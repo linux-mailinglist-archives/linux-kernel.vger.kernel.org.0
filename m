@@ -2,157 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9553109421
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:20:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7984F109436
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:28:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbfKYTUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 14:20:49 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45039 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfKYTUt (ORCPT
+        id S1727079AbfKYT2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 14:28:02 -0500
+Received: from mx.mylinuxtime.de ([195.201.174.144]:55274 "EHLO
+        mx.mylinuxtime.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfKYT2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 14:20:49 -0500
-Received: by mail-oi1-f194.google.com with SMTP id s71so14159720oih.11
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 11:20:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kHLgwwWlJiLxr2ARt5GzYa5qJrBUsXgP8lqORrP4CBI=;
-        b=GGHZW0/qHglQhTKyr9FT7LArU+/8B2MJwt0ERTENNILqCOR0zSFG5JQ6h85doOjbHk
-         LNTaVuVoX5VDHXd8l/o9UYnIYvh/r+ZYOrUr5VcbqzY5DTyQcIBl8NEIu14TmaCYYAgZ
-         ZnSf0kNazLgPtrS24ssoKF1aJsxWI9Zq6ekt/og/UomfWjhdflUN4vEMEdysBkgO69Y4
-         EVt2jwQQPfU3MiCLeXDPHG+YExP3K/V9K2RFxGeSFVhn+jx8YiIme2BQGVOb39YkP0sx
-         2lZYa0h6a6oKnzbtw/sWu3CYSjSwSo00Kj79t7uQCCl0rrg0l2PegD6+hLz2pQMm/P3h
-         nQUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kHLgwwWlJiLxr2ARt5GzYa5qJrBUsXgP8lqORrP4CBI=;
-        b=ms9+dWUY2ipj72cj8aWOalgXJMhhD3pczwoAe3heNze17zqtrkDZ2jFFTNooZB2pSk
-         GQIUECLHWOh/egIAKIpC03SQ96zB7eit2TqGk6yw0TWzCBgvIAPAt4O02noD2EDN5D9j
-         ExxvZrqPEWsoooarO4FLee5c3S7SZYggFiNCcHec7UkgKsDqq2bGqeAyj3u8aQfZcZZ9
-         MK2qrZ5j4NYalwAJ6JEctafmonuZYfMM62EF+KoCcIK5uCgFBf7out4hKejEdphgUkXV
-         Q4bRCF2TfAkGZ7LSkRzHo8KhuFN3OE/+8/dnhDypCbZ7qb1rvWGLy8WPgy8Ou+jzZOcP
-         rOjA==
-X-Gm-Message-State: APjAAAWWOjsZILmOWgh8OyldTUSjDPrGsrLC6m3VyQUouMcIUTcTLxpm
-        RkqpOI+SWO8isVh3bLcY/ZqyQh/sCArUCOKDOHViNg==
-X-Google-Smtp-Source: APXvYqyD4ah9bhyn/it46CSx9F7IM1K0Q0W5H77mtH0vZkSgt3LuPykHUgPh/okw2tgZ2UWF30HMQ8MfxqKfhIhCQB0=
-X-Received: by 2002:aca:4f58:: with SMTP id d85mr403850oib.142.1574709647312;
- Mon, 25 Nov 2019 11:20:47 -0800 (PST)
+        Mon, 25 Nov 2019 14:28:01 -0500
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 14:27:59 EST
+Received: from leda (unknown [IPv6:2001:470:99c1:714:e078:5e8f:bc9c:af22])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mx.mylinuxtime.de (Postfix) with ESMTPSA id 30791AEEB2;
+        Mon, 25 Nov 2019 20:21:17 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.mylinuxtime.de 30791AEEB2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=eworm.de; s=mail;
+        t=1574709677; bh=lVLErUGFk9dzz9u0j/g686/stLu2yikC3nX7dRehwYY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=WIl/YizuaH3dyVQM0SQTqLtXFesAekuhqEGM1ZVn9oB6Lq79jKbD6hN83ORDJRRkb
+         qjuhc0j+keFfWP3iu/GhYKdZjxCH98JGvvJAMhyiwwNhU0QIi76SU7qe5TjHvkRjln
+         B6f6latpEXE6FbqECECJpz7NoPcHrHaZIBqglPFs=
+Date:   Mon, 25 Nov 2019 20:21:11 +0100
+From:   Christian Hesse <list@eworm.de>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [ANNOUNCE] iproute2 5.4
+Message-ID: <20191125202111.1bb32360@leda>
+In-Reply-To: <20191125081737.2ff4a7ca@hermes.lan>
+References: <20191125081737.2ff4a7ca@hermes.lan>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-Face: %O:rCSk<c"<MpJ:yn<>HSKf7^4uF|FD$9$I0}g$nbnS1{DYPvs#:,~e`).mzj\$P9]V!WCveE/XdbL,L!{)6v%x4<jA|JaB-SKm74~Wa1m;|\QFlOg>\Bt!b#{;dS&h"7l=ow'^({02!2%XOugod|u*mYBVm-OS:VpZ"ZrRA4[Q&zye,^j;ftj!Hxx\1@;LM)Pz)|B%1#sfF;s;,N?*K*^)
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAGFBMVEUZFRFENy6KVTKEd23CiGHeqofJvrX4+vdHgItOAAAACXBIWXMAAA3XAAAN1wFCKJt4AAACUklEQVQ4y2VUTZeqMAxNxXG2Io5uGd64L35unbF9ax0b3OLxgFs4PcLff0lBHeb1QIq5uelNCEJNq/TIFGyeC+iugH0WJr+B1MvzWASpuP4CYHOB0VfoDdddwA7OIFQIEHjXDiCtV5e9QX0WMu8AG0mB7g7WP4GqeqVdsi4vv/5kFBvaF/zD7zDquL4DxbrDGDyAsgNYOsJOYzth4Q9ZF6iLV+6TLAT1pi2kuvgAtZxSjoG8cL+8vIn251uoe1OOEWwbIPU04gHsmMsoxyyhYsD2FdIigF1yxaVbBuSOCAlCoX324I7wNMhrO1bhOLsRoA6DC6wQ5eQiSG5BiWQfM4gN+uItQTRDMaJUhVbGyKWCuaaUGSVFVKpl4PdoDn3yY8J+YxQxyhlHfoYOyPgyDcO+cSQK6Bvabjcy2nwRo3pxgA8jslnCuYw23ESOzHAPYwo4ITNQMaOO+RGPEGhSlPEZBh2jmBEjQ5cKbxmr0ruAe/WCriUxW76I8T3h7vqY5VR5wXLdERodg2rHEzdxxk5KpXTL4FwnarvndKM5/MWDY5CuBBdQ+3/0ivsUJHicuHd+Xh3jOdBL+FjSGq4SPCwco+orpWlERRTNo7BHCvbNXFVSIQMp+P5QsIL9upmr8kMTUOfxEHoanwzKRcNAe76WbjBwex/RkdHu48xT5YqP70DaMOhBcTHmAVDxLaBdle93oJy1QKFUh2GXT4am+YH/GGel1CeI98GdMXsytjCKIq/9cMrlgxFCROv+3/BU1fijNpcVD6DxE8VfLBaxUGr1D5usgDYdjwiPAAAAAElFTkSuQmCC
 MIME-Version: 1.0
-References: <20191125185453.278468-1-guro@fb.com>
-In-Reply-To: <20191125185453.278468-1-guro@fb.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 25 Nov 2019 11:20:35 -0800
-Message-ID: <CALvZod7bsZcHZpd5i8ahAdKOhOCRxdLTrXCf78vg4_OENqUL9Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: memcg/slab: wait for !root kmem_cache refcnt killing
- on root kmem_cache destruction
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/Gt_qteWXsHThwO5rzNUlGk3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Authentication-Results: mx.mylinuxtime.de;
+        auth=pass smtp.auth=mail@eworm.de smtp.mailfrom=list@eworm.de
+X-Rspamd-Server: mx
+X-Spam-Status: No, score=-4.68
+X-Stat-Signature: dpsgjw3ameu7jykoyb58ur5dypo483sw
+X-Rspamd-Queue-Id: 30791AEEB2
+X-Spamd-Result: default: False [-4.68 / 15.00];
+         TO_DN_SOME(0.00)[];
+         SIGNED_PGP(-2.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+,1:+,2:~];
+         ASN(0.00)[asn:6939, ipnet:2001:470::/32, country:US];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_THREE(0.00)[3];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.20)[multipart/signed,text/plain];
+         NEURAL_HAM(-2.98)[-0.993,0];
+         MID_RHS_NOT_FQDN(0.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 10:55 AM Roman Gushchin <guro@fb.com> wrote:
->
-> Christian reported a warning like the following obtained during running some
-> KVM-related tests on s390:
->
-> WARNING: CPU: 8 PID: 208 at lib/percpu-refcount.c:108 percpu_ref_exit+0x50/0x58
-> Modules linked in: kvm(-) xt_CHECKSUM xt_MASQUERADE bonding xt_tcpudp ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ip6table_na>
-> CPU: 8 PID: 208 Comm: kworker/8:1 Not tainted 5.2.0+ #66
-> Hardware name: IBM 2964 NC9 712 (LPAR)
-> Workqueue: events sysfs_slab_remove_workfn
-> Krnl PSW : 0704e00180000000 0000001529746850 (percpu_ref_exit+0x50/0x58)
->            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-> Krnl GPRS: 00000000ffff8808 0000001529746740 000003f4e30e8e18 0036008100000000
->            0000001f00000000 0035008100000000 0000001fb3573ab8 0000000000000000
->            0000001fbdb6de00 0000000000000000 0000001529f01328 0000001fb3573b00
->            0000001fbb27e000 0000001fbdb69300 000003e009263d00 000003e009263cd0
-> Krnl Code: 0000001529746842: f0a0000407fe        srp        4(11,%r0),2046,0
->            0000001529746848: 47000700            bc         0,1792
->           #000000152974684c: a7f40001            brc        15,152974684e
->           >0000001529746850: a7f4fff2            brc        15,1529746834
->            0000001529746854: 0707                bcr        0,%r7
->            0000001529746856: 0707                bcr        0,%r7
->            0000001529746858: eb8ff0580024        stmg       %r8,%r15,88(%r15)
->            000000152974685e: a738ffff            lhi        %r3,-1
-> Call Trace:
-> ([<000003e009263d00>] 0x3e009263d00)
->  [<00000015293252ea>] slab_kmem_cache_release+0x3a/0x70
->  [<0000001529b04882>] kobject_put+0xaa/0xe8
->  [<000000152918cf28>] process_one_work+0x1e8/0x428
->  [<000000152918d1b0>] worker_thread+0x48/0x460
->  [<00000015291942c6>] kthread+0x126/0x160
->  [<0000001529b22344>] ret_from_fork+0x28/0x30
->  [<0000001529b2234c>] kernel_thread_starter+0x0/0x10
-> Last Breaking-Event-Address:
->  [<000000152974684c>] percpu_ref_exit+0x4c/0x58
-> ---[ end trace b035e7da5788eb09 ]---
->
-> The problem occurs because kmem_cache_destroy() is called immediately
-> after deleting of a memcg, so it races with the memcg kmem_cache
-> deactivation.
->
-> flush_memcg_workqueue() at the beginning of kmem_cache_destroy()
-> is supposed to guarantee that all deactivation processes are finished,
-> but failed to do so. It waits for an rcu grace period, after which all
-> children kmem_caches should be deactivated. During the deactivation
-> percpu_ref_kill() is called for non root kmem_cache refcounters,
-> but it requires yet another rcu grace period to finish the transition
-> to the atomic (dead) state.
->
-> So in a rare case when not all children kmem_caches are destroyed
-> at the moment when the root kmem_cache is about to be gone, we need
-> to wait another rcu grace period before destroying the root
-> kmem_cache.
->
-> Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Fixes: f0a3a24b532d ("mm: memcg/slab: rework non-root kmem_cache lifecycle management")
-> Signed-off-by: Roman Gushchin <guro@fb.com>
+--Sig_/Gt_qteWXsHThwO5rzNUlGk3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Stephen Hemminger <stephen@networkplumber.org> on Mon, 2019/11/25 08:17:
+> The 5.4 kernel has been released, and the last patches have
+> been applied to iproute2.
+>=20
+> Not a lot of changes in this release, most are related to fixing output
+> formatting and documentation.
+>=20
+> Download:
+>     https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-5.4.0.ta=
+r.gz
 
-> Cc: stable@vger.kernel.org
-> ---
->  mm/slab_common.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 8afa188f6e20..f0ab6d4ceb4c 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -904,6 +904,18 @@ static void flush_memcg_workqueue(struct kmem_cache *s)
->          * previous workitems on workqueue are processed.
->          */
->         flush_workqueue(memcg_kmem_cache_wq);
-> +
-> +       /*
-> +        * If we're racing with children kmem_cache deactivation, it might
-> +        * take another rcu grace period to complete their destruction.
-> +        * At this moment the corresponding percpu_ref_kill() call should be
-> +        * done, but it might take another rcu grace period to complete
-> +        * switching to the atomic mode.
-> +        * Please, note that we check without grabbing the slab_mutex. It's safe
-> +        * because at this moment the children list can't grow.
-> +        */
-> +       if (!list_empty(&s->memcg_params.children))
-> +               rcu_barrier();
->  }
->  #else
->  static inline int shutdown_memcg_caches(struct kmem_cache *s)
-> --
-> 2.23.0
->
+The file is not (yet) available. Did you miss to push it to the servers?
+--=20
+main(a){char*c=3D/*    Schoene Gruesse                         */"B?IJj;MEH"
+"CX:;",b;for(a/*    Best regards             my address:    */=3D0;b=3Dc[a+=
++];)
+putchar(b-1/(/*    Chris            cc -ox -xc - && ./x    */b/42*2-3)*42);}
+
+--Sig_/Gt_qteWXsHThwO5rzNUlGk3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXHmveYAHrRp+prOviUUh18yA9HYFAl3cKacACgkQiUUh18yA
+9HYNKggAtF3eZeuvK+qmNMKjTzqSbj7nyAIu24a+vgGlAG9Gwb0CleINgbJLXTYP
+2+xQDeBnO0m8oU20EWqt31cDCBzg81wQgWdRg1NHEGvl20yp3QoQlW8PvsM2Eu3f
+1DMHnHBZigTwjLxcpDoqlV/fK39lZYhNfK2O0qnujaIEQBE8Gl7ifrJbXU2tLNX0
+RkFHS+gn3JoCQub5BI2zJ+TKFs8//bzdFX63i4bhe/EkwoQFVyzGB0n2iLrb9pCm
+DJdksB+rrY9xk+q0UIXBpU0EXnb+FrKj+x2z14vuhgSceXKF62TFfvUhPd/2KEaO
+OCEPIv1Pxv0Exf8fl2eyqtGqH9z8wg==
+=Spmo
+-----END PGP SIGNATURE-----
+
+--Sig_/Gt_qteWXsHThwO5rzNUlGk3--
