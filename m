@@ -2,144 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1731090DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 16:16:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77FA91090ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 16:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbfKYPP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 10:15:58 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58413 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728172AbfKYPP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 10:15:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574694955;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FZC4Tpkk+CwwwL93QU1+o+P6o/ZYTmixyeklL1zRZCY=;
-        b=gAgopknFzMapF6Ud3+nITuCrxdO6Qez4j2xf2AnoJN+qOmyxPtARiIyGPebVOXAONuek2F
-        H4V5ENFfrv4DWPmfC5MM7fRHtpMnelkJ5hXFNe0GvqA80Mil9xApWF1JeDtsiXZkx/7Ayp
-        oWAQYWQ0yMzvFXWbAXmzEDyn8oiiP74=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-204-cvZ0gjUlPAqUKcag45LBpg-1; Mon, 25 Nov 2019 10:15:52 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B31DDB60;
-        Mon, 25 Nov 2019 15:15:50 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F7621001B05;
-        Mon, 25 Nov 2019 15:15:39 +0000 (UTC)
-Date:   Mon, 25 Nov 2019 23:15:35 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Andrea Vai <andrea.vai@unipv.it>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191125151535.GA8044@ming.t460p>
-References: <BYAPR04MB58167B95AF6B7CDB39D24C52E7780@BYAPR04MB5816.namprd04.prod.outlook.com>
- <CAOsYWL3NkDw6iK3q81=5L-02w=VgPF_+tYvfgnTihgCcwKgA+g@mail.gmail.com>
- <20191109222828.GA30568@ming.t460p>
- <fa3b0cf1f88e42e1200101bccbc797e4e7778d58.camel@unipv.it>
- <20191123072726.GC25356@ming.t460p>
- <a9ffcca93657cbbb56819fd883c474a702423b41.camel@unipv.it>
- <20191125035437.GA3806@ming.t460p>
- <bf47a6c620b847fa9e27f8542eb761529f3e0381.camel@unipv.it>
- <20191125102928.GA20489@ming.t460p>
- <e5093535c60fd5dff8f92b76dcd52a1030938f62.camel@unipv.it>
-MIME-Version: 1.0
-In-Reply-To: <e5093535c60fd5dff8f92b76dcd52a1030938f62.camel@unipv.it>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-MC-Unique: cvZ0gjUlPAqUKcag45LBpg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        id S1728522AbfKYPSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 10:18:42 -0500
+Received: from m15-112.126.com ([220.181.15.112]:53516 "EHLO m15-112.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727785AbfKYPSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 10:18:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=5WrnMnd6SLO8+2ax4Q
+        ZOP4APwycvcmz4bvINZCCXEKA=; b=b/WZZMCD66fo2YPdU5hzVY+kir06onvw0R
+        BbCSjMmCubOW5ZKQgxmOTFtuCMQyQIJiPYtGWIicB0oHgliSn7HiWlre02p3C0xc
+        0GLzPGYdcuG3iZoZP0P1phgcnQdHmla2bBzrHOE4HIZHszCEkntSHm1y8tvkLQjr
+        PgXTruwt4=
+Received: from localhost.localdomain (unknown [183.192.13.68])
+        by smtp2 (Coremail) with SMTP id DMmowAA3o+B08NtdNlfzAQ--.21587S2;
+        Mon, 25 Nov 2019 23:17:17 +0800 (CST)
+From:   yingjie_bai@126.com
+To:     Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Bai Yingjie <byj.tea@gmail.com>
+Subject: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for 64bit boot entry
+Date:   Mon, 25 Nov 2019 23:15:43 +0800
+Message-Id: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: DMmowAA3o+B08NtdNlfzAQ--.21587S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWfKryxWFWruF47Wr18AFb_yoW8XFykpa
+        4xGrnxtrZ5Kr1rZa12yF4IgrZ0yFsxu3yUW347AasI93W3Xr9xAF4DZry3WF1kWrWqkFWr
+        Zr4ayFyqyrsrWa7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bn5rcUUUUU=
+X-Originating-IP: [183.192.13.68]
+X-CM-SenderInfo: p1lqwyxlhbutbl6rjloofrz/1tbipB1491pD-LHSuQAAsJ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 03:58:34PM +0100, Andrea Vai wrote:
-> Il giorno lun, 25/11/2019 alle 18.29 +0800, Ming Lei ha scritto:
-> > On Mon, Nov 25, 2019 at 11:11:00AM +0100, Andrea Vai wrote:
-> > > Il giorno lun, 25/11/2019 alle 11.54 +0800, Ming Lei ha scritto:
-> > > > On Sat, Nov 23, 2019 at 04:44:55PM +0100, Andrea Vai wrote:
-> > > > > Il giorno sab, 23/11/2019 alle 15.28 +0800, Ming Lei ha
-> > scritto:
-> > > > > >=20
-> > > > > > Please post the log of 'lsusb -v', and I will try to make a
-> > > > patch
-> > > > > > for
-> > > > > > addressing the issue.
-> > > > >=20
-> > > > > attached,
-> > > >=20
-> > > > Please apply the attached patch, and re-build & install & reboot
-> > > > kernel.
-> > > >=20
-> > > > This time, please don't switch io scheduler.
-> > >=20
-> > > # patch -p1 < usb.patch outputs:
-> > >=20
-> > > (Stripping trailing CRs from patch; use --binary to disable.)
-> > > patching file block/blk-mq.c
-> > > Hunk #1 succeeded at 1465 (offset 29 lines).
-> > > Hunk #2 succeeded at 3061 (offset 13 lines).
-> > > (Stripping trailing CRs from patch; use --binary to disable.)
-> > > patching file drivers/scsi/scsi_lib.c
-> > > Hunk #1 succeeded at 1902 (offset -37 lines).
-> > > (Stripping trailing CRs from patch; use --binary to disable.)
-> > > patching file drivers/usb/storage/scsiglue.c
-> > > Hunk #1 succeeded at 651 (offset -10 lines).
-> > > (Stripping trailing CRs from patch; use --binary to disable.)
-> > > patching file include/linux/blk-mq.h
-> > > Hunk #1 succeeded at 226 (offset -162 lines).
-> > > (Stripping trailing CRs from patch; use --binary to disable.)
-> > > patching file include/scsi/scsi_host.h
-> > > patch unexpectedly ends in middle of line
-> > > patch unexpectedly ends in middle of line
-> > >=20
-> > > Just to be sure I have to go on, is this correct? Sounds like an
-> > error
-> > > but I don't know if it is important.
-> >=20
-> > Looks there is small conflict, however it has been fixed by patch,
-> > so
-> > it is correct, please go on your test.
->=20
-> Done, it still fails (2000 seconds or more to copy 1GB) :-(
->=20
-> cat /sys/block/sdf/queue/scheduler outputs:
-> [mq-deadline] none
->=20
-> What to try next?
+From: Bai Yingjie <byj.tea@gmail.com>
 
-1) cat /sys/kernel/debug/block/$DISK/hctx0/flags
+CPU like P4080 has 36bit physical address, its DDR physical
+start address can be configured above 4G by LAW registers.
 
-note: replace $DISK with disk name of your usb drive, such as, if it is
-/dev/sdb, pass $DISK as sdb.
+For such systems in which their physical memory start address was
+configured higher than 4G, we need also to write addr_h into the spin
+table of the target secondary CPU, so that addr_h and addr_l together
+represent a 64bit physical address.
+Otherwise the secondary core can not get correct entry to start from.
 
-2) echo 128 > /sys/block/$DISK/queue/nr_requests and run your copy 1GB
-test again.
+This should do no harm for normal case where addr_h is all 0.
 
+Signed-off-by: Bai Yingjie <byj.tea@gmail.com>
+---
+ arch/powerpc/platforms/85xx/smp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks,=20
-Ming
+diff --git a/arch/powerpc/platforms/85xx/smp.c b/arch/powerpc/platforms/85xx/smp.c
+index 8c7ea2486bc0..f12cdd1e80ff 100644
+--- a/arch/powerpc/platforms/85xx/smp.c
++++ b/arch/powerpc/platforms/85xx/smp.c
+@@ -252,6 +252,14 @@ static int smp_85xx_start_cpu(int cpu)
+ 	out_be64((u64 *)(&spin_table->addr_h),
+ 		__pa(ppc_function_entry(generic_secondary_smp_init)));
+ #else
++	/*
++	 * We need also to write addr_h to spin table for systems
++	 * in which their physical memory start address was configured
++	 * to above 4G, otherwise the secondary core can not get
++	 * correct entry to start from.
++	 * This does no harm for normal case where addr_h is all 0.
++	 */
++	out_be32(&spin_table->addr_h, __pa(__early_start) >> 32);
+ 	out_be32(&spin_table->addr_l, __pa(__early_start));
+ #endif
+ 	flush_spin_table(spin_table);
+-- 
+2.17.1
 
