@@ -2,76 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89B63109173
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:00:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 701B0109194
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbfKYQAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 11:00:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53404 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728454AbfKYQAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:00:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED843BF17;
-        Mon, 25 Nov 2019 16:00:19 +0000 (UTC)
-Message-ID: <1574697961.16378.5.camel@suse.cz>
-Subject: Re: [PATCH v4 1/6] x86,sched: Add support for frequency invariance
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Doug Smythies <dsmythies@telus.net>,
-        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
-        'Thomas Gleixner' <tglx@linutronix.de>,
-        'Ingo Molnar' <mingo@redhat.com>,
-        'Peter Zijlstra' <peterz@infradead.org>,
-        'Borislav Petkov' <bp@suse.de>, 'Len Brown' <lenb@kernel.org>,
-        "'Rafael J . Wysocki'" <rjw@rjwysocki.net>
-Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
+        id S1728812AbfKYQGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 11:06:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60082 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728533AbfKYQGb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 11:06:31 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 83B382901A0
+Subject: Re: [PATCH 1/4] i2c: i2c-cros-ec-tunnel: Pass ACPI node to i2c
+ adapter
+To:     Raul E Rangel <rrangel@chromium.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Akshu.Agrawal@amd.com, Guenter Roeck <groeck@chromium.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         linux-kernel@vger.kernel.org,
-        'Mel Gorman' <mgorman@techsingularity.net>,
-        'Matt Fleming' <matt@codeblueprint.co.uk>,
-        'Viresh Kumar' <viresh.kumar@linaro.org>,
-        'Juri Lelli' <juri.lelli@redhat.com>,
-        'Paul Turner' <pjt@google.com>,
-        'Vincent Guittot' <vincent.guittot@linaro.org>,
-        'Quentin Perret' <qperret@qperret.net>,
-        'Dietmar Eggemann' <dietmar.eggemann@arm.com>
-Date:   Mon, 25 Nov 2019 17:06:01 +0100
-In-Reply-To: <000001d5a29b$c944fd70$5bcef850$@net>
-References: <20191113124654.18122-1-ggherdovich@suse.cz>
-         <20191113124654.18122-2-ggherdovich@suse.cz>
-         <000001d5a29b$c944fd70$5bcef850$@net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-i2c@vger.kernel.org, Benson Leung <bleung@chromium.org>
+References: <20191121211053.48861-1-rrangel@chromium.org>
+ <20191121140830.1.Iae79baaa31014e8b1d8177bcfbcd41514af724f9@changeid>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <2dcedacb-8d08-6a58-23af-e834ef9e80fd@collabora.com>
+Date:   Mon, 25 Nov 2019 17:06:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20191121140830.1.Iae79baaa31014e8b1d8177bcfbcd41514af724f9@changeid>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-11-23 at 23:49 -0800, Doug Smythies wrote:
-> ...
-> Kernel 5.4-rc8 + revert, intel_cpufreq/schedutil: 3899 seconds
-> Kernel 5.4-rc8 + gg 6 + revert, intel_cpufreq/schedutil: 2740.7 seconds
-> Ratio: 0.70 (as expected)
-> Kernel 5.4-rc8, intel_cpufreq/schedutil: 2334.7 seconds (faster than expected)
-> Kernel 5.4-rc8 + gg 6 patch set, intel_cpufreq/schedutil: 2275.0 seconds (faster than expected)
-> Ratio: 0.97 (not as expected)
-> Kernel 5.4-rc8, intel_cpufreq/performance: 2215.3 seconds
-> Kernel 5.4-rc8, intel_cpufreq/ondemand: 3286.3 seconds
-> Re-stated from previous e-mail:
-> Kernel 5.3-rc8, intel_cpufreq/schedutil: ratio: 0.69 (I don't have the original times)
+Hi,
 
-Hello Doug,
+On 21/11/19 22:10, Raul E Rangel wrote:
+> The I2C bus needs to share the same ACPI node as the tunnel device so
+> that the I2C bus can be referenced from ACPI.
+> 
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-schedutil in 5.4 going a lot faster than in 5.3 would be a surprise. I'm
-running that same test too to check if I can see it as well.
+Hmm, isn't this change the same as https://lkml.org/lkml/2019/11/21/208 ?
 
-Besides, as it's already been said this patchset adds frequency
-scale-invariance to scheduler metrics such as load and utilization and that's
-useful also in areas other than frequency scaling (most notably the scheduler
-load balancer).
-
+Should I assume this deprecates the one pointed above? Who is the author? Please
+maintain the Signed-off chain.
 
 Thanks,
-Giovanni
+ Enric
+
+> ---
+> I would have added a Fixes annotation, but I wasn't able to find the
+> hash for https://lore.kernel.org/patchwork/patch/1151436/.
+> 
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> index 958161c71985..ac2412755f0a 100644
+> --- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> +++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> @@ -272,6 +272,7 @@ static int ec_i2c_probe(struct platform_device *pdev)
+>  	bus->adap.algo_data = bus;
+>  	bus->adap.dev.parent = &pdev->dev;
+>  	bus->adap.dev.of_node = pdev->dev.of_node;
+> +	ACPI_COMPANION_SET(&bus->adap.dev, ACPI_COMPANION(&pdev->dev));
+>  	bus->adap.retries = I2C_MAX_RETRIES;
+>  
+>  	err = i2c_add_adapter(&bus->adap);
+> 
