@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A4DC109074
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23313109085
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:57:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbfKYOzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 09:55:03 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40471 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728196AbfKYOzC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 09:55:02 -0500
-Received: by mail-pg1-f196.google.com with SMTP id e17so7307372pgd.7;
-        Mon, 25 Nov 2019 06:55:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=e4HNvCgeIsWWXZD/Eb73dwrTgcSGPA1KF9adoLiVXgQ=;
-        b=C0M56xig08BjM6UDtEp0uBL4EXLqykm2frcZoJ7E7GS3AAgxjKqdK3W5pbb8z6eGFN
-         xIWz0cmyQq2FsOL/krgiZSu5ZThNhgjLXzH7EFrfGopafUVit7HugddBcsQirgJ4Izrs
-         wf3ztUomTXDA92t6pts8yDdxxKuoT70kll2x0tFtYPr5g70QQQCkIxd9LeNYxIJol4W3
-         qufObs7ux04GuWcNfiy+H9lXQbFKd6427kSHUoa2BjnRnPkkD7sYyJsPWbI3pJ0I+hQl
-         oJv4JQeLj1Hr5FCiOl5fU2b5rYsHFCtHHVgrnx61TF0kCcj1hwe4EgtL6jHdBoz83KjF
-         0bTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=e4HNvCgeIsWWXZD/Eb73dwrTgcSGPA1KF9adoLiVXgQ=;
-        b=fsfmp+Gzb6ast0qU2vnUCPsxTRNbzE7OpzrdeUp18XwtnBQrsM/dToA688+2dwBwVb
-         VELeJ2OHQfNusLJt2C2r8oa44jaxnYF0eNPdn92aWo0EI4vUP0er1Wtlbo6dJjwpnxU5
-         /gOXB0HwKsHc6bR6sJPtBW7j6rLwAvtnjRvaOtxKAGv8Bp88fBMjT5eaIX2DipYJdjph
-         bSba6SQRshvdt866DlET/KyfP9LSdCl1ZKonJ7hyYHeqS6RLQTnoBXxZLpSy74r0nFqt
-         8rU38Lp5RtYvwh7DRbbgFCq/25MVII6vTg5sWyhDvZgD7hGvmyYGhTh5oQp95CSDyli6
-         9z8A==
-X-Gm-Message-State: APjAAAXQNl9rks2U98bQP42Plgp0zy3+NPQxOJl26/3rKLpgeWG43PEs
-        wtiUYqkPU81mtZ/l5sPGRwE=
-X-Google-Smtp-Source: APXvYqyTUDydmZxjqv1ZPCNVTCbzpy+iesgMrRGL2cKw74rn+PBdxs7oKou9Wp8GYPDIcUiiOEWR3A==
-X-Received: by 2002:a62:5485:: with SMTP id i127mr27075376pfb.186.1574693701152;
-        Mon, 25 Nov 2019 06:55:01 -0800 (PST)
-Received: from debian.net.fpt ([2405:4800:58f7:550c:6dad:1b5f:afc6:7758])
-        by smtp.gmail.com with ESMTPSA id j4sm8623602pgt.57.2019.11.25.06.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 06:55:00 -0800 (PST)
-From:   Phong Tran <tranmanphong@gmail.com>
-To:     davem@davemloft.net, gregkh@linuxfoundation.org, oneukum@suse.com
-Cc:     alexios.zavras@intel.com, johan@kernel.org, allison@lohutok.net,
-        tglx@linutronix.de, benquike@gmail.com, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phong Tran <tranmanphong@gmail.com>
-Subject: [PATCH 2/2] drivers: net: usbnet: Fix -Wcast-function-type
-Date:   Mon, 25 Nov 2019 21:54:43 +0700
-Message-Id: <20191125145443.29052-2-tranmanphong@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191125145443.29052-1-tranmanphong@gmail.com>
-References: <20191125145443.29052-1-tranmanphong@gmail.com>
+        id S1728385AbfKYO5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 09:57:45 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7170 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728071AbfKYO5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:57:45 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DFB236CF9FA8163C04FF;
+        Mon, 25 Nov 2019 22:57:39 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 25 Nov 2019
+ 22:57:33 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <Bhawanpreet.Lakha@amd.com>, <yuehaibing@huawei.com>
+CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] drm/amd/display: remove set but not used variable 'msg_out'
+Date:   Mon, 25 Nov 2019 22:54:45 +0800
+Message-ID: <20191125145445.21648-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-correct usage prototype of callback in tasklet_init().
-Report by https://github.com/KSPP/linux/issues/20
+drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c: In function mod_hdcp_hdcp2_enable_encryption:
+drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c:633:77: warning: variable msg_out set but not used [-Wunused-but-set-variable]
+drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c: In function mod_hdcp_hdcp2_enable_dp_stream_encryption:
+drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c:710:77: warning: variable msg_out set but not used [-Wunused-but-set-variable]
 
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+It is never used, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/usb/usbnet.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index dde05e2fdc3e..d10a5e6d0917 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -1573,6 +1573,12 @@ static void usbnet_bh (struct timer_list *t)
- 	}
- }
+diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
+index 2dd5fee..468f5e6 100644
+--- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
++++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
+@@ -630,14 +630,12 @@ enum mod_hdcp_status mod_hdcp_hdcp2_enable_encryption(struct mod_hdcp *hdcp)
+ 	struct psp_context *psp = hdcp->config.psp.handle;
+ 	struct ta_hdcp_shared_memory *hdcp_cmd;
+ 	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_input_v2 *msg_in;
+-	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_output_v2 *msg_out;
+ 	struct mod_hdcp_display *display = get_first_added_display(hdcp);
  
-+static void usbnet_bh_tasklet (unsigned long data)
-+{
-+	struct timer_list *t = (struct timer_list *)data;
-+	usbnet_bh(t);
-+}
-+
+ 	hdcp_cmd = (struct ta_hdcp_shared_memory *)psp->hdcp_context.hdcp_shared_buf;
+ 	memset(hdcp_cmd, 0, sizeof(struct ta_hdcp_shared_memory));
  
- /*-------------------------------------------------------------------------
-  *
-@@ -1700,7 +1706,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
- 	skb_queue_head_init (&dev->txq);
- 	skb_queue_head_init (&dev->done);
- 	skb_queue_head_init(&dev->rxq_pause);
--	dev->bh.func = (void (*)(unsigned long))usbnet_bh;
-+	dev->bh.func = usbnet_bh_tasklet;
- 	dev->bh.data = (unsigned long)&dev->delay;
- 	INIT_WORK (&dev->kevent, usbnet_deferred_kevent);
- 	init_usb_anchor(&dev->deferred);
+ 	msg_in = &hdcp_cmd->in_msg.hdcp2_prepare_process_authentication_message_v2;
+-	msg_out = &hdcp_cmd->out_msg.hdcp2_prepare_process_authentication_message_v2;
+ 
+ 	hdcp2_message_init(hdcp, msg_in);
+ 
+@@ -707,14 +705,12 @@ enum mod_hdcp_status mod_hdcp_hdcp2_enable_dp_stream_encryption(struct mod_hdcp
+ 	struct psp_context *psp = hdcp->config.psp.handle;
+ 	struct ta_hdcp_shared_memory *hdcp_cmd;
+ 	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_input_v2 *msg_in;
+-	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_output_v2 *msg_out;
+ 	uint8_t i;
+ 
+ 	hdcp_cmd = (struct ta_hdcp_shared_memory *)psp->hdcp_context.hdcp_shared_buf;
+ 	memset(hdcp_cmd, 0, sizeof(struct ta_hdcp_shared_memory));
+ 
+ 	msg_in = &hdcp_cmd->in_msg.hdcp2_prepare_process_authentication_message_v2;
+-	msg_out = &hdcp_cmd->out_msg.hdcp2_prepare_process_authentication_message_v2;
+ 
+ 	hdcp2_message_init(hdcp, msg_in);
+ 
 -- 
-2.20.1
+2.7.4
+
 
