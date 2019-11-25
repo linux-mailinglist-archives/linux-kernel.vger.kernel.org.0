@@ -2,85 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77FA91090ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 16:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CEA41090DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 16:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbfKYPSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 10:18:42 -0500
-Received: from m15-112.126.com ([220.181.15.112]:53516 "EHLO m15-112.126.com"
+        id S1728558AbfKYPQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 10:16:22 -0500
+Received: from sauhun.de ([88.99.104.3]:55242 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727785AbfKYPSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 10:18:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=5WrnMnd6SLO8+2ax4Q
-        ZOP4APwycvcmz4bvINZCCXEKA=; b=b/WZZMCD66fo2YPdU5hzVY+kir06onvw0R
-        BbCSjMmCubOW5ZKQgxmOTFtuCMQyQIJiPYtGWIicB0oHgliSn7HiWlre02p3C0xc
-        0GLzPGYdcuG3iZoZP0P1phgcnQdHmla2bBzrHOE4HIZHszCEkntSHm1y8tvkLQjr
-        PgXTruwt4=
-Received: from localhost.localdomain (unknown [183.192.13.68])
-        by smtp2 (Coremail) with SMTP id DMmowAA3o+B08NtdNlfzAQ--.21587S2;
-        Mon, 25 Nov 2019 23:17:17 +0800 (CST)
-From:   yingjie_bai@126.com
-To:     Scott Wood <oss@buserror.net>,
-        Kumar Gala <galak@kernel.crashing.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Bai Yingjie <byj.tea@gmail.com>
-Subject: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for 64bit boot entry
-Date:   Mon, 25 Nov 2019 23:15:43 +0800
-Message-Id: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DMmowAA3o+B08NtdNlfzAQ--.21587S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWfKryxWFWruF47Wr18AFb_yoW8XFykpa
-        4xGrnxtrZ5Kr1rZa12yF4IgrZ0yFsxu3yUW347AasI93W3Xr9xAF4DZry3WF1kWrWqkFWr
-        Zr4ayFyqyrsrWa7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bn5rcUUUUU=
-X-Originating-IP: [183.192.13.68]
-X-CM-SenderInfo: p1lqwyxlhbutbl6rjloofrz/1tbipB1491pD-LHSuQAAsJ
+        id S1728172AbfKYPQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 10:16:21 -0500
+Received: from localhost (x4e37056e.dyn.telefonica.de [78.55.5.110])
+        by pokefinder.org (Postfix) with ESMTPSA id 596772C0456;
+        Mon, 25 Nov 2019 16:16:19 +0100 (CET)
+Date:   Mon, 25 Nov 2019 16:16:18 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Tali Perry <tali.perry1@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, yuenn@google.com,
+        venture@google.com, benjaminfair@google.com,
+        avifishman70@gmail.com, joel@jms.id.au, tmaimon77@gmail.com,
+        syniurge@gmail.com, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] i2c: npcm: Add Nuvoton NPCM I2C controller driver
+Message-ID: <20191125151618.GE2412@kunai>
+References: <20191121095350.158689-1-tali.perry1@gmail.com>
+ <20191121095350.158689-3-tali.perry1@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Lb0e7rgc7IsuDeGj"
+Content-Disposition: inline
+In-Reply-To: <20191121095350.158689-3-tali.perry1@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bai Yingjie <byj.tea@gmail.com>
 
-CPU like P4080 has 36bit physical address, its DDR physical
-start address can be configured above 4G by LAW registers.
+--Lb0e7rgc7IsuDeGj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For such systems in which their physical memory start address was
-configured higher than 4G, we need also to write addr_h into the spin
-table of the target secondary CPU, so that addr_h and addr_l together
-represent a 64bit physical address.
-Otherwise the secondary core can not get correct entry to start from.
+On Thu, Nov 21, 2019 at 11:53:50AM +0200, Tali Perry wrote:
+> Add Nuvoton NPCM BMC i2c controller driver.
+>=20
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 
-This should do no harm for normal case where addr_h is all 0.
+Looking at all this SMB_* naming of the registers and also the quirks,
+this looks more like an SMBUS controller to me?
 
-Signed-off-by: Bai Yingjie <byj.tea@gmail.com>
----
- arch/powerpc/platforms/85xx/smp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> +	// currently I2C slave IF only supports single byte operations.
+> +	// in order to utilyze the npcm HW FIFO, the driver will ask for 16bytes
+> +	// at a time, pack them in buffer, and then transmit them all together
+> +	// to the FIFO and onward to the bus .
+> +	// NACK on read will be once reached to bus->adap->quirks->max_read_len
+> +	// sending a NACK whever the backend requests for it is not supported.
 
-diff --git a/arch/powerpc/platforms/85xx/smp.c b/arch/powerpc/platforms/85xx/smp.c
-index 8c7ea2486bc0..f12cdd1e80ff 100644
---- a/arch/powerpc/platforms/85xx/smp.c
-+++ b/arch/powerpc/platforms/85xx/smp.c
-@@ -252,6 +252,14 @@ static int smp_85xx_start_cpu(int cpu)
- 	out_be64((u64 *)(&spin_table->addr_h),
- 		__pa(ppc_function_entry(generic_secondary_smp_init)));
- #else
-+	/*
-+	 * We need also to write addr_h to spin table for systems
-+	 * in which their physical memory start address was configured
-+	 * to above 4G, otherwise the secondary core can not get
-+	 * correct entry to start from.
-+	 * This does no harm for normal case where addr_h is all 0.
-+	 */
-+	out_be32(&spin_table->addr_h, __pa(__early_start) >> 32);
- 	out_be32(&spin_table->addr_l, __pa(__early_start));
- #endif
- 	flush_spin_table(spin_table);
--- 
-2.17.1
+This for example...
 
+> +static const struct i2c_adapter_quirks npcm_i2c_quirks =3D {
+> +	.max_read_len =3D 32768,
+> +	.max_write_len =3D 32768,
+> +	.max_num_msgs =3D 2,
+> +	.flags =3D I2C_AQ_COMB_WRITE_THEN_READ
+> +};
+
+=2E.. and this. Like SMBus with the only exception of being able to send
+32K in a row. Or?
+
+
+--Lb0e7rgc7IsuDeGj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl3b8EIACgkQFA3kzBSg
+Kbabdg//Vlk6yGrJ9uPwF66dwUUKyE2M66t+W5miyttrphuZsLZXK7MGI2sQlF0D
+0ZTP0+fskh6L8uFpIK2eplGzHCyNHxz9yiGlluRMCohfL0HYVZw0TtLz08cKbg9p
+35Mqs8JhklbBQ6EaO+FCd3WBAUA244fmekZa4ltRs66A7EZ+40kB8JEGJ9UF4yZl
+AUop8BPaVGEJ9lw4x3n6DvsiNrGSuxbMJmmm2FU8HY2I31A2cUAv1B26xkjJ4NBW
+We7ts4jy4tJv6Uo0KxvBbvCgaxle/zwPkl7s2dPvajxLbMEXfq/yOrCWEAX7mg/u
+3ENhA7SETaZFcn4Yj3J0uVlbv/DIzPUcsGP499PW0DIsRY6i7dFl0JypETEceu8W
+/QQJO62nl3vh13bLcv1Nl6HtQjOX5EtVmUBwakasELQ+HMWp3zt7dHu7FgKtPaIJ
+eAL9AjrgCymz1v0kAzlXRx7KTi+285oWNUUVBtRedc76A60ONDmim7nsSkx+lmem
+djPX2bSGT0v1gp16CAMe07ZOmCB7Wu8S6pIK9Yo639bi9MnhblsXYRlF7unpO4RX
+8+xUos0Y2tLw28tU7g/pELYyBoKWoEDNCQrWy/3FHh41PFKGPRfOme0ZudIFgcPM
+Vu12YjeAhb1fqMqRyEMs8uwjx+4PBqJS7dzJvobQSgZyc9tjW+k=
+=Yu4F
+-----END PGP SIGNATURE-----
+
+--Lb0e7rgc7IsuDeGj--
