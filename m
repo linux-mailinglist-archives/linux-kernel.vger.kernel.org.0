@@ -2,74 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D8A6109540
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 22:46:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14BF610955E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 23:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbfKYVq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 16:46:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfKYVq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 16:46:27 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9405E20706;
-        Mon, 25 Nov 2019 21:46:26 +0000 (UTC)
-Date:   Mon, 25 Nov 2019 16:46:25 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, saiprakash.ranjan@codeaurora.org
-Subject: Re: [RFC v2 2/2] docs: ftrace: Fix typos
-Message-ID: <20191125164625.01101109@gandalf.local.home>
-In-Reply-To: <20191125123709.5eff70a9@gandalf.local.home>
-References: <cover.1574655670.git.frank@generalsoftwareinc.com>
-        <a843617511989679b29fbd62b1b8b3e991f2101e.1574655670.git.frank@generalsoftwareinc.com>
-        <20191125123709.5eff70a9@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726947AbfKYWFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 17:05:00 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52627 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbfKYWFA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 17:05:00 -0500
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAPM40dL086354;
+        Tue, 26 Nov 2019 07:04:01 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
+ Tue, 26 Nov 2019 07:04:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040052248.bbtec.net [126.40.52.248])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAPM3qjm086324
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 26 Nov 2019 07:04:00 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: general protection fault in selinux_socket_sendmsg (2)
+To:     syzbot <syzbot+314db21f0d5c1f53856c@syzkaller.appspotmail.com>,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <0000000000006c9f4e059830c33c@google.com>
+Cc:     andriin@fb.com, anton@enomsg.org, ast@kernel.org,
+        bpf@vger.kernel.org, ccross@android.com, daniel@iogearbox.net,
+        eparis@parisplace.org, kafai@fb.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com,
+        sds@tycho.nsa.gov, selinux@vger.kernel.org, songliubraving@fb.com,
+        tony.luck@intel.com, yhs@fb.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <2340a1a3-37cf-5f55-1f9a-9052a557f579@I-love.SAKURA.ne.jp>
+Date:   Tue, 26 Nov 2019 07:03:51 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <0000000000006c9f4e059830c33c@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Nov 2019 12:37:09 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Sun, 24 Nov 2019 23:38:41 -0500
-> "Frank A. Cancio Bello" <frank@generalsoftwareinc.com> wrote:
+On 2019/11/26 4:28, syzbot wrote:
+> Hello,
 > 
-> > --- a/Documentation/trace/ring-buffer-design.txt
-> > +++ b/Documentation/trace/ring-buffer-design.txt
-> > @@ -37,7 +37,7 @@ commit_page - a pointer to the page with the last finished non-nested write.
-> >  
-> >  cmpxchg - hardware-assisted atomic transaction that performs the following:
-> >  
-> > -   A = B iff previous A == C
-> > +   A = B if previous A == C  
+> syzbot found the following crash on:
 > 
-> This wasn't a typo. "iff" means "if and only if" which is a standard
-> notation. That is, this is shorthand for:
+> HEAD commit:    6b8a7946 Merge tag 'for_linus' of git://git.kernel.org/pub..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1680ab8ce00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4737c15fc47048f2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=314db21f0d5c1f53856c
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 > 
->   A = B if previous A == C
->   previous A == C if A = B
+> Unfortunately, I don't have any reproducer for this crash yet.
 
-Although thinking about this more, this may not be correct. If
-previous A == B, then A = B, thus the "iff" notation is not actually
-accurate.
-
-This wouldn't then be a typo fix, but a real fix to the logic ;-)
-
--- Steve
+Original bug has syz reproducer.
 
 > 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+314db21f0d5c1f53856c@syzkaller.appspotmail.com
 > 
-> >  
-> >     R = cmpxchg(A, C, B) is saying that we replace A with B if and only if
-> >        current A is equal to C, and we put the old (current) A into R
-> > --   
 
+net/rxrpc/output.c:655
+
+#syz dup: KMSAN: use-after-free in rxrpc_send_keepalive
