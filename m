@@ -2,159 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A51CF10872A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 05:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 278E01087DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 05:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbfKYEUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 23:20:47 -0500
-Received: from mail-eopbgr40062.outbound.protection.outlook.com ([40.107.4.62]:65423
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727397AbfKYEUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 23:20:45 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DAomdFpg7LGQvwRUGGv3gHno5EA5Pp38Da0sngNkBmpxDeTwdkVlXtoCSp0y1iiuth/mhDOcpaMWJ72RfnPFIyQrBZcHA6DflIGmP6KkFnXLw7QKdMVeeepPwl7hGJL/XWsCsnjpkbUi+wo9r7VMpLQhT5j5OFr0XeuaWxz7k4sY0KSxyTySEmnobZV381iecDjz/+eKPumq0hTmq20iJDYctnb7idbr54AB/XcZs6Mj0eCoEahW9L+DP0rHWw2Eq1whOcbsLh768tBmUkdy6shfstymE8wIeQQOAlxEqaPMrp8Gh8FCl+mXWlGUZN356YvvjdLS4yR9HCUDPN9RcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=opkWY90ZME6YU5qDnpBVlkuhn/A8phiAeae6EWKgQ1s=;
- b=egMj/KwFk969AHortMbVJAZAJsvqCRb6xtqJyKrZL+Y8kvV31sW/Slu5+iNSPmaHpLS+WIxEvwdgTS8SMu5jFeH0vZ9d7eggS4x4Hvn2GyJMMpFMerdSQ/xkxfWYXayJEpkpNMUiqQETkCCDr6UEUSZ4Jjq8zzTTrhBx35s22Cnm8rMXuS69E3NWt1QqiYgSFIk994ieHpvz6nlTmrxmgOJeKzyI3GptSkg+yt49yekg2f6EA07B6MhIsV0Zm41EQYNIMsnTXCfUTIRXMxDC5Pktx98clz5lZHHdkggS90eugtqRzclc1DEwtALKt227jMLOyBkB+IJqSg0kTVa6iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=opkWY90ZME6YU5qDnpBVlkuhn/A8phiAeae6EWKgQ1s=;
- b=qx4oxid4V35G1aXKZJQCnjAnDWwwuE7xfzqL1ukqY31I3l43kX2dK5lIHS8+6grXrKn55l3jvvg8UH/+AIXfuq/4CaGX/JXqMsdqYnGBF9XH6acySdylUqeELa0o2BVlQGvjrt6NZ1JwS+qQRE8RE7DojubH+7Irn2nhqnMv5fk=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
- VI1PR04MB4061.eurprd04.prod.outlook.com (10.171.182.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.19; Mon, 25 Nov 2019 04:20:42 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9%7]) with mapi id 15.20.2474.023; Mon, 25 Nov 2019
- 04:20:42 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Henry Lin <henryl@nvidia.com>
-CC:     Felipe Balbi <balbi@kernel.org>,
+        id S1727146AbfKYE1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 23:27:38 -0500
+Received: from foss.arm.com ([217.140.110.172]:44392 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbfKYE1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 23:27:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 948E431B;
+        Sun, 24 Nov 2019 20:27:36 -0800 (PST)
+Received: from [192.168.0.10] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03E013F6C4;
+        Sun, 24 Nov 2019 20:27:21 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH V10] mm/debug: Add tests validating architecture page
+ table helpers
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Romain Izard <romain.izard.pro@gmail.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: gadget: f_ncm: fix wrong usb_ep
-Thread-Topic: [PATCH] usb: gadget: f_ncm: fix wrong usb_ep
-Thread-Index: AQHVoCLqKGYVyVjGs0eFFEwrEIcffKebTxyA
-Date:   Mon, 25 Nov 2019 04:20:42 +0000
-Message-ID: <20191125042039.GA10953@b29397-desktop>
-References: <20191121041858.15746-1-henryl@nvidia.com>
-In-Reply-To: <20191121041858.15746-1-henryl@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cee1ef73-0916-4f5b-f283-08d7715ed5ae
-x-ms-traffictypediagnostic: VI1PR04MB4061:
-x-microsoft-antispam-prvs: <VI1PR04MB4061B83F1EF9156BA0D8F1F48B4A0@VI1PR04MB4061.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0232B30BBC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(376002)(396003)(366004)(346002)(39860400002)(136003)(199004)(189003)(71190400001)(6116002)(33656002)(3846002)(7736002)(71200400001)(229853002)(305945005)(81166006)(81156014)(8936002)(478600001)(6916009)(14454004)(2906002)(8676002)(5660300002)(26005)(1076003)(6506007)(53546011)(86362001)(102836004)(6246003)(66066001)(25786009)(316002)(6512007)(186003)(76116006)(99286004)(66446008)(66946007)(66476007)(66556008)(64756008)(33716001)(76176011)(44832011)(4326008)(446003)(11346002)(256004)(6436002)(54906003)(9686003)(6486002)(91956017);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4061;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1WOKQpCMeMT701tODKfRyOuZoSfY6Tn5wineIpMS8rmfQqsrT+OHl2r8OHwaEcCX13MQ9QI8vOa2RaGp/3j5hj+YtrRfYzxAZt22XX3preXZPs+fZtGOurEiMH/sRYnZWWH0ipD+0vP7CLKVOJXSUxH+Jncxs9ohxfh4PIdsbIXMV5Puh/+ZfVkFYtPLwKD7NaYoS9YL9AaS7Sv0VnJB3bBpaOqMvMtN5w5VzdScv1A+/T50XBdOBzs1II9WgXmRZ8cjHTcz9Aj82a2OW+JBI/Vds644lj2qoaZzKaJBNJbRAUVa/iD+W5pFlg65wfJfA0vYeqTc0EUOTVVVl4/G0KudEW7qgYWBSot0CkDFa19+EdiMH/MTzMtoClym4zX0Y7bP/OFnsPJkG5M+b5zRIPJ1zG9znR/nNT3ejMhDcuOps63T0KSrgASuo3YKC99I
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A862E450F1C70248B7A53919C1AC6362@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        James Hogan <jhogan@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1574227906-20550-1-git-send-email-anshuman.khandual@arm.com>
+Message-ID: <d20b95b2-369c-bcb8-3bf0-f7ce32d0fb12@arm.com>
+Date:   Mon, 25 Nov 2019 09:58:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cee1ef73-0916-4f5b-f283-08d7715ed5ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2019 04:20:42.0412
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qV6xQgLbN33VXn70+AkjTrlKsqyTqbzc56m9Y3YRwWm4/2FaJZlLsITZSjizEb4UAEVaS40kkmMusL9ILzgv4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4061
+In-Reply-To: <1574227906-20550-1-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-11-21 12:18:57, Henry Lin wrote:
-> Gadget driver should always use config_ep_by_speed() to initialize
-> usb_ep struct according to usb device's operating speed. Otherwise,
-> usb_ep struct may be wrong if usb devcie's operating speed is changed.
->=20
-
-Would you please share the use case how to reproduce it?
-
-Peter
-> Signed-off-by: Henry Lin <henryl@nvidia.com>
+On 11/20/2019 11:01 AM, Anshuman Khandual wrote:
+> This adds tests which will validate architecture page table helpers and
+> other accessors in their compliance with expected generic MM semantics.
+> This will help various architectures in validating changes to existing
+> page table helpers or addition of new ones.
+> 
+> This test covers basic page table entry transformations including but not
+> limited to old, young, dirty, clean, write, write protect etc at various
+> level along with populating intermediate entries with next page table page
+> and validating them.
+> 
+> Test page table pages are allocated from system memory with required size
+> and alignments. The mapped pfns at page table levels are derived from a
+> real pfn representing a valid kernel text symbol. This test gets called
+> right after page_alloc_init_late().
+> 
+> This gets build and run when CONFIG_DEBUG_VM_PGTABLE is selected along with
+> CONFIG_VM_DEBUG. Architectures willing to subscribe this test also need to
+> select CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE which for now is limited to x86 and
+> arm64. Going forward, other architectures too can enable this after fixing
+> build or runtime problems (if any) with their page table helpers.
+> 
+> Folks interested in making sure that a given platform's page table helpers
+> conform to expected generic MM semantics should enable the above config
+> which will just trigger this test during boot. Any non conformity here will
+> be reported as an warning which would need to be fixed. This test will help
+> catch any changes to the agreed upon semantics expected from generic MM and
+> enable platforms to accommodate it thereafter.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steven Price <Steven.Price@arm.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Sri Krishna chowdary <schowdary@nvidia.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Vineet Gupta <vgupta@synopsys.com>
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: Paul Burton <paul.burton@mips.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: linux-snps-arc@lists.infradead.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-ia64@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: x86@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Tested-by: Christophe Leroy <christophe.leroy@c-s.fr>		#PPC32
+> Reviewed-by: Ingo Molnar <mingo@kernel.org>
+> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
->  drivers/usb/gadget/function/f_ncm.c | 28 ++++++++++++----------------
->  1 file changed, 12 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/usb/gadget/function/f_ncm.c b/drivers/usb/gadget/fun=
-ction/f_ncm.c
-> index 2d6e76e4cffa..420b9c96f2fe 100644
-> --- a/drivers/usb/gadget/function/f_ncm.c
-> +++ b/drivers/usb/gadget/function/f_ncm.c
-> @@ -870,11 +870,10 @@ static int ncm_set_alt(struct usb_function *f, unsi=
-gned intf, unsigned alt)
->  		DBG(cdev, "reset ncm control %d\n", intf);
->  		usb_ep_disable(ncm->notify);
-> =20
-> -		if (!(ncm->notify->desc)) {
-> -			DBG(cdev, "init ncm ctrl %d\n", intf);
-> -			if (config_ep_by_speed(cdev->gadget, f, ncm->notify))
-> -				goto fail;
-> -		}
-> +		DBG(cdev, "init ncm ctrl %d\n", intf);
-> +		if (config_ep_by_speed(cdev->gadget, f, ncm->notify))
-> +			goto fail;
-> +
->  		usb_ep_enable(ncm->notify);
-> =20
->  	/* Data interface has two altsettings, 0 and 1 */
-> @@ -897,17 +896,14 @@ static int ncm_set_alt(struct usb_function *f, unsi=
-gned intf, unsigned alt)
->  		if (alt =3D=3D 1) {
->  			struct net_device	*net;
-> =20
-> -			if (!ncm->port.in_ep->desc ||
-> -			    !ncm->port.out_ep->desc) {
-> -				DBG(cdev, "init ncm\n");
-> -				if (config_ep_by_speed(cdev->gadget, f,
-> -						       ncm->port.in_ep) ||
-> -				    config_ep_by_speed(cdev->gadget, f,
-> -						       ncm->port.out_ep)) {
-> -					ncm->port.in_ep->desc =3D NULL;
-> -					ncm->port.out_ep->desc =3D NULL;
-> -					goto fail;
-> -				}
-> +			DBG(cdev, "init ncm\n");
-> +			if (config_ep_by_speed(cdev->gadget, f,
-> +					       ncm->port.in_ep) ||
-> +			    config_ep_by_speed(cdev->gadget, f,
-> +					       ncm->port.out_ep)) {
-> +				ncm->port.in_ep->desc =3D NULL;
-> +				ncm->port.out_ep->desc =3D NULL;
-> +				goto fail;
->  			}
-> =20
->  			/* TODO */
-> --=20
-> 2.17.1
->=20
+> This adds a test validation for architecture exported page table helpers.
+> Patch adds basic transformation tests at various levels of the page table.
+> 
+> This test was originally suggested by Catalin during arm64 THP migration
+> RFC discussion earlier. Going forward it can include more specific tests
+> with respect to various generic MM functions like THP, HugeTLB etc and
+> platform specific tests.
+> 
+> https://lore.kernel.org/linux-mm/20190628102003.GA56463@arrakis.emea.arm.com/
+> 
+> Needs to be applied on linux-next (next-20191108).
+> 
+> Changes in V10:
+> 
+> - Always enable DEBUG_VM_PGTABLE when DEBUG_VM is enabled per Ingo
+> - Added tags from Ingo
 
---=20
+Hello Andrew,
 
-Thanks,
-Peter Chen=
+There has not been any further comments on the previous version (V9) or this version
+(V10) of the patch which accommodated a comment from Ingo Molnar regarding making
+DEBUG_VM_PGTABLE always enabled when DEBUG_VM is selected. If this version looks okay,
+then would you please consider merging ? But if there is anything which still needs
+to be improved, please do let me know. I will try to incorporate that. Thank you.
+
+- Anshuman
