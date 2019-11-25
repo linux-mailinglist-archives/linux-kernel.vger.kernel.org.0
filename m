@@ -2,50 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1566109598
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 23:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2200A1095AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 23:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfKYWpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 17:45:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39676 "EHLO mail.kernel.org"
+        id S1727857AbfKYWpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 17:45:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727139AbfKYWpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725946AbfKYWpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Nov 2019 17:45:03 -0500
-Subject: Re: [GIT PULL] tpmdd updates for Linux v5.5
+Subject: Re: [GIT PULL] fsverity updates for 5.5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1574721902;
-        bh=pt93TpD3bcRM2woCPlb5kjxWwt/2vu3TsxLgqWDZZ9w=;
+        bh=iBG0BodDs0Gwe2XN+3tSn6/CzKDz6Y3Hq1qD3RP8fVM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ALUiLUDYFnYHGCpY7Qtp8e7lDTF1DAr1U9MKAGnJpYzItxJZy8MX1W/h6NKXQbM0e
-         OFZuvNas3vXqXG+rRI/G34rNSmnIZOLBaMa5WMoHDlfJVhtIl2c6TkgRdzNQ43589m
-         5OmXYC/I9Xjmg16ibUCLWbj18S8Xya+dW5U5fzD4=
+        b=DtDsSrUSnwwRHJAs7q+wn7NCy+oJCewmy6M4mKnDLa+fekgv+KY8iLupXJKXPmKtA
+         fIp/hp484Qs8GDHFCzdKv6pW4DBnmxFSwhFsgb1CnOsQhgThquEGZWqucgX1gUkZvS
+         Omu3s1Fbv+nmbK84xJ+WeEVZMb7Lip6E4uFdlcyI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191112195542.GA10619@linux.intel.com>
-References: <20191112195542.GA10619@linux.intel.com>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191112195542.GA10619@linux.intel.com>
-X-PR-Tracked-Remote: git://git.infradead.org/users/jjs/linux-tpmdd.git
- tags/tpmdd-next-20191112
-X-PR-Tracked-Commit-Id: 0b40dbcbba923b5379bd1d601edd6d51e23fe72c
+In-Reply-To: <20191125044503.GB9817@sol.localdomain>
+References: <20191125044503.GB9817@sol.localdomain>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191125044503.GB9817@sol.localdomain>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
+ tags/fsverity-for-linus
+X-PR-Tracked-Commit-Id: 73f0ec02d670a61afcef49bc0a74d42e324276ea
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 54f0e54011c9e83277e84ec2f60696285066dfa9
-Message-Id: <157472190290.22729.17187770371067659051.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 1c1ff4836fdab94c7c15b23be57bf64c1e56a36f
+Message-Id: <157472190253.22729.6647142236304424052.pr-tracker-bot@kernel.org>
 Date:   Mon, 25 Nov 2019 22:45:02 +0000
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, jmorris@namei.org
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 12 Nov 2019 21:55:42 +0200:
+The pull request you sent on Sun, 24 Nov 2019 20:45:03 -0800:
 
-> git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20191112
+> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/54f0e54011c9e83277e84ec2f60696285066dfa9
+https://git.kernel.org/torvalds/c/1c1ff4836fdab94c7c15b23be57bf64c1e56a36f
 
 Thank you!
 
