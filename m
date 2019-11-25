@@ -2,89 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F991094A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 21:28:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0419E1094BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 21:40:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfKYU0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 15:26:41 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:43235 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfKYU0l (ORCPT
+        id S1727099AbfKYUkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 15:40:16 -0500
+Received: from mail.prodrive-technologies.com ([212.61.153.67]:59091 "EHLO
+        mail.prodrive-technologies.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725912AbfKYUkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 15:26:41 -0500
-Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MODeL-1iBSJ70sZ7-00Oba1 for <linux-kernel@vger.kernel.org>; Mon, 25 Nov
- 2019 21:26:40 +0100
-Received: by mail-qt1-f179.google.com with SMTP id 14so18746677qtf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 12:26:40 -0800 (PST)
-X-Gm-Message-State: APjAAAXXARep5FyAiHky2zPWyAveOdx8I+NsfzclJUmGmsbzDOq5CsyW
-        ro8Nehm2yfOTic4QmknYPdvB5z3IA6Poc499qPE=
-X-Google-Smtp-Source: APXvYqxWEY0+GZVbECiGpX8VO0AfY8QEZpDcExkgOlEql1Ch52KBJ6wWYHxwsis5y0vJfLvZZmdStzaB4rJfVUF3of0=
-X-Received: by 2002:ac8:75c4:: with SMTP id z4mr30171906qtq.142.1574713599198;
- Mon, 25 Nov 2019 12:26:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20191108210236.1296047-1-arnd@arndb.de> <20191108211323.1806194-12-arnd@arndb.de>
- <1634aafd2a99cedceb63efe57e4c7e0a7317917b.camel@codethink.co.uk>
-In-Reply-To: <1634aafd2a99cedceb63efe57e4c7e0a7317917b.camel@codethink.co.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 25 Nov 2019 21:26:23 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2EfQnLjVfg6U0vCUp1S49CoWCMj-i8ojzbWEUAJAWV+Q@mail.gmail.com>
-Message-ID: <CAK8P3a2EfQnLjVfg6U0vCUp1S49CoWCMj-i8ojzbWEUAJAWV+Q@mail.gmail.com>
-Subject: Re: [Y2038] [PATCH 21/23] y2038: itimer: change implementation to timespec64
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        Mon, 25 Nov 2019 15:40:16 -0500
+X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 15:40:15 EST
+Received: from mail.prodrive-technologies.com (localhost.localdomain [127.0.0.1])
+        by localhost (Email Security Appliance) with SMTP id 3808632EC5_DDC39D3B;
+        Mon, 25 Nov 2019 20:30:11 +0000 (GMT)
+Received: from mail.prodrive-technologies.com (exc03.bk.prodrive.nl [10.1.1.212])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "mail.prodrive-technologies.com", Issuer "Prodrive Technologies B.V. OV SSL Issuing CA" (verified OK))
+        by mail.prodrive-technologies.com (Sophos Email Appliance) with ESMTPS id 2B2E730563_DDC39D2F;
+        Mon, 25 Nov 2019 20:30:10 +0000 (GMT)
+Received: from lnxclnt2222.Prodrive.nl (10.13.62.32) by EXC03.bk.prodrive.nl
+ (10.1.1.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1779.2; Mon, 25
+ Nov 2019 21:30:09 +0100
+From:   Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:EVtmBHZzCuyX0+E/a/5yJvDmvVB1xZ8zRtnMR1fjvMXrqV0yQIa
- zZO7pT/Huh7u8B7lVsGh07e1nCVdPNJ9kWBmBJhNXN8BF0fPgXZ/rjylRkHilIeyWvZRthM
- vTVt1nYdq1Z5Ohb2lWrS/vXcOPZq+wP5zW5H09PMMBdjbTDHFylWdFreqTr8G5V7fQzfyI9
- Bdd0fkVa2OzGYTh9V+bzA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DcN+Wtu4XiE=:bWvrv4ql9K1b2OnpQ3IVTF
- 6RcoNHcelotel/zyKvcHrvpVdZgWV2IA6M1PAEqQ4WAQAMh1VJwbqfE8W6Nzb2obH+SvlMtCx
- by5HosaPoWB0zTL2vF//EHORVCygTMXMmIiGiKu4D6ty30NIJg9lUZZkINnkyoRlhaxn0CmAI
- EBs53Yl0qO47oe8tD/W0M40FHYt9WIYQSNge5gYW/KUbLkFat92BXqvX9bk9nvUjIv78vxUba
- aSkRFyXdi/3IPFvQdq35FU5pQy9SPjCpEdbZmt9UgcXPDFgTTIV21Dv2HVk7z9NCMsh2naeGO
- eZCLx31H6yEOOejN2wqhN6WTbIkKM8x8xLG05sW15UjP7wfZjehapa+DZ6pNgjFXxcZ5xhnN8
- jlN6P+tgDxLCLZbaOR1xlnozYy//MzsDrGn5gxrH/Q86XpAzywpP0uzNRRkJkY3T6Ixt/v4qN
- tDXj9Xi1aW84DFepCUJxLjd9OJjF8ikVIwxX4nQdZxdKWs5KCw6oU5iN2UlZOnjv+kTi81cb9
- JMz70BICOfZeTXViK0bu3uvaQ1cOqLQD9dNhdWQxRo7HjwKpxO5zFQtWX9Bpt4/Xznmyj3fJh
- lhev6egRMAoZ0Mg/BVLvpDn5sMtKbAut9SEWXcgNgmndwkeXdRgFrzxhta+0pUQUhmIgjiTN+
- KV1K5CmIaTd7gVXan3geKmATjyUuKOrJ5TDrmcCWtDBYmSmB3z3vNPhydnFIS55sW/D0irQrT
- /kjAliLTaNeC4LvkzERB2h2xXoCPQgAb5LGscNnMFIWFp+zGvfykAxkfUfnWDU6JpFQ4ZzGwm
- LT8k/6zrgCR5N40kSt00Yq9+DsNr6Py+AqQuPUsx1kJAnVgB5FTM1bbh11mU90qILfXuHLbJB
- 2xiJtEdEY/fWNMceqn4w==
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>, <linux-i2c@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>
+CC:     Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
+Subject: [PATCH] irqchip/aspeed-i2c-ic: Fix irq domain name memory leak
+Date:   Mon, 25 Nov 2019 21:29:37 +0100
+Message-ID: <20191125202937.23133-1-roy.van.doormaal@prodrive-technologies.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: EXC03.bk.prodrive.nl (10.1.1.212) To EXC03.bk.prodrive.nl
+ (10.1.1.212)
+X-SASI-RCODE: 200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 5:52 PM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
->
-> On Fri, 2019-11-08 at 22:12 +0100, Arnd Bergmann wrote:
-> [...]
-> > @@ -292,8 +296,8 @@ static unsigned int alarm_setitimer(unsigned int seconds)
-> >        * We can't return 0 if we have an alarm pending ...  And we'd
-> >        * better return too much than too little anyway
-> >        */
-> > -     if ((!it_old.it_value.tv_sec && it_old.it_value.tv_usec) ||
-> > -           it_old.it_value.tv_usec >= 500000)
-> > +     if ((!it_old.it_value.tv_sec && it_old.it_value.tv_nsec) ||
-> > +           it_old.it_value.tv_nsec >= 500000)
-> [...]
->
-> This is now off by a factor of 1000.  It might be helpful to use
-> NSEC_PER_SEC / 2 here so no-one has to count the 0 digits.
+The aspeed irqchip driver overwrites the default irq domain name,
+but doesn't free the existing domain name.
+This patch frees the irq domain name before overwriting it.
 
-Fixed now, thanks a lot for pointing it out!
+kmemleak trace:
 
-        Arnd
+unreferenced object 0xb8004c40 (size 64):
+comm "swapper", pid 0, jiffies 4294937303 (age 747.660s)
+hex dump (first 32 bytes):
+3a 61 68 62 3a 61 70 62 3a 62 75 73 40 31 65 37 :ahb:apb:bus@1e7
+38 61 30 30 30 3a 69 6e 74 65 72 72 75 70 74 2d 8a000:interrupt-
+backtrace:
+[<086b59b8>] kmemleak_alloc+0xa8/0xc0
+[<b5a3490c>] __kmalloc_track_caller+0x118/0x1a0
+[<f59c7ced>] kvasprintf+0x5c/0xc0
+[<49275eec>] kasprintf+0x30/0x50
+[<5713064b>] __irq_domain_add+0x184/0x25c
+[<53c594d0>] aspeed_i2c_ic_of_init+0x9c/0x128
+[<d8d7017e>] of_irq_init+0x1ec/0x314
+[<f8405bf1>] irqchip_init+0x1c/0x24
+[<7ef974b3>] init_IRQ+0x30/0x90
+[<87a1438f>] start_kernel+0x28c/0x458
+[< (null)>] (null)
+[<f0763fdf>] 0xffffffff
+
+Signed-off-by: Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
+---
+ drivers/irqchip/irq-aspeed-i2c-ic.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/irqchip/irq-aspeed-i2c-ic.c b/drivers/irqchip/irq-aspeed-i2c-ic.c
+index 8d591c179f81..8081b8483a79 100644
+--- a/drivers/irqchip/irq-aspeed-i2c-ic.c
++++ b/drivers/irqchip/irq-aspeed-i2c-ic.c
+@@ -92,6 +92,8 @@ static int __init aspeed_i2c_ic_of_init(struct device_node *node,
+ 		goto err_iounmap;
+ 	}
+ 
++	if (i2c_ic->irq_domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
++		kfree(i2c_ic->irq_domain->name);
+ 	i2c_ic->irq_domain->name = "aspeed-i2c-domain";
+ 
+ 	irq_set_chained_handler_and_data(i2c_ic->parent_irq,
+-- 
+2.20.1
+
