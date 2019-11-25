@@ -2,111 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AABD1091C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB25D1091D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfKYQ16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 11:27:58 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:40694 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbfKYQ16 (ORCPT
+        id S1728899AbfKYQa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 11:30:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60520 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728871AbfKYQa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:27:58 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAPG94Ds116096;
-        Mon, 25 Nov 2019 16:27:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=Ozj67Jx8rsVBGI2LZIF1JcPq6UpIs76jAtotIqJKFIQ=;
- b=FennXwzGvPbvbeKjFDo1f177eq1Ef+oXqgdzTHt5bi2LQjVLu/ChuCJY3n/obDYZZnfO
- evuM0GtrR+kWCpwT8r/ab02Ye+ZHc1aQQwzyabu+3T2/hX8WVGUcK8veoOamhmR8FLmS
- ATqtsFLSkoYNdgFzAi9oZuLOiGPdWDuBsvOaIrtty+8RP4FdKlqnS8TKylqt02plhp0b
- Q95AoL2M0osq2dnhscs3QH8n1mDfU5+vuPGRtyVuzKzRqOEfJY6fYkdFDatmH+GjGYNl
- uZThZEsp4uAULTPNiOfjb98GcI2z6Id1S9Fi3bA2pFQUFDziDqFwmfMJ5bserMVz3BgA Kg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2wevqq0scx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Nov 2019 16:27:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAPG8I2N055296;
-        Mon, 25 Nov 2019 16:27:47 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2wfewaqgnv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Nov 2019 16:27:46 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAPGRh4G008991;
-        Mon, 25 Nov 2019 16:27:43 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 25 Nov 2019 08:27:43 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 2164A6A0133; Mon, 25 Nov 2019 11:31:11 -0500 (EST)
-Date:   Mon, 25 Nov 2019 11:31:11 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Jayshri Dajiram Pawar <jpawar@cadence.com>
-Cc:     Roger Quadros <rogerq@ti.com>, Peter Chen <peter.chen@nxp.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Sanket Parmar <sparmar@cadence.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH] usb: gadget: f_tcm: Added DMA32 flag while
- allocation of command buffer
-Message-ID: <20191125163111.GB21800@char.us.oracle.com>
-References: <1573640672-10344-1-git-send-email-jpawar@cadence.com>
- <20191114025301.GD30608@b29397-desktop>
- <5b567d57-6206-24cf-5886-20e8b5a92a45@ti.com>
- <MN2PR07MB6288D92B4AB6CF1B622A797CC1700@MN2PR07MB6288.namprd07.prod.outlook.com>
- <cefc03a1-b70a-bb40-289e-fbf4f9c79faf@ti.com>
- <20191115180215.GC23860@char.us.oracle.com>
- <MN2PR07MB6288E654268FBEB6DFC36F6FC1490@MN2PR07MB6288.namprd07.prod.outlook.com>
+        Mon, 25 Nov 2019 11:30:27 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id D5AEC28A0E9
+Subject: Re: [PATCH 3/4] platform/chrome: cros_ec: Pass firmware node to MFD
+ device
+To:     Raul E Rangel <rrangel@chromium.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Akshu.Agrawal@amd.com, Guenter Roeck <groeck@chromium.org>,
+        linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>
+References: <20191121211053.48861-1-rrangel@chromium.org>
+ <20191121140830.3.I1fbda3ecf40f4631420cbb75ba830d2d3b3bac1e@changeid>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <86f40fab-3e68-bc1c-425b-94f681c7b6c6@collabora.com>
+Date:   Mon, 25 Nov 2019 17:30:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN2PR07MB6288E654268FBEB6DFC36F6FC1490@MN2PR07MB6288.namprd07.prod.outlook.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9452 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=977
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911250140
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9452 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911250140
+In-Reply-To: <20191121140830.3.I1fbda3ecf40f4631420cbb75ba830d2d3b3bac1e@changeid>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-. massive snip..
-> > > Why is swiotlb buffer getting full? How much is it on your system?
-> 
-> On our system swiotlb max mapping size is 256KB.
-> UASP receive data state tries to queue and map buffer of length 524288 (512KB), which is greater than 256KB that's why swiotlb buffer is getting full.
+Hi Raul,
 
-What is the reason for the UASP not being able to break the buffer in say two
-256KB sg entries?
+One comment below.
 
+On 21/11/19 22:10, Raul E Rangel wrote:
+> cros_ec_dev needs to have a firmware node associated with it so mfd
+> cells can be properly bound to the correct ACPI/DT nodes.
 > 
-> > > Are you sure that dma_unmap is happening on requests that complete?
-> > else we'll just keep hogging the swiotlb buffer.
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> ---
 > 
-> Yes, dma_unmap is happening on requests that complete.
+> Before this patch:
+> $ find /sys/bus/platform/devices/cros-ec-* -iname firmware_node -exec ls -l '{}' \;
+> <nothing>
 > 
-> I could map buffer of length 512KB with  IO_TLB_SEGSIZE changed to 256.
-> With this max mapping size is increased to  256*2048 = 512KB.
+> After this patch:
+> $ find /sys/bus/platform/devices/cros-ec-dev.0.auto/ -iname firmware_node -exec ls -l '{}' \;
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-accel.1.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-chardev.7.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-debugfs.8.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-gyro.2.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-lid-angle.4.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-lightbar.9.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-pd-sysfs.10.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-ring.3.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-ec-sysfs.11.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-usbpd-charger.5.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/cros-usbpd-logger.6.auto/firmware_node -> ../../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> /sys/bus/platform/devices/cros-ec-dev.0.auto/firmware_node -> ../../../../../LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:1c/PNP0C09:00/GOOG0004:00
+> 
+>  drivers/platform/chrome/cros_ec.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+> index 51d76037f52a..3c08c9098d29 100644
+> --- a/drivers/platform/chrome/cros_ec.c
+> +++ b/drivers/platform/chrome/cros_ec.c
+> @@ -167,9 +167,16 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>  	}
+>  
+>  	/* Register a platform device for the main EC instance */
+> -	ec_dev->ec = platform_device_register_data(ec_dev->dev, "cros-ec-dev",
+> -					PLATFORM_DEVID_AUTO, &ec_p,
+> -					sizeof(struct cros_ec_platform));
+> +	ec_dev->ec =
+> +		platform_device_register_full(&(struct platform_device_info){
+> +			.parent = ec_dev->dev,
+> +			.name = "cros-ec-dev",
+> +			.id = PLATFORM_DEVID_AUTO,
+> +			.data = &ec_p,
+> +			.size_data = sizeof(struct cros_ec_platform),
+> +			.fwnode = ec_dev->dev->fwnode,
+> +			.of_node_reused = 1});
 
-If we go this route (which I rather dislike as this is a workaround, because
-what if the next time there is 1MB buffer? Do we keep on increasing this?) - then
-this should be dynamic and an option on the 'swiotlb' command line.
+Please create a local `struct platform_device_info`, fill and pass the &pdevinfo
+in platform_device_register_full, I think is more clear.
+
+Thanks,
+ Enric
+
+> +
+>  	if (IS_ERR(ec_dev->ec)) {
+>  		dev_err(ec_dev->dev,
+>  			"Failed to create CrOS EC platform device\n");
+> 
