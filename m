@@ -2,87 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B411085AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 00:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B1621085C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 01:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfKXX7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 18:59:48 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60315 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726803AbfKXX7s (ORCPT
+        id S1727165AbfKYAGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 19:06:33 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:36263 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbfKYAGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 18:59:48 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id F0F2922967;
-        Sun, 24 Nov 2019 18:59:46 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Sun, 24 Nov 2019 18:59:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=x+tDdMWKBIFb/MGGtC1anmSIzBdbBpV
-        lggF2pFtQW5Q=; b=YO5yHAIbA2MZKbPGtU+/WaAHDDljYyrdv7zIHyeHuzlGXOa
-        mCEO6rh9wRCeTmYRzlh6wj5pH8n33JECFLFjRBtctKPsT7cEOkrDlEFP+uAxuRug
-        TD0K2IuOE9mtyfojqTgisq/kHbQrARf/rm2bwkZPugY1EUSf3Iwa3hBhI9iBuPm0
-        /0u1tjyOl2y0wvUTnOvNlb1Lz1yvwup+zvCbhUIjN2gAVpFU1YKccbgJfi2HqlfW
-        zZrDXy952PUpXKR+a7v7U3V3jwdGS+VFTEh7LK+P/gvRme6JvWtdRie1OUSDavlZ
-        DPOYognNxMz7cWOt3SlPu3OOpXBLwFM/7wMiS4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=x+tDdM
-        WKBIFb/MGGtC1anmSIzBdbBpVlggF2pFtQW5Q=; b=TR0N2AZkZIm/ia6TA/b5oc
-        udFh5CVzCe7O4Eer9P/F7X/FSUjgDBf4SuiqVxGQptf3dlNNyOzZEyCg8CNju3Ky
-        T9X4+hyCQIfLKkZLeQxlG8YtSA3jLoyShGvqV4HX2dtnfqok6HdVzmoqWvnsEQCo
-        jC/PHx7/8RFl6Kpi9UxkbrxWHnzdm7GjcoI0CVralB3iSEJgpVaouGqvYFSjAL8h
-        XjtaG+tlboCATeGDNaD/p2dPlvwM57afOVFYbhpY9B882QFwC1W7BEmOSLRw9evl
-        aeZYZQwC1eFe6U5OlACvLVZkkarehfmH6t2WxfdPRoIVxYA/vcr8ifMCkrn14FNQ
-        ==
-X-ME-Sender: <xms:chnbXVG8PYTrbBW_SGYWSck1Cai7Ca4ZCHgVxEGtNATOXDxA161I4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehledgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgepud
-X-ME-Proxy: <xmx:chnbXR9FgZj_rMxcX_jng8LRSunQmOxJSVB2FFa5qT7Sik6HA0Nacg>
-    <xmx:chnbXehWE_4XX00eIm7NFAYfkrOv9czjls7jpoPVtj76YdlkYOtn8A>
-    <xmx:chnbXVleV2z1RRFyys8JGkayeg3gzEttnS9PKhSUKeCE5zHiEX2yQA>
-    <xmx:chnbXVTa241nWOIGbSkcOofyHnWPMpwiHigLyW5gqjdzcGFmJ7td9w>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id C6CC6E00A2; Sun, 24 Nov 2019 18:59:46 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-578-g826f590-fmstable-20191119v1
-Mime-Version: 1.0
-Message-Id: <e4d49ccb-8b83-4c85-9be1-48d77c0000e2@www.fastmail.com>
-In-Reply-To: <a600a526-2f11-4a37-b4f3-8f53c533db02@www.fastmail.com>
-References: <1573244313-9190-1-git-send-email-eajames@linux.ibm.com>
- <1573244313-9190-7-git-send-email-eajames@linux.ibm.com>
- <a600a526-2f11-4a37-b4f3-8f53c533db02@www.fastmail.com>
-Date:   Mon, 25 Nov 2019 10:31:13 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     linux-aspeed@lists.ozlabs.org, "Joel Stanley" <joel@jms.id.au>,
-        maz@kernel.org, "Jason Cooper" <jason@lakedaemon.net>,
-        tglx@linutronix.de, "Rob Herring" <robh+dt@kernel.org>,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH 06/12] drivers/soc: Add Aspeed XDMA Engine Driver
-Content-Type: text/plain
+        Sun, 24 Nov 2019 19:06:32 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191125000629epoutp0353c7613365467196b7581594b6aff81c~aPxdgiyB41697716977epoutp03D
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 00:06:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191125000629epoutp0353c7613365467196b7581594b6aff81c~aPxdgiyB41697716977epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574640389;
+        bh=LB45WzBOQI0KmJUhhSFF2FmDFRt66YAbZuIxnR+Pkxg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=ORgRROeb50CxL2xLredYk/oPgYUEdFSQ7PY1TqdBP+JGZzL1PiM7v0mNmZv9utWLU
+         QCgUf2lOmHKN1vhgdYFwki6mtUOUaljqtgktzN3WN4h0n53Dcfx2ipnXLANdsu6DMR
+         UmHiQohawTZW2FDoXnq6xYLgrcT1+tlv+fedhByU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191125000628epcas1p3c2f193b9e78380d777a27a8899352661~aPxdAM__B3108631086epcas1p37;
+        Mon, 25 Nov 2019 00:06:28 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47LnPv6QTFzMqYkv; Mon, 25 Nov
+        2019 00:06:27 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        40.32.48019.30B1BDD5; Mon, 25 Nov 2019 09:06:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453~aPxb2y35Y0344003440epcas1p3o;
+        Mon, 25 Nov 2019 00:06:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191125000627epsmtrp2a86715a5ca073b192f0740cb1756eadf~aPxb1-u0_2415424154epsmtrp2h;
+        Mon, 25 Nov 2019 00:06:27 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-8c-5ddb1b036d04
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EA.60.10238.30B1BDD5; Mon, 25 Nov 2019 09:06:27 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.88.103.87]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191125000627epsmtip2e63a7a60173d2f4e4bba8e12ce19a1f3~aPxbqXmvE2594225942epsmtip2F;
+        Mon, 25 Nov 2019 00:06:27 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        linkinjeon@gmail.com, Markus.Elfring@web.de,
+        sj1557.seo@samsung.com, dwagner@suse.de, nborisov@suse.com,
+        Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v5 00/13] add the latest exfat driver
+Date:   Sun, 24 Nov 2019 19:03:13 -0500
+Message-Id: <20191125000326.24561-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTN60ynA1gyFJQnBKkT+UAFWktxUIoakYzKB3H5UNPUkU4KsVs6
+        hQhGrWCAEDViP1QU1JiYCJhWqIisFUQ07hiUJRiX4IKENSoqFVsG1L/z7jnnnfvuuzgiycfC
+        8CyjlbUYGT2J+aN17dGyGCS8Xy2zX46n2t+fFlEFVxwYda2qQ0C9GuhDqKbmByj1ouECRs2U
+        fRRSU2eOUDPDx1DK9fuukOoaHUPXB9C3ywZEdGt5tYhu7LVh9ElXJaAdrm6Urn14kJ6sWUK3
+        3RrG6P4PdWi63259UibLaFmLlDVmmLRZRp2K3Lpds1GjTJDJY+SJ1GpSamQMrIpMSUuPSc3S
+        e5slpTmMPttbSmc4joxLTrKYsq2sNNPEWVUka9bqzXKZOZZjDFy2URebYTKskctkq5Re5V59
+        ZvdQjcg8GnGg2PMFtYHG0BLgh0MiHhYNtwAflhD1AF6YjCwB/l48AeDbiinAH74B2PjIBeYd
+        1Y5BAU80A1hvt4n+Wl523/CqcBwjVsBp10KfIYRYB2vPu1GfBiFeAfih76zQRwQTSliRP4j6
+        MEpEwTs/RmaxmEiCzx4UC/m0SFjldCM+MyTcGLzf8U3AEylwsunRHA6GQ50uEY/D4ORIM+Zr
+        AhIH4XgrwpeLAfz0XcVjBex1OIU+CUJEQ0dDHF9eCm//Kp99JEIEwpGvx4X8LWJYXCjhJVHw
+        ZFf7XGg4LCkamwulocN+TcRPUQ2f2i4ip0BE2b+ASwBUgkWsmTPoWE5ujv//j2rA7P4tp+pB
+        05O0NkDggFwgdl7vU0uETA6Xa2gDEEfIEHHq4x61RKxlcvNYi0ljydazXBtQemdXioQtzDB5
+        t9lo1ciVqxQKBRWfsDpBqSBDxfjUc7WE0DFWdj/LmlnLvE+A+4XZQOQ65FOp0dPz075nMPr4
+        tN/Ko/njyfS08035YWnL1q6gd2Ld07htHqGgUj/k1ow4r6YEFKwtDBw4sW1i8ee8XbWvQ5d1
+        nfP3vOtBinLc9lOHTmvrdgRETNX0pe4TdUoqzBvUQeOS2HuBnjTMvy5ZNUZpRzdvwWJ2Ribu
+        KpVtujlAolwmI1+OWDjmDwXYhEmVAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvC6z9O1Yg0m7ZC0OP57EbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyf9ZzV4sf0eov/b1pYLLb8O8Jqcen9BxYHbo+ds+6y
+        e+yfu4bdY/fNBjaPvi2rGD3Wb7nK4rH5dLXH501yHoe2v2HzuP1sG0sAZxSXTUpqTmZZapG+
+        XQJXxtVXm9gL3stWdPx9zdLAuFu8i5GTQ0LARGLN+qdMILaQwG5GieUHnCDi0hLHTpxh7mLk
+        ALKFJQ4fLu5i5AIq+cAosfLBS7A4m4C2xJ8toiDlIgKOEr27DrOA1DALPGaUOHH+CSNIQljA
+        VGJe01MWEJtFQFXi4M93YDavgI3EhZMdrBC75CVWbzjAPIGRZwEjwypGydSC4tz03GLDAsO8
+        1HK94sTc4tK8dL3k/NxNjOBw1NLcwXh5SfwhRgEORiUe3g1rb8UKsSaWFVfmHmKU4GBWEuF1
+        O3sjVog3JbGyKrUoP76oNCe1+BCjNAeLkjjv07xjkUIC6YklqdmpqQWpRTBZJg5OqQZGfbM3
+        mTEpywJOnpQ3NJh0pW/1pBdBm/9mL9jUaXnN07knfucSvTli0je2m2eLXYqq3T3PZ9kd/jce
+        nEx859055LN0vMV5kxfP2xbftFTrxbnpO/R9g2QslxfdPHfe8zyPce3G8PbwzLsXftZ7hgsV
+        3FhXts41+22vUPpksdLpLYINHR3+tn5KLMUZiYZazEXFiQD3N5KTQwIAAA==
+X-CMS-MailID: 20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453
+References: <CGME20191125000627epcas1p376a5a32c90e491f8cac92d053fb5e453@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds the latest Samsung exfat driver to fs/exfat. This is an
+implementation of the Microsoft exFAT specification. Previous versions
+of this shipped with millions of Android phones, and a random previous
+snaphot has been merged in drivers/staging/.
 
-> > +static int aspeed_xdma_remove(struct platform_device *pdev)
-> > +{
-> > +	struct aspeed_xdma *ctx = platform_get_drvdata(pdev);
-> > +
-> > +	gen_pool_free(ctx->vga_pool, (unsigned long)ctx->cmdq_vga_virt,
-> > +		      XDMA_CMDQ_SIZE);
-> 
-> You've used devm_gen_pool_create(), so no need to explicitly free it.
+Compared to the sdfat driver shipped on the phones the following changes
+have been made:
 
-Sorry, disregard that, brain-fart.
+ - the support for vfat has been removed as that is already supported
+   by fs/fat
+ - driver has been renamed to exfat
+ - the code has been refactored and clean up to fully integrate into
+   the upstream Linux version and follow the Linux coding style
+ - metadata operations like create, lookup and readdir have been further
+   optimized
+ - various major and minor bugs have been fixed
 
-Andrew
+We plan to treat this version as the future upstream for the code base
+once merged, and all new features and bug fixes will go upstream first.
+
+v5:
+ - Remove a blank line between the message and the error code in
+   exfat_load_upcase_table.
+ - Move brelse to the end of the while loop and rename label with
+   free_table in exfat_load_upcase_table.
+ - Move an error code assignment after a failed function call.
+ - Rename labels and directly return instead of goto.
+ - Improve the exception handling in exfat_get_dentry_set().
+ - Remove ->d_time leftover.
+ - fix boolreturn.cocci warnings.
+
+v4:
+ - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
+ - Rename labels with proper name.
+ - Remove blank lines.
+ - Remove pointer check for bh.
+ - Move ep into loop in exfat_load_bitmap().
+ - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
+ - Change exfat_allow_set_time return type with bool.
+
+v3:
+ - fix wrong sbi->s_dirt set.
+
+v2:
+ - Check the bitmap count up to the total clusters.
+ - Rename goto labels in several places.
+ - Change time mode type with enumeration.
+ - Directly return error instead of goto at first error check.
+ - Combine seq_printf calls into a single one.
+
+Namjae Jeon (13):
+  exfat: add in-memory and on-disk structures and headers
+  exfat: add super block operations
+  exfat: add inode operations
+  exfat: add directory operations
+  exfat: add file operations
+  exfat: add exfat entry operations
+  exfat: add bitmap operations
+  exfat: add exfat cache
+  exfat: add misc operations
+  exfat: add nls operations
+  exfat: add Kconfig and Makefile
+  exfat: add exfat in fs/Kconfig and fs/Makefile
+  MAINTAINERS: add exfat filesystem
+
+ MAINTAINERS          |    7 +
+ fs/Kconfig           |    3 +-
+ fs/Makefile          |    1 +
+ fs/exfat/Kconfig     |   21 +
+ fs/exfat/Makefile    |    8 +
+ fs/exfat/balloc.c    |  272 ++++++++
+ fs/exfat/cache.c     |  325 ++++++++++
+ fs/exfat/dir.c       | 1307 +++++++++++++++++++++++++++++++++++++
+ fs/exfat/exfat_fs.h  |  538 ++++++++++++++++
+ fs/exfat/exfat_raw.h |  191 ++++++
+ fs/exfat/fatent.c    |  472 ++++++++++++++
+ fs/exfat/file.c      |  343 ++++++++++
+ fs/exfat/inode.c     |  693 ++++++++++++++++++++
+ fs/exfat/misc.c      |  240 +++++++
+ fs/exfat/namei.c     | 1459 ++++++++++++++++++++++++++++++++++++++++++
+ fs/exfat/nls.c       |  808 +++++++++++++++++++++++
+ fs/exfat/super.c     |  738 +++++++++++++++++++++
+ 17 files changed, 7425 insertions(+), 1 deletion(-)
+ create mode 100644 fs/exfat/Kconfig
+ create mode 100644 fs/exfat/Makefile
+ create mode 100644 fs/exfat/balloc.c
+ create mode 100644 fs/exfat/cache.c
+ create mode 100644 fs/exfat/dir.c
+ create mode 100644 fs/exfat/exfat_fs.h
+ create mode 100644 fs/exfat/exfat_raw.h
+ create mode 100644 fs/exfat/fatent.c
+ create mode 100644 fs/exfat/file.c
+ create mode 100644 fs/exfat/inode.c
+ create mode 100644 fs/exfat/misc.c
+ create mode 100644 fs/exfat/namei.c
+ create mode 100644 fs/exfat/nls.c
+ create mode 100644 fs/exfat/super.c
+
+-- 
+2.17.1
+
