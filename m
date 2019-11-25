@@ -2,79 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 311C6109289
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 18:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFFF109297
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 18:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbfKYREh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 12:04:37 -0500
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:47072 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbfKYREh (ORCPT
+        id S1729117AbfKYRFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 12:05:47 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:36117 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729073AbfKYRFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 12:04:37 -0500
-Received: by mail-pf1-f178.google.com with SMTP id 193so7645981pfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 09:04:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=Q8Y0etMiJA8Fg6G1Iyc7V4yqyP4bp9mrc2XhmhODDZ4=;
-        b=xjL1upXnhhgvUxEan9YPfS2ENkzW82X4CqryT5ghQmUwyR4PYyQw1sNbKkZ0RhMNZt
-         LHddgoZZwfe6/0yMd+iUGYGQ/ivMPzkXZ1oXvwB32Ky/vrgK/OdciG+YuxxihbJrIlz7
-         M9JxI01ech17vkiQtUDo2eL4heCMEYzKVm2t/kzTYqJArJUJQJGCDHD7rFc+jDgAOBuw
-         Jqee7b1JBJSZCRJe74lVyAZ0ltWUWbLp22DdQjicgpZ2/7jvHkvYS2YUgMZHUd5+j82K
-         Do6orGVBjvq7zh2jakLwt019NetdneHXM7RWO4Hyrsp5ty2hMZG0OF7RNIBKfz8g4h0W
-         Av8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=Q8Y0etMiJA8Fg6G1Iyc7V4yqyP4bp9mrc2XhmhODDZ4=;
-        b=XHP698r1lr1V+LsBHRA2TIgw6V7G2i67UDe85fPZ/tdBwRT3r4mXKQmbif/47s8O0q
-         s4Ty8nFg1TXizHiqmj0Wnf63FU84gZznb7sEKfHkEoqTcRHuW/h3/C+rQ9FOo4neTb9m
-         XM10IxZlVsedaaI24uWne2T2HZzN797IgpLWP9nB1OFz6U4dfP52i1lGJVFME0iqEFF5
-         d5hVfnOERZqEtf97fjBfnfHDG+JUKkln1ldpnmYcXujDwCbXH7O6w4H/8Xorub6VDwAW
-         nW1ksQBSK6eSqf98mPBdjB2f8ss7HGUH0KnRHWKltVMvh87r9cCJuWPKeqx6NzZdfQtZ
-         XK5A==
-X-Gm-Message-State: APjAAAVJkcHrhPJKP0IL00gV7perABQM8SUHCg42xBdq4m/BRKynHGHt
-        Mv1CXgdnkR26eBzFB1dzguVivQ==
-X-Google-Smtp-Source: APXvYqwtpbUIHwHCKc2J7U/N+MsXBLJBXnILlCbzjATOR22XpH+YtDln+ICA0c7BVEgz5by3lfq7iw==
-X-Received: by 2002:a63:a03:: with SMTP id 3mr33194073pgk.117.1574701476491;
-        Mon, 25 Nov 2019 09:04:36 -0800 (PST)
-Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id l21sm8773079pjt.28.2019.11.25.09.04.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 09:04:36 -0800 (PST)
-Date:   Mon, 25 Nov 2019 09:04:27 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Phong Tran <tranmanphong@gmail.com>
-Cc:     davem@davemloft.net, keescook@chromium.org, kvalo@codeaurora.org,
-        saeedm@mellanox.com, jeffrey.t.kirsher@intel.com,
-        luciano.coelho@intel.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Fix -Wcast-function-type net drivers
-Message-ID: <20191125090427.787126fa@cakuba.netronome.com>
-In-Reply-To: <252466a8-2cad-7e4a-2a87-ade95365fa75@gmail.com>
-References: <20191124094306.21297-1-tranmanphong@gmail.com>
-        <20191124143919.63711421@cakuba.netronome.com>
-        <252466a8-2cad-7e4a-2a87-ade95365fa75@gmail.com>
-Organization: Netronome Systems, Ltd.
+        Mon, 25 Nov 2019 12:05:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574701539;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=UhMf0lnVjOcfCEB7ic10qPMrUlMrwwMjTmGRUymYol8=;
+        b=RtcC6wjU6Gv0ZsPFnUU3E+tA200YEv39SolUbxUZUQTNA/A7NHd3IoNWGoef9NvS+G
+        hv8Py82ie9zc6DHSP5hAnrCtXAOJnJ3+awkChZrLG4YOk93eW2F+GGt23JEcSIqNpXU5
+        a2pk8Ego0sOhZRcZFOHyLp5/fwwmxTQag4Bg+37m9GxxvOWfG/OFoIS5jrylh4mKlmN9
+        CJB4D7sowXV4v/ZDpaiOl5Yt+HMv7Jx7q1vK91deGxMwCtf2upuYaSqSLqijwXpvIDmb
+        uSELJi7DwSifNQln3TWBAGNx3UXmNj1DSL9Ld+0Z2Lgz+P2L9yPup3BXAu9kAVnZRncO
+        fRKg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQr4OGUPX+1NmWArOmLo="
+X-RZG-CLASS-ID: mo00
+Received: from localhost.localdomain
+        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
+        with ESMTPSA id 304194vAPH5d2r9
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 25 Nov 2019 18:05:39 +0100 (CET)
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH 4/4] ARM: dts: ux500: Remove ux500_ prefix from ux500_serial* labels
+Date:   Mon, 25 Nov 2019 18:04:28 +0100
+Message-Id: <20191125170428.76069-4-stephan@gerhold.net>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191125170428.76069-1-stephan@gerhold.net>
+References: <20191125170428.76069-1-stephan@gerhold.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Nov 2019 22:06:49 +0700, Phong Tran wrote:
-> Sent in different series:
-> 
-> [wireless]
-> https://lore.kernel.org/lkml/20191125150215.29263-1-tranmanphong@gmail.com/
-> 
-> [USB]
-> https://lore.kernel.org/linux-usb/20191125145443.29052-1-tranmanphong@gmail.com/
+ux500_serial{0,1,2} are the only labels with ux500_ prefix in
+ste-dbx5x0.dtsi, the other labels (gpio0, msp, ...) do not use
+any prefix. Remove it for consistency.
 
-Thank you!
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+ arch/arm/boot/dts/ste-dbx5x0.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/ste-dbx5x0.dtsi b/arch/arm/boot/dts/ste-dbx5x0.dtsi
+index 841934093c3b..d4a55369452d 100644
+--- a/arch/arm/boot/dts/ste-dbx5x0.dtsi
++++ b/arch/arm/boot/dts/ste-dbx5x0.dtsi
+@@ -24,9 +24,9 @@
+ 		spi1 = &spi1;
+ 		spi2 = &spi2;
+ 		spi3 = &spi3;
+-		serial0 = &ux500_serial0;
+-		serial1 = &ux500_serial1;
+-		serial2 = &ux500_serial2;
++		serial0 = &serial0;
++		serial1 = &serial1;
++		serial2 = &serial2;
+ 	};
+ 
+ 	chosen {
+@@ -838,7 +838,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		ux500_serial0: uart@80120000 {
++		serial0: uart@80120000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			reg = <0x80120000 0x1000>;
+ 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+@@ -853,7 +853,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		ux500_serial1: uart@80121000 {
++		serial1: uart@80121000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			reg = <0x80121000 0x1000>;
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+@@ -868,7 +868,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		ux500_serial2: uart@80007000 {
++		serial2: uart@80007000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			reg = <0x80007000 0x1000>;
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.24.0
+
