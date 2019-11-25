@@ -2,79 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CE521091BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17DCA1091D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbfKYQXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 11:23:21 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60400 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbfKYQXV (ORCPT
+        id S1728874AbfKYQ3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 11:29:55 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:39724 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbfKYQ3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:23:21 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 0D4C4260849
-Subject: Re: [PATCH 2/4] i2c: i2c-cros-ec-tunnel: Fix ACPI identifier
-To:     Raul E Rangel <rrangel@chromium.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Akshu.Agrawal@amd.com, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-i2c@vger.kernel.org, dlaurie@chromium.org
-References: <20191121211053.48861-1-rrangel@chromium.org>
- <20191121140830.2.I68b9a92ed4def031c3f247d3b49996a2512d762d@changeid>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <d82806a6-101e-181b-60de-0b32ff153ec6@collabora.com>
-Date:   Mon, 25 Nov 2019 17:23:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Mon, 25 Nov 2019 11:29:54 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iZHFE-0001Su-6B; Mon, 25 Nov 2019 17:29:48 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C91361C1AFF;
+        Mon, 25 Nov 2019 17:29:47 +0100 (CET)
+Date:   Mon, 25 Nov 2019 16:29:47 -0000
+From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/setup: Enhance the comments
+Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191121140830.2.I68b9a92ed4def031c3f247d3b49996a2512d762d@changeid>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Message-ID: <157469938760.21853.2579898398606046611.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Raul,
+The following commit has been merged into the x86/cleanups branch of tip:
 
-On 21/11/19 22:10, Raul E Rangel wrote:
-> The initial patch was using the incorrect identifier.
-> 
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-> ---
-> There are currently no boards using the identifier so it's fine to
-> change it.
-> 
+Commit-ID:     b74374fef924e0adb8cb1d84313d467965ca0f00
+Gitweb:        https://git.kernel.org/tip/b74374fef924e0adb8cb1d84313d467965ca0f00
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Mon, 18 Nov 2019 16:03:39 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 19 Nov 2019 17:49:19 +01:00
 
-Right, I don't see GOOG001A being used but also I don't see GOOG0012. Anyway,
-for the CrOS EC side, the change looks good to me. I think this will go through
-the I2C tree?
+x86/setup: Enhance the comments
 
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Update various comments, fix outright mistakes and meaningless descriptions.
 
-Thanks,
- Enric
+Also harmonize the style across the file, both in form and in language.
 
->  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-> index ac2412755f0a..5d91e33eb600 100644
-> --- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-> +++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-> @@ -299,7 +299,7 @@ static const struct of_device_id cros_ec_i2c_of_match[] = {
->  MODULE_DEVICE_TABLE(of, cros_ec_i2c_of_match);
->  
->  static const struct acpi_device_id cros_ec_i2c_tunnel_acpi_id[] = {
-> -	{ "GOOG001A", 0 },
-> +	{ "GOOG0012", 0 },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(acpi, cros_ec_i2c_tunnel_acpi_id);
-> 
+Cc: linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/setup.c | 41 ++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 26a4a73..a871381 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -43,11 +43,11 @@
+ #include <asm/vsyscall.h>
+ 
+ /*
+- * max_low_pfn_mapped: highest direct mapped pfn under 4GB
+- * max_pfn_mapped:     highest direct mapped pfn over 4GB
++ * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
++ * max_pfn_mapped:     highest directly mapped pfn > 4 GB
+  *
+  * The direct mapping only covers E820_TYPE_RAM regions, so the ranges and gaps are
+- * represented by pfn_mapped
++ * represented by pfn_mapped[].
+  */
+ unsigned long max_low_pfn_mapped;
+ unsigned long max_pfn_mapped;
+@@ -57,14 +57,23 @@ RESERVE_BRK(dmi_alloc, 65536);
+ #endif
+ 
+ 
+-static __initdata unsigned long _brk_start = (unsigned long)__brk_base;
+-unsigned long _brk_end = (unsigned long)__brk_base;
++/*
++ * Range of the BSS area. The size of the BSS area is determined
++ * at link time, with RESERVE_BRK*() facility reserving additional
++ * chunks.
++ */
++static __initdata
++unsigned long _brk_start = (unsigned long)__brk_base;
++unsigned long _brk_end   = (unsigned long)__brk_base;
+ 
+ struct boot_params boot_params;
+ 
+ /*
+- * Machine setup..
++ * These are the four main kernel memory regions, we put them into
++ * the resource tree so that kdump tools and other debugging tools
++ * recover it:
+  */
++
+ static struct resource rodata_resource = {
+ 	.name	= "Kernel rodata",
+ 	.start	= 0,
+@@ -95,16 +104,16 @@ static struct resource bss_resource = {
+ 
+ 
+ #ifdef CONFIG_X86_32
+-/* cpu data as detected by the assembly code in head_32.S */
++/* CPU data as detected by the assembly code in head_32.S */
+ struct cpuinfo_x86 new_cpu_data;
+ 
+-/* common cpu data for all cpus */
++/* Common CPU data for all CPUs */
+ struct cpuinfo_x86 boot_cpu_data __read_mostly;
+ EXPORT_SYMBOL(boot_cpu_data);
+ 
+ unsigned int def_to_bigsmp;
+ 
+-/* for MCA, but anyone else can use it if they want */
++/* For MCA, but anyone else can use it if they want */
+ unsigned int machine_id;
+ unsigned int machine_submodel_id;
+ unsigned int BIOS_revision;
+@@ -384,15 +393,15 @@ static void __init memblock_x86_reserve_range_setup_data(void)
+ /*
+  * Keep the crash kernel below this limit.
+  *
+- * On 32 bits earlier kernels would limit the kernel to the low 512 MiB
++ * Earlier 32-bits kernels would limit the kernel to the low 512 MB range
+  * due to mapping restrictions.
+  *
+- * On 64bit, kdump kernel need be restricted to be under 64TB, which is
++ * 64-bit kdump kernels need to be restricted to be under 64 TB, which is
+  * the upper limit of system RAM in 4-level paging mode. Since the kdump
+- * jumping could be from 5-level to 4-level, the jumping will fail if
+- * kernel is put above 64TB, and there's no way to detect the paging mode
+- * of the kernel which will be loaded for dumping during the 1st kernel
+- * bootup.
++ * jump could be from 5-level paging to 4-level paging, the jump will fail if
++ * the kernel is put above 64 TB, and during the 1st kernel bootup there's
++ * no good way to detect the paging mode of the target kernel which will be
++ * loaded for dumping.
+  */
+ #ifdef CONFIG_X86_32
+ # define CRASH_ADDR_LOW_MAX	SZ_512M
+@@ -803,7 +812,7 @@ void __init setup_arch(char **cmdline_p)
+ 	/*
+ 	 * Note: Quark X1000 CPUs advertise PGE incorrectly and require
+ 	 * a cr3 based tlb flush, so the following __flush_tlb_all()
+-	 * will not flush anything because the cpu quirk which clears
++	 * will not flush anything because the CPU quirk which clears
+ 	 * X86_FEATURE_PGE has not been invoked yet. Though due to the
+ 	 * load_cr3() above the TLB has been flushed already. The
+ 	 * quirk is invoked before subsequent calls to __flush_tlb_all()
