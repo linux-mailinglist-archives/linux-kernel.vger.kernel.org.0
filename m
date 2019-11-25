@@ -2,89 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23313109085
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16E1F10907B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:55:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfKYO5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 09:57:45 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7170 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728071AbfKYO5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 09:57:45 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DFB236CF9FA8163C04FF;
-        Mon, 25 Nov 2019 22:57:39 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 25 Nov 2019
- 22:57:33 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
-        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <Bhawanpreet.Lakha@amd.com>, <yuehaibing@huawei.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] drm/amd/display: remove set but not used variable 'msg_out'
-Date:   Mon, 25 Nov 2019 22:54:45 +0800
-Message-ID: <20191125145445.21648-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728377AbfKYOzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 09:55:21 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56251 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbfKYOzU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:55:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so15743241wmb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 06:55:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=17aeOdEACV6GCmSBNGeLhdL7I8VMOLywDStXvLbpbKk=;
+        b=IP1XcgI3FysrVnSEq8NB1nv49cr+e9Hb9dyhbhW70lnBxvM/OZgDc7OXAcrdnmF4Pb
+         H2gZWJLH2T5+0Tc3UDrIQ3vfI54Ci1QgwXUwGvlYyZEbSdTo5yuIuVUKZi7un7oFA9gv
+         92gzSz4kmdpAtptFarF2mq+KGXEVTxauk3Nj9eLW9s/uRnzhIbriu7XqjWZLgCtWPEGX
+         CKIF5KUlDC46PrOX93AYhEs6jBSmVrpXf/Syk4n8HRAthBNuq7qAAq4AYiRsPtLMAvg7
+         2xMM1JO0iAsLDvC4r6cxagSfMtyYYWZ5Upmccwec+s6MeHzJf+HxW9GFU+cPldLVplE+
+         jyDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=17aeOdEACV6GCmSBNGeLhdL7I8VMOLywDStXvLbpbKk=;
+        b=ojuVvFEXn/gGW0SP5NdZUQROnTkTUOAZyp/wSw4/fBO+b3CQyaMLNiif9gCN9jM+oE
+         aasCaNpANZfoO7QNk3wa89P2qP5kusmMypwnQ42ekaycdLHklA1MkVpm/bQ0QYoCxSZT
+         bQvnvLQIBPCGy7e1AaWtm7J5u14DZbWRd41O8D3gjEqDWHilPJKdWJ++i8d3bq/7V8Si
+         cRib9CAGShbKUl7mLoN6C3xlBG6nb2yw5HAfA/9uwdzsLlZtXWYOMlwP049Z6nrn1h8x
+         s7qwn4fPODgGfblhMkIxy5FhDqk2hoxVCp0qURLhZ3go43EccSHRdylrgjPnLuKrj/E6
+         jiWg==
+X-Gm-Message-State: APjAAAWwVwnkz8CLPjJ7G/dizzkhwxH2BUmeHBkY6IsyJYYkpS3Le439
+        AABMgLl7bENHPHmW5o/BJjtiFBLte8p6rlUIU6Y=
+X-Google-Smtp-Source: APXvYqyJqzPNBd01KuJnFGkGbR9BT5A13oFsJBoVd9HZiHyyG7q0VSD1WrYZcsuWBBJork2bw1Gm9MyvPiwdDVL8C2A=
+X-Received: by 2002:a7b:cb89:: with SMTP id m9mr29337295wmi.141.1574693718199;
+ Mon, 25 Nov 2019 06:55:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20191123192336.11678-1-natechancellor@gmail.com>
+In-Reply-To: <20191123192336.11678-1-natechancellor@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 25 Nov 2019 09:55:06 -0500
+Message-ID: <CADnq5_OGD5q44nEhHp2+RU3syhO9cUhqfnH34BRJhJrC-b+rLw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Ensure ret is always initialized when using SOC15_WAIT_ON_RREG
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Leo Liu <leo.liu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c: In function mod_hdcp_hdcp2_enable_encryption:
-drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c:633:77: warning: variable msg_out set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c: In function mod_hdcp_hdcp2_enable_dp_stream_encryption:
-drivers/gpu/drm/amd/amdgpu/../display/modules/hdcp/hdcp_psp.c:710:77: warning: variable msg_out set but not used [-Wunused-but-set-variable]
+On Mon, Nov 25, 2019 at 3:07 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Commit b0f3cd3191cd ("drm/amdgpu: remove unnecessary JPEG2.0 code from
+> VCN2.0") introduced a new clang warning in the vcn_v2_0_stop function:
+>
+> ../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: warning: variable 'r'
+> is used uninitialized whenever 'while' loop exits because its condition
+> is false [-Wsometimes-uninitialized]
+>         SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
+>         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
+> expanded from macro 'SOC15_WAIT_ON_RREG'
+>                 while ((tmp_ & (mask)) != (expected_value)) {   \
+>                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1083:6: note: uninitialized use
+> occurs here
+>         if (r)
+>             ^
+> ../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1082:2: note: remove the
+> condition if it is always true
+>         SOC15_WAIT_ON_RREG(VCN, 0, mmUVD_STATUS, UVD_STATUS__IDLE, 0x7, r);
+>         ^
+> ../drivers/gpu/drm/amd/amdgpu/../amdgpu/soc15_common.h:55:10: note:
+> expanded from macro 'SOC15_WAIT_ON_RREG'
+>                 while ((tmp_ & (mask)) != (expected_value)) {   \
+>                        ^
+> ../drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c:1072:7: note: initialize the
+> variable 'r' to silence this warning
+>         int r;
+>              ^
+>               = 0
+> 1 warning generated.
+>
+> To prevent warnings like this from happening in the future, make the
+> SOC15_WAIT_ON_RREG macro initialize its ret variable before the while
+> loop that can time out. This macro's return value is always checked so
+> it should set ret in both the success and fail path.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/776
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-It is never used, so remove it.
+Applied.  Thanks!
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c | 4 ----
- 1 file changed, 4 deletions(-)
+Alex
 
-diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-index 2dd5fee..468f5e6 100644
---- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-+++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-@@ -630,14 +630,12 @@ enum mod_hdcp_status mod_hdcp_hdcp2_enable_encryption(struct mod_hdcp *hdcp)
- 	struct psp_context *psp = hdcp->config.psp.handle;
- 	struct ta_hdcp_shared_memory *hdcp_cmd;
- 	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_input_v2 *msg_in;
--	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_output_v2 *msg_out;
- 	struct mod_hdcp_display *display = get_first_added_display(hdcp);
- 
- 	hdcp_cmd = (struct ta_hdcp_shared_memory *)psp->hdcp_context.hdcp_shared_buf;
- 	memset(hdcp_cmd, 0, sizeof(struct ta_hdcp_shared_memory));
- 
- 	msg_in = &hdcp_cmd->in_msg.hdcp2_prepare_process_authentication_message_v2;
--	msg_out = &hdcp_cmd->out_msg.hdcp2_prepare_process_authentication_message_v2;
- 
- 	hdcp2_message_init(hdcp, msg_in);
- 
-@@ -707,14 +705,12 @@ enum mod_hdcp_status mod_hdcp_hdcp2_enable_dp_stream_encryption(struct mod_hdcp
- 	struct psp_context *psp = hdcp->config.psp.handle;
- 	struct ta_hdcp_shared_memory *hdcp_cmd;
- 	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_input_v2 *msg_in;
--	struct ta_hdcp_cmd_hdcp2_process_prepare_authentication_message_output_v2 *msg_out;
- 	uint8_t i;
- 
- 	hdcp_cmd = (struct ta_hdcp_shared_memory *)psp->hdcp_context.hdcp_shared_buf;
- 	memset(hdcp_cmd, 0, sizeof(struct ta_hdcp_shared_memory));
- 
- 	msg_in = &hdcp_cmd->in_msg.hdcp2_prepare_process_authentication_message_v2;
--	msg_out = &hdcp_cmd->out_msg.hdcp2_prepare_process_authentication_message_v2;
- 
- 	hdcp2_message_init(hdcp, msg_in);
- 
--- 
-2.7.4
-
-
+> ---
+>  drivers/gpu/drm/amd/amdgpu/soc15_common.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/soc15_common.h b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
+> index 839f186e1182..19e870c79896 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/soc15_common.h
+> +++ b/drivers/gpu/drm/amd/amdgpu/soc15_common.h
+> @@ -52,6 +52,7 @@
+>                 uint32_t old_ = 0;      \
+>                 uint32_t tmp_ = RREG32(adev->reg_offset[ip##_HWIP][inst][reg##_BASE_IDX] + reg); \
+>                 uint32_t loop = adev->usec_timeout;             \
+> +               ret = 0;                                        \
+>                 while ((tmp_ & (mask)) != (expected_value)) {   \
+>                         if (old_ != tmp_) {                     \
+>                                 loop = adev->usec_timeout;      \
+> --
+> 2.24.0
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
