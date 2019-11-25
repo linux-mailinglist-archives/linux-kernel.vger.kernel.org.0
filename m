@@ -2,84 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19E2108D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60663108D2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfKYLn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 06:43:59 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50483 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbfKYLn7 (ORCPT
+        id S1727417AbfKYLsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 06:48:55 -0500
+Received: from sender4-pp-o97.zoho.com ([136.143.188.97]:25783 "EHLO
+        sender4-pp-o97.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbfKYLsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 06:43:59 -0500
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iZCmY-0006j5-5y; Mon, 25 Nov 2019 12:43:54 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1iZCmW-000851-Mr; Mon, 25 Nov 2019 12:43:52 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     mkl@pengutronix.de, Vladimir Oltean <olteanv@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david@protonic.nl
-Subject: [PATCH v2] net: dsa: sja1105: fix sja1105_parse_rgmii_delays()
-Date:   Mon, 25 Nov 2019 12:43:51 +0100
-Message-Id: <20191125114351.26694-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 25 Nov 2019 06:48:54 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574682301; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=Zh1hUCvlJMGk6y97KQ2gY/URuGJEHGH5+nMwXLmVUOaGb5XQQGgLQHyu4AbM32/B7nbZQr9PnB9ELnbXxJV9cnjzzFh7ULUYaLuCgxr2oRAfNCDrS1DHw7PIt+ZHKDYKsEXo0T6MlM4fNC4S/EXDjmzzVQZ+wKECbhS3FwMIACk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574682301; h=Cc:Date:From:Message-ID:Subject:To; 
+        bh=vR8FHznq9weoQe98IITab9ng2yy00364n8MMah+Ma50=; 
+        b=GpSHTS8DBWOKRxkasFoiLcz2UDbeUn79DlB40XYf+0DAc2kz8+xikMtKeKhouA+/679dEx54GK5i69EOFhoZOSimTgx5MFxQLqae2bfJH6S/oq+HU4moCLWJLd9CtWpzgUAkax4q+aE8V2L2puLkBWq7hfGSAUjQIQbd77CD3qM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=lQvQimSMRz0te5LQ+Y3/2PZJNtX30kdHo62qCnmc8N6YVq4W4iKtaQpVg0sHhKj9HQ2sJL3Q2vQP
+    8fB4co2XHyWbG9TrcFeQzXAH/dS1FfuRA5qP62fnads5acK0KhVV  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574682301;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        bh=vR8FHznq9weoQe98IITab9ng2yy00364n8MMah+Ma50=;
+        b=sYgGKEbh3ZwHUF6NXWO5ICAOJcfCCAcq9LRg5ambTxarGfHp+T5TZCd4Ys5wv8xL
+        Q9Ob7ATbJlgcWtUp0KbRDqMkwp5xOGA4Na7B1V2PCWuxQyiHMT989O95TpkkyNk5NoV
+        hzzqUL+RUquBBivxMIfRuiROUht3eg8PL20FEa0I=
+Received: from zhouyanjie-virtual-machine.localdomain (171.221.113.185 [171.221.113.185]) by mx.zohomail.com
+        with SMTPS id 1574682299618124.63314918176911; Mon, 25 Nov 2019 03:44:59 -0800 (PST)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, paulburton@kernel.org, paul@crapouillou.net,
+        mark.rutland@arm.com, syq@debian.org
+Subject: Fix bugs in X1000/X1500 and add X1830 pinctrl driver v5.
+Date:   Mon, 25 Nov 2019 19:44:39 +0800
+Message-Id: <1574682283-87655-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function was using configuration of port 0 in devicetree for all ports.
-In case CPU port was not 0, the delay settings was ignored. This resulted not
-working communication between CPU and the switch.
+v4-v5:
+Fix compile-time warnings.
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Fixes: f5b8631c293b ("net: dsa: sja1105: Error out if RGMII delays are requested in DT")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
----
- drivers/net/dsa/sja1105/sja1105_main.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index 1238fd68b2cd..34544b1c30dc 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -594,15 +594,15 @@ static int sja1105_parse_rgmii_delays(struct sja1105_private *priv,
- 	int i;
- 
- 	for (i = 0; i < SJA1105_NUM_PORTS; i++) {
--		if (ports->role == XMII_MAC)
-+		if (ports[i].role == XMII_MAC)
- 			continue;
- 
--		if (ports->phy_mode == PHY_INTERFACE_MODE_RGMII_RXID ||
--		    ports->phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
-+		if (ports[i].phy_mode == PHY_INTERFACE_MODE_RGMII_RXID ||
-+		    ports[i].phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
- 			priv->rgmii_rx_delay[i] = true;
- 
--		if (ports->phy_mode == PHY_INTERFACE_MODE_RGMII_TXID ||
--		    ports->phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
-+		if (ports[i].phy_mode == PHY_INTERFACE_MODE_RGMII_TXID ||
-+		    ports[i].phy_mode == PHY_INTERFACE_MODE_RGMII_ID)
- 			priv->rgmii_tx_delay[i] = true;
- 
- 		if ((priv->rgmii_rx_delay[i] || priv->rgmii_tx_delay[i]) &&
--- 
-2.24.0
 
