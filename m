@@ -2,104 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D89821094E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 22:03:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BEF10950A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 22:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKYVD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 16:03:26 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36279 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfKYVD0 (ORCPT
+        id S1727128AbfKYVSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 16:18:05 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:56188 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfKYVSF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 16:03:26 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j7so14535314oib.3;
-        Mon, 25 Nov 2019 13:03:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OKrMiztgq6n+4o04Pu0o49C5Fq/AysnEyKzVyb5lLq0=;
-        b=UIw4yyh7qFDT5JrbfzE9+B2sRCFPyZO+piBRAfV7WATnqYpS2gy4hjQrxnFSTu9rrx
-         JrRi4CUXU3qtXfeza/lEdtmZ3plNhV6faq4CxWqNpChoAGOoQhYc7zKfjt9nJWw0Lql8
-         qqrUEhUD8jHIBB7vPB6fIPrcA72eaqDGuaT5HVFL7Hq6f5ycNn/f5d2/BsmyQVfaErnu
-         T5OutfcI8SaZHlh6OC1NZ2/MOhr3ZciEjH1w0GN+wDFdFeJWNdtlnvQWCfzAjguRDACa
-         ljO6KbVlmEvkQv0mkSYxU9hpDh3UJvCIg5q9D6IOqtfOqOBRf2xteGFvZiEps8wSSKId
-         VDvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OKrMiztgq6n+4o04Pu0o49C5Fq/AysnEyKzVyb5lLq0=;
-        b=gLaZSvnGl9OWVLKtRLEKH4D8TrMFOcoivwOHlQ178OS2LlW4lfaFfi6Q+x3gyDeAwP
-         +Fq4EL5jQIvqgqn+IaxM2NQGzMBBcglzErE2VD2cT2W75e4zLgFgYgkcW0ffT6E/kR0/
-         Nkdq/IZ7k54ei/Xo2rq9B4uSmdyNmMfnAyfqjVWqOrnTOSGxtLDYsfWynjJQLY0hEMgc
-         Xl6GGzMeOs2S0caF8jW1QIA/v5lcWy0D+/M2srkaPwi/vI8auBeKjvBqOsgnulFkXBpC
-         Kuc96EekUMybombv1ErUUBSTNAb6pIWloR6RQbKEdTapFdqTo5kHxXao12m/rUynpPjP
-         K0eA==
-X-Gm-Message-State: APjAAAXzU0NUpcJLog0L62F9i+T1qbk5G5mGsx5u+r/7RAUWHFoVP3y0
-        N9VhXA6O+y4KQmkDbIsQmBY=
-X-Google-Smtp-Source: APXvYqze3Poy3kLoJa0rRu9uvBn9TVbfFGoKcXl7Nh53myivr11uSmd0qMygwUSk6NYzYZPbJmJKjA==
-X-Received: by 2002:aca:f083:: with SMTP id o125mr683892oih.122.1574715805287;
-        Mon, 25 Nov 2019 13:03:25 -0800 (PST)
-Received: from [100.71.96.87] ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id m134sm2924071oig.20.2019.11.25.13.03.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Nov 2019 13:03:24 -0800 (PST)
-Subject: Re: [PATCH] PCI: pciehp: Make sure pciehp_isr clears interrupt events
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Austin Bolen <austin_bolen@dell.com>, keith.busch@intel.com,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lukas@wunner.de
-References: <20191112215938.1145-1-stuart.w.hayes@gmail.com>
-From:   Stuart Hayes <stuart.w.hayes@gmail.com>
-Message-ID: <a7ac93e3-9a1f-2cd5-bf0b-30b562bd707d@gmail.com>
-Date:   Mon, 25 Nov 2019 15:03:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 25 Nov 2019 16:18:05 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAPL9SgQ165259;
+        Mon, 25 Nov 2019 21:17:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=K7hqDnK/TsK5jvG3JC6XMU0Tierrock1H72ajxKsRBk=;
+ b=OxsvRh5qJIREV0Nl58dZLErboXL1oTJYkpCY+bN+jUxOsaZnBggZOaWX42HmTWvi5Sdd
+ jU/vbr9jriaO9rf9vnnq/9NcUnL44XByndtFygp0jflr1w+2WgYFOylKbTvjSenpWQcA
+ Df94UVHciiRbCXw540IQwQfE4TBrib2TGIvfDDsXqpHHC9V2EZTSLY8eBcYJydFhZqtK
+ GLy/SVg92+5KEHok13Wp4sRddWEoRaJc8UrIVtl3DqdcY9HSvYoyaX8SbsHvujXaE6Jd
+ 0z0ucNwxpPE9soWGJXRUhljiIXmWJn7TqkxYKCg3/cCwCdulaqfxjDfbM79dhPIpDNlp Yg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2wewdr2917-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Nov 2019 21:17:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAPL8VPe156913;
+        Mon, 25 Nov 2019 21:15:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wfe80nsw4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Nov 2019 21:15:21 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAPLFBfc020511;
+        Mon, 25 Nov 2019 21:15:11 GMT
+Received: from neelam.us.oracle.com (/10.152.128.16)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Nov 2019 13:15:11 -0800
+From:   Alex Kogan <alex.kogan@oracle.com>
+To:     linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com,
+        will.deacon@arm.com, arnd@arndb.de, longman@redhat.com,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
+        jglauber@marvell.com
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        alex.kogan@oracle.com, dave.dice@oracle.com,
+        rahul.x.yadav@oracle.com
+Subject: [PATCH v7 0/5] Add NUMA-awareness to qspinlock
+Date:   Mon, 25 Nov 2019 16:07:04 -0500
+Message-Id: <20191125210709.10293-1-alex.kogan@oracle.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20191112215938.1145-1-stuart.w.hayes@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9452 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=988
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911250171
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9452 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911250171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Minor change from v6:
+---------------------
 
-On 11/12/19 3:59 PM, Stuart Hayes wrote:
-> The pciehp interrupt handler pciehp_isr() will read the slot status
-> register and then write back to it to clear just the bits that caused the
-> interrupt. If a different interrupt event bit gets set between the read and
-> the write, pciehp_isr() will exit without having cleared all of the
-> interrupt event bits, so we will never get another hotplug interrupt from
-> that device.
-> 
-> That is expected behavior according to the PCI Express spec (v.5.0, section
-> 6.7.3.4, "Software Notification of Hot-Plug Events").
-> 
-> Because the "presence detect changed" and "data link layer state changed"
-> event bits are both getting set at nearly the same time when a device is
-> added or removed, this is more likely to happen than it might seem. The
-> issue can be reproduced rather easily by connecting and disconnecting an
-> NVMe device on at least one system model.
-> 
-> This patch fixes the issue by modifying pciehp_isr() to loop back and
-> re-read the slot status register immediately after writing to it, until
-> it sees that all of the event status bits have been cleared.
-> 
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+- fixed a 32-bit build failure by adding dependency on 64BIT in Kconfig.
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Bjorn,
 
-Do you have any comments or issues with this patch set?  Anything I can do?
+Summary
+-------
 
-Thanks!
-Stuart
+Lock throughput can be increased by handing a lock to a waiter on the
+same NUMA node as the lock holder, provided care is taken to avoid
+starvation of waiters on other NUMA nodes. This patch introduces CNA
+(compact NUMA-aware lock) as the slow path for qspinlock. It is
+enabled through a configuration option (NUMA_AWARE_SPINLOCKS).
+
+CNA is a NUMA-aware version of the MCS lock. Spinning threads are
+organized in two queues, a main queue for threads running on the same
+node as the current lock holder, and a secondary queue for threads
+running on other nodes. Threads store the ID of the node on which
+they are running in their queue nodes. After acquiring the MCS lock and
+before acquiring the spinlock, the lock holder scans the main queue
+looking for a thread running on the same node (pre-scan). If found (call
+it thread T), all threads in the main queue between the current lock
+holder and T are moved to the end of the secondary queue.  If such T
+is not found, we make another scan of the main queue after acquiring 
+the spinlock when unlocking the MCS lock (post-scan), starting at the
+node where pre-scan stopped. If both scans fail to find such T, the
+MCS lock is passed to the first thread in the secondary queue. If the
+secondary queue is empty, the MCS lock is passed to the next thread in the
+main queue. To avoid starvation of threads in the secondary queue, those
+threads are moved back to the head of the main queue after a certain
+number of intra-node lock hand-offs.
+
+More details are available at https://arxiv.org/abs/1810.05600.
+
+The series applies on top of v5.4.0, commit eae56099de85.
+Performance numbers are available in previous revisions
+of the series.
+
+Further comments are welcome and appreciated.
+
+Alex Kogan (5):
+  locking/qspinlock: Rename mcs lock/unlock macros and make them more
+    generic
+  locking/qspinlock: Refactor the qspinlock slow path
+  locking/qspinlock: Introduce CNA into the slow path of qspinlock
+  locking/qspinlock: Introduce starvation avoidance into CNA
+  locking/qspinlock: Introduce the shuffle reduction optimization into
+    CNA
+
+ .../admin-guide/kernel-parameters.txt         |  18 +
+ arch/arm/include/asm/mcs_spinlock.h           |   6 +-
+ arch/x86/Kconfig                              |  20 ++
+ arch/x86/include/asm/qspinlock.h              |   4 +
+ arch/x86/kernel/alternative.c                 |  70 ++++
+ include/asm-generic/mcs_spinlock.h            |   4 +-
+ kernel/locking/mcs_spinlock.h                 |  20 +-
+ kernel/locking/qspinlock.c                    |  77 ++++-
+ kernel/locking/qspinlock_cna.h                | 319 ++++++++++++++++++
+ kernel/locking/qspinlock_paravirt.h           |   2 +-
+ 10 files changed, 517 insertions(+), 23 deletions(-)
+ create mode 100644 kernel/locking/qspinlock_cna.h
+
+-- 
+2.21.0 (Apple Git-122.2)
+
