@@ -2,69 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF131091E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DAA71091ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbfKYQen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 11:34:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46556 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728683AbfKYQen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:34:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BCE8DAF42;
-        Mon, 25 Nov 2019 16:34:41 +0000 (UTC)
-Date:   Mon, 25 Nov 2019 16:34:38 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [GIT PULL] scheduler changes for v5.5
-Message-ID: <20191125163438.GL28938@suse.de>
-References: <20191125125944.GA22218@gmail.com>
- <9af8a5eb-5104-ad0b-bf46-dedb65d66a07@arm.com>
- <20191125150811.GA116487@gmail.com>
- <d2312678-f3a1-9e22-0c95-2a161cd67bd7@arm.com>
+        id S1728919AbfKYQfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 11:35:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728683AbfKYQfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 11:35:22 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9F1920740;
+        Mon, 25 Nov 2019 16:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574699722;
+        bh=djhyZJDtxB70JBGj3o4DS80jcr7ceSVnPnc8G1l/Mrk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ApvQiZNesjcWJJDV0zN9Wjny9kGpbkQVYxD5zT+gHd8VYKOON1UigLALXqh7WEqUi
+         ZR55Mj03230H0OrhDIQu5Nl7JVn2aJABxrVv10sBQGLwqGbUGz9ZFaM+sFXpw/VLDX
+         QZCBTuUlAwqTSmn0zzaNOIaPfM6eeULQuWqPO/qY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <d2312678-f3a1-9e22-0c95-2a161cd67bd7@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAfSe-uwOvQSWUkOEw1m0C5wnKH1z0gSdjzAMTayKS3cphXMtA@mail.gmail.com>
+References: <20191025111338.27324-1-chunyan.zhang@unisoc.com> <20191025111338.27324-6-chunyan.zhang@unisoc.com> <20191113221952.AD925206E3@mail.kernel.org> <CAAfSe-twxx4PyERHXuYcoehPoNYiVaOS4hZEK0KndoM2sL_5gQ@mail.gmail.com> <20191125013312.ACC2E2071A@mail.kernel.org> <CAAfSe-uwOvQSWUkOEw1m0C5wnKH1z0gSdjzAMTayKS3cphXMtA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] clk: sprd: add clocks support for SC9863A
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+User-Agent: alot/0.8.1
+Date:   Mon, 25 Nov 2019 08:35:21 -0800
+Message-Id: <20191125163521.D9F1920740@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 04:20:21PM +0000, Valentin Schneider wrote:
-> On 25/11/2019 15:08, Ingo Molnar wrote:
-> > We can give testers a linearized tree for testing, should this come up 
-> > (which I doubt it will ...), ok?
-> > 
-> 
-> My worry (and I think Mel's) is on performance bisection of the mainline
-> tree (not specifically on the load balancer rework), by LKP or else. It's
-> not something I personally do (nor expect to do in the foreseeable future),
-> so Mel is much better positioned than I to argue for/against this.
-> 
+Quoting Chunyan Zhang (2019-11-24 18:10:58)
+> On Mon, 25 Nov 2019 at 09:33, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Chunyan Zhang (2019-11-17 03:27:15)
+> > >
+> > > Not sure if I understand correctly - do you mean that switch to use a
+> > > reference to clk_parent_data.hw in the driver instead?
+> > > like:
+> > > https://elixir.bootlin.com/linux/v5.4-rc7/source/drivers/clk/qcom/gcc=
+-sm8150.c#L136
+> > >
+> >
+> > Yes something like that.
+> >
+> > > Since if I have to define many clk_parent_data.fw_name strings
+> > > instead, it seems not able to reduce the code size, right?
+> >
+> > Ideally there are some internal only clks that can be linked to their
+>=20
+> If the *internal* clks should be in the same base address, then we
+> have many external clks as parents, since most of our clks are not
+> located according to modules which clks serve, but according to clk
+> type.
+>=20
+> > parent with a single clk_hw pointer. That will hopefully keep the size
+>=20
+> Since all clks used for a chip are defined in the same driver file, I
+> actually can use clk_hw pointer directly, that will cut down the size
+> of this driver code, and also easier for users to look for parents for
+> one clk (only need to look at driver file).
+>=20
+> But not sure if you aggree this way?
 
-This was a concern. If there is a regression then a bisection may point to
-one of the earlier patches. That will be ok as long as people remember
-to look at the whole series instead of just the patch the bisection
-identifies.  The second source of confusion may be that LKP reports
-a regression followed by a gain that will lack a comparison with the
-baseline so we may not be able to rely on LKP to detect regressions/gains
-from the series. It's inconvenient but not critical enough to dump the
-testing the existing branch has.
+If all clks are in the same file then it sounds fine to just use clk_hw
+pointers everywhere.
 
--- 
-Mel Gorman
-SUSE Labs
+>=20
+> > down somewhat. And if there are any external clks, they can be described
+> > in DT and then only the .fw_name field can be used and the fallback
+> > field .name can be left assigned to NULL.
+>=20
+> Yes, I noticed that. But I still need to add many .fw_name, that will
+> not be a small count.
+>=20
+
+Sure. The plan is to get rid of the array of string names to specify
+parents. We can debate the size and cost associated with moving away
+from that, but it won't change the overall message here that I'd like to
+see new drivers use the new way of specifying parents instead of using
+strings for topology description.
+
