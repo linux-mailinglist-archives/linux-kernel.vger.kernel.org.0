@@ -2,158 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7FE0108891
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 06:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00A0C10889B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 07:04:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfKYF6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 00:58:20 -0500
-Received: from mail-eopbgr690065.outbound.protection.outlook.com ([40.107.69.65]:47961
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727120AbfKYF6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 00:58:18 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JYFq5JbTDCHyis+9wSSaZJy4ZU/zAOwK/I7QLZcrdiQo9H2k0IDaanM0FMOVYEgs6hzdP/vaHvnNO2ZA+/eQ8GX25DcRPlaMRun2aRO5URJFyFZ7kynXv0pjFIWMu3tn3YC8Ow4nRTdc9Y107RQilLSLxCqw3kn+96s1wDU9eHNCFVd4spL+OaFLd9+OPgrBQP81zmol69JW7vvW+CgvaB+uFzJXZD5KlsZPCAGOlL4LGtc9uRyZ/nqI9lia27OJlWmBYr97K63II+E5tTRDyBVgcPkcIcL7d8XjvnGyTDTvsFz6M6MG5csEb6wUOz7kzWQbRh8WczQ8ovyRzl4o0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eZtNaULOgo5BlFOvij4pkR5P0UvZDV4dwCoW0GuDIds=;
- b=VA6lJDylLgva3+3wd+ut4VO0KJphy6UlZm/T0vS79R4uKdggL6xLUYRD2Qokjnj4TMFpNlExBX4bUGt3J3TvbQbVH7XOSE9Pe4ArBgKXFy1FFilRY82E4npdkYvD6MuG0Gav9s4Of69U+xqHvLme8tAXk1kaIKeAGKub4c9CSYUig790LcQsI52Eh9fPEZ2y/A72eHCtl5qUQ5yzHghAI3W+2V5YbWfDC6j0cABur9veFE9fVRG0+84ZKcdW0EcUMX6K3AO4ImTywAndG2hVgsnT4UZf/BBPbiRSVEVJHMZ0irZucBwzcN7cZ5zYioF1N7OkF8RMx93SACQlGp5YBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sifive.com; dmarc=pass action=none header.from=sifive.com;
- dkim=pass header.d=sifive.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sifive.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eZtNaULOgo5BlFOvij4pkR5P0UvZDV4dwCoW0GuDIds=;
- b=ICa0IoOOyyh6H4M2VPDqhPw6RHHGUGtVCyoDe1/EJQ9WVgQ3gIBhP1LhoVNQUpyAAy/FKaduY6Mx/FKOSH9FwPyyAJ+vMQGgHv09BHLgDLDhAyiAlyVVyPh56ShHODkrbLiBp82OJiG4ozIdAqEG+gR8fmeAm4EMPhRZ9Y/n538=
-Received: from MN2PR13MB3374.namprd13.prod.outlook.com (10.255.236.83) by
- MN2PR13MB2622.namprd13.prod.outlook.com (20.178.254.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.10; Mon, 25 Nov 2019 05:58:15 +0000
-Received: from MN2PR13MB3374.namprd13.prod.outlook.com
- ([fe80::4481:4560:7083:e4c6]) by MN2PR13MB3374.namprd13.prod.outlook.com
- ([fe80::4481:4560:7083:e4c6%7]) with mapi id 15.20.2495.014; Mon, 25 Nov 2019
- 05:58:15 +0000
-From:   Yash Shah <yash.shah@sifive.com>
-To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>
-CC:     "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "bmeng.cn@gmail.com" <bmeng.cn@gmail.com>,
-        "atish.patra@wdc.com" <atish.patra@wdc.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH v3 6/6] riscv: dts: Add DT support for SiFive FU540 GPIO
- driver
-Thread-Topic: [PATCH v3 6/6] riscv: dts: Add DT support for SiFive FU540 GPIO
- driver
-Thread-Index: AQHVo1VTXl3rxbuniEimR8aPOgQ+5g==
-Date:   Mon, 25 Nov 2019 05:58:14 +0000
-Message-ID: <1574661437-28486-7-git-send-email-yash.shah@sifive.com>
-References: <1574661437-28486-1-git-send-email-yash.shah@sifive.com>
-In-Reply-To: <1574661437-28486-1-git-send-email-yash.shah@sifive.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BMXPR01CA0053.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:2c::17) To MN2PR13MB3374.namprd13.prod.outlook.com
- (2603:10b6:208:162::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yash.shah@sifive.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.7.4
-x-originating-ip: [114.143.65.226]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e81c5664-0656-47a0-4686-08d7716c760b
-x-ms-traffictypediagnostic: MN2PR13MB2622:
-x-ld-processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR13MB2622121C16B8DB7EC6EE66E18C4A0@MN2PR13MB2622.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3513;
-x-forefront-prvs: 0232B30BBC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(136003)(376002)(346002)(366004)(396003)(39840400004)(189003)(199004)(186003)(6436002)(2906002)(316002)(14454004)(7416002)(54906003)(4326008)(11346002)(71190400001)(2616005)(50226002)(8936002)(110136005)(478600001)(6512007)(446003)(6116002)(8676002)(36756003)(3846002)(25786009)(81156014)(44832011)(305945005)(5660300002)(52116002)(14444005)(76176011)(256004)(26005)(81166006)(71200400001)(6506007)(386003)(2501003)(6636002)(66446008)(66556008)(86362001)(66946007)(102836004)(99286004)(6486002)(7736002)(107886003)(64756008)(66476007)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR13MB2622;H:MN2PR13MB3374.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: sifive.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: UiuWTCshWODqjTORFHwC+pjEh7oTKFg7XnOZXXukgKT1mFXvBrg9IPq0977T3CHDZahqSU91U7OuIYWBjiVLEl0AmBMaQsqQ8zsoS2xjseKTsy9G24Mlr63dyZXoiLbqqWDCLa+GGrNQobwZS9Xh7l0YiWJQxA1/xQDuvxCEkpyNT2BsL/DZS5IcOAm2MWD2VIylSoGBtEOyQ4mo7uIBNth+iobMvQJrR/dm/4IXR2x0zGXmfGs3sb4oVsWR9LA8Q6d2omBTcjydgyK0jf0ylmiK6yoZSOxKMZpWy/pBU+DE58CFVKB4Ju9LXuQDj7fgCzHWF8A+zh69iy+ub4Fk+ATSh+j6FTRQjJ68cQMA0TzkshvAxsTroisxV54E/TxBiaq+r2jWsNMjIw58NBIO6EGniuCQRuoqQNrGFGF+XsnGV0mbQgnAiMVz5n+3eTDG
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725823AbfKYGEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 01:04:24 -0500
+Received: from mga07.intel.com ([134.134.136.100]:23846 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbfKYGEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 01:04:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2019 22:04:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,240,1571727600"; 
+   d="scan'208";a="239391717"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 24 Nov 2019 22:04:22 -0800
+Received: from [10.251.82.176] (abudanko-mobl.ccr.corp.intel.com [10.251.82.176])
+        by linux.intel.com (Postfix) with ESMTP id 90822580495;
+        Sun, 24 Nov 2019 22:04:19 -0800 (PST)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2 0/3] perf record: adapt NUMA awareness to machines with
+ #CPUs > 1K
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Organization: Intel Corp.
+Message-ID: <fb356fe9-ac87-71ab-9845-075b3fac3199@linux.intel.com>
+Date:   Mon, 25 Nov 2019 09:04:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: sifive.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e81c5664-0656-47a0-4686-08d7716c760b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2019 05:58:14.9440
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TAuDYyuBcQ+z5C+g7GBROhuvGQTBhNPjtiz1XcnOWQ9PPQHpcriuehgIUUjBqf340ptR6mijKuUrEa/26tF3+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR13MB2622
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the gpio DT node in SiFive FU540 soc-specific DT file.
-Enable the gpio node in HiFive Unleashed board-specific DT file.
 
-Signed-off-by: Yash Shah <yash.shah@sifive.com>
+Current implementation of cpu_set_t type by glibc has internal cpu
+mask size limitation of no more than 1024 CPUs. This limitation confines
+NUMA awareness of Perf tool in record mode, thru --affinity option,
+to the first 1024 CPUs on machines with larger amount of CPUs.
+
+This patch set enables Perf tool to overcome 1024 CPUs limitation by
+using a dedicated struct mmap_cpu_mask type and applying tool's bitmap
+API operations to manipulate affinity masks of the tool's thread and
+the mmaped data buffers.
+
+tools bitmap API has been extended with bitmap_free() function and
+bitmap_equal() operation whose implementation is derived from the
+kernel one.
+
 ---
- arch/riscv/boot/dts/sifive/fu540-c000.dtsi          | 14 +++++++++++++-
- arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts |  4 ++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+Alexey Budankov (3):
+  tools bitmap: implement bitmap_equal() operation at bitmap API
+  perf mmap: declare type for cpu mask of arbitrary length
+  perf record: adapt affinity to machines with #CPUs > 1K
 
-diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/d=
-ts/sifive/fu540-c000.dtsi
-index afa43c7..2d7c284 100644
---- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-+++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-@@ -246,6 +246,18 @@
- 			#pwm-cells =3D <3>;
- 			status =3D "disabled";
- 		};
--
-+		gpio: gpio@10060000 {
-+			compatible =3D "sifive,fu540-c000-gpio", "sifive,gpio0";
-+			interrupt-parent =3D <&plic0>;
-+			interrupts =3D <7 8 9 10 11 12 13 14 15
-+				      16 17 18 19 20 21 22>;
-+			reg =3D <0x0 0x10060000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells =3D <2>;
-+			interrupt-controller;
-+			#interrupt-cells =3D <2>;
-+			clocks =3D <&prci PRCI_CLK_TLCLK>;
-+			status =3D "disabled";
-+		};
- 	};
- };
-diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts b/arch/ris=
-cv/boot/dts/sifive/hifive-unleashed-a00.dts
-index 88cfcb9..609198c 100644
---- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-+++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-@@ -94,3 +94,7 @@
- &pwm1 {
- 	status =3D "okay";
- };
-+
-+&gpio {
-+	status =3D "okay";
-+};
---=20
-2.7.4
+ tools/include/linux/bitmap.h | 30 ++++++++++++++++++++++++++++++
+ tools/lib/bitmap.c           | 15 +++++++++++++++
+ tools/perf/builtin-record.c  | 30 ++++++++++++++++++++++++------
+ tools/perf/util/mmap.c       | 31 +++++++++++++++++++++++++------
+ tools/perf/util/mmap.h       | 11 ++++++++++-
+ 5 files changed, 104 insertions(+), 13 deletions(-)
+
+---
+Changes in v2:
+- implemented bitmap_free() for symmetry with bitmap_alloc()
+- capitalized MMAP_CPU_MASK_BYTES() macro
+- returned -1 from perf_mmap__setup_affinity_mask()
+- implemented releasing of masks using bitmap_free()
+- moved debug printing under -vv option
+
+---
+Testing:
+
+  tools/perf/perf record -vv --affinity=cpu -- ls
+  thread mask[8]: empty
+  Using CPUID GenuineIntel-6-5E-3
+  intel_pt default config: tsc,mtc,mtc_period=3,psb_period=3,pt,branch
+  nr_cblocks: 0
+  affinity: CPU
+  mmap flush: 1
+  comp level: 0
+  ------------------------------------------------------------
+  perf_event_attr:
+    size                             112
+    { sample_period, sample_freq }   4000
+    sample_type                      IP|TID|TIME|PERIOD
+    read_format                      ID
+    disabled                         1
+    inherit                          1
+    mmap                             1
+    comm                             1
+    freq                             1
+    enable_on_exec                   1
+    task                             1
+    precise_ip                       3
+    sample_id_all                    1
+    exclude_guest                    1
+    mmap2                            1
+    comm_exec                        1
+    ksymbol                          1
+    bpf_event                        1
+  ------------------------------------------------------------
+  sys_perf_event_open: pid 28649  cpu 0  group_fd -1  flags 0x8 = 4
+  sys_perf_event_open: pid 28649  cpu 1  group_fd -1  flags 0x8 = 5
+  sys_perf_event_open: pid 28649  cpu 2  group_fd -1  flags 0x8 = 6
+  sys_perf_event_open: pid 28649  cpu 3  group_fd -1  flags 0x8 = 9
+  sys_perf_event_open: pid 28649  cpu 4  group_fd -1  flags 0x8 = 10
+  sys_perf_event_open: pid 28649  cpu 5  group_fd -1  flags 0x8 = 11
+  sys_perf_event_open: pid 28649  cpu 6  group_fd -1  flags 0x8 = 12
+  sys_perf_event_open: pid 28649  cpu 7  group_fd -1  flags 0x8 = 13
+  mmap size 528384B
+  0x7f1898200010: mmap mask[8]: 0
+  0x7f18982100d8: mmap mask[8]: 1
+  0x7f18982201a0: mmap mask[8]: 2
+  0x7f1898230268: mmap mask[8]: 3
+  0x7f1898240330: mmap mask[8]: 4
+  0x7f18982503f8: mmap mask[8]: 5
+  0x7f18982604c0: mmap mask[8]: 6
+  0x7f1898270588: mmap mask[8]: 7
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             1
+    size                             112
+    config                           0x9
+    watermark                        1
+    sample_id_all                    1
+    bpf_event                        1
+    { wakeup_events, wakeup_watermark } 1
+  ------------------------------------------------------------
+  sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 14
+  sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 = 15
+  sys_perf_event_open: pid -1  cpu 2  group_fd -1  flags 0x8 = 16
+  sys_perf_event_open: pid -1  cpu 3  group_fd -1  flags 0x8 = 17
+  sys_perf_event_open: pid -1  cpu 4  group_fd -1  flags 0x8 = 18
+  sys_perf_event_open: pid -1  cpu 5  group_fd -1  flags 0x8 = 19
+  sys_perf_event_open: pid -1  cpu 6  group_fd -1  flags 0x8 = 20
+  sys_perf_event_open: pid -1  cpu 7  group_fd -1  flags 0x8 = 21
+  ...
+  Synthesizing TSC conversion information
+  thread mask[8]: 0
+  thread mask[8]: 1
+  thread mask[8]: 2
+  thread mask[8]: 3
+  thread mask[8]: 4
+  arch			      copy     Documentation  init     kernel	 MAINTAINERS	  modules.builtin.modinfo  perf.data	  scripts   System.map	vmlinux
+  block			      COPYING  drivers	      ipc      lbuild	 Makefile	  modules.order		   perf.data.old  security  tools	vmlinux.o
+  certs			      CREDITS  fs	      Kbuild   lib	 mm		  Module.symvers	   README	  sound     usr
+  config-5.2.7-100.fc29.x86_64  crypto   include	      Kconfig  LICENSES  modules.builtin  net			   samples	  stdio     virt
+  thread mask[8]: 5
+  thread mask[8]: 6
+  thread mask[8]: 7
+  thread mask[8]: 0
+  thread mask[8]: 1
+  thread mask[8]: 2
+  thread mask[8]: 3
+  thread mask[8]: 4
+  thread mask[8]: 5
+  thread mask[8]: 6
+  thread mask[8]: 7
+  [ perf record: Woken up 0 times to write data ]
+  thread mask[8]: 0
+  thread mask[8]: 1
+  thread mask[8]: 2
+  thread mask[8]: 3
+  thread mask[8]: 4
+  thread mask[8]: 5
+  thread mask[8]: 6
+  thread mask[8]: 7
+  Looking at the vmlinux_path (8 entries long)
+  Using vmlinux for symbols
+  [ perf record: Captured and wrote 0.014 MB perf.data (8 samples) ]
+
+-- 
+2.20.1
 
