@@ -2,130 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19531108639
+	by mail.lfdr.de (Postfix) with ESMTP id 8924F10863A
 	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 02:15:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfKYBMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 20:12:06 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46889 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbfKYBMG (ORCPT
+        id S1727188AbfKYBPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 20:15:17 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34485 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbfKYBPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 20:12:06 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 193so6467239pfc.13
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 17:12:06 -0800 (PST)
+        Sun, 24 Nov 2019 20:15:17 -0500
+Received: by mail-pf1-f195.google.com with SMTP id n13so6501831pff.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 17:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=fUxnjYVvwcgXB0p2/65XHwblJekP3byuP5LlZ092IOo=;
-        b=fdiVaXFm4SFErN5LBs46ss2lcb9UcioTJsOpP5jwXMHthSV7SwNTKDK8vkJsUL9o9u
-         fWrrOBOXE5fVoh3eSUi8pYXMcfOu57mpkE5xiuC6+wlLC/MjRaqPMC/2ftb4A5Aul0pP
-         qGJpzO/giydCspj4CX9k4ULtYJO0Jz2XWFiPk=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
+        b=MiPiIX+FQla5J05mdl78JALG26TaMMitW+PrtdM+n9xIli+yPctZJfy+H7rJboL8GI
+         V0FgfkpjkhcPqr9AsCYE+6wIjzm/Mcm23GSgSWEHvT/KiG/8fB9DjiDS3+m7LrX0K3T9
+         dMe7b7dgH+HXwN2oIl08lMaUVhfDrTbREjAuLoCAysaa5N7ynLTYiQGCpd40byKNLmYo
+         mJZE+1c1Xhk2Rx7LVar2Py3/Dl8cYOXgFLWQGA7/ENtFS/UJQx+hJZ436vfOHrpK6Iwy
+         MSrRAvH+CrZfsRsNFx7u+ANlvlvlCwgg0mmIzOa9QenMN/bLG3ERxK4pEZqVMv8SGDyX
+         Rsfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=fUxnjYVvwcgXB0p2/65XHwblJekP3byuP5LlZ092IOo=;
-        b=pNok3zsgfCsbipqLMi42FGmxJfZaDv5hqxQvJa/BvwoXrATdsy95WzvVv9yK7dXTZS
-         W+pEtaDvaECs0LxLCR8QTsUe2E82b9CDMnc46fb3pamsL30UUasxFiqwJVPIe4zHAIuT
-         itDgmfN0BzVqusTApOJSDzp+FKLPwPMz8m3pqfY/8WLhkR++vvD7PDYCmB3hBXhOM2hh
-         h6YrG6XWUQ4s3wZ8mKAE/92gx4YA7nP2DnxDj7oYEa9xvPDsDK3EJQ5Cx73K395/NI9l
-         y77W1W6rCQ/DHFYphyiXGAjvTsL8bRBoWH92e5Dlx9I7zxee1pigymJdj+1v8ixQjtgt
-         sueA==
-X-Gm-Message-State: APjAAAXpx8qm63SdANLyZ5ar5IXnl3oPFqE7/zymHTO4+w2yPdVy259w
-        6prbEIygBd1IZYr2x1XYSXMeWA==
-X-Google-Smtp-Source: APXvYqwOMDDms24hepE4EzFIffoon4ml+adRTnU609UHYVCG2sJO86Xhzmv9lBcNYl6lxghjJSjUzw==
-X-Received: by 2002:a63:e60e:: with SMTP id g14mr29153291pgh.80.1574644325696;
-        Sun, 24 Nov 2019 17:12:05 -0800 (PST)
-Received: from localhost (2001-44b8-1113-6700-c5e4-a8fb-2787-cd48.static.ipv6.internode.on.net. [2001:44b8:1113:6700:c5e4:a8fb:2787:cd48])
-        by smtp.gmail.com with ESMTPSA id u9sm5692040pfm.102.2019.11.24.17.12.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2019 17:12:04 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Bart Van Assche <bvanassche@acm.org>, Qian Cai <cai@lca.pw>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: lockdep warning while booting POWER9 PowerNV
-In-Reply-To: <87ef0vpfbc.fsf@mpe.ellerman.id.au>
-References: <1567199630.5576.39.camel@lca.pw> <9b8b287a-4ae1-ca9b-cff1-6d93672b6893@acm.org> <87ef0vpfbc.fsf@mpe.ellerman.id.au>
-Date:   Mon, 25 Nov 2019 12:12:01 +1100
-Message-ID: <87v9r8g3oe.fsf@dja-thinkpad.axtens.net>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
+        b=uQE022T2/cKxfvZ/8sPSPPV/RBxpkSqkh0fbYXbf88Rs+Zo8BZuf6ZwvfVDNuxvGSe
+         pVr2WNBOHYECp6jKR2FVCK8kQPqNCVcW+dwpgGO3tGoiymnDr5+K66i1ybuVSCHDy3Xy
+         F3UF9Ir/JOKZvfhZmQwk2cH2O1N8oBnZlkK4o4R2da4f/8KdIVLpNdMraxCqm+YS+8Mn
+         f9Z/anAK5T4N5Ul5jGATgm4WQC6gA/En3VXZ4RZBGeX6TrVDv2uGtV8nFn/S0sX6pnef
+         z/N5oxPQ0chR6o1cem+D9IGC+8TpjFP10jQyXAVUUgdPWJpP9boBE7w6Jsy4Ntv7Hl+w
+         dqMg==
+X-Gm-Message-State: APjAAAWKFZ2FTn9ScJhwdBwAZdF2yO4nWy2Ibm7OqZ4vtwbA/E3rI6jD
+        c/TaX/U+pFRd6pw+92R+rjR55/+56LTnQBFAhnw=
+X-Google-Smtp-Source: APXvYqzpnhEXyCzclZ3fO4rwhMhmmMgFwwtZjdj6PPk4jFqs+x6Ccus2z8WDPirco8BEiOmfHEP5gsjWytMeR+Ra1Xg=
+X-Received: by 2002:a63:c802:: with SMTP id z2mr21810188pgg.158.1574644516736;
+ Sun, 24 Nov 2019 17:15:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a17:90a:1863:0:0:0:0 with HTTP; Sun, 24 Nov 2019 17:15:16
+ -0800 (PST)
+Reply-To: aishagaddafi969@aol.com
+From:   AISHA GADDAFI <vijairaja789@gmail.com>
+Date:   Sun, 24 Nov 2019 17:15:16 -0800
+Message-ID: <CAGZ0r_LJQH_Ri6GJmWGLhWx2cbzumT_XA82KSiURvRrO=Oisnw@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+-- 
+Dear Friend (Assalamu Alaikum),
 
->>> Once in a while, booting an IBM POWER9 PowerNV system (8335-GTH) would generate
->>> a warning in lockdep_register_key() at,
->>> 
->>> if (WARN_ON_ONCE(static_obj(key)))
->>> 
->>> because
->>> 
->>> key = 0xc0000000019ad118
->>> &_stext = 0xc000000000000000
->>> &_end = 0xc0000000049d0000
->>> 
->>> i.e., it will cause static_obj() returns 1.
->>
->> (back from a trip)
->>
->> Hi Qian,
->>
->> Does this mean that on POWER9 it can happen that a dynamically allocated 
->> object has an address that falls between &_stext and &_end?
->
-> I thought that was true on all arches due to initmem, but seems not.
->
-> I guess we have the same problem as s390 and we need to define
-> arch_is_kernel_initmem_freed().
->
-> Qian, can you try this:
->
-> diff --git a/arch/powerpc/include/asm/sections.h b/arch/powerpc/include/asm/sections.h
-> index 4a1664a8658d..616b1b7b7e52 100644
-> --- a/arch/powerpc/include/asm/sections.h
-> +++ b/arch/powerpc/include/asm/sections.h
-> @@ -5,8 +5,22 @@
->  
->  #include <linux/elf.h>
->  #include <linux/uaccess.h>
-> +
-> +#define arch_is_kernel_initmem_freed arch_is_kernel_initmem_freed
-> +
->  #include <asm-generic/sections.h>
->  
-> +extern bool init_mem_is_free;
-> +
-> +static inline int arch_is_kernel_initmem_freed(unsigned long addr)
-> +{
-> +	if (!init_mem_is_free)
-> +		return 0;
-> +
-> +	return addr >= (unsigned long)__init_begin &&
-> +		addr < (unsigned long)__init_end;
-> +}
-> +
->  extern char __head_end[];
->  
->  #ifdef __powerpc64__
->
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
 
-This also fixes the following syzkaller bug:
-https://syzkaller-ppc64.appspot.com/bug?id=cfdf75cd985012d0124cd41e6fa095d33e7d0f6b
-https://github.com/linuxppc/issues/issues/284
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
 
-Would you like me to do up a nice commit message for it?
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
 
-Regards,
-Daniel
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
 
->
-> cheers
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+aishagaddafi969@aol.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: aishagaddafi969@aol.com
