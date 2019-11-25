@@ -2,95 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 799B6109191
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B63109173
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbfKYQGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 11:06:18 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:37106 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728533AbfKYQGS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:06:18 -0500
-Received: by mail-vk1-f196.google.com with SMTP id l5so3581113vkb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 08:06:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Avttk0P5txS2q04zBlAty7rtXiGTPj5hhaK38ammByQ=;
-        b=e4Es4BNR8tv0qRFadBAbvVXURnUbZZXWCMCs/wpwjIdMh4Jy89Fb9xnhqIRsvSh68a
-         XJsKQJopD1tCEgGI9pChnGtQ7DahHVJ9gq9TKnNNNBulwFYjG+CblUqYW/vtQFu8vJxl
-         w1v1hYKDkFVHLQgwvtj6is/1xKjCpjQYMwvgLrchL+5ApRlQiLDVacv0DmtKybbB8N50
-         CRksIpAlofCr3r2qSaxGOBs8aeFN60Ook6Z7X/RkgjLJ1NolLOSSXCFHCnk9LpFB0T42
-         IwuG9sVc4vmuofxHdOc58LsoGlJYDg+KXcNHmcNmwLbz5Jq0N8EXxOIEHDU1Ew05iA6S
-         Tb8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Avttk0P5txS2q04zBlAty7rtXiGTPj5hhaK38ammByQ=;
-        b=Avlwog2uc/p7rZ4dRIIxU4U0whFTA5Mrgcr1vbpp5zH4WNWOWsS4jYMKJ4VxUzGn86
-         OTORP15HcPQRmZfKmneyql1AwdUprWO9nKju9azZA4F6MxhJI0L+YgJ6LzTgKysJ8T1o
-         tHAmKHC8r+5ubZ7cHz0xrSLiiRLFT84DlhFpRKPqFxA6JbVq307OlXKl36NO2GIvyP3g
-         D2p0yxTr0EvFy9cwgGWF3hNZ2xHcgI6HnkKu/XIAit7wWd2kC6SLq28JNtK/Uth1/vwe
-         F050k6N4MdAC1MfWzro1h1yBpYtCC23HBaS/wBZTzZHK5fLXEP35qFu3Hh0VQLjQlctT
-         cxMw==
-X-Gm-Message-State: APjAAAUZx7/fxf7dpwawnpCXiMgx+Ek4KFm/MYXxcpd7oPlICH8/cXJa
-        oOM8XBQW7Egi3XLg3D5cefOyBxK1HRL/HM2DqTmF8g==
-X-Google-Smtp-Source: APXvYqxNasVkK7MWNtHslDqEaSeS5Uo2U4dtls0PYrqWky4egoEbLjLpsDhsWSjOifL4RHlo/J6b+Vdm7rhS/WEKCJ4=
-X-Received: by 2002:ac5:ce8c:: with SMTP id 12mr17656856vke.34.1574697977355;
- Mon, 25 Nov 2019 08:06:17 -0800 (PST)
-MIME-Version: 1.0
-References: <1574442222-19759-1-git-send-email-christophe.kerello@st.com>
-In-Reply-To: <1574442222-19759-1-git-send-email-christophe.kerello@st.com>
-From:   Steve deRosier <derosier@gmail.com>
-Date:   Mon, 25 Nov 2019 08:05:40 -0800
-Message-ID: <CALLGbRJ00TeZKPfhkqj_mwu9zhMzc_+A8mh4uwaPnFBUatrwTw@mail.gmail.com>
-Subject: Re: mtd: Use mtd device name instead of mtd->name when registering
- nvmem device
-To:     Christophe Kerello <christophe.kerello@st.com>
-Cc:     miquel.raynal@bootlin.com, Richard Weinberger <richard@nod.at>,
-        vigneshr@ti.com, linux-mtd <linux-mtd@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
+        id S1728722AbfKYQAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 11:00:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53404 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728454AbfKYQAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 11:00:22 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ED843BF17;
+        Mon, 25 Nov 2019 16:00:19 +0000 (UTC)
+Message-ID: <1574697961.16378.5.camel@suse.cz>
+Subject: Re: [PATCH v4 1/6] x86,sched: Add support for frequency invariance
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Doug Smythies <dsmythies@telus.net>,
+        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
+        'Thomas Gleixner' <tglx@linutronix.de>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'Borislav Petkov' <bp@suse.de>, 'Len Brown' <lenb@kernel.org>,
+        "'Rafael J . Wysocki'" <rjw@rjwysocki.net>
+Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        'Mel Gorman' <mgorman@techsingularity.net>,
+        'Matt Fleming' <matt@codeblueprint.co.uk>,
+        'Viresh Kumar' <viresh.kumar@linaro.org>,
+        'Juri Lelli' <juri.lelli@redhat.com>,
+        'Paul Turner' <pjt@google.com>,
+        'Vincent Guittot' <vincent.guittot@linaro.org>,
+        'Quentin Perret' <qperret@qperret.net>,
+        'Dietmar Eggemann' <dietmar.eggemann@arm.com>
+Date:   Mon, 25 Nov 2019 17:06:01 +0100
+In-Reply-To: <000001d5a29b$c944fd70$5bcef850$@net>
+References: <20191113124654.18122-1-ggherdovich@suse.cz>
+         <20191113124654.18122-2-ggherdovich@suse.cz>
+         <000001d5a29b$c944fd70$5bcef850$@net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 9:04 AM Christophe Kerello
-<christophe.kerello@st.com> wrote:
->
-> MTD currently allows to have same partition name on different devices.
-> Since nvmen device registration has been added, it is not more possible
-> to have same partition name on different devices. We get following
-> logs:
-> sysfs: cannot create duplicate filename XXX
-> Failed to register NVMEM device
->
-> To avoid such issue, the proposed patch uses the mtd device name instead of
-> the partition name.
-...
-> diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-> index 5fac435..559b693 100644
-> --- a/drivers/mtd/mtdcore.c
-> +++ b/drivers/mtd/mtdcore.c
-> @@ -551,7 +551,7 @@ static int mtd_nvmem_add(struct mtd_info *mtd)
->
->         config.id = -1;
->         config.dev = &mtd->dev;
-> -       config.name = mtd->name;
-> +       config.name = dev_name(&mtd->dev);
->         config.owner = THIS_MODULE;
->         config.reg_read = mtd_nvmem_reg_read;
->         config.size = mtd->size;
+On Sat, 2019-11-23 at 23:49 -0800, Doug Smythies wrote:
+> ...
+> Kernel 5.4-rc8 + revert, intel_cpufreq/schedutil: 3899 seconds
+> Kernel 5.4-rc8 + gg 6 + revert, intel_cpufreq/schedutil: 2740.7 seconds
+> Ratio: 0.70 (as expected)
+> Kernel 5.4-rc8, intel_cpufreq/schedutil: 2334.7 seconds (faster than expected)
+> Kernel 5.4-rc8 + gg 6 patch set, intel_cpufreq/schedutil: 2275.0 seconds (faster than expected)
+> Ratio: 0.97 (not as expected)
+> Kernel 5.4-rc8, intel_cpufreq/performance: 2215.3 seconds
+> Kernel 5.4-rc8, intel_cpufreq/ondemand: 3286.3 seconds
+> Re-stated from previous e-mail:
+> Kernel 5.3-rc8, intel_cpufreq/schedutil: ratio: 0.69 (I don't have the original times)
 
-This would be a breaking change for anyone that depended on
-`config.name = mtd->name` behavior. Obviously, if they were using
-multiple devs with the same partition name as you were, they'd have
-already been broken, but I suspect if a lot of people were doing that
-we'd have heard about that before now.
+Hello Doug,
 
-- Steve
+schedutil in 5.4 going a lot faster than in 5.3 would be a surprise. I'm
+running that same test too to check if I can see it as well.
+
+Besides, as it's already been said this patchset adds frequency
+scale-invariance to scheduler metrics such as load and utilization and that's
+useful also in areas other than frequency scaling (most notably the scheduler
+load balancer).
+
+
+Thanks,
+Giovanni
