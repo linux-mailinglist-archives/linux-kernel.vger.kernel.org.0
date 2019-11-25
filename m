@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E7C108D28
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EFE6108D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfKYLrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 06:47:12 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42187 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727237AbfKYLrL (ORCPT
+        id S1727095AbfKYLwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 06:52:22 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:38010 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfKYLwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 06:47:11 -0500
-Received: by mail-wr1-f65.google.com with SMTP id a15so17621489wrf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 03:47:10 -0800 (PST)
+        Mon, 25 Nov 2019 06:52:21 -0500
+Received: by mail-il1-f193.google.com with SMTP id u17so13906602ilq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 03:52:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=CeeDtpjMokJukuH1miomF5Oz08aqVjt3ots/YpdA6R8=;
+        b=LL+d5UjSYKQo7SNtgOxz0ks9vaL1K+hNA5DwJRgFR9ov1HvWut16evvV0/6ztetOuR
+         he3t5iPskJEbvBfIb52JkTCKlv5Sp04uM17MGQAjataPJfKt6kWhkz35iJEKMEhEBJxJ
+         tKqMa9AMm0ONQuRCDqD/sxzamfPwBjy+xOgiCmhkv9uThCpbqMKhjOiEHGPzDYnWdU8P
+         8sm7wGJpa4loJrCqvK1ClOe4hhoHwuNXC9rSs4Ccq8hxoCS0txNpp3rJOVrTa7MFOyOO
+         dnKsQu8rhXIF9m/iN5YfRlpDvwlfWCFneurTuvuag0tkjjEQWWT9/Vuix5ORXZQ0JL9Z
+         uCKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S+EEhkHcLVWZKwT8zqSpAmLXMvzyNuJC5U+oB96yAfY=;
-        b=sxevm++HvCr1/v6JRNS39UApOmnsBgTHq3bQwMLBSRMrQNGJjNuHEIkgw4q+eQlorq
-         p9qWLeF7Epmm2hY3pGOQojTZ4MvOx6U3Ns5spHyy+m+za+yfYBec8WH19E3EUg7nX8wq
-         dgchBjgIotRPxsi/TN4zcbCNCtJ7E2+FiCQ2yHKU4zyzceiaqT6NjibXg2DFMr2hB38J
-         Cu/h9P0Y90Zwd2KZaNEyVcAR7WhUlRDXRas83Waj/l+agTl7bpJKC+akNcXQMFEunsx9
-         mgnbfHLe2oa2EdhT429kY43Grsh5BmF5rWo7XCnWNi69te8M4tJZmpaB5SbB9KvwwH6d
-         a0pA==
-X-Gm-Message-State: APjAAAXxDMSDKA3/fAHD9dYdvobUsRHuHQBT13oPCuSInKODe8xH2c83
-        y1m42abXBPRHmOdP4f0HMBE=
-X-Google-Smtp-Source: APXvYqyEESAigdr6gGonQM35wfYwuKMSmcENhp8ksP9iuV8ybf2y2gcCZTJbQ0ke0h5FD6Nxi+Optw==
-X-Received: by 2002:a5d:538d:: with SMTP id d13mr32994290wrv.304.1574682429742;
-        Mon, 25 Nov 2019 03:47:09 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id 4sm8426509wmd.33.2019.11.25.03.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 03:47:09 -0800 (PST)
-Date:   Mon, 25 Nov 2019 12:47:08 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
-Message-ID: <20191125114708.GI31714@dhcp22.suse.cz>
-References: <08a3f4dd-c3ce-0009-86c5-9ee51aba8557@suse.cz>
- <20191029151549.GO31513@dhcp22.suse.cz>
- <20191029143351.95f781f09a9fbf254163d728@linux-foundation.org>
- <alpine.DEB.2.21.1910291623050.9914@chino.kir.corp.google.com>
- <20191105130253.GO22672@dhcp22.suse.cz>
- <alpine.DEB.2.21.1911051659010.181254@chino.kir.corp.google.com>
- <20191106073521.GC8314@dhcp22.suse.cz>
- <alpine.DEB.2.21.1911061330030.155572@chino.kir.corp.google.com>
- <20191113112042.GG28938@suse.de>
- <alpine.DEB.2.21.1911241548340.192260@chino.kir.corp.google.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=CeeDtpjMokJukuH1miomF5Oz08aqVjt3ots/YpdA6R8=;
+        b=GJVx6+cyqkJ1NAeHfQprD441NjRwtIWK0oWm5jD5DzF+vvH/Bc9xxfAozp/Pp/PLXe
+         RhIH+NRAdjZ5Vb0eVKnNg+eAsTUJSXdn8RwIYaTO5ILr+wK3rhv7LiIN2ilvgCS4jCU0
+         3VH53IwSLqpAsaGALLFv/TDqk6N+FeYGd1ptuLRwPD+TLSRKthtBTlNbRuUKkZbUuT2r
+         Q0YEUm23jOdh2wJR0RoHm4yQbGw1qAKKJYZGC7Z7emh+fF1h/0DFUikNkTfJjTxiBtaz
+         IMRgkhg+UAPWSoulX5w/E6uI0PdrnpXhzntOvBM4e0TgUNBjCUlOJMt8UMffqPPmocvi
+         oOxg==
+X-Gm-Message-State: APjAAAX0zithsXOWbjtps5UcTbtqeF0RMvEX6t48bfwyADJrpdSLQapm
+        3opwrPT+d0YZyAIdxE9AXqbBekHzOsuJtozFI+c=
+X-Google-Smtp-Source: APXvYqz0DFGpXnvuXshvHVSxedQf2gI4DFhvQAvFtmzUSlS5Ng7EEaItNWEJyGJOiSMyqdv1h6l5VKcdoU3uLV3DxbM=
+X-Received: by 2002:a92:ce06:: with SMTP id b6mr30332956ilo.14.1574682740918;
+ Mon, 25 Nov 2019 03:52:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1911241548340.192260@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a5d:9250:0:0:0:0:0 with HTTP; Mon, 25 Nov 2019 03:52:20
+ -0800 (PST)
+Reply-To: aakkaavvii@gmail.com
+From:   Abraham Morrison <johnego001@gmail.com>
+Date:   Mon, 25 Nov 2019 03:52:20 -0800
+Message-ID: <CACOK_Jth5C+jaJc78Y7u=cdbC2zm1_8wgFn_04aEsK+azwJSag@mail.gmail.com>
+Subject: Good day!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 24-11-19 16:10:53, David Rientjes wrote:
-[...]
-> So my question would be: if we know the previous behavior that allowed 
-> excessive swap and recalling into compaction was deemed harmful for the 
-> local node, why do we now believe it cannot be harmful if done for all 
-> system memory?
-
-I have to say that I got lost in your explanation. I have already
-pointed this out in a previous email you didn't reply to. But the main
-difference to previous __GFP_THISNODE behavior is that it is used along
-with __GFP_NORETRY and that reduces the overall effort of the reclaim
-AFAIU. If that is not the case then please be _explicit_ why.
-
-Having test results from Andrea would be really appreciated of course
-but he seems to be too busy to do that (or maybe not interested
-anymore). I do not see any real reason to hold on this patch based on
-hand waving though. So either we have some good reasoning to argue
-against the patch or a good testing results or we should go ahead.
-As things stand right now, THP success rate went down after your last
-changes for _very simple_ workloads. This needs addressing which I hope
-we do agree on.
--- 
-Michal Hocko
-SUSE Labs
+RGVhciBGcmllbmQsDQpJIGFtIEJhcnJpc3RlciBBYnJhaGFtIE1vcnJpc29uLCBEaWQgeW91IHJl
+Y2VpdmUgbXkgcHJldmlvdXMgbWVzc2FnZQ0KdG8geW91PyBJIGhhdmUgYW4gaW1wb3J0YW50IGlu
+Zm9ybWF0aW9uIGZvciB5b3UgYWJvdXQgeW91ciBpbmhlcml0YW5jZQ0KZnVuZCB3b3J0aCBvZiAo
+JDIwLDUwMCwwMDAuMDApIE1pbGxpb24gd2hpY2ggd2FzIGxlZnQgZm9yIHlvdSBieSB5b3VyDQps
+YXRlIHJlbGF0aXZlLCBNci4gQ2FybG9zLiBTbyBpZiB5b3UgYXJlIGludGVyZXN0ZWQgZ2V0IGJh
+Y2sgdG8gbWUgZm9yDQptb3JlIGRldGFpbHMuDQpUaGFuayB5b3UuDQpCYXJyaXN0ZXIgQWJyYWhh
+bSBNb3JyaXNvbi4NCi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uDQrQlNC+0YDQvtCz0L7QuSDQtNGA0YPQsywNCtCvINCR0LDRgNGA0LjR
+gdGC0LXRgCDQkNCy0YDQsNCw0Lwg0JzQvtGA0YDQuNGB0L7QvSwg0JLRiyDQv9C+0LvRg9GH0LjQ
+u9C4INC80L7QtSDQv9GA0LXQtNGL0LTRg9GJ0LXQtSDRgdC+0L7QsdGJ0LXQvdC40LUg0LTQu9GP
+DQrQstCw0YE/INCjINC80LXQvdGPINC10YHRgtGMINC00LvRjyDQstCw0YEg0LLQsNC20L3QsNGP
+INC40L3RhNC+0YDQvNCw0YbQuNGPINC+INCy0LDRiNC10Lwg0L3QsNGB0LvQtdC00YHRgtCy0LXQ
+vdC90L7QvA0K0YTQvtC90LTQtSDQvdCwINGB0YPQvNC80YMgKDIwIDUwMCAwMDAsMDAg0LTQvtC7
+0LvQsNGA0L7QsiDQodCo0JApLCDQutC+0YLQvtGA0YvQuSDQvtGB0YLQsNCy0LjQuyDQstCw0Lwg
+0LLQsNGIDQrQv9C+0LrQvtC50L3Ri9C5INGA0L7QtNGB0YLQstC10L3QvdC40LosINC80LjRgdGC
+0LXRgCDQmtCw0YDQu9C+0YEuINCi0LDQuiDRh9GC0L4sINC10YHQu9C4INCy0Ysg0LfQsNC40L3R
+gtC10YDQtdGB0L7QstCw0L3RiywNCtGB0LLRj9C20LjRgtC10YHRjCDRgdC+INC80L3QvtC5INC0
+0LvRjyDQsdC+0LvQtdC1INC/0L7QtNGA0L7QsdC90L7QuSDQuNC90YTQvtGA0LzQsNGG0LjQuC4N
+CtCh0L/QsNGB0LjQsdC+Lg0K0JHQsNGA0YDQuNGB0YLQtdGAINCQ0LLRgNCw0LDQvCDQnNC+0YDR
+gNC40YHQvtC9Lg0K
