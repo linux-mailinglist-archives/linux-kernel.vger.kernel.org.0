@@ -2,67 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA3810868F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 03:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE056108696
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 03:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKYCpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 21:45:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726891AbfKYCpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 21:45:49 -0500
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 173AC20748
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 02:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574649949;
-        bh=rRksThIk3ANMx0k3KKiqT1coowGHHsm3yp6vHSO/yJY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OaV4TRIHyzlBynR9Odd2LazsvhxtgKgqcmg3sGJSaNVbTMVFUYZdIfZf2LTtX0Mx1
-         CAK/p4/4sM7e58ITMAq+Iw9KK01SDr0qXBw2dpKUj++9Shy1PzlbNtH5znT7CAUrFi
-         25mQVm+hZljRpj5y3LVO0lnt0qSa+RaztDefU2os=
-Received: by mail-lf1-f42.google.com with SMTP id 203so9694928lfa.12
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 18:45:49 -0800 (PST)
-X-Gm-Message-State: APjAAAXddb2MK4TmToTBuzz15goYiR7Qa6G4o8okVdjAg1m5aMGZ1HSH
-        rYl3mVuahQMo5xlz7I6p4v00Sn3wkajqAMJlEr0=
-X-Google-Smtp-Source: APXvYqzebOUmdYdPzb72IJa+IGOWUcBhHCWcr75z1vCyIu5oO1Yvgn7kdusnuRFHuVlapdjfV/P1A0LFVthYvYj8z2w=
-X-Received: by 2002:ac2:51b5:: with SMTP id f21mr18634983lfk.159.1574649947280;
- Sun, 24 Nov 2019 18:45:47 -0800 (PST)
+        id S1727072AbfKYCs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 21:48:57 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43552 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbfKYCs5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 21:48:57 -0500
+Received: by mail-io1-f66.google.com with SMTP id p12so7132349iog.10
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 18:48:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=JfC2mJ/tM0Gtil8eGoDF2rqsQ/Szyy5PK2H9MiBjWaY=;
+        b=BqbheMcM+/+8L5FUajWmcRC1Jt2EFb2gJwq13R2AdKWr4u92cpi/Qku/FU9A2Eu+bw
+         ynY6/cjU7Rtcg/TUulvsuyxfJbeMQqKE1Bx0d7bCGvwzC63FW/yS2hxaeTiWMC9Jp2uG
+         vRibYDUPgmnMbpZYvsxjswCE6r9A/t7AaQPMd6/EzO+s01YSFOmtqZTeGwp1lgVm3eze
+         y4DKreOlFHLvcUqPFKdhUhm4W51onBLMZZ1FAIwmxhjItpmYJcYkwxB7IFMbDBVSFV4x
+         Eq8vviYfv3npRjVahtOivSpmld1ch/YnzuGoNXuN7vLSX7IIiNcR7DRQrKJ8lN3coW9m
+         T7RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=JfC2mJ/tM0Gtil8eGoDF2rqsQ/Szyy5PK2H9MiBjWaY=;
+        b=YpRDFyJjyhV39EwHdmL8zC1UwQJQnVwqLz+3k2bk5V+A+k6Dg0jmIJDgFWo0v8Y4ip
+         HWM9WKLeMmuROa8mAoLEGZyXTOhBWOGlTzuH28R1qJCoy56OoRtJQu5LArc/cynS9l8B
+         w4n0x1tq/+DNyS+IZBJQqwa9hkWbGKOmjtcAT22m2dK8Wdrscjd+eANA/fIDTH8veybs
+         MCy1mopiBkOY3Su0ceLEZ8oU94a2oQYKNqon1f7aJA+mAWx7QuF8Hs+iAFJDpN1lP2Q8
+         BLP713PJHF35XUSnYARWnglPYQlAuaBK+VYF//mcgpWhpeG3qjoLGRkbamUOG8Mxw8+S
+         02ZQ==
+X-Gm-Message-State: APjAAAULeI/LWvkpD/DgnytKHMwiXXKKMnpAnEixwmLba3nIaDQiGM43
+        8t3R58XJJ379Booxh8Zm1RAoiA==
+X-Google-Smtp-Source: APXvYqxgFYzEUsZQS6ILtiWRgw3rG7t6lwifkA15Te4VPLhoWxbBdRnWhS7ZYmL1Y/h4E9NFkL+lqw==
+X-Received: by 2002:a02:aa0c:: with SMTP id r12mr26180623jam.75.1574650136249;
+        Sun, 24 Nov 2019 18:48:56 -0800 (PST)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id w2sm1790189ilg.51.2019.11.24.18.48.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2019 18:48:55 -0800 (PST)
+Date:   Sun, 24 Nov 2019 18:48:54 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Dan Williams <dan.j.williams@intel.com>
+cc:     Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, krste@berkeley.edu,
+        waterman@eecs.berkeley.edu,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH] Documentation: riscv: add patch acceptance guidelines
+In-Reply-To: <CAPcyv4iqTR8s0v8jH7haWCBQAzhZinUEsypiH7Ts9FCf+F9Bvg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.9999.1911241841210.22625@viisi.sifive.com>
+References: <alpine.DEB.2.21.9999.1911221842200.14532@viisi.sifive.com> <20191123092552.1438bc95@lwn.net> <alpine.DEB.2.21.9999.1911231523390.14532@viisi.sifive.com> <CAPcyv4hmagCVLCTYmmv0U8-YD5BEoQPV=wtm5hbp3MxqwZRQUA@mail.gmail.com>
+ <alpine.DEB.2.21.9999.1911231546450.14532@viisi.sifive.com> <CAPcyv4hBNfabaZmKs0XF+UT9Py8zJqpNdu5KsToqp305NASKNA@mail.gmail.com> <alpine.DEB.2.21.9999.1911231637510.14532@viisi.sifive.com>
+ <CAPcyv4iqTR8s0v8jH7haWCBQAzhZinUEsypiH7Ts9FCf+F9Bvg@mail.gmail.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-References: <1574306457-6251-1-git-send-email-krzk@kernel.org> <alpine.DEB.2.21.9999.1911221853330.14532@viisi.sifive.com>
-In-Reply-To: <alpine.DEB.2.21.9999.1911221853330.14532@viisi.sifive.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 25 Nov 2019 10:45:35 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPdHgXwt-E-DaKQdeD_jSkhYP5n2NWCZcSWr7Ny-cYxZKQ@mail.gmail.com>
-Message-ID: <CAJKOXPdHgXwt-E-DaKQdeD_jSkhYP5n2NWCZcSWr7Ny-cYxZKQ@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: Fix Kconfig indentation
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Nov 2019 at 10:54, Paul Walmsley <paul.walmsley@sifive.com> wrote:
->
-> On Thu, 21 Nov 2019, Krzysztof Kozlowski wrote:
->
-> > Adjust indentation from spaces to tab (+optional two spaces) as in
-> > coding style with command like:
-> >       $ sed -e 's/^        /\t/' -i */Kconfig
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Thanks, queued with Palmer's Reviewed-by: (which I believe would apply
-> equally to this version)
+On Sat, 23 Nov 2019, Dan Williams wrote:
 
-Thanks, I forgot to add it.
+> I'm open to updating the headers to make a section heading that
+> matches what you're trying to convey, however that header definition
+> should be globally agreed upon. I don't want the document that tries
+> to clarify per-subsystem behaviours itself to have per-subsystem
+> permutations. I think we, subsystem maintainers, at least need to be
+> able to agree on the topics we disagree on.
 
-Best regards,
-Krzysztof
+Unless you're planning to, say, follow up with some kind of automated 
+process working across all of the profile documents in such a way that it 
+would make technical sense for the different sections to be standardized, 
+I personally don't see any need at all for profile document 
+standardization.  As far as I can tell, these documents are meant for 
+humans, rather than computers, to read.  And in the absence of a strong 
+technical rationale to limit how maintainers express themselves here, I 
+don't think it's justified.
+
+
+- Paul
