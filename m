@@ -2,242 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92FAA108C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 11:53:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89ECB108C69
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbfKYKxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 05:53:32 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43164 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfKYKxc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 05:53:32 -0500
-Received: by mail-wr1-f67.google.com with SMTP id n1so17396050wra.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 02:53:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=OkytE82UAIdwtzd0xcYfMKdQtZ+YdM4GF6oUgahQDKo=;
-        b=my1UGmRxRmx0uNeVeQ7CrcRpk2E98unkN8UT4KfDyWJy4oWwE2aEg0fvd69lvduXYM
-         aJw2zJc5neYbJkhwa4vuJiOZ6fBMWL2pmwo+7ArvMf+wEmBjXYGZbZ2Y4MJw7Lrj98Lv
-         LlJOD9YOSY6/ReeoqxaZvWaUkRR/xAh875Tfe3INMw6jfKJNX5IGTJxHkqmoufupsGSx
-         mzPE2SCbygUz0mcWgVYAiWPtWVcBrZHe0Sp6KUXB58v/Om81akfJtPAczfsM3Js84d2b
-         dQwogE1pJ0L4HE9R0jXQ6hw9y5EgWvH4Pq3KcAvFPKRMtkCT+/fyQK8ubMVOKlRx2BJy
-         bzcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=OkytE82UAIdwtzd0xcYfMKdQtZ+YdM4GF6oUgahQDKo=;
-        b=c+BG0bRDGY/SzPtQy2V1URewKpo6rxYYVFZgU62ce3TvlCTZucYQMV1WK2LxblHXjB
-         S+VcWbHBK9++t5NtbV/L0h9/zwAU9Ib4qxz92ToCyequPKqVh/eSnlEf9LJ0Ujei69jm
-         +Q1B5Oy2IDfoqAgfOE+GNmw8EhhGxI70NOx8nBJKIG299xpR9/3UPnYBiCLrSh9cZx5X
-         /hAFJM63V1ZdR5Biivgb3xEeEyi/f+r2aJCTyQkM8iSHz+52VbZnC9Aq5QFR92OXfsgU
-         q6Cpl0KgZJBcR9RevdvR4Esap7FpM7M4GBhCn88Ys3Nt+h5n5YlbxvPAhzd3L0WapJ4b
-         9d+A==
-X-Gm-Message-State: APjAAAWJvrjIsmgAT5GasvvwhOIgR8B0rO4I4uyw/4+IXaiO6gkxj+h/
-        h6O/jvtCe3Vi3foAYJ7smJs=
-X-Google-Smtp-Source: APXvYqyKRbMRKZc5IeJ04imSv0UChi+6cQZCdYw5sIeewh1ipXwtD82sn7WqlhRpvVkO9XTeuaA2Rw==
-X-Received: by 2002:adf:f18c:: with SMTP id h12mr31284604wro.122.1574679209084;
-        Mon, 25 Nov 2019 02:53:29 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id k18sm10157738wrm.82.2019.11.25.02.53.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 02:53:28 -0800 (PST)
-Date:   Mon, 25 Nov 2019 11:53:26 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RCU changes for v5.5
-Message-ID: <20191125105326.GA20115@gmail.com>
+        id S1727569AbfKYLAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 06:00:08 -0500
+Received: from mail-eopbgr800085.outbound.protection.outlook.com ([40.107.80.85]:10193
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727278AbfKYLAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 06:00:08 -0500
+Received: from DM6PR02CA0065.namprd02.prod.outlook.com (2603:10b6:5:177::42)
+ by SN6PR02MB4670.namprd02.prod.outlook.com (2603:10b6:805:8f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.19; Mon, 25 Nov
+ 2019 11:00:05 +0000
+Received: from SN1NAM02FT034.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::204) by DM6PR02CA0065.outlook.office365.com
+ (2603:10b6:5:177::42) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17 via Frontend
+ Transport; Mon, 25 Nov 2019 11:00:05 +0000
+Authentication-Results: spf=softfail (sender IP is 149.199.60.83)
+ smtp.mailfrom=gmail.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=fail action=none header.from=gmail.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ gmail.com discourages use of 149.199.60.83 as permitted sender)
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT034.mail.protection.outlook.com (10.152.72.141) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
+ via Frontend Transport; Mon, 25 Nov 2019 11:00:04 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1iZC2E-00077C-OW; Mon, 25 Nov 2019 02:56:02 -0800
+Received: from [127.0.0.1] (helo=xsj-smtp-dlp1.xlnx.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1iZC29-0000fp-DV; Mon, 25 Nov 2019 02:55:57 -0800
+Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xAPAtu8s025518;
+        Mon, 25 Nov 2019 02:55:56 -0800
+Received: from [10.140.6.59] (helo=xhdshubhraj40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1iZC27-0000fS-Pj; Mon, 25 Nov 2019 02:55:56 -0800
+From:   shubhrajyoti.datta@gmail.com
+To:     linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+        corbet@lwn.net, gregkh@linuxfoundation.org, arnd@arndb.de,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH 1/3] dt-bindings: Add dt bindings for flex noc Performance Monitor
+Date:   Mon, 25 Nov 2019 16:25:50 +0530
+Message-Id: <1574679352-2989-1-git-send-email-shubhrajyoti.datta@gmail.com>
+X-Mailer: git-send-email 2.1.1
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-Result: No--4.118-7.0-31-1
+X-imss-scan-details: No--4.118-7.0-31-1;No--4.118-5.0-31-1
+X-TM-AS-User-Approved-Sender: No;No
+X-TM-AS-Result-Xfilter: Match text exemption rules:No
+X-EOPAttributedMessage: 0
+X-Matching-Connectors: 132191532049817285;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(189003)(199004)(2616005)(107886003)(8936002)(316002)(426003)(966005)(6916009)(9686003)(70586007)(86362001)(50466002)(82202003)(450100002)(70206006)(4326008)(48376002)(36756003)(6306002)(9786002)(51416003)(55446002)(498600001)(50226002)(2351001)(2361001)(305945005)(2906002)(6666004)(356004)(61266001)(26005)(16586007)(47776003)(5660300002)(76482006)(81166006)(73392003)(8676002)(81156014)(336012);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4670;H:xsj-pvapsmtpgw01;FPR:;SPF:SoftFail;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: bd56b19f-1c42-4e46-3c22-08d77196a094
+X-MS-TrafficTypeDiagnostic: SN6PR02MB4670:
+X-MS-Exchange-PUrlCount: 2
+X-Microsoft-Antispam-PRVS: <SN6PR02MB4670E75D91CB9915514074EC874A0@SN6PR02MB4670.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2089;
+X-Forefront-PRVS: 0232B30BBC
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?v0VmIqfjQ45mm+OPDOIuHwkXcGUWooiNiM+ncj9A7GYUVYcTlUWTqmokfuUs?=
+ =?us-ascii?Q?NHNs522PeTLKQfyRba7NXY7fsMhkNRVlybEOaPAcrCyCeMJwpAWlRqL7hkLG?=
+ =?us-ascii?Q?cETKZPpl6VeRiHpogKGKIA9ZghxZIqA1yx6GBhPZqv/mvsE/WtRl8VQOa67r?=
+ =?us-ascii?Q?SyXOojSai2s9v+eSEhT0hI8cQ2MP++yvH7Q0j2pj32iO5lYE9T53V8ImZKLy?=
+ =?us-ascii?Q?FKzjNMwKVIm/jQXwUZKEqdB0IAmPWLJb6N8Wpzunxpmu+kqgPRNxx6Obr2yW?=
+ =?us-ascii?Q?nJSywzNQ5tiuX6aU1VcLQBf8gnlh9NAh4246I048qvwwXPHTUprU4oxF+jEQ?=
+ =?us-ascii?Q?WAu5uZXaqBlhfRw0mOYYdTw4iEerOfD8aEnmuNTsZTFCn4BXctOgnonBdee0?=
+ =?us-ascii?Q?KmesuD3owmnuYpahIgnovXS6T3sHN2of+AEbh4LQxM4Pf5B4X6EWm7RORnLv?=
+ =?us-ascii?Q?TLb6x+K8dJjTyIm7TUptj5GJx+HCbUYRlooVQTqhf/cY+/RCbbVcME8wZvi1?=
+ =?us-ascii?Q?2dLshHxA+fHqI6oJh1w5CVRzlTNtKiNavo2Ja3zJ8R+RM2oLBW1g1C8Lw7Ui?=
+ =?us-ascii?Q?MdMaCWrhIQthXzswPIviSXScmGVEs65tjYGgh6T4aTNxV8tvI9aGPC0M472/?=
+ =?us-ascii?Q?EL7OBYWXCcsjNOF7xs4mzcnVsqeZnSjxAnkk6PyLYX3umIjdXGsuXGGt53L1?=
+ =?us-ascii?Q?e4mXrZ2ngrZyPfeex48p04uNsGvsoF7BkYHahJpEYl5QORLfzlj66RCQBvUm?=
+ =?us-ascii?Q?Ltr7ViTzildJSACM2W6JzLniWTwcl6kk7tN1kt0p8MP/2NvTxV80M0FhSyen?=
+ =?us-ascii?Q?opMoOKLQNZTTbgCwr3O4bfEk5lE7DSgn77cNQQL4iBsKT8uU9b/DgFEhM5hu?=
+ =?us-ascii?Q?TFmHR8SdDNheBgixFZVNbjTZlAQMQ+8kiAcT+OeHecCKXQ15/ZErMfW7PCes?=
+ =?us-ascii?Q?SG/XZvKNv1Zs+nmxxSurRDGvdPzHxCpqJN5nAC9BohnmNQbOCNIkx48dZb0W?=
+ =?us-ascii?Q?SIXAma3iwrr8ZqCELFUpw8wh3hUCOz3W71GnbTsOGp0wW4UqCaKAHkbo1pPp?=
+ =?us-ascii?Q?IVMpdnEIBFm0Ym5knCPVFuzK9bf35mjuKVxK9Sp85wcaPB4wW2KmHxxf/caE?=
+ =?us-ascii?Q?KT+Xx72d+COQnsgj55xlsxmR0Rbyv7nCcb7J8XjqIKOLvCxCNQGW4RKgoVMA?=
+ =?us-ascii?Q?kXXR1Bn4ZOJt9dPaYMHuN9CLxpDOqUcSUNC4qOeNxjLrPzrih/8Bvz4aFVwz?=
+ =?us-ascii?Q?UnpoVaaG4Bpfv7MR0Ma+RY9TtS4IaanBFzUSS7zvJYO5/AW4VOEIZbYgWJFS?=
+ =?us-ascii?Q?SWWjLbmSb//g72Hgrvr60veNwPo3i7HsfPhcggHB2hmR2B2rL9nRQ/Ye6P7a?=
+ =?us-ascii?Q?QqmqNzv3bnFbRTfzE/Ln/nwawaFzzaqFYeqq+OVzs6RUgkPmPm1N1N715ef1?=
+ =?us-ascii?Q?6jQ/oeqN+Q7T7GJDwUZYhtQgPNOiT4MvtpjntUIJwyFB3mMPsTw439Q/mr9E?=
+ =?us-ascii?Q?VcpWWTkT2wWWO6M25K5OjqFE/eKGPaJgY7JndoUnzmCZXDGF6BV/bTwO1MOT?=
+ =?us-ascii?Q?/gm8Nbg8KFg/ICcEj+E=3D?=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2019 11:00:04.8196
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd56b19f-1c42-4e46-3c22-08d77196a094
+X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4670
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-Please pull the latest core-rcu-for-linus git tree from:
+Add dt bindings for flexnoc Performance Monitor.
+The flexnoc counters for read and write response and requests are
+supported.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-rcu-for-linus
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+---
+changes from RFC:
+moved to schema / yaml
 
-   # HEAD: 43e0ae7ae0f567a3f8c10ec7a4078bc482660921 Merge branch 'for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu into core/rcu
+ .../devicetree/bindings/perf/xlnx-flexnoc-pm.yaml  | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
 
-The main changes in this cycle were:
+diff --git a/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml b/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
+new file mode 100644
+index 0000000..bd0f345
+--- /dev/null
++++ b/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/perf/xlnx-flexnoc-pm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xilinx flexnoc Performance Monitor device tree bindings
++
++maintainers:
++  - Arnd Bergmann <arnd@arndb.de>
++  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
++
++properties:
++  compatible:
++    # Versal SoC based boards
++    items:
++      - enum:
++          - xlnx,flexnoc-pm-2.7
++
++  reg:
++    items:
++      - description: funnel registers
++      - description: baselpd registers
++      - description: basefpd registers
++
++  reg-names:
++    # The core schema enforces this is a string array
++    items:
++      - const: funnel
++      - const: baselpd
++      - const: basefpd
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    performance-monitor@f0920000 {
++        compatible = "xlnx,flexnoc-pm-2.7";
++        reg-names = "funnel", "baselpd", "basefpd";
++        reg = <0x0 0xf0920000 0x0 0x1000>,
++              <0x0 0xf0980000 0x0 0x9000>,
++              <0x0 0xf0b80000 0x0 0x9000>;
++    };
+-- 
+2.1.1
 
-  - Dynamic tick (nohz) updates, perhaps most notably changes to
-    force the tick on when needed due to lengthy in-kernel execution
-    on CPUs on which RCU is waiting.
-    
-  - Linux-kernel memory consistency model updates.
-
-  - Replace rcu_swap_protected() with rcu_prepace_pointer().
-    
-  - Torture-test updates.
-   
-  - Documentation updates.
-    
-  - Miscellaneous fixes.
-
- Thanks,
-
-	Ingo
-
------------------->
-Alan Stern (4):
-      tools/memory-model: Fix data race detection for unordered store and load
-      tools/memory-model/Documentation: Fix typos in explanation.txt
-      tools/memory-model/Documentation: Put redefinition of rcu-fence into explanation.txt
-      tools/memory-model/Documentation: Add plain accesses and data races to explanation.txt
-
-Chuhong Yuan (1):
-      locktorture: Replace strncmp() with str_has_prefix()
-
-Dan Carpenter (1):
-      rcu: Fix uninitialized variable in nocb_gp_wait()
-
-Ethan Hansen (3):
-      rcu: Remove unused function rcutorture_record_progress()
-      rcu: Remove unused variable rcu_perf_writer_state
-      rcu: Remove unused function hlist_bl_del_init_rcu()
-
-Frederic Weisbecker (1):
-      nohz: Add TICK_DEP_BIT_RCU
-
-Joel Fernandes (Google) (10):
-      rcu: Reset CPU hints when reporting a quiescent state
-      Revert docs from "rcu: Restore barrier() to rcu_read_lock() and rcu_read_unlock()"
-      Revert docs from "treewide: Rename rcu_dereference_raw_notrace() to _check()"
-      docs: rcu: Correct links referring to titles
-      docs: rcu: Increase toctree to 3
-      Restore docs "treewide: Rename rcu_dereference_raw_notrace() to _check()"
-      Restore docs "rcu: Restore barrier() to rcu_read_lock() and rcu_read_unlock()"
-      doc: Update list_for_each_entry_rcu() documentation
-      workqueue: Convert for_each_wq to use built-in list check
-      rcu: Ensure that ->rcu_urgent_qs is set before resched IPI
-
-Mauro Carvalho Chehab (1):
-      docs: rcu: convert some articles from html to ReST
-
-Paul E. McKenney (27):
-      time: Export tick start/stop functions for rcutorture
-      rcu: Force on tick when invoking lots of callbacks
-      rcutorture: Force on tick for readers and callback flooders
-      stop_machine: Provide RCU quiescent state in multi_cpu_stop()
-      rcu: Make CPU-hotplug removal operations enable tick
-      rcutorture: Emulate dyntick aspect of userspace nohz_full sojourn
-      rcutorture: Remove CONFIG_HOTPLUG_CPU=n from scenarios
-      rcutorture: Separate warnings for each failure type
-      rcutorture: Make in-kernel-loop testing more brutal
-      rcu: Force tick on for nohz_full CPUs not reaching quiescent states
-      rcu: Force nohz_full tick on upon irq enter instead of exit
-      rcu: Confine ->core_needs_qs accesses to the corresponding CPU
-      rcu: Make kernel-mode nohz_full CPUs invoke the RCU core processing
-      rcu: Remove obsolete descriptions for rcu_barrier tracepoint
-      rcu: Update descriptions for rcu_nocb_wake tracepoint
-      rcu: Update descriptions for rcu_future_grace_period tracepoint
-      rcu: Suppress levelspread uninitialized messages
-      rcu: Upgrade rcu_swap_protected() to rcu_replace_pointer()
-      x86/kvm/pmu: Replace rcu_swap_protected() with rcu_replace_pointer()
-      drm/i915: Replace rcu_swap_protected() with rcu_replace_pointer()
-      drivers/scsi: Replace rcu_swap_protected() with rcu_replace_pointer()
-      fs/afs: Replace rcu_swap_protected() with rcu_replace_pointer()
-      bpf/cgroup: Replace rcu_swap_protected() with rcu_replace_pointer()
-      net/core: Replace rcu_swap_protected() with rcu_replace_pointer()
-      net/netfilter: Replace rcu_swap_protected() with rcu_replace_pointer()
-      net/sched: Replace rcu_swap_protected() with rcu_replace_pointer()
-      security/safesetid: Replace rcu_swap_protected() with rcu_replace_pointer()
-
-Sebastian Andrzej Siewior (1):
-      Documentation: Rename rcu_node_context_switch() to rcu_note_context_switch()
-
-Wolfgang M. Reimer (1):
-      locking: locktorture: Do not include rwlock.h directly
-
-kbuild test robot (1):
-      rcu: Several rcu_segcblist functions can be static
-
-
- .../Design/Data-Structures/Data-Structures.html    | 1391 --------
- .../RCU/Design/Data-Structures/Data-Structures.rst | 1163 +++++++
- .../Expedited-Grace-Periods.html                   |  668 ----
- .../Expedited-Grace-Periods.rst                    |  521 +++
- .../Design/Memory-Ordering/Tree-RCU-Diagram.html   |    9 -
- .../Memory-Ordering/Tree-RCU-Memory-Ordering.html  |  704 ----
- .../Memory-Ordering/Tree-RCU-Memory-Ordering.rst   |  624 ++++
- .../RCU/Design/Memory-Ordering/TreeRCU-gp.svg      |    2 +-
- .../RCU/Design/Memory-Ordering/TreeRCU-qs.svg      |    2 +-
- .../RCU/Design/Requirements/Requirements.html      | 3401 --------------------
- .../RCU/Design/Requirements/Requirements.rst       | 2704 ++++++++++++++++
- Documentation/RCU/index.rst                        |    7 +-
- Documentation/RCU/lockdep.txt                      |   18 +-
- Documentation/RCU/whatisRCU.txt                    |   14 +-
- arch/x86/kvm/pmu.c                                 |    4 +-
- drivers/gpu/drm/i915/gem/i915_gem_context.c        |    2 +-
- drivers/scsi/scsi.c                                |    4 +-
- drivers/scsi/scsi_sysfs.c                          |    8 +-
- fs/afs/vl_list.c                                   |    4 +-
- include/linux/rculist_bl.h                         |   28 -
- include/linux/rcupdate.h                           |   18 +
- include/linux/rcutiny.h                            |    1 +
- include/linux/rcutree.h                            |    1 +
- include/linux/tick.h                               |    7 +-
- include/trace/events/rcu.h                         |   47 +-
- include/trace/events/timer.h                       |    3 +-
- kernel/bpf/cgroup.c                                |    4 +-
- kernel/locking/locktorture.c                       |    9 +-
- kernel/rcu/rcu.h                                   |    4 +-
- kernel/rcu/rcu_segcblist.c                         |    6 +-
- kernel/rcu/rcuperf.c                               |   16 -
- kernel/rcu/rcutorture.c                            |   44 +-
- kernel/rcu/tree.c                                  |   73 +-
- kernel/rcu/tree.h                                  |    1 +
- kernel/rcu/tree_plugin.h                           |    2 +-
- kernel/stop_machine.c                              |    1 +
- kernel/time/tick-sched.c                           |   11 +
- kernel/workqueue.c                                 |   10 +-
- net/core/dev.c                                     |    4 +-
- net/core/sock_reuseport.c                          |    4 +-
- net/netfilter/nf_tables_api.c                      |    5 +-
- net/sched/act_api.c                                |    2 +-
- net/sched/act_csum.c                               |    4 +-
- net/sched/act_ct.c                                 |    3 +-
- net/sched/act_ctinfo.c                             |    4 +-
- net/sched/act_ife.c                                |    2 +-
- net/sched/act_mirred.c                             |    4 +-
- net/sched/act_mpls.c                               |    2 +-
- net/sched/act_police.c                             |    6 +-
- net/sched/act_sample.c                             |    4 +-
- net/sched/act_skbedit.c                            |    4 +-
- net/sched/act_tunnel_key.c                         |    4 +-
- net/sched/act_vlan.c                               |    2 +-
- security/safesetid/securityfs.c                    |    4 +-
- tools/memory-model/Documentation/explanation.txt   |  602 +++-
- tools/memory-model/linux-kernel.cat                |    2 +-
- .../selftests/rcutorture/configs/rcu/TASKS03       |    3 -
- .../selftests/rcutorture/configs/rcu/TREE02        |    3 -
- .../selftests/rcutorture/configs/rcu/TREE04        |    3 -
- .../selftests/rcutorture/configs/rcu/TREE06        |    3 -
- .../selftests/rcutorture/configs/rcu/TREE08        |    3 -
- .../selftests/rcutorture/configs/rcu/TREE09        |    3 -
- .../selftests/rcutorture/configs/rcu/TRIVIAL       |    3 -
- .../selftests/rcutorture/doc/TREE_RCU-kconfig.txt  |    1 -
- 64 files changed, 5830 insertions(+), 6390 deletions(-)
- delete mode 100644 Documentation/RCU/Design/Data-Structures/Data-Structures.html
- create mode 100644 Documentation/RCU/Design/Data-Structures/Data-Structures.rst
- delete mode 100644 Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
- create mode 100644 Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.rst
- delete mode 100644 Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Diagram.html
- delete mode 100644 Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
- create mode 100644 Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
- delete mode 100644 Documentation/RCU/Design/Requirements/Requirements.html
- create mode 100644 Documentation/RCU/Design/Requirements/Requirements.rst
