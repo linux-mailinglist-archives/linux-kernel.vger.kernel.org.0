@@ -2,143 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35EBD109088
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD1810908E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:59:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfKYO6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 09:58:42 -0500
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:35862 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728078AbfKYO6m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 09:58:42 -0500
-Received: by mail-wr1-f46.google.com with SMTP id z3so18428218wru.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 06:58:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=unipv-it.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=T38u6s14lrIokjD1pfLNotz8RAAutgMlPAmccZz9BPU=;
-        b=cmrRsyyCllSniFrjyjMRP2Yq+xb/s78lts1IDyaIr80zUiVHhSDsEGvLidHhGIrZ6R
-         ZwO3YdZ05CMmvY0kXGTB6Kuyjx7eFQMwmguM9fB8cI/Ma8S8LOrygGjGOJKOtL50dEo1
-         OMCeKeQSxg8uvDKFgQnV3Z/6nUxTFCm3Mtyc744LDIp0Z2vY0h+WPJLvh2q/p+ZKhRMm
-         kxcvSANreT5Olgl4GLV/6pFgznBPeGBMYZO665xL0C5V1K48/iczFWAabN9J8gCwqUfd
-         dHcVHLF3fxRtgVvUaqIBDQdFgukSkp/wjtV43zd0UNKf0E4n9+O2udD7R55snM40piVb
-         c3Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=T38u6s14lrIokjD1pfLNotz8RAAutgMlPAmccZz9BPU=;
-        b=TcZmDeMs7LaRnD2PRJ3BAqLuTh6JJ6mQIPhkK3vUDJkhOLDhCKaw/GI96ORz05Aeja
-         2oB4Kgi3YL7RCsQVPHj+qSoW3bSAxa/qM9fNjzp2g+vw/picfyUs1kXRH74lW+Z+ZVbn
-         EMmVDlY+V6UgZcBWUjvW7UGVMFCfdJLGpngO9LetwoCCZr+6tr5ooKKhpfLx94OUaAF8
-         h283t0yNfw6kwpebEN0XjRKauPdPG256ku+5+MnSl+3jQRY0eOLjJHqrTSZoPPNagk+V
-         YqQZT7f2sOI73jQedrMxq+wwfNtFtrntp1hYfRcNYq/ouq7fk0R8GG8fl4CoIMeLp6Oh
-         mPuw==
-X-Gm-Message-State: APjAAAX/WKpAiQKRYWFRigYts+YymE5CoT7bWeI+5etG0qVS6SU3cEmb
-        79xKsQoh11oP6hw//iGRAKiWxQ==
-X-Google-Smtp-Source: APXvYqwUlTUX50T3KRUQgx3L5evsrTDO/ep5jdtg2X5g0zuWja7jHszHn6fHn5H80Bj3MXxmxcrwTw==
-X-Received: by 2002:a5d:640d:: with SMTP id z13mr13656971wru.181.1574693920561;
-        Mon, 25 Nov 2019 06:58:40 -0800 (PST)
-Received: from angus.unipv.it (angus.unipv.it. [193.206.67.163])
-        by smtp.gmail.com with ESMTPSA id x8sm10676344wrm.7.2019.11.25.06.58.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 06:58:39 -0800 (PST)
-Message-ID: <e5093535c60fd5dff8f92b76dcd52a1030938f62.camel@unipv.it>
-Subject: Re: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-From:   Andrea Vai <andrea.vai@unipv.it>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Date:   Mon, 25 Nov 2019 15:58:34 +0100
-In-Reply-To: <20191125102928.GA20489@ming.t460p>
-References: <BYAPR04MB5816640CEF40CB52430BBD3AE7790@BYAPR04MB5816.namprd04.prod.outlook.com>
-         <b22c1dd95e6a262cf2667bee3913b412c1436746.camel@unipv.it>
-         <BYAPR04MB58167B95AF6B7CDB39D24C52E7780@BYAPR04MB5816.namprd04.prod.outlook.com>
-         <CAOsYWL3NkDw6iK3q81=5L-02w=VgPF_+tYvfgnTihgCcwKgA+g@mail.gmail.com>
-         <20191109222828.GA30568@ming.t460p>
-         <fa3b0cf1f88e42e1200101bccbc797e4e7778d58.camel@unipv.it>
-         <20191123072726.GC25356@ming.t460p>
-         <a9ffcca93657cbbb56819fd883c474a702423b41.camel@unipv.it>
-         <20191125035437.GA3806@ming.t460p>
-         <bf47a6c620b847fa9e27f8542eb761529f3e0381.camel@unipv.it>
-         <20191125102928.GA20489@ming.t460p>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728430AbfKYO7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 09:59:01 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6709 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728196AbfKYO7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:59:01 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id F06DE5FD51FD902D2374;
+        Mon, 25 Nov 2019 22:58:56 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 25 Nov 2019
+ 22:58:50 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <evan.quan@amd.com>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <Prike.Liang@amd.com>,
+        <yuehaibing@huawei.com>, <chenwandun@huawei.com>,
+        <yukuai3@huawei.com>
+CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] drm/amd/powerplay: remove set but not used variable 'stretch_amount2'
+Date:   Mon, 25 Nov 2019 22:58:43 +0800
+Message-ID: <20191125145843.15764-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il giorno lun, 25/11/2019 alle 18.29 +0800, Ming Lei ha scritto:
-> On Mon, Nov 25, 2019 at 11:11:00AM +0100, Andrea Vai wrote:
-> > Il giorno lun, 25/11/2019 alle 11.54 +0800, Ming Lei ha scritto:
-> > > On Sat, Nov 23, 2019 at 04:44:55PM +0100, Andrea Vai wrote:
-> > > > Il giorno sab, 23/11/2019 alle 15.28 +0800, Ming Lei ha
-> scritto:
-> > > > > 
-> > > > > Please post the log of 'lsusb -v', and I will try to make a
-> > > patch
-> > > > > for
-> > > > > addressing the issue.
-> > > > 
-> > > > attached,
-> > > 
-> > > Please apply the attached patch, and re-build & install & reboot
-> > > kernel.
-> > > 
-> > > This time, please don't switch io scheduler.
-> > 
-> > # patch -p1 < usb.patch outputs:
-> > 
-> > (Stripping trailing CRs from patch; use --binary to disable.)
-> > patching file block/blk-mq.c
-> > Hunk #1 succeeded at 1465 (offset 29 lines).
-> > Hunk #2 succeeded at 3061 (offset 13 lines).
-> > (Stripping trailing CRs from patch; use --binary to disable.)
-> > patching file drivers/scsi/scsi_lib.c
-> > Hunk #1 succeeded at 1902 (offset -37 lines).
-> > (Stripping trailing CRs from patch; use --binary to disable.)
-> > patching file drivers/usb/storage/scsiglue.c
-> > Hunk #1 succeeded at 651 (offset -10 lines).
-> > (Stripping trailing CRs from patch; use --binary to disable.)
-> > patching file include/linux/blk-mq.h
-> > Hunk #1 succeeded at 226 (offset -162 lines).
-> > (Stripping trailing CRs from patch; use --binary to disable.)
-> > patching file include/scsi/scsi_host.h
-> > patch unexpectedly ends in middle of line
-> > patch unexpectedly ends in middle of line
-> > 
-> > Just to be sure I have to go on, is this correct? Sounds like an
-> error
-> > but I don't know if it is important.
-> 
-> Looks there is small conflict, however it has been fixed by patch,
-> so
-> it is correct, please go on your test.
+drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/vegam_smumgr.c:
+ In function vegam_populate_clock_stretcher_data_table:
+drivers/gpu/drm/amd/amdgpu/../powerplay/smumgr/vegam_smumgr.c:1489:29:
+ warning: variable stretch_amount2 set but not used [-Wunused-but-set-variable]
 
-Done, it still fails (2000 seconds or more to copy 1GB) :-(
+It is never used, so can be removed.
 
-cat /sys/block/sdf/queue/scheduler outputs:
-[mq-deadline] none
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-What to try next?
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+index 50896e9..b0e0d67 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+@@ -1486,7 +1486,7 @@ static int vegam_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
+ 	struct vegam_smumgr *smu_data =
+ 			(struct vegam_smumgr *)(hwmgr->smu_backend);
+ 
+-	uint8_t i, stretch_amount, stretch_amount2, volt_offset = 0;
++	uint8_t i, stretch_amount, volt_offset = 0;
+ 	struct phm_ppt_v1_information *table_info =
+ 			(struct phm_ppt_v1_information *)(hwmgr->pptable);
+ 	struct phm_ppt_v1_clock_voltage_dependency_table *sclk_table =
+@@ -1525,11 +1525,9 @@ static int vegam_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
+ 			(table_info->cac_dtp_table->ucCKS_LDO_REFSEL != 0) ?
+ 			table_info->cac_dtp_table->ucCKS_LDO_REFSEL : 5;
+ 	/* Populate CKS Lookup Table */
+-	if (stretch_amount == 1 || stretch_amount == 2 || stretch_amount == 5)
+-		stretch_amount2 = 0;
+-	else if (stretch_amount == 3 || stretch_amount == 4)
+-		stretch_amount2 = 1;
+-	else {
++	if (!(stretch_amount == 1 || stretch_amount == 2 ||
++	      stretch_amount == 5 || stretch_amount == 3 ||
++	      stretch_amount == 4)) {
+ 		phm_cap_unset(hwmgr->platform_descriptor.platformCaps,
+ 				PHM_PlatformCaps_ClockStretcher);
+ 		PP_ASSERT_WITH_CODE(false,
+-- 
+2.7.4
 
-Thanks,
-Andrea
 
