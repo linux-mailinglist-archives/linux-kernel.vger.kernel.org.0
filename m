@@ -2,201 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54261108DA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:13:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A0A108DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfKYMNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 07:13:02 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10808 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725862AbfKYMNB (ORCPT
+        id S1727471AbfKYMOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 07:14:09 -0500
+Received: from a27-21.smtp-out.us-west-2.amazonses.com ([54.240.27.21]:53010
+        "EHLO a27-21.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725868AbfKYMOI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 07:13:01 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAPC70Pg009034;
-        Mon, 25 Nov 2019 13:12:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=sWG896Au3NOdFn4sqwKmFJD5XhVt5rs6AeaV5Mi4ANQ=;
- b=uzqYsfKcxiIa/sNurkG81LI/OQUQra6RKJCN6+a/SkAVDkF7NfDDeCpWcR8AOmts3ER9
- rZQ+dZPU5WQeOesidV/nzQQrMuZcSnmHsvZoBdzthX8sm2nKyyW5ymXtTyZHrXMZEaBm
- CZ1Me0/6r+spIPx+fGzIDIsMnqbnxSDU724p6XMuMNQubftwUFyOjLQ4Nvovb3cWCchN
- acgcPlQcQuulz0obIBqv6Wy8jChVW4UG9X6qY3AD8EeXrYQg4mCzNbDmqjUZCU56++Jk
- vhUp5pgXQD+sbeF6JVNl4D4NiAE+61huD9c2ElW8ns+DhebiI8wRuuaH4M1boTFca6oc hA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2wets9h0r3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Nov 2019 13:12:48 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CC984100034;
-        Mon, 25 Nov 2019 13:12:47 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BED6F2BE238;
-        Mon, 25 Nov 2019 13:12:47 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Nov 2019 13:12:47
- +0100
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <alexandre.torgue@st.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH] ARM: dts: stm32: remove "@" from stm32f4 pinmux groups
-Date:   Mon, 25 Nov 2019 13:12:44 +0100
-Message-ID: <20191125121244.19591-2-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20191125121244.19591-1-benjamin.gaignard@st.com>
-References: <20191125121244.19591-1-benjamin.gaignard@st.com>
+        Mon, 25 Nov 2019 07:14:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574684048;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date;
+        bh=OGZ2n8F7a9gKBAe87Xm3/4zY0uhWgsuXNCXAZXK+jtE=;
+        b=Nbubh/YLWhd/bH8vKeZ24qTE+Dk06qTDMPfP9vDAHNDwTXCM90IVv2oer+qx6Ofg
+        dPmV37evbR65ltzZMR9YbjF5gnYkuuR/RwpmYQWDDy4PDJjIX1FywXI7H+C9YMI0bMu
+        v6W1jnSjFHV1w5Ax6UnY6q8X84zlosb8xiiQ/lZU=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574684048;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date:Feedback-ID;
+        bh=OGZ2n8F7a9gKBAe87Xm3/4zY0uhWgsuXNCXAZXK+jtE=;
+        b=abeOGg/THu4btBCztsusmbZ5AMFxOdm+25+dAH7rLlb5lHWTpeM94CnH3JOKigx9
+        RZ8TThos2bDaoZDmFhD39hsf3c9QrHqU/ZJB1IQcxEh/tGk8HOdWKvw0nITSiIbTPWw
+        D/I6wAHH9Oge/wtzNCqTwrtq0qeLNKEXTVHJr+Pc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 147E2C447A0
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-25_03:2019-11-21,2019-11-25 signatures=0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] ath10k: fix RX of frames with broken FCS in
+ monitor mode
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191115105612.8531-1-linus.luessing@c0d3.blue>
+References: <20191115105612.8531-1-linus.luessing@c0d3.blue>
+To:     =?utf-8?q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
+Cc:     ath10k@lists.infradead.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Ben Greear <greearb@candelatech.com>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?q?Linus_L?==?utf-8?q?=C3=BCssing?= <ll@simonwunderlich.de>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-ID: <0101016ea27bbaac-2f573abe-d791-4ad8-b809-1ce481d4dbb8-000000@us-west-2.amazonses.com>
+Date:   Mon, 25 Nov 2019 12:14:08 +0000
+X-SES-Outgoing: 2019.11.25-54.240.27.21
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace all "@" by "_" in pinmux groups for stm32f4 family.
-This avoid errors when using yaml to check the bindings.
+Linus Lüssing wrote:
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/boot/dts/stm32f4-pinctrl.dtsi | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+> So far, frames were forwarded regardless of the FCS correctness leading
+> to userspace applications listening on the monitor mode interface to
+> receive potentially broken frames, even with the "fcsfail" flag unset.
+> 
+> By default, with the "fcsfail" flag of a monitor mode interface
+> unset, frames with FCS errors should be dropped. With this patch, the
+> fcsfail flag is taken into account correctly.
+> 
+> Tested-on: QCA4019 firmware-5-ct-full-community-12.bin-lede.011
+> 
+> Cc: Simon Wunderlich <sw@simonwunderlich.de>
+> Signed-off-by: Linus Lüssing <ll@simonwunderlich.de>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-index 35202896c093..722598cdf3b7 100644
---- a/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32f4-pinctrl.dtsi
-@@ -163,7 +163,7 @@
- 				st,bank-name = "GPIOK";
- 			};
- 
--			usart1_pins_a: usart1@0 {
-+			usart1_pins_a: usart1_0 {
- 				pins1 {
- 					pinmux = <STM32_PINMUX('A', 9, AF7)>; /* USART1_TX */
- 					bias-disable;
-@@ -176,7 +176,7 @@
- 				};
- 			};
- 
--			usart3_pins_a: usart3@0 {
-+			usart3_pins_a: usart3_0 {
- 				pins1 {
- 					pinmux = <STM32_PINMUX('B', 10, AF7)>; /* USART3_TX */
- 					bias-disable;
-@@ -189,7 +189,7 @@
- 				};
- 			};
- 
--			usbotg_fs_pins_a: usbotg_fs@0 {
-+			usbotg_fs_pins_a: usbotg_fs_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('A', 10, AF10)>, /* OTG_FS_ID */
- 						 <STM32_PINMUX('A', 11, AF10)>, /* OTG_FS_DM */
-@@ -200,7 +200,7 @@
- 				};
- 			};
- 
--			usbotg_fs_pins_b: usbotg_fs@1 {
-+			usbotg_fs_pins_b: usbotg_fs_1 {
- 				pins {
- 					pinmux = <STM32_PINMUX('B', 12, AF12)>, /* OTG_HS_ID */
- 						 <STM32_PINMUX('B', 14, AF12)>, /* OTG_HS_DM */
-@@ -211,7 +211,7 @@
- 				};
- 			};
- 
--			usbotg_hs_pins_a: usbotg_hs@0 {
-+			usbotg_hs_pins_a: usbotg_hs_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('H', 4, AF10)>, /* OTG_HS_ULPI_NXT*/
- 						 <STM32_PINMUX('I', 11, AF10)>, /* OTG_HS_ULPI_DIR */
-@@ -231,7 +231,7 @@
- 				};
- 			};
- 
--			ethernet_mii: mii@0 {
-+			ethernet_mii: mii_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('G', 13, AF11)>, /* ETH_MII_TXD0_ETH_RMII_TXD0 */
- 						 <STM32_PINMUX('G', 14, AF11)>, /* ETH_MII_TXD1_ETH_RMII_TXD1 */
-@@ -251,13 +251,13 @@
- 				};
- 			};
- 
--			adc3_in8_pin: adc@200 {
-+			adc3_in8_pin: adc_200 {
- 				pins {
- 					pinmux = <STM32_PINMUX('F', 10, ANALOG)>;
- 				};
- 			};
- 
--			pwm1_pins: pwm@1 {
-+			pwm1_pins: pwm_1 {
- 				pins {
- 					pinmux = <STM32_PINMUX('A', 8, AF1)>, /* TIM1_CH1 */
- 						 <STM32_PINMUX('B', 13, AF1)>, /* TIM1_CH1N */
-@@ -265,14 +265,14 @@
- 				};
- 			};
- 
--			pwm3_pins: pwm@3 {
-+			pwm3_pins: pwm_3 {
- 				pins {
- 					pinmux = <STM32_PINMUX('B', 4, AF2)>, /* TIM3_CH1 */
- 						 <STM32_PINMUX('B', 5, AF2)>; /* TIM3_CH2 */
- 				};
- 			};
- 
--			i2c1_pins: i2c1@0 {
-+			i2c1_pins: i2c1_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('B', 9, AF4)>, /* I2C1_SDA */
- 						 <STM32_PINMUX('B', 6, AF4)>; /* I2C1_SCL */
-@@ -282,7 +282,7 @@
- 				};
- 			};
- 
--			ltdc_pins: ltdc@0 {
-+			ltdc_pins: ltdc_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('I', 12, AF14)>, /* LCD_HSYNC */
- 						 <STM32_PINMUX('I', 13, AF14)>, /* LCD_VSYNC */
-@@ -316,7 +316,7 @@
- 				};
- 			};
- 
--			dcmi_pins: dcmi@0 {
-+			dcmi_pins: dcmi_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('A', 4, AF13)>, /* DCMI_HSYNC */
- 						 <STM32_PINMUX('B', 7, AF13)>, /* DCMI_VSYNC */
-@@ -339,7 +339,7 @@
- 				};
- 			};
- 
--			sdio_pins: sdio_pins@0 {
-+			sdio_pins: sdio_pins_0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
- 						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
-@@ -352,7 +352,7 @@
- 				};
- 			};
- 
--			sdio_pins_od: sdio_pins_od@0 {
-+			sdio_pins_od: sdio_pins_od_0 {
- 				pins1 {
- 					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
- 						 <STM32_PINMUX('C', 9, AF12)>, /* SDIO_D1 */
+Patch applied to ath-next branch of ath.git, thanks.
+
+ea0c3e2a4702 ath10k: fix RX of frames with broken FCS in monitor mode
+
 -- 
-2.15.0
+https://patchwork.kernel.org/patch/11246045/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
