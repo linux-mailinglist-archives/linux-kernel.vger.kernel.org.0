@@ -2,177 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FCE11089E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 09:19:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F011089F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 09:20:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfKYITc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 03:19:32 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:38705 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbfKYIT1 (ORCPT
+        id S1727319AbfKYIUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 03:20:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32170 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725763AbfKYIUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 03:19:27 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZ9aV-0001Sg-Pl; Mon, 25 Nov 2019 09:19:15 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 689411C1AF2;
-        Mon, 25 Nov 2019 09:19:12 +0100 (CET)
-Date:   Mon, 25 Nov 2019 08:19:12 -0000
-From:   "tip-bot2 for Will Deacon" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/refcount: Ensure integer operands are
- treated as signed
-Cc:     Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191121115902.2551-3-will@kernel.org>
-References: <20191121115902.2551-3-will@kernel.org>
+        Mon, 25 Nov 2019 03:20:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574670002;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VVpZi8JXk+Gn2x1ju+aRnIKTgySiGqpiCe8/VQiJ+ck=;
+        b=g+RR4A4MyQjGtFvJx+fWUiAZSrZfgacwiqVo53ClRdPlP9CgkjPolr7RaA8UAxQQiJ0B9X
+        bVFC/lOiaN8qihIjU1rGb8E96K455DtCL1y96k3Tsyc4yCZROJgaDmPXhXkX9qNQJuHnWG
+        WOci340roOR4uj2qB0WHGS9IfkeLFDY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-354-IIzbJ_fvOUGlXrfXA5iL8g-1; Mon, 25 Nov 2019 03:20:00 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C663110CE780;
+        Mon, 25 Nov 2019 08:19:58 +0000 (UTC)
+Received: from [10.72.12.44] (ovpn-12-44.pek2.redhat.com [10.72.12.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EF04608B0;
+        Mon, 25 Nov 2019 08:19:47 +0000 (UTC)
+Subject: Re: [RFC V4 2/2] This commit introduced IFC operations for vdpa
+To:     Zhu Lingshan <lingshan.zhu@intel.com>, mst@redhat.com,
+        alex.williamson@redhat.com
+Cc:     linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, tiwei.bie@intel.com, jason.zeng@intel.com,
+        zhiyuan.lv@intel.com
+References: <1574241431-24792-1-git-send-email-lingshan.zhu@intel.com>
+ <1574241431-24792-3-git-send-email-lingshan.zhu@intel.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <f4cd7ba4-953e-872a-42bd-aa1303c18458@redhat.com>
+Date:   Mon, 25 Nov 2019 16:19:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Message-ID: <157466995234.21853.622267729095000985.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <1574241431-24792-3-git-send-email-lingshan.zhu@intel.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: IIzbJ_fvOUGlXrfXA5iL8g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     97a1420adf0cdf0cf6f41bab0b2acf658c96b94b
-Gitweb:        https://git.kernel.org/tip/97a1420adf0cdf0cf6f41bab0b2acf658c96b94b
-Author:        Will Deacon <will@kernel.org>
-AuthorDate:    Thu, 21 Nov 2019 11:58:54 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 25 Nov 2019 09:14:57 +01:00
+On 2019/11/20 =E4=B8=8B=E5=8D=885:17, Zhu Lingshan wrote:
+> +
+> +=09if (!strcmp(kobj->name, "ifcvf-virtio_mdev"))
+> +=09=09mdev_virtio_set_class_id(mdev,MDEV_VIRTIO_CLASS_ID_VIRTIO);
+> +
+> +=09if (!strcmp(kobj->name, "ifcvf-vhost_mdev"))
+> +=09=09mdev_virtio_set_class_id(mdev,MDEV_VIRTIO_CLASS_ID_VHOST);
+> +
+> +=09mdev_set_drvdata(mdev, adapter);
+> +=09mdev_set_iommu_device(mdev_dev(mdev), dev);
+> +=09adapter->mdev_count--;
+> +
 
-locking/refcount: Ensure integer operands are treated as signed
 
-In preparation for changing the saturation point of REFCOUNT_FULL to
-INT_MIN/2, change the type of integer operands passed into the API
-from 'unsigned int' to 'int' so that we can avoid casting during
-comparisons when we don't want to fall foul of C integral conversion
-rules for signed and unsigned types.
+To avoid confusion, it's better to call mdev_set_iommu_device() only for=20
+the case of vhost. For virtio, it doesn't depends on that to work.
 
-Since the kernel is compiled with '-fno-strict-overflow', we don't need
-to worry about the UB introduced by signed overflow here. Furthermore,
-we're already making heavy use of the atomic_t API, which operates
-exclusively on signed types.
+Thanks
 
-Signed-off-by: Will Deacon <will@kernel.org>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Tested-by: Hanjun Guo <guohanjun@huawei.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20191121115902.2551-3-will@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/refcount.h | 14 +++++++-------
- lib/refcount.c           |  6 +++---
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/refcount.h b/include/linux/refcount.h
-index 79f62e8..89066a1 100644
---- a/include/linux/refcount.h
-+++ b/include/linux/refcount.h
-@@ -28,7 +28,7 @@ typedef struct refcount_struct {
-  * @r: the refcount
-  * @n: value to which the refcount will be set
-  */
--static inline void refcount_set(refcount_t *r, unsigned int n)
-+static inline void refcount_set(refcount_t *r, int n)
- {
- 	atomic_set(&r->refs, n);
- }
-@@ -44,13 +44,13 @@ static inline unsigned int refcount_read(const refcount_t *r)
- 	return atomic_read(&r->refs);
- }
- 
--extern __must_check bool refcount_add_not_zero_checked(unsigned int i, refcount_t *r);
--extern void refcount_add_checked(unsigned int i, refcount_t *r);
-+extern __must_check bool refcount_add_not_zero_checked(int i, refcount_t *r);
-+extern void refcount_add_checked(int i, refcount_t *r);
- 
- extern __must_check bool refcount_inc_not_zero_checked(refcount_t *r);
- extern void refcount_inc_checked(refcount_t *r);
- 
--extern __must_check bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r);
-+extern __must_check bool refcount_sub_and_test_checked(int i, refcount_t *r);
- 
- extern __must_check bool refcount_dec_and_test_checked(refcount_t *r);
- extern void refcount_dec_checked(refcount_t *r);
-@@ -79,12 +79,12 @@ extern void refcount_dec_checked(refcount_t *r);
- # ifdef CONFIG_ARCH_HAS_REFCOUNT
- #  include <asm/refcount.h>
- # else
--static inline __must_check bool refcount_add_not_zero(unsigned int i, refcount_t *r)
-+static inline __must_check bool refcount_add_not_zero(int i, refcount_t *r)
- {
- 	return atomic_add_unless(&r->refs, i, 0);
- }
- 
--static inline void refcount_add(unsigned int i, refcount_t *r)
-+static inline void refcount_add(int i, refcount_t *r)
- {
- 	atomic_add(i, &r->refs);
- }
-@@ -99,7 +99,7 @@ static inline void refcount_inc(refcount_t *r)
- 	atomic_inc(&r->refs);
- }
- 
--static inline __must_check bool refcount_sub_and_test(unsigned int i, refcount_t *r)
-+static inline __must_check bool refcount_sub_and_test(int i, refcount_t *r)
- {
- 	return atomic_sub_and_test(i, &r->refs);
- }
-diff --git a/lib/refcount.c b/lib/refcount.c
-index 48b78a4..719b0bc 100644
---- a/lib/refcount.c
-+++ b/lib/refcount.c
-@@ -61,7 +61,7 @@
-  *
-  * Return: false if the passed refcount is 0, true otherwise
-  */
--bool refcount_add_not_zero_checked(unsigned int i, refcount_t *r)
-+bool refcount_add_not_zero_checked(int i, refcount_t *r)
- {
- 	unsigned int new, val = atomic_read(&r->refs);
- 
-@@ -101,7 +101,7 @@ EXPORT_SYMBOL(refcount_add_not_zero_checked);
-  * cases, refcount_inc(), or one of its variants, should instead be used to
-  * increment a reference count.
-  */
--void refcount_add_checked(unsigned int i, refcount_t *r)
-+void refcount_add_checked(int i, refcount_t *r)
- {
- 	WARN_ONCE(!refcount_add_not_zero_checked(i, r), "refcount_t: addition on 0; use-after-free.\n");
- }
-@@ -180,7 +180,7 @@ EXPORT_SYMBOL(refcount_inc_checked);
-  *
-  * Return: true if the resulting refcount is 0, false otherwise
-  */
--bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r)
-+bool refcount_sub_and_test_checked(int i, refcount_t *r)
- {
- 	unsigned int new, val = atomic_read(&r->refs);
- 
