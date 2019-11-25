@@ -2,82 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8924F10863A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 02:15:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFAF0108641
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 02:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfKYBPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 20:15:17 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34485 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbfKYBPR (ORCPT
+        id S1727231AbfKYBTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 20:19:52 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46237 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbfKYBTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 20:15:17 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n13so6501831pff.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 17:15:17 -0800 (PST)
+        Sun, 24 Nov 2019 20:19:52 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a17so9587929lfi.13;
+        Sun, 24 Nov 2019 17:19:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
-        b=MiPiIX+FQla5J05mdl78JALG26TaMMitW+PrtdM+n9xIli+yPctZJfy+H7rJboL8GI
-         V0FgfkpjkhcPqr9AsCYE+6wIjzm/Mcm23GSgSWEHvT/KiG/8fB9DjiDS3+m7LrX0K3T9
-         dMe7b7dgH+HXwN2oIl08lMaUVhfDrTbREjAuLoCAysaa5N7ynLTYiQGCpd40byKNLmYo
-         mJZE+1c1Xhk2Rx7LVar2Py3/Dl8cYOXgFLWQGA7/ENtFS/UJQx+hJZ436vfOHrpK6Iwy
-         MSrRAvH+CrZfsRsNFx7u+ANlvlvlCwgg0mmIzOa9QenMN/bLG3ERxK4pEZqVMv8SGDyX
-         Rsfw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1BRJcfc8MhDWuAE2x1zzn5pGwEuyWHPYC+TlBnSdWu8=;
+        b=Pl9hZ1re8B3/Wdruv0SzZo9mYS1hFes/DGGN3B0ifaamOEG2f9/38mUgEUmkCSvxIe
+         zF1t7Z2rHyILc/plvUwfQJE/wxBt8fdmAayQcu0X3bBYtPynwLumCnzTQg5thefPNs+H
+         DOCeLIuvk9rKKs74h9IINFihhOtjPTiUeJtF5j0M5cNace75T+x7WEfPT92Q/SoV+aWL
+         Il9yeMJ2PKzNOFkaoEOtE/XGPROq6yhgpjZRJrB1IaoHx8+FJBzndrEEEGpTpGeiNMGC
+         vE7OncBKBgykWCith+n2COIbGCLt1Zq1yQHYFPJmysh8HCQcmW35gGk15jpJatAKvIUy
+         vGxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
-        b=uQE022T2/cKxfvZ/8sPSPPV/RBxpkSqkh0fbYXbf88Rs+Zo8BZuf6ZwvfVDNuxvGSe
-         pVr2WNBOHYECp6jKR2FVCK8kQPqNCVcW+dwpgGO3tGoiymnDr5+K66i1ybuVSCHDy3Xy
-         F3UF9Ir/JOKZvfhZmQwk2cH2O1N8oBnZlkK4o4R2da4f/8KdIVLpNdMraxCqm+YS+8Mn
-         f9Z/anAK5T4N5Ul5jGATgm4WQC6gA/En3VXZ4RZBGeX6TrVDv2uGtV8nFn/S0sX6pnef
-         z/N5oxPQ0chR6o1cem+D9IGC+8TpjFP10jQyXAVUUgdPWJpP9boBE7w6Jsy4Ntv7Hl+w
-         dqMg==
-X-Gm-Message-State: APjAAAWKFZ2FTn9ScJhwdBwAZdF2yO4nWy2Ibm7OqZ4vtwbA/E3rI6jD
-        c/TaX/U+pFRd6pw+92R+rjR55/+56LTnQBFAhnw=
-X-Google-Smtp-Source: APXvYqzpnhEXyCzclZ3fO4rwhMhmmMgFwwtZjdj6PPk4jFqs+x6Ccus2z8WDPirco8BEiOmfHEP5gsjWytMeR+Ra1Xg=
-X-Received: by 2002:a63:c802:: with SMTP id z2mr21810188pgg.158.1574644516736;
- Sun, 24 Nov 2019 17:15:16 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1BRJcfc8MhDWuAE2x1zzn5pGwEuyWHPYC+TlBnSdWu8=;
+        b=KHteQgnsxwXw6rKqvWJ+frDNYfmAVf6QyR/YzswRprCZfZemTak1iXlh8GnWmsZPG6
+         xz1jmp6Qq5s9K/hNMWBH/vfm0rHtUTFx8KReYBoICinWjEemZt8f2+x/unvyILg0ACUM
+         NGJg6hLpBQh/xrqhr34AxTZH/073m8jnh72EWNMzNz9aKFmucH6eS9AWIDNWduqNhHzk
+         gy+F/JS9zoVPqWvTqdYGltXUKkAH6T1Dg189GXidmVli2vuMmSAzz/uBStWm81ITjf6y
+         7Y6nLfsSST6vp99c8jZBHaBAgkkILuVHX0AsgVF5giMQVaEhCdgfD0YwfqbLaqWi2Aae
+         WbqA==
+X-Gm-Message-State: APjAAAWSWU/CqWEz2utWezoq2xs25sv2Ea8mKX+6zKuVMif0SbdLQe3c
+        sOvJQjpYcrjQPKP1FrD3QtGapbsmQaEosnetcuKe0A==
+X-Google-Smtp-Source: APXvYqxTxbIQbmPevyKUlXwPvj7kdUzCdNJBzuliq2Hjqoo+D62dAN/9MlCALq8199nyoHkDmkHUBcd/EZhCAR2dVRs=
+X-Received: by 2002:a19:c384:: with SMTP id t126mr18842484lff.100.1574644789373;
+ Sun, 24 Nov 2019 17:19:49 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:1863:0:0:0:0 with HTTP; Sun, 24 Nov 2019 17:15:16
- -0800 (PST)
-Reply-To: aishagaddafi969@aol.com
-From:   AISHA GADDAFI <vijairaja789@gmail.com>
-Date:   Sun, 24 Nov 2019 17:15:16 -0800
-Message-ID: <CAGZ0r_LJQH_Ri6GJmWGLhWx2cbzumT_XA82KSiURvRrO=Oisnw@mail.gmail.com>
-Subject: Dear Friend (Assalamu Alaikum),
-To:     undisclosed-recipients:;
+References: <20191125105843.2bdea309@canb.auug.org.au>
+In-Reply-To: <20191125105843.2bdea309@canb.auug.org.au>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Sun, 24 Nov 2019 17:19:38 -0800
+Message-ID: <CAADnVQJz=d-vqA4d+g-Mf=J+GVt4SDYxU_eo9E_+bN1WaroyJg@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the net-next tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Dear Friend (Assalamu Alaikum),
+On Sun, Nov 24, 2019 at 3:58 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+>
+>   kernel/bpf/syscall.c
+>
+> between commit:
+>
+>   84bb46cd6228 ("Revert "bpf: Emit audit messages upon successful prog load and unload"")
+>
+> from the net-next tree and commit:
+>
+>   8793e6b23b1e ("bpf: Move bpf_free_used_maps into sleepable section")
+>
+> from the bpf-next tree.
 
-I came across your e-mail contact prior a private search while in need of
-your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
-with three Children. I am the only biological Daughter of late Libyan
-President (Late Colonel Muammar Gaddafi).
-
-I have investment funds worth Twenty Seven Million Five Hundred Thousand
-United State Dollar ($27.500.000.00 ) and i need a trusted investment
-Manager/Partner because of my current refugee status, however, I am
-interested in you for investment project assistance in your country, may be
-from there, we can build business relationship in the nearest future.
-
-I am willing to negotiate investment/business profit sharing ratio with you
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated. write me at this email address(
-aishagaddafi969@aol.com ) for further discussion.
-
-Best Regards
-Mrs Aisha Al-Qaddafi
-Reply to: aishagaddafi969@aol.com
+argh. I wonder whether individual reverts would have
+helped git to avoid such conflict.
+Anyhow I've rebased bpf-next on top of net-next to avoid this mess.
+There was only one Fixes tag that I adjusted manually.
