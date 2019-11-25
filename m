@@ -2,210 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC56108D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 862CF108D83
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfKYMCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 07:02:42 -0500
-Received: from mail.dlink.ru ([178.170.168.18]:54766 "EHLO fd.dlink.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbfKYMCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 07:02:41 -0500
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id 30F321B20A35; Mon, 25 Nov 2019 15:02:37 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 30F321B20A35
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1574683357; bh=uOhBuma2uQnNNRxUMn0+HUFU8ipwP8HFLTk2ZlKhkyo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=HZGbst88e+QZyjpvkqJ/dydK9+JXp+8gfJAtKeroEaD4NzpGoS4BRJPlz1JgL8/QM
-         zXTuoNkWAhbTOsgZOOLDIJ2S9HiVgNpbgUfvQAP3jFt+MBf9z5SqMKht4Sje7aLisp
-         0AomsLHUVgKcVBLxQb/WmB2P/Yr2tmkbgVEzcttU=
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,USER_IN_WHITELIST
-        autolearn=disabled version=3.4.2
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id E3BF21B20303;
-        Mon, 25 Nov 2019 15:02:24 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru E3BF21B20303
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id 63CB31B20AE9;
-        Mon, 25 Nov 2019 15:02:24 +0300 (MSK)
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Mon, 25 Nov 2019 15:02:24 +0300 (MSK)
+        id S1727310AbfKYMDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 07:03:22 -0500
+Received: from mail-eopbgr60047.outbound.protection.outlook.com ([40.107.6.47]:17639
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727124AbfKYMDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 07:03:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DEs2JYY+SbSpV99gEaGofmC/iN4+jO3+EPHPRIeByUEAYoMln00YsW36HvbIu583Xb8Qu4DjD+LmOSXgMTJcKa0xzgr9V519DXGUUa8icI+gmI2dBt8KCFvkcLNPJ2glXIEnH7HMfdDIkVrNJtr/GGCw/mcf9Pw/ogI3qUz86Eiw5CCsv0iBOUgLniKJxYsKdL+rzgiwhC0R08WPl72xXqYYO5B6flVTCbhm03CNoIXqmBX18TA1VlOukl5bml4d73Qc+Gq+veALP/uvlRO+4Pf+b/LCWjiWd0Pmu47wHy0N4eoMEINTUWZiKYqDx7r4ywuCsMUqvy9Ds4qlKqIMdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QaegIZSZSKcKq0wwqi9/KOXIfgoWSpL6pm/ZPwk1XtA=;
+ b=LWY1GM+lNS+LZ9U8fHUJ2O71KRdhZ3JlilKHHl9RaOzf995iMDALdq/vyT+R95JaJSrOnGXXyAD99m541jzetZo3H8DGEZFpTW+xKRQUNM6V+Iu1AHWeLsJqPvz6YWxCxDdNo/BIi00780/yotqAfc0n3XRw3IbUueetsmSIjLaQScDmNKErZS2Wzsn23W+EW7fNHe17YWspz+Crcsaad0EYZOR4O1uu4vYgm7TIlYIOYysi+qJHS5RrYxjJBy1p0OTdSnFLNqLg9MKgW3vlO6DwrGmmWqe3setbDV8gE4VS7Yh5s9uX/O0Cd6u5JiKBBIAaoh09xDvZm5oyJyX6Pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QaegIZSZSKcKq0wwqi9/KOXIfgoWSpL6pm/ZPwk1XtA=;
+ b=TIghguSE2M8lSX9GGf3kVV1uzu1h1RX+ERion9pTW7Ghp4DdLIG/mWBzofWq7xod4yKbgmhlbLVrGbxSar+fs+MkP/trzIY3iwtelBwWnBBZXb8EDRFmyFmLUr5Ay988POcTnUfmYRTvyJ24a5T8KqUbmQfS0eMX4IkJC3aYoWQ=
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
+ VI1PR04MB6800.eurprd04.prod.outlook.com (52.133.245.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2474.17; Mon, 25 Nov 2019 12:02:38 +0000
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::f:e0f5:1b95:a5d]) by VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::f:e0f5:1b95:a5d%5]) with mapi id 15.20.2474.023; Mon, 25 Nov 2019
+ 12:02:38 +0000
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Alison Wang <alison.wang@nxp.com>
+Subject: Re: [PATCH] crypto: caam - do not reset pointer size if caam_ptr_size
+ is 64 bits
+Thread-Topic: [PATCH] crypto: caam - do not reset pointer size if
+ caam_ptr_size is 64 bits
+Thread-Index: AQHVoxct9YNV/+sCCkCTnpGbBimKsg==
+Date:   Mon, 25 Nov 2019 12:02:38 +0000
+Message-ID: <VI1PR04MB44455C61E2D64EFF88CE39768C4A0@VI1PR04MB4445.eurprd04.prod.outlook.com>
+References: <1574634784-10571-1-git-send-email-iuliana.prodan@nxp.com>
+ <VI1PR0402MB34857C5B83AC9811BB87F419984A0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=iuliana.prodan@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 05b5a397-d782-441e-e700-08d7719f5e0e
+x-ms-traffictypediagnostic: VI1PR04MB6800:|VI1PR04MB6800:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB6800E4825DF79677CFAEC1218C4A0@VI1PR04MB6800.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0232B30BBC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(376002)(136003)(346002)(189003)(199004)(3846002)(71200400001)(71190400001)(74316002)(6506007)(52536014)(7696005)(76176011)(6116002)(256004)(53546011)(6636002)(99286004)(446003)(7736002)(305945005)(91956017)(76116006)(4326008)(66946007)(26005)(66446008)(102836004)(186003)(25786009)(5660300002)(66476007)(66556008)(64756008)(14454004)(478600001)(66066001)(229853002)(8676002)(44832011)(6436002)(55016002)(81156014)(81166006)(8936002)(86362001)(14444005)(33656002)(6246003)(110136005)(54906003)(316002)(2906002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6800;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: sd+CnHDSPx1hu4Cq18mMTkJ0Y4LJSztyNt7Unig79HoGnvIpv/V1bDUMwclwKZ3JBuAoyTmceeOF7xn+Q0p1qxLNGSrJDQGgmH9EGEiRefEoPuwrZBS8Et8RWKjDOBsHPMtIr2rGffElnWx9Ne1wZ2WpO0ddOQz8Bu5aUBhWxYM+Y1PjoGudqf1SssJKes/hEJ0aAPPIaSumz6ojY7rKDt1xY2syBiQ1/967+pbNc2we/fIHfgIM9vAq8bU73j1Rz43isQnDG9cmqUuhkQUqS8ehX7oOoZAWiGC6Y5SAyrflzBcyZBChyp4s+8iV5Zr8kRiixsi0DqOKxDMa95jjcHgFiX4RSpvGj5R5DkhpR613yztMTApk1haAVX4ioRn0yEeGRPaG88KNNs5SrG5DHiUlezCpYUUuEeQcQSR6M6/0dR8V69svb/OHE5prQi8/
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Mon, 25 Nov 2019 15:02:24 +0300
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Edward Cree <ecree@solarflare.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        David Miller <davem@davemloft.net>, jiri@mellanox.com,
-        edumazet@google.com, idosch@mellanox.com, petrm@mellanox.com,
-        sd@queasysnail.net, f.fainelli@gmail.com,
-        jaswinder.singh@linaro.org, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, emmanuel.grumbach@intel.com,
-        luciano.coelho@intel.com, linuxwifi@intel.com,
-        kvalo@codeaurora.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL in
- napi_gro_receive()
-In-Reply-To: <b4b92c4d066007d9cb77e1645e667715c17834fb.camel@redhat.com>
-References: <20191014080033.12407-1-alobakin@dlink.ru>
- <20191015.181649.949805234862708186.davem@davemloft.net>
- <7e68da00d7c129a8ce290229743beb3d@dlink.ru>
- <PSXP216MB04388962C411CD0B17A86F47804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <c762f5eee08a8f2d0d6cb927d7fa3848@dlink.ru>
- <746f768684f266e5a5db1faf8314cd77@dlink.ru>
- <PSXP216MB0438267E8191486435445DA6804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <cc08834c-ccb3-263a-2967-f72a9d72535a@solarflare.com>
- <3147bff57d58fce651fe2d3ca53983be@dlink.ru>
- (sfid-20191125_115913_640375_B340BE47)
- <414288fcac2ba4fcee48a63bdbf28f7b9a5037c6.camel@sipsolutions.net>
- <b4b92c4d066007d9cb77e1645e667715c17834fb.camel@redhat.com>
-User-Agent: Roundcube Webmail/1.4.0
-Message-ID: <d535d5142e42b8c550f0220200e3779d@dlink.ru>
-X-Sender: alobakin@dlink.ru
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05b5a397-d782-441e-e700-08d7719f5e0e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2019 12:02:38.6960
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NoA6LAlmG8RW+qPZXTD+TaPJYNOBDqw1mn2yHOYEeA7EanVmKxr5ADPkfP2R8nOlgp4pF+RjFqKgrTGjdvOt1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Abeni wrote 25.11.2019 14:42:
-> On Mon, 2019-11-25 at 12:05 +0100, Johannes Berg wrote:
->> On Mon, 2019-11-25 at 13:58 +0300, Alexander Lobakin wrote:
->> > Edward Cree wrote 25.11.2019 13:31:
->> > > On 25/11/2019 09:09, Nicholas Johnson wrote:
->> > > > The default value of /proc/sys/net/core/gro_normal_batch was 8.
->> > > > Setting it to 1 allowed it to connect to Wi-Fi network.
->> > > >
->> > > > Setting it back to 8 did not kill the connection.
->> > > >
->> > > > But when I disconnected and tried to reconnect, it did not re-connect.
->> > > >
->> > > > Hence, it appears that the problem only affects the initial handshake
->> > > > when associating with a network, and not normal packet flow.
->> > > That sounds like the GRO batch isn't getting flushed at the endof the
->> > >  NAPI — maybe the driver isn't calling napi_complete_done() at the
->> > >  appropriate time?
->> >
->> > Yes, this was the first reason I thought about, but didn't look at
->> > iwlwifi yet. I already knew this driver has some tricky parts, but
->> > this 'fake NAPI' solution seems rather strange to me.
->> 
->> Truth be told, we kinda just fudged it until we got GRO, since that's
->> what we really want on wifi (to reduce the costly TCP ACKs if 
->> possible).
->> 
->> Maybe we should call napi_complete_done() instead? But as Edward noted
->> (below), we don't actually really do NAPI polling, we just fake it for
->> each interrupt since we will often get a lot of frames in one 
->> interrupt
->> if there's high throughput (A-MPDUs are basically coming in all at the
->> same time). I've never really looked too much at what exactly happens
->> here, beyond seeing the difference from GRO.
->> 
->> 
->> > > Indeed, from digging through the layers of iwlwifi I eventually get to
->> > >  iwl_pcie_rx_handle() which doesn't really have a NAPI poll (the
->> > >  napi->poll function is iwl_pcie_dummy_napi_poll() { WARN_ON(1);
->> > >  return 0; }) and instead calls napi_gro_flush() at the end of its RX
->> > >  handling.  Unfortunately, napi_gro_flush() is no longer enough,
->> > >  because it doesn't call gro_normal_list() so the packets on the
->> > >  GRO_NORMAL list just sit there indefinitely.
->> > >
->> > > It was seeing drivers calling napi_gro_flush() directly that had me
->> > >  worried in the first place about whether listifying napi_gro_receive()
->> > >  was safe and where the gro_normal_list() should go.
->> > > I wondered if other drivers that show up in [1] needed fixing with a
->> > >  gro_normal_list() next to their napi_gro_flush() call.  From a cursory
->> > >  check:
->> > > brocade/bna: has a real poller, calls napi_complete_done() so is OK.
->> > > cortina/gemini: calls napi_complete_done() straight after
->> > >  napi_gro_flush(), so is OK.
->> > > hisilicon/hns3: calls napi_complete(), so is _probably_ OK.
->> > > But it's far from clear to me why *any* of those drivers are calling
->> > >  napi_gro_flush() themselves...
->> >
->> > Agree. I mean, we _can_ handle this particular problem from networking
->> > core side, but from my point of view only rethinking driver's logic is
->> > the correct way to solve this and other issues that may potentionally
->> > appear in future.
->> 
->> Do tell what you think it should be doing :)
->> 
->> One additional wrinkle is that we have firmware notifications, command
->> completions and actual RX interleaved, so I think we do want to have
->> interrupts for the notifications and command completions?
-> 
-> I think it would be nice moving the iwlwifi driver to full/plain NAPI
-> mode. The interrupt handler could keep processing extra work as it does
-> now and queue real pkts on some internal queue, and than schedule the
-> relevant napi, which in turn could process such queue in the napi poll
-> method. Likely I missed tons of details and/or oversimplified it...
-
-Yep, full NAPI is the best variant, but I may miss a lot too.
-
-> For -net, I *think* something as dumb and hacky as the following could
-> possibly work:
-> ----
-> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-> b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-> index 4bba6b8a863c..df82fad96cbb 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-> @@ -1527,7 +1527,7 @@ static void iwl_pcie_rx_handle(struct iwl_trans
-> *trans, int queue)
->                 iwl_pcie_rxq_alloc_rbs(trans, GFP_ATOMIC, rxq);
-> 
->         if (rxq->napi.poll)
-> -               napi_gro_flush(&rxq->napi, false);
-> +               napi_complete_done(&rxq->napi, 0);
-> 
->         iwl_pcie_rxq_restock(trans, rxq);
->  }
-> ---
-
-napi_complete_done(napi, 0) has an equivalent static inline
-napi_complete(napi). I'm not sure it will work without any issues
-as iwlwifi doesn't _really_ turn NAPI into scheduling state.
-
-I'm not very familiar with iwlwifi, but as a work around manual
-napi_gro_flush() you can also manually flush napi->rx_list to
-prevent packets from stalling:
-
-diff -Naur a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c 
-b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c	2019-11-25 
-14:55:03.610355230 +0300
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c	2019-11-25 
-14:57:29.399556868 +0300
-@@ -1526,8 +1526,16 @@
-  	if (unlikely(emergency && count))
-  		iwl_pcie_rxq_alloc_rbs(trans, GFP_ATOMIC, rxq);
-
--	if (rxq->napi.poll)
-+	if (rxq->napi.poll) {
-+		if (rxq->napi.rx_count) {
-+			netif_receive_skb_list(&rxq->napi.rx_list);
-+
-+			INIT_LIST_HEAD(&rxq->napi.rx_list);
-+			rxq->napi.rx_count = 0;
-+		}
-+
-  		napi_gro_flush(&rxq->napi, false);
-+	}
-
-  	iwl_pcie_rxq_restock(trans, rxq);
-  }
-
-> Cheers,
-> 
-> Paolo
-
-Regards,
-ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
+On 11/25/2019 9:49 AM, Horia Geanta wrote:=0A=
+> On 11/25/2019 12:33 AM, Iuliana Prodan wrote:=0A=
+>> In commit 'a1cf573ee95 ("crypto: caam - select DMA address=0A=
+>> size at runtime")' CAAM pointer size (caam_ptr_size) is changed=0A=
+>> from sizeof(dma_addr_t) to runtime value computed from MCFGR register.=
+=0A=
+>> At some point, the bit for Pointer Size should be reset to 0,=0A=
+>> but only for the case when the CAAM pointer size if 32 bits.=0A=
+>> Therefore, use caam_ptr_size instead of sizeof(dma_addr_t).=0A=
+>>=0A=
+> The logic is circular, see below.=0A=
+> =0A=
+>> Fixes: a1cf573ee95 ("crypto: caam - select DMA address size at runtime")=
+=0A=
+> Please Cc the author(s) when adding Fixes tag.=0A=
+> =0A=
+>> Cc: <stable@vger.kernel.org>=0A=
+>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+>> ---=0A=
+>>   drivers/crypto/caam/ctrl.c | 2 +-=0A=
+>>   1 file changed, 1 insertion(+), 1 deletion(-)=0A=
+>>=0A=
+>> diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c=0A=
+>> index d7c3c38..786eef6 100644=0A=
+>> --- a/drivers/crypto/caam/ctrl.c=0A=
+>> +++ b/drivers/crypto/caam/ctrl.c=0A=
+>> @@ -674,7 +674,7 @@ static int caam_probe(struct platform_device *pdev)=
+=0A=
+>>   		clrsetbits_32(&ctrl->mcr, MCFGR_AWCACHE_MASK | MCFGR_LONG_PTR,=0A=
+>>   			      MCFGR_AWCACHE_CACH | MCFGR_AWCACHE_BUFF |=0A=
+>>   			      MCFGR_WDENABLE | MCFGR_LARGE_BURST |=0A=
+>> -			      (sizeof(dma_addr_t) =3D=3D sizeof(u64) ?=0A=
+>> +			      (caam_ptr_sz =3D=3D sizeof(u64) ?=0A=
+>>   			       MCFGR_LONG_PTR : 0));=0A=
+>>   =0A=
+> Before this in caam_probe() there's:=0A=
+> 	if (comp_params & CTPR_MS_PS && rd_reg32(&ctrl->mcr) & MCFGR_LONG_PTR)=
+=0A=
+> 		caam_ptr_sz =3D sizeof(u64);=0A=
+> 	else=0A=
+> 		caam_ptr_sz =3D sizeof(u32);=0A=
+> =0A=
+> thus caam_ptr_sz is determined based on MCFGR:=0A=
+> MCFGR[PS] =3D=3D> caam_ptr_sz=0A=
+> so it no longer makes sense to reconfigure MCFGR based on caam_ptr_sz:=0A=
+> caam_ptr_sz =3D=3D> MCFGR[PS]=0A=
+> =0A=
+> The short-term fix would be to no longer touch MCFGR[PS], which is in lin=
+e with=0A=
+> commit a1cf573ee95 ("crypto: caam - select DMA address size at runtime")=
+=0A=
+> =0A=
+> Note however there's a small issue with the logic of kernel relying on=0A=
+> MCFGR[PS] being previously configured (by U-boot etc.), see=0A=
+> commit 39eaf759466f ("crypto: caam - fix pointer size for AArch64 boot lo=
+ader, AArch32 kernel")=0A=
+> =0A=
+=0A=
+So, what's your suggestion? We shouldn't reset the MCFGR[PS] at all? We =0A=
+should use the value set by u-boot?=0A=
+=0A=
+Thanks,=0A=
+Iulia=0A=
+=0A=
+> In the long run, IMO the proper thing for the driver to do is to rely,=0A=
+> whenever possible, on DT ("dma-ranges" property) / dma_mask provided by=
+=0A=
+> the device driver infrastructure, and not on MCFGR[PS]:=0A=
+> [ DT "dma-ranges" =3D=3D> ] dma_mask =3D=3D> MCFGR[PS], caam_ptr_sz=0A=
+> but that would probably involve too many changes for getting into -stable=
+.=0A=
+> =0A=
+> Horia=0A=
+> =0A=
+=0A=
