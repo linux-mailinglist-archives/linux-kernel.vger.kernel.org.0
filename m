@@ -2,121 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E73108C60
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 11:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 828DA108C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:00:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfKYK7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 05:59:03 -0500
-Received: from fd.dlink.ru ([178.170.168.18]:44662 "EHLO fd.dlink.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfKYK7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 05:59:03 -0500
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id C60AF1B20400; Mon, 25 Nov 2019 13:58:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru C60AF1B20400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1574679538; bh=tXl0CZ8ZQKwituwUIeWFFggmc8Ny9GguiEH02Chb+Rs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=a45o3o3P//4ZWdb4IdfAoRDjCZD7XkSMbb0yFQA7iUnkl6hKnDUU5DOo97J2eTtHm
-         /59+08z/EO6Orx7arCGu/s3sUvTBY/OKOpoHy4u2hcMyyBu5AMUFu4LCnD3ppPxKO8
-         SI/TyWLseslni3DjGWecwwGYBa89b4nBXpROKk9s=
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
-        USER_IN_WHITELIST autolearn=disabled version=3.4.2
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id 3433D1B204A3;
-        Mon, 25 Nov 2019 13:58:39 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 3433D1B204A3
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id CD5151B210B7;
-        Mon, 25 Nov 2019 13:58:38 +0300 (MSK)
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Mon, 25 Nov 2019 13:58:38 +0300 (MSK)
+        id S1727627AbfKYLAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 06:00:24 -0500
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:37596 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbfKYLAY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 06:00:24 -0500
+Received: by mail-wm1-f46.google.com with SMTP id f129so14021002wmf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 03:00:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=gS84IIxPGaUBR9X9Mk2rkH83WR7vlZdxI/N0xiyIvDY=;
+        b=VNS/NxQVW/kfFovWuHio4KoDkERNwyOfkjSCpKtY8BLpmCcF1ubYBRo86wh4SXgX3w
+         m+7wiIq1ZghfbTd1PuDhgxDqzhFiJ+wFxs713paIuOldrsFvzz+lcfmW+iy0M6P6nbXY
+         7fRoVU04sv6MM8E7P4FclfUfW+NnAxKQzVyFN7xCiSI9kUuayiiMbORilh3+VysF8wq1
+         SR5x266P7vX8gLA6FizRNX8aZNdOmfU8vavnzKhzqmKI+mGN6vcODAMTdOItPDB4mxMx
+         5jA6L8Ki7jxNBZlGAvPZu2Ey41d7u8QQx5sJUhOI/74bIfCZEqVzjVFlHqDDtWSzB7Bn
+         8Gug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=gS84IIxPGaUBR9X9Mk2rkH83WR7vlZdxI/N0xiyIvDY=;
+        b=FMYNPSP6i5qcq7bn/HHlL6N7F0ZJT2XNjX7Xt9DRU7xFPZ2zhY2eEso9U484TEoVJi
+         D0m5NNHvphqozOiKiAi2wwq5+8wnHIp0xn2CozzLwneaF6LXoNQVBOrv50hpslQ3COJV
+         pwv73RZig8KB+KqFlfh6f+OvcYQqRgMWcOzxkfP3uMvyTSUOnvnw3KmbaLjBph3wCHUZ
+         sEnPLQIdCVmG+62xpAVKnZb+5iezyjsWmT9rlYYbZMwhV/XRq4wFTtO5o1UoxnG81zcM
+         KsoZwRc9clWBXuFhLLfRp+CPnQGtw0F1z1qGwRD0h9RqBzeP2dHG+cfYOXcYPrVXII0O
+         KQAQ==
+X-Gm-Message-State: APjAAAXP/vV5fZlIWpr4yIypGJwEtCChQZTj4t3f4K2huFIixTq5sbNQ
+        lpfkZ5tm5DwDQKvlC3B2z/A=
+X-Google-Smtp-Source: APXvYqzHa5XBPQW0lbrQOSeD5AxZKgOmsAbQpH9nO8/tE/7q4Rp0RAad4MAEIimQDM/H5NfLvP3nVw==
+X-Received: by 2002:a1c:96c9:: with SMTP id y192mr29211272wmd.8.1574679621886;
+        Mon, 25 Nov 2019 03:00:21 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id y2sm8346182wmy.2.2019.11.25.03.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2019 03:00:21 -0800 (PST)
+Date:   Mon, 25 Nov 2019 12:00:19 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] core/stacktrace cleanup for v5.5
+Message-ID: <20191125110019.GA117271@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Mon, 25 Nov 2019 13:58:38 +0300
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     Edward Cree <ecree@solarflare.com>
-Cc:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        David Miller <davem@davemloft.net>, jiri@mellanox.com,
-        edumazet@google.com, idosch@mellanox.com, pabeni@redhat.com,
-        petrm@mellanox.com, sd@queasysnail.net, f.fainelli@gmail.com,
-        jaswinder.singh@linaro.org, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, johannes.berg@intel.com,
-        emmanuel.grumbach@intel.com, luciano.coelho@intel.com,
-        linuxwifi@intel.com, kvalo@codeaurora.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL in
- napi_gro_receive()
-In-Reply-To: <cc08834c-ccb3-263a-2967-f72a9d72535a@solarflare.com>
-References: <20191014080033.12407-1-alobakin@dlink.ru>
- <20191015.181649.949805234862708186.davem@davemloft.net>
- <7e68da00d7c129a8ce290229743beb3d@dlink.ru>
- <PSXP216MB04388962C411CD0B17A86F47804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <c762f5eee08a8f2d0d6cb927d7fa3848@dlink.ru>
- <746f768684f266e5a5db1faf8314cd77@dlink.ru>
- <PSXP216MB0438267E8191486435445DA6804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
- <cc08834c-ccb3-263a-2967-f72a9d72535a@solarflare.com>
-User-Agent: Roundcube Webmail/1.4.0
-Message-ID: <3147bff57d58fce651fe2d3ca53983be@dlink.ru>
-X-Sender: alobakin@dlink.ru
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Edward Cree wrote 25.11.2019 13:31:
-> On 25/11/2019 09:09, Nicholas Johnson wrote:
->> The default value of /proc/sys/net/core/gro_normal_batch was 8.
->> Setting it to 1 allowed it to connect to Wi-Fi network.
->> 
->> Setting it back to 8 did not kill the connection.
->> 
->> But when I disconnected and tried to reconnect, it did not re-connect.
->> 
->> Hence, it appears that the problem only affects the initial handshake
->> when associating with a network, and not normal packet flow.
-> That sounds like the GRO batch isn't getting flushed at the endof the
->  NAPI — maybe the driver isn't calling napi_complete_done() at the
->  appropriate time?
+Linus,
 
-Yes, this was the first reason I thought about, but didn't look at
-iwlwifi yet. I already knew this driver has some tricky parts, but
-this 'fake NAPI' solution seems rather strange to me.
+Please pull the latest core-stacktrace-for-linus git tree from:
 
-> Indeed, from digging through the layers of iwlwifi I eventually get to
->  iwl_pcie_rx_handle() which doesn't really have a NAPI poll (the
->  napi->poll function is iwl_pcie_dummy_napi_poll() { WARN_ON(1);
->  return 0; }) and instead calls napi_gro_flush() at the end of its RX
->  handling.  Unfortunately, napi_gro_flush() is no longer enough,
->  because it doesn't call gro_normal_list() so the packets on the
->  GRO_NORMAL list just sit there indefinitely.
-> 
-> It was seeing drivers calling napi_gro_flush() directly that had me
->  worried in the first place about whether listifying napi_gro_receive()
->  was safe and where the gro_normal_list() should go.
-> I wondered if other drivers that show up in [1] needed fixing with a
->  gro_normal_list() next to their napi_gro_flush() call.  From a cursory
->  check:
-> brocade/bna: has a real poller, calls napi_complete_done() so is OK.
-> cortina/gemini: calls napi_complete_done() straight after
->  napi_gro_flush(), so is OK.
-> hisilicon/hns3: calls napi_complete(), so is _probably_ OK.
-> But it's far from clear to me why *any* of those drivers are calling
->  napi_gro_flush() themselves...
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-stacktrace-for-linus
 
-Agree. I mean, we _can_ handle this particular problem from networking
-core side, but from my point of view only rethinking driver's logic is
-the correct way to solve this and other issues that may potentionally
-appear in future.
+   # HEAD: 4b48512c2e9c63b62d7da23563cdb224b4d61d72 stacktrace: Get rid of unneeded '!!' pattern
 
-> -Ed
-> 
-> [1]: https://elixir.bootlin.com/linux/latest/ident/napi_gro_flush
+A minor cleanup.
 
-Regards,
-ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
+ Thanks,
+
+	Ingo
+
+------------------>
+Jiri Slaby (1):
+      stacktrace: Get rid of unneeded '!!' pattern
+
+
+ kernel/stacktrace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+index c9ea7eb2cb1a..2af66e449aa6 100644
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -142,7 +142,7 @@ unsigned int stack_trace_save_tsk(struct task_struct *tsk, unsigned long *store,
+ 		.store	= store,
+ 		.size	= size,
+ 		/* skip this function if they are tracing us */
+-		.skip	= skipnr + !!(current == tsk),
++		.skip	= skipnr + (current == tsk),
+ 	};
+ 
+ 	if (!try_get_task_stack(tsk))
+@@ -300,7 +300,7 @@ unsigned int stack_trace_save_tsk(struct task_struct *task,
+ 		.entries	= store,
+ 		.max_entries	= size,
+ 		/* skip this function if they are tracing us */
+-		.skip	= skipnr + !!(current == task),
++		.skip	= skipnr + (current == task),
+ 	};
+ 
+ 	save_stack_trace_tsk(task, &trace);
