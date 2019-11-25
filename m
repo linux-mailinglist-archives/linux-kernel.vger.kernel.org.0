@@ -2,79 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF79D108DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:26:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C06108DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:30:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfKYM0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 07:26:46 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:19637 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727310AbfKYM0p (ORCPT
+        id S1727193AbfKYMa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 07:30:56 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54313 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfKYMa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 07:26:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574684803;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=+VsrVMH/0AeKx+W15eVLwHD/fwlyWTB1SgPgdIap52w=;
-        b=k/KMIjgYNCmwpZ0UJJKPWNZTXMLMFp1yjZe+OZRGaWFfU+BtB0broCUq/qDEVN1Yhv
-        hrxEE3YaAuVBiCOglOoy1VIoW2Mg0aZDIRGET7r6aG7ylvNrZrO9k+YsJbC8aT+uwSme
-        K6VaQmBJW+RCoIKPIFabmrDpmP2cb/yaRMA3v7M6dvIR6CCUcSo67dSvFEUI4fyW+pPR
-        FSvJnFW76BKn71qm+rktdr9n+0EIj359MUk1M+hntA8H5fuEn5d2EWZQxNlbKDzhLvER
-        QFuRPhrQLSKTTo+2TAgSUYS9t00agGb23mpEQ9+4Ek5AQH1ueadOFse+sHyxaf9mTmjQ
-        Nwig==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQr4OGUPX+1NmWArOmLo="
-X-RZG-CLASS-ID: mo00
-Received: from localhost.localdomain
-        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
-        with ESMTPSA id 304194vAPCQh0FS
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 25 Nov 2019 13:26:43 +0100 (CET)
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 5/5] ARM: dts: ux500: nomadik-pinctrl: Add &gpio_in_nopull
-Date:   Mon, 25 Nov 2019 13:22:56 +0100
-Message-Id: <20191125122256.53482-5-stephan@gerhold.net>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191125122256.53482-1-stephan@gerhold.net>
-References: <20191125122256.53482-1-stephan@gerhold.net>
+        Mon, 25 Nov 2019 07:30:56 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b11so5802026wmj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 04:30:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=uNInIHq/5ROyOJ3aqQnVJSph2LAr19QvURlnsalUvjs=;
+        b=tQl0LTLivZPWkV+iB/q6nU+Rkfy+jfwF9XQe3v42g0+WO5ejRLJh/71CsyT0fsrb/w
+         FWSsAYT1CI743DHti6tih7QymcYu/Ob+3xVQrdvKDcmZwn5Z4bpzefh2YJ5tfWrxpmlL
+         kBqcOc5gQaAJrAhxGEeSQ94QDewI2LPpNUXRtog1IabomUfu/BKHOiz4003vtDAIywV7
+         FZjTL9Wj6dIIFOfdyG63maP5qjysz1C14Wdc8oudFemJMhp7Ux8waAsn/qbaEUD+prac
+         wboCVWo0nChIlb/2n5Vxb+4SX0q0sKsga+U/DtnFjF9Shj5aTF90kSicQ1H+4w4VtTV1
+         U21g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=uNInIHq/5ROyOJ3aqQnVJSph2LAr19QvURlnsalUvjs=;
+        b=RFOQnLzBP/cwew4OLj3MHCT1snUf0nqj186174IJYvFEE/C1Yd7IKWLK7p1OuTUj09
+         Ut/rnyYEkBcNVbAX8pyzBvTcOniVfWeAeVpONNO6bvL/ykCVgqr0j0ET16kHgTnVBEBj
+         wmTnXa5MFuPCZT39SAKH8x6lIkfPPXk9Qa5YFFJd1wPYZvqZs13R0oYQCHKijCrTKV3A
+         Qz79fZht2jveExR4SeR9NGRfPt/+LiDYQ4/4nls28V2UYQiH+h/4Mj/60yKMOAsnacoQ
+         nAJzKwJUmqd7dx+skPXHT6JOzMPq1RAzOTx7SEt0jM/iUKu1Spsqcko5goVpyGIu9edG
+         ArSw==
+X-Gm-Message-State: APjAAAXWlSzXSzUUcb9kBw6Knb/LFAuthXQF3giREqnkZQBCZWZTWnHr
+        OrBQbTtBih6ZdNFvJGrpFKTR1A==
+X-Google-Smtp-Source: APXvYqxhdhdSwqHiu0FU3Axoh8T+PVZunoW9nGMfGUPUqsOhfA8Dl4UFhVJWblM3MATB2crQVoNEJA==
+X-Received: by 2002:a1c:40c1:: with SMTP id n184mr29983297wma.116.1574685053091;
+        Mon, 25 Nov 2019 04:30:53 -0800 (PST)
+Received: from localhost ([2a01:e34:eeb6:4690:ecfa:1144:aa53:4a82])
+        by smtp.gmail.com with ESMTPSA id x2sm8032581wmc.3.2019.11.25.04.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2019 04:30:52 -0800 (PST)
+References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com> <1571382865-41978-4-git-send-email-jian.hu@amlogic.com> <1jsgnmba1a.fsf@starbuckisacylon.baylibre.com> <49b33e94-910b-3fd9-4da1-050742d07e93@amlogic.com> <1jblts3v7e.fsf@starbuckisacylon.baylibre.com> <f02b6fb2-5b98-0930-6d47-a3e65840fb82@amlogic.com> <1jh839f2ue.fsf@starbuckisacylon.baylibre.com> <20d04452-fc63-9e9e-220f-146b493a860f@amlogic.com> <1695e9b0-1730-eef6-491d-fe90ac897ee9@amlogic.com> <1jtv6yftmm.fsf@starbuckisacylon.baylibre.com> <9e652ed1-384e-f630-f2a4-0aa4486df577@amlogic.com> <1j7e3oqn36.fsf@starbuckisacylon.baylibre.com> <9ec317e8-136e-1ab4-4e9b-21210e7f3e05@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] clk: meson: a1: add support for Amlogic A1 clock driver
+In-reply-to: <9ec317e8-136e-1ab4-4e9b-21210e7f3e05@amlogic.com>
+Date:   Mon, 25 Nov 2019 13:30:50 +0100
+Message-ID: <1j5zj8qgsl.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ste-nomadik-pinctrl.dtsi already defines in_nopull and gpio_in_pu/pd,
-but there is no node to configure a pin as GPIO without pull up/down.
-Add a new &gpio_in_nopull node for this.
 
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
- arch/arm/boot/dts/ste-nomadik-pinctrl.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+On Mon 25 Nov 2019 at 13:01, Jian Hu <jian.hu@amlogic.com> wrote:
 
-diff --git a/arch/arm/boot/dts/ste-nomadik-pinctrl.dtsi b/arch/arm/boot/dts/ste-nomadik-pinctrl.dtsi
-index 5673a1113aef..bfdb5d9a014f 100644
---- a/arch/arm/boot/dts/ste-nomadik-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/ste-nomadik-pinctrl.dtsi
-@@ -25,6 +25,11 @@
- 		ste,output = <OUTPUT_LOW>;
- 	};
- 
-+	gpio_in_nopull: gpio_input_nopull {
-+		ste,gpio = <GPIOMODE_ENABLED>;
-+		ste,input = <INPUT_NOPULL>;
-+	};
-+
- 	gpio_in_pu: gpio_input_pull_up {
- 		ste,gpio = <GPIOMODE_ENABLED>;
- 		ste,input = <INPUT_PULLUP>;
--- 
-2.24.0
+> On 2019/11/25 18:14, Jerome Brunet wrote:
+>>
+>> On Thu 21 Nov 2019 at 04:21, Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>>> Hi, Jerome
+>>>
+>>> On 2019/11/20 23:35, Jerome Brunet wrote:
+>>>>
+>>>> On Wed 20 Nov 2019 at 10:28, Jian Hu <jian.hu@amlogic.com> wrote:
+>>>>
+>>>>> Hi, jerome
+>>>>>
+>>>>> Is there any problem about fixed_pll_dco's parent_data?
+>>>>>
+>>>>> Now both name and fw_name are described in parent_data.
+>>>>
+>>>> Yes, there is a problem.  This approach is incorrect, as I've tried to
+>>>> explain a couple times already. Let me try to re-summarize why this
+>>>> approach is incorrect.
+>>>>
+>>>> Both fw_name and name should be provided when it is possible that
+>>>> the DT does not describe the input clock. IOW, it is only for controllers
+>>>> which relied on the global name so far and are now starting to describe
+>>>> the clock input in DT
+>>>>
+>>>> This is not your case.
+>>>> Your controller is new and DT will have the correct
+>>>> info
+>>>>
+>>>> You are trying work around an ordering issue by providing both fw_name
+>>>> and name. This is not correct and I'll continue to nack it.
+>>>>
+>>>> If the orphan clock is not reparented as you would expect, I suggest you
+>>>> try to look a bit further at how the reparenting of orphans is done in
+>>>> CCF and why it does not match your expectation.
+>>>>
+>>> I have debugged the handle for orphan clock in CCF, Maybe you are missing
+>>> the last email.
+>>
+>> Nope, got it the first time
+>>
+>>> Even though the clock index exit, it will get failed for the orphan clock's
+>>> parent clock due to it has not beed added to the provider.
+>>
+>> If the provider is not registered yet, of course any query to it won't
+>> work. This why I have suggested to this debug *further* :
+>>
+>> * Is the orphan reparenting done when a new provider is registered ?
+>> * If not, should it be done ? is this your problem ?
+>>
+
+Apparently, I was not clear enough so I'll rephrase
+
+> Yes, the orphan reparenting is done when the new provider is
+> registered.
+
+No it is not done yet. Please check the code.
+
+The reparenting of orphan is done only on clock registration, not on
+provider registeration. Now that clocks can be specified by DT, this
+probably needs to added.
+
+That is your problem.
+
+Please fix the underlying issue, then you can post your series again.
+
+>
+> Reparenting the orphan will be done when each clock is registered by
+> devm_clk_hw_register. And at this time the provider has not been
+> registered. After all clocks are registered by devm_clk_hw_register, the
+> provider will be registered by devm_of_clk_add_hw_provider.
+>
+> Reparenting the orphan will fail when fw_name is added alone, the couse is
+> that devm_clk_hw_register is always running ahead of
+> devm_of_clk_add_hw_provider.
+
+Please stop bringing the topic of "fw_name" and "name" field together, I
+told you 3 times why this is wrong. It is not going to change.
+
+>
+> That is why it will failed to get parent for the orphan clock.
+
+It fails because the provider is not registered when you try to reparent
+the orphan.
+
+It shows that you should try again once the provider is registered.
+
+>
+>
+>
+>>
+>> .
+>>
 
