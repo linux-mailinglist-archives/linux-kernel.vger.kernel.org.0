@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6625B10943C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2118B10943D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:31:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725946AbfKYTbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 14:31:12 -0500
+        id S1727050AbfKYTbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 14:31:15 -0500
 Received: from mga12.intel.com ([192.55.52.136]:22629 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfKYTbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 14:31:11 -0500
+        id S1725924AbfKYTbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 14:31:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
   by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 11:31:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,242,1571727600"; 
-   d="scan'208";a="216994573"
+   d="scan'208";a="216994576"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga001.fm.intel.com with ESMTP; 25 Nov 2019 11:31:11 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -32,60 +32,50 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v2 0/4] Fix some 4-byte vs. 8-byte alignment issues in atomic bit operations
-Date:   Mon, 25 Nov 2019 11:43:00 -0800
-Message-Id: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v2 1/4] drivers/net/b44: Change to non-atomic bit operations
+Date:   Mon, 25 Nov 2019 11:43:01 -0800
+Message-Id: <1574710984-208305-2-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
+References: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A split lock is an unaligned atomic operation that spans two cache
-lines. The split lock access needs to hold bus lock and will
-degrade performance.
+From: Peter Zijlstra <peterz@infradead.org>
 
-Accessing one split lock long can take over one thousand extra cycles
-than atomically accessing one unaligned long within one cache line.
-And while the split lock access holds the bus lock, any other
-memory accesses are not allowed and the overall memory access performance
-is degraded.
+Since "pwol_mask" is local and never exposed to concurrency, there is
+no need to set bit in pwol_mask by costly atomic operations.
 
-Because badly performance impact by split lock, this patch series
-solve the split lock issues instead of other alignment issues.
-
-These parts are all simple fixes which are a necessary pre-cursor 
-before we can enable #AC traps for split lock access. But they 
-are also worthwhile performance fixes in their own right. So 
-no sense in holding them back while we discuss the merits of 
-the rest of the series. 
-
-The alignment issues may be fixed by changing the atomic bit operations
-APIs e.g. new set_bit_32() for 4-byte alignment. But the fixes will
-be complex because they touch a lot of call sites and architectures.
-
-Change Log:
-v2:
-- Remove patch 1 and 3 in v1 because they are in the tip tree already.
-- Add new patches 2-4 per David Laight's comments:
-https://lore.kernel.org/lkml/e7c75de9191847ed98c573f9ad871518@AcuMS.aculab.com/
-Running "grep -r --include '*.[ch]' '_bit([^(]*, *([^)]*\*)' ."
-returns about 200 results. Most of them don't have split lock issues.
-
-Fenghua Yu (3):
-  xen-pcifront: Align address of flags to size of unsigned long
-  mtd: rawnand: fsmc: Change to non-atomic bit operations
-  x86/mce: Force alignment for atomic bit operations
-
-Peter Zijlstra (1):
-  drivers/net/b44: Change to non-atomic bit operations
-
- arch/x86/include/asm/mce.h          | 3 ++-
- drivers/mtd/nand/raw/fsmc_nand.c    | 4 ++--
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
  drivers/net/ethernet/broadcom/b44.c | 4 ++--
- include/xen/interface/io/pciif.h    | 7 +++++--
- 4 files changed, 11 insertions(+), 7 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
+index 97ab0dd25552..5738ab963dfb 100644
+--- a/drivers/net/ethernet/broadcom/b44.c
++++ b/drivers/net/ethernet/broadcom/b44.c
+@@ -1520,7 +1520,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
+ 
+ 	memset(ppattern + offset, 0xff, magicsync);
+ 	for (j = 0; j < magicsync; j++)
+-		set_bit(len++, (unsigned long *) pmask);
++		__set_bit(len++, (unsigned long *)pmask);
+ 
+ 	for (j = 0; j < B44_MAX_PATTERNS; j++) {
+ 		if ((B44_PATTERN_SIZE - len) >= ETH_ALEN)
+@@ -1532,7 +1532,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
+ 		for (k = 0; k< ethaddr_bytes; k++) {
+ 			ppattern[offset + magicsync +
+ 				(j * ETH_ALEN) + k] = macaddr[k];
+-			set_bit(len++, (unsigned long *) pmask);
++			__set_bit(len++, (unsigned long *)pmask);
+ 		}
+ 	}
+ 	return len - 1;
 -- 
 2.19.1
 
