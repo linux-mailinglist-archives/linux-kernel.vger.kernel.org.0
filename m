@@ -2,174 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4261091A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA511091B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 17:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfKYQLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 11:11:47 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41507 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbfKYQLq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 11:11:46 -0500
-Received: by mail-qt1-f195.google.com with SMTP id 59so12235950qtg.8;
-        Mon, 25 Nov 2019 08:11:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=PsI4yZtUmbMwiHynlpswlFtIawc/jhnogyFzjtBl7eU=;
-        b=YiccQRIt/381JV3wKlX3qKTo/qvot6ogYibsfv73ierej9fCq6YCsy5c9orqQhVVRP
-         4S1XADPjHaOddI9LGQ90lqf5MD3L7iW0OpHHffbi+2q68ebCBgXisqN9JBvKxdk6cju9
-         T56M1ith/oVge9bsLR4OKhM5N3arTcVOVIaBirHLFbWtR39HcTYiJncGp6BS4vJVWjTk
-         NNJlKTq2Q1X5Iz8zf/R4WXs2dyVMgaKHAeEB4pOf47BByhM2q5dSevua7cSDS2yWDaFy
-         dZ6RENtiwPndYnavbh+cBygZIyEwtPZeeraBssBVWszRz30+c/7cFQF/E6gnTZ6TuaWP
-         oPXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:content-transfer-encoding
-         :user-agent;
-        bh=PsI4yZtUmbMwiHynlpswlFtIawc/jhnogyFzjtBl7eU=;
-        b=ZaI+8TmP3gn00Y8f57l/32v+HdBoktFQvETkbvWK+kOy5PM91kqJZUxgHVWeOTuT4A
-         J+mhlIPmzxQSSYJi/MFuor3HRoY8j6Ihm7EeaX+WGVTIKeB2nDyTPaIEaIQk2sp5qYKP
-         O4nv/rvzUswgo1Wio3jnA2NyyHNYaB3uy4GVHhU6jG/em5UFBIid14avbabqOs/XJTYc
-         JEtS2ZRAbK+UNjOp515xrOFyTX/Sp1OFHHUlci4HwMUDV+9DFvg4aIUcjLIsaGwzLhtI
-         VkMFv5ICS4HADErXCDg2QN8n28yZ262Uozz3839oUfjIiTYkDkG75fbEdiGAqbnCNa/w
-         aIyg==
-X-Gm-Message-State: APjAAAW0ySUhzOM08JTPrKLaUJ2wNNngS6381TX7Kj0YOxY81Y8hSpKr
-        Ujib0FW7Y3afLZnRYGOriZw=
-X-Google-Smtp-Source: APXvYqzc5+rMGpatEtjwOueIYyyg3OWDhFGQsiFZiy/JECfvlfQl6TNlBcl6pHn9mUB/jf4bs01UWQ==
-X-Received: by 2002:ac8:73ce:: with SMTP id v14mr29680412qtp.136.1574698303940;
-        Mon, 25 Nov 2019 08:11:43 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::3:2f2e])
-        by smtp.gmail.com with ESMTPSA id u7sm3571504qkm.127.2019.11.25.08.11.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Nov 2019 08:11:43 -0800 (PST)
-Date:   Mon, 25 Nov 2019 08:11:41 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
-Subject: [GIT PULL] cgroup changes for v5.5-rc1
-Message-ID: <20191125161141.GC2867037@devbig004.ftw2.facebook.com>
+        id S1728852AbfKYQTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 11:19:47 -0500
+Received: from D57E315A.static.ziggozakelijk.nl ([213.126.49.90]:52127 "EHLO
+        protonic.nl" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728827AbfKYQTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 11:19:46 -0500
+X-Greylist: delayed 357 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 11:19:44 EST
+Received: from erd987.prtnl (erd987.prtnl [192.168.237.3])
+        by sparta (Postfix) with ESMTP id A6E5944A00C3;
+        Mon, 25 Nov 2019 17:13:45 +0100 (CET)
+From:   Robin van der Gracht <robin@protonic.nl>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     "linux-input @ vger . kernel . org" <linux-input@vger.kernel.org>,
+        "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>,
+        RobinGong <yibin.gong@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        "linux-arm-kernel @ lists . infradead . org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin van der Gracht <robin@protonic.nl>
+Subject: [PATCH v4] input: keyboard: snvs_pwrkey: Send key events for i.MX6 S, DL and Q
+Date:   Mon, 25 Nov 2019 17:12:10 +0100
+Message-Id: <20191125161210.8275-1-robin@protonic.nl>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The first generation i.MX6 processors does not send an interrupt when the
+power key is pressed. It sends a power down request interrupt if the key is
+released before a hard shutdown (5 second press). This should allow
+software to bring down the SoC safely.
 
-There are several notable changes in this pull request.
+For this driver to work as a regular power key with the older SoCs, we need
+to send a keypress AND release when we get the power down request irq.
 
-* Single thread migrating itself has been optimized so that it doesn't
-  need threadgroup rwsem anymore.
+Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+---
 
-* Freezer optimization to avoid unnecessary frozen state changes.
+Changes v3 -> v4:
+ * The key release irq handler is now emitting the press and release
+   events directly, instead of the debounce timer handler.
 
-* cgroup ID unification so that cgroup fs ino is the only unique ID
-  used for the cgroup and can be used to directly look up live cgroups
-  through filehandle interface on 64bit ino archs.  On 32bit archs,
-  cgroup fs ino is still the only ID in use but it is only unique when
-  combined with gen.
+ drivers/input/keyboard/Kconfig       |  2 +-
+ drivers/input/keyboard/snvs_pwrkey.c | 28 +++++++++++++++++++++++++---
+ 2 files changed, 26 insertions(+), 4 deletions(-)
 
-* selftest and other changes.
-
-Thanks.
-
-The following changes since commit da0c9ea146cbe92b832f1b0f694840ea8eb33cce:
-
-  Linux 5.4-rc2 (2019-10-06 14:27:30 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.5
-
-for you to fetch changes up to 40363cf13999ee4fb3b5c1e67fa5e6f0e9da34bd:
-
-  writeback: fix -Wformat compilation warnings (2019-11-25 07:50:41 -0800)
-
-----------------------------------------------------------------
-Aleksa Sarai (1):
-      cgroup: pids: use atomic64_t for pids->limit
-
-Chris Down (1):
-      docs: cgroup: mm: Fix spelling of "list"
-
-Hewenliang (1):
-      kselftests: cgroup: Avoid the reuse of fd after it is deallocated
-
-Honglei Wang (1):
-      cgroup: freezer: don't change task and cgroups status unnecessarily
-
-Miaohe Lin (1):
-      cgroup: short-circuit current_cgns_cgroup_from_root() on the default hierarchy
-
-Michal Koutný (5):
-      cgroup: Update comments about task exit path
-      cgroup: Optimize single thread migration
-      selftests: cgroup: Simplify task self migration
-      selftests: cgroup: Add task migration tests
-      selftests: cgroup: Run test_core under interfering stress
-
-Qian Cai (1):
-      writeback: fix -Wformat compilation warnings
-
-Tejun Heo (13):
-      cgroup: remove cgroup_enable_task_cg_lists() optimization
-      cgroup: use cgroup->last_bstat instead of cgroup->bstat_pending for consistency
-      kernfs: fix ino wrap-around detection
-      writeback: use ino_t for inodes in tracepoints
-      netprio: use css ID instead of cgroup ID
-      kernfs: use dumber locking for kernfs_find_and_get_node_by_ino()
-      kernfs: kernfs_find_and_get_node_by_ino() should only look up activated nodes
-      kernfs: convert kernfs_node->id from union kernfs_node_id to u64
-      kernfs: combine ino/id lookup functions into kernfs_find_and_get_node_by_id()
-      kernfs: implement custom exportfs ops and fid type
-      kernfs: use 64bit inos if ino_t is 64bit
-      cgroup: use cgrp->kn->id as the cgroup ID
-      cgroup: fix incorrect WARN_ON_ONCE() in cgroup_setup_root()
-
- Documentation/admin-guide/cgroup-v2.rst       |   2 +-
- fs/kernfs/dir.c                               | 101 ++++----
- fs/kernfs/file.c                              |   4 +-
- fs/kernfs/inode.c                             |   4 +-
- fs/kernfs/kernfs-internal.h                   |   2 -
- fs/kernfs/mount.c                             | 102 ++++----
- include/linux/cgroup-defs.h                   |  19 +-
- include/linux/cgroup.h                        |  27 +--
- include/linux/exportfs.h                      |   5 +
- include/linux/kernfs.h                        |  57 +++--
- include/net/netprio_cgroup.h                  |   2 +-
- include/trace/events/cgroup.h                 |   6 +-
- include/trace/events/writeback.h              | 140 +++++------
- kernel/bpf/helpers.c                          |   2 +-
- kernel/bpf/local_storage.c                    |   2 +-
- kernel/cgroup/cgroup-internal.h               |   5 +-
- kernel/cgroup/cgroup-v1.c                     |   5 +-
- kernel/cgroup/cgroup.c                        | 325 ++++++++------------------
- kernel/cgroup/cpuset.c                        |   2 -
- kernel/cgroup/freezer.c                       |   9 +
- kernel/cgroup/pids.c                          |  11 +-
- kernel/cgroup/rstat.c                         |  46 ++--
- kernel/trace/blktrace.c                       |  84 ++++---
- net/core/filter.c                             |   4 +-
- net/core/netprio_cgroup.c                     |   8 +-
- tools/testing/selftests/cgroup/Makefile       |   4 +-
- tools/testing/selftests/cgroup/cgroup_util.c  |  42 +++-
- tools/testing/selftests/cgroup/cgroup_util.h  |   6 +-
- tools/testing/selftests/cgroup/test_core.c    | 146 ++++++++++++
- tools/testing/selftests/cgroup/test_freezer.c |   3 +-
- tools/testing/selftests/cgroup/test_stress.sh |   4 +
- tools/testing/selftests/cgroup/with_stress.sh | 101 ++++++++
- 32 files changed, 746 insertions(+), 534 deletions(-)
- create mode 100755 tools/testing/selftests/cgroup/test_stress.sh
- create mode 100755 tools/testing/selftests/cgroup/with_stress.sh
-
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 7c4f19dab34f..937e58da5ce1 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -436,7 +436,7 @@ config KEYBOARD_SNVS_PWRKEY
+ 	depends on OF
+ 	help
+ 	  This is the snvs powerkey driver for the Freescale i.MX application
+-	  processors that are newer than i.MX6 SX.
++	  processors.
+ 
+ 	  To compile this driver as a module, choose M here; the
+ 	  module will be called snvs_pwrkey.
+diff --git a/drivers/input/keyboard/snvs_pwrkey.c b/drivers/input/keyboard/snvs_pwrkey.c
+index 5342d8d45f81..4888e137cc5d 100644
+--- a/drivers/input/keyboard/snvs_pwrkey.c
++++ b/drivers/input/keyboard/snvs_pwrkey.c
+@@ -19,6 +19,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+ 
++#define SNVS_HPVIDR1_REG 0xF8
+ #define SNVS_LPSR_REG	0x4C	/* LP Status Register */
+ #define SNVS_LPCR_REG	0x38	/* LP Control Register */
+ #define SNVS_HPSR_REG	0x14
+@@ -37,6 +38,7 @@ struct pwrkey_drv_data {
+ 	int wakeup;
+ 	struct timer_list check_timer;
+ 	struct input_dev *input;
++	u8 minor_rev;
+ };
+ 
+ static void imx_imx_snvs_check_for_events(struct timer_list *t)
+@@ -67,13 +69,29 @@ static irqreturn_t imx_snvs_pwrkey_interrupt(int irq, void *dev_id)
+ {
+ 	struct platform_device *pdev = dev_id;
+ 	struct pwrkey_drv_data *pdata = platform_get_drvdata(pdev);
++	struct input_dev *input = pdata->input;
+ 	u32 lp_status;
+ 
+-	pm_wakeup_event(pdata->input->dev.parent, 0);
++	pm_wakeup_event(input->dev.parent, 0);
+ 
+ 	regmap_read(pdata->snvs, SNVS_LPSR_REG, &lp_status);
+-	if (lp_status & SNVS_LPSR_SPO)
+-		mod_timer(&pdata->check_timer, jiffies + msecs_to_jiffies(DEBOUNCE_TIME));
++	if (lp_status & SNVS_LPSR_SPO) {
++		if (pdata->minor_rev == 0) {
++			/*
++			 * The first generation i.MX6 SoCs only sends an
++			 * interrupt on button release. To mimic power-key
++			 * usage, we'll prepend a press event.
++			 */
++			input_report_key(input, pdata->keycode, 1);
++			input_sync(input);
++			input_report_key(input, pdata->keycode, 0);
++			input_sync(input);
++			pm_relax(input->dev.parent);
++		} else {
++			mod_timer(&pdata->check_timer,
++			          jiffies + msecs_to_jiffies(DEBOUNCE_TIME));
++		}
++	}
+ 
+ 	/* clear SPO status */
+ 	regmap_write(pdata->snvs, SNVS_LPSR_REG, SNVS_LPSR_SPO);
+@@ -94,6 +112,7 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
+ 	struct input_dev *input = NULL;
+ 	struct device_node *np;
+ 	int error;
++	u32 vid;
+ 
+ 	/* Get SNVS register Page */
+ 	np = pdev->dev.of_node;
+@@ -123,6 +142,9 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	regmap_read(pdata->snvs, SNVS_HPVIDR1_REG, &vid);
++	pdata->minor_rev = vid & 0xff;
++
+ 	regmap_update_bits(pdata->snvs, SNVS_LPCR_REG, SNVS_LPCR_DEP_EN, SNVS_LPCR_DEP_EN);
+ 
+ 	/* clear the unexpected interrupt before driver ready */
 -- 
-tejun
+2.20.1
+
