@@ -2,119 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85EFF108C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 11:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F06108BFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 11:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbfKYKpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 05:45:39 -0500
-Received: from foss.arm.com ([217.140.110.172]:48018 "EHLO foss.arm.com"
+        id S1727551AbfKYKpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 05:45:06 -0500
+Received: from foss.arm.com ([217.140.110.172]:47966 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbfKYKpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 05:45:38 -0500
+        id S1727278AbfKYKpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 05:45:06 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC8A855D;
-        Mon, 25 Nov 2019 02:45:37 -0800 (PST)
-Received: from entos-d05.shanghai.arm.com (entos-d05.shanghai.arm.com [10.169.40.35])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 56E063F52E;
-        Mon, 25 Nov 2019 02:45:32 -0800 (PST)
-From:   Jianyong Wu <jianyong.wu@arm.com>
-To:     netdev@vger.kernel.org, yangbo.lu@nxp.com, john.stultz@linaro.org,
-        tglx@linutronix.de, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, maz@kernel.org,
-        richardcochran@gmail.com, Mark.Rutland@arm.com, will@kernel.org,
-        suzuki.poulose@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
-        jianyong.wu@arm.com, nd@arm.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [RFC PATCH v8 1/8] arm/arm64: smccc/psci: add arm_smccc_1_1_get_conduit()
-Date:   Mon, 25 Nov 2019 18:44:59 +0800
-Message-Id: <20191125104506.36850-2-jianyong.wu@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191125104506.36850-1-jianyong.wu@arm.com>
-References: <20191125104506.36850-1-jianyong.wu@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 903EF328;
+        Mon, 25 Nov 2019 02:45:05 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2618F3F52E;
+        Mon, 25 Nov 2019 02:45:04 -0800 (PST)
+Date:   Mon, 25 Nov 2019 10:44:59 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Michael Kelley <mikelley@microsoft.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: Re: [PATCH v2 2/4] PCI: hv: Add the support of hibernation
+Message-ID: <20191125104459.GA14328@e121166-lin.cambridge.arm.com>
+References: <1574234218-49195-1-git-send-email-decui@microsoft.com>
+ <1574234218-49195-3-git-send-email-decui@microsoft.com>
+ <20191120172026.GE3279@e121166-lin.cambridge.arm.com>
+ <PU1P153MB0169D0A99D5687FBDB02536BBF4E0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20191121114419.GA4318@e121166-lin.cambridge.arm.com>
+ <CY4PR21MB06290283219FC78C45688DC4D74B0@CY4PR21MB0629.namprd21.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY4PR21MB06290283219FC78C45688DC4D74B0@CY4PR21MB0629.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+On Sun, Nov 24, 2019 at 10:19:46PM +0000, Michael Kelley wrote:
+> From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>  Sent: Thursday, November 21, 2019 3:44 AM
+> > 
+> > On Thu, Nov 21, 2019 at 12:50:17AM +0000, Dexuan Cui wrote:
+> > > > From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > > > Sent: Wednesday, November 20, 2019 9:20 AM
+> > > >
+> > > > On Tue, Nov 19, 2019 at 11:16:56PM -0800, Dexuan Cui wrote:
+> > > > > Implement the suspend/resume callbacks.
+> > > > >
+> > > > > We must make sure there is no pending work items before we call
+> > > > > vmbus_close().
+> > > >
+> > > > Where ? Why ? Imagine a developer reading this log to try to understand
+> > > > why you made this change, do you really think this commit log is
+> > > > informative in its current form ?
+> > > >
+> > > > I am not asking a book but this is a significant feature please make
+> > > > an effort to explain it (I can update the log for you but please
+> > > > write one and I shall do it).
+> > > >
+> > > > Lorenzo
+> > >
+> > > Sorry for being sloppy on this patch's changelog! Can you please use the
+> > > below? I can also post v3 with the new changelog if that's better.
+> > 
+> > As you wish but more importantly get hyper-V maintainers to ACK these
+> > changes since time is running out for v5.5.
+> > 
+> > Lorenzo
+> > 
+> > > PCI: hv: Add the support of hibernation
+> > >
+> > > hv_pci_suspend() runs in a process context as a callback in dpm_suspend().
+> > > When it starts to run, the channel callback hv_pci_onchannelcallback(),
+> > > which runs in a tasklet context, can be still running concurrently and
+> > > scheduling new work items onto hbus->wq in hv_pci_devices_present() and
+> > > hv_pci_eject_device(), and the work item handlers can access the vmbus
+> > > channel, which can be being closed by hv_pci_suspend(), e.g. the work item
+> > > handler pci_devices_present_work() -> new_pcichild_device() writes to
+> > > the vmbus channel.
+> > >
+> > > To eliminate the race, hv_pci_suspend() disables the channel callback
+> > > tasklet, sets hbus->state to hv_pcibus_removing, and re-enables the tasklet.
+> > >
+> > > This way, when hv_pci_suspend() proceeds, it knows that no new work item
+> > > can be scheduled, and then it flushes hbus->wq and safely closes the vmbus
+> > > channel.
+> > >
+> > > Thanks,
+> > > -- Dexuan
+> 
+> FWIW, I'd like to see the above level of detail also as comments in the code
+> Itself so that whoever next looks at the code sees the explanation directly
+> without having to review the commit logs.
+> 
+> Also, the commit message doesn't say what the commit actually does and
+> why.  I'd suggest the commit message along these lines:
+> 
+> Add suspend() and resume() functions so that Hyper-V virtual PCI devices are
+> handled properly when the VM hibernates and resumes from hibernation.
+> 
+> Note that the suspend() function must make sure there are no pending work
+> items before calling vmbus_close(), since it runs in a process context as a
+> callback in dpm_suspend().  When it starts to run, the channel callback
+> hv_pci_onchannelcallback(), which runs in a tasklet context, can be still running
+> concurrently and scheduling new work items onto hbus->wq in
+> hv_pci_devices_present() and hv_pci_eject_device(), and the work item 
+> handlers can access the vmbus channel, which can be being closed by
+> hv_pci_suspend(), e.g. the work item handler pci_devices_present_work() ->
+> new_pcichild_device() writes to the vmbus channel.
+> 
+> To eliminate the race, hv_pci_suspend() disables the channel callback
+> tasklet, sets hbus->state to hv_pcibus_removing, and re-enables the tasklet.
+> This way, when hv_pci_suspend() proceeds, it knows that no new work item
+> can be scheduled, and then it flushes hbus->wq and safely closes the vmbus
+> channel.
 
-SMCCC callers are currently amassing a collection of enums for the SMCCC
-conduit, and are having to dig into the PSCI driver's internals in order
-to figure out what to do.
+This is much better, thank you, if you are happy with the patches
+please add your tags so that I can pull the series asap, hopefully
+we can merge it in v5.5.
 
-Let's clean this up, with common SMCCC_CONDUIT_* definitions, and an
-arm_smccc_1_1_get_conduit() helper that abstracts the PSCI driver's
-internal state.
-
-We can kill off the PSCI_CONDUIT_* definitions once we've migrated users
-over to the new interface.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
----
- drivers/firmware/psci/psci.c | 15 +++++++++++++++
- include/linux/arm-smccc.h    | 16 ++++++++++++++++
- 2 files changed, 31 insertions(+)
-
-diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index f82ccd39a913..5f31f1bea1af 100644
---- a/drivers/firmware/psci/psci.c
-+++ b/drivers/firmware/psci/psci.c
-@@ -57,6 +57,21 @@ struct psci_operations psci_ops = {
- 	.smccc_version = SMCCC_VERSION_1_0,
- };
- 
-+enum arm_smccc_conduit arm_smccc_1_1_get_conduit(void)
-+{
-+	if (psci_ops.smccc_version < SMCCC_VERSION_1_1)
-+		return SMCCC_CONDUIT_NONE;
-+
-+	switch (psci_ops.conduit) {
-+	case PSCI_CONDUIT_SMC:
-+		return SMCCC_CONDUIT_SMC;
-+	case PSCI_CONDUIT_HVC:
-+		return SMCCC_CONDUIT_HVC;
-+	default:
-+		return SMCCC_CONDUIT_NONE;
-+	}
-+}
-+
- typedef unsigned long (psci_fn)(unsigned long, unsigned long,
- 				unsigned long, unsigned long);
- static psci_fn *invoke_psci_fn;
-diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-index 552cbd49abe8..701fa1da6b4a 100644
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -107,6 +107,22 @@
- 
- #include <linux/linkage.h>
- #include <linux/types.h>
-+
-+enum arm_smccc_conduit {
-+	SMCCC_CONDUIT_NONE,
-+	SMCCC_CONDUIT_SMC,
-+	SMCCC_CONDUIT_HVC,
-+};
-+
-+/**
-+ * arm_smccc_1_1_get_conduit()
-+ *
-+ * Returns the conduit to be used for SMCCCv1.1 or later.
-+ *
-+ * When SMCCCv1.1 is not present, returns SMCCC_CONDUIT_NONE.
-+ */
-+enum arm_smccc_conduit arm_smccc_1_1_get_conduit(void);
-+
- /**
-  * struct arm_smccc_res - Result from SMC/HVC call
-  * @a0-a3 result values from registers 0 to 3
--- 
-2.17.1
-
+Thanks,
+Lorenzo
