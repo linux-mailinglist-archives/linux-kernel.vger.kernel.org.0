@@ -2,45 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E22B5109295
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 18:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5901A109296
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 18:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfKYRFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 12:05:45 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.162]:14092 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbfKYRFn (ORCPT
+        id S1729106AbfKYRFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 12:05:46 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:36471 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbfKYRFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 12:05:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574701539;
+        Mon, 25 Nov 2019 12:05:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574701538;
         s=strato-dkim-0002; d=gerhold.net;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=53qG48IklGrDeQf7pc+hhg5H/dz6HcMn6cl+jKa+Pn8=;
-        b=pwFxMwL50TeCnvhz7eQ8TwF4rizpX+wbZExt5+CjRobScgXTsK/3PgIjh6myKemVyb
-        V7M6ZpSZfRv5rfqXBA6rnFAAdomI2nEnVZa+iNYq4qDFteEN1zvAT9Xh1ujK8aLHSZkD
-        j9QbFbjLzai3g/DIhXGGxXpgm1JBq0hxIsGgk/bKQwVcPGjyUKLYk5l1NdoHs7rHFKwx
-        1q0irm1zPjwxDFWetybSyc+lyD5IPpZHHiHlK9rS7vlal1k9tyY1APhcMfyzt6yNihbD
-        Q3pghJnGSrxDdcsKFphf63gWsH1GHa96vt31RXHTIMGVKmv1XUCUzzmyr8gUORCFkRir
-        nOSQ==
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=4T58iZwAhzibbxA38Ty05T3UHM/dV8EZ97kepZ5ETG4=;
+        b=e3tFNUQ3QRft4m1yWhM4MZNgJI02fVLtm94kjCXvbTZD20xY3+ivne5k+umfg8veW3
+        wiTfIfs+dJloDqNcuYbEI9uQ1LiTxb+jn6gP+QVkQY5JG6OsISZyj0R/5VxQRvdIHgx0
+        Z37XsM7I5RtNrddj6l74XOFQwueb3gsPR6vY5WWhE4bZDOnzCQDG5nNMI6so4Ax40vMr
+        w8SmjJzzCRsQUNe7K2asKr1fVhqsW7VMUqy9s7+1Ql27ehwr9ri0c9bcF/wsXhL0ptsG
+        apumaNugBd/HmT1DL65iIb+BbjAII1iRBomWDJvvktBoDzbItGdNa7GkpXQT7Gdxz7Q3
+        qGrg==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQr4OGUPX+1NmWArOmLo="
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
-        with ESMTPSA id 304194vAPH5b2r6
+        with ESMTPSA id 304194vAPH5c2r7
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Mon, 25 Nov 2019 18:05:37 +0100 (CET)
+        Mon, 25 Nov 2019 18:05:38 +0100 (CET)
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 1/4] ARM: dts: ux500: Disable I2C/SPI buses by default
-Date:   Mon, 25 Nov 2019 18:04:25 +0100
-Message-Id: <20191125170428.76069-1-stephan@gerhold.net>
+Subject: [PATCH 2/4] ARM: dts: ux500: Add aliases for I2C and SPI buses
+Date:   Mon, 25 Nov 2019 18:04:26 +0100
+Message-Id: <20191125170428.76069-2-stephan@gerhold.net>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191125170428.76069-1-stephan@gerhold.net>
+References: <20191125170428.76069-1-stephan@gerhold.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,216 +50,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the moment, all 5 I2C and 6 SPI buses are probed and exposed
-to user-space by default - even if they are not muxed to any pins
-on the board. This means that user-space sees an I2C/SPI bus that
-cannot be actually used properly.
+Now that we disable the I2C/SPI buses by default, is is even more
+important to assign aliases to the I2C/SPI device nodes.
+Otherwise, enabling/disabling one of them will potentially change
+all device IDs, e.g. i2c2 will be named i2c-0 if it is the only
+enabled I2C bus.
 
-In some cases this was used to put the corresponding pins into
-a low power sleep mode - but even then the pins first need to be
-configured by the board-specific device tree part.
-
-Avoid exposing unconfigured devices to user-space by disabling
-the I2C/SPI buses by default. Enable them in the board device trees
-when needed.
+Add aliases for the I2C and SPI buses to avoid this.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- arch/arm/boot/dts/ste-dbx5x0.dtsi     | 22 ++++++++++++++++++++++
- arch/arm/boot/dts/ste-href.dtsi       |  4 ++++
- arch/arm/boot/dts/ste-hrefprev60.dtsi |  1 +
- arch/arm/boot/dts/ste-snowball.dts    |  5 +++++
- 4 files changed, 32 insertions(+)
+ arch/arm/boot/dts/ste-dbx5x0.dtsi | 35 +++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
 diff --git a/arch/arm/boot/dts/ste-dbx5x0.dtsi b/arch/arm/boot/dts/ste-dbx5x0.dtsi
-index a53657b83288..899368aa6ff7 100644
+index 899368aa6ff7..ed91232a118a 100644
 --- a/arch/arm/boot/dts/ste-dbx5x0.dtsi
 +++ b/arch/arm/boot/dts/ste-dbx5x0.dtsi
-@@ -646,6 +646,8 @@
- 			clocks = <&prcc_kclk 3 3>, <&prcc_pclk 3 3>;
- 			clock-names = "i2cclk", "apb_pclk";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
+@@ -13,6 +13,19 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	/* This stablilizes the device enumeration */
++	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c4 = &i2c4;
++		spi0 = &spi0;
++		spi1 = &spi1;
++		spi2 = &spi2;
++		spi3 = &spi3;
++	};
 +
-+			status = "disabled";
+ 	chosen {
+ 	};
+ 
+@@ -633,7 +646,7 @@
+ 			};
  		};
  
- 		i2c@80122000 {
-@@ -662,6 +664,8 @@
- 			clocks = <&prcc_kclk 1 2>, <&prcc_pclk 1 2>;
- 			clock-names = "i2cclk", "apb_pclk";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		i2c@80004000 {
++		i2c0: i2c@80004000 {
+ 			compatible = "stericsson,db8500-i2c", "st,nomadik-i2c", "arm,primecell";
+ 			reg = <0x80004000 0x1000>;
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+@@ -650,7 +663,7 @@
+ 			status = "disabled";
  		};
  
- 		i2c@80128000 {
-@@ -678,6 +682,8 @@
- 			clocks = <&prcc_kclk 1 6>, <&prcc_pclk 1 6>;
- 			clock-names = "i2cclk", "apb_pclk";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		i2c@80122000 {
++		i2c1: i2c@80122000 {
+ 			compatible = "stericsson,db8500-i2c", "st,nomadik-i2c", "arm,primecell";
+ 			reg = <0x80122000 0x1000>;
+ 			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+@@ -668,7 +681,7 @@
+ 			status = "disabled";
  		};
  
- 		i2c@80110000 {
-@@ -694,6 +700,8 @@
- 			clocks = <&prcc_kclk 2 0>, <&prcc_pclk 2 0>;
- 			clock-names = "i2cclk", "apb_pclk";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		i2c@80128000 {
++		i2c2: i2c@80128000 {
+ 			compatible = "stericsson,db8500-i2c", "st,nomadik-i2c", "arm,primecell";
+ 			reg = <0x80128000 0x1000>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+@@ -686,7 +699,7 @@
+ 			status = "disabled";
  		};
  
- 		i2c@8012a000 {
-@@ -710,6 +718,8 @@
- 			clocks = <&prcc_kclk 1 9>, <&prcc_pclk 1 10>;
- 			clock-names = "i2cclk", "apb_pclk";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		i2c@80110000 {
++		i2c3: i2c@80110000 {
+ 			compatible = "stericsson,db8500-i2c", "st,nomadik-i2c", "arm,primecell";
+ 			reg = <0x80110000 0x1000>;
+ 			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+@@ -704,7 +717,7 @@
+ 			status = "disabled";
  		};
  
- 		spi@80002000 {
-@@ -724,6 +734,8 @@
- 			       <&dma 8 0 0x0>; /* Logical - MemToDev */
- 			dma-names = "rx", "tx";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		i2c@8012a000 {
++		i2c4: i2c@8012a000 {
+ 			compatible = "stericsson,db8500-i2c", "st,nomadik-i2c", "arm,primecell";
+ 			reg = <0x8012a000 0x1000>;
+ 			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+@@ -722,7 +735,7 @@
+ 			status = "disabled";
  		};
  
- 		spi@80003000 {
-@@ -738,6 +750,8 @@
- 			       <&dma 9 0 0x0>; /* Logical - MemToDev */
- 			dma-names = "rx", "tx";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		spi@80002000 {
++		ssp0: spi@80002000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x80002000 0x1000>;
+ 			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+@@ -738,7 +751,7 @@
+ 			status = "disabled";
  		};
  
- 		spi@8011a000 {
-@@ -753,6 +767,8 @@
- 			       <&dma 0 0 0x0>; /* Logical - MemToDev */
- 			dma-names = "rx", "tx";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		spi@80003000 {
++		ssp1: spi@80003000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x80003000 0x1000>;
+ 			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
+@@ -754,7 +767,7 @@
+ 			status = "disabled";
  		};
  
- 		spi@80112000 {
-@@ -768,6 +784,8 @@
- 			       <&dma 35 0 0x0>; /* Logical - MemToDev */
- 			dma-names = "rx", "tx";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		spi@8011a000 {
++		spi0: spi@8011a000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x8011a000 0x1000>;
+ 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+@@ -771,7 +784,7 @@
+ 			status = "disabled";
  		};
  
- 		spi@80111000 {
-@@ -783,6 +801,8 @@
- 			       <&dma 33 0 0x0>; /* Logical - MemToDev */
- 			dma-names = "rx", "tx";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		spi@80112000 {
++		spi1: spi@80112000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x80112000 0x1000>;
+ 			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+@@ -788,7 +801,7 @@
+ 			status = "disabled";
  		};
  
- 		spi@80129000 {
-@@ -798,6 +818,8 @@
- 			       <&dma 40 0 0x0>; /* Logical - MemToDev */
- 			dma-names = "rx", "tx";
- 			power-domains = <&pm_domains DOMAIN_VAPE>;
-+
-+			status = "disabled";
+-		spi@80111000 {
++		spi2: spi@80111000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x80111000 0x1000>;
+ 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+@@ -805,7 +818,7 @@
+ 			status = "disabled";
  		};
  
- 		ux500_serial0: uart@80120000 {
-diff --git a/arch/arm/boot/dts/ste-href.dtsi b/arch/arm/boot/dts/ste-href.dtsi
-index 7613a40421d5..5eafd5d8a8cd 100644
---- a/arch/arm/boot/dts/ste-href.dtsi
-+++ b/arch/arm/boot/dts/ste-href.dtsi
-@@ -39,18 +39,21 @@
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c0_a_1_default>;
- 			pinctrl-1 = <&i2c0_a_1_sleep>;
-+			status = "okay";
- 		};
- 
- 		i2c@80122000 {
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c1_b_2_default>;
- 			pinctrl-1 = <&i2c1_b_2_sleep>;
-+			status = "okay";
- 		};
- 
- 		i2c@80128000 {
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c2_b_2_default>;
- 			pinctrl-1 = <&i2c2_b_2_sleep>;
-+			status = "okay";
- 			lp5521@33 {
- 				compatible = "national,lp5521";
- 				reg = <0x33>;
-@@ -98,6 +101,7 @@
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c3_c_2_default>;
- 			pinctrl-1 = <&i2c3_c_2_sleep>;
-+			status = "okay";
- 		};
- 
- 		/* ST6G3244ME level translator for 1.8/2.9 V */
-diff --git a/arch/arm/boot/dts/ste-hrefprev60.dtsi b/arch/arm/boot/dts/ste-hrefprev60.dtsi
-index a036defdf164..937f942f0961 100644
---- a/arch/arm/boot/dts/ste-hrefprev60.dtsi
-+++ b/arch/arm/boot/dts/ste-hrefprev60.dtsi
-@@ -58,6 +58,7 @@
- 			 */
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&ssp0_hrefprev60_mode>;
-+			status = "okay";
- 		};
- 
- 		// External Micro SD slot
-diff --git a/arch/arm/boot/dts/ste-snowball.dts b/arch/arm/boot/dts/ste-snowball.dts
-index 8b80dcdf6e5b..ce136412b6da 100644
---- a/arch/arm/boot/dts/ste-snowball.dts
-+++ b/arch/arm/boot/dts/ste-snowball.dts
-@@ -307,18 +307,21 @@
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c0_a_1_default>;
- 			pinctrl-1 = <&i2c0_a_1_sleep>;
-+			status = "okay";
- 		};
- 
- 		i2c@80122000 {
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c1_b_2_default>;
- 			pinctrl-1 = <&i2c1_b_2_sleep>;
-+			status = "okay";
- 		};
- 
- 		i2c@80128000 {
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c2_b_2_default>;
- 			pinctrl-1 = <&i2c2_b_2_sleep>;
-+			status = "okay";
- 			lsm303dlh@18 {
- 				/* Accelerometer */
- 				compatible = "st,lsm303dlh-accel";
-@@ -369,11 +372,13 @@
- 			pinctrl-names = "default","sleep";
- 			pinctrl-0 = <&i2c3_c_2_default>;
- 			pinctrl-1 = <&i2c3_c_2_sleep>;
-+			status = "okay";
- 		};
- 
- 		spi@80002000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&ssp0_snowball_mode>;
-+			status = "okay";
- 		};
- 
- 		prcmu@80157000 {
+-		spi@80129000 {
++		spi3: spi@80129000 {
+ 			compatible = "arm,pl022", "arm,primecell";
+ 			reg = <0x80129000 0x1000>;
+ 			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.24.0
 
