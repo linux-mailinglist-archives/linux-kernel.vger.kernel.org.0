@@ -2,156 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 689731093AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 19:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A37BA109394
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 19:36:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfKYSnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 13:43:16 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:33920 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbfKYSnQ (ORCPT
+        id S1726504AbfKYSf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 13:35:58 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41647 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfKYSf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 13:43:16 -0500
-Received: by mail-io1-f70.google.com with SMTP id a13so11547166iol.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 10:43:15 -0800 (PST)
+        Mon, 25 Nov 2019 13:35:58 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 207so7598151pge.8;
+        Mon, 25 Nov 2019 10:35:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=80jidpt49g/pONxOu2n0U/AM8XIh1HfSkjAAlDTNwMw=;
-        b=VeAPSYrtWEkmhXm/OT47JB7/UvlBBP05IGlx2+2lvurJPGaf8ummv10+t59XNxMfHU
-         tr+gmWrmUtovdnw+hh6sts7oad04qUgcEAqY9n+bPD1+Jrtqz6NnzYDxLF6bJ4kOJheX
-         3kGRij+y6VKBvzZ3NXptRxi4nxANlIeXMg+/qY3eCd2q/XxpzOTAez27VLzhsq+01c0D
-         mq0PUSQWHWfHchxDmHN2tsDw+MqAUiqBRaxfQHDqsseki/zX+WC3z6qI2T4HyFAassAk
-         OuIdCguFpc5FFFSsu4Ud5WIXzihxHScqb+9UJC7moytKSTGJAhDWmWXUqjKrbocssP9I
-         y2VQ==
-X-Gm-Message-State: APjAAAV54zlC3Dezsa6prfr9m1eBF8/6tAxyoS4pt45CQUTDF7j/RaMf
-        SJHVHZeC6H3reATAJjdac6jh5T9Otqy9/AbGF8eKe9fYLsBu
-X-Google-Smtp-Source: APXvYqyfUxmvjuzBXASF2cgOtcuwEsXqbA3yv4Cl/UPOFc9WoNlXUMKRtpvxEfILylI6titbC5EcmiCV/Oe2KN4vAO9FkSqDDMdW
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5wNA4KHBKZEp6N1N62CKTMhksw9S2p7XTOcetbk9WWE=;
+        b=cWTRY6iNT8eJpcv5qV5pp1oNWqEIBPxjm4szDfklRuIbCpdZEpyegCb0Q3kTtl3YIs
+         TRNdX1Hbgem4KRTyyYGMiBzuXN2cGUWZ+bmbsl3OlOZ1y8Z2R9zfj0YbSxp5s+ivIKoP
+         nGdXeqVHKYktEow5m5Ys6a7iQiGxcOGGAcgp6uXLGgTmQkTg5tw6VduVIGLZDf6nw0br
+         OfsDq4XVLT3BN2TN+n9Lmdo49uAhmBVHW75XDDDpqxESLjUX651Yg7Tsg+0AdoM6+O4S
+         TSkxqpPA2Io3ZydG3F52CmPPwXItSSK8OdpZnjbPbALPbt2Dz1+t1+DyDJd33sTVhNx1
+         Welg==
+X-Gm-Message-State: APjAAAWHMmjQY2UL5XE1aZai50/y3dXvF9aglwCtzv53vcEGWU95rodc
+        PHYHS1k+P9LAyWEczDRWq4Ote9Zg
+X-Google-Smtp-Source: APXvYqzErU6dZ23s05ZiNGrtpG6AeWwc8RJzdWdziKcpVZeVa76TXRWv7WDf2HY1ETAGufIWNDQbhg==
+X-Received: by 2002:a63:6c3:: with SMTP id 186mr33414159pgg.282.1574706956286;
+        Mon, 25 Nov 2019 10:35:56 -0800 (PST)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id r5sm9373499pfh.179.2019.11.25.10.35.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2019 10:35:55 -0800 (PST)
+From:   Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v2] loop: avoid EAGAIN, if offset or block_size are
+ changed
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+References: <20190518004751.18962-1-jaegeuk@kernel.org>
+ <20190518005304.GA19446@jaegeuk-macbookpro.roam.corp.google.com>
+ <1e1aae74-bd6b-dddb-0c88-660aac33872c@acm.org>
+ <20191125175913.GC71634@jaegeuk-macbookpro.roam.corp.google.com>
+Message-ID: <a4e5d6bd-3685-379a-c388-cd2871827b21@acm.org>
+Date:   Mon, 25 Nov 2019 10:35:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:6611:: with SMTP id a17mr35070868ilc.208.1574706909444;
- Mon, 25 Nov 2019 10:35:09 -0800 (PST)
-Date:   Mon, 25 Nov 2019 10:35:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f683660598300559@google.com>
-Subject: INFO: rcu detected stall in sys_open (2)
-From:   syzbot <syzbot+7ee926c5e237e614ccb1@syzkaller.appspotmail.com>
-To:     bp@alien8.de, davem@davemloft.net, herbert@gondor.apana.org.au,
-        hpa@zytor.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191125175913.GC71634@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 11/25/19 9:59 AM, Jaegeuk Kim wrote:
+> On 11/19, Bart Van Assche wrote:
+>> On 5/17/19 5:53 PM, Jaegeuk Kim wrote:
+>>> This patch tries to avoid EAGAIN due to nrpages!=0 that was originally trying
+>>> to drop stale pages resulting in wrong data access.
+>>>
+>>> Report: https://bugs.chromium.org/p/chromium/issues/detail?id=938958#c38
+>>
+>> Please provide a more detailed commit description. What is wrong with the
+>> current implementation and why is the new behavior considered the correct
+>> behavior?
+> 
+> Some history would be:
+> 
+> Original bug fix is:
+> commit 5db470e229e2 ("loop: drop caches if offset or block_size are changed"),
+> which returns EAGAIN so that user land like Chrome would require enhancing their
+> error handling routines.
+> 
+> So, this patch tries to avoid EAGAIN while addressing the original bug.
+> 
+>>
+>> This patch moves draining code from before the following comment to after
+>> that comment:
+>>
+>> /* I/O need to be drained during transfer transition */
+>>
+>> Is that comment still correct or should it perhaps be updated?
+> 
+> IMHO, it's still valid.
 
-syzbot found the following crash on:
+Hi Jaegeuk,
 
-HEAD commit:    b9d3d014 Add linux-next specific files for 20191122
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=116ea322e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c24c45ce29b175c
-dashboard link: https://syzkaller.appspot.com/bug?extid=7ee926c5e237e614ccb1
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e23986e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d6ad02e00000
+Thank you for the additional and very helpful clarification. Can you have a look at the (totally untested) patch below? I prefer that version because it prevents concurrent processing of requests and syncing/killing the bdev.
 
-Bisection is inconclusive: the first bad commit could be any of:
+Thanks,
 
-8ec426c7 lustre: don't set f_version in ll_readdir
-ac0bf025 ima: Use i_version only when filesystem supports it
-7a11ac28 ntfs: remove i_version handling
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13b9509ce00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7ee926c5e237e614ccb1@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-	(detected by 0, t=10502 jiffies, g=7137, q=12)
-rcu: All QSes seen, last rcu_preempt kthread activity 10502  
-(4295014020-4295003518), jiffies_till_next_fqs=1, root ->qsmask 0x0
-syz-executor935 R  running task    23704  8896   8886 0x80004000
-Call Trace:
-  <IRQ>
-  sched_show_task kernel/sched/core.c:5954 [inline]
-  sched_show_task.cold+0x2ed/0x34e kernel/sched/core.c:5929
-  print_other_cpu_stall kernel/rcu/tree_stall.h:410 [inline]
-  check_cpu_stall kernel/rcu/tree_stall.h:538 [inline]
-  rcu_pending kernel/rcu/tree.c:2827 [inline]
-  rcu_sched_clock_irq.cold+0xaf4/0xc02 kernel/rcu/tree.c:2271
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1726
-  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:167
-  tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1310
-  __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
-  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1579
-  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1641
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1110 [inline]
-  smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1135
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
-  </IRQ>
-RIP: 0010:loop2+0x1e5/0x39e
-Code: 63 7b f0 f0 06 41 21 c7 45 31 f5 c4 63 7b f0 e2 0d 41 31 cf c4 63 7b  
-f0 f2 16 89 d6 45 31 e6 c4 63 7b f0 e2 02 44 03 44 3c 20 <44> 09 d6 45 31  
-e6 41 89 d4 44 21 ce 45 21 d4 45 01 ef 45 01 c3 44
-RSP: 0018:ffff88809dacf080 EFLAGS: 00000a17 ORIG_RAX: ffffffffffffff13
-RAX: 000000000d895faf RBX: 00000000af692001 RCX: 00000000c2b12cbe
-RDX: 00000000398a2513 RSI: 00000000398a2513 RDI: 00000000000001c0
-RBP: ffff88809dacf318 R08: 0000000023af5072 R09: 00000000d9fb4f71
-R10: 00000000449125ce R11: 00000000c47f205e R12: 00000000ce628944
-R13: 000000008d7843d3 R14: 00000000000d80b7 R15: 00000000cf392011
-  sha256_avx2_update+0x2d/0x40 arch/x86/crypto/sha256_ssse3_glue.c:236
-  crypto_shash_update+0xc9/0x120 crypto/shash.c:120
-  ima_calc_file_hash_tfm+0x321/0x3e0 security/integrity/ima/ima_crypto.c:369
-  ima_calc_file_shash security/integrity/ima/ima_crypto.c:389 [inline]
-  ima_calc_file_hash+0x1aa/0x570 security/integrity/ima/ima_crypto.c:454
-  ima_collect_measurement+0x534/0x5f0 security/integrity/ima/ima_api.c:247
-  process_measurement+0xd45/0x1850 security/integrity/ima/ima_main.c:326
-  ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:442
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x113d/0x4710 fs/namei.c:3529
-  do_filp_open+0x1a1/0x280 fs/namei.c:3559
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-  __do_sys_open fs/open.c:1115 [inline]
-  __se_sys_open fs/open.c:1110 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x447709
-Code: e8 3c e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 ab 06 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fce7ac54db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00000000006ddc28 RCX: 0000000000447709
-RDX: 0000000000000000 RSI: 0000000000141042 RDI: 0000000020000100
-RBP: 00000000006ddc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006ddc2c
-R13: 00007ffd0e67ecaf R14: 00007fce7ac559c0 R15: 0000000000000000
-rcu: rcu_preempt kthread starved for 10502 jiffies! g7137 f0x2  
-RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: RCU grace-period kthread stack dump:
-rcu_preempt     R  running task    29272    10      2 0x80004000
-Call Trace:
-  context_switch kernel/sched/core.c:3385 [inline]
-  __schedule+0x8e1/0x1f30 kernel/sched/core.c:4081
-  schedule+0xdc/0x2b0 kernel/sched/core.c:4155
-  schedule_timeout+0x486/0xc50 kernel/time/timer.c:1895
-  rcu_gp_fqs_loop kernel/rcu/tree.c:1661 [inline]
-  rcu_gp_kthread+0x9b2/0x18d0 kernel/rcu/tree.c:1821
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Bart.
 
 
+Subject: [PATCH] loop: Avoid EAGAIN if offset or block_size are changed
+
+After sync_blockdev() and kill_bdev() have been called, more requests
+can be submitted to the loop device. These requests dirty additional
+pages, causing loop_set_status() to return -EAGAIN. Not all user space
+code that changes the offset and/or the block size handles -EAGAIN
+correctly. Hence make sure that loop_set_status() does not return
+-EAGAIN.
+
+Fixes: 5db470e229e2 ("loop: drop caches if offset or block_size are changed")
+Reported-by: Gwendal Grignou <gwendal@chromium.org>
+Reported-by: grygorii tertychnyi <gtertych@cisco.com>
+Reported-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+  drivers/block/loop.c | 35 +++++++----------------------------
+  1 file changed, 7 insertions(+), 28 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 739b372a5112..48cfc8b9c247 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1264,15 +1264,15 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+  		goto out_unlock;
+  	}
+
++	/* I/O need to be drained during transfer transition */
++	blk_mq_freeze_queue(lo->lo_queue);
++
+  	if (lo->lo_offset != info->lo_offset ||
+  	    lo->lo_sizelimit != info->lo_sizelimit) {
+  		sync_blockdev(lo->lo_device);
+  		kill_bdev(lo->lo_device);
+  	}
+
+-	/* I/O need to be drained during transfer transition */
+-	blk_mq_freeze_queue(lo->lo_queue);
+-
+  	err = loop_release_xfer(lo);
+  	if (err)
+  		goto out_unfreeze;
+@@ -1298,14 +1298,6 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+
+  	if (lo->lo_offset != info->lo_offset ||
+  	    lo->lo_sizelimit != info->lo_sizelimit) {
+-		/* kill_bdev should have truncated all the pages */
+-		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
+-			err = -EAGAIN;
+-			pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
+-				__func__, lo->lo_number, lo->lo_file_name,
+-				lo->lo_device->bd_inode->i_mapping->nrpages);
+-			goto out_unfreeze;
+-		}
+  		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
+  			err = -EFBIG;
+  			goto out_unfreeze;
+@@ -1531,39 +1523,26 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
+
+  static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+  {
+-	int err = 0;
+-
+  	if (lo->lo_state != Lo_bound)
+  		return -ENXIO;
+
+  	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
+  		return -EINVAL;
+
++	blk_mq_freeze_queue(lo->lo_queue);
++
+  	if (lo->lo_queue->limits.logical_block_size != arg) {
+  		sync_blockdev(lo->lo_device);
+  		kill_bdev(lo->lo_device);
+  	}
+-
+-	blk_mq_freeze_queue(lo->lo_queue);
+-
+-	/* kill_bdev should have truncated all the pages */
+-	if (lo->lo_queue->limits.logical_block_size != arg &&
+-			lo->lo_device->bd_inode->i_mapping->nrpages) {
+-		err = -EAGAIN;
+-		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
+-			__func__, lo->lo_number, lo->lo_file_name,
+-			lo->lo_device->bd_inode->i_mapping->nrpages);
+-		goto out_unfreeze;
+-	}
+-
+  	blk_queue_logical_block_size(lo->lo_queue, arg);
+  	blk_queue_physical_block_size(lo->lo_queue, arg);
+  	blk_queue_io_min(lo->lo_queue, arg);
+  	loop_update_dio(lo);
+-out_unfreeze:
++
+  	blk_mq_unfreeze_queue(lo->lo_queue);
+
+-	return err;
++	return 0;
+  }
+
+  static int lo_simple_ioctl(struct loop_device *lo, unsigned int cmd,
