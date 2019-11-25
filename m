@@ -2,119 +2,320 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AE2E1085FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 01:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A96E108609
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 01:47:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfKYAhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 19:37:25 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11570 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbfKYAhX (ORCPT
+        id S1727106AbfKYArM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 19:47:12 -0500
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:46159 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbfKYArL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 19:37:23 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ddb22460001>; Sun, 24 Nov 2019 16:37:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 24 Nov 2019 16:37:23 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 24 Nov 2019 16:37:23 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 25 Nov
- 2019 00:37:18 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 25 Nov 2019 00:37:18 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ddb223d0000>; Sun, 24 Nov 2019 16:37:17 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     Ira Weiny <ira.weiny@intel.com>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 2/2] IB/umem: use get_user_pages_fast() to pin DMA pages
-Date:   Sun, 24 Nov 2019 16:37:15 -0800
-Message-ID: <20191125003715.516290-3-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191125003715.516290-1-jhubbard@nvidia.com>
-References: <20191125003715.516290-1-jhubbard@nvidia.com>
+        Sun, 24 Nov 2019 19:47:11 -0500
+Received: by mail-lj1-f182.google.com with SMTP id e9so13673159ljp.13
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 16:47:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=71i6XAnis5QNqOaioSv5KcdL5ixS6PrUa+11m9oCwL0=;
+        b=AnaJqdL3xrMjoBYuzPxSxDGN9L22At6/OhtaED1hGCh5VmD3hjzbZMc0QcFJT2pK5S
+         JgW3vZ3AqKgmvmhbzxbORuM3mLPm4cHCPmp7GSpHcxHcEUdaa8p9iAouZ41XtRs+WLtO
+         Q+Li0hxOPbMqsgO+0yokb9k6FD4JqXryOqRSM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=71i6XAnis5QNqOaioSv5KcdL5ixS6PrUa+11m9oCwL0=;
+        b=OvA054/WqcaxUVIZ6hYyizfq0xKhO+2gkEKZ7JYK3hrRzXDHUBsM3LWp747xnYdZ+Q
+         oZmhcisTbR7XDh08DdnUUDeCL+rqdp0TvqvHMJ/TaD6hlSU1puUpAeurhIVLbkNQJ7Q+
+         BTSSC50w3avuyAwCEUlNHbdO56eeqki/GPumb/otRbqzfOocmTbHS0bk3LLz8P+dj9RY
+         KyU2RHS6HFM7jEnYfV01YV7yWa4N8My5CTb1UkGNlc8gHFgF+/pZRFE1/Mgx1SRBhjWN
+         jChLi1HhdLS4rrMwpBJYmI7XxulUP153h3QRUEY/9nX511JWPxgThpElwDZf09xlHE7T
+         R+fw==
+X-Gm-Message-State: APjAAAU1vOvFMCkspdyPz4HXJebfDBI57pZDh8PUKCOFbn5zVDpS9KNO
+        8CZWcb8qGBEzBSIW8Vobx1lP83UbEKo=
+X-Google-Smtp-Source: APXvYqxn1oZTLiQ9t6sJRMyNsCI3ujWCqWHkhqsWrzHblytpCvLTKTv8xV+haThHr/EHrlKH94LgDw==
+X-Received: by 2002:a2e:8188:: with SMTP id e8mr19969845ljg.152.1574642828606;
+        Sun, 24 Nov 2019 16:47:08 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id k10sm2620481lfo.76.2019.11.24.16.47.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2019 16:47:07 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id e9so13673106ljp.13
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 16:47:07 -0800 (PST)
+X-Received: by 2002:a2e:99d0:: with SMTP id l16mr6900799ljj.1.1574642827345;
+ Sun, 24 Nov 2019 16:47:07 -0800 (PST)
 MIME-Version: 1.0
-X-NVConfidentiality: public
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 24 Nov 2019 16:46:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjmzaD=BZ1hjUYu+RTnSGDLfCRwCdg99GeQpCjEwo9uzw@mail.gmail.com>
+Message-ID: <CAHk-=wjmzaD=BZ1hjUYu+RTnSGDLfCRwCdg99GeQpCjEwo9uzw@mail.gmail.com>
+Subject: Linux 5.4
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574642246; bh=Xm1W60RRjaqCw/WDtR4CeZEieNi50IPMMXG+SsZWaD0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=QnuK8T09DZm9oGk8aNwnChqISSD87+GLkQ5vgYHhKquLbwD+UnBWhZryr723Im/ol
-         zTBlI4+3mAO1p7atiiyhuuC8On5JFff4m70gKh1K1RjhU58ORNb6Hx20Jaxt341eYx
-         9B1wGP0bgqL1G1BeIkLF4oLKzIWMgF9FD1CnsJW3SZxksSRw0JsGhFfgwurTHdK6Qf
-         aIXa9k+heaIrI5HXF9AGfrSEaIxk8LY2RH/LI9Przyl7dFcIWjNAJioMQJwLVpZrYV
-         VfV1vRLW6uQJ9RoQkETvft8BjQ4m42sCnD5TdZUPXSmc7Me/69b/H8Fwst6dRluYB+
-         zhKQHij6ivh3A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And get rid of the mmap_sem calls, as part of that. Note
-that get_user_pages_fast() will, if necessary, fall back to
-__gup_longterm_unlocked(), which takes the mmap_sem as needed.
+Not a lot happened this last week, which is just how I like it. And as
+expected, most of the pull requests I got were for the 5.5 merge
+window, which I'll obviously start working through tomorrow.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+What little there is here is mostly some networking updates (mix of
+network drivers and core networking), and some minor GPU driver
+updates. Other than that it's a small collection of random other
+things all over. The appended shortlog is small enough that you might
+as well just scroll through it.
+
+Anyway, this obviously opens the merge window for 5.5. It's not ideal
+timing with Thanksgiving week coming up, but it hopefully shouldn't be
+too much of an issue. If I fall behind (not because I'm all that big
+of a fan of the indiscriminate and relentless turkey-killing holiday)
+it's because we've got all three kids back for the holiday, and I
+might push some ot the merging to the second week as a result. We'll
+see what happens.
+
+Go do the testing thing.
+
+               Linus
+
 ---
- drivers/infiniband/core/umem.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.=
-c
-index 24244a2f68cc..3d664a2539eb 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -271,16 +271,13 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, u=
-nsigned long addr,
- 	sg =3D umem->sg_head.sgl;
-=20
- 	while (npages) {
--		down_read(&mm->mmap_sem);
--		ret =3D get_user_pages(cur_base,
--				     min_t(unsigned long, npages,
--					   PAGE_SIZE / sizeof (struct page *)),
--				     gup_flags | FOLL_LONGTERM,
--				     page_list, NULL);
--		if (ret < 0) {
--			up_read(&mm->mmap_sem);
-+		ret =3D get_user_pages_fast(cur_base,
-+					  min_t(unsigned long, npages,
-+						PAGE_SIZE /
-+						sizeof(struct page *)),
-+					  gup_flags | FOLL_LONGTERM, page_list);
-+		if (ret < 0)
- 			goto umem_release;
--		}
-=20
- 		cur_base +=3D ret * PAGE_SIZE;
- 		npages   -=3D ret;
-@@ -288,8 +285,6 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, uns=
-igned long addr,
- 		sg =3D ib_umem_add_sg_table(sg, page_list, ret,
- 			dma_get_max_seg_size(context->device->dma_device),
- 			&umem->sg_nents);
--
--		up_read(&mm->mmap_sem);
- 	}
-=20
- 	sg_mark_end(sg);
---=20
-2.24.0
+Adi Suresh (1):
+      gve: fix dma sync bug where not all pages synced
 
+Aditya Pakki (1):
+      net: atm: Reduce the severity of logging in unlink_clip_vcc
+
+Alex Deucher (4):
+      drm/amdgpu: remove experimental flag for Navi14
+      drm/amdgpu: disable gfxoff when using register read interface
+      drm/amdgpu: disable gfxoff on original raven
+      Revert "drm/amd/display: enable S/G for RAVEN chip"
+
+Alex Vesker (3):
+      net/mlx5: DR, Fix invalid EQ vector number on CQ creation
+      net/mlx5: DR, Skip rehash for tables with byte mask zero
+      net/mlx5: DR, Limit STE hash table enlarge based on bytemask
+
+Andrey Ryabinin (1):
+      mm/ksm.c: don't WARN if page is still mapped in remove_stable_node()
+
+Chris Wilson (4):
+      drm/i915/pmu: "Frequency" is reported as accumulated cycles
+      drm/i915/userptr: Try to acquire the page lock around set_page_dirty(=
+)
+      drm/i915: Protect request peeking with RCU
+      drm/i915/fbdev: Restore physical addresses for fb_mmap()
+
+Chuhong Yuan (2):
+      phy: mdio-sun4i: add missed regulator_disable in remove
+      net: fec: fix clock count mis-match
+
+Corinna Vinschen (1):
+      r8169: disable TSO on a single version of RTL8168c to fix performance
+
+Dan Carpenter (2):
+      bpf, offload: Unlock on error in bpf_offload_dev_create()
+      net: rtnetlink: prevent underflows in do_setvfinfo()
+
+David Hildenbrand (1):
+      mm/memory_hotplug: don't access uninitialized memmaps in
+shrink_zone_span()
+
+David Howells (1):
+      afs: Fix missing timeout reset
+
+David S. Miller (1):
+      Revert "mdio_bus: fix mdio_register_device when RESET_CONTROLLER
+is disabled"
+
+Davide Caratti (1):
+      net/sched: act_pedit: fix WARN() in the traffic path
+
+Eli Cohen (2):
+      net/mlx5e: Fix error flow cleanup in mlx5e_tc_tun_create_header_ipv4/=
+6
+      net/mlx5e: Fix ingress rate configuration for representors
+
+Eran Ben Elisha (2):
+      net/mlx5e: Do not use non-EXT link modes in EXT mode
+      net/mlxfw: Verify FSM error code translation doesn't exceed array siz=
+e
+
+Eric Dumazet (1):
+      net-sysfs: fix netdev_queue_add_kobject() breakage
+
+Evan Quan (2):
+      drm/amd/powerplay: issue no PPSMC_MSG_GetCurrPkgPwr on unsupported AS=
+ICs
+      drm/amd/powerplay: correct fine grained dpm force level setting
+
+Florian Westphal (1):
+      udp: drop skb extensions before marking skb stateless
+
+Geert Uytterhoeven (2):
+      mdio_bus: Fix init if CONFIG_RESET_CONTROLLER=3Dn
+      mdio_bus: Fix init if CONFIG_RESET_CONTROLLER=3Dn
+
+Haiyang Zhang (2):
+      hv_netvsc: Fix offset usage in netvsc_send_table()
+      hv_netvsc: Fix send_table offset in case of a host bug
+
+Halil Pasic (1):
+      virtio_ring: fix return code on DMA mapping fails
+
+Hangbin Liu (1):
+      ipv6/route: return if there is no fib_nh_gw_family
+
+Hans de Goede (1):
+      gpiolib: acpi: Add Terra Pad 1061 to the run_edge_events_on_boot_blac=
+klist
+
+Hayes Wang (1):
+      r8152: avoid to call napi_disable twice
+
+Huazhong Tan (1):
+      net: hns3: fix a wrong reset interrupt status mask
+
+Ivan Khoronzhuk (1):
+      taprio: don't reject same mqprio settings
+
+Joseph Qi (1):
+      Revert "fs: ocfs2: fix possible null-pointer dereferences in
+ocfs2_xa_prepare_entry()"
+
+Jouni Hogander (1):
+      net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
+
+Julian Wiedmann (2):
+      s390/qeth: fix potential deadlock on workqueue flush
+      s390/qeth: return proper errno on IO error
+
+Juliet Kim (2):
+      Revert "net/ibmvnic: Fix EOI when running in XIVE mode"
+      net/ibmvnic: Ignore H_FUNCTION return from H_EOI to tolerate XIVE mod=
+e
+
+Laura Abbott (1):
+      tools: gpio: Correctly add make dependencies for gpio_utils
+
+Laurent Vivier (1):
+      virtio_console: allocate inbufs in add_port() only if it is needed
+
+Linus Torvalds (1):
+      Linux 5.4
+
+Luc Van Oostenryck (1):
+      fork: fix pidfd_poll()'s return type
+
+Luigi Rizzo (1):
+      net/mlx4_en: fix mlx4 ethtool -N insertion
+
+Lyude Paul (1):
+      Revert "Input: synaptics - enable RMI mode for X1 Extreme 2nd Generat=
+ion"
+
+Maciej =C5=BBenczykowski (1):
+      net-ipv6: IPV6_TRANSPARENT - check NET_RAW prior to NET_ADMIN
+
+Maor Gottlieb (1):
+      net/mlx5: Fix auto group size calculation
+
+Marc Dionne (2):
+      afs: Fix possible assert with callbacks from yfs servers
+      afs: Fix large file support
+
+Marcelo Ricardo Leitner (1):
+      net/ipv4: fix sysctl max for fib_multipath_hash_policy
+
+Marek Beh=C3=BAn (1):
+      mdio_bus: fix mdio_register_device when RESET_CONTROLLER is disabled
+
+Marina Varshaver (1):
+      net/mlx5e: Add missing capability bit check for IP-in-IP
+
+Martin Habets (1):
+      sfc: Only cancel the PPS workqueue if it exists
+
+Matthew Auld (1):
+      drm/i915: make pool objects read-only
+
+Maxime Bizon (1):
+      cramfs: fix usage on non-MTD device
+
+Michael Heimpold (1):
+      net: qca_spi: fix receive buffer size check
+
+Michael S. Tsirkin (1):
+      virtio_balloon: fix shrinker scan number of pages
+
+Oliver Neukum (1):
+      nfc: port100: handle command failure cleanly
+
+Pankaj Sharma (2):
+      can: m_can_platform: set net_device structure as driver data
+      can: m_can_platform: remove unnecessary m_can_class_resume() call
+
+Pavel Tatashin (2):
+      arm64: uaccess: Ensure PAN is re-enabled after unhandled uaccess faul=
+t
+      arm64: uaccess: Remove uaccess_*_not_uao asm macros
+
+Petr Machata (1):
+      mlxsw: spectrum_router: Fix determining underlay for a GRE tunnel
+
+Prashant Malani (1):
+      r8152: Re-order napi_disable in rtl8152_close
+
+Rafael J. Wysocki (1):
+      PM: QoS: Invalidate frequency QoS requests after removal
+
+Roi Dayan (1):
+      net/mlx5e: Fix set vf link state error flow
+
+Russell King (2):
+      net: phylink: update documentation on create and destroy
+      net: phylink: fix link mode modification in PHY mode
+
+Shani Shapp (1):
+      net/mlx5: Update the list of the PCI supported devices
+
+Stefan Wahren (1):
+      net: qca_spi: Move reset_count to struct qcaspi
+
+Stefano Garzarella (1):
+      MAINTAINERS: Add myself as maintainer of virtio-vsock
+
+Sun Ke (1):
+      nbd:fix memory leak in nbd_get_socket()
+
+Tariq Toukan (1):
+      net/mlx4_en: Fix wrong limitation for number of TX rings
+
+Thierry Reding (2):
+      gpio: max77620: Fixup debounce delays
+      gpio: bd70528: Use correct unit for debounce times
+
+Ville Syrj=C3=A4l=C3=A4 (2):
+      drm/i915: Don't oops in dumb_create ioctl if we have no crtcs
+      drm/i915: Preload LUTs if the hw isn't currently using them
+
+Vlad Buslov (1):
+      net/mlx5e: Reorder mirrer action parsing to check for encap first
+
+Wei Wang (1):
+      virtio_balloon: fix shrinker count
+
+Willem de Bruijn (1):
+      net/tls: enable sk_msg redirect to tls socket egress
+
+Xin Long (1):
+      net: sched: ensure opts_len <=3D IP_TUNNEL_OPTS_MAX in act_tunnel_key
+
+Zhu Yanjun (1):
+      MAINTAINERS: forcedeth: Change Zhu Yanjun's email address
