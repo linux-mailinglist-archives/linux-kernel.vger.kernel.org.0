@@ -2,60 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACE810951B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 22:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E98E0109541
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 22:46:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbfKYVYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 16:24:06 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:58252 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1725930AbfKYVYG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 16:24:06 -0500
-Received: (qmail 5654 invoked by uid 2102); 25 Nov 2019 16:24:05 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 25 Nov 2019 16:24:05 -0500
-Date:   Mon, 25 Nov 2019 16:24:05 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     syzbot <syzbot+ec5f884c4a135aa0dbb9@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <benjamin.tissoires@redhat.com>,
-        <jikos@kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: INFO: rcu detected stall in hub_event
-In-Reply-To: <00000000000003b7c305982885e3@google.com>
-Message-ID: <Pine.LNX.4.44L0.1911251622420.1565-100000@iolanthe.rowland.org>
+        id S1726975AbfKYVqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 16:46:35 -0500
+Received: from l2mail1.panix.com ([166.84.1.75]:50933 "EHLO l2mail1.panix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725912AbfKYVqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 16:46:35 -0500
+X-Greylist: delayed 945 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 16:46:33 EST
+Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+        by l2mail1.panix.com (Postfix) with ESMTPS id 47MKvr2g9lzDkf
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 16:30:48 -0500 (EST)
+Received: from hp-x360n (50-76-61-131-ip-static.hfc.comcastbusiness.net [50.76.61.131])
+        by mailbackend.panix.com (Postfix) with ESMTPSA id 47MKvq2mkdz1tRQ;
+        Mon, 25 Nov 2019 16:30:47 -0500 (EST)
+Date:   Mon, 25 Nov 2019 13:30:45 -0800 (PST)
+From:   "Kenneth R. Crudup" <kenny@panix.com>
+Reply-To: "Kenneth R. Crudup" <kenny@panix.com>
+To:     torvalds@linux-foundation.org
+cc:     linux-kernel@vger.kernel.org
+Subject: Commit 0be0ee71 ("fs: properly and reliably lock f_pos in fdget_pos()")
+ breaking userspace
+Message-ID: <alpine.DEB.2.21.1911251322160.2408@hp-x360n>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-#syz test: https://github.com/google/kasan.git 46178223
 
-Index: usb-devel/drivers/hid/hid-core.c
-===================================================================
---- usb-devel.orig/drivers/hid/hid-core.c
-+++ usb-devel/drivers/hid/hid-core.c
-@@ -1057,6 +1057,8 @@ static void hid_apply_multiplier(struct
- 	while (multiplier_collection->parent_idx != -1 &&
- 	       multiplier_collection->type != HID_COLLECTION_LOGICAL)
- 		multiplier_collection = &hid->collection[multiplier_collection->parent_idx];
-+	if (multiplier_collection->type != HID_COLLECTION_LOGICAL)
-+		multiplier_collection = NULL;
- 
- 	effective_multiplier = hid_calculate_multiplier(hid, multiplier);
- 
-@@ -1191,6 +1193,9 @@ int hid_open_report(struct hid_device *d
- 	}
- 	device->collection_size = HID_DEFAULT_NUM_COLLECTIONS;
- 
-+	/* Needed for usages before the first collection */
-+	device->collection[0].parent_idx = -1;
-+
- 	ret = -EINVAL;
- 	while ((start = fetch_item(start, end, &item)) != NULL) {
- 
+FYI. Don't know if the fault lies with these subsystems or not, but I know
+it's been a goal to keep things working. In both cases, reverting this commit
+fixes both these issues. If you need additional information from me, please
+let me know.
 
+First issue manifests itself as a timeout in KDE's upower daemon:
+
+----
+Nov 25 13:18:51 hp-x360n systemd[1]: upower.service: Start operation timed out. Terminating.
+Nov 25 13:18:51 hp-x360n systemd[1]: upower.service: Main process exited, code=killed, status=15/TERM
+Nov 25 13:18:51 hp-x360n systemd[1]: upower.service: Failed with result 'timeout'.
+Nov 25 13:18:51 hp-x360n systemd[1]: Failed to start Daemon for power management.
+Nov 25 13:18:51 hp-x360n systemd[1]: upower.service: Service RestartSec=100ms expired, scheduling restart.
+Nov 25 13:18:51 hp-x360n systemd[1]: upower.service: Scheduled restart job, restart counter is at 9.
+Nov 25 13:18:51 hp-x360n systemd[1]: Stopped Daemon for power management.
+Nov 25 13:18:51 hp-x360n systemd[1]: Starting Daemon for power management...
+----
+
+Second issue:
+
+----
+Nov 25 13:19:22 hp-x360n kernel: [  861.213047] INFO: task vmware-vmblock-:1179 blocked for more than 737 seconds.
+Nov 25 13:19:22 hp-x360n kernel: [  861.213053]       Tainted: G     U            5.4.0-Kenny+ #8
+Nov 25 13:19:22 hp-x360n kernel: [  861.213054] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+Nov 25 13:19:22 hp-x360n kernel: [  861.213056] vmware-vmblock- D    0  1179      1 0x00000000
+Nov 25 13:19:22 hp-x360n kernel: [  861.213060] Call Trace:
+Nov 25 13:19:22 hp-x360n kernel: [  861.213068]  ? __schedule+0x2b8/0x580
+Nov 25 13:19:22 hp-x360n kernel: [  861.213071]  schedule+0x36/0xc0
+Nov 25 13:19:22 hp-x360n kernel: [  861.213074]  schedule_preempt_disabled+0x11/0x20
+Nov 25 13:19:22 hp-x360n kernel: [  861.213077]  __mutex_lock.isra.11+0x2f0/0x500
+Nov 25 13:19:22 hp-x360n kernel: [  861.213082]  __fdget_pos+0x42/0x50
+Nov 25 13:19:22 hp-x360n kernel: [  861.213085]  do_writev+0x2f/0x110
+Nov 25 13:19:22 hp-x360n kernel: [  861.213088]  do_syscall_64+0x46/0x170
+Nov 25 13:19:22 hp-x360n kernel: [  861.213091]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Nov 25 13:19:22 hp-x360n kernel: [  861.213094] RIP: 0033:0x7f4c6da1d527
+Nov 25 13:19:22 hp-x360n kernel: [  861.213098] Code: Bad RIP value.
+Nov 25 13:19:22 hp-x360n kernel: [  861.213100] RSP: 002b:00007f4c6d6aebc0 EFLAGS: 00000297 ORIG_RAX: 0000000000000014
+Nov 25 13:19:22 hp-x360n kernel: [  861.213102] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f4c6da1d527
+Nov 25 13:19:22 hp-x360n kernel: [  861.213103] RDX: 0000000000000002 RSI: 00007f4c6d6aec50 RDI: 0000000000000003
+Nov 25 13:19:22 hp-x360n kernel: [  861.213104] RBP: 00007f4c6d6aec50 R08: 0000000000000001 R09: 00007f4c6ce8c700
+Nov 25 13:19:22 hp-x360n kernel: [  861.213106] R10: 00007f4c68000080 R11: 0000000000000297 R12: 0000000000000002
+Nov 25 13:19:22 hp-x360n kernel: [  861.213107] R13: 0000000000020000 R14: 0000000000000000 R15: 0000000000000000
+----
+
+	-Kenny
+
+-- 
+Kenneth R. Crudup  Sr. SW Engineer, Scott County Consulting, Silicon Valley
