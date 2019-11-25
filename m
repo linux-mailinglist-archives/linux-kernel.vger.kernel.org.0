@@ -2,99 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0419E1094BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 21:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5281094B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 21:37:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfKYUkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 15:40:16 -0500
-Received: from mail.prodrive-technologies.com ([212.61.153.67]:59091 "EHLO
-        mail.prodrive-technologies.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725912AbfKYUkQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 15:40:16 -0500
-X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 15:40:15 EST
-Received: from mail.prodrive-technologies.com (localhost.localdomain [127.0.0.1])
-        by localhost (Email Security Appliance) with SMTP id 3808632EC5_DDC39D3B;
-        Mon, 25 Nov 2019 20:30:11 +0000 (GMT)
-Received: from mail.prodrive-technologies.com (exc03.bk.prodrive.nl [10.1.1.212])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "mail.prodrive-technologies.com", Issuer "Prodrive Technologies B.V. OV SSL Issuing CA" (verified OK))
-        by mail.prodrive-technologies.com (Sophos Email Appliance) with ESMTPS id 2B2E730563_DDC39D2F;
-        Mon, 25 Nov 2019 20:30:10 +0000 (GMT)
-Received: from lnxclnt2222.Prodrive.nl (10.13.62.32) by EXC03.bk.prodrive.nl
- (10.1.1.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1779.2; Mon, 25
- Nov 2019 21:30:09 +0100
-From:   Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>, <linux-i2c@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>
-CC:     Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
-Subject: [PATCH] irqchip/aspeed-i2c-ic: Fix irq domain name memory leak
-Date:   Mon, 25 Nov 2019 21:29:37 +0100
-Message-ID: <20191125202937.23133-1-roy.van.doormaal@prodrive-technologies.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726873AbfKYUhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 15:37:53 -0500
+Received: from ozlabs.org ([203.11.71.1]:53187 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbfKYUhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 15:37:52 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47MJkk2MZhz9sP6;
+        Tue, 26 Nov 2019 07:37:50 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574714270;
+        bh=0yhI/YgajjJApcUcRmCos4l4PimPdbi7Y3eazdjLUpg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Mv94NdbWAzDwu7/FC4Zu/MMrTpBm2ILSR/1AKXdLAV6XfySKndbLJU54NFgeWBCdP
+         Dqzmfk8iCXkL1p3c2yqnYjSOZn3H/9qOkh/7h1ZvHUitOK0eqm/DH7kuQaUDDSEHcN
+         c0Kj46g/hfOAOb9LH3zPUERfGdDOoR61Vgeb0ojqa1A2oRg9j2TijNWBO5xI3hWL+E
+         MDyo3mDdH8WSUEA0fIrhXUKMQdPOdqP9G7j1xG1bRUenlwjg9LsCRFy0T/OvQltdM7
+         UJNcqkR6l5YX9Hi9hk3s7WwmvnfiLhhhr+Bw4NmUhtur75YZJypiFf0RMFoXrDbACa
+         iLnn0KPB4Oc0Q==
+Date:   Tue, 26 Nov 2019 07:37:42 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the y2038 tree
+Message-ID: <20191126073742.4422e60d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: EXC03.bk.prodrive.nl (10.1.1.212) To EXC03.bk.prodrive.nl
- (10.1.1.212)
-X-SASI-RCODE: 200
+Content-Type: multipart/signed; boundary="Sig_/9mn/JmV+QUlYo2gIaWr+FoE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The aspeed irqchip driver overwrites the default irq domain name,
-but doesn't free the existing domain name.
-This patch frees the irq domain name before overwriting it.
+--Sig_/9mn/JmV+QUlYo2gIaWr+FoE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kmemleak trace:
+Hi all,
 
-unreferenced object 0xb8004c40 (size 64):
-comm "swapper", pid 0, jiffies 4294937303 (age 747.660s)
-hex dump (first 32 bytes):
-3a 61 68 62 3a 61 70 62 3a 62 75 73 40 31 65 37 :ahb:apb:bus@1e7
-38 61 30 30 30 3a 69 6e 74 65 72 72 75 70 74 2d 8a000:interrupt-
-backtrace:
-[<086b59b8>] kmemleak_alloc+0xa8/0xc0
-[<b5a3490c>] __kmalloc_track_caller+0x118/0x1a0
-[<f59c7ced>] kvasprintf+0x5c/0xc0
-[<49275eec>] kasprintf+0x30/0x50
-[<5713064b>] __irq_domain_add+0x184/0x25c
-[<53c594d0>] aspeed_i2c_ic_of_init+0x9c/0x128
-[<d8d7017e>] of_irq_init+0x1ec/0x314
-[<f8405bf1>] irqchip_init+0x1c/0x24
-[<7ef974b3>] init_IRQ+0x30/0x90
-[<87a1438f>] start_kernel+0x28c/0x458
-[< (null)>] (null)
-[<f0763fdf>] 0xffffffff
+In commit
 
-Signed-off-by: Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
----
- drivers/irqchip/irq-aspeed-i2c-ic.c | 2 ++
- 1 file changed, 2 insertions(+)
+  9dbda081bcd8 ("y2038: alarm: fix half-second cut-off")
 
-diff --git a/drivers/irqchip/irq-aspeed-i2c-ic.c b/drivers/irqchip/irq-aspeed-i2c-ic.c
-index 8d591c179f81..8081b8483a79 100644
---- a/drivers/irqchip/irq-aspeed-i2c-ic.c
-+++ b/drivers/irqchip/irq-aspeed-i2c-ic.c
-@@ -92,6 +92,8 @@ static int __init aspeed_i2c_ic_of_init(struct device_node *node,
- 		goto err_iounmap;
- 	}
- 
-+	if (i2c_ic->irq_domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
-+		kfree(i2c_ic->irq_domain->name);
- 	i2c_ic->irq_domain->name = "aspeed-i2c-domain";
- 
- 	irq_set_chained_handler_and_data(i2c_ic->parent_irq,
--- 
-2.20.1
+Fixes tag
 
+  Fixes: 3f58eae704d7 ("y2038: itimer: change implementation to timespec64")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: bd40a175769d ("y2038: itimer: change implementation to timespec64")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9mn/JmV+QUlYo2gIaWr+FoE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3cO5YACgkQAVBC80lX
+0GxdPwf/WQA+jlAW59/xyD7ewpiv7sfd/YNFhSlPspON3Fjnh80xva5VdFz/0Tlr
+jAbyBIt+0V0q9ojKciifNAntYHFCFgStHwIHhss88X4GD524mDa3YA+W+byyD7mR
+KPuXCztC9P0DV77e/wekJjw66JUL3DkdXGJ043cg5r/FZEpS18a4UGW0fSigmPQJ
+BaF6/A+O5UgA75LtsJ4WIWNlbQVo+Uwz/Bq4mYBYIiZgqhwkUhcaogdL6h/p+2qJ
+FLNhQYG0Pt6X/ZrsSsDitag7boH81HgMB/IOkhy4Zyi3PYi7YEuufacsG0eqMmdK
+Nd+9pp4oURiJMWe57jnwR+t3IaDKzQ==
+=OuJ4
+-----END PGP SIGNATURE-----
+
+--Sig_/9mn/JmV+QUlYo2gIaWr+FoE--
