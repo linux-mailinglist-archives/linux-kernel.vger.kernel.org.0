@@ -2,162 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6021086EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 04:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64B831086E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 04:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfKYD6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 22:58:24 -0500
-Received: from mail-eopbgr820053.outbound.protection.outlook.com ([40.107.82.53]:25585
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726939AbfKYD6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 22:58:24 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Tx7JeXjWM9jRpnWXHulwkxytc3vTQn+6Bz2LUUIY9rFTxAa/iChSovDs4P7cSH/nqZNf/PCZekrWymjS1ZFzsQ+3NjDKqjD1bmjh6EBOXE5VBFRyxH8wRK8uH8/T71Kkvnd0jo7xJRQ5S2dUQwY3ZYxU2AWA4K0w2NyCoVHufEqH+Mt9n7SNuKXJ+7nlhcTbnlWmuwONIK0fqeOxbqVAWBaLIRRk8s2xdQiGJb072ROc2HeurRx4pAKi0AMo9gJIIcH5vlewIJLDS6xyVEH5rx//wxsaOugsJcsgVvJhbg68U3Ka7L65HhBaY2JjtOc3S02cb48GrYz7MgVxUoRu6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dqsbP0bNaK4BIfI5jh5tXmvqonm9zCaTH/Ru8C/ebC0=;
- b=J55Pg2XRvqktcQd05bWniuGElDLRFMhj4DPgUG4Wu/rb3MFLzCI9eRVH1b5BxPWXgzoaFfF49Od2hHNXiLwbnr39L3mV1Jjnfp7tcco74WDwHR5xpZ+TT2B7nIwcUd08yqVb1mUFAkQ7Fv4xiwZ6cfdL6bB+TTvOm+LcCa6gLF1Fq4YMvPlvGlLZi9k146wJC1vyMBgGRJ8Pd5Lw7QoVkTgIwmZt9XVTiTWEkmjMsYolT44U2D+aK0vJCFadUbuXQ8aJRRQeX3lO0pxFiP9bLeBkFpks2LHswpRqc0hrzbDW2KbhITsflcaIuciQSa4an75Neu5T1aId/psUBOTbuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dqsbP0bNaK4BIfI5jh5tXmvqonm9zCaTH/Ru8C/ebC0=;
- b=a5Y+DE8J8VZZt6Si23a4+MU9fZJ2B1BQfcJldvhlUntFaZsAtToxvZtO/Gg4/XniB2Y7JmgW8+DplmVTM3310Qn+Ww1ga3SQgH1ej79AKVEd4cI6gB4Lqy7Meehq9tDmlSRd7pJVrPmYu7IQONB42W/GzftOkGN7VMnGc+0oFg0=
-Received: from MN2PR02MB6400.namprd02.prod.outlook.com (52.132.173.155) by
- MN2PR02MB5983.namprd02.prod.outlook.com (20.179.86.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.16; Mon, 25 Nov 2019 03:58:14 +0000
-Received: from MN2PR02MB6400.namprd02.prod.outlook.com
- ([fe80::c413:7dde:1e89:f355]) by MN2PR02MB6400.namprd02.prod.outlook.com
- ([fe80::c413:7dde:1e89:f355%7]) with mapi id 15.20.2474.023; Mon, 25 Nov 2019
- 03:58:14 +0000
-From:   Appana Durga Kedareswara Rao <appanad@xilinx.com>
-To:     Srinivas Neeli <sneeli@xilinx.com>,
-        "wg@grandegger.com" <wg@grandegger.com>,
-        "mkl@pengutronix.de" <mkl@pengutronix.de>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Michal Simek <michals@xilinx.com>
-CC:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        git <git@xilinx.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Venkatesh Yadav Abbarapu <VABBARAP@xilinx.com>,
-        Srinivas Neeli <sneeli@xilinx.com>
-Subject: RE: [PATCH 1/2] can: xilinx_can: skip error message on deferred probe
-Thread-Topic: [PATCH 1/2] can: xilinx_can: skip error message on deferred
- probe
-Thread-Index: AQHVn5uyvnYOjQUpgEOekQq4Dc1LUqebSOAg
-Date:   Mon, 25 Nov 2019 03:58:14 +0000
-Message-ID: <MN2PR02MB640088D5A6812ED36864C55CDC4A0@MN2PR02MB6400.namprd02.prod.outlook.com>
-References: <1574251865-19592-1-git-send-email-srinivas.neeli@xilinx.com>
- <1574251865-19592-2-git-send-email-srinivas.neeli@xilinx.com>
-In-Reply-To: <1574251865-19592-2-git-send-email-srinivas.neeli@xilinx.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-Mentions: srinivas.neeli@xilinx.com
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=appanad@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c2633ec4-379e-4dad-20b3-08d7715bb238
-x-ms-traffictypediagnostic: MN2PR02MB5983:|MN2PR02MB5983:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR02MB5983A03A6241BBC2C3F572E2DC4A0@MN2PR02MB5983.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1060;
-x-forefront-prvs: 0232B30BBC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(396003)(39860400002)(376002)(366004)(13464003)(189003)(199004)(33656002)(6506007)(107886003)(6246003)(2201001)(478600001)(25786009)(305945005)(9686003)(7696005)(74316002)(102836004)(186003)(86362001)(53546011)(4326008)(76176011)(7736002)(6636002)(55016002)(66476007)(110136005)(71200400001)(66446008)(2906002)(52536014)(15650500001)(5660300002)(2501003)(8936002)(81166006)(81156014)(76116006)(66946007)(14454004)(6436002)(446003)(11346002)(229853002)(99286004)(6116002)(3846002)(66066001)(316002)(14444005)(8676002)(26005)(256004)(64756008)(71190400001)(66556008)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB5983;H:MN2PR02MB6400.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NIFWHqtd6j18T0Hn8skp9c1y7o22q7JUICuZ2tF0X1WVLGwwPthhkU1c+bVLVKiLU/TZPmkLJWamXoYE7VtVKCYttKKLLiqGarnhYjN9UGHBvYlhmtY4pIQ73XLm8flS+mtPZut9FAUYvkZOTe5ixS8d7/qdXzo+B0/7/d0aAkaAZRAWXKqDGoJeoMa2+ONIxmibrKYonBBtMRkTOfK0GqZPOxwAZe0XvnJaSDAU4vsgcUiZ18zQeyP34r2dgX3V414vRt3SIR/F9pnHaRr63ACtBV8D5dOeyw4FUjC3OfwOlc+gv3T9txxKMINqEYU6mqEhZRJgCdKcR+n1CtxDrXQnYialidP6ldCHZ/VBBqDS4J5uspq8tvFgiMoHBbq5gD9g8Cs/zV8BbT4BLYiStd0m0eBV+1Q6PUPH0+k7ovkaZHjC5elLsEUjSIL3p7Y2
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2633ec4-379e-4dad-20b3-08d7715bb238
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2019 03:58:14.0371
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BXtq/ChvD3w50W0tSEfRHmd8Cyu05eCZw6Ptb0OfDyu2vgfpleEugfEuqqGbCKIf53YMStxv82rDB2lTDGQ15w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB5983
+        id S1727072AbfKYDtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 22:49:32 -0500
+Received: from mga04.intel.com ([192.55.52.120]:43951 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbfKYDtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 22:49:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2019 19:49:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,240,1571727600"; 
+   d="scan'208";a="260285512"
+Received: from chenyu-office.sh.intel.com ([10.239.158.173])
+  by FMSMGA003.fm.intel.com with ESMTP; 24 Nov 2019 19:49:28 -0800
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     x86@kernel.org
+Cc:     Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][v5] x86/resctrl: Add task resctrl information display
+Date:   Mon, 25 Nov 2019 12:00:01 +0800
+Message-Id: <20191125040001.28943-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Monitoring tools that want to find out which resctrl control
+and monitor groups a task belongs to must currently read
+the "tasks" file in every group until they locate the process
+ID.
 
-> -----Original Message-----
-> From: Srinivas Neeli <srinivas.neeli@xilinx.com>
-> Sent: Wednesday, November 20, 2019 5:41 PM
-> To: wg@grandegger.com; mkl@pengutronix.de; davem@davemloft.net;
-> Michal Simek <michals@xilinx.com>; Appana Durga Kedareswara Rao
-> <appanad@xilinx.com>
-> Cc: linux-can@vger.kernel.org; netdev@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; git
-> <git@xilinx.com>; Naga Sureshkumar Relli <nagasure@xilinx.com>;
-> Venkatesh Yadav Abbarapu <VABBARAP@xilinx.com>; Srinivas Neeli
-> <sneeli@xilinx.com>
-> Subject: [PATCH 1/2] can: xilinx_can: skip error message on deferred prob=
-e
->=20
-> From: Venkatesh Yadav Abbarapu <venkatesh.abbarapu@xilinx.com>
->=20
-> When can clock is provided from the clock wizard, clock wizard driver may
-> not be available when can driver probes resulting to the error message "b=
-us
-> clock not found error".
->=20
-> As this error message is not very useful to the end user, skip printing i=
-n the
-> case of deferred probe.
->=20
-> Signed-off-by: Venkatesh Yadav Abbarapu <venkatesh.abbarapu@xilinx.com>
-> Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Add an additional file /proc/{pid}/resctrl to provide this
+information.
 
-@Srinivas Neeli: Please send v2 with improved commit message as Marc sugges=
-ted, feel free to add=20
-Reviewed-by: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com> in =
-v2.=20
+The output is as followed according to Thomas's suggestion,
+for example:
 
-Regards,
-Kedar.
-> ---
->  drivers/net/can/xilinx_can.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c =
-index
-> 4a96e2dd7d77..c5f05b994435 100644
-> --- a/drivers/net/can/xilinx_can.c
-> +++ b/drivers/net/can/xilinx_can.c
-> @@ -1772,7 +1772,8 @@ static int xcan_probe(struct platform_device
-> *pdev)
->=20
->  	priv->bus_clk =3D devm_clk_get(&pdev->dev, devtype->bus_clk_name);
->  	if (IS_ERR(priv->bus_clk)) {
-> -		dev_err(&pdev->dev, "bus clock not found\n");
-> +		if (PTR_ERR(priv->bus_clk) !=3D -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "bus clock not found\n");
->  		ret =3D PTR_ERR(priv->bus_clk);
->  		goto err_free;
->  	}
-> --
-> 2.7.4
+ 1)   ""
+      Resctrl is not available.
+
+ 2)   "/"
+      Task is part of the root group, task is not associated to
+      any monitoring group.
+
+ 3)   "/mon_groups/mon0"
+      Task is part of the root group and monitoring group mon0.
+
+ 4)   "/group0"
+      Task is part of control group group0, task is not associated
+      to any monitoring group.
+
+ 5)   "/group0/mon_groups/mon1"
+      Task is part of control group group0 and monitoring group mon1.
+
+Tested-by: Jinshi Chen <jinshi.chen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+v2: Reduce indentation level in proc_resctrl_show()
+    according to Boris's suggestion.
+    Create the include/linux/resctrl.h header and
+    declare proc_resctrl_show() in this file, so
+    that other architectures would probably use it
+    in the future. Different architectures should
+    implement architectural specific proc_resctrl_show()
+    accordingly.
+
+v3: Return empty string if the resctrl filesystem has
+    not been mounted per Boris's suggestion.
+    Rename the config from CPU_RESCTRL to PROC_CPU_RESCTRL
+    to better represent its usage. Move PROC_CPU_RESCTRL
+    from arch/Kconfig to fs/proc/Kconfig.
+    And let PROC_CPU_RESCTRL to be depended on PROC_FS.
+
+v4: According to Thomas's suggestion, changed the output
+    from multiple lines to one single line.
+
+v5: According to Alexey's feedback, removed the header file
+    proc_fs.h in resctrl.h, and changed seq_puts() to
+    seq_putc() for simplicity.
+---
+ arch/x86/Kconfig                       |  1 +
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 78 ++++++++++++++++++++++++++
+ fs/proc/Kconfig                        |  4 ++
+ fs/proc/base.c                         |  7 +++
+ include/linux/resctrl.h                | 14 +++++
+ 5 files changed, 104 insertions(+)
+ create mode 100644 include/linux/resctrl.h
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8ef85139553f..252364d18887 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -455,6 +455,7 @@ config X86_CPU_RESCTRL
+ 	bool "x86 CPU resource control support"
+ 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select KERNFS
++	select PROC_CPU_RESCTRL		if PROC_FS
+ 	help
+ 	  Enable x86 CPU resource control support.
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 2e3b06d6bbc6..f786e7626a65 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -725,6 +725,84 @@ static int rdtgroup_tasks_show(struct kernfs_open_file *of,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PROC_CPU_RESCTRL
++
++/*
++ * A task can only be part of one control
++ * group and of one monitoring group which
++ * is associated to that control group.
++ * So one line is simple and clear enough:
++ *
++ * 1)   ""
++ *    Resctrl is not available.
++ *
++ * 2)   "/"
++ *    Task is part of the root group, and it is
++ *    not associated to any monitoring group.
++ *
++ * 3)   "/mon_groups/mon0"
++ *    Task is part of the root group and monitoring
++ *    group mon0.
++ *
++ * 4)   "/group0"
++ *    Task is part of control group group0, and it is
++ *    not associated to any monitoring group.
++ *
++ * 5)   "/group0/mon_groups/mon1"
++ *    Task is part of control group group0 and monitoring
++ *    group mon1.
++ */
++int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
++		      struct pid *pid, struct task_struct *tsk)
++{
++	struct rdtgroup *rdtg;
++	int ret = 0;
++
++	mutex_lock(&rdtgroup_mutex);
++
++	/* Return empty if resctrl has not been mounted. */
++	if (!static_branch_unlikely(&rdt_enable_key))
++		goto unlock;
++
++	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
++		struct rdtgroup *crg;
++
++		/*
++		 * Task information is only relevant for shareable
++		 * and exclusive groups.
++		 */
++		if (rdtg->mode != RDT_MODE_SHAREABLE &&
++		    rdtg->mode != RDT_MODE_EXCLUSIVE)
++			continue;
++
++		if (rdtg->closid != tsk->closid)
++			continue;
++
++		seq_printf(s, "/%s", rdtg->kn->name);
++		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
++				    mon.crdtgrp_list) {
++			if (tsk->rmid != crg->mon.rmid)
++				continue;
++			seq_printf(s, "%smon_groups/%s",
++				   rdtg == &rdtgroup_default ? "" : "/",
++				   crg->kn->name);
++			break;
++		}
++		seq_putc(s, '\n');
++		goto unlock;
++	}
++	/*
++	 * The above search should succeed. Otherwise return
++	 * with an error.
++	 */
++	ret = -ENOENT;
++unlock:
++	mutex_unlock(&rdtgroup_mutex);
++
++	return ret;
++}
++#endif
++
+ static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
+ 				    struct seq_file *seq, void *v)
+ {
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index cb5629bd5fff..ae96a339d24d 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -103,3 +103,7 @@ config PROC_CHILDREN
+ config PROC_PID_ARCH_STATUS
+ 	def_bool n
+ 	depends on PROC_FS
++
++config PROC_CPU_RESCTRL
++	def_bool n
++	depends on PROC_FS
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..0e4b8bf2b986 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -94,6 +94,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/stat.h>
+ #include <linux/posix-timers.h>
++#include <linux/resctrl.h>
+ #include <trace/events/oom.h>
+ #include "internal.h"
+ #include "fd.h"
+@@ -3060,6 +3061,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_PROC_CPU_RESCTRL
++	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score",  S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+@@ -3460,6 +3464,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ #endif
+ #ifdef CONFIG_CGROUPS
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
++#endif
++#ifdef CONFIG_PROC_CPU_RESCTRL
++	ONE("resctrl", S_IRUGO, proc_resctrl_show),
+ #endif
+ 	ONE("oom_score", S_IRUGO, proc_oom_score),
+ 	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+new file mode 100644
+index 000000000000..daf5cf64c6a6
+--- /dev/null
++++ b/include/linux/resctrl.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _RESCTRL_H
++#define _RESCTRL_H
++
++#ifdef CONFIG_PROC_CPU_RESCTRL
++
++int proc_resctrl_show(struct seq_file *m,
++		      struct pid_namespace *ns,
++		      struct pid *pid,
++		      struct task_struct *tsk);
++
++#endif
++
++#endif /* _RESCTRL_H */
+-- 
+2.17.1
 
