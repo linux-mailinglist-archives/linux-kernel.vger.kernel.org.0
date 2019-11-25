@@ -2,174 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F313108C6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 12:00:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87E73108C60
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 11:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbfKYLAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 06:00:17 -0500
-Received: from mail-eopbgr740081.outbound.protection.outlook.com ([40.107.74.81]:3776
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727278AbfKYLAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 06:00:16 -0500
-Received: from BN7PR02CA0023.namprd02.prod.outlook.com (2603:10b6:408:20::36)
- by BN7PR02MB5012.namprd02.prod.outlook.com (2603:10b6:408:22::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17; Mon, 25 Nov
- 2019 11:00:10 +0000
-Received: from SN1NAM02FT064.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::207) by BN7PR02CA0023.outlook.office365.com
- (2603:10b6:408:20::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17 via Frontend
- Transport; Mon, 25 Nov 2019 11:00:10 +0000
-Authentication-Results: spf=softfail (sender IP is 149.199.60.83)
- smtp.mailfrom=gmail.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=fail action=none header.from=gmail.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- gmail.com discourages use of 149.199.60.83 as permitted sender)
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT064.mail.protection.outlook.com (10.152.72.143) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
- via Frontend Transport; Mon, 25 Nov 2019 11:00:10 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@gmail.com>)
-        id 1iZC2v-00077Q-NL; Mon, 25 Nov 2019 02:56:45 -0800
-Received: from [127.0.0.1] (helo=xsj-smtp-dlp1.xlnx.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@gmail.com>)
-        id 1iZC2q-0000m2-CY; Mon, 25 Nov 2019 02:56:40 -0800
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xAPAudeD025781;
-        Mon, 25 Nov 2019 02:56:39 -0800
-Received: from [10.140.6.59] (helo=xhdshubhraj40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@gmail.com>)
-        id 1iZC2p-0000fS-Ae; Mon, 25 Nov 2019 02:56:39 -0800
-From:   shubhrajyoti.datta@gmail.com
-To:     linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-        corbet@lwn.net, gregkh@linuxfoundation.org, arnd@arndb.de,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH 3/3] Documentation: short descriptions for Flexnoc Performance Monitor driver
-Date:   Mon, 25 Nov 2019 16:25:52 +0530
-Message-Id: <1574679352-2989-3-git-send-email-shubhrajyoti.datta@gmail.com>
-X-Mailer: git-send-email 2.1.1
-In-Reply-To: <1574679352-2989-1-git-send-email-shubhrajyoti.datta@gmail.com>
-References: <1574679352-2989-1-git-send-email-shubhrajyoti.datta@gmail.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-Result: No--8.169-7.0-31-1
-X-imss-scan-details: No--8.169-7.0-31-1;No--8.169-5.0-31-1
-X-TM-AS-User-Approved-Sender: No;No
-X-TM-AS-Result-Xfilter: Match text exemption rules:No
-X-EOPAttributedMessage: 0
-X-Matching-Connectors: 132191532101927929;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(136003)(189003)(199004)(76482006)(107886003)(4326008)(73392003)(450100002)(26005)(11346002)(36756003)(2616005)(446003)(336012)(426003)(2361001)(81166006)(47776003)(50226002)(82202003)(2351001)(8676002)(9686003)(61266001)(81156014)(70206006)(498600001)(48376002)(55446002)(50466002)(9786002)(2906002)(356004)(305945005)(16586007)(5660300002)(316002)(6916009)(51416003)(76176011)(8936002)(70586007)(14444005)(6666004)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR02MB5012;H:xsj-pvapsmtpgw01;FPR:;SPF:SoftFail;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+        id S1727555AbfKYK7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 05:59:03 -0500
+Received: from fd.dlink.ru ([178.170.168.18]:44662 "EHLO fd.dlink.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727316AbfKYK7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 05:59:03 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id C60AF1B20400; Mon, 25 Nov 2019 13:58:58 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru C60AF1B20400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1574679538; bh=tXl0CZ8ZQKwituwUIeWFFggmc8Ny9GguiEH02Chb+Rs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=a45o3o3P//4ZWdb4IdfAoRDjCZD7XkSMbb0yFQA7iUnkl6hKnDUU5DOo97J2eTtHm
+         /59+08z/EO6Orx7arCGu/s3sUvTBY/OKOpoHy4u2hcMyyBu5AMUFu4LCnD3ppPxKO8
+         SI/TyWLseslni3DjGWecwwGYBa89b4nBXpROKk9s=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
+        USER_IN_WHITELIST autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id 3433D1B204A3;
+        Mon, 25 Nov 2019 13:58:39 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 3433D1B204A3
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id CD5151B210B7;
+        Mon, 25 Nov 2019 13:58:38 +0300 (MSK)
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Mon, 25 Nov 2019 13:58:38 +0300 (MSK)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b114997a-bccc-4707-6139-08d77196a3af
-X-MS-TrafficTypeDiagnostic: BN7PR02MB5012:
-X-Microsoft-Antispam-PRVS: <BN7PR02MB5012EF291861E705225B2C52874A0@BN7PR02MB5012.namprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:569;
-X-Forefront-PRVS: 0232B30BBC
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tAyeaUfSO9mPat3akCuJ6JM8UeV9q0YOkCDnYEnYbC5vEoviwshxYkssfqgZ+1OjJGzqFMpAB5ZdF5XyU1ntMT9LPh8Uh/1IHmHMvoHeZAb9/NqOSOlkbkKv9ZXR2jmYjzdwIfKCCT0LkFjPsnja6ojwTw+xzlzP0VX59EX7G7yRXF3lqNb2W24ZapBvjj9X79mj+i9spxNtd5yGh4upDFAwAkvdRbXFazigoBX9AaEaf2ZWxrI2wqmliLeu13A5M1pfrR4bVjxxNYtLODRDxy1Sl9e1kzO7Zja0i5hB9mn5VVIYK8vZC5OHK1eV5BHHCcVvoHgwusOGCwM37q0gJ4JOhmInkzGciWu7OKjDj5FQz+l6cvijtYb+mOyH39NMdbbVjz9hO4C71jS7dQ8Tg38PRtEBKfG7IV+0sLGUmIdfs6qgoZb3aHnB4sT32Lgr
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2019 11:00:10.0296
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b114997a-bccc-4707-6139-08d77196a3af
-X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR02MB5012
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 25 Nov 2019 13:58:38 +0300
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     Edward Cree <ecree@solarflare.com>
+Cc:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        David Miller <davem@davemloft.net>, jiri@mellanox.com,
+        edumazet@google.com, idosch@mellanox.com, pabeni@redhat.com,
+        petrm@mellanox.com, sd@queasysnail.net, f.fainelli@gmail.com,
+        jaswinder.singh@linaro.org, ilias.apalodimas@linaro.org,
+        linux-kernel@vger.kernel.org, johannes.berg@intel.com,
+        emmanuel.grumbach@intel.com, luciano.coelho@intel.com,
+        linuxwifi@intel.com, kvalo@codeaurora.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org
+Subject: Re: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL in
+ napi_gro_receive()
+In-Reply-To: <cc08834c-ccb3-263a-2967-f72a9d72535a@solarflare.com>
+References: <20191014080033.12407-1-alobakin@dlink.ru>
+ <20191015.181649.949805234862708186.davem@davemloft.net>
+ <7e68da00d7c129a8ce290229743beb3d@dlink.ru>
+ <PSXP216MB04388962C411CD0B17A86F47804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+ <c762f5eee08a8f2d0d6cb927d7fa3848@dlink.ru>
+ <746f768684f266e5a5db1faf8314cd77@dlink.ru>
+ <PSXP216MB0438267E8191486435445DA6804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+ <cc08834c-ccb3-263a-2967-f72a9d72535a@solarflare.com>
+User-Agent: Roundcube Webmail/1.4.0
+Message-ID: <3147bff57d58fce651fe2d3ca53983be@dlink.ru>
+X-Sender: alobakin@dlink.ru
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Edward Cree wrote 25.11.2019 13:31:
+> On 25/11/2019 09:09, Nicholas Johnson wrote:
+>> The default value of /proc/sys/net/core/gro_normal_batch was 8.
+>> Setting it to 1 allowed it to connect to Wi-Fi network.
+>> 
+>> Setting it back to 8 did not kill the connection.
+>> 
+>> But when I disconnected and tried to reconnect, it did not re-connect.
+>> 
+>> Hence, it appears that the problem only affects the initial handshake
+>> when associating with a network, and not normal packet flow.
+> That sounds like the GRO batch isn't getting flushed at the endof the
+>  NAPI — maybe the driver isn't calling napi_complete_done() at the
+>  appropriate time?
 
-Add short documentation for FlexNoc Performance Monitor driver.
+Yes, this was the first reason I thought about, but didn't look at
+iwlwifi yet. I already knew this driver has some tricky parts, but
+this 'fake NAPI' solution seems rather strange to me.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
- Documentation/misc-devices/xilinx_flex.txt | 66 ++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/misc-devices/xilinx_flex.txt
+> Indeed, from digging through the layers of iwlwifi I eventually get to
+>  iwl_pcie_rx_handle() which doesn't really have a NAPI poll (the
+>  napi->poll function is iwl_pcie_dummy_napi_poll() { WARN_ON(1);
+>  return 0; }) and instead calls napi_gro_flush() at the end of its RX
+>  handling.  Unfortunately, napi_gro_flush() is no longer enough,
+>  because it doesn't call gro_normal_list() so the packets on the
+>  GRO_NORMAL list just sit there indefinitely.
+> 
+> It was seeing drivers calling napi_gro_flush() directly that had me
+>  worried in the first place about whether listifying napi_gro_receive()
+>  was safe and where the gro_normal_list() should go.
+> I wondered if other drivers that show up in [1] needed fixing with a
+>  gro_normal_list() next to their napi_gro_flush() call.  From a cursory
+>  check:
+> brocade/bna: has a real poller, calls napi_complete_done() so is OK.
+> cortina/gemini: calls napi_complete_done() straight after
+>  napi_gro_flush(), so is OK.
+> hisilicon/hns3: calls napi_complete(), so is _probably_ OK.
+> But it's far from clear to me why *any* of those drivers are calling
+>  napi_gro_flush() themselves...
 
-diff --git a/Documentation/misc-devices/xilinx_flex.txt b/Documentation/misc-devices/xilinx_flex.txt
-new file mode 100644
-index 0000000..c075934
---- /dev/null
-+++ b/Documentation/misc-devices/xilinx_flex.txt
-@@ -0,0 +1,66 @@
-+Kernel driver xilinx_flex
-+============================
-+
-+Supported chips:
-+Versal SOC
-+
-+Author:
-+	Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-+
-+Description
-+-----------
-+
-+Versal uses the Arteris FlexNoC interconnect instead of the ARM NIC. FlexNoC
-+provides the capability to integrate performance counters in the interconnect.
-+It has configurable probe points to monitor the packet and forwards it to
-+observer for logging. It supports read and write transaction counts for
-+request and response.
-+
-+Features:
-+---> Run-time programmable selection of packet probe points.
-+---> Recording of traffic and link statistics.
-+---> Separate read and write response and request count.
-+
-+SYSFS:
-+
-+counteridfpd
-+	RW - shows the counter number selected for the FPD Flexnoc.
-+
-+counterfpd_rdreq
-+	RO - shows the read request count for the FPD counters.
-+
-+counterfpdsrc
-+	WO - sets the source of the FPD counter.
-+
-+counterfpd_wrrsp
-+	RO - shows the write response count for the FPD counters.
-+
-+counterfpd_rdrsp
-+	RO - shows the read response count for the FPD counters.
-+
-+counterfpd_wrreq
-+	RO - shows the write request count for the FPD counters.
-+
-+counterfpdport
-+	WO - sets the port number selected for the FPD Flexnoc.
-+
-+counteridlpd
-+	RW - shows the counter number selected for the LPD Flexnoc.
-+
-+counterlpdport
-+	WO - sets the port number selected for the LPD Flexnoc.
-+
-+counterlpd_rdreq
-+	RO - shows the read request count for the LPD counters.
-+
-+counterlpd_wrreq
-+	RO - shows the write request count for the LPD counters.
-+
-+counterlpd_wrrsp
-+	RO - shows the write response count for the LPD counters.
-+
-+counterlpdsrc
-+	WO - sets the source of the LPD counter.
-+
-+counterlpd_rdrsp
-+	RO - shows the read response count for the LPD counters.
--- 
-2.1.1
+Agree. I mean, we _can_ handle this particular problem from networking
+core side, but from my point of view only rethinking driver's logic is
+the correct way to solve this and other issues that may potentionally
+appear in future.
 
+> -Ed
+> 
+> [1]: https://elixir.bootlin.com/linux/latest/ident/napi_gro_flush
+
+Regards,
+ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
