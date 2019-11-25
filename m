@@ -2,125 +2,297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8AA109437
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2258109445
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:33:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfKYT2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 14:28:09 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:46265 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfKYT2I (ORCPT
+        id S1726926AbfKYTdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 14:33:35 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42103 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfKYTde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 14:28:08 -0500
-Received: by mail-il1-f197.google.com with SMTP id i74so14541159ild.13
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 11:28:08 -0800 (PST)
+        Mon, 25 Nov 2019 14:33:34 -0500
+Received: by mail-io1-f68.google.com with SMTP id k13so17578572ioa.9;
+        Mon, 25 Nov 2019 11:33:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mFQ2uM8eUtm7aXuPr+Kb3DaM5rrKzlYcHWCzrXEycX0=;
+        b=Zw9j86qFuPevjYi0ihc8XvzGHrD05DrfER6842rNQNqpxSuA8WqWsmuCbfItCVN93N
+         Nh9NVIP9heq2SLfFzagLEH27KEVfl1FGH+pCCp+s9zV5bM3O+BVMni2NcHJuWHIleijj
+         yvOBRgIgewRvZ0yLcT4M+E4yAVy/e+VSnptinkxauv3B3Bymagp9815LqiAtV2QZDZNL
+         e2ry5DYsvdLRuYxw7wIX6mob0SOy5eSAKcIBy4WWPBpF9E7EhSpZ+hEkI7DKCAJR688z
+         GzPZ3UDfzENjrnlHHexFALiDHRADU+1JmPTR0uygNv0SWqVKM60yW0T+FM9E38Fxc13p
+         29eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vepHw2FCtDai2doID+pQcicHSRg4AAVaV69lUY8SeNc=;
-        b=GToI0KKBGSOc/IrajxeqeZR/onSeTmANLGcxaGG9KjgbJKgGZEwYZBWujoCz0lPLdN
-         xJN9HK64Ct5lL9srbiRfcIPYIvmwxUFHugaOdglWX21NjRtod09hX0TxjoCJEQsHAJzP
-         QNyUAufZbKkA4BjJ8nlRs1ujLt/GHdy+Z0EcOST5rrcU0k3s2RtI0+lCygR8ogW5ohTB
-         Vhpr/b/1KXO2lVWbXUfg2yDbzIlFtWB0OgMpYZN+TsPPtif8aY5nEoUJx8FFqlMlRawy
-         5arAfiOY+n71p+wqYiAj7xYWbiPO1T+AyNJscD4EfQ+XqCUds5KfxF0Z1MDWIcF3+C2L
-         zeJA==
-X-Gm-Message-State: APjAAAUmWt29iPx8IqUZh2vMnZYD42J6FAc9WVAyjq6oTkSr6LlefUnA
-        RzTV4gmIOlu34sBLxspjV7oshz580ahoVeXlJcL3pXY5P5y9
-X-Google-Smtp-Source: APXvYqy9j/n9HPTJPkHiUlSCPsZh3oe7S2pyT8r5kW0yvcYxtwD0vMn4rZli+fUaFR17ZHhevavNreq77VK2Vn/4uWHbujIQHC/t
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mFQ2uM8eUtm7aXuPr+Kb3DaM5rrKzlYcHWCzrXEycX0=;
+        b=LwM/AU0T4L0At0kc7AiKzstsR1pvwKnnaxFpAbA0v/jafSn70uQeqz/6ZFJNvNzWZX
+         ffyd8ttLLyUYHD57rpUCxxu3Yn2z6gtl8wPuxXY16zroBtblRKytBEDpm8FogoIi6BzF
+         786TWavi0xSpHnS7swCzn1GdK4LMuCvGZePLmj02jDIOXeze6svLFhuuHTXoWnfarqdJ
+         nRJ3Skb+kpUp4DZk9Um74/WiVNtzdWPa5fIoMbcdPNvw8Dkvl+FYoqAlpy+yAGK/ZeHW
+         bTtH4CbO9hbfFS8bXPDjRE0eip78r2vOnkqWT/Arb5VGcCqgiQgKDc9Te7HKrQC5Wv+9
+         0q/A==
+X-Gm-Message-State: APjAAAW7qFvNyZz2ILIGDDWgYek4zXXZEuboDds2SFXn7eOx0Eum1Fc0
+        RQNGkkTJHFGzwUuirRJERz1rtn1/f5FTYlSuBIU=
+X-Google-Smtp-Source: APXvYqxUu2A01pKxdFcqtyts2vqbYHzTEz9tI2Gc3rEcG2oSUiUAKLBByPJCDzcVFNZtjIKoDD7Of8sHhGV5LSDk6io=
+X-Received: by 2002:a6b:8d09:: with SMTP id p9mr28965302iod.227.1574710413296;
+ Mon, 25 Nov 2019 11:33:33 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:9e0e:: with SMTP id q14mr20742629ili.151.1574710088077;
- Mon, 25 Nov 2019 11:28:08 -0800 (PST)
-Date:   Mon, 25 Nov 2019 11:28:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006c9f4e059830c33c@google.com>
-Subject: general protection fault in selinux_socket_sendmsg (2)
-From:   syzbot <syzbot+314db21f0d5c1f53856c@syzkaller.appspotmail.com>
-To:     andriin@fb.com, anton@enomsg.org, ast@kernel.org,
-        bpf@vger.kernel.org, ccross@android.com, daniel@iogearbox.net,
-        eparis@parisplace.org, kafai@fb.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        paul@paul-moore.com, sds@tycho.nsa.gov, selinux@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tony.luck@intel.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20191122193138.19278-1-navid.emamdoost@gmail.com> <20191125180448.GA39139@ubuntu-x2-xlarge-x86>
+In-Reply-To: <20191125180448.GA39139@ubuntu-x2-xlarge-x86>
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Date:   Mon, 25 Nov 2019 13:33:21 -0600
+Message-ID: <CAEkB2EQP-bMOcF0MmrtaV4dYrrMxyjMj+y3vgdaKJafeEW9ypw@mail.gmail.com>
+Subject: Re: [PATCH] PCI/IOV: Fix memory leak in pci_iov_add_virtfn()
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Nathan,
 
-syzbot found the following crash on:
+On Mon, Nov 25, 2019 at 12:04 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Fri, Nov 22, 2019 at 01:31:36PM -0600, Navid Emamdoost wrote:
+> > In the implementation of pci_iov_add_virtfn() the allocated virtfn is
+> > leaked if pci_setup_device() fails. The error handling is not calling
+> > pci_stop_and_remove_bus_device(). Change the goto label to failed2.
+> >
+> > Fixes: 156c55325d30 ("PCI: Check for pci_setup_device() failure in pci_=
+iov_add_virtfn()")
+> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> > ---
+> >  drivers/pci/iov.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> > index b3f972e8cfed..713660482feb 100644
+> > --- a/drivers/pci/iov.c
+> > +++ b/drivers/pci/iov.c
+> > @@ -164,7 +164,7 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+> >
+> >       rc =3D pci_setup_device(virtfn);
+> >       if (rc)
+> > -             goto failed1;
+> > +             goto failed2;
+> >
+> >       virtfn->dev.parent =3D dev->dev.parent;
+> >       virtfn->multifunction =3D 0;
+> > --
+> > 2.17.1
+> >
+>
+> Hi Navid,
+>
+> This patch causes a Clang warning about failed1 no longer being a used
+> label, as shown by this 0day build report. Would you please look into it
+> and address it in the same patch so there is not a warning regression?
+>
 
-HEAD commit:    6b8a7946 Merge tag 'for_linus' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1680ab8ce00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4737c15fc47048f2
-dashboard link: https://syzkaller.appspot.com/bug?extid=314db21f0d5c1f53856c
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Sure I will prepare a v2.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> Cheers,
+> Nathan
+>
+> On Mon, Nov 25, 2019 at 07:20:46AM +0800, kbuild test robot wrote:
+> > CC: kbuild-all@lists.01.org
+> > In-Reply-To: <20191122193138.19278-1-navid.emamdoost@gmail.com>
+> > References: <20191122193138.19278-1-navid.emamdoost@gmail.com>
+> > TO: Navid Emamdoost <navid.emamdoost@gmail.com>
+> > CC: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, lin=
+ux-kernel@vger.kernel.org, emamd001@umn.edu, Navid Emamdoost <navid.emamdoo=
+st@gmail.com>, emamd001@umn.edu, Navid Emamdoost <navid.emamdoost@gmail.com=
+>
+> > CC: emamd001@umn.edu, Navid Emamdoost <navid.emamdoost@gmail.com>
+> >
+> > Hi Navid,
+> >
+> > Thank you for the patch! Perhaps something to improve:
+> >
+> > [auto build test WARNING on pci/next]
+> > [also build test WARNING on v5.4-rc8 next-20191122]
+> > [if your patch is applied to the wrong git tree, please drop us a note =
+to help
+> > improve the system. BTW, we also suggest to use '--base' option to spec=
+ify the
+> > base tree in git format-patch, please see https://stackoverflow.com/a/3=
+7406982]
+> >
+> > url:    https://github.com/0day-ci/linux/commits/Navid-Emamdoost/PCI-IO=
+V-Fix-memory-leak-in-pci_iov_add_virtfn/20191125-020946
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git=
+ next
+> > config: arm64-defconfig (attached as .config)
+> > compiler: clang version 10.0.0 (git://gitmirror/llvm_project 844d97f650=
+a2d716e63e3be903c32a82f2f817b1)
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/s=
+bin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=3Darm64
+> >
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> > >> drivers/pci/iov.c:204:1: warning: unused label 'failed1' [-Wunused-l=
+abel]
+> >    failed1:
+> >    ^~~~~~~~
+> >    1 warning generated.
+> >
+> > vim +/failed1 +204 drivers/pci/iov.c
+> >
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  135
+> > 753f612471819d3 Jan H. Sch=C3=B6nherr 2017-09-26  136  int pci_iov_add_=
+virtfn(struct pci_dev *dev, int id)
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  137  {
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  138      int i;
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  139      int rc =3D -ENOME=
+M;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  140      u64 size;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  141      char buf[VIRTFN_I=
+D_LEN];
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  142      struct pci_dev *v=
+irtfn;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  143      struct resource *=
+res;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  144      struct pci_sriov =
+*iov =3D dev->sriov;
+> > 8b1fce04dc2a221 Gu Zheng         2013-05-25  145      struct pci_bus *b=
+us;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  146
+> > b07579c0924eee1 Wei Yang         2015-03-25  147      bus =3D virtfn_ad=
+d_bus(dev->bus, pci_iov_virtfn_bus(dev, id));
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  148      if (!bus)
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  149              goto fail=
+ed;
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  150
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  151      virtfn =3D pci_al=
+loc_dev(bus);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  152      if (!virtfn)
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  153              goto fail=
+ed0;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  154
+> > b07579c0924eee1 Wei Yang         2015-03-25  155      virtfn->devfn =3D=
+ pci_iov_virtfn_devfn(dev, id);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  156      virtfn->vendor =
+=3D dev->vendor;
+> > 3142d832af10d8c Filippo Sironi   2017-08-28  157      virtfn->device =
+=3D iov->vf_device;
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  158      virtfn->is_virtfn=
+ =3D 1;
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  159      virtfn->physfn =
+=3D pci_dev_get(dev);
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  160
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  161      if (id =3D=3D 0)
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  162              pci_read_=
+vf_config_common(virtfn);
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  163
+> > 156c55325d30261 Po Liu           2016-08-29  164      rc =3D pci_setup_=
+device(virtfn);
+> > 156c55325d30261 Po Liu           2016-08-29  165      if (rc)
+> > 59fb9307eee20d6 Navid Emamdoost  2019-11-22  166              goto fail=
+ed2;
+> > 156c55325d30261 Po Liu           2016-08-29  167
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  168      virtfn->dev.paren=
+t =3D dev->dev.parent;
+> > aa9319773619c9d Alex Williamson  2014-01-09  169      virtfn->multifunc=
+tion =3D 0;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  170
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  171      for (i =3D 0; i <=
+ PCI_SRIOV_NUM_BARS; i++) {
+> > c1fe1f96e30d31c Bjorn Helgaas    2015-03-25  172              res =3D &=
+dev->resource[i + PCI_IOV_RESOURCES];
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  173              if (!res-=
+>parent)
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  174                      c=
+ontinue;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  175              virtfn->r=
+esource[i].name =3D pci_name(virtfn);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  176              virtfn->r=
+esource[i].flags =3D res->flags;
+> > 0e6c9122a6ec96d Wei Yang         2015-03-25  177              size =3D =
+pci_iov_resource_size(dev, i + PCI_IOV_RESOURCES);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  178              virtfn->r=
+esource[i].start =3D res->start + size * id;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  179              virtfn->r=
+esource[i].end =3D virtfn->resource[i].start + size - 1;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  180              rc =3D re=
+quest_resource(res, &virtfn->resource[i]);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  181              BUG_ON(rc=
+);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  182      }
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  183
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  184      pci_device_add(vi=
+rtfn, virtfn->bus);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  185
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  186      sprintf(buf, "vir=
+tfn%u", id);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  187      rc =3D sysfs_crea=
+te_link(&dev->dev.kobj, &virtfn->dev.kobj, buf);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  188      if (rc)
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  189              goto fail=
+ed2;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  190      rc =3D sysfs_crea=
+te_link(&virtfn->dev.kobj, &dev->dev.kobj, "physfn");
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  191      if (rc)
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  192              goto fail=
+ed3;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  193
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  194      kobject_uevent(&v=
+irtfn->dev.kobj, KOBJ_CHANGE);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  195
+> > 27d6162944b9b34 Stuart Hayes     2017-10-04  196      pci_bus_add_devic=
+e(virtfn);
+> > 27d6162944b9b34 Stuart Hayes     2017-10-04  197
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  198      return 0;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  199
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  200  failed3:
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  201      sysfs_remove_link=
+(&dev->dev.kobj, buf);
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  202  failed2:
+> > cf0921bea66c556 KarimAllah Ahmed 2018-03-19  203      pci_stop_and_remo=
+ve_bus_device(virtfn);
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20 @204  failed1:
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  205      pci_dev_put(dev);
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  206  failed0:
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  207      virtfn_remove_bus=
+(dev->bus, bus);
+> > dc087f2f6a2925e Jiang Liu        2013-05-25  208  failed:
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  209
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  210      return rc;
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  211  }
+> > dd7cc44d0bcec5e Yu Zhao          2009-03-20  212
+> >
+> > :::::: The code at line 204 was first introduced by commit
+> > :::::: dd7cc44d0bcec5e9c42fe52e88dc254ae62eac8d PCI: add SR-IOV API for=
+ Physical Function driver
+> >
+> > :::::: TO: Yu Zhao <yu.zhao@intel.com>
+> > :::::: CC: Jesse Barnes <jbarnes@virtuousgeek.org>
+> >
+> > ---
+> > 0-DAY kernel test infrastructure                 Open Source Technology=
+ Center
+> > https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corp=
+oration
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+314db21f0d5c1f53856c@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 4616 Comm: kworker/1:0 Not tainted 5.4.0-rc8-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: krxrpcd rxrpc_peer_keepalive_worker
-RIP: 0010:selinux_socket_sendmsg+0x22/0x40 security/selinux/hooks.c:4828
-Code: c3 e8 c2 40 ac fe eb e8 55 48 89 e5 53 48 89 fb e8 43 d5 70 fe 48 8d  
-7b 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75  
-11 48 8b 7b 18 be 04 00 00 00 e8 fa fb ff ff 5b 5d
-RSP: 0000:ffff888089fd79f0 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff83427eb5
-RDX: 0000000000000003 RSI: ffffffff830281dd RDI: 0000000000000018
-RBP: ffff888089fd79f8 R08: ffff888098698400 R09: fffffbfff14f0154
-R10: fffffbfff14f0153 R11: ffffffff8a780a9f R12: dffffc0000000000
-R13: ffff888089fd7b20 R14: ffff888089fd7b20 R15: 000000000000001d
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c000064008 CR3: 00000000a87b8000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  security_socket_sendmsg+0x77/0xc0 security/security.c:2013
-  sock_sendmsg+0x45/0x130 net/socket.c:654
-  kernel_sendmsg+0x44/0x50 net/socket.c:677
-  rxrpc_send_keepalive+0x1ff/0x940 net/rxrpc/output.c:655
-  rxrpc_peer_keepalive_dispatch net/rxrpc/peer_event.c:376 [inline]
-  rxrpc_peer_keepalive_worker+0x7be/0xd02 net/rxrpc/peer_event.c:437
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace f42fd501ecc72d8d ]---
-RIP: 0010:selinux_socket_sendmsg+0x22/0x40 security/selinux/hooks.c:4828
-Code: c3 e8 c2 40 ac fe eb e8 55 48 89 e5 53 48 89 fb e8 43 d5 70 fe 48 8d  
-7b 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 75  
-11 48 8b 7b 18 be 04 00 00 00 e8 fa fb ff ff 5b 5d
-RSP: 0000:ffff888089fd79f0 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff83427eb5
-RDX: 0000000000000003 RSI: ffffffff830281dd RDI: 0000000000000018
-RBP: ffff888089fd79f8 R08: ffff888098698400 R09: fffffbfff14f0154
-R10: fffffbfff14f0153 R11: ffffffff8a780a9f R12: dffffc0000000000
-R13: ffff888089fd7b20 R14: ffff888089fd7b20 R15: 000000000000001d
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9c00057120 CR3: 00000000a3e31000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--=20
+Navid.
