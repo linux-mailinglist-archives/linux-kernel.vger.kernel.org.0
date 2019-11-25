@@ -2,182 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA51D109593
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 23:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1566109598
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 23:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbfKYWlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 17:41:24 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44470 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfKYWlY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 17:41:24 -0500
-Received: by mail-qk1-f196.google.com with SMTP id m16so14376644qki.11
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 14:41:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q3hL+mhvMKtQdk1PWTs3KdMciCCix20V4ciU42QvLSs=;
-        b=cbxRGVQ5MQzpVRqAv7Rvt/zeJOgAeAuisvRTR1y8nM0l8pGSvHElg7q2A7bwYUN+1w
-         xPhQ/9K5XQFKbHMTmeM9EcG6ruFbyZBzzh5RY/Pk3IcnwwRFW02fqLLKWEUKOYTztQsc
-         8D+bneRRVw3IHdeGZ6a9slSVh5FaTU7gFwjiS38yMVj4rO6kiKwqFpWaOASxBFOGhrXg
-         KTXI7O7GEKaFBM7cgWOBqCLn2anmpGBD3pbazWccqM28DeAcdiaAdJTPUFpWVAIY9fVP
-         EI/C0pwyiImB7/aykA2lP4VTXGWtRJMdxkF4/lCGV0B7Rqf180WxnbiVuy0IhUaWq5/A
-         /kmg==
-X-Gm-Message-State: APjAAAXEVdcP2+B/EvatbxW9f6ebhj96Q+b46yuqG5zQxONvJ8sZtURM
-        hj+3ZpzeAnOjhllNvg5jZvg=
-X-Google-Smtp-Source: APXvYqxcrWZDJgLEW6CjSQP+kqVtJnpLIirlkLFcgJgeSnrq0L2j9zQRMkHFw8sVKWWvY7VYiHvKzw==
-X-Received: by 2002:a37:64a:: with SMTP id 71mr28528362qkg.50.1574721682681;
-        Mon, 25 Nov 2019 14:41:22 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:500::2:6080])
-        by smtp.gmail.com with ESMTPSA id o139sm4054924qke.95.2019.11.25.14.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 14:41:22 -0800 (PST)
-Date:   Mon, 25 Nov 2019 17:41:19 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
-        linux-kernel@lists.codethink.co.uk, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] percpu: add __percpu to SHIFT_PERCPU_PTR
-Message-ID: <20191125224119.GA37611@dennisz-mbp.dhcp.thefacebook.com>
-References: <20191015102615.11430-1-ben.dooks@codethink.co.uk>
- <20191017181301.GA32546@dennisz-mbp.dhcp.thefacebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017181301.GA32546@dennisz-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1727228AbfKYWpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 17:45:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727139AbfKYWpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 17:45:03 -0500
+Subject: Re: [GIT PULL] tpmdd updates for Linux v5.5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574721902;
+        bh=pt93TpD3bcRM2woCPlb5kjxWwt/2vu3TsxLgqWDZZ9w=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ALUiLUDYFnYHGCpY7Qtp8e7lDTF1DAr1U9MKAGnJpYzItxJZy8MX1W/h6NKXQbM0e
+         OFZuvNas3vXqXG+rRI/G34rNSmnIZOLBaMa5WMoHDlfJVhtIl2c6TkgRdzNQ43589m
+         5OmXYC/I9Xjmg16ibUCLWbj18S8Xya+dW5U5fzD4=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191112195542.GA10619@linux.intel.com>
+References: <20191112195542.GA10619@linux.intel.com>
+X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191112195542.GA10619@linux.intel.com>
+X-PR-Tracked-Remote: git://git.infradead.org/users/jjs/linux-tpmdd.git
+ tags/tpmdd-next-20191112
+X-PR-Tracked-Commit-Id: 0b40dbcbba923b5379bd1d601edd6d51e23fe72c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 54f0e54011c9e83277e84ec2f60696285066dfa9
+Message-Id: <157472190290.22729.17187770371067659051.pr-tracker-bot@kernel.org>
+Date:   Mon, 25 Nov 2019 22:45:02 +0000
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, jmorris@namei.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 02:13:01PM -0400, Dennis Zhou wrote:
-> On Tue, Oct 15, 2019 at 11:26:15AM +0100, Ben Dooks wrote:
-> > The SHIFT_PERCPU_PTR() returns a pointer used by a number
-> > of functions that expect the pointer to be __percpu annotated
-> > (sparse address space 3). Adding __percpu to this makes the
-> > following sparse warnings go away.
-> > 
-> > Note, this then creates the problem the __percup is marked
-> > as noderef, which may need removing for some of the internal
-> > functions, or to remove other warnings.
-> > 
-> > mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:385:13:    got signed char *
-> > mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:385:13:    got signed char *
-> > mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:385:13:    got signed char *
-> > mm/vmstat.c:385:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:385:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:385:13:    got signed char *
-> > mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:401:13:    got signed char *
-> > mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:401:13:    got signed char *
-> > mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:401:13:    got signed char *
-> > mm/vmstat.c:401:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:401:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:401:13:    got signed char *
-> > mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:429:13:    got signed char *
-> > mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:429:13:    got signed char *
-> > mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:429:13:    got signed char *
-> > mm/vmstat.c:429:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:429:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:429:13:    got signed char *
-> > mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:445:13:    got signed char *
-> > mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:445:13:    got signed char *
-> > mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:445:13:    got signed char *
-> > mm/vmstat.c:445:13: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:445:13:    expected signed char [noderef] [usertype] <asn:3> *__p
-> > mm/vmstat.c:445:13:    got signed char *
-> > mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:763:29:    got signed char *
-> > mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:763:29:    got signed char *
-> > mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:763:29:    got signed char *
-> > mm/vmstat.c:763:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:763:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:763:29:    got signed char *
-> > mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:825:29:    got signed char *
-> > mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:825:29:    got signed char *
-> > mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:825:29:    got signed char *
-> > mm/vmstat.c:825:29: warning: incorrect type in initializer (different address spaces)
-> > mm/vmstat.c:825:29:    expected signed char [noderef] <asn:3> *__p
-> > mm/vmstat.c:825:29:    got signed char *
-> > 
-> > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> > ---
-> > Cc: Dennis Zhou <dennis@kernel.org>
-> > Cc: Tejun Heo <tj@kernel.org>
-> > Cc: Christoph Lameter <cl@linux.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
-> >  include/linux/percpu-defs.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-> > index a6fabd865211..a49b6c702598 100644
-> > --- a/include/linux/percpu-defs.h
-> > +++ b/include/linux/percpu-defs.h
-> > @@ -229,7 +229,7 @@ do {									\
-> >   * pointer value.  The weird cast keeps both GCC and sparse happy.
-> >   */
-> >  #define SHIFT_PERCPU_PTR(__p, __offset)					\
-> > -	RELOC_HIDE((typeof(*(__p)) __kernel __force *)(__p), (__offset))
-> > +	RELOC_HIDE((typeof(*(__p)) __kernel __percpu __force *)(__p), (__offset))
-> >  
-> >  #define per_cpu_ptr(ptr, cpu)						\
-> >  ({									\
-> > -- 
-> > 2.23.0
-> > 
-> 
-> Hello,
-> 
-> I've applied it for-5.5.
-> 
-> Thanks,
-> Dennis
+The pull request you sent on Tue, 12 Nov 2019 21:55:42 +0200:
 
-Hi Ben,
+> git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20191112
 
-I've reverted this commit. After spending a little more time on it, I
-don't think this is the fix we want because after we call RELOC_HIDE,
-we are shifting from __percpu to __kernel address spaces as we're adding
-the offset here.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/54f0e54011c9e83277e84ec2f60696285066dfa9
 
-Thanks,
-Dennis
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
