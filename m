@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2118B10943D
+	by mail.lfdr.de (Postfix) with ESMTP id 8F8CE10943E
 	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 20:31:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfKYTbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726984AbfKYTbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 25 Nov 2019 14:31:15 -0500
 Received: from mga12.intel.com ([192.55.52.136]:22629 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbfKYTbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 14:31:12 -0500
+        id S1725823AbfKYTbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 14:31:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
   by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 11:31:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,242,1571727600"; 
-   d="scan'208";a="216994576"
+   d="scan'208";a="216994579"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga001.fm.intel.com with ESMTP; 25 Nov 2019 11:31:11 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -32,9 +32,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v2 1/4] drivers/net/b44: Change to non-atomic bit operations
-Date:   Mon, 25 Nov 2019 11:43:01 -0800
-Message-Id: <1574710984-208305-2-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v2 2/4] xen-pcifront: Align address of flags to size of unsigned long
+Date:   Mon, 25 Nov 2019 11:43:02 -0800
+Message-Id: <1574710984-208305-3-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
 References: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
@@ -43,39 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+The address of "flags" is passed to atomic bitops which require the
+address is aligned to size of unsigned long.
 
-Since "pwol_mask" is local and never exposed to concurrency, there is
-no need to set bit in pwol_mask by costly atomic operations.
-
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- drivers/net/ethernet/broadcom/b44.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/xen/interface/io/pciif.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
-index 97ab0dd25552..5738ab963dfb 100644
---- a/drivers/net/ethernet/broadcom/b44.c
-+++ b/drivers/net/ethernet/broadcom/b44.c
-@@ -1520,7 +1520,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
- 
- 	memset(ppattern + offset, 0xff, magicsync);
- 	for (j = 0; j < magicsync; j++)
--		set_bit(len++, (unsigned long *) pmask);
-+		__set_bit(len++, (unsigned long *)pmask);
- 
- 	for (j = 0; j < B44_MAX_PATTERNS; j++) {
- 		if ((B44_PATTERN_SIZE - len) >= ETH_ALEN)
-@@ -1532,7 +1532,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
- 		for (k = 0; k< ethaddr_bytes; k++) {
- 			ppattern[offset + magicsync +
- 				(j * ETH_ALEN) + k] = macaddr[k];
--			set_bit(len++, (unsigned long *) pmask);
-+			__set_bit(len++, (unsigned long *)pmask);
- 		}
- 	}
- 	return len - 1;
+diff --git a/include/xen/interface/io/pciif.h b/include/xen/interface/io/pciif.h
+index d9922ae36eb5..639d5fb484a3 100644
+--- a/include/xen/interface/io/pciif.h
++++ b/include/xen/interface/io/pciif.h
+@@ -103,8 +103,11 @@ struct xen_pcie_aer_op {
+ 	uint32_t devfn;
+ };
+ struct xen_pci_sharedinfo {
+-	/* flags - XEN_PCIF_* */
+-	uint32_t flags;
++	/* flags - XEN_PCIF_*. Force alignment for atomic bit operations. */
++	union {
++		uint32_t	flags;
++		unsigned long	flags_alignment;
++	};
+ 	struct xen_pci_op op;
+ 	struct xen_pcie_aer_op aer_op;
+ };
 -- 
 2.19.1
 
