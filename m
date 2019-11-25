@@ -2,101 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC1A1089AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 09:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68FE3108A09
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 09:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfKYIGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 03:06:37 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42746 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfKYIGh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 03:06:37 -0500
-Received: by mail-oi1-f195.google.com with SMTP id o12so12251234oic.9;
-        Mon, 25 Nov 2019 00:06:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gAuJIv9yn4YXOSzk5PZReQ2dPQGSJ4vZoOY3jPtStjc=;
-        b=QWyvj/CFps7CV2EU9tzcrwuhr5T+shDGdnNpPkBnIHKM+J+s84shb5PExAaVokpBzA
-         Ekhu7Doqily5QBpaNCZ5cIb2T2Al5ggwTyxyxkOADyIKBLZr4cvEu1jduuuSxKE46QJb
-         DwKFStZZRU5z5Alm0f7lrXILu6YcLBXIVdgB7o4l8R8PRdCLZN9LfEtwa/uxtbGUDAFk
-         +pS2Ky1jn0oInBAocvzK1bWQFM23Mik1g+/nzoBdUVybx/IdKKGdsYf7ET3GBtMwEBQT
-         cNrVppLAvfq+N2NSEbPwkfszD8aEp6WgGwsclImgYIow7eRdjpionZxpTVn/Tuipyr3k
-         6pjQ==
-X-Gm-Message-State: APjAAAVG7C3oNcQfKnn8Kx3PbaH9X5Aw/vWLI4KCrfoGWb3g7AeSIDuX
-        bXqZBEquYhlqdXpA1M0y3uKPSnaYP2goQlS/qhc=
-X-Google-Smtp-Source: APXvYqwpeDUhNSpQ/oCrYrAiLsRBMIpwYQpPGW9c/ztktaU9IBlgDfMBbUNbBU4Re6q5x3Nv2eZgOEhw4M2WPaFTbaU=
-X-Received: by 2002:aca:3a86:: with SMTP id h128mr20980328oia.131.1574669195789;
- Mon, 25 Nov 2019 00:06:35 -0800 (PST)
+        id S1726957AbfKYI2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 03:28:15 -0500
+Received: from mga09.intel.com ([134.134.136.24]:60077 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725763AbfKYI2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 03:28:15 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 00:28:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,241,1571727600"; 
+   d="scan'208";a="216880267"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Nov 2019 00:28:12 -0800
+Date:   Mon, 25 Nov 2019 16:08:39 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     mdf@kernel.org, mark.rutland@arm.com, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        atull@kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH v6 0/2] add performance reporting support to FPGA DFL
+ drivers
+Message-ID: <20191125080839.GA6227@hao-dev>
+References: <1573622695-25607-1-git-send-email-hao.wu@intel.com>
+ <20191125033412.GB890@hao-dev>
+ <20191125080127.GC1809@willie-the-truck>
 MIME-Version: 1.0
-References: <20191122101721.7222-1-jslaby@suse.cz>
-In-Reply-To: <20191122101721.7222-1-jslaby@suse.cz>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 25 Nov 2019 09:06:24 +0100
-Message-ID: <CAMuHMdXETD5azNxPgzzhbx_kNh93EN3a8q6FcEVBV=MvLXzYGw@mail.gmail.com>
-Subject: Re: [PATCH] tty: don't crash in tty_init_dev when missing tty_port
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125080127.GC1809@willie-the-truck>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
+On Mon, Nov 25, 2019 at 08:01:28AM +0000, Will Deacon wrote:
+> On Mon, Nov 25, 2019 at 11:34:12AM +0800, Wu Hao wrote:
+> > Hi Will and Mark,
+> > 
+> > Could you please help us on review this patchset? as this patchset mainly 
+> > introduced a new perf driver following the similar way as drivers/perf/*.
+> 
+> Why is it not under drivers/perf/, then?
 
-On Fri, Nov 22, 2019 at 11:20 AM Jiri Slaby <jslaby@suse.cz> wrote:
-> We currently warn the user when tty->port is not set in tty_init_dev
-> yet. The warning says that the kernel will crash later. And it really
-> will only few lines below at:
-> tty->port->itty = tty;
->
-> So be nice and avoid the crash -- return an error instead. And update
-> the warning.
+Hi Will
 
-As per Greg's comment on another patch in
-https://lore.kernel.org/lkml/20191121135743.GA552517@kroah.com/,
-that will still cause systems with panic-on-warn to reboot.
+Thanks for the quick response. This is one sub feature for DFL based FPGAs,
+and we plan to put this sub feature together with others, including related
+documentation. It only registers a standard perf pmu for its userspace
+interfaces.
 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> ---
->  drivers/tty/tty_io.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-> index cb6370906a6d..d9f54c7d94f2 100644
-> --- a/drivers/tty/tty_io.c
-> +++ b/drivers/tty/tty_io.c
-> @@ -1345,9 +1345,12 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
->         if (!tty->port)
->                 tty->port = driver->ports[idx];
->
-> -       WARN_RATELIMIT(!tty->port,
-> -                       "%s: %s driver does not set tty->port. This will crash the kernel later. Fix the driver!\n",
-> -                       __func__, tty->driver->name);
-> +       if (WARN_RATELIMIT(!tty->port,
-> +                       "%s: %s driver does not set tty->port. This would crash the kernel. Fix the driver!\n",
-> +                       __func__, tty->driver->name)) {
-> +               retval = -EINVAL;
-> +               goto err_release_lock;
-> +       }
->
->         retval = tty_ldisc_lock(tty, 5 * HZ);
->         if (retval)
+> 
+> > This patchset has been submitted for a long time but didn't receive any
+> > comment after v4. we appreciate any review comments! thanks in advance. :)
+> 
+> Hmm, not sure I saw the previous versions. Guessing I wasn't on cc?
 
-Gr{oetje,eeting}s,
+We switched to perf API from v4, and started ccing you and Mark from v5. :)
 
-                        Geert
+Thanks
+Hao
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Will
