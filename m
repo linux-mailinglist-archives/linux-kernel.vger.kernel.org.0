@@ -2,188 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF268108E55
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B2F6108ED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 14:26:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfKYM7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 07:59:50 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54508 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfKYM7t (ORCPT
+        id S1727751AbfKYN0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 08:26:21 -0500
+Received: from aliyun-cloud.icoremail.net ([47.90.73.12]:18180 "HELO
+        aliyun-sdnproxy-4.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with SMTP id S1727393AbfKYN0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 07:59:49 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so5898007wmj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 04:59:47 -0800 (PST)
+        Mon, 25 Nov 2019 08:26:21 -0500
+X-Greylist: delayed 1203 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 08:26:19 EST
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=yw839dhwZFyMUYw9/2uCgotqVjToQsaaRUJoGdH3uqI=;
-        b=SNtNe7r1PHsV1Oqp94IjkFR9sBfZVXlevmh44+33YMooyqMA2uD0VgNYwbYcUQ+ib5
-         b8pDtktHF5X1cA0+tNLvaZYX+BQ9BXWMEKSeDnfi4QJcP25KT268zzJKZbdEghq5iyHU
-         DeWJq6C/3r0mvcng1RDQ89SDeWKwWBf1Grwy1HjHBNDO5sJQkQa3ra52JhsppXYxakl6
-         INtqi5uRshRYypa4mDGJiJn+hquwlApwcdUlMZGkIPfsc7exAV6ZBaqTIju9lsa7gpYg
-         sfU1ipLnT+V7w+CIkEsph29anmLODE41L/peqPLdaiACayZJ+WjnxP7WwhpfnzD1sA7e
-         6feQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=yw839dhwZFyMUYw9/2uCgotqVjToQsaaRUJoGdH3uqI=;
-        b=Y6maKzphOsfwCnY0VhsMdZoMSoL7BzXdhcLBhhR/nHhWLOYsawUc+dvQe01nJSFEK+
-         m++64QqnRZcAONxrDWo+WdzXaTmDGD5fcXWT97w14V9L4liShQITiDl2Jqber+fQzkDa
-         5Gh8LEXUHDIX60PfXyiLWkGZAJFe8Py1gC38ZMOhugaVbPoCID3cByWvY6AOZsPKZXqw
-         kAI8HnxoVliTuo7XbW5wsuFqsyoWnJphHSenlCN6wZFbIyoWYrUtzzgMaJHGWlMpGjLj
-         GOr4iBYN5g+qZhANmv/As+YAHfi6hbyZsjLngP0Wi7VDRSBXVabPsqbw5IfcpzplGZI2
-         Ky2Q==
-X-Gm-Message-State: APjAAAU0kEXuqd1Hn2cacwPnW0588H4Jfw2+CIoIYlzPMDgRrjbxFUFK
-        m1UBL54YrvfhxjFPPlpt7GE=
-X-Google-Smtp-Source: APXvYqx3cMKekN0vX9vF9CrfZalHeq5GLkfS5Ih3B8Xb/38S8N4wxPDL7MH/rviE1c6gHNqBjslKNw==
-X-Received: by 2002:a05:600c:218c:: with SMTP id e12mr28639401wme.30.1574686786883;
-        Mon, 25 Nov 2019 04:59:46 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id q5sm8254846wmc.27.2019.11.25.04.59.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 04:59:46 -0800 (PST)
-Date:   Mon, 25 Nov 2019 13:59:44 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Mel Gorman <mgorman@suse.de>, Ben Segall <bsegall@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: [GIT PULL] scheduler changes for v5.5
-Message-ID: <20191125125944.GA22218@gmail.com>
+        d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+        Message-Id:MIME-Version:Content-Transfer-Encoding; bh=UP7iGuZyWy
+        7rUnb0BqANyOczNI15OI3BvmT6wTeNlTs=; b=eXZ2QhdAr0Eyh94pU+Rqp9+x7t
+        2zeecmS/wKv+KbWTbb8a6UEeVVp4jNp9wE8FTl18CWzy8edd0vItJ3seI6IeoUhO
+        MN1Fklnl1NIFUTPZGekVfxgQsWOdRnLnpwos6+z8CecGCwKsKRRq+nbdQK+Thai5
+        hZCVHNE/da2va4hEI=
+Received: from localhost.localdomain (unknown [10.136.208.163])
+        by coremail-app1 (Coremail) with SMTP id RYCowACXebb6z9tdwLfmAQ--.36688S2;
+        Mon, 25 Nov 2019 20:58:37 +0800 (CST)
+From:   Yunhao Tian <18373444@buaa.edu.cn>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Yunhao Tian <18373444@buaa.edu.cn>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
+Date:   Mon, 25 Nov 2019 20:58:32 +0800
+Message-Id: <20191125125833.8023-1-18373444@buaa.edu.cn>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: RYCowACXebb6z9tdwLfmAQ--.36688S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrZr1xZFy7Ar4fKFWxWr43Awb_yoW8Jr47pF
+        W7J34FqF1rJ3Wagay3Ar1xCFy5ua4Y9FyUCrWUA3y5Zrn7JF1rt3Wjy34DAFykCrWfZr1Y
+        yrnrZry8CF4DZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+        IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2
+        z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2vYz4IE04k24V
+        AvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xf
+        McIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7
+        v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVCm
+        -wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26F1DJr1UJwCFx2IqxVCFs4IE7x
+        kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+        67AF67kF1VAFwI0_Jw0_GFylx4CE04Ijxs4lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67
+        AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IY
+        s7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+        4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRCg4fUUUUU
+X-CM-SenderInfo: yrytljauuuquxxddhvlgxou0/
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+The hws field of sun8i_v3s_hw_clks has only 74
+members. However, the number specified by CLK_NUMBER
+is 77 (= CLK_I2S0 + 1). This leads to runtime segmentation
+fault that is not always reproducible.
 
-Please pull the latest sched-core-for-linus git tree from:
+This patch fixes the problem by specifying correct clock number.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
+Signed-off-by: Yunhao Tian <18373444@buaa.edu.cn>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   # HEAD: de881a341c4143650fa50ce95cf450a5c94faa9f Merge branch 'sched/rt' into sched/core, to pick up commit
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index 5c779eec454b..0e36ca3bf3d5 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -618,7 +618,7 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+ 		[CLK_MBUS]		= &mbus_clk.common.hw,
+ 		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+ 	},
+-	.num	= CLK_NUMBER,
++	.num	= CLK_PLL_DDR1 + 1,
+ };
+ 
+ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+@@ -700,7 +700,7 @@ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+ 		[CLK_MBUS]		= &mbus_clk.common.hw,
+ 		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
+ 	},
+-	.num	= CLK_NUMBER,
++	.num	= CLK_I2S0 + 1,
+ };
+ 
+ static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
+-- 
+2.24.0
 
-The biggest changes in this cycle were:
-
- - Make kcpustat vtime aware (Frederic Weisbecker)
-
- - Rework the CFS load_balance() logic (Vincent Guittot)
-
- - Misc cleanups, smaller enhancements, fixes.
-
-The load-balancing rework is the most intrusive change: it replaces the 
-old heuristics that have become less meaningful after the introduction of 
-the PELT metrics, with a grounds-up load-balancing algorithm.
-
-As such it's not really an iterative series, but replaces the old 
-load-balancing logic with the new one. We hope there are no performance 
-regressions left - but statistically it's highly probable that there *is* 
-going to be some workload that is hurting from these chnages. If so then 
-we'd prefer to have a look at that workload and fix its scheduling, 
-instead of reverting the changes.
-
- Thanks,
-
-	Ingo
-
------------------->
-Frederic Weisbecker (22):
-      sched/cputime: Rename vtime_account_system() to vtime_account_kernel()
-      sched/cputime: Spare a seqcount lock/unlock cycle on context switch
-      sched/vtime: Record CPU under seqcount for kcpustat needs
-      sched/cputime: Add vtime idle task state
-      sched/cputime: Add vtime guest task state
-      context_tracking: Remove context_tracking_active()
-      context_tracking: Rename context_tracking_is_enabled() => context_tracking_enabled()
-      context_tracking: Rename context_tracking_is_cpu_enabled() to context_tracking_enabled_this_cpu()
-      context_tracking: Introduce context_tracking_enabled_cpu()
-      sched/vtime: Rename vtime_accounting_cpu_enabled() to vtime_accounting_enabled_this_cpu()
-      sched/vtime: Introduce vtime_accounting_enabled_cpu()
-      context_tracking: Check static key on context_tracking_enabled_*cpu()
-      sched/kcpustat: Introduce vtime-aware kcpustat accessor for CPUTIME_SYSTEM
-      procfs: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-      cpufreq: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-      leds: Use vtime aware kcpustat accessor to fetch CPUTIME_SYSTEM
-      sched/cputime: Support other fields on kcpustat_field()
-      sched/vtime: Bring up complete kcpustat accessor
-      procfs: Use all-in-one vtime aware kcpustat accessor
-      cpufreq: Use vtime aware kcpustat accessors for user time
-      leds: Use all-in-one vtime aware kcpustat accessor
-      rackmeter: Use vtime aware kcpustat accessor
-
-Patrick Bellasi (1):
-      sched/fair/util_est: Implement faster ramp-up EWMA on utilization increases
-
-Peter Zijlstra (6):
-      sched/fair: Better document newidle_balance()
-      sched/core: Make pick_next_task_idle() more consistent
-      sched/core: Optimize pick_next_task()
-      sched/core: Simplify sched_class::pick_next_task()
-      sched/fair: Use mul_u32_u32()
-      sched/core: Further clarify sched_class::set_next_task()
-
-Srivatsa S. Bhat (VMware) (1):
-      sched/Kconfig: Fix spelling mistake in user-visible help text
-
-Valentin Schneider (2):
-      sched/topology: Don't set SD_BALANCE_WAKE on cpuset domain relax
-      sched/uclamp: Fix overzealous type replacement
-
-Vincent Guittot (14):
-      sched/fair: Clean up asym packing
-      sched/fair: Rename sg_lb_stats::sum_nr_running to sum_h_nr_running
-      sched/fair: Remove meaningless imbalance calculation
-      sched/fair: Rework load_balance()
-      sched/fair: Use rq->nr_running when balancing load
-      sched/fair: Use load instead of runnable load in load_balance()
-      sched/fair: Spread out tasks evenly when not overloaded
-      sched/fair: Use utilization to select misfit task
-      sched/fair: Use load instead of runnable load in wakeup path
-      sched/fair: Optimize find_idlest_group()
-      sched/fair: Rework find_idlest_group()
-      sched/fair: Fix rework of find_idlest_group()
-      sched/fair: Add comments for group_type and balancing at SD_NUMA level
-      sched/cpufreq: Move the cfs_rq_util_change() call to cpufreq_update_util()
-
-
- arch/ia64/kernel/time.c                 |    4 +-
- arch/powerpc/kernel/time.c              |    6 +-
- arch/s390/kernel/vtime.c                |    4 +-
- arch/x86/entry/calling.h                |    2 +-
- drivers/cpufreq/cpufreq.c               |   17 +-
- drivers/cpufreq/cpufreq_governor.c      |    6 +-
- drivers/leds/trigger/ledtrig-activity.c |   14 +-
- drivers/macintosh/rack-meter.c          |    7 +-
- fs/proc/stat.c                          |   56 +-
- include/linux/context_tracking.h        |   30 +-
- include/linux/context_tracking_state.h  |   21 +-
- include/linux/kernel_stat.h             |   18 +
- include/linux/sched.h                   |    9 +-
- include/linux/tick.h                    |    2 +-
- include/linux/vtime.h                   |   59 +-
- kernel/Kconfig.preempt                  |    2 +-
- kernel/context_tracking.c               |    6 +-
- kernel/sched/core.c                     |   18 +-
- kernel/sched/cputime.c                  |  288 ++++++-
- kernel/sched/deadline.c                 |   12 +-
- kernel/sched/fair.c                     | 1437 +++++++++++++++++++------------
- kernel/sched/features.h                 |    1 +
- kernel/sched/idle.c                     |   10 +-
- kernel/sched/rt.c                       |   12 +-
- kernel/sched/sched.h                    |   25 +-
- kernel/sched/stop_task.c                |    9 +-
- kernel/sched/topology.c                 |    9 +-
- kernel/time/tick-sched.c                |    2 +-
- 28 files changed, 1331 insertions(+), 755 deletions(-)
