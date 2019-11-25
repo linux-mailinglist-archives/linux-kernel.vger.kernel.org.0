@@ -2,166 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A326108FE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:28:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF2B108FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbfKYO2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 09:28:13 -0500
-Received: from mail-eopbgr750080.outbound.protection.outlook.com ([40.107.75.80]:19077
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728016AbfKYO2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 09:28:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dnzM/zopAqpcHzejEnDSgHyyH+kvO9dgBAMf0P6JQ3u6lQeORmdm36eu4pFvCV35pgSNMaHhtknFFtkqQ7B+zIioq/e5uMZwj5cCaMX891I7BQehi5PyjeQUCi/1wzwnS5vPx6RxRaRbcvml/bzMjb3YUGvkUc+krd/rOgCgOtcD+M/xM+7wnw6spDGXv07P3MniQepi+4pw9wYEsemJVTZKQxjIAQI9RZsC3bzcgii/sNwUM1O92diOTVIt7/d2vIB/Jmr4fbCpssVNHMEfsdO00fjcnBgbepkzUhW7Wjl6LdU2VFNoer6oixVCImEAnBeV1FWzp3esNmWjx773Eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N/9fIBsdcQIb1DfTBD7Su2uYmYkjizqLQdD0liADHo8=;
- b=jQgbsTfM+92Fm81L89sZwU9mm5FUFhv4spl6XlxLXcnVJgfiYdNcUhwNiytJhm8oogG6wSRLzwVdL6n5spjEYDa/Co6bf1zstKTxkgrDZ1pjL8fAQEP3cjA4D1LqP88i+gXfPJRgXgIoSA50Xhzbp0Q7/tXAMqUuCKybiiOPrmjQxVZjFjEnGUUiP00nLJaJKXmSrqMcEiLHxVmdf/MiXCJuFo7rawf2gmku7tlb6cyjUZORslx9MwtzrpaS/+HqpIZmUjwgBcXWv61Vs5kQo9qiYPCxq+gx421MM36f7KR/ZB8yABiSzKyp+aV/RMUEX/CukIPgzhOrshEEHFIq2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1728116AbfKYOaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 09:30:12 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35462 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727666AbfKYOaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:30:11 -0500
+Received: by mail-lf1-f65.google.com with SMTP id r15so8260115lff.2;
+        Mon, 25 Nov 2019 06:30:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N/9fIBsdcQIb1DfTBD7Su2uYmYkjizqLQdD0liADHo8=;
- b=fpZe+7+PObgrfwBNpPmTyxKbpTSoOnHzdLPQygTDvglIiNi1/8IK72CaZzpqGAksVNPCoNkjpz11Mja5UQl6DCW9sxYaR27sTRn09eWCQQn/BI65qLdSug1WfV95KO0D7MYYh6oiTLFV1rXM70Sgsg2U+hGf09fPwuXruXXXEZw=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Harry.Wentland@amd.com; 
-Received: from CY4PR1201MB0230.namprd12.prod.outlook.com (10.172.79.7) by
- CY4PR1201MB0118.namprd12.prod.outlook.com (10.174.52.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.21; Mon, 25 Nov 2019 14:28:07 +0000
-Received: from CY4PR1201MB0230.namprd12.prod.outlook.com
- ([fe80::449d:52a8:2761:9195]) by CY4PR1201MB0230.namprd12.prod.outlook.com
- ([fe80::449d:52a8:2761:9195%5]) with mapi id 15.20.2474.023; Mon, 25 Nov 2019
- 14:28:07 +0000
-Subject: Re: [PATCH] drm/amd/display: Use NULL for pointer assignment in
- copy_stream_update_to_stream
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Nikola Cornij <nikola.cornij@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-References: <20191123193639.55297-1-natechancellor@gmail.com>
-From:   Harry Wentland <hwentlan@amd.com>
-Autocrypt: addr=hwentlan@amd.com; keydata=
- mQENBFhb4C8BCADhHHUNoBQ7K7LupCP0FsUb443Vuqq+dH0uo4A3lnPkMF6FJmGcJ9Sbx1C6
- cd4PbVAaTFZUEmjqfpm+wCRBe11eF55hW3GJ273wvfH69Q/zmAxwO8yk+i5ZWWl8Hns5h69K
- D9QURHLpXxrcwnfHFah0DwV23TrD1KGB7vowCZyJOw93U/GzAlXKESy0FM7ZOYIJH83X7qhh
- Q9KX94iTEYTeH86Wy8hwHtqM6ySviwEz0g+UegpG8ebbz0w3b5QmdKCAg+eZTmBekP5o77YE
- BKqR+Miiwo9+tzm2N5GiF9HDeI2pVe/egOLa5UcmsgdF4Y5FKoMnBbAHNaA6Fev8PHlNABEB
- AAG0J0hhcnJ5IFdlbnRsYW5kIDxoYXJyeS53ZW50bGFuZEBhbWQuY29tPokBNwQTAQgAIQUC
- WFvgLwIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRAtWBXJjBS24xUlCAC9MqAlIbZO
- /a37s41h+MQ+D20C6/hVErWO+RA06nA+jFDPUWrDJKYdn6EDQWdLY3ATeAq3X8GIeOTXGrPD
- b2OXD6kOViW/RNvlXdrIsnIDacdr39aoAlY1b+bhTzZVz4pto4l+K1PZb5jlMgTk/ks9HesL
- RfYVq5wOy3qIpocdjdlXnSUKn0WOkGBBd8Nv3o0OI18tiJ1S/QwLBBfZoVvfGinoB2p4j/wO
- kJxpi3F9TaOtLGcdrgfghg31Fb48DP+6kodZ4ircerp4hyAp0U2iKtsrQ/sVWR4mbe3eTfcn
- YjBxGd2JOVdNQZa2VTNf9GshIDMD8IIQK6jN0LfY8Py2uQENBFhb4C8BCAC/0KWY3pIbU2cy
- i7GMj3gqB6h0jGqRuMpMRoSNDoAUIuSh17w+bawuOF6XZPdK3D4lC9cOXMwP3aP9tTJOori2
- 8vMH8KW9jp9lAYnGWYhSqLdjzIACquMqi96EBtawJDct1e9pVgp+d4JXHlgIrl11ITJo8rCP
- dEqjro2bCBWxijsIncdCzMjf57+nR7u86SBtGSFcXKapS7YJeWcvM6MzFYgIkxHxxBDvBBvm
- U2/mAXiL72kwmlV1BNrabQxX2UnIb3xt3UovYJehrnDUMdYjxJgSPRBx27wQ/D05xAlhkmmL
- FJ01ZYc412CRCC6gjgFPfUi2y7YJTrQHS79WSyANABEBAAGJAR8EGAEIAAkFAlhb4C8CGwwA
- CgkQLVgVyYwUtuM72Qf+J6JOQ/27pWf5Ulde9GS0BigA1kV9CNfIq396TgvQzeyixHMvgPdq
- Z36x89zZi0otjMZv6ypIdEg5co1Bvz0wFaKbCiNbTjpnA1VAbQVLSFjCZLQiu0vc+BZ1yKDV
- T5ASJ97G4XvQNO+XXGY55MrmhoNqMaeIa/3Jas54fPVd5olcnUAyDty29/VWXNllUq38iBCX
- /0tTF7oav1lzPGfeW2c6B700FFZMTR4YBVSGE8jPIzu2Fj0E8EkDmsgS+nibqSvWXfo1v231
- 410h35CjbYDlYQO7Z1YD7asqbaOnF0As+rckyRMweQ9CxZn5+YBijtPJA3x5ldbCfQ9rWiTu XQ==
-Message-ID: <ec7313da-dcdd-8884-063f-bf0e8cc664dd@amd.com>
-Date:   Mon, 25 Nov 2019 09:28:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-In-Reply-To: <20191123193639.55297-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YTBPR01CA0028.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:14::41) To CY4PR1201MB0230.namprd12.prod.outlook.com
- (2603:10b6:910:1e::7)
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LKjdexg+LkffG26VUSsNwV+tvqoIqAg7PNu5vMgemIs=;
+        b=uZG2o2nYUojcIlyWe8PXU+6To4lKeOe9RblB9GWLBDHP0ROIwlChkyw0SKs6JtiR1f
+         MD2l3RucqTGhVbOhYG1uBeE6ZOOh5kvcDBIIW2cMvMhIgT707IS2IweaA8uIIlMxwob4
+         DAmhCFqI+PYiMm5hgaQ7NH9ImizHriobDG60zsBWOlJpMTIMpk23p6obVPnKF8D9Jd0w
+         Msd9NGRiv37kIRGnA1gDRLcvLDRdl8ucZ9K+rextcluWC7tAWJIYhcuQ2TuAL99qtP0E
+         /KglPy0CcvOGFbyFrFpEgQV034Asp79um1Jn3oKBEstlAvZsFeBNDmVdfz7fqdwJAI4u
+         0TmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LKjdexg+LkffG26VUSsNwV+tvqoIqAg7PNu5vMgemIs=;
+        b=RoS16EbS50y/ne2DmgxUQVEN0ydRLE8a6cXHUyxZkBYcloZjPLBAuukm4x5iPZPtce
+         d8J8Vi+QD63zRueElYp8h8R1VBBlxMnvBZx63awClZcb7rkm59s29C3Udg6vEyInlWgC
+         HZ6G8eSjxf/SvWaCBupu2R9L1l1OL1Hk5Mzjwr637NBQCCogs2XXFnqX0IDpI5KV+X9/
+         spCt1pvERl03jNp/CpZP7FAVcn8sY2VNbJrtlUQSC+9xhsFoer7GhCe/nKdejYqQGrRJ
+         BsvXn/A4dIgj0II0/i4OLcE6A2ByBaOir4f3f8odk/korGZUK/YvecnKzvVmLK979SDc
+         cLXg==
+X-Gm-Message-State: APjAAAWDIuOS2JHT/+lM/EUteBcFkU5iXTQ1nl3psDHo5Zfu3mn2tDCY
+        B12axCioLVDBu3duMqrm7WDOA4sKq44BokgP1TU=
+X-Google-Smtp-Source: APXvYqwNQ1gDP49zPYN8njc+j07Y/QD6fHpbzABV0vcBHhUVmveHtPabf233H4srJ1klzQkQ15yydwmm2QnzFdfBd1w=
+X-Received: by 2002:ac2:428d:: with SMTP id m13mr14985341lfh.64.1574692208081;
+ Mon, 25 Nov 2019 06:30:08 -0800 (PST)
 MIME-Version: 1.0
-X-Originating-IP: [165.204.55.251]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 434245ba-d9e0-4f36-6479-08d771b3b074
-X-MS-TrafficTypeDiagnostic: CY4PR1201MB0118:|CY4PR1201MB0118:
-X-MS-Exchange-PUrlCount: 1
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CY4PR1201MB0118BCF64B4EACBC96DCA2918C4A0@CY4PR1201MB0118.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-Forefront-PRVS: 0232B30BBC
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(396003)(346002)(366004)(199004)(189003)(54906003)(186003)(14454004)(966005)(5660300002)(2906002)(26005)(3846002)(6116002)(6246003)(14444005)(4001150100001)(31696002)(81166006)(81156014)(25786009)(8936002)(8676002)(4326008)(2486003)(76176011)(6486002)(229853002)(6306002)(6512007)(6436002)(50466002)(478600001)(45080400002)(52116002)(23676004)(66476007)(66556008)(6506007)(99286004)(66946007)(11346002)(47776003)(65806001)(65956001)(66066001)(386003)(53546011)(6636002)(230700001)(446003)(58126008)(2616005)(305945005)(316002)(110136005)(7736002)(36756003)(31686004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR1201MB0118;H:CY4PR1201MB0230.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qCnTFU5iV162tXqcgbiCw4TSxpZXhiR1U5Yz7V8nw+687gMol824bceGnIvGzjraNgWrphv/6TqA1NPXnwP59rSRtLdjyf+ZKkYFMGFOaBvjjvg1cl6lBNwBZ1Xfszh4iqgePHAlq5jvvAcUjXTkXkulH2iTdEQ2MzzEilpvoy95Yx83st1jq8f6PwGxRdf+54MX9KfCzxZGh19vTuIIoJ2FvHslKUlykcVL2yGQc3LRNJmorfz/CSscxEaSnTE6W15M2w1+xwTwjBUdfadVmDjEEnssT2xnyR/rI3KezytPETJdogEaZkrxWVdEeKHi0j6Us+iuBcboqRu+4bdnoPeF+yXrqfmv8DOclObU7xS6s9owrER/cvZYQchdIBLKnKZ2SZmZi3SipvkFGBe3DRCB3OQU+SvoQ4Uvvylqc1NSpVV4SUP2oEIQlasMjRg2T3kgJM5+/dbKw5wsO8zno1SSvbtbjJo6jMwj08HBYl8=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 434245ba-d9e0-4f36-6479-08d771b3b074
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2019 14:28:07.3935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9DVCLHNsHTkE0yVC6wS3Yxmqh2egWz0lCMotbreHlZfSxhD1Y38yqlXORjCTeX1nECdfYBkA5jAgG2vPKmWfGw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0118
+References: <1574604530-9024-1-git-send-email-akinobu.mita@gmail.com>
+ <1574604530-9024-2-git-send-email-akinobu.mita@gmail.com> <CAHp75VfGt59F5YbEjctvOm00g+Pws+1jYgVbNLnUE3kq3SZi-A@mail.gmail.com>
+In-Reply-To: <CAHp75VfGt59F5YbEjctvOm00g+Pws+1jYgVbNLnUE3kq3SZi-A@mail.gmail.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Mon, 25 Nov 2019 23:29:56 +0900
+Message-ID: <CAC5umyjzDODZf8ECWDmR6SAY-TNkdJ+a0GZRgOFcPCAMok2Ddg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] add header file for kelvin to/from Celsius conversion helpers
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        linux-hwmon@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sujith Thomas <sujith.thomas@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-23 2:36 p.m., Nathan Chancellor wrote:
-> Clang warns:
-> 
-> ../drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:1965:26: warning:
-> expression which evaluates to zero treated as a null pointer constant of
-> type 'struct dc_dsc_config *' [-Wnon-literal-null-conversion]
->                                 update->dsc_config = false;
->                                                      ^~~~~
-> ../drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:1971:25: warning:
-> expression which evaluates to zero treated as a null pointer constant of
-> type 'struct dc_dsc_config *' [-Wnon-literal-null-conversion]
->                         update->dsc_config = false;
->                                              ^~~~~
-> 2 warnings generated.
-> 
-> Fixes: f6fe4053b91f ("drm/amd/display: Use a temporary copy of the current state when updating DSC config")
-> Link: https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FClangBuiltLinux%2Flinux%2Fissues%2F777&amp;data=02%7C01%7Charry.wentland%40amd.com%7Ceb5e55813307456cf7d608d7704c79c4%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C1%7C637101346080296409&amp;sdata=6HK3wWYMoILbiBisjoHkFwopV%2BuJYUh8wCDhMSvRQQ8%3D&amp;reserved=0
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+2019=E5=B9=B411=E6=9C=8824=E6=97=A5(=E6=97=A5) 23:57 Andy Shevchenko <andy.=
+shevchenko@gmail.com>:
+>
+> On Sun, Nov 24, 2019 at 4:09 PM Akinobu Mita <akinobu.mita@gmail.com> wro=
+te:
+> >
+> > There are several helper macros to convert kelvin to/from Celsius in
+> > <linux/thermal.h> for thermal drivers.  These are useful for any other
+> > drivers or subsystems, but it's odd to include <linux/thermal.h> just f=
+or
+> > the helpers.
+> >
+> > This adds a new <linux/temperature.h> that provides the equivalent inli=
+ne
+> > functions for any drivers or subsystems.  It is intended to replace the
+> > helpers in <linux/thermal.h>.
+> >
+> > Cc: Sujith Thomas <sujith.thomas@intel.com>
+> > Cc: Darren Hart <dvhart@infradead.org>
+> > Cc: Andy Shevchenko <andy@infradead.org>
+> > Cc: Zhang Rui <rui.zhang@intel.com>
+> > Cc: Eduardo Valentin <edubezval@gmail.com>
+> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Cc: Amit Kucheria <amit.kucheria@verdurent.com>
+> > Cc: Jean Delvare <jdelvare@suse.com>
+> > Cc: Guenter Roeck <linux@roeck-us.net>
+> > Cc: Keith Busch <kbusch@kernel.org>
+> > Cc: Jens Axboe <axboe@fb.com>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Sagi Grimberg <sagi@grimberg.me>
+> > Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+> > ---
+> >  include/linux/temperature.h | 39 +++++++++++++++++++++++++++++++++++++=
+++
+>
+> >  include/linux/thermal.h     |  1 +
+>
+>
+> > --- a/include/linux/thermal.h
+> > +++ b/include/linux/thermal.h
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/idr.h>
+> >  #include <linux/device.h>
+> >  #include <linux/sysfs.h>
+> > +#include <linux/temperature.h>
+> >  #include <linux/workqueue.h>
+> >  #include <uapi/linux/thermal.h>
+>
+> I don't see any users of it. Why did you include?
 
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+The rest of this patch series starts using it.
 
-Harry
+I decided to include <linux/temperature.h> from <linux/thermal.h> because
+the existing <linux/thermal.h> provides the conversion helpers.
 
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-> index c7db4f4810c6..2645d20e8c4c 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-> @@ -1962,13 +1962,13 @@ static void copy_stream_update_to_stream(struct dc *dc,
->  			if (!dc->res_pool->funcs->validate_bandwidth(dc, dsc_validate_context, true)) {
->  				stream->timing.dsc_cfg = old_dsc_cfg;
->  				stream->timing.flags.DSC = old_dsc_enabled;
-> -				update->dsc_config = false;
-> +				update->dsc_config = NULL;
->  			}
->  
->  			dc_release_state(dsc_validate_context);
->  		} else {
->  			DC_ERROR("Failed to allocate new validate context for DSC change\n");
-> -			update->dsc_config = false;
-> +			update->dsc_config = NULL;
->  		}
->  	}
->  }
-> 
+However, not all of the thermal drivers require these conversion helpers,
+so we can change to include <linux/temperature.h> from each thermal driver
+instead of including it from <linux/thermal.h>.
+
+Which way do you prefer?
