@@ -2,63 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129E410902B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F79109033
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbfKYOjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 09:39:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728206AbfKYOjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 09:39:35 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63BA920679;
-        Mon, 25 Nov 2019 14:39:33 +0000 (UTC)
-Date:   Mon, 25 Nov 2019 09:39:32 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Kusanagi Kouichi <slash@ac.auone-net.jp>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] arm: exynos_config: Restore debugfs support
-Message-ID: <20191125093932.4a111dc8@gandalf.local.home>
-In-Reply-To: <7f6a5924-58f9-aafb-18c5-c749ad355a02@samsung.com>
-References: <CGME20191125125531eucas1p17f4044301903eeafe56865ed63738798@eucas1p1.samsung.com>
-        <20191125125515.30795-1-m.szyprowski@samsung.com>
-        <7f6a5924-58f9-aafb-18c5-c749ad355a02@samsung.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728240AbfKYOkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 09:40:06 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40348 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbfKYOkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:40:05 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q2so16173491ljg.7;
+        Mon, 25 Nov 2019 06:40:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/SvzLSQc9NaZmiRAfhKzbEgi5swALfQM0gwLxj/g1X4=;
+        b=BwfnTrBZIsf+YbKNO1Y09SKRcT/7JpfVe5u9XdIKMFF3vFkXXD09OebLH+/j2ARwh9
+         1UBsASBFYnpZ7Ar6c/L8nHzM0Xfqfs422qdX0ctAKCgI6tI/rKPsjOKVatdVdp8kqJP0
+         K3cRMjzd/SmBmsAq/X8a8B/4z7CUO2aS6k+gls6PZjaQOfdq4KqNXHSE3FkX38mEg01z
+         xprQHlhqwXFTWSyAKCm1HSJpb3EthA5hG11JB+PnE5YIRJvNkr163ZR++uBnx499Zz+X
+         lIMoKPo3k+/c+gF2+Elw+iJ7EBFbVxZkYH1Ca8nAVKdb35aAptffJ4OLimFdUFjeWn41
+         A8BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/SvzLSQc9NaZmiRAfhKzbEgi5swALfQM0gwLxj/g1X4=;
+        b=pIDmWiJrkdO3p/xLyAS7qYy/rZOWJCX/JiugpyqDUWZae+ZKXX/KRd5d3+OI4rMDpb
+         Y7FVM5zdU+KOeoLlfxzb78qhKag1BLx1bKnYhQIm8WExVNVXxwU2/JJO7zHtYsYG5agg
+         ca59TkT8ZKCWfj3t++rgygh13ohi2hMLyizEy4ucdpReZI/h61yox7byaaVRYGRLbEO/
+         JvTY9ddyiTXioHZFsPPgNa6zQsk74S9goEcD0n+53I35rZc5PPcAZXFBNqZVRGSvwTjY
+         gGNPyNd+FHRNbPNN3pPH6zXM8s7PPm7VhLC0XAE8qfDgicyDq2iKcFWSRf3hKC9iw+3Z
+         CKYA==
+X-Gm-Message-State: APjAAAXNJkAFk+PPG0zBV6cJDv4egSvgHYLQ0zkr3UxqekbBOUoIMyEt
+        zLB9+LEIourS40gxcdNnu1Uo5guscGjkMoNkyQ8=
+X-Google-Smtp-Source: APXvYqxnV6QXzPFLNYYbJkreFA5LHHLQRoa+mUvd3RVfemUmE7NzO9TeNGK9jW4ohjEjbkzC5MK9lxV+ELGJbAuF4NI=
+X-Received: by 2002:a2e:9842:: with SMTP id e2mr22522578ljj.93.1574692801789;
+ Mon, 25 Nov 2019 06:40:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1574604530-9024-1-git-send-email-akinobu.mita@gmail.com>
+ <1574604530-9024-9-git-send-email-akinobu.mita@gmail.com> <CAHp75Vc6e8xq==QGtEX0MGLoV8QCGQf+vP0x-SauNHyjveZrnQ@mail.gmail.com>
+In-Reply-To: <CAHp75Vc6e8xq==QGtEX0MGLoV8QCGQf+vP0x-SauNHyjveZrnQ@mail.gmail.com>
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+Date:   Mon, 25 Nov 2019 23:39:50 +0900
+Message-ID: <CAC5umyiMoByGhd6b2xWA4SLO1Lcn2+ag-yEgw6uirsCmj37mkQ@mail.gmail.com>
+Subject: Re: [PATCH 8/8] thermal: remove kelvin to/from Celsius conversion
+ helpers from <linux/thermal.h>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        linux-hwmon@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sujith Thomas <sujith.thomas@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Nov 2019 15:30:39 +0100
-Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
+2019=E5=B9=B411=E6=9C=8825=E6=97=A5(=E6=9C=88) 5:00 Andy Shevchenko <andy.s=
+hevchenko@gmail.com>:
+>
+> On Sun, Nov 24, 2019 at 4:09 PM Akinobu Mita <akinobu.mita@gmail.com> wro=
+te:
+> >
+> > This removes the kelvin to/from Celsius conversion helpers in
+> > <linux/thermal.h> which were switched to <linux/temperature.h> helpers.
+> >
+>
+> > DECI_KELVIN_TO_MILLICELSIUS_WITH_OFFSET() is only used by ACPI thermal
+> > zone driver and the usage is specific to the driver.  So this macro
+> > is moved to the ACPI thermal driver rather than generic header.
+>
+> I didn't get this point. If we split all helpers, let's do it for all,
+> and not spreading macro per driver.
 
-> It seems that commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
-> dependency") disabled DEBUG_FS also in some other ARM defconfigs.
-> 
-> For some of them it may be a correct change but a preferred way to
-> introduce such changes would be to:
-> 
-> - add explicit CONFIG_DEBUG_FS=y instances to all affected defconfigs
->   while removing DEBUG_FS selection from TRACING config item
-> 
-
-I strongly disagree. It was wrong to assume DEBUG_FS is attached to
-TRACING. If someone wanted DEBUG_FS in their def config, they should
-have added it specifically. The addition of DEBUG_FS to defconfigs no
-way belongs to the patch that removed DEBUG_FS from TRACING.
-
--- Steve
-
-
-> - let platform maintainers disable DEBUG_FS manually in corresponding
->   defconfigs later if desirable
-
+OK, I'll add deci_kelvin_to_millicelsius_with_offset() in the header.
+But the unit of 'offset' argument will be in millidegree instead of
+decidegree, because it's a bit more generic.
