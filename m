@@ -2,73 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FE3108A09
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 09:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A41681089FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 09:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfKYI2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 03:28:15 -0500
-Received: from mga09.intel.com ([134.134.136.24]:60077 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfKYI2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 03:28:15 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2019 00:28:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,241,1571727600"; 
-   d="scan'208";a="216880267"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Nov 2019 00:28:12 -0800
-Date:   Mon, 25 Nov 2019 16:08:39 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Will Deacon <will@kernel.org>
-Cc:     mdf@kernel.org, mark.rutland@arm.com, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        atull@kernel.org, gregkh@linuxfoundation.org
-Subject: Re: [PATCH v6 0/2] add performance reporting support to FPGA DFL
- drivers
-Message-ID: <20191125080839.GA6227@hao-dev>
-References: <1573622695-25607-1-git-send-email-hao.wu@intel.com>
- <20191125033412.GB890@hao-dev>
- <20191125080127.GC1809@willie-the-truck>
+        id S1726866AbfKYIWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 03:22:37 -0500
+Received: from emcscan.emc.com.tw ([192.72.220.5]:21048 "EHLO
+        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbfKYIWh (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 03:22:37 -0500
+X-Greylist: delayed 579 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 03:22:37 EST
+X-IronPort-AV: E=Sophos;i="5.56,253,1539619200"; 
+   d="scan'208";a="33019662"
+Received: from unknown (HELO webmail.emc.com.tw) ([192.168.10.1])
+  by emcscan.emc.com.tw with ESMTP; 25 Nov 2019 16:12:57 +0800
+Received: from 192.168.10.23
+        by webmail.emc.com.tw with MailAudit ESMTP Server V5.0(71510:0:AUTH_RELAY)
+        (envelope-from <dave.wang@emc.com.tw>); Mon, 25 Nov 2019 16:12:59 +0800 (CST)
+Received: from 192.168.33.57
+        by webmail.emc.com.tw with Mail2000 ESMTP Server V7.00(101174:1:AUTH_RELAY)
+        (envelope-from <dave.wang@emc.com.tw>); Mon, 25 Nov 2019 16:12:58 +0800 (CST)
+From:   "Dave.Wang" <dave.wang@emc.com.tw>
+To:     <Linux-kernel@vger.kernel.org>, <Linux-input@vger.kernel.org>,
+        <Dmitry.torokhov@gmail.com>
+Subject: [PATCH] Input: elan_i2c - Add more hardware ID for Lenovo laptop
+Date:   Mon, 25 Nov 2019 16:12:56 +0800
+Message-ID: <001e01d5a368$24946950$6dbd3bf0$@emc.com.tw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125080127.GC1809@willie-the-truck>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AdWjZOUZ82d17nMMTBCQUDb2k6LozQ==
+Content-Language: zh-tw
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMDYxMjlcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy02MWZiNGU3MS0wZjViLTExZWEtYWExNC04OGQ3ZjY1NjczMzBcYW1lLXRlc3RcNjFmYjRlNzItMGY1Yi0xMWVhLWFhMTQtODhkN2Y2NTY3MzMwYm9keS50eHQiIHN6PSI4NzIiIHQ9IjEzMjE5MTQzMTc1ODgwNDI1MiIgaD0idCs3Z0xaRVM5TklZMVlvYWlDNFpiNGJoaTNvPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 08:01:28AM +0000, Will Deacon wrote:
-> On Mon, Nov 25, 2019 at 11:34:12AM +0800, Wu Hao wrote:
-> > Hi Will and Mark,
-> > 
-> > Could you please help us on review this patchset? as this patchset mainly 
-> > introduced a new perf driver following the similar way as drivers/perf/*.
-> 
-> Why is it not under drivers/perf/, then?
+Add more hardware ID for Lenovo laptop.
 
-Hi Will
+Signed-off-by: Dave Wang <dave.wang@emc.com.tw>
+---
+ include/linux/input/elan-i2c-ids.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks for the quick response. This is one sub feature for DFL based FPGAs,
-and we plan to put this sub feature together with others, including related
-documentation. It only registers a standard perf pmu for its userspace
-interfaces.
+diff --git a/include/linux/input/elan-i2c-ids.h
+b/include/linux/input/elan-i2c-ids.h
+index 1ecb6b45812c..247e3f75bae7 100644
+--- a/include/linux/input/elan-i2c-ids.h
++++ b/include/linux/input/elan-i2c-ids.h
+@@ -67,8 +67,15 @@ static const struct acpi_device_id elan_acpi_id[] = {
+ 	{ "ELAN062B", 0 },
+ 	{ "ELAN062C", 0 },
+ 	{ "ELAN062D", 0 },
++	{ "ELAN062E", 0 },
++	{ "ELAN062F", 0 },
+ 	{ "ELAN0631", 0 },
+ 	{ "ELAN0632", 0 },
++	{ "ELAN0633", 0 },
++	{ "ELAN0634", 0 },
++	{ "ELAN0635", 0 },
++	{ "ELAN0636", 0 },
++	{ "ELAN0637", 0 },
+ 	{ "ELAN1000", 0 },
+ 	{ }
+ };
+-- 
+2.17.1
 
-> 
-> > This patchset has been submitted for a long time but didn't receive any
-> > comment after v4. we appreciate any review comments! thanks in advance. :)
-> 
-> Hmm, not sure I saw the previous versions. Guessing I wasn't on cc?
-
-We switched to perf API from v4, and started ccing you and Mark from v5. :)
-
-Thanks
-Hao
-
-> 
-> Will
