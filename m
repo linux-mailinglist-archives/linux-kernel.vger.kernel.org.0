@@ -2,68 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C6ED108D95
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCC5108D99
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfKYMLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 07:11:23 -0500
-Received: from sonic304-9.consmr.mail.bf2.yahoo.com ([74.6.128.32]:43062 "EHLO
-        sonic304-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727149AbfKYMLV (ORCPT
+        id S1727336AbfKYMLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 07:11:22 -0500
+Received: from a27-21.smtp-out.us-west-2.amazonses.com ([54.240.27.21]:52064
+        "EHLO a27-21.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725828AbfKYMLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Nov 2019 07:11:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1574683880; bh=LaXYIwKyp+iUHI4E5pVeKdh2/ANzSCc6varEg/7+mXI=; h=Date:From:Reply-To:Subject:From:Subject; b=X1BrUDCW+55srs+BdbaQ/n9v4/yano0zBw8sLLitcZM6aOgNLxjJXFuI2oLW6ymEt648uxUpeocy+yahL0/Tz2sdKYQ7mAgvgG0mYE+n0VDKIrQ44+21Zrl+FCR/uDFEwuyZBObrhRGNNXUw62gYxhhQDTMh/C04LSLSRPF3d/CNCEyp9hcbKmwlY9fzpWA9vYWOy7PW/pemsVSj0dToB14ZfK+VMk8O03r+amG23jv8DYGeZE4giI2wPOOKMxSnql/GG/IliF5VZ+tnx4gZqxh6PvP6yHaUc7GgaPfdWi/diGvf97W72dqA68PyajlHofaXqPN+2BS8dr6/5rvU9g==
-X-YMail-OSG: lAVLFrUVM1l9B9.JgrBcRohzORXcsBKVUriLbmX9fClhW4sxe9l9xcUdDkSruxh
- 9Bx8lgtggSPcMYVyJj_6rsaz1O1ArHjLq43gj7XpDQPqj.d9bZ4y6Axwn6trEEKr.3auEe62UBw4
- 4lymFkB7ZnMPWrv9yxgw9PpIx7Rt24aToxIvLQctxFQJBR8v1DILDD47Pi4uXxPoOTpGP8iCGh6.
- Ig3NyDF51NxosiXZ4GpkgnSpGLiDDb18Il5Cnv._cKGmS3Ca1equQs1Vug1PETxSPPr9pN4dR4Gy
- PW8cs4yxOFtoGKYnxm.1IZ_ZfTmis2BgfeEZbgaeElexbnoUcOEXhNkshCHMcQAJnhER.enkCDO_
- m4bDH1itNvgnBAXzfr.mt0KXrDXSAFSldjjxDmsrSwuObLDDvP916ul1Zn0mqq8CF9mLV_WnlZFl
- W95EMhWhG4I2YsTQoZX8rsMHriAHQebc5iEuqZ4R2W4Ccpq.yKOe6mfxbgww29ZOabbff.wP4pLP
- .826pHCG_6Hsrq0vOvqTUxydR6Y4fzZTETuYEkUr42CxBMl4evOQgrN7y77lT.5ZMO87cKgq.pjM
- 8SNuKXoAK2va0VieD.a8vcBM__zF7Dtnmn3sLlvbg66GsJJAGlorEj.xfU37.mxb8qfmRaYEiwte
- RFDpxaiZf5LMGWRh9Of3uieueA8sTTyp1ZrAD9CnzMezAmBUm7XKihz4EQ_G7P0haqKgveGoh9tW
- ecxVFLkaTbpr3_mhiUw1ilOYw7spsBFFrDRsVjzbiW3ZG77091gqed_MMOSU1Fnn1p0uLgzQcAq_
- H0_f12RDuE0C9wlBjzn88ps61oj07xj69FN8u_HS2zyL2jmBsiuW1BIqey8SANbjDXjPq_Lm50bl
- _7lI6ksRNpVxg3Xw0YMi7U7zfjAy1SzRa6BmSluozmPWbcxCjZ4BPyC3bVWRv2teXUaSPpJ.TIXC
- eenu.iinjd9u7xq2ziztkZOg.j4NekOVuerMr2mZ7bN63wSVRBvfP5hYtCHRbOQQQCRQlNZW7Pbc
- _rvBMCJgc5yZXV9inyze_e2Pzmi5eYufrpzlWseu4dmO5u6FBVV4lZkZwav_.w4BtI.skHzvNHya
- .OkaL.7KYG9tIIKPssL6tnFPwyHUrPsIr9VFdJWoMwy6f4l20tDNC4QER1IV1HYoybNinhr5MAt6
- eR.f7.02l8RKa1MMYYj6JVOimrsQ0OTYo2Wmd5O7nKv.ajUNUVhF1Nu3AiJ0QV2F_jILtpFnoXxe
- hxEaeKoYPsc2Mv7KmX40BK9G_vZMzbDW48rfAjH8mVffReZH7GXnb9Tz_lazc_GAzb4dgJbj9gGg
- xu4UAZT2n1DznahwgV3ErcmaxIP1PjQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Mon, 25 Nov 2019 12:11:20 +0000
-Date:   Mon, 25 Nov 2019 12:11:18 +0000 (UTC)
-From:   Hanley Bolly <hanlabolly22@gmail.com>
-Reply-To: hanlabolly@gmail.com
-Message-ID: <1144842412.3232276.1574683878606@mail.yahoo.com>
-Subject: Dear Friend,
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574683880;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date;
+        bh=dZsCIhysheSA6zhrVti9PRmRDfktYhj5NEIj4Sd9LIY=;
+        b=es9llh8fC7Y8D0ISBR7qEK0u7P4lfHdlaza4Z+EJdm9ZQHfh3IiXP4M/q7jqGIpR
+        qLc6H57ITuSe3+wuhs7dirjbLupnCSmtWXVMFP91Xvtr8kU2RUaBP3a2ST4p9E3P16l
+        F9qk0DHJ17mrKMskc+sV0lXB+a9sMm4K/ZUZLoYs=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574683880;
+        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:From:In-Reply-To:References:To:Cc:Message-Id:Date:Feedback-ID;
+        bh=dZsCIhysheSA6zhrVti9PRmRDfktYhj5NEIj4Sd9LIY=;
+        b=M1g5Sb/rA3VojiI75WPCHYvfDUrOsSn/WjFegV2bBqepgce+Mjf37+drstQhar/V
+        fGk9jOm9ZgPmhS1RfrKOKho/xoZa2YXThAk8hzd8U4TZb2h3L9lN4C4DRToxxIfg/mk
+        HqqW4mfpYuou8J0SEEb+0dAXfbrkesS+MODQFazM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1961C447B4
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Subject: Re: [PATCH v2] ath10k: Handle "invalid" BDFs for msm8998 devices
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191113154646.43048-1-jeffrey.l.hugo@gmail.com>
+References: <20191113154646.43048-1-jeffrey.l.hugo@gmail.com>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     davem@davemloft.net, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-ID: <0101016ea2792bf8-85cec4e9-f426-43ba-89a1-242f2308e25e-000000@us-west-2.amazonses.com>
+Date:   Mon, 25 Nov 2019 12:11:20 +0000
+X-SES-Outgoing: 2019.11.25-54.240.27.21
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
 
+> When the BDF download QMI message has the end field set to 1, it signals
+> the end of the transfer, and triggers the firmware to do a CRC check.  The
+> BDFs for msm8998 devices fail this check, yet the firmware is happy to
+> still use the BDF.  It appears that this error is not caught by the
+> downstream drive by concidence, therefore there are production devices
+> in the field where this issue needs to be handled otherwise we cannot
+> support wifi on them.  So, attempt to detect this scenario as best we can
+> and treat it as non-fatal.
+> 
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Dear Friend,
+Patch applied to ath-next branch of ath.git, thanks.
 
-I am Mr Hanley Bolly work with the department of Audit and accounting manager here in the Bank of Africa,There is this fund that was kept in my custody years ago and if any one provide the rightful information of this said fund that the bank has no option to transfer the fund to you as the beneficiary of this abandoned fund.
+319c2b71041f ath10k: Handle "invalid" BDFs for msm8998 devices
 
-I need your help applying for transfer (US$8.5M DOLLARS) to your bank account. I have every inquiry details to make the bank believed you and release the fund in within 8 banking working days with your full co-operation with me for success.
+-- 
+https://patchwork.kernel.org/patch/11242143/
 
-Please i need the following information from you so i can give you the full details.
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-1)Private telephone number...
-2)Age...
-3)Nationality...
-4)Occupation ...
-5)Full name ...
-
-Do reply me urgent with this email address below (hanlabolly@gmail.com) for quick respond.
-
-Thanks.
-Mr Hanley Bolly.
