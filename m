@@ -2,94 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8868310867E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 03:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D20108693
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 03:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfKYCVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 21:21:35 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36237 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfKYCVf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 21:21:35 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b19so6607348pfd.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2019 18:21:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=0Slbk7FHKESeFqcEuY8H04LKnF7/drC0hQa4BJ/FDvg=;
-        b=gH4v+ctBIPNMcQL86nKHecbkeJwpsrU/V3M2WbEfwawz+TRk/u6ND6wuIqXpt6t8t9
-         5a5Y8zWBllvB5EANzgYSeR2+KsJsQpZHsYDqW6ELNTnyBqgwqfYnJV81PgeJHndccNjb
-         igkz2bEdeFgZfOcnb6h1x+XIoXWn6FI84lA6bN1lHNmcLKElj1bRzDzmn2PTws27jfdL
-         BOiw0PZjJ/8lC5NygqkGOJUbJujon5jBOxkEwQiI166JObmhx3FlUyiMuhAgBVrF0BLl
-         WwsjasT/v0ktfcRkUltnpCnu/xXr4ShmWiNVv8KMI2qPFPar2t1eB/8WW9JAV8PxD6R1
-         QsFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=0Slbk7FHKESeFqcEuY8H04LKnF7/drC0hQa4BJ/FDvg=;
-        b=LQojJ898z9gZe1X0LOkg1pS/nDnU098JgVqxsbiaOEnDGCO1bNwKPHuolRoqDymR8M
-         ScPlSnkTP7GmHuIpryRoL9tD+qGyctihyOvRye6/bWRMCfT0yax6b5+4rik7MJJ2WMCL
-         g89MIsGfINSwAQvHU0yi1Z1mYpk2okRsSQIa+pX+Z9A3Zg9H0y+pTemZFTzrQLK30vdL
-         K7jPxFNz7S7Cbnqrr+O7qu1Oxj8j/6SgERgOgKujXYkJtC8yvjatWJ6m9IfTpDtTsT4I
-         W/6mVUy7RNrUnp9nfM7z6fnMpS85cG88gPx5XtHsQ5I0fDZk7mnwWL6D1SjBdf0agBp6
-         CcQQ==
-X-Gm-Message-State: APjAAAXW9z/E7RQV2YoQqjw+zkGcpvrm1osSv+P9JNfQkeqIir4/7nJD
-        Y3TGWDSHDARFxuX6/jes0gnKHg==
-X-Google-Smtp-Source: APXvYqy2NXWAYVFU4lF8cJY4DfT9esmtA2nl94dpzBrdQ+ER0JKUb0rxNsKuqL7Yn5+iqaTu/PgtcQ==
-X-Received: by 2002:a63:6705:: with SMTP id b5mr30162797pgc.23.1574648494395;
-        Sun, 24 Nov 2019 18:21:34 -0800 (PST)
-Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id x2sm5822449pgc.67.2019.11.24.18.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2019 18:21:34 -0800 (PST)
-Date:   Sun, 24 Nov 2019 18:21:28 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3] net: macb: add missed tasklet_kill
-Message-ID: <20191124182113.481f984b@cakuba.netronome.com>
-In-Reply-To: <20191123141918.16239-1-hslester96@gmail.com>
-References: <20191123141918.16239-1-hslester96@gmail.com>
-Organization: Netronome Systems, Ltd.
+        id S1727050AbfKYCsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 21:48:11 -0500
+Received: from mga17.intel.com ([192.55.52.151]:34958 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726895AbfKYCsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Nov 2019 21:48:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2019 18:48:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,240,1571727600"; 
+   d="scan'208";a="205972989"
+Received: from hu.sh.intel.com ([10.239.158.51])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Nov 2019 18:48:08 -0800
+From:   "Chen, Hu" <hu1.chen@intel.com>
+Cc:     avagin@openvz.org, hu1.chen@intel.com, lkp@intel.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] proc: align mnt_id in /proc/pid/fdinfo and /proc/pid/mountinfo
+Date:   Mon, 25 Nov 2019 10:26:37 +0800
+Message-Id: <20191125022641.4169-1-hu1.chen@intel.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <201911221116.HjFCwKbG%lkp@intel.com>
+References: <201911221116.HjFCwKbG%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 23 Nov 2019 22:19:18 +0800, Chuhong Yuan wrote:
-> This driver forgets to kill tasklet in remove.
-> Add the call to fix it.
-> 
-> Fixes: 032dc41ba6e2 ("net: macb: Handle HRESP error")
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+For Android application process, we found that the mnt_id read from
+/proc/pid/fdinfo doesn't exist in /proc/pid/mountinfo. Thus CRIU fails
+to dump such process and it complains
 
-I think this leaves a race condition, as far as I can tell
-tasklet_kill() just kills the currently scheduled tasklet,
-but doesn't prevent it from being scheduled again. If the 
-interrupt fires just after the tasklet_kill() call the tasklet
-will be scheduled back in. I think you'd need to mask the interrupt 
-(through the IDR register?) or just put the tasklet_kill() call after
-unregister_netdev(), because AFAICT closing the netdev disables all
-irqs.
+"(00.019206) Error (criu/files-reg.c:1299): Can't lookup mount=42 for
+fd=-3 path=/data/dalvik-cache/x86_64/system@framework@boot.art"
 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 1e1b774e1953..2ec416098fa3 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -4383,6 +4383,7 @@ static int macb_remove(struct platform_device *pdev)
->  
->  	if (dev) {
->  		bp = netdev_priv(dev);
-> +		tasklet_kill(&bp->hresp_err_tasklet);
->  		if (dev->phydev)
->  			phy_disconnect(dev->phydev);
->  		mdiobus_unregister(bp->mii_bus);
+This is due to how Android application is launched. In Android, there is
+a special process called Zygote which handles the forking of each new
+application process:
+0. Zygote opens and maps some files, for example
+   "/data/dalvik-cache/x86_64/system@framework@boot.art" in its current
+   mount namespace, say "old mnt ns".
+1. Zygote waits for the request to fork a new application.
+2. Zygote gets a request, it forks and run the new process in a new
+   mount namespace, say "new mnt ns".
+
+The file opened in step 0 ties to the mount point in "old mnt ns". The
+mnt_id of that mount is listed in /proc/pid/fdinfo. However,
+/proc/pid/mountinfo points to current ns, i.e., "new mnt ns".
+
+Althgouh this issue is exposed in Android, we believe it's generic.
+Prcoess may open files and enter new mnt ns.
+
+To address it, this patch searches the mirror mount in current ns with
+MAJOR and MINOR and shows the mirror's mnt_id.
+
+v2: fix warning reported by lkp
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chen, Hu <hu1.chen@intel.com>
+---
+ fs/mount.h     |  2 ++
+ fs/namespace.c | 30 ++++++++++++++++++++++++++++++
+ fs/proc/fd.c   | 12 ++++++++++--
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+
+diff --git a/fs/mount.h b/fs/mount.h
+index 711a4093e475..6bbfc2b3b8ba 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -153,3 +153,5 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
+ {
+ 	return ns->seq == 0;
+ }
++
++extern struct mount *lookup_mirror_mnt(const struct mount *mnt);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 2adfe7b166a3..131b36517472 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -683,6 +683,36 @@ bool __is_local_mountpoint(struct dentry *dentry)
+ 	return is_covered;
+ }
+ 
++/*
++ * lookup_mirror_mnt - Return @mnt's mirror mount in the current/local mount
++ * namespace. If mirror isn't found, just return NULL.
++ */
++struct mount *lookup_mirror_mnt(const struct mount *mnt)
++{
++	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
++	struct mount *mnt_local;
++	bool is_matched = false;
++
++	/* mnt belongs to current namesapce */
++	if (mnt->mnt_ns == ns)
++		return (struct mount *) mnt;
++
++	down_read(&namespace_sem);
++	list_for_each_entry(mnt_local, &ns->list, mnt_list) {
++		struct super_block *sb = mnt->mnt.mnt_sb;
++		struct super_block *sb_local = mnt_local->mnt.mnt_sb;
++
++		if (MAJOR(sb->s_dev) == MAJOR(sb_local->s_dev) &&
++		    MINOR(sb->s_dev) == MINOR(sb_local->s_dev)) {
++			is_matched = true;
++			break;
++		}
++	}
++	up_read(&namespace_sem);
++
++	return is_matched ? mnt_local : NULL;
++}
++
+ static struct mountpoint *lookup_mountpoint(struct dentry *dentry)
+ {
+ 	struct hlist_head *chain = mp_hash(dentry);
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a13212d..cbf2571b0620 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -23,6 +23,7 @@ static int seq_show(struct seq_file *m, void *v)
+ 	int f_flags = 0, ret = -ENOENT;
+ 	struct file *file = NULL;
+ 	struct task_struct *task;
++	struct mount *mount = NULL;
+ 
+ 	task = get_proc_task(m->private);
+ 	if (!task)
+@@ -53,9 +54,16 @@ static int seq_show(struct seq_file *m, void *v)
+ 	if (ret)
+ 		return ret;
+ 
++	/* After unshare -m, real_mount(file->f_path.mnt) is not meaningful in
++	 * current mount namesapce. We want to know the mnt_id in current mount
++	 * namespace
++	 */
++	mount = lookup_mirror_mnt(real_mount(file->f_path.mnt));
++	if (!mount)
++		mount = real_mount(file->f_path.mnt);
++
+ 	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
+-		   (long long)file->f_pos, f_flags,
+-		   real_mount(file->f_path.mnt)->mnt_id);
++		   (long long)file->f_pos, f_flags, mount->mnt_id);
+ 
+ 	show_fd_locks(m, file, files);
+ 	if (seq_has_overflowed(m))
+-- 
+2.22.0
 
