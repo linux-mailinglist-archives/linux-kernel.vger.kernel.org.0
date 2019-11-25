@@ -2,99 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E120108FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67DB2108FE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 15:26:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbfKYOZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 09:25:38 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42212 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbfKYOZi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 09:25:38 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y19so11158530lfl.9
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 06:25:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lk8SRgnsKjAXBRx1hwjdc4Ni4aIadkTu9BDcS7y9BzI=;
-        b=zchG2SUm1v9d74lK7/a2Ov/76astU1osx0T1E+xZK0+7tbypt2wEIrGbCIGTV3fYLl
-         Qrr/vm3uT1sQaljCinz5Mgcpia9mxh+xjWu1/o1DaUbLJPz2lsjywcvEzeV9OOcHFFXw
-         wwb43RuNNbilDJHZe1txdK+kp9I789BbjlWlIoc5O2kjNcXsCNmVIEjI2pTkl2Zgr16S
-         9wFS6rTOIN4Gq8aNErHoCVr8SiXT5GzeZqhbdGAx4PJBZVRLKf4k0ueXsbhHHwtAvpJW
-         iSEd9iur/qi7eAw07BQkKObFUYbW5j3hSr4gmF2pWAMnAGDNw/8lUlzSCrMNKGQUFBUX
-         +teQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lk8SRgnsKjAXBRx1hwjdc4Ni4aIadkTu9BDcS7y9BzI=;
-        b=YVjS/O6iyiwe7I/JK2RDkAa4y0dP0EK1cTOP5YEsVfgNsqmgTP/VCFjc+/8BMSnXqu
-         GyzjwRiwX8XWqUWG2gEF871ukUS00rOBdWK1+XvRIyv99+ay94pP0SCpS7jj3HV3e5HH
-         oe7xAQLDQUyhfAJPKa51ZRvf8PWq7XGhtamhwRc93rTtnVm8BVAZMvnM8bWDW81TooEY
-         HqLR/zfCa1A4R0nlvh3IjAl+0CwEaNb0qA0JnCGkHl/rSPVQgDhx7V7SJnPtA5bl8f90
-         EIs8niZcgUUc3o0b7UJoIyoR8J371YQUHrmafaMVlPAGw1ZSmqMKujUPTnU3rxzC3u5T
-         iXsA==
-X-Gm-Message-State: APjAAAVcFzdsHxkQk5shEfpZgtlE3ALpVnUs8D4BrIo3bIJvVNb0I0It
-        Oes+dnqdX2MLWrZGTBsev032xZli81QklQ==
-X-Google-Smtp-Source: APXvYqyE+jBtA6fW2pog7AMXr9bL2gLyOpR90A0sgyb4hzg762aBGAjB5B+6dLqfNRt+VohCnld2CQ==
-X-Received: by 2002:a19:751a:: with SMTP id y26mr21685422lfe.78.1574691935705;
-        Mon, 25 Nov 2019 06:25:35 -0800 (PST)
-Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
-        by smtp.gmail.com with ESMTPSA id 15sm4016640ljq.62.2019.11.25.06.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 06:25:35 -0800 (PST)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        bjorn.andersson@linaro.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 5/5] arm64: defconfig: Enable HFPLL
-Date:   Mon, 25 Nov 2019 15:25:10 +0100
-Message-Id: <20191125142511.681149-6-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191125142511.681149-1-niklas.cassel@linaro.org>
-References: <20191125142511.681149-1-niklas.cassel@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728110AbfKYO00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 09:26:26 -0500
+Received: from gate.crashing.org ([63.228.1.57]:57482 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728016AbfKYO00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:26:26 -0500
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id xAPEPvGa014695;
+        Mon, 25 Nov 2019 08:25:57 -0600
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id xAPEPuZS014692;
+        Mon, 25 Nov 2019 08:25:56 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Mon, 25 Nov 2019 08:25:56 -0600
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 2/2] powerpc/irq: inline call_do_irq() and call_do_softirq()
+Message-ID: <20191125142556.GU9491@gate.crashing.org>
+References: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr> <5ca6639b7c1c21ee4b4138b7cfb31d6245c4195c.1570684298.git.christophe.leroy@c-s.fr> <877e3tbvsa.fsf@mpe.ellerman.id.au> <20191121101552.GR16031@gate.crashing.org> <87y2w49rgo.fsf@mpe.ellerman.id.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y2w49rgo.fsf@mpe.ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+On Mon, Nov 25, 2019 at 09:32:23PM +1100, Michael Ellerman wrote:
+> Segher Boessenkool <segher@kernel.crashing.org> writes:
+> >> > +static inline void call_do_irq(struct pt_regs *regs, void *sp)
+> >> > +{
+> >> > +	register unsigned long r3 asm("r3") = (unsigned long)regs;
+> >> > +
+> >> > +	/* Temporarily switch r1 to sp, call __do_irq() then restore r1 */
+> >> > +	asm volatile(
+> >> > +		"	"PPC_STLU"	1, %2(%1);\n"
+> >> > +		"	mr		1, %1;\n"
+> >> > +		"	bl		%3;\n"
+> >> > +		"	"PPC_LL"	1, 0(1);\n" :
+> >> > +		"+r"(r3) :
+> >> > +		"b"(sp), "i"(THREAD_SIZE - STACK_FRAME_OVERHEAD), "i"(__do_irq) :
+> >> > +		"lr", "xer", "ctr", "memory", "cr0", "cr1", "cr5", "cr6", "cr7",
+> >> > +		"r0", "r2", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12");
+> >> > +}
+> >> 
+> >> If we add a nop after the bl, so the linker could insert a TOC restore,
+> >> then I don't think there's any circumstance under which we expect this
+> >> to actually clobber r2, is there?
+> >
+> > That is mostly correct.
+> 
+> That's the standard I aspire to :P
+> 
+> > If call_do_irq was a no-inline function, there would not be problems.
+> >
+> > What TOC does __do_irq require in r2 on entry, and what will be there
+> > when it returns?
+> 
+> The kernel TOC, and also the kernel TOC, unless something's gone wrong
+> or I'm missing something.
 
-The high frequency pll is required on compatible Qualcomm SoCs to
-support the CPU frequency scaling feature.
+If that is the case, we can just do the bl, no nop at all?  And that works
+for all of our ABIs.
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-Changes since v1:
--None
+If we can be certain that we have the kernel TOC in r2 on entry to
+call_do_irq, that is!  (Or it establishes it itself).
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7fa92defb964..e76b42b25dd6 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -727,6 +727,7 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_QCS_GCC_404=y
- CONFIG_SDM_GCC_845=y
- CONFIG_SM_GCC_8150=y
-+CONFIG_QCOM_HFPLL=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_ARM_MHU=y
--- 
-2.23.0
-
+Segher
