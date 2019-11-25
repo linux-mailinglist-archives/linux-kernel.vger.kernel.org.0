@@ -2,97 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFBDF108B12
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 10:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A007C108B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 10:42:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfKYJlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 04:41:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbfKYJlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 04:41:19 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75E61207FD;
-        Mon, 25 Nov 2019 09:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574674878;
-        bh=+Y6FIMc4+xqo5D5vbmeoa59aQM+tiG4yrw3isimy21M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RdZ/Ar69kyQ4p7MLxhA2LWC/rkl+WJhM0vwykksYnDs8Mf+E1RCYSNzCma8THvDOF
-         LWrRk4mMf07uylhXs1X60LCbztuv8Qzq9B7rei6FCUQEtD8qauGpuU4gXlUiNKPs78
-         gL28Gwxp4rxEgUuDXS1LwRzkc5EkMRIuNPV2yAXI=
-Date:   Mon, 25 Nov 2019 10:41:16 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.4 000/159] 4.4.203-stable review
-Message-ID: <20191125094116.GA2340170@kroah.com>
-References: <20191122100704.194776704@linuxfoundation.org>
- <f0f505ae-5113-1abd-d4f7-0c3535c83de4@nvidia.com>
- <20191122133931.GA2033651@kroah.com>
- <20191122134131.GA2050590@kroah.com>
- <20191122134627.GB2050590@kroah.com>
- <9f976044-2dbc-6c19-11e7-210cd7ab35ea@nvidia.com>
- <a5d68f07-5f9a-2809-404d-bcd8ca593d70@roeck-us.net>
- <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
+        id S1727382AbfKYJl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 04:41:57 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45884 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbfKYJl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 04:41:57 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAP9fo0H047014;
+        Mon, 25 Nov 2019 03:41:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1574674910;
+        bh=BHjdmBMXCMcSGb88sm3bp+JyzgDIOeOSY4gWD4Khgwg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YR/avMkwc/DqOMGkO+XmNiAFMOwoyWsQ1tVsmD1KqwYFAzncs20ndywNuM+A3rVPE
+         u3Kzc/ZrcIXTMfhYVOqGpJRVwYRrCzg52MGOiaIKNWlUS31MiCsJh86Eg2PaC83QlC
+         28CW8ao2jSCFt0cUcItHqxE7eS5Sb8Cw4d/irp/w=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAP9foS7059430;
+        Mon, 25 Nov 2019 03:41:50 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 25
+ Nov 2019 03:41:49 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 25 Nov 2019 03:41:49 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAP9fl96024639;
+        Mon, 25 Nov 2019 03:41:48 -0600
+Subject: Re: [PATCH v2] dmaengine: ti: edma: add missed operations
+To:     Chuhong Yuan <hslester96@gmail.com>
+CC:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191124052855.6472-1-hslester96@gmail.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <e4b05132-df91-f53d-158c-793fdfd56f25@ti.com>
+Date:   Mon, 25 Nov 2019 11:41:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20191124052855.6472-1-hslester96@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7edc9531-347e-9ac7-2583-5efb49acffdb@nvidia.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 24, 2019 at 08:31:46PM +0000, Jon Hunter wrote:
+
+
+On 24/11/2019 7.28, Chuhong Yuan wrote:
+> The driver forgets to call pm_runtime_disable and pm_runtime_put_sync in
+> probe failure and remove.
+> Add the calls and modify probe failure handling to fix it.
 > 
-> On 23/11/2019 15:46, Guenter Roeck wrote:
-> > On 11/22/19 6:48 AM, Jon Hunter wrote:
-> > 
-> > [ ... ]
-> > 
-> >> Error: arch/arm/boot/dts/omap5-board-common.dtsi:636.1-6 Label or path
-> >> dwc3 not found
-> >> FATAL ERROR: Syntax error parsing input tree
-> >> scripts/Makefile.lib:293: recipe for target
-> >> 'arch/arm/boot/dts/omap5-igep0050.dtb' failed
-> >> make[1]: *** [arch/arm/boot/dts/omap5-igep0050.dtb] Error 1
-> >> arch/arm/Makefile:338: recipe for target 'dtbs' failed
-> >> make: *** [dtbs] Error 2
-> >>
-> >>
-> >> This is caused by the following commit ...
-> >>
-> >> commit d0abc07b3d752cbe2a8d315f662c53c772caed0f
-> >> Author: H. Nikolaus Schaller <hns@goldelico.com>
-> >> Date:   Fri Sep 28 17:54:00 2018 +0200
-> >>
-> >>      ARM: dts: omap5: enable OTG role for DWC3 controller
-> >>
-> > 
-> > On top of the breakage caused by this patch, I would also argue
-> > that it is not a bug fix and should not have been included
-> > in the first place.
-> > 
-> > The dwc3 label was added with commit 4c387984618fe ("ARM: dts: omap5:
-> > Add l4 interconnect hierarchy and ti-sysc data"). Given the size of
-> > that patch, I highly doubt that a backport to 4.4 would work.
+> To simplify the fix, the patch adjusts the calling order and merges checks
+> for devm_kcalloc.
+> 
+> Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+> Changes in v2:
+>   - Add the missed pm_runtime_put_sync.
+>   - Simplify the patch.
+>   - Rebase to dma-next.
 
-Good catch, I have now dropped both of these patches and pushed out a
--rc3
+Thank you,
 
-> FYI ... I am still seeing a build failure because of this with -rc2 ...
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Can you see if -rc3 is also giving you problems?
+> 
+>  drivers/dma/ti/edma.c | 37 ++++++++++++++++++++-----------------
+>  1 file changed, 20 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+> index 756a3c951dc7..0628ee4bf1b4 100644
+> --- a/drivers/dma/ti/edma.c
+> +++ b/drivers/dma/ti/edma.c
+> @@ -2289,13 +2289,6 @@ static int edma_probe(struct platform_device *pdev)
+>  	if (!info)
+>  		return -ENODEV;
+>  
+> -	pm_runtime_enable(dev);
+> -	ret = pm_runtime_get_sync(dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "pm_runtime_get_sync() failed\n");
+> -		return ret;
+> -	}
+> -
+>  	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+>  	if (ret)
+>  		return ret;
+> @@ -2326,27 +2319,31 @@ static int edma_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, ecc);
+>  
+> +	pm_runtime_enable(dev);
+> +	ret = pm_runtime_get_sync(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm_runtime_get_sync() failed\n");
+> +		pm_runtime_disable(dev);
+> +		return ret;
+> +	}
+> +
+>  	/* Get eDMA3 configuration from IP */
+>  	ret = edma_setup_from_hw(dev, info, ecc);
+>  	if (ret)
+> -		return ret;
+> +		goto err_disable_pm;
+>  
+>  	/* Allocate memory based on the information we got from the IP */
+>  	ecc->slave_chans = devm_kcalloc(dev, ecc->num_channels,
+>  					sizeof(*ecc->slave_chans), GFP_KERNEL);
+> -	if (!ecc->slave_chans)
+> -		return -ENOMEM;
+>  
+>  	ecc->slot_inuse = devm_kcalloc(dev, BITS_TO_LONGS(ecc->num_slots),
+>  				       sizeof(unsigned long), GFP_KERNEL);
+> -	if (!ecc->slot_inuse)
+> -		return -ENOMEM;
+>  
+>  	ecc->channels_mask = devm_kcalloc(dev,
+>  					   BITS_TO_LONGS(ecc->num_channels),
+>  					   sizeof(unsigned long), GFP_KERNEL);
+> -	if (!ecc->channels_mask)
+> -		return -ENOMEM;
+> +	if (!ecc->slave_chans || !ecc->slot_inuse || !ecc->channels_mask)
+> +		goto err_disable_pm;
+>  
+>  	/* Mark all channels available initially */
+>  	bitmap_fill(ecc->channels_mask, ecc->num_channels);
+> @@ -2388,7 +2385,7 @@ static int edma_probe(struct platform_device *pdev)
+>  				       ecc);
+>  		if (ret) {
+>  			dev_err(dev, "CCINT (%d) failed --> %d\n", irq, ret);
+> -			return ret;
+> +			goto err_disable_pm;
+>  		}
+>  		ecc->ccint = irq;
+>  	}
+> @@ -2404,7 +2401,7 @@ static int edma_probe(struct platform_device *pdev)
+>  				       ecc);
+>  		if (ret) {
+>  			dev_err(dev, "CCERRINT (%d) failed --> %d\n", irq, ret);
+> -			return ret;
+> +			goto err_disable_pm;
+>  		}
+>  		ecc->ccerrint = irq;
+>  	}
+> @@ -2412,7 +2409,8 @@ static int edma_probe(struct platform_device *pdev)
+>  	ecc->dummy_slot = edma_alloc_slot(ecc, EDMA_SLOT_ANY);
+>  	if (ecc->dummy_slot < 0) {
+>  		dev_err(dev, "Can't allocate PaRAM dummy slot\n");
+> -		return ecc->dummy_slot;
+> +		ret = ecc->dummy_slot;
+> +		goto err_disable_pm;
+>  	}
+>  
+>  	queue_priority_mapping = info->queue_priority_mapping;
+> @@ -2512,6 +2510,9 @@ static int edma_probe(struct platform_device *pdev)
+>  
+>  err_reg1:
+>  	edma_free_slot(ecc, ecc->dummy_slot);
+> +err_disable_pm:
+> +	pm_runtime_put_sync(dev);
+> +	pm_runtime_disable(dev);
+>  	return ret;
+>  }
+>  
+> @@ -2542,6 +2543,8 @@ static int edma_remove(struct platform_device *pdev)
+>  	if (ecc->dma_memcpy)
+>  		dma_async_device_unregister(ecc->dma_memcpy);
+>  	edma_free_slot(ecc, ecc->dummy_slot);
+> +	pm_runtime_put_sync(dev);
+> +	pm_runtime_disable(dev);
+>  
+>  	return 0;
+>  }
+> 
 
-thanks,
+- PÃ©ter
 
-greg k-h
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
