@@ -2,133 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 764971085CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 01:07:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D15E51085AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 01:02:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbfKYAG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 24 Nov 2019 19:06:57 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:21725 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbfKYAGi (ORCPT
+        id S1727085AbfKYAC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 24 Nov 2019 19:02:56 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:58723 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726803AbfKYACz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Nov 2019 19:06:38 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191125000636epoutp043ab77e31b0b86983ac4c5ee8f80e8763~aPxj1Ptzc1290812908epoutp04H
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 00:06:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191125000636epoutp043ab77e31b0b86983ac4c5ee8f80e8763~aPxj1Ptzc1290812908epoutp04H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574640396;
-        bh=cebDS4wJnJkhFo4uYCXo0DH3otueb9YFlYeYEY3vVQE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HTVHdummgQG0/n3k3L2dPWNFe98aWXy2+s+DqFw5wi07Sc+XWIxTQlaFi5QX/XQsy
-         Q6Ifw/JAP4ISeGKVfsUrA41iNRJ7RIQmYNfUCmUhmjeDF7wXjdqxDOoiP1gOMrGJN4
-         xvIxT2DSueu8HJT4aEg4TfWU2p5dIEtJhO+9C61U=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191125000635epcas1p14215333a8f23834ce76efe627abe66e6~aPxjSbKl30808008080epcas1p1D;
-        Mon, 25 Nov 2019 00:06:35 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47LnQ30FHCzMqYkp; Mon, 25 Nov
-        2019 00:06:35 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7A.32.48019.A0B1BDD5; Mon, 25 Nov 2019 09:06:34 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191125000634epcas1p2e99dba9fd777b57618bb57bf9fa44c53~aPxigVeVc0156901569epcas1p2V;
-        Mon, 25 Nov 2019 00:06:34 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191125000634epsmtrp1ffee81abec10a18ab5d57d4fad84a828~aPxifnbjA2803828038epsmtrp1Z;
-        Mon, 25 Nov 2019 00:06:34 +0000 (GMT)
-X-AuditID: b6c32a38-6b4789c00001bb93-b4-5ddb1b0a0ddf
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.11.06569.A0B1BDD5; Mon, 25 Nov 2019 09:06:34 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191125000634epsmtip24113a61532f652adfd671405686cf1b4~aPxiWbuyf2000720007epsmtip2a;
-        Mon, 25 Nov 2019 00:06:34 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        linkinjeon@gmail.com, Markus.Elfring@web.de,
-        sj1557.seo@samsung.com, dwagner@suse.de, nborisov@suse.com,
-        Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v5 13/13] MAINTAINERS: add exfat filesystem
-Date:   Sun, 24 Nov 2019 19:03:26 -0500
-Message-Id: <20191125000326.24561-14-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191125000326.24561-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zk7O5stPqbWh0LZgaCM6U5z81Suooscyh9Cf8IQPc3DJu3G
-        zhQrKqlYsmLaXbxkFF3U0pXD1BRDK60o0Mp7BUVaJnY30dC2nUX9e77nfZ73eXm/l8RUXiKG
-        zLW5eKeNs1CEAm/sXJmgVsQOZ2quvE1hOt+dkjFHLtcTTHXtAwnT/2oIY1rbHuHM85YKgpkv
-        G5My0+cPMfMTR3HGP3dfyvR+/oJvjGCby17J2PbKGzL27mAhwXr9NYCt97/E2YYn+9nvt5ew
-        HXcmCHZ4tBFPl2dYUsw8l8M743ib0Z6TazMZqO07sjZn6fQaWk2vYZKpOBtn5Q3UlrR0dWqu
-        JTAsFZfPWfICVDonCFTi+hSnPc/Fx5ntgstA8Y4ci4PWOBIEzirk2UwJRrt1La3RrNYFlNkW
-        8+GrsxLHlLTAfbUbFIJCqQfISQSTkG9gRBbEKtgEUM0jygMUAfwNoKr7Xbj4mAKooqRG8tfR
-        fPZZuNAG0BWfVyLaA5axMykeQJIEXIV++6ODdBTcgBrK74X0GOwHaHSoNBQdCdeh0rmfeBDj
-        cDkq9nhDWAkNyH3qFhDDlqJa3z0siOUBvvtxIxZshGA/gcaOf5KJoi1osm42bIhE413+MB+D
-        Pha7ZcGBENyPvrZjIl0E0IdfBhFr0WC9TxqUYHAlqm9JFOllqHm2MtQRgwvR5M8TUrGLEhW5
-        VaJkOfL2doZXEos8x76EQ1l0rvo6Ia6nBCDPp1asBCwp+5dwEYAasIh3CFYTL9COpP//6zYI
-        3WI80wRan6V1AEgCaoHSd3MoUyXl8oW91g6ASIyKUqY+HchUKXO4vft4pz3LmWfhhQ6gCyzy
-        JBYTbbQHLtvmyqJ1q7VaLZOkT9brtNRiJTndk6mCJs7F7+F5B+/865OQ8phCoJ6d1E/0dxU9
-        fvi6+HkT3IRP6UeijUMwdtePp+NrXiiqPBGSeVOsIhLsLJ+Z+d6bbPqWrKYLdl+WjpxueX+t
-        Dm41VLVP9KW70+Q7dfwwvq02e9pw5JK37MWBgZd0n7JnxYV90Lgq8c1c0UF9j7fuZOn04vMz
-        lmrzZHeq/etwBoULZo6Ox5wC9weyTKQHoQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsWy7bCSvC6X9O1Yg32tWhaHH09it2hevJ7N
-        YuXqo0wW1+/eYrbYs/cki8XlXXPYLP7Pes5q8WN6vcX/Ny0sFlv+HWG1uPT+A4sDt8fOWXfZ
-        PfbPXcPusftmA5tH35ZVjB7rt1xl8dh8utrj8yY5j0Pb37B53H62jSWAM4rLJiU1J7MstUjf
-        LoEro2nZb6aCb6wVbctOMDYwNrB2MXJySAiYSOyceo6li5GLQ0hgN6PEruftUAlpiWMnzjB3
-        MXIA2cIShw8XQ9R8YJTYcH4rK0icTUBb4s8WUZByEQFHid5dh8HmMAs8ZpQ4cf4JI0hCWMBa
-        Ysa/rywgNouAqkR/Vx+YzStgK9E2aSMjxC55idUbDjCD2JxA8ROntoHZQgI2Eu2HjrJNYORb
-        wMiwilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOIC1tHYwnjgRf4hRgINRiYeXY8Ot
-        WCHWxLLiytxDjBIczEoivG5nb8QK8aYkVlalFuXHF5XmpBYfYpTmYFES55XPPxYpJJCeWJKa
-        nZpakFoEk2Xi4JRqYJzeXOAur3c1Ic1MYqcS73OJyy9rv2uVGe5gTWas+qR3MXtNuondztlv
-        Yz7c7GWbdFV68s0o40u7a6fV77Av7q7MYje617rjqcmuIuWpSX8uWbf6BXO3cSiu7re/cm36
-        dGEWrcI9Dq8bf8Tf6D3P/Mxjxpxd+890a23aLf16jqZPtxJrncDONCWW4oxEQy3mouJEAFue
-        kZJcAgAA
-X-CMS-MailID: 20191125000634epcas1p2e99dba9fd777b57618bb57bf9fa44c53
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191125000634epcas1p2e99dba9fd777b57618bb57bf9fa44c53
-References: <20191125000326.24561-1-namjae.jeon@samsung.com>
-        <CGME20191125000634epcas1p2e99dba9fd777b57618bb57bf9fa44c53@epcas1p2.samsung.com>
+        Sun, 24 Nov 2019 19:02:55 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7CFB15C3D;
+        Sun, 24 Nov 2019 19:02:54 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Sun, 24 Nov 2019 19:02:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to
+        :subject:content-type; s=fm1; bh=yAnKxPZbRoo2OEW2NIbW2/4bJIIdzho
+        1/YK4gE1VRSI=; b=CpsQQPIhPJ/jYdZjfnThBWlUg781MVJEU4QU+iJ6hrboGoH
+        BQsmQIfd8fPnBwmdp36oTQWfl4ne2rOqyYGXRZaxw6DBTW+RxHrpQ4TeqnR7Da04
+        lYHKG8nETc29H3Sqbg2tcjWiKXGA6jDKGSEXWYjV+YmwxjXox7FMo0d0K8XFy6/c
+        +Tfot/aRG3tRp6M+luzjlzvTyxDTNot77hdK0Idw1dT5yHkLatejQxgeFx44waTX
+        2KD2uGu1bpHNyt/0F/BproROs/moImh4jCuyJkC6s2ZqHa+N9VA54Hlv1bOQNcBv
+        k5Qzt2H9cRVrCdapq4hTAWkyFOzpjhGSJZXmcpg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=yAnKxP
+        ZbRoo2OEW2NIbW2/4bJIIdzho1/YK4gE1VRSI=; b=LGOno1P+W3b/rePYylNzoK
+        bBxLTrKmyFUTwlm86ughlr1HMuV62A2DQuSVMLFgLMY2SYdzXBepH/jbrB6d+azZ
+        9/F7fBp1ZzRQ9uIt1FYUViwoSYRy2ZSsckdengfnTNJWOIDwqesJGXjRgZIRqioU
+        +jhN5tHyiFhurj2b2HhHQOiUrR1TNF6Uf3CVXadfrDsMSzz2lVSnA2W/rWiipQmh
+        LyLJPjIu9e3sdGFJuMZjIvkJMQnZHooYsJmvt6pG2gCRGZNzi62iD+08Q2m6YOSd
+        I/N8c4nSwHGDeJFvbVPeWNJ0/O2nbW+5mM0uWiHys3Alxv8yMyVV0hSlrWVsiEVw
+        ==
+X-ME-Sender: <xms:LRrbXWUvwxkLfpXcaYQh4THV3cG8v3qN88Yz_EoLsJIK87BcFDVPOg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudehledgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:LRrbXRRKtLxr4ZWaqqIOYvR1Day3I9pQjOgnBMXSL21zCHwcghRwOA>
+    <xmx:LRrbXdtkdba12QZVYsGYAO-y3uHHrs5UV3A-z1MfsQoQd34ej5nMRA>
+    <xmx:LRrbXaMaSzHburtqGZ2qO0hvR3WyKvrgLNBX-y1tssUWxrmtQ9mJIg>
+    <xmx:LhrbXaxeNjVY1OcNxmMWetzIFofI1MOqPtBc_xvODKv-MQJ2oZGIUA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 59B21E00A3; Sun, 24 Nov 2019 19:02:53 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-578-g826f590-fmstable-20191119v1
+Mime-Version: 1.0
+Message-Id: <ef65b741-baec-484d-a5f4-984452e9d4e5@www.fastmail.com>
+In-Reply-To: <20191031014040.12898-1-rentao.bupt@gmail.com>
+References: <20191031014040.12898-1-rentao.bupt@gmail.com>
+Date:   Mon, 25 Nov 2019 10:34:22 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Tao Ren" <rentao.bupt@gmail.com>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Paul Burton" <paulburton@kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
+        "Mike Rapoport" <rppt@linux.ibm.com>,
+        "Doug Anderson" <armlinux@m.disordat.com>,
+        "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
+        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
+        "Joel Stanley" <joel@jms.id.au>, arm@kernel.org, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        "Tao Ren" <taoren@fb.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v2]_ARM:_ASPEED:_update_default_ARCH=5FNR=5FGPIO_fo?=
+ =?UTF-8?Q?r_ARCH=5FASPEED?=
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself and Sungjong Seo as exfat maintainer.
 
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d61ef301811..41a69751840c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6215,6 +6215,13 @@ F:	include/trace/events/mdio.h
- F:	include/uapi/linux/mdio.h
- F:	include/uapi/linux/mii.h
- 
-+EXFAT FILE SYSTEM
-+M:	Namjae Jeon <namjae.jeon@samsung.com>
-+M:	Sungjong Seo <sj1557.seo@samsung.com>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	fs/exfat/
-+
- EXFAT FILE SYSTEM
- M:	Valdis Kletnieks <valdis.kletnieks@vt.edu>
- L:	linux-fsdevel@vger.kernel.org
--- 
-2.17.1
+On Thu, 31 Oct 2019, at 12:10, rentao.bupt@gmail.com wrote:
+> From: Tao Ren <rentao.bupt@gmail.com>
+> 
+> Increase the max number of GPIOs from default 512 to 1024 for ASPEED
+> platforms, because Facebook Yamp (AST2500) BMC platform has total 594
+> GPIO pins (232 provided by ASPEED SoC, and 362 by I/O Expanders).
+> 
+> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Hopefully userspace is not making assumptions about sysfs gpiochip numbers.
+
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
