@@ -2,106 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 820EF108D92
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C6ED108D95
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2019 13:11:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfKYMLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 07:11:12 -0500
-Received: from a27-185.smtp-out.us-west-2.amazonses.com ([54.240.27.185]:55104
-        "EHLO a27-185.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725828AbfKYMLM (ORCPT
+        id S1727369AbfKYMLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 07:11:23 -0500
+Received: from sonic304-9.consmr.mail.bf2.yahoo.com ([74.6.128.32]:43062 "EHLO
+        sonic304-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727149AbfKYMLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 07:11:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574683870;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type;
-        bh=WA8L41etKerEMPhjYhfgg3Lt6XxJcn9BfYkWy5icFe8=;
-        b=mLjUl6GxoW/wRN3ZqrC367pGr9y4jV9HigYWQU2sW625FJKw1J04bx38dNjo6q6N
-        BtbL/k4zi3ig+003k7BwJKgWDqiMRrxyxNvFV+XVK8hl8ITF0TEwQYMfhJJagtcXl2T
-        58NcuxSYtw5o/f1iXPlFSHtpJFPPrJvYqx+f98jA=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574683870;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:MIME-Version:Content-Type:Feedback-ID;
-        bh=WA8L41etKerEMPhjYhfgg3Lt6XxJcn9BfYkWy5icFe8=;
-        b=EElOjMlBWBaXPq9Do5BLtt7WQftCI8aw9rjLMpDv/SQIOf/9CVqKPTH6jCUBhrfe
-        cn6O+afjP7F597M4F3a5amFKnlhOYvq5JMhe06b232uhb3e40Q0N26+Q1ZR6/5yGy0X
-        sYEX2/JekMlolXHqhhN9ACz0zk2GSZmYR4/uA/Qw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0ECF5C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Alexander Lobakin <alobakin@dlink.ru>,
-        Edward Cree <ecree@solarflare.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        David Miller <davem@davemloft.net>, jiri@mellanox.com,
-        edumazet@google.com, idosch@mellanox.com, petrm@mellanox.com,
-        sd@queasysnail.net, f.fainelli@gmail.com,
-        jaswinder.singh@linaro.org, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, emmanuel.grumbach@intel.com,
-        luciano.coelho@intel.com, linuxwifi@intel.com,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL in napi_gro_receive()
-References: <20191014080033.12407-1-alobakin@dlink.ru>
-        <20191015.181649.949805234862708186.davem@davemloft.net>
-        <7e68da00d7c129a8ce290229743beb3d@dlink.ru>
-        <PSXP216MB04388962C411CD0B17A86F47804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-        <c762f5eee08a8f2d0d6cb927d7fa3848@dlink.ru>
-        <746f768684f266e5a5db1faf8314cd77@dlink.ru>
-        <PSXP216MB0438267E8191486435445DA6804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
-        <cc08834c-ccb3-263a-2967-f72a9d72535a@solarflare.com>
-        <3147bff57d58fce651fe2d3ca53983be@dlink.ru>
-        <414288fcac2ba4fcee48a63bdbf28f7b9a5037c6.camel@sipsolutions.net>
-        <b4b92c4d066007d9cb77e1645e667715c17834fb.camel@redhat.com>
-Date:   Mon, 25 Nov 2019 12:11:10 +0000
-In-Reply-To: <b4b92c4d066007d9cb77e1645e667715c17834fb.camel@redhat.com>
-        (Paolo Abeni's message of "Mon, 25 Nov 2019 12:42:44 +0100")
-Message-ID: <0101016ea2790643-5f91d22f-e322-497e-8c58-34f5942bd2af-000000@us-west-2.amazonses.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 25 Nov 2019 07:11:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1574683880; bh=LaXYIwKyp+iUHI4E5pVeKdh2/ANzSCc6varEg/7+mXI=; h=Date:From:Reply-To:Subject:From:Subject; b=X1BrUDCW+55srs+BdbaQ/n9v4/yano0zBw8sLLitcZM6aOgNLxjJXFuI2oLW6ymEt648uxUpeocy+yahL0/Tz2sdKYQ7mAgvgG0mYE+n0VDKIrQ44+21Zrl+FCR/uDFEwuyZBObrhRGNNXUw62gYxhhQDTMh/C04LSLSRPF3d/CNCEyp9hcbKmwlY9fzpWA9vYWOy7PW/pemsVSj0dToB14ZfK+VMk8O03r+amG23jv8DYGeZE4giI2wPOOKMxSnql/GG/IliF5VZ+tnx4gZqxh6PvP6yHaUc7GgaPfdWi/diGvf97W72dqA68PyajlHofaXqPN+2BS8dr6/5rvU9g==
+X-YMail-OSG: lAVLFrUVM1l9B9.JgrBcRohzORXcsBKVUriLbmX9fClhW4sxe9l9xcUdDkSruxh
+ 9Bx8lgtggSPcMYVyJj_6rsaz1O1ArHjLq43gj7XpDQPqj.d9bZ4y6Axwn6trEEKr.3auEe62UBw4
+ 4lymFkB7ZnMPWrv9yxgw9PpIx7Rt24aToxIvLQctxFQJBR8v1DILDD47Pi4uXxPoOTpGP8iCGh6.
+ Ig3NyDF51NxosiXZ4GpkgnSpGLiDDb18Il5Cnv._cKGmS3Ca1equQs1Vug1PETxSPPr9pN4dR4Gy
+ PW8cs4yxOFtoGKYnxm.1IZ_ZfTmis2BgfeEZbgaeElexbnoUcOEXhNkshCHMcQAJnhER.enkCDO_
+ m4bDH1itNvgnBAXzfr.mt0KXrDXSAFSldjjxDmsrSwuObLDDvP916ul1Zn0mqq8CF9mLV_WnlZFl
+ W95EMhWhG4I2YsTQoZX8rsMHriAHQebc5iEuqZ4R2W4Ccpq.yKOe6mfxbgww29ZOabbff.wP4pLP
+ .826pHCG_6Hsrq0vOvqTUxydR6Y4fzZTETuYEkUr42CxBMl4evOQgrN7y77lT.5ZMO87cKgq.pjM
+ 8SNuKXoAK2va0VieD.a8vcBM__zF7Dtnmn3sLlvbg66GsJJAGlorEj.xfU37.mxb8qfmRaYEiwte
+ RFDpxaiZf5LMGWRh9Of3uieueA8sTTyp1ZrAD9CnzMezAmBUm7XKihz4EQ_G7P0haqKgveGoh9tW
+ ecxVFLkaTbpr3_mhiUw1ilOYw7spsBFFrDRsVjzbiW3ZG77091gqed_MMOSU1Fnn1p0uLgzQcAq_
+ H0_f12RDuE0C9wlBjzn88ps61oj07xj69FN8u_HS2zyL2jmBsiuW1BIqey8SANbjDXjPq_Lm50bl
+ _7lI6ksRNpVxg3Xw0YMi7U7zfjAy1SzRa6BmSluozmPWbcxCjZ4BPyC3bVWRv2teXUaSPpJ.TIXC
+ eenu.iinjd9u7xq2ziztkZOg.j4NekOVuerMr2mZ7bN63wSVRBvfP5hYtCHRbOQQQCRQlNZW7Pbc
+ _rvBMCJgc5yZXV9inyze_e2Pzmi5eYufrpzlWseu4dmO5u6FBVV4lZkZwav_.w4BtI.skHzvNHya
+ .OkaL.7KYG9tIIKPssL6tnFPwyHUrPsIr9VFdJWoMwy6f4l20tDNC4QER1IV1HYoybNinhr5MAt6
+ eR.f7.02l8RKa1MMYYj6JVOimrsQ0OTYo2Wmd5O7nKv.ajUNUVhF1Nu3AiJ0QV2F_jILtpFnoXxe
+ hxEaeKoYPsc2Mv7KmX40BK9G_vZMzbDW48rfAjH8mVffReZH7GXnb9Tz_lazc_GAzb4dgJbj9gGg
+ xu4UAZT2n1DznahwgV3ErcmaxIP1PjQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Mon, 25 Nov 2019 12:11:20 +0000
+Date:   Mon, 25 Nov 2019 12:11:18 +0000 (UTC)
+From:   Hanley Bolly <hanlabolly22@gmail.com>
+Reply-To: hanlabolly@gmail.com
+Message-ID: <1144842412.3232276.1574683878606@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: text/plain
-X-SES-Outgoing: 2019.11.25-54.240.27.185
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Abeni <pabeni@redhat.com> writes:
 
-> On Mon, 2019-11-25 at 12:05 +0100, Johannes Berg wrote:
->> On Mon, 2019-11-25 at 13:58 +0300, Alexander Lobakin wrote:
->>
->> > Agree. I mean, we _can_ handle this particular problem from networking
->> > core side, but from my point of view only rethinking driver's logic is
->> > the correct way to solve this and other issues that may potentionally
->> > appear in future.
->> 
->> Do tell what you think it should be doing :)
->> 
->> One additional wrinkle is that we have firmware notifications, command
->> completions and actual RX interleaved, so I think we do want to have
->> interrupts for the notifications and command completions?
->
-> I think it would be nice moving the iwlwifi driver to full/plain NAPI
-> mode. The interrupt handler could keep processing extra work as it does
-> now and queue real pkts on some internal queue, and than schedule the
-> relevant napi, which in turn could process such queue in the napi poll
-> method. Likely I missed tons of details and/or oversimplified it...
 
-Sorry for hijacking the thread, but I have a patch pending for ath10k
-(another wireless driver) which adds NAPI support to SDIO devices:
+Dear Friend,
 
-https://patchwork.kernel.org/patch/11188393/
+I am Mr Hanley Bolly work with the department of Audit and accounting manager here in the Bank of Africa,There is this fund that was kept in my custody years ago and if any one provide the rightful information of this said fund that the bank has no option to transfer the fund to you as the beneficiary of this abandoned fund.
 
-I think it does just what you suggested, but I'm no NAPI expert and
-would appreciate if someone more knowledgeable could take a look :)
+I need your help applying for transfer (US$8.5M DOLLARS) to your bank account. I have every inquiry details to make the bank believed you and release the fund in within 8 banking working days with your full co-operation with me for success.
 
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Please i need the following information from you so i can give you the full details.
+
+1)Private telephone number...
+2)Age...
+3)Nationality...
+4)Occupation ...
+5)Full name ...
+
+Do reply me urgent with this email address below (hanlabolly@gmail.com) for quick respond.
+
+Thanks.
+Mr Hanley Bolly.
