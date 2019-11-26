@@ -2,84 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A5B7109BF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:10:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB307109BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:09:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfKZKKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 05:10:09 -0500
-Received: from 8bytes.org ([81.169.241.247]:52882 "EHLO theia.8bytes.org"
+        id S1728002AbfKZKJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 05:09:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727837AbfKZKKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 05:10:08 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 72D5B3A4; Tue, 26 Nov 2019 11:10:06 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <jroedel@suse.de>, stable@vger.kernel.org
-Subject: [PATCH -tip] x86/mm/32: Sync only to LDT_BASE_ADDR in vmalloc_sync_all()
-Date:   Tue, 26 Nov 2019 11:09:42 +0100
-Message-Id: <20191126100942.13059-1-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727959AbfKZKJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 05:09:52 -0500
+Received: from localhost (unknown [84.241.194.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B17422089D;
+        Tue, 26 Nov 2019 10:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574762991;
+        bh=W8z6/CvP89Pad21EqU9fSyCJstx4Pa0nSnFzYyzFJ/A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tHQX1/KJxc1aHFQUhFjWoMTDjvGa/2EEkdZ7jgfwJeYOrdNNA4VquithjBM+YN+0V
+         xHodewXPd2hT6rkc/2jVWlilTC8NBw3XvLaksbMdEUFE0vbSN1Cv6CgKKdU5rjQTiK
+         y2fOTscxAWzspJfrsuqCJApvtFHjFeO7pbg7/F18=
+Date:   Tue, 26 Nov 2019 11:09:48 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     KVM list <kvm@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Peter Feiner <pfeiner@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: "statsfs" API design
+Message-ID: <20191126100948.GB1416107@kroah.com>
+References: <5d6cdcb1-d8ad-7ae6-7351-3544e2fa366d@redhat.com>
+ <20191109154952.GA1365674@kroah.com>
+ <cb52053e-eac0-cbb9-1633-646c7f71b8b3@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb52053e-eac0-cbb9-1633-646c7f71b8b3@redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Sun, Nov 10, 2019 at 02:04:58PM +0100, Paolo Bonzini wrote:
+> On 09/11/19 16:49, Greg Kroah-Hartman wrote:
+> > On Wed, Nov 06, 2019 at 04:56:25PM +0100, Paolo Bonzini wrote:
+> >> Hi all,
+> >>
+> >> statsfs is a proposal for a new Linux kernel synthetic filesystem, to be
+> >> mounted in /sys/kernel/stats, which exposes subsystem-level statistics
+> >> in sysfs.  Reading need not be particularly lightweight, but writing
+> >> must be fast.  Therefore, statistics are gathered at a fine-grain level
+> >> in order to avoid locking or atomic operations, and then aggregated by
+> >> statsfs until the desired granularity.
+> > 
+> > Wait, reading a statistic from userspace can be slow, but writing to it
+> > from userspace has to be fast?  Or do you mean the speed is all for
+> > reading/writing the value within the kernel?
+> 
+> Reading/writing from the kernel.  Reads from a userspace are a superset
+> of reading from the kernel, writes from userspace are irrelevant.
+> 
+> [...]
+> 
+> >> As you can see, values are basically integers stored somewhere in a
+> >> struct.   The statsfs_value struct also includes information on which
+> >> operations (for example sum, min, max, average, count nonzero) it makes
+> >> sense to expose when the values are aggregated.
+> > 
+> > What can userspace do with that info?
+> 
+> The basic usage is logging.  A turbostat-like tool that is able to use
+> both debugfs and tracepoints is already in tools/kvm/kvm_stat.
+> 
+> > I have some old notes somewhere about what people really want when it
+> > comes to a good "statistics" datatype, that I was thinking of building
+> > off of, but that seems independant of what you are doing here, right?
+> > This is just exporting existing values to userspace in a semi-sane way?
+> 
+> For KVM yes.  But while I'm at it, I'd like the subsystem to be useful
+> for others so if you can dig out those notes I can integrate that.
+> 
+> > Anyway, I like the idea, but what about how this is exposed to
+> > userspace?  The criticism of sysfs for statistics is that it is too slow
+> > to open/read/close lots of files and tough to get "at this moment in
+> > time these are all the different values" snapshots easily.  How will
+> > this be addressed here?
+> 
+> Individual files in sysfs *should* be the first format to export
+> statsfs, since quick scripts are an important usecase.  However, another
+> advantage of having a higher-level API is that other ways to access the
+> stats can be added transparently.
+> 
+> The main requirement for that is self-descriptiveness, blindly passing
+> structs to userspace is certainly the worst format of all.  But I don't
+> like the idea of JSON or anything ASCII; that adds overhead to both
+> production and parsing, for no particular reason.   Tracepoints already
+> do something like that to export arguments, so perhaps there is room to
+> reuse code or at least some ideas.  It could be binary sysfs files
+> (again like tracing) or netlink, I haven't thought about it at all.
 
-When vmalloc_sync_all() iterates over the address space until
-FIX_ADDR_TOP it will sync the whole kernel address space starting from
-VMALLOC_START.
+So I think there are two different things here:
+	- a simple data structure for in-kernel users of statistics
+	- a way to export statistics to userspace
 
-This is not a problem when the kernel address range is identical in
-all page-tables, but this is no longer the case when PTI is enabled on
-x86-32. In that case the per-process LDT is mapped in the kernel
-address range and vmalloc_sync_all() clears the LDT mapping for all
-processes.
+Now if they both can be solved with the same "solution", wonderful!  But
+don't think that you have to do both of these at the same time.
 
-To make LDT working again vmalloc_sync_all() must only iterate over
-the volatile parts of the kernel address range that are identical
-between all processes. This includes the VMALLOC and the PKMAP areas
-on x86-32.
+Which one are you trying to solve here, I can't figure it out.  Is it
+the second one?
 
-The order of the ranges in the address space is:
+thanks,
 
-	VMALLOC -> PKMAP -> LDT -> CPU_ENTRY_AREA -> FIX_ADDR
-
-So the right check in vmalloc_sync_all() is "address < LDT_BASE_ADDR"
-to make sure the VMALLOC and PKMAP areas are synchronized and the LDT
-mapping is not falsely overwritten. the CPU_ENTRY_AREA and
-the FIXMAP area are no longer synced as well, but these
-ranges are synchronized on page-table creation time and do
-not change during runtime.
-
-This change fixes the ldt_gdt selftest in my setup.
-
-Fixes: 7757d607c6b3 ("x86/pti: AllowCONFIG_PAGE_TABLE_ISOLATION for x86_32")
-Cc: stable@vger.kernel.org
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 9ceacd1156db..144329c44436 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -197,7 +197,7 @@ void vmalloc_sync_all(void)
- 		return;
- 
- 	for (address = VMALLOC_START & PMD_MASK;
--	     address >= TASK_SIZE_MAX && address < FIXADDR_TOP;
-+	     address >= TASK_SIZE_MAX && address < LDT_BASE_ADDR;
- 	     address += PMD_SIZE) {
- 		struct page *page;
- 
--- 
-2.16.4
-
+greg k-h
