@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9E710A156
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4193410A142
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbfKZPj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 10:39:58 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38059 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfKZPj6 (ORCPT
+        id S1728544AbfKZPem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 10:34:42 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38047 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfKZPel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 10:39:58 -0500
-Received: by mail-qt1-f194.google.com with SMTP id 14so21865887qtf.5;
-        Tue, 26 Nov 2019 07:39:57 -0800 (PST)
+        Tue, 26 Nov 2019 10:34:41 -0500
+Received: by mail-wm1-f66.google.com with SMTP id z19so3840692wmk.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 07:34:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jqOLj+zmhCKP7Os2hVh7KNkHJtVIfRP5Fr7ygxzfC/k=;
-        b=ZryQJlQklZkrilo3PB6/3iQkzFYlNRAE83eqDldO3pYYrXbuN1qjXyaSyDg40Q3Ww5
-         r/FrUnvEAuKgvzCqaPXgOAL3PNq9MLItAvdW9jCp76ILGphb7Ljr4ZDpVQdOftgxTp7F
-         +RT9wdHGyU7YMnPBOP0zn8Kfwh7I22gbbIdHKkFpN+GiSlclJY3nPMJ5e1czT60+X2H1
-         NMP16huoRg+U4XS4O5sxylbyxdM60MhTXvMqCvW3dtDDvnw321e1QpjjghbHVJ8qY2cB
-         BzR/B9F4vMkDMy+0UwZ7YL2js25YJkFu3fbgp3wMLIv+/gYJ4KVTkKKEaEyCFMQNO+dH
-         INWg==
+        bh=XHpKE1+pRggjDZg3Vcgn+vzDPH0txuMe168rRQcCK68=;
+        b=w864Jom6wGOmf6sK60smmKGgc+SuwnyTekrouut8YkgOdmKIfioXo3WWtSDucAjPNR
+         WYKH+7MhO2oaQ9OqDIvgWkjg0gy/lDu2VqmCi1+47V3irPn/aerma/cNc+OgLkYbpTyH
+         CK7aZ5jQxixxxlW8zjdxfFjho+2+qTp5vmCBmWo0zLC5A1qdhl2zdj8AnrzS/LUQjeJn
+         d+DDxvSktWFPp/y1YVj/1M1uMqwu9eGg16S8p9ywtgFt4VUup4/ERB5fMdSXrSn88XF5
+         uigHb9uV0hTG3cpI79vb1GnmTXZPwgXeyH3d0RvNJaMIS299a/Jqhh4kKigHioRL0uY5
+         U9Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jqOLj+zmhCKP7Os2hVh7KNkHJtVIfRP5Fr7ygxzfC/k=;
-        b=Jou5feRaC96lUcXxudDoS8sFOqBcH9WKKvaFpQtDEbB21YaD7sJhgSA008yR9Yf6Dc
-         j57hctEQZlcm+h7rqRAQpPXaBx4HJDxNLpale6kh9Oo8WsTaPzyR+Fizxpq372cvljAK
-         YKICv8ITTHTjKDHpTBp+FStJGPQKQbEXD2OeY6Mdp4aaIz5izn/Pe1cpr48VRQAetIEy
-         OfU2OxNcXFNEPQxc4atO506pynFtaoOm0WN+jGXnsL5XCq74FdSZjzzFcRf6P9kaFAus
-         aDhVDnO2fNNV8/mHweIHamukvZol5eaAXNQCTflpgMOCtM7a9c/r03wnzpU1JP4OmB96
-         2q3w==
-X-Gm-Message-State: APjAAAXtTq+ElCLD8xLqAKwUAf6CnhsURbqGqK9tUXheiD2zc5X0Sz0p
-        ESnLW3BU5+4JUHa8PTVC6UM=
-X-Google-Smtp-Source: APXvYqwRg51oIe6DA1IT2q++wUTdAqhqELpT4Qih6rNjRSxcYqDcBeXG9pFn2r75cIpoj1BsYMC0kg==
-X-Received: by 2002:ac8:690c:: with SMTP id e12mr23339115qtr.239.1574782796765;
-        Tue, 26 Nov 2019 07:39:56 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id z64sm6047532qtc.4.2019.11.26.07.39.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 07:39:55 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dummy_dvb_fe: register adapter/frontend
-Date:   Tue, 26 Nov 2019 12:31:57 -0300
-Message-Id: <20191126153157.26355-1-dwlsalmeida@gmail.com>
+        bh=XHpKE1+pRggjDZg3Vcgn+vzDPH0txuMe168rRQcCK68=;
+        b=RQeFGlxn0S+r+Lcl2z8pX48CKbrGxRtpCpZzAELNRmCYrppE8YpUDWfKrSxAs8zT3B
+         Nju8MtPmwdHshzixsOC+woghtrvazOQw66VdcbYa7fDmYRhDMlFw6mJyByimPTPIUsoh
+         kqBdGhd1BhAyxhBb96U8JbgNVxc4VwfI3cQ8zAdQZoBlawCxG0yjadOLWnupHgi5tfRT
+         0/0g5eXPcNH3PI/9FhXJPcDyjYhR9Jv+Bi1jNFndnKUxE1fntx9W0wEGtz/HWzWqgyWc
+         OMCAzG8XZ+Uy7Ykl2AsLWPVVBWdJrm3vgMu9f0orIBwNvHUBLQ0Nelcx02KzRGE/e8hu
+         Vf7w==
+X-Gm-Message-State: APjAAAVIh3bqS8fHSofISdUEN47zqggTar4t85Li98jZQuQCUrVmbqhc
+        WvjlhtHNNRgAJMH9P5cS8SQjeg==
+X-Google-Smtp-Source: APXvYqwdGDfHspdrOG2iQl8u6+NKrF41ljngXKadaalKOG2vajrUY33xi2U+YTG7fb3uci99JUykvw==
+X-Received: by 2002:a1c:6144:: with SMTP id v65mr5025056wmb.53.1574782479214;
+        Tue, 26 Nov 2019 07:34:39 -0800 (PST)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id j10sm15210748wrx.30.2019.11.26.07.34.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 26 Nov 2019 07:34:38 -0800 (PST)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     sboyd@kernel.org, bjorn.andersson@linaro.org, robdclark@gmail.com
+Cc:     mturquette@baylibre.com, agross@kernel.org, tdas@codeaurora.org,
+        anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        georgi.djakov@linaro.org
+Subject: [PATCH] clk: qcom: gcc-sdm845: Add missing flag to votable GDSCs
+Date:   Tue, 26 Nov 2019 17:34:37 +0200
+Message-Id: <20191126153437.11808-1-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,85 +62,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+On sdm845 devices, during boot we see the following warnings (unless we
+have added 'pd_ignore_unused' to the kernel command line):
+	hlos1_vote_mmnoc_mmu_tbu_sf_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu2_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu1_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc status stuck at 'on'
 
-Before using the DTV frontend core, a bridge driver should register the
-new frontend at the subsystem and unregister it at device detach / removal.
+As the name of these GDSCs suggests, they are "votable" and in downstream
+DT, they all have the property "qcom,no-status-check-on-disable", which
+means that we should not poll the status bit when we disable them.
 
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+Luckily the VOTABLE flag already exists and it does exactly what we need,
+so let's make use of it to make the warnings disappear.
+
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+Reported-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- drivers/media/dvb-frontends/dvb_dummy_fe.c | 39 ++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gcc-sdm845.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-index 4db679cb70ad..1ccb58c67e8e 100644
---- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
-+++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-@@ -13,12 +13,12 @@
- #include <media/dvb_frontend.h>
- #include "dvb_dummy_fe.h"
- 
-+DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
- 
- struct dvb_dummy_fe_state {
- 	struct dvb_frontend frontend;
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 95be125c3bdd..56d22dd225c9 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3255,6 +3255,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
  };
  
--
- static int dvb_dummy_fe_read_status(struct dvb_frontend *fe,
- 				    enum fe_status *status)
- {
-@@ -84,7 +84,36 @@ static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
+ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+@@ -3263,6 +3264,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
- static int dvb_dummy_fe_init(struct dvb_frontend* fe)
- {
--	return 0;
-+	int result = 0;
-+	struct dvb_adapter *adapter = fe->dvb;
-+
-+	result = dvb_register_adapter(adapter,
-+				      KBUILD_MODNAME,
-+				      THIS_MODULE,
-+				      adapter->device,
-+				      adapter_nr);
-+
-+	if (!result) {
-+		pr_err("DVB_DUMMY_FE: Failed to register the adapter, errno:%d",
-+			result);
-+		goto err;
-+	}
-+
-+	result = dvb_register_frontend(adapter, fe);
-+	if (!result) {
-+		pr_err("DVB_DUMMY_FE: Failed to register the frontend, errno:%d",
-+			result);
-+		goto err;
-+	}
-+
-+	return result;
-+
-+err:
-+	dvb_unregister_adapter(adapter);
-+	dvb_unregister_frontend(fe);
-+	dvb_frontend_detach(fe);
-+	return result;
-+
- }
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+@@ -3271,6 +3273,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
- static int dvb_dummy_fe_set_tone(struct dvb_frontend *fe,
-@@ -102,6 +131,12 @@ static int dvb_dummy_fe_set_voltage(struct dvb_frontend *fe,
- static void dvb_dummy_fe_release(struct dvb_frontend* fe)
- {
- 	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
-+	struct dvb_adapter *adapter = fe->dvb;
-+
-+	dvb_unregister_adapter(adapter);
-+	dvb_unregister_frontend(fe);
-+	dvb_frontend_detach(fe);
-+
- 	kfree(state);
- }
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+@@ -3279,6 +3282,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
--- 
-2.24.0
-
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+@@ -3287,6 +3291,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3295,6 +3300,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3303,6 +3309,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct clk_regmap *gcc_sdm845_clocks[] = {
