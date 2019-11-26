@@ -2,165 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED327109D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 12:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18741109D85
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 13:08:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbfKZL5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 06:57:17 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:15743 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfKZL5R (ORCPT
+        id S1728216AbfKZMIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 07:08:13 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45909 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727547AbfKZMIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 06:57:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574769432;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=OiXIPkAa+jo3JWZau1B2Ey3v2wblVpCTuGCnmx5s9Rg=;
-        b=kPsfkTV/+0nWDnwAhqKgkB9HK7WKUvDz4aZCvLDQhkd89WXqsTVz8zf0LaN7f1WyFT
-        LQgUbMZ+nTEsXS2BWy2uVy2cR5ieujjwtmgyKWdZ7ftK5aOqKLQn3LTO7ioufK8QZ3yB
-        vx8XCJwE5HcGCzf4oMHyDNu8JEAClm4vNP9Uj0dr4j0DxCaQFcIjbprzYgzRNnuEL18a
-        3LBfbJzzwnLS2g2vuWq7zfNg9xA7/IXjN5WyEL0e6dj8TjiHT2f0hpfB0Fdtv+mrj9uJ
-        xWcx8DSTvSlrZe5mshEZcUGqUZ14MK/hsKnb8NCN3oEgpoMWtjc8KDlL8KIOhpBCVLyp
-        +QxQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5DdBJSrwuuqxvPhSIh0PhkEvMsMre1rbZ/xz+jsR"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:89c0:ebfc:14bb:b5af:17db:dc1]
-        by smtp.strato.de (RZmta 45.0.2 AUTH)
-        with ESMTPSA id x0678cvAQBv38le
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 26 Nov 2019 12:57:03 +0100 (CET)
-Subject: Re: Bug 205201 - Booting halts if Dawicontrol DC-2976 UW SCSI board
- installed, unless RAM size limited to 3500M
-To:     Mike Rapoport <rppt@linux.ibm.com>, Christoph Hellwig <hch@lst.de>
-Cc:     Robin Murphy <robin.murphy@arm.com>, linux-arch@vger.kernel.org,
-        darren@stevens-zone.net, mad skateman <madskateman@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
-        paulus@samba.org, rtd2@xtra.co.nz,
-        "contact@a-eon.com" <contact@a-eon.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        nsaenzjulienne@suse.de
-References: <F1EBB706-73DF-430E-9020-C214EC8ED5DA@xenosoft.de>
- <20191121072943.GA24024@lst.de>
- <dbde2252-035e-6183-7897-43348e60647e@xenosoft.de>
- <6eec5c42-019c-a988-fc2a-cb804194683d@xenosoft.de>
- <d0252d29-7a03-20e1-ccd7-e12d906e4bdf@arm.com>
- <b3217742-2c0b-8447-c9ac-608b93265363@xenosoft.de>
- <20191121180226.GA3852@lst.de>
- <2fde79cf-875f-94e6-4a1b-f73ebb2e2c32@xenosoft.de>
- <20191125073923.GA30168@lst.de> <20191125093159.GA23118@linux.ibm.com>
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <b668bc25-9268-d25e-f9a0-176bb4ce1d07@xenosoft.de>
-Date:   Tue, 26 Nov 2019 12:57:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Tue, 26 Nov 2019 07:08:13 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z10so22070905wrs.12
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 04:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VQjjqFDsNM/6pE1oM/K01ML2mXuln8XPZDY4RZUivOc=;
+        b=ftFJPVEttEP3GedBZ2x5HGNphCA2lsPKmm8UDIb+ofgtvrD6/sjW3i5b9NvBmdc+cl
+         Q5yrnsC8K8rc1xA6pkrK2R0gaBfGM69vg1Xm7pCgBwXZntobK3Og7Wit2uTfM13ZwA04
+         OQsBfBLFsgI67RfAezmcLQ5hd0LOFzwJtWdFk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=VQjjqFDsNM/6pE1oM/K01ML2mXuln8XPZDY4RZUivOc=;
+        b=eb1O5e8gspazT9eBHHxI1N4gNyjLRj431D6uwrlFXFK3d4R9P7/f9Jk0+U+lXfc1hy
+         bhlSk9Q2uDiq7otMEvQO1LPMOEN24Zm1lVDkLvVnq1M6nABGiZMerFeV0G5tJtdEIx2l
+         9la9zvetzWBIbvTLlpITiV+rJTS04DQblBhI053HQWJ+j+fDWZIDKJlmlIDOFSxhJxCg
+         24xK8JhG6i04fYm3+6FMwmIqGaLW3xwAe+/U5Dlcw0hkp8XsLC/js0Nyg3d0QqKlSshM
+         74vbW5cMwtQGMyAnvF4/RPrrXxFBemxAuYkAHvgkdRpJ6xDdErif0RHtz+horvpO2xBR
+         NJBA==
+X-Gm-Message-State: APjAAAVledWr+IkM6BLF/YZU1Vsb1E5FW7wtQTjfiVOrOWyVh9IYRz0t
+        qf+UqNJEoIq2xpmLEt21WV+ntQ==
+X-Google-Smtp-Source: APXvYqyCVzH+f7yqTMpfD8vYQ/DrJUuOIE2WH3AwCdN2GqBS6WDrLDj1/zSPULNRsndeZMxFounfcA==
+X-Received: by 2002:a5d:530f:: with SMTP id e15mr38041522wrv.119.1574770088328;
+        Tue, 26 Nov 2019 04:08:08 -0800 (PST)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id k1sm15080399wrp.29.2019.11.26.04.08.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2019 04:08:07 -0800 (PST)
+Date:   Tue, 26 Nov 2019 13:08:05 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Cc:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ben Davis <Ben.Davis@arm.com>
+Subject: Re: [PATCH v1 2/2] drm/komeda: Refactor sysfs node "config_id"
+Message-ID: <20191126120805.GU29965@phenom.ffwll.local>
+Mail-Followup-To: "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ben Davis <Ben.Davis@arm.com>
+References: <20191126105412.5978-1-james.qian.wang@arm.com>
+ <20191126105412.5978-3-james.qian.wang@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20191125093159.GA23118@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191126105412.5978-3-james.qian.wang@arm.com>
+X-Operating-System: Linux phenom 5.3.0-2-amd64 
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 November 2019 at 10:32 am, Mike Rapoport wrote:
-> On Mon, Nov 25, 2019 at 08:39:23AM +0100, Christoph Hellwig wrote:
->> On Sat, Nov 23, 2019 at 12:42:27PM +0100, Christian Zigotzky wrote:
->>> Hello Christoph,
->>>
->>> Please find attached the dmesg of your Git kernel.
->> Thanks.  It looks like on your platform the swiotlb buffer isn't
->> actually addressable based on the bus dma mask limit, which is rather
->> interesting.  swiotlb_init uses memblock_alloc_low to allocate the
->> buffer, and I'll need some help from Mike and the powerpc maintainers
->> to figure out how that select where to allocate the buffer from, and
->> how we can move it to a lower address.  My gut feeling would be to try
->> to do what arm64 does and define a new ARCH_LOW_ADDRESS_LIMIT, preferably
->> without needing too much arch specific magic.
-> Presuming the problem is relevant for all CoreNet boards something like
-> this could work:
->   
-> diff --git a/arch/powerpc/include/asm/dma.h b/arch/powerpc/include/asm/dma.h
-> index 1b4f0254868f..7c6cfeeaff52 100644
-> --- a/arch/powerpc/include/asm/dma.h
-> +++ b/arch/powerpc/include/asm/dma.h
-> @@ -347,5 +347,11 @@ extern int isa_dma_bridge_buggy;
->   #define isa_dma_bridge_buggy	(0)
->   #endif
->   
-> +#ifdef CONFIG_CORENET_GENERIC
-> +extern phys_addr_t ppc_dma_phys_limit;
-> +#define ARCH_LOW_ADDRESS_LIMIT	(ppc_dma_phys_limit - 1)
-> +#endif
-> +
-> +
->   #endif /* __KERNEL__ */
->   #endif	/* _ASM_POWERPC_DMA_H */
-> diff --git a/arch/powerpc/platforms/85xx/common.c b/arch/powerpc/platforms/85xx/common.c
-> index fe0606439b5a..346b436b6d3f 100644
-> --- a/arch/powerpc/platforms/85xx/common.c
-> +++ b/arch/powerpc/platforms/85xx/common.c
-> @@ -126,3 +126,7 @@ void __init mpc85xx_qe_par_io_init(void)
->   	}
->   }
->   #endif
-> +
-> +#ifdef CONFIG_CORENET_GENERIC
-> +phys_addr_t ppc_dma_phys_limit = 0xffffffffUL;
-> +#endif
-> diff --git a/arch/powerpc/platforms/85xx/corenet_generic.c b/arch/powerpc/platforms/85xx/corenet_generic.c
-> index 7ee2c6628f64..673bcbdc7c75 100644
-> --- a/arch/powerpc/platforms/85xx/corenet_generic.c
-> +++ b/arch/powerpc/platforms/85xx/corenet_generic.c
-> @@ -64,7 +64,7 @@ void __init corenet_gen_setup_arch(void)
->   	mpc85xx_smp_init();
->   
->   	swiotlb_detect_4g();
+On Tue, Nov 26, 2019 at 10:54:47AM +0000, james qian wang (Arm Technology China) wrote:
+> From: "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
+> 
+> Split sysfs config_id bitfiles to multiple separated sysfs files.
+> 
+> Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.com>
+
+I guess Dave&my questions werent quite clear, this looks like uapi that's
+consumed by hwc, so the userspace needs to be open source. Plus it needs
+to be discussed/reviewed like any other kms uapi extensions, with a
+critical eye whether this makes sense to add to a supposedly cross-vendor
+interface.
+
+I suspect the right thing to do here is to push the revert. From a quick
+look at git history this landed together with the other kms properties in
+komeda which we reverted already.
+-Daniel
+
+> ---
+>  .../drm/arm/display/include/malidp_product.h  | 13 ---
+>  .../gpu/drm/arm/display/komeda/komeda_sysfs.c | 80 ++++++++++++++-----
+>  2 files changed, 62 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/arm/display/include/malidp_product.h b/drivers/gpu/drm/arm/display/include/malidp_product.h
+> index dbd3d4765065..b21f4aa15c95 100644
+> --- a/drivers/gpu/drm/arm/display/include/malidp_product.h
+> +++ b/drivers/gpu/drm/arm/display/include/malidp_product.h
+> @@ -21,17 +21,4 @@
+>  #define MALIDP_D71_PRODUCT_ID	0x0071
+>  #define MALIDP_D32_PRODUCT_ID	0x0032
+>  
+> -union komeda_config_id {
+> -	struct {
+> -		__u32	max_line_sz:16,
+> -			n_pipelines:2,
+> -			n_scalers:2, /* number of scalers per pipeline */
+> -			n_layers:3, /* number of layers per pipeline */
+> -			n_richs:3, /* number of rich layers per pipeline */
+> -			side_by_side:1, /* if HW works on side_by_side mode */
+> -			reserved_bits:5;
+> -	};
+> -	__u32 value;
+> -};
 > -
-> +	ppc_dma_phys_limit = 0x0fffffffUL;
->   	pr_info("%s board\n", ppc_md.name);
->   
->   	mpc85xx_qe_init();
-Hello Mike,
+>  #endif /* _MALIDP_PRODUCT_H_ */
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_sysfs.c b/drivers/gpu/drm/arm/display/komeda/komeda_sysfs.c
+> index 740f095b4ca5..5effab795dc1 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_sysfs.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_sysfs.c
+> @@ -18,28 +18,67 @@ core_id_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  static DEVICE_ATTR_RO(core_id);
+>  
+>  static ssize_t
+> -config_id_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +line_size_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  {
+>  	struct komeda_dev *mdev = dev_to_mdev(dev);
+>  	struct komeda_pipeline *pipe = mdev->pipelines[0];
+> -	union komeda_config_id config_id;
+> -	int i;
+> -
+> -	memset(&config_id, 0, sizeof(config_id));
+> -
+> -	config_id.max_line_sz = pipe->layers[0]->hsize_in.end;
+> -	config_id.side_by_side = mdev->side_by_side;
+> -	config_id.n_pipelines = mdev->n_pipelines;
+> -	config_id.n_scalers = pipe->n_scalers;
+> -	config_id.n_layers = pipe->n_layers;
+> -	config_id.n_richs = 0;
+> -	for (i = 0; i < pipe->n_layers; i++) {
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", pipe->layers[0]->hsize_in.end);
+> +}
+> +static DEVICE_ATTR_RO(line_size);
+> +
+> +static ssize_t
+> +n_pipelines_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct komeda_dev *mdev = dev_to_mdev(dev);
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", mdev->n_pipelines);
+> +}
+> +static DEVICE_ATTR_RO(n_pipelines);
+> +
+> +static ssize_t
+> +n_layers_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct komeda_dev *mdev = dev_to_mdev(dev);
+> +	struct komeda_pipeline *pipe = mdev->pipelines[0];
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", pipe->n_layers);
+> +}
+> +static DEVICE_ATTR_RO(n_layers);
+> +
+> +static ssize_t
+> +n_rich_layers_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct komeda_dev *mdev = dev_to_mdev(dev);
+> +	struct komeda_pipeline *pipe = mdev->pipelines[0];
+> +	int i, n_richs = 0;
+> +
+> +	for (i = 0; i < pipe->n_layers; i++)
+>  		if (pipe->layers[i]->layer_type == KOMEDA_FMT_RICH_LAYER)
+> -			config_id.n_richs++;
+> -	}
+> -	return snprintf(buf, PAGE_SIZE, "0x%08x\n", config_id.value);
+> +			n_richs++;
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", n_richs);
+> +}
+> +static DEVICE_ATTR_RO(n_rich_layers);
+> +
+> +static ssize_t
+> +n_scalers_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct komeda_dev *mdev = dev_to_mdev(dev);
+> +	struct komeda_pipeline *pipe = mdev->pipelines[0];
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", pipe->n_scalers);
+> +}
+> +static DEVICE_ATTR_RO(n_scalers);
+> +
+> +static ssize_t
+> +side_by_side_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct komeda_dev *mdev = dev_to_mdev(dev);
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%d\n", mdev->side_by_side);
+>  }
+> -static DEVICE_ATTR_RO(config_id);
+> +static DEVICE_ATTR_RO(side_by_side);
+>  
+>  static ssize_t
+>  aclk_hz_show(struct device *dev, struct device_attribute *attr, char *buf)
+> @@ -52,7 +91,12 @@ static DEVICE_ATTR_RO(aclk_hz);
+>  
+>  static struct attribute *komeda_sysfs_entries[] = {
+>  	&dev_attr_core_id.attr,
+> -	&dev_attr_config_id.attr,
+> +	&dev_attr_line_size.attr,
+> +	&dev_attr_n_pipelines.attr,
+> +	&dev_attr_n_layers.attr,
+> +	&dev_attr_n_rich_layers.attr,
+> +	&dev_attr_n_scalers.attr,
+> +	&dev_attr_side_by_side.attr,
+>  	&dev_attr_aclk_hz.attr,
+>  	NULL,
+>  };
+> -- 
+> 2.20.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-My PCI TV card works also with your patch! Before I had to add "#include 
-<asm/dma.h>" to the file "arch/powerpc/platforms/85xx/corenet_generic.c" 
-because of the following error:
-
-------
-
-   CC      arch/powerpc/platforms/85xx/corenet_generic.o
-   CC      ipc/util.o
-   CC      ipc/msgutil.o
-arch/powerpc/platforms/85xx/corenet_generic.c: In function 
-‘corenet_gen_setup_arch’:
-arch/powerpc/platforms/85xx/corenet_generic.c:77:2: error: 
-‘ppc_dma_phys_limit’ undeclared (first use in this function); did you 
-mean ‘cpu_to_phys_id’?
-   ppc_dma_phys_limit = 0x0fffffffUL;
-   ^~~~~~~~~~~~~~~~~~
-   cpu_to_phys_id
-arch/powerpc/platforms/85xx/corenet_generic.c:77:2: note: each 
-undeclared identifier is reported only once for each function it appears in
-scripts/Makefile.build:265: recipe for target 
-'arch/powerpc/platforms/85xx/corenet_generic.o' failed
-make[3]: *** [arch/powerpc/platforms/85xx/corenet_generic.o] Error 1
-scripts/Makefile.build:509: recipe for target 
-'arch/powerpc/platforms/85xx' failed
-make[2]: *** [arch/powerpc/platforms/85xx] Error 2
-scripts/Makefile.build:509: recipe for target 'arch/powerpc/platforms' 
-failed
-make[1]: *** [arch/powerpc/platforms] Error 2
-Makefile:1652: recipe for target 'arch/powerpc' failed
-make: *** [arch/powerpc] Error 2
-
-------
-
-After that I was able to compile the latest Git kernel with your patch.
-
-Thanks,
-Christian
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
