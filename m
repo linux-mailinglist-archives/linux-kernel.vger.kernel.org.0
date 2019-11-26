@@ -2,103 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2154210A490
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFF910A498
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfKZTat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 14:30:49 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42995 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727312AbfKZTaq (ORCPT
+        id S1727454AbfKZTdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 14:33:31 -0500
+Received: from mail-pj1-f74.google.com ([209.85.216.74]:37618 "EHLO
+        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbfKZTdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:30:46 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n5so21574835ljc.9;
-        Tue, 26 Nov 2019 11:30:44 -0800 (PST)
+        Tue, 26 Nov 2019 14:33:31 -0500
+Received: by mail-pj1-f74.google.com with SMTP id a31so656170pje.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 11:33:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N1fma/rzZbsK0KgJkH5gDE4TEHvO2HL1ft3nAMVM09o=;
-        b=DH9OE1isC9wMnuJMDGOHRni1GwxOUfsJU0ywmLSPLdfWPuomlkUHP8ykBHs1KwwoNZ
-         IJftDyO+OQGKxgrWaR0Bird2WXdpg7JQ9WPQTWKm7kLMz5l8yTUSlLy9lR6+twon3BEh
-         EB6ZMe5P7AwiA+ntl+Nn8ygQu1ODMZv5/opG4sn7DXVu57YHDoSxUbWgOblojTYE5OiK
-         6bpufoW/OvY8x5WIF4Ugk/rykcm4PGNjfe4M7+WT1L9t2ngWMLGuZy5LhvaJbQV+cYRT
-         865N738hDX8lXfnjCAPGvdp10UKPvPSQjjmjkLYLAW8NOmVywCz/EaS7QwF/z0HlnYgV
-         sXUw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=LZgbozaMv2++Eabt+iViPasyBMAegYsg5oYTvMeHf7E=;
+        b=S8pmopzzBG0rNok5vDN976cFoAR0A7Q+p/o8pCLnSXixM+5boO1hXI9m0F7yA6sPVV
+         IZyY5dqJw+zD9pjkQsCFWgDYz5wF+P5eNiXGqXXFMv+aRYKwpt3F8UawnB7gMei0i6YK
+         4d66jyCvy//Wa3Vusi8E+3lZBlUxR6yn31REPHhWKiHXldKjuVnLzFRabBqqG5gAGZtG
+         t2QH8dhE+35YRcXlL8MfSG9W6j2mdR4uGOafC5ful+3LPMSrTawaYmujJHXzrggLSV6H
+         9lTVl+5Wl79xSAYJW8Mc3QEXtAmUzLcvXtgiiSy/iJjtsjTonesbzCbeMh7TzIaZ0qEV
+         VqSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N1fma/rzZbsK0KgJkH5gDE4TEHvO2HL1ft3nAMVM09o=;
-        b=HCpTZltzV4WqwYmTjJrkfsa72bpQysuzKFjlxARVOH20xsiF8+mzNhEr8QqpIEIyie
-         XbwLau1cDvjvJaqaOXsak+inpX96WbgNEgGq54nvYp2KfPFhG9PXEwGBzgFOow8hfPFp
-         S9XFi+VVF/D8Zpwz1wVJxSAONYk4mCl1/urMD1M8Mr5WMq5sgifeDHoJt+GR3R3zSZbO
-         FObWoTjRQhhYnkNw5jlwIrMbWjm8bIugIep2YX8agUVil8j57qO7Fl+tDlGCEQ+z1OVI
-         aiWkBhiZvjOr6+fRMavY5Z5QF8QnhXXTguXF90iYUx4UqOdOPeJjeWBpewJndxLsyw1H
-         ZfOA==
-X-Gm-Message-State: APjAAAWuSrIa00Y7qChAI4lXUP+0aW23WCVIvi5vcYJUcZadpMq5E+Pq
-        x9lusRPmlJmKxbTAlGZa2l8=
-X-Google-Smtp-Source: APXvYqx9/2noQaJq7x/KWqh0xaR3KlZk66kcGXCNzZVnDIkbRFG0nnLsPyaQcfSma3Bx0Mn7mgvzSg==
-X-Received: by 2002:a2e:894b:: with SMTP id b11mr28263730ljk.118.1574796643636;
-        Tue, 26 Nov 2019 11:30:43 -0800 (PST)
-Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
-        by smtp.gmail.com with ESMTPSA id m18sm6134434ljg.3.2019.11.26.11.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 11:30:43 -0800 (PST)
-From:   Max Filippov <jcmvbkbc@gmail.com>
-To:     linux-xtensa@linux-xtensa.org
-Cc:     Chris Zankel <chris@zankel.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Max Filippov <jcmvbkbc@gmail.com>, stable@vger.kernel.org
-Subject: [PATCH] drivers/gpio/gpio-xtensa: fix driver build
-Date:   Tue, 26 Nov 2019 11:30:27 -0800
-Message-Id: <20191126193027.11970-1-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=LZgbozaMv2++Eabt+iViPasyBMAegYsg5oYTvMeHf7E=;
+        b=RISRLvB0YxRBNCKsHALG7LKDUuMN0p0pxwz+O9jrA1u80nSdrwRTOJleh+FyK7KntR
+         zCtWYdpPQwSq6w87OPHIelxyvcgoqSXrImRNUjZMeKVr3xvBP9gMAiyPy+oI2cAGP6Gc
+         nVX+/9ATCPfVTJjsbbX0xci5LYDvpP6nzlVz2Cg/71htIKF/IyKEGsLfCRqkpg7BwVQ5
+         CUGg03HP9JgL6/KdOc4J8o6AaRiaBUL1z60PddAeI2HCRYHGySd1ar/8Muljuem+QFb5
+         0khNA91jYmiJ1UunkDbIFjDXzQQB9oEvnpTG97Mh1Yw49nbEjdDYu5JnvtXGD5/RXeH0
+         Kv3w==
+X-Gm-Message-State: APjAAAUBmhK1I2apySbBB60lanmU7/Xn6SR8NWMNz47EmgBAdI91NZSH
+        Gg4dasKSMxKElT1ArnIgIDFCe+i1YJsYuWKm
+X-Google-Smtp-Source: APXvYqwlu7Ul/+3EqoijwO89c+WDCiAnYLTJIkWSIHVcFHz5+Auv/4L5M6KXbDaJdlS2PHvKtwCyeDHSuT1v47PK
+X-Received: by 2002:a63:c606:: with SMTP id w6mr156681pgg.133.1574796809308;
+ Tue, 26 Nov 2019 11:33:29 -0800 (PST)
+Date:   Tue, 26 Nov 2019 11:33:13 -0800
+Message-Id: <20191126193313.44181-1-heidifahim@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH] kunit: test: Improve error messages for kunit_tool when
+ kunitconfig is invalid
+From:   Heidi Fahim <heidifahim@google.com>
+To:     brendanhiggins@google.com, shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, Heidi Fahim <heidifahim@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cad6fade6e78 ("xtensa: clean up WSR*/RSR*/get_sr/set_sr") removed
-{RSR,WSR}_CPENABLE from xtensa code, but did not fix up all users,
-breaking gpio-xtensa driver build.
-Update gpio-xtensa to use new xtensa_{get,set}_sr API.
+Previous error message for invalid kunitconfig was vague. Added to it so
+that it lists invalid fields and prompts for them to be removed.  Added
+validate_config function returning whether or not this kconfig is valid.
 
-Cc: stable@vger.kernel.org # v5.0+
-Fixes: cad6fade6e78 ("xtensa: clean up WSR*/RSR*/get_sr/set_sr")
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Heidi Fahim <heidifahim@google.com>
 ---
- drivers/gpio/gpio-xtensa.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ tools/testing/kunit/kunit_kernel.py | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xtensa.c b/drivers/gpio/gpio-xtensa.c
-index 43d3fa5f511a..0fb2211f9573 100644
---- a/drivers/gpio/gpio-xtensa.c
-+++ b/drivers/gpio/gpio-xtensa.c
-@@ -44,15 +44,14 @@ static inline unsigned long enable_cp(unsigned long *cpenable)
- 	unsigned long flags;
+diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+index bf3876835331..010d3f5030d2 100644
+--- a/tools/testing/kunit/kunit_kernel.py
++++ b/tools/testing/kunit/kunit_kernel.py
+@@ -93,6 +93,19 @@ class LinuxSourceTree(object):
+ 			return False
+ 		return True
  
- 	local_irq_save(flags);
--	RSR_CPENABLE(*cpenable);
--	WSR_CPENABLE(*cpenable | BIT(XCHAL_CP_ID_XTIOP));
--
-+	*cpenable = xtensa_get_sr(cpenable);
-+	xtensa_set_sr(*cpenable | BIT(XCHAL_CP_ID_XTIOP), cpenable);
- 	return flags;
- }
++	def validate_config(self, build_dir):
++		kconfig_path = get_kconfig_path(build_dir)
++		validated_kconfig = kunit_config.Kconfig()
++		validated_kconfig.read_from_file(kconfig_path)
++		if not self._kconfig.is_subset_of(validated_kconfig):
++			invalid = self._kconfig.entries() - validated_kconfig.entries()
++			message = 'Provided Kconfig is not contained in validated .config. Invalid fields found in kunitconfig: %s' % (
++				', '.join([str(e) for e in invalid])
++			)
++			logging.error(message)
++			return False
++		return True
++
+ 	def build_config(self, build_dir):
+ 		kconfig_path = get_kconfig_path(build_dir)
+ 		if build_dir and not os.path.exists(build_dir):
+@@ -103,12 +116,7 @@ class LinuxSourceTree(object):
+ 		except ConfigError as e:
+ 			logging.error(e)
+ 			return False
+-		validated_kconfig = kunit_config.Kconfig()
+-		validated_kconfig.read_from_file(kconfig_path)
+-		if not self._kconfig.is_subset_of(validated_kconfig):
+-			logging.error('Provided Kconfig is not contained in validated .config!')
+-			return False
+-		return True
++		return self.validate_config(build_dir)
  
- static inline void disable_cp(unsigned long flags, unsigned long cpenable)
- {
--	WSR_CPENABLE(cpenable);
-+	xtensa_set_sr(cpenable, cpenable);
- 	local_irq_restore(flags);
- }
+ 	def build_reconfig(self, build_dir):
+ 		"""Creates a new .config if it is not a subset of the kunitconfig."""
+@@ -133,12 +141,7 @@ class LinuxSourceTree(object):
+ 		except (ConfigError, BuildError) as e:
+ 			logging.error(e)
+ 			return False
+-		used_kconfig = kunit_config.Kconfig()
+-		used_kconfig.read_from_file(get_kconfig_path(build_dir))
+-		if not self._kconfig.is_subset_of(used_kconfig):
+-			logging.error('Provided Kconfig is not contained in final config!')
+-			return False
+-		return True
++		return self.validate_config(build_dir)
  
+ 	def run_kernel(self, args=[], timeout=None, build_dir=None):
+ 		args.extend(['mem=256M'])
 -- 
-2.20.1
+2.24.0.432.g9d3f5f5b63-goog
 
