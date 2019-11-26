@@ -2,108 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B69F10A69E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF81410A69B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfKZWgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 17:36:40 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45550 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726983AbfKZWgj (ORCPT
+        id S1726957AbfKZWgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 17:36:36 -0500
+Received: from mail-yb1-f202.google.com ([209.85.219.202]:56245 "EHLO
+        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbfKZWgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 17:36:39 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 203so15425228lfa.12;
-        Tue, 26 Nov 2019 14:36:37 -0800 (PST)
+        Tue, 26 Nov 2019 17:36:36 -0500
+Received: by mail-yb1-f202.google.com with SMTP id f4so14049998yba.22
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 14:36:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=Wxy80mBAQVfVNiFRLzfL2dvJVYM/W7L9tB9zzxf4iug=;
-        b=P83wjgV5BZ79VZm2l5j3cMsBq8T9cIcd/ftrEAfOGQYgsbzP75wXa973rMk7459uXO
-         gjYLXtWxnZDZ3/i/awe3KDzga77Ve5ig8MvVwW2sPkFael3RDxd/RL/NvR62NjV03+wq
-         dzyKRgBPPSkd/LdcFkNnlJK7sNoppUQZfrL/4nuNc9nwXD4jiEb4yOKtZH2WzUKBZ1EK
-         AE3H1BlN7SPVNskMNWOMrXq2bYgkE8SMQiGNWU4nomZ0bwaUVWF2v4xKRPeC71feUDvs
-         6AJh051Ctva3V5hTRD9KcpR2JLSK+XJM3U1lp6X4B5pO+rWUV3EjdAe4qwRIqfSJBxI/
-         HR4A==
+        bh=EuaZnHowIBc7y1QLV9A0aE1DHqnTcytF/iy9ArT6dOM=;
+        b=ISb7ahBc3XQRcy7hXbzo638Z3k3Vwq80fpiEKdFfPpFa8d6GB9cT22SACX4p+HRS0F
+         uLp2LeH46TMRB70xuCT2IH64/j3YZ6Qmgin87KRnfAmL5Xey8+6cFA3U25dWILE3LYBh
+         r04C9GgrC/lkQEaJIwxfy1fh0KHKvc3uXJafGArJCUKSKk/kPirUd1k0oXCAnhhUWP65
+         h1x9epX6QKtn68b+JoYFDXiPxLrNf+MScJdzypxjD4gW9aE/bcsbOh5UdVwHhL5xGmT1
+         6PRxXyBV+QpIwEru7i1Rf8oGxrYsndojf9832I0NB8lHtZ8dSoWKAMzn2lGMl5vUohwc
+         gtIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wxy80mBAQVfVNiFRLzfL2dvJVYM/W7L9tB9zzxf4iug=;
-        b=cHn6cI7nc3Q4DmmM8uh9wTEgeD9PbSnFGic512W/n+YS8Lz+RWwlycqgCjq+H284JE
-         V9yD4LUmxEMZdyTqM3Y5NPTRHjTld+CAL6AHQrf/HD2o6ZrD1JmZq8CiobJpEBAZPiUc
-         vcINfTPoPgRPe5762FjNZOoaWB1lHeUjVpe+T0bg3bf9NEhBxVgQI9ZYb0DEx9YNyapp
-         lUdQGuZqMnEzMrwufSY/ESO3SvTjhsdbmivPwn2QNrkAc1ulQg/OWgLkOos50yPef8h/
-         4ZMyWQc6KE8kJRPLVxJZLaMnFmgGsWNYW+sD0n6YYSic2CGSOm4uBE0I7926aasuQ3gN
-         MwiQ==
-X-Gm-Message-State: APjAAAWe3UaLdxDPG5LknG/KfuUS7Be+DJNcuUPSC0y8PGuU02t5igay
-        0OjqHrIlSMhnTDRCsE3lbdYU2q+IQVxFrzsV8L0I7f/Y
-X-Google-Smtp-Source: APXvYqxN/GAR29dK9DHptHMLVgGfyUiHMxYz2YPesHjuMPjZoZCc/lHe4X7vDMZ4GtXvwD/lM5oU02+bx/5X2J2a8hY=
-X-Received: by 2002:ac2:46f7:: with SMTP id q23mr25607116lfo.68.1574807796845;
- Tue, 26 Nov 2019 14:36:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20191121234125.28032-1-sj38.park@gmail.com> <20191126222144.GW2889@paulmck-ThinkPad-P72>
-In-Reply-To: <20191126222144.GW2889@paulmck-ThinkPad-P72>
-From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Tue, 26 Nov 2019 23:36:10 +0100
-Message-ID: <CAEjAshpBEyzh-=s9rPw7+yAbZLZfv5-XaG=-TCEn1G5yaQmHbQ@mail.gmail.com>
-Subject: Re: [PATCH 0/7] docs: Update ko_KR translations
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-doc <linux-doc@vger.kernel.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=EuaZnHowIBc7y1QLV9A0aE1DHqnTcytF/iy9ArT6dOM=;
+        b=X1jCGJTpfPflR6QIsTG3MFkrgOcdo1qqsHem0TMvoAJdCawoxkct/sDJOAgiOUdPdY
+         GbykGQcPeQrShogfzORfWLfdYA2sNDIGVVi4UIn4qL4JYexd/1mOy/g+6SjTkqPDfKbl
+         o68OpdbA5aQC7V9pJHhqjiCuZG+SdblOPd4BHp8Or5cVfuRwF5ng22nRvoj+VPimz3UK
+         uzAiWpygcRqrtHw04+Sh5vbOS7JQ3EkqB5pDbe8S9cOmL//N9i89W+YFqY1p192i7LWB
+         i1hUpOm9IBxI/3ooN0DRWgwXEE8h9suwED8m3scqUiwV5Ge+ENi+PLo59unbYsdapUkx
+         DAZQ==
+X-Gm-Message-State: APjAAAWTHGg1AFFLHiLSs+Zdr8uVo++hPE7N4+Y3lNFYpPzkrSY6/WjU
+        cMB4gAoKyBrqiELCR79icqcTywVRUg7bnnLd
+X-Google-Smtp-Source: APXvYqybZoCVe8mrOgJY9Uodbr4NHifXHLOVmX5qrgUpwHsOA4x5+Hsmfb+KbINBpAxJuTImW+amSbNi4rAVB36+
+X-Received: by 2002:a81:68c3:: with SMTP id d186mr781876ywc.188.1574807794992;
+ Tue, 26 Nov 2019 14:36:34 -0800 (PST)
+Date:   Tue, 26 Nov 2019 14:36:16 -0800
+In-Reply-To: <20191126193313.44181-1-heidifahim@google.com>
+Message-Id: <20191126223616.98294-1-heidifahim@google.com>
+Mime-Version: 1.0
+References: <20191126193313.44181-1-heidifahim@google.com>
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH v2] kunit: test: Improve error messages for kunit_tool when
+ kunitconfig is invalid
+From:   Heidi Fahim <heidifahim@google.com>
+To:     brendanhiggins@google.com, shuah@kernel.org, davidgow@google.com
+Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, Heidi Fahim <heidifahim@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 11:21 PM Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Fri, Nov 22, 2019 at 12:41:18AM +0100, SeongJae Park wrote:
-> > This patchset contains updates of Korean translation documents and a fix
-> > of original document.
-> >
-> > First 4 patches update the Korean translation of memory-barriers.txt.
-> > Fifth patch fixes a broken section reference in the original
-> > memory-barriers.txt.
-> >
-> > Sixth and seventh patches update the Korean translation of howto.rst.
->
-> The sixth and seventh probably have some other more natural path,
-> but I queued them.  Any chance of a Reviewed-by from one of our other
-> Korean-language kernel hackers?
+Previous error message for invalid kunitconfig was vague. Added to it so
+that it lists invalid fields and prompts for them to be removed.  Added
+validate_config function returning whether or not this kconfig is valid.
 
-Thanks, Paul.  I asked a review to my Korean ex-colleague.  Will update the
-results, soon!
+Signed-off-by: Heidi Fahim <heidifahim@google.com>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Tested-by: Brendan Higgins <brendanhiggins@google.com>
+---
+Addressed Brendan's nit for error message
 
+ tools/testing/kunit/kunit_kernel.py | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-Thanks,
-SeongJae Park
+diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+index bf3876835331..e1df9aad778f 100644
+--- a/tools/testing/kunit/kunit_kernel.py
++++ b/tools/testing/kunit/kunit_kernel.py
+@@ -93,6 +93,20 @@ class LinuxSourceTree(object):
+ 			return False
+ 		return True
+ 
++	def validate_config(self, build_dir):
++		kconfig_path = get_kconfig_path(build_dir)
++		validated_kconfig = kunit_config.Kconfig()
++		validated_kconfig.read_from_file(kconfig_path)
++		if not self._kconfig.is_subset_of(validated_kconfig):
++			invalid = self._kconfig.entries() - validated_kconfig.entries()
++			message = 'Provided Kconfig is not contained in validated .config. Following fields found in kunitconfig, ' \
++					  'but not in .config: %s' % (
++					', '.join([str(e) for e in invalid])
++			)
++			logging.error(message)
++			return False
++		return True
++
+ 	def build_config(self, build_dir):
+ 		kconfig_path = get_kconfig_path(build_dir)
+ 		if build_dir and not os.path.exists(build_dir):
+@@ -103,12 +117,7 @@ class LinuxSourceTree(object):
+ 		except ConfigError as e:
+ 			logging.error(e)
+ 			return False
+-		validated_kconfig = kunit_config.Kconfig()
+-		validated_kconfig.read_from_file(kconfig_path)
+-		if not self._kconfig.is_subset_of(validated_kconfig):
+-			logging.error('Provided Kconfig is not contained in validated .config!')
+-			return False
+-		return True
++		return self.validate_config(build_dir)
+ 
+ 	def build_reconfig(self, build_dir):
+ 		"""Creates a new .config if it is not a subset of the kunitconfig."""
+@@ -133,12 +142,7 @@ class LinuxSourceTree(object):
+ 		except (ConfigError, BuildError) as e:
+ 			logging.error(e)
+ 			return False
+-		used_kconfig = kunit_config.Kconfig()
+-		used_kconfig.read_from_file(get_kconfig_path(build_dir))
+-		if not self._kconfig.is_subset_of(used_kconfig):
+-			logging.error('Provided Kconfig is not contained in final config!')
+-			return False
+-		return True
++		return self.validate_config(build_dir)
+ 
+ 	def run_kernel(self, args=[], timeout=None, build_dir=None):
+ 		args.extend(['mem=256M'])
+-- 
+2.24.0.432.g9d3f5f5b63-goog
 
->
->                                                         Thanx, Paul
->
-> > *** BLURB HERE ***
-> >
-> > SeongJae Park (7):
-> >   docs/memory-barriers.txt/kokr: Rewrite "KERNEL I/O BARRIER EFFECTS"
-> >     section
-> >   Documentation/kokr: Kill all references to mmiowb()
-> >   docs/memory-barriers.txt/kokr: Fix style, spacing and grammar in I/O
-> >     section
-> >   docs/memory-barriers.txt/kokr: Update I/O section to be clearer about
-> >     CPU vs thread
-> >   docs/memory-barriers.txt: Remove remaining references to mmiowb()
-> >   Documentation/translation: Use Korean for Korean translation title
-> >   Documentation/process/howto/kokr: Update for 4.x -> 5.x versioning
-> >
-> >  Documentation/memory-barriers.txt             |  11 +-
-> >  Documentation/translations/ko_KR/howto.rst    |  56 +++--
-> >  Documentation/translations/ko_KR/index.rst    |   4 +-
-> >  .../translations/ko_KR/memory-barriers.txt    | 227 +++++++-----------
-> >  4 files changed, 119 insertions(+), 179 deletions(-)
-> >
-> > --
-> > 2.17.2
-> >
