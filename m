@@ -2,97 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A41E10A11A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AAAF10A103
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:14:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfKZPTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 10:19:40 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:48361 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbfKZPTk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 10:19:40 -0500
-Received: from mail-qk1-f172.google.com ([209.85.222.172]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N18I8-1hq5I03i5S-012UMW; Tue, 26 Nov 2019 16:19:39 +0100
-Received: by mail-qk1-f172.google.com with SMTP id b8so1459199qkk.5;
-        Tue, 26 Nov 2019 07:19:38 -0800 (PST)
-X-Gm-Message-State: APjAAAX1bw1LdLbu9guADta0uV8K96uqlfn0Ru39rha4XxxPNlUmNpxc
-        JK4nAr9A7K7C2r/xv9TTCDG3EsH2huJp8o+TX/s=
-X-Google-Smtp-Source: APXvYqxkJM9lYV6ySiCqqwmdO8XRdUFW/0iwCM8k71faNi0k7M+UF9EcV3qyWKGQNF7hE1x+4/qErH4knwLOBFrAgZI=
-X-Received: by 2002:a37:84a:: with SMTP id 71mr15651038qki.138.1574781577640;
- Tue, 26 Nov 2019 07:19:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20191111203835.2260382-1-arnd@arndb.de> <20191111203835.2260382-6-arnd@arndb.de>
- <272c471b-a7a9-c830-e19b-d1f19ee47073@xs4all.nl> <CAK8P3a3vHWBJU6EiUbRKJ01Zsv5E5Yfr+=h2Dg95atjvaHZ+Rg@mail.gmail.com>
- <15a1a26c-b3ad-7449-4508-1207527ab21f@xs4all.nl>
-In-Reply-To: <15a1a26c-b3ad-7449-4508-1207527ab21f@xs4all.nl>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 26 Nov 2019 16:19:21 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1xZZNYtOgyGg8hcUKNdXHhT9CyTbD1PkyXqfXSdy5mUA@mail.gmail.com>
-Message-ID: <CAK8P3a1xZZNYtOgyGg8hcUKNdXHhT9CyTbD1PkyXqfXSdy5mUA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/8] media: v4l2-core: fix VIDIOC_DQEVENT for time64 ABI
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
+        id S1728386AbfKZPOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 10:14:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58184 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728078AbfKZPOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 10:14:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1E196B9ED;
+        Tue, 26 Nov 2019 15:14:18 +0000 (UTC)
+Message-ID: <1574781600.7677.2.camel@suse.cz>
+Subject: Re: [PATCH v4 1/6] x86,sched: Add support for frequency invariance
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Doug Smythies <dsmythies@telus.net>,
+        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
+        'Thomas Gleixner' <tglx@linutronix.de>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'Borislav Petkov' <bp@suse.de>, 'Len Brown' <lenb@kernel.org>,
+        "'Rafael J . Wysocki'" <rjw@rjwysocki.net>
+Cc:     x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        'Mel Gorman' <mgorman@techsingularity.net>,
+        'Matt Fleming' <matt@codeblueprint.co.uk>,
+        'Viresh Kumar' <viresh.kumar@linaro.org>,
+        'Juri Lelli' <juri.lelli@redhat.com>,
+        'Paul Turner' <pjt@google.com>,
+        'Vincent Guittot' <vincent.guittot@linaro.org>,
+        'Quentin Perret' <qperret@qperret.net>,
+        'Dietmar Eggemann' <dietmar.eggemann@arm.com>
+Date:   Tue, 26 Nov 2019 16:20:00 +0100
+In-Reply-To: <000801d5a41e$a7fce2c0$f7f6a840$@net>
+References: <20191113124654.18122-1-ggherdovich@suse.cz>
+                 <20191113124654.18122-2-ggherdovich@suse.cz>
+                 <000001d5a29b$c944fd70$5bcef850$@net> <1574697961.16378.5.camel@suse.cz>
+         <000801d5a41e$a7fce2c0$f7f6a840$@net>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:TeslaUHoW7jHFuz2vZBZoWUXU6BPhPCjmeT5eJndrpAPBnqnGyA
- PVM5VJKQuFvk/CLaFPIMSuGVXcC4725e9428bUWB6j7MJbPX+ClTiUMn1zzg6EUSYZgLQTt
- DmhtlVXnq6MPyvShBmrmN/TO0hAoX+eKPBnpWxW+PsFFePs55CfmyPFD+mv14hR/kQ3xqmz
- QakJocJN5f3gi7rF0NFcg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:KV2i6mp1x5E=:lbVqwXsT3kIEt4Smtc5p5d
- o9wOEtlSTktEYVPi/cf8TVD7umMlASIlHnu/YDt4/7RLeNkBR0mQivX7ueyDCaTcW3+9PWjxD
- 1tmCvLgplOZB+lzFlWBUhlAhOiu2euFaarC1f7Iv6QsXEQfQlkUhf0AzVFyVKW2zABsb/jCn1
- qb5HiRchenlmZB5AY7kHnZhRRVE+gg0llefoJ1LhgE7whFg1+ed4gbvPyo0caKz6HMTR0m+mF
- HikB6kEHruCMr/5u3YC5bRDXwbpBPOgQ5zZa7skVVWvIcQkS7RXSbzHeDC4uRapS/JYO4CM7d
- 0CWWGuxA+TYVqWI3cjXbHHKjaec1gzOTJD7ssuJd5SIQpldKMR8YNB999gOeVX/wX/huP9VYl
- MprTB7MfJUZWGkfLSOg6KR3ZL5fgKRt+hqVym2aIfIClln/q419gMHwE/lSr1dXVHoDgy4RvZ
- eNf0oNrf0yVYvf+6sHZkGKLS3RQ9q/a+zL0D3gfaYTdCSnb6vPoyQs/m/ivh8hmV65iNRQkkz
- ASaPism5CP/hsa9QAHkWGLaDud+2ixQedmn5qBpzg5Dc2SHc8A/Co0IgSzKAj6QBlMdTIcVhH
- jUafmTlmiaP3O/yaxn8lW+JxqS0BG5iqr0OWnuph0L3OXCjXpmFECN8GqmxQcG4yGQ4Fyxj7k
- ydInHRJ086M1z7pKSXXfQxT49gzvm9HxVVJAKwioxmlqcVwVm1sotj84dWBTWDZg4IWMAXS+8
- iLF66qfyAHpiY8TyoiXnhcVeyMJKwHthALV6BCBhOL5LqwpoliEZnfFvcA+psboYWbJRPYpbi
- Oh7EeTnEbnP15DRZGoqT6wGimYH/dDe1XyW/jvPD5sGDQs2OXFWi7UyDXZ84ZG8lkR3My0UjG
- 4E11tAxyOLUCZXPEXJZw==
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 4:10 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 11/26/19 3:43 PM, Arnd Bergmann wrote:
-> > On Mon, Nov 25, 2019 at 3:40 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >> On 11/11/19 9:38 PM, Arnd Bergmann wrote:
-> >                 struct v4l2_event *ev = parg;
-> >                 struct v4l2_event_time32 ev32 = {
-> >                         .type           = ev->type,
-> >                         .pending        = ev->pending,
-> >                         .sequence       = ev->sequence,
-> >                         .timestamp.tv_sec  = ev->timestamp.tv_sec,
-> >                         .timestamp.tv_nsec = ev->timestamp.tv_nsec,
-> >                         .id             = ev->id,
-> >                 };
-> >
-> >                 memcpy(ev32.u, ev->u, sizeof(ev->u));
-> >                 memcpy(ev32.reserved, ev->reserved, sizeof(ev->reserved));
-> >
-> >                 if (copy_to_user(arg, &ev32, sizeof(ev32)))
-> >                         return -EFAULT;
-> >
-> > Unfortunately this is a little uglier because it still requires the two
-> > memcpy() for the arrays, but I think it's good enough.
->
-> I agree.
->
-> Hmm, can't you do .u = ev->u ? Or is that not allowed by this syntax?
+On Mon, 2019-11-25 at 21:59 -0800, Doug Smythies wrote:
+> [...]
+> The issue with the schedutil governor not working properly in the 5.4 RC series
+> appears to be hardware dependant.
+> 
+> My test computer is Intel(R) Core(TM) i7-2600K CPU @ 3.40GHz., Sandy Bridge.
+> On a temporary basis, I acquired a computer with an
+> Intel(R) Core(TM) i5-4460 CPU @ 3.20GHz, Haswell,
+> and schedutil governor behaviour with the exact same kernels is fine:
+> 
+> That "gitsource" test, "make test" 6 times, first run thrown out:
+> 
+> Kernel 5.4 intel_cpufreq/schedutil: 3411.8 seconds
+> Kernel 5.4 + gg 6 intel_cpufreq/schedutil: 1696.7 seconds
+> Ratio: 0.49
+> Recall you got a ratio of 0.49 with 5th generation, Broadwell.
 
-No, that doesn't work here since the two unions are considered
-different types despite being defined identically. It would work by
-giving the union a name, but that name would also become visible
-to user space without adding more hacks.
+It's good to hear that we're getting the same performance numbers for this
+patchset on all hardware that is not a Sandy Bridge. Thanks for double
+checking, independent verification is always valuable.
 
-       Arnd
+Now, regarding the 5.4 regression for schedutil you see on Sandy Bridge: can
+we move this to the kernel bugzilla? Would you care to open a bug there and CC
+me to it? If it's reproducible we should assess it and see what can be done.
+
+I've tried gitsource on 5.3 versus 5.4, using intel_cpufreq + schedutil; I
+don't see the drop you're observing, but I don't have a Sandy Bridge readily
+available. This is what I see:
+
+Arithmetic mean of elapsed time for gitsource over 5 iterations (seconds):
+
+    microarch         v5.3 (baseline)                             v5.4
+    ------------------------------------------------------------------
+    Haswell         1337.84  +- 0.11%     1336.35  +- 0.12% (   0.11%)
+    Broadwell       1335.42  +- 0.08%     1352.54  +- 0.03% (  -1.28%)
+    Skylake          887.03  +- 1.02%      870.90  +- 1.19% (   1.82%)
+
+I'm looking around for a Sandy Bridge but I can make no promises at the
+moment.
+
+
+Thanks,
+Giovanni
