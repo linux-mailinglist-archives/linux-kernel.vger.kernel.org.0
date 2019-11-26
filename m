@@ -2,101 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B934109B62
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:39:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A77109B67
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfKZJj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:39:26 -0500
-Received: from foss.arm.com ([217.140.110.172]:60304 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbfKZJj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:39:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70E6855D;
-        Tue, 26 Nov 2019 01:39:25 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39FEF3F52E;
-        Tue, 26 Nov 2019 01:39:24 -0800 (PST)
-Date:   Tue, 26 Nov 2019 09:39:21 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
-Message-ID: <20191126093921.7tjsxiliyfgea76o@e107158-lin.cambridge.arm.com>
-References: <20191009104611.15363-1-qais.yousef@arm.com>
- <20191125163650.6a624fee@gandalf.local.home>
+        id S1727592AbfKZJmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 04:42:49 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39798 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727275AbfKZJmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 04:42:49 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 208C286972AA68386C43;
+        Tue, 26 Nov 2019 17:42:46 +0800 (CST)
+Received: from huawei.com (10.175.113.25) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Tue, 26 Nov 2019
+ 17:42:38 +0800
+From:   Wang ShaoBo <bobo.shaobowang@huawei.com>
+To:     <cj.chengjian@huawei.com>, <bobo.shaobowang@huawei.com>,
+        <mark.rutland@arm.com>, <huawei.libin@huawei.com>,
+        <guohanjun@huawei.com>, <xiexiuqi@huawei.com>, <wcohen@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <mtk.manpages@gmail.com>,
+        <wezhang@redhat.com>
+Subject: [PATCH] sys_personality: Streamline code in sys_personality()
+Date:   Tue, 26 Nov 2019 17:40:45 +0800
+Message-ID: <20191126094045.134654-1-bobo.shaobowang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191125163650.6a624fee@gandalf.local.home>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/25/19 16:36, Steven Rostedt wrote:
-> Sorry for the very late response...
+SYSCALL_DEFINE1 in kernel/exec_domain.c looks like verbose,
+ksys_personality() can make it more concise.
 
-No worries and thanks for taking the time to look at this!
+Signed-off-by: Wang ShaoBo <bobo.shaobowang@huawei.com>
+---
+ kernel/exec_domain.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-> 
-> On Wed,  9 Oct 2019 11:46:11 +0100
-> Qais Yousef <qais.yousef@arm.com> wrote:
-> 
-> > ATM the uclamp value are only used for frequency selection; but on
-> > heterogeneous systems this is not enough and we need to ensure that the
-> > capacity of the CPU is >= uclamp_min. Which is what implemented here.
-> 
-> Is it possible that the capacity can be fixed, where the process can
-> just have a cpu mask of CPUs that has the capacity for it?
+diff --git a/kernel/exec_domain.c b/kernel/exec_domain.c
+index 33f07c5f2515..f7a0512ddc23 100644
+--- a/kernel/exec_domain.c
++++ b/kernel/exec_domain.c
+@@ -37,10 +37,5 @@ module_init(proc_execdomains_init);
+ 
+ SYSCALL_DEFINE1(personality, unsigned int, personality)
+ {
+-	unsigned int old = current->personality;
+-
+-	if (personality != 0xffffffff)
+-		set_personality(personality);
+-
+-	return old;
++	return ksys_personality(personality);
+ }
+-- 
+2.20.1
 
-It is possible and I did consider it. But it didn't feel right because:
-
-	1. The same can be achieved with regular affinities.
-	2. On some systems, especially medium and lower end devices the number
-	   of big cores might be small (2 bigs and 6 littles is common).
-	   I couldn't justify that pinning to bigs is always better than
-	   letting the system try to balance itself in case it gets overloaded.
-
-The thing with RT is that generally we offer little guarantees if the system is
-not designed properly and the user can easily shoot themselves in the foot.
-
-This implementation offered the simplest best effort while still not being too
-restrictive.
-
-But the idea is valid and worth looking at in the future.
-
-> 
-> Not that this will affect this patch now, but just something for the
-> future.
-> 
-> > 
-> > 	capacity_orig_of(cpu) >= rt_task.uclamp_min
-> > 
-> > Note that by default uclamp.min is 1024, which means that RT tasks will
-> > always be biased towards the big CPUs, which make for a better more
-> > predictable behavior for the default case.
-> > 
-> > Must stress that the bias acts as a hint rather than a definite
-> > placement strategy. For example, if all big cores are busy executing
-> > other RT tasks we can't guarantee that a new RT task will be placed
-> > there.
-> > 
-> > On non-heterogeneous systems the original behavior of RT should be
-> > retained. Similarly if uclamp is not selected in the config.
-> > 
-> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Thanks for your time :-)
-
---
-Qais Yousef
