@@ -2,83 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3AEC10A284
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 17:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D545210A2DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 17:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728465AbfKZQya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 11:54:30 -0500
-Received: from mail-wm1-f41.google.com ([209.85.128.41]:39270 "EHLO
-        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbfKZQya (ORCPT
+        id S1728851AbfKZQ4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 11:56:07 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:34757 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727879AbfKZQ4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 11:54:30 -0500
-Received: by mail-wm1-f41.google.com with SMTP id t26so4158000wmi.4
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 08:54:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jTx9XvAoitX5ElOHyXfUJ5O+w+mtZmpTIHTRwny9Xek=;
-        b=hpyqvE9VeMaWI/eZXjmt+RGFOApuV/H9pWeb7ytb3XEgK/upMTknPdqtDJZ+QrruaF
-         oj4dl5xb8mUb0PGQ3pn4NehC2HtcZjtAvX+ZGXe7qiNpN5Y+gtlPjFdrTXn0A3Nl0GLv
-         nXwHN7hd+fje3Jw2Tiia2BkL+u6ddqshMPNpyJ+1h7JfwFlPXEEAT1TUu7l/x+zYB8Wz
-         zYxw9m5dgtKDGXk8QFqcW4SuZT3dyD8F5rlbFJXqqnoc/TUiwksCnQJuST0she6qq7Jg
-         QoPZVpw/xzIeWDx5bJZp1DcMfMtO75WeS9I3fHWVUwupzxXDbfU32QhYqNiE+kNztg4S
-         h3XQ==
-X-Gm-Message-State: APjAAAWJNIigUJfLuSCdYSFiW3fJ0h5YdU0cpdBbR/LxbmlTjK0KEp+/
-        XbatrEq2s0kx4gik2AC1NFwBmAZB
-X-Google-Smtp-Source: APXvYqyNQMXlfZcrpPbACcE9XEaIY+zXE74QnRlwETHHnA9AoeY9wlB4/0H5Mi4sPRDNtH7ng3/Gtw==
-X-Received: by 2002:a1c:a906:: with SMTP id s6mr5400635wme.125.1574787267780;
-        Tue, 26 Nov 2019 08:54:27 -0800 (PST)
-Received: from localhost (ip-37-188-250-171.eurotel.cz. [37.188.250.171])
-        by smtp.gmail.com with ESMTPSA id b14sm3679664wmj.18.2019.11.26.08.54.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 08:54:26 -0800 (PST)
-Date:   Tue, 26 Nov 2019 17:54:20 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: SLUB: purpose of sysfs events on cache creation/removal
-Message-ID: <20191126165420.GL20912@dhcp22.suse.cz>
-References: <20191126121901.GE20912@dhcp22.suse.cz>
- <alpine.DEB.2.21.1911261632030.9857@www.lameter.com>
+        Tue, 26 Nov 2019 11:56:07 -0500
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xAQGtfEc076814;
+        Wed, 27 Nov 2019 01:55:41 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Wed, 27 Nov 2019 01:55:41 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from localhost.localdomain (121.252.232.153.ap.dti.ne.jp [153.232.252.121])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xAQGtahH076800
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 27 Nov 2019 01:55:41 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Hugh Cole-Baker <sigmaris@gmail.com>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH] arm64: dts: rockchip: split rk3399-rockpro64 for v2 and v2.1 boards
+Date:   Wed, 27 Nov 2019 01:55:29 +0900
+Message-Id: <20191126165529.30703-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1911261632030.9857@www.lameter.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 26-11-19 16:32:56, Cristopher Lameter wrote:
-> On Tue, 26 Nov 2019, Michal Hocko wrote:
-> 
-> > Hi,
-> > I have just learnt about KOBJ_{ADD,REMOVE} sysfs events triggered on
-> > kmem cache creation/removal when SLUB is configured. This functionality
-> > goes all the way down to initial SLUB merge. I do not see any references
-> > in the Documentation explaining what those events are used for and
-> > whether there are any real users.
-> >
-> > Could you shed some more light into this?
-> 
-> I have no idea about what this is.
+This patch splits rk3399-rockpro64 dts file to 2 files for v2 and
+v2.1 boards.
 
-It seems to be there since the initial merge. I suspect this is just
-following a generic sysfs rule that each file has to provide those
-events?
+Both v2 and v2.1 boards can use almost same settings but we find a
+difference in I2C address of audio CODEC ES8136.
 
-> There have been many people who
-> reworked the sysfs support and this has been the cause for a lot of
-> breakage over the years.
+Reported-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ arch/arm64/boot/dts/rockchip/Makefile         |  3 +-
+ .../dts/rockchip/rk3399-rockpro64-v2.1.dts    | 30 +++++++++++++++++++
+ .../boot/dts/rockchip/rk3399-rockpro64-v2.dts | 30 +++++++++++++++++++
+ ...99-rockpro64.dts => rk3399-rockpro64.dtsi} | 18 -----------
+ 4 files changed, 62 insertions(+), 19 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.1.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dts
+ rename arch/arm64/boot/dts/rockchip/{rk3399-rockpro64.dts => rk3399-rockpro64.dtsi} (97%)
 
-Remember any specifics?
-
-I am mostly interested in potential users. In other words I am thinking
-to suppress those events. There is already ke knob to control existence
-of memcg caches but I do not see anything like this for root caches.
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index 48fb631d5451..3debaeb517fd 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -33,6 +33,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc-mezzanine.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock-pi-4.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock960.dtb
+-dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64-v2.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64-v2.1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.1.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.1.dts
+new file mode 100644
+index 000000000000..9450207bedad
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.1.dts
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
++ * Copyright (c) 2018 Akash Gajjar <Akash_Gajjar@mentor.com>
++ * Copyright (c) 2019 Katsuhiro Suzuki <katsuhiro@katsuster.net>
++ */
++
++/dts-v1/;
++#include "rk3399-rockpro64.dtsi"
++
++/ {
++	model = "Pine64 RockPro64 v2.1";
++	compatible = "pine64,rockpro64", "rockchip,rk3399";
++};
++
++&i2c1 {
++	es8316: codec@11 {
++		compatible = "everest,es8316";
++		reg = <0x11>;
++		clocks = <&cru SCLK_I2S_8CH_OUT>;
++		clock-names = "mclk";
++		#sound-dai-cells = <0>;
++
++		port {
++			es8316_p0_0: endpoint {
++				remote-endpoint = <&i2s1_p0_0>;
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dts
+new file mode 100644
+index 000000000000..7bd37eaa1d57
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dts
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
++ * Copyright (c) 2018 Akash Gajjar <Akash_Gajjar@mentor.com>
++ * Copyright (c) 2019 Katsuhiro Suzuki <katsuhiro@katsuster.net>
++ */
++
++/dts-v1/;
++#include "rk3399-rockpro64.dtsi"
++
++/ {
++	model = "Pine64 RockPro64 v2";
++	compatible = "pine64,rockpro64", "rockchip,rk3399";
++};
++
++&i2c1 {
++	es8316: codec@10 {
++		compatible = "everest,es8316";
++		reg = <0x10>;
++		clocks = <&cru SCLK_I2S_8CH_OUT>;
++		clock-names = "mclk";
++		#sound-dai-cells = <0>;
++
++		port {
++			es8316_p0_0: endpoint {
++				remote-endpoint = <&i2s1_p0_0>;
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+similarity index 97%
+rename from arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+rename to arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+index 7f4b2eba31d4..183eda4ffb9c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+@@ -4,16 +4,12 @@
+  * Copyright (c) 2018 Akash Gajjar <Akash_Gajjar@mentor.com>
+  */
+ 
+-/dts-v1/;
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "rk3399.dtsi"
+ #include "rk3399-opp.dtsi"
+ 
+ / {
+-	model = "Pine64 RockPro64";
+-	compatible = "pine64,rockpro64", "rockchip,rk3399";
+-
+ 	chosen {
+ 		stdout-path = "serial2:1500000n8";
+ 	};
+@@ -476,20 +472,6 @@ &i2c1 {
+ 	i2c-scl-rising-time-ns = <300>;
+ 	i2c-scl-falling-time-ns = <15>;
+ 	status = "okay";
+-
+-	es8316: codec@11 {
+-		compatible = "everest,es8316";
+-		reg = <0x11>;
+-		clocks = <&cru SCLK_I2S_8CH_OUT>;
+-		clock-names = "mclk";
+-		#sound-dai-cells = <0>;
+-
+-		port {
+-			es8316_p0_0: endpoint {
+-				remote-endpoint = <&i2s1_p0_0>;
+-			};
+-		};
+-	};
+ };
+ 
+ &i2c3 {
 -- 
-Michal Hocko
-SUSE Labs
+2.24.0
+
