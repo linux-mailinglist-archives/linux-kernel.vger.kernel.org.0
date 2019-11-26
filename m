@@ -2,147 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B14710A099
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:44:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70F9510A0AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfKZOoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 09:44:02 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:50287 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfKZOoC (ORCPT
+        id S1728030AbfKZOqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 09:46:46 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37551 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfKZOqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 09:44:02 -0500
-Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MIxmm-1iGQGI0lIo-00KPaf; Tue, 26 Nov 2019 15:44:00 +0100
-Received: by mail-qt1-f174.google.com with SMTP id q8so18985162qtr.10;
-        Tue, 26 Nov 2019 06:43:59 -0800 (PST)
-X-Gm-Message-State: APjAAAVEEHufWk6ZOeZpqEg5ZuzkmH8tQ6tjfEbCmq1KddqYj9sX2Crx
-        CtZ9UEKITgRey2Dy5xWIerJ78PolIu2AbVpj1tA=
-X-Google-Smtp-Source: APXvYqzRjNzcbtyT8m8Js3ouqRwuywNkSzgoSbWGRTp68Xa/cFG4Ckp/M6kGXAKo5/MG+uIlcDuSE2MktCaWDNF8BHg=
-X-Received: by 2002:aed:3fbc:: with SMTP id s57mr20247572qth.18.1574779438951;
- Tue, 26 Nov 2019 06:43:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20191111203835.2260382-1-arnd@arndb.de> <20191111203835.2260382-6-arnd@arndb.de>
- <272c471b-a7a9-c830-e19b-d1f19ee47073@xs4all.nl>
-In-Reply-To: <272c471b-a7a9-c830-e19b-d1f19ee47073@xs4all.nl>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 26 Nov 2019 15:43:42 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3vHWBJU6EiUbRKJ01Zsv5E5Yfr+=h2Dg95atjvaHZ+Rg@mail.gmail.com>
-Message-ID: <CAK8P3a3vHWBJU6EiUbRKJ01Zsv5E5Yfr+=h2Dg95atjvaHZ+Rg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/8] media: v4l2-core: fix VIDIOC_DQEVENT for time64 ABI
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:sVf1GKu7Qs2YDYafC87hpBxta/ajrGexzYgpMCoRb6AVSelhaAK
- zl2sHsU460UbVkjFNFBbuAwqXjtc72k41YmVRt2fJL4s903LpkWZ5EFt/G+Kd4lVVuzeUeQ
- qEmrqlQ1dyVwW+7r2ljpxrH/MIZ3Fd8kB82OrkTS7VCDC0pqhEf9kMN6jj1NtUaGrQcmHfg
- VAlw1on7uVoRS4trRoBHg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:t+Q4V2GWkv4=:Y/MPRVz5xJpT10FLX+efh6
- 29FLKGigzHLjaGdI3ib+NTvc1NRs1BDveuJEX/KyREJ/RbU5OO9deyArgj7beE7hexsY3i4rD
- 36mHV3Rl6+B7apvVwxe9mr84roeItRJJZlCWo5piSpdlQn34tHrJ5IjRyXDTEU9af+YqOC79h
- UScGxWE7bZNXe0/BKPkF46Z8Gvl6cmEpY53F1g3cthl//BPm9bsEjHXoUTCaWK0Soru2flVV9
- kqbrBWSI2V4TA7MAuce5ja0t0JrBVakNuXfL/pOqxv0ZxdA1yuxFkGRsiAWtfo5zc7NC0MvGO
- JZStFxM9l+dij9TqxlaqHEIZbDfRhPMVoKXETQUgwwQNxtBUPCdlPl51d0WqEB9bxqU4fLtkT
- Og6lBzlZebsc+CYC2moYwOmlYgU4IidA+E76KcJvf4meOGqXR+N2FxMtBNIf8b5nJQ3/9Uu+G
- KnuZhOQ7BTcpJJeF3MmTsv7vTxgulMxhDgw0CwVrT9SiatVu35SmA/hFQwO6JkMJf5L5LLQ/L
- co93mQfvhbNH/KS/AwHYk0uXAO2RbzrrydX0uGIqBsehLC0tBLSrlTR+rtFetM3wqduYjZc8x
- 8zsS5od8kNPK5BIABvZIWd9J9EjEvVSaqbrjXdXlfWnTjUt21giGJSVeQG3NK5DOuFhVcBcze
- XBCF1BmgKkCkFhLCsSHH9by5aB/NwvDHM9ftrF7JLfjp2l4H7OLG1tKHjILRXMhpjCsPM27jB
- xxnNDaoRzJ/kPZqVdVitr9wJ8THtFZ8RormoqZkLGQdwskWUz8Ua9z5js9IXlZlL7N1Mzfy91
- 1HSNd9N3IaxU+8Bz17yI11CAAZFVEuZqoylQH9X5nnXq+YJjo/sv9t9F+8OuRsCdDBMmXTtyR
- 7XAxwnuLpwAIk0e2ldZw==
+        Tue, 26 Nov 2019 09:46:46 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g7so2086075wrw.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 06:46:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Z4d670MtFAZBRVHDDr7y0hwhh3jdjrRCwzJNRcQEIpE=;
+        b=b2TOTmIssjHAdfu33yethPu4DPKpr4YhsGK0jiWYpI4rByPGN6vKrELD6l/eWkO5Pj
+         JwsxE59R4krfQTwhLW/J2sVsJvp0r616lQcwOq/fprrfZMYtnFFUpWcLQdCEX/ehF8wO
+         VULG/somi6ZYO+lGfnZgzyHswOwE1dgdrO67woKr/PF/4CXPGntHp6PDq+Ao0yoeDW43
+         Q/UvWkHMNQ2A9sLohyiUJZTaFjfA7V1NyMYDRy0O209j42zNyjU9icdjwiD8ShXQJUZ+
+         ss9v9JtpHF6BP598vF/Oe/BxVVBihnbjK33XmDbS9QQp/F/ZgepjPbrv1MB2nCvpSVZy
+         UONg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Z4d670MtFAZBRVHDDr7y0hwhh3jdjrRCwzJNRcQEIpE=;
+        b=B4Bv9eLG81iyirk5zHV4/+WfmH7EPSB6oBZFTH5k+buErmkzZQtF6lAs2cwcFIR8Q6
+         TSPHJBJd94NYeGtkSIz55rXq2UjzcrfR8zgDSnNKyPhpXgvZRm6b9Yihl3hnnTPkFF0K
+         KM7HFSCJu2e7uK+wV3RHWkLRBNeCSm35e2uDmphVBw3yAVY3xbInZ3yXL0T2JyyxOJAI
+         9Qc0YHm2ZB5BjeZsGEmxdzT0WznsM8NyWEAxorWOLX3vfkRZNbcxSLiSYcSXr2bpe1cE
+         5GWdB3J/ZQom8FQC1bBcAwRkmtS56aQ6BG8c2rjnBrx9ZtFQLJl5pD4dy86OH/11MtN+
+         GqjQ==
+X-Gm-Message-State: APjAAAU27YEriN0yZFLQ3pkz7zy5uG4BLvg54Sc3iRIviWKqqGW5a0uX
+        CZdJfO8ThZKSCMndAxlWVlM8x3THDfk=
+X-Google-Smtp-Source: APXvYqz7zA8LG92MJSyDd2eRIISQ4Qcp/e84JCJxgZqxCKET9zDZXwoc5lrMqJeg6GKWYIPxTIWQKw==
+X-Received: by 2002:a05:6000:12:: with SMTP id h18mr14314290wrx.87.1574779604252;
+        Tue, 26 Nov 2019 06:46:44 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a58:8166:7500:6c1e:69e9:a832:6384])
+        by smtp.gmail.com with ESMTPSA id s82sm3325380wms.28.2019.11.26.06.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2019 06:46:43 -0800 (PST)
+From:   Ilie Halip <ilie.halip@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Nick Desaulniers <ndesaulniers@google.com>, Andy <luto@kernel.org>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH v3] x86/boot: discard .eh_frame sections
+Date:   Tue, 26 Nov 2019 16:45:44 +0200
+Message-Id: <20191126144545.19354-1-ilie.halip@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191118175223.GM6363@zn.tnic>
+References: <20191118175223.GM6363@zn.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 3:40 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 11/11/19 9:38 PM, Arnd Bergmann wrote:
+When using GCC as compiler and LLVM's lld as linker, linking
+setup.elf fails:
+      LD      arch/x86/boot/setup.elf
+    ld.lld: error: init sections too big!
 
-> >       switch (cmd) {
-> > +#ifdef CONFIG_COMPAT_32BIT_TIME
-> > +     case VIDIOC_DQEVENT_TIME32: {
-> > +             struct v4l2_event_time32 ev32;
-> > +             struct v4l2_event *ev = parg;
-> > +
-> > +             memcpy(&ev32, ev, offsetof(struct v4l2_event, timestamp));
-> > +             ev32.timestamp.tv_sec = ev->timestamp.tv_sec;
-> > +             ev32.timestamp.tv_nsec = ev->timestamp.tv_nsec;
-> > +             memcpy(&ev32.id, &ev->id, sizeof(*ev) - offsetof(struct v4l2_event, id));
->
-> This looks dangerous: due to 64-bit alignment requirements the
-> v4l2_event struct may end with a 4-byte hole at the end of the struct,
-> which you do not want to copy to ev32.
->
-> I think it is safer to just copy id and reserved separately:
->
->                 ev32.id = ev->id;
->                 memcpy(ev32.reserved, ev->reserved, sizeof(ev->reserved));
+This happens because GCC generates .eh_frame sections for most
+of the files in that directory, then ld.lld places the merged
+section before __end_init, triggering an assert in the linker
+script.
 
-Actually I think it's that's also bad: The padding in *ev must already be
-cleared here (otherwise there is a leak of stack data in the kernel
-already), so  *not* copying the padding requires at least adding a memset
-upfront.
+Fix this by discarding the .eh_frame sections, as suggested by
+Boris. The kernel proper linker script discards them too.
 
-I would do the per-member copy like I did for v4l2_buffer in my
-other reply:
+Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+Link: https://lore.kernel.org/lkml/20191118175223.GM6363@zn.tnic/
+Link: https://github.com/ClangBuiltLinux/linux/issues/760
+Suggested-by: Borislav Petkov <bp@alien8.de>
+---
 
-                struct v4l2_event *ev = parg;
-                struct v4l2_event_time32 ev32 = {
-                        .type           = ev->type,
-                        .pending        = ev->pending,
-                        .sequence       = ev->sequence,
-                        .timestamp.tv_sec  = ev->timestamp.tv_sec,
-                        .timestamp.tv_nsec = ev->timestamp.tv_nsec,
-                        .id             = ev->id,
-                };
+Changes in V3:
+ * discard .eh_frame instead of placing it after .rodata
 
-                memcpy(ev32.u, ev->u, sizeof(ev->u));
-                memcpy(ev32.reserved, ev->reserved, sizeof(ev->reserved));
+Changes in V2:
+ * removed wildcard for input sections (.eh_frame* -> .eh_frame)
 
-                if (copy_to_user(arg, &ev32, sizeof(ev32)))
-                        return -EFAULT;
+ arch/x86/boot/setup.ld | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Unfortunately this is a little uglier because it still requires the two
-memcpy() for the arrays, but I think it's good enough.
+diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
+index 0149e41d42c2..3da1c37c6dd5 100644
+--- a/arch/x86/boot/setup.ld
++++ b/arch/x86/boot/setup.ld
+@@ -51,7 +51,10 @@ SECTIONS
+ 	. = ALIGN(16);
+ 	_end = .;
+ 
+-	/DISCARD/ : { *(.note*) }
++	/DISCARD/	: {
++		*(.eh_frame)
++		*(.note*)
++	}
+ 
+ 	/*
+ 	 * The ASSERT() sink to . is intentional, for binutils 2.14 compatibility:
+-- 
+2.17.1
 
-Any other ideas? Let me know if I should do a memset()
-plus individual member copy instead.
-> > +             if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
-> > +                     return -ENOIOCTLCMD;
-> > +
-> > +             rval = v4l2_event_dequeue(vfh, &ev, file->f_flags & O_NONBLOCK);
-> > +
-> > +             memcpy(ev32, &ev, offsetof(struct v4l2_event, timestamp));
-> > +             ev32->timestamp.tv_sec = ev.timestamp.tv_sec;
-> > +             ev32->timestamp.tv_nsec = ev.timestamp.tv_nsec;
-> > +             memcpy(&ev32->id, &ev.id,
-> > +                    sizeof(ev) - offsetof(struct v4l2_event, id));
->
-> Ditto.
-
-Using the corresponding code here as well.
-
-> > +
-> >  #define V4L2_EVENT_SUB_FL_SEND_INITIAL               (1 << 0)
-> >  #define V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK     (1 << 1)
-> >
-> > @@ -2486,6 +2515,7 @@ struct v4l2_create_buffers {
-> >  #define      VIDIOC_S_DV_TIMINGS     _IOWR('V', 87, struct v4l2_dv_timings)
-> >  #define      VIDIOC_G_DV_TIMINGS     _IOWR('V', 88, struct v4l2_dv_timings)
-> >  #define      VIDIOC_DQEVENT           _IOR('V', 89, struct v4l2_event)
-> > +#define      VIDIOC_DQEVENT_TIME32    _IOR('V', 89, struct v4l2_event_time32)
->
-> Shouldn't this be under #ifdef __KERNEL__?
->
-> And should this be in the public header at all? media/v4l2-ioctl.h might be a better
-> place.
-
-Done.
-
-       Arnd
