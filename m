@@ -2,205 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173D410A542
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 21:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB43F10A554
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 21:17:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfKZUPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 15:15:16 -0500
-Received: from mga01.intel.com ([192.55.52.88]:45565 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbfKZUPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 15:15:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2019 12:15:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,246,1571727600"; 
-   d="scan'208";a="206558824"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Nov 2019 12:15:10 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 28B11300B64; Tue, 26 Nov 2019 12:15:10 -0800 (PST)
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Borislav Petkov <bp@suse.de>
-Cc:     x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86: Filter MSR writes from luserspace
-References: <20191126112234.GA22393@zn.tnic>
-Date:   Tue, 26 Nov 2019 12:15:10 -0800
-In-Reply-To: <20191126112234.GA22393@zn.tnic> (Borislav Petkov's message of
-        "Tue, 26 Nov 2019 12:22:34 +0100")
-Message-ID: <87zhgie6nl.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1727095AbfKZUQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 15:16:25 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:44714 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726180AbfKZUQY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 15:16:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574799383;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tlkcBMz0aDkfjyZgidJYNXI4jyBSSwkGWerhRRVteAY=;
+        b=VXeCzyXPP/7NpwGn0fXRZdvNxDC7JuP/QvSq08Gr6WPO1M6cGs6cP+XSzdbbElaQGe0IAf
+        09SqMthrLPVnlUV+nkN4Q7VMJjSscueElnxs3pmFFXBzpCd2xdP2T447NieY4vdr2BPnrd
+        US3OPAOD4pEABdf+zoYHMsVd42hHKoU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-37-vyS4FXuhNRmseLIyxbB50w-1; Tue, 26 Nov 2019 15:16:19 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE27D1005512;
+        Tue, 26 Nov 2019 20:16:17 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 06A135D9CA;
+        Tue, 26 Nov 2019 20:16:14 +0000 (UTC)
+Date:   Tue, 26 Nov 2019 15:16:13 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: docs: device-mapper: Add dm-clone to documentation index
+Message-ID: <20191126201613.GA3750@redhat.com>
+References: <20191126185627.970-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191126185627.970-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: vyS4FXuhNRmseLIyxbB50w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Borislav Petkov <bp@suse.de> writes:
-> +int msr_filter_write(u32 reg)
-> +{
-> +	/* all perf counter MSRs */
-> +	switch (reg) {
-> +	case MSR_K7_EVNTSEL0:
-> +	case MSR_K7_PERFCTR0:
-> +	case MSR_F15H_PERF_CTL:
-> +	case MSR_F15H_PERF_CTR:
-> +	case MSR_AMD64_IBSBRTARGET:
-> +	case MSR_AMD64_IBSCTL:
-> +	case MSR_AMD64_IBSFETCHCTL:
-> +	case MSR_AMD64_IBSOPCTL:
-> +	case MSR_AMD64_IBSOPDATA4:
-> +	case MSR_AMD64_IBSOP_REG_COUNT:
-> +	case MSR_AMD64_IBSOP_REG_MASK:
-> +	case MSR_AMD64_IBS_REG_COUNT_MAX:
-> +	case MSR_ARCH_PERFMON_EVENTSEL0:
-> +	case MSR_ARCH_PERFMON_FIXED_CTR0:
-> +	case MSR_ARCH_PERFMON_FIXED_CTR_CTRL:
-> +	case MSR_ARCH_PERFMON_PERFCTR0:
-> +	case MSR_CORE_C1_RES:
-> +	case MSR_CORE_C3_RESIDENCY:
-> +	case MSR_CORE_C6_RESIDENCY:
-> +	case MSR_CORE_C7_RESIDENCY:
-> +	case MSR_CORE_PERF_GLOBAL_CTRL:
-> +	case MSR_CORE_PERF_GLOBAL_OVF_CTRL:
-> +	case MSR_CORE_PERF_GLOBAL_STATUS:
-> +	case MSR_DRAM_ENERGY_STATUS:
-> +	case MSR_F15H_CU_MAX_PWR_ACCUMULATOR:
-> +	case MSR_F15H_CU_PWR_ACCUMULATOR:
-> +	case MSR_F15H_NB_PERF_CTL:
-> +	case MSR_F15H_PTSC:
-> +	case MSR_F16H_L2I_PERF_CTL:
-> +	case MSR_F17H_IRPERF:
-> +	case MSR_IA32_APERF:
-> +	case MSR_IA32_DEBUGCTLMSR:
-> +	case MSR_IA32_DS_AREA:
-> +	case MSR_IA32_MISC_ENABLE:
-> +	case MSR_IA32_MPERF:
-> +	case MSR_IA32_PEBS_ENABLE:
-> +	case MSR_IA32_PERF_CAPABILITIES:
-> +	case MSR_IA32_PMC0:
-> +	case MSR_IA32_RTIT_ADDR0_A:
-> +	case MSR_IA32_RTIT_ADDR0_B:
-> +	case MSR_IA32_RTIT_ADDR1_A:
-> +	case MSR_IA32_RTIT_ADDR1_B:
-> +	case MSR_IA32_RTIT_ADDR2_A:
-> +	case MSR_IA32_RTIT_ADDR2_B:
-> +	case MSR_IA32_RTIT_ADDR3_A:
-> +	case MSR_IA32_RTIT_ADDR3_B:
-> +	case MSR_IA32_RTIT_CTL:
-> +	case MSR_IA32_RTIT_OUTPUT_BASE:
-> +	case MSR_IA32_RTIT_OUTPUT_MASK:
-> +	case MSR_IA32_RTIT_STATUS:
-> +	case MSR_IA32_THERM_STATUS:
-> +	case MSR_IA32_VMX_MISC:
-> +	case MSR_KNC_EVNTSEL0:
-> +	case MSR_KNC_IA32_PERF_GLOBAL_CTRL:
-> +	case MSR_KNC_IA32_PERF_GLOBAL_OVF_CONTROL:
-> +	case MSR_KNC_IA32_PERF_GLOBAL_STATUS:
-> +	case MSR_KNC_PERFCTR0:
-> +	case MSR_KNL_CORE_C6_RESIDENCY:
-> +	case MSR_LBR_CORE_FROM:
-> +	case MSR_LBR_CORE_TO:
-> +	case MSR_LBR_INFO_0:
-> +	case MSR_LBR_NHM_FROM:
-> +	case MSR_LBR_NHM_TO:
-> +	case MSR_LBR_SELECT:
-> +	case MSR_LBR_TOS:
-> +	case MSR_OFFCORE_RSP_0:
-> +	case MSR_OFFCORE_RSP_1:
-> +	case MSR_P4_ALF_ESCR0:
-> +	case MSR_P4_ALF_ESCR1:
-> +	case MSR_P4_BPU_CCCR0:
-> +	case MSR_P4_BPU_ESCR0:
-> +	case MSR_P4_BPU_ESCR1:
-> +	case MSR_P4_BPU_PERFCTR0:
-> +	case MSR_P4_BSU_ESCR0:
-> +	case MSR_P4_BSU_ESCR1:
-> +	case MSR_P4_CRU_ESCR0:
-> +	case MSR_P4_CRU_ESCR1:
-> +	case MSR_P4_CRU_ESCR2:
-> +	case MSR_P4_CRU_ESCR3:
-> +	case MSR_P4_CRU_ESCR4:
-> +	case MSR_P4_CRU_ESCR5:
-> +	case MSR_P4_DAC_ESCR0:
-> +	case MSR_P4_DAC_ESCR1:
-> +	case MSR_P4_FIRM_ESCR0:
-> +	case MSR_P4_FIRM_ESCR1:
-> +	case MSR_P4_FLAME_ESCR0:
-> +	case MSR_P4_FLAME_ESCR1:
-> +	case MSR_P4_FSB_ESCR0:
-> +	case MSR_P4_FSB_ESCR1:
-> +	case MSR_P4_IQ_ESCR0:
-> +	case MSR_P4_IQ_ESCR1:
-> +	case MSR_P4_IS_ESCR0:
-> +	case MSR_P4_IS_ESCR1:
-> +	case MSR_P4_ITLB_ESCR0:
-> +	case MSR_P4_ITLB_ESCR1:
-> +	case MSR_P4_IX_ESCR0:
-> +	case MSR_P4_IX_ESCR1:
-> +	case MSR_P4_MOB_ESCR0:
-> +	case MSR_P4_MOB_ESCR1:
-> +	case MSR_P4_MS_ESCR0:
-> +	case MSR_P4_MS_ESCR1:
-> +	case MSR_P4_PEBS_MATRIX_VERT:
-> +	case MSR_P4_PMH_ESCR0:
-> +	case MSR_P4_PMH_ESCR1:
-> +	case MSR_P4_RAT_ESCR0:
-> +	case MSR_P4_RAT_ESCR1:
-> +	case MSR_P4_SAAT_ESCR0:
-> +	case MSR_P4_SAAT_ESCR1:
-> +	case MSR_P4_SSU_ESCR0:
-> +	case MSR_P4_SSU_ESCR1:
-> +	case MSR_P4_TBPU_ESCR0:
-> +	case MSR_P4_TBPU_ESCR1:
-> +	case MSR_P4_TC_ESCR0:
-> +	case MSR_P4_TC_ESCR1:
-> +	case MSR_P4_U2L_ESCR0:
-> +	case MSR_P4_U2L_ESCR1:
-> +	case MSR_PEBS_FRONTEND:
-> +	case MSR_PEBS_LD_LAT_THRESHOLD:
-> +	case MSR_PKG_C10_RESIDENCY:
-> +	case MSR_PKG_C2_RESIDENCY:
-> +	case MSR_PKG_C3_RESIDENCY:
-> +	case MSR_PKG_C6_RESIDENCY:
-> +	case MSR_PKG_C7_RESIDENCY:
-> +	case MSR_PKG_C8_RESIDENCY:
-> +	case MSR_PKG_C9_RESIDENCY:
-> +	case MSR_PKG_ENERGY_STATUS:
-> +	case MSR_PLATFORM_ENERGY_STATUS:
-> +	case MSR_PLATFORM_INFO:
-> +	case MSR_PP0_ENERGY_STATUS:
-> +	case MSR_PP1_ENERGY_STATUS:
-> +	case MSR_PPERF:
-> +	case MSR_RAPL_POWER_UNIT:
-> +	case MSR_SMI_COUNT:
-> +		return -EPERM;
+On Tue, Nov 26 2019 at  1:56pm -0500,
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
+> When the dm-clone documentation was added, it was not added to the
+> documentation index, leading to a warning when building the
+> documentation:
+>=20
+>     Documentation/admin-guide/device-mapper/dm-clone.rst: WARNING: docume=
+nt isn't included in any toctree
+>=20
+> Fixes: 7431b7835f554f86 ("dm: add clone target")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/admin-guide/device-mapper/index.rst | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/admin-guide/device-mapper/index.rst b/Document=
+ation/admin-guide/device-mapper/index.rst
+> index 4872fb6d29524593..ec62fcc8eeceed83 100644
+> --- a/Documentation/admin-guide/device-mapper/index.rst
+> +++ b/Documentation/admin-guide/device-mapper/index.rst
+> @@ -8,6 +8,7 @@ Device Mapper
+>      cache-policies
+>      cache
+>      delay
+> +    dm-clone
+>      dm-crypt
+>      dm-dust
+>      dm-flakey
+>=20
 
-This will break a bazillion of tools that rely on programing many of
-those MSRs from user space. Just do a search on github for all the MSR
-names you're blocking. PMU use from ring 3 is a fairly common use case.
+I already staged this for 5.5 here:
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/=
+commit/?h=3Ddm-5.5&id=3D484e0d2b11e1fdd0d17702b282eb2ed56148385f
 
-just from the top of my head:
+But I don't plan to send to Linus for a week or 2...
 
-https://github.com/opcm/pcm
-https://github.com/RRZE-HPC/likwid
-... likely many more ...
+If Jon and/or someone else would like to send it along before then
+that'd be fine with me.
 
-There were patches in the past to allow a user configurable list.
-Something like that can make sense for some use models.
-
-But a hard coded list is just a terrible bad idea.
-
-For a "locked down" kernel the only case that can make sense
-is to block write to MSRs that control memory writes. But that's only
-a small fraction of the MSRs (afaik only DS_BASE and RTIT_OUTPUT*
-from your list, but there are more I believe)
-
-Also if there are blocks they would need to be model specific,
-e.g. the P4_* MSRs often mean something different on other parts.
-
--Andi
