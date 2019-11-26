@@ -2,71 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 529A910A3BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 18:58:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB8E10A391
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 18:50:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfKZR6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 12:58:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
+        id S1726333AbfKZRuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 12:50:44 -0500
+Received: from foss.arm.com ([217.140.110.172]:37558 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbfKZR6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 12:58:46 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C82C32073F;
-        Tue, 26 Nov 2019 17:49:02 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 12:49:01 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUGFIX PATCH v4 2/4] selftests/ftrace: Fix ftrace test cases
- to check unsupported
-Message-ID: <20191126124901.22ae2f9f@gandalf.local.home>
-In-Reply-To: <157475726452.3389.3778488615487716476.stgit@devnote2>
-References: <157475724667.3389.15752644047898709246.stgit@devnote2>
-        <157475726452.3389.3778488615487716476.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726005AbfKZRun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 12:50:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E74AB30E;
+        Tue, 26 Nov 2019 09:50:42 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CC813F52E;
+        Tue, 26 Nov 2019 09:50:42 -0800 (PST)
+Date:   Tue, 26 Nov 2019 17:50:40 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: [PATCHv2 6/6] ASoC: da7213: Add default clock handling
+Message-ID: <20191126175040.GD4205@sirena.org.uk>
+References: <20191120152406.2744-1-sebastian.reichel@collabora.com>
+ <20191120152406.2744-7-sebastian.reichel@collabora.com>
+ <AM5PR1001MB0994720A0D615339A978E35C804E0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <AM5PR1001MB0994E628439F021F97B872D480450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191126170841.GC4205@sirena.org.uk>
+ <AM5PR1001MB09949D557742E8817545637F80450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eheScQNz3K90DVRs"
+Content-Disposition: inline
+In-Reply-To: <AM5PR1001MB09949D557742E8817545637F80450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+X-Cookie: Where's SANDY DUNCAN?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Nov 2019 17:34:24 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> --- a/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
-> @@ -15,6 +15,11 @@ if [ $NP -eq 1 ] ;then
->    exit_unresolved
->  fi
->  
-> +if ! grep -q function available_tracers ; then
-> +  echo "Function trace is not enabled"
-> +  exit_unsupported
-> +fi
-> +
->  ORIG_CPUMASK=`cat tracing_cpumask`
+--eheScQNz3K90DVRs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Strange, but the bashism test failed:
+On Tue, Nov 26, 2019 at 05:39:45PM +0000, Adam Thomson wrote:
+> On 26 November 2019 17:09, Mark Brown wrote:
 
-++ checkbashisms /work/git-local/linux.git/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
-possible bashism in /work/git-local/linux.git/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc line 18 ('function' is useless):
-if ! grep -q function available_tracers ; then
+> > If we're special casing simple-card we're doing it wrong - there's
+> > nothing stopping any other machine driver behaving in the same way.
 
-Not sure why it did not like that line. Maybe my bashism check got
-confused by the key word "function"?
+> Ok, what's being proposed here is for the codec to automatically control =
+the PLL
+> rather than leaving it to the machine driver as is the case right now. In=
+ the
+> possible scenario where this is done using a card level widget to enable/=
+disable
 
-Yep!
+Wasn't the proposal to add a new mode where the machine driver *could*
+choose to delgate PLL selection to the CODEC driver rather than do so
+unconditionally? =20
 
-By adding quotes around "function" it doesn't complain:
+> the PLL we will conflict with that using the current suggested approach f=
+or the
+> da7213 driver, albeit with no real consequence other than configuring the=
+ PLL
+> twice the first time a stream is started. It's a case of how to determine=
+ who's
+> in control of the PLL here; machine driver or codec?
 
-	if ! grep -q "function" available_tracers ; then
+The patch looked like the idea was that as soon as the machine driver
+configures the PLL the CODEC driver will stop touching it which looked
+like a reasonable way of doing it, you could also do it with an explicit
+SYSCLK value (which would have to be 0 for generic machine drivers to
+pick it up) but this works just as well and may even be better.  Perhaps
+I misread it though.
 
-May need to add that.
+--eheScQNz3K90DVRs
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- Steve
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3dZfAACgkQJNaLcl1U
+h9CwfAf/YV/EIozE9EzDMFY5bhh24HCl54wOPeRj11gAdUc9Dgos5WcUBUp1OKGF
+fMWwffNUQQ6pttjnObQRNpgbEYALQbgmriiDqKa6l7m/jBgm0vaXtF+rdbyHEt7Z
+VGEZcUDDUYjL3lYLHpmCMIxuON1NceLHNn6UjNWc3ukHuKOZTDVKANSoAiskfvuH
+dpcZX/A6I71lUtLq54+uVGh28k7/5cOL2sE/syHjQyA25LcH71hjFVhaByUcx8EC
+AjV8phIVnDYDzwAQhrz0MfXCySpsaq0oPNWHkr9S4d4RZvVaqI5DFVVRGxUivZOM
+auolGphSGFR7UvpNFLu9qItUxlTZxA==
+=SdHM
+-----END PGP SIGNATURE-----
+
+--eheScQNz3K90DVRs--
