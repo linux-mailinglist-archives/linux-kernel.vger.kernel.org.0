@@ -2,139 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E56109E16
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 13:36:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82003109E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 13:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbfKZMgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 07:36:19 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:25835 "EHLO pegase1.c-s.fr"
+        id S1728507AbfKZMgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 07:36:20 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:44208 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728445AbfKZMgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 07:36:12 -0500
+        id S1728457AbfKZMgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 07:36:14 -0500
 Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47Mk0T6mvNz9v0GC;
-        Tue, 26 Nov 2019 13:36:09 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 47Mk0W0XSgz9v0G4;
+        Tue, 26 Nov 2019 13:36:11 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=PnPyQyQ0; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=JbPcOabM; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id PtuDK7RrT_qk; Tue, 26 Nov 2019 13:36:09 +0100 (CET)
+        with ESMTP id btX6GVqbcvDE; Tue, 26 Nov 2019 13:36:11 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47Mk0T5lz7z9v0G3;
-        Tue, 26 Nov 2019 13:36:09 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47Mk0V6Rqpz9v0G3;
+        Tue, 26 Nov 2019 13:36:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1574771769; bh=gOKxrtnFAgRuj43vPkwpnRsML3n0B7clWBuAh6m562Y=;
+        t=1574771770; bh=oVOYrjzNc7gpj0jHMDQl4bbKo9wjPs2rl2pHJ1hlGtk=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=PnPyQyQ04mngmpm+Thv3+/K8x1FG75fVbSBF1KM3i+WrO6Qb9OaPFjP5oNeeyzR9s
-         HcMx3OBvoR20fF6He9obZJQQjOQD7YULSiTqVWnWChzOsoYzs1PDGy8jWocFqUcc6R
-         tVG2d4UEHAC58vv9yBq4sm3lFTpyDvrZBEO0Tfq4=
+        b=JbPcOabMWMu7cIm3fUs3cWbbGdELcTmssx/2oYlUSQCud2gtKsQd6utzzjSULdlAq
+         WGt91Jbg4ZgYYF7RdeDZHMDv6/y817x3gTPVkFgdPgMrEkOA8LYPavp2Z4vPngyOLl
+         tU2qfVninuo+/oRbfhg9kkkJqQQHs4hpHLJELxSA=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 099468B7FC;
-        Tue, 26 Nov 2019 13:36:11 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 351C18B771;
+        Tue, 26 Nov 2019 13:36:12 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id y-1AHrQMGz9a; Tue, 26 Nov 2019 13:36:10 +0100 (CET)
+        with ESMTP id miazjcbvj0e8; Tue, 26 Nov 2019 13:36:12 +0100 (CET)
 Received: from po16098vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C83918B771;
-        Tue, 26 Nov 2019 13:36:10 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CD2118B7FC;
+        Tue, 26 Nov 2019 13:36:11 +0100 (CET)
 Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 94CDE6B76A; Tue, 26 Nov 2019 12:36:10 +0000 (UTC)
-Message-Id: <f28c9b5daf833e3b88f9c1245494b8aa73651a98.1574771540.git.christophe.leroy@c-s.fr>
+        id 9E0026B76A; Tue, 26 Nov 2019 12:36:11 +0000 (UTC)
+Message-Id: <18c3b9586bba1e0690f19ed91405d7e9c79c77b2.1574771540.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1574771539.git.christophe.leroy@c-s.fr>
 References: <cover.1574771539.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 07/16] powerpc: align stack to 2 * THREAD_SIZE with
- VMAP_STACK
+Subject: [PATCH v4 08/16] powerpc/32: Add early stack overflow detection with
+ VMAP stack.
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-mm@kvack.org
-Date:   Tue, 26 Nov 2019 12:36:10 +0000 (UTC)
+Date:   Tue, 26 Nov 2019 12:36:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to ease stack overflow detection, align
-stack to 2 * THREAD_SIZE when using VMAP_STACK.
-This allows overflow detection using a single bit check.
+To avoid recursive faults, stack overflow detection has to be
+performed before writing in the stack in exception prologs.
+
+Do it by checking the alignment. If the stack pointer alignment is
+wrong, it means it is pointing to the following or preceding page.
+
+Without VMAP stack, a stack overflow is catastrophic. With VMAP
+stack, a stack overflow isn't destructive, so don't panic. Kill
+the task with SIGSEGV instead.
+
+A dedicated overflow stack is set up for each CPU.
+
+lkdtm: Performing direct entry EXHAUST_STACK
+lkdtm: Calling function with 512 frame size to depth 32 ...
+lkdtm: loop 32/32 ...
+lkdtm: loop 31/32 ...
+lkdtm: loop 30/32 ...
+lkdtm: loop 29/32 ...
+lkdtm: loop 28/32 ...
+lkdtm: loop 27/32 ...
+lkdtm: loop 26/32 ...
+lkdtm: loop 25/32 ...
+lkdtm: loop 24/32 ...
+lkdtm: loop 23/32 ...
+lkdtm: loop 22/32 ...
+lkdtm: loop 21/32 ...
+lkdtm: loop 20/32 ...
+Kernel stack overflow in process test[359], r1=c900c008
+Oops: Kernel stack overflow, sig: 6 [#1]
+BE PAGE_SIZE=4K MMU=Hash PowerMac
+Modules linked in:
+CPU: 0 PID: 359 Comm: test Not tainted 5.3.0-rc7+ #2225
+NIP:  c0622060 LR: c0626710 CTR: 00000000
+REGS: c0895f48 TRAP: 0000   Not tainted  (5.3.0-rc7+)
+MSR:  00001032 <ME,IR,DR,RI>  CR: 28004224  XER: 00000000
+GPR00: c0626ca4 c900c008 c783c000 c07335cc c900c010 c07335cc c900c0f0 c07335cc
+GPR08: c900c0f0 00000001 00000000 00000000 28008222 00000000 00000000 00000000
+GPR16: 00000000 00000000 10010128 10010000 b799c245 10010158 c07335cc 00000025
+GPR24: c0690000 c08b91d4 c068f688 00000020 c900c0f0 c068f668 c08b95b4 c08b91d4
+NIP [c0622060] format_decode+0x0/0x4d4
+LR [c0626710] vsnprintf+0x80/0x5fc
+Call Trace:
+[c900c068] [c0626ca4] vscnprintf+0x18/0x48
+[c900c078] [c007b944] vprintk_store+0x40/0x214
+[c900c0b8] [c007bf50] vprintk_emit+0x90/0x1dc
+[c900c0e8] [c007c5cc] printk+0x50/0x60
+[c900c128] [c03da5b0] recursive_loop+0x44/0x6c
+[c900c338] [c03da5c4] recursive_loop+0x58/0x6c
+[c900c548] [c03da5c4] recursive_loop+0x58/0x6c
+[c900c758] [c03da5c4] recursive_loop+0x58/0x6c
+[c900c968] [c03da5c4] recursive_loop+0x58/0x6c
+[c900cb78] [c03da5c4] recursive_loop+0x58/0x6c
+[c900cd88] [c03da5c4] recursive_loop+0x58/0x6c
+[c900cf98] [c03da5c4] recursive_loop+0x58/0x6c
+[c900d1a8] [c03da5c4] recursive_loop+0x58/0x6c
+[c900d3b8] [c03da5c4] recursive_loop+0x58/0x6c
+[c900d5c8] [c03da5c4] recursive_loop+0x58/0x6c
+[c900d7d8] [c03da5c4] recursive_loop+0x58/0x6c
+[c900d9e8] [c03da5c4] recursive_loop+0x58/0x6c
+[c900dbf8] [c03da5c4] recursive_loop+0x58/0x6c
+[c900de08] [c03da67c] lkdtm_EXHAUST_STACK+0x30/0x4c
+[c900de18] [c03da3e8] direct_entry+0xc8/0x140
+[c900de48] [c029fb40] full_proxy_write+0x64/0xcc
+[c900de68] [c01500f8] __vfs_write+0x30/0x1d0
+[c900dee8] [c0152cb8] vfs_write+0xb8/0x1d4
+[c900df08] [c0152f7c] ksys_write+0x58/0xe8
+[c900df38] [c0014208] ret_from_syscall+0x0/0x34
+--- interrupt: c01 at 0xf806664
+    LR = 0x1000c868
+Instruction dump:
+4bffff91 80010014 7c832378 7c0803a6 38210010 4e800020 3d20c08a 3ca0c089
+8089a0cc 38a58f0c 38600001 4ba2d494 <9421ffe0> 7c0802a6 bfc10018 7c9f2378
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/thread_info.h | 13 +++++++++++++
- arch/powerpc/kernel/setup_32.c         |  2 +-
- arch/powerpc/kernel/setup_64.c         |  2 +-
- arch/powerpc/kernel/vmlinux.lds.S      |  2 +-
- 4 files changed, 16 insertions(+), 3 deletions(-)
+ arch/powerpc/include/asm/irq.h |  1 +
+ arch/powerpc/kernel/entry_32.S | 25 +++++++++++++++++++++++++
+ arch/powerpc/kernel/head_32.h  |  4 ++++
+ arch/powerpc/kernel/irq.c      |  1 +
+ arch/powerpc/kernel/setup_32.c |  1 +
+ arch/powerpc/kernel/traps.c    | 15 ++++++++++++---
+ 6 files changed, 44 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 488d5c4670ff..a2270749b282 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -22,6 +22,19 @@
+diff --git a/arch/powerpc/include/asm/irq.h b/arch/powerpc/include/asm/irq.h
+index 814dfab7e392..ec74ced2437d 100644
+--- a/arch/powerpc/include/asm/irq.h
++++ b/arch/powerpc/include/asm/irq.h
+@@ -55,6 +55,7 @@ extern void *mcheckirq_ctx[NR_CPUS];
+  */
+ extern void *hardirq_ctx[NR_CPUS];
+ extern void *softirq_ctx[NR_CPUS];
++extern void *stackovf_ctx[NR_CPUS];
  
- #define THREAD_SIZE		(1 << THREAD_SHIFT)
- 
-+/*
-+ * By aligning VMAP'd stacks to 2 * THREAD_SIZE, we can detect overflow by
-+ * checking sp & (1 << THREAD_SHIFT), which we can do cheaply in the entry
-+ * assembly.
-+ */
-+#ifdef CONFIG_VMAP_STACK
-+#define THREAD_ALIGN_SHIFT	(THREAD_SHIFT + 1)
-+#else
-+#define THREAD_ALIGN_SHIFT	THREAD_SHIFT
+ void call_do_softirq(void *sp);
+ void call_do_irq(struct pt_regs *regs, void *sp);
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 2a26fe19f0b1..00fcf954e742 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -184,9 +184,11 @@ transfer_to_handler:
+          */
+ 	kuap_save_and_lock r11, r12, r9, r2, r0
+ 	addi	r2, r12, -THREAD
++#ifndef CONFIG_VMAP_STACK
+ 	lwz	r9,KSP_LIMIT(r12)
+ 	cmplw	r1,r9			/* if r1 <= ksp_limit */
+ 	ble-	stack_ovf		/* then the kernel stack overflowed */
 +#endif
-+
-+#define THREAD_ALIGN		(1 << THREAD_ALIGN_SHIFT)
-+
- #ifndef __ASSEMBLY__
- #include <linux/cache.h>
- #include <asm/processor.h>
+ 5:
+ #if defined(CONFIG_PPC_BOOK3S_32) || defined(CONFIG_E500)
+ 	lwz	r12,TI_LOCAL_FLAGS(r2)
+@@ -298,6 +300,28 @@ reenable_mmu:
+  * On kernel stack overflow, load up an initial stack pointer
+  * and call StackOverflow(regs), which should not return.
+  */
++#ifdef CONFIG_VMAP_STACK
++_GLOBAL(stack_ovf)
++	li	r11, 0
++#ifdef CONFIG_SMP
++	mfspr	r11, SPRN_SPRG_THREAD
++	tovirt(r11, r11)
++	lwz	r11, TASK_CPU - THREAD(r11)
++	slwi	r11, r11, 3
++#endif
++	addis	r11, r11, stackovf_ctx@ha
++	addi	r11, r11, stackovf_ctx@l
++	lwz	r11, 0(r11)
++	cmpwi	cr1, r11, 0
++	addi	r11, r11, THREAD_SIZE - INT_FRAME_SIZE
++	bne	cr1, 1f
++	lis	r11, init_thread_union + THREAD_SIZE - INT_FRAME_SIZE@ha
++	addi	r11, r11, init_thread_union + THREAD_SIZE - INT_FRAME_SIZE@l
++1:	EXCEPTION_PROLOG_2
++	SAVE_NVGPRS(r11)
++	addi	r3, r1, STACK_FRAME_OVERHEAD
++	EXC_XFER_STD(0, StackOverflow)
++#else
+ stack_ovf:
+ 	/* sometimes we use a statically-allocated stack, which is OK. */
+ 	lis	r12,_end@h
+@@ -319,6 +343,7 @@ stack_ovf:
+ 	mtspr	SPRN_SRR1,r10
+ 	SYNC
+ 	RFI
++#endif
+ 
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ trace_syscall_entry_irq_off:
+diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32.h
+index 59e775930be8..283d4298d555 100644
+--- a/arch/powerpc/kernel/head_32.h
++++ b/arch/powerpc/kernel/head_32.h
+@@ -58,6 +58,10 @@
+ 	tophys(r11,r11)
+ #endif
+ 1:
++#ifdef CONFIG_VMAP_STACK
++	mtcrf	0x7f, r11
++	bt	32 - THREAD_ALIGN_SHIFT, stack_ovf_trampoline
++#endif
+ .endm
+ 
+ .macro EXCEPTION_PROLOG_2 ext
+diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+index 5645bc9cbc09..48aadc033e4a 100644
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -678,6 +678,7 @@ void *mcheckirq_ctx[NR_CPUS] __read_mostly;
+ 
+ void *softirq_ctx[NR_CPUS] __read_mostly;
+ void *hardirq_ctx[NR_CPUS] __read_mostly;
++void *stackovf_ctx[NR_CPUS] __read_mostly;
+ 
+ void do_softirq_own_stack(void)
+ {
 diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index dcffe927f5b9..f014c4f7a337 100644
+index f014c4f7a337..43e3643a35f5 100644
 --- a/arch/powerpc/kernel/setup_32.c
 +++ b/arch/powerpc/kernel/setup_32.c
-@@ -140,7 +140,7 @@ arch_initcall(ppc_init);
+@@ -158,6 +158,7 @@ void __init irqstack_early_init(void)
+ 	for_each_possible_cpu(i) {
+ 		softirq_ctx[i] = alloc_stack();
+ 		hardirq_ctx[i] = alloc_stack();
++		stackovf_ctx[i] = alloc_stack();
+ 	}
+ }
  
- static void *__init alloc_stack(void)
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 014ff0701f24..7da41609eed8 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -1630,11 +1630,20 @@ void alignment_exception(struct pt_regs *regs)
+ 
+ void StackOverflow(struct pt_regs *regs)
  {
--	void *ptr = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
-+	void *ptr = memblock_alloc(THREAD_SIZE, THREAD_ALIGN);
++	enum ctx_state prev_state = exception_enter();
++
+ 	pr_crit("Kernel stack overflow in process %s[%d], r1=%lx\n",
+ 		current->comm, task_pid_nr(current), regs->gpr[1]);
+-	debugger(regs);
+-	show_regs(regs);
+-	panic("kernel stack overflow");
++
++	if (IS_ENABLED(CONFIG_VMAP_STACK)) {
++		die("Kernel stack overflow", regs, SIGSEGV);
++	} else {
++		debugger(regs);
++		show_regs(regs);
++		panic("kernel stack overflow");
++	}
++
++	exception_exit(prev_state);
+ }
  
- 	if (!ptr)
- 		panic("cannot allocate %d bytes for stack at %pS\n",
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 6104917a282d..e05e6dd67ae6 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -633,7 +633,7 @@ static void *__init alloc_stack(unsigned long limit, int cpu)
- 
- 	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
- 
--	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
-+	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_ALIGN,
- 				     MEMBLOCK_LOW_LIMIT, limit,
- 				     early_cpu_to_node(cpu));
- 	if (!ptr)
-diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
-index 060a1acd7c6d..d38335129c06 100644
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -346,7 +346,7 @@ SECTIONS
- #endif
- 
- 	/* The initial task and kernel stack */
--	INIT_TASK_DATA_SECTION(THREAD_SIZE)
-+	INIT_TASK_DATA_SECTION(THREAD_ALIGN)
- 
- 	.data..page_aligned : AT(ADDR(.data..page_aligned) - LOAD_OFFSET) {
- 		PAGE_ALIGNED_DATA(PAGE_SIZE)
+ void kernel_fp_unavailable_exception(struct pt_regs *regs)
 -- 
 2.13.3
 
