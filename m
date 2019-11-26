@@ -2,90 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D9FE10A383
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 18:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529A910A3BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 18:58:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbfKZRnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 12:43:33 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:26850 "EHLO pegase1.c-s.fr"
+        id S1727117AbfKZR6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 12:58:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727642AbfKZRnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 12:43:32 -0500
-Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47Mrq56Ldsz9ty2b;
-        Tue, 26 Nov 2019 18:43:29 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=twpQAMdj; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id kXcPbgiquUQG; Tue, 26 Nov 2019 18:43:29 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47Mrq55GWNz9ty2Y;
-        Tue, 26 Nov 2019 18:43:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1574790209; bh=Nm8voP3roRsSJAwpWrKFutNy5/buSvyuxten1tQ9gTY=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=twpQAMdj6a4+f20pV4DPDuYjHyRUb/LjKbcEh4ouigrnW0V8x6XCySPnGgAeK0EST
-         k4aCausfd1kvRKYBzfgdeKiKY4V2CLEREHbBDsD2Vknlgau3FDGYx2ekGuZzdnhDhH
-         UIYAEfaPuxzUib/oq0qgEKSghZqmoU9mG2yg7Ybc=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 69C578B81A;
-        Tue, 26 Nov 2019 18:43:31 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id AG6IN_c4oP0K; Tue, 26 Nov 2019 18:43:31 +0100 (CET)
-Received: from po16098vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 021B08B825;
-        Tue, 26 Nov 2019 18:43:30 +0100 (CET)
-Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B1F0A6B76D; Tue, 26 Nov 2019 17:43:30 +0000 (UTC)
-Message-Id: <081e3b4e3a17a8ec9fdac46b505e3a29ca15f209.1574790198.git.christophe.leroy@c-s.fr>
-In-Reply-To: <05105deeaf63bc02151aea2cdeaf525534e0e9d4.1574790198.git.christophe.leroy@c-s.fr>
-References: <05105deeaf63bc02151aea2cdeaf525534e0e9d4.1574790198.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 2/2] selftests/powerpc: enable range tests on 8xx in
- ptrace-hwbreak.c selftest
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        ravi.bangoria@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 26 Nov 2019 17:43:30 +0000 (UTC)
+        id S1725895AbfKZR6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 12:58:46 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C82C32073F;
+        Tue, 26 Nov 2019 17:49:02 +0000 (UTC)
+Date:   Tue, 26 Nov 2019 12:49:01 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUGFIX PATCH v4 2/4] selftests/ftrace: Fix ftrace test cases
+ to check unsupported
+Message-ID: <20191126124901.22ae2f9f@gandalf.local.home>
+In-Reply-To: <157475726452.3389.3778488615487716476.stgit@devnote2>
+References: <157475724667.3389.15752644047898709246.stgit@devnote2>
+        <157475726452.3389.3778488615487716476.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-8xx is now able to support any range length so range tests can be enabled.
+On Tue, 26 Nov 2019 17:34:24 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> --- a/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
+> @@ -15,6 +15,11 @@ if [ $NP -eq 1 ] ;then
+>    exit_unresolved
+>  fi
+>  
+> +if ! grep -q function available_tracers ; then
+> +  echo "Function trace is not enabled"
+> +  exit_unsupported
+> +fi
+> +
+>  ORIG_CPUMASK=`cat tracing_cpumask`
 
----
-v2: new
----
- tools/testing/selftests/powerpc/ptrace/ptrace-hwbreak.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Strange, but the bashism test failed:
 
-diff --git a/tools/testing/selftests/powerpc/ptrace/ptrace-hwbreak.c b/tools/testing/selftests/powerpc/ptrace/ptrace-hwbreak.c
-index 7deedbc16b0b..fc477dfe86a2 100644
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-hwbreak.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-hwbreak.c
-@@ -455,9 +455,8 @@ run_tests(pid_t child_pid, struct ppc_debug_info *dbginfo, bool dawr)
- 	if (dbginfo->features & PPC_DEBUG_FEATURE_DATA_BP_RANGE) {
- 		test_sethwdebug_exact(child_pid);
- 
--		if (!is_8xx)
--			test_sethwdebug_range_aligned(child_pid);
--		if (dawr && !is_8xx) {
-+		test_sethwdebug_range_aligned(child_pid);
-+		if (dawr || is_8xx) {
- 			test_sethwdebug_range_unaligned(child_pid);
- 			test_sethwdebug_range_unaligned_dar(child_pid);
- 			test_sethwdebug_dawr_max_range(child_pid);
--- 
-2.13.3
+++ checkbashisms /work/git-local/linux.git/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
+possible bashism in /work/git-local/linux.git/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc line 18 ('function' is useless):
+if ! grep -q function available_tracers ; then
 
+Not sure why it did not like that line. Maybe my bashism check got
+confused by the key word "function"?
+
+Yep!
+
+By adding quotes around "function" it doesn't complain:
+
+	if ! grep -q "function" available_tracers ; then
+
+May need to add that.
+
+-- Steve
