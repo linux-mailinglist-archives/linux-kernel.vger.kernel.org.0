@@ -2,56 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F64510A483
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:30:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C8B10A494
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfKZTaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 14:30:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbfKZTaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:30:13 -0500
-Subject: Re: [GIT PULL] x86/entry changes for v5.5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574796612;
-        bh=byQIi+HbsCOzM+i7IEdMPnB3sn6YrYQJvAezISVV9kA=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=GSefI8SYIEC3VxYtXd6bQ39IoYTGnmN5L/bb2LyjkYch1s+e1ScSGKBTETfAR5aCF
-         1uRhRYAFsnCQH+tkfGbm0dJLasGnKCRsrYCGx3yNtAQPBo5UofsI2sJtADKSO1Nwgk
-         SYfbHwlnGNeAppmNX/NpAPFAKZ9PSLNoobI/B0HU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191125134922.GA5532@gmail.com>
-References: <20191125134922.GA5532@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191125134922.GA5532@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-entry-for-linus
-X-PR-Tracked-Commit-Id: f53e2cd0b8ab7d9e390414470bdbd830f660133f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cd4771f7709211082cbc41dc1f5b2be774ef1604
-Message-Id: <157479661251.2359.2999823608035580617.pr-tracker-bot@kernel.org>
-Date:   Tue, 26 Nov 2019 19:30:12 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+        id S1727360AbfKZTbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 14:31:06 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:28268 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfKZTbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 14:31:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574796664;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=ZFKAqYpbbjnGol8k3VcaYvgyvKkNLTdKc+1X7uXlroE=;
+        b=XfUYt5AxuLESQ5gMBtfHO18ZAOWzUflCUigM7aHSjLFM4nL6uhZUsgWMsL6apnH+ri
+        zyIJMXBnmWdFZxWTWCLEvDCvcytbZXSLqzQ5GWClhG5K4kh8/aicXLHQNEv0W9oK6x20
+        wpDn2IThg6OguDbQB18zUoS9L6WPWbl1oJUZeMBCCYj9gORJlsWSJQUbR8nSNdzre2CR
+        NRWrvS192g8wdW6UA39DlcdHFDPGykSPxKWf1BSTkOkponaELxg805e7Kl34wWT0RgoS
+        B81ca9c7PQxXDFY9Xi5Ko766TnUVWNOcVGUiYaU5cKBdevmQiybqbQ2sRcIja4ukuvzO
+        odSA==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaJvScdGvN"
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
+        with ESMTPSA id m074f2vAQJRY80E
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Tue, 26 Nov 2019 20:27:34 +0100 (CET)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Nicolai Stange <nstange@suse.de>,
+        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
+        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+        Roman Drahtmueller <draht@schaltsekun.de>,
+        Neil Horman <nhorman@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, kbuild-all@lists.01.org
+Subject: Re: [PATCH v26 12/12] LRNG - add interface for gathering of raw entropy (fwd)
+Date:   Tue, 26 Nov 2019 20:27:33 +0100
+Message-ID: <3845228.ihUtNFa0QL@tauon.chronox.de>
+In-Reply-To: <alpine.DEB.2.21.1911261903060.2605@hadrien>
+References: <alpine.DEB.2.21.1911261903060.2605@hadrien>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 25 Nov 2019 14:49:22 +0100:
+Am Dienstag, 26. November 2019, 19:04:10 CET schrieb Julia Lawall:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-entry-for-linus
+Hi Julia,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cd4771f7709211082cbc41dc1f5b2be774ef1604
+> Hello,
+> 
+> Should something be done about the lock on line 162?
 
-Thank you!
+Yes, thank you for the report. There should be an unlock, naturally.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Ciao
+Stephan
+
+
