@@ -2,129 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF81410A69B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8858210A6A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfKZWgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 17:36:36 -0500
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:56245 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbfKZWgg (ORCPT
+        id S1727073AbfKZWg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 17:36:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27598 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726232AbfKZWg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 17:36:36 -0500
-Received: by mail-yb1-f202.google.com with SMTP id f4so14049998yba.22
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 14:36:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=EuaZnHowIBc7y1QLV9A0aE1DHqnTcytF/iy9ArT6dOM=;
-        b=ISb7ahBc3XQRcy7hXbzo638Z3k3Vwq80fpiEKdFfPpFa8d6GB9cT22SACX4p+HRS0F
-         uLp2LeH46TMRB70xuCT2IH64/j3YZ6Qmgin87KRnfAmL5Xey8+6cFA3U25dWILE3LYBh
-         r04C9GgrC/lkQEaJIwxfy1fh0KHKvc3uXJafGArJCUKSKk/kPirUd1k0oXCAnhhUWP65
-         h1x9epX6QKtn68b+JoYFDXiPxLrNf+MScJdzypxjD4gW9aE/bcsbOh5UdVwHhL5xGmT1
-         6PRxXyBV+QpIwEru7i1Rf8oGxrYsndojf9832I0NB8lHtZ8dSoWKAMzn2lGMl5vUohwc
-         gtIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=EuaZnHowIBc7y1QLV9A0aE1DHqnTcytF/iy9ArT6dOM=;
-        b=X1jCGJTpfPflR6QIsTG3MFkrgOcdo1qqsHem0TMvoAJdCawoxkct/sDJOAgiOUdPdY
-         GbykGQcPeQrShogfzORfWLfdYA2sNDIGVVi4UIn4qL4JYexd/1mOy/g+6SjTkqPDfKbl
-         o68OpdbA5aQC7V9pJHhqjiCuZG+SdblOPd4BHp8Or5cVfuRwF5ng22nRvoj+VPimz3UK
-         uzAiWpygcRqrtHw04+Sh5vbOS7JQ3EkqB5pDbe8S9cOmL//N9i89W+YFqY1p192i7LWB
-         i1hUpOm9IBxI/3ooN0DRWgwXEE8h9suwED8m3scqUiwV5Ge+ENi+PLo59unbYsdapUkx
-         DAZQ==
-X-Gm-Message-State: APjAAAWTHGg1AFFLHiLSs+Zdr8uVo++hPE7N4+Y3lNFYpPzkrSY6/WjU
-        cMB4gAoKyBrqiELCR79icqcTywVRUg7bnnLd
-X-Google-Smtp-Source: APXvYqybZoCVe8mrOgJY9Uodbr4NHifXHLOVmX5qrgUpwHsOA4x5+Hsmfb+KbINBpAxJuTImW+amSbNi4rAVB36+
-X-Received: by 2002:a81:68c3:: with SMTP id d186mr781876ywc.188.1574807794992;
- Tue, 26 Nov 2019 14:36:34 -0800 (PST)
-Date:   Tue, 26 Nov 2019 14:36:16 -0800
-In-Reply-To: <20191126193313.44181-1-heidifahim@google.com>
-Message-Id: <20191126223616.98294-1-heidifahim@google.com>
-Mime-Version: 1.0
-References: <20191126193313.44181-1-heidifahim@google.com>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH v2] kunit: test: Improve error messages for kunit_tool when
- kunitconfig is invalid
-From:   Heidi Fahim <heidifahim@google.com>
-To:     brendanhiggins@google.com, shuah@kernel.org, davidgow@google.com
-Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, Heidi Fahim <heidifahim@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 26 Nov 2019 17:36:57 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAQMX26s057546;
+        Tue, 26 Nov 2019 17:36:43 -0500
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2whcxpr31n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Nov 2019 17:36:42 -0500
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xAQMYrGQ013272;
+        Tue, 26 Nov 2019 22:36:41 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma04wdc.us.ibm.com with ESMTP id 2wevd77a5d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Nov 2019 22:36:41 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAQMafvx55116208
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Nov 2019 22:36:41 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 590C3AC05B;
+        Tue, 26 Nov 2019 22:36:41 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C769AC060;
+        Tue, 26 Nov 2019 22:36:40 +0000 (GMT)
+Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.137])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Nov 2019 22:36:40 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Replace current->mm by kvm->mm on powerpc/kvm
+Date:   Tue, 26 Nov 2019 19:36:29 -0300
+Message-Id: <20191126223631.389779-1-leonardo@linux.ibm.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-26_07:2019-11-26,2019-11-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ suspectscore=2 spamscore=0 phishscore=0 mlxlogscore=606 bulkscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911260191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous error message for invalid kunitconfig was vague. Added to it so
-that it lists invalid fields and prompts for them to be removed.  Added
-validate_config function returning whether or not this kconfig is valid.
+Replace current->mm by kvm->mm on powerpc/kvm
 
-Signed-off-by: Heidi Fahim <heidifahim@google.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-Tested-by: Brendan Higgins <brendanhiggins@google.com>
+By replacing, we would reduce the use of 'global' current on code,
+relying more in the contents of kvm struct.
+
+On code, I found that in kvm_create_vm() there is:
+kvm->mm = current->mm;
+
+And that on every kvm_*_ioctl we have tests like that:
+if (kvm->mm != current->mm)
+        return -EIO;
+
+So this change would be safe.
+
 ---
-Addressed Brendan's nit for error message
+Changes since v2:
+- Rebased on torvalds/master and updated the remaining patches.
 
- tools/testing/kunit/kunit_kernel.py | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+Changes since v1:
+- Fixes possible 'use after free' on kvm_spapr_tce_release (from v1)
+- Fixes possible 'use after free' on kvm_vm_ioctl_create_spapr_tce
+- Fixes undeclared variable error
 
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index bf3876835331..e1df9aad778f 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -93,6 +93,20 @@ class LinuxSourceTree(object):
- 			return False
- 		return True
- 
-+	def validate_config(self, build_dir):
-+		kconfig_path = get_kconfig_path(build_dir)
-+		validated_kconfig = kunit_config.Kconfig()
-+		validated_kconfig.read_from_file(kconfig_path)
-+		if not self._kconfig.is_subset_of(validated_kconfig):
-+			invalid = self._kconfig.entries() - validated_kconfig.entries()
-+			message = 'Provided Kconfig is not contained in validated .config. Following fields found in kunitconfig, ' \
-+					  'but not in .config: %s' % (
-+					', '.join([str(e) for e in invalid])
-+			)
-+			logging.error(message)
-+			return False
-+		return True
-+
- 	def build_config(self, build_dir):
- 		kconfig_path = get_kconfig_path(build_dir)
- 		if build_dir and not os.path.exists(build_dir):
-@@ -103,12 +117,7 @@ class LinuxSourceTree(object):
- 		except ConfigError as e:
- 			logging.error(e)
- 			return False
--		validated_kconfig = kunit_config.Kconfig()
--		validated_kconfig.read_from_file(kconfig_path)
--		if not self._kconfig.is_subset_of(validated_kconfig):
--			logging.error('Provided Kconfig is not contained in validated .config!')
--			return False
--		return True
-+		return self.validate_config(build_dir)
- 
- 	def build_reconfig(self, build_dir):
- 		"""Creates a new .config if it is not a subset of the kunitconfig."""
-@@ -133,12 +142,7 @@ class LinuxSourceTree(object):
- 		except (ConfigError, BuildError) as e:
- 			logging.error(e)
- 			return False
--		used_kconfig = kunit_config.Kconfig()
--		used_kconfig.read_from_file(get_kconfig_path(build_dir))
--		if not self._kconfig.is_subset_of(used_kconfig):
--			logging.error('Provided Kconfig is not contained in final config!')
--			return False
--		return True
-+		return self.validate_config(build_dir)
- 
- 	def run_kernel(self, args=[], timeout=None, build_dir=None):
- 		args.extend(['mem=256M'])
+
+Leonardo Bras (2):
+  powerpc/kvm/book3s: Replace current->mm by kvm->mm
+  powerpc/kvm/book3e: Replace current->mm by kvm->mm
+
+ arch/powerpc/kvm/book3s_64_mmu_hv.c |  4 ++--
+ arch/powerpc/kvm/book3s_64_vio.c    | 10 ++++++----
+ arch/powerpc/kvm/book3s_hv.c        | 10 +++++-----
+ arch/powerpc/kvm/booke.c            |  2 +-
+ 4 files changed, 14 insertions(+), 12 deletions(-)
+
 -- 
-2.24.0.432.g9d3f5f5b63-goog
+2.23.0
 
