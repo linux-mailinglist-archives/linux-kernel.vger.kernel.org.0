@@ -2,128 +2,291 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B353510A13C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F21610A13A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfKZPce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 10:32:34 -0500
-Received: from mail-eopbgr750088.outbound.protection.outlook.com ([40.107.75.88]:27534
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727135AbfKZPcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 10:32:33 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nOll8paCBejnNPhyI0OqrHftBoHIh71HBXFa5Qw+L2SkuoPvt2vzoM04K0bhBP2A1Xea1QALpCOZIEIwdwqa0UvDhNZsMmNHAGLQWWp5U+OqDBdZaw+OWVwuRJDlhsPqpt/AvnZy+h3/RSdV2iK63ENKzr8/3wZm1i37Ilu3BLsBuoaGu5YsLXMacT/1XXLHgo9fXX6mROkJoqyTWVpNYu4O8YmLctoHGeBjcst9NQkPsuuKGr8Pow8dc4ZdF4joci7GXPUCtAUDSnEvXiQaDRqhVmWmmtJYYbyuXgjhcCwHWtpVP8/pM76xRz5Ifa1pwp9uOdhYoRcK8D5AfKf6Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GDnBJ09v1EtQoEjKn/An66DdBr3oA32Qb0Pd/IA/z9E=;
- b=Lku9CKeRQx9oGqwZ39gj4TrdfeFK74/7NbW6uSRdx6zFTVjFZg1yGCrZ3TukZtscnlFNG/nFQL1k6xFA79FVsYnrnW5duKxHvetdvcusLQ4uZDoK+wP8LC/IcLHnzwr26oO6/TM910T12iDGblnmIUFrT3+AjhHy9TQFILslXP6C/NCqFKRNbOmSWmxkkru2trI3tOcqgo28fl1j+kSn+I4WQNm8PPmLXggf+sKGhZrGxxcC4tJYV6AiwSTY1qaW498is8+Zo6scrmORTXf3GNYv5SxoACq2No1Riuu/0XY77Fz5J60uNiE2RpJiC0MenVCbGiS7mfT3ogsHpCjmVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GDnBJ09v1EtQoEjKn/An66DdBr3oA32Qb0Pd/IA/z9E=;
- b=MGfCjqEluh9posL8K8qnLSuidOIxZ8pcIctHwUCBOB/MdpHKgxPdo75rpUq7eOHUHPydHXkgXA1CiY2ZYBPJDKMT1xrZsq+TpDR0d1h9UoFf6mpAooz2/GZb7w6YxB31oSCvmVDACTza9IZ66zttxIKKWZdWb+RTlf8fU7OEDQk=
-Received: from DM6PR12MB3466.namprd12.prod.outlook.com (20.178.198.225) by
- DM6PR12MB3945.namprd12.prod.outlook.com (10.255.172.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.19; Tue, 26 Nov 2019 15:31:50 +0000
-Received: from DM6PR12MB3466.namprd12.prod.outlook.com
- ([fe80::8954:6ba3:6dca:4616]) by DM6PR12MB3466.namprd12.prod.outlook.com
- ([fe80::8954:6ba3:6dca:4616%7]) with mapi id 15.20.2474.023; Tue, 26 Nov 2019
- 15:31:50 +0000
-From:   "Liu, Zhan" <Zhan.Liu@amd.com>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Jules Irenge <jbi.octave@gmail.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>
-CC:     "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>
-Subject: RE: [PATCH] drm: radeon: replace 0 with NULL
-Thread-Topic: [PATCH] drm: radeon: replace 0 with NULL
-Thread-Index: AQHVpDGuiIGYb9FDoEeIk+mDGEp8l6edOuKAgABZ7RA=
-Date:   Tue, 26 Nov 2019 15:31:50 +0000
-Message-ID: <DM6PR12MB346679C0E1B515E450D0B2C29E450@DM6PR12MB3466.namprd12.prod.outlook.com>
-References: <20191126003514.133692-1-jbi.octave@gmail.com>
- <9a585a20-b885-680f-d561-8713afe53fa1@amd.com>
-In-Reply-To: <9a585a20-b885-680f-d561-8713afe53fa1@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Zhan.Liu@amd.com; 
-x-originating-ip: [165.204.55.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 91245abb-9193-4193-8755-08d77285c1f5
-x-ms-traffictypediagnostic: DM6PR12MB3945:|DM6PR12MB3945:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR12MB3945463BA4E385BE3355799C9E450@DM6PR12MB3945.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:196;
-x-forefront-prvs: 0233768B38
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(346002)(136003)(376002)(396003)(199004)(189003)(13464003)(99286004)(5660300002)(305945005)(71200400001)(256004)(71190400001)(66574012)(64756008)(3846002)(33656002)(6116002)(102836004)(66446008)(7736002)(25786009)(74316002)(81156014)(2906002)(8936002)(446003)(76176011)(14444005)(66476007)(6506007)(53546011)(478600001)(11346002)(26005)(8676002)(86362001)(7696005)(6306002)(9686003)(6246003)(81166006)(55016002)(52536014)(14454004)(6636002)(66066001)(45080400002)(76116006)(110136005)(66556008)(316002)(186003)(6436002)(54906003)(229853002)(66946007)(4326008)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3945;H:DM6PR12MB3466.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: DjsG5UiUr6uLUfFQrLeZl+6rGiCrBzlXsYo51I7iTS5TRtONmeFVN5FRzvYrHoc43McOhkYJUUVwIK0eIo7b/SeDuNbqdp4N2kKzaznCKnUuGl9s9VIRpFxpwD6MdAmzp6tItR+iDJdMWko0D7ZTRNJedOYo68d2fNlX2sfrs4lsj2Ql5wJ/Yy3JMnO62kWhFvqDG83QgnZ6oFnKuMx8lHmaDXmR26XR7RX7yH6k07N8VWB28WXLIW6mhbZ+2hNQRJaMnTRq/Jexpvo8nJiYjjTQTWHpAChoHIPZxjTUy7f1f13/XUtTyv0KI+XhlINFhp7NqIdS8S4/v5wUjlgsaNCDChneMxnbNxWQTLX6/5ZgK2lFA2xIjRLkwGc/UjhI2AqtLRzxz/+uKOYqKMOWk/Lvd5Q9GuCsuvmi7JP4wUPhs3NTclknIus6vKNqVWOJ
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728528AbfKZPcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 10:32:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727768AbfKZPcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 10:32:02 -0500
+Received: from linux-8ccs (x2f7ff09.dyn.telefonica.de [2.247.255.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22D0F2075C;
+        Tue, 26 Nov 2019 15:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574782320;
+        bh=Nt081fGxNxtH531Mbja/jxORqkwwmeE4JUg1dtDT5sg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eEf6K/U/pK6XszfFu7WH4LwgaL6caR25qU5KFhvfK76CJpGBFOhqPiCA88mLKVpaL
+         XKvalPBwu2Ez1YsyXORWGH4z62b8Ln4trQrYQWRnWIfn+n0txtXUP/q5IsHO+cT6YR
+         eLADQoUL3C7AoOtHChQniIz1JFqQniHqvKmTqBCM=
+Date:   Tue, 26 Nov 2019 16:31:54 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Matthias Maennich <maennich@google.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2] export.h: reduce __ksymtab_strings string duplication
+ by using "MS" section flags
+Message-ID: <20191126153153.GA3495@linux-8ccs>
+References: <20191120145110.8397-1-jeyu@kernel.org>
+ <20191125154217.18640-1-jeyu@kernel.org>
+ <CAK7LNASU9YysYNXuBKSU4WeUyE=2itfLDYzCupXL-49GUZuGnQ@mail.gmail.com>
+ <20191126135620.GA38845@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91245abb-9193-4193-8755-08d77285c1f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2019 15:31:50.4016
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MC0Wn+R3HNAWp1ZFcuWLovgXqpqbqC3qVTBxU2J9jkGqChrrh6RZInb6pk4T1x4Y
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3945
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191126135620.GA38845@google.com>
+X-OS:   Linux linux-8ccs 5.4.0-rc5-lp150.12.61-default+ x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogYW1kLWdmeCA8YW1kLWdm
-eC1ib3VuY2VzQGxpc3RzLmZyZWVkZXNrdG9wLm9yZz4gT24gQmVoYWxmIE9mDQo+IENocmlzdGlh
-biBLw7ZuaWcNCj4gU2VudDogMjAxOS9Ob3ZlbWJlci8yNiwgVHVlc2RheSA1OjEwIEFNDQo+IFRv
-OiBKdWxlcyBJcmVuZ2UgPGpiaS5vY3RhdmVAZ21haWwuY29tPjsgRGV1Y2hlciwgQWxleGFuZGVy
-DQo+IDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPg0KPiBDYzogWmhvdSwgRGF2aWQoQ2h1bk1p
-bmcpIDxEYXZpZDEuWmhvdUBhbWQuY29tPjsgYWlybGllZEBsaW51eC5pZTsNCj4gbGludXgta2Vy
-bmVsQHZnZXIua2VybmVsLm9yZzsgYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGRyaS0N
-Cj4gZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnOyBkYW5pZWxAZmZ3bGwuY2gNCj4gU3ViamVj
-dDogUmU6IFtQQVRDSF0gZHJtOiByYWRlb246IHJlcGxhY2UgMCB3aXRoIE5VTEwNCj4gDQo+IEFt
-IDI2LjExLjE5IHVtIDAxOjM1IHNjaHJpZWIgSnVsZXMgSXJlbmdlOg0KPiA+IFJlcGxhY2UgMCB3
-aXRoIE5VTEwgdG8gZml4IHNwYXJzZSB0b29sICB3YXJuaW5nDQo+ID4gICB3YXJuaW5nOiBVc2lu
-ZyBwbGFpbiBpbnRlZ2VyIGFzIE5VTEwgcG9pbnRlcg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-SnVsZXMgSXJlbmdlIDxqYmkub2N0YXZlQGdtYWlsLmNvbT4NCj4gDQo+IEFja2VkLWJ5OiBDaHJp
-c3RpYW4gS8O2bmlnIDxjaHJpc3RpYW4ua29lbmlnQGFtZC5jb20+DQoNClJldmlld2VkLWJ5OiBa
-aGFuIExpdSA8emhhbi5saXVAYW1kLmNvbT4NCg0KPiANCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMv
-Z3B1L2RybS9yYWRlb24vcmFkZW9uX2F1ZGlvLmMgfCAyICstDQo+ID4gICAxIGZpbGUgY2hhbmdl
-ZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9hdWRpby5jDQo+IGIvZHJpdmVycy9ncHUvZHJt
-L3JhZGVvbi9yYWRlb25fYXVkaW8uYw0KPiA+IGluZGV4IGI5YWVhNTc3NmQzZC4uMjI2OWNmY2Vk
-Nzg4IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2F1ZGlv
-LmMNCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9hdWRpby5jDQo+ID4g
-QEAgLTI4OCw3ICsyODgsNyBAQCBzdGF0aWMgdm9pZCByYWRlb25fYXVkaW9faW50ZXJmYWNlX2lu
-aXQoc3RydWN0DQo+IHJhZGVvbl9kZXZpY2UgKnJkZXYpDQo+ID4gICAJfSBlbHNlIHsNCj4gPiAg
-IAkJcmRldi0+YXVkaW8uZnVuY3MgPSAmcjYwMF9mdW5jczsNCj4gPiAgIAkJcmRldi0+YXVkaW8u
-aGRtaV9mdW5jcyA9ICZyNjAwX2hkbWlfZnVuY3M7DQo+ID4gLQkJcmRldi0+YXVkaW8uZHBfZnVu
-Y3MgPSAwOw0KPiA+ICsJCXJkZXYtPmF1ZGlvLmRwX2Z1bmNzID0gTlVMTDsNCj4gPiAgIAl9DQo+
-ID4gICB9DQo+ID4NCj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fDQo+IGFtZC1nZnggbWFpbGluZyBsaXN0DQo+IGFtZC1nZnhAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnDQo+IGh0dHBzOi8vbmFtMTEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5j
-b20vP3VybD1odHRwcyUzQSUyRiUyRmxpc3RzLg0KPiBmcmVlZGVza3RvcC5vcmclMkZtYWlsbWFu
-JTJGbGlzdGluZm8lMkZhbWQtDQo+IGdmeCZhbXA7ZGF0YT0wMiU3QzAxJTdDemhhbi5saXUlNDBh
-bWQuY29tJTdDMzU4MzJhMjg5NDg5NGM0NDgxN2QNCj4gMDhkNzcyNThjOWVhJTdDM2RkODk2MWZl
-NDg4NGU2MDhlMTFhODJkOTk0ZTE4M2QlN0MwJTdDMSU3QzYzNzEwDQo+IDM1OTc5ODE4NTA4NzIm
-YW1wO3NkYXRhPUZkb3VJczdQcmF3eDNVaEs0ejhBRWdWMG5ZSkpjeXJHTnA1Nkcwdw0KPiBoTlpV
-JTNEJmFtcDtyZXNlcnZlZD0wDQo=
++++ Matthias Maennich [26/11/19 13:56 +0000]:
+>On Tue, Nov 26, 2019 at 05:32:59PM +0900, Masahiro Yamada wrote:
+>>On Tue, Nov 26, 2019 at 12:42 AM Jessica Yu <jeyu@kernel.org> wrote:
+>>>
+>>>Commit c3a6cf19e695 ("export: avoid code duplication in
+>>>include/linux/export.h") refactors export.h quite nicely, but introduces
+>>>a slight increase in memory usage due to using the empty string ""
+>>>instead of NULL to indicate that an exported symbol has no namespace. As
+>>>mentioned in that commit, this meant an increase of 1 byte per exported
+>>>symbol without a namespace. For example, if a kernel configuration has
+>>>about 10k exported symbols, this would mean that the size of
+>>>__ksymtab_strings would increase by roughly 10kB.
+>>>
+>>>We can alleviate this situation by utilizing the SHF_MERGE and
+>>>SHF_STRING section flags. SHF_MERGE|SHF_STRING indicate to the linker
+>>>that the data in the section are null-terminated strings that can be
+>>>merged to eliminate duplication. More specifically, from the binutils
+>>>documentation - "for sections with both M and S, a string which is a
+>>>suffix of a larger string is considered a duplicate. Thus "def" will be
+>>>merged with "abcdef"; A reference to the first "def" will be changed to
+>>>a reference to "abcdef"+3". Thus, all the empty strings would be merged
+>>>as well as any strings that can be merged according to the cited method
+>>>above. For example, "memset" and "__memset" would be merged to just
+>>>"__memset" in __ksymtab_strings.
+>>>
+>>>As of v5.4-rc5, the following statistics were gathered with x86
+>>>defconfig with approximately 10.7k exported symbols.
+>>>
+>>>Size of __ksymtab_strings in vmlinux:
+>>>-------------------------------------
+>>>v5.4-rc5: 213834 bytes
+>>>v5.4-rc5 with commit c3a6cf19e695: 224455 bytes
+>>>v5.4-rc5 with this patch: 205759 bytes
+>>>
+>>>So, we already see memory savings of ~8kB compared to vanilla -rc5 and
+>>>savings of nearly 18.7kB compared to -rc5 with commit c3a6cf19e695 on top.
+>>>
+>>>Unfortunately, as of this writing, strings will not get deduplicated for
+>>>kernel modules, as ld does not do the deduplication for
+>>>SHF_MERGE|SHF_STRINGS sections for relocatable files (ld -r), which
+>>>kernel modules are. A patch for ld is currently being worked on to
+>>>hopefully allow for string deduplication in relocatable files in the
+>>>future.
+>>>
+>
+>Thanks for working on this!
+>
+>>>Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>>>Signed-off-by: Jessica Yu <jeyu@kernel.org>
+>>>---
+>>>
+>>>v2: use %progbits throughout and document the oddity in a comment.
+>>>
+>>> include/asm-generic/export.h |  8 +++++---
+>>> include/linux/export.h       | 27 +++++++++++++++++++++------
+>>> 2 files changed, 26 insertions(+), 9 deletions(-)
+>>>
+>>>diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+>>>index fa577978fbbd..23bc98e97a66 100644
+>>>--- a/include/asm-generic/export.h
+>>>+++ b/include/asm-generic/export.h
+>>>@@ -26,9 +26,11 @@
+>>> .endm
+>>>
+>>> /*
+>>>- * note on .section use: @progbits vs %progbits nastiness doesn't matter,
+>>>- * since we immediately emit into those sections anyway.
+>>>+ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
+>>>+ * section flag requires it. Use '%progbits' instead of '@progbits' since the
+>>>+ * former apparently works on all arches according to the binutils source.
+>>>  */
+>>>+
+>>> .macro ___EXPORT_SYMBOL name,val,sec
+>>> #ifdef CONFIG_MODULES
+>>>        .globl __ksymtab_\name
+>>>@@ -37,7 +39,7 @@
+>>> __ksymtab_\name:
+>>>        __put \val, __kstrtab_\name
+>>>        .previous
+>>>-       .section __ksymtab_strings,"a"
+>>>+       .section __ksymtab_strings,"aMS",%progbits,1
+>>> __kstrtab_\name:
+>>>        .asciz "\name"
+>>>        .previous
+>>>diff --git a/include/linux/export.h b/include/linux/export.h
+>>>index 201262793369..3d835ca34d33 100644
+>>>--- a/include/linux/export.h
+>>>+++ b/include/linux/export.h
+>>>@@ -81,16 +81,31 @@ struct kernel_symbol {
+>>>
+>>> #else
+>>>
+>>>+/*
+>>>+ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
+>>>+ * section flag requires it. Use '%progbits' instead of '@progbits' since the
+>>>+ * former apparently works on all arches according to the binutils source.
+>>>+ */
+>>>+#define __KSTRTAB_ENTRY(sym)                                                   \
+>>>+       asm("   .section \"__ksymtab_strings\",\"aMS\",%progbits,1      \n"     \
+>>>+           "__kstrtab_" #sym ":                                        \n"     \
+>>>+           "   .asciz  \"" #sym "\"                                    \n"     \
+>>>+           "   .previous                                               \n")
+>>>+
+>>>+#define __KSTRTAB_NS_ENTRY(sym, ns)                                            \
+>>>+       asm("   .section \"__ksymtab_strings\",\"aMS\",%progbits,1      \n"     \
+>>>+           "__kstrtabns_" #sym ":                                      \n"     \
+>>>+           "   .asciz  " #ns "                                         \n"     \
+>>
+>>
+>>Hmm, it took some time for me to how this code works.
+>>
+>>ns is already a C string, then you added # to it,
+>>then I was confused.
+>>
+>>Personally, I prefer this code:
+>>" .asciz \"" ns "\" \n"
+>>
+>>so it looks in the same way as __KSTRTAB_ENTRY().
+>
+>I agree with this, these entries should be consistent.
+>
+>>
+>>
+>>
+>>BTW, you duplicated \"aMS\",%progbits,1" and ".previous"
+>>
+>>
+>>I would write it shorter, like this:
+>>
+>>
+>>#define ___EXPORT_SYMBOL(sym, sec, ns) \
+>>       extern typeof(sym) sym; \
+>>       extern const char __kstrtab_##sym[]; \
+>>       extern const char __kstrtabns_##sym[]; \
+>>       __CRC_SYMBOL(sym, sec); \
+>>       asm("    .section \"__ksymtab_strings\",\"aMS\",%progbits,1\n" \
+>>           "__kstrtab_" #sym ": \n" \
+>>           "     .asciz \"" #sym "\" \n" \
+>>           "__kstrtabns_" #sym ": \n" \
+>>           "     .asciz \"" ns "\" \n" \
+>>           "     .previous \n");    \
+>>      __KSYMTAB_ENTRY(sym, sec)
+>>
+>
+>I would prefer the separate macros though (as initially proposed) as I
+>find them much more readable. The code is already a bit tricky to reason
+>about and I don't think the shorter version is enough of a gain.
+
+Yeah, the macros were more readable IMO. But I could just squash them into one
+__KSTRTAB_ENTRY macro as a compromise for Masahiro maybe?
+
+Is this any better?
+
+diff --git a/include/linux/export.h b/include/linux/export.h
+index 201262793369..f4a8fc798a1b 100644
+--- a/include/linux/export.h
++++ b/include/linux/export.h
+@@ -81,16 +81,30 @@ struct kernel_symbol {
+ 
+ #else
+ 
++/*
++ * note on .section use: we specify progbits since usage of the "M" (SHF_MERGE)
++ * section flag requires it. Use '%progbits' instead of '@progbits' since the
++ * former apparently works on all arches according to the binutils source.
++ *
++ * This basically corresponds to:
++ * const char __kstrtab_##sym[] __attribute__((section("__ksymtab_strings")) = #sym;
++ * const char __kstrtabns_##sym[] __attribute__((section("__ksymtab_strings")) = ns;
++ */
++#define __KSTRTAB_ENTRY(sym, ns)                                               \
++       asm("   .section \"__ksymtab_strings\",\"aMS\",%progbits,1      \n"     \
++           "__kstrtab_" #sym ":                                        \n"     \
++           "   .asciz  \"" #sym "\"                                    \n"     \
++           "__kstrtabns_" #sym ":                                      \n"     \
++           "   .asciz  \"" ns "\"                                      \n"     \
++           "   .previous                                               \n")
++
+ /* For every exported symbol, place a struct in the __ksymtab section */
+ #define ___EXPORT_SYMBOL(sym, sec, ns)                                 \
+        extern typeof(sym) sym;                                         \
++       extern const char __kstrtab_##sym[];                            \
++       extern const char __kstrtabns_##sym[];                          \
+        __CRC_SYMBOL(sym, sec);                                         \
+-       static const char __kstrtab_##sym[]                             \
+-       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+-       = #sym;                                                         \
+-       static const char __kstrtabns_##sym[]                           \
+-       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+-       = ns;                                                           \
++       __KSTRTAB_ENTRY(sym, ns);                                       \
+        __KSYMTAB_ENTRY(sym, sec)
+ 
+ #endif
+
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>>+           "   .previous                                               \n")
+>>>+
+>>> /* For every exported symbol, place a struct in the __ksymtab section */
+>>> #define ___EXPORT_SYMBOL(sym, sec, ns)                                 \
+>>>        extern typeof(sym) sym;                                         \
+>>>+       extern const char __kstrtab_##sym[];                            \
+>>>+       extern const char __kstrtabns_##sym[];                          \
+>>>        __CRC_SYMBOL(sym, sec);                                         \
+>>>-       static const char __kstrtab_##sym[]                             \
+>>>-       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+>>>-       = #sym;                                                         \
+>
+>You could keep simplified versions of these statements as comment for
+>the above macros to increase readability.
+>
+>>>-       static const char __kstrtabns_##sym[]                           \
+>>>-       __attribute__((section("__ksymtab_strings"), used, aligned(1))) \
+>>>-       = ns;                                                           \
+>>>+       __KSTRTAB_ENTRY(sym);                                           \
+>>>+       __KSTRTAB_NS_ENTRY(sym, ns);                                    \
+>>>        __KSYMTAB_ENTRY(sym, sec)
+>>>
+>>> #endif
+>>>--
+>>>2.16.4
+>>>
+>
+>With the above addressed, please feel free to add
+>
+>Reviewed-by: Matthias Maennich <maennich@google.com>
+>
+>Cheers,
+>Matthias
+>
+>>
+>>
+>>-- 
+>>Best Regards
+>>Masahiro Yamada
