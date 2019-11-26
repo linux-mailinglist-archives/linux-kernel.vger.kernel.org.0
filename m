@@ -2,90 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60461109C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:13:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB50109C1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:16:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfKZKNo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 26 Nov 2019 05:13:44 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20539 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727388AbfKZKNo (ORCPT
+        id S1727846AbfKZKQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 05:16:04 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:51445 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727752AbfKZKQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 05:13:44 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-68-quipjFAFM3icMji5ZqiO4A-1; Tue, 26 Nov 2019 10:13:38 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 26 Nov 2019 10:13:37 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 26 Nov 2019 10:13:37 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Fenghua Yu' <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>
-CC:     linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: RE: [PATCH v2 0/4] Fix some 4-byte vs. 8-byte alignment issues in
- atomic bit operations
-Thread-Topic: [PATCH v2 0/4] Fix some 4-byte vs. 8-byte alignment issues in
- atomic bit operations
-Thread-Index: AQHVo8bnUSfQXTuB6k6xiK+0nu6MoaedOrpg
-Date:   Tue, 26 Nov 2019 10:13:37 +0000
-Message-ID: <965b5dcf35b54f8b96008a82e6d581c1@AcuMS.aculab.com>
-References: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
-In-Reply-To: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 26 Nov 2019 05:16:03 -0500
+Received: by mail-il1-f198.google.com with SMTP id x2so16057823ilk.18
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 02:16:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=7ecu66BMHVud9DuzcAquPrxjiVzhM/h7EUP/vbsVeT0=;
+        b=EZQS6/cGgyceVt+smeIZC543Go80NJt9LlP+Tmg4ivdbdW2yyzylpaBNufqDfmlXCs
+         EYInTYbIniTG6ikvUhh/yI/acJHT4EGqnCfbWKIWy479xsA6ZOcuAUhtq7V6DV2yMIoS
+         9rrgJmlnziEhmb++iZPNlDwHp8KsC1dAbUG3OBLyhwKrQI/Me8to1AGBswumDtMbehCx
+         jJmAn7WOIix6FjG3LRFh4oOJP+oCfUXJxm6Aa+cF7On+hchRHWj21RCJ1Z1Wi2TSq+Ra
+         AW4naJkJdnN1x4BCxA0xjN/X79pnQYBnpgmXo+2D7XvLWkiELrS3Yk9vcmGy7A/aThz7
+         wqjA==
+X-Gm-Message-State: APjAAAVnzfq/1s7aiu5D45ZbUp7DDRyXzzHsjMCZ/ezsCgCTWeVq7oO9
+        RXw2tdf2C+/qDRuH9oi07D5ePH/3kdMZ8Z/+M/Wrl1i09fv0
+X-Google-Smtp-Source: APXvYqyozbo+bQ0Kv4jzAJMRKPS3S8LaBuyHiSS+ZbpT2Dw8Sg5CxjtmgBByAoHJJQ7lf7NxK6t1Htol/EVxcnlk7n9dOWJV1knV
 MIME-Version: 1.0
-X-MC-Unique: quipjFAFM3icMji5ZqiO4A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-Received: by 2002:a02:c9c6:: with SMTP id c6mr13899624jap.133.1574763361594;
+ Tue, 26 Nov 2019 02:16:01 -0800 (PST)
+Date:   Tue, 26 Nov 2019 02:16:01 -0800
+In-Reply-To: <0000000000001558f3056a369689@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c5f3d905983d2ae0@google.com>
+Subject: Re: WARNING in __device_add_disk
+From:   syzbot <syzbot+3337db851ace689ceb50@syzkaller.appspotmail.com>
+To:     akinobu.mita@gmail.com, akpm@linux-foundation.org, axboe@kernel.dk,
+        dvyukov@google.com, gregkh@linuxfoundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mhocko@kernel.org, syzkaller-bugs@googlegroups.com,
+        torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fenghua Yu
-> Sent: 25 November 2019 19:43
-...
-> Change Log:
-> v2:
-> - Remove patch 1 and 3 in v1 because they are in the tip tree already.
-> - Add new patches 2-4 per David Laight's comments:
-> https://lore.kernel.org/lkml/e7c75de9191847ed98c573f9ad871518@AcuMS.aculab.com/
-> Running "grep -r --include '*.[ch]' '_bit([^(]*, *([^)]*\*)' ."
-> returns about 200 results. Most of them don't have split lock issues.
+syzbot has bisected this bug to:
 
-Except that any code that has to cast the long[] array argument to any of
-the bitops functions is almost certainly broken in some way or other.
-At best it is relying on accidental alignment of whatever address it is passing
-to avoid alignment faults (for general misaligned accesses).
+commit e41d58185f1444368873d4d7422f7664a68be61d
+Author: Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed Jul 12 21:34:35 2017 +0000
 
-In other cases attempting to run the code on a BE system will update the
-wrong bits - potentially in some other member of the structure.
+     fault-inject: support systematic fault injection
 
-Now, you might say that 'this code is LE only', but at some point it might
-get used on a BE system.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17889f5ae00000
+start commit:   6da6c0db Linux v4.17-rc3
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=14489f5ae00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10489f5ae00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
+dashboard link: https://syzkaller.appspot.com/bug?extid=3337db851ace689ceb50
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15191837800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120af5c7800000
 
-So all of those 200 results need fixing to remove the casts.
-Just using the unblocked __bit_xxx() functions doesn't fix
-all the problems.
+Reported-by: syzbot+3337db851ace689ceb50@syzkaller.appspotmail.com
+Fixes: e41d58185f14 ("fault-inject: support systematic fault injection")
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
