@@ -2,50 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7BA41097B7
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4271097B6
 	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 03:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbfKZCPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 21:15:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53232 "EHLO mail.kernel.org"
+        id S1727973AbfKZCPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 21:15:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727937AbfKZCPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 21:15:12 -0500
-Subject: Re: [GIT PULL] KVM changes for Linux 5.5 merge window
+        id S1727939AbfKZCPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 21:15:13 -0500
+Subject: Re: [GIT PULL] MIPS changes for 5.5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574734511;
-        bh=cMMCMjBI8Ng64frChwTghVXdOfOT4udneO/aFnuWcVg=;
+        s=default; t=1574734512;
+        bh=SApbGo6e96+2wQYt1zE6K9i+7pXHLPxq5o0VdFgTegs=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jYvcmvRZ46feDDu3300ndbSMMX14iWHxm2lTNR6ZUYffIBMCOBw70TTrhtfNF3Bpx
-         /tKvHluVLCeHZwdLaaN7S2+9FhrNYnqwlOB5bXDUSr7s9CQm6A/BG98/Jiq7QGxjLk
-         YATwtVkyLG+0CgJteuHN4x5AFnHj5Pr/wF2gLGbo=
+        b=pOKW6osv7PjGUQfW0ZiMfOIF89F2km5TWtOQFs5XyuIMfLYrxV4phAoycNOTU2fxe
+         N3x4+RflBNltTYp+HZtfRlBVDTtWc5UZfdZhcIEhGHS9Xt+Pacg6Uf5R8Cum6QuvqY
+         ohpBzPW8nI7E8heZyVPO6G/04Oe7B7G5UcT4h/cg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1574679700-32775-1-git-send-email-pbonzini@redhat.com>
-References: <1574679700-32775-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <20191125194535.nh6762uusyhz7jtn@pburton-laptop>
+References: <20191125194535.nh6762uusyhz7jtn@pburton-laptop>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1574679700-32775-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: 96710247298df52a4b8150a62a6fe87083093ff3
+X-PR-Tracked-Message-Id: <20191125194535.nh6762uusyhz7jtn@pburton-laptop>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.5
+X-PR-Tracked-Commit-Id: a8d0f11ee50ddbd9f243c7a8b1a393a4f23ba093
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 752272f16dd18f2cac58a583a8673c8e2fb93abb
-Message-Id: <157473451166.11733.14602358583467422705.pr-tracker-bot@kernel.org>
-Date:   Tue, 26 Nov 2019 02:15:11 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@kernel.org, kvm@vger.kernel.org
+X-PR-Merge-Commit-Id: 2981dcf333b37e3753b5c1b5814418c4de1a8e34
+Message-Id: <157473451258.11733.2305117261489169794.pr-tracker-bot@kernel.org>
+Date:   Tue, 26 Nov 2019 02:15:12 +0000
+To:     Paul Burton <paulburton@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 25 Nov 2019 12:01:40 +0100:
+The pull request you sent on Mon, 25 Nov 2019 11:45:35 -0800:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/752272f16dd18f2cac58a583a8673c8e2fb93abb
+https://git.kernel.org/torvalds/c/2981dcf333b37e3753b5c1b5814418c4de1a8e34
 
 Thank you!
 
