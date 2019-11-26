@@ -2,53 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4525F10A695
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:34:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B69F10A69E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:36:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfKZWee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 17:34:34 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:48743 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbfKZWee (ORCPT
+        id S1727033AbfKZWgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 17:36:40 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45550 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfKZWgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 17:34:34 -0500
-X-Originating-IP: 90.65.92.102
-Received: from localhost (lfbn-1-1723-102.w90-65.abo.wanadoo.fr [90.65.92.102])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id C844D1C000A;
-        Tue, 26 Nov 2019 22:34:32 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 23:34:32 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH] rtc: Fix Kconfig indentation
-Message-ID: <20191126223432.GW299836@piout.net>
-References: <20191120133940.13881-1-krzk@kernel.org>
+        Tue, 26 Nov 2019 17:36:39 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so15425228lfa.12;
+        Tue, 26 Nov 2019 14:36:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wxy80mBAQVfVNiFRLzfL2dvJVYM/W7L9tB9zzxf4iug=;
+        b=P83wjgV5BZ79VZm2l5j3cMsBq8T9cIcd/ftrEAfOGQYgsbzP75wXa973rMk7459uXO
+         gjYLXtWxnZDZ3/i/awe3KDzga77Ve5ig8MvVwW2sPkFael3RDxd/RL/NvR62NjV03+wq
+         dzyKRgBPPSkd/LdcFkNnlJK7sNoppUQZfrL/4nuNc9nwXD4jiEb4yOKtZH2WzUKBZ1EK
+         AE3H1BlN7SPVNskMNWOMrXq2bYgkE8SMQiGNWU4nomZ0bwaUVWF2v4xKRPeC71feUDvs
+         6AJh051Ctva3V5hTRD9KcpR2JLSK+XJM3U1lp6X4B5pO+rWUV3EjdAe4qwRIqfSJBxI/
+         HR4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wxy80mBAQVfVNiFRLzfL2dvJVYM/W7L9tB9zzxf4iug=;
+        b=cHn6cI7nc3Q4DmmM8uh9wTEgeD9PbSnFGic512W/n+YS8Lz+RWwlycqgCjq+H284JE
+         V9yD4LUmxEMZdyTqM3Y5NPTRHjTld+CAL6AHQrf/HD2o6ZrD1JmZq8CiobJpEBAZPiUc
+         vcINfTPoPgRPe5762FjNZOoaWB1lHeUjVpe+T0bg3bf9NEhBxVgQI9ZYb0DEx9YNyapp
+         lUdQGuZqMnEzMrwufSY/ESO3SvTjhsdbmivPwn2QNrkAc1ulQg/OWgLkOos50yPef8h/
+         4ZMyWQc6KE8kJRPLVxJZLaMnFmgGsWNYW+sD0n6YYSic2CGSOm4uBE0I7926aasuQ3gN
+         MwiQ==
+X-Gm-Message-State: APjAAAWe3UaLdxDPG5LknG/KfuUS7Be+DJNcuUPSC0y8PGuU02t5igay
+        0OjqHrIlSMhnTDRCsE3lbdYU2q+IQVxFrzsV8L0I7f/Y
+X-Google-Smtp-Source: APXvYqxN/GAR29dK9DHptHMLVgGfyUiHMxYz2YPesHjuMPjZoZCc/lHe4X7vDMZ4GtXvwD/lM5oU02+bx/5X2J2a8hY=
+X-Received: by 2002:ac2:46f7:: with SMTP id q23mr25607116lfo.68.1574807796845;
+ Tue, 26 Nov 2019 14:36:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191120133940.13881-1-krzk@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191121234125.28032-1-sj38.park@gmail.com> <20191126222144.GW2889@paulmck-ThinkPad-P72>
+In-Reply-To: <20191126222144.GW2889@paulmck-ThinkPad-P72>
+From:   SeongJae Park <sj38.park@gmail.com>
+Date:   Tue, 26 Nov 2019 23:36:10 +0100
+Message-ID: <CAEjAshpBEyzh-=s9rPw7+yAbZLZfv5-XaG=-TCEn1G5yaQmHbQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7] docs: Update ko_KR translations
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Will Deacon <will@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2019 21:39:40+0800, Krzysztof Kozlowski wrote:
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/rtc/Kconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-Applied, thanks.
+On Tue, Nov 26, 2019 at 11:21 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> On Fri, Nov 22, 2019 at 12:41:18AM +0100, SeongJae Park wrote:
+> > This patchset contains updates of Korean translation documents and a fix
+> > of original document.
+> >
+> > First 4 patches update the Korean translation of memory-barriers.txt.
+> > Fifth patch fixes a broken section reference in the original
+> > memory-barriers.txt.
+> >
+> > Sixth and seventh patches update the Korean translation of howto.rst.
+>
+> The sixth and seventh probably have some other more natural path,
+> but I queued them.  Any chance of a Reviewed-by from one of our other
+> Korean-language kernel hackers?
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks, Paul.  I asked a review to my Korean ex-colleague.  Will update the
+results, soon!
+
+
+Thanks,
+SeongJae Park
+
+>
+>                                                         Thanx, Paul
+>
+> > *** BLURB HERE ***
+> >
+> > SeongJae Park (7):
+> >   docs/memory-barriers.txt/kokr: Rewrite "KERNEL I/O BARRIER EFFECTS"
+> >     section
+> >   Documentation/kokr: Kill all references to mmiowb()
+> >   docs/memory-barriers.txt/kokr: Fix style, spacing and grammar in I/O
+> >     section
+> >   docs/memory-barriers.txt/kokr: Update I/O section to be clearer about
+> >     CPU vs thread
+> >   docs/memory-barriers.txt: Remove remaining references to mmiowb()
+> >   Documentation/translation: Use Korean for Korean translation title
+> >   Documentation/process/howto/kokr: Update for 4.x -> 5.x versioning
+> >
+> >  Documentation/memory-barriers.txt             |  11 +-
+> >  Documentation/translations/ko_KR/howto.rst    |  56 +++--
+> >  Documentation/translations/ko_KR/index.rst    |   4 +-
+> >  .../translations/ko_KR/memory-barriers.txt    | 227 +++++++-----------
+> >  4 files changed, 119 insertions(+), 179 deletions(-)
+> >
+> > --
+> > 2.17.2
+> >
