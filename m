@@ -2,146 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAFDB109CD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 12:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A6BE109CDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 12:16:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbfKZLPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 06:15:43 -0500
-Received: from mga01.intel.com ([192.55.52.88]:2334 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728053AbfKZLPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 06:15:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2019 03:15:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,245,1571727600"; 
-   d="scan'208";a="409944662"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Nov 2019 03:15:42 -0800
-Received: from [10.125.252.207] (abudanko-mobl.ccr.corp.intel.com [10.125.252.207])
-        by linux.intel.com (Postfix) with ESMTP id B61055802E4;
-        Tue, 26 Nov 2019 03:15:39 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v3 0/3] perf record: adapt NUMA awareness to machines with
- #CPUs > 1K
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        id S1728051AbfKZLQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 06:16:25 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38104 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfKZLQY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 06:16:24 -0500
+Received: by mail-wr1-f65.google.com with SMTP id i12so22028199wro.5;
+        Tue, 26 Nov 2019 03:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mPsIQyZB05XA1geV+/a9mGk6poY26Jzmyx/vRU1WfpY=;
+        b=CvVd5h8yRpWWCZspKyZ2Geub44N8W7U4Jhjye1wj0+gjwAtkOVVmcul2n5Td6FtIOl
+         TYG086TBeCaeOdVzPpwKhwlLc4pXmhKLeWtbE6m/dAKdho1uQ2gr6EZUmN0OfCnHu7vA
+         CkekA1Jm7ugM9uREG/GBYK687qdaWRWRkE+2whjefu8rgH7tRkaaT/cLei9WaenddzQB
+         YDNEo0bfRrPSjq0dSg9yxZszaBpoL3x1/rChO+3ehiBgMCnr9nBa16a76NKGQ4BuO449
+         +5/bTc4kSISupGE5hditCGRORIPgm4bURLWXT4/8PYFGt4EyUpjU1VnqY7G7PQD752dr
+         4Cxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mPsIQyZB05XA1geV+/a9mGk6poY26Jzmyx/vRU1WfpY=;
+        b=JZ31AVKIzLzaf/WndVNvbu0QnVoNkZQEL6ASaOVoji4KakROAMs2n+xtWjOk9vtnW0
+         UpjBnOukcqvhYKXccEOmDqh89qH04T4IdffXwD5Lo/CtD2PxEtrphXJ5T4luLmeXmsK7
+         zJ962Tede+pXbS4bY9uw264dSu2lpP7Kc4U9r1QhnQYCVGRx4ud6HmZdfxq8hSUyo+Ax
+         oyjHwxKq7RuC8a43lhn7ijKilPO0RPaRe+T6Ff+qzMGdYDIx5ToFPHmr31dwLc/qLHoq
+         lJ2Z3otrgkk44+nha6PD2Iez39ueBucyDcSgivyuBUvoss3WLPDB5teyhicaANUirR4N
+         5zZQ==
+X-Gm-Message-State: APjAAAXXxSAfyYSHx2u8PBj9b23INda3kNbLaHxTbxG+8Ogadccl65ab
+        pXGyeajJE0lc4+a46GWUl8c=
+X-Google-Smtp-Source: APXvYqxSB1tYKQQzsIwE/RCW4zstGtQNypAFngwnyjSt5EMF0PfBQcHF962Sesm4cfpD/IFXIDsxsQ==
+X-Received: by 2002:adf:ef49:: with SMTP id c9mr16155700wrp.292.1574766982078;
+        Tue, 26 Nov 2019 03:16:22 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id b14sm2692135wmj.18.2019.11.26.03.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2019 03:16:21 -0800 (PST)
+Date:   Tue, 26 Nov 2019 12:16:18 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Len Brown <len.brown@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Organization: Intel Corp.
-Message-ID: <6b2be869-28c1-ae9b-92e8-5ababf143308@linux.intel.com>
-Date:   Tue, 26 Nov 2019 14:15:38 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Nadav Amit <namit@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-acpi@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH 11/12] ACPI/sleep: Convert acpi_wakeup_address into a
+ function
+Message-ID: <20191126111618.GA28423@gmail.com>
+References: <20191119002121.4107-1-sean.j.christopherson@intel.com>
+ <20191119002121.4107-12-sean.j.christopherson@intel.com>
+ <7338293.UcAxln0NAJ@kreacher>
+ <20191125104803.v6goacte2vjakx64@ucw.cz>
+ <20191125170034.GB12178@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125170034.GB12178@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Current implementation of cpu_set_t type by glibc has internal cpu
-mask size limitation of no more than 1024 CPUs. This limitation confines
-NUMA awareness of Perf tool in record mode, thru --affinity option,
-to the first 1024 CPUs on machines with larger amount of CPUs.
+* Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-This patch set enables Perf tool to overcome 1024 CPUs limitation by
-using a dedicated struct mmap_cpu_mask type and applying tool's bitmap
-API operations to manipulate affinity masks of the tool's thread and
-the mmaped data buffers.
+> On Mon, Nov 25, 2019 at 11:48:03AM +0100, Pavel Machek wrote:
+> > > On Tuesday, November 19, 2019 1:21:20 AM CET Sean Christopherson wrote:
+> > > > Convert acpi_wakeup_address from a raw variable into a function so that
+> > > > x86 can wrap its dereference of the real mode boot header in a function
+> > > > instead of broadcasting it to the world via a #define.  This sets the
+> > > > stage for a future patch to move the definition of acpi_wakeup_address()
+> > > > out of asm/acpi.h and thus break acpi.h's dependency on asm/realmode.h.
+> > > > 
+> > > > No functional change intended.
+> > > > 
+> > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > > 
+> > > Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > 
+> > > > --- a/drivers/acpi/sleep.c
+> > > > +++ b/drivers/acpi/sleep.c
+> > > > @@ -63,9 +63,9 @@ static int acpi_sleep_prepare(u32 acpi_state)
+> > > >  #ifdef CONFIG_ACPI_SLEEP
+> > > >  	/* do we have a wakeup address for S2 and S3? */
+> > > >  	if (acpi_state == ACPI_STATE_S3) {
+> > > > -		if (!acpi_wakeup_address)
+> > > > +		if (!acpi_wakeup_address())
+> > > >  			return -EFAULT;
+> > > > -		acpi_set_waking_vector(acpi_wakeup_address);
+> > > > +		acpi_set_waking_vector(acpi_wakeup_address());
+> > > >  
+> > 
+> > You might want to store result in a variable... especially since you are
+> > turning inline function into real one in a next patch.
+> > 
+> > And maybe function should be called get_acip_wakeup_address or
+> > something? This way it is easy to mistake actual wakeup address from
+> > function that gets it...
+> 
+> Agreed on both counts.
+> 
+> 
+> Ingo,
+> 
+> Would you prefer a v2 of the entire series (with Acks and removal of Fixes),
+> or a v2 that includes only the last two patches?
 
-tools bitmap API has been extended with bitmap_free() function and
-bitmap_equal() operation whose implementation is derived from the
-kernel one.
+Yep, that would be handy. I have them committed to tip:core/headers, but 
+haven't sent it to Linus yet, and can redo that all with these 
+improvements.
 
----
-Alexey Budankov (3):
-  tools bitmap: implement bitmap_equal() operation at bitmap API
-  perf mmap: declare type for cpu mask of arbitrary length
-  perf record: adapt affinity to machines with #CPUs > 1K
+Thanks,
 
- tools/include/linux/bitmap.h | 30 +++++++++++++++++++++++++++
- tools/lib/bitmap.c           | 15 ++++++++++++++
- tools/perf/builtin-record.c  | 27 ++++++++++++++++++------
- tools/perf/util/mmap.c       | 40 ++++++++++++++++++++++++++++++------
- tools/perf/util/mmap.h       | 13 +++++++++++-
- 5 files changed, 112 insertions(+), 13 deletions(-)
-
----
-Changes in v3:
-- implemented perf_mmap__print_cpu_mask() function
-- use perf_mmap__print_cpu_mask() to log thread and mmap cpus masks
-  when verbose level is equal to 2
-Changes in v2:
-- implemented bitmap_free() for symmetry with bitmap_alloc()
-- capitalized MMAP_CPU_MASK_BYTES() macro
-- returned -1 from perf_mmap__setup_affinity_mask()
-- implemented releasing of masks using bitmap_free()
-- moved debug printing under -vv option
-
----
-Testing:
-
-	tools/perf/perf record -vv --affinity=cpu -- ls
-	thread mask[8]: empty
-	...
-	------------------------------------------------------------
-	perf_event_attr:
-	...
-	mmap size 528384B
-	0x7fddecf760b8: mmap mask[8]: 0
-	0x7fddecf86180: mmap mask[8]: 1
-	0x7fddecf96248: mmap mask[8]: 2
-	0x7fddecfa6310: mmap mask[8]: 3
-	0x7fddecfb63d8: mmap mask[8]: 4
-	0x7fddecfc64a0: mmap mask[8]: 5
-	0x7fddecfd6568: mmap mask[8]: 6
-	0x7fddecfe6630: mmap mask[8]: 7
-	------------------------------------------------------------
-	perf_event_attr:
-	...
-	Synthesizing TSC conversion information
-	0x7fddecf760b8: thread mask[8]: 0
-	0x7fddecf86180: thread mask[8]: 1
-	0x7fddecf96248: thread mask[8]: 2
-	arch			      copy     Documentation  init     kernel	 MAINTAINERS	  modules.builtin.modinfo  perf.data	  scripts   System.map	vmlinux
-	block			      COPYING  drivers	      ipc      lbuild	 Makefile	  modules.order		   perf.data.old  security  tools	vmlinux.o
-	certs			      CREDITS  fs	      Kbuild   lib	 mm		  Module.symvers	   README	  sound     usr
-	config-5.2.7-100.fc29.x86_64  crypto   include	      Kconfig  LICENSES  modules.builtin  net			   samples	  stdio     virt
-	0x7fddecfa6310: thread mask[8]: 3
-	0x7fddecfb63d8: thread mask[8]: 4
-	0x7fddecfc64a0: thread mask[8]: 5
-	0x7fddecfd6568: thread mask[8]: 6
-	0x7fddecfe6630: thread mask[8]: 7
-	0x7fddecf760b8: thread mask[8]: 0
-	0x7fddecf86180: thread mask[8]: 1
-	0x7fddecf96248: thread mask[8]: 2
-	0x7fddecfa6310: thread mask[8]: 3
-	0x7fddecfb63d8: thread mask[8]: 4
-	0x7fddecfc64a0: thread mask[8]: 5
-	0x7fddecfd6568: thread mask[8]: 6
-	0x7fddecfe6630: thread mask[8]: 7
-	[ perf record: Woken up 0 times to write data ]
-	0x7fddecf760b8: thread mask[8]: 0
-	0x7fddecf86180: thread mask[8]: 1
-	0x7fddecf96248: thread mask[8]: 2
-	0x7fddecfa6310: thread mask[8]: 3
-	0x7fddecfb63d8: thread mask[8]: 4
-	0x7fddecfc64a0: thread mask[8]: 5
-	0x7fddecfd6568: thread mask[8]: 6
-	0x7fddecfe6630: thread mask[8]: 7
-	Looking at the vmlinux_path (8 entries long)
-	Using vmlinux for symbols
-	[ perf record: Captured and wrote 0.014 MB perf.data (8 samples) ]
-
--- 
-2.20.1
-
+	Ingo
