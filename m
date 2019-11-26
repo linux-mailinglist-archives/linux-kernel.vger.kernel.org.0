@@ -2,112 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1C1A109BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:10:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C05109C09
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:12:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbfKZKJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 05:09:59 -0500
-Received: from mail-eopbgr720051.outbound.protection.outlook.com ([40.107.72.51]:14560
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        id S1727734AbfKZKMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 05:12:10 -0500
+Received: from mail-eopbgr730040.outbound.protection.outlook.com ([40.107.73.40]:40096
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727965AbfKZKJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 05:09:55 -0500
+        id S1727585AbfKZKMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 05:12:10 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J7Dl7aVR7ysR0iwO7ZXXDeKPLPnUQEJfT8necFTMQw2zi+AgjyWr4qq6eBEK6luCLrtH5izBfHv6hR1hsNVg9aYQ6iBeemdRL1SSQ+tRyEiWLk/k928KAC9rQaZCaNmq4Ap2NMpo7M6pN0KJ5Be6Fgm4l9gU9CDDI5xOobVA/fEyfFRjTQT3g11LPvA4F3Ifp1oYltA1iHObM2fyttax/tP2UCmmFzD+6sNML42YJb2rGJK14v2XpcUsScuIFP+XqVZ3dFhYOlepMDYjClcxz96uj1qFZNSGLuC0WM4rKxDrUJCcez3L7HJdoovnLvOhMRWfhUyl4+R0qLOl4tBx3w==
+ b=eSfVk57cnybvKojSDGc2BSfnOowFZO+rd/mzkh9D/ibC5BDC9xLmKerJ1F/ufnAFmATAm6LCac1vjb1rI+6PFRPo6cOOY91cvdy6g9op3fPmbFUjeKUSo1NnE6tLWrv6AXNetjpm4jTtCK46OViFFnBUVUQRIdBqcJ7p3VzA+Zj1fdu7kNYsiGZ5x8PPmYEhlmUT/Ndw69aSS2DV5MduNnSkcXPqPF3V2X5ORA09SsBq5vivGQ6B4Ok17c3Au93TtHTHqfb7qZGd70GVEsZRoampuCZHaWxsrgHsXEfrlMF3uVYpX5G0c8afH0Bifyf1X0BL5qn37pmktOQ3aXTf8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GJ+MGMXb0UedodssqnjhqVgVK7bUeLr+Cr4qM01sjpM=;
- b=Wa2IWLW31hrcbNhKAt/PuUJTdPWCQ4C9HlyZiO3TBfIcP2r9hxsXcbWPqMn1XNIyvj8V8wO+UaODZYVlAsPh7RSk7Fd8SC4tPWPSXMkCtTdpJbwtYoltzLvvPb/QMc0pou99NeSi41cWdtsb/tBHaskNjmPHxLG6c7K5JKsbLz9fOClgCr7Tun2aQ2HHqav9gJ/dGWppTzhP3j/tQNCPrWBwMG/IWH2vV62uuvrkKXVMuHkrzkiV5cjpcPZTgsR/EnRJOxhpRh5prwXmSXpNLe/fGIKGBSIuCy14nyGkJLp+tKSsrNJ8QZUSCtgWSnloDrsdqYdsEHfcJT/2rQWbvQ==
+ bh=xptElvw3JiOrZV1RFP4qUNvM9d5yEfQ76CtkrYroE0c=;
+ b=RjT933uwEk0/cyRZXgvCxoKNfZrndGbNvkeP52slDy+6PzVeVZRyf0YMRGK5uf2UAR7O7MAR1hvElb5Mulqtj28P8L3BjOTSlHY09ftIahhyHfO8yPF978GCsNeN5Kh1tCwW0ZVUmsBBOYK5Twq62reexEt4X6wTGGkQBrInzaNgjxd0ILsGxvk9tQT9V0GkKn2Y0At1uY7vPmEJHepnFZb5uniMyRz/zBD/Nvw/9ZkhsDcPkNHwd3d4r8LA+vKJOaCeQpkVjzSpRlHlBHhBoA3G4id2+oSaanrYSGwShrMv6M6v0220XW5Nww8+taTHFBL6CsV8fNgys6aGp3zxNg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GJ+MGMXb0UedodssqnjhqVgVK7bUeLr+Cr4qM01sjpM=;
- b=y0bxBgC+0o6R/WL8cqvLe8IKorK5ZCaTw5IsCjn33Yy6H57RYqi9Dh0JVQhpTpO6cO6aywBJaKOprBo3HopgV/UWQDQaHwW+/mQqi1q22dPICLn8/4MWLv8BYYxq8E8XlYXyWRLNDAFaFP6MdJFgPLvmvpFp3HeZKSj4+HnulDM=
+ bh=xptElvw3JiOrZV1RFP4qUNvM9d5yEfQ76CtkrYroE0c=;
+ b=ZpAp/00dbpwy/i/IJdBydKi5Jw+FiDs+Kk2xbAbyrqNk+Tib1L6HPaN0QgZW8PWHf2s/kZgKbBky6t1Xp5QwOs9AEdnnqbXUWf4gHpD+OfgE/euM+zTl2bWdvDglXRJww4B5Tp9/GBwSqcOGmBO9JU/AMhMYc036lMal8FB29W4=
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com (10.175.88.22) by
- DM5PR12MB1163.namprd12.prod.outlook.com (10.168.240.18) with Microsoft SMTP
+ smtp.mailfrom=Akshu.Agrawal@amd.com; 
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com (20.179.80.143) by
+ MN2PR12MB2944.namprd12.prod.outlook.com (20.179.81.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.22; Tue, 26 Nov 2019 10:09:53 +0000
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::e5e7:96f0:ad90:d933]) by DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::e5e7:96f0:ad90:d933%7]) with mapi id 15.20.2474.023; Tue, 26 Nov 2019
- 10:09:53 +0000
-Subject: Re: [PATCH] drm: radeon: replace 0 with NULL
-To:     Jules Irenge <jbi.octave@gmail.com>, alexander.deucher@amd.com
-Cc:     David1.Zhou@amd.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@linux.ie,
-        amd-gfx@lists.freedesktop.org
-References: <20191126003514.133692-1-jbi.octave@gmail.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <9a585a20-b885-680f-d561-8713afe53fa1@amd.com>
-Date:   Tue, 26 Nov 2019 11:09:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-In-Reply-To: <20191126003514.133692-1-jbi.octave@gmail.com>
+ 15.20.2474.21; Tue, 26 Nov 2019 10:12:05 +0000
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::305d:cfb0:baaf:7008]) by MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::305d:cfb0:baaf:7008%4]) with mapi id 15.20.2474.023; Tue, 26 Nov 2019
+ 10:12:04 +0000
+Subject: Re: [PATCH] ASoC: AMD: Enable clk in startup intead of hw_params
+To:     Yu-Hsuan Hsu <yuhsuan@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Agrawal Akshu <Akshu.Agrawal@amd.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, Tzung-Bi Shih <tzungbi@google.com>
+References: <20191126075424.80668-1-yuhsuan@chromium.org>
+From:   "Agrawal, Akshu" <aagrawal2@amd.com>
+Message-ID: <460fa79d-76e8-d8be-8a9a-040d0e6df344@amd.com>
+Date:   Tue, 26 Nov 2019 15:41:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+In-Reply-To: <20191126075424.80668-1-yuhsuan@chromium.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-ClientProxiedBy: BN6PR19CA0079.namprd19.prod.outlook.com
- (2603:10b6:404:133::17) To DM5PR12MB1705.namprd12.prod.outlook.com
- (2603:10b6:3:10c::22)
+X-ClientProxiedBy: MA1PR01CA0155.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:71::25) To MN2PR12MB2878.namprd12.prod.outlook.com
+ (2603:10b6:208:aa::15)
 MIME-Version: 1.0
-X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+X-Originating-IP: [165.204.157.251]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 7389ca2b-be8c-4bcb-40c9-08d77258c7a4
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1163:|DM5PR12MB1163:
+X-MS-Office365-Filtering-Correlation-Id: 8e5a95d5-d3e0-4d1f-e80a-08d772591625
+X-MS-TrafficTypeDiagnostic: MN2PR12MB2944:|MN2PR12MB2944:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1163CE0AB5D8D01D1C4B5D7883450@DM5PR12MB1163.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:428;
+X-Microsoft-Antispam-PRVS: <MN2PR12MB294434CF246F42A93E35162CF8450@MN2PR12MB2944.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-Forefront-PRVS: 0233768B38
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(136003)(39860400002)(346002)(189003)(199004)(6512007)(31686004)(305945005)(65806001)(11346002)(65956001)(58126008)(8676002)(8936002)(81166006)(81156014)(6436002)(36756003)(2616005)(14454004)(6666004)(66476007)(66556008)(66946007)(186003)(86362001)(31696002)(4326008)(229853002)(2870700001)(2906002)(47776003)(66574012)(6246003)(76176011)(2486003)(23676004)(52116002)(4744005)(7736002)(6506007)(386003)(316002)(5660300002)(6636002)(25786009)(14444005)(99286004)(446003)(50466002)(46003)(478600001)(6116002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1163;H:DM5PR12MB1705.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(39860400002)(136003)(366004)(376002)(199004)(189003)(66066001)(316002)(2616005)(5660300002)(52116002)(6666004)(6486002)(8936002)(3846002)(14454004)(23676004)(14444005)(7736002)(229853002)(36756003)(8676002)(76176011)(2486003)(66556008)(6116002)(31696002)(66476007)(66946007)(81166006)(230700001)(446003)(53546011)(26005)(478600001)(99286004)(47776003)(6506007)(305945005)(386003)(65806001)(4326008)(58126008)(54906003)(6512007)(186003)(65956001)(7416002)(6436002)(2906002)(25786009)(50466002)(81156014)(6246003)(31686004)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB2944;H:MN2PR12MB2878.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TrF5NH/184EvolwwmWfSAojMjAPP86MnekjMtl2wUBrutXgLZfNMieJ8OwszPQLgIe+phZfTwwjkP6PhH7aeDVeOqCVEJLcVl3V/e/odWqGkG1XE4p/oLEwj+Rga01qKtKsxDsoXYgfpSjTga8QtyWlALbfNFM9mY0Evion6ntg+tp1g2Ko61WpqULEvFNezKjN8uj8TGb6A1W8/uY17RR2SHcsCgY1HWaDxiPR5nfIsXk7sC0qTYL/BM7TlQV92B0ku7nj6qvyL76uzMK1tO2k5RnNT4Dp9N2cnFnx6JqpsbRqRxcVyP5rc8R/4LE0O1OULTgQ6CUP9NJSWelgQ2zJ4ZW6Rjxh84H0VCQtUhQo2V4QpU4xV9m4EU1Eox6kKm5WFhbXbr/s0rIbCQCZmgUgkV82SsoFdYR8x3vUPj03QZSKjYQA0a15+rPEDb4Dk
+X-Microsoft-Antispam-Message-Info: GyN2Dbji3SFPRVLQNUIvKipXO4IK/aZhNfrNeETUC7Qi6mTgq1iVdMlx6Mihz1GKqJC0oZrRTM8Gs2OaDDnP2oNUcEG8izSgUfoH14thpHoPiWWnDDvx1pc0qf9uIvgO9hDRbyzmLjf27qM1Lo0EAYgPLkjLRXlIjTUa5u7IqjFKYTOMpHRmKb7AlZ00QOezthuCpE+Pxiez8vT8GjbqK9ILo9tIhl4YufezSlFaf4ER/01SAH99vUupAA6tXwBb8XLPo8qW900KsPBOuzBrtEsEZ62MO4OFSUySp+a5/5Z5SQsoGrIRfckx4IXE2uUTHozVj8AqhXOmg1kYscpX+Th/iqJR0WOMRHtgQJ2emQPyLu1oRyEoDuqUFqgU3EiTZdffcoD118ap0GTvoKlGYAaehChilRsCQsvFH8+7BEWrr8XNYcNp4TV5BrLw/2q4
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7389ca2b-be8c-4bcb-40c9-08d77258c7a4
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2019 10:09:53.0192
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e5a95d5-d3e0-4d1f-e80a-08d772591625
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2019 10:12:04.9111
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q1QCdniQXbxhLrhbtzVe4+UJLZIKH7hHkGDjSvrSYio3pmrMOlyiliwRC1N/Thuv
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1163
+X-MS-Exchange-CrossTenant-UserPrincipalName: km0OqLXTS61lYOL9NP5kElgrXL7iZF4jlQGM4l+zl2uxIQ8Ayf14l4+iWXkwxOcQ3FFED1NomLjT0OnVrGUeRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB2944
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 26.11.19 um 01:35 schrieb Jules Irenge:
-> Replace 0 with NULL to fix sparse tool  warning
->   warning: Using plain integer as NULL pointer
+
+On 11/26/2019 1:24 PM, Yu-Hsuan Hsu wrote:
+> Some usages only call startup and shutdown without setting hw_params
+> (e.g. arecord --dump-hw-params). If we don't enable clk in startup, it
+> will cause ref count error because the clk will be disabled in shutdown.
+> For this reason, we should move enabling clk from hw_params to startup.
 >
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-
-Acked-by: Christian König <christian.koenig@amd.com>
-
+> In addition, the hw_params is fixed in this driver(48000 rate, 2
+> channels, S16_LE format) so we don't need to change the clk rate after
+> the hw_params is set.
+>
+> Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
 > ---
->   drivers/gpu/drm/radeon/radeon_audio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   sound/soc/amd/acp-da7219-max98357a.c | 46 +++++++++-------------------
+>   1 file changed, 14 insertions(+), 32 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/radeon/radeon_audio.c b/drivers/gpu/drm/radeon/radeon_audio.c
-> index b9aea5776d3d..2269cfced788 100644
-> --- a/drivers/gpu/drm/radeon/radeon_audio.c
-> +++ b/drivers/gpu/drm/radeon/radeon_audio.c
-> @@ -288,7 +288,7 @@ static void radeon_audio_interface_init(struct radeon_device *rdev)
->   	} else {
->   		rdev->audio.funcs = &r600_funcs;
->   		rdev->audio.hdmi_funcs = &r600_hdmi_funcs;
-> -		rdev->audio.dp_funcs = 0;
-> +		rdev->audio.dp_funcs = NULL;
->   	}
+> diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+> index f4ee6798154af5..7a5621e5e2330d 100644
+> --- a/sound/soc/amd/acp-da7219-max98357a.c
+> +++ b/sound/soc/amd/acp-da7219-max98357a.c
+> @@ -96,14 +96,19 @@ static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
+>   	return 0;
 >   }
 >   
+> -static int da7219_clk_enable(struct snd_pcm_substream *substream,
+> -			     int wclk_rate, int bclk_rate)
+> +static int da7219_clk_enable(struct snd_pcm_substream *substream)
+>   {
+>   	int ret = 0;
+>   	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>   
+> -	clk_set_rate(da7219_dai_wclk, wclk_rate);
+> -	clk_set_rate(da7219_dai_bclk, bclk_rate);
+> +	/*
+> +	 * Set wclk to 48000 because the rate constraint of this driver is
+> +	 * 48000. ADAU7002 spec: "The ADAU7002 requires a BCLK rate that is
+> +	 * minimum of 64x the LRCLK sample rate." DA7219 is the only clk
+> +	 * source so for all codecs we have to limit bclk to 64X lrclk.
+> +	 */
+> +	clk_set_rate(da7219_dai_wclk, 48000);
+> +	clk_set_rate(da7219_dai_bclk, 48000 * 64);
+>   	ret = clk_prepare_enable(da7219_dai_bclk);
+>   	if (ret < 0) {
+>   		dev_err(rtd->dev, "can't enable master clock %d\n", ret);
+> @@ -156,7 +161,7 @@ static int cz_da7219_play_startup(struct snd_pcm_substream *substream)
+>   				   &constraints_rates);
+>   
+>   	machine->play_i2s_instance = I2S_SP_INSTANCE;
+> -	return 0;
+> +	return da7219_clk_enable(substream);
+>   }
+>   
+>   static int cz_da7219_cap_startup(struct snd_pcm_substream *substream)
+> @@ -178,7 +183,7 @@ static int cz_da7219_cap_startup(struct snd_pcm_substream *substream)
+>   
+>   	machine->cap_i2s_instance = I2S_SP_INSTANCE;
+>   	machine->capture_channel = CAP_CHANNEL1;
+> -	return 0;
+> +	return da7219_clk_enable(substream);
+>   }
+>   
+>   static int cz_max_startup(struct snd_pcm_substream *substream)
+> @@ -199,7 +204,7 @@ static int cz_max_startup(struct snd_pcm_substream *substream)
+>   				   &constraints_rates);
+>   
+>   	machine->play_i2s_instance = I2S_BT_INSTANCE;
+> -	return 0;
+> +	return da7219_clk_enable(substream);
+>   }
+>   
+>   static int cz_dmic0_startup(struct snd_pcm_substream *substream)
+> @@ -220,7 +225,7 @@ static int cz_dmic0_startup(struct snd_pcm_substream *substream)
+>   				   &constraints_rates);
+>   
+>   	machine->cap_i2s_instance = I2S_BT_INSTANCE;
+> -	return 0;
+> +	return da7219_clk_enable(substream);
+>   }
+>   
+>   static int cz_dmic1_startup(struct snd_pcm_substream *substream)
+> @@ -242,25 +247,7 @@ static int cz_dmic1_startup(struct snd_pcm_substream *substream)
+>   
+>   	machine->cap_i2s_instance = I2S_SP_INSTANCE;
+>   	machine->capture_channel = CAP_CHANNEL0;
+> -	return 0;
+> -}
+> -
+> -static int cz_da7219_params(struct snd_pcm_substream *substream,
+> -				      struct snd_pcm_hw_params *params)
+> -{
+> -	int wclk, bclk;
+> -
+> -	wclk = params_rate(params);
+> -	bclk = wclk * params_channels(params) *
+> -		snd_pcm_format_width(params_format(params));
+> -	/* ADAU7002 spec: "The ADAU7002 requires a BCLK rate
+> -	 * that is minimum of 64x the LRCLK sample rate."
+> -	 * DA7219 is the only clk source so for all codecs
+> -	 * we have to limit bclk to 64X lrclk.
+> -	 */
+> -	if (bclk < (wclk * 64))
+> -		bclk = wclk * 64;
+> -	return da7219_clk_enable(substream, wclk, bclk);
+> +	return da7219_clk_enable(substream);
+>   }
+>   
+>   static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
+> @@ -271,31 +258,26 @@ static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
+>   static const struct snd_soc_ops cz_da7219_play_ops = {
+>   	.startup = cz_da7219_play_startup,
+>   	.shutdown = cz_da7219_shutdown,
+> -	.hw_params = cz_da7219_params,
+>   };
+>   
+>   static const struct snd_soc_ops cz_da7219_cap_ops = {
+>   	.startup = cz_da7219_cap_startup,
+>   	.shutdown = cz_da7219_shutdown,
+> -	.hw_params = cz_da7219_params,
+>   };
+>   
+>   static const struct snd_soc_ops cz_max_play_ops = {
+>   	.startup = cz_max_startup,
+>   	.shutdown = cz_da7219_shutdown,
+> -	.hw_params = cz_da7219_params,
+>   };
+>   
+>   static const struct snd_soc_ops cz_dmic0_cap_ops = {
+>   	.startup = cz_dmic0_startup,
+>   	.shutdown = cz_da7219_shutdown,
+> -	.hw_params = cz_da7219_params,
+>   };
+>   
+>   static const struct snd_soc_ops cz_dmic1_cap_ops = {
+>   	.startup = cz_dmic1_startup,
+>   	.shutdown = cz_da7219_shutdown,
+> -	.hw_params = cz_da7219_params,
+>   };
+>   
+>   SND_SOC_DAILINK_DEF(designware1,
+
+Acked-by: Akshu Agrawal <akshu.agarawal@amd.com>
 
