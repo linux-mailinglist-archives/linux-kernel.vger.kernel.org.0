@@ -2,183 +2,372 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60AB7109B6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:43:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C742109B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:31:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbfKZJnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:43:05 -0500
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:34284 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727275AbfKZJnF (ORCPT
+        id S1727577AbfKZJbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 04:31:33 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:44138 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfKZJbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:43:05 -0500
-X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Nov 2019 04:43:03 EST
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAQ9ZCK5012387
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:37:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=subject : to :
- cc : references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp;
- bh=od7NtWv8A1ft46ESIAn5eCrlELpL9JojAJd+KINECi4=;
- b=yj/42p8M5m7IE8Ht/7o0/YFharUMGlOYox7IFIQoFEp+X0CJKnG6o7cszwmadDYA+gBI
- NaezpF3RrC+VBxFBOuhSX3zMBUm192U7kmMPxO8RKjuHAK2asOaOAVTJeSwGfbRXtSXc
- NW9eZkhwWmF3e6914M2B745l0ybdIHZZNL+vWWVUD+D7geHfL7Ox3jKf+61xpSryRn+I
- is7l8ZgXclE9+jxA4zJ1w3xi5DAfJYLucdrQj0y6Q+0ot8pcDJj1VLe73AfXUtsUweE+
- lNv9yXNw3q2tXzXlix8BsUBbJwya9M8NOg03ODuXEHFQ86mdKaQaT4pNkKZw3YIAuHiR Jw== 
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        by mx07-00252a01.pphosted.com with ESMTP id 2weu29hee8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:37:09 +0000
-Received: by mail-wm1-f71.google.com with SMTP id z3so887070wmk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 01:37:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=od7NtWv8A1ft46ESIAn5eCrlELpL9JojAJd+KINECi4=;
-        b=UM3FQllSTPplmabTC7jU+LvD7cb2Fa240ifZRDTJXFxChlEsJNHcaR/AfbBSmXRdnz
-         2eiiq9qJPnT7Bm3WqcNbdo8c4vDT5hRaMcQ8ASCvNqNXVLwg/s1NqhwXvB53f2NG9AmT
-         lVVGP/N/bHbHh3OgwN8MRxsK7oMBDUm+LtHpx8j3LDajq+Xk2K7AjT8aqk6HZn0WacaN
-         56T4do1RvngA5k9avohIS2oeWpX1pZvBfn7UJ00yurrTqZ7o88io8MPygmKqimVdQo0y
-         OtpPjyMbh16nPQzTN8uBuuXF+zqug9rEoU7H0q3piiYbiYM4EcyUjpEUGzCPnfstzE5E
-         0+BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=od7NtWv8A1ft46ESIAn5eCrlELpL9JojAJd+KINECi4=;
-        b=GY7wY5Vmhi2gAmNjwD8KJGQmyAPJUh9R8JVNOlSiHaXurP06o29hA0KE+/ktANXJCF
-         uDKLDENe5OFGCqdC5gj8dKAb9LpmcqdqiVSDnKHow6qTLKgP3954UlyustyYLNlos9uf
-         M5j93/qSU6CrTDW/QoFGMSGWbhFO3HqXWL9cVgvzj5LjNrNg7k6mFwyED+BjfN5DtQJi
-         4z7IkdKaUZ7SJPKaDGzZyHgix7PRbALh8fpSxCPoibR2gpiv0HAjHi/IjMrzhDszya4B
-         tYNQ6wWpkD+NUMp662ZWtbjMH1ud3CzTTH3K6/tfxyiEyQJOM8lGYZgbaZrlibLOIIFw
-         DkDg==
-X-Gm-Message-State: APjAAAW+gtT4+ud5Kn3KAcmDV6ZRlZZA77RpMoxnRV7EUqdVQ49EDquc
-        h0B6e0WUcFh6zw8w4IsVIIjUV99hbmUYGFbDF2GYJTlZXUTs/g3BQdCuoaCtPJDzOG9yxMiDARJ
-        JZnhtcXPqkBedY2tFkdwFFTB8
-X-Received: by 2002:a5d:4946:: with SMTP id r6mr28487133wrs.155.1574761028347;
-        Tue, 26 Nov 2019 01:37:08 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwBt2FmyEREb7ZvdP/DpQYA/wjkntFQB86TPOEh4oNOeIIRXcU33m0OX9mwck9d8Gn6k8YdQg==
-X-Received: by 2002:a5d:4946:: with SMTP id r6mr28487093wrs.155.1574761027986;
-        Tue, 26 Nov 2019 01:37:07 -0800 (PST)
-Received: from ?IPv6:2a00:1098:3142:14:f57f:65b0:b998:e2ca? ([2a00:1098:3142:14:f57f:65b0:b998:e2ca])
-        by smtp.gmail.com with ESMTPSA id e16sm2372706wme.35.2019.11.26.01.37.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2019 01:37:07 -0800 (PST)
-Subject: Re: [PATCH v3 3/7] ARM: dts: bcm2711: Enable PCIe controller
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        andrew.murray@arm.com, maz@kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
-Cc:     james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, jeremy.linton@arm.com,
-        linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20191126091946.7970-1-nsaenzjulienne@suse.de>
- <20191126091946.7970-4-nsaenzjulienne@suse.de>
-From:   Phil Elwell <phil@raspberrypi.org>
-Message-ID: <ede90a60-8194-4035-01c2-2673f4a8cfe7@raspberrypi.org>
-Date:   Tue, 26 Nov 2019 09:37:08 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 26 Nov 2019 04:31:32 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191126093127epoutp03e7ed4bea63a14193f38efa7ad1ed532d~arICMouBs2498724987epoutp03O
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:31:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191126093127epoutp03e7ed4bea63a14193f38efa7ad1ed532d~arICMouBs2498724987epoutp03O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574760687;
+        bh=mkL/g7/FB0iJ6KzjxbDyFtYw0Eg+RbHKsFbTLxR6QFQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=CDxdKbHYar8xCEpg8Gsau2Wem2dsfTmYvRbpmVrdCYEFAUBBzK3ujil0VhXYYpUNr
+         Fp2+scu56QVgDgDSTpZl8UJqboI1yHhr7JqJM9BpsWRu41EuXBGBkyJxNKOjoODnzf
+         bqm3htcOMr++IgThd4BGn5RYMJmuSVn6olhaRZEo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191126093127epcas1p424c21ba1b884603e0a87a08afb74fb94~arIBorT4l1182811828epcas1p4A;
+        Tue, 26 Nov 2019 09:31:27 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47MdvK0RrLzMqYkh; Tue, 26 Nov
+        2019 09:31:25 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CA.8A.48498.CE0FCDD5; Tue, 26 Nov 2019 18:31:25 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191126093124epcas1p47390a83ab7a7bb11f65aa99e8c550cf4~arH_x_jAA1172811728epcas1p4-;
+        Tue, 26 Nov 2019 09:31:24 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191126093124epsmtrp17bd3c8637e009fef25b59cc21f2ed6ec~arH_xQa3j3066030660epsmtrp1P;
+        Tue, 26 Nov 2019 09:31:24 +0000 (GMT)
+X-AuditID: b6c32a36-a3dff7000001bd72-9c-5ddcf0ec233d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        13.D1.06569.CE0FCDD5; Tue, 26 Nov 2019 18:31:24 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191126093123epsmtip213dd40477ace5d24157f28d65ee257e5~arH_kvZz21145911459epsmtip2j;
+        Tue, 26 Nov 2019 09:31:23 +0000 (GMT)
+Subject: Re: [PATCH v3] PM / devfreq: Add new name attribute for sysfs
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael.j.wysocki@intel.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, chanwoo@kernel.org,
+        stable@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <2545ff50-8e59-ff9f-1ba0-cb2661d5119a@samsung.com>
+Date:   Tue, 26 Nov 2019 18:37:29 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191126091946.7970-4-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191126091541.GB1371943@kroah.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-26_01:2019-11-26,2019-11-26 signatures=0
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTYRTn293urtHqa1meJMpuaaWZu7PZ7aEESo0KEoSKaNjNXdTcq91N
+        sqCXZBq9LII0NU0iJ9rITC2NhdrL1B5WWNkDk9KVWVlhCdHubpH//c7vnPP7nfN9hyLULjKY
+        Src4eLuFM9HkOHldy/yoyMHPPQZNdbuMze9+LGezy90k27H/o5LtulZEssNHWhH7Yl8Fyb6t
+        GFSypZd60QpKX940INPXVOaRek9xlVJ/tLYS6YdrZiQqNmUsT+M5I28P4S0pVmO6JTWWXpOU
+        HJ+si9EwkcwSdjEdYuHMfCydsDYxcmW6yTcLHZLJmZw+KpETBDoqbrnd6nTwIWlWwRFL8zaj
+        ybbEtlDgzILTkrowxWpeymg0Wp2vcEtG2v5j2TJbx7Yd3e3F5F7UtP4QCqAAL4IzDf3yQ2gc
+        pcYNCG4PdSqk4CuC1pLGv8EPBCdcLehfi/tZOZIS1xF0/qgipGAIQVf7T5lYNRmvBHdjr1zE
+        gXgeDNx87jchcCOC+/1lSjFB4nDw9HeTIp6IZ8GTkbc+WYpS4Ti4nO8UaTkOBffFc4RIT8Eb
+        4d53TqRVeBLcLejzywdgBgqOuPwqBA6C531nZRKeCfWDRf7ZAI+S8LPutVzUAZwApZ44aZnJ
+        4L1dq5RwMAwcy/mLd4Hrbisp9eYiqPU8UEiJaPCcPykTdQg8H9zXoiR6FlwdLUaS7wT49P2w
+        QrJSQW6OWiqZDV1vXsokPA3KD+aRxxFdOGabwjEbFI7ZoPC/WSmSV6KpvE0wp/ICY9OO/ewa
+        5D/T8JgGdK5zbTPCFKLHq0Y6XhjUCi5TyDI3I6AIOlAV0dJjUKuMXNZO3m5NtjtNvNCMdL63
+        zieCp6RYfUdvcSQzOm10dDS7iInRMQwdpKJGHhrUOJVz8Bk8b+Pt//pkVEDwXlQT9P7TDf3S
+        0AP59WvW9V5tY999G85ckHir58MOPruobVWWoWTrlz7XnpwwhtmsKR0tcyu88W/c24c2RZS0
+        Mb/cF8LuBE4MVeZ6PYunJ+XN+X1+bpZXO/h7+rtHbeip56vyVXXVxqT1Jae1+urO+L6EZeSV
+        U6s37D69tWCz7aOR8obTciGNY8IJu8D9AfiPGam8AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSvO6bD3diDTYfYLGYeOMKi0Xz4vVs
+        Fmeb3rBbXN41h83ic+8RRovbjSvYLB6veMtusWDjI0YHDo/Fe14yeWxa1cnmsX/uGnaPvi2r
+        GD0+b5ILYI3isklJzcksSy3St0vgymjqb2YqOJtVcePMXLYGxj1hXYycHBICJhLrby5m7GLk
+        4hAS2M0oce3JTnaIhKTEtItHmbsYOYBsYYnDh4shat4yStx9vAOsRljATWL97kcsILaIgIbE
+        y6O3WECKmEEGLZu8C2rqWyaJv1//sIFUsQloSex/cQPM5hdQlLj64zEjyAZeATuJzRNLQcIs
+        AqoS69ctYgaxRQUiJJ5vv8EIYvMKCEqcnPkEbBmngKHEzN6VYGOYBdQl/sy7xAxhi0vcejKf
+        CcKWl9j+dg7zBEbhWUjaZyFpmYWkZRaSlgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS
+        83M3MYIjS0trB+OJE/GHGAU4GJV4eH+cvR0rxJpYVlyZe4hRgoNZSYRX+/CdWCHelMTKqtSi
+        /Pii0pzU4kOM0hwsSuK88vnHIoUE0hNLUrNTUwtSi2CyTBycUg2MM+9In39T57nEOk8+ebcZ
+        z70lngsTeWZF/H/b6uDF/4K/Xc5nu+n5LUrTtL4JT43b+Hr97PCsL7v/mqf7TFKwXjdH26bt
+        fM2ceLN7uZnr+48vPrVxy5rlKs/Wqt6ZljNtg8NVbn1ZwRdex8NUl6laG7s98PRXUkicNtX0
+        t/7hZ70vNy3bJMWYq8RSnJFoqMVcVJwIADbuL9qoAgAA
+X-CMS-MailID: 20191126093124epcas1p47390a83ab7a7bb11f65aa99e8c550cf4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191125005755epcas1p2404d0f095e6ce543d36e55e2427282f8
+References: <CGME20191125005755epcas1p2404d0f095e6ce543d36e55e2427282f8@epcas1p2.samsung.com>
+        <20191125010357.27153-1-cw00.choi@samsung.com>
+        <20191125085039.GA2301674@kroah.com>
+        <48cadf42-4675-ffe1-a3d4-a97a37538955@samsung.com>
+        <20191126075333.GA1231308@kroah.com>
+        <c5c9dc78-8209-3b42-4b16-cb40b00b8508@samsung.com>
+        <20191126091541.GB1371943@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+On 11/26/19 6:15 PM, Greg KH wrote:
+> On Tue, Nov 26, 2019 at 05:35:28PM +0900, Chanwoo Choi wrote:
+>> On 11/26/19 4:53 PM, Greg KH wrote:
+>>> On Tue, Nov 26, 2019 at 12:08:18PM +0900, Chanwoo Choi wrote:
+>>>> Hi Greg,
+>>>>
+>>>> On 11/25/19 5:50 PM, Greg KH wrote:
+>>>>> On Mon, Nov 25, 2019 at 10:03:57AM +0900, Chanwoo Choi wrote:
+>>>>>> The commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
+>>>>>> sysfs") changed the node name to devfreq(x). After this commit, it is not
+>>>>>> possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
+>>>>>>
+>>>>>> Add new name attribute in order to get device name.
+>>>>>>
+>>>>>> Cc: stable@vger.kernel.org
+>>>>>> Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
+>>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>>>> ---
+>>>>>>  Changes from v2:
+>>>>>> - Change the order of name_show() according to the sequence in devfreq_attrs[]
+>>>>>>
+>>>>>> Changes from v1:
+>>>>>> - Update sysfs-class-devfreq documentation
+>>>>>> - Show device name directly from 'devfreq->dev.parent'
+>>>>>>
+>>>>>
+>>>>> Shouldn't you just revert the original patch here?  Why did the sysfs
+>>>>> file change?
+>>>>
+>>>> The initial devfreq code used the parent device name for device name
+>>>> corresponding to devfreq object instead of 'devfreq%d' style.
+>>>> Before applied The commit 4585fbcb5331 ("PM / devfreq: Modify
+>>>> the device name as devfreq(X) for sysfs"), the devfreq sysfs
+>>>> showed the parent device name as following:
+>>>>
+>>>> For example on Odroid-XU3 board before applied the commit 4585fbcb5331,
+>>>> 	/sys/class/devfreq/soc:bus_wcore
+>>>> 	/sys/class/devfreq/soc:bus_noc
+>>>> 	...(skip)
+>>>>
+>>>>
+>>>> But, I think that devfreq subsystem had to show the consistent
+>>>> sysfs entry name for devfreq device like input, thermal, hwmon subsystem.
+>>>>
+>>>> For example on Odroid-XU3 board,
+>>>> - The input subsystem show the 'input%d' style for input device.
+>>>> $root@localhost:/# ls /sys/class/input/                                         
+>>>> event0  event1  input0  input1  mice  mouse0
+>>>>
+>>>> - The thermal subsystem show the 'cooling_device%d' style for thermal cooling device.
+>>>> $ root@localhost:/# ls /sys/class/thermal/                                       
+>>>> cooling_device0  cooling_device2  thermal_zone1  thermal_zone3
+>>>> cooling_device1  thermal_zone0    thermal_zone2  thermal_zone4
+>>>>
+>>>> - The hwmon subsystem show the 'hwmon%d' style for h/w monitor device.
+>>>> $root@localhost:/# ls /sys/class/hwmon/                                         
+>>>> hwmon0
+>>>>
+>>>>
+>>>> So, I tried to make the consistent sysfs entry name for devfreq device
+>>>> by contributing commit 4585fbcb5331 ("PM / devfreq: Modify the device name as
+>>>> devfreq(X) for sysfs"). But, The commit 4585fbcb5331 have missed that sysfs
+>>>> interface had to provide the real device name. Some subsystem like thermal
+>>>> and hwmon provide the device type or device name through sysfs interface.
+>>>> It is possible to make the user to find their own specific device by iteration
+>>>> on user-space.
+>>>>
+>>>> root@localhost:/# cat /sys/class/thermal/cooling_device0/type 
+>>>> pwm-fan
+>>>> root@localhost:/# cat /sys/class/thermal/cooling_device1/type                  
+>>>> thermal-cpufreq-0
+>>>> root@localhost:/# cat /sys/class/thermal/cooling_device2/type                  
+>>>> thermal-cpufreq-1
+>>>>
+>>>> root@localhost:/# cat /sys/class/hwmon/hwmon0/name                             
+>>>> pwmfan
+>>>>
+>>>>
+>>>> So, I add the new 'name' attribute of sysfs for devfreq device.
+>>>>
+>>>>>
+>>>>>> Documentation/ABI/testing/sysfs-class-devfreq | 7 +++++++
+>>>>>>  drivers/devfreq/devfreq.c                     | 9 +++++++++
+>>>>>>  2 files changed, 16 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/ABI/testing/sysfs-class-devfreq b/Documentation/ABI/testing/sysfs-class-devfreq
+>>>>>> index 01196e19afca..75897e2fde43 100644
+>>>>>> --- a/Documentation/ABI/testing/sysfs-class-devfreq
+>>>>>> +++ b/Documentation/ABI/testing/sysfs-class-devfreq
+>>>>>> @@ -7,6 +7,13 @@ Description:
+>>>>>>  		The name of devfreq object denoted as ... is same as the
+>>>>>>  		name of device using devfreq.
+>>>>>>  
+>>>>>> +What:		/sys/class/devfreq/.../name
+>>>>>> +Date:		November 2019
+>>>>>> +Contact:	Chanwoo Choi <cw00.choi@samsung.com>
+>>>>>> +Description:
+>>>>>> +		The /sys/class/devfreq/.../name shows the name of device
+>>>>>> +		of the corresponding devfreq object.
+>>>>>> +
+>>>>>>  What:		/sys/class/devfreq/.../governor
+>>>>>>  Date:		September 2011
+>>>>>>  Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
+>>>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>>>>> index 65a4b6cf3fa5..6f4d93d2a651 100644
+>>>>>> --- a/drivers/devfreq/devfreq.c
+>>>>>> +++ b/drivers/devfreq/devfreq.c
+>>>>>> @@ -1169,6 +1169,14 @@ int devfreq_remove_governor(struct devfreq_governor *governor)
+>>>>>>  }
+>>>>>>  EXPORT_SYMBOL(devfreq_remove_governor);
+>>>>>>  
+>>>>>> +static ssize_t name_show(struct device *dev,
+>>>>>> +			struct device_attribute *attr, char *buf)
+>>>>>> +{
+>>>>>> +	struct devfreq *devfreq = to_devfreq(dev);
+>>>>>> +	return sprintf(buf, "%s\n", dev_name(devfreq->dev.parent));
+>>>>>
+>>>>> Why is the parent's name being set here, and not the device name?
+>>>>
+>>>> The device name style in struct devfreq is 'devfreq%d' instead of
+>>>> parent device name in order to keep the consistent naming style for devfreq device
+>>>> as I mentioned above. 'devfreq%d' name is consistent name style for devfreq device.
+>>>> But, it don't show the real h/w device name. So, show the parent device name
+>>>> which is specified on device-tree file.
+>>>
+>>> I'm sorry, but I still do not understand.  Can you show me the directory
+>>> tree before and after here?
+>>>
+>>
+>> I'm sorry for not enough description. I add the following example on Odroid-XU3 board.
+>>
+>>
+>> 1. Before applied commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X),
+>>
+>> root@localhost:~# ls /sys/class/devfreq                                        
+>> soc:bus_disp1       soc:bus_fsys_apb  soc:bus_gscl_scaler  soc:bus_mscl
+>> soc:bus_disp1_fimd  soc:bus_g2d       soc:bus_jpeg         soc:bus_noc
+>> soc:bus_fsys        soc:bus_g2d_acp   soc:bus_jpeg_apb     soc:bus_peri
+>> soc:bus_fsys2       soc:bus_gen       soc:bus_mfc          soc:bus_wcore
+>>
+>> root@localhost:~# ls -al /sys/class/devfreq
+>> total 0
+>> drwxr-xr-x  2 root root 0 Jan  1 09:00 .
+>> drwxr-xr-x 52 root root 0 Jan  1 09:00 ..
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_disp1 -> ../../devices/platform/soc/soc:bus_disp1/devfreq/soc:bus_disp1
+> 
+> Ah, that's odd, ok.
+> 
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_disp1_fimd -> ../../devices/platform/soc/soc:bus_disp1_fimd/devfreq/soc:bus_did
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_fsys -> ../../devices/platform/soc/soc:bus_fsys/devfreq/soc:bus_fsys
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_fsys2 -> ../../devices/platform/soc/soc:bus_fsys2/devfreq/soc:bus_fsys2
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_fsys_apb -> ../../devices/platform/soc/soc:bus_fsys_apb/devfreq/soc:bus_fsys_ab
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_g2d -> ../../devices/platform/soc/soc:bus_g2d/devfreq/soc:bus_g2d
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_g2d_acp -> ../../devices/platform/soc/soc:bus_g2d_acp/devfreq/soc:bus_g2d_acp
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_gen -> ../../devices/platform/soc/soc:bus_gen/devfreq/soc:bus_gen
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_gscl_scaler -> ../../devices/platform/soc/soc:bus_gscl_scaler/devfreq/soc:bus_r
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_jpeg -> ../../devices/platform/soc/soc:bus_jpeg/devfreq/soc:bus_jpeg
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_jpeg_apb -> ../../devices/platform/soc/soc:bus_jpeg_apb/devfreq/soc:bus_jpeg_ab
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_mfc -> ../../devices/platform/soc/soc:bus_mfc/devfreq/soc:bus_mfc
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_mscl -> ../../devices/platform/soc/soc:bus_mscl/devfreq/soc:bus_mscl
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_noc -> ../../devices/platform/soc/soc:bus_noc/devfreq/soc:bus_noc
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_peri -> ../../devices/platform/soc/soc:bus_peri/devfreq/soc:bus_peri
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:00 soc:bus_wcore -> ../../devices/platform/soc/soc:bus_wcore/devfreq/soc:bus_wcore
+>>
+>>
+>>
+>> 2. After applied commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X),
+>>
+>> root@localhost:~# ls  /sys/class/devfreq                                       
+>> devfreq0   devfreq11  devfreq14  devfreq3  devfreq6  devfreq9
+>> devfreq1   devfreq12  devfreq15  devfreq4  devfreq7
+>> devfreq10  devfreq13  devfreq2   devfreq5  devfreq8
+> 
+> That's better.
+> 
+>>
+>> root@localhost:~# ls -al /sys/class/devfreq                                    
+>> total 0
+>> drwxr-xr-x  2 root root 0 Jan  1 09:02 .
+>> drwxr-xr-x 52 root root 0 Jan  1 09:02 ..
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq0 -> ../../devices/platform/soc/soc:bus_wcore/devfreq/devfreq0
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq1 -> ../../devices/platform/soc/soc:bus_noc/devfreq/devfreq1
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq10 -> ../../devices/platform/soc/soc:bus_jpeg/devfreq/devfreq10
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq11 -> ../../devices/platform/soc/soc:bus_jpeg_apb/devfreq/devfreq11
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq12 -> ../../devices/platform/soc/soc:bus_disp1_fimd/devfreq/devfreq12
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq13 -> ../../devices/platform/soc/soc:bus_disp1/devfreq/devfreq13
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq14 -> ../../devices/platform/soc/soc:bus_gscl_scaler/devfreq/devfreq14
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq15 -> ../../devices/platform/soc/soc:bus_mscl/devfreq/devfreq15
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq2 -> ../../devices/platform/soc/soc:bus_fsys_apb/devfreq/devfreq2
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq3 -> ../../devices/platform/soc/soc:bus_fsys/devfreq/devfreq3
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq4 -> ../../devices/platform/soc/soc:bus_fsys2/devfreq/devfreq4
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq5 -> ../../devices/platform/soc/soc:bus_mfc/devfreq/devfreq5
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq6 -> ../../devices/platform/soc/soc:bus_gen/devfreq/devfreq6
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq7 -> ../../devices/platform/soc/soc:bus_peri/devfreq/devfreq7
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq8 -> ../../devices/platform/soc/soc:bus_g2d/devfreq/devfreq8
+>> lrwxrwxrwx  1 root root 0 Jan  1 09:02 devfreq9 -> ../../devices/platform/soc/soc:bus_g2d_acp/devfreq/devfreq9
+> 
+> Ok, this looks a bit better, but why is there the extra "devfreq"
+> directory in there?  That was in the original as well, but that feels
+> odd.
 
-On 26/11/2019 09:19, Nicolas Saenz Julienne wrote:
-> This enables bcm2711's PCIe bus, which is hardwired to a VIA
-> Technologies XHCI USB 3.0 controller.
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> 
-> ---
-> 
-> This will likely need a rebase once the RPi GENET patches land.
-> 
-> Changes since v2:
->    - Remove unused interrupt-map
->    - correct dma-ranges to it's full size, non power of 2 bus DMA
->      constraints now supported in linux-next[1]
->    - add device_type
->    - rename alias from pcie_0 to pcie0
-> 
-> Changes since v1:
->    - remove linux,pci-domain
-> 
-> [1] https://lkml.org/lkml/2019/11/21/235
-> 
->   arch/arm/boot/dts/bcm2711.dtsi | 41 ++++++++++++++++++++++++++++++++++
->   1 file changed, 41 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-> index 667658497898..2e121fc8b3d0 100644
-> --- a/arch/arm/boot/dts/bcm2711.dtsi
-> +++ b/arch/arm/boot/dts/bcm2711.dtsi
-> @@ -288,6 +288,47 @@ IRQ_TYPE_LEVEL_LOW)>,
->   		arm,cpu-registers-not-fw-configured;
->   	};
->   
-> +	scb {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +
-> +		ranges = <0x0 0x7c000000  0x0 0xfc000000  0x03800000>,
-> +			 <0x6 0x00000000  0x6 0x00000000  0x40000000>;
-> +
-> +		pcie0: pcie@7d500000 {
-> +			compatible = "brcm,bcm2711-pcie";
-> +			reg = <0x0 0x7d500000 0x9310>;
-> +			device_type = "pci";
-> +			#address-cells = <3>;
-> +			#interrupt-cells = <1>;
-> +			#size-cells = <2>;
-> +			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "pcie", "msi";
-> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +			interrupt-map = <0 0 0 1 &gicv2 GIC_SPI 143
-> +							IRQ_TYPE_LEVEL_HIGH>;
-> +			msi-controller;
-> +			msi-parent = <&pcie0>;
-> +
-> +			ranges = <0x02000000 0x0 0xf8000000 0x6 0x00000000
-> +				  0x0 0x04000000>;
-> +			/*
-> +			 * The wrapper around the PCIe block has a bug
-> +			 * preventing it from accessing beyond the first 3GB of
-> +			 * memory. As the bus DMA mask is rounded up to the
-> +			 * closest power of two of the dma-range size, we're
-> +			 * forced to set the limit at 2GB. This can be
-> +			 * harmlessly changed in the future once the DMA code
-> +			 * handles non power of two DMA limits.
-> +			 */
-> +			dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000
-> +				      0x0 0xc0000000>;
+What extra directory are you talking about? I didn't create
+the any extra directory for devfreq.
 
-The comment doesn't match the data here - I think for now the size field 
-needs to be reduced to 2GB to match the comment.
+If you mention the following 'devfreq' directory, 
+it is created by basic device driver code in linux kernel.
+- /sys/devices/platform/soc/soc\:bus_wcore/devfreq/
 
-Phil
+or
 
-> +			brcm,enable-ssc;
-> +		};
-> +	};
-> +
->   	cpus: cpus {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> 
+Each devfreq0~15 directories indicates the each devfreq device.
+
+
+For example, show the info of each path
+root@localhost:~# ls -al /sys/devices/platform/soc/soc\:bus_wcore/             
+total 0
+drwxr-xr-x   4 root root    0 Jan  1 09:56 .
+drwxr-xr-x 109 root root    0 Jan  1 09:56 ..
+drwxr-xr-x   3 root root    0 Jan  1 09:56 devfreq
+lrwxrwxrwx   1 root root    0 Jan  1 09:57 driver -> ../../../../bus/platform/drivers/exynos-bus
+-rw-r--r--   1 root root 4096 Jan  1 09:57 driver_override
+-r--r--r--   1 root root 4096 Jan  1 09:57 modalias
+lrwxrwxrwx   1 root root    0 Jan  1 09:57 of_node -> ../../../../firmware/devicetree/base/soc/bus_wcore
+drwxr-xr-x   2 root root    0 Jan  1 09:57 power
+lrwxrwxrwx   1 root root    0 Jan  1 09:56 subsystem -> ../../../../bus/platform
+-rw-r--r--   1 root root 4096 Jan  1 09:56 uevent
+
+root@localhost:~# ls -al /sys/devices/platform/soc/soc\:bus_wcore/devfreq/     
+total 0
+drwxr-xr-x 3 root root 0 Jan  1 09:56 .
+drwxr-xr-x 4 root root 0 Jan  1 09:56 ..
+drwxr-xr-x 3 root root 0 Jan  1 09:56 devfreq0
+
+root@localhost:~# ls -al /sys/devices/platform/soc/soc\:bus_wcore/devfreq/devfreq0
+drwxr-xr-x 3 root root    0 Jan  1 09:56 .
+drwxr-xr-x 3 root root    0 Jan  1 09:56 ..
+-r--r--r-- 1 root root 4096 Jan  1 10:03 available_frequencies
+-r--r--r-- 1 root root 4096 Jan  1 10:03 available_governors
+-r--r--r-- 1 root root 4096 Jan  1 10:03 cur_freq
+lrwxrwxrwx 1 root root    0 Jan  1 10:03 device -> ../../../soc:bus_wcore
+-rw-r--r-- 1 root root 4096 Jan  1 10:03 governor
+-rw-r--r-- 1 root root 4096 Jan  1 10:03 max_freq
+-rw-r--r-- 1 root root 4096 Jan  1 10:03 min_freq
+-r--r--r-- 1 root root 4096 Jan  1 10:03 name
+-rw-r--r-- 1 root root 4096 Jan  1 10:03 polling_interval
+drwxr-xr-x 2 root root    0 Jan  1 10:03 power
+lrwxrwxrwx 1 root root    0 Jan  1 09:56 subsystem -> ../../../../../../class/devfreq
+-r--r--r-- 1 root root 4096 Jan  1 10:03 target_freq
+-r--r--r-- 1 root root 4096 Jan  1 10:03 trans_stat
+-rw-r--r-- 1 root root 4096 Jan  1 09:56 uevent
+
+
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
