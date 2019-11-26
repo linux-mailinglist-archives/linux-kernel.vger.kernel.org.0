@@ -2,127 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1849D1097D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 03:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCCC1097DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 03:34:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfKZCdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 21:33:15 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47738 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727282AbfKZCdO (ORCPT
+        id S1727436AbfKZCez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 21:34:55 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:22340 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbfKZCez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 21:33:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574735593;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RbRdWBhJ4blUfXgXJEf9JYkRJ6P4wp0pBcRs6Ey3L2A=;
-        b=Rh+OBdrvCtzDEVg+MCC9o7M1sKXNbTTmOpNyacKyQC+weHEyOOkXiP5FzzmRczJRHoWMv0
-        k1Ro25J+L9DXDayoJirNDCkmfz3jQet7rwUniZ0Y1tBaeTpV5EF7l26ZSCkMeZxBvh/os4
-        B/6WUDXbLNsqBSeiv+tftOCKYAM8eR0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-151-ATDMGVSrPGWP4Ti-y8ZjIw-1; Mon, 25 Nov 2019 21:33:10 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 153B5100550D;
-        Tue, 26 Nov 2019 02:33:08 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A0C95C1D8;
-        Tue, 26 Nov 2019 02:32:57 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 10:32:53 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Andrea Vai <andrea.vai@unipv.it>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191126023253.GA24501@ming.t460p>
-References: <20191109222828.GA30568@ming.t460p>
- <fa3b0cf1f88e42e1200101bccbc797e4e7778d58.camel@unipv.it>
- <20191123072726.GC25356@ming.t460p>
- <a9ffcca93657cbbb56819fd883c474a702423b41.camel@unipv.it>
- <20191125035437.GA3806@ming.t460p>
- <bf47a6c620b847fa9e27f8542eb761529f3e0381.camel@unipv.it>
- <20191125102928.GA20489@ming.t460p>
- <e5093535c60fd5dff8f92b76dcd52a1030938f62.camel@unipv.it>
- <20191125151535.GA8044@ming.t460p>
- <0876e232feace900735ac90d27136288b54dafe1.camel@unipv.it>
+        Mon, 25 Nov 2019 21:34:55 -0500
+Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 26 Nov
+ 2019 10:35:17 +0800
+Subject: Re: [PATCH v2 3/3] clk: meson: a1: add support for Amlogic A1 clock
+ driver
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
+ <1571382865-41978-4-git-send-email-jian.hu@amlogic.com>
+ <1jsgnmba1a.fsf@starbuckisacylon.baylibre.com>
+ <49b33e94-910b-3fd9-4da1-050742d07e93@amlogic.com>
+ <1jblts3v7e.fsf@starbuckisacylon.baylibre.com>
+ <f02b6fb2-5b98-0930-6d47-a3e65840fb82@amlogic.com>
+ <1jh839f2ue.fsf@starbuckisacylon.baylibre.com>
+ <20d04452-fc63-9e9e-220f-146b493a860f@amlogic.com>
+ <1695e9b0-1730-eef6-491d-fe90ac897ee9@amlogic.com>
+ <1jtv6yftmm.fsf@starbuckisacylon.baylibre.com>
+ <9e652ed1-384e-f630-f2a4-0aa4486df577@amlogic.com>
+ <1j7e3oqn36.fsf@starbuckisacylon.baylibre.com>
+ <9ec317e8-136e-1ab4-4e9b-21210e7f3e05@amlogic.com>
+ <1j5zj8qgsl.fsf@starbuckisacylon.baylibre.com>
+ <7a3f1e14-e5a5-407a-335a-eb68d3082eb9@amlogic.com>
+Message-ID: <1ca0c5e1-8417-c5dc-7ad1-80ea707554b2@amlogic.com>
+Date:   Tue, 26 Nov 2019 10:35:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <0876e232feace900735ac90d27136288b54dafe1.camel@unipv.it>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: ATDMGVSrPGWP4Ti-y8ZjIw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In-Reply-To: <7a3f1e14-e5a5-407a-335a-eb68d3082eb9@amlogic.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.39.99]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 07:51:33PM +0100, Andrea Vai wrote:
-> Il giorno lun, 25/11/2019 alle 23.15 +0800, Ming Lei ha scritto:
-> > On Mon, Nov 25, 2019 at 03:58:34PM +0100, Andrea Vai wrote:
-> >=20
-> > [...]
-> >=20
-> > > What to try next?
-> >=20
-> > 1) cat /sys/kernel/debug/block/$DISK/hctx0/flags
-> result:
->=20
-> alloc_policy=3DFIFO SHOULD_MERGE|2
->=20
-> >=20
-> >=20
-> > 2) echo 128 > /sys/block/$DISK/queue/nr_requests and run your copy
-> > 1GB
-> > test again.
->=20
-> done, and still fails. What to try next?
 
-I just run 256M cp test to one USB storage device on patched kernel,
-and WRITE data IO is really in ascending order. The filesystem is ext4,
-and mount without '-o sync'. From previous discussion, looks that is
-exactly your test setting. The order can be observed via the following scri=
-pt:
 
-#!/bin/sh
-MAJ=3D$1
-MIN=3D$2
-MAJ=3D$(( $MAJ << 20 ))
-DEV=3D$(( $MAJ | $MIN ))
-/usr/share/bcc/tools/trace -t -C \
-  't:block:block_rq_issue (args->dev =3D=3D '$DEV') "%s %d %d", args->rwbs,=
- args->sector, args->nr_sector'
+On 2019/11/25 21:51, Jian Hu wrote:
+> 
+> 
+> On 2019/11/25 20:30, Jerome Brunet wrote:
+>>
+>> On Mon 25 Nov 2019 at 13:01, Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>>> On 2019/11/25 18:14, Jerome Brunet wrote:
+>>>>
+>>>> On Thu 21 Nov 2019 at 04:21, Jian Hu <jian.hu@amlogic.com> wrote:
+>>>>
+>>>>> Hi, Jerome
+>>>>>
+>>>>> On 2019/11/20 23:35, Jerome Brunet wrote:
+>>>>>>
+>>>>>> On Wed 20 Nov 2019 at 10:28, Jian Hu <jian.hu@amlogic.com> wrote:
+>>>>>>
+>>>>>>> Hi, jerome
+>>>>>>>
+>>>>>>> Is there any problem about fixed_pll_dco's parent_data?
+>>>>>>>
+>>>>>>> Now both name and fw_name are described in parent_data.
+>>>>>>
+>>>>>> Yes, there is a problem.  This approach is incorrect, as I've 
+>>>>>> tried to
+>>>>>> explain a couple times already. Let me try to re-summarize why this
+>>>>>> approach is incorrect.
+>>>>>>
+>>>>>> Both fw_name and name should be provided when it is possible that
+>>>>>> the DT does not describe the input clock. IOW, it is only for 
+>>>>>> controllers
+>>>>>> which relied on the global name so far and are now starting to 
+>>>>>> describe
+>>>>>> the clock input in DT
+>>>>>>
+>>>>>> This is not your case.
+>>>>>> Your controller is new and DT will have the correct
+>>>>>> info
+>>>>>>
+>>>>>> You are trying work around an ordering issue by providing both 
+>>>>>> fw_name
+>>>>>> and name. This is not correct and I'll continue to nack it.
+>>>>>>
+>>>>>> If the orphan clock is not reparented as you would expect, I 
+>>>>>> suggest you
+>>>>>> try to look a bit further at how the reparenting of orphans is 
+>>>>>> done in
+>>>>>> CCF and why it does not match your expectation.
+>>>>>>
+>>>>> I have debugged the handle for orphan clock in CCF, Maybe you are 
+>>>>> missing
+>>>>> the last email.
+>>>>
+>>>> Nope, got it the first time
+>>>>
+>>>>> Even though the clock index exit, it will get failed for the orphan 
+>>>>> clock's
+>>>>> parent clock due to it has not beed added to the provider.
+>>>>
+>>>> If the provider is not registered yet, of course any query to it won't
+>>>> work. This why I have suggested to this debug *further* :
+>>>>
+>>>> * Is the orphan reparenting done when a new provider is registered ?
+>>>> * If not, should it be done ? is this your problem ?
+>>>>
+>>
+>> Apparently, I was not clear enough so I'll rephrase
+>>
+>>> Yes, the orphan reparenting is done when the new provider is
+>>> registered.
+>>
+>> No it is not done yet. Please check the code.
+>>
+>> The reparenting of orphan is done only on clock registration, not on
+>> provider registeration. Now that clocks can be specified by DT, this
+>> probably needs to added.The action of reparenting the orphan is before 
+>> the provider registration 
+> with the current code.
+>>
+>> That is your problem.
+> Yes, if the provider is registered before the clock registration, it
+> will reparent successfully.
+>>
+>> Please fix the underlying issue, then you can post your series again.
+>>
+>>>
+>>> Reparenting the orphan will be done when each clock is registered by
+>>> devm_clk_hw_register. And at this time the provider has not been
+>>> registered. After all clocks are registered by devm_clk_hw_register, the
+>>> provider will be registered by devm_of_clk_add_hw_provider.
+>>>
+>>> Reparenting the orphan will fail when fw_name is added alone, the 
+>>> couse is
+>>> that devm_clk_hw_register is always running ahead of
+>>> devm_of_clk_add_hw_provider.
+>>
+>> Please stop bringing the topic of "fw_name" and "name" field together, I
+>> told you 3 times why this is wrong. It is not going to change.
+>>
+>>>
+>>> That is why it will failed to get parent for the orphan clock.
+>>
+>> It fails because the provider is not registered when you try to reparent
+>> the orphan.
+>>
+>> It shows that you should try again once the provider is registered.
+>>
+> OK, I have exchanged the position for devm_clk_hw_register and 
+> devm_of_clk_add_hw_provider in meson-eeclk.c.
+> 
+> It reparents successfully for orphan clock.
+> 
+> Is is ok that put devm_of_clk_add_hw_provider ahead?
+> 
+> As far as I am concerned, there is no any effect.Sorry, If the provider is registered first, I find it will affect the 
+assigned-clock-parents and assigned-clock-rates configurations in DT 
+when the provider is registered.
 
-$MAJ & $MIN can be retrieved via lsblk for your USB storage disk.
+It will fail to set the assigned parent and assigned rate for one clock 
+because of the related clocks are not registered yet.
 
-So I think we need to check if the patch is applied correctly first.
+Moreover, registering provider is always after clock registration in 
+other vendor clock drivers.
 
-If your kernel tree is managed via git, please post 'git diff'.
-Otherwise, share us your kernel version, and I will send you one
-backported patch on the kernel version.
+Maybe registering provider is better after the clock registration.
 
-Meantime, you can collect IO order log via the above script as you did last
-time, then send us the log.
 
-Thanks,
-Ming
-
+>>>
+>>>
+>>>
+>>>>
+>>>> .
+>>>>
+>>
+>> .
+>>
