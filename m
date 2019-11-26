@@ -2,115 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F180109B68
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5A4109B66
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:42:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfKZJm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:42:56 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38220 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727275AbfKZJm4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:42:56 -0500
-Received: by mail-ed1-f67.google.com with SMTP id s10so15705118edi.5;
-        Tue, 26 Nov 2019 01:42:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9bfdvk/BCYnBIN3lkt7QnRugpNhrBl4MqK4VJoegeaQ=;
-        b=JyhC0a7WITO/qRb5QCbT71KZ6Nm+N7oCBp7ZhwJpZGQkhllijWbZ6ViWR2QQQy9XwR
-         nP6bpB41eJiu4660U1Xgm+2ouCZH7fON7EMPTE2Rz/b13dyL4o3spO6XvGOAzFhGI/OS
-         36+wXRGSTwQwBZ5wrpNCXFT7xAYUiTdFauMuJA2Q83O9Tt1x/UB+vLysF9rUpHIu+LTb
-         W5alaHEXz6iWYRvIJdyMVK9Z3Ot9ulPOg4S1szYmRh2wOH37hDgnANDUtqug9I+M8b9E
-         cssCeOvVSTJYOcGVkKw5b/y7Gdm1MK8zn5xpw2k67Jkvh+Vj53cV7WGR8CX8kPRiZcSr
-         azpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9bfdvk/BCYnBIN3lkt7QnRugpNhrBl4MqK4VJoegeaQ=;
-        b=S0h2zo2PU+gxNZLZUdjl5MaTxZt6YKIt+2A3fPCfuRwITemSaBGA9ul+0fJWN1Wv+s
-         z02+rJKBGfYUXLjLcWQWN/og2eEZLGC0pLvNFnbDRAu1W4XajE/3DKwOhD+N3wPyS/5n
-         PqYnv32RsOsIT+7BvH4pvpA5z5jKeZrOloYGEkPOus3KZg4x/5Zf9uJSttWmpK0EOsvO
-         Kad+pBPEmPqO1ACRctEt2QJVqi+FiVKgPj6hyY2xIhZeZZJPfAHgTyTF3xyGuZrPaY1/
-         peK3XQ2nZIYCAo6SyMHcS8fp6gBkeMpVor/RI5gxkt8z5VVLgJmnoEpPZouuQuB/qlzR
-         fuSg==
-X-Gm-Message-State: APjAAAWQ5cW8TJubgYvmXEVcp+mDuzEiNt7Y8kE2/DmGhcil1j2nsTnK
-        GNCRH6Vc2qbY56Mud5O6YlrTni1WgOpw690gDHk=
-X-Google-Smtp-Source: APXvYqyks7TiuCgvDEvHQo/6h3yAGojsPacxZkIOZyOWkCRlk0kc3juTtgdDjeLpfULEVNal73vtemHWYNM5TPheU3U=
-X-Received: by 2002:a17:906:4910:: with SMTP id b16mr41915513ejq.133.1574761374033;
- Tue, 26 Nov 2019 01:42:54 -0800 (PST)
+        id S1727568AbfKZJmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 04:42:40 -0500
+Received: from foss.arm.com ([217.140.110.172]:60338 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727275AbfKZJmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 04:42:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00A3C30E;
+        Tue, 26 Nov 2019 01:42:38 -0800 (PST)
+Received: from [10.163.1.41] (unknown [10.163.1.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDA173F52E;
+        Tue, 26 Nov 2019 01:42:35 -0800 (PST)
+Subject: Re: [PATCH] mm: fix comments related to node reclaim
+To:     Hao Lee <haolee.swjtu@gmail.com>, akpm@linux-foundation.org
+Cc:     mgorman@techsingularity.net, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20191125142018.GA21373@haolee.github.io>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <cf85d546-3b6c-e172-3624-0e40e0f7699c@arm.com>
+Date:   Tue, 26 Nov 2019 15:13:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20191126093008.19742-1-o.rempel@pengutronix.de>
-In-Reply-To: <20191126093008.19742-1-o.rempel@pengutronix.de>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Tue, 26 Nov 2019 11:42:42 +0200
-Message-ID: <CA+h21hrs0Fo3-xS4GNwyFhJmbk+_xeY+WxondH06GWbH5PJFYg@mail.gmail.com>
-Subject: Re: [PATCH v2] net: dsa: sja1105: print info about probed chip only
- after everything was done.
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     mkl@pengutronix.de, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, kernel@pengutronix.de,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, david@protonic.nl
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191125142018.GA21373@haolee.github.io>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleksij,
 
-On Tue, 26 Nov 2019 at 11:30, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->
-> Currently we will get "Probed switch chip" notification multiple times
-> if first probe failed by some reason. To avoid this confusing notifications move
-> dev_info to the end of probe.
->
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+On 11/25/2019 07:50 PM, Hao Lee wrote:
+> As zone reclaim has been replaced by node reclaim, this patch fixes related
+> comments.
+> 
+> Signed-off-by: Hao Lee <haolee.swjtu@gmail.com>
 > ---
+>  include/linux/mmzone.h          | 2 +-
+>  include/uapi/linux/capability.h | 2 +-
+>  include/uapi/linux/sysctl.h     | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 9e47289a4511..7e3208f4f5bc 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -747,7 +747,7 @@ typedef struct pglist_data {
+>  
+>  #ifdef CONFIG_NUMA
+>  	/*
+> -	 * zone reclaim becomes active if more unmapped pages exist.
+> +	 * node reclaim becomes active if more unmapped pages exist.
+>  	 */
+>  	unsigned long		min_unmapped_pages;
+>  	unsigned long		min_slab_pages;
+> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+> index 240fdb9a60f6..dd6772f16eec 100644
+> --- a/include/uapi/linux/capability.h
+> +++ b/include/uapi/linux/capability.h
+> @@ -273,7 +273,7 @@ struct vfs_ns_cap_data {
+>  /* Allow enabling/disabling tagged queuing on SCSI controllers and sending
+>     arbitrary SCSI commands */
+>  /* Allow setting encryption key on loopback filesystem */
+> -/* Allow setting zone reclaim policy */
+> +/* Allow setting node reclaim policy */
 
-The merge window just opened yesterday:
-http://vger.kernel.org/~davem/net-next.html.
-Come back in 2 weeks with this patch for net-next.
+Does this point to the capability for accessing vm.zone_reclaim_mode = 0
+sysctl knob ? In that case we should not be changing the name here as the
+interface still retains the original name 'zone_reclaim_mode'.
 
->  drivers/net/dsa/sja1105/sja1105_main.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-> index aa140662c7c2..34544b1c30dc 100644
-> --- a/drivers/net/dsa/sja1105/sja1105_main.c
-> +++ b/drivers/net/dsa/sja1105/sja1105_main.c
-> @@ -2191,8 +2191,6 @@ static int sja1105_probe(struct spi_device *spi)
->                 return rc;
->         }
->
-> -       dev_info(dev, "Probed switch chip: %s\n", priv->info->name);
-> -
->         ds = dsa_switch_alloc(dev, SJA1105_NUM_PORTS);
->         if (!ds)
->                 return -ENOMEM;
-> @@ -2218,7 +2216,13 @@ static int sja1105_probe(struct spi_device *spi)
->
->         sja1105_tas_setup(ds);
->
-> -       return dsa_register_switch(priv->ds);
-> +       rc = dsa_register_switch(priv->ds);
-> +       if (rc)
-> +               return rc;
-> +
-> +       dev_info(dev, "Probed switch chip: %s\n", priv->info->name);
-> +
-> +       return 0;
->  }
->
->  static int sja1105_remove(struct spi_device *spi)
-> --
-> 2.24.0
->
-
-Thanks,
--Vladimir
+>  
+>  #define CAP_SYS_ADMIN        21
+>  
+> diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
+> index 87aa2a6d9125..27c1ed2822e6 100644
+> --- a/include/uapi/linux/sysctl.h
+> +++ b/include/uapi/linux/sysctl.h
+> @@ -195,7 +195,7 @@ enum
+>  	VM_MIN_UNMAPPED=32,	/* Set min percent of unmapped pages */
+>  	VM_PANIC_ON_OOM=33,	/* panic at out-of-memory */
+>  	VM_VDSO_ENABLED=34,	/* map VDSO into new processes? */
+> -	VM_MIN_SLAB=35,		 /* Percent pages ignored by zone reclaim */
+> +	VM_MIN_SLAB=35,		 /* Percent pages ignored by node reclaim */
+>  };
+>  
+>  
+> 
