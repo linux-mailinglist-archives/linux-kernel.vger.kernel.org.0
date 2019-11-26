@@ -2,86 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA2E01098D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 06:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7030A1098EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 06:40:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfKZFfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 00:35:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56934 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727379AbfKZFfC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 00:35:02 -0500
-X-UUID: 6538519289be4a80823965c00f1f7dfa-20191126
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=PTHlyvPT7+DKctsDgzzDOzGrtWUVdvF9uAmdUpUUCzI=;
-        b=mj2lbBLvkictvFSSj+JAgzHcQAc4bXK2h+Ln6vu27+lO41QJPsV5dmm+cnyQd0MGxR5vvilDM1cbmzvlhVQQSk5Mfs40q71MwdvBPexx59/WypM7JnpUQ3y+9Ug/4Bz3bWa2a6X/DHAAp3hZ7ZPe1+qor5um8q2b7nAun44O/Co=;
-X-UUID: 6538519289be4a80823965c00f1f7dfa-20191126
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <freddy.hsin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 787183843; Tue, 26 Nov 2019 13:34:55 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 26 Nov 2019 13:34:42 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 26 Nov 2019 13:34:35 +0800
-From:   <freddy.hsin@mediatek.com>
-To:     <sre@kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <matthias.bgg@gmail.com>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>
-CC:     <Chang-An.Chen@mediatek.com>, <wsd_upstream@mediatek.com>,
-        Freddy Hsin <freddy.hsin@mediatek.com>
-Subject: [PATCH v1 4/4] dt-binding: power: reset: Add documentation for MTK RGU (Reset Gernation Unit) reboot driver
-Date:   Tue, 26 Nov 2019 13:34:50 +0800
-Message-ID: <1574746490-625-5-git-send-email-freddy.hsin@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1574746490-625-1-git-send-email-freddy.hsin@mediatek.com>
-References: <1574746490-625-1-git-send-email-freddy.hsin@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1727207AbfKZFkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 00:40:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfKZFkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 00:40:07 -0500
+Subject: Re: [GIT PULL] regmap update for v5.5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574746806;
+        bh=bA0HJy7H0i447Qnj0rJcmZyqhOAuNypZ7zSzOVYTKg8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=aGqEqbuypNqr/W+/WYuanZBJ4ZHMwR6NisCqdWU8Rq3LtHD7C94lW9bS+y/XhNbNY
+         +LJngiuIzabGH0wN7oWPgt7uL5DzEwgkYN3RsL6ARdI4GQVH4zpntiq7aCF8lQ5Qfx
+         jJUYn8UPbzDAy6pr8n9iTuVTY6yPaZ+rMji7F6k0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191125130413.GB4535@sirena.org.uk>
+References: <20191125130413.GB4535@sirena.org.uk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191125130413.GB4535@sirena.org.uk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git
+ tags/regmap-v5.5
+X-PR-Tracked-Commit-Id: a20db58f3e6e6770362614c488e5426f972de97e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3b397c7ccafe0624018cb09fc96729f8f6165573
+Message-Id: <157474680670.3611.15539122527829487030.pr-tracker-bot@kernel.org>
+Date:   Tue, 26 Nov 2019 05:40:06 +0000
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRnJlZGR5IEhzaW4gPGZyZWRkeS5oc2luQG1lZGlhdGVrLmNvbT4NCg0KQWRkIGRvY3Vt
-ZW50YXRpb24gZm9yIE1USyBSR1UgKFJlc2V0IEdlbmVyYXRpb24gVW5pdCkgcmVib290IGRyaXZl
-ci4NCg0KU2lnbmVkLW9mZi1ieTogRnJlZGR5IEhzaW4gPGZyZWRkeS5oc2luQG1lZGlhdGVrLmNv
-bT4NCi0tLQ0KIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2VyL3Jlc2V0L210ay1yZWJvb3Qu
-dHh0IHwgICAzMCArKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNl
-cnRpb25zKCspDQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9wb3dlci9yZXNldC9tdGstcmVib290LnR4dA0KDQpkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2VyL3Jlc2V0L210ay1yZWJvb3QudHh0IGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2VyL3Jlc2V0L210ay1yZWJvb3Qu
-dHh0DQpuZXcgZmlsZSBtb2RlIDEwMDY0NA0KaW5kZXggMDAwMDAwMC4uNzA4ZDM1MQ0KLS0tIC9k
-ZXYvbnVsbA0KKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2VyL3Jl
-c2V0L210ay1yZWJvb3QudHh0DQpAQCAtMCwwICsxLDMwIEBADQorR2VuZXJpYyBNVEsgUkdVIG1h
-cHBlZCByZWdpc3RlciByZXNldCBkcml2ZXINCisNCitUaGlzIGlzIGEgcmVzZXQgZHJpdmVyIHVz
-aW5nIHRvcHJndSB0byBtYXAgaXRzIG5vbi12b2xhdGlsZSByZWdpc3Rlci4NCitUaGUgcmVzZXQg
-aXMgZ2VuZXJhbGx5IHBlcmZvcm1lZCB3aXRoIGEgd3JpdGUgdG8gdGhlIG5vbi12b2xhdGlsZSBy
-ZWdpc3Rlcg0KK2RlZmluZWQgYnkgdGhlIHJlZ2lzdGVyIG1hcCBwb2ludGVkIGJ5IHRvcHJndSBy
-ZWZlcmVuY2UgcGx1cyB0aGUgb2Zmc2V0DQord2l0aCB0aGUgbWFzayBkZWZpbmVkIGluIHRoZSBy
-ZWJvb3QtbW9kZSBub2RlLg0KKw0KK1JlcXVpcmVkIHByb3BlcnRpZXM6DQorLSBjb21wYXRpYmxl
-OiBzaG91bGQgY29udGFpbiAidG9wcmd1LXJlYm9vdC1tb2RlIg0KKy0gcmVnbWFwOiB0aGlzIGlz
-IHBoYW5kbGUgdG8gdGhlIHJlZ2lzdGVyIG1hcCBub2RlDQorLSBvZmZzZXQ6IG9mZnNldCBpbiB0
-aGUgcmVnaXN0ZXIgbWFwIGZvciB0aGUgcmVib290LW1vZGUgcmVnaXN0ZXIgKGluIGJ5dGVzKQ0K
-Ky0gbWFzazogdGhlIHJlc2V0IHZhbHVlIHdyaXR0ZW4gdG8gdGhlIHJlYm9vdCByZWdpc3RlciAo
-MzIgYml0IGFjY2VzcykNCisNCitFeGFtcGxlczoNCisJcmVib290LW1vZGUgew0KKwkgICBjb21w
-YXRpYmxlID0gInRvcHJndS1yZWJvb3QtbW9kZSI7DQorCSAgIHJlZ21hcCA9IDwmdG9wcmd1PjsN
-CisJICAgb2Zmc2V0ID0gPDB4MjQ+Ow0KKwkgICBtYXNrID0gPDB4Rj47DQorCX07DQorDQorT3B0
-aW9uYWwgcHJvcGVydGllcyAtIHJlYm9vdCBtb2RlIHZhbHVlIHRoYXQgd2lsbCBrZWVwIGluIHRv
-cHJndSBub25yc3QgUkc6DQorLSBtb2RlLWNoYXJnZXIgPSA8Qk9PVF9DSEFSR0VSPjsNCistIG1v
-ZGUtcmVjb3ZlcnkgPSA8Qk9PVF9SRUNPVkVSWT47DQorLSBtb2RlLWJvb3Rsb2FkZXIgPSA8Qk9P
-VF9CT09UTE9BREVSPjsNCistIG1vZGUtZG0tdmVyaXR5LWRldi1jb3JydXB0ID0gPEJPT1RfRE1f
-VkVSSVRZPjsNCistIG1vZGUta3BvYyA9IDxCT09UX0tQT0M+Ow0KKy0gbW9kZS1kZHItcmVzZXJ2
-ZSA9IDxCT09UX0REUl9SU1ZEPjsNCistIG1vZGUtbWV0YSA9IDxCT09UX01FVEE+Ow0KKy0gbW9k
-ZS1ycG1icGsgPSA8Qk9PVF9SUE1CUEs+Ow0KLS0gDQoxLjcuOS41DQo=
+The pull request you sent on Mon, 25 Nov 2019 13:04:13 +0000:
 
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v5.5
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3b397c7ccafe0624018cb09fc96729f8f6165573
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
