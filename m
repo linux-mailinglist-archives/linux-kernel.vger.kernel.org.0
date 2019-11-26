@@ -2,84 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC49610A07F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:40:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C1910A087
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfKZOkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 09:40:16 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:38926 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfKZOkP (ORCPT
+        id S1728030AbfKZOlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 09:41:25 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60519 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfKZOlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 09:40:15 -0500
-Received: by mail-ua1-f65.google.com with SMTP id r13so5748993uan.6
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 06:40:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=u9upnfTD/WVcffLNTqVHZWz84GbMxecNeQDUbO2uPTQ=;
-        b=ucK+lyfcu+YHuDC1bJyHgVyicMBp7PXEeTCbw558KLr9QIdbn2Zn43ZIULdF38gaXZ
-         1n08nzx+GLaOhYF3bWcn3JfMq7Z1XI6i9r0P1u9N3OKejulkDPVXA7B/3P4cLEOF0abT
-         50ZAEfLx/bVFefbd15MBGyazvDXQFpZmW72NEQUCl8soDUtCCq8ixTYfaB3LapHfc6Tu
-         cA3/iGhLmXb5wO3tKozK/n2EU1nQzO0y0VM55JtkBJ1VwEN8Rl20dSsQepIPDNiLQFjl
-         P5Pe2euAzaXueRUfDPis6/bD54pMEaFnYVkN05TzPMhREVxfNp20rGIQfbnovFFk/s8E
-         0DiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=u9upnfTD/WVcffLNTqVHZWz84GbMxecNeQDUbO2uPTQ=;
-        b=m7x695IXW53fO5GhbiU1xblKP34VwGjBmB0semyJ7BU26CfcRpSRlPU0Yd8PZvbWHE
-         EsIrdR6zyjHLo47AG1unDM/MUMe4Bxi0NBk2OhmIKACKUcx+OpeJdPWoc/eZgwqRNnS7
-         0P+HqcpJyZnOLsUvv/cqMpoUs+heRojNG1FN86ih7zgKd8KjyyfOmQsSTwbZDo1tOy33
-         MniajuNwslZ/971n1Kl4DPilP/HRxStOBMp3WlnClmRkm0v7bHGZAB6seUW+J/w2JpN/
-         A6gr4HIu9b1ywfY7DHgnIoYt06jCbgJqy1/K62ZZymI3+8Qo/Kr/5HtBuMx5NDU7dYWu
-         7pSw==
-X-Gm-Message-State: APjAAAWsVp4R222OkAY1tv14YtCR2+wFSrphk/kLLEBnxL2TzhX+HU0J
-        Z8hELAJdcAj/F2wb0RNQWmnHNyrkqF7sTT5gBwk=
-X-Google-Smtp-Source: APXvYqyG7Ofvxa2XLZVASi1VbLl4QPD4MpC0WrXZZQR8mxf4V5E4wOCboPtevujzsRmCL08V/+6BZelKLWoBp42g1k4=
-X-Received: by 2002:ab0:76cb:: with SMTP id w11mr9172159uaq.139.1574779214919;
- Tue, 26 Nov 2019 06:40:14 -0800 (PST)
+        Tue, 26 Nov 2019 09:41:25 -0500
+Received: from [185.81.136.22] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iZc1r-0003xg-5h; Tue, 26 Nov 2019 14:41:23 +0000
+Date:   Tue, 26 Nov 2019 15:41:22 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Kars de Jong <jongk@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux/m68k <linux-m68k@vger.kernel.org>
+Subject: Re: [PATCH] m68k: Wire up clone3() syscall
+Message-ID: <20191126144121.kzkujr27ga36gqnf@wittgenstein>
+References: <20191124195225.31230-1-jongk@linux-m68k.org>
+ <CAMuHMdVv9FU+kTf7RDd=AFKL12tJxzmGbX4jZZ8Av3VCZUzwhA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:1370:0:0:0:0:0 with HTTP; Tue, 26 Nov 2019 06:40:14
- -0800 (PST)
-Reply-To: ambrosecooker389@gmail.com
-From:   Ambrose Cooker <belemteju12@gmail.com>
-Date:   Tue, 26 Nov 2019 06:40:14 -0800
-Message-ID: <CAOdHXWQ6sgqmJ1TkeEja4r4d6TXcoqM8L6BtnzR2hjvn9c+cew@mail.gmail.com>
-Subject: Greetings to you my Dear!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVv9FU+kTf7RDd=AFKL12tJxzmGbX4jZZ8Av3VCZUzwhA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings to you my Dear!
+On Mon, Nov 25, 2019 at 10:12:25AM +0100, Geert Uytterhoeven wrote:
+> Hi Kars,
+> 
+> On Sun, Nov 24, 2019 at 8:52 PM Kars de Jong <jongk@linux-m68k.org> wrote:
+> > Wire up the clone3() syscall for m68k. The special entry point is done in
+> > assembler as was done for clone() as well. This is needed because all
+> > registers need to be saved. The C wrapper then calls the generic
+> > sys_clone3() with the correct arguments.
+> >
+> > Tested on A1200 using the simple test program from:
+> >
+> >   https://lore.kernel.org/lkml/20190716130631.tohj4ub54md25dys@brauner.io/
 
-On behalf of friendship and love I have a business
-what $10.2million.USD for you to
-handle with me. I have opportunity to transfer this abandon fund to
-your bank account in your country which belongs to our client.
+Please note that we now have a growing test-suite for the clone3()
+syscall under
+tools/testing/selftests/clone3/*
 
-I am inviting you in this transaction where this money can be shared
-between us at ratio of 60/40% and help the needy around us don=E2=80=99t be
-afraid of anything I am with you I will instruct you  on what you will
-do to maintain this fund.and please make this proposal a top secret.
+You can test on a suitable kernel with
 
-and kindly contact me with your information's if you are interested in
-this tranasction for more details.
+make TARGETS=clone3 kselftest
 
-Your Name:....
-Your Bank Name:....
-Your Account Number:...
-Your Telephone Number:...
-Your Country And Address:....
-Your Age And Sex:....
+> >
+> > Cc: linux-m68k@vger.kernel.org
+> > Signed-off-by: Kars de Jong <jongk@linux-m68k.org>
+> 
+> Thanks a lot!
+> Works fine on ARAnyM, too.
+> 
+> Looks good to me, but I'll wait a bit before applying, so the syscall experts
+> can chime in, if needed.
 
-Waiting for your urgent response.
-Yours Faithfully,
+Otherwise this looks good to me.
+Thanks for moving this forward. One day we'll be able to remove
+ARCH_WANT_SYS_CLONE3 completely. :)
 
-Mr.Ambrose Cooker
+	Christian
