@@ -2,72 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0542810A4BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43ABB10A4BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:54:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfKZTvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 14:51:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbfKZTvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:51:04 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7244A207DD;
-        Tue, 26 Nov 2019 19:51:03 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 14:51:01 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Piotr Maziarz <piotrx.maziarz@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        andriy.shevchenko@intel.com, cezary.rojewski@intel.com,
-        gustaw.lewandowski@intel.com
-Subject: Re: [PATCH v2 2/2] tracing: Use seq_buf_hex_dump() to dump buffers
-Message-ID: <20191126145101.1e6c4e43@gandalf.local.home>
-In-Reply-To: <61e34d88-bbf7-a2ff-e983-64dc9be1a482@linux.intel.com>
-References: <1573130738-29390-1-git-send-email-piotrx.maziarz@linux.intel.com>
-        <1573130738-29390-2-git-send-email-piotrx.maziarz@linux.intel.com>
-        <20191113160922.1b1f0fc0@gandalf.local.home>
-        <61e34d88-bbf7-a2ff-e983-64dc9be1a482@linux.intel.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726576AbfKZTyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 14:54:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40116 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725970AbfKZTyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 14:54:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CB75BAD26;
+        Tue, 26 Nov 2019 19:54:37 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@google.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Hannes Reinecke <hare@suse.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v4 rebase 00/10] Fix cdrom autoclose
+Date:   Tue, 26 Nov 2019 20:54:19 +0100
+Message-Id: <cover.1574797504.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Nov 2019 15:53:26 +0100
-Piotr Maziarz <piotrx.maziarz@linux.intel.com> wrote:
-> Hello Steven,
-> 
-> I'm writing handle in event-parse and I came across some technical 
-> problems. I have an event which print function looks like that:
-> TP_printk("%s",
-> 	  __print_hex_dump("", DUMP_PREFIX_OFFSET, 16, 4,
-> 			   __get_dynamic_array(buf),
-> 			   __get_dynamic_array_len(buf), false))
-> It works properly when printing events to debugfs.
-> I'm testing my implementation with trace-cmd and it has problem with 
-> parsing DUMP_PREFIX_OFFSET and false (I'm using 
-> alloc_and_process_delim()). Instead of having numerical values 
-> tep_print_args are of type TEP_PRINT_ATOM and have char array 
-> "DUMP_PREFIX_OFFSET" or "true".
-> Am I doing something incorrect? Parsing it this way is problematic 
-> because instead of false someone may use 0 or logic expression. And 
-> writing it to support all possible scenarios may be tedious and prone to 
-> errors.
+Hello,
 
-You can force the enum to be a number by including the following in the
-trace event header:
+there is cdrom autoclose feature that is supposed to close the tray,
+wait for the disc to become ready, and then open the device.
 
-TRACE_DEFINE_ENUM(DUMP_PREFIX_OFFSET);
-TRACE_DEFINE_ENUM(DUMP_PREFIX_ADDRESS);
-TRACE_DEFINE_ENUM(DUMP_PREFIX_NONE);
+This used to work in ancient times. Then in old times there was a hack
+in util-linux which worked around the breakage which probably resulted
+from switching to scsi emulation.
 
-and the format files will convert these to their actual numbers when
-displaying it to user space.
+Currently util-linux maintainer refuses to merge another hack on the
+basis that kernel still has the feature so it should be fixed there.
+The code needs not be replicated in every userspace utility like mount
+or dd which has no business knowing which devices are CD-roms and where
+the autoclose setting is in the kernel.
 
--- Steve
+This is rebase on top of current master.
+
+Also it seems that most people think that this is fix for WMware because
+there is one patch dealing with WMware.
+
+This is fix for Linux.
+
+Expected (ca Linux 2.4):
+
+eject
+< put CD on tray >
+mount /dev/cdrom
+...
+< cdrom now mounted >
+
+Actual:
+mount: /mnt: no medium found on /dev/sr0.
+
+Thanks
+
+Michal
+
+v3:
+- change the VMware workaround to use blacklist flag
+- use exported function instead of ioctl
+v4:
+- fix crash reported by kernel test robot
+- fix the debug message logic while refactoring cdrom_open
+- move repeated code out of __blkdev_get
+
+Link: https://lore.kernel.org/lkml/cover.1571834862.git.msuchanek@suse.de/
+Link: https://lore.kernel.org/lkml/cover.1513263482.git.msuchanek@suse.de/
+
+Michal Suchanek (10):
+  cdrom: add poll_event_interruptible
+  cdrom: factor out common open_for_* code
+  cdrom: wait for the tray to close
+  cdrom: export autoclose logic as a separate function
+  cdrom: unify log messages.
+  bdev: reset first_open when looping in __blkget_dev
+  bdev: separate parts of __blkdev_get as helper functions
+  bdev: add open_finish
+  scsi: blacklist: add VMware ESXi cdrom - broken tray emulation
+  scsi: sr: wait for the medium to become ready
+
+ Documentation/filesystems/locking.rst |   2 +
+ drivers/cdrom/cdrom.c                 | 471 +++++++++++++-------------
+ drivers/scsi/scsi_devinfo.c           |  15 +-
+ drivers/scsi/sr.c                     |  60 +++-
+ fs/block_dev.c                        |  72 ++--
+ include/linux/blkdev.h                |   1 +
+ include/linux/cdrom.h                 |   1 +
+ include/scsi/scsi_devinfo.h           |   7 +-
+ 8 files changed, 357 insertions(+), 272 deletions(-)
+
+-- 
+2.23.0
 
