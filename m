@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EF0010A0A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:46:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C0A10A08F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:42:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfKZOp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 09:45:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6800 "EHLO
+        id S1728329AbfKZOlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 09:41:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32598 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726049AbfKZOp7 (ORCPT
+        by vger.kernel.org with ESMTP id S1728039AbfKZOll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 09:45:59 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAQEjuf9145030
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:45:58 -0500
+        Tue, 26 Nov 2019 09:41:41 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAQEXuO0077148
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:41:40 -0500
 Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wfk5m2t6b-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wh3y35ub3-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:42:00 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:41:40 -0500
 Received: from localhost
         by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <zaslonko@linux.ibm.com>;
-        Tue, 26 Nov 2019 14:41:36 -0000
+        Tue, 26 Nov 2019 14:41:38 -0000
 Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
         by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Tue, 26 Nov 2019 14:41:34 -0000
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAQEfWox47513790
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAQEfWlv45613184
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 26 Nov 2019 14:41:32 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C32252051;
+        by IMSVA (Postfix) with ESMTP id 91B325204E;
         Tue, 26 Nov 2019 14:41:32 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id DD91552059;
-        Tue, 26 Nov 2019 14:41:31 +0000 (GMT)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3E79D52057;
+        Tue, 26 Nov 2019 14:41:32 +0000 (GMT)
 From:   Mikhail Zaslonko <zaslonko@linux.ibm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -46,238 +46,277 @@ Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
         Christian Borntraeger <borntraeger@de.ibm.com>,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] s390/boot: Add dfltcc= kernel command line parameter
-Date:   Tue, 26 Nov 2019 15:41:29 +0100
+Subject: [PATCH 5/5] btrfs: Increase buffer size for zlib functions
+Date:   Tue, 26 Nov 2019 15:41:30 +0100
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191126144130.75710-1-zaslonko@linux.ibm.com>
 References: <20191126144130.75710-1-zaslonko@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19112614-0008-0000-0000-000003388310
+x-cbid: 19112614-0008-0000-0000-00000338830F
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19112614-0009-0000-0000-00004A5787A3
-Message-Id: <20191126144130.75710-5-zaslonko@linux.ibm.com>
+x-cbparentid: 19112614-0009-0000-0000-00004A5787A4
+Message-Id: <20191126144130.75710-6-zaslonko@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-11-26_03:2019-11-26,2019-11-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- phishscore=0 spamscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501
- suspectscore=0 clxscore=1015 impostorscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911260130
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1911260129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the new kernel command line parameter 'dfltcc=' to configure
-s390 zlib hardware support.
-Format: { on | off | def_only | inf_only | always }
- on:       s390 zlib hardware support for compression on
-           level 1 and decompression (default)
- off:      No s390 zlib hardware support
- def_only: s390 zlib hardware support for deflate
-           only (compression on level 1)
- inf_only: s390 zlib hardware support for inflate
-           only (decompression)
- always:   Same as 'on' but ignores the selected compression
-           level always using hardware support (used for debugging)
+Due to the small size of zlib buffer (1 page) set in btrfs code, s390
+hardware compression is rather limited in terms of performance. Increasing
+the buffer size to 4 pages would bring significant benefit for s390
+hardware compression (up to 60% better performance compared to the
+PAGE_SIZE buffer) and should not bring much overhead in terms of memory
+consumption due to order 2 allocations.
 
 Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
- arch/s390/boot/ipl_parm.c                       | 14 ++++++++++++++
- arch/s390/include/asm/setup.h                   |  7 +++++++
- arch/s390/kernel/setup.c                        |  1 +
- lib/zlib_dfltcc/dfltcc.c                        |  5 ++++-
- lib/zlib_dfltcc/dfltcc.h                        |  1 +
- lib/zlib_dfltcc/dfltcc_deflate.c                |  6 ++++++
- lib/zlib_dfltcc/dfltcc_inflate.c                |  6 ++++++
- lib/zlib_dfltcc/dfltcc_util.h                   |  5 +++++
- 9 files changed, 56 insertions(+), 1 deletion(-)
+ fs/btrfs/compression.c |   2 +-
+ fs/btrfs/zlib.c        | 109 ++++++++++++++++++++++++++---------------
+ 2 files changed, 70 insertions(+), 41 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 8dee8f68fe15..953376347a3a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -836,6 +836,18 @@
- 			dump out devices still on the deferred probe list after
- 			retrying.
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index b05b361e2062..f789b356fd8b 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -1158,7 +1158,7 @@ int btrfs_decompress_buf2page(const char *buf, unsigned long buf_start,
+ 	/* copy bytes from the working buffer into the pages */
+ 	while (working_bytes > 0) {
+ 		bytes = min_t(unsigned long, bvec.bv_len,
+-				PAGE_SIZE - buf_offset);
++				PAGE_SIZE - (buf_offset % PAGE_SIZE));
+ 		bytes = min(bytes, working_bytes);
  
-+	dfltcc=		[HW,S390]
-+			Format: { on | off | def_only | inf_only | always }
-+			on:       s390 zlib hardware support for compression on
-+			          level 1 and decompression (default)
-+			off:      No s390 zlib hardware support
-+			def_only: s390 zlib hardware support for deflate
-+			          only (compression on level 1)
-+			inf_only: s390 zlib hardware support for inflate
-+			          only (decompression)
-+			always:   Same as 'on' but ignores the selected compression
-+			          level always using hardware support (used for debugging)
+ 		kaddr = kmap_atomic(bvec.bv_page);
+diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+index df1aace5df50..c5b4654e1242 100644
+--- a/fs/btrfs/zlib.c
++++ b/fs/btrfs/zlib.c
+@@ -20,6 +20,8 @@
+ #include <linux/refcount.h>
+ #include "compression.h"
+ 
++#define ZLIB_BUF_SIZE    (4 * PAGE_SIZE)
 +
- 	dhash_entries=	[KNL]
- 			Set number of hash buckets for dentry cache.
+ struct workspace {
+ 	z_stream strm;
+ 	char *buf;
+@@ -76,7 +78,7 @@ static struct list_head *zlib_alloc_workspace(unsigned int level)
+ 			zlib_inflate_workspacesize());
+ 	workspace->strm.workspace = kvmalloc(workspacesize, GFP_KERNEL);
+ 	workspace->level = level;
+-	workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
++	workspace->buf = kmalloc(ZLIB_BUF_SIZE, GFP_KERNEL);
+ 	if (!workspace->strm.workspace || !workspace->buf)
+ 		goto fail;
  
-diff --git a/arch/s390/boot/ipl_parm.c b/arch/s390/boot/ipl_parm.c
-index 24ef67eb1cef..357adad991d2 100644
---- a/arch/s390/boot/ipl_parm.c
-+++ b/arch/s390/boot/ipl_parm.c
-@@ -14,6 +14,7 @@
- char __bootdata(early_command_line)[COMMAND_LINE_SIZE];
- struct ipl_parameter_block __bootdata_preserved(ipl_block);
- int __bootdata_preserved(ipl_block_valid);
-+unsigned int __bootdata_preserved(zlib_dfltcc_support) = ZLIB_DFLTCC_FULL;
+@@ -97,6 +99,7 @@ static int zlib_compress_pages(struct list_head *ws,
+ 			       unsigned long *total_out)
+ {
+ 	struct workspace *workspace = list_entry(ws, struct workspace, list);
++	int i;
+ 	int ret;
+ 	char *data_in;
+ 	char *cpage_out;
+@@ -104,6 +107,7 @@ static int zlib_compress_pages(struct list_head *ws,
+ 	struct page *in_page = NULL;
+ 	struct page *out_page = NULL;
+ 	unsigned long bytes_left;
++	unsigned long in_buf_pages;
+ 	unsigned long len = *total_out;
+ 	unsigned long nr_dest_pages = *out_pages;
+ 	const unsigned long max_out = nr_dest_pages * PAGE_SIZE;
+@@ -121,9 +125,6 @@ static int zlib_compress_pages(struct list_head *ws,
+ 	workspace->strm.total_in = 0;
+ 	workspace->strm.total_out = 0;
  
- unsigned long __bootdata(vmalloc_size) = VMALLOC_DEFAULT_SIZE;
- unsigned long __bootdata(memory_end);
-@@ -229,6 +230,19 @@ void parse_boot_command_line(void)
- 		if (!strcmp(param, "vmalloc") && val)
- 			vmalloc_size = round_up(memparse(val, NULL), PAGE_SIZE);
+-	in_page = find_get_page(mapping, start >> PAGE_SHIFT);
+-	data_in = kmap(in_page);
+-
+ 	out_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
+ 	if (out_page == NULL) {
+ 		ret = -ENOMEM;
+@@ -133,12 +134,34 @@ static int zlib_compress_pages(struct list_head *ws,
+ 	pages[0] = out_page;
+ 	nr_pages = 1;
  
-+		if (!strcmp(param, "dfltcc")) {
-+			if (!strcmp(val, "off"))
-+				zlib_dfltcc_support = ZLIB_DFLTCC_DISABLED;
-+			else if (!strcmp(val, "on"))
-+				zlib_dfltcc_support = ZLIB_DFLTCC_FULL;
-+			else if (!strcmp(val, "def_only"))
-+				zlib_dfltcc_support = ZLIB_DFLTCC_DEFLATE_ONLY;
-+			else if (!strcmp(val, "inf_only"))
-+				zlib_dfltcc_support = ZLIB_DFLTCC_INFLATE_ONLY;
-+			else if (!strcmp(val, "always"))
-+				zlib_dfltcc_support = ZLIB_DFLTCC_FULL_DEBUG;
+-	workspace->strm.next_in = data_in;
++	workspace->strm.next_in = workspace->buf;
++	workspace->strm.avail_in = 0;
+ 	workspace->strm.next_out = cpage_out;
+ 	workspace->strm.avail_out = PAGE_SIZE;
+-	workspace->strm.avail_in = min(len, PAGE_SIZE);
+ 
+ 	while (workspace->strm.total_in < len) {
++		/* get next set of pages and copy their contents to
++		 * the input buffer for the following deflate call
++		 */
++		if (workspace->strm.avail_in == 0) {
++			bytes_left = len - workspace->strm.total_in;
++			in_buf_pages = min(DIV_ROUND_UP(bytes_left, PAGE_SIZE),
++					   ZLIB_BUF_SIZE / PAGE_SIZE);
++			for (i = 0; i < in_buf_pages; i++) {
++				in_page = find_get_page(mapping,
++							start >> PAGE_SHIFT);
++				data_in = kmap(in_page);
++				memcpy(workspace->buf + i*PAGE_SIZE, data_in,
++				       PAGE_SIZE);
++				kunmap(in_page);
++				put_page(in_page);
++				start += PAGE_SIZE;
++			}
++			workspace->strm.avail_in = min(bytes_left,
++						       ZLIB_BUF_SIZE);
++			workspace->strm.next_in = workspace->buf;
 +		}
 +
- 		if (!strcmp(param, "noexec")) {
- 			rc = kstrtobool(val, &enabled);
- 			if (!rc && !enabled)
-diff --git a/arch/s390/include/asm/setup.h b/arch/s390/include/asm/setup.h
-index 6dc6c4fbc8e2..bd2cca097421 100644
---- a/arch/s390/include/asm/setup.h
-+++ b/arch/s390/include/asm/setup.h
-@@ -80,6 +80,13 @@ struct parmarea {
- 	char command_line[ARCH_COMMAND_LINE_SIZE];	/* 0x10480 */
- };
+ 		ret = zlib_deflate(&workspace->strm, Z_SYNC_FLUSH);
+ 		if (ret != Z_OK) {
+ 			pr_debug("BTRFS: deflate in loop returned %d\n",
+@@ -149,12 +172,13 @@ static int zlib_compress_pages(struct list_head *ws,
+ 		}
  
-+extern unsigned int zlib_dfltcc_support;
-+#define ZLIB_DFLTCC_DISABLED		0
-+#define ZLIB_DFLTCC_FULL		1
-+#define ZLIB_DFLTCC_DEFLATE_ONLY	2
-+#define ZLIB_DFLTCC_INFLATE_ONLY	3
-+#define ZLIB_DFLTCC_FULL_DEBUG		4
+ 		/* we're making it bigger, give up */
+-		if (workspace->strm.total_in > 8192 &&
++		if (workspace->strm.total_in > ZLIB_BUF_SIZE &&
+ 		    workspace->strm.total_in <
+ 		    workspace->strm.total_out) {
+ 			ret = -E2BIG;
+ 			goto out;
+ 		}
 +
- extern int noexec_disabled;
- extern int memory_end_set;
- extern unsigned long memory_end;
-diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index 3ff291bc63b7..e1a0cf580f6f 100644
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -111,6 +111,7 @@ unsigned long __bootdata_preserved(__etext_dma);
- unsigned long __bootdata_preserved(__sdma);
- unsigned long __bootdata_preserved(__edma);
- unsigned long __bootdata_preserved(__kaslr_offset);
-+unsigned int __bootdata_preserved(zlib_dfltcc_support);
+ 		/* we need another page for writing out.  Test this
+ 		 * before the total_in so we will pull in a new page for
+ 		 * the stream end if required
+@@ -180,33 +204,42 @@ static int zlib_compress_pages(struct list_head *ws,
+ 		/* we're all done */
+ 		if (workspace->strm.total_in >= len)
+ 			break;
+-
+-		/* we've read in a full page, get a new one */
+-		if (workspace->strm.avail_in == 0) {
+-			if (workspace->strm.total_out > max_out)
+-				break;
+-
+-			bytes_left = len - workspace->strm.total_in;
+-			kunmap(in_page);
+-			put_page(in_page);
+-
+-			start += PAGE_SIZE;
+-			in_page = find_get_page(mapping,
+-						start >> PAGE_SHIFT);
+-			data_in = kmap(in_page);
+-			workspace->strm.avail_in = min(bytes_left,
+-							   PAGE_SIZE);
+-			workspace->strm.next_in = data_in;
+-		}
++		if (workspace->strm.total_out > max_out)
++			break;
+ 	}
+ 	workspace->strm.avail_in = 0;
+-	ret = zlib_deflate(&workspace->strm, Z_FINISH);
+-	zlib_deflateEnd(&workspace->strm);
+-
+-	if (ret != Z_STREAM_END) {
+-		ret = -EIO;
+-		goto out;
++	/* call deflate with Z_FINISH flush parameter providing more output
++	 * space but no more input data, until it returns with Z_STREAM_END
++	 */
++	while (ret != Z_STREAM_END) {
++		ret = zlib_deflate(&workspace->strm, Z_FINISH);
++		if (ret == Z_STREAM_END)
++			break;
++		if (ret != Z_OK && ret != Z_BUF_ERROR) {
++			zlib_deflateEnd(&workspace->strm);
++			ret = -EIO;
++			goto out;
++		} else if (workspace->strm.avail_out == 0) {
++			/* get another page for the stream end */
++			kunmap(out_page);
++			if (nr_pages == nr_dest_pages) {
++				out_page = NULL;
++				ret = -E2BIG;
++				goto out;
++			}
++			out_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
++			if (out_page == NULL) {
++				ret = -ENOMEM;
++				goto out;
++			}
++			cpage_out = kmap(out_page);
++			pages[nr_pages] = out_page;
++			nr_pages++;
++			workspace->strm.avail_out = PAGE_SIZE;
++			workspace->strm.next_out = cpage_out;
++		}
+ 	}
++	zlib_deflateEnd(&workspace->strm);
  
- unsigned long VMALLOC_START;
- EXPORT_SYMBOL(VMALLOC_START);
-diff --git a/lib/zlib_dfltcc/dfltcc.c b/lib/zlib_dfltcc/dfltcc.c
-index 7f77e5bb01c6..c30de430b30c 100644
---- a/lib/zlib_dfltcc/dfltcc.c
-+++ b/lib/zlib_dfltcc/dfltcc.c
-@@ -44,7 +44,10 @@ void dfltcc_reset(
-     dfltcc_state->param.nt = 1;
+ 	if (workspace->strm.total_out >= workspace->strm.total_in) {
+ 		ret = -E2BIG;
+@@ -221,10 +254,6 @@ static int zlib_compress_pages(struct list_head *ws,
+ 	if (out_page)
+ 		kunmap(out_page);
  
-     /* Initialize tuning parameters */
--    dfltcc_state->level_mask = DFLTCC_LEVEL_MASK;
-+    if (zlib_dfltcc_support == ZLIB_DFLTCC_FULL_DEBUG)
-+        dfltcc_state->level_mask = DFLTCC_LEVEL_MASK_DEBUG;
-+    else
-+        dfltcc_state->level_mask = DFLTCC_LEVEL_MASK;
-     dfltcc_state->block_size = DFLTCC_BLOCK_SIZE;
-     dfltcc_state->block_threshold = DFLTCC_FIRST_FHT_BLOCK_SIZE;
-     dfltcc_state->dht_threshold = DFLTCC_DHT_MIN_SAMPLE_SIZE;
-diff --git a/lib/zlib_dfltcc/dfltcc.h b/lib/zlib_dfltcc/dfltcc.h
-index 4782c92bb2ff..be70c807b62f 100644
---- a/lib/zlib_dfltcc/dfltcc.h
-+++ b/lib/zlib_dfltcc/dfltcc.h
-@@ -8,6 +8,7 @@
-  * Tuning parameters.
-  */
- #define DFLTCC_LEVEL_MASK 0x2 /* DFLTCC compression for level 1 only */
-+#define DFLTCC_LEVEL_MASK_DEBUG 0x3fe /* DFLTCC compression for all levels */
- #define DFLTCC_BLOCK_SIZE 1048576
- #define DFLTCC_FIRST_FHT_BLOCK_SIZE 4096
- #define DFLTCC_DHT_MIN_SAMPLE_SIZE 4096
-diff --git a/lib/zlib_dfltcc/dfltcc_deflate.c b/lib/zlib_dfltcc/dfltcc_deflate.c
-index b9d16917c30a..aa4539f5c071 100644
---- a/lib/zlib_dfltcc/dfltcc_deflate.c
-+++ b/lib/zlib_dfltcc/dfltcc_deflate.c
-@@ -3,6 +3,7 @@
- #include "../zlib_deflate/defutil.h"
- #include "dfltcc_util.h"
- #include "dfltcc.h"
-+#include <asm/setup.h>
- #include <linux/zutil.h>
+-	if (in_page) {
+-		kunmap(in_page);
+-		put_page(in_page);
+-	}
+ 	return ret;
+ }
  
- /*
-@@ -15,6 +16,11 @@ int dfltcc_can_deflate(
-     deflate_state *state = (deflate_state *)strm->state;
-     struct dfltcc_state *dfltcc_state = GET_DFLTCC_STATE(state);
+@@ -250,7 +279,7 @@ static int zlib_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
  
-+    /* Check for kernel dfltcc command line parameter */
-+    if (zlib_dfltcc_support == ZLIB_DFLTCC_DISABLED ||
-+            zlib_dfltcc_support == ZLIB_DFLTCC_INFLATE_ONLY)
-+        return 0;
-+
-     /* Unsupported compression settings */
-     if (!dfltcc_are_params_ok(state->level, state->w_bits, state->strategy,
-                               dfltcc_state->level_mask))
-diff --git a/lib/zlib_dfltcc/dfltcc_inflate.c b/lib/zlib_dfltcc/dfltcc_inflate.c
-index 12a93a06bd61..aa9ef23474df 100644
---- a/lib/zlib_dfltcc/dfltcc_inflate.c
-+++ b/lib/zlib_dfltcc/dfltcc_inflate.c
-@@ -3,6 +3,7 @@
- #include "../zlib_inflate/inflate.h"
- #include "dfltcc_util.h"
- #include "dfltcc.h"
-+#include <asm/setup.h>
- #include <linux/zutil.h>
+ 	workspace->strm.total_out = 0;
+ 	workspace->strm.next_out = workspace->buf;
+-	workspace->strm.avail_out = PAGE_SIZE;
++	workspace->strm.avail_out = ZLIB_BUF_SIZE;
  
- /*
-@@ -15,6 +16,11 @@ int dfltcc_can_inflate(
-     struct inflate_state *state = (struct inflate_state *)strm->state;
-     struct dfltcc_state *dfltcc_state = GET_DFLTCC_STATE(state);
+ 	/* If it's deflate, and it's got no preset dictionary, then
+ 	   we can tell zlib to skip the adler32 check. */
+@@ -289,7 +318,7 @@ static int zlib_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
+ 		}
  
-+    /* Check for kernel dfltcc command line parameter */
-+    if (zlib_dfltcc_support == ZLIB_DFLTCC_DISABLED ||
-+            zlib_dfltcc_support == ZLIB_DFLTCC_DEFLATE_ONLY)
-+        return 0;
-+
-     /* Unsupported compression settings */
-     if (state->wbits != HB_BITS)
-         return 0;
-diff --git a/lib/zlib_dfltcc/dfltcc_util.h b/lib/zlib_dfltcc/dfltcc_util.h
-index 1930b43c1915..43419d7d181b 100644
---- a/lib/zlib_dfltcc/dfltcc_util.h
-+++ b/lib/zlib_dfltcc/dfltcc_util.h
-@@ -3,6 +3,7 @@
- #define DFLTCC_UTIL_H
+ 		workspace->strm.next_out = workspace->buf;
+-		workspace->strm.avail_out = PAGE_SIZE;
++		workspace->strm.avail_out = ZLIB_BUF_SIZE;
  
- #include <linux/zutil.h>
-+#include <asm/setup.h>
+ 		if (workspace->strm.avail_in == 0) {
+ 			unsigned long tmp;
+@@ -340,7 +369,7 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
+ 	workspace->strm.total_in = 0;
  
- /*
-  * C wrapper for the DEFLATE CONVERSION CALL instruction.
-@@ -104,6 +105,10 @@ static inline int is_dfltcc_enabled(void)
-     uint64_t facilities[(DFLTCC_FACILITY / 64) + 1];
-     register char r0 __asm__("r0");
+ 	workspace->strm.next_out = workspace->buf;
+-	workspace->strm.avail_out = PAGE_SIZE;
++	workspace->strm.avail_out = ZLIB_BUF_SIZE;
+ 	workspace->strm.total_out = 0;
+ 	/* If it's deflate, and it's got no preset dictionary, then
+ 	   we can tell zlib to skip the adler32 check. */
+@@ -384,7 +413,7 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
+ 			buf_offset = 0;
  
-+    /* Check for kernel dfltcc command line parameter */
-+    if (zlib_dfltcc_support == ZLIB_DFLTCC_DISABLED)
-+        return 0;
-+
-     memset(facilities, 0, sizeof(facilities));
-     r0 = sizeof(facilities) / sizeof(facilities[0]) - 1;
-     __asm__ volatile("stfle %[facilities]\n"
+ 		bytes = min(PAGE_SIZE - pg_offset,
+-			    PAGE_SIZE - buf_offset);
++			    PAGE_SIZE - (buf_offset % PAGE_SIZE));
+ 		bytes = min(bytes, bytes_left);
+ 
+ 		kaddr = kmap_atomic(dest_page);
+@@ -395,7 +424,7 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
+ 		bytes_left -= bytes;
+ next:
+ 		workspace->strm.next_out = workspace->buf;
+-		workspace->strm.avail_out = PAGE_SIZE;
++		workspace->strm.avail_out = ZLIB_BUF_SIZE;
+ 	}
+ 
+ 	if (ret != Z_STREAM_END && bytes_left != 0)
 -- 
 2.17.1
 
