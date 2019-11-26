@@ -2,212 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EFE910979A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 02:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB111097A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 02:56:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfKZBlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 20:41:25 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36354 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbfKZBlZ (ORCPT
+        id S1727258AbfKZB4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 20:56:10 -0500
+Received: from mout-p-202.mailbox.org ([80.241.56.172]:38904 "EHLO
+        mout-p-202.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727104AbfKZB4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 20:41:25 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f10so14502020oto.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2019 17:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rJcDUhXRDoSzU6VM3BwzPwwJv9tkg4wejkptoQyWbDs=;
-        b=PLa0RvD/Cw1dZHdlKEMV5+pqmN7gTd7mJ7kFctBiA9BgAdIasobDba62BcJID3HI3g
-         vgDACsfyZEuksaXJuc/c0jwm7eFhn4gYDE1xFXjmO8RZRHmaUCqBTucA4b6aPEdH7R3g
-         Qyup2OUTGXIXqUMRoKvC/Hd/Nlu4UcDJcyRCR15X0tZkmq2Lds64U6MdEfSZOnhIvOYc
-         7PLZkYY8tzcFRZVbL+Ew2Nru4YDGl0NIcXcdq9KxhKDq25dJoqDocsumJzcAGTJWnZI6
-         ncPv8Xcn7vQsO8v9g5lfOEAAJStwOD5O0gB2Urf5xkRqP+jF9MwQ7rDTKnQ0cHWvxOLj
-         ectA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rJcDUhXRDoSzU6VM3BwzPwwJv9tkg4wejkptoQyWbDs=;
-        b=pB2wixd2ssfPY4xYlDI55C9X5nUFC3l6WdSsAHJIDVactyLCjMu+FmfKZKa3QxkH0U
-         ChChWv/NU25FmWI4rGglLVfelf4niTsfQn+d1uMwTX2qTz2zyRL+iAw8DjPHnPoovp6G
-         23+YRzMoibPrP5NONzbSZ5q+Tqc1iM9gBvHZ7Qh27LupvJCcaLexYuton48mY8IMrN7X
-         d1nnWIGiHAXXI5BfPQek66OP7dUtRTVGdxVIl4elKW9497bbhMna2z/xyxDIuUfGXre/
-         luNp3z+v6wUNOgEZQfZJHSnPWXa3FUmpJeCgXtVSzXrCV0ADQDp5z/MgfRdPBYzvpfSr
-         nesw==
-X-Gm-Message-State: APjAAAWb2D6OUhaW5i75YJzDP6i1hZaf7ZDLv548lzhEn2lUeOhVtCny
-        jz1saErip4agFTP5AmjFc7u8o3Z6hAKIBleYxRA9rQ==
-X-Google-Smtp-Source: APXvYqw0BmovICQjw2LolyXyVvHcUdAWM4lQJR2O96N2H6/dRSdg9xnFk8UVk+dPxzT2YkdZqfMBqN+lKzCDAkmJsHo=
-X-Received: by 2002:a9d:648f:: with SMTP id g15mr536456otl.195.1574732483510;
- Mon, 25 Nov 2019 17:41:23 -0800 (PST)
+        Mon, 25 Nov 2019 20:56:10 -0500
+X-Greylist: delayed 471 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Nov 2019 20:56:09 EST
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 47MRcx4JGHzQlC4;
+        Tue, 26 Nov 2019 02:48:17 +0100 (CET)
+Authentication-Results: gerste.heinlein-support.de (amavisd-new);
+        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+        header.d=mailbox.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+        t=1574732895;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=3vGTyx4hrjcs+n5a2EyZnoDC1MYkgE9tWQx/rXiB5Jg=;
+        b=tfZz/hUhECWi98Ur/t45TDfhcHtd8n7kweUxvyoG2Hxe3iuq497B9zDKgr9yZ8tVD612U6
+        c3e9gO4VrJ9fo+NcjBEKMajYlRKbpLS0l6QCs9Wu15ZFkAMSQTf22UpziRbfhaBI72nyEx
+        bVMOykVbdveeIRkiJIwYMGb3aWQHDFtXSg8TzyCGCjQXYCqE//+chroTwyufwWR+fhD1HO
+        6+F+a7GdqRNWuwQKFVgKreWxYCYH11vZ+e+PyE+AJy4ounzlS+/jD1x+FhSOIyBOJMw5Gu
+        FHFOfpLDdjS2EO++HqpfoyYSjWXkJ2KTqLrHEOSfH8Of84LfTQqawP2oCf+jYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
+        content-transfer-encoding:mime-version:message-id:date:date
+        :subject:subject:from:from:received; s=mail20150812; t=
+        1574732893; bh=PWOAFg4hdwumD5Wgmmm4vIukmBf1tHCRGCyJGHCyzX0=; b=W
+        U8WB3InnQZTnesO09wYOBTq74yclueWZR2ykRstZ+ZFCI8FX5d/NIV+cdZMxA+sU
+        BM67mm2e9fXfYMbTYPyYLp6KEqTI7SRnLzDZ0YNjG/8DCQVnpKwYTU+mecJk5OSk
+        vxEiOzmORXnym1Wxj/OI8NehWUjv9eVHU3A+oYRnIJo3EACTWS+S4J4OY8U2HH/u
+        hq3MaNTwXvVT4PYAypu6ZjzDATFK929epNUX1+AeA515Mj5rin9lokPcjdDpUvxD
+        czLTNYcOGKi9uYLStwNKKaZvJFYe5xH8+esXXAXsDW+sj0/VxEYKH1EOzKpuLqsi
+        wQfAZOHzSoqBWLqaR1GUg==
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id EnMWbBeg9YEO; Tue, 26 Nov 2019 02:48:13 +0100 (CET)
+From:   Erhard Furtner <erhard_f@mailbox.org>
+To:     linuxppc-dev@ozlabs.org
+Cc:     robh+dt@kernel.org, frowand.list@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Erhard Furtner <erhard_f@mailbox.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+Subject: [PATCH v2] of: unittest: fix memory leak in attach_node_and_children
+Date:   Tue, 26 Nov 2019 02:48:04 +0100
+Message-Id: <20191126014804.28267-1-erhard_f@mailbox.org>
 MIME-Version: 1.0
-References: <20191118234229.54085-1-saravanak@google.com>
-In-Reply-To: <20191118234229.54085-1-saravanak@google.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 25 Nov 2019 17:40:46 -0800
-Message-ID: <CAGETcx-CX7aR66XAvZbD9MLeLgtbPPHaFaAOY5f-OqOcWLGndw@mail.gmail.com>
-Subject: Re: [PATCH v1] clk: Keep boot clocks on for multiple consumers
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Android Kernel Team <kernel-team@android.com>,
-        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 3:42 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> Clocks can turned on (by the hardware, bootloader, etc) upon a
-> reset/boot of a hardware platform. These "boot clocks" could be clocking
-> devices that are active before the kernel starts running. For example,
-> clocks needed for the interconnects, UART console, display, CPUs, DDR,
-> etc.
->
-> When a boot clock is used by more than one consumer or multiple boot
-> clocks share a parent clock, the boot clock (or the common parent) can
-> be turned off when the first consumer probes. This can potentially crash
-> the device or cause poor user experience.
->
-> This patch fixes this by explicitly enabling the boot clocks during
-> clock registration and then disabling them at late_initcall_sync(). This
-> gives all the consumers until late_initcall() to put their "votes" in to
-> keep any of the boot clocks on past late_initcall().
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/clk/clk.c            | 62 ++++++++++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 63 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 1c677d7f7f53..a1b09c9f8845 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -72,6 +72,8 @@ struct clk_core {
->         unsigned long           flags;
->         bool                    orphan;
->         bool                    rpm_enabled;
-> +       bool                    state_held;
-> +       bool                    boot_enabled;
->         unsigned int            enable_count;
->         unsigned int            prepare_count;
->         unsigned int            protect_count;
-> @@ -1300,6 +1302,36 @@ static int clk_disable_unused(void)
->  }
->  late_initcall_sync(clk_disable_unused);
->
-> +static void clk_unprepare_disable_subtree(struct clk_core *core)
-> +{
-> +       struct clk_core *child;
-> +
-> +       lockdep_assert_held(&prepare_lock);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               clk_unprepare_disable_subtree(child);
-> +
-> +       if (!core->state_held)
-> +               return;
-> +
-> +       clk_core_disable_unprepare(core);
-> +}
-> +
-> +static int clk_release_boot_state(void)
-> +{
-> +       struct clk_core *core;
-> +
-> +       clk_prepare_lock();
-> +
-> +       hlist_for_each_entry(core, &clk_root_list, child_node)
-> +               clk_unprepare_disable_subtree(core);
-> +
-> +       clk_prepare_unlock();
-> +
-> +       return 0;
-> +}
-> +late_initcall_sync(clk_release_boot_state);
-> +
->  static int clk_core_determine_round_nolock(struct clk_core *core,
->                                            struct clk_rate_request *req)
->  {
-> @@ -1674,6 +1706,30 @@ static int clk_fetch_parent_index(struct clk_core *core,
->         return i;
->  }
->
-> +static void clk_core_hold_state(struct clk_core *core)
-> +{
-> +       if (core->state_held || !core->boot_enabled ||
-> +           core->flags & CLK_DONT_HOLD_STATE)
-> +               return;
-> +
-> +       WARN(core->orphan, "%s: Can't hold state for orphan clk\n", core->name);
-> +
-> +       core->state_held = !clk_core_prepare_enable(core);
-> +}
-> +
-> +static void __clk_core_update_orphan_hold_state(struct clk_core *core)
-> +{
-> +       struct clk_core *child;
-> +
-> +       if (core->orphan)
-> +               return;
-> +
-> +       clk_core_hold_state(core);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               __clk_core_update_orphan_hold_state(child);
-> +}
-> +
->  /*
->   * Update the orphan status of @core and all its children.
->   */
-> @@ -3374,6 +3430,8 @@ static int __clk_core_init(struct clk_core *core)
->                 rate = 0;
->         core->rate = core->req_rate = rate;
->
-> +       core->boot_enabled = clk_core_is_enabled(core);
-> +
->         /*
->          * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->          * don't get accidentally disabled when walking the orphan tree and
-> @@ -3389,6 +3447,9 @@ static int __clk_core_init(struct clk_core *core)
->                 clk_enable_unlock(flags);
->         }
->
-> +       if (!core->orphan)
-> +               clk_core_hold_state(core);
-> +
->         /*
->          * walk the list of orphan clocks and reparent any that newly finds a
->          * parent.
-> @@ -3408,6 +3469,7 @@ static int __clk_core_init(struct clk_core *core)
->                         __clk_set_parent_after(orphan, parent, NULL);
->                         __clk_recalc_accuracies(orphan);
->                         __clk_recalc_rates(orphan, 0);
-> +                       __clk_core_update_orphan_hold_state(orphan);
->                 }
->         }
->
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 2fdfe8061363..f0e522ea793f 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -32,6 +32,7 @@
->  #define CLK_OPS_PARENT_ENABLE  BIT(12)
->  /* duty cycle call may be forwarded to the parent clock */
->  #define CLK_DUTY_CYCLE_PARENT  BIT(13)
-> +#define CLK_DONT_HOLD_STATE    BIT(14) /* Don't hold state */
->
->  struct clk;
->  struct clk_hw;
-> --
-> 2.24.0.432.g9d3f5f5b63-goog
->
+In attach_node_and_children memory is allocated for full_name via
+kasprintf. If the condition of the 1st if is not met the function
+returns early without freeing the memory. Add a kfree() to fix that.
 
-Stephen,
+This has been detected with kmemleak:
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=205327
 
-Nudge, nudge. Thoughts?
+It looks like the leak was introduced by this commit:
+Fixes: 5babefb7f7ab ("of: unittest: allow base devicetree to have symbol metadata")
 
--Saravana
+Signed-off-by: Erhard Furtner <erhard_f@mailbox.org>
+Reviewed-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+---
+Changes in v2:
+  - Make the commit message more clearer.
+
+ drivers/of/unittest.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 92e895d86458..ca7823eef2b4 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -1146,8 +1146,10 @@ static void attach_node_and_children(struct device_node *np)
+ 	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
+ 
+ 	if (!strcmp(full_name, "/__local_fixups__") ||
+-	    !strcmp(full_name, "/__fixups__"))
++	    !strcmp(full_name, "/__fixups__")) {
++		kfree(full_name);
+ 		return;
++	}
+ 
+ 	dup = of_find_node_by_path(full_name);
+ 	kfree(full_name);
+-- 
+2.23.0
+
