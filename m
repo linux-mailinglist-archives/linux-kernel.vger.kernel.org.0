@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C387E10A53D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 21:15:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8011D10A543
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 21:15:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbfKZUOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 15:14:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47708 "EHLO mx1.suse.de"
+        id S1727631AbfKZUPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 15:15:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47588 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727465AbfKZUOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 15:14:44 -0500
+        id S1727478AbfKZUOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 15:14:45 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E229B35C;
-        Tue, 26 Nov 2019 20:14:43 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 7E2A7B37D;
+        Tue, 26 Nov 2019 20:14:44 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -58,9 +58,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 29/35] powerpc/perf: remove current_is_64bit()
-Date:   Tue, 26 Nov 2019 21:13:43 +0100
-Message-Id: <83795e9690ad8b51a2d991919bc102351a3bbb20.1574798487.git.msuchanek@suse.de>
+Subject: [PATCH v2 30/35] powerpc/perf: consolidate read_user_stack_32
+Date:   Tue, 26 Nov 2019 21:13:44 +0100
+Message-Id: <26c42758fd1ac114263dd8f38427f300af9e9e5d.1574798487.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1574798487.git.msuchanek@suse.de>
 References: <cover.1574798487.git.msuchanek@suse.de>
@@ -71,62 +71,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit ed1cd6deb013 ("powerpc: Activate CONFIG_THREAD_INFO_IN_TASK")
-current_is_64bit() is quivalent to !is_32bit_task().
-Remove the redundant function.
+There are two almost identical copies for 32bit and 64bit.
 
-Link: https://github.com/linuxppc/issues/issues/275
-Link: https://lkml.org/lkml/2019/9/12/540
+The function is used only in 32bit code which will be split out in next
+patch so consolidate to one function.
 
-Fixes: linuxppc#275
-Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/perf/callchain.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+v6: new patch
+v8: move the consolidated function out of the ifdef block.
+---
+ arch/powerpc/perf/callchain.c | 59 +++++++++++++++--------------------
+ 1 file changed, 25 insertions(+), 34 deletions(-)
 
 diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-index c84bbd4298a0..35d542515faf 100644
+index 35d542515faf..c6c4c609cc14 100644
 --- a/arch/powerpc/perf/callchain.c
 +++ b/arch/powerpc/perf/callchain.c
-@@ -284,16 +284,6 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
- 	}
+@@ -165,22 +165,6 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+ 	return read_user_stack_slow(ptr, ret, 8);
  }
  
--static inline int current_is_64bit(void)
+-static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
 -{
--	/*
--	 * We can't use test_thread_flag() here because we may be on an
--	 * interrupt stack, and the thread flags don't get copied over
--	 * from the thread_info on the main stack to the interrupt stack.
--	 */
--	return !test_ti_thread_flag(task_thread_info(current), TIF_32BIT);
--}
+-	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+-	    ((unsigned long)ptr & 3))
+-		return -EFAULT;
 -
- #else  /* CONFIG_PPC64 */
- /*
-  * On 32-bit we just access the address and let hash_page create a
-@@ -321,11 +311,6 @@ static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry
- {
- }
- 
--static inline int current_is_64bit(void)
--{
--	return 0;
+-	pagefault_disable();
+-	if (!__get_user_inatomic(*ret, ptr)) {
+-		pagefault_enable();
+-		return 0;
+-	}
+-	pagefault_enable();
+-
+-	return read_user_stack_slow(ptr, ret, 4);
 -}
 -
  static inline int valid_user_sp(unsigned long sp, int is_64)
  {
- 	if (!sp || (sp & 7) || sp > TASK_SIZE - 32)
-@@ -486,7 +471,7 @@ static void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
- void
- perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
+ 	if (!sp || (sp & 7) || sp > (is_64 ? TASK_SIZE : 0x100000000UL) - 32)
+@@ -285,25 +269,9 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+ }
+ 
+ #else  /* CONFIG_PPC64 */
+-/*
+- * On 32-bit we just access the address and let hash_page create a
+- * HPTE if necessary, so there is no need to fall back to reading
+- * the page tables.  Since this is called at interrupt level,
+- * do_page_fault() won't treat a DSI as a page fault.
+- */
+-static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
++static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
  {
--	if (current_is_64bit())
-+	if (!is_32bit_task())
- 		perf_callchain_user_64(entry, regs);
- 	else
- 		perf_callchain_user_32(entry, regs);
+-	int rc;
+-
+-	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+-	    ((unsigned long)ptr & 3))
+-		return -EFAULT;
+-
+-	pagefault_disable();
+-	rc = __get_user_inatomic(*ret, ptr);
+-	pagefault_enable();
+-
+-	return rc;
++	return 0;
+ }
+ 
+ static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+@@ -326,6 +294,29 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+ 
+ #endif /* CONFIG_PPC64 */
+ 
++/*
++ * On 32-bit we just access the address and let hash_page create a
++ * HPTE if necessary, so there is no need to fall back to reading
++ * the page tables.  Since this is called at interrupt level,
++ * do_page_fault() won't treat a DSI as a page fault.
++ */
++static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
++{
++	int rc;
++
++	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
++	    ((unsigned long)ptr & 3))
++		return -EFAULT;
++
++	pagefault_disable();
++	rc = __get_user_inatomic(*ret, ptr);
++	pagefault_enable();
++
++	if (IS_ENABLED(CONFIG_PPC64) && rc)
++		return read_user_stack_slow(ptr, ret, 4);
++	return rc;
++}
++
+ /*
+  * Layout for non-RT signal frames
+  */
 -- 
 2.23.0
 
