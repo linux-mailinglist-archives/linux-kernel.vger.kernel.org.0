@@ -2,193 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDA71109D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 12:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F142E109D30
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 12:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbfKZLmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 06:42:09 -0500
-Received: from mail-wm1-f73.google.com ([209.85.128.73]:41016 "EHLO
-        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbfKZLmI (ORCPT
+        id S1728183AbfKZLn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 06:43:57 -0500
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:53155 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725884AbfKZLn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 06:42:08 -0500
-Received: by mail-wm1-f73.google.com with SMTP id g8so1017561wmg.6
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 03:42:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=UhG4TbrFQmzzMiP4BKNG5iQmKmV3aCdN4xUR1YDfRPM=;
-        b=pfMouhbRCLequNThaZW7MP2Z9T7cZW3BKnMwxJsL/Kh33hHKRxn/F78Gm1njQTHRnk
-         KPKlJb7aNIHx8AhmDhp3NVvPdJiP8ZSO8GoLlx3QnxmArmuKheHLqVczKsTG99mjwG7z
-         wGdYhDx8WsQ18FMNCIMkZTQbDASXzHPVbonyNfjHslt3u6krRS6c/FtTpxOjXIkKsklW
-         1Y38eay8DGsyakOW3mVoZTqmV33JJh5oT4UbmyKM4rFkSYwmoc+nKJTSbJb/E1cQC9Bu
-         mR4EoFAy/cIWnONn5H3sbaoScdY84CRdDXQsk9kZ4ucdp9R//wc7ti2lGCwtCg0ILoup
-         POVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=UhG4TbrFQmzzMiP4BKNG5iQmKmV3aCdN4xUR1YDfRPM=;
-        b=pJahgkwJZAdH9PD235i4RUoSQbcBHb/pMQe4g/BmhhmfsGOJpxA980TU/V37/lNJrc
-         V8myCug+yP4o6LJwrn058xhhkv5FLKODKqR7KC6eK85opUUtR03NBdUmQJU//4u4HGGm
-         7LNq7qV9Xllm0F59dcobmyNJN1DpmJ8vgg17kVZ3vVsnM3SXCVYSzORL3m/g8CZ+NzG3
-         K0vfgLW4cVcQ8yLyqcni8yNKwVQSg/E8uacy/fvNi7CpqqYvfnpb7kBOCkT5IJEYond5
-         T3yAJeAsiXlT1L6Yn5pBVnCxTq5cZJuTU/joF0JkfJKfTULHnXbVV1pClcp6fv0/uvkV
-         ePKQ==
-X-Gm-Message-State: APjAAAWySMsG/cOIrbyQTsXMWBVsx8HA2yB9Hq7V02o7eueNHh2924SL
-        HPTnyGugoBuGwwO87+UaiLy+lF2zNA==
-X-Google-Smtp-Source: APXvYqwoGV7i0r1gTEUR1Tl8FkRM0G/pJpFJdLS6qomEgLxb0fRD0Pw9med/N0AXUlQtVoxl6+iFeihPdA==
-X-Received: by 2002:a5d:46c1:: with SMTP id g1mr15855542wrs.200.1574768526170;
- Tue, 26 Nov 2019 03:42:06 -0800 (PST)
-Date:   Tue, 26 Nov 2019 12:41:21 +0100
-In-Reply-To: <20191126114121.85552-1-elver@google.com>
-Message-Id: <20191126114121.85552-3-elver@google.com>
-Mime-Version: 1.0
-References: <20191126114121.85552-1-elver@google.com>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH v2 3/3] kcsan: Prefer __always_inline for fast-path
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-        arnd@arndb.de, dvyukov@google.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com,
-        mark.rutland@arm.com, paulmck@kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 26 Nov 2019 06:43:56 -0500
+Received: from [IPv6:2001:420:44c1:2577:f03d:3627:b74f:a4d0]
+ ([IPv6:2001:420:44c1:2577:f03d:3627:b74f:a4d0])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id ZZG2iFikrjpCOZZG5i5L5F; Tue, 26 Nov 2019 12:43:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1574768634; bh=x+Jz7Gw9Z56QjWtxcvTqZ2nl9dKf/bTGLBWhIEL58tA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=iopaX69/0VPqEa4BZDcUQAxi7obAZeMk5JiECTBCmJ3q1vEPpW4pGOKTKm3poQVla
+         YVwgMV4OeZxU57Yfl3sRt0vVDFEHMHEn4x0RCItVstWSq2cu6r6i15O2H30Y0OJ4Wl
+         74u6vJiPQfaYvT5gxN9JrXF/E4lApzdLMQkOOWVN9TYEnRPa7y5ag/3PEp1hBUsCgQ
+         FO3JG16XIcvwCdcS+c2oj1he1/nvnJcW0siZquclY79e0MzLKAQ94Z2DPJPkGWN8no
+         2+wVrZpI84ybFm/FFzEB9/hYSSk7ciyUiFma7K3HK6Rezjlq4Ty6gYOmCNZlkJLzlf
+         0gW/ia30S38gQ==
+Subject: Re: [PATCH v4 2/8] media: v4l2: abstract timeval handling in
+ v4l2_buffer
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+References: <20191111203835.2260382-1-arnd@arndb.de>
+ <20191111203835.2260382-3-arnd@arndb.de>
+ <00fea162-508a-b6e1-84ba-1472a94f6945@xs4all.nl>
+ <CAK8P3a3dhruU1k9XtVHZsfmTxt+jL5Pf8jhT77+vce5p=h9U8w@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <efdeef8a-5ce7-bbe5-8def-e4eec31f13ab@xs4all.nl>
+Date:   Tue, 26 Nov 2019 12:43:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a3dhruU1k9XtVHZsfmTxt+jL5Pf8jhT77+vce5p=h9U8w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfBOkbCwWInD2lFTX8p0nyKnZ+84lQbHuBNnKSS7ohtfK2pNi8snslujQh22RvKH/ZnI1cM+HH8j9SRwHmAUNQdEJCQRYyF3Eb8d5d0lLaiTyFrSIOxkm
+ 2bUPlWaTXPuM/pSVctOsG//utMZnszVP61cjKjWyRA5+9Y818sTACZPP1X2J4HCakhlh0kvXzVvxLCsFy6Qqj92rG9vzT3OyQhrDTJGLtX2khu8Du8Arxb43
+ wcIwM44ZNj5ZSmJ7ZYhJc0pHLxUiCCK6nM9epVRAyBTpmMa4vTs5tJ0pBzmHJWboMvJ7/5Fh5U1Gpbr3rFpBlEIOxpwtiPbV+8ldW30z2thkLp+Q+bsoGPVH
+ DjmOlV/93i1+54lOC5o5vMnD1vTBo8DHGiXHGxVgxQAKQu1HepboJ2Ih+ZAxA7pP8H3uTTi5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prefer __always_inline for fast-path functions that are called outside
-of user_access_save, to avoid generating UACCESS warnings when
-optimizing for size (CC_OPTIMIZE_FOR_SIZE). It will also avoid future
-surprises with compiler versions that change the inlining heuristic even
-when optimizing for performance.
+On 11/26/19 12:34 PM, Arnd Bergmann wrote:
+> On Mon, Nov 25, 2019 at 4:52 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> On 11/11/19 9:38 PM, Arnd Bergmann wrote:
+>>> As a preparation for adding 64-bit time_t support in the uapi,
+>>> change the drivers to no longer care about the format of the
+>>> timestamp field in struct v4l2_buffer.
+>>>
+>>> The v4l2_timeval_to_ns() function is no longer needed in the
+>>> kernel after this, but there may be userspace code relying on
+>>> it because it is part of the uapi header.
+>>
+>> There is indeed userspace code that relies on this.
+> 
+> Ok, good to know. I rephrased the changelog text as
+> 
+> The v4l2_timeval_to_ns() function is no longer needed in the
+> kernel after this, but there is userspace code relying on
+> it to be part of the uapi header.
+> 
+>>>
+>>> +static inline u64 v4l2_buffer_get_timestamp(const struct v4l2_buffer *buf)
+>>> +{
+>>> +     return buf->timestamp.tv_sec * NSEC_PER_SEC +
+>>> +            (u32)buf->timestamp.tv_usec * NSEC_PER_USEC;
+>>
+>> Why the (u32) cast?
+> 
+> Simple question, long answer:
+> 
+> on 32-bit architectures, the tv_usec member may be 32-bit wide plus
+> padding in user space when interpreted as a regular 'struct timeval',
+> but the kernel implementation now sees it as a 64-bit member,
+> with half of it being possibly uninitialized user space data.
+> 
+> The 32-bit cast avoids that uninitialized data and ensures user space
+> passing garbage in the upper half gets ignored, as it has to be on 32-bit
+> user space.
 
-Report: http://lkml.kernel.org/r/58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
-Rebased on: locking/kcsan branch of tip tree.
----
- kernel/kcsan/atomic.h   |  2 +-
- kernel/kcsan/core.c     | 16 +++++++---------
- kernel/kcsan/encoding.h | 14 +++++++-------
- 3 files changed, 15 insertions(+), 17 deletions(-)
+But that's only valid for little endian 32 bit systems, right?
+Is this only an issue for x86 platforms?
 
-diff --git a/kernel/kcsan/atomic.h b/kernel/kcsan/atomic.h
-index 576e03ddd6a3..a9c193053491 100644
---- a/kernel/kcsan/atomic.h
-+++ b/kernel/kcsan/atomic.h
-@@ -18,7 +18,7 @@
-  * than cast to volatile. Eventually, we hope to be able to remove this
-  * function.
-  */
--static inline bool kcsan_is_atomic(const volatile void *ptr)
-+static __always_inline bool kcsan_is_atomic(const volatile void *ptr)
- {
- 	/* only jiffies for now */
- 	return ptr == &jiffies;
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index 3314fc29e236..c616fec639cd 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -78,10 +78,8 @@ static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS-1];
-  */
- static DEFINE_PER_CPU(long, kcsan_skip);
- 
--static inline atomic_long_t *find_watchpoint(unsigned long addr,
--					     size_t size,
--					     bool expect_write,
--					     long *encoded_watchpoint)
-+static __always_inline atomic_long_t *
-+find_watchpoint(unsigned long addr, size_t size, bool expect_write, long *encoded_watchpoint)
- {
- 	const int slot = watchpoint_slot(addr);
- 	const unsigned long addr_masked = addr & WATCHPOINT_ADDR_MASK;
-@@ -146,7 +144,7 @@ insert_watchpoint(unsigned long addr, size_t size, bool is_write)
-  *	2. the thread that set up the watchpoint already removed it;
-  *	3. the watchpoint was removed and then re-used.
-  */
--static inline bool
-+static __always_inline bool
- try_consume_watchpoint(atomic_long_t *watchpoint, long encoded_watchpoint)
- {
- 	return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint, CONSUMED_WATCHPOINT);
-@@ -160,7 +158,7 @@ static inline bool remove_watchpoint(atomic_long_t *watchpoint)
- 	return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) != CONSUMED_WATCHPOINT;
- }
- 
--static inline struct kcsan_ctx *get_ctx(void)
-+static __always_inline struct kcsan_ctx *get_ctx(void)
- {
- 	/*
- 	 * In interrupts, use raw_cpu_ptr to avoid unnecessary checks, that would
-@@ -169,7 +167,7 @@ static inline struct kcsan_ctx *get_ctx(void)
- 	return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
- }
- 
--static inline bool is_atomic(const volatile void *ptr)
-+static __always_inline bool is_atomic(const volatile void *ptr)
- {
- 	struct kcsan_ctx *ctx = get_ctx();
- 
-@@ -193,7 +191,7 @@ static inline bool is_atomic(const volatile void *ptr)
- 	return kcsan_is_atomic(ptr);
- }
- 
--static inline bool should_watch(const volatile void *ptr, int type)
-+static __always_inline bool should_watch(const volatile void *ptr, int type)
- {
- 	/*
- 	 * Never set up watchpoints when memory operations are atomic.
-@@ -226,7 +224,7 @@ static inline void reset_kcsan_skip(void)
- 	this_cpu_write(kcsan_skip, skip_count);
- }
- 
--static inline bool kcsan_is_enabled(void)
-+static __always_inline bool kcsan_is_enabled(void)
- {
- 	return READ_ONCE(kcsan_enabled) && get_ctx()->disable_count == 0;
- }
-diff --git a/kernel/kcsan/encoding.h b/kernel/kcsan/encoding.h
-index b63890e86449..f03562aaf2eb 100644
---- a/kernel/kcsan/encoding.h
-+++ b/kernel/kcsan/encoding.h
-@@ -59,10 +59,10 @@ encode_watchpoint(unsigned long addr, size_t size, bool is_write)
- 		      (addr & WATCHPOINT_ADDR_MASK));
- }
- 
--static inline bool decode_watchpoint(long watchpoint,
--				     unsigned long *addr_masked,
--				     size_t *size,
--				     bool *is_write)
-+static __always_inline bool decode_watchpoint(long watchpoint,
-+					      unsigned long *addr_masked,
-+					      size_t *size,
-+					      bool *is_write)
- {
- 	if (watchpoint == INVALID_WATCHPOINT ||
- 	    watchpoint == CONSUMED_WATCHPOINT)
-@@ -78,13 +78,13 @@ static inline bool decode_watchpoint(long watchpoint,
- /*
-  * Return watchpoint slot for an address.
-  */
--static inline int watchpoint_slot(unsigned long addr)
-+static __always_inline int watchpoint_slot(unsigned long addr)
- {
- 	return (addr / PAGE_SIZE) % CONFIG_KCSAN_NUM_WATCHPOINTS;
- }
- 
--static inline bool matching_access(unsigned long addr1, size_t size1,
--				   unsigned long addr2, size_t size2)
-+static __always_inline bool matching_access(unsigned long addr1, size_t size1,
-+					    unsigned long addr2, size_t size2)
- {
- 	unsigned long end_range1 = addr1 + size1 - 1;
- 	unsigned long end_range2 = addr2 + size2 - 1;
--- 
-2.24.0.432.g9d3f5f5b63-goog
+> 
+> On 64-bit native user space, the tv_usec field is always 64 bit wide,
+> so this is a change in behavior for denormalized timeval data
+> with tv_usec > U32_MAX, but the current behavior does not appear
+> worth preserving either.
+> 
+> The correct way would probably be to return an error for
+>  tv_usec >USEC_PER_SEC, but as the code never did that, this
+> would risk a regression for user space that relies on passing
+> invalid timestamps without getting an error.
+
+This long answer needs to be added to a comment to that function.
+Because otherwise someone will come along later and remove that
+seemingly unnecessary cast.
+
+It's OK if it is a long comment, it's a non-trivial reason.
+
+> 
+>>> +static inline void v4l2_buffer_set_timestamp(struct v4l2_buffer *buf,
+>>> +                                          u64 timestamp)
+>>> +{
+>>> +     struct timespec64 ts = ns_to_timespec64(timestamp);
+>>> +
+>>> +     buf->timestamp.tv_sec  = ts.tv_sec;
+>>> +     buf->timestamp.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
+>>> +}
+>>> +
+>>
+>> This does not belong in the public header. This is kernel specific,
+> 
+> Note: this is not the uapi header but the in-kernel one.
+
+Ah, I missed that.
+
+> 
+>> so media/v4l2-common.h would be a good place.
+> 
+> Ok, sounds good. I wasn't sure where to put it, and ended up
+> with include/linux/videodev2.h as the best replacement for
+> include/uapi/linux/videodev2.h, changed it to
+> include/media/v4l2-common.h now.
+
+Never use include/linux/videodev2.h. It's just a wrapper around
+the uapi header and should not contain any 'real' code.
+
+It's also why I missed that you modified that header since we never
+touch it.
+
+Regards,
+
+	Hans
+
+> 
+>        Arnd
+> 
 
