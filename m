@@ -2,76 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0941A10A1E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 17:21:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8619110A1C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 17:17:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbfKZQVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 11:21:52 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36157 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfKZQVv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 11:21:51 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iZdSS-0002hL-31; Tue, 26 Nov 2019 16:12:56 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: x86/mmu: fix comparison of u8 with -1
-Date:   Tue, 26 Nov 2019 16:12:55 +0000
-Message-Id: <20191126161255.323992-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        id S1728477AbfKZQRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 11:17:12 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:35412 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726101AbfKZQRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 11:17:12 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id CB34F215C7;
+        Tue, 26 Nov 2019 17:17:09 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id BA55D215C6;
+        Tue, 26 Nov 2019 17:17:09 +0100 (CET)
+To:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [PATCH v1] clk: Convert managed get functions to devm_add_action API
+Message-ID: <3d8a58bf-0814-1ec1-038a-10a20b9646ad@free.fr>
+Date:   Tue, 26 Nov 2019 17:13:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Nov 26 17:17:09 2019 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 26 Nov 2019 13:56:53 +0100
 
-The comparison of the u8 value __entry->u with -1 is always
-going to be false because a __entry-u can never be negative.
-Fix this by casting it to a s8 integer.
+Using devm_add_action_or_reset() produces simpler code and smaller
+object size:
 
-Addresses clang warning:
-arch/x86/kvm/./mmutrace.h:360:16: warning: result of comparison
-of constant -1 with expression of type 'u8' (aka 'unsigned char')
-is always false [-Wtautological-constant-out-of-range-compare]
+1 file changed, 16 insertions(+), 46 deletions(-)
 
-Fixes: 335e192a3fa4 ("KVM: x86: add tracepoints around __direct_map and FNAME(fetch)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+    text	   data	    bss	    dec	    hex	filename
+-   1797	     80	      0	   1877	    755	drivers/clk/clk-devres.o
++   1499	     56	      0	   1555	    613	drivers/clk/clk-devres.o
+
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- arch/x86/kvm/mmutrace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-devres.c | 62 +++++++++++-----------------------------
+ 1 file changed, 16 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/kvm/mmutrace.h b/arch/x86/kvm/mmutrace.h
-index 7ca8831c7d1a..3466cd528a67 100644
---- a/arch/x86/kvm/mmutrace.h
-+++ b/arch/x86/kvm/mmutrace.h
-@@ -357,7 +357,7 @@ TRACE_EVENT(
- 		  __entry->r ? "r" : "-",
- 		  __entry->spte & PT_WRITABLE_MASK ? "w" : "-",
- 		  __entry->x ? "x" : "-",
--		  __entry->u == -1 ? "" : (__entry->u ? "u" : "-"),
-+		  (s8)__entry->u == -1 ? "" : (__entry->u ? "u" : "-"),
- 		  __entry->level, __entry->sptep
- 	)
- );
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index be160764911b..04379c1f203e 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -4,31 +4,29 @@
+ #include <linux/export.h>
+ #include <linux/gfp.h>
+ 
+-static void devm_clk_release(struct device *dev, void *res)
++static void __clk_put(void *clk)
+ {
+-	clk_put(*(struct clk **)res);
++	clk_put(clk);
+ }
+ 
+ struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+-	struct clk **ptr, *clk;
++	struct clk *clk = clk_get(dev, id);
+ 
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
+-
+-	clk = clk_get(dev, id);
+-	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
+-	}
++	if (!IS_ERR(clk))
++		if (devm_add_action_or_reset(dev, __clk_put, clk))
++			clk = ERR_PTR(-ENOMEM);
+ 
+ 	return clk;
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++void devm_clk_put(struct device *dev, struct clk *clk)
++{
++	devm_release_action(dev, __clk_put, clk);
++}
++EXPORT_SYMBOL(devm_clk_put);
++
+ struct clk *devm_clk_get_optional(struct device *dev, const char *id)
+ {
+ 	struct clk *clk = devm_clk_get(dev, id);
+@@ -116,42 +114,14 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
+ 
+-static int devm_clk_match(struct device *dev, void *res, void *data)
+-{
+-	struct clk **c = res;
+-	if (!c || !*c) {
+-		WARN_ON(!c || !*c);
+-		return 0;
+-	}
+-	return *c == data;
+-}
+-
+-void devm_clk_put(struct device *dev, struct clk *clk)
+-{
+-	int ret;
+-
+-	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
+-
+-	WARN_ON(ret);
+-}
+-EXPORT_SYMBOL(devm_clk_put);
+-
+ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id)
+ {
+-	struct clk **ptr, *clk;
+-
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++	struct clk *clk = of_clk_get_by_name(np, con_id);
+ 
+-	clk = of_clk_get_by_name(np, con_id);
+-	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
+-	}
++	if (!IS_ERR(clk))
++		if (devm_add_action_or_reset(dev, __clk_put, clk))
++			clk = ERR_PTR(-ENOMEM);
+ 
+ 	return clk;
+ }
 -- 
-2.24.0
-
+2.17.1
