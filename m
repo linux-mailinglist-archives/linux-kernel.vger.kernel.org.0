@@ -2,93 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEC2D109859
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 05:34:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEF5D10985B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 05:45:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbfKZEew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 23:34:52 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44428 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbfKZEew (ORCPT
+        id S1729188AbfKZEpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 23:45:52 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:60457 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729172AbfKZEpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 23:34:52 -0500
-Received: by mail-pg1-f196.google.com with SMTP id e6so8296715pgi.11;
-        Mon, 25 Nov 2019 20:34:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=r4sCXiFU1twmyenJG0NM7zHY2TV0D2ORPlGj2mpnJMI=;
-        b=H0Ifhf9+PF78erKiS5IqjyZop5Wkcm2Y5P85j2gnzYg2sdG13OQBPzn8X1owYpfo0b
-         FlpuQK+TdOjPwcXKFKavEhvcPogyDvJdCUqjwcdXzmUwfC689m3bhapXnMIMHyjAoskM
-         zwq00UsoAoeWZ2pAQ/MXarvEllXZtnUY8O4FZY5NdcCxDKSsoatj4qEOc/4mZdU7iTHT
-         tAJ+HyIW180xnFmpZXVHqDJvCD+CB+ontLHpEDMAwSgf1sg0TPz7n3df5FxsvX/ar3kA
-         20QuYpJzl89ONDQhxIiqx2yYe77o72A0kj1tWlEr6QrpGg77TZUVZ78ABt316NQnNgXH
-         PDvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=r4sCXiFU1twmyenJG0NM7zHY2TV0D2ORPlGj2mpnJMI=;
-        b=NS5FTDSg0P0M7r5UFT8D3u0MH06VJGtbDV7ul+iG4RdoFyblwX+CwdsruVlZ4501r1
-         k7PjxAOZ8KrGP3NPVsCLoSPPTwv3LDEGFkd1sq/5A3oFCbyXSTMR5uUtU5aNDdVSnB2r
-         dwzHtQthrZoeqP2pJ746N7QKz/DJLuDENjJ5IjOPLkDw/9TPfnWM3s7FY3xwfvqzFF9K
-         cIN2ZwyAz+KfsQrXXaZLp8YMle+Cm7lhuBQ4zQtwr358auht1N02wem3ZL4LqthevLg7
-         7kMjUrN0nlwYYkRPC4xyguW9B1lUVkkZOpxUdR9132Cd/Wef8j1fpEfDk2H/AzAWS7QB
-         uHkw==
-X-Gm-Message-State: APjAAAVdCFBo1MsE/40euPphH40mm3KpnhkU3A452JI1gvia/r/ne+g7
-        bJFFTGw+rhRz8V+SZhYJgew=
-X-Google-Smtp-Source: APXvYqy91r4SioV3aM4LfXCeaDZWLxEZmmP8CYnC/r2l1EkFlBW0Lo7+OWaTYCIGw0UmWuD7Rvwr9Q==
-X-Received: by 2002:a63:5f48:: with SMTP id t69mr35260836pgb.379.1574742891103;
-        Mon, 25 Nov 2019 20:34:51 -0800 (PST)
-Received: from localhost.localdomain ([182.78.163.34])
-        by smtp.gmail.com with ESMTPSA id x9sm10279264pgt.66.2019.11.25.20.34.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 25 Nov 2019 20:34:50 -0800 (PST)
-From:   kc27041980@gmail.com
-X-Google-Original-From: KC17041980@gmail.com
-To:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, KC27041980 <kc27041980@gmail.com>
-Subject: [PATCH 1/1] block/drbd/drbd_debugfs.c: Protect &connection->kref with resource->req_lock
-Date:   Tue, 26 Nov 2019 10:04:18 +0530
-Message-Id: <1574742858-23131-1-git-send-email-KC17041980@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 25 Nov 2019 23:45:52 -0500
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iZSjN-0003Ml-3g; Tue, 26 Nov 2019 05:45:41 +0100
+Date:   Tue, 26 Nov 2019 04:45:33 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     "Andrew Jeffery" <andrew@aj.id.au>
+Cc:     "Roy van Doormaal" <roy.van.doormaal@prodrive-technologies.com>,
+        "Brendan Higgins" <brendanhiggins@google.com>,
+        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Jason Cooper" <jason@lakedaemon.net>, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH] irqchip/aspeed-i2c-ic: Fix irq domain name memory leak
+Message-ID: <20191126044533.20d84e37@why>
+In-Reply-To: <ff44cecd-7e05-4e5d-b88f-2d6af6fd8b8b@www.fastmail.com>
+References: <20191125202937.23133-1-roy.van.doormaal@prodrive-technologies.com>
+        <ff44cecd-7e05-4e5d-b88f-2d6af6fd8b8b@www.fastmail.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: andrew@aj.id.au, roy.van.doormaal@prodrive-technologies.com, brendanhiggins@google.com, benh@kernel.crashing.org, joel@jms.id.au, tglx@linutronix.de, jason@lakedaemon.net, linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KC27041980 <kc27041980@gmail.com>
+On Tue, 26 Nov 2019 10:08:36 +1030
+"Andrew Jeffery" <andrew@aj.id.au> wrote:
 
-Protect &connection->kref by moving it under resource->req_lock.
+> On Tue, 26 Nov 2019, at 06:59, Roy van Doormaal wrote:
+> > The aspeed irqchip driver overwrites the default irq domain name,
+> > but doesn't free the existing domain name.
+> > This patch frees the irq domain name before overwriting it.
+> > 
+> > kmemleak trace:
+> > 
+> > unreferenced object 0xb8004c40 (size 64):
+> > comm "swapper", pid 0, jiffies 4294937303 (age 747.660s)
+> > hex dump (first 32 bytes):
+> > 3a 61 68 62 3a 61 70 62 3a 62 75 73 40 31 65 37 :ahb:apb:bus@1e7
+> > 38 61 30 30 30 3a 69 6e 74 65 72 72 75 70 74 2d 8a000:interrupt-
+> > backtrace:
+> > [<086b59b8>] kmemleak_alloc+0xa8/0xc0
+> > [<b5a3490c>] __kmalloc_track_caller+0x118/0x1a0
+> > [<f59c7ced>] kvasprintf+0x5c/0xc0
+> > [<49275eec>] kasprintf+0x30/0x50
+> > [<5713064b>] __irq_domain_add+0x184/0x25c
+> > [<53c594d0>] aspeed_i2c_ic_of_init+0x9c/0x128
+> > [<d8d7017e>] of_irq_init+0x1ec/0x314
+> > [<f8405bf1>] irqchip_init+0x1c/0x24
+> > [<7ef974b3>] init_IRQ+0x30/0x90
+> > [<87a1438f>] start_kernel+0x28c/0x458
+> > [< (null)>] (null)
+> > [<f0763fdf>] 0xffffffff
+> > 
+> > Signed-off-by: Roy van Doormaal <roy.van.doormaal@prodrive-technologies.com>
+> > ---
+> >  drivers/irqchip/irq-aspeed-i2c-ic.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/irqchip/irq-aspeed-i2c-ic.c 
+> > b/drivers/irqchip/irq-aspeed-i2c-ic.c
+> > index 8d591c179f81..8081b8483a79 100644
+> > --- a/drivers/irqchip/irq-aspeed-i2c-ic.c
+> > +++ b/drivers/irqchip/irq-aspeed-i2c-ic.c
+> > @@ -92,6 +92,8 @@ static int __init aspeed_i2c_ic_of_init(struct 
+> > device_node *node,
+> >  		goto err_iounmap;
+> >  	}
+> >  
+> > +	if (i2c_ic->irq_domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
+> > +		kfree(i2c_ic->irq_domain->name);
+> >  	i2c_ic->irq_domain->name = "aspeed-i2c-domain";  
+> 
+> Given that the name is no-longer allocated I think you need to clear the
+> IRQ_DOMAIN_NAME_ALLOCATED bit from flags to avoid attempting to
+> free the const string in irq_domain_remove():
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/irq/irqdomain.c?h=v5.4#n263
+> 
+> Or do a kstrdup().
 
-Signed-off-by: KC27041980 <kc27041980@gmail.com>
----
- drivers/block/drbd/drbd_debugfs.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Or even better, drop the whole domain name assignment, which is pretty
+pointless and makes debugging pointlessly difficult (see how the name
+is used to build the irq debugfs).
 
-diff --git a/drivers/block/drbd/drbd_debugfs.c b/drivers/block/drbd/drbd_debugfs.c
-index b3b9cd5..f6d75fa 100644
---- a/drivers/block/drbd/drbd_debugfs.c
-+++ b/drivers/block/drbd/drbd_debugfs.c
-@@ -363,11 +363,15 @@ static int in_flight_summary_show(struct seq_file *m, void *pos)
- 	struct drbd_connection *connection;
- 	unsigned long jif = jiffies;
- 
-+	spin_lock_irq(&resource->req_lock);
- 	connection = first_connection(resource);
- 	/* This does not happen, actually.
- 	 * But be robust and prepare for future code changes. */
--	if (!connection || !kref_get_unless_zero(&connection->kref))
-+	if (!connection || !kref_get_unless_zero(&connection->kref)) {
-+		spin_unlock_irq(&resource->req_lock);
- 		return -ESTALE;
-+	}
-+	spin_unlock_irq(&resource->req_lock);
- 
- 	/* BUMP me if you change the file format/content/presentation */
- 	seq_printf(m, "v: %u\n\n", 0);
+Thanks,
+
+	M.
 -- 
-2.7.4
-
+Jazz is not dead. It just smells funny...
