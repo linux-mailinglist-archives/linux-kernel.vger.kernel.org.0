@@ -2,100 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DEF0109B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72617109B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:58:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfKZJqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:46:00 -0500
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:33126 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbfKZJqA (ORCPT
+        id S1727705AbfKZJ6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 04:58:14 -0500
+Received: from 60-251-196-230.HINET-IP.hinet.net ([60.251.196.230]:32276 "EHLO
+        ironport.ite.com.tw" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727397AbfKZJ6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:46:00 -0500
-Received: by mail-wr1-f46.google.com with SMTP id w9so21663784wrr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 01:45:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k+BtnFSMnRjQ8YYOOPZrpiqvm9HWBxF1S878IBj12ug=;
-        b=GXz3qg5o/QW/Dmv9EU/db6tEE79XUdmiFmDrBxtau+F/+RnojIXwdWorI81FlNzv6G
-         D0xJxWFa6EN4/TsCWOwCuhAaVPrvAsUPEWPA/3q/5Py1zBsxao+9XXI+YInvyjMvhG81
-         NSc0AIGbAfQ7XLF9OVx5RBJaqd9nHDtEMyG/uhaHF77Vg3xzLqKRcmltbpNp5ku/QEOo
-         EevUmZP0FYnKvolWMrmER/SMKblWjQwRrNaMTGiR6g/aBqiPPKHo5MRY5rdgLtkvidjC
-         JQQzxQ5cc8YzyeO6LJl92lX2Xt92ES+DQoBAUPv1a0taEG1UrVsSIzMoRO87kpW/awFn
-         gczw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k+BtnFSMnRjQ8YYOOPZrpiqvm9HWBxF1S878IBj12ug=;
-        b=MZg4wgWXLGJxdedzrqdJCZWj4sAYIK7AX7A+Jmk0BEwZaMhqAfxkbpl7PagrIlWljn
-         Yaqzw6lkYFTbZx+5KBZTrtZdFvVzJCum+oFGBFi1bmc/znEBcUm330J+fq6HKsxhZhlh
-         8VwwwQG16cajY0hLXk+sPxj/Hqktokl+duaTprKghNQ/SztqZU10N3AxeCUPQo+UhREr
-         AiMj/ZuPzPef9iJplAmUWaqFbuPi8A2IGWwxdRoHrLTneGrTql8VF5WKfN9pk6q0vpUD
-         3Lcz7Q1ojXkaIYlEAdQTNzH1BYxFeyrNVxAUO9CqflC5k1gm+j5VNP3oTqtU47oq8hEV
-         C27Q==
-X-Gm-Message-State: APjAAAUEgVhJi7ys23MgU464sd4La9eEf+XDkntcEjOH8rQN2KtZCCga
-        bAPcrGT0rlnvEOQ3vV0IQL8=
-X-Google-Smtp-Source: APXvYqxybMjr5GimfVXDM2FP+7xc7awNx2xcyYveS80RNO/cxOLZM/moc97qpoTatLU3PLiUYHjfiQ==
-X-Received: by 2002:a5d:5546:: with SMTP id g6mr14255018wrw.320.1574761556918;
-        Tue, 26 Nov 2019 01:45:56 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id b17sm14408420wrp.49.2019.11.26.01.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 01:45:56 -0800 (PST)
-Date:   Tue, 26 Nov 2019 10:45:54 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [GIT PULL] x86/iopl changes for v5.5
-Message-ID: <20191126094554.GA3017@gmail.com>
-References: <20191125161626.GA956@gmail.com>
- <20191125192456.GA46001@gmail.com>
+        Tue, 26 Nov 2019 04:58:14 -0500
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 26 Nov 2019 17:58:12 +0800
+Received: from csbcas.internal.ite.com.tw (csbcas2.internal.ite.com.tw [192.168.65.47])
+        by mse.ite.com.tw with ESMTP id xAQ9w0kU081586;
+        Tue, 26 Nov 2019 17:58:00 +0800 (GMT-8)
+        (envelope-from allen.chen@ite.com.tw)
+Received: from allen-VirtualBox.internal.ite.com.tw (192.168.70.14) by
+ csbcas2.internal.ite.com.tw (192.168.65.45) with Microsoft SMTP Server (TLS)
+ id 14.3.352.0; Tue, 26 Nov 2019 17:58:01 +0800
+From:   allen <allen.chen@ite.com.tw>
+CC:     Allen Chen <allen.chen@ite.com.tw>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking timings logic
+Date:   Tue, 26 Nov 2019 17:46:12 +0800
+Message-ID: <1574761572-26585-1-git-send-email-allen.chen@ite.com.tw>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125192456.GA46001@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [192.168.70.14]
+X-MAIL: mse.ite.com.tw xAQ9w0kU081586
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+According to VESA ENHANCED EXTENDED DISPLAY IDENTIFICATION DATA STANDARD
+(Defines EDID Structure Version 1, Revision 4) page: 39
+How to determine whether the monitor support RB timing or not?
+EDID 1.4
+First:  read detailed timing descriptor and make sure byte 0 = 0x00,
+	byte 1 = 0x00, byte 2 = 0x00 and byte 3 = 0xFD
+Second: read EDID bit 0 in feature support byte at address 18h = 1
+	and detailed timing descriptor byte 10 = 0x04
+Third:  if EDID bit 0 in feature support byte = 1 &&
+	detailed timing descriptor byte 10 = 0x04
+	then we can check byte 15, if bit 4 in byte 15 = 1 is support RB
+        if EDID bit 0 in feature support byte != 1 ||
+	detailed timing descriptor byte 10 != 0x04,
+	then byte 15 can not be used
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+The linux code is_rb function not follow the VESA's rule
 
-> Forgot to list the conflicts that may arise if you merge this after the 
-> other x86 bits.
-> 
-> Firstly the symbol bits would conflict here:
-> 
->             arch/x86/entry/entry_32.S
->             arch/x86/kernel/head_32.S
->             arch/x86/xen/xen-asm_32.S
+Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
+Reported-by: kbuild test robot <lkp@intel.com>
+---
+ drivers/gpu/drm/drm_edid.c | 36 ++++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-Note that these conflicts will arise once you merge x86-asm-for-linus, 
-with an additional semantic conflict in arch/x86/crypto/blake2s-core.S, 
-see my merge conflict mail to that pull request.
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index f5926bf..e11e585 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -93,6 +93,12 @@ struct detailed_mode_closure {
+ 	int modes;
+ };
+ 
++struct edid_support_rb_closure {
++	struct edid *edid;
++	bool valid_support_rb;
++	bool support_rb;
++};
++
+ #define LEVEL_DMT	0
+ #define LEVEL_GTF	1
+ #define LEVEL_GTF2	2
+@@ -2017,23 +2023,41 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
+ 	}
+ }
+ 
++static bool
++is_display_descriptor(const u8 *r, u8 tag)
++{
++	return (!r[0] && !r[1] && !r[2] && r[3] == tag) ? true : false;
++}
++
+ static void
+ is_rb(struct detailed_timing *t, void *data)
+ {
+ 	u8 *r = (u8 *)t;
+-	if (r[3] == EDID_DETAIL_MONITOR_RANGE)
+-		if (r[15] & 0x10)
+-			*(bool *)data = true;
++	struct edid_support_rb_closure *closure = data;
++	struct edid *edid = closure->edid;
++
++	if (is_display_descriptor(r, EDID_DETAIL_MONITOR_RANGE)) {
++		if (edid->features & BIT(0) && r[10] == BIT(2)) {
++			closure->valid_support_rb = true;
++			closure->support_rb = (r[15] & 0x10) ? true : false;
++		}
++	}
+ }
+ 
+ /* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
+ static bool
+ drm_monitor_supports_rb(struct edid *edid)
+ {
++	struct edid_support_rb_closure closure = {
++		.edid = edid,
++		.valid_support_rb = false,
++		.support_rb = false,
++	};
++
+ 	if (edid->revision >= 4) {
+-		bool ret = false;
+-		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
+-		return ret;
++		drm_for_each_detailed_block((u8 *)edid, is_rb, &closure);
++		if (closure.valid_support_rb)
++			return closure.support_rb;
+ 	}
+ 
+ 	return ((edid->input & DRM_EDID_INPUT_DIGITAL) != 0);
+-- 
+1.9.1
 
-> There's also a conflict in arch/x86/include/asm/pgtable_32_types.h.
-
-This asm/pgtable_32_types.h conflict will be the only conflict you'll see 
-when you merge x86-iopl-for-linus:
-
-  <<<<<<< HEAD
-  #define CPU_ENTRY_AREA_PAGES    (NR_CPUS * 39)
-  =======
-  #define CPU_ENTRY_AREA_PAGES    (NR_CPUS * 41)
-  >>>>>>> e3cb0c7102f04c83bf1a7cb1d052e92749310b46
-
-And the correct resolution is to pick the '41' side.
-
-Thanks,
-
-	Ingo
