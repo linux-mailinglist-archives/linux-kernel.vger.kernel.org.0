@@ -2,116 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84406109FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:04:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FFB109FDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 15:05:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfKZOET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 09:04:19 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42122 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727719AbfKZOET (ORCPT
+        id S1728216AbfKZOFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 09:05:03 -0500
+Received: from mail-wr1-f74.google.com ([209.85.221.74]:55796 "EHLO
+        mail-wr1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728194AbfKZOFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 09:04:19 -0500
-Received: by mail-oi1-f193.google.com with SMTP id o12so16684224oic.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 06:04:18 -0800 (PST)
+        Tue, 26 Nov 2019 09:05:02 -0500
+Received: by mail-wr1-f74.google.com with SMTP id k15so10519495wrp.22
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 06:04:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=UhG4TbrFQmzzMiP4BKNG5iQmKmV3aCdN4xUR1YDfRPM=;
+        b=EymjOpB0+8SfpmZCmMcNlsOPRU3RMG0wks+OGGU5RoKu5iNnds8kJyGLwdmaUmWXuE
+         dnqplvFAsz1dWhct6ntlAzyoICh86s7vqDfU6+IiJYYhw0Ph7X2fvARCSRMsQKHfLcNY
+         twyP1G55MZ7sV/FGuuzZKyNFCtBZ/DG2K9EYcJHInSWHOW/ZNLNYA4kU6LSSjWhUk2gG
+         NExttxy8LAyaJZ5/yDTur8/fhlLE+CiaawhkaNeLA1hrypDOSghW49sZ+Y4WyKUgRSzD
+         X9V8XACo+gcKTYWQ7YjmfJF3aMm7g21gt2l8Aug8yD4aTHxnklsLncYC51IY8LEDjVG/
+         D70w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q130w8fypitwDj9gDfuj9In2u11nwddpuk2WOPM7J1s=;
-        b=c4GYldik58q/DVuvLl6cFb2M3FjwxTCqcHQ7GEoqy1ZT7FuCymrOjxonulNkkI6RcV
-         1LqyRtAws9F34czjtP/Rf4cB3B3jIIfy5luaYtUBulbTZZHfnzX+EgdNqC/nAy3S4GIg
-         bQh3wgrdD2sQFKaCqc4TWYI/dWegVNb8F5b3Igx0JxgAd+ImMnz8o2NVq8CT5FLjqVXj
-         T64guyn4Rw5x8YJ51dtg0F1H25F2QNDyLtvnXnXCTaD2KTCkuSkWYY52hn2LAuR1UMKz
-         6MLU0PR7Ihir35vM/coM7o9zCsKbPYpZ7GNfmZSaKRjZ34KXmxucNu3Slp9XykvLXyJh
-         2l/A==
-X-Gm-Message-State: APjAAAWmyPST3teEOsSiyfp929M+iRPgj5yvYC18MtdMjNjB9GE048U5
-        qKBQiz9s4YZyNyaIBsDkh5OYwEGSINkTteLeWn5OMA==
-X-Google-Smtp-Source: APXvYqzOAGYNgOQNoyZv3pVGgYpskOxDaWnUwjAAMzg3qqDEdp//Wpas1uChc6DgMj6Fsv62FUj0MEmTqeuBncyQAhQ=
-X-Received: by 2002:a05:6808:5d9:: with SMTP id d25mr3791077oij.54.1574777058146;
- Tue, 26 Nov 2019 06:04:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190917065959.5560-1-linux@rasmusvillemoes.dk> <20191011133617.9963-1-linux@rasmusvillemoes.dk>
-In-Reply-To: <20191011133617.9963-1-linux@rasmusvillemoes.dk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=UhG4TbrFQmzzMiP4BKNG5iQmKmV3aCdN4xUR1YDfRPM=;
+        b=DDL+IBaAuygXWZWBxxb+8uIrQtPmjUBVsYGnAbVqfps3/NJ2Zx/exicx69aDAZyP1H
+         M2xwka702x6FDaM9qe32vy/BqRr2nLjNQaqlczDx9ExH5Fo5TUAPdBLoYVjXidMx6ijd
+         Sd3aB+Iq0mH3WPBsqzZQvqzMWg8lshE/0sic//9PIgA/IwD5p8+42MHWhgPkps9I/bNw
+         V3EanorMLyP0Of6pXodZPXWjxBhBto7PMDi3QO6hENglvUB+X+V2c6W3besATtnaCNVD
+         bi2ll3aTnIGmJ9tGhdyTVBF5bB3fKxax8tW5M8HIlX6+mm+Wwqrrula5fZtJJ2+T0wO4
+         7DLw==
+X-Gm-Message-State: APjAAAU0XUu+MS2NYdJQanH0nk+Irm9BhOvQG75E8g7BpkmiaR1tI2D/
+        V+vmZPngyt4Db0wg32kT4xcwZr51Qw==
+X-Google-Smtp-Source: APXvYqw9j0kZ8yZja/mDU6fkiXpuVcqv6MuNt/1Adi5eUhrQ8V9TJqWro+GxVoczfRpyHQ5yB27MPvs0tg==
+X-Received: by 2002:a5d:694d:: with SMTP id r13mr27765421wrw.395.1574777098959;
+ Tue, 26 Nov 2019 06:04:58 -0800 (PST)
 Date:   Tue, 26 Nov 2019 15:04:06 +0100
-Message-ID: <CAMuHMdXSt_xtgUz+r9n5_YkJU09HUttbfibOvw8b2zBdXZtT4g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/1] printf: add support for printing symbolic error names
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Joe Perches <joe@perches.com>, Petr Mladek <pmladek@suse.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
+In-Reply-To: <20191126140406.164870-1-elver@google.com>
+Message-Id: <20191126140406.164870-3-elver@google.com>
+Mime-Version: 1.0
+References: <20191126140406.164870-1-elver@google.com>
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH v3 3/3] kcsan: Prefer __always_inline for fast-path
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     mark.rutland@arm.com, paulmck@kernel.org,
+        linux-kernel@vger.kernel.org, will@kernel.org,
+        peterz@infradead.org, boqun.feng@gmail.com, arnd@arndb.de,
+        dvyukov@google.com, linux-arch@vger.kernel.org,
+        kasan-dev@googlegroups.com, Randy Dunlap <rdunlap@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus,
+Prefer __always_inline for fast-path functions that are called outside
+of user_access_save, to avoid generating UACCESS warnings when
+optimizing for size (CC_OPTIMIZE_FOR_SIZE). It will also avoid future
+surprises with compiler versions that change the inlining heuristic even
+when optimizing for performance.
 
-Nice idea!
+Report: http://lkml.kernel.org/r/58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+Rebased on: locking/kcsan branch of tip tree.
+---
+ kernel/kcsan/atomic.h   |  2 +-
+ kernel/kcsan/core.c     | 16 +++++++---------
+ kernel/kcsan/encoding.h | 14 +++++++-------
+ 3 files changed, 15 insertions(+), 17 deletions(-)
 
-On Fri, Oct 11, 2019 at 3:38 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> This is a bit much for under the ---, so a separate cover letter for
-> this single patch.
->
-> v4: Dropped Uwe's ack since it's changed quite a bit. Change
-> errcode->errname as suggested by Petr. Make it 'default y if PRINTK'
-> so it's available in the common case, while those who have gone to
-> great lengths to shave their kernel to the bare minimum are not
-> affected.
->
-> Also require the caller to use %pe instead of printing all ERR_PTRs
-> symbolically. I can see some value in having the call site explicitly
-> indicate that they're printing an ERR_PTR (i.e., having the %pe), but
-> I also still believe it would make sense to print ordinary %p,
-> ERR_PTR() symbolically instead of as a random hash value that's not
-> stable across reboots. But in the interest of getting this in, I'll
-> leave that for now. It's easy enough to do later by just changing the
-> "case 'e'" to do a break (with an updated comment), then do an
-> IS_ERR() check after the switch.
->
-> Something I've glossed over in previous versions, and nobody has
-> commented on, is that I produced "ENOSPC" while the 'fallback' would
-> print "-28" (i.e., there's no minus in the symbolic case). I don't
-> care much either way, but here I've tried to show how I'd do it if we
-> want the minus also in the symbolic case. At first, I tried just using
-> the standard idiom
->
->   if (buf < end)
->     *buf = '-';
->   buf++;
->
-> followed by string(sym, ...). However, that doesn't work very well if
-> one wants to honour field width - for that to work, the whole string
-> including - must come from the errname() lookup and be handled by
-> string(). The simplest seemed to be to just unconditionally prefix all
-> strings with "-" when building the tables, and then change errname()
-> back to supporting both positive and negative error numbers.
+diff --git a/kernel/kcsan/atomic.h b/kernel/kcsan/atomic.h
+index 576e03ddd6a3..a9c193053491 100644
+--- a/kernel/kcsan/atomic.h
++++ b/kernel/kcsan/atomic.h
+@@ -18,7 +18,7 @@
+  * than cast to volatile. Eventually, we hope to be able to remove this
+  * function.
+  */
+-static inline bool kcsan_is_atomic(const volatile void *ptr)
++static __always_inline bool kcsan_is_atomic(const volatile void *ptr)
+ {
+ 	/* only jiffies for now */
+ 	return ptr == &jiffies;
+diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
+index 3314fc29e236..c616fec639cd 100644
+--- a/kernel/kcsan/core.c
++++ b/kernel/kcsan/core.c
+@@ -78,10 +78,8 @@ static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS-1];
+  */
+ static DEFINE_PER_CPU(long, kcsan_skip);
+ 
+-static inline atomic_long_t *find_watchpoint(unsigned long addr,
+-					     size_t size,
+-					     bool expect_write,
+-					     long *encoded_watchpoint)
++static __always_inline atomic_long_t *
++find_watchpoint(unsigned long addr, size_t size, bool expect_write, long *encoded_watchpoint)
+ {
+ 	const int slot = watchpoint_slot(addr);
+ 	const unsigned long addr_masked = addr & WATCHPOINT_ADDR_MASK;
+@@ -146,7 +144,7 @@ insert_watchpoint(unsigned long addr, size_t size, bool is_write)
+  *	2. the thread that set up the watchpoint already removed it;
+  *	3. the watchpoint was removed and then re-used.
+  */
+-static inline bool
++static __always_inline bool
+ try_consume_watchpoint(atomic_long_t *watchpoint, long encoded_watchpoint)
+ {
+ 	return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint, CONSUMED_WATCHPOINT);
+@@ -160,7 +158,7 @@ static inline bool remove_watchpoint(atomic_long_t *watchpoint)
+ 	return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) != CONSUMED_WATCHPOINT;
+ }
+ 
+-static inline struct kcsan_ctx *get_ctx(void)
++static __always_inline struct kcsan_ctx *get_ctx(void)
+ {
+ 	/*
+ 	 * In interrupts, use raw_cpu_ptr to avoid unnecessary checks, that would
+@@ -169,7 +167,7 @@ static inline struct kcsan_ctx *get_ctx(void)
+ 	return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
+ }
+ 
+-static inline bool is_atomic(const volatile void *ptr)
++static __always_inline bool is_atomic(const volatile void *ptr)
+ {
+ 	struct kcsan_ctx *ctx = get_ctx();
+ 
+@@ -193,7 +191,7 @@ static inline bool is_atomic(const volatile void *ptr)
+ 	return kcsan_is_atomic(ptr);
+ }
+ 
+-static inline bool should_watch(const volatile void *ptr, int type)
++static __always_inline bool should_watch(const volatile void *ptr, int type)
+ {
+ 	/*
+ 	 * Never set up watchpoints when memory operations are atomic.
+@@ -226,7 +224,7 @@ static inline void reset_kcsan_skip(void)
+ 	this_cpu_write(kcsan_skip, skip_count);
+ }
+ 
+-static inline bool kcsan_is_enabled(void)
++static __always_inline bool kcsan_is_enabled(void)
+ {
+ 	return READ_ONCE(kcsan_enabled) && get_ctx()->disable_count == 0;
+ }
+diff --git a/kernel/kcsan/encoding.h b/kernel/kcsan/encoding.h
+index b63890e86449..f03562aaf2eb 100644
+--- a/kernel/kcsan/encoding.h
++++ b/kernel/kcsan/encoding.h
+@@ -59,10 +59,10 @@ encode_watchpoint(unsigned long addr, size_t size, bool is_write)
+ 		      (addr & WATCHPOINT_ADDR_MASK));
+ }
+ 
+-static inline bool decode_watchpoint(long watchpoint,
+-				     unsigned long *addr_masked,
+-				     size_t *size,
+-				     bool *is_write)
++static __always_inline bool decode_watchpoint(long watchpoint,
++					      unsigned long *addr_masked,
++					      size_t *size,
++					      bool *is_write)
+ {
+ 	if (watchpoint == INVALID_WATCHPOINT ||
+ 	    watchpoint == CONSUMED_WATCHPOINT)
+@@ -78,13 +78,13 @@ static inline bool decode_watchpoint(long watchpoint,
+ /*
+  * Return watchpoint slot for an address.
+  */
+-static inline int watchpoint_slot(unsigned long addr)
++static __always_inline int watchpoint_slot(unsigned long addr)
+ {
+ 	return (addr / PAGE_SIZE) % CONFIG_KCSAN_NUM_WATCHPOINTS;
+ }
+ 
+-static inline bool matching_access(unsigned long addr1, size_t size1,
+-				   unsigned long addr2, size_t size2)
++static __always_inline bool matching_access(unsigned long addr1, size_t size1,
++					    unsigned long addr2, size_t size2)
+ {
+ 	unsigned long end_range1 = addr1 + size1 - 1;
+ 	unsigned long end_range2 = addr2 + size2 - 1;
+-- 
+2.24.0.432.g9d3f5f5b63-goog
 
-Still, it looks a bit wasteful to me to include the dash in each and every
-string value.
-
-Do you think you can code the +/- logic in string_nocheck() in less than
-the gain achieved by dropping the dashes from the tables?
-(e.g. by using the SIGN spec.flags? ;-)
-Or, do we need it? IS_ERR() doesn't consider positive values errors.
-
-Oh, what about the leading "E"? That one looks harder to get rid of,
-though ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
