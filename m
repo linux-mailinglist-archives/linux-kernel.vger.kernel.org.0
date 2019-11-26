@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3E71099C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 09:00:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26BA31099E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 09:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfKZIAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 03:00:22 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40991 "EHLO
+        id S1727517AbfKZIA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 03:00:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:41004 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbfKZIAV (ORCPT
+        with ESMTP id S1727154AbfKZIAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 03:00:21 -0500
+        Tue, 26 Nov 2019 03:00:23 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZVlc-00034Y-N6; Tue, 26 Nov 2019 09:00:12 +0100
+        id 1iZVle-00034p-Gt; Tue, 26 Nov 2019 09:00:14 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BF3C11C1D93;
-        Tue, 26 Nov 2019 09:00:10 +0100 (CET)
-Date:   Tue, 26 Nov 2019 08:00:10 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E32331C1D98;
+        Tue, 26 Nov 2019 09:00:11 +0100 (CET)
+Date:   Tue, 26 Nov 2019 08:00:11 -0000
 From:   "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/headers] vmw_balloon: Explicitly include linux/io.h for
- virt_to_phys()
+Subject: [tip: core/headers] x86/ftrace: Explicitly include vmalloc.h for
+ set_vm_flush_reset_perms()
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Borislav Petkov <bp@alien8.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -33,10 +33,10 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191119002121.4107-9-sean.j.christopherson@intel.com>
-References: <20191119002121.4107-9-sean.j.christopherson@intel.com>
+In-Reply-To: <20191119002121.4107-4-sean.j.christopherson@intel.com>
+References: <20191119002121.4107-4-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Message-ID: <157475521068.21853.11835962726515420190.tip-bot2@tip-bot2>
+Message-ID: <157475521180.21853.6313978982059128655.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,42 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/headers branch of tip:
 
-Commit-ID:     0ea1d7c60b8c88283e2656c7cfe688dc68646d44
-Gitweb:        https://git.kernel.org/tip/0ea1d7c60b8c88283e2656c7cfe688dc68646d44
+Commit-ID:     68f461af8bb9f1d4e69469aa91a741f12f679f19
+Gitweb:        https://git.kernel.org/tip/68f461af8bb9f1d4e69469aa91a741f12f679f19
 Author:        Sean Christopherson <sean.j.christopherson@intel.com>
-AuthorDate:    Mon, 18 Nov 2019 16:21:17 -08:00
+AuthorDate:    Mon, 18 Nov 2019 16:21:12 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 19 Nov 2019 17:50:27 +01:00
+CommitterDate: Tue, 19 Nov 2019 17:50:26 +01:00
 
-vmw_balloon: Explicitly include linux/io.h for virt_to_phys()
+x86/ftrace: Explicitly include vmalloc.h for set_vm_flush_reset_perms()
 
-iThrough a labyrinthian sequence of includes, usage of virt_to_phys() is
-dependent on the include of asm/io.h in x86's asm/realmode.h, which is
-included in x86's asm/acpi.h and thus by linux/acpi.h.  Explicitly
-include linux/io.h to break the dependency on realmode.h so that a
-future patch can remove the realmode.h include from acpi.h without
-breaking the build.
+The inclusion of linux/vmalloc.h, which is required for its definition
+of set_vm_flush_reset_perms(), is somehow dependent on asm/realmode.h
+being included by asm/acpi.h.  Explicitly include linux/vmalloc.h so
+that a future patch can drop the realmode.h include from asm/acpi.h
+without breaking the build.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20191119002121.4107-9-sean.j.christopherson@intel.com
+Link: https://lkml.kernel.org/r/20191119002121.4107-4-sean.j.christopherson@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/misc/vmw_balloon.c | 1 +
+ arch/x86/kernel/ftrace.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 5e6be15..b837e7e 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -17,6 +17,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 024c305..2009047 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -23,6 +23,7 @@
+ #include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/memory.h>
++#include <linux/vmalloc.h>
  
- #include <linux/types.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/vmalloc.h>
+ #include <trace/syscall.h>
+ 
