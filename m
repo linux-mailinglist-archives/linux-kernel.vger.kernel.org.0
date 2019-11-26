@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE4E810A492
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:31:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D8910A484
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfKZTa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 14:30:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33846 "EHLO mail.kernel.org"
+        id S1727169AbfKZTaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 14:30:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfKZTaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:30:10 -0500
-Subject: Re: [GIT PULL] x86/cleanups for v5.5
+        id S1727080AbfKZTaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 14:30:11 -0500
+Subject: Re: [GIT PULL] x86/cpu changes for v5.5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574796610;
-        bh=auNg4ILzOb4UsSHSlwQRjazQcpYRyqcFQaYCBGAGdeY=;
+        s=default; t=1574796611;
+        bh=3GUsvmtJruT9A+uYaLFJ3+RRH6vGgH8EXLMyqFaHq4g=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=u9peOMQDakQVhnQ+j9mvygO8Am62O/fL0qcBanrfZeUGL+pLd+wFSRm+8KIvPYfp/
-         AymmhG10y2YbfgPGziBzsuxNkbHy76mlydxBCqXnsHUqOeaPD4H9G//a252zdfbNSL
-         4gxrFINg1lZxIgLuKP+Gwb30kQmQTssPaJfAL8j4=
+        b=1ZPv6aBF/MQ/tU8ACpIfbpyLdUp91OZJZfgeLe9R3rSoxc+pavrXNmAfObk94qONI
+         eWxkcfp8BnZUrImkzwXd8CmNuj98M3q7YOhHK+/locII3s6bXMcDHl+g6Zsjy1hiE4
+         jLlBhadIYLA+77oEvYifId+eTcfjBN0/g+CwhIWs=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191125132834.GA42801@gmail.com>
-References: <20191125132834.GA42801@gmail.com>
+In-Reply-To: <20191125133826.GA88582@gmail.com>
+References: <20191125133826.GA88582@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191125132834.GA42801@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-cleanups-for-linus
-X-PR-Tracked-Commit-Id: b41d62201b9772c7c750360ab668d2caa502e642
+X-PR-Tracked-Message-Id: <20191125133826.GA88582@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cpu-for-linus
+X-PR-Tracked-Commit-Id: db8c33f8b5bea59d00ca12dcd6b65d01b1ea98ef
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fd2615908dfd0586ea40692a99c44e34b7e869bc
-Message-Id: <157479660994.2359.14107671678457436664.pr-tracker-bot@kernel.org>
-Date:   Tue, 26 Nov 2019 19:30:09 +0000
+X-PR-Merge-Commit-Id: a25bbc2644f01a9e680af4f760b54bd4834fdfec
+Message-Id: <157479661122.2359.16048585654600766047.pr-tracker-bot@kernel.org>
+Date:   Tue, 26 Nov 2019 19:30:11 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
@@ -43,12 +42,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 25 Nov 2019 14:28:34 +0100:
+The pull request you sent on Mon, 25 Nov 2019 14:38:26 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cleanups-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cpu-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fd2615908dfd0586ea40692a99c44e34b7e869bc
+https://git.kernel.org/torvalds/c/a25bbc2644f01a9e680af4f760b54bd4834fdfec
 
 Thank you!
 
