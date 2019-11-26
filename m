@@ -2,136 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72617109B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98765109B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:49:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfKZJ6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:58:14 -0500
-Received: from 60-251-196-230.HINET-IP.hinet.net ([60.251.196.230]:32276 "EHLO
-        ironport.ite.com.tw" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727397AbfKZJ6O (ORCPT
+        id S1727629AbfKZJtN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 26 Nov 2019 04:49:13 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:53646 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727422AbfKZJtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:58:14 -0500
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 26 Nov 2019 17:58:12 +0800
-Received: from csbcas.internal.ite.com.tw (csbcas2.internal.ite.com.tw [192.168.65.47])
-        by mse.ite.com.tw with ESMTP id xAQ9w0kU081586;
-        Tue, 26 Nov 2019 17:58:00 +0800 (GMT-8)
-        (envelope-from allen.chen@ite.com.tw)
-Received: from allen-VirtualBox.internal.ite.com.tw (192.168.70.14) by
- csbcas2.internal.ite.com.tw (192.168.65.45) with Microsoft SMTP Server (TLS)
- id 14.3.352.0; Tue, 26 Nov 2019 17:58:01 +0800
-From:   allen <allen.chen@ite.com.tw>
-CC:     Allen Chen <allen.chen@ite.com.tw>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking timings logic
-Date:   Tue, 26 Nov 2019 17:46:12 +0800
-Message-ID: <1574761572-26585-1-git-send-email-allen.chen@ite.com.tw>
-X-Mailer: git-send-email 1.9.1
+        Tue, 26 Nov 2019 04:49:13 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-111-dVxmoB-BOb-077JA22lhHQ-1; Tue, 26 Nov 2019 09:49:09 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 26 Nov 2019 09:49:08 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 26 Nov 2019 09:49:08 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Fenghua Yu' <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: RE: [PATCH v2 1/4] drivers/net/b44: Change to non-atomic bit
+ operations
+Thread-Topic: [PATCH v2 1/4] drivers/net/b44: Change to non-atomic bit
+ operations
+Thread-Index: AQHVo8boYhlrH/hYn0umhpEaMdAbOKedM4/w
+Date:   Tue, 26 Nov 2019 09:49:08 +0000
+Message-ID: <7cbe0135c6234700bebdefd0fdaa4f6a@AcuMS.aculab.com>
+References: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
+ <1574710984-208305-2-git-send-email-fenghua.yu@intel.com>
+In-Reply-To: <1574710984-208305-2-git-send-email-fenghua.yu@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.70.14]
-X-MAIL: mse.ite.com.tw xAQ9w0kU081586
-To:     unlisted-recipients:; (no To-header on input)
+X-MC-Unique: dVxmoB-BOb-077JA22lhHQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to VESA ENHANCED EXTENDED DISPLAY IDENTIFICATION DATA STANDARD
-(Defines EDID Structure Version 1, Revision 4) page: 39
-How to determine whether the monitor support RB timing or not?
-EDID 1.4
-First:  read detailed timing descriptor and make sure byte 0 = 0x00,
-	byte 1 = 0x00, byte 2 = 0x00 and byte 3 = 0xFD
-Second: read EDID bit 0 in feature support byte at address 18h = 1
-	and detailed timing descriptor byte 10 = 0x04
-Third:  if EDID bit 0 in feature support byte = 1 &&
-	detailed timing descriptor byte 10 = 0x04
-	then we can check byte 15, if bit 4 in byte 15 = 1 is support RB
-        if EDID bit 0 in feature support byte != 1 ||
-	detailed timing descriptor byte 10 != 0x04,
-	then byte 15 can not be used
+From: Fenghua Yu
+> Sent: 25 November 2019 19:43
+> From: Peter Zijlstra <peterz@infradead.org>
+> 
+> Since "pwol_mask" is local and never exposed to concurrency, there is
+> no need to set bit in pwol_mask by costly atomic operations.
+> 
+> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> ---
+>  drivers/net/ethernet/broadcom/b44.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
+> index 97ab0dd25552..5738ab963dfb 100644
+> --- a/drivers/net/ethernet/broadcom/b44.c
+> +++ b/drivers/net/ethernet/broadcom/b44.c
+> @@ -1520,7 +1520,7 @@ static int b44_magic_pattern(u8 *macaddr, u8 *ppattern, u8 *pmask, int offset)
+> 
+>  	memset(ppattern + offset, 0xff, magicsync);
+>  	for (j = 0; j < magicsync; j++)
+> -		set_bit(len++, (unsigned long *) pmask);
+> +		__set_bit(len++, (unsigned long *)pmask);
 
-The linux code is_rb function not follow the VESA's rule
+While this stops the misaligned locks, the code is still horribly borked on BE systems.
+The way pmask is used definitely wanst a u32[] not a u64[] one.
 
-Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
-Reported-by: kbuild test robot <lkp@intel.com>
----
- drivers/gpu/drm/drm_edid.c | 36 ++++++++++++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 6 deletions(-)
+	David
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index f5926bf..e11e585 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -93,6 +93,12 @@ struct detailed_mode_closure {
- 	int modes;
- };
- 
-+struct edid_support_rb_closure {
-+	struct edid *edid;
-+	bool valid_support_rb;
-+	bool support_rb;
-+};
-+
- #define LEVEL_DMT	0
- #define LEVEL_GTF	1
- #define LEVEL_GTF2	2
-@@ -2017,23 +2023,41 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
- 	}
- }
- 
-+static bool
-+is_display_descriptor(const u8 *r, u8 tag)
-+{
-+	return (!r[0] && !r[1] && !r[2] && r[3] == tag) ? true : false;
-+}
-+
- static void
- is_rb(struct detailed_timing *t, void *data)
- {
- 	u8 *r = (u8 *)t;
--	if (r[3] == EDID_DETAIL_MONITOR_RANGE)
--		if (r[15] & 0x10)
--			*(bool *)data = true;
-+	struct edid_support_rb_closure *closure = data;
-+	struct edid *edid = closure->edid;
-+
-+	if (is_display_descriptor(r, EDID_DETAIL_MONITOR_RANGE)) {
-+		if (edid->features & BIT(0) && r[10] == BIT(2)) {
-+			closure->valid_support_rb = true;
-+			closure->support_rb = (r[15] & 0x10) ? true : false;
-+		}
-+	}
- }
- 
- /* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
- static bool
- drm_monitor_supports_rb(struct edid *edid)
- {
-+	struct edid_support_rb_closure closure = {
-+		.edid = edid,
-+		.valid_support_rb = false,
-+		.support_rb = false,
-+	};
-+
- 	if (edid->revision >= 4) {
--		bool ret = false;
--		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
--		return ret;
-+		drm_for_each_detailed_block((u8 *)edid, is_rb, &closure);
-+		if (closure.valid_support_rb)
-+			return closure.support_rb;
- 	}
- 
- 	return ((edid->input & DRM_EDID_INPUT_DIGITAL) != 0);
--- 
-1.9.1
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
