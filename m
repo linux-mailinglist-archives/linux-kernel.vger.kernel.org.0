@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC8910984E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 05:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD6A10984D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 05:25:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbfKZEZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 25 Nov 2019 23:25:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59888 "EHLO mail.kernel.org"
+        id S1727729AbfKZEZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 25 Nov 2019 23:25:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727678AbfKZEZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Nov 2019 23:25:10 -0500
-Subject: Re: [GIT PULL] livepatching for 5.5
+        id S1727698AbfKZEZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Nov 2019 23:25:11 -0500
+Subject: Re: [GIT PULL] workqueue changes for v5.5-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574742310;
-        bh=rU5bCIB3n7nIB+6CSpyRTeoRcfcR9fgwXeAA8vDEO/0=;
+        s=default; t=1574742311;
+        bh=LVtZXbZSJvMri5iSU4hMH2DG+JBlwHdQKx/KA+4NaQY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=mvvQHcdfS77aC6Q4ND8VSnxtDZMYXC9GFOKemkaIB5tndF04JuxArfSoV0wmuqDoQ
-         3gdwsc503IBdiPryIshZwWKQy6kRhl4Y5KPoaylUsu9edMYL4t6INx2wvH0PU+fWsX
-         LGnzblyuWYlVCE6HQwjbt0aWzB1e6qd8PIaBSRUM=
+        b=CL7jtzRtpSXEHXUIXl5LhyxCfik8vGlr0+tkRmT5yN8Nx8mraOAGLwLdxp94tD6ij
+         /VJVW6ARw79bl0xK6wCqFmMQzGZOL8DzsHPHCJntndDm2+M5C7VcuwTv21wO0uUYDF
+         RsKCy3rM6xhfLKqp2s9/IsYglupcxR2UajA1waLI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191125141425.qlda25sth5zj66pn@pathway.suse.cz>
-References: <20191125141425.qlda25sth5zj66pn@pathway.suse.cz>
+In-Reply-To: <20191125160314.GB2867037@devbig004.ftw2.facebook.com>
+References: <20191125160314.GB2867037@devbig004.ftw2.facebook.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191125141425.qlda25sth5zj66pn@pathway.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching
- tags/livepatching-for-5.5
-X-PR-Tracked-Commit-Id: 0e672adc87e5ae1758b6e0571b42d743a8324327
+X-PR-Tracked-Message-Id: <20191125160314.GB2867037@devbig004.ftw2.facebook.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git
+ for-5.5
+X-PR-Tracked-Commit-Id: 49e9d1a9faf2f71fdfd80a30697ee9a15070626d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f838767555d40f29bc4771c5c8cc63193094b7cc
-Message-Id: <157474231022.2264.1059004263943125355.pr-tracker-bot@kernel.org>
-Date:   Tue, 26 Nov 2019 04:25:10 +0000
-To:     Petr Mladek <pmladek@suse.com>
+X-PR-Merge-Commit-Id: 9391edee8667733e22baa50d182191ba3a00d5e1
+Message-Id: <157474231147.2264.605490064254767692.pr-tracker-bot@kernel.org>
+Date:   Tue, 26 Nov 2019 04:25:11 +0000
+To:     Tejun Heo <tj@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+        linux-kernel@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 25 Nov 2019 15:14:25 +0100:
+The pull request you sent on Mon, 25 Nov 2019 08:03:14 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching tags/livepatching-for-5.5
+> git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-5.5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f838767555d40f29bc4771c5c8cc63193094b7cc
+https://git.kernel.org/torvalds/c/9391edee8667733e22baa50d182191ba3a00d5e1
 
 Thank you!
 
