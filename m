@@ -2,96 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F5A4109B66
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D87109B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:43:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbfKZJmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:42:40 -0500
-Received: from foss.arm.com ([217.140.110.172]:60338 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727275AbfKZJmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:42:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00A3C30E;
-        Tue, 26 Nov 2019 01:42:38 -0800 (PST)
-Received: from [10.163.1.41] (unknown [10.163.1.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDA173F52E;
-        Tue, 26 Nov 2019 01:42:35 -0800 (PST)
-Subject: Re: [PATCH] mm: fix comments related to node reclaim
-To:     Hao Lee <haolee.swjtu@gmail.com>, akpm@linux-foundation.org
-Cc:     mgorman@techsingularity.net, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20191125142018.GA21373@haolee.github.io>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <cf85d546-3b6c-e172-3624-0e40e0f7699c@arm.com>
-Date:   Tue, 26 Nov 2019 15:13:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727666AbfKZJno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 04:43:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35112 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727400AbfKZJnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 04:43:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EBD8DBBFE;
+        Tue, 26 Nov 2019 09:43:40 +0000 (UTC)
+Message-ID: <26c9cb9434fe59b61884e0e43d116fbff6c8590a.camel@suse.de>
+Subject: Re: [PATCH v3 3/7] ARM: dts: bcm2711: Enable PCIe controller
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Phil Elwell <phil@raspberrypi.org>, andrew.murray@arm.com,
+        maz@kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
+Cc:     james.quinlan@broadcom.com, mbrugger@suse.com,
+        f.fainelli@gmail.com, jeremy.linton@arm.com,
+        linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 26 Nov 2019 10:43:39 +0100
+In-Reply-To: <ede90a60-8194-4035-01c2-2673f4a8cfe7@raspberrypi.org>
+References: <20191126091946.7970-1-nsaenzjulienne@suse.de>
+         <20191126091946.7970-4-nsaenzjulienne@suse.de>
+         <ede90a60-8194-4035-01c2-2673f4a8cfe7@raspberrypi.org>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-MjOyRhx4Yk8pEyDha5vk"
+User-Agent: Evolution 3.34.1 
 MIME-Version: 1.0
-In-Reply-To: <20191125142018.GA21373@haolee.github.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-MjOyRhx4Yk8pEyDha5vk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/25/2019 07:50 PM, Hao Lee wrote:
-> As zone reclaim has been replaced by node reclaim, this patch fixes related
-> comments.
-> 
-> Signed-off-by: Hao Lee <haolee.swjtu@gmail.com>
-> ---
->  include/linux/mmzone.h          | 2 +-
->  include/uapi/linux/capability.h | 2 +-
->  include/uapi/linux/sysctl.h     | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 9e47289a4511..7e3208f4f5bc 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -747,7 +747,7 @@ typedef struct pglist_data {
->  
->  #ifdef CONFIG_NUMA
->  	/*
-> -	 * zone reclaim becomes active if more unmapped pages exist.
-> +	 * node reclaim becomes active if more unmapped pages exist.
->  	 */
->  	unsigned long		min_unmapped_pages;
->  	unsigned long		min_slab_pages;
-> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> index 240fdb9a60f6..dd6772f16eec 100644
-> --- a/include/uapi/linux/capability.h
-> +++ b/include/uapi/linux/capability.h
-> @@ -273,7 +273,7 @@ struct vfs_ns_cap_data {
->  /* Allow enabling/disabling tagged queuing on SCSI controllers and sending
->     arbitrary SCSI commands */
->  /* Allow setting encryption key on loopback filesystem */
-> -/* Allow setting zone reclaim policy */
-> +/* Allow setting node reclaim policy */
+On Tue, 2019-11-26 at 09:37 +0000, Phil Elwell wrote:
+> Hi Nicolas,
+>=20
+> On 26/11/2019 09:19, Nicolas Saenz Julienne wrote:
+> > This enables bcm2711's PCIe bus, which is hardwired to a VIA
+> > Technologies XHCI USB 3.0 controller.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> >=20
+> > ---
+> >=20
+> > This will likely need a rebase once the RPi GENET patches land.
+> >=20
+> > Changes since v2:
+> >    - Remove unused interrupt-map
+> >    - correct dma-ranges to it's full size, non power of 2 bus DMA
+> >      constraints now supported in linux-next[1]
+> >    - add device_type
+> >    - rename alias from pcie_0 to pcie0
+> >=20
+> > Changes since v1:
+> >    - remove linux,pci-domain
+> >=20
+> > [1] https://lkml.org/lkml/2019/11/21/235
+> >=20
+> >   arch/arm/boot/dts/bcm2711.dtsi | 41 +++++++++++++++++++++++++++++++++=
++
+> >   1 file changed, 41 insertions(+)
+> >=20
+> > diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711=
+.dtsi
+> > index 667658497898..2e121fc8b3d0 100644
+> > --- a/arch/arm/boot/dts/bcm2711.dtsi
+> > +++ b/arch/arm/boot/dts/bcm2711.dtsi
+> > @@ -288,6 +288,47 @@ IRQ_TYPE_LEVEL_LOW)>,
+> >   		arm,cpu-registers-not-fw-configured;
+> >   	};
+> >  =20
+> > +	scb {
+> > +		compatible =3D "simple-bus";
+> > +		#address-cells =3D <2>;
+> > +		#size-cells =3D <1>;
+> > +
+> > +		ranges =3D <0x0 0x7c000000  0x0 0xfc000000  0x03800000>,
+> > +			 <0x6 0x00000000  0x6 0x00000000  0x40000000>;
+> > +
+> > +		pcie0: pcie@7d500000 {
+> > +			compatible =3D "brcm,bcm2711-pcie";
+> > +			reg =3D <0x0 0x7d500000 0x9310>;
+> > +			device_type =3D "pci";
+> > +			#address-cells =3D <3>;
+> > +			#interrupt-cells =3D <1>;
+> > +			#size-cells =3D <2>;
+> > +			interrupts =3D <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names =3D "pcie", "msi";
+> > +			interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
+> > +			interrupt-map =3D <0 0 0 1 &gicv2 GIC_SPI 143
+> > +							IRQ_TYPE_LEVEL_HIGH>;
+> > +			msi-controller;
+> > +			msi-parent =3D <&pcie0>;
+> > +
+> > +			ranges =3D <0x02000000 0x0 0xf8000000 0x6 0x00000000
+> > +				  0x0 0x04000000>;
+> > +			/*
+> > +			 * The wrapper around the PCIe block has a bug
+> > +			 * preventing it from accessing beyond the first 3GB of
+> > +			 * memory. As the bus DMA mask is rounded up to the
+> > +			 * closest power of two of the dma-range size, we're
+> > +			 * forced to set the limit at 2GB. This can be
+> > +			 * harmlessly changed in the future once the DMA code
+> > +			 * handles non power of two DMA limits.
+> > +			 */
+> > +			dma-ranges =3D <0x02000000 0x0 0x00000000 0x0 0x00000000
+> > +				      0x0 0xc0000000>;
+>=20
+> The comment doesn't match the data here - I think for now the size field=
+=20
+> needs to be reduced to 2GB to match the comment.
 
-Does this point to the capability for accessing vm.zone_reclaim_mode = 0
-sysctl knob ? In that case we should not be changing the name here as the
-interface still retains the original name 'zone_reclaim_mode'.
+You're right, my bad, should've edited it out. The good part is that with t=
+his
+commit[1], which will soon be in Linus' tree, we don't need to fake dma-ran=
+ges
+size anymore.
 
->  
->  #define CAP_SYS_ADMIN        21
->  
-> diff --git a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
-> index 87aa2a6d9125..27c1ed2822e6 100644
-> --- a/include/uapi/linux/sysctl.h
-> +++ b/include/uapi/linux/sysctl.h
-> @@ -195,7 +195,7 @@ enum
->  	VM_MIN_UNMAPPED=32,	/* Set min percent of unmapped pages */
->  	VM_PANIC_ON_OOM=33,	/* panic at out-of-memory */
->  	VM_VDSO_ENABLED=34,	/* map VDSO into new processes? */
-> -	VM_MIN_SLAB=35,		 /* Percent pages ignored by zone reclaim */
-> +	VM_MIN_SLAB=35,		 /* Percent pages ignored by node reclaim */
->  };
->  
->  
-> 
+So for the record, the comment should state the following:
+
+	/*
+	 * The wrapper around the PCIe block has a bug
+	 * preventing it from accessing beyond the first 3GB of
+	 * memory.
+	 */
+
+Regards,
+Nicolas
+
+[1] https://lkml.org/lkml/2019/11/21/235
+
+
+--=-MjOyRhx4Yk8pEyDha5vk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl3c88sACgkQlfZmHno8
+x/7oswgAh8iyNGIM8/MJDFgcwiJ/KpGC9jc+vkjrrB7lLjA2i2L72hTIiHL4BbzE
+6sM5qVV7uml+1a9QwNLMsHkJQrK4VXdJohQEkPG+qqa1qWuYuQX9JIqA4CGowiMZ
+X/tWSCI5DJS3npMmiOCXlh7zZBaZx90iuJZXMqWRKHuEXlw5nN/rfkYiMyf4J0kD
+xquAH7gT/Tx5O20oh9cKjOoa745pbnX7At6qwIg7DTbU8mb2zLJWLhHA/GZmfkv3
+dmzw2btV71x+s3JVkfdzzA9g+Ttm+MUbu4GJzVqkshuEUU3BR6If7xBQTh7EH51C
+HFvZfdwyqnMSXjipC6RpifYEEX5tGQ==
+=sINh
+-----END PGP SIGNATURE-----
+
+--=-MjOyRhx4Yk8pEyDha5vk--
+
