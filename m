@@ -2,99 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A1E510A55C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 21:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5324B10A56C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 21:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfKZUV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 15:21:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52240 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbfKZUV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 15:21:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5F01B147;
-        Tue, 26 Nov 2019 20:21:53 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 21:21:51 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@google.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Hou Tao <houtao1@huawei.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Hannes Reinecke <hare@suse.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 rebase 00/10] Fix cdrom autoclose
-Message-ID: <20191126202151.GY11661@kitsune.suse.cz>
-References: <cover.1574797504.git.msuchanek@suse.de>
- <c6fe572c-530e-93eb-d62a-cb2f89c7b4ec@kernel.dk>
+        id S1726926AbfKZU1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 15:27:48 -0500
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:37737 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfKZU1r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 15:27:47 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 575903F656;
+        Tue, 26 Nov 2019 21:27:44 +0100 (CET)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=poRKj6I8;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ZkFTzor5INdG; Tue, 26 Nov 2019 21:27:42 +0100 (CET)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id EEE623F382;
+        Tue, 26 Nov 2019 21:27:39 +0100 (CET)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 24C7B36016C;
+        Tue, 26 Nov 2019 21:27:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1574800059; bh=j/BRuQJcx6Py9MS5lniFvxHGWs39VGoBsA+SEpAzptQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=poRKj6I8rSz6ts04cSbe3jhLXal6GPoSPgtvmmNXwuJf5JfYbmwOJ77qnsuFoveH9
+         52jmShLTdgE0errbv8A4+Ktso8VbF9t3F9WzoFLRO7PbwEQOyi9KvsWwgmwwnWsfjN
+         aBkCbGa7AbEp+wADG8tfrP3aIuUYus8Xt8iQeCVQ=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Subject: [PATCH 1/2] mm: Add and export vmf_insert_mixed_prot()
+Date:   Tue, 26 Nov 2019 21:27:16 +0100
+Message-Id: <20191126202717.30762-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6fe572c-530e-93eb-d62a-cb2f89c7b4ec@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 01:01:42PM -0700, Jens Axboe wrote:
-> On 11/26/19 12:54 PM, Michal Suchanek wrote:
-> > Hello,
-> > 
-> > there is cdrom autoclose feature that is supposed to close the tray,
-> > wait for the disc to become ready, and then open the device.
-> > 
-> > This used to work in ancient times. Then in old times there was a hack
-> > in util-linux which worked around the breakage which probably resulted
-> > from switching to scsi emulation.
-> > 
-> > Currently util-linux maintainer refuses to merge another hack on the
-> > basis that kernel still has the feature so it should be fixed there.
-> > The code needs not be replicated in every userspace utility like mount
-> > or dd which has no business knowing which devices are CD-roms and where
-> > the autoclose setting is in the kernel.
-> > 
-> > This is rebase on top of current master.
-> > 
-> > Also it seems that most people think that this is fix for WMware because
-> > there is one patch dealing with WMware.
-> 
-> I think the main complaint with this is that it's kind of a stretch to
-> add core functionality for a device type that's barely being
-> manufactured anymore and is mostly used in a virtualized fashion. I
-> think it you could fix this without 10 patches of churn and without
-> adding a new ->open() addition to fops, then people would be a lot more
-> receptive to the idea of improving cdrom auto-close.
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-I see no way to do that cleanly.
+The TTM module today uses a hack to be able to set a different page
+protection than struct vm_area_struct::vm_page_prot. To be able to do
+this properly, add and export vmf_insert_mixed_prot().
 
-There are two open modes for cdrom devices - blocking and non-blocking.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+---
+ include/linux/mm.h |  2 ++
+ mm/memory.c        | 15 +++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-In blocking mode open() should analyze the medium so that it's ready
-when it returns. In non-blocking mode it should return immediately so
-long as you can talk to the device.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index cc292273e6ba..29575d3c1e47 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2548,6 +2548,8 @@ vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
+ 			unsigned long pfn, pgprot_t pgprot);
+ vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ 			pfn_t pfn);
++vm_fault_t vmf_insert_mixed_prot(struct vm_area_struct *vma, unsigned long addr,
++			pfn_t pfn, pgprot_t pgprot);
+ vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
+ 		unsigned long addr, pfn_t pfn);
+ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
+diff --git a/mm/memory.c b/mm/memory.c
+index b1ca51a079f2..28f162e28144 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1719,9 +1719,9 @@ static bool vm_mixed_ok(struct vm_area_struct *vma, pfn_t pfn)
+ }
+ 
+ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
+-		unsigned long addr, pfn_t pfn, bool mkwrite)
++		unsigned long addr, pfn_t pfn, pgprot_t pgprot,
++		bool mkwrite)
+ {
+-	pgprot_t pgprot = vma->vm_page_prot;
+ 	int err;
+ 
+ 	BUG_ON(!vm_mixed_ok(vma, pfn));
+@@ -1764,10 +1764,17 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
+ 	return VM_FAULT_NOPAGE;
+ }
+ 
++vm_fault_t vmf_insert_mixed_prot(struct vm_area_struct *vma, unsigned long addr,
++				 pfn_t pfn, pgprot_t pgprot)
++{
++	return __vm_insert_mixed(vma, addr, pfn, pgprot, false);
++}
++EXPORT_SYMBOL(vmf_insert_mixed_prot);
++
+ vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ 		pfn_t pfn)
+ {
+-	return __vm_insert_mixed(vma, addr, pfn, false);
++	return __vm_insert_mixed(vma, addr, pfn, vma->vm_page_prot, false);
+ }
+ EXPORT_SYMBOL(vmf_insert_mixed);
+ 
+@@ -1779,7 +1786,7 @@ EXPORT_SYMBOL(vmf_insert_mixed);
+ vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
+ 		unsigned long addr, pfn_t pfn)
+ {
+-	return __vm_insert_mixed(vma, addr, pfn, true);
++	return __vm_insert_mixed(vma, addr, pfn, vma->vm_page_prot, true);
+ }
+ EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
+ 
+-- 
+2.21.0
 
-When waiting in open() with locks held the processes trying to open the
-device are locked out regradless of the mode they use.
-
-The only way to solve this is to pretend that the device is open and do
-the wait afterwards with the device unlocked.
-
-Thanks
-
-Michal
