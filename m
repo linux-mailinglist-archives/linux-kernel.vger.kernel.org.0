@@ -2,143 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C27109BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5B7109BF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 11:10:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfKZKIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 05:08:06 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:52403 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbfKZKIG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 05:08:06 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id E7C5C230D1;
-        Tue, 26 Nov 2019 11:08:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1574762882;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y3hXqvgd2MuTcuqEB4nE4yu26xVNMub4dFPnjjzwuFc=;
-        b=dFxXPlxcs5wRBFdPEc6cdNVDsDXU/Kllf1DAfc65g3QCmnFm7rxn7VkV6HW6eniMyCLORP
-        0ffkpCIJM3wk6wAdij5MW5XC8KcmV0IMV1KlrYdE+7SwIYNPlVr7geT1jC9WQ/DwXMhBU9
-        +/u3dIrPZ8oKDR05yic5hLRaapCXt9c=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 26 Nov 2019 11:08:01 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Kuldeep Singh <kuldeep.singh@nxp.com>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [EXT] [PATCH 3/4] arm64: dts: ls1028a: add FlexSPI node
-In-Reply-To: <AM0PR0402MB3556804FB47D182173C6A7AAE0450@AM0PR0402MB3556.eurprd04.prod.outlook.com>
-References: <20191123201317.25861-1-michael@walle.cc>
- <20191123201317.25861-4-michael@walle.cc>
- <AM0PR0402MB3556804FB47D182173C6A7AAE0450@AM0PR0402MB3556.eurprd04.prod.outlook.com>
-Message-ID: <afde04b888418e9e4f4fdb946a579e70@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: E7C5C230D1
-X-Spamd-Result: default: False [1.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         DBL_PROHIBIT(0.00)[0.32.167.96:email];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         NEURAL_HAM(-0.00)[-0.385];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+        id S1727811AbfKZKKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 05:10:09 -0500
+Received: from 8bytes.org ([81.169.241.247]:52882 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727837AbfKZKKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 05:10:08 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 72D5B3A4; Tue, 26 Nov 2019 11:10:06 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>, stable@vger.kernel.org
+Subject: [PATCH -tip] x86/mm/32: Sync only to LDT_BASE_ADDR in vmalloc_sync_all()
+Date:   Tue, 26 Nov 2019 11:09:42 +0100
+Message-Id: <20191126100942.13059-1-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kuldeep,
+From: Joerg Roedel <jroedel@suse.de>
 
-Am 2019-11-26 07:40, schrieb Kuldeep Singh:
-> Hi Michael,
-> 
->> -----Original Message-----
->> From: devicetree-owner@vger.kernel.org 
->> <devicetree-owner@vger.kernel.org>
->> On Behalf Of Michael Walle
->> Sent: Sunday, November 24, 2019 1:43 AM
->> To: linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org; 
->> linux-
->> kernel@vger.kernel.org
->> Cc: Shawn Guo <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; Rob
->> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
->> Michael Walle <michael@walle.cc>
->> Subject: [EXT] [PATCH 3/4] arm64: dts: ls1028a: add FlexSPI node
-> 
-> There's already a patch[1] sent upstream and is under review.
-> It includes dts(i) entries for LS1028. I will be sending the next 
-> version
+When vmalloc_sync_all() iterates over the address space until
+FIX_ADDR_TOP it will sync the whole kernel address space starting from
+VMALLOC_START.
 
-I've seen that, but there wasn't any reply for almost two months now. 
-But
-if you're sending your next version, this patch can be dropped from this
-series.
+This is not a problem when the kernel address range is identical in
+all page-tables, but this is no longer the case when PTI is enabled on
+x86-32. In that case the per-process LDT is mapped in the kernel
+address range and vmalloc_sync_all() clears the LDT mapping for all
+processes.
 
--michael
+To make LDT working again vmalloc_sync_all() must only iterate over
+the volatile parts of the kernel address range that are identical
+between all processes. This includes the VMALLOC and the PKMAP areas
+on x86-32.
 
-> 
-> [1] https://patchwork.kernel.org/patch/11139365/
->> 
->> Caution: EXT Email
->> 
->> Signed-off-by: Michael Walle <michael@walle.cc>
->> ---
->>  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> index 6730922c2d47..650b277ddd66 100644
->> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
->> @@ -260,6 +260,19 @@
->>                         status = "disabled";
->>                 };
->> 
->> +               fspi: spi@20c0000 {
->> +                       compatible = "nxp,lx2160a-fspi";
->> +                       #address-cells = <1>;
->> +                       #size-cells = <0>;
->> +                       reg = <0x0 0x20c0000 0x0 0x10000>,
->> +                             <0x0 0x20000000 0x0 0x10000000>;
->> +                       reg-names = "fspi_base", "fspi_mmap";
->> +                       interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&clockgen 4 3>, <&clockgen 4 3>;
->> +                       clock-names = "fspi_en", "fspi";
->> +                       status = "disabled";
->> +               };
->> +
->>                 esdhc: mmc@2140000 {
->>                         compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
->>                         reg = <0x0 0x2140000 0x0 0x10000>;
->> --
->> 2.20.1
-> 
-> Regards
-> Kuldeep
+The order of the ranges in the address space is:
+
+	VMALLOC -> PKMAP -> LDT -> CPU_ENTRY_AREA -> FIX_ADDR
+
+So the right check in vmalloc_sync_all() is "address < LDT_BASE_ADDR"
+to make sure the VMALLOC and PKMAP areas are synchronized and the LDT
+mapping is not falsely overwritten. the CPU_ENTRY_AREA and
+the FIXMAP area are no longer synced as well, but these
+ranges are synchronized on page-table creation time and do
+not change during runtime.
+
+This change fixes the ldt_gdt selftest in my setup.
+
+Fixes: 7757d607c6b3 ("x86/pti: AllowCONFIG_PAGE_TABLE_ISOLATION for x86_32")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 9ceacd1156db..144329c44436 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -197,7 +197,7 @@ void vmalloc_sync_all(void)
+ 		return;
+ 
+ 	for (address = VMALLOC_START & PMD_MASK;
+-	     address >= TASK_SIZE_MAX && address < FIXADDR_TOP;
++	     address >= TASK_SIZE_MAX && address < LDT_BASE_ADDR;
+ 	     address += PMD_SIZE) {
+ 		struct page *page;
+ 
+-- 
+2.16.4
+
