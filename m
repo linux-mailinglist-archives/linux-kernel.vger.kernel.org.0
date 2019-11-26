@@ -2,87 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D00C10A13B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9E710A156
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 16:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfKZPcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 10:32:02 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:27814 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728479AbfKZPcB (ORCPT
+        id S1728591AbfKZPj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 10:39:58 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38059 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfKZPj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 10:32:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574782320;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1B5z3ocoUnAb+PeLyD8I97QacT7fRBDt6WO9TjOiZjQ=;
-        b=ReBaqs3k9hxgc//6t9Rd/+3YOKBpjpONidmvm0F83Hy3yFf/j06gelMtiNRh1r5PP08DvP
-        i04/8JU45SkVISSVnZlcT7N6B5Neq+GjBnGQII516ir7O+3JVRGYUWApCyrs+wWeigfLUm
-        b3gtUfiM8JwYIoC0EeedYBtxlhnq+mA=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-199-s1CmBi2DP1-3BTLketZoqw-1; Tue, 26 Nov 2019 10:31:59 -0500
-Received: by mail-pj1-f70.google.com with SMTP id o34so51848pjb.15
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 07:31:58 -0800 (PST)
+        Tue, 26 Nov 2019 10:39:58 -0500
+Received: by mail-qt1-f194.google.com with SMTP id 14so21865887qtf.5;
+        Tue, 26 Nov 2019 07:39:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jqOLj+zmhCKP7Os2hVh7KNkHJtVIfRP5Fr7ygxzfC/k=;
+        b=ZryQJlQklZkrilo3PB6/3iQkzFYlNRAE83eqDldO3pYYrXbuN1qjXyaSyDg40Q3Ww5
+         r/FrUnvEAuKgvzCqaPXgOAL3PNq9MLItAvdW9jCp76ILGphb7Ljr4ZDpVQdOftgxTp7F
+         +RT9wdHGyU7YMnPBOP0zn8Kfwh7I22gbbIdHKkFpN+GiSlclJY3nPMJ5e1czT60+X2H1
+         NMP16huoRg+U4XS4O5sxylbyxdM60MhTXvMqCvW3dtDDvnw321e1QpjjghbHVJ8qY2cB
+         BzR/B9F4vMkDMy+0UwZ7YL2js25YJkFu3fbgp3wMLIv+/gYJ4KVTkKKEaEyCFMQNO+dH
+         INWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=1B5z3ocoUnAb+PeLyD8I97QacT7fRBDt6WO9TjOiZjQ=;
-        b=Zj+fHAArpsHzUxrG7PY5sgl+qF/Qg4RoBl1gtKH4WXv3h3Lr5FHaUKHkVuoePSdEg7
-         zmjgFyUvOvBzVwDPvqja2rSrlgTYpmtMCcicj+7YvnyNcW0qP+XdszxeQOXE5neU6795
-         9TOwsOLhNZ5zSiFKE3/fmXlkWMGM83UM2dWmxbvurNDQJlaQ8O83P67hg7DP/Ct0KwF0
-         X1vP7jOLE+XuJk1iE+ZiMbfC4RirJj8/9WLBC3Fy6tkZspyz++1JfUJQA8NLrXIixTne
-         BXhNW4oUhhVKgfAz3/wbGJOVz3JiSPqtTzmP54RhnayDZ3QxGw+gsGVl6FQMpeeHaE9e
-         8irA==
-X-Gm-Message-State: APjAAAXl3fjjNoVg9XNTKw9c4eLywGsECxgGBJKQIdgAVO2eQZ66gKXD
-        hC0lL8lTYXsgzv8XqkZGu3AVBO2dDyARCHG5FWWmH1fAXgEltLbZ02/6Q/ylEGwVvxUVWVrvcXH
-        eYviWR2w2m2a/x6QFPMJj+982
-X-Received: by 2002:a17:90a:3522:: with SMTP id q31mr7781090pjb.18.1574782318075;
-        Tue, 26 Nov 2019 07:31:58 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxfmv0tx5D0C/j5BQozTzoh1DEGYoaqkhONpxCb2xxJIi2vBrAwOCHCbdTIbW3eUHnO3MyYWQ==
-X-Received: by 2002:a17:90a:3522:: with SMTP id q31mr7781055pjb.18.1574782317801;
-        Tue, 26 Nov 2019 07:31:57 -0800 (PST)
-Received: from trix.remote.csb ([75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id 136sm13292798pfb.49.2019.11.26.07.31.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2019 07:31:57 -0800 (PST)
-Subject: Re: [PATCH RT v3] net/xfrm/input: Protect queue with lock
-To:     Joerg Vehlow <lkml@jv-coder.de>, linux-kernel@vger.kernel.org,
-        bigeasy@linutronix.de
-Cc:     Joerg Vehlow <joerg.vehlow@aox-tech.de>
-References: <20191126071335.34661-1-lkml@jv-coder.de>
-From:   Tom Rix <trix@redhat.com>
-Message-ID: <46d5e7ea-011b-a384-ac7a-9ba63bbe9ea5@redhat.com>
-Date:   Tue, 26 Nov 2019 07:31:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jqOLj+zmhCKP7Os2hVh7KNkHJtVIfRP5Fr7ygxzfC/k=;
+        b=Jou5feRaC96lUcXxudDoS8sFOqBcH9WKKvaFpQtDEbB21YaD7sJhgSA008yR9Yf6Dc
+         j57hctEQZlcm+h7rqRAQpPXaBx4HJDxNLpale6kh9Oo8WsTaPzyR+Fizxpq372cvljAK
+         YKICv8ITTHTjKDHpTBp+FStJGPQKQbEXD2OeY6Mdp4aaIz5izn/Pe1cpr48VRQAetIEy
+         OfU2OxNcXFNEPQxc4atO506pynFtaoOm0WN+jGXnsL5XCq74FdSZjzzFcRf6P9kaFAus
+         aDhVDnO2fNNV8/mHweIHamukvZol5eaAXNQCTflpgMOCtM7a9c/r03wnzpU1JP4OmB96
+         2q3w==
+X-Gm-Message-State: APjAAAXtTq+ElCLD8xLqAKwUAf6CnhsURbqGqK9tUXheiD2zc5X0Sz0p
+        ESnLW3BU5+4JUHa8PTVC6UM=
+X-Google-Smtp-Source: APXvYqwRg51oIe6DA1IT2q++wUTdAqhqELpT4Qih6rNjRSxcYqDcBeXG9pFn2r75cIpoj1BsYMC0kg==
+X-Received: by 2002:ac8:690c:: with SMTP id e12mr23339115qtr.239.1574782796765;
+        Tue, 26 Nov 2019 07:39:56 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
+        by smtp.gmail.com with ESMTPSA id z64sm6047532qtc.4.2019.11.26.07.39.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2019 07:39:55 -0800 (PST)
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+X-Google-Original-From: Daniel W. S. Almeida
+To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
+        rfontana@redhat.com, kstewart@linuxfoundation.org,
+        tglx@linutronix.de
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: dummy_dvb_fe: register adapter/frontend
+Date:   Tue, 26 Nov 2019 12:31:57 -0300
+Message-Id: <20191126153157.26355-1-dwlsalmeida@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <20191126071335.34661-1-lkml@jv-coder.de>
-Content-Language: en-US
-X-MC-Unique: s1CmBi2DP1-3BTLketZoqw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Why remove the #ifdef CONFIG_PREEMPT.. ?
+From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
+Before using the DTV frontend core, a bridge driver should register the
+new frontend at the subsystem and unregister it at device detach / removal.
 
-> +	spin_lock_irqsave(&trans->queue.lock, flags);
->  	skb_queue_splice_init(&trans->queue, &queue);
-> +	spin_unlock_irqrestore(&trans->queue.lock, flags);
->  
+Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+---
+ drivers/media/dvb-frontends/dvb_dummy_fe.c | 39 ++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-Fine otherwise.
-
-Tom
-
+diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+index 4db679cb70ad..1ccb58c67e8e 100644
+--- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
++++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
+@@ -13,12 +13,12 @@
+ #include <media/dvb_frontend.h>
+ #include "dvb_dummy_fe.h"
+ 
++DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ 
+ struct dvb_dummy_fe_state {
+ 	struct dvb_frontend frontend;
+ };
+ 
+-
+ static int dvb_dummy_fe_read_status(struct dvb_frontend *fe,
+ 				    enum fe_status *status)
+ {
+@@ -84,7 +84,36 @@ static int dvb_dummy_fe_sleep(struct dvb_frontend* fe)
+ 
+ static int dvb_dummy_fe_init(struct dvb_frontend* fe)
+ {
+-	return 0;
++	int result = 0;
++	struct dvb_adapter *adapter = fe->dvb;
++
++	result = dvb_register_adapter(adapter,
++				      KBUILD_MODNAME,
++				      THIS_MODULE,
++				      adapter->device,
++				      adapter_nr);
++
++	if (!result) {
++		pr_err("DVB_DUMMY_FE: Failed to register the adapter, errno:%d",
++			result);
++		goto err;
++	}
++
++	result = dvb_register_frontend(adapter, fe);
++	if (!result) {
++		pr_err("DVB_DUMMY_FE: Failed to register the frontend, errno:%d",
++			result);
++		goto err;
++	}
++
++	return result;
++
++err:
++	dvb_unregister_adapter(adapter);
++	dvb_unregister_frontend(fe);
++	dvb_frontend_detach(fe);
++	return result;
++
+ }
+ 
+ static int dvb_dummy_fe_set_tone(struct dvb_frontend *fe,
+@@ -102,6 +131,12 @@ static int dvb_dummy_fe_set_voltage(struct dvb_frontend *fe,
+ static void dvb_dummy_fe_release(struct dvb_frontend* fe)
+ {
+ 	struct dvb_dummy_fe_state* state = fe->demodulator_priv;
++	struct dvb_adapter *adapter = fe->dvb;
++
++	dvb_unregister_adapter(adapter);
++	dvb_unregister_frontend(fe);
++	dvb_frontend_detach(fe);
++
+ 	kfree(state);
+ }
+ 
+-- 
+2.24.0
 
