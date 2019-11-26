@@ -2,61 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B7E109DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 13:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF2C109DD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 13:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfKZMTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 07:19:04 -0500
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:52792 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727615AbfKZMTE (ORCPT
+        id S1728334AbfKZMWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 07:22:21 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60536 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfKZMWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 07:19:04 -0500
-Received: by mail-wm1-f46.google.com with SMTP id l1so2980775wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 04:19:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=7FMoRj/ytJrUR66B8EfiOg4Y0/kxvjsVOapeN7HOSP0=;
-        b=p4To6L/uUB4Ynfx7xv9qYg7QuplT6BywCInGbTvO70p7KOEHOF7T4FECjv05a/l7EA
-         pCjPMiBaFxR4pe+3hRAvs3KwYMZhkhq/NhVPTd5Nr/BVauiSiKH2m++0/jH65PvXmWOT
-         ILSo5VBDmduw14z8IvMPXgw20oTeQV7NttmjsCsdylkKNSbrWersAkLvbVyRrQlsoDPB
-         IXq0EymWCaphhE/9nrJ7OiBFEtp/a29Oks1li4Q/T63kuH6rYsjR/6+PIa1MIemoDBSG
-         sLPUgG9OS2BNT+8di8HFdZALDyJathMBjtFV9ZKiHJtO9qiHdB4dDwi8JLFv0oeeFS1E
-         H9VA==
-X-Gm-Message-State: APjAAAUjDPPf+UVuByThSUzaIhharhuApPTBKF8NuxcCp3fHMoTYOlH6
-        ArSDvEYtN1C7LA2Hs8kTfkOsC3zO
-X-Google-Smtp-Source: APXvYqxrUOL9z2BdQOQxB0IBtlt/5B6vcbAXvaMuNfOtiZR8bhwJK4TpfNTavnKN5FLTbsYbr+2Wuw==
-X-Received: by 2002:a7b:c006:: with SMTP id c6mr4186483wmb.52.1574770742789;
-        Tue, 26 Nov 2019 04:19:02 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id k18sm14941263wrm.82.2019.11.26.04.19.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 04:19:02 -0800 (PST)
-Date:   Tue, 26 Nov 2019 13:19:01 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Cristopher Lameter <cl@linux.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: SLUB: purpose of sysfs events on cache creation/removal
-Message-ID: <20191126121901.GE20912@dhcp22.suse.cz>
+        Tue, 26 Nov 2019 07:22:20 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAQCIx9a124963;
+        Tue, 26 Nov 2019 12:21:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=NTQIxt40LXfPQACIce5FWudimuSPwGtXy3yV8KLOGjQ=;
+ b=MiwPrVHWn/rErJvfdi9x6MuStdUbsbeOq4GkmuccGxSZU5dmh967RQTzI0nT8PEZbazK
+ 43dmaymnDA/45ZqxxGInsqfjNyQwm8djmPjirEXS7vM29+a8unEoeO4OlQwXinVw5c7H
+ HnmODH4bm5jFm3i4h4oocdsvTk7PocwAsbwxFtbQV2yb0EzwrwBbqh7P6cOgLWJ5maka
+ oWg/x63AofLPDPauGL/iEJDUlWPSbN3YpuWwXcpTC/vIB/VqRgCHJJfRMO3fc+6EdqWP
+ /P1PyrTv9Y3BSv6g+U9dOYLRvwIrAu5bVA5MGW1Pv42zLP7R62PBIa2mE/E3MqOv4YuZ sw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2wev6u6es0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Nov 2019 12:21:44 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAQC8Vxd017105;
+        Tue, 26 Nov 2019 12:19:43 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2wh0rbe47x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Nov 2019 12:19:43 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAQCJffZ006109;
+        Tue, 26 Nov 2019 12:19:42 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Nov 2019 04:19:41 -0800
+Date:   Tue, 26 Nov 2019 15:19:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] Silence an uninitialized variable warning
+Message-ID: <20191126121934.kuolgbm55dirfbay@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9452 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911260110
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9452 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911260110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-I have just learnt about KOBJ_{ADD,REMOVE} sysfs events triggered on
-kmem cache creation/removal when SLUB is configured. This functionality
-goes all the way down to initial SLUB merge. I do not see any references
-in the Documentation explaining what those events are used for and
-whether there are any real users.
+Smatch complains that "ret" could be uninitialized if we don't enter the
+loop.  I don't know if that's possible, but it's nicer to return a
+literal zero instead.
 
-Could you shed some more light into this?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ kernel/trace/trace_syscalls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 73140d80dd46..63528f458826 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -286,7 +286,7 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+ 		offset += sizeof(unsigned long);
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
 -- 
-Michal Hocko
-SUSE Labs
+2.11.0
+
