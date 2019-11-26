@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E34CC1099D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 09:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82DB21099D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 09:00:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfKZIAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 03:00:37 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:41033 "EHLO
+        id S1727368AbfKZIA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 03:00:27 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:41019 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbfKZIAa (ORCPT
+        with ESMTP id S1727313AbfKZIAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 03:00:30 -0500
+        Tue, 26 Nov 2019 03:00:25 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZVlc-00034M-2S; Tue, 26 Nov 2019 09:00:12 +0100
+        id 1iZVlc-00034V-L0; Tue, 26 Nov 2019 09:00:12 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1F2CC1C1D8F;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 918271C1D92;
         Tue, 26 Nov 2019 09:00:10 +0100 (CET)
 Date:   Tue, 26 Nov 2019 08:00:10 -0000
 From:   "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/headers] x86/ACPI/sleep: Move acpi_wakeup_address()
- definition into sleep.c, remove <asm/realmode.h> from <asm/acpi.h>
+Subject: [tip: core/headers] ASoC: Intel: Skylake: Explicitly include
+ linux/io.h for virt_to_phys()
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191119002121.4107-13-sean.j.christopherson@intel.com>
-References: <20191119002121.4107-13-sean.j.christopherson@intel.com>
+In-Reply-To: <20191119002121.4107-10-sean.j.christopherson@intel.com>
+References: <20191119002121.4107-10-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Message-ID: <157475521001.21853.838192988655814386.tip-bot2@tip-bot2>
+Message-ID: <157475521050.21853.1897962495187818342.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,110 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/headers branch of tip:
 
-Commit-ID:     7c8dfff8783bdc19696b563e01c588e81205ef15
-Gitweb:        https://git.kernel.org/tip/7c8dfff8783bdc19696b563e01c588e81205ef15
+Commit-ID:     6d1002c4229fa3cfdb5b73a2c8a45a4b6090ba0a
+Gitweb:        https://git.kernel.org/tip/6d1002c4229fa3cfdb5b73a2c8a45a4b6090ba0a
 Author:        Sean Christopherson <sean.j.christopherson@intel.com>
-AuthorDate:    Mon, 18 Nov 2019 16:21:21 -08:00
+AuthorDate:    Mon, 18 Nov 2019 16:21:18 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 19 Nov 2019 17:50:27 +01:00
 
-x86/ACPI/sleep: Move acpi_wakeup_address() definition into sleep.c, remove <asm/realmode.h> from <asm/acpi.h>
+ASoC: Intel: Skylake: Explicitly include linux/io.h for virt_to_phys()
 
-Move the definition of acpi_wakeup_address() into sleep.c to break
-linux/acpi.h's dependency (by way of asm/acpi.h) on asm/realmode.h.
-Everyone and their mother includes linux/acpi.h, i.e. modifying
-realmode.h results in a full kernel rebuild, which makes the already
-inscrutable real mode boot code even more difficult to understand and is
-positively rage inducing when trying to make changes to x86's boot flow.
-
-[ mingo: Renamed acpi_wakeup_address() to acpi_get_wakeup_address(), as suggested by Borislav Petkov. ]
+Through a labyrinthian sequence of includes, usage of virt_to_phys() is
+dependent on the include of asm/io.h in x86's asm/realmode.h, which is
+included in x86's asm/acpi.h and thus by linux/acpi.h.  Explicitly
+include linux/io.h to break the dependency on realmode.h so that a
+future patch can remove the realmode.h include from acpi.h without
+breaking the build.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20191119002121.4107-13-sean.j.christopherson@intel.com
+Link: https://lkml.kernel.org/r/20191119002121.4107-10-sean.j.christopherson@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/ia64/include/asm/acpi.h |  2 +-
- arch/x86/include/asm/acpi.h  |  6 +-----
- arch/x86/kernel/acpi/sleep.c | 11 +++++++++++
- drivers/acpi/sleep.c         |  4 ++--
- 4 files changed, 15 insertions(+), 8 deletions(-)
+ sound/soc/intel/skylake/skl-sst-cldma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/ia64/include/asm/acpi.h b/arch/ia64/include/asm/acpi.h
-index 36d7003..b66ba90 100644
---- a/arch/ia64/include/asm/acpi.h
-+++ b/arch/ia64/include/asm/acpi.h
-@@ -38,7 +38,7 @@ int acpi_gsi_to_irq (u32 gsi, unsigned int *irq);
- /* Low-level suspend routine. */
- extern int acpi_suspend_lowlevel(void);
+diff --git a/sound/soc/intel/skylake/skl-sst-cldma.c b/sound/soc/intel/skylake/skl-sst-cldma.c
+index 5a2c35f..36f697c 100644
+--- a/sound/soc/intel/skylake/skl-sst-cldma.c
++++ b/sound/soc/intel/skylake/skl-sst-cldma.c
+@@ -8,6 +8,7 @@
+  */
  
--static inline unsigned long acpi_wakeup_address(void)
-+static inline unsigned long acpi_get_wakeup_address(void)
- {
- 	return 0;
- }
-diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
-index 57788ec..ca09764 100644
---- a/arch/x86/include/asm/acpi.h
-+++ b/arch/x86/include/asm/acpi.h
-@@ -13,7 +13,6 @@
- #include <asm/processor.h>
- #include <asm/mmu.h>
- #include <asm/mpspec.h>
--#include <asm/realmode.h>
- #include <asm/x86_init.h>
- 
- #ifdef CONFIG_ACPI_APEI
-@@ -62,10 +61,7 @@ static inline void acpi_disable_pci(void)
- extern int (*acpi_suspend_lowlevel)(void);
- 
- /* Physical address to resume after wakeup */
--static inline unsigned long acpi_wakeup_address(void)
--{
--	return ((unsigned long)(real_mode_header->wakeup_start));
--}
-+unsigned long acpi_get_wakeup_address(void);
- 
- /*
-  * Check if the CPU can handle C2 and deeper
-diff --git a/arch/x86/kernel/acpi/sleep.c b/arch/x86/kernel/acpi/sleep.c
-index ca13851..26b7256 100644
---- a/arch/x86/kernel/acpi/sleep.c
-+++ b/arch/x86/kernel/acpi/sleep.c
-@@ -27,6 +27,17 @@ static char temp_stack[4096];
- #endif
- 
- /**
-+ * acpi_get_wakeup_address - provide physical address for S3 wakeup
-+ *
-+ * Returns the physical address where the kernel should be resumed after the
-+ * system awakes from S3, e.g. for programming into the firmware waking vector.
-+ */
-+unsigned long acpi_get_wakeup_address(void)
-+{
-+	return ((unsigned long)(real_mode_header->wakeup_start));
-+}
-+
-+/**
-  * x86_acpi_enter_sleep_state - enter sleep state
-  * @state: Sleep state to enter.
-  *
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index f5cca9f..6d3b2ea 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -63,9 +63,9 @@ static int acpi_sleep_prepare(u32 acpi_state)
- #ifdef CONFIG_ACPI_SLEEP
- 	/* do we have a wakeup address for S2 and S3? */
- 	if (acpi_state == ACPI_STATE_S3) {
--		if (!acpi_wakeup_address())
-+		if (!acpi_get_wakeup_address())
- 			return -EFAULT;
--		acpi_set_waking_vector(acpi_wakeup_address());
-+		acpi_set_waking_vector(acpi_get_wakeup_address());
- 
- 	}
- 	ACPI_FLUSH_CPU_CACHE();
+ #include <linux/device.h>
++#include <linux/io.h>
+ #include <linux/mm.h>
+ #include <linux/delay.h>
+ #include "../common/sst-dsp.h"
