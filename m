@@ -2,185 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B7B10A45A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:12:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D391610A448
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:05:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfKZTMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 14:12:13 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45538 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfKZTMN (ORCPT
+        id S1727111AbfKZTF3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 14:05:29 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:62441 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfKZTF2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:12:13 -0500
-Received: by mail-qt1-f193.google.com with SMTP id 30so22599210qtz.12;
-        Tue, 26 Nov 2019 11:12:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=KjGyaSiUKmJdB9E8MZospziw2v4nGOZn1672kkp9/8M=;
-        b=S1pKrMQrWEycS+aFsuMbpYub6ZnYzf7SsJd3Q+Fa2GlIxEHOscRAlMUNfY8UAjMHHr
-         NlLogQI1LKz2t29IPDNrXqS58k/PJP1wKBwHhExK5r+HfP8QWQVRyhgYnRFPAatNrqFq
-         OH8X3qGU8b3vEfOOiBuBGMk3ZjZgmK8sVYZjuiq1PjZfBXm1GhcKOpzDJmkxP6iQBPsQ
-         EzEVYAFpg8yrkNsH7mbg1qaipqgqOdrWZ6hvL4XuwPOHoNJSIq07XGArzqX0Ajjjop17
-         c8PTSyjfbPnAo4BLwGKM4kjK1PmUwrngmt09jTjIcpwM4Wscyb794IEBNn2KdEriAuMG
-         S0/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=KjGyaSiUKmJdB9E8MZospziw2v4nGOZn1672kkp9/8M=;
-        b=VfPPL87c4S+UoolWTQlCzVxfwetBpAJxERLgIUdsb5m0khHWWQ5XQJoyTzlwVriCOS
-         QKjcsfkssHlFpMWc4pU7iKjw+WJgRaRZAMjsaPxNUdiuBedfFvfYloyVpJBFb0/X2om/
-         6Rfw/xjFFuwb5c3Ko5fiwr3FzLq9vDp7tpS/NowedbtDpC3JgMwrKOM+ZZrC/ytQtmZ5
-         dTApAw88Uj2HG1xT76IPFa9Cy+PuLZKgj9hAV4bXDDbMlUbbme2qf9ARxKWGmJYItqh3
-         Wmng0PSa8Qy7VAEvg7wPzyfIkUAiwa+tAZSco8hEtLV5NcEwU5fIRFOm+0ojaIqGxlFj
-         O/rg==
-X-Gm-Message-State: APjAAAUeGilAvkDTGUNmWX09W1STrQ4jqU1SdAdrz+QddmS8fPMhnsfR
-        VOph9fz83nMdHn+MahJmxcA=
-X-Google-Smtp-Source: APXvYqyxkbb3ltVCzAL9ujSkpYmh+k+5SdSvHtIqfMfGyuWFbLc2sZLc6XDhsOZqn5+tHFPyY5rwAQ==
-X-Received: by 2002:ac8:73c6:: with SMTP id v6mr36967132qtp.137.1574795531820;
-        Tue, 26 Nov 2019 11:12:11 -0800 (PST)
-Received: from quaco.ghostprotocols.net (179-240-181-120.3g.claro.net.br. [179.240.181.120])
-        by smtp.gmail.com with ESMTPSA id z17sm6162363qtq.69.2019.11.26.11.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 11:12:11 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 2ADDD40D3E; Tue, 26 Nov 2019 16:04:50 -0300 (-03)
-Date:   Tue, 26 Nov 2019 16:04:50 -0300
-To:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jiri Olsa <jolsa@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
-        Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] libbpf: Fix up generation of bpf_helper_defs.h
-Message-ID: <20191126190450.GD29071@kernel.org>
-References: <20191126151045.GB19483@kernel.org>
- <20191126154836.GC19483@kernel.org>
- <87imn6y4n9.fsf@toke.dk>
- <20191126183451.GC29071@kernel.org>
- <87d0dexyij.fsf@toke.dk>
+        Tue, 26 Nov 2019 14:05:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1574795129; x=1606331129;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2tYGSMNcs0UW5Lvpl6YDf0Tvze90VFHUzSCbHuotN/Y=;
+  b=PB1TrApqXL5cuyt9fDw8haeQVSPFwU+HhI+p5JarF2526gLUoJfE/OAR
+   c01bPPQ2jWZ6tfMQ+fneaYCZZRpMRy/gx6bfzNw/HjYEufH0KFH2o9mpQ
+   bjyCKEbZooxxgXN1sd5dJwqsdoURvagGtETkFb6eI7b3OE53pxTiWrykZ
+   RTxXlKUDOuk7RWx84ZEA+XccXLEzeYaEMqHWTCAng4nNKnbRidNAZfVnI
+   huLdMwsTgMEcG3gXDWj0iE76Sg5k66AAfTLebJSI2Rri58BEW40VXlka8
+   cIVu47WKhe/zY4CNf+4deXXH3xemTMp2afLl9wa/pnwrKB7i+tVA/5fEF
+   Q==;
+IronPort-SDR: RSHekiM2ktTP1Fy2hRLyJS7EDFBn69Ti6V1vT00Li8I7tnDJKX7qfp+XUFINtuEmjAeeCUjmDJ
+ jinr8DTwJFuXdG8pCNr9ROcNYulvFJcaAycHsMr1wu5MO9PJu7W6aiIMv4wRqSQ7GTBo31M/ex
+ Z2aCmAueJfqQAYEsoDS1w0PMVmJeUAN3DMybvHXeKlApBY94MOTH5XxfS3GvhoUbEP8lyiBnMu
+ eZfuSmK70JHdp+J6lRaacB8RrfxdZg1BTsPkGGhzTnTedUb/TXBRotqIBLGtRnE2ki4mqP/IJr
+ qT8=
+X-IronPort-AV: E=Sophos;i="5.69,246,1571673600"; 
+   d="scan'208";a="128481924"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Nov 2019 03:05:29 +0800
+IronPort-SDR: NxX2HEtXc3w80hllkIiLNPL070rWoCcG2mzbi4235JPMIqghBmncA9794qRg8szFUnWEFb6yKV
+ KKYWo9oevq1GuHyVINFkZUtavVsxWLCj2zJPFVVw43sbpyv46pShPwqoL1OcCS0VyNiogmmi1k
+ S8gtYqPlWpf0a2TQ6eM31RqvvK6ZZM/i/7lic4wOece6xfT+wZV58BSmtr3gToa96Eea0fwY6/
+ Npa4+VGKny69jwACx1EToLM9WJRRF2cMQLg13RepVLh97pXcetjVLbstKODllZil7Z3m2F28S3
+ dGDp5AXMMAZ1vIgUk6kefNfm
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2019 11:00:06 -0800
+IronPort-SDR: nxYeJpflgf54V2H2m4tS5AoYPhejdMtOxwXGMEpLk0poTU5aapkCjQSswOYP3wGvbOLWQ0nyl5
+ aJT1M7YX96RukqYxDqEvdZBsDgOneOpmX73Sg2wfzaZeZp2lWUDWiSDnZe1tOfrC73dmdkdMId
+ 3FJWqp+VkDFmthixKtXkAVdh+m2Rr+LnSxtc2Eciu/pVUaDXI4voO4M2ZTvr118Dq3qcFMMmNA
+ 6QYOx/VcZNJM4e6ZZzyGnQ5ph4Qb5dF53L8Wd4IhJ/8U7MTxHcRkUrG248nourw/3wnmgxK3Xe
+ 4N4=
+WDCIronportException: Internal
+Received: from usa003951.ad.shared (HELO yoda.hgst.com) ([10.86.50.226])
+  by uls-op-cesaip02.wdc.com with ESMTP; 26 Nov 2019 11:05:28 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Anup Patel <anup@brainfault.org>,
+        linux-riscv@lists.infradead.org, Mao Han <han_mao@c-sky.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v5 0/4] Add support for SBI v0.2 
+Date:   Tue, 26 Nov 2019 11:04:59 -0800
+Message-Id: <20191126190503.19303-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87d0dexyij.fsf@toke.dk>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Nov 26, 2019 at 07:50:44PM +0100, Toke Høiland-Jørgensen escreveu:
-> Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> writes:
-> 
-> > Em Tue, Nov 26, 2019 at 05:38:18PM +0100, Toke Høiland-Jørgensen escreveu:
-> >> Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> writes:
-> >> 
-> >> > Em Tue, Nov 26, 2019 at 12:10:45PM -0300, Arnaldo Carvalho de Melo escreveu:
-> >> >> Hi guys,
-> >> >> 
-> >> >>    While merging perf/core with mainline I found the problem below for
-> >> >> which I'm adding this patch to my perf/core branch, that soon will go
-> >> >> Ingo's way, etc. Please let me know if you think this should be handled
-> >> >> some other way,
-> >> >
-> >> > This is still not enough, fails building in a container where all we
-> >> > have is the tarball contents, will try to fix later.
-> >> 
-> >> Wouldn't the right thing to do not be to just run the script, and then
-> >> put the generated bpf_helper_defs.h into the tarball?
+The Supervisor Binary Interface(SBI) specification[1] now defines a
+base extension that provides extendability to add future extensions
+while maintaining backward compatibility with previous versions.
+The new version is defined as 0.2 and older version is marked as 0.1.
 
-> > I would rather continue just running tar and have the build process
-> > in-tree or outside be the same.
-> 
-> Hmm, right. Well that Python script basically just parses
-> include/uapi/linux/bpf.h; and it can be given the path of that file with
-> the --filename argument. So as long as that file is present, it should
-> be possible to make it work, I guess?
- 
-> However, isn't the point of the tarball to make a "stand-alone" source
-> distribution?
+This series adds support v0.2 and a unified calling convention
+implementation between 0.1 and 0.2. It also add other SBI v0.2
+functionality defined in [2]. The base support for SBI v0.2 is already
+available in OpenSBI v0.5. This series needs additional patches[3] in
+OpenSBI. 
 
-Yes, it is, and as far as possible without any prep, just include the
-in-source tree files needed to build it.
+Tested on both BBL, OpenSBI with/without the above patch series. 
 
-> I'd argue that it makes more sense to just include the
-> generated header, then: The point of the Python script is specifically
-> to extract the latest version of the helper definitions from the kernel
-> source tree. And if you're "freezing" a version into a tarball, doesn't
-> it make more sense to also freeze the list of BPF helpers?
+[1] https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
+[2] https://github.com/riscv/riscv-sbi-doc/pull/27
+[3] http://lists.infradead.org/pipermail/opensbi/2019-November/000738.html
 
-Your suggestion may well even be the only solution, as older systems
-don't have python3, and that script requires it :-\
+Changes from v4->v5
+1. Fixed few minor comments related to static & inline.
+2. Make sure that every patch is boot tested individually.
 
-Some containers were showing this:
+Changes from v3->v4.
+1. Rebased on top of for-next.
+2. Fixed issuses with checkpatch --strict.
+3. Unfied all IPI/fence related functions.
+4. Added Hfence related SBI calls.
+5. Moved to function pointer based boot time switch between v01 and v02 calls.
+Changes from v2->v3.
+1. Moved v0.1 extensions to a new config.
+2. Added support for relacement extensions of v0.1 extensions.
 
-/bin/sh: 1: /git/linux/scripts/bpf_helpers_doc.py: not found
-Makefile:184: recipe for target 'bpf_helper_defs.h' failed
-make[3]: *** [bpf_helper_defs.h] Error 127
-make[3]: *** Deleting file 'bpf_helper_defs.h'
-Makefile.perf:778: recipe for target '/tmp/build/perf/libbpf.a' failed
+Changes from v1->v2
+1. Removed the legacy calling convention.
+2. Moved all SBI related calls to sbi.c.
+3. Moved all SBI related macros to uapi.
 
-That "not found" doesn't mean what it looks from staring at the above,
-its just that:
+Atish Patra (4):
+RISC-V: Mark existing SBI as 0.1 SBI.
+RISC-V: Add basic support for SBI v0.2
+RISC-V: Introduce a new config for SBI v0.1
+RISC-V: Implement new SBI v0.2 extensions
 
-nobody@1fb841e33ba3:/tmp/perf-5.4.0$ head -1 /tmp/perf-5.4.0/scripts/bpf_helpers_doc.py
-#!/usr/bin/python3
-nobody@1fb841e33ba3:/tmp/perf-5.4.0$ ls -la /usr/bin/python3
-ls: cannot access /usr/bin/python3: No such file or directory
-nobody@1fb841e33ba3:/tmp/perf-5.4.0$
+arch/riscv/Kconfig           |   6 +
+arch/riscv/include/asm/sbi.h | 177 +++++++-----
+arch/riscv/kernel/Makefile   |   1 +
+arch/riscv/kernel/sbi.c      | 547 ++++++++++++++++++++++++++++++++++-
+arch/riscv/kernel/setup.c    |   2 +
+5 files changed, 660 insertions(+), 73 deletions(-)
 
-So, for now, I'll keep my fix and start modifying the containers where
-this fails and disable testing libbpf/perf integration with BPF on those
-containers :-\
+--
+2.23.0
 
-I.e. doing:
-
-nobody@1fb841e33ba3:/tmp/perf-5.4.0$ make NO_LIBBPF=1 -C /tmp/perf-5.4.0/tools/perf/ O=/tmp/build/perf
-
-which ends up with a functional perf, just one without libbpf linked in:
-
-nobody@1fb841e33ba3:/tmp/perf-5.4.0$ /tmp/build/perf/perf -vv
-perf version 5.4.gf69779ce8f86
-                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
-    dwarf_getlocations: [ OFF ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
-                 glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
-                  gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
-         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
-                libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
-                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
-               libnuma: [ OFF ]  # HAVE_LIBNUMA_SUPPORT
-numa_num_possible_cpus: [ OFF ]  # HAVE_LIBNUMA_SUPPORT
-               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
-             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
-              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
-             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
-             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
-    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
-                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
-                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
-             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
-                   bpf: [ OFF ]  # HAVE_LIBBPF_SUPPORT
-                   aio: [ on  ]  # HAVE_AIO_SUPPORT
-                  zstd: [ OFF ]  # HAVE_ZSTD_SUPPORT
-nobody@1fb841e33ba3:/tmp/perf-5.4.0$
-
-The the build tests for libbpf and the bpf support in perf will
-continue, but for a reduced set of containers, those with python3.
-
-People wanting to build libbpf on such older systems will hopefully find
-this discussion in google, run the script, get the output and have it
-working.
-
-- Arnaldo
