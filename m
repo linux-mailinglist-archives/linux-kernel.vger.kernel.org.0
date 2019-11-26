@@ -2,84 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE22510A6D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 23:54:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE0F610A6D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 00:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfKZWyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 17:54:49 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:36506 "EHLO inva021.nxp.com"
+        id S1726701AbfKZXAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 18:00:47 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:34658 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbfKZWyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 17:54:49 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E30720092F;
-        Tue, 26 Nov 2019 23:54:47 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 20BF6200645;
-        Tue, 26 Nov 2019 23:54:47 +0100 (CET)
-Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8221B20507;
-        Tue, 26 Nov 2019 23:54:46 +0100 (CET)
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Alison Wang <alison.wang@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Subject: [PATCH v3] crypto: caam - do not reset pointer size from MCFGR register
-Date:   Wed, 27 Nov 2019 00:54:26 +0200
-Message-Id: <1574808866-16764-1-git-send-email-iuliana.prodan@nxp.com>
-X-Mailer: git-send-email 2.1.0
+        id S1726200AbfKZXAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 18:00:47 -0500
+Received: from zn.tnic (p200300EC2F0EC2003034EE13CF148829.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:c200:3034:ee13:cf14:8829])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B43E41EC0CD6;
+        Wed, 27 Nov 2019 00:00:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1574809245;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=1BYd4g36wutwSqaxdQDSylrN82e2jnf8ZMNCZbx52og=;
+        b=aeNLk3CB/v6VzkrA7gp4A8BhxOarAfd/N5P+2xMpTdJG0bD1GG5CJoXkXe/m+6TiAAD/S8
+        VxTdSa4SFDAGuQxEzoJADmLnfzJIvYXgM2RhVDzNkikswRVurhd0Wvwx2SO2c0tCvya+Hm
+        /AmTaZaF0F8XIlurQ58wzjXo7ASlswU=
+Date:   Wed, 27 Nov 2019 00:00:38 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Barret Rhoden <brho@google.com>, austin@google.com,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Rik van Riel <riel@surriel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: AVX register corruption from signal delivery
+Message-ID: <20191126230038.GI31379@zn.tnic>
+References: <20191126221328.GH31379@zn.tnic>
+ <EFBC6B60-D0EC-4518-A38E-076D3933AA0E@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <EFBC6B60-D0EC-4518-A38E-076D3933AA0E@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 'a1cf573ee95 ("crypto: caam - select DMA address size at runtime")'
-CAAM pointer size (caam_ptr_size) is changed from
-sizeof(dma_addr_t) to runtime value computed from MCFGR register.
-Therefore, do not reset MCFGR[PS].
+On Tue, Nov 26, 2019 at 02:30:10PM -0800, Andy Lutomirski wrote:
+> If we do this, we should have selftests/x86/slow or otherwise have a
+> fast vs slow mode. I really like that the entire suite takes under 2s.
 
-Fixes: a1cf573ee95 ("crypto: caam - select DMA address size at runtime")
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: <stable@vger.kernel.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Alison Wang <alison.wang@nxp.com>
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
----
-Changes since v2:
-- update description so the referred commit is not split on 2 lines;
-- added Reviewed-by.
+Sure, we can stick it under a separate Makefile target called "full" or
+so to mean, run the full set of tests. We can run the fast ones first
+and the slow ones then. Or something to that effect.
 
- drivers/crypto/caam/ctrl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Thx.
 
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index d7c3c38..3e811fc 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -671,11 +671,9 @@ static int caam_probe(struct platform_device *pdev)
- 	of_node_put(np);
- 
- 	if (!ctrlpriv->mc_en)
--		clrsetbits_32(&ctrl->mcr, MCFGR_AWCACHE_MASK | MCFGR_LONG_PTR,
-+		clrsetbits_32(&ctrl->mcr, MCFGR_AWCACHE_MASK,
- 			      MCFGR_AWCACHE_CACH | MCFGR_AWCACHE_BUFF |
--			      MCFGR_WDENABLE | MCFGR_LARGE_BURST |
--			      (sizeof(dma_addr_t) == sizeof(u64) ?
--			       MCFGR_LONG_PTR : 0));
-+			      MCFGR_WDENABLE | MCFGR_LARGE_BURST);
- 
- 	handle_imx6_err005766(&ctrl->mcr);
- 
 -- 
-2.1.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
