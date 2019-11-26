@@ -2,120 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDFF910A498
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B13E10A49C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 20:34:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfKZTdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 14:33:31 -0500
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:37618 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbfKZTdb (ORCPT
+        id S1727128AbfKZTd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 14:33:57 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40093 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbfKZTd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 14:33:31 -0500
-Received: by mail-pj1-f74.google.com with SMTP id a31so656170pje.4
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 11:33:29 -0800 (PST)
+        Tue, 26 Nov 2019 14:33:57 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y5so2371054lfy.7
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 11:33:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=LZgbozaMv2++Eabt+iViPasyBMAegYsg5oYTvMeHf7E=;
-        b=S8pmopzzBG0rNok5vDN976cFoAR0A7Q+p/o8pCLnSXixM+5boO1hXI9m0F7yA6sPVV
-         IZyY5dqJw+zD9pjkQsCFWgDYz5wF+P5eNiXGqXXFMv+aRYKwpt3F8UawnB7gMei0i6YK
-         4d66jyCvy//Wa3Vusi8E+3lZBlUxR6yn31REPHhWKiHXldKjuVnLzFRabBqqG5gAGZtG
-         t2QH8dhE+35YRcXlL8MfSG9W6j2mdR4uGOafC5ful+3LPMSrTawaYmujJHXzrggLSV6H
-         9lTVl+5Wl79xSAYJW8Mc3QEXtAmUzLcvXtgiiSy/iJjtsjTonesbzCbeMh7TzIaZ0qEV
-         VqSg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eNdeYyzKLpu63DGl2XEkPQDnzQUC1plincAavY5X3kM=;
+        b=QvAwJP0j2/X610cvfwW8I1VXhYWVnDyMBDlfw0V9BIJ7RmgPyzRPiAE+jEbmtwdGZe
+         OaUI0eIk1VJF8bzxEkApNnJ0YcGdNzhZut3CrbxwDAUu0nJTz0iRtxan5FaleaItrpky
+         HB1ZsWPbHd6/69K/6nXAjUupWa94CmR60Whqk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=LZgbozaMv2++Eabt+iViPasyBMAegYsg5oYTvMeHf7E=;
-        b=RISRLvB0YxRBNCKsHALG7LKDUuMN0p0pxwz+O9jrA1u80nSdrwRTOJleh+FyK7KntR
-         zCtWYdpPQwSq6w87OPHIelxyvcgoqSXrImRNUjZMeKVr3xvBP9gMAiyPy+oI2cAGP6Gc
-         nVX+/9ATCPfVTJjsbbX0xci5LYDvpP6nzlVz2Cg/71htIKF/IyKEGsLfCRqkpg7BwVQ5
-         CUGg03HP9JgL6/KdOc4J8o6AaRiaBUL1z60PddAeI2HCRYHGySd1ar/8Muljuem+QFb5
-         0khNA91jYmiJ1UunkDbIFjDXzQQB9oEvnpTG97Mh1Yw49nbEjdDYu5JnvtXGD5/RXeH0
-         Kv3w==
-X-Gm-Message-State: APjAAAUBmhK1I2apySbBB60lanmU7/Xn6SR8NWMNz47EmgBAdI91NZSH
-        Gg4dasKSMxKElT1ArnIgIDFCe+i1YJsYuWKm
-X-Google-Smtp-Source: APXvYqwlu7Ul/+3EqoijwO89c+WDCiAnYLTJIkWSIHVcFHz5+Auv/4L5M6KXbDaJdlS2PHvKtwCyeDHSuT1v47PK
-X-Received: by 2002:a63:c606:: with SMTP id w6mr156681pgg.133.1574796809308;
- Tue, 26 Nov 2019 11:33:29 -0800 (PST)
-Date:   Tue, 26 Nov 2019 11:33:13 -0800
-Message-Id: <20191126193313.44181-1-heidifahim@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH] kunit: test: Improve error messages for kunit_tool when
- kunitconfig is invalid
-From:   Heidi Fahim <heidifahim@google.com>
-To:     brendanhiggins@google.com, shuah@kernel.org
-Cc:     linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, Heidi Fahim <heidifahim@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eNdeYyzKLpu63DGl2XEkPQDnzQUC1plincAavY5X3kM=;
+        b=NUBhb7HkVh13go12GA86IVju4v8J6PqB90y7n/+pB5Kw7wa8hjnfpva7M1VrvLT/gQ
+         g0MBeUoiCqhcKfh4sfrh1Ik/+/gjulCyCcGmtfFdRyQ67Yy4h5FJPrulo7WcktwVGyAP
+         A2mrVD8JyYkmydr0mnRgP5kuY5qJWubmGQtPJHDOo88Cqq1E2J5En5sVOgiwukH3tvVl
+         oKzakrXbjIaQD3oO6UMVnYnpfnZT2AvZnGW6e1VKrzDKIqjqSo/H2oxP8KdxkJ9kbeyH
+         cULUMNhdmJoLFB+L3seIyeWtImTaUymoqiEgjVd1s5pDEnDOcQPFSExPA2z/FF2bJDk+
+         lA9Q==
+X-Gm-Message-State: APjAAAV/C25RsCEp6yscfD64ym24fiTKta3vGI8va8rYUY/xg02OHd1K
+        w0217GpspEss+BfZeuTxkys/bnQ3yeM=
+X-Google-Smtp-Source: APXvYqy1fEmjxyXALZovaClwmL/UPj3Py21qfShyeVx12L9v/npb2s8fXE5/4dG8jCPndkUbROYpxg==
+X-Received: by 2002:ac2:5de4:: with SMTP id z4mr24209627lfq.17.1574796834928;
+        Tue, 26 Nov 2019 11:33:54 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id f3sm5867916lfl.58.2019.11.26.11.33.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2019 11:33:54 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id e10so12441277ljj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 11:33:53 -0800 (PST)
+X-Received: by 2002:a2e:2c19:: with SMTP id s25mr27984371ljs.26.1574796833583;
+ Tue, 26 Nov 2019 11:33:53 -0800 (PST)
+MIME-Version: 1.0
+References: <20191125161626.GA956@gmail.com>
+In-Reply-To: <20191125161626.GA956@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 26 Nov 2019 11:33:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whswxd9b0A9Sr5YhjcGbA0WKrB8Rrtx89PLKeP6RdKT3A@mail.gmail.com>
+Message-ID: <CAHk-=whswxd9b0A9Sr5YhjcGbA0WKrB8Rrtx89PLKeP6RdKT3A@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/iopl changes for v5.5
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previous error message for invalid kunitconfig was vague. Added to it so
-that it lists invalid fields and prompts for them to be removed.  Added
-validate_config function returning whether or not this kconfig is valid.
+On Mon, Nov 25, 2019 at 8:16 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+> This tree implements a nice simplification of the iopl and ioperm code
+> that Thomas Gleixner discovered: we can implement the IO privilege
+> features of the iopl system call by using the IO permission bitmap in
+> permissive mode, while trapping CLI/STI/POPF/PUSHF uses in user-space if
+> they change the interrupt flag.
 
-Signed-off-by: Heidi Fahim <heidifahim@google.com>
----
- tools/testing/kunit/kunit_kernel.py | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+I've pulled it.
 
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index bf3876835331..010d3f5030d2 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -93,6 +93,19 @@ class LinuxSourceTree(object):
- 			return False
- 		return True
- 
-+	def validate_config(self, build_dir):
-+		kconfig_path = get_kconfig_path(build_dir)
-+		validated_kconfig = kunit_config.Kconfig()
-+		validated_kconfig.read_from_file(kconfig_path)
-+		if not self._kconfig.is_subset_of(validated_kconfig):
-+			invalid = self._kconfig.entries() - validated_kconfig.entries()
-+			message = 'Provided Kconfig is not contained in validated .config. Invalid fields found in kunitconfig: %s' % (
-+				', '.join([str(e) for e in invalid])
-+			)
-+			logging.error(message)
-+			return False
-+		return True
-+
- 	def build_config(self, build_dir):
- 		kconfig_path = get_kconfig_path(build_dir)
- 		if build_dir and not os.path.exists(build_dir):
-@@ -103,12 +116,7 @@ class LinuxSourceTree(object):
- 		except ConfigError as e:
- 			logging.error(e)
- 			return False
--		validated_kconfig = kunit_config.Kconfig()
--		validated_kconfig.read_from_file(kconfig_path)
--		if not self._kconfig.is_subset_of(validated_kconfig):
--			logging.error('Provided Kconfig is not contained in validated .config!')
--			return False
--		return True
-+		return self.validate_config(build_dir)
- 
- 	def build_reconfig(self, build_dir):
- 		"""Creates a new .config if it is not a subset of the kunitconfig."""
-@@ -133,12 +141,7 @@ class LinuxSourceTree(object):
- 		except (ConfigError, BuildError) as e:
- 			logging.error(e)
- 			return False
--		used_kconfig = kunit_config.Kconfig()
--		used_kconfig.read_from_file(get_kconfig_path(build_dir))
--		if not self._kconfig.is_subset_of(used_kconfig):
--			logging.error('Provided Kconfig is not contained in final config!')
--			return False
--		return True
-+		return self.validate_config(build_dir)
- 
- 	def run_kernel(self, args=[], timeout=None, build_dir=None):
- 		args.extend(['mem=256M'])
--- 
-2.24.0.432.g9d3f5f5b63-goog
+But do we have a test for something like this:
 
+   ioperm(.. limited set of ports..)
+   access that limited set.
+
+   special_sequence() {
+       iopl(3);
+       access some extended set
+       iopl(0)
+   }
+
+   go back to access the limited set again
+
+because there's subtle interactions with people using *both* iopl()
+and ioperm() and switching between the two. Historically you could
+trivially do the above, because they are entirely independent
+operations. Does it still work?
+
+Too busy/lazy to check myself.
+
+              Linus
