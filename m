@@ -2,85 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B6310A306
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 18:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7B310A2EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 18:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfKZRIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 12:08:42 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:10222 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727309AbfKZRIl (ORCPT
+        id S1728581AbfKZREh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 12:04:37 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36145 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfKZREh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 12:08:41 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAQH480h007261;
-        Tue, 26 Nov 2019 11:04:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=Iv/PtGLcU5/lFZn00YMSkCI5yPeSpQhva72OPbmoEfw=;
- b=ev5z29XShzgOtVef/thntsmFpHUnpN/knHoMYxlYe5fTD++rn7pldDKwj/Q4IeDJyax2
- ap2Ycv9TwQ4pgZHw8cZwyHXB/VClBZrFgaz21hrUQ40yTyUJ0l/m1TzcrdrGOcWlzlQt
- /rkIVNaC0RjAfLt+Q0by63zLGoYuXoC+vT6K3UwvpsZxsKIwTchd0TxEiX/4fPHiEC2s
- QPfAqBVMV1cEEGpTqiNPeiXlWs67nsknWykeZGNwcvNdlwEN1ZQn7xTUNuOJRaqeFQE4
- iTST6WiKnfz5g5m9pBOBKl5Ajt8kZrcVWYo51/YGr/YfnYqdCbxa0m3hGyO1VmXgvIGt Kg== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([5.172.152.52])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2wf328mjy6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 26 Nov 2019 11:04:20 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 26 Nov
- 2019 17:05:13 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 26 Nov 2019 17:05:13 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 88F6A2C6;
-        Tue, 26 Nov 2019 17:04:18 +0000 (UTC)
-Date:   Tue, 26 Nov 2019 17:04:18 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Michael Walle <michael@walle.cc>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: wm8904: fix automatic sysclk configuration
-Message-ID: <20191126170418.GL10439@ediswmail.ad.cirrus.com>
-References: <20191122232532.22258-1-michael@walle.cc>
+        Tue, 26 Nov 2019 12:04:37 -0500
+Received: by mail-ot1-f65.google.com with SMTP id p19so72362otc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 09:04:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0aRqjubVebGkfF0Se7BSThAXYeQQXVaR/wxZsEbt0q8=;
+        b=UpyrP3YA6tguIzdLA7TVi9RB4XydlLBFFWdnNBuzbspnU1ZjNvXrgfsuXbY99Roizt
+         lg7ffuqfaTVeRlmXWIPImxwH59yWclys3ymaIZUo+TPLThcHHCPmmPsGRVonwKq+akkr
+         2QSNGsHYfVT0M3IT4B7mpvGAhowY2QbFgQye8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0aRqjubVebGkfF0Se7BSThAXYeQQXVaR/wxZsEbt0q8=;
+        b=hLuWFiOr4ovTyb22/RgJQ+A3Dfk5qt28Z4Ela3mjgV6Lbjh81hBEOE2VhRfSXNTfzI
+         dY2W+7oJ9fp5969omRWLEnRk0M7j83dn/mQ3oLjjj7aLhtvMAZ0uisAgKLqcLughlxdm
+         OpRBW8hQt4upnetGfB43VE+1nu630C4AEn8n9LTmLjpEGAbh1kGZ0wFRdACUCKPr4zUx
+         Tn+B/eosSu0vW7fIei51i9EjoyrbmLXOjpyMa7sZc2Y7rTcg00yJcKfwkHOV8HpfpGFo
+         VuBhZqy9+9v0uOsWAQ7DfYmNMcNyqyCRPxMsN3GoJiNhlhsoFEOq8WtYVXMWE4MnWw+W
+         dUWw==
+X-Gm-Message-State: APjAAAVUbQsLWmu6d0/sKRavFw3lIkB56bjDIpopZsLKQNOhp48lq30e
+        MKOISm13MQroH9j2/0mrg3NRTmh790UlV2sVd6OomDGn
+X-Google-Smtp-Source: APXvYqxtz3LsMLPp3CWwV+HNab1glWV5rUdJ9ZIXotQRmAG1CFu2i2k6ws4D3fy3+3bB4CkNSsTgBuipWG5XuBEIOj8=
+X-Received: by 2002:a9d:1b4b:: with SMTP id l69mr3042854otl.303.1574787875817;
+ Tue, 26 Nov 2019 09:04:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191122232532.22258-1-michael@walle.cc>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1911260142
+References: <20191126131541.47393-1-mihail.atanassov@arm.com>
+ <20191126131541.47393-2-mihail.atanassov@arm.com> <20191126142610.GV29965@phenom.ffwll.local>
+ <11447519.fzG14qnjOE@e123338-lin>
+In-Reply-To: <11447519.fzG14qnjOE@e123338-lin>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 26 Nov 2019 18:04:24 +0100
+Message-ID: <CAKMK7uG2T9hPCsQ6yLekGoz5qA2-ePa2_MmsmQRBH5je+7Kaow@mail.gmail.com>
+Subject: Re: [PATCH 01/30] drm: Introduce drm_bridge_init()
+To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        nd <nd@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 12:25:32AM +0100, Michael Walle wrote:
-> The simple-card tries to signal the codec to disable rate constraints,
-> see commit 2458adb8f92a ("SoC: simple-card-utils: set 0Hz to sysclk when
-> shutdown"). This wasn't handled by the codec, instead it would set the
-> FLL frequency to 0Hz which isn't working. Since we don't have any rate
-> constraints just ignore this request.
-> 
-> Fixes: 13409d27cb39 ("ASoC: wm8904: configure sysclk/FLL automatically")
-> Signed-off-by: Michael Walle <michael@walle.cc>
-> ---
+On Tue, Nov 26, 2019 at 4:55 PM Mihail Atanassov
+<Mihail.Atanassov@arm.com> wrote:
+>
+> Hi Daniel,
+>
+> Thanks for the quick review.
+>
+> On Tuesday, 26 November 2019 14:26:10 GMT Daniel Vetter wrote:
+> > On Tue, Nov 26, 2019 at 01:15:59PM +0000, Mihail Atanassov wrote:
+> > > A simple convenience function to initialize the struct drm_bridge.
+> > >
+> > > Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+> >
+> > The commit message here leaves figuring out why we need this to the
+> > reader. Reading ahead the reasons seems to be to roll out bridge->dev
+> > setting for everyone, so that we can set the device_link. Please explain
+> > that in the commit message so the patch is properly motivated.
+>
+> Ack, but with one caveat: bridge->dev is the struct drm_device that is
+> the bridge client, we need to add a bridge->device (patch 29 in this
+> series) which is the struct device that will manage the bridge lifetime.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Ah yes, ->dev is for drm_bridge_attach.
 
-Thanks,
-Charles
+> >
+> > > ---
+> > >  drivers/gpu/drm/drm_bridge.c | 29 +++++++++++++++++++++++++++++
+> > >  include/drm/drm_bridge.h     |  4 ++++
+> > >  2 files changed, 33 insertions(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> > > index cba537c99e43..cbe680aa6eac 100644
+> > > --- a/drivers/gpu/drm/drm_bridge.c
+> > > +++ b/drivers/gpu/drm/drm_bridge.c
+> > > @@ -89,6 +89,35 @@ void drm_bridge_remove(struct drm_bridge *bridge)
+> > >  }
+> > >  EXPORT_SYMBOL(drm_bridge_remove);
+> > >
+> > > +/**
+> > > + * drm_bridge_init - initialise a drm_bridge structure
+> > > + *
+> > > + * @bridge: bridge control structure
+> > > + * @funcs: control functions
+> > > + * @dev: device
+> > > + * @timings: timing specification for the bridge; optional (may be NULL)
+> > > + * @driver_private: pointer to the bridge driver internal context (may be NULL)
+> >
+> > Please also sprinkle some links to this new function to relevant places,
+> > I'd add at least:
+> >
+> > "Drivers should call drm_bridge_init() first." to the kerneldoc for
+> > drm_bridge_add. drm_bridge_add should also mention drm_bridge_remove as
+> > the undo function.
+> >
+> > And perhaps a longer paragraph to &struct drm_bridge:
+> >
+> > "Bridge drivers should call drm_bridge_init() to initialized a bridge
+> > driver, and then register it with drm_bridge_add().
+> >
+> > "Users of bridges link a bridge driver into their overall display output
+> > pipeline by calling drm_bridge_attach()."
+>
+> Will do.
+>
+> >
+> > > + */
+> > > +void drm_bridge_init(struct drm_bridge *bridge, struct device *dev,
+> > > +                const struct drm_bridge_funcs *funcs,
+> > > +                const struct drm_bridge_timings *timings,
+> > > +                void *driver_private)
+> > > +{
+> > > +   WARN_ON(!funcs);
+> > > +
+> > > +   bridge->dev = NULL;
+> >
+> > Given that the goal here is to get bridge->dev set up, why not
+> >
+> >       WARN_ON(!dev);
+> >       bridge->dev = dev;
+>
+> See above struct device vs struct drm_device. I add a
+>
+>         bridge->device = dev;
+>
+> in patch 29, which takes care of that. I skipped the warn since
+> there's a dereference of dev, but I now realized it's behind CONFIG_OF,
+> so I'll add it in for v2.
+
+Ok, sounds good. Having the WARN_ON in patch 1 should also help making
+sure all the conversion patches dtrt (and any future users).
+-Daniel
+
+> Yes, 'device' isn't the best of names, but I took Russell's patch
+> almost as-is, I didn't have any better ideas for bikeshedding.
+>
+> >
+> > That should help us to really move forward with all this.
+> > -Daniel
+> >
+> > > +   bridge->encoder = NULL;
+> > > +   bridge->next = NULL;
+> > > +
+> > > +#ifdef CONFIG_OF
+> > > +   bridge->of_node = dev->of_node;
+> > > +#endif
+> > > +   bridge->timings = timings;
+> > > +   bridge->funcs = funcs;
+> > > +   bridge->driver_private = driver_private;
+> > > +}
+> > > +EXPORT_SYMBOL(drm_bridge_init);
+> > > +
+> > >  /**
+> > >   * drm_bridge_attach - attach the bridge to an encoder's chain
+> > >   *
+> > > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> > > index c0a2286a81e9..d6d9d5301551 100644
+> > > --- a/include/drm/drm_bridge.h
+> > > +++ b/include/drm/drm_bridge.h
+> > > @@ -402,6 +402,10 @@ struct drm_bridge {
+> > >
+> > >  void drm_bridge_add(struct drm_bridge *bridge);
+> > >  void drm_bridge_remove(struct drm_bridge *bridge);
+> > > +void drm_bridge_init(struct drm_bridge *bridge, struct device *dev,
+> > > +                const struct drm_bridge_funcs *funcs,
+> > > +                const struct drm_bridge_timings *timings,
+> > > +                void *driver_private);
+> > >  struct drm_bridge *of_drm_find_bridge(struct device_node *np);
+> > >  int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+> > >                   struct drm_bridge *previous);
+> >
+> >
+>
+>
+> --
+> Mihail
+>
+>
+>
+
+
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
