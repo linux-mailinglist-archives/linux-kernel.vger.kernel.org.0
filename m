@@ -2,139 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98543109B46
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA911109B4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2019 10:34:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfKZJdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 04:33:25 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44812 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727275AbfKZJdY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 04:33:24 -0500
-Received: by mail-wr1-f66.google.com with SMTP id i12so21510128wrn.11
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 01:33:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IGM4wS4irBq0S6zld4vb8xvQ2ohTky9b+k5RXHxB6oI=;
-        b=e/9+QozrhU4d5FTiT1kIYZ0ZMiu+CzJqRtX0HFIJVvb63ESALvRLnrfZV825NHCUkg
-         VuUmpFQfgBhDaqbPPS+4GR8+FHS3j8FNlcKGXqQYu+l7RotFd1ndqhTivkL/JZKQtu3l
-         PXA+WmOQ9XNW/I1XS60E0cTZRgO+nTnLW8wahJbFUFDD5toLLhjRYyvnW/CxBsXTQJJV
-         tXINZIxGZN5p94FOUbeMHfyRAMvBmIUu9sOVeYcOvFatM2wXU+i2r0jWu/csAhx0UzqW
-         TlHx4jgVWmTM6HVMoAc5zYHOjAspXcY7x2xVALGVGSs7qBkoHDepvQ516nGVmDZPToQE
-         j6rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IGM4wS4irBq0S6zld4vb8xvQ2ohTky9b+k5RXHxB6oI=;
-        b=fLuCfs9uqRuacrG4iuyR/xtaBbBiiBTul5F6m86QwFavwDh9QPNqp+WE0HjrVt1Osc
-         qhrB79cjhHJcfGVFvyTA+k1XzzgwS1OJ0/vPFXIDW/znIxDYLL5ujwxxf6R/gx/XmHO/
-         BgTD3xgSzdi4PPmeUbf/fV1NGroKe98hT/nX5Nwcfx5vDFImFDkNfitoeGWZuPpXoF/+
-         YTavzJ2gADfsZWNFdjq/O1q7hnrA64f6MzN96cB6V1o2PaWpSJKsKk2qxHBYbTNfamTC
-         3itzEJlRw80aNXfLRmQ6zoL+QHnFbC6Q690ufY+dSpwfV6iarWD+ZwZbzMLEzff0b2sK
-         nO7Q==
-X-Gm-Message-State: APjAAAVrbPdiKwdg2SaJOrIaf5bZOjY714KAT+IsmR2IYhVg8866lrGg
-        qIW8DINsRKMNPaTdg+VgAPI=
-X-Google-Smtp-Source: APXvYqyC5PAg9HLogS8SOLs8dVXkT5vWwTFF69Z5JxryU51ldr8mXcAViMR3Ewz0WDVwRMxd/HGEvA==
-X-Received: by 2002:a5d:6ac9:: with SMTP id u9mr35089430wrw.383.1574760802387;
-        Tue, 26 Nov 2019 01:33:22 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id u26sm2460841wmj.9.2019.11.26.01.33.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 01:33:21 -0800 (PST)
-Date:   Tue, 26 Nov 2019 10:33:19 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        id S1727598AbfKZJej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 04:34:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727400AbfKZJej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 04:34:39 -0500
+Received: from localhost (unknown [84.241.194.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9E8A206BF;
+        Tue, 26 Nov 2019 09:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574760878;
+        bh=Ohbjea8qptAUUQ/O12H8GrlNo7892ZclhwRkAsG3+9Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C4RTBtf+Em9QDnGqGAVZjFoEs/jSF0Olq/p4PV+O+slBrxWDegQNKkWlK99CcHQWi
+         N+2TPWflx7CTfiTvFkRr4kWtxwQQVs6ol1Wgz9qrnj8L3MbEYruFxzC/IqhVFqe4hF
+         2S6CdXOHyy808Cj4LIRPMNvyUrU/EC0TqwELMQhk=
+Date:   Tue, 26 Nov 2019 10:34:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] x86/asm changes for v5.5
-Message-ID: <20191126093319.GA129234@gmail.com>
-References: <20191125160821.GA42496@gmail.com>
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        emamd001@umn.edu
+Subject: Re: [PATCH] Input: Fix memory leak in psxpad_spi_probe
+Message-ID: <20191126093434.GA1383178@kroah.com>
+References: <20191121200115.24846-1-navid.emamdoost@gmail.com>
+ <20191122190208.GA248138@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191125160821.GA42496@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191122190208.GA248138@dtor-ws>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Ingo Molnar <mingo@kernel.org> wrote:
-
-> Linus,
+On Fri, Nov 22, 2019 at 11:02:08AM -0800, Dmitry Torokhov wrote:
+> Hi Navid,
 > 
-> Please pull the latest x86-asm-for-linus git tree from:
+> On Thu, Nov 21, 2019 at 02:01:11PM -0600, Navid Emamdoost wrote:
+> > In the implementation of psxpad_spi_probe() the allocated memory for
+> > pdev is leaked if psxpad_spi_init_ff() or input_register_polled_device()
+> > fail. The solution is using device managed allocation, like the one used
+> > for pad. Perform the allocation using
+> > devm_input_allocate_polled_device().
+> > 
+> > Fixes: 8be193c7b1f4 ("Input: add support for PlayStation 1/2 joypads connected via SPI")
+> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 > 
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
-> 
->    # HEAD: f01ec4fca8207e31b59a010c3de679c833f3a877 Merge branch 'x86/build' into x86/asm, to pick up completed topic branch
+> This is fixed in the current version of the driver, but you can send it
+> to stable@gerkernel.orf with my
 
-> Unfortunately the symbol rework will generate conflicts with pending 
-> changes to assembly files.
+Was it fixed by any specific patch, or just a side-affect of some other
+larger change?
 
-Here's a more detailed merge conflict note, the changes will create 
-direct merge conflicts in these files:
+thanks,
 
-  arch/x86/entry/entry_32.S
-  arch/x86/kernel/head_32.S
-  arch/x86/xen/xen-asm_32.S
-
-These are straightforward to resolve, but there's a semantic conflict as 
-well, due to this new commit you already merged via the crypto tree:
-
-  ed0356eda153: ("crypto: blake2s - x86_64 SIMD implementation")
-
-Which can be resolved via converting ENTRY/ENDPROC to 
-SYM_FUNC_START/SYM_FUNC_END() pattern via the patch below.
-
-Thanks,
-
-	Ingo
-
-====================>
-
- arch/x86/crypto/blake2s-core.S | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/crypto/blake2s-core.S b/arch/x86/crypto/blake2s-core.S
-index 8591938eee26..24910b766bdd 100644
---- a/arch/x86/crypto/blake2s-core.S
-+++ b/arch/x86/crypto/blake2s-core.S
-@@ -47,7 +47,7 @@ SIGMA2:
- 
- .text
- #ifdef CONFIG_AS_SSSE3
--ENTRY(blake2s_compress_ssse3)
-+SYM_FUNC_START(blake2s_compress_ssse3)
- 	testq		%rdx,%rdx
- 	je		.Lendofloop
- 	movdqu		(%rdi),%xmm0
-@@ -173,11 +173,11 @@ ENTRY(blake2s_compress_ssse3)
- 	movdqu		%xmm14,0x20(%rdi)
- .Lendofloop:
- 	ret
--ENDPROC(blake2s_compress_ssse3)
-+SYM_FUNC_END(blake2s_compress_ssse3)
- #endif /* CONFIG_AS_SSSE3 */
- 
- #ifdef CONFIG_AS_AVX512
--ENTRY(blake2s_compress_avx512)
-+SYM_FUNC_START(blake2s_compress_avx512)
- 	vmovdqu		(%rdi),%xmm0
- 	vmovdqu		0x10(%rdi),%xmm1
- 	vmovdqu		0x20(%rdi),%xmm4
-@@ -254,5 +254,5 @@ ENTRY(blake2s_compress_avx512)
- 	vmovdqu		%xmm4,0x20(%rdi)
- 	vzeroupper
- 	retq
--ENDPROC(blake2s_compress_avx512)
-+SYM_FUNC_END(blake2s_compress_avx512)
- #endif /* CONFIG_AS_AVX512 */
+greg k-h
