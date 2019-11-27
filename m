@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA4F610B9F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE0410B8C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731339AbfK0U6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:58:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49956 "EHLO mail.kernel.org"
+        id S1728305AbfK0Uqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:46:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727423AbfK0U6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:58:36 -0500
+        id S1729909AbfK0Uqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:46:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5C79215B2;
-        Wed, 27 Nov 2019 20:58:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1D212166E;
+        Wed, 27 Nov 2019 20:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888316;
-        bh=kAqtKWCDZXsE9YhDOOmXD4HFJ72pPiA6mcNcJzI0bfs=;
+        s=default; t=1574887599;
+        bh=aJtFH0CzECT2feA/hIGxX4skKXjsT+Xn0WFyS4eiy04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hOwlJ3wzz8UJ++fmE886uAOT5krvZlvTfkvYykiWjjE28M+ZwNnFfAPeMi8a6MAzw
-         QInT732MFL6PCEmyl63ZjTMR0IK5OSmbfCAhrnRHT92TEeOY2PavjImQ5W2zdVPNE5
-         ea2SIi9HaRsNxelE/7LrcXVjTwJEvSmeBVGWnv1k=
+        b=GyWzdLYI7wXZFKgPoSNvHg4x15/zmHxttcQkcoEo3rwVAB45bRG4g2OUzoyIIyHyU
+         xuFxKgQBdT1vsXcynHIGK6HrcQc9/GFrvVZ9c52LOnp5u31zCcaREIkV/6X3dTMjmd
+         4DW6RH6jRkZPjaQnZ3q0Rlow2E3W2yZUMXc+pLfU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyeongdon Kim <kyeongdon.kim@lge.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/306] net: fix warning in af_unix
-Date:   Wed, 27 Nov 2019 21:28:56 +0100
-Message-Id: <20191127203121.210938544@linuxfoundation.org>
+        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
+        Vlad Buslov <vladbu@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 004/211] net/mlx5e: Fix set vf link state error flow
+Date:   Wed, 27 Nov 2019 21:28:57 +0100
+Message-Id: <20191127203049.881825779@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kyeongdon Kim <kyeongdon.kim@lge.com>
+From: Roi Dayan <roid@mellanox.com>
 
-[ Upstream commit 33c4368ee2589c165aebd8d388cbd91e9adb9688 ]
+[ Upstream commit 751021218f7e66ee9bbaa2be23056e447cd75ec4 ]
 
-This fixes the "'hash' may be used uninitialized in this function"
+Before this commit the ndo always returned success.
+Fix that.
 
-net/unix/af_unix.c:1041:20: warning: 'hash' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  addr->hash = hash ^ sk->sk_type;
-
-Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 1ab2068a4c66 ("net/mlx5: Implement vports admin state backup/restore")
+Signed-off-by: Roi Dayan <roid@mellanox.com>
+Reviewed-by: Vlad Buslov <vladbu@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/unix/af_unix.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 231b6c032d2c3..d2d6ff0c6265d 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -225,6 +225,8 @@ static inline void unix_release_addr(struct unix_address *addr)
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1783,7 +1783,7 @@ int mlx5_eswitch_set_vport_state(struct
  
- static int unix_mkname(struct sockaddr_un *sunaddr, int len, unsigned int *hashp)
- {
-+	*hashp = 0;
-+
- 	if (len <= sizeof(short) || len > sizeof(*sunaddr))
- 		return -EINVAL;
- 	if (!sunaddr || sunaddr->sun_family != AF_UNIX)
--- 
-2.20.1
-
+ unlock:
+ 	mutex_unlock(&esw->state_lock);
+-	return 0;
++	return err;
+ }
+ 
+ int mlx5_eswitch_get_vport_config(struct mlx5_eswitch *esw,
 
 
