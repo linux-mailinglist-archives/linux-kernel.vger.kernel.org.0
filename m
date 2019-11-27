@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A648810BAF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE9910BB7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732367AbfK0VIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:08:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34688 "EHLO mail.kernel.org"
+        id S2387432AbfK0VNI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:13:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732720AbfK0VIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:08:16 -0500
+        id S2387419AbfK0VNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:13:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47C192176D;
-        Wed, 27 Nov 2019 21:08:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64C5E2154A;
+        Wed, 27 Nov 2019 21:13:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888894;
-        bh=r/6PnZsV0dHJK544Olh7r3lC8t0yb6V5BAUj0+ZXEI8=;
+        s=default; t=1574889184;
+        bh=uO8J9GrsInOqTtJumeYPqJ41rEgZjMm0EPfbFPPGY0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hz3f2FPZQReK3AYGLIG3Lru7hjtTNEbxjN2yQKkS1BmJQsqKDBes3zyapUNZXsUhw
-         uDDjvGfKga0HmSwb3GPE4/D5jdyQ2j1CAV4lAqV7avGDPQdcdsgUW52oVbzBaQBykU
-         1O3fRYcSMMiw23SG/6YFOP6Ha5Dgp8iy8ElkeBis=
+        b=ENAPP8cGYyxMpGML2MVCCcC92Xye/rBmz8zRPIOkSA1vQE7dv9fr13lPUe/l7duMu
+         XRAyPJk+vhtWa66Qk76zNPFFFo8B2+WYjzgMok0jvQ8jJZzSBTzSzopgxIxhCJ/BA8
+         Z2fWuw5q5E5umMwhD3LBkCkPmw1q9vSziX+hsao4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 285/306] media: usbvision: Fix races among open, close, and disconnect
-Date:   Wed, 27 Nov 2019 21:32:15 +0100
-Message-Id: <20191127203135.605793916@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org
+Subject: [PATCH 5.4 21/66] x86/entry/32: Move FIXUP_FRAME after pushing %fs in SAVE_ALL
+Date:   Wed, 27 Nov 2019 21:32:16 +0100
+Message-Id: <20191127202656.074211218@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,131 +43,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 9e08117c9d4efc1e1bc6fce83dab856d9fd284b6 upstream.
+commit 82cb8a0b1d8d07817b5d59f7fa1438e1fceafab2 upstream.
 
-Visual inspection of the usbvision driver shows that it suffers from
-three races between its open, close, and disconnect handlers.  In
-particular, the driver is careful to update its usbvision->user and
-usbvision->remove_pending flags while holding the private mutex, but:
+This will allow us to get percpu access working before FIXUP_FRAME,
+which will allow us to unwind ESPFIX earlier.
 
-	usbvision_v4l2_close() and usbvision_radio_close() don't hold
-	the mutex while they check the value of
-	usbvision->remove_pending;
-
-	usbvision_disconnect() doesn't hold the mutex while checking
-	the value of usbvision->user; and
-
-	also, usbvision_v4l2_open() and usbvision_radio_open() don't
-	check whether the device has been unplugged before allowing
-	the user to open the device files.
-
-Each of these can potentially lead to usbvision_release() being called
-twice and use-after-free errors.
-
-This patch fixes the races by reading the flags while the mutex is
-still held and checking for pending removes before allowing an open to
-succeed.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: <stable@vger.kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/usbvision/usbvision-video.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ arch/x86/entry/entry_32.S |   66 ++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 31 deletions(-)
 
---- a/drivers/media/usb/usbvision/usbvision-video.c
-+++ b/drivers/media/usb/usbvision/usbvision-video.c
-@@ -327,6 +327,10 @@ static int usbvision_v4l2_open(struct fi
- 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
- 		return -ERESTARTSYS;
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -213,54 +213,58 @@
+ 	 *
+ 	 * Be careful: we may have nonzero SS base due to ESPFIX.
+ 	 */
+-	andl	$0x0000ffff, 3*4(%esp)
++	andl	$0x0000ffff, 4*4(%esp)
  
-+	if (usbvision->remove_pending) {
-+		err_code = -ENODEV;
-+		goto unlock;
-+	}
- 	if (usbvision->user) {
- 		err_code = -EBUSY;
- 	} else {
-@@ -390,6 +394,7 @@ unlock:
- static int usbvision_v4l2_close(struct file *file)
- {
- 	struct usb_usbvision *usbvision = video_drvdata(file);
-+	int r;
+ #ifdef CONFIG_VM86
+-	testl	$X86_EFLAGS_VM, 4*4(%esp)
++	testl	$X86_EFLAGS_VM, 5*4(%esp)
+ 	jnz	.Lfrom_usermode_no_fixup_\@
+ #endif
+-	testl	$USER_SEGMENT_RPL_MASK, 3*4(%esp)
++	testl	$USER_SEGMENT_RPL_MASK, 4*4(%esp)
+ 	jnz	.Lfrom_usermode_no_fixup_\@
  
- 	PDEBUG(DBG_IO, "close");
+-	orl	$CS_FROM_KERNEL, 3*4(%esp)
++	orl	$CS_FROM_KERNEL, 4*4(%esp)
  
-@@ -404,9 +409,10 @@ static int usbvision_v4l2_close(struct f
- 	usbvision_scratch_free(usbvision);
+ 	/*
+ 	 * When we're here from kernel mode; the (exception) stack looks like:
+ 	 *
+-	 *  5*4(%esp) - <previous context>
+-	 *  4*4(%esp) - flags
+-	 *  3*4(%esp) - cs
+-	 *  2*4(%esp) - ip
+-	 *  1*4(%esp) - orig_eax
+-	 *  0*4(%esp) - gs / function
++	 *  6*4(%esp) - <previous context>
++	 *  5*4(%esp) - flags
++	 *  4*4(%esp) - cs
++	 *  3*4(%esp) - ip
++	 *  2*4(%esp) - orig_eax
++	 *  1*4(%esp) - gs / function
++	 *  0*4(%esp) - fs
+ 	 *
+ 	 * Lets build a 5 entry IRET frame after that, such that struct pt_regs
+ 	 * is complete and in particular regs->sp is correct. This gives us
+-	 * the original 5 enties as gap:
++	 * the original 6 enties as gap:
+ 	 *
+-	 * 12*4(%esp) - <previous context>
+-	 * 11*4(%esp) - gap / flags
+-	 * 10*4(%esp) - gap / cs
+-	 *  9*4(%esp) - gap / ip
+-	 *  8*4(%esp) - gap / orig_eax
+-	 *  7*4(%esp) - gap / gs / function
+-	 *  6*4(%esp) - ss
+-	 *  5*4(%esp) - sp
+-	 *  4*4(%esp) - flags
+-	 *  3*4(%esp) - cs
+-	 *  2*4(%esp) - ip
+-	 *  1*4(%esp) - orig_eax
+-	 *  0*4(%esp) - gs / function
++	 * 14*4(%esp) - <previous context>
++	 * 13*4(%esp) - gap / flags
++	 * 12*4(%esp) - gap / cs
++	 * 11*4(%esp) - gap / ip
++	 * 10*4(%esp) - gap / orig_eax
++	 *  9*4(%esp) - gap / gs / function
++	 *  8*4(%esp) - gap / fs
++	 *  7*4(%esp) - ss
++	 *  6*4(%esp) - sp
++	 *  5*4(%esp) - flags
++	 *  4*4(%esp) - cs
++	 *  3*4(%esp) - ip
++	 *  2*4(%esp) - orig_eax
++	 *  1*4(%esp) - gs / function
++	 *  0*4(%esp) - fs
+ 	 */
  
- 	usbvision->user--;
-+	r = usbvision->remove_pending;
- 	mutex_unlock(&usbvision->v4l2_lock);
+ 	pushl	%ss		# ss
+ 	pushl	%esp		# sp (points at ss)
+-	addl	$6*4, (%esp)	# point sp back at the previous context
+-	pushl	6*4(%esp)	# flags
+-	pushl	6*4(%esp)	# cs
+-	pushl	6*4(%esp)	# ip
+-	pushl	6*4(%esp)	# orig_eax
+-	pushl	6*4(%esp)	# gs / function
++	addl	$7*4, (%esp)	# point sp back at the previous context
++	pushl	7*4(%esp)	# flags
++	pushl	7*4(%esp)	# cs
++	pushl	7*4(%esp)	# ip
++	pushl	7*4(%esp)	# orig_eax
++	pushl	7*4(%esp)	# gs / function
++	pushl	7*4(%esp)	# fs
+ .Lfrom_usermode_no_fixup_\@:
+ .endm
  
--	if (usbvision->remove_pending) {
-+	if (r) {
- 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
- 		usbvision_release(usbvision);
- 		return 0;
-@@ -1090,6 +1096,11 @@ static int usbvision_radio_open(struct f
- 
- 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
- 		return -ERESTARTSYS;
-+
-+	if (usbvision->remove_pending) {
-+		err_code = -ENODEV;
-+		goto out;
-+	}
- 	err_code = v4l2_fh_open(file);
- 	if (err_code)
- 		goto out;
-@@ -1122,6 +1133,7 @@ out:
- static int usbvision_radio_close(struct file *file)
- {
- 	struct usb_usbvision *usbvision = video_drvdata(file);
-+	int r;
- 
- 	PDEBUG(DBG_IO, "");
- 
-@@ -1134,9 +1146,10 @@ static int usbvision_radio_close(struct
- 	usbvision_audio_off(usbvision);
- 	usbvision->radio = 0;
- 	usbvision->user--;
-+	r = usbvision->remove_pending;
- 	mutex_unlock(&usbvision->v4l2_lock);
- 
--	if (usbvision->remove_pending) {
-+	if (r) {
- 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
- 		v4l2_fh_release(file);
- 		usbvision_release(usbvision);
-@@ -1562,6 +1575,7 @@ err_usb:
- static void usbvision_disconnect(struct usb_interface *intf)
- {
- 	struct usb_usbvision *usbvision = to_usbvision(usb_get_intfdata(intf));
-+	int u;
- 
- 	PDEBUG(DBG_PROBE, "");
- 
-@@ -1578,13 +1592,14 @@ static void usbvision_disconnect(struct
- 	v4l2_device_disconnect(&usbvision->v4l2_dev);
- 	usbvision_i2c_unregister(usbvision);
- 	usbvision->remove_pending = 1;	/* Now all ISO data will be ignored */
-+	u = usbvision->user;
- 
- 	usb_put_dev(usbvision->dev);
- 	usbvision->dev = NULL;	/* USB device is no more */
- 
- 	mutex_unlock(&usbvision->v4l2_lock);
- 
--	if (usbvision->user) {
-+	if (u) {
- 		printk(KERN_INFO "%s: In use, disconnect pending\n",
- 		       __func__);
- 		wake_up_interruptible(&usbvision->wait_frame);
+@@ -308,8 +312,8 @@
+ .if \skip_gs == 0
+ 	PUSH_GS
+ .endif
+-	FIXUP_FRAME
+ 	pushl	%fs
++	FIXUP_FRAME
+ 	pushl	%es
+ 	pushl	%ds
+ 	pushl	\pt_regs_ax
 
 
