@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6342D10B899
+	by mail.lfdr.de (Postfix) with ESMTP id D3A4B10B89A
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbfK0Uoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:44:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54836 "EHLO mail.kernel.org"
+        id S1729681AbfK0UpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:45:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729662AbfK0Uow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:52 -0500
+        id S1729668AbfK0Uoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B0FD2166E;
-        Wed, 27 Nov 2019 20:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBB3421780;
+        Wed, 27 Nov 2019 20:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887492;
-        bh=2B1TO9U0JJWHutMSGqxzc5uvWPcGaGlSdTFQaLGEKu8=;
+        s=default; t=1574887494;
+        bh=2RQazaZHdMRFzzw+CHytliBKPTuap16KOhaHKyHHtMg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZwzMusWoFka51C2ROcepNNhiF98Gre1MZ3DciL1GeAJXJ0GKJEYjJuA1zH1ZybHk5
-         pfjhVdbFLUdMZOgczN3Re5gMAKR/cHT9IEJMmwGkux39WdIFAYE0ZK98/tVzbPobVc
-         a2Q+SdAQe10JfnO22f3HQBZ+PHSbhfzoiD2DPt08=
+        b=hr2i4D/aAHvmS0OtjzDeDibmDkXa524s5nbh9v0i/U72y2ag7+9OJ5eNRGzR4/2YB
+         umvWbfZ5cfXI3/JAewLvB81BQbuuODyFQpZ/PEAZPJCx79b5pHDFlYdsBu6pOXya+6
+         APKi9iHPtRHXHvYcpFE2rB0KFDdCs/voOiEBpjes=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 132/151] virtio_console: reset on out of memory
-Date:   Wed, 27 Nov 2019 21:31:55 +0100
-Message-Id: <20191127203046.392102374@linuxfoundation.org>
+Subject: [PATCH 4.9 133/151] virtio_console: dont tie bufs to a vq
+Date:   Wed, 27 Nov 2019 21:31:56 +0100
+Message-Id: <20191127203046.581934430@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -45,64 +45,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael S. Tsirkin <mst@redhat.com>
 
-[ Upstream commit 5c60300d68da32ca77f7f978039dc72bfc78b06b ]
+[ Upstream commit 2855b33514d290c51d52d94e25d3ef942cd4d578 ]
 
-When out of memory and we can't add ctrl vq buffers,
-probe fails. Unfortunately the error handling is
-out of spec: it calls del_vqs without bothering
-to reset the device first.
-
-To fix, call the full cleanup function in this case.
+an allocated buffer doesn't need to be tied to a vq -
+only vq->vdev is ever used. Pass the function the
+just what it needs - the vdev.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/virtio_console.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/char/virtio_console.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 800ced0a5a247..43724bd8a0c0a 100644
+index 43724bd8a0c0a..b09fc4553dc81 100644
 --- a/drivers/char/virtio_console.c
 +++ b/drivers/char/virtio_console.c
-@@ -2073,6 +2073,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+@@ -422,7 +422,7 @@ static void reclaim_dma_bufs(void)
+ 	}
+ }
  
- 	spin_lock_init(&portdev->ports_lock);
- 	INIT_LIST_HEAD(&portdev->ports);
-+	INIT_LIST_HEAD(&portdev->list);
+-static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
++static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size,
+ 				     int pages)
+ {
+ 	struct port_buffer *buf;
+@@ -445,7 +445,7 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
+ 		return buf;
+ 	}
  
- 	virtio_device_ready(portdev->vdev);
- 
-@@ -2090,8 +2091,15 @@ static int virtcons_probe(struct virtio_device *vdev)
- 		if (!nr_added_bufs) {
- 			dev_err(&vdev->dev,
- 				"Error allocating buffers for control queue\n");
--			err = -ENOMEM;
--			goto free_vqs;
-+			/*
-+			 * The host might want to notify mgmt sw about device
-+			 * add failure.
-+			 */
-+			__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
-+					   VIRTIO_CONSOLE_DEVICE_READY, 0);
-+			/* Device was functional: we need full cleanup. */
-+			virtcons_remove(vdev);
-+			return -ENOMEM;
- 		}
- 	} else {
+-	if (is_rproc_serial(vq->vdev)) {
++	if (is_rproc_serial(vdev)) {
  		/*
-@@ -2122,11 +2130,6 @@ static int virtcons_probe(struct virtio_device *vdev)
+ 		 * Allocate DMA memory from ancestor. When a virtio
+ 		 * device is created by remoteproc, the DMA memory is
+@@ -455,9 +455,9 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
+ 		 * DMA_MEMORY_INCLUDES_CHILDREN had been supported
+ 		 * in dma-coherent.c
+ 		 */
+-		if (!vq->vdev->dev.parent || !vq->vdev->dev.parent->parent)
++		if (!vdev->dev.parent || !vdev->dev.parent->parent)
+ 			goto free_buf;
+-		buf->dev = vq->vdev->dev.parent->parent;
++		buf->dev = vdev->dev.parent->parent;
  
- 	return 0;
+ 		/* Increase device refcnt to avoid freeing it */
+ 		get_device(buf->dev);
+@@ -841,7 +841,7 @@ static ssize_t port_fops_write(struct file *filp, const char __user *ubuf,
  
--free_vqs:
--	/* The host might want to notify mgmt sw about device add failure */
--	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
--			   VIRTIO_CONSOLE_DEVICE_READY, 0);
--	remove_vqs(portdev);
- free_chrdev:
- 	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
- free:
+ 	count = min((size_t)(32 * 1024), count);
+ 
+-	buf = alloc_buf(port->out_vq, count, 0);
++	buf = alloc_buf(port->portdev->vdev, count, 0);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+@@ -960,7 +960,7 @@ static ssize_t port_fops_splice_write(struct pipe_inode_info *pipe,
+ 	if (ret < 0)
+ 		goto error_out;
+ 
+-	buf = alloc_buf(port->out_vq, 0, pipe->nrbufs);
++	buf = alloc_buf(port->portdev->vdev, 0, pipe->nrbufs);
+ 	if (!buf) {
+ 		ret = -ENOMEM;
+ 		goto error_out;
+@@ -1377,7 +1377,7 @@ static unsigned int fill_queue(struct virtqueue *vq, spinlock_t *lock)
+ 
+ 	nr_added_bufs = 0;
+ 	do {
+-		buf = alloc_buf(vq, PAGE_SIZE, 0);
++		buf = alloc_buf(vq->vdev, PAGE_SIZE, 0);
+ 		if (!buf)
+ 			break;
+ 
 -- 
 2.20.1
 
