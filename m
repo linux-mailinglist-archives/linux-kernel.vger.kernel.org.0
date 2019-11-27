@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F0F210B9BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9AF10B9D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfK0U4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:56:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47150 "EHLO mail.kernel.org"
+        id S1731124AbfK0U44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:56:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730622AbfK0U4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:56:21 -0500
+        id S1731090AbfK0U4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:56:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D297C2084D;
-        Wed, 27 Nov 2019 20:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08F8820862;
+        Wed, 27 Nov 2019 20:56:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888180;
-        bh=kKlqWjgPTrgbDPomLTOmv0jHODoLL4eChQ1eMqesnz8=;
+        s=default; t=1574888209;
+        bh=cI00S5SAfJJxJwKC2KRPKowU5ynXC6YjOEbMSMAB+Yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IO4W23BGdeY+UBi41IJK7yptApcQykFqMCm9ouLqhl0QRCucMwjJ5oGzIQavNRCdv
-         90+HSmpqUkLpCveb8RcAjXP2HnPKjxLUsJD4oBOG8rfrdDy2EGIXUPecZPbyCc/S0h
-         i+WVOftVYCk+z1mMxh4mbExd0NhbQ/V/WT0s4XKc=
+        b=cyrnPneJy00HJ71Iu6b13a8CbzaKVDH+M3/gSRdboYGdLT42rUIKmJFfpEUMKHw4D
+         hgKBlBM9DlzeYZIoHZjJ5KtyPVkrgudHZ5do2LrasewymVdx65v3v8fQx5zV6Q6sjw
+         v/ZEnppeQwc6HpMjD0h5PRWXOaaP3QEbiBY5QdJA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
-        Vlad Buslov <vladbu@mellanox.com>,
+        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 008/306] net/mlx5e: Fix set vf link state error flow
-Date:   Wed, 27 Nov 2019 21:27:38 +0100
-Message-Id: <20191127203115.345737672@linuxfoundation.org>
+Subject: [PATCH 4.19 009/306] net/mlxfw: Verify FSM error code translation doesnt exceed array size
+Date:   Wed, 27 Nov 2019 21:27:39 +0100
+Message-Id: <20191127203115.412098570@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,32 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roi Dayan <roid@mellanox.com>
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-[ Upstream commit 751021218f7e66ee9bbaa2be23056e447cd75ec4 ]
+[ Upstream commit 30e9e0550bf693c94bc15827781fe42dd60be634 ]
 
-Before this commit the ndo always returned success.
-Fix that.
+Array mlxfw_fsm_state_err_str contains value to string translation, when
+values are provided by mlxfw_dev. If value is larger than
+MLXFW_FSM_STATE_ERR_MAX, return "unknown error" as expected instead of
+reading an address than exceed array size.
 
-Fixes: 1ab2068a4c66 ("net/mlx5: Implement vports admin state backup/restore")
-Signed-off-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Vlad Buslov <vladbu@mellanox.com>
+Fixes: 410ed13cae39 ("Add the mlxfw module for Mellanox firmware flash process")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxfw/mlxfw_fsm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1861,7 +1861,7 @@ int mlx5_eswitch_set_vport_state(struct
+--- a/drivers/net/ethernet/mellanox/mlxfw/mlxfw_fsm.c
++++ b/drivers/net/ethernet/mellanox/mlxfw/mlxfw_fsm.c
+@@ -86,6 +86,8 @@ retry:
+ 		return err;
  
- unlock:
- 	mutex_unlock(&esw->state_lock);
--	return 0;
-+	return err;
- }
- 
- int mlx5_eswitch_get_vport_config(struct mlx5_eswitch *esw,
+ 	if (fsm_state_err != MLXFW_FSM_STATE_ERR_OK) {
++		fsm_state_err = min_t(enum mlxfw_fsm_state_err,
++				      fsm_state_err, MLXFW_FSM_STATE_ERR_MAX);
+ 		pr_err("Firmware flash failed: %s\n",
+ 		       mlxfw_fsm_state_err_str[fsm_state_err]);
+ 		return -EINVAL;
 
 
