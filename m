@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2980110BA0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A2A310B8C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731043AbfK0U72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:59:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50834 "EHLO mail.kernel.org"
+        id S1729861AbfK0UqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:46:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731404AbfK0U7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:59:22 -0500
+        id S1728211AbfK0UqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:46:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6494620678;
-        Wed, 27 Nov 2019 20:59:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66014217AB;
+        Wed, 27 Nov 2019 20:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888360;
-        bh=xOiN5LjMgBp//ENnSVzIBfa6sOV/4n1mY+so8re9zjI=;
+        s=default; t=1574887580;
+        bh=gb11hL3cHx2OLB5oT98ih2DOYxYDCXBIe9RCDvGAhnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ac2CNvSkbgTgYPiTX/AFuW6p8UYkwfnpWO8cIWntcBgIlclg/YPGBev0RnWrmOoZ
-         1fpiOxAJGo/JSz7h1CU4hwGRndl1wwlA8SGzBOIiW7PIePpBnJ6JjrUUdEu+kansgg
-         dILlfGKvRnrQVSVwVVTKAOUoj9HGP6PW0HZCcG0Y=
+        b=BSNir+mRpdKbt1dMHqRebtOVWPHub4rVDuzU2T2scMlxDve/Xy/XF8YX5/bOqkfUx
+         jkiqr5bm4Fv/QtBwapPiJCFtczltYmWP/Lo0hyYtnn3SZRlonDBsmNYUy1BeLf/4rB
+         bzw37JnJUUPIgqyPaibMuon8+BwWwPZ5YtJMD3UY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Kiernan Hager <kah.listaddress@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 097/306] usbip: tools: fix atoi() on non-null terminated string
-Date:   Wed, 27 Nov 2019 21:29:07 +0100
-Message-Id: <20191127203121.975683825@linuxfoundation.org>
+Subject: [PATCH 4.14 015/211] platform/x86: asus-nb-wmi: Support ALS on the Zenbook UX430UQ
+Date:   Wed, 27 Nov 2019 21:29:08 +0100
+Message-Id: <20191127203052.001387647@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Kiernan Hager <kah.listaddress@gmail.com>
 
-[ Upstream commit e325808c0051b16729ffd472ff887c6cae5c6317 ]
+[ Upstream commit db2582afa7444a0ce6bb1ebf1431715969a10b06 ]
 
-Currently the call to atoi is being passed a single char string
-that is not null terminated, so there is a potential read overrun
-along the stack when parsing for an integer value.  Fix this by
-instead using a 2 char string that is initialized to all zeros
-to ensure that a 1 char read into the string is always terminated
-with a \0.
+This patch adds support for ALS on the Zenbook UX430UQ to the asus_nb_wmi
+driver. It also renames "quirk_asus_ux330uak" to "quirk_asus_forceals"
+because it is now used for more than one model of computer, and should
+thus have a more general name.
 
-Detected by cppcheck:
-"Invalid atoi() argument nr 1. A nul-terminated string is required."
-
-Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kiernan Hager <kah.listaddress@gmail.com>
+[andy: massaged commit message, fixed indentation and commas in the code]
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/platform/x86/asus-nb-wmi.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
-index dc93fadbee963..d79c7581b175f 100644
---- a/tools/usb/usbip/libsrc/usbip_host_common.c
-+++ b/tools/usb/usbip/libsrc/usbip_host_common.c
-@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
- 	int size;
- 	int fd;
- 	int length;
--	char status;
-+	char status[2] = { 0 };
- 	int value = 0;
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index 9c4b0d7f15c3b..b6f2ff95c3ed9 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -111,7 +111,7 @@ static struct quirk_entry quirk_asus_x550lb = {
+ 	.xusb2pr = 0x01D9,
+ };
  
- 	size = snprintf(status_attr_path, sizeof(status_attr_path),
-@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
- 		return -1;
- 	}
+-static struct quirk_entry quirk_asus_ux330uak = {
++static struct quirk_entry quirk_asus_forceals = {
+ 	.wmi_force_als_set = true,
+ };
  
--	length = read(fd, &status, 1);
-+	length = read(fd, status, 1);
- 	if (length < 0) {
- 		err("error reading attribute %s", status_attr_path);
- 		close(fd);
- 		return -1;
- 	}
+@@ -387,7 +387,7 @@ static const struct dmi_system_id asus_quirks[] = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "UX330UAK"),
+ 		},
+-		.driver_data = &quirk_asus_ux330uak,
++		.driver_data = &quirk_asus_forceals,
+ 	},
+ 	{
+ 		.callback = dmi_matched,
+@@ -398,6 +398,15 @@ static const struct dmi_system_id asus_quirks[] = {
+ 		},
+ 		.driver_data = &quirk_asus_x550lb,
+ 	},
++	{
++		.callback = dmi_matched,
++		.ident = "ASUSTeK COMPUTER INC. UX430UQ",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "UX430UQ"),
++		},
++		.driver_data = &quirk_asus_forceals,
++	},
+ 	{},
+ };
  
--	value = atoi(&status);
-+	value = atoi(status);
- 
- 	return value;
- }
 -- 
 2.20.1
 
