@@ -2,94 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FDF310B3A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 17:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D019C10B3A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 17:41:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfK0QlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 11:41:19 -0500
-Received: from foss.arm.com ([217.140.110.172]:50000 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbfK0QlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 11:41:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4B6B30E;
-        Wed, 27 Nov 2019 08:41:18 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 201213F68E;
-        Wed, 27 Nov 2019 08:41:17 -0800 (PST)
-Date:   Wed, 27 Nov 2019 16:41:16 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>
-Subject: Re: [PATCHv2 6/6] ASoC: da7213: Add default clock handling
-Message-ID: <20191127164116.GE4879@sirena.org.uk>
-References: <AM5PR1001MB0994720A0D615339A978E35C804E0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <AM5PR1001MB0994E628439F021F97B872D480450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191126170841.GC4205@sirena.org.uk>
- <AM5PR1001MB09949D557742E8817545637F80450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191126175040.GD4205@sirena.org.uk>
- <AM5PR1001MB09940CF764711F1F13A6B37E80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191127123317.GA4879@sirena.org.uk>
- <AM5PR1001MB0994D842A2D7051F81A7765B80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191127154030.GD4879@sirena.org.uk>
- <AM5PR1001MB099467ACADA4F7B6DDA5087480440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+        id S1727247AbfK0Qlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 11:41:52 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34499 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbfK0Qlw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 11:41:52 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l28so17740403lfj.1;
+        Wed, 27 Nov 2019 08:41:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/eWB2rCOMmX423AOdl9mozQ2GWqfxXSdgs//MzFs0+M=;
+        b=PjE0Rhyu81sYgLylgpTP49Qm6RDM7316CZq2qBpmlkMeVqPvRDx9xTAXQ6It4gyTeu
+         lxSoKlhqE6pHkozHig5mrPioaniP7qIlGkIFuvYjnFNniKEkuFYdSKB0atDKQlKJpwoh
+         AXbCs/Sfsgdrkg+FtSDwONO3995AlcHgtz1y6y6hqEOhp0EMIIlxDv5A2t8u4tdjk9q1
+         DRt33TLffLnmsvO7Iz9pWafhEQs+5gkgpMqoqZzCLLR+Bu6tCwIvakF0eZKyU7Hbaj/l
+         jYuOHipQnrz5S1LPjDLmEAbG5N8zh+UpFJs2losfuj0/y/qm5GR6db4/Ozi/sV5Rb2lD
+         /2Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/eWB2rCOMmX423AOdl9mozQ2GWqfxXSdgs//MzFs0+M=;
+        b=AryOIlaAsuYHmXtwQY43nU0/6s/k2Uody/DBdfyscBCely1Btni3TkTWQruIzNbGu6
+         zfqYQxMTdDx3hkZ/xnPO8O3h+FL+0hGJn+QhigyRH2s9n/r5r/RtjSjvFcOUc9YuzLrd
+         +tyho4R5e0wNKF3J+i/j/N66zxpNrzkA4o+qIZtZ+P57ilT+kBcBUhyKewvOVvcYwelh
+         W5xjX9VBHZvq+G+yEcOopPjbeVMY2aj61yeAcIg3vsM0YrNiqokqY4bnZGO1SD5qeVSI
+         ePe6KOup9X5HHue3+UAKJpgoCOiWV7MoAOxJP3lq5n1oAVVC6H9FTNKWm+5Vk6J1qFUy
+         0ekg==
+X-Gm-Message-State: APjAAAWfU+7/tG2bLAhnQ8zq7QFVeJKaEH04OzjyveVYxEJ2wcdgOHBf
+        xDTuf679pah4HPKNHYQRrcma5x9tCq76I/8UcHs=
+X-Google-Smtp-Source: APXvYqw8XiZzJsCr/3/6hFAt3SNZuHFa9l5qi3WPi3It1HEt6ojoVz3oyCyzHungjh9pEXPIuP3Kr9yU76HqJGqBPK0=
+X-Received: by 2002:ac2:5462:: with SMTP id e2mr19863175lfn.181.1574872908250;
+ Wed, 27 Nov 2019 08:41:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="idY8LE8SD6/8DnRI"
-Content-Disposition: inline
-In-Reply-To: <AM5PR1001MB099467ACADA4F7B6DDA5087480440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-X-Cookie: In the war of wits, he's unarmed.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191127094837.4045-1-jolsa@kernel.org> <20191127094837.4045-4-jolsa@kernel.org>
+In-Reply-To: <20191127094837.4045-4-jolsa@kernel.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 27 Nov 2019 08:41:36 -0800
+Message-ID: <CAADnVQ+04C7BCH+UCMXLuHoP3vWcKmmycaZa-bMJDSFBUddo1g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] bpftool: Allow to link libbpf dynamically
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 27, 2019 at 1:49 AM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> diff --git a/tools/build/feature/test-libbpf.c b/tools/build/feature/test-libbpf.c
+> index a508756cf4cc..93566d105a64 100644
+> --- a/tools/build/feature/test-libbpf.c
+> +++ b/tools/build/feature/test-libbpf.c
+> @@ -3,5 +3,14 @@
+>
+>  int main(void)
+>  {
+> +#ifdef BPFTOOL
+> +       /*
+> +        * libbpf_netlink_open (LIBBPF_0.0.6) is the latest
+> +        * we need for bpftool at the moment
+> +        */
+> +       libbpf_netlink_open(NULL);
+> +       return 0;
+> +#else
+>         return bpf_object__open("test") ? 0 : -1;
+> +#endif
 
---idY8LE8SD6/8DnRI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Nov 27, 2019 at 04:33:12PM +0000, Adam Thomson wrote:
-> On 27 November 2019 15:41, Mark Brown wrote:
-
-> > Not sure I follow here - if we're configuring the PLL explicitly then
-> > I'd expect the PLL to be configured first, then the SYSCLK, so I'd
-> > expect that the automatic PLL configuration wouldn't kick in.
-
-> The PLL in the codec relies on MCLK. The MCLK rate can be specified/configured
-> by a machine driver using the relevant codec sysclk function, as is done in a
-> number of drivers. Surely that has to happen first before we configure the PLL
-> as the PLL functions needs to know what rate is coming in so the correct
-> dividers can be applied for the required internal clocking to match up with the
-> desired sample rates. I guess I'm still missing something regarding your
-> discussion around SYSCLK?
-
-The PLL configuration specifies both input and output clock rates (as
-well as an input clock source) so if it's got to configure the MCLK I'd
-expect the driver to figure that out without needing the caller to
-separately set the MCLK rate.
-
---idY8LE8SD6/8DnRI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3epysACgkQJNaLcl1U
-h9Ah8Af+Jkfk+6DCF4lg0qjlDTkm9J28Cp9C51qea8Lkj15D3QYxiCSIngIkcLDK
-84eJfTaOnIjDYOj8bMovS/ZNY/JlsT46Vq8tJ2fPnyy/ihAM9CwKeGjprpv6voik
-JZZ3pStVuiu3l7tVBLoaDLGCITJPuV1pqeq+bZtbHs8Axdx9xyG2MF1iAWo9lgDw
-YpiNzRe6AESbGV8Pun6PTdBa8rktnOiTyixjLaiUC/WnUAxqXkHw/dHMWjOtYfwk
-PMc6a5y4lCHqvEM+x4g3gE2Z0B+wCjpDd71c6qWIxyyzYLNL0geN6ogF91EVVyVO
-xoBoNjYno2poQcDELx6VE77/8mFKWw==
-=g6G7
------END PGP SIGNATURE-----
-
---idY8LE8SD6/8DnRI--
+Such hack should be a clear sign that it's not appropriate for libbpf to
+be public netlink api library. Few functions that it already has are for
+libbpf and bpftool internal usage only.
