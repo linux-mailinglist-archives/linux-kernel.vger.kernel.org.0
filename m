@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6034310B8C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D34610B8C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbfK0Uqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:46:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
+        id S1729380AbfK0Uqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:46:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbfK0Uqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:46:32 -0500
+        id S1729896AbfK0Uqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:46:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C73A62158A;
-        Wed, 27 Nov 2019 20:46:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43FFE2166E;
+        Wed, 27 Nov 2019 20:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887591;
-        bh=7nybk/T84jG+yY80/3VieVPJKJrELADi6/UIcReZYhM=;
+        s=default; t=1574887593;
+        bh=lj6K0mYTs3dnyoxMWa1tl5VThW2W61nKhT+eoMC9cTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z7xlFXOiCJFXNVZjMiyXmJgR/pKVfNFPDvIe9J2DyShO3pUJa0gTXZhwAebC4qHa7
-         v+tySv80nIwmlIu9ou7n6F6C8WHGkE6uMyrXM3rfwIV6H5z7Ma3OssUQ8iRg/DqqaN
-         fe+tDiC4bqFADiyqh1hRCpxKZtZLoCYqa6jSz+Os=
+        b=BD/plhNHKzR7TMDx0wDvHFo2X8QY4Lru+2sPXitHFhalNFQyA+EbqdWWsoCwRYGUf
+         I1F89PSsma/ox2x4RDBF88zo3ZKO3eC6mhlmeuW9Et1LBWT8WrwAHKClZV1Vp6w4Rb
+         wId3p2PvPMROmO4a9NmnoO80ELMHS2wm9H81Xo/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 019/211] printk: fix integer overflow in setup_log_buf()
-Date:   Wed, 27 Nov 2019 21:29:12 +0100
-Message-Id: <20191127203052.837882082@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 020/211] gfs2: Fix marking bitmaps non-full
+Date:   Wed, 27 Nov 2019 21:29:13 +0100
+Message-Id: <20191127203052.913632014@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -45,59 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit d2130e82e9454304e9b91ba9da551b5989af8c27 ]
+[ Upstream commit ec23df2b0cf3e1620f5db77972b7fb735f267eff ]
 
-The way we calculate logbuf free space percentage overflows signed
-integer:
+Reservations in gfs can span multiple gfs2_bitmaps (but they won't span
+multiple resource groups).  When removing a reservation, we want to
+clear the GBF_FULL flags of all involved gfs2_bitmaps, not just that of
+the first bitmap.
 
-	int free;
-
-	free = __LOG_BUF_LEN - log_next_idx;
-	pr_info("early log buf free: %u(%u%%)\n",
-		free, (free * 100) / __LOG_BUF_LEN);
-
-We support LOG_BUF_LEN of up to 1<<25 bytes. Since setup_log_buf() is
-called during early init, logbuf is mostly empty, so
-
-	__LOG_BUF_LEN - log_next_idx
-
-is close to 1<<25. Thus when we multiply it by 100, we overflow signed
-integer value range: 100 is 2^6 + 2^5 + 2^2.
-
-Example, booting with LOG_BUF_LEN 1<<25 and log_buf_len=2G
-boot param:
-
-[    0.075317] log_buf_len: -2147483648 bytes
-[    0.075319] early log buf free: 33549896(-28%)
-
-Make "free" unsigned integer and use appropriate printk() specifier.
-
-Link: http://lkml.kernel.org/r/20181010113308.9337-1-sergey.senozhatsky@gmail.com
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Reviewed-by: Steven Whitehouse <swhiteho@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/printk/printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/gfs2/rgrp.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 5b33c14ab8b25..4e50beb162c00 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1099,7 +1099,7 @@ void __init setup_log_buf(int early)
- {
- 	unsigned long flags;
- 	char *new_log_buf;
--	int free;
-+	unsigned int free;
+diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+index 0d72baae51509..7cb0672294dfc 100644
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -623,7 +623,10 @@ static void __rs_deltree(struct gfs2_blkreserv *rs)
+ 	RB_CLEAR_NODE(&rs->rs_node);
  
- 	if (log_buf != __log_buf)
- 		return;
+ 	if (rs->rs_free) {
+-		struct gfs2_bitmap *bi = rbm_bi(&rs->rs_rbm);
++		u64 last_block = gfs2_rbm_to_block(&rs->rs_rbm) +
++				 rs->rs_free - 1;
++		struct gfs2_rbm last_rbm = { .rgd = rs->rs_rbm.rgd, };
++		struct gfs2_bitmap *start, *last;
+ 
+ 		/* return reserved blocks to the rgrp */
+ 		BUG_ON(rs->rs_rbm.rgd->rd_reserved < rs->rs_free);
+@@ -634,7 +637,13 @@ static void __rs_deltree(struct gfs2_blkreserv *rs)
+ 		   it will force the number to be recalculated later. */
+ 		rgd->rd_extfail_pt += rs->rs_free;
+ 		rs->rs_free = 0;
+-		clear_bit(GBF_FULL, &bi->bi_flags);
++		if (gfs2_rbm_from_block(&last_rbm, last_block))
++			return;
++		start = rbm_bi(&rs->rs_rbm);
++		last = rbm_bi(&last_rbm);
++		do
++			clear_bit(GBF_FULL, &start->bi_flags);
++		while (start++ != last);
+ 	}
+ }
+ 
 -- 
 2.20.1
 
