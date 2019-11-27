@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA2D10BE54
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBF110BE52
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbfK0VfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:35:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35248 "EHLO mail.kernel.org"
+        id S1730809AbfK0VfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:35:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729031AbfK0Utf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:49:35 -0500
+        id S1729838AbfK0Utk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:49:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DE2421787;
-        Wed, 27 Nov 2019 20:49:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1114E21787;
+        Wed, 27 Nov 2019 20:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887774;
-        bh=ArEb2f18QmJygKaaZnogCTVHbEhcpUrues3qVydbb7o=;
+        s=default; t=1574887779;
+        bh=7Zb84RMymvrQrGc5whayYZnaI5yyN4gn14MocjTCebU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j9Ry6CGWMB18q8ChyGazloMHKT/mo4Baa/sEPsMuyp+NVco7g5cu4+5ocuYM0G2zY
-         8n3NX/aga1gOYplPXOtEgglfomayGTcp67lwftPXrRwf17C5atoOL/O7nQHTRzyJ+l
-         HLLiXrKD+3hE2PipJgfBUagEP+01H2t0XVJjbvSM=
+        b=aWfg16+q33RcafAkYES7GBP9yBHEZEtFwTZ2fzc0EVU6M0m1QfLwKtKg7jupwJFX6
+         7ALXenzCOv/zgizIjv4aZIC7M9pdXF4VsHcqac3hw9mbFqtU1c/eXgWssF7jnqAbrg
+         Esel4yHUAXpX0KNYWzfu++niHZl8sbws/eyOLT/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerry Hoemann <jerry.hoemann@hpe.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 087/211] selftests: watchdog: Fix error message.
-Date:   Wed, 27 Nov 2019 21:30:20 +0100
-Message-Id: <20191127203101.981889610@linuxfoundation.org>
+Subject: [PATCH 4.14 089/211] bpf: devmap: fix wrong interface selection in notifier_call
+Date:   Wed, 27 Nov 2019 21:30:22 +0100
+Message-Id: <20191127203102.160819159@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -44,60 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerry Hoemann <jerry.hoemann@hpe.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 04d5e4bd37516ad60854eb74592c7dbddd75d277 ]
+[ Upstream commit f592f804831f1cf9d1f9966f58c80f150e6829b5 ]
 
-Printf's say errno but print the string version of error.
-Make consistent.
+The dev_map_notification() removes interface in devmap if
+unregistering interface's ifindex is same.
+But only checking ifindex is not enough because other netns can have
+same ifindex. so that wrong interface selection could occurred.
+Hence netdev pointer comparison code is added.
 
-Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+v2: compare netdev pointer instead of using net_eq() (Daniel Borkmann)
+v1: Initial patch
+
+Fixes: 2ddf71e23cc2 ("net: add notifier hooks for devmap bpf map")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/watchdog/watchdog-test.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/bpf/devmap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index e029e2017280f..f1c6e025cbe54 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
- 				printf("Last boot is caused by: %s.\n", (flags != 0) ?
- 					"Watchdog" : "Power-On-Reset");
- 			else
--				printf("WDIOC_GETBOOTSTATUS errno '%s'\n", strerror(errno));
-+				printf("WDIOC_GETBOOTSTATUS error '%s'\n", strerror(errno));
- 			break;
- 		case 'd':
- 			flags = WDIOS_DISABLECARD;
-@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
- 			if (!ret)
- 				printf("Watchdog card disabled.\n");
- 			else
--				printf("WDIOS_DISABLECARD errno '%s'\n", strerror(errno));
-+				printf("WDIOS_DISABLECARD error '%s'\n", strerror(errno));
- 			break;
- 		case 'e':
- 			flags = WDIOS_ENABLECARD;
-@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
- 			if (!ret)
- 				printf("Watchdog card enabled.\n");
- 			else
--				printf("WDIOS_ENABLECARD errno '%s'\n", strerror(errno));
-+				printf("WDIOS_ENABLECARD error '%s'\n", strerror(errno));
- 			break;
- 		case 'p':
- 			ping_rate = strtoul(optarg, NULL, 0);
-@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
- 			if (!ret)
- 				printf("Watchdog timeout set to %u seconds.\n", flags);
- 			else
--				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
-+				printf("WDIOC_SETTIMEOUT error '%s'\n", strerror(errno));
- 			break;
- 		default:
- 			usage(argv[0]);
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 482bf42e21a41..1060eee6c8d5f 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -388,8 +388,7 @@ static int dev_map_notification(struct notifier_block *notifier,
+ 				struct bpf_dtab_netdev *dev, *odev;
+ 
+ 				dev = READ_ONCE(dtab->netdev_map[i]);
+-				if (!dev ||
+-				    dev->dev->ifindex != netdev->ifindex)
++				if (!dev || netdev != dev->dev)
+ 					continue;
+ 				odev = cmpxchg(&dtab->netdev_map[i], dev, NULL);
+ 				if (dev == odev)
 -- 
 2.20.1
 
