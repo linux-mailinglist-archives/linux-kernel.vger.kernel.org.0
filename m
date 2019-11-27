@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A182D10BDB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:31:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12C6E10BD9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730501AbfK0UzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
+        id S1730133AbfK0Uz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:55:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730926AbfK0UzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:12 -0500
+        id S1730695AbfK0Uzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:55:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75C5E2070B;
-        Wed, 27 Nov 2019 20:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 839ED2084D;
+        Wed, 27 Nov 2019 20:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888110;
-        bh=6vo/Y59EGoUBJsZLYnDV6gLsI3MwKSYt5mAwDC241UY=;
+        s=default; t=1574888152;
+        bh=J18Pe9VFIeVy6toRgZji6+yo9zsWN92N2vTn+xCSzP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wTMTH0ptvPwFdMIue5p8NiFrfRGgeJLIyeTNOMpmMn1H2W7gYE2pv2/eGNTx3Dvsf
-         Afo8MQqBDVBzjVQ+yFsrIHJm7mLjaSk/hl9j8Yr4IRwcs4JHo5nNmuJXaUl8EjbKCE
-         zhCztiLr0gjKnukhYjD/M8oCTEKPpOvhO2DkK560=
+        b=jp+LgdDriKYoHl1m3OrNona6zEMI/oMXcJnweJ2q7jrKhlqiGs9emnZpmY1ODZjgn
+         icjwKiMG5O67vqHpck1uT26ewezPEKDOZwW0y4QHAQngKGw8u9GlakR/8ACbho4J1W
+         IhmbXQKyg2gZVaWi1r4DadpHuwTpZoZR+x7G0HTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Martin Habets <mhabets@solarflare.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 001/306] mlxsw: spectrum_router: Fix determining underlay for a GRE tunnel
-Date:   Wed, 27 Nov 2019 21:27:31 +0100
-Message-Id: <20191127203114.870042090@linuxfoundation.org>
+Subject: [PATCH 4.19 007/306] sfc: Only cancel the PPS workqueue if it exists
+Date:   Wed, 27 Nov 2019 21:27:37 +0100
+Message-Id: <20191127203115.279517181@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,70 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: Martin Habets <mhabets@solarflare.com>
 
-[ Upstream commit 1fc1657775dc1b19e9ac1d46b4054ed8ae5d99ab ]
+[ Upstream commit 723eb53690041740a13ac78efeaf6804f5d684c9 ]
 
-The helper mlxsw_sp_ipip_dev_ul_tb_id() determines the underlay VRF of a
-GRE tunnel. For a tunnel without a bound device, it uses the same VRF that
-the tunnel is in. However in Linux, a GRE tunnel without a bound device
-uses the main VRF as the underlay. Fix the function accordingly.
+The workqueue only exists for the primary PF. For other functions
+we hit a WARN_ON in kernel/workqueue.c.
 
-mlxsw further assumed that moving a tunnel to a different VRF could cause
-conflict in local tunnel endpoint address, which cannot be offloaded.
-However, the only way that an underlay could be changed by moving the
-tunnel device itself is if the tunnel device does not have a bound device.
-But in that case the underlay is always the main VRF, so there is no
-opportunity to introduce a conflict by moving such device. Thus this check
-constitutes a dead code, and can be removed, which do.
-
-Fixes: 6ddb7426a7d4 ("mlxsw: spectrum_router: Introduce loopback RIFs")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Fixes: 7c236c43b838 ("sfc: Add support for IEEE-1588 PTP")
+Signed-off-by: Martin Habets <mhabets@solarflare.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c |   19 ------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+ drivers/net/ethernet/sfc/ptp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
-@@ -970,7 +970,7 @@ u32 mlxsw_sp_ipip_dev_ul_tb_id(const str
- 	if (d)
- 		return l3mdev_fib_table(d) ? : RT_TABLE_MAIN;
- 	else
--		return l3mdev_fib_table(ol_dev) ? : RT_TABLE_MAIN;
-+		return RT_TABLE_MAIN;
- }
+--- a/drivers/net/ethernet/sfc/ptp.c
++++ b/drivers/net/ethernet/sfc/ptp.c
+@@ -1534,7 +1534,8 @@ void efx_ptp_remove(struct efx_nic *efx)
+ 	(void)efx_ptp_disable(efx);
  
- static struct mlxsw_sp_rif *
-@@ -1532,27 +1532,10 @@ static int mlxsw_sp_netdevice_ipip_ol_vr
- {
- 	struct mlxsw_sp_ipip_entry *ipip_entry =
- 		mlxsw_sp_ipip_entry_find_by_ol_dev(mlxsw_sp, ol_dev);
--	enum mlxsw_sp_l3proto ul_proto;
--	union mlxsw_sp_l3addr saddr;
--	u32 ul_tb_id;
+ 	cancel_work_sync(&efx->ptp_data->work);
+-	cancel_work_sync(&efx->ptp_data->pps_work);
++	if (efx->ptp_data->pps_workwq)
++		cancel_work_sync(&efx->ptp_data->pps_work);
  
- 	if (!ipip_entry)
- 		return 0;
- 
--	/* For flat configuration cases, moving overlay to a different VRF might
--	 * cause local address conflict, and the conflicting tunnels need to be
--	 * demoted.
--	 */
--	ul_tb_id = mlxsw_sp_ipip_dev_ul_tb_id(ol_dev);
--	ul_proto = mlxsw_sp->router->ipip_ops_arr[ipip_entry->ipipt]->ul_proto;
--	saddr = mlxsw_sp_ipip_netdev_saddr(ul_proto, ol_dev);
--	if (mlxsw_sp_ipip_demote_tunnel_by_saddr(mlxsw_sp, ul_proto,
--						 saddr, ul_tb_id,
--						 ipip_entry)) {
--		mlxsw_sp_ipip_entry_demote_tunnel(mlxsw_sp, ipip_entry);
--		return 0;
--	}
--
- 	return __mlxsw_sp_ipip_entry_update_tunnel(mlxsw_sp, ipip_entry,
- 						   true, false, false, extack);
- }
+ 	skb_queue_purge(&efx->ptp_data->rxq);
+ 	skb_queue_purge(&efx->ptp_data->txq);
 
 
