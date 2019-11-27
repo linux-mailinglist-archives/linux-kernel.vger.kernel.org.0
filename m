@@ -2,173 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F7E610ABF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:43:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D7C010AC07
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfK0Imz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:42:55 -0500
-Received: from mail-eopbgr790084.outbound.protection.outlook.com ([40.107.79.84]:58496
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726130AbfK0Imz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:42:55 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Koyge/fpbC+89b+bMu+HNcrQqweVPZrK9OQBrH+o9T6Rdu2+CB4jrTJJsiTmr6v9ad7mHgz/ztDGCL0klrzECPw88RFCJTtuQkMnn1A7ZL8w62c8IhZi+NqpnuFzZDJ1Lr9WC6IesKTSDUZdj76Mk1kn54ejr0zSreEOZvICrHAK34pVKjAAwfUBcwdUCtDxBcX5ZqKZ0lbZG008kI37kXz7vOa/7q+2v51SOtZhmXtyIodoPZbgJYwkcKMxWA9fD/pyNN+P4iBz3CR9nDbh5C+23zPpumIOITMAUBWqriazuyJsVlGJ1KST8TIw0X/jNAkfUde45FmVSpr9+tBW6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EjArgt8xEC3XRZ4TzMt//d5skXR3LOTrFiLTmqoRQms=;
- b=iB6Hm9s1TR7fUY8KpH1WrE3QkACrVgCzci3vhgD/8o18MKebnD8Qr95ZX24OowDnYApTqTlnl+DcP4ekrKCosShaLjRfk8hQYx90w14mjCo7Bb2GFP8VQuqDKBUh5kOEk7SITUlxaHfkS3hHdhN1RqNmZxC/VzgC2SSSJtFuokXamIB/pR+yM+P6oqGuZb7y6HOSJ9nNOyjE1Ci1unYRLo5lgpiapxPwVi3ZybKsNbZUHMm+src666twMijDcZ/d7UaHk+vu3m+7g/KpTCctXvwjDupcTLbVaYQHv3vgBtHbe6GbUauV03S5H6uUYVS7EJNb+8/wy871nSGTi2I+oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EjArgt8xEC3XRZ4TzMt//d5skXR3LOTrFiLTmqoRQms=;
- b=KXJJrPJbUqDoO65YYmCLEJtLAN5FjmMxH83AuuuYLFBrYuR6Gohw89Xfez+rruFd3mcvKTueC2uGFunPqblzxeJBPntWKS9+/DDmivVZEH5XMBbtfQ0j1ITn/Er/ribR1SHBsvX39jkAuN64/s/5SwvU8ASSoOon1ix9F3tdGIs=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com (10.175.88.22) by
- DM5PR12MB1211.namprd12.prod.outlook.com (10.168.239.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.19; Wed, 27 Nov 2019 08:42:51 +0000
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::e5e7:96f0:ad90:d933]) by DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::e5e7:96f0:ad90:d933%7]) with mapi id 15.20.2474.023; Wed, 27 Nov 2019
- 08:42:51 +0000
-Subject: Re: [PATCH 1/2] mm: Add and export vmf_insert_mixed_prot()
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20191126202717.30762-1-thomas_os@shipmail.org>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <e1a5ce03-1b8d-8118-de95-b53901e94b50@amd.com>
-Date:   Wed, 27 Nov 2019 09:42:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-In-Reply-To: <20191126202717.30762-1-thomas_os@shipmail.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: AM4PR07CA0013.eurprd07.prod.outlook.com
- (2603:10a6:205:1::26) To DM5PR12MB1705.namprd12.prod.outlook.com
- (2603:10b6:3:10c::22)
-MIME-Version: 1.0
-X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 23aa8fc9-fb06-4a08-148d-08d77315c9b7
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1211:
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1211B651519727476708FC9A83440@DM5PR12MB1211.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:390;
-X-Forefront-PRVS: 023495660C
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(136003)(39860400002)(376002)(189003)(199004)(31686004)(446003)(11346002)(4326008)(50466002)(65806001)(47776003)(316002)(2616005)(186003)(46003)(2486003)(58126008)(229853002)(65956001)(6246003)(81166006)(81156014)(66556008)(386003)(66476007)(8676002)(6506007)(52116002)(7736002)(54906003)(76176011)(66946007)(23676004)(5660300002)(478600001)(6436002)(99286004)(6116002)(7416002)(8936002)(305945005)(6512007)(25786009)(6666004)(14454004)(86362001)(31696002)(2906002)(6486002)(36756003)(2870700001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1211;H:DM5PR12MB1705.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TBwR4X1OeyHbwTFRpSndhJTtxNfxBFxCX+BLPN+6QiWJnW/zGWJAkg2LEMSgCYzxYdwogvLc4dtPU2DQAJ7IW7f7fxCWffx2EhQuq8TNXg2y0Dwn/2GwLp/pXO9rIKZbeFoPHNepGM9f4Td50fM/3wsukTuuD+1pUmsAljlSsSO/kxwYP/TG/sBY5sDK9n9oET3VTx1r95aPRfAmpXdRGzBVqEXHL91y5vywZ0a1XQ9aegkOJCjeC9Z6BTkz6f2Oe6UVs62mj4k5UElp9QK5zapfaPC9MIWuwzTofbK+aVnPtP5C9niyreoCRajOAZNzH67/mVSvUammoxBhuJ1q5Xg+t9ZFHfxdQ9SQk03QnKZ3Kfuort7QJ8YIPMppCQoclpKQ/oNjxws4B7IHdrnpcKLI77D8zhF3EdXqQG8l0TT8ovIIukIn0btupXbflTWV
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23aa8fc9-fb06-4a08-148d-08d77315c9b7
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2019 08:42:51.4009
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mLwdRiy11Jamxybl+T00UeynIieq/+3Yghcu08UusxpMHXLqCHunzTVBvDUgcaI2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1211
+        id S1727105AbfK0In0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:43:26 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:43648 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfK0InL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:43:11 -0500
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id Wwiu2100b5USYZQ01wiuXS; Wed, 27 Nov 2019 09:43:07 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iZsuU-0000xd-K7; Wed, 27 Nov 2019 09:42:54 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iZsuU-0004No-H4; Wed, 27 Nov 2019 09:42:54 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/7] gpio: Add GPIO Aggregator/Repeater
+Date:   Wed, 27 Nov 2019 09:42:46 +0100
+Message-Id: <20191127084253.16356-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 26.11.19 um 21:27 schrieb Thomas Hellström (VMware):
-> From: Thomas Hellstrom <thellstrom@vmware.com>
->
-> The TTM module today uses a hack to be able to set a different page
-> protection than struct vm_area_struct::vm_page_prot. To be able to do
-> this properly, add and export vmf_insert_mixed_prot().
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: "Christian König" <christian.koenig@amd.com>
-> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+	Hi all,
 
-Acked-by: Christian König <christian.koenig@amd.com>
+GPIO controllers are exported to userspace using /dev/gpiochip*
+character devices.  Access control to these devices is provided by
+standard UNIX file system permissions, on an all-or-nothing basis:
+either a GPIO controller is accessible for a user, or it is not.
+Currently no mechanism exists to control access to individual GPIOs.
 
-> ---
->   include/linux/mm.h |  2 ++
->   mm/memory.c        | 15 +++++++++++----
->   2 files changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index cc292273e6ba..29575d3c1e47 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2548,6 +2548,8 @@ vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
->   			unsigned long pfn, pgprot_t pgprot);
->   vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->   			pfn_t pfn);
-> +vm_fault_t vmf_insert_mixed_prot(struct vm_area_struct *vma, unsigned long addr,
-> +			pfn_t pfn, pgprot_t pgprot);
->   vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
->   		unsigned long addr, pfn_t pfn);
->   int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index b1ca51a079f2..28f162e28144 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1719,9 +1719,9 @@ static bool vm_mixed_ok(struct vm_area_struct *vma, pfn_t pfn)
->   }
->   
->   static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
-> -		unsigned long addr, pfn_t pfn, bool mkwrite)
-> +		unsigned long addr, pfn_t pfn, pgprot_t pgprot,
-> +		bool mkwrite)
->   {
-> -	pgprot_t pgprot = vma->vm_page_prot;
->   	int err;
->   
->   	BUG_ON(!vm_mixed_ok(vma, pfn));
-> @@ -1764,10 +1764,17 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
->   	return VM_FAULT_NOPAGE;
->   }
->   
-> +vm_fault_t vmf_insert_mixed_prot(struct vm_area_struct *vma, unsigned long addr,
-> +				 pfn_t pfn, pgprot_t pgprot)
-> +{
-> +	return __vm_insert_mixed(vma, addr, pfn, pgprot, false);
-> +}
-> +EXPORT_SYMBOL(vmf_insert_mixed_prot);
-> +
->   vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->   		pfn_t pfn)
->   {
-> -	return __vm_insert_mixed(vma, addr, pfn, false);
-> +	return __vm_insert_mixed(vma, addr, pfn, vma->vm_page_prot, false);
->   }
->   EXPORT_SYMBOL(vmf_insert_mixed);
->   
-> @@ -1779,7 +1786,7 @@ EXPORT_SYMBOL(vmf_insert_mixed);
->   vm_fault_t vmf_insert_mixed_mkwrite(struct vm_area_struct *vma,
->   		unsigned long addr, pfn_t pfn)
->   {
-> -	return __vm_insert_mixed(vma, addr, pfn, true);
-> +	return __vm_insert_mixed(vma, addr, pfn, vma->vm_page_prot, true);
->   }
->   EXPORT_SYMBOL(vmf_insert_mixed_mkwrite);
->   
+Hence this adds a GPIO driver to aggregate existing GPIOs, and expose
+them as a new gpiochip.  This is useful for implementing access control,
+and assigning a set of GPIOs to a specific user.  Furthermore, this
+simplifies and hardens exporting GPIOs to a virtual machine, as the VM
+can just grab the full GPIO controller, and no longer needs to care
+about which GPIOs to grab and which not, reducing the attack surface.
+
+Recently, other use cases have been discovered[1]:
+  - Describing GPIO inverters in DT, as a generic GPIO Repeater,
+  - Describing simple GPIO-operated devices in DT, and using the GPIO
+    Aggregator as a generic GPIO driver for userspace.
+
+Changes compared to v2[2] (more details in the individual patches):
+  - Integrate GPIO Repeater functionality,
+  - Absorb GPIO forwarder library, as the Aggregator and Repeater are
+    now a single driver,
+  - Use the aggregator parameters to create a GPIO lookup table instead
+    of an array of GPIO descriptors,
+  - Add documentation,
+  - New patches:
+      - "gpiolib: Add GPIOCHIP_NAME definition",
+      - "gpiolib: Add support for gpiochipN-based table lookup",
+      - "gpiolib: Add support for GPIO line table lookup",
+      - "dt-bindings: gpio: Add gpio-repeater bindings",
+      - "docs: gpio: Add GPIO Aggregator/Repeater documentation",
+      - "MAINTAINERS: Add GPIO Aggregator/Repeater section".
+  - Dropped patches:
+      - "gpio: Export gpiod_{request,free}() to modular GPIO code",
+      - "gpio: Export gpiochip_get_desc() to modular GPIO code",
+      - "gpio: Export gpio_name_to_desc() to modular GPIO code",
+      - "gpio: Add GPIO Forwarder Helper".
+
+Changes compared to v1[3]:
+  - Drop "virtual", rename to gpio-aggregator,
+  - Create and use new GPIO Forwarder Helper, to allow sharing code with
+    the GPIO inverter,
+  - Lift limit on the maximum number of GPIOs,
+  - Improve parsing of GPIO specifiers,
+  - Fix modular build.
+
+Aggregating GPIOs and exposing them as a new gpiochip was suggested in
+response to my proof-of-concept for GPIO virtualization with QEMU[4][5].
+
+For the first use case, aggregated GPIO controllers are instantiated and
+destroyed by writing to atribute files in sysfs.
+Sample session on the Renesas Koelsch development board:
+
+  - Unbind LEDs from leds-gpio driver:
+
+        echo leds > /sys/bus/platform/drivers/leds-gpio/unbind
+
+  - Create aggregators:
+
+    $ echo e6052000.gpio 19,20 \
+        > /sys/bus/platform/drivers/gpio-aggregator/new_device
+
+    gpio-aggregator gpio-aggregator.0: gpio 0 => gpio-953 (gpio-aggregator.0)
+    gpio-aggregator gpio-aggregator.0: gpio 1 => gpio-954 (gpio-aggregator.0)
+    gpiochip_find_base: found new base at 778
+    gpio gpiochip8: (gpio-aggregator.0): added GPIO chardev (254:8)
+    gpiochip_setup_dev: registered GPIOs 778 to 779 on device: gpiochip8 (gpio-aggregator.0)
+
+    $ echo e6052000.gpio 21 e6050000.gpio 20-22 \
+        > /sys/bus/platform/drivers/gpio-aggregator/new_device
+
+    gpio-aggregator gpio-aggregator.1: gpio 0 => gpio-955 (gpio-aggregator.1)
+    gpio-aggregator gpio-aggregator.1: gpio 1 => gpio-1012 (gpio-aggregator.1)
+    gpio-aggregator gpio-aggregator.1: gpio 2 => gpio-1013 (gpio-aggregator.1)
+    gpio-aggregator gpio-aggregator.1: gpio 3 => gpio-1014 (gpio-aggregator.1)
+    gpiochip_find_base: found new base at 774
+    gpio gpiochip9: (gpio-aggregator.1): added GPIO chardev (254:9)
+    gpiochip_setup_dev: registered GPIOs 774 to 777 on device: gpiochip9 (gpio-aggregator.1)
+
+  - Adjust permissions on /dev/gpiochip[89] (optional)
+
+  - Control LEDs:
+
+    $ gpioset gpiochip8 0=0 1=1 # LED6 OFF, LED7 ON
+    $ gpioset gpiochip8 0=1 1=0 # LED6 ON, LED7 OFF
+    $ gpioset gpiochip9 0=0     # LED8 OFF
+    $ gpioset gpiochip9 0=1     # LED8 ON
+
+  - Destroy aggregators:
+
+    $ echo gpio-aggregator.0 \
+            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
+    $ echo gpio-aggregator.1 \
+            > /sys/bus/platform/drivers/gpio-aggregator/delete_device
+
+Thanks for your comments!
+
+References:
+  [1] "[PATCH V4 2/2] gpio: inverter: document the inverter bindings"
+      (https://lore.kernel.org/linux-gpio/1561699236-18620-3-git-send-email-harish_kandiga@mentor.com/)
+  [2] "[PATCH/RFC v2 0/5] gpio: Add GPIO Aggregator Driver"
+      (https://lore.kernel.org/linux-gpio/20190911143858.13024-1-geert+renesas@glider.be/)
+  [3] "[PATCH RFC] gpio: Add Virtual Aggregator GPIO Driver"
+      (https://lore.kernel.org/lkml/20190705160536.12047-1-geert+renesas@glider.be/)
+  [4] "[PATCH QEMU POC] Add a GPIO backend"
+      (https://lore.kernel.org/linux-renesas-soc/20181003152521.23144-1-geert+renesas@glider.be/)
+  [5] "Getting To Blinky: Virt Edition / Making device pass-through
+       work on embedded ARM"
+      (https://fosdem.org/2019/schedule/event/vai_getting_to_blinky/)
+
+Geert Uytterhoeven (7):
+  gpiolib: Add GPIOCHIP_NAME definition
+  gpiolib: Add support for gpiochipN-based table lookup
+  gpiolib: Add support for GPIO line table lookup
+  dt-bindings: gpio: Add gpio-repeater bindings
+  gpio: Add GPIO Aggregator/Repeater driver
+  docs: gpio: Add GPIO Aggregator/Repeater documentation
+  MAINTAINERS: Add GPIO Aggregator/Repeater section
+
+ .../admin-guide/gpio/gpio-aggregator.rst      | 111 ++++
+ Documentation/admin-guide/gpio/index.rst      |   1 +
+ .../bindings/gpio/gpio-repeater.yaml          |  53 ++
+ MAINTAINERS                                   |   8 +
+ drivers/gpio/Kconfig                          |  13 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-aggregator.c                | 587 ++++++++++++++++++
+ drivers/gpio/gpiolib-sysfs.c                  |   7 +-
+ drivers/gpio/gpiolib.c                        |  38 +-
+ drivers/gpio/gpiolib.h                        |   2 +
+ include/linux/gpio/machine.h                  |   2 +-
+ 11 files changed, 815 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/admin-guide/gpio/gpio-aggregator.rst
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
+ create mode 100644 drivers/gpio/gpio-aggregator.c
+
+-- 
+2.17.1
 
