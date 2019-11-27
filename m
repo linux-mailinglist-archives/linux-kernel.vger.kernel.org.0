@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D5210B971
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BD0010B7F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730693AbfK0UxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
+        id S1727717AbfK0Ui1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728250AbfK0UxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:06 -0500
+        id S1728707AbfK0UiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:38:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BF4D218AE;
-        Wed, 27 Nov 2019 20:53:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CDD121569;
+        Wed, 27 Nov 2019 20:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887985;
-        bh=WM7kVhycQa2B0O1bmx0vp5AHcoAxPg1iqtFKxTRyqy8=;
+        s=default; t=1574887102;
+        bh=OyBQ+ISoZ+8SjXKCn5QTowWkqTtFsajvubXfBdi/IyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=igdfg6BRL4L3IDzvEOc1VLNnb5IIy2lHiotMIufmOMc4LxmpYnBJ4S7SgCOs6S6Li
-         gszBIS1qIGzsrsuecoEIZbpw2jfeCTYjllfmqTxnquEU3cE6VvwnhPm3fM6W0M9Drr
-         pGjh8wJh+6CgH4zbdzd7BNCW5x+tmYR2V9c4exV4=
+        b=k/+K3kmCBIKNt5EEIv97Ci2JCTrJkqfyxamXl6bi4oLn4Z2N51JLxwTnZQlkWUUKc
+         M2lgQLI2ekNw/9mf2Ozg6R0U1NsnAkfDvoKAzCahiCHrQ0Xny404KxAz+jbY3VzqHy
+         lQCM/PbmR9zcHVc6O153auyecQle954r4VGc/Rw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Uvarov <muvarov@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Adrian Bunk <bunk@kernel.org>
-Subject: [PATCH 4.14 170/211] net: phy: dp83867: fix speed 10 in sgmii mode
+        stable@vger.kernel.org, Kai Shen <shenkai8@huawei.com>,
+        Feilong Lin <linfeilong@huawei.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.4 112/132] cpufreq: Add NULL checks to show() and store() methods of cpufreq
 Date:   Wed, 27 Nov 2019 21:31:43 +0100
-Message-Id: <20191127203109.932403690@linuxfoundation.org>
+Message-Id: <20191127203030.193845897@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,60 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Uvarov <muvarov@gmail.com>
+From: Kai Shen <shenkai8@huawei.com>
 
-commit 333061b924539c0de081339643f45514f5f1c1e6 upstream.
+commit e6e8df07268c1f75dd9215536e2ce4587b70f977 upstream.
 
-For supporting 10Mps speed in SGMII mode DP83867_10M_SGMII_RATE_ADAPT bit
-of DP83867_10M_SGMII_CFG register has to be cleared by software.
-That does not affect speeds 100 and 1000 so can be done on init.
+Add NULL checks to show() and store() in cpufreq.c to avoid attempts
+to invoke a NULL callback.
 
-Signed-off-by: Max Uvarov <muvarov@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[ adapted for kernels without phy_modify_mmd ]
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
+Though some interfaces of cpufreq are set as read-only, users can
+still get write permission using chmod which can lead to a kernel
+crash, as follows:
+
+chmod +w /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+echo 1 >  /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+
+This bug was found in linux 4.19.
+
+Signed-off-by: Kai Shen <shenkai8@huawei.com>
+Reported-by: Feilong Lin <linfeilong@huawei.com>
+Reviewed-by: Feilong Lin <linfeilong@huawei.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Subject & changelog ]
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/phy/dp83867.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/cpufreq/cpufreq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -37,6 +37,8 @@
- #define DP83867_STRAP_STS1	0x006E
- #define DP83867_RGMIIDCTL	0x0086
- #define DP83867_IO_MUX_CFG	0x0170
-+#define DP83867_10M_SGMII_CFG   0x016F
-+#define DP83867_10M_SGMII_RATE_ADAPT_MASK BIT(7)
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -821,6 +821,9 @@ static ssize_t show(struct kobject *kobj
+ 	struct freq_attr *fattr = to_attr(attr);
+ 	ssize_t ret;
  
- #define DP83867_SW_RESET	BIT(15)
- #define DP83867_SW_RESTART	BIT(14)
-@@ -283,6 +285,23 @@ static int dp83867_config_init(struct ph
- 		}
- 	}
++	if (!fattr->show)
++		return -EIO;
++
+ 	down_read(&policy->rwsem);
  
-+	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
-+		/* For support SPEED_10 in SGMII mode
-+		 * DP83867_10M_SGMII_RATE_ADAPT bit
-+		 * has to be cleared by software. That
-+		 * does not affect SPEED_100 and
-+		 * SPEED_1000.
-+		 */
-+		val = phy_read_mmd(phydev, DP83867_DEVADDR,
-+				   DP83867_10M_SGMII_CFG);
-+		val &= ~DP83867_10M_SGMII_RATE_ADAPT_MASK;
-+		ret = phy_write_mmd(phydev, DP83867_DEVADDR,
-+				    DP83867_10M_SGMII_CFG, val);
+ 	if (fattr->show)
+@@ -840,6 +843,9 @@ static ssize_t store(struct kobject *kob
+ 	struct freq_attr *fattr = to_attr(attr);
+ 	ssize_t ret = -EINVAL;
+ 
++	if (!fattr->store)
++		return -EIO;
 +
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/* Enable Interrupt output INT_OE in CFG3 register */
- 	if (phy_interrupt_is_valid(phydev)) {
- 		val = phy_read(phydev, DP83867_CFG3);
+ 	get_online_cpus();
+ 
+ 	if (!cpu_online(policy->cpu))
 
 
