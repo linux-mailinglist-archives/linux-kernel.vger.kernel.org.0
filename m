@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DDF710B8BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2980110BA0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfK0UqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:46:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58014 "EHLO mail.kernel.org"
+        id S1731043AbfK0U72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:59:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729051AbfK0UqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:46:16 -0500
+        id S1731404AbfK0U7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:59:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70B452182A;
-        Wed, 27 Nov 2019 20:46:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6494620678;
+        Wed, 27 Nov 2019 20:59:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887575;
-        bh=4vSE2iF9fhoU/KldqzxMkgkbkCMZmhjX13/Zp+uKhiM=;
+        s=default; t=1574888360;
+        bh=xOiN5LjMgBp//ENnSVzIBfa6sOV/4n1mY+so8re9zjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k8kmvYYvC4PNGc2WW0qyuYBJB9q7aPKUSdzeUKjeq+JknVtWIhOSxQRsFUFKEJc11
-         BpfjPIu5qnJnCSMeOCO1ekG8vIskqWDBb05yC5v39ceQoVjbnmEFWf94vCN9KldRwj
-         Yg1/KUUG9t1k2EhzZlTxlMCiUVWpR1YnMMfLx+64=
+        b=1ac2CNvSkbgTgYPiTX/AFuW6p8UYkwfnpWO8cIWntcBgIlclg/YPGBev0RnWrmOoZ
+         1fpiOxAJGo/JSz7h1CU4hwGRndl1wwlA8SGzBOIiW7PIePpBnJ6JjrUUdEu+kansgg
+         dILlfGKvRnrQVSVwVVTKAOUoj9HGP6PW0HZCcG0Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 013/211] mm/ksm.c: dont WARN if page is still mapped in remove_stable_node()
-Date:   Wed, 27 Nov 2019 21:29:06 +0100
-Message-Id: <20191127203051.558767274@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 097/306] usbip: tools: fix atoi() on non-null terminated string
+Date:   Wed, 27 Nov 2019 21:29:07 +0100
+Message-Id: <20191127203121.975683825@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 9a63236f1ad82d71a98aa80320b6cb618fb32f44 upstream.
+[ Upstream commit e325808c0051b16729ffd472ff887c6cae5c6317 ]
 
-It's possible to hit the WARN_ON_ONCE(page_mapped(page)) in
-remove_stable_node() when it races with __mmput() and squeezes in
-between ksm_exit() and exit_mmap().
+Currently the call to atoi is being passed a single char string
+that is not null terminated, so there is a potential read overrun
+along the stack when parsing for an integer value.  Fix this by
+instead using a 2 char string that is initialized to all zeros
+to ensure that a 1 char read into the string is always terminated
+with a \0.
 
-  WARNING: CPU: 0 PID: 3295 at mm/ksm.c:888 remove_stable_node+0x10c/0x150
+Detected by cppcheck:
+"Invalid atoi() argument nr 1. A nul-terminated string is required."
 
-  Call Trace:
-   remove_all_stable_nodes+0x12b/0x330
-   run_store+0x4ef/0x7b0
-   kernfs_fop_write+0x200/0x420
-   vfs_write+0x154/0x450
-   ksys_write+0xf9/0x1d0
-   do_syscall_64+0x99/0x510
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Remove the warning as there is nothing scary going on.
-
-Link: http://lkml.kernel.org/r/20191119131850.5675-1-aryabinin@virtuozzo.com
-Fixes: cbf86cfe04a6 ("ksm: remove old stable nodes more thoroughly")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Acked-by: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/ksm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -849,13 +849,13 @@ static int remove_stable_node(struct sta
- 		return 0;
+diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
+index dc93fadbee963..d79c7581b175f 100644
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 	int size;
+ 	int fd;
+ 	int length;
+-	char status;
++	char status[2] = { 0 };
+ 	int value = 0;
+ 
+ 	size = snprintf(status_attr_path, sizeof(status_attr_path),
+@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 		return -1;
  	}
  
--	if (WARN_ON_ONCE(page_mapped(page))) {
--		/*
--		 * This should not happen: but if it does, just refuse to let
--		 * merge_across_nodes be switched - there is no need to panic.
--		 */
--		err = -EBUSY;
--	} else {
-+	/*
-+	 * Page could be still mapped if this races with __mmput() running in
-+	 * between ksm_exit() and exit_mmap(). Just refuse to let
-+	 * merge_across_nodes/max_page_sharing be switched.
-+	 */
-+	err = -EBUSY;
-+	if (!page_mapped(page)) {
- 		/*
- 		 * The stable node did not yet appear stale to get_ksm_page(),
- 		 * since that allows for an unmapped ksm page to be recognized
+-	length = read(fd, &status, 1);
++	length = read(fd, status, 1);
+ 	if (length < 0) {
+ 		err("error reading attribute %s", status_attr_path);
+ 		close(fd);
+ 		return -1;
+ 	}
+ 
+-	value = atoi(&status);
++	value = atoi(status);
+ 
+ 	return value;
+ }
+-- 
+2.20.1
+
 
 
