@@ -2,47 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A010210B97B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B89510B895
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730262AbfK0Uxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42402 "EHLO mail.kernel.org"
+        id S1729656AbfK0Uot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728292AbfK0Uxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:31 -0500
+        id S1729649AbfK0Uor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDDF21903;
-        Wed, 27 Nov 2019 20:53:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F3512178F;
+        Wed, 27 Nov 2019 20:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888011;
-        bh=85fGGUmNc6aJLbEGpfmynlbgA0s6PvO/ENe7anqmj50=;
+        s=default; t=1574887487;
+        bh=eO0C6pOQ51XQdb4zeqAMi6qHr22VdWDek6+vI/YW/kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UVnO6zLTICJ81hrs2Sivib1lFrnZrP+xoW4th38rD2fWwhv0k7B1c4x3jwqQEQ08e
-         JGyVoC6btCIWPmQm5szn1F21mG4UBU0UbQYow3JYaatiusA6RBQSMNALdK7REO8OmU
-         KoGrMib3vp5K+FsH0t3wuw1KiluR3dNZRfTyYE2I=
+        b=zpdsRSFg7N/6GYpPHI0SlO3f4FvxV8jP2JDjymj6Rz6ab5ls1nKhba1XQ2JX2dfzN
+         M480riqQqvcvST+setFUAu6njWCF+7KmsvkeTVsHLVFKLG56LREzchKV4GkfPQHaJd
+         k/kF/xoCjPUg40zioLxrx1G7GMlNmEoYHPP5SOUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Waiman Long <longman@redhat.com>, Borislav Petkov <bp@suse.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Mark Gross <mgross@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Tyler Hicks <tyhicks@canonical.com>, x86-ml <x86@kernel.org>
-Subject: [PATCH 4.14 179/211] x86/speculation: Fix redundant MDS mitigation message
-Date:   Wed, 27 Nov 2019 21:31:52 +0100
-Message-Id: <20191127203110.723987467@linuxfoundation.org>
+        stable@vger.kernel.org, Vito Caputo <vcaputo@pengaru.com>,
+        syzbot <syzkaller@googlegroups.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 130/151] media: cxusb: detect cxusb_ctrl_msg error in query
+Date:   Wed, 27 Nov 2019 21:31:53 +0100
+Message-Id: <20191127203046.240344655@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,81 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waiman Long <longman@redhat.com>
+From: Vito Caputo <vcaputo@pengaru.com>
 
-commit cd5a2aa89e847bdda7b62029d94e95488d73f6b2 upstream.
+commit ca8f245f284eeffa56f3b7a5eb6fc503159ee028 upstream.
 
-Since MDS and TAA mitigations are inter-related for processors that are
-affected by both vulnerabilities, the followiing confusing messages can
-be printed in the kernel log:
+Don't use uninitialized ircode[] in cxusb_rc_query() when
+cxusb_ctrl_msg() fails to populate its contents.
 
-  MDS: Vulnerable
-  MDS: Mitigation: Clear CPU buffers
+syzbot reported:
 
-To avoid the first incorrect message, defer the printing of MDS
-mitigation after the TAA mitigation selection has been done. However,
-that has the side effect of printing TAA mitigation first before MDS
-mitigation.
+dvb-usb: bulk message failed: -22 (1/-30591)
+=====================================================
+BUG: KMSAN: uninit-value in ir_lookup_by_scancode drivers/media/rc/rc-main.c:494 [inline]
+BUG: KMSAN: uninit-value in rc_g_keycode_from_table drivers/media/rc/rc-main.c:582 [inline]
+BUG: KMSAN: uninit-value in rc_keydown+0x1a6/0x6f0 drivers/media/rc/rc-main.c:816
+CPU: 1 PID: 11436 Comm: kworker/1:2 Not tainted 5.3.0-rc7+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events dvb_usb_read_remote_control
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+ kmsan_report+0x13a/0x2b0 mm/kmsan/kmsan_report.c:108
+ __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
+ bsearch+0x1dd/0x250 lib/bsearch.c:41
+ ir_lookup_by_scancode drivers/media/rc/rc-main.c:494 [inline]
+ rc_g_keycode_from_table drivers/media/rc/rc-main.c:582 [inline]
+ rc_keydown+0x1a6/0x6f0 drivers/media/rc/rc-main.c:816
+ cxusb_rc_query+0x2e1/0x360 drivers/media/usb/dvb-usb/cxusb.c:548
+ dvb_usb_read_remote_control+0xf9/0x290 drivers/media/usb/dvb-usb/dvb-usb-remote.c:261
+ process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
+ worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+ kthread+0x4b5/0x4f0 kernel/kthread.c:256
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
 
- [ bp: Check box is affected/mitigations are disabled first before
-   printing and massage. ]
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:150 [inline]
+ kmsan_internal_chain_origin+0xd2/0x170 mm/kmsan/kmsan.c:314
+ __msan_chain_origin+0x6b/0xe0 mm/kmsan/kmsan_instr.c:184
+ rc_g_keycode_from_table drivers/media/rc/rc-main.c:583 [inline]
+ rc_keydown+0x2c4/0x6f0 drivers/media/rc/rc-main.c:816
+ cxusb_rc_query+0x2e1/0x360 drivers/media/usb/dvb-usb/cxusb.c:548
+ dvb_usb_read_remote_control+0xf9/0x290 drivers/media/usb/dvb-usb/dvb-usb-remote.c:261
+ process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
+ worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+ kthread+0x4b5/0x4f0 kernel/kthread.c:256
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
 
-Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Mark Gross <mgross@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Tyler Hicks <tyhicks@canonical.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191115161445.30809-3-longman@redhat.com
+Local variable description: ----ircode@cxusb_rc_query
+Variable was created at:
+ cxusb_rc_query+0x4d/0x360 drivers/media/usb/dvb-usb/cxusb.c:543
+ dvb_usb_read_remote_control+0xf9/0x290 drivers/media/usb/dvb-usb/dvb-usb-remote.c:261
+
+Signed-off-by: Vito Caputo <vcaputo@pengaru.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/media/usb/dvb-usb/cxusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -39,6 +39,7 @@ static void __init spectre_v2_select_mit
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- static void __init mds_select_mitigation(void);
-+static void __init mds_print_mitigation(void);
- static void __init taa_select_mitigation(void);
+--- a/drivers/media/usb/dvb-usb/cxusb.c
++++ b/drivers/media/usb/dvb-usb/cxusb.c
+@@ -437,7 +437,8 @@ static int cxusb_rc_query(struct dvb_usb
+ 	u8 ircode[4];
+ 	int i;
  
- /* The base value of the SPEC_CTRL MSR that always has to be preserved. */
-@@ -108,6 +109,12 @@ void __init check_bugs(void)
- 	mds_select_mitigation();
- 	taa_select_mitigation();
+-	cxusb_ctrl_msg(d, CMD_GET_IR_CODE, NULL, 0, ircode, 4);
++	if (cxusb_ctrl_msg(d, CMD_GET_IR_CODE, NULL, 0, ircode, 4) < 0)
++		return 0;
  
-+	/*
-+	 * As MDS and TAA mitigations are inter-related, print MDS
-+	 * mitigation until after TAA mitigation selection is done.
-+	 */
-+	mds_print_mitigation();
-+
- 	arch_smt_update();
- 
- #ifdef CONFIG_X86_32
-@@ -245,6 +252,12 @@ static void __init mds_select_mitigation
- 		    (mds_nosmt || cpu_mitigations_auto_nosmt()))
- 			cpu_smt_disable(false);
- 	}
-+}
-+
-+static void __init mds_print_mitigation(void)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_MDS) || cpu_mitigations_off())
-+		return;
- 
- 	pr_info("%s\n", mds_strings[mds_mitigation]);
- }
+ 	*event = 0;
+ 	*state = REMOTE_NO_KEY_PRESSED;
 
 
