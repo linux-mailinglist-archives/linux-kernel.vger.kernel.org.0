@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A0B810B045
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 508E910B049
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfK0Nfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 08:35:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44507 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfK0Nf2 (ORCPT
+        id S1727169AbfK0Nfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 08:35:34 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44511 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbfK0Nfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 08:35:28 -0500
-Received: by mail-wr1-f68.google.com with SMTP id i12so26660045wrn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 05:35:26 -0800 (PST)
+        Wed, 27 Nov 2019 08:35:30 -0500
+Received: by mail-wr1-f67.google.com with SMTP id i12so26660154wrn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 05:35:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PwQtKdAUQY+SBl5OsHs80mv2U9tLV35lkOjHDH8uz/U=;
-        b=d2cdxQQ9QM6aWaCcpY6BPsgrz80U8Fwcf2w8R3J7+De+fTehFpP77InXdBpOshmtG+
-         32etBPEhPm69z+HnzUbWIXJmqF88J66XAgQl8duvoOYffYObmQYfJqYiOgZsL+F8OGbM
-         9J3aA3CJVF/GVScfiKoOkpwruakMZhbJgAta3PvgQtnlC2VTUGGDAqt0xceZ7b+jOZ/V
-         B+2C9t+orE3i5/ixDEQByG2iCRCllJcKFVRZCBMIP6eMtvUShSkWMB8wRJ0VDuR1dh6r
-         D2IrBbw4zC08FxiILk2FxWaw1TSMKAKJomt2K7GIEm/kbRTupkA8JCjd6W7ltZqQbB56
-         Q0Sg==
+        bh=p7V+xHNIyZ2oclfWUQxjk4vsWRTb0u39sFlOPPMozoc=;
+        b=DQeBIB0MbsdD5azj83qLyq5xXygJ8x270ElD+3EiUQe2zs2MUdeeLUql8faCfqh2lK
+         BeO3Kc4vdsWEorFyj3CEpadokZbQLp9jbVzasxJr1P3S4WF3iuwsf3JagZlD8GjHqqDA
+         evotXPIzeD6khCPCkAfafJ0SkPZGg8ojgICVY1mtqCFGSYWHN/4kJwvlYLTqZeDHD7l5
+         AXvgRd0xK40HFyyttyVDgNDQMbj0KF0VTukzhN2bZja856yfS5hG2oz8PVVovaYVCCtx
+         5+b43hjwsVguZWafJVrQtqQMDqgADztTM95RP6fFhFxThF/kbxssVNiyAzwBmfcTdOlj
+         AXag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PwQtKdAUQY+SBl5OsHs80mv2U9tLV35lkOjHDH8uz/U=;
-        b=qHHU+jtdtqXuMFYcwmcoA/qdT2GsljugoHEpn602MHUyLRjGC5A7S03kFaa+IkSHDs
-         mbBjHwILhLobnaQz7kBCo2L8ZX+kb4MqUqpDUThM/tnmnF9S6D/OZME2QvVP35thi9ty
-         cMVVZxiyX7E86d28vrHBTQSOueGYlZnwQj5kS6YD0UFeHEM/mAKXFBg2/Y36tYpq3gA4
-         w/FWQvo8I/Z17VbdHKVdcBSCK8KEk1isc8d53RxqqXVIYgmVGwNwAcHCLohxphHt2Qor
-         cGifLJFAFiX6wXkHfeGm9tz07aCGj1+ruy71oMwlhY+O+4+cik2dtHt2g5AKEXq93/q3
-         MBQw==
-X-Gm-Message-State: APjAAAUhqZT6pk4g0L+OA8oz9V1QpVibvW95bC/cWKsnSWrdL/SVOC84
-        w24IKOlQ9Q1UbGmQAS2eg+h4Gw==
-X-Google-Smtp-Source: APXvYqyY8p/I8uBCHcvNGF+XJfKMVeXXS67kHVI4ZRKWPfTZ/XQUA9ardXrExDJRQfWZ1TU2jqN73Q==
-X-Received: by 2002:a5d:438c:: with SMTP id i12mr20934477wrq.196.1574861725481;
-        Wed, 27 Nov 2019 05:35:25 -0800 (PST)
+        bh=p7V+xHNIyZ2oclfWUQxjk4vsWRTb0u39sFlOPPMozoc=;
+        b=q3qbfFO0y90AhYVaTUp+gCi/aYXjyjYW+rXvwgHZAzJClOHWr1b42lDsNlMBAjMuF6
+         4jLxuh7frxmk2Dw4xsO6iJv9WMQNbVohk0xw+uUId2wiJjnKB44xHLfrVgFBRIcqkt1C
+         NYXcZYxJqJ+YMoKVRo73RbNgyctPTjvWhvbOkub4gOEZ9PzmILbvBdi3JTHUL5zrAgk3
+         BjNn6YvUZASoaGaG9ijYtoltORjMYnPGMMArMUGhUwn6Jryaj2CzxjkZ1Nptan6l2WYw
+         xfMCd6YHqxr7Hro6eaKT6nmfcnbEHsMUiTD+8F79ykbgj3uWjeiRPfzlg4A3J//5y8Yq
+         JI+w==
+X-Gm-Message-State: APjAAAWsGXuNi2Eb083NyCbV/L1Da0eKYQ+vij86v0LGMm55G7Lg9A0N
+        th/D4d4ctIPx3OgevgH1Cs0oVw==
+X-Google-Smtp-Source: APXvYqwaKYrlokMX+NiLacauZCYl0mXZel/xbNs/uoO322ginCua9tDEtUexwnlvD3GMv1QHlyzFuw==
+X-Received: by 2002:adf:df0e:: with SMTP id y14mr39661533wrl.377.1574861727081;
+        Wed, 27 Nov 2019 05:35:27 -0800 (PST)
 Received: from debian-brgl.home (lfbn-1-7087-108.w90-116.abo.wanadoo.fr. [90.116.255.108])
-        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.24
+        by smtp.gmail.com with ESMTPSA id k18sm19663687wrm.82.2019.11.27.05.35.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 05:35:24 -0800 (PST)
+        Wed, 27 Nov 2019 05:35:25 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5/8] gpiolib: use gpiochip_get_desc() in lineevent_create()
-Date:   Wed, 27 Nov 2019 14:35:07 +0100
-Message-Id: <20191127133510.10614-6-brgl@bgdev.pl>
+Subject: [PATCH 6/8] gpiolib: actually protect the line event kfifo with mutex
+Date:   Wed, 27 Nov 2019 14:35:08 +0100
+Message-Id: <20191127133510.10614-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191127133510.10614-1-brgl@bgdev.pl>
 References: <20191127133510.10614-1-brgl@bgdev.pl>
@@ -65,38 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Unduplicate the ngpio check by simply calling gpiochip_get_desc() and
-checking its return value.
+The read_lock mutex is supposed to prevent collisions between reading
+and writing to the line event kfifo but it's actually only taken when
+the events are being read from it. Also take the lock when adding the
+events and checking if kfifo is empty.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpiolib.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6ef55cc1188b..17796437d7be 100644
+index 17796437d7be..d094b1be334d 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1009,8 +1009,9 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
- 	lflags = eventreq.handleflags;
- 	eflags = eventreq.eventflags;
+@@ -818,8 +818,10 @@ static __poll_t lineevent_poll(struct file *filep,
  
--	if (offset >= gdev->ngpio)
--		return -EINVAL;
-+	desc = gpiochip_get_desc(gdev->chip, offset);
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
+ 	poll_wait(filep, &le->wait, wait);
  
- 	/* Return an error if a unknown flag is set */
- 	if ((lflags & ~GPIOHANDLE_REQUEST_VALID_FLAGS) ||
-@@ -1048,7 +1049,6 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
++	mutex_lock(&le->read_lock);
+ 	if (!kfifo_is_empty(&le->events))
+ 		events = EPOLLIN | EPOLLRDNORM;
++	mutex_unlock(&le->read_lock);
+ 
+ 	return events;
+ }
+@@ -838,7 +840,9 @@ static ssize_t lineevent_read(struct file *filep,
+ 		return -EINVAL;
+ 
+ 	do {
++		mutex_lock(&le->read_lock);
+ 		if (kfifo_is_empty(&le->events)) {
++			mutex_unlock(&le->read_lock);
+ 			if (filep->f_flags & O_NONBLOCK)
+ 				return -EAGAIN;
+ 
+@@ -846,6 +850,8 @@ static ssize_t lineevent_read(struct file *filep,
+ 					!kfifo_is_empty(&le->events));
+ 			if (ret)
+ 				return ret;
++		} else {
++			mutex_unlock(&le->read_lock);
  		}
+ 
+ 		if (mutex_lock_interruptible(&le->read_lock))
+@@ -969,7 +975,9 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 		return IRQ_NONE;
  	}
  
--	desc = &gdev->descs[offset];
- 	ret = gpiod_request(desc, le->label);
++	mutex_lock(&le->read_lock);
+ 	ret = kfifo_put(&le->events, ge);
++	mutex_unlock(&le->read_lock);
  	if (ret)
- 		goto out_free_label;
+ 		wake_up_poll(&le->wait, EPOLLIN);
+ 
 -- 
 2.23.0
 
