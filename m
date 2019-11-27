@@ -2,127 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2339210AB8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6B210ABA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:20:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbfK0ISy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:18:54 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:59693 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726125AbfK0ISx (ORCPT
+        id S1727150AbfK0IUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:20:06 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43968 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfK0ITh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:18:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574842732;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ljhewKbxHJezSx+rS3E3FDX8oxHHWYHSlYwJHWJi7eA=;
-        b=Ac4MIf2xJASTiC0/XBL7c9nGCnseBqe/3tyDdfdMIzyu92pvS8Md0xjKjqaO7kCjGPZJLG
-        ad208g5CcmwLAeIRrHfbxt8hQ21OO7PXOaIPnjE0KdtFigyXklPZViGVbAuNHh9nPq1HDx
-        fpufYo1n9PF7oKnVmhr+LVJUWlx+SSs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-1jFMoWh8MuW10INoaOHqMA-1; Wed, 27 Nov 2019 03:18:49 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ADAC0100A14C;
-        Wed, 27 Nov 2019 08:18:47 +0000 (UTC)
-Received: from krava (ovpn-204-226.brq.redhat.com [10.40.204.226])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4E1E5600C8;
-        Wed, 27 Nov 2019 08:18:45 +0000 (UTC)
-Date:   Wed, 27 Nov 2019 09:18:44 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf c2c: fix '-e list'
-Message-ID: <20191127081844.GH32367@krava>
-References: <20191127073442.174202-1-irogers@google.com>
+        Wed, 27 Nov 2019 03:19:37 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iZsXp-0002Pa-Iz; Wed, 27 Nov 2019 09:19:29 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1F1811C004F;
+        Wed, 27 Nov 2019 09:19:29 +0100 (CET)
+Date:   Wed, 27 Nov 2019 08:19:28 -0000
+From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/ptrace: Document FSBASE and GSBASE ABI oddities
+Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191127073442.174202-1-irogers@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: 1jFMoWh8MuW10INoaOHqMA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Message-ID: <157484276896.21853.7610159468997605731.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 11:34:42PM -0800, Ian Rogers wrote:
-> When the event is passed as list, the default events should be listed as
-> per 'perf mem record -e list'. Previous behavior is:
->=20
-> $ perf c2c record -e list
-> failed: event 'list' not found, use '-e list' to get list of available ev=
-ents
->=20
->  Usage: perf c2c record [<options>] [<command>]
->     or: perf c2c record [<options>] -- <command> [<options>]
->=20
->     -e, --event <event>   event selector. Use 'perf mem record -e list' t=
-o list available events
+The following commit has been merged into the x86/urgent branch of tip:
 
-man c2c page do say you should use 'perf mem' not 'perf c2c'
-could you please change the man page as well?
+Commit-ID:     56f2ab41b652251f336a0f471b1033afeaedd161
+Gitweb:        https://git.kernel.org/tip/56f2ab41b652251f336a0f471b1033afeaedd161
+Author:        Andy Lutomirski <luto@kernel.org>
+AuthorDate:    Wed, 17 Jul 2019 06:44:16 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 26 Nov 2019 22:00:12 +01:00
 
->=20
-> New behavior:
->=20
-> $ perf c2c record -e list
-> ldlat-loads  : available
-> ldlat-stores : available
->=20
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-c2c.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
->=20
-> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-> index e69f44941aad..dd69cd218e4c 100644
-> --- a/tools/perf/builtin-c2c.c
-> +++ b/tools/perf/builtin-c2c.c
-> @@ -2872,10 +2872,26 @@ static int perf_c2c__report(int argc, const char =
-**argv)
->  static int parse_record_events(const struct option *opt,
->  =09=09=09       const char *str, int unset __maybe_unused)
->  {
-> +=09int j;
->  =09bool *event_set =3D (bool *) opt->value;
-> =20
-> -=09*event_set =3D true;
-> -=09return perf_mem_events__parse(str);
-> +=09if (strcmp(str, "list")) {
-> +=09=09*event_set =3D true;
-> +=09=09if (!perf_mem_events__parse(str))
-> +=09=09=09return 0;
-> +
-> +=09=09exit(-1);
-> +=09}
-> +=09for (j =3D 0; j < PERF_MEM_EVENTS__MAX; j++) {
-> +=09=09struct perf_mem_event *e =3D &perf_mem_events[j];
-> +
-> +=09=09fprintf(stderr, "%-13s%-*s%s\n",
-> +=09=09=09e->tag,
-> +=09=09=09verbose > 0 ? 25 : 0,
-> +=09=09=09verbose > 0 ? perf_mem_events__name(j) : "",
-> +=09=09=09e->supported ? ": available" : "");
-> +=09}
+x86/ptrace: Document FSBASE and GSBASE ABI oddities
 
-there's same loop in builtin-mem.c, could you please put it
-to function in mem-events.c?
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/ptrace.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-thanks,
-jirka
-
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 3b3b169..f0e1ddb 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -281,6 +281,20 @@ static int set_segment_reg(struct task_struct *task,
+ 	if (invalid_selector(value))
+ 		return -EIO;
+ 
++	/*
++	 * This function has some ABI oddities.
++	 *
++	 * A 32-bit ptracer probably expects that writing FS or GS will change
++	 * FSBASE or GSBASE respectively.  In the absence of FSGSBASE support,
++	 * this code indeed has that effect.  When FSGSBASE is added, this
++	 * will require a special case.
++	 *
++	 * For existing 64-bit ptracers, writing FS or GS *also* currently
++	 * changes the base if the selector is nonzero the next time the task
++	 * is run.  This behavior may not be needed, and trying to preserve it
++	 * when FSGSBASE is added would be complicated at best.
++	 */
++
+ 	switch (offset) {
+ 	case offsetof(struct user_regs_struct,fs):
+ 		task->thread.fsindex = value;
+@@ -370,6 +384,9 @@ static int putreg(struct task_struct *child,
+ 		 * When changing the FS base, use do_arch_prctl_64()
+ 		 * to set the index to zero and to set the base
+ 		 * as requested.
++		 *
++		 * NB: This behavior is nonsensical and likely needs to
++		 * change when FSGSBASE support is added.
+ 		 */
+ 		if (child->thread.fsbase != value)
+ 			return do_arch_prctl_64(child, ARCH_SET_FS, value);
