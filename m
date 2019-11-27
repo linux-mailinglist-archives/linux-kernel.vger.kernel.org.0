@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5774B10B9AE
+	by mail.lfdr.de (Postfix) with ESMTP id D2A7B10B9AF
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbfK0Uzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46250 "EHLO mail.kernel.org"
+        id S1731002AbfK0Uzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:55:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730981AbfK0Uzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:43 -0500
+        id S1730218AbfK0Uzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:55:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D02882068E;
-        Wed, 27 Nov 2019 20:55:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4B442154A;
+        Wed, 27 Nov 2019 20:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888142;
-        bh=uUfspw6J0y7zVNWHaEL3Fg4hnP5/GkJoZOcnFFnl6tg=;
+        s=default; t=1574888147;
+        bh=SWAWfJzmUKIYI5K513r05IPRQy5xw/PP18Nyx4gvL2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ns9V0C2vKtwMmA1dWZV4zIPRYHlHVu0Ud4549Cabl4UEitqP9Mx8u1KrLsaigMrL3
-         tMzy0lAoBZGrkJ8m6UMcBiP52o4x/iTNL5Pan90lzZd7EkTpNtM4azEf9yvbsuoLPY
-         cB6eTwMpzaF8b+kHUkX9Frb+S84nwJmQeN2jEOZ0=
+        b=gdxutCGDrWol8MkXPyYtXmnAKMRUSCPSTnvBJQNjPlZ62Ywv3TBqkCfJN3h1rEFY7
+         QEGYf7H0XgawhIUxqcDg1tjIDEBKC63rpvnSXXkbymuEmOUVoAxgbsjpDrQnhKQSCI
+         OL4GZh9CfHGaMhxaEpszFeGfyUcAA2TKrsGTtv/Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Michael Schupikov <michael@schupikov.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/306] mwifiex: Fix NL80211_TX_POWER_LIMITED
-Date:   Wed, 27 Nov 2019 21:27:51 +0100
-Message-Id: <20191127203116.245218438@linuxfoundation.org>
+Subject: [PATCH 4.19 023/306] crypto: testmgr - fix sizeof() on COMP_BUF_SIZE
+Date:   Wed, 27 Nov 2019 21:27:53 +0100
+Message-Id: <20191127203116.384045764@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,115 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Bunk <bunk@kernel.org>
+From: Michael Schupikov <michael@schupikov.de>
 
-[ Upstream commit 65a576e27309120e0621f54d5c81eb9128bd56be ]
+[ Upstream commit 22a8118d329334833cd30f2ceb36d28e8cae8a4f ]
 
-NL80211_TX_POWER_LIMITED was treated as NL80211_TX_POWER_AUTOMATIC,
-which is the opposite of what should happen and can cause nasty
-regulatory problems.
+After allocation, output and decomp_output both point to memory chunks of
+size COMP_BUF_SIZE. Then, only the first bytes are zeroed out using
+sizeof(COMP_BUF_SIZE) as parameter to memset(), because
+sizeof(COMP_BUF_SIZE) provides the size of the constant and not the size of
+allocated memory.
 
-if/else converted to a switch without default to make gcc warn
-on unhandled enum values.
+Instead, the whole allocated memory is meant to be zeroed out. Use
+COMP_BUF_SIZE as parameter to memset() directly in order to accomplish
+this.
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 336073840a872 ("crypto: testmgr - Allow different compression results")
+
+Signed-off-by: Michael Schupikov <michael@schupikov.de>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c  | 13 +++++++++++--
- drivers/net/wireless/marvell/mwifiex/ioctl.h     |  1 +
- drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 11 +++++++----
- 3 files changed, 19 insertions(+), 6 deletions(-)
+ crypto/testmgr.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index 47ec5293c045d..7b74ef71bef1d 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -376,11 +376,20 @@ mwifiex_cfg80211_set_tx_power(struct wiphy *wiphy,
- 	struct mwifiex_power_cfg power_cfg;
- 	int dbm = MBM_TO_DBM(mbm);
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 3664c26f4838e..13cb2ea99d6a5 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1400,8 +1400,8 @@ static int test_comp(struct crypto_comp *tfm,
+ 		int ilen;
+ 		unsigned int dlen = COMP_BUF_SIZE;
  
--	if (type == NL80211_TX_POWER_FIXED) {
-+	switch (type) {
-+	case NL80211_TX_POWER_FIXED:
- 		power_cfg.is_power_auto = 0;
-+		power_cfg.is_power_fixed = 1;
- 		power_cfg.power_level = dbm;
--	} else {
-+		break;
-+	case NL80211_TX_POWER_LIMITED:
-+		power_cfg.is_power_auto = 0;
-+		power_cfg.is_power_fixed = 0;
-+		power_cfg.power_level = dbm;
-+		break;
-+	case NL80211_TX_POWER_AUTOMATIC:
- 		power_cfg.is_power_auto = 1;
-+		break;
- 	}
+-		memset(output, 0, sizeof(COMP_BUF_SIZE));
+-		memset(decomp_output, 0, sizeof(COMP_BUF_SIZE));
++		memset(output, 0, COMP_BUF_SIZE);
++		memset(decomp_output, 0, COMP_BUF_SIZE);
  
- 	priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
-diff --git a/drivers/net/wireless/marvell/mwifiex/ioctl.h b/drivers/net/wireless/marvell/mwifiex/ioctl.h
-index 48e154e1865df..0dd592ea6e833 100644
---- a/drivers/net/wireless/marvell/mwifiex/ioctl.h
-+++ b/drivers/net/wireless/marvell/mwifiex/ioctl.h
-@@ -267,6 +267,7 @@ struct mwifiex_ds_encrypt_key {
+ 		ilen = ctemplate[i].inlen;
+ 		ret = crypto_comp_compress(tfm, ctemplate[i].input,
+@@ -1445,7 +1445,7 @@ static int test_comp(struct crypto_comp *tfm,
+ 		int ilen;
+ 		unsigned int dlen = COMP_BUF_SIZE;
  
- struct mwifiex_power_cfg {
- 	u32 is_power_auto;
-+	u32 is_power_fixed;
- 	u32 power_level;
- };
+-		memset(decomp_output, 0, sizeof(COMP_BUF_SIZE));
++		memset(decomp_output, 0, COMP_BUF_SIZE);
  
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-index 843d65bba1811..74e50566db1f2 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-@@ -688,6 +688,9 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
- 	txp_cfg = (struct host_cmd_ds_txpwr_cfg *) buf;
- 	txp_cfg->action = cpu_to_le16(HostCmd_ACT_GEN_SET);
- 	if (!power_cfg->is_power_auto) {
-+		u16 dbm_min = power_cfg->is_power_fixed ?
-+			      dbm : priv->min_tx_power_level;
-+
- 		txp_cfg->mode = cpu_to_le32(1);
- 		pg_tlv = (struct mwifiex_types_power_group *)
- 			 (buf + sizeof(struct host_cmd_ds_txpwr_cfg));
-@@ -702,7 +705,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
- 		pg->last_rate_code = 0x03;
- 		pg->modulation_class = MOD_CLASS_HR_DSSS;
- 		pg->power_step = 0;
--		pg->power_min = (s8) dbm;
-+		pg->power_min = (s8) dbm_min;
- 		pg->power_max = (s8) dbm;
- 		pg++;
- 		/* Power group for modulation class OFDM */
-@@ -710,7 +713,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
- 		pg->last_rate_code = 0x07;
- 		pg->modulation_class = MOD_CLASS_OFDM;
- 		pg->power_step = 0;
--		pg->power_min = (s8) dbm;
-+		pg->power_min = (s8) dbm_min;
- 		pg->power_max = (s8) dbm;
- 		pg++;
- 		/* Power group for modulation class HTBW20 */
-@@ -718,7 +721,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
- 		pg->last_rate_code = 0x20;
- 		pg->modulation_class = MOD_CLASS_HT;
- 		pg->power_step = 0;
--		pg->power_min = (s8) dbm;
-+		pg->power_min = (s8) dbm_min;
- 		pg->power_max = (s8) dbm;
- 		pg->ht_bandwidth = HT_BW_20;
- 		pg++;
-@@ -727,7 +730,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
- 		pg->last_rate_code = 0x20;
- 		pg->modulation_class = MOD_CLASS_HT;
- 		pg->power_step = 0;
--		pg->power_min = (s8) dbm;
-+		pg->power_min = (s8) dbm_min;
- 		pg->power_max = (s8) dbm;
- 		pg->ht_bandwidth = HT_BW_40;
- 	}
+ 		ilen = dtemplate[i].inlen;
+ 		ret = crypto_comp_decompress(tfm, dtemplate[i].input,
 -- 
 2.20.1
 
