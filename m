@@ -2,122 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F64910BF9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44DD110BF12
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfK0VoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:44:04 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35451 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbfK0Uh7 (ORCPT
+        id S1729376AbfK0Vkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:40:36 -0500
+Received: from smtprelay0087.hostedemail.com ([216.40.44.87]:35187 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729348AbfK0Umm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:37:59 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 23so18544059otf.2;
-        Wed, 27 Nov 2019 12:37:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=14vyCpwlco5dNMekZ671HzsQ/qD/jZMl32Sz5ULoC/U=;
-        b=EXzhuoyV1OLRcuwocYrAZ7FKZEIUjtjNrYygi24X9SokyLEPz0XRMvGUmsXzJHPEsm
-         HEjGyocRwmBgOCv3NqKYx1IVM9tRQsIdHEPjm05IQVIfhAkknunCKokl0v8sHdzSl2cJ
-         qkQhhvTLVPe5s3bAlhaeh/sL21g84jTENGy/B4ISDhpZHxsnODQ2vMbdu3b8L0iseCsh
-         4zTwpXFXwAoUA+iEQHJJpAaCPZROsJuvBlOo65Nkn/9NhUoKvK7dmge+9j+OL+oL1vzI
-         Jn8v5fVJX7HNWSFy+XmU4Q07pNCriIeqUft32P+RN3GpoVmRCMLFFQI2InxLvvTiYFZl
-         DHTQ==
-X-Gm-Message-State: APjAAAUU9SGfpxDvmtC2lMC/+uldHntpWEgb3fvdJW3lrFGeUqHPEwW/
-        uP1to04+2EeUB1p0oLSN9rxkPgRIlohy+5nhEcU=
-X-Google-Smtp-Source: APXvYqyekyFnyyTzxDAaVF4lh76x3pVg0AJcETDtG/R5UDB8kyib7ugeAakdgVvr7ZJMAAkTJwIUv0P5kqimosEUmPw=
-X-Received: by 2002:a9d:2073:: with SMTP id n106mr5117337ota.145.1574887078997;
- Wed, 27 Nov 2019 12:37:58 -0800 (PST)
+        Wed, 27 Nov 2019 15:42:42 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 1F9C6837F24D;
+        Wed, 27 Nov 2019 20:42:40 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3874:4321:5007:10004:10400:10848:11026:11658:11914:12294:12296:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30029:30054:30070:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: screw31_34379b223a41f
+X-Filterd-Recvd-Size: 1759
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 27 Nov 2019 20:42:38 +0000 (UTC)
+Message-ID: <80168e5bebedeb64e999ed11d8479846270bd3d7.camel@perches.com>
+Subject: Re: [PATCH 04/16] dyndbg: rename __verbose section to __dyndbg
+From:   Joe Perches <joe@perches.com>
+To:     Jim Cromie <jim.cromie@gmail.com>, jbaron@akamai.com,
+        linux-kernel@vger.kernel.org
+Cc:     linux@rasmusvillemoes.dk, greg@kroah.com,
+        Arnd Bergmann <arnd@arndb.de>, Jessica Yu <jeyu@kernel.org>,
+        linux-arch@vger.kernel.org
+Date:   Wed, 27 Nov 2019 12:42:12 -0800
+In-Reply-To: <20191127175051.1351346-1-jim.cromie@gmail.com>
+References: <20191127175051.1351346-1-jim.cromie@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-References: <cover.1574871463.git.nishadkamdar@gmail.com> <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
-In-Reply-To: <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Nov 2019 21:37:47 +0100
-Message-ID: <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
-Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
- License Identifier
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nishad,
+On Wed, 2019-11-27 at 10:50 -0700, Jim Cromie wrote:
+> dyndbg populates its callsite info into __verbose section, change that
+> to a more specific and descriptive name, __dyndbg.
+[]
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+[]
+> @@ -1040,7 +1040,7 @@ static int __init dynamic_debug_init(void)
+>  	ddebug_init_success = 1;
+>  	vpr_info("%d modules, %d entries and %d bytes in ddebug tables, %d bytes in (readonly) verbose section\n",
 
-On Wed, Nov 27, 2019 at 5:46 PM Nishad Kamdar <nishadkamdar@gmail.com> wrote:
-> This patch corrects the SPDX License Identifier style in
-> header files related to Reneses Soc pinctrl driver.
-> It assigns explicit block comment for the SPDX License Identifier.
+This format should also change verbose to dyndbg
+Maybe the ddebug word too
 
-Is it incorrect to not have an explicit block comment?
-Other recommendations have been to integrate the SPDX comment line
-into an existing comment header, if it exists....
+>  		 modct, entries, (int)(modct * sizeof(struct ddebug_table)),
+> -		 verbose_bytes + (int)(__stop___verbose - __start___verbose));
+> +		 verbose_bytes + (int)(__stop___dyndbg - __start___dyndbg));
+>  
+>  	/* apply ddebug_query boot param, dont unload tables on err */
+>  	if (ddebug_setup_string[0] != '\0') {
 
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46.
->
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/pinctrl/sh-pfc/core.h   | 4 ++--
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-> index b5b1d163e98a..5ad0ab8f9e14 100644
-> --- a/drivers/pinctrl/sh-pfc/core.h
-> +++ b/drivers/pinctrl/sh-pfc/core.h
-> @@ -1,5 +1,5 @@
-> -/* SPDX-License-Identifier: GPL-2.0
-> - *
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
->   * SuperH Pin Function Controller support.
->   *
->   * Copyright (C) 2012  Renesas Solutions Corp.
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> index 640d2a4cb838..fff9cbb7a0f8 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -1,5 +1,5 @@
-> -/* SPDX-License-Identifier: GPL-2.0
-> - *
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
->   * SuperH Pin Function Controller Support
->   *
->   * Copyright (c) 2008 Magnus Damm
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
