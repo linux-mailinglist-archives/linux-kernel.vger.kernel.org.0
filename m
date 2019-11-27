@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D8E10B7FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2E710B865
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:43:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbfK0Uii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:38:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42382 "EHLO mail.kernel.org"
+        id S1729377AbfK0Um7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:42:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728768AbfK0Uig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:38:36 -0500
+        id S1729372AbfK0Umx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:42:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15713215B2;
-        Wed, 27 Nov 2019 20:38:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9E41215A4;
+        Wed, 27 Nov 2019 20:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887115;
-        bh=zk/yj7nZce/1x8CxeZiDLu8VFD6lylu5eiLPJJaQATA=;
+        s=default; t=1574887372;
+        bh=AOzwc6nHGmg4oVDPLB8ouoaKqwdKAmVHFY5iyrSIGYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X/0WhqRKSujptXrjDH+2b0Ua9POLWJJTnH8GhrU0t5372eSmYurWzjtiwX1xJb235
-         NYaqFajZBvpnjmCFlX1mwa+neSM40dS4lXaaSzpCOF6Lx3sIGHzsKrjooYlpUJqKqQ
-         LBRqvSse6LXU21wSDilHvqLGI5CPEg/uxcXfNFGc=
+        b=Yit6kDaf/bBq336zxMtspBJvRY1I6+AdRi1WHrVtGnWRYQAQvOGHB81neAlLN9lrs
+         7RcQ03GQSNCzqBp0DYF8d5Bdq3bdzyTpf0U/PbeIjSc945khpqjZwC4HETr8Fy4iRa
+         HokgNmtemEbfL11siMWemGbbBk3HoHXM+FnSJ7do=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,12 +34,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 076/132] ocfs2: dont put and assigning null to bh allocated outside
-Date:   Wed, 27 Nov 2019 21:31:07 +0100
-Message-Id: <20191127203009.238856040@linuxfoundation.org>
+Subject: [PATCH 4.9 085/151] ocfs2: dont put and assigning null to bh allocated outside
+Date:   Wed, 27 Nov 2019 21:31:08 +0100
+Message-Id: <20191127203036.591821349@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -82,7 +82,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 59 insertions(+), 18 deletions(-)
 
 diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index 9ee8bcfbf00f3..92593179f7e2b 100644
+index 935bac253991b..1403c88f2b053 100644
 --- a/fs/ocfs2/buffer_head_io.c
 +++ b/fs/ocfs2/buffer_head_io.c
 @@ -98,25 +98,34 @@ int ocfs2_write_block(struct ocfs2_super *osb, struct buffer_head *bh,
@@ -121,8 +121,8 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  			}
  		}
  		bh = bhs[i];
-@@ -151,9 +160,26 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
- 		submit_bh(READ, bh);
+@@ -156,9 +165,26 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 		submit_bh(REQ_OP_READ, 0, bh);
  	}
  
 +read_failure:
@@ -148,7 +148,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  		/* No need to wait on the buffer if it's managed by JBD. */
  		if (!buffer_jbd(bh))
  			wait_on_buffer(bh);
-@@ -163,8 +189,7 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+@@ -168,8 +194,7 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
  			 * so we can safely record this and loop back
  			 * to cleanup the other buffers. */
  			status = -EIO;
@@ -158,7 +158,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  		}
  	}
  
-@@ -172,6 +197,9 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+@@ -177,6 +202,9 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
  	return status;
  }
  
@@ -168,7 +168,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  		      struct buffer_head *bhs[], int flags,
  		      int (*validate)(struct super_block *sb,
-@@ -181,6 +209,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+@@ -186,6 +214,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  	int i, ignore_cache = 0;
  	struct buffer_head *bh;
  	struct super_block *sb = ocfs2_metadata_cache_get_super(ci);
@@ -176,7 +176,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  
  	trace_ocfs2_read_blocks_begin(ci, (unsigned long long)block, nr, flags);
  
-@@ -206,6 +235,11 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+@@ -211,6 +240,11 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  		goto bail;
  	}
  
@@ -188,7 +188,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  	ocfs2_metadata_cache_io_lock(ci);
  	for (i = 0 ; i < nr ; i++) {
  		if (bhs[i] == NULL) {
-@@ -214,7 +248,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+@@ -219,7 +253,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  				ocfs2_metadata_cache_io_unlock(ci);
  				status = -ENOMEM;
  				mlog_errno(status);
@@ -198,7 +198,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  			}
  		}
  		bh = bhs[i];
-@@ -308,16 +343,27 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+@@ -313,16 +348,27 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  		}
  	}
  
@@ -232,7 +232,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  				continue;
  			}
  			/* We know this can't have changed as we hold the
-@@ -335,9 +381,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+@@ -340,9 +386,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  				 * uptodate. */
  				status = -EIO;
  				clear_buffer_needs_validate(bh);
@@ -243,7 +243,7 @@ index 9ee8bcfbf00f3..92593179f7e2b 100644
  			}
  
  			if (buffer_needs_validate(bh)) {
-@@ -347,11 +391,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+@@ -352,11 +396,8 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
  				BUG_ON(buffer_jbd(bh));
  				clear_buffer_needs_validate(bh);
  				status = validate(sb, bh);
