@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746D810B87A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA4010B95E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbfK0Unu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:43:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52218 "EHLO mail.kernel.org"
+        id S1730223AbfK0Uwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:52:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729498AbfK0Uns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:43:48 -0500
+        id S1730606AbfK0Uw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:52:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3F052080F;
-        Wed, 27 Nov 2019 20:43:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E69E21882;
+        Wed, 27 Nov 2019 20:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887428;
-        bh=FnI+fa6RYHCzzLqSE6NIcC3D6jU/xkVbeou+UhqK7sc=;
+        s=default; t=1574887947;
+        bh=SKDZpY9gfO13SASawCeW4cUWQ4spZq5Ne+lfp2vOYwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HvaxB0JUOsuzaS8s5A6tYZbOUPLEN0LtXgaakmGP9w0KQwTsxKVSa5DMvL5Fen12r
-         p7xRBbgc6FaPsPR6kuteMg70dQi7/zswLjkq/WCmwDYQXQRkNC0cnE4OTYnG5YKLdH
-         mUUKXAhBSTJ8dPilHpMaIodeiPXhWhrAxng0TN04=
+        b=HdAUXzPG6UUeBLtZjBuuDy3mhyi8bjmSHTCh9DAvCyLr72ZZBY8Pg00UL7nEmqZ+2
+         FwL6pjPA2vD/LrhGecOdHbtjC9h0WD77cIvTzs7A4azDzLlTR2hNHMdKPgTcTPhCZ0
+         f7v5BaVZHeelRZDiRutjXRKWt/2vYX7UZt9CVzI8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nathan Chancellor <natechancellor@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 105/151] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
-Date:   Wed, 27 Nov 2019 21:31:28 +0100
-Message-Id: <20191127203040.899342059@linuxfoundation.org>
+Subject: [PATCH 4.14 156/211] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
+Date:   Wed, 27 Nov 2019 21:31:29 +0100
+Message-Id: <20191127203108.723960643@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -82,7 +82,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index e053f1fa55120..ab2a451f31562 100644
+index d090f37ca4a11..8b4e3582af6e0 100644
 --- a/drivers/pinctrl/pinctrl-lpc18xx.c
 +++ b/drivers/pinctrl/pinctrl-lpc18xx.c
 @@ -630,14 +630,8 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
