@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E81810B838
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7CFE10B794
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfK0UlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46158 "EHLO mail.kernel.org"
+        id S1727803AbfK0UfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfK0UlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:09 -0500
+        id S1727782AbfK0UfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49A6B215A4;
-        Wed, 27 Nov 2019 20:41:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66BC12154A;
+        Wed, 27 Nov 2019 20:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887268;
-        bh=GrS/sfvynxkd0Z9uBnjBDVMYI0Mc/xdQEjRQgmhPX4Q=;
+        s=default; t=1574886902;
+        bh=ATMUg45hUGGfFNrsUroPDxBOa8WLEKS7zRKcEHMmwRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXVGoX+FYVBBx9qPvPTM3hD3jjGw6D0rlWw5Szd4a6HJUJ0zzUP57Wn4o+GsVAjEm
-         FEqrJbieWaZEoc1YJChbVLQICy5uemVknaAAnV631jqyQ3Ebc6eFIZPY2ZedkEjNi7
-         zmKCyBJvXQpFBNZUeIFZEdqydzR8603zJbiMAyko=
+        b=qCHStseNsSooAN0wmDHraI6twTDyyyxgRJhjWFKm29BsNq+R83uACtXK3BfQ7P/Iq
+         opq6PtX5bGZhsTaKEQrOboEUc1nsNOarSsAuUZ8HfVmMRro1Bj5pxA2pjEEbilHr9f
+         E3EododeGLAXn8McB7xWHJ9PQ857VxL2tibgJ2Kg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 045/151] SUNRPC: Fix a compile warning for cmpxchg64()
-Date:   Wed, 27 Nov 2019 21:30:28 +0100
-Message-Id: <20191127203028.345511266@linuxfoundation.org>
+Subject: [PATCH 4.4 038/132] scsi: iscsi_tcp: Explicitly cast param in iscsi_sw_tcp_host_get_param
+Date:   Wed, 27 Nov 2019 21:30:29 +0100
+Message-Id: <20191127202933.721193421@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,28 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit e732f4485a150492b286f3efc06f9b34dd6b9995 ]
+[ Upstream commit 20054597f169090109fc3f0dfa1a48583f4178a4 ]
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Clang warns when one enumerated type is implicitly converted to another.
+
+drivers/scsi/iscsi_tcp.c:803:15: warning: implicit conversion from
+enumeration type 'enum iscsi_host_param' to different enumeration type
+'enum iscsi_param' [-Wenum-conversion]
+                                                 &addr, param, buf);
+                                                        ^~~~~
+1 warning generated.
+
+iscsi_conn_get_addr_param handles ISCSI_HOST_PARAM_IPADDRESS just fine
+so add an explicit cast to iscsi_param to make it clear to Clang that
+this is expected behavior.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/153
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/auth_gss/gss_krb5_seal.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/iscsi_tcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/sunrpc/auth_gss/gss_krb5_seal.c b/net/sunrpc/auth_gss/gss_krb5_seal.c
-index 1d74d653e6c05..ad0dcb69395d7 100644
---- a/net/sunrpc/auth_gss/gss_krb5_seal.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_seal.c
-@@ -63,6 +63,7 @@
- #include <linux/sunrpc/gss_krb5.h>
- #include <linux/random.h>
- #include <linux/crypto.h>
-+#include <linux/atomic.h>
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 0b8af186e7078..fccb8991bd5b7 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -788,7 +788,8 @@ static int iscsi_sw_tcp_host_get_param(struct Scsi_Host *shost,
+ 			return rc;
  
- #if IS_ENABLED(CONFIG_SUNRPC_DEBUG)
- # define RPCDBG_FACILITY        RPCDBG_AUTH
+ 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
+-						 &addr, param, buf);
++						 &addr,
++						 (enum iscsi_param)param, buf);
+ 	default:
+ 		return iscsi_host_get_param(shost, param, buf);
+ 	}
 -- 
 2.20.1
 
