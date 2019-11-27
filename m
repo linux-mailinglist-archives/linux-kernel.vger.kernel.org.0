@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8343B10BE93
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD4710BF52
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbfK0VgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:36:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33870 "EHLO mail.kernel.org"
+        id S1727438AbfK0Uji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:39:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbfK0Usc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:48:32 -0500
+        id S1728939AbfK0Ujd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:39:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB56C21847;
-        Wed, 27 Nov 2019 20:48:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D74121771;
+        Wed, 27 Nov 2019 20:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887712;
-        bh=M8yWhEhiTwNnh56fDzs9IjxrNHd3LnDK6hpxY8eNykY=;
+        s=default; t=1574887173;
+        bh=DAjtfsZlNLaNHrIyH1KYYh8DO8Rh66dcIIvAzpcYzEo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RNpf1DVEPGmSBgw33VNGbDKX8Cm/nqUJQb3BDprZY7dq2X0lXU1+kOvzN+2yoBIED
-         8QdiM1qN/hUdwJbbv7rTCW3ASGDFJ+RIzBdwTTYEMn7+w2k9bHHIVazPqGjKXqHSnV
-         xwI2L0U7NOrpXUXIIF2i2D4zpfEbWMb3RyESy0BM=
+        b=LFh1wwNBz0CSjBnKO7DSENyhykR2R8yE82nIwxWysYUgIOSm0vj/shZUrzcRUhb25
+         IFAzxAaPTdai4I82y6rwqdovbBwJjNaKyuU1s/4uBxSuTPldO+0T2GrZC6IxUGXb3L
+         DKpqH2zkoUlrKDx/b0l0FtY/irjjUvaFkmIZx6kA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 048/211] scsi: iscsi_tcp: Explicitly cast param in iscsi_sw_tcp_host_get_param
-Date:   Wed, 27 Nov 2019 21:29:41 +0100
-Message-Id: <20191127203058.610057489@linuxfoundation.org>
+        stable@vger.kernel.org, Luigi Rizzo <lrizzo@google.com>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: [PATCH 4.9 001/151] net/mlx4_en: fix mlx4 ethtool -N insertion
+Date:   Wed, 27 Nov 2019 21:29:44 +0100
+Message-Id: <20191127203001.720968405@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,48 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Luigi Rizzo <lrizzo@google.com>
 
-[ Upstream commit 20054597f169090109fc3f0dfa1a48583f4178a4 ]
+[ Upstream commit 34e59836565e36fade1464e054a3551c1a0364be ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+ethtool expects ETHTOOL_GRXCLSRLALL to set ethtool_rxnfc->data with the
+total number of entries in the rx classifier table.  Surprisingly, mlx4
+is missing this part (in principle ethtool could still move forward and
+try the insert).
 
-drivers/scsi/iscsi_tcp.c:803:15: warning: implicit conversion from
-enumeration type 'enum iscsi_host_param' to different enumeration type
-'enum iscsi_param' [-Wenum-conversion]
-                                                 &addr, param, buf);
-                                                        ^~~~~
-1 warning generated.
+Tested: compiled and run command:
+	phh13:~# ethtool -N eth1 flow-type udp4  queue 4
+	Added rule with ID 255
 
-iscsi_conn_get_addr_param handles ISCSI_HOST_PARAM_IPADDRESS just fine
-so add an explicit cast to iscsi_param to make it clear to Clang that
-this is expected behavior.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/153
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Luigi Rizzo <lrizzo@google.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/iscsi_tcp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index e11eff6b0e97d..045207b5560eb 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -798,7 +798,8 @@ static int iscsi_sw_tcp_host_get_param(struct Scsi_Host *shost,
- 			return rc;
- 
- 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
--						 &addr, param, buf);
-+						 &addr,
-+						 (enum iscsi_param)param, buf);
- 	default:
- 		return iscsi_host_get_param(shost, param, buf);
- 	}
--- 
-2.20.1
-
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@ -1679,6 +1679,7 @@ static int mlx4_en_get_rxnfc(struct net_
+ 		err = mlx4_en_get_flow(dev, cmd, cmd->fs.location);
+ 		break;
+ 	case ETHTOOL_GRXCLSRLALL:
++		cmd->data = MAX_NUM_OF_FS_RULES;
+ 		while ((!err || err == -ENOENT) && priority < cmd->rule_cnt) {
+ 			err = mlx4_en_get_flow(dev, cmd, i);
+ 			if (!err)
 
 
