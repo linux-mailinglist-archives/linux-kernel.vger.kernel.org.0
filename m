@@ -2,93 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A50BE10A9AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:01:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5002C10A9BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfK0E7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 23:59:53 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17880 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbfK0E7t (ORCPT
+        id S1726556AbfK0FBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 00:01:20 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44413 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbfK0FBU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 23:59:49 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dde02c70000>; Tue, 26 Nov 2019 20:59:51 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 26 Nov 2019 20:59:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 26 Nov 2019 20:59:47 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
- 2019 04:59:47 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 27 Nov 2019 04:59:47 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.149]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dde02c20000>; Tue, 26 Nov 2019 20:59:47 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <digetx@gmail.com>,
-        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 11/11] ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
-Date:   Tue, 26 Nov 2019 20:59:33 -0800
-Message-ID: <1574830773-14892-12-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
-References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 27 Nov 2019 00:01:20 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g3so22840381ljl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 21:01:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=88N65tITeUm1d09hBoEF1qm64IaDFJNm12UuzH3e9e4=;
+        b=NktEcG2e8yadXluupJSS3uaewBg8wR0v4z/zJ8eCuSpIFm0g5SYC1PgNBSW4LiVW5b
+         fUm4tcR65alpJ/hGiI3oHRSjDBGa4PXZJ4SVp9kbmBuXA/oaeXqt52AixsYCW9SCWlnN
+         BY5DaA1dtFy81h2575vYh/1t0hOoOjoXGNjctwX/f3hse5A2PSjlEQsCYFkUviUlFzT9
+         bZWmK2oHaDwk/joPS2FTiHTpkCk2U33h/ci0hMwPwF1UWEcgumBgddLnhCnvStsRQbdH
+         WArEGanfh1JJBOubDbDM7bTJt2/hRhShuOReGw9bnNrh+KUEa2Q0HtBWhOWNWXNk21xL
+         jKNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=88N65tITeUm1d09hBoEF1qm64IaDFJNm12UuzH3e9e4=;
+        b=PC8+KDbWQBV1AeffcodkpZE0pubnx/+zl/MasXxCL0TLj/Btru0gsx7trbscjTPFeI
+         2diGvKo53PXk40fx7MtIDN39MvC2sLtnTj8hLothWx7+1nhwXhdoJ0fur7zUSRt+nkBR
+         WaBJP2QdCC7f0pvuu006wdr1rYJ/oBM1kqjUcw8XquSx0PttYhGkr+FGKmBLC4/cmVn1
+         E31QdsHWeUAulOGWDfqx8GWLwhpOis+crKmOFDNoZfGmzkskVkZLoQCp30hQyyiZbENn
+         WPBiCnitsVI01BLNSJLH31p8hZSk4GYuzjT3d6dQY6GtTa2q2U+PjGr7O+/fuPfF4H39
+         KaHA==
+X-Gm-Message-State: APjAAAU6iF9xQ7msIyzbQUBshSa3gNM3T6WKf/ezzTnYD+n0+HMvA73W
+        C1sPrJMkerF8ZgbbfJh9m3cBkkH3ipJyQYIy348=
+X-Google-Smtp-Source: APXvYqygXxhnf5Rbo0cFJa4hPmgAPk3DoFhGfeo3CN/k1g0tatvMEh3IYNqbNa+xzjaNaOIUv9ZLOaDewvuPZbESJbk=
+X-Received: by 2002:a2e:970a:: with SMTP id r10mr29875900lji.142.1574830878290;
+ Tue, 26 Nov 2019 21:01:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574830791; bh=qTvAji4nlSTfeFg4MTzoqwXKbO75ceIOy1l+c/njykQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=DX9p2d4BWmAjL6PqXaAC5V0B7ZJSrOBVEfVYpIaH6fFGwVc4/MGUh0FR8doMo8Pv9
-         efq5hILPLn0AoXC4W3eorlApWwRbltVOMTCZNRdMNblcYfMe+ei8anssrs6aD7JYGp
-         9jXD+pPNUdJGfH2ONYbQHfpKVK28z0XeHtdlCO+6769wHlxBjeffcDD9L4ZjcWJXep
-         b5EO2XZBetawG4l0TI/75+8uI621hJEQK9aa/opQiISsvTUFqiMlJ6I41OVjqWgDnG
-         +dbxbv/jrEa0csUlpkY2ikavgb2zrhnIvOpBRsfB/samUV/QWiL4ZkTIfb3xXnmU9L
-         Hn5uQ10ABgsUA==
+References: <20191111131252.921588318@infradead.org> <20191125125534.2aaaccf00c38a9a25dee623a@kernel.org>
+ <20191125123245.5ae9cb60@gandalf.local.home> <20191126091104.5e0cdc61e3b143fae4ed4cfd@kernel.org>
+ <20191126175812.c6e0cd1249422989007c91fe@kernel.org> <20191126185809.91574fb8eb02f3b2dd3af863@kernel.org>
+ <20191127084854.55ce1916e4f6d372f9731ed4@kernel.org> <CAADnVQK4twuXzFhD-qLHmCVK0n1h-GDENQLu+4PVV3Hp++R6kQ@mail.gmail.com>
+ <CAADnVQ+y9-JRA1u+UMD8uWjq1dt9AZrJKeOMe_zDNRL=wZ39TA@mail.gmail.com>
+In-Reply-To: <CAADnVQ+y9-JRA1u+UMD8uWjq1dt9AZrJKeOMe_zDNRL=wZ39TA@mail.gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 26 Nov 2019 21:01:06 -0800
+Message-ID: <CAADnVQJtNzyVrEy96tGhCiOfUEbLhzGzeF_7kXmS0SEG1=Upvg@mail.gmail.com>
+Subject: Re: [PATCH -v5 00/17] Rewrite x86/ftrace to use text_poke (and more)
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        bristot <bristot@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        jbaron@akamai.com, Jessica Yu <jeyu@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and pmc is
-the provider for these clocks.
+On Tue, Nov 26, 2019 at 8:32 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Nov 26, 2019 at 4:03 PM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> >
+> >
+> > On Tue, Nov 26, 2019 at 3:49 PM Masami Hiramatsu <mhiramat@kernel.org> =
+wrote:
+> >>
+> >> On Tue, 26 Nov 2019 18:58:09 +0900
+> >> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >> > I applied following patch, but it seems not enough. While disabling =
+256 kprobes,
+> >> > system was frozen (no BUG message).
+> >>
+> >> Aah, this is another bug in optprobe. I'll send a series for fix these=
+ bugs.
+> >
+> >
+> > Awesome! I=E2=80=99ve started looking at this crash as well.
+> > Could you share a brief description of the bug and cc me on fixes?
+> > I=E2=80=99d like to test them too.
+> > Thanks
+>
+> I noticed that your config doesn't have CONFIG_KPROBES_ON_FTRACE=3Dy
+> and without it most test.d/kprobe/ tests fail, but in your log they are p=
+assing.
+> Also do you have KPROBE_EVENTS_ON_NOTRACE=3Dy ?
+> Since without these two configs the crash wasn't reproducing for me.
+> Anyhow waiting for your fixes.
 
-Update bindings document to use pmc as clock provider for clk_out_2 and
-change id to pmc clock id.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/nau8825.txt b/Documentation/devicetree/bindings/sound/nau8825.txt
-index d16d96839bcb..487eb9574ee2 100644
---- a/Documentation/devicetree/bindings/sound/nau8825.txt
-+++ b/Documentation/devicetree/bindings/sound/nau8825.txt
-@@ -101,5 +101,5 @@ Example:
-       nuvoton,crosstalk-enable;
- 
-       clock-names = "mclk";
--      clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-+      clocks = <&pmc TEGRA_PMC_CLK_OUT_2>;
-   };
--- 
-2.7.4
-
+fwiw I bisected it down to commit 5b8ad1c9bc44 ("x86/kprobes: Fix
+ordering while text-patching")
+Reverting it fixes the crash. I bet Masami fix will be more correct.
