@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0109410BE31
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A656F10BE57
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfK0UtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:49:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34666 "EHLO mail.kernel.org"
+        id S1730642AbfK0Vfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729770AbfK0UtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:49:11 -0500
+        id S1730212AbfK0UtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:49:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7B3A21787;
-        Wed, 27 Nov 2019 20:49:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F662217C3;
+        Wed, 27 Nov 2019 20:49:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887751;
-        bh=QGsz8Ks1Tojt059lcycjgRGYNsiZ059yMmZcprWBtGc=;
+        s=default; t=1574887753;
+        bh=lMd0ULnEjuLF1xXeEfYBsc42wu6keCNdLjOP6QIpqZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wA5YYSjdsY+rGh8ls0dtLJlZJ7rejo8OuJSFWaRnSm2l2HwGo7fJgUJdAWYdnO9IM
-         +CLvBcP5jAmBTsHxaGtofxt0xASPKNYEGRtspC+lSz9jfGRkLXkBtJJBnOelYa+OjG
-         pUY2ExGP5RT0OEi/rXBoo+tez9FBQOjrqStpfStU=
+        b=H6KuFrB9TRNE2kkz4OYYV4K5HyOD+jXf1VztO/anFY4IKTk8JG2R2yj7QSJrC1h7g
+         h+IRzJ35GKSXibzVmnnUi3DouNir7ZyxrG4z2mwld1s0GzGDCD/8WiZfw1up8xMDgk
+         8n+kOmHMw8DkmhfEK0Jumh/trRHlZcZsAY0QL9rk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 079/211] qlcnic: fix a return in qlcnic_dcb_get_capability()
-Date:   Wed, 27 Nov 2019 21:30:12 +0100
-Message-Id: <20191127203101.270614373@linuxfoundation.org>
+Subject: [PATCH 4.14 080/211] net: ethernet: ti: cpsw: unsync mcast entries while switch promisc mode
+Date:   Wed, 27 Nov 2019 21:30:13 +0100
+Message-Id: <20191127203101.351058354@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -44,38 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-[ Upstream commit c94f026fb742b2d3199422751dbc4f6fc0e753d8 ]
+[ Upstream commit 9737cc99dd14b5b8b9d267618a6061feade8ea68 ]
 
-These functions are supposed to return one on failure and zero on
-success.  Returning a zero here could cause uninitialized variable
-bugs in several of the callers.  For example:
+After flushing all mcast entries from the table, the ones contained in
+mc list of ndev are not restored when promisc mode is toggled off,
+because they are considered as synched with ALE, thus, in order to
+restore them after promisc mode - reset syncing info. This fix
+touches only switch mode devices, including single port boards
+like Beagle Bone.
 
-    drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:1660 get_iscsi_dcb_priority()
-    error: uninitialized symbol 'caps'.
+Fixes: commit 5da1948969bc
+("net: ethernet: ti: cpsw: fix lost of mcast packets while rx_mode update")
 
-Fixes: 48365e485275 ("qlcnic: dcb: Add support for CEE Netlink interface.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ti/cpsw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-index 4b76c69fe86d2..834208e55f7b8 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-@@ -883,7 +883,7 @@ static u8 qlcnic_dcb_get_capability(struct net_device *netdev, int capid,
- 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 8cb44eabc2835..a44838aac97de 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -601,6 +601,7 @@ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
  
- 	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
--		return 0;
-+		return 1;
+ 			/* Clear all mcast from ALE */
+ 			cpsw_ale_flush_multicast(ale, ALE_ALL_PORTS, -1);
++			__dev_mc_unsync(ndev, NULL);
  
- 	switch (capid) {
- 	case DCB_CAP_ATTR_PG:
+ 			/* Flood All Unicast Packets to Host port */
+ 			cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
 -- 
 2.20.1
 
