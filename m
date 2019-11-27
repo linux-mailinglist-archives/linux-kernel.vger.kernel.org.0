@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6475610A9B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A50BE10A9AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:01:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725827AbfK0FAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 00:00:02 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17866 "EHLO
+        id S1727385AbfK0E7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 23:59:53 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17880 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfK0E7r (ORCPT
+        with ESMTP id S1727333AbfK0E7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 23:59:47 -0500
+        Tue, 26 Nov 2019 23:59:49 -0500
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dde02c60000>; Tue, 26 Nov 2019 20:59:50 -0800
+        id <B5dde02c70000>; Tue, 26 Nov 2019 20:59:51 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 26 Nov 2019 20:59:46 -0800
+  Tue, 26 Nov 2019 20:59:47 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 26 Nov 2019 20:59:46 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
- 2019 04:59:46 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 27 Nov 2019 04:59:46 +0000
+        by hqpgpgate101.nvidia.com on Tue, 26 Nov 2019 20:59:47 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
+ 2019 04:59:47 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 27 Nov 2019 04:59:47 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.149]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dde02c10001>; Tue, 26 Nov 2019 20:59:46 -0800
+        id <B5dde02c20000>; Tue, 26 Nov 2019 20:59:47 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <digetx@gmail.com>,
@@ -42,9 +42,9 @@ CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 10/11] arm64: tegra: smaug: Change clk_out_2 provider from tegra_car to pmc
-Date:   Tue, 26 Nov 2019 20:59:32 -0800
-Message-ID: <1574830773-14892-11-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v2 11/11] ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
+Date:   Tue, 26 Nov 2019 20:59:33 -0800
+Message-ID: <1574830773-14892-12-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
@@ -52,47 +52,43 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574830790; bh=AZT3qfqFQF36ckzWiswHL93ouN6Ik9+Ewp55cqiFurE=;
+        t=1574830791; bh=qTvAji4nlSTfeFg4MTzoqwXKbO75ceIOy1l+c/njykQ=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=TVmieoxegaXPI+wFlWhFLjWQQtZv+NnXIxhMc5b5rXfMkVqdOGM/bsiWe/RPM44b+
-         RQm8mMreYdOxnAJvDNbWKOKSpeCk+QWFsfxwRLw7/W2l3kCCXxZrLmvyPohihPrTQH
-         Hv+KwBSaoPWT0xiRSPfEMU8HREtd0J9QvFu8I4oz/wezLZ32VS7nwXTko38V3v8rR2
-         /+ugQi7T75zT7NcpUoXciDUSvtxNxJhIGEDM39adrjmszvZ5o/bah9sTkeELldOZRu
-         tr8zqdCFTc7b6n60D3y1hlpQHjGmpJxTBc/DACO9fg/Ka5H9xzTYstQ+WaCoLgS/nh
-         //D6gSaHk0hzQ==
+        b=DX9p2d4BWmAjL6PqXaAC5V0B7ZJSrOBVEfVYpIaH6fFGwVc4/MGUh0FR8doMo8Pv9
+         efq5hILPLn0AoXC4W3eorlApWwRbltVOMTCZNRdMNblcYfMe+ei8anssrs6aD7JYGp
+         9jXD+pPNUdJGfH2ONYbQHfpKVK28z0XeHtdlCO+6769wHlxBjeffcDD9L4ZjcWJXep
+         b5EO2XZBetawG4l0TI/75+8uI621hJEQK9aa/opQiISsvTUFqiMlJ6I41OVjqWgDnG
+         +dbxbv/jrEa0csUlpkY2ikavgb2zrhnIvOpBRsfB/samUV/QWiL4ZkTIfb3xXnmU9L
+         Hn5uQ10ABgsUA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clk_out_2 is the clocks from Tegra PMC block with clock source and state
-control part of Tegra PMC.
+Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and pmc is
+the provider for these clocks.
 
-Tegra pmc node is the provider for these clocks.
-
-This patch changes clk_out_2 provider to pmc and uses corresponding pmc
-clock id for clk_out_2.
+Update bindings document to use pmc as clock provider for clk_out_2 and
+change id to pmc clock id.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 2 +-
+ Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 72c7a04ac1df..4376c38d78f4 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1592,7 +1592,7 @@
- 			reg = <0x1a>;
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(E, 6) IRQ_TYPE_LEVEL_LOW>;
--			clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-+			clocks = <&pmc TEGRA_PMC_CLK_OUT_2>;
- 			clock-names = "mclk";
+diff --git a/Documentation/devicetree/bindings/sound/nau8825.txt b/Documentation/devicetree/bindings/sound/nau8825.txt
+index d16d96839bcb..487eb9574ee2 100644
+--- a/Documentation/devicetree/bindings/sound/nau8825.txt
++++ b/Documentation/devicetree/bindings/sound/nau8825.txt
+@@ -101,5 +101,5 @@ Example:
+       nuvoton,crosstalk-enable;
  
- 			nuvoton,jkdet-enable;
+       clock-names = "mclk";
+-      clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
++      clocks = <&pmc TEGRA_PMC_CLK_OUT_2>;
+   };
 -- 
 2.7.4
 
