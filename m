@@ -2,187 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF9610BEC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC0B10BFD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:47:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbfK0Vi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:38:29 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9089 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729787AbfK0Vi1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:38:27 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ddeecd40000>; Wed, 27 Nov 2019 13:38:28 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 27 Nov 2019 13:38:26 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 27 Nov 2019 13:38:26 -0800
-Received: from [10.2.169.149] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
- 2019 21:38:24 +0000
-Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>, <sboyd@kernel.org>
-CC:     <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
- <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
- <04b093fe-5eff-1ad2-9a8a-7674dcb2318a@nvidia.com>
-Message-ID: <ebcce0df-bb7a-2f24-cfbc-daaf3ac6bb4f@nvidia.com>
-Date:   Wed, 27 Nov 2019 13:38:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727850AbfK0Vr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:47:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727491AbfK0Vr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:47:27 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D574420869;
+        Wed, 27 Nov 2019 21:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574891245;
+        bh=EkA1v2/1S366xNgUBA8JF1UoqzxfzHPPRcLBNop72jg=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=L6yhIeX7vtUrVoZIffP/tyZL5DNmbG1YiL9mIQjZQzz/LICwd+ImdBHrT5GstwJLl
+         yb2BOXbZvt0vSsKxef1qXTSTE/p7tKpoG8+4GMmD7qT7/HQIy5RnwePNoL0vY1QH9H
+         qoLOfaP8YkPp96MCHRj1tspm87P4GP6w694oua/Y=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id A6B2A352151A; Wed, 27 Nov 2019 13:47:25 -0800 (PST)
+Date:   Wed, 27 Nov 2019 13:47:25 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/14] torture: Replace cpu_up/down with
+ device_online/offline
+Message-ID: <20191127214725.GG2889@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191125112754.25223-1-qais.yousef@arm.com>
+ <20191125112754.25223-13-qais.yousef@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <04b093fe-5eff-1ad2-9a8a-7674dcb2318a@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574890708; bh=ag/e8mQxwalbYL9n6zyLqVUDKe4qzyB/v1O/jPgJV40=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=SAtZ9YUtxEa8WiMlSA/tZg+9XyWCOH/DHlLFI+Y1pbbxw2Yl6Z0et9e41GWd7Tp9/
-         gZ2o3QVJlN0wyZqd2NMHdwYV8qZdN9Kv0Jigz8+tpKnUc1eyDCBMORiQXeh6md1XXv
-         HXnRwOlTgEymcOk0lYjWVms0Xypilqeo3DyrUZHrb9fRaOwis0e/81yhkcFNAVIgmn
-         8i7DC6Q38IRF12t6st4VG5vQlaItv9Ii/GG0M9xC63RTuzoBWn4IAuCcTqL8nKIaQ1
-         dq3+fJQosNdV78eBnoxa7Y55UCUiUuBDbWTyHWpIKDTmsBcdbe0KQj6+ivDLBo1VFV
-         fAJOF3lSasT7A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125112754.25223-13-qais.yousef@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 25, 2019 at 11:27:52AM +0000, Qais Yousef wrote:
+> The core device API performs extra housekeeping bits that are missing
+> from directly calling cpu_up/down.
+> 
+> See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
+> serialization during LPM") for an example description of what might go
+> wrong.
+> 
+> This also prepares to make cpu_up/down a private interface for anything
+> but the cpu subsystem.
+> 
+> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> CC: Davidlohr Bueso <dave@stgolabs.net>
+> CC: "Paul E. McKenney" <paulmck@kernel.org>
+> CC: Josh Triplett <josh@joshtriplett.org>
+> CC: linux-kernel@vger.kernel.org
 
-On 11/27/19 9:02 AM, Sowjanya Komatineni wrote:
->
-> On 11/27/19 6:31 AM, Dmitry Osipenko wrote:
->> 27.11.2019 07:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
->>> are currently registered by Tegra clock driver using clk_regiser_mux=20
->>> and
->>> clk_register_gate which performs direct Tegra PMC register access.
->>>
->>> When Tegra PMC is in secure mode, any access from non-secure world will
->>> not go through.
->>>
->>> This patch series adds these Tegra PMC clocks and blink controls to=20
->>> Tegra
->>> PMC driver with PMC as clock provider and removed them from Tegra clock
->>> driver. This also adds PMC specific clock id's to use in device tree=20
->>> and
->>> removed clock ids of PMC clock from Tegra clock driver.
->>>
->>> This series also includes patch to update clock provider from tegra_car
->>> to pmc in the device tree tegra210-smaug.dts that uses clk_out_2=20
->>> from PMC.
->>>
->>> [v2]:=C2=A0=C2=A0=C2=A0 Changes between v1 and v2 are
->>> =C2=A0=C2=A0=C2=A0=C2=A0- v2 includes patches for adding clk_out_1, clk=
-_out_2, clk_out_3,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 blink controls to Tegra PMC driver and r=
-emoving clk-tegra-pmc.
->>> =C2=A0=C2=A0=C2=A0=C2=A0- feedback related to pmc clocks in Tegra PMC d=
-river from v1
->>> =C2=A0=C2=A0=C2=A0=C2=A0- Removed patches for WB0 PLLM overrides and PL=
-LE IDDQ PMC=20
->>> programming
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 by the clock driver using helper functio=
-ns from Tegra PMC.
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Note:
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 To use helper functions from PMC driver,=
- PMC early init need to
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 happen prior to using helper functions a=
-nd these helper=20
->>> functions are
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for PLLM Override and PLLE IDDQ programm=
-ing in PMC during=20
->>> PLLM/PLLE
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock registration which happen in clock=
-_init prior to Tegra PMC
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 probe.
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Moving PLLM/PLLE clocks registration to =
-happen after Tegra PMC
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 impacts other clocks EMC, MC and corresp=
-onding tegra_emc_init and
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_mc_init.
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This implementation of configuring PMC r=
-egisters thru helper
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 functions in clock driver needs proper c=
-hanges across PMC, Clock,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EMC and MC inits to have it work across =
-all Tegra platforms.
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Currently PLLM Override is not enabled i=
-n the bootloader so=20
->>> proper
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 patches for this fix will be taken care =
-separately.
->> Hello Sowjanya,
->>
->> Could you please clarify what do you mean by "PLLM Override not enabled
->> in bootloader"?
->>
->> There is T124 Nyan Big Chromebook which is supported in upstream kernel,
->> it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
->> which has the PLLM Override set by bootloader as well. It's not clear to
->> me whether this patch series is supposed to break these devices. If the
->> breakage is the case here, then I'm afraid you can't postpone supporting
->> the PLLM Override and a full-featured implementation is needed.
->
-> Hi Dmitry,
->
-> Secure boot currently is enabled only on Tegra210 and Tegra210=20
-> bootloader doesn't enable PLLM override.
->
-> So PLLM override/PLLE IDDQ being in clock driver currently will not=20
-> break on any of existing Tegra platforms.
->
->>
->> I briefly tried to test this series on T30 and this time it doesn't hang
->> on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiFi
->> chip uses the Blink clock source and the clock should be enabled by the
->> MMC core because this is how DT part looks like:
->>
->> brcm_wifi_pwrseq: wifi-pwrseq {
->> =C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "mmc-pwrseq-simple";
->> =C2=A0=C2=A0=C2=A0=C2=A0clocks =3D <&pmc TEGRA_PMC_CLK_BLINK>;
->> =C2=A0=C2=A0=C2=A0=C2=A0clock-names =3D "ext_clock";
->> =C2=A0=C2=A0=C2=A0=C2=A0reset-gpios =3D=C2=A0 <&gpio TEGRA_GPIO(D, 3) GP=
-IO_ACTIVE_LOW>;
->> =C2=A0=C2=A0=C2=A0=C2=A0post-power-on-delay-ms =3D <300>;
->> =C2=A0=C2=A0=C2=A0=C2=A0power-off-delay-us =3D <300>;
->> };
->>
->> BTW, I=C2=A0 tried this series on a T20 device which also uses the Blink
->> clock for WiFi card and it works. So looks like this patchset has some
->> problem in regards to the T30 PMC clocks implementation.
->>
->> [snip]
->
-> Blink init state is set to true for both Tegra20 and Tegra30 and all=20
-> go through the same blink programming sequence.
->
-> Will try to add more debug messages to dump registers and will test=20
-> blink through device tree on T30 and will get back...
->
->
-define value for BLINK uses BIT macro instead of just position. Will fix=20
-this in v3.
+Looks fine from an rcutorture viewpoint, but why not provide an API
+that pulled lock_device_hotplug() and unlock_device_hotplug() into the
+online/offline calls?
+
+							Thanx, Paul
+
+> ---
+>  kernel/torture.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/torture.c b/kernel/torture.c
+> index 7c13f5558b71..12115024feb2 100644
+> --- a/kernel/torture.c
+> +++ b/kernel/torture.c
+> @@ -97,7 +97,9 @@ bool torture_offline(int cpu, long *n_offl_attempts, long *n_offl_successes,
+>  			 torture_type, cpu);
+>  	starttime = jiffies;
+>  	(*n_offl_attempts)++;
+> -	ret = cpu_down(cpu);
+> +	lock_device_hotplug();
+> +	ret = device_offline(get_cpu_device(cpu));
+> +	unlock_device_hotplug();
+>  	if (ret) {
+>  		if (verbose)
+>  			pr_alert("%s" TORTURE_FLAG
+> @@ -148,7 +150,9 @@ bool torture_online(int cpu, long *n_onl_attempts, long *n_onl_successes,
+>  			 torture_type, cpu);
+>  	starttime = jiffies;
+>  	(*n_onl_attempts)++;
+> -	ret = cpu_up(cpu);
+> +	lock_device_hotplug();
+> +	ret = device_online(get_cpu_device(cpu));
+> +	unlock_device_hotplug();
+>  	if (ret) {
+>  		if (verbose)
+>  			pr_alert("%s" TORTURE_FLAG
+> @@ -192,17 +196,20 @@ torture_onoff(void *arg)
+>  	for_each_online_cpu(cpu)
+>  		maxcpu = cpu;
+>  	WARN_ON(maxcpu < 0);
+> -	if (!IS_MODULE(CONFIG_TORTURE_TEST))
+> +	if (!IS_MODULE(CONFIG_TORTURE_TEST)) {
+> +		lock_device_hotplug();
+>  		for_each_possible_cpu(cpu) {
+>  			if (cpu_online(cpu))
+>  				continue;
+> -			ret = cpu_up(cpu);
+> +			ret = device_online(get_cpu_device(cpu));
+>  			if (ret && verbose) {
+>  				pr_alert("%s" TORTURE_FLAG
+>  					 "%s: Initial online %d: errno %d\n",
+>  					 __func__, torture_type, cpu, ret);
+>  			}
+>  		}
+> +		unlock_device_hotplug();
+> +	}
+>  
+>  	if (maxcpu == 0) {
+>  		VERBOSE_TOROUT_STRING("Only one CPU, so CPU-hotplug testing is disabled");
+> -- 
+> 2.17.1
+> 
