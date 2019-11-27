@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2140C10B77A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 587A610B851
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:42:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfK0UeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:34:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34452 "EHLO mail.kernel.org"
+        id S1729311AbfK0UmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:42:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbfK0UeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:12 -0500
+        id S1728434AbfK0UmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:42:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D5CA207DD;
-        Wed, 27 Nov 2019 20:34:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7A2B217AB;
+        Wed, 27 Nov 2019 20:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886851;
-        bh=xAvsjWTSVk+rkdZvOSr990nk1M3ME/7uTZPMbBNa94M=;
+        s=default; t=1574887331;
+        bh=rerAJvjwdtQCiHvZLYvd1cdCUR0ciLOvhCZJulM6qU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uC0HL7OdtChLhViMioQf91lA8P5MH1doFaHTSsXQtddGXG6UwCwHVMuSo+M6mY3IS
-         rFhlSRi9cxtu7CjSNY93SHYg05cXKC3x9gLjtPeSpdSAgpzhwc9eQ4TLfSAjJKChzn
-         pF2F5tNRu0av7lCYgxEVpsJaGfscDzxg5fnrDIrU=
+        b=vp+u49zsUc5kcDK1VJ+8Nse+iHQHH5G30KfiS3UtfycckWU3nkbyXeGq1+aDYp10d
+         3JIf/7yCgYvOb5mwQVmdwpjgkLlmZuU7E47y0MUMWmijgqKdBLdSw8A3C8P713punX
+         nJJ60NtLTXrkmWmB69OsMOOgNm95Bx4dUo7YlfOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 018/132] platform/x86: asus-wmi: Only Tell EC the OS will handle display hotkeys from asus_nb_wmi
-Date:   Wed, 27 Nov 2019 21:30:09 +0100
-Message-Id: <20191127202915.451157703@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 027/151] amiflop: clean up on errors during setup
+Date:   Wed, 27 Nov 2019 21:30:10 +0100
+Message-Id: <20191127203018.376055299@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,109 +43,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 401fee8195d401b2b94dee57383f627050724d5b ]
+[ Upstream commit 53d0f8dbde89cf6c862c7a62e00c6123e02cba41 ]
 
-Commit 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will
-handle the display off hotkey") causes the backlight to be permanently off
-on various EeePC laptop models using the eeepc-wmi driver (Asus EeePC
-1015BX, Asus EeePC 1025C).
+The error handling in fd_probe_drives() doesn't clean up at all. Fix it
+up in preparation for converting to blk-mq. While we're here, get rid of
+the commented out amiga_floppy_remove().
 
-The asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL) call added
-by that commit is made conditional in this commit and only enabled in
-the quirk_entry structs in the asus-nb-wmi driver fixing the broken
-display / backlight on various EeePC laptop models.
-
-Cc: João Paulo Rechi Vita <jprvita@endlessm.com>
-Fixes: 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c | 8 ++++++++
- drivers/platform/x86/asus-wmi.c    | 2 +-
- drivers/platform/x86/asus-wmi.h    | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/block/amiflop.c | 84 ++++++++++++++++++++---------------------
+ 1 file changed, 40 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index 274ccf920af50..cccf250cd1e33 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -78,10 +78,12 @@ static bool asus_q500a_i8042_filter(unsigned char data, unsigned char str,
- 
- static struct quirk_entry quirk_asus_unknown = {
- 	.wapf = 0,
-+	.wmi_backlight_set_devstate = true,
+diff --git a/drivers/block/amiflop.c b/drivers/block/amiflop.c
+index 5fd50a2841682..db4354fb2a0d3 100644
+--- a/drivers/block/amiflop.c
++++ b/drivers/block/amiflop.c
+@@ -1699,11 +1699,41 @@ static const struct block_device_operations floppy_fops = {
+ 	.check_events	= amiga_check_events,
  };
  
- static struct quirk_entry quirk_asus_q500a = {
- 	.i8042_filter = asus_q500a_i8042_filter,
-+	.wmi_backlight_set_devstate = true,
- };
++static struct gendisk *fd_alloc_disk(int drive)
++{
++	struct gendisk *disk;
++
++	disk = alloc_disk(1);
++	if (!disk)
++		goto out;
++
++	disk->queue = blk_init_queue(do_fd_request, &amiflop_lock);
++	if (IS_ERR(disk->queue)) {
++		disk->queue = NULL;
++		goto out_put_disk;
++	}
++
++	unit[drive].trackbuf = kmalloc(FLOPPY_MAX_SECTORS * 512, GFP_KERNEL);
++	if (!unit[drive].trackbuf)
++		goto out_cleanup_queue;
++
++	return disk;
++
++out_cleanup_queue:
++	blk_cleanup_queue(disk->queue);
++	disk->queue = NULL;
++out_put_disk:
++	put_disk(disk);
++out:
++	unit[drive].type->code = FD_NODRIVE;
++	return NULL;
++}
++
+ static int __init fd_probe_drives(void)
+ {
+ 	int drive,drives,nomem;
  
- /*
-@@ -92,15 +94,18 @@ static struct quirk_entry quirk_asus_q500a = {
- static struct quirk_entry quirk_asus_x55u = {
- 	.wapf = 4,
- 	.wmi_backlight_power = true,
-+	.wmi_backlight_set_devstate = true,
- 	.no_display_toggle = true,
- };
+-	printk(KERN_INFO "FD: probing units\nfound ");
++	pr_info("FD: probing units\nfound");
+ 	drives=0;
+ 	nomem=0;
+ 	for(drive=0;drive<FD_MAX_UNITS;drive++) {
+@@ -1711,27 +1741,17 @@ static int __init fd_probe_drives(void)
+ 		fd_probe(drive);
+ 		if (unit[drive].type->code == FD_NODRIVE)
+ 			continue;
+-		disk = alloc_disk(1);
++
++		disk = fd_alloc_disk(drive);
+ 		if (!disk) {
+-			unit[drive].type->code = FD_NODRIVE;
++			pr_cont(" no mem for fd%d", drive);
++			nomem = 1;
+ 			continue;
+ 		}
+ 		unit[drive].gendisk = disk;
+-
+-		disk->queue = blk_init_queue(do_fd_request, &amiflop_lock);
+-		if (!disk->queue) {
+-			unit[drive].type->code = FD_NODRIVE;
+-			continue;
+-		}
+-
+ 		drives++;
+-		if ((unit[drive].trackbuf = kmalloc(FLOPPY_MAX_SECTORS * 512, GFP_KERNEL)) == NULL) {
+-			printk("no mem for ");
+-			unit[drive].type = &drive_types[num_dr_types - 1]; /* FD_NODRIVE */
+-			drives--;
+-			nomem = 1;
+-		}
+-		printk("fd%d ",drive);
++
++		pr_cont(" fd%d",drive);
+ 		disk->major = FLOPPY_MAJOR;
+ 		disk->first_minor = drive;
+ 		disk->fops = &floppy_fops;
+@@ -1742,11 +1762,11 @@ static int __init fd_probe_drives(void)
+ 	}
+ 	if ((drives > 0) || (nomem == 0)) {
+ 		if (drives == 0)
+-			printk("no drives");
+-		printk("\n");
++			pr_cont(" no drives");
++		pr_cont("\n");
+ 		return drives;
+ 	}
+-	printk("\n");
++	pr_cont("\n");
+ 	return -ENOMEM;
+ }
+  
+@@ -1837,30 +1857,6 @@ static int __init amiga_floppy_probe(struct platform_device *pdev)
+ 	return ret;
+ }
  
- static struct quirk_entry quirk_asus_wapf4 = {
- 	.wapf = 4,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_asus_x200ca = {
- 	.wapf = 2,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_no_rfkill = {
-@@ -114,13 +119,16 @@ static struct quirk_entry quirk_no_rfkill_wapf4 = {
- 
- static struct quirk_entry quirk_asus_ux303ub = {
- 	.wmi_backlight_native = true,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_asus_x550lb = {
-+	.wmi_backlight_set_devstate = true,
- 	.xusb2pr = 0x01D9,
- };
- 
- static struct quirk_entry quirk_asus_forceals = {
-+	.wmi_backlight_set_devstate = true,
- 	.wmi_force_als_set = true,
- };
- 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index c06cdc5522b48..63b5b6838e8bf 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2135,7 +2135,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	} else
-+	} else if (asus->driver->quirks->wmi_backlight_set_devstate)
- 		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
- 
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
-diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
-index 5db052d1de1e1..53bab79780e22 100644
---- a/drivers/platform/x86/asus-wmi.h
-+++ b/drivers/platform/x86/asus-wmi.h
-@@ -45,6 +45,7 @@ struct quirk_entry {
- 	bool store_backlight_power;
- 	bool wmi_backlight_power;
- 	bool wmi_backlight_native;
-+	bool wmi_backlight_set_devstate;
- 	bool wmi_force_als_set;
- 	int wapf;
- 	/*
+-#if 0 /* not safe to unload */
+-static int __exit amiga_floppy_remove(struct platform_device *pdev)
+-{
+-	int i;
+-
+-	for( i = 0; i < FD_MAX_UNITS; i++) {
+-		if (unit[i].type->code != FD_NODRIVE) {
+-			struct request_queue *q = unit[i].gendisk->queue;
+-			del_gendisk(unit[i].gendisk);
+-			put_disk(unit[i].gendisk);
+-			kfree(unit[i].trackbuf);
+-			if (q)
+-				blk_cleanup_queue(q);
+-		}
+-	}
+-	blk_unregister_region(MKDEV(FLOPPY_MAJOR, 0), 256);
+-	free_irq(IRQ_AMIGA_CIAA_TB, NULL);
+-	free_irq(IRQ_AMIGA_DSKBLK, NULL);
+-	custom.dmacon = DMAF_DISK; /* disable DMA */
+-	amiga_chip_free(raw_buf);
+-	unregister_blkdev(FLOPPY_MAJOR, "fd");
+-}
+-#endif
+-
+ static struct platform_driver amiga_floppy_driver = {
+ 	.driver   = {
+ 		.name	= "amiga-floppy",
 -- 
 2.20.1
 
