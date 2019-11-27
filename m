@@ -2,123 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1941C10B0EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 077F810B0F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfK0OPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 09:15:41 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:43267 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfK0OPl (ORCPT
+        id S1727060AbfK0OQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 09:16:32 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43379 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfK0OQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 09:15:41 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id E725A3C057C;
-        Wed, 27 Nov 2019 15:15:37 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bipKjdt3AzRZ; Wed, 27 Nov 2019 15:15:32 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id D79383C00BE;
-        Wed, 27 Nov 2019 15:15:32 +0100 (CET)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 27 Nov
- 2019 15:15:32 +0100
-Date:   Wed, 27 Nov 2019 15:15:29 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v3 5/7] gpio: Add GPIO Aggregator/Repeater driver
-Message-ID: <20191127141529.GA18189@vmlxhi-102.adit-jv.com>
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20191127084253.16356-6-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191127084253.16356-6-geert+renesas@glider.be>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+        Wed, 27 Nov 2019 09:16:32 -0500
+Received: by mail-yw1-f66.google.com with SMTP id g77so8374278ywb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 06:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=w6PGv6Jf1cx74rxehqb96+ueBxnXCDdC1t93l0UKtKc=;
+        b=jPO/2txu3KAjmDmWJccJ1Nzi2WbPvk59kkcnQUPnCvfhcIDVdKkQoN8tfV3H1puWQL
+         fS3nkamfS25d/iUO4MK9RWi9McJEXGAVx+erFYTC5gpaJ4hGx+giIIeO+BpKjxTnajPr
+         D/1zowgirFfYnDwSmbXAEWeUojRPsCvTUqbBKxM992d+h6DVIGACF5NcB9T4PybSkoFi
+         M3KirYdaRgLCarjxYU5qlRT/rePkV+bw6M+Qdv1f+KV7rwRBjpDq89kSFDKiV7FVPgJ1
+         a5f500b2B72qTUiHB9aFy8dd/McrMMOLF2XjrMhaQ7z+1wjeDp9Ik25VAWY2ZyXj14bo
+         SyNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=w6PGv6Jf1cx74rxehqb96+ueBxnXCDdC1t93l0UKtKc=;
+        b=KImsIrVEMSHUzsPzEJWNU0kgmp/VNAywv2ENyK8fD3XYx7ZzGdZXkssvGuHe5B1mOh
+         EsT9dDm0EWPI0mBX74eq/hzfPoNyD/4pJ/H31jX1HBZlyTbkTDaiOwdwmtQLI/d9iNK2
+         mgRZ/yzblLlLwedELRWaVvdqZwIUNes1sTmRwb4P2Avh1fH9G8KzF6Acxfs1iNhVFMiV
+         0NMQvHlFeO5Oq529lQEoU4LT8/4X5LtLkq99k4LsvYTSeG+bhWipYvWY0TmQDNHGamBL
+         qiYHTN+/ZJpvPfyQ6mZntAn4Lofmcc1aeTwgJymIcryDB3AcRcXPe5FSJ3dchdZcI3rS
+         FE6g==
+X-Gm-Message-State: APjAAAVply89gECW6GKM/GiR6bBsRB/jO7yLwQ+Ko5n3OFv7p3pvWRl5
+        msRf+6C86MF9z/Jk1Xe88rfoIQ==
+X-Google-Smtp-Source: APXvYqzWr3WjVFNlWvvG1saJi5xfchjW8dcSq+uJItC3O3wshE9qK53GCaqXqUX0gvKmv1xOiCHXjA==
+X-Received: by 2002:a81:c609:: with SMTP id l9mr2926079ywi.37.1574864191414;
+        Wed, 27 Nov 2019 06:16:31 -0800 (PST)
+Received: from localhost.localdomain (li2093-158.members.linode.com. [172.105.159.158])
+        by smtp.gmail.com with ESMTPSA id u123sm6911115ywd.105.2019.11.27.06.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2019 06:16:30 -0800 (PST)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 0/2] tty: serial: msm_serial: Fix lockup issues
+Date:   Wed, 27 Nov 2019 22:15:42 +0800
+Message-Id: <20191127141544.4277-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+This patch set is to address two msm serial driver's lockup issues.
 
-Many thanks for the series upgrade.
-A few static-analysis findings below (could be false positives).
+The first lockup issue is a well known and common issue which is caused
+by recursive locking between normal printing and the kernel debugging
+facilities (e.g. sysrq and oops).  Patch 0001 follows up other drivers
+general approach to fix this lockup issue.
 
-On Wed, Nov 27, 2019 at 09:42:51AM +0100, Geert Uytterhoeven wrote:
+The second lockup issue is related with msm serial driver's specific
+implementation.  Since the serial driver invokes dma related operations
+after has acquired spinlock, then the dma functions might allocat dma
+descriptors and when the system has very less free memory the kernel
+tries to print out warning, this leads to recursive output and causes
+deadlock.  Patch 0002 is used to resolve this deadlock issue.
 
-[..]
+These two patches have been tested on DB410c with backported on 4.14.96,
+they also have been verified with mainline kernel for boot testing.
 
-> +static bool isrange(const char *s)
-> +{
-> +	size_t n = strlen(s);
+Changes from v1:
+* Added 'Fixes' tags for two patches (Jeffrey Hugo).
+* Added cover letter for more clear context description (Jeffrey Hugo).
 
-Cppcheck 1.40-18521-ge6d692d96058:
-drivers/gpio/gpio-aggregator.c:69:11: style: Variable 'n' is assigned a value that is never used. [unreadVariable]
 
-Smatch v0.5.0-6150-gc1ed13e4ee7b:
-drivers/gpio/gpio-aggregator.c:69 isrange() warn: unused return: n = strlen()
+Leo Yan (2):
+  tty: serial: msm_serial: Fix lockup for sysrq and oops
+  tty: serial: msm_serial: Fix deadlock caused by recursive output
 
-[..]
-
-> +	aggr->lookups->dev_id = kasprintf(GFP_KERNEL, "%s.%d", DRV_NAME, id);
-> +	if (!aggr->lookups) {
-> +		res = -ENOMEM;
-> +		goto remove_idr;
-> +	}
-
-s/aggr->lookups/aggr->lookups->dev_id/ ?
-
-[..]
-
-> +static int gpio_fwd_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-> +				 unsigned long *bits)
-> +{
-> +	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-> +	unsigned long *values, flags;
-
-gcc 9.2.1:
-warning: ‘flags’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-[..]
-
-> +static void gpio_fwd_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-> +				  unsigned long *bits)
-> +{
-> +	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
-> +	unsigned long *values, flags;
-
-gcc 9.2.1, same as above:
-warning: ‘flags’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-Should these be silenced like in 2bf593f101f3ca ("xilinx_uartps.c:
-suppress "may be used uninitialised" warning") ?
-
-I plan to do some runtime testing soon.
+ drivers/tty/serial/msm_serial.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
 -- 
-Best Regards,
-Eugeniu
+2.17.1
+
