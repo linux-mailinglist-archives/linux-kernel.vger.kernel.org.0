@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA45B10B83A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8998510B947
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbfK0UlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46310 "EHLO mail.kernel.org"
+        id S1730527AbfK0Uvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729151AbfK0UlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:15 -0500
+        id S1730519AbfK0Uvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA1D2215A4;
-        Wed, 27 Nov 2019 20:41:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DE7221847;
+        Wed, 27 Nov 2019 20:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887274;
-        bh=zI3xcxvCQysGTBFWmHA5NurhjEb3GfQ/9uuZ9tBRuQs=;
+        s=default; t=1574887901;
+        bh=yBjFzhPXopZMDn2CcBcQl8G9pKCxB5RUD8DZ79AQZmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dk/AXnipiSYAfU1qWfm3GlRJtYXCu+2BH/YQX482LMP9TzBzmOdT7QMJmee+Rfx21
-         5AVB6thy+BJXpMRqgifbj5F26ADaMi+pgj98agOOWpMFyBm+Y5WF7m1LHReopgZQoC
-         Rrui8ie/4rXtmRbmo3/KmGNEYPYLslmWH3JP8Pl8=
+        b=i46KiZl4Hl7Q87cVfegSrFZYYSHVgpUtXMyDw5j5M3gr1a6Y2czzahoNM/xBsgCdr
+         zk3JaZohOVVr6Dwbxdu4JFPU15mOpkdIMQbVs45o28jznFtcgoHJmaVvwtmTTEm2at
+         QiGpP3vhtmGPB4hvFUgAExuWo2MvT3B3VQAQRmWM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 047/151] atm: zatm: Fix empty body Clang warnings
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 097/211] block: fix the DISCARD request merge
 Date:   Wed, 27 Nov 2019 21:30:30 +0100
-Message-Id: <20191127203028.753438863@linuxfoundation.org>
+Message-Id: <20191127203102.866467733@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,173 +45,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit 64b9d16e2d02ca6e5dc8fcd30cfd52b0ecaaa8f4 ]
+[ Upstream commit 69840466086d2248898020a08dda52732686c4e6 ]
 
-Clang warns:
+There are two cases when handle DISCARD merge.
+If max_discard_segments == 1, the bios/requests need to be contiguous
+to merge. If max_discard_segments > 1, it takes every bio as a range
+and different range needn't to be contiguous.
 
-drivers/atm/zatm.c:513:7: error: while loop has empty body
-[-Werror,-Wempty-body]
-        zwait;
-             ^
-drivers/atm/zatm.c:513:7: note: put the semicolon on a separate line to
-silence this warning
+But now, attempt_merge screws this up. It always consider contiguity
+for DISCARD for the case max_discard_segments > 1 and cannot merge
+contiguous DISCARD for the case max_discard_segments == 1, because
+rq_attempt_discard_merge always returns false in this case.
+This patch fixes both of the two cases above.
 
-Get rid of this warning by using an empty do-while loop. While we're at
-it, add parentheses to make it clear that this is a function-like macro.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/42
-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/atm/zatm.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ block/blk-merge.c | 46 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
-index a0b88f1489905..e23e2672a1d6b 100644
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -126,7 +126,7 @@ static unsigned long dummy[2] = {0,0};
- #define zin_n(r) inl(zatm_dev->base+r*4)
- #define zin(r) inl(zatm_dev->base+uPD98401_##r*4)
- #define zout(v,r) outl(v,zatm_dev->base+uPD98401_##r*4)
--#define zwait while (zin(CMR) & uPD98401_BUSY)
-+#define zwait() do {} while (zin(CMR) & uPD98401_BUSY)
- 
- /* RX0, RX1, TX0, TX1 */
- static const int mbx_entries[NR_MBX] = { 1024,1024,1024,1024 };
-@@ -140,7 +140,7 @@ static const int mbx_esize[NR_MBX] = { 16,16,4,4 }; /* entry size in bytes */
- 
- static void zpokel(struct zatm_dev *zatm_dev,u32 value,u32 addr)
- {
--	zwait;
-+	zwait();
- 	zout(value,CER);
- 	zout(uPD98401_IND_ACC | uPD98401_IA_BALL |
- 	    (uPD98401_IA_TGT_CM << uPD98401_IA_TGT_SHIFT) | addr,CMR);
-@@ -149,10 +149,10 @@ static void zpokel(struct zatm_dev *zatm_dev,u32 value,u32 addr)
- 
- static u32 zpeekl(struct zatm_dev *zatm_dev,u32 addr)
- {
--	zwait;
-+	zwait();
- 	zout(uPD98401_IND_ACC | uPD98401_IA_BALL | uPD98401_IA_RW |
- 	  (uPD98401_IA_TGT_CM << uPD98401_IA_TGT_SHIFT) | addr,CMR);
--	zwait;
-+	zwait();
- 	return zin(CER);
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 8d60a5bbcef93..94650cdf2924b 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -659,6 +659,31 @@ static void blk_account_io_merge(struct request *req)
+ 		part_stat_unlock();
+ 	}
  }
++/*
++ * Two cases of handling DISCARD merge:
++ * If max_discard_segments > 1, the driver takes every bio
++ * as a range and send them to controller together. The ranges
++ * needn't to be contiguous.
++ * Otherwise, the bios/requests will be handled as same as
++ * others which should be contiguous.
++ */
++static inline bool blk_discard_mergable(struct request *req)
++{
++	if (req_op(req) == REQ_OP_DISCARD &&
++	    queue_max_discard_segments(req->q) > 1)
++		return true;
++	return false;
++}
++
++enum elv_merge blk_try_req_merge(struct request *req, struct request *next)
++{
++	if (blk_discard_mergable(req))
++		return ELEVATOR_DISCARD_MERGE;
++	else if (blk_rq_pos(req) + blk_rq_sectors(req) == blk_rq_pos(next))
++		return ELEVATOR_BACK_MERGE;
++
++	return ELEVATOR_NO_MERGE;
++}
  
-@@ -241,7 +241,7 @@ static void refill_pool(struct atm_dev *dev,int pool)
- 	}
- 	if (first) {
- 		spin_lock_irqsave(&zatm_dev->lock, flags);
--		zwait;
-+		zwait();
- 		zout(virt_to_bus(first),CER);
- 		zout(uPD98401_ADD_BAT | (pool << uPD98401_POOL_SHIFT) | count,
- 		    CMR);
-@@ -508,9 +508,9 @@ static int open_rx_first(struct atm_vcc *vcc)
- 	}
- 	if (zatm_vcc->pool < 0) return -EMSGSIZE;
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
--	zwait;
-+	zwait();
- 	zout(uPD98401_OPEN_CHAN,CMR);
--	zwait;
-+	zwait();
- 	DPRINTK("0x%x 0x%x\n",zin(CMR),zin(CER));
- 	chan = (zin(CMR) & uPD98401_CHAN_ADDR) >> uPD98401_CHAN_ADDR_SHIFT;
- 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
-@@ -571,21 +571,21 @@ static void close_rx(struct atm_vcc *vcc)
- 		pos = vcc->vci >> 1;
- 		shift = (1-(vcc->vci & 1)) << 4;
- 		zpokel(zatm_dev,zpeekl(zatm_dev,pos) & ~(0xffff << shift),pos);
--		zwait;
-+		zwait();
- 		zout(uPD98401_NOP,CMR);
--		zwait;
-+		zwait();
- 		zout(uPD98401_NOP,CMR);
- 		spin_unlock_irqrestore(&zatm_dev->lock, flags);
- 	}
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
--	zwait;
-+	zwait();
- 	zout(uPD98401_DEACT_CHAN | uPD98401_CHAN_RT | (zatm_vcc->rx_chan <<
- 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
--	zwait;
-+	zwait();
- 	udelay(10); /* why oh why ... ? */
- 	zout(uPD98401_CLOSE_CHAN | uPD98401_CHAN_RT | (zatm_vcc->rx_chan <<
- 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
--	zwait;
-+	zwait();
- 	if (!(zin(CMR) & uPD98401_CHAN_ADDR))
- 		printk(KERN_CRIT DEV_LABEL "(itf %d): can't close RX channel "
- 		    "%d\n",vcc->dev->number,zatm_vcc->rx_chan);
-@@ -699,7 +699,7 @@ printk("NONONONOO!!!!\n");
- 	skb_queue_tail(&zatm_vcc->tx_queue,skb);
- 	DPRINTK("QRP=0x%08lx\n",zpeekl(zatm_dev,zatm_vcc->tx_chan*VC_SIZE/4+
- 	  uPD98401_TXVC_QRP));
--	zwait;
-+	zwait();
- 	zout(uPD98401_TX_READY | (zatm_vcc->tx_chan <<
- 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
- 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
-@@ -891,12 +891,12 @@ static void close_tx(struct atm_vcc *vcc)
- 	}
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
- #if 0
--	zwait;
-+	zwait();
- 	zout(uPD98401_DEACT_CHAN | (chan << uPD98401_CHAN_ADDR_SHIFT),CMR);
- #endif
--	zwait;
-+	zwait();
- 	zout(uPD98401_CLOSE_CHAN | (chan << uPD98401_CHAN_ADDR_SHIFT),CMR);
--	zwait;
-+	zwait();
- 	if (!(zin(CMR) & uPD98401_CHAN_ADDR))
- 		printk(KERN_CRIT DEV_LABEL "(itf %d): can't close TX channel "
- 		    "%d\n",vcc->dev->number,chan);
-@@ -926,9 +926,9 @@ static int open_tx_first(struct atm_vcc *vcc)
- 	zatm_vcc->tx_chan = 0;
- 	if (vcc->qos.txtp.traffic_class == ATM_NONE) return 0;
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
--	zwait;
-+	zwait();
- 	zout(uPD98401_OPEN_CHAN,CMR);
--	zwait;
-+	zwait();
- 	DPRINTK("0x%x 0x%x\n",zin(CMR),zin(CER));
- 	chan = (zin(CMR) & uPD98401_CHAN_ADDR) >> uPD98401_CHAN_ADDR_SHIFT;
- 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
-@@ -1559,7 +1559,7 @@ static void zatm_phy_put(struct atm_dev *dev,unsigned char value,
- 	struct zatm_dev *zatm_dev;
+ /*
+  * For non-mq, this has to be called with the request spinlock acquired.
+@@ -676,12 +701,6 @@ static struct request *attempt_merge(struct request_queue *q,
+ 	if (req_op(req) != req_op(next))
+ 		return NULL;
  
- 	zatm_dev = ZATM_DEV(dev);
--	zwait;
-+	zwait();
- 	zout(value,CER);
- 	zout(uPD98401_IND_ACC | uPD98401_IA_B0 |
- 	    (uPD98401_IA_TGT_PHY << uPD98401_IA_TGT_SHIFT) | addr,CMR);
-@@ -1571,10 +1571,10 @@ static unsigned char zatm_phy_get(struct atm_dev *dev,unsigned long addr)
- 	struct zatm_dev *zatm_dev;
+-	/*
+-	 * not contiguous
+-	 */
+-	if (blk_rq_pos(req) + blk_rq_sectors(req) != blk_rq_pos(next))
+-		return NULL;
+-
+ 	if (rq_data_dir(req) != rq_data_dir(next)
+ 	    || req->rq_disk != next->rq_disk
+ 	    || req_no_special_merge(next))
+@@ -705,11 +724,19 @@ static struct request *attempt_merge(struct request_queue *q,
+ 	 * counts here. Handle DISCARDs separately, as they
+ 	 * have separate settings.
+ 	 */
+-	if (req_op(req) == REQ_OP_DISCARD) {
++
++	switch (blk_try_req_merge(req, next)) {
++	case ELEVATOR_DISCARD_MERGE:
+ 		if (!req_attempt_discard_merge(q, req, next))
+ 			return NULL;
+-	} else if (!ll_merge_requests_fn(q, req, next))
++		break;
++	case ELEVATOR_BACK_MERGE:
++		if (!ll_merge_requests_fn(q, req, next))
++			return NULL;
++		break;
++	default:
+ 		return NULL;
++	}
  
- 	zatm_dev = ZATM_DEV(dev);
--	zwait;
-+	zwait();
- 	zout(uPD98401_IND_ACC | uPD98401_IA_B0 | uPD98401_IA_RW |
- 	  (uPD98401_IA_TGT_PHY << uPD98401_IA_TGT_SHIFT) | addr,CMR);
--	zwait;
-+	zwait();
- 	return zin(CER) & 0xff;
- }
+ 	/*
+ 	 * If failfast settings disagree or any of the two is already
+@@ -834,8 +861,7 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
  
+ enum elv_merge blk_try_merge(struct request *rq, struct bio *bio)
+ {
+-	if (req_op(rq) == REQ_OP_DISCARD &&
+-	    queue_max_discard_segments(rq->q) > 1)
++	if (blk_discard_mergable(rq))
+ 		return ELEVATOR_DISCARD_MERGE;
+ 	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) == bio->bi_iter.bi_sector)
+ 		return ELEVATOR_BACK_MERGE;
 -- 
 2.20.1
 
