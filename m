@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F195E10B7B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE3310B934
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfK0UgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:36:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38356 "EHLO mail.kernel.org"
+        id S1730431AbfK0UvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbfK0UgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:36:19 -0500
+        id S1729890AbfK0UvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13D0F20866;
-        Wed, 27 Nov 2019 20:36:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF95E21852;
+        Wed, 27 Nov 2019 20:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886978;
-        bh=tKSkU9Q9EDtakjbQboA1s42HWo++KDvBtoHEEhQka24=;
+        s=default; t=1574887862;
+        bh=cZPT0WojLQHBwL1aDDdvZwNQLqnruWSL0DxO3nlIPMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dPdzkaYIRHmkIjdOWkb1Ox9NEKI/PibONsd4cUn5XUTsctkiSbR//oTW3xC9O3saZ
-         fL4Assc21HS6utZtAenqyTuIkgadq/Hsmq1rhlrztDh6CnZWU0kQXugyrpqiw/NGxD
-         2Hq3woeiEXyPZjHvj8srwnY15e6mdv9jK9qOseAg=
+        b=Oon7ThSzxWxyY0Ii+IXOnUQrfDvbepXmVFYK6Pj2PhCXmhD60SAFLb0LWJFd0k5S8
+         6kamdK6et2U0/SjBgO8l2tlzgCU5buWrnkBl76Pk+xL6Zw1rsbGSh8QwnC8GExFcK7
+         VggkaB7TIFA/KZMa7uzAtSQN4l8BUJCk0WkhqjP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        Lucas Van <lucas.van@intel.com>, Jon Mason <jdmason@kudzu.us>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 064/132] linux/bitmap.h: handle constant zero-size bitmaps correctly
+Subject: [PATCH 4.14 122/211] ntb: intel: fix return value for ndev_vec_mask()
 Date:   Wed, 27 Nov 2019 21:30:55 +0100
-Message-Id: <20191127203001.719191960@linuxfoundation.org>
+Message-Id: <20191127203105.690915268@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,58 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Dave Jiang <dave.jiang@intel.com>
 
-[ Upstream commit 7275b097851a5e2e0dd4da039c7e96b59ac5314e ]
+[ Upstream commit 7756e2b5d68c36e170a111dceea22f7365f83256 ]
 
-The static inlines in bitmap.h do not handle a compile-time constant
-nbits==0 correctly (they dereference the passed src or dst pointers,
-despite only 0 words being valid to access).  I had the 0-day buildbot
-chew on a patch [1] that would cause build failures for such cases without
-complaining, suggesting that we don't have any such users currently, at
-least for the 70 .config/arch combinations that was built.  Should any
-turn up, make sure they use the out-of-line versions, which do handle
-nbits==0 correctly.
+ndev_vec_mask() should be returning u64 mask value instead of int.
+Otherwise the mask value returned can be incorrect for larger
+vectors.
 
-This is of course not the most efficient, but it's much less churn than
-teaching all the static inlines an "if (zero_const_nbits())", and since we
-don't have any current instances, this doesn't affect existing code at
-all.
+Fixes: e26a5843f7f5 ("NTB: Split ntb_hw_intel and ntb_transport drivers")
 
-[1] lkml.kernel.org/r/20180815085539.27485-1-linux@rasmusvillemoes.dk
-
-Link: http://lkml.kernel.org/r/20180818131623.8755-3-linux@rasmusvillemoes.dk
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Yury Norov <ynorov@caviumnetworks.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Tested-by: Lucas Van <lucas.van@intel.com>
+Signed-off-by: Jon Mason <jdmason@kudzu.us>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/bitmap.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/ntb/hw/intel/ntb_hw_intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 9653fdb76a427..e9d5df4315d94 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -175,8 +175,13 @@ extern int bitmap_print_to_pagebuf(bool list, char *buf,
- #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
- #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.c b/drivers/ntb/hw/intel/ntb_hw_intel.c
+index 2557e2c05b90c..58068f1447bb2 100644
+--- a/drivers/ntb/hw/intel/ntb_hw_intel.c
++++ b/drivers/ntb/hw/intel/ntb_hw_intel.c
+@@ -348,7 +348,7 @@ static inline int ndev_db_clear_mask(struct intel_ntb_dev *ndev, u64 db_bits,
+ 	return 0;
+ }
  
-+/*
-+ * The static inlines below do not handle constant nbits==0 correctly,
-+ * so make such users (should any ever turn up) call the out-of-line
-+ * versions.
-+ */
- #define small_const_nbits(nbits) \
--	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG)
-+	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG && (nbits) > 0)
- 
- static inline void bitmap_zero(unsigned long *dst, unsigned int nbits)
+-static inline int ndev_vec_mask(struct intel_ntb_dev *ndev, int db_vector)
++static inline u64 ndev_vec_mask(struct intel_ntb_dev *ndev, int db_vector)
  {
+ 	u64 shift, mask;
+ 
 -- 
 2.20.1
 
