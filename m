@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E80C810BFAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6903910BE45
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbfK0VpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:45:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37752 "EHLO mail.kernel.org"
+        id S1730401AbfK0Uuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:50:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728022AbfK0UgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:36:01 -0500
+        id S1730387AbfK0Uur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:50:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C9D521582;
-        Wed, 27 Nov 2019 20:36:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D77A21774;
+        Wed, 27 Nov 2019 20:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886960;
-        bh=G+bUnZIIGo0TF/ZYi61/DRntB0hbkjdnF5/2+ThSJ3w=;
+        s=default; t=1574887846;
+        bh=veA1u/NFRMPjxmg2z9Ts0nba0JTcv5GCfC6drOMXbiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wJS1H+dB3acjZXJlbCiDUfgfLyQBfCum0KtkMzzFCGchU+EyEGbOe8PsucpCTX1p9
-         IqPTZXlfTI1/17myBx8wOSyVEdVxng/wALxtI6hclBJMH7nIE/15yYS4NizBAy/PWB
-         DgeWaYwwUd178tVvzkto1Anzl+yk35D6yXfcB7tM=
+        b=hSezoml6h3R5RAZw/mZX6r8nAZCOb51kkRiTcHi1Dwr5NdYwLUgFhT7FXzxKr2n7u
+         LvbvSads5qaHZO/G6sH36DownkyOFtk0VyHKj420sZPqWQsK8JDf9GjakSLa6R2YLu
+         p/Q7ExP7HnzA5UcGZVi/HrsxwJlgHK+YpKp2Q1zc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "Ernesto A. Fernndez" <ernesto.mnd.fernandez@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Hin-Tak Leung <htl10@users.sourceforge.net>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 058/132] selftests/ftrace: Fix to test kprobe $comm arg only if available
-Date:   Wed, 27 Nov 2019 21:30:49 +0100
-Message-Id: <20191127202957.777602143@linuxfoundation.org>
+Subject: [PATCH 4.14 117/211] fs/hfs/extent.c: fix array out of bounds read of array extent
+Date:   Wed, 27 Nov 2019 21:30:50 +0100
+Message-Id: <20191127203105.045045114@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +50,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 2452c96e617a0ff6fb2692e55217a3fa57a7322c ]
+[ Upstream commit 6c9a3f843a29d6894dfc40df338b91dbd78f0ae3 ]
 
-Test $comm in kprobe-event argument syntax testcase
-only if it is supported on the kernel because
-$comm has been introduced 4.8 kernel.
-So on older stable kernel, it should be skipped.
+Currently extent and index i are both being incremented causing an array
+out of bounds read on extent[i].  Fix this by removing the extraneous
+increment of extent.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Ernesto said:
+
+: This is only triggered when deleting a file with a resource fork.  I
+: may be wrong because the documentation isn't clear, but I don't think
+: you can create those under linux.  So I guess nobody was testing them.
+:
+: > A disk space leak, perhaps?
+:
+: That's what it looks like in general.  hfs_free_extents() won't do
+: anything if the block count doesn't add up, and the error will be
+: ignored.  Now, if the block count randomly does add up, we could see
+: some corruption.
+
+Detected by CoverityScan, CID#711541 ("Out of bounds read")
+
+Link: http://lkml.kernel.org/r/20180831140538.31566-1-colin.king@canonical.com
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Ernesto A. Fernndez <ernesto.mnd.fernandez@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Hin-Tak Leung <htl10@users.sourceforge.net>
+Cc: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc       | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/hfs/extent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-index 231bcd2c4eb59..1e7ac6f3362ff 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -71,8 +71,11 @@ test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
- echo "r ${PROBEFUNC} \$retval" > kprobe_events
- ! echo "p ${PROBEFUNC} \$retval" > kprobe_events
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 5f1ff97a3b987..263d5028d9d18 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -304,7 +304,7 @@ int hfs_free_fork(struct super_block *sb, struct hfs_cat_file *file, int type)
+ 		return 0;
  
-+# $comm was introduced in 4.8, older kernels reject it.
-+if grep -A1 "fetcharg:" README | grep -q '\$comm' ; then
- : "Comm access"
- test_goodarg "\$comm"
-+fi
+ 	blocks = 0;
+-	for (i = 0; i < 3; extent++, i++)
++	for (i = 0; i < 3; i++)
+ 		blocks += be16_to_cpu(extent[i].count);
  
- : "Indirect memory access"
- test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
+ 	res = hfs_free_extents(sb, extent, blocks, blocks);
 -- 
 2.20.1
 
