@@ -2,76 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26A8E10AC24
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A486110AC26
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfK0IrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:47:09 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2091 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbfK0IrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:47:09 -0500
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 62DF1EFFDFA9A6E46914;
-        Wed, 27 Nov 2019 16:47:06 +0800 (CST)
-Received: from dggeme765-chm.china.huawei.com (10.3.19.111) by
- DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 27 Nov 2019 16:47:06 +0800
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- dggeme765-chm.china.huawei.com (10.3.19.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 27 Nov 2019 16:47:05 +0800
-Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
- dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
- Wed, 27 Nov 2019 16:47:05 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     Haiwei Li <lihaiwei.kernel@gmail.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "gary.hook@amd.com" <gary.hook@amd.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Subject: Re: [PATCH v2] KVM: SVM: Fix "error" isn't initialized
-Thread-Topic: [PATCH v2] KVM: SVM: Fix "error" isn't initialized
-Thread-Index: AdWk9Gm4M611HFaZTlSzM0B9cT25RQ==
-Date:   Wed, 27 Nov 2019 08:47:05 +0000
-Message-ID: <a5d0e94ba8cc4926a1ef27e6efcee594@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.184.189.20]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726593AbfK0Irj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:47:39 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:54898 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726112AbfK0Irj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:47:39 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id D0DA9211BE;
+        Wed, 27 Nov 2019 09:47:37 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id B85982119A;
+        Wed, 27 Nov 2019 09:47:37 +0100 (CET)
+Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_AT803X_PHY from m to y
+To:     Oliver Graute <oliver.graute@gmail.com>
+Cc:     Peng Fan <peng.fan@nxp.com>, Anson Huang <anson.huang@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?UTF-8?Q?Andr=c3=a9_Draszik?= <git@andred.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+References: <1572848275-30941-1-git-send-email-peng.fan@nxp.com>
+ <20191126145450.GB5108@optiplex>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <e39c043d-d098-283d-97b0-2a44aefec2f1@free.fr>
+Date:   Wed, 27 Nov 2019 09:47:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20191126145450.GB5108@optiplex>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Nov 27 09:47:37 2019 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tIGU3ZjljNzg2ZTQzZWY0Zjg5MGI4YTAxZjE1ZjhmMDA3ODZmNGIxNGEgTW9uIFNlcCAx
-NyAwMDowMDowMCAyMDAxDQo+IEZyb206IEhhaXdlaSBMaSA8bGloYWl3ZWlAdGVuY2VudC5jb20+
-DQo+IERhdGU6IFdlZCwgMjcgTm92IDIwMTkgMTU6MDA6NDkgKzA4MDANCj4gU3ViamVjdDogW1BB
-VENIIHYyXSBmaXg6ICdlcnJvcicgaXMgbm90IGluaXRpYWxpemVkDQo+DQo+IFRoZXJlIGFyZSBh
-IGJ1bmNoIG9mIGVycm9yIHBhdGhzIHdlcmUgImVycm9yIiBpc24ndCBpbml0aWFsaXplZC4NCj4g
-QEAgLTE1NSw2ICsxNTUsOCBAQCBzdGF0aWMgaW50IF9fc2V2X2RvX2NtZF9sb2NrZWQoaW50IGNt
-ZCwgdm9pZCAqZGF0YSwgaW50ICpwc3BfcmV0KQ0KPiAgIAl1bnNpZ25lZCBpbnQgcGh5c19sc2Is
-IHBoeXNfbXNiOw0KPiAgIAl1bnNpZ25lZCBpbnQgcmVnLCByZXQgPSAwOw0KPg0KPiArCSpwc3Bf
-cmV0ID0gLTE7DQo+ICsNCj4gICAJaWYgKCFwc3ApDQo+ICAgCQlyZXR1cm4gLUVOT0RFVjsNCj4N
-Cg0KVGhlIGFyZyBwc3BfcmV0IG1heSBiZSBOVUxMIGluIHNvbWUgcGF0aCBzdWNoIGFzIHNldl9n
-dWVzdF9kZl9mbHVzaChOVUxMKS4NClNvIHlvdSBoYXZlIHRvIGNoZWNrIGl0IGFnYWluc3QgTlVM
-TC4NClRoYW5rcy4NCg==
+On 26/11/2019 15:54, Oliver Graute wrote:
+
+> this patch broke my imx8qm nfs setup. With the generic phy driver my
+> board is booting fine. But with the AT803X_PHY=y enabled  I'm running
+> into the following phy issue. So on my side it looks inverse as on
+> yours. What is the best proposal to fix this?
+> 
+> [    5.550442] fec 5b040000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+> [    5.573206] Sending DHCP requests ...... timed out!
+> [   95.339702] IP-Config: Retrying forever (NFS root)...
+> [   95.348873] Atheros 8035 ethernet 5b040000.ethernet-1:06: attached PHY driver [Atheros 8035 ethernet] (mii_bus:phy_addr=5b040000.ethernet-1:06, irq=POLL)
+> [   99.438443] fec 5b040000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+> [   99.461206] Sending DHCP requests ...... timed out!
+
+Which DTS are you using?
+
+I bet one dollar that 6d4cd041f0af triggered a latent bug in the DTS.
+
+Regards.
