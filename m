@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E5510BAB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 253BB10BAB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732327AbfK0VFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:05:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59468 "EHLO mail.kernel.org"
+        id S1732336AbfK0VFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:05:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732316AbfK0VFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:05:40 -0500
+        id S1732324AbfK0VFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3C2C2166E;
-        Wed, 27 Nov 2019 21:05:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8302621770;
+        Wed, 27 Nov 2019 21:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888740;
-        bh=L4QbWVzfIJSe4VDi2e6Gwm+s3G1sQIYBlYSwyB3DNpc=;
+        s=default; t=1574888746;
+        bh=AiDrupa0ElEL9BkwztZdJMc2ifNPMRDNGjY+TvtGWtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UPfSXNBHUa4hoTSDRvezj+M+469pUvnjz/dc6TyhL0tZtFuVbQEUqrIPNURJpAMpG
-         Q+ztgexF7P2tLy8H1ykbY6o96D6K+D4KYGtdMdp80P5es9oXr3C8fW6viHdSAFP500
-         2/vjvZd0CaxF0WQJzrVWt8yWvdaFCT/q9mci2gfk=
+        b=pQ1EJANJeNZKE8Z7M48pjWJ2JXm5k2DEqu8Z2BvHlr8ZLNO2PK5U7QKp7SgJRHTN3
+         dpKIKvn2mDTWSUdYVAdlH7W5mLqjEtnjG8GBUf5rQlcLc+1g19Yhyw84yFnoTeW8pp
+         TYsd9R7CKlcoiWcR8qHn9HAEbv9AOvPYy8hMzRa0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang yingliang <yangyingliang@huawei.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 252/306] mm/memory_hotplug: Do not unlock when fails to take the device_hotplug_lock
-Date:   Wed, 27 Nov 2019 21:31:42 +0100
-Message-Id: <20191127203133.302148471@linuxfoundation.org>
+        stable@vger.kernel.org, Donald Sharp <sharpd@cumulusnetworks.com>,
+        Mike Manning <mmanning@vyatta.att-mail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 253/306] ipv6: Fix handling of LLA with VRF and sockets bound to VRF
+Date:   Wed, 27 Nov 2019 21:31:43 +0100
+Message-Id: <20191127203133.368836476@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -46,44 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit d2ab99403ee00d8014e651728a4702ea1ae5e52c ]
+[ Upstream commit c2027d1e17582903e368abf5d4838b22a98f2b7b ]
 
-When adding the memory by probing memory block in sysfs interface, there is an
-obvious issue that we will unlock the device_hotplug_lock when fails to takes it.
+A recent commit allows sockets bound to a VRF to receive ipv6 link local
+packets. However, it only works for UDP and worse TCP connection attempts
+to the LLA with the only listener bound to the VRF just hang where as
+before the client gets a reset and connection refused. Fix by adjusting
+ir_iif for LL addresses and packets received through a device enslaved
+to a VRF.
 
-That issue was introduced in Commit 8df1d0e4a265
-("mm/memory_hotplug: make add_memory() take the device_hotplug_lock")
-
-We should drop out in time when fails to take the device_hotplug_lock.
-
-Fixes: 8df1d0e4a265 ("mm/memory_hotplug: make add_memory() take the device_hotplug_lock")
-Reported-by: Yang yingliang <yangyingliang@huawei.com>
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 6f12fa775530 ("vrf: mark skb for multicast or link-local as enslaved to VRF")
+Reported-by: Donald Sharp <sharpd@cumulusnetworks.com>
+Cc: Mike Manning <mmanning@vyatta.att-mail.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/tcp_ipv6.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 0f8e77f78cc80..ac1574a696100 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -510,7 +510,7 @@ memory_probe_store(struct device *dev, struct device_attribute *attr,
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index e7cdfa92c3820..9a117a79af659 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -734,6 +734,7 @@ static void tcp_v6_init_req(struct request_sock *req,
+ 			    const struct sock *sk_listener,
+ 			    struct sk_buff *skb)
+ {
++	bool l3_slave = ipv6_l3mdev_skb(TCP_SKB_CB(skb)->header.h6.flags);
+ 	struct inet_request_sock *ireq = inet_rsk(req);
+ 	const struct ipv6_pinfo *np = inet6_sk(sk_listener);
  
- 	ret = lock_device_hotplug_sysfs();
- 	if (ret)
--		goto out;
-+		return ret;
+@@ -741,7 +742,7 @@ static void tcp_v6_init_req(struct request_sock *req,
+ 	ireq->ir_v6_loc_addr = ipv6_hdr(skb)->daddr;
  
- 	nid = memory_add_physaddr_to_nid(phys_addr);
- 	ret = __add_memory(nid, phys_addr,
+ 	/* So that link locals have meaning */
+-	if (!sk_listener->sk_bound_dev_if &&
++	if ((!sk_listener->sk_bound_dev_if || l3_slave) &&
+ 	    ipv6_addr_type(&ireq->ir_v6_rmt_addr) & IPV6_ADDR_LINKLOCAL)
+ 		ireq->ir_iif = tcp_v6_iif(skb);
+ 
 -- 
 2.20.1
 
