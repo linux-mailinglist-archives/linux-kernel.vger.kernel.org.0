@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD0510B9FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 511E910B8D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731346AbfK0U6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:58:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50046 "EHLO mail.kernel.org"
+        id S1729003AbfK0UrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:47:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730443AbfK0U6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:58:42 -0500
+        id S1729955AbfK0UrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:47:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20D592084D;
-        Wed, 27 Nov 2019 20:58:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C13BC21826;
+        Wed, 27 Nov 2019 20:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888321;
-        bh=1AEe6262HdcOwAQh2tB2daek/J3BYWc1JBiEqovCau0=;
+        s=default; t=1574887627;
+        bh=cI00S5SAfJJxJwKC2KRPKowU5ynXC6YjOEbMSMAB+Yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YlBxlUQYFoeOVhgIIQRBJja2Uo5MOT0PgU7xKMzyrl/cepdh9YMFxe434Ho5whCEM
-         WBMPRyH00WmtkYtf3FQH0wMbMqCTsfb/MllRsIE1fCr0VSdbOFKjHxRXjsv4DZzJpJ
-         sLeP6t0cZHt/wL1Yedaj+l8UnVOUmTfSZUWVTzl8=
+        b=xQ4li9Yw32Z4KyCXdAvM/pXOOMXicyBsluR5n+am5nP60nRb56/+Em0wOZdmjSckE
+         qlGrygfl86GkBwNgBzhwzuvtQpnzPITOVutltMVCRLpQKY/znW4lA9Geo5G3TaWY8n
+         pBdkNjNqaV39R8Zg6iYIBEXVkQRkpQvVKE0MFMFY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/306] xfs: fix use-after-free race in xfs_buf_rele
+        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 005/211] net/mlxfw: Verify FSM error code translation doesnt exceed array size
 Date:   Wed, 27 Nov 2019 21:28:58 +0100
-Message-Id: <20191127203121.350680123@linuxfoundation.org>
+Message-Id: <20191127203049.969320055@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,123 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-[ Upstream commit 37fd1678245f7a5898c1b05128bc481fb403c290 ]
+[ Upstream commit 30e9e0550bf693c94bc15827781fe42dd60be634 ]
 
-When looking at a 4.18 based KASAN use after free report, I noticed
-that racing xfs_buf_rele() may race on dropping the last reference
-to the buffer and taking the buffer lock. This was the symptom
-displayed by the KASAN report, but the actual issue that was
-reported had already been fixed in 4.19-rc1 by commit e339dd8d8b04
-("xfs: use sync buffer I/O for sync delwri queue submission").
+Array mlxfw_fsm_state_err_str contains value to string translation, when
+values are provided by mlxfw_dev. If value is larger than
+MLXFW_FSM_STATE_ERR_MAX, return "unknown error" as expected instead of
+reading an address than exceed array size.
 
-Despite this, I think there is still an issue with xfs_buf_rele()
-in this code:
-
-        release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
-        spin_lock(&bp->b_lock);
-        if (!release) {
-.....
-
-If two threads race on the b_lock after both dropping a reference
-and one getting dropping the last reference so release = true, we
-end up with:
-
-CPU 0				CPU 1
-atomic_dec_and_lock()
-				atomic_dec_and_lock()
-				spin_lock(&bp->b_lock)
-spin_lock(&bp->b_lock)
-<spins>
-				<release = true bp->b_lru_ref = 0>
-				<remove from lists>
-				freebuf = true
-				spin_unlock(&bp->b_lock)
-				xfs_buf_free(bp)
-<gets lock, reading and writing freed memory>
-<accesses freed memory>
-spin_unlock(&bp->b_lock) <reads/writes freed memory>
-
-IOWs, we can't safely take bp->b_lock after dropping the hold
-reference because the buffer may go away at any time after we
-drop that reference. However, this can be fixed simply by taking the
-bp->b_lock before we drop the reference.
-
-It is safe to nest the pag_buf_lock inside bp->b_lock as the
-pag_buf_lock is only used to serialise against lookup in
-xfs_buf_find() and no other locks are held over or under the
-pag_buf_lock there. Make this clear by documenting the buffer lock
-orders at the top of the file.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com
-Signed-off-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 410ed13cae39 ("Add the mlxfw module for Mellanox firmware flash process")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_buf.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxfw/mlxfw_fsm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index e839907e8492f..f4a89c94c931b 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -37,6 +37,32 @@ static kmem_zone_t *xfs_buf_zone;
- #define xb_to_gfp(flags) \
- 	((((flags) & XBF_READ_AHEAD) ? __GFP_NORETRY : GFP_NOFS) | __GFP_NOWARN)
+--- a/drivers/net/ethernet/mellanox/mlxfw/mlxfw_fsm.c
++++ b/drivers/net/ethernet/mellanox/mlxfw/mlxfw_fsm.c
+@@ -86,6 +86,8 @@ retry:
+ 		return err;
  
-+/*
-+ * Locking orders
-+ *
-+ * xfs_buf_ioacct_inc:
-+ * xfs_buf_ioacct_dec:
-+ *	b_sema (caller holds)
-+ *	  b_lock
-+ *
-+ * xfs_buf_stale:
-+ *	b_sema (caller holds)
-+ *	  b_lock
-+ *	    lru_lock
-+ *
-+ * xfs_buf_rele:
-+ *	b_lock
-+ *	  pag_buf_lock
-+ *	    lru_lock
-+ *
-+ * xfs_buftarg_wait_rele
-+ *	lru_lock
-+ *	  b_lock (trylock due to inversion)
-+ *
-+ * xfs_buftarg_isolate
-+ *	lru_lock
-+ *	  b_lock (trylock due to inversion)
-+ */
- 
- static inline int
- xfs_buf_is_vmapped(
-@@ -1006,8 +1032,18 @@ xfs_buf_rele(
- 
- 	ASSERT(atomic_read(&bp->b_hold) > 0);
- 
--	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
-+	/*
-+	 * We grab the b_lock here first to serialise racing xfs_buf_rele()
-+	 * calls. The pag_buf_lock being taken on the last reference only
-+	 * serialises against racing lookups in xfs_buf_find(). IOWs, the second
-+	 * to last reference we drop here is not serialised against the last
-+	 * reference until we take bp->b_lock. Hence if we don't grab b_lock
-+	 * first, the last "release" reference can win the race to the lock and
-+	 * free the buffer before the second-to-last reference is processed,
-+	 * leading to a use-after-free scenario.
-+	 */
- 	spin_lock(&bp->b_lock);
-+	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
- 	if (!release) {
- 		/*
- 		 * Drop the in-flight state if the buffer is already on the LRU
--- 
-2.20.1
-
+ 	if (fsm_state_err != MLXFW_FSM_STATE_ERR_OK) {
++		fsm_state_err = min_t(enum mlxfw_fsm_state_err,
++				      fsm_state_err, MLXFW_FSM_STATE_ERR_MAX);
+ 		pr_err("Firmware flash failed: %s\n",
+ 		       mlxfw_fsm_state_err_str[fsm_state_err]);
+ 		return -EINVAL;
 
 
