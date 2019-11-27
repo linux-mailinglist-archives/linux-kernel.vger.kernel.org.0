@@ -2,237 +2,575 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA5D10ABEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40BE510ABEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:42:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbfK0IkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:40:13 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11384 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbfK0IkN (ORCPT
+        id S1726478AbfK0ImX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:42:23 -0500
+Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:48312
+        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726130AbfK0ImX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:40:13 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dde366e0000>; Wed, 27 Nov 2019 00:40:15 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 27 Nov 2019 00:40:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 27 Nov 2019 00:40:11 -0800
-Received: from [10.24.47.97] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
- 2019 08:40:07 +0000
-Subject: Re: [PATCH 1/4] PCI: dwc: Add new feature to skip core initialization
-To:     Kishon Vijay Abraham I <kishon@ti.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>, <lorenzo.pieralisi@arm.com>,
-        <andrew.murray@arm.com>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>
-CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20191113090851.26345-1-vidyas@nvidia.com>
- <20191113090851.26345-2-vidyas@nvidia.com>
- <973f239f-fdb8-b119-5ca1-b0a6307efe21@ti.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <9151ba97-f27e-3ff4-1e4c-f0d29bab47e5@nvidia.com>
-Date:   Wed, 27 Nov 2019 14:10:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Wed, 27 Nov 2019 03:42:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574844141;
+        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID;
+        bh=7/MivRQHyfpcrvHSpuvFAQNtij6PJmOgyCg3Zt0kVH4=;
+        b=I1sroUoEM7IgYvUHatkIGEpv/nHFt5foOtCK1eY2TWxy05FYK5GKXeitYI3UMBw1
+        p6wgXgK6drl2tE1rcyrggySRzKg/pWWGkFcd231Ai95Dd8vnmCWGKMkgeil3XpJEI5l
+        h6WbgTKrcLWdyHWZMZ2ZX6jcu5XDfA7tmSFFMZiw=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574844141;
+        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID:Feedback-ID;
+        bh=7/MivRQHyfpcrvHSpuvFAQNtij6PJmOgyCg3Zt0kVH4=;
+        b=GCmtO/uUTxWjPFjwiXyTzhj0kxJFF9JLfVJyIw007ki7LBu/phyYPuRqy5VuxnSQ
+        Y3+qbF9ToowNQct3IKqTAFRvEGsK4bUMZ7CCK90Dxy+HbCUU4vA8VAtGXf2FkaxXN1e
+        +oekqFf9JTYrwK9oOrKqjcBgNWie/oi8Iyq/JkQg=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
 MIME-Version: 1.0
-In-Reply-To: <973f239f-fdb8-b119-5ca1-b0a6307efe21@ti.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574844015; bh=uSypx561o+6c8CArX4KPnl6WhoFJlWrZfN9J+4SD0E0=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ojXJZo39AfcI+H0qNs1GkF+6bGOu3qJCvebiLnWswA0xHigUnp5qxHXhxG5b6CVVv
-         O6K9XLuFI33mCx0Tkug0+evp9d/nzhLN0e4BpQ2ROa+6sug3wqRNTUmLhIuGoQJCjF
-         YzbKdKvp9K68szJdGHncjrGJLuqeRqlAAJO2NxxVIE02k28ja/rIZvNJK9Lvlt6aOq
-         clH/sopk4W9UB/E19wLhDE5uBfTHzXlWz13r9ZwUWjeFXo0DBJrMpy0Yjda7fqeYXO
-         zFb2wJZ66SETNfxBN7cQA4SsGqS8tNE4XhpDH6uOhhOBLQ0aAgroEhbEV39ckCqEAG
-         d81c1IW3pfpew==
+Date:   Wed, 27 Nov 2019 08:42:20 +0000
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add OSM L3 interconnect
+ provider support
+In-Reply-To: <0101016e83897442-ecc4c00f-c0d1-4c2c-92ed-ce78e65c0935-000000@us-west-2.amazonses.com>
+References: <20191118154435.20357-1-sibis@codeaurora.org>
+ <0101016e7f30ad15-18908ef0-a2b9-4a2a-bf32-6cb3aa447b01-000000@us-west-2.amazonses.com>
+ <CAE=gft5jGagsFS2yBeJCLt9R26RQjx9bfMxhQu8Jj4uc4ca40w@mail.gmail.com>
+ <0101016e83897442-ecc4c00f-c0d1-4c2c-92ed-ce78e65c0935-000000@us-west-2.amazonses.com>
+Message-ID: <0101016eac068d05-761f0d60-b1ef-400f-bf84-3164c2a26d2e-000000@us-west-2.amazonses.com>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
+X-SES-Outgoing: 2019.11.27-54.240.27.18
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/2019 1:44 PM, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On 13/11/19 2:38 PM, Vidya Sagar wrote:
->> Add a new feature 'skip_core_init' that can be set by platform drivers
->> of devices that do not have their core registers available until reference
->> clock from host is available (Ex:- Tegra194) to indicate DesignWare
->> endpoint mode sub-system to not perform core registers initialization.
->> Existing dw_pcie_ep_init() is refactored and all the code that touches
->> registers is extracted to form a new API dw_pcie_ep_init_complete() that
->> can be called later by platform drivers setting 'skip_core_init' to '1'.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->>   .../pci/controller/dwc/pcie-designware-ep.c   | 72 +++++++++++--------
->>   drivers/pci/controller/dwc/pcie-designware.h  |  6 ++
->>   include/linux/pci-epc.h                       |  1 +
->>   3 files changed, 51 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> index 3dd2e2697294..06f4379be8a3 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> @@ -492,19 +492,53 @@ static unsigned int dw_pcie_ep_find_ext_capability(struct dw_pcie *pci, int cap)
->>   	return 0;
->>   }
->>   
->> -int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->> +int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
->>   {
->> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	unsigned int offset;
->> +	unsigned int nbars;
->> +	u8 hdr_type;
->> +	u32 reg;
->>   	int i;
->> +
->> +	hdr_type = dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE);
->> +	if (hdr_type != PCI_HEADER_TYPE_NORMAL) {
->> +		dev_err(pci->dev,
->> +			"PCIe controller is not set to EP mode (hdr_type:0x%x)!\n",
->> +			hdr_type);
->> +		return -EIO;
->> +	}
->> +
->> +	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
->> +
->> +	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
->> +
->> +	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
->> +	if (offset) {
->> +		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
->> +		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
->> +			PCI_REBAR_CTRL_NBAR_SHIFT;
->> +
->> +		dw_pcie_dbi_ro_wr_en(pci);
->> +		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
->> +			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
->> +		dw_pcie_dbi_ro_wr_dis(pci);
->> +	}
->> +
->> +	dw_pcie_setup(pci);
->> +
->> +	return 0;
->> +}
->> +
->> +int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->> +{
->>   	int ret;
->> -	u32 reg;
->>   	void *addr;
->> -	u8 hdr_type;
->> -	unsigned int nbars;
->> -	unsigned int offset;
->>   	struct pci_epc *epc;
->>   	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->>   	struct device *dev = pci->dev;
->>   	struct device_node *np = dev->of_node;
->> +	const struct pci_epc_features *epc_features;
->>   
->>   	if (!pci->dbi_base || !pci->dbi_base2) {
->>   		dev_err(dev, "dbi_base/dbi_base2 is not populated\n");
->> @@ -563,13 +597,6 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->>   	if (ep->ops->ep_init)
->>   		ep->ops->ep_init(ep);
->>   
->> -	hdr_type = dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE);
->> -	if (hdr_type != PCI_HEADER_TYPE_NORMAL) {
->> -		dev_err(pci->dev, "PCIe controller is not set to EP mode (hdr_type:0x%x)!\n",
->> -			hdr_type);
->> -		return -EIO;
->> -	}
->> -
->>   	ret = of_property_read_u8(np, "max-functions", &epc->max_functions);
->>   	if (ret < 0)
->>   		epc->max_functions = 1;
->> @@ -587,23 +614,12 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->>   		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
->>   		return -ENOMEM;
->>   	}
->> -	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
->>   
->> -	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
->> -
->> -	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
->> -	if (offset) {
->> -		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
->> -		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
->> -			PCI_REBAR_CTRL_NBAR_SHIFT;
->> -
->> -		dw_pcie_dbi_ro_wr_en(pci);
->> -		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
->> -			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
->> -		dw_pcie_dbi_ro_wr_dis(pci);
->> +	if (ep->ops->get_features) {
->> +		epc_features = ep->ops->get_features(ep);
->> +		if (epc_features->skip_core_init)
->> +			return 0;
->>   	}
->>   
->> -	dw_pcie_setup(pci);
->> -
->> -	return 0;
->> +	return dw_pcie_ep_init_complete(ep);
->>   }
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index 5accdd6bc388..340783e9032e 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -399,6 +399,7 @@ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
->>   #ifdef CONFIG_PCIE_DW_EP
->>   void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
->>   int dw_pcie_ep_init(struct dw_pcie_ep *ep);
->> +int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep);
->>   void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
->>   int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no);
->>   int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->> @@ -416,6 +417,11 @@ static inline int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->>   	return 0;
->>   }
->>   
->> +static inline int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
->> +{
->> +	return 0;
->> +}
->> +
->>   static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
->>   {
->>   }
->> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
->> index 36644ccd32ac..241e6a6f39fb 100644
->> --- a/include/linux/pci-epc.h
->> +++ b/include/linux/pci-epc.h
->> @@ -121,6 +121,7 @@ struct pci_epc_features {
->>   	u8	bar_fixed_64bit;
->>   	u64	bar_fixed_size[PCI_STD_NUM_BARS];
->>   	size_t	align;
->> +	bool	skip_core_init;
-> 
-> This looks more like a designware specific change. Why is it added to the core
-> pci_epc_features?
-Although the changes are done in DesignWare core (as Tegra194 uses DesignWare IP),
-core not being available for programming before REFCLK from host is available, seemed
-like a very generic case to me, so I added this as part of core features it self.
+Hey Evan/Georgi,
 
-Thanks,
-Vidya Sagar
-> 
-> Thanks
-> Kishon
-> 
+https://git.linaro.org/people/georgi.djakov/linux.git/commit/?h=icc-dev&id=9197da7d06e88666d1588e3c21a743e60381264d
 
+With the "Redefine interconnect provider
+DT nodes for SDM845" series, wouldn't it
+make more sense to define the OSM_L3 icc
+nodes in the sdm845.c icc driver and have
+the common helpers in osm_l3 driver? Though
+we don't plan on linking the OSM L3 nodes
+to the other nodes on SDM845/SC7180, we
+might have GPU needing to be linked to the
+OSM L3 nodes on future SoCs. Let me know
+how you want this done.
+
+Anyway I'll re-spin the series once the
+SDM845 icc re-work gets re-posted.
+
+On 2019-11-19 17:30, sibis@codeaurora.org wrote:
+> Hey Evan,
+> Thanks for taking time to review
+> the series.
+> 
+> On 2019-11-19 04:12, Evan Green wrote:
+>> Hi Sibi,
+>> 
+>> On Mon, Nov 18, 2019 at 7:45 AM Sibi Sankar <sibis@codeaurora.org> 
+>> wrote:
+>>> 
+>>> On some Qualcomm SoCs, Operating State Manager (OSM) controls the
+>>> resources of scaling L3 caches. Add a driver to handle bandwidth
+>>> requests to OSM L3 from CPU/GPU.
+>>> 
+>>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>>> ---
+>>>  drivers/interconnect/qcom/Kconfig  |   7 +
+>>>  drivers/interconnect/qcom/Makefile |   2 +
+>>>  drivers/interconnect/qcom/osm-l3.c | 284 
+>>> +++++++++++++++++++++++++++++
+>>>  3 files changed, 293 insertions(+)
+>>>  create mode 100644 drivers/interconnect/qcom/osm-l3.c
+>>> 
+>>> diff --git a/drivers/interconnect/qcom/Kconfig 
+>>> b/drivers/interconnect/qcom/Kconfig
+>>> index ecf057d7e2409..17aee5b0f15b7 100644
+>>> --- a/drivers/interconnect/qcom/Kconfig
+>>> +++ b/drivers/interconnect/qcom/Kconfig
+>>> @@ -5,6 +5,13 @@ config INTERCONNECT_QCOM
+>>>         help
+>>>           Support for Qualcomm's Network-on-Chip interconnect 
+>>> hardware.
+>>> 
+>>> +config INTERCONNECT_QCOM_OSM_L3
+>>> +       tristate "Qualcomm OSM L3 interconnect driver"
+>>> +       depends on INTERCONNECT_QCOM || COMPILE_TEST
+>> 
+>> Should we depend on something sdm845 here?
+> 
+> not really...
+> 
+> maybe I can have 845 interconnect
+> selecting osm_l3? since sc7180 also
+> would be doing the same.
+> 
+>> 
+>>> +       help
+>>> +         Say y here to support the Operating State Manager (OSM) 
+>>> interconnect
+>>> +         driver which controls the scaling of L3 caches on Qualcomm 
+>>> SoCs.
+>>> +
+>>>  config INTERCONNECT_QCOM_QCS404
+>>>         tristate "Qualcomm QCS404 interconnect driver"
+>>>         depends on INTERCONNECT_QCOM
+>>> diff --git a/drivers/interconnect/qcom/Makefile 
+>>> b/drivers/interconnect/qcom/Makefile
+>>> index 9adf9e380545e..8d86d6515ffc9 100644
+>>> --- a/drivers/interconnect/qcom/Makefile
+>>> +++ b/drivers/interconnect/qcom/Makefile
+>>> @@ -1,10 +1,12 @@
+>>>  # SPDX-License-Identifier: GPL-2.0
+>>> 
+>>> +icc-osm-l3-objs                                := osm-l3.o
+>>>  qnoc-msm8974-objs                      := msm8974.o
+>>>  qnoc-qcs404-objs                       := qcs404.o
+>>>  qnoc-sdm845-objs                       := sdm845.o
+>>>  icc-smd-rpm-objs                       := smd-rpm.o
+>>> 
+>>> +obj-$(CONFIG_INTERCONNECT_QCOM_OSM_L3) += icc-osm-l3.o
+>>>  obj-$(CONFIG_INTERCONNECT_QCOM_MSM8974) += qnoc-msm8974.o
+>>>  obj-$(CONFIG_INTERCONNECT_QCOM_QCS404) += qnoc-qcs404.o
+>>>  obj-$(CONFIG_INTERCONNECT_QCOM_SDM845) += qnoc-sdm845.o
+>>> diff --git a/drivers/interconnect/qcom/osm-l3.c 
+>>> b/drivers/interconnect/qcom/osm-l3.c
+>>> new file mode 100644
+>>> index 0000000000000..5e9f9ce02863b
+>>> --- /dev/null
+>>> +++ b/drivers/interconnect/qcom/osm-l3.c
+>>> @@ -0,0 +1,284 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+>>> + *
+>>> + */
+>>> +
+>>> +#include <dt-bindings/interconnect/qcom,osm-l3.h>
+>>> +#include <dt-bindings/interconnect/qcom,sdm845.h>
+>>> +#include <linux/bitfield.h>
+>>> +#include <linux/clk.h>
+>>> +#include <linux/interconnect-provider.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of_device.h>
+>>> +#include <linux/of_platform.h>
+>>> +#include <linux/platform_device.h>
+>>> +
+>>> +#define LUT_MAX_ENTRIES                        40U
+>>> +#define LUT_SRC                                GENMASK(31, 30)
+>>> +#define LUT_L_VAL                      GENMASK(7, 0)
+>>> +#define LUT_ROW_SIZE                   32
+>>> +#define CLK_HW_DIV                     2
+>>> +
+>>> +/* Register offsets */
+>>> +#define REG_ENABLE                     0x0
+>>> +#define REG_FREQ_LUT                   0x110
+>>> +#define REG_PERF_STATE                 0x920
+>>> +
+>>> +#define OSM_L3_MAX_LINKS               1
+>>> +
+>>> +#define to_qcom_provider(_provider) \
+>>> +       container_of(_provider, struct qcom_osm_l3_icc_provider, 
+>>> provider)
+>>> +
+>>> +enum {
+>>> +       SDM845_MASTER_OSM_L3_APPS = SLAVE_TCU + 1,
+>>> +       SDM845_SLAVE_OSM_L3,
+>>> +};
+>> 
+>> Should these just go in qcom,sdm845.h? Seems nice to have them all in
+>> one place, and then they can be accessed in the DT if needed.
+> 
+> yeah I can do that, by doing
+> this I can also get rid of the
+> SLAVE_TCU + 1 :)
+> 
+>> 
+>>> +
+>>> +struct qcom_osm_l3_icc_provider {
+>>> +       void __iomem *base;
+>>> +       unsigned int max_state;
+>>> +       unsigned long lut_tables[LUT_MAX_ENTRIES];
+>>> +       struct icc_provider provider;
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct qcom_icc_node - Qualcomm specific interconnect nodes
+>>> + * @name: the node name used in debugfs
+>>> + * @links: an array of nodes where we can go next while traversing
+>>> + * @id: a unique node identifier
+>>> + * @num_links: the total number of @links
+>>> + * @buswidth: width of the interconnect between a node and the bus
+>>> + */
+>>> +struct qcom_icc_node {
+>>> +       const char *name;
+>>> +       u16 links[OSM_L3_MAX_LINKS];
+>>> +       u16 id;
+>>> +       u16 num_links;
+>>> +       u16 buswidth;
+>>> +};
+>>> +
+>>> +struct qcom_icc_desc {
+>>> +       struct qcom_icc_node **nodes;
+>>> +       size_t num_nodes;
+>>> +};
+>>> +
+>>> +#define DEFINE_QNODE(_name, _id, _buswidth, ...)                     
+>>>   \
+>>> +               static struct qcom_icc_node _name = {                 
+>>>   \
+>>> +               .name = #_name,                                       
+>>>   \
+>>> +               .id = _id,                                            
+>>>   \
+>>> +               .buswidth = _buswidth,                                
+>>>   \
+>>> +               .num_links = ARRAY_SIZE(((int[]){ __VA_ARGS__ })),    
+>>>   \
+>>> +               .links = { __VA_ARGS__ },                             
+>>>   \
+>>> +       }
+>>> +
+>>> +DEFINE_QNODE(osm_apps_l3, SDM845_MASTER_OSM_L3_APPS, 16, 
+>>> SDM845_SLAVE_OSM_L3);
+>>> +DEFINE_QNODE(osm_l3, SDM845_SLAVE_OSM_L3, 16);
+>>> +
+>>> +static struct qcom_icc_node *sdm845_osm_l3_nodes[] = {
+>> 
+>> const?
+> 
+> unfortunately we can't ...
+> 
+> data->nodes[i] = node;
+> we setup links later ^^ with
+> the pointer.
+> 
+>> 
+>>> +       [MASTER_OSM_L3_APPS] = &osm_apps_l3,
+>>> +       [SLAVE_OSM_L3] = &osm_l3,
+>>> +};
+>>> +
+>>> +static struct qcom_icc_desc sdm845_osm_l3 = {
+>>> +       .nodes = sdm845_osm_l3_nodes,
+>>> +       .num_nodes = ARRAY_SIZE(sdm845_osm_l3_nodes),
+>>> +};
+>>> +
+>>> +static int qcom_icc_aggregate(struct icc_node *node, u32 tag, u32 
+>>> avg_bw,
+>>> +                             u32 peak_bw, u32 *agg_avg, u32 
+>>> *agg_peak)
+>>> +{
+>>> +       *agg_avg += avg_bw;
+>>> +       *agg_peak = max_t(u32, *agg_peak, peak_bw);
+>>> +
+>>> +       return 0;
+>>> +}
+>> 
+>> Georgi, I wonder if it's a good idea to make a small collection of
+>> "std" aggregate functions in the interconnect core that a driver can
+>> just point to if it's doing something super standard like this (ie
+>> driver->aggregate = icc_std_aggregate;). This is probably fine as-is
+>> for now, but if we see a lot more copy/pastes of this function we
+>> should think about it.
+>> 
+>>> +
+>>> +static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+>>> +{
+>>> +       struct qcom_osm_l3_icc_provider *qp;
+>>> +       struct icc_provider *provider;
+>>> +       struct qcom_icc_node *qn;
+>>> +       struct icc_node *n;
+>>> +       unsigned int index;
+>>> +       u32 agg_peak = 0;
+>>> +       u32 agg_avg = 0;
+>>> +       u64 rate;
+>>> +
+>>> +       qn = src->data;
+>>> +       provider = src->provider;
+>>> +       qp = to_qcom_provider(provider);
+>>> +
+>>> +       list_for_each_entry(n, &provider->nodes, node_list)
+>>> +               qcom_icc_aggregate(n, 0, n->avg_bw, n->peak_bw,
+>>> +                                  &agg_avg, &agg_peak);
+>>> +
+>>> +       rate = max(agg_avg, agg_peak);
+>>> +       rate = icc_units_to_bps(rate);
+>>> +       do_div(rate, qn->buswidth);
+>>> +
+>>> +       for (index = 0; index < qp->max_state; index++) {
+>> 
+>> If the rate is too high, you'll end up setting max_state into the
+>> register. That's probably bad, right? (Or maybe it's not because the
+>> table ends with the same value twice, but it seems like relying on an
+>> implementation detail). We could guard against that by only iterating
+>> to index < qp->max_state - 1.
+> 
+> yes, using max_state - 1 makes sense
+> here. Will change this in the next
+> re-spin.
+> 
+>> 
+>>> +               if (qp->lut_tables[index] >= rate)
+>>> +                       break;
+>>> +       }
+>>> +
+>>> +       writel_relaxed(index, qp->base + REG_PERF_STATE);
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +static int qcom_osm_l3_remove(struct platform_device *pdev)
+>>> +{
+>>> +       struct qcom_osm_l3_icc_provider *qp = 
+>>> platform_get_drvdata(pdev);
+>>> +       struct icc_provider *provider = &qp->provider;
+>>> +       struct icc_node *n;
+>>> +
+>>> +       list_for_each_entry(n, &provider->nodes, node_list) {
+>> 
+>> There was a comment on one of the other threads that we've been
+>> copy/pasting this snippet around and it's wrong because it doesn't use
+>> the _safe variant of the macro. So we end up destroying the list we're
+>> iterating over.
+>> 
+>> Georgi, did you have a plan to refactor this, or should we just change
+>> this to be the _safe version?
+>> 
+>>> +               icc_node_del(n);
+>>> +               icc_node_destroy(n->id);
+>>> +       }
+>>> +
+>>> +       return icc_provider_del(provider);
+>>> +}
+>>> +
+>>> +static int qcom_osm_l3_probe(struct platform_device *pdev)
+>>> +{
+>>> +       u32 info, src, lval, i, prev_freq = 0, freq;
+>>> +       static unsigned long hw_rate, xo_rate;
+>>> +       struct qcom_osm_l3_icc_provider *qp;
+>>> +       const struct qcom_icc_desc *desc;
+>>> +       struct icc_onecell_data *data;
+>>> +       struct icc_provider *provider;
+>>> +       struct qcom_icc_node **qnodes;
+>>> +       struct icc_node *node;
+>>> +       size_t num_nodes;
+>>> +       struct clk *clk;
+>>> +       int ret;
+>>> +
+>>> +       clk = clk_get(&pdev->dev, "xo");
+>>> +       if (IS_ERR(clk))
+>>> +               return PTR_ERR(clk);
+>>> +
+>>> +       xo_rate = clk_get_rate(clk);
+>>> +       clk_put(clk);
+>>> +
+>>> +       clk = clk_get(&pdev->dev, "alternate");
+>>> +       if (IS_ERR(clk))
+>>> +               return PTR_ERR(clk);
+>>> +
+>>> +       hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
+>> 
+>> It's a little weird there's a constant divide in there, though I guess
+>> it's in the cpufreq driver as well. I guess this is fine if it's
+>> likely to stay there (and the same) when this driver is generalized
+>> for other SoCs.
+> 
+> yeah I don't see this changing
+> on sc7180 so I'll leave this
+> as is.
+> 
+>> 
+>>> +       clk_put(clk);
+>>> +
+>>> +       qp = devm_kzalloc(&pdev->dev, sizeof(*qp), GFP_KERNEL);
+>>> +       if (!qp)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       qp->base = devm_platform_ioremap_resource(pdev, 0);
+>>> +       if (IS_ERR(qp->base))
+>>> +               return PTR_ERR(qp->base);
+>>> +
+>>> +       /* HW should be in enabled state to proceed */
+>>> +       if (!(readl_relaxed(qp->base + REG_ENABLE) & 0x1)) {
+>>> +               dev_err(&pdev->dev, "error hardware not enabled\n");
+>>> +               return -ENODEV;
+>>> +       }
+>>> +
+>>> +       for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+>>> +               info = readl_relaxed(qp->base + REG_FREQ_LUT +
+>>> +                                    i * LUT_ROW_SIZE);
+>>> +               src = FIELD_GET(LUT_SRC, info);
+>>> +               lval = FIELD_GET(LUT_L_VAL, info);
+>>> +               if (src)
+>>> +                       freq = xo_rate * lval;
+>>> +               else
+>>> +                       freq = hw_rate;
+>>> +
+>>> +               /*
+>>> +                * Two of the same frequencies with the same core 
+>>> counts means
+>> 
+>> "core counts" seems like a copied comment that doesn't apply.
+> 
+> yes we don't use the core_cnt
+> field so will update the comment.
+> 
+>> 
+>> But you only look at freq and not core count, is that really
+>> equivalent to the table's boundary condition? Or do you need to be
+>> comparing info == info_prev?
+> 
+> no we can get by comparing
+> current freq with prev freq
+> on OSM L3.
+> 
+>> 
+>>> +                * end of table
+>>> +                */
+>>> +               if (i > 0 && prev_freq == freq)
+>>> +                       break;
+>>> +
+>>> +               qp->lut_tables[i] = freq;
+>>> +               prev_freq = freq;
+>>> +       }
+>>> +       qp->max_state = i;
+>> 
+>> Should we error out or complain if there are too few entries, or if
+>> the table is not in increasing order?
+> 
+> OSM does make sure of the
+> increasing order and correct
+> number of freq entries if the
+> REG_ENABLE is set. However I
+> don't really mind adding the
+> increasing order check but we
+> can't really detect too few
+> entries since the number can
+> vary across SKUs.
+> 
+>> 
+>>> +
+>>> +       desc = of_device_get_match_data(&pdev->dev);
+>>> +       if (!desc)
+>>> +               return -EINVAL;
+>>> +
+>>> +       qnodes = desc->nodes;
+>>> +       num_nodes = desc->num_nodes;
+>>> +
+>>> +       data = devm_kcalloc(&pdev->dev, num_nodes, sizeof(*node), 
+>>> GFP_KERNEL);
+>>> +       if (!data)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       provider = &qp->provider;
+>>> +       provider->dev = &pdev->dev;
+>>> +       provider->set = qcom_icc_set;
+>>> +       provider->aggregate = qcom_icc_aggregate;
+>>> +       provider->xlate = of_icc_xlate_onecell;
+>>> +       INIT_LIST_HEAD(&provider->nodes);
+>>> +       provider->data = data;
+>>> +
+>>> +       ret = icc_provider_add(provider);
+>>> +       if (ret) {
+>>> +               dev_err(&pdev->dev, "error adding interconnect 
+>>> provider\n");
+>>> +               return ret;
+>>> +       }
+>>> +
+>>> +       for (i = 0; i < num_nodes; i++) {
+>>> +               size_t j;
+>>> +
+>>> +               node = icc_node_create(qnodes[i]->id);
+>>> +               if (IS_ERR(node)) {
+>>> +                       ret = PTR_ERR(node);
+>>> +                       goto err;
+>>> +               }
+>>> +
+>>> +               node->name = qnodes[i]->name;
+>>> +               node->data = qnodes[i];
+>>> +               icc_node_add(node, provider);
+>>> +
+>>> +               dev_dbg(&pdev->dev, "registered node %p %s %d\n", 
+>>> node,
+>>> +                       qnodes[i]->name, node->id);
+>>> +
+>>> +               /* populate links */
+>> 
+>> Not a super useful comment.
+> 
+> lol will remove it
+> 
+>> 
+>> 
+>>> +               for (j = 0; j < qnodes[i]->num_links; j++)
+>>> +                       icc_link_create(node, qnodes[i]->links[j]);
+>>> +
+>>> +               data->nodes[i] = node;
+>>> +       }
+>>> +       data->num_nodes = num_nodes;
+>>> +
+>>> +       platform_set_drvdata(pdev, qp);
+>>> +
+>>> +       return ret;
+>>> +err:
+>>> +       qcom_osm_l3_remove(pdev);
+>>> +       return ret;
+>>> +}
+>>> +
+>>> +static const struct of_device_id osm_l3_of_match[] = {
+>>> +       { .compatible = "qcom,sdm845-osm-l3", .data = &sdm845_osm_l3 
+>>> },
+>>> +       { },
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, osm_l3_of_match);
+>>> +
+>>> +static struct platform_driver osm_l3_driver = {
+>>> +       .probe = qcom_osm_l3_probe,
+>>> +       .remove = qcom_osm_l3_remove,
+>>> +       .driver = {
+>>> +               .name = "osm-l3",
+>>> +               .of_match_table = osm_l3_of_match,
+>>> +       },
+>>> +};
+>>> +module_platform_driver(osm_l3_driver);
+>>> +
+>>> +MODULE_DESCRIPTION("Qualcomm OSM L3 interconnect driver");
+>>> +MODULE_LICENSE("GPL v2");
+>>> --
+>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>>> Forum,
+>>> a Linux Foundation Collaborative Project
+>>> 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
