@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6416B10BC43
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3075A10BACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732619AbfK0VKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:10:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37264 "EHLO mail.kernel.org"
+        id S1732471AbfK0VGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:06:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732996AbfK0VKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:10:14 -0500
+        id S1732441AbfK0VGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:06:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1C10215F1;
-        Wed, 27 Nov 2019 21:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A79121843;
+        Wed, 27 Nov 2019 21:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889014;
-        bh=m+9gLKLJPVKmbMVfTrjUnkZTGNhO4OvqC2oDE5gvC5o=;
+        s=default; t=1574888794;
+        bh=zBhu2+KdYMb3Yub8SsyOlnjWpHgy8s+5nopaN6TD0kU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V1nPJkuCEsaqstC7ZrLenH2hXGt7MZVJ0Az/1younoBpzkNsqI129S9CpMJCpfX5W
-         X2UDMV8gV0oRKLvKWplKRb85Ei6ZqmIiIw/bvjwLdblrxynN47gThr3FmKqSu1dUFM
-         T1kEl3zhR0MMm5cmBZyXQEaaBxzTpA0iciz9i+ds=
+        b=y73nsRcdho1bkvi4Hx6fHZhnDHTyDVYSa9HhLqZKlRpaRBIE9BiXwO9UaY3+TB/N5
+         d15NYYYL6jRm8+RpGo4YE1WhrH5bqDKM9kbZo5T/z/tXFgrN5ctjhEERUyF8dKSWHl
+         xQbx8mKWP7Dc4K2ilsIj4TeytaLmnvtm21UxdiJ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Pittman <jpittman@redhat.com>,
-        David Jeffery <djeffery@redhat.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 5.3 43/95] md/raid10: prevent access of uninitialized resync_pages offset
-Date:   Wed, 27 Nov 2019 21:32:00 +0100
-Message-Id: <20191127202908.779733578@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org
+Subject: [PATCH 4.19 271/306] x86/doublefault/32: Fix stack canaries in the double fault handler
+Date:   Wed, 27 Nov 2019 21:32:01 +0100
+Message-Id: <20191127203134.623566738@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Pittman <jpittman@redhat.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 45422b704db392a6d79d07ee3e3670b11048bd53 upstream.
+commit 3580d0b29cab08483f84a16ce6a1151a1013695f upstream.
 
-Due to unneeded multiplication in the out_free_pages portion of
-r10buf_pool_alloc(), when using a 3-copy raid10 layout, it is
-possible to access a resync_pages offset that has not been
-initialized.  This access translates into a crash of the system
-within resync_free_pages() while passing a bad pointer to
-put_page().  Remove the multiplication, preventing access to the
-uninitialized area.
+The double fault TSS was missing GS setup, which is needed for stack
+canaries to work.
 
-Fixes: f0250618361db ("md: raid10: don't use bio's vec table to manage resync pages")
-Cc: stable@vger.kernel.org # 4.12+
-Signed-off-by: John Pittman <jpittman@redhat.com>
-Suggested-by: David Jeffery <djeffery@redhat.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid10.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/doublefault.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -191,7 +191,7 @@ static void * r10buf_pool_alloc(gfp_t gf
+--- a/arch/x86/kernel/doublefault.c
++++ b/arch/x86/kernel/doublefault.c
+@@ -65,6 +65,9 @@ struct x86_hw_tss doublefault_tss __cach
+ 	.ss		= __KERNEL_DS,
+ 	.ds		= __USER_DS,
+ 	.fs		= __KERNEL_PERCPU,
++#ifndef CONFIG_X86_32_LAZY_GS
++	.gs		= __KERNEL_STACK_CANARY,
++#endif
  
- out_free_pages:
- 	while (--j >= 0)
--		resync_free_pages(&rps[j * 2]);
-+		resync_free_pages(&rps[j]);
- 
- 	j = 0;
- out_free_bio:
+ 	.__cr3		= __pa_nodebug(swapper_pg_dir),
+ };
 
 
