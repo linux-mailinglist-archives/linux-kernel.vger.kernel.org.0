@@ -2,109 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B50410AB2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 08:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A68A10AB21
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 08:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfK0H3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 02:29:24 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34430 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfK0H3X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 02:29:23 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w11so18339310ote.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 23:29:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=u8oUQFRZy3gf3+1yf0zkKS6+wd9DrvcbQ832mANUPWo=;
-        b=S/SdAfsNtNo4n8om7tQ8ej8pWPma3kUq5jV16c0NRtI0d+7+cBogG4aHNIEOFRIssG
-         DqNvD128D3m2Dw4hHw/EN5U0fY7Y+9+GVaZ2wbUCqpTFItYtg4m1gXzE3FX9kTacD0KE
-         EzIgZ6gTcM/+yjIjDFAg0X7QxSA48QIcYpxEor2LIp5K7ip6lECTtMlDnVT8s6nRoVp+
-         VxhuDmKkPxn3I7TnYd6R+VAn8Byx2sKZrpIKL570sT3n5WZFSaQVFQHvgbcQq0cs1w9V
-         +idjzBgwlDMcXNa06M1IXARDreMzmjRFdZ6blxE8OrCksjV71MpuuONorciuI3YLPWrM
-         CG6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=u8oUQFRZy3gf3+1yf0zkKS6+wd9DrvcbQ832mANUPWo=;
-        b=TY5ZC2LakHcQJolJHvI6VidIh2c++WBe44H0NEDbRvK08fc0HMwk4DYTlpoGZC8OJa
-         cJoTmBgMgtOPQudFRfW5+i/hskdfkVXoKs6/GC0mh4RiKUXQyFx3qtdL8WLpy6iZ+94G
-         pN3cf2IgJw0fVB5ACFTfVqwL2sh+aPW+OGzvC8w6edRT6nBMeuqBq9gudonlnsDNEtwn
-         8VpOGj20h6UcZpB0cx345hKdZvhJCIzj1S07tpUmb3wTxvSg9HpUPt93n2kkGy+iKqAa
-         Zj5mf0CVGQDcw3K7MxcTRcs3EkDIjR7Cz7X3dwmetDuInjD9ofyWzCs4IvISgfGvx5DI
-         TTEQ==
-X-Gm-Message-State: APjAAAXvwgbwNY0S2kApaBylFVbfWXS9wW3NkLAEL7Pfvlejm+1nZQzR
-        ZlGTH++SpE7gis160v+WOXLJVFK9QWY2JbzCJiAXBg==
-X-Google-Smtp-Source: APXvYqwUJpU+ywaP4+HdQDqIrP53KyP5oXj3UgopnsUkAWzWQFz8KbbiHHCui0ide4gn0Mof0rjjgxah85RHCbxbzM8=
-X-Received: by 2002:a9d:65cd:: with SMTP id z13mr2544801oth.85.1574839762873;
- Tue, 26 Nov 2019 23:29:22 -0800 (PST)
+        id S1726876AbfK0HXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 02:23:49 -0500
+Received: from mga07.intel.com ([134.134.136.100]:37770 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726145AbfK0HXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 02:23:48 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2019 23:23:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,248,1571727600"; 
+   d="scan'208";a="383413228"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
+  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2019 23:23:46 -0800
+Date:   Wed, 27 Nov 2019 15:30:54 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     kernel test robot <lkp@intel.com>, LKP <lkp@lists.01.org>,
+        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: 2989f64510 ("dma-buf: Add selftests for dma-fence"): WARNING:
+ CPU: 0 PID: 1 at lib/debugobjects.c:524 __debug_object_init
+Message-ID: <20191127073054.GG30842@intel.com>
+References: <5dd63a8f.BFdOlqs/XZAJHDfR%lkp@intel.com>
+ <157432116576.24852.2065478066028556019@skylake-alporthouse-com>
+ <20191122013244.GC313@intel.com>
 MIME-Version: 1.0
-References: <20191126193027.11970-1-jcmvbkbc@gmail.com>
-In-Reply-To: <20191126193027.11970-1-jcmvbkbc@gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 27 Nov 2019 08:29:12 +0100
-Message-ID: <CAMpxmJV6qCGWKadeDyJLqCDtZ3zFBQAZ0yZuWkYiy3ZqWUFGiA@mail.gmail.com>
-Subject: Re: [PATCH] drivers/gpio/gpio-xtensa: fix driver build
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     linux-xtensa@linux-xtensa.org, Chris Zankel <chris@zankel.net>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Baruch Siach <baruch@tkos.co.il>,
-        "Stable # 4 . 20+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191122013244.GC313@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 26 lis 2019 o 20:30 Max Filippov <jcmvbkbc@gmail.com> napisa=C5=82(a):
->
-> Commit cad6fade6e78 ("xtensa: clean up WSR*/RSR*/get_sr/set_sr") removed
-> {RSR,WSR}_CPENABLE from xtensa code, but did not fix up all users,
-> breaking gpio-xtensa driver build.
-> Update gpio-xtensa to use new xtensa_{get,set}_sr API.
->
-> Cc: stable@vger.kernel.org # v5.0+
-> Fixes: cad6fade6e78 ("xtensa: clean up WSR*/RSR*/get_sr/set_sr")
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-> ---
->  drivers/gpio/gpio-xtensa.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-xtensa.c b/drivers/gpio/gpio-xtensa.c
-> index 43d3fa5f511a..0fb2211f9573 100644
-> --- a/drivers/gpio/gpio-xtensa.c
-> +++ b/drivers/gpio/gpio-xtensa.c
-> @@ -44,15 +44,14 @@ static inline unsigned long enable_cp(unsigned long *=
-cpenable)
->         unsigned long flags;
->
->         local_irq_save(flags);
-> -       RSR_CPENABLE(*cpenable);
-> -       WSR_CPENABLE(*cpenable | BIT(XCHAL_CP_ID_XTIOP));
-> -
-> +       *cpenable =3D xtensa_get_sr(cpenable);
-> +       xtensa_set_sr(*cpenable | BIT(XCHAL_CP_ID_XTIOP), cpenable);
->         return flags;
->  }
->
->  static inline void disable_cp(unsigned long flags, unsigned long cpenabl=
-e)
->  {
-> -       WSR_CPENABLE(cpenable);
-> +       xtensa_set_sr(cpenable, cpenable);
->         local_irq_restore(flags);
->  }
->
-> --
-> 2.20.1
->
+On Fri, Nov 22, 2019 at 09:32:45AM +0800, Philip Li wrote:
+> On Thu, Nov 21, 2019 at 07:26:05AM +0000, Chris Wilson wrote:
+> > Quoting kernel test robot (2019-11-21 07:19:43)
+> > > Greetings,
+> > > 
+> > > 0day kernel testing robot got the below dmesg and the first bad commit is
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > > 
+> > > commit 2989f6451084aed3f8cc9992477f7a9bf57a3716
+> > > Author:     Chris Wilson <chris@chris-wilson.co.uk>
+> > > AuthorDate: Mon Aug 19 10:59:27 2019 +0100
+> > > Commit:     Chris Wilson <chris@chris-wilson.co.uk>
+> > > CommitDate: Mon Aug 19 18:09:46 2019 +0100
+> > 
+> > That's a belated report, fixed by
+> Hi Chris, thanks for the feedback, we will double check this report and
+> provide update later.
+Hi Chris, it is confirmed that this report is false positive. 6ac3a0e had
+fixed the issue. Sorry for inconvenience.
 
-Patch applied, thanks!
-
-Bart
+> 
+> > 
+> > commit 6ac3a0ebfcc2f0c75ca0ca6974389ce421aa5cbd
+> > Author: Chris Wilson <chris@chris-wilson.co.uk>
+> > Date:   Tue Aug 20 13:21:18 2019 +0100
+> > 
+> > 	dmabuf: Mark up onstack timer for selftests
+> > 
+> > No?
+> > -Chris
