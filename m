@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7CFE10B794
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2462710B941
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfK0UfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:35:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35848 "EHLO mail.kernel.org"
+        id S1729805AbfK0Uva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727782AbfK0UfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:03 -0500
+        id S1730473AbfK0Uv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66BC12154A;
-        Wed, 27 Nov 2019 20:35:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDDE021847;
+        Wed, 27 Nov 2019 20:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886902;
-        bh=ATMUg45hUGGfFNrsUroPDxBOa8WLEKS7zRKcEHMmwRg=;
+        s=default; t=1574887887;
+        bh=/hFGSIbqhRdSb3z0BkOSlqGrwcilsXLi6GZ64g98xaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qCHStseNsSooAN0wmDHraI6twTDyyyxgRJhjWFKm29BsNq+R83uACtXK3BfQ7P/Iq
-         opq6PtX5bGZhsTaKEQrOboEUc1nsNOarSsAuUZ8HfVmMRro1Bj5pxA2pjEEbilHr9f
-         E3EododeGLAXn8McB7xWHJ9PQ857VxL2tibgJ2Kg=
+        b=tTXZbvuiMQq5Y25GpHXDu8hfbKS1HYN/dZm/tKNA2DOM270ZtHAL5BKIjQApFpn9V
+         wTiVNOPQea8fh1GBcBXXfWmzb1Jmzc4xmahvkJyr4c2lGaDvkQfDcEagTJGWHhjr8W
+         YzX1r9C3hDANrEt5JqLXgMNb5gQLPTklt+iiiPIo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 038/132] scsi: iscsi_tcp: Explicitly cast param in iscsi_sw_tcp_host_get_param
+Subject: [PATCH 4.14 096/211] macsec: let the administrator set UP state even if lowerdev is down
 Date:   Wed, 27 Nov 2019 21:30:29 +0100
-Message-Id: <20191127202933.721193421@linuxfoundation.org>
+Message-Id: <20191127203102.774805953@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 20054597f169090109fc3f0dfa1a48583f4178a4 ]
+[ Upstream commit 07bddef9839378bd6f95b393cf24c420529b4ef1 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+Currently, the kernel doesn't let the administrator set a macsec device
+up unless its lower device is currently up. This is inconsistent, as a
+macsec device that is up won't automatically go down when its lower
+device goes down.
 
-drivers/scsi/iscsi_tcp.c:803:15: warning: implicit conversion from
-enumeration type 'enum iscsi_host_param' to different enumeration type
-'enum iscsi_param' [-Wenum-conversion]
-                                                 &addr, param, buf);
-                                                        ^~~~~
-1 warning generated.
+Now that linkstate propagation works, there's really no reason for this
+limitation, so let's remove it.
 
-iscsi_conn_get_addr_param handles ISCSI_HOST_PARAM_IPADDRESS just fine
-so add an explicit cast to iscsi_param to make it clear to Clang that
-this is expected behavior.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/153
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
+Reported-by: Radu Rendec <radu.rendec@gmail.com>
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/iscsi_tcp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/macsec.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index 0b8af186e7078..fccb8991bd5b7 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -788,7 +788,8 @@ static int iscsi_sw_tcp_host_get_param(struct Scsi_Host *shost,
- 			return rc;
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 40e8f11f20cbf..9bb65e0af7dd7 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -2798,9 +2798,6 @@ static int macsec_dev_open(struct net_device *dev)
+ 	struct net_device *real_dev = macsec->real_dev;
+ 	int err;
  
- 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
--						 &addr, param, buf);
-+						 &addr,
-+						 (enum iscsi_param)param, buf);
- 	default:
- 		return iscsi_host_get_param(shost, param, buf);
- 	}
+-	if (!(real_dev->flags & IFF_UP))
+-		return -ENETDOWN;
+-
+ 	err = dev_uc_add(real_dev, dev->dev_addr);
+ 	if (err < 0)
+ 		return err;
 -- 
 2.20.1
 
