@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD5AF10BED9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07D0810BEE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbfK0UpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:45:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55034 "EHLO mail.kernel.org"
+        id S1730265AbfK0Vi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:38:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728218AbfK0Uo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:58 -0500
+        id S1728000AbfK0Uo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59EFB2166E;
-        Wed, 27 Nov 2019 20:44:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC5DF2178F;
+        Wed, 27 Nov 2019 20:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887496;
-        bh=1vNBDlIZgpV/AcG6p9zZo5ELyIjDay1EuilGCvtmWp4=;
+        s=default; t=1574887499;
+        bh=/3L86ahHxWFk9TwhhR+R4fiBFcsOQCKIJhLpCrEHvCw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IdOwMIXwUo4IYXLdLjnLfjX8RXPoAdRyBXkxtDwpFGUqLLjpkZpCnMf0oTyvQtlWW
-         yvTlMY18XD9OM7W7ULdz8Qmxkba7uX85elT3F//qjpUifxvlapDf1gjDeXCrdAP66Y
-         L6dOg4mb+eX0Q9r91PXVU6oXmweaVqt13xy+R6SU=
+        b=w5t1ggNTlPqnzd5ARqJdgKRixGiiNuflQr49CVBkMKsImKHleeBwFLHOvokwsHUVl
+         01HIclFjYzXuuaIkYIuF0oG4qG5UZtLYl2a6G6WGFSnjAKYYKpEWPBzrzbXyDFPRgG
+         cmzQCg7BywC1KCa79uNIc+0octLbFV+Q1f8/iYJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, mst@redhat.com,
-        Laurent Vivier <lvivier@redhat.com>,
+        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
+        Michael Mueller <mimu@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 134/151] virtio_console: allocate inbufs in add_port() only if it is needed
-Date:   Wed, 27 Nov 2019 21:31:57 +0100
-Message-Id: <20191127203046.663614848@linuxfoundation.org>
+Subject: [PATCH 4.9 135/151] virtio_ring: fix return code on DMA mapping fails
+Date:   Wed, 27 Nov 2019 21:31:58 +0100
+Message-Id: <20191127203046.747863171@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -44,132 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Vivier <lvivier@redhat.com>
+From: Halil Pasic <pasic@linux.ibm.com>
 
-[ Upstream commit d791cfcbf98191122af70b053a21075cb450d119 ]
+[ Upstream commit f7728002c1c7bfa787b276a31c3ef458739b8e7c ]
 
-When we hot unplug a virtserialport and then try to hot plug again,
-it fails:
+Commit 780bc7903a32 ("virtio_ring: Support DMA APIs")  makes
+virtqueue_add() return -EIO when we fail to map our I/O buffers. This is
+a very realistic scenario for guests with encrypted memory, as swiotlb
+may run out of space, depending on it's size and the I/O load.
 
-(qemu) chardev-add socket,id=serial0,path=/tmp/serial0,server,nowait
-(qemu) device_add virtserialport,bus=virtio-serial0.0,nr=2,\
-                  chardev=serial0,id=serial0,name=serial0
-(qemu) device_del serial0
-(qemu) device_add virtserialport,bus=virtio-serial0.0,nr=2,\
-                  chardev=serial0,id=serial0,name=serial0
-kernel error:
-  virtio-ports vport2p2: Error allocating inbufs
-qemu error:
-  virtio-serial-bus: Guest failure in adding port 2 for device \
-                     virtio-serial0.0
+The virtio-blk driver interprets -EIO form virtqueue_add() as an IO
+error, despite the fact that swiotlb full is in absence of bugs a
+recoverable condition.
 
-This happens because buffers for the in_vq are allocated when the port is
-added but are not released when the port is unplugged.
+Let us change the return code to -ENOMEM, and make the block layer
+recover form these failures when virtio-blk encounters the condition
+described above.
 
-They are only released when virtconsole is removed (see a7a69ec0d8e4)
-
-To avoid the problem and to be symmetric, we could allocate all the buffers
-in init_vqs() as they are released in remove_vqs(), but it sounds like
-a waste of memory.
-
-Rather than that, this patch changes add_port() logic to ignore ENOSPC
-error in fill_queue(), which means queue has already been filled.
-
-Fixes: a7a69ec0d8e4 ("virtio_console: free buffers after reset")
-Cc: mst@redhat.com
 Cc: stable@vger.kernel.org
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+Fixes: 780bc7903a32 ("virtio_ring: Support DMA APIs")
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Tested-by: Michael Mueller <mimu@linux.ibm.com>
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/virtio_console.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ drivers/virtio/virtio_ring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index b09fc4553dc81..d7ee031d776d8 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -1369,24 +1369,24 @@ static void set_console_size(struct port *port, u16 rows, u16 cols)
- 	port->cons.ws.ws_col = cols;
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 2f09294c59460..e459cd7302e27 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -427,7 +427,7 @@ unmap_release:
+ 		kfree(desc);
+ 
+ 	END_USE(vq);
+-	return -EIO;
++	return -ENOMEM;
  }
  
--static unsigned int fill_queue(struct virtqueue *vq, spinlock_t *lock)
-+static int fill_queue(struct virtqueue *vq, spinlock_t *lock)
- {
- 	struct port_buffer *buf;
--	unsigned int nr_added_bufs;
-+	int nr_added_bufs;
- 	int ret;
- 
- 	nr_added_bufs = 0;
- 	do {
- 		buf = alloc_buf(vq->vdev, PAGE_SIZE, 0);
- 		if (!buf)
--			break;
-+			return -ENOMEM;
- 
- 		spin_lock_irq(lock);
- 		ret = add_inbuf(vq, buf);
- 		if (ret < 0) {
- 			spin_unlock_irq(lock);
- 			free_buf(buf, true);
--			break;
-+			return ret;
- 		}
- 		nr_added_bufs++;
- 		spin_unlock_irq(lock);
-@@ -1406,7 +1406,6 @@ static int add_port(struct ports_device *portdev, u32 id)
- 	char debugfs_name[16];
- 	struct port *port;
- 	dev_t devt;
--	unsigned int nr_added_bufs;
- 	int err;
- 
- 	port = kmalloc(sizeof(*port), GFP_KERNEL);
-@@ -1465,11 +1464,13 @@ static int add_port(struct ports_device *portdev, u32 id)
- 	spin_lock_init(&port->outvq_lock);
- 	init_waitqueue_head(&port->waitqueue);
- 
--	/* Fill the in_vq with buffers so the host can send us data. */
--	nr_added_bufs = fill_queue(port->in_vq, &port->inbuf_lock);
--	if (!nr_added_bufs) {
-+	/* We can safely ignore ENOSPC because it means
-+	 * the queue already has buffers. Buffers are removed
-+	 * only by virtcons_remove(), not by unplug_port()
-+	 */
-+	err = fill_queue(port->in_vq, &port->inbuf_lock);
-+	if (err < 0 && err != -ENOSPC) {
- 		dev_err(port->dev, "Error allocating inbufs\n");
--		err = -ENOMEM;
- 		goto free_device;
- 	}
- 
-@@ -2081,14 +2082,11 @@ static int virtcons_probe(struct virtio_device *vdev)
- 	INIT_WORK(&portdev->control_work, &control_work_handler);
- 
- 	if (multiport) {
--		unsigned int nr_added_bufs;
--
- 		spin_lock_init(&portdev->c_ivq_lock);
- 		spin_lock_init(&portdev->c_ovq_lock);
- 
--		nr_added_bufs = fill_queue(portdev->c_ivq,
--					   &portdev->c_ivq_lock);
--		if (!nr_added_bufs) {
-+		err = fill_queue(portdev->c_ivq, &portdev->c_ivq_lock);
-+		if (err < 0) {
- 			dev_err(&vdev->dev,
- 				"Error allocating buffers for control queue\n");
- 			/*
-@@ -2099,7 +2097,7 @@ static int virtcons_probe(struct virtio_device *vdev)
- 					   VIRTIO_CONSOLE_DEVICE_READY, 0);
- 			/* Device was functional: we need full cleanup. */
- 			virtcons_remove(vdev);
--			return -ENOMEM;
-+			return err;
- 		}
- 	} else {
- 		/*
+ /**
 -- 
 2.20.1
 
