@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 999F010BC7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:21:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68CB010BBE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:17:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732712AbfK0VVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:21:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33728 "EHLO mail.kernel.org"
+        id S1733094AbfK0VQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:16:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbfK0VHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:07:33 -0500
+        id S1733097AbfK0VNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:13:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A033720637;
-        Wed, 27 Nov 2019 21:07:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FEA52154A;
+        Wed, 27 Nov 2019 21:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888853;
-        bh=LfA1WHC3J8XPfL/CFiTC6sNIBPjDAA/6b3KwEk0Dals=;
+        s=default; t=1574889212;
+        bh=QCpIL2Ww+mMyCTsJD1kUgjAx4MMrVpLoYYYZk619EqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVj9HS/xNmicmALGRfGp8EV8MHr5Hk9MQNgJvke5w2fuQM+9zwSkrGq9l0ksj27zK
-         O/CTPv/0pVYjyfdstQKXRmWWgR1A1DWT4tOgBGwlihRv1sJHUp9wp+xlPqliZFYN1S
-         jxw8OYcDxg0lywO9+Pai+ovon+9QY7vj4CEklLxw=
+        b=O156pwXf1yjYbHAt0cnt/XT6+DSz/cjpnO0EIBSF1Zcd0t2xhpqXsjnwnZ5K70qVP
+         8zeEHO0uOYLbNGITwj/FtHVAhQcNXm24F1r7lf9OZMQNb0whZ1yFxzJNkchr6rj9y9
+         MafaQDg5/bO4pUzc95PkExfzpgqaOmzJno5o+VXo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.de>
-Subject: [PATCH 4.19 296/306] USB: chaoskey: fix error case of a timeout
+        stable@vger.kernel.org, Vandana BN <bnvandana@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.4 31/66] media: vivid: Set vid_cap_streaming and vid_out_streaming to true
 Date:   Wed, 27 Nov 2019 21:32:26 +0100
-Message-Id: <20191127203136.364101637@linuxfoundation.org>
+Message-Id: <20191127202705.630013245@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,68 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Vandana BN <bnvandana@gmail.com>
 
-commit 92aa5986f4f7b5a8bf282ca0f50967f4326559f5 upstream.
+commit b4add02d2236fd5f568db141cfd8eb4290972eb3 upstream.
 
-In case of a timeout or if a signal aborts a read
-communication with the device needs to be ended
-lest we overwrite an active URB the next time we
-do IO to the device, as the URB may still be active.
+When vbi stream is started, followed by video streaming,
+the vid_cap_streaming and vid_out_streaming were not being set to true,
+which would cause the video stream to stop when vbi stream is stopped.
+This patch allows to set vid_cap_streaming and vid_out_streaming to true.
+According to Hans Verkuil it appears that these 'if (dev->kthread_vid_cap)'
+checks are a left-over from the original vivid development and should never
+have been there.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.de>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191107142856.16774-1-oneukum@suse.com
+Signed-off-by: Vandana BN <bnvandana@gmail.com>
+Cc: <stable@vger.kernel.org>      # for v3.18 and up
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/chaoskey.c |   24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ drivers/media/platform/vivid/vivid-vid-cap.c |    3 ---
+ drivers/media/platform/vivid/vivid-vid-out.c |    3 ---
+ 2 files changed, 6 deletions(-)
 
---- a/drivers/usb/misc/chaoskey.c
-+++ b/drivers/usb/misc/chaoskey.c
-@@ -384,13 +384,17 @@ static int _chaoskey_fill(struct chaoske
- 		!dev->reading,
- 		(started ? NAK_TIMEOUT : ALEA_FIRST_TIMEOUT) );
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -223,9 +223,6 @@ static int vid_cap_start_streaming(struc
+ 	if (vb2_is_streaming(&dev->vb_vid_out_q))
+ 		dev->can_loop_video = vivid_vid_can_loop(dev);
  
--	if (result < 0)
-+	if (result < 0) {
-+		usb_kill_urb(dev->urb);
- 		goto out;
-+	}
+-	if (dev->kthread_vid_cap)
+-		return 0;
+-
+ 	dev->vid_cap_seq_count = 0;
+ 	dprintk(dev, 1, "%s\n", __func__);
+ 	for (i = 0; i < VIDEO_MAX_FRAME; i++)
+--- a/drivers/media/platform/vivid/vivid-vid-out.c
++++ b/drivers/media/platform/vivid/vivid-vid-out.c
+@@ -161,9 +161,6 @@ static int vid_out_start_streaming(struc
+ 	if (vb2_is_streaming(&dev->vb_vid_cap_q))
+ 		dev->can_loop_video = vivid_vid_can_loop(dev);
  
--	if (result == 0)
-+	if (result == 0) {
- 		result = -ETIMEDOUT;
--	else
-+		usb_kill_urb(dev->urb);
-+	} else {
- 		result = dev->valid;
-+	}
- out:
- 	/* Let the device go back to sleep eventually */
- 	usb_autopm_put_interface(dev->interface);
-@@ -526,7 +530,21 @@ static int chaoskey_suspend(struct usb_i
- 
- static int chaoskey_resume(struct usb_interface *interface)
- {
-+	struct chaoskey *dev;
-+	struct usb_device *udev = interface_to_usbdev(interface);
-+
- 	usb_dbg(interface, "resume");
-+	dev = usb_get_intfdata(interface);
-+
-+	/*
-+	 * We may have lost power.
-+	 * In that case the device that needs a long time
-+	 * for the first requests needs an extended timeout
-+	 * again
-+	 */
-+	if (le16_to_cpu(udev->descriptor.idVendor) == ALEA_VENDOR_ID)
-+		dev->reads_started = false;
-+
- 	return 0;
- }
- #else
+-	if (dev->kthread_vid_out)
+-		return 0;
+-
+ 	dev->vid_out_seq_count = 0;
+ 	dprintk(dev, 1, "%s\n", __func__);
+ 	if (dev->start_streaming_error) {
 
 
