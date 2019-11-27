@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1287010BDA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:30:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8BB10BD9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731009AbfK0Vah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:30:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46140 "EHLO mail.kernel.org"
+        id S1729657AbfK0Va3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:30:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730356AbfK0Uzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:37 -0500
+        id S1730989AbfK0Uzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:55:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43A5520862;
-        Wed, 27 Nov 2019 20:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49AFE2068E;
+        Wed, 27 Nov 2019 20:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888136;
-        bh=WdjUGu7X/CWFXaVOckev9LeqnWq4q9ChzD+8yMwavRo=;
+        s=default; t=1574888144;
+        bh=8bxpyTayDO1IguOcBDdmMf7HebvpmIjmrxBF6bdJCP0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oOlWx8t4NQ8BsjF/6BbaNZbzGR8ihnn90wGkAL8a9sQmb74RSzaLpXr2o8eoXVeQf
-         HuSqcrXz/YQIzLqLeAPBTtzyt9NlXVZefmGxNAXzPeq0TXaLLoPjPq0XWaxyqpjrFK
-         JxJODFywskCyuIRwX6YJo0zkBNZAAwqsQdQSRh4Y=
+        b=cF4IhWUULlHgwpl5FBkkpoqRytMNs0IUu7K+LK994cJItm5nT0uAxTCh2IW0fa0Ul
+         CCDQ2BGMZL9PkwzDf3neapVD3QaeWI4Rc6uupf2TuTWjJRLbFf8Nsn8vzok/Ij4TqH
+         mJBqa+zcvw0Xb9GVesrGXLCBFQZxH3vjMURMfmqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.19 019/306] drm/i915/pmu: "Frequency" is reported as accumulated cycles
-Date:   Wed, 27 Nov 2019 21:27:49 +0100
-Message-Id: <20191127203116.103201032@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 022/306] ALSA: isight: fix leak of reference to firewire unit in error path of .probe callback
+Date:   Wed, 27 Nov 2019 21:27:52 +0100
+Message-Id: <20191127203116.313964901@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -45,42 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit add3eeed3683e2636ef524db48e1a678757c8e96 upstream.
+[ Upstream commit 51e68fb0929c29e47e9074ca3e99ffd6021a1c5a ]
 
-We report "frequencies" (actual-frequency, requested-frequency) as the
-number of accumulated cycles so that the average frequency over that
-period may be determined by the user. This means the units we report to
-the user are Mcycles (or just M), not MHz.
+In some error paths, reference count of firewire unit is not decreased.
+This commit fixes the bug.
 
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191109105356.5273-1-chris@chris-wilson.co.uk
-(cherry picked from commit e88866ef02851c88fe95a4bb97820b94b4d46f36)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-(cherry picked from commit a7d87b70d6da96c6772e50728c8b4e78e4cbfd55)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 5b14ec25a79b('ALSA: firewire: release reference count of firewire unit in .remove callback of bus driver')
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/i915_pmu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/firewire/isight.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -827,8 +827,8 @@ create_event_attributes(struct drm_i915_
- 		const char *name;
- 		const char *unit;
- 	} events[] = {
--		__event(I915_PMU_ACTUAL_FREQUENCY, "actual-frequency", "MHz"),
--		__event(I915_PMU_REQUESTED_FREQUENCY, "requested-frequency", "MHz"),
-+		__event(I915_PMU_ACTUAL_FREQUENCY, "actual-frequency", "M"),
-+		__event(I915_PMU_REQUESTED_FREQUENCY, "requested-frequency", "M"),
- 		__event(I915_PMU_INTERRUPTS, "interrupts", NULL),
- 		__event(I915_PMU_RC6_RESIDENCY, "rc6-residency", "ns"),
- 	};
+diff --git a/sound/firewire/isight.c b/sound/firewire/isight.c
+index 30957477e005e..0717ab9e48e3b 100644
+--- a/sound/firewire/isight.c
++++ b/sound/firewire/isight.c
+@@ -640,7 +640,7 @@ static int isight_probe(struct fw_unit *unit,
+ 	if (!isight->audio_base) {
+ 		dev_err(&unit->device, "audio unit base not found\n");
+ 		err = -ENXIO;
+-		goto err_unit;
++		goto error;
+ 	}
+ 	fw_iso_resources_init(&isight->resources, unit);
+ 
+@@ -669,12 +669,12 @@ static int isight_probe(struct fw_unit *unit,
+ 	dev_set_drvdata(&unit->device, isight);
+ 
+ 	return 0;
+-
+-err_unit:
+-	fw_unit_put(isight->unit);
+-	mutex_destroy(&isight->mutex);
+ error:
+ 	snd_card_free(card);
++
++	mutex_destroy(&isight->mutex);
++	fw_unit_put(isight->unit);
++
+ 	return err;
+ }
+ 
+-- 
+2.20.1
+
 
 
