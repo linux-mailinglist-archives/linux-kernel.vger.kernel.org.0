@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1FE810BF09
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B0FC10BEFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbfK0VkQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:40:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50214 "EHLO mail.kernel.org"
+        id S1728650AbfK0UnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:43:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729393AbfK0UnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:43:04 -0500
+        id S1728224AbfK0UnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:43:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFFAC21780;
-        Wed, 27 Nov 2019 20:43:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8958E21780;
+        Wed, 27 Nov 2019 20:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887384;
-        bh=eGI2FMmDfPDYoCg1ZCjAMD3yPyrwIpkZXMOAqPWr9GM=;
+        s=default; t=1574887400;
+        bh=ZUU5H9HjWn3RXfrImjsnjhkhrT3YNJwLQmoT5CgPNO8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PpJ8WfDHFhCskkCmPgTe/JLhUch6kDtW3FJn7pNty+KvYjIn1eXy82OrsR2puk5v/
-         y3EkiPqL7OrrWeuPVWNLE7DzLuEWWGVxBqYQhIKW6ifADElhQnadd3hG4KRFGwM4qw
-         fuD8QgNy2BrgIrF4sAibrT+8LRUI7Z5UjK8wqqXI=
+        b=pxns35y3/OCmTeE7CtnWeCSMHJXhwBem9jodgfBn2F27UV4nBiTljposf/nLgj4db
+         cSmAjuKsss8x94B56cogeU2PvGpnh6XVhjqViauYaHuxIupDJBBleKfHAmxu9m2mjr
+         Aw2Gyq75IHGMZ8EJOundPpg6ShBZfB+7BAMV6yZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 090/151] wlcore: Fix the return value in case of error in wlcore_vendor_cmd_smart_config_start()
-Date:   Wed, 27 Nov 2019 21:31:13 +0100
-Message-Id: <20191127203037.138316584@linuxfoundation.org>
+Subject: [PATCH 4.9 095/151] scsi: mpt3sas: Fix Sync cache command failure during driver unload
+Date:   Wed, 27 Nov 2019 21:31:18 +0100
+Message-Id: <20191127203038.361260964@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -45,38 +47,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
 
-[ Upstream commit 3419348a97bcc256238101129d69b600ceb5cc70 ]
+[ Upstream commit 9029a72500b95578a35877a43473b82cb0386c53 ]
 
-We return 0 unconditionally at the end of
-'wlcore_vendor_cmd_smart_config_start()'.
-However, 'ret' is set to some error codes in several error handling paths
-and we already return some error codes at the beginning of the function.
+This is to fix SYNC CACHE and START STOP command failures with
+DID_NO_CONNECT during driver unload.
 
-Return 'ret' instead to propagate the error code.
+In driver's IO submission patch (i.e. in driver's .queuecommand()) driver
+won't allow any SCSI commands to the IOC when ioc->remove_host flag is set
+and hence SYNC CACHE commands which are issued to the target drives (where
+write cache is enabled) during driver unload time is failed with
+DID_NO_CONNECT status.
 
-Fixes: 80ff8063e87c ("wlcore: handle smart config vendor commands")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Now modified the driver to allow SYNC CACHE and START STOP commands to IOC,
+even when remove_host flag is set.
+
+Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ti/wlcore/vendor_cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c | 36 +++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ti/wlcore/vendor_cmd.c b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
-index fd4e9ba176c9b..332a3a5c1c900 100644
---- a/drivers/net/wireless/ti/wlcore/vendor_cmd.c
-+++ b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
-@@ -66,7 +66,7 @@ wlcore_vendor_cmd_smart_config_start(struct wiphy *wiphy,
- out:
- 	mutex_unlock(&wl->mutex);
- 
--	return 0;
-+	return ret;
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index ec48c010a3bab..aa2078d7e23e2 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -3297,6 +3297,40 @@ _scsih_tm_tr_complete(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index,
+ 	return _scsih_check_for_pending_tm(ioc, smid);
  }
  
- static int
++/** _scsih_allow_scmd_to_device - check whether scmd needs to
++ *				 issue to IOC or not.
++ * @ioc: per adapter object
++ * @scmd: pointer to scsi command object
++ *
++ * Returns true if scmd can be issued to IOC otherwise returns false.
++ */
++inline bool _scsih_allow_scmd_to_device(struct MPT3SAS_ADAPTER *ioc,
++	struct scsi_cmnd *scmd)
++{
++
++	if (ioc->pci_error_recovery)
++		return false;
++
++	if (ioc->hba_mpi_version_belonged == MPI2_VERSION) {
++		if (ioc->remove_host)
++			return false;
++
++		return true;
++	}
++
++	if (ioc->remove_host) {
++
++		switch (scmd->cmnd[0]) {
++		case SYNCHRONIZE_CACHE:
++		case START_STOP:
++			return true;
++		default:
++			return false;
++		}
++	}
++
++	return true;
++}
+ 
+ /**
+  * _scsih_sas_control_complete - completion routine
+@@ -4059,7 +4093,7 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd *scmd)
+ 		return 0;
+ 	}
+ 
+-	if (ioc->pci_error_recovery || ioc->remove_host) {
++	if (!(_scsih_allow_scmd_to_device(ioc, scmd))) {
+ 		scmd->result = DID_NO_CONNECT << 16;
+ 		scmd->scsi_done(scmd);
+ 		return 0;
 -- 
 2.20.1
 
