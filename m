@@ -2,129 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D557110B28F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C857710B28D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfK0PlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 10:41:20 -0500
-Received: from foss.arm.com ([217.140.110.172]:49276 "EHLO foss.arm.com"
+        id S1727120AbfK0Pkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 10:40:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:49258 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfK0PlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:41:19 -0500
+        id S1726634AbfK0Pkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 10:40:33 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42FDF1045;
-        Wed, 27 Nov 2019 07:41:19 -0800 (PST)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB58F3F68E;
-        Wed, 27 Nov 2019 07:41:17 -0800 (PST)
-Date:   Wed, 27 Nov 2019 15:40:29 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: vexpress-spc: Fix wrong alternation of
- policy->related_cpus during CPU hp
-Message-ID: <20191127154029.GA4826@bogus>
-References: <20191127114801.23837-1-dietmar.eggemann@arm.com>
- <20191127120816.GC29301@bogus>
- <20191127121402.vd3tul4gmqm6qtyb@vireshk-i7>
- <20191127133200.GE29301@bogus>
- <a60cab69-4d47-d418-94bd-74630bf9e846@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4A7630E;
+        Wed, 27 Nov 2019 07:40:32 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4305C3F68E;
+        Wed, 27 Nov 2019 07:40:32 -0800 (PST)
+Date:   Wed, 27 Nov 2019 15:40:30 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: [PATCHv2 6/6] ASoC: da7213: Add default clock handling
+Message-ID: <20191127154030.GD4879@sirena.org.uk>
+References: <20191120152406.2744-1-sebastian.reichel@collabora.com>
+ <20191120152406.2744-7-sebastian.reichel@collabora.com>
+ <AM5PR1001MB0994720A0D615339A978E35C804E0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <AM5PR1001MB0994E628439F021F97B872D480450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191126170841.GC4205@sirena.org.uk>
+ <AM5PR1001MB09949D557742E8817545637F80450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191126175040.GD4205@sirena.org.uk>
+ <AM5PR1001MB09940CF764711F1F13A6B37E80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191127123317.GA4879@sirena.org.uk>
+ <AM5PR1001MB0994D842A2D7051F81A7765B80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="TybLhxa8M7aNoW+V"
 Content-Disposition: inline
-In-Reply-To: <a60cab69-4d47-d418-94bd-74630bf9e846@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <AM5PR1001MB0994D842A2D7051F81A7765B80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+X-Cookie: In the war of wits, he's unarmed.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 03:58:49PM +0100, Dietmar Eggemann wrote:
-> On 27/11/2019 14:32, Sudeep Holla wrote:
 
-[...]
+--TybLhxa8M7aNoW+V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >
-> > Yes but there's no architectural way. I need to revise and see tc2_pm.c
-> > to check if we can do any magic there.
->
-> I'm fine with finding a better solution to return a fixed topology core
-> cpumask or calling this patch a workaround. AFAICS, only TC2 is affected.
->
-> ("arm: Fix topology setup in case of CPU hotplug for CONFIG_SCHED_MC")
-> is needed for other systems as well in case we have commit ca74b316df96
-> ("arm: Use common cpu_topology structure and functions."). We probably
-> don't want to revert commit ca74b316df96?
->
+On Wed, Nov 27, 2019 at 01:42:54PM +0000, Adam Thomson wrote:
 
-Correct
+> nicest solution here though. I guess we're stuck with people having to manually
+> configure the PLL for bypass when a non-generic machine driver inits, to avoid
+> the initial double config, as I don't see other options unless you have
+> something to specify at init that it's auto or manual, and this doesn't feel
+> like a DT device specific property thing as it's more software than hardware.
+> At least Sebastian's patch has a good comment block to highlight this.
 
-> We do CPU hp stress tests in our EAS mainline integration test suite
-> https://developer.arm.com/tools-and-software/open-source-software/linux-kernel/energy-aware-scheduling/eas-mainline-development
-> and there is where we initially encountered this issue on TC2.
+Not sure I follow here - if we're configuring the PLL explicitly then
+I'd expect the PLL to be configured first, then the SYSCLK, so I'd
+expect that the automatic PLL configuration wouldn't kick in.
 
-I could come up with the patch below. If this is any cleaner and acceptable
-I am happy to post it. One advantage of moving the use of topology_core_cpumask
-inside ve_spc_clk_init is that it's just device_initcall and not a module.
-It allows to handle ve_spc_cpufreq as module. I prefer this than the
-previous solution/workaround. Let me know.
+--TybLhxa8M7aNoW+V
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Sudeep
+-----BEGIN PGP SIGNATURE-----
 
--->8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3emO0ACgkQJNaLcl1U
+h9BAnQf/Q4HBT+E0Q86c5T5kw3hIEfvjSfcdzKbqvPYBoxeiJPWz6BgtIYowJOk/
+VIMobVK2PGfli24WdMYQtG8lwdNCUo5ff2DmOFSEc5U90CRHfaaHh1agqu8g+xX0
+XENPmJDKQNV+T5AhrkNyulGeIwPqn2sOssOTTBzIRlQ5TeD8PvqDFmbNwQ1ty/wh
+pJijH+imJpNcTVQtey9tEP29W2HUqqEURJK6n7QVOFseFXQKLv+KpQaMmsx0Jqrd
+Js/kclZ1np41N3D15cACh/ANKG6RNaT5i03P9imE+ujeWPWFW92Z6P70vf5uzUug
+Q/qbBvhCvX6qIgrcOnsmLYLAlZfXyw==
+=bhaa
+-----END PGP SIGNATURE-----
 
-diff --git i/arch/arm/mach-vexpress/spc.c w/arch/arm/mach-vexpress/spc.c
-index 354e0e7025ae..e0e2e789a0b7 100644
---- i/arch/arm/mach-vexpress/spc.c
-+++ w/arch/arm/mach-vexpress/spc.c
-@@ -551,8 +551,9 @@ static struct clk *ve_spc_clk_register(struct device *cpu_dev)
-
- static int __init ve_spc_clk_init(void)
- {
--       int cpu;
-+       int cpu, cluster;
-        struct clk *clk;
-+       bool init_opp_table[MAX_CLUSTERS] = { false };
-
-        if (!info)
-                return 0; /* Continue only if SPC is initialised */
-@@ -578,8 +579,17 @@ static int __init ve_spc_clk_init(void)
-                        continue;
-                }
-
-+               cluster = topology_physical_package_id(cpu_dev->id);
-+               if (init_opp_table[cluster])
-+                       continue;
-+
-                if (ve_init_opp_table(cpu_dev))
-                        pr_warn("failed to initialise cpu%d opp table\n", cpu);
-+               else if (dev_pm_opp_set_sharing_cpus(cpu_dev,
-+                        topology_core_cpumask(cpu_dev->id)))
-+                       pr_warn("failed to mark OPPs shared for cpu%d\n", cpu);
-+
-+               init_opp_table[cluster] = true;
-        }
-
-        platform_device_register_simple("vexpress-spc-cpufreq", -1, NULL, 0);
-diff --git i/drivers/cpufreq/vexpress-spc-cpufreq.c w/drivers/cpufreq/vexpress-spc-cpufreq.c
-index 506e3f2bf53a..83c85d3d67e3 100644
---- i/drivers/cpufreq/vexpress-spc-cpufreq.c
-+++ w/drivers/cpufreq/vexpress-spc-cpufreq.c
-@@ -434,7 +434,7 @@ static int ve_spc_cpufreq_init(struct cpufreq_policy *policy)
-        if (cur_cluster < MAX_CLUSTERS) {
-                int cpu;
-
--               cpumask_copy(policy->cpus, topology_core_cpumask(policy->cpu));
-+               dev_pm_opp_get_sharing_cpus(cpu_dev, policy->cpus);
-
-                for_each_cpu(cpu, policy->cpus)
-                        per_cpu(physical_cluster, cpu) = cur_cluster;
-
+--TybLhxa8M7aNoW+V--
