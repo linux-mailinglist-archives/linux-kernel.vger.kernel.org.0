@@ -2,100 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E1110A84C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 02:59:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB4610A89A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 03:07:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbfK0B70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 20:59:26 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:8751 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727208AbfK0B7W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 20:59:22 -0500
-X-UUID: 89f9e712458143d5b34a774dfcbfa630-20191127
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=IWV6i4XvbNsjDusAu0aWVFucdSP8lwDUrIG+cdBLhtE=;
-        b=MtW8448UlV2blWcGciVPdas11KprBwumXkZe0LGS3pxz29MlToVIM+WAluHO8RLX7AgPmRPqpoFPfEhrlKpkZATfSl/sLMtO7UzD6vDVBoXuXID3NKtHhBrqx3xF/GbUn6HT/ryMURn0SlW2cssNAw+GzTLV4jLjvfPB1Vt7zr0=;
-X-UUID: 89f9e712458143d5b34a774dfcbfa630-20191127
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <dennis-yc.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 589041665; Wed, 27 Nov 2019 09:59:11 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 27 Nov 2019 09:58:45 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 27 Nov 2019 09:58:20 +0800
-From:   Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-Subject: [PATCH v2 14/14] soc: mediatek: cmdq: add set event function
-Date:   Wed, 27 Nov 2019 09:58:57 +0800
-Message-ID: <1574819937-6246-16-git-send-email-dennis-yc.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+        id S1726876AbfK0CHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 21:07:30 -0500
+Received: from mail.phunq.net ([66.183.183.73]:58330 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725940AbfK0CH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 21:07:29 -0500
+X-Greylist: delayed 1204 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Nov 2019 21:07:29 EST
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1iZmQN-0002Ed-42; Tue, 26 Nov 2019 17:47:23 -0800
+To:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From:   Daniel Phillips <daniel@phunq.net>
+Subject: [RFC] Thing 1: Shardmap fox Ext4
+Message-ID: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+Date:   Tue, 26 Nov 2019 17:47:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: C035F1AD24EF99F5DCAC69C08201CE2B3B8D6D4B7766512DE3B8DB859AFF436D2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIHNldCBldmVudCBmdW5jdGlvbiBpbiBjbWRxIGhlbHBlciBmdW5jdGlvbnMgdG8gc2V0IHNw
-ZWNpZmljIGV2ZW50Lg0KDQpTaWduZWQtb2ZmLWJ5OiBEZW5uaXMgWUMgSHNpZWggPGRlbm5pcy15
-Yy5oc2llaEBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21k
-cS1oZWxwZXIuYyAgIHwgMTUgKysrKysrKysrKysrKysrDQogaW5jbHVkZS9saW51eC9tYWlsYm94
-L210ay1jbWRxLW1haWxib3guaCB8ICAxICsNCiBpbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9t
-dGstY21kcS5oICAgIHwgIDkgKysrKysrKysrDQogMyBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxw
-ZXIuYyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1jbWRxLWhlbHBlci5jDQppbmRleCA2ZjI3
-MGZhZGZiNTAuLjA3YzZlY2M3NWJkZCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVr
-L210ay1jbWRxLWhlbHBlci5jDQorKysgYi9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1o
-ZWxwZXIuYw0KQEAgLTM2MCw2ICszNjAsMjEgQEAgaW50IGNtZHFfcGt0X2NsZWFyX2V2ZW50KHN0
-cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZlbnQpDQogfQ0KIEVYUE9SVF9TWU1CT0woY21kcV9w
-a3RfY2xlYXJfZXZlbnQpOw0KIA0KK2ludCBjbWRxX3BrdF9zZXRfZXZlbnQoc3RydWN0IGNtZHFf
-cGt0ICpwa3QsIHUxNiBldmVudCkNCit7DQorCXN0cnVjdCBjbWRxX2luc3RydWN0aW9uIGluc3Qg
-PSB7IHswfSB9Ow0KKw0KKwlpZiAoZXZlbnQgPj0gQ01EUV9NQVhfRVZFTlQpDQorCQlyZXR1cm4g
-LUVJTlZBTDsNCisNCisJaW5zdC5vcCA9IENNRFFfQ09ERV9XRkU7DQorCWluc3QudmFsdWUgPSBD
-TURRX1dGRV9VUERBVEUgfCBDTURRX1dGRV9VUERBVEVfVkFMVUU7DQorCWluc3QuZXZlbnQgPSBl
-dmVudDsNCisNCisJcmV0dXJuIGNtZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgaW5zdCk7DQor
-fQ0KK0VYUE9SVF9TWU1CT0woY21kcV9wa3Rfc2V0X2V2ZW50KTsNCisNCiBpbnQgY21kcV9wa3Rf
-cG9sbChzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTggc3Vic3lzLA0KIAkJICB1MTYgb2Zmc2V0LCB1
-MzIgdmFsdWUpDQogew0KZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvbWFpbGJveC9tdGstY21k
-cS1tYWlsYm94LmggYi9pbmNsdWRlL2xpbnV4L21haWxib3gvbXRrLWNtZHEtbWFpbGJveC5oDQpp
-bmRleCAzZjZiYzBkZmQ1ZGEuLmRiZWRkYTZjZmE5MSAxMDA2NDQNCi0tLSBhL2luY2x1ZGUvbGlu
-dXgvbWFpbGJveC9tdGstY21kcS1tYWlsYm94LmgNCisrKyBiL2luY2x1ZGUvbGludXgvbWFpbGJv
-eC9tdGstY21kcS1tYWlsYm94LmgNCkBAIC0xNyw2ICsxNyw3IEBADQogI2RlZmluZSBDTURRX0pV
-TVBfUEFTUwkJCUNNRFFfSU5TVF9TSVpFDQogDQogI2RlZmluZSBDTURRX1dGRV9VUERBVEUJCQlC
-SVQoMzEpDQorI2RlZmluZSBDTURRX1dGRV9VUERBVEVfVkFMVUUJCUJJVCgxNikNCiAjZGVmaW5l
-IENNRFFfV0ZFX1dBSVQJCQlCSVQoMTUpDQogI2RlZmluZSBDTURRX1dGRV9XQUlUX1ZBTFVFCQkw
-eDENCiANCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5o
-IGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KaW5kZXggNDBiYzYxYWQ4
-ZDMxLi5mMTE0NGZhYWI1ODIgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRl
-ay9tdGstY21kcS5oDQorKysgYi9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5o
-DQpAQCAtMTY4LDYgKzE2OCwxNSBAQCBpbnQgY21kcV9wa3Rfd2FpdF9ub19jbGVhcihzdHJ1Y3Qg
-Y21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KTsNCiAgKi8NCiBpbnQgY21kcV9wa3RfY2xlYXJfZXZl
-bnQoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCk7DQogDQorLyoqDQorICogY21kcV9w
-a3Rfc2V0X2V2ZW50KCkgLSBhcHBlbmQgc2V0IGV2ZW50IGNvbW1hbmQgdG8gdGhlIENNRFEgcGFj
-a2V0DQorICogQHBrdDoJdGhlIENNRFEgcGFja2V0DQorICogQGV2ZW50Ogl0aGUgZGVzaXJlZCBl
-dmVudCB0byBiZSBzZXQNCisgKg0KKyAqIFJldHVybjogMCBmb3Igc3VjY2VzczsgZWxzZSB0aGUg
-ZXJyb3IgY29kZSBpcyByZXR1cm5lZA0KKyAqLw0KK2ludCBjbWRxX3BrdF9zZXRfZXZlbnQoc3Ry
-dWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCk7DQorDQogLyoqDQogICogY21kcV9wa3RfcG9s
-bCgpIC0gQXBwZW5kIHBvbGxpbmcgY29tbWFuZCB0byB0aGUgQ01EUSBwYWNrZXQsIGFzayBHQ0Ug
-dG8NCiAgKgkJICAgICBleGVjdXRlIGFuIGluc3RydWN0aW9uIHRoYXQgd2FpdCBmb3IgYSBzcGVj
-aWZpZWQNCi0tIA0KMi4xOC4wDQo=
+Hi folks,
 
+Here is my somewhat tardy followup to my Three Things post from earlier
+this fall. I give you Thing 1, Shardmap. What I hope to accomplish today
+is to initiate a conversation with Ext4 developers, and other interested
+observers, which will eventually result in merging the new Shardmap
+directory index code into Ext4, thereby solving a number of longstanding
+issues with the venerable and somewhat problematic HTree.
+
+HTree is the most used directory index in the known universe. HTree does
+some things fantastically well, particularly in the most common range of
+directory sizes, but also exhibits some well known flaws and at least one
+previously unknown flaw, explained below. Shardmap is a new index design,
+just seven years old, an O(1) extensible hash table, meant to address all
+of HTree's flaws while improving performance and scaling into the
+previously inaccessible billion file per directory range. Subject to
+verifying these claims, it would seem to be logical to move on to the
+logistics of porting Shardmap to Ext4 as an optional index algorithm,
+eventually deprecating HTree.
+
+Shardmap equals or outperforms HTree at all scales, with the single
+exception of one theoretical case with a likewise theoretical solution.
+Shardmap is O(1) in all operations - insert, delete, lookup and readdir,
+while HTree is O(log N) in the first three and suffers from a relatively
+large constant readdir overhead. This is not the only reason Shardmap is
+faster than HTree, far from it.
+
+I will break performance discussion down into four ranges:
+   1) unindexed single block, to about 300 entries
+   2) indexed up to 30 thousand entries
+   3) indexed up to 3 million entries
+   4) indexed up to 1 billion entries.
+
+In theory, Shardmap and HTree are exactly tied in the common single
+block case, because creating the index is delayed in both cases until
+there are at least two blocks to index. However, Shardmap broke away
+from the traditional Ext2 entry block format in order to improve block
+level operation efficiency and to prevent record fragmentation under
+heavy aging, and is therefore significantly faster than HTree even in
+the single block case.
+
+Shardmap does not function at all in the fourth range, up to 1 billion
+entries, because its Btree has at most 2 levels. This simple flaw could be
+corrected without much difficulty but Shardmap would remain superior for
+a number of reasons.
+
+The most interesting case is the 300 to 30 thousand entry range, where
+Htree and Shardmap should theoretically be nearly equal, each requiring
+two accesses per lookup. However, HTree does two radix tree lookups while
+Shardmap does one, and the other lookup is in a cached memory object.
+Coupled with the faster record level operations, Shardmap is significantly
+faster in this range. In the 30 thousand to 3 million range, Shardmap's
+performance advantage further widens in accordance with O(1) / O(log N).
+
+For inserts, Shardmap's streaming update strategy is far superior to
+HTree's random index block write approach. HTree will tend to dirty every
+index block under heavy insert load, so that every index block must be
+written to media per commit, causing serious write multiplication
+issues. In fact, all Btree schemes suffer from this issue, which on the
+face of it appears to be enough reason to eliminate the Btree as a
+realistic design alternative. Shardmap dramatically reduces such per
+commit write multiplication by appending new index entries linearly to
+the tail blocks of a small number of index shards. For delete,
+Shardmap avoids write multiplication by appending tombstone entries to
+index shards, thereby addressing a well known HTree delete performance
+issue.
+
+HTree has always suffered from a serious mismatch between name storage
+order and inode storage order, greatly exacerbated by the large number
+of directory entries and inodes stored per block (false sharing). In
+particular, a typical HTree hash order directory traversal accesses the
+inode table randomly, multiplying both the cache footprint and write
+traffic. Historically, this was the cause of many performance complaints
+about HTree, though to be sure, such complaints have fallen off with
+the advent of solid state storage. Even so, this issue will continue rear
+its ugly head when users push the boundaries of cache and directory size
+(google telldir+horror). Shardmap avoids this issue entirely by storing
+and traversing directory entries in simple, classic linear order.
+
+This touches on the single most significant difference between Shardmap
+and HTree: Shardmap strictly separates its index from record entry blocks,
+while HTree embeds entries directly in the BTree index. The HTree
+strategy performs impressively well at low to medium directory scales,
+but at higher scales it causes significantly more cache pressure, due to
+the fact that the cache footprint of any randomly accessed index is
+necessarily the entire index. In contrast, Shardmap stores directory
+entries permanently in creation order, so that directory traversal is
+in simple linear order with effectively zero overhead. This avoids
+perhaps HTree's most dubious design feature, its arcane and not completely
+reliable hash order readdir traversal, which miraculously has avoided
+serious meltdown over these past two decades due to a legendary hack by
+Ted and subsequent careful adaptation to handle various corner cases.
+Nowhere in Shardmap will you find any such arcane and marginally
+supportable code, which should be a great relief to Ext4 maintainers.
+Or to put it another way, if somebody out there wishes to export a
+billion file directory using NFSv2, Shardmap will not be the reason
+why that does not work whereas HTree most probably would be.
+
+Besides separating out the index from entry records and accessing those
+records linearly in most situations, Shardmap also benefits from a very
+compact index design. Even if a directory has a billion entries, each
+index entry is only eight bytes in size. This exercise in structure
+compaction proved possible because the number of hash bits needed for the
+hash code decreases as the number of index shards increases, freeing up
+bits for larger block numbers as the directory expands. Shardmap
+therefore implements an index entry as several variable sized fields.
+This strategy works well up to the billion entry range, above which the
+number of hash index collisions (each of which must be resolved by
+accessing an underlying record block) starts to increase noticeably.
+This is really the only factor that limits Shardmap performance above
+a billion entries. Should we wish Shardmap to scale to trillions of
+entries without losing performance, we will need to increase the index
+entry size to ten bytes or so, or come up with some as yet unknown
+clever improvement (potential thesis project goes here).
+
+There are many additional technical details of Shardmap that ought to be
+explained, however today my primary purpose is simply to introduce what
+I view as a compelling case for obsoleting HTree. To that end, fewer
+words are better and this post is already quite long enough. I would love
+to get into some other interesting details, for example, the Bigmap free
+space mapping strategy, but that really needs its own post to do it
+justice, as do a number of other subjects.
+
+Wrapping up, what about that theoretical case where HTree outperforms
+Shardmap? This is theoretical because one needs to operate on a huge
+directory with tiny cache to trigger it. Both Shardmap and HTree will
+exhibit read multiplication under such conditions, due to frequent
+cache evictions, however the Shardmap read multiplication will be many
+times higher than HTree because of its coarser cache granularity. In the
+unlikely event that we ever need to fix this, one viable solution is to
+add paging support for Shardmap's in-memory cache structure, a standard
+technique sometimes called "anticache".
+
+That is it for today. There remains much to explain about Shardmap both
+within and beyond the Ext4 context. For example, Shardmap has proved to
+work very well as a standalone key value store, particularly with
+persistent memory. In fact, we have benchmarked Shardmap at over three
+million atomic, durable database operations per second on an Intel
+Optane server, which might well be a new world record. The details of
+how this was done are fascinating, however this post is far too small to
+contain them today. Perhaps this should be thing 1(b) for next week.
+
+Regards,
+
+Daniel
