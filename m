@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F3810BAD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A896D10BC60
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:20:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732188AbfK0VG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:06:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32926 "EHLO mail.kernel.org"
+        id S1732770AbfK0VIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:08:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732497AbfK0VGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:06:54 -0500
+        id S1732372AbfK0VId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:08:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2010F215F2;
-        Wed, 27 Nov 2019 21:06:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83349215F1;
+        Wed, 27 Nov 2019 21:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888814;
-        bh=TsHlTSdvhxWTQ1hfq+x90Y74xridxkUGzUUUPZWjXMo=;
+        s=default; t=1574888913;
+        bh=bh4SqCjFKFTC4hPHeEUDcPS3MRbmu9WKzAozBWFuTJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=htiQf4hmQzWUHFhJOXSJ7Gp/BLY+BVWlILP7cdboBi4Wf56Qu2H3FEZ7ilbbZSCdY
-         tPxssYDiPeAhKX83P+rAkR0OVqKNJD8vTyb6u0g1zRLmm5okpRlxQWkw8E9vJLtMsW
-         rEBdGa1Dbvs9HBUxzbTGUoodMUS4AfMeO+HGxPTo=
+        b=bz8IDKxxHYMV72iz9YKt996O0yPekC0nYsheVeokRmqf40gpWksjBQrKrkaQ+8k3g
+         fL4kAFqxIPe/YvsbG64Y3wozEKabNEnuevgqGq8YtG3AsVi+yleMQfdXqz1bZqRqYy
+         2hXHyNn/VnuvFgDRoE8e+bUA7F8IQ6Hkt5sizxdE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 238/306] net: bcmgenet: return correct value ret from bcmgenet_power_down
-Date:   Wed, 27 Nov 2019 21:31:28 +0100
-Message-Id: <20191127203132.379611382@linuxfoundation.org>
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 12/95] ipv6/route: return if there is no fib_nh_gw_family
+Date:   Wed, 27 Nov 2019 21:31:29 +0100
+Message-Id: <20191127202850.020132831@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 0db55093b56618088b9a1d445eb6e43b311bea33 ]
+[ Upstream commit 004b39427f945696db30abb2c4e1a3856ffff819 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Previously we will return directly if (!rt || !rt->fib6_nh.fib_nh_gw_family)
+in function rt6_probe(), but after commit cc3a86c802f0
+("ipv6: Change rt6_probe to take a fib6_nh"), the logic changed to
+return if there is fib_nh_gw_family.
 
-drivers/net/ethernet/broadcom/genet/bcmgenet.c: In function 'bcmgenet_power_down':
-drivers/net/ethernet/broadcom/genet/bcmgenet.c:1136:6: warning:
- variable 'ret' set but not used [-Wunused-but-set-variable]
-
-bcmgenet_power_down should return 'ret' instead of 0.
-
-Fixes: ca8cf341903f ("net: bcmgenet: propagate errors from bcmgenet_power_down")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: cc3a86c802f0 ("ipv6: Change rt6_probe to take a fib6_nh")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.c | 2 +-
+ net/ipv6/route.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index bb60104b4f805..338d223804343 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -1169,7 +1169,7 @@ static int bcmgenet_power_down(struct bcmgenet_priv *priv,
- 		break;
- 	}
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -634,7 +634,7 @@ static void rt6_probe(struct fib6_nh *fi
+ 	 * Router Reachability Probe MUST be rate-limited
+ 	 * to no more than one per minute.
+ 	 */
+-	if (fib6_nh->fib_nh_gw_family)
++	if (!fib6_nh->fib_nh_gw_family)
+ 		return;
  
--	return 0;
-+	return ret;
- }
- 
- static void bcmgenet_power_up(struct bcmgenet_priv *priv,
--- 
-2.20.1
-
+ 	nh_gw = &fib6_nh->fib_nh_gw6;
 
 
