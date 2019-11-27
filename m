@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6825110B970
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A71A110B814
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbfK0UxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41476 "EHLO mail.kernel.org"
+        id S1728943AbfK0Ujf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:39:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727738AbfK0UxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:09 -0500
+        id S1728936AbfK0Ujb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:39:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCC2A21903;
-        Wed, 27 Nov 2019 20:53:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E6F4215A5;
+        Wed, 27 Nov 2019 20:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887988;
-        bh=tHrJ+YCWwkR88WUqXar21vkFGy5QEqlLZ0Xs5JXIW3E=;
+        s=default; t=1574887170;
+        bh=fXkkkxnDXXoV83ryesOUevQgcM19dTB8GKotaaKn1HU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qP2Wetcs+STHrKk+LxubeKyBBjyRRbqtekNQ2tCgo6TW8B56P3v6OwZupwnAJHZon
-         AYdvqlzuTSDb9e48gHimvWet36YAHkyeRhFqcxzGtwcoJ9xYa9eLPCWrYkoUTKDFo1
-         II8w/AORG1589Rph9WTiFtopr/TRdi02Wfro7P8g=
+        b=ts9iRCUcIOgJUsWSsoez4V2pKwJCGYY/9Ft975MXXETbgeGpPhSOGszRoSA3Jul75
+         P9y8LZD6RZ3epLDurL5YRIz/D8qbjfVLHB5fdE1t+CjSFAngKGTvKsjEOFw8oCOqFz
+         Dwo951qZKC9LBo5p64/Z9ZlEbr/V5DWRSWRUsreE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Uvarov <muvarov@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Adrian Bunk <bunk@kernel.org>
-Subject: [PATCH 4.14 171/211] net: phy: dp83867: increase SGMII autoneg timer duration
-Date:   Wed, 27 Nov 2019 21:31:44 +0100
-Message-Id: <20191127203110.034421649@linuxfoundation.org>
+        stable@vger.kernel.org, Vito Caputo <vcaputo@pengaru.com>,
+        syzbot <syzkaller@googlegroups.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 114/132] media: cxusb: detect cxusb_ctrl_msg error in query
+Date:   Wed, 27 Nov 2019 21:31:45 +0100
+Message-Id: <20191127203031.292724691@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,59 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Uvarov <muvarov@gmail.com>
+From: Vito Caputo <vcaputo@pengaru.com>
 
-commit 1a97a477e666cbdededab93bd3754e508f0c09d7 upstream.
+commit ca8f245f284eeffa56f3b7a5eb6fc503159ee028 upstream.
 
-After reset SGMII Autoneg timer is set to 2us (bits 6 and 5 are 01).
-That is not enough to finalize autonegatiation on some devices.
-Increase this timer duration to maximum supported 16ms.
+Don't use uninitialized ircode[] in cxusb_rc_query() when
+cxusb_ctrl_msg() fails to populate its contents.
 
-Signed-off-by: Max Uvarov <muvarov@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[ adapted for kernels without phy_modify_mmd ]
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
+syzbot reported:
+
+dvb-usb: bulk message failed: -22 (1/-30591)
+=====================================================
+BUG: KMSAN: uninit-value in ir_lookup_by_scancode drivers/media/rc/rc-main.c:494 [inline]
+BUG: KMSAN: uninit-value in rc_g_keycode_from_table drivers/media/rc/rc-main.c:582 [inline]
+BUG: KMSAN: uninit-value in rc_keydown+0x1a6/0x6f0 drivers/media/rc/rc-main.c:816
+CPU: 1 PID: 11436 Comm: kworker/1:2 Not tainted 5.3.0-rc7+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events dvb_usb_read_remote_control
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+ kmsan_report+0x13a/0x2b0 mm/kmsan/kmsan_report.c:108
+ __msan_warning+0x73/0xe0 mm/kmsan/kmsan_instr.c:250
+ bsearch+0x1dd/0x250 lib/bsearch.c:41
+ ir_lookup_by_scancode drivers/media/rc/rc-main.c:494 [inline]
+ rc_g_keycode_from_table drivers/media/rc/rc-main.c:582 [inline]
+ rc_keydown+0x1a6/0x6f0 drivers/media/rc/rc-main.c:816
+ cxusb_rc_query+0x2e1/0x360 drivers/media/usb/dvb-usb/cxusb.c:548
+ dvb_usb_read_remote_control+0xf9/0x290 drivers/media/usb/dvb-usb/dvb-usb-remote.c:261
+ process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
+ worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+ kthread+0x4b5/0x4f0 kernel/kthread.c:256
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:150 [inline]
+ kmsan_internal_chain_origin+0xd2/0x170 mm/kmsan/kmsan.c:314
+ __msan_chain_origin+0x6b/0xe0 mm/kmsan/kmsan_instr.c:184
+ rc_g_keycode_from_table drivers/media/rc/rc-main.c:583 [inline]
+ rc_keydown+0x2c4/0x6f0 drivers/media/rc/rc-main.c:816
+ cxusb_rc_query+0x2e1/0x360 drivers/media/usb/dvb-usb/cxusb.c:548
+ dvb_usb_read_remote_control+0xf9/0x290 drivers/media/usb/dvb-usb/dvb-usb-remote.c:261
+ process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
+ worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+ kthread+0x4b5/0x4f0 kernel/kthread.c:256
+ ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+
+Local variable description: ----ircode@cxusb_rc_query
+Variable was created at:
+ cxusb_rc_query+0x4d/0x360 drivers/media/usb/dvb-usb/cxusb.c:543
+ dvb_usb_read_remote_control+0xf9/0x290 drivers/media/usb/dvb-usb/dvb-usb-remote.c:261
+
+Signed-off-by: Vito Caputo <vcaputo@pengaru.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/phy/dp83867.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/media/usb/dvb-usb/cxusb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -33,6 +33,12 @@
+--- a/drivers/media/usb/dvb-usb/cxusb.c
++++ b/drivers/media/usb/dvb-usb/cxusb.c
+@@ -435,7 +435,8 @@ static int cxusb_rc_query(struct dvb_usb
+ 	u8 ircode[4];
+ 	int i;
  
- /* Extended Registers */
- #define DP83867_CFG4            0x0031
-+#define DP83867_CFG4_SGMII_ANEG_MASK (BIT(5) | BIT(6))
-+#define DP83867_CFG4_SGMII_ANEG_TIMER_11MS   (3 << 5)
-+#define DP83867_CFG4_SGMII_ANEG_TIMER_800US  (2 << 5)
-+#define DP83867_CFG4_SGMII_ANEG_TIMER_2US    (1 << 5)
-+#define DP83867_CFG4_SGMII_ANEG_TIMER_16MS   (0 << 5)
-+
- #define DP83867_RGMIICTL	0x0032
- #define DP83867_STRAP_STS1	0x006E
- #define DP83867_RGMIIDCTL	0x0086
-@@ -300,6 +306,18 @@ static int dp83867_config_init(struct ph
+-	cxusb_ctrl_msg(d, CMD_GET_IR_CODE, NULL, 0, ircode, 4);
++	if (cxusb_ctrl_msg(d, CMD_GET_IR_CODE, NULL, 0, ircode, 4) < 0)
++		return 0;
  
- 		if (ret)
- 			return ret;
-+
-+		/* After reset SGMII Autoneg timer is set to 2us (bits 6 and 5
-+		 * are 01). That is not enough to finalize autoneg on some
-+		 * devices. Increase this timer duration to maximum 16ms.
-+		 */
-+		val = phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_CFG4);
-+		val &= ~DP83867_CFG4_SGMII_ANEG_MASK;
-+		val |= DP83867_CFG4_SGMII_ANEG_TIMER_16MS;
-+		ret = phy_write_mmd(phydev, DP83867_DEVADDR, DP83867_CFG4, val);
-+
-+		if (ret)
-+			return ret;
- 	}
- 
- 	/* Enable Interrupt output INT_OE in CFG3 register */
+ 	*event = 0;
+ 	*state = REMOTE_NO_KEY_PRESSED;
 
 
