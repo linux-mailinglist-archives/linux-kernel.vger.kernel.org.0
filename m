@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA1C10BFA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9573710BF19
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbfK0Vo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:44:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38550 "EHLO mail.kernel.org"
+        id S1730019AbfK0Vkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:40:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728112AbfK0UgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:36:24 -0500
+        id S1729321AbfK0Um0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:42:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99CBD20862;
-        Wed, 27 Nov 2019 20:36:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72B8021783;
+        Wed, 27 Nov 2019 20:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886984;
-        bh=99+ozqhw15jcn46i8tnsS5mRIbqSjBnEL4IOQNmNxSk=;
+        s=default; t=1574887345;
+        bh=4s8e4vFMSbvxkOqzZBgfRHrA0gBMSbB8WI/S0IuJjVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t884y0xNTUumBiBVYJPnjQrOR+7ceF5Dj10sNkMnVfxPLtx0YjlfJehhrq8WehWvk
-         dQx571YnIDTz+4+8aH8UNKHScuJsE8AFDp7Fs8gR1OrPWkOGdNgoF1nT93pWmPnIyU
-         A1LGOUc+iLc4YeBVw5mFpU4HEEBAhJVA8EfSUHxQ=
+        b=OIPT6UX/MFxwNyHZ6AmHI3gnQdbLoG/ORtHg8zC8lUZ1U70AyVsjhzSBxfzSS8uQp
+         2jJKlMfvALiIcHc6xbpYDUqaiVZwdTqQ0DramrQrhcXxpLN8Q3w8qAOr4Qe7UmSvZt
+         RblS+ZE5BbqDWvh7eoME/MGOZm6B9nBB0eI6/bYU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
         <ernesto.mnd.fernandez@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 066/132] hfsplus: fix BUG on bnode parent update
-Date:   Wed, 27 Nov 2019 21:30:57 +0100
-Message-Id: <20191127203002.676708703@linuxfoundation.org>
+Subject: [PATCH 4.9 076/151] hfs: fix return value of hfs_get_block()
+Date:   Wed, 27 Nov 2019 21:30:59 +0100
+Message-Id: <20191127203035.232383585@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,52 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit 19a9d0f1acf75e8be8cfba19c1a34e941846fa2b ]
+[ Upstream commit 1267a07be5ebbff2d2739290f3d043ae137c15b4 ]
 
-Creating, renaming or deleting a file may hit BUG_ON() if the first
-record of both a leaf node and its parent are changed, and if this
-forces the parent to be split.  This bug is triggered by xfstests
-generic/027, somewhat rarely; here is a more reliable reproducer:
+Direct writes to empty inodes fail with EIO.  The generic direct-io code
+is in part to blame (a patch has been submitted as "direct-io: allow
+direct writes to empty inodes"), but hfs is worse affected than the other
+filesystems because the fallback to buffered I/O doesn't happen.
 
-  truncate -s 50M fs.iso
-  mkfs.hfsplus fs.iso
-  mount fs.iso /mnt
-  i=1000
-  while [ $i -le 2400 ]; do
-    touch /mnt/$i &>/dev/null
-    ((++i))
-  done
-  i=2400
-  while [ $i -ge 1000 ]; do
-    mv /mnt/$i /mnt/$(perl -e "print $i x61") &>/dev/null
-    ((--i))
-  done
+The problem is the return value of hfs_get_block() when called with
+!create.  Change it to be more consistent with the other modules.
 
-The issue is that a newly created bnode is being put twice.  Reset
-new_node to NULL in hfs_brec_update_parent() before reaching goto again.
-
-Link: http://lkml.kernel.org/r/5ee1db09b60373a15890f6a7c835d00e76bf601d.1535682461.git.ernesto.mnd.fernandez@gmail.com
+Link: http://lkml.kernel.org/r/4538ab8c35ea37338490525f0f24cbc37227528c.1539195310.git.ernesto.mnd.fernandez@gmail.com
 Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
+Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/brec.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/hfs/extent.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 1002a0c08319b..20ce698251ad1 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -447,6 +447,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
- 			/* restore search_key */
- 			hfs_bnode_read_key(node, fd->search_key, 14);
- 		}
-+		new_node = NULL;
- 	}
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 1bd1afefe2538..16819d2a978b4 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -345,7 +345,9 @@ int hfs_get_block(struct inode *inode, sector_t block,
+ 	ablock = (u32)block / HFS_SB(sb)->fs_div;
  
- 	if (!rec && node->parent)
+ 	if (block >= HFS_I(inode)->fs_blocks) {
+-		if (block > HFS_I(inode)->fs_blocks || !create)
++		if (!create)
++			return 0;
++		if (block > HFS_I(inode)->fs_blocks)
+ 			return -EIO;
+ 		if (ablock >= HFS_I(inode)->alloc_blocks) {
+ 			res = hfs_extend_file(inode);
 -- 
 2.20.1
 
