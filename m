@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1099A10BDB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A20AA10BEDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfK0UzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
+        id S1729820AbfK0Vip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:38:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730901AbfK0Uy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:54:58 -0500
+        id S1728220AbfK0UpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:45:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 487252086A;
-        Wed, 27 Nov 2019 20:54:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 895A0217BC;
+        Wed, 27 Nov 2019 20:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888097;
-        bh=S8kGG9p6HSMDgtKASDhnwxvtfT614CVOtoxaHvrPciw=;
+        s=default; t=1574887512;
+        bh=5W9Egi4zKehIZf+zXK06b5qupqNkKPfecanbW4wj9z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xkYrcrnHsfLSxTUStDtQ4kKnHyFr3tYMDTAczJ1cKbGTN/tCgZo0dKVqbY1y5ND5B
-         W/NRjtez5kzrOHp1Z2E9PsIAXJV0laiDhsKY7GEK33IBnmCt4iJJf3GDAW1G/NQOy+
-         hv0gexPfjXlvkZG+jej5WQCi0bBpz0jI9A9XJk2o=
+        b=iliAc86YCcibNHQGOzatS33tSIHBw8ojHVtYxsX1JV9+b+XZxMRqJFynypve8Mbew
+         HIEMvf4cePt4nictKsYNvdbXd18TQY5yJbiKKCoBLiyREidw98doVwZaJd5UdRe4ML
+         xAtUXFF/2dZ8faLA+8Z6OADxDG0Ap9Q1ic+9dImA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+711468aa5c3a1eabf863@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 186/211] nfc: port100: handle command failure cleanly
-Date:   Wed, 27 Nov 2019 21:31:59 +0100
-Message-Id: <20191127203111.303012805@linuxfoundation.org>
+        stable@vger.kernel.org, Hewenliang <hewenliang4@huawei.com>
+Subject: [PATCH 4.9 139/151] usbip: tools: fix fd leakage in the function of read_attr_usbip_status
+Date:   Wed, 27 Nov 2019 21:32:02 +0100
+Message-Id: <20191127203046.982958231@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Hewenliang <hewenliang4@huawei.com>
 
-commit 5f9f0b11f0816b35867f2cf71e54d95f53f03902 upstream.
+commit 26a4d4c00f85cb844dd11dd35e848b079c2f5e8f upstream.
 
-If starting the transfer of a command suceeds but the transfer for the reply
-fails, it is not enough to initiate killing the transfer for the
-command may still be running. You need to wait for the killing to finish
-before you can reuse URB and buffer.
+We should close the fd before the return of read_attr_usbip_status.
 
-Reported-and-tested-by: syzbot+711468aa5c3a1eabf863@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
+Signed-off-by: Hewenliang <hewenliang4@huawei.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191025043515.20053-1-hewenliang4@huawei.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nfc/port100.c |    2 +-
+ tools/usb/usbip/libsrc/usbip_host_common.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nfc/port100.c
-+++ b/drivers/nfc/port100.c
-@@ -792,7 +792,7 @@ static int port100_send_frame_async(stru
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -69,7 +69,7 @@ static int32_t read_attr_usbip_status(st
+ 	}
  
- 	rc = port100_submit_urb_for_ack(dev, GFP_KERNEL);
- 	if (rc)
--		usb_unlink_urb(dev->out_urb);
-+		usb_kill_urb(dev->out_urb);
+ 	value = atoi(status);
+-
++	close(fd);
+ 	return value;
+ }
  
- exit:
- 	mutex_unlock(&dev->out_urb_lock);
 
 
