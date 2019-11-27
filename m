@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BB1510BB24
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8071C10BC88
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:22:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732957AbfK0VJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:09:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36754 "EHLO mail.kernel.org"
+        id S1732443AbfK0VGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:06:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732561AbfK0VJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:09:55 -0500
+        id S1727126AbfK0VGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:06:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BA17216F4;
-        Wed, 27 Nov 2019 21:09:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D96C21850;
+        Wed, 27 Nov 2019 21:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888994;
-        bh=57A37uReFpaoVHM91/3bIBAXphIRLjuVkZlIK30VGwc=;
+        s=default; t=1574888784;
+        bh=2Z0PeulUKiddpx7Y+aKFqPHyf9rEQImC8/nS7AD3Qp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cThZn7NmW4EfARCzFit9hn68ysHhIVtVsq8bozAU4ak0+Rg69SBzJOrHI+zJT9G8q
-         cKu3ilmdkdiiLQOH5pZJmM8nBn8A9kqCOWU73ZV1LjFBY2lSiGUxcagBi4axN6MV8d
-         Los0wobamBn5xS6hMD7hHCDQdPveEd49ABzQykjA=
+        b=yNVx0hodlq0kYAOu0+lmeL6RET6z4J3DLC1SlaYkMNIC86lKr8/dV71ED/Prt47N4
+         mM/QKc3AyFidNQbZf3nVjyBQJ+wOVdKqSKgvk+sk4NUHHtAar+yx2CX4du60XrLy0k
+         wy9aSAd+mCoeHVXDHED47GPZB1FQ0c0ygHV8l5wg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rajkumar Manoharan <rmanohar@qca.qualcomm.com>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Denis Efremov <efremov@linux.com>
-Subject: [PATCH 5.3 40/95] ath9k_hw: fix uninitialized variable data
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Alexander Kapshuk <alexander.kapshuk@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
+Subject: [PATCH 4.19 267/306] x86/insn: Fix awk regexp warnings
 Date:   Wed, 27 Nov 2019 21:31:57 +0100
-Message-Id: <20191127202906.069482258@linuxfoundation.org>
+Message-Id: <20191127203134.338035756@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,39 +51,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
+From: Alexander Kapshuk <alexander.kapshuk@gmail.com>
 
-commit 80e84f36412e0c5172447b6947068dca0d04ee82 upstream.
+commit 700c1018b86d0d4b3f1f2d459708c0cdf42b521d upstream.
 
-Currently, data variable in ar9003_hw_thermo_cal_apply() could be
-uninitialized if ar9300_otp_read_word() will fail to read the value.
-Initialize data variable with 0 to prevent an undefined behavior. This
-will be enough to handle error case when ar9300_otp_read_word() fails.
+gawk 5.0.1 generates the following regexp warnings:
 
-Fixes: 80fe43f2bbd5 ("ath9k_hw: Read and configure thermocal for AR9462")
-Cc: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
-Cc: John W. Linville <linville@tuxdriver.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  GEN      /home/sasha/torvalds/tools/objtool/arch/x86/lib/inat-tables.c
+  awk: ../arch/x86/tools/gen-insn-attr-x86.awk:260: warning: regexp escape sequence `\:' is not a known regexp operator
+  awk: ../arch/x86/tools/gen-insn-attr-x86.awk:350: (FILENAME=../arch/x86/lib/x86-opcode-map.txt FNR=41) warning: regexp escape sequence `\&' is  not a known regexp operator
+
+Ealier versions of gawk are not known to generate these warnings. The
+gawk manual referenced below does not list characters ':' and '&' as
+needing escaping, so 'unescape' them. See
+
+  https://www.gnu.org/software/gawk/manual/html_node/Escape-Sequences.html
+
+for more info.
+
+Running diff on the output generated by the script before and after
+applying the patch reported no differences.
+
+ [ bp: Massage commit message. ]
+
+[ Caught the respective tools header discrepancy. ]
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190924044659.3785-1-alexander.kapshuk@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath9k/ar9003_eeprom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/tools/gen-insn-attr-x86.awk               |    4 ++--
+ tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-@@ -4183,7 +4183,7 @@ static void ar9003_hw_thermometer_apply(
+--- a/arch/x86/tools/gen-insn-attr-x86.awk
++++ b/arch/x86/tools/gen-insn-attr-x86.awk
+@@ -69,7 +69,7 @@ BEGIN {
  
- static void ar9003_hw_thermo_cal_apply(struct ath_hw *ah)
- {
--	u32 data, ko, kg;
-+	u32 data = 0, ko, kg;
+ 	lprefix1_expr = "\\((66|!F3)\\)"
+ 	lprefix2_expr = "\\(F3\\)"
+-	lprefix3_expr = "\\((F2|!F3|66\\&F2)\\)"
++	lprefix3_expr = "\\((F2|!F3|66&F2)\\)"
+ 	lprefix_expr = "\\((66|F2|F3)\\)"
+ 	max_lprefix = 4
  
- 	if (!AR_SREV_9462_20_OR_LATER(ah))
- 		return;
+@@ -257,7 +257,7 @@ function convert_operands(count,opnd,
+ 	return add_flags(imm, mod)
+ }
+ 
+-/^[0-9a-f]+\:/ {
++/^[0-9a-f]+:/ {
+ 	if (NR == 1)
+ 		next
+ 	# get index
+--- a/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
++++ b/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
+@@ -69,7 +69,7 @@ BEGIN {
+ 
+ 	lprefix1_expr = "\\((66|!F3)\\)"
+ 	lprefix2_expr = "\\(F3\\)"
+-	lprefix3_expr = "\\((F2|!F3|66\\&F2)\\)"
++	lprefix3_expr = "\\((F2|!F3|66&F2)\\)"
+ 	lprefix_expr = "\\((66|F2|F3)\\)"
+ 	max_lprefix = 4
+ 
+@@ -257,7 +257,7 @@ function convert_operands(count,opnd,
+ 	return add_flags(imm, mod)
+ }
+ 
+-/^[0-9a-f]+\:/ {
++/^[0-9a-f]+:/ {
+ 	if (NR == 1)
+ 		next
+ 	# get index
 
 
