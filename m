@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A566510B779
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 473EB10B84F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:42:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfK0UeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:34:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34330 "EHLO mail.kernel.org"
+        id S1729299AbfK0UmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:42:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727501AbfK0UeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:09 -0500
+        id S1729288AbfK0UmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:42:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0920C207DD;
-        Wed, 27 Nov 2019 20:34:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DE5621787;
+        Wed, 27 Nov 2019 20:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886848;
-        bh=ISw/D12soK1PH4BKs72Gf3BrgKXz0bgrQqro4pbVxT8=;
+        s=default; t=1574887326;
+        bh=XP4W78k7tWdh+OxHKfg/hOgoXSYlnsAKcT0blXHT8RY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qH5cFl0O1jH2X3Gg0CcnBAaR4ihlK3qzRZwlujYDEPHVHGRie9eoV3+kNh3aWcJbH
-         1dkfBTTeY+NtToF9FMsGKuUVNvMgywgg6v0OXsaoiqPR+CW/AKyfHK8ISiJ8wS56Kj
-         dsdRLI3J0slEYODL5cDsBI5QVJZK3sgai7sy/sd8=
+        b=LdkV5iJB4BgisIrrjnXjJ2nKUyZoxtaQxuz2+qkfUkBJRVeQ0bYPpkbFS32N3fBSg
+         GMdMbWzaREvvyH9JD/CjeskVvsh8MYhjinPo5CK0uGSPUcDxYoMGdngbE2f/bEhal+
+         37kCax0fTrAbwWh+FVPPbPLG+Ei5Me5wRuVo+Zxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kiernan Hager <kah.listaddress@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 017/132] platform/x86: asus-nb-wmi: Support ALS on the Zenbook UX430UQ
+Subject: [PATCH 4.9 025/151] misc: mic: fix a DMA pool free failure
 Date:   Wed, 27 Nov 2019 21:30:08 +0100
-Message-Id: <20191127202913.900919182@linuxfoundation.org>
+Message-Id: <20191127203016.158952166@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kiernan Hager <kah.listaddress@gmail.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit db2582afa7444a0ce6bb1ebf1431715969a10b06 ]
+[ Upstream commit 6b995f4eec34745f6cb20d66d5277611f0b3c3fa ]
 
-This patch adds support for ALS on the Zenbook UX430UQ to the asus_nb_wmi
-driver. It also renames "quirk_asus_ux330uak" to "quirk_asus_forceals"
-because it is now used for more than one model of computer, and should
-thus have a more general name.
+In _scif_prog_signal(), the boolean variable 'x100' is used to indicate
+whether the MIC Coprocessor is X100. If 'x100' is true, the status
+descriptor will be used to write the value to the destination. Otherwise, a
+DMA pool will be allocated for this purpose. Specifically, if the DMA pool
+is allocated successfully, two memory addresses will be returned. One is
+for the CPU and the other is for the device to access the DMA pool. The
+former is stored to the variable 'status' and the latter is stored to the
+variable 'src'. After the allocation, the address in 'src' is saved to
+'status->src_dma_addr', which is actually in the DMA pool, and 'src' is
+then modified.
 
-Signed-off-by: Kiernan Hager <kah.listaddress@gmail.com>
-[andy: massaged commit message, fixed indentation and commas in the code]
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Later on, if an error occurs, the execution flow will transfer to the label
+'dma_fail', which will check 'x100' and free up the allocated DMA pool if
+'x100' is false. The point here is that 'status->src_dma_addr' is used for
+freeing up the DMA pool. As mentioned before, 'status->src_dma_addr' is in
+the DMA pool. And thus, the device is able to modify this data. This can
+potentially cause failures when freeing up the DMA pool because of the
+modified device address.
+
+This patch avoids the above issue by using the variable 'src' (with
+necessary calculation) to free up the DMA pool.
+
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/misc/mic/scif/scif_fence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index bf9e48010b98b..274ccf920af50 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -120,7 +120,7 @@ static struct quirk_entry quirk_asus_x550lb = {
- 	.xusb2pr = 0x01D9,
- };
- 
--static struct quirk_entry quirk_asus_ux330uak = {
-+static struct quirk_entry quirk_asus_forceals = {
- 	.wmi_force_als_set = true,
- };
- 
-@@ -422,7 +422,7 @@ static const struct dmi_system_id asus_quirks[] = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "UX330UAK"),
- 		},
--		.driver_data = &quirk_asus_ux330uak,
-+		.driver_data = &quirk_asus_forceals,
- 	},
- 	{
- 		.callback = dmi_matched,
-@@ -433,6 +433,15 @@ static const struct dmi_system_id asus_quirks[] = {
- 		},
- 		.driver_data = &quirk_asus_x550lb,
- 	},
-+	{
-+		.callback = dmi_matched,
-+		.ident = "ASUSTeK COMPUTER INC. UX430UQ",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "UX430UQ"),
-+		},
-+		.driver_data = &quirk_asus_forceals,
-+	},
- 	{},
- };
- 
+diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
+index cac3bcc308a7e..7bb929f05d852 100644
+--- a/drivers/misc/mic/scif/scif_fence.c
++++ b/drivers/misc/mic/scif/scif_fence.c
+@@ -272,7 +272,7 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+ dma_fail:
+ 	if (!x100)
+ 		dma_pool_free(ep->remote_dev->signal_pool, status,
+-			      status->src_dma_addr);
++			      src - offsetof(struct scif_status, val));
+ alloc_fail:
+ 	return err;
+ }
 -- 
 2.20.1
 
