@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BD610BE50
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF88C10BF5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbfK0VfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:35:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
+        id S1729244AbfK0Vme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:42:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729557AbfK0Utt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:49:49 -0500
+        id S1727269AbfK0UkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:40:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7CFE2158A;
-        Wed, 27 Nov 2019 20:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C75C21774;
+        Wed, 27 Nov 2019 20:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887789;
-        bh=oMoPkCwY6kDzGS2Li0xLQGa17DHyFG0V1ZNnzIwiQfU=;
+        s=default; t=1574887206;
+        bh=PQFfqQZTJt8OhFGzdF6KtpgMwrzOwM6x4oU3BMvFibs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F1IVXbK4WslTwk3YrHfDz/0TV0oWgGGvMiwut7oyKF4WhPDuJAF0vFDvuhe4QddkS
-         ByIexcHdFTRd0SE4JQxu9FQNbyIbBpPZIKhVhKlieV2urTtPwkkv69ADlrJ101k/YL
-         EKHpyMYc0hlABv5ukq82DvU66ZdoJ7NHzKfy43e4=
+        b=fsn3t79rZn7CqgFN6W5OZR6mVGwsdqht0c1ieERIhvxIlkmhcew59omYV0S3Bhp/Y
+         sx+U1Ev7SObpyrpm7umGdXk+neZymeZ9WA+OyAHmMYi1dBtGmoEpCvQbZ1nfmn3MTn
+         UmZdpbkcE+Z2aNHbZPiMlAv5/aS7BNE0lPVFtzzE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 052/211] clk: at91: audio-pll: fix audio pmc type
-Date:   Wed, 27 Nov 2019 21:29:45 +0100
-Message-Id: <20191127203058.982189454@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.9 006/151] gpio: max77620: Fixup debounce delays
+Date:   Wed, 27 Nov 2019 21:29:49 +0100
+Message-Id: <20191127203004.790459008@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 7fa75007b7d7421aea59ff2b12ab1bd65a5abfa6 ]
+commit b0391479ae04dfcbd208b9571c375064caad9a57 upstream.
 
-The allocation for the audio pmc is using the size of struct clk_audio_pad
-instead of struct clk_audio_pmc. This works fine because the former is
-larger than the latter but it is safer to be correct.
+When converting milliseconds to microseconds in commit fffa6af94894
+("gpio: max77620: Use correct unit for debounce times") some ~1 ms gaps
+were introduced between the various ranges supported by the controller.
+Fix this by changing the start of each range to the value immediately
+following the end of the previous range. This way a debounce time of,
+say 8250 us will translate into 16 ms instead of returning an -EINVAL
+error.
 
-Fixes: ("0865805d82d4 clk: at91: add audio pll clock drivers")
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Typically the debounce delay is only ever set through device tree and
+specified in milliseconds, so we can never really hit this issue because
+debounce times are always a multiple of 1000 us.
+
+The only notable exception for this is drivers/mmc/host/mmc-spi.c where
+the CD GPIO is requested, which passes a 1 us debounce time. According
+to a comment preceeding that code this should actually be 1 ms (i.e.
+1000 us).
+
+Reported-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Pavel Machek <pavel@denx.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/clk/at91/clk-audio-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-max77620.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index da7bafcfbe706..b3eaf654fac98 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -509,7 +509,7 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
- 
- static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
- {
--	struct clk_audio_pad *apmc_ck;
-+	struct clk_audio_pmc *apmc_ck;
- 	struct clk_init_data init = {};
- 
- 	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
--- 
-2.20.1
-
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -167,13 +167,13 @@ static int max77620_gpio_set_debounce(st
+ 	case 0:
+ 		val = MAX77620_CNFG_GPIO_DBNC_None;
+ 		break;
+-	case 1000 ... 8000:
++	case 1 ... 8000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
+ 		break;
+-	case 9000 ... 16000:
++	case 8001 ... 16000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
+ 		break;
+-	case 17000 ... 32000:
++	case 16001 ... 32000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
+ 		break;
+ 	default:
 
 
