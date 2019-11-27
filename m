@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4143B10B22F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:15:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E49ED10B235
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:15:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfK0PPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 10:15:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44296 "EHLO mail.kernel.org"
+        id S1727440AbfK0PPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 10:15:19 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:3691 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726655AbfK0PPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:15:00 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1A8B20674;
-        Wed, 27 Nov 2019 15:14:58 +0000 (UTC)
-Date:   Wed, 27 Nov 2019 10:14:56 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de
-Subject: Re: [PATCH] sched/clock: use static_branch_likely() check at
- sched_clock_running
-Message-ID: <20191127101456.2c814108@gandalf.local.home>
-In-Reply-To: <1574843848-26825-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1574843848-26825-1-git-send-email-zhenzhong.duan@oracle.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726655AbfK0PPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 10:15:18 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47NPTZ5Z5sz9v0vn;
+        Wed, 27 Nov 2019 16:15:14 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=RElQVMX9; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id eEa3dEyy4enE; Wed, 27 Nov 2019 16:15:14 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47NPTZ4Wzmz9v0vj;
+        Wed, 27 Nov 2019 16:15:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1574867714; bh=xDzqAuKpsMI0fM1Nu2APkhHGF83sjAZj+b2lNk9mmCU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=RElQVMX9+cCEQ78l0/J1L3DVbJxFsc0NztZpgSERF3y/OySvGhO+jQzlTNdzWyb64
+         f+vTAMnbV/x1zA7L+63FgChsJ6lc31ydvuTMVMObuv0zcJFM8zhorlNmr3lRheuJgs
+         VEUpw+GHSuU0PQLV6/W/oj5hu5sjavTHhRdzLf0o=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 253978B868;
+        Wed, 27 Nov 2019 16:15:16 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id TiWizM8GxlXJ; Wed, 27 Nov 2019 16:15:16 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 806FA8B85A;
+        Wed, 27 Nov 2019 16:15:15 +0100 (CET)
+Subject: Re: [PATCH v4 2/2] powerpc/irq: inline call_do_irq() and
+ call_do_softirq()
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr>
+ <5ca6639b7c1c21ee4b4138b7cfb31d6245c4195c.1570684298.git.christophe.leroy@c-s.fr>
+ <877e3tbvsa.fsf@mpe.ellerman.id.au>
+ <20191121101552.GR16031@gate.crashing.org>
+ <87y2w49rgo.fsf@mpe.ellerman.id.au> <20191125142556.GU9491@gate.crashing.org>
+ <5fdb1c92-8bf4-01ca-f81c-214870c33be3@c-s.fr>
+ <20191127145958.GG9491@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <2072e066-1ffb-867e-60ec-04a6bb9075c1@c-s.fr>
+Date:   Wed, 27 Nov 2019 16:15:15 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191127145958.GG9491@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Nov 2019 16:37:28 +0800
-Zhenzhong Duan <zhenzhong.duan@oracle.com> wrote:
 
-> sched_clock_running is enabled early at bootup stage and never
-> disabled. So hints that to compiler by using static_branch_likely()
-> rather than static_branch_unlikely().
 
-Looks like the confusion was the moving of the "!":
+Le 27/11/2019 à 15:59, Segher Boessenkool a écrit :
+> On Wed, Nov 27, 2019 at 02:50:30PM +0100, Christophe Leroy wrote:
+>> So what do we do ? We just drop the "r2" clobber ?
+> 
+> You have to make sure your asm code works for all ABIs.  This is quite
+> involved if you do a call to an external function.  The compiler does
+> *not* see this call, so you will have to make sure that all that the
+> compiler and linker do will work, or prevent some of those things (say,
+> inlining of the function containing the call).
 
--       if (unlikely(!sched_clock_running))
-+       if (!static_branch_unlikely(&sched_clock_running))
-
-Where, it was unlikely that !sched_clock_running would be true, but
-because the "!" was moved outside the "unlikely()" it makes the test
-"likely()". That is, if we added an intermediate step, it would have
-been:
-
-	if (!likely(sched_clock_running))
-
-which would have prevented the mistake that this patch fixes.
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
+But the whole purpose of the patch is to inline the call to __do_irq() 
+in order to avoid the trampoline function.
 
 > 
-> Fixes: 46457ea464f5 ("sched/clock: Use static key for sched_clock_running")
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> ---
->  kernel/sched/clock.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>> Otherwise, to be on the safe side we can just save r2 in a local var
+>> before the bl and restore it after. I guess it won't collapse CPU time
+>> on a performant PPC64.
 > 
-> diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-> index 1152259..12bca64 100644
-> --- a/kernel/sched/clock.c
-> +++ b/kernel/sched/clock.c
-> @@ -370,7 +370,7 @@ u64 sched_clock_cpu(int cpu)
->  	if (sched_clock_stable())
->  		return sched_clock() + __sched_clock_offset;
->  
-> -	if (!static_branch_unlikely(&sched_clock_running))
-> +	if (!static_branch_likely(&sched_clock_running))
->  		return sched_clock();
->  
->  	preempt_disable_notrace();
-> @@ -393,7 +393,7 @@ void sched_clock_tick(void)
->  	if (sched_clock_stable())
->  		return;
->  
-> -	if (!static_branch_unlikely(&sched_clock_running))
-> +	if (!static_branch_likely(&sched_clock_running))
->  		return;
->  
->  	lockdep_assert_irqs_disabled();
-> @@ -460,7 +460,7 @@ void __init sched_clock_init(void)
->  
->  u64 sched_clock_cpu(int cpu)
->  {
-> -	if (!static_branch_unlikely(&sched_clock_running))
-> +	if (!static_branch_likely(&sched_clock_running))
->  		return 0;
->  
->  	return sched_clock();
+> That does not fix everything.  The called function requires a specific
+> value in r2 on entry.
 
+Euh ... but there is nothing like that when using existing 
+call_do_irq(). How does GCC know that call_do_irq() has same TOC as 
+__do_irq() ?
+
+> 
+> So all this needs verification.  Hopefully you can get away with just
+> not clobbering r2 (and not adding a nop after the bl), sure.  But this
+> needs to be checked.
+> 
+> Changing control flow inside inline assembler always is problematic.
+> Another problem in this case (on all ABIs) is that the compiler does
+> not see you call __do_irq.  Again, you can probably get away with that
+> too, but :-)
+
+Anyway it sees I reference it, as it is in input arguments. Isn't it 
+enough ?
+
+Christophe
