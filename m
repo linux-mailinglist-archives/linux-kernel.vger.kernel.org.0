@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D4510BDC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A25910BDE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:32:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbfK0VbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:31:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45506 "EHLO mail.kernel.org"
+        id S1730304AbfK0VcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:32:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730916AbfK0UzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:06 -0500
+        id S1727146AbfK0Uxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:53:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BA422084D;
-        Wed, 27 Nov 2019 20:55:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BA252070B;
+        Wed, 27 Nov 2019 20:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888105;
-        bh=bg068m6eQEBEESa5p5w78Mq6U6ACRkCkcOhx0Dbo9xs=;
+        s=default; t=1574888034;
+        bh=kN3WIv/LyoTwwkl5EnavKlDXb+7KafpH6vrOsCLhcoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=01NAvmDoxEFQiZTn933OcFMmGMR4L3JwuH/TAcWILAUD3TUHByHphwvSSfX5/qT0j
-         Vesa012r/2wk6ThBtRYtZAgtj1ibTT40Sst1cNiMli07VzdrV6t05pZHOBaSIvnrsU
-         qkd4VJXOtEPBGxUakqfkf2qaExE9sp2ndPEIQScs=
+        b=JREx76pmw4sZOG07G1Vbp7wvSg1cTLmFZzPojkkEECMs1BDtRD7yQshzMXtFSyuc0
+         +iKCXYIt8YFkWE7l0ROExa44/6TDVGF5mUQv3Q0i+YfFh5/ZWgOO8LKijS5Z9IdVGF
+         zPdHJoAS8/FIOUayNV6el72FZbikSizPYDX9Pnxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.14 189/211] media: vivid: Fix wrong locking that causes race conditions on streaming stop
-Date:   Wed, 27 Nov 2019 21:32:02 +0100
-Message-Id: <20191127203111.557215149@linuxfoundation.org>
+        stable@vger.kernel.org, Kai Shen <shenkai8@huawei.com>,
+        Feilong Lin <linfeilong@huawei.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 191/211] cpufreq: Add NULL checks to show() and store() methods of cpufreq
+Date:   Wed, 27 Nov 2019 21:32:04 +0100
+Message-Id: <20191127203111.731778105@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -45,122 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Popov <alex.popov@linux.com>
+From: Kai Shen <shenkai8@huawei.com>
 
-commit 6dcd5d7a7a29c1e4b8016a06aed78cd650cd8c27 upstream.
+commit e6e8df07268c1f75dd9215536e2ce4587b70f977 upstream.
 
-There is the same incorrect approach to locking implemented in
-vivid_stop_generating_vid_cap(), vivid_stop_generating_vid_out() and
-sdr_cap_stop_streaming().
+Add NULL checks to show() and store() in cpufreq.c to avoid attempts
+to invoke a NULL callback.
 
-These functions are called during streaming stopping with vivid_dev.mutex
-locked. And they all do the same mistake while stopping their kthreads,
-which need to lock this mutex as well. See the example from
-vivid_stop_generating_vid_cap():
-  /* shutdown control thread */
-  vivid_grab_controls(dev, false);
-  mutex_unlock(&dev->mutex);
-  kthread_stop(dev->kthread_vid_cap);
-  dev->kthread_vid_cap = NULL;
-  mutex_lock(&dev->mutex);
+Though some interfaces of cpufreq are set as read-only, users can
+still get write permission using chmod which can lead to a kernel
+crash, as follows:
 
-But when this mutex is unlocked, another vb2_fop_read() can lock it
-instead of vivid_thread_vid_cap() and manipulate the buffer queue.
-That causes a use-after-free access later.
+chmod +w /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+echo 1 >  /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
 
-To fix those issues let's:
-  1. avoid unlocking the mutex in vivid_stop_generating_vid_cap(),
-vivid_stop_generating_vid_out() and sdr_cap_stop_streaming();
-  2. use mutex_trylock() with schedule_timeout_uninterruptible() in
-the loops of the vivid kthread handlers.
+This bug was found in linux 4.19.
 
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Kai Shen <shenkai8@huawei.com>
+Reported-by: Feilong Lin <linfeilong@huawei.com>
+Reviewed-by: Feilong Lin <linfeilong@huawei.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Subject & changelog ]
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    8 +++++---
- drivers/media/platform/vivid/vivid-kthread-out.c |    8 +++++---
- drivers/media/platform/vivid/vivid-sdr-cap.c     |    8 +++++---
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/cpufreq/cpufreq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -777,7 +777,11 @@ static int vivid_thread_vid_cap(void *da
- 		if (kthread_should_stop())
- 			break;
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -911,6 +911,9 @@ static ssize_t show(struct kobject *kobj
+ 	struct freq_attr *fattr = to_attr(attr);
+ 	ssize_t ret;
  
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
++	if (!fattr->show)
++		return -EIO;
 +
- 		cur_jiffies = jiffies;
- 		if (dev->cap_seq_resync) {
- 			dev->jiffies_vid_cap = cur_jiffies;
-@@ -930,8 +934,6 @@ void vivid_stop_generating_vid_cap(struc
+ 	down_read(&policy->rwsem);
+ 	ret = fattr->show(policy, buf);
+ 	up_read(&policy->rwsem);
+@@ -925,6 +928,9 @@ static ssize_t store(struct kobject *kob
+ 	struct freq_attr *fattr = to_attr(attr);
+ 	ssize_t ret = -EINVAL;
  
- 	/* shutdown control thread */
- 	vivid_grab_controls(dev, false);
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_vid_cap);
- 	dev->kthread_vid_cap = NULL;
--	mutex_lock(&dev->mutex);
- }
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -147,7 +147,11 @@ static int vivid_thread_vid_out(void *da
- 		if (kthread_should_stop())
- 			break;
- 
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
++	if (!fattr->store)
++		return -EIO;
 +
- 		cur_jiffies = jiffies;
- 		if (dev->out_seq_resync) {
- 			dev->jiffies_vid_out = cur_jiffies;
-@@ -301,8 +305,6 @@ void vivid_stop_generating_vid_out(struc
+ 	cpus_read_lock();
  
- 	/* shutdown control thread */
- 	vivid_grab_controls(dev, false);
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_vid_out);
- 	dev->kthread_vid_out = NULL;
--	mutex_lock(&dev->mutex);
- }
---- a/drivers/media/platform/vivid/vivid-sdr-cap.c
-+++ b/drivers/media/platform/vivid/vivid-sdr-cap.c
-@@ -149,7 +149,11 @@ static int vivid_thread_sdr_cap(void *da
- 		if (kthread_should_stop())
- 			break;
- 
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
-+
- 		cur_jiffies = jiffies;
- 		if (dev->sdr_cap_seq_resync) {
- 			dev->jiffies_sdr_cap = cur_jiffies;
-@@ -309,10 +313,8 @@ static void sdr_cap_stop_streaming(struc
- 	}
- 
- 	/* shutdown control thread */
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_sdr_cap);
- 	dev->kthread_sdr_cap = NULL;
--	mutex_lock(&dev->mutex);
- }
- 
- const struct vb2_ops vivid_sdr_cap_qops = {
+ 	if (cpu_online(policy->cpu)) {
 
 
