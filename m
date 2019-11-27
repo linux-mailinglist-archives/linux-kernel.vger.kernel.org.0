@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F28D10BE5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B12310BFD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:47:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730871AbfK0Vfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:35:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34428 "EHLO mail.kernel.org"
+        id S1728544AbfK0VqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:46:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728003AbfK0Us6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:48:58 -0500
+        id S1727538AbfK0UeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:34:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD0B9217C3;
-        Wed, 27 Nov 2019 20:48:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73D7D207DD;
+        Wed, 27 Nov 2019 20:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887738;
-        bh=VE3R3aiHUNjnBCnPqcjznNJBj+dctkdav0mNL+LP5Y0=;
+        s=default; t=1574886853;
+        bh=7ELU8Vu6+GPSxNfHPinOpipkeIGoboas9zgz5lzP99o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hwcm+NZMUCgWTk0Y/Ad6AJ/QnuJP1DJXayBewyL8lCeGCvLJmMSXJXC2pQE7CdIpD
-         dtmFTcAwmoMR3KRXhLNWgkeLs7L6FmVXB7YgEqwFjP/XIPBOIzBVmeCBtTv+UDFfJj
-         0dY2w7SlcoHlHQK/gRTGc8WnopmSvRj1nbm/bOa4=
+        b=ge5uplF8zj8dD4hO+K+xABl7+6vdj5DPF1WFPWEdHNISm1CzE3EEgPYvz+mhjWgPF
+         EP7YxnNieHAenISYM3rqVWXhOEj1p65tagYz8JRoKjHcnJrCbW47jY0dsxcfPN3eZX
+         3KMqNvtEtikx9COz/1bhgMg7KhUvD695HwC6YwpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Darren Hart <dvhart@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 075/211] ceph: fix dentry leak in ceph_readdir_prepopulate
-Date:   Wed, 27 Nov 2019 21:30:08 +0100
-Message-Id: <20191127203100.909688424@linuxfoundation.org>
+Subject: [PATCH 4.4 019/132] platform/x86: asus-wmi: add SERIO_I8042 dependency
+Date:   Wed, 27 Nov 2019 21:30:10 +0100
+Message-Id: <20191127202916.307387184@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,30 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit c58f450bd61511d897efc2ea472c69630635b557 ]
+[ Upstream commit ea893695ec1131a5fed0523ff8094bc6e8723bbe ]
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+A recent bugfix added a call to i8042_install_filter but did
+not add the dependency, leading to possible link errors:
+
+drivers/platform/built-in.o: In function `asus_nb_wmi_quirks':
+asus-nb-wmi.c:(.text+0x23af): undefined reference to `i8042_install_filter'
+
+This adds a dependency on SERIO_I8042||SERIO_I8042=n to indicate
+that we can build the driver when the i8042 driver is disabled,
+but it cannot be built-in when that is a loadable module.
+
+Fixes: b5643539b825 ("platform/x86: asus-wmi: Filter buggy scan codes on ASUS Q500A")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Darren Hart <dvhart@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/platform/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 3818027c12f5a..5999d806de788 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1631,7 +1631,6 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 			if (IS_ERR(realdn)) {
- 				err = PTR_ERR(realdn);
- 				d_drop(dn);
--				dn = NULL;
- 				goto next_item;
- 			}
- 			dn = realdn;
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 953974b5a9a95..6487453c68b59 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -566,6 +566,7 @@ config ASUS_WMI
+ config ASUS_NB_WMI
+ 	tristate "Asus Notebook WMI Driver"
+ 	depends on ASUS_WMI
++	depends on SERIO_I8042 || SERIO_I8042 = n
+ 	---help---
+ 	  This is a driver for newer Asus notebooks. It adds extra features
+ 	  like wireless radio and bluetooth control, leds, hotkeys, backlight...
 -- 
 2.20.1
 
