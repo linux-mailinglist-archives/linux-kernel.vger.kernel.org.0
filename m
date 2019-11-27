@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7518410B7FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C6610B983
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbfK0Uim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:38:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42450 "EHLO mail.kernel.org"
+        id S1728314AbfK0Uxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:53:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728771AbfK0Uii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:38:38 -0500
+        id S1730764AbfK0Uxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:53:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD42216F4;
-        Wed, 27 Nov 2019 20:38:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FDCA2068E;
+        Wed, 27 Nov 2019 20:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887118;
-        bh=QuI3VVaRWCrB1tpl1EFxVmZ4OoG20UNiLVtP0YBWAT8=;
+        s=default; t=1574888025;
+        bh=JFkH838InWF4Uk6kpUipLTfcZq+Or1Xb9dh4tiaBm7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h+jsqCnz9P9W+IDymGe3BPNXRcU15TRDaGET7vkHNnq5XnB7GSKcbVVQUd38tF5ql
-         yBb+u1jL1eRbkFKtk9Wmp7XpbhIhuDvjSPVnTO5xJ2uROzb7pmERqWxq1dG5WYbNcf
-         6qrAijvLyVyByVMbb++cNFIQGjqjBUDO8oIVkBJk=
+        b=PJxwfoZVEtfSlpiNtnDEGMclCcUQFngrG80ARLcS+q+kbOGXdYwTso1i+7md9BN1L
+         e4Eawpqo7VybLDEyTk1XZOveeU2ysleB85xSBCv5NAdeSFgs4Q0pC33GfRpxgilCGM
+         2EvfflUUMXcxT/8W+7mYAQM5kxY8rdYhfC+3p+vM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 077/132] ocfs2: fix clusters leak in ocfs2_defrag_extent()
-Date:   Wed, 27 Nov 2019 21:31:08 +0100
-Message-Id: <20191127203009.495739409@linuxfoundation.org>
+Subject: [PATCH 4.14 136/211] brcmsmac: never log "tid x is not aggable" by default
+Date:   Wed, 27 Nov 2019 21:31:09 +0100
+Message-Id: <20191127203106.881430566@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,82 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Chen <lchen@suse.com>
+From: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
 
-[ Upstream commit 6194ae4242dec0c9d604bc05df83aa9260a899e4 ]
+[ Upstream commit 96fca788e5788b7ea3b0050eb35a343637e0a465 ]
 
-ocfs2_defrag_extent() might leak allocated clusters.  When the file
-system has insufficient space, the number of claimed clusters might be
-less than the caller wants.  If that happens, the original code might
-directly commit the transaction without returning clusters.
+This message greatly spams the log under heavy Tx of frames with BK access
+class which is especially true when operating as AP. It is also not informative
+as the "agg'ablity" of TIDs are set once and never change.
+Fix this by logging only in debug mode.
 
-This patch is based on code in ocfs2_add_clusters_in_btree().
-
-[akpm@linux-foundation.org: include localalloc.h, reduce scope of data_ac]
-Link: http://lkml.kernel.org/r/20180904041621.16874-3-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/move_extents.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ .../net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c    | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index c1a83c58456ef..725a870fd14fc 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -25,6 +25,7 @@
- #include "ocfs2_ioctl.h"
- 
- #include "alloc.h"
-+#include "localalloc.h"
- #include "aops.h"
- #include "dlmglue.h"
- #include "extent_map.h"
-@@ -222,6 +223,7 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 	struct ocfs2_refcount_tree *ref_tree = NULL;
- 	u32 new_phys_cpos, new_len;
- 	u64 phys_blkno = ocfs2_clusters_to_blocks(inode->i_sb, phys_cpos);
-+	int need_free = 0;
- 
- 	if ((ext_flags & OCFS2_EXT_REFCOUNTED) && *len) {
- 
-@@ -315,6 +317,7 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		if (!partial) {
- 			context->range->me_flags &= ~OCFS2_MOVE_EXT_FL_COMPLETE;
- 			ret = -ENOSPC;
-+			need_free = 1;
- 			goto out_commit;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
+index 257968fb3111f..66f1f41b13803 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
+@@ -846,8 +846,8 @@ brcms_ops_ampdu_action(struct ieee80211_hw *hw,
+ 		status = brcms_c_aggregatable(wl->wlc, tid);
+ 		spin_unlock_bh(&wl->lock);
+ 		if (!status) {
+-			brcms_err(wl->wlc->hw->d11core,
+-				  "START: tid %d is not agg\'able\n", tid);
++			brcms_dbg_ht(wl->wlc->hw->d11core,
++				     "START: tid %d is not agg\'able\n", tid);
+ 			return -EINVAL;
  		}
- 	}
-@@ -339,6 +342,20 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		mlog_errno(ret);
- 
- out_commit:
-+	if (need_free && context->data_ac) {
-+		struct ocfs2_alloc_context *data_ac = context->data_ac;
-+
-+		if (context->data_ac->ac_which == OCFS2_AC_USE_LOCAL)
-+			ocfs2_free_local_alloc_bits(osb, handle, data_ac,
-+					new_phys_cpos, new_len);
-+		else
-+			ocfs2_free_clusters(handle,
-+					data_ac->ac_inode,
-+					data_ac->ac_bh,
-+					ocfs2_clusters_to_blocks(osb->sb, new_phys_cpos),
-+					new_len);
-+	}
-+
- 	ocfs2_commit_trans(osb, handle);
- 
- out_unlock_mutex:
+ 		ieee80211_start_tx_ba_cb_irqsafe(vif, sta->addr, tid);
 -- 
 2.20.1
 
