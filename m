@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 214A310ADEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC15110ADE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:40:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfK0Kkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:40:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56510 "EHLO mx1.suse.de"
+        id S1727322AbfK0KkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:40:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56706 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727287AbfK0KkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:40:00 -0500
+        id S1727298AbfK0KkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 05:40:02 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 34605B47B;
-        Wed, 27 Nov 2019 10:39:58 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id BE4EBB039;
+        Wed, 27 Nov 2019 10:39:59 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -58,9 +58,9 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 rebase 26/34] powerpc/64: system call: Fix sparse warning about missing declaration
-Date:   Wed, 27 Nov 2019 11:39:02 +0100
-Message-Id: <f45bdb3ccb7c6a0c7ee5ff0612a80bce2f44dc0b.1574803685.git.msuchanek@suse.de>
+Subject: [PATCH v2 rebase 27/34] powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+Date:   Wed, 27 Nov 2019 11:39:03 +0100
+Message-Id: <0262730675c77b31ff0654ae3ee53276300bb8d8.1574803685.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <cover.1574803684.git.msuchanek@suse.de>
 References: <cover.1574803684.git.msuchanek@suse.de>
@@ -71,48 +71,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse warns about missing declarations for these functions:
+This partially reverts commit caf6f9c8a326 ("asm-generic: Remove
+unneeded __ARCH_WANT_SYS_LLSEEK macro")
 
-+arch/powerpc/kernel/syscall_64.c:108:23: warning: symbol 'syscall_exit_prepare' was not declared. Should it be static?
-+arch/powerpc/kernel/syscall_64.c:18:6: warning: symbol 'system_call_exception' was not declared. Should it be static?
-+arch/powerpc/kernel/syscall_64.c:200:23: warning: symbol 'interrupt_exit_user_prepare' was not declared. Should it be static?
-+arch/powerpc/kernel/syscall_64.c:288:23: warning: symbol 'interrupt_exit_kernel_prepare' was not declared. Should it be static?
+When CONFIG_COMPAT is disabled on ppc64 the kernel does not build.
 
-Add declaration for them.
+There is resistance to both removing the llseek syscall from the 64bit
+syscall tables and building the llseek interface unconditionally.
+
+Link: https://lore.kernel.org/lkml/20190828151552.GA16855@infradead.org/
+Link: https://lore.kernel.org/lkml/20190829214319.498c7de2@naga/
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/include/asm/asm-prototypes.h | 6 ++++++
- arch/powerpc/kernel/syscall_64.c          | 1 +
- 2 files changed, 7 insertions(+)
+ arch/powerpc/include/asm/unistd.h | 1 +
+ fs/read_write.c                   | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/asm-prototypes.h b/arch/powerpc/include/asm/asm-prototypes.h
-index 399ca63196e4..841746357833 100644
---- a/arch/powerpc/include/asm/asm-prototypes.h
-+++ b/arch/powerpc/include/asm/asm-prototypes.h
-@@ -96,6 +96,12 @@ ppc_select(int n, fd_set __user *inp, fd_set __user *outp, fd_set __user *exp, s
- unsigned long __init early_init(unsigned long dt_ptr);
- void __init machine_init(u64 dt_ptr);
+diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
+index b0720c7c3fcf..700fcdac2e3c 100644
+--- a/arch/powerpc/include/asm/unistd.h
++++ b/arch/powerpc/include/asm/unistd.h
+@@ -31,6 +31,7 @@
+ #define __ARCH_WANT_SYS_SOCKETCALL
+ #define __ARCH_WANT_SYS_FADVISE64
+ #define __ARCH_WANT_SYS_GETPGRP
++#define __ARCH_WANT_SYS_LLSEEK
+ #define __ARCH_WANT_SYS_NICE
+ #define __ARCH_WANT_SYS_OLD_GETRLIMIT
+ #define __ARCH_WANT_SYS_OLD_UNAME
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5bbf587f5bc1..89aa2701dbeb 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -331,7 +331,8 @@ COMPAT_SYSCALL_DEFINE3(lseek, unsigned int, fd, compat_off_t, offset, unsigned i
+ }
  #endif
-+#ifdef CONFIG_PPC64
-+long system_call_exception(long r3, long r4, long r5, long r6, long r7, long r8, unsigned long r0, struct pt_regs *regs);
-+notrace unsigned long syscall_exit_prepare(unsigned long r3, struct pt_regs *regs);
-+notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs, unsigned long msr);
-+notrace unsigned long interrupt_exit_kernel_prepare(struct pt_regs *regs, unsigned long msr);
-+#endif
  
- long ppc_fadvise64_64(int fd, int advice, u32 offset_high, u32 offset_low,
- 		      u32 len_high, u32 len_low);
-diff --git a/arch/powerpc/kernel/syscall_64.c b/arch/powerpc/kernel/syscall_64.c
-index d00cfc4a39a9..62f44c3072f3 100644
---- a/arch/powerpc/kernel/syscall_64.c
-+++ b/arch/powerpc/kernel/syscall_64.c
-@@ -1,4 +1,5 @@
- #include <linux/err.h>
-+#include <asm/asm-prototypes.h>
- #include <asm/book3s/64/kup-radix.h>
- #include <asm/cputime.h>
- #include <asm/hw_irq.h>
+-#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT)
++#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT) || \
++	defined(__ARCH_WANT_SYS_LLSEEK)
+ SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
+ 		unsigned long, offset_low, loff_t __user *, result,
+ 		unsigned int, whence)
 -- 
 2.23.0
 
