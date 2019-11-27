@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFCD10B9AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5774B10B9AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729505AbfK0Uzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46182 "EHLO mail.kernel.org"
+        id S1730232AbfK0Uzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:55:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730024AbfK0Uzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:40 -0500
+        id S1730981AbfK0Uzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:55:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C46222154A;
-        Wed, 27 Nov 2019 20:55:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D02882068E;
+        Wed, 27 Nov 2019 20:55:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888139;
-        bh=0YtwBp1f+Cgq7P3s/HVzv1YEHY2F4J8cu2TOkq3oFFM=;
+        s=default; t=1574888142;
+        bh=uUfspw6J0y7zVNWHaEL3Fg4hnP5/GkJoZOcnFFnl6tg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zs01PbjGTKSzOmartOUqOsSEmIT9EyYbYF7E/Dr4ndbF5S4FsM+pbWhRJtWhMP/qC
-         5iHU+vdIRedCg5wKgrQs5eP4yB0F0hGYEoR2y864EdKISGv5nsfacTRQznGf/HBJIh
-         VPZZ/M47IxvocWRm9CeQEdy6ebHgF93A4H09CjHQ=
+        b=Ns9V0C2vKtwMmA1dWZV4zIPRYHlHVu0Ud4549Cabl4UEitqP9Mx8u1KrLsaigMrL3
+         tMzy0lAoBZGrkJ8m6UMcBiP52o4x/iTNL5Pan90lzZd7EkTpNtM4azEf9yvbsuoLPY
+         cB6eTwMpzaF8b+kHUkX9Frb+S84nwJmQeN2jEOZ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.19 020/306] drm/i915/userptr: Try to acquire the page lock around set_page_dirty()
-Date:   Wed, 27 Nov 2019 21:27:50 +0100
-Message-Id: <20191127203116.175503395@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 021/306] mwifiex: Fix NL80211_TX_POWER_LIMITED
+Date:   Wed, 27 Nov 2019 21:27:51 +0100
+Message-Id: <20191127203116.245218438@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -46,80 +44,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Adrian Bunk <bunk@kernel.org>
 
-commit 2d691aeca4aecbb8d0414a777a46981a8e142b05 upstream.
+[ Upstream commit 65a576e27309120e0621f54d5c81eb9128bd56be ]
 
-set_page_dirty says:
+NL80211_TX_POWER_LIMITED was treated as NL80211_TX_POWER_AUTOMATIC,
+which is the opposite of what should happen and can cause nasty
+regulatory problems.
 
-	For pages with a mapping this should be done under the page lock
-	for the benefit of asynchronous memory errors who prefer a
-	consistent dirty state. This rule can be broken in some special
-	cases, but should be better not to.
+if/else converted to a switch without default to make gcc warn
+on unhandled enum values.
 
-Under those rules, it is only safe for us to use the plain set_page_dirty
-calls for shmemfs/anonymous memory. Userptr may be used with real
-mappings and so needs to use the locked version (set_page_dirty_lock).
-
-However, following a try_to_unmap() we may want to remove the userptr and
-so call put_pages(). However, try_to_unmap() acquires the page lock and
-so we must avoid recursively locking the pages ourselves -- which means
-that we cannot safely acquire the lock around set_page_dirty(). Since we
-can't be sure of the lock, we have to risk skip dirtying the page, or
-else risk calling set_page_dirty() without a lock and so risk fs
-corruption.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203317
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112012
-Fixes: 5cc9ed4b9a7a ("drm/i915: Introduce mapping of user pages into video memory (userptr) ioctl")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191111133205.11590-1-chris@chris-wilson.co.uk
-(cherry picked from commit 0d4bbe3d407f79438dc4f87943db21f7134cfc65)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-(cherry picked from commit cee7fb437edcdb2f9f8affa959e274997f5dca4d)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Adrian Bunk <bunk@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/i915_gem_userptr.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c  | 13 +++++++++++--
+ drivers/net/wireless/marvell/mwifiex/ioctl.h     |  1 +
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 11 +++++++----
+ 3 files changed, 19 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-@@ -691,8 +691,28 @@ i915_gem_userptr_put_pages(struct drm_i9
- 	i915_gem_gtt_finish_pages(obj, pages);
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 47ec5293c045d..7b74ef71bef1d 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -376,11 +376,20 @@ mwifiex_cfg80211_set_tx_power(struct wiphy *wiphy,
+ 	struct mwifiex_power_cfg power_cfg;
+ 	int dbm = MBM_TO_DBM(mbm);
  
- 	for_each_sgt_page(page, sgt_iter, pages) {
--		if (obj->mm.dirty)
-+		if (obj->mm.dirty && trylock_page(page)) {
-+			/*
-+			 * As this may not be anonymous memory (e.g. shmem)
-+			 * but exist on a real mapping, we have to lock
-+			 * the page in order to dirty it -- holding
-+			 * the page reference is not sufficient to
-+			 * prevent the inode from being truncated.
-+			 * Play safe and take the lock.
-+			 *
-+			 * However...!
-+			 *
-+			 * The mmu-notifier can be invalidated for a
-+			 * migrate_page, that is alreadying holding the lock
-+			 * on the page. Such a try_to_unmap() will result
-+			 * in us calling put_pages() and so recursively try
-+			 * to lock the page. We avoid that deadlock with
-+			 * a trylock_page() and in exchange we risk missing
-+			 * some page dirtying.
-+			 */
- 			set_page_dirty(page);
-+			unlock_page(page);
-+		}
+-	if (type == NL80211_TX_POWER_FIXED) {
++	switch (type) {
++	case NL80211_TX_POWER_FIXED:
+ 		power_cfg.is_power_auto = 0;
++		power_cfg.is_power_fixed = 1;
+ 		power_cfg.power_level = dbm;
+-	} else {
++		break;
++	case NL80211_TX_POWER_LIMITED:
++		power_cfg.is_power_auto = 0;
++		power_cfg.is_power_fixed = 0;
++		power_cfg.power_level = dbm;
++		break;
++	case NL80211_TX_POWER_AUTOMATIC:
+ 		power_cfg.is_power_auto = 1;
++		break;
+ 	}
  
- 		mark_page_accessed(page);
- 		put_page(page);
+ 	priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
+diff --git a/drivers/net/wireless/marvell/mwifiex/ioctl.h b/drivers/net/wireless/marvell/mwifiex/ioctl.h
+index 48e154e1865df..0dd592ea6e833 100644
+--- a/drivers/net/wireless/marvell/mwifiex/ioctl.h
++++ b/drivers/net/wireless/marvell/mwifiex/ioctl.h
+@@ -267,6 +267,7 @@ struct mwifiex_ds_encrypt_key {
+ 
+ struct mwifiex_power_cfg {
+ 	u32 is_power_auto;
++	u32 is_power_fixed;
+ 	u32 power_level;
+ };
+ 
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index 843d65bba1811..74e50566db1f2 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -688,6 +688,9 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
+ 	txp_cfg = (struct host_cmd_ds_txpwr_cfg *) buf;
+ 	txp_cfg->action = cpu_to_le16(HostCmd_ACT_GEN_SET);
+ 	if (!power_cfg->is_power_auto) {
++		u16 dbm_min = power_cfg->is_power_fixed ?
++			      dbm : priv->min_tx_power_level;
++
+ 		txp_cfg->mode = cpu_to_le32(1);
+ 		pg_tlv = (struct mwifiex_types_power_group *)
+ 			 (buf + sizeof(struct host_cmd_ds_txpwr_cfg));
+@@ -702,7 +705,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
+ 		pg->last_rate_code = 0x03;
+ 		pg->modulation_class = MOD_CLASS_HR_DSSS;
+ 		pg->power_step = 0;
+-		pg->power_min = (s8) dbm;
++		pg->power_min = (s8) dbm_min;
+ 		pg->power_max = (s8) dbm;
+ 		pg++;
+ 		/* Power group for modulation class OFDM */
+@@ -710,7 +713,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
+ 		pg->last_rate_code = 0x07;
+ 		pg->modulation_class = MOD_CLASS_OFDM;
+ 		pg->power_step = 0;
+-		pg->power_min = (s8) dbm;
++		pg->power_min = (s8) dbm_min;
+ 		pg->power_max = (s8) dbm;
+ 		pg++;
+ 		/* Power group for modulation class HTBW20 */
+@@ -718,7 +721,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
+ 		pg->last_rate_code = 0x20;
+ 		pg->modulation_class = MOD_CLASS_HT;
+ 		pg->power_step = 0;
+-		pg->power_min = (s8) dbm;
++		pg->power_min = (s8) dbm_min;
+ 		pg->power_max = (s8) dbm;
+ 		pg->ht_bandwidth = HT_BW_20;
+ 		pg++;
+@@ -727,7 +730,7 @@ int mwifiex_set_tx_power(struct mwifiex_private *priv,
+ 		pg->last_rate_code = 0x20;
+ 		pg->modulation_class = MOD_CLASS_HT;
+ 		pg->power_step = 0;
+-		pg->power_min = (s8) dbm;
++		pg->power_min = (s8) dbm_min;
+ 		pg->power_max = (s8) dbm;
+ 		pg->ht_bandwidth = HT_BW_40;
+ 	}
+-- 
+2.20.1
+
 
 
