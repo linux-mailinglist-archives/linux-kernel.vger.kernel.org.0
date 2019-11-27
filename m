@@ -2,91 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD52910AC8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 10:25:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B2C10AC93
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 10:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfK0JZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 04:25:12 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:47349 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfK0JZM (ORCPT
+        id S1726587AbfK0JZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 04:25:37 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42574 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726282AbfK0JZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 04:25:12 -0500
-Received: from mail-qv1-f54.google.com ([209.85.219.54]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MWixU-1iKUGs1WKe-00X25Y; Wed, 27 Nov 2019 10:25:10 +0100
-Received: by mail-qv1-f54.google.com with SMTP id d3so8562842qvs.11;
-        Wed, 27 Nov 2019 01:25:10 -0800 (PST)
-X-Gm-Message-State: APjAAAUgKq5FWCyA1C8yF9uuJ5z96wysgkeUuL5e/SoqGdJIG1VoW/uk
-        wC6Bg0ikmSLhLaLiEmvTJ+yjFpIS3gVwu7iK3f0=
-X-Google-Smtp-Source: APXvYqzs6+rOckuHAd+3aopwg1GeGgfWV2X9q12ELte4WZT5ZoownfduEHy1+6glfj3Mcw2cHjRqHovN97pt0V2+7oA=
-X-Received: by 2002:a05:6214:811:: with SMTP id df17mr3679940qvb.197.1574846709178;
- Wed, 27 Nov 2019 01:25:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20191127130139.0b16375c@canb.auug.org.au>
-In-Reply-To: <20191127130139.0b16375c@canb.auug.org.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 27 Nov 2019 10:24:52 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3ZitDAXj+4UWYQM+Vv6FvO+q7DAx6ZhBZU58NPH6MvaQ@mail.gmail.com>
-Message-ID: <CAK8P3a3ZitDAXj+4UWYQM+Vv6FvO+q7DAx6ZhBZU58NPH6MvaQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the y2038 tree with the tip tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <dima@arista.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:WHbR4DI8Um5jgl17Wn1YLm4Xp7rPPGrftMB/Qo7sC3AY9rIg88c
- PouKIY4wxsYNbQob33G45NAq070NkFzRyORQr9+LvGp7NXaQdkbXFqU+XuoHwn6hcqwRMrA
- FWXauicOZXAi1ZosoKfqvVORqkrRSDZTySh2StywUiODm9aJHTwwPN3W8TaFrT7Bs+4jpnP
- aos9ZF54cqm92EtBaGb7w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:haWH2gPHdQo=:roMz8QXqa5QqO6KZJVJ5Ia
- rz6wl1YcISIxI+PO0h4hzMarTi3s78ZJMhzsdwX9T55y/i8pqEgkvddFg1n5cBDQI56f4c61c
- TJOozFElDrgVQEm6M2Ci9aykzqM1VvyEmYK080vxjMWPN3Xqs5KVACbcerav5SSO/rksFZM8L
- IpKnThyz1S3c3kD+6YKuJOioF297idVRumL1wezVmCiOgYRPc8fRg/u7/6ob6PyO4obGrBc/c
- Bov/eqbesHqkAzNnQ1IJqv147GL7OFzAPUsz8fnbKUql965qiqWdRjlIwFjP7TPLk2SNqbUij
- ywOgUx5GeR6kvp+/FqealLVhKQ64wu5fa4eaqccH08ge5VUG9zhIWoNOTAu8HUwCi5sHwLSoC
- 7yAYU43iB8ni4GoR2T1ouoXuvARs4ve9eupIaSU70HwfalEKDFH6HpCDzxnI9ysC+1OsGaSeP
- Q2xJtlIPpY1OPijcwVIx/I21V5+XQoH57o6UE3uF42yozf6yf6hKqo+C7rjn0v//PlFmJlqNz
- jLYlc7N4N9HbKebDvdfIT8Eb+eiAAKlrJ25GxiH/499HBoyD6o0i7tEH/ikR5YUuJMseiW7H1
- eupRUnm3/DHiRFcF+YKs2MpB+SEu4NMb95EU+kWXJF72dXAkURSWANbRlgiQsYVraTS1FivPW
- NG41ohbpuUSW4mLwc0HXsuIkmUWOqR0gTyCwgItUk7krVgEl0wFf5bk5IHXuYgv/fEYjA4uaw
- vynTJS7a2CUgv7/Mr0XhN6iWOxWzkXHtDhOq6+XGrDMbAbqldvxp4EvF1yo/ocJld9i9zHe8C
- Dx08ArsGjRzvDYqsP6BKhSFNvr5kcpwi7vZsH6jGufl4aG0Vx7LsFT5o1v/+1HpYnxZ4SN9XA
- 61bB2w1NIt2lTrF6MRtQ==
+        Wed, 27 Nov 2019 04:25:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574846735;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gHa4/Cq6deskcCOJjWjfn9nM/j9wpDJD9Nm25+gtRCo=;
+        b=QP/wuC7z4xFU6TumbcZVRGFjgq3ULdHQwuR4fHYxPHk/4fOBcP6Jd2GAM/ZWENza+zgoXo
+        4c/CNBNazE2p4ntHUVEC+2Fba/xjH+YWSLSqapiPX82Ltyc0oADVLXOG4MhdIFT1U/q7Bn
+        5kCUy5RY2plcyzzngI8W+tS3cNOhiKY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-71-dXB4TUW-Mp2wEqg0FREWHA-1; Wed, 27 Nov 2019 04:25:32 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0503F593D5;
+        Wed, 27 Nov 2019 09:25:30 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D50C5C219;
+        Wed, 27 Nov 2019 09:25:24 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id DB03E9DA4; Wed, 27 Nov 2019 10:25:23 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     robh@kernel.org, intel-gfx@lists.freedesktop.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/2] drm: call drm_gem_object_funcs.mmap with fake offset
+Date:   Wed, 27 Nov 2019 10:25:22 +0100
+Message-Id: <20191127092523.5620-2-kraxel@redhat.com>
+In-Reply-To: <20191127092523.5620-1-kraxel@redhat.com>
+References: <20191127092523.5620-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: dXB4TUW-Mp2wEqg0FREWHA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 3:01 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the y2038 tree got a conflict in:
->
->   kernel/time/time.c
->
-> between commit:
->
->   7b8474466ed9 ("time: Zero the upper 32-bits in __kernel_timespec on 32-bit")
->
-> from the tip tree and commit:
->
->   3ca47e958a64 ("y2038: remove CONFIG_64BIT_TIME")
->
-> from the y2038 tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+The fake offset is going to stay, so change the calling convention for
+drm_gem_object_funcs.mmap to include the fake offset.  Update all users
+accordingly.
 
-Looks good, thanks!
+Note that this reverts 83b8a6f242ea ("drm/gem: Fix mmap fake offset
+handling for drm_gem_object_funcs.mmap") and on top then adds the fake
+offset to  drm_gem_prime_mmap to make sure all paths leading to
+obj->funcs->mmap are consistent.
 
-       Arnd
+v3: move fake-offset tweak in drm_gem_prime_mmap() so we have this code
+    only once in the function (Rob Herring).
+
+Fixes: 83b8a6f242ea ("drm/gem: Fix mmap fake offset handling for drm_gem_ob=
+ject_funcs.mmap")
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+---
+ include/drm/drm_gem.h                  | 4 +---
+ drivers/gpu/drm/drm_gem.c              | 3 ---
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 3 +++
+ drivers/gpu/drm/drm_prime.c            | 5 +++--
+ drivers/gpu/drm/ttm/ttm_bo_vm.c        | 7 -------
+ 5 files changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 97a48165642c..0b375069cd48 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -159,9 +159,7 @@ struct drm_gem_object_funcs {
+ =09 *
+ =09 * The callback is used by by both drm_gem_mmap_obj() and
+ =09 * drm_gem_prime_mmap().  When @mmap is present @vm_ops is not
+-=09 * used, the @mmap callback must set vma->vm_ops instead. The @mmap
+-=09 * callback is always called with a 0 offset. The caller will remove
+-=09 * the fake offset as necessary.
++=09 * used, the @mmap callback must set vma->vm_ops instead.
+ =09 */
+ =09int (*mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
+=20
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 2f2b889096b0..56f42e0f2584 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1106,9 +1106,6 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsi=
+gned long obj_size,
+ =09=09return -EINVAL;
+=20
+ =09if (obj->funcs && obj->funcs->mmap) {
+-=09=09/* Remove the fake offset */
+-=09=09vma->vm_pgoff -=3D drm_vma_node_start(&obj->vma_node);
+-
+ =09=09ret =3D obj->funcs->mmap(obj, vma);
+ =09=09if (ret)
+ =09=09=09return ret;
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_g=
+em_shmem_helper.c
+index 0810d3ef6961..a421a2eed48a 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -528,6 +528,9 @@ int drm_gem_shmem_mmap(struct drm_gem_object *obj, stru=
+ct vm_area_struct *vma)
+ =09struct drm_gem_shmem_object *shmem;
+ =09int ret;
+=20
++=09/* Remove the fake offset */
++=09vma->vm_pgoff -=3D drm_vma_node_start(&obj->vma_node);
++
+ =09shmem =3D to_drm_gem_shmem_obj(obj);
+=20
+ =09ret =3D drm_gem_shmem_get_pages(shmem);
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 0814211b0f3f..a0f929c7117b 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -713,6 +713,9 @@ int drm_gem_prime_mmap(struct drm_gem_object *obj, stru=
+ct vm_area_struct *vma)
+ =09struct file *fil;
+ =09int ret;
+=20
++=09/* Add the fake offset */
++=09vma->vm_pgoff +=3D drm_vma_node_start(&obj->vma_node);
++
+ =09if (obj->funcs && obj->funcs->mmap) {
+ =09=09ret =3D obj->funcs->mmap(obj, vma);
+ =09=09if (ret)
+@@ -737,8 +740,6 @@ int drm_gem_prime_mmap(struct drm_gem_object *obj, stru=
+ct vm_area_struct *vma)
+ =09if (ret)
+ =09=09goto out;
+=20
+-=09vma->vm_pgoff +=3D drm_vma_node_start(&obj->vma_node);
+-
+ =09ret =3D obj->dev->driver->fops->mmap(fil, vma);
+=20
+ =09drm_vma_node_revoke(&obj->vma_node, priv);
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_vm.c b/drivers/gpu/drm/ttm/ttm_bo_v=
+m.c
+index e6495ca2630b..3e8c3de91ae4 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c
+@@ -514,13 +514,6 @@ EXPORT_SYMBOL(ttm_bo_mmap);
+ int ttm_bo_mmap_obj(struct vm_area_struct *vma, struct ttm_buffer_object *=
+bo)
+ {
+ =09ttm_bo_get(bo);
+-
+-=09/*
+-=09 * FIXME: &drm_gem_object_funcs.mmap is called with the fake offset
+-=09 * removed. Add it back here until the rest of TTM works without it.
+-=09 */
+-=09vma->vm_pgoff +=3D drm_vma_node_start(&bo->base.vma_node);
+-
+ =09ttm_bo_mmap_vma_setup(bo, vma);
+ =09return 0;
+ }
+--=20
+2.18.1
+
