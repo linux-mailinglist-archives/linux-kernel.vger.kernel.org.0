@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73E1510B874
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C331510B7DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:37:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbfK0Ung (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:43:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51566 "EHLO mail.kernel.org"
+        id S1728591AbfK0Uhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:37:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729470AbfK0Une (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:43:34 -0500
+        id S1728580AbfK0Uh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:37:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 120DF217D7;
-        Wed, 27 Nov 2019 20:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B971420862;
+        Wed, 27 Nov 2019 20:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887413;
-        bh=5Z8syyPxu+RIe5Hu9MJdInqhpQxBkHwU4Q6mZlg2V8w=;
+        s=default; t=1574887049;
+        bh=Ear3GYjHcm6aXs1U2mblM6eBMGjbS/W5opmAxtJII2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mYjHONjm4PC1Z/dJYnt40OrmJcOXLEG9mbauVSFEd3HA5S6LSVXP/Qx39AJf7rfee
-         GdMNAYb5au4cU8WGDMFhd9SRamEZOqxtzIBkNpeqAdnShtdEvX7DLZ1AGRpAloHwKF
-         N+wVFwoMZuOXXv5bZ12GZtl44B3adx2nZ/4XSozs=
+        b=eRA3k4tzQ5dw43Gwgh3LxEP+pJZqOKFbxmGBvGERZliRMBNGvoJFSXgXT5/X0hqtQ
+         q2i8zqUnHPPPsIXI0roJoGmgpxbEblS2ce1h/0TNosW6M/cimhSqDqhnj9CehvrGQd
+         TqRxXbWZKXXy7B7d0Cj2hwAgzhpXKOjc+MOM66ZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
-        David Teigland <teigland@redhat.com>,
+        stable@vger.kernel.org,
+        David Barmann <david.barmann@stackpath.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 100/151] dlm: dont leak kernel pointer to userspace
-Date:   Wed, 27 Nov 2019 21:31:23 +0100
-Message-Id: <20191127203039.370564169@linuxfoundation.org>
+Subject: [PATCH 4.4 093/132] sock: Reset dst when changing sk_mark via setsockopt
+Date:   Wed, 27 Nov 2019 21:31:24 +0100
+Message-Id: <20191127203020.182005605@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@tycho.ws>
+From: David Barmann <david.barmann@stackpath.com>
 
-[ Upstream commit 9de30f3f7f4d31037cfbb7c787e1089c1944b3a7 ]
+[ Upstream commit 50254256f382c56bde87d970f3d0d02fdb76ec70 ]
 
-In copy_result_to_user(), we first create a struct dlm_lock_result, which
-contains a struct dlm_lksb, the last member of which is a pointer to the
-lvb. Unfortunately, we copy the entire struct dlm_lksb to the result
-struct, which is then copied to userspace at the end of the function,
-leaking the contents of sb_lvbptr, which is a valid kernel pointer in some
-cases (indeed, later in the same function the data it points to is copied
-to userspace).
+When setting the SO_MARK socket option, if the mark changes, the dst
+needs to be reset so that a new route lookup is performed.
 
-It is an error to leak kernel pointers to userspace, as it undermines KASLR
-protections (see e.g. 65eea8edc31 ("floppy: Do not copy a kernel pointer to
-user memory in FDGETPRM ioctl") for another example of this).
+This fixes the case where an application wants to change routing by
+setting a new sk_mark.  If this is done after some packets have already
+been sent, the dst is cached and has no effect.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: David Barmann <david.barmann@stackpath.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/user.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/sock.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/dlm/user.c b/fs/dlm/user.c
-index 9ac65914ab5b0..57f2aacec97f5 100644
---- a/fs/dlm/user.c
-+++ b/fs/dlm/user.c
-@@ -700,7 +700,7 @@ static int copy_result_to_user(struct dlm_user_args *ua, int compat,
- 	result.version[0] = DLM_DEVICE_VERSION_MAJOR;
- 	result.version[1] = DLM_DEVICE_VERSION_MINOR;
- 	result.version[2] = DLM_DEVICE_VERSION_PATCH;
--	memcpy(&result.lksb, &ua->lksb, sizeof(struct dlm_lksb));
-+	memcpy(&result.lksb, &ua->lksb, offsetof(struct dlm_lksb, sb_lvbptr));
- 	result.user_lksb = ua->user_lksb;
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 8aa4a5f895723..92d5f6232ec76 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -951,10 +951,12 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+ 			clear_bit(SOCK_PASSSEC, &sock->flags);
+ 		break;
+ 	case SO_MARK:
+-		if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))
++		if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN)) {
+ 			ret = -EPERM;
+-		else
++		} else if (val != sk->sk_mark) {
+ 			sk->sk_mark = val;
++			sk_dst_reset(sk);
++		}
+ 		break;
  
- 	/* FIXME: dlm1 provides for the user's bastparam/addr to not be updated
+ 	case SO_RXQ_OVFL:
 -- 
 2.20.1
 
