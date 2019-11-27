@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F80610BAB6
+	by mail.lfdr.de (Postfix) with ESMTP id EF17F10BAB7
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731450AbfK0VFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1732361AbfK0VFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 27 Nov 2019 16:05:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59710 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732065AbfK0VFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:05:52 -0500
+        id S1727440AbfK0VFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10C682176D;
-        Wed, 27 Nov 2019 21:05:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D6CE217BA;
+        Wed, 27 Nov 2019 21:05:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888751;
-        bh=GsNJSubEqy9092/kPFVh7cTNvDDqTlvKsL8ToKkBp3A=;
+        s=default; t=1574888754;
+        bh=ivAr2KdU9K4Tx7Ky4Bm6mhRcS09rwRLNa5AkPF/3bcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C648szzbFwBduCYjhuJFYmrNeuFZpwe28LCe12sTTzvBWCxjYhxuTpuSMJ0ssghoY
-         Um9YzGy+k3wxl+Di755f7uREcgjiyqMrY0bw3/k0a811HZz5amvSPK/NKg5hFMcBo5
-         BNiREDSZa+4gwp2veMdSMVhP8ZAclRPavXgYIMwc=
+        b=XkRadY8Xs8moqMIT8+wAdV+FWdx24iu4BKXhxue+j0ORE/qAuvNP0YvD4XuaiHd7y
+         fMsRGPbsZHJU8yF1H7RJmbZ27hug4KLBjRcOjleN9KqyY6Tdtn6k8ifVOiZrlWSATP
+         dqdA/em8EqwoFwJGLEavIRGRTGvVdAkfmZsrAS2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vinayak Menon <vinmenon@codeaurora.org>,
-        Minchan Kim <minchan@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 255/306] mm/page_io.c: do not free shared swap slots
-Date:   Wed, 27 Nov 2019 21:31:45 +0100
-Message-Id: <20191127203133.499090401@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
+        syzbot+a0d209a4676664613e76@syzkaller.appspotmail.com,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Alexander Potapenko <glider@google.com>
+Subject: [PATCH 4.19 256/306] Bluetooth: Fix invalid-free in bcsp_close()
+Date:   Wed, 27 Nov 2019 21:31:46 +0100
+Message-Id: <20191127203133.564483599@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -49,80 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinayak Menon <vinmenon@codeaurora.org>
+From: Tomas Bortoli <tomasbortoli@gmail.com>
 
-[ Upstream commit 5df373e95689b9519b8557da7c5bd0db0856d776 ]
+commit cf94da6f502d8caecabd56b194541c873c8a7a3c upstream.
 
-The following race is observed due to which a processes faulting on a
-swap entry, finds the page neither in swapcache nor swap.  This causes
-zram to give a zero filled page that gets mapped to the process,
-resulting in a user space crash later.
+Syzbot reported an invalid-free that I introduced fixing a memleak.
 
-Consider parent and child processes Pa and Pb sharing the same swap slot
-with swap_count 2.  Swap is on zram with SWP_SYNCHRONOUS_IO set.
-Virtual address 'VA' of Pa and Pb points to the shared swap entry.
+bcsp_recv() also frees bcsp->rx_skb but never nullifies its value.
+Nullify bcsp->rx_skb every time it is freed.
 
-Pa                                       Pb
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+a0d209a4676664613e76@syzkaller.appspotmail.com
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: Alexander Potapenko <glider@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-fault on VA                              fault on VA
-do_swap_page                             do_swap_page
-lookup_swap_cache fails                  lookup_swap_cache fails
-                                         Pb scheduled out
-swapin_readahead (deletes zram entry)
-swap_free (makes swap_count 1)
-                                         Pb scheduled in
-                                         swap_readpage (swap_count == 1)
-                                         Takes SWP_SYNCHRONOUS_IO path
-                                         zram enrty absent
-                                         zram gives a zero filled page
-
-Fix this by making sure that swap slot is freed only when swap count
-drops down to one.
-
-Link: http://lkml.kernel.org/r/1571743294-14285-1-git-send-email-vinmenon@codeaurora.org
-Fixes: aa8d22a11da9 ("mm: swap: SWP_SYNCHRONOUS_IO: skip swapcache only if swapped page has no other reference")
-Signed-off-by: Vinayak Menon <vinmenon@codeaurora.org>
-Suggested-by: Minchan Kim <minchan@google.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page_io.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/bluetooth/hci_bcsp.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index aafd19ec1db46..08d2eae58fcee 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -76,6 +76,7 @@ static void swap_slot_free_notify(struct page *page)
- {
- 	struct swap_info_struct *sis;
- 	struct gendisk *disk;
-+	swp_entry_t entry;
+--- a/drivers/bluetooth/hci_bcsp.c
++++ b/drivers/bluetooth/hci_bcsp.c
+@@ -606,6 +606,7 @@ static int bcsp_recv(struct hci_uart *hu
+ 			if (*ptr == 0xc0) {
+ 				BT_ERR("Short BCSP packet");
+ 				kfree_skb(bcsp->rx_skb);
++				bcsp->rx_skb = NULL;
+ 				bcsp->rx_state = BCSP_W4_PKT_START;
+ 				bcsp->rx_count = 0;
+ 			} else
+@@ -621,6 +622,7 @@ static int bcsp_recv(struct hci_uart *hu
+ 			    bcsp->rx_skb->data[2])) != bcsp->rx_skb->data[3]) {
+ 				BT_ERR("Error in BCSP hdr checksum");
+ 				kfree_skb(bcsp->rx_skb);
++				bcsp->rx_skb = NULL;
+ 				bcsp->rx_state = BCSP_W4_PKT_DELIMITER;
+ 				bcsp->rx_count = 0;
+ 				continue;
+@@ -645,6 +647,7 @@ static int bcsp_recv(struct hci_uart *hu
+ 				       bscp_get_crc(bcsp));
  
- 	/*
- 	 * There is no guarantee that the page is in swap cache - the software
-@@ -107,11 +108,11 @@ static void swap_slot_free_notify(struct page *page)
- 	 * we again wish to reclaim it.
- 	 */
- 	disk = sis->bdev->bd_disk;
--	if (disk->fops->swap_slot_free_notify) {
--		swp_entry_t entry;
-+	entry.val = page_private(page);
-+	if (disk->fops->swap_slot_free_notify &&
-+			__swap_count(sis, entry) == 1) {
- 		unsigned long offset;
- 
--		entry.val = page_private(page);
- 		offset = swp_offset(entry);
- 
- 		SetPageDirty(page);
--- 
-2.20.1
-
+ 				kfree_skb(bcsp->rx_skb);
++				bcsp->rx_skb = NULL;
+ 				bcsp->rx_state = BCSP_W4_PKT_DELIMITER;
+ 				bcsp->rx_count = 0;
+ 				continue;
 
 
