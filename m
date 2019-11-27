@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C4210B96F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 107A710B885
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:44:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbfK0UxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41112 "EHLO mail.kernel.org"
+        id S1729076AbfK0UoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:44:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbfK0UxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:01 -0500
+        id S1727739AbfK0UoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1651221903;
-        Wed, 27 Nov 2019 20:52:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82C12217AB;
+        Wed, 27 Nov 2019 20:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887980;
-        bh=vl4WYn3Y1mvDXZ3LcSvCXAm7WocIWQiBt4NUiXNqQYk=;
+        s=default; t=1574887454;
+        bh=rMbU6ZdTyqmaJm652PJ0y8rsplYjV86nTgjhjbsJCn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvyU09aO335xOKFqssVftO0TCbvcPbUw2Adh8stuKEwxvWOiwiL0xZEFxVa2nqX+h
-         +Q/9Bw7R0NLAOb0rfKVj3gd+bZCykDEj7ckSLPDJfBuio0nmBFDySXqU1klaL7y9Ot
-         plEMBxpPHWLU0UD+9Z4latAFXxa3yH9PrbJcJBMs=
+        b=GFBj2Urm09SdpvwJbgYviMZCzbMf3psrIqh/KO1UiWRaoZfKhu6sWk74vozUVzuZW
+         uApexgTi82YeKT7RhsSoNFHzLEyMc3lpuXXs6/bS5ZFjy9GC8R49jMNBamo3bMrPM2
+         isP4w2jAbHp/n22Wr7oZC04zyxqDGjKINBX7+QiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Pittman <jpittman@redhat.com>,
-        David Jeffery <djeffery@redhat.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 4.14 168/211] md/raid10: prevent access of uninitialized resync_pages offset
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.9 118/151] ARC: perf: Accommodate big-endian CPU
 Date:   Wed, 27 Nov 2019 21:31:41 +0100
-Message-Id: <20191127203109.745603101@linuxfoundation.org>
+Message-Id: <20191127203044.514735968@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Pittman <jpittman@redhat.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 
-commit 45422b704db392a6d79d07ee3e3670b11048bd53 upstream.
+commit 5effc09c4907901f0e71e68e5f2e14211d9a203f upstream.
 
-Due to unneeded multiplication in the out_free_pages portion of
-r10buf_pool_alloc(), when using a 3-copy raid10 layout, it is
-possible to access a resync_pages offset that has not been
-initialized.  This access translates into a crash of the system
-within resync_free_pages() while passing a bad pointer to
-put_page().  Remove the multiplication, preventing access to the
-uninitialized area.
+8-letter strings representing ARC perf events are stores in two
+32-bit registers as ASCII characters like that: "IJMP", "IALL", "IJMPTAK" etc.
 
-Fixes: f0250618361db ("md: raid10: don't use bio's vec table to manage resync pages")
-Cc: stable@vger.kernel.org # 4.12+
-Signed-off-by: John Pittman <jpittman@redhat.com>
-Suggested-by: David Jeffery <djeffery@redhat.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+And the same order of bytes in the word is used regardless CPU endianness.
+
+Which means in case of big-endian CPU core we need to swap bytes to get
+the same order as if it was on little-endian CPU.
+
+Otherwise we're seeing the following error message on boot:
+------------------------->8----------------------
+ARC perf        : 8 counters (32 bits), 40 conditions, [overflow IRQ support]
+sysfs: cannot create duplicate filename '/devices/arc_pct/events/pmji'
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.18 #3
+Stack Trace:
+  arc_unwind_core+0xd4/0xfc
+  dump_stack+0x64/0x80
+  sysfs_warn_dup+0x46/0x58
+  sysfs_add_file_mode_ns+0xb2/0x168
+  create_files+0x70/0x2a0
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at kernel/events/core.c:12144 perf_event_sysfs_init+0x70/0xa0
+Failed to register pmu: arc_pct, reason -17
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.18 #3
+Stack Trace:
+  arc_unwind_core+0xd4/0xfc
+  dump_stack+0x64/0x80
+  __warn+0x9c/0xd4
+  warn_slowpath_fmt+0x22/0x2c
+  perf_event_sysfs_init+0x70/0xa0
+---[ end trace a75fb9a9837bd1ec ]---
+------------------------->8----------------------
+
+What happens here we're trying to register more than one raw perf event
+with the same name "PMJI". Why? Because ARC perf events are 4 to 8 letters
+and encoded into two 32-bit words. In this particular case we deal with 2
+events:
+ * "IJMP____" which counts all jump & branch instructions
+ * "IJMPC___" which counts only conditional jumps & branches
+
+Those strings are split in two 32-bit words this way "IJMP" + "____" &
+"IJMP" + "C___" correspondingly. Now if we read them swapped due to CPU core
+being big-endian then we read "PMJI" + "____" & "PMJI" + "___C".
+
+And since we interpret read array of ASCII letters as a null-terminated string
+on big-endian CPU we end up with 2 events of the same name "PMJI".
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/md/raid10.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -226,7 +226,7 @@ static void * r10buf_pool_alloc(gfp_t gf
+
+---
+ arch/arc/kernel/perf_event.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/arc/kernel/perf_event.c
++++ b/arch/arc/kernel/perf_event.c
+@@ -488,8 +488,8 @@ static int arc_pmu_device_probe(struct p
+ 	/* loop thru all available h/w condition indexes */
+ 	for (j = 0; j < cc_bcr.c; j++) {
+ 		write_aux_reg(ARC_REG_CC_INDEX, j);
+-		cc_name.indiv.word0 = read_aux_reg(ARC_REG_CC_NAME0);
+-		cc_name.indiv.word1 = read_aux_reg(ARC_REG_CC_NAME1);
++		cc_name.indiv.word0 = le32_to_cpu(read_aux_reg(ARC_REG_CC_NAME0));
++		cc_name.indiv.word1 = le32_to_cpu(read_aux_reg(ARC_REG_CC_NAME1));
  
- out_free_pages:
- 	while (--j >= 0)
--		resync_free_pages(&rps[j * 2]);
-+		resync_free_pages(&rps[j]);
- 
- 	j = 0;
- out_free_bio:
+ 		/* See if it has been mapped to a perf event_id */
+ 		for (i = 0; i < ARRAY_SIZE(arc_pmu_ev_hw_map); i++) {
 
 
