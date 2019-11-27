@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6DB10BB0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D38B010BAAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732833AbfK0VJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:09:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35478 "EHLO mail.kernel.org"
+        id S1732304AbfK0VFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:05:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732422AbfK0VI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:08:57 -0500
+        id S1732295AbfK0VFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E107C2154A;
-        Wed, 27 Nov 2019 21:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1EB521741;
+        Wed, 27 Nov 2019 21:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888936;
-        bh=IleI4WBlvw0MbTkV3loKafslw9g3LQhrhlmA3V+horw=;
+        s=default; t=1574888730;
+        bh=9OXAevLG4BgzRbZksXQkB08q/O8Khxr4GuRBGW5lZdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RDcd4bDXrwyfnJwqpWL+7wc+UN+o7ikMYMdJcD95Gw0xIOKuNyDXf2C4qRde2k+0H
-         nWGg9NlyVr9A9NPm+bV4tmgTNXdKr/EXxY9Dg0IWTrii8TSOb1El3Xyapj1RW1rJx8
-         Q93XmuHPsvNHXhuSbCT75iNnOsn6XPoPzz/bO/Ks=
+        b=e1XgCzfasZOKGXBrSvi4Nubr1Wg3CfPSNT465GtSCC7y7I2DB53IjO5QOBlBWl3KB
+         6eHJ0jZf2LLW5cCWKfx3LZf5mUvNBOjbr7hhxGml8OWpHqqSrTuMYlRZhyNkwk+uuG
+         Nz8bOqtw/usHxMDx4/UyApi+bm28WRfIEE4asIo8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5.3 20/95] gpio: bd70528: Use correct unit for debounce times
-Date:   Wed, 27 Nov 2019 21:31:37 +0100
-Message-Id: <20191127202850.450458548@linuxfoundation.org>
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 248/306] PCI: keystone: Use quirk to limit MRRS for K2G
+Date:   Wed, 27 Nov 2019 21:31:38 +0100
+Message-Id: <20191127203133.038833312@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit f88c117b6d6d7e96557b6ee143b26b550fc51076 upstream.
+[ Upstream commit 148e340c0696369fadbbddc8f4bef801ed247d71 ]
 
-The debounce time passed to gpiod_set_debounce() is specified in
-microseconds, so make sure to use the correct unit when computing the
-register values, which denote delays in milliseconds.
+PCI controller in K2G also has a limitation that memory read request
+size (MRRS) must not exceed 256 bytes. Use the quirk to limit MRRS
+(added for K2HK, K2L and K2E) for K2G as well.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 18bc64b3aebf ("gpio: Initial support for ROHM bd70528 GPIO block")
-[Bartosz: fixed a typo in commit message]
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-bd70528.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpio/gpio-bd70528.c
-+++ b/drivers/gpio/gpio-bd70528.c
-@@ -25,13 +25,13 @@ static int bd70528_set_debounce(struct b
- 	case 0:
- 		val = BD70528_DEBOUNCE_DISABLE;
- 		break;
--	case 1 ... 15:
-+	case 1 ... 15000:
- 		val = BD70528_DEBOUNCE_15MS;
- 		break;
--	case 16 ... 30:
-+	case 15001 ... 30000:
- 		val = BD70528_DEBOUNCE_30MS;
- 		break;
--	case 31 ... 50:
-+	case 30001 ... 50000:
- 		val = BD70528_DEBOUNCE_50MS;
- 		break;
- 	default:
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 5e199e7d2d4fd..765357b87ff69 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -36,6 +36,7 @@
+ #define PCIE_RC_K2HK		0xb008
+ #define PCIE_RC_K2E		0xb009
+ #define PCIE_RC_K2L		0xb00a
++#define PCIE_RC_K2G		0xb00b
+ 
+ #define to_keystone_pcie(x)	dev_get_drvdata((x)->dev)
+ 
+@@ -50,6 +51,8 @@ static void quirk_limit_mrrs(struct pci_dev *dev)
+ 		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
+ 		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCIE_RC_K2L),
+ 		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
++		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCIE_RC_K2G),
++		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
+ 		{ 0, },
+ 	};
+ 
+-- 
+2.20.1
+
 
 
