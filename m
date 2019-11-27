@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172AA10B8E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CDB810BA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730078AbfK0UsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:48:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32954 "EHLO mail.kernel.org"
+        id S1727116AbfK0U7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:59:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728261AbfK0Ur7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:47:59 -0500
+        id S1731366AbfK0U7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:59:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3803D21845;
-        Wed, 27 Nov 2019 20:47:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43D3920678;
+        Wed, 27 Nov 2019 20:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887678;
-        bh=1MWREmX53yQ9QQFDFRugDP7QzeX5bWAcw/ywG/g9DdI=;
+        s=default; t=1574888339;
+        bh=jTWzCOQwRiWhKbKWMLAjSFDku8KDuyLw1gEEl2r4qbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9N5fiBG7mvwUy80sYXGDlXqOIchQBWVK6G1XN0mfzBOu3g7wRJS2BYjcfMXl0R/G
-         hv0cFcp+DKnBQL/ZpzDHvv8gpiqg2bLCWfmMczft3onfAyRSyGwzC14zmCRt9Q2jyo
-         KcUmI72Gij/XoRp5CsdzoKbuQThPKjT/s9i5SKyk=
+        b=lXgYn0HV0AuF01LCnKY92lAQ45eKFi3TwmbGQiq0Fh2K2w4bQosI59YLrmaIKWHoT
+         r2o+ybXv9nzVPkhJZrs7KchASlDH9Xwvl/7dfkolAh6OvOJqp3+oFguZaz4oANBYOT
+         M9poZMtxOw1wPH4BTya4ttfZ8+SOCgQ6hMLBadQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, mst@redhat.com,
-        Laurent Vivier <lvivier@redhat.com>
-Subject: [PATCH 4.14 011/211] virtio_console: allocate inbufs in add_port() only if it is needed
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 094/306] macintosh/windfarm_smu_sat: Fix debug output
 Date:   Wed, 27 Nov 2019 21:29:04 +0100
-Message-Id: <20191127203050.999718897@linuxfoundation.org>
+Message-Id: <20191127203121.773846653@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,130 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Vivier <lvivier@redhat.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit d791cfcbf98191122af70b053a21075cb450d119 upstream.
+[ Upstream commit fc0c8b36d379a046525eacb9c3323ca635283757 ]
 
-When we hot unplug a virtserialport and then try to hot plug again,
-it fails:
+There's some antiquated debug output that's trying
+to do a hand-made hexdump and turning into horrible
+1-byte-per-line output these days.
 
-(qemu) chardev-add socket,id=serial0,path=/tmp/serial0,server,nowait
-(qemu) device_add virtserialport,bus=virtio-serial0.0,nr=2,\
-                  chardev=serial0,id=serial0,name=serial0
-(qemu) device_del serial0
-(qemu) device_add virtserialport,bus=virtio-serial0.0,nr=2,\
-                  chardev=serial0,id=serial0,name=serial0
-kernel error:
-  virtio-ports vport2p2: Error allocating inbufs
-qemu error:
-  virtio-serial-bus: Guest failure in adding port 2 for device \
-                     virtio-serial0.0
+Use print_hex_dump() instead
 
-This happens because buffers for the in_vq are allocated when the port is
-added but are not released when the port is unplugged.
-
-They are only released when virtconsole is removed (see a7a69ec0d8e4)
-
-To avoid the problem and to be symmetric, we could allocate all the buffers
-in init_vqs() as they are released in remove_vqs(), but it sounds like
-a waste of memory.
-
-Rather than that, this patch changes add_port() logic to ignore ENOSPC
-error in fill_queue(), which means queue has already been filled.
-
-Fixes: a7a69ec0d8e4 ("virtio_console: free buffers after reset")
-Cc: mst@redhat.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/virtio_console.c |   28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ drivers/macintosh/windfarm_smu_sat.c | 25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
 
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -1366,24 +1366,24 @@ static void set_console_size(struct port
- 	port->cons.ws.ws_col = cols;
- }
+diff --git a/drivers/macintosh/windfarm_smu_sat.c b/drivers/macintosh/windfarm_smu_sat.c
+index da7f4fc1a51d1..a0f61eb853c55 100644
+--- a/drivers/macintosh/windfarm_smu_sat.c
++++ b/drivers/macintosh/windfarm_smu_sat.c
+@@ -22,14 +22,6 @@
  
--static unsigned int fill_queue(struct virtqueue *vq, spinlock_t *lock)
-+static int fill_queue(struct virtqueue *vq, spinlock_t *lock)
- {
- 	struct port_buffer *buf;
--	unsigned int nr_added_bufs;
-+	int nr_added_bufs;
- 	int ret;
+ #define VERSION "1.0"
  
- 	nr_added_bufs = 0;
- 	do {
- 		buf = alloc_buf(vq->vdev, PAGE_SIZE, 0);
- 		if (!buf)
--			break;
-+			return -ENOMEM;
- 
- 		spin_lock_irq(lock);
- 		ret = add_inbuf(vq, buf);
- 		if (ret < 0) {
- 			spin_unlock_irq(lock);
- 			free_buf(buf, true);
--			break;
-+			return ret;
- 		}
- 		nr_added_bufs++;
- 		spin_unlock_irq(lock);
-@@ -1403,7 +1403,6 @@ static int add_port(struct ports_device
- 	char debugfs_name[16];
- 	struct port *port;
- 	dev_t devt;
--	unsigned int nr_added_bufs;
- 	int err;
- 
- 	port = kmalloc(sizeof(*port), GFP_KERNEL);
-@@ -1462,11 +1461,13 @@ static int add_port(struct ports_device
- 	spin_lock_init(&port->outvq_lock);
- 	init_waitqueue_head(&port->waitqueue);
- 
--	/* Fill the in_vq with buffers so the host can send us data. */
--	nr_added_bufs = fill_queue(port->in_vq, &port->inbuf_lock);
--	if (!nr_added_bufs) {
-+	/* We can safely ignore ENOSPC because it means
-+	 * the queue already has buffers. Buffers are removed
-+	 * only by virtcons_remove(), not by unplug_port()
-+	 */
-+	err = fill_queue(port->in_vq, &port->inbuf_lock);
-+	if (err < 0 && err != -ENOSPC) {
- 		dev_err(port->dev, "Error allocating inbufs\n");
--		err = -ENOMEM;
- 		goto free_device;
- 	}
- 
-@@ -2099,14 +2100,11 @@ static int virtcons_probe(struct virtio_
- 	INIT_WORK(&portdev->control_work, &control_work_handler);
- 
- 	if (multiport) {
--		unsigned int nr_added_bufs;
+-#define DEBUG
 -
- 		spin_lock_init(&portdev->c_ivq_lock);
- 		spin_lock_init(&portdev->c_ovq_lock);
+-#ifdef DEBUG
+-#define DBG(args...)	printk(args)
+-#else
+-#define DBG(args...)	do { } while(0)
+-#endif
+-
+ /* If the cache is older than 800ms we'll refetch it */
+ #define MAX_AGE		msecs_to_jiffies(800)
  
--		nr_added_bufs = fill_queue(portdev->c_ivq,
--					   &portdev->c_ivq_lock);
--		if (!nr_added_bufs) {
-+		err = fill_queue(portdev->c_ivq, &portdev->c_ivq_lock);
-+		if (err < 0) {
- 			dev_err(&vdev->dev,
- 				"Error allocating buffers for control queue\n");
- 			/*
-@@ -2117,7 +2115,7 @@ static int virtcons_probe(struct virtio_
- 					   VIRTIO_CONSOLE_DEVICE_READY, 0);
- 			/* Device was functional: we need full cleanup. */
- 			virtcons_remove(vdev);
--			return -ENOMEM;
-+			return err;
- 		}
- 	} else {
- 		/*
+@@ -106,13 +98,10 @@ struct smu_sdbp_header *smu_sat_get_sdb_partition(unsigned int sat_id, int id,
+ 		buf[i+2] = data[3];
+ 		buf[i+3] = data[2];
+ 	}
+-#ifdef DEBUG
+-	DBG(KERN_DEBUG "sat %d partition %x:", sat_id, id);
+-	for (i = 0; i < len; ++i)
+-		DBG(" %x", buf[i]);
+-	DBG("\n");
+-#endif
+ 
++	printk(KERN_DEBUG "sat %d partition %x:", sat_id, id);
++	print_hex_dump(KERN_DEBUG, "  ", DUMP_PREFIX_OFFSET,
++		       16, 1, buf, len, false);
+ 	if (size)
+ 		*size = len;
+ 	return (struct smu_sdbp_header *) buf;
+@@ -132,13 +121,13 @@ static int wf_sat_read_cache(struct wf_sat *sat)
+ 	if (err < 0)
+ 		return err;
+ 	sat->last_read = jiffies;
++
+ #ifdef LOTSA_DEBUG
+ 	{
+ 		int i;
+-		DBG(KERN_DEBUG "wf_sat_get: data is");
+-		for (i = 0; i < 16; ++i)
+-			DBG(" %.2x", sat->cache[i]);
+-		DBG("\n");
++		printk(KERN_DEBUG "wf_sat_get: data is");
++		print_hex_dump(KERN_DEBUG, "  ", DUMP_PREFIX_OFFSET,
++			       16, 1, sat->cache, 16, false);
+ 	}
+ #endif
+ 	return 0;
+-- 
+2.20.1
+
 
 
