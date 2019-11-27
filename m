@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4003910B956
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F8B10B7D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:37:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbfK0UwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:52:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39158 "EHLO mail.kernel.org"
+        id S1728561AbfK0UhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:37:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbfK0UwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:52:00 -0500
+        id S1728546AbfK0UhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:37:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88BB121774;
-        Wed, 27 Nov 2019 20:51:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B60B215A4;
+        Wed, 27 Nov 2019 20:37:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887919;
-        bh=Ip6hU7yXg9AcHOr9vr8JdMkTGx+/SfF3tqPyui4JfNY=;
+        s=default; t=1574887038;
+        bh=Fl3SEsBIGzxBJctj4L6lQQ/WsPmWKTODO20AiuDqu4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W00pJEVproSXbytRSm5bPbDzYqniyiGnhJZp/CdIwbw5p73GhZpWGpkgg9elgLl3z
-         IPjvrGkmLUYVdIvc4yyO+EY/JXFe4mNfd8Echa++tgxLLF8vHG1Kku8StBwfrne4ZE
-         WoyWZ9xbF42VBQT71CGx4d1HM6dfzb8LAZxUrSzc=
+        b=xShuXgp+LgBa6PbWModJUZQIT0vrgEzf3LBb18wg7WYG1JwoD+N0/y7b3BL9repL1
+         kawfbGXkuZ6Miaw3j54K15TQxEipchEPFkBXWm6UvYPPV06ZYnwH0EATxwZxzVVT+s
+         MjubVavHhzAISs02QqL9qiUEV3CiVywoFGFD25us=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Hannes Reinecke <hare@suse.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 146/211] scsi: lpfc: Correct loss of fc4 type on remote port address change
-Date:   Wed, 27 Nov 2019 21:31:19 +0100
-Message-Id: <20191127203107.814390844@linuxfoundation.org>
+Subject: [PATCH 4.4 089/132] scsi: lpfc: fcoe: Fix link down issue after 1000+ link bounces
+Date:   Wed, 27 Nov 2019 21:31:20 +0100
+Message-Id: <20191127203018.376194124@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,14 +48,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit d83ca3ea833d7a66d49225e4191c4e37cab8f079 ]
+[ Upstream commit 036cad1f1ac9ce03e2db94b8460f98eaf1e1ee4c ]
 
-An address change for a remote port cause PRLI for the wrong protocol
-to be sent.  The node copy done in the discovery code skipped copying
-the fc4 protocols supported as well.
+On FCoE adapters, when running link bounce test in a loop, initiator
+failed to login with switch switch and required driver reload to
+recover. Switch reached a point where all subsequent FLOGIs would be
+LS_RJT'd. Further testing showed the condition to be related to not
+performing FCF discovery between FLOGI's.
 
-Fix the copy logic for the address change.  Beefed up log messages in
-this area as well.
+Fix by monitoring FLOGI failures and once a repeated error is seen
+repeat FCF discovery.
 
 Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
 Signed-off-by: James Smart <jsmart2021@gmail.com>
@@ -63,86 +65,111 @@ Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_els.c       | 26 +++++++++++++++++++++++---
- drivers/scsi/lpfc/lpfc_nportdisc.c |  5 +++--
- 2 files changed, 26 insertions(+), 5 deletions(-)
+ drivers/scsi/lpfc/lpfc_els.c     |  2 ++
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 20 ++++++++++++++++++++
+ drivers/scsi/lpfc/lpfc_init.c    |  2 +-
+ drivers/scsi/lpfc/lpfc_sli.c     | 11 ++---------
+ drivers/scsi/lpfc/lpfc_sli4.h    |  1 +
+ 5 files changed, 26 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 95449f97101d3..e5db20e8979d5 100644
+index 82a690924f5eb..7ca8c2522c928 100644
 --- a/drivers/scsi/lpfc/lpfc_els.c
 +++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -1550,8 +1550,10 @@ lpfc_plogi_confirm_nport(struct lpfc_hba *phba, uint32_t *prsp,
- 	 */
- 	new_ndlp = lpfc_findnode_wwpn(vport, &sp->portName);
- 
-+	/* return immediately if the WWPN matches ndlp */
- 	if (new_ndlp == ndlp && NLP_CHK_NODE_ACT(new_ndlp))
- 		return ndlp;
+@@ -1124,6 +1124,7 @@ lpfc_cmpl_els_flogi(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+ 			phba->fcf.fcf_flag &= ~FCF_DISCOVERY;
+ 			phba->hba_flag &= ~(FCF_RR_INPROG | HBA_DEVLOSS_TMO);
+ 			spin_unlock_irq(&phba->hbalock);
++			phba->fcf.fcf_redisc_attempted = 0; /* reset */
+ 			goto out;
+ 		}
+ 		if (!rc) {
+@@ -1138,6 +1139,7 @@ lpfc_cmpl_els_flogi(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+ 			phba->fcf.fcf_flag &= ~FCF_DISCOVERY;
+ 			phba->hba_flag &= ~(FCF_RR_INPROG | HBA_DEVLOSS_TMO);
+ 			spin_unlock_irq(&phba->hbalock);
++			phba->fcf.fcf_redisc_attempted = 0; /* reset */
+ 			goto out;
+ 		}
+ 	}
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index a67950908db17..d50db2004d21e 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -1966,6 +1966,26 @@ int lpfc_sli4_fcf_rr_next_proc(struct lpfc_vport *vport, uint16_t fcf_index)
+ 				"failover and change port state:x%x/x%x\n",
+ 				phba->pport->port_state, LPFC_VPORT_UNKNOWN);
+ 		phba->pport->port_state = LPFC_VPORT_UNKNOWN;
 +
- 	if (phba->sli_rev == LPFC_SLI_REV4) {
- 		active_rrqs_xri_bitmap = mempool_alloc(phba->active_rrq_pool,
- 						       GFP_KERNEL);
-@@ -1560,9 +1562,13 @@ lpfc_plogi_confirm_nport(struct lpfc_hba *phba, uint32_t *prsp,
- 			       phba->cfg_rrq_xri_bitmap_sz);
++		if (!phba->fcf.fcf_redisc_attempted) {
++			lpfc_unregister_fcf(phba);
++
++			rc = lpfc_sli4_redisc_fcf_table(phba);
++			if (!rc) {
++				lpfc_printf_log(phba, KERN_INFO, LOG_FIP,
++						"3195 Rediscover FCF table\n");
++				phba->fcf.fcf_redisc_attempted = 1;
++				lpfc_sli4_clear_fcf_rr_bmask(phba);
++			} else {
++				lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
++						"3196 Rediscover FCF table "
++						"failed. Status:x%x\n", rc);
++			}
++		} else {
++			lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
++					"3197 Already rediscover FCF table "
++					"attempted. No more retry\n");
++		}
+ 		goto stop_flogi_current_fcf;
+ 	} else {
+ 		lpfc_printf_log(phba, KERN_INFO, LOG_FIP | LOG_ELS,
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 60c21093f8656..7e06fd6127ccb 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -4376,7 +4376,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
+ 			break;
+ 		}
+ 		/* If fast FCF failover rescan event is pending, do nothing */
+-		if (phba->fcf.fcf_flag & FCF_REDISC_EVT) {
++		if (phba->fcf.fcf_flag & (FCF_REDISC_EVT | FCF_REDISC_PEND)) {
+ 			spin_unlock_irq(&phba->hbalock);
+ 			break;
+ 		}
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index ad4f16ab7f7a2..523a1058078a5 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -16350,15 +16350,8 @@ lpfc_sli4_fcf_rr_next_index_get(struct lpfc_hba *phba)
+ 			goto initial_priority;
+ 		lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
+ 				"2844 No roundrobin failover FCF available\n");
+-		if (next_fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX)
+-			return LPFC_FCOE_FCF_NEXT_NONE;
+-		else {
+-			lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
+-				"3063 Only FCF available idx %d, flag %x\n",
+-				next_fcf_index,
+-			phba->fcf.fcf_pri[next_fcf_index].fcf_rec.flag);
+-			return next_fcf_index;
+-		}
++
++		return LPFC_FCOE_FCF_NEXT_NONE;
  	}
  
--	lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
--		 "3178 PLOGI confirm: ndlp %p x%x: new_ndlp %p\n",
--		 ndlp, ndlp->nlp_DID, new_ndlp);
-+	lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS | LOG_NODE,
-+			 "3178 PLOGI confirm: ndlp x%x x%x x%x: "
-+			 "new_ndlp x%x x%x x%x\n",
-+			 ndlp->nlp_DID, ndlp->nlp_flag,  ndlp->nlp_fc4_type,
-+			 (new_ndlp ? new_ndlp->nlp_DID : 0),
-+			 (new_ndlp ? new_ndlp->nlp_flag : 0),
-+			 (new_ndlp ? new_ndlp->nlp_fc4_type : 0));
- 
- 	if (!new_ndlp) {
- 		rc = memcmp(&ndlp->nlp_portname, name,
-@@ -1611,6 +1617,14 @@ lpfc_plogi_confirm_nport(struct lpfc_hba *phba, uint32_t *prsp,
- 			       phba->cfg_rrq_xri_bitmap_sz);
- 	}
- 
-+	/* At this point in this routine, we know new_ndlp will be
-+	 * returned. however, any previous GID_FTs that were done
-+	 * would have updated nlp_fc4_type in ndlp, so we must ensure
-+	 * new_ndlp has the right value.
-+	 */
-+	if (vport->fc_flag & FC_FABRIC)
-+		new_ndlp->nlp_fc4_type = ndlp->nlp_fc4_type;
-+
- 	lpfc_unreg_rpi(vport, new_ndlp);
- 	new_ndlp->nlp_DID = ndlp->nlp_DID;
- 	new_ndlp->nlp_prev_state = ndlp->nlp_prev_state;
-@@ -1732,6 +1746,12 @@ lpfc_plogi_confirm_nport(struct lpfc_hba *phba, uint32_t *prsp,
- 	    active_rrqs_xri_bitmap)
- 		mempool_free(active_rrqs_xri_bitmap,
- 			     phba->active_rrq_pool);
-+
-+	lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS | LOG_NODE,
-+			 "3173 PLOGI confirm exit: new_ndlp x%x x%x x%x\n",
-+			 new_ndlp->nlp_DID, new_ndlp->nlp_flag,
-+			 new_ndlp->nlp_fc4_type);
-+
- 	return new_ndlp;
- }
- 
-diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
-index a0658d1582287..043bca6449cd0 100644
---- a/drivers/scsi/lpfc/lpfc_nportdisc.c
-+++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
-@@ -2829,8 +2829,9 @@ lpfc_disc_state_machine(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
- 	/* DSM in event <evt> on NPort <nlp_DID> in state <cur_state> */
- 	lpfc_printf_vlog(vport, KERN_INFO, LOG_DISCOVERY,
- 			 "0211 DSM in event x%x on NPort x%x in "
--			 "state %d Data: x%x\n",
--			 evt, ndlp->nlp_DID, cur_state, ndlp->nlp_flag);
-+			 "state %d Data: x%x x%x\n",
-+			 evt, ndlp->nlp_DID, cur_state,
-+			 ndlp->nlp_flag, ndlp->nlp_fc4_type);
- 
- 	lpfc_debugfs_disc_trc(vport, LPFC_DISC_TRC_DSM,
- 		 "DSM in:          evt:%d ste:%d did:x%x",
+ 	if (next_fcf_index < LPFC_SLI4_FCF_TBL_INDX_MAX &&
+diff --git a/drivers/scsi/lpfc/lpfc_sli4.h b/drivers/scsi/lpfc/lpfc_sli4.h
+index 1e916e16ce989..0ecf92c8a2882 100644
+--- a/drivers/scsi/lpfc/lpfc_sli4.h
++++ b/drivers/scsi/lpfc/lpfc_sli4.h
+@@ -237,6 +237,7 @@ struct lpfc_fcf {
+ #define FCF_REDISC_EVT	0x100 /* FCF rediscovery event to worker thread */
+ #define FCF_REDISC_FOV	0x200 /* Post FCF rediscovery fast failover */
+ #define FCF_REDISC_PROG (FCF_REDISC_PEND | FCF_REDISC_EVT)
++	uint16_t fcf_redisc_attempted;
+ 	uint32_t addr_mode;
+ 	uint32_t eligible_fcf_cnt;
+ 	struct lpfc_fcf_rec current_rec;
 -- 
 2.20.1
 
