@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6952110BB6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54CA410BB71
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732067AbfK0VMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:12:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43434 "EHLO mail.kernel.org"
+        id S1733306AbfK0VMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:12:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731441AbfK0VMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:12:33 -0500
+        id S1732639AbfK0VMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:12:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E21ED21556;
-        Wed, 27 Nov 2019 21:12:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6043F215E5;
+        Wed, 27 Nov 2019 21:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889153;
-        bh=IKdccxMPNFCHWURegItuiQel6JPzSusxwke9CMW8mUM=;
+        s=default; t=1574889155;
+        bh=57A37uReFpaoVHM91/3bIBAXphIRLjuVkZlIK30VGwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T+HIdrc9i2b0BWJYRXwuu7SGtckymIurkViId5fnD0WAJTuCAC1IW3TVE8KKEAA5z
-         DaReLvQIQzLDKOVbw375iPXRU39IjlzCOjA8pfiPh0WMh8QwqVdjaT8LzO6t+RjoGh
-         5vdEszxU7gPHSYbO+8pp4qvc0SVP+ppwrKgRZgqk=
+        b=KGqZMNlKK9DUl6oK17LtU2FQPUTWbyckI/rhK/wniBcUmhMXix/ECPtbT/1aLwTxM
+         IRVw+sTdi5nse6UdrSkdoHTCghLBLw7eFTb5o6EU3Kn8ihRqlijKflxrsmhEV0d+Lx
+         CLvR/TFiIg2N7WpzrrkJ1MMU5ZVUTQ0GWBiKHMc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+a0d209a4676664613e76@syzkaller.appspotmail.com,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Alexander Potapenko <glider@google.com>
-Subject: [PATCH 5.4 01/66] Bluetooth: Fix invalid-free in bcsp_close()
-Date:   Wed, 27 Nov 2019 21:31:56 +0100
-Message-Id: <20191127202636.031177277@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rajkumar Manoharan <rmanohar@qca.qualcomm.com>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Denis Efremov <efremov@linux.com>
+Subject: [PATCH 5.4 02/66] ath9k_hw: fix uninitialized variable data
+Date:   Wed, 27 Nov 2019 21:31:57 +0100
+Message-Id: <20191127202639.541335901@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
 References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,50 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: Denis Efremov <efremov@linux.com>
 
-commit cf94da6f502d8caecabd56b194541c873c8a7a3c upstream.
+commit 80e84f36412e0c5172447b6947068dca0d04ee82 upstream.
 
-Syzbot reported an invalid-free that I introduced fixing a memleak.
+Currently, data variable in ar9003_hw_thermo_cal_apply() could be
+uninitialized if ar9300_otp_read_word() will fail to read the value.
+Initialize data variable with 0 to prevent an undefined behavior. This
+will be enough to handle error case when ar9300_otp_read_word() fails.
 
-bcsp_recv() also frees bcsp->rx_skb but never nullifies its value.
-Nullify bcsp->rx_skb every time it is freed.
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+a0d209a4676664613e76@syzkaller.appspotmail.com
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Cc: Alexander Potapenko <glider@google.com>
+Fixes: 80fe43f2bbd5 ("ath9k_hw: Read and configure thermocal for AR9462")
+Cc: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Cc: John W. Linville <linville@tuxdriver.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Denis Efremov <efremov@linux.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/hci_bcsp.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/bluetooth/hci_bcsp.c
-+++ b/drivers/bluetooth/hci_bcsp.c
-@@ -591,6 +591,7 @@ static int bcsp_recv(struct hci_uart *hu
- 			if (*ptr == 0xc0) {
- 				BT_ERR("Short BCSP packet");
- 				kfree_skb(bcsp->rx_skb);
-+				bcsp->rx_skb = NULL;
- 				bcsp->rx_state = BCSP_W4_PKT_START;
- 				bcsp->rx_count = 0;
- 			} else
-@@ -606,6 +607,7 @@ static int bcsp_recv(struct hci_uart *hu
- 			    bcsp->rx_skb->data[2])) != bcsp->rx_skb->data[3]) {
- 				BT_ERR("Error in BCSP hdr checksum");
- 				kfree_skb(bcsp->rx_skb);
-+				bcsp->rx_skb = NULL;
- 				bcsp->rx_state = BCSP_W4_PKT_DELIMITER;
- 				bcsp->rx_count = 0;
- 				continue;
-@@ -630,6 +632,7 @@ static int bcsp_recv(struct hci_uart *hu
- 				       bscp_get_crc(bcsp));
+--- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
++++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+@@ -4183,7 +4183,7 @@ static void ar9003_hw_thermometer_apply(
  
- 				kfree_skb(bcsp->rx_skb);
-+				bcsp->rx_skb = NULL;
- 				bcsp->rx_state = BCSP_W4_PKT_DELIMITER;
- 				bcsp->rx_count = 0;
- 				continue;
+ static void ar9003_hw_thermo_cal_apply(struct ath_hw *ah)
+ {
+-	u32 data, ko, kg;
++	u32 data = 0, ko, kg;
+ 
+ 	if (!AR_SREV_9462_20_OR_LATER(ah))
+ 		return;
 
 
