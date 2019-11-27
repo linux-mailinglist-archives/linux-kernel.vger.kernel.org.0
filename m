@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0667510BB05
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E09B10BAA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732802AbfK0VIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:08:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35218 "EHLO mail.kernel.org"
+        id S1732283AbfK0VFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:05:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732372AbfK0VIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:08:44 -0500
+        id S1732275AbfK0VFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC5982086A;
-        Wed, 27 Nov 2019 21:08:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C105420637;
+        Wed, 27 Nov 2019 21:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888923;
-        bh=Uqz+Pl5c/Di1mUQpPbEYuvi2Q8PKELQ8wd/LOIjO17k=;
+        s=default; t=1574888719;
+        bh=/UtcM2CJ+MzcFJltihVFYIShK9Fi91fdbH/dA9RjkHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vNLj5rBK/4Rzo4R8A4HBWyudDZeA2JUSbeHR9TiQzlQoflAOH/FeDqRBK1g+CX59L
-         dxa8kfCUtvpksqI54Pfik74D8DIugmYkOygRsplqaBTbYmiG7YFrQ5DY9L/O2fPGPM
-         wTDcUL/Ajb/Dp05AHizuelFVdV8GhgMo/IdEFe2g=
+        b=PQMgRuGgyeKP9h6vm6K04acIZRKJshpKxxvDP9X8v0SF+MdN0cVLORjon7cyOQMDW
+         eAl/huRppm4vhRwTno2DXkZAhHTTxCAlisZyPaj0uBKqpZn4kxNV6GAUn/YVaplhm3
+         HYFLXYRr+WjWdiQD19pfcXZwIkL9GPHodavA4Iag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Aya Levin <ayal@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.3 16/95] net/mlx5e: Do not use non-EXT link modes in EXT mode
-Date:   Wed, 27 Nov 2019 21:31:33 +0100
-Message-Id: <20191127202850.246292290@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Masney <masneyb@onstation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 244/306] pinctrl: qcom: spmi-gpio: fix gpio-hog related boot issues
+Date:   Wed, 27 Nov 2019 21:31:34 +0100
+Message-Id: <20191127203132.771581174@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Brian Masney <masneyb@onstation.org>
 
-[ Upstream commit 24960574505c49b102ca1dfa6bf109669bca2a66 ]
+[ Upstream commit 149a96047237574b756d872007c006acd0cc6687 ]
 
-On some old Firmwares, connector type value was not supported, and value
-read from FW was 0. For those, driver used link mode in order to set
-connector type in link_ksetting.
+When attempting to setup up a gpio hog, device probing would repeatedly
+fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
+between the gpio and pinctrl frameworks. If the gpio-ranges property is
+present in device tree, then the gpio framework will handle the gpio pin
+registration and eliminate the circular dependency.
 
-After FW exposed the connector type, driver translated the value to ethtool
-definitions. However, as 0 is a valid value, before returning PORT_OTHER,
-driver run the check of link mode in order to maintain backward
-compatibility.
+See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+gpio-hog related boot issues") for a detailed commit message that
+explains the issue in much more detail. The code comment in this commit
+came from Christian's commit.
 
-Cited patch added support to EXT mode.  With both features (connector type
-and EXT link modes) ,if connector_type read from FW is 0 and EXT mode is
-set, driver mistakenly compare EXT link modes to non-EXT link mode.
-Fixed that by skipping this comparison if we are in EXT mode, as connector
-type value is valid in this scenario.
-
-Fixes: 6a897372417e ("net/mlx5: ethtool, Add ethtool support for 50Gbps per lane link modes")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Reviewed-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -708,9 +708,9 @@ static int get_fec_supported_advertised(
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index cf82db78e69e6..0c30f5eb4c714 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -1028,10 +1028,23 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- static void ptys2ethtool_supported_advertised_port(struct ethtool_link_ksettings *link_ksettings,
- 						   u32 eth_proto_cap,
--						   u8 connector_type)
-+						   u8 connector_type, bool ext)
- {
--	if (!connector_type || connector_type >= MLX5E_CONNECTOR_TYPE_NUMBER) {
-+	if ((!connector_type && !ext) || connector_type >= MLX5E_CONNECTOR_TYPE_NUMBER) {
- 		if (eth_proto_cap & (MLX5E_PROT_MASK(MLX5E_10GBASE_CR)
- 				   | MLX5E_PROT_MASK(MLX5E_10GBASE_SR)
- 				   | MLX5E_PROT_MASK(MLX5E_40GBASE_CR4)
-@@ -842,9 +842,9 @@ static int ptys2connector_type[MLX5E_CON
- 		[MLX5E_PORT_OTHER]              = PORT_OTHER,
- 	};
+-	ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0, npins);
+-	if (ret) {
+-		dev_err(dev, "failed to add pin range\n");
+-		goto err_range;
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(dev->of_node, "gpio-ranges")) {
++		ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0,
++					     npins);
++		if (ret) {
++			dev_err(dev, "failed to add pin range\n");
++			goto err_range;
++		}
+ 	}
  
--static u8 get_connector_port(u32 eth_proto, u8 connector_type)
-+static u8 get_connector_port(u32 eth_proto, u8 connector_type, bool ext)
- {
--	if (connector_type && connector_type < MLX5E_CONNECTOR_TYPE_NUMBER)
-+	if ((connector_type || ext) && connector_type < MLX5E_CONNECTOR_TYPE_NUMBER)
- 		return ptys2connector_type[connector_type];
- 
- 	if (eth_proto &
-@@ -945,9 +945,9 @@ int mlx5e_ethtool_get_link_ksettings(str
- 	eth_proto_oper = eth_proto_oper ? eth_proto_oper : eth_proto_cap;
- 
- 	link_ksettings->base.port = get_connector_port(eth_proto_oper,
--						       connector_type);
-+						       connector_type, ext);
- 	ptys2ethtool_supported_advertised_port(link_ksettings, eth_proto_admin,
--					       connector_type);
-+					       connector_type, ext);
- 	get_lp_advertising(mdev, eth_proto_lp, link_ksettings);
- 
- 	if (an_status == MLX5_AN_COMPLETE)
+ 	return 0;
+-- 
+2.20.1
+
 
 
