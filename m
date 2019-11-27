@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C6210BE05
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B98ED10BE0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:33:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbfK0UwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:52:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39234 "EHLO mail.kernel.org"
+        id S1731056AbfK0Vdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:33:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729714AbfK0UwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:52:01 -0500
+        id S1730190AbfK0UwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:52:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04A0821871;
-        Wed, 27 Nov 2019 20:52:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D721218AE;
+        Wed, 27 Nov 2019 20:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887921;
-        bh=H0+p4fK298kw1jSTheIrFbd+g0vAAzU0oZwSoqofGG0=;
+        s=default; t=1574887929;
+        bh=GL2BxTNj0E0U6b50Cgt11UhBHTzZtJbYm0AmbFQSoMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hnLEhcXpcPww4kzIzFHwfW6jB0BVlfZR5vTUNrCZVfN1YuD+9kZbrF4dBAw1JIpl2
-         hMS8wMeIeDXgTfQ5m5tKhZkWOgXl3ifCp7fuXrOymSp5DILYAXdFgrR7hdlpvWNuzm
-         A+e7HTZL2gjtHQxMTmiCBU5ySpYdHsrW8qarek4Y=
+        b=wYgxGCFuOL22M8hVtJiimZ24PNYsKANkGDkZrt24uscaq8P2GCZf8DIkTvPj8nHp3
+         n8vPCXRgEMUo7LohanomYmI2HXvmCkmn77h/Yd83R/Rj0KDA15fgQEHUHhiQue+Sxl
+         uEUpgngfr7ErVl00hHChVbW0bwT1nj4Hwhar2LAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
-        David Teigland <teigland@redhat.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 147/211] dlm: fix invalid free
-Date:   Wed, 27 Nov 2019 21:31:20 +0100
-Message-Id: <20191127203107.914032200@linuxfoundation.org>
+Subject: [PATCH 4.14 150/211] ACPICA: Use %d for signed int print formatting instead of %u
+Date:   Wed, 27 Nov 2019 21:31:23 +0100
+Message-Id: <20191127203108.177654992@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -44,44 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@tycho.ws>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit d968b4e240cfe39d39d80483bac8bca8716fd93c ]
+[ Upstream commit f8ddf49b420112e28bdd23d7ad52d7991a0ccbe3 ]
 
-dlm_config_nodes() does not allocate nodes on failure, so we should not
-free() nodes when it fails.
+Fix warnings found using static analysis with cppcheck, use %d printf
+format specifier for signed ints rather than %u
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/member.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/power/acpi/tools/acpidump/apmain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/dlm/member.c b/fs/dlm/member.c
-index 3fda3832cf6a6..cad6d85911a80 100644
---- a/fs/dlm/member.c
-+++ b/fs/dlm/member.c
-@@ -680,7 +680,7 @@ int dlm_ls_start(struct dlm_ls *ls)
+diff --git a/tools/power/acpi/tools/acpidump/apmain.c b/tools/power/acpi/tools/acpidump/apmain.c
+index 943b6b6146834..bed0794e3295f 100644
+--- a/tools/power/acpi/tools/acpidump/apmain.c
++++ b/tools/power/acpi/tools/acpidump/apmain.c
+@@ -139,7 +139,7 @@ static int ap_insert_action(char *argument, u32 to_be_done)
  
- 	error = dlm_config_nodes(ls->ls_name, &nodes, &count);
- 	if (error < 0)
--		goto fail;
-+		goto fail_rv;
- 
- 	spin_lock(&ls->ls_recover_lock);
- 
-@@ -712,8 +712,9 @@ int dlm_ls_start(struct dlm_ls *ls)
- 	return 0;
- 
-  fail:
--	kfree(rv);
- 	kfree(nodes);
-+ fail_rv:
-+	kfree(rv);
- 	return error;
- }
- 
+ 	current_action++;
+ 	if (current_action > AP_MAX_ACTIONS) {
+-		fprintf(stderr, "Too many table options (max %u)\n",
++		fprintf(stderr, "Too many table options (max %d)\n",
+ 			AP_MAX_ACTIONS);
+ 		return (-1);
+ 	}
 -- 
 2.20.1
 
