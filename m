@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 631EF10BFA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE5010BDF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbfK0VoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:44:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40928 "EHLO mail.kernel.org"
+        id S1729981AbfK0Uwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:52:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbfK0Uhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:37:45 -0500
+        id S1728364AbfK0Uwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:52:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DBF72158C;
-        Wed, 27 Nov 2019 20:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE22021847;
+        Wed, 27 Nov 2019 20:52:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887064;
-        bh=+UUgulf3umEery2eT/3tjTxrLJpprV9yV0f2vEDgfkE=;
+        s=default; t=1574887949;
+        bh=gZtgvh8qFeJ0rwP1uNVOTHy9jivYcPY13ibJR/gnb4Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KiaqL4TJWTiwq30s+m3y5oU4j9iavuBvXsNi+BVQCjqLpkceNuCNUifjIl1sD4/Ml
-         PzWNII/IEBbOJXnNnbHQAZ6vaLGVKYEyZhGC0Eecz7En7Tz4gyYhEbcF4wEwCK1aN4
-         ZbqRNtxPKIfH0eCMXj7JKlYXxAoDT2X2w6E4Qryc=
+        b=SigEiTqQLSY31AG3imCtwo4++EBkpVPcdxiF4YBEtDez/v5VSJft5Xmnpk/jAanKY
+         cvG5ec4BOiOUd3YgY32j+PPGMd2KiBgXfzw9Y06qtAVXk/gPN22sjHTyQ9vNhrw5hS
+         +51kJvjtsGsP2/6FmSuhFI1+4mQUZ/zKuZaY14Ao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        James Erwin <james.erwin@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 098/132] IB/hfi1: Ensure full Gen3 speed in a Gen4 system
-Date:   Wed, 27 Nov 2019 21:31:29 +0100
-Message-Id: <20191127203023.103702509@linuxfoundation.org>
+Subject: [PATCH 4.14 157/211] pinctrl: zynq: Use define directive for PIN_CONFIG_IO_STANDARD
+Date:   Wed, 27 Nov 2019 21:31:30 +0100
+Message-Id: <20191127203108.812527278@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Erwin <james.erwin@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-If an hfi1 card is inserted in a Gen4 systems, the driver will avoid the
-gen3 speed bump and the card will operate at half speed.
+[ Upstream commit cd8a145a066a1a3beb0ae615c7cb2ee4217418d7 ]
 
-This is because the driver avoids the gen3 speed bump when the parent bus
-speed isn't identical to gen3, 8.0GT/s.  This is not compatible with gen4
-and newer speeds.
+Clang warns when one enumerated type is implicitly converted to another:
 
-Fix by relaxing the test to explicitly look for the lower capability
-speeds which inherently allows for gen4 and all future speeds.
+drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
+enumeration type 'enum zynq_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+        ~               ^~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
+enumeration type 'enum zynq_pin_config_param' to different enumeration
+type 'enum pin_config_param' [-Wenum-conversion]
+        = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+            ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+macro 'PCONFDUMP'
+        .param = a, .display = b, .format = c, .has_arg = d     \
+                 ^
+2 warnings generated.
 
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Link: https://lore.kernel.org/r/20191101192059.106248.1699.stgit@awfm-01.aw.intel.com
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Reviewed-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: James Erwin <james.erwin@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rdma/hfi1/pcie.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-zynq.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rdma/hfi1/pcie.c b/drivers/staging/rdma/hfi1/pcie.c
-index a956044459a2b..ea4df848d8405 100644
---- a/drivers/staging/rdma/hfi1/pcie.c
-+++ b/drivers/staging/rdma/hfi1/pcie.c
-@@ -389,7 +389,8 @@ int pcie_speeds(struct hfi1_devdata *dd)
- 	/*
- 	 * bus->max_bus_speed is set from the bridge's linkcap Max Link Speed
- 	 */
--	if (dd->pcidev->bus->max_bus_speed != PCIE_SPEED_8_0GT) {
-+	if (dd->pcidev->bus->max_bus_speed == PCIE_SPEED_2_5GT ||
-+	     dd->pcidev->bus->max_bus_speed == PCIE_SPEED_5_0GT) {
- 		dd_dev_info(dd, "Parent PCIe bridge does not support Gen3\n");
- 		dd->link_gen3_capable = 0;
- 	}
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index a0daf27042bd0..90fd37e8207bf 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -971,15 +971,12 @@ enum zynq_io_standards {
+ 	zynq_iostd_max
+ };
+ 
+-/**
+- * enum zynq_pin_config_param - possible pin configuration parameters
+- * @PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
++/*
++ * PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
+  *	this parameter (on a custom format) tells the driver which alternative
+  *	IO standard to use.
+  */
+-enum zynq_pin_config_param {
+-	PIN_CONFIG_IOSTANDARD = PIN_CONFIG_END + 1,
+-};
++#define PIN_CONFIG_IOSTANDARD		(PIN_CONFIG_END + 1)
+ 
+ static const struct pinconf_generic_params zynq_dt_params[] = {
+ 	{"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
 -- 
 2.20.1
 
