@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B2A10B857
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7A510B939
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:51:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfK0Um2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48652 "EHLO mail.kernel.org"
+        id S1729581AbfK0UvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbfK0UmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:42:24 -0500
+        id S1730443AbfK0UvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 089D421783;
-        Wed, 27 Nov 2019 20:42:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82C4D2192C;
+        Wed, 27 Nov 2019 20:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887343;
-        bh=QTntiOm27ELfX+4pHEMJoOCTT0p1VFvY5sE0aEjOdi0=;
+        s=default; t=1574887872;
+        bh=l6iiVA3E9iGMZdpQYcBruEKsw7d0YFm93jzD7sppr0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MoiMO41fOt+S2hMGehRuc5J6zIUAFIGDEKjqg11ATGukbff5D5mM0BaxmMLvl3DnU
-         j83RKmxBeMF60pz9dBj7Pc5QivZkCDprjaLDzNLjgJnqPLg2A1/MjMpevX/1buihHQ
-         sYNzmx1u56MBZLFElKUjnEbUndNBmMqHFW7whKFo=
+        b=gIPiYkkxUlp7NtM6v5vYV2AQ0h2ldLaHbybZnV/otfbFEp9p2Mj4Jn++7fHHL6vTh
+         oSTD6h+LWxSLEbNKk2RPueIf51I3cyQefATW3StYGzhJO9bobA1UPJFIW79tZhTFs4
+         y9qG72/dxXBzlvNpjMlZRFtJYPp5j2ghNPx9aeps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 075/151] hfsplus: fix return value of hfsplus_get_block()
-Date:   Wed, 27 Nov 2019 21:30:58 +0100
-Message-Id: <20191127203035.132076789@linuxfoundation.org>
+Subject: [PATCH 4.14 126/211] net: do not abort bulk send on BQL status
+Date:   Wed, 27 Nov 2019 21:30:59 +0100
+Message-Id: <20191127203106.019810447@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,43 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 839c3a6a5e1fbc8542d581911b35b2cb5cd29304 ]
+[ Upstream commit fe60faa5063822f2d555f4f326c7dd72a60929bf ]
 
-Direct writes to empty inodes fail with EIO.  The generic direct-io code
-is in part to blame (a patch has been submitted as "direct-io: allow
-direct writes to empty inodes"), but hfsplus is worse affected than the
-other filesystems because the fallback to buffered I/O doesn't happen.
+Before calling dev_hard_start_xmit(), upper layers tried
+to cook optimal skb list based on BQL budget.
 
-The problem is the return value of hfsplus_get_block() when called with
-!create.  Change it to be more consistent with the other modules.
+Problem is that GSO packets can end up comsuming more than
+the BQL budget.
 
-Link: http://lkml.kernel.org/r/2cd1301404ec7cf1e39c8f11a01a4302f1460ad6.1539195310.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Breaking the loop is not useful, since requeued packets
+are ahead of any packets still in the qdisc.
+
+It is also more expensive, since next TX completion will
+push these packets later, while skbs are not in cpu caches.
+
+It is also a behavior difference with TSO packets, that can
+break the BQL limit by a large amount.
+
+Note that drivers should use __netdev_tx_sent_queue()
+in order to have optimal xmit_more support, and avoid
+useless atomic operations as shown in the following patch.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/extents.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
-index ce0b8f8374081..d93c051559cb8 100644
---- a/fs/hfsplus/extents.c
-+++ b/fs/hfsplus/extents.c
-@@ -236,7 +236,9 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
- 	ablock = iblock >> sbi->fs_shift;
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 9d6beb9de924b..3ce68484ed5aa 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3029,7 +3029,7 @@ struct sk_buff *dev_hard_start_xmit(struct sk_buff *first, struct net_device *de
+ 		}
  
- 	if (iblock >= hip->fs_blocks) {
--		if (iblock > hip->fs_blocks || !create)
-+		if (!create)
-+			return 0;
-+		if (iblock > hip->fs_blocks)
- 			return -EIO;
- 		if (ablock >= hip->alloc_blocks) {
- 			res = hfsplus_file_extend(inode, false);
+ 		skb = next;
+-		if (netif_xmit_stopped(txq) && skb) {
++		if (netif_tx_queue_stopped(txq) && skb) {
+ 			rc = NETDEV_TX_BUSY;
+ 			break;
+ 		}
 -- 
 2.20.1
 
