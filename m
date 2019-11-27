@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AED310BB35
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72CAA10BB7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733059AbfK0VKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:10:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37708 "EHLO mail.kernel.org"
+        id S2387416AbfK0VNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:13:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733046AbfK0VKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:10:30 -0500
+        id S2387406AbfK0VM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:12:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CC79217BC;
-        Wed, 27 Nov 2019 21:10:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF0A021556;
+        Wed, 27 Nov 2019 21:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889029;
+        s=default; t=1574889179;
         bh=0mfKnqG4mH4LuWb2SZO7gF8jbUWaMBscu09hSclwSsE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I7wHZzfYhe5eaxf1yaRk0Cn0RsUF3sDp161xrovrl5NN31yzSCPGULBWuRrVzHuHe
-         sOIGQ5axZgjlR2l3LRVejRipeS5Yh58ymgt5ubKxt90N4w6z5+v7iidUrhAbTGBF4S
-         sPVh+Rseg9EWl6FAy+u0VX3rxXWzFK0e+WcWdvCk=
+        b=tAypsqOk5WxDPXlmIf2PwbNW4j9e9J9GCEDi8ez7W5RoVMGvnoQtxXE3XXFGx9632
+         bWJjNPhmC/iCKa1izW+1XQI/XlhMJDoPWm9Vu9BDPDGp3Xp6QwOag5dCOqtqMA1hT+
+         ewm4FVgUm7MdSjyOoNslDG35ffa8C4KXbETlpiz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lai Jiangshan <laijs@linux.alibaba.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>, stable@kernel.org
-Subject: [PATCH 5.3 57/95] x86/entry/32: Fix IRET exception
+Subject: [PATCH 5.4 19/66] x86/entry/32: Fix IRET exception
 Date:   Wed, 27 Nov 2019 21:32:14 +0100
-Message-Id: <20191127202923.606515335@linuxfoundation.org>
+Message-Id: <20191127202654.282045144@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
