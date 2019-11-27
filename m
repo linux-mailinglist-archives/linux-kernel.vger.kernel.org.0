@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30EA410BC29
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E4D310BB8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387447AbfK0VTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:19:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38742 "EHLO mail.kernel.org"
+        id S2387477AbfK0VNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:13:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733095AbfK0VK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:10:56 -0500
+        id S2387455AbfK0VN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:13:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10F74215F1;
-        Wed, 27 Nov 2019 21:10:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D825D215F1;
+        Wed, 27 Nov 2019 21:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889055;
-        bh=MN0tCmCKVka8C/YOs5YuD7ZrvzIshG1JptrIBThzokk=;
+        s=default; t=1574889205;
+        bh=82ExmoUW0CmGJP5HT1LJnAzzMKxhmDPVDUYbcUNyHKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jvgthp9TureT1vS+9sTwj5WbPZAocZksGcct3VgpI2GWtJlCM9VJpRxDjl91no7qp
-         mHP2YLkxpmMbf24y8QMyxdR3CBSet/KmynLSXtWWGx9+PLusiBipaKptrO3mteyxwr
-         v0m83A3JAU0fEBEEK/bkMp8yHEgLzb5aVpehJwxI=
+        b=Xsxv4UtwoqlCH1nrb8WQcpgsMHh0udn/cfFYX/x3B4kBiCJJE8rEr9LuUfWcGCHel
+         fi3J/hJ6+bZOGBMr9YT9KFjIErpXwaL53319egxbdKlm0FyhyLejdM+I5b+t4WFD+E
+         lxuJSMrqN28r5SnMl33CFPYi6Pf0tIl64UfGamro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 5.3 66/95] futex: Prevent robust futex exit race
+Subject: [PATCH 5.4 28/66] futex: Prevent robust futex exit race
 Date:   Wed, 27 Nov 2019 21:32:23 +0100
-Message-Id: <20191127202930.763356893@linuxfoundation.org>
+Message-Id: <20191127202701.518579879@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -195,7 +195,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
-@@ -3454,11 +3454,16 @@ err_unlock:
+@@ -3452,11 +3452,16 @@ err_unlock:
  	return ret;
  }
  
@@ -213,7 +213,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	u32 uval, uninitialized_var(nval), mval;
  	int err;
-@@ -3471,6 +3476,42 @@ retry:
+@@ -3469,6 +3474,42 @@ retry:
  	if (get_user(uval, uaddr))
  		return -1;
  
@@ -256,7 +256,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if ((uval & FUTEX_TID_MASK) != task_pid_vnr(curr))
  		return 0;
  
-@@ -3590,10 +3631,11 @@ void exit_robust_list(struct task_struct
+@@ -3588,10 +3629,11 @@ void exit_robust_list(struct task_struct
  		 * A pending lock might already be on the list, so
  		 * don't process it twice:
  		 */
@@ -270,7 +270,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  		if (rc)
  			return;
  		entry = next_entry;
-@@ -3607,9 +3649,10 @@ void exit_robust_list(struct task_struct
+@@ -3605,9 +3647,10 @@ void exit_robust_list(struct task_struct
  		cond_resched();
  	}
  
@@ -283,7 +283,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  }
  
  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
-@@ -3786,7 +3829,8 @@ void compat_exit_robust_list(struct task
+@@ -3784,7 +3827,8 @@ void compat_exit_robust_list(struct task
  		if (entry != pending) {
  			void __user *uaddr = futex_uaddr(entry, futex_offset);
  
@@ -293,7 +293,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  				return;
  		}
  		if (rc)
-@@ -3805,7 +3849,7 @@ void compat_exit_robust_list(struct task
+@@ -3803,7 +3847,7 @@ void compat_exit_robust_list(struct task
  	if (pending) {
  		void __user *uaddr = futex_uaddr(pending, futex_offset);
  
