@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4969110BE3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCE210BF36
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:41:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730311AbfK0UuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:50:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35790 "EHLO mail.kernel.org"
+        id S1729129AbfK0UlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:41:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730293AbfK0UuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:50:03 -0500
+        id S1729123AbfK0UlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:41:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C716A20678;
-        Wed, 27 Nov 2019 20:50:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D8621787;
+        Wed, 27 Nov 2019 20:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887802;
-        bh=d9nxKcst+qQU3OV1rFInKjs+FqAyZY6FfLLPYATbVhY=;
+        s=default; t=1574887263;
+        bh=qpOfe/n+XafqdA3bd277vvX9ZgxGKO9nKXTsAQ4Xcxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KuUl9/n58k737+Jgg3MVoO93DwHOV9JUhV3ggVonOXZ1jeW8ihYHorHKVhMUN3Sf7
-         FIIUtDIP7lGjTa9zjHL9UWbCHB8LTjFIUmO37rPs2+BXQVIhfLbIYxrOlMg6q334Xx
-         gQDzcID4uIwji+jdw15W6usEXG60RrUXtEllv85A=
+        b=FIvQiTdiw0n+8J+79ByihWggdYBKtTRRaJdBqdBXXslMlSyRW+rNKc0cXjDkyID1x
+         D7W5gXQnBap+8QZi0mhQ1K7lb6C3dl/aaCOQf5mc02XitCVqTb032Rw3p3fxKCwtE/
+         sUmv4Xj6y4riUmrD6sxjcKZ0CriJXh+froKNl3gQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Mattias Jacobsson <2pi@mok.nu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 093/211] fs/ocfs2/dlm/dlmdebug.c: fix a sleep-in-atomic-context bug in dlm_print_one_mle()
+Subject: [PATCH 4.9 043/151] USB: misc: appledisplay: fix backlight update_status return code
 Date:   Wed, 27 Nov 2019 21:30:26 +0100
-Message-Id: <20191127203102.517588992@linuxfoundation.org>
+Message-Id: <20191127203027.261800350@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,58 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Mattias Jacobsson <2pi@mok.nu>
 
-[ Upstream commit 999865764f5f128896402572b439269acb471022 ]
+[ Upstream commit 090158555ff8d194a98616034100b16697dd80d0 ]
 
-The kernel module may sleep with holding a spinlock.
+Upon success the update_status handler returns a positive number
+corresponding to the number of bytes transferred by usb_control_msg.
+However the return code of the update_status handler should indicate if
+an error occurred(negative) or how many bytes of the user's input to sysfs
+that was consumed. Return code zero indicates all bytes were consumed.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+The bug can for example result in the update_status handler being called
+twice, the second time with only the "unconsumed" part of the user's input
+to sysfs. Effectively setting an incorrect brightness.
 
-[FUNC] get_zeroed_page(GFP_NOFS)
-fs/ocfs2/dlm/dlmdebug.c, 332: get_zeroed_page in dlm_print_one_mle
-fs/ocfs2/dlm/dlmmaster.c, 240: dlm_print_one_mle in __dlm_put_mle
-fs/ocfs2/dlm/dlmmaster.c, 255: __dlm_put_mle in dlm_put_mle
-fs/ocfs2/dlm/dlmmaster.c, 254: spin_lock in dlm_put_ml
+Change the update_status handler to return zero for all successful
+transactions and forward usb_control_msg's error code upon failure.
 
-[FUNC] get_zeroed_page(GFP_NOFS)
-fs/ocfs2/dlm/dlmdebug.c, 332: get_zeroed_page in dlm_print_one_mle
-fs/ocfs2/dlm/dlmmaster.c, 240: dlm_print_one_mle in __dlm_put_mle
-fs/ocfs2/dlm/dlmmaster.c, 222: __dlm_put_mle in dlm_put_mle_inuse
-fs/ocfs2/dlm/dlmmaster.c, 219: spin_lock in dlm_put_mle_inuse
-
-To fix this bug, GFP_NOFS is replaced with GFP_ATOMIC.
-
-This bug is found by my static analysis tool DSAC.
-
-Link: http://lkml.kernel.org/r/20180901112528.27025-1-baijiaju1990@gmail.com
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/dlm/dlmdebug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/appledisplay.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ocfs2/dlm/dlmdebug.c b/fs/ocfs2/dlm/dlmdebug.c
-index 9b984cae4c4e0..1d6dc8422899b 100644
---- a/fs/ocfs2/dlm/dlmdebug.c
-+++ b/fs/ocfs2/dlm/dlmdebug.c
-@@ -329,7 +329,7 @@ void dlm_print_one_mle(struct dlm_master_list_entry *mle)
- {
- 	char *buf;
+diff --git a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
+index b8092bcf89a29..140af7754c1e6 100644
+--- a/drivers/usb/misc/appledisplay.c
++++ b/drivers/usb/misc/appledisplay.c
+@@ -160,8 +160,11 @@ static int appledisplay_bl_update_status(struct backlight_device *bd)
+ 		pdata->msgdata, 2,
+ 		ACD_USB_TIMEOUT);
+ 	mutex_unlock(&pdata->sysfslock);
+-	
+-	return retval;
++
++	if (retval < 0)
++		return retval;
++	else
++		return 0;
+ }
  
--	buf = (char *) get_zeroed_page(GFP_NOFS);
-+	buf = (char *) get_zeroed_page(GFP_ATOMIC);
- 	if (buf) {
- 		dump_mle(mle, buf, PAGE_SIZE - 1);
- 		free_page((unsigned long)buf);
+ static int appledisplay_bl_get_brightness(struct backlight_device *bd)
 -- 
 2.20.1
 
