@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2BD310B989
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:54:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D5810B8AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfK0UyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:54:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43950 "EHLO mail.kernel.org"
+        id S1728791AbfK0Upo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:45:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730805AbfK0UyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:54:13 -0500
+        id S1729308AbfK0Upl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:45:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CA1E2154A;
-        Wed, 27 Nov 2019 20:54:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A3B2217BC;
+        Wed, 27 Nov 2019 20:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888052;
-        bh=nOASPME7oBHDUaltT3oebX6cvhcGZFVv/TX6DPCoUc8=;
+        s=default; t=1574887540;
+        bh=s6XzFskxKEy/0UPny9gW5Yu4Xr5VQWwj/YGBAcYZ4jk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mP6luWYD8GvtcF67o6fZs/WPwMV2aFs8mwlLTydfau+j5d8KI2KnZDWxWo5OUwDFl
-         TN6BLoEuHI9KSIl5EVGlQBcmeYEG4sESnGRFsJ9StJN/smzE8PmJCkcPMeOYGG9aBC
-         jqAnKCt/jiouLCWhtByA8o3XxLRUWk9GwGixSVF4=
+        b=jKOfP3QNUh2wA8S7jZ/6wC7oqp+bfT0R2mwzbhwEoFssx/X14uSMBtutidszjD/0I
+         kMkW75ncE4PBz8V1pbOM8xUaGHSMbU81cDzyf8rs6LJA7QP5z5WpRq6XmXLvgnAD5m
+         6vyrqxx5J+/Om9F5jcbCqqZjxHIQ4JZTkMpOrubc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Suwan Kim <suwan.kim027@gmail.com>,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH 4.14 198/211] usbip: Fix uninitialized symbol nents in stub_recv_cmd_submit()
-Date:   Wed, 27 Nov 2019 21:32:11 +0100
-Message-Id: <20191127203112.327804232@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        "Christopher M. Riedl" <cmr@informatik.wtf>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH 4.9 149/151] powerpc/64s: support nospectre_v2 cmdline option
+Date:   Wed, 27 Nov 2019 21:32:12 +0100
+Message-Id: <20191127203047.641403632@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,115 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suwan Kim <suwan.kim027@gmail.com>
+From: "Christopher M. Riedl" <cmr@informatik.wtf>
 
-commit 2a9125317b247f2cf35c196f968906dcf062ae2d upstream.
+commit d8f0e0b073e1ec52a05f0c2a56318b47387d2f10 upstream.
 
-Smatch reported that nents is not initialized and used in
-stub_recv_cmd_submit(). nents is currently initialized by sgl_alloc()
-and used to allocate multiple URBs when host controller doesn't
-support scatter-gather DMA. The use of uninitialized nents means that
-buf_len is zero and use_sg is true. But buffer length should not be
-zero when an URB uses scatter-gather DMA.
+Add support for disabling the kernel implemented spectre v2 mitigation
+(count cache flush on context switch) via the nospectre_v2 and
+mitigations=off cmdline options.
 
-To prevent this situation, add the conditional that checks buf_len
-and use_sg. And move the use of nents right after the sgl_alloc() to
-avoid the use of uninitialized nents.
-
-If the error occurs, it adds SDEV_EVENT_ERROR_MALLOC and stub_priv
-will be released by stub event handler and connection will be shut
-down.
-
-Fixes: ea44d190764b ("usbip: Implement SG support to vhci-hcd and stub driver")
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191111141035.27788-1-suwan.kim027@gmail.com
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Christopher M. Riedl <cmr@informatik.wtf>
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190524024647.381-1-cmr@informatik.wtf
+Signed-off-by: Daniel Axtens <dja@axtens.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/usbip/stub_rx.c |   50 ++++++++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 18 deletions(-)
+ arch/powerpc/kernel/security.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/usbip/stub_rx.c
-+++ b/drivers/usb/usbip/stub_rx.c
-@@ -487,18 +487,50 @@ static void stub_recv_cmd_submit(struct
- 	if (pipe == -1)
- 		return;
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -29,7 +29,7 @@ static enum count_cache_flush_type count
+ bool barrier_nospec_enabled;
+ static bool no_nospec;
+ static bool btb_flush_enabled;
+-#ifdef CONFIG_PPC_FSL_BOOK3E
++#if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_BOOK3S_64)
+ static bool no_spectrev2;
+ #endif
  
-+	/*
-+	 * Smatch reported the error case where use_sg is true and buf_len is 0.
-+	 * In this case, It adds SDEV_EVENT_ERROR_MALLOC and stub_priv will be
-+	 * released by stub event handler and connection will be shut down.
-+	 */
- 	priv = stub_priv_alloc(sdev, pdu);
- 	if (!priv)
- 		return;
+@@ -107,7 +107,7 @@ static __init int barrier_nospec_debugfs
+ device_initcall(barrier_nospec_debugfs_init);
+ #endif /* CONFIG_DEBUG_FS */
  
- 	buf_len = (unsigned long long)pdu->u.cmd_submit.transfer_buffer_length;
+-#ifdef CONFIG_PPC_FSL_BOOK3E
++#if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_BOOK3S_64)
+ static int __init handle_nospectre_v2(char *p)
+ {
+ 	no_spectrev2 = true;
+@@ -115,6 +115,9 @@ static int __init handle_nospectre_v2(ch
+ 	return 0;
+ }
+ early_param("nospectre_v2", handle_nospectre_v2);
++#endif /* CONFIG_PPC_FSL_BOOK3E || CONFIG_PPC_BOOK3S_64 */
++
++#ifdef CONFIG_PPC_FSL_BOOK3E
+ void setup_spectre_v2(void)
+ {
+ 	if (no_spectrev2)
+@@ -392,7 +395,17 @@ static void toggle_count_cache_flush(boo
  
-+	if (use_sg && !buf_len) {
-+		dev_err(&udev->dev, "sg buffer with zero length\n");
-+		goto err_malloc;
+ void setup_count_cache_flush(void)
+ {
+-	toggle_count_cache_flush(true);
++	bool enable = true;
++
++	if (no_spectrev2 || cpu_mitigations_off()) {
++		if (security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED) ||
++		    security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED))
++			pr_warn("Spectre v2 mitigations not under software control, can't disable\n");
++
++		enable = false;
 +	}
 +
- 	/* allocate urb transfer buffer, if needed */
- 	if (buf_len) {
- 		if (use_sg) {
- 			sgl = sgl_alloc(buf_len, GFP_KERNEL, &nents);
- 			if (!sgl)
- 				goto err_malloc;
-+
-+			/* Check if the server's HCD supports SG */
-+			if (!udev->bus->sg_tablesize) {
-+				/*
-+				 * If the server's HCD doesn't support SG, break
-+				 * a single SG request into several URBs and map
-+				 * each SG list entry to corresponding URB
-+				 * buffer. The previously allocated SG list is
-+				 * stored in priv->sgl (If the server's HCD
-+				 * support SG, SG list is stored only in
-+				 * urb->sg) and it is used as an indicator that
-+				 * the server split single SG request into
-+				 * several URBs. Later, priv->sgl is used by
-+				 * stub_complete() and stub_send_ret_submit() to
-+				 * reassemble the divied URBs.
-+				 */
-+				support_sg = 0;
-+				num_urbs = nents;
-+				priv->completed_urbs = 0;
-+				pdu->u.cmd_submit.transfer_flags &=
-+								~URB_DMA_MAP_SG;
-+			}
- 		} else {
- 			buffer = kzalloc(buf_len, GFP_KERNEL);
- 			if (!buffer)
-@@ -506,24 +538,6 @@ static void stub_recv_cmd_submit(struct
- 		}
- 	}
++	toggle_count_cache_flush(enable);
+ }
  
--	/* Check if the server's HCD supports SG */
--	if (use_sg && !udev->bus->sg_tablesize) {
--		/*
--		 * If the server's HCD doesn't support SG, break a single SG
--		 * request into several URBs and map each SG list entry to
--		 * corresponding URB buffer. The previously allocated SG
--		 * list is stored in priv->sgl (If the server's HCD support SG,
--		 * SG list is stored only in urb->sg) and it is used as an
--		 * indicator that the server split single SG request into
--		 * several URBs. Later, priv->sgl is used by stub_complete() and
--		 * stub_send_ret_submit() to reassemble the divied URBs.
--		 */
--		support_sg = 0;
--		num_urbs = nents;
--		priv->completed_urbs = 0;
--		pdu->u.cmd_submit.transfer_flags &= ~URB_DMA_MAP_SG;
--	}
--
- 	/* allocate urb array */
- 	priv->num_urbs = num_urbs;
- 	priv->urbs = kmalloc_array(num_urbs, sizeof(*priv->urbs), GFP_KERNEL);
+ #ifdef CONFIG_DEBUG_FS
 
 
