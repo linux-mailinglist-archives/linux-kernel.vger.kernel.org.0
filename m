@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33AC110BF10
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB3210BF9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfK0Umi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:42:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49026 "EHLO mail.kernel.org"
+        id S1728876AbfK0Vny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:43:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729336AbfK0Umf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:42:35 -0500
+        id S1728685AbfK0UiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:38:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CEC321780;
-        Wed, 27 Nov 2019 20:42:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A82621771;
+        Wed, 27 Nov 2019 20:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887354;
+        s=default; t=1574887090;
         bh=Ubzdtado8qpF9VSRmYdGAtTkvjECdbzj1U/T/2pUfco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uTG0UzGGxmagRce0NK+8dFR1xYqXBJNjnWOCTtVOmCiObzDn8ZJ1hXKFc2DNVTt2o
-         LZDNSNKx1cPUbhAVIaf3tnmny4we+CZC9bzXP1Mewej29EFnGNgUSvSXKU7KJnIQCD
-         h+XYBOw11Bpv/K5aTMPE/xLYCHG2ZQk81kmlbpF8=
+        b=vu1aNK+hPQzt7GIBmcG9bz1MtdrddhDggj8nW2iTXgRyLpjslbPaxtyiNQwtPa+eh
+         f19TtN7Df34lUwynTEPaS4LYnpit/AxqGNdkXYWuhMJ40jZFib4tklR+SkcO8jUzsa
+         Ffl8AjsVl6y2n2BwCBAgnTnzoSX+zKiSpk7Z6r2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,12 +35,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 079/151] fs/hfs/extent.c: fix array out of bounds read of array extent
-Date:   Wed, 27 Nov 2019 21:31:02 +0100
-Message-Id: <20191127203035.695941897@linuxfoundation.org>
+Subject: [PATCH 4.4 072/132] fs/hfs/extent.c: fix array out of bounds read of array extent
+Date:   Wed, 27 Nov 2019 21:31:03 +0100
+Message-Id: <20191127203007.572023848@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
