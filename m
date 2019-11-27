@@ -2,98 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC0F10C099
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:27:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73EC310C09F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:27:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfK0X06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 18:26:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:47426 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbfK0X06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 18:26:58 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 15:26:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
-   d="scan'208";a="211837656"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by orsmga003.jf.intel.com with ESMTP; 27 Nov 2019 15:26:57 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 889E1300FE1; Wed, 27 Nov 2019 15:26:57 -0800 (PST)
-Date:   Wed, 27 Nov 2019 15:26:57 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Andi Kleen <andi@firstfloor.org>, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Optimize perf stat for large number of events/cpus
-Message-ID: <20191127232657.GL84886@tassilo.jf.intel.com>
-References: <20191121001522.180827-1-andi@firstfloor.org>
- <20191127151657.GE22719@kernel.org>
- <20191127154305.GJ22719@kernel.org>
+        id S1727313AbfK0X1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 18:27:31 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46966 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbfK0X1a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 18:27:30 -0500
+Received: by mail-oi1-f194.google.com with SMTP id n14so21618493oie.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 15:27:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o17+8CbvEVhOy52GU617H5c27TW8wRMeItKugWda1E8=;
+        b=gEfFygk6zlq4YjlSAWZP+mBposTPLDRB0XxbdPfaSa+M9iiNgVGB8mYWVDeb9AVTsk
+         YrA3GXh9ZLq4Z+xsJQhqojijbIxtEdSI1+fWzY+kmoYOLvqpkzqR6rXb56Y09ug897bC
+         eWBu9yWelTnScG+tv6mjz4fDwDi9w38OTIl6SHxAWgCSIC6PMa4eWYVdx2GMzV9dcLcQ
+         Se5pJt/Ybo+2hmCxGnMZDi2tDNMQExJNlLyEYnebNDH34CYmhwqbBfPpOu5pjURX3AuE
+         MUaRGQUqSsCf162tumHS06Y/2RmW7YNUzvfGIddWVqJq/34EW44h1+ePcEqcxOEhJKYU
+         4YPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o17+8CbvEVhOy52GU617H5c27TW8wRMeItKugWda1E8=;
+        b=AALWVNjQZ/NiJHU5T5cY8fVWHwkNzWCjVJlPDkgl8e4x6WDiuQR6JLuakZtyJ9BN2D
+         3pI2KYD2HGRcXUgJzYnZwR5lYbQzBrrFoqdQs68QZG6hRO2Kd+3e2KdbuXGF75HjObS8
+         IdRS2fuxgdZmH+F1o2nSAK9Ja46/RlHEeedOVGKOdyHWPHQgPXCQYSEazMIC8QT5XorM
+         KZyDKsYuzX7ihMrDmZQ4DmPGEdkUfWIRhmPUnsLIq4YfS1rM7v78zpLPWTeAwOeW/9Bw
+         Wh11etj5manOD0gnPvk5LNAq1tna+t8eUoe1g1Zzbz77FnsHphLfVpL/v2d3HO8UePZR
+         EKuw==
+X-Gm-Message-State: APjAAAVuXwWXL4cE0wywqbtToCiCrljoilUXkW1hZh3eTbTRp6zA6CNs
+        zAtmXhOz3Kgo52BA+YJBsIxDpYM9u/cBJ6fYrN3doA==
+X-Google-Smtp-Source: APXvYqz/AUEd3lH0kPPmUTqXkVmSb9WSAhqCK7EciEEtyrVLgZRj53oKw15Kf7wNjADfJLYnoAQVfAgL4uUDIqrpQDY=
+X-Received: by 2002:a05:6808:9a1:: with SMTP id e1mr6352651oig.175.1574897248917;
+ Wed, 27 Nov 2019 15:27:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127154305.GJ22719@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+ <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com> <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+In-Reply-To: <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 28 Nov 2019 00:27:02 +0100
+Message-ID: <CAG48ez2VBS4bVJqdCU9cUhYePYCiUURvXZWneBx2KGkg3L9d4g@mail.gmail.com>
+Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 12:43:05PM -0300, Arnaldo Carvalho de Melo wrote:
-> So, have you tried running 'perf test' after each cset is applied and
-> built?
+On Wed, Nov 27, 2019 at 9:48 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 11/27/19 12:23 PM, Jann Horn wrote:
+> > On Wed, Nov 27, 2019 at 6:11 AM Jens Axboe <axboe@kernel.dk> wrote:
+> >> I posted this a few weeks back, took another look at it and refined it a
+> >> bit. I'd like some input on the viability of this approach.
+> >>
+> >> A new signalfd setup flag is added, SFD_TASK. This is only valid if used
+> >> with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
+> >> remembered in the signalfd context, and will be the one we use for
+> >> checking signals in the poll/read handlers in signalfd.
+> >>
+> >> This is needed to make signalfd useful with io_uring and aio, of which
+> >> the former in particular has my interest.
+> >>
+> >> I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
+> >> on the signalfd descriptor, forking, and then exiting, we grab a
+> >> reference to the task when we assign it. If that original task exits, we
+> >> catch it in signalfd_flush() and ensure waiters are woken up.
+> >
+> > Mh... that's not really reliable, because you only get ->flush() from
+> > the last exiting thread (or more precisely, the last exiting task that
+> > shares the files_struct).
+> >
+> > What is your goal here? To have a reference to a task without keeping
+> > the entire task_struct around in memory if someone leaks the signalfd
+> > to another process - basically like a weak pointer? If so, you could
+> > store a refcounted reference to "struct pid" instead of a refcounted
+> > reference to the task_struct, and then do the lookup of the
+> > task_struct on ->poll and ->read (similar to what procfs does).
+>
+> Yeah, I think that works out much better (and cleaner). How about this,
+> then? Follows your advice and turns it into a struct pid instead. I
+> don't particularly like the -ESRCH in dequeue and setup, what do you
+> think? For poll, POLLERR seems like a prudent choice.
 
-I ran it at the end, but there are quite a few fails out of the box,
-so I missed that one thanks.
+-ESRCH may be kinda weird, but I also can't think of anything
+better... and it does describe the problem pretty accurately: The task
+whose signal state you're trying to inspect is gone. I went through
+the list of errnos, and everything else sounded more weird...
 
-This patch fixes it. Let me know if I should submit it in a more
-formal way.
 
----
+One more thing, though: We'll have to figure out some way to
+invalidate the fd when the target goes through execve(), in particular
+if it's a setuid execution. Otherwise we'll be able to just steal
+signals that were intended for the other task, that's probably not
+good.
 
-Fix event times test case
+So we should:
+ a) prevent using ->wait() on an old signalfd once the task has gone
+through execve()
+ b) kick off all existing waiters
+ c) most importantly, prevent ->read() on an old signalfd once the
+task has gone through execve()
 
-Reported-by: Arnaldo
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+We probably want to avoid using the cred_guard_mutex here, since it is
+quite broad and has some deadlocking issues; it might make sense to
+put the update of ->self_exec_id in fs/exec.c under something like the
+siglock, and then for a) and c) we can check whether the
+->self_exec_id changed while holding the siglock, and for b) we can
+add a call to signalfd_cleanup() after the ->self_exec_id change.
 
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index 4c6485fc31b9..4dc06289f4c7 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -224,7 +224,7 @@ int perf_evsel__enable(struct perf_evsel *evsel)
- 	int i;
- 	int err = 0;
- 
--	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+	for (i = 0; i < xyarray__max_x(evsel->fd) && !err; i++)
- 		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, NULL, i);
- 	return err;
- }
-@@ -239,7 +239,7 @@ int perf_evsel__disable(struct perf_evsel *evsel)
- 	int i;
- 	int err = 0;
- 
--	for (i = 0; i < evsel->cpus->nr && !err; i++)
-+	for (i = 0; i < xyarray__max_x(evsel->fd) && !err; i++)
- 		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, NULL, i);
- 	return err;
- }
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 59b9b4f3fe34..0844e3e29fb0 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1853,6 +1853,10 @@ int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus,
- 			     int cpu)
- {
-+	if (cpu == -1)
-+		return evsel__open_cpu(evsel, cpus, NULL, 0,
-+					cpus ? cpus->nr : 1);
-+
- 	return evsel__open_cpu(evsel, cpus, NULL, cpu, cpu + 1);
- }
- 
+> +static void signalfd_put_task(struct signalfd_ctx *ctx, struct task_struct *tsk)
+> +{
+> +       if (ctx->task_pid)
+> +               put_task_struct(tsk);
+> +}
+> +
+> +static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
+> +{
+> +       if (ctx->task_pid)
+> +               return get_pid_task(ctx->task_pid, PIDTYPE_PID);
+> +
+> +       return current;
+> +}
+
+This works, and I guess it's a question of coding style... but I'd
+kinda prefer to do the refcount operation in both cases, so that the
+semantics of the returned reference are simply "holds a reference"
+instead of "either holds a reference or borrows from current depending
+on ctx->task_pid". But if you feel strongly about it, feel free to
+keep it as-is.
+
+[...]
+> -       add_wait_queue(&current->sighand->signalfd_wqh, &wait);
+> +       add_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+>         for (;;) {
+>                 set_current_state(TASK_INTERRUPTIBLE);
+> -               ret = dequeue_signal(current, &ctx->sigmask, info);
+> +               ret = dequeue_signal(tsk, &ctx->sigmask, info);
+>                 if (ret != 0)
+>                         break;
+>                 if (signal_pending(current)) {
+>                         ret = -ERESTARTSYS;
+>                         break;
+>                 }
+> -               spin_unlock_irq(&current->sighand->siglock);
+> +               spin_unlock_irq(&tsk->sighand->siglock);
+>                 schedule();
+
+Should we be dropping the reference to the task before schedule() and
+re-acquiring it afterwards so that if we're blocked on a signalfd read
+and then the corresponding task dies, the refcount can drop to zero
+and we can get woken up? Probably doesn't matter, but seems a bit
+cleaner to me.
+
+> -               spin_lock_irq(&current->sighand->siglock);
+> +               spin_lock_irq(&tsk->sighand->siglock);
+>         }
+> -       spin_unlock_irq(&current->sighand->siglock);
+> +       spin_unlock_irq(&tsk->sighand->siglock);
+>
+> -       remove_wait_queue(&current->sighand->signalfd_wqh, &wait);
+> +       remove_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+>         __set_current_state(TASK_RUNNING);
+>
+> +       signalfd_put_task(ctx, tsk);
+>         return ret;
+>   }
+>
+> @@ -267,19 +296,24 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+>         /* Check the SFD_* constants for consistency.  */
+>         BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
+>         BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
+> +       BUILD_BUG_ON(SFD_TASK & (SFD_CLOEXEC | SFD_NONBLOCK));
+>
+> -       if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK))
+> +       if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK | SFD_TASK))
+> +               return -EINVAL;
+> +       if ((flags & (SFD_CLOEXEC | SFD_TASK)) == SFD_TASK)
+>                 return -EINVAL;
+
+(non-actionable comment: It seems kinda weird that you can specify
+these parameters with no effect for the `uffd != -1` case... but since
+the existing parameters already work that way, I guess it's
+consistent.)
