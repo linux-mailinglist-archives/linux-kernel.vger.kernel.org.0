@@ -2,130 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EED10AD39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C49110AD33
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:07:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfK0KHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:07:39 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16124 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726092AbfK0KHh (ORCPT
+        id S1726512AbfK0KHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:07:33 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:32801 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfK0KHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:07:37 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARA7AGl032453;
-        Wed, 27 Nov 2019 11:07:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=VAggDD7eOOudtLCJRIZWwLHbOcnWRF07mVpnmo9075g=;
- b=Xhl35aFk4FKmIqnDte+5HLyVlueiHnEO478B0pFnD948tio0UouOKZVf1p5ug0J3FF6b
- GQahQBaXYLsF+G0iXQFc3njAHBeXohOOjfLhHs0p92fjbeOaS0ZLvRpd+WmqPWTvSAs1
- 3FayiqM255Dv43/6E3ndE+Bs4J3zqL/EhECsINQO6V652R7XCOJJ0qXxrwsDQuLkMsQB
- rc7tBT7uCKWG1CWsNe+JiRoht0vHA1y7lrf3jluG4vd2UsP2inL5RC5rmh3FlHfJMFtt
- lPO/oYlNdv+by9JGnpcen2O1AN07t5jyftnYezEnmHH2rHmgsbjtoo/afOASpM3NITTn aw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2whcxsax09-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Nov 2019 11:07:17 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E14A100038;
-        Wed, 27 Nov 2019 11:07:15 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C806E2B11EF;
-        Wed, 27 Nov 2019 11:07:15 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 27 Nov 2019 11:07:15
- +0100
-From:   Olivier Moysan <olivier.moysan@st.com>
-To:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <pmeerw@pmeerw.net>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
-        <linux-iio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@st.com>,
-        <olivier.moysan@st.com>
-Subject: [INTERNAL][PATCH] iio: adc: stm32-dfsdm: adapt sampling rate to oversampling ratio
-Date:   Wed, 27 Nov 2019 11:07:12 +0100
-Message-ID: <20191127100712.24558-1-olivier.moysan@st.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 27 Nov 2019 05:07:33 -0500
+X-Originating-IP: 90.65.102.129
+Received: from localhost (lfbn-1-1480-129.w90-65.abo.wanadoo.fr [90.65.102.129])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 25041E002F;
+        Wed, 27 Nov 2019 10:07:23 +0000 (UTC)
+Date:   Wed, 27 Nov 2019 11:07:22 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu.Beznea@microchip.com
+Cc:     linux@armlinux.org.uk, Nicolas.Ferre@microchip.com,
+        Ludovic.Desroches@microchip.com, sre@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 02/17] ARM: at91: pm: move SAM9X60's PM under its own
+ SoC config flag
+Message-ID: <20191127100722.GI299836@piout.net>
+References: <1574773941-20649-1-git-send-email-claudiu.beznea@microchip.com>
+ <1574773941-20649-3-git-send-email-claudiu.beznea@microchip.com>
+ <20191126212841.GR299836@piout.net>
+ <10705ea9-7a0f-5af4-e383-293fabed6b89@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-27_02:2019-11-27,2019-11-27 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10705ea9-7a0f-5af4-e383-293fabed6b89@microchip.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update sampling rate when oversampling ratio is changed
-through the IIO ABI.
+On 27/11/2019 08:06:47+0000, Claudiu.Beznea@microchip.com wrote:
+> 
+> 
+> On 26.11.2019 23:28, Alexandre Belloni wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On 26/11/2019 15:12:06+0200, Claudiu Beznea wrote:
+> >> Move SAM9X60's PM part under SoC config flag. This allows the building
+> >> of SAM9X60 platform withouth depending on CONFIG_SOC_AT91SAM9 flag,
+> >> allowing us to select only necessary config flags for SAM9X60.
+> >>
+> > 
+> > I'm really wondering, how much space does that really save?
+> > 
+> > The net benefit seems to be very small...
+> 
+> Not that much, indeed. We want to be independent of SOC_AT91SAM9.
+> 
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
----
- drivers/iio/adc/stm32-dfsdm-adc.c | 32 ++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+The question is why? I don't see the technical benefit but I
+definitively see the maintenance burden of having two separate configs
+doing almost the same thing.
 
-diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-index 0339ecdd06bd..87a842507509 100644
---- a/drivers/iio/adc/stm32-dfsdm-adc.c
-+++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-@@ -1221,14 +1221,32 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
- 	unsigned int spi_freq;
- 	int ret = -EINVAL;
- 
-+	switch (ch->src) {
-+	case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL:
-+		spi_freq = adc->dfsdm->spi_master_freq;
-+		break;
-+	case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_FALLING:
-+	case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_RISING:
-+		spi_freq = adc->dfsdm->spi_master_freq / 2;
-+		break;
-+	default:
-+		spi_freq = adc->spi_freq;
-+	}
-+
- 	switch (mask) {
- 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
- 		ret = iio_device_claim_direct_mode(indio_dev);
- 		if (ret)
- 			return ret;
-+
- 		ret = stm32_dfsdm_compute_all_osrs(indio_dev, val);
--		if (!ret)
-+		if (!ret) {
-+			dev_dbg(&indio_dev->dev,
-+				"Sampling rate changed from (%u) to (%u)\n",
-+				adc->sample_freq, spi_freq / val);
- 			adc->oversamp = val;
-+			adc->sample_freq = spi_freq / val;
-+		}
- 		iio_device_release_direct_mode(indio_dev);
- 		return ret;
- 
-@@ -1240,18 +1258,6 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
- 		if (ret)
- 			return ret;
- 
--		switch (ch->src) {
--		case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL:
--			spi_freq = adc->dfsdm->spi_master_freq;
--			break;
--		case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_FALLING:
--		case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_RISING:
--			spi_freq = adc->dfsdm->spi_master_freq / 2;
--			break;
--		default:
--			spi_freq = adc->spi_freq;
--		}
--
- 		ret = dfsdm_adc_set_samp_freq(indio_dev, val, spi_freq);
- 		iio_device_release_direct_mode(indio_dev);
- 		return ret;
+> > 
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >> ---
+> >>  arch/arm/mach-at91/Makefile   |  1 +
+> >>  arch/arm/mach-at91/at91sam9.c | 18 ------------------
+> >>  arch/arm/mach-at91/pm.c       |  2 +-
+> >>  arch/arm/mach-at91/sam9x60.c  | 34 ++++++++++++++++++++++++++++++++++
+> >>  4 files changed, 36 insertions(+), 19 deletions(-)
+> >>  create mode 100644 arch/arm/mach-at91/sam9x60.c
+> >>
+> >> diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
+> >> index de64301dcff2..f565490f1b70 100644
+> >> --- a/arch/arm/mach-at91/Makefile
+> >> +++ b/arch/arm/mach-at91/Makefile
+> >> @@ -6,6 +6,7 @@
+> >>  # CPU-specific support
+> >>  obj-$(CONFIG_SOC_AT91RM9200) += at91rm9200.o
+> >>  obj-$(CONFIG_SOC_AT91SAM9)   += at91sam9.o
+> >> +obj-$(CONFIG_SOC_SAM9X60)    += sam9x60.o
+> >>  obj-$(CONFIG_SOC_SAMA5)              += sama5.o
+> >>  obj-$(CONFIG_SOC_SAMV7)              += samv7.o
+> >>
+> >> diff --git a/arch/arm/mach-at91/at91sam9.c b/arch/arm/mach-at91/at91sam9.c
+> >> index bf629c90c758..7e572189a5eb 100644
+> >> --- a/arch/arm/mach-at91/at91sam9.c
+> >> +++ b/arch/arm/mach-at91/at91sam9.c
+> >> @@ -31,21 +31,3 @@ DT_MACHINE_START(at91sam_dt, "Atmel AT91SAM9")
+> >>       .init_machine   = at91sam9_init,
+> >>       .dt_compat      = at91_dt_board_compat,
+> >>  MACHINE_END
+> >> -
+> >> -static void __init sam9x60_init(void)
+> >> -{
+> >> -     of_platform_default_populate(NULL, NULL, NULL);
+> >> -
+> >> -     sam9x60_pm_init();
+> >> -}
+> >> -
+> >> -static const char *const sam9x60_dt_board_compat[] __initconst = {
+> >> -     "microchip,sam9x60",
+> >> -     NULL
+> >> -};
+> >> -
+> >> -DT_MACHINE_START(sam9x60_dt, "Microchip SAM9X60")
+> >> -     /* Maintainer: Microchip */
+> >> -     .init_machine   = sam9x60_init,
+> >> -     .dt_compat      = sam9x60_dt_board_compat,
+> >> -MACHINE_END
+> >> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> >> index d5af6aedc02c..56a6a49b19e2 100644
+> >> --- a/arch/arm/mach-at91/pm.c
+> >> +++ b/arch/arm/mach-at91/pm.c
+> >> @@ -805,7 +805,7 @@ void __init at91rm9200_pm_init(void)
+> >>
+> >>  void __init sam9x60_pm_init(void)
+> >>  {
+> >> -     if (!IS_ENABLED(CONFIG_SOC_AT91SAM9))
+> >> +     if (!IS_ENABLED(CONFIG_SOC_SAM9X60))
+> >>               return;
+> >>
+> >>       at91_pm_modes_init();
+> >> diff --git a/arch/arm/mach-at91/sam9x60.c b/arch/arm/mach-at91/sam9x60.c
+> >> new file mode 100644
+> >> index 000000000000..d8c739d25458
+> >> --- /dev/null
+> >> +++ b/arch/arm/mach-at91/sam9x60.c
+> >> @@ -0,0 +1,34 @@
+> >> +// SPDX-License-Identifier: GPL-2.0+
+> >> +/*
+> >> + * Setup code for SAM9X60.
+> >> + *
+> >> + * Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries
+> >> + *
+> >> + * Author: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >> + */
+> >> +
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_platform.h>
+> >> +
+> >> +#include <asm/mach/arch.h>
+> >> +#include <asm/system_misc.h>
+> >> +
+> >> +#include "generic.h"
+> >> +
+> >> +static void __init sam9x60_init(void)
+> >> +{
+> >> +     of_platform_default_populate(NULL, NULL, NULL);
+> >> +
+> >> +     sam9x60_pm_init();
+> >> +}
+> >> +
+> >> +static const char *const sam9x60_dt_board_compat[] __initconst = {
+> >> +     "microchip,sam9x60",
+> >> +     NULL
+> >> +};
+> >> +
+> >> +DT_MACHINE_START(sam9x60_dt, "Microchip SAM9X60")
+> >> +     /* Maintainer: Microchip */
+> >> +     .init_machine   = sam9x60_init,
+> >> +     .dt_compat      = sam9x60_dt_board_compat,
+> >> +MACHINE_END
+> >> --
+> >> 2.7.4
+> >>
+> > 
+> > --
+> > Alexandre Belloni, Bootlin
+> > Embedded Linux and Kernel engineering
+> > https://bootlin.com
+> > 
+
 -- 
-2.17.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
