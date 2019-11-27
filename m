@@ -2,53 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A57DE10B71E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9E210B722
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfK0UAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:00:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39554 "EHLO mail.kernel.org"
+        id S1727501AbfK0UBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbfK0UAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:00:18 -0500
-Subject: Re: [GIT PULL] arch/microblaze patches for 5.5-rc1
+        id S1726729AbfK0UBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:01:40 -0500
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52F09205ED;
+        Wed, 27 Nov 2019 20:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574884818;
-        bh=fZcPhKtg4Eyt+zaHypDi0lDtktOjuqRadpEPnhXscEM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=IzN085izgIoUQMtd+PVPVkVQCyjoLNv4ZVo9UHerfbDOtFpdsLBFj0aimtCIeGCbi
-         MUj7PZ1sT/PbgUCvjhFS6zw0K/fJZ4lUe8oveOa5ZwDXnYsELKiOe89C2nYQJvbMP6
-         q2QD5f1BYGtXsnaOlt5IYFmiyqafBWwwMOkQm4dQ=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <026c97b9-565c-adc3-3d78-fe2e839e9ecd@monstr.eu>
-References: <026c97b9-565c-adc3-3d78-fe2e839e9ecd@monstr.eu>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <026c97b9-565c-adc3-3d78-fe2e839e9ecd@monstr.eu>
-X-PR-Tracked-Remote: git://git.monstr.eu/linux-2.6-microblaze.git
- tags/microblaze-v5.5-rc1
-X-PR-Tracked-Commit-Id: 22648c989cb8305f51b96b5962df8674697bb2ab
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 477093b3e144aa0ece07a5fd2a84013d037e2776
-Message-Id: <157488481798.30408.1857832385030124730.pr-tracker-bot@kernel.org>
-Date:   Wed, 27 Nov 2019 20:00:17 +0000
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        s=default; t=1574884899;
+        bh=o6w7PgA47rzSdbjn85d9GgkgbdSbOIW/GWwPXGXodEE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sP308u2hbDXMR2q3dZZo0JBwDMksE1GhaFfilJEywtHZ9B2ypm5TxWvNtauRR1VI2
+         NPkhuCiAm3Utir3jIaNyly1yLhyWGvfDvhH3qwI5k5S5o3bdjmPur1+pI6uAGvFSmH
+         W+2JLVhxK6WBnVw4g5njwl88mwmw7B22ETUlMXkw=
+Date:   Wed, 27 Nov 2019 12:01:38 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux F2FS Dev Mailing List 
+        <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [GIT PULL] f2fs for 5.5
+Message-ID: <20191127200138.GA47793@jaegeuk-macbookpro.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 27 Nov 2019 15:53:42 +0100:
+Hi Linus,
 
-> git://git.monstr.eu/linux-2.6-microblaze.git tags/microblaze-v5.5-rc1
+Could you please consider this pull request?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/477093b3e144aa0ece07a5fd2a84013d037e2776
+The following changes since commit b145b0eb2031a620ca010174240963e4d2c6ce26:
 
-Thank you!
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2019-10-04 11:17:51 -0700)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-5.5
+
+for you to fetch changes up to 803e74be04b32f7785742dcabfc62116718fbb06:
+
+  f2fs: stop GC when the victim becomes fully valid (2019-11-25 10:01:28 -0800)
+
+----------------------------------------------------------------
+f2fs-for-5.5-rc1
+
+In this round, we've introduced fairly small number of patches as below.
+
+Enhancement:
+ - improve the in-place-update IO flow
+ - allocate segment to guarantee no GC for pinned files
+
+Bug fix:
+ - fix updatetime in lazytime mode
+ - potential memory leak in f2fs_listxattr
+ - record parent inode number in rename2 correctly
+ - fix deadlock in f2fs_gc along with atomic writes
+ - avoid needless data migration in GC
+
+----------------------------------------------------------------
+Chao Yu (6):
+      f2fs: fix to update time in lazytime mode
+      f2fs: cache global IPU bio
+      f2fs: fix wrong description in document
+      f2fs: fix to update dir's i_pino during cross_rename
+      f2fs: fix potential overflow
+      f2fs: show f2fs instance in printk_ratelimited
+
+Chengguang Xu (1):
+      f2fs: choose hardlimit when softlimit is larger than hardlimit in f2fs_statfs_project()
+
+Chengguang Xu via Linux-f2fs-devel (1):
+      f2fs: mark recovery flag correctly in read_raw_super_block()
+
+Jaegeuk Kim (4):
+      f2fs: avoid kernel panic on corruption test
+      f2fs: support aligned pinned file
+      f2fs: expose main_blkaddr in sysfs
+      f2fs: stop GC when the victim becomes fully valid
+
+Qiuyang Sun (2):
+      f2fs: update multi-dev metadata in resize_fs
+      f2fs: check total_segments from devices in raw_super
+
+Randall Huang (1):
+      f2fs: fix to avoid memory leakage in f2fs_listxattr
+
+Sahitya Tummala (1):
+      f2fs: Fix deadlock in f2fs_gc() context during atomic files handling
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |   6 +
+ Documentation/filesystems/f2fs.txt      |   5 +-
+ fs/f2fs/checkpoint.c                    |   2 +-
+ fs/f2fs/data.c                          | 190 +++++++++++++++++++++++++-------
+ fs/f2fs/dir.c                           |   7 +-
+ fs/f2fs/f2fs.h                          |  63 +++++++----
+ fs/f2fs/file.c                          |  47 ++++++--
+ fs/f2fs/gc.c                            |  46 +++++++-
+ fs/f2fs/inode.c                         |   8 +-
+ fs/f2fs/namei.c                         |  15 ++-
+ fs/f2fs/node.c                          |   3 +-
+ fs/f2fs/recovery.c                      |   2 +-
+ fs/f2fs/segment.c                       |  64 ++++++++---
+ fs/f2fs/segment.h                       |   2 +
+ fs/f2fs/super.c                         |  50 +++++++--
+ fs/f2fs/sysfs.c                         |   4 +
+ fs/f2fs/xattr.c                         |  14 ++-
+ 17 files changed, 421 insertions(+), 107 deletions(-)
