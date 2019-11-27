@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB9510B9A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBFCD10B9AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730971AbfK0Uzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46086 "EHLO mail.kernel.org"
+        id S1729505AbfK0Uzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:55:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730654AbfK0Uzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:35 -0500
+        id S1730024AbfK0Uzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:55:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C68A720862;
-        Wed, 27 Nov 2019 20:55:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C46222154A;
+        Wed, 27 Nov 2019 20:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888134;
-        bh=ocDDI6UNN/IZnta24ouw3SRUvHXXUlZZoHZJyZBfJQg=;
+        s=default; t=1574888139;
+        bh=0YtwBp1f+Cgq7P3s/HVzv1YEHY2F4J8cu2TOkq3oFFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=skyNc9WX+1tmjgIwkw+er6UvUTKp2g54ypsDA7hU0iZR2ToVYNOpIoFHNDpljOHnv
-         9mGQNHhN8qqJw39ls/PPxSANRe3fM1wDO6zGZVXA5W0ZyPe/RlKBmi3G12SYdqBU+z
-         +oWfGkXprFCI74qlc67FESCfHKMUIwF+R+SniOy8=
+        b=zs01PbjGTKSzOmartOUqOsSEmIT9EyYbYF7E/Dr4ndbF5S4FsM+pbWhRJtWhMP/qC
+         5iHU+vdIRedCg5wKgrQs5eP4yB0F0hGYEoR2y864EdKISGv5nsfacTRQznGf/HBJIh
+         VPZZ/M47IxvocWRm9CeQEdy6ebHgF93A4H09CjHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.19 018/306] drm/amd/powerplay: issue no PPSMC_MSG_GetCurrPkgPwr on unsupported ASICs
-Date:   Wed, 27 Nov 2019 21:27:48 +0100
-Message-Id: <20191127203116.029122590@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.19 020/306] drm/i915/userptr: Try to acquire the page lock around set_page_dirty()
+Date:   Wed, 27 Nov 2019 21:27:50 +0100
+Message-Id: <20191127203116.175503395@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -43,60 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Quan <evan.quan@amd.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 355d991cb6ff6ae76b5e28b8edae144124c730e4 upstream.
+commit 2d691aeca4aecbb8d0414a777a46981a8e142b05 upstream.
 
-Otherwise, the error message prompted will confuse user.
+set_page_dirty says:
 
-Signed-off-by: Evan Quan <evan.quan@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+	For pages with a mapping this should be done under the page lock
+	for the benefit of asynchronous memory errors who prefer a
+	consistent dirty state. This rule can be broken in some special
+	cases, but should be better not to.
+
+Under those rules, it is only safe for us to use the plain set_page_dirty
+calls for shmemfs/anonymous memory. Userptr may be used with real
+mappings and so needs to use the locked version (set_page_dirty_lock).
+
+However, following a try_to_unmap() we may want to remove the userptr and
+so call put_pages(). However, try_to_unmap() acquires the page lock and
+so we must avoid recursively locking the pages ourselves -- which means
+that we cannot safely acquire the lock around set_page_dirty(). Since we
+can't be sure of the lock, we have to risk skip dirtying the page, or
+else risk calling set_page_dirty() without a lock and so risk fs
+corruption.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203317
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112012
+Fixes: 5cc9ed4b9a7a ("drm/i915: Introduce mapping of user pages into video memory (userptr) ioctl")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Cc: stable@vger.kernel.org
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191111133205.11590-1-chris@chris-wilson.co.uk
+(cherry picked from commit 0d4bbe3d407f79438dc4f87943db21f7134cfc65)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+(cherry picked from commit cee7fb437edcdb2f9f8affa959e274997f5dca4d)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/i915/i915_gem_userptr.c |   22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -3472,18 +3472,31 @@ static int smu7_get_pp_table_entry(struc
+--- a/drivers/gpu/drm/i915/i915_gem_userptr.c
++++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
+@@ -691,8 +691,28 @@ i915_gem_userptr_put_pages(struct drm_i9
+ 	i915_gem_gtt_finish_pages(obj, pages);
  
- static int smu7_get_gpu_power(struct pp_hwmgr *hwmgr, u32 *query)
- {
-+	struct amdgpu_device *adev = hwmgr->adev;
- 	int i;
- 	u32 tmp = 0;
+ 	for_each_sgt_page(page, sgt_iter, pages) {
+-		if (obj->mm.dirty)
++		if (obj->mm.dirty && trylock_page(page)) {
++			/*
++			 * As this may not be anonymous memory (e.g. shmem)
++			 * but exist on a real mapping, we have to lock
++			 * the page in order to dirty it -- holding
++			 * the page reference is not sufficient to
++			 * prevent the inode from being truncated.
++			 * Play safe and take the lock.
++			 *
++			 * However...!
++			 *
++			 * The mmu-notifier can be invalidated for a
++			 * migrate_page, that is alreadying holding the lock
++			 * on the page. Such a try_to_unmap() will result
++			 * in us calling put_pages() and so recursively try
++			 * to lock the page. We avoid that deadlock with
++			 * a trylock_page() and in exchange we risk missing
++			 * some page dirtying.
++			 */
+ 			set_page_dirty(page);
++			unlock_page(page);
++		}
  
- 	if (!query)
- 		return -EINVAL;
- 
--	smum_send_msg_to_smc_with_parameter(hwmgr, PPSMC_MSG_GetCurrPkgPwr, 0);
--	tmp = cgs_read_register(hwmgr->device, mmSMC_MSG_ARG_0);
--	*query = tmp;
-+	/*
-+	 * PPSMC_MSG_GetCurrPkgPwr is not supported on:
-+	 *  - Hawaii
-+	 *  - Bonaire
-+	 *  - Fiji
-+	 *  - Tonga
-+	 */
-+	if ((adev->asic_type != CHIP_HAWAII) &&
-+	    (adev->asic_type != CHIP_BONAIRE) &&
-+	    (adev->asic_type != CHIP_FIJI) &&
-+	    (adev->asic_type != CHIP_TONGA)) {
-+		smum_send_msg_to_smc_with_parameter(hwmgr, PPSMC_MSG_GetCurrPkgPwr, 0);
-+		tmp = cgs_read_register(hwmgr->device, mmSMC_MSG_ARG_0);
-+		*query = tmp;
- 
--	if (tmp != 0)
--		return 0;
-+		if (tmp != 0)
-+			return 0;
-+	}
- 
- 	smum_send_msg_to_smc(hwmgr, PPSMC_MSG_PmStatusLogStart);
- 	cgs_write_ind_register(hwmgr->device, CGS_IND_REG__SMC,
+ 		mark_page_accessed(page);
+ 		put_page(page);
 
 
