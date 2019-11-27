@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AE410B9F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B509010B9FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731307AbfK0U6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:58:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49578 "EHLO mail.kernel.org"
+        id S1731360AbfK0U6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:58:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731298AbfK0U6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:58:19 -0500
+        id S1731345AbfK0U6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:58:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C421F2084D;
-        Wed, 27 Nov 2019 20:58:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3221C2084B;
+        Wed, 27 Nov 2019 20:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888298;
-        bh=gUbBaBqeNzDCPkiKzKsFnWC4UNaWjQUjPjfR/d+HDI8=;
+        s=default; t=1574888326;
+        bh=6eykspN3cd2v1dC2FZs8AixH9I5Z7C5N1now7YBSKs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kf/1Gfn8sjALd5pwd3RRm/1NO0PoMqtm6o99U+in0W9NlazmfckPLqwQ/Tq72H/Om
-         HMrOhPM7aALk0gYqNsoa/ZnjjNn4M0AKqITvo80VAwscyUHbG7eN5M6IsiMxepN6mv
-         wMtHEQbqcwaeg/xk5792afULoJcAwQ4asuXF7zBE=
+        b=ysvrSqtFHcfsvk9xX0lA+/bPkpwu5ZbpCEz/xNfqZzD9Y/Dg+2gx4TLtgk0785wxB
+         gsAtRL7nEsGsKER3IWF/W3RQLvQvTSSRVQghPj7TyKE+TgkMn65acDkkX5vcaBc3Xn
+         4njkECRTLew7Ryj2LUOIgDXG/KFG3mtXwKWmo9MI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Angelo Dureghello <angelo@sysam.it>,
-        Greg Ungerer <gerg@linux-m68k.org>,
+        stable@vger.kernel.org, Luo Jiaxing <luojiaxing@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/306] m68k: fix command-line parsing when passed from u-boot
-Date:   Wed, 27 Nov 2019 21:28:23 +0100
-Message-Id: <20191127203118.650749917@linuxfoundation.org>
+Subject: [PATCH 4.19 054/306] scsi: hisi_sas: Feed back linkrate(max/min) when re-attached
+Date:   Wed, 27 Nov 2019 21:28:24 +0100
+Message-Id: <20191127203118.734981846@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,31 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Angelo Dureghello <angelo@sysam.it>
+From: Luo Jiaxing <luojiaxing@huawei.com>
 
-[ Upstream commit 381fdd62c38344a771aed06adaf14aae65c47454 ]
+[ Upstream commit 5a54691f874ab29ec82f08bc6936866a3ccdaa91 ]
 
-This patch fixes command_line array zero-terminated
-one byte over the end of the array, causing boot to hang.
+At directly attached situation, if the user modifies the sysfs interface
+of maximum_linkrate and minimum_linkrate to renegotiate the linkrate
+between SAS controller and target, the value of both files mentioned
+above should have change to user setting after renegotiate is over, but
+it remains unchanged.
 
-Signed-off-by: Angelo Dureghello <angelo@sysam.it>
-Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
+To fix this bug, maximum_linkrate and minimum_linkrate will be directly
+fed back to relevant sas_phy structure.
+
+Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/m68k/kernel/uboot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/m68k/kernel/uboot.c b/arch/m68k/kernel/uboot.c
-index b29c3b241e1bb..1070828770645 100644
---- a/arch/m68k/kernel/uboot.c
-+++ b/arch/m68k/kernel/uboot.c
-@@ -102,5 +102,5 @@ __init void process_uboot_commandline(char *commandp, int size)
- 	}
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index fd9d82c9033de..e9747379384b2 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -906,6 +906,9 @@ static void hisi_sas_phy_set_linkrate(struct hisi_hba *hisi_hba, int phy_no,
+ 	_r.maximum_linkrate = max;
+ 	_r.minimum_linkrate = min;
  
- 	parse_uboot_commandline(commandp, len);
--	commandp[size - 1] = 0;
-+	commandp[len - 1] = 0;
- }
++	sas_phy->phy->maximum_linkrate = max;
++	sas_phy->phy->minimum_linkrate = min;
++
+ 	hisi_hba->hw->phy_disable(hisi_hba, phy_no);
+ 	msleep(100);
+ 	hisi_hba->hw->phy_set_linkrate(hisi_hba, phy_no, &_r);
 -- 
 2.20.1
 
