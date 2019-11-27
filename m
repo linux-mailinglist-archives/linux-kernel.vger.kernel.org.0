@@ -2,113 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1C110AAD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 07:56:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D0F10AADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 07:59:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfK0G4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 01:56:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47168 "EHLO mail.kernel.org"
+        id S1726145AbfK0G7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 01:59:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726026AbfK0G4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 01:56:32 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1726026AbfK0G7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 01:59:06 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 109E120665;
-        Wed, 27 Nov 2019 06:56:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F410320665;
+        Wed, 27 Nov 2019 06:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574837791;
-        bh=kyXfm7AOEZ8Syg1jiA3cZuR2h8U5E3zuVBPHsT7+B1s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Lfnfzy4NPW0+4d6PcBHZS+myWitxFIrLLcDf67hUfyCKxlOrRdxZR28q2AOk41INa
-         oObBqgvBH4swW6AijumXLgcGMCqdZ6lG1ubPEnglbXMNldJdFpiUjHRqlNKXNDapUe
-         66V3dPiL6PFbqbeJXOUpQNbAT8gfQp7zVOy6h8+U=
-Date:   Wed, 27 Nov 2019 15:56:26 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, namit@vmware.com, hpa@zytor.com,
-        luto@kernel.org, ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        jeyu@kernel.org
-Subject: Re: [PATCH -tip 2/2] kprobes: Set unoptimized flag after
- unoptimizing code
-Message-Id: <20191127155626.5386bc3a25195cfd0fa82a08@kernel.org>
-In-Reply-To: <20191127061910.nbfmzds4k5wxorwz@ast-mbp.dhcp.thefacebook.com>
-References: <157483420094.25881.9190014521050510942.stgit@devnote2>
-        <157483422375.25881.13508326028469515760.stgit@devnote2>
-        <20191127061910.nbfmzds4k5wxorwz@ast-mbp.dhcp.thefacebook.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1574837945;
+        bh=zK1jCwlGOD78VxyRYdiQ6t+wN6eJspibjYTJfiHAKZQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nfhs7ssBftD+Mla9meYRq1vCMBrSJKx547gAd6rSP8aIjOOI2qauAyKMhSvV/7FSC
+         sPtAYOWwFIWOA2gSoD+79mwGyX0raoNh9UohHsXsJvPwqokDmzZenbE2lr0WwxY6lb
+         WEZeU9bJ2EiT1QxAaaCXIU4oQFbGx60wD2rvr3Nk=
+Date:   Wed, 27 Nov 2019 07:59:03 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Je Yen Tam <je.yen.tam@ni.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "serial/8250: Add support for NI-Serial
+ PXI/PXIe+485 devices"
+Message-ID: <20191127065903.GA1725222@kroah.com>
+References: <20191127031751.9082-1-je.yen.tam@ni.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127031751.9082-1-je.yen.tam@ni.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Nov 2019 22:19:11 -0800
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+On Wed, Nov 27, 2019 at 11:17:51AM +0800, Je Yen Tam wrote:
+> This reverts commit fdc2de87124f5183a98ea7eced1f76dbdba22951 which is
+> commit 225607f75454 ("serial/8250: Add support for NI-Serial PXI/PXIe+485 devices").
 
-> On Wed, Nov 27, 2019 at 02:57:04PM +0900, Masami Hiramatsu wrote:
-> > Fix to set unoptimized flag after confirming the code is completely
-> > unoptimized. Without this fix, when a kprobe hits the intermediate
-> > modified instruction (the first byte is replaced by int3, but
-> > latter bytes still be a jump address operand) while unoptimizing,
-> > it can return to the middle byte of the modified code. And it causes
-> > an invalid instruction exception in the kernel.
-> > 
-> > Usually, this is a rare case, but if we put a probe on the function
-> > called while text patching, it always causes a kernel panic as below.
-> > (text_poke() is used for patching the code in optprobe)
-> > 
-> >  # echo p text_poke+5 > kprobe_events
-> >  # echo 1 > events/kprobes/enable
-> >  # echo 0 > events/kprobes/enable
-> >  invalid opcode: 0000 [#1] PREEMPT SMP PTI
-> >  CPU: 7 PID: 137 Comm: kworker/7:1 Not tainted 5.4.0-rc8+ #29
-> >  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
-> >  Workqueue: events kprobe_optimizer
-> >  RIP: 0010:text_poke+0x9/0x50
-> >  Code: 01 00 00 5b 5d 41 5c 41 5d c3 89 c0 0f b7 4c 02 fe 66 89 4c 05 fe e9 31 ff ff ff e8 71 ac 03 00 90 55 48 89 f5 53 cc 30 cb fd <1e> ec 08 8b 05 72 98 31 01 85 c0 75 11 48 83 c4 08 48 89 ee 48 89
-> >  RSP: 0018:ffffc90000343df0 EFLAGS: 00010686
-> >  RAX: 0000000000000000 RBX: ffffffff81025796 RCX: 0000000000000000
-> >  RDX: 0000000000000004 RSI: ffff88807c983148 RDI: ffffffff81025796
-> >  RBP: ffff88807c983148 R08: 0000000000000001 R09: 0000000000000000
-> >  R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82284fe0
-> >  R13: ffff88807c983138 R14: ffffffff82284ff0 R15: 0ffff88807d9eee0
-> >  FS:  0000000000000000(0000) GS:ffff88807d9c0000(0000) knlGS:0000000000000000
-> >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >  CR2: 000000000058158b CR3: 000000007b372000 CR4: 00000000000006a0
-> >  Call Trace:
-> >   arch_unoptimize_kprobe+0x22/0x28
-> >   arch_unoptimize_kprobes+0x39/0x87
-> >   kprobe_optimizer+0x6e/0x290
-> >   process_one_work+0x2a0/0x610
-> >   worker_thread+0x28/0x3d0
-> >   ? process_one_work+0x610/0x610
-> >   kthread+0x10d/0x130
-> >   ? kthread_park+0x80/0x80
-> >   ret_from_fork+0x3a/0x50
-> >  Modules linked in:
-> >  ---[ end trace 83b34b22a228711b ]---
-> > 
-> > This can happen even if we blacklist text_poke() and other functions,
-> > because there is a small time window which showing the intermediate
-> > code to other CPUs.
-> > 
-> > Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Awesome. It fixes the crash for me.
-> Tested-by: Alexei Starovoitov <ast@kernel.org>
+That sentance does not make sense.  fdc2de87124f ("serial/8250: Add
+support for NI-Serial PXI/PXIe+485 devices") is in the 5.4 kernel tree,
+where did the commit id "225607f75454" come from?  I don't see it
+anywhere in Linus's tree.
 
-That's a good news :)
+> The upstream introduced a breakage on NI-Serial PXI(e)-RS485 devices,
+> RS-232 variants have no issue. The Linux system can enumerate the Serial
+> PXI(e)-RS485 devices, but it broke the R/W operation on the ports.
 
-Thank you for testing!
+I can not parse this paragraph either, what do you mean by "The
+upstream"?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> However, the implementation is working on the NI internal Linux RT kernel
+> but it does not work in the Linux main tree kernel. This is only affecting
+> NI products, specifically the RS-485 variants. Reverting the upstream
+> until a proper implementation that can apply to both NI internal Linux
+> kernel and Linux mainline kernel is figured out.
+
+So this patch really does not work at all?  Can't you just find a simple
+fix to go on top of it to resolve the issue?  You really want it all
+ripped out for 5.5 and 5.4.y?
+
+thanks,
+
+greg k-h
