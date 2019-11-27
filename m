@@ -2,149 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E247D10AD9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBBC10ADCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbfK0K3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:29:18 -0500
-Received: from mga14.intel.com ([192.55.52.115]:65447 "EHLO mga14.intel.com"
+        id S1726537AbfK0Keb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:34:31 -0500
+Received: from foss.arm.com ([217.140.110.172]:45812 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbfK0K3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:29:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 02:29:17 -0800
-X-IronPort-AV: E=Sophos;i="5.69,249,1571727600"; 
-   d="scan'208";a="199142767"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 02:29:13 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     allen <allen.chen@ite.com.tw>
-Cc:     Jau-Chih Tseng <Jau-Chih.Tseng@ite.com.tw>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Allen Chen <allen.chen@ite.com.tw>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list\:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Pi-Hsun Shih <pihsun@chromium.org>, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH] drm/edid: fixup EDID 1.3 and 1.4 judge reduced-blanking timings logic
-In-Reply-To: <1574761572-26585-1-git-send-email-allen.chen@ite.com.tw>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <1574761572-26585-1-git-send-email-allen.chen@ite.com.tw>
-Date:   Wed, 27 Nov 2019 12:29:11 +0200
-Message-ID: <87pnhdobns.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726267AbfK0Keb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 05:34:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A6DC30E;
+        Wed, 27 Nov 2019 02:34:30 -0800 (PST)
+Received: from dell3630.arm.com (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 890C23F6C4;
+        Wed, 27 Nov 2019 02:34:28 -0800 (PST)
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+To:     Atish Patra <atish.patra@wdc.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org
+Subject: [PATCH v2] arm: Fix topology setup in case of CPU hotplug for CONFIG_SCHED_MC
+Date:   Wed, 27 Nov 2019 11:33:53 +0100
+Message-Id: <20191127103353.12417-1-dietmar.eggemann@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Nov 2019, allen <allen.chen@ite.com.tw> wrote:
-> According to VESA ENHANCED EXTENDED DISPLAY IDENTIFICATION DATA STANDARD
-> (Defines EDID Structure Version 1, Revision 4) page: 39
-> How to determine whether the monitor support RB timing or not?
-> EDID 1.4
-> First:  read detailed timing descriptor and make sure byte 0 = 0x00,
-> 	byte 1 = 0x00, byte 2 = 0x00 and byte 3 = 0xFD
-> Second: read EDID bit 0 in feature support byte at address 18h = 1
-> 	and detailed timing descriptor byte 10 = 0x04
-> Third:  if EDID bit 0 in feature support byte = 1 &&
-> 	detailed timing descriptor byte 10 = 0x04
-> 	then we can check byte 15, if bit 4 in byte 15 = 1 is support RB
->         if EDID bit 0 in feature support byte != 1 ||
-> 	detailed timing descriptor byte 10 != 0x04,
-> 	then byte 15 can not be used
->
-> The linux code is_rb function not follow the VESA's rule
->
-> Signed-off-by: Allen Chen <allen.chen@ite.com.tw>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> ---
->  drivers/gpu/drm/drm_edid.c | 36 ++++++++++++++++++++++++++++++------
->  1 file changed, 30 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index f5926bf..e11e585 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -93,6 +93,12 @@ struct detailed_mode_closure {
->  	int modes;
->  };
->  
-> +struct edid_support_rb_closure {
-> +	struct edid *edid;
-> +	bool valid_support_rb;
-> +	bool support_rb;
-> +};
-> +
->  #define LEVEL_DMT	0
->  #define LEVEL_GTF	1
->  #define LEVEL_GTF2	2
-> @@ -2017,23 +2023,41 @@ struct drm_display_mode *drm_mode_find_dmt(struct drm_device *dev,
->  	}
->  }
->  
-> +static bool
-> +is_display_descriptor(const u8 *r, u8 tag)
-> +{
-> +	return (!r[0] && !r[1] && !r[2] && r[3] == tag) ? true : false;
-> +}
-> +
->  static void
->  is_rb(struct detailed_timing *t, void *data)
->  {
->  	u8 *r = (u8 *)t;
-> -	if (r[3] == EDID_DETAIL_MONITOR_RANGE)
-> -		if (r[15] & 0x10)
-> -			*(bool *)data = true;
-> +	struct edid_support_rb_closure *closure = data;
-> +	struct edid *edid = closure->edid;
-> +
-> +	if (is_display_descriptor(r, EDID_DETAIL_MONITOR_RANGE)) {
-> +		if (edid->features & BIT(0) && r[10] == BIT(2)) {
-> +			closure->valid_support_rb = true;
-> +			closure->support_rb = (r[15] & 0x10) ? true : false;
-> +		}
-> +	}
->  }
->  
->  /* EDID 1.4 defines this explicitly.  For EDID 1.3, we guess, badly. */
->  static bool
->  drm_monitor_supports_rb(struct edid *edid)
->  {
-> +	struct edid_support_rb_closure closure = {
-> +		.edid = edid,
-> +		.valid_support_rb = false,
-> +		.support_rb = false,
-> +	};
-> +
->  	if (edid->revision >= 4) {
-> -		bool ret = false;
-> -		drm_for_each_detailed_block((u8 *)edid, is_rb, &ret);
-> -		return ret;
-> +		drm_for_each_detailed_block((u8 *)edid, is_rb, &closure);
-> +		if (closure.valid_support_rb)
-> +			return closure.support_rb;
+Commit ca74b316df96 ("arm: Use common cpu_topology structure and
+functions.") changed cpu_coregroup_mask() from the ARM32 specific
+implementation in arch/arm/include/asm/topology.h to the one shared
+with ARM64 and RISCV in drivers/base/arch_topology.c.
 
-Are you planning on extending the closure use somehow?
+Currently on ARM32 (TC2 w/ CONFIG_SCHED_MC) the task scheduler setup
+code (w/ CONFIG_SCHED_DEBUG) shows this during CPU hotplug:
 
-I did not look up the spec, but purely on the code changes alone, you
-could just move the edid->features bit check at this level, and not pass
-it down, and nothing would change. I.e. don't iterate the EDID at all if
-the bit is not set.
+  ERROR: groups don't span domain->span
 
-You also don't actually use the distinction between valid_support_rb
-vs. support_rb for anything, so the closure just adds code.
+It happens to CPUs of the cluster of the CPU which gets hot-plugged
+out on scheduler domain MC.
 
-BR,
-Jani.
+Turns out that the shared cpu_coregroup_mask() requires that the
+hot-plugged CPU is removed from the core_sibling mask via
+remove_cpu_topology(). Otherwise the 'is core_sibling subset of
+cpumask_of_node()' doesn't work. In this case the task scheduler has to
+deal with cpumask_of_node instead of core_sibling which is wrong on
+scheduler domain MC.
 
+e.g. CPU3 hot-plugged out on TC2 [cluster0: 0,3-4 cluster1: 1-2]:
 
->  	}
->  
->  	return ((edid->input & DRM_EDID_INPUT_DIGITAL) != 0);
+  cpu_coregroup_mask(): CPU3 cpumask_of_node=0-2,4 core_sibling=0,3-4
+                                                                  ^
+should be:
 
+  cpu_coregroup_mask(): CPU3 cpumask_of_node=0-2,4 core_sibling=0,4
+
+Add remove_cpu_topology() to __cpu_disable() to remove the CPU from the
+topology masks in case of a CPU hotplug out operation.
+
+At the same time tweak store_cpu_topology() slightly so it will call
+update_siblings_masks() in case of CPU hotplug in operation via
+secondary_start_kernel()->smp_store_cpu_info().
+
+This aligns the ARM32 implementation with the ARM64 one.
+
+Guarding remove_cpu_topology() with CONFIG_GENERIC_ARCH_TOPOLOGY is
+necessary since some Arm32 defconfigs (aspeed_g5_defconfig,
+milbeaut_m10v_defconfig, spear13xx_defconfig) specify an explicit
+
+ # CONFIG_ARM_CPU_TOPOLOGY is not set
+
+w/ ./arch/arm/Kconfig: select GENERIC_ARCH_TOPOLOGY if ARM_CPU_TOPOLOGY
+
+Fixes: ca74b316df96 ("arm: Use common cpu_topology structure and functions")
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+Tested-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+---
+
+Changes in v2:
+
+- Removed cosmetic cleanup in pr_info() of store_cpu_topology()
+- Guarded remove_cpu_topology() with CONFIG_GENERIC_ARCH_TOPOLOGY
+
+I opted for an #ifdef in __cpu_disable rather than a stub definition of
+remove_cpu_topology() in include/linux/arch_topology.h to keep this
+change small.
+
+ arch/arm/kernel/smp.c      |  4 ++++
+ arch/arm/kernel/topology.c | 10 +++++-----
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 4b0bab2607e4..46e1be9e57a8 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -240,6 +240,10 @@ int __cpu_disable(void)
+ 	if (ret)
+ 		return ret;
+ 
++#ifdef CONFIG_GENERIC_ARCH_TOPOLOGY
++	remove_cpu_topology(cpu);
++#endif
++
+ 	/*
+ 	 * Take this CPU offline.  Once we clear this, we can't return,
+ 	 * and we must not schedule until we're ready to give up the cpu.
+diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+index 5b9faba03afb..8d2e61d9e7a6 100644
+--- a/arch/arm/kernel/topology.c
++++ b/arch/arm/kernel/topology.c
+@@ -196,9 +196,8 @@ void store_cpu_topology(unsigned int cpuid)
+ 	struct cpu_topology *cpuid_topo = &cpu_topology[cpuid];
+ 	unsigned int mpidr;
+ 
+-	/* If the cpu topology has been already set, just return */
+-	if (cpuid_topo->core_id != -1)
+-		return;
++	if (cpuid_topo->package_id != -1)
++		goto topology_populated;
+ 
+ 	mpidr = read_cpuid_mpidr();
+ 
+@@ -231,14 +230,15 @@ void store_cpu_topology(unsigned int cpuid)
+ 		cpuid_topo->package_id = -1;
+ 	}
+ 
+-	update_siblings_masks(cpuid);
+-
+ 	update_cpu_capacity(cpuid);
+ 
+ 	pr_info("CPU%u: thread %d, cpu %d, socket %d, mpidr %x\n",
+ 		cpuid, cpu_topology[cpuid].thread_id,
+ 		cpu_topology[cpuid].core_id,
+ 		cpu_topology[cpuid].package_id, mpidr);
++
++topology_populated:
++	update_siblings_masks(cpuid);
+ }
+ 
+ static inline int cpu_corepower_flags(void)
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.1
+
