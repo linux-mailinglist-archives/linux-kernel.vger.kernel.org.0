@@ -2,76 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2659D10C067
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 23:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0968010C068
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 23:56:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfK0Wzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 17:55:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53019 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726984AbfK0Wzx (ORCPT
+        id S1727478AbfK0W4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 17:56:44 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38269 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbfK0W4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 17:55:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574895352;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OkZZSn7UB7yAAoECEs1czq8fk4r+Na8nNcmoXP+YNQc=;
-        b=QNzWJlnK5+CUrrmg3GwfmYuo+buR0eu0hImWEV63EaQCg0+CmtIOZw/RuKblS2E2+xX1Cv
-        YS3aVjzyKQjwvHxXr+LOplPpBJaMllI7uhqAN6cZ2RJ+klAu8+Y6vsGipJefbZE7jjP7B0
-        8a0h52hyphZnUFaoQ/VY0Uo3Kr3TCuk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-100-wOGEJGgtPwG6HhsNBc0GVg-1; Wed, 27 Nov 2019 17:55:45 -0500
-Received: by mail-wm1-f71.google.com with SMTP id y14so2935535wmj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 14:55:45 -0800 (PST)
+        Wed, 27 Nov 2019 17:56:44 -0500
+Received: by mail-qk1-f193.google.com with SMTP id b8so6145995qkk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 14:56:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=XYhfRwG5Ji2pvMuCuinGa1OmrcViu32wplTTKEJhTfk=;
+        b=PAARS5PcPoQL3XS9GQzyp2fDTPw3+pUXtyo52tuExZFSfaIimO5e4M+TgBervYDP7U
+         yhUVGPxTjccP9BCtGXAcM0XetuU1oUTzPeqhPmHoE1dMxcvPoLDnJX90nNtLptJD/uP1
+         ju63egzcZc+qyp0v9JxEe0A4YxDXiDmyrT1WrJ7y9wECAYYxYgEATqabazbToNKHAofz
+         hG4stzgnWmZYPw1NxrIoYc6eMbWT0WlB7un2ZhhwIi01p8TNCRLc82GUpEhYT1DNLY2D
+         yeineiUFS+oLwXUsNXWGlIGyeTpyeIaE4Fct4BynsdREr5QLuW9ucMeYwnIPPYGUydxl
+         zBFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:content-transfer-encoding:from:mime-version
          :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=ypXWC1p1rh6B0sqBKSPovHb8hFFh42IyChXftJmwFwA=;
-        b=N8wFJMPp9jjHhme4GomoLJB7CXHcO+LRFFqOMjS/aXPbdqvB5LYrE+My+c4UeqOEV3
-         9ZMiau9ap4NtSKh+dmxgBdJmX1LUUvfR3YnC970GYgIcga+kD2WzYSKBSEJuzbc3IJZA
-         OwDEhsEU2Yw7uaWvzuBtSOg/IAOGhP3MzSL+niPVIwAJ2pbq+gWFw5SmgqYNc/yA8L32
-         BttYjYLyjVP7l4Y85QIW0aP45+iTI9oxiBO3e8PnDvZRyg30nLSycCdrXsChWR63zUK2
-         EaXQYA6U3HNCN3brNIo8it6SRSj4AVeDspB7CKkuqi2BFXkgqS5jI0vEFe7chEyCLl1J
-         m9jA==
-X-Gm-Message-State: APjAAAUtSu9sztnGRehG7WnbAZRc3Rfc4N7dayI0nE+Ubvs1ZEIvuZ7G
-        YvB/DSvqnUBy1vLjp1M9FccPsNvy9PA6zASj8GkFAe02L2Xld08ENfCxp3eNCPd85FYnt/BxYmY
-        dJ5I/iI/8tP2Px2/RP1+4aYAl
-X-Received: by 2002:a7b:c844:: with SMTP id c4mr6439428wml.1.1574895344446;
-        Wed, 27 Nov 2019 14:55:44 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyIAv+FB8FoOGt06XxttDaljWDfDs6v8v8eSAU83EObkoTkmGHfwfYyoH4gt9sI1Da63D1u4w==
-X-Received: by 2002:a7b:c844:: with SMTP id c4mr6439414wml.1.1574895344253;
-        Wed, 27 Nov 2019 14:55:44 -0800 (PST)
-Received: from ?IPv6:2a01:598:b889:7f36:a401:5177:c4ae:d2ba? ([2a01:598:b889:7f36:a401:5177:c4ae:d2ba])
-        by smtp.gmail.com with ESMTPSA id g11sm8525862wmh.27.2019.11.27.14.55.43
+        bh=XYhfRwG5Ji2pvMuCuinGa1OmrcViu32wplTTKEJhTfk=;
+        b=I9PvdTXfP5aV1NZ+DVgj4jnBWToEAc2QKn0MeZncQqlUYi+WBdVqIHEOD9SeYjqzfP
+         2GjbxUrIhjyGdUDrVn9+gUOdCvS1nzxbZL07z7upPCNjtTObFENJwJUb9kV2LotuXCfg
+         gQKrTBMRxbMXgN2i0PUuX5sF8Zn8NJG3006UDWdX0Wtc8W865wWPe0KusbN8+FkTIShP
+         RS19ZuMvq5Js6byisQvINgYUCsoWLx4LBCy+gninDwZDSK4X7BElWQuMOZwocCc46Khn
+         6lD/w2cjZVlC/CwQdqOurLEDmDK6OHEsWjIsJA/OZMk/sCddl5kCUYeS4JMEoPh43qAB
+         VGvw==
+X-Gm-Message-State: APjAAAXq/m9RG62opQIUp/TOvNaC74PuWkjF41Hp/yIlowIEP0RRNC9D
+        OELdRjJ7dQJ41tgtbxWAVco+bA==
+X-Google-Smtp-Source: APXvYqzmKp4CtfXv6/HagS2sTgegvpTVS6zdaqSQywUUhkFMbj8c01JkSqjXG7xlf5mELrHR22q0Xg==
+X-Received: by 2002:a37:b183:: with SMTP id a125mr6844021qkf.19.1574895401631;
+        Wed, 27 Nov 2019 14:56:41 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id k26sm8134476qtm.10.2019.11.27.14.56.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 14:55:43 -0800 (PST)
-From:   David Hildenbrand <david@redhat.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2] drivers/base/node.c: Simplify unregister_memory_block_under_nodes()
-Date:   Wed, 27 Nov 2019 23:55:42 +0100
-Message-Id: <13549413-C422-4661-9E7E-4DBC63B8997C@redhat.com>
-References: <20191127141532.525708b65a96fd614595bae8@linux-foundation.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-In-Reply-To: <20191127141532.525708b65a96fd614595bae8@linux-foundation.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: iPhone Mail (17A878)
-X-MC-Unique: wOGEJGgtPwG6HhsNBc0GVg-1
-X-Mimecast-Spam-Score: 0
+        Wed, 27 Nov 2019 14:56:41 -0800 (PST)
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in find_(smallest|biggest)_section_pfn
+Date:   Wed, 27 Nov 2019 17:56:40 -0500
+Message-Id: <555512D0-986D-437D-AE01-2087CB668F68@lca.pw>
+References: <f2d5c2ed-b315-ee70-7d1e-b91d6d72a076@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+In-Reply-To: <f2d5c2ed-b315-ee70-7d1e-b91d6d72a076@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -79,33 +67,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-> Am 27.11.2019 um 23:15 schrieb Andrew Morton <akpm@linux-foundation.org>:
+> On Nov 27, 2019, at 3:49 PM, David Hildenbrand <david@redhat.com> wrote:
 >=20
-> =EF=BB=BFOn Wed, 27 Nov 2019 17:53:12 +0100 David Hildenbrand <david@redh=
-at.com> wrote:
->=20
->> Just a note that this was actually also a bugfix as noted by Chris.
->>=20
->> If the memory we are removing was never onlined,
->> get_nid_for_pfn()->pfn_to_nid() will return garbage. Removing will
->> succeed but links will remain in place.
->>=20
->> Can be triggered by
->>=20
->> 1. hotplugging a DIMM to node 1
->> 2. not onlining the memory blocks
->> 3. unplugging it
->> 4. re-plugging it to node 1
->>=20
->> We will trigger the BUG_ON(ret) in add_memory_resource(), because
->> link_mem_sections() will return with -EEXIST.
->=20
-> Oh.  In that case case we please redo the patch as a bugfix?=20
-> Appropriate title and changelog?  And perhaps the bugfix can be split
-> from the cleanup, to make the former more backportable?
+> (I am a friend of cleaning up and refactoring code to make it easier to
+> understand, maintain and extend. I was assuming your mentality is to
+> rather keeping code changes minimal if there is a chance to break things
+> - I'm sorry if that assumption was wrong.)
 
-This is already upstream (d84f2f5a7552 ),so I=E2=80=98m afraid we can=E2=80=
-=98t do anything about it. (When your cleanups turn into bugfixes ...).
+Yes, I tested linux-next everyday and saw enough of those cleanup efforts en=
+ds up introducing regressions. It is almost every day or two I had to invest=
+igate at least one regression and pick the suckers out even though my testin=
+g is only focus on MM and friends. However, I do agree if there are worthy c=
+leanup and refactoring but those tiny ones make me uncomfortable. See, I am j=
+ust trying to save a real vacation for a few weeks in the future, but given t=
+he current situation, I=E2=80=99ll need to give up on this project [1] at al=
+l because I just have no courage to debug all the regressions there once bac=
+k.
 
-I can still try to send stable patches, though ...
-
+[1] https://github.com/cailca/linux-mm=
