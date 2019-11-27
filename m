@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D88510AE43
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2512010AE49
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfK0Kzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:55:33 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:50003 "EHLO
+        id S1727028AbfK0Kzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:55:41 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:45903 "EHLO
         relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfK0Kz3 (ORCPT
+        with ESMTP id S1726282AbfK0Kza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:55:29 -0500
+        Wed, 27 Nov 2019 05:55:30 -0500
 X-Originating-IP: 90.76.211.102
 Received: from localhost.localdomain (lfbn-1-2154-102.w90-76.abo.wanadoo.fr [90.76.211.102])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id E73BCFF80D;
-        Wed, 27 Nov 2019 10:55:26 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 47898FF808;
+        Wed, 27 Nov 2019 10:55:28 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
@@ -31,9 +31,9 @@ Cc:     <linux-mtd@lists.infradead.org>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Bernhard Frauendienst <kernel@nospam.obeliks.de>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v5 2/4] mtd: concat: Fix a comment referring to an unknown symbol
-Date:   Wed, 27 Nov 2019 11:55:20 +0100
-Message-Id: <20191127105522.31445-3-miquel.raynal@bootlin.com>
+Subject: [PATCH v5 3/4] mtd: Add get_mtd_device_by_node() helper
+Date:   Wed, 27 Nov 2019 11:55:21 +0100
+Message-Id: <20191127105522.31445-4-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191127105522.31445-1-miquel.raynal@bootlin.com>
 References: <20191127105522.31445-1-miquel.raynal@bootlin.com>
@@ -44,31 +44,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the comment describing what the mtd_concat_destroy() function
-does. It referrers to the concat_mtd_devs symbol which has never
-existed (at least not since the beginning of the Git era).
+From: Bernhard Frauendienst <kernel@nospam.obeliks.de>
 
+Add an helper to retrieve a MTD device by its OF node. Since drivers can
+assign arbitrary names to MTD devices in the absence of a 'label' DT
+property, there is no other reliable way to retrieve a MTD device for a
+given OF node.
+
+Signed-off-by: Bernhard Frauendienst <kernel@nospam.obeliks.de>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+[<miquel.raynal@bootlin.com>: light internals rework]
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/mtdconcat.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/mtd/mtdcore.c   | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/mtd/mtd.h |  2 ++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/drivers/mtd/mtdconcat.c b/drivers/mtd/mtdconcat.c
-index cbc5925e6440..1b6428d6e13d 100644
---- a/drivers/mtd/mtdconcat.c
-+++ b/drivers/mtd/mtdconcat.c
-@@ -852,10 +852,7 @@ struct mtd_info *mtd_concat_create(struct mtd_info *subdev[],	/* subdevices to c
- 	return &concat->mtd;
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 76b4264936ff..5a94a2c0a6de 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -985,6 +985,44 @@ struct mtd_info *get_mtd_device_nm(const char *name)
  }
+ EXPORT_SYMBOL_GPL(get_mtd_device_nm);
  
--/*
-- * This function destroys an MTD object obtained from concat_mtd_devs()
-- */
--
-+/* Cleans the context obtained from mtd_concat_create() */
- void mtd_concat_destroy(struct mtd_info *mtd)
++/**
++ *	get_mtd_device_by_node - obtain a validated handle for an MTD device
++ *	by of_node
++ *	@of_node: OF node of MTD device to open
++ *
++ *	This function returns an MTD device structure in case of success,
++ *	an error code otherwise.
++ */
++struct mtd_info *get_mtd_device_by_node(const struct device_node *of_node)
++{
++	struct mtd_info *mtd;
++	bool found = false;
++	int ret;
++
++	mutex_lock(&mtd_table_mutex);
++
++	mtd_for_each_device(mtd) {
++		if (of_node == mtd->dev.of_node) {
++			found = true;
++			break;
++		}
++	}
++
++	if (found)
++		ret = __get_mtd_device(mtd);
++
++	mutex_unlock(&mtd_table_mutex);
++
++	if (!found)
++		return ERR_PTR(-ENODEV);
++
++	if (ret)
++		return ERR_PTR(ret);
++
++	return mtd;
++}
++EXPORT_SYMBOL_GPL(get_mtd_device_by_node);
++
+ void put_mtd_device(struct mtd_info *mtd)
  {
- 	struct mtd_concat *concat = CONCAT(mtd);
+ 	mutex_lock(&mtd_table_mutex);
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index 677768b21a1d..0f25c476a1a3 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -573,6 +573,8 @@ extern struct mtd_info *get_mtd_device(struct mtd_info *mtd, int num);
+ extern int __get_mtd_device(struct mtd_info *mtd);
+ extern void __put_mtd_device(struct mtd_info *mtd);
+ extern struct mtd_info *get_mtd_device_nm(const char *name);
++extern struct mtd_info *get_mtd_device_by_node(
++		const struct device_node *of_node);
+ extern void put_mtd_device(struct mtd_info *mtd);
+ 
+ 
 -- 
 2.20.1
 
