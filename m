@@ -2,82 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C260410BC26
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ADEC10BC21
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfK0VSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:18:54 -0500
-Received: from mga12.intel.com ([192.55.52.136]:25616 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733142AbfK0VLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:11:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 13:11:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,250,1571727600"; 
-   d="scan'208";a="383619382"
-Received: from gtau-mobl.ger.corp.intel.com (HELO localhost) ([10.251.83.243])
-  by orsmga005.jf.intel.com with ESMTP; 27 Nov 2019 13:11:12 -0800
-Date:   Wed, 27 Nov 2019 23:11:09 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dan.j.williams@intel.com
-Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
- tpm_tis_probe_irq_single
-Message-ID: <20191127211109.GF14290@linux.intel.com>
-References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
- <20191114164151.GB9528@linux.intel.com>
- <20191114164426.GC9528@linux.intel.com>
- <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
- <20191121184949.yvw2gwzlkhjzko64@cantor>
+        id S1733272AbfK0VSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:18:40 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:38816 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1733151AbfK0VLT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:11:19 -0500
+Received: (qmail 4118 invoked by uid 2102); 27 Nov 2019 16:11:18 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 27 Nov 2019 16:11:18 -0500
+Date:   Wed, 27 Nov 2019 16:11:18 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Oliver Neukum <oneukum@suse.com>,
+        syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <hverkuil@xs4all.nl>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>, <mchehab@kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
+In-Reply-To: <000000000000cf39d205985a35b0@google.com>
+Message-ID: <Pine.LNX.4.44L0.1911271610270.1319-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191121184949.yvw2gwzlkhjzko64@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:49:49AM -0700, Jerry Snitselaar wrote:
-> On Sat Nov 16 19, Stefan Berger wrote:
-> > On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
-> > > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
-> > > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
-> > > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > 
-> > > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
-> > > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
-> > > > > This move handles error conditions better that may arise if anything
-> > > > > before fails in tpm_tis_probe_irq_single.
-> > > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > What about just changing the condition?
-> > > Also cannot take this since it is not a bug (no fixes tag).
-> > 
-> > I'll repost but will wait until Jerry has tested it on that machine.
-> > 
-> >    Stefan
-> > 
-> > 
-> > > 
-> > > /Jarkko
-> > 
-> > 
+Oliver:
+
+Make of this what you will...
+
+Alan Stern
+
+On Wed, 27 Nov 2019, syzbot wrote:
+
+> Hello,
 > 
-> It appears they still have the problem. I'm still waiting on logistics
-> to send me a system to debug.
+> syzbot has tested the proposed patch and the reproducer did not trigger  
+> crash:
+> 
+> Reported-and-tested-by:  
+> syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com
+> 
+> Tested on:
+> 
+> commit:         22be26f7 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9ca7a12fd736d93e0232
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=17d13f6ae00000
+> 
+> Note: testing is done by a robot and is best-effort only.
 
-Which hardware is guaranteed to ignite this? I can try to get test hw
-for this from somewhere. Kind of looking into this blinded ATM. Dan?
-
-/Jarkko
