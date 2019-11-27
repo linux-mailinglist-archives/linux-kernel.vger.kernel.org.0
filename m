@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A3210BBB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:16:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B54A110BC04
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbfK0VPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:15:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50430 "EHLO mail.kernel.org"
+        id S1732798AbfK0VRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:17:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387670AbfK0VPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:15:13 -0500
+        id S1733284AbfK0VM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:12:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F8BF21771;
-        Wed, 27 Nov 2019 21:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFDD5215E5;
+        Wed, 27 Nov 2019 21:12:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889312;
-        bh=keyMyZOrwHJ8/Mma4YkJTZvdUatq7dXMHRjU0gDH6+k=;
+        s=default; t=1574889148;
+        bh=ezbFv245e3UXk+bOz7/RRYSyfswY6TcgjUeambJ20VA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sT20lPOyuG8EZEd3ujvoqS1cnxGnTLjWBikA6RqGAcpGziTWV6QxhqNsgR62yxHwa
-         E2PyLRkxxzZ8GPhW5wWnQcAgFCWGef4bDaXHZUIWJJS9gfZEimvxv64dbe5eK/emoI
-         hpSPbfssKUQSY32HFKD2+SZVnJiprAuLFnff39es=
+        b=IS0yCXEayJS/FuS2Ly/YHyj+EK5wWsIGdhy46u4RcXClC1cKkfywBLODY2IMO1JAd
+         8oTOgfuGZU/OGxaic0UlSP8hKHWJPKw2qUNrV2E0awIz0NwmeC6fMKna+k8XOxsZnu
+         G8KN7GjaHFGWggq4oqm2aZbW5wtCB9BdpMD3NlcA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Joel Jennings <joel.jennings@makeitlabs.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.4 56/66] usb-serial: cp201x: support Mark-10 digital force gauge
-Date:   Wed, 27 Nov 2019 21:32:51 +0100
-Message-Id: <20191127202736.157804366@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.3 95/95] KVM: PPC: Book3S HV: Flush link stack on guest exit to host kernel
+Date:   Wed, 27 Nov 2019 21:32:52 +0100
+Message-Id: <20191127203003.310860131@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +42,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 347bc8cb26388791c5881a3775cb14a3f765a674 upstream.
+commit af2e8c68b9c5403f77096969c516f742f5bb29e0 upstream.
 
-Add support for the Mark-10 digital force gauge device to the cp201x
-driver.
+On some systems that are vulnerable to Spectre v2, it is up to
+software to flush the link stack (return address stack), in order to
+protect against Spectre-RSB.
 
-Based on a report and a larger patch from Joel Jennings
+When exiting from a guest we do some house keeping and then
+potentially exit to C code which is several stack frames deep in the
+host kernel. We will then execute a series of returns without
+preceeding calls, opening up the possiblity that the guest could have
+poisoned the link stack, and direct speculative execution of the host
+to a gadget of some sort.
 
-Reported-by: Joel Jennings <joel.jennings@makeitlabs.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191118092119.GA153852@kroah.com
+To prevent this we add a flush of the link stack on exit from a guest.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/cp210x.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/include/asm/asm-prototypes.h |    2 ++
+ arch/powerpc/kernel/security.c            |    9 +++++++++
+ arch/powerpc/kvm/book3s_hv_rmhandlers.S   |   30 ++++++++++++++++++++++++++++++
+ 3 files changed, 41 insertions(+)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -125,6 +125,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
- 	{ USB_DEVICE(0x10C4, 0x8382) }, /* Cygnal Integrated Products, Inc. */
- 	{ USB_DEVICE(0x10C4, 0x83A8) }, /* Amber Wireless AMB2560 */
-+	{ USB_DEVICE(0x10C4, 0x83AA) }, /* Mark-10 Digital Force Gauge */
- 	{ USB_DEVICE(0x10C4, 0x83D8) }, /* DekTec DTA Plus VHF/UHF Booster/Attenuator */
- 	{ USB_DEVICE(0x10C4, 0x8411) }, /* Kyocera GPS Module */
- 	{ USB_DEVICE(0x10C4, 0x8418) }, /* IRZ Automation Teleport SG-10 GSM/GPRS Modem */
+--- a/arch/powerpc/include/asm/asm-prototypes.h
++++ b/arch/powerpc/include/asm/asm-prototypes.h
+@@ -141,9 +141,11 @@ void _kvmppc_save_tm_pr(struct kvm_vcpu
+ extern s32 patch__call_flush_count_cache;
+ extern s32 patch__flush_count_cache_return;
+ extern s32 patch__flush_link_stack_return;
++extern s32 patch__call_kvm_flush_link_stack;
+ extern s32 patch__memset_nocache, patch__memcpy_nocache;
+ 
+ extern long flush_count_cache;
++extern long kvm_flush_link_stack;
+ 
+ #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
+ void kvmppc_save_tm_hv(struct kvm_vcpu *vcpu, u64 msr, bool preserve_nv);
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -400,6 +400,9 @@ static void toggle_count_cache_flush(boo
+ 
+ 	if (!enable) {
+ 		patch_instruction_site(&patch__call_flush_count_cache, PPC_INST_NOP);
++#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
++		patch_instruction_site(&patch__call_kvm_flush_link_stack, PPC_INST_NOP);
++#endif
+ 		pr_info("link-stack-flush: software flush disabled.\n");
+ 		link_stack_flush_enabled = false;
+ 		no_count_cache_flush();
+@@ -410,6 +413,12 @@ static void toggle_count_cache_flush(boo
+ 	patch_branch_site(&patch__call_flush_count_cache,
+ 			  (u64)&flush_count_cache, BRANCH_SET_LINK);
+ 
++#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
++	// This enables the branch from guest_exit_cont to kvm_flush_link_stack
++	patch_branch_site(&patch__call_kvm_flush_link_stack,
++			  (u64)&kvm_flush_link_stack, BRANCH_SET_LINK);
++#endif
++
+ 	pr_info("link-stack-flush: software flush enabled.\n");
+ 	link_stack_flush_enabled = true;
+ 
+--- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
++++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <asm/ppc_asm.h>
++#include <asm/code-patching-asm.h>
+ #include <asm/kvm_asm.h>
+ #include <asm/reg.h>
+ #include <asm/mmu.h>
+@@ -1458,6 +1459,13 @@ guest_exit_cont:		/* r9 = vcpu, r12 = tr
+ 1:
+ #endif /* CONFIG_KVM_XICS */
+ 
++	/*
++	 * Possibly flush the link stack here, before we do a blr in
++	 * guest_exit_short_path.
++	 */
++1:	nop
++	patch_site 1b patch__call_kvm_flush_link_stack
++
+ 	/* If we came in through the P9 short path, go back out to C now */
+ 	lwz	r0, STACK_SLOT_SHORT_PATH(r1)
+ 	cmpwi	r0, 0
+@@ -1933,6 +1941,28 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
+ 	mtlr	r0
+ 	blr
+ 
++.balign 32
++.global kvm_flush_link_stack
++kvm_flush_link_stack:
++	/* Save LR into r0 */
++	mflr	r0
++
++	/* Flush the link stack. On Power8 it's up to 32 entries in size. */
++	.rept 32
++	bl	.+4
++	.endr
++
++	/* And on Power9 it's up to 64. */
++BEGIN_FTR_SECTION
++	.rept 32
++	bl	.+4
++	.endr
++END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
++
++	/* Restore LR */
++	mtlr	r0
++	blr
++
+ kvmppc_guest_external:
+ 	/* External interrupt, first check for host_ipi. If this is
+ 	 * set, we know the host wants us out so let's do it now
 
 
