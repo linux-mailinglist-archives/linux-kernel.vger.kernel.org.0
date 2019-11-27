@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8469C10AB98
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5AB210AB90
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfK0ITw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:19:52 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43993 "EHLO
+        id S1726990AbfK0ITm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:19:42 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43966 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfK0ITo (ORCPT
+        with ESMTP id S1726545AbfK0ITh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:19:44 -0500
+        Wed, 27 Nov 2019 03:19:37 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZsXu-0002SA-7K; Wed, 27 Nov 2019 09:19:34 +0100
+        id 1iZsXs-0002RI-01; Wed, 27 Nov 2019 09:19:32 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 770061C1E6E;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2D71A1C1E6D;
         Wed, 27 Nov 2019 09:19:30 +0100 (CET)
 Date:   Wed, 27 Nov 2019 08:19:30 -0000
-From:   "tip-bot2 for Joerg Roedel" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/mm/32: Sync only to VMALLOC_END in vmalloc_sync_all()
-Cc:     Borislav Petkov <bp@suse.de>, Joerg Roedel <jroedel@suse.de>,
-        <stable@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+Subject: [tip: x86/urgent] lkdtm: Add a DOUBLE_FAULT crash type on x86
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191126111119.GA110513@gmail.com>
-References: <20191126111119.GA110513@gmail.com>
 MIME-Version: 1.0
-Message-ID: <157484277038.21853.10016482959595799515.tip-bot2@tip-bot2>
+Message-ID: <157484277010.21853.17013724751521586684.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,96 +52,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     9a62d20027da3164a22244d9f022c0c987261687
-Gitweb:        https://git.kernel.org/tip/9a62d20027da3164a22244d9f022c0c987261687
-Author:        Joerg Roedel <jroedel@suse.de>
-AuthorDate:    Tue, 26 Nov 2019 11:09:42 +01:00
+Commit-ID:     b09511c253e5c739a60952b97c071a93e92b2e88
+Gitweb:        https://git.kernel.org/tip/b09511c253e5c739a60952b97c071a93e92b2e88
+Author:        Andy Lutomirski <luto@kernel.org>
+AuthorDate:    Sun, 24 Nov 2019 21:18:04 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 26 Nov 2019 21:53:34 +01:00
 
-x86/mm/32: Sync only to VMALLOC_END in vmalloc_sync_all()
+lkdtm: Add a DOUBLE_FAULT crash type on x86
 
-The job of vmalloc_sync_all() is to help the lazy freeing of vmalloc()
-ranges: before such vmap ranges are reused we make sure that they are
-unmapped from every task's page tables.
+The DOUBLE_FAULT crash does INT $8, which is a decent approximation
+of a double fault.  This is useful for testing the double fault
+handling.  Use it like:
 
-This is really easy on pagetable setups where the kernel page tables
-are shared between all tasks - this is the case on 32-bit kernels
-with SHARED_KERNEL_PMD = 1.
-
-But on !SHARED_KERNEL_PMD 32-bit kernels this involves iterating
-over the pgd_list and clearing all pmd entries in the pgds that
-are cleared in the init_mm.pgd, which is the reference pagetable
-that the vmalloc() code uses.
-
-In that context the current practice of vmalloc_sync_all() iterating
-until FIX_ADDR_TOP is buggy:
-
-        for (address = VMALLOC_START & PMD_MASK;
-             address >= TASK_SIZE_MAX && address < FIXADDR_TOP;
-             address += PMD_SIZE) {
-                struct page *page;
-
-Because iterating up to FIXADDR_TOP will involve a lot of non-vmalloc
-address ranges:
-
-	VMALLOC -> PKMAP -> LDT -> CPU_ENTRY_AREA -> FIX_ADDR
-
-This is mostly harmless for the FIX_ADDR and CPU_ENTRY_AREA ranges
-that don't clear their pmds, but it's lethal for the LDT range,
-which relies on having different mappings in different processes,
-and 'synchronizing' them in the vmalloc sense corrupts those
-pagetable entries (clearing them).
-
-This got particularly prominent with PTI, which turns SHARED_KERNEL_PMD
-off and makes this the dominant mapping mode on 32-bit.
-
-To make LDT working again vmalloc_sync_all() must only iterate over
-the volatile parts of the kernel address range that are identical
-between all processes.
-
-So the correct check in vmalloc_sync_all() is "address < VMALLOC_END"
-to make sure the VMALLOC areas are synchronized and the LDT
-mapping is not falsely overwritten.
-
-The CPU_ENTRY_AREA and the FIXMAP area are no longer synced either,
-but this is not really a proplem since their PMDs get established
-during bootup and never change.
-
-This change fixes the ldt_gdt selftest in my setup.
-
-[ mingo: Fixed up the changelog to explain the logic and modified the
-         copying to only happen up until VMALLOC_END. ]
-
-Reported-by: Borislav Petkov <bp@suse.de>
-Tested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Cc: <stable@vger.kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: hpa@zytor.com
-Fixes: 7757d607c6b3: ("x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32")
-Link: https://lkml.kernel.org/r/20191126111119.GA110513@gmail.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/lkdtm/bugs.c  | 39 +++++++++++++++++++++++++++++++++++++-
+ drivers/misc/lkdtm/core.c  |  3 +++-
+ drivers/misc/lkdtm/lkdtm.h |  3 +++-
+ 3 files changed, 45 insertions(+)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 9ceacd1..304d31d 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -197,7 +197,7 @@ void vmalloc_sync_all(void)
- 		return;
+diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+index 7284a22..a4fdad0 100644
+--- a/drivers/misc/lkdtm/bugs.c
++++ b/drivers/misc/lkdtm/bugs.c
+@@ -12,6 +12,10 @@
+ #include <linux/sched/task_stack.h>
+ #include <linux/uaccess.h>
  
- 	for (address = VMALLOC_START & PMD_MASK;
--	     address >= TASK_SIZE_MAX && address < FIXADDR_TOP;
-+	     address >= TASK_SIZE_MAX && address < VMALLOC_END;
- 	     address += PMD_SIZE) {
- 		struct page *page;
++#ifdef CONFIG_X86_32
++#include <asm/desc.h>
++#endif
++
+ struct lkdtm_list {
+ 	struct list_head node;
+ };
+@@ -337,3 +341,38 @@ void lkdtm_UNSET_SMEP(void)
+ 	pr_err("FAIL: this test is x86_64-only\n");
+ #endif
+ }
++
++#ifdef CONFIG_X86_32
++void lkdtm_DOUBLE_FAULT(void)
++{
++	/*
++	 * Trigger #DF by setting the stack limit to zero.  This clobbers
++	 * a GDT TLS slot, which is okay because the current task will die
++	 * anyway due to the double fault.
++	 */
++	struct desc_struct d = {
++		.type = 3,	/* expand-up, writable, accessed data */
++		.p = 1,		/* present */
++		.d = 1,		/* 32-bit */
++		.g = 0,		/* limit in bytes */
++		.s = 1,		/* not system */
++	};
++
++	local_irq_disable();
++	write_gdt_entry(get_cpu_gdt_rw(smp_processor_id()),
++			GDT_ENTRY_TLS_MIN, &d, DESCTYPE_S);
++
++	/*
++	 * Put our zero-limit segment in SS and then trigger a fault.  The
++	 * 4-byte access to (%esp) will fault with #SS, and the attempt to
++	 * deliver the fault will recursively cause #SS and result in #DF.
++	 * This whole process happens while NMIs and MCEs are blocked by the
++	 * MOV SS window.  This is nice because an NMI with an invalid SS
++	 * would also double-fault, resulting in the NMI or MCE being lost.
++	 */
++	asm volatile ("movw %0, %%ss; addl $0, (%%esp)" ::
++		      "r" ((unsigned short)(GDT_ENTRY_TLS_MIN << 3)));
++
++	panic("tried to double fault but didn't die\n");
++}
++#endif
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index cbc4c90..ee0d6e7 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -171,6 +171,9 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(USERCOPY_KERNEL_DS),
+ 	CRASHTYPE(STACKLEAK_ERASING),
+ 	CRASHTYPE(CFI_FORWARD_PROTO),
++#ifdef CONFIG_X86_32
++	CRASHTYPE(DOUBLE_FAULT),
++#endif
+ };
  
+ 
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index ab446e0..c56d23e 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -28,6 +28,9 @@ void lkdtm_CORRUPT_USER_DS(void);
+ void lkdtm_STACK_GUARD_PAGE_LEADING(void);
+ void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
+ void lkdtm_UNSET_SMEP(void);
++#ifdef CONFIG_X86_32
++void lkdtm_DOUBLE_FAULT(void);
++#endif
+ 
+ /* lkdtm_heap.c */
+ void __init lkdtm_heap_init(void);
