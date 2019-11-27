@@ -2,120 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 834CD10B2DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A22510B2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 17:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfK0P7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 10:59:40 -0500
-Received: from mail-qt1-f178.google.com ([209.85.160.178]:35721 "EHLO
-        mail-qt1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfK0P7k (ORCPT
+        id S1727117AbfK0QFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 11:05:08 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:47274 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfK0QFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:59:40 -0500
-Received: by mail-qt1-f178.google.com with SMTP id n4so25858657qte.2;
-        Wed, 27 Nov 2019 07:59:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UP/A/8ZyD4j1YZR182zTc2bHEQDWRudBnSjV/1JGrFA=;
-        b=Ti3BTgK5d2HEDPSqrLdjysff5a2gLfcqTfMXe658LeJ6coCSw4ae3Nxb2aBHjLoNoS
-         sAoZq/egbd21qkGXjcG9Yjzh8LQbBQIcuYU1ep39iOXf/KUndbuOg4cWMkt8/2T70GX5
-         m40KSGqgDJyWjmt2nj8honGUBTX+YY7d0PBNvJfgHt4576HaHBFHUk+Vm+71IJS4x4Ra
-         fU8b+q0gH7ZwgVwLU016Bi8N/kNKXzXUo9KjnLJm/XDSaoaIEKe9Zvlc3kk99Oz+j6xE
-         L9ItnqvOr0GVM5wVUE7qJB6RytJq135V44rd49/Va81VNv+2AOhtyRqj2q62Ce/MV0IG
-         yczA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UP/A/8ZyD4j1YZR182zTc2bHEQDWRudBnSjV/1JGrFA=;
-        b=YshUeHjzAH4NEPYHhyXvAucYXcnPrLotgSQNJEDtZL+T/TIaZbdGa6YYFnQJs2Ll/E
-         xq5DfJL4WHL4BVtPEkDsM/iZSgXFzwymH7Ywi0AmnZ71h50hDaBY5quebZT9YizkjxWJ
-         bv7m/Se6K4NUqxMyF0Kpl8nktNof4u8MbPBetwbBKJ64eRWlCLKiU//eMHBWnFxrBBIj
-         HnS/1d0Fmtjamh52a85KLQggUFQa6JZG67KoJv2MGpMwIk8SfEtquliCgu8h9ghTed3q
-         lFoTrGyTHWyvwLdgCPThA9s+IxfvmGoTborvVFA+OjSl/AqTyoR6cPTuqxJxGpeg8je0
-         cxVQ==
-X-Gm-Message-State: APjAAAXq5iQcn/xeAj/fnmN+MXq7YotOcx3Btahe6EiGIurLueoUQ7Uk
-        /kqba1DgmF6XSf2hUgWpESM=
-X-Google-Smtp-Source: APXvYqyRSLfj0P2QBGvATZSgjsonhKDW4HXos0PDYoN5r18l/hkhwGaq+b8rfkd3OUjePYRr/zboyg==
-X-Received: by 2002:ac8:104:: with SMTP id e4mr26478494qtg.37.1574870379268;
-        Wed, 27 Nov 2019 07:59:39 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id m29sm8124177qtf.1.2019.11.27.07.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 07:59:38 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 1BB2440D3E; Wed, 27 Nov 2019 12:59:36 -0300 (-03)
-Date:   Wed, 27 Nov 2019 12:59:36 -0300
-To:     Quentin Monnet <quentin.monnet@netronome.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Subject: Re: [PATCH 3/3] bpftool: Allow to link libbpf dynamically
-Message-ID: <20191127155936.GL22719@kernel.org>
-References: <20191127094837.4045-1-jolsa@kernel.org>
- <20191127094837.4045-4-jolsa@kernel.org>
- <fd22660f-2f70-4ffa-b45f-bb417d006d0a@netronome.com>
- <20191127141520.GJ32367@krava>
- <20191127142449.GD22719@kernel.org>
- <d9bc04a6-0f72-9408-7c2e-2fb30e6a8f74@netronome.com>
- <20191127154849.GK22719@kernel.org>
- <d78a306f-a736-63d1-4d14-695ba33d3d9c@netronome.com>
+        Wed, 27 Nov 2019 11:05:07 -0500
+X-Greylist: delayed 1090 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 11:05:07 EST
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1iZzWm-0000RJ-Dp; Wed, 27 Nov 2019 10:46:52 -0500
+Message-ID: <8aadfbebed6502f21ba91a823e118770b84e31d2.camel@surriel.com>
+Subject: Re: [PATCH] x86/fpu: Don't cache access to fpu_fpregs_owner_ctx
+From:   Rik van Riel <riel@surriel.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Barret Rhoden <brho@google.com>,
+        Josh Bleecher Snyder <josharian@gmail.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Date:   Wed, 27 Nov 2019 10:46:51 -0500
+In-Reply-To: <20191127124243.u74osvlkhcmsskng@linutronix.de>
+References: <c87e93c3-5f30-f242-74b7-6c7ccc91158a@google.com>
+         <20191126202026.csrmjre6vn2nxq7c@linutronix.de>
+         <e4d6406b-0d47-5cc5-f3a8-6d14bd90760b@google.com>
+         <20191127124243.u74osvlkhcmsskng@linutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-6EoG3tuvdYQ7otJGjpXm"
+User-Agent: Evolution 3.34.0 (3.34.0-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d78a306f-a736-63d1-4d14-695ba33d3d9c@netronome.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Nov 27, 2019 at 03:52:06PM +0000, Quentin Monnet escreveu:
-> 2019-11-27 12:48 UTC-0300 ~ Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> > Em Wed, Nov 27, 2019 at 02:31:31PM +0000, Quentin Monnet escreveu:
-> >> 2019-11-27 11:24 UTC-0300 ~ Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> >>> Em Wed, Nov 27, 2019 at 03:15:20PM +0100, Jiri Olsa escreveu:
-> >>>> On Wed, Nov 27, 2019 at 01:38:55PM +0000, Quentin Monnet wrote:
-> >>>>> 2019-11-27 10:48 UTC+0100 ~ Jiri Olsa <jolsa@kernel.org>
-> >>>>> On the plus side, all build attempts from
-> >>>>> tools/testing/selftests/bpf/test_bpftool_build.sh pass successfully on
-> >>>>> my setup with dynamic linking from your branch.
 
-> >>>> cool, had no idea there was such test ;-)
+--=-6EoG3tuvdYQ7otJGjpXm
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> >>> Should be the the equivalent to 'make -C tools/perf build-test' :-)
+On Wed, 2019-11-27 at 13:42 +0100, Sebastian Andrzej Siewior wrote:
 
-> >>> Perhaps we should make tools/testing/selftests/perf/ link to that?
+> There is no Sign-off by here. Could this please be verified by the
+> reporter?
 
-> >> It is already run as part of the bpf selftests, so probably no need.
+Next time this is posted, feel free to add this :)
 
-> > You mean 'make -C tools/perf build-test' is run from the bpf selftests?
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-> Ah, no, sorry for the confusion. I meant that test_bpftool_build.sh is
-> run from the bpf selftests.
+> diff --git a/arch/x86/include/asm/fpu/internal.h
+> b/arch/x86/include/asm/fpu/internal.h
+> index 4c95c365058aa..44c48e34d7994 100644
+> --- a/arch/x86/include/asm/fpu/internal.h
+> +++ b/arch/x86/include/asm/fpu/internal.h
+> @@ -509,7 +509,7 @@ static inline void
+> __fpu_invalidate_fpregs_state(struct fpu *fpu)
+> =20
+>  static inline int fpregs_state_valid(struct fpu *fpu, unsigned int
+> cpu)
+>  {
+> -	return fpu =3D=3D this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu
+> =3D=3D fpu->last_cpu;
+> +	return fpu =3D=3D this_cpu_read(fpu_fpregs_owner_ctx) && cpu =3D=3D
+> fpu->last_cpu;
+>  }
+> =20
+>  /*
+--=20
+All Rights Reversed.
 
-> I am not familiar with perf build-test, but maybe that's something worth
-> adding to perf selftests indeed.
+--=-6EoG3tuvdYQ7otJGjpXm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Yeah, I think is worth considering plugging perf's build-test to
-selftests, if only to expose it to the people that are used with
-selftests and may start testing perf builds more regularly.
+-----BEGIN PGP SIGNATURE-----
 
-- Arnaldo
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl3emmsACgkQznnekoTE
+3oPklAf6Aybc6hqvWSIYKd0KqrHtRhyW0ibGiSXziJSYChlUaFy+3zFLwjES0ONN
+H8t7f0OSEINpN7OQt1LeWwCp9UHDIKqG3rv3jKdq+j/xrp7/D+4U5+cXtFlW+KIR
+lauargI7DEM+eyq5ASbiE5+2565cXD8gMKK+AMNJzPiCO3vi7SPkjm2P4MqQwC9G
+VUU+enJcP0WfDDaKCs5Bh2OseBAich72rXNKdiYEwMS70dUl0ofHzrj/LN+kh4OX
+fWksJcOv4BZP5BksB6yw3JBtTp9y5EAfnjYAAhWAiMijKTPRJ9UVOw+o+Km2bS8O
+e+Ildvuz9phtOdegUEtV8djdCzMelg==
+=xB4N
+-----END PGP SIGNATURE-----
+
+--=-6EoG3tuvdYQ7otJGjpXm--
+
