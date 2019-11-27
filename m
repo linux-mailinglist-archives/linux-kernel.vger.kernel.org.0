@@ -2,48 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D54D510C0CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4B510C0D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:50:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfK0Xu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 18:50:29 -0500
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:56770 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbfK0Xu2 (ORCPT
+        id S1727566AbfK0Xue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 18:50:34 -0500
+Received: from mail-wm1-f73.google.com ([209.85.128.73]:58058 "EHLO
+        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727482AbfK0Xud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 18:50:28 -0500
-Received: by mail-qt1-f202.google.com with SMTP id b26so15844867qtr.23
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 15:50:26 -0800 (PST)
+        Wed, 27 Nov 2019 18:50:33 -0500
+Received: by mail-wm1-f73.google.com with SMTP id m68so3100799wme.7
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 15:50:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=sslQZgUjF8mS7PYbCqQtrDtVZrFkyPKopZymkUPtEMY=;
-        b=i5Gxn3xz5Z2H5deMr0kzv7a9JQtZnurOcQsMzo6bpUAx+9HtZQIx0MnDd2OLfdWppN
-         Jndq+x4P0e0IQVBhejozG0Z5Itk5KZsEQCYeAs3g7IbS/StrFoprcvFsZdaTzk3O9LUT
-         BpAJCnPK4pxUJaHVGuAiUw3V7+yx7dwNQMJE9jyuc0TBMuUS6wpxmIyB24xuMO/mv155
-         t0sXBlWhS8QcYBPa7ZVVqAeXAKVVG7ted1Cbjhc82WyyygqfTtSozbrsS9zaMSrnEL2T
-         TPuTV4w3R93Xxmz59zH0ixGXwQXxmVXb9xS6daI5S3b9gJfATRt79hnM6cZOjFKeAtyo
-         qNLA==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=QATXnoiDKCWC3WWAdN6sdIHlK8jnCgnJfnHnydMklE8=;
+        b=AU/zJR+yASACbOc0824F8srWYA1NDXRsoPMm0D8nGcdyUSKwENxvNMuYtcbqxxekF+
+         Grm3CIoAz5coKLKYwPcjvFDrMJNB41C/86KKxcZ22no3y0mVg0Nx7Oki3KEhOOzCT8na
+         BznGzRNqsP+Dz5vmYTCCUwKWk4CEjhXl0RC5NSzr4lmkVd+hj91zPmOZnT7uopP/K/WQ
+         FVfQhoGjHmU7e0PvB/Zp9TrMsIf2reWHNuIF/V0MmvtfZTU02SGPqA2U5HWNMAWbBKCs
+         Cb2ffAhcPxNrTGFAM5zBKS8+MJriblWSqFedhTM+nfAYLsgcBComa47gop0u6EKItquT
+         XCqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=sslQZgUjF8mS7PYbCqQtrDtVZrFkyPKopZymkUPtEMY=;
-        b=oM9+P2pWnLvibx/B6bHjnBeodc86XlhBL++fC8+3e5cr4akqo5TwG5K3eYHWE+xuTS
-         01LJ1DwIk3cIEY3kJYXGNFyInpEF5Epz+pHU99IXUUhNS6WMXUD4ZgskrXohXk4nVv/t
-         BflWVc7kHGuqLAl9TuXYoUBhS5zN3vwl9fjWKKeo6o8qo4xcHzeQe+tZKBmBzR8xtcBt
-         HafKXfVnygkEAdCJrXlRr+n+xofrStt18qkqwOcWgusC9KVL1KcpC2PZzPO+WaCzk0oR
-         tttDsjrbPWmMFkCE5TqB+MpfjE/VnOUhcQmBYT/aUuM960FZ0I0OlMUks4fPiE5csLlI
-         fLPA==
-X-Gm-Message-State: APjAAAWmOA6aO/xfgBX+A4RSsvmL7zNIDGOCXeJBZBgYHQm5E83PXkI3
-        UF7dH70VpOe2q1dvEGieaMhYdwA1MQ==
-X-Google-Smtp-Source: APXvYqxKk3pq8bvD0ymUpPbJunE9ZqY6/NUll+mqHyW2ucxviSJPtx8WmwkTX/Pxf4fy+V4y/L1fs2cJTg==
-X-Received: by 2002:ac8:474a:: with SMTP id k10mr25607125qtp.338.1574898625703;
- Wed, 27 Nov 2019 15:50:25 -0800 (PST)
-Date:   Thu, 28 Nov 2019 00:49:13 +0100
-Message-Id: <20191127234916.31175-1-jannh@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=QATXnoiDKCWC3WWAdN6sdIHlK8jnCgnJfnHnydMklE8=;
+        b=Ac/OXGjj1S++b3NMOSbhrz8fyXMrfp7iW2dX0pptXdBrwVssm+Q/oG98LMbL+GXyI+
+         oNmjc9aj6JZJPyX+so0BpHf2bN3u6tiWXNqpInNHE2q1rEuVefEgkzqLuiTMbEiLohYb
+         xQUHGpIU0WDQgW9Zi1hFegKQBvmSZhzP50Y1pgwTJrTj1IhA5HqIktKsA19TDVYyqig1
+         iGqqjdbJgOYgdP3qXqcqzL8vOsRw+bbsNIhkvK1hdvrty8/CpmGvdK12VuWYGDt4xZvz
+         DlKmigIsRo1Y/bWbkn+ZCohUlywNSb4urttrO9tMUfp61nxBh0fMeJTqGQIPX/dU44q5
+         4x/A==
+X-Gm-Message-State: APjAAAUcRKfjYnXF+uweiPriNCZyqPTuQ7Woa8KwOKpZvQPcoQCByX1e
+        0OYJQU2cv4ciHt20KtFHquzG4aPMBg==
+X-Google-Smtp-Source: APXvYqwPXpyQktxPUwEfAKwE0X277dXosVA4G0cKw8YTSXbOQ0iWEOxFQiNuPk3QVsbb24dUA+5BObL9nw==
+X-Received: by 2002:a5d:6802:: with SMTP id w2mr1851016wru.353.1574898628777;
+ Wed, 27 Nov 2019 15:50:28 -0800 (PST)
+Date:   Thu, 28 Nov 2019 00:49:14 +0100
+In-Reply-To: <20191127234916.31175-1-jannh@google.com>
+Message-Id: <20191127234916.31175-2-jannh@google.com>
 Mime-Version: 1.0
+References: <20191127234916.31175-1-jannh@google.com>
 X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH v5 1/4] x86/insn-eval: Add support for 64-bit kernel mode
+Subject: [PATCH v5 2/4] x86/traps: Print address on #GP
 From:   Jann Horn <jannh@google.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -62,141 +66,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To support evaluating 64-bit kernel mode instructions:
+A frequent cause of #GP exceptions are memory accesses to non-canonical
+addresses. Unlike #PF, #GP doesn't come with a fault address in CR2, so
+the kernel doesn't currently print the fault address for #GP.
+Luckily, we already have the necessary infrastructure for decoding X86
+instructions and computing the memory address that is being accessed;
+hook it up to the #GP handler so that we can figure out the address
+operand of the faulting instruction and print it.
 
-Replace existing checks for user_64bit_mode() with a new helper that
-checks whether code is being executed in either 64-bit kernel mode or
-64-bit user mode.
+Distinguish two cases:
+  a) (Part of) the memory range being accessed lies in the non-canonical
+     address range; in this case, is is likely that the address we
+     decoded is actually the one that caused the #GP.
+  b) The entire memory range of the operand we decoded lies in canonical
+     address space; the #GP may or may not be related in some way to the
+     address we computed. We'll still print it, but with hedging
+     language in the message.
 
-Select the GS base depending on whether the instruction is being
-evaluated in kernel mode.
+While it is already possible to compute the faulting address manually by
+disassembling the opcode dump and evaluating the instruction against the
+register dump, this should make it slightly easier to identify crashes
+at a glance.
+
+Note that the operand length, which we get from the instruction decoder
+and use to determine whether the access straddles into non-canonical
+address space, is currently somewhat unreliable; but it should be good
+enough, considering that Linux on x86-64 never maps the page directly
+before the start of the non-canonical range anyway, and therefore the
+case where a memory range begins in that page and potentially straddles
+into the non-canonical range should be fairly uncommon.
+And if we do get this wrong, it only influences whether the error
+message claims that the access is canonical.
 
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
 
 Notes:
-    v2-v5:
-      no changes
+    v2:
+     - print different message for segment-related GP (Borislav)
+     - rewrite check for non-canonical address (Sean)
+     - make it clear we don't know for sure why the GP happened (Andy)
+    v3:
+     - change message format to one line (Borislav)
+    v4:
+     - rename insn_bytes to insn_buf (Ingo)
+     - add space after GPFSTR (Ingo)
+     - make sizeof(desc) clearer (Ingo, Borislav)
+     - also print the address (with a different message) if it's canonical (Ingo)
+    v5:
+     - reword comment on get_kernel_gp_address() (Sean)
+     - make get_kernel_gp_address() also work on 32-bit (Sean)
+     - minor nits (Sean)
+     - more hedging for canonical GP (Sean)
+     - let get_kernel_gp_address() return an enum (Sean)
+     - rewrite commit message
+    
+    I have already sent a patch to syzkaller that relaxes their parsing of GPF
+    messages (https://github.com/google/syzkaller/commit/432c7650) such that
+    changes like the one in this patch don't break it.
+    That patch has already made its way into syzbot's syzkaller instances
+    according to <https://syzkaller.appspot.com/upstream>.
 
- arch/x86/include/asm/ptrace.h | 13 +++++++++++++
- arch/x86/lib/insn-eval.c      | 26 +++++++++++++++-----------
- 2 files changed, 28 insertions(+), 11 deletions(-)
+ arch/x86/kernel/traps.c | 70 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
-index 5057a8ed100b..ac45b06941a5 100644
---- a/arch/x86/include/asm/ptrace.h
-+++ b/arch/x86/include/asm/ptrace.h
-@@ -159,6 +159,19 @@ static inline bool user_64bit_mode(struct pt_regs *regs)
- #endif
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index f19de6f45d48..9b6e4d04112a 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -56,6 +56,8 @@
+ #include <asm/mpx.h>
+ #include <asm/vm86.h>
+ #include <asm/umip.h>
++#include <asm/insn.h>
++#include <asm/insn-eval.h>
+ 
+ #ifdef CONFIG_X86_64
+ #include <asm/x86_init.h>
+@@ -518,11 +520,56 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
+ 	do_trap(X86_TRAP_BR, SIGSEGV, "bounds", regs, error_code, 0, NULL);
  }
  
++enum kernel_gp_hint {
++	GP_NO_HINT,
++	GP_NON_CANONICAL,
++	GP_CANONICAL
++};
++
 +/*
-+ * Determine whether the register set came from any context that is running in
-+ * 64-bit mode.
++ * When an uncaught #GP occurs, try to determine a memory address accessed by
++ * the instruction and return that address to the caller.
++ * Also try to figure out whether any part of the access to that address was
++ * non-canonical.
 + */
-+static inline bool any_64bit_mode(struct pt_regs *regs)
++static enum kernel_gp_hint get_kernel_gp_address(struct pt_regs *regs,
++						 unsigned long *addr)
 +{
++	u8 insn_buf[MAX_INSN_SIZE];
++	struct insn insn;
++
++	if (probe_kernel_read(insn_buf, (void *)regs->ip, MAX_INSN_SIZE))
++		return GP_NO_HINT;
++
++	kernel_insn_init(&insn, insn_buf, MAX_INSN_SIZE);
++	insn_get_modrm(&insn);
++	insn_get_sib(&insn);
++	*addr = (unsigned long)insn_get_addr_ref(&insn, regs);
++
++	if (*addr == -1UL)
++		return GP_NO_HINT;
++
 +#ifdef CONFIG_X86_64
-+	return !user_mode(regs) || user_64bit_mode(regs);
-+#else
-+	return false;
++	/*
++	 * Check that:
++	 *  - the operand is not in the kernel half
++	 *  - the last byte of the operand is not in the user canonical half
++	 */
++	if (*addr < ~__VIRTUAL_MASK &&
++	    *addr + insn.opnd_bytes - 1 > __VIRTUAL_MASK)
++		return GP_NON_CANONICAL;
 +#endif
++
++	return GP_CANONICAL;
 +}
 +
- #ifdef CONFIG_X86_64
- #define current_user_stack_pointer()	current_pt_regs()->sp
- #define compat_user_stack_pointer()	current_pt_regs()->sp
-diff --git a/arch/x86/lib/insn-eval.c b/arch/x86/lib/insn-eval.c
-index 306c3a0902ba..31600d851fd8 100644
---- a/arch/x86/lib/insn-eval.c
-+++ b/arch/x86/lib/insn-eval.c
-@@ -155,7 +155,7 @@ static bool check_seg_overrides(struct insn *insn, int regoff)
-  */
- static int resolve_default_seg(struct insn *insn, struct pt_regs *regs, int off)
++#define GPFSTR "general protection fault"
++
+ dotraplinkage void
+ do_general_protection(struct pt_regs *regs, long error_code)
  {
--	if (user_64bit_mode(regs))
-+	if (any_64bit_mode(regs))
- 		return INAT_SEG_REG_IGNORE;
- 	/*
- 	 * Resolve the default segment register as described in Section 3.7.4
-@@ -266,7 +266,7 @@ static int resolve_seg_reg(struct insn *insn, struct pt_regs *regs, int regoff)
- 	 * which may be invalid at this point.
- 	 */
- 	if (regoff == offsetof(struct pt_regs, ip)) {
--		if (user_64bit_mode(regs))
-+		if (any_64bit_mode(regs))
- 			return INAT_SEG_REG_IGNORE;
- 		else
- 			return INAT_SEG_REG_CS;
-@@ -289,7 +289,7 @@ static int resolve_seg_reg(struct insn *insn, struct pt_regs *regs, int regoff)
- 	 * In long mode, segment override prefixes are ignored, except for
- 	 * overrides for FS and GS.
- 	 */
--	if (user_64bit_mode(regs)) {
-+	if (any_64bit_mode(regs)) {
- 		if (idx != INAT_SEG_REG_FS &&
- 		    idx != INAT_SEG_REG_GS)
- 			idx = INAT_SEG_REG_IGNORE;
-@@ -646,23 +646,27 @@ unsigned long insn_get_seg_base(struct pt_regs *regs, int seg_reg_idx)
- 		 */
- 		return (unsigned long)(sel << 4);
+-	const char *desc = "general protection fault";
+ 	struct task_struct *tsk;
++	char desc[sizeof(GPFSTR) + 50 + 2*sizeof(unsigned long) + 1] = GPFSTR;
  
--	if (user_64bit_mode(regs)) {
-+	if (any_64bit_mode(regs)) {
- 		/*
- 		 * Only FS or GS will have a base address, the rest of
- 		 * the segments' bases are forced to 0.
- 		 */
- 		unsigned long base;
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+ 	cond_local_irq_enable(regs);
+@@ -540,6 +587,9 @@ do_general_protection(struct pt_regs *regs, long error_code)
  
--		if (seg_reg_idx == INAT_SEG_REG_FS)
-+		if (seg_reg_idx == INAT_SEG_REG_FS) {
- 			rdmsrl(MSR_FS_BASE, base);
--		else if (seg_reg_idx == INAT_SEG_REG_GS)
-+		} else if (seg_reg_idx == INAT_SEG_REG_GS) {
- 			/*
- 			 * swapgs was called at the kernel entry point. Thus,
- 			 * MSR_KERNEL_GS_BASE will have the user-space GS base.
- 			 */
--			rdmsrl(MSR_KERNEL_GS_BASE, base);
--		else
-+			if (user_mode(regs))
-+				rdmsrl(MSR_KERNEL_GS_BASE, base);
-+			else
-+				rdmsrl(MSR_GS_BASE, base);
-+		} else {
- 			base = 0;
-+		}
- 		return base;
+ 	tsk = current;
+ 	if (!user_mode(regs)) {
++		enum kernel_gp_hint hint = GP_NO_HINT;
++		unsigned long gp_addr;
++
+ 		if (fixup_exception(regs, X86_TRAP_GP, error_code, 0))
+ 			return;
+ 
+@@ -556,8 +606,22 @@ do_general_protection(struct pt_regs *regs, long error_code)
+ 			return;
+ 
+ 		if (notify_die(DIE_GPF, desc, regs, error_code,
+-			       X86_TRAP_GP, SIGSEGV) != NOTIFY_STOP)
+-			die(desc, regs, error_code);
++			       X86_TRAP_GP, SIGSEGV) == NOTIFY_STOP)
++			return;
++
++		if (error_code)
++			snprintf(desc, sizeof(desc), "segment-related " GPFSTR);
++		else
++			hint = get_kernel_gp_address(regs, &gp_addr);
++
++		if (hint != GP_NO_HINT)
++			snprintf(desc, sizeof(desc), GPFSTR " %s 0x%lx",
++				 (hint == GP_NON_CANONICAL) ?
++				 "probably for non-canonical address" :
++				 "maybe for address",
++				 gp_addr);
++
++		die(desc, regs, error_code);
+ 		return;
  	}
  
-@@ -703,7 +707,7 @@ static unsigned long get_seg_limit(struct pt_regs *regs, int seg_reg_idx)
- 	if (sel < 0)
- 		return 0;
- 
--	if (user_64bit_mode(regs) || v8086_mode(regs))
-+	if (any_64bit_mode(regs) || v8086_mode(regs))
- 		return -1L;
- 
- 	if (!sel)
-@@ -948,7 +952,7 @@ static int get_eff_addr_modrm(struct insn *insn, struct pt_regs *regs,
- 	 * following instruction.
- 	 */
- 	if (*regoff == -EDOM) {
--		if (user_64bit_mode(regs))
-+		if (any_64bit_mode(regs))
- 			tmp = regs->ip + insn->length;
- 		else
- 			tmp = 0;
-@@ -1250,7 +1254,7 @@ static void __user *get_addr_ref_32(struct insn *insn, struct pt_regs *regs)
- 	 * After computed, the effective address is treated as an unsigned
- 	 * quantity.
- 	 */
--	if (!user_64bit_mode(regs) && ((unsigned int)eff_addr > seg_limit))
-+	if (!any_64bit_mode(regs) && ((unsigned int)eff_addr > seg_limit))
- 		goto out;
- 
- 	/*
 -- 
 2.24.0.432.g9d3f5f5b63-goog
 
