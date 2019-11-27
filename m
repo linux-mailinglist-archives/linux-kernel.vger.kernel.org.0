@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7109010BA23
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 402F010BD3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfK0VAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:00:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51906 "EHLO mail.kernel.org"
+        id S1728874AbfK0V0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:26:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731269AbfK0VAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:00:10 -0500
+        id S1730957AbfK0VAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:00:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65CE02084B;
-        Wed, 27 Nov 2019 21:00:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D88B52158C;
+        Wed, 27 Nov 2019 21:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888409;
-        bh=b6JKrXfZ3sW46mtc8cUPJf+7pJXsH6mrbwPNqmM5xCY=;
+        s=default; t=1574888412;
+        bh=dP+PCoNwoOWfPuFe01TtS/TXqgxB3zZdYBB2ROF1FZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGKuMGAAU/MJblrJ5TrBN2n4th4QSRqbYt+yNhxuVP5/wIUUxmqzjrlATLptNHPQR
-         xLbn525GaN2+sOvGREe/k6IoxN8/zBXFqbNGt11fLQLh/kNkWu33ywg9IGIt7anOQm
-         91cVLuUTy82u/BuSWZvQpwTygds5juZ39aheqsSs=
+        b=Xv1/ZT+rsKVgSTgFRprpWDUPL679QlGlo9ng274B5QEtezwXuIZEeJQMF0biXsE5/
+         4wNUam5jLTnLcKPamWTTFQJQI+z1U5cfyojblQ5xjRllYGGn01oI94sDv/GOO+cwqU
+         StklvvUoSp+xHqNXGeZgxLgpGe1hUjO0F1qnW3IE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 123/306] f2fs: spread f2fs_set_inode_flags()
-Date:   Wed, 27 Nov 2019 21:29:33 +0100
-Message-Id: <20191127203124.116784284@linuxfoundation.org>
+Subject: [PATCH 4.19 124/306] mISDN: Fix type of switch control variable in ctrl_teimanager
+Date:   Wed, 27 Nov 2019 21:29:34 +0100
+Message-Id: <20191127203124.183945021@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,75 +45,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 9149a5eb606152df158eb7d7da5a34e84b574189 ]
+[ Upstream commit aeb5e02aca91522733eb1db595ac607d30c87767 ]
 
-This patch changes codes as below:
-- use f2fs_set_inode_flags() to update i_flags atomically to avoid
-potential race.
-- synchronize F2FS_I(inode)->i_flags to inode->i_flags in
-f2fs_new_inode().
-- use f2fs_set_inode_flags() to simply codes in f2fs_quota_{on,off}.
+Clang warns (trimmed for brevity):
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+drivers/isdn/mISDN/tei.c:1193:7: warning: overflow converting case value
+to switch condition type (2147764552 to 18446744071562348872) [-Wswitch]
+        case IMHOLD_L1:
+             ^
+drivers/isdn/mISDN/tei.c:1187:7: warning: overflow converting case value
+to switch condition type (2147764550 to 18446744071562348870) [-Wswitch]
+        case IMCLEAR_L2:
+             ^
+2 warnings generated.
+
+The root cause is that the _IOC macro can generate really large numbers,
+which don't find into type int. My research into how GCC and Clang are
+handling this at a low level didn't prove fruitful and surveying the
+kernel tree shows that aside from here and a few places in the scsi
+subsystem, everything that uses _IOC is at least of type 'unsigned int'.
+Make that change here because as nothing in this function cares about
+the signedness of the variable and it removes ambiguity, which is never
+good when dealing with compilers.
+
+While we're here, remove the unnecessary local variable ret (just return
+-EINVAL and 0 directly).
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/67
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h  | 2 +-
- fs/f2fs/namei.c | 2 ++
- fs/f2fs/super.c | 5 ++---
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/isdn/mISDN/tei.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2dc49a5419070..34e48bcf50874 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3388,7 +3388,7 @@ static inline void f2fs_set_encrypted_inode(struct inode *inode)
+diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
+index 12d9e5f4beb1f..58635b5f296f0 100644
+--- a/drivers/isdn/mISDN/tei.c
++++ b/drivers/isdn/mISDN/tei.c
+@@ -1180,8 +1180,7 @@ static int
+ ctrl_teimanager(struct manager *mgr, void *arg)
  {
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
- 	file_set_encrypt(inode);
--	inode->i_flags |= S_ENCRYPTED;
-+	f2fs_set_inode_flags(inode);
- #endif
+ 	/* currently we only have one option */
+-	int	*val = (int *)arg;
+-	int	ret = 0;
++	unsigned int *val = (unsigned int *)arg;
+ 
+ 	switch (val[0]) {
+ 	case IMCLEAR_L2:
+@@ -1197,9 +1196,9 @@ ctrl_teimanager(struct manager *mgr, void *arg)
+ 			test_and_clear_bit(OPTION_L1_HOLD, &mgr->options);
+ 		break;
+ 	default:
+-		ret = -EINVAL;
++		return -EINVAL;
+ 	}
+-	return ret;
++	return 0;
  }
  
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 1f67e389169f5..6b23dcbf52f45 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -124,6 +124,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL)
- 		set_inode_flag(inode, FI_PROJ_INHERIT);
- 
-+	f2fs_set_inode_flags(inode);
-+
- 	trace_f2fs_new_inode(inode, 0);
- 	return inode;
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 15779123d0895..7a9cc64f5ca37 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1837,8 +1837,7 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
- 
- 	inode_lock(inode);
- 	F2FS_I(inode)->i_flags |= F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL;
--	inode_set_flags(inode, S_NOATIME | S_IMMUTABLE,
--					S_NOATIME | S_IMMUTABLE);
-+	f2fs_set_inode_flags(inode);
- 	inode_unlock(inode);
- 	f2fs_mark_inode_dirty_sync(inode, false);
- 
-@@ -1863,7 +1862,7 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- 
- 	inode_lock(inode);
- 	F2FS_I(inode)->i_flags &= ~(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL);
--	inode_set_flags(inode, 0, S_NOATIME | S_IMMUTABLE);
-+	f2fs_set_inode_flags(inode);
- 	inode_unlock(inode);
- 	f2fs_mark_inode_dirty_sync(inode, false);
- out_put:
+ /* This function does create a L2 for fixed TEI in NT Mode */
 -- 
 2.20.1
 
