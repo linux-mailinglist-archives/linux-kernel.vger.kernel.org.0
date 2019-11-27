@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5F210BE27
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2073610BEE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbfK0Uu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:50:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37230 "EHLO mail.kernel.org"
+        id S1729541AbfK0UoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:44:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730373AbfK0Uuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:50:55 -0500
+        id S1727894AbfK0UoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 861CF21852;
-        Wed, 27 Nov 2019 20:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4976221775;
+        Wed, 27 Nov 2019 20:44:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887854;
-        bh=gnyAIKlrNJ5aelo1XrWF4FeI3PBPvjVGwofmo4745j4=;
+        s=default; t=1574887443;
+        bh=99+ozqhw15jcn46i8tnsS5mRIbqSjBnEL4IOQNmNxSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uJzRfPkEeXIuVxpIwen0Gp66OxCjY4/8D+ozOryMvg/IWG/7Ue3rPEkxP75R/qnkq
-         opZRALvygzbNZu/yRArPHwtNa6hZUmGskO+mW6z+YabrEzvSCDJ7J0cmfwCqLYt/kt
-         spRymnA7Iy0FYzuVeYudKm3EEBS6m2awL6b2PYoA=
+        b=Fu4fXE75p9Y3wxeISfKvmur8vyLgkX5lT/yU8fYN5lgCAuv5K/PZttlpT65XKKyPS
+         r9DhmpJWYBINLoaj5S6ScoGfvp/+rX3a35VCXUOUbkdK9cam+QP5f2rcuusk94Fpbt
+         up6cXipHWxywlgIuIEsOTpQKOUYR+eHf0Sq1GXxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 120/211] net: hns3: bugfix for buffer not free problem during resetting
-Date:   Wed, 27 Nov 2019 21:30:53 +0100
-Message-Id: <20191127203105.515962408@linuxfoundation.org>
+Subject: [PATCH 4.9 071/151] hfsplus: fix BUG on bnode parent update
+Date:   Wed, 27 Nov 2019 21:30:54 +0100
+Message-Id: <20191127203034.579519020@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,87 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit 73b907a083b8a8c1c62cb494bc9fbe6ae086c460 ]
+[ Upstream commit 19a9d0f1acf75e8be8cfba19c1a34e941846fa2b ]
 
-When hns3_get_ring_config()/hns3_queue_to_ring()/
-hns3_get_vector_ring_chain() failed during resetting, the allocated
-memory has not been freed before these three functions return. So
-this patch adds error handler in these functions to fix it.
+Creating, renaming or deleting a file may hit BUG_ON() if the first
+record of both a leaf node and its parent are changed, and if this
+forces the parent to be split.  This bug is triggered by xfstests
+generic/027, somewhat rarely; here is a more reliable reproducer:
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  truncate -s 50M fs.iso
+  mkfs.hfsplus fs.iso
+  mount fs.iso /mnt
+  i=1000
+  while [ $i -le 2400 ]; do
+    touch /mnt/$i &>/dev/null
+    ((++i))
+  done
+  i=2400
+  while [ $i -ge 1000 ]; do
+    mv /mnt/$i /mnt/$(perl -e "print $i x61") &>/dev/null
+    ((--i))
+  done
+
+The issue is that a newly created bnode is being put twice.  Reset
+new_node to NULL in hfs_brec_update_parent() before reaching goto again.
+
+Link: http://lkml.kernel.org/r/5ee1db09b60373a15890f6a7c835d00e76bf601d.1535682461.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../hisilicon/hns3/hns3pf/hns3_enet.c         | 24 ++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ fs/hfsplus/brec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-index 5483cb23c08a3..e9cff8ed5e076 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-@@ -2300,7 +2300,7 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
- 			chain = devm_kzalloc(&pdev->dev, sizeof(*chain),
- 					     GFP_KERNEL);
- 			if (!chain)
--				return -ENOMEM;
-+				goto err_free_chain;
- 
- 			cur_chain->next = chain;
- 			chain->tqp_index = tx_ring->tqp->tqp_index;
-@@ -2324,7 +2324,7 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
- 	while (rx_ring) {
- 		chain = devm_kzalloc(&pdev->dev, sizeof(*chain), GFP_KERNEL);
- 		if (!chain)
--			return -ENOMEM;
-+			goto err_free_chain;
- 
- 		cur_chain->next = chain;
- 		chain->tqp_index = rx_ring->tqp->tqp_index;
-@@ -2336,6 +2336,16 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
+diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+index 1002a0c08319b..20ce698251ad1 100644
+--- a/fs/hfsplus/brec.c
++++ b/fs/hfsplus/brec.c
+@@ -447,6 +447,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+ 			/* restore search_key */
+ 			hfs_bnode_read_key(node, fd->search_key, 14);
+ 		}
++		new_node = NULL;
  	}
  
- 	return 0;
-+
-+err_free_chain:
-+	cur_chain = head->next;
-+	while (cur_chain) {
-+		chain = cur_chain->next;
-+		devm_kfree(&pdev->dev, chain);
-+		cur_chain = chain;
-+	}
-+
-+	return -ENOMEM;
- }
- 
- static void hns3_free_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
-@@ -2530,8 +2540,10 @@ static int hns3_queue_to_ring(struct hnae3_queue *tqp,
- 		return ret;
- 
- 	ret = hns3_ring_get_cfg(tqp, priv, HNAE3_RING_TYPE_RX);
--	if (ret)
-+	if (ret) {
-+		devm_kfree(priv->dev, priv->ring_data[tqp->tqp_index].ring);
- 		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -2556,6 +2568,12 @@ static int hns3_get_ring_config(struct hns3_nic_priv *priv)
- 
- 	return 0;
- err:
-+	while (i--) {
-+		devm_kfree(priv->dev, priv->ring_data[i].ring);
-+		devm_kfree(priv->dev,
-+			   priv->ring_data[i + h->kinfo.num_tqps].ring);
-+	}
-+
- 	devm_kfree(&pdev->dev, priv->ring_data);
- 	return ret;
- }
+ 	if (!rec && node->parent)
 -- 
 2.20.1
 
