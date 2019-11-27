@@ -2,253 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A503110B068
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBAC10B07E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfK0NjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 08:39:01 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41862 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfK0NjA (ORCPT
+        id S1727017AbfK0Nnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 08:43:41 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55990 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726320AbfK0Nnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 08:39:00 -0500
-Received: by mail-wr1-f66.google.com with SMTP id b18so26716895wrj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 05:38:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:references:from:openpgp:autocrypt:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eU4VlI4ArP56nCay48Vt2NhXZMRD3ggL2hIZnoXhceQ=;
-        b=uExpzpnhHZCBAFD3IcqrWJygCDHGgN5YWhG2Trp7uD2RnNs6F4LCOEOW9qsmZrbv/4
-         sfRRoqkGSLnwAdV9oII/3bot1TZshIrhasnvpBLybobh7GqHUB6JnAb4SAxzjOVi1tZR
-         JTd1i3oRhWTtX7fuTPRw7n7GK2h+yhK60eHj+lkdhBCpZWSmARvPwZL8Ef5BlkiNAqQ/
-         Cfnan/ODgHMKSSSgfc1AJtf4+Z4qQ2kMwDNFqEVZNUPx2nnEdWC40Vm8CuFWMYHuTT9N
-         ZUGPLpYWHGvUvEvQU7DX3vE2GfBJBaBMcxQd5CQIqKLwIxtd19Sd9uzcvetTFsdluW6I
-         OIXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:openpgp:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=eU4VlI4ArP56nCay48Vt2NhXZMRD3ggL2hIZnoXhceQ=;
-        b=f3v4FxiLEiOh4WQ9ydxFrOl43OjTJiL4nPD7u2lNMw+rSB6v+BKP7OihHy6JPu2SHZ
-         Z2H0mWdmjj4fKt8wrfc2zxVDGXz7x9Iog2SEKW7N40gYfsVN1GvbVzOEOKSSuPU5ndXc
-         jcAZ8Dgo+RnJD3sGl+j9sspBU609ypYMb19XY00dnlDpAO4RGgp4AZwfcNb+mKLVQdhK
-         4C0GQ/THI3goIjuRfc45Nv7dvo3+Gi8EazjYGXXReJCjeqqwn8z8FUBLfc3LN2PbCR6x
-         54yi60d8NsHts0pa2kssg1NyoXSZ2E+uPRals+S73SrM8fa08wXJ81fo0LSCoNk71AIS
-         llYQ==
-X-Gm-Message-State: APjAAAVHAfqd8H3oM8OpclDO/JF30pKHNZ9F3Vg0k8S3MgWEqBJNzVDA
-        XvW2awL39AvQeRTIC4Pph59Wbw==
-X-Google-Smtp-Source: APXvYqxDnsF+COHQgRZP9CCHmIMcuL6Ca4nzr7dMlubewqhDVfPTLc7AHyQE/m7fwJdSl2zbtQKWKw==
-X-Received: by 2002:adf:f5c2:: with SMTP id k2mr42144936wrp.118.1574861937643;
-        Wed, 27 Nov 2019 05:38:57 -0800 (PST)
-Received: from [172.20.1.104] ([217.38.71.146])
-        by smtp.gmail.com with ESMTPSA id k20sm6430968wmj.10.2019.11.27.05.38.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Nov 2019 05:38:56 -0800 (PST)
-To:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@redhat.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-References: <20191127094837.4045-1-jolsa@kernel.org>
- <20191127094837.4045-4-jolsa@kernel.org>
-From:   Quentin Monnet <quentin.monnet@netronome.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=quentin.monnet@netronome.com; prefer-encrypt=mutual; keydata=
- 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
- RHhSHGnKaQ6MfrTge5Q0h5A=
-Subject: Re: [PATCH 3/3] bpftool: Allow to link libbpf dynamically
-Message-ID: <fd22660f-2f70-4ffa-b45f-bb417d006d0a@netronome.com>
-Date:   Wed, 27 Nov 2019 13:38:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 27 Nov 2019 08:43:40 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARDfY77093032;
+        Wed, 27 Nov 2019 08:42:25 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2whh323tb7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Nov 2019 08:42:25 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xARDaaeM005774;
+        Wed, 27 Nov 2019 13:42:24 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma05wdc.us.ibm.com with ESMTP id 2wevd75033-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Nov 2019 13:42:24 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xARDgMud50856388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 13:42:23 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D69FD124055;
+        Wed, 27 Nov 2019 13:42:22 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BCE99124054;
+        Wed, 27 Nov 2019 13:42:21 +0000 (GMT)
+Received: from [9.152.98.31] (unknown [9.152.98.31])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed, 27 Nov 2019 13:42:21 +0000 (GMT)
+Subject: Re: [PATCH 5/5] btrfs: Increase buffer size for zlib functions
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191126144130.75710-1-zaslonko@linux.ibm.com>
+ <20191126144130.75710-6-zaslonko@linux.ibm.com>
+ <20191126155249.j2dktiggykfoz4iz@MacBook-Pro-91.local>
+From:   Zaslonko Mikhail <zaslonko@linux.ibm.com>
+Message-ID: <11377b99-b66c-fdc3-5c8f-0bae34c92c03@linux.ibm.com>
+Date:   Wed, 27 Nov 2019 14:42:20 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191127094837.4045-4-jolsa@kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191126155249.j2dktiggykfoz4iz@MacBook-Pro-91.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-27_03:2019-11-27,2019-11-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=773 malwarescore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 clxscore=1015 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911270119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-11-27 10:48 UTC+0100 ~ Jiri Olsa <jolsa@kernel.org>
-> Currently we support only static linking with kernel's libbpf
-> (tools/lib/bpf). This patch adds LIBBPF_DYNAMIC compile variable
-> that triggers libbpf detection and bpf dynamic linking:
+Hello,
+
+On 26.11.2019 16:52, Josef Bacik wrote:
+> On Tue, Nov 26, 2019 at 03:41:30PM +0100, Mikhail Zaslonko wrote:
+>> Due to the small size of zlib buffer (1 page) set in btrfs code, s390
+>> hardware compression is rather limited in terms of performance. Increasing
+>> the buffer size to 4 pages would bring significant benefit for s390
+>> hardware compression (up to 60% better performance compared to the
+>> PAGE_SIZE buffer) and should not bring much overhead in terms of memory
+>> consumption due to order 2 allocations.
+>>
+>> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 > 
->   $ make -C tools/bpf/bpftool make LIBBPF_DYNAMIC=1
+> We may have to make these allocations under memory pressure in the IO context,
+> order 2 allocations here is going to be not awesome.  If you really want it then
+> you need to at least be able to fall back to single page if you fail to get the
+> allocation.  Thanks,
 > 
-> If libbpf is not installed, build (with LIBBPF_DYNAMIC=1) stops with:
+
+As far as I understand GFP_KERNEL allocations would never fail for the order <= 
+PAGE_ALLOC_COSTLY_ORDER. How else can the memory pressure condition be identified
+here?
+
+> josef
 > 
->   $ make -C tools/bpf/bpftool LIBBPF_DYNAMIC=1
->     Auto-detecting system features:
->     ...                        libbfd: [ on  ]
->     ...        disassembler-four-args: [ on  ]
->     ...                          zlib: [ on  ]
->     ...                        libbpf: [ OFF ]
-> 
->   Makefile:102: *** Error: libbpf-devel is missing, please install it.  Stop.
-> 
-> Adding specific bpftool's libbpf check for libbpf_netlink_open (LIBBPF_0.0.6)
-> which is the latest we need for bpftool at the moment.
-> 
-> Adding LIBBPF_DIR compile variable to allow linking with
-> libbpf installed into specific directory:
-> 
->   $ make -C tools/lib/bpf/ prefix=/tmp/libbpf/ install_lib install_headers
->   $ make -C tools/bpf/bpftool/ LIBBPF_DYNAMIC=1 LIBBPF_DIR=/tmp/libbpf/
-> 
-> It might be needed to clean build tree first because features
-> framework does not detect the change properly:
-> 
->   $ make -C tools/build/feature clean
->   $ make -C tools/bpf/bpftool/ clean
-> 
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/bpf/bpftool/Makefile        | 40 ++++++++++++++++++++++++++++++-
->  tools/build/feature/test-libbpf.c |  9 +++++++
->  2 files changed, 48 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
-> index 39bc6f0f4f0b..2b6ed08cb31e 100644
-> --- a/tools/bpf/bpftool/Makefile
-> +++ b/tools/bpf/bpftool/Makefile
-
-> @@ -55,7 +64,7 @@ ifneq ($(EXTRA_LDFLAGS),)
->  LDFLAGS += $(EXTRA_LDFLAGS)
->  endif
->  
-> -LIBS = $(LIBBPF) -lelf -lz
-> +LIBS = -lelf -lz
-
-Hi Jiri,
-
-This change seems to be breaking the build with the static library for
-me. I know you add back $(LIBBPF) later in the Makefile, see at the end
-of this email...
-
->  
->  INSTALL ?= install
->  RM ?= rm -f
-> @@ -64,6 +73,23 @@ FEATURE_USER = .bpftool
->  FEATURE_TESTS = libbfd disassembler-four-args reallocarray zlib
->  FEATURE_DISPLAY = libbfd disassembler-four-args zlib
->  
-> +ifdef LIBBPF_DYNAMIC
-> +  # Add libbpf check with the flags to ensure bpftool
-> +  # specific version is detected.
-
-Nit: We do not check for a specific bpftool version, we check for a
-recent enough libbpf version?
-
-> +  FEATURE_CHECK_CFLAGS-libbpf := -DBPFTOOL
-> +  FEATURE_TESTS   += libbpf
-> +  FEATURE_DISPLAY += libbpf
-> +
-> +  # for linking with debug library run:
-> +  # make LIBBPF_DYNAMIC=1 LIBBPF_DIR=/opt/libbpf
-> +  ifdef LIBBPF_DIR
-> +    LIBBPF_CFLAGS  := -I$(LIBBPF_DIR)/include
-> +    LIBBPF_LDFLAGS := -L$(LIBBPF_DIR)/$(libdir_relative)
-> +    FEATURE_CHECK_CFLAGS-libbpf  := $(LIBBPF_CFLAGS)
-> +    FEATURE_CHECK_LDFLAGS-libbpf := $(LIBBPF_LDFLAGS)
-> +  endif
-> +endif
-> +
->  check_feat := 1
->  NON_CHECK_FEAT_TARGETS := clean uninstall doc doc-clean doc-install doc-uninstall
->  ifdef MAKECMDGOALS
-> @@ -88,6 +114,18 @@ ifeq ($(feature-reallocarray), 0)
->  CFLAGS += -DCOMPAT_NEED_REALLOCARRAY
->  endif
->  
-> +ifdef LIBBPF_DYNAMIC
-> +  ifeq ($(feature-libbpf), 1)
-> +    LIBS    += -lbpf
-> +    CFLAGS  += $(LIBBPF_CFLAGS)
-> +    LDFLAGS += $(LIBBPF_LDFLAGS)
-> +  else
-> +    dummy := $(error Error: No libbpf devel library found, please install libbpf-devel)
-
-libbpf-devel sounds like a RH/Fedora package name, but other
-distributions might have different names (Debian/Ubuntu would go by
-libbpf-dev I suppose, although I don't believe such package exists at
-the moment). Maybe use a more generic message?
-
-> +  endif
-> +else
-> +  LIBS += $(LIBBPF)
-
-... I believe the order of the libraries is relevant, and it seems the
-static libbpf should be passed before the dynamic libs. Here I could fix
-the build with the static library on my setup by prepending the library
-path instead, like this:
-
-	LIBS := $(LIBBPF) $(LIBS)
-
-On the plus side, all build attempts from
-tools/testing/selftests/bpf/test_bpftool_build.sh pass successfully on
-my setup with dynamic linking from your branch.
-
-> +endif
-> +
->  include $(wildcard $(OUTPUT)*.d)
->  
->  all: $(OUTPUT)bpftool
-
-Thanks,
-Quentin
