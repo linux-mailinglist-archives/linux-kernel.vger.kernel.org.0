@@ -2,92 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5042410A86A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 03:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0E810A877
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 03:01:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfK0CAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 21:00:05 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:27971 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727179AbfK0B7T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 20:59:19 -0500
-X-UUID: a8dc599bfab643f78ea09e26e03b1609-20191127
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=c04uTlKMAuDikNWMu5PVVMKDbJWfigV3WXc3DE/9nHE=;
-        b=e/cd3KnWmFMjTGCNOjIYDsFdCva8BwKjok9CYJdh3ESeruu96HDcWYCPZ2VOLEgtICopxQq26cnZUQZ2tzmh9Wg/bxGYBY19OIQqYcz7iMOnd3Q9qzjEdwnc4BGF4ZFHWm0vzvZl6GXqTYFdeDasfB/T9tSQQCgmDMLs6bMQbG0=;
-X-UUID: a8dc599bfab643f78ea09e26e03b1609-20191127
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <dennis-yc.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 697112271; Wed, 27 Nov 2019 09:59:12 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 27 Nov 2019 09:59:02 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 27 Nov 2019 09:58:20 +0800
-From:   Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Dennis YC Hsieh <dennis-yc.hsieh@mediatek.com>
-Subject: [PATCH v2 13/14] soc: mediatek: cmdq: add wait no clear event function
-Date:   Wed, 27 Nov 2019 09:58:56 +0800
-Message-ID: <1574819937-6246-15-git-send-email-dennis-yc.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
-References: <1574819937-6246-1-git-send-email-dennis-yc.hsieh@mediatek.com>
+        id S1726655AbfK0CBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 21:01:46 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56329 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbfK0CBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 21:01:46 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47N3sx5l1dz9sSc;
+        Wed, 27 Nov 2019 13:01:41 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1574820103;
+        bh=cy9A3E8oTFi0nOn+OkeRW0ppPDDn/IuuVGvqFC6oZWI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=lR1n2OUMsIdhMdiQU0iQrJdGz4khJvlm7+5h+faaVwEb/nSjij8bgEvsthnGaFxmN
+         WY8TkTJi6wSbRgw2ILuNIS5xccwkcu6oYZfbfftjhv9XVOKcVtjckpaY5WDp8+QcIi
+         klyf5Cdd6ymfXmh7u3w5Mu7WNxQN5tm8nv8Hq/k8BH7NlaIhobP5u854F9OrHYGO9J
+         G6y9TCsA2d32++z+kmongGw0FgeVOwaVHCIavR8NmIxV8nFFm0cI35/I1Gpd8r5T5J
+         ObH/r1jnWMMDzHIAMcIMcvs8NI86lN/3HJ8jnxCiTwqqgPDPi/iMedHgGVhYMWSvkZ
+         Ng2C2TOz9mnvQ==
+Date:   Wed, 27 Nov 2019 13:01:39 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <dima@arista.com>
+Subject: linux-next: manual merge of the y2038 tree with the tip tree
+Message-ID: <20191127130139.0b16375c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; boundary="Sig_/F+E.qrgZ3.i=Z3aqEuBAa0K";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIHdhaXQgbm8gY2xlYXIgZXZlbnQgZnVuY3Rpb24gaW4gY21kcSBoZWxwZXIgZnVuY3Rpb25z
-IHRvIHdhaXQgc3BlY2lmaWMNCmV2ZW50IHdpdGhvdXQgY2xlYXIgdG8gMCBhZnRlciByZWNlaXZl
-IGl0Lg0KDQpTaWduZWQtb2ZmLWJ5OiBEZW5uaXMgWUMgSHNpZWggPGRlbm5pcy15Yy5oc2llaEBt
-ZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIu
-YyB8IDE1ICsrKysrKysrKysrKysrKw0KIGluY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210ay1j
-bWRxLmggIHwgMTAgKysrKysrKysrKw0KIDIgZmlsZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygr
-KQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVyLmMg
-Yi9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstY21kcS1oZWxwZXIuYw0KaW5kZXggMTBhOWI0NDgx
-ZTU4Li42ZjI3MGZhZGZiNTAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGst
-Y21kcS1oZWxwZXIuYw0KKysrIGIvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEtaGVscGVy
-LmMNCkBAIC0zMzAsNiArMzMwLDIxIEBAIGludCBjbWRxX3BrdF93ZmUoc3RydWN0IGNtZHFfcGt0
-ICpwa3QsIHUxNiBldmVudCkNCiB9DQogRVhQT1JUX1NZTUJPTChjbWRxX3BrdF93ZmUpOw0KIA0K
-K2ludCBjbWRxX3BrdF93YWl0X25vX2NsZWFyKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZl
-bnQpDQorew0KKwlzdHJ1Y3QgY21kcV9pbnN0cnVjdGlvbiBpbnN0ID0geyB7MH0gfTsNCisNCisJ
-aWYgKGV2ZW50ID49IENNRFFfTUFYX0VWRU5UKQ0KKwkJcmV0dXJuIC1FSU5WQUw7DQorDQorCWlu
-c3Qub3AgPSBDTURRX0NPREVfV0ZFOw0KKwlpbnN0LnZhbHVlID0gQ01EUV9XRkVfV0FJVCB8IENN
-RFFfV0ZFX1dBSVRfVkFMVUU7DQorCWluc3QuZXZlbnQgPSBldmVudDsNCisNCisJcmV0dXJuIGNt
-ZHFfcGt0X2FwcGVuZF9jb21tYW5kKHBrdCwgaW5zdCk7DQorfQ0KK0VYUE9SVF9TWU1CT0woY21k
-cV9wa3Rfd2FpdF9ub19jbGVhcik7DQorDQogaW50IGNtZHFfcGt0X2NsZWFyX2V2ZW50KHN0cnVj
-dCBjbWRxX3BrdCAqcGt0LCB1MTYgZXZlbnQpDQogew0KIAlzdHJ1Y3QgY21kcV9pbnN0cnVjdGlv
-biBpbnN0ID0geyB7MH0gfTsNCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRl
-ay9tdGstY21kcS5oIGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLWNtZHEuaA0KaW5k
-ZXggZDE1ZDhjOTQxOTkyLi40MGJjNjFhZDhkMzEgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4
-L3NvYy9tZWRpYXRlay9tdGstY21kcS5oDQorKysgYi9pbmNsdWRlL2xpbnV4L3NvYy9tZWRpYXRl
-ay9tdGstY21kcS5oDQpAQCAtMTQ5LDYgKzE0OSwxNiBAQCBpbnQgY21kcV9wa3Rfd3JpdGVfc192
-YWx1ZShzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgZG1hX2FkZHJfdCBhZGRyLA0KICAqLw0KIGludCBj
-bWRxX3BrdF93ZmUoc3RydWN0IGNtZHFfcGt0ICpwa3QsIHUxNiBldmVudCk7DQogDQorLyoqDQor
-ICogY21kcV9wa3Rfd2FpdF9ub19jbGVhcigpIC0gQXBwZW5kIHdhaXQgZm9yIGV2ZW50IGNvbW1h
-bmQgdG8gdGhlIENNRFEgcGFja2V0LA0KKyAqCQkJICAgICAgd2l0aG91dCB1cGRhdGUgZXZlbnQg
-dG8gMCBhZnRlciByZWNlaXZlIGl0Lg0KKyAqIEBwa3Q6CXRoZSBDTURRIHBhY2tldA0KKyAqIEBl
-dmVudDoJdGhlIGRlc2lyZWQgZXZlbnQgdHlwZSB0byB3YWl0DQorICoNCisgKiBSZXR1cm46IDAg
-Zm9yIHN1Y2Nlc3M7IGVsc2UgdGhlIGVycm9yIGNvZGUgaXMgcmV0dXJuZWQNCisgKi8NCitpbnQg
-Y21kcV9wa3Rfd2FpdF9ub19jbGVhcihzdHJ1Y3QgY21kcV9wa3QgKnBrdCwgdTE2IGV2ZW50KTsN
-CisNCiAvKioNCiAgKiBjbWRxX3BrdF9jbGVhcl9ldmVudCgpIC0gYXBwZW5kIGNsZWFyIGV2ZW50
-IGNvbW1hbmQgdG8gdGhlIENNRFEgcGFja2V0DQogICogQHBrdDoJdGhlIENNRFEgcGFja2V0DQot
-LSANCjIuMTguMA0K
+--Sig_/F+E.qrgZ3.i=Z3aqEuBAa0K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
+
+Today's linux-next merge of the y2038 tree got a conflict in:
+
+  kernel/time/time.c
+
+between commit:
+
+  7b8474466ed9 ("time: Zero the upper 32-bits in __kernel_timespec on 32-bi=
+t")
+
+from the tip tree and commit:
+
+  3ca47e958a64 ("y2038: remove CONFIG_64BIT_TIME")
+
+from the y2038 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/time/time.c
+index 4d434dad6ebc,58e312e7380f..000000000000
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@@ -884,8 -879,7 +882,7 @@@ int get_timespec64(struct timespec64 *t
+  	ts->tv_sec =3D kts.tv_sec;
+ =20
+  	/* Zero out the padding for 32 bit systems or in compat mode */
+- 	if (IS_ENABLED(CONFIG_64BIT_TIME) && (!IS_ENABLED(CONFIG_64BIT) ||
+- 					      in_compat_syscall()))
+ -	if (in_compat_syscall())
+++	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
+  		kts.tv_nsec &=3D 0xFFFFFFFFUL;
+ =20
+  	ts->tv_nsec =3D kts.tv_nsec;
+
+--Sig_/F+E.qrgZ3.i=Z3aqEuBAa0K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3d2QMACgkQAVBC80lX
+0Gy+2wf9Hz9gIvHa5mX4rJBnTrWt2lj92Pr1lv5dsS6VZ77Z9N1BV6C3BGtuhKZn
+7tCrXbaQxc4akNVxZscif4jHudkGLway93r8FyIO9Lk1TPWLF+kPdx4YiICYVh3G
+X3jVP9J56S4NT41aKLyk+T4sUCTxSMoCaPStOa9yflitB+rkS6OO+tRaVD415aYF
+NqaHpmleXABWKNrdykhYzpE+jryMNw49mqeDTRqTNeYcGbt0m+nnHD5kOr7QUCbe
+2fiZVg7jjy6YVpN8mApTiWDtuqWT8dxi4Uk5bUqru2WO7j6ihGXDKJHa4F0/OJIv
+WcUdoaCsk2EgHSyDre8R1b/Zqr5a6Q==
+=ksJO
+-----END PGP SIGNATURE-----
+
+--Sig_/F+E.qrgZ3.i=Z3aqEuBAa0K--
