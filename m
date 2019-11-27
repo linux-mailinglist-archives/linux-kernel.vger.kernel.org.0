@@ -2,91 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C0010B70D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 20:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA0A710B71D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:00:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfK0Twr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 14:52:47 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58513 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726729AbfK0Twr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 14:52:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574884366;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HiZS6oFfOA80v64mJWiWGLuKXjLnUu1+qmjApNcY1+g=;
-        b=A+KbQX280HJaBRouFB5dZ/mJdzvdY//yTNxDjtxgzpaq3doPcstqXRqONocXU/ZjnyHyLQ
-        tAz6zEfmRGwPwNo3XbB8wOoLb/4Yo2B6OftGWXTX5wfTHhhS0M4GoTdUd32GsNlUwkSi8V
-        oMJeaBLK9QGxG2kPTpme2bD46SgZljY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-358-sNM1L5unPcmyRmOhb03aWA-1; Wed, 27 Nov 2019 14:52:42 -0500
-Received: by mail-wm1-f71.google.com with SMTP id o135so2972344wme.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 11:52:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=+P1Iia7oLAHdhlzKG11woXJ5RZt0oWz8tr0zkXFxMMU=;
-        b=Ds5vpQm48wbcaWqYqcbv476kYY4o1v/gNqRhaPbD0YJf7dLVEjnjP6Icl1WK/l8pex
-         ANru2LS6B1gNjPiN4Sb3pIfKK204BKR0Kg9K+kOPEH8ajDbh7bfs65985ErmccThrKcu
-         FqVieF4NB1spROHWnLn1OMywvF4KGcTuUKUCSnPr6GN8L6v+qAuCe+4CcVA7/AeXLkQD
-         56pPfOfsYvPyHVAOhOhB9R8/e1xR3x8opabW98nAJWwjaI4NYZVCLS9fOcFuJzoMRRH+
-         7kdTV+3lqRvYrKU9sJ4p45iHlmeKtrXK3l91dLk68KYPjjhaDXpCABLPrsyK/9fEwmlE
-         Z51w==
-X-Gm-Message-State: APjAAAUjrSKxXIvs7wh2FJNT/RQwnuVsD+c19NSELq8JlzOW1ShVnnLL
-        4LezievlZwOxH3NFZ0jCf55eifffV2iRhX8T5av8BxL/3Xb1qZmtWT1GA5JJd7p7meKAJJzEYdY
-        yMRM49Rmzq6bPsiX5tTAQpImB
-X-Received: by 2002:adf:e301:: with SMTP id b1mr43578211wrj.280.1574884361880;
-        Wed, 27 Nov 2019 11:52:41 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwsv9XtEO7rpruY9ZcJkRC6TjBlCtMvfsdFKxhHQuULD11A6Ui5Ejf2GFuEyNIh84JMt72E/Q==
-X-Received: by 2002:adf:e301:: with SMTP id b1mr43578199wrj.280.1574884361733;
-        Wed, 27 Nov 2019 11:52:41 -0800 (PST)
-Received: from [192.168.3.122] (p5B0C6355.dip0.t-ipconnect.de. [91.12.99.85])
-        by smtp.gmail.com with ESMTPSA id l26sm7995576wmj.48.2019.11.27.11.52.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 11:52:41 -0800 (PST)
-From:   David Hildenbrand <david@redhat.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in find_(smallest|biggest)_section_pfn
-Date:   Wed, 27 Nov 2019 20:52:40 +0100
-Message-Id: <7D8F1E5C-5A39-4C76-AD2F-4D0954DB57F5@redhat.com>
-References: <CE5C4BD6-FAA6-4439-B869-679D24C17298@lca.pw>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-In-Reply-To: <CE5C4BD6-FAA6-4439-B869-679D24C17298@lca.pw>
-To:     Qian Cai <cai@lca.pw>
-X-Mailer: iPhone Mail (17A878)
-X-MC-Unique: sNM1L5unPcmyRmOhb03aWA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        id S1727259AbfK0UAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:00:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727184AbfK0UAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:00:16 -0500
+Subject: Re: [GIT PULL] First set of RISC-V updates for v5.5-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574884816;
+        bh=S03p4uHH+3stFzte3DVgsrqEvGsRCqtTD/GxeT3+Yi8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=vFufiaMaD2jpHePhT5SvHilhHPalAVbVZQ/wiEzePxxd2w5nnvYwXP/f4y7hXwcRL
+         4jk+MkY5QJVH9g9Oeeg0et4H8HkYw5ZsUfE5a0AKegU3fduNY82FVjfuWhpTcVe2h0
+         EOuBFrPHgNgaNIdDWroCXPp1D4fpbIlb8TMeZ6SM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <alpine.DEB.2.21.9999.1911261311520.23039@viisi.sifive.com>
+References: <alpine.DEB.2.21.9999.1911261311520.23039@viisi.sifive.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <alpine.DEB.2.21.9999.1911261311520.23039@viisi.sifive.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
+ tags/riscv/for-v5.5-rc1
+X-PR-Tracked-Commit-Id: 5ba9aa56e6d3e8fddb954c2f818d1ce0525235bb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6a0e20cd8cddd70ae5c1211ebe102d738ff2069b
+Message-Id: <157488481647.30408.5646332357749422178.pr-tracker-bot@kernel.org>
+Date:   Wed, 27 Nov 2019 20:00:16 +0000
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     torvalds@linux-foundation.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The pull request you sent on Tue, 26 Nov 2019 13:13:24 -0800 (PST):
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv/for-v5.5-rc1
 
-> Am 27.11.2019 um 20:37 schrieb Qian Cai <cai@lca.pw>:
->=20
-> =EF=BB=BF
->=20
->> On Nov 27, 2019, at 2:06 PM, David Hildenbrand <david@redhat.com> wrote:
->>=20
->> The zone pointer is unique for every node. (in contrast to the zone inde=
-x).
->=20
-> I am not sure if it is worth optimizing there. The existing nid check loo=
-ks quite straight-forward and cheap.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6a0e20cd8cddd70ae5c1211ebe102d738ff2069b
 
-I understand but strongly dislike your attitude towards code changes ;)
+Thank you!
 
->=20
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
