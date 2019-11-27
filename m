@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A15FC10B924
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6881710B846
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbfK0UuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:50:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
+        id S1728731AbfK0Ulr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:41:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729927AbfK0UuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:50:16 -0500
+        id S1727696AbfK0Uln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:41:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5905121847;
-        Wed, 27 Nov 2019 20:50:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EB5720863;
+        Wed, 27 Nov 2019 20:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887815;
-        bh=9B51i506uoit8PvzKsp8Hnm676PvlawhR2kOkoqXzLA=;
+        s=default; t=1574887302;
+        bh=6MsO48qqDlueLw2rlZAnHoxYP3IEV8AjklsM9jZxRY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=omi2j4pAGFp0JR173ACENYnk56QFyoiERU3N04TQOTGLk7b1ZNX3zrjiqmp2wAWnS
-         M42A+HmDSoG2Sx1VPca4N5ojWlpk47vGQqIHCu+nzZKu4pARQSM8ODTaeyPLcDs8yi
-         ejtmO1E2uRFkhtbDLb1aWGi60lVBSHbFAWkCm+Eo=
+        b=S4OJSEwvYfB/LDp83CxaMykFQC8QeCvNzXfAhvQrfpZiAF393AYPRlvC43Kpog0R7
+         dFZdIu29oBn+BiU62wCTCFfQAMVAIc7utd5mAIz8y7jOovgHaDLGN3H9idBsmtArh6
+         fwz+z/hoHmQhXo0OdYXH+r+ewpMwvUPK2sr5K8EA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 106/211] selftests/powerpc/cache_shape: Fix out-of-tree build
-Date:   Wed, 27 Nov 2019 21:30:39 +0100
-Message-Id: <20191127203104.016375778@linuxfoundation.org>
+Subject: [PATCH 4.9 057/151] mfd: arizona: Correct calling of runtime_put_sync
+Date:   Wed, 27 Nov 2019 21:30:40 +0100
+Message-Id: <20191127203032.480021499@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
 
-[ Upstream commit 69f8117f17b332a68cd8f4bf8c2d0d3d5b84efc5 ]
+[ Upstream commit 6b269a41a4520f7eb639e61a45ebbb9c9267d5e0 ]
 
-Use TEST_GEN_PROGS and don't redefine all, this makes the out-of-tree
-build work. We need to move the extra dependencies below the include
-of lib.mk, because it adds the $(OUTPUT) prefix if it's defined.
+Don't call runtime_put_sync when clk32k_ref is ARIZONA_32KZ_MCLK2
+as there is no corresponding runtime_get_sync call.
 
-We can also drop the clean rule, lib.mk does it for us.
+MCLK1 is not in the AoD power domain so if it is used as 32kHz clock
+source we need to hold a runtime PM reference to keep the device from
+going into low power mode.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: cdd8da8cc66b ("mfd: arizona: Add gating of external MCLKn clocks")
+Signed-off-by: Sapthagiri Baratam <sapthagiri.baratam@cirrus.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/cache_shape/Makefile | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/mfd/arizona-core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/powerpc/cache_shape/Makefile b/tools/testing/selftests/powerpc/cache_shape/Makefile
-index 1be547434a49c..7e0c175b82978 100644
---- a/tools/testing/selftests/powerpc/cache_shape/Makefile
-+++ b/tools/testing/selftests/powerpc/cache_shape/Makefile
-@@ -1,11 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--TEST_PROGS := cache_shape
--
--all: $(TEST_PROGS)
--
--$(TEST_PROGS): ../harness.c ../utils.c
-+TEST_GEN_PROGS := cache_shape
+diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+index 0556a9749dbe0..1f0c2b594654e 100644
+--- a/drivers/mfd/arizona-core.c
++++ b/drivers/mfd/arizona-core.c
+@@ -52,8 +52,10 @@ int arizona_clk32k_enable(struct arizona *arizona)
+ 			if (ret != 0)
+ 				goto err_ref;
+ 			ret = clk_prepare_enable(arizona->mclk[ARIZONA_MCLK1]);
+-			if (ret != 0)
+-				goto err_pm;
++			if (ret != 0) {
++				pm_runtime_put_sync(arizona->dev);
++				goto err_ref;
++			}
+ 			break;
+ 		case ARIZONA_32KZ_MCLK2:
+ 			ret = clk_prepare_enable(arizona->mclk[ARIZONA_MCLK2]);
+@@ -67,8 +69,6 @@ int arizona_clk32k_enable(struct arizona *arizona)
+ 					 ARIZONA_CLK_32K_ENA);
+ 	}
  
- include ../../lib.mk
- 
--clean:
--	rm -f $(TEST_PROGS) *.o
-+$(TEST_GEN_PROGS): ../harness.c ../utils.c
+-err_pm:
+-	pm_runtime_put_sync(arizona->dev);
+ err_ref:
+ 	if (ret != 0)
+ 		arizona->clk32k_ref--;
 -- 
 2.20.1
 
