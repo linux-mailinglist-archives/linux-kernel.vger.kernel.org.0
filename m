@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDE8010BE7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3284910BE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfK0Url (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
+        id S1730047AbfK0Urv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:47:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727674AbfK0Urg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:47:36 -0500
+        id S1730031AbfK0Urt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:47:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E413F217C3;
-        Wed, 27 Nov 2019 20:47:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C27DE217C3;
+        Wed, 27 Nov 2019 20:47:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887655;
-        bh=DVwA5y0PtsAzbNU08Ymwy5VUpe7WAvseor28GDqW7fo=;
+        s=default; t=1574887668;
+        bh=UgCUPv+FXXkrqQZEGsb62ZUpxRa20bdJWsSt6ZQqkLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hFV1632VgybA5MoB3s+785f0u+95ilizDOGfJdFhHmC4MP7k/eY8V8ACozJsZoG4m
-         hssfq6ha9LpTmT2nbqxHetByYDccg34i3YvICfYd5Bc6QZ+YJZEGhJ6BVh7LyOVHBe
-         wxw7PZQ0rMG1neAIA8fi2C3owUZcvpCTQX3jU+XE=
+        b=B8A3/iCXMIC/p7sXtzwW/hysbvnwN5buueRELOjbaDQH6JKygXrvibixXFfsinj/J
+         Em24btStRUPBHdpRanOb+dLNlxzFMjs+ARwCkvKAk3NVy+P8DJO2IqcQr5HvhkOub3
+         LvUI28raW3wZs6sGmM0admS8DZ6vjRu3BZLn06hM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 006/211] net/sched: act_pedit: fix WARN() in the traffic path
-Date:   Wed, 27 Nov 2019 21:28:59 +0100
-Message-Id: <20191127203050.039523929@linuxfoundation.org>
+Subject: [PATCH 4.14 007/211] vhost/vsock: split packets to send using multiple buffers
+Date:   Wed, 27 Nov 2019 21:29:00 +0100
+Message-Id: <20191127203050.278790438@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -43,91 +45,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Stefano Garzarella <sgarzare@redhat.com>
 
-[ Upstream commit f67169fef8dbcc1ac6a6a109ecaad0d3b259002c ]
+commit 6dbd3e66e7785a2f055bf84d98de9b8fd31ff3f5 upstream.
 
-when configuring act_pedit rules, the number of keys is validated only on
-addition of a new entry. This is not sufficient to avoid hitting a WARN()
-in the traffic path: for example, it is possible to replace a valid entry
-with a new one having 0 extended keys, thus causing splats in dmesg like:
+If the packets to sent to the guest are bigger than the buffer
+available, we can split them, using multiple buffers and fixing
+the length in the packet header.
+This is safe since virtio-vsock supports only stream sockets.
 
- pedit BUG: index 42
- WARNING: CPU: 2 PID: 4054 at net/sched/act_pedit.c:410 tcf_pedit_act+0xc84/0x1200 [act_pedit]
- [...]
- RIP: 0010:tcf_pedit_act+0xc84/0x1200 [act_pedit]
- Code: 89 fa 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 03 0f 8e ac 00 00 00 48 8b 44 24 10 48 c7 c7 a0 c4 e4 c0 8b 70 18 e8 1c 30 95 ea <0f> 0b e9 a0 fa ff ff e8 00 03 f5 ea e9 14 f4 ff ff 48 89 58 40 e9
- RSP: 0018:ffff888077c9f320 EFLAGS: 00010286
- RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffffac2983a2
- RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888053927bec
- RBP: dffffc0000000000 R08: ffffed100a726209 R09: ffffed100a726209
- R10: 0000000000000001 R11: ffffed100a726208 R12: ffff88804beea780
- R13: ffff888079a77400 R14: ffff88804beea780 R15: ffff888027ab2000
- FS:  00007fdeec9bd740(0000) GS:ffff888053900000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007ffdb3dfd000 CR3: 000000004adb4006 CR4: 00000000001606e0
- Call Trace:
-  tcf_action_exec+0x105/0x3f0
-  tcf_classify+0xf2/0x410
-  __dev_queue_xmit+0xcbf/0x2ae0
-  ip_finish_output2+0x711/0x1fb0
-  ip_output+0x1bf/0x4b0
-  ip_send_skb+0x37/0xa0
-  raw_sendmsg+0x180c/0x2430
-  sock_sendmsg+0xdb/0x110
-  __sys_sendto+0x257/0x2b0
-  __x64_sys_sendto+0xdd/0x1b0
-  do_syscall_64+0xa5/0x4e0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x7fdeeb72e993
- Code: 48 8b 0d e0 74 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 0d d6 2c 00 00 75 13 49 89 ca b8 2c 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 4b cc 00 00 48 89 04 24
- RSP: 002b:00007ffdb3de8a18 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
- RAX: ffffffffffffffda RBX: 000055c81972b700 RCX: 00007fdeeb72e993
- RDX: 0000000000000040 RSI: 000055c81972b700 RDI: 0000000000000003
- RBP: 00007ffdb3dea130 R08: 000055c819728510 R09: 0000000000000010
- R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000040
- R13: 000055c81972b6c0 R14: 000055c81972969c R15: 0000000000000080
-
-Fix this moving the check on 'nkeys' earlier in tcf_pedit_init(), so that
-attempts to install rules having 0 keys are always rejected with -EINVAL.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/act_pedit.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/sched/act_pedit.c
-+++ b/net/sched/act_pedit.c
-@@ -46,7 +46,7 @@ static struct tcf_pedit_key_ex *tcf_pedi
- 	int err = -EINVAL;
- 	int rem;
+---
+ drivers/vhost/vsock.c                   |   66 +++++++++++++++++++++++---------
+ net/vmw_vsock/virtio_transport_common.c |   15 +++++--
+ 2 files changed, 60 insertions(+), 21 deletions(-)
+
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -103,7 +103,7 @@ vhost_transport_do_send_pkt(struct vhost
+ 		struct iov_iter iov_iter;
+ 		unsigned out, in;
+ 		size_t nbytes;
+-		size_t len;
++		size_t iov_len, payload_len;
+ 		int head;
  
--	if (!nla || !n)
-+	if (!nla)
- 		return NULL;
+ 		spin_lock_bh(&vsock->send_pkt_list_lock);
+@@ -148,8 +148,24 @@ vhost_transport_do_send_pkt(struct vhost
+ 			break;
+ 		}
  
- 	keys_ex = kcalloc(n, sizeof(*k), GFP_KERNEL);
-@@ -163,6 +163,9 @@ static int tcf_pedit_init(struct net *ne
- 		return -EINVAL;
- 
- 	parm = nla_data(pattr);
-+	if (!parm->nkeys)
-+		return -EINVAL;
+-		len = iov_length(&vq->iov[out], in);
+-		iov_iter_init(&iov_iter, READ, &vq->iov[out], in, len);
++		iov_len = iov_length(&vq->iov[out], in);
++		if (iov_len < sizeof(pkt->hdr)) {
++			virtio_transport_free_pkt(pkt);
++			vq_err(vq, "Buffer len [%zu] too small\n", iov_len);
++			break;
++		}
 +
- 	ksize = parm->nkeys * sizeof(struct tc_pedit_key);
- 	if (nla_len(pattr) < sizeof(*parm) + ksize)
- 		return -EINVAL;
-@@ -172,8 +175,6 @@ static int tcf_pedit_init(struct net *ne
- 		return PTR_ERR(keys_ex);
++		iov_iter_init(&iov_iter, READ, &vq->iov[out], in, iov_len);
++		payload_len = pkt->len - pkt->off;
++
++		/* If the packet is greater than the space available in the
++		 * buffer, we split it using multiple buffers.
++		 */
++		if (payload_len > iov_len - sizeof(pkt->hdr))
++			payload_len = iov_len - sizeof(pkt->hdr);
++
++		/* Set the correct length in the header */
++		pkt->hdr.len = cpu_to_le32(payload_len);
  
- 	if (!tcf_idr_check(tn, parm->index, a, bind)) {
--		if (!parm->nkeys)
--			return -EINVAL;
- 		ret = tcf_idr_create(tn, parm->index, est, a,
- 				     &act_pedit_ops, bind, false);
- 		if (ret)
+ 		nbytes = copy_to_iter(&pkt->hdr, sizeof(pkt->hdr), &iov_iter);
+ 		if (nbytes != sizeof(pkt->hdr)) {
+@@ -158,33 +174,47 @@ vhost_transport_do_send_pkt(struct vhost
+ 			break;
+ 		}
+ 
+-		nbytes = copy_to_iter(pkt->buf, pkt->len, &iov_iter);
+-		if (nbytes != pkt->len) {
++		nbytes = copy_to_iter(pkt->buf + pkt->off, payload_len,
++				      &iov_iter);
++		if (nbytes != payload_len) {
+ 			virtio_transport_free_pkt(pkt);
+ 			vq_err(vq, "Faulted on copying pkt buf\n");
+ 			break;
+ 		}
+ 
+-		vhost_add_used(vq, head, sizeof(pkt->hdr) + pkt->len);
++		vhost_add_used(vq, head, sizeof(pkt->hdr) + payload_len);
+ 		added = true;
+ 
+-		if (pkt->reply) {
+-			int val;
+-
+-			val = atomic_dec_return(&vsock->queued_replies);
+-
+-			/* Do we have resources to resume tx processing? */
+-			if (val + 1 == tx_vq->num)
+-				restart_tx = true;
+-		}
+-
+ 		/* Deliver to monitoring devices all correctly transmitted
+ 		 * packets.
+ 		 */
+ 		virtio_transport_deliver_tap_pkt(pkt);
+ 
+-		total_len += pkt->len;
+-		virtio_transport_free_pkt(pkt);
++		pkt->off += payload_len;
++		total_len += payload_len;
++
++		/* If we didn't send all the payload we can requeue the packet
++		 * to send it with the next available buffer.
++		 */
++		if (pkt->off < pkt->len) {
++			spin_lock_bh(&vsock->send_pkt_list_lock);
++			list_add(&pkt->list, &vsock->send_pkt_list);
++			spin_unlock_bh(&vsock->send_pkt_list_lock);
++		} else {
++			if (pkt->reply) {
++				int val;
++
++				val = atomic_dec_return(&vsock->queued_replies);
++
++				/* Do we have resources to resume tx
++				 * processing?
++				 */
++				if (val + 1 == tx_vq->num)
++					restart_tx = true;
++			}
++
++			virtio_transport_free_pkt(pkt);
++		}
+ 	} while(likely(!vhost_exceeds_weight(vq, ++pkts, total_len)));
+ 	if (added)
+ 		vhost_signal(&vsock->dev, vq);
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -92,8 +92,17 @@ static struct sk_buff *virtio_transport_
+ 	struct virtio_vsock_pkt *pkt = opaque;
+ 	struct af_vsockmon_hdr *hdr;
+ 	struct sk_buff *skb;
++	size_t payload_len;
++	void *payload_buf;
+ 
+-	skb = alloc_skb(sizeof(*hdr) + sizeof(pkt->hdr) + pkt->len,
++	/* A packet could be split to fit the RX buffer, so we can retrieve
++	 * the payload length from the header and the buffer pointer taking
++	 * care of the offset in the original packet.
++	 */
++	payload_len = le32_to_cpu(pkt->hdr.len);
++	payload_buf = pkt->buf + pkt->off;
++
++	skb = alloc_skb(sizeof(*hdr) + sizeof(pkt->hdr) + payload_len,
+ 			GFP_ATOMIC);
+ 	if (!skb)
+ 		return NULL;
+@@ -133,8 +142,8 @@ static struct sk_buff *virtio_transport_
+ 
+ 	skb_put_data(skb, &pkt->hdr, sizeof(pkt->hdr));
+ 
+-	if (pkt->len) {
+-		skb_put_data(skb, pkt->buf, pkt->len);
++	if (payload_len) {
++		skb_put_data(skb, payload_buf, payload_len);
+ 	}
+ 
+ 	return skb;
 
 
