@@ -2,35 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26F8810BC9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F80610BAB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732343AbfK0VFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:05:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59632 "EHLO mail.kernel.org"
+        id S1731450AbfK0VFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:05:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbfK0VFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:05:49 -0500
+        id S1732065AbfK0VFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C9EB21770;
-        Wed, 27 Nov 2019 21:05:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10C682176D;
+        Wed, 27 Nov 2019 21:05:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888748;
-        bh=5Pdak+JPJzVEhoD/8rcgc5m8LdWqf4v8nm3VoE3IvzQ=;
+        s=default; t=1574888751;
+        bh=GsNJSubEqy9092/kPFVh7cTNvDDqTlvKsL8ToKkBp3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LpxKWBvmRTf7cRgPIsOxhPWFkbLE8B30tIPwqbBUVUcuzAB/OWu6rfi1CiCDCFcSp
-         3xDY81mpG5B+hRAGcruzzT/hAXPzJ0w3jnDsCktSdxGAgagqqKwWjvDZrYRMnSZM4x
-         /SfPYU6C/D9BwdFA6OSUqkZmKjIDZqALJ4Vo9Q+w=
+        b=C648szzbFwBduCYjhuJFYmrNeuFZpwe28LCe12sTTzvBWCxjYhxuTpuSMJ0ssghoY
+         Um9YzGy+k3wxl+Di755f7uREcgjiyqMrY0bw3/k0a811HZz5amvSPK/NKg5hFMcBo5
+         BNiREDSZa+4gwp2veMdSMVhP8ZAclRPavXgYIMwc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Vinayak Menon <vinmenon@codeaurora.org>,
+        Minchan Kim <minchan@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 254/306] cfg80211: call disconnect_wk when AP stops
-Date:   Wed, 27 Nov 2019 21:31:44 +0100
-Message-Id: <20191127203133.433190312@linuxfoundation.org>
+Subject: [PATCH 4.19 255/306] mm/page_io.c: do not free shared swap slots
+Date:   Wed, 27 Nov 2019 21:31:45 +0100
+Message-Id: <20191127203133.499090401@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -43,66 +49,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Vinayak Menon <vinmenon@codeaurora.org>
 
-[ Upstream commit e005bd7ddea06784c1eb91ac5bb6b171a94f3b05 ]
+[ Upstream commit 5df373e95689b9519b8557da7c5bd0db0856d776 ]
 
-Since we now prevent regulatory restore during STA disconnect
-if concurrent AP interfaces are active, we need to reschedule
-this check when the AP state changes. This fixes never doing
-a restore when an AP is the last interface to stop. Or to put
-it another way: we need to re-check after anything we check
-here changes.
+The following race is observed due to which a processes faulting on a
+swap entry, finds the page neither in swapcache nor swap.  This causes
+zram to give a zero filled page that gets mapped to the process,
+resulting in a user space crash later.
 
-Cc: stable@vger.kernel.org
-Fixes: 113f3aaa81bd ("cfg80211: Prevent regulatory restore during STA disconnect in concurrent interfaces")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Consider parent and child processes Pa and Pb sharing the same swap slot
+with swap_count 2.  Swap is on zram with SWP_SYNCHRONOUS_IO set.
+Virtual address 'VA' of Pa and Pb points to the shared swap entry.
+
+Pa                                       Pb
+
+fault on VA                              fault on VA
+do_swap_page                             do_swap_page
+lookup_swap_cache fails                  lookup_swap_cache fails
+                                         Pb scheduled out
+swapin_readahead (deletes zram entry)
+swap_free (makes swap_count 1)
+                                         Pb scheduled in
+                                         swap_readpage (swap_count == 1)
+                                         Takes SWP_SYNCHRONOUS_IO path
+                                         zram enrty absent
+                                         zram gives a zero filled page
+
+Fix this by making sure that swap slot is freed only when swap count
+drops down to one.
+
+Link: http://lkml.kernel.org/r/1571743294-14285-1-git-send-email-vinmenon@codeaurora.org
+Fixes: aa8d22a11da9 ("mm: swap: SWP_SYNCHRONOUS_IO: skip swapcache only if swapped page has no other reference")
+Signed-off-by: Vinayak Menon <vinmenon@codeaurora.org>
+Suggested-by: Minchan Kim <minchan@google.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/ap.c   | 2 ++
- net/wireless/core.h | 2 ++
- net/wireless/sme.c  | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ mm/page_io.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/net/wireless/ap.c b/net/wireless/ap.c
-index 882d97bdc6bfd..550ac9d827fe7 100644
---- a/net/wireless/ap.c
-+++ b/net/wireless/ap.c
-@@ -41,6 +41,8 @@ int __cfg80211_stop_ap(struct cfg80211_registered_device *rdev,
- 		cfg80211_sched_dfs_chan_update(rdev);
- 	}
+diff --git a/mm/page_io.c b/mm/page_io.c
+index aafd19ec1db46..08d2eae58fcee 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -76,6 +76,7 @@ static void swap_slot_free_notify(struct page *page)
+ {
+ 	struct swap_info_struct *sis;
+ 	struct gendisk *disk;
++	swp_entry_t entry;
  
-+	schedule_work(&cfg80211_disconnect_work);
-+
- 	return err;
- }
+ 	/*
+ 	 * There is no guarantee that the page is in swap cache - the software
+@@ -107,11 +108,11 @@ static void swap_slot_free_notify(struct page *page)
+ 	 * we again wish to reclaim it.
+ 	 */
+ 	disk = sis->bdev->bd_disk;
+-	if (disk->fops->swap_slot_free_notify) {
+-		swp_entry_t entry;
++	entry.val = page_private(page);
++	if (disk->fops->swap_slot_free_notify &&
++			__swap_count(sis, entry) == 1) {
+ 		unsigned long offset;
  
-diff --git a/net/wireless/core.h b/net/wireless/core.h
-index 7f52ef5693203..f5d58652108dd 100644
---- a/net/wireless/core.h
-+++ b/net/wireless/core.h
-@@ -430,6 +430,8 @@ void cfg80211_process_wdev_events(struct wireless_dev *wdev);
- bool cfg80211_does_bw_fit_range(const struct ieee80211_freq_range *freq_range,
- 				u32 center_freq_khz, u32 bw_khz);
+-		entry.val = page_private(page);
+ 		offset = swp_offset(entry);
  
-+extern struct work_struct cfg80211_disconnect_work;
-+
- /**
-  * cfg80211_chandef_dfs_usable - checks if chandef is DFS usable
-  * @wiphy: the wiphy to validate against
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index c7047c7b4e80f..07c2196e9d573 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -667,7 +667,7 @@ static void disconnect_work(struct work_struct *work)
- 	rtnl_unlock();
- }
- 
--static DECLARE_WORK(cfg80211_disconnect_work, disconnect_work);
-+DECLARE_WORK(cfg80211_disconnect_work, disconnect_work);
- 
- 
- /*
+ 		SetPageDirty(page);
 -- 
 2.20.1
 
