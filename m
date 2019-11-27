@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C4910B966
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2FDD10B7EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbfK0Uwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:52:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40630 "EHLO mail.kernel.org"
+        id S1728689AbfK0UiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:38:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729982AbfK0Uwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:52:45 -0500
+        id S1727756AbfK0UiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:38:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C58F5218BA;
-        Wed, 27 Nov 2019 20:52:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DCCE215A5;
+        Wed, 27 Nov 2019 20:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887965;
-        bh=oh0ks+X54M4go9LLQLOV8qujEqe3WNtVIJ2zrYgMEqc=;
+        s=default; t=1574887082;
+        bh=8I63cHGEo6Hyc38/WiEx2WOGdfG7LCz56iii/e2WbxI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OoWv/Dt8q95AdnWR1XEAbMcYtFRkhUlMEcjXV7yHQlr6fSbL5ljAduryv5c1vArpN
-         nby0k6Dge+u8TjhaHE6qa2m/B+6XGrvUZK8NmQiFQVpqsRLez2FJd8ocv75HFVHxfx
-         0prBzlrMv599Y1gy4ywMcXLwqUV58DdhthW7guHM=
+        b=aOi6S5X+f1+DBH8qbYYxaML1dNhrutf0jFtOp5//XH8wwJXPSP0D+AAwN6cSfpfYm
+         gm8yZEXKAJizr7vIEdUeMpgZjwTSDObU4flneUwreI6klBr9kB+G3vLSc8iQDq9+lM
+         /N/w9/amWuBiwYGTqkHCw8B0s8+98EIFcsT7vrww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 163/211] cfg80211: call disconnect_wk when AP stops
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.4 105/132] mmc: block: Fix tag condition with packed writes
 Date:   Wed, 27 Nov 2019 21:31:36 +0100
-Message-Id: <20191127203109.296527722@linuxfoundation.org>
+Message-Id: <20191127203025.855011718@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,68 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit e005bd7ddea06784c1eb91ac5bb6b171a94f3b05 ]
+commit d806b46e5f496a6335ebd7f8432d2533507ce9a2 upstream.
 
-Since we now prevent regulatory restore during STA disconnect
-if concurrent AP interfaces are active, we need to reschedule
-this check when the AP state changes. This fixes never doing
-a restore when an AP is the last interface to stop. Or to put
-it another way: we need to re-check after anything we check
-here changes.
+Apparently a cut-and-paste error, 'do_data_tag' is using 'brq' for data
+size even though 'brq' has not been set up. Instead use blk_rq_sectors().
 
-Cc: stable@vger.kernel.org
-Fixes: 113f3aaa81bd ("cfg80211: Prevent regulatory restore during STA disconnect in concurrent interfaces")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/wireless/ap.c   | 2 ++
- net/wireless/core.h | 2 ++
- net/wireless/sme.c  | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/mmc/card/block.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/wireless/ap.c b/net/wireless/ap.c
-index 63682176c96cb..c4bd3ecef5089 100644
---- a/net/wireless/ap.c
-+++ b/net/wireless/ap.c
-@@ -40,6 +40,8 @@ int __cfg80211_stop_ap(struct cfg80211_registered_device *rdev,
- 		cfg80211_sched_dfs_chan_update(rdev);
- 	}
- 
-+	schedule_work(&cfg80211_disconnect_work);
-+
- 	return err;
- }
- 
-diff --git a/net/wireless/core.h b/net/wireless/core.h
-index 90f90c7d8bf9b..507ec6446eb67 100644
---- a/net/wireless/core.h
-+++ b/net/wireless/core.h
-@@ -429,6 +429,8 @@ void cfg80211_process_wdev_events(struct wireless_dev *wdev);
- bool cfg80211_does_bw_fit_range(const struct ieee80211_freq_range *freq_range,
- 				u32 center_freq_khz, u32 bw_khz);
- 
-+extern struct work_struct cfg80211_disconnect_work;
-+
- /**
-  * cfg80211_chandef_dfs_usable - checks if chandef is DFS usable
-  * @wiphy: the wiphy to validate against
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index 66cccd16c24af..8344153800e27 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -667,7 +667,7 @@ static void disconnect_work(struct work_struct *work)
- 	rtnl_unlock();
- }
- 
--static DECLARE_WORK(cfg80211_disconnect_work, disconnect_work);
-+DECLARE_WORK(cfg80211_disconnect_work, disconnect_work);
- 
- 
- /*
--- 
-2.20.1
-
+--- a/drivers/mmc/card/block.c
++++ b/drivers/mmc/card/block.c
+@@ -1772,8 +1772,7 @@ static void mmc_blk_packed_hdr_wrq_prep(
+ 		do_data_tag = (card->ext_csd.data_tag_unit_size) &&
+ 			(prq->cmd_flags & REQ_META) &&
+ 			(rq_data_dir(prq) == WRITE) &&
+-			((brq->data.blocks * brq->data.blksz) >=
+-			 card->ext_csd.data_tag_unit_size);
++			blk_rq_bytes(prq) >= card->ext_csd.data_tag_unit_size;
+ 		/* Argument of CMD23 */
+ 		packed_cmd_hdr[(i * 2)] = cpu_to_le32(
+ 			(do_rel_wr ? MMC_CMD23_ARG_REL_WR : 0) |
 
 
