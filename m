@@ -2,37 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EBA010BD56
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75BCA10BD52
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732108AbfK0V2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:28:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49914 "EHLO mail.kernel.org"
+        id S1731980AbfK0V2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:28:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731333AbfK0U6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:58:35 -0500
+        id S1731350AbfK0U6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:58:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 344302084D;
-        Wed, 27 Nov 2019 20:58:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9655B2084D;
+        Wed, 27 Nov 2019 20:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888313;
-        bh=nn55VR0mjRnVCirDI9UVbFxLsK48NZQCrZGr+lyqim4=;
+        s=default; t=1574888329;
+        bh=BMFHvk5a88FT5YP9mQsEHlbl8cKcHQllCzfUDXjL5Qg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DqkOcaOSLqlXzihNlSBHSygu6FzyMpCALIrzCDRumwufxM4olMwIpxs2Cq/P8e9yN
-         KWtk+2NAIMJWJlKolK+CvOqQs0EiumqpKh5LXh5zmwy0BV/kAEwL0XYrxl+Ty56dFs
-         4CR+2eM5FJIq1Til8BjoZ414Rdl7diD8rxarI/rU=
+        b=nNnhhFe+uHY7Pry/lssMSbjZ5w2wE253aTl4gzK7hrOrA8x31pd06Drw66rJvvtoV
+         vIsHj33x01hRYQqnKJZ1Tsv7Ao0uccrceq8js9FNqEU6ITKMSnHcTVHN0tfVhVpcx1
+         rrYuTissvM1k91xYgGyNp4PACKcHePg0FVkLdEJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 085/306] net: dsa: mv88e6xxx: Fix 88E6141/6341 2500mbps SERDES speed
-Date:   Wed, 27 Nov 2019 21:28:55 +0100
-Message-Id: <20191127203121.142473613@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 090/306] kprobes, x86/ptrace.h: Make regs_get_kernel_stack_nth() not fault on bad stack
+Date:   Wed, 27 Nov 2019 21:29:00 +0100
+Message-Id: <20191127203121.491777539@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -45,105 +51,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Behún <marek.behun@nic.cz>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit 26422340da467538cd65eaa9c65538039ee99c8c ]
+[ Upstream commit c2712b858187f5bcd7b042fe4daa3ba3a12635c0 ]
 
-This is a fix for the port_set_speed method for the Topaz family.
-Currently the same method is used as for the Peridot family, but
-this is wrong for the SERDES port.
+Andy had some concerns about using regs_get_kernel_stack_nth() in a new
+function regs_get_kernel_argument() as if there's any error in the stack
+code, it could cause a bad memory access. To be on the safe side, call
+probe_kernel_read() on the stack address to be extra careful in accessing
+the memory. A helper function, regs_get_kernel_stack_nth_addr(), was added
+to just return the stack address (or NULL if not on the stack), that will be
+used to find the address (and could be used by other functions) and read the
+address with kernel_probe_read().
 
-On Topaz, the SERDES port is port 5, not 9 and 10 as in Peridot.
-Moreover setting alt_bit on Topaz only makes sense for port 0 (for
-(differentiating 100mbps vs 200mbps). The SERDES port does not
-support more than 2500mbps, so alt_bit does not make any difference.
-
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Requested-by: Andy Lutomirski <luto@amacapital.net>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20181017165951.09119177@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6xxx/chip.c |  4 ++--
- drivers/net/dsa/mv88e6xxx/port.c | 25 +++++++++++++++++++++++--
- drivers/net/dsa/mv88e6xxx/port.h |  1 +
- 3 files changed, 26 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/ptrace.h | 42 +++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index d075f0f7a3de8..411ae9961bf4f 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -3028,7 +3028,7 @@ static const struct mv88e6xxx_ops mv88e6141_ops = {
- 	.port_set_link = mv88e6xxx_port_set_link,
- 	.port_set_duplex = mv88e6xxx_port_set_duplex,
- 	.port_set_rgmii_delay = mv88e6390_port_set_rgmii_delay,
--	.port_set_speed = mv88e6390_port_set_speed,
-+	.port_set_speed = mv88e6341_port_set_speed,
- 	.port_tag_remap = mv88e6095_port_tag_remap,
- 	.port_set_frame_mode = mv88e6351_port_set_frame_mode,
- 	.port_set_egress_floods = mv88e6352_port_set_egress_floods,
-@@ -3649,7 +3649,7 @@ static const struct mv88e6xxx_ops mv88e6341_ops = {
- 	.port_set_link = mv88e6xxx_port_set_link,
- 	.port_set_duplex = mv88e6xxx_port_set_duplex,
- 	.port_set_rgmii_delay = mv88e6390_port_set_rgmii_delay,
--	.port_set_speed = mv88e6390_port_set_speed,
-+	.port_set_speed = mv88e6341_port_set_speed,
- 	.port_tag_remap = mv88e6095_port_tag_remap,
- 	.port_set_frame_mode = mv88e6351_port_set_frame_mode,
- 	.port_set_egress_floods = mv88e6352_port_set_egress_floods,
-diff --git a/drivers/net/dsa/mv88e6xxx/port.c b/drivers/net/dsa/mv88e6xxx/port.c
-index fdeddbfa829da..2f16a310c110e 100644
---- a/drivers/net/dsa/mv88e6xxx/port.c
-+++ b/drivers/net/dsa/mv88e6xxx/port.c
-@@ -228,8 +228,11 @@ static int mv88e6xxx_port_set_speed(struct mv88e6xxx_chip *chip, int port,
- 		ctrl = MV88E6XXX_PORT_MAC_CTL_SPEED_1000;
- 		break;
- 	case 2500:
--		ctrl = MV88E6390_PORT_MAC_CTL_SPEED_10000 |
--			MV88E6390_PORT_MAC_CTL_ALTSPEED;
-+		if (alt_bit)
-+			ctrl = MV88E6390_PORT_MAC_CTL_SPEED_10000 |
-+				MV88E6390_PORT_MAC_CTL_ALTSPEED;
-+		else
-+			ctrl = MV88E6390_PORT_MAC_CTL_SPEED_10000;
- 		break;
- 	case 10000:
- 		/* all bits set, fall through... */
-@@ -291,6 +294,24 @@ int mv88e6185_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed)
- 	return mv88e6xxx_port_set_speed(chip, port, speed, false, false);
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 6de1fd3d00974..ee696efec99fd 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -236,24 +236,52 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+ 		(kernel_stack_pointer(regs) & ~(THREAD_SIZE - 1)));
  }
  
-+/* Support 10, 100, 200, 1000, 2500 Mbps (e.g. 88E6341) */
-+int mv88e6341_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed)
++/**
++ * regs_get_kernel_stack_nth_addr() - get the address of the Nth entry on stack
++ * @regs:	pt_regs which contains kernel stack pointer.
++ * @n:		stack entry number.
++ *
++ * regs_get_kernel_stack_nth() returns the address of the @n th entry of the
++ * kernel stack which is specified by @regs. If the @n th entry is NOT in
++ * the kernel stack, this returns NULL.
++ */
++static inline unsigned long *regs_get_kernel_stack_nth_addr(struct pt_regs *regs, unsigned int n)
 +{
-+	if (speed == SPEED_MAX)
-+		speed = port < 5 ? 1000 : 2500;
++	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
 +
-+	if (speed > 2500)
-+		return -EOPNOTSUPP;
-+
-+	if (speed == 200 && port != 0)
-+		return -EOPNOTSUPP;
-+
-+	if (speed == 2500 && port < 5)
-+		return -EOPNOTSUPP;
-+
-+	return mv88e6xxx_port_set_speed(chip, port, speed, !port, true);
++	addr += n;
++	if (regs_within_kernel_stack(regs, (unsigned long)addr))
++		return addr;
++	else
++		return NULL;
 +}
 +
- /* Support 10, 100, 200, 1000 Mbps (e.g. 88E6352 family) */
- int mv88e6352_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed)
++/* To avoid include hell, we can't include uaccess.h */
++extern long probe_kernel_read(void *dst, const void *src, size_t size);
++
+ /**
+  * regs_get_kernel_stack_nth() - get Nth entry of the stack
+  * @regs:	pt_regs which contains kernel stack pointer.
+  * @n:		stack entry number.
+  *
+  * regs_get_kernel_stack_nth() returns @n th entry of the kernel stack which
+- * is specified by @regs. If the @n th entry is NOT in the kernel stack,
++ * is specified by @regs. If the @n th entry is NOT in the kernel stack
+  * this returns 0.
+  */
+ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+ 						      unsigned int n)
  {
-diff --git a/drivers/net/dsa/mv88e6xxx/port.h b/drivers/net/dsa/mv88e6xxx/port.h
-index 95b59f5eb3931..cbb64a7683e28 100644
---- a/drivers/net/dsa/mv88e6xxx/port.h
-+++ b/drivers/net/dsa/mv88e6xxx/port.h
-@@ -280,6 +280,7 @@ int mv88e6xxx_port_set_duplex(struct mv88e6xxx_chip *chip, int port, int dup);
+-	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
+-	addr += n;
+-	if (regs_within_kernel_stack(regs, (unsigned long)addr))
+-		return *addr;
+-	else
+-		return 0;
++	unsigned long *addr;
++	unsigned long val;
++	long ret;
++
++	addr = regs_get_kernel_stack_nth_addr(regs, n);
++	if (addr) {
++		ret = probe_kernel_read(&val, addr, sizeof(val));
++		if (!ret)
++			return val;
++	}
++	return 0;
+ }
  
- int mv88e6065_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed);
- int mv88e6185_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed);
-+int mv88e6341_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed);
- int mv88e6352_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed);
- int mv88e6390_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed);
- int mv88e6390x_port_set_speed(struct mv88e6xxx_chip *chip, int port, int speed);
+ #define arch_has_single_step()	(1)
 -- 
 2.20.1
 
