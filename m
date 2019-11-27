@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C55AE10BEF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA1C10BFA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbfK0Vje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:39:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52888 "EHLO mail.kernel.org"
+        id S1728483AbfK0Vo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:44:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729532AbfK0UoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:06 -0500
+        id S1728112AbfK0UgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:36:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6662217AB;
-        Wed, 27 Nov 2019 20:44:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99CBD20862;
+        Wed, 27 Nov 2019 20:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887446;
-        bh=XGeaBPaoTRyL12hk8l8n/RDBwwRN4upaOnS/zIqnn14=;
+        s=default; t=1574886984;
+        bh=99+ozqhw15jcn46i8tnsS5mRIbqSjBnEL4IOQNmNxSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OJ92rlksXB5Is6pbIVrWPfSZmxhnJjWl2f5Seb8w2IpxsG1vXF/VOVSmXkN9gTprh
-         YR8J1TwuDV6uIeHkPVmBJfCR3ocOqLtiODEWfAnEmcRaIlalfd65c5HulFCUPaCGyT
-         jIs1SNUx4Y0R923G82KUfMgJZpFQnLoI6T/qf6xg=
+        b=t884y0xNTUumBiBVYJPnjQrOR+7ceF5Dj10sNkMnVfxPLtx0YjlfJehhrq8WehWvk
+         dQx571YnIDTz+4+8aH8UNKHScuJsE8AFDp7Fs8gR1OrPWkOGdNgoF1nT93pWmPnIyU
+         A1LGOUc+iLc4YeBVw5mFpU4HEEBAhJVA8EfSUHxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
         <ernesto.mnd.fernandez@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 072/151] hfs: fix BUG on bnode parent update
-Date:   Wed, 27 Nov 2019 21:30:55 +0100
-Message-Id: <20191127203034.728700754@linuxfoundation.org>
+Subject: [PATCH 4.4 066/132] hfsplus: fix BUG on bnode parent update
+Date:   Wed, 27 Nov 2019 21:30:57 +0100
+Message-Id: <20191127203002.676708703@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,34 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit ef75bcc5763d130451a99825f247d301088b790b ]
+[ Upstream commit 19a9d0f1acf75e8be8cfba19c1a34e941846fa2b ]
 
-hfs_brec_update_parent() may hit BUG_ON() if the first record of both a
-leaf node and its parent are changed, and if this forces the parent to
-be split.  It is not possible for this to happen on a valid hfs
-filesystem because the index nodes have fixed length keys.
+Creating, renaming or deleting a file may hit BUG_ON() if the first
+record of both a leaf node and its parent are changed, and if this
+forces the parent to be split.  This bug is triggered by xfstests
+generic/027, somewhat rarely; here is a more reliable reproducer:
 
-For reasons I ignore, the hfs module does have support for a number of
-hfsplus features.  A corrupt btree header may report variable length
-keys and trigger this BUG, so it's better to fix it.
+  truncate -s 50M fs.iso
+  mkfs.hfsplus fs.iso
+  mount fs.iso /mnt
+  i=1000
+  while [ $i -le 2400 ]; do
+    touch /mnt/$i &>/dev/null
+    ((++i))
+  done
+  i=2400
+  while [ $i -ge 1000 ]; do
+    mv /mnt/$i /mnt/$(perl -e "print $i x61") &>/dev/null
+    ((--i))
+  done
 
-Link: http://lkml.kernel.org/r/cf9b02d57f806217a2b1bf5db8c3e39730d8f603.1535682463.git.ernesto.mnd.fernandez@gmail.com
+The issue is that a newly created bnode is being put twice.  Reset
+new_node to NULL in hfs_brec_update_parent() before reaching goto again.
+
+Link: http://lkml.kernel.org/r/5ee1db09b60373a15890f6a7c835d00e76bf601d.1535682461.git.ernesto.mnd.fernandez@gmail.com
 Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
 Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/brec.c | 1 +
+ fs/hfsplus/brec.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index 2e713673df42f..85dab71bee74f 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -444,6 +444,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+index 1002a0c08319b..20ce698251ad1 100644
+--- a/fs/hfsplus/brec.c
++++ b/fs/hfsplus/brec.c
+@@ -447,6 +447,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
  			/* restore search_key */
  			hfs_bnode_read_key(node, fd->search_key, 14);
  		}
