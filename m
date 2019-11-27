@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F67310B9E7
+	by mail.lfdr.de (Postfix) with ESMTP id BF44B10B9E8
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbfK0U56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:57:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49014 "EHLO mail.kernel.org"
+        id S1731263AbfK0U6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:58:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730688AbfK0U5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:57:53 -0500
+        id S1730680AbfK0U6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:58:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED61E20862;
-        Wed, 27 Nov 2019 20:57:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCDAB20862;
+        Wed, 27 Nov 2019 20:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888272;
-        bh=RUmIk2AyAHnF+oOB0qFKnfPjkDLo8tbmg3+ir3tzxSg=;
+        s=default; t=1574888280;
+        bh=0kjC/bhYkd5uVA3EYta0Z8i5/4EmS3pkzPHQm41NAXU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mqHkS8xT67Qj1lAlAhQXmasSNIRbbD0GkfHDaQBqfcHQdathyMflw6E3jxeL/mTwN
-         HlY5cXADhPP8S8wiT4SYnc22TUGR433DCx5GODmWytGQBDmcDtds/2/bfd0IBJv0y/
-         30n1itdA/VGaC9ZR/cB75mvOBIDL3Dic407jazIA=
+        b=MyXehrt5GjYtQcNn+fj3NQJ+2dep2WuOPkAAj87N7Yvrx27Na9yzAYTqdnkwf62jK
+         1XMemnaKMcVoKCGu01xl2UfvJeLXF1GRqqhnhyD5WKRQDiMt0l00NrGEajlQJal2vC
+         3t7Z7TgdClr+PAXzTuuWPBAfBBVDU7Q0GyiIh7dk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/306] scsi: isci: Use proper enumerated type in atapi_d2h_reg_frame_handler
-Date:   Wed, 27 Nov 2019 21:28:40 +0100
-Message-Id: <20191127203119.915281460@linuxfoundation.org>
+Subject: [PATCH 4.19 073/306] scsi: iscsi_tcp: Explicitly cast param in iscsi_sw_tcp_host_get_param
+Date:   Wed, 27 Nov 2019 21:28:43 +0100
+Message-Id: <20191127203120.176097617@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -47,51 +48,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit e9e9a103528c7e199ead6e5374c9c52cf16b5802 ]
+[ Upstream commit 20054597f169090109fc3f0dfa1a48583f4178a4 ]
 
 Clang warns when one enumerated type is implicitly converted to another.
 
-drivers/scsi/isci/request.c:1629:13: warning: implicit conversion from
-enumeration type 'enum sci_io_status' to different enumeration type
-'enum sci_status' [-Wenum-conversion]
-                        status = SCI_IO_FAILURE_RESPONSE_VALID;
-                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/isci/request.c:1631:12: warning: implicit conversion from
-enumeration type 'enum sci_io_status' to different enumeration type
-'enum sci_status' [-Wenum-conversion]
-                status = SCI_IO_FAILURE_RESPONSE_VALID;
-                       ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/iscsi_tcp.c:803:15: warning: implicit conversion from
+enumeration type 'enum iscsi_host_param' to different enumeration type
+'enum iscsi_param' [-Wenum-conversion]
+                                                 &addr, param, buf);
+                                                        ^~~~~
+1 warning generated.
 
-status is of type sci_status but SCI_IO_FAILURE_RESPONSE_VALID is of
-type sci_io_status. Use SCI_FAILURE_IO_RESPONSE_VALID, which is from
-sci_status and has SCI_IO_FAILURE_RESPONSE_VALID's exact value since
-that is what SCI_IO_FAILURE_RESPONSE_VALID is mapped to in the isci.h
-file.
+iscsi_conn_get_addr_param handles ISCSI_HOST_PARAM_IPADDRESS just fine
+so add an explicit cast to iscsi_param to make it clear to Clang that
+this is expected behavior.
 
 Link: https://github.com/ClangBuiltLinux/linux/issues/153
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/request.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/iscsi_tcp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
-index ed197bc8e801a..2f151708b59ae 100644
---- a/drivers/scsi/isci/request.c
-+++ b/drivers/scsi/isci/request.c
-@@ -1626,9 +1626,9 @@ static enum sci_status atapi_d2h_reg_frame_handler(struct isci_request *ireq,
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index b025a0b743417..23354f206533b 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -800,7 +800,8 @@ static int iscsi_sw_tcp_host_get_param(struct Scsi_Host *shost,
+ 			return rc;
  
- 	if (status == SCI_SUCCESS) {
- 		if (ireq->stp.rsp.status & ATA_ERR)
--			status = SCI_IO_FAILURE_RESPONSE_VALID;
-+			status = SCI_FAILURE_IO_RESPONSE_VALID;
- 	} else {
--		status = SCI_IO_FAILURE_RESPONSE_VALID;
-+		status = SCI_FAILURE_IO_RESPONSE_VALID;
+ 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
+-						 &addr, param, buf);
++						 &addr,
++						 (enum iscsi_param)param, buf);
+ 	default:
+ 		return iscsi_host_get_param(shost, param, buf);
  	}
- 
- 	if (status != SCI_SUCCESS) {
 -- 
 2.20.1
 
