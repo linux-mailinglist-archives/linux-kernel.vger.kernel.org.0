@@ -2,147 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E79B10AFEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74D5C10AFF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbfK0NJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 08:09:17 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33049 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726520AbfK0NJQ (ORCPT
+        id S1726985AbfK0NKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 08:10:43 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53654 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726514AbfK0NKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 08:09:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574860155;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=M6+DDtUgzApiQu4YHE35MwvUiV8KTCoPHcuxsyEvH7Q=;
-        b=jLjkmwL7tWJjaR54VnbOkWCyZCZRj/8uZubIlvfOg3yN+xZJKATBFIe6OkfjMs5/ru9VMK
-        IlrsL2EfqcbyIRvQIg7fWdVOzbJsspHYW/Nyyq5VeSZbJX/5VszLRB7GBH5Z6qIvJbkxe2
-        OHReTMHq9qcCOa6pa4RXia7wZlWVM2c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-ijxwCcqoNMurXxKPrFl-Jw-1; Wed, 27 Nov 2019 08:09:13 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BB275DB6B;
-        Wed, 27 Nov 2019 13:09:10 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-19.pek2.redhat.com [10.72.8.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AB1BB608B9;
-        Wed, 27 Nov 2019 13:09:00 +0000 (UTC)
-Date:   Wed, 27 Nov 2019 21:08:54 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Andrea Vai <andrea.vai@unipv.it>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191127130854.GA12140@ming.t460p>
-References: <20191125102928.GA20489@ming.t460p>
- <e5093535c60fd5dff8f92b76dcd52a1030938f62.camel@unipv.it>
- <20191125151535.GA8044@ming.t460p>
- <0876e232feace900735ac90d27136288b54dafe1.camel@unipv.it>
- <20191126023253.GA24501@ming.t460p>
- <0598fe2754bf0717d81f7e72d3e9b3230c608cc6.camel@unipv.it>
- <20191126091533.GB32135@ming.t460p>
- <e852331e72532dbfdc7981d958b1cd05ded41317.camel@unipv.it>
- <20191127020533.GA7190@ming.t460p>
- <3af3666920e7d46f8f0c6d88612f143ffabc743c.camel@unipv.it>
+        Wed, 27 Nov 2019 08:10:43 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARD7OtN030867;
+        Wed, 27 Nov 2019 14:10:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=igm3D/p5FLqgRVPoSI6/qpaaV5+h4X7oZSLPmG0YbEs=;
+ b=Pl4afNHN1aK10wyyNGAR27PgIqU77ofhi97vGCRs4bix8f9y69Qpw3uz/P9pac/RAulQ
+ bblmjkI5VI7Asio9kHK7jCtpAhQTvDygYIq6FKSI5ud3AIBJ+/hPAjX6Lxenj2yLgJ7O
+ Lj2897qrdAo4t2Y4GEl/UPr9sq1/H3eVBqmQvU6BmdgMWR3HG5aPAFSWvDqwSLQhPlXW
+ kegyo5tXrfG8McywOXcQ5Imi1kxzGBJvjyIjym7e/HTjA7sKESKhCYhlD181KUmcfrmb
+ urksOvSikTwc/mBeKMB+bWOIwpCOPEzcMBTkDOojhyJOdM9e0Uvv/Oa5Xm1KS145YXX8 HQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2whcxybt1q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Nov 2019 14:10:22 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 76DC5100034;
+        Wed, 27 Nov 2019 14:10:22 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 58DA82B8B2C;
+        Wed, 27 Nov 2019 14:10:22 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 27 Nov 2019 14:10:21
+ +0100
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
+        <linux-iio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@st.com>,
+        <olivier.moysan@st.com>
+Subject: [PATCH v2] iio: adc: stm32-dfsdm: adapt sampling rate to oversampling ratio
+Date:   Wed, 27 Nov 2019 14:10:08 +0100
+Message-ID: <20191127131008.18896-1-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <3af3666920e7d46f8f0c6d88612f143ffabc743c.camel@unipv.it>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: ijxwCcqoNMurXxKPrFl-Jw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-27_02:2019-11-27,2019-11-27 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 10:39:40AM +0100, Andrea Vai wrote:
-> Il giorno mer, 27/11/2019 alle 10.05 +0800, Ming Lei ha scritto:
-> >=20
-> >=20
-> > It can be workaround via the following change:
-> >=20
-> > /lib/modules/5.4.0+/build/include/generated/autoconf.h:
-> >=20
-> > //#define CONFIG_CC_HAS_ASM_INLINE 1
->=20
-> Thanks, it worked, trace attached. Produced by: start the trace script
-> (with the pendrive already plugged), wait some seconds, run the test
-> (1 trial, 1 GB), wait for the test to finish, stop the trace.
->=20
-> The copy took 2659 seconds, roughly as already seen before.
+Update sampling rate when oversampling ratio is changed
+through the IIO ABI.
 
-Thanks for collecting the log.
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+---
+changes in version 2:
+- correct title
+---
+ drivers/iio/adc/stm32-dfsdm-adc.c | 32 ++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
-From the log, some of write IOs are out-of-order, such as, the 1st one
-is 378880.
-
-16.41240 2   266     266     kworker/2:1H    block_rq_issue   b'W' 370656 2=
-40
-16.41961 3   485     485     kworker/3:1H    block_rq_issue   b'W' 378880 2=
-40
-16.73729 2   266     266     kworker/2:1H    block_rq_issue   b'W' 370896 2=
-40
-17.71161 2   266     266     kworker/2:1H    block_rq_issue   b'W' 379120 2=
-40
-18.02344 2   266     266     kworker/2:1H    block_rq_issue   b'W' 371136 2=
-40
-18.94314 3   485     485     kworker/3:1H    block_rq_issue   b'W' 379360 2=
-40
-19.25624 2   266     266     kworker/2:1H    block_rq_issue   b'W' 371376 2=
-40
-
-IO latency is increased a lot since the 1st out-of-order request(usb
-storage HBA is single queue depth, one request can be issued only if=20
-the previous issued request is completed).
-
-The reason is that there are two kind of tasks which inserts rq to device.
-One is the 'cp' process, the other is kworker/u8:*.  The out-of-order
-happens during the two task's interleaving.
-
-Under such situation, I believe that the old legacy IO path may not
-guarantee the order too. In blk_queue_bio(), after get_request()
-allocates one request, the queue lock is released.  And request is
-actually inserted & issued from blk_flush_plug_list() under the
-branch of 'if (plug)'. If requests are from two tasks, then request
-is inserted/issued from two plug list, and no order can be guaranteed.
-
-In my test, except for several requests from the beginning, all other
-requests are inserted via the kworker thread(guess it is writeback wq),
-that is why I can't observe the issue in my test.
-
-As Schmid suggested, you may run the same test on old kernel with
-legacy io path, and see if the performance is still good.
-
-Also, could you share the following info about your machine? So that
-I can build my VM guest in this setting for reproducing your situation
-(requests are inserted from two types of threads).
-
-- lscpu
-- free -h
-- lsblk -d $USB_DISK
-- exact commands for mount the disk, and running the copy operation
-
-Thanks,
-Ming
+diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+index 0339ecdd06bd..87a842507509 100644
+--- a/drivers/iio/adc/stm32-dfsdm-adc.c
++++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+@@ -1221,14 +1221,32 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
+ 	unsigned int spi_freq;
+ 	int ret = -EINVAL;
+ 
++	switch (ch->src) {
++	case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL:
++		spi_freq = adc->dfsdm->spi_master_freq;
++		break;
++	case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_FALLING:
++	case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_RISING:
++		spi_freq = adc->dfsdm->spi_master_freq / 2;
++		break;
++	default:
++		spi_freq = adc->spi_freq;
++	}
++
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+ 		ret = iio_device_claim_direct_mode(indio_dev);
+ 		if (ret)
+ 			return ret;
++
+ 		ret = stm32_dfsdm_compute_all_osrs(indio_dev, val);
+-		if (!ret)
++		if (!ret) {
++			dev_dbg(&indio_dev->dev,
++				"Sampling rate changed from (%u) to (%u)\n",
++				adc->sample_freq, spi_freq / val);
+ 			adc->oversamp = val;
++			adc->sample_freq = spi_freq / val;
++		}
+ 		iio_device_release_direct_mode(indio_dev);
+ 		return ret;
+ 
+@@ -1240,18 +1258,6 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
+ 		if (ret)
+ 			return ret;
+ 
+-		switch (ch->src) {
+-		case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL:
+-			spi_freq = adc->dfsdm->spi_master_freq;
+-			break;
+-		case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_FALLING:
+-		case DFSDM_CHANNEL_SPI_CLOCK_INTERNAL_DIV2_RISING:
+-			spi_freq = adc->dfsdm->spi_master_freq / 2;
+-			break;
+-		default:
+-			spi_freq = adc->spi_freq;
+-		}
+-
+ 		ret = dfsdm_adc_set_samp_freq(indio_dev, val, spi_freq);
+ 		iio_device_release_direct_mode(indio_dev);
+ 		return ret;
+-- 
+2.17.1
 
