@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15CF610B77E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A52BF10B7BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbfK0UeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:34:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34724 "EHLO mail.kernel.org"
+        id S1728420AbfK0Ugo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727571AbfK0UeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:22 -0500
+        id S1727443AbfK0Ugm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:36:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3585207DD;
-        Wed, 27 Nov 2019 20:34:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8506A2158A;
+        Wed, 27 Nov 2019 20:36:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886862;
-        bh=yaJoh/7AyG+itmJ2dxC94svgjgemr1sqw9xtDGBeWVA=;
+        s=default; t=1574887002;
+        bh=K889wb9+LZ+sx4rJPH8B7o+s1jSttb+DbgaMv6XZACU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JZLwl5wKwO38aczPKnRe1Hj4nFu++lz2OACLMgAjqCnfy2c8lANJvU084RHN0p2rZ
-         xoDMXU+ohHHg+e3n/ATRhDW5jRQQJPpxZEopOUZf4oo4/aKHfY6VHQDpAxAN1FEhRa
-         3wOh4vxpQq8aQDvoka6DM4WaY1GOHzrYdjrWYT0o=
+        b=ePz91oQRq27+bYbRroyaaH20sPIUOndEWOq4CiUkgkhrT+SW5Uw1T9CBUvxYG+OSa
+         t/UpGNMtRVgZJXSxopVVBuxeIcrvmcxXtRW+pXj1Wi8ZaQ/gjOtEZ1OLkmuEi4tcVU
+         smCuXwV7oq2N0wyVY9jdx2dHOirS53kAjwJ7NVlM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 021/132] ALSA: isight: fix leak of reference to firewire unit in error path of .probe callback
-Date:   Wed, 27 Nov 2019 21:30:12 +0100
-Message-Id: <20191127202918.358266259@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 022/132] printk: fix integer overflow in setup_log_buf()
+Date:   Wed, 27 Nov 2019 21:30:13 +0100
+Message-Id: <20191127202919.224332710@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
 References: <20191127202857.270233486@linuxfoundation.org>
@@ -43,51 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-[ Upstream commit 51e68fb0929c29e47e9074ca3e99ffd6021a1c5a ]
+[ Upstream commit d2130e82e9454304e9b91ba9da551b5989af8c27 ]
 
-In some error paths, reference count of firewire unit is not decreased.
-This commit fixes the bug.
+The way we calculate logbuf free space percentage overflows signed
+integer:
 
-Fixes: 5b14ec25a79b('ALSA: firewire: release reference count of firewire unit in .remove callback of bus driver')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+	int free;
+
+	free = __LOG_BUF_LEN - log_next_idx;
+	pr_info("early log buf free: %u(%u%%)\n",
+		free, (free * 100) / __LOG_BUF_LEN);
+
+We support LOG_BUF_LEN of up to 1<<25 bytes. Since setup_log_buf() is
+called during early init, logbuf is mostly empty, so
+
+	__LOG_BUF_LEN - log_next_idx
+
+is close to 1<<25. Thus when we multiply it by 100, we overflow signed
+integer value range: 100 is 2^6 + 2^5 + 2^2.
+
+Example, booting with LOG_BUF_LEN 1<<25 and log_buf_len=2G
+boot param:
+
+[    0.075317] log_buf_len: -2147483648 bytes
+[    0.075319] early log buf free: 33549896(-28%)
+
+Make "free" unsigned integer and use appropriate printk() specifier.
+
+Link: http://lkml.kernel.org/r/20181010113308.9337-1-sergey.senozhatsky@gmail.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/firewire/isight.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/printk/printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/firewire/isight.c b/sound/firewire/isight.c
-index 48d6dca471c6b..6c8daf5b391ff 100644
---- a/sound/firewire/isight.c
-+++ b/sound/firewire/isight.c
-@@ -639,7 +639,7 @@ static int isight_probe(struct fw_unit *unit,
- 	if (!isight->audio_base) {
- 		dev_err(&unit->device, "audio unit base not found\n");
- 		err = -ENXIO;
--		goto err_unit;
-+		goto error;
- 	}
- 	fw_iso_resources_init(&isight->resources, unit);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 699c18c9d7633..e53a976ca28ea 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -937,7 +937,7 @@ void __init setup_log_buf(int early)
+ {
+ 	unsigned long flags;
+ 	char *new_log_buf;
+-	int free;
++	unsigned int free;
  
-@@ -668,12 +668,12 @@ static int isight_probe(struct fw_unit *unit,
- 	dev_set_drvdata(&unit->device, isight);
- 
- 	return 0;
--
--err_unit:
--	fw_unit_put(isight->unit);
--	mutex_destroy(&isight->mutex);
- error:
- 	snd_card_free(card);
-+
-+	mutex_destroy(&isight->mutex);
-+	fw_unit_put(isight->unit);
-+
- 	return err;
- }
- 
+ 	if (log_buf != __log_buf)
+ 		return;
 -- 
 2.20.1
 
