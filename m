@@ -2,38 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A052F10B78C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E634E10B833
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbfK0Uey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:34:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
+        id S1729117AbfK0UlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:41:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727717AbfK0Ues (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:48 -0500
+        id S1729108AbfK0Uk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:40:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0A6420866;
-        Wed, 27 Nov 2019 20:34:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE135215A5;
+        Wed, 27 Nov 2019 20:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886887;
-        bh=g8qwpXtgl8IM5Jzu0ga/wmRPoMvRpo/KhSdJYLHxgnk=;
+        s=default; t=1574887256;
+        bh=nZxJ00STl8IMFOGnrMdWwzfFhRdOIpZHkd0P/ot4qpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Za0jY7HLBUdDYq2eNYrKsZs+tdZKFWPUH+9CbVKeO4lrh5J7tXsxavH3/STJJ8fm
-         vIW4wyMw86LzC5rRU+74AQYEoF9+m9PJ9j1TiWOM/YAKvnKu7xfIDUlpx2iNMa0mNU
-         e787MxDcDnXz/PAX211p5W9OUeRSSDQNoFfO3T1k=
+        b=2O6y5+F4uJMZXc6dQTfNAwVwRLSGmFZZ51dnzdIS5gSW0/KQkJDQeP73TLQJ7XJ/o
+         8JvTFKcDZquHbfeXoQPzV7dCVGntbQ3Hv0Itb+0hPiB/CHYYZQn1OrGk3jmY+joogY
+         oeXQv+kba2mfV/ayQ0vz0RCG3dEZL3G5HAjTotpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 032/132] misc: mic: fix a DMA pool free failure
+        stable@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 040/151] kprobes, x86/ptrace.h: Make regs_get_kernel_stack_nth() not fault on bad stack
 Date:   Wed, 27 Nov 2019 21:30:23 +0100
-Message-Id: <20191127202928.454271515@linuxfoundation.org>
+Message-Id: <20191127203025.510308881@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +51,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-[ Upstream commit 6b995f4eec34745f6cb20d66d5277611f0b3c3fa ]
+[ Upstream commit c2712b858187f5bcd7b042fe4daa3ba3a12635c0 ]
 
-In _scif_prog_signal(), the boolean variable 'x100' is used to indicate
-whether the MIC Coprocessor is X100. If 'x100' is true, the status
-descriptor will be used to write the value to the destination. Otherwise, a
-DMA pool will be allocated for this purpose. Specifically, if the DMA pool
-is allocated successfully, two memory addresses will be returned. One is
-for the CPU and the other is for the device to access the DMA pool. The
-former is stored to the variable 'status' and the latter is stored to the
-variable 'src'. After the allocation, the address in 'src' is saved to
-'status->src_dma_addr', which is actually in the DMA pool, and 'src' is
-then modified.
+Andy had some concerns about using regs_get_kernel_stack_nth() in a new
+function regs_get_kernel_argument() as if there's any error in the stack
+code, it could cause a bad memory access. To be on the safe side, call
+probe_kernel_read() on the stack address to be extra careful in accessing
+the memory. A helper function, regs_get_kernel_stack_nth_addr(), was added
+to just return the stack address (or NULL if not on the stack), that will be
+used to find the address (and could be used by other functions) and read the
+address with kernel_probe_read().
 
-Later on, if an error occurs, the execution flow will transfer to the label
-'dma_fail', which will check 'x100' and free up the allocated DMA pool if
-'x100' is false. The point here is that 'status->src_dma_addr' is used for
-freeing up the DMA pool. As mentioned before, 'status->src_dma_addr' is in
-the DMA pool. And thus, the device is able to modify this data. This can
-potentially cause failures when freeing up the DMA pool because of the
-modified device address.
-
-This patch avoids the above issue by using the variable 'src' (with
-necessary calculation) to free up the DMA pool.
-
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Requested-by: Andy Lutomirski <luto@amacapital.net>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20181017165951.09119177@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/mic/scif/scif_fence.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/ptrace.h | 42 +++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
-index 7f2c96f570667..6821d9d415854 100644
---- a/drivers/misc/mic/scif/scif_fence.c
-+++ b/drivers/misc/mic/scif/scif_fence.c
-@@ -271,7 +271,7 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
- dma_fail:
- 	if (!x100)
- 		dma_pool_free(ep->remote_dev->signal_pool, status,
--			      status->src_dma_addr);
-+			      src - offsetof(struct scif_status, val));
- alloc_fail:
- 	return err;
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index ea78a8438a8af..fb489cd848faa 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -199,24 +199,52 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+ 		(kernel_stack_pointer(regs) & ~(THREAD_SIZE - 1)));
  }
+ 
++/**
++ * regs_get_kernel_stack_nth_addr() - get the address of the Nth entry on stack
++ * @regs:	pt_regs which contains kernel stack pointer.
++ * @n:		stack entry number.
++ *
++ * regs_get_kernel_stack_nth() returns the address of the @n th entry of the
++ * kernel stack which is specified by @regs. If the @n th entry is NOT in
++ * the kernel stack, this returns NULL.
++ */
++static inline unsigned long *regs_get_kernel_stack_nth_addr(struct pt_regs *regs, unsigned int n)
++{
++	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
++
++	addr += n;
++	if (regs_within_kernel_stack(regs, (unsigned long)addr))
++		return addr;
++	else
++		return NULL;
++}
++
++/* To avoid include hell, we can't include uaccess.h */
++extern long probe_kernel_read(void *dst, const void *src, size_t size);
++
+ /**
+  * regs_get_kernel_stack_nth() - get Nth entry of the stack
+  * @regs:	pt_regs which contains kernel stack pointer.
+  * @n:		stack entry number.
+  *
+  * regs_get_kernel_stack_nth() returns @n th entry of the kernel stack which
+- * is specified by @regs. If the @n th entry is NOT in the kernel stack,
++ * is specified by @regs. If the @n th entry is NOT in the kernel stack
+  * this returns 0.
+  */
+ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+ 						      unsigned int n)
+ {
+-	unsigned long *addr = (unsigned long *)kernel_stack_pointer(regs);
+-	addr += n;
+-	if (regs_within_kernel_stack(regs, (unsigned long)addr))
+-		return *addr;
+-	else
+-		return 0;
++	unsigned long *addr;
++	unsigned long val;
++	long ret;
++
++	addr = regs_get_kernel_stack_nth_addr(regs, n);
++	if (addr) {
++		ret = probe_kernel_read(&val, addr, sizeof(val));
++		if (!ret)
++			return val;
++	}
++	return 0;
+ }
+ 
+ #define arch_has_single_step()	(1)
 -- 
 2.20.1
 
