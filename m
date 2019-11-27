@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2040310BFB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB67110BE33
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbfK0Ufs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:35:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37226 "EHLO mail.kernel.org"
+        id S1730241AbfK0Utb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:49:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbfK0Ufn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:43 -0500
+        id S1729493AbfK0UtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:49:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B1CE207DD;
-        Wed, 27 Nov 2019 20:35:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E66321871;
+        Wed, 27 Nov 2019 20:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886942;
-        bh=LZp/NX6ULwok7KISCfKKkJI5x6JyKuh3DkWBM1uLWIw=;
+        s=default; t=1574887761;
+        bh=rh03igqzqmJ/spz57UkA4AWPIpnxHGzKIwHeAdn90AY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FdYImZGg+DwJ40Bci+VA7heQGpdryIMzjxkfNtp70by3AaNZdg4sWS52sh5bxFfcH
-         2rk7YMxSLyCUZCpxBtUc+ZEAodKU3RmZGarJuG4WctLU4AN/NmlheFg+zJGYNH4mUa
-         e+0RHzZ+TV7f0yeehlKzaYCY1aVr0mIawH+PIalw=
+        b=PuPoz7jrzIGAncvLn6CciRJ5eg4B1cGDlx63u8lwrx3lBoUfoyOVyU58Ot0oLu8P4
+         EZ5PKIGges9X5gvrr6mDSvluHjNTYaqlIHn+pnsU8csEQWoG+4Sp9syUopUUDLBxwc
+         0ikn+OG41toFyzPF023tbcfjvFw1xRlktsPdhJVU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 025/132] powerpc: Fix signedness bug in update_flash_db()
+Subject: [PATCH 4.14 083/211] mfd: intel_soc_pmic_bxtwc: Chain power button IRQs as well
 Date:   Wed, 27 Nov 2019 21:30:16 +0100
-Message-Id: <20191127202923.382983472@linuxfoundation.org>
+Message-Id: <20191127203101.614387681@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +46,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 014704e6f54189a203cc14c7c0bb411b940241bc ]
+[ Upstream commit 9f8ddee1dab836ca758ca8fc555ab5a3aaa5d3fd ]
 
-The "count < sizeof(struct os_area_db)" comparison is type promoted to
-size_t so negative values of "count" are treated as very high values
-and we accidentally return success instead of a negative error code.
+Power button IRQ actually has a second level of interrupts to
+distinguish between UI and POWER buttons. Moreover, current
+implementation looks awkward in approach to handle second level IRQs by
+first level related IRQ chip.
 
-This doesn't really change runtime much but it fixes a static checker
-warning.
+To address above issues, split power button IRQ to be chained as well.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Geoff Levand <geoff@infradead.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/ps3/os-area.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/intel_soc_pmic_bxtwc.c | 41 ++++++++++++++++++++++--------
+ include/linux/mfd/intel_soc_pmic.h |  1 +
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/platforms/ps3/os-area.c b/arch/powerpc/platforms/ps3/os-area.c
-index 3db53e8aff927..9b2ef76578f06 100644
---- a/arch/powerpc/platforms/ps3/os-area.c
-+++ b/arch/powerpc/platforms/ps3/os-area.c
-@@ -664,7 +664,7 @@ static int update_flash_db(void)
- 	db_set_64(db, &os_area_db_id_rtc_diff, saved_params.rtc_diff);
+diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+index 15bc052704a6d..9ca1f8c015de9 100644
+--- a/drivers/mfd/intel_soc_pmic_bxtwc.c
++++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+@@ -31,8 +31,8 @@
  
- 	count = os_area_flash_write(db, sizeof(struct os_area_db), pos);
--	if (count < sizeof(struct os_area_db)) {
-+	if (count < 0 || count < sizeof(struct os_area_db)) {
- 		pr_debug("%s: os_area_flash_write failed %zd\n", __func__,
- 			 count);
- 		error = count < 0 ? count : -EIO;
+ /* Interrupt Status Registers */
+ #define BXTWC_IRQLVL1		0x4E02
+-#define BXTWC_PWRBTNIRQ		0x4E03
+ 
++#define BXTWC_PWRBTNIRQ		0x4E03
+ #define BXTWC_THRM0IRQ		0x4E04
+ #define BXTWC_THRM1IRQ		0x4E05
+ #define BXTWC_THRM2IRQ		0x4E06
+@@ -47,10 +47,9 @@
+ 
+ /* Interrupt MASK Registers */
+ #define BXTWC_MIRQLVL1		0x4E0E
+-#define BXTWC_MPWRTNIRQ		0x4E0F
+-
+ #define BXTWC_MIRQLVL1_MCHGR	BIT(5)
+ 
++#define BXTWC_MPWRBTNIRQ	0x4E0F
+ #define BXTWC_MTHRM0IRQ		0x4E12
+ #define BXTWC_MTHRM1IRQ		0x4E13
+ #define BXTWC_MTHRM2IRQ		0x4E14
+@@ -66,9 +65,7 @@
+ /* Whiskey Cove PMIC share same ACPI ID between different platforms */
+ #define BROXTON_PMIC_WC_HRV	4
+ 
+-/* Manage in two IRQ chips since mask registers are not consecutive */
+ enum bxtwc_irqs {
+-	/* Level 1 */
+ 	BXTWC_PWRBTN_LVL1_IRQ = 0,
+ 	BXTWC_TMU_LVL1_IRQ,
+ 	BXTWC_THRM_LVL1_IRQ,
+@@ -77,9 +74,11 @@ enum bxtwc_irqs {
+ 	BXTWC_CHGR_LVL1_IRQ,
+ 	BXTWC_GPIO_LVL1_IRQ,
+ 	BXTWC_CRIT_LVL1_IRQ,
++};
+ 
+-	/* Level 2 */
+-	BXTWC_PWRBTN_IRQ,
++enum bxtwc_irqs_pwrbtn {
++	BXTWC_PWRBTN_IRQ = 0,
++	BXTWC_UIBTN_IRQ,
+ };
+ 
+ enum bxtwc_irqs_bcu {
+@@ -113,7 +112,10 @@ static const struct regmap_irq bxtwc_regmap_irqs[] = {
+ 	REGMAP_IRQ_REG(BXTWC_CHGR_LVL1_IRQ, 0, BIT(5)),
+ 	REGMAP_IRQ_REG(BXTWC_GPIO_LVL1_IRQ, 0, BIT(6)),
+ 	REGMAP_IRQ_REG(BXTWC_CRIT_LVL1_IRQ, 0, BIT(7)),
+-	REGMAP_IRQ_REG(BXTWC_PWRBTN_IRQ, 1, 0x03),
++};
++
++static const struct regmap_irq bxtwc_regmap_irqs_pwrbtn[] = {
++	REGMAP_IRQ_REG(BXTWC_PWRBTN_IRQ, 0, 0x01),
+ };
+ 
+ static const struct regmap_irq bxtwc_regmap_irqs_bcu[] = {
+@@ -125,7 +127,7 @@ static const struct regmap_irq bxtwc_regmap_irqs_adc[] = {
+ };
+ 
+ static const struct regmap_irq bxtwc_regmap_irqs_chgr[] = {
+-	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 0, BIT(5)),
++	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 0, 0x20),
+ 	REGMAP_IRQ_REG(BXTWC_CHGR0_IRQ, 0, 0x1f),
+ 	REGMAP_IRQ_REG(BXTWC_CHGR1_IRQ, 1, 0x1f),
+ };
+@@ -144,7 +146,16 @@ static struct regmap_irq_chip bxtwc_regmap_irq_chip = {
+ 	.mask_base = BXTWC_MIRQLVL1,
+ 	.irqs = bxtwc_regmap_irqs,
+ 	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs),
+-	.num_regs = 2,
++	.num_regs = 1,
++};
++
++static struct regmap_irq_chip bxtwc_regmap_irq_chip_pwrbtn = {
++	.name = "bxtwc_irq_chip_pwrbtn",
++	.status_base = BXTWC_PWRBTNIRQ,
++	.mask_base = BXTWC_MPWRBTNIRQ,
++	.irqs = bxtwc_regmap_irqs_pwrbtn,
++	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_pwrbtn),
++	.num_regs = 1,
+ };
+ 
+ static struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
+@@ -472,6 +483,16 @@ static int bxtwc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
++					 BXTWC_PWRBTN_LVL1_IRQ,
++					 IRQF_ONESHOT,
++					 &bxtwc_regmap_irq_chip_pwrbtn,
++					 &pmic->irq_chip_data_pwrbtn);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add PWRBTN IRQ chip\n");
++		return ret;
++	}
++
+ 	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
+ 					 BXTWC_TMU_LVL1_IRQ,
+ 					 IRQF_ONESHOT,
+diff --git a/include/linux/mfd/intel_soc_pmic.h b/include/linux/mfd/intel_soc_pmic.h
+index 5aacdb017a9f6..806a4f095312b 100644
+--- a/include/linux/mfd/intel_soc_pmic.h
++++ b/include/linux/mfd/intel_soc_pmic.h
+@@ -25,6 +25,7 @@ struct intel_soc_pmic {
+ 	int irq;
+ 	struct regmap *regmap;
+ 	struct regmap_irq_chip_data *irq_chip_data;
++	struct regmap_irq_chip_data *irq_chip_data_pwrbtn;
+ 	struct regmap_irq_chip_data *irq_chip_data_tmu;
+ 	struct regmap_irq_chip_data *irq_chip_data_bcu;
+ 	struct regmap_irq_chip_data *irq_chip_data_adc;
 -- 
 2.20.1
 
