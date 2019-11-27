@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E06A10AB8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:19:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 624A210AB9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfK0ITj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:19:39 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43960 "EHLO
+        id S1726858AbfK0ITi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:19:38 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43964 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfK0ITh (ORCPT
+        with ESMTP id S1726373AbfK0ITh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Nov 2019 03:19:37 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZsXq-0002Qs-P0; Wed, 27 Nov 2019 09:19:31 +0100
+        id 1iZsXp-0002Pb-LI; Wed, 27 Nov 2019 09:19:29 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0C90D1C1E71;
-        Wed, 27 Nov 2019 09:19:30 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4BE171C1E6D;
+        Wed, 27 Nov 2019 09:19:29 +0100 (CET)
 Date:   Wed, 27 Nov 2019 08:19:29 -0000
 From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/traps: Disentangle the 32-bit and 64-bit
- doublefault code
+Subject: [tip: x86/urgent] x86/ptrace: Remove set_segment_reg()
+ implementations for current
 Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -33,7 +33,7 @@ Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157484276997.21853.6533072564160468139.tip-bot2@tip-bot2>
+Message-ID: <157484276921.21853.10028026818717673035.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,24 +49,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     93efbde2c331004d8053f04b4bf0ca3e630b474a
-Gitweb:        https://git.kernel.org/tip/93efbde2c331004d8053f04b4bf0ca3e630b474a
+Commit-ID:     8e05f1b4f27d07a0f93e7c6fd28525a5d082b85c
+Gitweb:        https://git.kernel.org/tip/8e05f1b4f27d07a0f93e7c6fd28525a5d082b85c
 Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Wed, 20 Nov 2019 22:12:38 -08:00
+AuthorDate:    Mon, 15 Jul 2019 10:08:48 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 26 Nov 2019 21:53:34 +01:00
+CommitterDate: Tue, 26 Nov 2019 22:00:12 +01:00
 
-x86/traps: Disentangle the 32-bit and 64-bit doublefault code
+x86/ptrace: Remove set_segment_reg() implementations for current
 
-The 64-bit doublefault handler is much nicer than the 32-bit one.
-As a first step toward unifying them, make the 64-bit handler
-self-contained.  This should have no effect no functional effect
-except in the odd case of x86_64 with CONFIG_DOUBLEFAULT=n in which
-case it will change the logging a bit.
+seg_segment_reg() should be unreachable with task == current.
+Rather than confusingly trying to make it work, just explicitly
+disable this case.
 
-This also gets rid of CONFIG_DOUBLEFAULT configurability on 64-bit
-kernels.  It didn't do anything useful -- CONFIG_DOUBLEFAULT=n
-didn't actually disable doublefault handling on x86_64.
+(regset->get is used for current in the coredump code, but the ->set
+ interface is only used for ptrace, and you can't ptrace yourself.)
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -75,77 +72,66 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/Kconfig.debug           |  2 +-
- arch/x86/include/asm/processor.h |  1 -
- arch/x86/kernel/doublefault.c    | 11 -----------
- arch/x86/kernel/traps.c          | 12 +++---------
- 4 files changed, 4 insertions(+), 22 deletions(-)
+ arch/x86/kernel/ptrace.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-index 409c00f..c4eab8e 100644
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -117,7 +117,7 @@ config DEBUG_WX
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 066e5b0..3b3b169 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -182,6 +182,9 @@ static u16 get_segment_reg(struct task_struct *task, unsigned long offset)
+ static int set_segment_reg(struct task_struct *task,
+ 			   unsigned long offset, u16 value)
+ {
++	if (WARN_ON_ONCE(task == current))
++		return -EIO;
++
+ 	/*
+ 	 * The value argument was already truncated to 16 bits.
+ 	 */
+@@ -209,10 +212,7 @@ static int set_segment_reg(struct task_struct *task,
+ 		break;
  
- config DOUBLEFAULT
- 	default y
--	bool "Enable doublefault exception handler" if EXPERT
-+	bool "Enable doublefault exception handler" if EXPERT && X86_32
- 	---help---
- 	  This option allows trapping of rare doublefault exceptions that
- 	  would otherwise cause a system to silently reboot. Disabling this
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index e51afbb..f6c6300 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -997,7 +997,6 @@ bool xen_set_default_idle(void);
- #endif
+ 	case offsetof(struct user_regs_struct, gs):
+-		if (task == current)
+-			set_user_gs(task_pt_regs(task), value);
+-		else
+-			task_user_gs(task) = value;
++		task_user_gs(task) = value;
+ 	}
  
- void stop_this_cpu(void *dummy);
--void df_debug(struct pt_regs *regs, long error_code);
- void microcode_check(void);
+ 	return 0;
+@@ -272,6 +272,9 @@ static u16 get_segment_reg(struct task_struct *task, unsigned long offset)
+ static int set_segment_reg(struct task_struct *task,
+ 			   unsigned long offset, u16 value)
+ {
++	if (WARN_ON_ONCE(task == current))
++		return -EIO;
++
+ 	/*
+ 	 * The value argument was already truncated to 16 bits.
+ 	 */
+@@ -281,23 +284,15 @@ static int set_segment_reg(struct task_struct *task,
+ 	switch (offset) {
+ 	case offsetof(struct user_regs_struct,fs):
+ 		task->thread.fsindex = value;
+-		if (task == current)
+-			loadsegment(fs, task->thread.fsindex);
+ 		break;
+ 	case offsetof(struct user_regs_struct,gs):
+ 		task->thread.gsindex = value;
+-		if (task == current)
+-			load_gs_index(task->thread.gsindex);
+ 		break;
+ 	case offsetof(struct user_regs_struct,ds):
+ 		task->thread.ds = value;
+-		if (task == current)
+-			loadsegment(ds, task->thread.ds);
+ 		break;
+ 	case offsetof(struct user_regs_struct,es):
+ 		task->thread.es = value;
+-		if (task == current)
+-			loadsegment(es, task->thread.es);
+ 		break;
  
- enum l1tf_mitigations {
-diff --git a/arch/x86/kernel/doublefault.c b/arch/x86/kernel/doublefault.c
-index 0d6c657..0b3c616 100644
---- a/arch/x86/kernel/doublefault.c
-+++ b/arch/x86/kernel/doublefault.c
-@@ -72,15 +72,4 @@ struct x86_hw_tss doublefault_tss __cacheline_aligned = {
- 	.__cr3		= __pa_nodebug(swapper_pg_dir),
- };
- 
--/* dummy for do_double_fault() call */
--void df_debug(struct pt_regs *regs, long error_code) {}
--
--#else /* !CONFIG_X86_32 */
--
--void df_debug(struct pt_regs *regs, long error_code)
--{
--	pr_emerg("PANIC: double fault, error_code: 0x%lx\n", error_code);
--	show_regs(regs);
--	panic("Machine halted.");
--}
- #endif
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index c903121..76381b0 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -411,15 +411,9 @@ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code, unsign
- 		handle_stack_overflow("kernel stack overflow (double-fault)", regs, cr2);
- #endif
- 
--#ifdef CONFIG_DOUBLEFAULT
--	df_debug(regs, error_code);
--#endif
--	/*
--	 * This is always a kernel trap and never fixable (and thus must
--	 * never return).
--	 */
--	for (;;)
--		die(str, regs, error_code);
-+	pr_emerg("PANIC: double fault, error_code: 0x%lx\n", error_code);
-+	show_regs(regs);
-+	panic("Machine halted.");
- }
- #endif
- 
+ 		/*
