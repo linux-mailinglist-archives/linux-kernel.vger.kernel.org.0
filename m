@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDA5E10BF5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B42310BF1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfK0Vmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:42:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44220 "EHLO mail.kernel.org"
+        id S1729815AbfK0VlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:41:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728492AbfK0Ujy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:39:54 -0500
+        id S1728777AbfK0UmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:42:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0647320863;
-        Wed, 27 Nov 2019 20:39:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D67C21787;
+        Wed, 27 Nov 2019 20:42:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887193;
-        bh=LZp/NX6ULwok7KISCfKKkJI5x6JyKuh3DkWBM1uLWIw=;
+        s=default; t=1574887333;
+        bh=jPgVZdWq1uxqLuuFB4zn5NW/loTd09gJehXLV22OFX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oSg4jg9hpDb7a/W8Vk677vDoT1hkZbudjSyG/gKY96jF5qV7ubZPT24/8xseeXinF
-         b0x0sZknlReAfZKaD/BH4BXcdC+hDvJKPq82+P714GB5RKUY32TddbEhPm5eM6T8Sg
-         JCvvyyB+RjwK4d6ajn6wXBG9+yZSBa3SE6nk0DIg=
+        b=pZTdpZN86waNrmhU83ixguHqTSUPT4lgzkbgu/9P4QELczjRy3xVusXLCn8fr3xYb
+         UnZGY61PfMga/aLrdA0GQUg3rMPUZAfM68zAqbCKsdw1ixF4hPontosGMisNRA78t4
+         iGQfivRMLe6XPU1SnLFN4NMJ/Bk1rOqmwdNX7mos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Geoff Levand <geoff@infradead.org>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 017/151] powerpc: Fix signedness bug in update_flash_db()
-Date:   Wed, 27 Nov 2019 21:30:00 +0100
-Message-Id: <20191127203010.440341531@linuxfoundation.org>
+Subject: [PATCH 4.9 018/151] powerpc/eeh: Fix use of EEH_PE_KEEP on wrong field
+Date:   Wed, 27 Nov 2019 21:30:01 +0100
+Message-Id: <20191127203011.441618804@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -45,38 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 014704e6f54189a203cc14c7c0bb411b940241bc ]
+[ Upstream commit 473af09b56dc4be68e4af33220ceca6be67aa60d ]
 
-The "count < sizeof(struct os_area_db)" comparison is type promoted to
-size_t so negative values of "count" are treated as very high values
-and we accidentally return success instead of a negative error code.
+eeh_add_to_parent_pe() sometimes removes the EEH_PE_KEEP flag, but it
+incorrectly removes it from pe->type, instead of pe->state.
 
-This doesn't really change runtime much but it fixes a static checker
-warning.
+However, rather than clearing it from the correct field, remove it.
+Inspection of the code shows that it can't ever have had any effect
+(even if it had been cleared from the correct field), because the
+field is never tested after it is cleared by the statement in
+question.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Geoff Levand <geoff@infradead.org>
+The clear statement was added by commit 807a827d4e74 ("powerpc/eeh:
+Keep PE during hotplug"), but it didn't explain why it was necessary.
+
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/ps3/os-area.c | 2 +-
+ arch/powerpc/kernel/eeh_pe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/ps3/os-area.c b/arch/powerpc/platforms/ps3/os-area.c
-index 3db53e8aff927..9b2ef76578f06 100644
---- a/arch/powerpc/platforms/ps3/os-area.c
-+++ b/arch/powerpc/platforms/ps3/os-area.c
-@@ -664,7 +664,7 @@ static int update_flash_db(void)
- 	db_set_64(db, &os_area_db_id_rtc_diff, saved_params.rtc_diff);
+diff --git a/arch/powerpc/kernel/eeh_pe.c b/arch/powerpc/kernel/eeh_pe.c
+index 1abd8dd77ec13..eee2131a97e61 100644
+--- a/arch/powerpc/kernel/eeh_pe.c
++++ b/arch/powerpc/kernel/eeh_pe.c
+@@ -370,7 +370,7 @@ int eeh_add_to_parent_pe(struct eeh_dev *edev)
+ 		while (parent) {
+ 			if (!(parent->type & EEH_PE_INVALID))
+ 				break;
+-			parent->type &= ~(EEH_PE_INVALID | EEH_PE_KEEP);
++			parent->type &= ~EEH_PE_INVALID;
+ 			parent = parent->parent;
+ 		}
  
- 	count = os_area_flash_write(db, sizeof(struct os_area_db), pos);
--	if (count < sizeof(struct os_area_db)) {
-+	if (count < 0 || count < sizeof(struct os_area_db)) {
- 		pr_debug("%s: os_area_flash_write failed %zd\n", __func__,
- 			 count);
- 		error = count < 0 ? count : -EIO;
 -- 
 2.20.1
 
