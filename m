@@ -2,30 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C086110AF7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 13:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB6C10AF89
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 13:27:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfK0MX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 07:23:26 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6723 "EHLO huawei.com"
+        id S1726694AbfK0M1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 07:27:31 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6724 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726526AbfK0MX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 07:23:26 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 04670F25B047DEF24081;
-        Wed, 27 Nov 2019 20:23:22 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 27 Nov 2019
- 20:23:13 +0800
+        id S1726383AbfK0M1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 07:27:31 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A8175FC9E2CAF370E365;
+        Wed, 27 Nov 2019 20:27:29 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 27 Nov 2019
+ 20:27:20 +0800
 From:   yu kuai <yukuai3@huawei.com>
-To:     <zajec5@gmail.com>, <linville@tuxdriver.com>,
-        <kvalo@codeaurora.org>
-CC:     <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
-        <zhengbin13@huawei.com>
-Subject: [PATCH] bcma: remove set but not used variable 'sizel'
-Date:   Wed, 27 Nov 2019 20:44:33 +0800
-Message-ID: <20191127124433.34301-1-yukuai3@huawei.com>
+To:     <airlied@linux.ie>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+        <torvalds@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>, <zhengbin13@huawei.com>
+Subject: [PATCH] agp: remove set but not used variable 'size'
+Date:   Wed, 27 Nov 2019 20:48:41 +0800
+Message-ID: <20191127124841.36732-1-yukuai3@huawei.com>
 X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
@@ -39,46 +38,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/bcma/scan.c: In function ‘bcma_erom_get_addr_desc’:
+drivers/char/agp/generic.c: In function ‘agp_generic_create_gatt_table’:
+drivers/char/agp/generic.c:853:6: warning: variable ‘size’ set but not
+used [-Wunused-but-set-variable]
 
-drivers/bcma/scan.c:222:20: warning: variable ‘sizel’ set but
-not used [-Wunused-but-set-variable]
+It is never used, so can be removed.
 
-It is never used, and so can be removed.
-
-Fixes: 8369ae33b705 ("bcma: add Broadcom specific AMBA bus driver")
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 ---
- drivers/bcma/scan.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/char/agp/generic.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
-index 4a2d1b235fb5..1f2de714b401 100644
---- a/drivers/bcma/scan.c
-+++ b/drivers/bcma/scan.c
-@@ -219,7 +219,7 @@ static s32 bcma_erom_get_mst_port(struct bcma_bus *bus, u32 __iomem **eromptr)
- static u32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 __iomem **eromptr,
- 				  u32 type, u8 port)
+diff --git a/drivers/char/agp/generic.c b/drivers/char/agp/generic.c
+index df1edb5ec0ad..174849491a49 100644
+--- a/drivers/char/agp/generic.c
++++ b/drivers/char/agp/generic.c
+@@ -850,7 +850,6 @@ int agp_generic_create_gatt_table(struct agp_bridge_data *bridge)
  {
--	u32 addrl, addrh, sizel, sizeh = 0;
-+	u32 addrl, addrh, sizeh = 0;
- 	u32 size;
+ 	char *table;
+ 	char *table_end;
+-	int size;
+ 	int page_order;
+ 	int num_entries;
+ 	int i;
+@@ -864,25 +863,22 @@ int agp_generic_create_gatt_table(struct agp_bridge_data *bridge)
+ 	table = NULL;
+ 	i = bridge->aperture_size_idx;
+ 	temp = bridge->current_size;
+-	size = page_order = num_entries = 0;
++	page_order = num_entries = 0;
  
- 	u32 ent = bcma_erom_get_ent(bus, eromptr);
-@@ -239,12 +239,9 @@ static u32 bcma_erom_get_addr_desc(struct bcma_bus *bus, u32 __iomem **eromptr,
+ 	if (bridge->driver->size_type != FIXED_APER_SIZE) {
+ 		do {
+ 			switch (bridge->driver->size_type) {
+ 			case U8_APER_SIZE:
+-				size = A_SIZE_8(temp)->size;
+ 				page_order =
+ 				    A_SIZE_8(temp)->page_order;
+ 				num_entries =
+ 				    A_SIZE_8(temp)->num_entries;
+ 				break;
+ 			case U16_APER_SIZE:
+-				size = A_SIZE_16(temp)->size;
+ 				page_order = A_SIZE_16(temp)->page_order;
+ 				num_entries = A_SIZE_16(temp)->num_entries;
+ 				break;
+ 			case U32_APER_SIZE:
+-				size = A_SIZE_32(temp)->size;
+ 				page_order = A_SIZE_32(temp)->page_order;
+ 				num_entries = A_SIZE_32(temp)->num_entries;
+ 				break;
+@@ -890,7 +886,6 @@ int agp_generic_create_gatt_table(struct agp_bridge_data *bridge)
+ 			case FIXED_APER_SIZE:
+ 			case LVL2_APER_SIZE:
+ 			default:
+-				size = page_order = num_entries = 0;
+ 				break;
+ 			}
  
- 	if ((ent & SCAN_ADDR_SZ) == SCAN_ADDR_SZ_SZD) {
- 		size = bcma_erom_get_ent(bus, eromptr);
--		sizel = size & SCAN_SIZE_SZ;
- 		if (size & SCAN_SIZE_SG32)
- 			sizeh = bcma_erom_get_ent(bus, eromptr);
--	} else
--		sizel = SCAN_ADDR_SZ_BASE <<
--				((ent & SCAN_ADDR_SZ) >> SCAN_ADDR_SZ_SHIFT);
-+	}
- 
- 	return addrl;
- }
+@@ -920,7 +915,6 @@ int agp_generic_create_gatt_table(struct agp_bridge_data *bridge)
+ 			}
+ 		} while (!table && (i < bridge->driver->num_aperture_sizes));
+ 	} else {
+-		size = ((struct aper_size_info_fixed *) temp)->size;
+ 		page_order = ((struct aper_size_info_fixed *) temp)->page_order;
+ 		num_entries = ((struct aper_size_info_fixed *) temp)->num_entries;
+ 		table = alloc_gatt_pages(page_order);
 -- 
 2.17.2
 
