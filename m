@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B4A10B892
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3240C10B80F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:39:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbfK0Uoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:44:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54436 "EHLO mail.kernel.org"
+        id S1728083AbfK0UjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:39:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbfK0Uol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:41 -0500
+        id S1728897AbfK0UjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:39:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E168D2158A;
-        Wed, 27 Nov 2019 20:44:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2465121569;
+        Wed, 27 Nov 2019 20:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887481;
-        bh=Cj5k5l1hgsvz/6ZMIJzgQ2nDSVd4HdUBgRCfi+Rzyps=;
+        s=default; t=1574887159;
+        bh=8lr5WI3hKp8J6pf8q7kwThSAqJKzrjvFPMvna7Gwtuk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZyop+3Ae0T1+kJPrJ0nGDL2vl69Yii8yN9oc9lhdU04oRWKPtzqQG4+M+rtIYHoX
-         tX9aykC+Ejuv04pmxE0P2yRCujNm/RSLRcU9e23yFg6zlsoVnutIqtTkAgIXxeq9Nd
-         2ZFpIhvmHRgiI4dTfnw5nwMy6kW/ZVKGw5b+nDIE=
+        b=X1AO7A2ukK77RQFiUdhAWgIrY2Uxx7rbIDVWfUHPSVHzIq3TgrC+aBFHD/9ofw6HO
+         EAibsQuIsr/t42IdCAgmtdAbZDXWEeSj+v6JeYgVP9bflr+UB6vnZh1QGoGMFuzs5w
+         LuBsW0+w5JFx33oR6R7yF9STOiED1vR9HxW+P2ZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c86454eb3af9e8a4da20@syzkaller.appspotmail.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.9 128/151] media: uvcvideo: Fix error path in control parsing failure
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 120/132] virtio_console: drop custom control queue cleanup
 Date:   Wed, 27 Nov 2019 21:31:51 +0100
-Message-Id: <20191127203045.936828249@linuxfoundation.org>
+Message-Id: <20191127203032.645412707@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit 8c279e9394cade640ed86ec6c6645a0e7df5e0b6 upstream.
+[ Upstream commit 61a8950c5c5708cf2068b29ffde94e454e528208 ]
 
-When parsing the UVC control descriptors fails, the error path tries to
-cleanup a media device that hasn't been initialised, potentially
-resulting in a crash. Fix this by initialising the media device before
-the error handling path can be reached.
+We now cleanup all VQs on device removal - no need
+to handle the control VQ specially.
 
-Fixes: 5a254d751e52 ("[media] uvcvideo: Register a v4l2_device")
-Reported-by: syzbot+c86454eb3af9e8a4da20@syzkaller.appspotmail.com
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/uvc/uvc_driver.c |   30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ drivers/char/virtio_console.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2021,6 +2021,21 @@ static int uvc_probe(struct usb_interfac
- 			le16_to_cpu(udev->descriptor.idVendor),
- 			le16_to_cpu(udev->descriptor.idProduct));
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 1b002e1391f0a..bc4a804048205 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1987,21 +1987,6 @@ static void remove_vqs(struct ports_device *portdev)
+ 	kfree(portdev->out_vqs);
+ }
  
-+	/* Initialize the media device. */
-+#ifdef CONFIG_MEDIA_CONTROLLER
-+	dev->mdev.dev = &intf->dev;
-+	strscpy(dev->mdev.model, dev->name, sizeof(dev->mdev.model));
-+	if (udev->serial)
-+		strscpy(dev->mdev.serial, udev->serial,
-+			sizeof(dev->mdev.serial));
-+	usb_make_path(udev, dev->mdev.bus_info, sizeof(dev->mdev.bus_info));
-+	dev->mdev.hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
-+	dev->mdev.driver_version = LINUX_VERSION_CODE;
-+	media_device_init(&dev->mdev);
-+
-+	dev->vdev.mdev = &dev->mdev;
-+#endif
-+
- 	/* Parse the Video Class control descriptor. */
- 	if (uvc_parse_control(dev) < 0) {
- 		uvc_trace(UVC_TRACE_PROBE, "Unable to parse UVC "
-@@ -2041,20 +2056,7 @@ static int uvc_probe(struct usb_interfac
- 			"linux-uvc-devel mailing list.\n");
- 	}
- 
--	/* Initialize the media device and register the V4L2 device. */
--#ifdef CONFIG_MEDIA_CONTROLLER
--	dev->mdev.dev = &intf->dev;
--	strlcpy(dev->mdev.model, dev->name, sizeof(dev->mdev.model));
--	if (udev->serial)
--		strlcpy(dev->mdev.serial, udev->serial,
--			sizeof(dev->mdev.serial));
--	strcpy(dev->mdev.bus_info, udev->devpath);
--	dev->mdev.hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
--	dev->mdev.driver_version = LINUX_VERSION_CODE;
--	media_device_init(&dev->mdev);
+-static void remove_controlq_data(struct ports_device *portdev)
+-{
+-	struct port_buffer *buf;
+-	unsigned int len;
 -
--	dev->vdev.mdev = &dev->mdev;
--#endif
-+	/* Register the V4L2 device. */
- 	if (v4l2_device_register(&intf->dev, &dev->vdev) < 0)
- 		goto error;
+-	if (!use_multiport(portdev))
+-		return;
+-
+-	while ((buf = virtqueue_get_buf(portdev->c_ivq, &len)))
+-		free_buf(buf, true);
+-
+-	while ((buf = virtqueue_detach_unused_buf(portdev->c_ivq)))
+-		free_buf(buf, true);
+-}
+-
+ /*
+  * Once we're further in boot, we get probed like any other virtio
+  * device.
+@@ -2162,7 +2147,6 @@ static void virtcons_remove(struct virtio_device *vdev)
+ 	 * have to just stop using the port, as the vqs are going
+ 	 * away.
+ 	 */
+-	remove_controlq_data(portdev);
+ 	remove_vqs(portdev);
+ 	kfree(portdev);
+ }
+@@ -2207,7 +2191,6 @@ static int virtcons_freeze(struct virtio_device *vdev)
+ 	 */
+ 	if (use_multiport(portdev))
+ 		virtqueue_disable_cb(portdev->c_ivq);
+-	remove_controlq_data(portdev);
  
+ 	list_for_each_entry(port, &portdev->ports, list) {
+ 		virtqueue_disable_cb(port->in_vq);
+-- 
+2.20.1
+
 
 
