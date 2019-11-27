@@ -2,108 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE50310AE5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 12:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0092C10AE7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 12:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfK0LAW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 27 Nov 2019 06:00:22 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46787 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfK0LAV (ORCPT
+        id S1727022AbfK0LGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 06:06:36 -0500
+Received: from filter.apex.net.au ([203.30.98.150]:36607 "EHLO
+        filter.apex.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfK0LGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 06:00:21 -0500
-X-Originating-IP: 90.76.211.102
-Received: from xps13 (lfbn-1-2154-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id ED4AB1C001A;
-        Wed, 27 Nov 2019 11:00:18 +0000 (UTC)
-Date:   Wed, 27 Nov 2019 12:00:18 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Zak Hays <zak.hays@lexmark.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] thermal: armada-thermal: clear reset in
- armadaxp_init
-Message-ID: <20191127120018.679bf947@xps13>
-In-Reply-To: <MWHPR10MB13435C92C02136EE4582B1218C450@MWHPR10MB1343.namprd10.prod.outlook.com>
-References: <1574721077-29892-1-git-send-email-zhays@lexmark.com>
-        <1574721077-29892-2-git-send-email-zhays@lexmark.com>
-        <MWHPR10MB13435C92C02136EE4582B1218C450@MWHPR10MB1343.namprd10.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 27 Nov 2019 06:06:36 -0500
+X-Greylist: delayed 580 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 06:06:34 EST
+Received: from localhost (unknown [127.0.0.1])
+        by filter-sub-01.as-ip.net.au (filter.apex.net.au) with ESMTP id CA4A0A40141;
+        Wed, 27 Nov 2019 21:20:45 +1100 (EST)
+Received: from webmail.effect.net.au (unknown [203.30.98.150])
+        by filter.apex.net.au (filter.apex.net.au) with ESMTP id 3185FA40004;
+        Wed, 27 Nov 2019 21:20:45 +1100 (EST)
+Received: from [197.234.221.195]
+ by webmail.apex.net.au
+ with HTTP (HTTP/1.1 POST); Wed, 27 Nov 2019 21:20:45 +1100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 27 Nov 2019 02:20:45 -0800
+From:   Julian David <juliandavid137954@gmail.com>
+To:     undisclosed-recipients:;
+Subject: MY MESSAGE CONFIRM BACK
+Message-ID: <1e2bebf861629e6970f63406fa3ff8da@apex.net.au>
+X-Sender: juliandavid137954@gmail.com
+User-Agent: Roundcube Webmail/0.8.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zak,
 
-Zak Hays <zak.hays@lexmark.com> wrote on Tue, 26 Nov 2019 14:54:11
-+0000:
 
-> The reset bit needs to be cleared in the init sequence otherwise it
-> 
-> holds the block in reset.
-
-"thermal: armada: " is the right prefix for your title
-
-Your Signed-off-by should be here (git commit --amend -s)
-
-The format of your patch is strange, there are additional empty lines
-which are problematic.
-
-> 
-> ---
-> 
->  drivers/thermal/armada_thermal.c | 3 +++
-> 
->  1 file changed, 3 insertions(+)
-> 
-> 
-> 
-> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-> 
-> index 88363812033c..8c4d1244ee7a 100644
-> 
-> --- a/drivers/thermal/armada_thermal.c
-> 
-> +++ b/drivers/thermal/armada_thermal.c
-> 
-> @@ -155,6 +155,9 @@ static void armadaxp_init(struct platform_device *pdev,
-> 
->  
-> 
->          regmap_write(priv->syscon, data->syscon_control1_off, reg);
-> 
->  
-> 
-> +       reg &= ~PMU_TDC0_SW_RST_MASK;
-> 
-> +       regmap_write(priv->syscon, data->syscon_control1_off, reg);
-> 
-> +
-
-Do you really want to write this register twice? Shouldn't you get rid
-of the first regmap_write() above?
-
-> 
->          /* Enable the sensor */
-> 
->          regmap_read(priv->syscon, data->syscon_status_off, &reg);
-> 
->          reg &= ~PMU_TM_DISABLE_MASK;
-> 
-
-In your next iteration, please use the '-v2' option with
-git-format-patch to get titles starting with "[PATCH v2 x/2] ..."
-automatically. Also write a changelog below the three dots '---'.
-
+-- 
+Dear,
+How is everything today,I am widow with a child who is 7 years old. 
+Pressure from my family has compelled me to seek for your assistance. 
+Can you help me receive $10.5 Million in your account, this money is for 
+investment into real estate, I don't want to lose this fund as pressure 
+on me with life threatening is becoming unbearable. Since the death of 
+my husband, his brothers have been seriously chasing me around with 
+constant threats, trying to suppress me so that they might have the 
+documents of his landed properties and they have confiscate them. Please 
+can I confide in you, I will give you more details once you reply back. 
+my number is: +22990078315
 Thanks,
-Miquèl
+Julian David
