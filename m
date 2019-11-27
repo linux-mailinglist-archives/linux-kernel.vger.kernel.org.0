@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2B310B849
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB51A10B7A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbfK0Ulx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:41:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47472 "EHLO mail.kernel.org"
+        id S1727956AbfK0Ufq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729234AbfK0Ulu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:50 -0500
+        id S1727236AbfK0Ufk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF36B20863;
-        Wed, 27 Nov 2019 20:41:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D569021569;
+        Wed, 27 Nov 2019 20:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887310;
-        bh=dG+zSrw7iEHZfFQEuCJ+9sfjj9LTzYBKGyDmPJzLAbU=;
+        s=default; t=1574886940;
+        bh=7LaErUhJdmTpbtcjeuEhaAeVt66iI+/qbhdzpL30bTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MBt4vf84RYxRNfeWCIVApsLOgdQBE8YUN/dvQ5JPGtUcNY4PeLVXfnkXkXWibukd+
-         fBmQe3viJ81LxYdniE0wju96O9CPRW+LYmHIqZRiVHAvP6AWb5PjvGFaoqtDp9ELan
-         lj/jDTASENU/q3pkvp+CvARzCdLixmuSbFASWP/I=
+        b=V759+tPrhLH/ikpMwfvmSXTrFTfbrkcixEikcgfYjClGbslPECo3aZpWz5n7W3m4A
+         6El4ZnS57FtklalW6OJY6JHD2JnAGIMrGKsakUtVfgISXRlxHhubS6SFdPXAcrNPC0
+         KrfMphyty2OpdNKoIwuXBcCeOaxYL3W9/+pceunc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 059/151] mfd: max8997: Enale irq-wakeup unconditionally
+Subject: [PATCH 4.4 051/132] sparc: Fix parport build warnings.
 Date:   Wed, 27 Nov 2019 21:30:42 +0100
-Message-Id: <20191127203032.846787093@linuxfoundation.org>
+Message-Id: <20191127202949.362119708@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,64 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: David S. Miller <davem@davemloft.net>
 
-[ Upstream commit efddff27c886e729a7f84a7205bd84d7d4af7336 ]
+[ Upstream commit 46b8306480fb424abd525acc1763da1c63a27d8a ]
 
-IRQ wake up support for MAX8997 driver was initially configured by
-respective property in pdata. However, after the driver conversion to
-device-tree, setting it was left as 'todo'. Nowadays most of other PMIC MFD
-drivers initialized from device-tree assume that they can be an irq wakeup
-source, so enable it also for MAX8997. This fixes support for wakeup from
-MAX8997 RTC alarm.
+If PARPORT_PC_FIFO is not enabled, do not provide the dma lock
+macros and lock definition.  Otherwise:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+./arch/sparc/include/asm/parport.h:24:24: warning: ‘dma_spin_lock’ defined but not used [-Wunused-variable]
+ static DEFINE_SPINLOCK(dma_spin_lock);
+                        ^~~~~~~~~~~~~
+./include/linux/spinlock_types.h:81:39: note: in definition of macro ‘DEFINE_SPINLOCK’
+ #define DEFINE_SPINLOCK(x) spinlock_t x = __SPIN_LOCK_UNLOCKED(x)
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/max8997.c       | 8 +-------
- include/linux/mfd/max8997.h | 1 -
- 2 files changed, 1 insertion(+), 8 deletions(-)
+ arch/sparc/include/asm/parport.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
-index 2d6e2c3927862..4a2fc59d59016 100644
---- a/drivers/mfd/max8997.c
-+++ b/drivers/mfd/max8997.c
-@@ -155,12 +155,6 @@ static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
+diff --git a/arch/sparc/include/asm/parport.h b/arch/sparc/include/asm/parport.h
+index f005ccac91cc9..e87c0f81b700e 100644
+--- a/arch/sparc/include/asm/parport.h
++++ b/arch/sparc/include/asm/parport.h
+@@ -20,6 +20,7 @@
+  */
+ #define HAS_DMA
  
- 	pd->ono = irq_of_parse_and_map(dev->of_node, 1);
++#ifdef CONFIG_PARPORT_PC_FIFO
+ static DEFINE_SPINLOCK(dma_spin_lock);
  
--	/*
--	 * ToDo: the 'wakeup' member in the platform data is more of a linux
--	 * specfic information. Hence, there is no binding for that yet and
--	 * not parsed here.
--	 */
--
- 	return pd;
- }
+ #define claim_dma_lock() \
+@@ -30,6 +31,7 @@ static DEFINE_SPINLOCK(dma_spin_lock);
  
-@@ -248,7 +242,7 @@ static int max8997_i2c_probe(struct i2c_client *i2c,
- 	 */
+ #define release_dma_lock(__flags) \
+ 	spin_unlock_irqrestore(&dma_spin_lock, __flags);
++#endif
  
- 	/* MAX8997 has a power button input. */
--	device_init_wakeup(max8997->dev, pdata->wakeup);
-+	device_init_wakeup(max8997->dev, true);
- 
- 	return ret;
- 
-diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.h
-index cf815577bd686..3ae1fe743bc34 100644
---- a/include/linux/mfd/max8997.h
-+++ b/include/linux/mfd/max8997.h
-@@ -178,7 +178,6 @@ struct max8997_led_platform_data {
- struct max8997_platform_data {
- 	/* IRQ */
- 	int ono;
--	int wakeup;
- 
- 	/* ---- PMIC ---- */
- 	struct max8997_regulator_data *regulators;
+ static struct sparc_ebus_info {
+ 	struct ebus_dma_info info;
 -- 
 2.20.1
 
