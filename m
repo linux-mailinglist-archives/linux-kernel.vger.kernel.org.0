@@ -2,42 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686BA10B96E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FE310B7ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729272AbfK0UxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41072 "EHLO mail.kernel.org"
+        id S1728724AbfK0UiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:38:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730668AbfK0Uw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:52:58 -0500
+        id S1728707AbfK0UiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:38:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 954B9218DE;
-        Wed, 27 Nov 2019 20:52:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0F3221736;
+        Wed, 27 Nov 2019 20:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887978;
-        bh=4jRCHwt9FzNoPULeqAk5ypyYV4J5S/YfCSXAZc9W2f4=;
+        s=default; t=1574887095;
+        bh=EO6OL04z+eVNB+ycq/2Q0uPJQWhDp8owxls2bHKsHNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WrfVGf09AiAinA4jQJhOMCu+MZIrWj3n4MtEYujK0CVLL6n9yrDD3+tiGt0a6AC6I
-         2dtcPhaIamqkgHlImAD50+OselyNIIk/3RLulFIVtOqdWd027Eqnk8uPdtrvtsvw5X
-         ipDDLI8BDfrwTdAV5P465sJG7cXkr0qEUY8jL/Fk=
+        b=cXZhMyZ7MwPRfdvJ5bEaBS+ABuBI1HOjT4kLJNTUMu6m9RidK7BKnLROWq0kN3I9p
+         Uyk7YWiQdL4B092hnvYRUWjcSdMBkoIy4IEVVVuALuHQ64xEk6fLbbt/oKQ4X5v4uS
+         P6aDiMl70T5/5/nYi6eyFZxRJPN1Sk2KHj72P29U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Rajkumar Manoharan <rmanohar@qca.qualcomm.com>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Denis Efremov <efremov@linux.com>
-Subject: [PATCH 4.14 167/211] ath9k_hw: fix uninitialized variable data
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Waiman Long <longman@redhat.com>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Tyler Hicks <tyhicks@canonical.com>, x86-ml <x86@kernel.org>
+Subject: [PATCH 4.4 109/132] x86/speculation: Fix redundant MDS mitigation message
 Date:   Wed, 27 Nov 2019 21:31:40 +0100
-Message-Id: <20191127203109.660466493@linuxfoundation.org>
+Message-Id: <20191127203028.096451138@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,39 +52,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
+From: Waiman Long <longman@redhat.com>
 
-commit 80e84f36412e0c5172447b6947068dca0d04ee82 upstream.
+commit cd5a2aa89e847bdda7b62029d94e95488d73f6b2 upstream.
 
-Currently, data variable in ar9003_hw_thermo_cal_apply() could be
-uninitialized if ar9300_otp_read_word() will fail to read the value.
-Initialize data variable with 0 to prevent an undefined behavior. This
-will be enough to handle error case when ar9300_otp_read_word() fails.
+Since MDS and TAA mitigations are inter-related for processors that are
+affected by both vulnerabilities, the followiing confusing messages can
+be printed in the kernel log:
 
-Fixes: 80fe43f2bbd5 ("ath9k_hw: Read and configure thermocal for AR9462")
-Cc: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
-Cc: John W. Linville <linville@tuxdriver.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Efremov <efremov@linux.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  MDS: Vulnerable
+  MDS: Mitigation: Clear CPU buffers
+
+To avoid the first incorrect message, defer the printing of MDS
+mitigation after the TAA mitigation selection has been done. However,
+that has the side effect of printing TAA mitigation first before MDS
+mitigation.
+
+ [ bp: Check box is affected/mitigations are disabled first before
+   printing and massage. ]
+
+Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Mark Gross <mgross@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Tyler Hicks <tyhicks@canonical.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191115161445.30809-3-longman@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath9k/ar9003_eeprom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-@@ -4116,7 +4116,7 @@ static void ar9003_hw_thermometer_apply(
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -37,6 +37,7 @@ static void __init spectre_v2_select_mit
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
+ static void __init mds_select_mitigation(void);
++static void __init mds_print_mitigation(void);
+ static void __init taa_select_mitigation(void);
  
- static void ar9003_hw_thermo_cal_apply(struct ath_hw *ah)
- {
--	u32 data, ko, kg;
-+	u32 data = 0, ko, kg;
+ /* The base value of the SPEC_CTRL MSR that always has to be preserved. */
+@@ -99,6 +100,12 @@ void __init check_bugs(void)
+ 	mds_select_mitigation();
+ 	taa_select_mitigation();
  
- 	if (!AR_SREV_9462_20_OR_LATER(ah))
++	/*
++	 * As MDS and TAA mitigations are inter-related, print MDS
++	 * mitigation until after TAA mitigation selection is done.
++	 */
++	mds_print_mitigation();
++
+ 	arch_smt_update();
+ 
+ #ifdef CONFIG_X86_32
+@@ -224,6 +231,12 @@ static void __init mds_select_mitigation
+ 		mds_mitigation = MDS_MITIGATION_OFF;
  		return;
+ 	}
++}
++
++static void __init mds_print_mitigation(void)
++{
++	if (!boot_cpu_has_bug(X86_BUG_MDS) || cpu_mitigations_off())
++		return;
+ 
+ 	if (mds_mitigation == MDS_MITIGATION_FULL) {
+ 		if (!boot_cpu_has(X86_FEATURE_MD_CLEAR))
 
 
