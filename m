@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C6610B983
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 336ED10B7C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:37:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfK0Uxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43008 "EHLO mail.kernel.org"
+        id S1728440AbfK0Ugt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:36:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730764AbfK0Uxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:46 -0500
+        id S1728424AbfK0Ugs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:36:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FDCA2068E;
-        Wed, 27 Nov 2019 20:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB35D215A4;
+        Wed, 27 Nov 2019 20:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888025;
-        bh=JFkH838InWF4Uk6kpUipLTfcZq+Or1Xb9dh4tiaBm7U=;
+        s=default; t=1574887007;
+        bh=faAfye4U9NiBAVX4GKVcclxbx9Ur0Cd7sQHtZGt+ov0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PJxwfoZVEtfSlpiNtnDEGMclCcUQFngrG80ARLcS+q+kbOGXdYwTso1i+7md9BN1L
-         e4Eawpqo7VybLDEyTk1XZOveeU2ysleB85xSBCv5NAdeSFgs4Q0pC33GfRpxgilCGM
-         2EvfflUUMXcxT/8W+7mYAQM5kxY8rdYhfC+3p+vM=
+        b=csf7fbjItdM+Fun3pM6rB9Xpl0zREZSeWkhFobzo4jrQjK2O1Ytq1f1pW06tR+nTQ
+         iJUXBx3mnobpenpMYqp9+l4WyexkrTa/H3CFYQ9JhmelW8YLxQ/xQLk/VY30LVMAbq
+         hDl8TNouBq/S2OmyAZn7CWiiPTWygHU+1ZHfZE9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 136/211] brcmsmac: never log "tid x is not aggable" by default
+Subject: [PATCH 4.4 078/132] net: do not abort bulk send on BQL status
 Date:   Wed, 27 Nov 2019 21:31:09 +0100
-Message-Id: <20191127203106.881430566@linuxfoundation.org>
+Message-Id: <20191127203010.278501503@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 96fca788e5788b7ea3b0050eb35a343637e0a465 ]
+[ Upstream commit fe60faa5063822f2d555f4f326c7dd72a60929bf ]
 
-This message greatly spams the log under heavy Tx of frames with BK access
-class which is especially true when operating as AP. It is also not informative
-as the "agg'ablity" of TIDs are set once and never change.
-Fix this by logging only in debug mode.
+Before calling dev_hard_start_xmit(), upper layers tried
+to cook optimal skb list based on BQL budget.
 
-Signed-off-by: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Problem is that GSO packets can end up comsuming more than
+the BQL budget.
+
+Breaking the loop is not useful, since requeued packets
+are ahead of any packets still in the qdisc.
+
+It is also more expensive, since next TX completion will
+push these packets later, while skbs are not in cpu caches.
+
+It is also a behavior difference with TSO packets, that can
+break the BQL limit by a large amount.
+
+Note that drivers should use __netdev_tx_sent_queue()
+in order to have optimal xmit_more support, and avoid
+useless atomic operations as shown in the following patch.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c    | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-index 257968fb3111f..66f1f41b13803 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/mac80211_if.c
-@@ -846,8 +846,8 @@ brcms_ops_ampdu_action(struct ieee80211_hw *hw,
- 		status = brcms_c_aggregatable(wl->wlc, tid);
- 		spin_unlock_bh(&wl->lock);
- 		if (!status) {
--			brcms_err(wl->wlc->hw->d11core,
--				  "START: tid %d is not agg\'able\n", tid);
-+			brcms_dbg_ht(wl->wlc->hw->d11core,
-+				     "START: tid %d is not agg\'able\n", tid);
- 			return -EINVAL;
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 18a5154e2f254..903c6242b4499 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2801,7 +2801,7 @@ struct sk_buff *dev_hard_start_xmit(struct sk_buff *first, struct net_device *de
  		}
- 		ieee80211_start_tx_ba_cb_irqsafe(vif, sta->addr, tid);
+ 
+ 		skb = next;
+-		if (netif_xmit_stopped(txq) && skb) {
++		if (netif_tx_queue_stopped(txq) && skb) {
+ 			rc = NETDEV_TX_BUSY;
+ 			break;
+ 		}
 -- 
 2.20.1
 
