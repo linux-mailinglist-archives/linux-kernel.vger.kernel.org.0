@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDF810B84D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7AD10B92D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:50:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbfK0UmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:42:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47744 "EHLO mail.kernel.org"
+        id S1730382AbfK0Uul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:50:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727895AbfK0Ul7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:59 -0500
+        id S1730373AbfK0Uuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:50:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D4B121775;
-        Wed, 27 Nov 2019 20:41:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE49C2184C;
+        Wed, 27 Nov 2019 20:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887318;
-        bh=mDMQRLefT1wXgAOc2ntoJDLCRHpGLUSN9tXIFTlyFbs=;
+        s=default; t=1574887836;
+        bh=UuqkYwaEdKSFRzNCtzmdbILIkT501RlWETeJr5f1rEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nTXA2o5n0TWjOGA2DmPOCkOfvwJCfL6dWxNx9wk6fxb2TK1gy70HTWlvNSCntehNW
-         zH/Q/2YL1Feq4ol+lNJgKCnZGVm/COZYxSUAoIibgk0fDAY67bOqsyw+yG5eGdKulk
-         IU9RKQwxmu1HGP0K701+bNytmaKTJqP4Ai+z4rsg=
+        b=xyevuFZK5/wiFOT6DUldiEEW3CykJVJOf1jXzSs5mUUGkaY32lynmK3SYi8vC95aV
+         B4asNMeXM29O3u1P6nckuWMAZDK70GuvAJ2XyzIhw7KDli0QIh2vD9z0WiR/V3Qi8C
+         sMlQ/djhbwT1IpHz49QgG+T3p+I9XyqtgR8Egvuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Felipe Rechia <felipe.rechia@datacom.com.br>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 062/151] powerpc/process: Fix flush_all_to_thread for SPE
-Date:   Wed, 27 Nov 2019 21:30:45 +0100
-Message-Id: <20191127203033.242846647@linuxfoundation.org>
+Subject: [PATCH 4.14 113/211] hfsplus: fix return value of hfsplus_get_block()
+Date:   Wed, 27 Nov 2019 21:30:46 +0100
+Message-Id: <20191127203104.699181119@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felipe Rechia <felipe.rechia@datacom.com.br>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit e901378578c62202594cba0f6c076f3df365ec91 ]
+[ Upstream commit 839c3a6a5e1fbc8542d581911b35b2cb5cd29304 ]
 
-Fix a bug introduced by the creation of flush_all_to_thread() for
-processors that have SPE (Signal Processing Engine) and use it to
-compute floating-point operations.
+Direct writes to empty inodes fail with EIO.  The generic direct-io code
+is in part to blame (a patch has been submitted as "direct-io: allow
+direct writes to empty inodes"), but hfsplus is worse affected than the
+other filesystems because the fallback to buffered I/O doesn't happen.
 
->From userspace perspective, the problem was seen in attempts of
-computing floating-point operations which should generate exceptions.
-For example:
+The problem is the return value of hfsplus_get_block() when called with
+!create.  Change it to be more consistent with the other modules.
 
-  fork();
-  float x = 0.0 / 0.0;
-  isnan(x);           // forked process returns False (should be True)
-
-The operation above also should always cause the SPEFSCR FINV bit to
-be set. However, the SPE floating-point exceptions were turned off
-after a fork().
-
-Kernel versions prior to the bug used flush_spe_to_thread(), which
-first saves SPEFSCR register values in tsk->thread and then calls
-giveup_spe(tsk).
-
-After commit 579e633e764e, the save_all() function was called first
-to giveup_spe(), and then the SPEFSCR register values were saved in
-tsk->thread. This would save the SPEFSCR register values after
-disabling SPE for that thread, causing the bug described above.
-
-Fixes 579e633e764e ("powerpc: create flush_all_to_thread()")
-Signed-off-by: Felipe Rechia <felipe.rechia@datacom.com.br>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/2cd1301404ec7cf1e39c8f11a01a4302f1460ad6.1539195310.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/process.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/hfsplus/extents.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 47c6c0401b3a2..54c95e7c74cce 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -576,12 +576,11 @@ void flush_all_to_thread(struct task_struct *tsk)
- 	if (tsk->thread.regs) {
- 		preempt_disable();
- 		BUG_ON(tsk != current);
--		save_all(tsk);
--
- #ifdef CONFIG_SPE
- 		if (tsk->thread.regs->msr & MSR_SPE)
- 			tsk->thread.spefscr = mfspr(SPRN_SPEFSCR);
- #endif
-+		save_all(tsk);
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 284d7fb73e863..58f296bfd4380 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -237,7 +237,9 @@ int hfsplus_get_block(struct inode *inode, sector_t iblock,
+ 	ablock = iblock >> sbi->fs_shift;
  
- 		preempt_enable();
- 	}
+ 	if (iblock >= hip->fs_blocks) {
+-		if (iblock > hip->fs_blocks || !create)
++		if (!create)
++			return 0;
++		if (iblock > hip->fs_blocks)
+ 			return -EIO;
+ 		if (ablock >= hip->alloc_blocks) {
+ 			res = hfsplus_file_extend(inode, false);
 -- 
 2.20.1
 
