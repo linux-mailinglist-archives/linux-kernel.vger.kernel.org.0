@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3692A10BBE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:17:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8897110BAF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:10:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732876AbfK0VQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:16:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46708 "EHLO mail.kernel.org"
+        id S1732685AbfK0VH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:07:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732784AbfK0VNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:13:53 -0500
+        id S1732674AbfK0VH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:07:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A67321741;
-        Wed, 27 Nov 2019 21:13:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2CA920637;
+        Wed, 27 Nov 2019 21:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889233;
-        bh=YLyGdyG2GbF2+WCjoHDmiZSalR1OSon7kNEebSIaPzA=;
+        s=default; t=1574888876;
+        bh=TjK6ymxqY67uPx9haMeBRwGjjLaIwExRBNJ32pxvHWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rmhuvF6XYW46HzCTHKf76Sj+6RSY6ETZWYgLCmZs/DSb9MfjrECgqyL6WuzLqaTym
-         Y1hrUOzuRTjFtCeBNLBKONiD5BMkbg7BboWXIgqx1AqgnyH7+K2Nly67io7ISXlHCT
-         n6S8jXj0sVc29goYNiSH5cSt2OImsOPSeNvtdYr0=
+        b=g1J+7Eqh/YTbvYSErPSvDgIQdtcNrc1sKhecfBt6cy66N41CZtMIUdrnAA3gZyPPy
+         gjVOCPJ2PyAklSP0gdzAP7QhZm9HmodqjqrdJG/ROTchgQaGdrJX2DhT9nPVkrUFxN
+         fkwkuEpsF0E8TKg0EeyFBA1pMeleg5PB7Cm1Xp/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 5.4 38/66] exit/exec: Seperate mm_release()
-Date:   Wed, 27 Nov 2019 21:32:33 +0100
-Message-Id: <20191127202718.958636413@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        "Christopher M. Riedl" <cmr@informatik.wtf>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH 4.19 304/306] powerpc/64s: support nospectre_v2 cmdline option
+Date:   Wed, 27 Nov 2019 21:32:34 +0100
+Message-Id: <20191127203136.927449924@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,98 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: "Christopher M. Riedl" <cmr@informatik.wtf>
 
-commit 4610ba7ad877fafc0a25a30c6c82015304120426 upstream.
+commit d8f0e0b073e1ec52a05f0c2a56318b47387d2f10 upstream.
 
-mm_release() contains the futex exit handling. mm_release() is called from
-do_exit()->exit_mm() and from exec()->exec_mm().
+Add support for disabling the kernel implemented spectre v2 mitigation
+(count cache flush on context switch) via the nospectre_v2 and
+mitigations=off cmdline options.
 
-In the exit_mm() case PF_EXITING and the futex state is updated. In the
-exec_mm() case these states are not touched.
-
-As the futex exit code needs further protections against exit races, this
-needs to be split into two functions.
-
-Preparatory only, no functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.240518241@linutronix.de
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Christopher M. Riedl <cmr@informatik.wtf>
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190524024647.381-1-cmr@informatik.wtf
+Signed-off-by: Daniel Axtens <dja@axtens.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/exec.c                |    2 +-
- include/linux/sched/mm.h |    6 ++++--
- kernel/exit.c            |    2 +-
- kernel/fork.c            |   12 +++++++++++-
- 4 files changed, 17 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/security.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1015,7 +1015,7 @@ static int exec_mmap(struct mm_struct *m
- 	/* Notify parent that we're no longer interested in the old VM */
- 	tsk = current;
- 	old_mm = current->mm;
--	mm_release(tsk, old_mm);
-+	exec_mm_release(tsk, old_mm);
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -28,7 +28,7 @@ static enum count_cache_flush_type count
+ bool barrier_nospec_enabled;
+ static bool no_nospec;
+ static bool btb_flush_enabled;
+-#ifdef CONFIG_PPC_FSL_BOOK3E
++#if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_BOOK3S_64)
+ static bool no_spectrev2;
+ #endif
  
- 	if (old_mm) {
- 		sync_mm_rss(old_mm);
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -117,8 +117,10 @@ extern struct mm_struct *get_task_mm(str
-  * succeeds.
-  */
- extern struct mm_struct *mm_access(struct task_struct *task, unsigned int mode);
--/* Remove the current tasks stale references to the old mm_struct */
--extern void mm_release(struct task_struct *, struct mm_struct *);
-+/* Remove the current tasks stale references to the old mm_struct on exit() */
-+extern void exit_mm_release(struct task_struct *, struct mm_struct *);
-+/* Remove the current tasks stale references to the old mm_struct on exec() */
-+extern void exec_mm_release(struct task_struct *, struct mm_struct *);
+@@ -106,7 +106,7 @@ static __init int barrier_nospec_debugfs
+ device_initcall(barrier_nospec_debugfs_init);
+ #endif /* CONFIG_DEBUG_FS */
  
- #ifdef CONFIG_MEMCG
- extern void mm_update_next_owner(struct mm_struct *mm);
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -437,7 +437,7 @@ static void exit_mm(void)
- 	struct mm_struct *mm = current->mm;
- 	struct core_state *core_state;
- 
--	mm_release(current, mm);
-+	exit_mm_release(current, mm);
- 	if (!mm)
- 		return;
- 	sync_mm_rss(mm);
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1283,7 +1283,7 @@ static int wait_for_vfork_done(struct ta
-  * restoring the old one. . .
-  * Eric Biederman 10 January 1998
-  */
--void mm_release(struct task_struct *tsk, struct mm_struct *mm)
-+static void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+-#ifdef CONFIG_PPC_FSL_BOOK3E
++#if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_BOOK3S_64)
+ static int __init handle_nospectre_v2(char *p)
  {
- 	/* Get rid of any futexes when releasing the mm */
- 	futex_mm_release(tsk);
-@@ -1320,6 +1320,16 @@ void mm_release(struct task_struct *tsk,
- 		complete_vfork_done(tsk);
+ 	no_spectrev2 = true;
+@@ -114,6 +114,9 @@ static int __init handle_nospectre_v2(ch
+ 	return 0;
+ }
+ early_param("nospectre_v2", handle_nospectre_v2);
++#endif /* CONFIG_PPC_FSL_BOOK3E || CONFIG_PPC_BOOK3S_64 */
++
++#ifdef CONFIG_PPC_FSL_BOOK3E
+ void setup_spectre_v2(void)
+ {
+ 	if (no_spectrev2 || cpu_mitigations_off())
+@@ -391,7 +394,17 @@ static void toggle_count_cache_flush(boo
+ 
+ void setup_count_cache_flush(void)
+ {
+-	toggle_count_cache_flush(true);
++	bool enable = true;
++
++	if (no_spectrev2 || cpu_mitigations_off()) {
++		if (security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED) ||
++		    security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED))
++			pr_warn("Spectre v2 mitigations not under software control, can't disable\n");
++
++		enable = false;
++	}
++
++	toggle_count_cache_flush(enable);
  }
  
-+void exit_mm_release(struct task_struct *tsk, struct mm_struct *mm)
-+{
-+	mm_release(tsk, mm);
-+}
-+
-+void exec_mm_release(struct task_struct *tsk, struct mm_struct *mm)
-+{
-+	mm_release(tsk, mm);
-+}
-+
- /**
-  * dup_mm() - duplicates an existing mm structure
-  * @tsk: the task_struct with which the new mm will be associated.
+ #ifdef CONFIG_DEBUG_FS
 
 
