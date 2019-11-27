@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0265D10B805
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0605A10B985
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:54:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728865AbfK0UjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:39:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43008 "EHLO mail.kernel.org"
+        id S1730224AbfK0Ux7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728028AbfK0UjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:39:02 -0500
+        id S1730776AbfK0Uxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:53:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2410821555;
-        Wed, 27 Nov 2019 20:39:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E662120862;
+        Wed, 27 Nov 2019 20:53:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887141;
-        bh=ljzpc29zEjbuOlRLwHzyBSChmFY/7k0JP+k54974aJo=;
+        s=default; t=1574888031;
+        bh=TJK7wwduTNpV7U4RlAnrTK6SDI4g++CbzCrtYmcfz40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJaiFgmKpXp4ACXlTVHvPgFmVYE7IHNVkMg70YCaQNZNMgNfU/8iwzEvyDS26YBJg
-         gPG5u4diCbhelS/SE4fZE0wQ3b3vLsQcqO4oioDKCFINQsgW405a5Bxu7340oQKRs4
-         gtD0UQ8UaIqUOhK2mgVMpvxdwsR0kHe32rPGk8ew=
+        b=p9mJE4ItDo4C6laucxsKFXivwcewDBL/7z0cVpHgdbIn0lpvmpUPa9tX8zK6M5x40
+         W4MGgyAUvZRjrWkyTKhyTMWxUdtqxxywzeOAdNOACmwYrj9Dmpxx1aLKCQsKJJSaKU
+         t3tti6/VxfzIbdsxu0ZTwY82olFSbw0lfS5oRgY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        "Christopher M. Riedl" <cmr@informatik.wtf>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>
-Subject: [PATCH 4.4 130/132] powerpc/64s: support nospectre_v2 cmdline option
-Date:   Wed, 27 Nov 2019 21:32:01 +0100
-Message-Id: <20191127203034.232292736@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 190/211] media: usbvision: Fix races among open, close, and disconnect
+Date:   Wed, 27 Nov 2019 21:32:03 +0100
+Message-Id: <20191127203111.644123253@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +44,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Christopher M. Riedl" <cmr@informatik.wtf>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit d8f0e0b073e1ec52a05f0c2a56318b47387d2f10 upstream.
+commit 9e08117c9d4efc1e1bc6fce83dab856d9fd284b6 upstream.
 
-Add support for disabling the kernel implemented spectre v2 mitigation
-(count cache flush on context switch) via the nospectre_v2 and
-mitigations=off cmdline options.
+Visual inspection of the usbvision driver shows that it suffers from
+three races between its open, close, and disconnect handlers.  In
+particular, the driver is careful to update its usbvision->user and
+usbvision->remove_pending flags while holding the private mutex, but:
 
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Christopher M. Riedl <cmr@informatik.wtf>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190524024647.381-1-cmr@informatik.wtf
-Signed-off-by: Daniel Axtens <dja@axtens.net>
+	usbvision_v4l2_close() and usbvision_radio_close() don't hold
+	the mutex while they check the value of
+	usbvision->remove_pending;
+
+	usbvision_disconnect() doesn't hold the mutex while checking
+	the value of usbvision->user; and
+
+	also, usbvision_v4l2_open() and usbvision_radio_open() don't
+	check whether the device has been unplugged before allowing
+	the user to open the device files.
+
+Each of these can potentially lead to usbvision_release() being called
+twice and use-after-free errors.
+
+This patch fixes the races by reading the flags while the mutex is
+still held and checking for pending removes before allowing an open to
+succeed.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/kernel/security.c |   19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -29,7 +29,7 @@ static enum count_cache_flush_type count
- bool barrier_nospec_enabled;
- static bool no_nospec;
- static bool btb_flush_enabled;
--#ifdef CONFIG_PPC_FSL_BOOK3E
-+#if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_BOOK3S_64)
- static bool no_spectrev2;
- #endif
+---
+ drivers/media/usb/usbvision/usbvision-video.c |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+--- a/drivers/media/usb/usbvision/usbvision-video.c
++++ b/drivers/media/usb/usbvision/usbvision-video.c
+@@ -328,6 +328,10 @@ static int usbvision_v4l2_open(struct fi
+ 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
+ 		return -ERESTARTSYS;
  
-@@ -107,7 +107,7 @@ static __init int barrier_nospec_debugfs
- device_initcall(barrier_nospec_debugfs_init);
- #endif /* CONFIG_DEBUG_FS */
- 
--#ifdef CONFIG_PPC_FSL_BOOK3E
-+#if defined(CONFIG_PPC_FSL_BOOK3E) || defined(CONFIG_PPC_BOOK3S_64)
- static int __init handle_nospectre_v2(char *p)
- {
- 	no_spectrev2 = true;
-@@ -115,6 +115,9 @@ static int __init handle_nospectre_v2(ch
- 	return 0;
- }
- early_param("nospectre_v2", handle_nospectre_v2);
-+#endif /* CONFIG_PPC_FSL_BOOK3E || CONFIG_PPC_BOOK3S_64 */
-+
-+#ifdef CONFIG_PPC_FSL_BOOK3E
- void setup_spectre_v2(void)
- {
- 	if (no_spectrev2)
-@@ -390,7 +393,17 @@ static void toggle_count_cache_flush(boo
- 
- void setup_count_cache_flush(void)
- {
--	toggle_count_cache_flush(true);
-+	bool enable = true;
-+
-+	if (no_spectrev2 || cpu_mitigations_off()) {
-+		if (security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED) ||
-+		    security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED))
-+			pr_warn("Spectre v2 mitigations not under software control, can't disable\n");
-+
-+		enable = false;
++	if (usbvision->remove_pending) {
++		err_code = -ENODEV;
++		goto unlock;
 +	}
-+
-+	toggle_count_cache_flush(enable);
- }
+ 	if (usbvision->user) {
+ 		err_code = -EBUSY;
+ 	} else {
+@@ -391,6 +395,7 @@ unlock:
+ static int usbvision_v4l2_close(struct file *file)
+ {
+ 	struct usb_usbvision *usbvision = video_drvdata(file);
++	int r;
  
- #ifdef CONFIG_DEBUG_FS
+ 	PDEBUG(DBG_IO, "close");
+ 
+@@ -405,9 +410,10 @@ static int usbvision_v4l2_close(struct f
+ 	usbvision_scratch_free(usbvision);
+ 
+ 	usbvision->user--;
++	r = usbvision->remove_pending;
+ 	mutex_unlock(&usbvision->v4l2_lock);
+ 
+-	if (usbvision->remove_pending) {
++	if (r) {
+ 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
+ 		usbvision_release(usbvision);
+ 		return 0;
+@@ -1091,6 +1097,11 @@ static int usbvision_radio_open(struct f
+ 
+ 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
+ 		return -ERESTARTSYS;
++
++	if (usbvision->remove_pending) {
++		err_code = -ENODEV;
++		goto out;
++	}
+ 	err_code = v4l2_fh_open(file);
+ 	if (err_code)
+ 		goto out;
+@@ -1123,6 +1134,7 @@ out:
+ static int usbvision_radio_close(struct file *file)
+ {
+ 	struct usb_usbvision *usbvision = video_drvdata(file);
++	int r;
+ 
+ 	PDEBUG(DBG_IO, "");
+ 
+@@ -1135,9 +1147,10 @@ static int usbvision_radio_close(struct
+ 	usbvision_audio_off(usbvision);
+ 	usbvision->radio = 0;
+ 	usbvision->user--;
++	r = usbvision->remove_pending;
+ 	mutex_unlock(&usbvision->v4l2_lock);
+ 
+-	if (usbvision->remove_pending) {
++	if (r) {
+ 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
+ 		v4l2_fh_release(file);
+ 		usbvision_release(usbvision);
+@@ -1562,6 +1575,7 @@ err_usb:
+ static void usbvision_disconnect(struct usb_interface *intf)
+ {
+ 	struct usb_usbvision *usbvision = to_usbvision(usb_get_intfdata(intf));
++	int u;
+ 
+ 	PDEBUG(DBG_PROBE, "");
+ 
+@@ -1578,13 +1592,14 @@ static void usbvision_disconnect(struct
+ 	v4l2_device_disconnect(&usbvision->v4l2_dev);
+ 	usbvision_i2c_unregister(usbvision);
+ 	usbvision->remove_pending = 1;	/* Now all ISO data will be ignored */
++	u = usbvision->user;
+ 
+ 	usb_put_dev(usbvision->dev);
+ 	usbvision->dev = NULL;	/* USB device is no more */
+ 
+ 	mutex_unlock(&usbvision->v4l2_lock);
+ 
+-	if (usbvision->user) {
++	if (u) {
+ 		printk(KERN_INFO "%s: In use, disconnect pending\n",
+ 		       __func__);
+ 		wake_up_interruptible(&usbvision->wait_frame);
 
 
