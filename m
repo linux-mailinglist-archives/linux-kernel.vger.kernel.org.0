@@ -2,129 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D9E10BD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A4710BD3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731487AbfK0V1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:27:38 -0500
-Received: from mga06.intel.com ([134.134.136.31]:23224 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731392AbfK0U7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:59:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 12:59:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,250,1571727600"; 
-   d="scan'208";a="383616943"
-Received: from gtau-mobl.ger.corp.intel.com (HELO localhost) ([10.251.83.243])
-  by orsmga005.jf.intel.com with ESMTP; 27 Nov 2019 12:59:14 -0800
-Date:   Wed, 27 Nov 2019 22:59:12 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [GIT PULL] tpmdd updates for Linux v5.4
-Message-ID: <20191127205912.GB14290@linux.intel.com>
-References: <20190902143121.pjnykevzlajlcrh6@linux.intel.com>
- <CAA9_cmeLnHK4y+usQaWo72nUG3RNsripuZnS-koY4XTRC+mwJA@mail.gmail.com>
- <20191127205800.GA14290@linux.intel.com>
+        id S1731926AbfK0V1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:27:03 -0500
+Received: from smtprelay0110.hostedemail.com ([216.40.44.110]:50874 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730978AbfK0U75 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:59:57 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 794C21802587B;
+        Wed, 27 Nov 2019 20:59:55 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1561:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3867:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6117:6742:7901:8985:9025:10004:10400:10848:11232:11658:11914:12043:12050:12297:12740:12895:13069:13255:13311:13357:13439:13894:14181:14659:14721:21080:21627:21788:30054:30060:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: goose47_391d3abea6950
+X-Filterd-Recvd-Size: 2157
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 27 Nov 2019 20:59:52 +0000 (UTC)
+Message-ID: <ae40eb808f420f5de4a140b8757dfbc426a8cf90.camel@perches.com>
+Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
+ License Identifier
+From:   Joe Perches <joe@perches.com>
+To:     Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 27 Nov 2019 12:59:25 -0800
+In-Reply-To: <9bacc7d9-6bd9-0b7c-18cd-d614796397dd@suse.de>
+References: <cover.1574871463.git.nishadkamdar@gmail.com>
+         <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
+         <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
+         <9bacc7d9-6bd9-0b7c-18cd-d614796397dd@suse.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127205800.GA14290@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 10:58:00PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 20, 2019 at 08:48:25PM -0800, Dan Williams wrote:
-> > On Mon, Sep 2, 2019 at 7:34 AM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > Hi
-> > >
-> > > A new driver for fTPM living inside ARM TEE was added this round. In
-> > > addition to that, there is three bug fixes and one clean up.
-> > >
-> > > /Jarkko
-> > >
-> > > The following changes since commit 8fb8e9e46261e0117cb3cffb6dd8bb7e08f8649b:
-> > >
-> > >   Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-08-30 09:23:45 -0700)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190902
-> > >
-> > > for you to fetch changes up to e8bd417aab0c72bfb54465596b16085702ba0405:
-> > >
-> > >   tpm/tpm_ftpm_tee: Document fTPM TEE driver (2019-09-02 17:08:35 +0300)
-> > >
-> > > ----------------------------------------------------------------
-> > > tpmdd updates for Linux v5.4
-> > >
-> > > ----------------------------------------------------------------
-> > > Jarkko Sakkinen (1):
-> > >       tpm: Remove a deprecated comments about implicit sysfs locking
-> > >
-> > > Lukas Bulwahn (1):
-> > >       MAINTAINERS: fix style in KEYS-TRUSTED entry
-> > >
-> > > Sasha Levin (2):
-> > >       tpm/tpm_ftpm_tee: A driver for firmware TPM running inside TEE
-> > >       tpm/tpm_ftpm_tee: Document fTPM TEE driver
-> > >
-> > > Stefan Berger (2):
-> > >       tpm_tis_core: Turn on the TPM before probing IRQ's
-> > >       tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
-> > 
-> > Hi Jarrko,
-> > 
-> > I'm replying here because I can't find the patches to reply to
-> > directly from LKML.
-> > 
-> > Commit 7f064c378e2c "tpm_tis_core: Turn on the TPM before probing
-> > IRQ's" in the v5.3-stable tree caused a regression on a pre-release
-> > platform with a TPM2 device. The interrupt starts screaming when the
-> > driver is loaded and does not stop until the device is force unbond
-> > from the driver by:
-> > 
-> >      echo IFX0740:00 > /sys/bus/platform/drivers/tpm_tis/unbind
-> > 
-> > I checked v5.4-rc8 and it has the same problem. I tried reverting:
-> > 
-> > 1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
-> > 5b359c7c4372 tpm_tis_core: Turn on the TPM before probing IRQ's
-> > 
-> > Which silenced the screaming interrupt problem, but now the TPM is reporting:
-> > 
-> > [    3.725131] tpm_tis IFX0740:00: 2.0 TPM (device-id 0x1B, rev-id 16)
-> > [    3.725358] tpm tpm0: tpm_try_transmit: send(): error -5
-> > [    3.725359] tpm tpm0: [Firmware Bug]: TPM interrupt not working,
-> > polling instead
-> > 
-> > ...at load, where it was not reporting this previously. Can you take a look?
-> 
-> It is already in WiP:
-> 
-> https://patchwork.kernel.org/patch/11240111/
-> 
-> Stefan also sent patches that revert to changes that you described:
-> 
-> https://patchwork.kernel.org/cover/11262363/
-> 
-> Probably better first to fix the issue on top of master before deciding
-> actions.
+On Wed, 2019-11-27 at 21:55 +0100, Andreas Färber wrote:
+> However, if we're touching these lines anyway, shouldn't we be updating
+> the SPDX Identifier to GPL-2.0-only while at it?
 
-... and apologies for late response.
+Probably better to do that with a treewide script one day.
 
-/Jarkko
+https://lkml.org/lkml/2018/8/16/487
+
+
