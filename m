@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF46910BA15
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0E0410B8D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731477AbfK0U7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51400 "EHLO mail.kernel.org"
+        id S1728885AbfK0UrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:47:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731463AbfK0U7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:59:47 -0500
+        id S1729972AbfK0UrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:47:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ECDE20678;
-        Wed, 27 Nov 2019 20:59:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DC6421826;
+        Wed, 27 Nov 2019 20:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888386;
-        bh=XR5WvofJzj0e2g0fbgE8Wpx6sS5fNscbX+8F20oWjZo=;
+        s=default; t=1574887632;
+        bh=phxjke+MdZknIuPKAZ3hQGzWF9cgS8GpyWlJh7zQ7/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pw+nP5LSek+5ZJs5aMQRfnTtzGypL5ZrXbiQwkJbGa/nduK22pwZLAlgCDddhcbM3
-         8lRLsbGeLJ5pPbPFxlBS7nY658/Rd833yW1P/xYbJXQtpgoyXDi53SoccDsHGDR2FR
-         HYnfJ4cgyOm33XcDqXr1xp45kVQVgyhp2lkgjikE=
+        b=swM85izSSqYQckxcIFpcF+CHwGkHTH98zDTNa2J8z7JMgPPoUYN8PrGnzzGqjhUHJ
+         zA3CJ5vXA1qCW6ps7HawTtylXye2I4JkxItEmwscZyihwXpDDFyRxQYilfpx2zfgmP
+         NGqmPT0KtMGaXonzBN2Dj3Apo6o7xr7BcG237F3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 115/306] selftests/bpf: fix return value comparison for tests in test_libbpf.sh
-Date:   Wed, 27 Nov 2019 21:29:25 +0100
-Message-Id: <20191127203123.587919103@linuxfoundation.org>
+Subject: [PATCH 4.14 033/211] btrfs: handle error of get_old_root
+Date:   Wed, 27 Nov 2019 21:29:26 +0100
+Message-Id: <20191127203054.972119527@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quentin Monnet <quentin.monnet@netronome.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit c5fa5d602221362f8341ecd9e32d83194abf5bd9 ]
+[ Upstream commit 315bed43fea532650933e7bba316a7601d439edf ]
 
-The return value for each test in test_libbpf.sh is compared with
+In btrfs_search_old_slot get_old_root is always used with the assumption
+it cannot fail. However, this is not true in rare circumstance it can
+fail and return null. This will lead to null point dereference when the
+header is read. Fix this by checking the return value and properly
+handling NULL by setting ret to -EIO and returning gracefully.
 
-    if (( $? == 0 )) ; then ...
-
-This works well with bash, but not with dash, that /bin/sh is aliased to
-on some systems (such as Ubuntu).
-
-Let's replace this comparison by something that works on both shells.
-
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Coverity-id: 1087503
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_libbpf.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/ctree.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/test_libbpf.sh b/tools/testing/selftests/bpf/test_libbpf.sh
-index 8b1bc96d8e0cc..2989b2e2d856d 100755
---- a/tools/testing/selftests/bpf/test_libbpf.sh
-+++ b/tools/testing/selftests/bpf/test_libbpf.sh
-@@ -6,7 +6,7 @@ export TESTNAME=test_libbpf
- # Determine selftest success via shell exit code
- exit_handler()
- {
--	if (( $? == 0 )); then
-+	if [ $? -eq 0 ]; then
- 		echo "selftests: $TESTNAME [PASS]";
- 	else
- 		echo "$TESTNAME: failed at file $LAST_LOADED" 1>&2
+diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+index 27983fd657abd..d2263caff3070 100644
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -2988,6 +2988,10 @@ int btrfs_search_old_slot(struct btrfs_root *root, const struct btrfs_key *key,
+ 
+ again:
+ 	b = get_old_root(root, time_seq);
++	if (!b) {
++		ret = -EIO;
++		goto done;
++	}
+ 	level = btrfs_header_level(b);
+ 	p->locks[level] = BTRFS_READ_LOCK;
+ 
 -- 
 2.20.1
 
