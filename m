@@ -2,124 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06FF310ACCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 10:47:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D13F010ACD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 10:49:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfK0Jra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 04:47:30 -0500
-Received: from mail.dlink.ru ([178.170.168.18]:45696 "EHLO fd.dlink.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfK0Jra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 04:47:30 -0500
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id 774D41B21308; Wed, 27 Nov 2019 12:47:27 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 774D41B21308
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1574848047; bh=jsmsLyZC85bwwRh9nTRZB17m6X2+Kg7Y8UTp79ZBK2g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=Zbrl2dBP4M0S6FvqNY2EPIxsAPsEae+RA1ovQJo7lac7voVbmckMrCEeCE+sglKI1
-         0kyzHaGf/djEW3YkNmc7LB+itXdMgXAvchZ65e8/QkWp95nQ3XWbWhzAZndLuDThrA
-         cUDsKVAQer2jld+I72s+6oc0pePtLKoDExfvZUnk=
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
-        USER_IN_WHITELIST autolearn=disabled version=3.4.2
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id 24BFF1B2089D;
-        Wed, 27 Nov 2019 12:47:17 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 24BFF1B2089D
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id A7E6F1B22678;
-        Wed, 27 Nov 2019 12:47:16 +0300 (MSK)
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Wed, 27 Nov 2019 12:47:16 +0300 (MSK)
+        id S1726881AbfK0Jsy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 27 Nov 2019 04:48:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35466 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726133AbfK0Jsx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 04:48:53 -0500
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-87-NFXHfLVYNiSAs2jPeVzGOA-1; Wed, 27 Nov 2019 04:48:49 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BD0380183D;
+        Wed, 27 Nov 2019 09:48:47 +0000 (UTC)
+Received: from krava.redhat.com (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B627E5D6C8;
+        Wed, 27 Nov 2019 09:48:38 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>
+Subject: [PATCH 0/3] perf/bpftool: Allow to link libbpf dynamically
+Date:   Wed, 27 Nov 2019 10:48:34 +0100
+Message-Id: <20191127094837.4045-1-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 27 Nov 2019 12:47:16 +0300
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     David Miller <davem@davemloft.net>
-Cc:     pabeni@redhat.com, johannes@sipsolutions.net, ecree@solarflare.com,
-        nicholas.johnson-opensource@outlook.com.au, jiri@mellanox.com,
-        edumazet@google.com, idosch@mellanox.com, petrm@mellanox.com,
-        sd@queasysnail.net, f.fainelli@gmail.com,
-        jaswinder.singh@linaro.org, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, emmanuel.grumbach@intel.com,
-        luciano.coelho@intel.com, linuxwifi@intel.com,
-        kvalo@codeaurora.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL in
- napi_gro_receive()
-In-Reply-To: <20191126.155746.627765091618337419.davem@davemloft.net>
-References: <414288fcac2ba4fcee48a63bdbf28f7b9a5037c6.camel@sipsolutions.net>
- <b4b92c4d066007d9cb77e1645e667715c17834fb.camel@redhat.com>
- <d535d5142e42b8c550f0220200e3779d@dlink.ru>
- <20191126.155746.627765091618337419.davem@davemloft.net>
-User-Agent: Roundcube Webmail/1.4.0
-Message-ID: <eb1b40cb25eb9808bb54f33913f5fdb4@dlink.ru>
-X-Sender: alobakin@dlink.ru
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: NFXHfLVYNiSAs2jPeVzGOA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller wrote 27.11.2019 02:57:
-> From: Alexander Lobakin <alobakin@dlink.ru>
-> Date: Mon, 25 Nov 2019 15:02:24 +0300
-> 
->> Paolo Abeni wrote 25.11.2019 14:42:
->>> For -net, I *think* something as dumb and hacky as the following 
->>> could
->>> possibly work:
->>> ----
->>> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
->>> b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
->>> index 4bba6b8a863c..df82fad96cbb 100644
->>> --- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
->>> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
->>> @@ -1527,7 +1527,7 @@ static void iwl_pcie_rx_handle(struct iwl_trans
->>> *trans, int queue)
->>>                 iwl_pcie_rxq_alloc_rbs(trans, GFP_ATOMIC, rxq);
->>>         if (rxq->napi.poll)
->>> -               napi_gro_flush(&rxq->napi, false);
->>> +               napi_complete_done(&rxq->napi, 0);
->>>         iwl_pcie_rxq_restock(trans, rxq);
->>>  }
->>> ---
->> 
->> napi_complete_done(napi, 0) has an equivalent static inline
->> napi_complete(napi). I'm not sure it will work without any issues
->> as iwlwifi doesn't _really_ turn NAPI into scheduling state.
->> 
->> I'm not very familiar with iwlwifi, but as a work around manual
->> napi_gro_flush() you can also manually flush napi->rx_list to
->> prevent packets from stalling:
->> 
->> diff -Naur a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
->> b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
->> --- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c 2019-11-25
->> --- 14:55:03.610355230 +0300
->> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c 2019-11-25
->> 14:57:29.399556868 +0300
->  ...
-> 
-> Thanks to everyone for looking into this.
-> 
-> Can I get some kind of fix in the next 24 hours?  I want to send a 
-> quick
-> follow-on pull request to Linus to deal with all of the fallout, and in
-> particular fix this regression.
+hi,
+adding support to link bpftool with libbpf dynamically,
+and config change for perf.
 
-The fix is here: [1]
-It's pretty straightforward, but needs a minimal testing anyways.
-If any changes are needed, please let me know.
+It's now possible to use:
+  $ make -C tools/bpf/bpftool/ LIBBPF_DYNAMIC=1
 
-> Thanks!
+which will detect libbpf devel package with needed version,
+and if found, link it with bpftool.
 
-Regards,
-ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
+It's possible to use arbitrary installed libbpf:
+  $ make -C tools/bpf/bpftool/ LIBBPF_DYNAMIC=1 LIBBPF_DIR=/tmp/libbpf/
 
-[1] 
-https://lore.kernel.org/netdev/20191127094123.18161-1-alobakin@dlink.ru
+I based this change on top of Arnaldo's perf/core, because
+it contains libbpf feature detection code as dependency.
+It's now also synced with latest bpf-next, so Toke's change
+applies correctly.
+
+Also available in:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  libbpf/dyn
+
+thanks,
+jirka
+
+
+---
+Jiri Olsa (2):
+      perf tools: Allow to specify libbpf install directory
+      bpftool: Allow to link libbpf dynamically
+
+Toke Høiland-Jørgensen (1):
+      libbpf: Export netlink functions used by bpftool
+
+ tools/bpf/bpftool/Makefile        | 40 +++++++++++++++++++++++++++++++++++++++-
+ tools/build/feature/test-libbpf.c |  9 +++++++++
+ tools/lib/bpf/libbpf.h            | 22 +++++++++++++---------
+ tools/lib/bpf/libbpf.map          |  7 +++++++
+ tools/lib/bpf/nlattr.h            | 15 ++++++++++-----
+ tools/perf/Makefile.config        | 27 ++++++++++++++++++++-------
+ 6 files changed, 98 insertions(+), 22 deletions(-)
+
