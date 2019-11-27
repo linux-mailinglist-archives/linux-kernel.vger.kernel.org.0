@@ -2,74 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52FED10AD8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6AF10AD90
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:29:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfK0K2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:28:15 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44266 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfK0K2O (ORCPT
+        id S1726987AbfK0K25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:28:57 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52130 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726664AbfK0K25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:28:14 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZuYM-0004KS-Tg; Wed, 27 Nov 2019 11:28:10 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7B6481C1E75;
-        Wed, 27 Nov 2019 11:28:10 +0100 (CET)
-Date:   Wed, 27 Nov 2019 10:28:10 -0000
-From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/entry/32: Remove unused 'restore_all_notrace'
- local label
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>
+        Wed, 27 Nov 2019 05:28:57 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARARSCO025133;
+        Wed, 27 Nov 2019 11:28:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=NGFn1INSjiFml8tyG7QtE320FjzT4hxnP0D7Gm8LUjM=;
+ b=CHYiT5KJS0Tugi2Uic3ENpPMOFjtyZmwijWCu/l046fRACJXZugPjioFcf/uqHF+KCcc
+ UheMnN7h5rfADvt9oPOixm2x3Iwegv0LGE7Fr/LYtMtQJRyZLh3l+vNc6poedJoCVSPu
+ 4sGd6WZianXOrxmgycP+sawyxhg9T7mkK+uGqh+JeFytqzjC+Ow9Wdwk9N5ZsCBF+nLD
+ 5ZpxpE7WlnENlBMauAKp4/jC2Fj8b/qB3qh/hhvecgmhOE7X/unXzSYWwjUYuoRtXCX3
+ /53tLbtIzUB5FHsV7JkofJhdGi/3pgAuc+06aky7JPusU9KjoIk+zKGrYMQDP27kjvvK TQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2whcxyb1fu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Nov 2019 11:28:53 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 150E6100039;
+        Wed, 27 Nov 2019 11:28:50 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 67F582B1869;
+        Wed, 27 Nov 2019 11:28:50 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE1.st.com (10.75.127.16)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov 2019 11:28:49
+ +0100
+From:   Yannick Fertre <yannick.fertre@st.com>
+To:     Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Input: goodix - support gt9147 touchpanel
+Date:   Wed, 27 Nov 2019 11:28:46 +0100
+Message-ID: <1574850526-13518-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Message-ID: <157485049034.21853.7019749519013705012.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-27_02:2019-11-27,2019-11-27 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+From: Yannick Fertré <yannick.fertre@st.com>
 
-Commit-ID:     3e1b43586eae232157ca70e905cece0297f17bfd
-Gitweb:        https://git.kernel.org/tip/3e1b43586eae232157ca70e905cece0297f17bfd
-Author:        Borislav Petkov <bp@alien8.de>
-AuthorDate:    Sun, 24 Nov 2019 17:12:25 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 27 Nov 2019 10:38:16 +01:00
+Add support for it by adding compatible and supported chip data
+(default settings used).
+The chip data on GT9147 is similar to GT912, like
+- config data register has 0x8047 address
+- config data register max len is 240
+- config data checksum has 8-bit
 
-x86/entry/32: Remove unused 'restore_all_notrace' local label
-
-Signed-off-by: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
 ---
- arch/x86/entry/entry_32.S | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/input/touchscreen/goodix.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 632432b..7e05604 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1090,7 +1090,6 @@ SYM_FUNC_START(entry_INT80_32)
- restore_all:
- 	TRACE_IRQS_IRET
- 	SWITCH_TO_ENTRY_STACK
--.Lrestore_all_notrace:
- 	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
- 	/* Switch back to user CR3 */
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+index fb43aa7..b470773 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -1045,6 +1045,7 @@ static const struct of_device_id goodix_of_match[] = {
+ 	{ .compatible = "goodix,gt9271" },
+ 	{ .compatible = "goodix,gt928" },
+ 	{ .compatible = "goodix,gt967" },
++	{ .compatible = "goodix,gt9147",},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, goodix_of_match);
+-- 
+2.7.4
+
