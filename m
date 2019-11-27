@@ -2,255 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A765410ABE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0135D10ABEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:40:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfK0IgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:36:24 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44010 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfK0IgY (ORCPT
+        id S1726514AbfK0Iko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:40:44 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57032 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbfK0Ikn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:36:24 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h14so436208pfe.10
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 00:36:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kEWlTxImZpdkwXhGS8325FceSNRBs8VLhunG13s9KAM=;
-        b=yHpRnVxIjSPnmIdbMbeu/tYzFBYDtKTTB287cO1KR1bARwSmREn/eQP74Bl7Af9/y8
-         a82ewmL2RBQDxl2XmBxTNBAL+KaxJmKAwlKSRl+2cOkk7//wvP6vjlBiIup/h7v2jo8V
-         hD3ZtLbo9ZCwivNiTAZq2pUpGLBvhYf0Fvj3PTlMiN0akT2u3kqKvVPIDeYgrbSC2Cb9
-         ERUMql/9D07dmErr5NA8VCMA753S+WHPa1jovOmvlhsanFxOuurKFWr5XnitU2n4yk0s
-         6g95m1QCflgnf2y6N/vMnCzgc3LucbF8wwRMWAlX49Y/dCTaJfA0G0K6Ehqx6Ay7WAr2
-         baJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kEWlTxImZpdkwXhGS8325FceSNRBs8VLhunG13s9KAM=;
-        b=p68p1vXZoIVaaZVPZYNd8TPidVWDmiSOnzN1AAs7iGDcG1jBnE9SSdK2zl/xZ56Xlk
-         8+Rv46yZpR1gIXU0qJgvnursy0UjA4TmnGwgMYCrqSruN5cSX/27Uw9e4psPBGVbjZxx
-         brGB763yTKD2LeusSujW7l9ZyAg4AmFwDhCP25Sy+9SK8y72lk1gidK/FBCusiFeQ+7L
-         fCZdUj1k1iJW8RrJ0v4UUXmmIlKQiROOODcYYqS3b2yPTI+jw7wmpTQaLysLlwjapcuU
-         3dSBavv7qU/CdsQa4fSvqjvsBlojYmXZCQ0yu+s3voyn3lh6eBmuizG7dOBJUFbSt260
-         IWMw==
-X-Gm-Message-State: APjAAAWbxB0t2R1R6TQUutDdf0j9CjBmFdMkr0YFLws2fnyAa308r1y/
-        +Jcz8biA5tMSVtVjtX0YNQVpvg==
-X-Google-Smtp-Source: APXvYqz6ciA/bE2sIdxV8IrR+vllOp4Mb3eFxMKadK3NK074FLo5rfjIe4sBJET8JrQj229M/EAXpQ==
-X-Received: by 2002:a63:1b1f:: with SMTP id b31mr3451053pgb.177.1574843782900;
-        Wed, 27 Nov 2019 00:36:22 -0800 (PST)
-Received: from localhost ([122.171.112.123])
-        by smtp.gmail.com with ESMTPSA id k24sm15884442pfk.63.2019.11.27.00.36.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Nov 2019 00:36:21 -0800 (PST)
-Date:   Wed, 27 Nov 2019 14:06:19 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Andrew-sh.Cheng" <andrew-sh.cheng@mediatek.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com, fan.chen@mediatek.com
-Subject: Re: [v5, PATCH 4/5] cpufreq: mediatek: add opp notification for SVS
- support
-Message-ID: <20191127083619.etocnhpyyut3hzwq@vireshk-i7>
-References: <1574769046-28449-1-git-send-email-andrew-sh.cheng@mediatek.com>
- <1574769046-28449-5-git-send-email-andrew-sh.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574769046-28449-5-git-send-email-andrew-sh.cheng@mediatek.com>
-User-Agent: NeoMutt/20180716-391-311a52
+        Wed, 27 Nov 2019 03:40:43 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAR8diPW098182;
+        Wed, 27 Nov 2019 08:39:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=qgB41Ahd8fkfj9DCrb0acci8sQ/6nxDp8iC0TStjsYs=;
+ b=kKS/gyC2wrkG6iJvxjNwh38z6ghKNTvoxsGkjfL676Xfs3hzDVYRUgEer7BYsA+R95LX
+ h7+NlWJ6U9Nx+HjGwf4RPmDNIqlzgbhnCgUnNqwWDwkRYNZj+MS05oBGvVa6XZZ+Za4y
+ koFwrD+jvdWiMifwoH+d9+aG5sjEp/ZR71OOkKXfZqmKL5Mp9mGtGj0etM53I2n0h70H
+ 0t+PAeQBJ2Nyos3E9sVOjxU1FwjQJDu/W7xx4V52g5e6JrVd24UoOmJpbrSEPjK/qel4
+ XJ7qto8CB12qSmBNJ4ZrLQlzVa04C9t4s0GZ9FcN2waK0oIPUuqOXZmktUHr4R+fFQAH HQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2wewdrbxbk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 08:39:55 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAR8dgZi060741;
+        Wed, 27 Nov 2019 08:39:54 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wgvhbr6su-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 08:39:51 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAR8cRor013061;
+        Wed, 27 Nov 2019 08:38:28 GMT
+Received: from z2.cn.oracle.com (/10.182.71.218)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Nov 2019 00:38:27 -0800
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH] sched/clock: use static_branch_likely() check at sched_clock_running
+Date:   Wed, 27 Nov 2019 16:37:28 +0800
+Message-Id: <1574843848-26825-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9453 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911270073
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9453 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911270073
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-11-19, 19:50, Andrew-sh.Cheng wrote:
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> index 4b0cc50dd93b..7c37ab31230a 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -42,6 +42,10 @@ struct mtk_cpu_dvfs_info {
->  	struct list_head list_head;
->  	int intermediate_voltage;
->  	bool need_voltage_tracking;
-> +	struct mutex lock; /* avoid notify and policy race condition */
+sched_clock_running is enabled early at bootup stage and never
+disabled. So hints that to compiler by using static_branch_likely()
+rather than static_branch_unlikely().
 
-Will a read-write lock be better suited here for performance reasons ?
+Fixes: 46457ea464f5 ("sched/clock: Use static key for sched_clock_running")
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+---
+ kernel/sched/clock.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> +	struct notifier_block opp_nb;
-> +	int opp_cpu;
-> +	unsigned long opp_freq;
->  };
->  
->  static LIST_HEAD(dvfs_info_list);
-> @@ -231,6 +235,7 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
->  	vproc = dev_pm_opp_get_voltage(opp);
->  	dev_pm_opp_put(opp);
->  
-> +	mutex_lock(&info->lock);
->  	/*
->  	 * If the new voltage or the intermediate voltage is higher than the
->  	 * current voltage, scale up voltage first.
-> @@ -242,6 +247,7 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
->  			pr_err("cpu%d: failed to scale up voltage!\n",
->  			       policy->cpu);
->  			mtk_cpufreq_set_voltage(info, old_vproc);
-> +			mutex_unlock(&info->lock);
->  			return ret;
->  		}
->  	}
-> @@ -253,6 +259,7 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
->  		       policy->cpu);
->  		mtk_cpufreq_set_voltage(info, old_vproc);
->  		WARN_ON(1);
-> +		mutex_unlock(&info->lock);
->  		return ret;
->  	}
->  
-> @@ -263,6 +270,7 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
->  		       policy->cpu);
->  		clk_set_parent(cpu_clk, armpll);
->  		mtk_cpufreq_set_voltage(info, old_vproc);
-> +		mutex_unlock(&info->lock);
->  		return ret;
->  	}
->  
-> @@ -273,6 +281,7 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
->  		       policy->cpu);
->  		mtk_cpufreq_set_voltage(info, inter_vproc);
->  		WARN_ON(1);
-> +		mutex_unlock(&info->lock);
->  		return ret;
->  	}
->  
-> @@ -288,15 +297,75 @@ static int mtk_cpufreq_set_target(struct cpufreq_policy *policy,
->  			clk_set_parent(cpu_clk, info->inter_clk);
->  			clk_set_rate(armpll, old_freq_hz);
->  			clk_set_parent(cpu_clk, armpll);
-> +			mutex_unlock(&info->lock);
->  			return ret;
->  		}
->  	}
->  
-> +	info->opp_freq = freq_hz;
-> +	mutex_unlock(&info->lock);
-> +
->  	return 0;
->  }
->  
->  #define DYNAMIC_POWER "dynamic-power-coefficient"
->  
-> +static int mtk_cpufreq_opp_notifier(struct notifier_block *nb,
-> +				    unsigned long event, void *data)
-> +{
-> +	struct dev_pm_opp *opp = data;
-> +	struct dev_pm_opp *opp_item;
-> +	struct mtk_cpu_dvfs_info *info =
-> +		container_of(nb, struct mtk_cpu_dvfs_info, opp_nb);
-
-Do the assignment after all definitions, instead of awkwardly breaking
-the line here.
-
-> +	unsigned long freq, volt;
-> +	struct cpufreq_policy *policy;
-> +	int ret = 0;
-> +
-> +	if (event == OPP_EVENT_ADJUST_VOLTAGE) {
-> +		freq = dev_pm_opp_get_freq(opp);
-> +
-> +		mutex_lock(&info->lock);
-> +		if (info->opp_freq == freq) {
-> +			volt = dev_pm_opp_get_voltage(opp);
-> +			ret = mtk_cpufreq_set_voltage(info, volt);
-> +			if (ret)
-> +				dev_err(info->cpu_dev, "failed to scale voltage: %d\n",
-> +					ret);
-> +		}
-> +		mutex_unlock(&info->lock);
-> +	} else if (event == OPP_EVENT_DISABLE) {
-> +		freq = info->opp_freq;
-> +		opp_item = dev_pm_opp_find_freq_ceil(info->cpu_dev, &freq);
-
-name it new_opp instead of opp_item.
-
-> +		if (!IS_ERR(opp_item))
-> +			dev_pm_opp_put(opp_item);
-> +		else
-> +			freq = 0;
-> +
-
-What is the purpose of the above code ?
-
-> +		/* case of current opp is disabled */
-> +		if (freq == 0 || freq != info->opp_freq) {
-> +			// find an enable opp item
-
-Use proper commenting style please.
-
-> +			freq = 1;
-> +			opp_item = dev_pm_opp_find_freq_ceil(info->cpu_dev,
-> +							     &freq);
-> +			if (!IS_ERR(opp_item)) {
-> +				dev_pm_opp_put(opp_item);
-> +				policy = cpufreq_cpu_get(info->opp_cpu);
-> +				if (policy) {
-> +					cpufreq_driver_target(policy,
-> +						freq / 1000,
-> +						CPUFREQ_RELATION_L);
-
-Why don't you simply call this instead of all the code in the else
-block ?
-
-> +					cpufreq_cpu_put(policy);
-> +				}
-> +			} else {
-> +				pr_err("%s: all opp items are disabled\n",
-> +				       __func__);
-> +			}
-> +		}
-> +	}
-> +
-> +	return notifier_from_errno(ret);
-> +}
-> +
->  static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
->  {
->  	struct device *cpu_dev;
-> @@ -383,11 +452,21 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
->  	info->intermediate_voltage = dev_pm_opp_get_voltage(opp);
->  	dev_pm_opp_put(opp);
->  
-> +	info->opp_cpu = cpu;
-> +	info->opp_nb.notifier_call = mtk_cpufreq_opp_notifier;
-> +	ret = dev_pm_opp_register_notifier(cpu_dev, &info->opp_nb);
-> +	if (ret) {
-> +		pr_warn("cannot register opp notification\n");
-> +		goto out_free_opp_table;
-> +	}
-> +
-> +	mutex_init(&info->lock);
->  	info->cpu_dev = cpu_dev;
->  	info->proc_reg = proc_reg;
->  	info->sram_reg = IS_ERR(sram_reg) ? NULL : sram_reg;
->  	info->cpu_clk = cpu_clk;
->  	info->inter_clk = inter_clk;
-> +	info->opp_freq = clk_get_rate(cpu_clk);
->  
->  	/*
->  	 * If SRAM regulator is present, software "voltage tracking" is needed
-> -- 
-> 2.12.5
-
+diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+index 1152259..12bca64 100644
+--- a/kernel/sched/clock.c
++++ b/kernel/sched/clock.c
+@@ -370,7 +370,7 @@ u64 sched_clock_cpu(int cpu)
+ 	if (sched_clock_stable())
+ 		return sched_clock() + __sched_clock_offset;
+ 
+-	if (!static_branch_unlikely(&sched_clock_running))
++	if (!static_branch_likely(&sched_clock_running))
+ 		return sched_clock();
+ 
+ 	preempt_disable_notrace();
+@@ -393,7 +393,7 @@ void sched_clock_tick(void)
+ 	if (sched_clock_stable())
+ 		return;
+ 
+-	if (!static_branch_unlikely(&sched_clock_running))
++	if (!static_branch_likely(&sched_clock_running))
+ 		return;
+ 
+ 	lockdep_assert_irqs_disabled();
+@@ -460,7 +460,7 @@ void __init sched_clock_init(void)
+ 
+ u64 sched_clock_cpu(int cpu)
+ {
+-	if (!static_branch_unlikely(&sched_clock_running))
++	if (!static_branch_likely(&sched_clock_running))
+ 		return 0;
+ 
+ 	return sched_clock();
 -- 
-viresh
+1.8.3.1
+
