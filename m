@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3617B10BC65
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A61CA10BB81
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732567AbfK0VHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:07:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33312 "EHLO mail.kernel.org"
+        id S1731847AbfK0VNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:13:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732568AbfK0VHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:07:13 -0500
+        id S1732929AbfK0VNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:13:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AFD5217D6;
-        Wed, 27 Nov 2019 21:07:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C45182154A;
+        Wed, 27 Nov 2019 21:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888832;
-        bh=aJqLwpf/G8NqfB0sL2MWBrc35kuUJFRONfEAYaqxE9U=;
+        s=default; t=1574889192;
+        bh=eaBjrtbhJ62pLWppLNZsKpx+Q5x1JcT00JxRyiiPxLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lbau14lcPSfR25RI4CwdoWsZRL0LloII3/VVyViadOahXMg0xGBgwll2NE9j8vbU7
-         q+LiU8mVDzio4vcU2gSUp/tJAWjkNiivVi1agIQsVSFmeCln+2Vh2ybrU6kdNdpPPl
-         AIxBMmrFsVevb6XiPtStWRR2yvDnLd0gzodmZFAk=
+        b=rARyE4HL1WpJaw5156SjSFDcyT2X8Jh0df2cRRuk8XkYulUlxWOOP6FZ2iCH/zzoI
+         Rw6HFadWt8uxHrzVHhIxlDLBIEE1RiINS3kalpIAbiW6BLgIp4A70xFoiEVugKw7zL
+         FyDtsFOOTIHT/VOwbKSWIcQHj29ALUu4w+hEFK5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d93dff37e6a89431c158@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.19 288/306] media: b2c2-flexcop-usb: add sanity checking
-Date:   Wed, 27 Nov 2019 21:32:18 +0100
-Message-Id: <20191127203135.815814577@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org
+Subject: [PATCH 5.4 24/66] selftests/x86/mov_ss_trap: Fix the SYSENTER test
+Date:   Wed, 27 Nov 2019 21:32:19 +0100
+Message-Id: <20191127202657.801767125@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 1b976fc6d684e3282914cdbe7a8d68fdce19095c upstream.
+commit 8caa016bfc129f2c925d52da43022171d1d1de91 upstream.
 
-The driver needs an isochronous endpoint to be present. It will
-oops in its absence. Add checking for it.
+For reasons that I haven't quite fully diagnosed, running
+mov_ss_trap_32 on a 32-bit kernel results in an infinite loop in
+userspace.  This appears to be because the hacky SYSENTER test
+doesn't segfault as desired; instead it corrupts the program state
+such that it infinite loops.
 
-Reported-by: syzbot+d93dff37e6a89431c158@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Fix it by explicitly clearing EBP before doing SYSENTER.  This will
+give a more reliable segfault.
+
+Fixes: 59c2a7226fc5 ("x86/selftests: Add mov_to_ss test")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/b2c2/flexcop-usb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/testing/selftests/x86/mov_ss_trap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/b2c2/flexcop-usb.c
-+++ b/drivers/media/usb/b2c2/flexcop-usb.c
-@@ -537,6 +537,9 @@ static int flexcop_usb_probe(struct usb_
- 	struct flexcop_device *fc = NULL;
- 	int ret;
- 
-+	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
-+		return -ENODEV;
-+
- 	if ((fc = flexcop_device_kmalloc(sizeof(struct flexcop_usb))) == NULL) {
- 		err("out of memory\n");
- 		return -ENOMEM;
+--- a/tools/testing/selftests/x86/mov_ss_trap.c
++++ b/tools/testing/selftests/x86/mov_ss_trap.c
+@@ -257,7 +257,8 @@ int main()
+ 			err(1, "sigaltstack");
+ 		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND | SA_ONSTACK);
+ 		nr = SYS_getpid;
+-		asm volatile ("mov %[ss], %%ss; SYSENTER" : "+a" (nr)
++		/* Clear EBP first to make sure we segfault cleanly. */
++		asm volatile ("xorl %%ebp, %%ebp; mov %[ss], %%ss; SYSENTER" : "+a" (nr)
+ 			      : [ss] "m" (ss) : "flags", "rcx"
+ #ifdef __x86_64__
+ 				, "r11"
 
 
