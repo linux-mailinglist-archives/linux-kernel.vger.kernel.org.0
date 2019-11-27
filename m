@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3003410B811
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E5310B897
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfK0Uj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:39:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43570 "EHLO mail.kernel.org"
+        id S1729664AbfK0Uox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:44:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728897AbfK0UjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:39:25 -0500
+        id S1729004AbfK0Uou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8745B21569;
-        Wed, 27 Nov 2019 20:39:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B82B2166E;
+        Wed, 27 Nov 2019 20:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887165;
-        bh=djQpxoQsKHIgxbZ1V+yqDs5di/kEoqJziiDyBpyvB0c=;
+        s=default; t=1574887489;
+        bh=sV6V6px7SnpPCHUQXwR8GTmlMRu+09tlY5oHH0QhhIU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b9yS9RaA6aFRT9t9HJsF6DF4ST+Nv2ZKWkjoGYXuDRDXqb1byW4nkF1RIpiB6ckp+
-         2lWr6untW7z0Y/1NlRTNvu9rgAKhl5u011rIUut2drVOLdF11ZSBJi339+BAqqlZLT
-         GNLG+qXKvKCPa7lkfjacq1rdD/K+azUGVBDvss50=
+        b=TfnJt7VOnQeGWp3ds03zrGZ1kNog6GsUKhvpNyQ+WpDjMZWyZaKe+S+bTkWflsEo0
+         eeoOjyhHA97CyqQM6TKwI5YQpfsvBMyB42QvLgdk8qboynF53NxLynE2eFGOB3LMbV
+         kZuKQJ9vgvhU3NjSpUK6TgX/wmFm9R8iMXGe9mzQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Joel Jennings <joel.jennings@makeitlabs.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 122/132] usb-serial: cp201x: support Mark-10 digital force gauge
-Date:   Wed, 27 Nov 2019 21:31:53 +0100
-Message-Id: <20191127203032.898353013@linuxfoundation.org>
+        syzbot+f49d12d34f2321cf4df2@syzkaller.appspotmail.com,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 131/151] media: imon: invalid dereference in imon_touch_event
+Date:   Wed, 27 Nov 2019 21:31:54 +0100
+Message-Id: <20191127203046.299853380@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +45,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Sean Young <sean@mess.org>
 
-commit 347bc8cb26388791c5881a3775cb14a3f765a674 upstream.
+commit f3f5ba42c58d56d50f539854d8cc188944e96087 upstream.
 
-Add support for the Mark-10 digital force gauge device to the cp201x
-driver.
+The touch timer is set up in intf1. If the second interface does not exist,
+the timer and touch input device are not setup and we get the following
+error, when touch events are reported via intf0.
 
-Based on a report and a larger patch from Joel Jennings
+kernel BUG at kernel/time/timer.c:956!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc1+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__mod_timer kernel/time/timer.c:956 [inline]
+RIP: 0010:__mod_timer kernel/time/timer.c:949 [inline]
+RIP: 0010:mod_timer+0x5a2/0xb50 kernel/time/timer.c:1100
+Code: 45 10 c7 44 24 14 ff ff ff ff 48 89 44 24 08 48 8d 45 20 48 c7 44 24 18 00 00 00 00 48 89 04 24 e9 5a fc ff ff e8 ae ce 0e 00 <0f> 0b e8 a7 ce 0e 00 4c 89 74 24 20 e9 37 fe ff ff e8 98 ce 0e 00
+RSP: 0018:ffff8881db209930 EFLAGS: 00010006
+RAX: ffffffff86c2b200 RBX: 00000000ffffa688 RCX: ffffffff83efc583
+RDX: 0000000000000100 RSI: ffffffff812f4d82 RDI: ffff8881d2356200
+RBP: ffff8881d23561e8 R08: ffffffff86c2b200 R09: ffffed103a46abeb
+R10: ffffed103a46abea R11: ffff8881d2355f53 R12: dffffc0000000000
+R13: 1ffff1103b64132d R14: ffff8881d2355f50 R15: 0000000000000006
+FS:  0000000000000000(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f75e2799000 CR3: 00000001d3b07000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ imon_touch_event drivers/media/rc/imon.c:1348 [inline]
+ imon_incoming_packet.isra.0+0x2546/0x2f10 drivers/media/rc/imon.c:1603
+ usb_rx_callback_intf0+0x151/0x1e0 drivers/media/rc/imon.c:1734
+ __usb_hcd_giveback_urb+0x1f2/0x470 drivers/usb/core/hcd.c:1654
+ usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1719
+ dummy_timer+0x120f/0x2fa2 drivers/usb/gadget/udc/dummy_hcd.c:1965
+ call_timer_fn+0x179/0x650 kernel/time/timer.c:1404
+ expire_timers kernel/time/timer.c:1449 [inline]
+ __run_timers kernel/time/timer.c:1773 [inline]
+ __run_timers kernel/time/timer.c:1740 [inline]
+ run_timer_softirq+0x5e3/0x1490 kernel/time/timer.c:1786
+ __do_softirq+0x221/0x912 kernel/softirq.c:292
+ invoke_softirq kernel/softirq.c:373 [inline]
+ irq_exit+0x178/0x1a0 kernel/softirq.c:413
+ exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+ smp_apic_timer_interrupt+0x12f/0x500 arch/x86/kernel/apic/apic.c:1137
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
+ </IRQ>
+RIP: 0010:default_idle+0x28/0x2e0 arch/x86/kernel/process.c:581
+Code: 90 90 41 56 41 55 65 44 8b 2d 44 3a 8f 7a 41 54 55 53 0f 1f 44 00 00 e8 36 ee d0 fb e9 07 00 00 00 0f 00 2d fa dd 4f 00 fb f4 <65> 44 8b 2d 20 3a 8f 7a 0f 1f 44 00 00 5b 5d 41 5c 41 5d 41 5e c3
+RSP: 0018:ffffffff86c07da8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000007 RBX: ffffffff86c2b200 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffffffff86c2ba4c
+RBP: fffffbfff0d85640 R08: ffffffff86c2b200 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ cpuidle_idle_call kernel/sched/idle.c:154 [inline]
+ do_idle+0x3b6/0x500 kernel/sched/idle.c:263
+ cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:355
+ start_kernel+0x82a/0x864 init/main.c:784
+ secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
+Modules linked in:
 
-Reported-by: Joel Jennings <joel.jennings@makeitlabs.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191118092119.GA153852@kroah.com
+Reported-by: syzbot+f49d12d34f2321cf4df2@syzkaller.appspotmail.com
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/rc/imon.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -121,6 +121,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
- 	{ USB_DEVICE(0x10C4, 0x8382) }, /* Cygnal Integrated Products, Inc. */
- 	{ USB_DEVICE(0x10C4, 0x83A8) }, /* Amber Wireless AMB2560 */
-+	{ USB_DEVICE(0x10C4, 0x83AA) }, /* Mark-10 Digital Force Gauge */
- 	{ USB_DEVICE(0x10C4, 0x83D8) }, /* DekTec DTA Plus VHF/UHF Booster/Attenuator */
- 	{ USB_DEVICE(0x10C4, 0x8411) }, /* Kyocera GPS Module */
- 	{ USB_DEVICE(0x10C4, 0x8418) }, /* IRZ Automation Teleport SG-10 GSM/GPRS Modem */
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -1644,8 +1644,7 @@ static void imon_incoming_packet(struct
+ 	spin_unlock_irqrestore(&ictx->kc_lock, flags);
+ 
+ 	/* send touchscreen events through input subsystem if touchpad data */
+-	if (ictx->display_type == IMON_DISPLAY_TYPE_VGA && len == 8 &&
+-	    buf[7] == 0x86) {
++	if (ictx->touch && len == 8 && buf[7] == 0x86) {
+ 		imon_touch_event(ictx, buf);
+ 		return;
+ 
 
 
