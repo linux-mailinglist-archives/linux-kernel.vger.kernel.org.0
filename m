@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0586510B8C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6034310B8C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfK0Uq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:46:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58288 "EHLO mail.kernel.org"
+        id S1729897AbfK0Uqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:46:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729863AbfK0UqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:46:23 -0500
+        id S1729887AbfK0Uqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:46:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAFFC217AB;
-        Wed, 27 Nov 2019 20:46:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C73A62158A;
+        Wed, 27 Nov 2019 20:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887583;
-        bh=9onU8VwIgp6xAGBwTDZAdRpmNruixRMCUYDO6TYiaog=;
+        s=default; t=1574887591;
+        bh=7nybk/T84jG+yY80/3VieVPJKJrELADi6/UIcReZYhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RBot9XydZzI2qwm0vJTsxyBha/Sedl2Yy+K81/VVxljvLLF3lOcWeWwkXEa7zckpo
-         xgZikb7vi4XBqCFLCpxqVea4TEBW8QiqNqDKv0gCXOY0Le+zb0jhxaEHr7H5mgYfMK
-         y0ozo4F8M5uW6CYjJFzdcx5pOkp5F+2gDfx99PG8=
+        b=z7xlFXOiCJFXNVZjMiyXmJgR/pKVfNFPDvIe9J2DyShO3pUJa0gTXZhwAebC4qHa7
+         v+tySv80nIwmlIu9ou7n6F6C8WHGkE6uMyrXM3rfwIV6H5z7Ma3OssUQ8iRg/DqqaN
+         fe+tDiC4bqFADiyqh1hRCpxKZtZLoCYqa6jSz+Os=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 016/211] platform/x86: asus-wmi: Only Tell EC the OS will handle display hotkeys from asus_nb_wmi
-Date:   Wed, 27 Nov 2019 21:29:09 +0100
-Message-Id: <20191127203052.202481453@linuxfoundation.org>
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 019/211] printk: fix integer overflow in setup_log_buf()
+Date:   Wed, 27 Nov 2019 21:29:12 +0100
+Message-Id: <20191127203052.837882082@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -46,106 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-[ Upstream commit 401fee8195d401b2b94dee57383f627050724d5b ]
+[ Upstream commit d2130e82e9454304e9b91ba9da551b5989af8c27 ]
 
-Commit 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will
-handle the display off hotkey") causes the backlight to be permanently off
-on various EeePC laptop models using the eeepc-wmi driver (Asus EeePC
-1015BX, Asus EeePC 1025C).
+The way we calculate logbuf free space percentage overflows signed
+integer:
 
-The asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL) call added
-by that commit is made conditional in this commit and only enabled in
-the quirk_entry structs in the asus-nb-wmi driver fixing the broken
-display / backlight on various EeePC laptop models.
+	int free;
 
-Cc: João Paulo Rechi Vita <jprvita@endlessm.com>
-Fixes: 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+	free = __LOG_BUF_LEN - log_next_idx;
+	pr_info("early log buf free: %u(%u%%)\n",
+		free, (free * 100) / __LOG_BUF_LEN);
+
+We support LOG_BUF_LEN of up to 1<<25 bytes. Since setup_log_buf() is
+called during early init, logbuf is mostly empty, so
+
+	__LOG_BUF_LEN - log_next_idx
+
+is close to 1<<25. Thus when we multiply it by 100, we overflow signed
+integer value range: 100 is 2^6 + 2^5 + 2^2.
+
+Example, booting with LOG_BUF_LEN 1<<25 and log_buf_len=2G
+boot param:
+
+[    0.075317] log_buf_len: -2147483648 bytes
+[    0.075319] early log buf free: 33549896(-28%)
+
+Make "free" unsigned integer and use appropriate printk() specifier.
+
+Link: http://lkml.kernel.org/r/20181010113308.9337-1-sergey.senozhatsky@gmail.com
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c | 8 ++++++++
- drivers/platform/x86/asus-wmi.c    | 2 +-
- drivers/platform/x86/asus-wmi.h    | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ kernel/printk/printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index b6f2ff95c3ed9..59f3a37a44d7a 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -78,10 +78,12 @@ static bool asus_q500a_i8042_filter(unsigned char data, unsigned char str,
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 5b33c14ab8b25..4e50beb162c00 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1099,7 +1099,7 @@ void __init setup_log_buf(int early)
+ {
+ 	unsigned long flags;
+ 	char *new_log_buf;
+-	int free;
++	unsigned int free;
  
- static struct quirk_entry quirk_asus_unknown = {
- 	.wapf = 0,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_asus_q500a = {
- 	.i8042_filter = asus_q500a_i8042_filter,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- /*
-@@ -92,26 +94,32 @@ static struct quirk_entry quirk_asus_q500a = {
- static struct quirk_entry quirk_asus_x55u = {
- 	.wapf = 4,
- 	.wmi_backlight_power = true,
-+	.wmi_backlight_set_devstate = true,
- 	.no_display_toggle = true,
- };
- 
- static struct quirk_entry quirk_asus_wapf4 = {
- 	.wapf = 4,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_asus_x200ca = {
- 	.wapf = 2,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_asus_ux303ub = {
- 	.wmi_backlight_native = true,
-+	.wmi_backlight_set_devstate = true,
- };
- 
- static struct quirk_entry quirk_asus_x550lb = {
-+	.wmi_backlight_set_devstate = true,
- 	.xusb2pr = 0x01D9,
- };
- 
- static struct quirk_entry quirk_asus_forceals = {
-+	.wmi_backlight_set_devstate = true,
- 	.wmi_force_als_set = true,
- };
- 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 3f662cd774d7a..1c1999600717c 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2147,7 +2147,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	} else
-+	} else if (asus->driver->quirks->wmi_backlight_set_devstate)
- 		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
- 
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
-diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
-index 6c1311f4b04de..57a79bddb2861 100644
---- a/drivers/platform/x86/asus-wmi.h
-+++ b/drivers/platform/x86/asus-wmi.h
-@@ -44,6 +44,7 @@ struct quirk_entry {
- 	bool store_backlight_power;
- 	bool wmi_backlight_power;
- 	bool wmi_backlight_native;
-+	bool wmi_backlight_set_devstate;
- 	bool wmi_force_als_set;
- 	int wapf;
- 	/*
+ 	if (log_buf != __log_buf)
+ 		return;
 -- 
 2.20.1
 
