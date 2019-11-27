@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D925F10BB30
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8737610BB78
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbfK0VK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:10:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37470 "EHLO mail.kernel.org"
+        id S2387399AbfK0VM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:12:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733009AbfK0VKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:10:22 -0500
+        id S1733307AbfK0VMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:12:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45ECB2176D;
-        Wed, 27 Nov 2019 21:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B37222178F;
+        Wed, 27 Nov 2019 21:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889021;
+        s=default; t=1574889171;
         bh=zBhu2+KdYMb3Yub8SsyOlnjWpHgy8s+5nopaN6TD0kU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jGDCKWr5ryy7yyI2TxiJkK7pBrE4UMTP4z4scMCKdJTefy8Z2Ur77kkzzPjricRp7
-         opBONsV+M7stedgcU5cadYSOgxcJErMy3f2kVgr6/ApBlk+/3632lniAm0Dv5nt81B
-         oMHcAusECLHAr7Aq9hL5F1luGE66fZV6g592fa1E=
+        b=rvXKbpZ9CAsA646dmObeOb7ZSei05LXFU29v/Xuv1soHAJyll2Ant59EIacQHO0s9
+         qnRntJcYrU1VPXTJfwudUA7RlWvtVpc3LsJcRwWZ+0qlQNPr8PisNGBfBeNKQYhbv8
+         TpQRjNtsPKAASPk83wKNZFtWmHi4bDum3lLcLDbw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@kernel.org
-Subject: [PATCH 5.3 54/95] x86/doublefault/32: Fix stack canaries in the double fault handler
+Subject: [PATCH 5.4 16/66] x86/doublefault/32: Fix stack canaries in the double fault handler
 Date:   Wed, 27 Nov 2019 21:32:11 +0100
-Message-Id: <20191127202920.122041147@linuxfoundation.org>
+Message-Id: <20191127202651.983020622@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
