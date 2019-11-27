@@ -2,95 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4D010AAD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 07:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E3610AADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 07:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbfK0Gyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 01:54:41 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43564 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbfK0Gyl (ORCPT
+        id S1726530AbfK0G4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 01:56:38 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726478AbfK0G4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 01:54:41 -0500
-Received: by mail-wr1-f68.google.com with SMTP id n1so25313232wra.10
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 22:54:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KuQPrp2Sf7gN5I9EAr348T1yBTBQmJrpqeh1YXF7Lzs=;
-        b=WMOXL/ILHyTMMK62UlIIUCyH/MoU3hbrKHjGiJ/sgbLmF8XmA91lLhtmCa5Ztrd3g6
-         tNdDYpi5taMs0iX+3voaZrBBh19vE2wkV+mc0weNsnYvdJbu672uh6m8LRKlUqHGoCWz
-         v9ogaH1rzEAdR8vW2/bEmSfiNJKyEetkpVt/bvZ+qrCan9TMT2J8I7SpohSfhatJPiEp
-         +s8lTs3pULMQCxidqNPa5VniRtds2lDbR2ucfDDfd9XwVVL/EsrXHhXCjrVPGvOluJ6b
-         SLikrXMnNPR51Uvy6lfWXbg9wcOFADAPMj8IQfMOh7MPxmQJ1Xs7wHF3N7bQZHB+ostn
-         SwBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KuQPrp2Sf7gN5I9EAr348T1yBTBQmJrpqeh1YXF7Lzs=;
-        b=fsLqy75UA/Tx2+wV/oFBHlVq9rgFlmBkr6XR63kRPqTUyMr9+qIc6iCCUIqRTsqfSi
-         nFmyUeW8lszY39RrghS+jvPeU9HYvpDyugHwMJ+gEhXar0fJzZk/pZR4U7OgvzZV5zly
-         rXVf09GvaHe0V/AbFSiAkYjfmOILWfeNd9GteRMe3FrSVQlp3OyCYPljLg0iN56CiUCD
-         wUHKYbh3QU4AtlQU5FIOGbSBGjTiDsvgpFu6FYfRgEVQu9poQBt6PnQSearHV4RkeyKp
-         vJFiYte8OTZGd9gspmstCYtFcdHzPW2eLGECT5+zeuYA8HrXH7b0QyvjpLMtT8vvvKma
-         QXqA==
-X-Gm-Message-State: APjAAAXpIFROkbtT9b7WuvlKsEJcFUpVFKU2g5562A38HGvIrW1pyWeu
-        aEWJaQlo1BTr3zuM8wtPUw7CBMrd
-X-Google-Smtp-Source: APXvYqwE4fh4DybzzJTVdArcKOAdloAXiFEfExedjedmAj6f0bS3UToeENnW1eKVNkyO6Rvspl+tFQ==
-X-Received: by 2002:adf:e40e:: with SMTP id g14mr19328980wrm.264.1574837679093;
-        Tue, 26 Nov 2019 22:54:39 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id z9sm18102498wrv.35.2019.11.26.22.54.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2019 22:54:38 -0800 (PST)
-Date:   Wed, 27 Nov 2019 07:54:36 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Jules Irenge <jbi.octave@gmail.com>
-Cc:     bp@alien8.de, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        x86@kernel.org, hpa@zytor.com, mingo@redhat.com
-Subject: Re: [PATCH] cpu: microcode: Add comma to 0
-Message-ID: <20191127065436.GC52731@gmail.com>
-References: <20191126221519.167145-1-jbi.octave@gmail.com>
+        Wed, 27 Nov 2019 01:56:37 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAR6plrJ138264
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 01:56:36 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2whcxq4ecf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 01:56:36 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 27 Nov 2019 06:56:34 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Nov 2019 06:56:29 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAR6uSmL44302394
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 06:56:28 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F16711C054;
+        Wed, 27 Nov 2019 06:56:28 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 07AD911C04A;
+        Wed, 27 Nov 2019 06:56:27 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.148.8.105])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 27 Nov 2019 06:56:26 +0000 (GMT)
+Date:   Wed, 27 Nov 2019 08:56:25 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arch@vger.kernel.org, darren@stevens-zone.net,
+        mad skateman <madskateman@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        paulus@samba.org, rtd2@xtra.co.nz,
+        "contact@a-eon.com" <contact@a-eon.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        nsaenzjulienne@suse.de
+Subject: Re: Bug 205201 - Booting halts if Dawicontrol DC-2976 UW SCSI board
+ installed, unless RAM size limited to 3500M
+References: <20191121072943.GA24024@lst.de>
+ <dbde2252-035e-6183-7897-43348e60647e@xenosoft.de>
+ <6eec5c42-019c-a988-fc2a-cb804194683d@xenosoft.de>
+ <d0252d29-7a03-20e1-ccd7-e12d906e4bdf@arm.com>
+ <b3217742-2c0b-8447-c9ac-608b93265363@xenosoft.de>
+ <20191121180226.GA3852@lst.de>
+ <2fde79cf-875f-94e6-4a1b-f73ebb2e2c32@xenosoft.de>
+ <20191125073923.GA30168@lst.de>
+ <4681f5fe-c095-15f5-9221-4b55e940bafc@xenosoft.de>
+ <20191126164026.GA8026@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191126221519.167145-1-jbi.octave@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191126164026.GA8026@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19112706-0012-0000-0000-0000036CCE06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19112706-0013-0000-0000-000021A875C1
+Message-Id: <20191127065624.GB16913@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-27_01:2019-11-26,2019-11-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
+ impostorscore=0 phishscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ suspectscore=2 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911270055
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Jules Irenge <jbi.octave@gmail.com> wrote:
-
-> Add ","  after 0
-> Because memory for the struct is being cleared
-> and elements after "," are missing on purpose
->  as they are being cleared to
+On Tue, Nov 26, 2019 at 05:40:26PM +0100, Christoph Hellwig wrote:
+> On Tue, Nov 26, 2019 at 12:26:38PM +0100, Christian Zigotzky wrote:
+> > Hello Christoph,
+> >
+> > The PCI TV card works with your patch! I was able to patch your Git kernel 
+> > with the patch above.
+> >
+> > I haven't found any error messages in the dmesg yet.
 > 
-> Recommended by Boris Petkov
-> 
-> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index a0e52bd00ecc..04ee649f4acb 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -418,7 +418,7 @@ static int __apply_microcode_amd(struct microcode_amd *mc)
->  static bool
->  apply_microcode_early_amd(u32 cpuid_1_eax, void *ucode, size_t size, bool save_patch)
->  {
-> -	struct cont_desc desc = { 0 };
-> +	struct cont_desc desc = { 0, };
+> Thanks.  Unfortunately this is a bit of a hack as we need to set
+> the mask based on runtime information like the magic FSL PCIe window.
+> Let me try to draft something better up, and thanks already for testing
+> this one!
 
-This is 100% unnecessary - " = { }" is enough of a structure initializer.
+Maybe we'll simply force bottom up allocation before calling
+swiotlb_init()? Anyway, it's the last memblock allocation.
 
-Thanks,
 
-	Ingo
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 62f74b1b33bd..771e6cf7e2b9 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -286,14 +286,15 @@ void __init mem_init(void)
+ 	/*
+ 	 * book3s is limited to 16 page sizes due to encoding this in
+ 	 * a 4-bit field for slices.
+ 	 */
+ 	BUILD_BUG_ON(MMU_PAGE_COUNT > 16);
+ 
+ #ifdef CONFIG_SWIOTLB
++	memblock_set_bottom_up(true);
+ 	swiotlb_init(0);
+ #endif
+ 
+ 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE);
+ 	set_max_mapnr(max_pfn);
+ 	memblock_free_all();
+ 
+ 
+
+
+-- 
+Sincerely yours,
+Mike.
+
