@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A4610BA50
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:03:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3486810BD25
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbfK0VBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:01:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54292 "EHLO mail.kernel.org"
+        id S1731802AbfK0VB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:01:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731787AbfK0VBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:01:50 -0500
+        id S1731789AbfK0VBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:01:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65A402084B;
-        Wed, 27 Nov 2019 21:01:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8B20215A4;
+        Wed, 27 Nov 2019 21:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888509;
-        bh=nJ49gYhEL/vKBChnulon0sgeTedMmKmQ57sKJFu4eRw=;
+        s=default; t=1574888512;
+        bh=pDHn+HksLh2BBFaUeCFU7cSKTlRwKXjRdFc2nsgwYLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UvCQkH5SvXH19lUU65qs1+te24qMEQlKqcfLmtGVXt/XT+5USDWIjkiAWClSCZi4C
-         1pfC/8olllZOR9kWumy9QWbCAYmFUFhTlZT8j1ipinEFrTQRGyT0+kPHCP/5bN8+dH
-         kZz8jwpDEqhMGroOV7uTohB1fk6ZC4TwAR6u+kTk=
+        b=x2r5qdc1HY+egJZJoG7VA5cDLh10iAVntuAGCA4Ar5MGdQLulW/DEmxoOxfQcPrB8
+         PKFOx4k9x7CK6cN3FJgEz6+zLiN/CqnCBIOgYg1H7recDaRWNixXktDb3E2E/w4cz+
+         jrRCuZmhu0WjcrZJYwPppZjbUPXueWktpj1acDoM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 162/306] selftests/powerpc/signal: Fix out-of-tree build
-Date:   Wed, 27 Nov 2019 21:30:12 +0100
-Message-Id: <20191127203127.315873242@linuxfoundation.org>
+Subject: [PATCH 4.19 163/306] selftests/powerpc/switch_endian: Fix out-of-tree build
+Date:   Wed, 27 Nov 2019 21:30:13 +0100
+Message-Id: <20191127203127.374696406@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,49 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 27825349d7b238533a47e3d98b8bb0efd886b752 ]
+[ Upstream commit 266bac361d5677e61a6815bd29abeb3bdced2b07 ]
 
-We should use TEST_GEN_PROGS, not TEST_PROGS. That tells the selftests
-makefile (lib.mk) that those tests are generated (built), and so it
-adds the $(OUTPUT) prefix for us, making the out-of-tree build work
-correctly.
+For the out-of-tree build to work we need to tell switch_endian_test
+to look for check-reversed.S in $(OUTPUT).
 
-It also means we don't need our own clean rule, lib.mk does it.
-
-We also have to update the signal_tm rule to use $(OUTPUT).
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/signal/Makefile | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ tools/testing/selftests/powerpc/switch_endian/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/powerpc/signal/Makefile b/tools/testing/selftests/powerpc/signal/Makefile
-index 1fca25c6ace06..209a958dca127 100644
---- a/tools/testing/selftests/powerpc/signal/Makefile
-+++ b/tools/testing/selftests/powerpc/signal/Makefile
-@@ -1,15 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
--TEST_PROGS := signal signal_tm
--
--all: $(TEST_PROGS)
--
--$(TEST_PROGS): ../harness.c ../utils.c signal.S
-+TEST_GEN_PROGS := signal signal_tm
- 
- CFLAGS += -maltivec
--signal_tm: CFLAGS += -mhtm
-+$(OUTPUT)/signal_tm: CFLAGS += -mhtm
- 
+diff --git a/tools/testing/selftests/powerpc/switch_endian/Makefile b/tools/testing/selftests/powerpc/switch_endian/Makefile
+index fcd2dcb8972ba..bdc081afedb0f 100644
+--- a/tools/testing/selftests/powerpc/switch_endian/Makefile
++++ b/tools/testing/selftests/powerpc/switch_endian/Makefile
+@@ -8,6 +8,7 @@ EXTRA_CLEAN = $(OUTPUT)/*.o $(OUTPUT)/check-reversed.S
  top_srcdir = ../../../../..
  include ../../lib.mk
  
--clean:
--	rm -f $(TEST_PROGS) *.o
-+$(TEST_GEN_PROGS): ../harness.c ../utils.c signal.S
++$(OUTPUT)/switch_endian_test: ASFLAGS += -I $(OUTPUT)
+ $(OUTPUT)/switch_endian_test: $(OUTPUT)/check-reversed.S
+ 
+ $(OUTPUT)/check-reversed.o: $(OUTPUT)/check.o
 -- 
 2.20.1
 
