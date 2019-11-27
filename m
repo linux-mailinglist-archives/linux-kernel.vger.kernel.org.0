@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5F910BCAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D27F910BB09
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbfK0VWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:22:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59090 "EHLO mail.kernel.org"
+        id S1732811AbfK0VI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:08:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732274AbfK0VFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:05:22 -0500
+        id S1732805AbfK0VIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:08:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5AFD2166E;
-        Wed, 27 Nov 2019 21:05:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E70092154A;
+        Wed, 27 Nov 2019 21:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888722;
-        bh=TSfcfKMerSp3xOiFklG5ABCAq1n+d8pMG/0OHuwn+yU=;
+        s=default; t=1574888931;
+        bh=rf5bjiNK4RmwS7yA3hm0aVHNlwwrZDILECWu2L2WWfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lDXfgidZJD8oIO/JnWTtZlaXRwYvWdHr9Ulvxz1e3yh/+Tg70GQsXwFL8z7M5SlTm
-         00gVqHUp9simhk8zuMq54M+I55PzVXAQXiMlDHFumU9h8+9xHdUerE7UMIRuvOmBbB
-         Aj4gBHor5nLkcYoup72j8xqyICzlfmdA7GOHeDhE=
+        b=hvruRD8/YEGYpXRob+u8wQhigZ71uYmO0Asw+72/B2PRu5adtxN4PxsYNupTXXyb9
+         ujfyIKEz5EUxfht3Ygb7lsUPUBQqrn33GYNbZ69pS/jsYwqOWrMOvxprZmC/2wXMIP
+         GZd+cJ+Rru1KG7+BnMLlU3ICuOSBJXqjabG32Z9U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 245/306] pinctrl: bcm2835: Use define directive for BCM2835_PINCONF_PARAM_PULL
-Date:   Wed, 27 Nov 2019 21:31:35 +0100
-Message-Id: <20191127203132.838482192@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 5.3 19/95] gpio: max77620: Fixup debounce delays
+Date:   Wed, 27 Nov 2019 21:31:36 +0100
+Message-Id: <20191127202850.399983484@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit b40ac08ff886302a6aa457fd72e94a969f50e245 ]
+commit b0391479ae04dfcbd208b9571c375064caad9a57 upstream.
 
-Clang warns when one enumerated type is implicitly converted to another:
+When converting milliseconds to microseconds in commit fffa6af94894
+("gpio: max77620: Use correct unit for debounce times") some ~1 ms gaps
+were introduced between the various ranges supported by the controller.
+Fix this by changing the start of each range to the value immediately
+following the end of the previous range. This way a debounce time of,
+say 8250 us will translate into 16 ms instead of returning an -EINVAL
+error.
 
-drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit
-conversion from enumeration type 'enum bcm2835_pinconf_param' to
-different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
-                     ~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
-1 warning generated.
+Typically the debounce delay is only ever set through device tree and
+specified in milliseconds, so we can never really hit this issue because
+debounce times are always a multiple of 1000 us.
 
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
+The only notable exception for this is drivers/mmc/host/mmc-spi.c where
+the CD GPIO is requested, which passes a 1 us debounce time. According
+to a comment preceeding that code this should actually be 1 ms (i.e.
+1000 us).
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Pavel Machek <pavel@denx.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-max77620.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 08925d24180b0..1bd3c10ce1893 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -72,10 +72,8 @@
- #define GPIO_REG_OFFSET(p)	((p) / 32)
- #define GPIO_REG_SHIFT(p)	((p) % 32)
- 
--enum bcm2835_pinconf_param {
--	/* argument: bcm2835_pinconf_pull */
--	BCM2835_PINCONF_PARAM_PULL = (PIN_CONFIG_END + 1),
--};
-+/* argument: bcm2835_pinconf_pull */
-+#define BCM2835_PINCONF_PARAM_PULL	(PIN_CONFIG_END + 1)
- 
- struct bcm2835_pinctrl {
- 	struct device *dev;
--- 
-2.20.1
-
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -192,13 +192,13 @@ static int max77620_gpio_set_debounce(st
+ 	case 0:
+ 		val = MAX77620_CNFG_GPIO_DBNC_None;
+ 		break;
+-	case 1000 ... 8000:
++	case 1 ... 8000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_8ms;
+ 		break;
+-	case 9000 ... 16000:
++	case 8001 ... 16000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_16ms;
+ 		break;
+-	case 17000 ... 32000:
++	case 16001 ... 32000:
+ 		val = MAX77620_CNFG_GPIO_DBNC_32ms;
+ 		break;
+ 	default:
 
 
