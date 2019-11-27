@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C04F10BC1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8C710BB8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733148AbfK0VLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:11:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39298 "EHLO mail.kernel.org"
+        id S1732781AbfK0VNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:13:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732722AbfK0VLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:11:09 -0500
+        id S1732608AbfK0VNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:13:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7A68217BA;
-        Wed, 27 Nov 2019 21:11:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D81EA215F1;
+        Wed, 27 Nov 2019 21:13:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889068;
-        bh=jgZhuF8duSwxHtm8Ldfjn86FE4kAix6Su0REliUcJSk=;
+        s=default; t=1574889218;
+        bh=XlAJfjFYmMEYcBNDrUXkP9rhkEu3DX4g5RnRmGamycI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SMjvAcwev2PBc36XWeoUnupo/gXVHeY+iL13umcKge+9V6CODf2HG9Fy46xIpMkJR
-         AX7cMDTfp6x2TvQLh2x9EqAY/RNzgNVSFMbSqhhKlY29LwWhIT1Frhc1os9TGtMTgc
-         /AxlJas17RYInNWo1jsA3nxVb4Hj5LNdzIUEyZR0=
+        b=PGR3HL3uiB3m3ImNGJp7Y4GpkMlMAsRm44Aa3NfpS5Y0vpifHWPuB8QBs7Hcwtvmo
+         3dWDC9b+0gF7MeWr9RWm+3kq0jVBbadfEq32IL86d3d24HyHnfHt3MhvIAvhfNSBjW
+         0OARy9hECo+RuV9rE6F9kozaBbnSZJlERDonG4cA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 5.3 71/95] media: vivid: Fix wrong locking that causes race conditions on streaming stop
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com
+Subject: [PATCH 5.4 33/66] media: usbvision: Fix invalid accesses after device disconnect
 Date:   Wed, 27 Nov 2019 21:32:28 +0100
-Message-Id: <20191127202937.596975780@linuxfoundation.org>
+Message-Id: <20191127202710.996633518@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
+References: <20191127202632.536277063@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,122 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Popov <alex.popov@linux.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 6dcd5d7a7a29c1e4b8016a06aed78cd650cd8c27 upstream.
+commit c7a191464078262bf799136317c95824e26a222b upstream.
 
-There is the same incorrect approach to locking implemented in
-vivid_stop_generating_vid_cap(), vivid_stop_generating_vid_out() and
-sdr_cap_stop_streaming().
+The syzbot fuzzer found two invalid-access bugs in the usbvision
+driver.  These bugs occur when userspace keeps the device file open
+after the device has been disconnected and usbvision_disconnect() has
+set usbvision->dev to NULL:
 
-These functions are called during streaming stopping with vivid_dev.mutex
-locked. And they all do the same mistake while stopping their kthreads,
-which need to lock this mutex as well. See the example from
-vivid_stop_generating_vid_cap():
-  /* shutdown control thread */
-  vivid_grab_controls(dev, false);
-  mutex_unlock(&dev->mutex);
-  kthread_stop(dev->kthread_vid_cap);
-  dev->kthread_vid_cap = NULL;
-  mutex_lock(&dev->mutex);
+	When the device file is closed, usbvision_radio_close() tries
+	to issue a usb_set_interface() call, passing the NULL pointer
+	as its first argument.
 
-But when this mutex is unlocked, another vb2_fop_read() can lock it
-instead of vivid_thread_vid_cap() and manipulate the buffer queue.
-That causes a use-after-free access later.
+	If userspace performs a querycap ioctl call, vidioc_querycap()
+	calls usb_make_path() with the same NULL pointer.
 
-To fix those issues let's:
-  1. avoid unlocking the mutex in vivid_stop_generating_vid_cap(),
-vivid_stop_generating_vid_out() and sdr_cap_stop_streaming();
-  2. use mutex_trylock() with schedule_timeout_uninterruptible() in
-the loops of the vivid kthread handlers.
+This patch fixes the problems by making the appropriate tests
+beforehand.  Note that vidioc_querycap() is protected by
+usbvision->v4l2_lock, acquired in a higher layer of the V4L2
+subsystem.
 
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-and-tested-by: syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    8 +++++---
- drivers/media/platform/vivid/vivid-kthread-out.c |    8 +++++---
- drivers/media/platform/vivid/vivid-sdr-cap.c     |    8 +++++---
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/media/usb/usbvision/usbvision-video.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -796,7 +796,11 @@ static int vivid_thread_vid_cap(void *da
- 		if (kthread_should_stop())
- 			break;
+--- a/drivers/media/usb/usbvision/usbvision-video.c
++++ b/drivers/media/usb/usbvision/usbvision-video.c
+@@ -453,6 +453,9 @@ static int vidioc_querycap(struct file *
+ {
+ 	struct usb_usbvision *usbvision = video_drvdata(file);
  
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
++	if (!usbvision->dev)
++		return -ENODEV;
 +
- 		cur_jiffies = jiffies;
- 		if (dev->cap_seq_resync) {
- 			dev->jiffies_vid_cap = cur_jiffies;
-@@ -956,8 +960,6 @@ void vivid_stop_generating_vid_cap(struc
+ 	strscpy(vc->driver, "USBVision", sizeof(vc->driver));
+ 	strscpy(vc->card,
+ 		usbvision_device_data[usbvision->dev_model].model_string,
+@@ -1099,8 +1102,9 @@ static int usbvision_radio_close(struct
+ 	mutex_lock(&usbvision->v4l2_lock);
+ 	/* Set packet size to 0 */
+ 	usbvision->iface_alt = 0;
+-	usb_set_interface(usbvision->dev, usbvision->iface,
+-				    usbvision->iface_alt);
++	if (usbvision->dev)
++		usb_set_interface(usbvision->dev, usbvision->iface,
++				  usbvision->iface_alt);
  
- 	/* shutdown control thread */
- 	vivid_grab_controls(dev, false);
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_vid_cap);
- 	dev->kthread_vid_cap = NULL;
--	mutex_lock(&dev->mutex);
- }
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -143,7 +143,11 @@ static int vivid_thread_vid_out(void *da
- 		if (kthread_should_stop())
- 			break;
- 
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
-+
- 		cur_jiffies = jiffies;
- 		if (dev->out_seq_resync) {
- 			dev->jiffies_vid_out = cur_jiffies;
-@@ -301,8 +305,6 @@ void vivid_stop_generating_vid_out(struc
- 
- 	/* shutdown control thread */
- 	vivid_grab_controls(dev, false);
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_vid_out);
- 	dev->kthread_vid_out = NULL;
--	mutex_lock(&dev->mutex);
- }
---- a/drivers/media/platform/vivid/vivid-sdr-cap.c
-+++ b/drivers/media/platform/vivid/vivid-sdr-cap.c
-@@ -141,7 +141,11 @@ static int vivid_thread_sdr_cap(void *da
- 		if (kthread_should_stop())
- 			break;
- 
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
-+
- 		cur_jiffies = jiffies;
- 		if (dev->sdr_cap_seq_resync) {
- 			dev->jiffies_sdr_cap = cur_jiffies;
-@@ -303,10 +307,8 @@ static void sdr_cap_stop_streaming(struc
- 	}
- 
- 	/* shutdown control thread */
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_sdr_cap);
- 	dev->kthread_sdr_cap = NULL;
--	mutex_lock(&dev->mutex);
- }
- 
- static void sdr_cap_buf_request_complete(struct vb2_buffer *vb)
+ 	usbvision_audio_off(usbvision);
+ 	usbvision->radio = 0;
 
 
