@@ -2,87 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C857710B28D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DBB510B294
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfK0Pkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 10:40:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:49258 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbfK0Pkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:40:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4A7630E;
-        Wed, 27 Nov 2019 07:40:32 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4305C3F68E;
-        Wed, 27 Nov 2019 07:40:32 -0800 (PST)
-Date:   Wed, 27 Nov 2019 15:40:30 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>
-Subject: Re: [PATCHv2 6/6] ASoC: da7213: Add default clock handling
-Message-ID: <20191127154030.GD4879@sirena.org.uk>
-References: <20191120152406.2744-1-sebastian.reichel@collabora.com>
- <20191120152406.2744-7-sebastian.reichel@collabora.com>
- <AM5PR1001MB0994720A0D615339A978E35C804E0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <AM5PR1001MB0994E628439F021F97B872D480450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191126170841.GC4205@sirena.org.uk>
- <AM5PR1001MB09949D557742E8817545637F80450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191126175040.GD4205@sirena.org.uk>
- <AM5PR1001MB09940CF764711F1F13A6B37E80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191127123317.GA4879@sirena.org.uk>
- <AM5PR1001MB0994D842A2D7051F81A7765B80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+        id S1727128AbfK0PmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 10:42:09 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:42789 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726593AbfK0PmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 10:42:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574869327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rTiplu3jVVG57/goTxX/EWtlHVQFyeygebJxT1iF7jE=;
+        b=NP4zJgSxRdtEh5kJoYt6wHBchePLp7N22H5wxOT7UVjdejkqmQtyETS+1Yhtv8xPEPyXdm
+        AdN/Dknww0GOIs6rwzK6C01c00vviANp4AJ8rN1KfalK5zv+5PQu56uh5AovJ4moBBT5Om
+        b5diZsepnkFSN5tUIjvmNXKGxnVKlOk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-165-KTmG-I0VOJaQbcSWsc6Yig-1; Wed, 27 Nov 2019 10:42:06 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E31A101F4E0;
+        Wed, 27 Nov 2019 15:42:04 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43F691001DE1;
+        Wed, 27 Nov 2019 15:41:55 +0000 (UTC)
+Subject: Re: [PATCH] mm/filemap: do not allocate cache pages beyond end of
+ file at read
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+References: <157225677483.3442.4227193290486305330.stgit@buzz>
+ <20191028124222.ld6u3dhhujfqcn7w@box>
+ <CAHk-=wgQ-Dcs2keNJPovTb4gG33M81yANH6KZM9d5NLUb-cJ1g@mail.gmail.com>
+ <20191028125702.xdfbs7rqhm3wer5t@box>
+ <ac83fee6-9bcd-8c66-3596-2c0fbe6bcf96@yandex-team.ru>
+ <CAHk-=who0HS=NT8U7vFDT7er_CD7+ZreRJMxjYrRXs5G6dbpyw@mail.gmail.com>
+ <f0140b13-cca2-af9e-eb4b-82eda134eb8f@redhat.com>
+ <CAHk-=wh4SKRxKQf5LawRMSijtjRVQevaFioBK+tOZAVPt7ek0Q@mail.gmail.com>
+ <640bbe51-706b-8d9f-4abc-5f184de6a701@redhat.com>
+ <CAHpGcM+o2OwXdrj+A2_OqRg6YokfauFNiBJF-BQp0dJFvq_BrQ@mail.gmail.com>
+ <22f04f02-86e4-b379-81c8-08c002a648f0@redhat.com>
+ <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <cdd48a4d-42a4-dd15-2701-e08e26fef17f@redhat.com>
+Date:   Wed, 27 Nov 2019 15:41:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TybLhxa8M7aNoW+V"
-Content-Disposition: inline
-In-Reply-To: <AM5PR1001MB0994D842A2D7051F81A7765B80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-X-Cookie: In the war of wits, he's unarmed.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=whRuPkm7zFUiGe_BXkLvEdShZGngkb=uRufgU65ogCxfg@mail.gmail.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-MC-Unique: KTmG-I0VOJaQbcSWsc6Yig-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---TybLhxa8M7aNoW+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 25/11/2019 17:05, Linus Torvalds wrote:
+> On Mon, Nov 25, 2019 at 2:53 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>> Linus, is that roughly what you were thinking of?
+> So the concept looks ok, but I don't really like the new flags as they
+> seem to be gfs2-specific rather than generic.
+>
+> That said, I don't _gate_ them either, since they aren't in any
+> critical code sequence, and it's not like they do anything really odd.
+>
+> I still think the whole gfs2 approach is broken. You're magically ok
+> with using stale data from the cache just because it's cached, even if
+> another client might have truncated the file or something.
 
-On Wed, Nov 27, 2019 at 01:42:54PM +0000, Adam Thomson wrote:
+If another node tries to truncate the file, that will require an 
+exclusive glock, and in turn that means the all the other nodes will 
+have to drop their glock(s) shared or exclusive. That process 
+invalidates the page cache on those nodes, such that any further 
+requests on those nodes will find the cache empty and have to call into 
+the filesystem.
 
-> nicest solution here though. I guess we're stuck with people having to manually
-> configure the PLL for bypass when a non-generic machine driver inits, to avoid
-> the initial double config, as I don't see other options unless you have
-> something to specify at init that it's auto or manual, and this doesn't feel
-> like a DT device specific property thing as it's more software than hardware.
-> At least Sebastian's patch has a good comment block to highlight this.
+If a page is truncated on another node, then when the local node gives 
+up its glock, after any copying (e.g. for read) has completed then the 
+truncate will take place. The local node will then have to reread any 
+data relating to new pages or return an error in case the next page to 
+be read has vanished due to the truncate. It is a pretty small window, 
+and the advantage is that in cases where the page is in cache, we can 
+directly use the cached page without having to call into the filesystem 
+at all. So it is page atomic in that sense.
 
-Not sure I follow here - if we're configuring the PLL explicitly then
-I'd expect the PLL to be configured first, then the SYSCLK, so I'd
-expect that the automatic PLL configuration wouldn't kick in.
+The overall aim here is to avoid taking (potentially slow) cluster locks 
+when at all possible, yet at the same time deliver close to local fs 
+semantics whenever we can. You can think of GFS2's glock concept (at 
+least as far as the inodes we are discussing here) as providing a 
+combination of (page) cache control and cluster (dlm) locking.
 
---TybLhxa8M7aNoW+V
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> So you're ok with saying "the file used to be X bytes in size, so
+> we'll just give you this data because we trust that the X is correct".
+>
+> But you're not ok to say "oh, the file used to be X bytes in size, but
+> we don't want to give you a short read because it might not be correct
+> any more".
+>
+> See the disconnect? You trust the size in one situation, but not in another one.
 
------BEGIN PGP SIGNATURE-----
+Well we are not trusting the size at all... the original algorithm 
+worked entirely off "is this page in cache and uptodate?" and for 
+exactly the reason that we know the size in the inode might be out of 
+date, if we are not currently holding a glock in either shared or 
+exclusive mode. We also know that if there is a page in cache and 
+uptodate then we must be holding the glock too.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3emO0ACgkQJNaLcl1U
-h9BAnQf/Q4HBT+E0Q86c5T5kw3hIEfvjSfcdzKbqvPYBoxeiJPWz6BgtIYowJOk/
-VIMobVK2PGfli24WdMYQtG8lwdNCUo5ff2DmOFSEc5U90CRHfaaHh1agqu8g+xX0
-XENPmJDKQNV+T5AhrkNyulGeIwPqn2sOssOTTBzIRlQ5TeD8PvqDFmbNwQ1ty/wh
-pJijH+imJpNcTVQtey9tEP29W2HUqqEURJK6n7QVOFseFXQKLv+KpQaMmsx0Jqrd
-Js/kclZ1np41N3D15cACh/ANKG6RNaT5i03P9imE+ujeWPWFW92Z6P70vf5uzUug
-Q/qbBvhCvX6qIgrcOnsmLYLAlZfXyw==
-=bhaa
------END PGP SIGNATURE-----
 
---TybLhxa8M7aNoW+V--
+>
+> I also don't really see that you *need* the new flag at all. Since
+> you're doing to do a speculative read and then a real read anyway, and
+> since the only thing that you seem to care about is the file size
+> (because the *data* you will trust if it is cached), then why don't
+> you just use the *existing* generic read, and *IFF* you get a
+> truncated return value, then you go and double-check that the file
+> hasn't changed in size?
+>
+> See what I'm saying? I think gfs2 is being very inconsistent in when
+> it trusts the file size, and I don't see that you even need the new
+> behavior that patch gives, because you might as well just use the
+> existing code (just move the i_size check earlier, and then teach gfs2
+> to double-check the "I didn't get as much as I expected" case).
+>
+>                   Linus
+
+I'll leave the finer details to Andreas here, since it is his patch, and 
+hopefully we can figure out a good path forward. We are perhaps also a 
+bit reluctant to go off and (nearly) duplicate code that is already in 
+the core vfs library functions, since that often leads to things getting 
+out of sync (our implementation of ->writepages is one case where that 
+happened in the past) and missing important bug fixes/features in some 
+cases. Hopefully though we can iterate on this a bit and come up with 
+something which will resolve all the issues,
+
+Steve.
+
+
+>
+
