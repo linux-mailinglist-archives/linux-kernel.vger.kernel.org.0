@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1380210BF25
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35F7810BEE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729900AbfK0VlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47626 "EHLO mail.kernel.org"
+        id S1728245AbfK0UoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:44:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728266AbfK0Ul4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:56 -0500
+        id S1729552AbfK0UoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4288E20863;
-        Wed, 27 Nov 2019 20:41:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92FDB21775;
+        Wed, 27 Nov 2019 20:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887315;
-        bh=Dr/MgV0CT6e61/f8fbdA16ZEvfZhrv4OxigPBFLptW0=;
+        s=default; t=1574887449;
+        bh=GnvoePJDb/EgHDx1xW5xhESP3HsVbSoTADQMojtsNyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lU35ufVGFWCzWnJ8Sf5jMQWVy6YIDHxwLFXj8CeGm6xL1tJJiafK4jr2xg7JuJZGd
-         M5StydQ4x61iYOtfwzcgZFgMDIoaRim0VwCs6ZIFYP1/+Tsq/A60NAgcjSY7AtgsBP
-         vAqKUOiOgXiz5niyikwL/3XrDt6ik0A97Ru2xxOc=
+        b=EkUP2h8Np6suni7gZhM4qvsyiuZTQSytbcU9Limcy9WtOPj5HuCRwgqG5Jdid+O30
+         yLSdqR9xU4trl1zuXTDtTxT7vk5LhPFrhdku5NoAnBAZ1936prEgBY4lvsB7Jtmsbe
+         e6sXcArV8+meZOsA1qJYDBIKJIh0HbRRDuvuTaXc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 061/151] thermal: rcar_thermal: Prevent hardware access during system suspend
-Date:   Wed, 27 Nov 2019 21:30:44 +0100
-Message-Id: <20191127203033.128457230@linuxfoundation.org>
+Subject: [PATCH 4.9 063/151] sparc64: Rework xchg() definition to avoid warnings.
+Date:   Wed, 27 Nov 2019 21:30:46 +0100
+Message-Id: <20191127203033.434768326@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -47,43 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: David S. Miller <davem@davemloft.net>
 
-[ Upstream commit 3a31386217628ffe2491695be2db933c25dde785 ]
+[ Upstream commit 6c2fc9cddc1ffdef8ada1dc8404e5affae849953 ]
 
-On r8a7791/koelsch, sometimes the following message is printed during
-system suspend:
+Such as:
 
-    rcar_thermal e61f0000.thermal: thermal sensor was broken
+fs/ocfs2/file.c: In function ‘ocfs2_file_write_iter’:
+./arch/sparc/include/asm/cmpxchg_64.h:55:22: warning: value computed is not used [-Wunused-value]
+ #define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 
-This happens if the workqueue runs while the device is already
-suspended.  Fix this by using the freezable system workqueue instead,
-cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from happening
-during system suspend").
+and
 
-Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c: In function ‘ixgbevf_xdp_setup’:
+./arch/sparc/include/asm/cmpxchg_64.h:55:22: warning: value computed is not used [-Wunused-value]
+ #define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/rcar_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/sparc/include/asm/cmpxchg_64.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 73e5fee6cf1d5..83126e2dce36d 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -401,8 +401,8 @@ static irqreturn_t rcar_thermal_irq(int irq, void *data)
- 	rcar_thermal_for_each_priv(priv, common) {
- 		if (rcar_thermal_had_changed(priv, status)) {
- 			rcar_thermal_irq_disable(priv);
--			schedule_delayed_work(&priv->work,
--					      msecs_to_jiffies(300));
-+			queue_delayed_work(system_freezable_wq, &priv->work,
-+					   msecs_to_jiffies(300));
- 		}
- 	}
+diff --git a/arch/sparc/include/asm/cmpxchg_64.h b/arch/sparc/include/asm/cmpxchg_64.h
+index faa2f61058c27..92f0a46ace78e 100644
+--- a/arch/sparc/include/asm/cmpxchg_64.h
++++ b/arch/sparc/include/asm/cmpxchg_64.h
+@@ -40,7 +40,12 @@ static inline unsigned long xchg64(__volatile__ unsigned long *m, unsigned long
+ 	return val;
+ }
+ 
+-#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
++#define xchg(ptr,x)							\
++({	__typeof__(*(ptr)) __ret;					\
++	__ret = (__typeof__(*(ptr)))					\
++		__xchg((unsigned long)(x), (ptr), sizeof(*(ptr)));	\
++	__ret;								\
++})
+ 
+ void __xchg_called_with_bad_pointer(void);
  
 -- 
 2.20.1
