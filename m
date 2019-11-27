@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32E0510B82E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5392710B8FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfK0Ukv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45588 "EHLO mail.kernel.org"
+        id S1730180AbfK0Uss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:48:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729090AbfK0Ukt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:49 -0500
+        id S1729685AbfK0Usq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:48:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E321821772;
-        Wed, 27 Nov 2019 20:40:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAA1921826;
+        Wed, 27 Nov 2019 20:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887248;
-        bh=pIrHMhpaaasDi/axB0LADqktz+OiSBs0YHoiRDHDFOM=;
+        s=default; t=1574887725;
+        bh=zLQV2HqGvTo5a7yHKXiDaxbA4ZR6GADgRXsTGVKYPBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pzLE+WW/Uz65/fe9xeBwacsVgP6pmw6QoKwhAjGuJnpFCjVHzMVUIdiv2KVF4knEl
-         AmbFuFXxT95UeQ9hWCzvXGCNkyxD+NeJrEJqPhb4Atrh5p2KiqGkqyF0HJUMZa9Rae
-         3CE8X1EPYi8LqyfGBToCslIXlzhL03KMpoO3mRoA=
+        b=HoiVWun1xr0D6kmC+KyWHuPdj1SBjKAsktAuHXkTKXDTElk7Ql/xcT6AtjnUqd0KF
+         p20u0sFF+956PBjDi+5XYFzPS0S9zEov7iFX34tA+7je8RS3+sI42F8VaeNRNUFd7U
+         aoEd0EH9fIGhGAuNmxHdDq4/OSRYmXsKelR/KTGE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carl Huang <cjhuang@codeaurora.org>,
-        Brian Norris <briannorris@chomium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 020/151] ath10k: allocate small size dma memory in ath10k_pci_diag_write_mem
+Subject: [PATCH 4.14 070/211] atm: zatm: Fix empty body Clang warnings
 Date:   Wed, 27 Nov 2019 21:30:03 +0100
-Message-Id: <20191127203012.724097908@linuxfoundation.org>
+Message-Id: <20191127203100.488273912@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,111 +46,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Carl Huang <cjhuang@codeaurora.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 0738b4998c6d1caf9ca2447b946709a7278c70f1 ]
+[ Upstream commit 64b9d16e2d02ca6e5dc8fcd30cfd52b0ecaaa8f4 ]
 
-ath10k_pci_diag_write_mem may allocate big size of the dma memory
-based on the parameter nbytes. Take firmware diag download as
-example, the biggest size is about 500K. In some systems, the
-allocation is likely to fail because it can't acquire such a large
-contiguous dma memory.
+Clang warns:
 
-The fix is to allocate a small size dma memory. In the loop,
-driver copies the data to the allocated dma memory and writes to
-the destination until all the data is written.
+drivers/atm/zatm.c:513:7: error: while loop has empty body
+[-Werror,-Wempty-body]
+        zwait;
+             ^
+drivers/atm/zatm.c:513:7: note: put the semicolon on a separate line to
+silence this warning
 
-Tested with QCA6174 PCI with
-firmware-6.bin_WLAN.RM.4.4.1-00119-QCARMSWP-1, this also affects
-QCA9377 PCI.
+Get rid of this warning by using an empty do-while loop. While we're at
+it, add parentheses to make it clear that this is a function-like macro.
 
-Signed-off-by: Carl Huang <cjhuang@codeaurora.org>
-Reviewed-by: Brian Norris <briannorris@chomium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/42
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/pci.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ drivers/atm/zatm.c | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
-index b7bac14d1487b..d84a362a084ac 100644
---- a/drivers/net/wireless/ath/ath10k/pci.c
-+++ b/drivers/net/wireless/ath/ath10k/pci.c
-@@ -1039,10 +1039,9 @@ int ath10k_pci_diag_write_mem(struct ath10k *ar, u32 address,
- 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
- 	int ret = 0;
- 	u32 *buf;
--	unsigned int completed_nbytes, orig_nbytes, remaining_bytes;
-+	unsigned int completed_nbytes, alloc_nbytes, remaining_bytes;
- 	struct ath10k_ce_pipe *ce_diag;
- 	void *data_buf = NULL;
--	u32 ce_data;	/* Host buffer address in CE space */
- 	dma_addr_t ce_data_base = 0;
- 	int i;
+diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+index 2c288d1f42bba..817c7edfec0b4 100644
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -126,7 +126,7 @@ static unsigned long dummy[2] = {0,0};
+ #define zin_n(r) inl(zatm_dev->base+r*4)
+ #define zin(r) inl(zatm_dev->base+uPD98401_##r*4)
+ #define zout(v,r) outl(v,zatm_dev->base+uPD98401_##r*4)
+-#define zwait while (zin(CMR) & uPD98401_BUSY)
++#define zwait() do {} while (zin(CMR) & uPD98401_BUSY)
  
-@@ -1056,9 +1055,10 @@ int ath10k_pci_diag_write_mem(struct ath10k *ar, u32 address,
- 	 *   1) 4-byte alignment
- 	 *   2) Buffer in DMA-able space
- 	 */
--	orig_nbytes = nbytes;
-+	alloc_nbytes = min_t(unsigned int, nbytes, DIAG_TRANSFER_LIMIT);
-+
- 	data_buf = (unsigned char *)dma_alloc_coherent(ar->dev,
--						       orig_nbytes,
-+						       alloc_nbytes,
- 						       &ce_data_base,
- 						       GFP_ATOMIC);
- 	if (!data_buf) {
-@@ -1066,9 +1066,6 @@ int ath10k_pci_diag_write_mem(struct ath10k *ar, u32 address,
- 		goto done;
+ /* RX0, RX1, TX0, TX1 */
+ static const int mbx_entries[NR_MBX] = { 1024,1024,1024,1024 };
+@@ -140,7 +140,7 @@ static const int mbx_esize[NR_MBX] = { 16,16,4,4 }; /* entry size in bytes */
+ 
+ static void zpokel(struct zatm_dev *zatm_dev,u32 value,u32 addr)
+ {
+-	zwait;
++	zwait();
+ 	zout(value,CER);
+ 	zout(uPD98401_IND_ACC | uPD98401_IA_BALL |
+ 	    (uPD98401_IA_TGT_CM << uPD98401_IA_TGT_SHIFT) | addr,CMR);
+@@ -149,10 +149,10 @@ static void zpokel(struct zatm_dev *zatm_dev,u32 value,u32 addr)
+ 
+ static u32 zpeekl(struct zatm_dev *zatm_dev,u32 addr)
+ {
+-	zwait;
++	zwait();
+ 	zout(uPD98401_IND_ACC | uPD98401_IA_BALL | uPD98401_IA_RW |
+ 	  (uPD98401_IA_TGT_CM << uPD98401_IA_TGT_SHIFT) | addr,CMR);
+-	zwait;
++	zwait();
+ 	return zin(CER);
+ }
+ 
+@@ -241,7 +241,7 @@ static void refill_pool(struct atm_dev *dev,int pool)
  	}
- 
--	/* Copy caller's data to allocated DMA buf */
--	memcpy(data_buf, data, orig_nbytes);
--
- 	/*
- 	 * The address supplied by the caller is in the
- 	 * Target CPU virtual address space.
-@@ -1081,12 +1078,14 @@ int ath10k_pci_diag_write_mem(struct ath10k *ar, u32 address,
- 	 */
- 	address = ath10k_pci_targ_cpu_to_ce_addr(ar, address);
- 
--	remaining_bytes = orig_nbytes;
--	ce_data = ce_data_base;
-+	remaining_bytes = nbytes;
- 	while (remaining_bytes) {
- 		/* FIXME: check cast */
- 		nbytes = min_t(int, remaining_bytes, DIAG_TRANSFER_LIMIT);
- 
-+		/* Copy caller's data to allocated DMA buf */
-+		memcpy(data_buf, data, nbytes);
-+
- 		/* Set up to receive directly into Target(!) address */
- 		ret = __ath10k_ce_rx_post_buf(ce_diag, &address, address);
- 		if (ret != 0)
-@@ -1096,7 +1095,7 @@ int ath10k_pci_diag_write_mem(struct ath10k *ar, u32 address,
- 		 * Request CE to send caller-supplied data that
- 		 * was copied to bounce buffer to Target(!) address.
- 		 */
--		ret = ath10k_ce_send_nolock(ce_diag, NULL, (u32)ce_data,
-+		ret = ath10k_ce_send_nolock(ce_diag, NULL, ce_data_base,
- 					    nbytes, 0, 0);
- 		if (ret != 0)
- 			goto done;
-@@ -1137,12 +1136,12 @@ int ath10k_pci_diag_write_mem(struct ath10k *ar, u32 address,
- 
- 		remaining_bytes -= nbytes;
- 		address += nbytes;
--		ce_data += nbytes;
-+		data += nbytes;
+ 	if (first) {
+ 		spin_lock_irqsave(&zatm_dev->lock, flags);
+-		zwait;
++		zwait();
+ 		zout(virt_to_bus(first),CER);
+ 		zout(uPD98401_ADD_BAT | (pool << uPD98401_POOL_SHIFT) | count,
+ 		    CMR);
+@@ -508,9 +508,9 @@ static int open_rx_first(struct atm_vcc *vcc)
  	}
- 
- done:
- 	if (data_buf) {
--		dma_free_coherent(ar->dev, orig_nbytes, data_buf,
-+		dma_free_coherent(ar->dev, alloc_nbytes, data_buf,
- 				  ce_data_base);
+ 	if (zatm_vcc->pool < 0) return -EMSGSIZE;
+ 	spin_lock_irqsave(&zatm_dev->lock, flags);
+-	zwait;
++	zwait();
+ 	zout(uPD98401_OPEN_CHAN,CMR);
+-	zwait;
++	zwait();
+ 	DPRINTK("0x%x 0x%x\n",zin(CMR),zin(CER));
+ 	chan = (zin(CMR) & uPD98401_CHAN_ADDR) >> uPD98401_CHAN_ADDR_SHIFT;
+ 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
+@@ -571,21 +571,21 @@ static void close_rx(struct atm_vcc *vcc)
+ 		pos = vcc->vci >> 1;
+ 		shift = (1-(vcc->vci & 1)) << 4;
+ 		zpokel(zatm_dev,zpeekl(zatm_dev,pos) & ~(0xffff << shift),pos);
+-		zwait;
++		zwait();
+ 		zout(uPD98401_NOP,CMR);
+-		zwait;
++		zwait();
+ 		zout(uPD98401_NOP,CMR);
+ 		spin_unlock_irqrestore(&zatm_dev->lock, flags);
  	}
+ 	spin_lock_irqsave(&zatm_dev->lock, flags);
+-	zwait;
++	zwait();
+ 	zout(uPD98401_DEACT_CHAN | uPD98401_CHAN_RT | (zatm_vcc->rx_chan <<
+ 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
+-	zwait;
++	zwait();
+ 	udelay(10); /* why oh why ... ? */
+ 	zout(uPD98401_CLOSE_CHAN | uPD98401_CHAN_RT | (zatm_vcc->rx_chan <<
+ 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
+-	zwait;
++	zwait();
+ 	if (!(zin(CMR) & uPD98401_CHAN_ADDR))
+ 		printk(KERN_CRIT DEV_LABEL "(itf %d): can't close RX channel "
+ 		    "%d\n",vcc->dev->number,zatm_vcc->rx_chan);
+@@ -699,7 +699,7 @@ printk("NONONONOO!!!!\n");
+ 	skb_queue_tail(&zatm_vcc->tx_queue,skb);
+ 	DPRINTK("QRP=0x%08lx\n",zpeekl(zatm_dev,zatm_vcc->tx_chan*VC_SIZE/4+
+ 	  uPD98401_TXVC_QRP));
+-	zwait;
++	zwait();
+ 	zout(uPD98401_TX_READY | (zatm_vcc->tx_chan <<
+ 	    uPD98401_CHAN_ADDR_SHIFT),CMR);
+ 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
+@@ -891,12 +891,12 @@ static void close_tx(struct atm_vcc *vcc)
+ 	}
+ 	spin_lock_irqsave(&zatm_dev->lock, flags);
+ #if 0
+-	zwait;
++	zwait();
+ 	zout(uPD98401_DEACT_CHAN | (chan << uPD98401_CHAN_ADDR_SHIFT),CMR);
+ #endif
+-	zwait;
++	zwait();
+ 	zout(uPD98401_CLOSE_CHAN | (chan << uPD98401_CHAN_ADDR_SHIFT),CMR);
+-	zwait;
++	zwait();
+ 	if (!(zin(CMR) & uPD98401_CHAN_ADDR))
+ 		printk(KERN_CRIT DEV_LABEL "(itf %d): can't close TX channel "
+ 		    "%d\n",vcc->dev->number,chan);
+@@ -926,9 +926,9 @@ static int open_tx_first(struct atm_vcc *vcc)
+ 	zatm_vcc->tx_chan = 0;
+ 	if (vcc->qos.txtp.traffic_class == ATM_NONE) return 0;
+ 	spin_lock_irqsave(&zatm_dev->lock, flags);
+-	zwait;
++	zwait();
+ 	zout(uPD98401_OPEN_CHAN,CMR);
+-	zwait;
++	zwait();
+ 	DPRINTK("0x%x 0x%x\n",zin(CMR),zin(CER));
+ 	chan = (zin(CMR) & uPD98401_CHAN_ADDR) >> uPD98401_CHAN_ADDR_SHIFT;
+ 	spin_unlock_irqrestore(&zatm_dev->lock, flags);
+@@ -1559,7 +1559,7 @@ static void zatm_phy_put(struct atm_dev *dev,unsigned char value,
+ 	struct zatm_dev *zatm_dev;
+ 
+ 	zatm_dev = ZATM_DEV(dev);
+-	zwait;
++	zwait();
+ 	zout(value,CER);
+ 	zout(uPD98401_IND_ACC | uPD98401_IA_B0 |
+ 	    (uPD98401_IA_TGT_PHY << uPD98401_IA_TGT_SHIFT) | addr,CMR);
+@@ -1571,10 +1571,10 @@ static unsigned char zatm_phy_get(struct atm_dev *dev,unsigned long addr)
+ 	struct zatm_dev *zatm_dev;
+ 
+ 	zatm_dev = ZATM_DEV(dev);
+-	zwait;
++	zwait();
+ 	zout(uPD98401_IND_ACC | uPD98401_IA_B0 | uPD98401_IA_RW |
+ 	  (uPD98401_IA_TGT_PHY << uPD98401_IA_TGT_SHIFT) | addr,CMR);
+-	zwait;
++	zwait();
+ 	return zin(CER) & 0xff;
+ }
  
 -- 
 2.20.1
