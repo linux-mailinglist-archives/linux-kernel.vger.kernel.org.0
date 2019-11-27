@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E2510B909
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D07710B827
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfK0UtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
+        id S1727401AbfK0Uka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:40:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729599AbfK0UtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:49:08 -0500
+        id S1727690AbfK0UkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:40:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE6C0217C3;
-        Wed, 27 Nov 2019 20:49:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48DA821772;
+        Wed, 27 Nov 2019 20:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887748;
-        bh=dP+PCoNwoOWfPuFe01TtS/TXqgxB3zZdYBB2ROF1FZs=;
+        s=default; t=1574887224;
+        bh=9P2C0OhGyuVrf0uVcSnEJlV+LUuk1SKnoL9Sxe9kW7I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TkPkq7U1De0b7+0iaUZbya1FoHCkWlAKP21fUX3o0r1I2T4Yu8/Jk0JGIwTIJ+gG7
-         SQaGXIMxT19p5mdQRHaRhFlYEsfHaQMhKHaYvx3Ow/twrzW1fh8I8tSgLWg2FuiWPZ
-         aENB2yrLUP2tN+clv1tFFmbR0yYlTML/2l9li3XA=
+        b=mFJOsV4+XQV091ClHBdP75B6h4tdXDUTtxLP+0GBSdjLboIp1U4TfWaZ3VdzARt3/
+         1hYPsYxCa73pf0Hs32I3w+iJQdJK8DrhAGRryR6pD1b7SuLBVlXBD6bVS/n1MGkkc2
+         qbnvB3zWx3Ug5xH65iAMwntP5IBDWNZ9HDLNy9QQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Uros Bizjak <ubizjak@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 078/211] mISDN: Fix type of switch control variable in ctrl_teimanager
-Date:   Wed, 27 Nov 2019 21:30:11 +0100
-Message-Id: <20191127203101.188989333@linuxfoundation.org>
+Subject: [PATCH 4.9 029/151] KVM/x86: Fix invvpid and invept register operand size in 64-bit mode
+Date:   Wed, 27 Nov 2019 21:30:12 +0100
+Message-Id: <20191127203019.137550971@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,68 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
 
-[ Upstream commit aeb5e02aca91522733eb1db595ac607d30c87767 ]
+[ Upstream commit 5ebb272b2ea7e02911a03a893f8d922d49f9bb4a ]
 
-Clang warns (trimmed for brevity):
+Register operand size of invvpid and invept instruction in 64-bit mode
+has always 64 bits. Adjust inline function argument type to reflect
+correct size.
 
-drivers/isdn/mISDN/tei.c:1193:7: warning: overflow converting case value
-to switch condition type (2147764552 to 18446744071562348872) [-Wswitch]
-        case IMHOLD_L1:
-             ^
-drivers/isdn/mISDN/tei.c:1187:7: warning: overflow converting case value
-to switch condition type (2147764550 to 18446744071562348870) [-Wswitch]
-        case IMCLEAR_L2:
-             ^
-2 warnings generated.
-
-The root cause is that the _IOC macro can generate really large numbers,
-which don't find into type int. My research into how GCC and Clang are
-handling this at a low level didn't prove fruitful and surveying the
-kernel tree shows that aside from here and a few places in the scsi
-subsystem, everything that uses _IOC is at least of type 'unsigned int'.
-Make that change here because as nothing in this function cares about
-the signedness of the variable and it removes ambiguity, which is never
-good when dealing with compilers.
-
-While we're here, remove the unnecessary local variable ret (just return
--EINVAL and 0 directly).
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/67
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/mISDN/tei.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
-index 12d9e5f4beb1f..58635b5f296f0 100644
---- a/drivers/isdn/mISDN/tei.c
-+++ b/drivers/isdn/mISDN/tei.c
-@@ -1180,8 +1180,7 @@ static int
- ctrl_teimanager(struct manager *mgr, void *arg)
- {
- 	/* currently we only have one option */
--	int	*val = (int *)arg;
--	int	ret = 0;
-+	unsigned int *val = (unsigned int *)arg;
- 
- 	switch (val[0]) {
- 	case IMCLEAR_L2:
-@@ -1197,9 +1196,9 @@ ctrl_teimanager(struct manager *mgr, void *arg)
- 			test_and_clear_bit(OPTION_L1_HOLD, &mgr->options);
- 		break;
- 	default:
--		ret = -EINVAL;
-+		return -EINVAL;
- 	}
--	return ret;
-+	return 0;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 4c0d6d0d6337f..f76caa03f4f80 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1547,7 +1547,7 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
+ 	return -1;
  }
  
- /* This function does create a L2 for fixed TEI in NT Mode */
+-static inline void __invvpid(int ext, u16 vpid, gva_t gva)
++static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
+ {
+     struct {
+ 	u64 vpid : 16;
+@@ -1561,7 +1561,7 @@ static inline void __invvpid(int ext, u16 vpid, gva_t gva)
+ 		  : : "a"(&operand), "c"(ext) : "cc", "memory");
+ }
+ 
+-static inline void __invept(int ext, u64 eptp, gpa_t gpa)
++static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
+ {
+ 	struct {
+ 		u64 eptp, gpa;
 -- 
 2.20.1
 
