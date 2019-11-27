@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6971610BB2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E95D610BC71
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:21:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733031AbfK0VKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:10:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37384 "EHLO mail.kernel.org"
+        id S1732714AbfK0VIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:08:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733012AbfK0VKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:10:20 -0500
+        id S1732695AbfK0VIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:08:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D01D321555;
-        Wed, 27 Nov 2019 21:10:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E169D20637;
+        Wed, 27 Nov 2019 21:08:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889019;
-        bh=8dLYzmD6yVg83Y8rOOwXkUvVYdDu+qUDgfphnIUNfzc=;
+        s=default; t=1574888884;
+        bh=S8kGG9p6HSMDgtKASDhnwxvtfT614CVOtoxaHvrPciw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LgSsqEpxPQ+Khjv3SYMFs6/+wko1IbuzsvhmchI1JegDK0vda+dfPHWSuGyonqrj6
-         flWByCJDKsgvm/E5cgGgNgRMU6207gEC4Pnl/jMPwDMQFTEgIjd3TAxQOFRVYifsFI
-         aos5cWyNo4amyi9/y7Ro8Zpk0VDfkqsgFOuPaNhY=
+        b=nx1J9nCIQ4cSVwZADfWa0Mb86oW97YZ3iBSj9l1cyytEafjv9QWZBvxUYhmGbJKWF
+         +ZwzsLOfsddKrxRM3LpTqRXdeMi6v68fyNZBNFx77Hm1rWphr1jjsNGhabTPWH/U1a
+         OwOuRQDwHJMM6T2Cd1KzlDuR/6KuhYldPKzMsC4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 5.3 53/95] x86/xen/32: Simplify ring check in xen_iret_crit_fixup()
-Date:   Wed, 27 Nov 2019 21:32:10 +0100
-Message-Id: <20191127202919.224124606@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+711468aa5c3a1eabf863@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 281/306] nfc: port100: handle command failure cleanly
+Date:   Wed, 27 Nov 2019 21:32:11 +0100
+Message-Id: <20191127203135.311115248@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Beulich <jbeulich@suse.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 922eea2ce5c799228d9ff1be9890e6873ce8fff6 upstream.
+commit 5f9f0b11f0816b35867f2cf71e54d95f53f03902 upstream.
 
-This can be had with two instead of six insns, by just checking the high
-CS.RPL bit.
+If starting the transfer of a command suceeds but the transfer for the reply
+fails, it is not enough to initiate killing the transfer for the
+command may still be running. You need to wait for the killing to finish
+before you can reuse URB and buffer.
 
-Also adjust the comment - there would be no #GP in the mentioned cases, as
-there's no segment limit violation or alike. Instead there'd be #PF, but
-that one reports the target EIP of said branch, not the address of the
-branch insn itself.
-
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Link: https://lkml.kernel.org/r/a5986837-01eb-7bf8-bf42-4d3084d6a1f5@suse.com
+Reported-and-tested-by: syzbot+711468aa5c3a1eabf863@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/xen-asm_32.S |   15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/nfc/port100.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/xen/xen-asm_32.S
-+++ b/arch/x86/xen/xen-asm_32.S
-@@ -153,22 +153,15 @@ hyper_iret:
-  * it's still on stack), we need to restore its value here.
-  */
- ENTRY(xen_iret_crit_fixup)
--	pushl %ecx
- 	/*
- 	 * Paranoia: Make sure we're really coming from kernel space.
- 	 * One could imagine a case where userspace jumps into the
- 	 * critical range address, but just before the CPU delivers a
--	 * GP, it decides to deliver an interrupt instead.  Unlikely?
--	 * Definitely.  Easy to avoid?  Yes.  The Intel documents
--	 * explicitly say that the reported EIP for a bad jump is the
--	 * jump instruction itself, not the destination, but some
--	 * virtual environments get this wrong.
-+	 * PF, it decides to deliver an interrupt instead.  Unlikely?
-+	 * Definitely.  Easy to avoid?  Yes.
- 	 */
--	movl 3*4(%esp), %ecx		/* nested CS */
--	andl $SEGMENT_RPL_MASK, %ecx
--	cmpl $USER_RPL, %ecx
--	popl %ecx
--	je 2f
-+	testb $2, 2*4(%esp)		/* nested CS */
-+	jnz 2f
+--- a/drivers/nfc/port100.c
++++ b/drivers/nfc/port100.c
+@@ -792,7 +792,7 @@ static int port100_send_frame_async(stru
  
- 	/*
- 	 * If eip is before iret_restore_end then stack
+ 	rc = port100_submit_urb_for_ack(dev, GFP_KERNEL);
+ 	if (rc)
+-		usb_unlink_urb(dev->out_urb);
++		usb_kill_urb(dev->out_urb);
+ 
+ exit:
+ 	mutex_unlock(&dev->out_urb_lock);
 
 
