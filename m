@@ -2,46 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB72310B824
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8377E10B76F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfK0UkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
+        id S1727182AbfK0Udu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:33:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbfK0UkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:12 -0500
+        id S1727010AbfK0Udu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:33:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A909621770;
-        Wed, 27 Nov 2019 20:40:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93BBF207DD;
+        Wed, 27 Nov 2019 20:33:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887212;
-        bh=g6tQzpPav/HyLLUIHmdIMx0pZsXaRsRBu3POfBuvuyo=;
+        s=default; t=1574886828;
+        bh=sph2R7pishUgeqOmCYzrLpe0s/ZA4/j+OqsawcNw1Uw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FMd5xx6HVZaXS+IHfKPwoWdjdlOqi/cOnOYo/LNj9aW2t+938diN4B3//D2pVMPqV
-         j6iEboEp3Y/GdS5lZ/ucvug1BsnooVf7BBOsNilJ2g/JniI7riTNT0tA6NhA51KXW5
-         LA0tk2+Sl5wqM8tmtdQxdsjvqlhvPvVT4VGFrCXc=
+        b=yS5eNp9eTl6SH8mOXb7dSMlSwfPsl7Cps2If09fqcWOJer1M7HQfJLFdiZnEt2S4h
+         cyy5a8GupBu5Pp/EW6WPyz7NMdvSViM+LVDG1t6lmnJF3v717Sk0gnwJAZMeakMNZO
+         8jTVOau2IrdblK3sZB9+1toq56Lnkp2FTKTdjzB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Thomas Voegtle <tv@lio96.de>, Changwei Ge <gechangwei@live.cn>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 008/151] Revert "fs: ocfs2: fix possible null-pointer dereferences in ocfs2_xa_prepare_entry()"
-Date:   Wed, 27 Nov 2019 21:29:51 +0100
-Message-Id: <20191127203006.310925298@linuxfoundation.org>
+        stable@vger.kernel.org, Luigi Rizzo <lrizzo@google.com>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: [PATCH 4.4 001/132] net/mlx4_en: fix mlx4 ethtool -N insertion
+Date:   Wed, 27 Nov 2019 21:29:52 +0100
+Message-Id: <20191127202858.337504458@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,111 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
+From: Luigi Rizzo <lrizzo@google.com>
 
-commit 94b07b6f9e2e996afff7395de6b35f34f4cb10bf upstream.
+[ Upstream commit 34e59836565e36fade1464e054a3551c1a0364be ]
 
-This reverts commit 56e94ea132bb5c2c1d0b60a6aeb34dcb7d71a53d.
+ethtool expects ETHTOOL_GRXCLSRLALL to set ethtool_rxnfc->data with the
+total number of entries in the rx classifier table.  Surprisingly, mlx4
+is missing this part (in principle ethtool could still move forward and
+try the insert).
 
-Commit 56e94ea132bb ("fs: ocfs2: fix possible null-pointer dereferences
-in ocfs2_xa_prepare_entry()") introduces a regression that fail to
-create directory with mount option user_xattr and acl.  Actually the
-reported NULL pointer dereference case can be correctly handled by
-loc->xl_ops->xlo_add_entry(), so revert it.
+Tested: compiled and run command:
+	phh13:~# ethtool -N eth1 flow-type udp4  queue 4
+	Added rule with ID 255
 
-Link: http://lkml.kernel.org/r/1573624916-83825-1-git-send-email-joseph.qi@linux.alibaba.com
-Fixes: 56e94ea132bb ("fs: ocfs2: fix possible null-pointer dereferences in ocfs2_xa_prepare_entry()")
-Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Reported-by: Thomas Voegtle <tv@lio96.de>
-Acked-by: Changwei Ge <gechangwei@live.cn>
-Cc: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Luigi Rizzo <lrizzo@google.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ocfs2/xattr.c |   56 ++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 33 insertions(+), 23 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -1497,6 +1497,18 @@ static int ocfs2_xa_check_space(struct o
- 	return loc->xl_ops->xlo_check_space(loc, xi);
- }
- 
-+static void ocfs2_xa_add_entry(struct ocfs2_xa_loc *loc, u32 name_hash)
-+{
-+	loc->xl_ops->xlo_add_entry(loc, name_hash);
-+	loc->xl_entry->xe_name_hash = cpu_to_le32(name_hash);
-+	/*
-+	 * We can't leave the new entry's xe_name_offset at zero or
-+	 * add_namevalue() will go nuts.  We set it to the size of our
-+	 * storage so that it can never be less than any other entry.
-+	 */
-+	loc->xl_entry->xe_name_offset = cpu_to_le16(loc->xl_size);
-+}
-+
- static void ocfs2_xa_add_namevalue(struct ocfs2_xa_loc *loc,
- 				   struct ocfs2_xattr_info *xi)
- {
-@@ -2128,31 +2140,29 @@ static int ocfs2_xa_prepare_entry(struct
- 	if (rc)
- 		goto out;
- 
--	if (!loc->xl_entry) {
--		rc = -EINVAL;
--		goto out;
--	}
--
--	if (ocfs2_xa_can_reuse_entry(loc, xi)) {
--		orig_value_size = loc->xl_entry->xe_value_size;
--		rc = ocfs2_xa_reuse_entry(loc, xi, ctxt);
--		if (rc)
--			goto out;
--		goto alloc_value;
--	}
-+	if (loc->xl_entry) {
-+		if (ocfs2_xa_can_reuse_entry(loc, xi)) {
-+			orig_value_size = loc->xl_entry->xe_value_size;
-+			rc = ocfs2_xa_reuse_entry(loc, xi, ctxt);
-+			if (rc)
-+				goto out;
-+			goto alloc_value;
-+		}
- 
--	if (!ocfs2_xattr_is_local(loc->xl_entry)) {
--		orig_clusters = ocfs2_xa_value_clusters(loc);
--		rc = ocfs2_xa_value_truncate(loc, 0, ctxt);
--		if (rc) {
--			mlog_errno(rc);
--			ocfs2_xa_cleanup_value_truncate(loc,
--							"overwriting",
--							orig_clusters);
--			goto out;
-+		if (!ocfs2_xattr_is_local(loc->xl_entry)) {
-+			orig_clusters = ocfs2_xa_value_clusters(loc);
-+			rc = ocfs2_xa_value_truncate(loc, 0, ctxt);
-+			if (rc) {
-+				mlog_errno(rc);
-+				ocfs2_xa_cleanup_value_truncate(loc,
-+								"overwriting",
-+								orig_clusters);
-+				goto out;
-+			}
- 		}
--	}
--	ocfs2_xa_wipe_namevalue(loc);
-+		ocfs2_xa_wipe_namevalue(loc);
-+	} else
-+		ocfs2_xa_add_entry(loc, name_hash);
- 
- 	/*
- 	 * If we get here, we have a blank entry.  Fill it.  We grow our
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@ -1667,6 +1667,7 @@ static int mlx4_en_get_rxnfc(struct net_
+ 		err = mlx4_en_get_flow(dev, cmd, cmd->fs.location);
+ 		break;
+ 	case ETHTOOL_GRXCLSRLALL:
++		cmd->data = MAX_NUM_OF_FS_RULES;
+ 		while ((!err || err == -ENOENT) && priority < cmd->rule_cnt) {
+ 			err = mlx4_en_get_flow(dev, cmd, i);
+ 			if (!err)
 
 
