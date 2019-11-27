@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3436A10B8AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BD310B989
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:54:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfK0Upl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:45:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56716 "EHLO mail.kernel.org"
+        id S1728319AbfK0UyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:54:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727835AbfK0Upj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:45:39 -0500
+        id S1730805AbfK0UyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:54:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D850B217AB;
-        Wed, 27 Nov 2019 20:45:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CA1E2154A;
+        Wed, 27 Nov 2019 20:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887538;
-        bh=gla/T9epZxieOxWiss8ElTZqXZOTcBewGKHUizRHzyk=;
+        s=default; t=1574888052;
+        bh=nOASPME7oBHDUaltT3oebX6cvhcGZFVv/TX6DPCoUc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ALMAGc/sr+DR3AsdqUm+XB1PR5H27ErmnXQxcWmDajgDoAL+ANwzzc7A3jtF7hCyR
-         5+7bGK2iiZefCl6YOyyqXeRZL+MZVPHcyT3eZVqE3IyxfdTrr4giOj/CsYrpZQzYGw
-         RGzOqJPfdV2ymRYjtV4Dxkw1xiW2FqbcoE7P14fM=
+        b=mP6luWYD8GvtcF67o6fZs/WPwMV2aFs8mwlLTydfau+j5d8KI2KnZDWxWo5OUwDFl
+         TN6BLoEuHI9KSIl5EVGlQBcmeYEG4sESnGRFsJ9StJN/smzE8PmJCkcPMeOYGG9aBC
+         jqAnKCt/jiouLCWhtByA8o3XxLRUWk9GwGixSVF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernd Porr <mail@berndporr.me.uk>,
-        Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.9 148/151] staging: comedi: usbduxfast: usbduxfast_ai_cmdtest rounding error
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Suwan Kim <suwan.kim027@gmail.com>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH 4.14 198/211] usbip: Fix uninitialized symbol nents in stub_recv_cmd_submit()
 Date:   Wed, 27 Nov 2019 21:32:11 +0100
-Message-Id: <20191127203047.571694697@linuxfoundation.org>
+Message-Id: <20191127203112.327804232@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,86 +45,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bernd Porr <mail@berndporr.me.uk>
+From: Suwan Kim <suwan.kim027@gmail.com>
 
-commit 5618332e5b955b4bff06d0b88146b971c8dd7b32 upstream.
+commit 2a9125317b247f2cf35c196f968906dcf062ae2d upstream.
 
-The userspace comedilib function 'get_cmd_generic_timed' fills
-the cmd structure with an informed guess and then calls the
-function 'usbduxfast_ai_cmdtest' in this driver repeatedly while
-'usbduxfast_ai_cmdtest' is modifying the cmd struct until it
-no longer changes. However, because of rounding errors this never
-converged because 'steps = (cmd->convert_arg * 30) / 1000' and then
-back to 'cmd->convert_arg = (steps * 1000) / 30' won't be the same
-because of rounding errors. 'Steps' should only be converted back to
-the 'convert_arg' if 'steps' has actually been modified. In addition
-the case of steps being 0 wasn't checked which is also now done.
+Smatch reported that nents is not initialized and used in
+stub_recv_cmd_submit(). nents is currently initialized by sgl_alloc()
+and used to allocate multiple URBs when host controller doesn't
+support scatter-gather DMA. The use of uninitialized nents means that
+buf_len is zero and use_sg is true. But buffer length should not be
+zero when an URB uses scatter-gather DMA.
 
-Signed-off-by: Bernd Porr <mail@berndporr.me.uk>
-Cc: <stable@vger.kernel.org> # 4.4+
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
-Link: https://lore.kernel.org/r/20191118230759.1727-1-mail@berndporr.me.uk
+To prevent this situation, add the conditional that checks buf_len
+and use_sg. And move the use of nents right after the sgl_alloc() to
+avoid the use of uninitialized nents.
+
+If the error occurs, it adds SDEV_EVENT_ERROR_MALLOC and stub_priv
+will be released by stub event handler and connection will be shut
+down.
+
+Fixes: ea44d190764b ("usbip: Implement SG support to vhci-hcd and stub driver")
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191111141035.27788-1-suwan.kim027@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/usbduxfast.c |   21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/usb/usbip/stub_rx.c |   50 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
 
---- a/drivers/staging/comedi/drivers/usbduxfast.c
-+++ b/drivers/staging/comedi/drivers/usbduxfast.c
-@@ -1,5 +1,5 @@
- /*
-- *  Copyright (C) 2004-2014 Bernd Porr, mail@berndporr.me.uk
-+ *  Copyright (C) 2004-2019 Bernd Porr, mail@berndporr.me.uk
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -17,7 +17,7 @@
-  * Description: University of Stirling USB DAQ & INCITE Technology Limited
-  * Devices: [ITL] USB-DUX-FAST (usbduxfast)
-  * Author: Bernd Porr <mail@berndporr.me.uk>
-- * Updated: 10 Oct 2014
-+ * Updated: 16 Nov 2019
-  * Status: stable
-  */
+--- a/drivers/usb/usbip/stub_rx.c
++++ b/drivers/usb/usbip/stub_rx.c
+@@ -487,18 +487,50 @@ static void stub_recv_cmd_submit(struct
+ 	if (pipe == -1)
+ 		return;
  
-@@ -31,6 +31,7 @@
-  *
-  *
-  * Revision history:
-+ * 1.0: Fixed a rounding error in usbduxfast_ai_cmdtest
-  * 0.9: Dropping the first data packet which seems to be from the last transfer.
-  *      Buffer overflows in the FX2 are handed over to comedi.
-  * 0.92: Dropping now 4 packets. The quad buffer has to be emptied.
-@@ -359,6 +360,7 @@ static int usbduxfast_ai_cmdtest(struct
- 				 struct comedi_cmd *cmd)
- {
- 	int err = 0;
-+	int err2 = 0;
- 	unsigned int steps;
- 	unsigned int arg;
++	/*
++	 * Smatch reported the error case where use_sg is true and buf_len is 0.
++	 * In this case, It adds SDEV_EVENT_ERROR_MALLOC and stub_priv will be
++	 * released by stub event handler and connection will be shut down.
++	 */
+ 	priv = stub_priv_alloc(sdev, pdu);
+ 	if (!priv)
+ 		return;
  
-@@ -408,11 +410,16 @@ static int usbduxfast_ai_cmdtest(struct
- 	 */
- 	steps = (cmd->convert_arg * 30) / 1000;
- 	if (cmd->chanlist_len !=  1)
--		err |= comedi_check_trigger_arg_min(&steps,
--						    MIN_SAMPLING_PERIOD);
--	err |= comedi_check_trigger_arg_max(&steps, MAX_SAMPLING_PERIOD);
--	arg = (steps * 1000) / 30;
--	err |= comedi_check_trigger_arg_is(&cmd->convert_arg, arg);
-+		err2 |= comedi_check_trigger_arg_min(&steps,
-+						     MIN_SAMPLING_PERIOD);
-+	else
-+		err2 |= comedi_check_trigger_arg_min(&steps, 1);
-+	err2 |= comedi_check_trigger_arg_max(&steps, MAX_SAMPLING_PERIOD);
-+	if (err2) {
-+		err |= err2;
-+		arg = (steps * 1000) / 30;
-+		err |= comedi_check_trigger_arg_is(&cmd->convert_arg, arg);
+ 	buf_len = (unsigned long long)pdu->u.cmd_submit.transfer_buffer_length;
+ 
++	if (use_sg && !buf_len) {
++		dev_err(&udev->dev, "sg buffer with zero length\n");
++		goto err_malloc;
 +	}
++
+ 	/* allocate urb transfer buffer, if needed */
+ 	if (buf_len) {
+ 		if (use_sg) {
+ 			sgl = sgl_alloc(buf_len, GFP_KERNEL, &nents);
+ 			if (!sgl)
+ 				goto err_malloc;
++
++			/* Check if the server's HCD supports SG */
++			if (!udev->bus->sg_tablesize) {
++				/*
++				 * If the server's HCD doesn't support SG, break
++				 * a single SG request into several URBs and map
++				 * each SG list entry to corresponding URB
++				 * buffer. The previously allocated SG list is
++				 * stored in priv->sgl (If the server's HCD
++				 * support SG, SG list is stored only in
++				 * urb->sg) and it is used as an indicator that
++				 * the server split single SG request into
++				 * several URBs. Later, priv->sgl is used by
++				 * stub_complete() and stub_send_ret_submit() to
++				 * reassemble the divied URBs.
++				 */
++				support_sg = 0;
++				num_urbs = nents;
++				priv->completed_urbs = 0;
++				pdu->u.cmd_submit.transfer_flags &=
++								~URB_DMA_MAP_SG;
++			}
+ 		} else {
+ 			buffer = kzalloc(buf_len, GFP_KERNEL);
+ 			if (!buffer)
+@@ -506,24 +538,6 @@ static void stub_recv_cmd_submit(struct
+ 		}
+ 	}
  
- 	if (cmd->stop_src == TRIG_COUNT)
- 		err |= comedi_check_trigger_arg_min(&cmd->stop_arg, 1);
+-	/* Check if the server's HCD supports SG */
+-	if (use_sg && !udev->bus->sg_tablesize) {
+-		/*
+-		 * If the server's HCD doesn't support SG, break a single SG
+-		 * request into several URBs and map each SG list entry to
+-		 * corresponding URB buffer. The previously allocated SG
+-		 * list is stored in priv->sgl (If the server's HCD support SG,
+-		 * SG list is stored only in urb->sg) and it is used as an
+-		 * indicator that the server split single SG request into
+-		 * several URBs. Later, priv->sgl is used by stub_complete() and
+-		 * stub_send_ret_submit() to reassemble the divied URBs.
+-		 */
+-		support_sg = 0;
+-		num_urbs = nents;
+-		priv->completed_urbs = 0;
+-		pdu->u.cmd_submit.transfer_flags &= ~URB_DMA_MAP_SG;
+-	}
+-
+ 	/* allocate urb array */
+ 	priv->num_urbs = num_urbs;
+ 	priv->urbs = kmalloc_array(num_urbs, sizeof(*priv->urbs), GFP_KERNEL);
 
 
