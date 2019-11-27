@@ -2,147 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE57910B15B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:31:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B87110B15E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:31:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfK0Obg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 09:31:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44202 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfK0Obg (ORCPT
+        id S1727172AbfK0Obl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 09:31:41 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34877 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfK0Obk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 09:31:36 -0500
-Received: by mail-wr1-f65.google.com with SMTP id i12so26886647wrn.11
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 06:31:34 -0800 (PST)
+        Wed, 27 Nov 2019 09:31:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j6so15715962lja.2;
+        Wed, 27 Nov 2019 06:31:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qlAkHZOA6eXoiGp7sT9AQUtpqqqurE9XZGWxcrGi//M=;
-        b=A5YVd+acZGDhd+1hH+jbmPL/SwGWX3TrjcWs7IsrSDw2YmrcGa4QLRa/f+B3Zizbrp
-         N2bbtsSbdkIJxEiBaUy4XZAEBGyHM88S1qYd8e/xteMXKjy5vtn95UXQ3cW13YKlxcYH
-         /zMDGiXAiCjsaFkTp0SrVxsMFjmUBK9Fn4bpCR63vQdbvZDp4fLOAC8rvFsyQWkqx/aa
-         VUqO/p1qxOz0tMW5OCt7dRno+Bk+T/PiBrxRxAru8NrEdFYmFG3df0tGKpe0mOmoD1VG
-         Bd1W4vKKU8AubmIwwwydB7KeT+WapOGUM21DpPPzbOjW5X1HYNitXuVqM1Y2m8BwWLSn
-         +8KA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M9v+QKFBceM7UwSZzBuiBDdbBA4xp8eGHt5HTP5gbgc=;
+        b=vVCcpBZx/CT6V3mo1xdBB8U2Q1ZK2bCaI/XYtKfEZ4VTlW+dQgL1REcBAn77EYEvDD
+         UzkT+RGgQ7H2BtBsTJCIaYl3OVLiZoxJog1A38U2jayp38t4ojIo5QJX0iLTeeRG/CyM
+         9JTtfCsLwnf4kusN1K7g2+xPFPZqkWQwKAsQEU/lz2njFMy5Ion/4tboLXx851wG9nZj
+         6EBEUskGO5TFTC417ZX8NTvIA4Ev6bhH1SVT6sicv4ywU7XWwkZZbzc10gXs14Yu+UgK
+         8nb05ofRWMGqaT6LBKDpa8ok8+mKjwPtBl+ntaPv6MqI1yRkdjyryXv0iA7wNCrnSCus
+         PQVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=qlAkHZOA6eXoiGp7sT9AQUtpqqqurE9XZGWxcrGi//M=;
-        b=JCJPmpJDCccZSxIhf8iBEOjGKM/njsrH5wqjOdwDkn5eMlBzSgGSUqCVEv2UvOEp9B
-         tM2r9bsTmT2acrf/LX+oVFlIM3sJAv/UztU0OzZeJA2+eIVlJ2+eh2ApqepzE5Gqz3TD
-         Y7JtxmVo2xiCCtBQ5b7IKCyMyrwsX6DKgHv0WVPSw2TBYSp0FTDYnDnsVhOexgOh1J+/
-         hGBjyfbUDVWx2tNbHY7gd6rFQKvZWLyjbVHmbFFRX851fQfFCDuCm+VOBaX6t737BI1p
-         y7ALTTbjIqeS0NdyHYWmarkKFv5l/vS86n518hV8x0UybOdFh2SQHTXHZLjtafzb2XUs
-         +86Q==
-X-Gm-Message-State: APjAAAUP5nTZEw00h2sSOnlkjwmrUY09NjZYif4CB+9iooCATA7CVz1p
-        d+a5vwPkBDGPEsI5dIwDeTUrBA==
-X-Google-Smtp-Source: APXvYqzQftFz1wipVzan1q9hzzjSrPto9OLFbPUa1nTEwkWP8BIPbcKJprDpo1HEAwR24iXufwOCXg==
-X-Received: by 2002:a5d:50c3:: with SMTP id f3mr41563628wrt.14.1574865093420;
-        Wed, 27 Nov 2019 06:31:33 -0800 (PST)
-Received: from [172.20.1.104] ([217.38.71.146])
-        by smtp.gmail.com with ESMTPSA id 189sm7016379wmc.7.2019.11.27.06.31.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Nov 2019 06:31:32 -0800 (PST)
-Subject: Re: [PATCH 3/3] bpftool: Allow to link libbpf dynamically
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@redhat.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-References: <20191127094837.4045-1-jolsa@kernel.org>
- <20191127094837.4045-4-jolsa@kernel.org>
- <fd22660f-2f70-4ffa-b45f-bb417d006d0a@netronome.com>
- <20191127141520.GJ32367@krava> <20191127142449.GD22719@kernel.org>
-From:   Quentin Monnet <quentin.monnet@netronome.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=quentin.monnet@netronome.com; prefer-encrypt=mutual; keydata=
- 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
- RHhSHGnKaQ6MfrTge5Q0h5A=
-Message-ID: <d9bc04a6-0f72-9408-7c2e-2fb30e6a8f74@netronome.com>
-Date:   Wed, 27 Nov 2019 14:31:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M9v+QKFBceM7UwSZzBuiBDdbBA4xp8eGHt5HTP5gbgc=;
+        b=Lcbdnhqh86WvhIF6cOYveTE6HOvPShfEx06kwD4DXDUpFkliXxgPXiLYrZprmfDnCX
+         +jj+6jS0PXXdXHXVRnCwTKU34IsELLu1eNS09py8xEFGUgtKUcnkre1yaAnVnUda/Zxr
+         zzcGrEGUkGqIWvwgZaxze1CthqHM92RLj+bvJutThfKB4tKZERkfo3ZAB9TN7PRoZb3p
+         hJaxzHfmlqq9c0cgMsnXwhlA0p4qLCYX2AZUdlErj2OEa/JyAri0g69Y9Q3CN83rUkPa
+         HyIQ22BuuaFJkG/+knyrxwY0z8bs3S3hnd3B3J8GdrosGsJ2HPNYmccYlr/2Q+VBHpHv
+         hWjA==
+X-Gm-Message-State: APjAAAW/FwjIfG1fCipwXrJ/Xv0CTX6khRxjCGZPTUg20WeFEekACa/Z
+        ssk9bCZNXHPs/ItRYthUO/CQ8DTI
+X-Google-Smtp-Source: APXvYqxT5TbAMagvxoPwkEO7AKeUttwQ+IV1OURSX9UINaImynpi/CEn3C9r2cPJkgzpd9Fl1wrvsA==
+X-Received: by 2002:a2e:9699:: with SMTP id q25mr31094007lji.251.1574865096813;
+        Wed, 27 Nov 2019 06:31:36 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id v21sm6993461lfe.68.2019.11.27.06.31.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 06:31:35 -0800 (PST)
+Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com, sboyd@kernel.org
+Cc:     gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, mturquette@baylibre.com,
+        horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com,
+        krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com,
+        josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
+Date:   Wed, 27 Nov 2019 17:31:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191127142449.GD22719@kernel.org>
+In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-11-27 11:24 UTC-0300 ~ Arnaldo Carvalho de Melo
-<arnaldo.melo@gmail.com>
-> Em Wed, Nov 27, 2019 at 03:15:20PM +0100, Jiri Olsa escreveu:
->> On Wed, Nov 27, 2019 at 01:38:55PM +0000, Quentin Monnet wrote:
->>> 2019-11-27 10:48 UTC+0100 ~ Jiri Olsa <jolsa@kernel.org>
->>> On the plus side, all build attempts from
->>> tools/testing/selftests/bpf/test_bpftool_build.sh pass successfully on
->>> my setup with dynamic linking from your branch.
->>
->> cool, had no idea there was such test ;-)
+27.11.2019 07:59, Sowjanya Komatineni пишет:
+> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+> are currently registered by Tegra clock driver using clk_regiser_mux and
+> clk_register_gate which performs direct Tegra PMC register access.
 > 
-> Should be the the equivalent to 'make -C tools/perf build-test' :-)
+> When Tegra PMC is in secure mode, any access from non-secure world will
+> not go through.
 > 
-> Perhaps we should make tools/testing/selftests/perf/ link to that?
+> This patch series adds these Tegra PMC clocks and blink controls to Tegra
+> PMC driver with PMC as clock provider and removed them from Tegra clock
+> driver. This also adds PMC specific clock id's to use in device tree and
+> removed clock ids of PMC clock from Tegra clock driver.
+> 
+> This series also includes patch to update clock provider from tegra_car
+> to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
+> 
+> [v2]:	Changes between v1 and v2 are
+> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
+> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
+> 	- feedback related to pmc clocks in Tegra PMC driver from v1
+> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
+> 	  by the clock driver using helper functions from Tegra PMC.
+> 
+>  	  Note:
+> 	  To use helper functions from PMC driver, PMC early init need to
+> 	  happen prior to using helper functions and these helper functions are
+> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
+> 	  clock registration which happen in clock_init prior to Tegra PMC
+> 	  probe.
+> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
+> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
+> 	  tegra_mc_init.
+> 	  This implementation of configuring PMC registers thru helper
+> 	  functions in clock driver needs proper changes across PMC, Clock,
+> 	  EMC and MC inits to have it work across all Tegra platforms.
+> 
+> 	  Currently PLLM Override is not enabled in the bootloader so proper
+> 	  patches for this fix will be taken care separately.
 
-It is already run as part of the bpf selftests, so probably no need.
+Hello Sowjanya,
 
-Thanks,
-Quentin
+Could you please clarify what do you mean by "PLLM Override not enabled
+in bootloader"?
+
+There is T124 Nyan Big Chromebook which is supported in upstream kernel,
+it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
+which has the PLLM Override set by bootloader as well. It's not clear to
+me whether this patch series is supposed to break these devices. If the
+breakage is the case here, then I'm afraid you can't postpone supporting
+the PLLM Override and a full-featured implementation is needed.
+
+I briefly tried to test this series on T30 and this time it doesn't hang
+on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiFi
+chip uses the Blink clock source and the clock should be enabled by the
+MMC core because this is how DT part looks like:
+
+brcm_wifi_pwrseq: wifi-pwrseq {
+	compatible = "mmc-pwrseq-simple";
+	clocks = <&pmc TEGRA_PMC_CLK_BLINK>;
+	clock-names = "ext_clock";
+	reset-gpios =  <&gpio TEGRA_GPIO(D, 3) GPIO_ACTIVE_LOW>;
+	post-power-on-delay-ms = <300>;
+	power-off-delay-us = <300>;
+};
+
+BTW, I  tried this series on a T20 device which also uses the Blink
+clock for WiFi card and it works. So looks like this patchset has some
+problem in regards to the T30 PMC clocks implementation.
+
+[snip]
