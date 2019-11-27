@@ -2,146 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920A610B110
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E68BC10B116
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbfK0OWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 09:22:20 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33044 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbfK0OWU (ORCPT
+        id S1727166AbfK0OXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 09:23:16 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:15498 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726634AbfK0OXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 09:22:20 -0500
-Received: by mail-lf1-f65.google.com with SMTP id d6so17342805lfc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 06:22:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1ueKGNrZq9k5CAhuDKF0UemrCbj1DCqBbGnBf2zTeN8=;
-        b=LiD7wVliol4JBaFNF5iQsLBWwl2fPcg4c0y+Sanhx3VYe3K1c9XiMQGBdJhwRicVkC
-         drsVbAmx3ccSsK+EMri63sqmqTtDq1BzSMbB37X0vg4cGT4AA2UMN9y3iEdNdCauseoe
-         W9ZcP3hdjy1DLrQzXLCitdqOu+3KPX38dU3zkK/IFCXjEVEd3kg8Lhehs+zGgvdbuZZI
-         F1tohcfdEkBCWYN74A0rjMH5daupj2rAeavcgKrpUcJqH62BqpXIm/KRiTpDyBFDAwjo
-         1+ITbTDY4LQYwd/fZbZJwrneofyYAbo9OAueDrPgIcdlH5iyYmhV4cpoAKcebOLKELfk
-         d+Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1ueKGNrZq9k5CAhuDKF0UemrCbj1DCqBbGnBf2zTeN8=;
-        b=V8h1Rj2y4Hj+4qQ33eGGC2P+ioHfpAoENQaOYYyIWD4pl4lxS/hOQjcrUAGpLQFW4Z
-         G5Y6LngUHwGxYkyEg2dsj4WJ6U5Qt0ves/N12CkaGhTHxFQTH9TtLvPZLX+D1jmxON4t
-         Bg3Ibm5TnZL8nwc0BdfdSp2UEJb+DUwyxa2PQLbgNBHHXsMSEAgukpbXYxJ4cGRns/lU
-         WgbjDTC1fx+4ougnFtHIvddP84Y1xH+9zyYsruckajanqodT8SLxmQnSjPUqZ8FbcafA
-         YK/5/xKtsp6RdXGUgpGnR4PnaII/JEVhMhHfdjH5wCUSptns14tU0K7F4Yap7Byw+Sft
-         NNDg==
-X-Gm-Message-State: APjAAAVWQ8PdNDd2sadQMNNOF4RwuNSro8e0r4D6Irn9Ys6BQFCp116U
-        2Zsbbywh7Ju4jeSSjGIJ0DM=
-X-Google-Smtp-Source: APXvYqxoDGM2pTjkXU7EFq31NdlZMDDL+QXhB5NtEwqztyorARwYt7dKhqs0xkXQ+f7uB2oxBnZ6hQ==
-X-Received: by 2002:ac2:51b5:: with SMTP id f21mr28773344lfk.159.1574864538094;
-        Wed, 27 Nov 2019 06:22:18 -0800 (PST)
-Received: from seldlx21914.corpusers.net ([37.139.156.40])
-        by smtp.gmail.com with ESMTPSA id x9sm7032158lfn.21.2019.11.27.06.22.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Nov 2019 06:22:17 -0800 (PST)
-Date:   Wed, 27 Nov 2019 15:22:16 +0100
-From:   Vitaly Wool <vitalywool@gmail.com>
-To:     <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/3] z3fold: compact objects more accurately
-Message-Id: <20191127152216.6ad33745a21ba71c53606acb@gmail.com>
-In-Reply-To: <20191127152012.17a4b35f9e7f6e50f9aaca9c@gmail.com>
-References: <20191127152012.17a4b35f9e7f6e50f9aaca9c@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; x86_64-unknown-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Nov 2019 09:23:15 -0500
+X-UUID: 5623eca84e664962893906b9f978bb1d-20191127
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=NhBME09v3vIkyV7lPjd2SdpUbwvFpe5cLCJrE0AJDLc=;
+        b=FWsISVEZgeGOrx7RXH9FxrOyHQF+Ac8LeyYh2C13e8uq3ZmAk8eg2FTdbOHaSGG3faatGbkdjQXY4E0IzcsVByRjLJ5A1vZEKir+qrSkexiQ35jDj941Engs3WRrO39yBt78a8CdBfHRSeDHNoXOsIUbASgX7PJoDGuXE828psY=;
+X-UUID: 5623eca84e664962893906b9f978bb1d-20191127
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1720118062; Wed, 27 Nov 2019 22:23:10 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 27 Nov 2019 22:22:59 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 27 Nov 2019 22:23:03 +0800
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>
+CC:     Neal Liu <neal.liu@mediatek.com>,
+        Crystal Guo <Crystal.Guo@mediatek.com>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Subject: [PATCH v5 0/3] MediaTek Security random number generator support
+Date:   Wed, 27 Nov 2019 22:22:55 +0800
+Message-ID: <1574864578-467-1-git-send-email-neal.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several small things to be considered regarding the
-new inter-page compaction mechanism. First, we better set the
-relevant size in chunks to 0 in the old z3fold header for the
-object that has been moved to another z3fold page. Then, we
-shouldn't do inter-page compaction if an object is mapped.
-Lastly, free_handle should happen before release_z3fold_page
-(but not in case the page is under reclaim, it will the handle
-will be freed by reclaim then).
+VGhlc2UgcGF0Y2ggc2VyaWVzIGludHJvZHVjZSBhIGdlbmVyaWMgcm5nIGRyaXZlciBmb3IgVHJ1
+c3R6b25lDQpiYXNlZCBrZXJuZWwgZHJpdmVyIHdoaWNoIHdvdWxkIGxpa2UgdG8gY29tbXVuaWNh
+dGUgd2l0aCBBVEYNClNJUCBzZXJ2aWNlcy4NCg0KUGF0Y2ggIzEgaW5pdGlhbHMgU01DIGZpZCB0
+YWJsZSBmb3IgTWVkaWF0ZWsgU0lQIGludGVyZmFjZXMgYW5kDQphZGRzIEhXUk5HIHJlbGF0ZWQg
+U01DIGNhbGwuDQoNClBhdGNoICMyLi4zIGFkZHMgbXRrLXNlYy1ybmcga2VybmVsIGRyaXZlciBm
+b3IgVHJ1c3R6b25lIGJhc2VkIFNvQ3MuDQpGb3IgTWVkaWFUZWsgU29DcyBvbiBBUk12OCB3aXRo
+IFRydXN0Wm9uZSBlbmFibGVkLCBwZXJpcGhlcmFscyBsaWtlDQplbnRyb3B5IHNvdXJjZXMgaXMg
+bm90IGFjY2Vzc2libGUgZnJvbSBub3JtYWwgd29ybGQgKGxpbnV4KSBhbmQNCnJhdGhlciBhY2Nl
+c3NpYmxlIGZyb20gc2VjdXJlIHdvcmxkIChBVEYvVEVFKSBvbmx5Lg0KVGhpcyBkcml2ZXIgYWlt
+cyB0byBwcm92aWRlIGEgZ2VuZXJpYyBpbnRlcmZhY2UgdG8gQVRGIHJuZyBzZXJ2aWNlLg0KDQoN
+CmNoYW5nZXMgc2luY2UgdjE6DQotIHJlbmFtZSBtdDY3eHgtcm5nIHRvIG10ay1zZWMtcm5nIHNp
+bmNlIGFsbCBNZWRpYVRlayBBUk12OCBTb0NzIGNhbiByZXVzZQ0KICB0aGlzIGRyaXZlci4NCi0g
+cmVmaW5lIGNvZGluZyBzdHlsZSBhbmQgdW5uZWNlc3NhcnkgY2hlY2suDQoNCmNoYW5nZXMgc2lu
+Y2UgdjI6DQotIHJlbW92ZSB1bnVzZWQgY29tbWVudHMuDQotIHJlbW92ZSByZWR1bmRhbnQgdmFy
+aWFibGUuDQoNCmNoYW5nZXMgc2luY2UgdjM6DQotIGFkZCBkdC1iaW5kaW5ncyBmb3IgTWVkaWFU
+ZWsgcm5nIHdpdGggVHJ1c3Rab25lIGVuYWJsZWQuDQotIHJldmlzZSBIV1JORyBTTUMgY2FsbCBm
+aWQuDQoNCmNoYW5nZXMgc2luY2UgdjQ6DQotIG1vdmUgYmluZGluZ3MgdG8gdGhlIGFybS9maXJt
+d2FyZSBkaXJlY3RvcnkuDQotIHJldmlzZSBkcml2ZXIgaW5pdCBmbG93IHRvIGNoZWNrIG1vcmUg
+cHJvcGVydHkuDQoNCg0KTmVhbCBMaXUgKDMpOg0KICBzb2M6IG1lZGlhdGVrOiBhZGQgU01DIGZp
+ZCB0YWJsZSBmb3IgU0lQIGludGVyZmFjZQ0KICBkdC1iaW5kaW5nczogcm5nOiBhZGQgYmluZGlu
+Z3MgZm9yIE1lZGlhVGVrIEFSTXY4IFNvQ3MNCiAgaHdybmc6IGFkZCBtdGstc2VjLXJuZyBkcml2
+ZXINCg0KIC4uLi9hcm0vZmlybXdhcmUvbWVkaWF0ZWssbXRrLXNlYy1ybmcudHh0ICAgICB8ICAx
+OCArKysNCiBkcml2ZXJzL2NoYXIvaHdfcmFuZG9tL0tjb25maWcgICAgICAgICAgICAgICAgfCAg
+MTYgKysrDQogZHJpdmVycy9jaGFyL2h3X3JhbmRvbS9NYWtlZmlsZSAgICAgICAgICAgICAgIHwg
+ICAxICsNCiBkcml2ZXJzL2NoYXIvaHdfcmFuZG9tL210ay1zZWMtcm5nLmMgICAgICAgICAgfCAx
+MDMgKysrKysrKysrKysrKysrKysrDQogaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrX3Np
+cF9zdmMuaCAgICAgIHwgIDMzICsrKysrKw0KIDUgZmlsZXMgY2hhbmdlZCwgMTcxIGluc2VydGlv
+bnMoKykNCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2FybS9maXJtd2FyZS9tZWRpYXRlayxtdGstc2VjLXJuZy50eHQNCiBjcmVhdGUgbW9kZSAx
+MDA2NDQgZHJpdmVycy9jaGFyL2h3X3JhbmRvbS9tdGstc2VjLXJuZy5jDQogY3JlYXRlIG1vZGUg
+MTAwNjQ0IGluY2x1ZGUvbGludXgvc29jL21lZGlhdGVrL210a19zaXBfc3ZjLmgNCg0KLS0gDQoy
+LjE4LjA=
 
-This patch addresses all three issues.
-
-Signed-off-by: Vitaly Wool <vitaly.vul@sony.com>
----
- mm/z3fold.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/mm/z3fold.c b/mm/z3fold.c
-index 36bd2612f609..f2a75418e248 100644
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -670,6 +670,7 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
- 	int first_idx = __idx(zhdr, FIRST);
- 	int middle_idx = __idx(zhdr, MIDDLE);
- 	int last_idx = __idx(zhdr, LAST);
-+	unsigned short *moved_chunks = NULL;
- 
- 	/*
- 	 * No need to protect slots here -- all the slots are "local" and
-@@ -679,14 +680,17 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
- 		p += ZHDR_SIZE_ALIGNED;
- 		sz = zhdr->first_chunks << CHUNK_SHIFT;
- 		old_handle = (unsigned long)&zhdr->slots->slot[first_idx];
-+		moved_chunks = &zhdr->first_chunks;
- 	} else if (zhdr->middle_chunks && zhdr->slots->slot[middle_idx]) {
- 		p += zhdr->start_middle << CHUNK_SHIFT;
- 		sz = zhdr->middle_chunks << CHUNK_SHIFT;
- 		old_handle = (unsigned long)&zhdr->slots->slot[middle_idx];
-+		moved_chunks = &zhdr->middle_chunks;
- 	} else if (zhdr->last_chunks && zhdr->slots->slot[last_idx]) {
- 		p += PAGE_SIZE - (zhdr->last_chunks << CHUNK_SHIFT);
- 		sz = zhdr->last_chunks << CHUNK_SHIFT;
- 		old_handle = (unsigned long)&zhdr->slots->slot[last_idx];
-+		moved_chunks = &zhdr->last_chunks;
- 	}
- 
- 	if (sz > 0) {
-@@ -743,6 +747,8 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
- 		write_unlock(&zhdr->slots->lock);
- 		add_to_unbuddied(pool, new_zhdr);
- 		z3fold_page_unlock(new_zhdr);
-+
-+		*moved_chunks = 0;
- 	}
- 
- 	return new_zhdr;
-@@ -840,7 +846,7 @@ static void do_compact_page(struct z3fold_header *zhdr, bool locked)
- 	}
- 
- 	if (!zhdr->foreign_handles && buddy_single(zhdr) &&
--			compact_single_buddy(zhdr)) {
-+	    zhdr->mapped_count == 0 && compact_single_buddy(zhdr)) {
- 		if (kref_put(&zhdr->refcount, release_z3fold_page_locked))
- 			atomic64_dec(&pool->pages_nr);
- 		else
-@@ -1254,6 +1260,8 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
- 		return;
- 	}
- 
-+	if (!page_claimed)
-+		free_handle(handle);
- 	if (kref_put(&zhdr->refcount, release_z3fold_page_locked_list)) {
- 		atomic64_dec(&pool->pages_nr);
- 		return;
-@@ -1263,7 +1271,6 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
- 		z3fold_page_unlock(zhdr);
- 		return;
- 	}
--	free_handle(handle);
- 	if (unlikely(PageIsolated(page)) ||
- 	    test_and_set_bit(NEEDS_COMPACTING, &page->private)) {
- 		put_z3fold_header(zhdr);
--- 
-2.17.1
