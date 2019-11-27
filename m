@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22CDB10BFD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:47:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48BD210BE29
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:34:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbfK0Vpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:45:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35778 "EHLO mail.kernel.org"
+        id S1730423AbfK0UvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbfK0UfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:01 -0500
+        id S1729388AbfK0UvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8266216C8;
-        Wed, 27 Nov 2019 20:34:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DF3D2195D;
+        Wed, 27 Nov 2019 20:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886900;
-        bh=detVZUwgRyHVtddSUN/iavcWIqSHjmcqFrt8yqmE6bQ=;
+        s=default; t=1574887859;
+        bh=iEFg2OgAmaWRd0RDYXvJ8JsJ2QGa+NeD4y94Xt9Om80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c2AWs4qmnUks1YM7QnH7ccn5A2rZYfUjlIOYgEn/eP0zWfRTWSrqNtHlhE9lv+f2o
-         x3RB3/XKX803BkQyYsHrWmg4+4GensqV57bS52eVKZghZqsd6LdVzMtd/AORdbYtxz
-         80a2jce17Ac5mFblQMQ4AEP8SqLOT+Gst/sH1nFY=
+        b=UlwNsnbiR9OHT2LnR6jsOP/jUHPLE7JSADo67vbJT7L1WUxCPDNAuSeKKc7lbXgV7
+         bHIatz9H4UJOTTp4lUBk4j8jSEGw+SSTM5/DKXV2L8gWupUwF8e+NQQ0I68vSf46sh
+         42F6V1tDP5Pm7Pn0Hu43x1PuLmT1mYPKeraWJfL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
+        Patrick Talbert <ptalbert@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 037/132] scsi: isci: Change sci_controller_start_tasks return type to sci_status
+Subject: [PATCH 4.14 095/211] macsec: update operstate when lower device changes
 Date:   Wed, 27 Nov 2019 21:30:28 +0100
-Message-Id: <20191127202932.379168929@linuxfoundation.org>
+Message-Id: <20191127203102.680589559@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 362b5da3dfceada6e74ecdd7af3991bbe42c0c0f ]
+[ Upstream commit e6ac075882b2afcdf2d5ab328ce4ab42a1eb9593 ]
 
-Clang warns when an enumerated type is implicitly converted to another.
+Like all other virtual devices (macvlan, vlan), the operstate of a
+macsec device should match the state of its lower device. This is done
+by calling netif_stacked_transfer_operstate from its netdevice notifier.
 
-drivers/scsi/isci/request.c:3476:13: warning: implicit conversion from
-enumeration type 'enum sci_task_status' to different enumeration type
-'enum sci_status' [-Wenum-conversion]
-                        status = sci_controller_start_task(ihost,
-                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/isci/host.c:2744:10: warning: implicit conversion from
-enumeration type 'enum sci_status' to different enumeration type 'enum
-sci_task_status' [-Wenum-conversion]
-                return SCI_SUCCESS;
-                ~~~~~~ ^~~~~~~~~~~
-drivers/scsi/isci/host.c:2753:9: warning: implicit conversion from
-enumeration type 'enum sci_status' to different enumeration type 'enum
-sci_task_status' [-Wenum-conversion]
-        return status;
-        ~~~~~~ ^~~~~~
+We also need to call netif_stacked_transfer_operstate when a new macsec
+device is created, so that its operstate is set properly. This is only
+relevant when we try to bring the device up directly when we create it.
 
-Avoid all of these implicit conversion by just making
-sci_controller_start_task use sci_status. This silences
-Clang and has no functional change since sci_task_status
-has all of its values mapped to something in sci_status.
+Radu Rendec proposed a similar patch, inspired from the 802.1q driver,
+that included changing the administrative state of the macsec device,
+instead of just the operstate. This version is similar to what the
+macvlan driver does, and updates only the operstate.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/153
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
+Reported-by: Radu Rendec <radu.rendec@gmail.com>
+Reported-by: Patrick Talbert <ptalbert@redhat.com>
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/host.c | 8 ++++----
- drivers/scsi/isci/host.h | 2 +-
- drivers/scsi/isci/task.c | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/macsec.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
-index 609dafd661d14..da4583a2fa23e 100644
---- a/drivers/scsi/isci/host.c
-+++ b/drivers/scsi/isci/host.c
-@@ -2717,9 +2717,9 @@ enum sci_status sci_controller_continue_io(struct isci_request *ireq)
-  *    the task management request.
-  * @task_request: the handle to the task request object to start.
-  */
--enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
--					       struct isci_remote_device *idev,
--					       struct isci_request *ireq)
-+enum sci_status sci_controller_start_task(struct isci_host *ihost,
-+					  struct isci_remote_device *idev,
-+					  struct isci_request *ireq)
- {
- 	enum sci_status status;
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 9bcb7c3e879f3..40e8f11f20cbf 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -3273,6 +3273,9 @@ static int macsec_newlink(struct net *net, struct net_device *dev,
+ 	if (err < 0)
+ 		goto del_dev;
  
-@@ -2728,7 +2728,7 @@ enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
- 			 "%s: SCIC Controller starting task from invalid "
- 			 "state\n",
- 			 __func__);
--		return SCI_TASK_FAILURE_INVALID_STATE;
-+		return SCI_FAILURE_INVALID_STATE;
- 	}
++	netif_stacked_transfer_operstate(real_dev, dev);
++	linkwatch_fire_event(dev);
++
+ 	macsec_generation++;
  
- 	status = sci_remote_device_start_task(ihost, idev, ireq);
-diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
-index 22a9bb1abae14..15dc6e0d8deb0 100644
---- a/drivers/scsi/isci/host.h
-+++ b/drivers/scsi/isci/host.h
-@@ -490,7 +490,7 @@ enum sci_status sci_controller_start_io(
- 	struct isci_remote_device *idev,
- 	struct isci_request *ireq);
+ 	return 0;
+@@ -3444,6 +3447,20 @@ static int macsec_notify(struct notifier_block *this, unsigned long event,
+ 		return NOTIFY_DONE;
  
--enum sci_task_status sci_controller_start_task(
-+enum sci_status sci_controller_start_task(
- 	struct isci_host *ihost,
- 	struct isci_remote_device *idev,
- 	struct isci_request *ireq);
-diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
-index 6dcaed0c1fc8c..fb6eba331ac6e 100644
---- a/drivers/scsi/isci/task.c
-+++ b/drivers/scsi/isci/task.c
-@@ -258,7 +258,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
- 				 struct isci_tmf *tmf, unsigned long timeout_ms)
- {
- 	DECLARE_COMPLETION_ONSTACK(completion);
--	enum sci_task_status status = SCI_TASK_FAILURE;
-+	enum sci_status status = SCI_FAILURE;
- 	struct isci_request *ireq;
- 	int ret = TMF_RESP_FUNC_FAILED;
- 	unsigned long flags;
-@@ -301,7 +301,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
- 	/* start the TMF io. */
- 	status = sci_controller_start_task(ihost, idev, ireq);
- 
--	if (status != SCI_TASK_SUCCESS) {
-+	if (status != SCI_SUCCESS) {
- 		dev_dbg(&ihost->pdev->dev,
- 			 "%s: start_io failed - status = 0x%x, request = %p\n",
- 			 __func__,
+ 	switch (event) {
++	case NETDEV_DOWN:
++	case NETDEV_UP:
++	case NETDEV_CHANGE: {
++		struct macsec_dev *m, *n;
++		struct macsec_rxh_data *rxd;
++
++		rxd = macsec_data_rtnl(real_dev);
++		list_for_each_entry_safe(m, n, &rxd->secys, secys) {
++			struct net_device *dev = m->secy.netdev;
++
++			netif_stacked_transfer_operstate(real_dev, dev);
++		}
++		break;
++	}
+ 	case NETDEV_UNREGISTER: {
+ 		struct macsec_dev *m, *n;
+ 		struct macsec_rxh_data *rxd;
 -- 
 2.20.1
 
