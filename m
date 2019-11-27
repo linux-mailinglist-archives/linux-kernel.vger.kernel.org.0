@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BFB410BB8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B0F10BB45
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbfK0VNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:13:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45744 "EHLO mail.kernel.org"
+        id S1732718AbfK0VLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:11:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387464AbfK0VN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:13:28 -0500
+        id S1733097AbfK0VK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:10:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E180217F9;
-        Wed, 27 Nov 2019 21:13:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F79D21775;
+        Wed, 27 Nov 2019 21:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889207;
+        s=default; t=1574889058;
         bh=sDzY29B+fqQFh7q2y2OrABZsUQVM1JjkS1wKHq8bNn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UKvfx44figNk8HrWm9QJ72p86nFnuhF5d2N2bwlf19vf5MpL1LJ6i8zepNm6MFpL+
-         umesWmuGdCSIsGMO7h8Zz/6+Vpu5ZX0v5H1kXYwP5JsQFvodSHYKgrz9HEKw8Cdm3t
-         z8uxpXVI0PjReSYiBPpIvdbJ1XEIeWyUtacvhXw0=
+        b=xYxnYDWjnBfWFWdyHmz2s0AysIonH5CKJ/fOazP9b/qHocvdfnBhhtyo70BqV5H2y
+         orusAH0NeKjmGEPT5rU7IJP7jj2SWeLkoUjgQZysUHWcc96Slz5Du9fFDhlYC7fhZ7
+         1xr6qKA/iUURddKTxasGPWcG4YX4EX6LloYtuFpc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         syzbot+a36ab65c6653d7ccdd62@syzkaller.appspotmail.com,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 29/66] ALSA: usb-audio: Fix NULL dereference at parsing BADD
+Subject: [PATCH 5.3 67/95] ALSA: usb-audio: Fix NULL dereference at parsing BADD
 Date:   Wed, 27 Nov 2019 21:32:24 +0100
-Message-Id: <20191127202701.883158414@linuxfoundation.org>
+Message-Id: <20191127202932.253077014@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
