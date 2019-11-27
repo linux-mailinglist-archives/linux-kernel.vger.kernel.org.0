@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D42610B85F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:42:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E86410B945
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbfK0Umv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:42:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49612 "EHLO mail.kernel.org"
+        id S1730517AbfK0Uvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727813AbfK0Umt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:42:49 -0500
+        id S1730496AbfK0Uvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2F1421780;
-        Wed, 27 Nov 2019 20:42:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F14FB21774;
+        Wed, 27 Nov 2019 20:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887369;
-        bh=XfDiQjvwi/dxFwd5jdxe7CZGUs6C2zCSTVXvUAaR0ic=;
+        s=default; t=1574887895;
+        bh=w+q6BL0CoPHRaEY79kEP5MAZuqvdmh1WzmsnEEQrdhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GD1Uf8wF6qLG39VCaK4QTjm/nkOCtu5azIpiUerOnUogAzfn4QEnRREF67XNjxYQ5
-         fUln8m9CpSFFPQMqODUMCTZ9WdNc03fiZA0em/JNyvdu0x5dp+4F4R3nM3mIegWUal
-         RM2F7cQGxHURHijQnm+B4H71wLlMDIusClRTCLmI=
+        b=xWXyklMSEuuUbGc0+qn1jXG2yvXwKOdoBenl1Bu4D8tzrRcUhYD/7qbPR+knT9ReT
+         mxOBnH0USK5nZihOz2EIwYcxhfdkR/PdQ5+WSaXfrgbip6qB2PYRwOUMas5krFfRGE
+         Kv4KJJck1Pi387yLOlKSUD6yJbikSjXkk3/BKM7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Brodsky <kevin.brodsky@arm.com>,
-        Victor Kamensky <kamensky@cisco.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 084/151] arm64: makefile fix build of .i file in external module case
+Subject: [PATCH 4.14 134/211] wlcore: Fix the return value in case of error in wlcore_vendor_cmd_smart_config_start()
 Date:   Wed, 27 Nov 2019 21:31:07 +0100
-Message-Id: <20191127203036.453789056@linuxfoundation.org>
+Message-Id: <20191127203106.689178028@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Victor Kamensky <kamensky@cisco.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 98356eb0ae499c63e78073ccedd9a5fc5c563288 ]
+[ Upstream commit 3419348a97bcc256238101129d69b600ceb5cc70 ]
 
-After 'a66649dab350 arm64: fix vdso-offsets.h dependency' if
-one will try to build .i file in case of external kernel module,
-build fails complaining that prepare0 target is missing. This
-issue came up with SystemTap when it tries to build variety
-of .i files for its own generated kernel modules trying to
-figure given kernel features/capabilities.
+We return 0 unconditionally at the end of
+'wlcore_vendor_cmd_smart_config_start()'.
+However, 'ret' is set to some error codes in several error handling paths
+and we already return some error codes at the beginning of the function.
 
-The issue is that prepare0 is defined in top level Makefile
-only if KBUILD_EXTMOD is not defined. .i file rule depends
-on prepare and in case KBUILD_EXTMOD defined top level Makefile
-contains empty rule for prepare. But after mentioned commit
-arch/arm64/Makefile would introduce dependency on prepare0
-through its own prepare target.
+Return 'ret' instead to propagate the error code.
 
-Fix it to put proper ifdef KBUILD_EXTMOD around code introduced
-by mentioned commit. It matches what top level Makefile does.
-
-Acked-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 80ff8063e87c ("wlcore: handle smart config vendor commands")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/ti/wlcore/vendor_cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index ee94597773fab..8d469aa5fc987 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -134,6 +134,7 @@ archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
- 	$(Q)$(MAKE) $(clean)=$(boot)/dts
+diff --git a/drivers/net/wireless/ti/wlcore/vendor_cmd.c b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
+index 5c0bcb1fe1a1f..e75c3cee0252f 100644
+--- a/drivers/net/wireless/ti/wlcore/vendor_cmd.c
++++ b/drivers/net/wireless/ti/wlcore/vendor_cmd.c
+@@ -66,7 +66,7 @@ wlcore_vendor_cmd_smart_config_start(struct wiphy *wiphy,
+ out:
+ 	mutex_unlock(&wl->mutex);
  
-+ifeq ($(KBUILD_EXTMOD),)
- # We need to generate vdso-offsets.h before compiling certain files in kernel/.
- # In order to do that, we should use the archprepare target, but we can't since
- # asm-offsets.h is included in some files used to generate vdso-offsets.h, and
-@@ -143,6 +144,7 @@ archclean:
- prepare: vdso_prepare
- vdso_prepare: prepare0
- 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
-+endif
+-	return 0;
++	return ret;
+ }
  
- define archhelp
-   echo  '* Image.gz      - Compressed kernel image (arch/$(ARCH)/boot/Image.gz)'
+ static int
 -- 
 2.20.1
 
