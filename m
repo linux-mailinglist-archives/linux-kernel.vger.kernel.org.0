@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9027310BB87
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D888910BB3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731260AbfK0VN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:13:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45498 "EHLO mail.kernel.org"
+        id S1732704AbfK0VK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:10:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731515AbfK0VNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:13:21 -0500
+        id S1732119AbfK0VKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:10:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E61F32086A;
-        Wed, 27 Nov 2019 21:13:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF02C2154A;
+        Wed, 27 Nov 2019 21:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889200;
+        s=default; t=1574889050;
         bh=TcgEOZy2tdbZnFR7pwvTCI0uoNIrtmp6FAYmtxIsDF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gdn8ISF8o9OsmOu7aPTeDIY7j0Xj/e2JhB+O5gCd0Fyj52GVJ5YR2gQEjwCmWWzQm
-         bDe3JmkSmQjfRF0K7//GiqDttCLXiq0EgkYm2ldAS0s2DGKD5cJ7as3yu+LLkgEC4t
-         LIg9GMdWiPgO/Kw5/JEWbYX3eE+JN/TU5fNK8X0g=
+        b=dvvSe5+Ea2d20pcM9t4aLyHt+TdZ5VI95nkkDy5eFPVwa3aFWe7MD/yaLtFkKgVww
+         Ws918EVXs9nGoAYWyiY2YcVyJOmj05yaBodsTi1pB0xi1+tIOqUMa+S0Lf122ZD+9w
+         my1PER69GDKC6bfjdvDqh4agZKWipbz5Af+mirHc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andy Lutomirski <luto@kernel.org>, stable@kernel.org,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.4 26/66] x86/pti/32: Calculate the various PTI cpu_entry_area sizes correctly, make the CPU_ENTRY_AREA_PAGES assert precise
+Subject: [PATCH 5.3 64/95] x86/pti/32: Calculate the various PTI cpu_entry_area sizes correctly, make the CPU_ENTRY_AREA_PAGES assert precise
 Date:   Wed, 27 Nov 2019 21:32:21 +0100
-Message-Id: <20191127202659.227959442@linuxfoundation.org>
+Message-Id: <20191127202928.851701801@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
