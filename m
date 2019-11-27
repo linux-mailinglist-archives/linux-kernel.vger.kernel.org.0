@@ -2,100 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2079A10AD93
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8B910AD94
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:29:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfK0K3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:29:07 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:30728 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726546AbfK0K3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:29:07 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARAR2dk031886;
-        Wed, 27 Nov 2019 11:29:04 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type :
- content-transfer-encoding; s=STMicroelectronics;
- bh=Bmi9ZxvHiIlWxe/sSml2LTtA26zSCPWx7oIRLedeHJE=;
- b=Pr3Z78mCwyJ9TShbbI12Na03BJ4OiVZwMtDSWYVnuxhayk6LzKq3YiFopT8c55DlgFSA
- xoig3XdJcgk6oAQW5qS3Wa2/b+2XMcsRa0/4GZvKNLzmnNibvsBDsIuT0wPuNl5dtXZD
- rFQfnC9r1f3yMcg1+Z62xKHxSNkbycdsGcxvFzhcyH2dOPocP0JZEigZ2ggqmkAnZSd1
- v2F+69ysw+FZPYYNwlw9g4bwoUfnaFNVF+J6dmn+fMvgBDDAYuK0WXxDGgccU3MVZno5
- orgZNCBILAxnNgA5AQ0S3WzeZIY1lfRT+bAf/ZK6pMNB2I+sNHc5YB58ZzGKJjs1iSmU OQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2whcxsb1hc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Nov 2019 11:29:03 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0235910002A;
-        Wed, 27 Nov 2019 11:29:03 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5591E2B1868;
-        Wed, 27 Nov 2019 11:29:03 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG6NODE1.st.com (10.75.127.16)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov 2019 11:29:02
- +0100
-From:   Yannick Fertre <yannick.fertre@st.com>
-To:     Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Input: goodix: request_irq: convert gpio to irq
-Date:   Wed, 27 Nov 2019 11:29:01 +0100
-Message-ID: <1574850541-13577-1-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727099AbfK0K3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:29:18 -0500
+Received: from fd.dlink.ru ([178.170.168.18]:53404 "EHLO fd.dlink.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbfK0K3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 05:29:17 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id BB5C21B2120E; Wed, 27 Nov 2019 13:29:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru BB5C21B2120E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1574850553; bh=EsvGsnpDTlUlkRudAZRaGscbrq1rpDXrPl2b4VXesCU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=C8h4I5Jw3GU/gGodtmFJfokOxM+MnPrYiEZvOPpR71NzZllqQbJk9oc8NGhbVJr8Z
+         lcMdvh7BDkng/94rgxrdml69FW+P1g5E3QMiZ3SReLzFvfvGG3Gshrdkqps/s+IFNF
+         V0BcM5VO7ddfkkJ8v8opMOcHx1yMNStorUpx65nw=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,USER_IN_WHITELIST
+        autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id EE0721B2089D;
+        Wed, 27 Nov 2019 13:29:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru EE0721B2089D
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id 9206C1B22678;
+        Wed, 27 Nov 2019 13:29:03 +0300 (MSK)
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Wed, 27 Nov 2019 13:29:03 +0300 (MSK)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-27_02:2019-11-27,2019-11-27 signatures=0
+Date:   Wed, 27 Nov 2019 13:29:03 +0300
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     Luciano Coelho <luciano.coelho@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Manish Chopra <manishc@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "Kenneth R. Crudup" <kenny@panix.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: wireless: intel: iwlwifi: fix GRO_NORMAL packet
+ stalling
+In-Reply-To: <PSXP216MB0438B2F163C635F8B8B4AD8AA4440@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+References: <20191127094123.18161-1-alobakin@dlink.ru>
+ <7a9332bf645fbb8c9fff634a3640c092fb9b4b79.camel@intel.com>,<c571a88c15c4a70a61cde6ca270af033@dlink.ru>
+ <PSXP216MB0438B2F163C635F8B8B4AD8AA4440@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+User-Agent: Roundcube Webmail/1.4.0
+Message-ID: <a638ab877999dbc4ded87bfaebe784f5@dlink.ru>
+X-Sender: alobakin@dlink.ru
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yannick Fertré <yannick.fertre@st.com>
+Nicholas Johnson wrote 27.11.2019 13:23:
+> Hi,
 
-Convert gpio to irq if not already done by gpio lib.
+Hi Nicholas,
 
-Signed-off-by: Yannick Fertré <yannick.fertre
----
- drivers/input/touchscreen/goodix.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+>  Sorry for top down reply, stuck with my phone. If it replies HTML
+> then I am so done with Outlook client.
+> 
+>  Does my Reported-by tag apply here?
+> 
+>  As the reporter, should I check to see that it indeed solves the
+> issue on the original hardware setup? I can do this within two hours
+> and give Tested-by then.
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index b470773..f1d9d5e 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -23,6 +23,7 @@
- #include <linux/delay.h>
- #include <linux/irq.h>
- #include <linux/interrupt.h>
-+#include <linux/gpio.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/acpi.h>
-@@ -392,6 +393,13 @@ static void goodix_free_irq(struct goodix_ts_data *ts)
- 
- static int goodix_request_irq(struct goodix_ts_data *ts)
- {
-+	int gpio;
-+
-+	gpio = desc_to_gpio(ts->gpiod_int);
-+
-+	if (gpio_is_valid(gpio))
-+		ts->client->irq = gpio_to_irq(gpio);
-+
- 	return devm_request_threaded_irq(&ts->client->dev, ts->client->irq,
- 					 NULL, goodix_ts_irq_handler,
- 					 ts->irq_flags, ts->client->name, ts);
--- 
-2.7.4
+Oops, I'm sorry I forgot to mention you in the commit message. Let's
+see what Dave will say, I have no problems with waiting for your test
+results and publishing v2.
 
+>  Thanks
+> 
+>  Regards,
+> 
+>  Nicholas
+
+Regards,
+ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
