@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A58A10BFAA
+	by mail.lfdr.de (Postfix) with ESMTP id E80C810BFAC
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfK0UgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:36:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37488 "EHLO mail.kernel.org"
+        id S1729111AbfK0VpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:45:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727969AbfK0Ufx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:53 -0500
+        id S1728022AbfK0UgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:36:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A458E207DD;
-        Wed, 27 Nov 2019 20:35:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C9D521582;
+        Wed, 27 Nov 2019 20:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886953;
-        bh=ZZNklmPefQ3KLoghL8Ew6T8cRfOw/TBoReMABM988cc=;
+        s=default; t=1574886960;
+        bh=G+bUnZIIGo0TF/ZYi61/DRntB0hbkjdnF5/2+ThSJ3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0ke7hqf14NCEqJc9OO5tDBls6DHiTlq7wK+5lQ3pirxtc5snbERVnXj2ab1ow5mP
-         3zELh/7Pn+rU8aQOsycLfMdkGpfjIADAxJyEdMT/yGI2V9Nal33pHLdoDX4AryYWWF
-         /Vfcj6cs2AevadbnkEppmm84xUinNOZ4vg5XKUBo=
+        b=wJS1H+dB3acjZXJlbCiDUfgfLyQBfCum0KtkMzzFCGchU+EyEGbOe8PsucpCTX1p9
+         IqPTZXlfTI1/17myBx8wOSyVEdVxng/wALxtI6hclBJMH7nIE/15yYS4NizBAy/PWB
+         DgeWaYwwUd178tVvzkto1Anzl+yk35D6yXfcB7tM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 055/132] qlcnic: fix a return in qlcnic_dcb_get_capability()
-Date:   Wed, 27 Nov 2019 21:30:46 +0100
-Message-Id: <20191127202955.641786739@linuxfoundation.org>
+Subject: [PATCH 4.4 058/132] selftests/ftrace: Fix to test kprobe $comm arg only if available
+Date:   Wed, 27 Nov 2019 21:30:49 +0100
+Message-Id: <20191127202957.777602143@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
 References: <20191127202857.270233486@linuxfoundation.org>
@@ -44,38 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit c94f026fb742b2d3199422751dbc4f6fc0e753d8 ]
+[ Upstream commit 2452c96e617a0ff6fb2692e55217a3fa57a7322c ]
 
-These functions are supposed to return one on failure and zero on
-success.  Returning a zero here could cause uninitialized variable
-bugs in several of the callers.  For example:
+Test $comm in kprobe-event argument syntax testcase
+only if it is supported on the kernel because
+$comm has been introduced 4.8 kernel.
+So on older stable kernel, it should be skipped.
 
-    drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:1660 get_iscsi_dcb_priority()
-    error: uninitialized symbol 'caps'.
-
-Fixes: 48365e485275 ("qlcnic: dcb: Add support for CEE Netlink interface.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc       | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-index a72bcddf160ac..178e7236eeb51 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-@@ -883,7 +883,7 @@ static u8 qlcnic_dcb_get_capability(struct net_device *netdev, int capid,
- 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+index 231bcd2c4eb59..1e7ac6f3362ff 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+@@ -71,8 +71,11 @@ test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
+ echo "r ${PROBEFUNC} \$retval" > kprobe_events
+ ! echo "p ${PROBEFUNC} \$retval" > kprobe_events
  
- 	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
--		return 0;
-+		return 1;
++# $comm was introduced in 4.8, older kernels reject it.
++if grep -A1 "fetcharg:" README | grep -q '\$comm' ; then
+ : "Comm access"
+ test_goodarg "\$comm"
++fi
  
- 	switch (capid) {
- 	case DCB_CAP_ATTR_PG:
+ : "Indirect memory access"
+ test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
 -- 
 2.20.1
 
