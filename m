@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 146CB10BE69
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A5C910BE6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:37:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbfK0Uqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58422 "EHLO mail.kernel.org"
+        id S1729911AbfK0Uqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:46:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729876AbfK0Uq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:46:29 -0500
+        id S1728222AbfK0Uqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:46:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D55ED2158A;
-        Wed, 27 Nov 2019 20:46:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F68F2182A;
+        Wed, 27 Nov 2019 20:46:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887588;
-        bh=FknDXqjToftO/T1ZTrO4rNNhR0VU4cU3YPNxDSoszY0=;
+        s=default; t=1574887596;
+        bh=wMAJKq3zt9WGbUuDR1jnSVCwQkmkUvyIQkE4Axf/nFA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KBczJEdxH+mCh+TuKeMD24AJ7Ny9Sj9hXZd65PP3moYy+klkapS6UR7ENXDp7cBrv
-         Q2G9hfxJRmg2dawUG0hlZjncJJ1GSxwZOr7vm72Wb+KZAdm1pSAnO+3N3XAfbf033f
-         j6KziNynYqkYtmildzP1tJqvduHZp9yr7BkHCQHk=
+        b=j63MC3I1YZ+qTLxa1c1axGV5DdvKEDWWzoK83N+Qp2ibU0OyOpwXpo3scErvRfC6B
+         oMcKYFjO/tJ/oWa6Srp9KsxvaxAbveeQepGLIrDpo7CziJa0Rb6r3rCM4M0a/Ug0Nv
+         NCMf0c45VNm7LwaNZO4ls5XZDQmnOzMAnpUAE+Hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 018/211] ALSA: isight: fix leak of reference to firewire unit in error path of .probe callback
-Date:   Wed, 27 Nov 2019 21:29:11 +0100
-Message-Id: <20191127203052.656103970@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 021/211] pty: fix compat ioctls
+Date:   Wed, 27 Nov 2019 21:29:14 +0100
+Message-Id: <20191127203053.040404097@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -43,51 +43,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 51e68fb0929c29e47e9074ca3e99ffd6021a1c5a ]
+[ Upstream commit 50f45326afab723df529eca54095e2feac24da2d ]
 
-In some error paths, reference count of firewire unit is not decreased.
-This commit fixes the bug.
+pointer-taking ones need compat_ptr(); int-taking one doesn't.
 
-Fixes: 5b14ec25a79b('ALSA: firewire: release reference count of firewire unit in .remove callback of bus driver')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/firewire/isight.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/tty/pty.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/sound/firewire/isight.c b/sound/firewire/isight.c
-index 5826aa8362f10..9edb26ab16e90 100644
---- a/sound/firewire/isight.c
-+++ b/sound/firewire/isight.c
-@@ -639,7 +639,7 @@ static int isight_probe(struct fw_unit *unit,
- 	if (!isight->audio_base) {
- 		dev_err(&unit->device, "audio unit base not found\n");
- 		err = -ENXIO;
--		goto err_unit;
-+		goto error;
- 	}
- 	fw_iso_resources_init(&isight->resources, unit);
+diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
+index 9e26c530d2ddb..b3208b1b1028d 100644
+--- a/drivers/tty/pty.c
++++ b/drivers/tty/pty.c
+@@ -28,6 +28,7 @@
+ #include <linux/mount.h>
+ #include <linux/file.h>
+ #include <linux/ioctl.h>
++#include <linux/compat.h>
  
-@@ -668,12 +668,12 @@ static int isight_probe(struct fw_unit *unit,
- 	dev_set_drvdata(&unit->device, isight);
- 
- 	return 0;
--
--err_unit:
--	fw_unit_put(isight->unit);
--	mutex_destroy(&isight->mutex);
- error:
- 	snd_card_free(card);
-+
-+	mutex_destroy(&isight->mutex);
-+	fw_unit_put(isight->unit);
-+
- 	return err;
+ #undef TTY_DEBUG_HANGUP
+ #ifdef TTY_DEBUG_HANGUP
+@@ -488,6 +489,7 @@ static int pty_bsd_ioctl(struct tty_struct *tty,
+ 	return -ENOIOCTLCMD;
  }
  
++#ifdef CONFIG_COMPAT
+ static long pty_bsd_compat_ioctl(struct tty_struct *tty,
+ 				 unsigned int cmd, unsigned long arg)
+ {
+@@ -495,8 +497,11 @@ static long pty_bsd_compat_ioctl(struct tty_struct *tty,
+ 	 * PTY ioctls don't require any special translation between 32-bit and
+ 	 * 64-bit userspace, they are already compatible.
+ 	 */
+-	return pty_bsd_ioctl(tty, cmd, arg);
++	return pty_bsd_ioctl(tty, cmd, (unsigned long)compat_ptr(arg));
+ }
++#else
++#define pty_bsd_compat_ioctl NULL
++#endif
+ 
+ static int legacy_count = CONFIG_LEGACY_PTY_COUNT;
+ /*
+@@ -676,6 +681,7 @@ static int pty_unix98_ioctl(struct tty_struct *tty,
+ 	return -ENOIOCTLCMD;
+ }
+ 
++#ifdef CONFIG_COMPAT
+ static long pty_unix98_compat_ioctl(struct tty_struct *tty,
+ 				 unsigned int cmd, unsigned long arg)
+ {
+@@ -683,8 +689,12 @@ static long pty_unix98_compat_ioctl(struct tty_struct *tty,
+ 	 * PTY ioctls don't require any special translation between 32-bit and
+ 	 * 64-bit userspace, they are already compatible.
+ 	 */
+-	return pty_unix98_ioctl(tty, cmd, arg);
++	return pty_unix98_ioctl(tty, cmd,
++		cmd == TIOCSIG ? arg : (unsigned long)compat_ptr(arg));
+ }
++#else
++#define pty_unix98_compat_ioctl NULL
++#endif
+ 
+ /**
+  *	ptm_unix98_lookup	-	find a pty master
 -- 
 2.20.1
 
