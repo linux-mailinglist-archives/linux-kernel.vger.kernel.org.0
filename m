@@ -2,111 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED8910B5E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 19:42:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A02DC10B5E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 19:43:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfK0Smv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 13:42:51 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:46406 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbfK0Smv (ORCPT
+        id S1727126AbfK0SnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 13:43:22 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34053 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfK0SnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 13:42:51 -0500
-Received: by mail-pj1-f66.google.com with SMTP id a16so10404433pjs.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 10:42:50 -0800 (PST)
+        Wed, 27 Nov 2019 13:43:22 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l28so18038347lfj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 10:43:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CZVXp4jTn3AxGkNEiypeb8rdOk5szYATq8RNyz6w/wM=;
-        b=j6yRt0oaznyATDXrogCBscbi+Vg8MB0M2Z2pRH8rI3wIaFOVfPcEcp8qRb3zaNI8k+
-         4jt5U8C8uD/xHkGHbIW2o3uH6cYJaKYKkVw/ItpOgENvfkyYoEw7c/HGR4yCMihM1v3f
-         /zTXWOZd6w0TdXp0A66ksIzqq35QkODSG0GAZAebRcNg18gb64gx9cpVxiKbMWafXx+i
-         u8Cf4XFxbVXtPHZHyeA5bmZp5X5zbaqUacB5uFtDWo2lXREJi1Q3OrK/Ay6MmeNmtMBS
-         +c91qeiUPBlqlvoiu2yR2w6STXJe0ACUog4Lb356VHDKs9SgkdCfF7N4seEIgslGkjRl
-         zfcg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cbp4DRGdKYx7atlFA7GlUWnZYZVPUU8tNJviwLPMwP8=;
+        b=HM5iTj817tbd8cgI9ROFiU+5J5YRbcS7MYRE/ldgJRbpHkbNqHSUly1N+3IW3ABvaP
+         0AnDO9ZClvsfdopZ7slk2K/U954EKFibZ0xJNi38LaKsXU7ctKWaPktwa9Oe4vB6CzGj
+         MlL/2ANydkNTMbGaraqikAd4dKM9Y6DcDCxkg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CZVXp4jTn3AxGkNEiypeb8rdOk5szYATq8RNyz6w/wM=;
-        b=tBvYJ63IHk2OjBsKSCYfRLsFCD12qHA6JHYrMKhPDqkqjWqw04rqgdr9JlO/3tgxwb
-         ++IxhiQZbE3g6u5b2oGMSjyy4kCs0Wk98H2u4QSOixZQfcu/+Vbm7Zz1HaABiJnjQh5e
-         1tuFtVVrXQJt98pigGCoSBWmkXLlvNwdbqUnmak1CaloLYyuF9DnmZispsHTLp+mGCnB
-         Byj+kz+vCabl8LcLjtfWt2mh2YLh4qhUb2H1M//i4nO74oH9//MISseA7KzcsmzuCcoH
-         wjN/5nhp8RM6BO/8z4fmH/CsG5Xix5W/cs9gqQE2PQHY55uewRJVG6eLAWzcy0AAql08
-         ZueA==
-X-Gm-Message-State: APjAAAWvd7Wzj4vfN0YR3e8wGVYnGna4WzcRq27BV5sRCEE/bVb0MnzB
-        qSbkf6YTAPcl1i74nm4gUKg2iQ==
-X-Google-Smtp-Source: APXvYqwkG6dHA1vS8RkBB3zlZfXMnaqbdTG/2aVXx/SvoAEkJtlFZADwufTjQcvmUjql/dBgQ7mpFg==
-X-Received: by 2002:a17:902:900b:: with SMTP id a11mr5485790plp.116.1574880170025;
-        Wed, 27 Nov 2019 10:42:50 -0800 (PST)
-Received: from gnomeregan.cam.corp.google.com ([2620:15c:6:14:ad22:1cbb:d8fa:7d55])
-        by smtp.googlemail.com with ESMTPSA id u9sm17413696pfm.102.2019.11.27.10.42.48
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cbp4DRGdKYx7atlFA7GlUWnZYZVPUU8tNJviwLPMwP8=;
+        b=l2ioMJfoW9lrNPfsSalxA/n0UKOAWfLulHUF1enDgh36Df/UyA8TEaK0OGvvHZoFIL
+         amdH9KRXY9OXjK9+lvzj4rVQL+jGk3FMLP9OlyWjHD5qF9yzEhI7HdYYWqFANtIbmr+h
+         2anTko/CDFwdvoqaGwWn4olaLtzIn1Zq5JA8bIAKpvXeUeBH1Nx42/R1jtEBncXQ+NdX
+         BUH0o4fQPJpM9bO1ILC8zsZ/ehwXyJBDQQamugEMoaODDfA7C+aOiLN8aNHkMlWP+nz+
+         UG9hzSG5rvapMo9nTYWqXTGyF2WloKTySSG8HPBDMrNr1OUDzOCKDj44l1ps5B46EBUU
+         uXXg==
+X-Gm-Message-State: APjAAAXzz0bk21f96TNwMqtrAjhDRdOhKW3Y+E1rp8OgoRYXeaBLaVo2
+        iRB1dZXVCt39F/KUr1RlrtF/UNpSqLM=
+X-Google-Smtp-Source: APXvYqwVBx0l8EkUuGikeu0Bl/MO5idAnxy6f2xclLRj8fZMSVt4wndLhIntzdmJ6z1eVLR0vy+5Bw==
+X-Received: by 2002:a19:8c4e:: with SMTP id i14mr16268118lfj.90.1574880198611;
+        Wed, 27 Nov 2019 10:43:18 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id v28sm2806434lfd.93.2019.11.27.10.43.17
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 10:42:49 -0800 (PST)
-Subject: Re: [PATCH] x86/fpu: Don't cache access to fpu_fpregs_owner_ctx
-To:     Borislav Petkov <bp@alien8.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Josh Bleecher Snyder <josharian@gmail.com>,
-        "Rik van Riel\"" <riel@surriel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, ian@airs.com
-References: <c87e93c3-5f30-f242-74b7-6c7ccc91158a@google.com>
- <20191126202026.csrmjre6vn2nxq7c@linutronix.de>
- <e4d6406b-0d47-5cc5-f3a8-6d14bd90760b@google.com>
- <20191127124243.u74osvlkhcmsskng@linutronix.de>
- <20191127140754.GB3812@zn.tnic>
-From:   Barret Rhoden <brho@google.com>
-Message-ID: <f4d5ca28-a388-c382-4b1a-4b65c9f9e6e7@google.com>
-Date:   Wed, 27 Nov 2019 13:42:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 27 Nov 2019 10:43:17 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id m4so25578301ljj.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 10:43:17 -0800 (PST)
+X-Received: by 2002:a2e:2c19:: with SMTP id s25mr31789522ljs.26.1574880197221;
+ Wed, 27 Nov 2019 10:43:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191127140754.GB3812@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CACRpkdZYR=5-vf29vYN-gZWRNta3axWNxMTve+hoK_ugkUhcnA@mail.gmail.com>
+In-Reply-To: <CACRpkdZYR=5-vf29vYN-gZWRNta3axWNxMTve+hoK_ugkUhcnA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 27 Nov 2019 10:43:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgTCNr1e9g7U6irHxhdHqB3PZJ9hL1SZmPK32NNtuEcZQ@mail.gmail.com>
+Message-ID: <CAHk-=wgTCNr1e9g7U6irHxhdHqB3PZJ9hL1SZmPK32NNtuEcZQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Bulk pin control changes for v5.5
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> Use this_cpu_read() instead this_cpu_read_stable() to avoid caching of
->> fpu_fpregs_owner_ctx during preemption points.
->>
->> Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
-> 
-> Or
-> 
-> a352a3b7b792 ("x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD")
-> 
-> maybe, which adds the fpregs_unlock() ?
+On Tue, Nov 26, 2019 at 7:01 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> Rahul Tanwar :
+>       pinctrl: Add pinmux & GPIO controller driver for a new SoC
 
-Using this_cpu_read_stable() (or some variant) seems to go back quite a 
-while; not sure when exactly it became a problem.  If it helps, commit 
-d9c9ce34ed5c ("x86/fpu: Fault-in user stack if 
-copy_fpstate_to_sigframe() fails") was the one that popped up the most 
-during Austin's bisection.
+Hmm. This results in
 
->> Also I would like to add
->> 	Debugged-by: Ian Lance Taylor
-> 
-> Yes, pls. CCed.
+  WARNING: modpost: missing MODULE_LICENSE() in
+drivers/pinctrl/pinctrl-equilibrium.o
 
-To close the loop on this, here's what Austin wrote on the bugzilla:
+I've pulled it, but can you please fix it up?
 
-> --- Comment #2 from Austin Clements (austin@google.com) ---
-> I can confirm that the patch posted by Sebastian Andrzej Siewior at
-> https://lkml.org/lkml/2019/11/27/304 fixes the issue both in our C reproducer
-> and in our original Go reproducer. (Sorry, I'm not subscribed to LKML, so I
-> can't reply there, and I'm on an airplane, so it's hard to get subscribed :)
-> 
-> Regarding the question about the "Debugged-by" line in the patch, debugging was
-> a joint effort between myself (Austin Clements <austin@google.com>), David
-> Chase <drchase@golang.org>, and Ian Lance Taylor <ian@airs.com>.
-
-Thanks,
-
-Barret
+               Linus
