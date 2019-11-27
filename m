@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FAEB10B87C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5764E10B8B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfK0Un6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:43:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
+        id S1729833AbfK0UqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728980AbfK0Uny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:43:54 -0500
+        id S1729820AbfK0UqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:46:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6759720862;
-        Wed, 27 Nov 2019 20:43:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F3A3217C3;
+        Wed, 27 Nov 2019 20:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887433;
-        bh=ANpEzvaNrgTeJe+unM5bxWbDq76vUfMBryJX1h5/v5w=;
+        s=default; t=1574887561;
+        bh=1obXavLzHsCeZUAaQ/cIka7JXtrr6Qjcv2jjQ2VJJkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f8/S6nalJ8vDCUIjWnGnSfgQFKcF1SyIBxNy5gKG8gfhWSaluzpKpi4aQT4sgYD1Z
-         Bd8KJ/bgDmQZ58vaW3xVKMXyU628GUwZqvbiAQcCqIcuuYoml3DoDtmrSGQOTtBr3B
-         J9PLE9Ad4s7iApQBUaVRWGODkPtzUjjShAOi9fww=
+        b=oxcY/FItAbnWNOnOvV3+a8p820pfLxlBqE12lOC2s49klhOZ0fg3xX88+uvaCn7Hw
+         ChNOuBgQgBMQQP7k9Q3RhbtHQKEvDo1cAUHt7+mPg8oYJI77wDqJ39Qm/HoDw8/Xy4
+         KOkTCadZYTqyMp7mDn1RqRTvSOKC7VTiJA+9PfrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Vignesh R <vigneshr@ti.com>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 107/151] PCI: keystone: Use quirk to limit MRRS for K2G
-Date:   Wed, 27 Nov 2019 21:31:30 +0100
-Message-Id: <20191127203042.087223129@linuxfoundation.org>
+Subject: [PATCH 4.9 108/151] spi: omap2-mcspi: Fix DMA and FIFO event trigger size mismatch
+Date:   Wed, 27 Nov 2019 21:31:31 +0100
+Message-Id: <20191127203042.253609157@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -44,42 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit 148e340c0696369fadbbddc8f4bef801ed247d71 ]
+[ Upstream commit baf8b9f8d260c55a86405f70a384c29cda888476 ]
 
-PCI controller in K2G also has a limitation that memory read request
-size (MRRS) must not exceed 256 bytes. Use the quirk to limit MRRS
-(added for K2HK, K2L and K2E) for K2G as well.
+Commit b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
+broke SPI transfers where bits_per_word != 8. This is because of
+mimsatch between McSPI FIFO level event trigger size (SPI word length) and
+DMA request size(word length * maxburst). This leads to data
+corruption, lockup and errors like:
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+	spi1.0: EOW timed out
+
+Fix this by setting DMA maxburst size to 1 so that
+McSPI FIFO level event trigger size matches DMA request size.
+
+Fixes: b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
+Cc: stable@vger.kernel.org
+Reported-by: David Lechner <david@lechnology.com>
+Tested-by: David Lechner <david@lechnology.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/host/pci-keystone.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi-omap2-mcspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
-index eac0a1238e9d0..c690299d5c4a8 100644
---- a/drivers/pci/host/pci-keystone.c
-+++ b/drivers/pci/host/pci-keystone.c
-@@ -43,6 +43,7 @@
- #define PCIE_RC_K2HK		0xb008
- #define PCIE_RC_K2E		0xb009
- #define PCIE_RC_K2L		0xb00a
-+#define PCIE_RC_K2G		0xb00b
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index bc136fe3a2829..ccb6f98550da4 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -625,8 +625,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
+ 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
+ 	cfg.src_addr_width = width;
+ 	cfg.dst_addr_width = width;
+-	cfg.src_maxburst = es;
+-	cfg.dst_maxburst = es;
++	cfg.src_maxburst = 1;
++	cfg.dst_maxburst = 1;
  
- #define to_keystone_pcie(x)	container_of(x, struct keystone_pcie, pp)
- 
-@@ -57,6 +58,8 @@ static void quirk_limit_mrrs(struct pci_dev *dev)
- 		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
- 		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCIE_RC_K2L),
- 		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
-+		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCIE_RC_K2G),
-+		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
- 		{ 0, },
- 	};
- 
+ 	rx = xfer->rx_buf;
+ 	tx = xfer->tx_buf;
 -- 
 2.20.1
 
