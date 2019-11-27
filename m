@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0A210B79E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DECD210B7A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfK0Ufa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:35:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36666 "EHLO mail.kernel.org"
+        id S1727900AbfK0Ufd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727848AbfK0Uf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:26 -0500
+        id S1727884AbfK0Uf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8CC02154A;
-        Wed, 27 Nov 2019 20:35:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F921215A4;
+        Wed, 27 Nov 2019 20:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886926;
-        bh=GQdssR5vvChor4Ev4t2/5349FPN4oSbrjLFcBctu+Y0=;
+        s=default; t=1574886928;
+        bh=GrS/sfvynxkd0Z9uBnjBDVMYI0Mc/xdQEjRQgmhPX4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NIOJToz7rGmbbp5VMWQpGixnUp6+em0zROVAqfQDNAjYx8qIVpB4E0it5+1BevXRH
-         Ww+PFTOVc/aDQ7y8oZo38C0X2DLGCTOPkwmRrmdfmjwZhmGcbpFDkcUJsPdbpVgwEC
-         iW2NAxcJWer/fEn5medo9dd/Stb3oNhJWir7gnjg=
+        b=wVtBs7DnhoB+TFEfN9OuVHbEN1K5lvR/WplsC0Kq3peaJK6NBPAepViZik/ktzSkG
+         CNKq4dAsNVig13PviyTOcGCslqVtH/LKkEvfyZ8LrSS2ieI7khdVvqM7Nr+QhWCBma
+         djXGlvQo9j5Cx2OTJrCG5eULy/XFUpcEba3eZ9HA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mattias Jacobsson <2pi@mok.nu>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 046/132] USB: misc: appledisplay: fix backlight update_status return code
-Date:   Wed, 27 Nov 2019 21:30:37 +0100
-Message-Id: <20191127202942.227536708@linuxfoundation.org>
+Subject: [PATCH 4.4 047/132] SUNRPC: Fix a compile warning for cmpxchg64()
+Date:   Wed, 27 Nov 2019 21:30:38 +0100
+Message-Id: <20191127202943.117179148@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
 References: <20191127202857.270233486@linuxfoundation.org>
@@ -43,48 +44,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mattias Jacobsson <2pi@mok.nu>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit 090158555ff8d194a98616034100b16697dd80d0 ]
+[ Upstream commit e732f4485a150492b286f3efc06f9b34dd6b9995 ]
 
-Upon success the update_status handler returns a positive number
-corresponding to the number of bytes transferred by usb_control_msg.
-However the return code of the update_status handler should indicate if
-an error occurred(negative) or how many bytes of the user's input to sysfs
-that was consumed. Return code zero indicates all bytes were consumed.
-
-The bug can for example result in the update_status handler being called
-twice, the second time with only the "unconsumed" part of the user's input
-to sysfs. Effectively setting an incorrect brightness.
-
-Change the update_status handler to return zero for all successful
-transactions and forward usb_control_msg's error code upon failure.
-
-Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/misc/appledisplay.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/sunrpc/auth_gss/gss_krb5_seal.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
-index 993f4da065c3a..dabd1077d03c4 100644
---- a/drivers/usb/misc/appledisplay.c
-+++ b/drivers/usb/misc/appledisplay.c
-@@ -161,8 +161,11 @@ static int appledisplay_bl_update_status(struct backlight_device *bd)
- 		pdata->msgdata, 2,
- 		ACD_USB_TIMEOUT);
- 	mutex_unlock(&pdata->sysfslock);
--	
--	return retval;
-+
-+	if (retval < 0)
-+		return retval;
-+	else
-+		return 0;
- }
+diff --git a/net/sunrpc/auth_gss/gss_krb5_seal.c b/net/sunrpc/auth_gss/gss_krb5_seal.c
+index 1d74d653e6c05..ad0dcb69395d7 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_seal.c
++++ b/net/sunrpc/auth_gss/gss_krb5_seal.c
+@@ -63,6 +63,7 @@
+ #include <linux/sunrpc/gss_krb5.h>
+ #include <linux/random.h>
+ #include <linux/crypto.h>
++#include <linux/atomic.h>
  
- static int appledisplay_bl_get_brightness(struct backlight_device *bd)
+ #if IS_ENABLED(CONFIG_SUNRPC_DEBUG)
+ # define RPCDBG_FACILITY        RPCDBG_AUTH
 -- 
 2.20.1
 
