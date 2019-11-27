@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B8E10BF39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E926F10BE89
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfK0UkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44764 "EHLO mail.kernel.org"
+        id S1730110AbfK0UsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:48:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbfK0UkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:15 -0500
+        id S1729612AbfK0UsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:48:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28D71215A5;
-        Wed, 27 Nov 2019 20:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0321621826;
+        Wed, 27 Nov 2019 20:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887214;
-        bh=Tk62XXmbAj7T/YAPVWiuez5jbTb0s9/iqhhmPflfepI=;
+        s=default; t=1574887694;
+        bh=hyGOFn3YZetm72mwECSkAUsfLoBdMx0Ka7hvxQTUnmk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OS6JwdmB0lMsRodjQUnsuX6LVAV+zSwqkA627mhXTj2mhbm3+ZbogL7M6vUpGbxWv
-         7zTZubF20qPqOU1T/DZoFMSCG87Nk+ek1PsKk6sk0K3zsdbXe2gOyRkpfI1zGPYUY1
-         DQHH0jw3bwFzM0Ka4zsCa8BP7EK9p9rH1iC0JxD0=
+        b=FHnIg1KXxLIII1PVW9m7kYKTRkyIVXVSwxnxNX2h4c9UCz3/WgUf3Rdr5+M1+eoe9
+         IfD8l7DOx2ymwCMUEvWHK1s3XSBLZN2Hlu447PMglUqOTvFQJWDqKRUvkKLusNGPsl
+         XIxEd78sx++c5X6G6+jyVkm4OlLmQ/iex4CttwZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 009/151] mm/ksm.c: dont WARN if page is still mapped in remove_stable_node()
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 059/211] xfs: fix use-after-free race in xfs_buf_rele
 Date:   Wed, 27 Nov 2019 21:29:52 +0100
-Message-Id: <20191127203007.033795705@linuxfoundation.org>
+Message-Id: <20191127203059.636966049@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +45,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit 9a63236f1ad82d71a98aa80320b6cb618fb32f44 upstream.
+[ Upstream commit 37fd1678245f7a5898c1b05128bc481fb403c290 ]
 
-It's possible to hit the WARN_ON_ONCE(page_mapped(page)) in
-remove_stable_node() when it races with __mmput() and squeezes in
-between ksm_exit() and exit_mmap().
+When looking at a 4.18 based KASAN use after free report, I noticed
+that racing xfs_buf_rele() may race on dropping the last reference
+to the buffer and taking the buffer lock. This was the symptom
+displayed by the KASAN report, but the actual issue that was
+reported had already been fixed in 4.19-rc1 by commit e339dd8d8b04
+("xfs: use sync buffer I/O for sync delwri queue submission").
 
-  WARNING: CPU: 0 PID: 3295 at mm/ksm.c:888 remove_stable_node+0x10c/0x150
+Despite this, I think there is still an issue with xfs_buf_rele()
+in this code:
 
-  Call Trace:
-   remove_all_stable_nodes+0x12b/0x330
-   run_store+0x4ef/0x7b0
-   kernfs_fop_write+0x200/0x420
-   vfs_write+0x154/0x450
-   ksys_write+0xf9/0x1d0
-   do_syscall_64+0x99/0x510
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+        release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
+        spin_lock(&bp->b_lock);
+        if (!release) {
+.....
 
-Remove the warning as there is nothing scary going on.
+If two threads race on the b_lock after both dropping a reference
+and one getting dropping the last reference so release = true, we
+end up with:
 
-Link: http://lkml.kernel.org/r/20191119131850.5675-1-aryabinin@virtuozzo.com
-Fixes: cbf86cfe04a6 ("ksm: remove old stable nodes more thoroughly")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Acked-by: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CPU 0				CPU 1
+atomic_dec_and_lock()
+				atomic_dec_and_lock()
+				spin_lock(&bp->b_lock)
+spin_lock(&bp->b_lock)
+<spins>
+				<release = true bp->b_lru_ref = 0>
+				<remove from lists>
+				freebuf = true
+				spin_unlock(&bp->b_lock)
+				xfs_buf_free(bp)
+<gets lock, reading and writing freed memory>
+<accesses freed memory>
+spin_unlock(&bp->b_lock) <reads/writes freed memory>
 
+IOWs, we can't safely take bp->b_lock after dropping the hold
+reference because the buffer may go away at any time after we
+drop that reference. However, this can be fixed simply by taking the
+bp->b_lock before we drop the reference.
+
+It is safe to nest the pag_buf_lock inside bp->b_lock as the
+pag_buf_lock is only used to serialise against lookup in
+xfs_buf_find() and no other locks are held over or under the
+pag_buf_lock there. Make this clear by documenting the buffer lock
+orders at the top of the file.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com
+Signed-off-by: Dave Chinner <david@fromorbit.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/ksm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/xfs/xfs_buf.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -710,13 +710,13 @@ static int remove_stable_node(struct sta
- 		return 0;
- 	}
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index e4a623956df57..e5970ecdfd585 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -58,6 +58,32 @@ static kmem_zone_t *xfs_buf_zone;
+ #define xb_to_gfp(flags) \
+ 	((((flags) & XBF_READ_AHEAD) ? __GFP_NORETRY : GFP_NOFS) | __GFP_NOWARN)
  
--	if (WARN_ON_ONCE(page_mapped(page))) {
--		/*
--		 * This should not happen: but if it does, just refuse to let
--		 * merge_across_nodes be switched - there is no need to panic.
--		 */
--		err = -EBUSY;
--	} else {
++/*
++ * Locking orders
++ *
++ * xfs_buf_ioacct_inc:
++ * xfs_buf_ioacct_dec:
++ *	b_sema (caller holds)
++ *	  b_lock
++ *
++ * xfs_buf_stale:
++ *	b_sema (caller holds)
++ *	  b_lock
++ *	    lru_lock
++ *
++ * xfs_buf_rele:
++ *	b_lock
++ *	  pag_buf_lock
++ *	    lru_lock
++ *
++ * xfs_buftarg_wait_rele
++ *	lru_lock
++ *	  b_lock (trylock due to inversion)
++ *
++ * xfs_buftarg_isolate
++ *	lru_lock
++ *	  b_lock (trylock due to inversion)
++ */
+ 
+ static inline int
+ xfs_buf_is_vmapped(
+@@ -983,8 +1009,18 @@ xfs_buf_rele(
+ 
+ 	ASSERT(atomic_read(&bp->b_hold) > 0);
+ 
+-	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
 +	/*
-+	 * Page could be still mapped if this races with __mmput() running in
-+	 * between ksm_exit() and exit_mmap(). Just refuse to let
-+	 * merge_across_nodes/max_page_sharing be switched.
++	 * We grab the b_lock here first to serialise racing xfs_buf_rele()
++	 * calls. The pag_buf_lock being taken on the last reference only
++	 * serialises against racing lookups in xfs_buf_find(). IOWs, the second
++	 * to last reference we drop here is not serialised against the last
++	 * reference until we take bp->b_lock. Hence if we don't grab b_lock
++	 * first, the last "release" reference can win the race to the lock and
++	 * free the buffer before the second-to-last reference is processed,
++	 * leading to a use-after-free scenario.
 +	 */
-+	err = -EBUSY;
-+	if (!page_mapped(page)) {
+ 	spin_lock(&bp->b_lock);
++	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
+ 	if (!release) {
  		/*
- 		 * The stable node did not yet appear stale to get_ksm_page(),
- 		 * since that allows for an unmapped ksm page to be recognized
+ 		 * Drop the in-flight state if the buffer is already on the LRU
+-- 
+2.20.1
+
 
 
