@@ -2,150 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E22FB10B807
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5894F10B8F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbfK0UjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:39:09 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728028AbfK0UjH (ORCPT
+        id S1729574AbfK0Ush (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:48:37 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46505 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730141AbfK0Usd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:39:07 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARKapsm011375
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 15:39:05 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2whcxr0xej-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 15:39:05 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Nov 2019 20:39:03 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Nov 2019 20:39:00 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xARKcxtt59375626
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Nov 2019 20:38:59 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 685C7A404D;
-        Wed, 27 Nov 2019 20:38:59 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 52D1BA4051;
-        Wed, 27 Nov 2019 20:38:58 +0000 (GMT)
-Received: from dhcp-9-31-103-87.watson.ibm.com (unknown [9.31.103.87])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Nov 2019 20:38:58 +0000 (GMT)
-Subject: Re: [PATCH v0 1/2] IMA: Defined queue functions
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Wed, 27 Nov 2019 15:38:57 -0500
-In-Reply-To: <20191127025212.3077-2-nramas@linux.microsoft.com>
-References: <20191127025212.3077-1-nramas@linux.microsoft.com>
-         <20191127025212.3077-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19112720-0008-0000-0000-0000033918B0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19112720-0009-0000-0000-00004A58227A
-Message-Id: <1574887137.4793.346.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-27_04:2019-11-27,2019-11-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=3 spamscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911270166
+        Wed, 27 Nov 2019 15:48:33 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 193so11712451pfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 12:48:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y6LYqA1009w6/0ukN0Ib/bql9rL9dUoPmyEoPz0e4AE=;
+        b=FdkcHHVvIY3IEFp0+wECGStXgSWXF4l63Es+grBYcdduCC7OlLsRIWiHcAceeoSO0c
+         KE0p4VBA6wuzuhj5W0xVaHoLemUCW42tcOtTP+cZ+h2pgIpk+E/D3wCOKVQUIM+vbQeD
+         r227ZE4R8e355lnIjtEEyv7foBGflEwCdB+rrMnT3BGtEawzPn0rS2mjsjtJQxaES0ma
+         eJ/eamuR4soalOyEHTTDv8WPVrjK73knNLLbRQvV61uDf2IZW9VCQ8huhMtc5lyBy5Vv
+         6I9el17XC6e3uHm27KZt//D+ZWGQ5xffzzug2d10YB5s8pc6U+zTQfApYxQWmT3KvFdF
+         Cteg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y6LYqA1009w6/0ukN0Ib/bql9rL9dUoPmyEoPz0e4AE=;
+        b=HF6b/l186t2K6ij31p3xt7wcMzgiUSBz+cguPhDzlUntqiy3vWhD21o5HJ14QwRE4L
+         4glpD8LCFtewSFd9/sMXMUlmUxPpr0rCMrJgM+T7MZM9ienk8BvfydHRpI7+6fOPCp2t
+         BQEbu8wQ42slQQaswANKOnOWDtdfPb/xFOR32BDNx0bvAU84V05C/PezQVqD/q2pkkn/
+         pI4EsU445gLP5ldAi0d4bRkBDPFEE12sRs3PQy9WFVWcMNHrZA4ervqoiBr4TsfkDzyL
+         D8m0Oe1WwdTJj7WNjeQ4LvSPGHsHLfg5qUYH+jlj/UMSfJXvdBEzacwHWOn/n/Jo38G1
+         m+Ew==
+X-Gm-Message-State: APjAAAUkqXHqjVcGKJ9/Rftg8rCXeyV/JDDTzImLuhHl3OjJpL2bkFoN
+        Jn3PnIPZ914pnldhJyt0YQ3THw==
+X-Google-Smtp-Source: APXvYqxQ65bEvXdycLMXbBtX1P9RFv4BXVKPMqYZ/aYjR1KmPzyt6bVrEPZZCdlnLzb3SEwPi+GajQ==
+X-Received: by 2002:a63:4b52:: with SMTP id k18mr7079804pgl.394.1574887712054;
+        Wed, 27 Nov 2019 12:48:32 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:814b:c5b0:7860:90ce? ([2605:e000:100e:8c61:814b:c5b0:7860:90ce])
+        by smtp.gmail.com with ESMTPSA id l7sm3479413pfl.11.2019.11.27.12.48.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 12:48:31 -0800 (PST)
+Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
+To:     Jann Horn <jannh@google.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+ <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+Date:   Wed, 27 Nov 2019 12:48:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lakshmi,
-
-Janne Karhunen is defining an IMA workqueue in order to more
-frequently update the on disk security xattrs.  The Subject line on
-this patch needs to be more explicit (eg. define workqueue for early
-boot "key" measurements).
-
-On Tue, 2019-11-26 at 18:52 -0800, Lakshmi Ramasubramanian wrote:
-> Keys created or updated in the system before IMA is initialized
-
-Keys created or updated before a custom policy is loaded are currently
-not measured.
-
-> should be queued up. And, keys (including any queued ones)
-> should be processed when IMA initialization is completed.
+On 11/27/19 12:23 PM, Jann Horn wrote:
+> On Wed, Nov 27, 2019 at 6:11 AM Jens Axboe <axboe@kernel.dk> wrote:
+>> I posted this a few weeks back, took another look at it and refined it a
+>> bit. I'd like some input on the viability of this approach.
+>>
+>> A new signalfd setup flag is added, SFD_TASK. This is only valid if used
+>> with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
+>> remembered in the signalfd context, and will be the one we use for
+>> checking signals in the poll/read handlers in signalfd.
+>>
+>> This is needed to make signalfd useful with io_uring and aio, of which
+>> the former in particular has my interest.
+>>
+>> I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
+>> on the signalfd descriptor, forking, and then exiting, we grab a
+>> reference to the task when we assign it. If that original task exits, we
+>> catch it in signalfd_flush() and ensure waiters are woken up.
 > 
-> This patch defines functions to queue and dequeue keys for
-> measurement. A flag namely ima_process_keys_for_measurement
-> is used to check if the key should be queued or should be
-> processed immediately.
+> Mh... that's not really reliable, because you only get ->flush() from
+> the last exiting thread (or more precisely, the last exiting task that
+> shares the files_struct).
 > 
-> ima_policy_flag cannot be relied upon to make queuing decision
-> because ima_policy_flag will be set to 0 when either IMA is
-> not initialized or when the IMA policy itself is empty.
+> What is your goal here? To have a reference to a task without keeping
+> the entire task_struct around in memory if someone leaks the signalfd
+> to another process - basically like a weak pointer? If so, you could
+> store a refcounted reference to "struct pid" instead of a refcounted
+> reference to the task_struct, and then do the lookup of the
+> task_struct on ->poll and ->read (similar to what procfs does).
 
-I'm not sure why you want to differentiate between IMA being
-initialized vs. an empty policy.  I would think you would want to know
-when a custom policy has been loaded.
+Yeah, I think that works out much better (and cleaner). How about this,
+then? Follows your advice and turns it into a struct pid instead. I
+don't particularly like the -ESRCH in dequeue and setup, what do you
+think? For poll, POLLERR seems like a prudent choice.
 
-Until ima_update_policy() is called, "ima_rules" points to the
-architecture specific and configured policy rules, which are
-persistent, and the builtin policy rules.  Once a custom policy is
-loaded, "ima_rules" points to the architecture specific, configured,
-and custom policy rules.
+Tested with the test cases I sent out yesterday, works for me.
 
-I would define a function that determines whether or not a custom
-policy has been loaded.
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index 44b6845b071c..ccb1173b20aa 100644
+--- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -50,6 +50,7 @@ void signalfd_cleanup(struct sighand_struct *sighand)
+  
+  struct signalfd_ctx {
+  	sigset_t sigmask;
++	struct pid *task_pid;
+  };
+  
+  static int signalfd_release(struct inode *inode, struct file *file)
+@@ -58,20 +59,41 @@ static int signalfd_release(struct inode *inode, struct file *file)
+  	return 0;
+  }
+  
++static void signalfd_put_task(struct signalfd_ctx *ctx, struct task_struct *tsk)
++{
++	if (ctx->task_pid)
++		put_task_struct(tsk);
++}
++
++static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
++{
++	if (ctx->task_pid)
++		return get_pid_task(ctx->task_pid, PIDTYPE_PID);
++
++	return current;
++}
++
+  static __poll_t signalfd_poll(struct file *file, poll_table *wait)
+  {
+  	struct signalfd_ctx *ctx = file->private_data;
++	struct task_struct *tsk;
+  	__poll_t events = 0;
+  
+-	poll_wait(file, &current->sighand->signalfd_wqh, wait);
++	tsk = signalfd_get_task(ctx);
++	if (tsk) {
++		poll_wait(file, &tsk->sighand->signalfd_wqh, wait);
+  
+-	spin_lock_irq(&current->sighand->siglock);
+-	if (next_signal(&current->pending, &ctx->sigmask) ||
+-	    next_signal(&current->signal->shared_pending,
+-			&ctx->sigmask))
+-		events |= EPOLLIN;
+-	spin_unlock_irq(&current->sighand->siglock);
++		spin_lock_irq(&tsk->sighand->siglock);
++		if (next_signal(&tsk->pending, &ctx->sigmask) ||
++		    next_signal(&tsk->signal->shared_pending,
++				&ctx->sigmask))
++			events |= EPOLLIN;
++		spin_unlock_irq(&tsk->sighand->siglock);
+  
++		signalfd_put_task(ctx, tsk);
++	} else {
++		events |= EPOLLERR;
++	}
+  	return events;
+  }
+  
+@@ -167,10 +189,15 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+  				int nonblock)
+  {
+  	ssize_t ret;
++	struct task_struct *tsk;
+  	DECLARE_WAITQUEUE(wait, current);
+  
+-	spin_lock_irq(&current->sighand->siglock);
+-	ret = dequeue_signal(current, &ctx->sigmask, info);
++	tsk = signalfd_get_task(ctx);
++	if (!tsk)
++		return -ESRCH;
++
++	spin_lock_irq(&tsk->sighand->siglock);
++	ret = dequeue_signal(tsk, &ctx->sigmask, info);
+  	switch (ret) {
+  	case 0:
+  		if (!nonblock)
+@@ -178,29 +205,31 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+  		ret = -EAGAIN;
+  		/* fall through */
+  	default:
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
++		signalfd_put_task(ctx, tsk);
+  		return ret;
+  	}
+  
+-	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
++	add_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+  	for (;;) {
+  		set_current_state(TASK_INTERRUPTIBLE);
+-		ret = dequeue_signal(current, &ctx->sigmask, info);
++		ret = dequeue_signal(tsk, &ctx->sigmask, info);
+  		if (ret != 0)
+  			break;
+  		if (signal_pending(current)) {
+  			ret = -ERESTARTSYS;
+  			break;
+  		}
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
+  		schedule();
+-		spin_lock_irq(&current->sighand->siglock);
++		spin_lock_irq(&tsk->sighand->siglock);
+  	}
+-	spin_unlock_irq(&current->sighand->siglock);
++	spin_unlock_irq(&tsk->sighand->siglock);
+  
+-	remove_wait_queue(&current->sighand->signalfd_wqh, &wait);
++	remove_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
+  	__set_current_state(TASK_RUNNING);
+  
++	signalfd_put_task(ctx, tsk);
+  	return ret;
+  }
+  
+@@ -267,19 +296,24 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  	/* Check the SFD_* constants for consistency.  */
+  	BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
+  	BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
++	BUILD_BUG_ON(SFD_TASK & (SFD_CLOEXEC | SFD_NONBLOCK));
+  
+-	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK))
++	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK | SFD_TASK))
++		return -EINVAL;
++	if ((flags & (SFD_CLOEXEC | SFD_TASK)) == SFD_TASK)
+  		return -EINVAL;
+  
+  	sigdelsetmask(mask, sigmask(SIGKILL) | sigmask(SIGSTOP));
+  	signotset(mask);
+  
+  	if (ufd == -1) {
+-		ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
++		ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+  		if (!ctx)
+  			return -ENOMEM;
+  
+  		ctx->sigmask = *mask;
++		if (flags & SFD_TASK)
++			ctx->task_pid = get_task_pid(current, PIDTYPE_PID);
+  
+  		/*
+  		 * When we call this, the initialization must be complete, since
+@@ -290,6 +324,7 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  		if (ufd < 0)
+  			kfree(ctx);
+  	} else {
++		struct task_struct *tsk;
+  		struct fd f = fdget(ufd);
+  		if (!f.file)
+  			return -EBADF;
+@@ -298,11 +333,17 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
+  			fdput(f);
+  			return -EINVAL;
+  		}
+-		spin_lock_irq(&current->sighand->siglock);
++		tsk = signalfd_get_task(ctx);
++		if (!tsk) {
++			fdput(f);
++			return -ESRCH;
++		}
++		spin_lock_irq(&tsk->sighand->siglock);
+  		ctx->sigmask = *mask;
+-		spin_unlock_irq(&current->sighand->siglock);
++		spin_unlock_irq(&tsk->sighand->siglock);
+  
+-		wake_up(&current->sighand->signalfd_wqh);
++		wake_up(&tsk->sighand->signalfd_wqh);
++		signalfd_put_task(ctx, tsk);
+  		fdput(f);
+  	}
+  
+diff --git a/include/uapi/linux/signalfd.h b/include/uapi/linux/signalfd.h
+index 83429a05b698..064c5dc3eb99 100644
+--- a/include/uapi/linux/signalfd.h
++++ b/include/uapi/linux/signalfd.h
+@@ -16,6 +16,7 @@
+  /* Flags for signalfd4.  */
+  #define SFD_CLOEXEC O_CLOEXEC
+  #define SFD_NONBLOCK O_NONBLOCK
++#define SFD_TASK 00000001
+  
+  struct signalfd_siginfo {
+  	__u32 ssi_signo;
 
-(I still need to review adding/removing from the queue.)
-
-> 
-> @@ -27,14 +154,14 @@
->   * The payload data used to instantiate or update the key is measured.
->   */
->  void ima_post_key_create_or_update(struct key *keyring, struct key *key,
-> -				   const void *payload, size_t plen,
-> +				   const void *payload, size_t payload_len,
->  				   unsigned long flags, bool create)
-
-This "hunk" and subsequent one seem to be just a variable name change.
- It has nothing to do with queueing "key" measurements and shouldn't
-be included in this patch.
-
-Mimi
-
->  {
->  	/* Only asymmetric keys are handled by this hook. */
->  	if (key->type != &key_type_asymmetric)
->  		return;
->  
-> -	if (!payload || (plen == 0))
-> +	if (!payload || (payload_len == 0))
->  		return;
->  
->  	/*
-> @@ -52,7 +179,7 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->  	 * if the IMA policy is configured to measure a key linked
->  	 * to the given keyring.
->  	 */
-> -	process_buffer_measurement(payload, plen,
-> +	process_buffer_measurement(payload, payload_len,
->  				   keyring->description, KEY_CHECK, 0,
->  				   keyring->description);
->  }
-
+-- 
+Jens Axboe
 
