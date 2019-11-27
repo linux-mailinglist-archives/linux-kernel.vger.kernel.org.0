@@ -2,67 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB18610A92D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 04:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B41E010A942
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 05:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfK0Djn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 22:39:43 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51842 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726454AbfK0Djn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 22:39:43 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9C7981D57FCE35DA8437;
-        Wed, 27 Nov 2019 11:39:41 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 27 Nov 2019
- 11:39:30 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <hughd@google.com>, <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <yukuai3@huawei.com>,
-        <yi.zhang@huawei.com>, <zhengbin13@huawei.com>
-Subject: [PATCH] mm/shmem.c: don't set 'seals' to 'F_SEAL_SEAL' in shmem_get_inode
-Date:   Wed, 27 Nov 2019 12:00:51 +0800
-Message-ID: <20191127040051.39169-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726719AbfK0EEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 23:04:30 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37045 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfK0EE3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 23:04:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id d5so22781097ljl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 20:04:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rd62a4+kKdVGM6mxx4wZ7hE246doAaPmYNs4HO65uTc=;
+        b=f2lBh8HSNpUVoEVI7YAMjgFbAjJ4qgZOSy1I+ycg6K4sEyb1f6UqlcqcJgY8LlrEaY
+         C2cwcHjQqk6W16tM9JIvKKArAVS8TolUZdFdX844nnJq42jJOxmEslFLvYYxAZQNOz/J
+         FtVpsiY8U/lssN472Ro2p7e2XrppLWv+x8l9o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rd62a4+kKdVGM6mxx4wZ7hE246doAaPmYNs4HO65uTc=;
+        b=P7yVcvTWdOf38la/IHvZAEiiIEWgqPJBdqgh1EOTjCRqTo2yGuHzAcOigRN+wV0XAV
+         AHzCXijspnp1Z7lkNdVOh9ZPfULBPE7gg/M9LaPU9VoYXEvs+2jaWvN3hcDBMkuI+BJU
+         hwDz5Iwiyy+5DcOtOqEpAvAxeSU8SspprkZzzO96FcuwQWjKWV41YXQCWZehjeuVqoAH
+         8k2j+6eXffvCavOK3bEQkoV921omk81S1jECV1qtcLK4m+bsWjmuuqO9b0Svq1pTuPCN
+         1OiO/1Bcne06ZyFvkTMJqCFAx3LBpK5YU5b8AMMROkIGxfz5f3oUHJGASAaW8AsAdz5U
+         FNNg==
+X-Gm-Message-State: APjAAAVG9nEqEVjDz/P7E537BSJuuzebxZ0isgxbS524al/mKZD932P8
+        PVRTIDDlvliFjjYTi1pWUlLixmsw4Sw=
+X-Google-Smtp-Source: APXvYqyzl8WlAcFlu/5+4YfbBBVgMv6ImzWnMkh/qWJrxkhmtxOuECqhFsWiy64HXlgclzao1318iQ==
+X-Received: by 2002:a2e:85d5:: with SMTP id h21mr28752855ljj.243.1574827466467;
+        Tue, 26 Nov 2019 20:04:26 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id f11sm1634693lfa.9.2019.11.26.20.04.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2019 20:04:25 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id f16so15943785lfm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 20:04:24 -0800 (PST)
+X-Received: by 2002:a19:4bd4:: with SMTP id y203mr24700097lfa.61.1574827464261;
+ Tue, 26 Nov 2019 20:04:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+References: <20191126110659.GA14042@redhat.com> <20191126110758.GA14051@redhat.com>
+In-Reply-To: <20191126110758.GA14051@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 26 Nov 2019 20:04:08 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whrhuNg_53wc3pBVToH-AUwKDbC5P_cb7=8bYfn=BYCJA@mail.gmail.com>
+Message-ID: <CAHk-=whrhuNg_53wc3pBVToH-AUwKDbC5P_cb7=8bYfn=BYCJA@mail.gmail.com>
+Subject: Re: [PATCH] ptrace/x86: introduce TS_COMPAT_RESTART to fix get_nr_restart_syscall()
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Jan Kratochvil <jan.kratochvil@redhat.com>,
+        Pedro Alves <palves@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'seals' is set to 'F_SEAL_SEAL' in shmem_get_inode, which means "prevent
-further seals from being set", thus sealing API will be useless and many
-code in shmem.c will never be reached. For example:
+On Tue, Nov 26, 2019 at 3:08 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> Alternatively we could add ->compat_restart into struct restart_block,
+> logically this is the same thing.
 
-shmem_setattr
-	if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
-	    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
-		return -EPERM;
+That sounds like the better model to me. That's what the restart_block
+is about: it's supposed to contain the restart information.
 
-So, initialize 'seals' to zero is more reasonable.
+I'd much rather see the system call number added into the restart
+block (or just the "compat bit" - but we have that X32 case too, so
+why not put it all there). And then the get_nr_restart_syscall() hack
+goes away and is just "set state from the restart block".
 
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
- mm/shmem.c | 1 -
- 1 file changed, 1 deletion(-)
+How painful would that be? I guess right now we always just set all
+the restart_block info manually in all the restart cases, and that
+could make it a bit painful to add this kind of architecture-specific
+flag, but it _sounds_ conceptually like the right thing to do.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 165fa6332993..7b032b347bda 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2256,7 +2256,6 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 		memset(info, 0, (char *)inode - (char *)info);
- 		spin_lock_init(&info->lock);
- 		atomic_set(&info->stop_eviction, 0);
--		info->seals = F_SEAL_SEAL;
- 		info->flags = flags & VM_NORESERVE;
- 		INIT_LIST_HEAD(&info->shrinklist);
- 		INIT_LIST_HEAD(&info->swaplist);
--- 
-2.17.2
+I definitely don't love the "magic sticky bit in thread status" field model.
 
+             Linus
