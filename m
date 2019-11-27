@@ -2,35 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8723810BE4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 222AD10BE40
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730789AbfK0VfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:35:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36056 "EHLO mail.kernel.org"
+        id S1727092AbfK0Uuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:50:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728869AbfK0UuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:50:13 -0500
+        id S1728335AbfK0Uu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:50:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EE5721843;
-        Wed, 27 Nov 2019 20:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F9D42158A;
+        Wed, 27 Nov 2019 20:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887812;
-        bh=S0mzF6aUuCpWNC8VmiehPqJiME194Ey3syXdysl0clM=;
+        s=default; t=1574887825;
+        bh=febHDCnmAbc7A9SiF0v4GbyjctYAv1LCzcdfJi+6TSE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gyfnFMayvbnADpno1OkYiEcTXqSl2ejJo6SLu/7xSWMp2SwhnLOIodtQ7pcz37aBu
-         zJgWr+i+enXC2MSOUV2Z/bsAOpZffJVhvFSTj7R5DTs/qtRcI5SdizQ92fHwb+jgL+
-         7y8fr9p7q9R11VxMS/eTJT9veX2p/iTuiBvCX+6Y=
+        b=iE/tFR85UZkM512aBlAa/3Db6GFHKTyNN0NDAPElbAjbCynWBj3UaqsColgG+AvkB
+         +9pW8K7TLhZhw/wN9IfsAP+42eeH9cd0mRQUY206+jkWtbQodDAICQ3g6zbshGglLe
+         Peie0UIomu12QXaBLrWd474QS6H3LDn08rupZREE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 105/211] selftests/powerpc/switch_endian: Fix out-of-tree build
-Date:   Wed, 27 Nov 2019 21:30:38 +0100
-Message-Id: <20191127203103.610385271@linuxfoundation.org>
+Subject: [PATCH 4.14 110/211] hfs: fix BUG on bnode parent update
+Date:   Wed, 27 Nov 2019 21:30:43 +0100
+Message-Id: <20191127203104.491510210@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -43,31 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit 266bac361d5677e61a6815bd29abeb3bdced2b07 ]
+[ Upstream commit ef75bcc5763d130451a99825f247d301088b790b ]
 
-For the out-of-tree build to work we need to tell switch_endian_test
-to look for check-reversed.S in $(OUTPUT).
+hfs_brec_update_parent() may hit BUG_ON() if the first record of both a
+leaf node and its parent are changed, and if this forces the parent to
+be split.  It is not possible for this to happen on a valid hfs
+filesystem because the index nodes have fixed length keys.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+For reasons I ignore, the hfs module does have support for a number of
+hfsplus features.  A corrupt btree header may report variable length
+keys and trigger this BUG, so it's better to fix it.
+
+Link: http://lkml.kernel.org/r/cf9b02d57f806217a2b1bf5db8c3e39730d8f603.1535682463.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/powerpc/switch_endian/Makefile | 1 +
+ fs/hfs/brec.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/powerpc/switch_endian/Makefile b/tools/testing/selftests/powerpc/switch_endian/Makefile
-index 30b8ff8fb82e7..e4cedfe9753d7 100644
---- a/tools/testing/selftests/powerpc/switch_endian/Makefile
-+++ b/tools/testing/selftests/powerpc/switch_endian/Makefile
-@@ -7,6 +7,7 @@ EXTRA_CLEAN = $(OUTPUT)/*.o $(OUTPUT)/check-reversed.S
+diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
+index da25c49203cc5..896396554bcc1 100644
+--- a/fs/hfs/brec.c
++++ b/fs/hfs/brec.c
+@@ -445,6 +445,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+ 			/* restore search_key */
+ 			hfs_bnode_read_key(node, fd->search_key, 14);
+ 		}
++		new_node = NULL;
+ 	}
  
- include ../../lib.mk
- 
-+$(OUTPUT)/switch_endian_test: ASFLAGS += -I $(OUTPUT)
- $(OUTPUT)/switch_endian_test: $(OUTPUT)/check-reversed.S
- 
- $(OUTPUT)/check-reversed.o: $(OUTPUT)/check.o
+ 	if (!rec && node->parent)
 -- 
 2.20.1
 
