@@ -2,187 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62EB210ACDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 10:49:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 964E210ACD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 10:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfK0JtF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 27 Nov 2019 04:49:05 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53927 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726920AbfK0JtC (ORCPT
+        id S1726593AbfK0Jsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 04:48:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34088 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfK0Jsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 04:49:02 -0500
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-160-N8QNudZsNuOKTM7DqNQzcw-1; Wed, 27 Nov 2019 04:49:00 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EB3FB107ACE3;
-        Wed, 27 Nov 2019 09:48:57 +0000 (UTC)
-Received: from krava.redhat.com (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A52305D6C8;
-        Wed, 27 Nov 2019 09:48:54 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Subject: [PATCH 3/3] bpftool: Allow to link libbpf dynamically
-Date:   Wed, 27 Nov 2019 10:48:37 +0100
-Message-Id: <20191127094837.4045-4-jolsa@kernel.org>
-In-Reply-To: <20191127094837.4045-1-jolsa@kernel.org>
-References: <20191127094837.4045-1-jolsa@kernel.org>
+        Wed, 27 Nov 2019 04:48:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=P/yUKvXVbQkE33SlewRoaK2e7mxmW3hqYImnmOVQTMY=; b=nnf/Dbqtyj/YKaXQc9zwfbcXT
+        fYQkrY7TWnYTbcYlq8kmwqWaBuLTFhEPhEVKOakSb87v9aO3PyyDQmfbauQ0PY+L8pl0UcltCkDSl
+        YrzIOXfxnl5MC9pofSy5LUch4BKNXlkOkaZDJ87irhNSqb5w0ZG2SQv/N56cF3o1jvDk6KGczNr4y
+        /yfAcby9eY7zR0Bndxb8sEROZ6jAOG3Z96f4LgZ7DZi7HhRhp1QIeCQC5ThuDbIX6e/lUj0NANUvQ
+        s8Dp6ePSDnTsxWF1Ycm5CPb/oayT6G0zgibpPd3+uTug98BOMc2VmttRSazO7k9vMtQGKo6n9vTjC
+        wGWqZ2VJg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iZtwC-0006qV-2H; Wed, 27 Nov 2019 09:48:44 +0000
+Date:   Wed, 27 Nov 2019 01:48:44 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        lorenzo.pieralisi@arm.com, andrew.murray@arm.com,
+        bhelgaas@google.com, kishon@ti.com, thierry.reding@gmail.com,
+        Jisheng.Zhang@synaptics.com, jonathanh@nvidia.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH 1/4] PCI: dwc: Add new feature to skip core initialization
+Message-ID: <20191127094844.GA21122@infradead.org>
+References: <20191113090851.26345-1-vidyas@nvidia.com>
+ <20191113090851.26345-2-vidyas@nvidia.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: N8QNudZsNuOKTM7DqNQzcw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191113090851.26345-2-vidyas@nvidia.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we support only static linking with kernel's libbpf
-(tools/lib/bpf). This patch adds LIBBPF_DYNAMIC compile variable
-that triggers libbpf detection and bpf dynamic linking:
+On Wed, Nov 13, 2019 at 02:38:48PM +0530, Vidya Sagar wrote:
+> +	if (ep->ops->get_features) {
+> +		epc_features = ep->ops->get_features(ep);
+> +		if (epc_features->skip_core_init)
+> +			return 0;
+>  	}
+>  
+> +	return dw_pcie_ep_init_complete(ep);
 
-  $ make -C tools/bpf/bpftool make LIBBPF_DYNAMIC=1
+This calling convention is strange.  Just split the early part of
+dw_pcie_ep_init into an dw_pcie_ep_early and either add a tiny
+wrapper like:
 
-If libbpf is not installed, build (with LIBBPF_DYNAMIC=1) stops with:
+int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+{
+	int error;
 
-  $ make -C tools/bpf/bpftool LIBBPF_DYNAMIC=1
-    Auto-detecting system features:
-    ...                        libbfd: [ on  ]
-    ...        disassembler-four-args: [ on  ]
-    ...                          zlib: [ on  ]
-    ...                        libbpf: [ OFF ]
+	error = dw_pcie_ep_init_early(ep);
+	if (error)
+		return error;
+	return dw_pcie_ep_init_late(ep);
+}
 
-  Makefile:102: *** Error: libbpf-devel is missing, please install it.  Stop.
-
-Adding specific bpftool's libbpf check for libbpf_netlink_open (LIBBPF_0.0.6)
-which is the latest we need for bpftool at the moment.
-
-Adding LIBBPF_DIR compile variable to allow linking with
-libbpf installed into specific directory:
-
-  $ make -C tools/lib/bpf/ prefix=/tmp/libbpf/ install_lib install_headers
-  $ make -C tools/bpf/bpftool/ LIBBPF_DYNAMIC=1 LIBBPF_DIR=/tmp/libbpf/
-
-It might be needed to clean build tree first because features
-framework does not detect the change properly:
-
-  $ make -C tools/build/feature clean
-  $ make -C tools/bpf/bpftool/ clean
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/bpf/bpftool/Makefile        | 40 ++++++++++++++++++++++++++++++-
- tools/build/feature/test-libbpf.c |  9 +++++++
- 2 files changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
-index 39bc6f0f4f0b..2b6ed08cb31e 100644
---- a/tools/bpf/bpftool/Makefile
-+++ b/tools/bpf/bpftool/Makefile
-@@ -1,6 +1,15 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+# LIBBPF_DYNAMIC to enable libbpf dynamic linking.
-+
- include ../../scripts/Makefile.include
- include ../../scripts/utilities.mak
-+include ../../scripts/Makefile.arch
-+
-+ifeq ($(LP64), 1)
-+  libdir_relative = lib64
-+else
-+  libdir_relative = lib
-+endif
- 
- ifeq ($(srctree),)
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
-@@ -55,7 +64,7 @@ ifneq ($(EXTRA_LDFLAGS),)
- LDFLAGS += $(EXTRA_LDFLAGS)
- endif
- 
--LIBS = $(LIBBPF) -lelf -lz
-+LIBS = -lelf -lz
- 
- INSTALL ?= install
- RM ?= rm -f
-@@ -64,6 +73,23 @@ FEATURE_USER = .bpftool
- FEATURE_TESTS = libbfd disassembler-four-args reallocarray zlib
- FEATURE_DISPLAY = libbfd disassembler-four-args zlib
- 
-+ifdef LIBBPF_DYNAMIC
-+  # Add libbpf check with the flags to ensure bpftool
-+  # specific version is detected.
-+  FEATURE_CHECK_CFLAGS-libbpf := -DBPFTOOL
-+  FEATURE_TESTS   += libbpf
-+  FEATURE_DISPLAY += libbpf
-+
-+  # for linking with debug library run:
-+  # make LIBBPF_DYNAMIC=1 LIBBPF_DIR=/opt/libbpf
-+  ifdef LIBBPF_DIR
-+    LIBBPF_CFLAGS  := -I$(LIBBPF_DIR)/include
-+    LIBBPF_LDFLAGS := -L$(LIBBPF_DIR)/$(libdir_relative)
-+    FEATURE_CHECK_CFLAGS-libbpf  := $(LIBBPF_CFLAGS)
-+    FEATURE_CHECK_LDFLAGS-libbpf := $(LIBBPF_LDFLAGS)
-+  endif
-+endif
-+
- check_feat := 1
- NON_CHECK_FEAT_TARGETS := clean uninstall doc doc-clean doc-install doc-uninstall
- ifdef MAKECMDGOALS
-@@ -88,6 +114,18 @@ ifeq ($(feature-reallocarray), 0)
- CFLAGS += -DCOMPAT_NEED_REALLOCARRAY
- endif
- 
-+ifdef LIBBPF_DYNAMIC
-+  ifeq ($(feature-libbpf), 1)
-+    LIBS    += -lbpf
-+    CFLAGS  += $(LIBBPF_CFLAGS)
-+    LDFLAGS += $(LIBBPF_LDFLAGS)
-+  else
-+    dummy := $(error Error: No libbpf devel library found, please install libbpf-devel)
-+  endif
-+else
-+  LIBS += $(LIBBPF)
-+endif
-+
- include $(wildcard $(OUTPUT)*.d)
- 
- all: $(OUTPUT)bpftool
-diff --git a/tools/build/feature/test-libbpf.c b/tools/build/feature/test-libbpf.c
-index a508756cf4cc..93566d105a64 100644
---- a/tools/build/feature/test-libbpf.c
-+++ b/tools/build/feature/test-libbpf.c
-@@ -3,5 +3,14 @@
- 
- int main(void)
- {
-+#ifdef BPFTOOL
-+	/*
-+	 * libbpf_netlink_open (LIBBPF_0.0.6) is the latest
-+	 * we need for bpftool at the moment
-+	 */
-+	libbpf_netlink_open(NULL);
-+	return 0;
-+#else
- 	return bpf_object__open("test") ? 0 : -1;
-+#endif
- }
--- 
-2.21.0
-
+or just open code that in the few callers.  That keeps the calling
+conventions much simpler and avoids relying on a callback and flag.
