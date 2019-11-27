@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B2310B7DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 746D810B87A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbfK0Uhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:37:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40772 "EHLO mail.kernel.org"
+        id S1729010AbfK0Unu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:43:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728607AbfK0Uhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:37:39 -0500
+        id S1729498AbfK0Uns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:43:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0F5A21569;
-        Wed, 27 Nov 2019 20:37:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3F052080F;
+        Wed, 27 Nov 2019 20:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887059;
-        bh=awQvIKTfUYWNu69iro6jB5+ZflEGxlK8ruMsEgXoNEc=;
+        s=default; t=1574887428;
+        bh=FnI+fa6RYHCzzLqSE6NIcC3D6jU/xkVbeou+UhqK7sc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NjqK3er893u6MNJHo0doqYwYlwJvMvuRLdocvG97AcaLKSjOxHEeFa1KAEofGBCJj
-         W5KIG4eh6SnEHiPgLHsDm20A0L9xDxEjFDi3AXXZvQ39zMeJdVcOxg9p2smRSZSMEr
-         ac6Yv2oRAu/QCcnkw7hy5ZaE5Ci7SH2PpFgUlGyc=
+        b=HvaxB0JUOsuzaS8s5A6tYZbOUPLEN0LtXgaakmGP9w0KQwTsxKVSa5DMvL5Fen12r
+         p7xRBbgc6FaPsPR6kuteMg70dQi7/zswLjkq/WCmwDYQXQRkNC0cnE4OTYnG5YKLdH
+         mUUKXAhBSTJ8dPilHpMaIodeiPXhWhrAxng0TN04=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
-        Vignesh R <vigneshr@ti.com>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 097/132] spi: omap2-mcspi: Fix DMA and FIFO event trigger size mismatch
+Subject: [PATCH 4.9 105/151] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
 Date:   Wed, 27 Nov 2019 21:31:28 +0100
-Message-Id: <20191127203022.521896485@linuxfoundation.org>
+Message-Id: <20191127203040.899342059@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vignesh R <vigneshr@ti.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit baf8b9f8d260c55a86405f70a384c29cda888476 ]
+[ Upstream commit f24bfb39975c241374cadebbd037c17960cf1412 ]
 
-Commit b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
-broke SPI transfers where bits_per_word != 8. This is because of
-mimsatch between McSPI FIFO level event trigger size (SPI word length) and
-DMA request size(word length * maxburst). This leads to data
-corruption, lockup and errors like:
+Clang warns when one enumerated type is implicitly converted to another:
 
-	spi1.0: EOW timed out
+drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
+from enumeration type 'enum lpc18xx_pin_config_param' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+        ~                          ^~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
+from enumeration type 'enum lpc18xx_pin_config_param' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
+        ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+macro 'PCONFDUMP'
+        .param = a, .display = b, .format = c, .has_arg = d     \
+                 ^
+2 warnings generated.
 
-Fix this by setting DMA maxburst size to 1 so that
-McSPI FIFO level event trigger size matches DMA request size.
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
 
-Fixes: b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
-Cc: stable@vger.kernel.org
-Reported-by: David Lechner <david@lechnology.com>
-Tested-by: David Lechner <david@lechnology.com>
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/140
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-omap2-mcspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-lpc18xx.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 2e35fc735ba6a..79fa237f76c42 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -593,8 +593,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
- 	cfg.src_addr_width = width;
- 	cfg.dst_addr_width = width;
--	cfg.src_maxburst = es;
--	cfg.dst_maxburst = es;
-+	cfg.src_maxburst = 1;
-+	cfg.dst_maxburst = 1;
+diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+index e053f1fa55120..ab2a451f31562 100644
+--- a/drivers/pinctrl/pinctrl-lpc18xx.c
++++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+@@ -630,14 +630,8 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
+ 	LPC18XX_PIN(i2c0_sda, PIN_I2C0_SDA),
+ };
  
- 	rx = xfer->rx_buf;
- 	tx = xfer->tx_buf;
+-/**
+- * enum lpc18xx_pin_config_param - possible pin configuration parameters
+- * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt
+- * 	controller.
+- */
+-enum lpc18xx_pin_config_param {
+-	PIN_CONFIG_GPIO_PIN_INT = PIN_CONFIG_END + 1,
+-};
++/* PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt controller */
++#define PIN_CONFIG_GPIO_PIN_INT		(PIN_CONFIG_END + 1)
+ 
+ static const struct pinconf_generic_params lpc18xx_params[] = {
+ 	{"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
 -- 
 2.20.1
 
