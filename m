@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0409410B831
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B982810B7BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfK0Uk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45726 "EHLO mail.kernel.org"
+        id S1727495AbfK0Ugl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:36:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728591AbfK0Uky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:54 -0500
+        id S1728287AbfK0Ugk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:36:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83FB521774;
-        Wed, 27 Nov 2019 20:40:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D64A6215A4;
+        Wed, 27 Nov 2019 20:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887254;
-        bh=8v2/Cs1QTRw3u87ZKECXxUqI3I0na7RDg/PfoarGI0o=;
+        s=default; t=1574886999;
+        bh=kFJth200sPmtszgT2RYC2hQ65ZwtwIBT34N2U7ZQ2VA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vc3Z8PIBbi/1gOfNXOsDaH8klZw391ucDXiwlUjEFReoxACwGNUjTcUY6xu2nVmTm
-         mLErLyMg+qJAtl/DM+1LdmpmDMI1EzCVWWI9srDcCR0KrjnwdEfXEYzZnoemXelYcC
-         K5kdAK7yD3+q9y4AZ9DhR0mHXk7p4Oh3mx0i8U1M=
+        b=HK+quojNmzJ8mmfJ03VQEiGld1bUAns1ZmV1602nGytcMLnqzS7XCIIy+lMFyZ5dz
+         SCYTJJT6JPz8bMGwUeAP6tcSOR5ZOYW1NhUSYEmtbhDpCdd+pYo1cNnVLc8rnj4Nt7
+         Ur2TBWd+Hrwvp4Xrk4j1EgiSET3SVgHD134jQSjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
+        stable@vger.kernel.org, Duncan Laurie <dlaurie@chromium.org>,
+        Vadim Bendebury <vbendeb@chromium.org>,
+        Stefan Reinauer <reinauer@chromium.org>,
+        Furquan Shaikh <furquan@google.com>,
+        Furquan Shaikh <furquan@chromium.org>,
+        Aaron Durbin <adurbin@chromium.org>,
+        Justin TerAvest <teravest@chromium.org>,
+        Ross Zwisler <zwisler@google.com>,
+        Guenter Roeck <groeck@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 039/151] xfs: fix use-after-free race in xfs_buf_rele
+Subject: [PATCH 4.4 031/132] gsmi: Fix bug in append_to_eventlog sysfs handler
 Date:   Wed, 27 Nov 2019 21:30:22 +0100
-Message-Id: <20191127203024.197432490@linuxfoundation.org>
+Message-Id: <20191127202928.087227879@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,121 +51,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Duncan Laurie <dlaurie@chromium.org>
 
-[ Upstream commit 37fd1678245f7a5898c1b05128bc481fb403c290 ]
+[ Upstream commit 655603de68469adaff16842ac17a5aec9c9ce89b ]
 
-When looking at a 4.18 based KASAN use after free report, I noticed
-that racing xfs_buf_rele() may race on dropping the last reference
-to the buffer and taking the buffer lock. This was the symptom
-displayed by the KASAN report, but the actual issue that was
-reported had already been fixed in 4.19-rc1 by commit e339dd8d8b04
-("xfs: use sync buffer I/O for sync delwri queue submission").
+The sysfs handler should return the number of bytes consumed, which in the
+case of a successful write is the entire buffer.  Also fix a bug where
+param.data_len was being set to (count - (2 * sizeof(u32))) instead of just
+(count - sizeof(u32)).  The latter is correct because we skip over the
+leading u32 which is our param.type, but we were also incorrectly
+subtracting sizeof(u32) on the line where we were actually setting
+param.data_len:
 
-Despite this, I think there is still an issue with xfs_buf_rele()
-in this code:
+	param.data_len = count - sizeof(u32);
 
-        release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
-        spin_lock(&bp->b_lock);
-        if (!release) {
-.....
+This meant that for our example event.kernel_software_watchdog with total
+length 10 bytes, param.data_len was just 2 prior to this change.
 
-If two threads race on the b_lock after both dropping a reference
-and one getting dropping the last reference so release = true, we
-end up with:
+To test, successfully append an event to the log with gsmi sysfs.
+This sample event is for a "Kernel Software Watchdog"
 
-CPU 0				CPU 1
-atomic_dec_and_lock()
-				atomic_dec_and_lock()
-				spin_lock(&bp->b_lock)
-spin_lock(&bp->b_lock)
-<spins>
-				<release = true bp->b_lru_ref = 0>
-				<remove from lists>
-				freebuf = true
-				spin_unlock(&bp->b_lock)
-				xfs_buf_free(bp)
-<gets lock, reading and writing freed memory>
-<accesses freed memory>
-spin_unlock(&bp->b_lock) <reads/writes freed memory>
+> xxd -g 1 event.kernel_software_watchdog
+0000000: 01 00 00 00 ad de 06 00 00 00
 
-IOWs, we can't safely take bp->b_lock after dropping the hold
-reference because the buffer may go away at any time after we
-drop that reference. However, this can be fixed simply by taking the
-bp->b_lock before we drop the reference.
+> cat event.kernel_software_watchdog > /sys/firmware/gsmi/append_to_eventlog
 
-It is safe to nest the pag_buf_lock inside bp->b_lock as the
-pag_buf_lock is only used to serialise against lookup in
-xfs_buf_find() and no other locks are held over or under the
-pag_buf_lock there. Make this clear by documenting the buffer lock
-orders at the top of the file.
+> mosys eventlog list | tail -1
+14 | 2012-06-25 10:14:14 | Kernl Event | Software Watchdog
 
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com
-Signed-off-by: Dave Chinner <david@fromorbit.com>
+Signed-off-by: Duncan Laurie <dlaurie@chromium.org>
+Reviewed-by: Vadim Bendebury <vbendeb@chromium.org>
+Reviewed-by: Stefan Reinauer <reinauer@chromium.org>
+Signed-off-by: Furquan Shaikh <furquan@google.com>
+Tested-by: Furquan Shaikh <furquan@chromium.org>
+Reviewed-by: Aaron Durbin <adurbin@chromium.org>
+Reviewed-by: Justin TerAvest <teravest@chromium.org>
+[zwisler: updated changelog for 2nd bug fix and upstream]
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_buf.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ drivers/firmware/google/gsmi.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 651755353374d..0b58b9d419e84 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -57,6 +57,32 @@ static kmem_zone_t *xfs_buf_zone;
- #define xb_to_gfp(flags) \
- 	((((flags) & XBF_READ_AHEAD) ? __GFP_NORETRY : GFP_NOFS) | __GFP_NOWARN)
+diff --git a/drivers/firmware/google/gsmi.c b/drivers/firmware/google/gsmi.c
+index f1ab05ea56bbc..3c117559f102f 100644
+--- a/drivers/firmware/google/gsmi.c
++++ b/drivers/firmware/google/gsmi.c
+@@ -480,11 +480,10 @@ static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
+ 	if (count < sizeof(u32))
+ 		return -EINVAL;
+ 	param.type = *(u32 *)buf;
+-	count -= sizeof(u32);
+ 	buf += sizeof(u32);
  
-+/*
-+ * Locking orders
-+ *
-+ * xfs_buf_ioacct_inc:
-+ * xfs_buf_ioacct_dec:
-+ *	b_sema (caller holds)
-+ *	  b_lock
-+ *
-+ * xfs_buf_stale:
-+ *	b_sema (caller holds)
-+ *	  b_lock
-+ *	    lru_lock
-+ *
-+ * xfs_buf_rele:
-+ *	b_lock
-+ *	  pag_buf_lock
-+ *	    lru_lock
-+ *
-+ * xfs_buftarg_wait_rele
-+ *	lru_lock
-+ *	  b_lock (trylock due to inversion)
-+ *
-+ * xfs_buftarg_isolate
-+ *	lru_lock
-+ *	  b_lock (trylock due to inversion)
-+ */
+ 	/* The remaining buffer is the data payload */
+-	if (count > gsmi_dev.data_buf->length)
++	if ((count - sizeof(u32)) > gsmi_dev.data_buf->length)
+ 		return -EINVAL;
+ 	param.data_len = count - sizeof(u32);
  
- static inline int
- xfs_buf_is_vmapped(
-@@ -957,8 +983,18 @@ xfs_buf_rele(
+@@ -504,7 +503,7 @@ static ssize_t eventlog_write(struct file *filp, struct kobject *kobj,
  
- 	ASSERT(atomic_read(&bp->b_hold) > 0);
+ 	spin_unlock_irqrestore(&gsmi_dev.lock, flags);
  
--	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
-+	/*
-+	 * We grab the b_lock here first to serialise racing xfs_buf_rele()
-+	 * calls. The pag_buf_lock being taken on the last reference only
-+	 * serialises against racing lookups in xfs_buf_find(). IOWs, the second
-+	 * to last reference we drop here is not serialised against the last
-+	 * reference until we take bp->b_lock. Hence if we don't grab b_lock
-+	 * first, the last "release" reference can win the race to the lock and
-+	 * free the buffer before the second-to-last reference is processed,
-+	 * leading to a use-after-free scenario.
-+	 */
- 	spin_lock(&bp->b_lock);
-+	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
- 	if (!release) {
- 		/*
- 		 * Drop the in-flight state if the buffer is already on the LRU
+-	return rc;
++	return (rc == 0) ? count : rc;
+ 
+ }
+ 
 -- 
 2.20.1
 
