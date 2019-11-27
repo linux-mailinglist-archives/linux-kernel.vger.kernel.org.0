@@ -2,98 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2F210AFA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 13:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EBC310AF94
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 13:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfK0MkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 07:40:06 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:50422 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726520AbfK0MkE (ORCPT
+        id S1726909AbfK0Mcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 07:32:31 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46129 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbfK0Mcb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 07:40:04 -0500
-X-Greylist: delayed 537 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 07:40:03 EST
-Received: from faui04s.informatik.uni-erlangen.de (faui04s.informatik.uni-erlangen.de [131.188.30.149])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id D13B1241838;
-        Wed, 27 Nov 2019 13:31:02 +0100 (CET)
-Received: by faui04s.informatik.uni-erlangen.de (Postfix, from userid 66121)
-        id AE1FE15E15AC; Wed, 27 Nov 2019 13:31:02 +0100 (CET)
-From:   Dorothea Ehrl <dorothea.ehrl@fau.de>
-To:     manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com,
-        gregkh@linuxfoundation.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     linux-kernel@i4.cs.fau.de, Dorothea Ehrl <dorothea.ehrl@fau.de>,
-        Vanessa Hack <vanessa.hack@fau.de>
-Subject: [PATCH 5/5] staging/qlge: fix block comment coding style
-Date:   Wed, 27 Nov 2019 13:30:52 +0100
-Message-Id: <20191127123052.16424-5-dorothea.ehrl@fau.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191127123052.16424-1-dorothea.ehrl@fau.de>
-References: <20191127123052.16424-1-dorothea.ehrl@fau.de>
+        Wed, 27 Nov 2019 07:32:31 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z7so23038198wrl.13;
+        Wed, 27 Nov 2019 04:32:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=APAHGrPXLQYqK4XEoTpL2DzSySkqv8Fb1fkOTesm7KY=;
+        b=LwZR714aKNW53eU2PrzF8ld6L7vBnmV7u/N8kuk7ie4toOHHh+jtUVVd1J8W9xBpFP
+         +V+j+nJKAZcYvUylzzmynyzIK/N/OquiTEJDSAOvJLw/qREeLYe2aA+6EZJHrPN1dzGV
+         C/xmCHAekdf6oKxpN1+hS/AbZqbrd07SrbAmOXFo2OBQufmjQwWismEM9oYEMhG9vqCz
+         WVgcndjZ4FbHMHmVFRz/LELqaqzKwoDaSfVgnOKej8bZapxtSg13asl1xQ0l/xMBSRXi
+         CtqMhCqTJ3rI2rXAJonHhuNbFe6Qd8XY2T5pbPODcPiYJjwe6KoMgHY41OA9+NvjcwQD
+         ADAg==
+X-Gm-Message-State: APjAAAUM+QD/GcWc0Lmz++MrM6GisBItrbSL5mf/mNs7reJjHrfhcpHE
+        n2a9yBg/XbniVJQGiKNRyJ0=
+X-Google-Smtp-Source: APXvYqxfKgQ5PfmLC6R8aUvg0wAMhGCvN28Tabbxnu2utp0rEv/IP2wvtLrgZvqhCyzrvsU3FB+Yjw==
+X-Received: by 2002:adf:f3d0:: with SMTP id g16mr22568717wrp.2.1574857947424;
+        Wed, 27 Nov 2019 04:32:27 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id b14sm6614061wmj.18.2019.11.27.04.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2019 04:32:26 -0800 (PST)
+Date:   Wed, 27 Nov 2019 13:32:25 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] mm: memcg/slab: wait for !root kmem_cache refcnt killing
+ on root kmem_cache destruction
+Message-ID: <20191127123225.GR20912@dhcp22.suse.cz>
+References: <20191125185453.278468-1-guro@fb.com>
+ <20191126092918.GB20912@dhcp22.suse.cz>
+ <20191126184135.GA66034@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191126184135.GA66034@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes:
-"WARNING: block comment use * on subsequent lines"
-"WARNING: block comments should align the * on each line"
-"WARNING: block comments use a trailing */ on a separate line"
-by checkpatch.pl.
+On Tue 26-11-19 18:41:41, Roman Gushchin wrote:
+> On Tue, Nov 26, 2019 at 10:29:18AM +0100, Michal Hocko wrote:
+> > On Mon 25-11-19 10:54:53, Roman Gushchin wrote:
+[...]
+> > > So in a rare case when not all children kmem_caches are destroyed
+> > > at the moment when the root kmem_cache is about to be gone, we need
+> > > to wait another rcu grace period before destroying the root
+> > > kmem_cache.
+> > 
+> > Could you explain how rare this really is please?
+> 
+> It seems that we don't destroy root kmem_caches with enabled memcg
+> accounting that often, but maybe I'm biased here.
 
-Signed-off-by: Dorothea Ehrl <dorothea.ehrl@fau.de>
-Co-developed-by: Vanessa Hack <vanessa.hack@fau.de>
-Signed-off-by: Vanessa Hack <vanessa.hack@fau.de>
----
- drivers/staging/qlge/qlge_main.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/staging/qlge/qlge_main.c b/drivers/staging/qlge/qlge_main.c
-index d19709bcdc20..29861f01ca26 100644
---- a/drivers/staging/qlge/qlge_main.c
-+++ b/drivers/staging/qlge/qlge_main.c
-@@ -402,8 +402,8 @@ static int ql_set_mac_addr_reg(struct ql_adapter *qdev, u8 *addr, u32 type,
- 				   (index << MAC_ADDR_IDX_SHIFT) |	/* index */
- 				   type);	/* type */
- 			/* This field should also include the queue id
--			   and possibly the function id.  Right now we hardcode
--			   the route field to NIC core.
-+			 * and possibly the function id.  Right now we hardcode
-+			 * the route field to NIC core.
- 			 */
- 			cam_output = (CAM_OUT_ROUTE_NIC |
- 				      (qdev->
-@@ -683,7 +683,7 @@ static int ql_read_flash_word(struct ql_adapter *qdev, int offset, __le32 *data)
- 			FLASH_ADDR, FLASH_ADDR_RDY, FLASH_ADDR_ERR);
- 	if (status)
- 		goto exit;
--	 /* This data is stored on flash as an array of
-+	/* This data is stored on flash as an array of
- 	 * __le32.  Since ql_read32() returns cpu endian
- 	 * we need to swap it back.
- 	 */
-@@ -2223,7 +2223,8 @@ static int ql_napi_poll_msix(struct napi_struct *napi, int budget)
- 		     "Enter, NAPI POLL cq_id = %d.\n", rx_ring->cq_id);
-
- 	/* Service the TX rings first.  They start
--	 * right after the RSS rings. */
-+	 * right after the RSS rings.
-+	 */
- 	for (i = qdev->rss_ring_count; i < qdev->rx_ring_count; i++) {
- 		trx_ring = &qdev->rx_ring[i];
- 		/* If this TX completion ring belongs to this vector and
-@@ -2888,7 +2889,8 @@ static void ql_free_rx_resources(struct ql_adapter *qdev,
- }
-
- /* Allocate queues and buffers for this completions queue based
-- * on the values in the parameter structure. */
-+ * on the values in the parameter structure.
-+ */
- static int ql_alloc_rx_resources(struct ql_adapter *qdev,
- 				 struct rx_ring *rx_ring)
- {
---
-2.20.1
-
+So this happens each time a root kmem_cache is destroyed? Which would
+imply that only dynamically created ones?
+-- 
+Michal Hocko
+SUSE Labs
