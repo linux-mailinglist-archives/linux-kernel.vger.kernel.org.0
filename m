@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCFFA10BBFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB2710BC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:18:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732639AbfK0VMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:12:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43754 "EHLO mail.kernel.org"
+        id S1732921AbfK0VR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:17:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728319AbfK0VMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:12:41 -0500
+        id S1728397AbfK0VMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:12:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A98FA215F1;
-        Wed, 27 Nov 2019 21:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A821121775;
+        Wed, 27 Nov 2019 21:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889161;
-        bh=L+jYQkLDbz7jdGIFvd7QPd5vlf8ZtyBtC/ptRMlOHZQ=;
+        s=default; t=1574889130;
+        bh=iKMlagfNcq3TPOMQAulL64ysv1hwp8Mdv1gDrrm9eTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GkrFJh2QiaWwzzbTUmYLMYrp0x96ww1HPScLs6nqJSIgMoTYIMW9GRDwKupnK4A0K
-         o20GVVDimUXZLzTJGwaA8+uaIpgq2mWBK/lBr5tL2r7iTgnDctrIKqd6Z90gWoHUYQ
-         ohIwWgig6VYVn1OSrGt3gs6PUo4uF0QjK5+6ziX0=
+        b=bYIgAYTTfeRKppWBzBSoNVKQ1M8NE3XRLN2Sq2O+sa0C04i0vvEb78cQWmNWa9EOW
+         zQIxAT7mShbFK0c/STqaXYMn0emT697OQp+srpOv/4GX1R08HjSSI7PyV8ZCRAfxXV
+         t3mGnk9TQQw/Upji/JweZxT0zsodWhd1pcsKWdQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.4 04/66] ath10k: Fix HOST capability QMI incompatibility
+        stable@vger.kernel.org, Vito Caputo <vcaputo@pengaru.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.3 42/95] Revert "dm crypt: use WQ_HIGHPRI for the IO and crypt workqueues"
 Date:   Wed, 27 Nov 2019 21:31:59 +0100
-Message-Id: <20191127202640.922771514@linuxfoundation.org>
+Message-Id: <20191127202908.311593368@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,168 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 7165ef890a4c44cf16db66b82fd78448f4bde6ba upstream.
+commit f612b2132db529feac4f965f28a1b9258ea7c22b upstream.
 
-The introduction of 768ec4c012ac ("ath10k: update HOST capability QMI
-message") served the purpose of supporting the new and extended HOST
-capability QMI message.
+This reverts commit a1b89132dc4f61071bdeaab92ea958e0953380a1.
 
-But while the new message adds a slew of optional members it changes the
-data type of the "daemon_support" member, which means that older
-versions of the firmware will fail to decode the incoming request
-message.
+Revert required hand-patching due to subsequent changes that were
+applied since commit a1b89132dc4f61071bdeaab92ea958e0953380a1.
 
-There is no way to detect this breakage from Linux and there's no way to
-recover from sending the wrong message (i.e. we can't just try one
-format and then fallback to the other), so a quirk is introduced in
-DeviceTree to indicate to the driver that the firmware requires the 8bit
-version of this message.
-
+Requires: ed0302e83098d ("dm crypt: make workqueue names device-specific")
 Cc: stable@vger.kernel.org
-Fixes: 768ec4c012ac ("ath10k: update HOST capability qmi message")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Bug: https://bugzilla.kernel.org/show_bug.cgi?id=199857
+Reported-by: Vito Caputo <vcaputo@pengaru.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt |    6 ++
- drivers/net/wireless/ath/ath10k/qmi.c                          |   13 ++++-
- drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.c                 |   22 ++++++++++
- drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.h                 |    1 
- drivers/net/wireless/ath/ath10k/snoc.c                         |   11 +++++
- drivers/net/wireless/ath/ath10k/snoc.h                         |    1 
- 6 files changed, 51 insertions(+), 3 deletions(-)
+ drivers/md/dm-crypt.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-+++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-@@ -81,6 +81,12 @@ Optional properties:
- 	Definition: Name of external front end module used. Some valid FEM names
- 		    for example: "microsemi-lx5586", "sky85703-11"
- 		    and "sky85803" etc.
-+- qcom,snoc-host-cap-8bit-quirk:
-+	Usage: Optional
-+	Value type: <empty>
-+	Definition: Quirk specifying that the firmware expects the 8bit version
-+		    of the host capability QMI request
-+
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2911,21 +2911,18 @@ static int crypt_ctr(struct dm_target *t
+ 	}
  
- Example (to supply PCI based wifi block details):
+ 	ret = -ENOMEM;
+-	cc->io_queue = alloc_workqueue("kcryptd_io/%s",
+-				       WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM,
+-				       1, devname);
++	cc->io_queue = alloc_workqueue("kcryptd_io/%s", WQ_MEM_RECLAIM, 1, devname);
+ 	if (!cc->io_queue) {
+ 		ti->error = "Couldn't create kcryptd io queue";
+ 		goto bad;
+ 	}
  
---- a/drivers/net/wireless/ath/ath10k/qmi.c
-+++ b/drivers/net/wireless/ath/ath10k/qmi.c
-@@ -581,22 +581,29 @@ static int ath10k_qmi_host_cap_send_sync
- {
- 	struct wlfw_host_cap_resp_msg_v01 resp = {};
- 	struct wlfw_host_cap_req_msg_v01 req = {};
-+	struct qmi_elem_info *req_ei;
- 	struct ath10k *ar = qmi->ar;
-+	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
- 	struct qmi_txn txn;
- 	int ret;
- 
- 	req.daemon_support_valid = 1;
- 	req.daemon_support = 0;
- 
--	ret = qmi_txn_init(&qmi->qmi_hdl, &txn,
--			   wlfw_host_cap_resp_msg_v01_ei, &resp);
-+	ret = qmi_txn_init(&qmi->qmi_hdl, &txn, wlfw_host_cap_resp_msg_v01_ei,
-+			   &resp);
- 	if (ret < 0)
- 		goto out;
- 
-+	if (test_bit(ATH10K_SNOC_FLAG_8BIT_HOST_CAP_QUIRK, &ar_snoc->flags))
-+		req_ei = wlfw_host_cap_8bit_req_msg_v01_ei;
-+	else
-+		req_ei = wlfw_host_cap_req_msg_v01_ei;
-+
- 	ret = qmi_send_request(&qmi->qmi_hdl, NULL, &txn,
- 			       QMI_WLFW_HOST_CAP_REQ_V01,
- 			       WLFW_HOST_CAP_REQ_MSG_V01_MAX_MSG_LEN,
--			       wlfw_host_cap_req_msg_v01_ei, &req);
-+			       req_ei, &req);
- 	if (ret < 0) {
- 		qmi_txn_cancel(&txn);
- 		ath10k_err(ar, "failed to send host capability request: %d\n", ret);
---- a/drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.c
-+++ b/drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.c
-@@ -1988,6 +1988,28 @@ struct qmi_elem_info wlfw_host_cap_req_m
- 	{}
- };
- 
-+struct qmi_elem_info wlfw_host_cap_8bit_req_msg_v01_ei[] = {
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct wlfw_host_cap_req_msg_v01,
-+					   daemon_support_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct wlfw_host_cap_req_msg_v01,
-+					   daemon_support),
-+	},
-+	{}
-+};
-+
- struct qmi_elem_info wlfw_host_cap_resp_msg_v01_ei[] = {
- 	{
- 		.data_type      = QMI_STRUCT,
---- a/drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.h
-+++ b/drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.h
-@@ -575,6 +575,7 @@ struct wlfw_host_cap_req_msg_v01 {
- 
- #define WLFW_HOST_CAP_REQ_MSG_V01_MAX_MSG_LEN 189
- extern struct qmi_elem_info wlfw_host_cap_req_msg_v01_ei[];
-+extern struct qmi_elem_info wlfw_host_cap_8bit_req_msg_v01_ei[];
- 
- struct wlfw_host_cap_resp_msg_v01 {
- 	struct qmi_response_type_v01 resp;
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -1261,6 +1261,15 @@ out:
- 	return ret;
- }
- 
-+static void ath10k_snoc_quirks_init(struct ath10k *ar)
-+{
-+	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
-+	struct device *dev = &ar_snoc->dev->dev;
-+
-+	if (of_property_read_bool(dev->of_node, "qcom,snoc-host-cap-8bit-quirk"))
-+		set_bit(ATH10K_SNOC_FLAG_8BIT_HOST_CAP_QUIRK, &ar_snoc->flags);
-+}
-+
- int ath10k_snoc_fw_indication(struct ath10k *ar, u64 type)
- {
- 	struct ath10k_snoc *ar_snoc = ath10k_snoc_priv(ar);
-@@ -1678,6 +1687,8 @@ static int ath10k_snoc_probe(struct plat
- 	ar->ce_priv = &ar_snoc->ce;
- 	msa_size = drv_data->msa_size;
- 
-+	ath10k_snoc_quirks_init(ar);
-+
- 	ret = ath10k_snoc_resource_init(ar);
- 	if (ret) {
- 		ath10k_warn(ar, "failed to initialize resource: %d\n", ret);
---- a/drivers/net/wireless/ath/ath10k/snoc.h
-+++ b/drivers/net/wireless/ath/ath10k/snoc.h
-@@ -63,6 +63,7 @@ enum ath10k_snoc_flags {
- 	ATH10K_SNOC_FLAG_REGISTERED,
- 	ATH10K_SNOC_FLAG_UNREGISTERING,
- 	ATH10K_SNOC_FLAG_RECOVERY,
-+	ATH10K_SNOC_FLAG_8BIT_HOST_CAP_QUIRK,
- };
- 
- struct ath10k_snoc {
+ 	if (test_bit(DM_CRYPT_SAME_CPU, &cc->flags))
+-		cc->crypt_queue = alloc_workqueue("kcryptd/%s",
+-						  WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM,
++		cc->crypt_queue = alloc_workqueue("kcryptd/%s", WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM,
+ 						  1, devname);
+ 	else
+ 		cc->crypt_queue = alloc_workqueue("kcryptd/%s",
+-						  WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM | WQ_UNBOUND,
++						  WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM | WQ_UNBOUND,
+ 						  num_online_cpus(), devname);
+ 	if (!cc->crypt_queue) {
+ 		ti->error = "Couldn't create kcryptd queue";
 
 
