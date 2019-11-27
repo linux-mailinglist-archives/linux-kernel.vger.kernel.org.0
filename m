@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F3810B88D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA0510B976
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfK0Uoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:44:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
+        id S1730711AbfK0UxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:53:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729598AbfK0Uo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:29 -0500
+        id S1729592AbfK0UxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:53:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8085F2166E;
-        Wed, 27 Nov 2019 20:44:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9016F2184C;
+        Wed, 27 Nov 2019 20:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887469;
-        bh=X/58Tm7eKCZC7D2HzvHgjcaueL9E+HraeIKt33xEIWA=;
+        s=default; t=1574887999;
+        bh=lRPt9jymUbXWKctZ9s1aVDzxhXEFT0cUHXoT8XZU/sU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lTNNAAch8rM+VATAe5Rl4QadnxLyx4SLzT6+/o2sTcqF9VgF6g95xRCBhWurwu61a
-         DSj+vBZrh6mfr2ole/7U+ohzwVBZgkN71ZcZeseVatmm85e81ZuLwLW4wvXOrGA1II
-         pS1VDrW1LvHBat0Bt9DUU5+Z9OOgHnwE1HJ6A5DA=
+        b=w6tYkpZ1Ix/Tu4cYDogijN3i9fb/ACxbHIrReVRvM1ZStWy6oeU1zjcmqInSfm9QT
+         z38LpPCeBlIT9YpHg+XYrpru41WB23/DZvXDLTpuDywBZbEza1tMVLcVYoe7IltC3y
+         kebMDpfDKASStnYRKu8tQFE+2C+yZYi2CaJN+1RM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vandana BN <bnvandana@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.9 124/151] media: vivid: Set vid_cap_streaming and vid_out_streaming to true
-Date:   Wed, 27 Nov 2019 21:31:47 +0100
-Message-Id: <20191127203045.445126141@linuxfoundation.org>
+        stable@vger.kernel.org, Chester Lin <clin@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.14 175/211] ARM: 8904/1: skip nomap memblocks while finding the lowmem/highmem boundary
+Date:   Wed, 27 Nov 2019 21:31:48 +0100
+Message-Id: <20191127203110.381286961@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vandana BN <bnvandana@gmail.com>
+From: Chester Lin <clin@suse.com>
 
-commit b4add02d2236fd5f568db141cfd8eb4290972eb3 upstream.
+commit 1d31999cf04c21709f72ceb17e65b54a401330da upstream.
 
-When vbi stream is started, followed by video streaming,
-the vid_cap_streaming and vid_out_streaming were not being set to true,
-which would cause the video stream to stop when vbi stream is stopped.
-This patch allows to set vid_cap_streaming and vid_out_streaming to true.
-According to Hans Verkuil it appears that these 'if (dev->kthread_vid_cap)'
-checks are a left-over from the original vivid development and should never
-have been there.
+adjust_lowmem_bounds() checks every memblocks in order to find the boundary
+between lowmem and highmem. However some memblocks could be marked as NOMAP
+so they are not used by kernel, which should be skipped while calculating
+the boundary.
 
-Signed-off-by: Vandana BN <bnvandana@gmail.com>
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Chester Lin <clin@suse.com>
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-vid-cap.c |    3 ---
- drivers/media/platform/vivid/vivid-vid-out.c |    3 ---
- 2 files changed, 6 deletions(-)
+ arch/arm/mm/mmu.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/media/platform/vivid/vivid-vid-cap.c
-+++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-@@ -236,9 +236,6 @@ static int vid_cap_start_streaming(struc
- 	if (vb2_is_streaming(&dev->vb_vid_out_q))
- 		dev->can_loop_video = vivid_vid_can_loop(dev);
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -1195,6 +1195,9 @@ void __init adjust_lowmem_bounds(void)
+ 		phys_addr_t block_start = reg->base;
+ 		phys_addr_t block_end = reg->base + reg->size;
  
--	if (dev->kthread_vid_cap)
--		return 0;
--
- 	dev->vid_cap_seq_count = 0;
- 	dprintk(dev, 1, "%s\n", __func__);
- 	for (i = 0; i < VIDEO_MAX_FRAME; i++)
---- a/drivers/media/platform/vivid/vivid-vid-out.c
-+++ b/drivers/media/platform/vivid/vivid-vid-out.c
-@@ -158,9 +158,6 @@ static int vid_out_start_streaming(struc
- 	if (vb2_is_streaming(&dev->vb_vid_cap_q))
- 		dev->can_loop_video = vivid_vid_can_loop(dev);
- 
--	if (dev->kthread_vid_out)
--		return 0;
--
- 	dev->vid_out_seq_count = 0;
- 	dprintk(dev, 1, "%s\n", __func__);
- 	if (dev->start_streaming_error) {
++		if (memblock_is_nomap(reg))
++			continue;
++
+ 		if (reg->base < vmalloc_limit) {
+ 			if (block_end > lowmem_limit)
+ 				/*
 
 
