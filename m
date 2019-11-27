@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1071E10BD04
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:27:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E58E010BA1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfK0VAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:00:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51664 "EHLO mail.kernel.org"
+        id S1730933AbfK0VAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:00:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730993AbfK0U77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:59:59 -0500
+        id S1731525AbfK0VAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:00:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC6662158A;
-        Wed, 27 Nov 2019 20:59:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4DB820678;
+        Wed, 27 Nov 2019 21:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888399;
-        bh=CUQm85ZwFc3ZiJ3wii7Anj20FIV1fgD/Xl2COzvfJSg=;
+        s=default; t=1574888407;
+        bh=LlG2uit9KDyM3hzOHqNGksF+oDB68gKaKas/WQtvjRM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1k4kRuvjBgQO8XP9ZealarUrFEfnwLuopxVaI2Hu57PuutowQx0SlGobIuNTuk7VD
-         ZiiTv45MvH/KwMfbtQI2ZIX62NPjja8W2k7v6ru8Kd0O3n/EgSGEq3JQNdCMNuyEmE
-         ggCk8Os2KmOa394KlZYq4Z+EIzKjH6lyoBxHHo4s=
+        b=LGTu2/58GEvrMYYUINhbIgs6XCZFI9vwkYeYuIhZpJGj14hA/zvuThREO0/GOCgrn
+         6/7LepP83fzoMscAwbiCaqxwpjJruOhp7RtOCyqFhXThdOOkt2KUMcFyeFwGjOo+qF
+         7eEyjhpSCNnrEEpjb+LY98W8UNtos08qsb09Btaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 119/306] rtc: s35390a: Change bufs type to u8 in s35390a_init
-Date:   Wed, 27 Nov 2019 21:29:29 +0100
-Message-Id: <20191127203123.846992325@linuxfoundation.org>
+Subject: [PATCH 4.19 122/306] f2fs: fix to spread clear_cold_data()
+Date:   Wed, 27 Nov 2019 21:29:32 +0100
+Message-Id: <20191127203124.048149314@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -45,42 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit ef0f02fd69a02b50e468a4ddbe33e3d81671e248 ]
+[ Upstream commit 2baf07818549c8bb8d7b3437e889b86eab56d38e ]
 
-Clang warns:
+We need to drop PG_checked flag on page as well when we clear PG_uptodate
+flag, in order to avoid treating the page as GCing one later.
 
-drivers/rtc/rtc-s35390a.c:124:27: warning: implicit conversion from
-'int' to 'char' changes value from 192 to -64 [-Wconstant-conversion]
-        buf = S35390A_FLAG_RESET | S35390A_FLAG_24H;
-            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
-1 warning generated.
-
-Update buf to be an unsigned 8-bit integer, which matches the buf member
-in struct i2c_msg.
-
-https://github.com/ClangBuiltLinux/linux/issues/145
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-s35390a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/data.c    | 8 +++++++-
+ fs/f2fs/dir.c     | 1 +
+ fs/f2fs/segment.c | 4 +++-
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
-index 77feb603cd4c0..3c64dbb08109a 100644
---- a/drivers/rtc/rtc-s35390a.c
-+++ b/drivers/rtc/rtc-s35390a.c
-@@ -108,7 +108,7 @@ static int s35390a_get_reg(struct s35390a *s35390a, int reg, char *buf, int len)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 3a2fd66769660..a7436ad194585 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1782,6 +1782,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	/* This page is already truncated */
+ 	if (fio->old_blkaddr == NULL_ADDR) {
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
+ 		goto out_writepage;
+ 	}
+ got_it:
+@@ -1957,8 +1958,10 @@ static int __write_data_page(struct page *page, bool *submitted,
  
- static int s35390a_init(struct s35390a *s35390a)
- {
--	char buf;
-+	u8 buf;
- 	int ret;
- 	unsigned initcount = 0;
+ out:
+ 	inode_dec_dirty_pages(inode);
+-	if (err)
++	if (err) {
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
++	}
  
+ 	if (wbc->for_reclaim) {
+ 		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
+@@ -2573,6 +2576,8 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 		}
+ 	}
+ 
++	clear_cold_data(page);
++
+ 	/* This is atomic written page, keep Private */
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
+ 		return f2fs_drop_inmem_page(inode, page);
+@@ -2591,6 +2596,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
+ 		return 0;
+ 
++	clear_cold_data(page);
+ 	set_page_private(page, 0);
+ 	ClearPagePrivate(page);
+ 	return 1;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index ecc3a4e2be96d..cd611a57d04d7 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -733,6 +733,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 		clear_page_dirty_for_io(page);
+ 		ClearPagePrivate(page);
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
+ 		inode_dec_dirty_pages(dir);
+ 		f2fs_remove_dirty_inode(dir);
+ 	}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d78009694f3fd..43a07514c3574 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -277,8 +277,10 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		}
+ next:
+ 		/* we don't need to invalidate this in the sccessful status */
+-		if (drop || recover)
++		if (drop || recover) {
+ 			ClearPageUptodate(page);
++			clear_cold_data(page);
++		}
+ 		set_page_private(page, 0);
+ 		ClearPagePrivate(page);
+ 		f2fs_put_page(page, 1);
 -- 
 2.20.1
 
