@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3006A10B797
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E5210B948
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfK0UfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:35:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35926 "EHLO mail.kernel.org"
+        id S1730534AbfK0Uvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:51:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727790AbfK0UfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:06 -0500
+        id S1730519AbfK0Uvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D304420866;
-        Wed, 27 Nov 2019 20:35:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2832B21850;
+        Wed, 27 Nov 2019 20:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886905;
-        bh=QCIZeCkQ0r6C4cbohp8AQg8/ULaLDHBUimyrxqpfD38=;
+        s=default; t=1574887903;
+        bh=NjWy5znEkoWXqsJzxRB5cmvhQBP3xr8ifrgF/0d3lR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jo85GqCp7+OlHPPQXflKNnaXWex3gsuDTbHXJqsQs+QF7uJHnrsqVEZM0ujvglmrC
-         gScbm3deGhW5LjByEiP+zQbKmuhJPWdFCeyR+kkl2PUKI4RpD+1vdV1nMjnExC2//6
-         mvw5p4r1PobRuN73nu8DQfa45IYH9DlkoaSa+Jy0=
+        b=qJ9feTuZMp0dR3VBrbKEQOMG6SYWXAliVWa0ovxYus+yj96FH8T8N+NrAf77SxLC0
+         JKCjV6SEENcciUcIpJDRhvi0NbHzLRPmmRSV87P3VGnXqD8D4//swaOIVgNLyJ8c6G
+         kHzZz6PBbeQX43rZhpj7qFtxTuh7qepbqJzda6xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 039/132] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
-Date:   Wed, 27 Nov 2019 21:30:30 +0100
-Message-Id: <20191127202935.165639162@linuxfoundation.org>
+Subject: [PATCH 4.14 098/211] i2c: uniphier-f: make driver robust against concurrency
+Date:   Wed, 27 Nov 2019 21:30:31 +0100
+Message-Id: <20191127203102.959083592@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +45,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 4917fb90eec7c26dac1497ada3bd4a325f670fcc ]
+[ Upstream commit f1fdcbbdf45d9609f3d4063b67e9ea941ba3a58f ]
 
-A typo that makes it impossible to get the correct clocks for
-MMP2_CLK_SDH2 and MMP2_CLK_SDH3.
+This is unlikely to happen, but it is possible for a CPU to enter
+the interrupt handler just after wait_for_completion_timeout() has
+expired. If this happens, the hardware is accessed from multiple
+contexts concurrently.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Fixes: 1ec770d92a62 ("clk: mmp: add mmp2 DT support for clock driver")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Disable the IRQ after wait_for_completion_timeout(), and do nothing
+from the handler when the IRQ is disabled.
+
+Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-uniphier-f.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index f261b1d292c74..8b45cb2caed1b 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
- 	/* The gate clocks has mux parent. */
- 	{MMP2_CLK_SDH0, "sdh0_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_SDH1, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_SDH1, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
-+	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
-+	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DISP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
+diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
+index bc26ec822e268..b9a0690b4fd73 100644
+--- a/drivers/i2c/busses/i2c-uniphier-f.c
++++ b/drivers/i2c/busses/i2c-uniphier-f.c
+@@ -98,6 +98,7 @@ struct uniphier_fi2c_priv {
+ 	unsigned int flags;
+ 	unsigned int busy_cnt;
+ 	unsigned int clk_cycle;
++	spinlock_t lock;	/* IRQ synchronization */
+ };
+ 
+ static void uniphier_fi2c_fill_txfifo(struct uniphier_fi2c_priv *priv,
+@@ -162,7 +163,10 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
+ 	struct uniphier_fi2c_priv *priv = dev_id;
+ 	u32 irq_status;
+ 
++	spin_lock(&priv->lock);
++
+ 	irq_status = readl(priv->membase + UNIPHIER_FI2C_INT);
++	irq_status &= priv->enabled_irqs;
+ 
+ 	dev_dbg(&priv->adap.dev,
+ 		"interrupt: enabled_irqs=%04x, irq_status=%04x\n",
+@@ -230,6 +234,8 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
+ 		goto handled;
+ 	}
+ 
++	spin_unlock(&priv->lock);
++
+ 	return IRQ_NONE;
+ 
+ data_done:
+@@ -246,6 +252,8 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
+ handled:
+ 	uniphier_fi2c_clear_irqs(priv);
+ 
++	spin_unlock(&priv->lock);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -311,7 +319,7 @@ static int uniphier_fi2c_master_xfer_one(struct i2c_adapter *adap,
+ {
+ 	struct uniphier_fi2c_priv *priv = i2c_get_adapdata(adap);
+ 	bool is_read = msg->flags & I2C_M_RD;
+-	unsigned long time_left;
++	unsigned long time_left, flags;
+ 
+ 	dev_dbg(&adap->dev, "%s: addr=0x%02x, len=%d, stop=%d\n",
+ 		is_read ? "receive" : "transmit", msg->addr, msg->len, stop);
+@@ -342,6 +350,12 @@ static int uniphier_fi2c_master_xfer_one(struct i2c_adapter *adap,
+ 	       priv->membase + UNIPHIER_FI2C_CR);
+ 
+ 	time_left = wait_for_completion_timeout(&priv->comp, adap->timeout);
++
++	spin_lock_irqsave(&priv->lock, flags);
++	priv->enabled_irqs = 0;
++	uniphier_fi2c_set_irqs(priv);
++	spin_unlock_irqrestore(&priv->lock, flags);
++
+ 	if (!time_left) {
+ 		dev_err(&adap->dev, "transaction timeout.\n");
+ 		uniphier_fi2c_recover(priv);
+@@ -546,6 +560,7 @@ static int uniphier_fi2c_probe(struct platform_device *pdev)
+ 
+ 	priv->clk_cycle = clk_rate / bus_speed;
+ 	init_completion(&priv->comp);
++	spin_lock_init(&priv->lock);
+ 	priv->adap.owner = THIS_MODULE;
+ 	priv->adap.algo = &uniphier_fi2c_algo;
+ 	priv->adap.dev.parent = dev;
 -- 
 2.20.1
 
