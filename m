@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2073610BEE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34E1A10BE2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:34:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbfK0UoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:44:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
+        id S1729531AbfK0Ve0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:34:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727894AbfK0UoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:04 -0500
+        id S1730412AbfK0Uu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:50:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4976221775;
-        Wed, 27 Nov 2019 20:44:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1C9421871;
+        Wed, 27 Nov 2019 20:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887443;
-        bh=99+ozqhw15jcn46i8tnsS5mRIbqSjBnEL4IOQNmNxSk=;
+        s=default; t=1574887857;
+        bh=wu8iWbB/vI5j91N6tp1uS1uxExscGnc+y38dgtOkPU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fu4fXE75p9Y3wxeISfKvmur8vyLgkX5lT/yU8fYN5lgCAuv5K/PZttlpT65XKKyPS
-         r9DhmpJWYBINLoaj5S6ScoGfvp/+rX3a35VCXUOUbkdK9cam+QP5f2rcuusk94Fpbt
-         up6cXipHWxywlgIuIEsOTpQKOUYR+eHf0Sq1GXxg=
+        b=y/eLl+RZPL83SVWckG/gNA/xtLOMId5ATqtIQPY43PzIamoJbmOW2/eI0kahfAVbU
+         EA8Kbfj9Gi0iawtTZ5i9hK/pQhSgfArTx/GO+JCedtNlVxiD2Fwg6hO5Nne6PXHOaW
+         XveOo1LMfWS+OwqEl+7j1Cl4BZGKRIixMByADrdY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Gerd W. Haeussler" <gerd.haeussler@cesys-it.com>,
+        Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 071/151] hfsplus: fix BUG on bnode parent update
+Subject: [PATCH 4.14 121/211] ntb_netdev: fix sleep time mismatch
 Date:   Wed, 27 Nov 2019 21:30:54 +0100
-Message-Id: <20191127203034.579519020@linuxfoundation.org>
+Message-Id: <20191127203105.588112666@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,54 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Jon Mason <jdmason@kudzu.us>
 
-[ Upstream commit 19a9d0f1acf75e8be8cfba19c1a34e941846fa2b ]
+[ Upstream commit a861594b1b7ffd630f335b351c4e9f938feadb8e ]
 
-Creating, renaming or deleting a file may hit BUG_ON() if the first
-record of both a leaf node and its parent are changed, and if this
-forces the parent to be split.  This bug is triggered by xfstests
-generic/027, somewhat rarely; here is a more reliable reproducer:
+The tx_time should be in usecs (according to the comment above the
+variable), but the setting of the timer during the rearming is done in
+msecs.  Change it to match the expected units.
 
-  truncate -s 50M fs.iso
-  mkfs.hfsplus fs.iso
-  mount fs.iso /mnt
-  i=1000
-  while [ $i -le 2400 ]; do
-    touch /mnt/$i &>/dev/null
-    ((++i))
-  done
-  i=2400
-  while [ $i -ge 1000 ]; do
-    mv /mnt/$i /mnt/$(perl -e "print $i x61") &>/dev/null
-    ((--i))
-  done
-
-The issue is that a newly created bnode is being put twice.  Reset
-new_node to NULL in hfs_brec_update_parent() before reaching goto again.
-
-Link: http://lkml.kernel.org/r/5ee1db09b60373a15890f6a7c835d00e76bf601d.1535682461.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: e74bfeedad08 ("NTB: Add flow control to the ntb_netdev")
+Suggested-by: Gerd W. Haeussler <gerd.haeussler@cesys-it.com>
+Signed-off-by: Jon Mason <jdmason@kudzu.us>
+Acked-by: Dave Jiang <dave.jiang@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/brec.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ntb_netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 1002a0c08319b..20ce698251ad1 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -447,6 +447,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
- 			/* restore search_key */
- 			hfs_bnode_read_key(node, fd->search_key, 14);
- 		}
-+		new_node = NULL;
- 	}
+diff --git a/drivers/net/ntb_netdev.c b/drivers/net/ntb_netdev.c
+index 0250aa9ae2cbc..97bf49ad81a6d 100644
+--- a/drivers/net/ntb_netdev.c
++++ b/drivers/net/ntb_netdev.c
+@@ -236,7 +236,7 @@ static void ntb_netdev_tx_timer(unsigned long data)
+ 	struct ntb_netdev *dev = netdev_priv(ndev);
  
- 	if (!rec && node->parent)
+ 	if (ntb_transport_tx_free_entry(dev->qp) < tx_stop) {
+-		mod_timer(&dev->tx_timer, jiffies + msecs_to_jiffies(tx_time));
++		mod_timer(&dev->tx_timer, jiffies + usecs_to_jiffies(tx_time));
+ 	} else {
+ 		/* Make sure anybody stopping the queue after this sees the new
+ 		 * value of ntb_transport_tx_free_entry()
 -- 
 2.20.1
 
