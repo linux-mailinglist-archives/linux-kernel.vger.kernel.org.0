@@ -2,101 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2619910ABA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A026C10ABB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfK0IXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:23:42 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51376 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfK0IXm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:23:42 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xAR8NSIX098777;
-        Wed, 27 Nov 2019 02:23:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1574843008;
-        bh=c3p+untF1DqNrT7u8zgrjYKfBj2PhnudxBIzqK/7Ssw=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=q3UBmSxGuVraf7vXEpjmOGixV+UhQcS+sLztjkatVdN4cCq0q+fRG/GMRl8RbPobG
-         pt4479mm0BMlCdOZx42BesnU68CvKXu3oaG2tAmStmiXtiQcIJd1pI0OKTYWf0W0iG
-         aOHOlxTWqcPkiRVt96c/GWVVlZaaETb0+0Qzh6Yo=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xAR8NSpa041206
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Nov 2019 02:23:28 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 27
- Nov 2019 02:23:28 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 27 Nov 2019 02:23:28 -0600
-Received: from [10.24.69.157] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xAR8NNBR024827;
-        Wed, 27 Nov 2019 02:23:24 -0600
-Subject: Re: [PATCH 2/4] PCI: endpoint: Add notification for core init
- completion
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Vidya Sagar <vidyas@nvidia.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>, <lorenzo.pieralisi@arm.com>,
-        <andrew.murray@arm.com>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>
-CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20191113090851.26345-1-vidyas@nvidia.com>
- <20191113090851.26345-3-vidyas@nvidia.com>
- <122c1625-2075-d34a-80da-8b73a03096d3@ti.com>
-Message-ID: <5ce04eb6-8afc-3248-4658-b191a0ef8012@ti.com>
-Date:   Wed, 27 Nov 2019 13:52:42 +0530
+        id S1726540AbfK0I2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:28:30 -0500
+Received: from mail.phunq.net ([66.183.183.73]:58710 "EHLO phunq.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726125AbfK0I2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:28:30 -0500
+Received: from [172.16.1.14]
+        by phunq.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.3)
+        (envelope-from <daniel@phunq.net>)
+        id 1iZsgU-0003Z4-HJ; Wed, 27 Nov 2019 00:28:26 -0800
+Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
+To:     Vyacheslav Dubeyko <slava@dubeyko.com>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Darrick J. Wong" <djwong@kernel.org>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
+From:   Daniel Phillips <daniel@phunq.net>
+Message-ID: <5c9b5bd3-028a-5211-30a6-a5a8706b373e@phunq.net>
+Date:   Wed, 27 Nov 2019 00:28:26 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <122c1625-2075-d34a-80da-8b73a03096d3@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <8ece0424ceeeffbc4df5d52bfa270a9522f81cda.camel@dubeyko.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2019-11-26 11:40 p.m., Vyacheslav Dubeyko wrote:
+> As far as I know, usually, a folder contains dozens or hundreds
+> files/folders in average. There are many research works that had showed
+> this fact. Do you mean some special use-case when folder could contain
+> the billion files? Could you share some research work that describes
+> some practical use-case with billion files per folder?
 
-On 27/11/19 1:48 PM, Kishon Vijay Abraham I wrote:
-> Hi,
+You are entirely correct that the vast majority of directories contain
+only a handful of files. That is my case (1). A few directories on a
+typical server can go into the tens of thousands of files. There was
+a time when we could not handle those efficiently, and now thanks to
+HTree we can. Some directories go into the millions, ask the Lustre
+people about that. If you could have a directory with a billion files
+then somebody will have a use for it. For example, you may be able to
+avoid a database for a particular application and just use the file
+system instead.
+
+Now, scaling to a billion files is just one of several things that
+Shardmap does better than HTree. More immediately, Shardmap implements
+readdir simply, accurately and efficiently, unlike HTree. See here for
+some discussion:
+
+   https://lwn.net/Articles/544520/
+   "Widening ext4's readdir() cookie"
+
+See the recommendation that is sometimes offered to work around
+HTree's issues with processing files in hash order. Basically, read
+the entire directory into memory, sort by inode number, then process
+in that order. As an application writer do you really want to do this,
+or would you prefer that the filesystem just take care of for you so
+the normal, simple and readable code is also the most efficient code?
+
+> If you are talking about improving the performance then do you mean
+> some special open-source implementation?
+
+I mean the same kind of kernel filesystem implementation that HTree
+currently has. Open source of course, GPLv2 to be specific.
+
+>> For delete, Shardmap avoids write multiplication by appending tombstone
+>> entries to index shards, thereby addressing a well known HTree delete
+>> performance issue.
 > 
-> On 13/11/19 2:38 PM, Vidya Sagar wrote:
->> Add support to send notifications to EPF from EPC once the core
->> registers initialization is complete.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->>  drivers/pci/endpoint/pci-epc-core.c | 19 ++++++++++++++++++-
->>  include/linux/pci-epc.h             |  1 +
->>  include/linux/pci-epf.h             |  5 +++++
->>  3 files changed, 24 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
->> index 2f6436599fcb..fcc3f7fb19c0 100644
->> --- a/drivers/pci/endpoint/pci-epc-core.c
->> +++ b/drivers/pci/endpoint/pci-epc-core.c
->> @@ -542,10 +542,27 @@ void pci_epc_linkup(struct pci_epc *epc)
->>  	if (!epc || IS_ERR(epc))
->>  		return;
->>  
->> -	atomic_notifier_call_chain(&epc->notifier, 0, NULL);
->> +	atomic_notifier_call_chain(&epc->notifier, LINK_UP, NULL);
->>  }
->>  EXPORT_SYMBOL_GPL(pci_epc_linkup);
-> 
-> Is this based on upstream kernel? or did you create this after applying [1]?
+> Do you mean Copy-On-Write policy here or some special technique?
 
-never mind, you've mentioned this depends on my other series in your cover letter.
+The technique Shardmap uses to reduce write amplication under heavy
+load is somewhat similar to the technique used by Google's Bigtable to
+achieve a similar result for data files. (However, the resemblance to
+Bigtable ends there.)
 
-Thanks
-Kishon
+Each update to a Shardmap index is done twice: once in a highly
+optimized hash table shard in cache, then again by appending an
+entry to the tail of the shard's media "fifo". Media writes are
+therefore mostly linear. I say mostly, because if there is a large
+number of shards then a single commit may need to update the tail
+block of each one, which still adds up to vastly fewer blocks than
+the BTree case, where it is easy to construct cases where every
+index block must be updated on every commit, a nasty example of
+n**2 performance overhead.
+
+> How could be good Shardmap for the SSD use-case? Do you mean that we
+> could reduce write amplification issue for NAND flash case?
+
+Correct. Reducing write amplification is particularly important for
+flash based storage. It also has a noticeable beneficial effect on
+efficiency under many common and not so common loads.
+
+> Let's imagine that it needs to implement the Shardmap approach. Could
+> you estimate the implementation and stabilization time? How expensive
+> and long-term efforts could it be?
+
+Shardmap is already implemented and stable, though it does need wider
+usage and testing. Code is available here:
+
+   https://github.com/danielbot/Shardmap
+
+Shardmap needs to be ported to kernel, already planned and in progress
+for Tux3. Now I am proposing that the Ext4 team should consider porting
+Shardmap to Ext4, or at least enter into a serious discussion of the
+logistics.
+
+Added Darrick to cc, as he is already fairly familiar with this subject,
+once was an Ext4 developer, and perhaps still is should the need arise.
+By the way, is there a reason that Ted's MIT address bounced on my
+original post?
+
+Regards,
+
+Daniel
