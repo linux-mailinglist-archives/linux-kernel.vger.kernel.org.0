@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A097710B9BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE92B10B9C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbfK0U4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
+        id S1731053AbfK0U41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730746AbfK0U4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:56:13 -0500
+        id S1731046AbfK0U4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:56:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB057215F1;
-        Wed, 27 Nov 2019 20:56:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 929F820862;
+        Wed, 27 Nov 2019 20:56:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888172;
-        bh=4Bq9zUx7ceP48+ET5OQc8d7++KgI10SHReEseY/1MN0=;
+        s=default; t=1574888183;
+        bh=wyyl9s9xZv7JFxye6DTH7V7QfW8oBgfEhI9UUGwxt0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T7EgxXbLx+BN8oZ4RBi7M08M4v5bVTFntMVsO5UxlxF6YW+IBvUFkGDdHE/zHVqsp
-         fzM2tRET1FE4BbRr4c9S/B6gL5aRnyn4EoXMApyP9+zMtIKc+VG/Chze71uveAPfr1
-         bqIzkKT84ldLXefJeWQ7gn0duJDboci1Q5ufSEBg=
+        b=ZzmSTblfv1VgGE+TFX90+iEt+xqfci6GuMl20NtRx3Fi4bOfRYPCUPT6avy4A3sQZ
+         JV5BMMtScuHfMSWgbBRUgTjn/nowtZg37WNUo/8RDPpbdiiY7vXujfje1Ri21gjVkj
+         C33D8vSgru/zVDPCsX8UYS7q68LCZ9vMNWlW7ktI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 032/306] powerpc/boot: Fix opal console in boot wrapper
-Date:   Wed, 27 Nov 2019 21:28:02 +0100
-Message-Id: <20191127203117.097130733@linuxfoundation.org>
+Subject: [PATCH 4.19 035/306] powerpc/eeh: Fix use of EEH_PE_KEEP on wrong field
+Date:   Wed, 27 Nov 2019 21:28:05 +0100
+Message-Id: <20191127203117.379300257@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,50 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 1a855eaccf353f7ed1d51a3d4b3af727ccbd81ca ]
+[ Upstream commit 473af09b56dc4be68e4af33220ceca6be67aa60d ]
 
-As of commit 10c77dba40ff ("powerpc/boot: Fix build failure in 32-bit
-boot wrapper") the opal code is hidden behind CONFIG_PPC64_BOOT_WRAPPER,
-but the boot wrapper avoids include/linux, so it does not get the normal
-Kconfig flags.
+eeh_add_to_parent_pe() sometimes removes the EEH_PE_KEEP flag, but it
+incorrectly removes it from pe->type, instead of pe->state.
 
-We can drop the guard entirely as in commit f8e8e69cea49 ("powerpc/boot:
-Only build OPAL code when necessary") the makefile only includes opal.c
-in the build if CONFIG_PPC64_BOOT_WRAPPER is set.
+However, rather than clearing it from the correct field, remove it.
+Inspection of the code shows that it can't ever have had any effect
+(even if it had been cleared from the correct field), because the
+field is never tested after it is cleared by the statement in
+question.
 
-Fixes: 10c77dba40ff ("powerpc/boot: Fix build failure in 32-bit boot wrapper")
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+The clear statement was added by commit 807a827d4e74 ("powerpc/eeh:
+Keep PE during hotplug"), but it didn't explain why it was necessary.
+
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/opal.c | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/powerpc/kernel/eeh_pe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/boot/opal.c b/arch/powerpc/boot/opal.c
-index 0272570d02de1..dfb199ef5b949 100644
---- a/arch/powerpc/boot/opal.c
-+++ b/arch/powerpc/boot/opal.c
-@@ -13,8 +13,6 @@
- #include <libfdt.h>
- #include "../include/asm/opal-api.h"
+diff --git a/arch/powerpc/kernel/eeh_pe.c b/arch/powerpc/kernel/eeh_pe.c
+index 1b238ecc553e2..210d239a93950 100644
+--- a/arch/powerpc/kernel/eeh_pe.c
++++ b/arch/powerpc/kernel/eeh_pe.c
+@@ -379,7 +379,7 @@ int eeh_add_to_parent_pe(struct eeh_dev *edev)
+ 		while (parent) {
+ 			if (!(parent->type & EEH_PE_INVALID))
+ 				break;
+-			parent->type &= ~(EEH_PE_INVALID | EEH_PE_KEEP);
++			parent->type &= ~EEH_PE_INVALID;
+ 			parent = parent->parent;
+ 		}
  
--#ifdef CONFIG_PPC64_BOOT_WRAPPER
--
- /* Global OPAL struct used by opal-call.S */
- struct opal {
- 	u64 base;
-@@ -101,9 +99,3 @@ int opal_console_init(void *devp, struct serial_console_data *scdp)
- 
- 	return 0;
- }
--#else
--int opal_console_init(void *devp, struct serial_console_data *scdp)
--{
--	return -1;
--}
--#endif /* __powerpc64__ */
 -- 
 2.20.1
 
