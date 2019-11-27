@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0475B10B879
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3782010B7B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbfK0Uns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:43:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51916 "EHLO mail.kernel.org"
+        id S1728065AbfK0UgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:36:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729475AbfK0Unl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:43:41 -0500
+        id S1728033AbfK0UgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:36:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DCEE217AB;
-        Wed, 27 Nov 2019 20:43:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB30C207DD;
+        Wed, 27 Nov 2019 20:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887420;
-        bh=pm4J433S+H+C6Sxgui/dBAeNPiQ5Rk3ZCpsfCJCntLg=;
+        s=default; t=1574886963;
+        bh=i4QKo1c3jisTV2BspdLecAEOwACkSI6dwzcxae6X5fI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lGmnd4wfBjhVGIH/IE5KYWGEVJn4R7Jbj+Bb/dqUN1zXU0AI8TCtS9zJY3XWybmEw
-         to403cfgTVlFKmdJ1BoMn9mu+rOgu5rm5wtucwP89TJ4XFG4IxVh53cR1Wy5EDqh0G
-         HC7DjiG3OTeBtqcKmkzSywMd6tU+LFeGJbde/cWQ=
+        b=rwVHRQdu0XpOecaIVky1/KVhw7fnwkFHE+x8z6INBUqr0yIzYm0l4hM/+KxO0/WYO
+         YXYKtDlcNYOl2LUcPibRaIrw8yW7gaJZv2VN0tQYY1NEN/tPRsl2Xoc8zwMlnvA3aN
+         drX7BASiaTBFdfo6KHbIfFruxvXgXI4tzpO2yj/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 067/151] macsec: let the administrator set UP state even if lowerdev is down
+Subject: [PATCH 4.4 059/132] thermal: rcar_thermal: Prevent hardware access during system suspend
 Date:   Wed, 27 Nov 2019 21:30:50 +0100
-Message-Id: <20191127203034.133854267@linuxfoundation.org>
+Message-Id: <20191127202958.414472394@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +47,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 07bddef9839378bd6f95b393cf24c420529b4ef1 ]
+[ Upstream commit 3a31386217628ffe2491695be2db933c25dde785 ]
 
-Currently, the kernel doesn't let the administrator set a macsec device
-up unless its lower device is currently up. This is inconsistent, as a
-macsec device that is up won't automatically go down when its lower
-device goes down.
+On r8a7791/koelsch, sometimes the following message is printed during
+system suspend:
 
-Now that linkstate propagation works, there's really no reason for this
-limitation, so let's remove it.
+    rcar_thermal e61f0000.thermal: thermal sensor was broken
 
-Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
-Reported-by: Radu Rendec <radu.rendec@gmail.com>
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This happens if the workqueue runs while the device is already
+suspended.  Fix this by using the freezable system workqueue instead,
+cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from happening
+during system suspend").
+
+Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/macsec.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/thermal/rcar_thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
-index d2a3825376be5..a48ed0873cc72 100644
---- a/drivers/net/macsec.c
-+++ b/drivers/net/macsec.c
-@@ -2798,9 +2798,6 @@ static int macsec_dev_open(struct net_device *dev)
- 	struct net_device *real_dev = macsec->real_dev;
- 	int err;
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index 13d01edc7a043..487c5cd7516c0 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -350,8 +350,8 @@ static irqreturn_t rcar_thermal_irq(int irq, void *data)
+ 	rcar_thermal_for_each_priv(priv, common) {
+ 		if (rcar_thermal_had_changed(priv, status)) {
+ 			rcar_thermal_irq_disable(priv);
+-			schedule_delayed_work(&priv->work,
+-					      msecs_to_jiffies(300));
++			queue_delayed_work(system_freezable_wq, &priv->work,
++					   msecs_to_jiffies(300));
+ 		}
+ 	}
  
--	if (!(real_dev->flags & IFF_UP))
--		return -ENETDOWN;
--
- 	err = dev_uc_add(real_dev, dev->dev_addr);
- 	if (err < 0)
- 		return err;
 -- 
 2.20.1
 
