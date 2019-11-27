@@ -2,262 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 839CB10C0D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B8510C0CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfK0Xuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 18:50:40 -0500
-Received: from mail-wr1-f73.google.com ([209.85.221.73]:55060 "EHLO
-        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbfK0Xuj (ORCPT
+        id S1727409AbfK0Xto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 18:49:44 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33558 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727126AbfK0Xto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 18:50:39 -0500
-Received: by mail-wr1-f73.google.com with SMTP id f8so7663738wrw.21
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 15:50:37 -0800 (PST)
+        Wed, 27 Nov 2019 18:49:44 -0500
+Received: by mail-io1-f65.google.com with SMTP id j13so26952451ioe.0;
+        Wed, 27 Nov 2019 15:49:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=+1lx5ocSVx6un1v0Cw2ClVXDDkVMc3TsX0GOf0k847E=;
-        b=W5y6tSeM7/OGLQ1ZTWtsKW5uLMtBKd6X/tgxB0w7/yCSuKXW01xfNqOyaxRu1ju7tQ
-         1Bdx1x/Lg6+FJA2j2dMX6DUJBoBmBiXn523rrnhIP0L/EQTThVq5B2FfVh4C+dS2xX4K
-         JgpYwNSckA3YgU2tcANqkmbYVldrMk9JDbeq5kxamUxoY3+UznOme8dDTh1fxhBMWJ26
-         epjjM6e7WUEV723/YTm9UTwbCgE+shXYnja9l7x+UQIy9NWWsrg8xg5xPW9L/VJa/onS
-         mmN0Tu8JZgbp+fXhf8CQP6ejc9Fj/Y2/vG7MisU2G3byzdEFbfyK6abmcnlzh6wCyO0Q
-         nJaw==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=gSj2pWdZX1PdXEy1vq4ly43WymfbEpVIP+x3vEhoi3c=;
+        b=Mw1uKeloCBfJYGuEaZeon622BcZkt9xCzt5+HNrdOlgekuf2MCHxl6axxMTaPfZ3ni
+         3SEsgCqx9kjqypACw3CNBsF5JB50tsV2Y8/nInyKxozI80sZFbBPMR8eQN7K6B2Pr68J
+         Q1Hmv3JnGyx+PqWIIFTpNTUUlvnf9ImukhtnYTR63YX8k+xGi9mQ/gdj5BllaQO5/7x3
+         XLmtlWmuDrodlBrBmWCPeN61jkOk92PemxB3QZLFohgmJITVLyZ/KGM8OuQYDNFM62X/
+         lckHjqzgw/bSE2sokC9KpJ1Lbz+XRpX/k1ArWUvA0v8r1nmny0BZoTmINWflSl32SIMw
+         K14g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=+1lx5ocSVx6un1v0Cw2ClVXDDkVMc3TsX0GOf0k847E=;
-        b=Gn5UI9Rot4+uHK1l0k7geeO13LSnByYNCNaw5pHuaB9I76WBZl1S+heEXhRjzq+y9S
-         2ZTYaBRSHP5iLFN8s7Bhp3MHYCIpecnTGLqHxvxkx7c0KNUMLK9fueUZ5DciZnbaVCTM
-         2iK8M4IuXBKO1vgQs+nMgO48tVGrqLg57IjenPJ5fpVAPiBUbm7zWw3HqF+FsvoUNOTu
-         CKhqRjUqRex5Ve7I0PENCckeSyQ4aQFq86T+49M6iAJrkABs7ryKapaN7vQQteaOTMrI
-         ejUJoX7x3Gj5WBR2Cdj5EvMw180WMQYY8Xb+xNBJtONdHmJ60X8t+BH71eODhhxzrC3h
-         +5cA==
-X-Gm-Message-State: APjAAAWybtnzlAV7bi6sQApSFAZ3KuJYtktW+jWsOY71JSb0nMFCFfQW
-        7jXVypUS6I2E7bscTa9DE955p1MeDQ==
-X-Google-Smtp-Source: APXvYqxlu1HIfDw7/3Xxj1fhARq97fWvjzsFvMco68IF8ULTTCoyyN3NAePBR4emBb+51+5go4AJKqEqMw==
-X-Received: by 2002:adf:e944:: with SMTP id m4mr10084533wrn.49.1574898636363;
- Wed, 27 Nov 2019 15:50:36 -0800 (PST)
-Date:   Thu, 28 Nov 2019 00:49:16 +0100
-In-Reply-To: <20191127234916.31175-1-jannh@google.com>
-Message-Id: <20191127234916.31175-4-jannh@google.com>
-Mime-Version: 1.0
-References: <20191127234916.31175-1-jannh@google.com>
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH v5 4/4] x86/kasan: Print original address on #GP
-From:   Jann Horn <jannh@google.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        jannh@google.com
-Cc:     linux-kernel@vger.kernel.org,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=gSj2pWdZX1PdXEy1vq4ly43WymfbEpVIP+x3vEhoi3c=;
+        b=ax4HWunZWlW6+p2HR5KgcWFKjIUyW5p+HutkEKPYki7RH1uESnznjZghk/t7uxQqss
+         oBIrlJF1t3LBBOZC7aGrM404lWqYNzxZpD1i40A/D5FTfezodC7T48Zo9BniezWh8cY7
+         EuHpgQl3vCNLaybZoDpscG7mq2aHmEhN+ai2pAWDbQw2cos8IepfuuY1DAyWjtPYJcL8
+         qzQDHen6Mzm6BEZ3+uGUt5jKrXhrpEsDKhllW9uJI6BZKMdKr5C97Ryx3oMVdCvoe9nF
+         Yfo/5SOYy752W9OoNGHgX8R+Ung4EqFfpF2P7FEWIX6quwv6txobDaBqvbFuermNghdI
+         0W/w==
+X-Gm-Message-State: APjAAAVnPkcSCOYGvL2F7EYZ/PeEbXq2c2hPNR56KRRDWhddioNuk9+v
+        MA5V3r8zYBTkkJj96XakmWz0zjX6TiiomakqVGByEU2O
+X-Google-Smtp-Source: APXvYqzqIEUCnQNmhAeENYKBRjkNwhAc2pztWO5oL7JoyJq4EKdOgBnNlcJkCUoc9O/kvCg5QnmcMVtCU0QxrTYoVo8=
+X-Received: by 2002:a5d:848c:: with SMTP id t12mr36778001iom.5.1574898583117;
+ Wed, 27 Nov 2019 15:49:43 -0800 (PST)
+MIME-Version: 1.0
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 27 Nov 2019 17:49:32 -0600
+Message-ID: <CAH2r5mtDpwY=MrQ=yN29JeWUqf+ozgYvgnzbnb91VoK8Vg4Zmw@mail.gmail.com>
+Subject: [GIT PULL] CIFS/SMB3 Fixes
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make #GP exceptions caused by out-of-bounds KASAN shadow accesses easier
-to understand by computing the address of the original access and
-printing that. More details are in the comments in the patch.
+Please pull the following changes since commit
+219d54332a09e8d8741c1e1982f5eae56099de85:
 
-This turns an error like this:
+  Linux 5.4 (2019-11-24 16:32:01 -0800)
 
-    kasan: CONFIG_KASAN_INLINE enabled
-    kasan: GPF could be caused by NULL-ptr deref or user memory access
-    general protection fault probably for non-canonical address
-        0xe017577ddf75b7dd: 0000 [#1] PREEMPT SMP KASAN PTI
+are available in the Git repository at:
 
-into this:
+  git://git.samba.org/sfrench/cifs-2.6.git tags/5.5-rc-smb3-fixes
 
-    general protection fault probably for non-canonical address
-        0xe017577ddf75b7dd: 0000 [#1] PREEMPT SMP KASAN PTI
-    KASAN: maybe wild-memory-access in range
-        [0x00badbeefbadbee8-0x00badbeefbadbeef]
+for you to fetch changes up to 68464b88cc0a735eaacd2c69beffb85d36f25292:
 
-The hook is placed in architecture-independent code, but is currently
-only wired up to the X86 exception handler because I'm not sufficiently
-familiar with the address space layout and exception handling mechanisms
-on other architectures.
+  CIFS: fix a white space issue in cifs_get_inode_info() (2019-11-27
+11:31:49 -0600)
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
+----------------------------------------------------------------
+Various smb3 fixes (including 12 for stable) and also features
+(addition of multichannel support).  This includes the first set of
+CIFS/SMB3 changes for 5.5.
 
-Notes:
-    v2:
-     - move to mm/kasan/report.c (Dmitry)
-     - change hook name to be more generic
-     - use TASK_SIZE instead of TASK_SIZE_MAX for compiling on non-x86
-     - don't open-code KASAN_SHADOW_MASK (Dmitry)
-     - add "KASAN: " prefix, but not "BUG: " (Andrey, Dmitry)
-     - use same naming scheme as get_wild_bug_type (Andrey)
-     - this version was "Reviewed-by: Dmitry Vyukov <dvyukov@google.com>"
-    v3:
-     - adjusted example output in commit message based on
-       changes in preceding patch
-     - ensure that KASAN output happens after bust_spinlocks(1)
-     - moved hook in arch/x86/kernel/traps.c such that output
-       appears after the first line of KASAN-independent error report
-    v4:
-     - adjust patch to changes in x86/traps patch
-    v5:
-     - adjust patch to changes in x86/traps patch
-     - fix bug introduced in v3: remove die() call after oops_end()
+Buildbot automated regression testing results (passed):
+http://smb3-test-rhel-75.southcentralus.cloudapp.azure.com/#/builders/2/builds/286
 
- arch/x86/kernel/traps.c     | 12 ++++++++++-
- arch/x86/mm/kasan_init_64.c | 21 -------------------
- include/linux/kasan.h       |  6 ++++++
- mm/kasan/report.c           | 40 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 57 insertions(+), 22 deletions(-)
+There are additional fixes for DFS (global name space) support and
+some multichannel enhancements and POSIX fixes that are still being
+tested and are not included in
+this pull request.
+----------------------------------------------------------------
+Aurelien Aptel (8):
+      cifs: sort interface list by speed
+      cifs: add multichannel mount options and data structs
+      cifs: add server param
+      cifs: switch servers depending on binding state
+      CIFS: refactor cifs_get_inode_info()
+      cifs: try opening channels after mounting
+      cifs: try harder to open new channels
+      cifs: dump channel info in DebugData
 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 9b6e4d04112a..a7dade19783a 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -37,6 +37,7 @@
- #include <linux/mm.h>
- #include <linux/smp.h>
- #include <linux/io.h>
-+#include <linux/kasan.h>
- #include <asm/stacktrace.h>
- #include <asm/processor.h>
- #include <asm/debugreg.h>
-@@ -589,6 +590,8 @@ do_general_protection(struct pt_regs *regs, long error_code)
- 	if (!user_mode(regs)) {
- 		enum kernel_gp_hint hint = GP_NO_HINT;
- 		unsigned long gp_addr;
-+		unsigned long flags;
-+		int sig;
- 
- 		if (fixup_exception(regs, X86_TRAP_GP, error_code, 0))
- 			return;
-@@ -621,7 +624,14 @@ do_general_protection(struct pt_regs *regs, long error_code)
- 				 "maybe for address",
- 				 gp_addr);
- 
--		die(desc, regs, error_code);
-+		flags = oops_begin();
-+		sig = SIGSEGV;
-+		__die_header(desc, regs, error_code);
-+		if (hint == GP_NON_CANONICAL)
-+			kasan_non_canonical_hook(gp_addr);
-+		if (__die_body(desc, regs, error_code))
-+			sig = 0;
-+		oops_end(flags, regs, sig);
- 		return;
- 	}
- 
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index 296da58f3013..69c437fb21cc 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -245,23 +245,6 @@ static void __init kasan_map_early_shadow(pgd_t *pgd)
- 	} while (pgd++, addr = next, addr != end);
- }
- 
--#ifdef CONFIG_KASAN_INLINE
--static int kasan_die_handler(struct notifier_block *self,
--			     unsigned long val,
--			     void *data)
--{
--	if (val == DIE_GPF) {
--		pr_emerg("CONFIG_KASAN_INLINE enabled\n");
--		pr_emerg("GPF could be caused by NULL-ptr deref or user memory access\n");
--	}
--	return NOTIFY_OK;
--}
--
--static struct notifier_block kasan_die_notifier = {
--	.notifier_call = kasan_die_handler,
--};
--#endif
--
- void __init kasan_early_init(void)
- {
- 	int i;
-@@ -298,10 +281,6 @@ void __init kasan_init(void)
- 	int i;
- 	void *shadow_cpu_entry_begin, *shadow_cpu_entry_end;
- 
--#ifdef CONFIG_KASAN_INLINE
--	register_die_notifier(&kasan_die_notifier);
--#endif
--
- 	memcpy(early_top_pgt, init_top_pgt, sizeof(early_top_pgt));
- 
- 	/*
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index cc8a03cc9674..7305024b44e3 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -194,4 +194,10 @@ static inline void *kasan_reset_tag(const void *addr)
- 
- #endif /* CONFIG_KASAN_SW_TAGS */
- 
-+#ifdef CONFIG_KASAN_INLINE
-+void kasan_non_canonical_hook(unsigned long addr);
-+#else /* CONFIG_KASAN_INLINE */
-+static inline void kasan_non_canonical_hook(unsigned long addr) { }
-+#endif /* CONFIG_KASAN_INLINE */
-+
- #endif /* LINUX_KASAN_H */
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 621782100eaa..5ef9f24f566b 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -512,3 +512,43 @@ void __kasan_report(unsigned long addr, size_t size, bool is_write, unsigned lon
- 
- 	end_report(&flags);
- }
-+
-+#ifdef CONFIG_KASAN_INLINE
-+/*
-+ * With CONFIG_KASAN_INLINE, accesses to bogus pointers (outside the high
-+ * canonical half of the address space) cause out-of-bounds shadow memory reads
-+ * before the actual access. For addresses in the low canonical half of the
-+ * address space, as well as most non-canonical addresses, that out-of-bounds
-+ * shadow memory access lands in the non-canonical part of the address space.
-+ * Help the user figure out what the original bogus pointer was.
-+ */
-+void kasan_non_canonical_hook(unsigned long addr)
-+{
-+	unsigned long orig_addr;
-+	const char *bug_type;
-+
-+	if (addr < KASAN_SHADOW_OFFSET)
-+		return;
-+
-+	orig_addr = (addr - KASAN_SHADOW_OFFSET) << KASAN_SHADOW_SCALE_SHIFT;
-+	/*
-+	 * For faults near the shadow address for NULL, we can be fairly certain
-+	 * that this is a KASAN shadow memory access.
-+	 * For faults that correspond to shadow for low canonical addresses, we
-+	 * can still be pretty sure - that shadow region is a fairly narrow
-+	 * chunk of the non-canonical address space.
-+	 * But faults that look like shadow for non-canonical addresses are a
-+	 * really large chunk of the address space. In that case, we still
-+	 * print the decoded address, but make it clear that this is not
-+	 * necessarily what's actually going on.
-+	 */
-+	if (orig_addr < PAGE_SIZE)
-+		bug_type = "null-ptr-deref";
-+	else if (orig_addr < TASK_SIZE)
-+		bug_type = "probably user-memory-access";
-+	else
-+		bug_type = "maybe wild-memory-access";
-+	pr_alert("KASAN: %s in range [0x%016lx-0x%016lx]\n", bug_type,
-+		 orig_addr, orig_addr + KASAN_SHADOW_MASK);
-+}
-+#endif
+Dan Carpenter (1):
+      cifs: rename a variable in SendReceive()
+
+Dan Carpenter via samba-technical (1):
+      CIFS: fix a white space issue in cifs_get_inode_info()
+
+Long Li (7):
+      cifs: Don't display RDMA transport on reconnect
+      cifs: smbd: Invalidate and deregister memory registration on
+re-send for direct I/O
+      cifs: smbd: Return -EINVAL when the number of iovs exceeds
+SMBDIRECT_MAX_SGE
+      cifs: smbd: Add messages on RDMA session destroy and reconnection
+      cifs: smbd: Return -ECONNABORTED when trasnport is not in connected state
+      cifs: smbd: Only queue work for error recovery on memory registration
+      cifs: smbd: Return -EAGAIN when transport is reconnecting
+
+Markus Elfring (3):
+      CIFS: Use memdup_user() rather than duplicating its implementation
+      CIFS: Use common error handling code in smb2_ioctl_query_info()
+      CIFS: Return directly after a failed build_path_from_dentry() in
+cifs_do_create()
+
+Paulo Alcantara (SUSE) (5):
+      cifs: Fix use-after-free bug in cifs_reconnect()
+      cifs: Fix lookup of root ses in DFS referral cache
+      cifs: Fix potential softlockups while refreshing DFS cache
+      cifs: Fix retrieval of DFS referrals in cifs_mount()
+      cifs: Always update signing key of first channel
+
+Pavel Shilovsky (6):
+      CIFS: Respect O_SYNC and O_DIRECT flags during reconnect
+      CIFS: Close open handle after interrupted close
+      CIFS: Fix NULL pointer dereference in mid callback
+      CIFS: Do not miss cancelled OPEN responses
+      CIFS: Fix SMB2 oplock break processing
+      CIFS: Properly process SMB3 lease breaks
+
+Ronnie Sahlberg (4):
+      cifs: close the shared root handle on tree disconnect
+      smb3: add debug messages for closing unmatched open
+      cifs: don't use 'pre:' for MODULE_SOFTDEP
+      cifs: move cifsFileInfo_put logic into a work-queue
+
+Steve French (4):
+      cifs: add support for flock
+      smb3: remove confusing dmesg when mounting with encryption ("seal")
+      smb3: dump in_send and num_waiters stats counters by default
+      cifs: update internal module version number
+
+YueHaibing (2):
+      cifs: remove unused variable 'sid_user'
+      CIFS: remove set but not used variables 'cinode' and 'netfid'
+
+ fs/cifs/cifs_debug.c    |  43 +++++++++-
+ fs/cifs/cifs_spnego.c   |   2 +-
+ fs/cifs/cifsacl.c       |   2 -
+ fs/cifs/cifsfs.c        |  44 ++++++++---
+ fs/cifs/cifsfs.h        |   3 +-
+ fs/cifs/cifsglob.h      |  90 +++++++++++++++------
+ fs/cifs/cifsproto.h     |   8 ++
+ fs/cifs/connect.c       | 191 +++++++++++++++++++++++++++++++++-----------
+ fs/cifs/dfs_cache.c     |   3 +-
+ fs/cifs/dir.c           |   6 +-
+ fs/cifs/file.c          | 159 +++++++++++++++++++++++++++++--------
+ fs/cifs/inode.c         | 333
+++++++++++++++++++++++++++++++++++++++++++++++-------------------------------
+ fs/cifs/misc.c          |  17 +---
+ fs/cifs/sess.c          | 230
+++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/cifs/smb1ops.c       |   8 +-
+ fs/cifs/smb2misc.c      | 175 ++++++++++++++++++++++++----------------
+ fs/cifs/smb2ops.c       | 141 +++++++++++++++++++--------------
+ fs/cifs/smb2pdu.c       | 168 ++++++++++++++++++++++++++-------------
+ fs/cifs/smb2pdu.h       |   2 +-
+ fs/cifs/smb2proto.h     |   6 +-
+ fs/cifs/smb2transport.c | 165 +++++++++++++++++++++++++++++---------
+ fs/cifs/smbdirect.c     |  36 +++++----
+ fs/cifs/transport.c     |  37 +++++++--
+ 23 files changed, 1340 insertions(+), 529 deletions(-)
+
 -- 
-2.24.0.432.g9d3f5f5b63-goog
+Thanks,
 
+Steve
