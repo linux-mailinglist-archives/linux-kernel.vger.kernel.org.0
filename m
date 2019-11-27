@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B8FC10BF43
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8EC10BF45
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbfK0Uks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45446 "EHLO mail.kernel.org"
+        id S1728558AbfK0Uku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:40:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbfK0Ukn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:43 -0500
+        id S1729075AbfK0Ukq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:40:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E48CA21780;
-        Wed, 27 Nov 2019 20:40:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AABF215A5;
+        Wed, 27 Nov 2019 20:40:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887243;
-        bh=+MSac9lGQ3g4tukeHIJJKFOOP18cM1X5Kz249xwJKOY=;
+        s=default; t=1574887245;
+        bh=05CNfXklO5AkLQeHnG44yjPSeuDjG6GdgTpsbdsJ3LU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BB3m/LUKuaUITuPsklJ5fz8K1GpN3vjeXjq31R8ueRi4IWD3hoELXhgZdtsDsqsas
-         Eang9WKT3t2zzt99mj3KDJNl+DL82/u1DrHT+IwRVR392vkguIk3QqBdQ0+cQ9iBfR
-         4eCeDJAu9vFUkNrMbyD7zfdNNeMFWjemSvpS++iM=
+        b=HESOFqJOUI9F3m86RACdvQk5VoaMTEwRNvRSzythhbRh81TdPvtTe9vHDIkrbJ3pR
+         p6lkWO5GH7J5gtHbQ+c8f14WypH/RsXLF4slj6e+BJs8iJrY6h0zw8q22kGbtZ0YRE
+         11qVN/1qKQSNQVcE3yhcPFo7Ki/EwgKtvZ9hGDS8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Kyeongdon Kim <kyeongdon.kim@lge.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 036/151] scsi: dc395x: fix DMA API usage in sg_update_list
-Date:   Wed, 27 Nov 2019 21:30:19 +0100
-Message-Id: <20191127203022.471385962@linuxfoundation.org>
+Subject: [PATCH 4.9 037/151] net: fix warning in af_unix
+Date:   Wed, 27 Nov 2019 21:30:20 +0100
+Message-Id: <20191127203023.103006467@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
 References: <20191127203000.773542911@linuxfoundation.org>
@@ -44,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Kyeongdon Kim <kyeongdon.kim@lge.com>
 
-[ Upstream commit 6c404a68bf83b4135a8a9aa1c388ebdf98e8ba7f ]
+[ Upstream commit 33c4368ee2589c165aebd8d388cbd91e9adb9688 ]
 
-We need to transfer device ownership to the CPU before we can manipulate
-the mapped data.
+This fixes the "'hash' may be used uninitialized in this function"
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+net/unix/af_unix.c:1041:20: warning: 'hash' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  addr->hash = hash ^ sk->sk_type;
+
+Signed-off-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/dc395x.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/unix/af_unix.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
-index 9da0ac360848f..830b2d2dcf206 100644
---- a/drivers/scsi/dc395x.c
-+++ b/drivers/scsi/dc395x.c
-@@ -1972,6 +1972,11 @@ static void sg_update_list(struct ScsiReqBlk *srb, u32 left)
- 			xferred -= psge->length;
- 		} else {
- 			/* Partial SG entry done */
-+			pci_dma_sync_single_for_cpu(srb->dcb->
-+					    acb->dev,
-+					    srb->sg_bus_addr,
-+					    SEGMENTX_LEN,
-+					    PCI_DMA_TODEVICE);
- 			psge->length -= xferred;
- 			psge->address += xferred;
- 			srb->sg_index = idx;
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index cecf51a5aec4f..32ae82a5596d9 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -224,6 +224,8 @@ static inline void unix_release_addr(struct unix_address *addr)
+ 
+ static int unix_mkname(struct sockaddr_un *sunaddr, int len, unsigned int *hashp)
+ {
++	*hashp = 0;
++
+ 	if (len <= sizeof(short) || len > sizeof(*sunaddr))
+ 		return -EINVAL;
+ 	if (!sunaddr || sunaddr->sun_family != AF_UNIX)
 -- 
 2.20.1
 
