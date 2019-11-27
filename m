@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D0810BEE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1099A10BDB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:31:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730265AbfK0Vi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:38:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55146 "EHLO mail.kernel.org"
+        id S1728385AbfK0UzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:55:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728000AbfK0Uo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:44:59 -0500
+        id S1730901AbfK0Uy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:54:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC5DF2178F;
-        Wed, 27 Nov 2019 20:44:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 487252086A;
+        Wed, 27 Nov 2019 20:54:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887499;
-        bh=/3L86ahHxWFk9TwhhR+R4fiBFcsOQCKIJhLpCrEHvCw=;
+        s=default; t=1574888097;
+        bh=S8kGG9p6HSMDgtKASDhnwxvtfT614CVOtoxaHvrPciw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w5t1ggNTlPqnzd5ARqJdgKRixGiiNuflQr49CVBkMKsImKHleeBwFLHOvokwsHUVl
-         01HIclFjYzXuuaIkYIuF0oG4qG5UZtLYl2a6G6WGFSnjAKYYKpEWPBzrzbXyDFPRgG
-         cmzQCg7BywC1KCa79uNIc+0octLbFV+Q1f8/iYJI=
+        b=xkYrcrnHsfLSxTUStDtQ4kKnHyFr3tYMDTAczJ1cKbGTN/tCgZo0dKVqbY1y5ND5B
+         W/NRjtez5kzrOHp1Z2E9PsIAXJV0laiDhsKY7GEK33IBnmCt4iJJf3GDAW1G/NQOy+
+         hv0gexPfjXlvkZG+jej5WQCi0bBpz0jI9A9XJk2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
-        Michael Mueller <mimu@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 135/151] virtio_ring: fix return code on DMA mapping fails
-Date:   Wed, 27 Nov 2019 21:31:58 +0100
-Message-Id: <20191127203046.747863171@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+711468aa5c3a1eabf863@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 186/211] nfc: port100: handle command failure cleanly
+Date:   Wed, 27 Nov 2019 21:31:59 +0100
+Message-Id: <20191127203111.303012805@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Halil Pasic <pasic@linux.ibm.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit f7728002c1c7bfa787b276a31c3ef458739b8e7c ]
+commit 5f9f0b11f0816b35867f2cf71e54d95f53f03902 upstream.
 
-Commit 780bc7903a32 ("virtio_ring: Support DMA APIs")  makes
-virtqueue_add() return -EIO when we fail to map our I/O buffers. This is
-a very realistic scenario for guests with encrypted memory, as swiotlb
-may run out of space, depending on it's size and the I/O load.
+If starting the transfer of a command suceeds but the transfer for the reply
+fails, it is not enough to initiate killing the transfer for the
+command may still be running. You need to wait for the killing to finish
+before you can reuse URB and buffer.
 
-The virtio-blk driver interprets -EIO form virtqueue_add() as an IO
-error, despite the fact that swiotlb full is in absence of bugs a
-recoverable condition.
+Reported-and-tested-by: syzbot+711468aa5c3a1eabf863@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Let us change the return code to -ENOMEM, and make the block layer
-recover form these failures when virtio-blk encounters the condition
-described above.
-
-Cc: stable@vger.kernel.org
-Fixes: 780bc7903a32 ("virtio_ring: Support DMA APIs")
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Tested-by: Michael Mueller <mimu@linux.ibm.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/virtio/virtio_ring.c | 2 +-
+ drivers/nfc/port100.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 2f09294c59460..e459cd7302e27 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -427,7 +427,7 @@ unmap_release:
- 		kfree(desc);
+--- a/drivers/nfc/port100.c
++++ b/drivers/nfc/port100.c
+@@ -792,7 +792,7 @@ static int port100_send_frame_async(stru
  
- 	END_USE(vq);
--	return -EIO;
-+	return -ENOMEM;
- }
+ 	rc = port100_submit_urb_for_ack(dev, GFP_KERNEL);
+ 	if (rc)
+-		usb_unlink_urb(dev->out_urb);
++		usb_kill_urb(dev->out_urb);
  
- /**
--- 
-2.20.1
-
+ exit:
+ 	mutex_unlock(&dev->out_urb_lock);
 
 
