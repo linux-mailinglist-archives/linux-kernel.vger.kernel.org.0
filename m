@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8092410BBC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6971610BB2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387583AbfK0VOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:14:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48678 "EHLO mail.kernel.org"
+        id S1733031AbfK0VKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387559AbfK0VOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:14:37 -0500
+        id S1733012AbfK0VKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:10:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6F2421556;
-        Wed, 27 Nov 2019 21:14:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D01D321555;
+        Wed, 27 Nov 2019 21:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889277;
+        s=default; t=1574889019;
         bh=8dLYzmD6yVg83Y8rOOwXkUvVYdDu+qUDgfphnIUNfzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XHEBZcrmifSBokdQBMcSeRS3ASRtKenlfBcPhYb1bcIYB7eRe5GLOdlxEUG5gTui0
-         Xqu5G2IALjewUJgtNFSazvScI2/YslolOK/3sB0ikVAEjpfMZU6ofXuZFo+X4TdR52
-         AdON0QsITR4iYoPBVFG0F7/wcKtYEkn6mk4uaoZQ=
+        b=LgSsqEpxPQ+Khjv3SYMFs6/+wko1IbuzsvhmchI1JegDK0vda+dfPHWSuGyonqrj6
+         flWByCJDKsgvm/E5cgGgNgRMU6207gEC4Pnl/jMPwDMQFTEgIjd3TAxQOFRVYifsFI
+         aos5cWyNo4amyi9/y7Ro8Zpk0VDfkqsgFOuPaNhY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Juergen Gross <jgross@suse.com>
-Subject: [PATCH 5.4 15/66] x86/xen/32: Simplify ring check in xen_iret_crit_fixup()
+Subject: [PATCH 5.3 53/95] x86/xen/32: Simplify ring check in xen_iret_crit_fixup()
 Date:   Wed, 27 Nov 2019 21:32:10 +0100
-Message-Id: <20191127202650.644009359@linuxfoundation.org>
+Message-Id: <20191127202919.224124606@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
