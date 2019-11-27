@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B98ED10BE0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:33:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C0A10BEED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731056AbfK0Vdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:33:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39462 "EHLO mail.kernel.org"
+        id S1728091AbfK0Unk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:43:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730190AbfK0UwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:52:09 -0500
+        id S1729475AbfK0Ung (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:43:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D721218AE;
-        Wed, 27 Nov 2019 20:52:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82C8921780;
+        Wed, 27 Nov 2019 20:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887929;
-        bh=GL2BxTNj0E0U6b50Cgt11UhBHTzZtJbYm0AmbFQSoMI=;
+        s=default; t=1574887416;
+        bh=7uYu+MMlCNmBEbBpUQj6ynnp2NogCNvOF+xUmo/Srx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wYgxGCFuOL22M8hVtJiimZ24PNYsKANkGDkZrt24uscaq8P2GCZf8DIkTvPj8nHp3
-         n8vPCXRgEMUo7LohanomYmI2HXvmCkmn77h/Yd83R/Rj0KDA15fgQEHUHhiQue+Sxl
-         uEUpgngfr7ErVl00hHChVbW0bwT1nj4Hwhar2LAI=
+        b=fhhWCHUogJIHx5OeT0uy9Drj85wqTUJWcSIm1EY+QxAQ72LeG4pkIqTinVpul8Q2t
+         IW/YJHXY44ywcqLoJSXxGRe5sPE0/8N8jkTl9VrlSgkfSH/FrbU2fY4/NzU2A0v9BY
+         Y/6Nj0nnhnYBL38JtYEFfaDTC96J+SSOpO1VaMjY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Erik Schmauss <erik.schmauss@intel.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 150/211] ACPICA: Use %d for signed int print formatting instead of %u
-Date:   Wed, 27 Nov 2019 21:31:23 +0100
-Message-Id: <20191127203108.177654992@linuxfoundation.org>
+Subject: [PATCH 4.9 101/151] ACPICA: Use %d for signed int print formatting instead of %u
+Date:   Wed, 27 Nov 2019 21:31:24 +0100
+Message-Id: <20191127203039.627182584@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,7 +61,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/power/acpi/tools/acpidump/apmain.c b/tools/power/acpi/tools/acpidump/apmain.c
-index 943b6b6146834..bed0794e3295f 100644
+index 7ff46be908f0b..d426fec3b1d34 100644
 --- a/tools/power/acpi/tools/acpidump/apmain.c
 +++ b/tools/power/acpi/tools/acpidump/apmain.c
 @@ -139,7 +139,7 @@ static int ap_insert_action(char *argument, u32 to_be_done)
