@@ -2,75 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A68A10AB21
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 08:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3755810AB31
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 08:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfK0HXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 02:23:49 -0500
-Received: from mga07.intel.com ([134.134.136.100]:37770 "EHLO mga07.intel.com"
+        id S1726559AbfK0Hat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 02:30:49 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:8466 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726145AbfK0HXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 02:23:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2019 23:23:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,248,1571727600"; 
-   d="scan'208";a="383413228"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2019 23:23:46 -0800
-Date:   Wed, 27 Nov 2019 15:30:54 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     kernel test robot <lkp@intel.com>, LKP <lkp@lists.01.org>,
-        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: 2989f64510 ("dma-buf: Add selftests for dma-fence"): WARNING:
- CPU: 0 PID: 1 at lib/debugobjects.c:524 __debug_object_init
-Message-ID: <20191127073054.GG30842@intel.com>
-References: <5dd63a8f.BFdOlqs/XZAJHDfR%lkp@intel.com>
- <157432116576.24852.2065478066028556019@skylake-alporthouse-com>
- <20191122013244.GC313@intel.com>
+        id S1726111AbfK0Hat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 02:30:49 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47NC9c3dGGz9tykX;
+        Wed, 27 Nov 2019 08:30:44 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=NkdOCTCD; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 0lG1PMTvBala; Wed, 27 Nov 2019 08:30:44 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47NC9c1bgrz9tykW;
+        Wed, 27 Nov 2019 08:30:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1574839844; bh=NJQssQkYeJeEjKGMaEMr+bjTGOX9h1XeXNPNHApes7k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NkdOCTCDvC0Kndz+ltBeOQvVocuXPNtP0aJg9+YY+8GqDvUIdB91/nP31kmMHRcap
+         WFsCPGX0tZVfMzN09DlYpkejbUT9sXpvf1l1b9Ph1Ec4woz7r/DhkUfWLUnzu69vZb
+         Hwy/pEaiRyDrEYOMc3lH+ZhmYVlh8Y7gK+BzYF5o=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F33098B842;
+        Wed, 27 Nov 2019 08:30:44 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id OkqU2WrIISZx; Wed, 27 Nov 2019 08:30:44 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 339598B770;
+        Wed, 27 Nov 2019 08:30:43 +0100 (CET)
+Subject: Re: [PATCH v2 26/35] powerpc/64: system call: Fix sparse warning
+ about missing declaration
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Michal Suchanek <msuchanek@suse.de>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Breno Leitao <leitao@debian.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Russell Currey <ruscur@russell.cc>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Diana Craciun <diana.craciun@nxp.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Romero <gromero@linux.ibm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        Jagadeesh Pagadala <jagdsh.linux@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+References: <cover.1574798487.git.msuchanek@suse.de>
+ <d0a6b5235c4e1544f4c253724a5b8f2106cc43bd.1574798487.git.msuchanek@suse.de>
+ <20191126214441.4wziibsax2mvpl3p@ltop.local>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <35062751-0d90-ce2d-76ad-ea6566668d93@c-s.fr>
+Date:   Wed, 27 Nov 2019 08:30:42 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191122013244.GC313@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191126214441.4wziibsax2mvpl3p@ltop.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 09:32:45AM +0800, Philip Li wrote:
-> On Thu, Nov 21, 2019 at 07:26:05AM +0000, Chris Wilson wrote:
-> > Quoting kernel test robot (2019-11-21 07:19:43)
-> > > Greetings,
-> > > 
-> > > 0day kernel testing robot got the below dmesg and the first bad commit is
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > > 
-> > > commit 2989f6451084aed3f8cc9992477f7a9bf57a3716
-> > > Author:     Chris Wilson <chris@chris-wilson.co.uk>
-> > > AuthorDate: Mon Aug 19 10:59:27 2019 +0100
-> > > Commit:     Chris Wilson <chris@chris-wilson.co.uk>
-> > > CommitDate: Mon Aug 19 18:09:46 2019 +0100
-> > 
-> > That's a belated report, fixed by
-> Hi Chris, thanks for the feedback, we will double check this report and
-> provide update later.
-Hi Chris, it is confirmed that this report is false positive. 6ac3a0e had
-fixed the issue. Sorry for inconvenience.
 
+
+Le 26/11/2019 à 22:44, Luc Van Oostenryck a écrit :
+> On Tue, Nov 26, 2019 at 09:13:40PM +0100, Michal Suchanek wrote:
+>> Sparse warns about missing declarations for these functions:
+>>
+>> +arch/powerpc/kernel/syscall_64.c:108:23: warning: symbol 'syscall_exit_prepare' was not declared. Should it be static?
+>> +arch/powerpc/kernel/syscall_64.c:18:6: warning: symbol 'system_call_exception' was not declared. Should it be static?
+>> +arch/powerpc/kernel/syscall_64.c:200:23: warning: symbol 'interrupt_exit_user_prepare' was not declared. Should it be static?
+>> +arch/powerpc/kernel/syscall_64.c:288:23: warning: symbol 'interrupt_exit_kernel_prepare' was not declared. Should it be static?
+>>
+>> Add declaration for them.
 > 
-> > 
-> > commit 6ac3a0ebfcc2f0c75ca0ca6974389ce421aa5cbd
-> > Author: Chris Wilson <chris@chris-wilson.co.uk>
-> > Date:   Tue Aug 20 13:21:18 2019 +0100
-> > 
-> > 	dmabuf: Mark up onstack timer for selftests
-> > 
-> > No?
-> > -Chris
+> I'm fine with this patch but, just FYI, lately people seems to
+> prefer to add '__visible' to the function definition instead
+> of creating such header files.
+
+AFAIU, that's not exactly the purpose of '__visible', see 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9add850c2
+
+Christophe
