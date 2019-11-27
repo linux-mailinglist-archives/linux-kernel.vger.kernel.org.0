@@ -2,203 +2,459 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA7A10B200
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:13:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DCDB10B22C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 16:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfK0PNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 10:13:48 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:37917 "EHLO
-        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727197AbfK0PNg (ORCPT
+        id S1727405AbfK0PO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 10:14:28 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45417 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfK0PO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 10:13:36 -0500
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 27 Nov 2019 20:43:26 +0530
-IronPort-SDR: ALHVegyS+C6HEkrucJboFlMUqp0BMnL+bUZYq4VM58pc9SYRfDD2/1QiltG4RJwl5Zej3JXhn2
- gBZ/bIs9TW6Y+e8Yrys3AdBONOHl9lzF/kKp/u5RQL1m2P89oaGazsOBEx+u4Kv7q2lfGVWE0k
- 9wkVbeQ3zNLP2mT2uT4cCmOUa7vbLeNamcXhl2tkTtDFtTiqSq7iCTsiJCOupukoAal5zxbcP5
- HpA4VzbNzKbtC6pUsASwSU1y/4/+BLuTtqM9AUlpq+oEg1vsvwvujAUG55VBNRp9BVHgrtIldn
- CBPBPDZUJmLrIX+cTilODdG4
-Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 27 Nov 2019 20:42:58 +0530
-Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id 05EAE398B; Wed, 27 Nov 2019 20:42:55 +0530 (IST)
-From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
-        robh+dt@kernel.org, sricharan@codeaurora.org,
-        nprakash@codeaurora.org
-Subject: [PATCH V3 10/10] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-Date:   Wed, 27 Nov 2019 20:42:54 +0530
-Message-Id: <1574867574-2216-11-git-send-email-gokulsri@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+        Wed, 27 Nov 2019 10:14:28 -0500
+Received: by mail-lj1-f194.google.com with SMTP id n21so24856681ljg.12;
+        Wed, 27 Nov 2019 07:14:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=c1XLjtk7tksZyt4DxhyINu7I6cog8HmXoAD9TAyz5TI=;
+        b=DUWr1fWGwWji2my7KN/K9L6850krecK/wXkPCFuIsAhtPBRolOGcY2VV8O0aY0Z+YX
+         7QdGIEk9WuuOfvOlfvSi1Y0bk138ynh52wJAVSBXxnFsIaqZQOYKCC/O/v7SxBOh2vhJ
+         r//gUbVImHKpL00J3lRD9h4GeOB3rvYo/V1Id5asLWVc+8Ohx7vjInPz7CS1CpkxkBtC
+         qc5QVwhqi17Lp9uz5F09rLGCOvow9PDOh/0rppIh3FO+P/CWZypX9eQzk119znk0EF2V
+         6gw7g/tqW+1+dQn3bMwvvfOWLzxUnsJp+0ab7pAL/ybXquN6+X4GZWxQORZgq5ua3jZa
+         dF0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c1XLjtk7tksZyt4DxhyINu7I6cog8HmXoAD9TAyz5TI=;
+        b=ZIHZYbjtE4cfZA0kv4QqTgIoTZHyF5wnt8h73gittbeThPm3BMu7DHat6tUEMU7hYU
+         GYwohIKXTOcQNl0rojyxveAYq8QNamzxepyYh/5jXOSfqUOboBS87ksGxkdze2jpl0Xi
+         MI1yaLcnpnlTSt2IEdnPegTKLzMfT6KlhAIPCJ/s9XWYwxsCqGRYriUfWUjyTl2njdpu
+         NZdh9LZ8uGoDB/dEZ/mnAh3LpYYJEFf+W4O5cnhs/mtd0U/FgUb/KzM1Xmo3FD0BDRkX
+         PASaacNKeYPZD36kt97GiGmOEFLe4bP4OfqRZs8ktyCt31C5/fm1Kws0k5SWnxpWg3aQ
+         W3Ig==
+X-Gm-Message-State: APjAAAVo3t8LAatNChbnQlbUhqrp5wPGu6pKlnCj4lZuZ4Ji7NoMo5Vo
+        vvAJjtX1oYVRfM18ulL+HbiwbQmc
+X-Google-Smtp-Source: APXvYqx2FWzvotUMbAlmBp8oVKb09R22t6C1ZG/w7iTNFuI/ioiJBHQKVNq5tDLWPRdWmAfyYOF8sA==
+X-Received: by 2002:a2e:8695:: with SMTP id l21mr30760911lji.53.1574867664610;
+        Wed, 27 Nov 2019 07:14:24 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id s76sm1896047lje.53.2019.11.27.07.14.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 07:14:23 -0800 (PST)
+Subject: Re: [PATCH v2 02/11] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mturquette@baylibre.com, horms+renesas@verge.net.au,
+        Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de,
+        spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+ <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <749de44c-ec59-3cab-c02e-7b8fcb1fb9f4@gmail.com>
+Date:   Wed, 27 Nov 2019 18:14:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable remoteproc WCSS PIL driver with glink
-and ssr subdevices. Also configures shared memory
-and enables smp2p and mailboxes required for IPC.
+27.11.2019 07:59, Sowjanya Komatineni пишет:
+> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out_3 with
+> mux and gate for each of these clocks.
+> 
+> Currently these PMC clocks are registered by Tegra clock driver using
+> clk_register_mux and clk_register_gate by passing PMC base address
+> and register offsets and PMC programming for these clocks happens
+> through direct PMC access by the clock driver.
+> 
+> With this, when PMC is in secure mode any direct PMC access from the
+> non-secure world does not go through and these clocks will not be
+> functional.
+> 
+> This patch adds these clocks registration with PMC as a clock provider
+> for these clocks. clk_ops callback implementations for these clocks
+> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC programming
+> in secure mode and non-secure mode.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 330 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 330 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index ea0e11a09c12..a353f6d0a832 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -13,6 +13,9 @@
+>  
+>  #include <linux/arm-smccc.h>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk/clk-conf.h>
+>  #include <linux/clk/tegra.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+> @@ -48,6 +51,7 @@
+>  #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>  #include <dt-bindings/gpio/tegra186-gpio.h>
+>  #include <dt-bindings/gpio/tegra194-gpio.h>
+> +#include <dt-bindings/soc/tegra-pmc.h>
+>  
+>  #define PMC_CNTRL			0x0
+>  #define  PMC_CNTRL_INTR_POLARITY	BIT(17) /* inverts INTR polarity */
+> @@ -100,6 +104,7 @@
+>  #define PMC_WAKE2_STATUS		0x168
+>  #define PMC_SW_WAKE2_STATUS		0x16c
+>  
+> +#define PMC_CLK_OUT_CNTRL		0x1a8
+>  #define PMC_SENSOR_CTRL			0x1b0
+>  #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>  #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+> @@ -155,6 +160,91 @@
+>  #define  TEGRA_SMC_PMC_READ	0xaa
+>  #define  TEGRA_SMC_PMC_WRITE	0xbb
+>  
+> +struct pmc_clk_mux {
+> +	struct clk_hw	hw;
+> +	unsigned long	offs;
+> +	u32		mask;
+> +	u32		shift;
+> +};
+> +
+> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct pmc_clk_mux, hw)
+> +
+> +struct pmc_clk_gate {
+> +	struct clk_hw	hw;
+> +	unsigned long	offs;
+> +	u32		shift;
+> +};
+> +
+> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
+> +
+> +struct pmc_clk_init_data {
+> +	char *mux_name;
+> +	char *gate_name;
+> +	const char **parents;
+> +	int num_parents;
+> +	int mux_id;
+> +	int gate_id;
+> +	char *dev_name;
+> +	u8 mux_shift;
+> +	u8 gate_shift;
+> +	u8 init_parent_index;
+> +	int init_state;
+> +};
+> +
+> +static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
+> +	"clk_m_div4", "extern1",
+> +};
+> +
+> +static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
+> +	"clk_m_div4", "extern2",
+> +};
+> +
+> +static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
+> +	"clk_m_div4", "extern3",
+> +};
+> +
+> +static struct pmc_clk_init_data tegra_pmc_clks_data[] = {
+> +	{
+> +		.mux_name = "clk_out_1_mux",
+> +		.gate_name = "clk_out_1",
+> +		.parents = clk_out1_parents,
+> +		.num_parents = ARRAY_SIZE(clk_out1_parents),
+> +		.mux_id = TEGRA_PMC_CLK_OUT_1_MUX,
+> +		.gate_id = TEGRA_PMC_CLK_OUT_1,
+> +		.dev_name = "extern1",
+> +		.mux_shift = 6,
+> +		.gate_shift = 2,
+> +		.init_parent_index = 3,
+> +		.init_state = 1,
+> +	},
+> +	{
+> +		.mux_name = "clk_out_2_mux",
+> +		.gate_name = "clk_out_2",
+> +		.parents = clk_out2_parents,
+> +		.num_parents = ARRAY_SIZE(clk_out2_parents),
+> +		.mux_id = TEGRA_PMC_CLK_OUT_2_MUX,
+> +		.gate_id = TEGRA_PMC_CLK_OUT_2,
+> +		.dev_name = "extern2",
+> +		.mux_shift = 14,
+> +		.gate_shift = 10,
+> +		.init_parent_index = 0,
+> +		.init_state = 0,
+> +	},
+> +	{
+> +		.mux_name = "clk_out_3_mux",
+> +		.gate_name = "clk_out_3",
+> +		.parents = clk_out3_parents,
+> +		.num_parents = ARRAY_SIZE(clk_out3_parents),
+> +		.mux_id = TEGRA_PMC_CLK_OUT_3_MUX,
+> +		.gate_id = TEGRA_PMC_CLK_OUT_3,
+> +		.dev_name = "extern3",
+> +		.mux_shift = 22,
+> +		.gate_shift = 18,
+> +		.init_parent_index = 0,
+> +		.init_state = 0,
+> +	},
+> +};
+> +
+>  struct tegra_powergate {
+>  	struct generic_pm_domain genpd;
+>  	struct tegra_pmc *pmc;
+> @@ -254,6 +344,9 @@ struct tegra_pmc_soc {
+>  	 */
+>  	const struct tegra_wake_event *wake_events;
+>  	unsigned int num_wake_events;
+> +
+> +	struct pmc_clk_init_data *pmc_clks_data;
+> +	unsigned int num_pmc_clks;
+>  };
+>  
+>  static const char * const tegra186_reset_sources[] = {
+> @@ -2163,6 +2256,228 @@ static int tegra_pmc_clk_notify_cb(struct notifier_block *nb,
+>  	return NOTIFY_OK;
+>  }
+>  
+> +static void pmc_clk_fence_udelay(u32 offset)
+> +{
+> +	tegra_pmc_readl(pmc, offset);
+> +	/* pmc clk propagation delay 2 us */
+> +	udelay(2);
+> +}
+> +
+> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct pmc_clk_mux *mux = to_pmc_clk_mux(hw);
+> +	int num_parents = clk_hw_get_num_parents(hw);
+> +	u32 val;
+> +
+> +	val = tegra_pmc_readl(pmc, mux->offs) >> mux->shift;
+> +	val &= mux->mask;
+> +
+> +	if (val >= num_parents)
+> +		return -EINVAL;
+> +
+> +	return val;
+> +}
+> +
+> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct pmc_clk_mux *mux = to_pmc_clk_mux(hw);
+> +	u32 val;
+> +
+> +	val = tegra_pmc_readl(pmc, mux->offs);
+> +	val &= ~(mux->mask << mux->shift);
+> +	val |= index << mux->shift;
+> +	tegra_pmc_writel(pmc, val, mux->offs);
+> +	pmc_clk_fence_udelay(mux->offs);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops pmc_clk_mux_ops = {
+> +	.get_parent = pmc_clk_mux_get_parent,
+> +	.set_parent = pmc_clk_mux_set_parent,
+> +	.determine_rate = __clk_mux_determine_rate,
+> +};
+> +
+> +static struct clk *
+> +tegra_pmc_clk_mux_register(const char *name, const char * const *parent_names,
+> +			   int num_parents, unsigned long flags,
+> +			   unsigned long offset, u32 shift, u32 mask)
+> +{
+> +	struct clk_init_data init;
+> +	struct pmc_clk_mux *mux;
+> +
+> +	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> +	if (!mux)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = &pmc_clk_mux_ops;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = num_parents;
+> +	init.flags = flags;
+> +
+> +	mux->hw.init = &init;
+> +	mux->offs = offset;
+> +	mux->mask = mask;
+> +	mux->shift = shift;
+> +
+> +	return clk_register(NULL, &mux->hw);
+> +}
+> +
+> +static int pmc_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+> +
+> +	return tegra_pmc_readl(pmc, gate->offs) & BIT(gate->shift) ? 1 : 0;
+> +}
+> +
+> +static void pmc_clk_set_state(struct clk_hw *hw, int state)
+> +{
+> +	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+> +	u32 val;
+> +
+> +	val = tegra_pmc_readl(pmc, gate->offs);
+> +	val = state ? (val | BIT(gate->shift)) : (val & ~BIT(gate->shift));
+> +	tegra_pmc_writel(pmc, val, gate->offs);
+> +	pmc_clk_fence_udelay(gate->offs);
+> +}
+> +
+> +static int pmc_clk_enable(struct clk_hw *hw)
+> +{
+> +	pmc_clk_set_state(hw, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +static void pmc_clk_disable(struct clk_hw *hw)
+> +{
+> +	pmc_clk_set_state(hw, 0);
+> +}
+> +
+> +static const struct clk_ops pmc_clk_gate_ops = {
+> +	.is_enabled = pmc_clk_is_enabled,
+> +	.enable = pmc_clk_enable,
+> +	.disable = pmc_clk_disable,
+> +};
+> +
+> +static struct clk *
+> +tegra_pmc_clk_gate_register(const char *name, const char *parent_name,
+> +			    unsigned long flags, unsigned long offset,
+> +			    u32 shift)
+> +{
+> +	struct clk_init_data init;
+> +	struct pmc_clk_gate *gate;
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = &pmc_clk_gate_ops;
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +	init.flags = flags;
+> +
+> +	gate->hw.init = &init;
+> +	gate->offs = offset;
+> +	gate->shift = shift;
+> +
+> +	return clk_register(NULL, &gate->hw);
+> +}
+> +
+> +static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+> +				     struct device_node *np)
+> +{
+> +	struct clk *clkmux, *clk, *parent;
+> +	struct clk_onecell_data *clk_data;
+> +	unsigned int num_clks;
+> +	int i, ret;
+> +
+> +	/* each pmc clock output has a mux and a gate */
+> +	num_clks = pmc->soc->num_pmc_clks * 2;
+> +
+> +	if (!num_clks)
+> +		return;
+> +
+> +	clk_data = kmalloc(sizeof(*clk_data), GFP_KERNEL);
+> +	if (!clk_data)
+> +		return;
+> +
+> +	clk_data->clks = kcalloc(TEGRA_PMC_CLK_MAX, sizeof(*clk_data->clks),
+> +				 GFP_KERNEL);
+> +	if (!clk_data->clks)
+> +		goto free_clkdata;
+> +
+> +	clk_data->clk_num = num_clks;
+> +
+> +	for (i = 0; i < pmc->soc->num_pmc_clks; i++) {
+> +		struct pmc_clk_init_data *data;
+> +
+> +		data = pmc->soc->pmc_clks_data + i;
+> +
+> +		clkmux = tegra_pmc_clk_mux_register(data->mux_name,
+> +						    data->parents,
+> +						    data->num_parents,
+> +						    CLK_SET_RATE_NO_REPARENT |
+> +						    CLK_SET_RATE_PARENT,
+> +						    PMC_CLK_OUT_CNTRL,
+> +						    data->mux_shift, 3);
+> +		if (IS_ERR(clkmux))
+> +			goto free_clks;
+> +
+> +		clk_data->clks[data->mux_id] = clkmux;
+> +
+> +		clk = tegra_pmc_clk_gate_register(data->gate_name,
+> +						  data->mux_name,
+> +						  CLK_SET_RATE_PARENT,
+> +						  PMC_CLK_OUT_CNTRL,
+> +						  data->gate_shift);
+> +		if (IS_ERR(clk))
+> +			goto free_clks;
+> +
+> +		clk_data->clks[data->gate_id] = clk;
+> +
+> +		ret = clk_set_parent(clk, clkmux);
+> +		if (ret < 0) {
+> +			pr_err("failed to set parent of %s to %s\n",
+> +			       __func__, __clk_get_name(clk),
+> +			       __clk_get_name(clkmux));
+> +		}
+> +
+> +		clk_register_clkdev(clk, data->dev_name, data->gate_name);
+> +
+> +		/* configure initial clock parent and state */
+> +		parent = clk_get_sys(data->gate_name,
+> +				     data->parents[data->init_parent_index]);
+> +		if (!IS_ERR(parent)) {
+> +			ret = clk_set_parent(clkmux, parent);
+> +			if (ret < 0) {
+> +				pr_err("failed to set parent of %s to %s\n",
+> +				       __func__, __clk_get_name(clkmux),
+> +				       __clk_get_name(parent));
+> +				WARN_ON(1);
+> +			}
+> +		}
+> +
+> +		if (data->init_state) {
+> +			if (clk_prepare_enable(clk)) {
+> +				pr_err("failed to enable %s\n", __func__,
+> +				       __clk_get_name(clk));
+> +				WARN_ON(1);
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 121 ++++++++++++++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
+Should be a bit better to move the WARN_ON to the end of errors handling
+in order to catch all possible errors:
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index 6a61a63..da66533 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -10,12 +10,66 @@
- 	model = "Qualcomm Technologies, Inc. IPQ8074";
- 	compatible = "qcom,ipq8074";
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		smem_region: memory@4ab00000 {
-+			no-map;
-+			reg = <0x0 0x4ab00000 0x0 0x00100000>;
-+		};
-+
-+		q6_region: memory@4b000000 {
-+			no-map;
-+			reg = <0x0 0x4b000000 0x0 0x05f00000>;
-+		};
-+	};
-+
- 	firmware {
- 		scm {
- 			compatible = "qcom,scm-ipq8074", "qcom,scm";
- 		};
- 	};
- 
-+	tcsr_mutex: hwlock@193d000 {
-+		compatible = "qcom,tcsr-mutex";
-+		syscon = <&tcsr_mutex_regs 0 0x80>;
-+		#hwlock-cells = <1>;
-+	};
-+
-+	smem {
-+		compatible = "qcom,smem";
-+		memory-region = <&smem_region>;
-+		hwlocks = <&tcsr_mutex 0>;
-+	};
-+
-+	wcss: smp2p-wcss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <0 322 1>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			qcom,smp2p-feature-ssr-ack;
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	soc: soc {
- 		#address-cells = <0x1>;
- 		#size-cells = <0x1>;
-@@ -431,6 +485,73 @@
- 				      "axi_m_sticky";
- 			status = "disabled";
- 		};
-+
-+		tcsr_q6: syscon@1945000 {
-+			compatible = "syscon";
-+			reg = <0x01945000 0xe000>;
-+		};
-+
-+		tcsr_mutex_regs: syscon@193d000 {
-+			compatible = "syscon";
-+			reg = <0x01905000 0x8000>;
-+		};
-+
-+		apcs_glb: mailbox@b111000 {
-+			compatible = "qcom,ipq8074-apcs-apps-global";
-+			reg = <0x0b111000 0x1000>;
-+
-+			#mbox-cells = <1>;
-+		};
-+
-+		q6v5_wcss: q6v5_wcss@cd00000 {
-+			compatible = "qcom,ipq8074-wcss-pil";
-+			reg = <0x0cd00000 0x4040>,
-+			      <0x004ab000 0x20>;
-+			reg-names = "qdsp6",
-+				    "rmb";
-+			qca,auto-restart;
-+			qca,extended-intc;
-+			interrupts-extended = <&intc 0 325 1>,
-+					      <&wcss_smp2p_in 0 0>,
-+					      <&wcss_smp2p_in 1 0>,
-+					      <&wcss_smp2p_in 2 0>,
-+					      <&wcss_smp2p_in 3 0>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			resets = <&gcc GCC_WCSSAON_RESET>,
-+				 <&gcc GCC_WCSS_BCR>,
-+				 <&gcc GCC_WCSS_Q6_BCR>;
-+
-+			reset-names = "wcss_aon_reset",
-+				      "wcss_reset",
-+				      "wcss_q6_reset";
-+
-+			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-+			clock-names = "prng";
-+
-+			qcom,halt-regs = <&tcsr_q6 0xa000 0xd000 0x0>;
-+
-+			qcom,smem-states = <&wcss_smp2p_out 0>,
-+					   <&wcss_smp2p_out 1>;
-+			qcom,smem-state-names = "shutdown",
-+						"stop";
-+
-+			memory-region = <&q6_region>;
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+
-+				rpm_requests {
-+					qcom,glink-channels = "IPCRTR";
-+				};
-+			};
-+		};
- 	};
- 
- 	cpus {
--- 
-1.9.1
+@@ -2510,6 +2510,7 @@ static void tegra_pmc_clock_register(struct
+tegra_pmc *pmc,
+        return;
 
+ free_clks:
++       WARN_ON(1);
+        kfree(clk_data->clks);
+ free_clkdata:
+        kfree(clk_data);
