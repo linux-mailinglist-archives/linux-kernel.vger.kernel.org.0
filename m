@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 197AE10B927
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D90F10B7A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbfK0UuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:50:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36178 "EHLO mail.kernel.org"
+        id S1727928AbfK0Ufk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730338AbfK0UuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:50:19 -0500
+        id S1727884AbfK0Uff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7BEC2184B;
-        Wed, 27 Nov 2019 20:50:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12D1120866;
+        Wed, 27 Nov 2019 20:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887818;
-        bh=smj7WEOSQsCw5b/IQBjPivmAUO3VMbcy9rvsjk69F/I=;
+        s=default; t=1574886934;
+        bh=KBTbvLDdWuDQ8X00mqs8/tL1VrZWLuSyGoaJhrKpYdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GAiX9Ld/uzyQMGWi2Qu9xCYL5sqsakA+7WC6i2Ec7/SSKYcGYli5q8/ebDakXhViu
-         FSqhDdGEQbWSBXZbqqzva4YR27M5+sxY+G/rp/OlqKRkfgi/OL+u6GKJJzLQalBeOW
-         VGIxb0qgDBC9BO4BpX7i+SgXULQDvQlGQ9L5ZgEQ=
+        b=R1WYcpw9I2992YS6FVB2mZmJ37DCTKPqBHylD9Yvk90yn3w7oA26XlaSIHFwfRIPn
+         nwSLc1EfmrsESJW1u927+12qOfAJ/Fo5vyom1DRvCtpxzzySDBcZFIh5VUd31hvB7q
+         l7vh5uHOcmJIaT6Rlf/hX9FUFkKAViq5XORs3BOY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 107/211] linux/bitmap.h: handle constant zero-size bitmaps correctly
+Subject: [PATCH 4.4 049/132] s390/perf: Return error when debug_register fails
 Date:   Wed, 27 Nov 2019 21:30:40 +0100
-Message-Id: <20191127203104.109450350@linuxfoundation.org>
+Message-Id: <20191127202946.781053509@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,58 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 7275b097851a5e2e0dd4da039c7e96b59ac5314e ]
+[ Upstream commit ec0c0bb489727de0d4dca6a00be6970ab8a3b30a ]
 
-The static inlines in bitmap.h do not handle a compile-time constant
-nbits==0 correctly (they dereference the passed src or dst pointers,
-despite only 0 words being valid to access).  I had the 0-day buildbot
-chew on a patch [1] that would cause build failures for such cases without
-complaining, suggesting that we don't have any such users currently, at
-least for the 70 .config/arch combinations that was built.  Should any
-turn up, make sure they use the out-of-line versions, which do handle
-nbits==0 correctly.
+Return an error when the function debug_register() fails allocating
+the debug handle.
+Also remove the registered debug handle when the initialization fails
+later on.
 
-This is of course not the most efficient, but it's much less churn than
-teaching all the static inlines an "if (zero_const_nbits())", and since we
-don't have any current instances, this doesn't affect existing code at
-all.
-
-[1] lkml.kernel.org/r/20180815085539.27485-1-linux@rasmusvillemoes.dk
-
-Link: http://lkml.kernel.org/r/20180818131623.8755-3-linux@rasmusvillemoes.dk
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Yury Norov <ynorov@caviumnetworks.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/bitmap.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/s390/kernel/perf_cpum_sf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 835c2271196a4..1990b88bd0ab2 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -185,8 +185,13 @@ extern int bitmap_print_to_pagebuf(bool list, char *buf,
- #define BITMAP_FIRST_WORD_MASK(start) (~0UL << ((start) & (BITS_PER_LONG - 1)))
- #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+index b79d51459cf25..874762a51c546 100644
+--- a/arch/s390/kernel/perf_cpum_sf.c
++++ b/arch/s390/kernel/perf_cpum_sf.c
+@@ -1616,14 +1616,17 @@ static int __init init_cpum_sampling_pmu(void)
+ 	}
  
-+/*
-+ * The static inlines below do not handle constant nbits==0 correctly,
-+ * so make such users (should any ever turn up) call the out-of-line
-+ * versions.
-+ */
- #define small_const_nbits(nbits) \
--	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG)
-+	(__builtin_constant_p(nbits) && (nbits) <= BITS_PER_LONG && (nbits) > 0)
+ 	sfdbg = debug_register(KMSG_COMPONENT, 2, 1, 80);
+-	if (!sfdbg)
++	if (!sfdbg) {
+ 		pr_err("Registering for s390dbf failed\n");
++		return -ENOMEM;
++	}
+ 	debug_register_view(sfdbg, &debug_sprintf_view);
  
- static inline void bitmap_zero(unsigned long *dst, unsigned int nbits)
- {
+ 	err = register_external_irq(EXT_IRQ_MEASURE_ALERT,
+ 				    cpumf_measurement_alert);
+ 	if (err) {
+ 		pr_cpumsf_err(RS_INIT_FAILURE_ALRT);
++		debug_unregister(sfdbg);
+ 		goto out;
+ 	}
+ 
+@@ -1632,6 +1635,7 @@ static int __init init_cpum_sampling_pmu(void)
+ 		pr_cpumsf_err(RS_INIT_FAILURE_PERF);
+ 		unregister_external_irq(EXT_IRQ_MEASURE_ALERT,
+ 					cpumf_measurement_alert);
++		debug_unregister(sfdbg);
+ 		goto out;
+ 	}
+ 	perf_cpu_notifier(cpumf_pmu_notifier);
 -- 
 2.20.1
 
