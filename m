@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B61110BB0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BECFC10BAB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732843AbfK0VJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:09:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35560 "EHLO mail.kernel.org"
+        id S1732302AbfK0VFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732830AbfK0VJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:09:01 -0500
+        id S1731393AbfK0VFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D803A2086A;
-        Wed, 27 Nov 2019 21:09:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A34002080F;
+        Wed, 27 Nov 2019 21:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888941;
-        bh=vma1+y/i0t67aijisSoim2RvjrLDgcUc1DDG8Q+KHnU=;
+        s=default; t=1574888735;
+        bh=k+aeY3djTXrMWJV296qj1JOi9SAAWVq/Vc2rki06J+w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=00l+IL/YJKwfoteIfu0SLLHiNrxD3AdOMp2gQugZYZsZuEGc9poRRywfynGSViyWh
-         BhRue8+Ba06jRjBd0rxp6sF4LJEPe8e+9lrS4JsGvrtfdnBjoOr/4QO7LUVzFLg15M
-         Wqnev/OraOPNtHErH22dTc9aA+Rso+RUW8jT1D4I=
+        b=OSI8G93ttj8iO4JvhIC03KiSx4mGx6eDWi1AI3OPIZCiTPuNonYoaHpvoOK8c0i4L
+         hIUNL66WQd9bv7NTRlb5oiMvaCLWd/uNsrctVLa2OsK6RmX44YrV6BaHebfKlwRNEJ
+         IcQvtksxngW/iMzAXAl3rwS+WxK2y/4VRuKUsYfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.3 22/95] fork: fix pidfd_poll()s return type
-Date:   Wed, 27 Nov 2019 21:31:39 +0100
-Message-Id: <20191127202850.552050279@linuxfoundation.org>
+        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Vignesh R <vigneshr@ti.com>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 250/306] spi: omap2-mcspi: Fix DMA and FIFO event trigger size mismatch
+Date:   Wed, 27 Nov 2019 21:31:40 +0100
+Message-Id: <20191127203133.170686283@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Vignesh R <vigneshr@ti.com>
 
-commit 9e77716a75bc6cf54965e5ec069ba7c02b32251c upstream.
+[ Upstream commit baf8b9f8d260c55a86405f70a384c29cda888476 ]
 
-pidfd_poll() is defined as returning 'unsigned int' but the
-.poll method is declared as returning '__poll_t', a bitwise type.
+Commit b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
+broke SPI transfers where bits_per_word != 8. This is because of
+mimsatch between McSPI FIFO level event trigger size (SPI word length) and
+DMA request size(word length * maxburst). This leads to data
+corruption, lockup and errors like:
 
-Fix this by using the proper return type and using the EPOLL
-constants instead of the POLL ones, as required for __poll_t.
+	spi1.0: EOW timed out
 
-Fixes: b53b0b9d9a61 ("pidfd: add polling support")
-Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: stable@vger.kernel.org # 5.3
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/r/20191120003320.31138-1-luc.vanoostenryck@gmail.com
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by setting DMA maxburst size to 1 so that
+McSPI FIFO level event trigger size matches DMA request size.
 
+Fixes: b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
+Cc: stable@vger.kernel.org
+Reported-by: David Lechner <david@lechnology.com>
+Tested-by: David Lechner <david@lechnology.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/fork.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/spi/spi-omap2-mcspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1713,11 +1713,11 @@ static void pidfd_show_fdinfo(struct seq
- /*
-  * Poll support for process exit notification.
-  */
--static unsigned int pidfd_poll(struct file *file, struct poll_table_struct *pts)
-+static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
- {
- 	struct task_struct *task;
- 	struct pid *pid = file->private_data;
--	int poll_flags = 0;
-+	__poll_t poll_flags = 0;
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index f50cb8a4b4138..eb2d2de172af3 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -607,8 +607,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
+ 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
+ 	cfg.src_addr_width = width;
+ 	cfg.dst_addr_width = width;
+-	cfg.src_maxburst = es;
+-	cfg.dst_maxburst = es;
++	cfg.src_maxburst = 1;
++	cfg.dst_maxburst = 1;
  
- 	poll_wait(file, &pid->wait_pidfd, pts);
- 
-@@ -1729,7 +1729,7 @@ static unsigned int pidfd_poll(struct fi
- 	 * group, then poll(2) should block, similar to the wait(2) family.
- 	 */
- 	if (!task || (task->exit_state && thread_group_empty(task)))
--		poll_flags = POLLIN | POLLRDNORM;
-+		poll_flags = EPOLLIN | EPOLLRDNORM;
- 	rcu_read_unlock();
- 
- 	return poll_flags;
+ 	rx = xfer->rx_buf;
+ 	tx = xfer->tx_buf;
+-- 
+2.20.1
+
 
 
