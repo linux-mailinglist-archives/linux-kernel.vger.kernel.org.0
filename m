@@ -2,67 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA8210ABC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75A0610ABCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbfK0IbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:31:20 -0500
-Received: from s3.sipsolutions.net ([144.76.43.62]:40602 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfK0IbU (ORCPT
+        id S1727022AbfK0IcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:32:19 -0500
+Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:38248 "EHLO
+        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbfK0IcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:31:20 -0500
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.92.3)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1iZsis-00DxP3-29; Wed, 27 Nov 2019 09:30:54 +0100
-Message-ID: <6da209ffe31744d79c1394e1f3d038db19beca51.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 net-next] net: core: use listified Rx for GRO_NORMAL
- in napi_gro_receive()
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Alexander Lobakin <alobakin@dlink.ru>,
-        David Miller <davem@davemloft.net>
-Cc:     pabeni@redhat.com, ecree@solarflare.com,
-        nicholas.johnson-opensource@outlook.com.au, jiri@mellanox.com,
-        edumazet@google.com, idosch@mellanox.com, petrm@mellanox.com,
-        sd@queasysnail.net, f.fainelli@gmail.com,
-        jaswinder.singh@linaro.org, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, emmanuel.grumbach@intel.com,
-        luciano.coelho@intel.com, linuxwifi@intel.com,
-        kvalo@codeaurora.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org
-Date:   Wed, 27 Nov 2019 09:30:51 +0100
-In-Reply-To: <4cb1abfb7cbd137151f024405f7b0678@dlink.ru>
-References: <414288fcac2ba4fcee48a63bdbf28f7b9a5037c6.camel@sipsolutions.net>
-         <b4b92c4d066007d9cb77e1645e667715c17834fb.camel@redhat.com>
-         <d535d5142e42b8c550f0220200e3779d@dlink.ru>
-         <20191126.155746.627765091618337419.davem@davemloft.net>
-         <4cb1abfb7cbd137151f024405f7b0678@dlink.ru>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Wed, 27 Nov 2019 03:32:17 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id CE8CA41CE1;
+        Wed, 27 Nov 2019 09:32:14 +0100 (CET)
+Authentication-Results: pio-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="KFQNLPu2";
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 6TwXtQa_G2Zk; Wed, 27 Nov 2019 09:32:05 +0100 (CET)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 11C9B41BA4;
+        Wed, 27 Nov 2019 09:32:02 +0100 (CET)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 378D3360140;
+        Wed, 27 Nov 2019 09:32:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1574843522; bh=Og4luRQdluh+hAMeX8+BJha1sCbiLJlldQtmSpb2990=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KFQNLPu2ssbAmbmSpaB/4Liu4TF37qg9ct9Iy4I7iR2RDRYvn6IUmptkZ5amxQbgW
+         CEcw6ILpLYYfsjaNOriLp8hcEl+lVPKqDbUMwsP0w8+mVtPxs6o8RcV4Rs+oaA66y3
+         mFL+3G6a6skaGARalHB7+HRkxOCyRD/aYPEeGXUQ=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-graphics-maintainer@vmware.com
+Cc:     =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Subject: [RFC PATCH 0/7] Huge page-table entries for TTM
+Date:   Wed, 27 Nov 2019 09:31:13 +0100
+Message-Id: <20191127083120.34611-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-11-27 at 10:47 +0300, Alexander Lobakin wrote:
+In order to save TLB space and CPU usage this patchset enables huge- and giant
+page-table entries for TTM and TTM-enabled graphics drivers.
 
-> > Can I get some kind of fix in the next 24 hours?  I want to send a 
-> > quick
-> > follow-on pull request to Linus to deal with all of the fallout, and in
-> > particular fix this regression.
-> 
-> If Intel guys and others will agree, I'll send a patch which will add
-> manual napi->rx_list flushing in iwlwifi driver in about ~2-3 hours.
+Patch 1 introduces a vma_is_special_huge() function to make the mm code
+take the same path as DAX when splitting huge- and giant page table entries,
+(which is zapping the page-table entry and rely on re-faulting).
 
-Sounds fine to me.
+Patch 2 makes the mm code split existing huge page-table entries
+on huge_fault fallbacks. Typically on COW or on buffer-objects that want
+write-notify. COW and write-notification is always done on the lowest
+page-table level. See the patch log message for additional considerations.
 
-> Anyway, this driver should get a proper NAPI in future releases to
-> prevent problems like this one.
+Patch 3 introduces functions to allow the graphics drivers to manipulate
+the caching- and encryption flags of huge page-table entries without ugly
+hacks.
 
-Yeah, we'll work on that, but that might take a bit longer :)
+Patch 4 implements the huge_fault handler in TTM.
 
-johannes
+This enables huge page-table entries, provided that the kernel is configured
+to support transhuge pages, either by default or using madvise().
+However, they are unlikely to be inserted unless the kernel buffer object
+pfns and user-space addresses align perfectly. There are various options
+here, but since buffer objects that reside in system pages typically start
+at huge page boundaries if they are backed by huge pages, we try to enforce
+buffer object starting pfns and user-space addresses to be huge page-size
+aligned if their size exceeds a huge page-size. If pud-size transhuge
+("giant") pages are enabled by the arch, the same holds for those.
+
+Patch 5 implements a drm helper to align user-space addresses according
+to the above scheme, if possible.
+
+Patch 6 implements a TTM range manager that does the same for graphics IO
+memory.
+
+Patch 7 finally hooks up the helpers of patch 5 and 6 to the vmwgfx driver.
+A similar change is needed for graphics drivers that wants a reasonable
+likelyhood of actually using huge page-table entries.
+
+Finally, if a buffer object size is not huge-page or giant-page aligned,
+its size will NOT be inflated by this patchset. This means that the buffer
+object tail will use smaller size page-table entries and thus no memory
+overhead occurs. Drivers that want to pay the memory overhead price need to
+implement their own scheme to inflate buffer-object sizes.
+
+PMD size huge page-table-entries have been tested with vmwgfx and found to
+work well both with system memory backed and IO memory backed buffer objects.
+
+PUD size giant page-table-entries have seen limited (fault and COW) testing
+using a modified kernel and a fake vmwgfx TTM memory type. The vmwgfx driver
+does otherwise not support 1GB-size IO memory resources.
+
+Comments and suggestions welcome.
+Thomas
+
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+
 
