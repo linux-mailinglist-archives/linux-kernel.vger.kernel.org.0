@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A9A410B9A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0F210B9BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730951AbfK0Uz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45872 "EHLO mail.kernel.org"
+        id S1729650AbfK0U4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730146AbfK0UzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:25 -0500
+        id S1730622AbfK0U4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:56:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F29A2070B;
-        Wed, 27 Nov 2019 20:55:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D297C2084D;
+        Wed, 27 Nov 2019 20:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888124;
-        bh=lDXkVWJ9S5dgNw9Hr18od3skLLTtbWiy3U51b8sjXh4=;
+        s=default; t=1574888180;
+        bh=kKlqWjgPTrgbDPomLTOmv0jHODoLL4eChQ1eMqesnz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YlVFcHnb/9tTsRJ0Ouk+/yuOxdHOvaSqFDqvv6FsQMpHyFVdfxF1SWpGhy8kLvO4w
-         3Ekg0CeYM1gpMXOEzeOP+qnW0litkyuYxc2jg+4U0J/zthMwrxYmQo/n4WQSMSaDqh
-         gZaOeKIGAysi0ghTOmUe39BznecX9TTKLFJyyjr8=
+        b=IO4W23BGdeY+UBi41IJK7yptApcQykFqMCm9ouLqhl0QRCucMwjJ5oGzIQavNRCdv
+         90+HSmpqUkLpCveb8RcAjXP2HnPKjxLUsJD4oBOG8rfrdDy2EGIXUPecZPbyCc/S0h
+         i+WVOftVYCk+z1mMxh4mbExd0NhbQ/V/WT0s4XKc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 006/306] net: sched: ensure opts_len <= IP_TUNNEL_OPTS_MAX in act_tunnel_key
-Date:   Wed, 27 Nov 2019 21:27:36 +0100
-Message-Id: <20191127203115.209535927@linuxfoundation.org>
+        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
+        Vlad Buslov <vladbu@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 008/306] net/mlx5e: Fix set vf link state error flow
+Date:   Wed, 27 Nov 2019 21:27:38 +0100
+Message-Id: <20191127203115.345737672@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -44,50 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Roi Dayan <roid@mellanox.com>
 
-[ Upstream commit 4f0e97d070984d487df027f163e52bb72d1713d8 ]
+[ Upstream commit 751021218f7e66ee9bbaa2be23056e447cd75ec4 ]
 
-info->options_len is 'u8' type, and when opts_len with a value >
-IP_TUNNEL_OPTS_MAX, 'info->options_len = opts_len' will cast int
-to u8 and set a wrong value to info->options_len.
+Before this commit the ndo always returned success.
+Fix that.
 
-Kernel crashed in my test when doing:
-
-  # opts="0102:80:00800022"
-  # for i in {1..99}; do opts="$opts,0102:80:00800022"; done
-  # ip link add name geneve0 type geneve dstport 0 external
-  # tc qdisc add dev eth0 ingress
-  # tc filter add dev eth0 protocol ip parent ffff: \
-       flower indev eth0 ip_proto udp action tunnel_key \
-       set src_ip 10.0.99.192 dst_ip 10.0.99.193 \
-       dst_port 6081 id 11 geneve_opts $opts \
-       action mirred egress redirect dev geneve0
-
-So we should do the similar check as cls_flower does, return error
-when opts_len > IP_TUNNEL_OPTS_MAX in tunnel_key_copy_opts().
-
-Fixes: 0ed5269f9e41 ("net/sched: add tunnel option support to act_tunnel_key")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1ab2068a4c66 ("net/mlx5: Implement vports admin state backup/restore")
+Signed-off-by: Roi Dayan <roid@mellanox.com>
+Reviewed-by: Vlad Buslov <vladbu@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_tunnel_key.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/act_tunnel_key.c
-+++ b/net/sched/act_tunnel_key.c
-@@ -137,6 +137,10 @@ static int tunnel_key_copy_opts(const st
- 			if (opt_len < 0)
- 				return opt_len;
- 			opts_len += opt_len;
-+			if (opts_len > IP_TUNNEL_OPTS_MAX) {
-+				NL_SET_ERR_MSG(extack, "Tunnel options exceeds max size");
-+				return -EINVAL;
-+			}
- 			if (dst) {
- 				dst_len -= opt_len;
- 				dst += opt_len;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1861,7 +1861,7 @@ int mlx5_eswitch_set_vport_state(struct
+ 
+ unlock:
+ 	mutex_unlock(&esw->state_lock);
+-	return 0;
++	return err;
+ }
+ 
+ int mlx5_eswitch_get_vport_config(struct mlx5_eswitch *esw,
 
 
