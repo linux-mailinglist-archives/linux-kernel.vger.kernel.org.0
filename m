@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDA1A10B809
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F3810B88D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfK0UjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:39:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43182 "EHLO mail.kernel.org"
+        id S1729608AbfK0Uoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:44:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728028AbfK0UjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:39:11 -0500
+        id S1729598AbfK0Uo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:44:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 275BD21771;
-        Wed, 27 Nov 2019 20:39:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8085F2166E;
+        Wed, 27 Nov 2019 20:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887149;
-        bh=t2XuCSyMG2zPL/eMs0BsLnk03CeFXwVGDD07/9DQJsY=;
+        s=default; t=1574887469;
+        bh=X/58Tm7eKCZC7D2HzvHgjcaueL9E+HraeIKt33xEIWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XT6xS+EjYLHaH/5RGoY8FIjaMkQ/Tq1sBhREZxCkvix4d1w41Jd64cVLcAdPUW2Yc
-         lg7lTPW1yS0Zh8TVvExSXmNb50t+b5Ut3RftjiJ4eX6HODq0GWHUQdv2Ix+BcddRtp
-         NLCo3AZdHuHuV04I5L9qlZOVbpWJvJi2UmmByGzs=
+        b=lTNNAAch8rM+VATAe5Rl4QadnxLyx4SLzT6+/o2sTcqF9VgF6g95xRCBhWurwu61a
+         DSj+vBZrh6mfr2ole/7U+ohzwVBZgkN71ZcZeseVatmm85e81ZuLwLW4wvXOrGA1II
+         pS1VDrW1LvHBat0Bt9DUU5+Z9OOgHnwE1HJ6A5DA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 116/132] virtio_console: reset on out of memory
+        stable@vger.kernel.org, Vandana BN <bnvandana@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 124/151] media: vivid: Set vid_cap_streaming and vid_out_streaming to true
 Date:   Wed, 27 Nov 2019 21:31:47 +0100
-Message-Id: <20191127203031.894165030@linuxfoundation.org>
+Message-Id: <20191127203045.445126141@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,68 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Vandana BN <bnvandana@gmail.com>
 
-[ Upstream commit 5c60300d68da32ca77f7f978039dc72bfc78b06b ]
+commit b4add02d2236fd5f568db141cfd8eb4290972eb3 upstream.
 
-When out of memory and we can't add ctrl vq buffers,
-probe fails. Unfortunately the error handling is
-out of spec: it calls del_vqs without bothering
-to reset the device first.
+When vbi stream is started, followed by video streaming,
+the vid_cap_streaming and vid_out_streaming were not being set to true,
+which would cause the video stream to stop when vbi stream is stopped.
+This patch allows to set vid_cap_streaming and vid_out_streaming to true.
+According to Hans Verkuil it appears that these 'if (dev->kthread_vid_cap)'
+checks are a left-over from the original vivid development and should never
+have been there.
 
-To fix, call the full cleanup function in this case.
+Signed-off-by: Vandana BN <bnvandana@gmail.com>
+Cc: <stable@vger.kernel.org>      # for v3.18 and up
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/virtio_console.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/media/platform/vivid/vivid-vid-cap.c |    3 ---
+ drivers/media/platform/vivid/vivid-vid-out.c |    3 ---
+ 2 files changed, 6 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index df9eab91c2d25..78aab6e246e13 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -2067,6 +2067,7 @@ static int virtcons_probe(struct virtio_device *vdev)
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -236,9 +236,6 @@ static int vid_cap_start_streaming(struc
+ 	if (vb2_is_streaming(&dev->vb_vid_out_q))
+ 		dev->can_loop_video = vivid_vid_can_loop(dev);
  
- 	spin_lock_init(&portdev->ports_lock);
- 	INIT_LIST_HEAD(&portdev->ports);
-+	INIT_LIST_HEAD(&portdev->list);
+-	if (dev->kthread_vid_cap)
+-		return 0;
+-
+ 	dev->vid_cap_seq_count = 0;
+ 	dprintk(dev, 1, "%s\n", __func__);
+ 	for (i = 0; i < VIDEO_MAX_FRAME; i++)
+--- a/drivers/media/platform/vivid/vivid-vid-out.c
++++ b/drivers/media/platform/vivid/vivid-vid-out.c
+@@ -158,9 +158,6 @@ static int vid_out_start_streaming(struc
+ 	if (vb2_is_streaming(&dev->vb_vid_cap_q))
+ 		dev->can_loop_video = vivid_vid_can_loop(dev);
  
- 	virtio_device_ready(portdev->vdev);
- 
-@@ -2084,8 +2085,15 @@ static int virtcons_probe(struct virtio_device *vdev)
- 		if (!nr_added_bufs) {
- 			dev_err(&vdev->dev,
- 				"Error allocating buffers for control queue\n");
--			err = -ENOMEM;
--			goto free_vqs;
-+			/*
-+			 * The host might want to notify mgmt sw about device
-+			 * add failure.
-+			 */
-+			__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
-+					   VIRTIO_CONSOLE_DEVICE_READY, 0);
-+			/* Device was functional: we need full cleanup. */
-+			virtcons_remove(vdev);
-+			return -ENOMEM;
- 		}
- 	} else {
- 		/*
-@@ -2116,11 +2124,6 @@ static int virtcons_probe(struct virtio_device *vdev)
- 
- 	return 0;
- 
--free_vqs:
--	/* The host might want to notify mgmt sw about device add failure */
--	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
--			   VIRTIO_CONSOLE_DEVICE_READY, 0);
--	remove_vqs(portdev);
- free_chrdev:
- 	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
- free:
--- 
-2.20.1
-
+-	if (dev->kthread_vid_out)
+-		return 0;
+-
+ 	dev->vid_out_seq_count = 0;
+ 	dprintk(dev, 1, "%s\n", __func__);
+ 	if (dev->start_streaming_error) {
 
 
