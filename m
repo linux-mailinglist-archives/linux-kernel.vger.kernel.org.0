@@ -2,87 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DDEF10C09B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:27:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32CB210C0A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 00:36:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbfK0X1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 18:27:09 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:60689 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727031AbfK0X1I (ORCPT
+        id S1727231AbfK0Xgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 18:36:55 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:54530 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbfK0Xgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 18:27:08 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id D30B52268A;
-        Wed, 27 Nov 2019 18:27:07 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 27 Nov 2019 18:27:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=yBXiasXxv0gjhYCb054yfAMOsqC33OB
-        WoEwFmmhBlDA=; b=CtG0VEmfW54ClNVWa6lkKSLgU4CLCQgybG6EGbYDalGEPMm
-        FsfG7J8/ig4x8DxwEx4qV8A0Ee9hyFFq8lWl3gdqqfoR87ebIFaXR44g+OhSlsmJ
-        i0k7hHmyN5LIrZ+S26rzmj088HzrgGasbH9fDkmPxMvu9AmvvPKaMYZ/5w/W75DJ
-        kysFPwMZzoDoe0gxM7H7fnP1l1mVEHWMTpXMbARASNSlRPlKec1+xAaz1u/upT8K
-        DcswakEHKtFx3GETC2SaeHZnQ2dF1O+ixFwNUL6gyxgKwh3kjCHW94PToi0UN3XC
-        2DTJ+KQLjGJTiO0Rb3eFZcx7YJRxZqT5QTJi+3g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=yBXias
-        Xxv0gjhYCb054yfAMOsqC33OBWoEwFmmhBlDA=; b=DpByWhcoz5fQJTyByH06/r
-        fV2sTlTnBpTfBb1dElxF+kpeEGdEMDuDgAXddJ94Gs4/oVUHHzJH1L1xq4LDGqnD
-        aW+CP5ZJs1JliPsmOKcAvG5tTGujC0QzHLLzbu0i6P3oyDT6nyD38Yf2Mgxj09e+
-        vWnRXTxMSDTEemm6vlwA0hPCJQ8bh3xyTHRBRXLKrP/LyAnnaIIA2+APKmrKHuCj
-        LOPL9gQQxpg2spwsorgVdpj2HhAmt4ubR3JUZFjfa2CDxX4xEGsAphDemb8rLPfm
-        fFyGY38TkaUPPSRg6vM6tR6bWq/muWCVl/45L83/bLxvxU/uavkAS5HMwlZYzkYg
-        ==
-X-ME-Sender: <xms:SgbfXUZ0teA62JsetIiouIbDFZ2wIgIqrkoRupzWmriMeaGyUtpNjw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudeiiedgtdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:SgbfXfYtg8mGRSgkaeRQJoYHgqYG_HscXjG5EWhiN1ea-XhZYQldpg>
-    <xmx:SgbfXW1-LZMMZWOA9WIfrTeapZOF5tT2yYOuUDAk2IHQM0AssjTJ5A>
-    <xmx:SgbfXdUd-QLH1pe_RzGcVR2_qv5okNT5u4viCWCC_2jLajY4XBTsbA>
-    <xmx:SwbfXWwI73HKS4JN_feji9NFDdfWof7FuLFkS5jmB9G3Gj7ny05Edw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 3CAF8E00A2; Wed, 27 Nov 2019 18:27:06 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-578-g826f590-fmstable-20191119v1
-Mime-Version: 1.0
-Message-Id: <01b18f38-2faa-4896-9a61-d0c657596c6f@www.fastmail.com>
-In-Reply-To: <493e2f9ed5aff112519adcdf2d3044bf54c2d91a.1572945709.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1572945709.git.matti.vaittinen@fi.rohmeurope.com>
- <493e2f9ed5aff112519adcdf2d3044bf54c2d91a.1572945709.git.matti.vaittinen@fi.rohmeurope.com>
-Date:   Thu, 28 Nov 2019 09:58:35 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Matti Vaittinen" <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com
-Cc:     "Linus Walleij" <linus.walleij@linaro.org>,
-        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
-        "Joel Stanley" <joel@jms.id.au>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/62] gpio: gpio-aspeed: Use new GPIO_LINE_DIRECTION
-Content-Type: text/plain
+        Wed, 27 Nov 2019 18:36:55 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARNTdKB057274;
+        Wed, 27 Nov 2019 23:36:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=Z0br7yFxus9V+xguTr7W8maMYEonihMlkEnz4VRBrDc=;
+ b=LzCx9LjDFZaEnOjdab7ivaiyosB8LruZ84rZRWt2JY2amEh6icHfZjGvYN2xAPi+YUPj
+ SWbbrNGtuYCrcTW/BTbPfP4Cxk8QiyGP3EKeDB+qgFa1mUCsCAlL+g9vB0LC4Uj77FWk
+ 7QJxgt4HScWbJfh4Iox6XySos9ePnfOaQSFyzE8RL52WpKk1V+WRxoYCIZ8wuD9tJpdB
+ 5OI6p+Px/6ZAlil/+sDoxGtYGdqyCPa4q3pHSm0IrNH9Lijl9gdGEx4SBEXn2GSJhJCt
+ pOcowdMdzap1BlzG5WPSE8vxKNPM2avA8vpdUbzv69BG8FdKeV7DWgqyX6bfW7b+GMdk Hw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wevqqge7f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 23:36:35 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARNYZB5015562;
+        Wed, 27 Nov 2019 23:36:35 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2wh0rn2a4d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 23:36:35 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xARNaXJb013656;
+        Wed, 27 Nov 2019 23:36:33 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Nov 2019 15:36:32 -0800
+Date:   Wed, 27 Nov 2019 18:36:40 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] padata: Remove broken queue flushing
+Message-ID: <20191127233640.kl5g2bpmg2hvlkz4@ca-dmjordan1.us.oracle.com>
+References: <20191119051731.yev6dcsp2znjaagz@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191119051731.yev6dcsp2znjaagz@gondor.apana.org.au>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911270188
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911270188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Tue, 5 Nov 2019, at 20:42, Matti Vaittinen wrote:
-> It's hard for occasional GPIO code reader/writer to know if values 0/1
-> equal to IN or OUT. Use defined GPIO_LINE_DIRECTION_IN and
-> GPIO_LINE_DIRECTION_OUT to help them out.
+On Tue, Nov 19, 2019 at 01:17:31PM +0800, Herbert Xu wrote:
+> The function padata_flush_queues is fundamentally broken because
+> it cannot force padata users to complete the request that is
+> underway.  IOW padata has to passively wait for the completion
+> of any outstanding work.
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> As it stands flushing is used in two places.  Its use in padata_stop
+> is simply unnecessary because nothing depends on the queues to
+> be flushed afterwards.
+> 
+> The other use in padata_replace is more substantial as we depend
+> on it to free the old pd structure.  This patch instead uses the
+> pd->refcnt to dynamically free the pd structure once all requests
+> are complete.
+> 
+> Fixes: 2b73b07ab8a4 ("padata: Flush the padata queues actively")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Not sure where the series is at, but this looks fine to me:
-
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
