@@ -2,118 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3344B10B4BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 18:50:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B20C10B4C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 18:50:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfK0RuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 12:50:18 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:42192 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726984AbfK0RuS (ORCPT
+        id S1727179AbfK0Ruh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 12:50:37 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37653 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbfK0Rug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 12:50:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574877017;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+MB6N9uP3ORAGIaepwpg/1bmdyKasKWZBIfVHjugW8k=;
-        b=I2JndIzL5W8rKGE+au/M4Hw07CSzq5+ZCGdCalYKbyQ3LwmAkeXHW5WCdi+VxDvxK3sFhm
-        rtFYTBRVmFoLfyQyPeKUbZFCIuARyxh37rtNIz8CzyFRUFSo4wVcDg3G1PxoJnmfOKbWnl
-        oxWedz40OXSZiuYnVNvJsk16kdMERyU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-138-WxIffqC8PO-3iffa3IjJpw-1; Wed, 27 Nov 2019 12:50:13 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 89C75800D5A;
-        Wed, 27 Nov 2019 17:50:12 +0000 (UTC)
-Received: from ovpn-118-152.ams2.redhat.com (unknown [10.36.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 755345C28D;
-        Wed, 27 Nov 2019 17:50:03 +0000 (UTC)
-Message-ID: <26e9b84bef24d46da9504aae2ca444d0d258c621.camel@redhat.com>
-Subject: Re: epoll_wait() performance
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     'Marek Majkowski' <marek@cloudflare.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>
-Date:   Wed, 27 Nov 2019 18:50:02 +0100
-In-Reply-To: <2f1635d9300a4bec8a0422e9e9518751@AcuMS.aculab.com>
-References: <bc84e68c0980466096b0d2f6aec95747@AcuMS.aculab.com>
-         <CAJPywTJYDxGQtDWLferh8ObjGp3JsvOn1om1dCiTOtY6S3qyVg@mail.gmail.com>
-         <5f4028c48a1a4673bd3b38728e8ade07@AcuMS.aculab.com>
-         <20191127164821.1c41deff@carbon>
-         <0b8d7447e129539aec559fa797c07047f5a6a1b2.camel@redhat.com>
-         <2f1635d9300a4bec8a0422e9e9518751@AcuMS.aculab.com>
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30)
+        Wed, 27 Nov 2019 12:50:36 -0500
+Received: by mail-io1-f68.google.com with SMTP id k24so15201940ioc.4;
+        Wed, 27 Nov 2019 09:50:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=04rJ1IYwNSIyJOHKJi4xXfEFHxSBSW+n5iwgukHRDYo=;
+        b=jtuGQCCTDbUJ5ImvXzF36pJWvS/G0E2f9jGhmPvOSjcR9/GOBctAZDeZZx+XDT+ZFL
+         zBkd7eWDm+XH6doZMonVivdpXIzSv5x1nB6rw4K6Z93MVpCL8s3g0ekoR6j9eMJNWHP5
+         QZ37fW014SlXffav0nD0sZz12sGAFUnmv5oQmVLQV6lA6oqfzy6EnB1RhU2P7189BCPH
+         7PXH53O2VXGzISkP3uge84MCvBgqU9IBqapRO4H17fM8l59sdEYtQYzzbr5flTIr75GR
+         74Ea84SQAfV1VlbQu05wqGpE5JqqLdmEAUsGhzF7liHMKQNjAyuAdOOF7bjVdZJ+erxp
+         IlQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=04rJ1IYwNSIyJOHKJi4xXfEFHxSBSW+n5iwgukHRDYo=;
+        b=SCLXyOlBFhR/JHs6jRjd2+RGH7zSrHDrY/mMEJR3/vcPFCGQibFiIK8ETr3euav3M8
+         bRlXMWpiw1ZfVS880N4sbCSK0HVpI1jMIbdBirIkAGRr5xB/La0mGzNP0mgWmAeEYmEF
+         F8ujMHkRAGXDkXX3XUyLrFyz2IbeBhBRSvVERbyYqQOpo7/3G4V+7iJDR+SNGbZQViXS
+         Yoc3ZICVyMSX+ilotfIunGHWnAAB3+BOzl8l53zTLlUc3xmTh+geu/1Rv/JqfQfnfGH0
+         RP6rK2zS0bm2nJ7g2BiY/FuZ3zOiKMev6oB0Iey0I8bVLBL5Pe8TElnZ8lHna/JnpZQ3
+         vmZg==
+X-Gm-Message-State: APjAAAX8WhROdPGTTr5p0em32CtqQwoeLmkmXPJSUbRLCk7zRb2G6+KM
+        agZYzUAF4iEGx745Wj7v0CM=
+X-Google-Smtp-Source: APXvYqzWvzxtb7J0G8nzMhO77OMQr50BdQa1XbiNt1L46k32ns3H5ggL9HenLLvInyzeBxVZGAtX+g==
+X-Received: by 2002:a02:6a01:: with SMTP id l1mr5693053jac.73.1574877035951;
+        Wed, 27 Nov 2019 09:50:35 -0800 (PST)
+Received: from localhost.localdomain (c-24-9-77-57.hsd1.co.comcast.net. [24.9.77.57])
+        by smtp.googlemail.com with ESMTPSA id b22sm1183466ior.49.2019.11.27.09.50.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2019 09:50:35 -0800 (PST)
+From:   Jim Cromie <jim.cromie@gmail.com>
+To:     jbaron@akamai.com, linux-kernel@vger.kernel.org
+Cc:     linux@rasmusvillemoes.dk, greg@kroah.com,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH 01/16] dyndbg-docs: eschew file /full/path query in docs
+Date:   Wed, 27 Nov 2019 10:50:24 -0700
+Message-Id: <20191127175025.1351158-1-jim.cromie@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: WxIffqC8PO-3iffa3IjJpw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Regarding:
+commit 2b6783191da7 ("dynamic_debug: add trim_prefix() to provide source-root relative paths")
+commit a73619a845d5 ("kbuild: use -fmacro-prefix-map to make __FILE__ a relative path")
 
-Thanks for the additional details.
+2nd commit broke dynamic-debug's "file $fullpath" query form, but
+nobody noticed because 1st commit trimmed prefixes from control-file
+output, so the click-copy-pasting of fullpaths into new queries had
+ceased; that query form became unused.
 
-On Wed, 2019-11-27 at 17:30 +0000, David Laight wrote:
-> From: Paolo Abeni
-> > Sent: 27 November 2019 16:27
-> ...
-> > @David: If I read your message correctly, the pkt rate you are dealing
-> > with is quite low... are we talking about tput or latency? I guess
-> > latency could be measurably higher with recvmmsg() in respect to other
-> > syscall. How do you measure the releative performances of recvmmsg()
-> > and recv() ? with micro-benchmark/rdtsc()? Am I right that you are
-> > usually getting a single packet per recvmmsg() call?
-> 
-> The packet rate per socket is low, typically one packet every 20ms.
-> This is RTP, so telephony audio.
-> However we have a lot of audio channels and hence a lot of sockets.
-> So there are can be 1000s of sockets we need to receive the data from.
-> The test system I'm using has 16 E1 TDM links each of which can handle
-> 31 audio channels.
-> Forwarding all these to/from RTP (one of the things it might do) is 496
-> audio channels - so 496 RTP sockets and 496 RTCP ones.
-> Although the test I'm doing is pure RTP and doesn't use TDM.
+Removing the function is cleanest, but it could be useful in
+old-compiler corner cases, where __FILE__ still has /full/path,
+and it safely does nothing otherwize.
 
-Oks, I think this is not exactly the preferred recvmmsg() use case ;)
+So instead, quietly deprecate "file /full/path" query form, by
+removing all /full/paths examples in the docs.  I skipped adding a
+back-compat note.
 
-> What I'm measuring is the total time taken to receive all the packets
-> (on all the sockets) that are available to be read every 10ms.
-> So poll + recv + add_to_queue.
-> (The data processing is done by other threads.)
-> I use the time difference (actually CLOCK_MONOTONIC - from rdtsc)
-> to generate a 64 entry (self scaling) histogram of the elapsed times.
-> Then look for the histograms peak value.
-> (I need to work on the max value, but that is a different (more important!) problem.)
-> Depending on the poll/recv method used this takes 1.5 to 2ms
-> in each 10ms period.
-> (It is faster if I run the cpu at full speed, but it usually idles along
-> at 800MHz.)
-> 
-> If I use recvmmsg() I only expect to see one packet because there
-> is (almost always) only one packet on each socket every 20ms.
-> However there might be more than one, and if there is they
-> all need to be read (well at least 2 of them) in that block of receives.
+Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+---
+ .../admin-guide/dynamic-debug-howto.rst       | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-I would wild guess that recvmmsg() would be faster than 2 recv() when
-there are exactly 2 pkts to read and the user-space provides exactly 2
-msg entries, but likely non very relevant for the overall scenario.
-
-Sorry, I don't have any good suggestion here.
-
-Cheers,
-
-Paolo
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 252e5ef324e5..e011f8907116 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -62,10 +62,10 @@ statements via::
+ 
+   nullarbor:~ # cat <debugfs>/dynamic_debug/control
+   # filename:lineno [module]function flags format
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:323 [svcxprt_rdma]svc_rdma_cleanup =_ "SVCRDMA Module Removed, deregister RPC RDMA transport\012"
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:341 [svcxprt_rdma]svc_rdma_init =_ "\011max_inline       : %d\012"
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:340 [svcxprt_rdma]svc_rdma_init =_ "\011sq_depth         : %d\012"
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svc_rdma.c:338 [svcxprt_rdma]svc_rdma_init =_ "\011max_requests     : %d\012"
++  net/sunrpc/svc_rdma.c:323 [svcxprt_rdma]svc_rdma_cleanup =_ "SVCRDMA Module Removed, deregister RPC RDMA transport\012"
++  net/sunrpc/svc_rdma.c:341 [svcxprt_rdma]svc_rdma_init =_ "\011max_inline       : %d\012"
++  net/sunrpc/svc_rdma.c:340 [svcxprt_rdma]svc_rdma_init =_ "\011sq_depth         : %d\012"
++  net/sunrpc/svc_rdma.c:338 [svcxprt_rdma]svc_rdma_init =_ "\011max_requests     : %d\012"
+   ...
+ 
+ 
+@@ -85,7 +85,7 @@ the debug statement callsites with any non-default flags::
+ 
+   nullarbor:~ # awk '$3 != "=_"' <debugfs>/dynamic_debug/control
+   # filename:lineno [module]function flags format
+-  /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svcsock.c:1603 [sunrpc]svc_send p "svc_process: st_sendto returned %d\012"
++  net/sunrpc/svcsock.c:1603 [sunrpc]svc_send p "svc_process: st_sendto returned %d\012"
+ 
+ Command Language Reference
+ ==========================
+@@ -158,13 +158,12 @@ func
+ 	func svc_tcp_accept
+ 
+ file
+-    The given string is compared against either the full pathname, the
+-    src-root relative pathname, or the basename of the source file of
+-    each callsite.  Examples::
++    The given string is compared against either the src-root relative
++    pathname, or the basename of the source file of each callsite.
++    Examples::
+ 
+ 	file svcsock.c
+-	file kernel/freezer.c
+-	file /usr/src/packages/BUILD/sgi-enhancednfs-1.4/default/net/sunrpc/svcsock.c
++	file kernel/freezer.c	# ie column 1 of control file
+ 
+ module
+     The given string is compared against the module name
+-- 
+2.23.0
 
