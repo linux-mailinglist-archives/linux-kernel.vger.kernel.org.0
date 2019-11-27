@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230B610B829
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E278F10B789
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:34:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbfK0Uke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45120 "EHLO mail.kernel.org"
+        id S1727727AbfK0Ues (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:34:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729042AbfK0Ukb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:31 -0500
+        id S1727701AbfK0Uep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:34:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E031C20863;
-        Wed, 27 Nov 2019 20:40:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53F3121569;
+        Wed, 27 Nov 2019 20:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887230;
-        bh=detVZUwgRyHVtddSUN/iavcWIqSHjmcqFrt8yqmE6bQ=;
+        s=default; t=1574886884;
+        bh=0TzNGBE4evBN9ZgC26JWg/JkCXYW4d8ehuItIepx2+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f51ojN7xDpUPdiWAzt6UdAR/ywSdvCyZ/siBU1+dUDfaMy3P+VUMBCuGruiITVByp
-         O5OnEG/Dq7EkBF/1zy1VgqXJGmhVf8EQnnCTJwg4WYsQLfkpFJQyVX3Xn0WHoPDEwp
-         FRj4NnM1JZtGmw82TUv8Z7LkQlB1zvOSkao1T/eY=
+        b=DjDoK6brgLSg79EnDUatGzo2+niQea0fUD9LlhoIN+Scu/7qpMDfYOG/R8ABwFyPa
+         I2jtyqsM/5/6XEGBUqHVlBOa5B9Y2UDxCpmrbEV4ooWd1vDjlSc2JWhHdkOlLj+Nh4
+         5VLI7Yf6Zulv+TR2fIe9AyyQPKfWNSNMJqRlEV+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 031/151] scsi: isci: Change sci_controller_start_tasks return type to sci_status
+Subject: [PATCH 4.4 023/132] gfs2: Fix marking bitmaps non-full
 Date:   Wed, 27 Nov 2019 21:30:14 +0100
-Message-Id: <20191127203019.935095356@linuxfoundation.org>
+Message-Id: <20191127202920.080045665@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit 362b5da3dfceada6e74ecdd7af3991bbe42c0c0f ]
+[ Upstream commit ec23df2b0cf3e1620f5db77972b7fb735f267eff ]
 
-Clang warns when an enumerated type is implicitly converted to another.
+Reservations in gfs can span multiple gfs2_bitmaps (but they won't span
+multiple resource groups).  When removing a reservation, we want to
+clear the GBF_FULL flags of all involved gfs2_bitmaps, not just that of
+the first bitmap.
 
-drivers/scsi/isci/request.c:3476:13: warning: implicit conversion from
-enumeration type 'enum sci_task_status' to different enumeration type
-'enum sci_status' [-Wenum-conversion]
-                        status = sci_controller_start_task(ihost,
-                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/isci/host.c:2744:10: warning: implicit conversion from
-enumeration type 'enum sci_status' to different enumeration type 'enum
-sci_task_status' [-Wenum-conversion]
-                return SCI_SUCCESS;
-                ~~~~~~ ^~~~~~~~~~~
-drivers/scsi/isci/host.c:2753:9: warning: implicit conversion from
-enumeration type 'enum sci_status' to different enumeration type 'enum
-sci_task_status' [-Wenum-conversion]
-        return status;
-        ~~~~~~ ^~~~~~
-
-Avoid all of these implicit conversion by just making
-sci_controller_start_task use sci_status. This silences
-Clang and has no functional change since sci_task_status
-has all of its values mapped to something in sci_status.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/153
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Reviewed-by: Steven Whitehouse <swhiteho@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/host.c | 8 ++++----
- drivers/scsi/isci/host.h | 2 +-
- drivers/scsi/isci/task.c | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ fs/gfs2/rgrp.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
-index 609dafd661d14..da4583a2fa23e 100644
---- a/drivers/scsi/isci/host.c
-+++ b/drivers/scsi/isci/host.c
-@@ -2717,9 +2717,9 @@ enum sci_status sci_controller_continue_io(struct isci_request *ireq)
-  *    the task management request.
-  * @task_request: the handle to the task request object to start.
-  */
--enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
--					       struct isci_remote_device *idev,
--					       struct isci_request *ireq)
-+enum sci_status sci_controller_start_task(struct isci_host *ihost,
-+					  struct isci_remote_device *idev,
-+					  struct isci_request *ireq)
- {
- 	enum sci_status status;
+diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+index e632006a52df6..2736e9cfc2ee9 100644
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -645,7 +645,10 @@ static void __rs_deltree(struct gfs2_blkreserv *rs)
+ 	RB_CLEAR_NODE(&rs->rs_node);
  
-@@ -2728,7 +2728,7 @@ enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
- 			 "%s: SCIC Controller starting task from invalid "
- 			 "state\n",
- 			 __func__);
--		return SCI_TASK_FAILURE_INVALID_STATE;
-+		return SCI_FAILURE_INVALID_STATE;
+ 	if (rs->rs_free) {
+-		struct gfs2_bitmap *bi = rbm_bi(&rs->rs_rbm);
++		u64 last_block = gfs2_rbm_to_block(&rs->rs_rbm) +
++				 rs->rs_free - 1;
++		struct gfs2_rbm last_rbm = { .rgd = rs->rs_rbm.rgd, };
++		struct gfs2_bitmap *start, *last;
+ 
+ 		/* return reserved blocks to the rgrp */
+ 		BUG_ON(rs->rs_rbm.rgd->rd_reserved < rs->rs_free);
+@@ -656,7 +659,13 @@ static void __rs_deltree(struct gfs2_blkreserv *rs)
+ 		   it will force the number to be recalculated later. */
+ 		rgd->rd_extfail_pt += rs->rs_free;
+ 		rs->rs_free = 0;
+-		clear_bit(GBF_FULL, &bi->bi_flags);
++		if (gfs2_rbm_from_block(&last_rbm, last_block))
++			return;
++		start = rbm_bi(&rs->rs_rbm);
++		last = rbm_bi(&last_rbm);
++		do
++			clear_bit(GBF_FULL, &start->bi_flags);
++		while (start++ != last);
  	}
+ }
  
- 	status = sci_remote_device_start_task(ihost, idev, ireq);
-diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
-index 22a9bb1abae14..15dc6e0d8deb0 100644
---- a/drivers/scsi/isci/host.h
-+++ b/drivers/scsi/isci/host.h
-@@ -490,7 +490,7 @@ enum sci_status sci_controller_start_io(
- 	struct isci_remote_device *idev,
- 	struct isci_request *ireq);
- 
--enum sci_task_status sci_controller_start_task(
-+enum sci_status sci_controller_start_task(
- 	struct isci_host *ihost,
- 	struct isci_remote_device *idev,
- 	struct isci_request *ireq);
-diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
-index 6dcaed0c1fc8c..fb6eba331ac6e 100644
---- a/drivers/scsi/isci/task.c
-+++ b/drivers/scsi/isci/task.c
-@@ -258,7 +258,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
- 				 struct isci_tmf *tmf, unsigned long timeout_ms)
- {
- 	DECLARE_COMPLETION_ONSTACK(completion);
--	enum sci_task_status status = SCI_TASK_FAILURE;
-+	enum sci_status status = SCI_FAILURE;
- 	struct isci_request *ireq;
- 	int ret = TMF_RESP_FUNC_FAILED;
- 	unsigned long flags;
-@@ -301,7 +301,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
- 	/* start the TMF io. */
- 	status = sci_controller_start_task(ihost, idev, ireq);
- 
--	if (status != SCI_TASK_SUCCESS) {
-+	if (status != SCI_SUCCESS) {
- 		dev_dbg(&ihost->pdev->dev,
- 			 "%s: start_io failed - status = 0x%x, request = %p\n",
- 			 __func__,
 -- 
 2.20.1
 
