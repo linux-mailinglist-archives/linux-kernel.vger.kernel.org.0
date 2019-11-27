@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA2210BB2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C0910BAE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733020AbfK0VKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:10:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37324 "EHLO mail.kernel.org"
+        id S1732642AbfK0VHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:07:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733009AbfK0VKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:10:17 -0500
+        id S1732032AbfK0VHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:07:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 646FB215E5;
-        Wed, 27 Nov 2019 21:10:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE07D20637;
+        Wed, 27 Nov 2019 21:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889016;
-        bh=Lm3tkdQR5+KE9wfD6jeQJJF/nlpNrVgcbeXGht6aZa4=;
+        s=default; t=1574888858;
+        bh=O4kljrPt375tBeZnHIE1KU1ZosopXyMxljzp2rRX/gg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z3DMhgJAe8uC78+zujkEQe8EAt1jSJem4xRajbrcTXu7L2VKHSIXNRvpJooDcRlhu
-         u8HvqSo5x05+iIgeGI7yi8Oxj/oJJfLzOcDfH0/uuTP+lAkdHQDd0e0RqHpMHHkUZR
-         eq5TUXvfgwFIdBNYYPNtPZOlnU73EnqVf13BJZpw=
+        b=nL9T8hW+m9M1VGOqejePn1P9JMQROGN8uw73bSZm75r0disBYXIqtQzVSG9OUNQOl
+         9u9rtuZeoqmgOXN+ZFKw1y2tMZswIKcgRZlFtLm0MaLl6T3Vg61qiKlQ86RIc8K9/v
+         /vWu5ddj/6f3bkW7Ln1qTYXnKjQoEJ7pS/vtzs/c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 5.3 52/95] x86/xen/32: Make xen_iret_crit_fixup() independent of frame layout
-Date:   Wed, 27 Nov 2019 21:32:09 +0100
-Message-Id: <20191127202918.358119566@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a36ab65c6653d7ccdd62@syzkaller.appspotmail.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 280/306] ALSA: usb-audio: Fix NULL dereference at parsing BADD
+Date:   Wed, 27 Nov 2019 21:32:10 +0100
+Message-Id: <20191127203135.243292483@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,180 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Beulich <jbeulich@suse.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 29b810f5a5ec127d3143770098e05981baa3eb77 upstream.
+commit 9435f2bb66874a0c4dd25e7c978957a7ca2c93b1 upstream.
 
-Now that SS:ESP always get saved by SAVE_ALL, this also needs to be
-accounted for in xen_iret_crit_fixup(). Otherwise the old_ax value gets
-interpreted as EFLAGS, and hence VM86 mode appears to be active all the
-time, leading to random "vm86_32: no user_vm86: BAD" log messages alongside
-processes randomly crashing.
+snd_usb_mixer_controls_badd() that parses UAC3 BADD profiles misses a
+NULL check for the given interfaces.  When a malformed USB descriptor
+is passed, this may lead to an Oops, as spotted by syzkaller.
+Skip the iteration if the interface doesn't exist for avoiding the
+crash.
 
-Since following the previous model (sitting after SAVE_ALL) would further
-complicate the code _and_ retain the dependency of xen_iret_crit_fixup() on
-frame manipulations done by entry_32.S, switch things around and do the
-adjustment ahead of SAVE_ALL.
-
-Fixes: 3c88c692c287 ("x86/stackframe/32: Provide consistent pt_regs")
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Stable Team <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/32d8713d-25a7-84ab-b74b-aa3e88abce6b@suse.com
+Fixes: 17156f23e93c ("ALSA: usb: add UAC3 BADD profiles support")
+Reported-by: syzbot+a36ab65c6653d7ccdd62@syzkaller.appspotmail.com
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191122112840.24797-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_32.S |   22 +++++---------
- arch/x86/xen/xen-asm_32.S |   70 +++++++++++++++++-----------------------------
- 2 files changed, 35 insertions(+), 57 deletions(-)
+ sound/usb/mixer.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1341,11 +1341,6 @@ END(spurious_interrupt_bug)
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -2949,6 +2949,9 @@ static int snd_usb_mixer_controls_badd(s
+ 			continue;
  
- #ifdef CONFIG_XEN_PV
- ENTRY(xen_hypervisor_callback)
--	pushl	$-1				/* orig_ax = -1 => not a system call */
--	SAVE_ALL
--	ENCODE_FRAME_POINTER
--	TRACE_IRQS_OFF
--
- 	/*
- 	 * Check to see if we got the event in the critical
- 	 * region in xen_iret_direct, after we've reenabled
-@@ -1353,16 +1348,17 @@ ENTRY(xen_hypervisor_callback)
- 	 * iret instruction's behaviour where it delivers a
- 	 * pending interrupt when enabling interrupts:
- 	 */
--	movl	PT_EIP(%esp), %eax
--	cmpl	$xen_iret_start_crit, %eax
-+	cmpl	$xen_iret_start_crit, (%esp)
- 	jb	1f
--	cmpl	$xen_iret_end_crit, %eax
-+	cmpl	$xen_iret_end_crit, (%esp)
- 	jae	1f
--
--	jmp	xen_iret_crit_fixup
--
--ENTRY(xen_do_upcall)
--1:	mov	%esp, %eax
-+	call	xen_iret_crit_fixup
-+1:
-+	pushl	$-1				/* orig_ax = -1 => not a system call */
-+	SAVE_ALL
-+	ENCODE_FRAME_POINTER
-+	TRACE_IRQS_OFF
-+	mov	%esp, %eax
- 	call	xen_evtchn_do_upcall
- #ifndef CONFIG_PREEMPT
- 	call	xen_maybe_preempt_hcall
---- a/arch/x86/xen/xen-asm_32.S
-+++ b/arch/x86/xen/xen-asm_32.S
-@@ -126,10 +126,9 @@ hyper_iret:
- 	.globl xen_iret_start_crit, xen_iret_end_crit
- 
- /*
-- * This is called by xen_hypervisor_callback in entry.S when it sees
-+ * This is called by xen_hypervisor_callback in entry_32.S when it sees
-  * that the EIP at the time of interrupt was between
-- * xen_iret_start_crit and xen_iret_end_crit.  We're passed the EIP in
-- * %eax so we can do a more refined determination of what to do.
-+ * xen_iret_start_crit and xen_iret_end_crit.
-  *
-  * The stack format at this point is:
-  *	----------------
-@@ -138,34 +137,23 @@ hyper_iret:
-  *	 eflags		}  outer exception info
-  *	 cs		}
-  *	 eip		}
-- *	---------------- <- edi (copy dest)
-- *	 eax		:  outer eax if it hasn't been restored
-  *	----------------
-- *	 eflags		}  nested exception info
-- *	 cs		}   (no ss/esp because we're nested
-- *	 eip		}    from the same ring)
-- *	 orig_eax	}<- esi (copy src)
-- *	 - - - - - - - -
-- *	 fs		}
-- *	 es		}
-- *	 ds		}  SAVE_ALL state
-- *	 eax		}
-- *	  :		:
-- *	 ebx		}<- esp
-+ *	 eax		:  outer eax if it hasn't been restored
-  *	----------------
-+ *	 eflags		}
-+ *	 cs		}  nested exception info
-+ *	 eip		}
-+ *	 return address	: (into xen_hypervisor_callback)
-  *
-- * In order to deliver the nested exception properly, we need to shift
-- * everything from the return addr up to the error code so it sits
-- * just under the outer exception info.  This means that when we
-- * handle the exception, we do it in the context of the outer
-- * exception rather than starting a new one.
-+ * In order to deliver the nested exception properly, we need to discard the
-+ * nested exception frame such that when we handle the exception, we do it
-+ * in the context of the outer exception rather than starting a new one.
-  *
-- * The only caveat is that if the outer eax hasn't been restored yet
-- * (ie, it's still on stack), we need to insert its value into the
-- * SAVE_ALL state before going on, since it's usermode state which we
-- * eventually need to restore.
-+ * The only caveat is that if the outer eax hasn't been restored yet (i.e.
-+ * it's still on stack), we need to restore its value here.
-  */
- ENTRY(xen_iret_crit_fixup)
-+	pushl %ecx
- 	/*
- 	 * Paranoia: Make sure we're really coming from kernel space.
- 	 * One could imagine a case where userspace jumps into the
-@@ -176,32 +164,26 @@ ENTRY(xen_iret_crit_fixup)
- 	 * jump instruction itself, not the destination, but some
- 	 * virtual environments get this wrong.
- 	 */
--	movl PT_CS(%esp), %ecx
-+	movl 3*4(%esp), %ecx		/* nested CS */
- 	andl $SEGMENT_RPL_MASK, %ecx
- 	cmpl $USER_RPL, %ecx
-+	popl %ecx
- 	je 2f
- 
--	lea PT_ORIG_EAX(%esp), %esi
--	lea PT_EFLAGS(%esp), %edi
--
- 	/*
- 	 * If eip is before iret_restore_end then stack
- 	 * hasn't been restored yet.
- 	 */
--	cmp $iret_restore_end, %eax
-+	cmpl $iret_restore_end, 1*4(%esp)
- 	jae 1f
- 
--	movl 0+4(%edi), %eax		/* copy EAX (just above top of frame) */
--	movl %eax, PT_EAX(%esp)
--
--	lea ESP_OFFSET(%edi), %edi	/* move dest up over saved regs */
--
--	/* set up the copy */
--1:	std
--	mov $PT_EIP / 4, %ecx		/* saved regs up to orig_eax */
--	rep movsl
--	cld
--
--	lea 4(%edi), %esp		/* point esp to new frame */
--2:	jmp xen_do_upcall
--
-+	movl 4*4(%esp), %eax		/* load outer EAX */
-+	ret $4*4			/* discard nested EIP, CS, and EFLAGS as
-+					 * well as the just restored EAX */
+ 		iface = usb_ifnum_to_if(dev, intf);
++		if (!iface)
++			continue;
 +
-+1:
-+	ret $3*4			/* discard nested EIP, CS, and EFLAGS */
-+
-+2:
-+	ret
-+END(xen_iret_crit_fixup)
+ 		num = iface->num_altsetting;
+ 
+ 		if (num < 2)
 
 
