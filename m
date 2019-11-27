@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2708810B7C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7532C10B866
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:43:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfK0Ugy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:36:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39456 "EHLO mail.kernel.org"
+        id S1728606AbfK0UnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:43:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728447AbfK0Ugx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:36:53 -0500
+        id S1727985AbfK0UnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:43:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B273215A4;
-        Wed, 27 Nov 2019 20:36:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86369217BA;
+        Wed, 27 Nov 2019 20:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887012;
-        bh=N39DXQqu1coMpy96kBMWYb+Sz85DeuZUx59EONJN3I8=;
+        s=default; t=1574887382;
+        bh=0NAakbf0aFFUr3C1ssYzRRr9w/w1NNglKrosxTZzK+w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZzerHnDTW240N3vciIalPNqdt1YY5ZWfMs5r31T0gAXF15Rjw9N3R+QByhnG37beJ
-         9fEHdRB1l+JTGrtijOuM0eI80sQY8oBBO8qWFAPr4dBTo9LrjYIkwEYU0yPlsJskBQ
-         sZ7+7AqetbnbUAZ6OXYmR8Cy+kd7EiCjn6d3otCQ=
+        b=WamoV0JqFOmtx6ME1e3D1xKO9o36JA1A2dc+3QsD8dNP9gv1kksWy0gPrNRIWKbce
+         Dfgy1gIs95ooqQF2i1EiW4TqFjJeTHxL6WspF4gYgPVU2W+oyX8K+KnqRnkvnl1vFM
+         PMYa8aQA9sBgSguxaZj6MVdNCEEe9myUiRWpxzwM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
         Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 080/132] audit: print empty EXECVE args
-Date:   Wed, 27 Nov 2019 21:31:11 +0100
-Message-Id: <20191127203011.280284361@linuxfoundation.org>
+Subject: [PATCH 4.9 089/151] audit: print empty EXECVE args
+Date:   Wed, 27 Nov 2019 21:31:12 +0100
+Message-Id: <20191127203037.037579187@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -73,10 +73,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 0fe8b337291a3..87c43c92fb7d8 100644
+index c2aaf539728fb..854e90be1a023 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -1093,7 +1093,7 @@ static void audit_log_execve_info(struct audit_context *context,
+@@ -1096,7 +1096,7 @@ static void audit_log_execve_info(struct audit_context *context,
  		}
  
  		/* write as much as we can to the audit log */
