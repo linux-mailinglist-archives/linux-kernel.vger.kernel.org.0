@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5659D10BE5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDA5E10BF5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfK0Usn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:48:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33922 "EHLO mail.kernel.org"
+        id S1729399AbfK0Vmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:42:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727739AbfK0Usf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:48:35 -0500
+        id S1728492AbfK0Ujy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:39:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEA4C217C3;
-        Wed, 27 Nov 2019 20:48:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0647320863;
+        Wed, 27 Nov 2019 20:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887715;
-        bh=KzaYq/ZxefBgTK1mWLIBUbunCDUrWNx+9I10MwP1UNU=;
+        s=default; t=1574887193;
+        bh=LZp/NX6ULwok7KISCfKKkJI5x6JyKuh3DkWBM1uLWIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoivxwalVsenqd1J+jWOhyPrb0ewTqZWgSkEwc5Ps+8ECcngdy5lxeF5Yc/kUfCO+
-         BevwHpK+dDQvOP7YSPQlY6ETYtVyv4mkx7Az9kSmKKwRXpIbbfhNe3MfZjMuEEMDvY
-         UZ1bNk20FjkJuKG0G1Ha+79YQ93yvKQmD9ayD6OE=
+        b=oSg4jg9hpDb7a/W8Vk677vDoT1hkZbudjSyG/gKY96jF5qV7ubZPT24/8xseeXinF
+         b0x0sZknlReAfZKaD/BH4BXcdC+hDvJKPq82+P714GB5RKUY32TddbEhPm5eM6T8Sg
+         JCvvyyB+RjwK4d6ajn6wXBG9+yZSBa3SE6nk0DIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 066/211] usbip: tools: fix atoi() on non-null terminated string
-Date:   Wed, 27 Nov 2019 21:29:59 +0100
-Message-Id: <20191127203100.142713705@linuxfoundation.org>
+Subject: [PATCH 4.9 017/151] powerpc: Fix signedness bug in update_flash_db()
+Date:   Wed, 27 Nov 2019 21:30:00 +0100
+Message-Id: <20191127203010.440341531@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e325808c0051b16729ffd472ff887c6cae5c6317 ]
+[ Upstream commit 014704e6f54189a203cc14c7c0bb411b940241bc ]
 
-Currently the call to atoi is being passed a single char string
-that is not null terminated, so there is a potential read overrun
-along the stack when parsing for an integer value.  Fix this by
-instead using a 2 char string that is initialized to all zeros
-to ensure that a 1 char read into the string is always terminated
-with a \0.
+The "count < sizeof(struct os_area_db)" comparison is type promoted to
+size_t so negative values of "count" are treated as very high values
+and we accidentally return success instead of a negative error code.
 
-Detected by cppcheck:
-"Invalid atoi() argument nr 1. A nul-terminated string is required."
+This doesn't really change runtime much but it fixes a static checker
+warning.
 
-Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Geoff Levand <geoff@infradead.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/ps3/os-area.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
-index 6ff7b601f8545..f5ad219a324e8 100644
---- a/tools/usb/usbip/libsrc/usbip_host_common.c
-+++ b/tools/usb/usbip/libsrc/usbip_host_common.c
-@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
- 	int size;
- 	int fd;
- 	int length;
--	char status;
-+	char status[2] = { 0 };
- 	int value = 0;
+diff --git a/arch/powerpc/platforms/ps3/os-area.c b/arch/powerpc/platforms/ps3/os-area.c
+index 3db53e8aff927..9b2ef76578f06 100644
+--- a/arch/powerpc/platforms/ps3/os-area.c
++++ b/arch/powerpc/platforms/ps3/os-area.c
+@@ -664,7 +664,7 @@ static int update_flash_db(void)
+ 	db_set_64(db, &os_area_db_id_rtc_diff, saved_params.rtc_diff);
  
- 	size = snprintf(status_attr_path, sizeof(status_attr_path),
-@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
- 		return -1;
- 	}
- 
--	length = read(fd, &status, 1);
-+	length = read(fd, status, 1);
- 	if (length < 0) {
- 		err("error reading attribute %s", status_attr_path);
- 		close(fd);
- 		return -1;
- 	}
- 
--	value = atoi(&status);
-+	value = atoi(status);
- 
- 	return value;
- }
+ 	count = os_area_flash_write(db, sizeof(struct os_area_db), pos);
+-	if (count < sizeof(struct os_area_db)) {
++	if (count < 0 || count < sizeof(struct os_area_db)) {
+ 		pr_debug("%s: os_area_flash_write failed %zd\n", __func__,
+ 			 count);
+ 		error = count < 0 ? count : -EIO;
 -- 
 2.20.1
 
