@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA4EC10BDDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E3B10BEBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbfK0UyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:54:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43664 "EHLO mail.kernel.org"
+        id S1728366AbfK0ViX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:38:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfK0UyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:54:04 -0500
+        id S1728286AbfK0Upe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:45:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5497B2086A;
-        Wed, 27 Nov 2019 20:54:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E869A21741;
+        Wed, 27 Nov 2019 20:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888043;
-        bh=nO1nZoTSUMWnUAtRdEMsicEEwjOcRiAQDFf2YrjUfJg=;
+        s=default; t=1574887533;
+        bh=DeFJWPhFtF9RPI2zIaWSc+XHgGD8AYSBWHu+7NqVOKc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MNIrSJkRecCfsnlaEE5GNOCR9hlk6JeF0TOUY8HYEmpjL+5EyzGsPQnbkdw1S7GaC
-         FpqkuBg7nUp0jvUAnbUF/eXtuyBO9rKGMbrsodsFw+VSb3utJEoGm0LWLafzgOIwN5
-         xFscNkSVRruMKwXU2lsOUrs8Joe2csWwdVkkUb/A=
+        b=NqHpUnge6T91RmE+giLxTQddJLIbIc8KUB57G3UKipUps+gNlRSty3r0qUCI1xm1j
+         FjVWJUvU3q8B6Pb0ZFYdX3KHippQZ75MqYPNK1NGlJNJHiKhCJhWVAIk7NScWlwC9L
+         lHUvdYPhB+ywqpWwhx3fV5d2qlt3EaP4IgDX4CME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+f49d12d34f2321cf4df2@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 195/211] media: imon: invalid dereference in imon_touch_event
-Date:   Wed, 27 Nov 2019 21:32:08 +0100
-Message-Id: <20191127203112.072922546@linuxfoundation.org>
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 147/151] USB: serial: option: add support for Foxconn T77W968 LTE modules
+Date:   Wed, 27 Nov 2019 21:32:10 +0100
+Message-Id: <20191127203047.509900041@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,88 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Aleksander Morgado <aleksander@aleksander.es>
 
-commit f3f5ba42c58d56d50f539854d8cc188944e96087 upstream.
+commit f0797095423e6ea3b4be61134ee353c7f504d440 upstream.
 
-The touch timer is set up in intf1. If the second interface does not exist,
-the timer and touch input device are not setup and we get the following
-error, when touch events are reported via intf0.
+These are the Foxconn-branded variants of the Dell DW5821e modules,
+same USB layout as those. The device exposes AT, NMEA and DIAG ports
+in both USB configurations.
 
-kernel BUG at kernel/time/timer.c:956!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc1+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__mod_timer kernel/time/timer.c:956 [inline]
-RIP: 0010:__mod_timer kernel/time/timer.c:949 [inline]
-RIP: 0010:mod_timer+0x5a2/0xb50 kernel/time/timer.c:1100
-Code: 45 10 c7 44 24 14 ff ff ff ff 48 89 44 24 08 48 8d 45 20 48 c7 44 24 18 00 00 00 00 48 89 04 24 e9 5a fc ff ff e8 ae ce 0e 00 <0f> 0b e8 a7 ce 0e 00 4c 89 74 24 20 e9 37 fe ff ff e8 98 ce 0e 00
-RSP: 0018:ffff8881db209930 EFLAGS: 00010006
-RAX: ffffffff86c2b200 RBX: 00000000ffffa688 RCX: ffffffff83efc583
-RDX: 0000000000000100 RSI: ffffffff812f4d82 RDI: ffff8881d2356200
-RBP: ffff8881d23561e8 R08: ffffffff86c2b200 R09: ffffed103a46abeb
-R10: ffffed103a46abea R11: ffff8881d2355f53 R12: dffffc0000000000
-R13: 1ffff1103b64132d R14: ffff8881d2355f50 R15: 0000000000000006
-FS:  0000000000000000(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f75e2799000 CR3: 00000001d3b07000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- imon_touch_event drivers/media/rc/imon.c:1348 [inline]
- imon_incoming_packet.isra.0+0x2546/0x2f10 drivers/media/rc/imon.c:1603
- usb_rx_callback_intf0+0x151/0x1e0 drivers/media/rc/imon.c:1734
- __usb_hcd_giveback_urb+0x1f2/0x470 drivers/usb/core/hcd.c:1654
- usb_hcd_giveback_urb+0x368/0x420 drivers/usb/core/hcd.c:1719
- dummy_timer+0x120f/0x2fa2 drivers/usb/gadget/udc/dummy_hcd.c:1965
- call_timer_fn+0x179/0x650 kernel/time/timer.c:1404
- expire_timers kernel/time/timer.c:1449 [inline]
- __run_timers kernel/time/timer.c:1773 [inline]
- __run_timers kernel/time/timer.c:1740 [inline]
- run_timer_softirq+0x5e3/0x1490 kernel/time/timer.c:1786
- __do_softirq+0x221/0x912 kernel/softirq.c:292
- invoke_softirq kernel/softirq.c:373 [inline]
- irq_exit+0x178/0x1a0 kernel/softirq.c:413
- exiting_irq arch/x86/include/asm/apic.h:536 [inline]
- smp_apic_timer_interrupt+0x12f/0x500 arch/x86/kernel/apic/apic.c:1137
- apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
- </IRQ>
-RIP: 0010:default_idle+0x28/0x2e0 arch/x86/kernel/process.c:581
-Code: 90 90 41 56 41 55 65 44 8b 2d 44 3a 8f 7a 41 54 55 53 0f 1f 44 00 00 e8 36 ee d0 fb e9 07 00 00 00 0f 00 2d fa dd 4f 00 fb f4 <65> 44 8b 2d 20 3a 8f 7a 0f 1f 44 00 00 5b 5d 41 5c 41 5d 41 5e c3
-RSP: 0018:ffffffff86c07da8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000007 RBX: ffffffff86c2b200 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffffffff86c2ba4c
-RBP: fffffbfff0d85640 R08: ffffffff86c2b200 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- cpuidle_idle_call kernel/sched/idle.c:154 [inline]
- do_idle+0x3b6/0x500 kernel/sched/idle.c:263
- cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:355
- start_kernel+0x82a/0x864 init/main.c:784
- secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:241
-Modules linked in:
+P:  Vendor=0489 ProdID=e0b4 Rev=03.18
+S:  Manufacturer=FII
+S:  Product=T77W968 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#=0x0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#=0x1 Alt= 0 #EPs= 1 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
 
-Reported-by: syzbot+f49d12d34f2321cf4df2@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+P:  Vendor=0489 ProdID=e0b4 Rev=03.18
+S:  Manufacturer=FII
+S:  Product=T77W968 LTE
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=500mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#=0x1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#=0x6 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
+
+Signed-off-by: Aleksander Morgado <aleksander@aleksander.es>
+[ johan: drop id defines ]
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/rc/imon.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/serial/option.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/media/rc/imon.c
-+++ b/drivers/media/rc/imon.c
-@@ -1737,8 +1737,7 @@ static void imon_incoming_scancode(struc
- 	spin_unlock_irqrestore(&ictx->kc_lock, flags);
- 
- 	/* send touchscreen events through input subsystem if touchpad data */
--	if (ictx->display_type == IMON_DISPLAY_TYPE_VGA && len == 8 &&
--	    buf[7] == 0x86) {
-+	if (ictx->touch && len == 8 && buf[7] == 0x86) {
- 		imon_touch_event(ictx, buf);
- 		return;
- 
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1990,6 +1990,10 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
++	{ USB_DEVICE(0x0489, 0xe0b4),						/* Foxconn T77W968 */
++	  .driver_info = RSVD(0) | RSVD(1) | RSVD(6) },
++	{ USB_DEVICE(0x0489, 0xe0b5),						/* Foxconn T77W968 ESIM */
++	  .driver_info = RSVD(0) | RSVD(1) | RSVD(6) },
+ 	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
+ 	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
+ 	{ USB_DEVICE(0x2cb7, 0x0104),						/* Fibocom NL678 series */
 
 
