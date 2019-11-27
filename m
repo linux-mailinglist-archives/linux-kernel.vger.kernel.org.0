@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6F710B99C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:55:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C2410B8A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbfK0UzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:55:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45440 "EHLO mail.kernel.org"
+        id S1729712AbfK0UpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:45:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfK0UzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:55:03 -0500
+        id S1729706AbfK0UpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:45:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 549DA21556;
-        Wed, 27 Nov 2019 20:55:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1718521780;
+        Wed, 27 Nov 2019 20:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888102;
-        bh=VAuPGxZCIYsAgk/b9uxIyvWkBkmJL4yAMIffas4UNes=;
+        s=default; t=1574887509;
+        bh=YnZvOSCW0bD6fm1Fzv00QuMQnTGHaT7OrBMOg3XzLII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c17+S9psA6h07DglUtDqTSkn5YfnMMPTEckw7tMMxqsVP2opSvwVqa+Irkcs9tuq/
-         rgZvb/M51I3ERqNcQ24F4BBeUBN2+njLMkuases9juO3DWFKRPeKZd77Fpe0hvFFw2
-         w5sF2K7UicaJakCXEqKQdaQ4E7NHoXMN6i5/jhpk=
+        b=pH8dzSAyqegLgGlBsR7ZJ6nlvlzYhn1ssk4wRaut6xQGrHkpJkn8q7uJd/EHBBdga
+         QWjJsQ+C+BOmVU/BYmV8xZxC264OcSC0mjHtaX9cSeGj5128joafnmQtA/a5g0Ch93
+         q3gKJh+sDrHAB0Q/Qo0cmZkQgskJAvH/mwVNWsI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vandana BN <bnvandana@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 188/211] media: vivid: Set vid_cap_streaming and vid_out_streaming to true
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 138/151] virtio_console: move removal code
 Date:   Wed, 27 Nov 2019 21:32:01 +0100
-Message-Id: <20191127203111.472635191@linuxfoundation.org>
+Message-Id: <20191127203046.926583668@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +43,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vandana BN <bnvandana@gmail.com>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit b4add02d2236fd5f568db141cfd8eb4290972eb3 upstream.
+[ Upstream commit aa44ec867030a72e8aa127977e37dec551d8df19 ]
 
-When vbi stream is started, followed by video streaming,
-the vid_cap_streaming and vid_out_streaming were not being set to true,
-which would cause the video stream to stop when vbi stream is stopped.
-This patch allows to set vid_cap_streaming and vid_out_streaming to true.
-According to Hans Verkuil it appears that these 'if (dev->kthread_vid_cap)'
-checks are a left-over from the original vivid development and should never
-have been there.
+Will make it reusable for error handling.
 
-Signed-off-by: Vandana BN <bnvandana@gmail.com>
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vivid/vivid-vid-cap.c |    3 ---
- drivers/media/platform/vivid/vivid-vid-out.c |    3 ---
- 2 files changed, 6 deletions(-)
+ drivers/char/virtio_console.c | 72 +++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
---- a/drivers/media/platform/vivid/vivid-vid-cap.c
-+++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-@@ -239,9 +239,6 @@ static int vid_cap_start_streaming(struc
- 	if (vb2_is_streaming(&dev->vb_vid_out_q))
- 		dev->can_loop_video = vivid_vid_can_loop(dev);
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 8975ea08d6c01..34548d3b4d13c 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1993,6 +1993,42 @@ static void remove_vqs(struct ports_device *portdev)
+ 	kfree(portdev->out_vqs);
+ }
  
--	if (dev->kthread_vid_cap)
--		return 0;
--
- 	dev->vid_cap_seq_count = 0;
- 	dprintk(dev, 1, "%s\n", __func__);
- 	for (i = 0; i < VIDEO_MAX_FRAME; i++)
---- a/drivers/media/platform/vivid/vivid-vid-out.c
-+++ b/drivers/media/platform/vivid/vivid-vid-out.c
-@@ -158,9 +158,6 @@ static int vid_out_start_streaming(struc
- 	if (vb2_is_streaming(&dev->vb_vid_cap_q))
- 		dev->can_loop_video = vivid_vid_can_loop(dev);
++static void virtcons_remove(struct virtio_device *vdev)
++{
++	struct ports_device *portdev;
++	struct port *port, *port2;
++
++	portdev = vdev->priv;
++
++	spin_lock_irq(&pdrvdata_lock);
++	list_del(&portdev->list);
++	spin_unlock_irq(&pdrvdata_lock);
++
++	/* Disable interrupts for vqs */
++	vdev->config->reset(vdev);
++	/* Finish up work that's lined up */
++	if (use_multiport(portdev))
++		cancel_work_sync(&portdev->control_work);
++	else
++		cancel_work_sync(&portdev->config_work);
++
++	list_for_each_entry_safe(port, port2, &portdev->ports, list)
++		unplug_port(port);
++
++	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
++
++	/*
++	 * When yanking out a device, we immediately lose the
++	 * (device-side) queues.  So there's no point in keeping the
++	 * guest side around till we drop our final reference.  This
++	 * also means that any ports which are in an open state will
++	 * have to just stop using the port, as the vqs are going
++	 * away.
++	 */
++	remove_vqs(portdev);
++	kfree(portdev);
++}
++
+ /*
+  * Once we're further in boot, we get probed like any other virtio
+  * device.
+@@ -2121,42 +2157,6 @@ fail:
+ 	return err;
+ }
  
--	if (dev->kthread_vid_out)
--		return 0;
+-static void virtcons_remove(struct virtio_device *vdev)
+-{
+-	struct ports_device *portdev;
+-	struct port *port, *port2;
 -
- 	dev->vid_out_seq_count = 0;
- 	dprintk(dev, 1, "%s\n", __func__);
- 	if (dev->start_streaming_error) {
+-	portdev = vdev->priv;
+-
+-	spin_lock_irq(&pdrvdata_lock);
+-	list_del(&portdev->list);
+-	spin_unlock_irq(&pdrvdata_lock);
+-
+-	/* Disable interrupts for vqs */
+-	vdev->config->reset(vdev);
+-	/* Finish up work that's lined up */
+-	if (use_multiport(portdev))
+-		cancel_work_sync(&portdev->control_work);
+-	else
+-		cancel_work_sync(&portdev->config_work);
+-
+-	list_for_each_entry_safe(port, port2, &portdev->ports, list)
+-		unplug_port(port);
+-
+-	unregister_chrdev(portdev->chr_major, "virtio-portsdev");
+-
+-	/*
+-	 * When yanking out a device, we immediately lose the
+-	 * (device-side) queues.  So there's no point in keeping the
+-	 * guest side around till we drop our final reference.  This
+-	 * also means that any ports which are in an open state will
+-	 * have to just stop using the port, as the vqs are going
+-	 * away.
+-	 */
+-	remove_vqs(portdev);
+-	kfree(portdev);
+-}
+-
+ static struct virtio_device_id id_table[] = {
+ 	{ VIRTIO_ID_CONSOLE, VIRTIO_DEV_ANY_ID },
+ 	{ 0 },
+-- 
+2.20.1
+
 
 
