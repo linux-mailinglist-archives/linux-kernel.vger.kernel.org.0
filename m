@@ -2,86 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0968010C068
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 23:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4925610C06A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 23:57:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfK0W4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 17:56:44 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38269 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfK0W4o (ORCPT
+        id S1727542AbfK0W5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 17:57:00 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:38671 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbfK0W5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 17:56:44 -0500
-Received: by mail-qk1-f193.google.com with SMTP id b8so6145995qkk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 14:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=XYhfRwG5Ji2pvMuCuinGa1OmrcViu32wplTTKEJhTfk=;
-        b=PAARS5PcPoQL3XS9GQzyp2fDTPw3+pUXtyo52tuExZFSfaIimO5e4M+TgBervYDP7U
-         yhUVGPxTjccP9BCtGXAcM0XetuU1oUTzPeqhPmHoE1dMxcvPoLDnJX90nNtLptJD/uP1
-         ju63egzcZc+qyp0v9JxEe0A4YxDXiDmyrT1WrJ7y9wECAYYxYgEATqabazbToNKHAofz
-         hG4stzgnWmZYPw1NxrIoYc6eMbWT0WlB7un2ZhhwIi01p8TNCRLc82GUpEhYT1DNLY2D
-         yeineiUFS+oLwXUsNXWGlIGyeTpyeIaE4Fct4BynsdREr5QLuW9ucMeYwnIPPYGUydxl
-         zBFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=XYhfRwG5Ji2pvMuCuinGa1OmrcViu32wplTTKEJhTfk=;
-        b=I9PvdTXfP5aV1NZ+DVgj4jnBWToEAc2QKn0MeZncQqlUYi+WBdVqIHEOD9SeYjqzfP
-         2GjbxUrIhjyGdUDrVn9+gUOdCvS1nzxbZL07z7upPCNjtTObFENJwJUb9kV2LotuXCfg
-         gQKrTBMRxbMXgN2i0PUuX5sF8Zn8NJG3006UDWdX0Wtc8W865wWPe0KusbN8+FkTIShP
-         RS19ZuMvq5Js6byisQvINgYUCsoWLx4LBCy+gninDwZDSK4X7BElWQuMOZwocCc46Khn
-         6lD/w2cjZVlC/CwQdqOurLEDmDK6OHEsWjIsJA/OZMk/sCddl5kCUYeS4JMEoPh43qAB
-         VGvw==
-X-Gm-Message-State: APjAAAXq/m9RG62opQIUp/TOvNaC74PuWkjF41Hp/yIlowIEP0RRNC9D
-        OELdRjJ7dQJ41tgtbxWAVco+bA==
-X-Google-Smtp-Source: APXvYqzmKp4CtfXv6/HagS2sTgegvpTVS6zdaqSQywUUhkFMbj8c01JkSqjXG7xlf5mELrHR22q0Xg==
-X-Received: by 2002:a37:b183:: with SMTP id a125mr6844021qkf.19.1574895401631;
-        Wed, 27 Nov 2019 14:56:41 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id k26sm8134476qtm.10.2019.11.27.14.56.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 14:56:41 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in find_(smallest|biggest)_section_pfn
-Date:   Wed, 27 Nov 2019 17:56:40 -0500
-Message-Id: <555512D0-986D-437D-AE01-2087CB668F68@lca.pw>
-References: <f2d5c2ed-b315-ee70-7d1e-b91d6d72a076@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-In-Reply-To: <f2d5c2ed-b315-ee70-7d1e-b91d6d72a076@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-X-Mailer: iPhone Mail (17A878)
+        Wed, 27 Nov 2019 17:57:00 -0500
+Received: from marcel-macpro.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 95B0FCEC82;
+        Thu, 28 Nov 2019 00:06:06 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
+Subject: Re: [PATCH] dt-bindings: net: bluetooth: Minor fix in
+ broadcom-bluetooth
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20191127224509.3341-1-abhishekpandit@chromium.org>
+Date:   Wed, 27 Nov 2019 23:56:58 +0100
+Cc:     Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Johan Hedberg <johan.hedberg@intel.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mohammad Rasim <mohammad.rasim96@gmail.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <268BB19B-161A-4244-B460-E59E7C846632@holtmann.org>
+References: <20191127224509.3341-1-abhishekpandit@chromium.org>
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+X-Mailer: Apple Mail (2.3601.0.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Abhishek,
 
+> The example for brcm,bt-pcm-int-params should be a bytestring and all
+> values need to be two hex characters.
+> 
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> ---
+> 
+> Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Nov 27, 2019, at 3:49 PM, David Hildenbrand <david@redhat.com> wrote:
->=20
-> (I am a friend of cleaning up and refactoring code to make it easier to
-> understand, maintain and extend. I was assuming your mentality is to
-> rather keeping code changes minimal if there is a chance to break things
-> - I'm sorry if that assumption was wrong.)
+patch has been applied to bluetooth-next tree.
 
-Yes, I tested linux-next everyday and saw enough of those cleanup efforts en=
-ds up introducing regressions. It is almost every day or two I had to invest=
-igate at least one regression and pick the suckers out even though my testin=
-g is only focus on MM and friends. However, I do agree if there are worthy c=
-leanup and refactoring but those tiny ones make me uncomfortable. See, I am j=
-ust trying to save a real vacation for a few weeks in the future, but given t=
-he current situation, I=E2=80=99ll need to give up on this project [1] at al=
-l because I just have no courage to debug all the regressions there once bac=
-k.
+Regards
 
-[1] https://github.com/cailca/linux-mm=
+Marcel
+
