@@ -2,93 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E050110AA62
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5527F10AA6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfK0Fq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 00:46:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbfK0Fq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 00:46:28 -0500
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C5A42084B
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 05:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574833587;
-        bh=oQiJiVUECmkuTnAwoFBoV84O+kVtT61Ej5+OnFy1dCE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AdSr0gQG7P2SKzLEN+rfnH5OX5yxQl7ZNqSPcZS0qv8blSgjhoGKGytjWliG9hG0I
-         BKYSfGjRJswjxMs4hf/tLG52dDMGYwUHYBgZmow+Gboo5alx+gBtvDl0e0e8xVsA2x
-         4yEC3W2XJmRYDRgpPYN9NpIoG3KwZfE9TrVMY+1E=
-Received: by mail-wm1-f47.google.com with SMTP id g206so5681873wme.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2019 21:46:27 -0800 (PST)
-X-Gm-Message-State: APjAAAV4KLN/f5LyNe5R+hSNjtFsaQaGBL5pPCivLQ51ywRz4fntqZK6
-        CzdUr2U3v/5XK3+9OMcDBtD6upOaPXMzfPARDCQe4w==
-X-Google-Smtp-Source: APXvYqyM9npE6Emj9WttvPSjgS/uP+e5K5P03ZPlpmJO5JKOu26gYD0LNTCqKbWK4OL/jluqTLBCW1Dql5ojcnXhcvU=
-X-Received: by 2002:a1c:1f8d:: with SMTP id f135mr2394132wmf.79.1574833585808;
- Tue, 26 Nov 2019 21:46:25 -0800 (PST)
+        id S1726149AbfK0FyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 00:54:20 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:42135 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726078AbfK0FyT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 00:54:19 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0TjCTZdE_1574834051;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TjCTZdE_1574834051)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Nov 2019 13:54:11 +0800
+Subject: Re: [PATCH v2 3/3] sched/numa: documentation for per-cgroup numa stat
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <cc35a710-c2ec-6c61-e30e-ee707798c5e9@linux.alibaba.com>
+ <9ce01935-84ba-e8b4-461b-8be388433950@infradead.org>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <7169fba4-220f-a4a7-d6e7-0f025a3cd308@linux.alibaba.com>
+Date:   Wed, 27 Nov 2019 13:54:11 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191126110659.GA14042@redhat.com> <20191126110758.GA14051@redhat.com>
- <CAHk-=whrhuNg_53wc3pBVToH-AUwKDbC5P_cb7=8bYfn=BYCJA@mail.gmail.com>
-In-Reply-To: <CAHk-=whrhuNg_53wc3pBVToH-AUwKDbC5P_cb7=8bYfn=BYCJA@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 26 Nov 2019 21:46:14 -0800
-X-Gmail-Original-Message-ID: <CALCETrWTjUJQVXmbhnAfpg=J1kV8XZnWrjR7Yt+a1Dd2GSTr5A@mail.gmail.com>
-Message-ID: <CALCETrWTjUJQVXmbhnAfpg=J1kV8XZnWrjR7Yt+a1Dd2GSTr5A@mail.gmail.com>
-Subject: Re: [PATCH] ptrace/x86: introduce TS_COMPAT_RESTART to fix get_nr_restart_syscall()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Jan Kratochvil <jan.kratochvil@redhat.com>,
-        Pedro Alves <palves@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9ce01935-84ba-e8b4-461b-8be388433950@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 8:04 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, Nov 26, 2019 at 3:08 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > Alternatively we could add ->compat_restart into struct restart_block,
-> > logically this is the same thing.
->
-> That sounds like the better model to me. That's what the restart_block
-> is about: it's supposed to contain the restart information.
->
-> I'd much rather see the system call number added into the restart
-> block (or just the "compat bit" - but we have that X32 case too, so
-> why not put it all there). And then the get_nr_restart_syscall() hack
-> goes away and is just "set state from the restart block".
->
-> How painful would that be? I guess right now we always just set all
-> the restart_block info manually in all the restart cases, and that
-> could make it a bit painful to add this kind of architecture-specific
-> flag, but it _sounds_ conceptually like the right thing to do.
+Hi, Randy
 
-How about we rename restart_block::fn to __fn, add fields
-restart_syscall_nr and restart_syscall_arch, and do:
+On 2019/11/27 下午12:58, Randy Dunlap wrote:
+> On 11/26/19 5:50 PM, 王贇 wrote:
+>> Since v1:
+>>   * thanks to Iurii for the better sentence
+>>   * thanks to Jonathan for the better format
+>>
+>> Add the description for 'cg_numa_stat', also a new doc to explain
+>> the details on how to deal with the per-cgroup numa statistics.
+>>
+>> Cc: Peter Zijlstra <peterz@infradead.org>
+>> Cc: Michal Koutný <mkoutny@suse.com>
+>> Cc: Mel Gorman <mgorman@suse.de>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Iurii Zaikin <yzaikin@google.com>
+>> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+> 
+> Hi,
+> I have a few comments/corrections. Please see below.
 
-long restart_block_activate(long (*fn)(struct restart_block *))
-{
-  current->restart_block.__fn = fn;
-  arch_restart_block_activate();
-  return -ERESTART_RESTARTBLOCK;
-  current->restart_block.syscall_nr
-}
+Thanks for the comments :-) will apply them all in next version.
 
-IMO the ideal solution would be to add a new syscall nr to restart a
-syscall and make it the same on all architectures.  This has
-unfortunate interactions with seccomp, though.
+> 
+>> ---
+>>  Documentation/admin-guide/cg-numa-stat.rst      | 163 
+[snip]
+>> +if you want to have the whole history.
+>> +
+>> +We have per-task migfailed counter to tell how many page migration has been
+> 
+> I can't find any occurrence of 'migfailed' in the entire kernel source tree.
+> Maybe it is misspelled?
 
---Andy
+This one is added by the secondary patch:
+  [PATCH v2 2/3] sched/numa: expose per-task pages-migration-failure
+
+As suggested by Mel.
+
+Regards,
+Michael Wang
+
+> 
+>> +failed for a particular task, you will find it in /proc/PID/sched entry.
+> 
+> 
+> HTH.
+> 
