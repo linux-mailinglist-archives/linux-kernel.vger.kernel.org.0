@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30EAC10BA02
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFDB910B8E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731121AbfK0U7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:59:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50254 "EHLO mail.kernel.org"
+        id S1730063AbfK0Urz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:47:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731355AbfK0U6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:58:52 -0500
+        id S1728869AbfK0Ury (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:47:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 324EF21555;
-        Wed, 27 Nov 2019 20:58:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4021C217C3;
+        Wed, 27 Nov 2019 20:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888331;
-        bh=IlqYNJRUsp5l1H4ncdmRJk//1Dze8Md5GZIQm0/u8Tc=;
+        s=default; t=1574887673;
+        bh=zvYRrz4rzu32n8VzU68nDZUGzYohu/DbbQ7Rr99+HhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CijVrKpotmJKfzpbPiGL7YyR3ACcJWh11UOYta5tHORfAiDvDIbpGzNIyvUwmUvcS
-         31fjDnsqK/UyRPxzf39cpQ4kMEOEhHdUhxeqEEk01JQnFqPRk+oNyeVpzVOBbtYRoL
-         iQhRaWNlF+wNj8e2JRpY89O1Sj4SVxZSv2lZ98mg=
+        b=SI26OGNggPFYWZmfcP/lfJq3mCjOzqskOfUdvYbZ4/UYogjqVFjJDSFZoWwLyhdK9
+         eeMhKw7Z1Lhpxd3uHYduyqReRj880/YRtOpF2zkZDDFYKKmMxoBBHRNDCCYZcAhTrE
+         kbXt5JGdEoKGALRJLHf7K2GuLyj32JiQeoHLorHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alexander Meiler <alex.meiler@protonmail.com>
-Subject: [PATCH 4.19 091/306] ACPI / scan: Create platform device for INT33FE ACPI nodes
-Date:   Wed, 27 Nov 2019 21:29:01 +0100
-Message-Id: <20191127203121.562699013@linuxfoundation.org>
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.14 009/211] tools: gpio: Correctly add make dependencies for gpio_utils
+Date:   Wed, 27 Nov 2019 21:29:02 +0100
+Message-Id: <20191127203050.644445653@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,149 +43,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 589edb56b424876cbbf61547b987a1f57d7ea99d ]
+commit 0161a94e2d1c713bd34d72bc0239d87c31747bf7 upstream.
 
-Bay and Cherry Trail devices with a Dollar Cove or Whiskey Cove PMIC
-have an ACPI node with a HID of INT33FE which is a "virtual" battery
-device implementing a standard ACPI battery interface which depends upon
-a proprietary, undocument OpRegion called BMOP. Since we do have docs
-for the actual fuel-gauges used on these boards we instead use native
-fuel-gauge drivers talking directly to the fuel-gauge ICs on boards which
-rely on this INT33FE device for their battery monitoring.
+gpio tools fail to build correctly with make parallelization:
 
-On boards with a Dollar Cove PMIC the INT33FE device's resources (_CRS)
-describe a non-existing I2C client at address 0x6b with a bus-speed of
-100KHz. This is a problem on some boards since there are actual devices
-on that same bus which need a speed of 400KHz to function properly.
+$ make -s -j24
+ld: gpio-utils.o: file not recognized: file truncated
+make[1]: *** [/home/labbott/linux_upstream/tools/build/Makefile.build:145: lsgpio-in.o] Error 1
+make: *** [Makefile:43: lsgpio-in.o] Error 2
+make: *** Waiting for unfinished jobs....
 
-This commit adds the INT33FE HID to the list of devices with I2C resources
-which should be enumerated as a platform-device rather then letting the
-i2c-core instantiate an i2c-client matching the first I2C resource,
-so that its bus-speed will not influence the max speed of the I2C bus.
-This fixes e.g. the touchscreen not working on the Teclast X98 II Plus.
+This is because gpio-utils.o is used across multiple targets.
+Fix this by making gpio-utios.o a proper dependency.
 
-The INT33FE device on boards with a Whiskey Cove PMIC is somewhat special.
-Its first I2C resource is for a secondary I2C address of the PMIC itself,
-which is already described in an ACPI device with an INT34D3 HID.
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-But it has 3 more I2C resources describing 3 other chips for which we do
-need to instantiate I2C clients and which need device-connections added
-between them for things to work properly. This special case is handled by
-the drivers/platform/x86/intel_cht_int33fe.c code.
-
-Before this commit that code was binding to the i2c-client instantiated
-for the secondary I2C address of the PMIC, since we now instantiate a
-platform device for the INT33FE device instead, this commit also changes
-the intel_cht_int33fe driver from an i2c driver to a platform driver.
-
-This also brings the intel_cht_int33fe drv inline with how we instantiate
-multiple i2c clients from a single ACPI device in other cases, as done
-by the drivers/platform/x86/i2c-multi-instantiate.c code.
-
-Reported-and-tested-by: Alexander Meiler <alex.meiler@protonmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/scan.c                      |  1 +
- drivers/platform/x86/intel_cht_int33fe.c | 24 +++++++++---------------
- 2 files changed, 10 insertions(+), 15 deletions(-)
+ tools/gpio/Build    |    1 +
+ tools/gpio/Makefile |   10 +++++++---
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index e1b6231cfa1c5..1dcc48b9d33c9 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1550,6 +1550,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
- 	 */
- 	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
- 		{"BSG1160", },
-+		{"INT33FE", },
- 		{}
- 	};
+--- a/tools/gpio/Build
++++ b/tools/gpio/Build
+@@ -1,3 +1,4 @@
++gpio-utils-y += gpio-utils.o
+ lsgpio-y += lsgpio.o gpio-utils.o
+ gpio-hammer-y += gpio-hammer.o gpio-utils.o
+ gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -35,11 +35,15 @@ $(OUTPUT)include/linux/gpio.h: ../../inc
  
-diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-index a26f410800c21..f40b1c1921064 100644
---- a/drivers/platform/x86/intel_cht_int33fe.c
-+++ b/drivers/platform/x86/intel_cht_int33fe.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
+ prepare: $(OUTPUT)include/linux/gpio.h
  
-@@ -88,9 +89,9 @@ static const struct property_entry fusb302_props[] = {
- 	{ }
- };
- 
--static int cht_int33fe_probe(struct i2c_client *client)
-+static int cht_int33fe_probe(struct platform_device *pdev)
- {
--	struct device *dev = &client->dev;
-+	struct device *dev = &pdev->dev;
- 	struct i2c_board_info board_info;
- 	struct cht_int33fe_data *data;
- 	struct i2c_client *max17047;
-@@ -207,7 +208,7 @@ static int cht_int33fe_probe(struct i2c_client *client)
- 	if (!data->pi3usb30532)
- 		goto out_unregister_fusb302;
- 
--	i2c_set_clientdata(client, data);
-+	platform_set_drvdata(pdev, data);
- 
- 	return 0;
- 
-@@ -223,9 +224,9 @@ static int cht_int33fe_probe(struct i2c_client *client)
- 	return -EPROBE_DEFER; /* Wait for the i2c-adapter to load */
- }
- 
--static int cht_int33fe_remove(struct i2c_client *i2c)
-+static int cht_int33fe_remove(struct platform_device *pdev)
- {
--	struct cht_int33fe_data *data = i2c_get_clientdata(i2c);
-+	struct cht_int33fe_data *data = platform_get_drvdata(pdev);
- 
- 	i2c_unregister_device(data->pi3usb30532);
- 	i2c_unregister_device(data->fusb302);
-@@ -237,29 +238,22 @@ static int cht_int33fe_remove(struct i2c_client *i2c)
- 	return 0;
- }
- 
--static const struct i2c_device_id cht_int33fe_i2c_id[] = {
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, cht_int33fe_i2c_id);
--
- static const struct acpi_device_id cht_int33fe_acpi_ids[] = {
- 	{ "INT33FE", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, cht_int33fe_acpi_ids);
- 
--static struct i2c_driver cht_int33fe_driver = {
-+static struct platform_driver cht_int33fe_driver = {
- 	.driver	= {
- 		.name = "Intel Cherry Trail ACPI INT33FE driver",
- 		.acpi_match_table = ACPI_PTR(cht_int33fe_acpi_ids),
- 	},
--	.probe_new = cht_int33fe_probe,
-+	.probe = cht_int33fe_probe,
- 	.remove = cht_int33fe_remove,
--	.id_table = cht_int33fe_i2c_id,
--	.disable_i2c_core_irq_mapping = true,
- };
- 
--module_i2c_driver(cht_int33fe_driver);
-+module_platform_driver(cht_int33fe_driver);
- 
- MODULE_DESCRIPTION("Intel Cherry Trail ACPI INT33FE pseudo device driver");
- MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
--- 
-2.20.1
-
++GPIO_UTILS_IN := $(output)gpio-utils-in.o
++$(GPIO_UTILS_IN): prepare FORCE
++	$(Q)$(MAKE) $(build)=gpio-utils
++
+ #
+ # lsgpio
+ #
+ LSGPIO_IN := $(OUTPUT)lsgpio-in.o
+-$(LSGPIO_IN): prepare FORCE
++$(LSGPIO_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+ 	$(Q)$(MAKE) $(build)=lsgpio
+ $(OUTPUT)lsgpio: $(LSGPIO_IN)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+@@ -48,7 +52,7 @@ $(OUTPUT)lsgpio: $(LSGPIO_IN)
+ # gpio-hammer
+ #
+ GPIO_HAMMER_IN := $(OUTPUT)gpio-hammer-in.o
+-$(GPIO_HAMMER_IN): prepare FORCE
++$(GPIO_HAMMER_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+ 	$(Q)$(MAKE) $(build)=gpio-hammer
+ $(OUTPUT)gpio-hammer: $(GPIO_HAMMER_IN)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+@@ -57,7 +61,7 @@ $(OUTPUT)gpio-hammer: $(GPIO_HAMMER_IN)
+ # gpio-event-mon
+ #
+ GPIO_EVENT_MON_IN := $(OUTPUT)gpio-event-mon-in.o
+-$(GPIO_EVENT_MON_IN): prepare FORCE
++$(GPIO_EVENT_MON_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
+ 	$(Q)$(MAKE) $(build)=gpio-event-mon
+ $(OUTPUT)gpio-event-mon: $(GPIO_EVENT_MON_IN)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
 
