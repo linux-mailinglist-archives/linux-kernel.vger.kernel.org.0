@@ -2,87 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3049E10ABAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B8610AB81
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:14:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfK0I1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:27:36 -0500
-Received: from mail187-16.suw11.mandrillapp.com ([198.2.187.16]:18789 "EHLO
-        mail187-16.suw11.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726125AbfK0I1g (ORCPT
+        id S1726515AbfK0IOu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 27 Nov 2019 03:14:50 -0500
+Received: from esa3.mentor.iphmx.com ([68.232.137.180]:25273 "EHLO
+        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfK0IOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:27:36 -0500
-X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 03:27:35 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=FyS2d7WYMN0XOjwqfqtBJxC7BKxHzrTUpalh89S9EPA=;
- b=NcA3edqKKW328oETwaJrje3RWQsX3x+AuM+0PSExfg++KrUBadyB4hOU3GJyg50Lj3PI/1rjXbC/
-   DKUeH5RUjdIj7IuuomYjnQXx/ADcijd1qJvu+eJUej3uglxfXcHyAzOkWNLIlMdyDnBe4Axy7xjt
-   HJ9h2+kC8fMSX0Nz718=
-Received: from pmta01.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail187-16.suw11.mandrillapp.com id hropne174i46 for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 08:12:34 +0000 (envelope-from <bounce-md_31050260.5dde2ff2.v1-79c01fdeceb14bb68d395f4859771242@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1574842354; h=From : 
- Subject : To : Cc : Message-Id : In-Reply-To : Date : MIME-Version : 
- Content-Type : Content-Transfer-Encoding : From : Subject : Date : 
- X-Mandrill-User : List-Unsubscribe; 
- bh=FyS2d7WYMN0XOjwqfqtBJxC7BKxHzrTUpalh89S9EPA=; 
- b=Hv26thj983lyL85quVozUQ8Kq7K/sjb9TulHzXDwrZIa16sBWaK1Hf9XxmA01hXJh+zfdv
- +FS6/RY6I0yvfPcY/mzsx+mtybkYPpTXmXVS9Gr0HDW0+rtT63+v1HE/Qbpyqu85oVIe2E2T
- 8ilVkSHbLs8f1mqtbWWG6DqajUMNg=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: Commit 0be0ee71 ("fs: properly and reliably lock f_pos in fdget_pos()") breaking userspace
-Received: from [87.98.221.171] by mandrillapp.com id 79c01fdeceb14bb68d395f4859771242; Wed, 27 Nov 2019 08:12:34 +0000
-To:     "Kenneth R. Crudup" <kenny@panix.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-Id: <20191127081229.GA3506@deco.navytux.spb.ru>
-In-Reply-To: <CAHk-=wh6w6U5FgZZXq-Eo8+aH1Y6ffp+Nwr_6GzmuzjVuGXmNw@mail.gmail.com> <alpine.DEB.2.21.1911260445170.6292@hp-x360n>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.79c01fdeceb14bb68d395f4859771242
-X-Mandrill-User: md_31050260
-Date:   Wed, 27 Nov 2019 08:12:34 +0000
+        Wed, 27 Nov 2019 03:14:50 -0500
+IronPort-SDR: vOSqOyXw8HC05bJhzZP6FTTg6h4fSPJPvO1Fb/JUKcrhi9bpGsvBbE7s5YDuAzFxMnG55KrSIv
+ Tu/xSe4DvlTNXUfL0f6uhFUnDeLuglWw45XXDkeywb3YTT3sFNbWmuJSrLwmUXIKAPOHx2AsTN
+ S6KhqrhjxV2PQhT2Wse1f4PYWwGKo6DcF9rGDN4e5p5o2TliBZF1IRbgDG5g3jZiYpP+vLSj8E
+ OmOMOIY4KfGn3yUSpOUraeBNo1arbfG16oii1vzVh/2uwt1NLHhXPoziu73zCAWVI8vUZOBqbQ
+ Iqo=
+X-IronPort-AV: E=Sophos;i="5.69,248,1571731200"; 
+   d="scan'208";a="43556738"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa3.mentor.iphmx.com with ESMTP; 27 Nov 2019 00:14:49 -0800
+IronPort-SDR: BX04e9T2j+gJ4hVUyHYeKaKEEuYFQjU4MfwcvPoT0NPPhyNItdfQayTeyclKm7vY8pxc+SuyYt
+ LMTPOnfCybjTbuI2XZOVq6LYbF73aNyNUgGn2v6HUusqVk47dblNyej1Pgjy3X2Z/ZFaCt8n7j
+ vb2fLrbqanyEuMzDN+xAHJ90QXdSZ3CM7W9TB9w/Jkx4CLCetFNQBqyghf2YJVIg/4Q/dhU4G4
+ QmmQsYmDGnrMeg/ohsZjppVgcW+1+8Enh8sbw7MPQeqCQ3ao4zL278Da2oGzmm9qW2pdtxFahQ
+ pIU=
+From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
+To:     Finn Thain <fthain@telegraphics.com.au>,
+        Andrea Vai <andrea.vai@unipv.it>
+CC:     Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Thread-Topic: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Thread-Index: AQHVV3qcHF7jYFXqX02A+/ZaS0pzdqeAjBMAgANe+wCAFDitAIAAzHgAgACKv4CAAl41gIAAaSkAgAAFKQCAAEsvAIAABMGAgAA8WICAAIDlgIAAV4SAgAEWB4CAAIOAUA==
+Date:   Wed, 27 Nov 2019 08:14:43 +0000
+Message-ID: <cb6e84781c4542229a3f31572cef19ab@SVR-IES-MBX-03.mgc.mentorg.com>
+References: <20191109222828.GA30568@ming.t460p>
+         <fa3b0cf1f88e42e1200101bccbc797e4e7778d58.camel@unipv.it>
+         <20191123072726.GC25356@ming.t460p>
+         <a9ffcca93657cbbb56819fd883c474a702423b41.camel@unipv.it>
+         <20191125035437.GA3806@ming.t460p>
+         <bf47a6c620b847fa9e27f8542eb761529f3e0381.camel@unipv.it>
+         <20191125102928.GA20489@ming.t460p>
+         <e5093535c60fd5dff8f92b76dcd52a1030938f62.camel@unipv.it>
+         <20191125151535.GA8044@ming.t460p>
+         <0876e232feace900735ac90d27136288b54dafe1.camel@unipv.it>
+         <20191126023253.GA24501@ming.t460p>
+ <0598fe2754bf0717d81f7e72d3e9b3230c608cc6.camel@unipv.it>
+ <alpine.LNX.2.21.1.1911271055200.8@nippy.intranet>
+In-Reply-To: <alpine.LNX.2.21.1.1911271055200.8@nippy.intranet>
+Accept-Language: de-DE, en-IE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [137.202.0.90]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 12:03:36PM -0800, Linus Torvalds wrote:
-> On Mon, Nov 25, 2019 at 7:39 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+> 
+> > Then I started another set of 100 trials and let them run tonight, and
+> > the first 10 trials were around 1000s, then gradually decreased to
+> > ~300s, and finally settled around 200s with some trials below 70-80s.
+> > This to say, times are extremely variable and for the first time I
+> > noticed a sort of "performance increase" with time.
 > >
-> > I think I'll have to revert that trial commit. I'll give it another
-> > day in case somebody has a better idea, but it looks like it's too
-> > early to do that nice cleanup as things are now.
 > 
-> I've reverted it for now,
+> The sheer volume of testing (probably some terabytes by now) would
+> exercise the wear leveling algorithm in the FTL.
 > 
-> I don't want this problem to cause people to report known bugs during
-> the merge window. The fact that I saw no issues obviously is just a
-> matter of my workloads being too simple.
+But with "old kernel" the copy operation still is "fast", as far as i understood.
+If FTL (e.g. wear leveling) would slow down, we would see that also in
+the old kernel, right?
 
-I see, ok; let's move on incrementally. What is the fate of small
-net/socket.c cleanup patch? Should I resend it to netdev or something?
+Andrea, can you confirm that the same device used with the old fast
+kernel is still fast today?
 
-
-On Tue, Nov 26, 2019 at 04:46:39AM -0800, Kenneth R. Crudup wrote:
-> 
-> On Tue, 26 Nov 2019, Kirill Smelkov wrote:
-> 
-> > P.S. even though I was put into cc there, somehow I did not received any
-> > notification email for commits d8e464ecc17b (vfs: mark pipes and sockets as
-> > stream-like file descriptors) and 0be0ee71816b (vfs: properly and
-> > reliably lock f_pos in fdget_pos()).
-> 
-> That's my fault; the CC: list for those commits was pretty long and I was
-> worried about it appearing like SPAMming anyone who'd signed off on it, so
-> I'd punted and sent it to Linus and the LKML only.
-
-I did not mean it was your fault. I was trying to say that there was no
-automatic notification just as those commits were pushed to master. And
-neither there is for 2be7d348fe92 (Revert "vfs: properly and reliably
-lock f_pos in fdget_pos()").
-
-Kirill
+BR
+Carsten
