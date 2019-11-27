@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8C710BB8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDF710BAEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:10:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732781AbfK0VNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:13:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
+        id S1732651AbfK0VHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:07:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732608AbfK0VNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:13:38 -0500
+        id S1732644AbfK0VHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:07:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D81EA215F1;
-        Wed, 27 Nov 2019 21:13:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59E8020637;
+        Wed, 27 Nov 2019 21:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889218;
-        bh=XlAJfjFYmMEYcBNDrUXkP9rhkEu3DX4g5RnRmGamycI=;
+        s=default; t=1574888863;
+        bh=7I0lFTe+1NEhYKeuw5K4FxjfDiPjGAU8oZZn+LzRD6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PGR3HL3uiB3m3ImNGJp7Y4GpkMlMAsRm44Aa3NfpS5Y0vpifHWPuB8QBs7Hcwtvmo
-         3dWDC9b+0gF7MeWr9RWm+3kq0jVBbadfEq32IL86d3d24HyHnfHt3MhvIAvhfNSBjW
-         0OARy9hECo+RuV9rE6F9kozaBbnSZJlERDonG4cA=
+        b=A+/KiL1Kusauhpfm/2RyxsLHYLpIfsrUPLIXiQUpj2GR6Bcv1hvJ7KQf0q3NYzpFf
+         Lf2ryCK8frwLhODjWVBlnqWzn658EDfpL1hGJ3FUOdS1gpeXYGZi1qfzybCLI7Jaz6
+         w7yOlLQEo8f0tqBgzA6H88ihggcG+JQnUoBM1skE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com
-Subject: [PATCH 5.4 33/66] media: usbvision: Fix invalid accesses after device disconnect
-Date:   Wed, 27 Nov 2019 21:32:28 +0100
-Message-Id: <20191127202710.996633518@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 299/306] USB: serial: mos7720: fix remote wakeup
+Date:   Wed, 27 Nov 2019 21:32:29 +0100
+Message-Id: <20191127203136.572198965@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +42,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Johan Hovold <johan@kernel.org>
 
-commit c7a191464078262bf799136317c95824e26a222b upstream.
+commit ea422312a462696093b5db59d294439796cba4ad upstream.
 
-The syzbot fuzzer found two invalid-access bugs in the usbvision
-driver.  These bugs occur when userspace keeps the device file open
-after the device has been disconnected and usbvision_disconnect() has
-set usbvision->dev to NULL:
+The driver was setting the device remote-wakeup feature during probe in
+violation of the USB specification (which says it should only be set
+just prior to suspending the device). This could potentially waste
+power during suspend as well as lead to spurious wakeups.
 
-	When the device file is closed, usbvision_radio_close() tries
-	to issue a usb_set_interface() call, passing the NULL pointer
-	as its first argument.
+Note that USB core would clear the remote-wakeup feature at first
+resume.
 
-	If userspace performs a querycap ioctl call, vidioc_querycap()
-	calls usb_make_path() with the same NULL pointer.
-
-This patch fixes the problems by making the appropriate tests
-beforehand.  Note that vidioc_querycap() is protected by
-usbvision->v4l2_lock, acquired in a higher layer of the V4L2
-subsystem.
-
-Reported-and-tested-by: syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: <stable@vger.kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 0f64478cbc7a ("USB: add USB serial mos7720 driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.19
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/usbvision/usbvision-video.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/serial/mos7720.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/media/usb/usbvision/usbvision-video.c
-+++ b/drivers/media/usb/usbvision/usbvision-video.c
-@@ -453,6 +453,9 @@ static int vidioc_querycap(struct file *
- {
- 	struct usb_usbvision *usbvision = video_drvdata(file);
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -1894,10 +1894,6 @@ static int mos7720_startup(struct usb_se
+ 	product = le16_to_cpu(serial->dev->descriptor.idProduct);
+ 	dev = serial->dev;
  
-+	if (!usbvision->dev)
-+		return -ENODEV;
-+
- 	strscpy(vc->driver, "USBVision", sizeof(vc->driver));
- 	strscpy(vc->card,
- 		usbvision_device_data[usbvision->dev_model].model_string,
-@@ -1099,8 +1102,9 @@ static int usbvision_radio_close(struct
- 	mutex_lock(&usbvision->v4l2_lock);
- 	/* Set packet size to 0 */
- 	usbvision->iface_alt = 0;
--	usb_set_interface(usbvision->dev, usbvision->iface,
--				    usbvision->iface_alt);
-+	if (usbvision->dev)
-+		usb_set_interface(usbvision->dev, usbvision->iface,
-+				  usbvision->iface_alt);
+-	/* setting configuration feature to one */
+-	usb_control_msg(serial->dev, usb_sndctrlpipe(serial->dev, 0),
+-			(__u8)0x03, 0x00, 0x01, 0x00, NULL, 0x00, 5000);
+-
+ 	if (product == MOSCHIP_DEVICE_ID_7715) {
+ 		struct urb *urb = serial->port[0]->interrupt_in_urb;
  
- 	usbvision_audio_off(usbvision);
- 	usbvision->radio = 0;
 
 
