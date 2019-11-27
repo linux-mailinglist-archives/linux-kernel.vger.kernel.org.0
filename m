@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 757C310BAD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B2810BB00
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbfK0VHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:07:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32984 "EHLO mail.kernel.org"
+        id S1732778AbfK0VIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:08:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732522AbfK0VG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:06:57 -0500
+        id S1731761AbfK0VIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:08:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F4BC217AB;
-        Wed, 27 Nov 2019 21:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0665F217BA;
+        Wed, 27 Nov 2019 21:08:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888817;
-        bh=Z8WLsowTzZsW31wmmoVRggCv92659igdD967f0ESUVw=;
+        s=default; t=1574888915;
+        bh=Mu8/QGb2c/oeq4mNDzhCm1G0evuaFId6DUaoke7BP1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xRVc7AVYcxZzwTO6LTjnxPhsabEmNyTBfZb+J0kFNhxWdwNpOQtWrK/QyhGA2uBSL
-         bWDxEM2oI8hng6MeGuarbiRgNW4XlaWOCSuR5eN3yVMsocvayFmMc7GHK86+wen2nO
-         LPCbdu3tbLNeZyYY3AOcv4UzYEGShsV+1CCex78A=
+        b=rc+rEXBaS15mmrE2CzycRSxJgBIYMhxr3r5G8RbuUn/A9DxTEBoAm6GnDbWEA3O1o
+         9og8uPGdd6Xm8lduq3FwgUopOjUwKYUIR6KlmRkMdhJjMEN0n6c3C8z2Oqs1MijZqC
+         d17VXITZlzCdQ9XgKsrq8Fc8t75hpHorQ+faReo0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        David Barmann <david.barmann@stackpath.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 239/306] sock: Reset dst when changing sk_mark via setsockopt
-Date:   Wed, 27 Nov 2019 21:31:29 +0100
-Message-Id: <20191127203132.445420037@linuxfoundation.org>
+        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 13/95] taprio: dont reject same mqprio settings
+Date:   Wed, 27 Nov 2019 21:31:30 +0100
+Message-Id: <20191127202850.086969835@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +45,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Barmann <david.barmann@stackpath.com>
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-[ Upstream commit 50254256f382c56bde87d970f3d0d02fdb76ec70 ]
+[ Upstream commit b5a0faa3572ac70bd374bd66190ac3ad4fddab20 ]
 
-When setting the SO_MARK socket option, if the mark changes, the dst
-needs to be reset so that a new route lookup is performed.
+The taprio qdisc allows to set mqprio setting but only once. In case
+if mqprio settings are provided next time the error is returned as
+it's not allowed to change traffic class mapping in-flignt and that
+is normal. But if configuration is absolutely the same - no need to
+return error. It allows to provide same command couple times,
+changing only base time for instance, or changing only scheds maps,
+but leaving mqprio setting w/o modification. It more corresponds the
+message: "Changing the traffic mapping of a running schedule is not
+supported", so reject mqprio if it's really changed.
 
-This fixes the case where an application wants to change routing by
-setting a new sk_mark.  If this is done after some packets have already
-been sent, the dst is cached and has no effect.
+Also corrected TC_BITMASK + 1 for consistency, as proposed.
 
-Signed-off-by: David Barmann <david.barmann@stackpath.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: a3d43c0d56f1 ("taprio: Add support adding an admin schedule")
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Tested-by: Vladimir Oltean <olteanv@gmail.com>
+Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/sock.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/sched/sch_taprio.c |   28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index ba4f843cdd1d1..948fd687292a6 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -951,10 +951,12 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
- 			clear_bit(SOCK_PASSSEC, &sock->flags);
- 		break;
- 	case SO_MARK:
--		if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))
-+		if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN)) {
- 			ret = -EPERM;
--		else
-+		} else if (val != sk->sk_mark) {
- 			sk->sk_mark = val;
-+			sk_dst_reset(sk);
-+		}
- 		break;
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -842,7 +842,7 @@ static int taprio_parse_mqprio_opt(struc
+ 	}
  
- 	case SO_RXQ_OVFL:
--- 
-2.20.1
-
+ 	/* Verify priority mapping uses valid tcs */
+-	for (i = 0; i < TC_BITMASK + 1; i++) {
++	for (i = 0; i <= TC_BITMASK; i++) {
+ 		if (qopt->prio_tc_map[i] >= qopt->num_tc) {
+ 			NL_SET_ERR_MSG(extack, "Invalid traffic class in priority to traffic class mapping");
+ 			return -EINVAL;
+@@ -1014,6 +1014,26 @@ static void setup_txtime(struct taprio_s
+ 	}
+ }
+ 
++static int taprio_mqprio_cmp(const struct net_device *dev,
++			     const struct tc_mqprio_qopt *mqprio)
++{
++	int i;
++
++	if (!mqprio || mqprio->num_tc != dev->num_tc)
++		return -1;
++
++	for (i = 0; i < mqprio->num_tc; i++)
++		if (dev->tc_to_txq[i].count != mqprio->count[i] ||
++		    dev->tc_to_txq[i].offset != mqprio->offset[i])
++			return -1;
++
++	for (i = 0; i <= TC_BITMASK; i++)
++		if (dev->prio_tc_map[i] != mqprio->prio_tc_map[i])
++			return -1;
++
++	return 0;
++}
++
+ static int taprio_change(struct Qdisc *sch, struct nlattr *opt,
+ 			 struct netlink_ext_ack *extack)
+ {
+@@ -1065,6 +1085,10 @@ static int taprio_change(struct Qdisc *s
+ 	admin = rcu_dereference(q->admin_sched);
+ 	rcu_read_unlock();
+ 
++	/* no changes - no new mqprio settings */
++	if (!taprio_mqprio_cmp(dev, mqprio))
++		mqprio = NULL;
++
+ 	if (mqprio && (oper || admin)) {
+ 		NL_SET_ERR_MSG(extack, "Changing the traffic mapping of a running schedule is not supported");
+ 		err = -ENOTSUPP;
+@@ -1132,7 +1156,7 @@ static int taprio_change(struct Qdisc *s
+ 					    mqprio->offset[i]);
+ 
+ 		/* Always use supplied priority mappings */
+-		for (i = 0; i < TC_BITMASK + 1; i++)
++		for (i = 0; i <= TC_BITMASK; i++)
+ 			netdev_set_prio_tc_map(dev, i,
+ 					       mqprio->prio_tc_map[i]);
+ 	}
 
 
