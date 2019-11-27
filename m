@@ -2,115 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9D2A10BB67
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E111010BBF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732184AbfK0VMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:12:08 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:40538 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733256AbfK0VMF (ORCPT
+        id S1733262AbfK0VRV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 27 Nov 2019 16:17:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33656 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732942AbfK0VMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:12:05 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B36C120B7185;
-        Wed, 27 Nov 2019 13:12:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B36C120B7185
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1574889124;
-        bh=BjH41wc2s7M+i6lyEXWUb1jJqyOffx38FZ7r2CreKBw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=C2mnrUf75pU4jHQAMpcwi46dM3w7EZN3ld8GFzsICwqToZRFK07dIXgGA9jdsec85
-         cZ+lloUsdrTGs5LnPjNcdidd4r6Af0xuAjlfK3pul1n1M8I/3vc4uHHsE3jqxuLy1b
-         Ni+O0M/RgFCc1ts87IAj59+tfrp0YzA2nb6KUPAg=
-Subject: Re: [PATCH v0 1/2] IMA: Defined queue functions
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, Janne Karhunen <janne.karhunen@gmail.com>
-References: <20191127025212.3077-1-nramas@linux.microsoft.com>
- <20191127025212.3077-2-nramas@linux.microsoft.com>
- <1574887137.4793.346.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <ea2fafb8-a97f-5365-debd-d90143e549bf@linux.microsoft.com>
-Date:   Wed, 27 Nov 2019 13:11:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 27 Nov 2019 16:12:52 -0500
+Received: by mail-ot1-f67.google.com with SMTP id q23so14553812otn.0;
+        Wed, 27 Nov 2019 13:12:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cImB892YXUVPGGhFezh816WamO3nmCEALpwjUr8+dkg=;
+        b=RbKyDyUvhoYEyGwnd4XwOAQk91C3qXm5+tXlUAkZ++aa7hlj0RbkYAUoEI3q0TtOFl
+         Fq7aIi7retxQwbC1yQBEbsro9vwRZ4xG2IymiU+sQ+xlqTmcNeF4ijIO+2jPcX1ZXQOj
+         sEMsJEkIyCWVgrEUcBiSNSYdc9hTzOD/23/2n2HiWEyYMxmoOq7hI7A8ZDNMfOfzjsvs
+         kHgys8t+Wp1yim9DQ9x1lK5w8w3ySJCs1Pi7YgWQGN0/axtp7XkscD4oDKYPRPV4cxeL
+         yp7a1jEhw9zvplzZXCL1EskiZtPDzUeUnUvbwWikE73VFfLoFESc1zhB+Mk14VKJPCEk
+         sLaA==
+X-Gm-Message-State: APjAAAVkP6xci/9VL1L5vjfKvYlbddXt1zIGrb1aoB21UbyJzi//TvF1
+        6VYU6a24oNQ0zJQb3jwKJD0wK8EsJNRdHnscZtc=
+X-Google-Smtp-Source: APXvYqxh3g09zK8yoW4/yyNAk1QlyeyoV8wcshHdQWMv3ezyM47GygheulvdavD9PmPbPqN6RamYKOqEfquQDCZNc+o=
+X-Received: by 2002:a9d:17ca:: with SMTP id j68mr5270571otj.250.1574889171373;
+ Wed, 27 Nov 2019 13:12:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1574887137.4793.346.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1574871463.git.nishadkamdar@gmail.com> <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
+ <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
+ <9bacc7d9-6bd9-0b7c-18cd-d614796397dd@suse.de> <ae40eb808f420f5de4a140b8757dfbc426a8cf90.camel@perches.com>
+In-Reply-To: <ae40eb808f420f5de4a140b8757dfbc426a8cf90.camel@perches.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Nov 2019 22:12:39 +0100
+Message-ID: <CAMuHMdUSSHvQ74c156tuhWShp05TQuSmXa-kY3HNbYj0VL_d4g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
+ License Identifier
+To:     Joe Perches <joe@perches.com>
+Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Nishad Kamdar <nishadkamdar@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/19 12:38 PM, Mimi Zohar wrote:
+On Wed, Nov 27, 2019 at 9:59 PM Joe Perches <joe@perches.com> wrote:
+> On Wed, 2019-11-27 at 21:55 +0100, Andreas Färber wrote:
+> > However, if we're touching these lines anyway, shouldn't we be updating
+> > the SPDX Identifier to GPL-2.0-only while at it?
+>
+> Probably better to do that with a treewide script one day.
 
-> Hi Lakshmi,
-> 
-> Janne Karhunen is defining an IMA workqueue in order to more
-> frequently update the on disk security xattrs.  
+Yeah... But it's already more than one year after
 
-Has the above patch set been posted for review? I'll take a look and see 
-if that one can be used for queuing keys.
+> https://lkml.org/lkml/2018/8/16/487
 
-The Subject line on
-> this patch needs to be more explicit (eg. define workqueue for early
-> boot "key" measurements).
+and Documentation/process/license-rules.rst (which is the authoritive
+rule?) still hasn't been updated...
 
-Will update the subject line.
-I was trying to keep the subject line short and have more details in the 
-patch description.
+Gr{oetje,eeting}s,
 
-> I'm not sure why you want to differentiate between IMA being
-> initialized vs. an empty policy.  I would think you would want to know
-> when a custom policy has been loaded.
+                        Geert
 
-You are right - When custom ima policy rules are loaded (in 
-ima_update_policy() function), ima_process_queued_keys_for_measurement() 
-function is called to process queued keys.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-The flag ima_process_keys_for_measurement is set to true in 
-ima_process_queued_keys_for_measurement(). And, subsequent keys are 
-processed immediately.
-
-Please take a look at ima_process_queued_keys_for_measurement() in this 
-patch (v0 1/2) and the ima_update_policy() change in "PATCH v0 2/2".
-
-> 
-> I would define a function that determines whether or not a custom
-> policy has been loaded.
-
-The queued keys need to be processed once when the custom policy is 
-loaded. Subsequently, keys are processed immediately (not queued).
-
-Do you still think there is a need to have a function to determine if 
-custom policy has been loaded? Wouldn't the flag 
-ima_process_keys_for_measurement be sufficient?
-
-Please take a look at "PATCH v0 2/2" and let me know if you disagree.
-
-> (I still need to review adding/removing from the queue.)
-> 
->>
->> @@ -27,14 +154,14 @@
->>    * The payload data used to instantiate or update the key is measured.
->>    */
->>   void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->> -				   const void *payload, size_t plen,
->> +				   const void *payload, size_t payload_len,
->>   				   unsigned long flags, bool create)
-> 
-> This "hunk" and subsequent one seem to be just a variable name change.
->   It has nothing to do with queueing "key" measurements and shouldn't
-> be included in this patch.
-> 
-> Mimi
-
-I'll remove this change.
-
-thanks,
-  -lakshmi
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
