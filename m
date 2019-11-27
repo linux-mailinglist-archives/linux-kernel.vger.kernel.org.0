@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1634B10B7F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D5210B971
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfK0UiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:38:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41936 "EHLO mail.kernel.org"
+        id S1730693AbfK0UxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:53:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727717AbfK0UiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:38:21 -0500
+        id S1728250AbfK0UxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:53:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB6AB216F4;
-        Wed, 27 Nov 2019 20:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BF4D218AE;
+        Wed, 27 Nov 2019 20:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887100;
-        bh=SFIB1JQr7rHj22xFEr9RdNmop0b5wSPDAWcsBkFU9l8=;
+        s=default; t=1574887985;
+        bh=WM7kVhycQa2B0O1bmx0vp5AHcoAxPg1iqtFKxTRyqy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eed5/5hEk5oGOBqxmxwVElUqRPrPV/27LXh2Y/YpziejlediR8qwPbKIs+Cpm2G8D
-         GakwtgYcv7jkQgI+TTMI3uT2xbX9tiYQT/cqdUykiOi41aM86ilN48Xd4qdkmbjfhe
-         bZOwEqvTZ0rcvVKk6hpfD3UdLV0kCKxAXCxB86Ss=
+        b=igdfg6BRL4L3IDzvEOc1VLNnb5IIy2lHiotMIufmOMc4LxmpYnBJ4S7SgCOs6S6Li
+         gszBIS1qIGzsrsuecoEIZbpw2jfeCTYjllfmqTxnquEU3cE6VvwnhPm3fM6W0M9Drr
+         pGjh8wJh+6CgH4zbdzd7BNCW5x+tmYR2V9c4exV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.4 111/132] media: vivid: Fix wrong locking that causes race conditions on streaming stop
-Date:   Wed, 27 Nov 2019 21:31:42 +0100
-Message-Id: <20191127203028.892624694@linuxfoundation.org>
+        stable@vger.kernel.org, Max Uvarov <muvarov@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Adrian Bunk <bunk@kernel.org>
+Subject: [PATCH 4.14 170/211] net: phy: dp83867: fix speed 10 in sgmii mode
+Date:   Wed, 27 Nov 2019 21:31:43 +0100
+Message-Id: <20191127203109.932403690@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,122 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Popov <alex.popov@linux.com>
+From: Max Uvarov <muvarov@gmail.com>
 
-commit 6dcd5d7a7a29c1e4b8016a06aed78cd650cd8c27 upstream.
+commit 333061b924539c0de081339643f45514f5f1c1e6 upstream.
 
-There is the same incorrect approach to locking implemented in
-vivid_stop_generating_vid_cap(), vivid_stop_generating_vid_out() and
-sdr_cap_stop_streaming().
+For supporting 10Mps speed in SGMII mode DP83867_10M_SGMII_RATE_ADAPT bit
+of DP83867_10M_SGMII_CFG register has to be cleared by software.
+That does not affect speeds 100 and 1000 so can be done on init.
 
-These functions are called during streaming stopping with vivid_dev.mutex
-locked. And they all do the same mistake while stopping their kthreads,
-which need to lock this mutex as well. See the example from
-vivid_stop_generating_vid_cap():
-  /* shutdown control thread */
-  vivid_grab_controls(dev, false);
-  mutex_unlock(&dev->mutex);
-  kthread_stop(dev->kthread_vid_cap);
-  dev->kthread_vid_cap = NULL;
-  mutex_lock(&dev->mutex);
-
-But when this mutex is unlocked, another vb2_fop_read() can lock it
-instead of vivid_thread_vid_cap() and manipulate the buffer queue.
-That causes a use-after-free access later.
-
-To fix those issues let's:
-  1. avoid unlocking the mutex in vivid_stop_generating_vid_cap(),
-vivid_stop_generating_vid_out() and sdr_cap_stop_streaming();
-  2. use mutex_trylock() with schedule_timeout_uninterruptible() in
-the loops of the vivid kthread handlers.
-
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Max Uvarov <muvarov@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[ adapted for kernels without phy_modify_mmd ]
+Signed-off-by: Adrian Bunk <bunk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-kthread-cap.c |    8 +++++---
- drivers/media/platform/vivid/vivid-kthread-out.c |    8 +++++---
- drivers/media/platform/vivid/vivid-sdr-cap.c     |    8 +++++---
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/net/phy/dp83867.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -763,7 +763,11 @@ static int vivid_thread_vid_cap(void *da
- 		if (kthread_should_stop())
- 			break;
+--- a/drivers/net/phy/dp83867.c
++++ b/drivers/net/phy/dp83867.c
+@@ -37,6 +37,8 @@
+ #define DP83867_STRAP_STS1	0x006E
+ #define DP83867_RGMIIDCTL	0x0086
+ #define DP83867_IO_MUX_CFG	0x0170
++#define DP83867_10M_SGMII_CFG   0x016F
++#define DP83867_10M_SGMII_RATE_ADAPT_MASK BIT(7)
  
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
-+
- 		cur_jiffies = jiffies;
- 		if (dev->cap_seq_resync) {
- 			dev->jiffies_vid_cap = cur_jiffies;
-@@ -916,8 +920,6 @@ void vivid_stop_generating_vid_cap(struc
- 
- 	/* shutdown control thread */
- 	vivid_grab_controls(dev, false);
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_vid_cap);
- 	dev->kthread_vid_cap = NULL;
--	mutex_lock(&dev->mutex);
- }
---- a/drivers/media/platform/vivid/vivid-kthread-out.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-out.c
-@@ -147,7 +147,11 @@ static int vivid_thread_vid_out(void *da
- 		if (kthread_should_stop())
- 			break;
- 
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
-+
- 		cur_jiffies = jiffies;
- 		if (dev->out_seq_resync) {
- 			dev->jiffies_vid_out = cur_jiffies;
-@@ -301,8 +305,6 @@ void vivid_stop_generating_vid_out(struc
- 
- 	/* shutdown control thread */
- 	vivid_grab_controls(dev, false);
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_vid_out);
- 	dev->kthread_vid_out = NULL;
--	mutex_lock(&dev->mutex);
- }
---- a/drivers/media/platform/vivid/vivid-sdr-cap.c
-+++ b/drivers/media/platform/vivid/vivid-sdr-cap.c
-@@ -151,7 +151,11 @@ static int vivid_thread_sdr_cap(void *da
- 		if (kthread_should_stop())
- 			break;
- 
--		mutex_lock(&dev->mutex);
-+		if (!mutex_trylock(&dev->mutex)) {
-+			schedule_timeout_uninterruptible(1);
-+			continue;
-+		}
-+
- 		cur_jiffies = jiffies;
- 		if (dev->sdr_cap_seq_resync) {
- 			dev->jiffies_sdr_cap = cur_jiffies;
-@@ -311,10 +315,8 @@ static void sdr_cap_stop_streaming(struc
+ #define DP83867_SW_RESET	BIT(15)
+ #define DP83867_SW_RESTART	BIT(14)
+@@ -283,6 +285,23 @@ static int dp83867_config_init(struct ph
+ 		}
  	}
  
- 	/* shutdown control thread */
--	mutex_unlock(&dev->mutex);
- 	kthread_stop(dev->kthread_sdr_cap);
- 	dev->kthread_sdr_cap = NULL;
--	mutex_lock(&dev->mutex);
- }
- 
- const struct vb2_ops vivid_sdr_cap_qops = {
++	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
++		/* For support SPEED_10 in SGMII mode
++		 * DP83867_10M_SGMII_RATE_ADAPT bit
++		 * has to be cleared by software. That
++		 * does not affect SPEED_100 and
++		 * SPEED_1000.
++		 */
++		val = phy_read_mmd(phydev, DP83867_DEVADDR,
++				   DP83867_10M_SGMII_CFG);
++		val &= ~DP83867_10M_SGMII_RATE_ADAPT_MASK;
++		ret = phy_write_mmd(phydev, DP83867_DEVADDR,
++				    DP83867_10M_SGMII_CFG, val);
++
++		if (ret)
++			return ret;
++	}
++
+ 	/* Enable Interrupt output INT_OE in CFG3 register */
+ 	if (phy_interrupt_is_valid(phydev)) {
+ 		val = phy_read(phydev, DP83867_CFG3);
 
 
