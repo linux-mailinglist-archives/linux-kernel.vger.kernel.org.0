@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE2EF10BD78
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CCF10BD67
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731322AbfK0V3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:29:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48602 "EHLO mail.kernel.org"
+        id S1731254AbfK0U6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:58:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbfK0U5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:57:32 -0500
+        id S1731247AbfK0U54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:57:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD3052084D;
-        Wed, 27 Nov 2019 20:57:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D9322084D;
+        Wed, 27 Nov 2019 20:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888251;
-        bh=D2XWTpu5/GCUecg5nQbA9/IIp5CZsitM2odbagSQDAE=;
+        s=default; t=1574888274;
+        bh=RePkeaheWKE+ZnVrEGtOO+X4ZsfaVqbtPRO0k4Nlf8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BrGiKCnXLjjzBxfPXz1GMcdId7wE47H7Kf/BIflXgF4NGDPOMiWoIxdQt131GTJUG
-         sz2LyNmcPoOG9RzreU4x1KZwjBNadE+bZsgAEI7V8E8lQJ38TOUGSNNC0mA6h3KPE/
-         kNPjUl8Nbi1V/xNNoCDnMNEl98jiL9E2uxl2R8DY=
+        b=IFIFrZSWf6R7ayCNxCZU4PDUF4dzippaNu6mEJ7NJk7yBv9/0vQIlhJZX7QRQrINo
+         kcir8j75aUMYdQipQUSnC3IUVKnS/0pL8FNPEnFNlJUJpTN632cStsYR1eQhpXxePf
+         Z/y4ucJg/wF0mYbNECY5IiPeWKy8DwMsY0IPlmjc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rahul Verma <rahul.verma@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 063/306] qed: Align local and global PTT to propagate through the APIs.
-Date:   Wed, 27 Nov 2019 21:28:33 +0100
-Message-Id: <20191127203119.357583672@linuxfoundation.org>
+Subject: [PATCH 4.19 071/306] scsi: isci: Change sci_controller_start_tasks return type to sci_status
+Date:   Wed, 27 Nov 2019 21:28:41 +0100
+Message-Id: <20191127203119.993670702@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -45,199 +45,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rahul Verma <Rahul.Verma@cavium.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 706d08913d1f68610c32b4a001026aa989878dd9 ]
+[ Upstream commit 362b5da3dfceada6e74ecdd7af3991bbe42c0c0f ]
 
-    Align the use of local PTT to propagate through the qed_mcp* API's.
-    Global ptt should not be used.
+Clang warns when an enumerated type is implicitly converted to another.
 
-    Register access should be done through layers. Register address is
-    mapped into a PTT, PF translation table. Several interface functions
-    require a PTT to direct read/write into register. There is a pool of
-    PTT maintained, and several PTT are used simultaneously to access
-    device registers in different flows. Same PTT should not be used in
-    flows that can run concurrently.
-    To avoid running out of PTT resources, too many PTT should not be
-    acquired without releasing them. Every PF has a global PTT, which is
-    used throughout the life of PF, in most important flows for register
-    access. Generic functions acquire the PTT locally and release after
-    the use. This patch aligns the use of Global PTT and Local PTT
-    accordingly.
+drivers/scsi/isci/request.c:3476:13: warning: implicit conversion from
+enumeration type 'enum sci_task_status' to different enumeration type
+'enum sci_status' [-Wenum-conversion]
+                        status = sci_controller_start_task(ihost,
+                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/isci/host.c:2744:10: warning: implicit conversion from
+enumeration type 'enum sci_status' to different enumeration type 'enum
+sci_task_status' [-Wenum-conversion]
+                return SCI_SUCCESS;
+                ~~~~~~ ^~~~~~~~~~~
+drivers/scsi/isci/host.c:2753:9: warning: implicit conversion from
+enumeration type 'enum sci_status' to different enumeration type 'enum
+sci_task_status' [-Wenum-conversion]
+        return status;
+        ~~~~~~ ^~~~~~
 
-Signed-off-by: Rahul Verma <rahul.verma@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Avoid all of these implicit conversion by just making
+sci_controller_start_task use sci_status. This silences
+Clang and has no functional change since sci_task_status
+has all of its values mapped to something in sci_status.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/153
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed.h      |  2 +-
- drivers/net/ethernet/qlogic/qed/qed_main.c | 22 ++++++++++++++----
- drivers/net/ethernet/qlogic/qed/qed_mcp.c  | 27 ++++++++++------------
- drivers/net/ethernet/qlogic/qed/qed_mcp.h  |  5 ++--
- drivers/net/ethernet/qlogic/qed/qed_vf.c   |  2 +-
- 5 files changed, 35 insertions(+), 23 deletions(-)
+ drivers/scsi/isci/host.c | 8 ++++----
+ drivers/scsi/isci/host.h | 2 +-
+ drivers/scsi/isci/task.c | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed.h b/drivers/net/ethernet/qlogic/qed/qed.h
-index a60e1c8d470a0..32e786a3952b1 100644
---- a/drivers/net/ethernet/qlogic/qed/qed.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed.h
-@@ -914,7 +914,7 @@ u16 qed_get_cm_pq_idx_llt_mtc(struct qed_hwfn *p_hwfn, u8 tc);
- /* Prototypes */
- int qed_fill_dev_info(struct qed_dev *cdev,
- 		      struct qed_dev_info *dev_info);
--void qed_link_update(struct qed_hwfn *hwfn);
-+void qed_link_update(struct qed_hwfn *hwfn, struct qed_ptt *ptt);
- u32 qed_unzip_data(struct qed_hwfn *p_hwfn,
- 		   u32 input_len, u8 *input_buf,
- 		   u32 max_size, u8 *unzip_buf);
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
-index 637687b766ff0..049a83b40e469 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -1462,6 +1462,7 @@ static int qed_get_link_data(struct qed_hwfn *hwfn,
- }
- 
- static void qed_fill_link(struct qed_hwfn *hwfn,
-+			  struct qed_ptt *ptt,
- 			  struct qed_link_output *if_link)
+diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
+index 1ee3868ade079..7b5deae68d33b 100644
+--- a/drivers/scsi/isci/host.c
++++ b/drivers/scsi/isci/host.c
+@@ -2717,9 +2717,9 @@ enum sci_status sci_controller_continue_io(struct isci_request *ireq)
+  *    the task management request.
+  * @task_request: the handle to the task request object to start.
+  */
+-enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
+-					       struct isci_remote_device *idev,
+-					       struct isci_request *ireq)
++enum sci_status sci_controller_start_task(struct isci_host *ihost,
++					  struct isci_remote_device *idev,
++					  struct isci_request *ireq)
  {
- 	struct qed_mcp_link_params params;
-@@ -1542,7 +1543,7 @@ static void qed_fill_link(struct qed_hwfn *hwfn,
+ 	enum sci_status status;
  
- 	/* TODO - fill duplex properly */
- 	if_link->duplex = DUPLEX_FULL;
--	qed_mcp_get_media_type(hwfn->cdev, &media_type);
-+	qed_mcp_get_media_type(hwfn, ptt, &media_type);
- 	if_link->port = qed_get_port_type(media_type);
- 
- 	if_link->autoneg = params.speed.autoneg;
-@@ -1598,21 +1599,34 @@ static void qed_fill_link(struct qed_hwfn *hwfn,
- static void qed_get_current_link(struct qed_dev *cdev,
- 				 struct qed_link_output *if_link)
- {
-+	struct qed_hwfn *hwfn;
-+	struct qed_ptt *ptt;
- 	int i;
- 
--	qed_fill_link(&cdev->hwfns[0], if_link);
-+	hwfn = &cdev->hwfns[0];
-+	if (IS_PF(cdev)) {
-+		ptt = qed_ptt_acquire(hwfn);
-+		if (ptt) {
-+			qed_fill_link(hwfn, ptt, if_link);
-+			qed_ptt_release(hwfn, ptt);
-+		} else {
-+			DP_NOTICE(hwfn, "Failed to fill link; No PTT\n");
-+		}
-+	} else {
-+		qed_fill_link(hwfn, NULL, if_link);
-+	}
- 
- 	for_each_hwfn(cdev, i)
- 		qed_inform_vf_link_state(&cdev->hwfns[i]);
- }
- 
--void qed_link_update(struct qed_hwfn *hwfn)
-+void qed_link_update(struct qed_hwfn *hwfn, struct qed_ptt *ptt)
- {
- 	void *cookie = hwfn->cdev->ops_cookie;
- 	struct qed_common_cb_ops *op = hwfn->cdev->protocol_ops.common;
- 	struct qed_link_output if_link;
- 
--	qed_fill_link(hwfn, &if_link);
-+	qed_fill_link(hwfn, ptt, &if_link);
- 	qed_inform_vf_link_state(hwfn);
- 
- 	if (IS_LEAD_HWFN(hwfn) && cookie)
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-index 58c7eb9d8e1b8..938ace333af10 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -1382,7 +1382,7 @@ static void qed_mcp_handle_link_change(struct qed_hwfn *p_hwfn,
- 	if (p_hwfn->mcp_info->capabilities & FW_MB_PARAM_FEATURE_SUPPORT_EEE)
- 		qed_mcp_read_eee_config(p_hwfn, p_ptt, p_link);
- 
--	qed_link_update(p_hwfn);
-+	qed_link_update(p_hwfn, p_ptt);
- out:
- 	spin_unlock_bh(&p_hwfn->mcp_info->link_lock);
- }
-@@ -1849,12 +1849,10 @@ int qed_mcp_get_mbi_ver(struct qed_hwfn *p_hwfn,
- 	return 0;
- }
- 
--int qed_mcp_get_media_type(struct qed_dev *cdev, u32 *p_media_type)
-+int qed_mcp_get_media_type(struct qed_hwfn *p_hwfn,
-+			   struct qed_ptt *p_ptt, u32 *p_media_type)
- {
--	struct qed_hwfn *p_hwfn = &cdev->hwfns[0];
--	struct qed_ptt  *p_ptt;
--
--	if (IS_VF(cdev))
-+	if (IS_VF(p_hwfn->cdev))
- 		return -EINVAL;
- 
- 	if (!qed_mcp_is_init(p_hwfn)) {
-@@ -1862,16 +1860,15 @@ int qed_mcp_get_media_type(struct qed_dev *cdev, u32 *p_media_type)
- 		return -EBUSY;
+@@ -2728,7 +2728,7 @@ enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
+ 			 "%s: SCIC Controller starting task from invalid "
+ 			 "state\n",
+ 			 __func__);
+-		return SCI_TASK_FAILURE_INVALID_STATE;
++		return SCI_FAILURE_INVALID_STATE;
  	}
  
--	*p_media_type = MEDIA_UNSPECIFIED;
--
--	p_ptt = qed_ptt_acquire(p_hwfn);
--	if (!p_ptt)
--		return -EBUSY;
--
--	*p_media_type = qed_rd(p_hwfn, p_ptt, p_hwfn->mcp_info->port_addr +
--			       offsetof(struct public_port, media_type));
-+	if (!p_ptt) {
-+		*p_media_type = MEDIA_UNSPECIFIED;
-+		return -EINVAL;
-+	}
+ 	status = sci_remote_device_start_task(ihost, idev, ireq);
+diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
+index b3539928073c6..6bc3f022630a2 100644
+--- a/drivers/scsi/isci/host.h
++++ b/drivers/scsi/isci/host.h
+@@ -489,7 +489,7 @@ enum sci_status sci_controller_start_io(
+ 	struct isci_remote_device *idev,
+ 	struct isci_request *ireq);
  
--	qed_ptt_release(p_hwfn, p_ptt);
-+	*p_media_type = qed_rd(p_hwfn, p_ptt,
-+			       p_hwfn->mcp_info->port_addr +
-+			       offsetof(struct public_port,
-+					media_type));
+-enum sci_task_status sci_controller_start_task(
++enum sci_status sci_controller_start_task(
+ 	struct isci_host *ihost,
+ 	struct isci_remote_device *idev,
+ 	struct isci_request *ireq);
+diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
+index 6dcaed0c1fc8c..fb6eba331ac6e 100644
+--- a/drivers/scsi/isci/task.c
++++ b/drivers/scsi/isci/task.c
+@@ -258,7 +258,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
+ 				 struct isci_tmf *tmf, unsigned long timeout_ms)
+ {
+ 	DECLARE_COMPLETION_ONSTACK(completion);
+-	enum sci_task_status status = SCI_TASK_FAILURE;
++	enum sci_status status = SCI_FAILURE;
+ 	struct isci_request *ireq;
+ 	int ret = TMF_RESP_FUNC_FAILED;
+ 	unsigned long flags;
+@@ -301,7 +301,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
+ 	/* start the TMF io. */
+ 	status = sci_controller_start_task(ihost, idev, ireq);
  
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.h b/drivers/net/ethernet/qlogic/qed/qed_mcp.h
-index 85e6b3989e7a9..80a6b5d1ff338 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.h
-@@ -322,14 +322,15 @@ int qed_mcp_get_mbi_ver(struct qed_hwfn *p_hwfn,
-  * @brief Get media type value of the port.
-  *
-  * @param cdev      - qed dev pointer
-+ * @param p_ptt
-  * @param mfw_ver    - media type value
-  *
-  * @return int -
-  *      0 - Operation was successul.
-  *      -EBUSY - Operation failed
-  */
--int qed_mcp_get_media_type(struct qed_dev      *cdev,
--			   u32                  *media_type);
-+int qed_mcp_get_media_type(struct qed_hwfn *p_hwfn,
-+			   struct qed_ptt *p_ptt, u32 *media_type);
- 
- /**
-  * @brief General function for sending commands to the MCP
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-index 6ab3fb008139d..5dda547772c13 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-@@ -1698,7 +1698,7 @@ static void qed_handle_bulletin_change(struct qed_hwfn *hwfn)
- 	ops->ports_update(cookie, vxlan_port, geneve_port);
- 
- 	/* Always update link configuration according to bulletin */
--	qed_link_update(hwfn);
-+	qed_link_update(hwfn, NULL);
- }
- 
- void qed_iov_vf_task(struct work_struct *work)
+-	if (status != SCI_TASK_SUCCESS) {
++	if (status != SCI_SUCCESS) {
+ 		dev_dbg(&ihost->pdev->dev,
+ 			 "%s: start_io failed - status = 0x%x, request = %p\n",
+ 			 __func__,
 -- 
 2.20.1
 
