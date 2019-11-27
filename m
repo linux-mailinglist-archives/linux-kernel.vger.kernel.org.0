@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E87610BF0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F0510BE19
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfK0Um5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:42:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49502 "EHLO mail.kernel.org"
+        id S1730848AbfK0Vdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:33:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729356AbfK0Umr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:42:47 -0500
+        id S1729516AbfK0Uvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E40321780;
-        Wed, 27 Nov 2019 20:42:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2071621774;
+        Wed, 27 Nov 2019 20:51:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887366;
-        bh=OqVoey58BstSGCzT7Cy3FNTTDtc2UNvTtORa3PHd4co=;
+        s=default; t=1574887898;
+        bh=s6M5Jct3ZzhxrZHKNxFihAJ8CG7qRPPEX72qQEc/axw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OquqfNuho8efGL1QWwSehTwkFA1llTeDwYbK4821pMaIY+sBerdOrWelpB2ubPQNN
-         Fo7sGzhR6s02l03Pg4l7eaUgS4s4GMW8uuhcqfjYRGUW4YeO99TaiRynBFjZ6vWXjG
-         Z3iGQtRIJw7fZYHrSzG3R8rK/OtBfWD1ycrVEPes=
+        b=Uk3wV8MNb+axnutUxxrzYjH2kCwoJQ6xKC5F7cRrLTdE+tsA7Q+jHhSBtftOondA+
+         2xkpo5CXPN2owA0LPQydQ0KhqN14xEFw94kuyoD/CnAVDIIz/JtrtUMcEXuGg8Mta8
+         i5GZRYmfQj/k43aHgp4q+ioDu+8nM/jREf+xvdhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Lucas Van <lucas.van@intel.com>, Jon Mason <jdmason@kudzu.us>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 083/151] ntb: intel: fix return value for ndev_vec_mask()
-Date:   Wed, 27 Nov 2019 21:31:06 +0100
-Message-Id: <20191127203036.218714867@linuxfoundation.org>
+Subject: [PATCH 4.14 135/211] rtl8xxxu: Fix missing break in switch
+Date:   Wed, 27 Nov 2019 21:31:08 +0100
+Message-Id: <20191127203106.787142086@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Jiang <dave.jiang@intel.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 7756e2b5d68c36e170a111dceea22f7365f83256 ]
+[ Upstream commit 307b00c5e695857ca92fc6a4b8ab6c48f988a1b1 ]
 
-ndev_vec_mask() should be returning u64 mask value instead of int.
-Otherwise the mask value returned can be incorrect for larger
-vectors.
+Add missing break statement in order to prevent the code from falling
+through to the default case.
 
-Fixes: e26a5843f7f5 ("NTB: Split ntb_hw_intel and ntb_transport drivers")
-
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-Tested-by: Lucas Van <lucas.van@intel.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
+Fixes: 26f1fad29ad9 ("New driver: rtl8xxxu (mac80211)")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ntb/hw/intel/ntb_hw_intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.c b/drivers/ntb/hw/intel/ntb_hw_intel.c
-index 7310a261c858b..e175cbeba266f 100644
---- a/drivers/ntb/hw/intel/ntb_hw_intel.c
-+++ b/drivers/ntb/hw/intel/ntb_hw_intel.c
-@@ -330,7 +330,7 @@ static inline int ndev_db_clear_mask(struct intel_ntb_dev *ndev, u64 db_bits,
- 	return 0;
- }
- 
--static inline int ndev_vec_mask(struct intel_ntb_dev *ndev, int db_vector)
-+static inline u64 ndev_vec_mask(struct intel_ntb_dev *ndev, int db_vector)
- {
- 	u64 shift, mask;
- 
+diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+index 7806a4d2b1fcd..91b01ca32e752 100644
+--- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
++++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+@@ -5691,6 +5691,7 @@ static int rtl8xxxu_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
+ 		break;
+ 	case WLAN_CIPHER_SUITE_TKIP:
+ 		key->flags |= IEEE80211_KEY_FLAG_GENERATE_MMIC;
++		break;
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
 -- 
 2.20.1
 
