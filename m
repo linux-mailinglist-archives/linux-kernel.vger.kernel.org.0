@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9573710BF19
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 370CB10BE22
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbfK0Vkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:40:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
+        id S1730089AbfK0VeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:34:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729321AbfK0Um0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:42:26 -0500
+        id S1727217AbfK0UvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:51:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72B8021783;
-        Wed, 27 Nov 2019 20:42:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1A93218A3;
+        Wed, 27 Nov 2019 20:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887345;
-        bh=4s8e4vFMSbvxkOqzZBgfRHrA0gBMSbB8WI/S0IuJjVM=;
+        s=default; t=1574887877;
+        bh=EbbfNz2ZlOjuyLlZQPVnXYerkBR9NFHbNmfKODEnyRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OIPT6UX/MFxwNyHZ6AmHI3gnQdbLoG/ORtHg8zC8lUZ1U70AyVsjhzSBxfzSS8uQp
-         2jJKlMfvALiIcHc6xbpYDUqaiVZwdTqQ0DramrQrhcXxpLN8Q3w8qAOr4Qe7UmSvZt
-         RblS+ZE5BbqDWvh7eoME/MGOZm6B9nBB0eI6/bYU=
+        b=gsMP067vnv8Cfuw9XZgiWNwPoCWvBDlTgDQ2c/dIPcIPirB65QH6XfVtKZREx3b5m
+         VnFHzfv9YHX0T+2jHiil8/5q0FuCULbIq/Yl69FEnxOGJbc1qcvdOkUjyMACu8R67q
+         rJ2K80BbKsTWF/cRu2vRHqsERCLWNbyAFORaMT5Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Vyacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Dietmar.Eggemann@arm.com,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, patrick.bellasi@arm.com,
+        vincent.guittot@linaro.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 076/151] hfs: fix return value of hfs_get_block()
-Date:   Wed, 27 Nov 2019 21:30:59 +0100
-Message-Id: <20191127203035.232383585@linuxfoundation.org>
+Subject: [PATCH 4.14 128/211] sched/fair: Dont increase sd->balance_interval on newidle balance
+Date:   Wed, 27 Nov 2019 21:31:01 +0100
+Message-Id: <20191127203106.189140425@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,43 +49,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
 
-[ Upstream commit 1267a07be5ebbff2d2739290f3d043ae137c15b4 ]
+[ Upstream commit 3f130a37c442d5c4d66531b240ebe9abfef426b5 ]
 
-Direct writes to empty inodes fail with EIO.  The generic direct-io code
-is in part to blame (a patch has been submitted as "direct-io: allow
-direct writes to empty inodes"), but hfs is worse affected than the other
-filesystems because the fallback to buffered I/O doesn't happen.
+When load_balance() fails to move some load because of task affinity,
+we end up increasing sd->balance_interval to delay the next periodic
+balance in the hopes that next time we look, that annoying pinned
+task(s) will be gone.
 
-The problem is the return value of hfs_get_block() when called with
-!create.  Change it to be more consistent with the other modules.
+However, idle_balance() pays no attention to sd->balance_interval, yet
+it will still lead to an increase in balance_interval in case of
+pinned tasks.
 
-Link: http://lkml.kernel.org/r/4538ab8c35ea37338490525f0f24cbc37227528c.1539195310.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+If we're going through several newidle balances (e.g. we have a
+periodic task), this can lead to a huge increase of the
+balance_interval in a very small amount of time.
+
+To prevent that, don't increase the balance interval when going
+through a newidle balance.
+
+This is a similar approach to what is done in commit 58b26c4c0257
+("sched: Increment cache_nice_tries only on periodic lb"), where we
+disregard newidle balance and rely on periodic balance for more stable
+results.
+
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar.Eggemann@arm.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: patrick.bellasi@arm.com
+Cc: vincent.guittot@linaro.org
+Link: http://lkml.kernel.org/r/1537974727-30788-2-git-send-email-valentin.schneider@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/extent.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 1bd1afefe2538..16819d2a978b4 100644
---- a/fs/hfs/extent.c
-+++ b/fs/hfs/extent.c
-@@ -345,7 +345,9 @@ int hfs_get_block(struct inode *inode, sector_t block,
- 	ablock = (u32)block / HFS_SB(sb)->fs_div;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index feeb52880d353..67433fbdcb5a4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8319,13 +8319,22 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+ 	sd->nr_balance_failed = 0;
  
- 	if (block >= HFS_I(inode)->fs_blocks) {
--		if (block > HFS_I(inode)->fs_blocks || !create)
-+		if (!create)
-+			return 0;
-+		if (block > HFS_I(inode)->fs_blocks)
- 			return -EIO;
- 		if (ablock >= HFS_I(inode)->alloc_blocks) {
- 			res = hfs_extend_file(inode);
+ out_one_pinned:
++	ld_moved = 0;
++
++	/*
++	 * idle_balance() disregards balance intervals, so we could repeatedly
++	 * reach this code, which would lead to balance_interval skyrocketting
++	 * in a short amount of time. Skip the balance_interval increase logic
++	 * to avoid that.
++	 */
++	if (env.idle == CPU_NEWLY_IDLE)
++		goto out;
++
+ 	/* tune up the balancing interval */
+ 	if (((env.flags & LBF_ALL_PINNED) &&
+ 			sd->balance_interval < MAX_PINNED_INTERVAL) ||
+ 			(sd->balance_interval < sd->max_interval))
+ 		sd->balance_interval *= 2;
+-
+-	ld_moved = 0;
+ out:
+ 	return ld_moved;
+ }
 -- 
 2.20.1
 
