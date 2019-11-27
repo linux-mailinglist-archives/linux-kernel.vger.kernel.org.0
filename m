@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B8C410BBA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C808B10BC84
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:21:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387555AbfK0VOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:14:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
+        id S1730531AbfK0VVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:21:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387540AbfK0VO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:14:29 -0500
+        id S1731750AbfK0VGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:06:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42B6E2086A;
-        Wed, 27 Nov 2019 21:14:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD5462086A;
+        Wed, 27 Nov 2019 21:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889268;
-        bh=tiZo7yfmOeXm6N5umuvy8LgJchgg6d+v0cQPRTP5Mw0=;
+        s=default; t=1574888812;
+        bh=nfS1Bvz/Gc6ID7OsOKV+BI/hrTRDWNcVHNNvsdEfMWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XsTIscrFnVErhEDgSYW2h9bGgIY8EeHBC661/YqF9LJj1RDuR6jDmfgd24kJwhsR3
-         hvb5fwboFUyjBflT6JG9ZHFGGDmUFM27nMtYgPhrGtODzYKtWOXkp4C6Rat0jHzeQz
-         evKZ5OQK/WVd9c06UgLaWZQOSckZG5zUuqfaqyjs=
+        b=xXWDDGOaVN6OqHSF3xjcsmZmpHp/I6syUppfUuAS05+mkoIcbJDeLKeoEsBzLPxEA
+         QFQ1a4+Z+UWUWvnzFEW7e0buhy5vnMNLJ73eOJj/DYj3igovFVokxE1jfVoJu13vlu
+         zdjjSrq9HLqpN4KKMH0I4RVjF+ubBq2096CVyn2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.4 12/66] nbd: prevent memory leak
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+Subject: [PATCH 4.19 277/306] x86/entry/32: Fix FIXUP_ESPFIX_STACK with user CR3
 Date:   Wed, 27 Nov 2019 21:32:07 +0100
-Message-Id: <20191127202647.736404180@linuxfoundation.org>
+Message-Id: <20191127203135.043436214@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 03bf73c315edca28f47451913177e14cd040a216 upstream.
+commit 4a13b0e3e10996b9aa0b45a764ecfe49f6fcd360 upstream.
 
-In nbd_add_socket when krealloc succeeds, if nsock's allocation fail the
-reallocted memory is leak. The correct behaviour should be assigning the
-reallocted memory to config->socks right after success.
+UNWIND_ESPFIX_STACK needs to read the GDT, and the GDT mapping that
+can be accessed via %fs is not mapped in the user pagetables.  Use
+SGDT to find the cpu_entry_area mapping and read the espfix offset
+from that instead.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-and-tested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/nbd.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_32.S |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1032,14 +1032,15 @@ static int nbd_add_socket(struct nbd_dev
- 		sockfd_put(sock);
- 		return -ENOMEM;
- 	}
-+
-+	config->socks = socks;
-+
- 	nsock = kzalloc(sizeof(struct nbd_sock), GFP_KERNEL);
- 	if (!nsock) {
- 		sockfd_put(sock);
- 		return -ENOMEM;
- 	}
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -315,7 +315,8 @@
  
--	config->socks = socks;
--
- 	nsock->fallback_index = -1;
- 	nsock->dead = false;
- 	mutex_init(&nsock->tx_lock);
+ .macro CHECK_AND_APPLY_ESPFIX
+ #ifdef CONFIG_X86_ESPFIX32
+-#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
++#define GDT_ESPFIX_OFFSET (GDT_ENTRY_ESPFIX_SS * 8)
++#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + GDT_ESPFIX_OFFSET
+ 
+ 	ALTERNATIVE	"jmp .Lend_\@", "", X86_BUG_ESPFIX
+ 
+@@ -1056,12 +1057,26 @@ ENDPROC(entry_INT80_32)
+  * We can't call C functions using the ESPFIX stack. This code reads
+  * the high word of the segment base from the GDT and swiches to the
+  * normal stack and adjusts ESP with the matching offset.
++ *
++ * We might be on user CR3 here, so percpu data is not mapped and we can't
++ * access the GDT through the percpu segment.  Instead, use SGDT to find
++ * the cpu_entry_area alias of the GDT.
+  */
+ #ifdef CONFIG_X86_ESPFIX32
+ 	/* fixup the stack */
+-	mov	GDT_ESPFIX_SS + 4, %al /* bits 16..23 */
+-	mov	GDT_ESPFIX_SS + 7, %ah /* bits 24..31 */
++	pushl	%ecx
++	subl	$2*4, %esp
++	sgdt	(%esp)
++	movl	2(%esp), %ecx				/* GDT address */
++	/*
++	 * Careful: ECX is a linear pointer, so we need to force base
++	 * zero.  %cs is the only known-linear segment we have right now.
++	 */
++	mov	%cs:GDT_ESPFIX_OFFSET + 4(%ecx), %al	/* bits 16..23 */
++	mov	%cs:GDT_ESPFIX_OFFSET + 7(%ecx), %ah	/* bits 24..31 */
+ 	shl	$16, %eax
++	addl	$2*4, %esp
++	popl	%ecx
+ 	addl	%esp, %eax			/* the adjusted stack pointer */
+ 	pushl	$__KERNEL_DS
+ 	pushl	%eax
 
 
