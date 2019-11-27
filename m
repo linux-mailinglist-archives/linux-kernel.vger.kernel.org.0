@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBF110BE52
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03BF810BF47
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbfK0VfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:35:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35314 "EHLO mail.kernel.org"
+        id S1728006AbfK0Vlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729838AbfK0Utk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:49:40 -0500
+        id S1727988AbfK0UlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:41:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1114E21787;
-        Wed, 27 Nov 2019 20:49:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8EC1215A4;
+        Wed, 27 Nov 2019 20:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887779;
-        bh=7Zb84RMymvrQrGc5whayYZnaI5yyN4gn14MocjTCebU=;
+        s=default; t=1574887261;
+        bh=tGyuerj4tgHb0qQhYD5ienk8WW7ZV2NkS0UB4aqLey4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aWfg16+q33RcafAkYES7GBP9yBHEZEtFwTZ2fzc0EVU6M0m1QfLwKtKg7jupwJFX6
-         7ALXenzCOv/zgizIjv4aZIC7M9pdXF4VsHcqac3hw9mbFqtU1c/eXgWssF7jnqAbrg
-         Esel4yHUAXpX0KNYWzfu++niHZl8sbws/eyOLT/E=
+        b=uLKMGMMLwnK67sgXMJ9xP5W24Rt9U01tN9i914LRbBpN2n8zcLpu/VzLsXnwv9ImU
+         Y7GdUb1/u7AnDhlDVv/yNC05bJ7bgNY+adRd+85nF3YY5NB/pfwtdHdzLjlSuhU4Qo
+         wXBV0BcK/OrPGVtgMhT8imR+TgVhjaIv09TLaDRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 089/211] bpf: devmap: fix wrong interface selection in notifier_call
-Date:   Wed, 27 Nov 2019 21:30:22 +0100
-Message-Id: <20191127203102.160819159@linuxfoundation.org>
+Subject: [PATCH 4.9 042/151] macintosh/windfarm_smu_sat: Fix debug output
+Date:   Wed, 27 Nov 2019 21:30:25 +0100
+Message-Id: <20191127203026.791960719@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-[ Upstream commit f592f804831f1cf9d1f9966f58c80f150e6829b5 ]
+[ Upstream commit fc0c8b36d379a046525eacb9c3323ca635283757 ]
 
-The dev_map_notification() removes interface in devmap if
-unregistering interface's ifindex is same.
-But only checking ifindex is not enough because other netns can have
-same ifindex. so that wrong interface selection could occurred.
-Hence netdev pointer comparison code is added.
+There's some antiquated debug output that's trying
+to do a hand-made hexdump and turning into horrible
+1-byte-per-line output these days.
 
-v2: compare netdev pointer instead of using net_eq() (Daniel Borkmann)
-v1: Initial patch
+Use print_hex_dump() instead
 
-Fixes: 2ddf71e23cc2 ("net: add notifier hooks for devmap bpf map")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/devmap.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/macintosh/windfarm_smu_sat.c | 25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 482bf42e21a41..1060eee6c8d5f 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -388,8 +388,7 @@ static int dev_map_notification(struct notifier_block *notifier,
- 				struct bpf_dtab_netdev *dev, *odev;
+diff --git a/drivers/macintosh/windfarm_smu_sat.c b/drivers/macintosh/windfarm_smu_sat.c
+index ad6223e883404..3d310dd60a0be 100644
+--- a/drivers/macintosh/windfarm_smu_sat.c
++++ b/drivers/macintosh/windfarm_smu_sat.c
+@@ -22,14 +22,6 @@
  
- 				dev = READ_ONCE(dtab->netdev_map[i]);
--				if (!dev ||
--				    dev->dev->ifindex != netdev->ifindex)
-+				if (!dev || netdev != dev->dev)
- 					continue;
- 				odev = cmpxchg(&dtab->netdev_map[i], dev, NULL);
- 				if (dev == odev)
+ #define VERSION "1.0"
+ 
+-#define DEBUG
+-
+-#ifdef DEBUG
+-#define DBG(args...)	printk(args)
+-#else
+-#define DBG(args...)	do { } while(0)
+-#endif
+-
+ /* If the cache is older than 800ms we'll refetch it */
+ #define MAX_AGE		msecs_to_jiffies(800)
+ 
+@@ -106,13 +98,10 @@ struct smu_sdbp_header *smu_sat_get_sdb_partition(unsigned int sat_id, int id,
+ 		buf[i+2] = data[3];
+ 		buf[i+3] = data[2];
+ 	}
+-#ifdef DEBUG
+-	DBG(KERN_DEBUG "sat %d partition %x:", sat_id, id);
+-	for (i = 0; i < len; ++i)
+-		DBG(" %x", buf[i]);
+-	DBG("\n");
+-#endif
+ 
++	printk(KERN_DEBUG "sat %d partition %x:", sat_id, id);
++	print_hex_dump(KERN_DEBUG, "  ", DUMP_PREFIX_OFFSET,
++		       16, 1, buf, len, false);
+ 	if (size)
+ 		*size = len;
+ 	return (struct smu_sdbp_header *) buf;
+@@ -132,13 +121,13 @@ static int wf_sat_read_cache(struct wf_sat *sat)
+ 	if (err < 0)
+ 		return err;
+ 	sat->last_read = jiffies;
++
+ #ifdef LOTSA_DEBUG
+ 	{
+ 		int i;
+-		DBG(KERN_DEBUG "wf_sat_get: data is");
+-		for (i = 0; i < 16; ++i)
+-			DBG(" %.2x", sat->cache[i]);
+-		DBG("\n");
++		printk(KERN_DEBUG "wf_sat_get: data is");
++		print_hex_dump(KERN_DEBUG, "  ", DUMP_PREFIX_OFFSET,
++			       16, 1, sat->cache, 16, false);
+ 	}
+ #endif
+ 	return 0;
 -- 
 2.20.1
 
