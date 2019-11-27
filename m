@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B2D10B817
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63C5C10B8F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbfK0Ujr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:39:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43966 "EHLO mail.kernel.org"
+        id S1727391AbfK0Usb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:48:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728149AbfK0Ujn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:39:43 -0500
+        id S1730141AbfK0Us1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:48:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93B8C20863;
-        Wed, 27 Nov 2019 20:39:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72B5621844;
+        Wed, 27 Nov 2019 20:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887183;
-        bh=yaJoh/7AyG+itmJ2dxC94svgjgemr1sqw9xtDGBeWVA=;
+        s=default; t=1574887706;
+        bh=m09NQk/hf9MktbOGeBLi3nTN2WP7IyVR6LenXFTYOpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3jnV+4lhUNGzXZ8BNFzZFvo1RgN9+nRZ3SXLjhclfHvEjclH1kFCRafM7AQ3rjpP
-         2JaEsLj7e5cxTL/WuOgFlB1zrns+Ea3tZM/JKAmPHX6nrgTKxznfVUw2N3MlHzVJM8
-         UnJgucRpDqB19q+xwZ9B6cnhqfyzGE94UTlquRr4=
+        b=OH4PZ9IEra5PBMUyw5+Hi1BI9URwSkMGEc+/Krpn68AxP7HWuxbHqWLW9RC0E5Id+
+         ZVCtxAysWT5jssuluxPz0uBOWFd/vr/us23B+rwo3Y1yclVBEsjOTujZkDO5sPXEKD
+         hnIElpGOP6jFcZXHkh0ThU7+blqQGeLC5zSu4Ji0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 013/151] ALSA: isight: fix leak of reference to firewire unit in error path of .probe callback
-Date:   Wed, 27 Nov 2019 21:29:56 +0100
-Message-Id: <20191127203008.996732126@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 064/211] PCI: vmd: Detach resources after stopping root bus
+Date:   Wed, 27 Nov 2019 21:29:57 +0100
+Message-Id: <20191127203059.983587019@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Jon Derrick <jonathan.derrick@intel.com>
 
-[ Upstream commit 51e68fb0929c29e47e9074ca3e99ffd6021a1c5a ]
+[ Upstream commit dc8af3a827df6d4bb925d3b81b7ec94a7cce9482 ]
 
-In some error paths, reference count of firewire unit is not decreased.
-This commit fixes the bug.
+The VMD removal path calls pci_stop_root_busi(), which tears down the pcie
+tree, including detaching all of the attached drivers. During driver
+detachment, devices may use pci_release_region() to release resources.
+This path relies on the resource being accessible in resource tree.
 
-Fixes: 5b14ec25a79b('ALSA: firewire: release reference count of firewire unit in .remove callback of bus driver')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+By detaching the child domain from the parent resource domain prior to
+stopping the bus, we are preventing the list traversal from finding the
+resource to be freed. If we instead detach the resource after stopping
+the bus, we will have properly freed the resource and detaching is
+simply accounting at that point.
+
+Without this order, the resource is never freed and is orphaned on VMD
+removal, leading to a warning:
+
+[  181.940162] Trying to free nonexistent resource <e5a10000-e5a13fff>
+
+Fixes: 2c2c5c5cd213 ("x86/PCI: VMD: Attach VMD resources to parent domain's resource tree")
+Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/firewire/isight.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pci/host/vmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/firewire/isight.c b/sound/firewire/isight.c
-index 48d6dca471c6b..6c8daf5b391ff 100644
---- a/sound/firewire/isight.c
-+++ b/sound/firewire/isight.c
-@@ -639,7 +639,7 @@ static int isight_probe(struct fw_unit *unit,
- 	if (!isight->audio_base) {
- 		dev_err(&unit->device, "audio unit base not found\n");
- 		err = -ENXIO;
--		goto err_unit;
-+		goto error;
- 	}
- 	fw_iso_resources_init(&isight->resources, unit);
+diff --git a/drivers/pci/host/vmd.c b/drivers/pci/host/vmd.c
+index 2537b022f42d4..af6d5da10ea5f 100644
+--- a/drivers/pci/host/vmd.c
++++ b/drivers/pci/host/vmd.c
+@@ -753,12 +753,12 @@ static void vmd_remove(struct pci_dev *dev)
+ {
+ 	struct vmd_dev *vmd = pci_get_drvdata(dev);
  
-@@ -668,12 +668,12 @@ static int isight_probe(struct fw_unit *unit,
- 	dev_set_drvdata(&unit->device, isight);
- 
- 	return 0;
--
--err_unit:
--	fw_unit_put(isight->unit);
--	mutex_destroy(&isight->mutex);
- error:
- 	snd_card_free(card);
-+
-+	mutex_destroy(&isight->mutex);
-+	fw_unit_put(isight->unit);
-+
- 	return err;
+-	vmd_detach_resources(vmd);
+ 	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
+ 	pci_stop_root_bus(vmd->bus);
+ 	pci_remove_root_bus(vmd->bus);
+ 	vmd_cleanup_srcu(vmd);
+ 	vmd_teardown_dma_ops(vmd);
++	vmd_detach_resources(vmd);
+ 	irq_domain_remove(vmd->irq_domain);
  }
  
 -- 
