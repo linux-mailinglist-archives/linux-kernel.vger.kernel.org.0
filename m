@@ -2,80 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C49C910B69F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 20:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC7510B6A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 20:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfK0TXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 14:23:12 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:56658 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfK0TXM (ORCPT
+        id S1727179AbfK0TXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 14:23:40 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37770 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbfK0TXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 14:23:12 -0500
-Received: from localhost (c-73-35-209-67.hsd1.wa.comcast.net [73.35.209.67])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E3B8A14A6F7E4;
-        Wed, 27 Nov 2019 11:23:10 -0800 (PST)
-Date:   Wed, 27 Nov 2019 11:23:10 -0800 (PST)
-Message-Id: <20191127.112310.1018809619618803508.davem@davemloft.net>
-To:     alobakin@dlink.ru
-Cc:     ecree@solarflare.com, jiri@mellanox.com, edumazet@google.com,
-        idosch@mellanox.com, pabeni@redhat.com, petrm@mellanox.com,
-        sd@queasysnail.net, f.fainelli@gmail.com,
-        jaswinder.singh@linaro.org, manishc@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, johannes.berg@intel.com,
-        emmanuel.grumbach@intel.com, luciano.coelho@intel.com,
-        linuxwifi@intel.com, kvalo@codeaurora.org,
-        nicholas.johnson-opensource@outlook.com.au, kenny@panix.com,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: wireless: intel: iwlwifi: fix GRO_NORMAL
- packet stalling
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191127094123.18161-1-alobakin@dlink.ru>
-References: <20191127094123.18161-1-alobakin@dlink.ru>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 27 Nov 2019 11:23:11 -0800 (PST)
+        Wed, 27 Nov 2019 14:23:40 -0500
+Received: by mail-oi1-f193.google.com with SMTP id 128so13064542oih.4
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 11:23:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Hw0kz+i9Mk8GNpNzBnmR7s/yayYdDJKPB0j3/83kv4=;
+        b=nyxjcgHAyOOTk376Ad6oVXa6b6/uZGiWdROp4ZAu14ImXIP2lRabEaWnZzN1qeKSre
+         RAiFxTIXlri7abDsc5Dr2ZEX7wc2VRyfE+rWwForgEue8rC+W0hnI/bDQD0TU3IQvJaI
+         ++Avuw3+7IxY6zxB6OIB+vmow7A3jVLN4vjELvLgvr1TbbGWLbE4CZ9r8G0toKPwwFXK
+         6cmPoeN8RcupeDZ3H2NWHcpSt8hivxj9+TLUW841txs8kM/v3D0lwTHyM1PoRD842YlA
+         cYGZP7o2CxIqOrmKDk0GGeV7i4hcfFya+YObWK3/+jtaHbDElKCM3a7XUma18MQw8pBl
+         fQ0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Hw0kz+i9Mk8GNpNzBnmR7s/yayYdDJKPB0j3/83kv4=;
+        b=lIhqZdM6shhQNfXCD0Qiefq4dI7m7NEPjoXjyOZSXDwtC6MS1Do0/AIpnwITvAqBBf
+         z/8lAMXt7mmri3QkSte3pERcXNYx2BI/VqDREdLeUY2eoX59KEWUntQlOnzHKBZcDISO
+         dx5eWTF70qHYLkN9fYCJukCca6quVi8NHKaNvehFT6X0cbsoQRbAhmBkY5iwH37LFjkg
+         bo1YvRC9Uv1MKiXE3dlVh64WFQXK4kACrXNnsNKpnhauigH/yNqqsN1kFrMVSmjcvJr6
+         94pqgrSnqv+J9QTzrKLuVutC1R5aubfRJjKuBp1Aft/Oi1ThoFAGa1uO5tmD5O+cnFmq
+         8HZw==
+X-Gm-Message-State: APjAAAVibgwMShwUK324vglVqw6bGxu78kRVAfACPXGFJh33cUQgFZ4q
+        XLK2+NRAEvUpxoqrbZl7Se1EkQ5vwky7RTJhp5/Phw==
+X-Google-Smtp-Source: APXvYqzd0diswvCyfrWBdO3wyErC5RMF3LoQj+2/Y8VPS1V/yCBMfWpMJ5+y7iCf4VMVajBy/G4v1znEhdboXyt4v1Q=
+X-Received: by 2002:aca:782:: with SMTP id 124mr5318377oih.47.1574882618639;
+ Wed, 27 Nov 2019 11:23:38 -0800 (PST)
+MIME-Version: 1.0
+References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+In-Reply-To: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 27 Nov 2019 20:23:12 +0100
+Message-ID: <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lobakin <alobakin@dlink.ru>
-Date: Wed, 27 Nov 2019 12:41:23 +0300
+On Wed, Nov 27, 2019 at 6:11 AM Jens Axboe <axboe@kernel.dk> wrote:
+> I posted this a few weeks back, took another look at it and refined it a
+> bit. I'd like some input on the viability of this approach.
+>
+> A new signalfd setup flag is added, SFD_TASK. This is only valid if used
+> with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
+> remembered in the signalfd context, and will be the one we use for
+> checking signals in the poll/read handlers in signalfd.
+>
+> This is needed to make signalfd useful with io_uring and aio, of which
+> the former in particular has my interest.
+>
+> I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
+> on the signalfd descriptor, forking, and then exiting, we grab a
+> reference to the task when we assign it. If that original task exits, we
+> catch it in signalfd_flush() and ensure waiters are woken up.
 
-> Commit 6570bc79c0df ("net: core: use listified Rx for GRO_NORMAL in
-> napi_gro_receive()") has applied batched GRO_NORMAL packets processing
-> to all napi_gro_receive() users, including mac80211-based drivers.
-> 
-> However, this change has led to a regression in iwlwifi driver [1][2] as
-> it is required for NAPI users to call napi_complete_done() or
-> napi_complete() and the end of every polling iteration, whilst iwlwifi
-> doesn't use NAPI scheduling at all and just calls napi_gro_flush().
-> In that particular case, packets which have not been already flushed
-> from napi->rx_list stall in it until at least next Rx cycle.
-> 
-> Fix this by adding a manual flushing of the list to iwlwifi driver right
-> before napi_gro_flush() call to mimic napi_complete() logics.
-> 
-> I prefer to open-code gro_normal_list() rather than exporting it for 2
-> reasons:
-> * to prevent from using it and napi_gro_flush() in any new drivers,
->   as it is the *really* bad way to use NAPI that should be avoided;
-> * to keep gro_normal_list() static and don't lose any CC optimizations.
-> 
-> I also don't add the "Fixes:" tag as the mentioned commit was only a
-> trigger that only exposed an improper usage of NAPI in this particular
-> driver.
-> 
-> [1] https://lore.kernel.org/netdev/PSXP216MB04388962C411CD0B17A86F47804A0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM
-> [2] https://bugzilla.kernel.org/show_bug.cgi?id=205647
-> 
-> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+Mh... that's not really reliable, because you only get ->flush() from
+the last exiting thread (or more precisely, the last exiting task that
+shares the files_struct).
 
-Applied, thanks for the quick turnaround.
+What is your goal here? To have a reference to a task without keeping
+the entire task_struct around in memory if someone leaks the signalfd
+to another process - basically like a weak pointer? If so, you could
+store a refcounted reference to "struct pid" instead of a refcounted
+reference to the task_struct, and then do the lookup of the
+task_struct on ->poll and ->read (similar to what procfs does).
+
+In other words:
+
+> diff --git a/fs/signalfd.c b/fs/signalfd.c
+> index 44b6845b071c..4bbdab9438c1 100644
+> --- a/fs/signalfd.c
+> +++ b/fs/signalfd.c
+> @@ -50,28 +50,62 @@ void signalfd_cleanup(struct sighand_struct *sighand)
+>
+>   struct signalfd_ctx {
+>         sigset_t sigmask;
+> +       struct task_struct *task;
+
+Turn this into "struct pid *task_pid".
+
+> +static int signalfd_flush(struct file *file, void *data)
+> +{
+> +       struct signalfd_ctx *ctx = file->private_data;
+> +       struct task_struct *tsk = ctx->task;
+> +
+> +       if (tsk == current) {
+> +               ctx->task = NULL;
+> +               wake_up(&tsk->sighand->signalfd_wqh);
+> +               put_task_struct(tsk);
+> +       }
+> +
+> +       return 0;
+> +}
+
+Get rid of this.
+
+> +static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
+> +{
+> +       struct task_struct *tsk = ctx->task ?: current;
+> +
+> +       get_task_struct(tsk);
+> +       return tsk;
+> +}
+
+Replace this with something like:
+
+  if (ctx->task_pid)
+    return get_pid_task(ctx->task_pid, PIDTYPE_PID); /* will return
+NULL if the task is gone */
+  else
+    return get_task_struct(current);
+
+and add NULL checks to the places that call this.
+
+> @@ -167,10 +201,11 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+>                                 int nonblock)
+>   {
+>         ssize_t ret;
+> +       struct task_struct *tsk = signalfd_get_task(ctx);
+
+(Here we could even optimize away the refcounting using RCU if we
+wanted to, since unlike in the ->poll handler, we don't need to be
+able to block.)
+
+>         if (ufd == -1) {
+> -               ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
+> +               ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>                 if (!ctx)
+>                         return -ENOMEM;
+>
+>                 ctx->sigmask = *mask;
+> +               if (flags & SFD_TASK) {
+> +                       ctx->task = current;
+> +                       get_task_struct(ctx->task);
+> +               }
+
+and here do "ctx->task_pid = get_task_pid(current, PIDTYPE_PID)"
