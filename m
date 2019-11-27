@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E88210BC36
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA61110BAB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:07:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732882AbfK0VJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:09:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36060 "EHLO mail.kernel.org"
+        id S1732370AbfK0VF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:05:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732875AbfK0VJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:09:20 -0500
+        id S1727440AbfK0VF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:05:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCCD1215E5;
-        Wed, 27 Nov 2019 21:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9B152086A;
+        Wed, 27 Nov 2019 21:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888960;
-        bh=j4+Z2IPEngF5+fke5jSBA0vOLXve52pBnioAKf+yoUE=;
+        s=default; t=1574888756;
+        bh=roSMi2E4aQEUsCzUFo/nqA8frS5jVbo6/6nvYCpg3eY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IaTJS9n8dageWOFTnh+ceQ1HJxnV2xmrWgUzW5J4r3LU/niF178bXrTXMwnTSlsCK
-         iRXR7ylDBk/VE1JAaJn5u/os3+pfnujbXK//LHxtkOcEff0SqEfkNanz3OlXbqOczg
-         bkta0+rWb3sJ/HLG49nkNQjhjaqk94uzWBm6rEhw=
+        b=yMBSD7RSbzwt9DPby0qs0uygMO1TdG1AaLGL63RIOK2d6qONiRWBfES06PCzFHb+g
+         wzIIvBx9GvjzMSvp2fz8ZDC4jbTOeOhcHMyqCOIqGKldeiSZin2S18sjTf1H53xDaR
+         asaCvQrO6zr9C5ds97k9aQrzbqG+wA8HAOVNGdy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.3 29/95] mm/ksm.c: dont WARN if page is still mapped in remove_stable_node()
-Date:   Wed, 27 Nov 2019 21:31:46 +0100
-Message-Id: <20191127202856.468507270@linuxfoundation.org>
+        stable@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: [PATCH 4.19 257/306] KVM: MMU: Do not treat ZONE_DEVICE pages as being reserved
+Date:   Wed, 27 Nov 2019 21:31:47 +0100
+Message-Id: <20191127203133.629360119@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
-References: <20191127202845.651587549@linuxfoundation.org>
+In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
+References: <20191127203114.766709977@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +46,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 9a63236f1ad82d71a98aa80320b6cb618fb32f44 upstream.
+commit a78986aae9b2988f8493f9f65a587ee433e83bc3 upstream.
 
-It's possible to hit the WARN_ON_ONCE(page_mapped(page)) in
-remove_stable_node() when it races with __mmput() and squeezes in
-between ksm_exit() and exit_mmap().
+Explicitly exempt ZONE_DEVICE pages from kvm_is_reserved_pfn() and
+instead manually handle ZONE_DEVICE on a case-by-case basis.  For things
+like page refcounts, KVM needs to treat ZONE_DEVICE pages like normal
+pages, e.g. put pages grabbed via gup().  But for flows such as setting
+A/D bits or shifting refcounts for transparent huge pages, KVM needs to
+to avoid processing ZONE_DEVICE pages as the flows in question lack the
+underlying machinery for proper handling of ZONE_DEVICE pages.
 
-  WARNING: CPU: 0 PID: 3295 at mm/ksm.c:888 remove_stable_node+0x10c/0x150
+This fixes a hang reported by Adam Borowski[*] in dev_pagemap_cleanup()
+when running a KVM guest backed with /dev/dax memory, as KVM straight up
+doesn't put any references to ZONE_DEVICE pages acquired by gup().
 
-  Call Trace:
-   remove_all_stable_nodes+0x12b/0x330
-   run_store+0x4ef/0x7b0
-   kernfs_fop_write+0x200/0x420
-   vfs_write+0x154/0x450
-   ksys_write+0xf9/0x1d0
-   do_syscall_64+0x99/0x510
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Note, Dan Williams proposed an alternative solution of doing put_page()
+on ZONE_DEVICE pages immediately after gup() in order to simplify the
+auditing needed to ensure is_zone_device_page() is called if and only if
+the backing device is pinned (via gup()).  But that approach would break
+kvm_vcpu_{un}map() as KVM requires the page to be pinned from map() 'til
+unmap() when accessing guest memory, unlike KVM's secondary MMU, which
+coordinates with mmu_notifier invalidations to avoid creating stale
+page references, i.e. doesn't rely on pages being pinned.
 
-Remove the warning as there is nothing scary going on.
+[*] http://lkml.kernel.org/r/20190919115547.GA17963@angband.pl
 
-Link: http://lkml.kernel.org/r/20191119131850.5675-1-aryabinin@virtuozzo.com
-Fixes: cbf86cfe04a6 ("ksm: remove old stable nodes more thoroughly")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Acked-by: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Adam Borowski <kilobyte@angband.pl>
+Analyzed-by: David Hildenbrand <david@redhat.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[sean: backport to 4.x; resolve conflict in mmu.c]
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/ksm.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/kvm/mmu.c       |    8 ++++----
+ include/linux/kvm_host.h |    1 +
+ virt/kvm/kvm_main.c      |   26 +++++++++++++++++++++++---
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -885,13 +885,13 @@ static int remove_stable_node(struct sta
- 		return 0;
- 	}
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3261,7 +3261,7 @@ static void transparent_hugepage_adjust(
+ 	 * here.
+ 	 */
+ 	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+-	    level == PT_PAGE_TABLE_LEVEL &&
++	    !kvm_is_zone_device_pfn(pfn) && level == PT_PAGE_TABLE_LEVEL &&
+ 	    PageTransCompoundMap(pfn_to_page(pfn)) &&
+ 	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+ 		unsigned long mask;
+@@ -5709,9 +5709,9 @@ restart:
+ 		 * the guest, and the guest page table is using 4K page size
+ 		 * mapping if the indirect sp has level = 1.
+ 		 */
+-		if (sp->role.direct &&
+-			!kvm_is_reserved_pfn(pfn) &&
+-			PageTransCompoundMap(pfn_to_page(pfn))) {
++		if (sp->role.direct && !kvm_is_reserved_pfn(pfn) &&
++		    !kvm_is_zone_device_pfn(pfn) &&
++		    PageTransCompoundMap(pfn_to_page(pfn))) {
+ 			drop_spte(kvm, sptep);
+ 			need_tlb_flush = 1;
+ 			goto restart;
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -911,6 +911,7 @@ int kvm_cpu_has_pending_timer(struct kvm
+ void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
  
--	if (WARN_ON_ONCE(page_mapped(page))) {
--		/*
--		 * This should not happen: but if it does, just refuse to let
--		 * merge_across_nodes be switched - there is no need to panic.
--		 */
--		err = -EBUSY;
--	} else {
+ bool kvm_is_reserved_pfn(kvm_pfn_t pfn);
++bool kvm_is_zone_device_pfn(kvm_pfn_t pfn);
+ 
+ struct kvm_irq_ack_notifier {
+ 	struct hlist_node link;
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -147,10 +147,30 @@ __weak int kvm_arch_mmu_notifier_invalid
+ 	return 0;
+ }
+ 
++bool kvm_is_zone_device_pfn(kvm_pfn_t pfn)
++{
 +	/*
-+	 * Page could be still mapped if this races with __mmput() running in
-+	 * between ksm_exit() and exit_mmap(). Just refuse to let
-+	 * merge_across_nodes/max_page_sharing be switched.
++	 * The metadata used by is_zone_device_page() to determine whether or
++	 * not a page is ZONE_DEVICE is guaranteed to be valid if and only if
++	 * the device has been pinned, e.g. by get_user_pages().  WARN if the
++	 * page_count() is zero to help detect bad usage of this helper.
 +	 */
-+	err = -EBUSY;
-+	if (!page_mapped(page)) {
- 		/*
- 		 * The stable node did not yet appear stale to get_ksm_page(),
- 		 * since that allows for an unmapped ksm page to be recognized
++	if (!pfn_valid(pfn) || WARN_ON_ONCE(!page_count(pfn_to_page(pfn))))
++		return false;
++
++	return is_zone_device_page(pfn_to_page(pfn));
++}
++
+ bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
+ {
++	/*
++	 * ZONE_DEVICE pages currently set PG_reserved, but from a refcounting
++	 * perspective they are "normal" pages, albeit with slightly different
++	 * usage rules.
++	 */
+ 	if (pfn_valid(pfn))
+-		return PageReserved(pfn_to_page(pfn));
++		return PageReserved(pfn_to_page(pfn)) &&
++		       !kvm_is_zone_device_pfn(pfn);
+ 
+ 	return true;
+ }
+@@ -1727,7 +1747,7 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty)
+ 
+ void kvm_set_pfn_dirty(kvm_pfn_t pfn)
+ {
+-	if (!kvm_is_reserved_pfn(pfn)) {
++	if (!kvm_is_reserved_pfn(pfn) && !kvm_is_zone_device_pfn(pfn)) {
+ 		struct page *page = pfn_to_page(pfn);
+ 
+ 		if (!PageReserved(page))
+@@ -1738,7 +1758,7 @@ EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
+ 
+ void kvm_set_pfn_accessed(kvm_pfn_t pfn)
+ {
+-	if (!kvm_is_reserved_pfn(pfn))
++	if (!kvm_is_reserved_pfn(pfn) && !kvm_is_zone_device_pfn(pfn))
+ 		mark_page_accessed(pfn_to_page(pfn));
+ }
+ EXPORT_SYMBOL_GPL(kvm_set_pfn_accessed);
 
 
