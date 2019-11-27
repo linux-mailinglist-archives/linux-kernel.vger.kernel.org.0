@@ -2,30 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 624A210AB9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B9F410AB97
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfK0ITi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:19:38 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43964 "EHLO
+        id S1727096AbfK0ITu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:19:50 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43985 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfK0ITh (ORCPT
+        with ESMTP id S1726980AbfK0ITo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:19:37 -0500
+        Wed, 27 Nov 2019 03:19:44 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iZsXp-0002Pb-LI; Wed, 27 Nov 2019 09:19:29 +0100
+        id 1iZsXu-0002Rj-1S; Wed, 27 Nov 2019 09:19:34 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4BE171C1E6D;
-        Wed, 27 Nov 2019 09:19:29 +0100 (CET)
-Date:   Wed, 27 Nov 2019 08:19:29 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 502A81C1E72;
+        Wed, 27 Nov 2019 09:19:30 +0100 (CET)
+Date:   Wed, 27 Nov 2019 08:19:30 -0000
 From:   "tip-bot2 for Andy Lutomirski" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/ptrace: Remove set_segment_reg()
- implementations for current
+Subject: [tip: x86/urgent] selftests/x86/single_step_syscall: Check SYSENTER directly
 Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -33,7 +32,7 @@ Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157484276921.21853.10028026818717673035.tip-bot2@tip-bot2>
+Message-ID: <157484277024.21853.2643521750694270592.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,21 +48,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/urgent branch of tip:
 
-Commit-ID:     8e05f1b4f27d07a0f93e7c6fd28525a5d082b85c
-Gitweb:        https://git.kernel.org/tip/8e05f1b4f27d07a0f93e7c6fd28525a5d082b85c
+Commit-ID:     3300c4f3afbb59a1f4bfdbe0f0b6c91e241541b1
+Gitweb:        https://git.kernel.org/tip/3300c4f3afbb59a1f4bfdbe0f0b6c91e241541b1
 Author:        Andy Lutomirski <luto@kernel.org>
-AuthorDate:    Mon, 15 Jul 2019 10:08:48 -07:00
+AuthorDate:    Wed, 20 Nov 2019 12:22:46 -08:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 26 Nov 2019 22:00:12 +01:00
+CommitterDate: Tue, 26 Nov 2019 21:53:34 +01:00
 
-x86/ptrace: Remove set_segment_reg() implementations for current
+selftests/x86/single_step_syscall: Check SYSENTER directly
 
-seg_segment_reg() should be unreachable with task == current.
-Rather than confusingly trying to make it work, just explicitly
-disable this case.
-
-(regset->get is used for current in the coredump code, but the ->set
- interface is only used for ptrace, and you can't ptrace yourself.)
+We used to test SYSENTER only through the vDSO.  Test it directly
+too, just in case.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -72,66 +67,135 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/ptrace.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ tools/testing/selftests/x86/single_step_syscall.c | 94 ++++++++++++--
+ 1 file changed, 85 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index 066e5b0..3b3b169 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -182,6 +182,9 @@ static u16 get_segment_reg(struct task_struct *task, unsigned long offset)
- static int set_segment_reg(struct task_struct *task,
- 			   unsigned long offset, u16 value)
- {
-+	if (WARN_ON_ONCE(task == current))
-+		return -EIO;
-+
- 	/*
- 	 * The value argument was already truncated to 16 bits.
- 	 */
-@@ -209,10 +212,7 @@ static int set_segment_reg(struct task_struct *task,
- 		break;
+diff --git a/tools/testing/selftests/x86/single_step_syscall.c b/tools/testing/selftests/x86/single_step_syscall.c
+index 50ce6c3..1063328 100644
+--- a/tools/testing/selftests/x86/single_step_syscall.c
++++ b/tools/testing/selftests/x86/single_step_syscall.c
+@@ -43,7 +43,19 @@ static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
+ 		err(1, "sigaction");
+ }
  
- 	case offsetof(struct user_regs_struct, gs):
--		if (task == current)
--			set_user_gs(task_pt_regs(task), value);
--		else
--			task_user_gs(task) = value;
-+		task_user_gs(task) = value;
+-static volatile sig_atomic_t sig_traps;
++static void clearhandler(int sig)
++{
++	struct sigaction sa;
++	memset(&sa, 0, sizeof(sa));
++	sa.sa_handler = SIG_DFL;
++	sigemptyset(&sa.sa_mask);
++	if (sigaction(sig, &sa, 0))
++		err(1, "sigaction");
++}
++
++static volatile sig_atomic_t sig_traps, sig_eflags;
++sigjmp_buf jmpbuf;
++static unsigned char altstack_data[SIGSTKSZ];
+ 
+ #ifdef __x86_64__
+ # define REG_IP REG_RIP
+@@ -90,6 +102,25 @@ static void sigtrap(int sig, siginfo_t *info, void *ctx_void)
  	}
+ }
+ 
++static char const * const signames[] = {
++	[SIGSEGV] = "SIGSEGV",
++	[SIGBUS] = "SIBGUS",
++	[SIGTRAP] = "SIGTRAP",
++	[SIGILL] = "SIGILL",
++};
++
++static void print_and_longjmp(int sig, siginfo_t *si, void *ctx_void)
++{
++	ucontext_t *ctx = ctx_void;
++
++	printf("\tGot %s with RIP=%lx, TF=%ld\n", signames[sig],
++	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP],
++	       (unsigned long)ctx->uc_mcontext.gregs[REG_EFL] & X86_EFLAGS_TF);
++
++	sig_eflags = (unsigned long)ctx->uc_mcontext.gregs[REG_EFL];
++	siglongjmp(jmpbuf, 1);
++}
++
+ static void check_result(void)
+ {
+ 	unsigned long new_eflags = get_eflags();
+@@ -109,6 +140,22 @@ static void check_result(void)
+ 	sig_traps = 0;
+ }
+ 
++static void fast_syscall_no_tf(void)
++{
++	sig_traps = 0;
++	printf("[RUN]\tFast syscall with TF cleared\n");
++	fflush(stdout);  /* Force a syscall */
++	if (get_eflags() & X86_EFLAGS_TF) {
++		printf("[FAIL]\tTF is now set\n");
++		exit(1);
++	}
++	if (sig_traps) {
++		printf("[FAIL]\tGot SIGTRAP\n");
++		exit(1);
++	}
++	printf("[OK]\tNothing unexpected happened\n");
++}
++
+ int main()
+ {
+ #ifdef CAN_BUILD_32
+@@ -163,17 +210,46 @@ int main()
+ 	check_result();
+ 
+ 	/* Now make sure that another fast syscall doesn't set TF again. */
+-	printf("[RUN]\tFast syscall with TF cleared\n");
+-	fflush(stdout);  /* Force a syscall */
+-	if (get_eflags() & X86_EFLAGS_TF) {
+-		printf("[FAIL]\tTF is now set\n");
+-		exit(1);
++	fast_syscall_no_tf();
++
++	/*
++	 * And do a forced SYSENTER to make sure that this works even if
++	 * fast syscalls don't use SYSENTER.
++	 *
++	 * Invoking SYSENTER directly breaks all the rules.  Just handle
++	 * the SIGSEGV.
++	 */
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		unsigned long nr = SYS_getpid;
++		printf("[RUN]\tSet TF and check SYSENTER\n");
++		stack_t stack = {
++			.ss_sp = altstack_data,
++			.ss_size = SIGSTKSZ,
++		};
++		if (sigaltstack(&stack, NULL) != 0)
++			err(1, "sigaltstack");
++		sethandler(SIGSEGV, print_and_longjmp,
++			   SA_RESETHAND | SA_ONSTACK);
++		sethandler(SIGILL, print_and_longjmp, SA_RESETHAND);
++		set_eflags(get_eflags() | X86_EFLAGS_TF);
++		/* Clear EBP first to make sure we segfault cleanly. */
++		asm volatile ("xorl %%ebp, %%ebp; SYSENTER" : "+a" (nr) :: "flags", "rcx"
++#ifdef __x86_64__
++				, "r11"
++#endif
++			);
++
++		/* We're unreachable here.  SYSENTER forgets RIP. */
+ 	}
+-	if (sig_traps) {
+-		printf("[FAIL]\tGot SIGTRAP\n");
++	clearhandler(SIGSEGV);
++	clearhandler(SIGILL);
++	if (!(sig_eflags & X86_EFLAGS_TF)) {
++		printf("[FAIL]\tTF was cleared\n");
+ 		exit(1);
+ 	}
+-	printf("[OK]\tNothing unexpected happened\n");
++
++	/* Now make sure that another fast syscall doesn't set TF again. */
++	fast_syscall_no_tf();
  
  	return 0;
-@@ -272,6 +272,9 @@ static u16 get_segment_reg(struct task_struct *task, unsigned long offset)
- static int set_segment_reg(struct task_struct *task,
- 			   unsigned long offset, u16 value)
- {
-+	if (WARN_ON_ONCE(task == current))
-+		return -EIO;
-+
- 	/*
- 	 * The value argument was already truncated to 16 bits.
- 	 */
-@@ -281,23 +284,15 @@ static int set_segment_reg(struct task_struct *task,
- 	switch (offset) {
- 	case offsetof(struct user_regs_struct,fs):
- 		task->thread.fsindex = value;
--		if (task == current)
--			loadsegment(fs, task->thread.fsindex);
- 		break;
- 	case offsetof(struct user_regs_struct,gs):
- 		task->thread.gsindex = value;
--		if (task == current)
--			load_gs_index(task->thread.gsindex);
- 		break;
- 	case offsetof(struct user_regs_struct,ds):
- 		task->thread.ds = value;
--		if (task == current)
--			loadsegment(ds, task->thread.ds);
- 		break;
- 	case offsetof(struct user_regs_struct,es):
- 		task->thread.es = value;
--		if (task == current)
--			loadsegment(es, task->thread.es);
- 		break;
- 
- 		/*
+ }
