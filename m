@@ -2,100 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7625610AF2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 13:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBE610AF34
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 13:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfK0MBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 07:01:25 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:33829 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfK0MBZ (ORCPT
+        id S1727051AbfK0MB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 07:01:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38526 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726983AbfK0MBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 07:01:25 -0500
-Received: from mail-lj1-f175.google.com ([209.85.208.175]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MdNHa-1i0sEt3cbA-00ZSA5; Wed, 27 Nov 2019 13:01:23 +0100
-Received: by mail-lj1-f175.google.com with SMTP id e9so24143957ljp.13;
-        Wed, 27 Nov 2019 04:01:23 -0800 (PST)
-X-Gm-Message-State: APjAAAXdfxNZTxo4BFqbIdYgtFU6ode9w7XHHPfXYUpJ/AEdBYqLNJbl
-        uqtOGkrRlfxnHjGtqTdx9xVYhG7tT9Jf0b9twhI=
-X-Google-Smtp-Source: APXvYqziDlqq5Dzs6upwfbV/V0hi2sCqZa+0e8VjhKCQZe+GYHkc5E8w6eo0lAiPAcdp9kqETGqKueHwK15/WGusde4=
-X-Received: by 2002:a2e:5843:: with SMTP id x3mr618488ljd.64.1574856083341;
- Wed, 27 Nov 2019 04:01:23 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1573456283.git.baolin.wang@linaro.org> <CAK8P3a1we9D5C2NOBww=cW-4L1PT3t0NnDRmknLwiLm652TmKg@mail.gmail.com>
- <CAMz4kuK9HEuGdhNqHO_qoy9jD=ccsPPhD_dKYwNRgQyWyYwqRA@mail.gmail.com>
- <CAK8P3a0rNhyxmUWLUV1js3FsuAESDOPX3E4b8ActtL4GRT4uTA@mail.gmail.com>
- <CADBw62pzV+5ZXBEbFvTQJ9essAd4cd7Xkz5j9AXB5rAQy0wLqA@mail.gmail.com>
- <CAMz4kuK_3q4JY1vNXe6zGHDNF8Ep-SkcUq6Z25r790VSz4+Bjw@mail.gmail.com>
- <CAK8P3a11vJb1riYseqPnF_5SuJA+YnYuGwC0XWx6_rk+eQ0Bmw@mail.gmail.com>
- <f88856aa-9175-2a93-3747-c98215cb79c3@suse.de> <20191127090023.GA23040@infradead.org>
-In-Reply-To: <20191127090023.GA23040@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 27 Nov 2019 13:01:06 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0gUWf_+ZmscuFanvPG=wN09ELL-JpByjJJM4Lo1FYmrQ@mail.gmail.com>
-Message-ID: <CAK8P3a0gUWf_+ZmscuFanvPG=wN09ELL-JpByjJJM4Lo1FYmrQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Add MMC software queue support
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Hannes Reinecke <hare@suse.de>,
-        "(Exiting) Baolin Wang" <baolin.wang@linaro.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Paolo Valente <paolo.valente@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:580VDw310m+E7/f+vrcK74DySwXU+ECbb8b2LLqYcvyh+NajzFe
- RywynYTPpgG7GDg92DZwDXH+7Qygya89VEVeeC60PBJe1ujehCpMeFsflU0+MbOOa4uMXVE
- Mzjo7kHgTbxIgWGY3qm5mo4BnWOfd8lUv/D8yCr/1PH36RDiucM7j62/WxPW9D/HHknY/5b
- +YOUAopbaSrLa6R7evbAA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UcZAd24DVs4=:hJxrFWDIxCWki3o/hlc67j
- LEAomg2FJxMOTy02+HbjOTFbDy2zx9e7YQIkhDBSRXur9RkXjFAO0yIvGDr4IvIw2Mo1dz5SB
- 016E03fciBajyv20XIy7Y+1jzW4uyTvj5ntGTzsUPBuJZNgXwP4do7ywWwtREdyOCPaVol25y
- jvlBPfAp/hjz9K5D8LEctwx3NZDOywq8pDBvJ72du5GlAC5jFGhZu9IuIcHlbqFwBU7LYls3E
- LAN+bZBDPIpt+UKDOh3WBfnUH9L4uJwY0npLtvd3Ar+D8HIT9OMRvsJVfdw49gGMnMvlfEyyB
- k8AajG/suN4D4TJns8fA+sZtf2C37pnfjLtfXHujehoInk6LUOWofZvVqv0g8GwfeFkd7+dwr
- li76EYIREMO8Z49BSDYPxTrdsT9LYYyzIo0SZbFht0Ygk8yC+VMvJA4JMYaCs4aT6aqVzmX97
- e0mtDxnAlyDVwMrxEo/9XsoZKAe7NE/omu6C5oLkUrqWr7zS28Ee1/ZaHirrZb8rAxRoa+IYy
- t6p5GH9VynkHxdq42Mq+ELVOaGVeytmNexazzvbFpo0vViOTSufJNfm5xsXhA+wCoTUq4LVzi
- qz022NktdMaVcbjOn5C3pyHjAQ27l5/hUcRF9XGiqYXFJCFmmBklDSLMGzKued/wSbvWo9mZy
- R8Yt6mHzGM380Rl3pVSoNd3A/XuxqNwQntS7EcqJul4vEHkkYrnSlm883XePUUAjuI89NLXXF
- xpT/18Nnf/ldcy3Pz3bZCkvNK2jlHdAg02JFk9flZvX9VoaHpwkiIQi/0jSTIvV7OK0vxk3Ue
- l41+VDeL7dI0nUiNQPK+gJ+gtXBd/StkXL8kpj2XlGPdn0yHr3agj/YRilzTU3AVJwVDuLhqB
- 6syMOS+dqSA3T2duvarw==
+        Wed, 27 Nov 2019 07:01:52 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xARBqPhD146012;
+        Wed, 27 Nov 2019 07:01:40 -0500
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2whcxqpktg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Nov 2019 07:01:40 -0500
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xARC1IaN022718;
+        Wed, 27 Nov 2019 12:01:39 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01dal.us.ibm.com with ESMTP id 2wevd6wfey-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Nov 2019 12:01:39 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xARC1cSo51446128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 12:01:38 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3BED9B2070;
+        Wed, 27 Nov 2019 12:01:38 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0EC0B2067;
+        Wed, 27 Nov 2019 12:01:37 +0000 (GMT)
+Received: from sofia.ibm.com (unknown [9.124.35.209])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Nov 2019 12:01:37 +0000 (GMT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 6164F2E2F5A; Wed, 27 Nov 2019 17:31:35 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH 0/3] pseries: Track and expose idle PURR and SPURR ticks
+Date:   Wed, 27 Nov 2019 17:31:09 +0530
+Message-Id: <1574856072-30972-1-git-send-email-ego@linux.vnet.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-27_02:2019-11-27,2019-11-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ mlxscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911270104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 10:00 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Tue, Nov 26, 2019 at 12:17:15PM +0100, Hannes Reinecke wrote:
->  If requests are batched enough we could just drain
-> and switch every time an other partition access comes in.  Especially
-> so if people only use partitions for boot partitions and other rarely
-> used areas.
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-We only support a single user partition plus up to two boot partitions that
-are accessed rarely, I don't think there is any reason to optimize switching
-between them.
+On PSeries LPARs, the data centers planners desire a more accurate
+view of system utilization per resource such as CPU to plan the system
+capacity requirements better. Such accuracy can be obtained by reading
+PURR/SPURR registers for CPU resource utilization.
 
-The only change that I think we need here is to change the partition switch
-from something that is done synchronously during ->queue_rq() to
-something that fits better into normal scheme of sending a cmd to
-the device, returning BLK_STS_RESOURCE from ->queue_rq.
-Possibly this could even be turned into a standard struct request that is
-added between two normal requests for different partitions at some
-point, if this simplifies the logic (I suspect it won't, but it may be worth
-a try).
+Tools such as lparstat which are used to compute the utilization need
+to know [S]PURR ticks when the cpu was busy or idle. The [S]PURR
+counters are already exposed through sysfs.  We already account for
+PURR ticks when we go to idle so that we can update the VPA area. This
+patchset extends support to account for SPURR ticks when idle, and
+expose both via per-cpu sysfs files.
 
-      Arnd
+These patches are required for enhancement to the lparstat utility
+that compute the CPU utilization based on PURR and SPURR which can be
+found here :
+https://groups.google.com/forum/#!topic/powerpc-utils-devel/fYRo69xO9r4
+
+Gautham R. Shenoy (3):
+  powerpc/pseries: Account for SPURR ticks on idle CPUs
+  powerpc/sysfs: Show idle_purr and idle_spurr for every CPU
+  Documentation: Document sysfs interfaces purr, spurr, idle_purr,
+    idle_spurr
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 39 ++++++++++++++++++++++
+ arch/powerpc/kernel/idle.c                         |  2 ++
+ arch/powerpc/kernel/sysfs.c                        | 32 ++++++++++++++++++
+ drivers/cpuidle/cpuidle-pseries.c                  | 28 ++++++++++------
+ 4 files changed, 90 insertions(+), 11 deletions(-)
+
+-- 
+1.9.4
+
