@@ -2,131 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA9A810AA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 06:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E61710AA98
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 07:09:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfK0F5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 00:57:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfK0F5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 00:57:10 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9799207DD;
-        Wed, 27 Nov 2019 05:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574834229;
-        bh=2LCywgeMJXg7y4ZWRrSFYRw5cDi6k86r0DUii6K/vjQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GVK6QVOleKWWTwSsGfvWyZAUIusPFRz9VktM8OyoBWN1OZx/DBMYBzLXgMJn7yrKp
-         ZbqPznc9YfnfDMmHPFDlye1kkp6egzAmsPNYHweuE+uQvG7e6FHnbG+HZ2LtVwnlgE
-         3FD1LbKAuTdFdsTiS7MxvzFkjqCr3sIduLM0jeRo=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bristot@redhat.com,
-        jbaron@akamai.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, namit@vmware.com, hpa@zytor.com,
-        luto@kernel.org, ard.biesheuvel@linaro.org, jpoimboe@redhat.com,
-        jeyu@kernel.org, alexei.starovoitov@gmail.com,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH -tip 2/2] kprobes: Set unoptimized flag after unoptimizing code
-Date:   Wed, 27 Nov 2019 14:57:04 +0900
-Message-Id: <157483422375.25881.13508326028469515760.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <157483420094.25881.9190014521050510942.stgit@devnote2>
-References: <157483420094.25881.9190014521050510942.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
+        id S1726591AbfK0GJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 01:09:25 -0500
+Received: from pmg.pichincha.gob.ec ([179.49.0.227]:59966 "EHLO
+        pmg.pichincha.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfK0GJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 01:09:25 -0500
+X-Greylist: delayed 432 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 01:09:24 EST
+Received: from pmg.pichincha.gob.ec (localhost.localdomain [127.0.0.1])
+        by pmg.pichincha.gob.ec (Proxmox) with ESMTP id 719F9C61E11;
+        Wed, 27 Nov 2019 01:02:11 -0500 (-05)
+Received: from webmail.pichincha.gob.ec (webmail.pichincha.gob.ec [192.168.0.2])
+        by pmg.pichincha.gob.ec (Proxmox) with ESMTP id DDE4DC61DF7;
+        Wed, 27 Nov 2019 01:02:10 -0500 (-05)
+Received: from webmail.pichincha.gob.ec (localhost.localdomain [127.0.0.1])
+        by webmail.pichincha.gob.ec (Postfix) with ESMTPS id 458C5132001D;
+        Wed, 27 Nov 2019 00:55:44 -0500 (-05)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by webmail.pichincha.gob.ec (Postfix) with ESMTP id 111D8175F83;
+        Wed, 27 Nov 2019 00:55:44 -0500 (-05)
+DKIM-Filter: OpenDKIM Filter v2.10.3 webmail.pichincha.gob.ec 111D8175F83
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pichincha.gob.ec;
+        s=87C2FEA4-125C-11E8-95F5-EEE075CF53BB; t=1574834144;
+        bh=2JhFg/uDdXkeH9oJL/1qjnTW9OC6Ncj0ABzWOWi7n+g=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=DmwAgQ4TmUG+9c5RUkoO41Kp8bgIJbger7Ru4oialZDwOVPcDtJLuI3v6QErukJKB
+         RX66v2p0acEeL7Kyb/Y0KlLS1waS2BY/amw4KnhKiBogvROjJswZ4+Od+brwhWeVyt
+         HE9isIBXcOTkkxxU3RlG9xrpReL/ixOu1NJDVCLM=
+Received: from webmail.pichincha.gob.ec ([127.0.0.1])
+        by localhost (webmail.pichincha.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 8Eu39FJBS8b7; Wed, 27 Nov 2019 00:55:43 -0500 (-05)
+Received: from webmail.pichincha.gob.ec (webmail.pichincha.gob.ec [192.168.0.2])
+        by webmail.pichincha.gob.ec (Postfix) with ESMTP id 7E36A1653E0;
+        Wed, 27 Nov 2019 00:55:43 -0500 (-05)
+Date:   Wed, 27 Nov 2019 00:55:43 -0500 (ECT)
+From:   =?utf-8?Q?Andr=C3=A9s_Sebastian_?= Mena Pacheco 
+        <asmena@pichincha.gob.ec>
+Reply-To: euroxsillions@gmail.com
+Message-ID: <1858982079.2404929.1574834143485.JavaMail.zimbra@pichincha.gob.ec>
+Subject: Grattis du har vunnit .
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [185.232.20.203]
+X-Mailer: Zimbra 8.8.15_GA_3829 (zclient/8.8.15_GA_3829)
+Thread-Index: yW1wtQRoEgZ6HLKimL+hEP3r1co7IA==
+Thread-Topic: Grattis du har vunnit .
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to set unoptimized flag after confirming the code is completely
-unoptimized. Without this fix, when a kprobe hits the intermediate
-modified instruction (the first byte is replaced by int3, but
-latter bytes still be a jump address operand) while unoptimizing,
-it can return to the middle byte of the modified code. And it causes
-an invalid instruction exception in the kernel.
+Grattis du har vunnit 650 000,00 =E2=82=AC i Power-ball Lottery jackpot Pro=
+mo m=C3=A5natliga dragningar som h=C3=B6lls i november 2019.
 
-Usually, this is a rare case, but if we put a probe on the function
-called while text patching, it always causes a kernel panic as below.
-(text_poke() is used for patching the code in optprobe)
+Kontakta v=C3=A5r fordran E-post: euroxsillions@gmail.com
 
- # echo p text_poke+5 > kprobe_events
- # echo 1 > events/kprobes/enable
- # echo 0 > events/kprobes/enable
- invalid opcode: 0000 [#1] PREEMPT SMP PTI
- CPU: 7 PID: 137 Comm: kworker/7:1 Not tainted 5.4.0-rc8+ #29
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
- Workqueue: events kprobe_optimizer
- RIP: 0010:text_poke+0x9/0x50
- Code: 01 00 00 5b 5d 41 5c 41 5d c3 89 c0 0f b7 4c 02 fe 66 89 4c 05 fe e9 31 ff ff ff e8 71 ac 03 00 90 55 48 89 f5 53 cc 30 cb fd <1e> ec 08 8b 05 72 98 31 01 85 c0 75 11 48 83 c4 08 48 89 ee 48 89
- RSP: 0018:ffffc90000343df0 EFLAGS: 00010686
- RAX: 0000000000000000 RBX: ffffffff81025796 RCX: 0000000000000000
- RDX: 0000000000000004 RSI: ffff88807c983148 RDI: ffffffff81025796
- RBP: ffff88807c983148 R08: 0000000000000001 R09: 0000000000000000
- R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82284fe0
- R13: ffff88807c983138 R14: ffffffff82284ff0 R15: 0ffff88807d9eee0
- FS:  0000000000000000(0000) GS:ffff88807d9c0000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000000000058158b CR3: 000000007b372000 CR4: 00000000000006a0
- Call Trace:
-  arch_unoptimize_kprobe+0x22/0x28
-  arch_unoptimize_kprobes+0x39/0x87
-  kprobe_optimizer+0x6e/0x290
-  process_one_work+0x2a0/0x610
-  worker_thread+0x28/0x3d0
-  ? process_one_work+0x610/0x610
-  kthread+0x10d/0x130
-  ? kthread_park+0x80/0x80
-  ret_from_fork+0x3a/0x50
- Modules linked in:
- ---[ end trace 83b34b22a228711b ]---
+1. Fullst=C3=A4ndigt namn:
+2. Adress:
+3. Sex:
+4. =C3=85lder:
+5. Yrke:
+6. Telefon:
 
-This can happen even if we blacklist text_poke() and other functions,
-because there is a small time window which showing the intermediate
-code to other CPUs.
-
-Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/kprobes.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 53534aa258a6..34e28b236d68 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -510,6 +510,8 @@ static void do_unoptimize_kprobes(void)
- 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
- 	/* Loop free_list for disarming */
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-+		/* Switching from detour code to origin */
-+		op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 		/* Disarm probes if marked disabled */
- 		if (kprobe_disabled(&op->kp))
- 			arch_disarm_kprobe(&op->kp);
-@@ -649,6 +651,7 @@ static void force_unoptimize_kprobe(struct optimized_kprobe *op)
- {
- 	lockdep_assert_cpus_held();
- 	arch_unoptimize_kprobe(op);
-+	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 	if (kprobe_disabled(&op->kp))
- 		arch_disarm_kprobe(&op->kp);
- }
-@@ -676,7 +679,6 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
- 		return;
- 	}
- 
--	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
- 	if (!list_empty(&op->list)) {
- 		/* Dequeue from the optimization queue */
- 		list_del_init(&op->list);
+Andr=C3=A9s Sebastian  Mena Pacheco
+Online-koordinator
 
