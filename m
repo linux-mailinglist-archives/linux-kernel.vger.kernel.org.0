@@ -2,113 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5646910AD88
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:27:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4188E10AD8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:28:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfK0K1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:27:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47792 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726204AbfK0K1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:27:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1B51FACE0;
-        Wed, 27 Nov 2019 10:27:47 +0000 (UTC)
-Message-ID: <1574850465.2485.10.camel@suse.com>
-Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
-From:   Oliver Neukum <oneukum@suse.com>
-To:     syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>,
-        andreyknvl@google.com, hverkuil@xs4all.nl,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Date:   Wed, 27 Nov 2019 11:27:45 +0100
-In-Reply-To: <000000000000f47f0b0595307ddc@google.com>
-References: <000000000000f47f0b0595307ddc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1726920AbfK0K2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:28:17 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44265 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbfK0K2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 05:28:15 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iZuYE-0004Jb-EZ; Wed, 27 Nov 2019 11:28:02 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E5F2E1C1E75;
+        Wed, 27 Nov 2019 11:28:01 +0100 (CET)
+Date:   Wed, 27 Nov 2019 10:28:01 -0000
+From:   "tip-bot2 for Anthony Steinhauser" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/x86: Implement immediate enforcement of
+ /sys/devices/cpu/rdpmc value of 0
+Cc:     Anthony Steinhauser <asteinhauser@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191125054838.137615-1-asteinhauser@google.com>
+References: <20191125054838.137615-1-asteinhauser@google.com>
+MIME-Version: 1.0
+Message-ID: <157485048175.21853.7122458851283772555.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 18.10.2019, 07:53 -0700 schrieb syzbot:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    22be26f7 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=102b65cf600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9ca7a12fd736d93e0232
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143b9060e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15d3b94b600000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com
+The following commit has been merged into the perf/urgent branch of tip:
 
-#syz test: https://github.com/google/kasan.git 22be26f7
+Commit-ID:     405b45376de90b3027aaf8c4de035c6bb721fa7e
+Gitweb:        https://git.kernel.org/tip/405b45376de90b3027aaf8c4de035c6bb721fa7e
+Author:        Anthony Steinhauser <asteinhauser@google.com>
+AuthorDate:    Sun, 24 Nov 2019 21:48:38 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 27 Nov 2019 10:32:11 +01:00
 
-From 497dce10b022c0cfbba450a47d634aa212ecafa1 Mon Sep 17 00:00:00 2001
-From: Oliver Neukum <oneukum@suse.com>
-Date: Mon, 18 Nov 2019 14:41:51 +0100
-Subject: [PATCH] si470x: prevent resubmission
+perf/x86: Implement immediate enforcement of /sys/devices/cpu/rdpmc value of 0
 
-Starting IO to a device is not necessarily a NOP in every error
-case. So we need to terminate all IO in every case of probe
-failure and disconnect with absolute certainty.
+When you successfully write 0 to /sys/devices/cpu/rdpmc, the RDPMC
+instruction should be disabled unconditionally and immediately (after you
+close the SYSFS file) by the documentation.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Instead, in the current implementation the PMU must be reloaded which
+happens only eventually some time in the future. Only after that the RDPMC
+instruction becomes disabled (on ring 3) on the respective core.
+
+This change makes the treatment of the 0 value as blocking and as
+unconditional as the current treatment of the 2 value, only the CR4.PCE
+bit is naturally set to false instead of true.
+
+Signed-off-by: Anthony Steinhauser <asteinhauser@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Link: https://lkml.kernel.org/r/20191125054838.137615-1-asteinhauser@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/media/radio/si470x/radio-si470x-usb.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/events/core.c             | 18 ++++++++++++------
+ arch/x86/include/asm/mmu_context.h |  4 +++-
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
-index fedff68d8c49..8663828d93a5 100644
---- a/drivers/media/radio/si470x/radio-si470x-usb.c
-+++ b/drivers/media/radio/si470x/radio-si470x-usb.c
-@@ -542,6 +542,8 @@ static int si470x_start_usb(struct si470x_device *radio)
- 		radio->int_in_running = 0;
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 6e3f0c1..9a89d98 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -49,6 +49,7 @@ DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
+ 	.enabled = 1,
+ };
+ 
++DEFINE_STATIC_KEY_FALSE(rdpmc_never_available_key);
+ DEFINE_STATIC_KEY_FALSE(rdpmc_always_available_key);
+ 
+ u64 __read_mostly hw_cache_event_ids
+@@ -2181,21 +2182,26 @@ static ssize_t set_attr_rdpmc(struct device *cdev,
+ 	if (x86_pmu.attr_rdpmc_broken)
+ 		return -ENOTSUPP;
+ 
+-	if ((val == 2) != (x86_pmu.attr_rdpmc == 2)) {
++	if (val != x86_pmu.attr_rdpmc) {
+ 		/*
+-		 * Changing into or out of always available, aka
+-		 * perf-event-bypassing mode.  This path is extremely slow,
++		 * Changing into or out of never available or always available,
++		 * aka perf-event-bypassing mode. This path is extremely slow,
+ 		 * but only root can trigger it, so it's okay.
+ 		 */
++		if (val == 0)
++			static_branch_inc(&rdpmc_never_available_key);
++		else if (x86_pmu.attr_rdpmc == 0)
++			static_branch_dec(&rdpmc_never_available_key);
++
+ 		if (val == 2)
+ 			static_branch_inc(&rdpmc_always_available_key);
+-		else
++		else if (x86_pmu.attr_rdpmc == 2)
+ 			static_branch_dec(&rdpmc_always_available_key);
++
+ 		on_each_cpu(refresh_pce, NULL, 1);
++		x86_pmu.attr_rdpmc = val;
  	}
- 	radio->status_rssi_auto_update = radio->int_in_running;
-+	if (retval < 0)
-+		return retval;
  
- 	/* start radio */
- 	retval = si470x_start(radio);
-@@ -734,7 +736,8 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
- 	/* start radio */
- 	retval = si470x_start_usb(radio);
- 	if (retval < 0)
--		goto err_buf;
-+		/* the urb may be running even after an error */
-+		goto err_all;
+-	x86_pmu.attr_rdpmc = val;
+-
+ 	return count;
+ }
  
- 	/* set initial frequency */
- 	si470x_set_freq(radio, 87.5 * FREQ_MUL); /* available in all regions */
-@@ -749,7 +752,7 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 16ae821..5f33924 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -26,12 +26,14 @@ static inline void paravirt_activate_mm(struct mm_struct *prev,
  
- 	return 0;
- err_all:
--	usb_kill_urb(radio->int_in_urb);
-+	usb_poison_urb(radio->int_in_urb);
- err_buf:
- 	kfree(radio->buffer);
- err_ctrl:
-@@ -824,7 +827,7 @@ static void si470x_usb_driver_disconnect(struct usb_interface *intf)
- 	mutex_lock(&radio->lock);
- 	v4l2_device_disconnect(&radio->v4l2_dev);
- 	video_unregister_device(&radio->videodev);
--	usb_kill_urb(radio->int_in_urb);
-+	usb_poison_urb(radio->int_in_urb);
- 	usb_set_intfdata(intf, NULL);
- 	mutex_unlock(&radio->lock);
- 	v4l2_device_put(&radio->v4l2_dev);
--- 
-2.16.4
-
+ #ifdef CONFIG_PERF_EVENTS
+ 
++DECLARE_STATIC_KEY_FALSE(rdpmc_never_available_key);
+ DECLARE_STATIC_KEY_FALSE(rdpmc_always_available_key);
+ 
+ static inline void load_mm_cr4_irqsoff(struct mm_struct *mm)
+ {
+ 	if (static_branch_unlikely(&rdpmc_always_available_key) ||
+-	    atomic_read(&mm->context.perf_rdpmc_allowed))
++	    (!static_branch_unlikely(&rdpmc_never_available_key) &&
++	     atomic_read(&mm->context.perf_rdpmc_allowed)))
+ 		cr4_set_bits_irqsoff(X86_CR4_PCE);
+ 	else
+ 		cr4_clear_bits_irqsoff(X86_CR4_PCE);
