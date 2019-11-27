@@ -2,45 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47F5010AC22
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:47:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A8E10AC24
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:47:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbfK0IrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:47:01 -0500
-Received: from verein.lst.de ([213.95.11.211]:44944 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbfK0IrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:47:01 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 39BBF68AFE; Wed, 27 Nov 2019 09:46:58 +0100 (CET)
-Date:   Wed, 27 Nov 2019 09:46:57 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Christoph Hellwig <hch@lst.de>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH] powerpc/32: drop unused ISA_DMA_THRESHOLD
-Message-ID: <20191127084657.GA24133@lst.de>
-References: <20191125092033.20014-1-rppt@kernel.org>
+        id S1726558AbfK0IrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:47:09 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2091 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726092AbfK0IrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:47:09 -0500
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id 62DF1EFFDFA9A6E46914;
+        Wed, 27 Nov 2019 16:47:06 +0800 (CST)
+Received: from dggeme765-chm.china.huawei.com (10.3.19.111) by
+ DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 27 Nov 2019 16:47:06 +0800
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ dggeme765-chm.china.huawei.com (10.3.19.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 27 Nov 2019 16:47:05 +0800
+Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
+ dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
+ Wed, 27 Nov 2019 16:47:05 +0800
+From:   linmiaohe <linmiaohe@huawei.com>
+To:     Haiwei Li <lihaiwei.kernel@gmail.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "gary.hook@amd.com" <gary.hook@amd.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: Re: [PATCH v2] KVM: SVM: Fix "error" isn't initialized
+Thread-Topic: [PATCH v2] KVM: SVM: Fix "error" isn't initialized
+Thread-Index: AdWk9Gm4M611HFaZTlSzM0B9cT25RQ==
+Date:   Wed, 27 Nov 2019 08:47:05 +0000
+Message-ID: <a5d0e94ba8cc4926a1ef27e6efcee594@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.184.189.20]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125092033.20014-1-rppt@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 11:20:33AM +0200, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> The ISA_DMA_THRESHOLD variable is set by several platforms but never
-> referenced.
-> Remove it.
-
-Looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+PiBGcm9tIGU3ZjljNzg2ZTQzZWY0Zjg5MGI4YTAxZjE1ZjhmMDA3ODZmNGIxNGEgTW9uIFNlcCAx
+NyAwMDowMDowMCAyMDAxDQo+IEZyb206IEhhaXdlaSBMaSA8bGloYWl3ZWlAdGVuY2VudC5jb20+
+DQo+IERhdGU6IFdlZCwgMjcgTm92IDIwMTkgMTU6MDA6NDkgKzA4MDANCj4gU3ViamVjdDogW1BB
+VENIIHYyXSBmaXg6ICdlcnJvcicgaXMgbm90IGluaXRpYWxpemVkDQo+DQo+IFRoZXJlIGFyZSBh
+IGJ1bmNoIG9mIGVycm9yIHBhdGhzIHdlcmUgImVycm9yIiBpc24ndCBpbml0aWFsaXplZC4NCj4g
+QEAgLTE1NSw2ICsxNTUsOCBAQCBzdGF0aWMgaW50IF9fc2V2X2RvX2NtZF9sb2NrZWQoaW50IGNt
+ZCwgdm9pZCAqZGF0YSwgaW50ICpwc3BfcmV0KQ0KPiAgIAl1bnNpZ25lZCBpbnQgcGh5c19sc2Is
+IHBoeXNfbXNiOw0KPiAgIAl1bnNpZ25lZCBpbnQgcmVnLCByZXQgPSAwOw0KPg0KPiArCSpwc3Bf
+cmV0ID0gLTE7DQo+ICsNCj4gICAJaWYgKCFwc3ApDQo+ICAgCQlyZXR1cm4gLUVOT0RFVjsNCj4N
+Cg0KVGhlIGFyZyBwc3BfcmV0IG1heSBiZSBOVUxMIGluIHNvbWUgcGF0aCBzdWNoIGFzIHNldl9n
+dWVzdF9kZl9mbHVzaChOVUxMKS4NClNvIHlvdSBoYXZlIHRvIGNoZWNrIGl0IGFnYWluc3QgTlVM
+TC4NClRoYW5rcy4NCg==
