@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E92410BD77
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF88310BD6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:29:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731333AbfK0V3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:29:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49138 "EHLO mail.kernel.org"
+        id S1731294AbfK0U6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:58:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731251AbfK0U56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:57:58 -0500
+        id S1730090AbfK0U6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:58:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C5D12084D;
-        Wed, 27 Nov 2019 20:57:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 552AE20862;
+        Wed, 27 Nov 2019 20:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888277;
-        bh=94EP+6CJbPi2gxqtqgE+/k68giV31iWUvYrmgWMNFuo=;
+        s=default; t=1574888292;
+        bh=nyKkzBi6H7Uh8OTeR56ZnuDUxLI1jcTiVleAkU5JdKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kAMYx9CvqBgv4JxE839cC63X32H4azKVa+qe3X1gmd2qtxs4myfkTE8/vxNQdQRvg
-         rtGILbUFhyerKl3/QvYRdNZrzcKb5SpWeLqMIWXlmwDZFLIpim8nXl6ZCX8gm81dnx
-         0c2Tc/5kFBHMOjjbw3WseI/B+oRrcWEdLhKXDt+0=
+        b=G7piuzW7C3Zf7qYQ3Zo5HCAn8nLNgB8LEJEbg1pCMHK1TJrjjB0oXFPVUHgtk6h5P
+         RJR2/qFGAqVuNZeRWKpebe3Y/K0yeN8dwlNGXgol03rNRSdkEoPq1hv8fQPZrUJGVk
+         hUwjmPepdAVNnriqjzsluwsaOREfAf5HVNOcrm20=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 072/306] scsi: bfa: Avoid implicit enum conversion in bfad_im_post_vendor_event
-Date:   Wed, 27 Nov 2019 21:28:42 +0100
-Message-Id: <20191127203120.087313433@linuxfoundation.org>
+Subject: [PATCH 4.19 078/306] PCI: mediatek: Fixup MSI enablement logic by enabling MSI before clocks
+Date:   Wed, 27 Nov 2019 21:28:48 +0100
+Message-Id: <20191127203120.582753149@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -46,65 +45,198 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-[ Upstream commit 761c830ec7b3d0674b3ad89cefd77a692634e305 ]
+[ Upstream commit 3828d60fd2ef99f97a677c1f95af2ab3e65e2576 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+Commit 43e6409db64d ("PCI: mediatek: Add MSI support for MT2712 and
+MT7622") added MSI support but enabled MSI in the wrong place, at a step
+in the probe sequence where clocks were not still enabled.
 
-drivers/scsi/bfa/bfa_fcs_lport.c:379:26: warning: implicit conversion
-from enumeration type 'enum bfa_lport_aen_event' to different
-enumeration type 'enum bfa_ioc_aen_event' [-Wenum-conversion]
-                                  BFA_AEN_CAT_LPORT, event);
-                                                     ^~~~~
+Fix this issue by calling mtk_pcie_enable_msi() in mtk_pcie_startup_port_v2()
+since clocks are enabled when mtk_pcie_startup_port_v2() is called.
 
-The root cause of these warnings is the bfad_im_post_vendor_event
-function, which expects a value from enum bfa_ioc_aen_event but there
-are multiple instances of values from enums bfa_port_aen_event,
-bfa_audit_aen_event, and bfa_lport_aen_event being used in this
-function.
+To avoid forward declaration of mtk_pcie_enable_msi(), move the
+mtk_pcie_startup_port_v2() function definition in the file.
 
-Given that this doesn't appear to be a problem since cat helps with
-differentiating the events, just change evt's type to int so that no
-conversion needs to happen and Clang won't warn. Update aen_type's type
-in bfa_aen_entry_s as members that hold enumerated types should be int.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/147
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 43e6409db64d ("PCI: mediatek: Add MSI support for MT2712 and MT7622")
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+[lorenzo.pieralisi@arm.com: squashed commit and adapted log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bfa/bfa_defs_svc.h | 2 +-
- drivers/scsi/bfa/bfad_im.h      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 143 +++++++++++++------------
+ 1 file changed, 72 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/scsi/bfa/bfa_defs_svc.h b/drivers/scsi/bfa/bfa_defs_svc.h
-index 3d0c96a5c8735..c19c26e0e405e 100644
---- a/drivers/scsi/bfa/bfa_defs_svc.h
-+++ b/drivers/scsi/bfa/bfa_defs_svc.h
-@@ -1453,7 +1453,7 @@ union bfa_aen_data_u {
- struct bfa_aen_entry_s {
- 	struct list_head	qe;
- 	enum bfa_aen_category   aen_category;
--	u32                     aen_type;
-+	int                     aen_type;
- 	union bfa_aen_data_u    aen_data;
- 	u64			aen_tv_sec;
- 	u64			aen_tv_usec;
-diff --git a/drivers/scsi/bfa/bfad_im.h b/drivers/scsi/bfa/bfad_im.h
-index e61ed8dad0b4f..bd4ac187fd8e7 100644
---- a/drivers/scsi/bfa/bfad_im.h
-+++ b/drivers/scsi/bfa/bfad_im.h
-@@ -143,7 +143,7 @@ struct bfad_im_s {
- static inline void bfad_im_post_vendor_event(struct bfa_aen_entry_s *entry,
- 					     struct bfad_s *drv, int cnt,
- 					     enum bfa_aen_category cat,
--					     enum bfa_ioc_aen_event evt)
-+					     int evt)
- {
- 	struct timespec64 ts;
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 8d1364c317747..1bfbceb9f4458 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -394,75 +394,6 @@ static struct pci_ops mtk_pcie_ops_v2 = {
+ 	.write = mtk_pcie_config_write,
+ };
  
+-static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+-{
+-	struct mtk_pcie *pcie = port->pcie;
+-	struct resource *mem = &pcie->mem;
+-	const struct mtk_pcie_soc *soc = port->pcie->soc;
+-	u32 val;
+-	size_t size;
+-	int err;
+-
+-	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+-	if (pcie->base) {
+-		val = readl(pcie->base + PCIE_SYS_CFG_V2);
+-		val |= PCIE_CSR_LTSSM_EN(port->slot) |
+-		       PCIE_CSR_ASPM_L1_EN(port->slot);
+-		writel(val, pcie->base + PCIE_SYS_CFG_V2);
+-	}
+-
+-	/* Assert all reset signals */
+-	writel(0, port->base + PCIE_RST_CTRL);
+-
+-	/*
+-	 * Enable PCIe link down reset, if link status changed from link up to
+-	 * link down, this will reset MAC control registers and configuration
+-	 * space.
+-	 */
+-	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
+-
+-	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
+-	val = readl(port->base + PCIE_RST_CTRL);
+-	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
+-	       PCIE_MAC_SRSTB | PCIE_CRSTB;
+-	writel(val, port->base + PCIE_RST_CTRL);
+-
+-	/* Set up vendor ID and class code */
+-	if (soc->need_fix_class_id) {
+-		val = PCI_VENDOR_ID_MEDIATEK;
+-		writew(val, port->base + PCIE_CONF_VEND_ID);
+-
+-		val = PCI_CLASS_BRIDGE_PCI;
+-		writew(val, port->base + PCIE_CONF_CLASS_ID);
+-	}
+-
+-	/* 100ms timeout value should be enough for Gen1/2 training */
+-	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
+-				 !!(val & PCIE_PORT_LINKUP_V2), 20,
+-				 100 * USEC_PER_MSEC);
+-	if (err)
+-		return -ETIMEDOUT;
+-
+-	/* Set INTx mask */
+-	val = readl(port->base + PCIE_INT_MASK);
+-	val &= ~INTX_MASK;
+-	writel(val, port->base + PCIE_INT_MASK);
+-
+-	/* Set AHB to PCIe translation windows */
+-	size = mem->end - mem->start;
+-	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+-	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+-
+-	val = upper_32_bits(mem->start);
+-	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
+-
+-	/* Set PCIe to AXI translation memory space.*/
+-	val = fls(0xffffffff) | WIN_ENABLE;
+-	writel(val, port->base + PCIE_AXI_WINDOW0);
+-
+-	return 0;
+-}
+-
+ static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+ {
+ 	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
+@@ -639,8 +570,6 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
+ 		ret = mtk_pcie_allocate_msi_domains(port);
+ 		if (ret)
+ 			return ret;
+-
+-		mtk_pcie_enable_msi(port);
+ 	}
+ 
+ 	return 0;
+@@ -707,6 +636,78 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
+ 	return 0;
+ }
+ 
++static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
++{
++	struct mtk_pcie *pcie = port->pcie;
++	struct resource *mem = &pcie->mem;
++	const struct mtk_pcie_soc *soc = port->pcie->soc;
++	u32 val;
++	size_t size;
++	int err;
++
++	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
++	if (pcie->base) {
++		val = readl(pcie->base + PCIE_SYS_CFG_V2);
++		val |= PCIE_CSR_LTSSM_EN(port->slot) |
++		       PCIE_CSR_ASPM_L1_EN(port->slot);
++		writel(val, pcie->base + PCIE_SYS_CFG_V2);
++	}
++
++	/* Assert all reset signals */
++	writel(0, port->base + PCIE_RST_CTRL);
++
++	/*
++	 * Enable PCIe link down reset, if link status changed from link up to
++	 * link down, this will reset MAC control registers and configuration
++	 * space.
++	 */
++	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
++
++	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
++	val = readl(port->base + PCIE_RST_CTRL);
++	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
++	       PCIE_MAC_SRSTB | PCIE_CRSTB;
++	writel(val, port->base + PCIE_RST_CTRL);
++
++	/* Set up vendor ID and class code */
++	if (soc->need_fix_class_id) {
++		val = PCI_VENDOR_ID_MEDIATEK;
++		writew(val, port->base + PCIE_CONF_VEND_ID);
++
++		val = PCI_CLASS_BRIDGE_PCI;
++		writew(val, port->base + PCIE_CONF_CLASS_ID);
++	}
++
++	/* 100ms timeout value should be enough for Gen1/2 training */
++	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
++				 !!(val & PCIE_PORT_LINKUP_V2), 20,
++				 100 * USEC_PER_MSEC);
++	if (err)
++		return -ETIMEDOUT;
++
++	/* Set INTx mask */
++	val = readl(port->base + PCIE_INT_MASK);
++	val &= ~INTX_MASK;
++	writel(val, port->base + PCIE_INT_MASK);
++
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		mtk_pcie_enable_msi(port);
++
++	/* Set AHB to PCIe translation windows */
++	size = mem->end - mem->start;
++	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
++	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
++
++	val = upper_32_bits(mem->start);
++	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
++
++	/* Set PCIe to AXI translation memory space.*/
++	val = fls(0xffffffff) | WIN_ENABLE;
++	writel(val, port->base + PCIE_AXI_WINDOW0);
++
++	return 0;
++}
++
+ static void __iomem *mtk_pcie_map_bus(struct pci_bus *bus,
+ 				      unsigned int devfn, int where)
+ {
 -- 
 2.20.1
 
