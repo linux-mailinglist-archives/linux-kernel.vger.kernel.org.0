@@ -2,79 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E236510BCCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F234B10BCE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:25:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732839AbfK0VYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:24:05 -0500
-Received: from mga18.intel.com ([134.134.136.126]:25959 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbfK0VYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:24:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 13:24:03 -0800
-X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
-   d="scan'208";a="203209747"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 13:24:03 -0800
-Message-ID: <4a2aa8554933c2d004761d5f3e8132018be5ea27.camel@linux.intel.com>
-Subject: Re: [PATCH] driver core: Fix test_async_driver_probe if NUMA is
- disabled
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 27 Nov 2019 13:24:02 -0800
-In-Reply-To: <20191127202453.28087-1-linux@roeck-us.net>
-References: <20191127202453.28087-1-linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1732111AbfK0VYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:24:51 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33186 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730966AbfK0VYt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:24:49 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t5so26090263ljk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 13:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=72qCgtbemVTUpvzrdd2T6FECaArR3GQue5QrhrOMv0E=;
+        b=OV+6PiiYrIpBKzX3BTW/peStJbVml69oanvVFmcsS0Mqwuwv5LdedaP8Gjv/05FwVA
+         4fpoq9a6PWyGP2SdT60p2FiI+qP84KBl+3irZfaVh3BY9uoAWIGu1mqrqTt/8auiEP8F
+         /D/pFBuSmEtCSHFjKEYhOrjut89oB7cw2SdsPEmLhHFR+56bhA6GZmNM2Py2X5qW4Eh8
+         rp3cJmzg1iCmu8eb2nP4a4rVCnSICg0es7/3S6w5LCj2hSkiTxNjifc/6yi4GEu1Wtyd
+         eUAMmct42sQ3j61gcRGr5OU6wOhEs5koguj7i22DfsXZMjlgyAwQoabxatU4Cp7T9qHw
+         eb3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=72qCgtbemVTUpvzrdd2T6FECaArR3GQue5QrhrOMv0E=;
+        b=aOsnh6BZDWZ2U+yq+XzthqH8VEBtFMwPEOz1k+D4JaGvlhWREdQep8NPcUPmTaOSlG
+         AiBf2Roq6WzmdYtGBqdYK0Okl/NHbjt9rn9nneZZGi/Kh148cDjX8f2K4Yyw9Sp5KSaG
+         1oSBYjRO1Lr7CHR5bJGRpaGcJgk8ZLBxYUQTm4beShEO6NlqKhikL19tsgS7tPsGdvVn
+         hN/4MbPRDrLoAPuT6PrPx/4ghvAtPFU0dXKgIWqDOweKpBN3+ZAVUm09U/jsc56AUT1V
+         VkIkDIuGp4RkIOJl6Wot6A/RlfWFC+IPLd1W3JxPFTjxwYeFIdiMoTvTnbwgf6lFYUfg
+         1cAw==
+X-Gm-Message-State: APjAAAXpgeRE/jzgEnUPJ9xhY+aq3RD4HD87MsD3RldzxO2vk/6fT97k
+        KQFmzXkcTJVgZGSP7Lgk3vCDiGdybJrkiJac2Q==
+X-Google-Smtp-Source: APXvYqz5BbxxliwQniLencfmmvcMnP/8pOXtSCn9uLplJNILt0Ddg+eyJu8lUnXOMAFLnamsppKz3JiS0LfAyOf6klo=
+X-Received: by 2002:a2e:9e19:: with SMTP id e25mr32319683ljk.226.1574889887131;
+ Wed, 27 Nov 2019 13:24:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:4711:0:0:0:0:0 with HTTP; Wed, 27 Nov 2019 13:24:46
+ -0800 (PST)
+Reply-To: mualixx1@gmail.com
+From:   MUSSA ALI <larsnbarro06@gmail.com>
+Date:   Wed, 27 Nov 2019 13:24:46 -0800
+Message-ID: <CAFgd+_uqzuBOe=t_swnPLmYJKpXCMdj+V1FoYaPXJdkCWBOmkQ@mail.gmail.com>
+Subject: Urgent Reply
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-11-27 at 12:24 -0800, Guenter Roeck wrote:
-> Since commit 57ea974fb871 ("driver core: Rewrite test_async_driver_probe
-> to cover serialization and NUMA affinity"), running the test with NUMA
-> disabled results in warning messages similar to the following.
-> 
-> test_async_driver test_async_driver.12: NUMA node mismatch -1 != 0
-> 
-> If CONFIG_NUMA=n, dev_to_node(dev) returns -1, and numa_node_id()
-> returns 0. Both are widely used, so it appears risky to change return
-> values. Augment the check with IS_ENABLED(CONFIG_NUMA) instead
-> to fix the problem.
-> 
-> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> Fixes: 57ea974fb871 ("driver core: Rewrite test_async_driver_probe to cover serialization and NUMA affinity")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  drivers/base/test/test_async_driver_probe.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/test/test_async_driver_probe.c b/drivers/base/test/test_async_driver_probe.c
-> index f4b1d8e54daf..3bb7beb127a9 100644
-> --- a/drivers/base/test/test_async_driver_probe.c
-> +++ b/drivers/base/test/test_async_driver_probe.c
-> @@ -44,7 +44,8 @@ static int test_probe(struct platform_device *pdev)
->  	 * performing an async init on that node.
->  	 */
->  	if (dev->driver->probe_type == PROBE_PREFER_ASYNCHRONOUS) {
-> -		if (dev_to_node(dev) != numa_node_id()) {
-> +		if (IS_ENABLED(CONFIG_NUMA) &&
-> +		    dev_to_node(dev) != numa_node_id()) {
->  			dev_warn(dev, "NUMA node mismatch %d != %d\n",
->  				 dev_to_node(dev), numa_node_id());
->  			atomic_inc(&warnings);
+Dear  friend,
 
-I'm not sure that is really the correct fix. It might be better to test it
-against NUMA_NO_NODE and then if it is not that make sure that it matches
-the node ID. Adding the check against NUMA_NO_NODE would resolve the issue
-for cases where the device might be assigned to multiple NUMA nodes.
+I know this means of communication may not be morally right to you as
+a person but I also have had a great thought about it and I have come
+to this conclusion which I am about to share with you.
 
+INTRODUCTION: I am a banker   and in one way or the other was hoping
+you will cooperate with me as a partner in a project of transferring
+an abandoned fund of a late customer of the bank worth of $18,000,000
+(Eighteen Million Dollars US).
+
+This will be disbursed or shared between the both of us in these
+percentages, 60% for me and 40% for you. Contact me immediately if
+that is alright for you so that we can enter in agreement before we
+start processing for the transfer of the funds. If you are satisfied
+with this proposal, please provide the below details for the Mutual
+Confidential Agreement:
+
+1. Full Name and Address
+2. Occupation and Country of Origin
+3. Telephone Number
+
+I wait for your response so that we can commence on this project as
+soon as possible.
+
+Regards,
+Mr. Mussa  Ali
