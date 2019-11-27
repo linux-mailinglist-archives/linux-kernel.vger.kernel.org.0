@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 222AD10BE40
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C5310BFB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfK0Uuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:50:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
+        id S1727983AbfK0Uft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728335AbfK0Uu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:50:27 -0500
+        id S1727955AbfK0Ufq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F9D42158A;
-        Wed, 27 Nov 2019 20:50:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6367F21569;
+        Wed, 27 Nov 2019 20:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887825;
-        bh=febHDCnmAbc7A9SiF0v4GbyjctYAv1LCzcdfJi+6TSE=;
+        s=default; t=1574886945;
+        bh=sgFMomuJpgJia9iF3oPr/+Riich2tDYbIAx20glD344=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iE/tFR85UZkM512aBlAa/3Db6GFHKTyNN0NDAPElbAjbCynWBj3UaqsColgG+AvkB
-         +9pW8K7TLhZhw/wN9IfsAP+42eeH9cd0mRQUY206+jkWtbQodDAICQ3g6zbshGglLe
-         Peie0UIomu12QXaBLrWd474QS6H3LDn08rupZREE=
+        b=N/FViRwxe9HBepXBhd2hrgIWhYTySpMZx+a/NjW8xA0b9aLDtvRRGjiuK8MRsBPpi
+         4W17RXaKTMIk8mVVvt+3+3zCPCdNXLhBtc8qkiRED3AVYKzE13HnCPkAAP5VDn4mmn
+         A4N0xhiEpTyvxeMAwnyeXDKxI9UlTpKTS2g8gY2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 110/211] hfs: fix BUG on bnode parent update
+Subject: [PATCH 4.4 052/132] ceph: fix dentry leak in ceph_readdir_prepopulate
 Date:   Wed, 27 Nov 2019 21:30:43 +0100
-Message-Id: <20191127203104.491510210@linuxfoundation.org>
+Message-Id: <20191127202950.126491988@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,43 +45,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Yan, Zheng <zyan@redhat.com>
 
-[ Upstream commit ef75bcc5763d130451a99825f247d301088b790b ]
+[ Upstream commit c58f450bd61511d897efc2ea472c69630635b557 ]
 
-hfs_brec_update_parent() may hit BUG_ON() if the first record of both a
-leaf node and its parent are changed, and if this forces the parent to
-be split.  It is not possible for this to happen on a valid hfs
-filesystem because the index nodes have fixed length keys.
-
-For reasons I ignore, the hfs module does have support for a number of
-hfsplus features.  A corrupt btree header may report variable length
-keys and trigger this BUG, so it's better to fix it.
-
-Link: http://lkml.kernel.org/r/cf9b02d57f806217a2b1bf5db8c3e39730d8f603.1535682463.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/brec.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ceph/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index da25c49203cc5..896396554bcc1 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -445,6 +445,7 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
- 			/* restore search_key */
- 			hfs_bnode_read_key(node, fd->search_key, 14);
- 		}
-+		new_node = NULL;
- 	}
- 
- 	if (!rec && node->parent)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 2ad3f4ab4dcfa..0be931cf3c44c 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1515,7 +1515,6 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 			if (IS_ERR(realdn)) {
+ 				err = PTR_ERR(realdn);
+ 				d_drop(dn);
+-				dn = NULL;
+ 				goto next_item;
+ 			}
+ 			dn = realdn;
 -- 
 2.20.1
 
