@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F1BF10B791
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:35:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E899D10B837
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfK0UfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:35:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35576 "EHLO mail.kernel.org"
+        id S1729139AbfK0UlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:41:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727749AbfK0Uez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:55 -0500
+        id S1728607AbfK0UlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:41:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8A9C215E5;
-        Wed, 27 Nov 2019 20:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC4B21774;
+        Wed, 27 Nov 2019 20:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886895;
-        bh=JadU7RXG0vhQpSjpd6IvdvyjnC7SaQAKpVyfBtCPbz0=;
+        s=default; t=1574887266;
+        bh=KzaYq/ZxefBgTK1mWLIBUbunCDUrWNx+9I10MwP1UNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SQnj8xp0D7GBgJhd2JY81Y9EhJJtgYa6HA8UBnLKSkRHT2DxGLGoETWKWkBYvhgCT
-         98KAoeVkVZ7R2qbGcZ2ul+ihb75iYFil3zvNeV//L11BAQSYzMuiCAedxE3eOcdXg/
-         N+lyaJ0IfdoJ8nLEKCKB0F/EeWqQgtcNycrqMWN4=
+        b=DTegwJmCsO+9cHgsw7k4Q23TxEWJxRWOx1GMx1sJoq7exy3OolIeXANOfzCb8pdAg
+         8II74UbRAS7zseznDQfJHn0fsCqxXtW8rm1AYw79NUxboVygB1nTa/y46it98+v/3c
+         TmvoYsK3DnWFfGcxymdSJOR4aCTj1E/4s6TXHF/A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Uros Bizjak <ubizjak@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 035/132] KVM/x86: Fix invvpid and invept register operand size in 64-bit mode
-Date:   Wed, 27 Nov 2019 21:30:26 +0100
-Message-Id: <20191127202930.091213175@linuxfoundation.org>
+Subject: [PATCH 4.9 044/151] usbip: tools: fix atoi() on non-null terminated string
+Date:   Wed, 27 Nov 2019 21:30:27 +0100
+Message-Id: <20191127203027.542833130@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uros Bizjak <ubizjak@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 5ebb272b2ea7e02911a03a893f8d922d49f9bb4a ]
+[ Upstream commit e325808c0051b16729ffd472ff887c6cae5c6317 ]
 
-Register operand size of invvpid and invept instruction in 64-bit mode
-has always 64 bits. Adjust inline function argument type to reflect
-correct size.
+Currently the call to atoi is being passed a single char string
+that is not null terminated, so there is a potential read overrun
+along the stack when parsing for an integer value.  Fix this by
+instead using a 2 char string that is initialized to all zeros
+to ensure that a 1 char read into the string is always terminated
+with a \0.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Detected by cppcheck:
+"Invalid atoi() argument nr 1. A nul-terminated string is required."
+
+Fixes: 3391ba0e2792 ("usbip: tools: Extract generic code to be shared with vudc backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/usb/usbip/libsrc/usbip_host_common.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 1b3a432f6fd53..9344ac6b4f99d 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1298,7 +1298,7 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
- 	return -1;
- }
+diff --git a/tools/usb/usbip/libsrc/usbip_host_common.c b/tools/usb/usbip/libsrc/usbip_host_common.c
+index 6ff7b601f8545..f5ad219a324e8 100644
+--- a/tools/usb/usbip/libsrc/usbip_host_common.c
++++ b/tools/usb/usbip/libsrc/usbip_host_common.c
+@@ -43,7 +43,7 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 	int size;
+ 	int fd;
+ 	int length;
+-	char status;
++	char status[2] = { 0 };
+ 	int value = 0;
  
--static inline void __invvpid(int ext, u16 vpid, gva_t gva)
-+static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
- {
-     struct {
- 	u64 vpid : 16;
-@@ -1312,7 +1312,7 @@ static inline void __invvpid(int ext, u16 vpid, gva_t gva)
- 		  : : "a"(&operand), "c"(ext) : "cc", "memory");
- }
+ 	size = snprintf(status_attr_path, sizeof(status_attr_path),
+@@ -61,14 +61,14 @@ static int32_t read_attr_usbip_status(struct usbip_usb_device *udev)
+ 		return -1;
+ 	}
  
--static inline void __invept(int ext, u64 eptp, gpa_t gpa)
-+static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
- {
- 	struct {
- 		u64 eptp, gpa;
+-	length = read(fd, &status, 1);
++	length = read(fd, status, 1);
+ 	if (length < 0) {
+ 		err("error reading attribute %s", status_attr_path);
+ 		close(fd);
+ 		return -1;
+ 	}
+ 
+-	value = atoi(&status);
++	value = atoi(status);
+ 
+ 	return value;
+ }
 -- 
 2.20.1
 
