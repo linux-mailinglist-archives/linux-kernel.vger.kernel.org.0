@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 415B710B7AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4EAF10B92F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:50:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbfK0UgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:36:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37612 "EHLO mail.kernel.org"
+        id S1730386AbfK0Uup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:50:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728003AbfK0Uf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:35:56 -0500
+        id S1730378AbfK0Uuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:50:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2932121569;
-        Wed, 27 Nov 2019 20:35:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0B492184C;
+        Wed, 27 Nov 2019 20:50:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886955;
-        bh=mZXpx8+xFCXZk4H+qNwB395xe4afMbtzQq2VjSn5N+I=;
+        s=default; t=1574887839;
+        bh=VNgWXYD8e+4U8yiObGoH66hb1GrtXm1uHaPUEKGL4xg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dyJVTkEFyDU7CU2/LefrNS9NoKb5xNVL6yiqk2lV+cOJBG0hw7NBpocfddK+flyY2
-         SFp+FiIEHuJx7FZ1t4iT1O4EVlN7mtkB2Qu8aImDDVJnP5B2UGhsYuHpZTDnI4xe3L
-         00P3Xv6YVQGC5djPZ1+OVEyojQVVLAucix2MSAhY=
+        b=KBzyh5BGayQxBvaxHkiJAwtXKp9/1DjyJlMHn/EvpCRxgLfzAbRnfCjlXWPK7m6dz
+         FZMElM7R751PnW4QQtxkdQzZ5pmWjOyh9l+IM0/s7oBzYEtym/QXuVLwC2jHEWOWHe
+         SrLzW2LvShWE8a9AHzlP6WWSeAP3n/1LCK6Scw74=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 056/132] mfd: mc13xxx-core: Fix PMIC shutdown when reading ADC values
+Subject: [PATCH 4.14 114/211] hfs: fix return value of hfs_get_block()
 Date:   Wed, 27 Nov 2019 21:30:47 +0100
-Message-Id: <20191127202955.820527469@linuxfoundation.org>
+Message-Id: <20191127203104.767292820@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +48,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit 55143439b7b501882bea9d95a54adfe00ffc79a3 ]
+[ Upstream commit 1267a07be5ebbff2d2739290f3d043ae137c15b4 ]
 
-When trying to read any MC13892 ADC channel on a imx51-babbage board:
+Direct writes to empty inodes fail with EIO.  The generic direct-io code
+is in part to blame (a patch has been submitted as "direct-io: allow
+direct writes to empty inodes"), but hfs is worse affected than the other
+filesystems because the fallback to buffered I/O doesn't happen.
 
-The MC13892 PMIC shutdowns completely.
+The problem is the return value of hfs_get_block() when called with
+!create.  Change it to be more consistent with the other modules.
 
-After debugging this issue and comparing the MC13892 and MC13783
-initializations done in the vendor kernel, it was noticed that the
-CHRGRAWDIV bit of the ADC0 register was not being set.
-
-This bit is set by default after power on, but the driver was
-clearing it.
-
-After setting this bit it is possible to read the ADC values correctly.
-
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Tested-by: Chris Healy <cphealy@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Link: http://lkml.kernel.org/r/4538ab8c35ea37338490525f0f24cbc37227528c.1539195310.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/mc13xxx-core.c  | 3 ++-
- include/linux/mfd/mc13xxx.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ fs/hfs/extent.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
-index 8d74806b83c12..1494e7cbd593b 100644
---- a/drivers/mfd/mc13xxx-core.c
-+++ b/drivers/mfd/mc13xxx-core.c
-@@ -278,7 +278,8 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
- 	if (ret)
- 		goto out;
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 0c638c6121526..5f1ff97a3b987 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -345,7 +345,9 @@ int hfs_get_block(struct inode *inode, sector_t block,
+ 	ablock = (u32)block / HFS_SB(sb)->fs_div;
  
--	adc0 = MC13XXX_ADC0_ADINC1 | MC13XXX_ADC0_ADINC2;
-+	adc0 = MC13XXX_ADC0_ADINC1 | MC13XXX_ADC0_ADINC2 |
-+	       MC13XXX_ADC0_CHRGRAWDIV;
- 	adc1 = MC13XXX_ADC1_ADEN | MC13XXX_ADC1_ADTRIGIGN | MC13XXX_ADC1_ASC;
- 
- 	if (channel > 7)
-diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
-index 638222e43e489..93011c61aafd2 100644
---- a/include/linux/mfd/mc13xxx.h
-+++ b/include/linux/mfd/mc13xxx.h
-@@ -247,6 +247,7 @@ struct mc13xxx_platform_data {
- #define MC13XXX_ADC0_TSMOD0		(1 << 12)
- #define MC13XXX_ADC0_TSMOD1		(1 << 13)
- #define MC13XXX_ADC0_TSMOD2		(1 << 14)
-+#define MC13XXX_ADC0_CHRGRAWDIV		(1 << 15)
- #define MC13XXX_ADC0_ADINC1		(1 << 16)
- #define MC13XXX_ADC0_ADINC2		(1 << 17)
- 
+ 	if (block >= HFS_I(inode)->fs_blocks) {
+-		if (block > HFS_I(inode)->fs_blocks || !create)
++		if (!create)
++			return 0;
++		if (block > HFS_I(inode)->fs_blocks)
+ 			return -EIO;
+ 		if (ablock >= HFS_I(inode)->alloc_blocks) {
+ 			res = hfs_extend_file(inode);
 -- 
 2.20.1
 
