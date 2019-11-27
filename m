@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B00710B868
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2371310B7C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbfK0UnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:43:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50332 "EHLO mail.kernel.org"
+        id S1728490AbfK0UhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:37:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727985AbfK0UnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:43:07 -0500
+        id S1728483AbfK0UhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:37:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ECFC217BA;
-        Wed, 27 Nov 2019 20:43:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B33921569;
+        Wed, 27 Nov 2019 20:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887386;
-        bh=q1PI2dTJwyLmqkca9709uEYoymtSc7EhaZx1/pKiNBs=;
+        s=default; t=1574887019;
+        bh=/DuRqBacLBPF71Nt1vdYFOxtF5gUZeFLy40QWej2VrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LJ2FMl7bfD7vYetC4AtWoNtuIUtvGO93lpIUJlWQ++AeBMq+09ZQb2qGxEtROWBA7
-         d3OdKXbedWLtZRqPSqfG6R8Yp+26tUbEbwgr8byKvmhXRnjlkaYrTRMO1Kc9FQw2eS
-         Znx/TVGcLd5JTWY9UExnFSF3WVz4hFmxN8KSC0SE=
+        b=BfVBOgneJ8MNxhwb0HItf5c4UlrLS5XAxZPXalqfK3Gz8G8AHhOHfFvDpwtMuyBWM
+         qIl4EqEgex1owhsriqL5yyoIq27woGgZlHbABOOvBuf3M0elFsLce9D51TBTo7UC6a
+         xjd2lhFJIUl7GAGPxSDj11nyF2yBn8gP9IFp1GnE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 091/151] rtl8xxxu: Fix missing break in switch
+Subject: [PATCH 4.4 083/132] brcmsmac: never log "tid x is not aggable" by default
 Date:   Wed, 27 Nov 2019 21:31:14 +0100
-Message-Id: <20191127203037.298509334@linuxfoundation.org>
+Message-Id: <20191127203013.972453659@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
 
-[ Upstream commit 307b00c5e695857ca92fc6a4b8ab6c48f988a1b1 ]
+[ Upstream commit 96fca788e5788b7ea3b0050eb35a343637e0a465 ]
 
-Add missing break statement in order to prevent the code from falling
-through to the default case.
+This message greatly spams the log under heavy Tx of frames with BK access
+class which is especially true when operating as AP. It is also not informative
+as the "agg'ablity" of TIDs are set once and never change.
+Fix this by logging only in debug mode.
 
-Fixes: 26f1fad29ad9 ("New driver: rtl8xxxu (mac80211)")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Ali MJ Al-Nasrawy <alimjalnasrawy@gmail.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-index 4e725d165aa60..e78545d4add3c 100644
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -5660,6 +5660,7 @@ static int rtl8xxxu_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
- 		break;
- 	case WLAN_CIPHER_SUITE_TKIP:
- 		key->flags |= IEEE80211_KEY_FLAG_GENERATE_MMIC;
-+		break;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
+index e3b01d804cf24..a4e1eec96c60d 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/mac80211_if.c
+@@ -846,8 +846,8 @@ brcms_ops_ampdu_action(struct ieee80211_hw *hw,
+ 		status = brcms_c_aggregatable(wl->wlc, tid);
+ 		spin_unlock_bh(&wl->lock);
+ 		if (!status) {
+-			brcms_err(wl->wlc->hw->d11core,
+-				  "START: tid %d is not agg\'able\n", tid);
++			brcms_dbg_ht(wl->wlc->hw->d11core,
++				     "START: tid %d is not agg\'able\n", tid);
+ 			return -EINVAL;
+ 		}
+ 		ieee80211_start_tx_ba_cb_irqsafe(vif, sta->addr, tid);
 -- 
 2.20.1
 
