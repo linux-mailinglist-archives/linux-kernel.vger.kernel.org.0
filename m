@@ -2,108 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E381610A82A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 02:54:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7963D10A83B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 02:57:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfK0By0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 20:54:26 -0500
-Received: from mail-eopbgr50049.outbound.protection.outlook.com ([40.107.5.49]:49638
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725916AbfK0By0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 20:54:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lqBZfF+WRxDmetbb2R0fKO/8sP/chV/iJ6JdprqhUJc8obeKPLnII6SP1JMO7IR6lyRPmNprih6U316J/TbnwVc8DYEXCpByzZzD+ISnUThSOrBwJPSFqEGt+GqVJ+vZJfpTVYnmpvOUhplWfpa0rV/CBXXKnyKeuDjFQuvLcLfabbCxOzIbNtDYz91GlqK2gC5wnW6gZA99VGt6IWsyABUoZ6InRUg8MqzRiUOwQxVOttLe3LdvIbWZrnf/+433Rv67LHfTuaL93IBIeSWtp2rutuSemXuYzfMOLNGeSw5aoq7pRAEDcI4jaYgaBXcvAmD0sQdFL767SDqfZKtHYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wSAIsOB7R0CWb5FzViwn/PR+qgxibS+TTaC1NZAJiBk=;
- b=N/qJpIkPqkpPd+yseaaj4mQQOC81M78/XOr0eArYI3A7KbeCqtuSHkalH+MIMhKDGsZbkVs6eEon49TZsNBkeCZMRPMZevIXJ77t8MBnaWwOupbwEG1Q89Q3LXCFAJTUmogiUPTVRVA98GUuuZft7nne4qY4Bg5wRMBS79TnRgm6kxXpygvKgQzmnEpXnbgqCYrQrIDPvLoPY+qzw8I2scXCpklAnFuliJSnj3n1nPryKi0cjGBuzIJySFqdsofT8s9CuAydU9cITjNQ4iDKB6SrF0rwH3alJTDcho9fZajF474DK93I1yuJ6J6lhxeBWlf1Uvmh5PEZFFaLRZc5Pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wSAIsOB7R0CWb5FzViwn/PR+qgxibS+TTaC1NZAJiBk=;
- b=gtLJ7G9G4fUlZra5UXQvoMy41/GW76N0htbrC03w9EXKdzaN0zMbbakDXOMPbdgA6JqEYRp1xLdpHuCAICickelhqP0d1MVqNvfAI5WO8EA/xadyxcAhbsKlLqGl/HVJIFhpthO5fu6YZgVzE+qZ5obWtzVnJj+zLgXGGBnAyEs=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
- VI1PR04MB6110.eurprd04.prod.outlook.com (20.179.26.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.17; Wed, 27 Nov 2019 01:54:23 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9%7]) with mapi id 15.20.2474.023; Wed, 27 Nov 2019
- 01:54:23 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Henry Lin <henryl@nvidia.com>
-CC:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Romain Izard <romain.izard.pro@gmail.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: gadget: f_ncm: fix wrong usb_ep
-Thread-Topic: [PATCH] usb: gadget: f_ncm: fix wrong usb_ep
-Thread-Index: AQHVoCLqKGYVyVjGs0eFFEwrEIcffKebTxyAgAHGIQCAAAb9cIAAJQiAgAEJN3A=
-Date:   Wed, 27 Nov 2019 01:54:22 +0000
-Message-ID: <VI1PR04MB532730D2E1BA4108B37155D08B440@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20191121041858.15746-1-henryl@nvidia.com>,<20191125042039.GA10953@b29397-desktop>
- <MN2PR12MB33899F0DEEA0A22086ACE0ECAC450@MN2PR12MB3389.namprd12.prod.outlook.com>,<VI1PR04MB53277359AF0E283AE948F34C8B450@VI1PR04MB5327.eurprd04.prod.outlook.com>
- <MN2PR12MB33894E3D1D9AC14B8C9E2966AC450@MN2PR12MB3389.namprd12.prod.outlook.com>
-In-Reply-To: <MN2PR12MB33894E3D1D9AC14B8C9E2966AC450@MN2PR12MB3389.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a5b38d25-1370-4204-3d1f-08d772dcb9bd
-x-ms-traffictypediagnostic: VI1PR04MB6110:
-x-microsoft-antispam-prvs: <VI1PR04MB6110DB012526F87716FC80828B440@VI1PR04MB6110.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 023495660C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(136003)(376002)(396003)(189003)(199004)(66446008)(256004)(64756008)(14444005)(86362001)(71200400001)(71190400001)(76116006)(66946007)(25786009)(66476007)(66556008)(316002)(54906003)(5660300002)(52536014)(33656002)(14454004)(478600001)(7736002)(4326008)(76176011)(7696005)(6246003)(186003)(4744005)(44832011)(66066001)(11346002)(305945005)(6506007)(74316002)(102836004)(26005)(446003)(81156014)(55016002)(229853002)(81166006)(2906002)(6436002)(8936002)(8676002)(6916009)(6116002)(99286004)(3846002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6110;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 00kpsySjtbG1AB/llZMc8i1Cce/xXPBqc+XUypz3+QHkBb4j7oQAHDBsh2BBkdKIsYCKEEevMLKNIELtuxLZSJpmRXSetHId6t+8JGxzgTx/qNQQMBPm44tNd1AlscnkRcuDnlerDTZ8Jms0SnSL4X2QmAgAm2p4tb0owaGWpHK+tIYhlJ1NTfxUh/GA27WPS+F3pqLjm4EfOYfq7v05t1IOQUWz8LUeZdnfPpUQvNUA+OtKde01VuOVkzF8PXDcbj/QBJ/Wzsr6duN76VcaaMqErjbpBuwlBG2oeAwqS5ZtY/wPvXXFCWNbfiwVLV+0NERpFRFTMG747DoTLle4Q8tDRTd6jHuQctI5srLA8EVq3v1+iHmyLWV1DBiofqRYwbB2k/ZXM+Iugl/HTLsyDzSnjaJfnWzcnpwq6OmR55S7Sl1D/WJRT07XWyai00DK
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5b38d25-1370-4204-3d1f-08d772dcb9bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2019 01:54:22.9073
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +rIMqjvMdKY20mN3plp57QiCrPl+hdsyshyTG9vT6L2E1vFtwPvDulFfoWsCy9lcFrgWPBKcvUvtYF9NYlVJXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6110
+        id S1727124AbfK0B5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 20:57:17 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:54448 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfK0B5F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 20:57:05 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B275320B7185;
+        Tue, 26 Nov 2019 17:57:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B275320B7185
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1574819823;
+        bh=Iwdb9PIGbkKGRCIR+bqAolJJXZ9yKxW4UuLyb4S0tkc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qVLPGkSvt5BZoHnu8+VVZNG8k6w8mGjjs7TG35MCdVzVIEZrkvKOA0ho9hXVXHTSG
+         jqKJUDV/Ix/7pJ+tr3oKp8lB9FMMztjYd/6rtglDFP6//AvqLR5mDwQCAo7cbtFROe
+         99Xu30riYM7pn6zqghskPcxJPLzRdH58UjIs323Q=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Subject: [PATCH v9 0/6] KEYS: Measure keys when they are created or updated
+Date:   Tue, 26 Nov 2019 17:56:48 -0800
+Message-Id: <20191127015654.3744-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
-> >Does your UDC driver call composite_disconnect when disconnect from the =
-host?
-> >It should set all desc to NULL at related function ->disable.
->=20
-> For ECM case, if ecm_set_alt() gets called with alt =3D=3D 0, in_ep->desc=
- and out_ep-
-> >desc will be set up. But these two ep will not be enabled as gether_conn=
-ect() is not
-> executed. During disconnect from the host, ecm_disable() gets called with=
- ep
-> disabled. In this case, gether_disconnect() will not get called to set de=
-sc to NULL.
+Keys created or updated in the system are currently not measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether or not the trusted keys keyring(s), for instance, contain
+only known good (trusted) keys.
 
-Would you please share your test case? I use Linux host, and the host will =
-always set alt for 1,
-and doesn't have this issue.
+IMA measures system files, command line arguments passed to kexec,
+boot aggregate, etc. It can be used to measure keys as well.
+But there is no mechanism available in the kernel for IMA to
+know when a key is created or updated.
 
-Peter
+This change aims to address measuring keys created or updated
+in the system.
+
+To achieve the above the following changes have been made:
+
+ - Added a new IMA hook namely, ima_post_key_create_or_update, which
+   measures the key. This IMA hook is called from key_create_or_update
+   function. The key measurement can be controlled through IMA policy.
+
+   A new IMA policy function KEY_CHECK has been added to measure keys.
+   "keyrings=" option can be specified for KEY_CHECK to limit
+   measuring the keys loaded onto the specified keyrings only.
+
+   # measure keys loaded onto any keyring
+   measure func=KEY_CHECK
+
+   # measure keys loaded onto the IMA keyring only
+   measure func=KEY_CHECK keyring=".ima"
+
+   # measure keys on the BUILTIN and IMA keyrings into a different PCR
+   measure func=KEY_CHECK keyring=".builtin_trusted_keys|.ima" pcr=11
+
+Testing performed:
+
+  * Booted the kernel with this change.
+  * When KEY_CHECK policy is set IMA measures keys loaded
+    onto any keyring (keyrings= option not specified).
+  * Keys are not measured when KEY_CHECK is not set.
+  * When keyrings= option is specified for KEY_CHECK then only the keys
+    loaded onto a keyring specified in the option is measured.
+  * Added a new key to a keyring.
+    => Added keys to .ima and .evm keyrings.
+  * Added the same key again.
+    => Add the same key to .ima and .evm keyrings.
+
+Change Log:
+
+  v9:
+
+  => Changed the measured key data from just the public key to
+     the entire payload passed to key_create_or_update() function.
+     This payload is the certificate from which the key is created
+     or updated by key_create_or_update() function.
+  => Added check in process_buffer_measurement() to return
+     immediately if ima_policy_flag is set to zero.
+
+  v8:
+
+  => Updated ima_match_keyring() function to check for
+     whole keyring name match.
+  => Used CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE instead of
+     CONFIG_KEYS to build ima_asymmetric_keys.c and enable
+     the IMA hook to measure keys since this config handles
+     the required build time dependencies better.
+  => Updated patch description to illustrate verification
+     of key measurement.
+
+  v7:
+
+  => Removed CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS option and used
+     CONFIG_KEYS instead for ima_asymmetric_keys.c
+  => Added the patches related to "keyrings=" option support to
+     this patch set.
+
+  v6:
+
+  => Rebased the changes to v5.4-rc7
+  => Renamed KEYRING_CHECK to KEY_CHECK per Mimi's suggestion.
+  => Excluded the patches that add support for limiting key
+     measurement to specific keyrings ("keyrings=" option
+     for "measure func=KEY_CHECK" in the IMA policy).
+     Also, excluded the patches that add support for deferred
+     processing of keys (queue support).
+     These patches will be added in separate patch sets later.
+
+  v5:
+
+  => Reorganized the patches to add measurement of keys through
+     the IMA hook without any queuing and then added queuing support.
+  => Updated the queuing functions to minimize code executed inside mutex.
+  => Process queued keys after custom IMA policies have been applied.
+
+  v4:
+
+  => Rebased the changes to v5.4-rc3
+  => Applied the following dependent patch set first
+     and then added new changes.
+  https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
+  => Refactored the patch set to separate out changes related to
+     func KEYRING_CHECK and options keyrings into different patches.
+  => Moved the functions to queue and dequeue keys for measurement
+     from ima_queue.c to a new file ima_asymmetric_keys.c.
+  => Added a new config namely CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
+     to compile ima_asymmetric_keys.c
+
+  v3:
+
+  => Added KEYRING_CHECK for measuring keys. This can optionally specify
+     keyrings to measure.
+  => Updated ima_get_action() and related functions to return
+     the keyrings if specified in the policy.
+  => process_buffer_measurement() function is updated to take keyring
+     as a parameter. The key will be measured if the policy includes
+     the keyring in the list of measured keyrings. If the policy does not
+     specify any keyrings then all keys are measured.
+
+  v2:
+
+  => Per suggestion from Mimi reordered the patch set to first
+     enable measuring keys added or updated in the system.
+     And, then scope the measurement to keys added to 
+     builtin_trusted_keys keyring through ima policy.
+  => Removed security_key_create_or_update function and instead
+     call ima hook, to measure the key, directly from 
+     key_create_or_update function.
+
+  v1:
+
+  => LSM function for key_create_or_update. It calls ima.
+  => Added ima hook for measuring keys
+  => ima measures keys based on ima policy.
+
+  v0:
+
+  => Added LSM hook for key_create_or_update.
+  => Measure keys added to builtin or secondary trusted keys keyring.
+
+Lakshmi Ramasubramanian (6):
+  IMA: Check IMA policy flag
+  IMA: Add KEY_CHECK func to measure keys
+  IMA: Define an IMA hook to measure keys
+  KEYS: Call the IMA hook to measure keys
+  IMA: Add support to limit measuring keys
+  IMA: Read keyrings= option from the IMA policy
+
+ Documentation/ABI/testing/ima_policy         |  16 ++-
+ include/linux/ima.h                          |  14 +++
+ security/integrity/ima/Makefile              |   1 +
+ security/integrity/ima/ima.h                 |   9 +-
+ security/integrity/ima/ima_api.c             |   8 +-
+ security/integrity/ima/ima_appraise.c        |   4 +-
+ security/integrity/ima/ima_asymmetric_keys.c |  58 +++++++++++
+ security/integrity/ima/ima_main.c            |  12 ++-
+ security/integrity/ima/ima_policy.c          | 100 +++++++++++++++++--
+ security/keys/key.c                          |  10 ++
+ 10 files changed, 212 insertions(+), 20 deletions(-)
+ create mode 100644 security/integrity/ima/ima_asymmetric_keys.c
+
+-- 
+2.17.1
+
