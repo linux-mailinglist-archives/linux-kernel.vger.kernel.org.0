@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8640210B183
+	by mail.lfdr.de (Postfix) with ESMTP id 1636310B182
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:40:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfK0OkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 09:40:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38202 "EHLO
+        id S1727095AbfK0OkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 09:40:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38198 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfK0OkQ (ORCPT
+        with ESMTP id S1726514AbfK0OkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 09:40:16 -0500
+        Wed, 27 Nov 2019 09:40:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CZV3OYfpH1AK9pBqBZAdN+dUDGtEBZRBkTDFRY9k6uk=; b=bMOqtrlMh4aH68BYjeNt4pp+XA
-        uaxEoWQVzB0IswnzUl4OdLcTF8zSAtQZIPqUPnFIKqnlCXzfbr4hhR1VjqvQ8SeEbl7pCnDQp0h/g
-        c5Oh6rcdZLfOLhh7o3dkErRf3xwf4h+SeVcEQ8KC7JMkIbE9Vcg4PW8D4pwUCERnhvepg3FSaqmdN
-        4MoDQ83K6tE924fszzWssocdbGxClsNtfvkFhs0L4CxqN1vmN4C0XYyCbvLSQZWw0CbeUy6qXdi57
-        Wn9hcGtv4OIYJaMEISnUkoUguzqlQHn8sAP9GecvQ989DOmCIXEMr8DEDxopv8Eic/tQYVF+/0hEZ
-        vmxIJwDg==;
+        bh=howc56bxTEyWXedb5RcS/cev28tOk9Lz2mtefx1HF+w=; b=uo3NQC8M7tVPEIZTbh3f/yeg/a
+        1ohDdK9fsu6Jx5pkykl7Y4CnpzvLq3y67GfVai1JbgdtrZLrza/17IYN6R3L4/ZiW7b6ZIFuRNXdC
+        xv7zTtRjjsiWfc8jTu4jsHsBTzzNCNiJd+E4CnWGba5IMlaywtDJ31GO4u8HrHfZ+NdXkK18ZsreS
+        PHSZBGMHPP9VCXlqT/7BwYSOI17nsYTvtOnGeVE+63tsJOZWOj8PyVVVnVqHpz788SpA0I9MfBs1f
+        0DAo7dknCRYaNVrBvA+EryacOtNeB2t9ZJcYoKD6RLG5aMdzwDxhHpaycRrUvVKEiH6TgV+i9nNxs
+        z2QnEoWQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iZyUC-0006gj-Sk; Wed, 27 Nov 2019 14:40:09 +0000
+        id 1iZyUF-0006rV-2E; Wed, 27 Nov 2019 14:40:11 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Thomas Hellstrom <thellstrom@vmware.com>
 Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         iommu@lists.linux-foundation.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dma-mapping: move dma_addressing_limited out of line
-Date:   Wed, 27 Nov 2019 15:40:05 +0100
-Message-Id: <20191127144006.25998-2-hch@lst.de>
+Subject: [PATCH 2/2] dma-mapping: force unencryped devices are always addressing limited
+Date:   Wed, 27 Nov 2019 15:40:06 +0100
+Message-Id: <20191127144006.25998-3-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191127144006.25998-1-hch@lst.de>
 References: <20191127144006.25998-1-hch@lst.de>
@@ -47,63 +47,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function isn't used in the fast path, and moving it out of line
-will reduce include clutter with the next change.
+Devices that are forced to DMA through unencrypted bounce buffers
+need to be treated as if they are addressing limited.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/dma-mapping.h | 14 +-------------
- kernel/dma/mapping.c        | 15 +++++++++++++++
- 2 files changed, 16 insertions(+), 13 deletions(-)
+ kernel/dma/mapping.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c4d8741264bd..94ef74ecd18a 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -687,19 +687,7 @@ static inline int dma_coerce_mask_and_coherent(struct device *dev, u64 mask)
- 	return dma_set_mask_and_coherent(dev, mask);
- }
- 
--/**
-- * dma_addressing_limited - return if the device is addressing limited
-- * @dev:	device to check
-- *
-- * Return %true if the devices DMA mask is too small to address all memory in
-- * the system, else %false.  Lack of addressing bits is the prime reason for
-- * bounce buffering, but might not be the only one.
-- */
--static inline bool dma_addressing_limited(struct device *dev)
--{
--	return min_not_zero(dma_get_mask(dev), dev->bus_dma_limit) <
--			    dma_get_required_mask(dev);
--}
-+bool dma_addressing_limited(struct device *dev);
- 
- #ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS
- void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
 diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 12ff766ec1fa..1dbe6d725962 100644
+index 1dbe6d725962..f6c35b53d996 100644
 --- a/kernel/dma/mapping.c
 +++ b/kernel/dma/mapping.c
-@@ -405,3 +405,18 @@ unsigned long dma_get_merge_boundary(struct device *dev)
- 	return ops->get_merge_boundary(dev);
+@@ -416,6 +416,8 @@ EXPORT_SYMBOL_GPL(dma_get_merge_boundary);
+  */
+ bool dma_addressing_limited(struct device *dev)
+ {
++	if (force_dma_unencrypted(dev))
++		return true;
+ 	return min_not_zero(dma_get_mask(dev), dev->bus_dma_limit) <
+ 			    dma_get_required_mask(dev);
  }
- EXPORT_SYMBOL_GPL(dma_get_merge_boundary);
-+
-+/**
-+ * dma_addressing_limited - return if the device is addressing limited
-+ * @dev:	device to check
-+ *
-+ * Return %true if the devices DMA mask is too small to address all memory in
-+ * the system, else %false.  Lack of addressing bits is the prime reason for
-+ * bounce buffering, but might not be the only one.
-+ */
-+bool dma_addressing_limited(struct device *dev)
-+{
-+	return min_not_zero(dma_get_mask(dev), dev->bus_dma_limit) <
-+			    dma_get_required_mask(dev);
-+}
-+EXPORT_SYMBOL_GPL(dma_addressing_limited);
 -- 
 2.20.1
 
