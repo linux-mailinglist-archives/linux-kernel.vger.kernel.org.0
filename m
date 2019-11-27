@@ -2,150 +2,423 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB00D10B553
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 19:12:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E398B10B568
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 19:18:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfK0SMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 13:12:00 -0500
-Received: from mail-eopbgr800077.outbound.protection.outlook.com ([40.107.80.77]:10633
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1727117AbfK0SSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 13:18:14 -0500
+Received: from mail-eopbgr790107.outbound.protection.outlook.com ([40.107.79.107]:35936
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726576AbfK0SMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 13:12:00 -0500
+        id S1726576AbfK0SSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 13:18:13 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QVA03c1CQ8Pg9QsCofsePiNcrTkkb2wjWIVGz7HQraLsfg4J6ifiFs3GASejVvp7fTuKY3B9HEft4k9cXGFqUYXEpbnO7Kk9S+rkHpvafqm/A9Y6BC0LtgBKywaBblhbPB5pnf2Umoa1YbMAkL+7bAjAnmml8wvH7JoqD+Pqi0Q6YEDNpGk3WBaogPns3C2DH/Ftm4jOQXVQCi59Ev3NKBR99SMODA5/fGdcOAcS8cPzcRYVCRDI77c6e0mWMX1T4Wpinj6JQhaqxMvZS6+pMzC0WX/tSOrippBPDfcO86qoVlZXzwzQ1a0IYd9PldFaIqJC04yhnsSa/DpNr/Ll7A==
+ b=A9d1hlQehm4jYyq8NYRpDQhKXiGQGeFwyWbeLhZ88J2upobTOzPLjCMFkrCrLmiYPm8o3rGMiUAvgTu1zhzNZ6vwkUVSSOIf+pO4T92IdSU5t2A2jwOEYrTgM/v5uTAfFA4cRvD22xjZ6YKifCjAGGiY9gq18B16VEqeBvk/OhB/1+q/uVwzWzt14au55D6m3RNQCk9lkfjsHXZGT8RrbZQQlq7a/+7+5Wjz97p8T0eCOm8eD0GK+dsVwtapXMDnPFT0QodM5EOOawp2fMFEoa/Yl9ORqOrWhiOMZTfp86pu/anXKN5Ls+38ERWqU6ixkOLlO9usogoxliXbZlyn9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JvFbPB7U32hKj02gTPM8D9eeOuLK2sRIs5lkF/5PlDE=;
- b=PlYZE0sHlrAn9I5AEtcVzRgRhVAjB0zSV3ZfOk8ZdH3x27Dfr0udKVuFSLELU/IMK7a6bGPo0tkVADQBAtsaIBAUmpl2wPyd+zBkaKMqNT37+lgKqtYugSwuzfhJ1NAWlNzr/oTfuupT46Q7Ah70cCtm+n9uxRYAH4ByGg+HjqzeVV6qtc4pxhdn1Xeg/ryTKS+CRANZfeQ0eDUr1rJjFmwy9h6ELXkyr4TUh0BRMP5SndNvzxpjiucTCzJUpRn45UBWmD6wnXrEJii+X3qQw9VDzcyDff7aKo+WdGqSJ6KpqAuu1DT9it/R6pZWN2ro3GN4wYd/VuCaAZ/c+8GQAQ==
+ bh=DJ82oGZkvsuzeyy8JrOoAgoW7LqvlgXKurMEpl44H54=;
+ b=b8BIjxHkZlmUEnaKCLzTAwHWOiMeeDhivViJj+vn4icQIaSFONQcGJflC8fzbVylKbJZ+RzNB53VpDyct3RcXJ+fy4t80g1OM6u7Qx0QBn/P/2xxqYJMeUo00j0zM+NaYnuf+swe8y0b5ausuB59BHdqfa4sZrD3Pm8xd+9LerbKvVld3qjgA3fAc8Zs4HD6nbOoZfON2TbQuF5SRudGoYDb+jO8BAizCiyLlgypO0auvcReDyiXR5KCTwkEMtQk5MKzd5Uspm2CgNWchUe4s//2f5JS8BMSSY7QUlJmFWPhXtEtpFCNgfcOyQBXQOkpB+RuyIh1otAisS7o8DAy8w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JvFbPB7U32hKj02gTPM8D9eeOuLK2sRIs5lkF/5PlDE=;
- b=wt8W7IdfcP0y3mICS5gzLiem0heYarz4chqSm0llGP3EGoH4UFWclX6d6Mhm5TjmkS6FT8kJmYKdYtNo5oJ2Bvl8+IL+m9ctWN7C/LafIYIMQAkfbXEwCNYz0X7/pcKJHvvgiCkixVjmpN8XwqQUfyyPSRTu/09ke+y52iydhWM=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.71.154) by
- DM6PR12MB4042.namprd12.prod.outlook.com (10.141.185.75) with Microsoft SMTP
+ bh=DJ82oGZkvsuzeyy8JrOoAgoW7LqvlgXKurMEpl44H54=;
+ b=X3Rx7XqZuTpziChpitr2kEOQ86WFpkuYAVFig3z2tRoOKP3K+lMW9QS1FbqJuuCzIRqzQyZ0wtynMWA8SA9ZAwA1GM9WM/rFXO0bVLcebpNc0e43IQC/S7FlYEME5tfotbBp3meYCGgNwxa8/QCrPlpskLI5t5zAs1RgGvqL7ls=
+Received: from CY4PR21MB0629.namprd21.prod.outlook.com (10.175.115.19) by
+ CY4PR21MB0149.namprd21.prod.outlook.com (10.173.189.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.21; Wed, 27 Nov 2019 18:11:57 +0000
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::dd0c:8e53:4913:8ef4]) by DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::dd0c:8e53:4913:8ef4%5]) with mapi id 15.20.2474.023; Wed, 27 Nov 2019
- 18:11:56 +0000
-Subject: Re: [PATCH v2] KVM: SVM: Fix "error" isn't initialized
-To:     Haiwei Li <lihaiwei.kernel@gmail.com>,
-        "x86@kernel.org" <x86@kernel.org>, kvm@vger.kernel.org,
+ 15.20.2495.4; Wed, 27 Nov 2019 18:14:22 +0000
+Received: from CY4PR21MB0629.namprd21.prod.outlook.com
+ ([fe80::ed94:4b6d:5371:285c]) by CY4PR21MB0629.namprd21.prod.outlook.com
+ ([fe80::ed94:4b6d:5371:285c%4]) with mapi id 15.20.2516.003; Wed, 27 Nov 2019
+ 18:14:22 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Wei Hu <weh@microsoft.com>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>, "hch@lst.de" <hch@lst.de>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "info@metux.net" <info@metux.net>, "arnd@arndb.de" <arnd@arndb.de>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-crypto@vger.kernel.org
-Cc:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        gary.hook@amd.com, herbert@gondor.apana.org.au, davem@davemloft.net
-References: <2967bd12-21bf-3223-e90b-96b4eaa8c4c2@gmail.com>
-From:   Tom Lendacky <thomas.lendacky@amd.com>
-Message-ID: <1b0b053a-66cd-c712-4bba-732084075e97@amd.com>
-Date:   Wed, 27 Nov 2019 12:11:54 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-In-Reply-To: <2967bd12-21bf-3223-e90b-96b4eaa8c4c2@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>
+Subject: RE: [PATCH v2] video: hyperv: hyperv_fb: Use physical memory for fb
+ on HyperV Gen 1 VMs.
+Thread-Topic: [PATCH v2] video: hyperv: hyperv_fb: Use physical memory for fb
+ on HyperV Gen 1 VMs.
+Thread-Index: AQHVoQ5PjN4EbiSJUU6r31f3vjqbG6efUlHw
+Date:   Wed, 27 Nov 2019 18:14:22 +0000
+Message-ID: <CY4PR21MB0629A6D880A94949B98A3725D7440@CY4PR21MB0629.namprd21.prod.outlook.com>
+References: <20191122082408.3210-1-weh@microsoft.com>
+In-Reply-To: <20191122082408.3210-1-weh@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN4PR0501CA0083.namprd05.prod.outlook.com
- (2603:10b6:803:22::21) To DM6PR12MB3163.namprd12.prod.outlook.com
- (2603:10b6:5:15e::26)
-MIME-Version: 1.0
-X-Originating-IP: [165.204.77.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 60459dc9-1cd4-48d9-22dd-08d7736549dc
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4042:|DM6PR12MB4042:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4042EB4C91B0557D3D47A631EC440@DM6PR12MB4042.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:79;
-X-Forefront-PRVS: 023495660C
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(366004)(39860400002)(346002)(136003)(199004)(189003)(5660300002)(52116002)(6486002)(8676002)(3846002)(2486003)(14454004)(31696002)(47776003)(36756003)(2501003)(81166006)(66066001)(229853002)(86362001)(66556008)(6116002)(23676004)(14444005)(66946007)(66476007)(76176011)(50466002)(316002)(446003)(81156014)(99286004)(478600001)(53546011)(305945005)(6506007)(26005)(7736002)(4326008)(58126008)(110136005)(6512007)(54906003)(186003)(7416002)(65956001)(65806001)(6436002)(25786009)(11346002)(31686004)(386003)(2616005)(2870700001)(2906002)(8936002)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB4042;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-11-27T18:14:20.7689160Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0d63d08d-8989-4e45-9821-76f933e75210;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 6ec69b60-0fbd-4e86-2166-08d77365a109
+x-ms-traffictypediagnostic: CY4PR21MB0149:|CY4PR21MB0149:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR21MB0149D37AD592B940244C4586D7440@CY4PR21MB0149.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 023495660C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(199004)(189003)(54094003)(1250700005)(7736002)(110136005)(86362001)(14444005)(2201001)(256004)(71190400001)(3846002)(74316002)(66476007)(66066001)(22452003)(64756008)(66446008)(66556008)(305945005)(71200400001)(2906002)(8676002)(25786009)(6116002)(8990500004)(81166006)(8936002)(76116006)(81156014)(99286004)(52536014)(10290500003)(9686003)(14454004)(498600001)(446003)(11346002)(55016002)(5660300002)(33656002)(1511001)(66946007)(229853002)(2501003)(6246003)(6636002)(26005)(186003)(7416002)(6506007)(10090500001)(7696005)(6436002)(76176011)(102836004)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0149;H:CY4PR21MB0629.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:3;MX:3;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: h0GD3HYz9wKvvaFWqEBWTW/tlGOnab5l1tCUke4AgrvuZ/Gq4K7JQtp2vlHUkiM3R53IAaOJoqMgQ20nrxCAlfIQ/MFQtoCcjzDRfiIEFZqUYY+9ohqU4aJ6VKv8ZUWIo7TQwP0JuCRdk/qU86ZNSrJR64tM03EUl4SqJHgZlt7tRlm4G2VHQh778Q147oJtuJoElGcEURKCSmGwjIMPKUCdxOLiTYajuPoPC2O2VFwo7a9/JSZavX+md6Myv8q/BkvDwFUOaB8tq0lj5U3+QKao9Vi7EL/udRA+jTMZJn8sSRe5peHsgRPqCeWc4tJdu/1tKc4chrtRFV/Ww1jI0/Mrad6T6miZeDGLr77oOgYh4NsN+jRVKDgvoAJCXhGS5GvCmJAT0YVtCjfPm1bF2RyC6mPF0pjB81PXFpkx51j9H8JlnKeUf+P1o7VF8YJh
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60459dc9-1cd4-48d9-22dd-08d7736549dc
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2019 18:11:56.8396
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: c3ft0+imYvk7HzFAXIJSEjt1ZKqFiooaIjTWlx+v7hMWH7Ps2vv9y9h20Oxl5eP8Rm7g7fk9urI2yvjuzXQXQuiXjhpbd/3IoStHCiAyN41jqzgLHpEXIJDmYrEenBEVfELcSme6lAEyXD2JS+ql7dFYDEARlxLinZdHdVU9Hb44hBJWT+yEQj9xBjHIBFyRBcqIgRhmjG+izszBnuTU3vUxATgbK3tZAIJpgtj9OBJonRWeP5EFFDD9UzT7xHLijG/Zr4jDHEuj/soiaG8Wg0I0ahWJlIwm2MLDcl3agKle9KSn4h/amRtdC+pYKBoKPGDspK9jO+7HrN50twn4eHcqnYWnBuSB+bvDtYB5chn6wapy3jQ9gXrrU9B3JCUMgaY2jzDYo4veXuRruc9ukzIfcKqM8OGWLaHlJfcNVphBit4d9+6Sv/TRNXrbx4lr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ec69b60-0fbd-4e86-2166-08d77365a109
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2019 18:14:22.5466
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zMR62l+GPt85zJTvXi052M49C6uvwX3VTOHNtMIV8phQ05CLngu61LsAV6HVVxOGu6eWeihMR5+AVjsUOqi6ow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4042
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HwMfejRQP/yCWYPMNaC4zcBDWPvDJjUbrXAQ06j8BN2YjqnSxoPEoLp2Mu9JW33/AI3qjGtZi+IrqlMzZkwAVYxNaE3DPKcCDD8bFliqFZA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/19 1:23 AM, Haiwei Li wrote:
->  From e7f9c786e43ef4f890b8a01f15f8f00786f4b14a Mon Sep 17 00:00:00 2001
-> From: Haiwei Li <lihaiwei@tencent.com>
-> Date: Wed, 27 Nov 2019 15:00:49 +0800
-> Subject: [PATCH v2] fix: 'error' is not initialized
-> 
-> There are a bunch of error paths were "error" isn't initialized.
-
-Please provide a better patch commit message and just fix the actual
-problem, which is error is uninitialized in sev_flush_asids(). Please
-just initialize error to zero.
-
-Thanks,
-Tom
-
-> 
-> Signed-off-by: Haiwei Li <lihaiwei@tencent.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Wei Hu <weh@microsoft.com> Sent: Friday, November 22, 2019 12:24 AM
+>=20
+> On Hyper-V, Generation 1 VMs can directly use VM's physical memory for
+> their framebuffers. This can improve the efficiency of framebuffer and
+> overall performence for VM. The physical memory assigned to framebuffer
+> must be contiguous. We use CMA allocator to get contiguouse physicial
+> memory when the framebuffer size is greater than 4MB. For size under
+> 4MB, we use alloc_pages to achieve this.
+>=20
+> To enable framebuffer memory allocation from CMA, supply a kernel
+> parameter to give enough space to CMA allocator at boot time. For
+> example:
+>     cma=3D130m
+> This gives 130MB memory to CAM allocator that can be allocated to
+> framebuffer. If this fails, we fall back to the old way of using
+> mmio for framebuffer.
+>=20
+> Signed-off-by: Wei Hu <weh@microsoft.com>
 > ---
->   arch/x86/kvm/svm.c           | 3 ++-
->   drivers/crypto/ccp/psp-dev.c | 2 ++
->   2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 362e874..9eef6fc 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -6308,7 +6308,8 @@ static int sev_flush_asids(void)
->       up_write(&sev_deactivate_lock);
-> 
->       if (ret)
-> -        pr_err("SEV: DF_FLUSH failed, ret=%d, error=%#x\n", ret, error);
-> +        pr_err("SEV: DF_FLUSH failed, ret=%d. PSP returned error=%#x\n",
-> +               ret, error);
-> 
->       return ret;
->   }
-> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-> index 39fdd06..c486c24 100644
-> --- a/drivers/crypto/ccp/psp-dev.c
-> +++ b/drivers/crypto/ccp/psp-dev.c
-> @@ -155,6 +155,8 @@ static int __sev_do_cmd_locked(int cmd, void *data, 
-> int *psp_ret)
->       unsigned int phys_lsb, phys_msb;
->       unsigned int reg, ret = 0;
-> 
-> +    *psp_ret = -1;
+>     v2: Incorporated review comments form hch@lst.de, Michael Kelley and
+>     Dexuan Cui
+>     - Use dma_alloc_coherent to allocate large contiguous memory
+>     - Use phys_addr_t for physical addresses
+>     - Corrected a few spelling errors and minor cleanups
+>     - Also tested on 32 bit Ubuntu guest
+>=20
+>  drivers/video/fbdev/Kconfig     |   1 +
+>  drivers/video/fbdev/hyperv_fb.c | 196 +++++++++++++++++++++++++-------
+>  2 files changed, 158 insertions(+), 39 deletions(-)
+>=20
+
+[snip]
+
+> +/*
+> + * Allocate enough contiguous physical memory.
+> + * Return physical address if succeeded or -1 if failed.
+> + */
+> +static phys_addr_t hvfb_get_phymem(struct hv_device *hdev,
+> +				   unsigned int request_size)
+> +{
+> +	struct page *page =3D NULL;
+> +	dma_addr_t dma_handle;
+> +	void *vmem;
+> +	unsigned int request_pages;
+> +	phys_addr_t paddr =3D 0;
+> +	unsigned int order =3D get_order(request_size);
 > +
->       if (!psp)
->           return -ENODEV;
-> 
-> -- 
-> 1.8.3.1
+> +	if (request_size =3D=3D 0)
+> +		return -1;
+> +
+> +	/* Try to call alloc_pages if the size is less than 2^MAX_ORDER */
+> +	if (order < MAX_ORDER) {
+> +		page =3D alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
+> +		if (!page)
+> +			return -1;
+> +
+> +		paddr =3D (page_to_pfn(page) << PAGE_SHIFT);
+> +		request_pages =3D (1 << order);
+> +		goto get_phymem1;
+> +	}
+
+Could you use an 'else' clause here and eliminate the above
+'goto' statement?  I know that makes the below code be indented
+one level deeper, but that doesn't seem particularly problematic
+here.  The reason we have 'else' clauses is to avoid 'goto's and
+labels.  :-)
+
+> +
+> +	/* Allocate from CMA */
+> +	if (hdev =3D=3D NULL)
+> +		return -1;
+
+The above test seems unnecessary.  A lot of things would have
+broken before getting to this function if hdev was NULL.
+
+> +
+> +	hdev->device.coherent_dma_mask =3D DMA_BIT_MASK(64);
+> +
+> +	request_pages =3D (round_up(request_size, PAGE_SIZE) >> PAGE_SHIFT);
+> +
+> +	vmem =3D dma_alloc_coherent(&hdev->device,
+> +				 request_pages * PAGE_SIZE,
+> +				 &dma_handle,
+> +				 GFP_KERNEL | __GFP_NOWARN);
+> +
+> +	if (!vmem)
+> +		return -1;
+> +
+> +	paddr =3D virt_to_phys(vmem);
+> +
+> +get_phymem1:
+> +	pr_info("Allocated %d pages starts at physical addr 0x%llx\n",
+> +		request_pages, paddr);
+
+I wonder if we want to show the physical address here.  The Linux kernel
+definitely does not show kernel virtual addresses due to security
+concerns, and I'm wondering if the same applies to physical addresses.
+What's the benefit to showing the physical address?
+
+And in the message "starts" should be "starting".
+
+> +
+> +	return paddr;
+> +}
+> +
+> +/* Release contiguous physical memory */
+> +static void hvfb_release_phymem(struct hv_device *hdev,
+> +				phys_addr_t paddr, unsigned int size)
+> +{
+> +	unsigned int order =3D get_order(size);
+> +
+> +	if (order < MAX_ORDER)
+> +		__free_pages(pfn_to_page(paddr >> PAGE_SHIFT), order);
+> +	else
+> +		dma_free_coherent(&hdev->device,
+> +				  round_up(size, PAGE_SIZE),
+> +				  phys_to_virt(paddr),
+> +				  paddr);
+> +}
+> +
+>=20
+>  /* Get framebuffer memory from Hyper-V video pci space */
+>  static int hvfb_getmem(struct hv_device *hdev, struct fb_info *info)
+> @@ -947,8 +1028,57 @@ static int hvfb_getmem(struct hv_device *hdev, stru=
+ct fb_info
+> *info)
+>  	void __iomem *fb_virt;
+>  	int gen2vm =3D efi_enabled(EFI_BOOT);
+>  	resource_size_t pot_start, pot_end;
+> +	phys_addr_t paddr;
+>  	int ret;
+>=20
+> +	if (!gen2vm) {
+> +		pdev =3D pci_get_device(PCI_VENDOR_ID_MICROSOFT,
+> +			PCI_DEVICE_ID_HYPERV_VIDEO, NULL);
+> +		if (!pdev) {
+> +			pr_err("Unable to find PCI Hyper-V video\n");
+> +			return -ENODEV;
+> +		}
+> +	}
+> +
+> +	info->apertures =3D alloc_apertures(1);
+> +	if (!info->apertures)
+> +		goto err1;
+
+There's a small memory leak here.  The apertures are never freed in any
+of the error cases in this function, or in hvfb_putmem().  This is not a bu=
+g you
+introduced -- the original code had the same leak.
+
+> +
+> +	if (gen2vm) {
+> +		info->apertures->ranges[0].base =3D screen_info.lfb_base;
+> +		info->apertures->ranges[0].size =3D screen_info.lfb_size;
+> +	} else {
+> +		info->apertures->ranges[0].base =3D pci_resource_start(pdev, 0);
+> +		info->apertures->ranges[0].size =3D pci_resource_len(pdev, 0);
+> +	}
+> +
+> +	/*
+> +	 * For Gen 1 VM, we can directly use the contiguous memory
+> +	 * from VM. If we succeed, deferred IO happens directly
+> +	 * on this allocated framebuffer memory, avoiding extra
+> +	 * memory copy.
+> +	 */
+> +	if (!gen2vm) {
+> +		paddr =3D hvfb_get_phymem(hdev, screen_fb_size);
+> +		if (paddr !=3D (phys_addr_t) -1) {
+> +			par->mmio_pp =3D paddr;
+> +			par->mmio_vp =3D par->dio_vp =3D __va(paddr);
+> +
+> +			info->fix.smem_start =3D paddr;
+> +			info->fix.smem_len =3D screen_fb_size;
+> +			info->screen_base =3D par->mmio_vp;
+> +			info->screen_size =3D screen_fb_size;
+> +
+> +			par->need_docopy =3D false;
+> +			goto getmem1;
+
+Maybe change the 'getmem1' label to 'done' or something similarly
+indicative having successfully completed everything that needs to be
+done?
+
+> +		}
+> +		pr_info("Unable to allocate enough contiguous physical memory on Gen 1
+> VM. Use MMIO instead.\n");
+
+I'd suggest changing the message to say "Using MMIO instead".  This is just=
+ an
+informative message indicating what the driver is doing.  "Use MMIO instead=
+"
+sounds like a directive to the user to do something different, like change =
+his
+kernel configuration, and that's not the intent.
+
+> +	}
+
+In the above code, there are three, almost consecutive, tests of the "gen2v=
+m"
+variable.  It seems like the apertures could be allocated first, and then t=
+he three
+tests combined into one test.  Then you have one range of code for Gen 1 an=
+d
+another range for Gen 2 and fewer lines 'if' statements, 'else' statements,=
+ and
+curly braces.
+
+> +
+> +	/*
+> +	 * Cannot use the contiguous physical memory.
+> +	 * Allocate mmio space for framebuffer.
+> +	 */
+>  	dio_fb_size =3D
+>  		screen_width * screen_height * screen_depth / 8;
+>=20
+> @@ -956,13 +1086,6 @@ static int hvfb_getmem(struct hv_device *hdev, stru=
+ct fb_info
+> *info)
+>  		pot_start =3D 0;
+>  		pot_end =3D -1;
+>  	} else {
+> -		pdev =3D pci_get_device(PCI_VENDOR_ID_MICROSOFT,
+> -			      PCI_DEVICE_ID_HYPERV_VIDEO, NULL);
+> -		if (!pdev) {
+> -			pr_err("Unable to find PCI Hyper-V video\n");
+> -			return -ENODEV;
+> -		}
+> -
+>  		if (!(pci_resource_flags(pdev, 0) & IORESOURCE_MEM) ||
+>  		    pci_resource_len(pdev, 0) < screen_fb_size) {
+>  			pr_err("Resource not available or (0x%lx < 0x%lx)\n",
+> @@ -991,20 +1114,6 @@ static int hvfb_getmem(struct hv_device *hdev, stru=
+ct fb_info
+> *info)
+>  	if (par->dio_vp =3D=3D NULL)
+>  		goto err3;
+>=20
+> -	info->apertures =3D alloc_apertures(1);
+> -	if (!info->apertures)
+> -		goto err4;
+> -
+> -	if (gen2vm) {
+> -		info->apertures->ranges[0].base =3D screen_info.lfb_base;
+> -		info->apertures->ranges[0].size =3D screen_info.lfb_size;
+> -		remove_conflicting_framebuffers(info->apertures,
+> -						KBUILD_MODNAME, false);
+> -	} else {
+> -		info->apertures->ranges[0].base =3D pci_resource_start(pdev, 0);
+> -		info->apertures->ranges[0].size =3D pci_resource_len(pdev, 0);
+> -	}
+> -
+>  	/* Physical address of FB device */
+>  	par->mmio_pp =3D par->mem->start;
+>  	/* Virtual address of FB device */
+> @@ -1015,13 +1124,15 @@ static int hvfb_getmem(struct hv_device *hdev, st=
+ruct fb_info
+> *info)
+>  	info->screen_base =3D par->dio_vp;
+>  	info->screen_size =3D dio_fb_size;
+>=20
+> +getmem1:
+> +	remove_conflicting_framebuffers(info->apertures,
+> +					KBUILD_MODNAME, false);
+
+With your change, remove_conflicting_framebuffers() is called for both
+Gen 1 and Gen 2 VMs.  In the old code, it was called only for Gen 2 VMs.
+Is this change intentional?  If so, why?  I haven't delved into the details
+of what remove_conflicting_framebuffers() does, so my question is=20
+more of a double-check rather than my definitely thinking something
+is wrong.
+
+> +
+>  	if (!gen2vm)
+>  		pci_dev_put(pdev);
+>=20
+>  	return 0;
+>=20
+> -err4:
+> -	vfree(par->dio_vp);
+>  err3:
+>  	iounmap(fb_virt);
+>  err2:
+> @@ -1035,13 +1146,19 @@ static int hvfb_getmem(struct hv_device *hdev, st=
+ruct fb_info
+> *info)
+>  }
+>=20
+>  /* Release the framebuffer */
+> -static void hvfb_putmem(struct fb_info *info)
+> +static void hvfb_putmem(struct hv_device *hdev, struct fb_info *info)
+>  {
+>  	struct hvfb_par *par =3D info->par;
+>=20
+> -	vfree(par->dio_vp);
+> -	iounmap(info->screen_base);
+> -	vmbus_free_mmio(par->mem->start, screen_fb_size);
+> +	if (par->need_docopy) {
+> +		vfree(par->dio_vp);
+> +		iounmap(info->screen_base);
+> +		vmbus_free_mmio(par->mem->start, screen_fb_size);
+> +	} else {
+> +		hvfb_release_phymem(hdev, info->fix.smem_start,
+> +				    screen_fb_size);
+> +	}
+> +
+>  	par->mem =3D NULL;
+
+There's a small memory leak in the above statement.  The data
+structure pointed to by "mem" is not freed.   The same problem
+occurs in hvfb_getmem() in the "err2" path.   This bug existed in
+the old code as well, so it was not introduced by your changes.
+
+Michael
