@@ -2,74 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E967710A932
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 04:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB18610A92D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 04:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfK0Doo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 26 Nov 2019 22:44:44 -0500
-Received: from mga03.intel.com ([134.134.136.65]:55996 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbfK0Doo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Nov 2019 22:44:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2019 19:44:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,248,1571727600"; 
-   d="scan'208";a="291935296"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga001.jf.intel.com with ESMTP; 26 Nov 2019 19:44:43 -0800
-Date:   Tue, 26 Nov 2019 19:44:43 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     Haiwei Li <lihaiwei.kernel@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>
-Subject: Re: [PATCH] KVM: SVM: Fix "error" isn't initialized
-Message-ID: <20191127034443.GF22233@linux.intel.com>
-References: <3b418fab6b804c6cba48e372cce875c1@huawei.com>
+        id S1726696AbfK0Djn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 26 Nov 2019 22:39:43 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51842 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726454AbfK0Djn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Nov 2019 22:39:43 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9C7981D57FCE35DA8437;
+        Wed, 27 Nov 2019 11:39:41 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 27 Nov 2019
+ 11:39:30 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <hughd@google.com>, <akpm@linux-foundation.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>, <zhengbin13@huawei.com>
+Subject: [PATCH] mm/shmem.c: don't set 'seals' to 'F_SEAL_SEAL' in shmem_get_inode
+Date:   Wed, 27 Nov 2019 12:00:51 +0800
+Message-ID: <20191127040051.39169-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b418fab6b804c6cba48e372cce875c1@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 03:30:06AM +0000, linmiaohe wrote:
-> 
-> > From: Haiwei Li <lihaiwei@tencent.com>
-> > Subject: [PATCH] initialize 'error'
-> >
-> > There are a bunch of error paths were "error" isn't initialized.
-> Hi,
-> In case error case, sev_guest_df_flush() do not set the error.
-> Can you set the value of error to reflect what error happened
-> in sev_guest_df_flush()?
-> The current fix may looks confused when print "DF_FLUSH failed" with
-> error = 0.
-> Thanks. 
-> 
-> PS: This is just my personal point.
+'seals' is set to 'F_SEAL_SEAL' in shmem_get_inode, which means "prevent
+further seals from being set", thus sealing API will be useless and many
+code in shmem.c will never be reached. For example:
 
-Disclaimer: not my world at all...
+shmem_setattr
+	if ((newsize < oldsize && (info->seals & F_SEAL_SHRINK)) ||
+	    (newsize > oldsize && (info->seals & F_SEAL_GROW)))
+		return -EPERM;
 
-Based on the prototype for __sev_do_cmd_locked(), @error is intended to be
-filled only if there's an actual response from the PSP, which is a 16-bit
-value.  So maybe init @psp_ret at the beginning of __sev_do_cmd_locked() to
--1 to indicate the command was never sent to the PSP?  And update the
-pr_err() in sev_asid_flush() to explicitly state it's the PSP return?
+So, initialize 'seals' to zero is more reasonable.
+
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ mm/shmem.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 165fa6332993..7b032b347bda 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2256,7 +2256,6 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
+ 		memset(info, 0, (char *)inode - (char *)info);
+ 		spin_lock_init(&info->lock);
+ 		atomic_set(&info->stop_eviction, 0);
+-		info->seals = F_SEAL_SEAL;
+ 		info->flags = flags & VM_NORESERVE;
+ 		INIT_LIST_HEAD(&info->shrinklist);
+ 		INIT_LIST_HEAD(&info->swaplist);
+-- 
+2.17.2
+
