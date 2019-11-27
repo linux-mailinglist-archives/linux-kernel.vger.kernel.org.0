@@ -2,154 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C89C10ADEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:40:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74A7D10ADFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 11:43:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfK0Kj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 05:39:57 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:47019 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727187AbfK0Kjt (ORCPT
+        id S1726747AbfK0KnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 05:43:02 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46189 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfK0KnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:39:49 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-161-I7527sRAPDaNoTe7FdxHBQ-1; Wed, 27 Nov 2019 10:39:45 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 27 Nov 2019 10:39:45 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 27 Nov 2019 10:39:45 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Marek Majkowski' <marek@cloudflare.com>
-CC:     linux-kernel <linux-kernel@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>,
-        "Jesper Dangaard Brouer" <brouer@redhat.com>
-Subject: RE: epoll_wait() performance
-Thread-Topic: epoll_wait() performance
-Thread-Index: AdWgk3jgEIFNwcnRS6+4A+/jFPxTuQEdLCCAAAAn2qA=
-Date:   Wed, 27 Nov 2019 10:39:44 +0000
-Message-ID: <5f4028c48a1a4673bd3b38728e8ade07@AcuMS.aculab.com>
-References: <bc84e68c0980466096b0d2f6aec95747@AcuMS.aculab.com>
- <CAJPywTJYDxGQtDWLferh8ObjGp3JsvOn1om1dCiTOtY6S3qyVg@mail.gmail.com>
-In-Reply-To: <CAJPywTJYDxGQtDWLferh8ObjGp3JsvOn1om1dCiTOtY6S3qyVg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 27 Nov 2019 05:43:02 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a17so16715684lfi.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 02:43:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4bSZtYSKRzzSpgbvHLlRlvm4/VSvnoysG6GlVXihnl0=;
+        b=ggKnvTb3rsJToKxbuhyxwAbfRBemmGkw8JZt/E9J/1dva2aqZ56jv3tvhwXZI/lTDT
+         5f6wo5LpHRqnMAejwyytGjAdGro3Cq2DWfIJWELdiBbag2RHMjmZqhl3kDypKRaBPnqM
+         Y/f6UBfRriLjYDBLpmql0qGv/rDbQfWjp7BJg9bgwQeF/jMHPwXEa4GWTnYiPAwhPb5e
+         XD7b98K1+F/mjCoL4AWYXhzzo03som5qUjjmDPIcZMy4w8Vou9qns3GllacfRtdsQKPt
+         nDWvssfwI5q+Ay/+b6l+10d/cA3oC9alMPeAj31Wd8lTnp1uiRm7OmJOUySUV3n1Z8BF
+         n7yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4bSZtYSKRzzSpgbvHLlRlvm4/VSvnoysG6GlVXihnl0=;
+        b=ev2QW/1IJsrucn6RAU6EHRW7clxG5aqfXDQkSuM3yyR21inFTioWNuwRPP53hWb9Qr
+         TLrFSpe6l1l3DC4HdPa0jRp9pw4As57o6v1ToRg+BQNg2/GiycaaNAwm0VfrTxFv5wms
+         BuFxPX5GJ0sNOkVgkaEME4uveVXaxB7Dls8P24O4Qj0ef2+Kg6//9KvW2ILeevOgocul
+         5W49Poyn1JSOPgwONyMUNLH49I0+Bas4C9YtNgDUpWBF1XKp7Ihx0GJq2ks64iNi4J9n
+         TmQILsOSEnBeHWRzuYRmSo8nNRthfEhLHGHxEHw/NRZpnpFxpMAQFGbhJ6bjTGFggs7O
+         Y9mw==
+X-Gm-Message-State: APjAAAWhCRcmaNCvmbFG3l6VgT6kzf00t4gvjjURCpzcIiqBMCllbX44
+        5G3+30zMUvkW79VdaebmvpzoMeFn2D4UOlMQu4VGuw==
+X-Google-Smtp-Source: APXvYqw0axWlyE9Xf7qKCdQKDA51b0gvm1OnGchTmMmRVTBeWX1iAOF60Ns4IfePT38SeObuWmaWludZTP46LMj/Nog=
+X-Received: by 2002:a19:7d02:: with SMTP id y2mr26825678lfc.86.1574851379646;
+ Wed, 27 Nov 2019 02:42:59 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: I7527sRAPDaNoTe7FdxHBQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20191126164140.6240-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20191126164140.6240-1-ckeepax@opensource.cirrus.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 27 Nov 2019 11:42:47 +0100
+Message-ID: <CACRpkdYc=2vWte+gFp0m6RvWSu=+qT=WWUzag0N1FUBmbSCOOw@mail.gmail.com>
+Subject: Re: [PATCH] spi: cadence: Correct handling of native chipselect
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Gregory Clement <gregory.clement@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTWFyZWsgTWFqa293c2tpDQo+IFNlbnQ6IDI3IE5vdmVtYmVyIDIwMTkgMDk6NTENCj4g
-T24gRnJpLCBOb3YgMjIsIDIwMTkgYXQgMTI6MTggUE0gRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
-aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4gSSdtIHRyeWluZyB0byBvcHRpbWlzZSBzb21lIGNv
-ZGUgdGhhdCByZWFkcyBVRFAgbWVzc2FnZXMgKFJUUCBhbmQgUlRDUCkgZnJvbSBhIGxvdCBvZiBz
-b2NrZXRzLg0KPiA+IFRoZSAnbm9ybWFsJyBkYXRhIHBhdHRlcm4gaXMgdGhhdCB0aGVyZSBpcyBu
-byBkYXRhIG9uIGhhbGYgdGhlIHNvY2tldHMgKFJUQ1ApIGFuZA0KPiA+IG9uZSBtZXNzYWdlIGV2
-ZXJ5IDIwbXMgb24gdGhlIG90aGVycyAoUlRQKS4NCj4gPiBIb3dldmVyIHRoZXJlIGNhbiBiZSBt
-b3JlIHRoYW4gb25lIG1lc3NhZ2Ugb24gZWFjaCBzb2NrZXQsIGFuZCB0aGV5IGFsbCBuZWVkIHRv
-IGJlIHJlYWQuDQo+ID4gU2luY2UgdGhlIGNvZGUgcHJvY2Vzc2luZyB0aGUgZGF0YSBydW5zIGV2
-ZXJ5IDEwbXMsIHRoZSBtZXNzYWdlIHJlY2VpdmluZyBjb2RlDQo+ID4gYWxzbyBydW5zIGV2ZXJ5
-IDEwbXMgKGEgbWFzc2l2ZSBnYWluIHdoZW4gdXNpbmcgcG9sbCgpKS4NCj4gDQo+IEhvdyBtYW55
-IHNvY2tldHMgd2UgYXJlIHRhbGtpbmcgYWJvdXQ/IE1vcmUgbGlrZSA1MDAgb3IgNTAwaz8gV2Ug
-aGFkIHZlcnkNCj4gYmFkIGV4cGVyaWVuY2Ugd2l0aCBVRFAgY29ubmVjdGVkIHNvY2tldHMsIHNv
-IGlmIHlvdSBhcmUgdXNpbmcgVURQIGNvbm5lY3RlZA0KPiBzb2NrZXRzLCB0aGUgUlggcGF0aCBp
-cyBzdXBlciBzbG93LCBtb3N0bHkgY29uc3VtZWQgYnkgdWRwX2xpYl9sb29rdXAoKQ0KPiBodHRw
-czovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92NS40L3NvdXJjZS9uZXQvaXB2NC91ZHAuYyNM
-NDQ1DQoNCkZvciBteSB0ZXN0cyBJIGhhdmUgOTAwLCBidXQgdGhhdCBpcyBub3RoaW5nIGxpa2Ug
-dGhlIGxpbWl0IGZvciB0aGUgYXBwbGljYXRpb24uDQpUaGUgdGVzdCBzeXN0ZW0gaXMgb3ZlciA1
-MCUgaWRsZSBhbmQgcnVubmluZyBhdCBpdHMgbWluaW1hbCBjbG9jayBzcGVlZC4NClRoZSBzb2Nr
-ZXRzIGFyZSBhbGwgdW5jb25uZWN0ZWQsIEkgYmVsaWV2ZSB0aGUgcmVtb3RlIGFwcGxpY2F0aW9u
-IGlzIGFsbG93ZWQNCnRvIGNoYW5nZSB0aGUgc291cmNlIElQIG1pZC1mbG93IQ0KDQouLi4NCj4g
-PiBXaGlsZSB1c2luZyByZWN2bW1zZygpIHRvIHJlYWQgbXVsdGlwbGUgbWVzc2FnZXMgbWlnaHQg
-c2VlbSBhIGdvb2QgaWRlYSwgaXQgaXMgbXVjaA0KPiA+IHNsb3dlciB0aGFuIHJlY3YoKSB3aGVu
-IHRoZXJlIGlzIG9ubHkgb25lIG1lc3NhZ2UgKGV2ZW4gcmVjdm1zZygpIGlzIGEgbG90IHNsb3dl
-cikuDQo+ID4gKEknbSBub3Qgc3VyZSB3aHkgdGhlIGNvZGUgcGF0aHMgYXJlIHNvIHNsb3csIEkg
-c3VzcGVjdCBpdCBpcyBhbGwgdGhlIGNvcHlfZnJvbV91c2VyKCkNCj4gPiBhbmQgZmFmZmluZyB3
-aXRoIHRoZSB1c2VyIGlvdltdLikNCj4gPg0KPiA+IFNvIHVzaW5nIHBvbGwoKSB3ZSByZXBvbGwg
-dGhlIGZkIGFmdGVyIGNhbGxpbmcgcmVjdigpIHRvIGZpbmQgaXMgdGhlcmUgaXMgYSBzZWNvbmQg
-bWVzc2FnZS4NCj4gPiBIb3dldmVyIHRoZSBzZWNvbmQgcG9sbCBoYXMgYSBzaWduaWZpY2FudCBw
-ZXJmb3JtYW5jZSBjb3N0IChidXQgbGVzcyB0aGFuIHVzaW5nIHJlY3ZtbXNnKCkpLg0KPiANCj4g
-VGhhdCBzb3VuZHMgd3JvbmcuIFNpbmdsZSByZWN2bW1zZygpLCBldmVuIHdoZW4gcmVjZWl2aW5n
-IG9ubHkgYQ0KPiBzaW5nbGUgbWVzc2FnZSwgc2hvdWxkIGJlIGZhc3RlciB0aGFuIHR3byBzeXNj
-YWxscyAtIHJlY3YoKSBhbmQNCj4gcG9sbCgpLg0KDQpNeSBzdXNwaWNpb24gaXMgdGhlIGV4dHJh
-IHR3byBjb3B5X2Zyb21fdXNlcigpIG5lZWRlZCBmb3IgZWFjaCByZWN2bXNnIGFyZSBhDQpzaWdu
-aWZpY2FudCBvdmVyaGVhZCwgbW9zdCBsaWtlbHkgZHVlIHRvIHRoZSBjcmFwcHkgY29kZSB0aGF0
-IHRyaWVzIHRvIHN0b3ANCnRoZSBrZXJuZWwgYnVmZmVyIGJlaW5nIG92ZXJydW4uDQpJIG5lZWQg
-dG8gcnVuIHRoZSB0ZXN0cyBvbiBhIHN5c3RlbSB3aXRoIGEgJ2hvbWUgYnVpbHQnIGtlcm5lbCB0
-byBzZWUgaG93IG11Y2gNCmRpZmZlcmVuY2UgdGhpcyBtYWtlIChieSBzZWVpbmcgaG93IG11Y2gg
-c2xvd2VyIGR1cGxpY2F0aW5nIHRoZSBjb3B5IG1ha2VzIGl0KS4NCg0KVGhlIHN5c3RlbSBjYWxs
-IGNvc3Qgb2YgcG9sbCgpIGdldHMgZmFjdG9yZWQgb3ZlciBhIHJlYXNvbmFibGUgbnVtYmVyIG9m
-IHNvY2tldHMuDQpTbyBkb2luZyBwb2xsKCkgb24gYSBzb2NrZXQgd2l0aCBubyBkYXRhIGlzIGEg
-bG90IGZhc3RlciB0aGF0IHRoZSBzZXR1cCBmb3IgcmVjdm1zZw0KZXZlbiBhbGxvd2luZyBmb3Ig
-bG9va2luZyB1cCB0aGUgZmQuDQoNClRoaXMgY291bGQgYmUgZml4ZWQgYnkgYW4gZXh0cmEgZmxh
-ZyB0byByZWN2bW1zZygpIHRvIGluZGljYXRlIHRoYXQgeW91IG9ubHkgcmVhbGx5DQpleHBlY3Qg
-b25lIG1lc3NhZ2UgYW5kIHRvIGNhbGwgdGhlIHBvbGwoKSBmdW5jdGlvbiBiZWZvcmUgZWFjaCBz
-dWJzZXF1ZW50IHJlY2VpdmUuDQoNClRoZXJlIGlzIGFsc28gdGhlICdyZXNjaGVkdWxlJyB0aGF0
-IEVyaWMgYWRkZWQgdG8gdGhlIGxvb3AgaW4gcmVjdm1tc2cuDQpJIGRvbid0IGtub3cgaG93IG11
-Y2ggdGhhdCBhY3R1YWxseSBjb3N0cy4NCkluIHRoaXMgY2FzZSB0aGUgcHJvY2VzcyBpcyBsaWtl
-bHkgdG8gYmUgcnVubmluZyBhdCBhIFJUIHByaW9yaXR5IGFuZCBwaW5uZWQgdG8gYSBjcHUuDQpJ
-biBzb21lIGNhc2VzIHRoZSBjcHUgaXMgYWxzbyByZXNlcnZlZCAoYXQgYm9vdCB0aW1lKSBzbyB0
-aGF0ICdyYW5kb20nIG90aGVyIGNvZGUgY2FuJ3QgdXNlIGl0Lg0KDQpXZSByZWFsbHkgZG8gd2Fu
-dCB0byByZWNlaXZlIGFsbCB0aGVzZSBVRFAgcGFja2V0cyBpbiBhIHRpbWVseSBtYW5uZXIuDQpB
-bHRob3VnaCB2ZXJ5IGxvdyBsYXRlbmN5IGlzbid0IGl0c2VsZiBhbiBpc3N1ZS4NClRoZSBkYXRh
-IGlzIHRlbGVwaG9ueSBhdWRpbyB3aXRoICh0eXBpY2FsbHkpIG9uZSBwYWNrZXQgZXZlcnkgMjBt
-cy4NClRoZSBjb2RlIG9ubHkgbG9va3MgZm9yIHBhY2tldHMgZXZlcnkgMTBtcyAtIHRoYXQgaGVs
-cHMgbm8gZW5kIHNpbmNlLCBpbiBwcmluY2lwbGUsDQpvbmx5IGEgc2luZ2xlIHBvbGwoKS9lcG9s
-bF93YWl0KCkgY2FsbCAob24gYWxsIHRoZSBzb2NrZXRzKSBpcyBuZWVkZWQgZXZlcnkgMTBtcy4N
-Cg0KPiA+IElmIHdlIHVzZSBlcG9sbCgpIGluIGxldmVsIHRyaWdnZXJlZCBtb2RlIGEgc2Vjb25k
-IGVwb2xsX3dhaXQoKSBjYWxsIChhZnRlciB0aGUgcmVjdigpKSB3aWxsDQo+ID4gaW5kaWNhdGUg
-dGhhdCB0aGVyZSBpcyBtb3JlIGRhdGEuDQo+ID4NCj4gPiBGb3IgcG9sbCgpIGl0IGRvZXNuJ3Qg
-bWFrZSBtdWNoIGRpZmZlcmVuY2UgaG93IG1hbnkgZmQgYXJlIHN1cHBsaWVkIHRvIGVhY2ggc3lz
-dGVtIGNhbGwuDQo+ID4gVGhlIG92ZXJhbGwgcGVyZm9ybWFuY2UgaXMgbXVjaCB0aGUgc2FtZSBm
-b3IgMzIsIDY0IG9yIDUwMCAoYWxsIHRoZSBzb2NrZXRzKS4NCj4gPg0KPiA+IEZvciBlcG9sbF93
-YWl0KCkgdGhhdCBpc24ndCB0cnVlLg0KPiA+IFN1cHBseWluZyBhIGJ1ZmZlciB0aGF0IGlzIHNo
-b3J0ZXIgdGhhbiB0aGUgbGlzdCBvZiAncmVhZHknIGZkcyBnaXZlcyBhIG1hc3NpdmUgcGVuYWx0
-eS4NCj4gPiBXaXRoIGEgYnVmZmVyIGxvbmcgZW5vdWdoIGZvciBhbGwgdGhlIGV2ZW50cyBlcG9s
-bCgpIGlzIHNvbWV3aGF0IGZhc3RlciB0aGFuIHBvbGwoKS4NCj4gPiBCdXQgd2l0aCBhIDY0IGVu
-dHJ5IGJ1ZmZlciBpdCBpcyBtdWNoIHNsb3dlci4NCj4gPiBJJ3ZlIGxvb2tlZCBhdCB0aGUgY29k
-ZSBhbmQgY2FuJ3Qgc2VlIHdoeSBzcGxpY2luZyB0aGUgdW5yZWFkIGV2ZW50cyBiYWNrIGlzIGV4
-cGVuc2l2ZS4NCj4gDQo+IEFnYWluLCB0aGlzIGlzIHN1cnByaXNpbmcuDQoNClllcCwgYnV0IHJl
-cGVhdGVkbHkgbWVhc3VyYWJsZS4NCklmIG5vIG9uZSBlbHNlIGhhcyBzZWVuIHRoaXMgSSdsbCBo
-YXZlIHRvIHRyeSB0byBpbnN0cnVtZW50IGl0IGluIHRoZSBrZXJuZWwgc29tZWhvdy4NCkknbSBw
-cmV0dHkgc3VyZSBpdCBpc24ndCBhIHVzZXJzcGFjZSBpc3N1ZS4NCg0KPiA+IEknZCBsaWtlIHRv
-IGJlIGFibGUgdG8gY2hhbmdlIHRoZSBjb2RlIHNvIHRoYXQgbXVsdGlwbGUgdGhyZWFkcyBhcmUg
-cmVhZGluZyBmcm9tIHRoZSBlcG9sbCBmZC4NCj4gPiBUaGlzIHdvdWxkIG1lYW4gSSdkIGhhdmUg
-dG8gcnVuIGl0IGluIGVkZ2UgbW9kZSBhbmQgZWFjaCB0aHJlYWQgcmVhZGluZyBhIHNtYWxsaXNo
-DQo+ID4gYmxvY2sgb2YgZXZlbnRzLg0KPiA+IEFueSBzdWdnZXN0aW9ucyBvbiBob3cgdG8gZWZm
-aWNpZW50bHkgcmVhZCB0aGUgJ3VudXN1YWwnIGFkZGl0aW9uYWwgbWVzc2FnZXMgZnJvbQ0KPiA+
-IHRoZSBzb2NrZXRzPw0KPiANCj4gUmFuZG9tIGlkZWFzOg0KPiAxLiBQZXJoYXBzIHJlZHVjaW5n
-IHRoZSBudW1iZXIgb2Ygc29ja2V0cyBjb3VsZCBoZWxwIC0gd2l0aCBpcHRhYmxlcyBvciBUUFJP
-WFkuDQo+IFRQUk9YWSBoYXMgc29tZSBwZXJmb3JtYW5jZSBpbXBhY3QgdGhvdWdoLCBzbyBiZSBj
-YXJlZnVsLg0KDQpXZSdkIHRoZW4gaGF2ZSB0byB1c2UgcmVjdm1zZygpIC0gd2hpY2ggaXMgbWVh
-c3VyYWJseSBzbG93ZXIgdGhhbiByZWN2KCkuDQoNCj4gMi4gSSBwbGF5ZWQgd2l0aCBpb19zdWJt
-aXQgZm9yIHN5c2NhbGwgYmF0Y2hpbmcsIGJ1dCBpbiBteSBleHBlcmltZW50cyBJIHdhc24ndA0K
-PiBhYmxlIHRvIHNob3cgcGVyZm9ybWFuY2UgYm9vc3Q6DQo+IGh0dHBzOi8vYmxvZy5jbG91ZGZs
-YXJlLmNvbS9pb19zdWJtaXQtdGhlLWVwb2xsLWFsdGVybmF0aXZlLXlvdXZlLW5ldmVyLWhlYXJk
-LWFib3V0Lw0KPiBQZXJoYXBzIHRoZSBuZXdlciBpb191cmluZyB3aXRoIG5ldHdvcmtpbmcgc3Vw
-cG9ydCBjb3VsZCBoZWxwOg0KPiBodHRwczovL3R3aXR0ZXIuY29tL2F4Ym9lL3N0YXR1cy8xMTk1
-MDQ3MzM1MTgyNTI0NDE2DQoNCllvdSBuZWVkIGFuIE9TIHRoYXQgYWN0dWFsbHkgZG9lcyBhc3lu
-YyBJTyAtIExpa2UgUlNYMTEvTSBvciB3aW5kb3dzLg0KSnVzdCBkZWZlcnJpbmcgdGhlIHJlcXVl
-c3QgdG8gYSBrZXJuZWwgdGhyZWFkIGNhbiBtZWFuIHlvdSBnZXQgc3R1Y2sNCmJlaGluZCBvdGhl
-ciBwcm9jZXNzZXMgYmxvY2tpbmcgcmVhZHMuDQoNCj4gMy4gU09fQlVTWVBPTEwgZHJhc3RpY2Fs
-bHkgcmVkdWNlcyBsYXRlbmN5LCBidXQgSSd2ZSBvbmx5IHVzZWQgaXQgd2l0aA0KPiBhIHNpbmds
-ZSBzb2NrZXQuLg0KDQpXZSBuZWVkIHRvIG1pbmltaXNlIHRoZSBjcHUgY29zdCBtb3JlIHRoYW4g
-dGhlIGFic29sdXRlIGxhdGVuY3kuDQoNCj4gNC4gSWYgeW91IHdhbnQgdG8gZ2V0IG51bWJlciBv
-ZiBvdXRzdGFuZGluZyBwYWNrZXRzLCB0aGVyZSBpcyBTSU9DSU5RDQo+IGFuZCBTT19NRU1JTkZP
-Lg0KDQpUaGF0J3MgYW5vdGhlciBzeXN0ZW0gY2FsbC4NCnBvbGwoKSBjYW4gdGVsbCB1c2Ugd2hl
-dGhlciB0aGVyZSBpcyBhbnkgZGF0YSBvbiBhIGxvdCBvZiBzb2NrZXRzIHF1aWNrZXIuDQoNCglE
-YXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91
-bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5
-NzM4NiAoV2FsZXMpDQo=
+Hi Charles!
 
+Thanks for finding this!
+
+On Tue, Nov 26, 2019 at 5:41 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+
+> To fix a regression on the Cadence SPI driver, this patch reverts
+> commit 6046f5407ff0 ("spi: cadence: Fix default polarity of native
+> chipselect").
+>
+> This patch was not the correct fix for the issue. The SPI framework
+> calls the set_cs line with the logic level it desires on the chip select
+> line, as such the old is_high handling was correct. However, this was
+> broken by the fact that before commit 3e5ec1db8bfe ("spi: Fix SPI_CS_HIGH
+> setting when using native and GPIO CS") all controllers that offered
+> the use of a GPIO chip select had SPI_CS_HIGH applied, even for hardware
+> chip selects. This caused the value passed into the driver to be inverted.
+> Which unfortunately makes it look like a logical enable the chip select
+> value.
+>
+> Since the core was corrected to not unconditionally apply SPI_CS_HIGH,
+> the Cadence driver, whilst using the hardware chip select, will deselect
+> the chip select every time we attempt to communicate with the device,
+> which results in failed communications.
+>
+> Fixes: 3e5ec1db8bfe ("spi: Fix SPI_CS_HIGH setting when using native and GPIO CS")
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+I kind of get it... I think.
+
+I see it fixes a patch that I was not CC:ed on, which is a bit unfortunate
+as it tries to fix something I wrote, but such things happen.
+
+The original patch
+f3186dd87669 ("spi: Optionally use GPIO descriptors for CS GPIOs")
+came with the assumption that native chip select handler needed
+was to be converted to always expect a true (1) value to their
+->set_cs() callbacks for asserting chip select, and this was one of
+the drivers augmented to expect that.
+
+As
+3e5ec1db8bfe ("spi: Fix SPI_CS_HIGH setting when using native and GPIO CS")
+essentially undo that semantic change and switches back to
+the old semantic, all the drivers that were converted to expect
+a high input to their ->set_cs() callbacks for asserting CS need
+to be reverted back as well, but that didn't happen.
+
+So we need to fix not just cadence but also any other driver setting
+->use_gpio_descriptors() and also supplying their own
+->set_cs() callback and expecting this behaviour, or the fix
+will have fixed broken a bunch of drivers.
+
+But we are lucky: there aren't many of them.
+In addition to spi-cadence.c this seems to affect only spi-dw.c
+and I suppose that is what Gregory was using? Or
+something else?
+
+Yours,
+Linus Walleij
