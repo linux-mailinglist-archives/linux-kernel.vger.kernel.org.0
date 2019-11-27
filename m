@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04AB10BB74
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C87B610BC51
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:20:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732830AbfK0VMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:12:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43652 "EHLO mail.kernel.org"
+        id S1732703AbfK0VTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:19:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbfK0VMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:12:39 -0500
+        id S1726593AbfK0VJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:09:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18B8E21556;
-        Wed, 27 Nov 2019 21:12:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E51F12176D;
+        Wed, 27 Nov 2019 21:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889158;
-        bh=u1csPlVEfQUnMjHvNXx4OmNGhAz9+OVPfxVfdGG03Hw=;
+        s=default; t=1574888996;
+        bh=eS1BJnBh8mOWUbVmRx/IREx1XEcFwiiQtlXaaqSffLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h5Q2yifcrxkK0L+MaUSbcy0KeobqMcRD1HFnZyXpBoTDD7DTEP38yWk1xSDkVrQ5C
-         W5P1YpGNDEIOp8HAEkmO7YVt6iMvRqy/IiEr8zqalmEyZH/AKzIKQKeRQmhNo4ut1M
-         Y7DCS+Pr/8tCuxU9ok0Tn7fsHGgGNUH4lcw/T++g=
+        b=ELUdncm9k8Ug1CyEyVRyd0YGQBr1H9dNtAO4NCP+hnU3plvmHkV5WfN5MIorUdLIa
+         6biuiPLcgUcJhzj3zNUHU7BzYtadijsAO54YvfdNIlSOK3yyCaX2CuL85VuNIT+1p5
+         DMVer54fWIInJgl/0te+DgxDDGwdd4IggfhGhw5s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.4 03/66] ath10k: Fix a NULL-ptr-deref bug in ath10k_usb_alloc_urb_from_pipe
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 5.3 41/95] Revert "Bluetooth: hci_ll: set operational frequency earlier"
 Date:   Wed, 27 Nov 2019 21:31:58 +0100
-Message-Id: <20191127202639.673049492@linuxfoundation.org>
+Message-Id: <20191127202908.243531316@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-References: <20191127202632.536277063@linuxfoundation.org>
+In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
+References: <20191127202845.651587549@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,74 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Peng <benquike@gmail.com>
+From: Adam Ford <aford173@gmail.com>
 
-commit bfd6e6e6c5d2ee43a3d9902b36e01fc7527ebb27 upstream.
+commit cef456cd354ef485f12d57000c455e83e416a2b6 upstream.
 
-The `ar_usb` field of `ath10k_usb_pipe_usb_pipe` objects
-are initialized to point to the containing `ath10k_usb` object
-according to endpoint descriptors read from the device side, as shown
-below in `ath10k_usb_setup_pipe_resources`:
+As nice as it would be to update firmware faster, that patch broke
+at least two different boards, an OMAP4+WL1285 based Motorola Droid
+4, as reported by Sebasian Reichel and the Logic PD i.MX6Q +
+WL1837MOD.
 
-for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
-        endpoint = &iface_desc->endpoint[i].desc;
+This reverts commit a2e02f38eff84f199c8e32359eb213f81f270047.
 
-        // get the address from endpoint descriptor
-        pipe_num = ath10k_usb_get_logical_pipe_num(ar_usb,
-                                                endpoint->bEndpointAddress,
-                                                &urbcount);
-        ......
-        // select the pipe object
-        pipe = &ar_usb->pipes[pipe_num];
-
-        // initialize the ar_usb field
-        pipe->ar_usb = ar_usb;
-}
-
-The driver assumes that the addresses reported in endpoint
-descriptors from device side  to be complete. If a device is
-malicious and does not report complete addresses, it may trigger
-NULL-ptr-deref `ath10k_usb_alloc_urb_from_pipe` and
-`ath10k_usb_free_urb_to_pipe`.
-
-This patch fixes the bug by preventing potential NULL-ptr-deref.
-
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[groeck: Add driver tag to subject, fix build warning]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ath/ath10k/usb.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/bluetooth/hci_ll.c |   39 ++++++++++++++++++---------------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/usb.c
-+++ b/drivers/net/wireless/ath/ath10k/usb.c
-@@ -38,6 +38,10 @@ ath10k_usb_alloc_urb_from_pipe(struct at
- 	struct ath10k_urb_context *urb_context = NULL;
- 	unsigned long flags;
+--- a/drivers/bluetooth/hci_ll.c
++++ b/drivers/bluetooth/hci_ll.c
+@@ -621,13 +621,6 @@ static int ll_setup(struct hci_uart *hu)
  
-+	/* bail if this pipe is not initialized */
-+	if (!pipe->ar_usb)
-+		return NULL;
+ 	serdev_device_set_flow_control(serdev, true);
+ 
+-	if (hu->oper_speed)
+-		speed = hu->oper_speed;
+-	else if (hu->proto->oper_speed)
+-		speed = hu->proto->oper_speed;
+-	else
+-		speed = 0;
+-
+ 	do {
+ 		/* Reset the Bluetooth device */
+ 		gpiod_set_value_cansleep(lldev->enable_gpio, 0);
+@@ -639,20 +632,6 @@ static int ll_setup(struct hci_uart *hu)
+ 			return err;
+ 		}
+ 
+-		if (speed) {
+-			__le32 speed_le = cpu_to_le32(speed);
+-			struct sk_buff *skb;
+-
+-			skb = __hci_cmd_sync(hu->hdev,
+-					     HCI_VS_UPDATE_UART_HCI_BAUDRATE,
+-					     sizeof(speed_le), &speed_le,
+-					     HCI_INIT_TIMEOUT);
+-			if (!IS_ERR(skb)) {
+-				kfree_skb(skb);
+-				serdev_device_set_baudrate(serdev, speed);
+-			}
+-		}
+-
+ 		err = download_firmware(lldev);
+ 		if (!err)
+ 			break;
+@@ -677,7 +656,25 @@ static int ll_setup(struct hci_uart *hu)
+ 	}
+ 
+ 	/* Operational speed if any */
++	if (hu->oper_speed)
++		speed = hu->oper_speed;
++	else if (hu->proto->oper_speed)
++		speed = hu->proto->oper_speed;
++	else
++		speed = 0;
+ 
++	if (speed) {
++		__le32 speed_le = cpu_to_le32(speed);
++		struct sk_buff *skb;
 +
- 	spin_lock_irqsave(&pipe->ar_usb->cs_lock, flags);
- 	if (!list_empty(&pipe->urb_list_head)) {
- 		urb_context = list_first_entry(&pipe->urb_list_head,
-@@ -55,6 +59,10 @@ static void ath10k_usb_free_urb_to_pipe(
- {
- 	unsigned long flags;
++		skb = __hci_cmd_sync(hu->hdev, HCI_VS_UPDATE_UART_HCI_BAUDRATE,
++				     sizeof(speed_le), &speed_le,
++				     HCI_INIT_TIMEOUT);
++		if (!IS_ERR(skb)) {
++			kfree_skb(skb);
++			serdev_device_set_baudrate(serdev, speed);
++		}
++	}
  
-+	/* bail if this pipe is not initialized */
-+	if (!pipe->ar_usb)
-+		return;
-+
- 	spin_lock_irqsave(&pipe->ar_usb->cs_lock, flags);
- 
- 	pipe->urb_cnt++;
+ 	return 0;
+ }
 
 
