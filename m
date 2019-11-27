@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA5C510BF4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6508010BE8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfK0UkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44598 "EHLO mail.kernel.org"
+        id S1729359AbfK0UsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:48:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728996AbfK0UkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:09 -0500
+        id S1730104AbfK0UsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:48:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0301215A5;
-        Wed, 27 Nov 2019 20:40:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74FEA217C3;
+        Wed, 27 Nov 2019 20:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887209;
-        bh=7m1VKE82npjS1QBKundjQGelVxKoyCd7NyC2hrGZzgQ=;
+        s=default; t=1574887692;
+        bh=ZbZQWLNVEAwI0OA//as0xFt12U2YZ+kzigbVogJ9SX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hkHvEfEYWGfVRh29KjTgqAydwviggfZDvWtaE1/pocTd/OhkTBefyTYV00yA/K8vE
-         WGWq22vxCOWv2SBseS3WSFd7L8XB5dPevl6xlaSzlKBBWW06BaudUC1107ydRxRUzU
-         n0mk398K6/Kn5XfNlWjFrtGonh7N+ou0+4EvQizE=
+        b=KzS0/Jh2kM/c38z+JBYz5ded9a+I8q0H3yQuVYDi2AfzxKH7Nns/RqLxpLIARN147
+         jBHyWL6OPO5wZLyiwQ4nHX6t9bG0oy6Ikausu62oUjAStOnfg+ZY6FtVqXYi1x/ggs
+         kS5pA21L4hCutcEdGkVcIcrwxp5ItnXGvWuwqfks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.9 007/151] tools: gpio: Correctly add make dependencies for gpio_utils
-Date:   Wed, 27 Nov 2019 21:29:50 +0100
-Message-Id: <20191127203004.992049196@linuxfoundation.org>
+        stable@vger.kernel.org, Netanel Belgazal <netanel@amazon.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 058/211] net: ena: Fix Kconfig dependency on X86
+Date:   Wed, 27 Nov 2019 21:29:51 +0100
+Message-Id: <20191127203059.565077941@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,74 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laura Abbott <labbott@redhat.com>
+From: Netanel Belgazal <netanel@amazon.com>
 
-commit 0161a94e2d1c713bd34d72bc0239d87c31747bf7 upstream.
+[ Upstream commit 8c590f9776386b8f697fd0b7ed6142ae6e3de79e ]
 
-gpio tools fail to build correctly with make parallelization:
+The Kconfig limitation of X86 is to too wide.
+The ENA driver only requires a little endian dependency.
 
-$ make -s -j24
-ld: gpio-utils.o: file not recognized: file truncated
-make[1]: *** [/home/labbott/linux_upstream/tools/build/Makefile.build:145: lsgpio-in.o] Error 1
-make: *** [Makefile:43: lsgpio-in.o] Error 2
-make: *** Waiting for unfinished jobs....
+Change the dependency to be on little endian CPU.
 
-This is because gpio-utils.o is used across multiple targets.
-Fix this by making gpio-utios.o a proper dependency.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/gpio/Build    |    1 +
- tools/gpio/Makefile |   10 +++++++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/amazon/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/gpio/Build
-+++ b/tools/gpio/Build
-@@ -1,3 +1,4 @@
-+gpio-utils-y += gpio-utils.o
- lsgpio-y += lsgpio.o gpio-utils.o
- gpio-hammer-y += gpio-hammer.o gpio-utils.o
- gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -32,11 +32,15 @@ $(OUTPUT)include/linux/gpio.h: ../../inc
+diff --git a/drivers/net/ethernet/amazon/Kconfig b/drivers/net/ethernet/amazon/Kconfig
+index 99b30353541ab..9e87d7b8360f5 100644
+--- a/drivers/net/ethernet/amazon/Kconfig
++++ b/drivers/net/ethernet/amazon/Kconfig
+@@ -17,7 +17,7 @@ if NET_VENDOR_AMAZON
  
- prepare: $(OUTPUT)include/linux/gpio.h
+ config ENA_ETHERNET
+ 	tristate "Elastic Network Adapter (ENA) support"
+-	depends on (PCI_MSI && X86)
++	depends on PCI_MSI && !CPU_BIG_ENDIAN
+ 	---help---
+ 	  This driver supports Elastic Network Adapter (ENA)"
  
-+GPIO_UTILS_IN := $(output)gpio-utils-in.o
-+$(GPIO_UTILS_IN): prepare FORCE
-+	$(Q)$(MAKE) $(build)=gpio-utils
-+
- #
- # lsgpio
- #
- LSGPIO_IN := $(OUTPUT)lsgpio-in.o
--$(LSGPIO_IN): prepare FORCE
-+$(LSGPIO_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
- 	$(Q)$(MAKE) $(build)=lsgpio
- $(OUTPUT)lsgpio: $(LSGPIO_IN)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-@@ -45,7 +49,7 @@ $(OUTPUT)lsgpio: $(LSGPIO_IN)
- # gpio-hammer
- #
- GPIO_HAMMER_IN := $(OUTPUT)gpio-hammer-in.o
--$(GPIO_HAMMER_IN): prepare FORCE
-+$(GPIO_HAMMER_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
- 	$(Q)$(MAKE) $(build)=gpio-hammer
- $(OUTPUT)gpio-hammer: $(GPIO_HAMMER_IN)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-@@ -54,7 +58,7 @@ $(OUTPUT)gpio-hammer: $(GPIO_HAMMER_IN)
- # gpio-event-mon
- #
- GPIO_EVENT_MON_IN := $(OUTPUT)gpio-event-mon-in.o
--$(GPIO_EVENT_MON_IN): prepare FORCE
-+$(GPIO_EVENT_MON_IN): prepare FORCE $(OUTPUT)gpio-utils-in.o
- 	$(Q)$(MAKE) $(build)=gpio-event-mon
- $(OUTPUT)gpio-event-mon: $(GPIO_EVENT_MON_IN)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+-- 
+2.20.1
+
 
 
