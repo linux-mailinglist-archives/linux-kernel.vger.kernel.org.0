@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C361A10B84B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 406FB10B7A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbfK0Ul6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:41:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47572 "EHLO mail.kernel.org"
+        id S1727995AbfK0Ufw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729260AbfK0Ulx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:53 -0500
+        id S1727969AbfK0Uft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C00A221775;
-        Wed, 27 Nov 2019 20:41:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF0F7207DD;
+        Wed, 27 Nov 2019 20:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887313;
-        bh=G+bUnZIIGo0TF/ZYi61/DRntB0hbkjdnF5/2+ThSJ3w=;
+        s=default; t=1574886948;
+        bh=D6JT7FvDOOq9sWuwoDemas30vIqXwcUFtXk+E/9t1d8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eWqtUSiaujTVjKd1y1iyel02RwGPB098IoS4sQ43p50P2MVI5DJMMDx5IniTW++I/
-         f8hojvgnOcmXGoB9c+obBIapCLiv7dS5DCLcD8ViYJH5EZx0/J00JeEBuE2FP17IYm
-         JRhT8BDc5smWQx4JOGeQCkC3iWhNwldAKXj8T9eI=
+        b=w0l7jFV4DWJEKiyScQchP5HpNID8P55vWWkHdqALAaIfA8O+LmyV7L5+Ws55wmwDK
+         bwdZzrijb0ndzhGkfR7E1TIvbXKe2sQWWfJ+zKnFYIlULvwyVM59MCrqHD6RaS+lxJ
+         TSAfRhisIpvrEoNJ6wI4yWzU/5Q/yjlQQ7qlevpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 060/151] selftests/ftrace: Fix to test kprobe $comm arg only if available
-Date:   Wed, 27 Nov 2019 21:30:43 +0100
-Message-Id: <20191127203032.997599346@linuxfoundation.org>
+Subject: [PATCH 4.4 053/132] rtc: s35390a: Change bufs type to u8 in s35390a_init
+Date:   Wed, 27 Nov 2019 21:30:44 +0100
+Message-Id: <20191127202951.811690952@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 2452c96e617a0ff6fb2692e55217a3fa57a7322c ]
+[ Upstream commit ef0f02fd69a02b50e468a4ddbe33e3d81671e248 ]
 
-Test $comm in kprobe-event argument syntax testcase
-only if it is supported on the kernel because
-$comm has been introduced 4.8 kernel.
-So on older stable kernel, it should be skipped.
+Clang warns:
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+drivers/rtc/rtc-s35390a.c:124:27: warning: implicit conversion from
+'int' to 'char' changes value from 192 to -64 [-Wconstant-conversion]
+        buf = S35390A_FLAG_RESET | S35390A_FLAG_24H;
+            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 warning generated.
+
+Update buf to be an unsigned 8-bit integer, which matches the buf member
+in struct i2c_msg.
+
+https://github.com/ClangBuiltLinux/linux/issues/145
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc       | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/rtc/rtc-s35390a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-index 231bcd2c4eb59..1e7ac6f3362ff 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -71,8 +71,11 @@ test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
- echo "r ${PROBEFUNC} \$retval" > kprobe_events
- ! echo "p ${PROBEFUNC} \$retval" > kprobe_events
+diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
+index 00662dd28d66a..9a931efd50d36 100644
+--- a/drivers/rtc/rtc-s35390a.c
++++ b/drivers/rtc/rtc-s35390a.c
+@@ -106,7 +106,7 @@ static int s35390a_get_reg(struct s35390a *s35390a, int reg, char *buf, int len)
+  */
+ static int s35390a_reset(struct s35390a *s35390a, char *status1)
+ {
+-	char buf;
++	u8 buf;
+ 	int ret;
+ 	unsigned initcount = 0;
  
-+# $comm was introduced in 4.8, older kernels reject it.
-+if grep -A1 "fetcharg:" README | grep -q '\$comm' ; then
- : "Comm access"
- test_goodarg "\$comm"
-+fi
- 
- : "Indirect memory access"
- test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
 -- 
 2.20.1
 
