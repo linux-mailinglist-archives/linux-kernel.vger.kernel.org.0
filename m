@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E926F10BE89
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:38:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B209510BF5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:43:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730110AbfK0UsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:48:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33368 "EHLO mail.kernel.org"
+        id S1728956AbfK0Vmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:42:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729612AbfK0UsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:48:15 -0500
+        id S1728191AbfK0Ujj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:39:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0321621826;
-        Wed, 27 Nov 2019 20:48:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 966A8215A4;
+        Wed, 27 Nov 2019 20:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887694;
-        bh=hyGOFn3YZetm72mwECSkAUsfLoBdMx0Ka7hvxQTUnmk=;
+        s=default; t=1574887178;
+        bh=lAZNK7op+4kcA3x47WinCxta+04F2Aa6+QacMSUXaLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FHnIg1KXxLIII1PVW9m7kYKTRkyIVXVSwxnxNX2h4c9UCz3/WgUf3Rdr5+M1+eoe9
-         IfD8l7DOx2ymwCMUEvWHK1s3XSBLZN2Hlu447PMglUqOTvFQJWDqKRUvkKLusNGPsl
-         XIxEd78sx++c5X6G6+jyVkm4OlLmQ/iex4CttwZA=
+        b=uoitYU7bCqaIfdoEqHt7UZ4fQVOf9dWOck8uHjtxFN/gHTkVmEWOOqygXdH6HYKca
+         oumTi8t++TjGT5n/YoNCo95Dh7nX1JsIXmqOHn3JcLD3ubRpwK5U30AZOQJhrqvwF8
+         /7QMnluHwrlZnN7igtYPaDEn5cUSWeLD0mD85k7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 059/211] xfs: fix use-after-free race in xfs_buf_rele
-Date:   Wed, 27 Nov 2019 21:29:52 +0100
-Message-Id: <20191127203059.636966049@linuxfoundation.org>
+Subject: [PATCH 4.9 011/151] platform/x86: asus-wmi: Only Tell EC the OS will handle display hotkeys from asus_nb_wmi
+Date:   Wed, 27 Nov 2019 21:29:54 +0100
+Message-Id: <20191127203008.230205776@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,121 +46,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 37fd1678245f7a5898c1b05128bc481fb403c290 ]
+[ Upstream commit 401fee8195d401b2b94dee57383f627050724d5b ]
 
-When looking at a 4.18 based KASAN use after free report, I noticed
-that racing xfs_buf_rele() may race on dropping the last reference
-to the buffer and taking the buffer lock. This was the symptom
-displayed by the KASAN report, but the actual issue that was
-reported had already been fixed in 4.19-rc1 by commit e339dd8d8b04
-("xfs: use sync buffer I/O for sync delwri queue submission").
+Commit 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will
+handle the display off hotkey") causes the backlight to be permanently off
+on various EeePC laptop models using the eeepc-wmi driver (Asus EeePC
+1015BX, Asus EeePC 1025C).
 
-Despite this, I think there is still an issue with xfs_buf_rele()
-in this code:
+The asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL) call added
+by that commit is made conditional in this commit and only enabled in
+the quirk_entry structs in the asus-nb-wmi driver fixing the broken
+display / backlight on various EeePC laptop models.
 
-        release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
-        spin_lock(&bp->b_lock);
-        if (!release) {
-.....
-
-If two threads race on the b_lock after both dropping a reference
-and one getting dropping the last reference so release = true, we
-end up with:
-
-CPU 0				CPU 1
-atomic_dec_and_lock()
-				atomic_dec_and_lock()
-				spin_lock(&bp->b_lock)
-spin_lock(&bp->b_lock)
-<spins>
-				<release = true bp->b_lru_ref = 0>
-				<remove from lists>
-				freebuf = true
-				spin_unlock(&bp->b_lock)
-				xfs_buf_free(bp)
-<gets lock, reading and writing freed memory>
-<accesses freed memory>
-spin_unlock(&bp->b_lock) <reads/writes freed memory>
-
-IOWs, we can't safely take bp->b_lock after dropping the hold
-reference because the buffer may go away at any time after we
-drop that reference. However, this can be fixed simply by taking the
-bp->b_lock before we drop the reference.
-
-It is safe to nest the pag_buf_lock inside bp->b_lock as the
-pag_buf_lock is only used to serialise against lookup in
-xfs_buf_find() and no other locks are held over or under the
-pag_buf_lock there. Make this clear by documenting the buffer lock
-orders at the top of the file.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com
-Signed-off-by: Dave Chinner <david@fromorbit.com>
+Cc: João Paulo Rechi Vita <jprvita@endlessm.com>
+Fixes: 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_buf.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ drivers/platform/x86/asus-nb-wmi.c | 8 ++++++++
+ drivers/platform/x86/asus-wmi.c    | 2 +-
+ drivers/platform/x86/asus-wmi.h    | 1 +
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index e4a623956df57..e5970ecdfd585 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -58,6 +58,32 @@ static kmem_zone_t *xfs_buf_zone;
- #define xb_to_gfp(flags) \
- 	((((flags) & XBF_READ_AHEAD) ? __GFP_NORETRY : GFP_NOFS) | __GFP_NOWARN)
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index 4c35419608f7c..0fd7e40b86a0d 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -78,10 +78,12 @@ static bool asus_q500a_i8042_filter(unsigned char data, unsigned char str,
  
-+/*
-+ * Locking orders
-+ *
-+ * xfs_buf_ioacct_inc:
-+ * xfs_buf_ioacct_dec:
-+ *	b_sema (caller holds)
-+ *	  b_lock
-+ *
-+ * xfs_buf_stale:
-+ *	b_sema (caller holds)
-+ *	  b_lock
-+ *	    lru_lock
-+ *
-+ * xfs_buf_rele:
-+ *	b_lock
-+ *	  pag_buf_lock
-+ *	    lru_lock
-+ *
-+ * xfs_buftarg_wait_rele
-+ *	lru_lock
-+ *	  b_lock (trylock due to inversion)
-+ *
-+ * xfs_buftarg_isolate
-+ *	lru_lock
-+ *	  b_lock (trylock due to inversion)
-+ */
+ static struct quirk_entry quirk_asus_unknown = {
+ 	.wapf = 0,
++	.wmi_backlight_set_devstate = true,
+ };
  
- static inline int
- xfs_buf_is_vmapped(
-@@ -983,8 +1009,18 @@ xfs_buf_rele(
+ static struct quirk_entry quirk_asus_q500a = {
+ 	.i8042_filter = asus_q500a_i8042_filter,
++	.wmi_backlight_set_devstate = true,
+ };
  
- 	ASSERT(atomic_read(&bp->b_hold) > 0);
+ /*
+@@ -92,15 +94,18 @@ static struct quirk_entry quirk_asus_q500a = {
+ static struct quirk_entry quirk_asus_x55u = {
+ 	.wapf = 4,
+ 	.wmi_backlight_power = true,
++	.wmi_backlight_set_devstate = true,
+ 	.no_display_toggle = true,
+ };
  
--	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
-+	/*
-+	 * We grab the b_lock here first to serialise racing xfs_buf_rele()
-+	 * calls. The pag_buf_lock being taken on the last reference only
-+	 * serialises against racing lookups in xfs_buf_find(). IOWs, the second
-+	 * to last reference we drop here is not serialised against the last
-+	 * reference until we take bp->b_lock. Hence if we don't grab b_lock
-+	 * first, the last "release" reference can win the race to the lock and
-+	 * free the buffer before the second-to-last reference is processed,
-+	 * leading to a use-after-free scenario.
-+	 */
- 	spin_lock(&bp->b_lock);
-+	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
- 	if (!release) {
- 		/*
- 		 * Drop the in-flight state if the buffer is already on the LRU
+ static struct quirk_entry quirk_asus_wapf4 = {
+ 	.wapf = 4,
++	.wmi_backlight_set_devstate = true,
+ };
+ 
+ static struct quirk_entry quirk_asus_x200ca = {
+ 	.wapf = 2,
++	.wmi_backlight_set_devstate = true,
+ };
+ 
+ static struct quirk_entry quirk_no_rfkill = {
+@@ -114,13 +119,16 @@ static struct quirk_entry quirk_no_rfkill_wapf4 = {
+ 
+ static struct quirk_entry quirk_asus_ux303ub = {
+ 	.wmi_backlight_native = true,
++	.wmi_backlight_set_devstate = true,
+ };
+ 
+ static struct quirk_entry quirk_asus_x550lb = {
++	.wmi_backlight_set_devstate = true,
+ 	.xusb2pr = 0x01D9,
+ };
+ 
+ static struct quirk_entry quirk_asus_forceals = {
++	.wmi_backlight_set_devstate = true,
+ 	.wmi_force_als_set = true,
+ };
+ 
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 10bd13b301784..aede41a92cacb 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2154,7 +2154,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
+-	} else
++	} else if (asus->driver->quirks->wmi_backlight_set_devstate)
+ 		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
+ 
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
+index 5db052d1de1e1..53bab79780e22 100644
+--- a/drivers/platform/x86/asus-wmi.h
++++ b/drivers/platform/x86/asus-wmi.h
+@@ -45,6 +45,7 @@ struct quirk_entry {
+ 	bool store_backlight_power;
+ 	bool wmi_backlight_power;
+ 	bool wmi_backlight_native;
++	bool wmi_backlight_set_devstate;
+ 	bool wmi_force_als_set;
+ 	int wapf;
+ 	/*
 -- 
 2.20.1
 
