@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA5C110B8E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AE0110B904
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbfK0Urr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:47:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
+        id S1729757AbfK0UtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:49:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727689AbfK0Urn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:47:43 -0500
+        id S1729258AbfK0UtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:49:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EF0B21823;
-        Wed, 27 Nov 2019 20:47:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49F2B21787;
+        Wed, 27 Nov 2019 20:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887663;
-        bh=QYahGcoXfpYMI3HLfFJgkerkVbrp22ZuxmbEIqzZPUY=;
+        s=default; t=1574887740;
+        bh=Hs8kuq+LuqdHAW51q4eCyncbYgnnsO9Gp6+sHsLNfl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xyBTMTx1uQvC6xh912HHHseOlGIJYEhbo7rtYUwhiMRbd9er3Th2wonr/kNkZ8RgO
-         NUt/qjQIP/Wjw3lUPBJqBhEBsi9miPjTU/7hZZZ+t41ebygvsc6oXXzKq+/c9HTmfP
-         6IQ7pKTm/m4fIDpQpqYJmHk+iaM9BK6rqAx1q0/c=
+        b=DEq+fCQOp832RzZ2da/+XPgF65pDSLrSmfF+LXpcqZjRMNP4wGY0IAJugeuAhQC0i
+         UJiH31g3k3Pc5Gi6rsqOwhweLOVP3luvUvA/RVWo7kvmqc6G72F2dJtr2GVqtWyELB
+         HKoeCR9PVouyAgZSu1xIZKN2JqswnYqkCM1Cn3uU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/211] KVM: nVMX: reset cache/shadows when switching loaded VMCS
-Date:   Wed, 27 Nov 2019 21:29:37 +0100
-Message-Id: <20191127203058.337637590@linuxfoundation.org>
+Subject: [PATCH 4.14 049/211] crypto: ccree - avoid implicit enum conversion
+Date:   Wed, 27 Nov 2019 21:29:42 +0100
+Message-Id: <20191127203058.669455776@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -45,60 +47,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit b7031fd40fcc741b0f9b0c04c8d844e445858b84 ]
+[ Upstream commit 18e732b8035d175181aae2ded127994cb01694f7 ]
 
-Reset the vm_{entry,exit}_controls_shadow variables as well as the
-segment cache after loading a new VMCS in vmx_switch_vmcs().  The
-shadows/cache track VMCS data, i.e. they're stale every time we
-switch to a new VMCS regardless of reason.
+Clang warns when one enumerated type is implicitly converted to another
+and this happens in several locations in this driver, ultimately related
+to the set_cipher_{mode,config0} functions. set_cipher_mode expects a mode
+of type drv_cipher_mode and set_cipher_config0 expects a mode of type
+drv_crypto_direction.
 
-This fixes a bug where stale control shadows would be consumed after
-a nested VMExit due to a failed consistency check.
+drivers/crypto/ccree/cc_ivgen.c:58:35: warning: implicit conversion from
+enumeration type 'enum cc_desc_direction' to different enumeration type
+'enum drv_crypto_direction' [-Wenum-conversion]
+        set_cipher_config0(&iv_seq[idx], DESC_DIRECTION_ENCRYPT_ENCRYPT);
 
-Suggested-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+drivers/crypto/ccree/cc_hash.c:99:28: warning: implicit conversion from
+enumeration type 'enum cc_hash_conf_pad' to different enumeration type
+'enum drv_crypto_direction' [-Wenum-conversion]
+                set_cipher_config0(desc, HASH_DIGEST_RESULT_LITTLE_ENDIAN);
+
+drivers/crypto/ccree/cc_aead.c:1643:30: warning: implicit conversion
+from enumeration type 'enum drv_hash_hw_mode' to different enumeration
+type 'enum drv_cipher_mode' [-Wenum-conversion]
+        set_cipher_mode(&desc[idx], DRV_HASH_HW_GHASH);
+
+Since this fundamentally isn't a problem because these values just
+represent simple integers for a shift operation, make it clear to Clang
+that this is okay by making the mode parameter in both functions an int.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/46
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/vmx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/ccree/cc_hw_queue_defs.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index ab6384efc7916..1c4e5eb8be835 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -10000,6 +10000,10 @@ static void vmx_switch_vmcs(struct kvm_vcpu *vcpu, struct loaded_vmcs *vmcs)
- 	vmx_vcpu_load(vcpu, cpu);
- 	vcpu->cpu = cpu;
- 	put_cpu();
-+
-+	vm_entry_controls_reset_shadow(vmx);
-+	vm_exit_controls_reset_shadow(vmx);
-+	vmx_segment_cache_clear(vmx);
+diff --git a/drivers/staging/ccree/cc_hw_queue_defs.h b/drivers/staging/ccree/cc_hw_queue_defs.h
+index 2ae0f655e7a0e..b86f47712e303 100644
+--- a/drivers/staging/ccree/cc_hw_queue_defs.h
++++ b/drivers/staging/ccree/cc_hw_queue_defs.h
+@@ -467,8 +467,7 @@ static inline void set_flow_mode(struct cc_hw_desc *pdesc,
+  * @pdesc: pointer HW descriptor struct
+  * @mode:  Any one of the modes defined in [CC7x-DESC]
+  */
+-static inline void set_cipher_mode(struct cc_hw_desc *pdesc,
+-				   enum drv_cipher_mode mode)
++static inline void set_cipher_mode(struct cc_hw_desc *pdesc, int mode)
+ {
+ 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_MODE, mode);
  }
- 
- /*
-@@ -11428,7 +11432,6 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu, bool from_vmentry)
- 		vmx->nested.vmcs01_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
- 
- 	vmx_switch_vmcs(vcpu, &vmx->nested.vmcs02);
--	vmx_segment_cache_clear(vmx);
- 
- 	if (prepare_vmcs02(vcpu, vmcs12, from_vmentry, &exit_qual)) {
- 		leave_guest_mode(vcpu);
-@@ -12172,9 +12175,6 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 	}
- 
- 	vmx_switch_vmcs(vcpu, &vmx->vmcs01);
--	vm_entry_controls_reset_shadow(vmx);
--	vm_exit_controls_reset_shadow(vmx);
--	vmx_segment_cache_clear(vmx);
- 
- 	/* Update any VMCS fields that might have changed while L2 ran */
- 	vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, vmx->msr_autoload.host.nr);
+@@ -479,8 +478,7 @@ static inline void set_cipher_mode(struct cc_hw_desc *pdesc,
+  * @pdesc: pointer HW descriptor struct
+  * @mode: Any one of the modes defined in [CC7x-DESC]
+  */
+-static inline void set_cipher_config0(struct cc_hw_desc *pdesc,
+-				      enum drv_crypto_direction mode)
++static inline void set_cipher_config0(struct cc_hw_desc *pdesc, int mode)
+ {
+ 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_CONF0, mode);
+ }
 -- 
 2.20.1
 
