@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B12310BFD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2A510BE5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:36:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbfK0VqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:46:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34502 "EHLO mail.kernel.org"
+        id S1730762AbfK0Vfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:35:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727538AbfK0UeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:34:14 -0500
+        id S1729264AbfK0UtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:49:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73D7D207DD;
-        Wed, 27 Nov 2019 20:34:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4058021787;
+        Wed, 27 Nov 2019 20:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886853;
-        bh=7ELU8Vu6+GPSxNfHPinOpipkeIGoboas9zgz5lzP99o=;
+        s=default; t=1574887745;
+        bh=Cyz/ltkVZ79YYSWUegWFEuN6IGPYYvpiwX20k9pvej8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ge5uplF8zj8dD4hO+K+xABl7+6vdj5DPF1WFPWEdHNISm1CzE3EEgPYvz+mhjWgPF
-         EP7YxnNieHAenISYM3rqVWXhOEj1p65tagYz8JRoKjHcnJrCbW47jY0dsxcfPN3eZX
-         3KMqNvtEtikx9COz/1bhgMg7KhUvD695HwC6YwpM=
+        b=yZGbsIb734e2TRZw5+sL1oWFkWd3fVqHcWGzeVv9PrIIBWrO0+5wNfo5R4vOP4uxb
+         w0o4JF/uvDWF/0gPCLxeklFSiaZrOS32V7uzh+rFKnDCuWYGbFGJ6pmVIHllw1iPDs
+         nQz/QIUXQ5sHqDJwv1/kOxoUr+klFN5QemBwfGE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Darren Hart <dvhart@linux.intel.com>,
+        stable@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 019/132] platform/x86: asus-wmi: add SERIO_I8042 dependency
+Subject: [PATCH 4.14 077/211] f2fs: fix to spread clear_cold_data()
 Date:   Wed, 27 Nov 2019 21:30:10 +0100
-Message-Id: <20191127202916.307387184@linuxfoundation.org>
+Message-Id: <20191127203101.096985706@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit ea893695ec1131a5fed0523ff8094bc6e8723bbe ]
+[ Upstream commit 2baf07818549c8bb8d7b3437e889b86eab56d38e ]
 
-A recent bugfix added a call to i8042_install_filter but did
-not add the dependency, leading to possible link errors:
+We need to drop PG_checked flag on page as well when we clear PG_uptodate
+flag, in order to avoid treating the page as GCing one later.
 
-drivers/platform/built-in.o: In function `asus_nb_wmi_quirks':
-asus-nb-wmi.c:(.text+0x23af): undefined reference to `i8042_install_filter'
-
-This adds a dependency on SERIO_I8042||SERIO_I8042=n to indicate
-that we can build the driver when the i8042 driver is disabled,
-but it cannot be built-in when that is a loadable module.
-
-Fixes: b5643539b825 ("platform/x86: asus-wmi: Filter buggy scan codes on ASUS Q500A")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Darren Hart <dvhart@linux.intel.com>
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/data.c    | 8 +++++++-
+ fs/f2fs/dir.c     | 1 +
+ fs/f2fs/segment.c | 4 +++-
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 953974b5a9a95..6487453c68b59 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -566,6 +566,7 @@ config ASUS_WMI
- config ASUS_NB_WMI
- 	tristate "Asus Notebook WMI Driver"
- 	depends on ASUS_WMI
-+	depends on SERIO_I8042 || SERIO_I8042 = n
- 	---help---
- 	  This is a driver for newer Asus notebooks. It adds extra features
- 	  like wireless radio and bluetooth control, leds, hotkeys, backlight...
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index cc57294451940..ac3fa4bbed2d9 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1445,6 +1445,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	/* This page is already truncated */
+ 	if (fio->old_blkaddr == NULL_ADDR) {
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
+ 		goto out_writepage;
+ 	}
+ got_it:
+@@ -1597,8 +1598,10 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 
+ out:
+ 	inode_dec_dirty_pages(inode);
+-	if (err)
++	if (err) {
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
++	}
+ 
+ 	if (wbc->for_reclaim) {
+ 		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
+@@ -2158,6 +2161,8 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 		}
+ 	}
+ 
++	clear_cold_data(page);
++
+ 	/* This is atomic written page, keep Private */
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
+ 		return drop_inmem_page(inode, page);
+@@ -2176,6 +2181,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
+ 		return 0;
+ 
++	clear_cold_data(page);
+ 	set_page_private(page, 0);
+ 	ClearPagePrivate(page);
+ 	return 1;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index c0c933ad43c8d..4abefd841b6c7 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -745,6 +745,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 		clear_page_dirty_for_io(page);
+ 		ClearPagePrivate(page);
+ 		ClearPageUptodate(page);
++		clear_cold_data(page);
+ 		inode_dec_dirty_pages(dir);
+ 		remove_dirty_inode(dir);
+ 	}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9e5fca35e47d0..2cd0d126ef8fa 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -251,8 +251,10 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		}
+ next:
+ 		/* we don't need to invalidate this in the sccessful status */
+-		if (drop || recover)
++		if (drop || recover) {
+ 			ClearPageUptodate(page);
++			clear_cold_data(page);
++		}
+ 		set_page_private(page, 0);
+ 		ClearPagePrivate(page);
+ 		f2fs_put_page(page, 1);
 -- 
 2.20.1
 
