@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1819F10B943
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D42610B85F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:42:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbfK0Uvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:51:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38344 "EHLO mail.kernel.org"
+        id S1729370AbfK0Umv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:42:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730496AbfK0Uvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:51:33 -0500
+        id S1727813AbfK0Umt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:42:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8224521847;
-        Wed, 27 Nov 2019 20:51:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2F1421780;
+        Wed, 27 Nov 2019 20:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887893;
-        bh=ZdfIT4acldax/0aBpIDoPq29X7aqh95wXh2ik/TGRMs=;
+        s=default; t=1574887369;
+        bh=XfDiQjvwi/dxFwd5jdxe7CZGUs6C2zCSTVXvUAaR0ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MpzaB/I0O9xXBubnLJOhbBvLp17yIKtDcUxAEM8EnjvodSuIgxfeIHLA6VgOygqhn
-         pY3DAuKFupgyZIQ8dtsVHxQvk30RvPf7rEBi+oSX5c1z2wBtNn8YR1K7aZfPDrUGCT
-         Bvx16kDDfUnEzA242Y8YGhdawANnoZCh7dM0BPNc=
+        b=GD1Uf8wF6qLG39VCaK4QTjm/nkOCtu5azIpiUerOnUogAzfn4QEnRREF67XNjxYQ5
+         fUln8m9CpSFFPQMqODUMCTZ9WdNc03fiZA0em/JNyvdu0x5dp+4F4R3nM3mIegWUal
+         RM2F7cQGxHURHijQnm+B4H71wLlMDIusClRTCLmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lior David <liord@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Kevin Brodsky <kevin.brodsky@arm.com>,
+        Victor Kamensky <kamensky@cisco.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 133/211] wil6210: fix locking in wmi_call
-Date:   Wed, 27 Nov 2019 21:31:06 +0100
-Message-Id: <20191127203106.606165918@linuxfoundation.org>
+Subject: [PATCH 4.9 084/151] arm64: makefile fix build of .i file in external module case
+Date:   Wed, 27 Nov 2019 21:31:07 +0100
+Message-Id: <20191127203036.453789056@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lior David <liord@codeaurora.org>
+From: Victor Kamensky <kamensky@cisco.com>
 
-[ Upstream commit dc57731dbd535880fe6ced31c229262c34df7d64 ]
+[ Upstream commit 98356eb0ae499c63e78073ccedd9a5fc5c563288 ]
 
-Switch from spin_lock to spin_lock_irqsave, because
-wmi_ev_lock is used inside interrupt handler.
+After 'a66649dab350 arm64: fix vdso-offsets.h dependency' if
+one will try to build .i file in case of external kernel module,
+build fails complaining that prepare0 target is missing. This
+issue came up with SystemTap when it tries to build variety
+of .i files for its own generated kernel modules trying to
+figure given kernel features/capabilities.
 
-Signed-off-by: Lior David <liord@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The issue is that prepare0 is defined in top level Makefile
+only if KBUILD_EXTMOD is not defined. .i file rule depends
+on prepare and in case KBUILD_EXTMOD defined top level Makefile
+contains empty rule for prepare. But after mentioned commit
+arch/arm64/Makefile would introduce dependency on prepare0
+through its own prepare target.
+
+Fix it to put proper ifdef KBUILD_EXTMOD around code introduced
+by mentioned commit. It matches what top level Makefile does.
+
+Acked-by: Kevin Brodsky <kevin.brodsky@arm.com>
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/wmi.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm64/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
-index d63d7c3268018..798516f42f2f9 100644
---- a/drivers/net/wireless/ath/wil6210/wmi.c
-+++ b/drivers/net/wireless/ath/wil6210/wmi.c
-@@ -1002,15 +1002,16 @@ int wmi_call(struct wil6210_priv *wil, u16 cmdid, void *buf, u16 len,
- {
- 	int rc;
- 	unsigned long remain;
-+	ulong flags;
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index ee94597773fab..8d469aa5fc987 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -134,6 +134,7 @@ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
+ 	$(Q)$(MAKE) $(clean)=$(boot)/dts
  
- 	mutex_lock(&wil->wmi_mutex);
++ifeq ($(KBUILD_EXTMOD),)
+ # We need to generate vdso-offsets.h before compiling certain files in kernel/.
+ # In order to do that, we should use the archprepare target, but we can't since
+ # asm-offsets.h is included in some files used to generate vdso-offsets.h, and
+@@ -143,6 +144,7 @@ archclean:
+ prepare: vdso_prepare
+ vdso_prepare: prepare0
+ 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
++endif
  
--	spin_lock(&wil->wmi_ev_lock);
-+	spin_lock_irqsave(&wil->wmi_ev_lock, flags);
- 	wil->reply_id = reply_id;
- 	wil->reply_buf = reply;
- 	wil->reply_size = reply_size;
- 	reinit_completion(&wil->wmi_call);
--	spin_unlock(&wil->wmi_ev_lock);
-+	spin_unlock_irqrestore(&wil->wmi_ev_lock, flags);
- 
- 	rc = __wmi_send(wil, cmdid, buf, len);
- 	if (rc)
-@@ -1030,11 +1031,11 @@ int wmi_call(struct wil6210_priv *wil, u16 cmdid, void *buf, u16 len,
- 	}
- 
- out:
--	spin_lock(&wil->wmi_ev_lock);
-+	spin_lock_irqsave(&wil->wmi_ev_lock, flags);
- 	wil->reply_id = 0;
- 	wil->reply_buf = NULL;
- 	wil->reply_size = 0;
--	spin_unlock(&wil->wmi_ev_lock);
-+	spin_unlock_irqrestore(&wil->wmi_ev_lock, flags);
- 
- 	mutex_unlock(&wil->wmi_mutex);
- 
+ define archhelp
+   echo  '* Image.gz      - Compressed kernel image (arch/$(ARCH)/boot/Image.gz)'
 -- 
 2.20.1
 
