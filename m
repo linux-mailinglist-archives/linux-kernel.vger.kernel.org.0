@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0605A10B985
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A8510B80C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:39:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbfK0Ux7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:53:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
+        id S1728899AbfK0UjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:39:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730776AbfK0Uxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:52 -0500
+        id S1728043AbfK0UjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:39:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E662120862;
-        Wed, 27 Nov 2019 20:53:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B215321781;
+        Wed, 27 Nov 2019 20:39:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888031;
-        bh=TJK7wwduTNpV7U4RlAnrTK6SDI4g++CbzCrtYmcfz40=;
+        s=default; t=1574887147;
+        bh=KiNTpBqQjZufNQVSxZpZkenyg2xSVpIVaX9A/Vr/FdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p9mJE4ItDo4C6laucxsKFXivwcewDBL/7z0cVpHgdbIn0lpvmpUPa9tX8zK6M5x40
-         W4MGgyAUvZRjrWkyTKhyTMWxUdtqxxywzeOAdNOACmwYrj9Dmpxx1aLKCQsKJJSaKU
-         t3tti6/VxfzIbdsxu0ZTwY82olFSbw0lfS5oRgY0=
+        b=NmPtAM1dC89GLpxHDJCTC7GwVpLVDnv9fe/1kbVNy5o1dC69x8rh+HCaCI17+22zR
+         bJC0GIRx6spQuhwBB0fLjEA0t9FzIeSVabK9tQb0/e8sj9fDHJ7/eTWRE+sQ54P4+S
+         m/gXsq6FTfFXwzmogWOoBtIgE0YOsEQAKw4OTfR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 190/211] media: usbvision: Fix races among open, close, and disconnect
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH 4.4 132/132] KVM: PPC: Book3S HV: Flush link stack on guest exit to host kernel
 Date:   Wed, 27 Nov 2019 21:32:03 +0100
-Message-Id: <20191127203111.644123253@linuxfoundation.org>
+Message-Id: <20191127203034.541297082@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
-References: <20191127203049.431810767@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,131 +43,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 9e08117c9d4efc1e1bc6fce83dab856d9fd284b6 upstream.
+commit af2e8c68b9c5403f77096969c516f742f5bb29e0 upstream.
 
-Visual inspection of the usbvision driver shows that it suffers from
-three races between its open, close, and disconnect handlers.  In
-particular, the driver is careful to update its usbvision->user and
-usbvision->remove_pending flags while holding the private mutex, but:
+On some systems that are vulnerable to Spectre v2, it is up to
+software to flush the link stack (return address stack), in order to
+protect against Spectre-RSB.
 
-	usbvision_v4l2_close() and usbvision_radio_close() don't hold
-	the mutex while they check the value of
-	usbvision->remove_pending;
+When exiting from a guest we do some house keeping and then
+potentially exit to C code which is several stack frames deep in the
+host kernel. We will then execute a series of returns without
+preceeding calls, opening up the possiblity that the guest could have
+poisoned the link stack, and direct speculative execution of the host
+to a gadget of some sort.
 
-	usbvision_disconnect() doesn't hold the mutex while checking
-	the value of usbvision->user; and
+To prevent this we add a flush of the link stack on exit from a guest.
 
-	also, usbvision_v4l2_open() and usbvision_radio_open() don't
-	check whether the device has been unplugged before allowing
-	the user to open the device files.
-
-Each of these can potentially lead to usbvision_release() being called
-twice and use-after-free errors.
-
-This patch fixes the races by reading the flags while the mutex is
-still held and checking for pending removes before allowing an open to
-succeed.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: <stable@vger.kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[dja: backport to v4.4, drop P9 support]
+Signed-off-by: Daniel Axtens <dja@axtens.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/usb/usbvision/usbvision-video.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ arch/powerpc/include/asm/asm-prototypes.h |    2 ++
+ arch/powerpc/kernel/security.c            |    9 +++++++++
+ arch/powerpc/kvm/book3s_hv_rmhandlers.S   |   20 ++++++++++++++++++++
+ 3 files changed, 31 insertions(+)
 
---- a/drivers/media/usb/usbvision/usbvision-video.c
-+++ b/drivers/media/usb/usbvision/usbvision-video.c
-@@ -328,6 +328,10 @@ static int usbvision_v4l2_open(struct fi
- 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
- 		return -ERESTARTSYS;
+--- a/arch/powerpc/include/asm/asm-prototypes.h
++++ b/arch/powerpc/include/asm/asm-prototypes.h
+@@ -16,7 +16,9 @@
+ extern s32 patch__call_flush_count_cache;
+ extern s32 patch__flush_count_cache_return;
+ extern s32 patch__flush_link_stack_return;
++extern s32 patch__call_kvm_flush_link_stack;
  
-+	if (usbvision->remove_pending) {
-+		err_code = -ENODEV;
-+		goto unlock;
-+	}
- 	if (usbvision->user) {
- 		err_code = -EBUSY;
- 	} else {
-@@ -391,6 +395,7 @@ unlock:
- static int usbvision_v4l2_close(struct file *file)
- {
- 	struct usb_usbvision *usbvision = video_drvdata(file);
-+	int r;
+ extern long flush_count_cache;
++extern long kvm_flush_link_stack;
  
- 	PDEBUG(DBG_IO, "close");
+ #endif /* _ASM_POWERPC_ASM_PROTOTYPES_H */
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -391,6 +391,9 @@ static void toggle_count_cache_flush(boo
  
-@@ -405,9 +410,10 @@ static int usbvision_v4l2_close(struct f
- 	usbvision_scratch_free(usbvision);
+ 	if (!enable) {
+ 		patch_instruction_site(&patch__call_flush_count_cache, PPC_INST_NOP);
++#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
++		patch_instruction_site(&patch__call_kvm_flush_link_stack, PPC_INST_NOP);
++#endif
+ 		pr_info("link-stack-flush: software flush disabled.\n");
+ 		link_stack_flush_enabled = false;
+ 		no_count_cache_flush();
+@@ -401,6 +404,12 @@ static void toggle_count_cache_flush(boo
+ 	patch_branch_site(&patch__call_flush_count_cache,
+ 			  (u64)&flush_count_cache, BRANCH_SET_LINK);
  
- 	usbvision->user--;
-+	r = usbvision->remove_pending;
- 	mutex_unlock(&usbvision->v4l2_lock);
- 
--	if (usbvision->remove_pending) {
-+	if (r) {
- 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
- 		usbvision_release(usbvision);
- 		return 0;
-@@ -1091,6 +1097,11 @@ static int usbvision_radio_open(struct f
- 
- 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
- 		return -ERESTARTSYS;
++#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
++	// This enables the branch from guest_exit_cont to kvm_flush_link_stack
++	patch_branch_site(&patch__call_kvm_flush_link_stack,
++			  (u64)&kvm_flush_link_stack, BRANCH_SET_LINK);
++#endif
 +
-+	if (usbvision->remove_pending) {
-+		err_code = -ENODEV;
-+		goto out;
-+	}
- 	err_code = v4l2_fh_open(file);
- 	if (err_code)
- 		goto out;
-@@ -1123,6 +1134,7 @@ out:
- static int usbvision_radio_close(struct file *file)
- {
- 	struct usb_usbvision *usbvision = video_drvdata(file);
-+	int r;
+ 	pr_info("link-stack-flush: software flush enabled.\n");
+ 	link_stack_flush_enabled = true;
  
- 	PDEBUG(DBG_IO, "");
+--- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
++++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
+@@ -18,6 +18,7 @@
+  */
  
-@@ -1135,9 +1147,10 @@ static int usbvision_radio_close(struct
- 	usbvision_audio_off(usbvision);
- 	usbvision->radio = 0;
- 	usbvision->user--;
-+	r = usbvision->remove_pending;
- 	mutex_unlock(&usbvision->v4l2_lock);
+ #include <asm/ppc_asm.h>
++#include <asm/code-patching-asm.h>
+ #include <asm/kvm_asm.h>
+ #include <asm/reg.h>
+ #include <asm/mmu.h>
+@@ -1169,6 +1170,10 @@ mc_cont:
+ 	bl	kvmhv_accumulate_time
+ #endif
  
--	if (usbvision->remove_pending) {
-+	if (r) {
- 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
- 		v4l2_fh_release(file);
- 		usbvision_release(usbvision);
-@@ -1562,6 +1575,7 @@ err_usb:
- static void usbvision_disconnect(struct usb_interface *intf)
- {
- 	struct usb_usbvision *usbvision = to_usbvision(usb_get_intfdata(intf));
-+	int u;
++	/* Possibly flush the link stack here. */
++1:	nop
++	patch_site 1b patch__call_kvm_flush_link_stack
++
+ 	mr 	r3, r12
+ 	/* Increment exit count, poke other threads to exit */
+ 	bl	kvmhv_commence_exit
+@@ -1564,6 +1569,21 @@ END_FTR_SECTION_IFSET(CPU_FTR_ARCH_207S)
+ 	mtlr	r0
+ 	blr
  
- 	PDEBUG(DBG_PROBE, "");
- 
-@@ -1578,13 +1592,14 @@ static void usbvision_disconnect(struct
- 	v4l2_device_disconnect(&usbvision->v4l2_dev);
- 	usbvision_i2c_unregister(usbvision);
- 	usbvision->remove_pending = 1;	/* Now all ISO data will be ignored */
-+	u = usbvision->user;
- 
- 	usb_put_dev(usbvision->dev);
- 	usbvision->dev = NULL;	/* USB device is no more */
- 
- 	mutex_unlock(&usbvision->v4l2_lock);
- 
--	if (usbvision->user) {
-+	if (u) {
- 		printk(KERN_INFO "%s: In use, disconnect pending\n",
- 		       __func__);
- 		wake_up_interruptible(&usbvision->wait_frame);
++.balign 32
++.global kvm_flush_link_stack
++kvm_flush_link_stack:
++	/* Save LR into r0 */
++	mflr	r0
++
++	/* Flush the link stack. On Power8 it's up to 32 entries in size. */
++	.rept 32
++	bl	.+4
++	.endr
++
++	/* Restore LR */
++	mtlr	r0
++	blr
++
+ /*
+  * Check whether an HDSI is an HPTE not found fault or something else.
+  * If it is an HPTE not found fault that is due to the guest accessing
 
 
