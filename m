@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E47110BA08
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D7310B9DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbfK0U7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:59:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50616 "EHLO mail.kernel.org"
+        id S1731204AbfK0U53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:57:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731381AbfK0U7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:59:08 -0500
+        id S1729717AbfK0U50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:57:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 466852084B;
-        Wed, 27 Nov 2019 20:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0261A21850;
+        Wed, 27 Nov 2019 20:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888347;
-        bh=y5GylDGsCz7qIrBi3/WJS/VV0/tGA8o9bj7XaPDIqYk=;
+        s=default; t=1574888245;
+        bh=pHdX6CY6Rf7zrpKNhcJf+fkTXPMjxTYy8EVKOPNPvA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NqSgk5WJHvMGgjmRm8qjwNWkSexFFFMriiZymPoZHnZd7E84VlvtQQQlg42Inq9BS
-         fEX/28jYIrPhMoW70qBWKsiAm23aHnS0FxzrkoYwYSU8PznFbEiL/h8JYsgGcBwAfC
-         mmzWDLXFUIFXxdV2PmkOZG+Nr/OqEsg/5xghWOdc=
+        b=RAtoEdtei/cK51XFDuRQng4NwaDN+2+kCRCU0xIIRu0GqG+y5uaPEmCOZ5fIgZVb/
+         Y/++T0yaCtrOu/GCWmCkQ23YAOp1GM1HIWEJw98YWVdZYB41TDwAZqe7mutTMsmfPm
+         QLX+H8orz0+JfOX6eQLm5wrJlvNRLzMR6LCSEEJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 056/306] scsi: hisi_sas: Free slot later in slot_complete_vx_hw()
-Date:   Wed, 27 Nov 2019 21:28:26 +0100
-Message-Id: <20191127203118.872281834@linuxfoundation.org>
+Subject: [PATCH 4.19 061/306] pwm: lpss: Only set update bit if we are actually changing the settings
+Date:   Wed, 27 Nov 2019 21:28:31 +0100
+Message-Id: <20191127203119.213170315@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -45,70 +44,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 3e178f3ecfcf91a258e832b0f0843a4cfd9059ac ]
+[ Upstream commit 2153bbc12f77fb2203276befc0f0dddbfb023bb1 ]
 
-If an SSP/SMP IO times out, it may be actually in reality be
-simultaneously processing completion of the slot in
-slot_complete_vx_hw().
+According to the datasheet the update bit must be set if the on-time-div
+or the base-unit changes.
 
-Then if the slot is freed in slot_complete_vx_hw() (this IPTT is freed
-and it may be re-used by other slot), and we may abort the wrong slot in
-hisi_sas_abort_task().
+Now that we properly order device resume on Cherry Trail so that the GFX0
+_PS0 method no longer exits with an error, we end up with a sequence of
+events where we are writing the same values twice in a row.
 
-So to solve the issue, free the slot after the check of
-SAS_TASK_STATE_ABORTED in slot_complete_vx_hw().
+First the _PS0 method restores the duty cycle of 0% the GPU driver set
+on suspend and then the GPU driver first updates just the enabled bit in
+the pwm_state from 0 to 1, causing us to write the same values again,
+before restoring the pre-suspend duty-cycle in a separate pwm_apply call.
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+When writing the update bit the second time, without changing any of
+the values the update bit clears immediately / instantly, instead of
+staying 1 for a while as usual. After this the next setting of the update
+bit seems to be ignored, causing the restoring of the pre-suspend
+duty-cycle to not get applied. This makes the backlight come up with
+a 0% dutycycle after suspend/resume.
+
+Any further brightness changes after this do work.
+
+This commit moves the setting of the update bit into pwm_lpss_prepare()
+and only sets the bit if we have actually changed any of the values.
+
+This avoids the setting of the update bit the second time we configure
+the PWM to 0% dutycycle, this fixes the backlight coming up with 0%
+duty-cycle after a suspend/resume.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 2 +-
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-lpss.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 1c4ea58da1ae1..c4774d63d5d04 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -2481,7 +2481,6 @@ slot_complete_v2_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
- 	}
+diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
+index 4721a264bac25..1e69c1c9ec096 100644
+--- a/drivers/pwm/pwm-lpss.c
++++ b/drivers/pwm/pwm-lpss.c
+@@ -97,7 +97,7 @@ static void pwm_lpss_prepare(struct pwm_lpss_chip *lpwm, struct pwm_device *pwm,
+ 	unsigned long long on_time_div;
+ 	unsigned long c = lpwm->info->clk_rate, base_unit_range;
+ 	unsigned long long base_unit, freq = NSEC_PER_SEC;
+-	u32 ctrl;
++	u32 orig_ctrl, ctrl;
  
- out:
--	hisi_sas_slot_task_free(hisi_hba, task, slot);
- 	sts = ts->stat;
- 	spin_lock_irqsave(&task->task_state_lock, flags);
- 	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
-@@ -2491,6 +2490,7 @@ slot_complete_v2_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
- 	}
- 	task->task_state_flags |= SAS_TASK_STATE_DONE;
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
-+	hisi_sas_slot_task_free(hisi_hba, task, slot);
+ 	do_div(freq, period_ns);
  
- 	if (!is_internal && (task->task_proto != SAS_PROTOCOL_SMP)) {
- 		spin_lock_irqsave(&device->done_lock, flags);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 3922b17e2ea39..fb2a5969181b5 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1749,7 +1749,6 @@ slot_complete_v3_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
- 	}
+@@ -114,13 +114,17 @@ static void pwm_lpss_prepare(struct pwm_lpss_chip *lpwm, struct pwm_device *pwm,
+ 	do_div(on_time_div, period_ns);
+ 	on_time_div = 255ULL - on_time_div;
  
- out:
--	hisi_sas_slot_task_free(hisi_hba, task, slot);
- 	sts = ts->stat;
- 	spin_lock_irqsave(&task->task_state_lock, flags);
- 	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
-@@ -1759,6 +1758,7 @@ slot_complete_v3_hw(struct hisi_hba *hisi_hba, struct hisi_sas_slot *slot)
- 	}
- 	task->task_state_flags |= SAS_TASK_STATE_DONE;
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
-+	hisi_sas_slot_task_free(hisi_hba, task, slot);
+-	ctrl = pwm_lpss_read(pwm);
++	orig_ctrl = ctrl = pwm_lpss_read(pwm);
+ 	ctrl &= ~PWM_ON_TIME_DIV_MASK;
+ 	ctrl &= ~(base_unit_range << PWM_BASE_UNIT_SHIFT);
+ 	base_unit &= base_unit_range;
+ 	ctrl |= (u32) base_unit << PWM_BASE_UNIT_SHIFT;
+ 	ctrl |= on_time_div;
+-	pwm_lpss_write(pwm, ctrl);
++
++	if (orig_ctrl != ctrl) {
++		pwm_lpss_write(pwm, ctrl);
++		pwm_lpss_write(pwm, ctrl | PWM_SW_UPDATE);
++	}
+ }
  
- 	if (!is_internal && (task->task_proto != SAS_PROTOCOL_SMP)) {
- 		spin_lock_irqsave(&device->done_lock, flags);
+ static inline void pwm_lpss_cond_enable(struct pwm_device *pwm, bool cond)
+@@ -144,7 +148,6 @@ static int pwm_lpss_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 				return ret;
+ 			}
+ 			pwm_lpss_prepare(lpwm, pwm, state->duty_cycle, state->period);
+-			pwm_lpss_write(pwm, pwm_lpss_read(pwm) | PWM_SW_UPDATE);
+ 			pwm_lpss_cond_enable(pwm, lpwm->info->bypass == false);
+ 			ret = pwm_lpss_wait_for_update(pwm);
+ 			if (ret) {
+@@ -157,7 +160,6 @@ static int pwm_lpss_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			if (ret)
+ 				return ret;
+ 			pwm_lpss_prepare(lpwm, pwm, state->duty_cycle, state->period);
+-			pwm_lpss_write(pwm, pwm_lpss_read(pwm) | PWM_SW_UPDATE);
+ 			return pwm_lpss_wait_for_update(pwm);
+ 		}
+ 	} else if (pwm_is_enabled(pwm)) {
 -- 
 2.20.1
 
