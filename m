@@ -2,139 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6673310B087
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C04A10B097
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:50:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfK0Np6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 08:45:58 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45315 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfK0Np5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 08:45:57 -0500
-Received: by mail-qt1-f195.google.com with SMTP id 30so25342660qtz.12;
-        Wed, 27 Nov 2019 05:45:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tim0z48P/Ho4XX4rxvSqCrBEA1TS21VHvg9AxGU9cUo=;
-        b=loxi/+dyFPwW34NQEBvyXRBAXz7R51jVt1JzJNfdmksHqZYiuGv678bpygS7AyTcyG
-         px+L3G+F1bImhNWDkGnnts4PZBFKzn29ElHqENqeJv1jppPnXdKDAmjzBQQ6sVRfg1xr
-         6Xfzx7m2O343J2pCvuzBOP4K5kf/9uPJ/oE+wqljaY9Ng7Bu1p1RFWJoM6v+MbwS9sYM
-         pDH3hHrynI7szJWf2fIkuEKXn/ODjn9YzmNKfc21I/3WWe20Xm003fsEk4AA3xVIUytY
-         NlVAaF6dWfgsLRkRWEenDkwjZ5yvHsIBi1f1CHuL9tm84B/RkoY0FpUXgT3EMDwHhcNy
-         FCag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tim0z48P/Ho4XX4rxvSqCrBEA1TS21VHvg9AxGU9cUo=;
-        b=MSZpqcY3Tp2Tve+W7eLd4vYi7zS/9UeHKMr194FkFg5cJZOhQ9DNNYOaNpbvXHIIbG
-         QTS7WE2BDsLECgGoqIyMeGJlP05pqy3q5B+VluCnvwllTqnkYYWzIkresS6/UU8Veaum
-         8NOq5lBpadNh6x+lMtM+pWhD/IMU6ddOid9Jop3kat0LCEURxRRS7MtkEDy/t7eIgPuR
-         63Hejp/i4SQQZX0hYIUa0s0idsaH8zzdwvIUzX3P2dDcb4OEh/uDdgOHfRp5/WuvoUtZ
-         SfiyzboguzWwBb0b+f7kwzykeSIWLebw+ls/HMC06uOt9Cjd5E7QCOtO3nzC/CsWXPkq
-         aBrQ==
-X-Gm-Message-State: APjAAAVbXRP5XZU+JuB/wnRTdLOQVD+Uj9ck95HF08lI4XpuHJ9dbpSq
-        w6NbjTAc+tXU9GsyHuiMBASoiHZjIE4=
-X-Google-Smtp-Source: APXvYqwAPqmAF3/Vr+h2lq/WTBPNZOERbfyeIOC6lgge2oHvISvxGhaZJm/IbCgWQsceKUt1cm3bEA==
-X-Received: by 2002:ac8:198b:: with SMTP id u11mr26214987qtj.133.1574862356632;
-        Wed, 27 Nov 2019 05:45:56 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id y200sm6435632qkb.1.2019.11.27.05.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 05:45:56 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id A79E740D3E; Wed, 27 Nov 2019 10:45:53 -0300 (-03)
-Date:   Wed, 27 Nov 2019 10:45:53 -0300
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jiri Olsa <jolsa@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
-        Namhyung Kim <namhyung@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: [PATCH] libbpf: Use PRIu64 for sym->st_value to fix build on 32-bit
- arches
-Message-ID: <20191127134553.GC22719@kernel.org>
-References: <20191126183451.GC29071@kernel.org>
- <87d0dexyij.fsf@toke.dk>
- <20191126190450.GD29071@kernel.org>
- <CAEf4Bzbq3J9g7cP=KMqR=bMFcs=qPiNZwnkvCKz3-SAp_m0GzA@mail.gmail.com>
- <20191126221018.GA22719@kernel.org>
- <20191126221733.GB22719@kernel.org>
- <CAEf4BzbZLiJnUb+BdUMEwcgcKCjJBWx1895p8qS8rK2r5TYu3w@mail.gmail.com>
- <20191126231030.GE3145429@mini-arch.hsd1.ca.comcast.net>
- <20191126155228.0e6ed54c@cakuba.netronome.com>
- <20191127013901.GE29071@kernel.org>
+        id S1726747AbfK0Nud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 08:50:33 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:34507 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbfK0Nud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 08:50:33 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47NMbp056Yz9v0wq;
+        Wed, 27 Nov 2019 14:50:30 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=JjS7Yv8C; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id bJT7dAplImvV; Wed, 27 Nov 2019 14:50:29 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47NMbn68C4z9v0wn;
+        Wed, 27 Nov 2019 14:50:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1574862629; bh=rc+q1YoGmH8a8vOMoySCGs9Lx4sR0OvYwsYXLQE8hK8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JjS7Yv8CRT6AYv05rwiqTYrHkvuMAoCYFRbvpXPD/IhW2BKTP2ebY27gNskuXOzfs
+         K5u5woB4w0I4IrEw3jKEHlc2J0kep7WnIXAXNATcpXktTNT5jxxEfSeSPFw71Ta/tI
+         QunQAsQzWMZ2CYxGQVqlfspDAllEa8g7CrQsIKXU=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 466118B861;
+        Wed, 27 Nov 2019 14:50:31 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id gHllTL7Lgrj0; Wed, 27 Nov 2019 14:50:31 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CCC198B85A;
+        Wed, 27 Nov 2019 14:50:30 +0100 (CET)
+Subject: Re: [PATCH v4 2/2] powerpc/irq: inline call_do_irq() and
+ call_do_softirq()
+To:     Segher Boessenkool <segher@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <f12fb9a6cc52d83ee9ddf15a36ee12ac77e6379f.1570684298.git.christophe.leroy@c-s.fr>
+ <5ca6639b7c1c21ee4b4138b7cfb31d6245c4195c.1570684298.git.christophe.leroy@c-s.fr>
+ <877e3tbvsa.fsf@mpe.ellerman.id.au>
+ <20191121101552.GR16031@gate.crashing.org>
+ <87y2w49rgo.fsf@mpe.ellerman.id.au> <20191125142556.GU9491@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <5fdb1c92-8bf4-01ca-f81c-214870c33be3@c-s.fr>
+Date:   Wed, 27 Nov 2019 14:50:30 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127013901.GE29071@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191125142556.GU9491@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Another fix I'm carrying in my perf/core branch,
 
-Regards,
 
-- Arnaldo
+Le 25/11/2019 à 15:25, Segher Boessenkool a écrit :
+> On Mon, Nov 25, 2019 at 09:32:23PM +1100, Michael Ellerman wrote:
+>> Segher Boessenkool <segher@kernel.crashing.org> writes:
+>>>>> +static inline void call_do_irq(struct pt_regs *regs, void *sp)
+>>>>> +{
+>>>>> +	register unsigned long r3 asm("r3") = (unsigned long)regs;
+>>>>> +
+>>>>> +	/* Temporarily switch r1 to sp, call __do_irq() then restore r1 */
+>>>>> +	asm volatile(
+>>>>> +		"	"PPC_STLU"	1, %2(%1);\n"
+>>>>> +		"	mr		1, %1;\n"
+>>>>> +		"	bl		%3;\n"
+>>>>> +		"	"PPC_LL"	1, 0(1);\n" :
+>>>>> +		"+r"(r3) :
+>>>>> +		"b"(sp), "i"(THREAD_SIZE - STACK_FRAME_OVERHEAD), "i"(__do_irq) :
+>>>>> +		"lr", "xer", "ctr", "memory", "cr0", "cr1", "cr5", "cr6", "cr7",
+>>>>> +		"r0", "r2", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12");
+>>>>> +}
+>>>>
+>>>> If we add a nop after the bl, so the linker could insert a TOC restore,
+>>>> then I don't think there's any circumstance under which we expect this
+>>>> to actually clobber r2, is there?
+>>>
+>>> That is mostly correct.
+>>
+>> That's the standard I aspire to :P
+>>
+>>> If call_do_irq was a no-inline function, there would not be problems.
+>>>
+>>> What TOC does __do_irq require in r2 on entry, and what will be there
+>>> when it returns?
+>>
+>> The kernel TOC, and also the kernel TOC, unless something's gone wrong
+>> or I'm missing something.
+> 
+> If that is the case, we can just do the bl, no nop at all?  And that works
+> for all of our ABIs.
+> 
+> If we can be certain that we have the kernel TOC in r2 on entry to
+> call_do_irq, that is!  (Or it establishes it itself).
 
-commit 98bb09f90a0ae33125fabc8f41529345382f1498
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Wed Nov 27 09:26:54 2019 -0300
+So what do we do ? We just drop the "r2" clobber ?
 
-    libbpf: Use PRIu64 for sym->st_value to fix build on 32-bit arches
-    
-    The st_value field is a 64-bit value, so use PRIu64 to fix this error on
-    32-bit arches:
-    
-      In file included from libbpf.c:52:
-      libbpf.c: In function 'bpf_program__record_reloc':
-      libbpf_internal.h:59:22: error: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'Elf64_Addr' {aka 'const long long unsigned int'} [-Werror=format=]
-        libbpf_print(level, "libbpf: " fmt, ##__VA_ARGS__); \
-                            ^~~~~~~~~~
-      libbpf_internal.h:62:27: note: in expansion of macro '__pr'
-       #define pr_warn(fmt, ...) __pr(LIBBPF_WARN, fmt, ##__VA_ARGS__)
-                                 ^~~~
-      libbpf.c:1822:4: note: in expansion of macro 'pr_warn'
-          pr_warn("bad call relo offset: %lu\n", sym->st_value);
-          ^~~~~~~
-      libbpf.c:1822:37: note: format string is defined here
-          pr_warn("bad call relo offset: %lu\n", sym->st_value);
-                                         ~~^
-                                         %llu
-    
-    Fixes: 1f8e2bcb2cd5 ("libbpf: Refactor relocation handling")
-    Cc: Alexei Starovoitov <ast@kernel.org>
-    Cc: Andrii Nakryiko <andriin@fb.com>
-    Link: https://lkml.kernel.org/n/tip-iabs1wq19c357bkk84p7blif@git.kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Otherwise, to be on the safe side we can just save r2 in a local var 
+before the bl and restore it after. I guess it won't collapse CPU time 
+on a performant PPC64.
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index b20f82e58989..6b0eae5c8a94 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -1819,7 +1819,7 @@ static int bpf_program__record_reloc(struct bpf_program *prog,
- 			return -LIBBPF_ERRNO__RELOC;
- 		}
- 		if (sym->st_value % 8) {
--			pr_warn("bad call relo offset: %lu\n", sym->st_value);
-+			pr_warn("bad call relo offset: %" PRIu64 "\n", sym->st_value);
- 			return -LIBBPF_ERRNO__RELOC;
- 		}
- 		reloc_desc->type = RELO_CALL;
+Christophe
