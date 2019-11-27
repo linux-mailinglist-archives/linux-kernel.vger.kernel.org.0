@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A25910BDE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:32:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2274E10BDD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbfK0VcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:32:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
+        id S1730784AbfK0UyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:54:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727146AbfK0Uxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:53:55 -0500
+        id S1730769AbfK0Ux5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:53:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BA252070B;
-        Wed, 27 Nov 2019 20:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 111A52086A;
+        Wed, 27 Nov 2019 20:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888034;
-        bh=kN3WIv/LyoTwwkl5EnavKlDXb+7KafpH6vrOsCLhcoY=;
+        s=default; t=1574888036;
+        bh=2XLDk3oFP55arHYzwo879IpYDhq26C9Jkur5rc2Fqyc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JREx76pmw4sZOG07G1Vbp7wvSg1cTLmFZzPojkkEECMs1BDtRD7yQshzMXtFSyuc0
-         +iKCXYIt8YFkWE7l0ROExa44/6TDVGF5mUQv3Q0i+YfFh5/ZWgOO8LKijS5Z9IdVGF
-         zPdHJoAS8/FIOUayNV6el72FZbikSizPYDX9Pnxk=
+        b=xqeAYOuqqalkRjZvzEYgsrlEj4kxNKIFeLj1F0Bo62gSm1V4/bMsS5fqtZSWGJ3Id
+         s+tOK+T42hC2PeIQT8Y4x0iKsehswjPejSPTwLBLOONC5trDg1rKHpLS3l+N79iHuY
+         9Hf+QPkLPrbERsujzP7zS/jYaE38KMPwAST5+4rU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai Shen <shenkai8@huawei.com>,
-        Feilong Lin <linfeilong@huawei.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 191/211] cpufreq: Add NULL checks to show() and store() methods of cpufreq
-Date:   Wed, 27 Nov 2019 21:32:04 +0100
-Message-Id: <20191127203111.731778105@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c86454eb3af9e8a4da20@syzkaller.appspotmail.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 192/211] media: uvcvideo: Fix error path in control parsing failure
+Date:   Wed, 27 Nov 2019 21:32:05 +0100
+Message-Id: <20191127203111.818712853@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
 References: <20191127203049.431810767@linuxfoundation.org>
@@ -45,56 +45,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Shen <shenkai8@huawei.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-commit e6e8df07268c1f75dd9215536e2ce4587b70f977 upstream.
+commit 8c279e9394cade640ed86ec6c6645a0e7df5e0b6 upstream.
 
-Add NULL checks to show() and store() in cpufreq.c to avoid attempts
-to invoke a NULL callback.
+When parsing the UVC control descriptors fails, the error path tries to
+cleanup a media device that hasn't been initialised, potentially
+resulting in a crash. Fix this by initialising the media device before
+the error handling path can be reached.
 
-Though some interfaces of cpufreq are set as read-only, users can
-still get write permission using chmod which can lead to a kernel
-crash, as follows:
-
-chmod +w /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
-echo 1 >  /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
-
-This bug was found in linux 4.19.
-
-Signed-off-by: Kai Shen <shenkai8@huawei.com>
-Reported-by: Feilong Lin <linfeilong@huawei.com>
-Reviewed-by: Feilong Lin <linfeilong@huawei.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 5a254d751e52 ("[media] uvcvideo: Register a v4l2_device")
+Reported-by: syzbot+c86454eb3af9e8a4da20@syzkaller.appspotmail.com
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/media/usb/uvc/uvc_driver.c |   28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -911,6 +911,9 @@ static ssize_t show(struct kobject *kobj
- 	struct freq_attr *fattr = to_attr(attr);
- 	ssize_t ret;
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -2059,6 +2059,20 @@ static int uvc_probe(struct usb_interfac
+ 			   sizeof(dev->name) - len);
+ 	}
  
-+	if (!fattr->show)
-+		return -EIO;
++	/* Initialize the media device. */
++#ifdef CONFIG_MEDIA_CONTROLLER
++	dev->mdev.dev = &intf->dev;
++	strscpy(dev->mdev.model, dev->name, sizeof(dev->mdev.model));
++	if (udev->serial)
++		strscpy(dev->mdev.serial, udev->serial,
++			sizeof(dev->mdev.serial));
++	usb_make_path(udev, dev->mdev.bus_info, sizeof(dev->mdev.bus_info));
++	dev->mdev.hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
++	media_device_init(&dev->mdev);
 +
- 	down_read(&policy->rwsem);
- 	ret = fattr->show(policy, buf);
- 	up_read(&policy->rwsem);
-@@ -925,6 +928,9 @@ static ssize_t store(struct kobject *kob
- 	struct freq_attr *fattr = to_attr(attr);
- 	ssize_t ret = -EINVAL;
- 
-+	if (!fattr->store)
-+		return -EIO;
++	dev->vdev.mdev = &dev->mdev;
++#endif
 +
- 	cpus_read_lock();
+ 	/* Parse the Video Class control descriptor. */
+ 	if (uvc_parse_control(dev) < 0) {
+ 		uvc_trace(UVC_TRACE_PROBE, "Unable to parse UVC "
+@@ -2079,19 +2093,7 @@ static int uvc_probe(struct usb_interfac
+ 			"linux-uvc-devel mailing list.\n");
+ 	}
  
- 	if (cpu_online(policy->cpu)) {
+-	/* Initialize the media device and register the V4L2 device. */
+-#ifdef CONFIG_MEDIA_CONTROLLER
+-	dev->mdev.dev = &intf->dev;
+-	strlcpy(dev->mdev.model, dev->name, sizeof(dev->mdev.model));
+-	if (udev->serial)
+-		strlcpy(dev->mdev.serial, udev->serial,
+-			sizeof(dev->mdev.serial));
+-	strcpy(dev->mdev.bus_info, udev->devpath);
+-	dev->mdev.hw_revision = le16_to_cpu(udev->descriptor.bcdDevice);
+-	media_device_init(&dev->mdev);
+-
+-	dev->vdev.mdev = &dev->mdev;
+-#endif
++	/* Register the V4L2 device. */
+ 	if (v4l2_device_register(&intf->dev, &dev->vdev) < 0)
+ 		goto error;
+ 
 
 
