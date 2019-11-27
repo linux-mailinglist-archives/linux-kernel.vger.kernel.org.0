@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B50910B9FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:59:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B37A10B8E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbfK0U65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:58:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50316 "EHLO mail.kernel.org"
+        id S1730068AbfK0Ur6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:47:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730816AbfK0U6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:58:55 -0500
+        id S1728261AbfK0Ur4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:47:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A192E20678;
-        Wed, 27 Nov 2019 20:58:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAC77217D6;
+        Wed, 27 Nov 2019 20:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888334;
-        bh=d5aN0u3+tlQOnw6rz7zLvdGW+WvOSXR1GFhj+QuTke8=;
+        s=default; t=1574887676;
+        bh=2+2UrcNQKOmqNWVIJvaoWFdOKn0xaQmXMVSbHEEMVUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=es1JX6w1lCWDxeW1v6EK3tIeSOfa5dGxBUKCzhbTCon/bg81KWwe3EC/5WuE9A7R7
-         Q//F4SSz2HaMUAeIsw1b8FeN4nW9JhXbeSO6VxEGzvpGvvVH79J6la7F+cgCmLNeIy
-         0mskWH7uLRm/y9H5Fm47dYidQu2m8c0WEl7dTfPo=
+        b=hvFZOTzIqDtl023kc7So7Lm3jYPldOdB714+9Sg2gvaqGkb5cWCU82Hv2Yk1d95zX
+         OsE4gV73bnkImbtQm2mnHMViACfIzJC1dK0oeWbpIVAyxrxT6Za+4zNASqTj+foznJ
+         jASvk6rBObySZhp/xbKx1kDLzV4JVZYLlp5WsrFI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/306] PM / Domains: Deal with multiple states but no governor in genpd
-Date:   Wed, 27 Nov 2019 21:29:02 +0100
-Message-Id: <20191127203121.631580626@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Mike Christie <mchristi@redhat.com>,
+        Sun Ke <sunke32@huawei.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 010/211] nbd:fix memory leak in nbd_get_socket()
+Date:   Wed, 27 Nov 2019 21:29:03 +0100
+Message-Id: <20191127203050.799096716@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
-References: <20191127203114.766709977@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Sun Ke <sunke32@huawei.com>
 
-[ Upstream commit 2c9b7f8772033cc8bafbd4eefe2ca605bf3eb094 ]
+commit dff10bbea4be47bdb615b036c834a275b7c68133 upstream.
 
-A caller of pm_genpd_init() that provides some states for the genpd via the
-->states pointer in the struct generic_pm_domain, should also provide a
-governor. This because it's the job of the governor to pick a state that
-satisfies the constraints.
+Before returning NULL, put the sock first.
 
-Therefore, let's print a warning to inform the user about such bogus
-configuration and avoid to bail out, by instead picking the shallowest
-state before genpd invokes the ->power_off() callback.
+Cc: stable@vger.kernel.org
+Fixes: cf1b2326b734 ("nbd: verify socket is supported during setup")
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/power/domain.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/block/nbd.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index bf5be0bfaf773..52c292d0908a2 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -467,6 +467,10 @@ static int genpd_power_off(struct generic_pm_domain *genpd, bool one_dev_on,
- 			return -EAGAIN;
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -931,6 +931,7 @@ static struct socket *nbd_get_socket(str
+ 	if (sock->ops->shutdown == sock_no_shutdown) {
+ 		dev_err(disk_to_dev(nbd->disk), "Unsupported socket: shutdown callout must be supported.\n");
+ 		*err = -EINVAL;
++		sockfd_put(sock);
+ 		return NULL;
  	}
  
-+	/* Default to shallowest state. */
-+	if (!genpd->gov)
-+		genpd->state_idx = 0;
-+
- 	if (genpd->power_off) {
- 		int ret;
- 
-@@ -1686,6 +1690,8 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
- 		ret = genpd_set_default_power_state(genpd);
- 		if (ret)
- 			return ret;
-+	} else if (!gov) {
-+		pr_warn("%s : no governor for states\n", genpd->name);
- 	}
- 
- 	device_initialize(&genpd->dev);
--- 
-2.20.1
-
 
 
