@@ -2,119 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E3E10BC47
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D2A10BB67
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733161AbfK0VSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:18:05 -0500
-Received: from smtprelay0106.hostedemail.com ([216.40.44.106]:46544 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733245AbfK0VMB (ORCPT
+        id S1732184AbfK0VMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:12:08 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:40538 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733256AbfK0VMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:12:01 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id C526452D3;
-        Wed, 27 Nov 2019 21:11:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2197:2198:2199:2200:2393:2525:2553:2560:2563:2682:2685:2693:2731:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3167:3355:3622:3653:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4361:4384:5007:6119:6248:7514:7903:8603:9025:10004:10400:10848:11026:11232:11657:11658:11914:12043:12296:12297:12438:12555:12663:12740:12760:12895:13095:13439:14096:14097:14180:14181:14659:14721:21060:21080:21094:21221:21433:21451:21627:21939:21972:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: mint26_112ea289bab27
-X-Filterd-Recvd-Size: 3449
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 27 Nov 2019 21:11:57 +0000 (UTC)
-Message-ID: <074cc723b3874f95b1b1ad89c1d2dcbae982deba.camel@perches.com>
-Subject: Re: [PATCH] cpu: microcode: replace 0 with NULL
-From:   Joe Perches <joe@perches.com>
-To:     Jules Irenge <jbi.octave@gmail.com>, Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, x86@kernel.org,
-        hpa@zytor.com, mingo@redhat.com
-Date:   Wed, 27 Nov 2019 13:11:31 -0800
-In-Reply-To: <alpine.LFD.2.21.1911261554100.156067@ninjahub.org>
-References: <20191126002734.121905-1-jbi.octave@gmail.com>
-         <20191126135330.GE31379@zn.tnic>
-         <alpine.LFD.2.21.1911261554100.156067@ninjahub.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 27 Nov 2019 16:12:05 -0500
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B36C120B7185;
+        Wed, 27 Nov 2019 13:12:04 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B36C120B7185
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1574889124;
+        bh=BjH41wc2s7M+i6lyEXWUb1jJqyOffx38FZ7r2CreKBw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=C2mnrUf75pU4jHQAMpcwi46dM3w7EZN3ld8GFzsICwqToZRFK07dIXgGA9jdsec85
+         cZ+lloUsdrTGs5LnPjNcdidd4r6Af0xuAjlfK3pul1n1M8I/3vc4uHHsE3jqxuLy1b
+         Ni+O0M/RgFCc1ts87IAj59+tfrp0YzA2nb6KUPAg=
+Subject: Re: [PATCH v0 1/2] IMA: Defined queue functions
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, Janne Karhunen <janne.karhunen@gmail.com>
+References: <20191127025212.3077-1-nramas@linux.microsoft.com>
+ <20191127025212.3077-2-nramas@linux.microsoft.com>
+ <1574887137.4793.346.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <ea2fafb8-a97f-5365-debd-d90143e549bf@linux.microsoft.com>
+Date:   Wed, 27 Nov 2019 13:11:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1574887137.4793.346.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-11-26 at 16:03 +0000, Jules Irenge wrote:
-> 
-> On Tue, 26 Nov 2019, Borislav Petkov wrote:
-> 
-> > On Tue, Nov 26, 2019 at 12:27:34AM +0000, Jules Irenge wrote:
-> > > Replace 0 with NULL to fix sparse tool  warning
-> > >  warning: Using plain integer as NULL pointer
-> > > 
-> > > Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-> > > ---
-> > >  arch/x86/kernel/cpu/microcode/amd.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> > > index a0e52bd00ecc..4934aa7c94e7 100644
-> > > --- a/arch/x86/kernel/cpu/microcode/amd.c
-> > > +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> > > @@ -418,7 +418,7 @@ static int __apply_microcode_amd(struct microcode_amd *mc)
-> > >  static bool
-> > >  apply_microcode_early_amd(u32 cpuid_1_eax, void *ucode, size_t size, bool save_patch)
-> > >  {
-> > > -	struct cont_desc desc = { 0 };
-> > > +	struct cont_desc desc = { NULL };
-> > 
-> > So my gcc guy says that 0 and NULL are equivalent as designated
-> > initializers in this case. And if you look at the resulting asm, it
-> > doesn't change:
-> > 
-> > # arch/x86/kernel/cpu/microcode/amd.c:421: 	struct cont_desc desc = { 0 };
-> > 	movq	$0, 8(%rsp)	#, desc
-> > 	movq	$0, (%rsp)	#, desc
-> > 	movq	$0, 16(%rsp)	#, desc
-> > 	movq	$0, 24(%rsp)	#, desc
-> > 
-> > But what I'd prefer actually is, if you do them like this:
-> > 
-> > 			... = { 0,  };
-> > 
-> > because:
-> > 
-> > 1. It is clear that the memory for the struct is being cleared
-> > 2. The following ones - the ones after "," are missing too, on purpose,
-> >    because they're being cleared too.
-> > 
-> > Also pls add that explanation to the commit message.
-> > 
-> > Thx.
-> > 
-> > -- 
-> > Regards/Gruss,
-> >     Boris.
-> > 
-> > https://people.kernel.org/tglx/notes-about-netiquette
-> > 
-> Hi Boris,
-> 
-> Thanks for your reply and suggestion. 
-> 
-> I am learning patching with sparse trying to solve some problems that the 
-> tool complains about.
-> 
-> Sometime the tool is not always right. If I take your suggestion that I 
-> am about to do, sparse will however still complain.
-> 
-> so I will suggest my change to be discarded.
-> 
-> I will take another challenge.
+On 11/27/19 12:38 PM, Mimi Zohar wrote:
 
-This initializer should ether use named members with the appropriate
-zeroing type or just use a blank {} so that regardless of type and
-member order, the entire structure is zeroed.
+> Hi Lakshmi,
+> 
+> Janne Karhunen is defining an IMA workqueue in order to more
+> frequently update the on disk security xattrs.  
 
-	struct cont_desc desc = {};
+Has the above patch set been posted for review? I'll take a look and see 
+if that one can be used for queuing keys.
 
+The Subject line on
+> this patch needs to be more explicit (eg. define workqueue for early
+> boot "key" measurements).
 
+Will update the subject line.
+I was trying to keep the subject line short and have more details in the 
+patch description.
+
+> I'm not sure why you want to differentiate between IMA being
+> initialized vs. an empty policy.  I would think you would want to know
+> when a custom policy has been loaded.
+
+You are right - When custom ima policy rules are loaded (in 
+ima_update_policy() function), ima_process_queued_keys_for_measurement() 
+function is called to process queued keys.
+
+The flag ima_process_keys_for_measurement is set to true in 
+ima_process_queued_keys_for_measurement(). And, subsequent keys are 
+processed immediately.
+
+Please take a look at ima_process_queued_keys_for_measurement() in this 
+patch (v0 1/2) and the ima_update_policy() change in "PATCH v0 2/2".
+
+> 
+> I would define a function that determines whether or not a custom
+> policy has been loaded.
+
+The queued keys need to be processed once when the custom policy is 
+loaded. Subsequently, keys are processed immediately (not queued).
+
+Do you still think there is a need to have a function to determine if 
+custom policy has been loaded? Wouldn't the flag 
+ima_process_keys_for_measurement be sufficient?
+
+Please take a look at "PATCH v0 2/2" and let me know if you disagree.
+
+> (I still need to review adding/removing from the queue.)
+> 
+>>
+>> @@ -27,14 +154,14 @@
+>>    * The payload data used to instantiate or update the key is measured.
+>>    */
+>>   void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+>> -				   const void *payload, size_t plen,
+>> +				   const void *payload, size_t payload_len,
+>>   				   unsigned long flags, bool create)
+> 
+> This "hunk" and subsequent one seem to be just a variable name change.
+>   It has nothing to do with queueing "key" measurements and shouldn't
+> be included in this patch.
+> 
+> Mimi
+
+I'll remove this change.
+
+thanks,
+  -lakshmi
