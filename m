@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C16510BF3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A73CC10BFD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:47:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfK0Uki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:40:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45192 "EHLO mail.kernel.org"
+        id S1729032AbfK0Vpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:45:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728526AbfK0Ukd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:40:33 -0500
+        id S1727817AbfK0UfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59D6521772;
-        Wed, 27 Nov 2019 20:40:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D387920866;
+        Wed, 27 Nov 2019 20:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887232;
-        bh=X0X+XnxcakSoGSTsODunSWW+0yo6QkYP+ksjJxsWRis=;
+        s=default; t=1574886913;
+        bh=5XTVctNyzk6Pgxq8rjqvXvZW0PO39MZ7Adbv+jjPc3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0ITnogGl0vAiy9DMlbL0hmD9znnN465HdUxGWJjcOi/WtoDspNhnH3FJJqj6rEEx
-         cS2PJPx8uLjd6f/1f8po4xEaBX6qtoW5Ej02vNyUbHVHVXnpvEmohXB6lhbuFBFV+G
-         rI7dK0b8neupyHFf/8eIP1L02kqNTEoJNEXqRFm8=
+        b=LRSLpa7RFoK3MJg2JlmOVtEQi5TQp3WqykReIPICRRtltmfPz/uiXxbEfZL4SBgIH
+         yOZVDmfbpCYFjhIty2jbqCZeLPx+b8fZ5jqbB+0YD8Tfxz3JOtsRhFAF/3NLRh/lTk
+         20h2hXoJDD21FkiefyMW1PwKKP5sB1dodH7lPrrM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 032/151] scsi: iscsi_tcp: Explicitly cast param in iscsi_sw_tcp_host_get_param
+Subject: [PATCH 4.4 024/132] synclink_gt(): fix compat_ioctl()
 Date:   Wed, 27 Nov 2019 21:30:15 +0100
-Message-Id: <20191127203020.180839630@linuxfoundation.org>
+Message-Id: <20191127202920.953069607@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 20054597f169090109fc3f0dfa1a48583f4178a4 ]
+[ Upstream commit 27230e51349fde075598c1b59d15e1ff802f3f6e ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+compat_ptr() for pointer-taking ones...
 
-drivers/scsi/iscsi_tcp.c:803:15: warning: implicit conversion from
-enumeration type 'enum iscsi_host_param' to different enumeration type
-'enum iscsi_param' [-Wenum-conversion]
-                                                 &addr, param, buf);
-                                                        ^~~~~
-1 warning generated.
-
-iscsi_conn_get_addr_param handles ISCSI_HOST_PARAM_IPADDRESS just fine
-so add an explicit cast to iscsi_param to make it clear to Clang that
-this is expected behavior.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/153
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/iscsi_tcp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/synclink_gt.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index ace4f1f41b8e0..d60564397be54 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -798,7 +798,8 @@ static int iscsi_sw_tcp_host_get_param(struct Scsi_Host *shost,
- 			return rc;
+diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
+index 6fc39fbfc2755..b5145e8bdf0a2 100644
+--- a/drivers/tty/synclink_gt.c
++++ b/drivers/tty/synclink_gt.c
+@@ -1192,14 +1192,13 @@ static long slgt_compat_ioctl(struct tty_struct *tty,
+ 			 unsigned int cmd, unsigned long arg)
+ {
+ 	struct slgt_info *info = tty->driver_data;
+-	int rc = -ENOIOCTLCMD;
++	int rc;
  
- 		return iscsi_conn_get_addr_param((struct sockaddr_storage *)
--						 &addr, param, buf);
-+						 &addr,
-+						 (enum iscsi_param)param, buf);
- 	default:
- 		return iscsi_host_get_param(shost, param, buf);
+ 	if (sanity_check(info, tty->name, "compat_ioctl"))
+ 		return -ENODEV;
+ 	DBGINFO(("%s compat_ioctl() cmd=%08X\n", info->device_name, cmd));
+ 
+ 	switch (cmd) {
+-
+ 	case MGSL_IOCSPARAMS32:
+ 		rc = set_params32(info, compat_ptr(arg));
+ 		break;
+@@ -1219,18 +1218,11 @@ static long slgt_compat_ioctl(struct tty_struct *tty,
+ 	case MGSL_IOCWAITGPIO:
+ 	case MGSL_IOCGXSYNC:
+ 	case MGSL_IOCGXCTRL:
+-	case MGSL_IOCSTXIDLE:
+-	case MGSL_IOCTXENABLE:
+-	case MGSL_IOCRXENABLE:
+-	case MGSL_IOCTXABORT:
+-	case TIOCMIWAIT:
+-	case MGSL_IOCSIF:
+-	case MGSL_IOCSXSYNC:
+-	case MGSL_IOCSXCTRL:
+-		rc = ioctl(tty, cmd, arg);
++		rc = ioctl(tty, cmd, (unsigned long)compat_ptr(arg));
+ 		break;
++	default:
++		rc = ioctl(tty, cmd, arg);
  	}
+-
+ 	DBGINFO(("%s compat_ioctl() cmd=%08X rc=%d\n", info->device_name, cmd, rc));
+ 	return rc;
+ }
 -- 
 2.20.1
 
