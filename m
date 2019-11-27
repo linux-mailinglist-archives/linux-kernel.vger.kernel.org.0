@@ -2,295 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5894F10B8F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9873610B90E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbfK0Ush (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:48:37 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46505 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730141AbfK0Usd (ORCPT
+        id S1730228AbfK0UtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:49:24 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:30491 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730224AbfK0UtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:48:33 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 193so11712451pfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 12:48:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y6LYqA1009w6/0ukN0Ib/bql9rL9dUoPmyEoPz0e4AE=;
-        b=FdkcHHVvIY3IEFp0+wECGStXgSWXF4l63Es+grBYcdduCC7OlLsRIWiHcAceeoSO0c
-         KE0p4VBA6wuzuhj5W0xVaHoLemUCW42tcOtTP+cZ+h2pgIpk+E/D3wCOKVQUIM+vbQeD
-         r227ZE4R8e355lnIjtEEyv7foBGflEwCdB+rrMnT3BGtEawzPn0rS2mjsjtJQxaES0ma
-         eJ/eamuR4soalOyEHTTDv8WPVrjK73knNLLbRQvV61uDf2IZW9VCQ8huhMtc5lyBy5Vv
-         6I9el17XC6e3uHm27KZt//D+ZWGQ5xffzzug2d10YB5s8pc6U+zTQfApYxQWmT3KvFdF
-         Cteg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y6LYqA1009w6/0ukN0Ib/bql9rL9dUoPmyEoPz0e4AE=;
-        b=HF6b/l186t2K6ij31p3xt7wcMzgiUSBz+cguPhDzlUntqiy3vWhD21o5HJ14QwRE4L
-         4glpD8LCFtewSFd9/sMXMUlmUxPpr0rCMrJgM+T7MZM9ienk8BvfydHRpI7+6fOPCp2t
-         BQEbu8wQ42slQQaswANKOnOWDtdfPb/xFOR32BDNx0bvAU84V05C/PezQVqD/q2pkkn/
-         pI4EsU445gLP5ldAi0d4bRkBDPFEE12sRs3PQy9WFVWcMNHrZA4ervqoiBr4TsfkDzyL
-         D8m0Oe1WwdTJj7WNjeQ4LvSPGHsHLfg5qUYH+jlj/UMSfJXvdBEzacwHWOn/n/Jo38G1
-         m+Ew==
-X-Gm-Message-State: APjAAAUkqXHqjVcGKJ9/Rftg8rCXeyV/JDDTzImLuhHl3OjJpL2bkFoN
-        Jn3PnIPZ914pnldhJyt0YQ3THw==
-X-Google-Smtp-Source: APXvYqxQ65bEvXdycLMXbBtX1P9RFv4BXVKPMqYZ/aYjR1KmPzyt6bVrEPZZCdlnLzb3SEwPi+GajQ==
-X-Received: by 2002:a63:4b52:: with SMTP id k18mr7079804pgl.394.1574887712054;
-        Wed, 27 Nov 2019 12:48:32 -0800 (PST)
-Received: from ?IPv6:2605:e000:100e:8c61:814b:c5b0:7860:90ce? ([2605:e000:100e:8c61:814b:c5b0:7860:90ce])
-        by smtp.gmail.com with ESMTPSA id l7sm3479413pfl.11.2019.11.27.12.48.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 12:48:31 -0800 (PST)
-Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
-To:     Jann Horn <jannh@google.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
- <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
-Date:   Wed, 27 Nov 2019 12:48:29 -0800
+        Wed, 27 Nov 2019 15:49:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574887759;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=lbtqSpEoKeUzhaseKNsML5ukqseola/LmF5zc1Zv4Dw=;
+        b=dYFuObAv6EroP5HgCLC8LzLLNvM50XABzXS3K4WLwdc7DXpb2Qofj4ticLvPunzJSaAWCO
+        Jipg+MNM2fi7F2uQD+4Ccsv5F7mCdlOuK8yhhraQmhVa1QvlfD1vW+Y3f1FOX7D5bXIQq2
+        l9JzzRdDFrrZqa1zTYFBflBzD8F6mes=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-190-1_vn4diuMaGIu8iL36k85w-1; Wed, 27 Nov 2019 15:49:15 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B75461800D52;
+        Wed, 27 Nov 2019 20:49:13 +0000 (UTC)
+Received: from [10.36.116.94] (ovpn-116-94.ams2.redhat.com [10.36.116.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2102560BE2;
+        Wed, 27 Nov 2019 20:49:11 +0000 (UTC)
+Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in
+ find_(smallest|biggest)_section_pfn
+To:     Qian Cai <cai@lca.pw>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+References: <CE5C4BD6-FAA6-4439-B869-679D24C17298@lca.pw>
+ <7D8F1E5C-5A39-4C76-AD2F-4D0954DB57F5@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <f2d5c2ed-b315-ee70-7d1e-b91d6d72a076@redhat.com>
+Date:   Wed, 27 Nov 2019 21:49:11 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <7D8F1E5C-5A39-4C76-AD2F-4D0954DB57F5@redhat.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: 1_vn4diuMaGIu8iL36k85w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/19 12:23 PM, Jann Horn wrote:
-> On Wed, Nov 27, 2019 at 6:11 AM Jens Axboe <axboe@kernel.dk> wrote:
->> I posted this a few weeks back, took another look at it and refined it a
->> bit. I'd like some input on the viability of this approach.
+On 27.11.19 20:52, David Hildenbrand wrote:
+>=20
+>=20
+>> Am 27.11.2019 um 20:37 schrieb Qian Cai <cai@lca.pw>:
 >>
->> A new signalfd setup flag is added, SFD_TASK. This is only valid if used
->> with SFD_CLOEXEC. If set, the task setting up the signalfd descriptor is
->> remembered in the signalfd context, and will be the one we use for
->> checking signals in the poll/read handlers in signalfd.
+>> =EF=BB=BF
 >>
->> This is needed to make signalfd useful with io_uring and aio, of which
->> the former in particular has my interest.
+>>> On Nov 27, 2019, at 2:06 PM, David Hildenbrand <david@redhat.com> wrote=
+:
+>>>
+>>> The zone pointer is unique for every node. (in contrast to the zone ind=
+ex).
 >>
->> I _think_ this is sane. To prevent the case of a task clearing O_CLOEXEC
->> on the signalfd descriptor, forking, and then exiting, we grab a
->> reference to the task when we assign it. If that original task exits, we
->> catch it in signalfd_flush() and ensure waiters are woken up.
-> 
-> Mh... that's not really reliable, because you only get ->flush() from
-> the last exiting thread (or more precisely, the last exiting task that
-> shares the files_struct).
-> 
-> What is your goal here? To have a reference to a task without keeping
-> the entire task_struct around in memory if someone leaks the signalfd
-> to another process - basically like a weak pointer? If so, you could
-> store a refcounted reference to "struct pid" instead of a refcounted
-> reference to the task_struct, and then do the lookup of the
-> task_struct on ->poll and ->read (similar to what procfs does).
+>> I am not sure if it is worth optimizing there. The existing nid check lo=
+oks quite straight-forward and cheap.
+>=20
+> I understand but strongly dislike your attitude towards code changes ;)
+>=20
 
-Yeah, I think that works out much better (and cleaner). How about this,
-then? Follows your advice and turns it into a struct pid instead. I
-don't particularly like the -ESRCH in dequeue and setup, what do you
-think? For poll, POLLERR seems like a prudent choice.
+I think that came out wrong, let me rephrase:
 
-Tested with the test cases I sent out yesterday, works for me.
+This is not a performance optimization but a cleanup. Once you
+understood how zone pointers work, you immediately see why the nid
+checks are only here for legacy reasons (see "mm/memory_hotplug: we
+always have a zone in find_(smallest|biggest)_section_pfn" in linux-next).
 
-diff --git a/fs/signalfd.c b/fs/signalfd.c
-index 44b6845b071c..ccb1173b20aa 100644
---- a/fs/signalfd.c
-+++ b/fs/signalfd.c
-@@ -50,6 +50,7 @@ void signalfd_cleanup(struct sighand_struct *sighand)
-  
-  struct signalfd_ctx {
-  	sigset_t sigmask;
-+	struct pid *task_pid;
-  };
-  
-  static int signalfd_release(struct inode *inode, struct file *file)
-@@ -58,20 +59,41 @@ static int signalfd_release(struct inode *inode, struct file *file)
-  	return 0;
-  }
-  
-+static void signalfd_put_task(struct signalfd_ctx *ctx, struct task_struct *tsk)
-+{
-+	if (ctx->task_pid)
-+		put_task_struct(tsk);
-+}
-+
-+static struct task_struct *signalfd_get_task(struct signalfd_ctx *ctx)
-+{
-+	if (ctx->task_pid)
-+		return get_pid_task(ctx->task_pid, PIDTYPE_PID);
-+
-+	return current;
-+}
-+
-  static __poll_t signalfd_poll(struct file *file, poll_table *wait)
-  {
-  	struct signalfd_ctx *ctx = file->private_data;
-+	struct task_struct *tsk;
-  	__poll_t events = 0;
-  
--	poll_wait(file, &current->sighand->signalfd_wqh, wait);
-+	tsk = signalfd_get_task(ctx);
-+	if (tsk) {
-+		poll_wait(file, &tsk->sighand->signalfd_wqh, wait);
-  
--	spin_lock_irq(&current->sighand->siglock);
--	if (next_signal(&current->pending, &ctx->sigmask) ||
--	    next_signal(&current->signal->shared_pending,
--			&ctx->sigmask))
--		events |= EPOLLIN;
--	spin_unlock_irq(&current->sighand->siglock);
-+		spin_lock_irq(&tsk->sighand->siglock);
-+		if (next_signal(&tsk->pending, &ctx->sigmask) ||
-+		    next_signal(&tsk->signal->shared_pending,
-+				&ctx->sigmask))
-+			events |= EPOLLIN;
-+		spin_unlock_irq(&tsk->sighand->siglock);
-  
-+		signalfd_put_task(ctx, tsk);
-+	} else {
-+		events |= EPOLLERR;
-+	}
-  	return events;
-  }
-  
-@@ -167,10 +189,15 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
-  				int nonblock)
-  {
-  	ssize_t ret;
-+	struct task_struct *tsk;
-  	DECLARE_WAITQUEUE(wait, current);
-  
--	spin_lock_irq(&current->sighand->siglock);
--	ret = dequeue_signal(current, &ctx->sigmask, info);
-+	tsk = signalfd_get_task(ctx);
-+	if (!tsk)
-+		return -ESRCH;
-+
-+	spin_lock_irq(&tsk->sighand->siglock);
-+	ret = dequeue_signal(tsk, &ctx->sigmask, info);
-  	switch (ret) {
-  	case 0:
-  		if (!nonblock)
-@@ -178,29 +205,31 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
-  		ret = -EAGAIN;
-  		/* fall through */
-  	default:
--		spin_unlock_irq(&current->sighand->siglock);
-+		spin_unlock_irq(&tsk->sighand->siglock);
-+		signalfd_put_task(ctx, tsk);
-  		return ret;
-  	}
-  
--	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
-+	add_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
-  	for (;;) {
-  		set_current_state(TASK_INTERRUPTIBLE);
--		ret = dequeue_signal(current, &ctx->sigmask, info);
-+		ret = dequeue_signal(tsk, &ctx->sigmask, info);
-  		if (ret != 0)
-  			break;
-  		if (signal_pending(current)) {
-  			ret = -ERESTARTSYS;
-  			break;
-  		}
--		spin_unlock_irq(&current->sighand->siglock);
-+		spin_unlock_irq(&tsk->sighand->siglock);
-  		schedule();
--		spin_lock_irq(&current->sighand->siglock);
-+		spin_lock_irq(&tsk->sighand->siglock);
-  	}
--	spin_unlock_irq(&current->sighand->siglock);
-+	spin_unlock_irq(&tsk->sighand->siglock);
-  
--	remove_wait_queue(&current->sighand->signalfd_wqh, &wait);
-+	remove_wait_queue(&tsk->sighand->signalfd_wqh, &wait);
-  	__set_current_state(TASK_RUNNING);
-  
-+	signalfd_put_task(ctx, tsk);
-  	return ret;
-  }
-  
-@@ -267,19 +296,24 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
-  	/* Check the SFD_* constants for consistency.  */
-  	BUILD_BUG_ON(SFD_CLOEXEC != O_CLOEXEC);
-  	BUILD_BUG_ON(SFD_NONBLOCK != O_NONBLOCK);
-+	BUILD_BUG_ON(SFD_TASK & (SFD_CLOEXEC | SFD_NONBLOCK));
-  
--	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK))
-+	if (flags & ~(SFD_CLOEXEC | SFD_NONBLOCK | SFD_TASK))
-+		return -EINVAL;
-+	if ((flags & (SFD_CLOEXEC | SFD_TASK)) == SFD_TASK)
-  		return -EINVAL;
-  
-  	sigdelsetmask(mask, sigmask(SIGKILL) | sigmask(SIGSTOP));
-  	signotset(mask);
-  
-  	if (ufd == -1) {
--		ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
-+		ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-  		if (!ctx)
-  			return -ENOMEM;
-  
-  		ctx->sigmask = *mask;
-+		if (flags & SFD_TASK)
-+			ctx->task_pid = get_task_pid(current, PIDTYPE_PID);
-  
-  		/*
-  		 * When we call this, the initialization must be complete, since
-@@ -290,6 +324,7 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
-  		if (ufd < 0)
-  			kfree(ctx);
-  	} else {
-+		struct task_struct *tsk;
-  		struct fd f = fdget(ufd);
-  		if (!f.file)
-  			return -EBADF;
-@@ -298,11 +333,17 @@ static int do_signalfd4(int ufd, sigset_t *mask, int flags)
-  			fdput(f);
-  			return -EINVAL;
-  		}
--		spin_lock_irq(&current->sighand->siglock);
-+		tsk = signalfd_get_task(ctx);
-+		if (!tsk) {
-+			fdput(f);
-+			return -ESRCH;
-+		}
-+		spin_lock_irq(&tsk->sighand->siglock);
-  		ctx->sigmask = *mask;
--		spin_unlock_irq(&current->sighand->siglock);
-+		spin_unlock_irq(&tsk->sighand->siglock);
-  
--		wake_up(&current->sighand->signalfd_wqh);
-+		wake_up(&tsk->sighand->signalfd_wqh);
-+		signalfd_put_task(ctx, tsk);
-  		fdput(f);
-  	}
-  
-diff --git a/include/uapi/linux/signalfd.h b/include/uapi/linux/signalfd.h
-index 83429a05b698..064c5dc3eb99 100644
---- a/include/uapi/linux/signalfd.h
-+++ b/include/uapi/linux/signalfd.h
-@@ -16,6 +16,7 @@
-  /* Flags for signalfd4.  */
-  #define SFD_CLOEXEC O_CLOEXEC
-  #define SFD_NONBLOCK O_NONBLOCK
-+#define SFD_TASK 00000001
-  
-  struct signalfd_siginfo {
-  	__u32 ssi_signo;
+(I am a friend of cleaning up and refactoring code to make it easier to
+understand, maintain and extend. I was assuming your mentality is to
+rather keeping code changes minimal if there is a chance to break things
+- I'm sorry if that assumption was wrong.)
 
--- 
-Jens Axboe
+--=20
+Thanks,
+
+David / dhildenb
 
