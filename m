@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3052610BF34
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8733410BFB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfK0Ulg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:41:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46748 "EHLO mail.kernel.org"
+        id S1727865AbfK0Uf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:35:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729178AbfK0Ula (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:30 -0500
+        id S1727848AbfK0UfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:35:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50C7B215A4;
-        Wed, 27 Nov 2019 20:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00B0A20866;
+        Wed, 27 Nov 2019 20:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887289;
-        bh=MAOsExUO1LX6olohxHbtXv7sXIynRIuvN8sG2DMYCAI=;
+        s=default; t=1574886921;
+        bh=pz831w1FYuAKytC2tJGnO7bVucvEVuEDHUgUhpkzv/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XG3mT+XdhEJqS5HUEBzgO1F03HT4XORDwDhvyzRLTwlobNxba1vhirnuOh+U7ywrH
-         8f4RiIiboHY+oRFIpAQLJgmoWlmmt2qxkE3ZeYQPNp6/HTTCRMmHJZEQmxlqPOaKxb
-         9ua+ynfGqYYcYTO6w3JZKQfttm8xKsVkjoCE7l10=
+        b=oqdDqzq5ReCtQGGE7fmxegKDM4srWsTXszISUhptd8sRo1jYa1TASk0oaoOxdOgYy
+         ETXMYL6Ckp0T8iudkm8EWLFus9sguPkc2F4XJj/hjKseTJwIRu1vYOhMjrtwHOVhB2
+         /XZgdU3LFMS9PBsMTWm4KScPvH2RXqeO0JJRjqhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 052/151] rtc: s35390a: Change bufs type to u8 in s35390a_init
+        stable@vger.kernel.org, Philipp Klocke <philipp97kl@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 044/132] ALSA: i2c/cs8427: Fix int to char conversion
 Date:   Wed, 27 Nov 2019 21:30:35 +0100
-Message-Id: <20191127203031.061238898@linuxfoundation.org>
+Message-Id: <20191127202939.896994447@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
+References: <20191127202857.270233486@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Philipp Klocke <philipp97kl@gmail.com>
 
-[ Upstream commit ef0f02fd69a02b50e468a4ddbe33e3d81671e248 ]
+[ Upstream commit eb7ebfa3c1989aa8e59d5e68ab3cddd7df1bfb27 ]
 
-Clang warns:
+Compiling with clang yields the following warning:
 
-drivers/rtc/rtc-s35390a.c:124:27: warning: implicit conversion from
-'int' to 'char' changes value from 192 to -64 [-Wconstant-conversion]
-        buf = S35390A_FLAG_RESET | S35390A_FLAG_24H;
-            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
-1 warning generated.
+sound/i2c/cs8427.c:140:31: warning: implicit conversion from 'int'
+to 'char' changes value from 160 to -96 [-Wconstant-conversion]
+    data[0] = CS8427_REG_AUTOINC | CS8427_REG_CORU_DATABUF;
+            ~ ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
 
-Update buf to be an unsigned 8-bit integer, which matches the buf member
-in struct i2c_msg.
+Because CS8427_REG_AUTOINC is defined as 128, it is too big for a
+char field.
+So change data from char to unsigned char, that it can hold the value.
 
-https://github.com/ClangBuiltLinux/linux/issues/145
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This patch does not change the generated code.
+
+Signed-off-by: Philipp Klocke <philipp97kl@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-s35390a.c | 2 +-
+ sound/i2c/cs8427.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
-index 5dab4665ca3bd..3e0eea3aa876d 100644
---- a/drivers/rtc/rtc-s35390a.c
-+++ b/drivers/rtc/rtc-s35390a.c
-@@ -106,7 +106,7 @@ static int s35390a_get_reg(struct s35390a *s35390a, int reg, char *buf, int len)
-  */
- static int s35390a_reset(struct s35390a *s35390a, char *status1)
- {
--	char buf;
-+	u8 buf;
- 	int ret;
- 	unsigned initcount = 0;
+diff --git a/sound/i2c/cs8427.c b/sound/i2c/cs8427.c
+index 7e21621e492a4..7fd1b40008838 100644
+--- a/sound/i2c/cs8427.c
++++ b/sound/i2c/cs8427.c
+@@ -118,7 +118,7 @@ static int snd_cs8427_send_corudata(struct snd_i2c_device *device,
+ 	struct cs8427 *chip = device->private_data;
+ 	char *hw_data = udata ?
+ 		chip->playback.hw_udata : chip->playback.hw_status;
+-	char data[32];
++	unsigned char data[32];
+ 	int err, idx;
  
+ 	if (!memcmp(hw_data, ndata, count))
 -- 
 2.20.1
 
