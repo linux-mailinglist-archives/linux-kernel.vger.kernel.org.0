@@ -2,106 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C954C10AC3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:50:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5162C10AC48
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 09:54:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbfK0IuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 03:50:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40467 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfK0IuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 03:50:12 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y5so6418887wmi.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 00:50:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ImdFufuCLABk5owE8eytpQBnf5CgqpycdtGsCA5UGN0=;
-        b=RuLGRVNMMRMVHHZrCSKT6GThkoiDsJnj0QRDuc+enKMNpRqO9bStghG8pK4bV3KDTj
-         Q6e1S1+OHjraBbJ1E4eTecgtpyEcuXpLCHYywdUyAnrpTZzOSVwRxv/rlIS1niDtEsxD
-         XkeeH/7D+kMcA/J4uFH5s+veXGh3vISItdJUWOeD9i3G5Q4hxvOB1Vdu2YaPEYpL8mij
-         YwXmc5/gRfa4BBUdbQ/EvNH1tkng3NTiq2VUF+xwhEdsxTG74GiwTPohSO/Nt6oOBJWP
-         mCsz9l+6AbWmu6MCh1m1RjB3CyC3a4Wavkd5iv/D1SwlMnA8FMAJzbSRldjCFgvHQXF6
-         4utQ==
-X-Gm-Message-State: APjAAAURFFxcDq0MOvldlPO0ABnBjduwIGAvTstDzKMF1MvY2QZnZi+b
-        UnCWS3e754m0+u+iJe32HFM=
-X-Google-Smtp-Source: APXvYqw8RWSr4foVA5g0pWSg5i8S+1/nelRYLyqWD8O/YCVpejH/DKWzrSxz5qb/ndIYzeuHmctHug==
-X-Received: by 2002:a7b:c38c:: with SMTP id s12mr3246481wmj.84.1574844610057;
-        Wed, 27 Nov 2019 00:50:10 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id l10sm19891393wrg.90.2019.11.27.00.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 00:50:09 -0800 (PST)
-Date:   Wed, 27 Nov 2019 09:50:08 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Pengfei Li <fly@kernel.page>,
-        "lixinhai.lxh@gmail.com" <lixinhai.lxh@gmail.com>,
-        akpm <akpm@linux-foundation.org>,
-        mgorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, cl <cl@linux.com>,
-        "iamjoonsoo.kim" <iamjoonsoo.kim@lge.com>, guro <guro@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [RFC v1 00/19] Modify zonelist to nodelist v1
-Message-ID: <20191127085008.GM20912@dhcp22.suse.cz>
-References: <20191125083948.GC31714@dhcp22.suse.cz>
- <828BAB69-4B46-418F-A5E2-35B0756340D0@lca.pw>
- <20191126154101.GJ20912@dhcp22.suse.cz>
- <8B426079-6091-4898-8D77-609915C273E8@lca.pw>
+        id S1726446AbfK0Ix5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 03:53:57 -0500
+Received: from verein.lst.de ([213.95.11.211]:44993 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726092AbfK0Ix4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 03:53:56 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id E4D1568AFE; Wed, 27 Nov 2019 09:53:51 +0100 (CET)
+Date:   Wed, 27 Nov 2019 09:53:51 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arch@vger.kernel.org, darren@stevens-zone.net,
+        mad skateman <madskateman@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        paulus@samba.org, rtd2@xtra.co.nz,
+        "contact@a-eon.com" <contact@a-eon.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        nsaenzjulienne@suse.de
+Subject: Re: Bug 205201 - Booting halts if Dawicontrol DC-2976 UW SCSI
+ board installed, unless RAM size limited to 3500M
+Message-ID: <20191127085351.GA24676@lst.de>
+References: <dbde2252-035e-6183-7897-43348e60647e@xenosoft.de> <6eec5c42-019c-a988-fc2a-cb804194683d@xenosoft.de> <d0252d29-7a03-20e1-ccd7-e12d906e4bdf@arm.com> <b3217742-2c0b-8447-c9ac-608b93265363@xenosoft.de> <20191121180226.GA3852@lst.de> <2fde79cf-875f-94e6-4a1b-f73ebb2e2c32@xenosoft.de> <20191125073923.GA30168@lst.de> <4681f5fe-c095-15f5-9221-4b55e940bafc@xenosoft.de> <20191126164026.GA8026@lst.de> <20191127065624.GB16913@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8B426079-6091-4898-8D77-609915C273E8@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191127065624.GB16913@linux.ibm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 26-11-19 14:04:06, Qian Cai wrote:
-> 
-> 
-> > On Nov 26, 2019, at 10:41 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > 
-> > On Tue 26-11-19 10:30:56, Qian Cai wrote:
-> >> 
-> >> 
-> >>> On Nov 25, 2019, at 3:39 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> >>> 
-> >>> People do care about ZONE_MOVABLE and if there is a non-movable memory
-> >>> sitting there then it is a bug. Please report that.
-> >> 
-> >> It is trivial to test yourself if you ever care. Just pass kernelcore=
-> >> to as many NUMA machines you could find, an then test if ever possible
-> >> to offline those memory.
-> > 
-> > I definitely do care if you can provide more details (ideally in a
-> > separate email thread). I am using movable memory for memory hotplug
-> > usecases and so far I do not remember any kernel/non-movable allocations
-> > would make it in - modulo bugs when somebody might use __GFP_MOVABLE
-> > when it is not appropriate.
-> > 
-> 
-> I don’t think it is anything to do with __GFP_MOVABLE. It is about booting a kernel
-> with either passing kernelcore= or movablecore=. Then, those ZONE_MOVABLE will
-> have non-movable pages which looks like those from vmemmap_populate().
+On Wed, Nov 27, 2019 at 08:56:25AM +0200, Mike Rapoport wrote:
+> Maybe we'll simply force bottom up allocation before calling
+> swiotlb_init()? Anyway, it's the last memblock allocation.
 
-OK, I see. This looks like a bug in kernelcore/movablecore. And honestly
-I wouldn't be surprised because these are hacks that should have been
-removed. I have even attempted to do that because their main usecase is
-mostly gone. There were some objections though...
-
-> How do you create ZONE_MOVALBLE in this first place? 
-
-The most common usecase I work with is to use movable_node parameter
-which makes whole nodes marked as hotplugable to be moved to
-ZONE_MOVABLE.
-
--- 
-Michal Hocko
-SUSE Labs
+That should work, but I don't think it is the proper fix.  The underlying
+issue here is that ZONE_DMA/DMA32 sizing is something that needs to
+be propagated to memblock and dma-direct as is based around addressing
+limitations.  But our zone initialization is such a mess that we
+can't just reuse a variable.  Nicolas has started to clean some of
+this up, but we need to clean that whole zone initialization mess up
+a lot more.
