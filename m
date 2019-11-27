@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4AB10BD41
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F5C10BCFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:27:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbfK0V1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:27:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51288 "EHLO mail.kernel.org"
+        id S1731488AbfK0U75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:59:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731454AbfK0U7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:59:41 -0500
+        id S1731463AbfK0U7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:59:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2B0920678;
-        Wed, 27 Nov 2019 20:59:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F6C120678;
+        Wed, 27 Nov 2019 20:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574888381;
-        bh=xSTAfSAwQlR+mw6DZnVx2dvVH4DuAFNoVR9OKpY6MwA=;
+        s=default; t=1574888391;
+        bh=Y18yuxI31zdXm3BrZcwrM5f7T94WmOvlXVgoXwJyH2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P9d+fncSRKmJU2Tlq16ekulf2lOtR/Fe7xlI8cwP9OGaPyxqkSAvMub9xj4E1ZOw1
-         5mZGYV4bxFvR2PoMIQn8YmqkYKI42Vo/Ra2+dM+YEUj7tV+QBja7F9rPH2EvOUYwFD
-         sSbcehlKRSE4E0bskbjxWwgkL6RZ91Yqepv/+jSM=
+        b=jTSaPZlCvsAnBRM8s4RwmiFNU7fHEVQwOeiLXE1hfC0xHT/jlT3pJlKquDSYLbrTf
+         5PH/LehrmvEeyGRAlFV7LaJ2mAHdj414TSt9HlcSdyJ5Ty/vM0czCwAv/ZMGrusLjN
+         7lzTS+yCcwyXe4WfJElCMx77keeNVf6gvcFmEEwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 113/306] powerpc/mm/radix: Fix small page at boundary when splitting
-Date:   Wed, 27 Nov 2019 21:29:23 +0100
-Message-Id: <20191127203123.465081644@linuxfoundation.org>
+Subject: [PATCH 4.19 116/306] tools: bpftool: fix completion for "bpftool map update"
+Date:   Wed, 27 Nov 2019 21:29:26 +0100
+Message-Id: <20191127203123.650790329@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127203114.766709977@linuxfoundation.org>
 References: <20191127203114.766709977@linuxfoundation.org>
@@ -43,58 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Quentin Monnet <quentin.monnet@netronome.com>
 
-[ Upstream commit 81d1b54dec95209ab5e5be2cf37182885f998753 ]
+[ Upstream commit fe8ecccc10b3adc071de05ca7af728ca1a4ac9aa ]
 
-When we have CONFIG_STRICT_KERNEL_RWX enabled, we want to split the
-linear mapping at the text/data boundary so we can map the kernel
-text read only.
+When trying to complete "bpftool map update" commands, the call to
+printf would print an error message that would show on the command line
+if no map is found to complete the command line.
 
-Currently we always use a small page at the text/data boundary, even
-when that's not necessary:
+Fix it by making sure we have map ids to complete the line with, before
+we try to print something.
 
-  Mapped 0x0000000000000000-0x0000000000e00000 with 2.00 MiB pages
-  Mapped 0x0000000000e00000-0x0000000001000000 with 64.0 KiB pages
-  Mapped 0x0000000001000000-0x0000000040000000 with 2.00 MiB pages
-
-This is because the check that the mapping crosses the __init_begin
-boundary is too strict, it also returns true when we map exactly up to
-the boundary.
-
-So fix it to check that the mapping would actually map past
-__init_begin, and with that we see:
-
-  Mapped 0x0000000000000000-0x0000000040000000 with 2.00 MiB pages
-  Mapped 0x0000000040000000-0x0000000100000000 with 1.00 GiB pages
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/pgtable-radix.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/bpf/bpftool/bash-completion/bpftool | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/pgtable-radix.c b/arch/powerpc/mm/pgtable-radix.c
-index b387c7b917b7e..69caeb5bccb21 100644
---- a/arch/powerpc/mm/pgtable-radix.c
-+++ b/arch/powerpc/mm/pgtable-radix.c
-@@ -295,14 +295,14 @@ static int __meminit create_physical_mapping(unsigned long start,
+diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+index 598066c401912..c2b6b2176f3b7 100644
+--- a/tools/bpf/bpftool/bash-completion/bpftool
++++ b/tools/bpf/bpftool/bash-completion/bpftool
+@@ -143,7 +143,7 @@ _bpftool_map_update_map_type()
+     local type
+     type=$(bpftool -jp map show $keyword $ref | \
+         command sed -n 's/.*"type": "\(.*\)",$/\1/p')
+-    printf $type
++    [[ -n $type ]] && printf $type
+ }
  
- 		if (split_text_mapping && (mapping_size == PUD_SIZE) &&
- 			(addr < __pa_symbol(__init_begin)) &&
--			(addr + mapping_size) >= __pa_symbol(__init_begin)) {
-+			(addr + mapping_size) > __pa_symbol(__init_begin)) {
- 			max_mapping_size = PMD_SIZE;
- 			goto retry;
- 		}
- 
- 		if (split_text_mapping && (mapping_size == PMD_SIZE) &&
- 		    (addr < __pa_symbol(__init_begin)) &&
--		    (addr + mapping_size) >= __pa_symbol(__init_begin)) {
-+		    (addr + mapping_size) > __pa_symbol(__init_begin)) {
- 			mapping_size = PAGE_SIZE;
- 			psize = mmu_virtual_psize;
- 		}
+ _bpftool_map_update_get_id()
 -- 
 2.20.1
 
