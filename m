@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626F910BC13
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:18:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E94A10BB5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:13:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733230AbfK0VLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:11:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41080 "EHLO mail.kernel.org"
+        id S1733239AbfK0VLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 16:11:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733221AbfK0VLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:11:49 -0500
+        id S1732782AbfK0VLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 16:11:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFF0A21555;
-        Wed, 27 Nov 2019 21:11:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B15EE21555;
+        Wed, 27 Nov 2019 21:11:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574889109;
-        bh=LfA1WHC3J8XPfL/CFiTC6sNIBPjDAA/6b3KwEk0Dals=;
+        s=default; t=1574889112;
+        bh=6V7r6TB9qW/1X5KnQjTT2gyh0o0FqU2iM3qP87EZEXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JrQoHrrpwcTJXNE0Z4067HF/veqUB6DN7nn/V/vhhadGUfywPnOLZkjJZfBaHBouB
-         Dto9b588Ht1Ys2gsTv2HNOq5/JnQvSVfCMuAZimv5n7RP0nFAOixOObGl1e5xErFgO
-         Liuc8xUJZTn3Yp4HcEJwFjUntsnb93WNrZz3uTiE=
+        b=SCzapFZJp0rPqJHzKM93O1+CL8FVDdSKlS+20jr0ooIEkr4FnbP3TGdLIMlqdjyMd
+         84a1XRV9wYXQYPWj0Gxrm3zZrf+p7pS95v5oNFrOJb+7kuAU7cByQHLbor+AfMmEOp
+         EOC+D+2SHUtEEKrH3sVZrX52TyP8anNZB62W3fe4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.de>
-Subject: [PATCH 5.3 85/95] USB: chaoskey: fix error case of a timeout
-Date:   Wed, 27 Nov 2019 21:32:42 +0100
-Message-Id: <20191127202953.570882475@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+495dab1f175edc9c2f13@syzkaller.appspotmail.com
+Subject: [PATCH 5.3 86/95] appledisplay: fix error handling in the scheduled work
+Date:   Wed, 27 Nov 2019 21:32:43 +0100
+Message-Id: <20191127202955.638390156@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191127202845.651587549@linuxfoundation.org>
 References: <20191127202845.651587549@linuxfoundation.org>
@@ -44,66 +45,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oliver Neukum <oneukum@suse.com>
 
-commit 92aa5986f4f7b5a8bf282ca0f50967f4326559f5 upstream.
+commit 91feb01596e5efc0cc922cc73f5583114dccf4d2 upstream.
 
-In case of a timeout or if a signal aborts a read
-communication with the device needs to be ended
-lest we overwrite an active URB the next time we
-do IO to the device, as the URB may still be active.
+The work item can operate on
 
-Signed-off-by: Oliver Neukum <oneukum@suse.de>
+1. stale memory left over from the last transfer
+the actual length of the data transfered needs to be checked
+2. memory already freed
+the error handling in appledisplay_probe() needs
+to cancel the work in that case
+
+Reported-and-tested-by: syzbot+495dab1f175edc9c2f13@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191107142856.16774-1-oneukum@suse.com
+Link: https://lore.kernel.org/r/20191106124902.7765-1-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/chaoskey.c |   24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ drivers/usb/misc/appledisplay.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/chaoskey.c
-+++ b/drivers/usb/misc/chaoskey.c
-@@ -384,13 +384,17 @@ static int _chaoskey_fill(struct chaoske
- 		!dev->reading,
- 		(started ? NAK_TIMEOUT : ALEA_FIRST_TIMEOUT) );
- 
--	if (result < 0)
-+	if (result < 0) {
-+		usb_kill_urb(dev->urb);
- 		goto out;
-+	}
- 
--	if (result == 0)
-+	if (result == 0) {
- 		result = -ETIMEDOUT;
--	else
-+		usb_kill_urb(dev->urb);
+--- a/drivers/usb/misc/appledisplay.c
++++ b/drivers/usb/misc/appledisplay.c
+@@ -164,7 +164,12 @@ static int appledisplay_bl_get_brightnes
+ 		0,
+ 		pdata->msgdata, 2,
+ 		ACD_USB_TIMEOUT);
+-	brightness = pdata->msgdata[1];
++	if (retval < 2) {
++		if (retval >= 0)
++			retval = -EMSGSIZE;
 +	} else {
- 		result = dev->valid;
++		brightness = pdata->msgdata[1];
 +	}
- out:
- 	/* Let the device go back to sleep eventually */
- 	usb_autopm_put_interface(dev->interface);
-@@ -526,7 +530,21 @@ static int chaoskey_suspend(struct usb_i
+ 	mutex_unlock(&pdata->sysfslock);
  
- static int chaoskey_resume(struct usb_interface *interface)
- {
-+	struct chaoskey *dev;
-+	struct usb_device *udev = interface_to_usbdev(interface);
-+
- 	usb_dbg(interface, "resume");
-+	dev = usb_get_intfdata(interface);
-+
-+	/*
-+	 * We may have lost power.
-+	 * In that case the device that needs a long time
-+	 * for the first requests needs an extended timeout
-+	 * again
-+	 */
-+	if (le16_to_cpu(udev->descriptor.idVendor) == ALEA_VENDOR_ID)
-+		dev->reads_started = false;
-+
- 	return 0;
- }
- #else
+ 	if (retval < 0)
+@@ -299,6 +304,7 @@ error:
+ 	if (pdata) {
+ 		if (pdata->urb) {
+ 			usb_kill_urb(pdata->urb);
++			cancel_delayed_work_sync(&pdata->work);
+ 			if (pdata->urbdata)
+ 				usb_free_coherent(pdata->udev, ACD_URB_BUFFER_LEN,
+ 					pdata->urbdata, pdata->urb->transfer_dma);
 
 
