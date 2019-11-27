@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2FDD10B7EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6642F10B8B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:45:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbfK0UiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:38:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
+        id S1729793AbfK0Upw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:45:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727756AbfK0UiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:38:03 -0500
+        id S1728185AbfK0Upt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:45:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DCCE215A5;
-        Wed, 27 Nov 2019 20:38:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C9B22178F;
+        Wed, 27 Nov 2019 20:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887082;
-        bh=8I63cHGEo6Hyc38/WiEx2WOGdfG7LCz56iii/e2WbxI=;
+        s=default; t=1574887549;
+        bh=E7bp0BOM3t1qTKZFsIcbtokzuEIIenJD4UwrpLkgBBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aOi6S5X+f1+DBH8qbYYxaML1dNhrutf0jFtOp5//XH8wwJXPSP0D+AAwN6cSfpfYm
-         gm8yZEXKAJizr7vIEdUeMpgZjwTSDObU4flneUwreI6klBr9kB+G3vLSc8iQDq9+lM
-         /N/w9/amWuBiwYGTqkHCw8B0s8+98EIFcsT7vrww=
+        b=LSi5PPV6g/7TT52jlO+XxvYZ9tt5xvNBPpFQFBN3BACLHqkTQp0+q+91RGXdqyrNv
+         NZmnQJ5kLElLjQnlxnyAQeuCl5FVVKO62ugPAYncVv8vgP0kOuH2Qjmgk/wVwncBck
+         cPBdgLbM1SwOE1AL85Jce4pHidva/s1Gw30WpAHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.4 105/132] mmc: block: Fix tag condition with packed writes
+Subject: [PATCH 4.9 113/151] dm: use blk_set_queue_dying() in __dm_destroy()
 Date:   Wed, 27 Nov 2019 21:31:36 +0100
-Message-Id: <20191127203025.855011718@linuxfoundation.org>
+Message-Id: <20191127203043.434613352@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Bart Van Assche <bart.vanassche@sandisk.com>
 
-commit d806b46e5f496a6335ebd7f8432d2533507ce9a2 upstream.
+commit 2e91c3694181dc500faffec16c5aaa0ac5e15449 upstream.
 
-Apparently a cut-and-paste error, 'do_data_tag' is using 'brq' for data
-size even though 'brq' has not been set up. Instead use blk_rq_sectors().
+After QUEUE_FLAG_DYING has been set any code that is waiting in
+get_request() should be woken up.  But to get this behaviour
+blk_set_queue_dying() must be used instead of only setting
+QUEUE_FLAG_DYING.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Bart Van Assche <bart.vanassche@sandisk.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/card/block.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/md/dm.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/mmc/card/block.c
-+++ b/drivers/mmc/card/block.c
-@@ -1772,8 +1772,7 @@ static void mmc_blk_packed_hdr_wrq_prep(
- 		do_data_tag = (card->ext_csd.data_tag_unit_size) &&
- 			(prq->cmd_flags & REQ_META) &&
- 			(rq_data_dir(prq) == WRITE) &&
--			((brq->data.blocks * brq->data.blksz) >=
--			 card->ext_csd.data_tag_unit_size);
-+			blk_rq_bytes(prq) >= card->ext_csd.data_tag_unit_size;
- 		/* Argument of CMD23 */
- 		packed_cmd_hdr[(i * 2)] = cpu_to_le32(
- 			(do_rel_wr ? MMC_CMD23_ARG_REL_WR : 0) |
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1946,9 +1946,7 @@ static void __dm_destroy(struct mapped_d
+ 	set_bit(DMF_FREEING, &md->flags);
+ 	spin_unlock(&_minor_lock);
+ 
+-	spin_lock_irq(q->queue_lock);
+-	queue_flag_set(QUEUE_FLAG_DYING, q);
+-	spin_unlock_irq(q->queue_lock);
++	blk_set_queue_dying(q);
+ 
+ 	if (dm_request_based(md) && md->kworker_task)
+ 		kthread_flush_worker(&md->kworker);
 
 
