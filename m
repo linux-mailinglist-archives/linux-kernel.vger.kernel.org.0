@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A614B10BFA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A0B310BF3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 22:42:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbfK0VpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 16:45:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38102 "EHLO mail.kernel.org"
+        id S1729062AbfK0Ukn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:40:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728063AbfK0UgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:36:11 -0500
+        id S1728863AbfK0Uki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:40:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E4C421569;
-        Wed, 27 Nov 2019 20:36:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06F47215A4;
+        Wed, 27 Nov 2019 20:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574886970;
-        bh=/UzbN4KAa0Te1SaklwVyPaEjx3xLax6KeNPcYLJw6HE=;
+        s=default; t=1574887238;
+        bh=Jq7yV1cMB4AnFU+bp4wsDh/McG2TBw5lyeKLoiGpng0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9uVfi9Yy+9YwXr+c46zJadnJb88eN0Xd6burqrY2/KHu2AoUdML+zywhEYYoeKjs
-         1b92HEj0XHmtwZXfUNnF2O5++CbJoGvwYsJvRozEKf/583y8v14rtISdx6X56wLqcj
-         iehRITp/JWmDsfSszuBy+aK2PYpNCPn7dcTQ/gy0=
+        b=IglgtzjhYojM7edMrJ5tt49+batQ2H45dezd0zswHvqVpfgkWart1OVGyfXgOMSsn
+         HuGfNLTnTzjJWACloXtg1xi7lBR1vlh1/0+KvLhi85/209pLmimcpA8AefQBnLzhCq
+         14ZQlSM8s9kX2VNJmaLmgm7pTKuvw1XuS7Ow/Llo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 026/132] powerpc/eeh: Fix use of EEH_PE_KEEP on wrong field
+Subject: [PATCH 4.9 034/151] ASoC: tegra_sgtl5000: fix device_node refcounting
 Date:   Wed, 27 Nov 2019 21:30:17 +0100
-Message-Id: <20191127202923.610000771@linuxfoundation.org>
+Message-Id: <20191127203021.756052898@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127202857.270233486@linuxfoundation.org>
-References: <20191127202857.270233486@linuxfoundation.org>
+In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
+References: <20191127203000.773542911@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +46,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-[ Upstream commit 473af09b56dc4be68e4af33220ceca6be67aa60d ]
+[ Upstream commit a85227da2dcc291b762c8482a505bc7d0d2d4b07 ]
 
-eeh_add_to_parent_pe() sometimes removes the EEH_PE_KEEP flag, but it
-incorrectly removes it from pe->type, instead of pe->state.
+Similar to the following:
 
-However, rather than clearing it from the correct field, remove it.
-Inspection of the code shows that it can't ever have had any effect
-(even if it had been cleared from the correct field), because the
-field is never tested after it is cleared by the statement in
-question.
+commit 4321723648b0 ("ASoC: tegra_alc5632: fix device_node refcounting")
 
-The clear statement was added by commit 807a827d4e74 ("powerpc/eeh:
-Keep PE during hotplug"), but it didn't explain why it was necessary.
+commit 7c5dfd549617 ("ASoC: tegra: fix device_node refcounting")
 
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/eeh_pe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra_sgtl5000.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/eeh_pe.c b/arch/powerpc/kernel/eeh_pe.c
-index 304f07cfa2622..4d4c32d0e6cee 100644
---- a/arch/powerpc/kernel/eeh_pe.c
-+++ b/arch/powerpc/kernel/eeh_pe.c
-@@ -367,7 +367,7 @@ int eeh_add_to_parent_pe(struct eeh_dev *edev)
- 		while (parent) {
- 			if (!(parent->type & EEH_PE_INVALID))
- 				break;
--			parent->type &= ~(EEH_PE_INVALID | EEH_PE_KEEP);
-+			parent->type &= ~EEH_PE_INVALID;
- 			parent = parent->parent;
- 		}
+diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+index 1e76869dd4880..863e04809a6b8 100644
+--- a/sound/soc/tegra/tegra_sgtl5000.c
++++ b/sound/soc/tegra/tegra_sgtl5000.c
+@@ -152,14 +152,14 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Property 'nvidia,i2s-controller' missing/invalid\n");
+ 		ret = -EINVAL;
+-		goto err;
++		goto err_put_codec_of_node;
+ 	}
+ 
+ 	tegra_sgtl5000_dai.platform_of_node = tegra_sgtl5000_dai.cpu_of_node;
+ 
+ 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+ 	if (ret)
+-		goto err;
++		goto err_put_cpu_of_node;
+ 
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+@@ -172,6 +172,13 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
+ 
+ err_fini_utils:
+ 	tegra_asoc_utils_fini(&machine->util_data);
++err_put_cpu_of_node:
++	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
++	tegra_sgtl5000_dai.cpu_of_node = NULL;
++	tegra_sgtl5000_dai.platform_of_node = NULL;
++err_put_codec_of_node:
++	of_node_put(tegra_sgtl5000_dai.codec_of_node);
++	tegra_sgtl5000_dai.codec_of_node = NULL;
+ err:
+ 	return ret;
+ }
+@@ -186,6 +193,12 @@ static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
+ 
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ 
++	of_node_put(tegra_sgtl5000_dai.cpu_of_node);
++	tegra_sgtl5000_dai.cpu_of_node = NULL;
++	tegra_sgtl5000_dai.platform_of_node = NULL;
++	of_node_put(tegra_sgtl5000_dai.codec_of_node);
++	tegra_sgtl5000_dai.codec_of_node = NULL;
++
+ 	return ret;
+ }
  
 -- 
 2.20.1
