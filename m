@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E368810B0BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 14:59:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 006BF10B0BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 15:00:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfK0N7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 08:59:53 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39739 "EHLO
+        id S1726537AbfK0N7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 08:59:39 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60065 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfK0N7k (ORCPT
+        with ESMTP id S1726881AbfK0N7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 08:59:40 -0500
+        Wed, 27 Nov 2019 08:59:38 -0500
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iZxqv-0005PC-Jd; Wed, 27 Nov 2019 14:59:33 +0100
+        id 1iZxqv-0005PD-JM; Wed, 27 Nov 2019 14:59:33 +0100
 Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iZxqv-0008EN-3R; Wed, 27 Nov 2019 14:59:33 +0100
+        id 1iZxqv-0008Ez-3u; Wed, 27 Nov 2019 14:59:33 +0100
 From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     bgolaszewski@baylibre.com, linus.walleij@linaro.org,
         support.opensource@diasemi.com, lee.jones@linaro.org,
@@ -27,9 +27,9 @@ To:     bgolaszewski@baylibre.com, linus.walleij@linaro.org,
         stwiss.opensource@diasemi.com, Adam.Thomson.Opensource@diasemi.com
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@pengutronix.de
-Subject: [PATCH v2 1/5] gpio: add support to get local gpio number
-Date:   Wed, 27 Nov 2019 14:59:28 +0100
-Message-Id: <20191127135932.7223-2-m.felsch@pengutronix.de>
+Subject: [PATCH v2 2/5] dt-bindings: mfd: da9062: add regulator voltage selection documentation
+Date:   Wed, 27 Nov 2019 14:59:29 +0100
+Message-Id: <20191127135932.7223-3-m.felsch@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191127135932.7223-1-m.felsch@pengutronix.de>
 References: <20191127135932.7223-1-m.felsch@pengutronix.de>
@@ -44,61 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes consumers needs to know the gpio-chip local gpio number of a
-'struct gpio_desc' for further configuration. This is often the case for
-mfd devices.
+Add the documentation which describe the voltage selection gpio support.
+This property can be applied to each subnode within the 'regulators'
+node so each regulator can be configured differently.
 
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
- drivers/gpio/gpiolib.c        |  6 ++++++
- include/linux/gpio/consumer.h | 10 ++++++++++
- 2 files changed, 16 insertions(+)
+ Documentation/devicetree/bindings/mfd/da9062.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 104ed299d5ea..7709648313fc 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4377,6 +4377,12 @@ int gpiod_count(struct device *dev, const char *con_id)
- }
- EXPORT_SYMBOL_GPL(gpiod_count);
+diff --git a/Documentation/devicetree/bindings/mfd/da9062.txt b/Documentation/devicetree/bindings/mfd/da9062.txt
+index edca653a5777..7e780fa6f57d 100644
+--- a/Documentation/devicetree/bindings/mfd/da9062.txt
++++ b/Documentation/devicetree/bindings/mfd/da9062.txt
+@@ -66,6 +66,15 @@ Sub-nodes:
+   details of individual regulator device can be found in:
+   Documentation/devicetree/bindings/regulator/regulator.txt
  
-+int gpiod_to_offset(struct gpio_desc *desc)
-+{
-+	return gpio_chip_hwgpio(desc);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_to_offset);
++  Optional regulator device-specific properties:
++  - dlg,vsel-sense-gpios : The GPIO reference which should be used by the
++    regulator to switch the voltage between active/suspend voltage settings. If
++    the signal is active the active-settings are applied else the suspend
++    settings are applied. Attention: Sharing the same gpio for other purposes
++    or across multiple regulators is possible but the gpio settings must be the
++    same. Also the gpio phandle must refer to the mfd root node other gpios are
++    not allowed and make no sense.
 +
- /**
-  * gpiod_get - obtain a GPIO for a given GPIO function
-  * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index b70af921c614..e2178c3bf7fd 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -60,6 +60,9 @@ enum gpiod_flags {
- /* Return the number of GPIOs associated with a device / function */
- int gpiod_count(struct device *dev, const char *con_id);
- 
-+/* Get the local chip offset from a global desc */
-+int gpiod_to_offset(struct gpio_desc *desc);
-+
- /* Acquire and dispose GPIOs */
- struct gpio_desc *__must_check gpiod_get(struct device *dev,
- 					 const char *con_id,
-@@ -189,6 +192,13 @@ static inline int gpiod_count(struct device *dev, const char *con_id)
- 	return 0;
- }
- 
-+static inline int gpiod_to_offset(struct gpio_desc *desc)
-+{
-+	/* GPIO can never have been requested */
-+	WARN_ON(desc);
-+	return 0;
-+}
-+
- static inline struct gpio_desc *__must_check gpiod_get(struct device *dev,
- 						       const char *con_id,
- 						       enum gpiod_flags flags)
+ - rtc : This node defines settings required for the Real-Time Clock associated
+   with the DA9062. There are currently no entries in this binding, however
+   compatible = "dlg,da9062-rtc" should be added if a node is created.
 -- 
 2.20.1
 
