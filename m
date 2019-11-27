@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFE310B845
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:41:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A15FC10B924
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2019 21:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbfK0Ulp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 15:41:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47106 "EHLO mail.kernel.org"
+        id S1730340AbfK0UuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 15:50:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729228AbfK0Ull (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:41:41 -0500
+        id S1729927AbfK0UuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:50:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E184320863;
-        Wed, 27 Nov 2019 20:41:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5905121847;
+        Wed, 27 Nov 2019 20:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574887300;
-        bh=20y6msOi7lmlQ6mQ3DWuL9/PRbBq+fbqGSZPVLo2ebQ=;
+        s=default; t=1574887815;
+        bh=9B51i506uoit8PvzKsp8Hnm676PvlawhR2kOkoqXzLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GTWTM47ok0STCqMTejmw68W8cQ1in7xYPjPN7rZF980FN60RuGdipptVRXM0AJArn
-         9AmZKNRtsC7jF+XFe8ycPIKhGMyutyKSpnoDK6sW9/DqEsRkRqCx1guxvRvV1JyHmM
-         qrHVKCt6QxQJT3tZqQReQoQXaiu/VZL+hiYoUfio=
+        b=omi2j4pAGFp0JR173ACENYnk56QFyoiERU3N04TQOTGLk7b1ZNX3zrjiqmp2wAWnS
+         M42A+HmDSoG2Sx1VPca4N5ojWlpk47vGQqIHCu+nzZKu4pARQSM8ODTaeyPLcDs8yi
+         ejtmO1E2uRFkhtbDLb1aWGi60lVBSHbFAWkCm+Eo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/151] net: ethernet: ti: cpsw: unsync mcast entries while switch promisc mode
+Subject: [PATCH 4.14 106/211] selftests/powerpc/cache_shape: Fix out-of-tree build
 Date:   Wed, 27 Nov 2019 21:30:39 +0100
-Message-Id: <20191127203032.340864685@linuxfoundation.org>
+Message-Id: <20191127203104.016375778@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191127203000.773542911@linuxfoundation.org>
-References: <20191127203000.773542911@linuxfoundation.org>
+In-Reply-To: <20191127203049.431810767@linuxfoundation.org>
+References: <20191127203049.431810767@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 9737cc99dd14b5b8b9d267618a6061feade8ea68 ]
+[ Upstream commit 69f8117f17b332a68cd8f4bf8c2d0d3d5b84efc5 ]
 
-After flushing all mcast entries from the table, the ones contained in
-mc list of ndev are not restored when promisc mode is toggled off,
-because they are considered as synched with ALE, thus, in order to
-restore them after promisc mode - reset syncing info. This fix
-touches only switch mode devices, including single port boards
-like Beagle Bone.
+Use TEST_GEN_PROGS and don't redefine all, this makes the out-of-tree
+build work. We need to move the extra dependencies below the include
+of lib.mk, because it adds the $(OUTPUT) prefix if it's defined.
 
-Fixes: commit 5da1948969bc
-("net: ethernet: ti: cpsw: fix lost of mcast packets while rx_mode update")
+We can also drop the clean rule, lib.mk does it for us.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ti/cpsw.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/powerpc/cache_shape/Makefile | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index d7cb205fe7e26..892b06852e150 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -590,6 +590,7 @@ static void cpsw_set_promiscious(struct net_device *ndev, bool enable)
+diff --git a/tools/testing/selftests/powerpc/cache_shape/Makefile b/tools/testing/selftests/powerpc/cache_shape/Makefile
+index 1be547434a49c..7e0c175b82978 100644
+--- a/tools/testing/selftests/powerpc/cache_shape/Makefile
++++ b/tools/testing/selftests/powerpc/cache_shape/Makefile
+@@ -1,11 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+-TEST_PROGS := cache_shape
+-
+-all: $(TEST_PROGS)
+-
+-$(TEST_PROGS): ../harness.c ../utils.c
++TEST_GEN_PROGS := cache_shape
  
- 			/* Clear all mcast from ALE */
- 			cpsw_ale_flush_multicast(ale, ALE_ALL_PORTS, -1);
-+			__dev_mc_unsync(ndev, NULL);
+ include ../../lib.mk
  
- 			/* Flood All Unicast Packets to Host port */
- 			cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
+-clean:
+-	rm -f $(TEST_PROGS) *.o
++$(TEST_GEN_PROGS): ../harness.c ../utils.c
 -- 
 2.20.1
 
