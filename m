@@ -2,127 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BB0210C59E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD5F110C5A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:08:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfK1JHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 04:07:04 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41453 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726510AbfK1JHE (ORCPT
+        id S1727166AbfK1JIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 04:08:06 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55972 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725789AbfK1JIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 04:07:04 -0500
+        Thu, 28 Nov 2019 04:08:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574932022;
+        s=mimecast20190719; t=1574932085;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Fc+1aWU1n7L4x+QFUaTGUrJ8QZV6jxVGyjTh715dkvk=;
-        b=A74N8nFoiAsXUKyDuny7Q4f2J4PTSBV3QVofw+v50hSaYIk3FKYiSm2fLn91AtWVBVG+pD
-        0xFFrUTsis8eGr76w0QcOtUS01JCdksS0ywyqW/2ZSYCDMtDJ51IRdelKV4fB34JRIN/oA
-        6jlmWKBt4ibMvKvEEOJu4pNmL5Srba4=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-62-oBTcpRAdPy6lVmq27WljXQ-1; Thu, 28 Nov 2019 04:07:01 -0500
-Received: by mail-lj1-f200.google.com with SMTP id n11so4837293lji.9
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 01:07:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=DvrocL/1GRTCvaXxuQQF+aHOAoWJJA60RMKFIr0Cm60=;
-        b=E/2K/HAOsaCefjw+SfYpoQKsKqtYLgysQNSiDiCkPZ0STQEADp8oxypu5t3kL+Pv3l
-         YoYqoMFU/bniPoMKe5vZHw54rD4LjNgm3SikAtvt5XXweztOmJc35XE7/svSoRHilIzr
-         1zPJOh7Wh4qqiRKn1reAH8WaiefS2WgIwhRrLheMZNgZGvlTcJ/AzVgaC2bDeMwPjI2J
-         L7VB5R6OrVb7lzq0/SNZlWCKuMU+ugnYAzk+5Wr/njqmvLo9nUMMvSudmgEulPBjF8uA
-         0LRXdYdIT8VDx40zkMfJdVhlVK1RtmtTwHbxnOYS0rzhnXGDzP2rDi6sBMUW5FzdSPPr
-         7CKw==
-X-Gm-Message-State: APjAAAVNXiPKiRV2V1OzFsVogYYJF3mQTgcb5EmDTaXK1cEd9iJbppp/
-        FLFmIndNVh5196krW95+5k96DIfroncacNVNUiGbzFEP8pBkjrNjk6E7/Y/a2xMQvFLWHtPHObK
-        zVLCEdLcC7abVmgtrMj15P/bP
-X-Received: by 2002:a2e:914d:: with SMTP id q13mr7972520ljg.198.1574932019916;
-        Thu, 28 Nov 2019 01:06:59 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwW+RawCEjX/SrVq5qTek4AHlvFYFzQbz7nhztA0ZhJ3BUPtFzw7uzugqmhWCO8ANdZ6bOJqQ==
-X-Received: by 2002:a2e:914d:: with SMTP id q13mr7972501ljg.198.1574932019671;
-        Thu, 28 Nov 2019 01:06:59 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id o26sm8079173lfi.57.2019.11.28.01.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 01:06:58 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 2377C1818BE; Thu, 28 Nov 2019 10:06:57 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>
-Subject: Re: [PATCH 0/3] perf/bpftool: Allow to link libbpf dynamically
-In-Reply-To: <CAADnVQLp2VTi9JhtfkLOR9Y1ipNFObOGH9DQe5zbKxz77juhqA@mail.gmail.com>
-References: <20191127094837.4045-1-jolsa@kernel.org> <CAADnVQLp2VTi9JhtfkLOR9Y1ipNFObOGH9DQe5zbKxz77juhqA@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Thu, 28 Nov 2019 10:06:57 +0100
-Message-ID: <87o8wwwery.fsf@toke.dk>
+        bh=LQyMIOq1brhBX2bUMaM6TFXqa3RnBbkv7h2aLB1dU5Q=;
+        b=Ld4ueGqnZKPx4dNjtYdjIb739E2lG5QLQUHrajg5oxhafViAuBP+DL0WEuiU2WaT49T/Gu
+        RrJwsf/4FfejqfyW5eP8MYfBQhvxvZ0P7ZnNd5MA7KvAQD23JX/ngJQqNzEA4GgS51tmRh
+        Q7N0P9j9KwS5CqPW21Fv+PGYckFwzpU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-301-0ZLVFI1nP2WETMSLr2dzlg-1; Thu, 28 Nov 2019 04:08:03 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B577980183C;
+        Thu, 28 Nov 2019 09:08:00 +0000 (UTC)
+Received: from [10.36.116.37] (ovpn-116-37.ams2.redhat.com [10.36.116.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 552426084E;
+        Thu, 28 Nov 2019 09:07:54 +0000 (UTC)
+Subject: Re: [PATCH] KVM: vgic: Use warpper function to lock/unlock all vcpus
+ in kvm_vgic_create()
+To:     linmiaohe <linmiaohe@huawei.com>, maz@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com,
+        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        gregkh@linuxfoundation.org, will@kernel.org,
+        andre.przywara@arm.com, tglx@linutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1574910551-14351-1-git-send-email-linmiaohe@huawei.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <cdd7ef36-70ae-3e56-2ea3-48d7051991c3@redhat.com>
+Date:   Thu, 28 Nov 2019 10:07:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MC-Unique: oBTcpRAdPy6lVmq27WljXQ-1
+In-Reply-To: <1574910551-14351-1-git-send-email-linmiaohe@huawei.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: 0ZLVFI1nP2WETMSLr2dzlg-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+Hi,
 
-> On Wed, Nov 27, 2019 at 1:48 AM Jiri Olsa <jolsa@kernel.org> wrote:
->>
->> hi,
->> adding support to link bpftool with libbpf dynamically,
->> and config change for perf.
->>
->> It's now possible to use:
->>   $ make -C tools/bpf/bpftool/ LIBBPF_DYNAMIC=3D1
->>
->> which will detect libbpf devel package with needed version,
->> and if found, link it with bpftool.
->>
->> It's possible to use arbitrary installed libbpf:
->>   $ make -C tools/bpf/bpftool/ LIBBPF_DYNAMIC=3D1 LIBBPF_DIR=3D/tmp/libb=
-pf/
->>
->> I based this change on top of Arnaldo's perf/core, because
->> it contains libbpf feature detection code as dependency.
->> It's now also synced with latest bpf-next, so Toke's change
->> applies correctly.
->
-> I don't like it.
-> Especially Toke's patch to expose netlink as public and stable libbpf
-> api.
+On 11/28/19 4:09 AM, linmiaohe wrote:
+> From: Miaohe Lin <linmiaohe@huawei.com>
+> 
+> Use warpper function lock_all_vcpus()/unlock_all_vcpus()
+s/warpper/wrapper and also in the title.
+> in kvm_vgic_create() to remove duplicated code dealing
+> with locking and unlocking all vcpus in a vm.
+> 
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
+>  virt/kvm/arm/vgic/vgic-init.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+> index b3c5de48064c..53e3969dfb52 100644
+> --- a/virt/kvm/arm/vgic/vgic-init.c
+> +++ b/virt/kvm/arm/vgic/vgic-init.c
+> @@ -70,7 +70,7 @@ void kvm_vgic_early_init(struct kvm *kvm)
+>   */
+>  int kvm_vgic_create(struct kvm *kvm, u32 type)
+>  {
+> -	int i, vcpu_lock_idx = -1, ret;
+> +	int i, ret;
+>  	struct kvm_vcpu *vcpu;
+>  
+>  	if (irqchip_in_kernel(kvm))
+> @@ -92,11 +92,8 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
+>  	 * that no other VCPUs are run while we create the vgic.
+>  	 */
+>  	ret = -EBUSY;
+> -	kvm_for_each_vcpu(i, vcpu, kvm) {
+> -		if (!mutex_trylock(&vcpu->mutex))
+> -			goto out_unlock;
+> -		vcpu_lock_idx = i;
+> -	}
+> +	if (!lock_all_vcpus(kvm))
+> +		return ret;
+>  
+>  	kvm_for_each_vcpu(i, vcpu, kvm) {
+>  		if (vcpu->arch.has_run_once)
+> @@ -125,10 +122,7 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
+>  		INIT_LIST_HEAD(&kvm->arch.vgic.rd_regions);
+>  
+>  out_unlock:
+> -	for (; vcpu_lock_idx >= 0; vcpu_lock_idx--) {
+> -		vcpu = kvm_get_vcpu(kvm, vcpu_lock_idx);
+> -		mutex_unlock(&vcpu->mutex);
+> -	}
+> +	unlock_all_vcpus(kvm);
+>  	return ret;
+>  }
+>  
+> 
+Besides, looks good to me
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Figured you might say that :)
+Thanks
 
-> bpftools needs to stay tightly coupled with libbpf (and statically
-> linked for that reason).
-> Otherwise libbpf will grow a ton of public api that would have to be stab=
-le
-> and will quickly become a burden.
-
-I can see why you don't want to expose the "internal" functions as
-LIBBPF_API. Doesn't *have* to mean we can't link bpftool dynamically
-against the .so version of libbpf, though; will see if I can figure out
-a clean way to do that...
-
--Toke
+Eric
 
