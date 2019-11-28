@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 096A110C373
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 06:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7EC410C366
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 06:10:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfK1FKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 00:10:39 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35874 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbfK1FKL (ORCPT
+        id S1727011AbfK1FKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 00:10:13 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44659 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726882AbfK1FKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 00:10:11 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k13so12302258pgh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 21:10:09 -0800 (PST)
+        Thu, 28 Nov 2019 00:10:10 -0500
+Received: by mail-pg1-f193.google.com with SMTP id e6so12268797pgi.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 21:10:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ouUtqJi8LGrm8rrsEkCm6pqbpQoOVXeEx8u8OcmIa0k=;
-        b=lRoVK5doRSRDbRTAAJnPpfGG0jqnYt4E9nzW5oAevteuhSV0bqeuKhhCkEEhImCFaj
-         iwr9QF0pGo8EWPpe8QBpLIhwIZXaOiK0nZsY+KB8MVcuXVYhlkqNqbIDt3ZBsI5KNVUt
-         UtEADqokuYMdxi0rGQ5jhmt+znDOCaTls1MbNSlLRhn8FIbeTwTwafDs9W6OCCvfwczx
-         slgKI+hQCG1Y/fYUBue5N8LhwXugyZD2KXj75N/7pfpvLc54zw0yPbiYLeHOIJTqVy2k
-         kSqvElS17wUi4JCtzv5IG4E3Ecmw18ALYxd6n7VlK35wVwv3LsaGA/emiZca/U72O6p1
-         pmCQ==
+        bh=BvSTajJ0/txDo3oQ9anR2MLYElhTmMiqKohTpjPUH4Y=;
+        b=hEcBgdZf62B5VBmMPEBMROUIXTik/BmhILgVyVtvBnFUL+wplH8lMAizJ0o0t3/ng/
+         iKfkb0yh4LkTNwbo9TqW1UBDse7OefhHp8STTYmoQFwejSusy11WfaIqzr0xEq29Aovr
+         SZXB0JEgIUGPzDtNjE816xl2J45Cm2GSK5ykeQgEZkH5nGJijSLPBkdL4qnvjle75Giy
+         W+JaJPW95XhtAntBeGnN2+nKIFtQCjTVptuFfZTjIdT3FltrfPmPadJ8D9pLtk1nAkXU
+         hWfXB3h/Mjf1HyqlidX7XwaVp3uY5B2UiNZSduoUE4Yc4j9x6jM4LtnvD45MvbkJr0B4
+         l9Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ouUtqJi8LGrm8rrsEkCm6pqbpQoOVXeEx8u8OcmIa0k=;
-        b=tOiYfGpp0WMzeXPr/k8YFb55LA/rn3XLHVRw12BJk9ywZb0l4C/gbIEiAArBs7Z3bP
-         gEdbMixjAcHysSCArBOleQPXvhxyiNpial0PeBiLLgg27RXvyba8SR9dVkJfc+ZZ1cz7
-         c+qLcAPwYoW5aHd9h3z3jCCztu6GR+v9Mc+vIrXr14kltTvPZv/4xovThiAV9l7fOxyq
-         yQqD2TD61qwSuGp9FSp83wY1BYUy0kI1c0FMjPwL4J/w6p6dg7HJTcdVWgPubbNLwX2S
-         +rM0gWFIdKRMz78ZV9jPshpiAgf8jn4bz8+8SGChshzwEuDbkkLq1CiUYkztArZ2i2L+
-         wmaw==
-X-Gm-Message-State: APjAAAVqXjXG/rGE2Unc3B+QWCi1RfvtfTp+OdrikPUvN1Vx6WCv7IxA
-        oU+YxGoPeKvAOW6MToCRbRa7+ajkNBg=
-X-Google-Smtp-Source: APXvYqw3ZxeK1KWVoQYkQZwW5gUw6ZrpY3pVlZhbG3RaFiSUJyRNEgOJwBNo/d4aRPX19W30JLm64g==
-X-Received: by 2002:aa7:8b1a:: with SMTP id f26mr29781944pfd.81.1574917808709;
-        Wed, 27 Nov 2019 21:10:08 -0800 (PST)
+        bh=BvSTajJ0/txDo3oQ9anR2MLYElhTmMiqKohTpjPUH4Y=;
+        b=sToeJFVhiLImEntgigCngtRMgd3NRNzHnK2DZGyJPHltJRcHwBiZQZyK4VzTG+X09G
+         DsSWMy+AaBHuOkE3gWvvpuRRkdHbqi1FJ3ROUQyYTDxq2BTNXnuyVVRhVqhD78QuGOBU
+         GOFlfSGT2BjBNMMqaxgGY3JYVdrQ5u09WuIX8RSuuRoYzOA+JP0zhXmYDZaADo3pViP9
+         ltxVXP2x3/7zZWgnTIQUWtQ9us8U1nTnJ0zIPH6XOgFGPIKv6wLhEBKYqXEfgjB1dS5R
+         SjynKJaqU1yPkDD/I+5NCzaG7tY8hXvmPaziOwELOCnx8gxTY/3gmziG34YDIlcJMPOn
+         W15w==
+X-Gm-Message-State: APjAAAVG3c+RVamRcQn48az5BN0Ltg3ENFOVgdttxoYFY91n60N4/WAm
+        Qgn4uVStkN+KZfk22/nyd6EePyl3+FQ=
+X-Google-Smtp-Source: APXvYqyql6x+1lm7cxFqUepsOsRjBk9AfB5o3/t6r/N0vThhH09XFvGWl/xVmQ8NaYF3vh/pvqejmQ==
+X-Received: by 2002:a62:5e04:: with SMTP id s4mr52193789pfb.63.1574917809693;
+        Wed, 27 Nov 2019 21:10:09 -0800 (PST)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id j20sm17799838pff.182.2019.11.27.21.10.07
+        by smtp.gmail.com with ESMTPSA id j20sm17799838pff.182.2019.11.27.21.10.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 21:10:08 -0800 (PST)
+        Wed, 27 Nov 2019 21:10:09 -0800 (PST)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     John Stultz <john.stultz@linaro.org>,
@@ -61,9 +61,9 @@ Cc:     John Stultz <john.stultz@linaro.org>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v6 4/8] dt-bindings: usb: dwc3: Allow clock list & resets to be more flexible
-Date:   Thu, 28 Nov 2019 05:09:57 +0000
-Message-Id: <20191128051001.18995-5-john.stultz@linaro.org>
+Subject: [PATCH v6 5/8] usb: dwc3: Rework clock initialization to be more flexible
+Date:   Thu, 28 Nov 2019 05:09:58 +0000
+Message-Id: <20191128051001.18995-6-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191128051001.18995-1-john.stultz@linaro.org>
 References: <20191128051001.18995-1-john.stultz@linaro.org>
@@ -72,9 +72,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather then adding another device specific binding to support
-hikey960, Rob Herring suggested we expand the current dwc3
-binding to allow for variable numbers of clocks and resets.
+The dwc3 core binding specifies three clocks:
+  ref, bus_early, and suspend
+
+which are all controlled in the driver together.
+
+However some variants of the hardware my not have all three
+clks, or some may have more. Usually this was handled by using
+the dwc3-of-simple glue driver, but that resulted in a
+proliferation of bindings for for every variant, when the only
+difference was the clocks and resets lists.
+
+So this patch reworks the reading of the clks from the dts to
+use devm_clk_bulk_get_all() will will fetch all the clocks
+specified in the dts together.
+
+This patch was recommended by Rob Herring <robh@kernel.org>
+as an alternative to creating multiple bindings for each variant
+of hardware.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Rob Herring <robh+dt@kernel.org>
@@ -93,36 +108,68 @@ Cc: Jack Pham <jackp@codeaurora.org>
 Cc: linux-usb@vger.kernel.org
 Cc: devicetree@vger.kernel.org
 Suggested-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: John Stultz <john.stultz@linaro.org>
-Change-Id: I0176989314d7b7e6ea586f5036f072442f7e34e1
+Change-Id: I3319bec8253edc131d772ca66dc9335435b06424
 ---
- Documentation/devicetree/bindings/usb/dwc3.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+v3: Rework dwc3 core rather then adding another dwc-of-simple
+    binding.
+v6: Re-introduce this patch, on Rob's suggestion
+---
+ drivers/usb/dwc3/core.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
-index 66780a47ad85..29768b0ca923 100644
---- a/Documentation/devicetree/bindings/usb/dwc3.txt
-+++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-@@ -7,7 +7,8 @@ Required properties:
-  - compatible: must be "snps,dwc3"
-  - reg : Address and length of the register set for the device
-  - interrupts: Interrupts used by the dwc3 controller.
-- - clock-names: should contain "ref", "bus_early", "suspend"
-+ - clock-names: list of clock names. Ideally should be "ref",
-+                "bus_early", "suspend" but may be less or more.
-  - clocks: list of phandle and clock specifier pairs corresponding to
-            entries in the clock-names property.
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index f561c6c9e8a9..c6316d4b7593 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -289,12 +289,6 @@ static int dwc3_core_soft_reset(struct dwc3 *dwc)
+ 	return 0;
+ }
  
-@@ -36,7 +37,7 @@ Optional properties:
-  - phys: from the *Generic PHY* bindings
-  - phy-names: from the *Generic PHY* bindings; supported names are "usb2-phy"
- 	or "usb3-phy".
-- - resets: a single pair of phandle and reset specifier
-+ - resets: set of phandle and reset specifier pairs
-  - snps,usb2-lpm-disable: indicate if we don't want to enable USB2 HW LPM
-  - snps,usb3_lpm_capable: determines if platform is USB3 LPM capable
-  - snps,dis-start-transfer-quirk: when set, disable isoc START TRANSFER command
+-static const struct clk_bulk_data dwc3_core_clks[] = {
+-	{ .id = "ref" },
+-	{ .id = "bus_early" },
+-	{ .id = "suspend" },
+-};
+-
+ /*
+  * dwc3_frame_length_adjustment - Adjusts frame length if required
+  * @dwc3: Pointer to our controller context structure
+@@ -1438,11 +1432,6 @@ static int dwc3_probe(struct platform_device *pdev)
+ 	if (!dwc)
+ 		return -ENOMEM;
+ 
+-	dwc->clks = devm_kmemdup(dev, dwc3_core_clks, sizeof(dwc3_core_clks),
+-				 GFP_KERNEL);
+-	if (!dwc->clks)
+-		return -ENOMEM;
+-
+ 	dwc->dev = dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -1478,17 +1467,18 @@ static int dwc3_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dwc->reset);
+ 
+ 	if (dev->of_node) {
+-		dwc->num_clks = ARRAY_SIZE(dwc3_core_clks);
+-
+-		ret = devm_clk_bulk_get(dev, dwc->num_clks, dwc->clks);
++		ret = devm_clk_bulk_get_all(dev, &dwc->clks);
+ 		if (ret == -EPROBE_DEFER)
+ 			return ret;
+ 		/*
+ 		 * Clocks are optional, but new DT platforms should support all
+ 		 * clocks as required by the DT-binding.
+ 		 */
+-		if (ret)
++		if (ret < 0)
+ 			dwc->num_clks = 0;
++		else
++			dwc->num_clks = ret;
++
+ 	}
+ 
+ 	ret = reset_control_deassert(dwc->reset);
 -- 
 2.17.1
 
