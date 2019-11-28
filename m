@@ -2,161 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8875C10C6D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 11:39:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E50510C70A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 11:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfK1Kis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 05:38:48 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7174 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726133AbfK1Kir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 05:38:47 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 580AC7EBE1F7FFC1E90C;
-        Thu, 28 Nov 2019 18:38:45 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Thu, 28 Nov 2019
- 18:38:35 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <sunke32@huawei.com>, <josef@toxicpanda.com>
-CC:     <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
-        <nbd@other.debian.org>, <linux-kernel@vger.kernel.org>,
-        <mchristi@redhat.com>
-Subject: [PATCH] nbd: fix potential deadlock in nbd_config_put()
-Date:   Thu, 28 Nov 2019 18:45:51 +0800
-Message-ID: <1574937951-92828-1-git-send-email-sunke32@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726968AbfK1Kqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 05:46:32 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35234 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfK1Kqb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 05:46:31 -0500
+Received: by mail-oi1-f196.google.com with SMTP id k196so6568879oib.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 02:46:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GQPDbYqNRXSh6PXhx4akn8aIavTIr5uskPQRjgpyFfM=;
+        b=ulsUpUUeLrxyO7qJDpjeMfLgZ7felgad/9o65ulMzMSfCJXi362CB75AlAmIIKGN9e
+         Pqt4YLmVeoEYaHUPDqyGzJGkyq33EPXwmhce31kVSamztL2pniW5LsuRGbBPCYfBbYB1
+         ID1L77YEHHCI5PIhtLb2SW2CwTHuWfdmZvyNpi+pGfpoMSitLqV+u0IypsSMA5Co/ZzD
+         2H/N8EnPxZMHvz+cCgoXvmgV707+s1DuDfkSAGrvlEt6I24tUzOwfu/q5/74d7dXg/8s
+         7xrPw1MbkMYW9Tz+JGo6sZCBl8h//JMyctHR7TyMu5PpIeDG85b5PfPkJe4RQtZ0azkO
+         ndvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GQPDbYqNRXSh6PXhx4akn8aIavTIr5uskPQRjgpyFfM=;
+        b=BNJCKI9UpmKypyODEEKbdLzTTMqJNM3v8ewHz7JgnLELLiNngwuEq5OJABI78D/Ikt
+         gU0Y14SisQI6msliPqYKySRnd2As7ArU3hG/fD/FB5XqtSEdJjScxJl2QyCiFYjOdYDA
+         6CFGbmqPdUN9rfAuReDdTzlIo9iRT8oR/pMah52pWylRgxdFc4wV2KWNIvaqQ5wqe6sF
+         YJnYJO13YGFkiUTY/RMiic+oyaj0sk0p4/KukS7ixTK73qPFWtG+LkZ/5KIH+EllbiYW
+         TMp7xV+m7+VfFB4W6EZB3znkiINbK/CF7FC0m0xTQlzrOHRo/QdEPhWsaZ8tqWS3rXYy
+         B3xQ==
+X-Gm-Message-State: APjAAAXzohUL1sdEHZE09n+KcRGvV4/ciyHY8XsAVi4kNOC/ou4R7aR1
+        RWJShJ5is2wBmf9B8KviaOEBmwNHR1AR/vEcj91LP2lA
+X-Google-Smtp-Source: APXvYqwgKWuNM3AaDjBIBvZISOlC0kMprIi47NTQkQds/weaknlkiS0CWm8bJ/afikYUhzQgCjXdlqD4YK1bVJEH0Xo=
+X-Received: by 2002:aca:4756:: with SMTP id u83mr8054092oia.147.1574937989831;
+ Thu, 28 Nov 2019 02:46:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+References: <20191127135932.7223-1-m.felsch@pengutronix.de> <20191127135932.7223-2-m.felsch@pengutronix.de>
+In-Reply-To: <20191127135932.7223-2-m.felsch@pengutronix.de>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 28 Nov 2019 11:46:19 +0100
+Message-ID: <CAMpxmJXzBphmW7SWD05wtLjSAR7VBzVAgnYJYd3Sd49Bp6AmgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] gpio: add support to get local gpio number
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Adam.Thomson.Opensource@diasemi.com,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I got a deadlock report from syzkaller:
+=C5=9Br., 27 lis 2019 o 14:59 Marco Felsch <m.felsch@pengutronix.de> napisa=
+=C5=82(a):
+>
+> Sometimes consumers needs to know the gpio-chip local gpio number of a
+> 'struct gpio_desc' for further configuration. This is often the case for
+> mfd devices.
+>
 
-[  234.427696] ============================================
-[  234.428327] WARNING: possible recursive locking detected
-[  234.429011] 5.4.0-rc4+ #1 Not tainted
-[  234.429528] --------------------------------------------
-[  234.430162] kworker/u9:0/894 is trying to acquire lock:
-[  234.430911] ffff0000d3aca128 ((wq_completion)knbd0-recv){+.+.}, at: flush_workqueue+0xbc/0xfe8
-[  234.432330]
-[  234.432330] but task is already holding lock:
-[  234.432927] ffff0000d3aca128 ((wq_completion)knbd0-recv){+.+.}, at: process_one_work+0x6a0/0x17e8
-[  234.433983]
-[  234.433983] other info that might help us debug this:
-[  234.434615]  Possible unsafe locking scenario:
-[  234.434615]
-[  234.435263]        CPU0
-[  234.435613]        ----
-[  234.436019]   lock((wq_completion)knbd0-recv);
-[  234.436521]   lock((wq_completion)knbd0-recv);
-[  234.437166]
-[  234.437166]  *** DEADLOCK ***
-[  234.437166]
-[  234.437763]  May be due to missing lock nesting notation
-[  234.437763]
-[  234.438559] 3 locks held by kworker/u9:0/894:
-[  234.439040]  #0: ffff0000d3aca128 ((wq_completion)knbd0-recv){+.+.}, at: process_one_work+0x6a0/0x17e8
-[  234.440185]  #1: ffff0000d344fd50 ((work_completion)(&args->work)){+.+.}, at: process_one_work+0x6a0/0x17e8
-[  234.442209]  #2: ffff0000d723cd78 (&nbd->config_lock){+.+.}, at: refcount_dec_and_mutex_lock+0x5c/0x128
-[  234.443380]
-[  234.443380] stack backtrace:
-[  234.444271] CPU: 3 PID: 894 Comm: kworker/u9:0 Not tainted 5.4.0-rc4+ #1
-[  234.444989] Hardware name: linux,dummy-virt (DT)
-[  234.446077] Workqueue: knbd0-recv recv_work
-[  234.446909] Call trace:
-[  234.447372]  dump_backtrace+0x0/0x358
-[  234.447877]  show_stack+0x28/0x38
-[  234.448347]  dump_stack+0x15c/0x1ec
-[  234.448838]  __lock_acquire+0x12ec/0x2f78
-[  234.449474]  lock_acquire+0x180/0x590
-[  234.450075]  flush_workqueue+0x104/0xfe8
-[  234.450587]  drain_workqueue+0x164/0x390
-[  234.451090]  destroy_workqueue+0x30/0x560
-[  234.451598]  nbd_config_put+0x308/0x700
-[  234.452093]  recv_work+0x198/0x1f0
-[  234.452556]  process_one_work+0x7ac/0x17e8
-[  234.453189]  worker_thread+0x36c/0xb70
-[  234.453788]  kthread+0x2f4/0x378
-[  234.454257]  ret_from_fork+0x10/0x18
+We already have this support. It's just a matter of exporting it, so
+maybe adjust the commit message to not be confusing.
 
-The root cause is recv_work() is the last one to drop the config
-ref and try to destroy the workqueue from inside the work queue.
+That being said: I'm not really a fan of this - the whole idea of gpio
+descriptors was to make them opaque and their hardware offsets
+irrelevant. :(
 
-There are two ways to fix the bug. The first way is flushing the
-workqueue before dropping the initial refcount and making sure
-recv_work() will not be the last owner of nbd_config. However it
-is hard for ioctl interface. Because nbd_clear_sock_ioctl() may
-not be invoked, so we need to flush the workqueue in nbd_release()
-and that will lead to another deadlock because recv_work can not
-exit from nbd_read_stat() loop.
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> ---
+>  drivers/gpio/gpiolib.c        |  6 ++++++
+>  include/linux/gpio/consumer.h | 10 ++++++++++
+>  2 files changed, 16 insertions(+)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 104ed299d5ea..7709648313fc 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -4377,6 +4377,12 @@ int gpiod_count(struct device *dev, const char *co=
+n_id)
+>  }
+>  EXPORT_SYMBOL_GPL(gpiod_count);
+>
+> +int gpiod_to_offset(struct gpio_desc *desc)
 
-The second way is using another work to put nbd_config asynchronously
-for recv_work().
+Maybe call it: gpiod_desc_to_offset()?
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- drivers/block/nbd.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 5753246..e7685a3 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -110,6 +110,7 @@ struct nbd_device {
- 	refcount_t config_refs;
- 	refcount_t refs;
- 	struct nbd_config *config;
-+	struct work_struct config_release;
- 	struct mutex config_lock;
- 	struct gendisk *disk;
- 	struct workqueue_struct *recv_workq;
-@@ -152,6 +153,7 @@ static int part_shift;
- static int nbd_dev_dbg_init(struct nbd_device *nbd);
- static void nbd_dev_dbg_close(struct nbd_device *nbd);
- static void nbd_config_put(struct nbd_device *nbd);
-+static void nbd_config_put_async(struct nbd_device *nbd);
- static void nbd_connect_reply(struct genl_info *info, int index);
- static int nbd_genl_status(struct sk_buff *skb, struct genl_info *info);
- static void nbd_dead_link_work(struct work_struct *work);
-@@ -789,7 +791,7 @@ static void recv_work(struct work_struct *work)
- 	}
- 	atomic_dec(&config->recv_threads);
- 	wake_up(&config->recv_wq);
--	nbd_config_put(nbd);
-+	nbd_config_put_async(nbd);
- 	kfree(args);
- }
- 
-@@ -1222,6 +1224,22 @@ static void nbd_config_put(struct nbd_device *nbd)
- 	}
- }
- 
-+static void nbd_config_release_work(struct work_struct *work)
-+{
-+	struct nbd_device *nbd = container_of(work, struct nbd_device,
-+						   config_release);
-+	nbd_config_put(nbd);
-+}
-+
-+static void nbd_config_put_async(struct nbd_device *nbd)
-+{
-+	if (refcount_dec_not_one(&nbd->config_refs))
-+		return;
-+
-+	INIT_WORK(&nbd->config_release, nbd_config_release_work);
-+	schedule_work(&nbd->config_release);
-+}
-+
- static int nbd_start_device(struct nbd_device *nbd)
- {
- 	struct nbd_config *config = nbd->config;
--- 
-2.7.4
-
+> +{
+> +       return gpio_chip_hwgpio(desc);
+> +}
+> +EXPORT_SYMBOL_GPL(gpiod_to_offset);
+> +
+>  /**
+>   * gpiod_get - obtain a GPIO for a given GPIO function
+>   * @dev:       GPIO consumer, can be NULL for system-global GPIOs
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.=
+h
+> index b70af921c614..e2178c3bf7fd 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -60,6 +60,9 @@ enum gpiod_flags {
+>  /* Return the number of GPIOs associated with a device / function */
+>  int gpiod_count(struct device *dev, const char *con_id);
+>
+> +/* Get the local chip offset from a global desc */
+> +int gpiod_to_offset(struct gpio_desc *desc);
+> +
+>  /* Acquire and dispose GPIOs */
+>  struct gpio_desc *__must_check gpiod_get(struct device *dev,
+>                                          const char *con_id,
+> @@ -189,6 +192,13 @@ static inline int gpiod_count(struct device *dev, co=
+nst char *con_id)
+>         return 0;
+>  }
+>
+> +static inline int gpiod_to_offset(struct gpio_desc *desc)
+> +{
+> +       /* GPIO can never have been requested */
+> +       WARN_ON(desc);
+> +       return 0;
+> +}
+> +
+>  static inline struct gpio_desc *__must_check gpiod_get(struct device *de=
+v,
+>                                                        const char *con_id=
+,
+>                                                        enum gpiod_flags f=
+lags)
+> --
+> 2.20.1
+>
