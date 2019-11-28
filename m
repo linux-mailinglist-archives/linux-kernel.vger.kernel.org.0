@@ -2,139 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE9110C470
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 08:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F7D10C474
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 08:45:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfK1Hpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 02:45:32 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:54088 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfK1Hpc (ORCPT
+        id S1727361AbfK1Hpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 02:45:45 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:7644 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfK1Hpn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 02:45:32 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAS7jMFU011581;
-        Thu, 28 Nov 2019 07:45:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=OdpF9tLxLFKM7EnkRAYagcdyDm+kWt6AXF8o3UG4bMk=;
- b=HRyajfzZSaedBpO9gCM8SyuLLeUKiQaJk00s0eoc8hVckt3gaA1AV+q/ZJ6FVwyQ/W0o
- 7F/iR7RmlNP/u0pnPjcm73b2QO3/CQdeSNw5JH1VklUlMCEwnPYN0f4k7Bm9ux746Z44
- b32LFfmdGVwYUh0G4S1awoYDG4Q2JEyxVFDtw8k5P7dCL8lxpIRKWi9pgyKlwlQMZT6+
- PSLFYkzNYatwp2pOyMHYJ7Xsil0Mwp2ObSl49eNFpRrjqnPHVrDWuL0jwAPfmTteCZvd
- szy5CxlWFNGkCcYyqv10C6Mw6BzqP9R+gyuYZXWx6bivGNv65Xmk6JqUT0a6PkJ8qCdy 9Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2wevqqhxn9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Nov 2019 07:45:22 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAS7jAWt049678;
-        Thu, 28 Nov 2019 07:45:21 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2why49m30r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Nov 2019 07:45:21 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAS7jEpZ028073;
-        Thu, 28 Nov 2019 07:45:15 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 27 Nov 2019 23:45:14 -0800
-Date:   Thu, 28 Nov 2019 10:45:05 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     shubhrajyoti.datta@gmail.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        robh+dt@kernel.org, soren.brinkmann@xilinx.com
-Subject: Re: [PATCH v3 08/10] clk: clock-wizard: Make the output names unique
-Message-ID: <20191128074505.GC1781@kadam>
-References: <cover.1574922435.git.shubhrajyoti.datta@xilinx.com>
- <d9277db2692bb77a41dfed927cfb791bdcced17d.1574922435.git.shubhrajyoti.datta@xilinx.com>
+        Thu, 28 Nov 2019 02:45:43 -0500
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 1BIEeTe/xvsmF8vn9hfa3SajDb9AMZepfhaR5sJ5afACDvhZx8yk0wd9EG4Y4ohqz4j+zUPNuc
+ 8rWl4jbODMHJF4mNW6X8aHpiOnOzMrmmHAN+QBRyXvZbwAqoro9AKiWNZK1rqGNJNTdZz300Fd
+ l4TKYp185RBa+7dffRoDLgUsfJLrN2G2dkb5cqCxFDKMsS2ZiHUvaZTFr4gn0+DgEOMOmysEWv
+ g2MVDGJWGxNaOZCTjsJwIF/ssIPrfMxUCVcdrlzn7WV7KQdD9tknVfA1Ny3YtBybPCzhETeAGK
+ Ojw=
+X-IronPort-AV: E=Sophos;i="5.69,252,1571727600"; 
+   d="scan'208";a="55970602"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Nov 2019 00:45:42 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 28 Nov 2019 00:45:34 -0700
+Received: from M43218.microchip.com (10.10.85.251) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 28 Nov 2019 00:45:31 -0700
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <nicolas.ferre@microchip.com>,
+        <adrian.hunter@intel.com>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <claudiu.beznea@microchip.com>, <Eugen.Hristev@microchip.com>,
+        <alexandre.belloni@bootlin.com>,
+        "Ludovic Desroches" <ludovic.desroches@microchip.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/3] dt-bindings: sdhci-of-at91: new compatible string and update properties
+Date:   Thu, 28 Nov 2019 08:45:20 +0100
+Message-ID: <20191128074522.69706-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9277db2692bb77a41dfed927cfb791bdcced17d.1574922435.git.shubhrajyoti.datta@xilinx.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911280065
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911280065
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 12:06:15PM +0530, shubhrajyoti.datta@gmail.com wrote:
-> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> 
-> Incase there are more than one instance of the clocking wizard.
-> And if the output name given is the same then the probe fails.
-> Fix the same by appending the device name to the output name to
-> make it unique.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
->  drivers/clk/clk-xlnx-clock-wizard.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
-> index 75ea745..9993543 100644
-> --- a/drivers/clk/clk-xlnx-clock-wizard.c
-> +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-> @@ -555,6 +555,9 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  		ret = -ENOMEM;
->  		goto err_disable_clk;
->  	}
-> +	outputs = of_property_count_strings(np, "clock-output-names");
-> +	if (outputs == 1)
-> +		flags = CLK_SET_RATE_PARENT;
->  	clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
->  			(&pdev->dev, clk_name,
->  			 __clk_get_name(clk_wzrd->clk_in1),
-> @@ -566,9 +569,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  		goto err_disable_clk;
->  	}
->  
-> -	outputs = of_property_count_strings(np, "clock-output-names");
-> -	if (outputs == 1)
-> -		flags = CLK_SET_RATE_PARENT;
->  	clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
->  	if (!clk_name) {
->  		ret = -ENOMEM;
-> @@ -591,6 +591,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  	/* register div per output */
->  	for (i = outputs - 1; i >= 0 ; i--) {
->  		const char *clkout_name;
-> +		const char *clkout_name_wiz;
->  
->  		if (of_property_read_string_index(np, "clock-output-names", i,
->  						  &clkout_name)) {
-> @@ -599,9 +600,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
->  			ret = -EINVAL;
->  			goto err_rm_int_clks;
->  		}
-> +		clkout_name_wiz = kasprintf(GFP_KERNEL, "%s_%s",
-> +					    dev_name(&pdev->dev), clkout_name);
+There is a new compatible string for the SAM9X60 sdhci device. It involves
+an update of the properties about the clocks stuff.
 
-If this kasprintf() crashes then clk_wzrd_register_divf() will fail.
-But that was a headache to review.  Just add a check for NULL.  We need
-a kfree() as well.
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 
-One alternative would be to just declare a buffer on the stack and use
-snprintf().  We don't need to keep the name around after the call to
-clk_wzrd_register_divf().
+Changes:
+- v3: rebase due to conflict with Nicolas' patch
+- v2: remove the extra example and fix node label
 
-regards,
-dan carpenter
+ .../devicetree/bindings/mmc/sdhci-atmel.txt         | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+index 503c6dbac1b2..69edfd4d3922 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-atmel.txt
+@@ -5,11 +5,16 @@ Documentation/devicetree/bindings/mmc/mmc.txt and the properties used by the
+ sdhci-of-at91 driver.
+ 
+ Required properties:
+-- compatible:		Must be "atmel,sama5d2-sdhci".
++- compatible:		Must be "atmel,sama5d2-sdhci" or "microchip,sam9x60-sdhci".
+ - clocks:		Phandlers to the clocks.
+-- clock-names:		Must be "hclock", "multclk", "baseclk";
++- clock-names:		Must be "hclock", "multclk", "baseclk" for
++			"atmel,sama5d2-sdhci".
++			Must be "hclock", "multclk" for "microchip,sam9x60-sdhci".
+ 
+ Optional properties:
++- assigned-clocks:	The same with "multclk".
++- assigned-clock-rates	The rate of "multclk" in order to not rely on the
++			gck configuration set by previous components.
+ - microchip,sdcal-inverted: when present, polarity on the SDCAL SoC pin is
+   inverted. The default polarity for this signal is described in the datasheet.
+   For instance on SAMA5D2, the pin is usually tied to the GND with a resistor
+@@ -17,10 +22,12 @@ Optional properties:
+ 
+ Example:
+ 
+-sdmmc0: sdio-host@a0000000 {
++mmc0: sdio-host@a0000000 {
+ 	compatible = "atmel,sama5d2-sdhci";
+ 	reg = <0xa0000000 0x300>;
+ 	interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
+ 	clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
+ 	clock-names = "hclock", "multclk", "baseclk";
++	assigned-clocks = <&sdmmc0_gclk>;
++	assigned-clock-rates = <480000000>;
+ };
+-- 
+2.24.0
 
