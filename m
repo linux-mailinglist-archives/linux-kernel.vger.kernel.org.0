@@ -2,245 +2,370 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E93510C36B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 06:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 776C010C37A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 06:12:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbfK1FK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 00:10:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60070 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbfK1FKZ (ORCPT
+        id S1726608AbfK1FMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 00:12:37 -0500
+Received: from sender4-pp-o98.zoho.com ([136.143.188.98]:25803 "EHLO
+        sender4-pp-o98.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfK1FMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 00:10:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l+NBq4hr2KRRSPHU68VrtargZDFHklaSzkUUjI+g3kY=; b=eknrOevoXGVBjGctmGm1T1yYM
-        GpcDuTUpcecCjIE+YrQX8CIlJaSk1TZk0kkaT1WY8TOgzr2ZK0ZtP4pTt2LF8TLPNiYdynwpHkw1o
-        XmHJtwqWtAwdJ4IGqzJynUitWN0VSpoB/TL+v636S+/HvYZnuwS6zcLE10gkMCuGDpbsw7xTPY0kY
-        nJ6ISt7VsZk/tBggIX6QL+Ffz99+r+m0kHjM/Due/pGied2AtaCmMmFo6JMshl12WGtXuKaTR+JEG
-        lAEFLLSEuBc8bROCeVZ1uzSQhBC8Rw8ddOlBiUQ76JtWZMdEZMSHIvmanOTIzH+aKuzbYEYvNpOpl
-        IURWbD23A==;
-Received: from [2601:1c0:6280:3f0::5a22]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iaC4N-00065F-L5; Thu, 28 Nov 2019 05:10:23 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] clocksource: fix Kconfig miscues
-Message-ID: <4deb42a9-82f2-72f9-891f-972a9a399f4f@infradead.org>
-Date:   Wed, 27 Nov 2019 21:10:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Thu, 28 Nov 2019 00:12:36 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1574917916; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=nx4Uzg4pUF8dGZQgxktKp0iMZA1sRrYC0gvG9INTbzD9FlofPd6Ym4c1WTZF6cjyFEel96Ge+4sE34S4SCfJrYZXzTeFqzDcYvkBohPgkVwRFsjHui/HMYENje1GbbXVZYqFv0am/lCmGmYXKUu5kOouEzOafzYWxcH0dWyV1WQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1574917916; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=Gv5khDipFDg8e+TeKCMd3YHA1629M59X1LmDNZoFAV4=; 
+        b=Q9OZPDoZl3UPWmTYpwZaKd6zfcPoo4epbV43k5NmxDmw7bQliEX3y6nykKYkOpAfgTso7PR8hd7uQptVBBQM5flkE1EJHj8GhKNBcrig+90alrDoOsRMlVA/447/PjhHFNOsxW856Nya+17PUjL6BTfYA1DOvZM42Z2EYCKZQ9o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=TsQd6KJYkOH8PSRnHQx0SYK/MIgQc42gEjqOoAR256DYqu5rEM0s+tPKQIvlA8k98wNEfO9uSoCh
+    DUZGPZOHK09dxte63zagQH4M9oCQGOrPt4IGODJdzFVL7uwRV5q8  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574917916;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        bh=Gv5khDipFDg8e+TeKCMd3YHA1629M59X1LmDNZoFAV4=;
+        b=jMlzZCJBgsnwYkasczDEhkK9rEPqjZ0OR8N05jR9PS7IJhwIO7WiRBjPJAqewiw2
+        gbvWs6cQHTF/eNzoqimOfaoWgqdiqVmIikSkB4ui7O/QBOOfQWyPCGZI/4NUi5Zxa1t
+        Fh9/qwqogmbsP3QF6kFL3850iiJ7yKSDM0/jhZIc=
+Received: from [192.168.88.130] (125.71.5.36 [125.71.5.36]) by mx.zohomail.com
+        with SMTPS id 157491791588131.159645916822114; Wed, 27 Nov 2019 21:11:55 -0800 (PST)
+Subject: Re: [PATCH v4 4/6] MIPS: Ingenic: Initial YSH & ATIL CU Neo board
+ support.
+To:     Paul Cercueil <paul@crapouillou.net>
+References: <1574787974-58040-1-git-send-email-zhouyanjie@zoho.com>
+ <1574787974-58040-5-git-send-email-zhouyanjie@zoho.com>
+ <1574873873.3.1@crapouillou.net>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, paulburton@kernel.org, jhogan@kernel.org,
+        mripard@kernel.org, shawnguo@kernel.org, mark.rutland@arm.com,
+        syq@debian.org, ralf@linux-mips.org, heiko@sntech.de,
+        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
+        krzk@kernel.org, geert+renesas@glider.be,
+        prasannatsmkumar@gmail.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com, 772753199@qq.com
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5DDF5711.9050008@zoho.com>
+Date:   Thu, 28 Nov 2019 13:11:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1574873873.3.1@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Paul,
 
-Fix lots of typo, spelling, punctuation, and grammar miscues in
-drivers/clocksource/Kconfig.
+On 2019=E5=B9=B411=E6=9C=8828=E6=97=A5 00:57, Paul Cercueil wrote:
+> Hi Zhou,
+>
+>
+> Le mer., nov. 27, 2019 at 01:06, Zhou Yanjie <zhouyanjie@zoho.com> a=20
+> =C3=A9crit :
+>> Add a device tree for the Ingenic X1000 based YSH & ATIL CU Neo board.
+>> Note that this is unselectable via Kconfig until the X1000 SoC is made
+>> selectable in a later commit.
+>>
+>> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+>> ---
+>>
+>> Notes:
+>>     v1->v2:
+>>     Rebase on top of mips-next, use TCU for system timer and=20
+>> clocksource.
+>>
+>>     v2->v3:
+>>     No change.
+>>
+>>     v3->v4:
+>>     1.Adjust "model" in "cu1000.dts" to match the description in=20
+>> "devices.yaml".
+>>     2.Adjust "bool" in "Kconfig" to avoid duplicate names with=20
+>> subsequent boards.
+>>
+>>  arch/mips/boot/dts/ingenic/Makefile   |   1 +
+>>  arch/mips/boot/dts/ingenic/cu1000.dts |  52 ++++++++++++++++++
+>>  arch/mips/configs/cu1000_defconfig    | 100=20
+>> ++++++++++++++++++++++++++++++++++
+>>  arch/mips/jz4740/Kconfig              |   4 ++
+>>  4 files changed, 157 insertions(+)
+>>  create mode 100644 arch/mips/boot/dts/ingenic/cu1000.dts
+>>  create mode 100644 arch/mips/configs/cu1000_defconfig
+>>
+>> diff --git a/arch/mips/boot/dts/ingenic/Makefile=20
+>> b/arch/mips/boot/dts/ingenic/Makefile
+>> index 9cc4844..f6db7bb 100644
+>> --- a/arch/mips/boot/dts/ingenic/Makefile
+>> +++ b/arch/mips/boot/dts/ingenic/Makefile
+>> @@ -2,5 +2,6 @@
+>>  dtb-$(CONFIG_JZ4740_QI_LB60)    +=3D qi_lb60.dtb
+>>  dtb-$(CONFIG_JZ4770_GCW0)    +=3D gcw0.dtb
+>>  dtb-$(CONFIG_JZ4780_CI20)    +=3D ci20.dtb
+>> +dtb-$(CONFIG_X1000_CU1000)    +=3D cu1000.dtb
+>>
+>>  obj-$(CONFIG_BUILTIN_DTB)    +=3D $(addsuffix .o, $(dtb-y))
+>> diff --git a/arch/mips/boot/dts/ingenic/cu1000.dts=20
+>> b/arch/mips/boot/dts/ingenic/cu1000.dts
+>> new file mode 100644
+>> index 00000000..f92f6af
+>> --- /dev/null
+>> +++ b/arch/mips/boot/dts/ingenic/cu1000.dts
+>> @@ -0,0 +1,52 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +
+>> +#include "x1000.dtsi"
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/clock/ingenic,tcu.h>
+>> +
+>> +/ {
+>> +    compatible =3D "yna,cu1000", "ingenic,x1000";
+>> +    model =3D "YSH & ATIL General Board CU Neo";
+>> +
+>> +    aliases {
+>> +        serial2 =3D &uart2;
+>> +    };
+>> +
+>> +    chosen {
+>> +        stdout-path =3D &uart2;
+>> +    };
+>> +
+>> +    memory {
+>> +        device_type =3D "memory";
+>> +        reg =3D <0x0 0x04000000>;
+>> +    };
+>> +};
+>> +
+>> +&exclk {
+>> +    clock-frequency =3D <24000000>;
+>> +};
+>> +
+>> +&tcu {
+>> +    /* 1500 kHz for the system timer and clocksource */
+>> +    assigned-clocks =3D <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER2>;
+>> +    assigned-clock-rates =3D <1500000>, <1500000>;
+>> +
+>> +    /* Use channel #1 for the system timer channel #2 for the=20
+>> clocksource */
+>> +    ingenic,pwm-channels-mask =3D <0xfa>;
+>
+> From the mask used, I'm gessing that you're reserving channels #0 and=20
+> #2, not #1 and #2.
+>
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org
----
-Interesting that NSPIRE_TIMER is for timer-zevio.c, which says
-nothing about NSpire.
+My fault, you are right, it use channels #0 and #2.
 
- drivers/clocksource/Kconfig |   48 +++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+>> +};
+>> +
+>> +&uart2 {
+>> +    status =3D "okay";
+>> +
+>> +    pinctrl-names =3D "default";
+>> +    pinctrl-0 =3D <&pins_uart2>;
+>> +};
+>> +
+>> +&pinctrl {
+>> +    pins_uart2: uart2 {
+>> +        function =3D "uart2";
+>> +        groups =3D "uart2-data-d";
+>> +        bias-disable;
+>> +    };
+>> +};
+>> diff --git a/arch/mips/configs/cu1000_defconfig=20
+>> b/arch/mips/configs/cu1000_defconfig
+>> new file mode 100644
+>> index 00000000..88729ee
+>> --- /dev/null
+>> +++ b/arch/mips/configs/cu1000_defconfig
+>> @@ -0,0 +1,100 @@
+>> +CONFIG_LOCALVERSION_AUTO=3Dy
+>> +CONFIG_KERNEL_GZIP=3Dy
+>> +CONFIG_SYSVIPC=3Dy
+>> +CONFIG_NO_HZ_IDLE=3Dy
+>> +CONFIG_HIGH_RES_TIMERS=3Dy
+>> +CONFIG_PREEMPT=3Dy
+>> +CONFIG_IKCONFIG=3Dy
+>> +CONFIG_IKCONFIG_PROC=3Dy
+>> +CONFIG_LOG_BUF_SHIFT=3D14
+>> +CONFIG_CGROUPS=3Dy
+>> +CONFIG_MEMCG=3Dy
+>> +CONFIG_MEMCG_KMEM=3Dy
+>> +CONFIG_CGROUP_SCHED=3Dy
+>> +CONFIG_CGROUP_FREEZER=3Dy
+>> +CONFIG_CGROUP_DEVICE=3Dy
+>> +CONFIG_CGROUP_CPUACCT=3Dy
+>> +CONFIG_NAMESPACES=3Dy
+>> +CONFIG_USER_NS=3Dy
+>> +CONFIG_BLK_DEV_INITRD=3Dy
+>> +CONFIG_INITRAMFS_SOURCE=3D"arch/mips/boot/ramdisk.cpio.gz"
+>> +CONFIG_CC_OPTIMIZE_FOR_SIZE=3Dy
+>> +CONFIG_SYSCTL_SYSCALL=3Dy
+>> +CONFIG_KALLSYMS_ALL=3Dy
+>> +CONFIG_EMBEDDED=3Dy
+>> +# CONFIG_VM_EVENT_COUNTERS is not set
+>> +# CONFIG_COMPAT_BRK is not set
+>> +CONFIG_SLAB=3Dy
+>> +CONFIG_MACH_INGENIC=3Dy
+>> +CONFIG_X1000_CU1000=3Dy
+>> +CONFIG_HIGHMEM=3Dy
+>> +CONFIG_HZ_100=3Dy
+>> +CONFIG_HZ=3D100
+>
+> This line looks malformed.
 
---- linux-next-20191127.orig/drivers/clocksource/Kconfig
-+++ linux-next-20191127/drivers/clocksource/Kconfig
-@@ -88,7 +88,7 @@ config ROCKCHIP_TIMER
- 	select TIMER_OF
- 	select CLKSRC_MMIO
- 	help
--	  Enables the support for the rockchip timer driver.
-+	  Enables the support for the Rockchip timer driver.
- 
- config ARMADA_370_XP_TIMER
- 	bool "Armada 370 and XP timer driver" if COMPILE_TEST
-@@ -162,13 +162,13 @@ config NPCM7XX_TIMER
- 	select CLKSRC_MMIO
- 	help
- 	  Enable 24-bit TIMER0 and TIMER1 counters in the NPCM7xx architecture,
--	  While TIMER0 serves as clockevent and TIMER1 serves as clocksource.
-+	  where TIMER0 serves as clockevent and TIMER1 serves as clocksource.
- 
- config CADENCE_TTC_TIMER
- 	bool "Cadence TTC timer driver" if COMPILE_TEST
- 	depends on COMMON_CLK
- 	help
--	  Enables support for the cadence ttc driver.
-+	  Enables support for the Cadence TTC driver.
- 
- config ASM9260_TIMER
- 	bool "ASM9260 timer driver" if COMPILE_TEST
-@@ -190,10 +190,10 @@ config CLKSRC_DBX500_PRCMU
- 	bool "Clocksource PRCMU Timer" if COMPILE_TEST
- 	depends on HAS_IOMEM
- 	help
--	  Use the always on PRCMU Timer as clocksource
-+	  Use the always on PRCMU Timer as clocksource.
- 
- config CLPS711X_TIMER
--	bool "Cirrus logic timer driver" if COMPILE_TEST
-+	bool "Cirrus Logic timer driver" if COMPILE_TEST
- 	select CLKSRC_MMIO
- 	help
- 	  Enables support for the Cirrus Logic PS711 timer.
-@@ -205,11 +205,11 @@ config ATLAS7_TIMER
- 	  Enables support for the Atlas7 timer.
- 
- config MXS_TIMER
--	bool "Mxs timer driver" if COMPILE_TEST
-+	bool "MXS timer driver" if COMPILE_TEST
- 	select CLKSRC_MMIO
- 	select STMP_DEVICE
- 	help
--	  Enables support for the Mxs timer.
-+	  Enables support for the MXS timer.
- 
- config PRIMA2_TIMER
- 	bool "Prima2 timer driver" if COMPILE_TEST
-@@ -238,10 +238,10 @@ config KEYSTONE_TIMER
- 	  Enables support for the Keystone timer.
- 
- config INTEGRATOR_AP_TIMER
--	bool "Integrator-ap timer driver" if COMPILE_TEST
-+	bool "Integrator-AP timer driver" if COMPILE_TEST
- 	select CLKSRC_MMIO
- 	help
--	  Enables support for the Integrator-ap timer.
-+	  Enables support for the Integrator-AP timer.
- 
- config CLKSRC_EFM32
- 	bool "Clocksource for Energy Micro's EFM32 SoCs" if !ARCH_EFM32
-@@ -283,8 +283,8 @@ config CLKSRC_NPS
- 	select TIMER_OF if OF
- 	help
- 	  NPS400 clocksource support.
--	  Got 64 bit counter with update rate up to 1000MHz.
--	  This counter is accessed via couple of 32 bit memory mapped registers.
-+	  It has a 64-bit counter with update rate up to 1000MHz.
-+	  This counter is accessed via couple of 32-bit memory-mapped registers.
- 
- config CLKSRC_STM32
- 	bool "Clocksource for STM32 SoCs" if !ARCH_STM32
-@@ -305,14 +305,14 @@ config ARC_TIMERS
- 	help
- 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
- 	  (ARC700 as well as ARC HS38).
--	  TIMER0 serves as clockevent while TIMER1 provides clocksource
-+	  TIMER0 serves as clockevent while TIMER1 provides clocksource.
- 
- config ARC_TIMERS_64BIT
- 	bool "Support for 64-bit counters in ARC HS38 cores" if COMPILE_TEST
- 	depends on ARC_TIMERS
- 	select TIMER_OF
- 	help
--	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP)
-+	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP).
- 	  RTC is implemented inside the core, while GFRC sits outside the core in
- 	  ARConnect IP block. Driver automatically picks one of them for clocksource
- 	  as appropriate.
-@@ -390,7 +390,7 @@ config ARM_GLOBAL_TIMER
- 	select TIMER_OF if OF
- 	depends on ARM
- 	help
--	  This options enables support for the ARM global timer unit
-+	  This option enables support for the ARM global timer unit.
- 
- config ARM_TIMER_SP804
- 	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
-@@ -403,14 +403,14 @@ config CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLO
- 	depends on ARM_GLOBAL_TIMER
- 	default y
- 	help
--	 Use ARM global timer clock source as sched_clock
-+	  Use ARM global timer clock source as sched_clock.
- 
- config ARMV7M_SYSTICK
- 	bool "Support for the ARMv7M system time" if COMPILE_TEST
- 	select TIMER_OF if OF
- 	select CLKSRC_MMIO
- 	help
--	  This options enables support for the ARMv7M system timer unit
-+	  This option enables support for the ARMv7M system timer unit.
- 
- config ATMEL_PIT
- 	bool "Atmel PIT support" if COMPILE_TEST
-@@ -460,7 +460,7 @@ config VF_PIT_TIMER
- 	bool
- 	select CLKSRC_MMIO
- 	help
--	  Support for Period Interrupt Timer on Freescale Vybrid Family SoCs.
-+	  Support for Periodic Interrupt Timer on Freescale Vybrid Family SoCs.
- 
- config OXNAS_RPS_TIMER
- 	bool "Oxford Semiconductor OXNAS RPS Timers driver" if COMPILE_TEST
-@@ -523,7 +523,7 @@ config SH_TIMER_MTU2
- 	help
- 	  This enables build of a clockevent driver for the Multi-Function
- 	  Timer Pulse Unit 2 (MTU2) hardware available on SoCs from Renesas.
--	  This hardware comes with 16 bit-timer registers.
-+	  This hardware comes with 16-bit timer registers.
- 
- config RENESAS_OSTM
- 	bool "Renesas OSTM timer driver" if COMPILE_TEST
-@@ -580,7 +580,7 @@ config CLKSRC_TANGO_XTAL
- 	select TIMER_OF
- 	select CLKSRC_MMIO
- 	help
--	  This enables the clocksource for Tango SoC
-+	  This enables the clocksource for Tango SoC.
- 
- config CLKSRC_PXA
- 	bool "Clocksource for PXA or SA-11x0 platform" if COMPILE_TEST
-@@ -600,15 +600,15 @@ config H8300_TMR16
-         bool "Clockevent timer for the H83069 platform" if COMPILE_TEST
-         depends on HAS_IOMEM
- 	help
--	  This enables the 16 bits timer for the H8300 platform with the
--	  H83069 cpu.
-+	  This enables the 16-bits timer for the H8300 platform with the
-+	  H83069 CPU.
- 
- config H8300_TPU
-         bool "Clocksource for the H8300 platform" if COMPILE_TEST
-         depends on HAS_IOMEM
- 	help
- 	  This enables the clocksource for the H8300 platform with the
--	  H8S2678 cpu.
-+	  H8S2678 CPU.
- 
- config CLKSRC_IMX_GPT
- 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
-@@ -666,8 +666,8 @@ config CSKY_MP_TIMER
- 	help
- 	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
- 	  system.
--	  csky,mptimer is not only used in SMP system, it also could be used
--	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
-+	  csky,mptimer is not only used in SMP system, it also could be used in
-+	  single core system. It's not a mmio reg and it uses mtcr/mfcr instruction.
- 
- config GX6605S_TIMER
- 	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
+Ok, I'll remove it in v7.
+
+>
+>> +# CONFIG_SECCOMP is not set
+>> +# CONFIG_SUSPEND is not set
+>> +# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+>> +# CONFIG_COMPACTION is not set
+>> +CONFIG_CMA=3Dy
+>> +CONFIG_CMA_AREAS=3D7
+>> +CONFIG_UEVENT_HELPER=3Dy
+>> +CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
+>> +CONFIG_DEVTMPFS=3Dy
+>> +# CONFIG_FW_LOADER is not set
+>> +# CONFIG_ALLOW_DEV_COREDUMP is not set
+>> +# CONFIG_INPUT_MOUSEDEV is not set
+>> +# CONFIG_INPUT_KEYBOARD is not set
+>> +# CONFIG_INPUT_MOUSE is not set
+>> +# CONFIG_SERIO is not set
+>> +CONFIG_VT_HW_CONSOLE_BINDING=3Dy
+>> +CONFIG_LEGACY_PTY_COUNT=3D2
+>> +CONFIG_SERIAL_EARLYCON=3Dy
+>> +CONFIG_SERIAL_8250=3Dy
+>> +CONFIG_SERIAL_8250_CONSOLE=3Dy
+>> +CONFIG_SERIAL_8250_NR_UARTS=3D3
+>> +CONFIG_SERIAL_8250_RUNTIME_UARTS=3D3
+>> +CONFIG_SERIAL_8250_INGENIC=3Dy
+>> +CONFIG_SERIAL_OF_PLATFORM=3Dy
+>> +# CONFIG_HW_RANDOM is not set
+>> +CONFIG_GPIO_SYSFS=3Dy
+>> +# CONFIG_HWMON is not set
+>> +# CONFIG_LCD_CLASS_DEVICE is not set
+>> +# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
+>> +# CONFIG_VGA_CONSOLE is not set
+>> +# CONFIG_HID is not set
+>> +# CONFIG_USB_SUPPORT is not set
+>> +# CONFIG_IOMMU_SUPPORT is not set
+>> +CONFIG_NVMEM=3Dy
+>> +CONFIG_NVMEM_SYSFS=3Dy
+>> +CONFIG_EXT4_FS=3Dy
+>> +# CONFIG_DNOTIFY is not set
+>> +CONFIG_PROC_KCORE=3Dy
+>> +# CONFIG_PROC_PAGE_MONITOR is not set
+>> +CONFIG_TMPFS=3Dy
+>> +CONFIG_CONFIGFS_FS=3Dy
+>> +CONFIG_NLS=3Dy
+>> +CONFIG_NLS_CODEPAGE_936=3Dy
+>> +CONFIG_NLS_CODEPAGE_950=3Dy
+>> +CONFIG_NLS_ASCII=3Dy
+>> +CONFIG_NLS_ISO8859_1=3Dy
+>> +CONFIG_NLS_UTF8=3Dy
+>> +CONFIG_CRYPTO_ECHAINIV=3Dy
+>> +CONFIG_CRYPTO_AES=3Dy
+>> +CONFIG_CRYPTO_DEFLATE=3Dy
+>> +CONFIG_CRYPTO_LZO=3Dy
+>> +CONFIG_PRINTK_TIME=3Dy
+>> +CONFIG_CONSOLE_LOGLEVEL_DEFAULT=3D15
+>> +CONFIG_CONSOLE_LOGLEVEL_QUIET=3D15
+>> +CONFIG_MESSAGE_LOGLEVEL_DEFAULT=3D7
+>> +CONFIG_DEBUG_INFO=3Dy
+>> +CONFIG_STRIP_ASM_SYMS=3Dy
+>> +CONFIG_DEBUG_FS=3Dy
+>> +CONFIG_MAGIC_SYSRQ=3Dy
+>> +CONFIG_PANIC_ON_OOPS=3Dy
+>> +CONFIG_PANIC_TIMEOUT=3D10
+>> +# CONFIG_SCHED_DEBUG is not set
+>> +# CONFIG_DEBUG_PREEMPT is not set
+>> +CONFIG_STACKTRACE=3Dy
+>> +# CONFIG_FTRACE is not set
+>> +CONFIG_CMDLINE_BOOL=3Dy
+>> +CONFIG_CMDLINE=3D"console=3DttyS2,115200n8 mem=3D32M@0x0 earlycon=20
+>> clk_ignore_unused"
+>
+> You already specify the stdout-path in the devicetree, no need to pass=20
+> the "console" parameter.
+>
+
+According the test log , if remove "console=3DttyS2,115200n8", serial will =
+not
+initialized and will stuck after:
+
+[    0.016815] printk: bootconsole [x1000_uart0] disabled
+
+if remove both "console=3DttyS2,115200n8" and "earlycon" it will stuck afte=
+r:
+
+Starting kernel ...
+
+So I think both the "earlycon" and the "console=3DttyS2,115200n8 earlycon"=
+=20
+should be retained.
+
+> For the "mem" parameter, it's already set in the devicetree, so no=20
+> need to set it again here.
+> Besides, in the devicetree it is set to 64 MiB.
+
+Ok, I'll remove them in v7.
+
+>
+> Why is clk_ignore_unused needed?
+
+In fact, I also don't know why "clk_ignore_unused" needed.
+This part of the parameter is copied from ci20_defconfig,
+but according to the test, if remove "clk_ignore_unused",
+it will stuck after :
+
+[    0.374361] printk: bootconsole [x1000_uart0] disabled
+
+Differeent from the case where "console=3DttyS2,115200n8" is removed,
+the serial is successfully initialized this time.
+
+So I think "clk_ignore_unused" should be retained.
+
+Thanks and best regards!
+
+>
+> Cheers,
+> -Paul
+>
+>> +CONFIG_CMDLINE_OVERRIDE=3Dy
+>> diff --git a/arch/mips/jz4740/Kconfig b/arch/mips/jz4740/Kconfig
+>> index 6b96844..ccaf507 100644
+>> --- a/arch/mips/jz4740/Kconfig
+>> +++ b/arch/mips/jz4740/Kconfig
+>> @@ -16,6 +16,10 @@ config JZ4780_CI20
+>>      bool "MIPS Creator CI20"
+>>      select MACH_JZ4780
+>>
+>> +config X1000_CU1000
+>> +    bool "YSH & ATIL General Module CU1000"
+>> +    select MACH_X1000
+>> +
+>>  endchoice
+>>
+>>  config MACH_JZ4740
+>> --=20
+>> 2.7.4
+>>
+>>
+>
+>
+
+
 
