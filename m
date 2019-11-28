@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F7D10CD30
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:51:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C9B210CD35
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfK1QuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 11:50:13 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43789 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726859AbfK1QuL (ORCPT
+        id S1727299AbfK1QvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 11:51:06 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41196 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbfK1QuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 11:50:11 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h14so3190739pfe.10
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:09 -0800 (PST)
+        Thu, 28 Nov 2019 11:50:10 -0500
+Received: by mail-pf1-f196.google.com with SMTP id s18so4810000pfd.8
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6rU2ZvHsnSzYwMs7Z05xUbhf11jabY6wDKJCR5AZiJ8=;
-        b=xLaNPUaUIKXCW9bn1eGbhGpqCq44pw7uvqUvbHWA4HXNCC3j8wDWHuHJOglsgXtqSk
-         WHKtLL/F++cUfpC9UOFnfKeZYczymLgalUAVwkbj2XQewDTZaY49MRx4nJHwuX2LQ22g
-         hZCd2n+Fs45bxCw09A83bpNdll58/D85vKQUfLvPhdLeJGezwl2ddQlfKf/glagBUdp8
-         1m8c/kJuqMChbyaZPNkYaMtKvkiReM3ynaPvfVHGYkjtbrEIXiSF6jmuEjWy5hUisEd3
-         Mo7glQ+8H5q3aaptBsBgrOKcyZoZ596KJiz3lV9SYRpWfxNey2AXYAhCR4YSM6ExV8xq
-         OwkQ==
+        bh=/CYFf1/fglZp7zKhC9PXoy9tsiufDFpWHrIfBoNpSeA=;
+        b=j+pGVSDttH9jAktUOyITmB+U/zXlXzbNFhYXzCMcA9YJZsyvOI6ptywHmqwrnG657V
+         ftZVMmSzBzBStJF3FvFBVguNBN8TxhFKRNxvT/m6XssDlhTd8hg+TyGWXhlsA0w59WrP
+         BLzwMuPWzNVVol4FXSGqovGCtodZh3fUTlZJVirJH1GpmyUiwk+0m8+v5p2gzNNNGQxN
+         mVFASCDxrO4X8ORdulic6AyyRWOS3GnWNQdBZiXZSvIY6OrBimlNOZiFKyoeAAResIxx
+         qGIVd/cUVwNW2Qs4NUVrMmgeZSxr6+xP7wLPLbJt1DPDj/umY/SMhtsdLDi8QiGvAYMq
+         kWpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6rU2ZvHsnSzYwMs7Z05xUbhf11jabY6wDKJCR5AZiJ8=;
-        b=OawF4reN3XpXYevuCvTsuJ85dUCG60pyi1oGQAv9WYV96Cg/kh1Sc51+2ur3MQ6rYQ
-         nJO4pLSlEu7aLvMxZFb7N9rgLfNnW0B+wsFxLiYge6FPfD+3L7W3IFJeefOtXR8fyBJ4
-         GEoj4s3tySv/X9cj6vl7thYwt59wHz/k/M7twHLARTVZ7ebmuhcdOKgLNTBzYNlNz0Nt
-         +yoEIBFcXkRkNgnKtfYBX0s9ZNBGJ4xE1XcjtjYsqZtb5SnRWFjmeGYCbC4Xzd3htGTb
-         RDBl708tBEPshkI3baDzdG1mZUC7vmw3gDoDCdWXN0rOKdS9QUkY9VfKPa1NdOLnrrfL
-         N9jA==
-X-Gm-Message-State: APjAAAWDqIh7nMweaHnZcyLewfVIdwkigaI54L37wlR8IPGgzGbQhahy
-        vvS6qEhPKM6xQ53Z/OpRneF7Mw==
-X-Google-Smtp-Source: APXvYqwwS5sB68lbDlyVrgeTCJ16HYifOS/3Hk6LpNS+0KYfnvpq3hykK4GUDY5gN7r2/bWGXWlThQ==
-X-Received: by 2002:a63:4547:: with SMTP id u7mr12360882pgk.423.1574959809102;
-        Thu, 28 Nov 2019 08:50:09 -0800 (PST)
+        bh=/CYFf1/fglZp7zKhC9PXoy9tsiufDFpWHrIfBoNpSeA=;
+        b=rQwTDyBXETIc136J9O0fiiWDlVtAMdLTJ2O0hZrFARMiFIFUS2ZaVTi37N947mKSJm
+         1gmb/v6rzKuq5HbAAoyBMw7TiOwnQOKoGsAyK1mhUuxHTgzQfnsQHe42OpVKSDxlro98
+         5E87IiDSSBhPgtB6r/Rw47olX1QORUP4Vl7mAQYsJ/uQKoC0+6/IOSuYabLM2dNlT1Ib
+         idVGbdKUMDc4gAaZyv8CTMOpmmeh60qqFvbX9yBhT9YqA0dB/AoEoUOsjQN3/1YEpEeP
+         lXmPxDGKXy172h6YzhkwpD4M6dn9WQ34Pzy87mg/1HFKhaZAic/T9wxI5rIAFcLqgqux
+         DWWQ==
+X-Gm-Message-State: APjAAAUdz4awKQs/hkLOCVNaSJ8a9YIRnWH4yRyaigIeBVrh76kjexx3
+        0/dXmEfVOPsT/Grj3bjXC04wIw==
+X-Google-Smtp-Source: APXvYqzpKQyfQldmlacCexxAJBteAtozIdoLogYWnWundKX96otdtVJvtxFQ/5CTEI8XhLTF/bnfEg==
+X-Received: by 2002:a63:f62:: with SMTP id 34mr11469684pgp.19.1574959810061;
+        Thu, 28 Nov 2019 08:50:10 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.08
+        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 08:50:08 -0800 (PST)
+        Thu, 28 Nov 2019 08:50:09 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     stable@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19][PATCH 05/17] hwrng: stm32 - fix unbalanced pm_runtime_enable
-Date:   Thu, 28 Nov 2019 09:49:50 -0700
-Message-Id: <20191128165002.6234-6-mathieu.poirier@linaro.org>
+Subject: [stable 4.19][PATCH 06/17] remoteproc: fix rproc_da_to_va in case of unallocated carveout
+Date:   Thu, 28 Nov 2019 09:49:51 -0700
+Message-Id: <20191128165002.6234-7-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191128165002.6234-1-mathieu.poirier@linaro.org>
 References: <20191128165002.6234-1-mathieu.poirier@linaro.org>
@@ -58,48 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lionel Debieve <lionel.debieve@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
 
-commit af0d4442dd6813de6e77309063beb064fa8e89ae upstream
+commit 74457c40f97a98142bb13153395d304ad3c85cdd upstream
 
-No remove function implemented yet in the driver.
-Without remove function, the pm_runtime implementation
-complains when removing and probing again the driver.
+With introduction of rproc_alloc_registered_carveouts() which
+delays carveout allocation just before the start of the remote
+processor, rproc_da_to_va() could be called before all carveouts
+are allocated.
+This patch adds a check in rproc_da_to_va() to return NULL if
+carveout is not allocated.
 
-Signed-off-by: Lionel Debieve <lionel.debieve@st.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: stable <stable@vger.kernel.org> # 4.19
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/char/hw_random/stm32-rng.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/char/hw_random/stm32-rng.c b/drivers/char/hw_random/stm32-rng.c
-index 042860d97b15..37b338a76ba4 100644
---- a/drivers/char/hw_random/stm32-rng.c
-+++ b/drivers/char/hw_random/stm32-rng.c
-@@ -169,6 +169,13 @@ static int stm32_rng_probe(struct platform_device *ofdev)
- 	return devm_hwrng_register(dev, &priv->rng);
- }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index aa6206706fe3..af9d443e7796 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -183,6 +183,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	list_for_each_entry(carveout, &rproc->carveouts, node) {
+ 		int offset = da - carveout->da;
  
-+static int stm32_rng_remove(struct platform_device *ofdev)
-+{
-+	pm_runtime_disable(&ofdev->dev);
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
 +
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM
- static int stm32_rng_runtime_suspend(struct device *dev)
- {
-@@ -210,6 +217,7 @@ static struct platform_driver stm32_rng_driver = {
- 		.of_match_table = stm32_rng_match,
- 	},
- 	.probe = stm32_rng_probe,
-+	.remove = stm32_rng_remove,
- };
- 
- module_platform_driver(stm32_rng_driver);
+ 		/* try next carveout if da is too small */
+ 		if (offset < 0)
+ 			continue;
 -- 
 2.17.1
 
