@@ -2,93 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F0510C17C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7745010C1E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:51:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbfK1Bkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 20:40:52 -0500
-Received: from mga02.intel.com ([134.134.136.20]:10961 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727775AbfK1BkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 20:40:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 17:40:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
-   d="scan'208";a="221166525"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga002.jf.intel.com with ESMTP; 27 Nov 2019 17:40:20 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-        Len Brown <lenb@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v4 19/19] KVM: VMX: Allow KVM_INTEL when building for Centaur and/or Zhaoxin CPUs
-Date:   Wed, 27 Nov 2019 17:40:16 -0800
-Message-Id: <20191128014016.4389-20-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191128014016.4389-1-sean.j.christopherson@intel.com>
-References: <20191128014016.4389-1-sean.j.christopherson@intel.com>
+        id S1727601AbfK1Bu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 20:50:58 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41174 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfK1Bu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 20:50:58 -0500
+Received: from pendragon.ideasonboard.com (unknown [104.132.253.101])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AB0FF4FF;
+        Thu, 28 Nov 2019 02:50:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1574905855;
+        bh=UZ6ggFBgzZuX2+D3oNGNdZPRR6WVAycMBJ8RY8d+ymk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t9GPUKIeQrjeJLIeZS9jGzPqGzY99zDh5ccnMwPkF4WJde46R2sSURIlzPlFwwT48
+         Hmo2GJF3DMoVkpgbKXEtZ0P3yZIzekR8hCmCiVGnfzJb6XJRe6aJk/RdR7EFGbsOik
+         scbNW64T2s0//DvmZ4j3rCEm8uADY6iCPIa33ZB4=
+Date:   Thu, 28 Nov 2019 03:50:45 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v7 2/7] dt-bindings: display, renesas,du: Document cmms
+ property
+Message-ID: <20191128015045.GA13942@pendragon.ideasonboard.com>
+References: <20191113100556.15616-1-jacopo+renesas@jmondi.org>
+ <20191113100556.15616-3-jacopo+renesas@jmondi.org>
+ <CAMuHMdWAvFfL5gWZVkfan=o2pRygxCKaNwCf=7AbiPJS1r8nAA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWAvFfL5gWZVkfan=o2pRygxCKaNwCf=7AbiPJS1r8nAA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the dependency for KVM_INTEL, i.e. KVM w/ VMX, from Intel CPUs to
-any CPU that supports the IA32_FEAT_CTL MSR and thus VMX functionality.
-This effectively allows building KVM_INTEL for Centaur and Zhaoxin CPUs.
+On Wed, Nov 13, 2019 at 02:34:27PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+> 
+> Sorry for spoiling your v7 ;-)
+> 
+> On Wed, Nov 13, 2019 at 11:04 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Document the newly added 'cmms' property which accepts a list of phandle
+> 
+> renesas,cmms
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/Kconfig | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Fix applied to my branch.
 
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 840e12583b85..991019d5eee1 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -60,13 +60,11 @@ config KVM
- 	  If unsure, say N.
- 
- config KVM_INTEL
--	tristate "KVM for Intel processors support"
--	depends on KVM
--	# for perf_guest_get_msrs():
--	depends on CPU_SUP_INTEL
-+	tristate "KVM for Intel (and compatible) processors support"
-+	depends on KVM && IA32_FEAT_CTL
- 	---help---
--	  Provides support for KVM on Intel processors equipped with the VT
--	  extensions.
-+	  Provides support for KVM on processors equipped with Intel's VT
-+	  extensions, a.k.a. Virtual Machine Extensions (VMX).
- 
- 	  To compile this as a module, choose M here: the module
- 	  will be called kvm-intel.
+> > and channel index pairs that point to the CMM units available for each
+> > Display Unit output video channel.
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
 -- 
-2.24.0
+Regards,
 
+Laurent Pinchart
