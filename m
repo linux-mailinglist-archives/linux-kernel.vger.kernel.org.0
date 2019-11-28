@@ -2,172 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFBBE10C80D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 12:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B16EF10C80F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 12:38:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfK1Lgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 06:36:42 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38007 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfK1Lgl (ORCPT
+        id S1726610AbfK1Lif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 06:38:35 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33772 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfK1Lif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 06:36:41 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mol@pengutronix.de>)
-        id 1iaI67-0003Kl-DU; Thu, 28 Nov 2019 12:36:35 +0100
-Received: from mol by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <mol@pengutronix.de>)
-        id 1iaI65-0004MZ-Pg; Thu, 28 Nov 2019 12:36:33 +0100
-Date:   Thu, 28 Nov 2019 12:36:33 +0100
-From:   Michael Olbrich <m.olbrich@pengutronix.de>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2] usb: dwc3: gadget: restart the transfer if a isoc
- request is queued too late
-Message-ID: <20191128113633.5slzlehhwlmnc3zr@pengutronix.de>
-Mail-Followup-To: Alan Stern <stern@rowland.harvard.edu>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <6d4b87c8-5aca-18cb-81db-a8d2fd4bd86e@synopsys.com>
- <Pine.LNX.4.44L0.1911151549370.1527-100000@iolanthe.rowland.org>
+        Thu, 28 Nov 2019 06:38:35 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y23so2652922wma.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 03:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=7dzXAN2X2L6bGPvK4PFvG9vdURbUoCe50bDBU3Z9XwI=;
+        b=KeHVV1r+lyB6FTTM8bE+Y10Z5uaKh2EjYaJu/C5ZfN/1HDQmh8sIhqWJJNiyQZZ0/F
+         QIvpkEBOlu6tiG0p5EO/SNsYNB6jhkVdi36Wobvo3BIkF6nuBU8Kc2eoUVgDHzXZzZvS
+         eoeK4d2bMGa/NrFMyzZiH8nlZ086wekBcpicq4B0/3AFTqifl43Q3akZproFcEpY2OaR
+         nVcSH3VUGRoy95JIuOp3fxbXPsf++7WEcQgVzz1LyaRC7ACaZvwCn3NEALSTtzY5cHn1
+         4lMOV5B09daTu/aMMeCoa6ct92q29yUAV6f3s9tGZy3WFm1u+gS0UDYkZHCwHQdOCJN7
+         /c/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=7dzXAN2X2L6bGPvK4PFvG9vdURbUoCe50bDBU3Z9XwI=;
+        b=c/sfyjqmSrBhdYM7F5pTN5TTtGBD02SVPwQCItOk+m/nA/fUbFX7HpcMh3bOmgev/c
+         ZzYwmAaNwhAHvCZirQJ/WpRPs9DabgARq8F1thEabZ8IBarVBblc3gR8rpXLBykWcpfI
+         FXUPUVA6UQnrIax89U6hmyyIgCjOS+wVUHJtJZmE9SbwOFMJnJF4a7UoO7epJ0RdKF9c
+         gZ6IB49WnztMXyY+BfIE6SmFB/nBT80KkOCL2Qbdqp1AXJOo0vureNKHDMuftsJuRRrl
+         y00bbWKDWNTIWrzImciNPuBjAtnNRmkYh4qj6nRWD2/Z3Ma2PPLlU3LcAZxNDJf8tso6
+         peLg==
+X-Gm-Message-State: APjAAAW9AsfUrhGLSMC3LZDqx0hNkFU37aTUjDsLh4TjFBuze9eoeuPS
+        sKP9daCLBr39aScsGX6eeFW6WeSsZpQtpdNFvVY=
+X-Google-Smtp-Source: APXvYqwmrhL+T92X8GSWKUUzYbbHF9p4pljSxW3oaar+nWfgXzT3Fw3oznVN29gGWmBWKLCZETMqBOIV+bbGpEohyqA=
+X-Received: by 2002:a1c:1b15:: with SMTP id b21mr1015684wmb.104.1574941112317;
+ Thu, 28 Nov 2019 03:38:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1911151549370.1527-100000@iolanthe.rowland.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:32:14 up 143 days, 16:42, 146 users,  load average: 0.66, 0.30,
- 0.22
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mol@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Reply-To: sebastient766@gmail.com
+Received: by 2002:adf:df83:0:0:0:0:0 with HTTP; Thu, 28 Nov 2019 03:38:31
+ -0800 (PST)
+From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
+Date:   Thu, 28 Nov 2019 11:38:31 +0000
+X-Google-Sender-Auth: 6oKAvRkzYv1-sXc3jTH1UUVk4AE
+Message-ID: <CAOmrfMuOFbuqNzcOMA8Op8548JiM+OAXTkQp_DzWoaeWAxopOA@mail.gmail.com>
+Subject: Dear Friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 04:06:10PM -0500, Alan Stern wrote:
-> On Thu, 14 Nov 2019, Thinh Nguyen wrote:
-> 
-> > Michael Olbrich wrote:
-> 
-> > >>> How about changing the gadget driver instead?  For frames where the UVC
-> > >>> gadget knows no video frame data is available (numbers 4, 8, 12, and so
-> > >>> on in the example above), queue a zero-length request.  Then there
-> > >>> won't be any gaps in the isochronous packet stream.
-> > >> What Alan suggests may work. Have you tried this?
-> > > Yes and it works in general. There are however some problems with that
-> > > approach that I want to avoid:
-> > >
-> > > 1. It adds extra overhead to handle the extra zero-length request.
-> > > Especially for encoded video the available bandwidth can be quite a bit
-> > > larger that what is actually used. I want to avoid that.
-> 
-> This comment doesn't seem to make sense.  If the available bandwidth is
-> much _larger_ than what is actually used, what's the problem?  You
-> don't run into difficulties until the available bandwidth is too
-> _small_.
-> 
-> The extra overhead of a zero-length request should be pretty small.  
-> After all, the gadget expects to send a packet for every frame anyway,
-> more or less.
+FROM MR.S=C3=89BASTIEN TONI
+AUDIT& ACCOUNT MANAGER
+BANK OF AFRICA (B.O.A)
+OUAGADOUGOU BURKINA FASO
+WEST AFRICA.
 
-My current test-case is video frames with 450kB on average at 30fps. This
-currently results in ~10 CPU load for the threaded interrupt handler.
-At least in my test, filling the actual video data into the frame has very
-little impact. So if I reserve 900kB to support occasionally larger video
-frames, then I expect that this CPU load will almost double in all cases,
-not just when the video frames are larger.
+Dear Friend,
 
-> > > 2. The UVC gadget currently does no know how many zero-length request must
-> > > added. So it needs fill all available request until a new video frame
-> > > arrives. With the current 4 requests that is not a problem right now. But
-> > > that does not scale for USB3 bandwidths. So one thing that I want to do is
-> > > to queue many requests but only enable the interrupt for a few of than.
-> > >  From what I can tell from the code, the gadget framework and the dwc3
-> > > driver should already support this.
-> > > This will result in extra latency. There is probably an acceptable
-> > > trade-off with an acceptable interrupt load and latency. But I would like
-> > > to avoid that if possible.
-> 
-> There are two different situations to consider:
-> 
-> 	In the middle of a video stream, latency isn't an issue.
-> 	The gadget should expect to send a new packet for each frame,
-> 	and it doesn't know what to put in that packet until it
-> 	receives the video data or it knows there won't be any data.
-> 
-> 	At the start of a video stream, latency can be an issue.  But
-> 	in this situation the gadget doesn't have to send 0-length
-> 	requests until there actually is some data available.
-> 
-> Either way, it should be okay.
-> 
-> As far as interrupt load is concerned, I don't see how it relates to
-> the issue of sending 0-length requests.
+With due respect, I have decided to contact you on
+abusinesstransaction  that will be beneficial to both of us. At the
+bank last account and  auditing evaluation, my staffs came across an
+old account which was being maintained by a foreign client who we
+learn was among the deceased passengers of motor accident on
+November.2003, the deceased was unable to run this account since his
+death. Theaccount has  remained dormant without the knowledge of his
+family since it was put in a  safe deposit account in the bank for
+future investment by the client.
 
-Maybe I don't understand, how 0-length requests work. My current
-understanding is, that they are queued like any other request.
+Since his demise, even the members of his family haven't applied for
+claims  over this fund and it has been in the safe deposit account
+until I  discovered that it cannot be claimed since our client
+isaforeign national
+and we are sure that he has no next of kin here to file claims over
+the money. As the director of the department, this  discovery was
+brought to my office so as to decide what is to bedone.I  decided to
+seek ways through which to transfer this money out of the bank  and
+out of the country too.
 
-If I want to reduce the number of interrupts then I need to queue more
-requests and only ask for an interrupt for some of them. This means that
-potentially a lot of 0-length requests requests are queued when a new video
-frame arrives and this means extra latency for the frame.
+The total amount in the account is 18.6 million with my positions as
+staffs  of the bank, I am handicapped because I cannot operate foreign
+accounts and  cannot lay bonafide claim over this money. The client
+was a foreign  national and you will only be asked to act as his next
+of kin and I will  supply you with all the necessary information and
+bank data to assist you in being able to transfer this money to any
+bank of your  choice where this money could be transferred into.The
+total sum will be  shared as follows: 50% for me, 50% for you and
+expenses incidental occur  during the transfer will be incur by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund  transfer to your account. Since I
+work in this bank that is why you should  be confident in the success
+of this transaction because you will be updated with information as at
+when desired.
 
-I think the worst-case latency is 2x the time between two interrupts.
-So less interrupts mean more latency.
-The stop/start transfer this patch implements, the video frame can be sent
-immediately without any extra latency.
+I will wish you to keep this transaction secret and confidential as I
+am  hoping to retire with my share of this money at the end of
+transaction  which will be when this money is safety in your account.
+I will then come over to your country for sharing according to the
+previously agreed percentages. You might even have to advise me on
+possibilities of investment in your country or elsewhere of our
+choice. May  God help you to help me to a restive retirement, Amen,And
+You have to  contact me through my private e-mail
+at(sebastient766@gmail.com)Please for further information and inquires
+feel free to contact me back immediately for more explanation and
+better  understanding I want you to assure me your capability of
+handling this  project with trust by providing me your following
+information details such as:
 
-> > I think I understand the problem you're trying to solve now.
-> > 
-> > The dwc3 driver does not know that there's a gap until after a new 
-> > request was queued, which then it will send an END_TRANSFER command and 
-> > dequeue all the requests to restart the transfer due to missed_isoc.
-> > We do this because the dwc3 driver does not know whether the new request 
-> > is actually stale data, and we should not change this behavior.
-> > 
-> > Now, with UVC, it needs to communicate to the dwc3 driver that there 
-> > will be a gap after a certain request (and that the device is expecting 
-> > to send 0-length data). This is not a normal operation for isoc 
-> > transfer. You may need to introduce a new way for the function driver to 
-> > do that, possibly a new field in usb_request structure to indicate that. 
-> > However, this seems a little awkward. Maybe others can comment on this.
+(1)NAME..............
+(2)AGE:................
+(3)SEX:.....................
+(4)PHONE NUMBER:.................
+(5)OCCUPATION:.....................
+(6)YOUR COUNTRY:.....................
 
-I'm not sure how this is supposed to work. What exactly can the dwc3 driver
-/ hardware do to handle a gap?
-
-> Note that on the host side, there is a difference between receiving 
-> a 0-length packet and receiving no packet at all.  As long as both the 
-> host and the gadget expect the isochronous stream to be running, there 
-> shouldn't be any gaps if you can avoid it.
-
-Huh, so how is this handled on other hardware? From what I can tell the UVC
-gadget works with other drivers and I've not found any special handling for
-this. Is there no packet sent or are 0-length packet generated implicitly
-somewhere?
-
-Regards,
-Michael
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Yours sincerely,
+Mr.S=C3=A9bastien Toni
