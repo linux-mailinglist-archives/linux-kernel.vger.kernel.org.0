@@ -2,135 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89CDF10CA57
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B8710CA71
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfK1O3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:29:03 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:46114 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfK1O3D (ORCPT
+        id S1726729AbfK1OgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:36:06 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38791 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbfK1OgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 09:29:03 -0500
-Received: by mail-il1-f194.google.com with SMTP id q1so24358588ile.13;
-        Thu, 28 Nov 2019 06:29:02 -0800 (PST)
+        Thu, 28 Nov 2019 09:36:06 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z19so11953695wmk.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:36:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sMU0IL8Rlq+6fLrJTHisOtaFzn6MftRpT5q5jbwKEnw=;
-        b=YFZ7jtEkcvX4TmeNwPif9CPkdwTp+mxAUEY4FjYbYpXyvr6efWAcYCoSjcmloOni+C
-         B2fcNsZhUGrmrruDM1Fn3X4PTW/l9ttFWinZhFQKNMSavM0wykqfuMFiTbZSRC36UeBK
-         pLV3M7nttXdZVdlpHpkYXvsYGV5MV9SVURwDy9O/5Js5r5o+q/RVNMaEfoUKKVONYEmi
-         HLg3M87cTSJGEVsZknsUUCwE67azeSxwSk7vAhOHPWIyNlJKro3oKWSJUPBFRJ9lm+vz
-         GerFAYGEf0CKOc6/T05YALXGQXDLIErDrirC6thnR/8sLw2iW41oDC7q72EBEaU0UuSI
-         ECnw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RKiEZcP/L0A2rXbC8H4X5BIo7afN1A6dEGoky6fB7+8=;
+        b=RhXR0ZeX7CH630cBBVDoTbDoIg+bfQnEe2e5PKJaG+yclednb5kM9Y8Eng7aDWJBHD
+         FU+5IR6gwHueelOoVC5PQ9vj7rTsr6WVwO/xezZKm9KcUrDbc3Y5NXad2IRnlpsxCcqK
+         Gss6Um5uf+b8l7ectAJJFFZnmILUBtHFPQkOue+8KkSReFVzzVWOau+8x2QV2jTKpVYL
+         nyzYgq5pEwhmLshnmQ3nFu6lftJ7Biw967BKpgd1OE56aukGAWt0nMdm00/+wDERZqc3
+         DmGmmlALK+fd77in10AzgYAaYH6EW0ZfplukAUtqjF0UMXZX/qOaWtJlVTN1gUV6QRfJ
+         6q0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sMU0IL8Rlq+6fLrJTHisOtaFzn6MftRpT5q5jbwKEnw=;
-        b=rW+vAjZP9worDcfQMMP6EdvSaMYJeERhwrbK8fbBAXFWdiLBAxjZOxikH5Q+Vx16ea
-         S8jaeF1ejZ4zH2TY1B28Unsio66yf4KCIvicWNCpv5vqntSM0DjeiDFqmtzqrlrUEh+3
-         B7dgPaoXp5kh6g9ylzRy9FYxdT0hWyA5rfMx8yoeiRty/5bzFeFQIkPsFiOpKn8SkCgi
-         1opt95XqB1bZ+l+4s/qmOmYbxGQLgH1S5uhbUH/Mow4nOEED8HAgwhL2GsDk5oX1w8sQ
-         qOBRDfSLgrfqOr+9bVgyQtuTF4iofwf1Pr+LckysaN91+Lmr1HGVuTI/ZFhuJAxRHLA1
-         QKXA==
-X-Gm-Message-State: APjAAAWuObxHDV69yONcmx/A5S1eZvEnAMfz/aTmEn/RjqikYYD6HGGN
-        TPlECHYyYHIz9sAOzf1+mqn7yQUvXdV/vnydTuY=
-X-Google-Smtp-Source: APXvYqw67ERvKvsiBbN3SrEbzFjudGN5TzFNOBhuzvLOM1d9Nzm89YSmkAMVOANimiYGEaCZyTwj0zrIZHwowONaGWQ=
-X-Received: by 2002:a92:4095:: with SMTP id d21mr7689377ill.158.1574951341870;
- Thu, 28 Nov 2019 06:29:01 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RKiEZcP/L0A2rXbC8H4X5BIo7afN1A6dEGoky6fB7+8=;
+        b=TbUTreM0zfatwx5Ct7Y8bofxgWw4+0QRjsUbPH5M45dKKR0Qg6YlIDlJtqQZmpxXDn
+         kNy9m7aXpmqN0OPNnx4/qKMQKNSPLzNSqvsJCsnWOWacxz8scuryphMfoAlTjAXulkGL
+         kVegmpOGXjq4v/ypBsp44ScFBUfyWYDaanE8E2xezQXTtF965HWwtmEdq/7GqOXohQUD
+         Hx6vaviQbYmGc/zneG1/XGPy7yi3GrXrw1z/qD0ZG3weJQd2tqcdZCcUm+oZXCk9lmyY
+         O/jXiRa1oObX2cz7ARIAUPUHrnSyuVRyiI1UyqtTEMnp1BXH+MulgphyA7qEZmXnaecH
+         M1og==
+X-Gm-Message-State: APjAAAV9LYZruePnqAbPvLJ0mniDwtBphBeWRS8JhdhvpmZnpnwvFUg+
+        U47nWNvu43sJ2wO4wyubFDo=
+X-Google-Smtp-Source: APXvYqz92pJeCW/D9VAvn7Uh3kFxNyM3AMWtDGRKPIpvVxERBR51hrNagMQf2h4L/AmqzwtIH2/3AA==
+X-Received: by 2002:a7b:c95a:: with SMTP id i26mr10220347wml.41.1574951763538;
+        Thu, 28 Nov 2019 06:36:03 -0800 (PST)
+Received: from localhost ([193.47.161.132])
+        by smtp.gmail.com with ESMTPSA id m15sm23751006wrj.52.2019.11.28.06.36.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Nov 2019 06:36:02 -0800 (PST)
+Date:   Thu, 28 Nov 2019 13:16:44 +0100
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Peng Fan <peng.fan@nxp.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_AT803X_PHY from m to y
+Message-ID: <20191128121644.GD2460@optiplex>
+References: <20191127124638.GC5108@optiplex>
+ <1ed54a69-c29f-6008-02ae-11d16f68b265@free.fr>
 MIME-Version: 1.0
-References: <20191029124211.15052-1-aford173@gmail.com> <CAHCN7xKAJ3koJc1H2zyGFG3J6qu+uw0jozT=pQ_0i8HStX5TbQ@mail.gmail.com>
- <20191128102141.beq7wzdu5vxwx7wk@uno.localdomain>
-In-Reply-To: <20191128102141.beq7wzdu5vxwx7wk@uno.localdomain>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Thu, 28 Nov 2019 08:28:49 -0600
-Message-ID: <CAHCN7xJpa68bB+acaywq+ca0sG0gYXM2wBiK=50KWLVp6e-9FA@mail.gmail.com>
-Subject: Re: [PATCH] media: ov5640: Fix check for PLL1 exceeding max allowed rate
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Adam Ford <adam.ford@logicpd.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ed54a69-c29f-6008-02ae-11d16f68b265@free.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 4:19 AM Jacopo Mondi <jacopo@jmondi.org> wrote:
->
-> Hi Adam,
->
-> On Tue, Nov 26, 2019 at 08:08:05PM -0600, Adam Ford wrote:
-> > On Tue, Oct 29, 2019 at 7:42 AM Adam Ford <aford173@gmail.com> wrote:
-> > >
-> > > The variable _rate is by ov5640_compute_sys_clk() which returns
-> > > zero if the PLL exceeds 1GHz.  Unfortunately, the check to see
-> > > if the max PLL1 output is checking 'rate' and not '_rate' and
-> > > 'rate' does not ever appear to be 0.
->
-> This seems a bit convoluted. What about:
->
-> "The PLL calculation routine checks the wrong variable 'rate' to
-> verify that the calculated PLL1 output frequency does not exceed
-> 1GHz. Fix this by using the correct '_rate' one."
->
-> Or something against these lines
-
-That makes sense.
-
-I'll do a V2 for this patch and change the description and add your
-'acked-by' note to it.
-
-I probably won't get to it until this weekend, since today is a
-holiday in the US, and I am traveling.
-
-adam
->
-> > >
-> > > This patch changes the check against the returned value of
-> > > '_rate' to determine if the PLL1 output exceeds 1GHz.
-> > >
-> > > Fixes: aa2882481cad ("media: ov5640: Adjust the clock based on the expected rate")
-> > >
+On 28/11/19, Marc Gonzalez wrote:
+> On 27/11/2019 13:46, Oliver Graute wrote:
+> 
+> > On 27/11/19, Marc Gonzalez wrote:
 > >
-> > I haven't seen any responses to this patch.  Has anyone had a chance
-> > to review this?  It's been nearly a month.
->
-> You're totally right! Sorry about this
->
-> > I think it would be appropriate to backport to stable if deemed acceptable.
-> >
->
-> Indeed! This fixes a real issue
->
-> Acked-by: Jacopo Mondi <jacopo@jmondi.org>
->
-> Thanks
->   j
->
-> > adam
-> >
-> > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > >
-> > > diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-> > > index 5e495c833d32..bb968e764f31 100644
-> > > --- a/drivers/media/i2c/ov5640.c
-> > > +++ b/drivers/media/i2c/ov5640.c
-> > > @@ -874,7 +874,7 @@ static unsigned long ov5640_calc_sys_clk(struct ov5640_dev *sensor,
-> > >                          * We have reached the maximum allowed PLL1 output,
-> > >                          * increase sysdiv.
-> > >                          */
-> > > -                       if (!rate)
-> > > +                       if (!_rate)
-> > >                                 break;
-> > >
-> > >                         /*
-> > > --
-> > > 2.17.1
-> > >
+> >> On 26/11/2019 15:54, Oliver Graute wrote:
+> >>
+> >>> this patch broke my imx8qm nfs setup. With the generic phy driver my
+> >>> board is booting fine. But with the AT803X_PHY=y enabled  I'm running
+> >>> into the following phy issue. So on my side it looks inverse as on
+> >>> yours. What is the best proposal to fix this?
+> >>>
+> >>> [    5.550442] fec 5b040000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+> >>> [    5.573206] Sending DHCP requests ...... timed out!
+> >>> [   95.339702] IP-Config: Retrying forever (NFS root)...
+> >>> [   95.348873] Atheros 8035 ethernet 5b040000.ethernet-1:06: attached PHY driver [Atheros 8035 ethernet] (mii_bus:phy_addr=5b040000.ethernet-1:06, irq=POLL)
+> >>> [   99.438443] fec 5b040000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+> >>> [   99.461206] Sending DHCP requests ...... timed out!
+> >>
+> >> Which DTS are you using?
+> > 
+> > I'am using this DTS which I'am currently working on:
+> > 
+> > https://lists.infradead.org/pipermail/linux-arm-kernel/2019-October/689501.html
+> >>
+> >> I bet one dollar that 6d4cd041f0af triggered a latent bug in the DTS.
+> > 
+> > So what should I fix in my device tree?
+> 
+> In the board DTS I used to work on, I had this:
+> 
+> &eth0 {
+> 	phy-connection-type = "rgmii-id";
+> 	phy-handle = <&eth0_phy>;
+> 	#address-cells = <1>;
+> 	#size-cells = <0>;
+> 
+> 	/* Atheros AR8035 */
+> 	eth0_phy: ethernet-phy@4 {
+> 		compatible = "ethernet-phy-id004d.d072",
+> 			     "ethernet-phy-ieee802.3-c22";
+> 		interrupts = <37 IRQ_TYPE_EDGE_RISING>;
+> 		reg = <4>;
+> 	};
+> };
+> 
+> In your DTS, you #include "imx8qm.dtsi"
+> I found no such file:
+> $ git ls-files | grep imx8qm
+
+yes this file is not yet added to Shawn Guos next tree.
+Latest patch can be found here:
+
+ https://patchwork.kernel.org/patch/11248331/
+
+> 
+> In your patch:
+> https://patchwork.kernel.org/patch/11211567/
+> 
+> +&fec1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_fec1>;
+> +	phy-mode = "rgmii-txid";
+> +	phy-handle = <&ethphy0>;
+> +	fsl,magic-packet;
+> +	fsl,rgmii_rxc_dly;
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethphy0: ethernet-phy@0 {
+> +			compatible = "ethernet-phy-ieee802.3-c22";
+> +			reg = <4>;
+> +			at803x,eee-disabled;
+> +			at803x,vddio-1p8v;
+> +		};
+> +	};
+> +};
+> 
+> Try all possible 'phy-mode' (rgmii, rgmii-id, rgmii-rxid, rgmii-txid)
+> Investigate 'fsl,rgmii_rxc_dly' (it's not a standard Linux DT prop)
+> Documentation/devicetree/bindings/net/ethernet-controller.yaml
+
+thx for this hint.
+
+Best regards,
+
+Oliver
