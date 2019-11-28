@@ -2,94 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B8010C528
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 270B310C52E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:33:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfK1Ibs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 03:31:48 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44727 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbfK1Ibr (ORCPT
+        id S1727573AbfK1Ic7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 03:32:59 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44934 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfK1Ic7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 03:31:47 -0500
-Received: by mail-lj1-f194.google.com with SMTP id c19so494188lji.11
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 00:31:46 -0800 (PST)
+        Thu, 28 Nov 2019 03:32:59 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v201so18326967lfa.11
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 00:32:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ngIzBSaZTBdMqXGWOPe9GclRnKYINQpAHzSYxgt3Z4Y=;
-        b=uPGBabdrg40M2eyaJnEIdzAkPAWAh66yboW71srLcihQEm3evrrLv74wXfV/y0V4vy
-         zE/5pxbcMDSb1+4rtp1KpfxSCBM5IxnfAXZUnmZpBcXTFpLEv+9cXKxZbN0hqsTIuchd
-         stcvU4DC7L3G2Y+HUlF8Qa7lC5LTD5RcGAB5Yxgk7W2ZzsLazJrIy7DArw/KamasuYuc
-         ZP6uN9UEfkQfaHhAi1s7cd6epkq/kl6vd/sfaiYoNWbucL/y0c9caw50APZ8YKXkcb9p
-         E1r9Ij0lC0+jumkCzaG1osQeFg7kxsC2RkGlhkx51mfDWXOyoqq5hd2zal85x52Zmz9P
-         5/zA==
+        bh=lIy277yxYKVobrZz2ToLDywtPrlz1UVDNYgv3IeN1Jg=;
+        b=fatrkrOJr4qwMGagesnkLFa7gXLISGxz3MWjlGva/SQ19IbhGVVerqggDnbRpsqLE2
+         jVKi54KOnDC0o5PpvG5ebVRMGL8Ts94ShZAr7LpJbt2Du5ymMQuw5YDrSLcNGTyqqBIf
+         WwcBWKFTcw8PdqDLjYLsPTBUx8BTQYUp+m6QcdtPGpLMXxj4ZvcZlxkhcgDnT4Q1tfrA
+         MRLLO0273PUhmDabzseylDafZeeQssgZPMD/4JGNae91/ZgBoLS8nA6JqeHmPyA7THZK
+         Cp2NL+mvNfxsIjM88h3T3JQOmSDz4Xv4/nMcyK8tcySjb+uAnn8+3DSzGX49LrAEs6Rk
+         ol4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ngIzBSaZTBdMqXGWOPe9GclRnKYINQpAHzSYxgt3Z4Y=;
-        b=Ho+5NKNKvlcQl0N03HSULKr5yhNnOv2MyCl7FCAIr3Q31IgmRBQCPzOrZ1W1TF4seu
-         FJN8D3H+B6OjRbzuUPseozJ22SDBj7DwCyycJBhKEKpzEd1Wx8vJfdwyIkwyCtU0VU29
-         G4sV9tgsm3w1bgVR9REqhlJv6WwDrV+PSbFntZCEL/3Zt+ZhYA3ZMu++MzrHecx7FVFa
-         tLL++sq1SuvoYvl8pTh3UMAyq/hO9jrCd5mAggj0qE+V7QlSG8Fr4v+ieJv87KGJNtoN
-         oKBSrCy15d55pICl2dBXit2493IOhPDvwraJgx4iKvJHjK++Bz0Of9OQ67bD5+3xKyUJ
-         PINA==
-X-Gm-Message-State: APjAAAWfz8AT8aWrVkinKEJdIZ7AjHh78HlAzHsQbOkH80FAsGC+pcJg
-        3DNMTmswCikvg6qxE9keNzymnw==
-X-Google-Smtp-Source: APXvYqyjhpd1fwjyFGGobQaLrboEaWvt16SUkegSBCmGAMmjCSEb7g/vVLKhFYp3N5W/45siUXkQfg==
-X-Received: by 2002:a2e:888b:: with SMTP id k11mr9117296lji.87.1574929905389;
-        Thu, 28 Nov 2019 00:31:45 -0800 (PST)
+        bh=lIy277yxYKVobrZz2ToLDywtPrlz1UVDNYgv3IeN1Jg=;
+        b=kFdagGl6Crs3I8TEC/Sqhw+ljrdmyDUoK7glcDyA9HD4FmahiYpmrlnyShr5VI7LoD
+         BDSqJtA1wJZuz7z5CUDB5hMYGdIKK6aDTmpWAoCIK7cOSOAMcg/SpHSmrwhdxJaeNHo0
+         r/LAnhFlJ505xFiCWdqOhLv76/tjKqHWEUP/KSGswUurNvH2bhL2WldEQ1dAViUE3ShP
+         9Vx1cb9+yQ2noz+IcYwU/6AvHkM5hmuWUtFJ1foSiUR6jHyNlZYHYGOk9TCDIFgdNXad
+         iwgUg2VTaXQGp3WpQ9U2uIAvSwloL7ZxxXw6qkeVqDioQIN2hVO4rvVzFzceKXM3iSGF
+         uZ8w==
+X-Gm-Message-State: APjAAAW608ukD3eoHyYELjDM4OJAbAEeZHE0E/jd3+Xj7a9vrJyvcyJo
+        otDEnHQiA6Wd0Llrs6FGYRrbsw==
+X-Google-Smtp-Source: APXvYqxyczGbS/7hvESPwKMKR0/0KbuTnLjq1DmHGcjCr0kUQd2LoN2KVxqmC3Lm2OWL61xWHAtf7g==
+X-Received: by 2002:a19:4bd4:: with SMTP id y203mr29282721lfa.61.1574929977126;
+        Thu, 28 Nov 2019 00:32:57 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id s11sm8207800ljo.42.2019.11.28.00.31.44
+        by smtp.gmail.com with ESMTPSA id r4sm8192396ljn.64.2019.11.28.00.32.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 00:31:44 -0800 (PST)
+        Thu, 28 Nov 2019 00:32:56 -0800 (PST)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id C25C6101715; Thu, 28 Nov 2019 11:31:43 +0300 (+03)
-Date:   Thu, 28 Nov 2019 11:31:43 +0300
+        id A6E76101715; Thu, 28 Nov 2019 11:32:55 +0300 (+03)
+Date:   Thu, 28 Nov 2019 11:32:55 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     Wei Yang <richardw.yang@linux.intel.com>
 Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm/page_vma_mapped: page table boundary is already
- guaranteed
-Message-ID: <20191128083143.kwih655snxqa2qnm@box.shutemov.name>
+Subject: Re: [PATCH 1/2] mm/page_vma_mapped: use PMD_SIZE instead of
+ calculating it
+Message-ID: <20191128083255.ab5rwj7gvktwunik@box.shutemov.name>
 References: <20191128010321.21730-1-richardw.yang@linux.intel.com>
- <20191128010321.21730-2-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191128010321.21730-2-richardw.yang@linux.intel.com>
+In-Reply-To: <20191128010321.21730-1-richardw.yang@linux.intel.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 09:03:21AM +0800, Wei Yang wrote:
-> The check here is to guarantee pvmw->address iteration is limited in one
-> page table boundary. To be specific, here the address range should be in
-> one PMD_SIZE.
+On Thu, Nov 28, 2019 at 09:03:20AM +0800, Wei Yang wrote:
+> At this point, we are sure page is PageTransHuge, which means
+> hpage_nr_pages is HPAGE_PMD_NR.
 > 
-> If my understanding is correct, this check is already done in the above
-> check:
-> 
->     address >= __vma_address(page, vma) + PMD_SIZE
-> 
-> The boundary check here seems not necessary.
+> This is safe to use PMD_SIZE instead of calculating it.
 > 
 > Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+> ---
+>  mm/page_vma_mapped.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+> index eff4b4520c8d..76e03650a3ab 100644
+> --- a/mm/page_vma_mapped.c
+> +++ b/mm/page_vma_mapped.c
+> @@ -223,7 +223,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+>  			if (pvmw->address >= pvmw->vma->vm_end ||
+>  			    pvmw->address >=
+>  					__vma_address(pvmw->page, pvmw->vma) +
+> -					hpage_nr_pages(pvmw->page) * PAGE_SIZE)
+> +					PMD_SIZE)
+>  				return not_found(pvmw);
+>  			/* Did we cross page table boundary? */
+>  			if (pvmw->address % PMD_SIZE == 0) {
 
-NAK.
-
-THP can be mapped with PTE not aligned to PMD_SIZE. Consider mremap().
-
-> Test:
->    more than 48 hours kernel build test shows this code is not touched.
-
-Not an argument. I doubt mremap(2) is ever called in kernel build
-workload.
+It is dubious cleanup. Maybe page_size(pvmw->page) instead? It will not
+break if we ever get PUD THP pages.
 
 -- 
  Kirill A. Shutemov
