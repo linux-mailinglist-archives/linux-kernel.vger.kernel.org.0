@@ -2,113 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC3910CD22
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DC0810CD3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:52:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfK1Quc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 11:50:32 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46129 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfK1QuV (ORCPT
+        id S1727319AbfK1QwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 11:52:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54890 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726582AbfK1Qv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 11:50:21 -0500
-Received: by mail-pl1-f195.google.com with SMTP id k20so7341936pll.13
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ve1daf/mMGyyV9VtqaD9VZ+drFrdziUeyzqFEa1bEX8=;
-        b=QdfKOwx2OJabOfCqE3mEGZgTrv2/gWtfc9aPsAegxShDlcJFxfod9xbR8qUpaUSrKA
-         lN+swYwLnlgLgrSviR4JWJihJonMpuhy7wXqHAnmUInK0mv8323jJHcCIE4QGYw2lsZH
-         q8oKAydylvf86RpUa4wuc+K76Mk8Yr0z0Bp0mJmTZlYpbNQelJuy2w772CJ365QXJ0hK
-         sJQROf9qRH30ngnifsT6wcvVfOsqo0OHmynT5HckidI/ew0Z7ofqawUkSOMQO/qEzAcp
-         C1v01meXvQFJRnBwVFxCG2S+pRY6T9NkCdPIOWPZspbfiwTUWLVf5twPkpqtU/z0nBQI
-         nIVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ve1daf/mMGyyV9VtqaD9VZ+drFrdziUeyzqFEa1bEX8=;
-        b=UAnEfE6FnZ3FuniphjCOKucm3Oo24yN2EHjQt9HyOOoaj8Y6NhZyYUqtuFIx7HFtOL
-         2Ol07gtDNIhKGg6SoeTCjddBOQ5TwEvaLPfHOA+aUT4BZjkUqw2VMtZmwbL3/d7jKSHH
-         Toto+ph0SSrQ2T5KuXtY277nUgQ8wdFK/paSssQmBZEUuXSgJuETMH+znvCCDFZBhwPA
-         3VKbXw2/TJlXipaH1K4Ir8wQRAFOODFzZy9AeVb6WiQEeD4x39KMDGZzQJOhFtRzj86v
-         5U7FIBOLQ4M9FpAGxKFk21R5PTMCjq9POYJ6U2vS+zxHxVRxng7L4Ds++7g2AIpFQx+w
-         ATTQ==
-X-Gm-Message-State: APjAAAXXaM10q2gmlCJ9ygmRGugU1uyXUbmOGSKr18c2ah+Xm6zEvuSP
-        +zYbsuqSjarPaGMqYAOvCoLK6w==
-X-Google-Smtp-Source: APXvYqwF9EpUID9uoRJaTP7XOptfqBdu8zh2mx1l+skezdxU/+nVZEZ0krSH/BIt3st7U3Is4b6ZnQ==
-X-Received: by 2002:a17:902:b181:: with SMTP id s1mr10698227plr.62.1574959820186;
-        Thu, 28 Nov 2019 08:50:20 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 08:50:19 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     stable@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19][PATCH 17/17] dmaengine: stm32-dma: check whether length is aligned on FIFO threshold
-Date:   Thu, 28 Nov 2019 09:50:02 -0700
-Message-Id: <20191128165002.6234-18-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191128165002.6234-1-mathieu.poirier@linaro.org>
-References: <20191128165002.6234-1-mathieu.poirier@linaro.org>
+        Thu, 28 Nov 2019 11:51:59 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xASGlPqA042046
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 11:51:58 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wjah6qy4k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 11:51:58 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
+        Thu, 28 Nov 2019 16:51:54 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 28 Nov 2019 16:51:50 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xASGpmKa46006438
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 28 Nov 2019 16:51:48 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A437E52050;
+        Thu, 28 Nov 2019 16:51:48 +0000 (GMT)
+Received: from localhost (unknown [9.152.212.112])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 4B1C052057;
+        Thu, 28 Nov 2019 16:51:48 +0000 (GMT)
+Date:   Thu, 28 Nov 2019 17:51:47 +0100
+From:   Vasily Gorbik <gor@linux.ibm.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        jpoimboe@redhat.com, joe.lawrence@redhat.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jikos@kernel.org, pmladek@suse.com, nstange@suse.de,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] s390/unwind: drop unnecessary code around calling
+ ftrace_graph_ret_addr()
+References: <20191106095601.29986-1-mbenes@suse.cz>
+ <20191106095601.29986-2-mbenes@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191106095601.29986-2-mbenes@suse.cz>
+X-TM-AS-GCONF: 00
+x-cbid: 19112816-0028-0000-0000-000003C135A0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19112816-0029-0000-0000-00002484414C
+Message-Id: <your-ad-here.call-01574959907-ext-0700@work.hours>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-28_05:2019-11-28,2019-11-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 suspectscore=1 impostorscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=731 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1911280142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+On Wed, Nov 06, 2019 at 10:55:58AM +0100, Miroslav Benes wrote:
+> The current code around calling ftrace_graph_ret_addr() is ifdeffed and
+> also tests if ftrace redirection is present on stack.
+> ftrace_graph_ret_addr() however performs the test internally and there
+> is a version for !CONFIG_FUNCTION_GRAPH_TRACER as well. The unnecessary
+> code can thus be dropped.
+> 
+> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+> ---
+>  arch/s390/kernel/unwind_bc.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
 
-commit cc832dc8e32785a730ba07c3a357e17c201a5df8 upstream
-
-When a period length is not multiple of FIFO some data may be stuck
-within FIFO.
-
-Burst/FIFO Threshold/Period or buffer length check has to be hardened
-
-In any case DMA will grant any request from client but will degraded
-any parameters whether awkward.
-
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Cc: stable <stable@vger.kernel.org> # 4.19
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/dma/stm32-dma.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
-index 379e8d534e61..4903a408fc14 100644
---- a/drivers/dma/stm32-dma.c
-+++ b/drivers/dma/stm32-dma.c
-@@ -308,20 +308,12 @@ static bool stm32_dma_fifo_threshold_is_allowed(u32 burst, u32 threshold,
- 
- static bool stm32_dma_is_burst_possible(u32 buf_len, u32 threshold)
- {
--	switch (threshold) {
--	case STM32_DMA_FIFO_THRESHOLD_FULL:
--		if (buf_len >= STM32_DMA_MAX_BURST)
--			return true;
--		else
--			return false;
--	case STM32_DMA_FIFO_THRESHOLD_HALFFULL:
--		if (buf_len >= STM32_DMA_MAX_BURST / 2)
--			return true;
--		else
--			return false;
--	default:
--		return false;
--	}
-+	/*
-+	 * Buffer or period length has to be aligned on FIFO depth.
-+	 * Otherwise bytes may be stuck within FIFO at buffer or period
-+	 * length.
-+	 */
-+	return ((buf_len % ((threshold + 1) * 4)) == 0);
- }
- 
- static u32 stm32_dma_get_best_burst(u32 buf_len, u32 max_burst, u32 threshold,
--- 
-2.17.1
+This patch has been picked up from v2 already. It's in Linus tree.
 
