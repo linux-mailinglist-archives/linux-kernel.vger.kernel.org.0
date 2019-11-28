@@ -2,149 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F46010C874
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 13:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0ABB10C87B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 13:17:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfK1MQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 07:16:39 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:12721 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfK1MQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 07:16:39 -0500
-Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47NxSz08lfz9tyK4;
-        Thu, 28 Nov 2019 13:16:35 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=kO0pFPX5; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 3cE5LCkfSVGN; Thu, 28 Nov 2019 13:16:34 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47NxSy6D0Bz9tyJ9;
-        Thu, 28 Nov 2019 13:16:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1574943394; bh=z1woTg6MEJ3fy0Mii159dsi5J82uSDdsZ8O152Iuous=;
-        h=From:Subject:To:Cc:Date:From;
-        b=kO0pFPX5Ga+VpaB+Xu7pr1Ne0NcIRQYB2XZEeOLmsWlTQK5fjBJP7vp8ZiAQkB8rc
-         o/WVkeo1xdHQlOcSAYfTIIz8yTntK4iT8Y6LJoacyntLB7Mkr509OCR0KW6PLeCPL/
-         MjCrV5moEQvK8eip6iPnkRU2Fa3XSE3gba2jfcsw=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 21A848B889;
-        Thu, 28 Nov 2019 13:16:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id f64NmaBkFnRc; Thu, 28 Nov 2019 13:16:36 +0100 (CET)
-Received: from po16098vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.103])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E3E2B8B87E;
-        Thu, 28 Nov 2019 13:16:35 +0100 (CET)
-Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id BC2456B822; Thu, 28 Nov 2019 12:16:35 +0000 (UTC)
-Message-Id: <7556683b57d8ce100855857f03d1cd3d2903d045.1574943062.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/devicetrees: Change 'gpios' to 'cs-gpios' on fsl,spi
- nodes
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-spi@vger.kernel.org
-Date:   Thu, 28 Nov 2019 12:16:35 +0000 (UTC)
+        id S1726710AbfK1MRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 07:17:12 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:15783 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfK1MRM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 07:17:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574943430;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=j2Zi7z7PshzDcW95CJR/hmzUfkNJXaAcZIHrohG8tZM=;
+        b=GoxDhbmI6D5113ctTCILcQ+dUylJMyAgX5mAfHdKkL/Tw62aoIHuGiUspDOS6nZyey
+        CVFP4JXQmpj3+9ASfeUEKXAznrD4+/HjSr2IiXlHGc6cerzL7Tc4/gD0mas9BAAv9Bdk
+        RETJHPjL3B7oOfXmJngRH0ucSb3ek+v/K3NfSldxHXcNEZTpUmRQUqTwX0dETGA9ZM/x
+        Fn4PK/HzFFU2Fv65uq0Wr/DloFJar8aWNy6YLP/yp4rlmBdx3pQYxg/5FhvEKHIu7u44
+        ncAPFDnoZ1SgXUXwz8s7sHgOGRkEophXbo+lx7CdlUhKuL17ejzoRqYzCBDIsWqHVKgR
+        FHSg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAiw43upSE="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
+        with ESMTPSA id y07703vASCGvJQg
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Thu, 28 Nov 2019 13:16:57 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: MIPS: bug: gettimeofday syscall broken on CI20 board
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <96b53936-a288-91bc-a14b-a501c5231a03@arm.com>
+Date:   Thu, 28 Nov 2019 13:16:57 +0100
+Cc:     linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        MIPS Creator CI20 Development 
+        <mips-creator-ci20-dev@googlegroups.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2966D06E-C754-4807-A48E-02D476EF1A24@goldelico.com>
+References: <18788C50-F29B-4BD7-89F6-B056FF490214@goldelico.com> <703DC004-96E8-463D-8870-3CC410FE1C5E@goldelico.com> <3190d1a4-96c4-1843-3ae1-bae3a97af9fb@arm.com> <8D151C34-41A1-4DFE-92D6-D1B27AEC8730@goldelico.com> <3E2EEC19-F320-4320-9A85-67B4E615C74A@goldelico.com> <96b53936-a288-91bc-a14b-a501c5231a03@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 0f0581b24bd0 ("spi: fsl: Convert to use CS GPIO
-descriptors"), the prefered way to define chipselect GPIOs is using
-'cs-gpios' property instead of the legacy 'gpios' property.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- Documentation/devicetree/bindings/spi/fsl-spi.txt | 8 ++++----
- arch/powerpc/boot/dts/mgcoge.dts                  | 2 +-
- arch/powerpc/boot/dts/mpc832x_rdb.dts             | 2 +-
- arch/powerpc/boot/dts/mpc8610_hpcd.dts            | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+> Am 28.11.2019 um 13:05 schrieb Vincenzo Frascino =
+<vincenzo.frascino@arm.com>:
+>=20
+> Hi Nikolaus,
+>=20
+> On 27/11/2019 14:29, H. Nikolaus Schaller wrote:
+>> Hi Vincenco,
+>>=20
+> [...]
+>=20
+>>>=20
+>>> a) with 5.4 kernel
+>>>=20
+>=20
+> Could you please report the hash of your top commit?
 
-diff --git a/Documentation/devicetree/bindings/spi/fsl-spi.txt b/Documentation/devicetree/bindings/spi/fsl-spi.txt
-index 411375eac54d..0654380eb751 100644
---- a/Documentation/devicetree/bindings/spi/fsl-spi.txt
-+++ b/Documentation/devicetree/bindings/spi/fsl-spi.txt
-@@ -15,13 +15,13 @@ Required properties:
- - clock-frequency : input clock frequency to non FSL_SOC cores
- 
- Optional properties:
--- gpios : specifies the gpio pins to be used for chipselects.
-+- cs-gpios : specifies the gpio pins to be used for chipselects.
-   The gpios will be referred to as reg = <index> in the SPI child nodes.
-   If unspecified, a single SPI device without a chip select can be used.
- - fsl,spisel_boot : for the MPC8306 and MPC8309, specifies that the
-   SPISEL_BOOT signal is used as chip select for a slave device. Use
-   reg = <number of gpios> in the corresponding child node, i.e. 0 if
--  the gpios property is not present.
-+  the cs-gpios property is not present.
- 
- Example:
- 	spi@4c0 {
-@@ -31,8 +31,8 @@ Example:
- 		interrupts = <82 0>;
- 		interrupt-parent = <700>;
- 		mode = "cpu";
--		gpios = <&gpio 18 1	// device reg=<0>
--			 &gpio 19 1>;	// device reg=<1>
-+		cs-gpios = <&gpio 18 1		// device reg=<0>
-+			    &gpio 19 1>;	// device reg=<1>
- 	};
- 
- 
-diff --git a/arch/powerpc/boot/dts/mgcoge.dts b/arch/powerpc/boot/dts/mgcoge.dts
-index a2dd5f1da621..7de068991bde 100644
---- a/arch/powerpc/boot/dts/mgcoge.dts
-+++ b/arch/powerpc/boot/dts/mgcoge.dts
-@@ -224,7 +224,7 @@
- 				reg = <0x11a80 0x40 0x89fc 0x2>;
- 				interrupts = <2 8>;
- 				interrupt-parent = <&PIC>;
--				gpios = < &cpm2_pio_d 19 0>;
-+				cs-gpios = < &cpm2_pio_d 19 0>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				ds3106@1 {
-diff --git a/arch/powerpc/boot/dts/mpc832x_rdb.dts b/arch/powerpc/boot/dts/mpc832x_rdb.dts
-index b6257186528e..ecebc27a2898 100644
---- a/arch/powerpc/boot/dts/mpc832x_rdb.dts
-+++ b/arch/powerpc/boot/dts/mpc832x_rdb.dts
-@@ -249,7 +249,7 @@
- 			reg = <0x4c0 0x40>;
- 			interrupts = <2>;
- 			interrupt-parent = <&qeic>;
--			gpios = <&qe_pio_d 13 0>;
-+			cs-gpios = <&qe_pio_d 13 0>;
- 			mode = "cpu-qe";
- 
- 			mmc-slot@0 {
-diff --git a/arch/powerpc/boot/dts/mpc8610_hpcd.dts b/arch/powerpc/boot/dts/mpc8610_hpcd.dts
-index 1a8321ac105a..33bbe58c1ad0 100644
---- a/arch/powerpc/boot/dts/mpc8610_hpcd.dts
-+++ b/arch/powerpc/boot/dts/mpc8610_hpcd.dts
-@@ -200,7 +200,7 @@
- 			interrupts = <59 2>;
- 			interrupt-parent = <&mpic>;
- 			mode = "cpu";
--			gpios = <&sdcsr_pio 7 0>;
-+			cs-gpios = <&sdcsr_pio 7 0>;
- 			sleep = <&pmc 0x00000800 0>;
- 
- 			mmc-slot@0 {
--- 
-2.13.3
+We have our own config and some compile fixes. But the base
+commit is 219d54332a09
 
+>=20
+> [...]
+>=20
+>>=20
+>> root@letux:~# ./gettime=20
+>> r =3D -1 errno=3D1
+>> tv.sec =3D 1
+>> tv.usec =3D 1
+>> rt =3D 1478193516 errno=3D1
+>> t =3D 1478193516
+>> root@letux:~#=20
+>>=20
+>=20
+> On arm64 the output of your application is what follows:
+>=20
+> r =3D 0 errno=3D0
+> tv.sec =3D 1574942449
+> tv.usec =3D 348684
+> rt =3D 1574942449 errno=3D0
+> t =3D 1574942449
+>=20
+> Which seems what it is expected.
+
+Indeed. Well, on all other arm architectures I can test (omap3/4/5, =
+imx6, raspi)
+it is correct. Only on mips jz4780 I see this.
+
+>=20
+> On a previous email you mentioned what follows:
+>=20
+> root@letux:~# cat /proc/cpuinfo
+> system type             : JZ4780
+> machine                 : img,ci20
+> processor               : 0
+> cpu model               : Ingenic JZRISC V4.15  FPU V0.0
+> BogoMIPS                : 1196.85
+> wait instruction        : yes
+> microsecond timers      : no
+> tlb_entries             : 32
+> extra interrupt vector  : yes
+> hardware watchpoint     : yes, count: 1, address/irw mask: [0x0fff]
+> isa                     : mips1 mips2 mips32r1 mips32r2
+> ASEs implemented        :
+> shadow register sets    : 1
+> kscratch registers      : 0
+> package                 : 0
+> core                    : 0
+> VCED exceptions         : not available
+> VCEI exceptions         : not available
+>=20
+> I am not familiar with JZ4780, which HW clock is it using? (R4K, GIC =
+or NONE)?
+
+Ah, good question. How do I find out? Checking defconfig did not show =
+any
+config with R4K or GIC. So it is likely NONE. CONFIG_RTC_DRV_JZ4740=3Dy =
+if that
+helps.
+
+BR and thanks,
+Nikolaus=
