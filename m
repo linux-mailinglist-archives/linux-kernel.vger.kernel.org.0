@@ -2,77 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6E410CDB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 18:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D40110CDD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 18:25:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfK1RXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 12:23:02 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:46888 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfK1RXC (ORCPT
+        id S1727188AbfK1RZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 12:25:12 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:54835 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727141AbfK1RZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 12:23:02 -0500
-Received: by mail-qv1-f68.google.com with SMTP id t9so513391qvh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 09:22:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=dxY7m/07nwpEoPmFlWFEy/QedJrHJ2tQnhpGMIFFBPA=;
-        b=lwgkM95EcPlajjkzOiW1CVT8SyikrffucLON3EJwUFlrJsyRMtR9+D5lB1ftY/W1Cz
-         uV29sjkzC68x3BL0tvgjhO8SG6alfLg1F0kChIF7XXTKTBb2MLiyLGQjk1Pt33GZ5hts
-         aa2JuCmLWsA6l3yEJlLCQbVj2vSO/BsXMeBZUxv81QYjPW1pDFPA6nsZNMVNR45ku2iW
-         XXPKD82T0GJhc4pTQOhd7nVohud1azDF2SMVkUUii+nlqpp3NnWUPD1uAU/Q1F3QaE/0
-         vMQz1y3Aa2CahQl/BlfOjtenF+BvMEzQF8XBV1BHpoomeWVua4NPHAIckFG5I1DsoBm0
-         wwDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=dxY7m/07nwpEoPmFlWFEy/QedJrHJ2tQnhpGMIFFBPA=;
-        b=Y09SLBmg4JEql7hQcbQ6xqVwztd64CLDitcNKdP08c9Q3zDK4AlZ7Jn+f1NwoaIQg6
-         fUQrR/pcqnyp4VXZGJHJQIDaMF2CTYFIrqj7NkDGNllOADyuicz3lcY2YlGdgTa6TkoJ
-         R8UeyYQHlZE6enJdhv/RwQtXhJV0WjKs+DjpYNG+CKqsYyElpblTHuIKeH+5YMESqONc
-         BCD9U7IX16z2sX2JVKvY5VTyyIz3TeffBmk4tTJ/ScPDRkz600NvpvIsRdHnjerl3l+c
-         jJG5mxQlkDyzx49zXsSj6sqmhu3IjAx8NSvwmwBOSV0k+vPFatGxyRB5wRhiaWXquuKv
-         vvxg==
-X-Gm-Message-State: APjAAAXCnfAlX+jyGF7rabfqJLUUdL5evipkdovduExv24IkYgBKrCm6
-        enLthCO9S7abnO/SF5OzqsAGhg==
-X-Google-Smtp-Source: APXvYqxYRuvBPE0xGFypF88YG98wllF0IIMgWOkACR+5JbFUpq8+rry1pXmFuFbS4CnE5DVnRHzT7Q==
-X-Received: by 2002:a0c:e90b:: with SMTP id a11mr11720436qvo.229.1574961779319;
-        Thu, 28 Nov 2019 09:22:59 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id j7sm8823693qkd.46.2019.11.28.09.22.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2019 09:22:58 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in find_(smallest|biggest)_section_pfn
-Date:   Thu, 28 Nov 2019 12:22:57 -0500
-Message-Id: <D7EFF3C1-E603-4729-8ABE-EBB6994795BF@lca.pw>
-References: <20191128154637.GO26807@dhcp22.suse.cz>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>
-In-Reply-To: <20191128154637.GO26807@dhcp22.suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-X-Mailer: iPhone Mail (17A878)
+        Thu, 28 Nov 2019 12:25:07 -0500
+Received: (qmail 20647 invoked by uid 500); 28 Nov 2019 12:25:05 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 28 Nov 2019 12:25:05 -0500
+Date:   Thu, 28 Nov 2019 12:25:05 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     Oliver Neukum <oneukum@suse.com>
+cc:     syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>,
+        <andreyknvl@google.com>, <hverkuil@xs4all.nl>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>, <mchehab@kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
+In-Reply-To: <1574954383.21204.11.camel@suse.com>
+Message-ID: <Pine.LNX.4.44L0.1911281214050.19734-100000@netrider.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 28 Nov 2019, Oliver Neukum wrote:
 
+> Am Mittwoch, den 27.11.2019, 16:11 -0500 schrieb Alan Stern:
+> > Oliver:
+> > 
+> > Make of this what you will...
+> 
+> Hi,
+> 
+> first, thank you. Second, this is teaching me to question my
+> assumptions. There is no disconnect at all. We are busy looping
+> in the error handler as we have virtual hardware in this test,
+> which can execute an URB without waiting for hardware.
+> 
+> So should we kill error handling for this case?
 
-> On Nov 28, 2019, at 10:46 AM, Michal Hocko <mhocko@kernel.org> wrote:
->=20
-> I tend to push back on cleanups without a clear added value. In this
-> particular case it is not about aesthetic or a personal feeling about
-> the code though. Please read my comment with the ack.
+Okay.  First of all, we must recognize that these syzbot tests have
+encountered two separate bugs.  The first is the one fixed in your
+original patches (the use-after-free).  This bug needs no discussion;
+it looks like your patch fixes it.
 
-I can only encourage you to push back more in general especially for those m=
-icro-size cleanups. On the other hand, it could be arbitrary because once yo=
-u are gone for vacations or some other reasons, it will be inconsistent of r=
-eviewing. You are mostly of my first defense those days.=
+The second bug is the CPU starvation caused by the tight resubmit loop
+in the completion handler.  It is the reason why you kept getting
+failure reports back from syzbot.  It is to some extent a misleading
+result, related to the fact that dummy-hcd doesn't use real hardware,
+as you noted.
+
+Nevertheless, the fix I posted is appropriate.  I posed this question
+to Greg KH some weeks ago, and he pointed out that after some
+discussion on the mailing list, people had generally agreed that
+drivers should not blindly resubmit URBs when they get an unrecognized
+error status.  In this situation, error recovery has to occur at a
+higher level (for example, the user could unplug the device and then
+plug it in again).
+
+So even though with real hardware this tight resubmit loop might not
+end up using all the available CPU time, not resubmitting is still the
+right approach.
+
+Alan Stern
+
