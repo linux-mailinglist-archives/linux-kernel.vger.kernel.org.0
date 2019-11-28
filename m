@@ -2,117 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E98210CBF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6050E10CBFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbfK1PmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 10:42:11 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:16821 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfK1PmK (ORCPT
+        id S1726710AbfK1PpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 10:45:24 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57104 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbfK1PpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:42:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574955728;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=nIftciHtdIZW58XYe32SJEVSKmd/d/4nuYbsUj5SOW4=;
-        b=aT4eqKsQjooGlWu4T6PVkQr6dH6MsdWCkVplXu52Fd+oY9e69v2hFeHKensb0S/k43
-        OqJnrNoFPIGt5zq9FvfhX73aYzP4VLLaR9+ZxOBHJ9ZI6eXXa7IHy+F6RD+aqH0wUl/4
-        C8ZabKa5q/l+0sT+USRNWFZW8//w+gNXoUrcE+8JvPXDjfqKRQHuBtgUWMnjvVpyG6Rn
-        EcGHz0FAXHChegSR4LbQ68hZ/mx7RG7rnWc8MSOF6eJju3O5BkAIzEcJrmwU2cqxcW/E
-        jn/LaMPyNHU1+3+GDIJKtSGU4wZBV+24kJm+Hu21Jn8RYR2/V3bjliQL8QITkY0hfXoD
-        GzSQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAiw43upSE="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
-        with ESMTPSA id y07703vASFg1Kot
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Thu, 28 Nov 2019 16:42:01 +0100 (CET)
+        Thu, 28 Nov 2019 10:45:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1Ua9kzhqWdT/XmuB+JkZPQ/zR7CbGzhbDxmS9/PUHRg=; b=lYn5QAbbuOgCVzO0wK72zGcGg
+        mQTVtUtKdl4KYiJHp4I5I3FXK/6FWZhfra4tUuTFV7QC78oDUm8NKzHIrgasl+8sbPlrCdG0T67u3
+        kgAQ57kaMp3R3h1Z+mwXZn4SMTDknO5FcjPcWJhT6kEGYu4yyJ+8h7G98UfdWJKrqUQljjAF2xpQv
+        RhfjlbJLk4dNosXzbNYjYOLiCEP2PZWfBnLjpu5EMP/cgJOBC3HTYk0zTcErIw08z7ffMbdnD/r09
+        tSSlveUJqScNNE8ME81M1Rd4A954YOsGafxeRRIk7ktZ64V53SmN+UKMgMG5kfHDds764Ihn7lkwx
+        SsNl980Fw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iaLym-0005vg-OI; Thu, 28 Nov 2019 15:45:16 +0000
+Date:   Thu, 28 Nov 2019 07:45:16 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] fs: Fix page_mkwrite off-by-one errors
+Message-ID: <20191128154516.GA17166@infradead.org>
+References: <20191127151811.9229-1-agruenba@redhat.com>
+ <20191127154954.GT6219@magnolia>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: MIPS: bug: gettimeofday syscall broken on CI20 board
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <64ee0c3e-9a54-f86a-daf5-32d54454b8ad@arm.com>
-Date:   Thu, 28 Nov 2019 16:42:01 +0100
-Cc:     Maarten ter Huurne <maarten@treewalker.org>,
-        MIPS Creator CI20 Development 
-        <mips-creator-ci20-dev@googlegroups.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3B85F0EB-DEB4-478B-8745-B44C991D82F4@goldelico.com>
-References: <18788C50-F29B-4BD7-89F6-B056FF490214@goldelico.com> <7b6275c7-ab2b-a647-6bf7-d5e1c4523c98@arm.com> <D1CE4D1E-9A42-4FAE-90A9-615C38B979C0@goldelico.com> <4807842.gtHLO0kk0V@hyperion> <01D75E67-EC2E-4C74-B9BB-752773C481A9@goldelico.com> <64ee0c3e-9a54-f86a-daf5-32d54454b8ad@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <20191127154954.GT6219@magnolia>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 27, 2019 at 07:49:54AM -0800, Darrick J. Wong wrote:
+> On Wed, Nov 27, 2019 at 04:18:11PM +0100, Andreas Gruenbacher wrote:
+> > Fix a check in block_page_mkwrite meant to determine whether an offset
+> > is within the inode size.  This error has spread to several filesystems
+> > and to iomap_page_mkwrite, so fix those instances as well.
+> 
+> Seeing how this has gotten screwed up at least six times in the kernel,
+> maybe we need a static inline helper to do this for us?
 
-> Am 28.11.2019 um 15:01 schrieb Vincenzo Frascino =
-<vincenzo.frascino@arm.com>:
->=20
->>>=20
->>=20
->> What still does not fit into the picture is the errno =3D 1 i.e. =
-EPERM.
->> Maybe I have to study the libc code that tries to read the ELF =
-symbols
->> you have mentioned. It may fail for unknown reasons.
->>=20
->=20
-> This is what I was going to suggest next. It might be that something =
-is not
-> working there.
->=20
-> Let us know your findings.
+Yes.  I think we really want a little helper that checks the mapping
+and the offset.  That also gives us the opportunity to document the
+semantics.
 
-Well, my findings are that the gettimeofday() function in glibc-2.24 =
-(used by
-Debian Stretch) is simple:
+> 
+> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> 
+> The iomap part looks ok,
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> (I might just extract the iomap part and put it in the iomap tree if
+> someone doesn't merge this one before I get to it...)
 
-> #include <errno.h>
-> #include <sys/time.h>
->=20
-> #undef __gettimeofday
->=20
-> #ifdef HAVE_GETTIMEOFDAY_VSYSCALL
-> # define HAVE_VSYSCALL
-> #endif
-> #include <sysdep-vdso.h>
->=20
-> /* Get the current time of day and timezone information,
->    putting it into *tv and *tz.  If tz is null, *tz is not filled.
->    Returns 0 on success, -1 on errors.  */
-> int
-> __gettimeofday (struct timeval *tv, struct timezone *tz)
-> {
->   return INLINE_VSYSCALL (gettimeofday, 2, tv, tz);
-> }
-> libc_hidden_def (__gettimeofday)
-> weak_alias (__gettimeofday, gettimeofday)
-> libc_hidden_weak (gettimeofday)
->=20
-
-but the macro INLINE_VSYSCALL is not immediately understandable.
-
-So I have no idea how to patch the kernel to check why that
-sets errno. And patching libc is beyond my range of experience.
-
-It is only clear that your kernel patch did break it for MIPS
-(at least for CI20) but for obvious reasons not for ARM.
-
-BTW: kernel v5.4 works with Debian Jessie, i.e. glibc-2.19.
-Maybe it triggers a fallback.
-
-BR and thanks,
-Nikolaus
-
-
+I think we should just pull in the helper and conversions through
+some tree after all iomap bits are merged.  It might as well be
+the iomap tree as that seems to the place for file system read/write
+infrastructure these days.
