@@ -2,165 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C238410CB73
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE1810CB8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfK1POH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 10:14:07 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38236 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbfK1POG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:14:06 -0500
-Received: by mail-ot1-f65.google.com with SMTP id z25so22470945oti.5;
-        Thu, 28 Nov 2019 07:14:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HtuUzrcYCx4FDKvEYRGNCE7CBoyzQfGcKVK/4Fc5Xdo=;
-        b=U7H/vMgHKUQfGCWIqsAc2hDHGYhdMRtA9d/x76Mk5bgXtAUHQYEQezz4KCmwjzRW3Q
-         +hsmclBS9eH14K21262FlXFPBytrKVmtqE6z5p3Mhr0hBRSz6Z0pzVEFti39PLc/XAxR
-         zhD+DjtkdgHLUyMGBNkFnUDJXEDRhysdooejFjchqAbk1nkr7MKaHCVY0WU/efzuvrsy
-         f7sb0aw+V9v5w/zyksxHwYqHPfyNJvAnODn4HLzBofYH0/kjvpWUixCFUvHR0Kn2JOBg
-         AJvdKW3wjpEhw10cyE8N83V/fU3TEDHS51QKDX7k+/MRSvBF6VZIQ9wkkGDnU6m7vv3p
-         18+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HtuUzrcYCx4FDKvEYRGNCE7CBoyzQfGcKVK/4Fc5Xdo=;
-        b=uXDEK99CBKoKMznmkMemSpWODYPBfqA9C7TAj3uo13oa0cnETkMP4GeNbPK7z8vv0P
-         0viMPthldYPnFxEKHUKgYpqFDWjGUMyztXcynZfqCRFuQulhrKsSz23PQXY38iAQO5Or
-         TcnSSk2ZPap0X8wyyOCERj86/S6ZrFPrHB2RfvxmNwtGIOohMQT6Oq8/tj38pdsP6PDF
-         S5OyT+BBDTqzUjysyj8S7ExeWg24tupUvGbUYSZax8asraIMo9KLMNMFft8brNUxjupk
-         yzioJC087Z3g6x0thcaVmFCC/HRdzPB9DrrvUnXHeQadv6x/GA6CdT5JWPVWelKwz8pS
-         9q0w==
-X-Gm-Message-State: APjAAAX0BuTn6Oaiz0LdBoQ15nT8dgLS0BlPlbDY9VPrC5xDe4ZlUEAQ
-        BAmikxcFCZ2VUqVi2r9RsPg=
-X-Google-Smtp-Source: APXvYqwID9RssdR2nPQiWYVEbA9lQFH3JA3ZSSEgHgyZrAY109cux/TszBuuQeKLk9wPhsrCNT+FyQ==
-X-Received: by 2002:a05:6830:46:: with SMTP id d6mr8123426otp.7.1574954045573;
-        Thu, 28 Nov 2019 07:14:05 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l73sm2613001oib.0.2019.11.28.07.14.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Nov 2019 07:14:04 -0800 (PST)
-Subject: Re: [PATCH v2 7/8] nvme: hwmon: switch to use <linux/temperature.h>
- helpers
-To:     Akinobu Mita <akinobu.mita@gmail.com>,
-        linux-nvme@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sujith Thomas <sujith.thomas@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-References: <1574952879-7200-1-git-send-email-akinobu.mita@gmail.com>
- <1574952879-7200-8-git-send-email-akinobu.mita@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <479c99fe-51c6-910f-4471-4883de4cfd21@roeck-us.net>
-Date:   Thu, 28 Nov 2019 07:14:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <1574952879-7200-8-git-send-email-akinobu.mita@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726694AbfK1PR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 10:17:26 -0500
+Received: from mga12.intel.com ([192.55.52.136]:39027 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726436AbfK1PR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 10:17:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2019 07:17:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,253,1571727600"; 
+   d="scan'208";a="199551647"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.104])
+  by orsmga007.jf.intel.com with ESMTP; 28 Nov 2019 07:17:25 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        tglx@linutronix.de, bp@alien8.de, linux-kernel@vger.kernel.org
+Cc:     eranian@google.com, alexey.budankov@linux.intel.com,
+        vitaly.slobodskoy@intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [RFC PATCH 1/8] perf: Save PMU specific data in task_struct
+Date:   Thu, 28 Nov 2019 07:14:24 -0800
+Message-Id: <1574954071-6321-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/19 6:54 AM, Akinobu Mita wrote:
-> This switches the nvme driver to use kelvin_to_millicelsius() and
-> millicelsius_to_kelvin() in <linux/temperature.h>.
-> 
-> Cc: Sujith Thomas <sujith.thomas@intel.com>
-> Cc: Darren Hart <dvhart@infradead.org>
-> Cc: Andy Shevchenko <andy@infradead.org>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Amit Kucheria <amit.kucheria@verdurent.com>
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Keith Busch <kbusch@kernel.org>
-> Cc: Jens Axboe <axboe@fb.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Sagi Grimberg <sagi@grimberg.me>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Some PMU specific data has to be saved/restored during context switch,
+e.g. LBR call stack data. Currently, the data is saved in event context
+structure, but only for per-process event. For system-wide event,
+because of missing the LBR call stack data after context switch, LBR
+callstacks are always shorter in comparison to per-process mode.
 
-> ---
-> * v2
-> - add Reviewed-by tag
-> 
->   drivers/nvme/host/hwmon.c | 13 +++++--------
->   1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/hwmon.c b/drivers/nvme/host/hwmon.c
-> index a5af21f..14720c1 100644
-> --- a/drivers/nvme/host/hwmon.c
-> +++ b/drivers/nvme/host/hwmon.c
-> @@ -5,14 +5,11 @@
->    */
->   
->   #include <linux/hwmon.h>
-> +#include <linux/temperature.h>
->   #include <asm/unaligned.h>
->   
->   #include "nvme.h"
->   
-> -/* These macros should be moved to linux/temperature.h */
-> -#define MILLICELSIUS_TO_KELVIN(t) DIV_ROUND_CLOSEST((t) + 273150, 1000)
-> -#define KELVIN_TO_MILLICELSIUS(t) ((t) * 1000L - 273150)
-> -
->   struct nvme_hwmon_data {
->   	struct nvme_ctrl *ctrl;
->   	struct nvme_smart_log log;
-> @@ -35,7 +32,7 @@ static int nvme_get_temp_thresh(struct nvme_ctrl *ctrl, int sensor, bool under,
->   		return -EIO;
->   	if (ret < 0)
->   		return ret;
-> -	*temp = KELVIN_TO_MILLICELSIUS(status & NVME_TEMP_THRESH_MASK);
-> +	*temp = kelvin_to_millicelsius(status & NVME_TEMP_THRESH_MASK);
->   
->   	return 0;
->   }
-> @@ -46,7 +43,7 @@ static int nvme_set_temp_thresh(struct nvme_ctrl *ctrl, int sensor, bool under,
->   	unsigned int threshold = sensor << NVME_TEMP_THRESH_SELECT_SHIFT;
->   	int ret;
->   
-> -	temp = MILLICELSIUS_TO_KELVIN(temp);
-> +	temp = millicelsius_to_kelvin(temp);
->   	threshold |= clamp_val(temp, 0, NVME_TEMP_THRESH_MASK);
->   
->   	if (under)
-> @@ -88,7 +85,7 @@ static int nvme_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
->   	case hwmon_temp_min:
->   		return nvme_get_temp_thresh(data->ctrl, channel, true, val);
->   	case hwmon_temp_crit:
-> -		*val = KELVIN_TO_MILLICELSIUS(data->ctrl->cctemp);
-> +		*val = kelvin_to_millicelsius(data->ctrl->cctemp);
->   		return 0;
->   	default:
->   		break;
-> @@ -105,7 +102,7 @@ static int nvme_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
->   			temp = get_unaligned_le16(log->temperature);
->   		else
->   			temp = le16_to_cpu(log->temp_sensor[channel - 1]);
-> -		*val = KELVIN_TO_MILLICELSIUS(temp);
-> +		*val = kelvin_to_millicelsius(temp);
->   		break;
->   	case hwmon_temp_alarm:
->   		*val = !!(log->critical_warning & NVME_SMART_CRIT_TEMPERATURE);
-> 
+For example,
+  Per-process mode:
+  $perf record --call-graph lbr -- taskset -c 0 ./tchain_edit
+
+  -   99.90%    99.86%  tchain_edit  tchain_edit       [.] f3
+       99.86% _start
+          __libc_start_main
+          generic_start_main
+          main
+          f1
+        - f2
+             f3
+
+  System-wide mode:
+  $perf record --call-graph lbr -a -- taskset -c 0 ./tchain_edit
+
+  -   99.88%    99.82%  tchain_edit  tchain_edit        [.] f3
+   - 62.02% main
+        f1
+        f2
+        f3
+   - 28.83% f1
+      - f2
+        f3
+   - 28.83% f1
+      - f2
+           f3
+   - 8.88% generic_start_main
+        main
+        f1
+        f2
+        f3
+
+It isn't practical to simply allocate the data for system-wide event in
+CPU context structure for all tasks. We have no idea which CPU a task
+will be scheduled to. The duplicated LBR data has to be maintained on
+every CPU context structure. That's a huge waste. Otherwise, the LBR
+data still lost if the task is scheduled to another CPU.
+
+Save the pmu specific data in task_struct. The size of pmu specific data
+is 788 bytes for LBR call stack. Usually, the overall amount of threads
+doesn't exceed a few thousands. For 10K threads, keeping LBR data would
+consume additional ~8MB. The additional space will only be allocated
+during LBR call stack monitoring. It will be released when the
+monitoring is finished.
+
+Furthermore, moving task_ctx_data from perf_event_context to task_struct
+can reduce complexity and make things clearer. E.g. perf doesn't need to
+swap task_ctx_data on optimized context switch path.
+This patch set is just the first step. There could be other
+optimization/extension on top of this patch set. E.g. for cgroup
+profiling, perf just needs to save/store the LBR call stack information
+for tasks in specific cgroup. That could reduce the additional space.
+Also, the LBR call stack can be available for software events, or allow
+even debugging use cases, like LBRs on crash later.
+
+The data can be shared among events. To sync the writers of
+perf_ctx_data RCU pointer, add a lock in task_struct as well.
+
+The size of pmu specific data is saved in struct perf_ctx_data. It's
+required when child task allocates the space.
+The refcount in struct perf_ctx_data is used to track the users of pmu
+specific data.
+
+Reviewed-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ include/linux/perf_event.h | 28 ++++++++++++++++++++++++++++
+ include/linux/sched.h      |  4 ++++
+ kernel/events/core.c       |  2 ++
+ 3 files changed, 34 insertions(+)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 34c7c69..a6abefb 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -821,6 +821,34 @@ struct perf_event_context {
+ 	struct rcu_head			rcu_head;
+ };
+ 
++/**
++ * struct perf_ctx_data - PMU specific data for a task
++ * @rcu_head:  To avoid the race on free PMU specific data
++ * @refcount:  To track users
++ * @data_size: Size of PMU specific data
++ * @data:      PMU specific data
++ *
++ * Currently, the struct is only used in Intel LBR call stack mode to
++ * save/restore the call stack of a task on context switches.
++ * The data only be allocated when Intel LBR call stack mode is enabled.
++ * The data will be freed when the mode is disabled. The rcu_head is
++ * used to prevent the race on free the data.
++ * The content of the data will only be accessed in context switch, which
++ * should be protected by rcu_read_lock().
++ *
++ * Careful: Struct perf_ctx_data is added as a pointor in struct task_struct.
++ * When system-wide Intel LBR call stack mode is enabled, a buffer with
++ * constant size will be allocated for each task.
++ * Also, system memory consumption can further grow when the size of
++ * struct perf_ctx_data enlarges.
++ */
++struct perf_ctx_data {
++	struct rcu_head			rcu_head;
++	u64				refcount;
++	size_t				data_size;
++	void				*data;
++};
++
+ /*
+  * Number of contexts where an event can trigger:
+  *	task, softirq, hardirq, nmi.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 67a1d86..51397e2 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -46,6 +46,7 @@ struct mempolicy;
+ struct nameidata;
+ struct nsproxy;
+ struct perf_event_context;
++struct perf_ctx_data;
+ struct pid_namespace;
+ struct pipe_inode_info;
+ struct rcu_node;
+@@ -1059,6 +1060,9 @@ struct task_struct {
+ 	struct perf_event_context	*perf_event_ctxp[perf_nr_task_contexts];
+ 	struct mutex			perf_event_mutex;
+ 	struct list_head		perf_event_list;
++	/* Sync the writers of perf_ctx_data RCU pointer */
++	raw_spinlock_t			perf_ctx_data_lock;
++	struct perf_ctx_data __rcu	*perf_ctx_data;
+ #endif
+ #ifdef CONFIG_DEBUG_PREEMPT
+ 	unsigned long			preempt_disable_ip;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 059ee71..43567d1 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -12321,6 +12321,8 @@ int perf_event_init_task(struct task_struct *child)
+ 	memset(child->perf_event_ctxp, 0, sizeof(child->perf_event_ctxp));
+ 	mutex_init(&child->perf_event_mutex);
+ 	INIT_LIST_HEAD(&child->perf_event_list);
++	child->perf_ctx_data = NULL;
++	raw_spin_lock_init(&child->perf_ctx_data_lock);
+ 
+ 	for_each_task_context_nr(ctxn) {
+ 		ret = perf_event_init_context(child, ctxn);
+-- 
+2.7.4
 
