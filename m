@@ -2,60 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACBED10CFD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA01610CFCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfK1WvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 17:51:03 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:45514 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfK1WvC (ORCPT
+        id S1726702AbfK1Wmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 17:42:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48310 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfK1Wmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 17:51:02 -0500
-Received: from 79.184.255.242.ipv4.supernova.orange.pl (79.184.255.242) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 7a1bba6277687c37; Thu, 28 Nov 2019 23:51:00 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        "Kenneth R. Crudup" <kenny@panix.com>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/2] ACPI: PM: s2idle: Fix possible suspend lock-up
-Date:   Thu, 28 Nov 2019 23:42:09 +0100
-Message-ID: <2787005.CsmIKtZlk9@kreacher>
+        Thu, 28 Nov 2019 17:42:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YWU+2cL1a8V7zdnD6YoB1Y5aa4SlJGwwOBC43F4kcpk=; b=B7oUa/oy07Rxb6l4GSyDKkke8
+        nYDX7KYQgQquj8NbVkCT6qjBpdOaYkoUsO6+s4RThCUtsyP8Wjd0do7Nnh8n6SClZSYV3E97S8nmy
+        fmnfIhgWmfyTel5C2A52/qmjEeamSFVk8D+/So4kupvHq/S4SK0lpb7qGLdKH4Sbaz4Vp6i81grxh
+        jY/zTTq7x5kL5CWQMiUNTAiF61HaD9PNpMNm7tvAwZLFak25HhpafNjBcujjEsEkVqXBmDsViwSob
+        YxEZwxESxaWN06jZ+MAgrlr5f0wIu4jcl1PTEppfcsIXnSGIyhbNqws2uU9mClhyEVk7h5pDB+M9i
+        KdmjlaAmg==;
+Received: from [2601:1c0:6280:3f0::5a22]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iaSUY-0000hU-2r; Thu, 28 Nov 2019 22:42:30 +0000
+To:     LKML <linux-kernel@vger.kernel.org>, linux-csky@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>, Guo Ren <guoren@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] irqchip: cleanup Kconfig help text
+Message-ID: <ca14f757-f191-62a0-b896-6b3ba0f9d168@infradead.org>
+Date:   Thu, 28 Nov 2019 14:42:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+From: Randy Dunlap <rdunlap@infradead.org>
 
-The first patch in this series is a fix for a suspend-to-idle issues introduced
-in 5.4 (see its changelog for details).
+Fixes to Kconfig help text:
 
-The second one is more of an optimization, although some systems may need it
-too (depending on how fragile their platform firmware is).
+- spell out "hardware"
+- fix verb usage
 
-Kenneth,
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Guo Ren <guoren@kernel.org>
+Cc: linux-csky@vger.kernel.org
+---
+ drivers/irqchip/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This series is roughly equivalent to the patch at
-
-https://lore.kernel.org/linux-pm/CAJZ5v0h1Ro75++4xuCznkx6GNYd+G5NpMGP96z1jdh=dm9uZbw@mail.gmail.com/T/#m11ca9a14efe4e5193bbda69767595a5fb7bd5479
-
-The main difference is that it flushes system_wq before ec_query_wq, but that
-should not really matter if the issue you saw in 5.4 is the one described
-in the changelog of patch [1/2].
-
-Please test this series and let me know if it works for you too.
-
-In case it does work, it would be good to know if patch [1/2] is sufficient to
-fix the suspend problem at least with ec_no_wakeup == 0 (it may not be
-sufficient with ec_no_wakeup == 1).
-
-Thanks!
-
-
+--- lnx-54.orig/drivers/irqchip/Kconfig
++++ lnx-54/drivers/irqchip/Kconfig
+@@ -434,7 +434,7 @@ config CSKY_MPINTC
+ 	help
+ 	  Say yes here to enable C-SKY SMP interrupt controller driver used
+ 	  for C-SKY SMP system.
+-	  In fact it's not mmio map in hw and it use ld/st to visit the
++	  In fact it's not mmio map in hardware and it uses ld/st to visit the
+ 	  controller's register inside CPU.
+ 
+ config CSKY_APB_INTC
+@@ -442,7 +442,7 @@ config CSKY_APB_INTC
+ 	depends on CSKY
+ 	help
+ 	  Say yes here to enable C-SKY APB interrupt controller driver used
+-	  by C-SKY single core SOC system. It use mmio map apb-bus to visit
++	  by C-SKY single core SOC system. It uses mmio map apb-bus to visit
+ 	  the controller's register.
+ 
+ config IMX_IRQSTEER
 
