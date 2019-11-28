@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B83D10CF98
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 22:46:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C007A10CF93
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 22:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfK1VqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 16:46:11 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:54378 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfK1VqL (ORCPT
+        id S1726633AbfK1VnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 16:43:19 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:57904 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfK1VnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 16:46:11 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xASLYDh9031956;
-        Thu, 28 Nov 2019 21:38:21 GMT
+        Thu, 28 Nov 2019 16:43:19 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xASLe2Ti055828;
+        Thu, 28 Nov 2019 21:40:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=6XI4go+lb9shS5sonxMMGanusVftbZ4ONKKqMMScI5Q=;
- b=pJvQnCW19zjfJNwgHAxvfq8Nx8U9li8CBnYcaAB9ozBNszoJ3S/Olk0QPLzrvNh37dTA
- aJHWnn2+vW85sgb9/PuZwqzg7fpIC7XfXYBYJfBqBAxnU/fkRimp+HXCveicgn5syRtR
- l5uawUvQLs/xTWLOHEGcD3XWH0UnGinZpZOnWRyN+ivFFy8U9LC3sdnZdu/xf4aqwvyJ
- l5toovQJDS8lxWWcn/etzXxMN89x3sS2xr02DWLipbbVZl/CvzGZtUV113KwidPoXKzc
- peiVSD8BdaiPloLpamr/LBRXsuLAoZnWl8AYnVvFqAgUgpj6Oywd0G80R7Ot8mkSvefg nQ== 
+ bh=RDlUvdHx7bP3fhej6PPw6iFvdRiOK+n8uLYu5RZA6Wo=;
+ b=oX2zn5k3BmCcgDl/3j7J84yRrPIvrAuufkNnxD1idCwELsblCla0nEHs0+I5/3aj0zvs
+ 8J7gyV/Z0CZdeMn3lVo1cKmS8Zkq1eQlhlioAFlBGrdl4GXG2wMY7IiZX+yFNrkf13aM
+ Czwno+dEeQQErb24EgPTNdU4VGv5P5th2eWIZI+07jHvI/qGzfvRqx1fxVoPnkZA4LTA
+ cpeLVz+7iTcYY11HxM9wD23FKO/TMoIKfRpxp4Ull62ft7Y/X6ykvR8iYN09blJP3NnE
+ QPTsB1myN5irpyr97z6mioRMfjESethNW1ZcM6DiMQlHRC7adUF6uV83UY0pxhTQ3wj7 Zg== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2wewdrn34h-1
+        by userp2130.oracle.com with ESMTP id 2wev6un6ws-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Nov 2019 21:38:21 +0000
+        Thu, 28 Nov 2019 21:40:02 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xASLcIGq050314;
-        Thu, 28 Nov 2019 21:38:21 GMT
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xASLcIbw050234;
+        Thu, 28 Nov 2019 21:40:01 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2wjh0kme7v-1
+        by aserp3020.oracle.com with ESMTP id 2wjh0kmq2j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Nov 2019 21:38:18 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xASLbq47029213;
-        Thu, 28 Nov 2019 21:37:52 GMT
+        Thu, 28 Nov 2019 21:40:01 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xASLe1b3030098;
+        Thu, 28 Nov 2019 21:40:01 GMT
 Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 28 Nov 2019 13:37:52 -0800
-Subject: Re: [PATCH v2] xen/events: remove event handling recursion detection
-To:     Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org
+        with ESMTP ; Thu, 28 Nov 2019 13:40:00 -0800
+Subject: Re: [PATCH v2 0/2] xen/gntdev: sanitize user interface handling
+To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 Cc:     Stefano Stabellini <sstabellini@kernel.org>
-References: <20191128084545.13831-1-jgross@suse.com>
+References: <20191107111546.26579-1-jgross@suse.com>
+ <442417bc-ec65-0864-0a99-59583a52f866@suse.com>
 From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
@@ -90,14 +91,14 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <b0a86e66-2366-ff94-e867-2fc5cfdae38d@oracle.com>
-Date:   Thu, 28 Nov 2019 16:37:27 -0500
+Message-ID: <38f8733d-f94f-e10f-0291-4d198f327d56@oracle.com>
+Date:   Thu, 28 Nov 2019 16:39:37 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191128084545.13831-1-jgross@suse.com>
+In-Reply-To: <442417bc-ec65-0864-0a99-59583a52f866@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9455 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
@@ -109,46 +110,35 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=150
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911280188
+ definitions=main-1911280189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/19 3:45 AM, Juergen Gross wrote:
-> -
->  static void __xen_evtchn_do_upcall(void)
->  {
->  	struct vcpu_info *vcpu_info = __this_cpu_read(xen_vcpu);
-> -	int cpu = get_cpu();
-> -	unsigned count;
-> +	int cpu = smp_processor_id();
->  
->  	do {
->  		vcpu_info->evtchn_upcall_pending = 0;
->  
-> -		if (__this_cpu_inc_return(xed_nesting_count) - 1)
-> -			goto out;
-> -
->  		xen_evtchn_handle_events(cpu);
->  
->  		BUG_ON(!irqs_disabled());
->  
-> -		count = __this_cpu_read(xed_nesting_count);
-> -		__this_cpu_write(xed_nesting_count, 0);
-> -	} while (count != 1 || vcpu_info->evtchn_upcall_pending);
-> -
-> -out:
-> +		rmb(); /* Hypervisor can set upcall pending. */
+On 11/28/19 3:48 AM, Jürgen Groß wrote:
+> On 07.11.19 12:15, Juergen Gross wrote:
+>> The Xen gntdev driver's checking of the number of allowed mapped pages
+>> is in need of some sanitizing work.
+>>
+>> Changes in V2:
+>> - enhanced commit message of patch 1 (Andrew Cooper)
+>>
+>> Juergen Gross (2):
+>>    xen/gntdev: replace global limit of mapped pages by limit per call
+>>    xen/gntdev: switch from kcalloc() to kvcalloc()
+>>
+>>   drivers/xen/gntdev-common.h |  2 +-
+>>   drivers/xen/gntdev-dmabuf.c | 11 +++------
+>>   drivers/xen/gntdev.c        | 55
+>> +++++++++++++++++++--------------------------
+>>   3 files changed, 27 insertions(+), 41 deletions(-)
+>>
+>
+> Boris, could you please comment on the patches?
 
-virt_rmb() perhaps then?
+Sure, both look good (and so R-b). I haven't commented since Oleksandr
+already gave you his.
+
 
 -boris
-
->  
-> -	put_cpu();
-> +	} while (vcpu_info->evtchn_upcall_pending);
->  }
->  
->  void xen_evtchn_do_upcall(struct pt_regs *regs)
-
