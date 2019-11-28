@@ -2,169 +2,292 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E128F10C65E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 11:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A58FE10C663
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 11:07:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfK1KG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 05:06:28 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53140 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfK1KG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 05:06:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kAzGthTrVHAi7AX7oK1GGCcOfI4R/DIxoI7QEs76F5I=; b=na5oiyEis1GUKanh4lMUFOTQP
-        J1oTldWRG73YC7hsRSkSgrbMnI/UJrIbPiuHgWklDRuw+9e+E51uXkR+y2SAkIIJAKn/gsWjdocDX
-        +iUIcjua9ImyXRvVIajZawYfXc6kkyJB3OpoZuJhT7zETEpjE1ISyx7O7qYYEVzhIIBaSVqmWSh5O
-        JZygnJsgB3phfXJpHt30IYBn2Azng9gyu3oeTNnft1LCnTJ05Jv+1GW89fvBF9tQPm/9U/Hn/UIf6
-        ugkQWqXR5sLTG3JJhnqBta6dJoiW5pVv9yDwinXXd+zZm78mgtSbs4I0UnJ0ptbAD7XQWUYHYll6K
-        1OlkN0hkQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45710)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iaGgi-0000GT-Rg; Thu, 28 Nov 2019 10:06:17 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iaGgf-0001Bf-SB; Thu, 28 Nov 2019 10:06:13 +0000
-Date:   Thu, 28 Nov 2019 10:06:13 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Peng Ma <peng.ma@nxp.com>
-Cc:     "linux@rempel-privat.de" <linux@rempel-privat.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH] i2c: imx: Defer probing if EDMA not available
-Message-ID: <20191128100613.GI25745@shell.armlinux.org.uk>
-References: <20191127071136.5240-1-peng.ma@nxp.com>
+        id S1726700AbfK1KHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 05:07:32 -0500
+Received: from mout.gmx.net ([212.227.15.18]:53855 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfK1KHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 05:07:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1574935637;
+        bh=2zQMZkhlvmPqfR4bW72WrM1X2vOkND7H6zw+qEX8U5k=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=iEds2dpH2W3n3NJOrhRzYwYttZYZPWAic1OVdy18yKJNcwTxZilTgDlfiKzjjTL3h
+         mtSALC+BdRWTn0Vmudr9QahS1Y3pKGu8KrSQ0BeMD0gzHAWqxmXvX8BNYxDKxvdOB6
+         ojQ5Q7FKOumz3xNhkLLRzeumJpuObp/kcEuDSpy8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from zaphod.peppercon.de ([212.80.250.50]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5QF5-1iYtG53Kz7-001SCD; Thu, 28
+ Nov 2019 11:07:16 +0100
+From:   Ingo van Lil <inguin@gmx.de>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Rosin <peda@axentia.se>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Ingo van Lil <inguin@gmx.de>
+Subject: [PATCH] ARM: dts: at91: Reenable UART TX pull-ups
+Date:   Thu, 28 Nov 2019 11:06:29 +0100
+Message-Id: <20191128100629.10247-1-inguin@gmx.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127071136.5240-1-peng.ma@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vfC3vJk8FsxmCb+AYv4X1cMohXEUY1LuX9wBqpCyDJoGWoWFDzo
+ 9sVXgCFcBslpRL0rLv/bVR/TXeYnDV5c7xpr6AfN8nLPwzSqCELZ63B8AhEg3dHHIMS2GNY
+ eOw5URR1tw0oQTsQBnmIhSHbc7GVrDwdBl8W7qN/xitPcGKqpskpVaGM3b1kyigaLTLb3is
+ h2TZ3r2bcsudsmA7YWxgA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:C8HVvU9iQbk=:h9qsrHMA0oVtcEFWSYszlB
+ Dc9s97AuEb63IuZo/uw0YM7z9jVr8hMOi3N8bL/ijy+VhN+JceR2qUuQTTxc5wfxCqg/5S2Pq
+ 6wCdJisvuiI8RuDiNQ7zPgrRWhBvtsh/us6HyMVANcfNMZ7nkGx7Nqore8hwRTHda9M8dQKgn
+ 2gyEVyCynLub5m9vFfLKE6IDQHNu6SQnESnvtO4UlCexz9toxnIx+qBHo+aqYQTzVVeAhDaM0
+ 7BRGD4K9s6iSEO0Ah831HOGh2wYk3OujP7mpcwaHjaiiGISy7TfUh1T763JnG1n5/U5gJHH6u
+ W/1YsOH0lF0AA0EBVXPdvlbC97da8wWY9iUASlgktCeN9JX6G8U2un+b3d4dw1YIq1TpshuD3
+ WepXRA8H9Z7gca3H4d3ULiVOYFQWwryGWf4x0YRgZmBcJWWoazp68qU7KtKQfdXq8g5/gAHZF
+ w6HpBm91yVIbB+c+GW5pwPzIh+B4YcB78zpFCg2I9YlUK5MQ1ypxL23l1Bp6yT2qKVe4O69wg
+ eQ/LPTPo7DFf5C6rYViVZJTm1jBlFBElYrmiZnf0MU4s16OmJmJIHzmRCTvsFp6VfbrZwf0+y
+ 5A6SvWp77+8npSN9/WiK/4Pmi8iN5Ib+hmzxc9PZMHU0eR6T3kWSAPJ4Y4S4ip/HaDJ+yx2PB
+ L0f2uYhltx14kBwCkwCt0STm+6N0BdqfWjzJ9Hs3rEc0iaPTD1p0IrgHSXOUkUsVOkX8wZ33G
+ gGXIm+ifjufPZq460dOUA5gNWklP7KJ7HVeMxCT02IOj/UYEng+nkGrlq19i9jcKGlSkFpzpk
+ hW8tBhdwoX9CYvSvaRVYlMxcYRL0A250ZFK9MkhxogOzj61t0Tyz7rvw1pxWq4HeZ+0MvMZCm
+ e0WcS/6NnL7HV5+M2rO6dkkuNkyDTPpAqs0OK+eWGf42ki761MUrLmNNkham/nY5FYICZcjb1
+ k0hPRg/CLaeLVAGDqN1gDlERxoFqx+HOkBHfgsp+yrpdiNWWLNiSJcXQv9S84zZZKZDKMM/w8
+ j1XRq5X+nMR192RxPsi1pV9fWvbenP5Gm7dfPO8R5dEvuIhCOtqeM5Ef9PzTYPpC4BXQ5HaBk
+ 7ppV7JEejNbwbGH72AL7okhwBQrck2mO+k0nC08UxKOmpIyzAscIxsO63UTHgl494227Eny6D
+ +LK9eXOP9r+f8kq+zfNjIK2RwI0zMhvK7PJn0KvD7M1fExU50qM2z2hxunmRLg8bDcutOBWUY
+ HxtfIijQwPtzdeGyOwXPgJG03/C7lnt2VPAW3vg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 07:12:09AM +0000, Peng Ma wrote:
-> EDMA may be not available or defered due to dependencies on
-> other modules, If these scenarios is encountered, we should
-> defer probing.
+Pull-ups for SAM9 UART/USART TX lines were disabled in 5e04822f.
+However, several chips in the SAM9 family require pull-ups to prevent
+the TX lines from falling (and causing an endless break condition) when
+the transceiver is disabled.
 
-This has been tried before in this form, and it causes regressions.
+=46rom the SAM9G20 datasheet, 32.5.1: "To prevent the TXD line from
+falling when the USART is disabled, the use of an internal pull up
+is mandatory.". This commit reenables the pull-ups for all chips having
+that sentence in their datasheets.
 
-> Signed-off-by: Peng Ma <peng.ma@nxp.com>
-> ---
->  drivers/i2c/busses/i2c-imx.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index 40111a3..c2b0693 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -369,8 +369,8 @@ static void i2c_imx_reset_regs(struct imx_i2c_struct *i2c_imx)
->  }
->  
->  /* Functions for DMA support */
-> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
-> -						dma_addr_t phy_addr)
-> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
-> +			       dma_addr_t phy_addr)
->  {
->  	struct imx_i2c_dma *dma;
->  	struct dma_slave_config dma_sconfig;
-> @@ -379,7 +379,7 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->  
->  	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
->  	if (!dma)
-> -		return;
-> +		return -ENOMEM;
->  
->  	dma->chan_tx = dma_request_chan(dev, "tx");
->  	if (IS_ERR(dma->chan_tx)) {
-> @@ -424,7 +424,7 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->  	dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
->  		dma_chan_name(dma->chan_tx), dma_chan_name(dma->chan_rx));
->  
-> -	return;
-> +	return 0;
->  
->  fail_rx:
->  	dma_release_channel(dma->chan_rx);
-> @@ -432,6 +432,8 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->  	dma_release_channel(dma->chan_tx);
->  fail_al:
->  	devm_kfree(dev, dma);
-> +
-> +	return ret;
+Signed-off-by: Ingo van Lil <inguin@gmx.de>
+=2D--
+ arch/arm/boot/dts/at91sam9260.dtsi | 12 ++++++------
+ arch/arm/boot/dts/at91sam9261.dtsi |  6 +++---
+ arch/arm/boot/dts/at91sam9263.dtsi |  6 +++---
+ arch/arm/boot/dts/at91sam9g45.dtsi |  8 ++++----
+ arch/arm/boot/dts/at91sam9rl.dtsi  |  8 ++++----
+ 5 files changed, 20 insertions(+), 20 deletions(-)
 
-Some platforms don't have EDMA.  Doesn't this force everyone who wants
-I2C to have DMA?  The last attempt at this had:
+diff --git a/arch/arm/boot/dts/at91sam9260.dtsi b/arch/arm/boot/dts/at91sa=
+m9260.dtsi
+index dee9c0c8a096..16c6fd3c4246 100644
+=2D-- a/arch/arm/boot/dts/at91sam9260.dtsi
++++ b/arch/arm/boot/dts/at91sam9260.dtsi
+@@ -187,7 +187,7 @@
+ 				usart0 {
+ 					pinctrl_usart0: usart0-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 5 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
-	/* return successfully if there is no dma support */
-	return ret == -ENODEV ? 0 : ret;
+@@ -221,7 +221,7 @@
+ 				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
-here because of exactly this.
+@@ -239,7 +239,7 @@
+ 				usart2 {
+ 					pinctrl_usart2: usart2-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
->  }
->  
->  static void i2c_imx_dma_callback(void *arg)
-> @@ -1605,10 +1607,14 @@ static int i2c_imx_probe(struct platform_device *pdev)
->  	dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
->  
->  	/* Init DMA config if supported */
-> -	i2c_imx_dma_request(i2c_imx, phy_addr);
-> +	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
-> +	if (ret == -EPROBE_DEFER)
-> +		goto i2c_adapter_remove;
+@@ -257,7 +257,7 @@
+ 				usart3 {
+ 					pinctrl_usart3: usart3-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 10 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 10 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 11 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
-This happens _after_ the adapter has been published to the rest of the
-kernel.  Claiming resources after publication is racy - the adapter may
-be in use by a request at this point.  Secondly, there's been problems
-with this causing regressions when EDMA is built as a module and i2c-imx
-is built-in.
+@@ -275,7 +275,7 @@
+ 				uart0 {
+ 					pinctrl_uart0: uart0-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOA 31 AT91_PERIPH_B AT91_PINCTRL_NONE
++							<AT91_PIOA 31 AT91_PERIPH_B AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOA 30 AT91_PERIPH_B AT91_PINCTRL_PULL_UP>;
+ 					};
+ 				};
+@@ -283,7 +283,7 @@
+ 				uart1 {
+ 					pinctrl_uart1: uart1-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 12 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 12 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 13 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+ 				};
+diff --git a/arch/arm/boot/dts/at91sam9261.dtsi b/arch/arm/boot/dts/at91sa=
+m9261.dtsi
+index dba025a98527..5ed3d745ac86 100644
+=2D-- a/arch/arm/boot/dts/at91sam9261.dtsi
++++ b/arch/arm/boot/dts/at91sam9261.dtsi
+@@ -329,7 +329,7 @@
+ 				usart0 {
+ 					pinctrl_usart0: usart0-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOC 8 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOC 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOC 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
-See e8c220fac415 ("Revert "i2c: imx: improve the error handling in
-i2c_imx_dma_request()"") when exactly what you're proposing was tried
-and ended up having to be reverted.
+@@ -347,7 +347,7 @@
+ 				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOC 12 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOC 12 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOC 13 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
-AFAIK nothing has changed since, so merely reinstating the known to be
-broken code, thereby reintroducing the same (and more) problems, isn't
-going to be acceptable.
+@@ -365,7 +365,7 @@
+ 				usart2 {
+ 					pinctrl_usart2: usart2-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOC 14 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOC 14 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOC 15 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
-Sorry, but this gets a big NAK from me.
+diff --git a/arch/arm/boot/dts/at91sam9263.dtsi b/arch/arm/boot/dts/at91sa=
+m9263.dtsi
+index 99678abdda93..5c990cfae254 100644
+=2D-- a/arch/arm/boot/dts/at91sam9263.dtsi
++++ b/arch/arm/boot/dts/at91sam9263.dtsi
+@@ -183,7 +183,7 @@
+ 				usart0 {
+ 					pinctrl_usart0: usart0-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOA 26 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOA 26 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOA 27 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
->  
->  	return 0;   /* Return OK */
->  
-> +i2c_adapter_remove:
-> +	i2c_del_adapter(&i2c_imx->adapter);
->  clk_notifier_unregister:
->  	clk_notifier_unregister(i2c_imx->clk, &i2c_imx->clk_change_nb);
->  rpm_disable:
-> -- 
-> 2.9.5
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+@@ -201,7 +201,7 @@
+ 				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOD 0 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOD 0 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOD 1 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+@@ -219,7 +219,7 @@
+ 				usart2 {
+ 					pinctrl_usart2: usart2-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOD 2 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOD 2 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOD 3 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sa=
+m9g45.dtsi
+index 691c95ea6175..fd179097a4bf 100644
+=2D-- a/arch/arm/boot/dts/at91sam9g45.dtsi
++++ b/arch/arm/boot/dts/at91sam9g45.dtsi
+@@ -556,7 +556,7 @@
+ 				usart0 {
+ 					pinctrl_usart0: usart0-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 19 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 19 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 18 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+@@ -574,7 +574,7 @@
+ 				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 4 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 5 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+@@ -592,7 +592,7 @@
+ 				usart2 {
+ 					pinctrl_usart2: usart2-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+@@ -610,7 +610,7 @@
+ 				usart3 {
+ 					pinctrl_usart3: usart3-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_NONE
++							<AT91_PIOB 8 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
+ 							 AT91_PIOB 9 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam=
+9rl.dtsi
+index 8643b7151565..ea024e4b6e09 100644
+=2D-- a/arch/arm/boot/dts/at91sam9rl.dtsi
++++ b/arch/arm/boot/dts/at91sam9rl.dtsi
+@@ -682,7 +682,7 @@
+ 				usart0 {
+ 					pinctrl_usart0: usart0-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOA 6 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOA 6 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOA 7 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+@@ -721,7 +721,7 @@
+ 				usart1 {
+ 					pinctrl_usart1: usart1-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOA 11 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOA 11 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOA 12 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+@@ -744,7 +744,7 @@
+ 				usart2 {
+ 					pinctrl_usart2: usart2-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOA 13 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOA 13 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOA 14 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+@@ -767,7 +767,7 @@
+ 				usart3 {
+ 					pinctrl_usart3: usart3-0 {
+ 						atmel,pins =3D
+-							<AT91_PIOB 0 AT91_PERIPH_A AT91_PINCTRL_NONE>,
++							<AT91_PIOB 0 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 							<AT91_PIOB 1 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 					};
+
+=2D-
+2.21.0
+
