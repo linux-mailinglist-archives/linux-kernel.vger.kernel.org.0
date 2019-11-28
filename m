@@ -2,125 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB0C10C586
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D836510C590
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:02:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfK1I5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 03:57:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45814 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726656AbfK1I5H (ORCPT
+        id S1727080AbfK1JCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 04:02:49 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44300 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbfK1JCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 03:57:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574931426;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UTqyxfqplr5cCVGYbvk1+6dr+xn0FSeXRHiQCzbM5Do=;
-        b=gLy9OlMfaMj5GVvF5/GIc3JFmn9VlDnDDzCGMETRVFHDBgwHwyw+NDQgXrVB2QWM5QZwHV
-        kwqhyYHvVmQ9b08JPAA44jEpVJ0xLLJUjNyj/YTN+EZ9qHIlNOT8i+sTQj2fjeqxXRLBvh
-        ApAYcVboUsuv3v5B+RgsboaMkeruG68=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-223-tdG362LsNXq1vxkm-wtRyA-1; Thu, 28 Nov 2019 03:57:04 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5381018B9FC1;
-        Thu, 28 Nov 2019 08:57:02 +0000 (UTC)
-Received: from [10.36.116.37] (ovpn-116-37.ams2.redhat.com [10.36.116.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B57B600C8;
-        Thu, 28 Nov 2019 08:56:56 +0000 (UTC)
-Subject: Re: [PATCH] KVM: arm64: eliminate unnecessary var err and jump label
- in set_core_reg()
-To:     linmiaohe <linmiaohe@huawei.com>, maz@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com,
-        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
-        christoffer.dall@arm.com, catalin.marinas@arm.com,
-        gregkh@linuxfoundation.org, will@kernel.org,
-        andre.przywara@arm.com, tglx@linutronix.de
-Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <1574910598-14468-1-git-send-email-linmiaohe@huawei.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <7210b73f-66a0-e276-74b4-83d011b57d21@redhat.com>
-Date:   Thu, 28 Nov 2019 09:56:54 +0100
+        Thu, 28 Nov 2019 04:02:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19so595953lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 01:02:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=J0ArWTMK2M2cZ2zXfxSef0laglMj50lskLz/N/COoyI=;
+        b=G6glzc+N9b1z4gASSZC5AEd2jFJOL3n0eIWVnAe5AFj6b9KL8p9l0fGtPjZWwqloVc
+         MbFAw7gXgY7/o9XSopUwxaWCYsOW18S4HjAnf9itzbbDFUaNMz31hPcYOSVv9JEZ7K8h
+         ktQw5DrGfazKfaU1IQ6XlCNocKnC3bQUx4EY0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J0ArWTMK2M2cZ2zXfxSef0laglMj50lskLz/N/COoyI=;
+        b=NLPae7gbMq3AZdp3SCF2yZwJF2WlNMLf1l1IkzlB+m8KiDur1FJ8JcWHiPnQjfvMNY
+         QlMMaJFBlqyCkLHlfuxwktfe73Se2G4yjqrZWszUfPkpPNo8IozG65FV9A0VSrIrOXH7
+         3G/BDLL172LOpKd36KBNCw3KzL3Wb7AMhBszU3lu9gVrcTex+Kg50Ic1hcccmeSqYjZF
+         auet8FnjAKRyP5NnM2CEOKwzpm7KoY+noWh6BEVzypo6pOiW+0Y81NWlg7vmBgtezugI
+         VSF5TmAKwuLSodiFnbSB1Q6PTkkRvR4dAhF7gE6sfQCsAjfbHt3NERj+t1P52fkwdr9Q
+         Z/Hg==
+X-Gm-Message-State: APjAAAVhX/LZmLmGfDwEnnauaLiZK48aDSsfugeQl6n9aKNm2wLkCAov
+        suohM9qg45/YwrAB8H/RNQxICA==
+X-Google-Smtp-Source: APXvYqzK+0aH2OxqnNebVIbBxsAx+sVVUV5///KJSvWtCfimRUSUBpmooYcKVoc1aZPo9aQXeAPhvA==
+X-Received: by 2002:a2e:9a12:: with SMTP id o18mr33630972lji.191.1574931766022;
+        Thu, 28 Nov 2019 01:02:46 -0800 (PST)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id r125sm8265681lff.59.2019.11.28.01.02.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Nov 2019 01:02:45 -0800 (PST)
+Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
+To:     Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
+ <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
+ <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk>
+ <CAG48ez2VBS4bVJqdCU9cUhYePYCiUURvXZWneBx2KGkg3L9d4g@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <f4144a96-58ef-fba7-79f0-e5178147b6bb@rasmusvillemoes.dk>
+Date:   Thu, 28 Nov 2019 10:02:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <1574910598-14468-1-git-send-email-linmiaohe@huawei.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: tdG362LsNXq1vxkm-wtRyA-1
-X-Mimecast-Spam-Score: 0
+In-Reply-To: <CAG48ez2VBS4bVJqdCU9cUhYePYCiUURvXZWneBx2KGkg3L9d4g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 28/11/2019 00.27, Jann Horn wrote:
 
-On 11/28/19 4:09 AM, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
+> One more thing, though: We'll have to figure out some way to
+> invalidate the fd when the target goes through execve(), in particular
+> if it's a setuid execution. Otherwise we'll be able to just steal
+> signals that were intended for the other task, that's probably not
+> good.
 > 
-> The var err and jump label out isn't really needed in
-> set_core_reg(). Clean them up.
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-
-Thanks
-
-Eric
-
-> ---
->  arch/arm64/kvm/guest.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
+> So we should:
+>  a) prevent using ->wait() on an old signalfd once the task has gone
+> through execve()
+>  b) kick off all existing waiters
+>  c) most importantly, prevent ->read() on an old signalfd once the
+> task has gone through execve()
 > 
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> index 3b836c91609e..88eb6e5399ed 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -159,7 +159,6 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
->  	__uint128_t tmp;
->  	void *valp = &tmp;
->  	u64 off;
-> -	int err = 0;
->  
->  	/* Our ID is an index into the kvm_regs struct. */
->  	off = core_reg_offset_from_id(reg->id);
-> @@ -173,10 +172,8 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
->  	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
->  		return -EINVAL;
->  
-> -	if (copy_from_user(valp, uaddr, KVM_REG_SIZE(reg->id))) {
-> -		err = -EFAULT;
-> -		goto out;
-> -	}
-> +	if (copy_from_user(valp, uaddr, KVM_REG_SIZE(reg->id)))
-> +		return -EFAULT;
->  
->  	if (off == KVM_REG_ARM_CORE_REG(regs.pstate)) {
->  		u64 mode = (*(u64 *)valp) & PSR_AA32_MODE_MASK;
-> @@ -200,14 +197,12 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
->  				return -EINVAL;
->  			break;
->  		default:
-> -			err = -EINVAL;
-> -			goto out;
-> +			return -EINVAL;
->  		}
->  	}
->  
->  	memcpy((u32 *)regs + off, valp, KVM_REG_SIZE(reg->id));
-> -out:
-> -	return err;
-> +	return 0;
->  }
->  
->  #define vq_word(vq) (((vq) - SVE_VQ_MIN) / 64)
-> 
+> We probably want to avoid using the cred_guard_mutex here, since it is
+> quite broad and has some deadlocking issues; it might make sense to
+> put the update of ->self_exec_id in fs/exec.c under something like the
+> siglock,
 
+What prevents one from exec'ing a trivial helper 2^32-1 times before
+exec'ing into the victim binary?
+
+Rasmus
