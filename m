@@ -2,221 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E1AB10CA41
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:18:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B1110CA4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbfK1OS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:18:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42144 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbfK1OS2 (ORCPT
+        id S1726664AbfK1OVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:21:38 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43933 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfK1OVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 09:18:28 -0500
-Received: by mail-wr1-f66.google.com with SMTP id a15so31329215wrf.9
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:18:25 -0800 (PST)
+        Thu, 28 Nov 2019 09:21:38 -0500
+Received: by mail-ot1-f67.google.com with SMTP id l14so22305477oti.10;
+        Thu, 28 Nov 2019 06:21:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JT/cyXM4c3hlhS/42ul0Bg6b/PSo9qW/fW/jL/8JN5I=;
-        b=aBW4RYhYozIkFwfWySiGzURoUK9gm0MvN+lR/Cel+fVCRq9AHk7CUDGMkIS89R3axU
-         A2hDkR2Y3fkuG60BOe5DzK1Qnv2jNQ8ziyx8MRBjX1NicgfFIYbmUHlI3UKoeIJDyCxC
-         Mw6q4RgeIqt0DHN03YALF2tnD/hYDDaHNccs1LgxIcY2KztA8IrK0meBV3r7KofbQuSi
-         wnpUPgz9f2WYd1mjOa/1oDAAXEyOnmYIWkOD9BhkI2tl9ZjovrH2oAFhpHsHOuTVvkvZ
-         YebdzA76BVW5RqTmgJ7qaTsII7a2hzcqc8t3cgTy7YYOzqw2oL9LtO9CwmEZ8ZDy4FLC
-         gsMA==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pAOuUXPMeoRavXucH0FHeoL8ht+w96IWOMyp3rFxFc8=;
+        b=KBsr5LptVS2b+zcFfq8COkxUXZcEB1jGnIvoAk8NwagRT1ELTfEAXLdstWJYDI6aaB
+         5ikq8r7yeXpZJUsmuCTsxVZBwkn5e6kdd3PYtYjd8hk5CMTpB+upcSPMdHn7RqXcRyw9
+         RinpBwEXjmy04jpU+6TDm7qfEQIz8RRtOLvhFl/p/3aDgIWn9sG3G5vb3HKjgi+KSAAt
+         ZaKa8rtzMcIV6WLvWbALGQEksQ5F0K8jfcop3LjNWaYqAbqrFM454dVpuZ9AJMzROeHP
+         h6bHdcHeRJOvB9+/tVwZlbfYUfLwkG8drmkGEA3Rtv+y2WYKJmiBXol2B/oaLD4Jmf2p
+         cFjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JT/cyXM4c3hlhS/42ul0Bg6b/PSo9qW/fW/jL/8JN5I=;
-        b=cTrGpVRgLsNKRzy1VcekguwJG4bgZf5RoKbqTjRNE7Gb+I8KeQjzb2YpemPx2L5M3A
-         laWGSFgLgIMMTwUEnjg+vJx1kQihNe9M3bXHSzxXYtwDCX0dLK7EU6zN5M30yKkhJtQj
-         jNXPZd1Vac+gG1AUFmESxngQM11hdPda6LQrvzydY7Vkoo+JW09k2Fd502p2RUm+F1ST
-         z9GitJZNQBaGHLKn7sdNs1TJ3Hx3E3uR3u7g/q5oOhiQ48scJnQ4yU87BhGZdWHToBHm
-         thPTXQ8dUYfzdlEmlCIx2c79IVIe2+A8i/l/o+w2zTrTp8Uo3HpxH5gePsIAEPbJ1CwH
-         cV/A==
-X-Gm-Message-State: APjAAAWqtbvWQ8bzleJMvCPqLHAX3Oi1uIefC+AgA2I4mNBj23gDNj53
-        qsKiiemmiirGNqrK3PLZ15c3sw==
-X-Google-Smtp-Source: APXvYqycAPzTOk7jiYu0x7chzYsqp4QkBnI1R5T6PVG42h5covchwVRihpX7Va66RoE5RKSY6KNu2g==
-X-Received: by 2002:a5d:6652:: with SMTP id f18mr6935257wrw.246.1574950704416;
-        Thu, 28 Nov 2019 06:18:24 -0800 (PST)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id f6sm23947092wrr.15.2019.11.28.06.18.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Nov 2019 06:18:23 -0800 (PST)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org
-Cc:     rostedt@goodmis.org, mingo@redhat.com, bjorn.andersson@linaro.org,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        okukatla@codeaurora.org, evgreen@chromium.org, mka@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        georgi.djakov@linaro.org
-Subject: [PATCH v4 3/3] interconnect: Add basic tracepoints
-Date:   Thu, 28 Nov 2019 16:18:18 +0200
-Message-Id: <20191128141818.32168-4-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191128141818.32168-1-georgi.djakov@linaro.org>
-References: <20191128141818.32168-1-georgi.djakov@linaro.org>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pAOuUXPMeoRavXucH0FHeoL8ht+w96IWOMyp3rFxFc8=;
+        b=l/jhGirmfGJk+Ll0MmeGHYuAzTqXFt0aS5L8n3mgzyL4BrdTUnVJBzSC+ghQlLwVAA
+         gs2RKFKbqHzqFDqa/GRThcdds3QRsXkCCvMaDDwfFTcTDuPkonkkHDDcHlLC6CFiu8lW
+         FtsfXikCRfo/yF0SW5vNaJA4JYES0BC+4C4wIGk9oziyOsRzseBMUhdYtuXr7YSWc8Bk
+         imeiNhoIu9BJO2zfRWcWXE1IHf2Kf9KXxrjKrBdts3euv3zRhKPIRgFRqSgNbUsGR9H1
+         yM5hl6tO5lOiqX4kDxMi6Zb0s5vKzFg6xjWvK3usjlNoKq8lDNhOlKict5grFjVW5qNA
+         LDcg==
+X-Gm-Message-State: APjAAAVBkktTK4wRzI0wWqeD1uZgIpLrqdxwwTWvLKsvUqS9dZN4PbzB
+        pVCwBRM3/f8bLd7ztr2s4sCCjcay
+X-Google-Smtp-Source: APXvYqyg/dOuWAh3aONJFSxiOoY0asq6842kRVYbO07guEulmAV3bFhidrH7ncZ6zHHYAH92ywgZtA==
+X-Received: by 2002:a9d:744a:: with SMTP id p10mr7122237otk.235.1574950896159;
+        Thu, 28 Nov 2019 06:21:36 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l32sm6126339otl.74.2019.11.28.06.21.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Nov 2019 06:21:34 -0800 (PST)
+Subject: Re: [PATCH 6/6] (v3) drivers: hwmon: i5k_amb: simplify probing /
+ device identification
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     tim@buttersideup.com, james.morse@arm.com, rrichter@marvell.com,
+        jdelvare@suse.com, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com, linux-crypto@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org
+References: <20191128125406.10417-1-info@metux.net>
+ <20191128125406.10417-6-info@metux.net>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <bee7ba11-6b4a-1cc7-ee8c-ddf17cb8daca@roeck-us.net>
+Date:   Thu, 28 Nov 2019 06:21:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191128125406.10417-6-info@metux.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tracepoints can help with understanding the system behavior of a
-given interconnect path when the consumer drivers change their bandwidth
-demands. This might be interesting when we want to monitor the requested
-interconnect bandwidth for each client driver. The paths may share the
-same nodes and this will help to understand "who and when is requesting
-what". All this is useful for subsystem drivers developers and may also
-provide hints when optimizing the power and performance profile of the
-system.
+On 11/28/19 4:54 AM, Enrico Weigelt, metux IT consult wrote:
+> Simpilify the probing by putting all chip-specific data directly
+> into the pci match table, removing the redundant chipset_ids table.
+> 
+> Changes v3:
+>      * use pci_get_device_by_id() introduces by a previous patch
+>        of this queue
+> 
+> Changes v2:
+>      * use PCI_DEVICE_DATA() macro in the pci match table
+>      * directly pass the pci device id to i5k_channel_probe(),
+>        instead of computing it internally by extra offset parameter
+> 
+> Submitted: 2019-06-06
+> Signed-off-by: Enrico Weigelt <info@metux.net>
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/interconnect/Makefile |  1 +
- drivers/interconnect/core.c   |  7 +++
- drivers/interconnect/trace.h  | 88 +++++++++++++++++++++++++++++++++++
- 3 files changed, 96 insertions(+)
- create mode 100644 drivers/interconnect/trace.h
+I don't immediately see how this is better. I am not even sure if it is correct.
 
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-index 28f2ab0824d5..725029ae7a2c 100644
---- a/drivers/interconnect/Makefile
-+++ b/drivers/interconnect/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+CFLAGS_core.o				:= -I$(src)
- icc-core-objs				:= core.o
- 
- obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index c9e16bc1331e..0e4852feb395 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -21,6 +21,9 @@
- 
- #include "internal.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include "trace.h"
-+
- static DEFINE_IDR(icc_idr);
- static LIST_HEAD(icc_providers);
- static DEFINE_MUTEX(icc_lock);
-@@ -435,6 +438,8 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
- 
- 		/* aggregate requests for this node */
- 		aggregate_requests(node);
-+
-+		trace_icc_set_bw(path, node, i, avg_bw, peak_bw);
- 	}
- 
- 	ret = apply_constraints(path);
-@@ -453,6 +458,8 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
- 
- 	mutex_unlock(&icc_lock);
- 
-+	trace_icc_set_bw_end(path, ret);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(icc_set_bw);
-diff --git a/drivers/interconnect/trace.h b/drivers/interconnect/trace.h
-new file mode 100644
-index 000000000000..3d668ff566bf
---- /dev/null
-+++ b/drivers/interconnect/trace.h
-@@ -0,0 +1,88 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Interconnect framework tracepoints
-+ * Copyright (c) 2019, Linaro Ltd.
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM interconnect
-+
-+#if !defined(_TRACE_INTERCONNECT_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_INTERCONNECT_H
-+
-+#include <linux/interconnect.h>
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(icc_set_bw,
-+
-+	TP_PROTO(struct icc_path *p, struct icc_node *n, int i,
-+		 u32 avg_bw, u32 peak_bw),
-+
-+	TP_ARGS(p, n, i, avg_bw, peak_bw),
-+
-+	TP_STRUCT__entry(
-+		__string(path_name, p->name)
-+		__string(dev, dev_name(p->reqs[i].dev))
-+		__string(node_name, n->name)
-+		__field(u32, avg_bw)
-+		__field(u32, peak_bw)
-+		__field(u32, node_avg_bw)
-+		__field(u32, node_peak_bw)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(path_name, p->name);
-+		__assign_str(dev, dev_name(p->reqs[i].dev));
-+		__assign_str(node_name, n->name);
-+		__entry->avg_bw = avg_bw;
-+		__entry->peak_bw = peak_bw;
-+		__entry->node_avg_bw = n->avg_bw;
-+		__entry->node_peak_bw = n->peak_bw;
-+	),
-+
-+	TP_printk("path=%s dev=%s node=%s avg_bw=%u peak_bw=%u agg_avg=%u agg_peak=%u",
-+		  __get_str(path_name),
-+		  __get_str(dev),
-+		  __get_str(node_name),
-+		  __entry->avg_bw,
-+		  __entry->peak_bw,
-+		  __entry->node_avg_bw,
-+		  __entry->node_peak_bw)
-+);
-+
-+TRACE_EVENT(icc_set_bw_end,
-+
-+	TP_PROTO(struct icc_path *p, int ret),
-+
-+	TP_ARGS(p, ret),
-+
-+	TP_STRUCT__entry(
-+		__string(path_name, p->name)
-+		__string(dev, dev_name(p->reqs[0].dev))
-+		__field(int, ret)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(path_name, p->name);
-+		__assign_str(dev, dev_name(p->reqs[0].dev));
-+		__entry->ret = ret;
-+	),
-+
-+	TP_printk("path=%s dev=%s ret=%d",
-+		  __get_str(path_name),
-+		  __get_str(dev),
-+		  __entry->ret)
-+);
-+
-+#endif /* _TRACE_INTERCONNECT_H */
-+
-+/* This part must be outside protection */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace
-+
-+#include <trace/define_trace.h>
+Guenter
+
+> ---
+>   drivers/hwmon/i5k_amb.c | 38 +++++++++++++++-----------------------
+>   1 file changed, 15 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/hwmon/i5k_amb.c b/drivers/hwmon/i5k_amb.c
+> index b09c39abd3a8..cb85607d104f 100644
+> --- a/drivers/hwmon/i5k_amb.c
+> +++ b/drivers/hwmon/i5k_amb.c
+> @@ -414,16 +414,14 @@ static int i5k_amb_add(void)
+>   }
+>   
+>   static int i5k_find_amb_registers(struct i5k_amb_data *data,
+> -					    unsigned long devid)
+> +				  const struct pci_device_id *devid)
+>   {
+>   	struct pci_dev *pcidev;
+>   	u32 val32;
+>   	int res = -ENODEV;
+>   
+>   	/* Find AMB register memory space */
+> -	pcidev = pci_get_device(PCI_VENDOR_ID_INTEL,
+> -				devid,
+> -				NULL);
+> +	pcidev = pci_get_device_by_id(devid);
+>   	if (!pcidev)
+>   		return -ENODEV;
+>   
+> @@ -447,14 +445,15 @@ static int i5k_find_amb_registers(struct i5k_amb_data *data,
+>   	return res;
+>   }
+>   
+> -static int i5k_channel_probe(u16 *amb_present, unsigned long dev_id)
+> +static int i5k_channel_probe(u16 *amb_present, unsigned int vendor,
+> +			     unsigned int device)
+>   {
+>   	struct pci_dev *pcidev;
+>   	u16 val16;
+>   	int res = -ENODEV;
+>   
+>   	/* Copy the DIMM presence map for these two channels */
+> -	pcidev = pci_get_device(PCI_VENDOR_ID_INTEL, dev_id, NULL);
+> +	pcidev = pci_get_device(vendor, device, NULL);
+>   	if (!pcidev)
+>   		return -ENODEV;
+>   
+> @@ -473,23 +472,12 @@ static int i5k_channel_probe(u16 *amb_present, unsigned long dev_id)
+>   	return res;
+>   }
+>   
+> -static struct {
+> -	unsigned long err;
+> -	unsigned long fbd0;
+> -} chipset_ids[]  = {
+> -	{ PCI_DEVICE_ID_INTEL_5000_ERR, PCI_DEVICE_ID_INTEL_5000_FBD0 },
+> -	{ PCI_DEVICE_ID_INTEL_5400_ERR, PCI_DEVICE_ID_INTEL_5400_FBD0 },
+> -	{ 0, 0 }
+> -};
+> -
+> -#ifdef MODULE
+>   static const struct pci_device_id i5k_amb_ids[] = {
+> -	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5000_ERR) },
+> -	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5400_ERR) },
+> +	{ PCI_DEVICE_DATA(INTEL, 5000_ERR, PCI_DEVICE_ID_INTEL_5000_FBD0) },
+> +	{ PCI_DEVICE_DATA(INTEL, 5400_ERR, PCI_DEVICE_ID_INTEL_5400_FBD0) },
+>   	{ 0, }
+>   };
+>   MODULE_DEVICE_TABLE(pci, i5k_amb_ids);
+> -#endif
+>   
+>   static int i5k_amb_probe(struct platform_device *pdev)
+>   {
+> @@ -504,22 +492,26 @@ static int i5k_amb_probe(struct platform_device *pdev)
+>   	/* Figure out where the AMB registers live */
+>   	i = 0;
+>   	do {
+> -		res = i5k_find_amb_registers(data, chipset_ids[i].err);
+> +		res = i5k_find_amb_registers(data, &i5k_amb_ids[i]);
+>   		if (res == 0)
+>   			break;
+>   		i++;
+> -	} while (chipset_ids[i].err);
+> +	} while (i5k_amb_ids[i].device);
+>   
+>   	if (res)
+>   		goto err;
+>   
+>   	/* Copy the DIMM presence map for the first two channels */
+> -	res = i5k_channel_probe(&data->amb_present[0], chipset_ids[i].fbd0);
+> +	res = i5k_channel_probe(&data->amb_present[0],
+> +				i5k_amb_ids[i].vendor,
+> +				i5k_amb_ids[i].driver_data);
+>   	if (res)
+>   		goto err;
+>   
+>   	/* Copy the DIMM presence map for the optional second two channels */
+> -	i5k_channel_probe(&data->amb_present[2], chipset_ids[i].fbd0 + 1);
+> +	i5k_channel_probe(&data->amb_present[2],
+> +			  i5k_amb_ids[i].vendor,
+> +			  i5k_amb_ids[i].driver_data+1);
+>   
+>   	/* Set up resource regions */
+>   	reso = request_mem_region(data->amb_base, data->amb_len, DRVNAME);
+> 
+
