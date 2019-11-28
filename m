@@ -2,167 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3816410C582
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB8310C583
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:56:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfK1I4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 03:56:40 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46888 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfK1I4k (ORCPT
+        id S1727465AbfK1I4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 03:56:55 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:40831 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfK1I4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 03:56:40 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a17so19401256lfi.13
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 00:56:39 -0800 (PST)
+        Thu, 28 Nov 2019 03:56:55 -0500
+Received: by mail-il1-f194.google.com with SMTP id b15so528584ila.7
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 00:56:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rsvhqVEc8W9N9lJvrGMrOxgnq8ofC0A7592rwPDo3sc=;
-        b=OLvoZlTGPhnIxJh6RXxAp6IInTJIJoOOfd1AkWrRBhriSGLCKTaGrTuXu+0LtW7q/W
-         ycCGvWy93cn2so2BAoLn53ktsbc2JO3q9YYH6/+QxQhxalaEvQCuCAiLzHG2bkDZjcyg
-         rTYU3RScyRyvvSISZYvCOZFJMfbxnMMpxKw/lMjuRd0iNeXMv3JwyPv5HCzmzMvOLX22
-         l8nTy+ZUASaCNCs21NvscKB+6pqVCIgDwTJJqcW/+HY0pFfKqXwrpbJ573axC/sGZDhG
-         j64p9DB7ZwJ9EJFK2PuBB5zqqvpsOitEhcV98P5hKtQUBhuGTDj6V+x1T4/tNPHnzE1Y
-         RaAw==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=O9yy5zTlqeykJYyG8DTw88S0CYqhC0k0lDgOWFWAX6lOc89TtW8j+3iq0PQvho7Nb2
+         VtQm+baOQVDA7JrhCn0dvm6VGL32kfjBah1oHOC9+g/YOKZAQBj1qjbG17r3qzj7K5oe
+         Hr0zgrwanjdQcCWPAf2BvFX/8J/AKtN55JaP6s/aMPmtbwCWRQBeZ8LvdVbvZqZspHu6
+         WitMPwqSz4OSSV67RW6B4tWVr7ebdm5O/eG0AP7s0s9vmertadABGvx6IMf5C6LcHviv
+         4mT2Rlr7K5B7W3f7hg6Z5reSmcW7rBrxADpzn5t7RFz1c99W0BdrsN8OeK1DYR5QmbqZ
+         tWDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rsvhqVEc8W9N9lJvrGMrOxgnq8ofC0A7592rwPDo3sc=;
-        b=FUeoR010WoaXBScQGopFw19T2p0m3TXKcL6K0wSmSqQYhx60+rRFlERqEC240pVe99
-         n+5xeNVKPyqI6Xn3nuIy8fnSKac0N4xXNqLjf2rijGS4Fha/qPhRn8Z9QOwlyKO0rNMR
-         vekHsaYfqWFcQHFk9kJqciwXvcKqRGaDlzTWN7YlIhQV/qpQLk19y3c8akVgYvS5UvZU
-         s71E66D+Ap0OZvfSDf6COKC/nT3bH/6sCwm44gYsoTd7Gquzs2wE03eGBafVNhyFMp78
-         b6B8jf8gRKiOvDBdEO1VP5Kgi7ojxCyovzTALTTSECLAmb7fpX/4xviUhs8qESGxngI1
-         adTQ==
-X-Gm-Message-State: APjAAAWXwW1HN6hgaJCF9BjNfuCc3Evx6YmS9QoN2PecAZDHr4rdIoCH
-        bcjrwZlT4Eck87r6bvP4i4Q6MJxCJEGnjvLqxSiJ9g==
-X-Google-Smtp-Source: APXvYqy2r73CX24TK2abu/IrRUo8YzrxriqIzkMfeKAEKPSKbnnda6JFLmzOpLL1il8q4Vq3PuqemHsofHnXV5hjGRU=
-X-Received: by 2002:a19:8104:: with SMTP id c4mr25848755lfd.191.1574931398231;
- Thu, 28 Nov 2019 00:56:38 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=jHVTkDGMLwK2gigfjDx+/4zPi49Ky2pjCpZk9jA7BGSfjXNL7m2fm3+zv10ORx67Ot
+         KeDf0VcVobNG3CYkijogtoMEupx3jKnWMJZMzpzYVbDceVnopsHs6p+BBG6kCBSG+nPM
+         E1935OgWui4GaSvHc42X+k5GwyWSVVY0TkXCsEkbcJABxywdMtPZebk1xr7oQ+uMCe62
+         dCm6JnNid9kMl384mruI3UMqylf05d5kcE/adUJHiJ4/MO7qzkS78K0cuO7yIx+IUqDV
+         lmksp/MKap1UfO71fdF/0gNz9PEMZRrC7NOfvDXVbrI+88P0y2txQ4uzhCjm5vPQVrs3
+         sO4g==
+X-Gm-Message-State: APjAAAW0wbQSsMZt6+ri/hrSubvjG0Iz1FbWEzh3k/e3aSj6x/H9mhAn
+        QVnFE9s3+11V9m3dhWEJ4iHL1Bi8cggNXgz1bvw=
+X-Google-Smtp-Source: APXvYqzjC37YeZb3ZRB4r2FvAznYjlRjfIEoouo6mC8Di+iq89g7DE4Fmw8N1FgICdmKksHmuUOaCEvsxaJUaKGB5Hc=
+X-Received: by 2002:a05:6e02:4d2:: with SMTP id f18mr48038328ils.270.1574931413904;
+ Thu, 28 Nov 2019 00:56:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20191127202632.536277063@linuxfoundation.org>
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 28 Nov 2019 14:26:27 +0530
-Message-ID: <CA+G9fYt8UCoKYnemrGFX4btoNukF0FFTsppzePKDbGbV5sQrtg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 00/66] 5.4.1-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+Received: by 2002:a02:270e:0:0:0:0:0 with HTTP; Thu, 28 Nov 2019 00:56:52
+ -0800 (PST)
+Reply-To: robertandersonhappy1@gmail.com
+From:   robert <robertandersongood5@gmail.com>
+Date:   Thu, 28 Nov 2019 00:56:52 -0800
+Message-ID: <CAD7QbCCHjPVNNNkd4iMpBMyePzaL1OVXWBkwrt+Vkk8BHYDsMA@mail.gmail.com>
+Subject: Dear friend, My name is Bar.robert anderson I am an attorney and a
+ private account manager to my late client. In the Year 2014, my client by
+ name Mr. Carlos, passed away,The reason why I contacted you is because you
+ bear the same last name with the deceased, and I can present you as the
+ beneficiary and next of kin to my late client funds then you will stand as
+ his next of kin and claim the funds. leaving behind a cash inheritance of
+ seven Million Five Hundred Thousand United States Dollars (US$7.500,000,00).My
+ late client and bosom friend grew up in a "Motherless Babies Home". He had no
+ family, no beneficiary nor next of kin to the inheritance Funds left behind
+ at the Bank. You should contact me through my private email address:
+ robertandersonhappy1@gmail.com Best Regards, Bar. robert anderson
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 28 Nov 2019 at 02:47, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.4.1 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.1-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 5.4.1-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.4.y
-git commit: d6453d6b0c5737ef7e24b4216b86ddc013bfc158
-git describe: v5.4-67-gd6453d6b0c57
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/bui=
-ld/v5.4-67-gd6453d6b0c57
-
-No regressions (compared to build v5.4)
-
-No fixes (compared to build v5.4)
-
-
-Ran 26389 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* linux-log-parser
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
