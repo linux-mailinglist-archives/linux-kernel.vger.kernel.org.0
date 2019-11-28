@@ -2,110 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5625B10C473
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 08:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F10DE10C47E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 08:46:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfK1Hpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 02:45:42 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:17133 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfK1Hpl (ORCPT
+        id S1727328AbfK1Hqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 02:46:39 -0500
+Received: from mail-lf1-f49.google.com ([209.85.167.49]:32968 "EHLO
+        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfK1Hqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 02:45:41 -0500
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: DJdDYTnhX3gDSH5DxjQHm6fV5WqFSJ4LPTOs5qIwL6AysjQs9zHy+b1FBkaFqjDKS+3Kz7urE4
- ifoS4211TYU9TvkrhZCga26abGJfsrLsPG+vTuxOgPmHyIb3jci7TJIjLOmYj4FFgoyypOYvbD
- gatmZow7aIqycuTEGvEbTyq+xPUJVgxJXv5/qfbITRK+oo2tReYw8P9gX72gWvfTpNjpRIRmZ3
- eqGzj6+N4znraAFsHmbLdet2oLYEweJIXdTT1ARpVONpc7e8VEXkOPXc1l1+TbEJm2+AK+sqoR
- usM=
-X-IronPort-AV: E=Sophos;i="5.69,252,1571727600"; 
-   d="scan'208";a="56875796"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Nov 2019 00:45:40 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 28 Nov 2019 00:45:40 -0700
-Received: from M43218.microchip.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 28 Nov 2019 00:45:37 -0700
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <nicolas.ferre@microchip.com>,
-        <adrian.hunter@intel.com>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <claudiu.beznea@microchip.com>, <Eugen.Hristev@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        "Ludovic Desroches" <ludovic.desroches@microchip.com>
-Subject: [PATCH v4 3/3] ARM: dts: at91: sama5d2: set the sdmmc gclk frequency
-Date:   Thu, 28 Nov 2019 08:45:22 +0100
-Message-ID: <20191128074522.69706-3-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191128074522.69706-1-ludovic.desroches@microchip.com>
-References: <20191128074522.69706-1-ludovic.desroches@microchip.com>
+        Thu, 28 Nov 2019 02:46:39 -0500
+Received: by mail-lf1-f49.google.com with SMTP id d6so19299284lfc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 23:46:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=jdx2MQkwvcftTUnPZKqg3iJvEsTP5EAA9GMYXynV6xQ=;
+        b=AjiQgysKXtXC/dybUet8gn6KnPqsNuMCOSKRFTHcLFeRA19rTM5+ZQF+4BlJ9HqGTw
+         88a1dYswJkqzye6tyQxnf5B4csb0v3fz9cEK1OEMEJmIIJv6GgkT12Y9PKWLhppWk5nQ
+         3F1UxNBCvX2JoVhrDwdDGLda3WNwhtyZVkyN0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=jdx2MQkwvcftTUnPZKqg3iJvEsTP5EAA9GMYXynV6xQ=;
+        b=Rw3TBSDLYdCttZiIq5/BD9OPFEScTqcdP7QckNGcswNiFrTR7+M1M5P+QJo2WCSXvX
+         a/IfJJVbuMmPUhK1G5vJS2Hgr/eosZ5O92J6FxREp004VHdoDQ/msvqHpytxQxph0BA6
+         RFlP7cVXboYkjGCR5g61Ke5Z+PtjdKOMnFsF738LReaEOtDC4SuC3z3M3Qm4kcn1cfoz
+         kTuCXZxge8Xkj5ZYlw45SmiN0w4lumi85iZSMZGwRzvhgq1XrknYjFWVnMXXibMEy+4U
+         znWN3iu1JDzUZhVGOAZMky7VmlOdjAiZoI8UJuYEBqus/jwJh6n7jxfwgQ5l5kQkr4+d
+         7KXA==
+X-Gm-Message-State: APjAAAWMpPETnbSmqljMwJSAj2pB88ppPMqv2EoAqJcZFZuq9VQdH0bC
+        nkpC1wi5BfGFeQJri09gxpLdyw==
+X-Google-Smtp-Source: APXvYqxzZJWSRNVX2K52T4NrLvmxBt7DhlSHllRy9y5O4IZxQVfRzgFQlNA1lLUPwnQ1OCwilSdlpQ==
+X-Received: by 2002:ac2:5616:: with SMTP id v22mr21215766lfd.84.1574927196815;
+        Wed, 27 Nov 2019 23:46:36 -0800 (PST)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 129sm8224582lfj.86.2019.11.27.23.46.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Nov 2019 23:46:36 -0800 (PST)
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Optimization in pick_next_task
+Message-ID: <9af14b44-81c7-cdb1-ed4f-2f684f9fdbb3@rasmusvillemoes.dk>
+Date:   Thu, 28 Nov 2019 08:46:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the frequency of the generated clock used by sdmmc devices in order
-to not rely on the configuration done by previous components.
+In kernel/sched/core.c, we have
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
+        /*
+         * Optimization: we know that if all tasks are in the fair class
+we can
+         * call that function directly,
 
-Changes:
-- v4: none
-- v3: none
-- v2: none
+But then the code goes on to do
 
- arch/arm/boot/dts/sama5d2.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+                p = fair_sched_class.pick_next_task(rq, prev, rf);
+                ...
+                if (unlikely(!p))
+                        p = idle_sched_class.pick_next_task(rq, prev, rf);
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 565204816e34..7665263af907 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -300,6 +300,8 @@ sdmmc0: sdio-host@a0000000 {
- 			interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
- 			clocks = <&pmc PMC_TYPE_PERIPHERAL 31>, <&pmc PMC_TYPE_GCK 31>, <&pmc PMC_TYPE_CORE PMC_MAIN>;
- 			clock-names = "hclock", "multclk", "baseclk";
-+			assigned-clocks = <&pmc PMC_TYPE_GCK 31>;
-+			assigned-clock-rates = <480000000>;
- 			status = "disabled";
- 		};
- 
-@@ -309,6 +311,8 @@ sdmmc1: sdio-host@b0000000 {
- 			interrupts = <32 IRQ_TYPE_LEVEL_HIGH 0>;
- 			clocks = <&pmc PMC_TYPE_PERIPHERAL 32>, <&pmc PMC_TYPE_GCK 32>, <&pmc PMC_TYPE_CORE PMC_MAIN>;
- 			clock-names = "hclock", "multclk", "baseclk";
-+			assigned-clocks = <&pmc PMC_TYPE_GCK 32>;
-+			assigned-clock-rates = <480000000>;
- 			status = "disabled";
- 		};
- 
--- 
-2.24.0
+which still loads a function pointer and calls
+pick_next_task_{fair,idle} through that. Should those be made extern and
+used here, or am I misinterpreting what "directly" refers to?
 
+Rasmus
