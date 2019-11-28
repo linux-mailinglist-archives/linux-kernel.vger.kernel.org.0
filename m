@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E84810CD16
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9FC310CD27
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:50:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfK1QuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 11:50:18 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36605 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfK1QuO (ORCPT
+        id S1727080AbfK1QuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 11:50:17 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39301 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbfK1QuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 11:50:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b19so13393170pfd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:13 -0800 (PST)
+        Thu, 28 Nov 2019 11:50:15 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b137so10825574pga.6
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jY7j7XGeZ35a5OePHaCLSQ6i6f4GRHNTIE3RrACf924=;
-        b=rk/TdVgoD1IwdNF/bmyE65/dESdOwICMlgGj86MG4i4pagGw7ktUvMFDE6omLZM7Am
-         3FCdQsSAtE6cELEQg8ed+WrvSkgrD6+bLxTv+Ls7ZxJqFZCV5S+F2WaQ1vAjwKHOhXfU
-         QiHqCQ3FWcWYfmUxBSzbRWZw5qoiQWEWdkguK0EW4tn3e7FXImtRaWK4QLPBrPLdlYIJ
-         BHdEXrOzIenD/PmnpoySm4HkRnCylqayGHDdb+SMImj2Fq6AZKTY9LNSe20vG4PViqxK
-         s13sdUzGfh/dhNaR6DIGF4JPCCnC+kozLTDtGz1YTPyhqEzTiDALZ+82RJY4GLlRrNQd
-         xsyQ==
+        bh=Dfqbr0RxajlO5BfpaJ+gj/cruGVf9oBCHGspuRMYLGM=;
+        b=O9JevNY1LOgHwoZQBP3JRCrkxMNX7g335LWvtIGE8TSf0gdh7CvuTTvGfjm78nXgUM
+         +p1zMhh+nbn6ISXwf21PH0Z60BkeYpF4a6JzV8KEkI2WqyswsIDCbpxjl7X+PRhKCzIs
+         DXpIhvG/INtLpkzRZFie2gEw9yF+o67uC62GGi7F3QILehtJeR3fMeC9qJxpd4Rb5bQn
+         9z5+WTrOoWg7fT07bhstV28T/EBnSeUD0loJ3jbO1F/0igGdeu3+T9Nt13ydF/Z+DFFs
+         rkThpEXWnl23uu7cSgvOhyGVz2L72jGZfYqVGe0hqI/1KBTny0XVSPtvXsQb4D+rZIxg
+         X5Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jY7j7XGeZ35a5OePHaCLSQ6i6f4GRHNTIE3RrACf924=;
-        b=fqYopEgHYe8a02W3TvgfZuDMXnOOol5VKRNmFBKlG1jr+xWANInhxMgGXj0+fF4rGf
-         7LedFMvyl1p+6/tO+DlTzUD0uiDYE9wDMBJGEkl5wWcC3iWJmdKn9bT4WnKXgwx8Q2DQ
-         vZv1lQbl3y7rNCpO/TZkz3lWIekrpt9Do50RAkNTC9JFWuGTuJ3wOTOjj3WvbcKFvUtk
-         Oo+rRKM6YcW1BB8tsvLn/aBBsnsNHZLbSCqUuCgr15dHrDAkEK924fCh2/K7XDaId0Fg
-         d5MhV31Nbdy9JmAPq7NxFHnt0pwXioWAX7CdKcaRCW6bh8856UZvpdir3tsLA8mpoXDZ
-         I1cQ==
-X-Gm-Message-State: APjAAAVSLVmkH0dc94LUsBMf6XPZAOOnfIPwatHBEjTxXC0UqLk2MHHk
-        rDLCCkpEBjWDDXZRDKgXaBz7wA==
-X-Google-Smtp-Source: APXvYqweYzi4M9AMfmWN/j96HV08rLj6Z1utHyfK7EpXnpTX4iAGw5js/j8Q7AK1jayA/akmq+Oa7Q==
-X-Received: by 2002:a65:4242:: with SMTP id d2mr12151883pgq.166.1574959813448;
-        Thu, 28 Nov 2019 08:50:13 -0800 (PST)
+        bh=Dfqbr0RxajlO5BfpaJ+gj/cruGVf9oBCHGspuRMYLGM=;
+        b=P/PVFBsCHdQ8zNuCqkhQyIeQMi+hvY3+hVtkJ/7FjErDfiXLYQu51l/lbEtv+TaBUr
+         MpDsHqeqwAh1Qz6ktNoQqYaAAEity0s/bFpWyETyYyabSgXaKP62Z7A5Fpa4/Tk78Y3L
+         GGDdLXBsS5S+LLYMT7WyCaALHp4qafA02BNAF89bXbFqYf3YN6QVwxlInZS9CnIhO+EA
+         /cK+68dEGBTjkClnIajC9zYvv8IigtmUHesAC2bzsBNuvlezNe2z4FaJeADKzvSeVeN8
+         AqgLu3UOCvF+eMnsAUil+xjMCbZXJQ/UGcIABrPgR47p4okfAxjJ62Fu7Ligp907E4x7
+         EnzA==
+X-Gm-Message-State: APjAAAWt3iyRMSAGE63eYLc37YopyCjFsYNm4IHDfw9HNpP0hv8KOMFN
+        V1Hb1oKyYlaAAN4LUSNBM5daMA==
+X-Google-Smtp-Source: APXvYqz1CZkfXWlCWREUSYNgSlKLOyyH6hBE4kK1EF/EFkOotdf16LQQAGFxMXT09S3PLDy00ju7iA==
+X-Received: by 2002:a63:907:: with SMTP id 7mr11914734pgj.361.1574959814421;
+        Thu, 28 Nov 2019 08:50:14 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.12
+        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 08:50:13 -0800 (PST)
+        Thu, 28 Nov 2019 08:50:14 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     stable@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19][PATCH 10/17] clk: stm32mp1: parent clocks update
-Date:   Thu, 28 Nov 2019 09:49:55 -0700
-Message-Id: <20191128165002.6234-11-mathieu.poirier@linaro.org>
+Subject: [stable 4.19][PATCH 11/17] mailbox: mailbox-test: fix null pointer if no mmio
+Date:   Thu, 28 Nov 2019 09:49:56 -0700
+Message-Id: <20191128165002.6234-12-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191128165002.6234-1-mathieu.poirier@linaro.org>
 References: <20191128165002.6234-1-mathieu.poirier@linaro.org>
@@ -58,58 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
 
-commit 749c9e553e1f063eb132a78d80225532cbfedb80 upstream
+commit 6899b4f7c99c72968e58e502f96084f74f6e5e86 upstream
 
-Fixes parent clock for axi, fdcan, sai and adc12 clocks.
+Fix null pointer issue if resource_size is called with no ioresource.
 
-Fixes: e51d297e9a92 ("clk: stm32mp1: add Sub System clocks")
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Cc: stable <stable@vger.kernel.org> # 4.19
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/clk/clk-stm32mp1.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/mailbox/mailbox-test.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 8e25ed62f67b..bf3b6a4c78d0 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -121,7 +121,7 @@ static const char * const cpu_src[] = {
- };
+diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
+index 58bfafc34bc4..129b3656c453 100644
+--- a/drivers/mailbox/mailbox-test.c
++++ b/drivers/mailbox/mailbox-test.c
+@@ -363,22 +363,24 @@ static int mbox_test_probe(struct platform_device *pdev)
  
- static const char * const axi_src[] = {
--	"ck_hsi", "ck_hse", "pll2_p", "pll3_p"
-+	"ck_hsi", "ck_hse", "pll2_p"
- };
+ 	/* It's okay for MMIO to be NULL */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	size = resource_size(res);
+ 	tdev->tx_mmio = devm_ioremap_resource(&pdev->dev, res);
+-	if (PTR_ERR(tdev->tx_mmio) == -EBUSY)
++	if (PTR_ERR(tdev->tx_mmio) == -EBUSY) {
+ 		/* if reserved area in SRAM, try just ioremap */
++		size = resource_size(res);
+ 		tdev->tx_mmio = devm_ioremap(&pdev->dev, res->start, size);
+-	else if (IS_ERR(tdev->tx_mmio))
++	} else if (IS_ERR(tdev->tx_mmio)) {
+ 		tdev->tx_mmio = NULL;
++	}
  
- static const char * const per_src[] = {
-@@ -225,19 +225,19 @@ static const char * const usart6_src[] = {
- };
+ 	/* If specified, second reg entry is Rx MMIO */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	size = resource_size(res);
+ 	tdev->rx_mmio = devm_ioremap_resource(&pdev->dev, res);
+-	if (PTR_ERR(tdev->rx_mmio) == -EBUSY)
++	if (PTR_ERR(tdev->rx_mmio) == -EBUSY) {
++		size = resource_size(res);
+ 		tdev->rx_mmio = devm_ioremap(&pdev->dev, res->start, size);
+-	else if (IS_ERR(tdev->rx_mmio))
++	} else if (IS_ERR(tdev->rx_mmio)) {
+ 		tdev->rx_mmio = tdev->tx_mmio;
++	}
  
- static const char * const fdcan_src[] = {
--	"ck_hse", "pll3_q", "pll4_q"
-+	"ck_hse", "pll3_q", "pll4_q", "pll4_r"
- };
- 
- static const char * const sai_src[] = {
--	"pll4_q", "pll3_q", "i2s_ckin", "ck_per"
-+	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "pll3_r"
- };
- 
- static const char * const sai2_src[] = {
--	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "spdif_ck_symb"
-+	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "spdif_ck_symb", "pll3_r"
- };
- 
- static const char * const adc12_src[] = {
--	"pll4_q", "ck_per"
-+	"pll4_r", "ck_per", "pll3_q"
- };
- 
- static const char * const dsi_src[] = {
+ 	tdev->tx_channel = mbox_test_request_channel(pdev, "tx");
+ 	tdev->rx_channel = mbox_test_request_channel(pdev, "rx");
 -- 
 2.17.1
 
