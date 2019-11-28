@@ -2,194 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1DD810CB89
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04BB110CB99
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:18:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfK1PQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 10:16:25 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40985 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbfK1PQZ (ORCPT
+        id S1727005AbfK1PSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 10:18:34 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34761 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfK1PSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:16:25 -0500
-Received: by mail-io1-f67.google.com with SMTP id z26so25792708iot.8;
-        Thu, 28 Nov 2019 07:16:24 -0800 (PST)
+        Thu, 28 Nov 2019 10:18:33 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n13so13307792pff.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 07:18:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=H82IbOS8sPZjWpvcnPcR/AqjGK/fOT5IpCUad40HLpM=;
-        b=jFkLPx4spUlCQAlkElZdAN/usQOw62IzHHY17uPCjEjiRvR3Ew45iJgdOCGgFJuwmy
-         tc12rUtvLAumuNtQfgak+gNrU305RyPV5nNUoT7QrbOIGfyQxxTAzCOygwOCq+tAh+ut
-         gDYAhBoodWSub2YT9kgAcE2MXrqf3mafeVeP7law170kSB+R2bPCvMPy/KdmD7H4py9Y
-         58eIDioECiAEQhzC6sz6ulocyOC0AemYsJeEW2gHOb1tyJeW8BEgoats+Zow/OmWwL3Y
-         nmjee7/mEWcF4WVsGKv5WhR3/6hhUMbmwgH9E4SxczUzaZ2T77SCid6X3ymEkwvqzy9M
-         elhg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Vz09qS99hyvV+5cErCqS+LojQyYSm3WMnbpZQwjAQlI=;
+        b=ghfm9r4DFsb5fHfnc7g/ko5YJHWygsZv/hcBNlfcXpfFlyQiVMMlre6OpoJDyEbw8K
+         Q4sx8HPS+CiM/ZpJ+APk4eKAqEJdDWSNmB43GmpDJ2+LW2A6DEpKnbHxBp3ijXaGOWv1
+         sktDV5DC+ccHnARwl9EStR4Br0fwqX9bBHQ3155uy+xUB+yjfSKRPk+OXL9F4r2zywkW
+         P8unVis3ScqzW8ZAzsZjRCAwHisRBGEVzMhrlcVt0djct49hzEi8VnFkkOzL13FVWu8Z
+         /Xf0LC/h6I0YVUE+R5LoIKId8sa2tAaRzgk8TFvP5/nwRTjhbQ1Q7OZyviiab8oW8gJb
+         JCOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=H82IbOS8sPZjWpvcnPcR/AqjGK/fOT5IpCUad40HLpM=;
-        b=K3c9GUrxd4BwJPm5uY7GCjTH+dEFA1XskObUrqalN3d30uPsC9C9EFc1eQGnZUNdt4
-         m/LpOMeeuSGYUY0h4r6QJaOjA8dy+hT6ndZX3Gn+BF7/9sAWXDUkXKdGbMCBOOw+1pwL
-         lwdArvc3YqXiWI8yaw02OyzvluUm43/2S/eIMpPmjkOo/AX8W0g85wQgO6qPlDu7wGO2
-         F37Fdm5wG8FhRMsDEJK0JqhV6Xy0ho26Ufw//Vx1LUdpGa+v9EydN9px7/b8XdQK8Y4P
-         +nBWLOPllESKzkg7f9t9H41DVyJ0HVTFpGRfMseWTAWsMtpre77su/fYGDkAFaX5m374
-         Ygcw==
-X-Gm-Message-State: APjAAAX2nRopO+Glk57paAMB+pv0plZkJaE+Uw3mXrC/vr2kU5t49XJ4
-        gX2E3487B9TSIta57YWqavHFqVmoFALPNI+S24E=
-X-Google-Smtp-Source: APXvYqz8GjuY8urNYBmxma4DGx0mSieCqXdt1pzHdh1zCUnKUm27LXPBe0Rh4lFT2Z8hUrQH687ozEQJIC7EOhS+L8c=
-X-Received: by 2002:a5d:9f05:: with SMTP id q5mr40915527iot.295.1574954183712;
- Thu, 28 Nov 2019 07:16:23 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Vz09qS99hyvV+5cErCqS+LojQyYSm3WMnbpZQwjAQlI=;
+        b=ao1kjdzs7wyDa4Rh/U803K/ciwQyu5Fgxh5cVbM2fjZKwIoStMAoqySSIvc0I6uxLA
+         S9yl4Zo/2WXUY/extYWbhGkLfJZ/T5eXRqWW+k8RV53k1LFie6VjIx8dGldg/y4Qfhz9
+         hNW+O6nIVZHeJGJW90Z85s4oi7O4iI48961/I3ySiELNjlLDws37ejzt5WRT35pYfriU
+         CyVw9mrY32CwUakDrOFdeivx0ca5ee9Zv8f8lYWO62f7QumQv9SyEWP5vrbzI895gryO
+         LV3CKj0P2Y2ZbGCR+POlOlR02dMwA6ioWNTQfilAZjy9WXqUVw0USdtnSJd0OxwGKS59
+         e8lA==
+X-Gm-Message-State: APjAAAXLLzhBX3CJndad+XpzCJPQb/uUBVj2FvHjtu4INp6DAEmRWRbe
+        p8p2Tqg+Rk8BTxy9/ykEwMjnpzEG2l5mvw==
+X-Google-Smtp-Source: APXvYqzDYfEjpOkxYsikOF3AlK0ttrBHAuqSaebABsl7aoIPyBRlEbusIMhiOewSWE05ceC8nHS3UA==
+X-Received: by 2002:a65:6815:: with SMTP id l21mr11337032pgt.283.1574954312463;
+        Thu, 28 Nov 2019 07:18:32 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:bc69:2e63:573c:4afd? ([2605:e000:100e:8c61:bc69:2e63:573c:4afd])
+        by smtp.gmail.com with ESMTPSA id w2sm21460471pgm.18.2019.11.28.07.18.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2019 07:18:31 -0800 (PST)
+Subject: Re: INFO: trying to register non-static key in
+ io_cqring_overflow_flush
+To:     syzbot <syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000009f46d4059863fdea@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <71b86056-944f-c5e1-b4cf-35833a82761c@kernel.dk>
+Date:   Thu, 28 Nov 2019 07:18:28 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191127052935.1719897-1-anarsoul@gmail.com> <20191127052935.1719897-2-anarsoul@gmail.com>
- <20191127111419.z5hfu5soxceiivg6@core.my.home> <20191127173547.ch3pcv3lxgdcrfnu@gilmour.lan>
- <CAEExFWvG-Af4qtUrxQV4ssNQCVQAmpXfxB+92wX+6ZxUNfX-Jw@mail.gmail.com>
- <CA+E=qVcdwQO3Y8ismmBN-gRVNMs1Thx+TPLqstKM9fYf2_0qFQ@mail.gmail.com> <20191127222427.coyeggbxs5miioxn@core.my.home>
-In-Reply-To: <20191127222427.coyeggbxs5miioxn@core.my.home>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Thu, 28 Nov 2019 23:16:05 +0800
-Message-ID: <CAEExFWtBifY-1O0wBzk7ft8C9fxSUUx_cCJAribdP8dE9cteUg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/7] thermal: sun8i: add thermal driver for H6/H5/H3/A64/A83T/R40
-To:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Frank Lee <tiny.windzz@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0000000000009f46d4059863fdea@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 6:24 AM Ond=C5=99ej Jirman <megous@megous.com> wrot=
-e:
->
-> On Wed, Nov 27, 2019 at 11:48:32AM -0800, Vasily Khoruzhick wrote:
-> > On Wed, Nov 27, 2019 at 11:44 AM Frank Lee <tiny.windzz@gmail.com> wrot=
-e:
-> > >
-> > > Hello Vasily,
-> > >
-> > > Thank you very much for your work on this.
-> > > This looks good to me.
-> >
-> > Thanks!
-> >
-> > > By the way, I would like to ask comments about adding the following c=
-ode.
-> >
-> > Can we add it as follow up patch? I don't think that I have a device
-> > with working suspend to test it and I'm hesitant to add any code that
-> > I can't test.
->
-> I have, but it doesn't use any of the clocks and resets, so it wouldn't
-> test this fully, and basicaly doesn't need re-calibration at all, probabl=
-y.
->
-> So that may be one feedback. On a83t, I'd made these callbacks a no-op.
+On 11/28/19 12:35 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    d7688697 Merge tag 'for-linus' of git://git.kernel.org/pub..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=145e5fcee00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12f2051e3d8cdb3f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=be9e13497969768c0e6e
+> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146c517ae00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16550b12e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com
 
-This is just that the mainline code does not yet have the S2RAM code
-implementation of these SOCs.
-Each module has its own suspend function and resume function as part
-of the system suspend function.
-When the system is in S2RAM, the entire SOC will be completely powered
-off, and each module
-needs to save and restore its own state.
+This is the same as:
 
-Yangtao
+syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
 
->
-> regards,
->         o.
->
-> > >
-> > > diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_=
-thermal.c
-> > > index c0ed60782b11..579dde5e0701 100644
-> > > --- a/drivers/thermal/sun8i_thermal.c
-> > > +++ b/drivers/thermal/sun8i_thermal.c
-> > > @@ -629,11 +629,63 @@ static const struct of_device_id of_ths_match[]=
- =3D {
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, of_ths_match);
-> > >
-> > > +static int __maybe_unused sun8i_thermal_suspend(struct device *dev)
-> > > +{
-> > > + struct ths_device *tmdev; =3D dev_get_drvdata(dev);
-> > > +
-> > > + clk_disable(tmdev->mod_clk);
-> > > + clk_disable(tmdev->bus_clk);
-> > > +
-> > > + reset_control_assert(tmdev->reset);
-> > > +
-> > > + return 0;
-> > > +}
-> > > +
-> > > +static int __maybe_unused sun8i_thermal_resume(struct device *dev)
-> > > +{
-> > > + struct ths_device *tmdev; =3D dev_get_drvdata(dev);
-> > > + int error;
-> > > +
-> > > + error =3D reset_control_deassert(tmdev->reset);
-> > > + if (error)
-> > > + return error;
-> > > +
-> > > + error =3D clk_enable(tmdev->bus_clk);
-> > > + if (error)
-> > > + goto assert_reset;
-> > > +
-> > > + clk_set_rate(tmdev->mod_clk, 24000000);
-> > > + error =3D clk_enable(tmdev->mod_clk);
-> > > + if (error)
-> > > + goto bus_disable;
-> > > +
-> > > + sun8i_ths_calibrate(tmdev);
-> > > +
-> > > + ret =3D tmdev->chip->init(tmdev);
-> > > + if (ret)
-> > > + goto mod_disable;
-> > > +
-> > > + return 0;
-> > > +
-> > > +mod_disable:
-> > > + clk_disable(tmdev->mod_clk);
-> > > +bus_disable:
-> > > + clk_disable(tmdev->bus_clk);
-> > > +assert_reset:
-> > > + reset_control_assert(tmdev->reset);
-> > > +
-> > > + return 0;
-> > > +}
-> > > +
-> > > +static SIMPLE_DEV_PM_OPS(sun8i_thermal_pm_ops,
-> > > + sun8i_thermal_suspend, sun8i_thermal_resume);
-> > > +
-> > >  static struct platform_driver ths_driver =3D {
-> > >   .probe =3D sun8i_ths_probe,
-> > >   .remove =3D sun8i_ths_remove,
-> > >   .driver =3D {
-> > >   .name =3D "sun8i-thermal",
-> > > + .pm =3D &sun8i_thermal_pm_ops,
-> > >   .of_match_table =3D of_ths_match,
-> > >   },
-> > >  };
-> > >
-> > > Yangtao
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+which is fixed by eb065d301e8c83643367bdb0898becc364046bda in my
+for-5.5/io_uring-post branch, which will go upstream soon. Letting
+you know so we don't have duplicate entries for this one.
+
+-- 
+Jens Axboe
+
