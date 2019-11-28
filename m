@@ -2,71 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E11910C40C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 07:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB4110C410
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 07:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfK1Gi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 01:38:56 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7173 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726301AbfK1Gi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 01:38:56 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 697B7D7E59EC32DF0DB2;
-        Thu, 28 Nov 2019 14:38:53 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 28 Nov 2019
- 14:38:45 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <maz@kernel.org>, <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <james.morse@arm.com>, <julien.thierry.kdev@gmail.com>,
-        <suzuki.poulose@arm.com>, <christoffer.dall@arm.com>,
-        <catalin.marinas@arm.com>, <eric.auger@redhat.com>,
-        <gregkh@linuxfoundation.org>, <will@kernel.org>,
-        <andre.przywara@arm.com>, <tglx@linutronix.de>
-CC:     <linmiaohe@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-Subject: [PATCH] KVM: vgic: Fix potential double free dist->spis in __kvm_vgic_destroy()
-Date:   Thu, 28 Nov 2019 14:38:48 +0800
-Message-ID: <1574923128-19956-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726731AbfK1GlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 01:41:00 -0500
+Received: from verein.lst.de ([213.95.11.211]:50604 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726301AbfK1GlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 01:41:00 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id E117D68B05; Thu, 28 Nov 2019 07:40:56 +0100 (CET)
+Date:   Thu, 28 Nov 2019 07:40:56 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Jianxiong Gao <jxgao@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [bug] __blk_mq_run_hw_queue suspicious rcu usage
+Message-ID: <20191128064056.GA19822@lst.de>
+References: <alpine.DEB.2.21.1909041434580.160038@chino.kir.corp.google.com> <20190905060627.GA1753@lst.de> <alpine.DEB.2.21.1909051534050.245316@chino.kir.corp.google.com> <alpine.DEB.2.21.1909161641320.9200@chino.kir.corp.google.com> <alpine.DEB.2.21.1909171121300.151243@chino.kir.corp.google.com> <1d74607e-37f7-56ca-aba3-5a3bd7a68561@amd.com> <20190918132242.GA16133@lst.de> <alpine.DEB.2.21.1911271359000.135363@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1911271359000.135363@chino.kir.corp.google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+On Wed, Nov 27, 2019 at 02:11:28PM -0800, David Rientjes wrote:
+> So we're left with making dma_pool_alloc(GFP_ATOMIC) actually be atomic 
+> even when the DMA needs to be unencrypted for SEV.  Christoph's suggestion 
+> was to wire up dmapool in kernel/dma/remap.c for this.  Is that necessary 
+> to be done for all devices that need to do dma_pool_alloc(GFP_ATOMIC) or 
+> can we do it within the DMA API itself so it's transparent to the driver?
 
-In kvm_vgic_dist_init() called from kvm_vgic_map_resources(), if
-dist->vgic_model is invalid, dist->spis will be freed without set
-dist->spis = NULL. And in vgicv2 resources clean up path,
-__kvm_vgic_destroy() will be called to free allocated resources.
-And dist->spis will be freed again in clean up chain because we
-forget to set dist->spis = NULL in kvm_vgic_dist_init() failed
-path. So double free would happen.
-
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- virt/kvm/arm/vgic/vgic-init.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index 53e3969dfb52..c17c29beeb72 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -171,6 +171,7 @@ static int kvm_vgic_dist_init(struct kvm *kvm, unsigned int nr_spis)
- 			break;
- 		default:
- 			kfree(dist->spis);
-+			dist->spis = NULL;
- 			return -EINVAL;
- 		}
- 	}
--- 
-2.19.1
-
+It needs to be transparent to the driver.  Lots of drivers use GFP_ATOMIC
+dma allocations, and all of them are broken on SEV setups currently.
