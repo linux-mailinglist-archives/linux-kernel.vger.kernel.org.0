@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B727A10CAFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 916F110CAF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:58:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfK1O61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:58:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35533 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbfK1O6I (ORCPT
+        id S1727671AbfK1O6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:58:16 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46230 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727642AbfK1O6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 09:58:08 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j6so19827390lja.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:58:07 -0800 (PST)
+        Thu, 28 Nov 2019 09:58:11 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a17so20229357lfi.13
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:58:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Z0ILJLPvMSycr+N5z1WBGPbbOOzMeVGs3+El1NFG5gM=;
-        b=MsBrXnDd/G1Zjj210ATgY6vuErblELNtwtEokGCaoA1MxxkLkU5DMXWZ/DqI4rkd5Z
-         gETgTkCKjtmJ/BL1I8x41SvinDsW0tjkR9cfyiTi9zOlB2m8FMv18BEU617l2rIZlRYm
-         JgqrkOdeLh5F0tEM8F/+7LQYmLCxUlP6KBeO0=
+        bh=ApKAjcbgk3TFllS4KVlYulsx0IXhA9sg3keVA4kG7Kg=;
+        b=Cu0pEa3DGH8Jq4DqyrRVVK+6bn2ungANZKmPnurdLgGvoCh7zh9ab2EKVG+2ifp9f9
+         rF8n9op4NSmEteqozoQv7Ma5TFukZVpXhMk//1OFvFLfiiCXPFq6mIrgqPDMuC4k0F+i
+         tPXfxNLVhzbivJVrd/o409oUcl06X8HPclCC8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Z0ILJLPvMSycr+N5z1WBGPbbOOzMeVGs3+El1NFG5gM=;
-        b=la89XoLNWrOg0G9jUu5EmQMLvFz4O6WmTpWeQyW6RFg89q8XxAu8gRqestvrMCe7jg
-         duORayNZeBBKT9EciOX9Lm188J1n5aR9yXB70Z998aJgvdYVEKomRvfQEHu/gtd9L2Dr
-         gEGgnF3D04vgoPpU6o3XnrqF0zHbjLPknPKGBdcM0BZJ5u6sHgje8NiHrrldDE3eRYjR
-         jD5IaaboIBcJUsGLBC42YMnyF/4y0U5g+ahY9KE/HPh9+1aw7eIN8c74aJd8P08HDYTF
-         Nd6YFZQvWfWRMr37a8lEz1O/UXjb2QFvoAI3Q1/DZlYT6VsgneMd9TYG/Gq2JXMYaigP
-         +GRg==
-X-Gm-Message-State: APjAAAXtxg6qhUHYiGQhlxPgRzLL8L1veoiLhmOLpOmLyo8uvBaK0zMl
-        ZcJXHO/FyOaZVPe280wv4/Sn4Q==
-X-Google-Smtp-Source: APXvYqzc2fQxY6lskiW/Z09onmsQDrBOExaD6v9SX5/irAT7oq304NVrn38+PRfo+mxcFltlRIIozA==
-X-Received: by 2002:a2e:9f4d:: with SMTP id v13mr35084645ljk.78.1574953086759;
-        Thu, 28 Nov 2019 06:58:06 -0800 (PST)
+        bh=ApKAjcbgk3TFllS4KVlYulsx0IXhA9sg3keVA4kG7Kg=;
+        b=VIE+GrRvBhHTgPiaj9e75PLwJXDe4PwMiUTdeT8BuGCoxCdspdglHhuxZr4wAPpG6x
+         MfDQRnGSr0vwZrVEdU27GAzev1cdN5UeufoGipqMTR8V+WYCjOLhtFhiMHnVQ6LLVxJB
+         TFzqNY2CeQfG49CwhFeDbsEb1nQhYlzdx2CJPvbv/KKhJdl56xztZH2tu/+yzU7k/2ZB
+         PBnclaZJPmDFoqGKCMiwf9RP3CzlnvQdCMThGXvn7xnYH+yRhJF/r8v5AziG6lB83HFz
+         CdhMrnKR8X8bsHaEptc7miDSZTxmmshYXVsn4hK/ZhVNo/IwlhB4h2/JNzQbA55zIW7D
+         5WCQ==
+X-Gm-Message-State: APjAAAXOnqTuWpF3N1w0G/y9QnsR8jUtfDrCCsHObpz3xYQKxitxTIYL
+        oSHzlmy1OjZR0mcPWqbOXK2XIA==
+X-Google-Smtp-Source: APXvYqwJ2pFRjS+aCBBi6M5p/vBXoIE7qINVl1Cxd1FpO3O+0xRHnhugtUuDHZc9+RuUfUWk5qB68w==
+X-Received: by 2002:ac2:4adc:: with SMTP id m28mr8797486lfp.26.1574953087899;
+        Thu, 28 Nov 2019 06:58:07 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.58.05
+        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.58.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 06:58:06 -0800 (PST)
+        Thu, 28 Nov 2019 06:58:07 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
 Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH v6 48/49] soc: fsl: qe: remove unused #include of asm/irq.h from ucc.c
-Date:   Thu, 28 Nov 2019 15:55:53 +0100
-Message-Id: <20191128145554.1297-49-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v6 49/49] soc: fsl: qe: remove PPC32 dependency from CONFIG_QUICC_ENGINE
+Date:   Thu, 28 Nov 2019 15:55:54 +0100
+Message-Id: <20191128145554.1297-50-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
 References: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
@@ -63,36 +62,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When allowing this driver to be built for ARM, the build fails (for
-CONFIG_SMP=y) since ARM's asm/irq.h header is not self-contained:
+There are also PPC64, ARM and ARM64 based SOCs with a QUICC Engine,
+and the core QE code as well as net/wan/fsl_ucc_hdlc and
+tty/serial/ucc_uart has now been modified to not rely on ppcisms.
 
-  In file included from drivers/soc/fsl/qe/ucc.c:18:0:
->> arch/arm/include/asm/irq.h:34:50: error: unknown type name 'cpumask_t'
-    extern void arch_trigger_cpumask_backtrace(const cpumask_t *mask,
+So extend the architectures that can select QUICC_ENGINE, and add the
+rather modest requirements of OF && HAS_IOMEM.
 
-But nothing in this file actually uses anything from asm/irq.h -
-removing this #include generates identical object code, both on PPC32
-and on ARM (the latter with a patch added to asm/irq.h to make the
-build work in the first place).
+The core code as well as the ucc_uart driver has been tested on an
+LS1021A (arm), and it has also been tested that the QE code still
+works on an mpc8309 (ppc). Qiang Zhao has tested that the QE-HDLC code
+that gets enabled with this works on ARM64.
 
-Reported-by: kbuild test robot <lkp@intel.com>
+Reviewed-by: Timur Tabi <timur@kernel.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/ucc.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/soc/fsl/qe/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
-index da3d7e2dd837..90157acc5ba6 100644
---- a/drivers/soc/fsl/qe/ucc.c
-+++ b/drivers/soc/fsl/qe/ucc.c
-@@ -15,7 +15,6 @@
- #include <linux/spinlock.h>
- #include <linux/export.h>
+diff --git a/drivers/soc/fsl/qe/Kconfig b/drivers/soc/fsl/qe/Kconfig
+index cfa4b2939992..357c5800b112 100644
+--- a/drivers/soc/fsl/qe/Kconfig
++++ b/drivers/soc/fsl/qe/Kconfig
+@@ -5,7 +5,8 @@
  
--#include <asm/irq.h>
- #include <asm/io.h>
- #include <soc/fsl/qe/immap_qe.h>
- #include <soc/fsl/qe/qe.h>
+ config QUICC_ENGINE
+ 	bool "QUICC Engine (QE) framework support"
+-	depends on FSL_SOC && PPC32
++	depends on OF && HAS_IOMEM
++	depends on PPC || ARM || ARM64 || COMPILE_TEST
+ 	select GENERIC_ALLOCATOR
+ 	select CRC32
+ 	help
 -- 
 2.23.0
 
