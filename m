@@ -2,136 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A51410C22F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 03:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA77610C249
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 03:30:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729715AbfK1CPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 21:15:22 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38663 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728254AbfK1CPW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 21:15:22 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o8so6535354pls.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 18:15:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=XKJnukPRIpRZM8ESM42CDezgPUH+DNpYUDF+AgeMnxA=;
-        b=LojbQ22sjkATQWlWLgldJDisEccdNnFSAr/WbVbHBsNFqUEJQd4EfE+e+k2L7buwJX
-         72qUUsnI9S87uUkAp2a3K4sw17UOrP8a8hEnQYdVv2PFz/fvRyjnJqxX57LdSk17hAm7
-         fQCMeZXtebD75ZrZ00EeGdAKSAD3TiPv8BHzCDTMNKvrCXPZBoG4/LYmR9VtmQRpOO5Y
-         LE+/ceeilOK2yMrLC54h5Zko8plN3PCbNl/x67egNAy/KMg+PeNcAcWkzqzvr9eAY2eq
-         rE0WxH0UZlxAXVB3qns3e1sYH1EKDJVmldgOgGuILNa+XKFi6BpbhYP3jVtubo0l9/EG
-         tKWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=XKJnukPRIpRZM8ESM42CDezgPUH+DNpYUDF+AgeMnxA=;
-        b=ZWWNN90MTHS9qdJSx7/jZcC3y0VxFo5judruv8p17Vpe3RbcM7jOdLPuEBHv6ZhO+Q
-         XaL5xwfXpdxgH/KF+VADcE5xe2HSAm2kcB44Au72hTvAUkM9XY4P+TK0irr1joYmDyON
-         n2EPASJLx4ArdChRP4eZj7ZhE85OBty5XcjFOthlgaG80/NFrG/1sq2WRz5NwRIqFK/S
-         L36aRj/NtGgoQiJasUwC2EhgdNF5ZwEh9/5iENKPVWSAskfEIDUNZ4zMCu+f2tBwCghi
-         06AsfzKFF7vt/suunIdSCm2obDiNFOCImGb5s/2CQ93I+m7aGjd6QB8fLKhsBX1fcEIg
-         EbhA==
-X-Gm-Message-State: APjAAAVb3PCU4oJqQ4BvjJbPS5SgRluzey9DXHW6kzhP0BoNbEpUou1q
-        Nz8bN/P2UJCswxcm6s/T+rfNDg==
-X-Google-Smtp-Source: APXvYqwTRN+B7usIpZ2EjxKm7sld1bFhj6BbhPH3fXWS8xVewpkEMaeYUAea0ocTRBZgtWFWNJef/w==
-X-Received: by 2002:a17:902:8ec4:: with SMTP id x4mr7060349plo.114.1574907320118;
-        Wed, 27 Nov 2019 18:15:20 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:1ef2:d875:fac7:54dc:40be? ([2601:646:c200:1ef2:d875:fac7:54dc:40be])
-        by smtp.gmail.com with ESMTPSA id p5sm17953369pgj.63.2019.11.27.18.15.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 18:15:19 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] lkdtm/bugs: Avoid ifdefs for DOUBLE_FAULT
-Date:   Wed, 27 Nov 2019 18:15:17 -0800
-Message-Id: <C0659748-A5B3-45D3-B752-88A643C66E46@amacapital.net>
-References: <201911271748.A7C361E28@keescook>
-Cc:     Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        x86 <x86@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <201911271748.A7C361E28@keescook>
-To:     Kees Cook <keescook@chromium.org>
-X-Mailer: iPhone Mail (17A878)
+        id S1727976AbfK1C36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 21:29:58 -0500
+Received: from mga18.intel.com ([134.134.136.126]:17935 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726695AbfK1C35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 21:29:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 18:29:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
+   d="scan'208";a="221176106"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 27 Nov 2019 18:29:54 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
+        yi.l.liu@intel.com, yi.y.sun@intel.com,
+        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 0/8] Use 1st-level for DMA remapping
+Date:   Thu, 28 Nov 2019 10:25:42 +0800
+Message-Id: <20191128022550.9832-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Intel VT-d in scalable mode supports two types of page talbes
+for DMA translation: the first level page table and the second
+level page table. The first level page table uses the same
+format as the CPU page table, while the second level page table
+keeps compatible with previous formats. The software is able
+to choose any one of them for DMA remapping according to the use
+case.
 
-> On Nov 27, 2019, at 5:50 PM, Kees Cook <keescook@chromium.org> wrote:
->=20
-> =EF=BB=BFOn Wed, Nov 27, 2019 at 01:01:40PM -0800, Andy Lutomirski wrote:
->>=20
->>=20
->>>> On Nov 27, 2019, at 11:19 AM, Kees Cook <keescook@chromium.org> wrote:
->>>=20
->>> =EF=BB=BFLKDTM test visibility shouldn't change, so remove the ifdefs on=
+This patchset aims to move IOVA (I/O Virtual Address) translation
+to 1st-level page table in scalable mode. This will simplify vIOMMU
+(IOMMU simulated by VM hypervisor) design by using the two-stage
+translation, a.k.a. nested mode translation.
 
->>> DOUBLE_FAULT and make sure test failure doesn't crash the system.
->>>=20
->>> Link: https://lore.kernel.org/lkml/20191127184837.GA35982@gmail.com
->>> Fixes: b09511c253e5 ("lkdtm: Add a DOUBLE_FAULT crash type on x86")
->>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>> ---
->>> applies on top of tip/x86/urgent
->>> ---
->>> drivers/misc/lkdtm/bugs.c  | 8 +++++---
->>> drivers/misc/lkdtm/core.c  | 4 +---
->>> drivers/misc/lkdtm/lkdtm.h | 2 --
->>> 3 files changed, 6 insertions(+), 8 deletions(-)
->>>=20
->>> diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
->>> index a4fdad04809a..22f5293414cc 100644
->>> --- a/drivers/misc/lkdtm/bugs.c
->>> +++ b/drivers/misc/lkdtm/bugs.c
->>> @@ -342,9 +342,9 @@ void lkdtm_UNSET_SMEP(void)
->>> #endif
->>> }
->>>=20
->>> -#ifdef CONFIG_X86_32
->>> void lkdtm_DOUBLE_FAULT(void)
->>> {
->>> +#ifdef CONFIG_X86_32
->>>   /*
->>>    * Trigger #DF by setting the stack limit to zero.  This clobbers
->>>    * a GDT TLS slot, which is okay because the current task will die
->>> @@ -373,6 +373,8 @@ void lkdtm_DOUBLE_FAULT(void)
->>>   asm volatile ("movw %0, %%ss; addl $0, (%%esp)" ::
->>>             "r" ((unsigned short)(GDT_ENTRY_TLS_MIN << 3)));
->>>=20
->>> -    panic("tried to double fault but didn't die\n");
->>> -}
->>> +    pr_err("FAIL: tried to double fault but didn't die!\n");
->>> +#else
->>> +    pr_err("FAIL: this test is only available on 32-bit x86.\n");
->>> #endif
->>> +}
->>=20
->> I=E2=80=99m not familiar with the userspace tooling, but this seems unfor=
-tunate. The first FAIL is =E2=80=9Cthe test case screwed up, and it=E2=80=99=
-s a bug.=E2=80=9D  The second FAIL is =E2=80=9Cnot applicable to this system=
-.=E2=80=9D
->>=20
->>=20
->> ISTM simply not exposing the test on systems that don=E2=80=99t support m=
-akes sense. Can you clarify?
->=20
-> I don't like the tests liked in the DIRECT file to change from build to
-> build (it should be stable per kernel version). Userspace needs to know
-> how to evaluate the results of running each test, so in both cases, I
-> consider it a failure: double fault didn't work or you tried to test
-> double fault on an unsupported architecture. (The SMEP test works
-> similarly.)
->=20
+As Intel VT-d architecture offers caching mode, guest IOVA (GIOVA)
+support is now implemented in a shadow page manner. The device
+simulation software, like QEMU, has to figure out GIOVA->GPA mappings
+and write them to a shadowed page table, which will be used by the
+physical IOMMU. Each time when mappings are created or destroyed in
+vIOMMU, the simulation software has to intervene. Hence, the changes
+on GIOVA->GPA could be shadowed to host.
 
 
-So how is the test harness supposed
-to distinguish success from failure?  If it printed UNSUPPORTED instead of FA=
-IL, it would make more sense to me, but I=E2=80=99m not sure why that=E2=80=99=
-s better than just not exposing it at all.=
+     .-----------.
+     |  vIOMMU   |
+     |-----------|                 .--------------------.
+     |           |IOTLB flush trap |        QEMU        |
+     .-----------. (map/unmap)     |--------------------|
+     |GIOVA->GPA |---------------->|    .------------.  |
+     '-----------'                 |    | GIOVA->HPA |  |
+     |           |                 |    '------------'  |
+     '-----------'                 |                    |
+                                   |                    |
+                                   '--------------------'
+                                                |
+            <------------------------------------
+            |
+            v VFIO/IOMMU API
+      .-----------.
+      |  pIOMMU   |
+      |-----------|
+      |           |
+      .-----------.
+      |GIOVA->HPA |
+      '-----------'
+      |           |
+      '-----------'
+
+In VT-d 3.0, scalable mode is introduced, which offers two-level
+translation page tables and nested translation mode. Regards to
+GIOVA support, it can be simplified by 1) moving the GIOVA support
+over 1st-level page table to store GIOVA->GPA mapping in vIOMMU,
+2) binding vIOMMU 1st level page table to the pIOMMU, 3) using pIOMMU
+second level for GPA->HPA translation, and 4) enable nested (a.k.a.
+dual-stage) translation in host. Compared with current shadow GIOVA
+support, the new approach makes the vIOMMU design simpler and more
+efficient as we only need to flush the pIOMMU IOTLB and possible
+device-IOTLB when an IOVA mapping in vIOMMU is torn down.
+
+     .-----------.
+     |  vIOMMU   |
+     |-----------|                 .-----------.
+     |           |IOTLB flush trap |   QEMU    |
+     .-----------.    (unmap)      |-----------|
+     |GIOVA->GPA |---------------->|           |
+     '-----------'                 '-----------'
+     |           |                       |
+     '-----------'                       |
+           <------------------------------
+           |      VFIO/IOMMU          
+           |  cache invalidation and  
+           | guest gpd bind interfaces
+           v
+     .-----------.
+     |  pIOMMU   |
+     |-----------|
+     .-----------.
+     |GIOVA->GPA |<---First level
+     '-----------'
+     | GPA->HPA  |<---Scond level
+     '-----------'
+     '-----------'
+
+This patch set includes two parts. The former part implements the
+per-domain page table abstraction, which makes the page table
+difference transparent to various map/unmap APIs. The later part
+applies the first level page table for IOVA translation unless the
+DOMAIN_ATTR_NESTING domain attribution has been set, which indicates
+nested mode in use.
+
+Based-on-idea-by: Ashok Raj <ashok.raj@intel.com>
+Based-on-idea-by: Kevin Tian <kevin.tian@intel.com>
+Based-on-idea-by: Liu Yi L <yi.l.liu@intel.com>
+Based-on-idea-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Based-on-idea-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+Based-on-idea-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Change log:
+
+ v1->v2
+ - The first series was posted here
+   https://lkml.org/lkml/2019/9/23/297
+ - Use per domain page table ops to handle different page tables.
+ - Use first level for DMA remapping by default on both bare metal
+   and vm guest.
+ - Code refine according to code review comments for v1.
+
+Lu Baolu (8):
+  iommu/vt-d: Add per domain page table ops
+  iommu/vt-d: Move domain_flush_cache helper into header
+  iommu/vt-d: Implement second level page table ops
+  iommu/vt-d: Apply per domain second level page table ops
+  iommu/vt-d: Add first level page table interfaces
+  iommu/vt-d: Implement first level page table ops
+  iommu/vt-d: Identify domains using first level page table
+  iommu/vt-d: Add set domain DOMAIN_ATTR_NESTING attr
+
+ drivers/iommu/Makefile             |   2 +-
+ drivers/iommu/intel-iommu.c        | 412 +++++++++++++++++++++++------
+ drivers/iommu/intel-pgtable.c      | 376 ++++++++++++++++++++++++++
+ include/linux/intel-iommu.h        |  64 ++++-
+ include/trace/events/intel_iommu.h |  60 +++++
+ 5 files changed, 837 insertions(+), 77 deletions(-)
+ create mode 100644 drivers/iommu/intel-pgtable.c
+
+-- 
+2.17.1
+
