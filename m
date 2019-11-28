@@ -2,145 +2,282 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ABC010C9F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 14:59:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E9010C9FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 14:59:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfK1N7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 08:59:20 -0500
-Received: from foss.arm.com ([217.140.110.172]:35776 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfK1N7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 08:59:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20C1230E;
-        Thu, 28 Nov 2019 05:59:19 -0800 (PST)
-Received: from [192.168.0.9] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B474D3F52E;
-        Thu, 28 Nov 2019 05:59:17 -0800 (PST)
-Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-References: <20191009104611.15363-1-qais.yousef@arm.com>
- <39c08971-5d07-8018-915b-9c6284f89d5d@arm.com>
- <20191030174309.buptfbqha374efpl@e107158-lin.cambridge.arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <a5b59c1c-3863-b816-6faf-a3b6fd301834@arm.com>
-Date:   Thu, 28 Nov 2019 14:59:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726749AbfK1N7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 08:59:40 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:13987 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfK1N7j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 08:59:39 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191128135935epoutp04b5bf21af0a72951595d6e5bf248677ba~bWEtRFTUK3096730967epoutp04q
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 13:59:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191128135935epoutp04b5bf21af0a72951595d6e5bf248677ba~bWEtRFTUK3096730967epoutp04q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574949575;
+        bh=QRyw0lLQtVQOLJHLaBfOinFSbqQnNEXXqAEqLzOVO5g=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=dObXyuI7ef1FgcMMF9S01dV3Og7XKp3VkLHYhc3sPapWcUn2zcAWa+7wNGiAFlIo2
+         jQTvOgsM0d4mRw7vqBSAn5uzHLXQy0upU+REczJjZ9XkrUWDVFAdXWq6EBLR8fqWW0
+         Dg0qALomW1ZfK7yMBx+FNONhEyRObUxWLaQWp0Ys=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20191128135933epcas5p2bf2ee973d1d0ccc435f43446487de2c9~bWEsAZErN3228632286epcas5p2M;
+        Thu, 28 Nov 2019 13:59:33 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        15.2F.19629.5C2DFDD5; Thu, 28 Nov 2019 22:59:33 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191128135933epcas5p1537a2987cfbd31cbe97c45e2f2268e83~bWErPjGEi0354203542epcas5p12;
+        Thu, 28 Nov 2019 13:59:33 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191128135933epsmtrp1f6e58e8c9e56b0ae05fd69484427caf2~bWErOz1zv2878528785epsmtrp1G;
+        Thu, 28 Nov 2019 13:59:33 +0000 (GMT)
+X-AuditID: b6c32a4b-32dff70000014cad-7b-5ddfd2c5c95c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.57.06569.4C2DFDD5; Thu, 28 Nov 2019 22:59:32 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.111.84.32]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191128135930epsmtip29a07a267da03acad7434bae7bf992ea7~bWEpFnazX2555125551epsmtip2U;
+        Thu, 28 Nov 2019 13:59:30 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'sheebab'" <sheebab@cadence.com>, <avri.altman@wdc.com>,
+        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <stanley.chu@mediatek.com>,
+        <beanhuo@micron.com>, <yuehaibing@huawei.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <vigneshr@ti.com>, <linux-block@vger.kernel.org>
+Cc:     <rafalc@cadence.com>, <mparab@cadence.com>
+In-Reply-To: <1574147082-22725-3-git-send-email-sheebab@cadence.com>
+Subject: RE: [PATCH RESEND 2/2] scsi: ufs: Update L4 attributes on manual
+ hibern8 exit in Cadence UFS.
+Date:   Thu, 28 Nov 2019 19:29:29 +0530
+Message-ID: <0b8f01d5a5f4$0f7a8a70$2e6f9f50$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20191030174309.buptfbqha374efpl@e107158-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHedmnDsV+0XJYctqc2u08WFWQfYAMqNNbiAjPboCmnZAqHgA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtd+/d3XU4uc6FX0oPVxoWPkKFW5ipCF4qIgpKQtGVFxe5KZuP
+        rMBZZj7J1D9ymNW0hyFYuubSRNPcUEvwRSaZFJr5xApfGK22q+R/53zfOb9zPvhRuGRS4EZd
+        VKVwapU8UUaKCGOHt7dPZ/9YjP/9bj9manWIZN58ySMY/bARY1pG9jMDTRUkU/DBRDJPLH8w
+        5nPPT4LJNi8SjNZwl2Qqn2sx5tHLj4ixvl8QMp8WJ4lQJ7Y2bwZjs9/OCdhifRtis7taCXa5
+        Lpdkf0yMEKyh9RdiLcONGPurfgd7q60AOyk6JwqO5xIvpnFqv5A4kWJ64o8wucv/8mR5jVCL
+        hvbmIwcK6EB4XNovyEciSkI3I/j06iHGk58I9L2tBE+WEBSVjJAblusvjOuLFgTLwzM4T6YR
+        3OutEdhUJO0Dpqoc0raQ0v0YTIxm2e047Qt9s/O4DTvQEaCf//AvkKJcaAWYqznbmKA9wWLS
+        2+Vi+iBUD5ZjPHaGrvJxgn9mJzTOVeB8o12wOvHYniulw+H301Ehr3GFztVCezmgu4Wg+zaA
+        8YYIaGhcWccuMG0xCHnsBlO3c4S2PkBfgsKmAH58DR5VmgkeH4G2wQrCJsFpb6hr8uOjnKBo
+        bRzjnWLIzZHwak+4MT+07nSHOwUFAh6zYF35jhcjD92mw3SbDtNtOkD3P+wBIp6hbVyyRpnA
+        aYKSA1Rcuq9GrtSkqhJ8LyQp65H9++07ZkL1vcfbEU0hmaNYYRiLkQjkaZoMZTsCCpdJxefv
+        /RuJ4+UZVzh1Uqw6NZHTtCN3ipC5iksEQ9ESOkGewl3iuGROvbHFKAc3LbqKWkatPe7jJ/Z7
+        VWUeXHPh3ANKzWlrkZUxgePbpV6ndn9XL2TNCtkmSfFhx2VKa+1O6kxfMhqlUUerqcmtprKz
+        8fqqqRBlcINqSRHkuBwZV+a8J90SYfy66NUX9C62ozbc52bzIBt+xvzaw2qMDdviHfot5HT8
+        Vf2hqGh9ZpiM0CjkB/bhao38L+hV9ip6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSvO6RS/djDb4+tLB4+fMqm8XBh50s
+        FotubGOy2HtL2+LyrjlsFt3Xd7BZLD/+j8ni3ulPLBYtx76yWDRsmcFmMW9DA5PF0q03GS3+
+        n/3AbnHn63MWBz6PNZ2vmTxajrxl9Ziw6ACjR8vJ/Swe39d3sHl8fHqLxWPL/s+MHsdvbGfy
+        +LxJzqP9QDdTAFcUl01Kak5mWWqRvl0CV8arp//YC04aVDyfuZK9gfGqehcjJ4eEgIlE08Zt
+        LF2MXBxCArsZJSa+vMsIkZCWuL5xAjuELSyx8t9zdoiiF4wSs68uBkuwCehK7FjcxgaSEBG4
+        xyRx/9AlFpAEs4CBxKVLn5lBbCGBs4wSizYWgdicAi4Si95dZwKxhQXSJFatWA62jUVAVeL4
+        jkVsIDavgKXEkiszmSBsQYmTM58AzeQAmqkn0baREWK8vMT2t3OYIY5TkPj5dBkriC0i4CTx
+        Z8VddogacYmjP3uYJzAKz0IyaRbCpFlIJs1C0rGAkWUVo2RqQXFuem6xYYFRXmq5XnFibnFp
+        Xrpecn7uJkZwDGtp7WA8cSL+EKMAB6MSD6/ApvuxQqyJZcWVuYcYJTiYlUR4k+YChXhTEiur
+        Uovy44tKc1KLDzFKc7AoifPK5x+LFBJITyxJzU5NLUgtgskycXBKNTAy/vmi2vHWb9I9b8F7
+        G2s8TqfYe6a5zRGI3n/WocHPK13HeW5reZlAl6q5U7PAcusvyYGXVAsi1z3yrzO2nP5d/q/y
+        Gc4jZ4tmPjz0RPlL/9usZbXL3JlDV+v3rZyiELgz7FE7ww/+D7/d6hN077z2aD9rfZLjUtdF
+        vnu3Zro5VN9etW+6rbkSS3FGoqEWc1FxIgAn7zMG3QIAAA==
+X-CMS-MailID: 20191128135933epcas5p1537a2987cfbd31cbe97c45e2f2268e83
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20191119070557epcas4p1e2ff5e9d4c69f15cb7510ab5277f0391
+References: <1574147082-22725-1-git-send-email-sheebab@cadence.com>
+        <CGME20191119070557epcas4p1e2ff5e9d4c69f15cb7510ab5277f0391@epcas4p1.samsung.com>
+        <1574147082-22725-3-git-send-email-sheebab@cadence.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2019 18:43, Qais Yousef wrote:
-> On 10/30/19 12:57, Dietmar Eggemann wrote:
->> On 09.10.19 12:46, Qais Yousef wrote:
->>
->> [...]
->>
->>> Changes in v2:
->>> 	- Use cpupri_find() to check the fitness of the task instead of
->>> 	  sprinkling find_lowest_rq() with several checks of
->>> 	  rt_task_fits_capacity().
->>>
->>> 	  The selected implementation opted to pass the fitness function as an
->>> 	  argument rather than call rt_task_fits_capacity() capacity which is
->>> 	  a cleaner to keep the logical separation of the 2 modules; but it
->>> 	  means the compiler has less room to optimize rt_task_fits_capacity()
->>> 	  out when it's a constant value.
->>
->> I would prefer exporting rt_task_fits_capacity() sched-internally via
->> kernel/sched/sched.h. Less code changes and the indication whether
->> rt_task_fits_capacity() has to be used in cpupri_find() is already given
->> by lowest_mask being !NULL or NULL.
->>
-> 
-> I don't mind if the maintainers agree too. The reason I did that way is because
-> it keeps the implementation of cpupri generic and self contained.
-> 
-> rt_task_fits_capacity() at the moment is a static function in rt.c
-> To use it in cpupri_find() I either need to make it public somewhere or have an
-> 
-> 	extern bool rt_task_fits_capacity(...);
-> 
-> in cpupri.c. Neither of which appealed to me personally.
-> 
->> [...]
->>
->>> +inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
->>> +{
->>> +	unsigned int min_cap;
->>> +	unsigned int max_cap;
->>> +	unsigned int cpu_cap;
->>
->> Nit picking. Since we discussed it already,
->>
->> I found this "Also please try to aggregate variables of the same type
->> into a single line. There is no point in wasting screen space::" ;-)
->>
->> https://lore.kernel.org/r/20181107171149.165693799@linutronix.de
-> 
-> That wasn't merged at the end AFAICT :)
-> 
-> It's not my preferred style in this case if I have the choice - but I promise
-> to change it if I ended up having to spin another version anyway :)
-> 
->>
->> [...]
->>
->>> @@ -2223,7 +2273,10 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
->>>  	 */
->>>  	if (task_on_rq_queued(p) && rq->curr != p) {
->>>  #ifdef CONFIG_SMP
->>> -		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
->>> +		bool need_to_push = rq->rt.overloaded ||
->>> +				    !rt_task_fits_capacity(p, cpu_of(rq));
->>> +
->>> +		if (p->nr_cpus_allowed > 1 && need_to_push)
->>>  			rt_queue_push_tasks(rq);
->>>  #endif /* CONFIG_SMP */
->>>  		if (p->prio < rq->curr->prio && cpu_online(cpu_of(rq)))
->> What happens to a always running CFS task which switches to RT? Luca
->> introduced a special migrate callback (next to push and pull)
->> specifically to deal with this scenario. A lot of new infrastructure for
->> this one use case, but still, do we care for it in RT as well?
->>
->> https://lore.kernel.org/r/20190506044836.2914-4-luca.abeni@santannapisa.it
->>
-> 
-> Good question. This scenario and the one where uclamp values are changed while
-> an RT task is running are similar.
-> 
-> In both cases the migration will happen on the next activation/wakeup AFAICS.
-> 
-> I am not sure an always running rt/deadline task is something conceivable in
-> practice and we want to cater for. It is certainly something we can push a fix
-> for in the future on top of this. IMHO we're better off trying to keep the
-> complexity low until we have a real scenario/use case that justifies it.
-> 
-> As it stands when the system is overloaded or when there are more RT tasks than
-> big cores we're stuffed too. And there are probably more ways where we can
-> shoot ourselves in the foot. Using RT and deadline is hard and that's one of
-> their unavoidable plagues I suppose.
 
-I'm OK with that. I just wanted to make sure we will apply the same
-requirements to the upcoming DL capacity awareness implementation. Not
-catering for this use case means that we can skip the migrate callback
-from Luca's initial DL capacity awareness patch-set.
 
-I still would prefer to export rt_task_fits_capacity() via
-kernel/sched/sched.h but I won't insist on that detail:
+> -----Original Message-----
+> From: sheebab <sheebab@cadence.com>
+> Sent: 19 November 2019 12:35
+> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
+> pedrom.sousa@synopsys.com; jejb@linux.ibm.com;
+> martin.petersen@oracle.com; stanley.chu@mediatek.com;
+> beanhuo@micron.com; yuehaibing@huawei.com; linux-scsi@vger.kernel.org;
+> linux-kernel@vger.kernel.org; vigneshr@ti.com; linux-block@vger.kernel.org
+> Cc: rafalc@cadence.com; mparab@cadence.com; sheebab
+> <sheebab@cadence.com>
+> Subject: [PATCH RESEND 2/2] scsi: ufs: Update L4 attributes on manual
+hibern8
+> exit in Cadence UFS.
+> 
+> Backup L4 attributes duirng manual hibern8 entry and restore the L4
+attributes
+> on manual hibern8 exit as per JESD220C.
+> 
+> Signed-off-by: sheebab <sheebab@cadence.com>
+> ---
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>  drivers/scsi/ufs/cdns-pltfrm.c | 97
+> +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 95 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c
+b/drivers/scsi/ufs/cdns-pltfrm.c index
+> adbbd60..5510567 100644
+> --- a/drivers/scsi/ufs/cdns-pltfrm.c
+> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
+> @@ -19,6 +19,14 @@
+> 
+>  #define CDNS_UFS_REG_HCLKDIV	0xFC
+>  #define CDNS_UFS_REG_PHY_XCFGD1	0x113C
+> +#define CDNS_UFS_MAX 12
+> +
+> +struct cdns_ufs_host {
+> +	/**
+> +	 * cdns_ufs_dme_attr_val - for storing L4 attributes
+> +	 */
+> +	u32 cdns_ufs_dme_attr_val[CDNS_UFS_MAX];
+> +};
+> 
+>  /**
+>   * cdns_ufs_enable_intr - enable interrupts @@ -47,6 +55,77 @@ static
+void
+> cdns_ufs_disable_intr(struct ufs_hba *hba, u32 intrs)  }
+> 
+>  /**
+> + * cdns_ufs_get_l4_attr - get L4 attributes on local side
+> + * @hba: per adapter instance
+> + *
+> + */
+> +static void cdns_ufs_get_l4_attr(struct ufs_hba *hba) {
+> +	struct cdns_ufs_host *host = ufshcd_get_variant(hba);
+> +
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_PEERDEVICEID),
+> +		       &host->cdns_ufs_dme_attr_val[0]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_PEERCPORTID),
+> +		       &host->cdns_ufs_dme_attr_val[1]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_TRAFFICCLASS),
+> +		       &host->cdns_ufs_dme_attr_val[2]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_PROTOCOLID),
+> +		       &host->cdns_ufs_dme_attr_val[3]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_CPORTFLAGS),
+> +		       &host->cdns_ufs_dme_attr_val[4]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_TXTOKENVALUE),
+> +		       &host->cdns_ufs_dme_attr_val[5]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_RXTOKENVALUE),
+> +		       &host->cdns_ufs_dme_attr_val[6]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_LOCALBUFFERSPACE),
+> +		       &host->cdns_ufs_dme_attr_val[7]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_PEERBUFFERSPACE),
+> +		       &host->cdns_ufs_dme_attr_val[8]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_CREDITSTOSEND),
+> +		       &host->cdns_ufs_dme_attr_val[9]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_CPORTMODE),
+> +		       &host->cdns_ufs_dme_attr_val[10]);
+> +	ufshcd_dme_get(hba, UIC_ARG_MIB(T_CONNECTIONSTATE),
+> +		       &host->cdns_ufs_dme_attr_val[11]);
+> +}
+> +
+> +/**
+> + * cdns_ufs_set_l4_attr - set L4 attributes on local side
+> + * @hba: per adapter instance
+> + *
+> + */
+> +static void cdns_ufs_set_l4_attr(struct ufs_hba *hba) {
+> +	struct cdns_ufs_host *host = ufshcd_get_variant(hba);
+> +
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_CONNECTIONSTATE), 0);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_PEERDEVICEID),
+> +		       host->cdns_ufs_dme_attr_val[0]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_PEERCPORTID),
+> +		       host->cdns_ufs_dme_attr_val[1]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_TRAFFICCLASS),
+> +		       host->cdns_ufs_dme_attr_val[2]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_PROTOCOLID),
+> +		       host->cdns_ufs_dme_attr_val[3]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_CPORTFLAGS),
+> +		       host->cdns_ufs_dme_attr_val[4]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_TXTOKENVALUE),
+> +		       host->cdns_ufs_dme_attr_val[5]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_RXTOKENVALUE),
+> +		       host->cdns_ufs_dme_attr_val[6]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_LOCALBUFFERSPACE),
+> +		       host->cdns_ufs_dme_attr_val[7]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_PEERBUFFERSPACE),
+> +		       host->cdns_ufs_dme_attr_val[8]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_CREDITSTOSEND),
+> +		       host->cdns_ufs_dme_attr_val[9]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_CPORTMODE),
+> +		       host->cdns_ufs_dme_attr_val[10]);
+> +	ufshcd_dme_set(hba, UIC_ARG_MIB(T_CONNECTIONSTATE),
+> +		       host->cdns_ufs_dme_attr_val[11]); }
+> +
+> +/**
+>   * Sets HCLKDIV register value based on the core_clk
+>   * @hba: host controller instance
+>   *
+> @@ -134,6 +213,7 @@ static void cdns_ufs_hibern8_notify(struct ufs_hba
+> *hba, enum uic_cmd_dme cmd,
+>  		 * before manual hibernate entry.
+>  		 */
+>  		cdns_ufs_enable_intr(hba, UFSHCD_UIC_HIBERN8_MASK);
+> +		cdns_ufs_get_l4_attr(hba);
+>  	}
+>  	if (status == POST_CHANGE && cmd == UIC_CMD_DME_HIBER_EXIT) {
+>  		/**
+> @@ -141,6 +221,7 @@ static void cdns_ufs_hibern8_notify(struct ufs_hba
+> *hba, enum uic_cmd_dme cmd,
+>  		 * after manual hibern8 exit.
+>  		 */
+>  		cdns_ufs_disable_intr(hba, UFSHCD_UIC_HIBERN8_MASK);
+> +		cdns_ufs_set_l4_attr(hba);
+>  	}
+>  }
+> 
+> @@ -245,15 +326,27 @@ static int cdns_ufs_pltfrm_probe(struct
+> platform_device *pdev)
+>  	const struct of_device_id *of_id;
+>  	struct ufs_hba_variant_ops *vops;
+>  	struct device *dev = &pdev->dev;
+> +	struct cdns_ufs_host *host;
+> +	struct ufs_hba *hba;
+> 
+>  	of_id = of_match_node(cdns_ufs_of_match, dev->of_node);
+>  	vops = (struct ufs_hba_variant_ops *)of_id->data;
+> 
+>  	/* Perform generic probe */
+>  	err = ufshcd_pltfrm_init(pdev, vops);
+> -	if (err)
+> +	if (err) {
+>  		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
+> -
+> +		goto out;
+> +	}
+> +	host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
+> +	if (!host) {
+> +		err = -ENOMEM;
+> +		dev_err(dev, "%s: no memory for cdns host\n", __func__);
+> +		goto out;
+> +	}
+> +	hba =  platform_get_drvdata(pdev);
+> +	ufshcd_set_variant(hba, host);
+> +out:
+>  	return err;
+>  }
+> 
+> --
+> 2.7.4
+
+
