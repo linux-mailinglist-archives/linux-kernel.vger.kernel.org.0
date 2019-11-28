@@ -2,148 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6319E10C262
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 03:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AAD010C264
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 03:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730045AbfK1CaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 21:30:24 -0500
-Received: from mga18.intel.com ([134.134.136.126]:17935 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728371AbfK1CaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 21:30:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 18:30:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
-   d="scan'208";a="221176261"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by orsmga002.jf.intel.com with ESMTP; 27 Nov 2019 18:30:15 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
-        yi.l.liu@intel.com, yi.y.sun@intel.com,
-        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Yi Sun <yi.y.sun@linux.intel.com>
-Subject: [PATCH v2 8/8] iommu/vt-d: Add set domain DOMAIN_ATTR_NESTING attr
-Date:   Thu, 28 Nov 2019 10:25:50 +0800
-Message-Id: <20191128022550.9832-9-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191128022550.9832-1-baolu.lu@linux.intel.com>
-References: <20191128022550.9832-1-baolu.lu@linux.intel.com>
+        id S1728410AbfK1CbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 21:31:22 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44525 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbfK1CbV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 21:31:21 -0500
+Received: by mail-pg1-f196.google.com with SMTP id e6so12083903pgi.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 18:31:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w3MhAgNwJCDzFmg83BGAd8t/eEyIf/GsxgnTUb2ToXs=;
+        b=AbV2WhvURSc4H37cMnU1McRpKMN3PNtGgOrYok6XE+t9/06vmiOzXjxO8o2/A4nNp4
+         Th474P4Odokl5RWixStRMW5aLqjuL+perV6RJMm+oYT0og/XFeKaql61vRSRiMJ2pq32
+         0omD61mSXnitttdyY+8RdTvxmea7rn86qHhC8uuVGiCvCxLNuvzRjfd/GUuY0RIQYSP2
+         cmdskrvBVEhe3S9Q8lDcJdRWRIlI7bSrEFH1y1U4Rk/tYvNaQaqZi/+FF5T+ytaNx+SZ
+         qeKAzvV5MkymttKH0wbACMhRa1dZMoMvjL94xGienEDXbooxuQVYAxmfQ3NFUZlSxovl
+         0VrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w3MhAgNwJCDzFmg83BGAd8t/eEyIf/GsxgnTUb2ToXs=;
+        b=S7kwrNtwoaJx5kjWFxBfnGfldERq59X+ar2AgCXqJKCLITAaHm/SbCpyQRUlBl/09C
+         nJTvP+88xVKpcuXIwm94bM0HY+UC0YV5A1yfRr+2M79fE/+1dxnexOZtQd97MOfE37Dt
+         UYHtZL5aQAsXmv+dZP43Ruxa6sslOOAP6398HgDFm1WaL3FPB+Z3ZVYrqHyThGpoN2nD
+         3+ZAJKHrBlxq++RFRypkN98WlPwmkQiPXCDRZJZhWIK4Em14gtyKCzfcFIb/0QS7YsXC
+         KW8ZOOtni4xbgL420OiHu+E44DC/GrqW+7RJq3ntjv8B7qGocxfblAtMMju1PerubTCe
+         RJvg==
+X-Gm-Message-State: APjAAAU0LTdMMgEmNLUtfMoRq59JUqkExH9WKIEgZeqZDIBKMs8hgmVx
+        EOQ84lTv6MFPo/CR7XEvEql1zl5HYOk=
+X-Google-Smtp-Source: APXvYqx4TG+a8InkKBmHDvzMujmJEOUlgarnckvNwhCekHG+3RWiohoP5Zo9pN47GWMMV9wizulVyg==
+X-Received: by 2002:a62:cf46:: with SMTP id b67mr30054210pfg.77.1574908280836;
+        Wed, 27 Nov 2019 18:31:20 -0800 (PST)
+Received: from localhost ([122.171.112.123])
+        by smtp.gmail.com with ESMTPSA id q15sm1312656pgi.55.2019.11.27.18.31.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Nov 2019 18:31:20 -0800 (PST)
+Date:   Thu, 28 Nov 2019 08:01:16 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: vexpress-spc: Fix wrong alternation of
+ policy->related_cpus during CPU hp
+Message-ID: <20191128023116.3skwbeowk7wtjaxc@vireshk-i7>
+References: <20191127114801.23837-1-dietmar.eggemann@arm.com>
+ <20191127120816.GC29301@bogus>
+ <20191127121402.vd3tul4gmqm6qtyb@vireshk-i7>
+ <20191127133200.GE29301@bogus>
+ <a60cab69-4d47-d418-94bd-74630bf9e846@arm.com>
+ <20191127154029.GA4826@bogus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127154029.GA4826@bogus>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the Intel VT-d specific callback of setting
-DOMAIN_ATTR_NESTING domain attribution. It is necessary
-to let the VT-d driver know that the domain represents
-a virutual machine which requires the IOMMU hardware to
-support nested translation mode. Return success if the
-IOMMU hardware suports nested mode, otherwise failure.
+On 27-11-19, 15:40, Sudeep Holla wrote:
+> diff --git i/arch/arm/mach-vexpress/spc.c w/arch/arm/mach-vexpress/spc.c
+> index 354e0e7025ae..e0e2e789a0b7 100644
+> --- i/arch/arm/mach-vexpress/spc.c
+> +++ w/arch/arm/mach-vexpress/spc.c
+> @@ -551,8 +551,9 @@ static struct clk *ve_spc_clk_register(struct device *cpu_dev)
+> 
+>  static int __init ve_spc_clk_init(void)
+>  {
+> -       int cpu;
+> +       int cpu, cluster;
+>         struct clk *clk;
+> +       bool init_opp_table[MAX_CLUSTERS] = { false };
+> 
+>         if (!info)
+>                 return 0; /* Continue only if SPC is initialised */
+> @@ -578,8 +579,17 @@ static int __init ve_spc_clk_init(void)
+>                         continue;
+>                 }
+> 
+> +               cluster = topology_physical_package_id(cpu_dev->id);
+> +               if (init_opp_table[cluster])
+> +                       continue;
+> +
+>                 if (ve_init_opp_table(cpu_dev))
+>                         pr_warn("failed to initialise cpu%d opp table\n", cpu);
+> +               else if (dev_pm_opp_set_sharing_cpus(cpu_dev,
+> +                        topology_core_cpumask(cpu_dev->id)))
+> +                       pr_warn("failed to mark OPPs shared for cpu%d\n", cpu);
+> +
+> +               init_opp_table[cluster] = true;
+>         }
+> 
+>         platform_device_register_simple("vexpress-spc-cpufreq", -1, NULL, 0);
+> diff --git i/drivers/cpufreq/vexpress-spc-cpufreq.c w/drivers/cpufreq/vexpress-spc-cpufreq.c
+> index 506e3f2bf53a..83c85d3d67e3 100644
+> --- i/drivers/cpufreq/vexpress-spc-cpufreq.c
+> +++ w/drivers/cpufreq/vexpress-spc-cpufreq.c
+> @@ -434,7 +434,7 @@ static int ve_spc_cpufreq_init(struct cpufreq_policy *policy)
+>         if (cur_cluster < MAX_CLUSTERS) {
+>                 int cpu;
+> 
+> -               cpumask_copy(policy->cpus, topology_core_cpumask(policy->cpu));
+> +               dev_pm_opp_get_sharing_cpus(cpu_dev, policy->cpus);
+> 
+>                 for_each_cpu(cpu, policy->cpus)
+>                         per_cpu(physical_cluster, cpu) = cur_cluster;
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Yi Sun <yi.y.sun@linux.intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 56 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+This is a better *work-around* I would say, as we can't break it the
+way I explained earlier :)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 68b2f98ecd65..ee717dcb9644 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -308,6 +308,12 @@ static int hw_pass_through = 1;
-  */
- #define DOMAIN_FLAG_LOSE_CHILDREN		BIT(1)
- 
-+/*
-+ * Domain represents a virtual machine which demands iommu nested
-+ * translation mode support.
-+ */
-+#define DOMAIN_FLAG_NESTING_MODE		BIT(2)
-+
- #define for_each_domain_iommu(idx, domain)			\
- 	for (idx = 0; idx < g_num_of_iommus; idx++)		\
- 		if (domain->iommu_refcnt[idx])
-@@ -5929,6 +5935,24 @@ static inline bool iommu_pasid_support(void)
- 	return ret;
- }
- 
-+static inline bool nested_mode_support(void)
-+{
-+	struct dmar_drhd_unit *drhd;
-+	struct intel_iommu *iommu;
-+	bool ret = true;
-+
-+	rcu_read_lock();
-+	for_each_active_iommu(iommu, drhd) {
-+		if (!sm_supported(iommu) || !ecap_nest(iommu->ecap)) {
-+			ret = false;
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
- static bool intel_iommu_capable(enum iommu_cap cap)
- {
- 	if (cap == IOMMU_CAP_CACHE_COHERENCY)
-@@ -6305,10 +6329,42 @@ static bool intel_iommu_is_attach_deferred(struct iommu_domain *domain,
- 	return dev->archdata.iommu == DEFER_DEVICE_DOMAIN_INFO;
- }
- 
-+static int
-+intel_iommu_domain_set_attr(struct iommu_domain *domain,
-+			    enum iommu_attr attr, void *data)
-+{
-+	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
-+		return -EINVAL;
-+
-+	switch (attr) {
-+	case DOMAIN_ATTR_NESTING:
-+		spin_lock_irqsave(&device_domain_lock, flags);
-+		if (nested_mode_support() &&
-+		    list_empty(&dmar_domain->devices)) {
-+			dmar_domain->flags |= DOMAIN_FLAG_NESTING_MODE;
-+			dmar_domain->ops = &second_lvl_pgtable_ops;
-+		} else {
-+			ret = -ENODEV;
-+		}
-+		spin_unlock_irqrestore(&device_domain_lock, flags);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
- const struct iommu_ops intel_iommu_ops = {
- 	.capable		= intel_iommu_capable,
- 	.domain_alloc		= intel_iommu_domain_alloc,
- 	.domain_free		= intel_iommu_domain_free,
-+	.domain_set_attr	= intel_iommu_domain_set_attr,
- 	.attach_dev		= intel_iommu_attach_device,
- 	.detach_dev		= intel_iommu_detach_device,
- 	.aux_attach_dev		= intel_iommu_aux_attach_device,
 -- 
-2.17.1
-
+viresh
