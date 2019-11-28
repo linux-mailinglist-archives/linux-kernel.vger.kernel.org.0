@@ -2,177 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B78410C2DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 04:33:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3A7010C2F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 04:44:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfK1DdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 22:33:17 -0500
-Received: from mo-csw1515.securemx.jp ([210.130.202.154]:36624 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbfK1DdQ (ORCPT
+        id S1727446AbfK1Dop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 22:44:45 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:19338 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbfK1Doo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 22:33:16 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id xAS3X6ob005472; Thu, 28 Nov 2019 12:33:06 +0900
-X-Iguazu-Qid: 34trMIO5KQudw3XypG
-X-Iguazu-QSIG: v=2; s=0; t=1574911986; q=34trMIO5KQudw3XypG; m=TQwososeHkYd8YPQcmO3nAFvyvjdHxKubdsnV5Ex9r8=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1510) id xAS3X4IG034859;
-        Thu, 28 Nov 2019 12:33:05 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id xAS3X4FH013494;
-        Thu, 28 Nov 2019 12:33:04 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id xAS3X4Sr028371;
-        Thu, 28 Nov 2019 12:33:04 +0900
-Date:   Thu, 28 Nov 2019 12:33:02 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        David Miller <davem@davemloft.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jouni Hogander <jouni.hogander@unikie.com>
-Subject: Re: [PATCH 4.19 282/306] net-sysfs: Fix reference count leak in
- rx|netdev_queue_add_kobject
-X-TSB-HOP: ON
-Message-ID: <20191128033302.riq5c55kt7mre3vw@toshiba.co.jp>
-References: <20191127203114.766709977@linuxfoundation.org>
- <20191127203135.382666831@linuxfoundation.org>
+        Wed, 27 Nov 2019 22:44:44 -0500
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Nov 2019 22:44:42 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574912681;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=nvzO8rqYdXuIPjP0LXy5wKBL7E3Y7S8VI2AMrtpVuGw=;
+        b=PFclMg4EFSJ57I2l8e9SLhyyJ0lo4j9gQOL/+hg75rXhXe/iv9zfFaow6PMx7KMGi0
+        kM3Q/HKGaPTWry/0tp5DCvg/n61UxaccEI1Tjl9JhFrs/m94SuOahR5jeHvf233mqWvY
+        v7IR49TyI8D4sV4clCQdaPJQ347IvCTwnRG4w0fG97f6pqKqkQ4tXVagfoP1P9JUAEty
+        zhZlcyikYOtp8hXxNCp6dC6avl+l2U4U82cENXaOAQDwfz2fYHxoSjCSBb6Xpe5nmq63
+        SforMexiig6Ha4z2bYQFWpCeeiDQWetTw8SYlzstENyxzWcyQY7HAxGuQc1ktBCSKu+r
+        uWDQ==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp04-01.back.ox.d0m.de
+        by smtp-ox.front (RZmta 46.0.0 AUTH)
+        with ESMTPSA id 604beevAS3cd2Io
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Thu, 28 Nov 2019 04:38:39 +0100 (CET)
+Date:   Thu, 28 Nov 2019 04:38:39 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
+Message-ID: <1936168849.1467696.1574912319589@webmail.strato.com>
+In-Reply-To: <20191127084253.16356-2-geert+renesas@glider.be>
+References: <20191127084253.16356-1-geert+renesas@glider.be>
+ <20191127084253.16356-2-geert+renesas@glider.be>
+Subject: Re: [PATCH v3 1/7] gpiolib: Add GPIOCHIP_NAME definition
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127203135.382666831@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.1-Rev22
+X-Originating-IP: 112.198.74.215
+X-Originating-Client: open-xchange-appsuite
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Wed, Nov 27, 2019 at 09:32:12PM +0100, Greg Kroah-Hartman wrote:
-> From: Jouni Hogander <jouni.hogander@unikie.com>
+> On November 27, 2019 at 9:42 AM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 > 
-> commit b8eb718348b8fb30b5a7d0a8fce26fb3f4ac741b upstream.
 > 
-> kobject_init_and_add takes reference even when it fails. This has
-> to be given up by the caller in error handling. Otherwise memory
-> allocated by kobject_init_and_add is never freed. Originally found
-> by Syzkaller:
+> The string literal "gpiochip" is used in several places.
+> Add a definition for it, and use it everywhere, to make sure everything
+> stays in sync.
 > 
-> BUG: memory leak
-> unreferenced object 0xffff8880679f8b08 (size 8):
->   comm "netdev_register", pid 269, jiffies 4294693094 (age 12.132s)
->   hex dump (first 8 bytes):
->     72 78 2d 30 00 36 20 d4                          rx-0.6 .
->   backtrace:
->     [<000000008c93818e>] __kmalloc_track_caller+0x16e/0x290
->     [<000000001f2e4e49>] kvasprintf+0xb1/0x140
->     [<000000007f313394>] kvasprintf_const+0x56/0x160
->     [<00000000aeca11c8>] kobject_set_name_vargs+0x5b/0x140
->     [<0000000073a0367c>] kobject_init_and_add+0xd8/0x170
->     [<0000000088838e4b>] net_rx_queue_update_kobjects+0x152/0x560
->     [<000000006be5f104>] netdev_register_kobject+0x210/0x380
->     [<00000000e31dab9d>] register_netdevice+0xa1b/0xf00
->     [<00000000f68b2465>] __tun_chr_ioctl+0x20d5/0x3dd0
->     [<000000004c50599f>] tun_chr_ioctl+0x2f/0x40
->     [<00000000bbd4c317>] do_vfs_ioctl+0x1c7/0x1510
->     [<00000000d4c59e8f>] ksys_ioctl+0x99/0xb0
->     [<00000000946aea81>] __x64_sys_ioctl+0x78/0xb0
->     [<0000000038d946e5>] do_syscall_64+0x16f/0x580
->     [<00000000e0aa5d8f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
->     [<00000000285b3d1a>] 0xffffffffffffffff
-> 
-> Cc: David Miller <davem@davemloft.net>
-> Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Signed-off-by: Jouni Hogander <jouni.hogander@unikie.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-
-We also need the following commits to fix this issue:
-
-commit 48a322b6f9965b2f1e4ce81af972f0e287b07ed0
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Wed Nov 20 19:19:07 2019 -0800
-
-    net-sysfs: fix netdev_queue_add_kobject() breakage
-
-    kobject_put() should only be called in error path.
-
-    Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject")
-    Signed-off-by: Eric Dumazet <edumazet@google.com>
-    Cc: Jouni Hogander <jouni.hogander@unikie.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-And this should also apply to 4.14.y and 5.3.y.
-Please apply this commnit to 4.14.y, 4.19.y and 5.3.y
-
-Best regards,
-  Nobuhiro
-
-
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  net/core/net-sysfs.c |   24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
+> v3:
+>   - New.
+> ---
+>  drivers/gpio/gpiolib-sysfs.c | 7 +++----
+>  drivers/gpio/gpiolib.c       | 4 ++--
+>  drivers/gpio/gpiolib.h       | 2 ++
+>  3 files changed, 7 insertions(+), 6 deletions(-)
 > 
-> --- a/net/core/net-sysfs.c
-> +++ b/net/core/net-sysfs.c
-> @@ -932,21 +932,23 @@ static int rx_queue_add_kobject(struct n
->  	error = kobject_init_and_add(kobj, &rx_queue_ktype, NULL,
->  				     "rx-%u", index);
->  	if (error)
-> -		return error;
-> +		goto err;
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+> index fbf6b1a0a4fae6ce..23e3d335cd543d53 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -762,10 +762,9 @@ int gpiochip_sysfs_register(struct gpio_device *gdev)
+>  		parent = &gdev->dev;
 >  
->  	dev_hold(queue->dev);
+>  	/* use chip->base for the ID; it's already known to be unique */
+> -	dev = device_create_with_groups(&gpio_class, parent,
+> -					MKDEV(0, 0),
+> -					chip, gpiochip_groups,
+> -					"gpiochip%d", chip->base);
+> +	dev = device_create_with_groups(&gpio_class, parent, MKDEV(0, 0), chip,
+> +					gpiochip_groups, GPIOCHIP_NAME "%d",
+> +					chip->base);
+>  	if (IS_ERR(dev))
+>  		return PTR_ERR(dev);
 >  
->  	if (dev->sysfs_rx_queue_group) {
->  		error = sysfs_create_group(kobj, dev->sysfs_rx_queue_group);
-> -		if (error) {
-> -			kobject_put(kobj);
-> -			return error;
-> -		}
-> +		if (error)
-> +			goto err;
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index dce0b31f4125a6b3..c9e47620d2434983 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1419,7 +1419,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>  		ret = gdev->id;
+>  		goto err_free_gdev;
+>  	}
+> -	dev_set_name(&gdev->dev, "gpiochip%d", gdev->id);
+> +	dev_set_name(&gdev->dev, GPIOCHIP_NAME "%d", gdev->id);
+>  	device_initialize(&gdev->dev);
+>  	dev_set_drvdata(&gdev->dev, gdev);
+>  	if (chip->parent && chip->parent->driver)
+> @@ -5105,7 +5105,7 @@ static int __init gpiolib_dev_init(void)
+>  		return ret;
 >  	}
 >  
->  	kobject_uevent(kobj, KOBJ_ADD);
+> -	ret = alloc_chrdev_region(&gpio_devt, 0, GPIO_DEV_MAX, "gpiochip");
+> +	ret = alloc_chrdev_region(&gpio_devt, 0, GPIO_DEV_MAX, GPIOCHIP_NAME);
+>  	if (ret < 0) {
+>  		pr_err("gpiolib: failed to allocate char dev region\n");
+>  		bus_unregister(&gpio_bus_type);
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index ca9bc1e4803c2979..a4a759920faa48ab 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -16,6 +16,8 @@
+>  #include <linux/module.h>
+>  #include <linux/cdev.h>
 >  
->  	return error;
+> +#define GPIOCHIP_NAME	"gpiochip"
 > +
-> +err:
-> +	kobject_put(kobj);
-> +	return error;
->  }
->  #endif /* CONFIG_SYSFS */
->  
-> @@ -1471,21 +1473,21 @@ static int netdev_queue_add_kobject(stru
->  	error = kobject_init_and_add(kobj, &netdev_queue_ktype, NULL,
->  				     "tx-%u", index);
->  	if (error)
-> -		return error;
-> +		goto err;
->  
->  	dev_hold(queue->dev);
->  
->  #ifdef CONFIG_BQL
->  	error = sysfs_create_group(kobj, &dql_group);
-> -	if (error) {
-> -		kobject_put(kobj);
-> -		return error;
-> -	}
-> +	if (error)
-> +		goto err;
->  #endif
->  
->  	kobject_uevent(kobj, KOBJ_ADD);
->  
-> -	return 0;
-> +err:
-> +	kobject_put(kobj);
-> +	return error;
->  }
->  #endif /* CONFIG_SYSFS */
->  
-> 
-> 
-> 
+>  /**
+>   * struct gpio_device - internal state container for GPIO devices
+>   * @id: numerical ID number for the GPIO chip
+> -- 
+> 2.17.1
+>
+
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+
+CU
+Uli
