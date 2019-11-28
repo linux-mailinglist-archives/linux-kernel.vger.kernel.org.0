@@ -2,77 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D40110CDD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 18:25:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D831710CDDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 18:26:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfK1RZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 12:25:12 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:54835 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727141AbfK1RZH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 12:25:07 -0500
-Received: (qmail 20647 invoked by uid 500); 28 Nov 2019 12:25:05 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 28 Nov 2019 12:25:05 -0500
-Date:   Thu, 28 Nov 2019 12:25:05 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Oliver Neukum <oneukum@suse.com>
-cc:     syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>,
-        <andreyknvl@google.com>, <hverkuil@xs4all.nl>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>, <mchehab@kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
-In-Reply-To: <1574954383.21204.11.camel@suse.com>
-Message-ID: <Pine.LNX.4.44L0.1911281214050.19734-100000@netrider.rowland.org>
+        id S1726963AbfK1R00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 12:26:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56404 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726594AbfK1R00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 12:26:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6B9A2AE20;
+        Thu, 28 Nov 2019 17:26:24 +0000 (UTC)
+From:   =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+To:     cgroups@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] cgroup/pids: Make pids.events notifications affine to pids.max
+Date:   Thu, 28 Nov 2019 18:26:12 +0100
+Message-Id: <20191128172612.10259-1-mkoutny@suse.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 28 Nov 2019, Oliver Neukum wrote:
+Currently, when pids.max limit is breached in the hierarchy, the event
+is counted and reported in the cgroup where the forking task resides.
 
-> Am Mittwoch, den 27.11.2019, 16:11 -0500 schrieb Alan Stern:
-> > Oliver:
-> > 
-> > Make of this what you will...
-> 
-> Hi,
-> 
-> first, thank you. Second, this is teaching me to question my
-> assumptions. There is no disconnect at all. We are busy looping
-> in the error handler as we have virtual hardware in this test,
-> which can execute an URB without waiting for hardware.
-> 
-> So should we kill error handling for this case?
+The proper hierarchical behavior is to count and report the event in the
+cgroup whose limit is being exceeded. Apply this behavior in the default
+hierarchy.
 
-Okay.  First of all, we must recognize that these syzbot tests have
-encountered two separate bugs.  The first is the one fixed in your
-original patches (the use-after-free).  This bug needs no discussion;
-it looks like your patch fixes it.
+Reasons for RFC:
 
-The second bug is the CPU starvation caused by the tight resubmit loop
-in the completion handler.  It is the reason why you kept getting
-failure reports back from syzbot.  It is to some extent a misleading
-result, related to the fact that dummy-hcd doesn't use real hardware,
-as you noted.
+1) If anyone has adjusted their readings to this behavior, this is a BC
+   break.
 
-Nevertheless, the fix I posted is appropriate.  I posed this question
-to Greg KH some weeks ago, and he pointed out that after some
-discussion on the mailing list, people had generally agreed that
-drivers should not blindly resubmit URBs when they get an unrecognized
-error status.  In this situation, error recovery has to occur at a
-higher level (for example, the user could unplug the device and then
-plug it in again).
+2) This solves no reported bug, just a spotted inconsistency.
 
-So even though with real hardware this tight resubmit loop might not
-end up using all the available CPU time, not resubmitting is still the
-right approach.
+3) One step further would be to distinguish pids.events and
+   pids.events.local for proper hierarchical counting. (The current
+   behavior wouldn't match neither though.)
 
-Alan Stern
+Signed-off-by: Michal Koutný <mkoutny@suse.com>
+---
+ kernel/cgroup/pids.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
+index 138059eb730d..5fc34d8b8f60 100644
+--- a/kernel/cgroup/pids.c
++++ b/kernel/cgroup/pids.c
+@@ -140,7 +140,7 @@ static void pids_charge(struct pids_cgroup *pids, int num)
+  * the new value to exceed the hierarchical limit. Returns 0 if the charge
+  * succeeded, otherwise -EAGAIN.
+  */
+-static int pids_try_charge(struct pids_cgroup *pids, int num)
++static int pids_try_charge(struct pids_cgroup *pids, int num, struct pids_cgroup **fail)
+ {
+ 	struct pids_cgroup *p, *q;
+ 
+@@ -153,8 +153,10 @@ static int pids_try_charge(struct pids_cgroup *pids, int num)
+ 		 * p->limit is %PIDS_MAX then we know that this test will never
+ 		 * fail.
+ 		 */
+-		if (new > limit)
++		if (new > limit) {
++			*fail = p;
+ 			goto revert;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -217,20 +219,25 @@ static void pids_cancel_attach(struct cgroup_taskset *tset)
+ static int pids_can_fork(struct task_struct *task)
+ {
+ 	struct cgroup_subsys_state *css;
+-	struct pids_cgroup *pids;
++	struct pids_cgroup *pids, *pids_over_limit;
+ 	int err;
+ 
+ 	css = task_css_check(current, pids_cgrp_id, true);
+ 	pids = css_pids(css);
+-	err = pids_try_charge(pids, 1);
++	err = pids_try_charge(pids, 1, &pids_over_limit);
+ 	if (err) {
++		/* Backwards compatibility on v1 where events were notified in
++		 * leaves. */
++		if (!cgroup_subsys_on_dfl(pids_cgrp_subsys))
++			pids_over_limit = pids;
++
+ 		/* Only log the first time events_limit is incremented. */
+-		if (atomic64_inc_return(&pids->events_limit) == 1) {
++		if (atomic64_inc_return(&pids_over_limit->events_limit) == 1) {
+ 			pr_info("cgroup: fork rejected by pids controller in ");
+-			pr_cont_cgroup_path(css->cgroup);
++			pr_cont_cgroup_path(pids_over_limit->css.cgroup);
+ 			pr_cont("\n");
+ 		}
+-		cgroup_file_notify(&pids->events_file);
++		cgroup_file_notify(&pids_over_limit->events_file);
+ 	}
+ 	return err;
+ }
+-- 
+2.24.0
 
