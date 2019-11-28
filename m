@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACAFC10CAF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:58:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9665310CB05
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:59:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfK1O6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:58:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46831 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbfK1O5z (ORCPT
+        id S1727718AbfK1O67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:58:59 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46210 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727517AbfK1O55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 09:57:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e9so28812198ljp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:57:53 -0800 (PST)
+        Thu, 28 Nov 2019 09:57:57 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a17so20228838lfi.13
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:57:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L4hA4zEJWHs66Lwy24heYdX9pI+8KbPTU8eYDZ/QqTY=;
-        b=da4NAHVb4/ZNRDjdsIzpZ6eBC190ajJKLA6grEN7ZG5F7RsAa84POPBq4Y87Q7auQm
-         xRGGWr7p+8MbKeInnDDiu3EQ3GpQftYCTE4bdeQYkVNsMzUes1Xtm6O1Ec6zmFv7bnSN
-         0yOz/L6VHetbifeISQ2w0sf4c+jZoGTDGlfoI=
+        bh=izqhGk+7dYtc0qSDmqSrNzca5ES+nhNiwDVQCjT9+7A=;
+        b=V2jSMZBN8uh/xpePhhzkN28hW1PU3ZPx3auFFgQEEIv24PnHG7WcUuT9Hr7TOse5Rk
+         FIOhKMME0cB9iUKg1zBa4lJ8C9Vi0lSdcsXWunqNCSFJ9Nz0OrpeEQRglQhTBkE35R9e
+         ejuls2cV8st5na9tOFkujKVk+QD9iuwF49KvM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L4hA4zEJWHs66Lwy24heYdX9pI+8KbPTU8eYDZ/QqTY=;
-        b=NFT0yuXyTqg1pyI747rpBEV3gSfcJq+aHOk6NSNXBnCdx7249ZyM1Fzr83ygOoXxgt
-         /J0pZTq1AOU+ihjDWWNRpRg25Jsg6ixWi4yidppEQbPWhIpnJJT71LkolpyRVWEv2PqM
-         XrmvA3eZG0WuFgiIDyFSt4HdWP9/yMUm3v657zhiOZrPkIpcmx/56sSLywNySzCr6CiT
-         5WL2i1nGp0Yu8FTbPSDvOgRYtsc1HGjdNRkOeXqN9fcGMVngB/r+nVLGkJ+7i16sXtt8
-         +oBT84MRvZKiVBoOMFS/HeneW+2UTQRkIN1vEJ3iNd65ttQOs0XOEyYw2HtE/3RsHIF2
-         zaDw==
-X-Gm-Message-State: APjAAAUeVNLZ7ELoxWf52BCoNQGLbmg5sXoWSpCOWupo3V72hB+IEulK
-        /GcV7b01KxHdLOOn4cmYH+nj9g==
-X-Google-Smtp-Source: APXvYqwfABDko30317bMIKZ2QbVVstLAKjVquLP+ohBUzZYK0IJWt98nEGubG91JvI6olW9Wy2yv3g==
-X-Received: by 2002:a05:651c:32a:: with SMTP id b10mr7947026ljp.132.1574953073001;
-        Thu, 28 Nov 2019 06:57:53 -0800 (PST)
+        bh=izqhGk+7dYtc0qSDmqSrNzca5ES+nhNiwDVQCjT9+7A=;
+        b=lNByBew7xMeg/2Gt/y/1VewersdXJqe1u/4mv7N4uTfCOwbPUb1ua8PPY4VvBPxhzl
+         Y6W9MioBhMhiGIUDk7HjTmAF13TpzCI7q1pcXm85PVSp2DomT/ic2ifibdn0Q6S0aOgu
+         2K0JUcsSDPcpJz/erm0F+8FBj1rzKdY/rBe/MgcF3p+8gwp9NHRjmJnfpulEj5UXbi+n
+         aI2ia5MgS54yhD3eqBrFPwKADwPznE6jKGyVB0eEIWlsc3RiCxi49m2SX0YS656xcB1P
+         V1dVD7QY2eUGF4cJW86kf9oZbjC+JUWb9CLZiHiqNSNoZmqv4AUyounRJeoo8ii2Ihot
+         Nz9A==
+X-Gm-Message-State: APjAAAXHvvwfOWXXbHUjJG9ZC+e0PTJLBrZo9W0+/ELtp/9SmIWvfDpX
+        Nntn+4dWcQSm06JOODL3LSUyKA==
+X-Google-Smtp-Source: APXvYqyw4gw+pnvDh4FxsHQgDketpaq7hQlReciEcvlLDb7UG2dgMuvgna7yNQjdHNDX/gN/j/K3IQ==
+X-Received: by 2002:ac2:5a08:: with SMTP id q8mr32413398lfn.106.1574953074176;
+        Thu, 28 Nov 2019 06:57:54 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.57.51
+        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.57.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 06:57:52 -0800 (PST)
+        Thu, 28 Nov 2019 06:57:53 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v6 36/49] soc: fsl: qe: make cpm_muram_free() return void
-Date:   Thu, 28 Nov 2019 15:55:41 +0100
-Message-Id: <20191128145554.1297-37-linux@rasmusvillemoes.dk>
+Subject: [PATCH v6 37/49] soc: fsl: qe: make cpm_muram_free() ignore a negative offset
+Date:   Thu, 28 Nov 2019 15:55:42 +0100
+Message-Id: <20191128145554.1297-38-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
 References: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
@@ -62,63 +62,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nobody uses the return value from cpm_muram_free, and functions that
-free resources usually return void. One could imagine a use for a "how
-much have I allocated" a la ksize(), but knowing how much one had
-access to after the fact is useless.
+This allows one to simplify callers since they can store a negative
+value as a sentinel to indicate "this was never allocated" (or store
+the -ENOMEM from an allocation failure) and then call cpm_muram_free()
+unconditionally.
 
 Reviewed-by: Timur Tabi <timur@kernel.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe_common.c | 3 +--
- include/soc/fsl/qe/qe.h        | 5 ++---
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/soc/fsl/qe/qe_common.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/soc/fsl/qe/qe_common.c b/drivers/soc/fsl/qe/qe_common.c
-index 84c90105e588..962835488f66 100644
+index 962835488f66..48c77bb92846 100644
 --- a/drivers/soc/fsl/qe/qe_common.c
 +++ b/drivers/soc/fsl/qe/qe_common.c
-@@ -170,7 +170,7 @@ EXPORT_SYMBOL(cpm_muram_alloc);
-  * cpm_muram_free - free a chunk of multi-user ram
-  * @offset: The beginning of the chunk as returned by cpm_muram_alloc().
-  */
--int cpm_muram_free(s32 offset)
-+void cpm_muram_free(s32 offset)
- {
- 	unsigned long flags;
+@@ -176,6 +176,9 @@ void cpm_muram_free(s32 offset)
  	int size;
-@@ -188,7 +188,6 @@ int cpm_muram_free(s32 offset)
- 	}
- 	gen_pool_free(muram_pool, offset + GENPOOL_OFFSET, size);
- 	spin_unlock_irqrestore(&cpm_muram_lock, flags);
--	return size;
- }
- EXPORT_SYMBOL(cpm_muram_free);
+ 	struct muram_block *tmp;
  
-diff --git a/include/soc/fsl/qe/qe.h b/include/soc/fsl/qe/qe.h
-index f589ae3f1216..e282ac01ec08 100644
---- a/include/soc/fsl/qe/qe.h
-+++ b/include/soc/fsl/qe/qe.h
-@@ -99,7 +99,7 @@ int cpm_muram_init(void);
- 
- #if defined(CONFIG_CPM) || defined(CONFIG_QUICC_ENGINE)
- s32 cpm_muram_alloc(unsigned long size, unsigned long align);
--int cpm_muram_free(s32 offset);
-+void cpm_muram_free(s32 offset);
- s32 cpm_muram_alloc_fixed(unsigned long offset, unsigned long size);
- void __iomem *cpm_muram_addr(unsigned long offset);
- unsigned long cpm_muram_offset(void __iomem *addr);
-@@ -111,9 +111,8 @@ static inline s32 cpm_muram_alloc(unsigned long size,
- 	return -ENOSYS;
- }
- 
--static inline int cpm_muram_free(s32 offset)
-+static inline void cpm_muram_free(s32 offset)
- {
--	return -ENOSYS;
- }
- 
- static inline s32 cpm_muram_alloc_fixed(unsigned long offset,
++	if (offset < 0)
++		return;
++
+ 	size = 0;
+ 	spin_lock_irqsave(&cpm_muram_lock, flags);
+ 	list_for_each_entry(tmp, &muram_block_list, head) {
 -- 
 2.23.0
 
