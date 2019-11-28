@@ -2,71 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B91D10C5AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9D510C5AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfK1JIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 04:08:41 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45464 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfK1JIk (ORCPT
+        id S1727277AbfK1JI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 04:08:57 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:44764 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726565AbfK1JI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 04:08:40 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n21so27599263ljg.12
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 01:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=78TUNxc9SDX9bG49GuEtf0MJi3qZ9js9cOuwvB8JDFM=;
-        b=nbQb12OW3QrlhRiNVts6U011R3m6RJ2IEahdggL7ug6hl7xtA+9L7UvULnrkncuKRU
-         gCNhiPKLz3OH0WAbv0A6fK18YGwpkmdibsvvq6qMPjp38/nElKb5NKEE3RrRsnbsRMYz
-         qEqpXH0p2ePUaP28QIYssojmsJK/Ua4i13WW4e7vIRQxY55UJ2+HRrDF5LE4lyClylpp
-         +m4Ae+pPeG18JfAcMMK8RNmm//6eMh/cROJgUUoLVqx4oa+tHcnX94Ad3FyBbDrimcPi
-         YLzifSmM/WtgXS/Oq7LbbS843h4fSTu9Logu1D04uiSyEp7zw/vHOOGXuFQgD6uEId/p
-         K96g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=78TUNxc9SDX9bG49GuEtf0MJi3qZ9js9cOuwvB8JDFM=;
-        b=rXHgKB0tE2OpK7ZvGcC5MUH6fX4/EXNsWHLFFeIpQIK0csIfNiUs6+zn5zYf+npuqi
-         /CTHCmDFzlFCEFy+gdAXjWdcQ7i9p8FIZA+GjvI9kGWg143R+7OmarwjSQ02/uhCUP8s
-         irNksMQqV586ugvmNK9EeAvxXA3RIkyGmXWnASmdPmnXRBC7O/f0OX659R5tuEalYtDn
-         k9LjxfSU1SyzVH+Y4gN7RRBDSiIq0B2dVZHYUEFKe4y65e6rOOnKgawAo3vLUyTX9AZV
-         OcMe4Wj077QmBmOM95nd+G7GvXZVdeToJU4WEF61oHf3MMNvukrWpwpG3iyEvceBDK4h
-         aMhA==
-X-Gm-Message-State: APjAAAUSJBb1spGAJqWFZbvtFM6ItwoJEVb1pIfdl7NWxyz8oYf7lzuA
-        2EbH1wScZCQrOVW/CgwKxflA2JHx7jZSTEl40X3upQ==
-X-Google-Smtp-Source: APXvYqxgwoUSOqDcdaqGDS7R5yA+8++vOzVHDWK3tPmj3lxVoGi4FFBLUdIzhwyII2/H891p5hwnicQruvpBBJvptCo=
-X-Received: by 2002:a05:651c:102a:: with SMTP id w10mr4635658ljm.77.1574932117200;
- Thu, 28 Nov 2019 01:08:37 -0800 (PST)
+        Thu, 28 Nov 2019 04:08:57 -0500
+Received: from [109.168.11.45] (port=58706 helo=[192.168.101.73])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1iaFnD-001hSv-4c; Thu, 28 Nov 2019 10:08:55 +0100
+Subject: Re: [PATCH] genirq: show irq name in non-oneshot error message
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>
+References: <20191105140854.27893-1-luca@lucaceresoli.net>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <e698b81f-54c3-6d47-8a4b-80c15b58aaad@lucaceresoli.net>
+Date:   Thu, 28 Nov 2019 10:08:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191126131541.47393-1-mihail.atanassov@arm.com> <20191126131541.47393-25-mihail.atanassov@arm.com>
-In-Reply-To: <20191126131541.47393-25-mihail.atanassov@arm.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 28 Nov 2019 10:08:25 +0100
-Message-ID: <CACRpkdZViRq-cxfR5MsbBtduNm6mkYJtO9c6Beiep15gyvqYNw@mail.gmail.com>
-Subject: Re: [PATCH 24/30] drm/mcde: dsi: Use drm_bridge_init()
-To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        nd <nd@arm.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191105140854.27893-1-luca@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 2:16 PM Mihail Atanassov
-<Mihail.Atanassov@arm.com> wrote:
+Hi,
 
-> No functional change.
->
-> Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+On 05/11/19 15:08, Luca Ceresoli wrote:
+> Requesting a threaded IRQ with handler=NULL and !ONESHOT fails, but the
+> error message does not include the IRQ line name, which makes it harder to
+> find the offending driver.
+> 
+> Print the IRQ line name to clarify where the error comes from. Use the same
+> format as other pr_err() above in the same function.
+> 
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  kernel/irq/manage.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 1753486b440c..b6c53ab053d2 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -1500,8 +1500,8 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+>  		 * has. The type flags are unreliable as the
+>  		 * underlying chip implementation can override them.
+>  		 */
+> -		pr_err("Threaded irq requested with handler=NULL and !ONESHOT for irq %d\n",
+> -		       irq);
+> +		pr_err("Threaded irq requested with handler=NULL and !ONESHOT for %s (irq %d)\n",
+> +		       new->name, irq);
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Gently pinging about this trivial patch.
 
-Yours,
-Linus Walleij
+Should I send it elsewhere than where get_maintainer.pl suggests?
+
+Thanks,
+-- 
+Luca
