@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF0E10C1F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0A4210C1EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:53:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbfK1BxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 20:53:21 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:45760 "EHLO
+        id S1727956AbfK1BxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 20:53:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:45756 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727906AbfK1BxF (ORCPT
+        with ESMTP id S1727899AbfK1BxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 20:53:05 -0500
+        Wed, 27 Nov 2019 20:53:04 -0500
 Received: from [5.158.153.53] (helo=g2noscherz.lab.linutronix.de.)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1ia8zK-00083b-AJ; Thu, 28 Nov 2019 02:52:58 +0100
+        id 1ia8zK-00083b-Qc; Thu, 28 Nov 2019 02:52:58 +0100
 From:   John Ogness <john.ogness@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Zijlstra <peterz@infradead.org>,
@@ -30,9 +30,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Brendan Higgins <brendanhiggins@google.com>,
         kexec@lists.infradead.org
-Subject: [RFC PATCH v5 2/3] printk-rb: new printk ringbuffer implementation (reader)
-Date:   Thu, 28 Nov 2019 02:58:34 +0106
-Message-Id: <20191128015235.12940-3-john.ogness@linutronix.de>
+Subject: [RFC PATCH v5 3/3] printk-rb: add test module
+Date:   Thu, 28 Nov 2019 02:58:35 +0106
+Message-Id: <20191128015235.12940-4-john.ogness@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191128015235.12940-1-john.ogness@linutronix.de>
 References: <20191128015235.12940-1-john.ogness@linutronix.de>
@@ -46,288 +46,380 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the reader implementation for the new ringbuffer.
+This module does some heavy write stress testing on the ringbuffer
+with a reader that is checking for integrity.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- kernel/printk/printk_ringbuffer.c | 234 ++++++++++++++++++++++++++++++
- kernel/printk/printk_ringbuffer.h |  12 +-
- 2 files changed, 245 insertions(+), 1 deletion(-)
+ kernel/printk/Makefile   |   3 +
+ kernel/printk/test_prb.c | 347 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 350 insertions(+)
+ create mode 100644 kernel/printk/test_prb.c
 
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index 09c32e52fd40..f85762713583 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -674,3 +674,237 @@ void prb_commit(struct prb_reserved_entry *e)
- 	local_irq_restore(e->irqflags);
- }
- EXPORT_SYMBOL(prb_commit);
+diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
+index 4d052fc6bcde..2aabbe561efc 100644
+--- a/kernel/printk/Makefile
++++ b/kernel/printk/Makefile
+@@ -2,3 +2,6 @@
+ obj-y	= printk.o
+ obj-$(CONFIG_PRINTK)	+= printk_safe.o
+ obj-$(CONFIG_A11Y_BRAILLE_CONSOLE)	+= braille.o
++
++prbtest-y = printk_ringbuffer.o test_prb.o
++obj-m += prbtest.o
+diff --git a/kernel/printk/test_prb.c b/kernel/printk/test_prb.c
+new file mode 100644
+index 000000000000..d038b16bf01b
+--- /dev/null
++++ b/kernel/printk/test_prb.c
+@@ -0,0 +1,347 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kthread.h>
++#include <linux/delay.h>
++#include <linux/random.h>
++#include <linux/slab.h>
++#include <linux/wait.h>
++#include "printk_ringbuffer.h"
 +
 +/*
-+ * Given @blk_lpos, return a pointer to the raw data from the data block
-+ * and calculate the size of the data part. A NULL pointer is returned
-+ * if @blk_lpos specifies values that could never be legal.
++ * This is a test module that starts "num_online_cpus()" writer threads
++ * that each write data of varying length. They do this as fast as
++ * they can.
 + *
-+ * This function (used by readers) performs strict validation on the lpos
-+ * values to possibly detect bugs in the writer code. A WARN_ON_ONCE() is
-+ * triggered if an internal error is detected.
++ * Dictionary data is stored in a separate data ring. The writers will
++ * only write dictionary data about half the time. This is to make the
++ * test more realistic with text and dict data rings containing
++ * different data blocks.
++ *
++ * Because the threads are running in such tight loops, they will call
++ * schedule() from time to time so the system stays alive.
++ *
++ * If the writers encounter an error, the test is aborted. Test results are
++ * recorded to the ftrace buffers, with some additional information also
++ * provided via printk. The test can be aborted manually by removing the
++ * module. (Ideally the test should never abort on its own.)
 + */
-+static char *get_data(struct prb_data_ring *data_ring,
-+		      struct prb_data_blk_lpos *blk_lpos,
-+		      unsigned long *data_size)
++
++/* not used right now */
++DECLARE_WAIT_QUEUE_HEAD(test_wait);
++
++/* test data structure */
++struct rbdata {
++	int len;
++	char text[0];
++};
++
++static char *test_running;
++static int halt_test;
++
++/* dump text or dictionary data to the trace buffers */
++static void print_record(const char *name, struct rbdata *dat, u64 seq)
 +{
-+	struct prb_data_block *db;
++	char buf[160];
 +
-+	if (blk_lpos->begin == INVALID_LPOS &&
-+	    blk_lpos->next == INVALID_LPOS) {
-+		/* descriptor without a data block */
-+		return NULL;
-+	} else if (DATA_WRAPS(data_ring, blk_lpos->begin) ==
-+		   DATA_WRAPS(data_ring, blk_lpos->next)) {
-+		/* regular data block */
-+		if (WARN_ON_ONCE(blk_lpos->next <= blk_lpos->begin))
-+			return NULL;
-+		db = to_block(data_ring, blk_lpos->begin);
-+		*data_size = blk_lpos->next - blk_lpos->begin;
++	snprintf(buf, sizeof(buf), "%s", dat->text);
++	buf[sizeof(buf) - 1] = 0;
 +
-+	} else if ((DATA_WRAPS(data_ring, blk_lpos->begin) + 1 ==
-+		    DATA_WRAPS(data_ring, blk_lpos->next)) ||
-+		   ((DATA_WRAPS(data_ring, blk_lpos->begin) ==
-+		     DATA_WRAPS(data_ring, -1UL)) &&
-+		    (DATA_WRAPS(data_ring, blk_lpos->next) == 0))) {
-+		/* wrapping data block */
-+		db = to_block(data_ring, 0);
-+		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
-+
-+	} else {
-+		WARN_ON_ONCE(1);
-+		return NULL;
-+	}
-+
-+	/* A valid data block will always be aligned to the ID size. */
-+	if (WARN_ON_ONCE(blk_lpos->begin !=
-+			 ALIGN(blk_lpos->begin, sizeof(db->id))) ||
-+	    WARN_ON_ONCE(blk_lpos->next !=
-+			 ALIGN(blk_lpos->next, sizeof(db->id)))) {
-+		return NULL;
-+	}
-+
-+	/* A valid data block will always have at least an ID. */
-+	if (WARN_ON_ONCE(*data_size < sizeof(db->id)))
-+		return NULL;
-+
-+	/* Subtract descriptor ID space from size. */
-+	*data_size -= sizeof(db->id);
-+
-+	return &db->data[0];
-+}
-+
-+/* Given @blk_lpos, copy an expected @len of data into the provided buffer. */
-+static bool copy_data(struct prb_data_ring *data_ring,
-+		      struct prb_data_blk_lpos *blk_lpos, u16 len, char *buf,
-+		      unsigned int buf_size)
-+{
-+	unsigned long data_size;
-+	char *data;
-+
-+	/* Caller might not want the data. */
-+	if (!buf || !buf_size)
-+		return true;
-+
-+	data = get_data(data_ring, blk_lpos, &data_size);
-+	if (!data)
-+		return false;
-+
-+	/* Actual cannot be less than expected. */
-+	if (WARN_ON_ONCE(data_size < len))
-+		return false;
-+
-+	data_size = min_t(u16, buf_size, len);
-+
-+	if (!WARN_ON_ONCE(!data_size))
-+		memcpy(&buf[0], data, data_size);
-+	return true;
++	trace_printk("seq=%llu len=%d %sval=%s\n",
++		     seq, dat->len, name,
++		     dat->len < sizeof(buf) ? buf : "<invalid>");
 +}
 +
 +/*
-+ * Read the record @id and verify that it is committed and has the sequence
-+ * number @seq.
++ * sequentially dump all the valid records in the ringbuffer
++ * (used to verify memory integrity)
 + *
-+ * Error return values:
-+ * -EINVAL: The record @seq does not exist.
-+ * -ENOENT: The record @seq exists, but its data is not available. This is a
-+ *          valid record, so readers should continue with the next seq.
++ * Since there is no reader interface, the internal members are
++ * directly accessed. This function is called after all writers
++ * are finished so there is no need for any memory barriers.
 + */
-+static int desc_read_committed(struct prb_desc_ring *desc_ring, u32 id,
-+			       u64 seq, struct prb_desc *desc)
++static void dump_rb(struct printk_ringbuffer *rb)
 +{
-+	enum desc_state d_state;
++	struct printk_info info;
++	struct printk_record r;
++	char text_buf[200];
++	char dict_buf[200];
++	u64 seq = 0;
 +
-+	d_state = desc_read(desc_ring, id, desc);
-+	if (desc->info.seq != seq)
-+		return -EINVAL;
-+	else if (d_state == desc_reusable)
-+		return -ENOENT;
-+	else if (d_state != desc_committed)
-+		return -EINVAL;
++	r.info = &info;
++	r.text_buf = &text_buf[0];
++	r.dict_buf = &dict_buf[0];
++	r.text_buf_size = sizeof(text_buf);
++	r.dict_buf_size = sizeof(dict_buf);
++
++	trace_printk("BEGIN full dump\n");
++
++	while (prb_read_valid(rb, seq, &r)) {
++		/* check/track the sequence */
++		if (info.seq != seq)
++			trace_printk("DROPPED %llu\n", info.seq - seq);
++
++		print_record("TEXT", (struct rbdata *)&r.text_buf[0],
++			     info.seq);
++		if (info.dict_len) {
++			print_record("DICT", (struct rbdata *)&r.dict_buf[0],
++				     info.seq);
++		}
++
++		seq = info.seq + 1;
++	}
++
++	trace_printk("END full dump\n");
++}
++
++DECLARE_PRINTKRB(test_rb, 15, 5, 5);
++
++static int prbtest_writer(void *data)
++{
++	unsigned long num = (unsigned long)data;
++	struct prb_reserved_entry e;
++	char text_id = 'A' + num;
++	char dict_id = 'a' + num;
++	unsigned long count = 0;
++	struct printk_record r;
++	struct rbdata *dat;
++	int len;
++
++	pr_err("prbtest: start thread %03lu (writer)\n", num);
++
++	for (;;) {
++		len = sizeof(struct rbdata) + (prandom_u32() & 0x7f) + 2;
++
++		/* specify the text/dict sizes for reservation */
++		r.text_buf_size = len;
++		/* only add a dictionary on some records */
++		if (len % 2)
++			r.dict_buf_size = len;
++		else
++			r.dict_buf_size = 0;
++
++		if (prb_reserve(&e, &test_rb, &r)) {
++			len -= sizeof(struct rbdata) + 1;
++
++			dat = (struct rbdata *)&r.text_buf[0];
++			dat->len = len;
++			memset(&dat->text[0], text_id, len);
++			dat->text[len] = 0;
++
++			/* dictionary reservation is allowed to fail */
++			if (r.dict_buf) {
++				dat = (struct rbdata *)&r.dict_buf[0];
++				dat->len = len;
++				memset(&dat->text[0], dict_id, len);
++				dat->text[len] = 0;
++			} else if (r.text_buf_size % 2) {
++				trace_printk(
++				    "writer%lu (%c) dict dropped: seq=%llu\n",
++				    num, text_id, r.info->seq);
++			}
++
++			prb_commit(&e);
++			wake_up_interruptible(&test_wait);
++		} else {
++			WRITE_ONCE(halt_test, 1);
++			trace_printk("writer%lu (%c) reserve failed\n",
++				     num, text_id);
++		}
++
++		if ((count++ & 0x3fff) == 0)
++			schedule();
++
++		if (READ_ONCE(halt_test) == 1)
++			break;
++	}
++
++	pr_err("prbtest: end thread %03lu (writer, wrote %lu)\n", num, count);
++
++	test_running[num] = 0;
 +
 +	return 0;
 +}
 +
-+/*
-+ * Copy the ringbuffer data from the record with @seq to the provided
-+ * @r buffer. On success, 0 is returned.
-+ *
-+ * See desc_read_committed() for error return values.
-+ */
-+static int prb_read(struct printk_ringbuffer *rb, u64 seq,
-+		    struct printk_record *r)
++static bool check_data(struct rbdata *dat, u64 seq, unsigned long num)
 +{
-+	struct prb_desc_ring *desc_ring = &rb->desc_ring;
-+	struct prb_desc *rdesc = to_desc(desc_ring, seq);
-+	atomic_t *state_var = &rdesc->state_var;
-+	struct prb_desc desc;
-+	int err;
-+	u32 id;
++	int len;
 +
-+	/* Get a reliable local copy of the descriptor and check validity. */
-+	id = DESC_ID(atomic_read(state_var));
-+	err = desc_read_committed(desc_ring, id, seq, &desc);
-+	if (err)
-+		return err;
++	len = strnlen(dat->text, 160);
 +
-+	/* If requested, copy meta data. */
-+	if (r->info)
-+		memcpy(r->info, &desc.info, sizeof(*(r->info)));
-+
-+	/*
-+	 * Load/copy text data. If it fails, this is a
-+	 * data-less descriptor.
-+	 */
-+	if (!copy_data(&rb->text_data_ring, &desc.text_blk_lpos,
-+		       desc.info.text_len, r->text_buf, r->text_buf_size)) {
-+		return -ENOENT;
++	if (len != dat->len || len >= 160) {
++		WRITE_ONCE(halt_test, 1);
++		trace_printk("reader%lu invalid len for %llu (%d<->%d)\n",
++			     num, seq, len, dat->len);
++		return false;
 +	}
 +
-+	/*
-+	 * Load/copy dict data. Although this should not fail, dict data
-+	 * is not important. So if it fails, modify the copied meta data
-+	 * to report that there is no dict data, thus silently dropping
-+	 * the dict data.
-+	 */
-+	if (!copy_data(&rb->dict_data_ring, &desc.dict_blk_lpos,
-+		       desc.info.dict_len, r->dict_buf, r->dict_buf_size)) {
-+		if (r->info)
-+			r->info->dict_len = 0;
-+	}
-+
-+	/* Re-check real descriptor validity. */
-+	return desc_read_committed(desc_ring, id, seq, &desc);
-+}
-+
-+/* Get the sequence number of the tail descriptor. */
-+static u64 get_desc_tail_seq(struct printk_ringbuffer *rb)
-+{
-+	struct prb_desc_ring *desc_ring = &rb->desc_ring;
-+	enum desc_state d_state;
-+	struct prb_desc desc;
-+	u32 id;
-+
-+	do {
-+		id = atomic_read(&rb->desc_ring.tail_id);
-+		d_state = desc_read(desc_ring, id, &desc);
-+
-+		/*
-+		 * This loop will not be infinite because the tail is
-+		 * _always_ in the committed or reusable state.
-+		 */
-+	} while (d_state != desc_committed && d_state != desc_reusable);
-+
-+	return desc.info.seq;
-+}
-+
-+/**
-+ * prb_read_valid() - Non-blocking read of a requested record or (if gone)
-+ *                    the next available record.
-+ *
-+ * @rb:  The ringbuffer to read from.
-+ * @seq: The sequence number of the record to read.
-+ * @r:   The record data buffer to store the read record to.
-+ *
-+ * This is the public function available to readers to read a record.
-+ *
-+ * The reader provides the @info, @text_buf, @dict_buf buffers of @r to be
-+ * filled in.
-+ *
-+ * Context: Any context.
-+ * Return: true if a record was read, otherwise false.
-+ *
-+ * On success, the reader must check r->info.seq to see which record was
-+ * actually read. This allows the reader to detect dropped records.
-+ *
-+ * Failure means @seq refers to a not yet written record.
-+ */
-+bool prb_read_valid(struct printk_ringbuffer *rb, u64 seq,
-+		    struct printk_record *r)
-+{
-+	u64 tail_seq;
-+	int err;
-+
-+	while ((err = prb_read(rb, seq, r))) {
-+		tail_seq = get_desc_tail_seq(rb);
-+
-+		if (seq < tail_seq) {
-+			/*
-+			 * Behind the tail. Catch up and try again. This
-+			 * can happen for -ENOENT and -EINVAL cases.
-+			 */
-+			seq = tail_seq;
-+
-+		} else if (err == -ENOENT) {
-+			/* Record exists, but no data available. Skip. */
-+			seq++;
-+
-+		} else {
-+			/* Non-existent/non-committed record. Must stop. */
++	while (len) {
++		len--;
++		if (dat->text[len] != dat->text[0]) {
++			WRITE_ONCE(halt_test, 1);
++			trace_printk("reader%lu bad data\n", num);
 +			return false;
 +		}
 +	}
 +
 +	return true;
 +}
-+EXPORT_SYMBOL(prb_read_valid);
-diff --git a/kernel/printk/printk_ringbuffer.h b/kernel/printk/printk_ringbuffer.h
-index b6f06e5edc1b..3c0eaa165a5f 100644
---- a/kernel/printk/printk_ringbuffer.h
-+++ b/kernel/printk/printk_ringbuffer.h
-@@ -17,11 +17,17 @@ struct printk_info {
- };
- 
- /*
-- * A structure providing the buffers, used by writers.
-+ * A structure providing the buffers, used by writers and readers.
-  *
-  * Writers:
-  * The writer sets @text_buf_size and @dict_buf_size before calling
-  * prb_reserve(). On success, prb_reserve() sets @info, @text_buf, @dict_buf.
-+ *
-+ * Readers:
-+ * The reader sets all fields before calling prb_read_valid(). Note that
-+ * the reader provides the @info, @text_buf, @dict_buf buffers. On success,
-+ * the struct pointed to by @info will be filled and the char arrays pointed
-+ * to by @text_buf and @dict_buf will be filled with text and dict data.
-  */
- struct printk_record {
- 	struct printk_info	*info;
-@@ -236,4 +242,8 @@ bool prb_reserve(struct prb_reserved_entry *e, struct printk_ringbuffer *rb,
- 		 struct printk_record *r);
- void prb_commit(struct prb_reserved_entry *e);
- 
-+/* Reader Interface */
-+bool prb_read_valid(struct printk_ringbuffer *rb, u64 seq,
-+		    struct printk_record *r);
 +
- #endif /* _KERNEL_PRINTK_RINGBUFFER_H */
++static int prbtest_reader(void *data)
++{
++	unsigned long num = (unsigned long)data;
++	unsigned long total_lost = 0;
++	unsigned long max_lost = 0;
++	unsigned long count = 0;
++	struct printk_info info;
++	struct printk_record r;
++	char text_buf[200];
++	char dict_buf[200];
++	int did_sched = 1;
++	u64 seq = 0;
++
++	r.info = &info;
++	r.text_buf = &text_buf[0];
++	r.dict_buf = &dict_buf[0];
++	r.text_buf_size = sizeof(text_buf);
++	r.dict_buf_size = sizeof(dict_buf);
++
++	pr_err("prbtest: start thread %03lu (reader)\n", num);
++
++	while (!wait_event_interruptible(test_wait,
++				kthread_should_stop() ||
++				prb_read_valid(&test_rb, seq, &r))) {
++		if (kthread_should_stop())
++			break;
++		/* check/track the sequence */
++		if (info.seq < seq) {
++			WRITE_ONCE(halt_test, 1);
++			trace_printk("reader%lu invalid seq %llu -> %llu\n",
++				num, seq, info.seq);
++			break;
++		} else if (info.seq != seq && !did_sched) {
++			total_lost += info.seq - seq;
++			if (max_lost < info.seq - seq)
++				max_lost = info.seq - seq;
++		}
++
++		if (!check_data((struct rbdata *)&r.text_buf[0],
++				info.seq, num)) {
++			trace_printk("text error\n");
++			break;
++		}
++
++		if (info.dict_len) {
++			if (!check_data((struct rbdata *)&r.dict_buf[0],
++					info.seq, num)) {
++				trace_printk("dict error\n");
++				break;
++			}
++		} else if (info.text_len % 2) {
++			trace_printk("dict dropped: seq=%llu\n", info.seq);
++		}
++
++		did_sched = 0;
++		if ((count++ & 0x3fff) == 0) {
++			did_sched = 1;
++			schedule();
++		}
++
++		if (READ_ONCE(halt_test) == 1)
++			break;
++
++		seq = info.seq + 1;
++	}
++
++	pr_err(
++	 "reader%lu: total_lost=%lu max_lost=%lu total_read=%lu seq=%llu\n",
++	 num, total_lost, max_lost, count, info.seq);
++
++	pr_err("prbtest: end thread %03lu (reader)\n", num);
++
++	while (!kthread_should_stop())
++		msleep(1000);
++	test_running[num] = 0;
++
++	return 0;
++}
++
++static int module_test_running;
++static struct task_struct *reader_thread;
++
++static int start_test(void *arg)
++{
++	struct task_struct *thread;
++	unsigned long i;
++	int num_cpus;
++
++	num_cpus = num_online_cpus();
++	test_running = kzalloc(num_cpus, GFP_KERNEL);
++	if (!test_running)
++		return -ENOMEM;
++
++	module_test_running = 1;
++
++	pr_err("prbtest: starting test\n");
++
++	for (i = 0; i < num_cpus; i++) {
++		test_running[i] = 1;
++		if (i < num_cpus - 1) {
++			thread = kthread_run(prbtest_writer, (void *)i,
++					     "prbtest writer");
++		} else {
++			thread = kthread_run(prbtest_reader, (void *)i,
++					     "prbtest reader");
++			reader_thread = thread;
++		}
++		if (IS_ERR(thread)) {
++			pr_err("prbtest: unable to create thread %lu\n", i);
++			test_running[i] = 0;
++		}
++	}
++
++	for (;;) {
++		msleep(1000);
++
++		for (i = 0; i < num_cpus; i++) {
++			if (test_running[i] == 1)
++				break;
++		}
++		if (i == num_cpus)
++			break;
++	}
++
++	pr_err("prbtest: completed test\n");
++
++	dump_rb(&test_rb);
++
++	module_test_running = 0;
++
++	return 0;
++}
++
++static int prbtest_init(void)
++{
++	kthread_run(start_test, NULL, "prbtest");
++	return 0;
++}
++
++static void prbtest_exit(void)
++{
++	if (reader_thread && !IS_ERR(reader_thread))
++		kthread_stop(reader_thread);
++
++	WRITE_ONCE(halt_test, 1);
++
++	while (module_test_running)
++		msleep(1000);
++	kfree(test_running);
++}
++
++module_init(prbtest_init);
++module_exit(prbtest_exit);
++
++MODULE_AUTHOR("John Ogness <john.ogness@linutronix.de>");
++MODULE_DESCRIPTION("printk ringbuffer test");
++MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
