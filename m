@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9A010CD25
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08E2010CD19
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 17:50:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfK1Quj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 11:50:39 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35811 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbfK1QuS (ORCPT
+        id S1727142AbfK1QuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 11:50:23 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:43174 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfK1QuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 11:50:18 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q13so13386441pff.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:16 -0800 (PST)
+        Thu, 28 Nov 2019 11:50:19 -0500
+Received: by mail-pj1-f65.google.com with SMTP id a10so12094680pju.10
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 08:50:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wD+KHeFwNIT1Ivtv7WYTanJVrN7dwD/1vKpe+xiraBg=;
-        b=XxJzsLiKI5MPczc6OehjYgyBmdMq1rBlV4V+Ha6DjUUuQDc58zxRJ15aB+Flz2aYMS
-         /2fsKbeii5vSFGyYLFyJL0ieaEG1MHCsh/SccclxbtTiOnqYmeL3m7skNy5lBQvJOuOT
-         m+rX2LH9zpUQ7UCKhfMObYPSO4Z60lL4f3A9/vOxeL99JNhzPvuuT+Z8eWysovrGetzS
-         8K5SG/rBLI4MDRNqWPudwHilN9b2NSGyWWr9rMZOFPKx1eX691hk+wXM1nql2Rvzn7NL
-         DqT5nYp8ugOe+SrQ/msGWXnfK/LlZqTDFIAy0jA5CwthjBn12uB0UtN/h0ka68rAPhJq
-         JFVw==
+        bh=zVs3SHcLVbqKmpq6Nb4lGHjdKCb+EPD/oEdMc3bO/jg=;
+        b=l5Gr5Qjd9pVo0HxGFV6G8A0yjVBGoSZqzaCCL7mejIdkqCP3emkRfKj8vLMjNdrpI5
+         bvYK/b71kLhhQVKEZiOQWGEt7vBsj8dzHZ4K6L1XdXY/KtWmYN0JevpFOi7pDPo80nKm
+         XUlORXTdlW4bLLGIlr0oIyukod20PdmH18UUtPTZCj6rCyxonWYBR4EL+oIhrfooYI2G
+         9cNOxHLh8rbhaCK5Ek1WiqhGaSM7g9KLuIuUeWE4xtOiN8xNKP0PgNzKpMklVjQJV15q
+         g49ojWGv2xVRuHFFcgdRV5TslE85XMW6WJzfxKEMOl5c1eKidIUWEnBJOB1YP5/VeAuJ
+         WEwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wD+KHeFwNIT1Ivtv7WYTanJVrN7dwD/1vKpe+xiraBg=;
-        b=gltvwI0OAHqspMKRMn0pUnWydq/qAyn5dybgaKKtnhynLQ1HHUeYjYS+y7Wv2hVLkG
-         U59Ya4Rrlq2RxRvhdDZje9gxdgMtnrIWypTq/mqoA6lD/kLTA0Km87GZIIcOR6ABS69P
-         e1knUsZ8Bpe1v2nnjeh6iXLn3q3Vb54KAIeKXk37f5UxF77njUbHwKmvpDUwzvgV96to
-         Q7RgfMEU500rKDPt/RMYTn4lG8vmo+BY3Es4YsyN5WeTQASaOStAmuVjuj+whrTswpsk
-         dpdWOOWsFFYVxf7uxIX9QT43Zy2PVu/i0zpo1gQ81l2TmntFRAhmE09V4LZZj1vocAHj
-         nddw==
-X-Gm-Message-State: APjAAAWEABB3PRWQk2ka2cF0XLqqXOi4318MgjqA6G4fNqKRo7JBpJsg
-        LjHdpBU0EFGG/FQI3WksscNPJM+bMkI=
-X-Google-Smtp-Source: APXvYqxS0HAt+GN5cRfQFCDZXmck4pldUrQ2zjv5oJleqUtgJvq5m2IQPbX/dTwWRbfK5ghbhPf7iw==
-X-Received: by 2002:aa7:828c:: with SMTP id s12mr52785777pfm.166.1574959816244;
-        Thu, 28 Nov 2019 08:50:16 -0800 (PST)
+        bh=zVs3SHcLVbqKmpq6Nb4lGHjdKCb+EPD/oEdMc3bO/jg=;
+        b=PPvkvRDG4ejENDgefK3j++P3Z95p0ULQ1KaPdX/zKDx3FI81vpH4yn4KZ3f4mQR2Pm
+         X30F3QK39X1c+/R+ueslfHMdwCLJZKnJGpQTBjwbxRnEDuKBFT669M7REcCe5fA4OpoH
+         aUdHommVW5M0Mlo05wn080mVjL1ajg87S/ZxwkW3DrNyUSQMv0NvwTtgRdS3dtvlBgle
+         l2sQwNSs5kYcxCxSHyoHKkGCuNzcn/4JqzBmuj1ZRebsAalnfvGFxpqZ1CqhsLRMjQBC
+         P/ug9LM3X+oVC5cvJBI/6ni5Ym/u68djzJ2Y2clglZXFR2jUTwf4sfSg5JTAR4xelP7f
+         wEjg==
+X-Gm-Message-State: APjAAAXpOV2/EdULqH/GrdOVCPtq7HvMbsUzX5xR8Eo5PzPdmd4uSHy+
+        ERd6giEieP9lKCgecne/itguSA==
+X-Google-Smtp-Source: APXvYqz5iFTxCKBSv+g9xpXEiPFwlT40atPfb9JCN8mALvNzpqC+2vNzcqNyKb0PlddBnmfLwvZVBA==
+X-Received: by 2002:a17:902:8bc8:: with SMTP id r8mr10661273plo.189.1574959817142;
+        Thu, 28 Nov 2019 08:50:17 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.15
+        by smtp.gmail.com with ESMTPSA id a15sm2450343pfh.169.2019.11.28.08.50.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 08:50:15 -0800 (PST)
+        Thu, 28 Nov 2019 08:50:16 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     stable@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [stable 4.19][PATCH 13/17] ASoC: stm32: i2s: fix dma configuration
-Date:   Thu, 28 Nov 2019 09:49:58 -0700
-Message-Id: <20191128165002.6234-14-mathieu.poirier@linaro.org>
+Subject: [stable 4.19][PATCH 14/17] ASoC: stm32: i2s: fix 16 bit format support
+Date:   Thu, 28 Nov 2019 09:49:59 -0700
+Message-Id: <20191128165002.6234-15-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191128165002.6234-1-mathieu.poirier@linaro.org>
 References: <20191128165002.6234-1-mathieu.poirier@linaro.org>
@@ -60,61 +60,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Olivier Moysan <olivier.moysan@st.com>
 
-commit 1ac2bd16448997d9ec01922423486e1e85535eda upstream
+commit 0c4c68d6fa1bae74d450e50823c24fcc3cd0b171 upstream
 
-DMA configuration is not balanced on start/stop.
-Move DMA configuration to trigger callback.
+I2S supports 16 bits data in 32 channel length.
+However the expected driver behavior, is to
+set channel length to 16 bits when data format is 16 bits.
 
 Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable <stable@vger.kernel.org> # 4.19
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- sound/soc/stm/stm32_i2s.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sound/soc/stm/stm32_i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
-index 6d0bf78d114d..449bb7049a28 100644
+index 449bb7049a28..004d83091505 100644
 --- a/sound/soc/stm/stm32_i2s.c
 +++ b/sound/soc/stm/stm32_i2s.c
-@@ -488,7 +488,7 @@ static int stm32_i2s_configure(struct snd_soc_dai *cpu_dai,
- {
- 	struct stm32_i2s_data *i2s = snd_soc_dai_get_drvdata(cpu_dai);
- 	int format = params_width(params);
--	u32 cfgr, cfgr_mask, cfg1, cfg1_mask;
-+	u32 cfgr, cfgr_mask, cfg1;
- 	unsigned int fthlv;
- 	int ret;
- 
-@@ -529,15 +529,11 @@ static int stm32_i2s_configure(struct snd_soc_dai *cpu_dai,
- 	if (ret < 0)
- 		return ret;
- 
--	cfg1 = I2S_CFG1_RXDMAEN | I2S_CFG1_TXDMAEN;
--	cfg1_mask = cfg1;
--
- 	fthlv = STM32_I2S_FIFO_SIZE * I2S_FIFO_TH_ONE_QUARTER / 4;
--	cfg1 |= I2S_CFG1_FTHVL_SET(fthlv - 1);
--	cfg1_mask |= I2S_CFG1_FTHVL_MASK;
-+	cfg1 = I2S_CFG1_FTHVL_SET(fthlv - 1);
- 
- 	return regmap_update_bits(i2s->regmap, STM32_I2S_CFG1_REG,
--				  cfg1_mask, cfg1);
-+				  I2S_CFG1_FTHVL_MASK, cfg1);
- }
- 
- static int stm32_i2s_startup(struct snd_pcm_substream *substream,
-@@ -589,6 +585,10 @@ static int stm32_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 		/* Enable i2s */
- 		dev_dbg(cpu_dai->dev, "start I2S\n");
- 
-+		cfg1_mask = I2S_CFG1_RXDMAEN | I2S_CFG1_TXDMAEN;
-+		regmap_update_bits(i2s->regmap, STM32_I2S_CFG1_REG,
-+				   cfg1_mask, cfg1_mask);
-+
- 		ret = regmap_update_bits(i2s->regmap, STM32_I2S_CR1_REG,
- 					 I2S_CR1_SPE, I2S_CR1_SPE);
- 		if (ret < 0) {
+@@ -501,7 +501,7 @@ static int stm32_i2s_configure(struct snd_soc_dai *cpu_dai,
+ 	switch (format) {
+ 	case 16:
+ 		cfgr = I2S_CGFR_DATLEN_SET(I2S_I2SMOD_DATLEN_16);
+-		cfgr_mask = I2S_CGFR_DATLEN_MASK;
++		cfgr_mask = I2S_CGFR_DATLEN_MASK | I2S_CGFR_CHLEN;
+ 		break;
+ 	case 32:
+ 		cfgr = I2S_CGFR_DATLEN_SET(I2S_I2SMOD_DATLEN_32) |
 -- 
 2.17.1
 
