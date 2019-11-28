@@ -2,186 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E2E310C307
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 04:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A04110C2F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 04:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfK1Dpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 22:45:45 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.102]:34474 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfK1Dpo (ORCPT
+        id S1727322AbfK1DmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 22:42:01 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:41763 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbfK1DmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 22:45:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574912740;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=ovvWqqCqtCKN+01XuykkLwFdsy5R9BqiNVQImuwx8zI=;
-        b=ffk/i1nHKYX8ytIw6OjhQTaqzVXLFHAHrerwH8kuoBmQmJN9x/+QVQtrNKP5vooEpX
-        8NDUblQH/wvmKMV25Q88fCgTIhFOVABAIkTuJREo8ezRLctzJrgEFA4s/KjCpkbE4a5H
-        v4iEErdMdtweOtIL3S/GROJ67c3Q7nLJ6WEi3W44TICT1ri9yJG8bGIUNafmMRNzX/lp
-        q9VS5C4VWg2iDxwIechkbGwDXzwUSq56Wm4y8KXsLqOIFxUJS2dXqhdYGL5TwfeXMVKY
-        4IwJE/1+LPwzIzkrUFdLWOBte7tNPZlBrIdPZSG5y29z5Fq4RevMNievwRk7Q9+DfjOA
-        ACiA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp04-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 46.0.0 AUTH)
-        with ESMTPSA id 604beevAS3db2Iu
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Thu, 28 Nov 2019 04:39:37 +0100 (CET)
-Date:   Thu, 28 Nov 2019 04:39:37 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
-Message-ID: <1708272897.1467701.1574912377195@webmail.strato.com>
-In-Reply-To: <20191127084253.16356-5-geert+renesas@glider.be>
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20191127084253.16356-5-geert+renesas@glider.be>
-Subject: Re: [PATCH v3 4/7] dt-bindings: gpio: Add gpio-repeater bindings
+        Wed, 27 Nov 2019 22:42:01 -0500
+Received: by mail-pj1-f65.google.com with SMTP id ca19so1636892pjb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 19:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hwr92oLWatoGx3uzF+7NwO91jSr/7W7A5PP5SHm0/LQ=;
+        b=ETU15TiAx1Z7yDqy7QMoVMpUVdU+jS29zjx0hkg2vHGrZC9+cE3pYr7tnCcoWVulGI
+         zWSVYM8lf7PeTE0/AJ2/IneHvtpmVWtI7Uphk/svA1ggCvIJN+X2+009OSYIr8B4C4v6
+         aoMyWoMwpOhJGrjs6ACfnG3fAh1gE3x4BqAZI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hwr92oLWatoGx3uzF+7NwO91jSr/7W7A5PP5SHm0/LQ=;
+        b=qehpaDrpwMXeGrBM+pAQJdaKDpNJWSy/pGW4QauQmsSmEy0Lly1rO3IPNkTx+Ovah/
+         kp/6nDvBW7wZhXIurHqVfdwyIZNphr2+WQMz6kXkZL5v4m6d7G+16likiS8+TJxrP4D3
+         z36YSd41BsLDAyLEXnuBJs+76hFWhHiCp+z4gn0ZhbKjcOXY7yPqxZCSpAXYAagmOBIg
+         LQHYMF4PZCebXn65RFIOrEjlvFn8dKc1o0Z9i/Fsw8BgVGdga2/BoOhUTs+3JUpqSsH+
+         xeg9GPIvFHCurVd7qpwwe5T/U8qhlYmXNH8nMeHLdECcsEngrqs13fCrnZFcKuf0yuPT
+         QQVw==
+X-Gm-Message-State: APjAAAUk3sor2p194DmG3TF8LNaw/HudK6H1aNvUxgXmnnZ4a61NozZ+
+        4RajuL9uW60wF5AH2X69mkdv/6vOGuY=
+X-Google-Smtp-Source: APXvYqy1OCgKLhJCs2ZmcSKLbGu91GfNXJGRdwdvYZO0yQlFwSXJTBn/cGRtVtoQEZ4veVA5UqYvzQ==
+X-Received: by 2002:a17:90a:8c92:: with SMTP id b18mr8211986pjo.7.1574912518618;
+        Wed, 27 Nov 2019 19:41:58 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id z23sm17607567pgj.43.2019.11.27.19.41.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2019 19:41:57 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>, linux-wireless@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-kernel@vger.kernel.org (open list),
+        clang-built-linux@googlegroups.com (open list:CLANG/LLVM BUILD SUPPORT)
+Subject: [PATCH RESEND] wireless: Use offsetof instead of custom macro.
+Date:   Thu, 28 Nov 2019 11:39:58 +0800
+Message-Id: <20191128033959.87715-1-pihsun@chromium.org>
+X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.1-Rev22
-X-Originating-IP: 112.198.74.215
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use offsetof to calculate offset of a field to take advantage of
+compiler built-in version when possible, and avoid UBSAN warning when
+compiling with Clang:
 
-> On November 27, 2019 at 9:42 AM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> 
-> 
-> Add Device Tree bindings for a GPIO repeater, with optional translation
-> of physical signal properties.  This is useful for describing explicitly
-> the presence of e.g. an inverter on a GPIO line, and was inspired by the
-> non-YAML gpio-inverter bindings by Harish Jenny K N
-> <harish_kandiga@mentor.com>[1].
-> 
-> Note that this is different from a GPIO Nexus Node[2], which cannot do
-> physical signal property translation.
-> 
-> While an inverter can be described implicitly by exchanging the
-> GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags, this has its limitations.
-> Each GPIO line has only a single GPIO_ACTIVE_* flag, but applies to both
-> th provider and consumer sides:
->   1. The GPIO provider (controller) looks at the flags to know the
->      polarity, so it can translate between logical (active/not active)
->      and physical (high/low) signal levels.
->   2. While the signal polarity is usually fixed on the GPIO consumer
->      side (e.g. an LED is tied to either the supply voltage or GND),
->      it may be configurable on some devices, and both sides need to
->      agree.  Hence the GPIO_ACTIVE_* flag as seen by the consumer must
->      match the actual polarity.
->      There exists a similar issue with interrupt flags, where both the
->      interrupt controller and the device generating the interrupt need
->      to agree, which breaks in the presence of a physical inverter not
->      described in DT (see e.g. [3]).
-> 
-> [1] "[PATCH V4 2/2] gpio: inverter: document the inverter bindings"
->     https://lore.kernel.org/linux-gpio/1561699236-18620-3-git-send-email-harish_kandiga@mentor.com/
-> 
-> [2] Devicetree Specification v0.3-rc2, Section 2.5
->     https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.3-rc2
-> 
-> [3] "[PATCH] wlcore/wl18xx: Add invert-irq OF property for physically
->     inverted IRQ"
->     https://lore.kernel.org/linux-renesas-soc/20190607172958.20745-1-erosca@de.adit-jv.com/
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - New.
-> ---
->  .../bindings/gpio/gpio-repeater.yaml          | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-repeater.yaml b/Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
-> new file mode 100644
-> index 0000000000000000..efdee0c3be43f731
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-repeater.yaml
-> @@ -0,0 +1,53 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/gpio-repeater.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GPIO Repeater
-> +
-> +maintainers:
-> +  - Harish Jenny K N <harish_kandiga@mentor.com>
-> +  - Geert Uytterhoeven <geert+renesas@glider.be>
-> +
-> +description:
-> +  This represents a repeater for one or more GPIOs, possibly including physical
-> +  signal property translation (e.g. polarity inversion).
-> +
-> +properties:
-> +  compatible:
-> +    const: gpio-repeater
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +  gpios:
-> +    description:
-> +      Phandle and specifier, one for each repeated GPIO.
-> +
-> +  gpio-line-names:
-> +    description:
-> +      Strings defining the names of the GPIO lines going out of the GPIO
-> +      controller.
-> +
-> +required:
-> +  - compatible
-> +  - "#gpio-cells"
-> +  - gpio-controller
-> +  - gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Device node describing a polarity inverter for a single GPIO
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    inverter: gpio-repeater {
-> +        compatible = "gpio-repeater";
-> +        #gpio-cells = <2>;
-> +        gpio-controller;
-> +        gpios = <&gpio 95 GPIO_ACTIVE_LOW>;
-> +    };
-> -- 
-> 2.17.1
->
+==================================================================
+UBSAN: Undefined behaviour in net/wireless/wext-core.c:525:14
+member access within null pointer of type 'struct iw_point'
+CPU: 3 PID: 165 Comm: kworker/u16:3 Tainted: G S      W         4.19.23 #43
+Workqueue: cfg80211 __cfg80211_scan_done [cfg80211]
+Call trace:
+ dump_backtrace+0x0/0x194
+ show_stack+0x20/0x2c
+ __dump_stack+0x20/0x28
+ dump_stack+0x70/0x94
+ ubsan_epilogue+0x14/0x44
+ ubsan_type_mismatch_common+0xf4/0xfc
+ __ubsan_handle_type_mismatch_v1+0x34/0x54
+ wireless_send_event+0x3cc/0x470
+ ___cfg80211_scan_done+0x13c/0x220 [cfg80211]
+ __cfg80211_scan_done+0x28/0x34 [cfg80211]
+ process_one_work+0x170/0x35c
+ worker_thread+0x254/0x380
+ kthread+0x13c/0x158
+ ret_from_fork+0x10/0x18
+===================================================================
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+---
+ include/uapi/linux/wireless.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-CU
-Uli
+diff --git a/include/uapi/linux/wireless.h b/include/uapi/linux/wireless.h
+index 86eca3208b6b..f259cca5cc2b 100644
+--- a/include/uapi/linux/wireless.h
++++ b/include/uapi/linux/wireless.h
+@@ -1090,8 +1090,7 @@ struct iw_event {
+ /* iw_point events are special. First, the payload (extra data) come at
+  * the end of the event, so they are bigger than IW_EV_POINT_LEN. Second,
+  * we omit the pointer, so start at an offset. */
+-#define IW_EV_POINT_OFF (((char *) &(((struct iw_point *) NULL)->length)) - \
+-			  (char *) NULL)
++#define IW_EV_POINT_OFF offsetof(struct iw_point, length)
+ #define IW_EV_POINT_LEN	(IW_EV_LCP_LEN + sizeof(struct iw_point) - \
+ 			 IW_EV_POINT_OFF)
+ 
+
+base-commit: 1875ff320f14afe21731a6e4c7b46dd33e45dfaa
+-- 
+2.24.0.393.g34dc348eaf-goog
+
