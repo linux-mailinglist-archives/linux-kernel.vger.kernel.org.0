@@ -2,90 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FE810C242
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 03:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2805A10C257
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 03:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbfK1C22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 21:28:28 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47089 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727432AbfK1C22 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 21:28:28 -0500
-Received: from callcc.thunk.org (97-71-153.205.biz.bhn.net [97.71.153.205] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xAS2SHsO003384
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Nov 2019 21:28:18 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 1C4934202FD; Wed, 27 Nov 2019 21:28:17 -0500 (EST)
-Date:   Wed, 27 Nov 2019 21:28:17 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Daniel Phillips <daniel@phunq.net>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-Message-ID: <20191128022817.GE22921@mit.edu>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <20191127142508.GB5143@mit.edu>
- <c3636a43-6ae9-25d4-9483-34770b6929d0@phunq.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3636a43-6ae9-25d4-9483-34770b6929d0@phunq.net>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1728295AbfK1CaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 21:30:05 -0500
+Received: from mga18.intel.com ([134.134.136.126]:17935 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728232AbfK1CaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 21:30:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 18:30:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
+   d="scan'208";a="221176120"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 27 Nov 2019 18:29:59 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
+        yi.l.liu@intel.com, yi.y.sun@intel.com,
+        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 2/8] iommu/vt-d: Move domain_flush_cache helper into header
+Date:   Thu, 28 Nov 2019 10:25:44 +0800
+Message-Id: <20191128022550.9832-3-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191128022550.9832-1-baolu.lu@linux.intel.com>
+References: <20191128022550.9832-1-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 02:27:27PM -0800, Daniel Phillips wrote:
-> > (2) It's implemented as userspace code (e.g., it uses open(2),
-> > mmap(2), et. al) and using C++, so it would need to be reimplemented
-> > from scratch for use in the kernel.
-> 
-> Right. Some of these details, like open, are obviously trivial, others
-> less so. Reimplementing from scratch is an overstatement because the
-> actual intrusions of user space code are just a small portion of the code
-> and nearly all abstracted behind APIs that can be implemented as needed
-> for userspace or kernel in out of line helpers, so that the main source
-> is strictly unaware of the difference.
+So that it could be used in other source files as well.
 
-The use of C++ with templates is presumably one of the "less so"
-parts, and it was that which I had in mind when I said,
-"reimplementing from scratch".
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-iommu.c | 7 -------
+ include/linux/intel-iommu.h | 7 +++++++
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-> Also, most of this work is already being done for Tux3,
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 677e82a828f0..7752ff299cb5 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -833,13 +833,6 @@ static struct intel_iommu *device_to_iommu(struct device *dev, u8 *bus, u8 *devf
+ 	return iommu;
+ }
+ 
+-static void domain_flush_cache(struct dmar_domain *domain,
+-			       void *addr, int size)
+-{
+-	if (!domain->iommu_coherency)
+-		clflush_cache_range(addr, size);
+-}
+-
+ static int device_context_mapped(struct intel_iommu *iommu, u8 bus, u8 devfn)
+ {
+ 	struct context_entry *context;
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index e8bfe7466ebb..9b259756057b 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -681,6 +681,13 @@ static inline int first_pte_in_page(struct dma_pte *pte)
+ 	return !((unsigned long)pte & ~VTD_PAGE_MASK);
+ }
+ 
++static inline void
++domain_flush_cache(struct dmar_domain *domain, void *addr, int size)
++{
++	if (!domain->iommu_coherency)
++		clflush_cache_range(addr, size);
++}
++
+ extern struct dmar_drhd_unit * dmar_find_matched_drhd_unit(struct pci_dev *dev);
+ extern int dmar_find_matched_atsr_unit(struct pci_dev *dev);
+ 
+-- 
+2.17.1
 
-Great, when that work is done, we can take a look at the code and
-see....
-
-> > (5) The claim is made that readdir() accesses files sequentially; but
-> > there is also mention in Shardmap of compressing shards (e.g.,
-> > rewriting them) to squeeze out deleted and tombstone entries.  This
-> > pretty much guarantees that it will not be possible to satisfy POSIX
-> > requirements of telldir(2)/seekdir(3) (using a 32-bit or 64-bitt
-> > cookie), NFS (which also requires use of a 32-bit or 64-bit cookie
-> > while doing readdir scan), or readdir() semantics in the face of
-> > directory entries getting inserted or removed from the directory.
-> 
-> No problem, the data blocks are completely separate from the index so
-> readdir just walks through them in linear order a la classic UFS/Ext2.
-> What could possibly be simpler, faster or more POSIX compliant?
-
-OK, so what you're saying then is for every single directory entry
-addition or removal, there must be (at least) two blocks which must be
-modified, an (at least one) index block, and a data block, no?  That
-makes it worse than htree, where most of the time we only need to
-modify a single leaf node.  We only have to touch an index block when
-a leaf node gets full and it needs to be split.
-
-Anyway, let's wait and see how you and Hirofumi-san work out those
-details for Tux3, and we can look at that and consider next steps at
-that time.
-
-Cheers,
-
-						- Ted
