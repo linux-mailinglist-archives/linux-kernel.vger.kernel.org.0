@@ -2,99 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9462610CFCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2860310CFDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:51:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfK1Wrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 17:47:32 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43306 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfK1Wrc (ORCPT
+        id S1726749AbfK1WvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 17:51:03 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63649 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfK1WvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 17:47:32 -0500
-Received: by mail-ot1-f68.google.com with SMTP id l14so23313361oti.10
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 14:47:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CUk7v7UPe6VTRCevALfgnUC9KL2cGJpFHn8mL3idLe0=;
-        b=Y8Ea/smQHjouC6SBRXFZkjwTn2tarmmechSnFeym66dooOOnkxhT2nHCmkSARtdQUe
-         ZXdW78yhSFGWQa9ZEKD+TSdGevk4bhR+ccadD5qPzyAVHBSeBpKWvJNNtVxHxWYdKSlw
-         tsLHHiQ1/WZPQ7fJQVfpJxtzU5skIztwBNzX5XZeRT1BCWYgL3D14cJyuo171iKI4apV
-         7E/2u7t3FvJMNVr/zLBD1kmeCWN/E3GUMZmzjsEZ0yKeEv5iUJpSKP1JivJYGprcKcsb
-         cVpqaAEL62COc9FyK1lg2vZAtfyTW3MfKZ4yqB7r/BorGWp6TDqqVlQRslci132N+iyF
-         Zafw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CUk7v7UPe6VTRCevALfgnUC9KL2cGJpFHn8mL3idLe0=;
-        b=IwumMKBE+XuMzloUrImKo3O0euYLOv12OJfyFYxuYP8ODGksOPBI8V5u0Ac2JPeheQ
-         AfOBQFDAXpLKJo5xNhQk9pvqUNqAHo8CRIY45eaSBBQBM5sHSAOy+aoZCv4N+80nj2nQ
-         FQ9YA7N4CXT07afwHtxtW8irZHJteWQ33aHf8tOwk3Yha+uTvDIA+TBIScLGByWPysCS
-         f/KwAKpo4JJ5gUyaGAG1LPTECiHUprrz4UzpmJIfdK6p8GiX2h/nM+Frzf1cu7Ghlgim
-         L2OThsezttkQidC6KFdNGdyqZP4pCH/cRqrZzIm/QlDqiXusio2CzhK/VB4oRsZhsDmK
-         5q5w==
-X-Gm-Message-State: APjAAAVOWJVZDRsbXB4ZbSsxn98TCbRk2pTjb9wkt2ifkYjauINtLiMh
-        xpUZb70Qq+EPS9J5uuEtZg96fsUgkeeC1hDmjTjFIw==
-X-Google-Smtp-Source: APXvYqwtrGRoVpfoYUQbpfscgR1YvjNIoEJwTjGpNh374JxCwGJYz8mI0UDKMJGK2aEAi5yUqMGk7HFD34Er13qtUfQ=
-X-Received: by 2002:a9d:4801:: with SMTP id c1mr8740496otf.32.1574981248999;
- Thu, 28 Nov 2019 14:47:28 -0800 (PST)
+        Thu, 28 Nov 2019 17:51:02 -0500
+Received: from 79.184.255.242.ipv4.supernova.orange.pl (79.184.255.242) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 5936317b2e2d446d; Thu, 28 Nov 2019 23:51:00 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     "Kenneth R. Crudup" <kenny@panix.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] ACPI: EC: Rework flushing of pending work
+Date:   Thu, 28 Nov 2019 23:47:51 +0100
+Message-ID: <5947679.MAvhsAmGqv@kreacher>
+In-Reply-To: <2787005.CsmIKtZlk9@kreacher>
+References: <2787005.CsmIKtZlk9@kreacher>
 MIME-Version: 1.0
-References: <254505c9-2b76-ebeb-306c-02aaf1704b88@kernel.dk>
- <CAG48ez33ewwQB26cag+HhjbgGfQCdOLt6CvfmV1A5daCJoXiZQ@mail.gmail.com>
- <1d3a458a-fa79-5e33-b5ce-b473122f6d1a@kernel.dk> <CAG48ez2VBS4bVJqdCU9cUhYePYCiUURvXZWneBx2KGkg3L9d4g@mail.gmail.com>
- <f4144a96-58ef-fba7-79f0-e5178147b6bb@rasmusvillemoes.dk> <CAG48ez1v5EmuSvn+LY8od_ZMt1QVdUWqi9DWLSp0CgMxkL=sNg@mail.gmail.com>
- <CAG48ez1FK6h4tEv=cGGtm84NXDkeiMV+woFmqQYPbcsOZjKxZw@mail.gmail.com>
-In-Reply-To: <CAG48ez1FK6h4tEv=cGGtm84NXDkeiMV+woFmqQYPbcsOZjKxZw@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 28 Nov 2019 23:46:59 +0100
-Message-ID: <CAG48ez11PjWtaFrPqtU6yPKsm0_0Sb3Te-8bvVQLEozDzx7cFw@mail.gmail.com>
-Subject: Re: [PATCH RFC] signalfd: add support for SFD_TASK
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 8:18 PM Jann Horn <jannh@google.com> wrote:
-> On Thu, Nov 28, 2019 at 11:07 AM Jann Horn <jannh@google.com> wrote:
-> > On Thu, Nov 28, 2019 at 10:02 AM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
-> > > On 28/11/2019 00.27, Jann Horn wrote:
-> > >
-> > > > One more thing, though: We'll have to figure out some way to
-> > > > invalidate the fd when the target goes through execve(), in particular
-> > > > if it's a setuid execution. Otherwise we'll be able to just steal
-> > > > signals that were intended for the other task, that's probably not
-> > > > good.
-> > > >
-> > > > So we should:
-> > > >  a) prevent using ->wait() on an old signalfd once the task has gone
-> > > > through execve()
-> > > >  b) kick off all existing waiters
-> > > >  c) most importantly, prevent ->read() on an old signalfd once the
-> > > > task has gone through execve()
-> > > >
-> > > > We probably want to avoid using the cred_guard_mutex here, since it is
-> > > > quite broad and has some deadlocking issues; it might make sense to
-> > > > put the update of ->self_exec_id in fs/exec.c under something like the
-> > > > siglock,
-> > >
-> > > What prevents one from exec'ing a trivial helper 2^32-1 times before
-> > > exec'ing into the victim binary?
-> >
-> > Uh, yeah... that thing should probably become 64 bits wide, too.
->
-> Actually, that'd still be wrong even with the existing kernel code for
-> two reasons:
->
->  - if you reparent to a subreaper, the existing exec_id comparison breaks
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-... actually, I was wrong about this, this case is fine because the
-->exit_signal is reset in reparent_leader().
+There is a race condition in the ACPI EC driver, between
+__acpi_ec_flush_event() and acpi_ec_event_handler(), that may
+cause systems to stay in suspended-to-idle forever after a wakeup
+event coming from the EC.
+
+Namely, acpi_s2idle_wake() calls acpi_ec_flush_work() to wait until
+the delayed work resulting from the handling of the EC GPE in
+acpi_ec_dispatch_gpe() is processed, and that function invokes
+__acpi_ec_flush_event() which uses wait_event() to wait for
+ec->nr_pending_queries to become zero on ec->wait, and that wait
+queue may be woken up too early.
+
+Suppose that acpi_ec_dispatch_gpe() has caused acpi_ec_gpe_handler()
+to run, so advance_transaction() has been called and it has invoked
+acpi_ec_submit_query() to queue up an event work item, so
+ec->nr_pending_queries has been incremented (under ec->lock).  The
+work function of that work item, acpi_ec_event_handler() runs later
+and calls acpi_ec_query() to process the event.  That function calls
+acpi_ec_transaction() which invokes acpi_ec_transaction_unlocked()
+and the latter wakes up ec->wait under ec->lock, but it drops that
+lock before returning.
+
+When acpi_ec_query() returns, acpi_ec_event_handler() acquires
+ec->lock and decrements ec->nr_pending_queries, but at that point
+__acpi_ec_flush_event() (woken up previously) may already have
+acquired ec->lock, checked the value of ec->nr_pending_queries (and
+it would not have been zero then) and decided to go back to sleep.
+Next, if ec->nr_pending_queries is equal to zero now, the loop
+in acpi_ec_event_handler() terminates, ec->lock is released and
+acpi_ec_check_event() is called, but it does nothing unless
+ec_event_clearing is equal to ACPI_EC_EVT_TIMING_EVENT (which is
+not the case by default).  In the end, if no more event work items
+have been queued up while executing acpi_ec_transaction_unlocked(),
+there is nothing to wake up __acpi_ec_flush_event() again and it
+sleeps forever, so the suspend-to-idle loop cannot make progress and
+the system is permanently suspended.
+
+To avoid this issue, notice that it actually is not necessary to
+wait for ec->nr_pending_queries to become zero in every case in
+which __acpi_ec_flush_event() is used.
+
+First, during platform-based system suspend (not suspend-to-idle),
+__acpi_ec_flush_event() is called by acpi_ec_disable_event() after
+clearing the EC_FLAGS_QUERY_ENABLED flag, which prevents
+acpi_ec_submit_query() from submitting any new event work items,
+so calling flush_scheduled_work() and flushing ec_query_wq
+subsequently (in order to wait until all of the queries in that
+queue have been processed) would be sufficient to flush all of
+the pending EC work in that case.
+
+Second, the purpose of the flushing of pending EC work while
+suspended-to-idle described above really is to wait until the
+first event work item coming from acpi_ec_dispatch_gpe() is
+complete, because it should produce system wakeup events if
+that is a valid EC-based system wakeup, so calling
+flush_scheduled_work() followed by flushing ec_query_wq is also
+sufficient for that purpose.
+
+Rework the code to follow the above observations.
+
+Fixes: 56b9918490 ("PM: sleep: Simplify suspend-to-idle control flow")
+Reported-by: Kenneth R. Crudup <kenny@panix.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/ec.c |   36 +++++++++++++-----------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
+
+Index: linux-pm/drivers/acpi/ec.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/ec.c
++++ linux-pm/drivers/acpi/ec.c
+@@ -525,26 +525,10 @@ static void acpi_ec_enable_event(struct
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static bool acpi_ec_query_flushed(struct acpi_ec *ec)
++static void __acpi_ec_flush_work(void)
+ {
+-	bool flushed;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&ec->lock, flags);
+-	flushed = !ec->nr_pending_queries;
+-	spin_unlock_irqrestore(&ec->lock, flags);
+-	return flushed;
+-}
+-
+-static void __acpi_ec_flush_event(struct acpi_ec *ec)
+-{
+-	/*
+-	 * When ec_freeze_events is true, we need to flush events in
+-	 * the proper position before entering the noirq stage.
+-	 */
+-	wait_event(ec->wait, acpi_ec_query_flushed(ec));
+-	if (ec_query_wq)
+-		flush_workqueue(ec_query_wq);
++	flush_scheduled_work(); /* flush ec->work */
++	flush_workqueue(ec_query_wq); /* flush queries */
+ }
+ 
+ static void acpi_ec_disable_event(struct acpi_ec *ec)
+@@ -554,15 +538,21 @@ static void acpi_ec_disable_event(struct
+ 	spin_lock_irqsave(&ec->lock, flags);
+ 	__acpi_ec_disable_event(ec);
+ 	spin_unlock_irqrestore(&ec->lock, flags);
+-	__acpi_ec_flush_event(ec);
++
++	/*
++	 * When ec_freeze_events is true, we need to flush events in
++	 * the proper position before entering the noirq stage.
++	 */
++	__acpi_ec_flush_work();
+ }
+ 
+ void acpi_ec_flush_work(void)
+ {
+-	if (first_ec)
+-		__acpi_ec_flush_event(first_ec);
++	/* Without ec_query_wq there is nothing to flush. */
++	if (!ec_query_wq)
++		return;
+ 
+-	flush_scheduled_work();
++	__acpi_ec_flush_work();
+ }
+ #endif /* CONFIG_PM_SLEEP */
+ 
+
+
+
