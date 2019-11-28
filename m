@@ -2,90 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9D910CEA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 19:48:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE1810CEB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 19:58:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfK1Sr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 13:47:59 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41486 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfK1Sr6 (ORCPT
+        id S1726653AbfK1S5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 13:57:46 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:55266 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfK1S5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 13:47:58 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r27so8371306otc.8;
-        Thu, 28 Nov 2019 10:47:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SbqDtyGUayCHn8YA1qIYy//Vs47v2ekEoPz9wEIqoIU=;
-        b=QdExebKLEyBAlSiWEff8xM3wFGzM3WreNyZYUwaXBrCvISUmDDUFy5//HOgdCFYxz9
-         RO/uG+Xp4XS9ViAn9lhEal6mun8qnCJDZ6Nw1yH7YG0TwIQ7JQJcUHzOcGbc1LvOTp+K
-         7AJLsYvlu9WeuBcziISUTOi9LqHjGkaOofZ5yRnr+BW3U67O+jQmVDiGMpKRxU2nuLgr
-         6DTbm61r9MMAcWQBiKdEnTpaLSBvcoeTrfFidxiBBVvgCyNlC36Bw45OCMu5QERvOMQU
-         f1bZK5HimjqZWzkNirFNhjs/6wcAuA5SW5rcAa9y7lYBLq5K1FvcMSVmVpSbTi8rXoUf
-         9zBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SbqDtyGUayCHn8YA1qIYy//Vs47v2ekEoPz9wEIqoIU=;
-        b=LRg8cgiXDQmUb2x/T8U9lNSpLp+yfjACpkxScwy6MAGC75BdqDwkrvlUlTs25ygZmd
-         3pOatNfpnGn+hLBafn0ESBQeMgKzMDERiDrPJJ9GNmOhCjquRC6Tr/DQ65GEF+WdTheA
-         ko1fwsVvJrzrZSZryi6BB2Y9b9M1BjnCrTSxqlF1BZqP8yLWH0MyIl6PhcnbtVjvCnK2
-         yaZhLgHfuFQ486J/j9QUNRNS+X6ws4/B8SyW5nU82YOmC5NncYMCgd6H/YwKTGVL723i
-         zcoDj5TEbFvXhEITK7i2en0T2nYMD7R6a7aWm/XmHTdDa8i6RYjqqim/i07+X7eumpbt
-         cHJg==
-X-Gm-Message-State: APjAAAU3zRjqt2cTAQ/WNcC6ekJ/xYzdnHDSmOOmEWS05uuLKDYR0x0e
-        N45Ty+WoSGf6kNr+jIcoT7Uh+14z
-X-Google-Smtp-Source: APXvYqzs+J0u1bXIFWyjqtDhfL9jnr0r4g2IqYV06fMSJ7zuo89sifizcjxoMfbseB/qZlhA0+6zvw==
-X-Received: by 2002:a05:6830:2109:: with SMTP id i9mr8695007otc.334.1574966877546;
-        Thu, 28 Nov 2019 10:47:57 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d132sm6400804oif.2.2019.11.28.10.47.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Nov 2019 10:47:56 -0800 (PST)
-Subject: Re: [PATCH 5.4 00/66] 5.4.1-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20191127202632.536277063@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <ee4a83ba-e746-42f9-34c1-18caf2e369c8@roeck-us.net>
-Date:   Thu, 28 Nov 2019 10:47:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 28 Nov 2019 13:57:45 -0500
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+X-isilmar-external: YES
+Received: from owl.dominikbrodowski.net (owl-tcp.brodo.linta [10.1.0.111])
+        by isilmar-4.linta.de (Postfix) with ESMTPSA id BD6DB200A6E;
+        Thu, 28 Nov 2019 18:57:43 +0000 (UTC)
+Received: by owl.dominikbrodowski.net (Postfix, from userid 1000)
+        id 91BC880238; Thu, 28 Nov 2019 19:56:07 +0100 (CET)
+Date:   Thu, 28 Nov 2019 19:56:07 +0100
+From:   Dominik Brodowski <linux@dominikbrodowski.net>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: unchecked MSR access error in throttle_active_work()
+Message-ID: <20191128185607.GA3726@owl.dominikbrodowski.net>
+References: <20191128085447.GA3682@owl.dominikbrodowski.net>
+ <20191128094419.GB17745@zn.tnic>
+ <20191128102930.jgra6igtp4rppmis@isilmar-4.linta.de>
+ <2859c017f515695eae1de47fdcf34db35bc5be39.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191127202632.536277063@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2859c017f515695eae1de47fdcf34db35bc5be39.camel@linux.intel.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/19 12:31 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.1 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
-> Anything received after that time might be too late.
-> 
+On Thu, Nov 28, 2019 at 06:51:42AM -0800, Srinivas Pandruvada wrote:
+> On Thu, 2019-11-28 at 11:29 +0100, Dominik Brodowski wrote:
+> > On Thu, Nov 28, 2019 at 10:44:19AM +0100, Borislav Petkov wrote:
+> > > On Thu, Nov 28, 2019 at 09:54:47AM +0100, Dominik Brodowski wrote:
+> > > > On most recent mainline kernels (such as 5.5-rc0 up to
+> > > > a6ed68d6468b), I see
+> > > > the following output in dmesg during startup:
+> > > > 
+> > > > [   78.016676] unchecked MSR access error: WRMSR to 0x19c (tried
+> > > > to write 0x00000000880f3a80) at rIP: 0xffffffff84ab5742
+> > > > (throttle_active_work+0xf2/0x230)
+> > > > [   78.016686] Call Trace:
+> > > > [   78.016694]  process_one_work+0x247/0x590
+> > > > [   78.016703]  worker_thread+0x50/0x3b0
+> > > > [   78.016710]  kthread+0x10a/0x140
+> > > > [   78.016715]  ? process_one_work+0x590/0x590
+> > > > [   78.016735]  ? kthread_park+0x90/0x90
+> > > > [   78.016740]  ret_from_fork+0x3a/0x50
+> > > > 
+> > > > Any clues?
+> > > 
+> > > Most likely
+> > > 
+> > > f6656208f04e ("x86/mce/therm_throt: Optimize notifications of
+> > > thermal throttle")
+> > > 
+> > > I guess we're missing some X86_FEATURE_ check for that MSR to
+> > > exist.
+> > 
+> > Thanks. FWIW, it's a i7-8650U.
+> > 
+> Please try the attached patch. 
 
-Build results:
-	total: 158 pass: 157 fail: 1
-Failed builds:
-	mips:allmodconfig
-Qemu test results:
-	total: 394 pass: 394 fail: 0
+Seems to work fine now. Thanks!
 
-The mips build failure is well known and inherited from mainline.
-
-Guenter
+	Dominik
