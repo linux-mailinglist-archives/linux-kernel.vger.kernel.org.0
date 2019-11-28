@@ -2,109 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4948A10CFD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A34F10CFE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 00:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfK1WvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 17:51:02 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42200 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfK1WvB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 17:51:01 -0500
-Received: from 79.184.255.242.ipv4.supernova.orange.pl (79.184.255.242) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 361cf6a5a72f8264; Thu, 28 Nov 2019 23:50:59 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     "Kenneth R. Crudup" <kenny@panix.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] ACPI: PM: s2idle: Rework ACPI events synchronization
-Date:   Thu, 28 Nov 2019 23:50:40 +0100
-Message-ID: <6942598.FjHfHmHd9f@kreacher>
-In-Reply-To: <2787005.CsmIKtZlk9@kreacher>
-References: <2787005.CsmIKtZlk9@kreacher>
+        id S1726655AbfK1W7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 17:59:54 -0500
+Received: from mout.web.de ([212.227.15.3]:42843 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfK1W7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 17:59:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1574981980;
+        bh=EvEfm6y/RB5YckvRo/5+L6OhoAw+x433Z/iu5wl68Pc=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=ECzHCdVK8KEUyJtqZfSrrZ5rMAtWX3SXgA7dsUO7RQnH+R2aRMLB+bBZpeGDyeK99
+         4ZVrDNHAQIW5cWGZRGvXZ//9OeKLiD2G1naPwu4sXD1PnxoEvZsjvYhFzSBKZH6+x8
+         VImnQiStQr+/dzVtdkkAz58VQAZRug68v1MOy/OE=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.43.108] ([89.204.139.119]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LZvrx-1hwDzy32eD-00ll8L; Thu, 28
+ Nov 2019 23:59:39 +0100
+Subject: Re: [PATCH v2] arm64: dts: rockchip: split rk3399-rockpro64, for v2
+ and v2.1 boards
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-rockchip@lists.infradead.org,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Hugh Cole-Baker <sigmaris@gmail.com>
+References: <3fa2e3df-221b-99a8-796a-2e21f75cf706@web.de>
+ <9133677.cKcSbgiQdr@phil>
+From:   Soeren Moch <smoch@web.de>
+Message-ID: <f6dc3daf-7cfb-0ac2-99ee-1c691eaf2ef0@web.de>
+Date:   Thu, 28 Nov 2019 23:59:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <9133677.cKcSbgiQdr@phil>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:GTMg10fwIdQgUypiLStUkuDQaNnuemDGISy4kPeso8Aml2Yiy3J
+ XtmDMK1Ck9OCIgB4gsvXpwluyfHEvVL6odI13iVUGcJkp8gIKMkbhpmj22h0kwTZ0gpG1iQ
+ hwb/wytSRQ4Fv3jJZaoAPEiNtYb7IWNr/qszbQWVTWnWM+BcdH7Wf2IQ39U68XlEdl1lWJg
+ JrMLLTWCDs1r/aF2CwWNA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tNqU8rJXfoE=:L/TF0Z0VappKZaTu5kUmcC
+ Y3w/seh85+uHhb3ZXodgr/DvZRVReMe09Nyb+V+oyWBETEvRbbL++HbPRFpk4M4XMUdjf76t+
+ pz1C0ILVqt/+8MFw+sP/Us5zWWdxDhPHQJA00ax2196FxN/9PYQwaeCBu6oA44P3f2WMxMQ1p
+ myRG9gtl3lGk4QLJcH2avmBUJAWuTpcOQcRbz3sbgN9acOTXVoxC04USTcUUmFz3d4ufnJIOi
+ WBklHLLxWVP0o8agZ+MYDxcX+thhsFnvzm+w7ofrdly7xfv/Jbi4Mf86fdStI4zS0x184dYC3
+ y+JwBVbNewVz/+iXUhc1bHdocbk6vdP78ZHLl5Oevgd/t/+ATFhV96y0i26KnXRk/IGb0s7+X
+ qAMUYXcA9XdpG1W7YWybCRpgzklqAXW1l6a8GqDqaPzIoow4mZN9SNNXU1dUdpS4JoPDh0Go0
+ HLuVQPgr3mVe02rFsa2NAyAskoaeQO/XB10r8DqOwejooToermq3y0t13+f642w8L4iJO/oqw
+ maqIFEsGkpGFDgcZlYiC6/XRqFlSLhJ+jylXXsCxKOiyBU9Bzz32OYXejcGRfGQJxo5V+RF51
+ 2VSMynG3lG0f7iaI2FAogltuzCLzzGGCOXgQSX6DMhTDeSUZ5wuHPkQfCdsjBsrKp8RmEM2D9
+ ebM0azGWsik6XZh1ecCcDCg+G/DcI//khthFQCPCaE0RF3CBNfB/zFwMJYxC+nRkTAbXyzKBE
+ 1cTWCWfH9usk5q3EW54j/GVBXhIM0q9ZmggCtTvINVDyVG80Z60x6Py4ZwcPYPcEcHPM2wC/3
+ JtY8UtwMgHW5ObswoItIU4+IOEnk5lWpb8nAZdksuSoochBX4fT/bHHGclCGZv9xOVlesslVV
+ 35DaV5YDxVxyBYczKnf2wrnXNbyD2FyHDUJvRYA6lqesBPipVlsFvxbvxdlaK+Kx0jWXBl0/I
+ OPRImOfES5z49bbvgkCBixNUvVM3muvShFLz6c3k6nbknNTKZzTLEHUCvFM5f2E38z3WRmedm
+ PYQyDHtQL0M8+gbDS0YrFMZjDrrsUakq9vfchxmRNn8ol0PooEArQ0ahHc1dzrgZfN5uTQQXC
+ hXI7+kLzgGOJCaPZw46Mitg+fP+Z7jgPo1YIl5UPksBeMiZz/xkwE5Sq07iQDM6WnU+62ly4f
+ sarMThs25UovzQSHKseDrDgV3OHbButJ1PBfF5GfiP9KVGSkbKZM+ygvLU+NvCD2WJOuPNUNK
+ Gn6ERpHWFPHsd+wlg855oiXLLJu5BCKDhIs0coA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 28.11.19 22:53, Heiko Stuebner wrote:
+> Am Donnerstag, 28. November 2019, 20:55:54 CET schrieb Soeren Moch:
+>>> On Thu, Nov 28, 2019 at 6:02 AM Katsuhiro Suzuki
+>>> <katsuhiro@katsuster.net> wrote:
+>>>> This patch splits rk3399-rockpro64 dts file to 2 files for v2 and
+>>>> v2.1 boards.
+>>>>
+>>>> Both v2 and v2.1 boards can use almost same settings but we find a
+>>>> difference in I2C address of audio CODEC ES8136.
+>>>>
+>>>> Reported-by: Vasily Khoruzhick <anarsoul@gmail.com>
+>>>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>>>>
+>>>> ---
+> [...]
+>
+>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+>>>> new file mode 100644
+>>>> index 000000000000..183eda4ffb9c
+>>>> --- /dev/null
+>> If we add this as new file, should we sort handles and properties
+>> alphabetically, where it is not done yet?
+> I'm torn here ... on one side, doing missing sorting might be nice
+> on the other hand, there is the moving without functional changes
+> paradigm, which is generally nice to adhere to.
+Agreed. Since we don't move a file, but most of it's content, it was not
+clear to me what's more important.
+>
+> But I guess sorting would generally be ok.
+>
+>> I'm not sure about all the exceptions that usually apply for rockchip
+>> devicetrees, status property at the end, also the pinctrl node?
+> In general I don't "enforce" the sorting, so don't reject patches but instead
+> just do sorting myself if necessary ;-).
+>
+> The general rule-of-thumb for nodes we came up with during the rk3288-veyron
+> era is something like:
+>
+> compatible
+> reg
+> interrupts
+> [alphabetical properties]
+> status
+>
+> as this makes it somewhat easier to parse the core properties (compatible,
+> reg, ints, status] when scrolling through a devicetree :-) .
+Thanks for your explanation, perfectly makes sense.
+>
+> Pinctrl position is at the discretion of the dt author :-D .
+> Position at the end has just the advantage that a long pin-group list does
+> not get in the way so much.
+>
+>> What about unused references, e.g. "fan"?
+> Don't change too much when moving stuff around :-)
+Yes, good compromise to do some sorting, but no other changes.
 
-Note that the EC GPE processing need not be synchronized in
-acpi_s2idle_wake() after invoking acpi_ec_dispatch_gpe(), because
-that function checks the GPE status and dispatches its handler if
-need be and the SCI action handler is not going to run anyway at
-that point.
-
-Moreover, it is better to drain all of the pending ACPI events
-before restoring the working-state configuration of GPEs in
-acpi_s2idle_restore(), because those events are likely to be related
-to system wakeup, in which case they will not be relevant going
-forward.
-
-Rework the code to take these observations into account.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/sleep.c |   26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
-
-Index: linux-pm/drivers/acpi/sleep.c
-===================================================================
---- linux-pm.orig/drivers/acpi/sleep.c
-+++ linux-pm/drivers/acpi/sleep.c
-@@ -977,6 +977,16 @@ static int acpi_s2idle_prepare_late(void
- 	return 0;
- }
- 
-+static void acpi_s2idle_sync(void)
-+{
-+	/*
-+	 * The EC driver uses the system workqueue and an additional special
-+	 * one, so those need to be flushed too.
-+	 */
-+	acpi_ec_flush_work();
-+	acpi_os_wait_events_complete(); /* synchronize Notify handling */
-+}
-+
- static void acpi_s2idle_wake(void)
- {
- 	/*
-@@ -1001,13 +1011,8 @@ static void acpi_s2idle_wake(void)
- 		 * should be missed by canceling the wakeup here.
- 		 */
- 		pm_system_cancel_wakeup();
--		/*
--		 * The EC driver uses the system workqueue and an additional
--		 * special one, so those need to be flushed too.
--		 */
--		acpi_os_wait_events_complete(); /* synchronize EC GPE processing */
--		acpi_ec_flush_work();
--		acpi_os_wait_events_complete(); /* synchronize Notify handling */
-+
-+		acpi_s2idle_sync();
- 
- 		rearm_wake_irq(acpi_sci_irq);
- 	}
-@@ -1024,6 +1029,13 @@ static void acpi_s2idle_restore_early(vo
- 
- static void acpi_s2idle_restore(void)
- {
-+	/*
-+	 * Drain pending events before restoring the working-state configuration
-+	 * of GPEs.
-+	 */
-+	acpi_os_wait_events_complete(); /* synchronize GPE processing */
-+	acpi_s2idle_sync();
-+
- 	s2idle_wakeup = false;
- 
- 	acpi_enable_all_runtime_gpes();
-
-
-
+Thanks,
+Soeren
