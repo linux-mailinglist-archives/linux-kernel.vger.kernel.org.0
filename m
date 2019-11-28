@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F3D110CAE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CDE710CAE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfK1O5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:57:17 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39186 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbfK1O5P (ORCPT
+        id S1727337AbfK1O51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:57:27 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37878 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbfK1O5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 09:57:15 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f18so20234844lfj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:57:14 -0800 (PST)
+        Thu, 28 Nov 2019 09:57:19 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u17so1462988lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:57:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mcPtC9aaHvQVHiMDeuHeO5Xd/IlCVhW66bWYCmG15ow=;
-        b=EmkDyXuqAdU0mDbWeNds+sBE9QLEmfHaO5I4B4TTXCJ9nRxpp5C+xuDFdZRQxt7wq2
-         AAF6YpMlfKCAZKeLvo6uLKsU7IKJhjEFyvK1PKAnNcZ1JPXmzW6AQ7+M5NqvWw4qYv/l
-         x2IqPboiEsuPFc8Yr+/a4hs0i7+HayMlTcKoI=
+        bh=FmgfMIRsfesacuqaAWdy4m11iy4kXtcqJGU2jE1ib94=;
+        b=DWaJoZNKmVKJfjUISyttmUEuNUv/FC4di6OurSxwDjNRPf9fCoQE/A/qz2Dy66aw71
+         PMyfrMM8lWNdbHve3iKOns1KyW7JmJCa85Djs2qtRkWpz9X+k2Ozb14LpmYyBYaKsLE9
+         HPUmmm8ft3lQXqQmtEWC2OKlYzqlvX2OAcQXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mcPtC9aaHvQVHiMDeuHeO5Xd/IlCVhW66bWYCmG15ow=;
-        b=EO5wuZxqjZ4CrlT0PstmENkE/YHfFZ9Jfn9p4U3Acjp3v5VInQMuGy7K7VxCldQvfw
-         Kg2q1WNcOOMYOl0cnDKi37oBWpO246fuCntp0fe4TAK0Oj+dDG6Ta9xouqfjnJW6x9dY
-         L5eDMIF7WHLFm+yIePUyNM44qMdgxm2xdIF7TWEWhT9hCwJ0VfqRvpimjHeE0BHyXSNm
-         UCjF40T+vTzGOutlxQ9ofmYc5hRXbtl2qOSMxhe1M3kxzGCANaFKIPVnl8pXntvN+/Zl
-         MNEYJ99jV05U3pkSLjOIYBv/hCIKIZ0on261XRtI6JlgHt1AB7MbcVfnAj2exSWZGezf
-         mggw==
-X-Gm-Message-State: APjAAAVDPKghS7ybiQI6AHaCNRi4/SgOPsTxT63guBt5Tuw++GB5+apP
-        9FqVfB66lMytWN61MrY+dt30jQ==
-X-Google-Smtp-Source: APXvYqySVaYODKYk+svlcgwOVHhmUKL1Q2Wk/1XqF1/sAAQz/dRwqwnYV2cQVtTbY6URwH9ffRGCHg==
-X-Received: by 2002:a19:22cc:: with SMTP id i195mr32346136lfi.148.1574953033803;
-        Thu, 28 Nov 2019 06:57:13 -0800 (PST)
+        bh=FmgfMIRsfesacuqaAWdy4m11iy4kXtcqJGU2jE1ib94=;
+        b=kU+IEf7lO9pwU6aDT5KPVL0VCtyWVgWwcZhP4m4dT3K0Ek0bSZCCeBJvwfLi3TOvux
+         42/TsVrXbCejPtdRScOXdGd7GCziLwKfF4yzL9F4YUg7OeYTKTF9GmnQ1/VH453+c6Oi
+         8A9PeO0POoe8A+TZ6Le7F6SaYxVpGR97LSvNytrETuvtlb6ejJ1RQ/ER5c/XP52yETN+
+         i03KtBS2lCF+Igx0tjkJxrxSp8kOfm4XPAnRBojJ/7xt47vgMr2JV97NNpdkzxiDAgUd
+         I+V4on9gs35Eq8WMhMAuqxs33HokCDmixysQ4FTEZJXKpquCN/WEi06TzZyCwh2cuQlP
+         81rA==
+X-Gm-Message-State: APjAAAW2QmzoQ+ohzdqPdEEAYzfCkGViSSsSLQQlts8YLnOcP4h2pjkG
+        9SbyLZSzHnod33Rpk9po9HnJWQ==
+X-Google-Smtp-Source: APXvYqz+PF41ZfV2qdB0Q0B87NeIFa3uor094RTZMNig8ikkYiK55r+ga2Tn+9ewAJX6oroKuIa4Rw==
+X-Received: by 2002:a2e:91d5:: with SMTP id u21mr35420576ljg.32.1574953036398;
+        Thu, 28 Nov 2019 06:57:16 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.57.12
+        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.57.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 06:57:13 -0800 (PST)
+        Thu, 28 Nov 2019 06:57:15 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v6 07/49] soc: fsl: qe: qe.c: guard use of pvr_version_is() with CONFIG_PPC32
-Date:   Thu, 28 Nov 2019 15:55:12 +0100
-Message-Id: <20191128145554.1297-8-linux@rasmusvillemoes.dk>
+Subject: [PATCH v6 09/49] soc: fsl: qe: drop assign-only high_active in qe_ic_init
+Date:   Thu, 28 Nov 2019 15:55:14 +0100
+Message-Id: <20191128145554.1297-10-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
 References: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
@@ -62,53 +62,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e5c5c8d23fef (soc/fsl/qe: only apply QE_General4 workaround on
-affected SoCs) introduced use of pvr_version_is(), saying
-
-    The QE_General4 workaround is only valid for the MPC832x and MPC836x
-    SoCs. The other SoCs that embed a QUICC engine are not affected by this
-    hardware bug and thus can use the computed divisors (this was
-    successfully tested on the T1040).
-
-I'm reading the above as saying that the errata does not apply to the
-ARM-based SOCs with QUICC engine. In any case, use of pvr_version_is()
-must be guarded by CONFIG_PPC32 before we can remove the PPC32
-dependency from CONFIG_QUICC_ENGINE, so introduce qe_general4_errata()
-to keep the necessary #ifdeffery localized to a trivial helper.
+high_active is only assigned to but never used. Remove it.
 
 Reviewed-by: Timur Tabi <timur@kernel.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/soc/fsl/qe/qe_ic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe.c b/drivers/soc/fsl/qe/qe.c
-index 85737e6f5b62..1d8aa62c7ddf 100644
---- a/drivers/soc/fsl/qe/qe.c
-+++ b/drivers/soc/fsl/qe/qe.c
-@@ -197,6 +197,14 @@ EXPORT_SYMBOL(qe_get_brg_clk);
- #define PVR_VER_836x	0x8083
- #define PVR_VER_832x	0x8084
+diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+index 8c874372416b..4b03060d8079 100644
+--- a/drivers/soc/fsl/qe/qe_ic.c
++++ b/drivers/soc/fsl/qe/qe_ic.c
+@@ -320,7 +320,7 @@ void __init qe_ic_init(struct device_node *node, unsigned int flags,
+ {
+ 	struct qe_ic *qe_ic;
+ 	struct resource res;
+-	u32 temp = 0, ret, high_active = 0;
++	u32 temp = 0, ret;
  
-+static bool qe_general4_errata(void)
-+{
-+#ifdef CONFIG_PPC32
-+	return pvr_version_is(PVR_VER_836x) || pvr_version_is(PVR_VER_832x);
-+#endif
-+	return false;
-+}
-+
- /* Program the BRG to the given sampling rate and multiplier
-  *
-  * @brg: the BRG, QE_BRG1 - QE_BRG16
-@@ -223,7 +231,7 @@ int qe_setbrg(enum qe_clock brg, unsigned int rate, unsigned int multiplier)
- 	/* Errata QE_General4, which affects some MPC832x and MPC836x SOCs, says
- 	   that the BRG divisor must be even if you're not using divide-by-16
- 	   mode. */
--	if (pvr_version_is(PVR_VER_836x) || pvr_version_is(PVR_VER_832x))
-+	if (qe_general4_errata())
- 		if (!div16 && (divisor & 1) && (divisor > 3))
- 			divisor++;
+ 	ret = of_address_to_resource(node, 0, &res);
+ 	if (ret)
+@@ -366,10 +366,8 @@ void __init qe_ic_init(struct device_node *node, unsigned int flags,
+ 		temp |= CICR_GRTB;
+ 
+ 	/* choose destination signal for highest priority interrupt */
+-	if (flags & QE_IC_HIGH_SIGNAL) {
++	if (flags & QE_IC_HIGH_SIGNAL)
+ 		temp |= (SIGNAL_HIGH << CICR_HPIT_SHIFT);
+-		high_active = 1;
+-	}
+ 
+ 	qe_ic_write(qe_ic->regs, QEIC_CICR, temp);
  
 -- 
 2.23.0
