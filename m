@@ -2,98 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A75C10C9C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 14:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51FC510C9C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 14:45:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfK1Nny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 08:43:54 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33245 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbfK1Nnw (ORCPT
+        id S1727109AbfK1NpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 08:45:11 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46169 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbfK1NpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 08:43:52 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b6so1552322wrq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 05:43:50 -0800 (PST)
+        Thu, 28 Nov 2019 08:45:11 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a17so20066698lfi.13
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 05:45:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qWB0GnHdmXhKLKHodka8vOS+SgvA6x8EElzWcdcx5ww=;
-        b=F1DEWss5lWPIOHF1keRZXlAR8uX19LLPvRfTbPq0IGYG2LZ5nSNZFGU9oW0IZn/6Bn
-         Z4zm5JyDek6NV2gKYHZxSW9rLehMcmfmekenEFg8DDGo2iN5OhWe1aDkhjoCmZx2Ir3o
-         uRyeHpHi61ZR2Xdb+jeHSTXjT/eCAS/AYdOPvy2+vKFi8V1jKW0G+GG7U6aZXmUvrPwW
-         OLCVvYFrZRlDM9xrAiMvDCv2T2MMlcg6+9Xcfr5hGdOTKXnyolbZyHPV37O9WcSvuMQa
-         zYk+gtd4Wk8wTD190V/dklglqsiwPOPw9lAfK9LGqVTfCFI6T1mAJt0/0Lpp/Hkr4QyU
-         BMug==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qVyVH3GucIXCwfrLXX19RLZ09hFTpdgyonXBY6f04/k=;
+        b=ZqFnPPmFXVOZPQ+d07lBFfoR3OZn+DTxcIkmUV2Ixk3ZgAOc1136lj4VSNYn7ltmue
+         Y7q9kYYfko+UbksL+7cOxZg2Xfz1Uo6AavH2kyMi3RteXWGRsX5vpWqQf/RK77j9iwve
+         PAQgcfFrhlltVqBW3kwiFTki7LGoQaa+o8mJwOZ8PQ51I6y8SYdjhmMkWkaoOG8+KOaO
+         GhBnhG7YZzOGZpMTi96UUGJjxRLUc9Z09SJEjaM+uAlnWFpMohoEJNbhbL2mWtKnHjpU
+         lC67Wv4bSGZdmb7egsTcBU3DgjWUCP9ugxohPyZsLVuYTFzueoyVkJ0Ix1hmF6ZSR0zK
+         ueMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qWB0GnHdmXhKLKHodka8vOS+SgvA6x8EElzWcdcx5ww=;
-        b=K+eH0lLsNrFkk6p89+uY1bd+Tc1MLNRZ3yLlJnDwLFc9GffVf8qrPe6pjLo8Oyd1o1
-         k1PU456YI1q2XTQMHjGYlh3HQ9w8DPzJ8k5UtncQma9AoebqxOp3HOBcn8//JbKi+0e/
-         R82V3xOqrD1IK3rvhntog9L2K1jVJXtq2XDA5bJ3WOcWNmMQQzEoIDpMveIHr/sWRaJT
-         0zjyC3LX7sA6QNdiXvPXMwgf48U2r/vG/zehEYKmRHXbBnGWgYSyZiQOUXWhV/5BMaf+
-         GRAaQyQQ7eVFsfn7ROgmM0y6GJWfS0lRe9NBkyPiNZNxV1fXjMSLvlObwTVzCKJFwu67
-         LtNQ==
-X-Gm-Message-State: APjAAAVDWB41l7VUXz0paB6DoliHSehSXt8XITM8vsp+4z8RsjkQb7/C
-        jCF3PWbc/rcCJLJdCbu8Sqqn2MA8ysE=
-X-Google-Smtp-Source: APXvYqzBZTvoaBQhXf4XJ+7VH/b38mWo1iX1Z0B6XnUNVcuTjgKirzmpRYM5aHebl+qRmeZIJVJ/tg==
-X-Received: by 2002:adf:f147:: with SMTP id y7mr48400538wro.236.1574948629807;
-        Thu, 28 Nov 2019 05:43:49 -0800 (PST)
-Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id u26sm10743407wmj.9.2019.11.28.05.43.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 05:43:49 -0800 (PST)
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Rob Herring <robh@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: connector: Improve the english of the initial description
-Date:   Thu, 28 Nov 2019 13:43:58 +0000
-Message-Id: <20191128134358.3880498-3-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191128134358.3880498-1-bryan.odonoghue@linaro.org>
-References: <20191128134358.3880498-1-bryan.odonoghue@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qVyVH3GucIXCwfrLXX19RLZ09hFTpdgyonXBY6f04/k=;
+        b=euaUHI1//xsBHtKODR6knwPhJXEVCNz2u9sDr08IFZKvBiH1N2+m4QmWXKffvvMRy3
+         FK8q+wXMq7IGPTzv3WSMtJGWYCYr6+YsYbni/NpfRp8n7O3xEW5tl+Rl5vfyVcrhcBWx
+         Rc0x8yVcyj14zo1K2o963D+pDkfW+aCp0Hr9MwOQCT65g6Fmumc4Ung3LpUZ4NHEsJcQ
+         hCIJ5GJu4sdUFukwiXIsjtFpBodUaV5U9EO9IstqyD/eMOR7gYA2N4WwkexZsDgjhbGi
+         aK2QKDxBGXlrnfV5Nqc17+Gxtzr+d3L1dfAiIbZnr0jIkGbgsn7WQkInN2hTINJ4RKLV
+         y+vg==
+X-Gm-Message-State: APjAAAW3kvySLgJN0qeQ1Pouhm5SrgCaTieZlrJ5pPUuZjGfaMCRYsE6
+        xntazny0SEDZGHw9IwCvoAQBAcPGiKcSzUBLelZc4g==
+X-Google-Smtp-Source: APXvYqxmD5I6HnIUXKd0kI0HkU3aSQ4hioXpM0yhKdtcDcsx3EccroOaBtiV8gi40+vkYztiQmeRCAXkMncEdw2+E9Y=
+X-Received: by 2002:a19:f701:: with SMTP id z1mr26973589lfe.133.1574948708877;
+ Thu, 28 Nov 2019 05:45:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191120142038.30746-1-ktouil@baylibre.com> <20191120142038.30746-2-ktouil@baylibre.com>
+ <CACRpkdaZrvPObjyN4kasARzKZ9=PiAcvTzXzWkmC7R+Ay5tU8w@mail.gmail.com>
+ <CAMpxmJWSgYjcGdR7Zrj-=nA+H8cYfZUriHQPxN=8zgPDvD-wTA@mail.gmail.com>
+ <CACRpkdaW82pgQivc0VVgqqVv4fgXxMyGD3Lo8YHcMK7aGPDKaw@mail.gmail.com>
+ <CAMpxmJU_0MzroyD_ZF5WOxpZz3dkADLOmW7aKpWdJ7GCvo-RnA@mail.gmail.com>
+ <CACRpkdaPQKxfC66yhG=xdmCOGGd9PjDVCwZquKb+4HmuS_=kNA@mail.gmail.com> <CALL1Z1xpcGyh_f3ooRT+gGApoAnS7YBMd2hUKqnt+pTcAFoeAg@mail.gmail.com>
+In-Reply-To: <CALL1Z1xpcGyh_f3ooRT+gGApoAnS7YBMd2hUKqnt+pTcAFoeAg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 28 Nov 2019 14:44:56 +0100
+Message-ID: <CACRpkdYEEypRZOaO3Ta9aDgizNeLyUOSraBEhKaZcHaJV+o0gQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: nvmem: new optional property write-protect-gpios
+To:     Khouloud Touil <ktouil@baylibre.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        baylibre-upstreaming@groups.io,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The description lacks a few indefinite articles when reading and as a
-result is a bit clunky to read. Introduce a few indefinite articles to
-appease the grammar gods.
+On Tue, Nov 26, 2019 at 4:18 PM Khouloud Touil <ktouil@baylibre.com> wrote:
 
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- Documentation/devicetree/bindings/connector/usb-connector.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> [Me]
+>> 4. The code still need to be modified to set the value
+>>    to "1" to assert the line since the gpiolib now handles
+>>    the inversion semantics.
 
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-index d357987181ee..88578ac1a8a7 100644
---- a/Documentation/devicetree/bindings/connector/usb-connector.txt
-+++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-@@ -1,8 +1,8 @@
- USB Connector
- =============
- 
--USB connector node represents physical USB connector. It should be
--a child of USB interface controller.
-+A USB connector node represents a physical USB connector. It should be
-+a child of a USB interface controller.
- 
- Required properties:
- - compatible: describes type of the connector, must be one of:
--- 
-2.24.0
+> By saying "assert the wp" do you mean enable the write operation or
+> block it ?
 
+Yeah one more layer of confusion, sorry :/
+
+By "asserting WP" I mean driving the line to a state where
+writing to the EEPROM is enabled, i.e. the default state is
+that the EEPROM is write protected and when you "assert"
+WP it becomes writable.
+
+If you feel the inverse semantics are more intuitive (such that
+WP comes up asserted and thus write protected), be my
+guest :D
+
+As long as it is unambiguously documented in the bindings
+and with comments in the code I'm game for whatever the
+at24 people feel is most appropriate. (You will set the standard
+for everyone else.)
+
+Yours.
+Linus Walleij
