@@ -2,220 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C6E710C7FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 12:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5E510C806
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 12:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfK1LeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 06:34:23 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22458 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726227AbfK1LeX (ORCPT
+        id S1726694AbfK1LfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 06:35:01 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43647 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfK1LfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 06:34:23 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xASBRQXs001753;
-        Thu, 28 Nov 2019 12:34:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=vcru8Yw5xoPG8rIOJUSk+LjLaSpyvHCsGnBcaiG0UXs=;
- b=BUmfz3aLsGtIMdxzjllOfORoAqCvdHX/pbe4Y9wp1txnkXB4v+FlmqmOSec+50gtVfxJ
- rr7QJzuM7iCp77a4vH062kg5Eg42MBxJVV7k9Yk0uoShOYtuBYcjHF0M0GtVOqz0NIxw
- fSiknbLvVPinYBn0TMy/I1aUenbESRFtQH2JNxv4WIF0gyrkKiKZXqE5JoxV5jdRF5ZO
- R36NN+KAEhKfLnVrAP9XQ4ygZCqNYYHZHhxnPdnFauMY1GwsushClUOW2KGQdcR/QOZ3
- wREuol3lx7/EG8o2L6hAmIm9jbDCfLIZn8s4c8oe2LDQunJjBYXKAMDi37SjATQfIy1X eQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2whcxshrhh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Nov 2019 12:34:19 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8131F100038;
-        Thu, 28 Nov 2019 12:34:18 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag7node2.st.com [10.75.127.20])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 72FC32B1882;
-        Thu, 28 Nov 2019 12:34:18 +0100 (CET)
-Received: from localhost (10.75.127.50) by SFHDAG7NODE2.st.com (10.75.127.20)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 28 Nov 2019 12:34:17
- +0100
-From:   Loic Pallardy <loic.pallardy@st.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        <fabien.dessenne@st.com>, <s-anna@ti.com>,
-        Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 1/1] remoteproc: add support for co-processor loaded and booted before kernel
-Date:   Thu, 28 Nov 2019 12:33:51 +0100
-Message-ID: <1574940831-7433-1-git-send-email-loic.pallardy@st.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 28 Nov 2019 06:35:00 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so4957288ljm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 03:34:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=XOqt1jA1mHDLa304qf2rgZ/MgYLbFa3pf/BnMQUaDUU=;
+        b=jXLwhfyTQDXvRp9KdmQMJpPvWCMrvfQGfjoalvLtnweIxV6eaWL6+FxOW54SN3/lCi
+         O8wSfDPhKFc69w1M5A955/eZVWOjKZCY/VB7lrcL39YTZx+dE4acIA6eJOzhzHS4CzKa
+         VCxz0bz0HA6fDAJnVxCT0n7LlVuwO7g3xojM1ysv1c/UlW/yOQavAWvsJMFoopU+AeCa
+         yrGiEyCYkuRjGYQcrkmvfPA3+2JFT3nyOxyLG+kO5sEvy+SMFWuPQEby779MxARBw7+0
+         4+N8ie63zkjuc/DuanK9ypI5ccyxAyMBz4aB6uafa3Kb/4C7OcOLaXQfXzQudgKPd0RU
+         QYKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=XOqt1jA1mHDLa304qf2rgZ/MgYLbFa3pf/BnMQUaDUU=;
+        b=f2+XuEdUO0cXo8uCBViI1ffe5xQEjPk88UicuOOrQJ/XF4uwow7QhA7oSIhqQFLhT8
+         ZYPx4Z2L/Z9K0vTntM9MYmKQFdeBsu3aBIqDffAn+IjJMKybPEyDjuaGF04FJsxA+ccp
+         ejlyM2ZCUToamz5MxCOlHD2tN03g6mapDnrLn78MN41Ys5QXE5T4JFwzEoJtK4o2gZJx
+         WOZ5CWl8XO45wCwROYcpJlRCI1aKe5nNosEHkXNNVPnHMmzUX5sIMwQurbRPDgIhF0er
+         HJyti7yGzsVmJs1CX//lzIM7Q9jM3YmKMCXx3zcinl8brD6MSsER3qG9jwpZ2UanBCpl
+         o4rw==
+X-Gm-Message-State: APjAAAUzr6XU9pHTwxTn0kcfoyOueouugX//gy+sAzi3cIr7s1oCXQj/
+        4PcvpQFVZMNW9FAdE/a6NPLe2w==
+X-Google-Smtp-Source: APXvYqxtsM0j/fet/8Hd0wppyL5kmHFHQSC8L5N/GAw4xOFXmFoZ5D9szeElJt5bgd2+LoHbl99hcA==
+X-Received: by 2002:a2e:8e27:: with SMTP id r7mr34842858ljk.101.1574940898131;
+        Thu, 28 Nov 2019 03:34:58 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id f11sm4228455lfa.9.2019.11.28.03.34.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2019 03:34:57 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 6B5A310188A; Thu, 28 Nov 2019 14:34:56 +0300 (+03)
+Date:   Thu, 28 Nov 2019 14:34:56 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: shmem: allow split THP when truncating THP
+ partially
+Message-ID: <20191128113456.5phjhd3ajgky3h3i@box>
+References: <1574471132-55639-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20191125093611.hlamtyo4hvefwibi@box>
+ <3a35da3a-dff0-a8ca-8269-3018fff8f21b@linux.alibaba.com>
+ <20191125183350.5gmcln6t3ofszbsy@box>
+ <9a68b929-2f84-083d-0ac8-2ceb3eab8785@linux.alibaba.com>
+ <14b7c24b-706e-79cf-6fbc-f3c042f30f06@linux.alibaba.com>
+ <alpine.LSU.2.11.1911271718130.652@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG7NODE2.st.com
- (10.75.127.20)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-28_01:2019-11-28,2019-11-28 signatures=0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LSU.2.11.1911271718130.652@eggly.anvils>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remote processor could boot independently or be loaded/started before
-Linux kernel by bootloader or any firmware.
-This patch introduces a new property in rproc core, named skip_fw_load,
-to be able to allocate resources and sub-devices like vdev and to
-synchronize with current state without loading firmware from file system.
-It is platform driver responsibility to implement the right firmware
-load ops according to HW specificities.
+On Wed, Nov 27, 2019 at 07:06:01PM -0800, Hugh Dickins wrote:
+> On Tue, 26 Nov 2019, Yang Shi wrote:
+> > On 11/25/19 11:33 AM, Yang Shi wrote:
+> > > On 11/25/19 10:33 AM, Kirill A. Shutemov wrote:
+> > > > On Mon, Nov 25, 2019 at 10:24:38AM -0800, Yang Shi wrote:
+> > > > > On 11/25/19 1:36 AM, Kirill A. Shutemov wrote:
+> > > > > > On Sat, Nov 23, 2019 at 09:05:32AM +0800, Yang Shi wrote:
+> > > > > > > Currently when truncating shmem file, if the range is partial of
+> > > > > > > THP
+> > > > > > > (start or end is in the middle of THP), the pages actually will
+> > > > > > > just get
+> > > > > > > cleared rather than being freed unless the range cover the whole
+> > > > > > > THP.
+> > > > > > > Even though all the subpages are truncated (randomly or
+> > > > > > > sequentially),
+> > > > > > > the THP may still be kept in page cache.  This might be fine for
+> > > > > > > some
+> > > > > > > usecases which prefer preserving THP.
+> > > > > > > 
+> > > > > > > But, when doing balloon inflation in QEMU, QEMU actually does hole
+> > > > > > > punch
+> > > > > > > or MADV_DONTNEED in base page size granulairty if hugetlbfs is not
+> > > > > > > used.
+> > > > > > > So, when using shmem THP as memory backend QEMU inflation actually
+> > > > > > > doesn't
+> > > > > > > work as expected since it doesn't free memory.  But, the inflation
+> > > > > > > usecase really needs get the memory freed.  Anonymous THP will not
+> > > > > > > get
+> > > > > > > freed right away too but it will be freed eventually when all
+> > > > > > > subpages are
+> > > > > > > unmapped, but shmem THP would still stay in page cache.
+> > > > > > > 
+> > > > > > > To protect the usecases which may prefer preserving THP, introduce
+> > > > > > > a
+> > > > > > > new fallocate mode: FALLOC_FL_SPLIT_HPAGE, which means spltting THP
+> > > > > > > is
+> > > > > > > preferred behavior if truncating partial THP.  This mode just makes
+> > > > > > > sense to tmpfs for the time being.
+> 
+> Sorry, I haven't managed to set aside enough time for this until now.
+> 
+> First off, let me say that I firmly believe this punch-split behavior
+> should be the standard behavior (like in my huge tmpfs implementation),
+> and we should not need a special FALLOC_FL_SPLIT_HPAGE to do it.
+> But I don't know if I'll be able to persuade Kirill of that.
+> 
+> If the caller wants to write zeroes into the file, she can do so with the
+> write syscall: the caller has asked to punch a hole or truncate the file,
+> and in our case, like your QEMU case, hopes that memory and memcg charge
+> will be freed by doing so.  I'll be surprised if changing the behavior
+> to yours and mine turns out to introduce a regression, but if it does,
+> I guess we'll then have to put it behind a sysctl or whatever.
+> 
+> IIUC the reason that it's currently implemented by clearing the hole
+> is because split_huge_page() (unlike in older refcounting days) cannot
+> be guaranteed to succeed.  Which is unfortunate, and none of us is very
+> keen to build a filesystem on unreliable behavior; but the failure cases
+> appear in practice to be rare enough, that it's on balance better to give
+> the punch-hole-truncate caller what she asked for whenever possible.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+I don't have a firm position here. Maybe you are right and we should try
+to split pages right away.
 
----
-Change from v3:
-- add comment about firmware NULL pointer
-- add Mathieu Poirier Ack
-Change from v2:
-- rename property into skip_fw_load
-- update rproc_boot and rproc_fw_boot description
-- update commit message
-Change from v1:
-- Keep bool in struct rproc
----
- drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++--------
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 55 insertions(+), 14 deletions(-)
+It might be useful to consider case wider than shmem.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 307df98347ba..367a7929b7a0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1358,8 +1358,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	return ret;
- }
- 
--/*
-- * take a firmware and boot a remote processor with it.
-+/**
-+ * rproc_fw_boot() - boot specified remote processor according to specified
-+ * firmware
-+ * @rproc: handle of a remote processor
-+ * @fw: pointer on firmware to handle
-+ *
-+ * Handle resources defined in resource table, load firmware and
-+ * start remote processor.
-+ *
-+ * If firmware pointer fw is NULL, firmware is not handled by remoteproc
-+ * core, but under the responsibility of platform driver.
-+ *
-+ * Returns 0 on success, and an appropriate error value otherwise.
-  */
- static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- {
-@@ -1371,7 +1382,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	if (ret)
- 		return ret;
- 
--	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-+	if (fw)
-+		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-+			 fw->size);
-+	else
-+		dev_info(dev, "Synchronizing with preloaded co-processor\n");
- 
- 	/*
- 	 * if enabling an IOMMU isn't relevant for this rproc, this is
-@@ -1718,16 +1733,22 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  * rproc_boot() - boot a remote processor
-  * @rproc: handle of a remote processor
-  *
-- * Boot a remote processor (i.e. load its firmware, power it on, ...).
-+ * Boot a remote processor (i.e. load its firmware, power it on, ...) from
-+ * different contexts:
-+ * - power off
-+ * - preloaded firmware
-+ * - started before kernel execution
-+ * The different operations are selected thanks to properties defined by
-+ * platform driver.
-  *
-- * If the remote processor is already powered on, this function immediately
-- * returns (successfully).
-+ * If the remote processor is already powered on at rproc level, this function
-+ * immediately returns (successfully).
-  *
-  * Returns 0 on success, and an appropriate error value otherwise.
-  */
- int rproc_boot(struct rproc *rproc)
- {
--	const struct firmware *firmware_p;
-+	const struct firmware *firmware_p = NULL;
- 	struct device *dev;
- 	int ret;
- 
-@@ -1758,11 +1779,20 @@ int rproc_boot(struct rproc *rproc)
- 
- 	dev_info(dev, "powering up %s\n", rproc->name);
- 
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto downref_rproc;
-+	if (!rproc->skip_fw_load) {
-+		/* load firmware */
-+		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+		if (ret < 0) {
-+			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			goto downref_rproc;
-+		}
-+	} else {
-+		/*
-+		 * Set firmware name pointer to null as remoteproc core is not
-+		 * in charge of firmware loading
-+		 */
-+		kfree(rproc->firmware);
-+		rproc->firmware = NULL;
- 	}
- 
- 	ret = rproc_fw_boot(rproc, firmware_p);
-@@ -1916,8 +1946,17 @@ int rproc_add(struct rproc *rproc)
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
- 
--	/* if rproc is marked always-on, request it to boot */
--	if (rproc->auto_boot) {
-+	if (rproc->skip_fw_load) {
-+		/*
-+		 * If rproc is marked already booted, no need to wait
-+		 * for firmware.
-+		 * Just handle associated resources and start sub devices
-+		 */
-+		ret = rproc_boot(rproc);
-+		if (ret < 0)
-+			return ret;
-+	} else if (rproc->auto_boot) {
-+		/* if rproc is marked always-on, request it to boot */
- 		ret = rproc_trigger_auto_boot(rproc);
- 		if (ret < 0)
- 			return ret;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..4fd5bedab4fa 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -479,6 +479,7 @@ struct rproc_dump_segment {
-  * @table_sz: size of @cached_table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  * @auto_boot: flag to indicate if remote processor should be auto-started
-+ * @skip_fw_load: remote processor has been preloaded before start sequence
-  * @dump_segments: list of segments in the firmware
-  * @nb_vdev: number of vdev currently handled by rproc
-  */
-@@ -512,6 +513,7 @@ struct rproc {
- 	size_t table_sz;
- 	bool has_iommu;
- 	bool auto_boot;
-+	bool skip_fw_load;
- 	struct list_head dump_segments;
- 	int nb_vdev;
- };
+On traditional filesystem with a backing storage semantics of the same
+punch hole operation is somewhat different. It doesn't have explicit
+implications on memory footprint. It's about managing persistent storage.
+With shmem/tmpfs it is lumped together.
+
+It might be nice to write down pages that can be discarded under memory
+pressure and leave the huge page intact until then...
+
+[ I don't see a problem with your patch as long as we agree that it's
+desired semantics for the interface. ]
+
 -- 
-2.7.4
-
+ Kirill A. Shutemov
