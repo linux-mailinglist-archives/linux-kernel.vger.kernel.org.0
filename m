@@ -2,89 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB0310CFC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBED10CFD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 23:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfK1WkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 17:40:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48154 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfK1WkZ (ORCPT
+        id S1726856AbfK1WvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 17:51:03 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45514 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfK1WvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 17:40:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8s4OV8QdxGuKeWypyj3UNsLPvMPu6eIU4B1rnNMiCVk=; b=UIBQKkwYlA9v9WMMmXJQwIW3o
-        ul8DnxLBsDJcre9bnLzGrSbi3mx4Hrc9IwLNHl7BmkY3gOMJsrwqpHYRy7bj6oh9QnSNjd5sRPbfe
-        7GwbMXtP1MLrFuWld0bcdKHTX8az7ijTNuN2Ix0Z7xx+2dmWbXcVx9SAhkAPsTIHWe1jfD3l/Ip40
-        QuvBSD53+5bYSoo5afxJImzsvt0m1moQSXnjWNtw2/s3Wr8iQdYmYnnnLaiP8vQkvzgm6aoC0Nexh
-        zNGfjcjuyytb51YVH3guxoPn2C/V6yKfLLV7qI+nyXFbez6nI9bpxWqW4I1XNAzY7ED2Bd5+i7a1y
-        FeyKGkpxg==;
-Received: from [2601:1c0:6280:3f0::5a22]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iaSSW-0000OZ-D3; Thu, 28 Nov 2019 22:40:24 +0000
-To:     LKML <linux-kernel@vger.kernel.org>, linux-csky@vger.kernel.org
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, Guo Ren <guoren@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] clocksource: minor Kconfig help text fixes
-Message-ID: <87922baa-223a-345d-38ac-be5a94d15b34@infradead.org>
-Date:   Thu, 28 Nov 2019 14:40:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Thu, 28 Nov 2019 17:51:02 -0500
+Received: from 79.184.255.242.ipv4.supernova.orange.pl (79.184.255.242) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 7a1bba6277687c37; Thu, 28 Nov 2019 23:51:00 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>,
+        "Kenneth R. Crudup" <kenny@panix.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] ACPI: PM: s2idle: Fix possible suspend lock-up
+Date:   Thu, 28 Nov 2019 23:42:09 +0100
+Message-ID: <2787005.CsmIKtZlk9@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi All,
 
-Minor cleanups in Kconfig help text:
+The first patch in this series is a fix for a suspend-to-idle issues introduced
+in 5.4 (see its changelog for details).
 
-- End a sentence with a period.
-- Fix verb grammar.
+The second one is more of an optimization, although some systems may need it
+too (depending on how fragile their platform firmware is).
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Guo Ren <guoren@kernel.org>
-Cc: linux-csky@vger.kernel.org
----
- drivers/clocksource/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Kenneth,
 
---- lnx-54.orig/drivers/clocksource/Kconfig
-+++ lnx-54/drivers/clocksource/Kconfig
-@@ -312,7 +312,7 @@ config ARC_TIMERS_64BIT
- 	depends on ARC_TIMERS
- 	select TIMER_OF
- 	help
--	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP)
-+	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP).
- 	  RTC is implemented inside the core, while GFRC sits outside the core in
- 	  ARConnect IP block. Driver automatically picks one of them for clocksource
- 	  as appropriate.
-@@ -666,7 +666,7 @@ config CSKY_MP_TIMER
- 	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
- 	  system.
- 	  csky,mptimer is not only used in SMP system, it also could be used
--	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
-+	  single core system. It's not a mmio reg and it uses mtcr/mfcr instruction.
- 
- config GX6605S_TIMER
- 	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
+This series is roughly equivalent to the patch at
+
+https://lore.kernel.org/linux-pm/CAJZ5v0h1Ro75++4xuCznkx6GNYd+G5NpMGP96z1jdh=dm9uZbw@mail.gmail.com/T/#m11ca9a14efe4e5193bbda69767595a5fb7bd5479
+
+The main difference is that it flushes system_wq before ec_query_wq, but that
+should not really matter if the issue you saw in 5.4 is the one described
+in the changelog of patch [1/2].
+
+Please test this series and let me know if it works for you too.
+
+In case it does work, it would be good to know if patch [1/2] is sufficient to
+fix the suspend problem at least with ec_no_wakeup == 0 (it may not be
+sufficient with ec_no_wakeup == 1).
+
+Thanks!
+
 
 
