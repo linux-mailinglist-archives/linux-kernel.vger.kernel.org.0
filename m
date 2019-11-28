@@ -2,63 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A297D10C94B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 14:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D28710C94C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 14:13:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfK1NNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 08:13:32 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44581 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfK1NNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 08:13:32 -0500
-Received: by mail-ed1-f67.google.com with SMTP id a67so22678473edf.11
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 05:13:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=6odt7knjVFSwMgqrF/PlO3TrsT0zu25Y9zQ5izRGZM8=;
-        b=nhLtpGgSrQn5p3Hzg79MkTsN6ERB4d1I+9EU1H3osSrIsqEp/KkmrbUaalF6dc13PP
-         FFmWlpkt7BxhB1jEGtEycwv1+oLusgvWdHmIS10c/cdb7EJKkb7bq+S0eoCrgiFJSCkq
-         tgxD+n2ZBDZ3zMzJYfSULejHiOMOU41pe1dgjJeRGRyPOxAKCkYJr7ZfTMTOcQzCwcZH
-         3jyKN41PvZWRX+r78jk7klAPeNXAD2ZoL7UEzGjkAs36RMTwqrxytGzLOkIWQKvmjVk8
-         CeujlJvGf6SbT+VJ4IZqDJibnc8jsdQk5UBbWVCJlcLIUUux9FBoaZl/Fxl0U8Sh5ST2
-         5TxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=6odt7knjVFSwMgqrF/PlO3TrsT0zu25Y9zQ5izRGZM8=;
-        b=MySVUBTXO1U42R6Hjz60IyVEww+7nP8f8HV+KrN26COLNSOgKglonSnbfZVYztLgj1
-         mbCMDwfuLKgFlCC6loFIqrXG2Ewbf/UGhGhUAAu9gWn9Q3GKkLE4nKG0oZAHD3fhxJa/
-         wzKg449G3wq/ghFsYepebQ4H6nkvV/Ng+NeGxQsiJA5A3VRywcjbH+hihrTjdIeM2/Sa
-         4shCv8V3TzZr5h2h346fdAMQifMVFsKUcOpDPDhFllenNmeMDN5RsUbusFCWn/QHKFFU
-         ysirUotHlu1bYi+83hmtYqlWaVyzV0jnBqbbDz998nPj938C3KbF7zLYUsxYUH6K2L52
-         8yVQ==
-X-Gm-Message-State: APjAAAXNlBzxsQ7fqt7kLyI0YDM6LN4HQkGGcUmxv6WXiknBaAHhmzcQ
-        8Lkn8oUwgMRG5YHh5uteg8yVicDDdihP9CSAeMM=
-X-Google-Smtp-Source: APXvYqxX92nrq1Wbh8BE76s/xwbY0/S/pfU6XJCNxmeKGqZB/FYBUTeN6De9S57gc58pNltmjH3xwgwkACVuHBDR37M=
-X-Received: by 2002:a17:906:31c3:: with SMTP id f3mr32100480ejf.198.1574946810765;
- Thu, 28 Nov 2019 05:13:30 -0800 (PST)
+        id S1726648AbfK1NNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 08:13:44 -0500
+Received: from foss.arm.com ([217.140.110.172]:35126 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726320AbfK1NNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 08:13:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F23EF30E;
+        Thu, 28 Nov 2019 05:13:43 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FCA03F52E;
+        Thu, 28 Nov 2019 05:13:43 -0800 (PST)
+Date:   Thu, 28 Nov 2019 13:13:41 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: [PATCHv2 6/6] ASoC: da7213: Add default clock handling
+Message-ID: <20191128131341.GD4210@sirena.org.uk>
+References: <20191126170841.GC4205@sirena.org.uk>
+ <AM5PR1001MB09949D557742E8817545637F80450@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191126175040.GD4205@sirena.org.uk>
+ <AM5PR1001MB09940CF764711F1F13A6B37E80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191127123317.GA4879@sirena.org.uk>
+ <AM5PR1001MB0994D842A2D7051F81A7765B80440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191127154030.GD4879@sirena.org.uk>
+ <AM5PR1001MB099467ACADA4F7B6DDA5087480440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20191127164116.GE4879@sirena.org.uk>
+ <AM5PR1001MB099446A50351CC49478893D780440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Reply-To: yusufosman0142@gmail.com
-Received: by 2002:a17:906:69cb:0:0:0:0 with HTTP; Thu, 28 Nov 2019 05:13:30
- -0800 (PST)
-From:   yusuf osman <yusufosman1042@gmail.com>
-Date:   Thu, 28 Nov 2019 05:13:30 -0800
-X-Google-Sender-Auth: e5jGTAx4BbuETrSnIm7EgalK59M
-Message-ID: <CABJS7P4r+Pf3mfceKhTKG6pF7S3NO89kGB=9sV0cYVraFRkkGg@mail.gmail.com>
-Subject: hi
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
+Content-Disposition: inline
+In-Reply-To: <AM5PR1001MB099446A50351CC49478893D780440@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+X-Cookie: Do not dry clean.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day dear, i have been waiting for your response, kindly check
-your inbox and get back to me, i really need your responds as soon as
-possible, i look forward to hear from you soon. Thanks
 
-Yours Sincerely
-Yusuf
+--veXX9dWIonWZEC6h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Nov 27, 2019 at 06:10:00PM +0000, Adam Thomson wrote:
+> On 27 November 2019 16:41, Mark Brown wrote:
+
+> > The PLL configuration specifies both input and output clock rates (as
+> > well as an input clock source) so if it's got to configure the MCLK I'd
+> > expect the driver to figure that out without needing the caller to
+> > separately set the MCLK rate.
+
+> Yes it does but the name of the function implies it's setting the codec's PLL,
+> not the system clock, whereas the other function implies setting the system
+> clock and not the PLL. Also generally you're only setting the sysclk once
+> whereas you may want to configure and enable/disable the PLL more dynamically,
+> at least for devices which do have a built-in PLL. Of course that could still be
+> handled through the single PLL function call.
+
+I wouldn't be so sure about only setting the SYSCLK once - if you've got
+an input clock you can configure then you might for example want to
+switch between 44.1kHz and 48kHz bases, and disable it or run it at very
+low frequency when idle.  In some systems it's as dynamic as a PLL is.
+
+> Just as an informational, what's the future for these two functions if
+> essentially one is only really required and the other deemed redundant? I would
+> just like to be clear so I'm not falling over things like this in the future,
+> and wasting your time as well. Seems that the PLL call isn't part of simple
+> generic card code so would the be deemed surplus to requirements some point down
+> the line?
+
+Things like simple-card are good for 90% of systems but I'm fairly sure
+we'll never be able to handle more complex setups entirely
+automatically.  What we *should* be doing over time is transitioning all
+this clock stuff into the actual clock framework but that's a big, long
+term thing which nobody is currently actually working on.
+
+--veXX9dWIonWZEC6h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3fyAUACgkQJNaLcl1U
+h9BbLwf/ZISsJtwJ0CU1vhbk43SAwt2M4uHor1sY0rCDrh6SnqvRGe6TMWOHvjHz
+9huuR+na9acBHQ5yOOiQn6fA9JGClPZNKN2HjgUOfZ28J1Qur+pNddbtTuy70xi4
+oOayq16CdAMqXwa7IPIjo3lL+LIJfBJun2XGUQlKByrLpON/y+9LRT+r8twRpFhu
+Ko0M4akmUEXodGJfWRPsoHXVDXRV9LMvKB8m5v9MwVSH4XHfzZCuf4XtlUIigztX
+MnlSv4fnVyoHpRUbjShEsq0TIvOOIgf01NIGNqhsBLUd4OUlRMX64/FHDOSuObEn
+n05/fdBhdXaCJRclImqdOUtFGdqHLA==
+=Y+sk
+-----END PGP SIGNATURE-----
+
+--veXX9dWIonWZEC6h--
