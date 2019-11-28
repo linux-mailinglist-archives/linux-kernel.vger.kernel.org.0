@@ -2,97 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBD8E10C109
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 01:41:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4624210C10D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 01:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfK1Ala (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 19:41:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:54779 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbfK1Ala (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 19:41:30 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Nf2v6CWVz9sSJ;
-        Thu, 28 Nov 2019 11:41:27 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1574901688;
-        bh=sd4/QC2DtC86zW3ryXuf/Oon6IKrF+GBxFj+ksxiPzU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fHFOawqRPSe3cfV+gZ6WApii2EeCLFqIAKnHWo3p75dEJM96a377VobIZcBm6xUIf
-         0EsZdMtnvCx4/cLvj2gXbQYPa+BlcOWzxdkRpuMjDYqSFD7WImwjlFwp8YA/i/jAvz
-         scXny0khhEuCI/0hPKuT+y+CmDb0HmAOFicXumir1BkvbsmUJMvULjB0q0fk+5TZGf
-         uzxsyyEmpy+IJNH0Am5W0GhXLk+NJ5SlCa/PnHMF2aIvQP23prlyCqiUuwXLBg+cQP
-         4IO9g15puXssuH+a6HCTnt7X6xFDJMenVNgevbLGMEbzIftHciWhFoGWcLH9SkV8Nt
-         nMKDVGlFIhXAw==
-Date:   Thu, 28 Nov 2019 11:41:27 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jassi Brar <jaswinder.singh@linaro.org>,
-        Rob Herring <robherring2@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Fabien Dessenne <fabien.dessenne@st.com>
-Subject: linux-next: manual merge of the mailbox tree with the devicetree
- tree
-Message-ID: <20191128114127.0f1e3b06@canb.auug.org.au>
+        id S1727322AbfK1Alo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 19:41:44 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:44673 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbfK1Aln (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 19:41:43 -0500
+Received: by mail-pj1-f68.google.com with SMTP id w8so10979081pjh.11;
+        Wed, 27 Nov 2019 16:41:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=9/KvU09jM/BgUeXZbQ33AJI/29n1B/OHRwEMV0UXnHo=;
+        b=oVSnEkfkxzWJIkroklQFL5l9SCvxLsZSqEMNbeq64rF3I+DqZBlxPaTH692JzQ6ZGE
+         sZl1bfphXuAcTYdYOAgAjBaKOkpM7ywTECEIlJVG6gm7WTNCGzfWWq8TqaEase6QFYHp
+         Db77u7G9tGTJrrd4FVBsyQT/aO0GYbzzsxMGfmQxzTZMECbZwBz3YdoxKAO9+qx2tT5W
+         dB+pL5wGx/mMD6wCJ0NRui9/EeuRqpcMxxiAVFnwyYD2ztktAUiv/B5O0ndmLa/D4fBx
+         SyVmEukW8dYnN06/sFXH4JLM+D0NmG5LNXHE6lAhezm6lWp2UpTZBNqligt2tIgvYXHg
+         9qdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=9/KvU09jM/BgUeXZbQ33AJI/29n1B/OHRwEMV0UXnHo=;
+        b=lM32yVnKfkNOjLrySOotFXuwjvT0qxi+Apy4D37g9QKuEY/gAHarmOQI/wvr9HnroN
+         7Yw/fjO+GF87acRx/R0Big+1NOJJl4m27f11elkFFSOFN6rBVHEjCC560lqdt0y//mxM
+         kNk/cPBP1YU+pxNO62MAeg1KdaW2l2own3RTTBpQUJAtjWNugJCIgAHTuUSgvE+0u2HZ
+         kvDmjvOng3vS0nToTc/eeISE2v1O11mKOdSqicARCNIxroVGchmxFQ349QjwlNFba6MQ
+         6Qs3TpjMp47BLRD432hF0ej+C90cYpp4SW25s/NuUBlLa6Aj+1QNsYj9pmndv9r8pCaD
+         XkWA==
+X-Gm-Message-State: APjAAAUXIDJP605FPdAxrvJUeusdL3HC9yOOeqxf3RCFq0O0ByYM+3is
+        yP+oa39B6YmjmqPvATCD+Q==
+X-Google-Smtp-Source: APXvYqw20O9d8eFPTtRIIbXBeE3VCtUDMGZbbzZ+ufD0VvcKHIjRkWES6CtpOsMdXRThBLeok32cng==
+X-Received: by 2002:a17:90a:1982:: with SMTP id 2mr9749651pji.30.1574901703028;
+        Wed, 27 Nov 2019 16:41:43 -0800 (PST)
+Received: from [127.0.0.1] ([203.205.141.52])
+        by smtp.gmail.com with ESMTPSA id j7sm8147583pjz.12.2019.11.27.16.41.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 16:41:42 -0800 (PST)
+From:   Haiwei Li <lihaiwei.kernel@gmail.com>
+Subject: [PATCH] CRYPTO: Fix initialize 'psp_ret' to avoid uninitialized usage
+ in error paths
+To:     linux-crypto@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     thomas.lendacky@amd.com, gary.hook@amd.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net
+Message-ID: <aa2fd7ae-261a-5c62-821c-96479d11309b@gmail.com>
+Date:   Thu, 28 Nov 2019 08:41:32 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SuKzyasq5wvNffpko8PqMji";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SuKzyasq5wvNffpko8PqMji
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+ From 842cac9822aafd3cfe2da154b92b033fa1ed0d2d Mon Sep 17 00:00:00 2001
+From: Haiwei Li <lihaiwei@tencent.com>
+Date: Thu, 28 Nov 2019 08:25:16 +0800
+Subject: [PATCH] fix: initialize @psp_ret to avoid uninitialized usage 
+in error paths
 
-Hi all,
+Initialize @psp_ret to -1 to avoid uninitialized usage in error paths.
+Such as the function 'sev_flush_asides' in file 'arch/x86/kvm/svm.c'.
 
-Today's linux-next merge of the mailbox tree got a conflict in:
 
-  Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
+Signed-off-by: Haiwei Li <lihaiwei@tencent.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+  drivers/crypto/ccp/psp-dev.c | 3 +++
+  1 file changed, 3 insertions(+)
 
-between commit:
+diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
+index 39fdd06..3501562 100644
+--- a/drivers/crypto/ccp/psp-dev.c
++++ b/drivers/crypto/ccp/psp-dev.c
+@@ -155,6 +155,9 @@ static int __sev_do_cmd_locked(int cmd, void *data, 
+int *psp_ret)
+  	unsigned int phys_lsb, phys_msb;
+  	unsigned int reg, ret = 0;
 
-  4360bf724483 ("dt-bindings: mailbox: convert stm32-ipcc to json-schema")
++	if (psp_ret)
++		*psp_ret = -1;
++
+  	if (!psp)
+  		return -ENODEV;
 
-from the devicetree tree and commit:
-
-  9b2cfd3fb09e ("dt-bindings: mailbox: stm32-ipcc: Updates for wakeup manag=
-ement")
-
-from the mailbox tree.
-
-I fixed it up (I just deleted the file - presumably there will need to be
-followup fixes to the json file) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SuKzyasq5wvNffpko8PqMji
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3fF7cACgkQAVBC80lX
-0GwLYQf/emideZaY5M6Jnfk8OIRnEQAB6SNldtdMGUjBgHzw+z6NDiKLe2vsP0c4
-+NdFaTx6+FfP/gua8ZbvDZhmIqcci0Hht1cHEM1FdIQcG7xCkjItnvqkt8jyvUuF
-qRC8n6yR/mRaTNK+Jf/t3QX0nQcn8l3m1cOJsuEssqdJoLU4dEoVzvL+j6AINJgu
-KlpUgXsr/KuRF4ZInIsbvUK7Nl++EO5RcM9q6PQJmk3ViYOPsheV5XCHfC7DGk8y
-ao2V3kB1gbK+PGdKpoYfxgzC93d1/TbXaCWeF+Y9rBPJ7fahGNmzxeL/b7pM+cW0
-mKiqXfHQ4FgE7llu1nxb8NFIDiE0gg==
-=x9/m
------END PGP SIGNATURE-----
-
---Sig_/SuKzyasq5wvNffpko8PqMji--
+--
+1.8.3.1
