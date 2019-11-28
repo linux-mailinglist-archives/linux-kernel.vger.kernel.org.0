@@ -2,67 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB8310C583
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:56:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB0C10C586
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:57:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfK1I4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 03:56:55 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:40831 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfK1I4z (ORCPT
+        id S1727648AbfK1I5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 03:57:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45814 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726656AbfK1I5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 03:56:55 -0500
-Received: by mail-il1-f194.google.com with SMTP id b15so528584ila.7
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 00:56:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=O9yy5zTlqeykJYyG8DTw88S0CYqhC0k0lDgOWFWAX6lOc89TtW8j+3iq0PQvho7Nb2
-         VtQm+baOQVDA7JrhCn0dvm6VGL32kfjBah1oHOC9+g/YOKZAQBj1qjbG17r3qzj7K5oe
-         Hr0zgrwanjdQcCWPAf2BvFX/8J/AKtN55JaP6s/aMPmtbwCWRQBeZ8LvdVbvZqZspHu6
-         WitMPwqSz4OSSV67RW6B4tWVr7ebdm5O/eG0AP7s0s9vmertadABGvx6IMf5C6LcHviv
-         4mT2Rlr7K5B7W3f7hg6Z5reSmcW7rBrxADpzn5t7RFz1c99W0BdrsN8OeK1DYR5QmbqZ
-         tWDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=jHVTkDGMLwK2gigfjDx+/4zPi49Ky2pjCpZk9jA7BGSfjXNL7m2fm3+zv10ORx67Ot
-         KeDf0VcVobNG3CYkijogtoMEupx3jKnWMJZMzpzYVbDceVnopsHs6p+BBG6kCBSG+nPM
-         E1935OgWui4GaSvHc42X+k5GwyWSVVY0TkXCsEkbcJABxywdMtPZebk1xr7oQ+uMCe62
-         dCm6JnNid9kMl384mruI3UMqylf05d5kcE/adUJHiJ4/MO7qzkS78K0cuO7yIx+IUqDV
-         lmksp/MKap1UfO71fdF/0gNz9PEMZRrC7NOfvDXVbrI+88P0y2txQ4uzhCjm5vPQVrs3
-         sO4g==
-X-Gm-Message-State: APjAAAW0wbQSsMZt6+ri/hrSubvjG0Iz1FbWEzh3k/e3aSj6x/H9mhAn
-        QVnFE9s3+11V9m3dhWEJ4iHL1Bi8cggNXgz1bvw=
-X-Google-Smtp-Source: APXvYqzjC37YeZb3ZRB4r2FvAznYjlRjfIEoouo6mC8Di+iq89g7DE4Fmw8N1FgICdmKksHmuUOaCEvsxaJUaKGB5Hc=
-X-Received: by 2002:a05:6e02:4d2:: with SMTP id f18mr48038328ils.270.1574931413904;
- Thu, 28 Nov 2019 00:56:53 -0800 (PST)
+        Thu, 28 Nov 2019 03:57:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574931426;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=UTqyxfqplr5cCVGYbvk1+6dr+xn0FSeXRHiQCzbM5Do=;
+        b=gLy9OlMfaMj5GVvF5/GIc3JFmn9VlDnDDzCGMETRVFHDBgwHwyw+NDQgXrVB2QWM5QZwHV
+        kwqhyYHvVmQ9b08JPAA44jEpVJ0xLLJUjNyj/YTN+EZ9qHIlNOT8i+sTQj2fjeqxXRLBvh
+        ApAYcVboUsuv3v5B+RgsboaMkeruG68=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-223-tdG362LsNXq1vxkm-wtRyA-1; Thu, 28 Nov 2019 03:57:04 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5381018B9FC1;
+        Thu, 28 Nov 2019 08:57:02 +0000 (UTC)
+Received: from [10.36.116.37] (ovpn-116-37.ams2.redhat.com [10.36.116.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B57B600C8;
+        Thu, 28 Nov 2019 08:56:56 +0000 (UTC)
+Subject: Re: [PATCH] KVM: arm64: eliminate unnecessary var err and jump label
+ in set_core_reg()
+To:     linmiaohe <linmiaohe@huawei.com>, maz@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com,
+        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        gregkh@linuxfoundation.org, will@kernel.org,
+        andre.przywara@arm.com, tglx@linutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1574910598-14468-1-git-send-email-linmiaohe@huawei.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <7210b73f-66a0-e276-74b4-83d011b57d21@redhat.com>
+Date:   Thu, 28 Nov 2019 09:56:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Received: by 2002:a02:270e:0:0:0:0:0 with HTTP; Thu, 28 Nov 2019 00:56:52
- -0800 (PST)
-Reply-To: robertandersonhappy1@gmail.com
-From:   robert <robertandersongood5@gmail.com>
-Date:   Thu, 28 Nov 2019 00:56:52 -0800
-Message-ID: <CAD7QbCCHjPVNNNkd4iMpBMyePzaL1OVXWBkwrt+Vkk8BHYDsMA@mail.gmail.com>
-Subject: Dear friend, My name is Bar.robert anderson I am an attorney and a
- private account manager to my late client. In the Year 2014, my client by
- name Mr. Carlos, passed away,The reason why I contacted you is because you
- bear the same last name with the deceased, and I can present you as the
- beneficiary and next of kin to my late client funds then you will stand as
- his next of kin and claim the funds. leaving behind a cash inheritance of
- seven Million Five Hundred Thousand United States Dollars (US$7.500,000,00).My
- late client and bosom friend grew up in a "Motherless Babies Home". He had no
- family, no beneficiary nor next of kin to the inheritance Funds left behind
- at the Bank. You should contact me through my private email address:
- robertandersonhappy1@gmail.com Best Regards, Bar. robert anderson
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1574910598-14468-1-git-send-email-linmiaohe@huawei.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: tdG362LsNXq1vxkm-wtRyA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On 11/28/19 4:09 AM, linmiaohe wrote:
+> From: Miaohe Lin <linmiaohe@huawei.com>
+> 
+> The var err and jump label out isn't really needed in
+> set_core_reg(). Clean them up.
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+
+Thanks
+
+Eric
+
+> ---
+>  arch/arm64/kvm/guest.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index 3b836c91609e..88eb6e5399ed 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -159,7 +159,6 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+>  	__uint128_t tmp;
+>  	void *valp = &tmp;
+>  	u64 off;
+> -	int err = 0;
+>  
+>  	/* Our ID is an index into the kvm_regs struct. */
+>  	off = core_reg_offset_from_id(reg->id);
+> @@ -173,10 +172,8 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+>  	if (KVM_REG_SIZE(reg->id) > sizeof(tmp))
+>  		return -EINVAL;
+>  
+> -	if (copy_from_user(valp, uaddr, KVM_REG_SIZE(reg->id))) {
+> -		err = -EFAULT;
+> -		goto out;
+> -	}
+> +	if (copy_from_user(valp, uaddr, KVM_REG_SIZE(reg->id)))
+> +		return -EFAULT;
+>  
+>  	if (off == KVM_REG_ARM_CORE_REG(regs.pstate)) {
+>  		u64 mode = (*(u64 *)valp) & PSR_AA32_MODE_MASK;
+> @@ -200,14 +197,12 @@ static int set_core_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+>  				return -EINVAL;
+>  			break;
+>  		default:
+> -			err = -EINVAL;
+> -			goto out;
+> +			return -EINVAL;
+>  		}
+>  	}
+>  
+>  	memcpy((u32 *)regs + off, valp, KVM_REG_SIZE(reg->id));
+> -out:
+> -	return err;
+> +	return 0;
+>  }
+>  
+>  #define vq_word(vq) (((vq) - SVE_VQ_MIN) / 64)
+> 
 
