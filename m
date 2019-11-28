@@ -2,117 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE1710CBAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:27:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F9110CBB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:29:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfK1P1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 10:27:41 -0500
-Received: from sonic313-19.consmr.mail.gq1.yahoo.com ([98.137.65.82]:35075
-        "EHLO sonic313-19.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726594AbfK1P1l (ORCPT
+        id S1726876AbfK1P3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 10:29:32 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36974 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfK1P3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:27:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1574954859; bh=BBopnqo6qohFLaZDooxmr9jLgdzlSTJflqclumYEoow=; h=Date:From:To:Cc:Subject:References:From:Subject; b=h10ju8+H2GjcW9b8CtTWsyLgQ+A1aV9j7mgiwYISBqkLVtZ9bSeEHfjw8xz10X5eKaatMYzrPvx+NeIf8Q/xIkGC2ZnvugK1X+88M61YMyC8q+fMHPc8t0pT8lfF0FP5vQ/0AQ5jc6CcFU/AARkCK748lMvtV0eJQA5ec2l+rWNq89dZLiygeGUzd/Avr4mAqxGmwZWlKGSfnkEx7098XVcOrCcL+piD40E4YIc9+nxVzsOFMmRMzii983RA+j83JdkcQpYsKMPDmGbY8HlH1ImMm+5JC9jy3tBoSR7uAWOpfyOqAWT+Tq526KW9xchL39hCFF14Z+IKUs0+yD3KbQ==
-X-YMail-OSG: Xm6URX4VM1nRaeWmaNTm7ugAZVF1L..zbE2al1IEpUB6LFNtWbxbj7kKssMf3ZQ
- u6855OT2XAlkeoc9s.jbZ5pRjpzDaCZBbpYQRwjGQT5SqwO8RU6nrYngsHcwNMev24UHrntN2LfC
- RfOwA7jPdEXC8v0Wu5OciarIVZ42HzbBbNdQmwHh69_iv.zCrpQZwyyWOXjYJLXwyTjdgKSyDL3d
- SzA5DR_n1fMh_q4uxXvb6VeiMiUM0C.frGcJVur5ZejGqIbMOTriLRfFmlhqEOhiuVRGYPMYBicH
- mo6Qza1uphzTQDaoKSHn24QIqi9GqWFl_iUma86XgqMe87o1E9ucCst4O1.V_btr2ubB3XzEko9b
- Rw.EZLY42n..cbgL7v4r6Pj37V4bmFap56c8i6q4y0w8b5TwTUz2e7RHQiYCaxFdfcS8MM9Q20Hd
- c9t5BYXtG_hTcUaARsdRPiUDcDrULNxywVOsHy6RBJv_IxuqNibd94391R0NQpKEmvI0oujl.ulE
- q_zdzRMddCyfoIyXhR34NPo0hUw8318Dtv_1Wxj5VqLR5jRzrnAED39emgTV63el6xOrNcQOYR0Y
- 2gxyXhMTY1XUgaI1Q3O1N5fE.gkdWf3SIOwcWdJzTkchmmLVriFpgxrg1n_wsaCF2ARxFs7flC77
- EvLXnktbStcSwUE8J87RkeebghSEEsCzB7ZTQtnoMSy2YcNXty.9XThCggTUXx3DWQtPfbiyoAkn
- M74jxHBL4QI6rv53NtX.3gKMUuVXPyGcnTjoKaOfHsJzOEY55Tah7ihCYrU0jGXHN0YQ.9Durc3E
- GsiWG4BYu9aBotsVbXGOEtnVxF1aOU.JGV0z7lIiPHnw8U9WzKW1BALEb1kZ_V5MtWWFA36J3VZV
- MT83bWHyACiqJ.ni3H7LKMvEqYaFMDJbWERynFvbf_HCWF7.Tr0JPySc.m0qW15TYIIF1spc7ORB
- wQyMDsLg417WhVOKmTviO4FWsVv4.G_Wy80RXIwqchVQcAQJMaJcbbl0jlB3FPndF8dBdsVsei3J
- kwulrVk43s2PCV8R2k9eM0_.j3cyebDCWE2dNIyFjbG1DhMpd9AScUXmnk6yO77SQz8pHEwvNAes
- t.kjcGagwuEEXebvtGtH86cIw7I.E3wYT0GLmYqXHlhRhgIfT8ZxusbHEwaZuWcXplj4ENJyUKwn
- QSqEfWi8P8sPc5_.nbJANbJQMNa1zVXEeqIGF927vXBRDDI78sTVAoPdPqvZICvYHiVXiYNBNNIT
- KxHLGOBCF__10cffNyDzp2FiaDL7Kr8xT4bjlAF19EC_Egn0y9L_mdSTCCd9MCotKKw19sflv8fQ
- XGeweunuehWEVgT5we1aSDaaIvtD1WgrXhEOjRNCbRTGMxSqF_u_9KXAgWYBVW_OwT.nrSjo-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Nov 2019 15:27:39 +0000
-Received: by smtp403.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3a3072f52d7e668a9fb4b87cdd2c6c03;
-          Thu, 28 Nov 2019 15:27:34 +0000 (UTC)
-Date:   Thu, 28 Nov 2019 23:27:16 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: [GIT PULL] erofs updates for 5.5
-Message-ID: <20191128152711.GA4993@hsiangkao-HP-ZHAN-66-Pro-G1>
+        Thu, 28 Nov 2019 10:29:31 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 128so15547586oih.4
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 07:29:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8jbWiJP8zuPwo1h57bhn9bSCas9rrkjtaMb7mPh1IdA=;
+        b=N+fcqekoOxQDhlpJGKAWkheEt+gN07VZ81/73rXPn1PTzGgsLa3Rcmh9TY+xjk+3Ih
+         qDS65BfoaV4kxITCwQ9aynD1HSih7wmCgb7HKN1o0H2yuxRclj9Ujkcv+DZ9XG9qqLfs
+         gYcHNBi7EmNxtYpBo1DwprVnLxrTtjU6Ewc2Z1bEnBpr9dgcHgNpZdxeFGtuNGpYZLXB
+         hvMrqTF858ayZPTPJw8NVYywiC4NY9H/sx9/Hg0jnT8HOwWZT4svLjw62xcIlt+rlAQX
+         SzBMJVlbbVULZs/zzvLYp6VnC0pl64WDBL9U0f3CF54c3vg/K2F81DElVEZbPOtUntZY
+         PnQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8jbWiJP8zuPwo1h57bhn9bSCas9rrkjtaMb7mPh1IdA=;
+        b=i2L4vQb2nD3mXvewh1bhkycF+VO8F29x8WNz3/k64lfmF9rGmvagNClmlV3gkWpKWD
+         HFJYVBn2ZInRQVW2zt6j8VrYI9GI+MDcCsu0/L+naOEMC6L5RI7C1oiw3JU1loAw48fS
+         45f7RRuCYy1h5gpZp3u6/T7X3qIkg+g3i430riIakZWXhSOIefNhoRtUngdKXgxqFoJV
+         YBt5jaQQqh4QUVOe/JDd2mWYqL8YzhouOC6U8Ueb9pByLqBjjzz39UYnBaNvwhKsZ7SA
+         AJ3dNxRmhO19WSK/yCQ4D234IYJKrfAnxuQBNubF8jIioY0a8hT1smr0WEi0MYMHVRqU
+         XXJQ==
+X-Gm-Message-State: APjAAAUaiP7540wFzQcN41Ukt32yELtQD3CS/gVXlxAW4+TPKovQptKn
+        Js41qwu/+wzC00iCOEOC+xyGdsfxErztTUJhf4HGNw==
+X-Google-Smtp-Source: APXvYqwQF8gySZpP3ML3y1V5QupQwMNy5TOx2Z2uDdHPjHuyVgwkY34m3prkUOx4mIROyml0+fITWq8uzCmVDZn6HVs=
+X-Received: by 2002:aca:d783:: with SMTP id o125mr1403513oig.68.1574954969803;
+ Thu, 28 Nov 2019 07:29:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-References: <20191128152711.GA4993.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
-X-Mailer: WebService/1.1.14728 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+References: <0000000000009f46d4059863fdea@google.com> <71b86056-944f-c5e1-b4cf-35833a82761c@kernel.dk>
+In-Reply-To: <71b86056-944f-c5e1-b4cf-35833a82761c@kernel.dk>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 28 Nov 2019 16:29:03 +0100
+Message-ID: <CAG48ez09ZN2v2rTvnSgybrZu7BAa28vcnkcOU=Z7549rbpqz1A@mail.gmail.com>
+Subject: Re: INFO: trying to register non-static key in io_cqring_overflow_flush
+To:     Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Nov 28, 2019 at 4:19 PM Jens Axboe <axboe@kernel.dk> wrote:
+> On 11/28/19 12:35 AM, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    d7688697 Merge tag 'for-linus' of git://git.kernel.org/pub..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=145e5fcee00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=12f2051e3d8cdb3f
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=be9e13497969768c0e6e
+> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146c517ae00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16550b12e00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+be9e13497969768c0e6e@syzkaller.appspotmail.com
+>
+> This is the same as:
+>
+> syzbot+0d818c0d39399188f393@syzkaller.appspotmail.com
 
-Could you consider this pull request for 5.5-rc1?
+syzbot listens to specific commands, see
+<https://github.com/google/syzkaller/blob/master/docs/syzbot.md#status>
+(linked in the report):
 
-No major kernel updates for this round since I'm fully diving
-into LZMA algorithm internals now to provide high CR XZ algorihm
-support. It needs more work and time for me to get a better
-compression time.
-
-All commits have been in linux-next and tested with no smoke out.
-This merges cleanly with master.
-
-Happy Thanksgiving!
-Gao Xiang
-
-The following changes since commit 4f5cafb5cb8471e54afdc9054d973535614f7675:
-
-  Linux 5.4-rc3 (2019-10-13 16:37:36 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-5.5-rc1
-
-for you to fetch changes up to 3dcb5fa23e16ef50b09e7a56b47d8e4c04ca09c0:
-
-  erofs: remove unnecessary output in erofs_show_options() (2019-11-24 11:02:41 +0800)
-
-----------------------------------------------------------------
-Updates since last change:
-- Introduce superblock checksum support;
-- Set iowait when waiting I/O on the sync decompression path;
-- Several code cleanups.
-
-----------------------------------------------------------------
-Chengguang Xu (1):
-      erofs: remove unnecessary output in erofs_show_options()
-
-Gao Xiang (6):
-      erofs: clean up collection handling routines
-      erofs: remove dead code since managed cache is now built-in
-      erofs: get rid of __stagingpage_alloc helper
-      erofs: clean up decompress queue stuffs
-      erofs: set iowait for sync decompression
-      erofs: drop all vle annotations for runtime names
-
-Pratik Shinde (1):
-      erofs: support superblock checksum
-
- fs/erofs/Kconfig        |   1 +
- fs/erofs/decompressor.c |   2 +-
- fs/erofs/erofs_fs.h     |   3 +-
- fs/erofs/internal.h     |   7 +-
- fs/erofs/super.c        |  39 ++++++-
- fs/erofs/utils.c        |  17 ++-
- fs/erofs/zdata.c        | 288 +++++++++++++++++++++---------------------------
- fs/erofs/zdata.h        |   8 +-
- fs/erofs/zmap.c         |  28 ++---
- 9 files changed, 190 insertions(+), 203 deletions(-)
-
+#syz dup: INFO: trying to register non-static key in io_cqring_ev_posted
