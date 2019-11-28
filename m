@@ -2,341 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C70E10C364
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 06:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E93510C36B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 06:10:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfK1FKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 00:10:17 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41546 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbfK1FKO (ORCPT
+        id S1727432AbfK1FK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 00:10:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60070 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727150AbfK1FKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 00:10:14 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t8so10999020plr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 21:10:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RTwhiGGQI56EX7zxVFVkZMzvQ6KeYwPMuBINHNN78VE=;
-        b=zP4AQxuY0FZin5I4kw6zgjYse7QycYQBRbSq6aiiqJQoljrKYOR6UINFvxRqwhq+wh
-         /IRFA0OVHwKkViESNJCu8ixC+FtuDe8KBhuWheSVFlbCZderf+BQcN0JN9iyEEJSrXOv
-         dcdB/czyZyqawpU4TraRtpPYniyRON2GIBd2Q/9j2hsHjwuvAKJd7DTy+wBEXdZWmbGS
-         tNMBKe2xB8kOuBj9Qi+U7GZkQyzMwaVQL4uPo9Y1poUi0pbDJeybiZgIiytIzFoGkP/O
-         2MlG3Eg+BmkNzNOKa27EXR2nkvALtnmBwL2mdUt3jdY4dPbJNB889UPnZ0grgQdOSKQY
-         meHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=RTwhiGGQI56EX7zxVFVkZMzvQ6KeYwPMuBINHNN78VE=;
-        b=clB4w1r/GT0MAa8yQyHsgIwHgAxmMdwhdQU1EDoSAWEeAVcUByzU79ixxK99GuLvYa
-         /X/LsegfHwkGyf/UxV9jNrzlysGC4SgmZ9z2iZbnn08+0GK7BH9NP51bRPsyivKFjRAj
-         OKEvxCEpLJ9CVuC+9CKb83MOxnHIDLpdc5jQzfzUWUaGpa2DXLe39sPfYVn6AznUCeHO
-         Whuz8ulJ5TFn4bik6JqGC6GBjznipnvgDL1Z/iu19SnMYwNRdVMj8e27fQPlyvqdJLHu
-         G6NLh6AXBZrKz9piYnUxy7/Krh+d+b+wP8+NdhTfjimazx9OQeZZ1Yw7P/gPZI0qOhSE
-         VLLw==
-X-Gm-Message-State: APjAAAWcVY7UGyo4yCGo6wOjkdnzfy6ra+PSciSDrUOIrZHPUn8oWN+e
-        bsIC0b2s2pN2oB8EMpEmi9IqiUHFhEg=
-X-Google-Smtp-Source: APXvYqyRHkjTZZl+/60KbQcFfgrS+yISYTsqFIRNx0NMCxjA+oFiT4bdf2xXudW1TLILVE9y6hjjJg==
-X-Received: by 2002:a17:902:a98b:: with SMTP id bh11mr8058652plb.281.1574917812910;
-        Wed, 27 Nov 2019 21:10:12 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id j20sm17799838pff.182.2019.11.27.21.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 21:10:12 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Yu Chen <chenyu56@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <lijun.kernel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jack Pham <jackp@codeaurora.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v6 8/8] misc: hisi_hikey_usb: Driver to support usb functionality of Hikey960
-Date:   Thu, 28 Nov 2019 05:10:01 +0000
-Message-Id: <20191128051001.18995-9-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191128051001.18995-1-john.stultz@linaro.org>
-References: <20191128051001.18995-1-john.stultz@linaro.org>
+        Thu, 28 Nov 2019 00:10:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l+NBq4hr2KRRSPHU68VrtargZDFHklaSzkUUjI+g3kY=; b=eknrOevoXGVBjGctmGm1T1yYM
+        GpcDuTUpcecCjIE+YrQX8CIlJaSk1TZk0kkaT1WY8TOgzr2ZK0ZtP4pTt2LF8TLPNiYdynwpHkw1o
+        XmHJtwqWtAwdJ4IGqzJynUitWN0VSpoB/TL+v636S+/HvYZnuwS6zcLE10gkMCuGDpbsw7xTPY0kY
+        nJ6ISt7VsZk/tBggIX6QL+Ffz99+r+m0kHjM/Due/pGied2AtaCmMmFo6JMshl12WGtXuKaTR+JEG
+        lAEFLLSEuBc8bROCeVZ1uzSQhBC8Rw8ddOlBiUQ76JtWZMdEZMSHIvmanOTIzH+aKuzbYEYvNpOpl
+        IURWbD23A==;
+Received: from [2601:1c0:6280:3f0::5a22]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iaC4N-00065F-L5; Thu, 28 Nov 2019 05:10:23 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] clocksource: fix Kconfig miscues
+Message-ID: <4deb42a9-82f2-72f9-891f-972a9a399f4f@infradead.org>
+Date:   Wed, 27 Nov 2019 21:10:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Chen <chenyu56@huawei.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-The HiKey960 has a fairly complex USB configuration due to it
-needing to support a USB-C port for host/device mode and multiple
-USB-A ports in host mode using a single USB controller.
+Fix lots of typo, spelling, punctuation, and grammar miscues in
+drivers/clocksource/Kconfig.
 
-See schematics here:
-  https://github.com/96boards/documentation/raw/master/consumer/hikey/hikey960/hardware-docs/HiKey960_Schematics.pdf
-
-This driver acts as a usb-role-switch intermediary, intercepting
-the role switch notifications from the tcpm code, and passing
-them on to the dwc3 core.
-
-In doing so, it also controls the onboard hub and power gpios in
-order to properly route the data lines between the USB-C port
-and the onboard hub to the USB-A ports.
-
-NOTE: It was noted that controlling the TYPEC_VBUS_POWER_OFF and
-TYPEC_VBUS_POWER_ON values here is not reccomended. I'm looking
-for a way to remove that bit from the logic here, but wanted to
-still get feedback on this approach.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-CC: ShuFan Lee <shufan_lee@richtek.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Yu Chen <chenyu56@huawei.com>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jun Li <lijun.kernel@gmail.com>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Jack Pham <jackp@codeaurora.org>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
-[jstultz: Major rework to make the driver a usb-role-switch
-          intermediary]
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Change-Id: Icf381520abd46d083750d01f91e478321560fbf9
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 ---
-v3:
-* Major rework to make the driver a usb-role-switch intermediary
-  rather then trying to do notifier callbacks from the role switch
-  logic
----
- drivers/misc/Kconfig          |   6 ++
- drivers/misc/Makefile         |   1 +
- drivers/misc/hisi_hikey_usb.c | 178 ++++++++++++++++++++++++++++++++++
- 3 files changed, 185 insertions(+)
- create mode 100644 drivers/misc/hisi_hikey_usb.c
+Interesting that NSPIRE_TIMER is for timer-zevio.c, which says
+nothing about NSpire.
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 7f0d48f406e3..1d0279b77a12 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -465,6 +465,12 @@ config PVPANIC
- 	  a paravirtualized device provided by QEMU; it lets a virtual machine
- 	  (guest) communicate panic events to the host.
+ drivers/clocksource/Kconfig |   48 +++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
+
+--- linux-next-20191127.orig/drivers/clocksource/Kconfig
++++ linux-next-20191127/drivers/clocksource/Kconfig
+@@ -88,7 +88,7 @@ config ROCKCHIP_TIMER
+ 	select TIMER_OF
+ 	select CLKSRC_MMIO
+ 	help
+-	  Enables the support for the rockchip timer driver.
++	  Enables the support for the Rockchip timer driver.
  
-+config HISI_HIKEY_USB
-+	tristate "USB functionality of HiSilicon Hikey Platform"
-+	depends on OF && GPIOLIB
-+	help
-+	  If you say yes here you get support for usb functionality of HiSilicon Hikey Platform.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index c1860d35dc7e..e5e85ad0dd57 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -57,3 +57,4 @@ obj-y				+= cardreader/
- obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
- obj-$(CONFIG_HABANA_AI)		+= habanalabs/
- obj-$(CONFIG_XILINX_SDFEC)	+= xilinx_sdfec.o
-+obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
-diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
-new file mode 100644
-index 000000000000..32015bc9ccf6
---- /dev/null
-+++ b/drivers/misc/hisi_hikey_usb.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Support for usb functionality of Hikey series boards
-+ * based on Hisilicon Kirin Soc.
-+ *
-+ * Copyright (C) 2017-2018 Hilisicon Electronics Co., Ltd.
-+ *		http://www.huawei.com
-+ *
-+ * Authors: Yu Chen <chenyu56@huawei.com>
-+ */
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/slab.h>
-+#include <linux/usb/role.h>
-+
-+#define DEVICE_DRIVER_NAME "hisi_hikey_usb"
-+
-+#define HUB_VBUS_POWER_ON 1
-+#define HUB_VBUS_POWER_OFF 0
-+#define USB_SWITCH_TO_HUB 1
-+#define USB_SWITCH_TO_TYPEC 0
-+#define TYPEC_VBUS_POWER_ON 1
-+#define TYPEC_VBUS_POWER_OFF 0
-+
-+struct hisi_hikey_usb {
-+	struct gpio_desc *otg_switch;
-+	struct gpio_desc *typec_vbus;
-+	struct gpio_desc *hub_vbus;
-+
-+	struct usb_role_switch *hub_role_sw;
-+	struct usb_role_switch *dev_role_sw;
-+	struct notifier_block nb;
-+};
-+
-+static void hub_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb, int value)
-+{
-+	gpiod_set_value_cansleep(hisi_hikey_usb->hub_vbus, value);
-+}
-+
-+static void usb_switch_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
-+			    int switch_to)
-+{
-+	gpiod_set_value_cansleep(hisi_hikey_usb->otg_switch, switch_to);
-+}
-+
-+static void usb_typec_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
-+				 int value)
-+{
-+	gpiod_set_value_cansleep(hisi_hikey_usb->typec_vbus, value);
-+}
-+
-+static int hub_usb_role_switch_set(struct device *dev, enum usb_role role)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
-+
-+	if (!hisi_hikey_usb || !hisi_hikey_usb->dev_role_sw)
-+		return -EINVAL;
-+
-+	switch (role) {
-+	case USB_ROLE_NONE:
-+		usb_typec_power_ctrl(hisi_hikey_usb, TYPEC_VBUS_POWER_OFF);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_HUB);
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_ON);
-+		break;
-+	case USB_ROLE_HOST:
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_OFF);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
-+		usb_typec_power_ctrl(hisi_hikey_usb, TYPEC_VBUS_POWER_ON);
-+		break;
-+	case USB_ROLE_DEVICE:
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_OFF);
-+		usb_typec_power_ctrl(hisi_hikey_usb, TYPEC_VBUS_POWER_OFF);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return usb_role_switch_set_role(hisi_hikey_usb->dev_role_sw, role);
-+}
-+
-+static enum usb_role hub_usb_role_switch_get(struct device *dev)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
-+
-+	if (!hisi_hikey_usb || !hisi_hikey_usb->dev_role_sw)
-+		return -EINVAL;
-+
-+	return usb_role_switch_get_role(hisi_hikey_usb->dev_role_sw);
-+}
-+
-+static int hisi_hikey_usb_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct hisi_hikey_usb *hisi_hikey_usb;
-+	struct usb_role_switch_desc hub_role_switch = {NULL};
-+
-+	hisi_hikey_usb = devm_kzalloc(dev, sizeof(*hisi_hikey_usb), GFP_KERNEL);
-+	if (!hisi_hikey_usb)
-+		return -ENOMEM;
-+
-+	hisi_hikey_usb->typec_vbus = devm_gpiod_get(dev, "typec-vbus",
-+						    GPIOD_OUT_LOW);
-+	if (IS_ERR(hisi_hikey_usb->typec_vbus))
-+		return PTR_ERR(hisi_hikey_usb->typec_vbus);
-+
-+	hisi_hikey_usb->otg_switch = devm_gpiod_get(dev, "otg-switch",
-+						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(hisi_hikey_usb->otg_switch))
-+		return PTR_ERR(hisi_hikey_usb->otg_switch);
-+
-+	/* hub-vdd33-en is optional */
-+	hisi_hikey_usb->hub_vbus = devm_gpiod_get_optional(dev, "hub-vdd33-en",
-+							   GPIOD_OUT_HIGH);
-+	if (IS_ERR(hisi_hikey_usb->hub_vbus))
-+		return PTR_ERR(hisi_hikey_usb->hub_vbus);
-+
-+	hisi_hikey_usb->dev_role_sw = usb_role_switch_get(dev);
-+	if (!hisi_hikey_usb->dev_role_sw)
-+		return -EPROBE_DEFER;
-+	if (IS_ERR(hisi_hikey_usb->dev_role_sw))
-+		return PTR_ERR(hisi_hikey_usb->dev_role_sw);
-+
-+	hub_role_switch.fwnode = dev_fwnode(dev);
-+	hub_role_switch.set = hub_usb_role_switch_set;
-+	hub_role_switch.get = hub_usb_role_switch_get;
-+	hisi_hikey_usb->hub_role_sw = usb_role_switch_register(dev,
-+							&hub_role_switch);
-+
-+	if (IS_ERR(hisi_hikey_usb->hub_role_sw)) {
-+		usb_role_switch_put(hisi_hikey_usb->dev_role_sw);
-+		return PTR_ERR(hisi_hikey_usb->hub_role_sw);
-+	}
-+
-+	platform_set_drvdata(pdev, hisi_hikey_usb);
-+
-+	return 0;
-+}
-+
-+static int  hisi_hikey_usb_remove(struct platform_device *pdev)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = platform_get_drvdata(pdev);
-+
-+	if (hisi_hikey_usb->hub_role_sw)
-+		usb_role_switch_unregister(hisi_hikey_usb->hub_role_sw);
-+
-+	if (hisi_hikey_usb->dev_role_sw)
-+		usb_role_switch_put(hisi_hikey_usb->dev_role_sw);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id id_table_hisi_hikey_usb[] = {
-+	{.compatible = "hisilicon,gpio_hubv1"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, id_table_hisi_hikey_usb);
-+
-+static struct platform_driver hisi_hikey_usb_driver = {
-+	.probe = hisi_hikey_usb_probe,
-+	.remove = hisi_hikey_usb_remove,
-+	.driver = {
-+		.name = DEVICE_DRIVER_NAME,
-+		.of_match_table = id_table_hisi_hikey_usb,
-+	},
-+};
-+
-+module_platform_driver(hisi_hikey_usb_driver);
-+
-+MODULE_AUTHOR("Yu Chen <chenyu56@huawei.com>");
-+MODULE_DESCRIPTION("Driver Support for USB functionality of Hikey");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+ config ARMADA_370_XP_TIMER
+ 	bool "Armada 370 and XP timer driver" if COMPILE_TEST
+@@ -162,13 +162,13 @@ config NPCM7XX_TIMER
+ 	select CLKSRC_MMIO
+ 	help
+ 	  Enable 24-bit TIMER0 and TIMER1 counters in the NPCM7xx architecture,
+-	  While TIMER0 serves as clockevent and TIMER1 serves as clocksource.
++	  where TIMER0 serves as clockevent and TIMER1 serves as clocksource.
+ 
+ config CADENCE_TTC_TIMER
+ 	bool "Cadence TTC timer driver" if COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	help
+-	  Enables support for the cadence ttc driver.
++	  Enables support for the Cadence TTC driver.
+ 
+ config ASM9260_TIMER
+ 	bool "ASM9260 timer driver" if COMPILE_TEST
+@@ -190,10 +190,10 @@ config CLKSRC_DBX500_PRCMU
+ 	bool "Clocksource PRCMU Timer" if COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	help
+-	  Use the always on PRCMU Timer as clocksource
++	  Use the always on PRCMU Timer as clocksource.
+ 
+ config CLPS711X_TIMER
+-	bool "Cirrus logic timer driver" if COMPILE_TEST
++	bool "Cirrus Logic timer driver" if COMPILE_TEST
+ 	select CLKSRC_MMIO
+ 	help
+ 	  Enables support for the Cirrus Logic PS711 timer.
+@@ -205,11 +205,11 @@ config ATLAS7_TIMER
+ 	  Enables support for the Atlas7 timer.
+ 
+ config MXS_TIMER
+-	bool "Mxs timer driver" if COMPILE_TEST
++	bool "MXS timer driver" if COMPILE_TEST
+ 	select CLKSRC_MMIO
+ 	select STMP_DEVICE
+ 	help
+-	  Enables support for the Mxs timer.
++	  Enables support for the MXS timer.
+ 
+ config PRIMA2_TIMER
+ 	bool "Prima2 timer driver" if COMPILE_TEST
+@@ -238,10 +238,10 @@ config KEYSTONE_TIMER
+ 	  Enables support for the Keystone timer.
+ 
+ config INTEGRATOR_AP_TIMER
+-	bool "Integrator-ap timer driver" if COMPILE_TEST
++	bool "Integrator-AP timer driver" if COMPILE_TEST
+ 	select CLKSRC_MMIO
+ 	help
+-	  Enables support for the Integrator-ap timer.
++	  Enables support for the Integrator-AP timer.
+ 
+ config CLKSRC_EFM32
+ 	bool "Clocksource for Energy Micro's EFM32 SoCs" if !ARCH_EFM32
+@@ -283,8 +283,8 @@ config CLKSRC_NPS
+ 	select TIMER_OF if OF
+ 	help
+ 	  NPS400 clocksource support.
+-	  Got 64 bit counter with update rate up to 1000MHz.
+-	  This counter is accessed via couple of 32 bit memory mapped registers.
++	  It has a 64-bit counter with update rate up to 1000MHz.
++	  This counter is accessed via couple of 32-bit memory-mapped registers.
+ 
+ config CLKSRC_STM32
+ 	bool "Clocksource for STM32 SoCs" if !ARCH_STM32
+@@ -305,14 +305,14 @@ config ARC_TIMERS
+ 	help
+ 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
+ 	  (ARC700 as well as ARC HS38).
+-	  TIMER0 serves as clockevent while TIMER1 provides clocksource
++	  TIMER0 serves as clockevent while TIMER1 provides clocksource.
+ 
+ config ARC_TIMERS_64BIT
+ 	bool "Support for 64-bit counters in ARC HS38 cores" if COMPILE_TEST
+ 	depends on ARC_TIMERS
+ 	select TIMER_OF
+ 	help
+-	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP)
++	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP).
+ 	  RTC is implemented inside the core, while GFRC sits outside the core in
+ 	  ARConnect IP block. Driver automatically picks one of them for clocksource
+ 	  as appropriate.
+@@ -390,7 +390,7 @@ config ARM_GLOBAL_TIMER
+ 	select TIMER_OF if OF
+ 	depends on ARM
+ 	help
+-	  This options enables support for the ARM global timer unit
++	  This option enables support for the ARM global timer unit.
+ 
+ config ARM_TIMER_SP804
+ 	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
+@@ -403,14 +403,14 @@ config CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLO
+ 	depends on ARM_GLOBAL_TIMER
+ 	default y
+ 	help
+-	 Use ARM global timer clock source as sched_clock
++	  Use ARM global timer clock source as sched_clock.
+ 
+ config ARMV7M_SYSTICK
+ 	bool "Support for the ARMv7M system time" if COMPILE_TEST
+ 	select TIMER_OF if OF
+ 	select CLKSRC_MMIO
+ 	help
+-	  This options enables support for the ARMv7M system timer unit
++	  This option enables support for the ARMv7M system timer unit.
+ 
+ config ATMEL_PIT
+ 	bool "Atmel PIT support" if COMPILE_TEST
+@@ -460,7 +460,7 @@ config VF_PIT_TIMER
+ 	bool
+ 	select CLKSRC_MMIO
+ 	help
+-	  Support for Period Interrupt Timer on Freescale Vybrid Family SoCs.
++	  Support for Periodic Interrupt Timer on Freescale Vybrid Family SoCs.
+ 
+ config OXNAS_RPS_TIMER
+ 	bool "Oxford Semiconductor OXNAS RPS Timers driver" if COMPILE_TEST
+@@ -523,7 +523,7 @@ config SH_TIMER_MTU2
+ 	help
+ 	  This enables build of a clockevent driver for the Multi-Function
+ 	  Timer Pulse Unit 2 (MTU2) hardware available on SoCs from Renesas.
+-	  This hardware comes with 16 bit-timer registers.
++	  This hardware comes with 16-bit timer registers.
+ 
+ config RENESAS_OSTM
+ 	bool "Renesas OSTM timer driver" if COMPILE_TEST
+@@ -580,7 +580,7 @@ config CLKSRC_TANGO_XTAL
+ 	select TIMER_OF
+ 	select CLKSRC_MMIO
+ 	help
+-	  This enables the clocksource for Tango SoC
++	  This enables the clocksource for Tango SoC.
+ 
+ config CLKSRC_PXA
+ 	bool "Clocksource for PXA or SA-11x0 platform" if COMPILE_TEST
+@@ -600,15 +600,15 @@ config H8300_TMR16
+         bool "Clockevent timer for the H83069 platform" if COMPILE_TEST
+         depends on HAS_IOMEM
+ 	help
+-	  This enables the 16 bits timer for the H8300 platform with the
+-	  H83069 cpu.
++	  This enables the 16-bits timer for the H8300 platform with the
++	  H83069 CPU.
+ 
+ config H8300_TPU
+         bool "Clocksource for the H8300 platform" if COMPILE_TEST
+         depends on HAS_IOMEM
+ 	help
+ 	  This enables the clocksource for the H8300 platform with the
+-	  H8S2678 cpu.
++	  H8S2678 CPU.
+ 
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+@@ -666,8 +666,8 @@ config CSKY_MP_TIMER
+ 	help
+ 	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
+ 	  system.
+-	  csky,mptimer is not only used in SMP system, it also could be used
+-	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
++	  csky,mptimer is not only used in SMP system, it also could be used in
++	  single core system. It's not a mmio reg and it uses mtcr/mfcr instruction.
+ 
+ config GX6605S_TIMER
+ 	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
 
