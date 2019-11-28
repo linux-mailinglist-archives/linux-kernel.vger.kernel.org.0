@@ -2,84 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED9A210C1E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:51:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C52B10C1ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:53:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbfK1BvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 20:51:14 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44981 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfK1BvO (ORCPT
+        id S1727982AbfK1BxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 20:53:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:45767 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbfK1BxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 20:51:14 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g3so26577548ljl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 17:51:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XSpsmOKMn/O48LBUUrQ1uLf4PCDrcrylBzPfl36vaW4=;
-        b=HKZjDm8rWodB8EJ++Bfhj8pyIRhnt6rHbi9iLTBmubir7V/H3ot6+UwhKaMf/AE9TE
-         otYJAAzZU44px9b6r8FV0elKk5tJD9IFvkCYS6GL1WkiaXlnLrJ+urAUAopY4Jf2o13k
-         27w6oL9CloZIsZW87L8ylCgNrRDHNFZ+7Okhc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XSpsmOKMn/O48LBUUrQ1uLf4PCDrcrylBzPfl36vaW4=;
-        b=aZl3h3LpJzOdnyiGI7hKP1CBhkZ2TPMGTy38GyqCkQ7m4FoH+JaWMwo6tFKVoCtWk+
-         EqMa1OPFRaOKNZrP9mZ2DjIQK8YraDjhgZPV4zCWgjc0Ta8nQAVslSLV0Ehqs6Je4x6R
-         ckxeqUKjbS5gL1/PDmNxwfqA1qIs3gFxnjZhXuJmCYXrCVcusciNz2VHDcZzdrDn4+cp
-         6+EOIlmhIlAQmG3OEhSwjREh2lMHayyzjfZhMuONb4/VD/UnvpqSjrkoW1c4vgO5GjLU
-         /0OXNaeh4ENy8DV+xHxrl2aZmTwpD5z4LXapTDWlsc+K5gh72+yyC0aZfUMx2kWJYry/
-         SYjg==
-X-Gm-Message-State: APjAAAWKYT+ibKELB3LuB/A1bDhTGt4ndGDtt2lMwxuP4tZTwv8pGdSm
-        XDkAIq7HTMaNEijktDd4cXKHTZiyPX0=
-X-Google-Smtp-Source: APXvYqwg4iNpIgGa/Pp3a9eGOWZlbpxrY0Lwl/MJU2ku1DTFXE5H/zczpnA2X5UuV75BHIiPl/v7fg==
-X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr302517ljj.114.1574905871864;
-        Wed, 27 Nov 2019 17:51:11 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id x12sm601322ljd.92.2019.11.27.17.51.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2019 17:51:10 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id t5so26646215ljk.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 17:51:10 -0800 (PST)
-X-Received: by 2002:a2e:84d0:: with SMTP id q16mr21585112ljh.48.1574905870426;
- Wed, 27 Nov 2019 17:51:10 -0800 (PST)
+        Wed, 27 Nov 2019 20:53:10 -0500
+Received: from [5.158.153.53] (helo=g2noscherz.lab.linutronix.de.)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1ia8zI-00083b-6R; Thu, 28 Nov 2019 02:52:57 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        kexec@lists.infradead.org
+Subject: [RFC PATCH v5 0/3] printk: new ringbuffer implementation
+Date:   Thu, 28 Nov 2019 02:58:32 +0106
+Message-Id: <20191128015235.12940-1-john.ogness@linutronix.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAPM=9ty6MLNc4qYKOAO3-eFDpQtm9hGPg9hPQOm4iRg_8MkmNw@mail.gmail.com>
-In-Reply-To: <CAPM=9ty6MLNc4qYKOAO3-eFDpQtm9hGPg9hPQOm4iRg_8MkmNw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 27 Nov 2019 17:50:54 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whdhd69G1AiYTQKSB-RApOVbmzmAzO=+oW+yHO-NXLhkQ@mail.gmail.com>
-Message-ID: <CAHk-=whdhd69G1AiYTQKSB-RApOVbmzmAzO=+oW+yHO-NXLhkQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 5.5-rc1
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 4:59 PM Dave Airlie <airlied@gmail.com> wrote:
->
-> my sample merge is here:
-> https://cgit.freedesktop.org/~airlied/linux/log/?h=drm-next-5.5-merged
+Hello,
 
-Hmm. I think you missed a couple: you left a duplicate
-intel_update_rawclk() around (it got moved into
-intel_power_domains_init_hw() by commit 2f216a850715 ("drm/i915:
-update rawclk also on resume"), and you left the "select
-REFCOUNT_FULL" that no longer exists.
+This is a follow-up RFC on the work to re-implement much of the
+core of printk. The threads for the previous RFC versions are
+here[0][1][2][3].
 
-And apparently nobody bothered to tell me about the semantic conflict
-with the media tree due to the changed calling convention of
-cec_notifier_cec_adap_unregister(). Didn't that show up in linux-next?
+This RFC includes only the ringbuffer and a test module. This is
+a rewrite of the proposed ringbuffer, now based on the proof of
+concept[4] from Petr Mladek as agreed at the meeting[5] during
+LPC2019 in Lisbon.
 
-Anyway, merged and pushed out,
+The internal structure has been reworked such that the printk
+strings are in their own array, each separated by a 32-bit
+integer.
 
-            Linus
+A 2nd array contains the dictionary strings (also with each
+separated by a 32-bit integer).
+
+A 3rd array is made up of descriptors that contain all the
+meta-data for each printk record (sequence number, timestamp,
+loglevel, caller, etc.) as well as pointers into the other data
+arrays for the text and dictionary data.
+
+The writer interface is somewhat similar to v4, but the reader
+interface has changed significantly. Rather than using an
+iterator object, readers just specify the sequence number they
+want to read. In effect, the sequence number acts as the
+iterator.
+
+I have been communicating with Petr the last couple months to
+make sure this implementation fits his expectations. This RFC is
+mainly to get some feedback from anyone else that may see
+something that Petr and I have missed.
+
+This series also includes my test module. On a 16-core ARM64
+test machine, the module runs without any errors. I am seeing
+the 15 writing cores each writing about 34500 records per
+second, while the 1 reading core misses only about 15% of the
+total records.
+
+John Ogness
+
+[0] https://lkml.kernel.org/r/20190212143003.48446-1-john.ogness@linutronix.de
+[1] https://lkml.kernel.org/r/20190607162349.18199-1-john.ogness@linutronix.de
+[2] https://lkml.kernel.org/r/20190727013333.11260-1-john.ogness@linutronix.de
+[3] https://lkml.kernel.org/r/20190807222634.1723-1-john.ogness@linutronix.de
+[4] https://lkml.kernel.org/r/20190704103321.10022-1-pmladek@suse.com
+[5] https://lkml.kernel.org/r/87k1acz5rx.fsf@linutronix.de
+
+John Ogness (3):
+  printk-rb: new printk ringbuffer implementation (writer)
+  printk-rb: new printk ringbuffer implementation (reader)
+  printk-rb: add test module
+
+ kernel/printk/Makefile            |   3 +
+ kernel/printk/printk_ringbuffer.c | 910 ++++++++++++++++++++++++++++++
+ kernel/printk/printk_ringbuffer.h | 249 ++++++++
+ kernel/printk/test_prb.c          | 347 ++++++++++++
+ 4 files changed, 1509 insertions(+)
+ create mode 100644 kernel/printk/printk_ringbuffer.c
+ create mode 100644 kernel/printk/printk_ringbuffer.h
+ create mode 100644 kernel/printk/test_prb.c
+
+-- 
+2.20.1
+
