@@ -2,119 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DD810C161
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:27:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 149D810C1CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfK1B05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 20:26:57 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34908 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbfK1B04 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 20:26:56 -0500
-Received: by mail-qk1-f195.google.com with SMTP id v23so13529564qkg.2;
-        Wed, 27 Nov 2019 17:26:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:message-id;
-        bh=v8LU2xOwjieQDa2R6tGnD5twL2ibcfNQBKehMMo1pOM=;
-        b=p836t4C/Mb+9Qvhxsav8CCyUyHlm3wBMtfPfrn7bYMeeIejCGlv2YUMbpMA0MK1L/+
-         VXLxbYJ1NRwLdz4WkoVp/VfhBcqoiVEyHiO7HWdo6shS9Tl5xZzi0OMXtAc3vfX8T99h
-         M5iouGVNciEqs7b5tcU+peOjlNwiRSnt8kZXmpIwK0Ur818WjukKiDKLjldfYPg+FV72
-         xwAZ6ZIEcbcyos8SKyHW7pFoJFtzmgL1p8HGIUpHLHd2dqkmRjrT1TmtSvbIT80C2myy
-         ArzTiwQSWj70wXmczp2vX7IPGgt7mx746sp/kEm5s0K2x9XVmeuEHXoYAcAEChc6dcfN
-         PmIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:message-id;
-        bh=v8LU2xOwjieQDa2R6tGnD5twL2ibcfNQBKehMMo1pOM=;
-        b=SjPM2F7Q+zOq9wFKOTsQwHw6zlo9qWtMowfHTpHokZzg7FB3qbQfAIqVb//vi0hyfp
-         i9+WWPFndCBxGyNPNUFdJ2sVh0qVAa2DF0vnYtRtnvRJ7UdYpoPOTRjRm1sTnDtZNRe/
-         3icA/6Xdz17fB5QUfPZemWwMutbzL8U7yRkLg0Yf9pXmFqFXg8i8VEyAEtOBz2aloyuR
-         gdXA1O5TjFsu2SOMOA+xJ/2kgF1P1yxMU8LGVaAkxXx6r4z0L/6kM9yrbN5NKxcFRWJW
-         9CxpXTwNiqhvCiCIdQn4OpDqptDokcpnRVSNN1B/Nci54iDOFFmDpOfwzwMm2aDl7azw
-         v4rA==
-X-Gm-Message-State: APjAAAX7kGd00KlJt6D+7hwSiuM0HiASiGUWslCHKonFJw5J2fL3WddM
-        87g5D0zkwez6hZRK5qsabLk=
-X-Google-Smtp-Source: APXvYqxB/VbbPWmpBnSxp8Xt72z5BjnOGfBI/88tlr4XpstuxJxLusLIEXERyHyxku4qUIZyCYEegw==
-X-Received: by 2002:a37:b12:: with SMTP id 18mr7235035qkl.387.1574904413916;
-        Wed, 27 Nov 2019 17:26:53 -0800 (PST)
-Received: from [192.168.86.249] ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id o33sm9020218qta.27.2019.11.27.17.26.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Nov 2019 17:26:53 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Date:   Wed, 27 Nov 2019 22:27:31 -0300
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAADnVQLFVH000BJM4cN29kcC+KKDmVek3jaen3cZz2=12jP58g@mail.gmail.com>
-References: <87imn6y4n9.fsf@toke.dk> <20191126183451.GC29071@kernel.org> <87d0dexyij.fsf@toke.dk> <20191126190450.GD29071@kernel.org> <CAEf4Bzbq3J9g7cP=KMqR=bMFcs=qPiNZwnkvCKz3-SAp_m0GzA@mail.gmail.com> <20191126221018.GA22719@kernel.org> <20191126221733.GB22719@kernel.org> <CAEf4BzbZLiJnUb+BdUMEwcgcKCjJBWx1895p8qS8rK2r5TYu3w@mail.gmail.com> <20191126231030.GE3145429@mini-arch.hsd1.ca.comcast.net> <20191126155228.0e6ed54c@cakuba.netronome.com> <20191127013901.GE29071@kernel.org> <CAADnVQJCMpke49NNzy33EKdwpW+SY1orTm+0f0b-JuW8+uA7Yw@mail.gmail.com> <2993CDB0-8D4D-4A0C-9DB2-8FDD1A0538AB@kernel.org> <CAADnVQJc2cBU2jWmtbe5mNjWsE67DvunhubqJWWG_gaQc3p=Aw@mail.gmail.com> <58CA150B-D006-48DF-A279-077BA2FFD6EC@kernel.org> <CAADnVQLFVH000BJM4cN29kcC+KKDmVek3jaen3cZz2=12jP58g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] libbpf: Fix up generation of bpf_helper_defs.h
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-CC:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        =?ISO-8859-1?Q?Toke_H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jiri Olsa <jolsa@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
-        Namhyung Kim <namhyung@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Message-ID: <D93F5A0F-7675-4A66-B90A-C6091F995BE5@kernel.org>
+        id S1727952AbfK1BnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 20:43:22 -0500
+Received: from mga03.intel.com ([134.134.136.65]:14337 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727126AbfK1BnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Nov 2019 20:43:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 17:43:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,251,1571727600"; 
+   d="scan'208";a="410537884"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga006.fm.intel.com with ESMTP; 27 Nov 2019 17:43:19 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "H Peter Anvin" <hpa@zytor.com>, "Tony Luck" <tony.luck@intel.com>,
+        "Reinette Chatre" <reinette.chatre@intel.com>,
+        "Babu Moger" <babu.moger@amd.com>,
+        "Andre Przywara" <Andre.Przywara@arm.com>,
+        "Sai Praneeth Prakhya" <sai.praneeth.prakhya@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v8 00/13] selftests/resctrl: Add resctrl selftest
+Date:   Wed, 27 Nov 2019 16:39:31 -0800
+Message-Id: <1574901584-212957-1-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On November 27, 2019 10:20:17 PM GMT-03:00, Alexei Starovoitov <alexei=2Est=
-arovoitov@gmail=2Ecom> wrote:
->On Wed, Nov 27, 2019 at 5:17 PM Arnaldo Carvalho de Melo
-><arnaldo=2Emelo@gmail=2Ecom> wrote:
->>
->> On November 27, 2019 9:59:15 PM GMT-03:00, Alexei Starovoitov
-><alexei=2Estarovoitov@gmail=2Ecom> wrote:
->> >On Wed, Nov 27, 2019 at 4:50 PM Arnaldo Carvalho de Melo
->> ><arnaldo=2Emelo@gmail=2Ecom> wrote:
->> >>
->> >> Take it as one, I think it's what should have been in the cset it
->is
->> >fixing, that way no breakage would have happened=2E
->> >
->> >Ok=2E I trimmed commit log and applied here:
->>
->>https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/bpf/bpf=2Egit/commit=
-/?id=3D1fd450f99272791df8ea8e1b0f5657678e118e90
->> >
->> >What about your other fix and my suggestion there?
->> >(__u64) cast instead of PRI ?
->> >We do this already in two places:
->> >libbpf=2Ec:                shdr_idx, (__u64)sym->st_value);
->> >libbpf=2Ec:             (__u64)sym=2Est_value,
->GELF_ST_TYPE(sym=2Est_info),
->>
->>
->> I'm using the smartphone now, but I thought you first suggested using
->a cast to long, if you mean using %llu + cast to __u64, then should be
->was ugly as using PRI, IOW, should work on both 64 bit and 32 bit=2E :-)
->
->Yes=2E I suggested (long) first, but then found two cases in libbpf that
->solve this with (__u64),
->so better to stick to that for consistency=2E
+With more and more resctrl features are being added by Intel, AMD
+and ARM, a test tool is becoming more and more useful to validate
+that both hardware and software functionalities work as expected.
 
-If it's already being used elsewhere in lubbpf, it was tested already with=
- the build containers and since nobody complained, go with it :-)
+We introduce resctrl selftest to cover resctrl features on X86, AMD
+and ARM architectures. It first implements MBM (Memory Bandwidth
+Monitoring), MBA (Memory Bandwidth Allocation), L3 CAT (Cache Allocation
+Technology), and CQM (Cache QoS Monitoring)  tests. We will enhance
+the selftest tool to include more functionality tests in the future.
 
-- Arnaldo
+The tool has been tested on Intel RDT, AMD QoS and ARM MPAM and is
+in tools/testing/selftests/resctrl in order to have generic test code
+base for all architectures.
+
+The selftest tool we are introducing here provides a convenient
+tool which does automatic resctrl testing, is easily available in kernel
+tree, and covers Intel RDT, AMD QoS and ARM MPAM.
+
+There is an existing resctrl test suite 'intel_cmt_cat'. But its major
+purpose is to test Intel RDT hardware via writing and reading MSR
+registers. It does access resctrl file system; but the functionalities
+are very limited. And it doesn't support automatic test and a lot of
+manual verifications are involved.
+
+Changelog:
+v8:
+Update code per comments from Andre Przywara from ARM:
+- Change Makefile and remove inline assembly code to build and test the
+  tool on ARM
+- Change the output to TAP format because the format is both readable by
+  human and other test tools.
+- Detect resctrl feature from /proc/cpuinfo instead of dmesg to support
+  generic detection on all architectures.
+- Fix a few coding issues.
+
+v7:
+- Fix a few warnings when compiling patches separately, pointed by Babu 
+
+v6:
+- Fix a benchmark reading optimized out issue in newer GCC.
+- Fix a few coding style issues.
+- Re-arrange code among patches to make cleaner code. No change in patches
+structure.
+
+v5:
+- Based the v4 patches submitted by Fenghua Yu and added changes to support
+  AMD.
+- Changed the function name get_sock_num to get_resource_id. Intel uses
+  socket number for schemata and AMD uses l3 index id. To generalize,
+  changed the function name to get_resource_id.
+- Added the code to detect vendor.
+- Disabled the few tests for AMD where the test results are not clear.
+  Also AMD does not have IMC.
+- Fixed few compile issues.
+- Some cleanup to make each patch independent.
+- Tested the patches on AMD system. Fenghua, Need your help to test on
+  Intel box. Please feel free to change and resubmit if something
+   broken.
+
+v4:
+- address comments from Balu and Randy
+- Add CAT and CQM tests
+
+v3:
+- Change code based on comments from Babu Moger
+- Remove some unnessary code and use pipe to communicate b/w processes
+
+v2:
+- Change code based on comments from Babu Moger
+- Clean up other places.
+
+Babu Moger (3):
+  selftests/resctrl: Add vendor detection mechanism
+  selftests/resctrl: Use cache index3 id for AMD schemata masks
+  selftests/resctrl: Disable MBA and MBM tests for AMD
+
+Fenghua Yu (6):
+  selftests/resctrl: Add README for resctrl tests
+  selftests/resctrl: Add MBM test
+  selftests/resctrl: Add MBA test
+  selftests/resctrl: Add Cache QoS Monitoring (CQM) selftest
+  selftests/resctrl: Add Cache Allocation Technology (CAT) selftest
+  selftests/resctrl: Add the test in MAINTAINERS
+
+Sai Praneeth Prakhya (4):
+  selftests/resctrl: Add basic resctrl file system operations and data
+  selftests/resctrl: Read memory bandwidth from perf IMC counter and
+    from resctrl file system
+  selftests/resctrl: Add callback to start a benchmark
+  selftests/resctrl: Add built in benchmark
+
+ MAINTAINERS                                   |   1 +
+ tools/testing/selftests/resctrl/Makefile      |  17 +
+ tools/testing/selftests/resctrl/README        |  53 ++
+ tools/testing/selftests/resctrl/cache.c       | 272 +++++++
+ tools/testing/selftests/resctrl/cat_test.c    | 250 ++++++
+ tools/testing/selftests/resctrl/cqm_test.c    | 176 +++++
+ tools/testing/selftests/resctrl/fill_buf.c    | 213 +++++
+ tools/testing/selftests/resctrl/mba_test.c    | 171 ++++
+ tools/testing/selftests/resctrl/mbm_test.c    | 145 ++++
+ tools/testing/selftests/resctrl/resctrl.h     | 107 +++
+ .../testing/selftests/resctrl/resctrl_tests.c | 202 +++++
+ tools/testing/selftests/resctrl/resctrl_val.c | 744 ++++++++++++++++++
+ tools/testing/selftests/resctrl/resctrlfs.c   | 722 +++++++++++++++++
+ 13 files changed, 3073 insertions(+)
+ create mode 100644 tools/testing/selftests/resctrl/Makefile
+ create mode 100644 tools/testing/selftests/resctrl/README
+ create mode 100644 tools/testing/selftests/resctrl/cache.c
+ create mode 100644 tools/testing/selftests/resctrl/cat_test.c
+ create mode 100644 tools/testing/selftests/resctrl/cqm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
+ create mode 100644 tools/testing/selftests/resctrl/mba_test.c
+ create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl.h
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_val.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrlfs.c
+
+-- 
+2.19.1
 
