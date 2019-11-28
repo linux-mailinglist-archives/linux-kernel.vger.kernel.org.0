@@ -2,123 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9EF10C1E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED9A210C1E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 02:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfK1Buy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 27 Nov 2019 20:50:54 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:47024 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfK1Buy (ORCPT
+        id S1727638AbfK1BvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 27 Nov 2019 20:51:14 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44981 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfK1BvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Nov 2019 20:50:54 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 193so12255820pfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 17:50:53 -0800 (PST)
+        Wed, 27 Nov 2019 20:51:14 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g3so26577548ljl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 17:51:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=VR2/v9AWTifanIT/eMBWdlLjcrylXavL2K2N3+XyWKM=;
-        b=Jwr8BYRG9hc5AwI+XoTTuxNeM7IqXgM0Ugt7NqcfVJem+UlL6jjo8c2CE9bkJ9vRyA
-         4s9trIxViiJQSkX7847WiHDXh1bBc1UoFEsFnWpL4EhPKEOacBGNu6rhdY7tuOpKLANB
-         BrryU15HsnWXYz3n5+1U9TFSzMvnm/XdPCrZk=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XSpsmOKMn/O48LBUUrQ1uLf4PCDrcrylBzPfl36vaW4=;
+        b=HKZjDm8rWodB8EJ++Bfhj8pyIRhnt6rHbi9iLTBmubir7V/H3ot6+UwhKaMf/AE9TE
+         otYJAAzZU44px9b6r8FV0elKk5tJD9IFvkCYS6GL1WkiaXlnLrJ+urAUAopY4Jf2o13k
+         27w6oL9CloZIsZW87L8ylCgNrRDHNFZ+7Okhc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=VR2/v9AWTifanIT/eMBWdlLjcrylXavL2K2N3+XyWKM=;
-        b=FWJnvtNBmV+KHAGxsSgrGsmNHAa7oM5FC6q/laGJixjTMWW2Tv5vzyx67UPggcenrq
-         7akOMVhJ23TfXBt0BlacYcBOf4J3sDj4bhknvCLBkugTkzEqLNDbF3wBlvJu1bHC9TRJ
-         YPLlbudqUyK50iWaSpKKetbWcmclwG3UGyfp8gsyBsy3LapRqbDRtOZ0nefZWKdt3c18
-         iqTkYcZ5ch/EOSGVJEKd5u4gzhLqdYJoTwCBAifj/nDO/Ogg0KlgkoP7fJ+MElYOuKZE
-         tESQ+XxxlNsSiJbu7hFth7k7MxyQjENzfctcggO3r3g6jDFPoBEciW4si03EWX+U6jPF
-         bkjg==
-X-Gm-Message-State: APjAAAX9Dg52dXPLezqx22L2jPAvcXLBRat0KRtJ7bTr+18fQSp3siGm
-        TnCyW7ms9GGZyG6HHM6X/O5kuA1++Hw=
-X-Google-Smtp-Source: APXvYqw6h/1IVnr2+2Jqptg9r4JqNrDvrzg74/nQwWdTpwWZEbfoFKMqUhQlAA8EXDIY9hkk5YUUvA==
-X-Received: by 2002:a63:fd4c:: with SMTP id m12mr8479924pgj.211.1574905853402;
-        Wed, 27 Nov 2019 17:50:53 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s18sm18227508pfs.20.2019.11.27.17.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2019 17:50:52 -0800 (PST)
-Date:   Wed, 27 Nov 2019 17:50:51 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        x86 <x86@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lkdtm/bugs: Avoid ifdefs for DOUBLE_FAULT
-Message-ID: <201911271748.A7C361E28@keescook>
-References: <201911271118.FCC2D04F@keescook>
- <E359D543-FB4E-4EF5-85E6-40057B57C58F@amacapital.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XSpsmOKMn/O48LBUUrQ1uLf4PCDrcrylBzPfl36vaW4=;
+        b=aZl3h3LpJzOdnyiGI7hKP1CBhkZ2TPMGTy38GyqCkQ7m4FoH+JaWMwo6tFKVoCtWk+
+         EqMa1OPFRaOKNZrP9mZ2DjIQK8YraDjhgZPV4zCWgjc0Ta8nQAVslSLV0Ehqs6Je4x6R
+         ckxeqUKjbS5gL1/PDmNxwfqA1qIs3gFxnjZhXuJmCYXrCVcusciNz2VHDcZzdrDn4+cp
+         6+EOIlmhIlAQmG3OEhSwjREh2lMHayyzjfZhMuONb4/VD/UnvpqSjrkoW1c4vgO5GjLU
+         /0OXNaeh4ENy8DV+xHxrl2aZmTwpD5z4LXapTDWlsc+K5gh72+yyC0aZfUMx2kWJYry/
+         SYjg==
+X-Gm-Message-State: APjAAAWKYT+ibKELB3LuB/A1bDhTGt4ndGDtt2lMwxuP4tZTwv8pGdSm
+        XDkAIq7HTMaNEijktDd4cXKHTZiyPX0=
+X-Google-Smtp-Source: APXvYqwg4iNpIgGa/Pp3a9eGOWZlbpxrY0Lwl/MJU2ku1DTFXE5H/zczpnA2X5UuV75BHIiPl/v7fg==
+X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr302517ljj.114.1574905871864;
+        Wed, 27 Nov 2019 17:51:11 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id x12sm601322ljd.92.2019.11.27.17.51.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 17:51:10 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id t5so26646215ljk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2019 17:51:10 -0800 (PST)
+X-Received: by 2002:a2e:84d0:: with SMTP id q16mr21585112ljh.48.1574905870426;
+ Wed, 27 Nov 2019 17:51:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E359D543-FB4E-4EF5-85E6-40057B57C58F@amacapital.net>
+References: <CAPM=9ty6MLNc4qYKOAO3-eFDpQtm9hGPg9hPQOm4iRg_8MkmNw@mail.gmail.com>
+In-Reply-To: <CAPM=9ty6MLNc4qYKOAO3-eFDpQtm9hGPg9hPQOm4iRg_8MkmNw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 27 Nov 2019 17:50:54 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whdhd69G1AiYTQKSB-RApOVbmzmAzO=+oW+yHO-NXLhkQ@mail.gmail.com>
+Message-ID: <CAHk-=whdhd69G1AiYTQKSB-RApOVbmzmAzO=+oW+yHO-NXLhkQ@mail.gmail.com>
+Subject: Re: [git pull] drm for 5.5-rc1
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 01:01:40PM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Nov 27, 2019, at 11:19 AM, Kees Cook <keescook@chromium.org> wrote:
-> > 
-> > ﻿LKDTM test visibility shouldn't change, so remove the ifdefs on
-> > DOUBLE_FAULT and make sure test failure doesn't crash the system.
-> > 
-> > Link: https://lore.kernel.org/lkml/20191127184837.GA35982@gmail.com
-> > Fixes: b09511c253e5 ("lkdtm: Add a DOUBLE_FAULT crash type on x86")
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> > applies on top of tip/x86/urgent
-> > ---
-> > drivers/misc/lkdtm/bugs.c  | 8 +++++---
-> > drivers/misc/lkdtm/core.c  | 4 +---
-> > drivers/misc/lkdtm/lkdtm.h | 2 --
-> > 3 files changed, 6 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-> > index a4fdad04809a..22f5293414cc 100644
-> > --- a/drivers/misc/lkdtm/bugs.c
-> > +++ b/drivers/misc/lkdtm/bugs.c
-> > @@ -342,9 +342,9 @@ void lkdtm_UNSET_SMEP(void)
-> > #endif
-> > }
-> > 
-> > -#ifdef CONFIG_X86_32
-> > void lkdtm_DOUBLE_FAULT(void)
-> > {
-> > +#ifdef CONFIG_X86_32
-> >    /*
-> >     * Trigger #DF by setting the stack limit to zero.  This clobbers
-> >     * a GDT TLS slot, which is okay because the current task will die
-> > @@ -373,6 +373,8 @@ void lkdtm_DOUBLE_FAULT(void)
-> >    asm volatile ("movw %0, %%ss; addl $0, (%%esp)" ::
-> >              "r" ((unsigned short)(GDT_ENTRY_TLS_MIN << 3)));
-> > 
-> > -    panic("tried to double fault but didn't die\n");
-> > -}
-> > +    pr_err("FAIL: tried to double fault but didn't die!\n");
-> > +#else
-> > +    pr_err("FAIL: this test is only available on 32-bit x86.\n");
-> > #endif
-> > +}
-> 
-> I’m not familiar with the userspace tooling, but this seems unfortunate. The first FAIL is “the test case screwed up, and it’s a bug.”  The second FAIL is “not applicable to this system.”
-> 
-> 
-> ISTM simply not exposing the test on systems that don’t support makes sense. Can you clarify?
+On Wed, Nov 27, 2019 at 4:59 PM Dave Airlie <airlied@gmail.com> wrote:
+>
+> my sample merge is here:
+> https://cgit.freedesktop.org/~airlied/linux/log/?h=drm-next-5.5-merged
 
-I don't like the tests liked in the DIRECT file to change from build to
-build (it should be stable per kernel version). Userspace needs to know
-how to evaluate the results of running each test, so in both cases, I
-consider it a failure: double fault didn't work or you tried to test
-double fault on an unsupported architecture. (The SMEP test works
-similarly.)
+Hmm. I think you missed a couple: you left a duplicate
+intel_update_rawclk() around (it got moved into
+intel_power_domains_init_hw() by commit 2f216a850715 ("drm/i915:
+update rawclk also on resume"), and you left the "select
+REFCOUNT_FULL" that no longer exists.
 
--- 
-Kees Cook
+And apparently nobody bothered to tell me about the semantic conflict
+with the media tree due to the changed calling convention of
+cec_notifier_cec_adap_unregister(). Didn't that show up in linux-next?
+
+Anyway, merged and pushed out,
+
+            Linus
