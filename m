@@ -2,63 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C29F610C60C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF1A110C614
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfK1JfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 04:35:17 -0500
-Received: from smtprelay0084.hostedemail.com ([216.40.44.84]:60116 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726252AbfK1JfR (ORCPT
+        id S1726696AbfK1JiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 04:38:11 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53556 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfK1JiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 04:35:17 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 4BACA4DCF;
-        Thu, 28 Nov 2019 09:35:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3872:3874:4321:5007:10004:10400:10848:11232:11658:11914:12048:12297:12663:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: touch72_681114d104324
-X-Filterd-Recvd-Size: 1652
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 28 Nov 2019 09:35:15 +0000 (UTC)
-Message-ID: <ab3309596fac1c5a0cb4e0abed0cf1ee7ac13a3d.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Look for Kconfig indentation errors
-From:   Joe Perches <joe@perches.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date:   Thu, 28 Nov 2019 01:34:47 -0800
-In-Reply-To: <87a78gnyaz.fsf@intel.com>
-References: <1574906800-19901-1-git-send-email-krzk@kernel.org>
-         <87a78gnyaz.fsf@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Thu, 28 Nov 2019 04:38:11 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u18so10214632wmc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 01:38:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NhpLhJz6+GDF9m5U6zWuGMsno9FtNQ2w1q9YdXHXl14=;
+        b=osNXp1PoN1pNhtrxYjY6DcE8SZhJaS2KskPEeSN8ztSvahvxN4BpUC+7LeDoz9PO8Z
+         I0gzYdxQfGjXIb6/Z67XNwX3QDLs3Bz/j0HpJ5RwuZYlymTwqf7Sja4a+Shhg+fzbAjb
+         Mg3ztcaeZsf6itIt3xHy9QPDOkbR4/u+TceDQjSv2SQyMK1k5TBdBaoIekpL35fkBKtR
+         UdlcWvz4JdBQIl0U6bY46pQ2nL8qHBKyKKqeOCFBpL6v2l/n6WxtfAr8VdtFE8/esimq
+         Yu0xg8AOreQ1svph/X3j3/tDkjyh4QuCeAvYcfu+4YgAVJMnwa5ZCT9FJ3WFW2Z2FJXJ
+         SGZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NhpLhJz6+GDF9m5U6zWuGMsno9FtNQ2w1q9YdXHXl14=;
+        b=lQJiWoaEu5CqyVIBU8AULgA7+n8QpBbrFbEiynQa5CZUrEyhrWkZKeJCXmVb10fIwP
+         kADnaUbqDig7XizHzpNRPCjqfNhP56VBCyLx3IVVAPEhGUMA3abrBcBGZgALR4Q8QdCM
+         V8FO4hbYFd2L4hRO2q4YG177MKQ7gpeN+CipPil2rs8FrqAA+NV+Axk8mJ4FSMjU1j0R
+         rI2mCnB6juxdgP2oExl1M+wsxxNHBS1ZiOGK1aMxkIEYnc77PfNIKpsyDRVGp3HZDvsd
+         bM6sdhCuunwZfJUTHQsfVSh0RYNYH8J9nRbxeREF34NyzrDXhIf8QiU2MBQYwqiN0ACt
+         Ijeg==
+X-Gm-Message-State: APjAAAWWXSqYXn8bRaOr5fzcjkLtLzWmxuUgYf1DCyJIGwC9P2nFMYEr
+        dvM6NsQ5QLynqyXretWC9bOgPA==
+X-Google-Smtp-Source: APXvYqxshxI1xLIjiArznE4nEZ0G3ax1Vs9ZBK7qgqy3CJVywQrE7TmI2c+oBXwRmIS83w6jJ6LDtA==
+X-Received: by 2002:a7b:cb89:: with SMTP id m9mr8563703wmi.141.1574933887456;
+        Thu, 28 Nov 2019 01:38:07 -0800 (PST)
+Received: from apalos.home (athedsl-4476713.home.otenet.gr. [94.71.27.49])
+        by smtp.gmail.com with ESMTPSA id f2sm3076753wmh.46.2019.11.28.01.38.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2019 01:38:06 -0800 (PST)
+Date:   Thu, 28 Nov 2019 11:38:04 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>, Sekhar Nori <nsekhar@ti.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: ti: ale: ensure vlan/mdb deleted when no
+ members
+Message-ID: <20191128093804.GA18633@apalos.home>
+References: <20191127155905.22921-1-grygorii.strashko@ti.com>
+ <20191128082127.GA16359@apalos.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191128082127.GA16359@apalos.home>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-11-28 at 11:29 +0200, Jani Nikula wrote:
-> On Thu, 28 Nov 2019, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > Kconfig should be indented with one tab for first level and tab+2 spaces
-> > for second level.  There are many mixups of this so add a checkpatch
-> > rule.
+On Thu, Nov 28, 2019 at 10:21:27AM +0200, Ilias Apalodimas wrote:
+> On Wed, Nov 27, 2019 at 05:59:05PM +0200, Grygorii Strashko wrote:
+> > The recently updated ALE APIs cpsw_ale_del_mcast() and
+> > cpsw_ale_del_vlan_modify() have an issue and will not delete ALE entry even
+> > if VLAN/mcast group has no more members. Hence fix it here and delete ALE
+> > entry if !port_mask.
 > > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > The issue affected only new cpsw switchdev driver.
+> > 
+> > Fixes: e85c14370783 ("net: ethernet: ti: ale: modify vlan/mdb api for switchdev")
+> > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > ---
+> >  drivers/net/ethernet/ti/cpsw_ale.c | 14 ++++++++++----
+> >  1 file changed, 10 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
+> > index 929f3d3354e3..a5179ecfea05 100644
+> > --- a/drivers/net/ethernet/ti/cpsw_ale.c
+> > +++ b/drivers/net/ethernet/ti/cpsw_ale.c
+> > @@ -396,12 +396,14 @@ int cpsw_ale_del_mcast(struct cpsw_ale *ale, const u8 *addr, int port_mask,
+> >  	if (port_mask) {
+> >  		mcast_members = cpsw_ale_get_port_mask(ale_entry,
+> >  						       ale->port_mask_bits);
+> > -		mcast_members &= ~port_mask;
+> > -		cpsw_ale_set_port_mask(ale_entry, mcast_members,
+> > +		port_mask = mcast_members & ~port_mask;
+> > +	}
+> > +
+> > +	if (port_mask)
+> > +		cpsw_ale_set_port_mask(ale_entry, port_mask,
+> >  				       ale->port_mask_bits);
+> > -	} else {
+> > +	else
+> >  		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
+> > -	}
 > 
-> I agree unifying the indentation is nice, and without something like
-> this it'll start bitrotting before Krzysztof's done fixing them all... I
-> think there's been quite a few fixes merged lately.
+> The code assumed calls cpsw_ale_del_mcast() should have a port mask '0' when
+> deleting an entry. Do we want to have 'dual' functionality on it? 
+> This will delete mcast entries if port mask is 0 or port mask matches exactly
+> what's configured right?
 > 
-> I approve of the idea, but I'm clueless about the implementation.
 
-I think that a grammar, or a least an array of words
-that are supposed to start on a tab should be used here.
+Deleting the ALE entry if the port_mask matches execlty what's configured makes
+sense. Can we change it to something that doesn't change the function argument?
 
+I think something like: 
+mcast_members = 0;
+if (port_mask) {
+	mcast_members = cpsw_ale_get_port_mask(ale_entry,
+											ale->port_mask_bits);
+	mcast_members &= ~port_mask;
+}
+if (mcast_members)
+	cpsw_ale_set_port_mask(ale_entry, mcast_members, ....)
+else
+	cpsw_ale_set_entry_type(....)
 
+is more readable?
+
+Thanks
+/Ilias
