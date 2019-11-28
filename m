@@ -2,163 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B8710CA71
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A0D10CA5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:30:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfK1OgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:36:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38791 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbfK1OgG (ORCPT
+        id S1726670AbfK1Oab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:30:31 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46570 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfK1Oab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 09:36:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id z19so11953695wmk.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:36:04 -0800 (PST)
+        Thu, 28 Nov 2019 09:30:31 -0500
+Received: by mail-qk1-f193.google.com with SMTP id f5so4516967qkm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:30:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RKiEZcP/L0A2rXbC8H4X5BIo7afN1A6dEGoky6fB7+8=;
-        b=RhXR0ZeX7CH630cBBVDoTbDoIg+bfQnEe2e5PKJaG+yclednb5kM9Y8Eng7aDWJBHD
-         FU+5IR6gwHueelOoVC5PQ9vj7rTsr6WVwO/xezZKm9KcUrDbc3Y5NXad2IRnlpsxCcqK
-         Gss6Um5uf+b8l7ectAJJFFZnmILUBtHFPQkOue+8KkSReFVzzVWOau+8x2QV2jTKpVYL
-         nyzYgq5pEwhmLshnmQ3nFu6lftJ7Biw967BKpgd1OE56aukGAWt0nMdm00/+wDERZqc3
-         DmGmmlALK+fd77in10AzgYAaYH6EW0ZfplukAUtqjF0UMXZX/qOaWtJlVTN1gUV6QRfJ
-         6q0A==
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=jYscQgO3B2aZoecEj2KE4EY+YiL/cnMaPDA5RlnwFLg=;
+        b=Flvc2zOaQTV13CEkOqjvW0TMJphIYyAkdWE2tT83veu2X0ERztNsQJcMztofB/ZN7l
+         MNFiYkNDzuFxliVxQlY9fUffjcmiawFNyhCWadPMqmpxzfTLcISszz0fDNTcDzZ+dC01
+         lIZl2jp8ZqCu6raKHn+219SSke74iMA3gJX3Hs7v3F4p/6J7SnmSCYg8LoyhIDkzy2Gk
+         gAxvQf3pq7JskO7K8YXiW10GRbIT6oIkY/iETkP3EQ0wPRDbuVHqx2qZqOzD4HdmTYbm
+         24LmdYGPoG5lUR/2FbvwSdihM5BesyomafPgmFtXxFvCU3kbFcW1feiBuZnLFMj/FzWW
+         Q3pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RKiEZcP/L0A2rXbC8H4X5BIo7afN1A6dEGoky6fB7+8=;
-        b=TbUTreM0zfatwx5Ct7Y8bofxgWw4+0QRjsUbPH5M45dKKR0Qg6YlIDlJtqQZmpxXDn
-         kNy9m7aXpmqN0OPNnx4/qKMQKNSPLzNSqvsJCsnWOWacxz8scuryphMfoAlTjAXulkGL
-         kVegmpOGXjq4v/ypBsp44ScFBUfyWYDaanE8E2xezQXTtF965HWwtmEdq/7GqOXohQUD
-         Hx6vaviQbYmGc/zneG1/XGPy7yi3GrXrw1z/qD0ZG3weJQd2tqcdZCcUm+oZXCk9lmyY
-         O/jXiRa1oObX2cz7ARIAUPUHrnSyuVRyiI1UyqtTEMnp1BXH+MulgphyA7qEZmXnaecH
-         M1og==
-X-Gm-Message-State: APjAAAV9LYZruePnqAbPvLJ0mniDwtBphBeWRS8JhdhvpmZnpnwvFUg+
-        U47nWNvu43sJ2wO4wyubFDo=
-X-Google-Smtp-Source: APXvYqz92pJeCW/D9VAvn7Uh3kFxNyM3AMWtDGRKPIpvVxERBR51hrNagMQf2h4L/AmqzwtIH2/3AA==
-X-Received: by 2002:a7b:c95a:: with SMTP id i26mr10220347wml.41.1574951763538;
-        Thu, 28 Nov 2019 06:36:03 -0800 (PST)
-Received: from localhost ([193.47.161.132])
-        by smtp.gmail.com with ESMTPSA id m15sm23751006wrj.52.2019.11.28.06.36.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Nov 2019 06:36:02 -0800 (PST)
-Date:   Thu, 28 Nov 2019 13:16:44 +0100
-From:   Oliver Graute <oliver.graute@gmail.com>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Peng Fan <peng.fan@nxp.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        =?iso-8859-1?Q?Andr=E9?= Draszik <git@andred.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: Change CONFIG_AT803X_PHY from m to y
-Message-ID: <20191128121644.GD2460@optiplex>
-References: <20191127124638.GC5108@optiplex>
- <1ed54a69-c29f-6008-02ae-11d16f68b265@free.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ed54a69-c29f-6008-02ae-11d16f68b265@free.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=jYscQgO3B2aZoecEj2KE4EY+YiL/cnMaPDA5RlnwFLg=;
+        b=EvZvxsH1MXwu4Vdl0NPEu8cyHZF9g5qpELhFEuWNojxxoL7VBg/kEgWmZf8Xxngene
+         q4sc392AOR5f61q87PFE4wvJ4wGN1wkl9XzgWpdDZKrJi5In6e3w7I+l5tHqGIN1xopn
+         qHtFtNFfJ32i+GQmIGc7/8G1MuV6MA+VcU03S45RXmAyE9S9ejUp4rXX1LO1m+cIDYJE
+         fw5MppOM9h64dGEwfB7MymAp72miRPvldwhu09ukpEzr6pd7ZuK5+mcua4D1mgQZ20iA
+         HrfTQIM5k0j1vQ8uJkOsCTRz5YpyGIgto45C1fyVHZIuFK3Nsd4V7NbvSGKObG6wegfM
+         diyw==
+X-Gm-Message-State: APjAAAXZObLIrDFuZ+LnVNycUm2kkvnlF7mHhzC8Z+usBGKLHtwjlWkK
+        94N9Z2xBNRknZbeW1pXiwmeymg==
+X-Google-Smtp-Source: APXvYqyxjiPVBCqwpds4kxAvWyJeLoZVUi5Ie7C1ODzakCJWKx3kUUce4170/DFkgo9C+sTyOcG63g==
+X-Received: by 2002:ae9:eb53:: with SMTP id b80mr5848666qkg.430.1574951430457;
+        Thu, 28 Nov 2019 06:30:30 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id j3sm8354143qkk.133.2019.11.28.06.30.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2019 06:30:29 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in find_(smallest|biggest)_section_pfn
+Date:   Thu, 28 Nov 2019 09:30:29 -0500
+Message-Id: <270C2A1D-25B0-4BC5-A521-9EEADF3A6B75@lca.pw>
+References: <657e4a9d-767d-5140-a4f4-d963794cdf0c@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+In-Reply-To: <657e4a9d-767d-5140-a4f4-d963794cdf0c@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: iPhone Mail (17A878)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/11/19, Marc Gonzalez wrote:
-> On 27/11/2019 13:46, Oliver Graute wrote:
-> 
-> > On 27/11/19, Marc Gonzalez wrote:
-> >
-> >> On 26/11/2019 15:54, Oliver Graute wrote:
-> >>
-> >>> this patch broke my imx8qm nfs setup. With the generic phy driver my
-> >>> board is booting fine. But with the AT803X_PHY=y enabled  I'm running
-> >>> into the following phy issue. So on my side it looks inverse as on
-> >>> yours. What is the best proposal to fix this?
-> >>>
-> >>> [    5.550442] fec 5b040000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
-> >>> [    5.573206] Sending DHCP requests ...... timed out!
-> >>> [   95.339702] IP-Config: Retrying forever (NFS root)...
-> >>> [   95.348873] Atheros 8035 ethernet 5b040000.ethernet-1:06: attached PHY driver [Atheros 8035 ethernet] (mii_bus:phy_addr=5b040000.ethernet-1:06, irq=POLL)
-> >>> [   99.438443] fec 5b040000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
-> >>> [   99.461206] Sending DHCP requests ...... timed out!
-> >>
-> >> Which DTS are you using?
-> > 
-> > I'am using this DTS which I'am currently working on:
-> > 
-> > https://lists.infradead.org/pipermail/linux-arm-kernel/2019-October/689501.html
-> >>
-> >> I bet one dollar that 6d4cd041f0af triggered a latent bug in the DTS.
-> > 
-> > So what should I fix in my device tree?
-> 
-> In the board DTS I used to work on, I had this:
-> 
-> &eth0 {
-> 	phy-connection-type = "rgmii-id";
-> 	phy-handle = <&eth0_phy>;
-> 	#address-cells = <1>;
-> 	#size-cells = <0>;
-> 
-> 	/* Atheros AR8035 */
-> 	eth0_phy: ethernet-phy@4 {
-> 		compatible = "ethernet-phy-id004d.d072",
-> 			     "ethernet-phy-ieee802.3-c22";
-> 		interrupts = <37 IRQ_TYPE_EDGE_RISING>;
-> 		reg = <4>;
-> 	};
-> };
-> 
-> In your DTS, you #include "imx8qm.dtsi"
-> I found no such file:
-> $ git ls-files | grep imx8qm
 
-yes this file is not yet added to Shawn Guos next tree.
-Latest patch can be found here:
 
- https://patchwork.kernel.org/patch/11248331/
+> On Nov 28, 2019, at 9:03 AM, David Hildenbrand <david@redhat.com> wrote:
+>=20
+> That's why we have linux-next and plenty of people playing with it
+> (including you and me for example).
 
-> 
-> In your patch:
-> https://patchwork.kernel.org/patch/11211567/
-> 
-> +&fec1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_fec1>;
-> +	phy-mode = "rgmii-txid";
-> +	phy-handle = <&ethphy0>;
-> +	fsl,magic-packet;
-> +	fsl,rgmii_rxc_dly;
-> +	status = "okay";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ethphy0: ethernet-phy@0 {
-> +			compatible = "ethernet-phy-ieee802.3-c22";
-> +			reg = <4>;
-> +			at803x,eee-disabled;
-> +			at803x,vddio-1p8v;
-> +		};
-> +	};
-> +};
-> 
-> Try all possible 'phy-mode' (rgmii, rgmii-id, rgmii-rxid, rgmii-txid)
-> Investigate 'fsl,rgmii_rxc_dly' (it's not a standard Linux DT prop)
-> Documentation/devicetree/bindings/net/ethernet-controller.yaml
-
-thx for this hint.
-
-Best regards,
-
-Oliver
+As mentioned, it is an expensive development practice. Once a patch was merg=
+ed into linux-next, it becomes someone else=E2=80=99s problems because if no=
+body flags it as problematic, all it needs is a good eye review and some tim=
+e before it gets merged into mainline eventually.=
