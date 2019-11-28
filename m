@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A29FF10CAFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 592EA10CB02
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 15:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbfK1O6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 09:58:07 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36947 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbfK1O6A (ORCPT
+        id S1727706AbfK1O6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 09:58:53 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38732 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727534AbfK1O6A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 28 Nov 2019 09:58:00 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u17so1465163lja.4
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:57:57 -0800 (PST)
+Received: by mail-lf1-f67.google.com with SMTP id r14so4005778lfm.5
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 06:57:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=06uKXQqvrr0zZOJsLmQ0X59rlZ+fACJwVhesQKP6zWk=;
-        b=JgiuAeArS47wsHZWM0BK/bezVFi7ZvWamm9FoPUC9tdZMXp4VCy5jWfx2t686hMUOy
-         VybX+a/F0IKQZSS1QHbM5u49tyQhqGGkkQnWZHi/zYpbIT20YQl0gPFiNwUmHSxFIuiI
-         9dTQWrvv9HWzBW01vfuUWbyvYrzaWvZFOcIyQ=
+        bh=72sEWcRrZShV6+ZtrbY8IpuEizwarRLNFp/8lkLUzfY=;
+        b=GU+FHdBJRYkw5UkPWN7s3g70/83WQOEmISQwX9qSdRVD3WHOUaGAFdBUx3Sme7fjHL
+         /Z+7qlogtJH6EcMtuHnCJMLrZd5CaVdwbfAxgYfHduzeaVVIkMdpB925f242Mn00PfSy
+         RuXGBWmdfSaOhpduQ3XxsbwxqdAElKPZlwwik=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=06uKXQqvrr0zZOJsLmQ0X59rlZ+fACJwVhesQKP6zWk=;
-        b=IbOB36sGBLHMnhD0Frz/IVmqLR4kXWUy15VWDZSlbw8Q8ChXRI1xqOzxjn7MbSZLO8
-         eDQ9rsqv+uvSfxEp6WWFgme3r717S7C+0Fd9xxIqdfdQHGBiC4bKzVTatFKPfFqR0KLy
-         7S9l5ztxCBz9OwmjSRQPej2FblMy7WdBruYWsm6d5dp8sohkDBDZMjCYVBWx4sHu5wR/
-         /RA389oNiroXS+SwABCgt/6nPZZUyqTsJcUrLhzGhx6j+guoC7UemJFP+uhDmKqckOUQ
-         C80PKw8deYqNs3DAFkRZ+G0QwORLynJYe32m8Ng79T+T9ngTqSgyMApMmLPWkVe67JR4
-         0qPw==
-X-Gm-Message-State: APjAAAVwMiOPsGM4J0nZiQDUDfh1VQ5JSUR8S2kI9z2BovhS+ygL/2Wk
-        ROffhG3Da7udluq7cqAj30B6AMeGCjy/g3F7
-X-Google-Smtp-Source: APXvYqyK7wVR6d3zwjKZ2mFM/WM8Cw60uivy1/bMNQ6D4J5Uyd1DQ6s5FG/7hVfz49aG1uqyrcyxDw==
-X-Received: by 2002:a2e:2a43:: with SMTP id q64mr35566264ljq.242.1574953076393;
-        Thu, 28 Nov 2019 06:57:56 -0800 (PST)
+        bh=72sEWcRrZShV6+ZtrbY8IpuEizwarRLNFp/8lkLUzfY=;
+        b=ABwR8d+KKNt+NDRYEO0fI3VWhz7qovt0Pn8qSR+U/EK+LBT3coVQXIsmKG2k/rIuQw
+         V+w2hktxZ2U2erpaEVqa3x3tKxyfbySVAVFk/AO11E0ooZAxzW5wCPd2eww0PLsSGyrN
+         akAJJ4xyZDFY7aRRqDcbMZfF++cM9LAiCQmuHwlaAtt3V4Pk+69wiyON5j9Ncsg++MCJ
+         Z/6yg5YjCUAxOvfFXV/IHHliFOeteST/OJ+yfQo7Ish58Zi+XmBLyot9xUEKSKysmnQX
+         a+SvLsXpA8GvvnvfEVhN8+CmQ3wO8mzRKuhJty1T0+Z3Clx2WXOukv4fqfZr7p4ELEMN
+         xicw==
+X-Gm-Message-State: APjAAAXU1vtjG5I8Y6UEIMNZczbHTZzz1ue4g138ret+KZrRkYylBjJx
+        p5my1hwjoQ2u1buidRvc3ILr5IDhf3kggiS5
+X-Google-Smtp-Source: APXvYqz02uT5YFaXnAxzTLioQmYffM+bBn/MgPobmwNavfJAST5FVWoxj4QiDIoEsaR5yWe6ky9XnQ==
+X-Received: by 2002:a19:6b04:: with SMTP id d4mr33009525lfa.10.1574953077507;
+        Thu, 28 Nov 2019 06:57:57 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.57.55
+        by smtp.gmail.com with ESMTPSA id u2sm2456803lfl.18.2019.11.28.06.57.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 06:57:56 -0800 (PST)
+        Thu, 28 Nov 2019 06:57:57 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
         Christophe Leroy <christophe.leroy@c-s.fr>
@@ -49,9 +49,9 @@ Cc:     linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v6 39/49] soc: fsl: qe: refactor cpm_muram_alloc_common to prevent BUG on error path
-Date:   Thu, 28 Nov 2019 15:55:44 +0100
-Message-Id: <20191128145554.1297-40-linux@rasmusvillemoes.dk>
+Subject: [PATCH v6 40/49] soc: fsl: qe: avoid IS_ERR_VALUE in ucc_slow.c
+Date:   Thu, 28 Nov 2019 15:55:45 +0100
+Message-Id: <20191128145554.1297-41-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
 References: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
@@ -62,70 +62,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the kmalloc() fails, we try to undo the gen_pool allocation we've
-just done. Unfortunately, start has already been modified to subtract
-the GENPOOL_OFFSET bias, so we're freeing something that very likely
-doesn't exist in the gen_pool, meaning we hit the
+When trying to build this for a 64-bit platform, one gets warnings
+from using IS_ERR_VALUE on something which is not sizeof(long).
 
- kernel BUG at lib/genalloc.c:399!
- Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
- ...
- [<803fd0e8>] (gen_pool_free) from [<80426bc8>] (cpm_muram_alloc_common+0xb0/0xc8)
- [<80426bc8>] (cpm_muram_alloc_common) from [<80426c28>] (cpm_muram_alloc+0x48/0x80)
- [<80426c28>] (cpm_muram_alloc) from [<80428214>] (ucc_slow_init+0x110/0x4f0)
- [<80428214>] (ucc_slow_init) from [<8044a718>] (qe_uart_request_port+0x3c/0x1d8)
+Instead, change the various *_offset fields to store a signed integer,
+and simply check for a negative return from qe_muram_alloc(). Since
+qe_muram_free() now accepts and ignores a negative argument, we only
+need to make sure these fields are initialized with -1, and we can
+just unconditionally call qe_muram_free() in ucc_slow_free().
 
-(this was tested by just injecting a random failure by adding
-"|| (get_random_int()&7) == 0" to the "if (!entry)" condition).
-
-Refactor the code so we do the kmalloc() first, meaning that's the
-thing that needs undoing in case gen_pool_alloc_algo() then
-fails. This allows a later cleanup to move the locking from the
-callers into the _common function, keeping the kmalloc() out of the
-critical region and then, hopefully (if all the muram_alloc callers
-allow) change it to a GFP_KERNEL allocation.
+Note that the error case for us_pram_offset failed to set that field
+to 0 (which, as noted earlier, is anyway a bogus sentinel value).
 
 Reviewed-by: Timur Tabi <timur@kernel.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/soc/fsl/qe/qe_common.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/soc/fsl/qe/ucc_slow.c | 22 +++++++++-------------
+ include/soc/fsl/qe/ucc_slow.h |  6 +++---
+ 2 files changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/soc/fsl/qe/qe_common.c b/drivers/soc/fsl/qe/qe_common.c
-index dcb267567d76..a81a1a79f1ca 100644
---- a/drivers/soc/fsl/qe/qe_common.c
-+++ b/drivers/soc/fsl/qe/qe_common.c
-@@ -119,23 +119,21 @@ static s32 cpm_muram_alloc_common(unsigned long size,
- 	struct muram_block *entry;
- 	s32 start;
+diff --git a/drivers/soc/fsl/qe/ucc_slow.c b/drivers/soc/fsl/qe/ucc_slow.c
+index 9b55fd0f50c6..274d34449846 100644
+--- a/drivers/soc/fsl/qe/ucc_slow.c
++++ b/drivers/soc/fsl/qe/ucc_slow.c
+@@ -154,6 +154,9 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
+ 			__func__);
+ 		return -ENOMEM;
+ 	}
++	uccs->rx_base_offset = -1;
++	uccs->tx_base_offset = -1;
++	uccs->us_pram_offset = -1;
  
-+	entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
-+	if (!entry)
-+		return -ENOMEM;
- 	start = gen_pool_alloc_algo(muram_pool, size, algo, data);
--	if (!start)
--		goto out2;
-+	if (!start) {
-+		kfree(entry);
-+		return -ENOMEM;
-+	}
- 	start = start - GENPOOL_OFFSET;
- 	memset_io(cpm_muram_addr(start), 0, size);
--	entry = kmalloc(sizeof(*entry), GFP_ATOMIC);
--	if (!entry)
--		goto out1;
- 	entry->start = start;
- 	entry->size = size;
- 	list_add(&entry->head, &muram_block_list);
+ 	/* Fill slow UCC structure */
+ 	uccs->us_info = us_info;
+@@ -179,7 +182,7 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
+ 	/* Get PRAM base */
+ 	uccs->us_pram_offset =
+ 		qe_muram_alloc(UCC_SLOW_PRAM_SIZE, ALIGNMENT_OF_UCC_SLOW_PRAM);
+-	if (IS_ERR_VALUE(uccs->us_pram_offset)) {
++	if (uccs->us_pram_offset < 0) {
+ 		printk(KERN_ERR "%s: cannot allocate MURAM for PRAM", __func__);
+ 		ucc_slow_free(uccs);
+ 		return -ENOMEM;
+@@ -206,10 +209,9 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
+ 	uccs->rx_base_offset =
+ 		qe_muram_alloc(us_info->rx_bd_ring_len * sizeof(struct qe_bd),
+ 				QE_ALIGNMENT_OF_BD);
+-	if (IS_ERR_VALUE(uccs->rx_base_offset)) {
++	if (uccs->rx_base_offset < 0) {
+ 		printk(KERN_ERR "%s: cannot allocate %u RX BDs\n", __func__,
+ 			us_info->rx_bd_ring_len);
+-		uccs->rx_base_offset = 0;
+ 		ucc_slow_free(uccs);
+ 		return -ENOMEM;
+ 	}
+@@ -217,9 +219,8 @@ int ucc_slow_init(struct ucc_slow_info * us_info, struct ucc_slow_private ** ucc
+ 	uccs->tx_base_offset =
+ 		qe_muram_alloc(us_info->tx_bd_ring_len * sizeof(struct qe_bd),
+ 			QE_ALIGNMENT_OF_BD);
+-	if (IS_ERR_VALUE(uccs->tx_base_offset)) {
++	if (uccs->tx_base_offset < 0) {
+ 		printk(KERN_ERR "%s: cannot allocate TX BDs", __func__);
+-		uccs->tx_base_offset = 0;
+ 		ucc_slow_free(uccs);
+ 		return -ENOMEM;
+ 	}
+@@ -352,14 +353,9 @@ void ucc_slow_free(struct ucc_slow_private * uccs)
+ 	if (!uccs)
+ 		return;
  
- 	return start;
--out1:
--	gen_pool_free(muram_pool, start, size);
--out2:
--	return -ENOMEM;
- }
+-	if (uccs->rx_base_offset)
+-		qe_muram_free(uccs->rx_base_offset);
+-
+-	if (uccs->tx_base_offset)
+-		qe_muram_free(uccs->tx_base_offset);
+-
+-	if (uccs->us_pram)
+-		qe_muram_free(uccs->us_pram_offset);
++	qe_muram_free(uccs->rx_base_offset);
++	qe_muram_free(uccs->tx_base_offset);
++	qe_muram_free(uccs->us_pram_offset);
  
- /*
+ 	if (uccs->us_regs)
+ 		iounmap(uccs->us_regs);
+diff --git a/include/soc/fsl/qe/ucc_slow.h b/include/soc/fsl/qe/ucc_slow.h
+index 8696fdea2ae9..d187a6be83bc 100644
+--- a/include/soc/fsl/qe/ucc_slow.h
++++ b/include/soc/fsl/qe/ucc_slow.h
+@@ -185,7 +185,7 @@ struct ucc_slow_private {
+ 	struct ucc_slow_info *us_info;
+ 	struct ucc_slow __iomem *us_regs; /* Ptr to memory map of UCC regs */
+ 	struct ucc_slow_pram *us_pram;	/* a pointer to the parameter RAM */
+-	u32 us_pram_offset;
++	s32 us_pram_offset;
+ 	int enabled_tx;		/* Whether channel is enabled for Tx (ENT) */
+ 	int enabled_rx;		/* Whether channel is enabled for Rx (ENR) */
+ 	int stopped_tx;		/* Whether channel has been stopped for Tx
+@@ -194,8 +194,8 @@ struct ucc_slow_private {
+ 	struct list_head confQ;	/* frames passed to chip waiting for tx */
+ 	u32 first_tx_bd_mask;	/* mask is used in Tx routine to save status
+ 				   and length for first BD in a frame */
+-	u32 tx_base_offset;	/* first BD in Tx BD table offset (In MURAM) */
+-	u32 rx_base_offset;	/* first BD in Rx BD table offset (In MURAM) */
++	s32 tx_base_offset;	/* first BD in Tx BD table offset (In MURAM) */
++	s32 rx_base_offset;	/* first BD in Rx BD table offset (In MURAM) */
+ 	struct qe_bd *confBd;	/* next BD for confirm after Tx */
+ 	struct qe_bd *tx_bd;	/* next BD for new Tx request */
+ 	struct qe_bd *rx_bd;	/* next BD to collect after Rx */
 -- 
 2.23.0
 
