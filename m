@@ -2,125 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16EF10C80F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 12:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4919E10C816
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 12:39:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfK1Lif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 06:38:35 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33772 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfK1Lif (ORCPT
+        id S1726764AbfK1Ljp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 06:39:45 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:31375 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726320AbfK1Ljm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 06:38:35 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y23so2652922wma.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 03:38:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=7dzXAN2X2L6bGPvK4PFvG9vdURbUoCe50bDBU3Z9XwI=;
-        b=KeHVV1r+lyB6FTTM8bE+Y10Z5uaKh2EjYaJu/C5ZfN/1HDQmh8sIhqWJJNiyQZZ0/F
-         QIvpkEBOlu6tiG0p5EO/SNsYNB6jhkVdi36Wobvo3BIkF6nuBU8Kc2eoUVgDHzXZzZvS
-         eoeK4d2bMGa/NrFMyzZiH8nlZ086wekBcpicq4B0/3AFTqifl43Q3akZproFcEpY2OaR
-         nVcSH3VUGRoy95JIuOp3fxbXPsf++7WEcQgVzz1LyaRC7ACaZvwCn3NEALSTtzY5cHn1
-         4lMOV5B09daTu/aMMeCoa6ct92q29yUAV6f3s9tGZy3WFm1u+gS0UDYkZHCwHQdOCJN7
-         /c/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=7dzXAN2X2L6bGPvK4PFvG9vdURbUoCe50bDBU3Z9XwI=;
-        b=c/sfyjqmSrBhdYM7F5pTN5TTtGBD02SVPwQCItOk+m/nA/fUbFX7HpcMh3bOmgev/c
-         ZzYwmAaNwhAHvCZirQJ/WpRPs9DabgARq8F1thEabZ8IBarVBblc3gR8rpXLBykWcpfI
-         FXUPUVA6UQnrIax89U6hmyyIgCjOS+wVUHJtJZmE9SbwOFMJnJF4a7UoO7epJ0RdKF9c
-         gZ6IB49WnztMXyY+BfIE6SmFB/nBT80KkOCL2Qbdqp1AXJOo0vureNKHDMuftsJuRRrl
-         y00bbWKDWNTIWrzImciNPuBjAtnNRmkYh4qj6nRWD2/Z3Ma2PPLlU3LcAZxNDJf8tso6
-         peLg==
-X-Gm-Message-State: APjAAAW9AsfUrhGLSMC3LZDqx0hNkFU37aTUjDsLh4TjFBuze9eoeuPS
-        sKP9daCLBr39aScsGX6eeFW6WeSsZpQtpdNFvVY=
-X-Google-Smtp-Source: APXvYqwmrhL+T92X8GSWKUUzYbbHF9p4pljSxW3oaar+nWfgXzT3Fw3oznVN29gGWmBWKLCZETMqBOIV+bbGpEohyqA=
-X-Received: by 2002:a1c:1b15:: with SMTP id b21mr1015684wmb.104.1574941112317;
- Thu, 28 Nov 2019 03:38:32 -0800 (PST)
+        Thu, 28 Nov 2019 06:39:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574941181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x/jeELqhj5P3A7DPG/PC1XpTw6obMUxkE54tKkidDrQ=;
+        b=g4pwOX2rQhNfvIEUgpoCchPqBRTXF9WlB5YAMdLdK1DapGKS0RWhYXqhWd3U4Dd1YNHcLh
+        l6jYp036zIve75CJA663lxajKgV5eyVa7mFTN4U9SZahTclEpsHJ/af7BKwbBq9FurOZRY
+        JWPuQuHxRIz0kSEboLyVXdAJwcSIJG0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-354-JkfH9-oZNDChP8mZlQBhKw-1; Thu, 28 Nov 2019 06:39:35 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E29E107ACC7;
+        Thu, 28 Nov 2019 11:39:33 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 526BE5D9E1;
+        Thu, 28 Nov 2019 11:39:31 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 56292A1E0; Thu, 28 Nov 2019 12:39:30 +0100 (CET)
+Date:   Thu, 28 Nov 2019 12:39:30 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     robh@kernel.org, intel-gfx@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] drm: call drm_gem_object_funcs.mmap with fake
+ offset
+Message-ID: <20191128113930.yhckvneecpvfhlls@sirius.home.kraxel.org>
+References: <20191127092523.5620-1-kraxel@redhat.com>
+ <20191127092523.5620-2-kraxel@redhat.com>
 MIME-Version: 1.0
-Reply-To: sebastient766@gmail.com
-Received: by 2002:adf:df83:0:0:0:0:0 with HTTP; Thu, 28 Nov 2019 03:38:31
- -0800 (PST)
-From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
-Date:   Thu, 28 Nov 2019 11:38:31 +0000
-X-Google-Sender-Auth: 6oKAvRkzYv1-sXc3jTH1UUVk4AE
-Message-ID: <CAOmrfMuOFbuqNzcOMA8Op8548JiM+OAXTkQp_DzWoaeWAxopOA@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191127092523.5620-2-kraxel@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: JkfH9-oZNDChP8mZlQBhKw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FROM MR.S=C3=89BASTIEN TONI
-AUDIT& ACCOUNT MANAGER
-BANK OF AFRICA (B.O.A)
-OUAGADOUGOU BURKINA FASO
-WEST AFRICA.
+On Wed, Nov 27, 2019 at 10:25:22AM +0100, Gerd Hoffmann wrote:
+> The fake offset is going to stay, so change the calling convention for
+> drm_gem_object_funcs.mmap to include the fake offset.  Update all users
+> accordingly.
+>=20
+> Note that this reverts 83b8a6f242ea ("drm/gem: Fix mmap fake offset
+> handling for drm_gem_object_funcs.mmap") and on top then adds the fake
+> offset to  drm_gem_prime_mmap to make sure all paths leading to
+> obj->funcs->mmap are consistent.
+>=20
+> v3: move fake-offset tweak in drm_gem_prime_mmap() so we have this code
+>     only once in the function (Rob Herring).
 
-Dear Friend,
+Now this series fails in Intel CI.  Can't see why though.  The
+difference between v2 and v3 is just the place where vma->vm_pgoff gets
+updated, and no code between the v2 and v3 location touches vma ...
 
-With due respect, I have decided to contact you on
-abusinesstransaction  that will be beneficial to both of us. At the
-bank last account and  auditing evaluation, my staffs came across an
-old account which was being maintained by a foreign client who we
-learn was among the deceased passengers of motor accident on
-November.2003, the deceased was unable to run this account since his
-death. Theaccount has  remained dormant without the knowledge of his
-family since it was put in a  safe deposit account in the bank for
-future investment by the client.
+confused,
+  Gerd
 
-Since his demise, even the members of his family haven't applied for
-claims  over this fund and it has been in the safe deposit account
-until I  discovered that it cannot be claimed since our client
-isaforeign national
-and we are sure that he has no next of kin here to file claims over
-the money. As the director of the department, this  discovery was
-brought to my office so as to decide what is to bedone.I  decided to
-seek ways through which to transfer this money out of the bank  and
-out of the country too.
-
-The total amount in the account is 18.6 million with my positions as
-staffs  of the bank, I am handicapped because I cannot operate foreign
-accounts and  cannot lay bonafide claim over this money. The client
-was a foreign  national and you will only be asked to act as his next
-of kin and I will  supply you with all the necessary information and
-bank data to assist you in being able to transfer this money to any
-bank of your  choice where this money could be transferred into.The
-total sum will be  shared as follows: 50% for me, 50% for you and
-expenses incidental occur  during the transfer will be incur by both
-of us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund  transfer to your account. Since I
-work in this bank that is why you should  be confident in the success
-of this transaction because you will be updated with information as at
-when desired.
-
-I will wish you to keep this transaction secret and confidential as I
-am  hoping to retire with my share of this money at the end of
-transaction  which will be when this money is safety in your account.
-I will then come over to your country for sharing according to the
-previously agreed percentages. You might even have to advise me on
-possibilities of investment in your country or elsewhere of our
-choice. May  God help you to help me to a restive retirement, Amen,And
-You have to  contact me through my private e-mail
-at(sebastient766@gmail.com)Please for further information and inquires
-feel free to contact me back immediately for more explanation and
-better  understanding I want you to assure me your capability of
-handling this  project with trust by providing me your following
-information details such as:
-
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:.....................
-(6)YOUR COUNTRY:.....................
-
-Yours sincerely,
-Mr.S=C3=A9bastien Toni
