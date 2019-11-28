@@ -2,90 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5935410CBB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:29:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7009310CBF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:43:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfK1P30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 10:29:26 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34838 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfK1P30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:29:26 -0500
-Received: by mail-qk1-f195.google.com with SMTP id v23so15232111qkg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 07:29:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=o25gVTM3POIQu+gqgts69ZSJpER0xLxj/NptxHj1lGY=;
-        b=RiROsxoQeTjFzPUjV2tSMBSlHoWH14G7MKaat8rAiHMEsMRQ6uHJWEZko66S5ZLYRR
-         D8Rgaa/jk1lC/LpAQ+SqVl8oJv9NPtAb6ozlqx1+a5x0sdEtQRpGPeMi5f3y7SrbXXlV
-         z9r/FfReU/k8ZaRBkh7jPNkTQPnCMD7cqmCoU1AxOX/3vE7MVg2yLblVUuPH95n1ayTG
-         seWpwnF2SGi+e1nrNnosoaZEwNXgOWc7m1vhr7PgcACk8jrd+ANE6nb3s0oRFh9FrKsd
-         N3C7AGSTPrAFbVlDWwJeuVA2mkHWEayVnRtWl/NmvtZmaGadHPfrWkawv+zLC7SK3c5o
-         5aTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=o25gVTM3POIQu+gqgts69ZSJpER0xLxj/NptxHj1lGY=;
-        b=MIElty9oEyWhHtOxPPy6Po1gCvgMLg2O2ldqxo0f5IugsCOHE3o0ymJaVhKZ4LinM9
-         f59FCnSZrE+Bs1p8ULdTlYxPV4i8+yXYG5oHDvxqfLmwAjMEZLLvq9WrlD4CVIvfBPen
-         dLrWW+1a9PwJPEwW0NmcztQq5G5HhxcwnNc083YonFiPF+nOLRv0P+P616aBH5ZNhMLa
-         pKXI5t2MXYJKlToWsIqMnueMS2wbROnC/qADk7AMVfzyCFaOBDflNiIySmP0K6O7VFUw
-         bN6yAXQkRBG6pRWMEe2AHbJoXib3lKdRtUhq7e8aNpZHS+tMSNbd/mZ3m904A1yM/TUG
-         fPiw==
-X-Gm-Message-State: APjAAAWy7aXX0i5MK/oC9u6O6bHdAbjc3YQ+s6oUHZUOz4JH7sxv57FX
-        AdFzN/sF5OuPwCwaxgjhGN4qHQ==
-X-Google-Smtp-Source: APXvYqw1pdKo9iQXakvY4/z67dTdEia642ja75qtt6+Zp2jRCx47LSMi11S8cgfmAeOTImpKbpXPfg==
-X-Received: by 2002:a37:9fc9:: with SMTP id i192mr7687196qke.364.1574954965256;
-        Thu, 28 Nov 2019 07:29:25 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id u4sm4055273qkh.59.2019.11.28.07.29.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2019 07:29:24 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v1] mm/memory_hotplug: don't check the nid in find_(smallest|biggest)_section_pfn
-Date:   Thu, 28 Nov 2019 10:29:24 -0500
-Message-Id: <687DAE43-C40F-4527-876D-CAC750D150B6@lca.pw>
-References: <c1857505-4565-99c8-d86d-efa6c076312a@redhat.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>
-In-Reply-To: <c1857505-4565-99c8-d86d-efa6c076312a@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-X-Mailer: iPhone Mail (17A878)
+        id S1726900AbfK1PnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 10:43:15 -0500
+Received: from elvis.franken.de ([193.175.24.41]:53133 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726510AbfK1PnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 10:43:15 -0500
+X-Greylist: delayed 1529 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Nov 2019 10:43:15 EST
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1iaLY8-0003pZ-00; Thu, 28 Nov 2019 16:17:44 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id F11D9C0638; Thu, 28 Nov 2019 16:07:21 +0100 (CET)
+Date:   Thu, 28 Nov 2019 16:07:21 +0100
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Maarten ter Huurne <maarten@treewalker.org>,
+        mips-creator-ci20-dev@googlegroups.com,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: MIPS: bug: gettimeofday syscall broken on CI20 board
+Message-ID: <20191128150721.GA20142@alpha.franken.de>
+References: <18788C50-F29B-4BD7-89F6-B056FF490214@goldelico.com>
+ <7b6275c7-ab2b-a647-6bf7-d5e1c4523c98@arm.com>
+ <D1CE4D1E-9A42-4FAE-90A9-615C38B979C0@goldelico.com>
+ <4807842.gtHLO0kk0V@hyperion>
+ <01D75E67-EC2E-4C74-B9BB-752773C481A9@goldelico.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01D75E67-EC2E-4C74-B9BB-752773C481A9@goldelico.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 28, 2019 at 02:48:46PM +0100, H. Nikolaus Schaller wrote:
+> 
+> What still does not fit into the picture is the errno = 1 i.e. EPERM.
+> Maybe I have to study the libc code that tries to read the ELF symbols
+> you have mentioned. It may fail for unknown reasons.
 
+to understand vdso you might look at arch/mips/vdso and lib/vdso
+kernel sources.
 
-> On Nov 28, 2019, at 9:52 AM, David Hildenbrand <david@redhat.com> wrote:
->=20
-> I also agree that it should not be used for basic functional/compile
-> tests (I said "It is a way of giving patches *more* testing."). It
-> should not be the only place to test stuff (especially to let somebody
-> else do it).
->=20
-> However, sometimes we really have to get additional test coverage via
-> linux-next, especially for weird archs/configurations/setups.
->=20
-> ... and if we don't have enough reviewers, it's really hard to get stuff
-> upstream.
->=20
-> I wish MM patches would get reviewed more thoroughly.
->=20
-> (If we all make a wish, maybe Santa Clause will listen ;) )
+And if I understand it correctly you neither have a working high resolution
+timer usable bei do_hres() in lib/vdso/gettimeofday.c or a working
+gettimeofday_fallback(), which is enabled via CONFIG_MIPS_CLOCK_VSYSCALL
+and needs either CSRC_R4K or CLKSRC_MIPS_GIC.
 
-What I don=E2=80=99t understand is that we have an policy prohibiting code c=
-hurn like code optimization in cold path, but allow those micro cleanup of c=
-ode. Those cleanup also tend to be unregulated and is subject to personal ta=
-stes (for example, your CS teachers may have a different taste from mine). I=
- can understand developers want to have fun, but perhaps there are other pla=
-yground areas that worth taking more risk?=20=
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
