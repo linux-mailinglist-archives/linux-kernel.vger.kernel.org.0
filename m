@@ -2,65 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7009310CBF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D00F810CBB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 16:31:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfK1PnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 10:43:15 -0500
-Received: from elvis.franken.de ([193.175.24.41]:53133 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbfK1PnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 10:43:15 -0500
-X-Greylist: delayed 1529 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Nov 2019 10:43:15 EST
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1iaLY8-0003pZ-00; Thu, 28 Nov 2019 16:17:44 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id F11D9C0638; Thu, 28 Nov 2019 16:07:21 +0100 (CET)
-Date:   Thu, 28 Nov 2019 16:07:21 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Maarten ter Huurne <maarten@treewalker.org>,
-        mips-creator-ci20-dev@googlegroups.com,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: MIPS: bug: gettimeofday syscall broken on CI20 board
-Message-ID: <20191128150721.GA20142@alpha.franken.de>
-References: <18788C50-F29B-4BD7-89F6-B056FF490214@goldelico.com>
- <7b6275c7-ab2b-a647-6bf7-d5e1c4523c98@arm.com>
- <D1CE4D1E-9A42-4FAE-90A9-615C38B979C0@goldelico.com>
- <4807842.gtHLO0kk0V@hyperion>
- <01D75E67-EC2E-4C74-B9BB-752773C481A9@goldelico.com>
+        id S1726702AbfK1Pbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 10:31:39 -0500
+Received: from mail-40130.protonmail.ch ([185.70.40.130]:57608 "EHLO
+        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbfK1Pbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 10:31:39 -0500
+Date:   Thu, 28 Nov 2019 15:31:31 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1574955096;
+        bh=jrPTZgi0SU4x8PDrknsTeduahbLr99zyjShTd7swWm4=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=DWR+RBx1r49fxhEEvwf506KeubbDh7cTV/Gh20Uuetz+r+wT8yoUCjTAxuTw44Wz1
+         FlgwK6mIc0S99+e/1Uu67LxCQU3GTDA6YPZc5B9esHWhQAVq2Z8geR14gPDLVkV4ay
+         hp9RBO0Y9dLoQedLXRNDT44BZzJi8aG1rNVE16u0=
+To:     Steven Rostedt <rostedt@goodmis.org>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     dann frazier <dann.frazier@canonical.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        James Morris <jmorris@namei.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: tracefs splats in lockdown=confidentiality mode
+Message-ID: <2vtDIdkutRsBBbaiswjFZlGeQPSlDHF3et5ZxQ4YJ4zArOKo7-53A6d8SwpUtt7NCYdQEmmkeTADvrS7NCzw0Stw33n44vJC_qspqXgRPZQ=@protonmail.ch>
+In-Reply-To: <20191101181501.4beff81b@grimm.local.home>
+References: <20191101210803.GA9841@xps13.dannf>
+ <20191101181501.4beff81b@grimm.local.home>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01D75E67-EC2E-4C74-B9BB-752773C481A9@goldelico.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.7 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 02:48:46PM +0100, H. Nikolaus Schaller wrote:
-> 
-> What still does not fit into the picture is the errno = 1 i.e. EPERM.
-> Maybe I have to study the libc code that tries to read the ELF symbols
-> you have mentioned. It may fail for unknown reasons.
+On Friday, November 1, 2019 10:15 PM, Steven Rostedt <rostedt@goodmis.org> =
+wrote:
 
-to understand vdso you might look at arch/mips/vdso and lib/vdso
-kernel sources.
+> On Fri, 1 Nov 2019 15:08:03 -0600
+> dann frazier dann.frazier@canonical.com wrote:
+>
+> > hey,
+> > fyi, I'm seeing a bunch of errors from tracefs when booting 5.4-rc5 in
+> > lockdown=3Dconfidentiality mode:
+> > [ 1.763630] Lockdown: swapper/0: use of tracefs is restricted; see man =
+kernel_lockdown.7
+> > [ 1.772332] Could not create tracefs 'available_events' entry
+> > [ 1.778633] Lockdown: swapper/0: use of tracefs is restricted; see man =
+kernel_lockdown.7
+> > [ 1.787095] Could not create tracefs 'set_event' entry
+> > [ 1.792412] Lockdown: swapper/0: use of tracefs is restricted; see man =
+kernel_lockdown.7
+> > (...)
+> > [ 2.899481] Could not create tracefs 'set_graph_notrace' entry
+> > [ 2.905671] Lockdown: swapper/0: use of tracefs is restricted; see man =
+kernel_lockdown.7
+> > [ 2.913934] ------------[ cut here ]------------
+> > [ 2.918435] Could not register function stat for cpu 0
+> > [ 2.923717] WARNING: CPU: 1 PID: 1 at kernel/trace/ftrace.c:987 ftrace_=
+init_tracefs_toplevel+0x168/0x1bc
+> > [ 2.933939] Modules linked in:
+> > [ 2.937290] CPU: 1 PID: 1 Comm:
+>
+> Looks to me that it's working as designed ;-)
+>
+> I'm guessing we could quiet these warnings for boot up though. :-/
+>
+> But there should be at least one message that states that the tracefs
+> files are not being created due to lockdown.
+>
+> -- Steve
 
-And if I understand it correctly you neither have a working high resolution
-timer usable bei do_hres() in lib/vdso/gettimeofday.c or a working
-gettimeofday_fallback(), which is enabled via CONFIG_MIPS_CLOCK_VSYSCALL
-and needs either CSRC_R4K or CLKSRC_MIPS_GIC.
+Could you clarify what functionality is lost here and if it affects
+system stability?
 
-Thomas.
+I agree that triggering WARNING on every boot with supported kernel
+configuration isn't optimal experience for users.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Jordan
