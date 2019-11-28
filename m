@@ -2,93 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C8910C595
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:03:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE8610C5A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 10:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfK1JDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 04:03:20 -0500
-Received: from dvalin.narfation.org ([213.160.73.56]:51930 "EHLO
-        dvalin.narfation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfK1JDU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 04:03:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-        s=20121; t=1574931798;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NrOadlV/ly7FreKTOQxgRCOUZAeZYFuDY0qoRN8icgo=;
-        b=cDgC2CAdf2rhtq7hEdWN7O6A53wGbKZtVnG7HANS56jXbJDlbuy4WBQ6tB4iITPMinNWTz
-        8ufAeJhojywWlqfMM3ThtQ7p76e0n8Sj8L24AyTXsWhh6j9yKnLRF3K4dLr/DCAK8TyW4I
-        Yv0u0zLnBVZ7HdnC57anmxMMBMsSSdc=
-From:   Sven Eckelmann <sven@narfation.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzkaller <syzkaller@googlegroups.com>,
-        syzbot <syzbot+a229d8d995b74f8c4b6c@syzkaller.appspotmail.com>,
-        a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        =?utf-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>,
-        LKML <linux-kernel@vger.kernel.org>, mareklindner@neomailbox.ch,
-        netdev <netdev@vger.kernel.org>, sw@simonwunderlich.de,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        vinicius.gomes@intel.com, wang.yi59@zte.com.cn,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Subject: Re: WARNING in mark_lock (3)
-Date:   Thu, 28 Nov 2019 10:03:13 +0100
-Message-ID: <3691620.GRZi0niZ3p@sven-edge>
-In-Reply-To: <CACT4Y+abQSWfiN16BwXFOBi+d3CFGk53oj+5+zZwQPbcYu-Rew@mail.gmail.com>
-References: <0000000000009aa32205985e78b6@google.com> <1809369.KjlzdqruN6@sven-edge> <CACT4Y+abQSWfiN16BwXFOBi+d3CFGk53oj+5+zZwQPbcYu-Rew@mail.gmail.com>
+        id S1727033AbfK1JHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 04:07:54 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40788 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725789AbfK1JHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Nov 2019 04:07:53 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 538A8517B63887E92DE5;
+        Thu, 28 Nov 2019 17:07:51 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 28 Nov 2019 17:07:48 +0800
+From:   Daode Huang <huangdaode@hisilicon.com>
+To:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <maz@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
+        <fabien.dessenne@st.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] irqchip/stm32: Fix "WARNING: invalid free of devm_ allocated
+Date:   Thu, 28 Nov 2019 17:04:40 +0800
+Message-ID: <1574931880-168682-1-git-send-email-huangdaode@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3339975.5L7NHtn4j8"; micalg="pgp-sha512"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart3339975.5L7NHtn4j8
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Since devm_ allocated data can be automaitcally released, it's no
+need to free it apparently, just remove it.
 
-On Thursday, 28 November 2019 09:54:15 CET Dmitry Vyukov wrote:
-[...]
-> > I was thinking more about rerunning the same bisect but tell it to assume
-> > "crashed: general protection fault in batadv_iv_ogm_queue_add" as OK instead
-> > of assuming that it is a crashed like the previous "crashed: WARNING in
-> > mark_lock". Just to get a non-bogus bisect result. Or try to rerun the
-> > bisect between 40e220b4218b and 89d57dddd7d319ded00415790a0bb3c954b7e386
-> 
-> But... but this done by a program. What do you mean by "tell it"?
+Fixes: cfbf9e497094 ("irqchip/stm32: Use a platform driver for
+stm32mp1-exti device")
+Signed-off-by: Daode Huang <huangdaode@hisilicon.com>
+---
+ drivers/irqchip/irq-stm32-exti.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Sorry that I asked about what the infrastructure around syzbot can do and
-how the interaction with it looks like.
-
-Kind regards,
-	Sven
---nextPart3339975.5L7NHtn4j8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAl3fjVEACgkQXYcKB8Em
-e0ajQhAAvetvCCehY5SmHsrLLKW7/YkVm3Ez3oqtbu/VCn8TEvau5PVt48ojQYmu
-zOIZAs05i4JRI1WHZXyrAzPF3CI4juDdFCwOibiPDzCU2C3qD5s2AsZfxK22iPUt
-dkBhW19Cq115ZgcOmerAor0nLkRkglYwoAEg6j+edtXUU3JYQG6PSGICN1NMGhmY
-Q1jcXAGR1Hm+2SbR1sBBCflQHt8E6/wURkeqrvV82AcRSO3sPqQBWSEZ7QzIe3mc
-oh0v4o5xZQMqppDByKmS9kZ5kRPH0yQid9l/KU4yGAQ8IDIZRKJGSHbpdOSGHNB4
-9Wc3SR04lmn8WhwRBE8vpB/6n8cAq0mAv/kTa6pEYzjY499z8BjEkkAh9ggOuxLQ
-AOb4dpu0L+wyXP/vLhUKJI+KWAJ+OOJoAVxNXh6HvhQRpShpTN/7+o1AVyRXLlBZ
-bdjxVh3McRWvn8KYat3DtkON90uQRCZ9ufyTXcIPKkTiqQuT/UpwY0fNe3kjYfpK
-pd5dyM86JWGxd39ramOhFSBQyNUAmJ+9pY2uVypbSABbbyIlqerGqzRSvgxoynNN
-UrrZN3MVBCouMxM9+ES7L63jUg8JQQdAwr4RoisEyGLSPsstEnOd6PWYdsk6WYA2
-kDoKPp9EjAeGEb7qH+IbXSm73qP2xX+rBBjfcTn/1CHCkgAPvTg=
-=lHZm
------END PGP SIGNATURE-----
-
---nextPart3339975.5L7NHtn4j8--
-
-
+diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+index e00f2fa..46ec0af 100644
+--- a/drivers/irqchip/irq-stm32-exti.c
++++ b/drivers/irqchip/irq-stm32-exti.c
+@@ -779,8 +779,6 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
+ 	irq_domain_remove(domain);
+ out_unmap:
+ 	iounmap(host_data->base);
+-	kfree(host_data->chips_data);
+-	kfree(host_data);
+ 	return ret;
+ }
+ 
+-- 
+2.8.1
 
