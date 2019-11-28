@@ -2,123 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0891C10C58A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D6E10C57B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 09:53:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbfK1I73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 03:59:29 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43657 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfK1I73 (ORCPT
+        id S1727614AbfK1IxP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 28 Nov 2019 03:53:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46358 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfK1IxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 03:59:29 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q28so3135816qkn.10
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 00:59:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wZDOmo+mPfnPdaN//xLxORxFeLKUGqLr+J7G6xlCcv0=;
-        b=SqLbd+9oTES7vGoU6eGRMkOpdFNV40HLc8s+9TAEtizxbar9kUpZ2tYAOwvaCY1zJ+
-         h2RoTvo57zIm/phFl00V8pNUu++Ie3H2YdWs5duONa6ZKlqZcd3g5I+xw9BtKTc+uUCg
-         mkSzYl/52v0L6ZFbszaSXtmAE+0/SOnzVv8g/2TvaZz1fGjnWDca/ilGBsMv/qxl8KSL
-         xQAZnM9roykuNy0O/hXzxcFl4RG9lANGbs8Syy6W6Bf5a02XsRcE9w5/+oZcjCQaB01w
-         hwiQPa9y/o5RMKSE8pPl9j5Evo2S4Nyk5RdMnwDFqxg8avw58AnnFNmJXvs343DJaTt9
-         oMtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wZDOmo+mPfnPdaN//xLxORxFeLKUGqLr+J7G6xlCcv0=;
-        b=dvdrjWwTgfctOjc8Z+/EvJzfy9z39D7NHi2nj801X9xGovhEZ14UDLFsBXbLSM/FeC
-         cg2G/BVY+EdnyNQ4B00gmZ+oLEewe3lNuGF0eAQhNBj9E/qVeT2MW3k8xSo7BPF+1vL4
-         EzB73Qiej2VlWHF0Rc4f6NNx5P1rGhv10A0Z2LwGIi7TlMDjqlTk0rA6g62rHJzSYJaL
-         syr6/2vuoem/lUSWkQhRfUZHO+uJRBeMU1huECCnoiQHZdUdtspHoRyPG3yu4N+4nY/8
-         WpSsOrsWeL/kA3/qp1kalIWRCxMOyFAcXnXvaMmaYq9sYFAqePKGPTc1XxNCCVqTJeqH
-         efVg==
-X-Gm-Message-State: APjAAAUT98ceYAnVrzMmHz7lXwKKPuJ0z4qiCkd+gImxO0A20jyzFjfN
-        oJHaigTl+ogdZK7FpLtGH+4YIylZySaet+V6UFha+0cm
-X-Google-Smtp-Source: APXvYqxQ8DtLmeAzs+5VWeB2Gdz5ZzKRF7gLOdRvhy2DWqwJIHm23YKNcX22+xkzBrqhwZiFwlBokOtLC2TXudHDan0=
-X-Received: by 2002:a37:e312:: with SMTP id y18mr5456024qki.250.1574931134398;
- Thu, 28 Nov 2019 00:52:14 -0800 (PST)
+        Thu, 28 Nov 2019 03:53:15 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iaFXu-0003iG-Ny; Thu, 28 Nov 2019 09:53:06 +0100
+Date:   Thu, 28 Nov 2019 09:53:06 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Barret Rhoden <brho@google.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Josh Bleecher Snyder <josharian@gmail.com>,
+        Rik van Riel <riel@surriel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, ian@airs.com,
+        Austin Clements <austin@google.com>,
+        David Chase <drchase@golang.org>
+Subject: [PATCH v2] x86/fpu: Don't cache access to fpu_fpregs_owner_ctx
+Message-ID: <20191128085306.hxfa2o3knqtu4wfn@linutronix.de>
+References: <c87e93c3-5f30-f242-74b7-6c7ccc91158a@google.com>
+ <20191126202026.csrmjre6vn2nxq7c@linutronix.de>
+ <e4d6406b-0d47-5cc5-f3a8-6d14bd90760b@google.com>
+ <20191127124243.u74osvlkhcmsskng@linutronix.de>
+ <20191127140754.GB3812@zn.tnic>
+ <f4d5ca28-a388-c382-4b1a-4b65c9f9e6e7@google.com>
 MIME-Version: 1.0
-References: <201911262053.C6317530@keescook> <00000000000085ce5905984f2c8b@google.com>
- <201911271124.F01A0B37@keescook>
-In-Reply-To: <201911271124.F01A0B37@keescook>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 28 Nov 2019 09:52:03 +0100
-Message-ID: <CACT4Y+aEeUaTQioc85nPXG9GM_ODojdoywNoVEOf5b6yXXU0cg@mail.gmail.com>
-Subject: Re: WARNING in generic_make_request_checks
-To:     Kees Cook <keescook@chromium.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Cc:     syzbot <syzbot+21cfe1f803e0e158acf1@syzkaller.appspotmail.com>,
-        00moses.alexander00@gmail.com, Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ilya Dryomov <idryomov@gmail.com>, joseph.qi@linux.alibaba.com,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Mike Snitzer <snitzer@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tejun Heo <tj@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, wgh@torlan.ru,
-        zkabelac@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <f4d5ca28-a388-c382-4b1a-4b65c9f9e6e7@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 8:26 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Tue, Nov 26, 2019 at 11:45:00PM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot has tested the proposed patch and the reproducer did not trigger
-> > crash:
-> >
-> > Reported-and-tested-by:
-> > syzbot+21cfe1f803e0e158acf1@syzkaller.appspotmail.com
-> >
-> > Tested on:
-> >
-> > commit:         8b2ded1c block: don't warn when doing fsync on read-only d..
-> > git tree:
-> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=d727e10a28207217
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=21cfe1f803e0e158acf1
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >
-> > Note: testing is done by a robot and is best-effort only.
->
-> It seems for successful tests, I still need to tell syzbot that this is
-> fixed?
+The state/owner of FPU is saved fpu_fpregs_owner_ctx by pointing to the
+context that is currently loaded. It never changed during the life time
+of a task and remained stable/constant.
 
-+syzkaller mailing list for syzbot discussion
+Since deferred loading the FPU registers on return to userland, the
+content of fpu_fpregs_owner_ctx may change during preemption and must
+not be cached.
+This went unnoticed for some time and was now noticed, in particular
+gcc-9 is able to cache that load in copy_fpstate_to_sigframe() and reuse
+it in the retry loop:
 
-Yes.
-You used a commit. But patch testing may work with raw attached
-patches, or on trees that are not merged, or it may just a trial run
-on HEAD or run with additional debugging only and it may incidentally
-succeed; or may be not incidentally but the patch disables part of
-functionality just to check if it affects the crash or not, but it's
-totally not a fix for the bug.
-Nobody ever figured out how all of this could work; allocate time to
-write a complete proposal for the workflow and implement this.
-So at the moment patch testing functionality is completely unrelated
-to the rest of the workflow. It's a convenience feature.
+  copy_fpstate_to_sigframe()
+    load fpu_fpregs_owner_ctx and save on stack
+    fpregs_lock()
+    copy_fpregs_to_sigframe() /* failed */
+    fpregs_unlock()
+         *** PREEMPTION, another uses FPU, changes fpu_fpregs_owner_ctx ***
 
+    fault_in_pages_writeable() /* succeed, retry */
 
-> #syz fix: block: don't warn when doing fsync on read-only devices
->
-> --
-> Kees Cook
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/201911271124.F01A0B37%40keescook.
+    fpregs_lock()
+	__fpregs_load_activate()
+	  fpregs_state_valid() /* uses fpu_fpregs_owner_ctx from stack */
+    copy_fpregs_to_sigframe() /* succeeds, random FPU content */
+
+This is a comparison of the assembly of gcc-9, without vs with this
+patch:
+
+| # arch/x86/kernel/fpu/signal.c:173:      if (!access_ok(buf, size))
+|        cmpq    %rdx, %rax      # tmp183, _4
+|        jb      .L190   #,
+|-# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+|-#APP
+|-# 512 "arch/x86/include/asm/fpu/internal.h" 1
+|-       movq %gs:fpu_fpregs_owner_ctx,%rax      #, pfo_ret__
+|-# 0 "" 2
+|-#NO_APP
+|-       movq    %rax, -88(%rbp) # pfo_ret__, %sfp
+…
+|-# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+|-       movq    -88(%rbp), %rcx # %sfp, pfo_ret__
+|-       cmpq    %rcx, -64(%rbp) # pfo_ret__, %sfp
+|+# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+|+#APP
+|+# 512 "arch/x86/include/asm/fpu/internal.h" 1
+|+       movq %gs:fpu_fpregs_owner_ctx(%rip),%rax        # fpu_fpregs_owner_ctx, pfo_ret__
+|+# 0 "" 2
+|+# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+|+#NO_APP
+|+       cmpq    %rax, -64(%rbp) # pfo_ret__, %sfp
+
+Use this_cpu_read() instead this_cpu_read_stable() to avoid caching of
+fpu_fpregs_owner_ctx during preemption points.
+
+The fixes tag points to the commit where defered FPU loading was added.
+Since this commit the compiler is no longer allowed move the load of
+fpu_fpregs_owner_ctx somewhere else / outside of the locked section. A
+task preemption will change its value and stale content will be observed.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=205663
+Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
+Debugged-by: Austin Clements <austin@google.com>
+Debugged-by: David Chase <drchase@golang.org>
+Debugged-by: Ian Lance Taylor <ian@airs.com>
+Tested-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+
+v1…v2:
+ - Adding tags
+ - Explaining why Fixes: does not point to the bisected commit.
+
+ arch/x86/include/asm/fpu/internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 4c95c365058aa..44c48e34d7994 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -509,7 +509,7 @@ static inline void __fpu_invalidate_fpregs_state(struct fpu *fpu)
+ 
+ static inline int fpregs_state_valid(struct fpu *fpu, unsigned int cpu)
+ {
+-	return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
++	return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+ }
+ 
+ /*
+-- 
+2.24.0
+
