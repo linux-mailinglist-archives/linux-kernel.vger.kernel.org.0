@@ -2,138 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B17010C692
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 11:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0470D10C687
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2019 11:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfK1KU4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 05:20:56 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34230 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfK1KU4 (ORCPT
+        id S1726565AbfK1KTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 05:19:42 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:60853 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfK1KTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 05:20:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t2so30359639wrr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 02:20:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=caWmBHqOFCXoHvzB9Rg0Yov3N8s7t2SawQxPVgzqSw4=;
-        b=dCYQR2n44rq+7GWeL5Lgy7OmheUIf5XwE1+PFdVyCrsbnfPhLTrVBfN4pdpzsw8O/S
-         yv7sgl8CBCwiRYjZV8XJbik2idGU7y9fraEfU3U/9YS4rCp5WcBWieHRu0yK+sy64VUy
-         tjVH1fTv8H8DqVauPID3lOHN+AF0mrCypt1Zm9hGXr9ViFAEU0mDI7DiWNrhUkzwud0z
-         m/WhbFHURFWiXmwiXLYk8V8JQc8a4FK9JEWcgRxYWNyJlQ3VXfkQriIAPl76ru+d+hHD
-         OijLzNnGig5I5gNY+zSBdKiDbhQgQm8QyJqW19l9qgm+VIoEJCF0IfOKgzSBLnLcu+lE
-         /xSw==
-X-Gm-Message-State: APjAAAXeCFlkkR4xkyEudm2LR46R2iS6iQS2YN9u+VU7o/5cxJywdro7
-        cPw9LDSHYKQjEHVYS7ypR1w=
-X-Google-Smtp-Source: APXvYqwGRZRnVs75F0orSXv2n5n1SyiQDtgNO1It2H0+sjNBdyZzegh5FzGkWXuN2ViBfGB8/E225g==
-X-Received: by 2002:a5d:6886:: with SMTP id h6mr29500317wru.154.1574936452924;
-        Thu, 28 Nov 2019 02:20:52 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id z6sm9672837wrw.36.2019.11.28.02.20.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 02:20:52 -0800 (PST)
-Date:   Thu, 28 Nov 2019 11:20:51 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1] drivers/base/node.c: get rid of get_nid_for_pfn()
-Message-ID: <20191128102051.GI26807@dhcp22.suse.cz>
-References: <20191127174126.28064-1-david@redhat.com>
+        Thu, 28 Nov 2019 05:19:42 -0500
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id DB106FF80D;
+        Thu, 28 Nov 2019 10:19:37 +0000 (UTC)
+Date:   Thu, 28 Nov 2019 11:21:41 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Adam Ford <adam.ford@logicpd.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: ov5640: Fix check for PLL1 exceeding max allowed
+ rate
+Message-ID: <20191128102141.beq7wzdu5vxwx7wk@uno.localdomain>
+References: <20191029124211.15052-1-aford173@gmail.com>
+ <CAHCN7xKAJ3koJc1H2zyGFG3J6qu+uw0jozT=pQ_0i8HStX5TbQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iej6shqa67f73dq2"
 Content-Disposition: inline
-In-Reply-To: <20191127174126.28064-1-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHCN7xKAJ3koJc1H2zyGFG3J6qu+uw0jozT=pQ_0i8HStX5TbQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-11-19 18:41:26, David Hildenbrand wrote:
-> Since commit d84f2f5a7552 ("drivers/base/node.c: simplify
-> unregister_memory_block_under_nodes()") we only have a single user of
-> get_nid_for_pfn(). Let's just inline that code and get rid of
-> get_nid_for_pfn().
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-I am not really sure this is an improvement. The code is ugly as hell
-and open coding it just makes register_mem_sect_under_node harder to
-read.
+--iej6shqa67f73dq2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-If anything get_nid_for_pfn deserves a comment why
-CONFIG_DEFERRED_STRUCT_PAGE_INIT calls for special case as
-early_pfn_to_nid is not bound to that config (it is defined when
-CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID || CONFIG_HAVE_MEMBLOCK_NODE_MAP
+Hi Adam,
 
-> ---
->  drivers/base/node.c | 23 +++++++----------------
->  1 file changed, 7 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 98a31bafc8a2..735073fd2926 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -744,17 +744,6 @@ int unregister_cpu_under_node(unsigned int cpu, unsigned int nid)
->  }
->  
->  #ifdef CONFIG_MEMORY_HOTPLUG_SPARSE
-> -static int __ref get_nid_for_pfn(unsigned long pfn)
-> -{
-> -	if (!pfn_valid_within(pfn))
-> -		return -1;
-> -#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> -	if (system_state < SYSTEM_RUNNING)
-> -		return early_pfn_to_nid(pfn);
-> -#endif
-> -	return pfn_to_nid(pfn);
-> -}
-> -
->  /* register memory section under specified node if it spans that node */
->  static int register_mem_sect_under_node(struct memory_block *mem_blk,
->  					 void *arg)
-> @@ -766,8 +755,6 @@ static int register_mem_sect_under_node(struct memory_block *mem_blk,
->  	unsigned long pfn;
->  
->  	for (pfn = start_pfn; pfn <= end_pfn; pfn++) {
-> -		int page_nid;
-> -
->  		/*
->  		 * memory block could have several absent sections from start.
->  		 * skip pfn range from absent section
-> @@ -784,11 +771,15 @@ static int register_mem_sect_under_node(struct memory_block *mem_blk,
->  		 * block belong to the same node.
->  		 */
->  		if (system_state == SYSTEM_BOOTING) {
-> -			page_nid = get_nid_for_pfn(pfn);
-> -			if (page_nid < 0)
-> +			if (!pfn_valid_within(pfn))
->  				continue;
-> -			if (page_nid != nid)
-> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> +			if (early_pfn_to_nid(pfn) != nid)
->  				continue;
-> +#else
-> +			if (pfn_to_nid(pfn) != nid)
-> +				continue;
-> +#endif
->  		}
->  
->  		/*
-> -- 
-> 2.21.0
+On Tue, Nov 26, 2019 at 08:08:05PM -0600, Adam Ford wrote:
+> On Tue, Oct 29, 2019 at 7:42 AM Adam Ford <aford173@gmail.com> wrote:
+> >
+> > The variable _rate is by ov5640_compute_sys_clk() which returns
+> > zero if the PLL exceeds 1GHz.  Unfortunately, the check to see
+> > if the max PLL1 output is checking 'rate' and not '_rate' and
+> > 'rate' does not ever appear to be 0.
 
--- 
-Michal Hocko
-SUSE Labs
+This seems a bit convoluted. What about:
+
+"The PLL calculation routine checks the wrong variable 'rate' to
+verify that the calculated PLL1 output frequency does not exceed
+1GHz. Fix this by using the correct '_rate' one."
+
+Or something against these lines
+
+> >
+> > This patch changes the check against the returned value of
+> > '_rate' to determine if the PLL1 output exceeds 1GHz.
+> >
+> > Fixes: aa2882481cad ("media: ov5640: Adjust the clock based on the expected rate")
+> >
+>
+> I haven't seen any responses to this patch.  Has anyone had a chance
+> to review this?  It's been nearly a month.
+
+You're totally right! Sorry about this
+
+> I think it would be appropriate to backport to stable if deemed acceptable.
+>
+
+Indeed! This fixes a real issue
+
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+  j
+
+> adam
+>
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> >
+> > diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+> > index 5e495c833d32..bb968e764f31 100644
+> > --- a/drivers/media/i2c/ov5640.c
+> > +++ b/drivers/media/i2c/ov5640.c
+> > @@ -874,7 +874,7 @@ static unsigned long ov5640_calc_sys_clk(struct ov5640_dev *sensor,
+> >                          * We have reached the maximum allowed PLL1 output,
+> >                          * increase sysdiv.
+> >                          */
+> > -                       if (!rate)
+> > +                       if (!_rate)
+> >                                 break;
+> >
+> >                         /*
+> > --
+> > 2.17.1
+> >
+
+--iej6shqa67f73dq2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl3fn7EACgkQcjQGjxah
+Vjy86RAAw1kxOzkw1nnyB56pcH62BlNk9zY7bCQtKMIUFrqzDkEFM8qvECDtlbab
+6SU8TTSN5kcc0gRS8g95reKyefbdclhN4sSBQ8EZtOO7uj/UpkIzj3iHXG9kKmEB
++ffUjBhnWlCP6x7Im6t740b7wwJ6+OXVAskL32Ts9yAqTapAEtJfswxj+DADCJsa
+CpSy6OSBgR3o95Y2WuRS7i6e6Llr5ria3d1fzWO8gD4GFACAZJnotJ8NKmzyAZPM
+mMAtMu0XebSsMiFjHbfbD7dB4g/pyD6qxqwVJTLGa/Lhr5kpIcsKgkENO2jNEIpo
+CeUm71EJ4S133iYCarDCDHArqoOzeYWfBTSli6c38FGdk7zrEE1/ijFJw5sEJmO3
+PfhcxXxcpjHOyqxxHZmXnlKDmPDbyKqsTY7wKViVfTQWN+4qCuRBZTyKDC5LG+uB
+NMa9FYoDGoWCegpXcFHPy/KRNgJwyJoCEe7o8s9wDJHetJv1foufBaxoHlxGNsbl
+XgHtA8cKxQyVLcGmxRbQss/BLSHkR7479KjFgiRRppkh/+WPNjReO/2Kfna5MJuQ
+VkuSfgxKDVzlD20PTkvlqOv6+WwdFJLI0+9/mpJVfndcJ331sBqpZogW1g8uNrRa
+DC8g5qnayGYym4M3rqlDk6mld3psDdkatENsj6K3uUVL7yUvUW0=
+=Zsgt
+-----END PGP SIGNATURE-----
+
+--iej6shqa67f73dq2--
