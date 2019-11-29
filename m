@@ -2,175 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D219F10D7C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 16:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE13310D7B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 16:13:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfK2PRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 10:17:08 -0500
-Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:15245 "EHLO
-        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfK2PRH (ORCPT
+        id S1726950AbfK2PN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 10:13:29 -0500
+Received: from mail-qk1-f178.google.com ([209.85.222.178]:37331 "EHLO
+        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfK2PN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 10:17:07 -0500
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 Nov 2019 10:17:06 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1575040626;
-  h=subject:to:references:from:message-id:date:mime-version:
-   in-reply-to:content-transfer-encoding;
-  bh=DaycKm/LpFN80ZMKrBVbdlKWv8+WyUR116gism8Plrc=;
-  b=CwfR0mRURPVh494qZIf8FK34eXCGI8zEMFO8z5/sBlyYajvUKHBw6OQ5
-   MPMUwwCMyZu+LE/CwxI99Ooxn8YRPNN8uylo3D8WRLaZTsg7TKxVEN6sO
-   Deykyxq7PRu3zUO/jCtbsWgszxJcDI4+hMln72qc1LyJobvniiuXFjOSI
-   E=;
-Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  andrew.cooper3@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="andrew.cooper3@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
-  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="Andrew.Cooper3@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
-  envelope-from="Andrew.Cooper3@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: 71h5pEqfTCR8dWxE+4xORG+x0kfkUdLgEXlbcI2+7/823J6hAcpKl1Fw0FbpM57MBZK+yPCYfe
- +gtwcw1IH3ScW4vp4hK5uAwEShjuK6X4UqcL/F2RNjG4HfM4giLxcY8GfU6M7yfc7nRD7msekC
- amLf0dR/N/w12VJUi+hd9hDNC2zNNkLQ464UblQ6ZNOV3AngElYA95ivhb1/K7QvCkZ4KH9Dvt
- tDtfFs/Tv/i/U2nQ56YUn1RxmtlsQi23Xv35u88TcE0HdpUfyWpJspag6R1PSqsxvTj36z9DSd
- Y+w=
-X-SBRS: 2.7
-X-MesageID: 9345885
-X-Ironport-Server: esa5.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.69,257,1571716800"; 
-   d="scan'208";a="9345885"
-Subject: Re: [Xen-devel] [PATCH 1/3] arm/arm64/xen: use C inlines for
- privcmd_call
-To:     Julien Grall <julien@xen.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        <jmorris@namei.org>, <sashal@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <steve.capper@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-        <james.morse@arm.com>, <vladimir.murzin@arm.com>,
-        <mark.rutland@arm.com>, <tglx@linutronix.de>,
-        <gregkh@linuxfoundation.org>, <allison@lohutok.net>,
-        <info@metux.net>, <alexios.zavras@intel.com>,
-        <sstabellini@kernel.org>, <boris.ostrovsky@oracle.com>,
-        <jgross@suse.com>, <stefan@agner.ch>,
-        <yamada.masahiro@socionext.com>, <xen-devel@lists.xenproject.org>,
-        <linux@armlinux.org.uk>
-References: <20191127184453.229321-1-pasha.tatashin@soleen.com>
- <20191127184453.229321-2-pasha.tatashin@soleen.com>
- <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <e785a585-8b71-8a49-285e-2bcb1437500b@citrix.com>
-Date:   Fri, 29 Nov 2019 15:09:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 29 Nov 2019 10:13:28 -0500
+Received: by mail-qk1-f178.google.com with SMTP id e187so25829161qkf.4
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 07:13:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=W6egdRMGiTO6yhu5AX3v9UKGMgKCZYWtWcMTq1xiguc=;
+        b=dd8tlyCbL0MV/jdCFG+gVtyZoNki0wz9bCiO9PYILiolX0HJwMUTpCILRsKT0VfFMD
+         9a7a4+hepOHL6TfYW7wDA8PGRZfI07VJ4LjKudFEh614ssIIbOcLRDKDGZWoQlmwiOPo
+         VN5BIOORVVd+U8CtOCgqNLLQZ9i5HGslnPIu+wEG0XjqAOItC9hacvr61Vmwuxgj1as8
+         dw7+x2rd6cPCFKY2i9OzTGZJat0KuNWayEVxE31PCG3iQAg+tOm4Mt2z7Drz2gfqC0Yr
+         uHrJuLlbkepCWFqztmEjKCF1Ud7kKzyfQAPbzWYQ4Rl/JDfIJw5Si4EeXGVJcDMwRb4f
+         ne8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=W6egdRMGiTO6yhu5AX3v9UKGMgKCZYWtWcMTq1xiguc=;
+        b=iAqsF7vFl2bLbIxNJ5pbW3g+aT+x28G3qMlZHFLe3DfBhfVnKxc9iIDRH/LImZlGqQ
+         2HYH9LQ2nyZIG2CNjlEGvhDtm8vTejFxjuI25x8NcBDwcnmkkOeU4rSPV3Yb4U5EvNK9
+         YJfvUEcDydIfgMibXN7pzDFW0wzVrysanCVL13KCW9a5kNGe3RofMHmBYQjJ7Aj5iweo
+         2JBTUrofncsZGoBTaoAZ2w6GQymRmF+oBZXNtSTVga8AAK0/2xrrU6Us43oMnBebljn6
+         pI8WIfdMwazOIinAOzO38jp3P5sIdcgAgVzUheToj6HmoHQxKH3QMDecnJH2D10Lks+m
+         fEkQ==
+X-Gm-Message-State: APjAAAVMFrnNUtjSl0yt10zo3RxAmvZT7DqafO+C3f4kyXWXRGF33Soz
+        OfLg/9TI9+7xAEWXxx0BaL8=
+X-Google-Smtp-Source: APXvYqwOBURrykCZNgLFpWJqdA6UhD0rgc/KnvgW09ESJk9X2ZsmBeCEKUSqTwF/+wM2U/cnRAczmg==
+X-Received: by 2002:a37:bdc4:: with SMTP id n187mr16934395qkf.376.1575040407639;
+        Fri, 29 Nov 2019 07:13:27 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id y91sm11760529qtd.28.2019.11.29.07.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2019 07:13:26 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 234A4405B6; Fri, 29 Nov 2019 12:13:24 -0300 (-03)
+Date:   Fri, 29 Nov 2019 12:13:24 -0300
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: perf probe -d failing to delete probes
+Message-ID: <20191129151324.GA26963@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2019 15:05, Julien Grall wrote:
-> Hi,
->
-> On 27/11/2019 18:44, Pavel Tatashin wrote:
->> diff --git a/arch/arm64/include/asm/xen/hypercall.h
->> b/arch/arm64/include/asm/xen/hypercall.h
->> index 3522cbaed316..1a74fb28607f 100644
->> --- a/arch/arm64/include/asm/xen/hypercall.h
->> +++ b/arch/arm64/include/asm/xen/hypercall.h
->> @@ -1 +1,29 @@
->> +#ifndef _ASM_ARM64_XEN_HYPERCALL_H
->> +#define _ASM_ARM64_XEN_HYPERCALL_H
->>   #include <xen/arm/hypercall.h>
->> +#include <linux/uaccess.h>
->> +
->> +static inline long privcmd_call(unsigned int call, unsigned long a1,
->> +                unsigned long a2, unsigned long a3,
->> +                unsigned long a4, unsigned long a5)
->
-> I realize that privcmd_call is the only hypercall using Software PAN
-> at the moment. However, dm_op needs the same as hypercall will be
-> issued from userspace as well.
 
-And dm_op() won't be the only example as we continue in cleaning up the
-gaping hole that is privcmd.
+Hi Masami,
 
-> So I was wondering whether we should create a generic function (e.g.
-> do_xen_hypercall() or do_xen_user_hypercall()) to cover the two
-> hypercalls?
+   Can you please take a look at this?
 
-Probably a good idea.
+[root@quaco perf]# perf probe -l
+  probe_perf:map__map_ip (on ui__warn_map_erange+222@perf/tools/perf/builtin-top.c in /home/acme/bin/perf)
+  probe_perf:map__map_ip (on ui__warn_map_erange+222@perf/tools/perf/builtin-top.c in /home/acme/bin/perf)
+  probe_perf:map__map_ip (on perf_evlist__set_paused+222@util/evlist.c in /home/acme/bin/perf)
+  probe_perf:map__map_ip (on perf_evlist__resume+222@util/evlist.c in /home/acme/bin/perf)
+  probe_perf:map__map_ip (on perf_evsel__group_desc+222@util/evsel.c in /home/acme/bin/perf)
+  probe_perf:map__map_ip (on svg_partial_wakeline+222@util/svghelper.c in /home/acme/bin/perf)
+[root@quaco perf]# perf probe -d probe_perf:map_*
+"probe_perf:map_*" does not hit any event.
+  Error: Failed to delete events.
+[root@quaco perf]# perf probe -d probe_perf:*
+"probe_perf:*" does not hit any event.
+  Error: Failed to delete events.
+[root@quaco perf]# perf probe -d probe*:*
+"probe*:*" does not hit any event.
+  Error: Failed to delete events.
+[root@quaco perf]# perf probe -d '*:*'
+"*:*" does not hit any event.
+  Error: Failed to delete events.
+[root@quaco perf]#
 
-~Andrew
+- Arnaldo
