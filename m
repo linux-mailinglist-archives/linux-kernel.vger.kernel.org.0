@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE00210D14F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 07:03:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F73E10D15A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 07:04:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfK2GDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 01:03:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:48067 "EHLO
+        id S1727398AbfK2GED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 01:04:03 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:48054 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfK2GDF (ORCPT
+        with ESMTP id S1726916AbfK2GDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 01:03:05 -0500
+        Fri, 29 Nov 2019 01:03:04 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iaZMq-0008NB-M3; Fri, 29 Nov 2019 07:03:00 +0100
+        id 1iaZMq-0008Nv-2y; Fri, 29 Nov 2019 07:03:00 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 507DF1C210B;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A14C01C210D;
         Fri, 29 Nov 2019 07:02:53 +0100 (CET)
 Date:   Fri, 29 Nov 2019 06:02:53 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf map: Remove unused functions
+Subject: [tip: perf/urgent] perf map: Ditch leftover map__reloc_vmlinux() prototype
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <tip-p2k98mj3ff2uk1z95sbl5r6e@git.kernel.org>
-References: <tip-p2k98mj3ff2uk1z95sbl5r6e@git.kernel.org>
+In-Reply-To: <tip-35yy50cgpcx8cjorluwd5j53@git.kernel.org>
+References: <tip-35yy50cgpcx8cjorluwd5j53@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157500737321.21853.13720782224200269774.tip-bot2@tip-bot2>
+Message-ID: <157500737356.21853.5715037550449349985.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,102 +49,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     a82f15e39a4b75482d48d0910f6abe5e4f869b76
-Gitweb:        https://git.kernel.org/tip/a82f15e39a4b75482d48d0910f6abe5e4f869b76
+Commit-ID:     40df3897f0867f2e3700b4f216698288495053ef
+Gitweb:        https://git.kernel.org/tip/40df3897f0867f2e3700b4f216698288495053ef
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 25 Nov 2019 10:42:38 -03:00
+AuthorDate:    Fri, 22 Nov 2019 12:44:10 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 26 Nov 2019 11:07:46 -03:00
+CommitterDate: Tue, 26 Nov 2019 11:07:45 -03:00
 
-perf map: Remove unused functions
+perf map: Ditch leftover map__reloc_vmlinux() prototype
 
-At some point those stopped being used, prune them.
+In 39b12f781271 ("perf tools: Make it possible to read object code from vmlinux")
+the actual function was removed, but we forgot to remove the prototype,
+fix it.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-p2k98mj3ff2uk1z95sbl5r6e@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-35yy50cgpcx8cjorluwd5j53@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/map.c        | 30 ++++++++----------------------
- tools/perf/util/map_groups.h |  5 -----
- 2 files changed, 8 insertions(+), 27 deletions(-)
+ tools/perf/util/map.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index b59944e..267d951 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -568,6 +568,12 @@ void map_groups__insert(struct map_groups *mg, struct map *map)
- 	up_write(&maps->lock);
- }
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 1f110b5..c0dffa9 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -144,8 +144,6 @@ struct symbol *map__find_symbol_by_name(struct map *map, const char *name);
+ void map__fixup_start(struct map *map);
+ void map__fixup_end(struct map *map);
  
-+static void __maps__remove(struct maps *maps, struct map *map)
-+{
-+	rb_erase_init(&map->rb_node, &maps->entries);
-+	map__put(map);
-+}
-+
- void map_groups__remove(struct map_groups *mg, struct map *map)
- {
- 	struct maps *maps = &mg->maps;
-@@ -654,8 +660,8 @@ static bool map__contains_symbol(struct map *map, struct symbol *sym)
- 	return ip >= map->start && ip < map->end;
- }
- 
--struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
--					 struct map **mapp)
-+static struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
-+						struct map **mapp)
- {
- 	struct symbol *sym;
- 	struct map *pos;
-@@ -890,26 +896,6 @@ static void __maps__insert(struct maps *maps, struct map *map)
- 	map__get(map);
- }
- 
--void maps__insert(struct maps *maps, struct map *map)
--{
--	down_write(&maps->lock);
--	__maps__insert(maps, map);
--	up_write(&maps->lock);
--}
+-void map__reloc_vmlinux(struct map *map);
 -
--void __maps__remove(struct maps *maps, struct map *map)
--{
--	rb_erase_init(&map->rb_node, &maps->entries);
--	map__put(map);
--}
--
--void maps__remove(struct maps *maps, struct map *map)
--{
--	down_write(&maps->lock);
--	__maps__remove(maps, map);
--	up_write(&maps->lock);
--}
--
- struct map *maps__find(struct maps *maps, u64 ip)
- {
- 	struct rb_node *p;
-diff --git a/tools/perf/util/map_groups.h b/tools/perf/util/map_groups.h
-index 63ed211..f627024 100644
---- a/tools/perf/util/map_groups.h
-+++ b/tools/perf/util/map_groups.h
-@@ -19,9 +19,6 @@ struct maps {
- 	struct rw_semaphore lock;
- };
+ int map__set_kallsyms_ref_reloc_sym(struct map *map, const char *symbol_name,
+ 				    u64 addr);
  
--void maps__insert(struct maps *maps, struct map *map);
--void maps__remove(struct maps *maps, struct map *map);
--void __maps__remove(struct maps *maps, struct map *map);
- struct map *maps__find(struct maps *maps, u64 addr);
- struct map *maps__first(struct maps *maps);
- struct map *map__next(struct map *map);
-@@ -32,8 +29,6 @@ struct map *map__next(struct map *map);
- #define maps__for_each_entry_safe(maps, map, next) \
- 	for (map = maps__first(maps), next = map__next(map); map; map = next, next = map__next(map))
- 
--struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name, struct map **mapp);
--
- struct map_groups {
- 	struct maps	 maps;
- 	struct machine	 *machine;
