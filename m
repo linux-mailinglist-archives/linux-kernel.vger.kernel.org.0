@@ -2,84 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496A010D58B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 13:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0663310D591
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 13:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfK2MPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 07:15:40 -0500
-Received: from ozlabs.org ([203.11.71.1]:46565 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfK2MPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 07:15:40 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47PYPP2Sdhz9sPj;
-        Fri, 29 Nov 2019 23:15:37 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1575029737;
-        bh=39ex8pURGBPP/cI+i8/QOxDKC5Z+vDOw38ntqGTRCiI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=O2AWhh36egxFR57pLhYvUBOZ5yWL4+glWq2k2agZPrZyjMXpoRDM0Xh6/r4BpYSpK
-         IZxSeIuoo3MxY7f3+WhXpJlEDP0DeLEJnJOJa6yko2wUlAJwRQAs5sM4kJAqP84u/k
-         qnSNQaZFEUAJGap25F9IXNTlOJuYb+l15xMl6VbWFQr2htLq/2oI59f3r7GKLCvpF+
-         TLDmN/hbCbd4mNzMOlYa+E1RyfYeJ0tzh07/+affo2GRrWG9tQU2q4FCj80H+I+Q6X
-         QySn2vHzUkULu7/q0LWxQVVQ8gl794sPOnH8xR0cHX/5Si8Yt/pXD5qK6ofrsS+eAw
-         g7lxemDZWhqzQ==
-Date:   Fri, 29 Nov 2019 23:15:36 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the powerpc tree
-Message-ID: <20191129231536.1fbd41ba@canb.auug.org.au>
-In-Reply-To: <20191129231200.1f5ae2a9@canb.auug.org.au>
-References: <20191129231200.1f5ae2a9@canb.auug.org.au>
+        id S1726879AbfK2MQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 07:16:24 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:65463 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfK2MQY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 07:16:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575029784; x=1606565784;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=cee/yOjh6ZpBwyeLFaKQzceF1KatF6QwJve14+TGWNg=;
+  b=F6l+2IHTQNhih3lajidzmk/Z4xgZkSjyvJCrNqD6y1i5NoS/Qh6ARgpx
+   FF8gl8pTlRV3vMZtAKUcrD0XNIiL+c98nfriNaKLyLVj5wOuFmqrYzQUU
+   zYPr4CnnXN9vc4qMv3JD1/0xdKU1xacdsB1mYPXaAR7znSDYRBydMraME
+   U=;
+IronPort-SDR: 03H6+KTATpQtNuUJZiHQWwcjgAVizRaKlU/7thzxfNrxwyQyfelQAuODRiV6OHHyFJb6MkjXl+
+ LXJ4onVuKF2g==
+X-IronPort-AV: E=Sophos;i="5.69,257,1571702400"; 
+   d="scan'208";a="6854910"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 29 Nov 2019 12:16:22 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (Postfix) with ESMTPS id 7713DA2777;
+        Fri, 29 Nov 2019 12:16:20 +0000 (UTC)
+Received: from EX13D32EUC004.ant.amazon.com (10.43.164.121) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 29 Nov 2019 12:16:20 +0000
+Received: from EX13D32EUC003.ant.amazon.com (10.43.164.24) by
+ EX13D32EUC004.ant.amazon.com (10.43.164.121) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 29 Nov 2019 12:16:19 +0000
+Received: from EX13D32EUC003.ant.amazon.com ([10.43.164.24]) by
+ EX13D32EUC003.ant.amazon.com ([10.43.164.24]) with mapi id 15.00.1367.000;
+ Fri, 29 Nov 2019 12:16:18 +0000
+From:   "Durrant, Paul" <pdurrant@amazon.com>
+To:     Jan Beulich <jbeulich@suse.com>
+CC:     "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?Um9nZXIgUGF1IE1vbm7DqQ==?= <roger.pau@citrix.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: RE: [PATCH] xen-blkback: allow module to be cleanly unloaded
+Thread-Topic: [PATCH] xen-blkback: allow module to be cleanly unloaded
+Thread-Index: AQHVpqiPN+OVVFahFEu3tG0tj9ZAZ6eiCq+AgAAFMRA=
+Date:   Fri, 29 Nov 2019 12:16:18 +0000
+Message-ID: <783331c9c731497490f537318fafadd0@EX13D32EUC003.ant.amazon.com>
+References: <20191129113131.1954-1-pdurrant@amazon.com>
+ <6d0a90f6-3def-a970-6dca-8d1f3eb66c1c@suse.com>
+In-Reply-To: <6d0a90f6-3def-a970-6dca-8d1f3eb66c1c@suse.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.244]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/U8m6Gu/o4QploGI=pgWxJU/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/U8m6Gu/o4QploGI=pgWxJU/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-hmm, that subject is completely wrong, sorry.
-
-On Fri, 29 Nov 2019 23:12:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Commit
->=20
->   6f090192f822 ("x86/efi: remove unused variables")
->=20
-> is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/U8m6Gu/o4QploGI=pgWxJU/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3hC+gACgkQAVBC80lX
-0Gyd5Af/bQ9GCeJy6v8qKErFbbWh+CMiHzvI4mTDrpRAYdxxAi2UZIIG8PmaIqCk
-/kvxH0DbJ9XSOhQbd2+TioUJVn+jXk0O6sUKQjVgqS1LHENcznL6t+r0f2qUE9D4
-UO4bb2A9ZQ/Hu1mDx3kVixFhwQAXNRtnYTiIoUuBZfQyK8v6xrpXc1fN7OqaqNEF
-5NGtDxhdtRg1Pc3LuyDgBO7+oo1/1satcBhPSx7fHa5Z5+gMZBrTdk6R8lxKDH9c
-+Vq9kWcFMV/sOMGefcfiLy5HDMaSDRC0F7q3eVnUCTRinpj/OlB3FTJcmn2gtwsm
-Kt+wM8e24eFEi63gMtqXxgHpCjVg9w==
-=vSa4
------END PGP SIGNATURE-----
-
---Sig_/U8m6Gu/o4QploGI=pgWxJU/--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYW4gQmV1bGljaCA8amJldWxp
+Y2hAc3VzZS5jb20+DQo+IFNlbnQ6IDI5IE5vdmVtYmVyIDIwMTkgMTE6NTYNCj4gVG86IER1cnJh
+bnQsIFBhdWwgPHBkdXJyYW50QGFtYXpvbi5jb20+DQo+IENjOiB4ZW4tZGV2ZWxAbGlzdHMueGVu
+cHJvamVjdC5vcmc7IGxpbnV4LWJsb2NrQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc7IFJvZ2VyIFBhdSBNb25uw6kgPHJvZ2VyLnBhdUBjaXRyaXguY29t
+PjsgSmVucyBBeGJvZQ0KPiA8YXhib2VAa2VybmVsLmRrPjsgS29ucmFkIFJ6ZXN6dXRlayBXaWxr
+IDxrb25yYWQud2lsa0BvcmFjbGUuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSB4ZW4tYmxr
+YmFjazogYWxsb3cgbW9kdWxlIHRvIGJlIGNsZWFubHkgdW5sb2FkZWQNCj4gDQo+IE9uIDI5LjEx
+LjIwMTkgMTI6MzEsIFBhdWwgRHVycmFudCB3cm90ZToNCj4gPiAtLS0gYS9kcml2ZXJzL2Jsb2Nr
+L3hlbi1ibGtiYWNrL3hlbmJ1cy5jDQo+ID4gKysrIGIvZHJpdmVycy9ibG9jay94ZW4tYmxrYmFj
+ay94ZW5idXMuYw0KPiA+IEBAIC0xNzMsNiArMTczLDggQEAgc3RhdGljIHN0cnVjdCB4ZW5fYmxr
+aWYgKnhlbl9ibGtpZl9hbGxvYyhkb21pZF90DQo+IGRvbWlkKQ0KPiA+ICAJaW5pdF9jb21wbGV0
+aW9uKCZibGtpZi0+ZHJhaW5fY29tcGxldGUpOw0KPiA+ICAJSU5JVF9XT1JLKCZibGtpZi0+ZnJl
+ZV93b3JrLCB4ZW5fYmxraWZfZGVmZXJyZWRfZnJlZSk7DQo+ID4NCj4gPiArCV9fbW9kdWxlX2dl
+dChUSElTX01PRFVMRSk7DQo+ID4gKw0KPiA+ICAJcmV0dXJuIGJsa2lmOw0KPiA+ICB9DQo+ID4N
+Cj4gPiBAQCAtMzIwLDYgKzMyMiw4IEBAIHN0YXRpYyB2b2lkIHhlbl9ibGtpZl9mcmVlKHN0cnVj
+dCB4ZW5fYmxraWYgKmJsa2lmKQ0KPiA+DQo+ID4gIAkvKiBNYWtlIHN1cmUgZXZlcnl0aGluZyBp
+cyBkcmFpbmVkIGJlZm9yZSBzaHV0dGluZyBkb3duICovDQo+ID4gIAlrbWVtX2NhY2hlX2ZyZWUo
+eGVuX2Jsa2lmX2NhY2hlcCwgYmxraWYpOw0KPiA+ICsNCj4gPiArCW1vZHVsZV9wdXQoVEhJU19N
+T0RVTEUpOw0KPiA+ICB9DQo+IA0KPiBJIHJlYWxpemUgdGhlcmUgYXJlIHZhcmlvdXMgZXhhbXBs
+ZSBvZiB0aGlzIGluIHRoZSB0cmVlLCBidXQNCj4gaXNuJ3QgdGhpcyBhIGZsYXdlZCBhcHByb2Fj
+aD8gX19tb2R1bGVfZ2V0KCkgKG5vciBldmVuDQo+IHRyeV9tb2R1bGVfZ2V0KCkpIHdpbGwgcHJl
+dmVudCBhbiB1bmxvYWQgYXR0ZW1wdCBhaGVhZCBvZiBpdA0KPiBnZXR0aW5nIGludm9rZWQsIHdo
+aWxlIGV4ZWN1dGlvbiBpcyBhbHJlYWR5IGluIHRoaXMgbW9kdWxlJ3MNCj4gLnRleHQgc2VjdGlv
+bi4NCg0KR29vZCBwb2ludC4gVGhhdCBkb2VzIGFwcGVhciB0byBiZSBhIHJhY2UuDQoNCj4gSSB0
+aGluayB0aGUgeGVuYnVzIGRyaXZlciBzaG91bGQgZG8gdGhpcw0KPiBiZWZvcmUgY2FsbGluZyAt
+PnByb2JlKCksIGluIGNhc2Ugb2YgaXRzIGZhaWx1cmUsIGFuZCBhZnRlcg0KPiBhIHN1Y2Nlc3Nm
+dWwgY2FsbCB0byAtPnJlbW92ZSgpLg0KPiANCg0KVGhhdCBkb2VzIHNvdW5kIGJldHRlci4gSSds
+bCBzZWUgaWYgSSBjYW4gcGljayB1cCBvdGhlciBvY2N1cnJlbmNlcyAoY2VydGFpbmx5IG5ldGJh
+Y2spIGFuZCBmaXguDQoNCiAgUGF1bA0K
