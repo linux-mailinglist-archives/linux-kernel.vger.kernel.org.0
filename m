@@ -2,125 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB0010D94B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 19:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE26A10D95D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 19:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbfK2SEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 13:04:04 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:39973 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727004AbfK2SED (ORCPT
+        id S1727184AbfK2SG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 13:06:29 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:25128 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727030AbfK2SGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 13:04:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575050642;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IlFgPdt1LcOz56WlrtlEf0jAAH3wPp2cvZwXbRiPeKQ=;
-        b=Rdj1ql15hxak5/0zVkJ5AHe3iRTmH/BfQ6FZvTdb7D8YKXf7H/ntVnss4yWgW1OfnPNi4R
-        jV7IR/jE3KHxiABvJhneFa1O7P0LKkNc/796GgRrU9EsXYkVeW4FPGhhHcH1zLvDfgg7j1
-        bKCt3zduhjXxdMOu5c7HYtdywl7D22o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-273-Q38vz6twMjyvhFPv4XsDzA-1; Fri, 29 Nov 2019 13:03:59 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0DB3DB61;
-        Fri, 29 Nov 2019 18:03:57 +0000 (UTC)
-Received: from krava (ovpn-204-101.brq.redhat.com [10.40.204.101])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3726960856;
-        Fri, 29 Nov 2019 18:03:54 +0000 (UTC)
-Date:   Fri, 29 Nov 2019 19:03:54 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 04/15] perf tools: Add map_groups to 'struct
- addr_location'
-Message-ID: <20191129180354.GB26903@krava>
-References: <20191112183757.28660-1-acme@kernel.org>
- <20191112183757.28660-5-acme@kernel.org>
- <20191129134056.GE14169@krava>
- <20191129151733.GC26963@kernel.org>
- <20191129160631.GD26963@kernel.org>
+        Fri, 29 Nov 2019 13:06:23 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xATHxatc023646;
+        Fri, 29 Nov 2019 19:06:06 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=hMddIkaPL2KUpivYYgNbUzef0pFCb7AakiEoifdSJ68=;
+ b=DcgwRA3z9YoMvhw2gqZNj0Y7mAaH374pcKv/oaJZyR3Y+0NWyIXDU1vZvoUJsiSf9MKc
+ n7pYWYhvdWnvzjlRAEqvBXQm6eejxQtiuIEicDZIHbbHq5fwpIyIKC3ad32Mpk+t5vjU
+ 6N3YR2vQY0oa4bVXMKOK0MHu2N5i/8KKg/w9L3VTgkuBf5Fl8rizKXsUk9arSWoo6Ms5
+ U6sf1jy49IvKecHrsEX6iA2Oejugoog7LzKiFD2QIptknvtjeYYX9uG7FNa7WhE0Ug3w
+ o56dswfbI/Its2M5j2rrCqB1OtQVhXkdlIiSwXV2R3LgDCufUQfErC7ogTbSontFkAdO 5g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2whcxss0my-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 29 Nov 2019 19:06:06 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8BB7610002A;
+        Fri, 29 Nov 2019 19:06:04 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 749D3222D1F;
+        Fri, 29 Nov 2019 19:06:04 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 29 Nov 2019 19:06:04
+ +0100
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/6] STM32 DT: Updates for SOC diversity
+Date:   Fri, 29 Nov 2019 19:05:56 +0100
+Message-ID: <20191129180602.28470-1-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20191129160631.GD26963@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: Q38vz6twMjyvhFPv4XsDzA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-29_06:2019-11-29,2019-11-29 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 01:06:31PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Nov 29, 2019 at 12:17:33PM -0300, Arnaldo Carvalho de Melo escrev=
-eu:
-> > Em Fri, Nov 29, 2019 at 02:40:56PM +0100, Jiri Olsa escreveu:
-> > > > +++ b/tools/perf/util/callchain.c
-> > > > @@ -1119,8 +1119,8 @@ int fill_callchain_info(struct addr_location =
-*al, struct callchain_cursor_node *
-> > > >  =09=09=09goto out;
-> > > >  =09}
-> > > > =20
-> > > > -=09if (al->map->groups =3D=3D &al->machine->kmaps) {
-> > > > -=09=09if (machine__is_host(al->machine)) {
-> > > > +=09if (al->mg =3D=3D &al->mg->machine->kmaps) {
->=20
-> > > heya, I'm getting segfault because of this change
->=20
-> > > perf record --call-graph dwarf ./ex
->=20
-> > > =09(gdb) r report --stdio
-> > > =09Program received signal SIGSEGV, Segmentation fault.
-> > > =09fill_callchain_info (al=3D0x7fffffffa1b0, node=3D0xcd2bd0, hide_un=
-resolved=3Dfalse) at util/callchain.c:1122
-> > > =091122            if (al->maps =3D=3D &al->maps->machine->kmaps) {
-> > > =09(gdb) p al->maps
-> > > =09$1 =3D (struct maps *) 0x0
->=20
-> > > I wish all those map changes would go through some review,
-> > > I have no idea how the code works now ;-)
->=20
-> > ouch, I did tons of tests, obviously some more, and reviewing, would
-> > catch these, my bad, will try and fix this...
->=20
-> > And yeah, I reproduced the problem, working on a fix.
->=20
-> Can you try with this one-liner?
+Changes since v1:
+ -According to Arnd comment, move chosen and aliases nodes to dts board file.
 
-yep, it fixes the issue for me
 
-thanks,
-jirka
+This series updates stm32mp device tree files in order to handle the STM32MP15
+part numbers diversity. STM32MP15 part numbers are built in this way:
 
->=20
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 416d174d223c..c8c5410315e8 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2446,6 +2446,7 @@ static int append_inlines(struct callchain_cursor *=
-cursor, struct map_symbol *ms
-> =20
->  =09list_for_each_entry(ilist, &inline_node->val, list) {
->  =09=09struct map_symbol ilist_ms =3D {
-> +=09=09=09.maps =3D ms->maps,
->  =09=09=09.map =3D map,
->  =09=09=09.sym =3D ilist->symbol,
->  =09=09};
->=20
+-STM32MP15X: X = [1, 3, 7] for IPs diversity:
+ -STM32MP151 = basic part
+ -STM32MP153 = STM32MP151  + a second CPU A7 + MCAN(x2)
+ -STM32MP157 = STM32MP153 + DSI + GPU
+
+-STMM32MP15xY: Y = [a, c] for security diversity:
+ -STM32MP15xA: basic part.
+ -STM32MP15xC: adds crypto IP.
+
+-STM32MP15xxZZ: ZZ = [aa, ab, ac, ad] for packages (IO) diversity:
+ -STM32MP15xxAA: TFBGA448 18x18
+ -STM32MP15xxAB: LFBGA354 16x16
+ -STM32MP15xxAC: TFBGA361 12x12
+ -STM32MP15xxAD: TFBGA257 10x10
+
+New device tree files are created and some existing are renamed to match with
+this split.
+
+In this way it is easy to assemble (by inclusion) those files to match with the
+SOC partnumber used on board, and then it's simpler for users to create their
+own device tree board file using the correct SOC.
+
+For more details:
+
+See STM32MP151 [1], STM32MP153 [2], STM32MP157 [3] reference manuals:
+ [1] https://www.st.com/resource/en/reference_manual/dm00366349.pdf
+ [2] https://www.st.com/resource/en/reference_manual/dm00366355.pdf
+ [3] https://www.st.com/resource/en/reference_manual/dm00327659.pdf
+
+Product family:
+ https://www.st.com/en/microcontrollers-microprocessors/stm32-arm-cortex-mpus.html#products
+
+regards
+Alex
+
+Alexandre Torgue (6):
+  ARM: dts: stm32: Adapt stm32mp157 pinctrl to manage STM32MP15xx SOCs
+    family
+  ARM: dts: stm32: Update stm32mp157 pinctrl files
+  ARM: dts: stm32: Introduce new STM32MP15 SOCs: STM32MP151 and
+    STM32MP153
+  ARM: dts: stm32: Manage security diversity for STM32M15x SOCs
+  ARM: dts: stm32: Adapt STM32MP157 DK boards to stm32 DT diversity
+  ARM: dts: stm32: Adapt STM32MP157C ED1 board to STM32 DT diversity
+
+ arch/arm/boot/dts/stm32mp15-pinctrl.dtsi      | 1087 +++++++++++++++
+ .../dts/{stm32mp157c.dtsi => stm32mp151.dtsi} |  218 ++-
+ arch/arm/boot/dts/stm32mp153.dtsi             |   45 +
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi     | 1240 -----------------
+ arch/arm/boot/dts/stm32mp157.dtsi             |   31 +
+ arch/arm/boot/dts/stm32mp157a-avenger96.dts   |    5 +-
+ arch/arm/boot/dts/stm32mp157a-dk1.dts         |  595 +-------
+ arch/arm/boot/dts/stm32mp157c-dk2.dts         |   15 +-
+ arch/arm/boot/dts/stm32mp157c-ed1.dts         |    6 +-
+ arch/arm/boot/dts/stm32mp157xaa-pinctrl.dtsi  |   90 --
+ arch/arm/boot/dts/stm32mp157xab-pinctrl.dtsi  |   62 -
+ arch/arm/boot/dts/stm32mp157xac-pinctrl.dtsi  |   78 --
+ arch/arm/boot/dts/stm32mp157xad-pinctrl.dtsi  |   62 -
+ arch/arm/boot/dts/stm32mp15xc.dtsi            |   18 +
+ arch/arm/boot/dts/stm32mp15xx-dkx.dtsi        |  597 ++++++++
+ arch/arm/boot/dts/stm32mp15xxaa-pinctrl.dtsi  |   85 ++
+ arch/arm/boot/dts/stm32mp15xxab-pinctrl.dtsi  |   57 +
+ arch/arm/boot/dts/stm32mp15xxac-pinctrl.dtsi  |   73 +
+ arch/arm/boot/dts/stm32mp15xxad-pinctrl.dtsi  |   57 +
+ 19 files changed, 2232 insertions(+), 2189 deletions(-)
+ create mode 100644 arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
+ rename arch/arm/boot/dts/{stm32mp157c.dtsi => stm32mp151.dtsi} (91%)
+ create mode 100644 arch/arm/boot/dts/stm32mp153.dtsi
+ delete mode 100644 arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp157.dtsi
+ delete mode 100644 arch/arm/boot/dts/stm32mp157xaa-pinctrl.dtsi
+ delete mode 100644 arch/arm/boot/dts/stm32mp157xab-pinctrl.dtsi
+ delete mode 100644 arch/arm/boot/dts/stm32mp157xac-pinctrl.dtsi
+ delete mode 100644 arch/arm/boot/dts/stm32mp157xad-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp15xc.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp15xx-dkx.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp15xxaa-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp15xxab-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp15xxac-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32mp15xxad-pinctrl.dtsi
+
+-- 
+2.17.1
 
