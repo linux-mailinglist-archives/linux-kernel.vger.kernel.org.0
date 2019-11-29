@@ -2,200 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E70110D857
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 17:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 759E910D858
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 17:18:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfK2QRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 11:17:40 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45463 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726926AbfK2QRk (ORCPT
+        id S1727110AbfK2QSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 11:18:16 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36639 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbfK2QSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 11:17:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575044257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nC165XAf8z00FQicFMdRB+X/C3ivNyex6DQHQvlQ96g=;
-        b=YkVSqFMs0LKFEXrHQeM+lMJAcJ5XA/4dycudI3984ExRHETSLP1htK1WRndWuu855eB46d
-        1rd1zUj8gZ23hA4HhdV9qD5JjvELXk+Zt6nxg28xBEny4SH7rPqXyS6ndSd02+3tYJZf4J
-        xlMYshu6QLELZP38/lO39hUavHG1yMs=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-169-Ouu_ULEANAqAu0kxjPn-9A-1; Fri, 29 Nov 2019 11:17:34 -0500
-Received: by mail-qv1-f70.google.com with SMTP id g6so2168654qvp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 08:17:34 -0800 (PST)
+        Fri, 29 Nov 2019 11:18:16 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b19so14823787pfd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 08:18:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=hkOXmCsd62Z6yZIgf5KLyyzjgYMJjkWtEWTlS4tFO94=;
+        b=Dzq4TVjL9rVsDZjtz3DCaj1EfmhFYIE5vQQ/c6YnioIfGKpIyArSfgicy1R8lTtEiK
+         LTTtw0MU55k4iVlk826ipaEF7sGRgsib/jEAOCYeMS5M/6efny2vf7uLvEOxuTu2XEu4
+         AnUHqnNDxda+i/mcIWPdQGexRL2gEe6+bSQEQrkG9X2Chp/2j6fBs4uo4+GpNvv16eZa
+         mHNe/km9sM6nlC9JWq0XsuIVirkWivGgf9EMJMLzqC8j5RDrZe0ohG/GKmvtWPTu4kmD
+         a7kT+2cPLz8ou5kBjmL7tn6P+vAgsJYbbiY1Aq3cNGGHtIqjIfc+xowYY2euJv3uIOgQ
+         94mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dpdSr67eMWMTe1/gd1Elve1qWOHBB45CAiQGfKTczRs=;
-        b=h7Ard8WQaHCTzxHHKgoo5/Zu5EMsVXUi6GLnlSa40JtnyMeF3d7eCSruhz8gyzFdnB
-         xtYyPmjbWhq+AE4lXRudUCmkW5lbQWCYIwGXKKV6MTY5GZMpUY8oHn6/bNfvdI9X6J7+
-         6vNqcJxis92JpN9PVeADQSoQzcGKQEhShXIAKuatQF/i2gTznydE/ROBerpSXfrQCINx
-         aeeXpgjRnobN54HdwHL/rTZBgUC+6P7Lo2gYgm/tGLDRsaV7OUesAnSN4+U5tOSizQu+
-         Lgqmi5cOXnf5Bzp9jriGVqvoeGHnsqjtSETsdINRaIZANLfPd7dMtB8TSWiMT9zKRJLw
-         OBZg==
-X-Gm-Message-State: APjAAAU4dlUXqrOFVK+ynpqFMHDC/+x23jv9lcrGLa1Ivo09iZW6X6L+
-        VplY3jnnjS4/GYHfBa0D9JTgJxLFxAfElfDHPw7Zrp5hktefRPWU+3luZ5Oyaj/lbSVkzWHZkic
-        tSrF7jnL+FwACq3aSYBr09ByF
-X-Received: by 2002:a37:644:: with SMTP id 65mr207925qkg.309.1575044254124;
-        Fri, 29 Nov 2019 08:17:34 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxDehW4hUYvXxXhA6Tkbmu/WkHPLEM1tjU0+eNrpPeUNpji9CurY+4OO6JTb02J5LdbVaJVTA==
-X-Received: by 2002:a37:644:: with SMTP id 65mr207883qkg.309.1575044253788;
-        Fri, 29 Nov 2019 08:17:33 -0800 (PST)
-Received: from xz-x1 ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id l17sm10222892qkl.21.2019.11.29.08.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 08:17:32 -0800 (PST)
-Date:   Fri, 29 Nov 2019 11:17:31 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>
-Subject: Re: [PATCH] KVM: X86: Use APIC_DEST_* macros properly
-Message-ID: <20191129161731.GB9292@xz-x1>
-References: <20191128193211.32684-1-peterx@redhat.com>
- <87sgm6damv.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=hkOXmCsd62Z6yZIgf5KLyyzjgYMJjkWtEWTlS4tFO94=;
+        b=rsmZkZHKM2tmFtAucSjPW1k+CCdlteEQ4l1bfFRIM2I8+lTmIV9wjnxqI6MmAvUl7r
+         oMK4VZgvRRdgelJS9kCJrnjwm1ZOFc55jcw8snOP7Z3nB5jJwZdLomQ37ZpjCnYq5XGg
+         zq61Qh1BDvKlX74tqK0HXg/YgejN/9Gk6VhLhsf7xSBYyRZekDOK47FwQZOFx9L5LP7/
+         wwIAiPhnPj738FsPTWh147PygvfygFNCsiDTwhvuPrjTvlPlA++qeA2dsy3O4c/Jf94d
+         7e+terKAKBx5u9f9PQy/loFn4kmwrYYlhw3aoqFfNV7kp1w46tSLQ0Dev7V/2wXH1fRI
+         v/ng==
+X-Gm-Message-State: APjAAAUMVXfTyAnUMaY6t51oxsIwnsSwmvMR76Yq2S+XncX+NmH6nB/A
+        7OFYax9kcjjY630Uka4l8TQBrUJIFHiPoZQOyMkQAyJ3
+X-Google-Smtp-Source: APXvYqx5fOtYlK89kU56o3qNIIrgBmTPE3MBXRO7h9t0clt2YamenDB1yXf7tso0ELjZwyK38I129jeeSKxP+V4tfOk=
+X-Received: by 2002:a65:5a4d:: with SMTP id z13mr17598735pgs.21.1575044295816;
+ Fri, 29 Nov 2019 08:18:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87sgm6damv.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-MC-Unique: Ouu_ULEANAqAu0kxjPn-9A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
+Received: by 2002:a17:90a:cf0e:0:0:0:0 with HTTP; Fri, 29 Nov 2019 08:18:15
+ -0800 (PST)
+Reply-To: jessica.u.m1977@gmail.com
+From:   Jessica Meir <jessicaumeir638@gmail.com>
+Date:   Fri, 29 Nov 2019 16:18:15 +0000
+Message-ID: <CAE7R3m0sgOn7OvDRTQJ9D6E93h+-iSdPEGJCZcLZ27fXP6JemA@mail.gmail.com>
+Subject: Ola
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 03:23:36PM +0100, Vitaly Kuznetsov wrote:
-> Peter Xu <peterx@redhat.com> writes:
->=20
-> > Previously we were using either APIC_DEST_PHYSICAL|APIC_DEST_LOGICAL
-> > or 0|1 to fill in kvm_lapic_irq.dest_mode, and it's done in an adhoc
-> > way.  It's fine imho only because in most cases when we check against
-> > dest_mode it's against APIC_DEST_PHYSICAL (which equals to 0).
-> > However, that's not consistent, majorly because APIC_DEST_LOGICAL does
-> > not equals to 1, so if one day we check irq.dest_mode against
-> > APIC_DEST_LOGICAL we'll probably always get a false returned.
-> >
-> > This patch replaces the 0/1 settings of irq.dest_mode with the macros
-> > to make them consistent.
-> >
-> > CC: Paolo Bonzini <pbonzini@redhat.com>
-> > CC: Sean Christopherson <sean.j.christopherson@intel.com>
-> > CC: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > CC: Nitesh Narayan Lal <nitesh@redhat.com>
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >  arch/x86/kvm/ioapic.c   | 9 ++++++---
-> >  arch/x86/kvm/irq_comm.c | 7 ++++---
-> >  arch/x86/kvm/x86.c      | 2 +-
-> >  3 files changed, 11 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-> > index 9fd2dd89a1c5..1e091637d5d5 100644
-> > --- a/arch/x86/kvm/ioapic.c
-> > +++ b/arch/x86/kvm/ioapic.c
-> > @@ -331,7 +331,8 @@ static void ioapic_write_indirect(struct kvm_ioapic=
- *ioapic, u32 val)
-> >  =09=09=09irq.vector =3D e->fields.vector;
-> >  =09=09=09irq.delivery_mode =3D e->fields.delivery_mode << 8;
-> >  =09=09=09irq.dest_id =3D e->fields.dest_id;
-> > -=09=09=09irq.dest_mode =3D e->fields.dest_mode;
-> > +=09=09=09irq.dest_mode =3D e->fields.dest_mode ?
-> > +=09=09=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
-> >  =09=09=09bitmap_zero(&vcpu_bitmap, 16);
-> >  =09=09=09kvm_bitmap_or_dest_vcpus(ioapic->kvm, &irq,
-> >  =09=09=09=09=09=09 &vcpu_bitmap);
-> > @@ -343,7 +344,8 @@ static void ioapic_write_indirect(struct kvm_ioapic=
- *ioapic, u32 val)
-> >  =09=09=09=09 * keep ioapic_handled_vectors synchronized.
-> >  =09=09=09=09 */
-> >  =09=09=09=09irq.dest_id =3D old_dest_id;
-> > -=09=09=09=09irq.dest_mode =3D old_dest_mode;
-> > +=09=09=09=09irq.dest_mode =3D old_dest_mode ?
-> > +=09=09=09=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
-> >  =09=09=09=09kvm_bitmap_or_dest_vcpus(ioapic->kvm, &irq,
-> >  =09=09=09=09=09=09=09 &vcpu_bitmap);
-> >  =09=09=09}
-> > @@ -369,7 +371,8 @@ static int ioapic_service(struct kvm_ioapic *ioapic=
-, int irq, bool line_status)
-> > =20
-> >  =09irqe.dest_id =3D entry->fields.dest_id;
-> >  =09irqe.vector =3D entry->fields.vector;
-> > -=09irqe.dest_mode =3D entry->fields.dest_mode;
-> > +=09irqe.dest_mode =3D entry->fields.dest_mode ?
-> > +=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
-> >  =09irqe.trig_mode =3D entry->fields.trig_mode;
-> >  =09irqe.delivery_mode =3D entry->fields.delivery_mode << 8;
-> >  =09irqe.level =3D 1;
-> > diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
-> > index 8ecd48d31800..673b6afd6dbf 100644
-> > --- a/arch/x86/kvm/irq_comm.c
-> > +++ b/arch/x86/kvm/irq_comm.c
-> > @@ -52,8 +52,8 @@ int kvm_irq_delivery_to_apic(struct kvm *kvm, struct =
-kvm_lapic *src,
-> >  =09unsigned long dest_vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)];
-> >  =09unsigned int dest_vcpus =3D 0;
-> > =20
-> > -=09if (irq->dest_mode =3D=3D 0 && irq->dest_id =3D=3D 0xff &&
-> > -=09=09=09kvm_lowest_prio_delivery(irq)) {
-> > +=09if (irq->dest_mode =3D=3D APIC_DEST_PHYSICAL &&
-> > +=09    irq->dest_id =3D=3D 0xff && kvm_lowest_prio_delivery(irq)) {
-> >  =09=09printk(KERN_INFO "kvm: apic: phys broadcast and lowest prio\n");
-> >  =09=09irq->delivery_mode =3D APIC_DM_FIXED;
-> >  =09}
-> > @@ -114,7 +114,8 @@ void kvm_set_msi_irq(struct kvm *kvm, struct kvm_ke=
-rnel_irq_routing_entry *e,
-> >  =09=09irq->dest_id |=3D MSI_ADDR_EXT_DEST_ID(e->msi.address_hi);
-> >  =09irq->vector =3D (e->msi.data &
-> >  =09=09=09MSI_DATA_VECTOR_MASK) >> MSI_DATA_VECTOR_SHIFT;
-> > -=09irq->dest_mode =3D (1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.address=
-_lo;
-> > +=09irq->dest_mode =3D (1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.address=
-_lo ?
-> > +=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
-> >  =09irq->trig_mode =3D (1 << MSI_DATA_TRIGGER_SHIFT) & e->msi.data;
-> >  =09irq->delivery_mode =3D e->msi.data & 0x700;
-> >  =09irq->msi_redir_hint =3D ((e->msi.address_lo
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 3ed167e039e5..3b00d662dc14 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -7356,7 +7356,7 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, u=
-nsigned long flags, int apicid)
-> >  =09struct kvm_lapic_irq lapic_irq;
-> > =20
-> >  =09lapic_irq.shorthand =3D 0;
-> > -=09lapic_irq.dest_mode =3D 0;
-> > +=09lapic_irq.dest_mode =3D APIC_DEST_PHYSICAL;
-> >  =09lapic_irq.level =3D 0;
-> >  =09lapic_irq.dest_id =3D apicid;
-> >  =09lapic_irq.msi_redir_hint =3D false;
->=20
-> dest_mode is being passed to kvm_apic_match_dest() where we do:
->=20
-> =09case APIC_DEST_NOSHORT:
-> =09=09if (dest_mode =3D=3D APIC_DEST_PHYSICAL)
-> =09=09=09return kvm_apic_match_physical_addr(target, mda);
-> =09=09else
-> =09=09=09return kvm_apic_match_logical_addr(target, mda);
->=20
-> I'd suggest we fix this too then (and BUG() in case it's neither).
-
-That's true.  Let me add another patch to fix it (probably easier by
-changing the type of dest_mode param in kvm_apic_match_dest from int
-to bool).
-
-Thanks,
-
---=20
-Peter Xu
-
+Oi, sou eu Jessica, por favor, quero saber se voc=C3=AA recebeu minha mensa=
+gem
