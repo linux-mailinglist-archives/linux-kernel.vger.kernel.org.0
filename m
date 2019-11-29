@@ -2,109 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C0A10D1AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 08:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B100F10D1B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 08:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfK2HEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 02:04:15 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44301 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfK2HEP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 02:04:15 -0500
-Received: by mail-wr1-f68.google.com with SMTP id i12so33622101wrn.11
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 23:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fXChBmsSKdAnlVBk3b3I2SyZMaioWsiZLWdJUbZg8Nw=;
-        b=jMSk0bhyXxsFxVEP7RDkjEosOH8mvfvIar4CKELHv5HTpIQ76ndnJn4xy0AAOgtECR
-         h4piZ0kXyMrnjSYZgsNLWAg3T+lWWGVjnlhwP4PcLsAudDJkbfXWE8A0bQ+nEHYT03oM
-         TaBQcNvBweg9c9UolaMJUlxMxAJNs6CLwABcUiMbcD7OVstqAXwwthiMyxh4KufRQAuV
-         pIkeVpFstQd0cVLzoZkdE7Z9M29/CCio2nVkHHElRRUAQJBD2WX33AOxXP7THnrjBSoT
-         KRsSpR2Fp8z3vJOPvULT4978WyecS9wj+vcHsZe0undy0ff6zjdZMVv1GLeEnHy+w0WN
-         HgpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fXChBmsSKdAnlVBk3b3I2SyZMaioWsiZLWdJUbZg8Nw=;
-        b=chUY3pxnGXBUueH+bD8Ago2UB2w5ZAM5ROpYUozaolXrHWfa97UeOq8mjnVSD14pKY
-         OlHTsEeFus9VPTQ3Qw0/1jrgHyB76ITbhekNEV6zBomBiJx86+Os6sL5zvDtsz64MCz3
-         sNk89u/aMBxqIie6x39w6XmjF6QMEyU9/vM7wcZxeoKKeW34p60xMMMpnHkKaYx/SOXB
-         gY3bGMJVEZ8fJAAPBgawr19zPNbRUECStHUC9djxyfcjinhd8B251w819wfcMrBm47fL
-         Zf0Ed+vMHT0lO3x0TAcJ0IMxt3nRlZzYnQf9AHiHB7LZGH6Umzzg3yRboNVGHaLM77wC
-         5RLw==
-X-Gm-Message-State: APjAAAWAaLmlW5ZudNSDB3GudCn3K7KWFiUh86bS+cAm99aJKtCHkQZp
-        1tQrb87PMkj445D1zSGSWuCBvD7Z
-X-Google-Smtp-Source: APXvYqz8lQA/Bj/ckMw7mSr0aDNTOp2XLnBEl/yR4nNfP1wNBSvmlhB9NFMLP0RV1STrPlB7V32CVQ==
-X-Received: by 2002:adf:d4ca:: with SMTP id w10mr15441653wrk.53.1575011053195;
-        Thu, 28 Nov 2019 23:04:13 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id g11sm12886881wmh.27.2019.11.28.23.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2019 23:04:12 -0800 (PST)
-Date:   Fri, 29 Nov 2019 08:04:10 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Marco Elver <elver@google.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] spinlock_debug: Fix various data races
-Message-ID: <20191129070410.GA23979@gmail.com>
-References: <20191120155715.28089-1-elver@google.com>
- <20191121183257.GA124760@gmail.com>
- <20191121194418.GA239776@google.com>
+        id S1726897AbfK2HFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 02:05:12 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7177 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726845AbfK2HFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 02:05:11 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 53DBF9292813DBDE57C3;
+        Fri, 29 Nov 2019 15:05:09 +0800 (CST)
+Received: from huawei.com (10.67.189.2) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 29 Nov 2019
+ 15:04:55 +0800
+From:   Lexi Shao <shaolexi@huawei.com>
+To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <mpe@ellerman.id.au>, <christophe.leroy@c-s.fr>
+CC:     <liucheng32@huawei.com>, <yi.zhang@huawei.com>,
+        <wangkefeng.wang@huawei.com>, <shaolexi@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+Subject: [PATCH] powerpc/kasan: KASAN is not supported on RELOCATABLE && FSL_BOOKE
+Date:   Fri, 29 Nov 2019 15:04:55 +0800
+Message-ID: <20191129070455.62084-1-shaolexi@huawei.com>
+X-Mailer: git-send-email 2.12.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191121194418.GA239776@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.2]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+CONFIG_RELOCATABLE and CONFIG_KASAN cannot be enabled at the same time
+on ppce500 fsl_booke. All functions called before kasan_early_init()
+should be disabled with kasan check. When CONFIG_RELOCATABLE is enabled
+on ppce500 fsl_booke, relocate_init() is called before kasan_early_init()
+which triggers kasan check and results in boot failure.
+Call trace and functions which triggers kasan check(*):
+  - _start
+   - set_ivor
+    - relocate_init(*)
+     - early_get_first_memblock_info(*)
+      - of_scan_flat_dt(*)
+	...
+    - kasan_early_init
 
-* Marco Elver <elver@google.com> wrote:
+Potential solutions could be 1. implement relocate_init and all its children
+function in a seperate file or 2. introduce a global vairable in KASAN, only
+enable KASAN check when init is done.
 
-> On Thu, 21 Nov 2019, Ingo Molnar wrote:
-> 
-> > 
-> > * Marco Elver <elver@google.com> wrote:
-> > 
-> > >  static inline void debug_spin_lock_after(raw_spinlock_t *lock)
-> > >  {
-> > > -	lock->owner_cpu = raw_smp_processor_id();
-> > > -	lock->owner = current;
-> > > +	WRITE_ONCE(lock->owner_cpu, raw_smp_processor_id());
-> > > +	WRITE_ONCE(lock->owner, current);
-> > >  }
-> > 
-> > debug_spin_lock_after() runs inside the spinlock itself - why do these 
-> > writes have to be WRITE_ONCE()?
-> > 
-> > > @@ -197,8 +197,8 @@ static inline void debug_write_unlock(rwlock_t *lock)
-> > >  	RWLOCK_BUG_ON(lock->owner != current, lock, "wrong owner");
-> > >  	RWLOCK_BUG_ON(lock->owner_cpu != raw_smp_processor_id(),
-> > >  							lock, "wrong CPU");
-> > > -	lock->owner = SPINLOCK_OWNER_INIT;
-> > > -	lock->owner_cpu = -1;
-> > > +	WRITE_ONCE(lock->owner, SPINLOCK_OWNER_INIT);
-> > > +	WRITE_ONCE(lock->owner_cpu, -1);
-> > >  }
-> > 
-> > This too is running inside the critical section of the spinlock - why are 
-> > the WRITE_ONCE() calls necessary?
-> 
-> Although the writes are inside the critical section, they are read
-> concurrently outside the critical section, e.g. in
-> debug_spin_lock_before(). In other words, the WRITE_ONCE pair with the
-> READ_ONCE that are *outside* the critical section.
+Disable KASAN when RELOCATABLE is selected on fsl_booke for now until
+it is supported.
 
-Fair enough!
+Signed-off-by: Lexi Shao <shaolexi@huawei.com>
+---
+ arch/powerpc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 3e56c9c2f16e..14f3da63c088 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -171,7 +171,7 @@ config PPC
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_ARCH_HUGE_VMAP		if PPC_BOOK3S_64 && PPC_RADIX_MMU
+ 	select HAVE_ARCH_JUMP_LABEL
+-	select HAVE_ARCH_KASAN			if PPC32
++	select HAVE_ARCH_KASAN			if PPC32 && !(RELOCATABLE && FSL_BOOKE)
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_MMAP_RND_BITS
+ 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if COMPAT
+-- 
+2.12.3
 
-	Ingo
