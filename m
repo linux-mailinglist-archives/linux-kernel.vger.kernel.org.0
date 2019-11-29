@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 428FC10D134
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 07:03:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C575A10D15B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 07:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfK2GC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 01:02:58 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:47997 "EHLO
+        id S1727345AbfK2GD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 01:03:57 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:48060 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfK2GC6 (ORCPT
+        with ESMTP id S1726920AbfK2GDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 01:02:58 -0500
+        Fri, 29 Nov 2019 01:03:04 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iaZMh-0008Hm-0T; Fri, 29 Nov 2019 07:02:51 +0100
+        id 1iaZMg-0008He-F9; Fri, 29 Nov 2019 07:02:50 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A9A3B1C1D25;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 231A81C20BF;
         Fri, 29 Nov 2019 07:02:50 +0100 (CET)
 Date:   Fri, 29 Nov 2019 06:02:50 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf regs: Make perf_reg_name() return "unknown"
- instead of NULL
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+Subject: [tip: perf/urgent] perf script: Fix brstackinsn for AUXTRACE
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <tip-95wjyv4o65nuaeweq31t7l1s@git.kernel.org>
-References: <tip-95wjyv4o65nuaeweq31t7l1s@git.kernel.org>
+In-Reply-To: <20191127095322.15417-1-adrian.hunter@intel.com>
+References: <20191127095322.15417-1-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Message-ID: <157500737059.21853.15701174489164157405.tip-bot2@tip-bot2>
+Message-ID: <157500737004.21853.16146217324384962426.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,85 +49,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     5b596e0ff0e1852197d4c82d3314db5e43126bf7
-Gitweb:        https://git.kernel.org/tip/5b596e0ff0e1852197d4c82d3314db5e43126bf7
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Wed, 27 Nov 2019 10:13:34 -03:00
+Commit-ID:     0cd032d3b5fcebf5454315400ab310746a81ca53
+Gitweb:        https://git.kernel.org/tip/0cd032d3b5fcebf5454315400ab310746a81ca53
+Author:        Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate:    Wed, 27 Nov 2019 11:53:21 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Thu, 28 Nov 2019 08:08:38 -03:00
 
-perf regs: Make perf_reg_name() return "unknown" instead of NULL
+perf script: Fix brstackinsn for AUXTRACE
 
-To avoid breaking the build on arches where this is not wired up, at
-least all the other features should be made available and when using
-this specific routine, the "unknown" should point the user/developer to
-the need to wire this up on this particular hardware architecture.
+brstackinsn must be allowed to be set by the user when AUX area data has
+been captured because, in that case, the branch stack might be
+synthesized on the fly. This fixes the following error:
 
-Detected in a container mipsel debian cross build environment, where it
-shows up as:
+Before:
 
-  In file included from /usr/mipsel-linux-gnu/include/stdio.h:867,
-                   from /git/linux/tools/perf/lib/include/perf/cpumap.h:6,
-                   from util/session.c:13:
-  In function 'printf',
-      inlined from 'regs_dump__printf' at util/session.c:1103:3,
-      inlined from 'regs__printf' at util/session.c:1131:2:
-  /usr/mipsel-linux-gnu/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
-    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
-        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  $ perf record -e '{intel_pt//,cpu/mem_inst_retired.all_loads,aux-sample-size=8192/pp}:u' grep -rqs jhgjhg /boot
+  [ perf record: Woken up 19 times to write data ]
+  [ perf record: Captured and wrote 2.274 MB perf.data ]
+  $ perf script -F +brstackinsn --xed --itrace=i1usl100 | head
+  Display of branch stack assembler requested, but non all-branch filter set
+  Hint: run 'perf record -b ...'
 
-cross compiler details:
+After:
 
-  mipsel-linux-gnu-gcc (Debian 9.2.1-8) 9.2.1 20190909
+  $ perf record -e '{intel_pt//,cpu/mem_inst_retired.all_loads,aux-sample-size=8192/pp}:u' grep -rqs jhgjhg /boot
+  [ perf record: Woken up 19 times to write data ]
+  [ perf record: Captured and wrote 2.274 MB perf.data ]
+  $ perf script -F +brstackinsn --xed --itrace=i1usl100 | head
+            grep 13759 [002]  8091.310257:       1862                                        instructions:uH:      5641d58069eb bmexec+0x86b (/bin/grep)
+        bmexec+2485:
+        00005641d5806b35                        jnz 0x5641d5806bd0              # MISPRED
+        00005641d5806bd0                        movzxb  (%r13,%rdx,1), %eax
+        00005641d5806bd6                        add %rdi, %rax
+        00005641d5806bd9                        movzxb  -0x1(%rax), %edx
+        00005641d5806bdd                        cmp %rax, %r14
+        00005641d5806be0                        jnb 0x5641d58069c0              # MISPRED
+        mismatch of LBR data and executable
+        00005641d58069c0                        movzxb  (%r13,%rdx,1), %edi
 
-Also on mips64:
-
-  In file included from /usr/mips64-linux-gnuabi64/include/stdio.h:867,
-                   from /git/linux/tools/perf/lib/include/perf/cpumap.h:6,
-                   from util/session.c:13:
-  In function 'printf',
-      inlined from 'regs_dump__printf' at util/session.c:1103:3,
-      inlined from 'regs__printf' at util/session.c:1131:2,
-      inlined from 'regs_user__printf' at util/session.c:1139:3,
-      inlined from 'dump_sample' at util/session.c:1246:3,
-      inlined from 'machines__deliver_event' at util/session.c:1421:3:
-  /usr/mips64-linux-gnuabi64/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
-    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
-        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'printf',
-      inlined from 'regs_dump__printf' at util/session.c:1103:3,
-      inlined from 'regs__printf' at util/session.c:1131:2,
-      inlined from 'regs_intr__printf' at util/session.c:1147:3,
-      inlined from 'dump_sample' at util/session.c:1249:3,
-      inlined from 'machines__deliver_event' at util/session.c:1421:3:
-  /usr/mips64-linux-gnuabi64/include/bits/stdio2.h:107:10: error: '%-5s' directive argument is null [-Werror=format-overflow=]
-    107 |   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
-        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-cross compiler details:
-
-  mips64-linux-gnuabi64-gcc (Debian 9.2.1-8) 9.2.1 20190909
-
-Fixes: 2bcd355b71da ("perf tools: Add interface to arch registers sets")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-95wjyv4o65nuaeweq31t7l1s@git.kernel.org
+Fixes: 48d02a1d5c13 ("perf script: Add 'brstackinsn' for branch stacks")
+Reported-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lore.kernel.org/lkml/20191127095322.15417-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/perf_regs.h | 2 +-
+ tools/perf/builtin-script.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/perf_regs.h b/tools/perf/util/perf_regs.h
-index e014c2c..a454991 100644
---- a/tools/perf/util/perf_regs.h
-+++ b/tools/perf/util/perf_regs.h
-@@ -41,7 +41,7 @@ int perf_reg_value(u64 *valp, struct regs_dump *regs, int id);
- 
- static inline const char *perf_reg_name(int id __maybe_unused)
- {
--	return NULL;
-+	return "unknown";
- }
- 
- static inline int perf_reg_value(u64 *valp __maybe_unused,
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 7b2f092..e8db26b 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -448,7 +448,7 @@ static int perf_evsel__check_attr(struct evsel *evsel,
+ 		       "selected. Hence, no address to lookup the source line number.\n");
+ 		return -EINVAL;
+ 	}
+-	if (PRINT_FIELD(BRSTACKINSN) &&
++	if (PRINT_FIELD(BRSTACKINSN) && !allow_user_set &&
+ 	    !(perf_evlist__combined_branch_type(session->evlist) &
+ 	      PERF_SAMPLE_BRANCH_ANY)) {
+ 		pr_err("Display of branch stack assembler requested, but non all-branch filter set\n"
