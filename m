@@ -2,61 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5572510DB35
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 322A710DB39
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:39:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387446AbfK2Vjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 16:39:44 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44663 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387424AbfK2Vjo (ORCPT
+        id S2387462AbfK2Vjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 16:39:48 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39311 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387424AbfK2Vjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 16:39:44 -0500
-Received: by mail-lj1-f195.google.com with SMTP id c19so6309963lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:39:42 -0800 (PST)
+        Fri, 29 Nov 2019 16:39:46 -0500
+Received: by mail-lf1-f67.google.com with SMTP id q6so542612lfb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=N+931pEx1Hg+i4sg3YN9R80y/JO2qyDWX3fVbDkLEV8=;
-        b=WMAlo2z7ud+xPkLazAHrcoYGu8P9EvsN5yyG3J0z6osHw9Hfp20eNgq31QExaYQnHR
-         jCV4wkikzQ/b9oS60p4i0hkEYTiegVdpXDNXYMxPWnq2bd+hpYdt+tmqAm4hJ8ITnfdh
-         eOhh5CIYFwnVFBdZYEXyqtB0jpJBKc5p8WkYBOUZm/JyGUtyinIkWyS8tNvharNZO3lP
-         rVhw7mYjDKRJ8uh6jXOxP6z3M9autwIfMBl2UBXzW337kttsbvUuiX+qAETURTA8LT4r
-         Jk4ZeT+zE5bOjhb8mSnT3PUqgdsw0h+7uRdDx2ICEiyBd0DsW6mBoD8PLRwkq2t2tSNs
-         kksA==
+        bh=0VIY072ZJlZj4z1mcJleK9agtZhmef7Eqj9dCGXoaPE=;
+        b=kJAnMVeuP8snQfAobCu21qO8VB0dZHBZDPwF5pdzuZliCBWBT+7/r1Tw/t58TzPqwM
+         1aa98YIogWyt2+iNcVZbXaWIIupi/Pmt+Xr0fC62sXUhkXmgmY+8c4ZreiPAW/TeXWoG
+         8IzwcuIIpzDlF/3ad4TGLYYP9iY76EKv+fWvPb16UmLjI49qPVaj9BXZd+wPztIYrL90
+         JYW25jtOhjy2gqXw15XYCrFv3FauXiP4hNh56HgVC7t6lAg5+2z+TNM9t9KETuSBITjy
+         GHDWYit7hXxO/dGQLTO+bLl3M74QFXmppNBsE7bYL12YBUtwu7jiHCpAs3Yumc6G/IlA
+         fXLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=N+931pEx1Hg+i4sg3YN9R80y/JO2qyDWX3fVbDkLEV8=;
-        b=EehYmuLspMguaf9OQ7MMbzjaKXUlLXLMWoFam97gdjWWeFf55EubslLj0HarX5tO8S
-         lRV2cmgbmqE6VpOZ7DmKKg4Jl4bsDiYYdrg46TAL4RxtVeEKQ8ERl/a2j4nawXCHnpMf
-         Kp/igbgGKg7bI73N6+azyfj0KmM++Eat3/5+NZa/6x58VTdCPfC6wvsP6bHCPqp/B156
-         G1PpoMer40vd+YlugwwX9viQseuxpfqvTyXhwY+KKP7duAINZ+uALWj5RfCbEIpxgAs7
-         JbGYUcz+sVqHQZxTdtBHlOrNjKsTHwznLviuGFzqweyyooq58ZO+FwWKlT2+8zpZDcQY
-         JhDg==
-X-Gm-Message-State: APjAAAX8e5FFgno04/0sARt0K7RBXSMZ/n0ulwtsU3ZVU8X4HbvO31CA
-        b0pw4fL5U2M/L3ylh6k1Hpidpw==
-X-Google-Smtp-Source: APXvYqxsCnVwv6LDBL1jcUqv344vlPQituvC1/sYcz9y5J3rTQoP49a6zLtvx7rPh5xuFEVF65iQWQ==
-X-Received: by 2002:a2e:2914:: with SMTP id u20mr24260689lje.219.1575063581426;
-        Fri, 29 Nov 2019 13:39:41 -0800 (PST)
+        bh=0VIY072ZJlZj4z1mcJleK9agtZhmef7Eqj9dCGXoaPE=;
+        b=QeiVUMekOyBBDuUkrRWnReNX5MaQFOh1Ki7w5xMuBvjFGcZkj1CzGBp9nwjdIFMjwc
+         MM37aNl1K0qHlYsEmlNDXzNpUwcDgRXalHmSIOloBLhE/BQ8gmKtIyTcBMbOMWDBHfyC
+         0peEKVYTsAwd8t0w8ZRKjqQDOVTI3X0aanIPg0og6wTdwEfVpZiE3lfP4ogZfn+A/8mm
+         favMzPrwN9olwurdpAvUfP0H4PojrZr/E8PpgjyMMKVvbjBtfYdTFu1XWdaCmefYGFrF
+         n1U4zzeEr5LbXBWk6PgD7a89+9obvUfalVK1wYoqGBA6O2eBoYzmUdX26qXCEwVvqSq7
+         Xp/g==
+X-Gm-Message-State: APjAAAWsQ3XU5tlNhiFgPJHccr2Udsh2u6GObWgMfXBx+tM4zDtesL39
+        6OFgv7rWN/k3bOrcrQJROPZLZq7+15Dhkw==
+X-Google-Smtp-Source: APXvYqyPFOJP3LbNcrnULpaVcK05GoYjbZkn25HyDBR+a/U/LXJclR53qLuaVJaE8rGEZpxPtw3NvQ==
+X-Received: by 2002:a19:ed0f:: with SMTP id y15mr36683832lfy.3.1575063582905;
+        Fri, 29 Nov 2019 13:39:42 -0800 (PST)
 Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
-        by smtp.gmail.com with ESMTPSA id p4sm10817755lji.107.2019.11.29.13.39.40
+        by smtp.gmail.com with ESMTPSA id p4sm10817755lji.107.2019.11.29.13.39.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 13:39:40 -0800 (PST)
+        Fri, 29 Nov 2019 13:39:42 -0800 (PST)
 From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org, vireshk@kernel.org, ulf.hansson@linaro.org,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/5] arm64: dts: qcom: qcs404: Add CPR and populate OPP table
-Date:   Fri, 29 Nov 2019 22:39:13 +0100
-Message-Id: <20191129213917.1301110-4-niklas.cassel@linaro.org>
+        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
+        ulf.hansson@linaro.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 4/5] arm64: defconfig: enable CONFIG_QCOM_CPR
+Date:   Fri, 29 Nov 2019 22:39:14 +0100
+Message-Id: <20191129213917.1301110-5-niklas.cassel@linaro.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191129213917.1301110-1-niklas.cassel@linaro.org>
 References: <20191129213917.1301110-1-niklas.cassel@linaro.org>
@@ -67,10 +66,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CPR and populate OPP table.
+Enable CONFIG_QCOM_CPR.
 
-Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
@@ -78,204 +75,21 @@ Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Changes since v6:
 -Picked up Bjorn's and Ulf's Reviewed-by.
 
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 132 +++++++++++++++++++++++++--
- 1 file changed, 124 insertions(+), 8 deletions(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 03aa80f2814a..ca255d98d007 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -44,7 +44,8 @@
- 			#cooling-cells = <2>;
- 			clocks = <&apcs_glb>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&pms405_s3>;
-+			power-domains = <&cpr>;
-+			power-domain-names = "cpr";
- 		};
- 
- 		CPU1: cpu@101 {
-@@ -57,7 +58,8 @@
- 			#cooling-cells = <2>;
- 			clocks = <&apcs_glb>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&pms405_s3>;
-+			power-domains = <&cpr>;
-+			power-domain-names = "cpr";
- 		};
- 
- 		CPU2: cpu@102 {
-@@ -70,7 +72,8 @@
- 			#cooling-cells = <2>;
- 			clocks = <&apcs_glb>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&pms405_s3>;
-+			power-domains = <&cpr>;
-+			power-domain-names = "cpr";
- 		};
- 
- 		CPU3: cpu@103 {
-@@ -83,7 +86,8 @@
- 			#cooling-cells = <2>;
- 			clocks = <&apcs_glb>;
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&pms405_s3>;
-+			power-domains = <&cpr>;
-+			power-domain-names = "cpr";
- 		};
- 
- 		L2_0: l2-cache {
-@@ -107,20 +111,37 @@
- 	};
- 
- 	cpu_opp_table: cpu-opp-table {
--		compatible = "operating-points-v2";
-+		compatible = "operating-points-v2-kryo-cpu";
- 		opp-shared;
- 
- 		opp-1094400000 {
- 			opp-hz = /bits/ 64 <1094400000>;
--			opp-microvolt = <1224000 1224000 1224000>;
-+			required-opps = <&cpr_opp1>;
- 		};
- 		opp-1248000000 {
- 			opp-hz = /bits/ 64 <1248000000>;
--			opp-microvolt = <1288000 1288000 1288000>;
-+			required-opps = <&cpr_opp2>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
--			opp-microvolt = <1384000 1384000 1384000>;
-+			required-opps = <&cpr_opp3>;
-+		};
-+	};
-+
-+	cpr_opp_table: cpr-opp-table {
-+		compatible = "operating-points-v2-qcom-level";
-+
-+		cpr_opp1: opp1 {
-+			opp-level = <1>;
-+			qcom,opp-fuse-level = <1>;
-+		};
-+		cpr_opp2: opp2 {
-+			opp-level = <2>;
-+			qcom,opp-fuse-level = <2>;
-+		};
-+		cpr_opp3: opp3 {
-+			opp-level = <3>;
-+			qcom,opp-fuse-level = <3>;
- 		};
- 	};
- 
-@@ -310,6 +331,62 @@
- 			tsens_caldata: caldata@d0 {
- 				reg = <0x1f8 0x14>;
- 			};
-+			cpr_efuse_speedbin: speedbin@13c {
-+				reg = <0x13c 0x4>;
-+				bits = <2 3>;
-+			};
-+			cpr_efuse_quot_offset1: qoffset1@231 {
-+				reg = <0x231 0x4>;
-+				bits = <4 7>;
-+			};
-+			cpr_efuse_quot_offset2: qoffset2@232 {
-+				reg = <0x232 0x4>;
-+				bits = <3 7>;
-+			};
-+			cpr_efuse_quot_offset3: qoffset3@233 {
-+				reg = <0x233 0x4>;
-+				bits = <2 7>;
-+			};
-+			cpr_efuse_init_voltage1: ivoltage1@229 {
-+				reg = <0x229 0x4>;
-+				bits = <4 6>;
-+			};
-+			cpr_efuse_init_voltage2: ivoltage2@22a {
-+				reg = <0x22a 0x4>;
-+				bits = <2 6>;
-+			};
-+			cpr_efuse_init_voltage3: ivoltage3@22b {
-+				reg = <0x22b 0x4>;
-+				bits = <0 6>;
-+			};
-+			cpr_efuse_quot1: quot1@22b {
-+				reg = <0x22b 0x4>;
-+				bits = <6 12>;
-+			};
-+			cpr_efuse_quot2: quot2@22d {
-+				reg = <0x22d 0x4>;
-+				bits = <2 12>;
-+			};
-+			cpr_efuse_quot3: quot3@230 {
-+				reg = <0x230 0x4>;
-+				bits = <0 12>;
-+			};
-+			cpr_efuse_ring1: ring1@228 {
-+				reg = <0x228 0x4>;
-+				bits = <0 3>;
-+			};
-+			cpr_efuse_ring2: ring2@228 {
-+				reg = <0x228 0x4>;
-+				bits = <4 3>;
-+			};
-+			cpr_efuse_ring3: ring3@229 {
-+				reg = <0x229 0x4>;
-+				bits = <0 3>;
-+			};
-+			cpr_efuse_revision: revision@218 {
-+				reg = <0x218 0x4>;
-+				bits = <3 3>;
-+			};
- 		};
- 
- 		rng: rng@e3000 {
-@@ -952,6 +1029,45 @@
- 			clocks = <&sleep_clk>;
- 		};
- 
-+		cpr: power-controller@b018000 {
-+			compatible = "qcom,qcs404-cpr", "qcom,cpr";
-+			reg = <0x0b018000 0x1000>;
-+			interrupts = <0 15 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&xo_board>;
-+			clock-names = "ref";
-+			vdd-apc-supply = <&pms405_s3>;
-+			#power-domain-cells = <0>;
-+			operating-points-v2 = <&cpr_opp_table>;
-+			acc-syscon = <&tcsr>;
-+
-+			nvmem-cells = <&cpr_efuse_quot_offset1>,
-+				<&cpr_efuse_quot_offset2>,
-+				<&cpr_efuse_quot_offset3>,
-+				<&cpr_efuse_init_voltage1>,
-+				<&cpr_efuse_init_voltage2>,
-+				<&cpr_efuse_init_voltage3>,
-+				<&cpr_efuse_quot1>,
-+				<&cpr_efuse_quot2>,
-+				<&cpr_efuse_quot3>,
-+				<&cpr_efuse_ring1>,
-+				<&cpr_efuse_ring2>,
-+				<&cpr_efuse_ring3>,
-+				<&cpr_efuse_revision>;
-+			nvmem-cell-names = "cpr_quotient_offset1",
-+				"cpr_quotient_offset2",
-+				"cpr_quotient_offset3",
-+				"cpr_init_voltage1",
-+				"cpr_init_voltage2",
-+				"cpr_init_voltage3",
-+				"cpr_quotient1",
-+				"cpr_quotient2",
-+				"cpr_quotient3",
-+				"cpr_ring_osc1",
-+				"cpr_ring_osc2",
-+				"cpr_ring_osc3",
-+				"cpr_fuse_revision";
-+		};
-+
- 		timer@b120000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e76b42b25dd6..4385033c0a34 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -438,6 +438,7 @@ CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_MAX77620=y
+ CONFIG_POWER_AVS=y
++CONFIG_QCOM_CPR=y
+ CONFIG_ROCKCHIP_IODOMAIN=y
+ CONFIG_POWER_RESET_MSM=y
+ CONFIG_POWER_RESET_XGENE=y
 -- 
 2.23.0
 
