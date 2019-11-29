@@ -2,88 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28AE510D30A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:13:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B91B010D325
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:22:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfK2JNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 04:13:49 -0500
-Received: from foss.arm.com ([217.140.110.172]:45060 "EHLO foss.arm.com"
+        id S1726791AbfK2JWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 04:22:51 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:55190 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfK2JNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 04:13:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB2BE30E;
-        Fri, 29 Nov 2019 01:13:48 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C57BB3F68E;
-        Fri, 29 Nov 2019 01:13:47 -0800 (PST)
-Date:   Fri, 29 Nov 2019 09:13:45 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/14] torture: Replace cpu_up/down with
- device_online/offline
-Message-ID: <20191129091344.hf5demtjytv5dw5q@e107158-lin.cambridge.arm.com>
-References: <20191125112754.25223-1-qais.yousef@arm.com>
- <20191125112754.25223-13-qais.yousef@arm.com>
- <20191127214725.GG2889@paulmck-ThinkPad-P72>
- <20191128165611.7lmjaszjl4gbo7u2@e107158-lin.cambridge.arm.com>
- <20191128170025.ii3vqbj4jpcyghut@e107158-lin.cambridge.arm.com>
- <20191128210246.GJ2889@paulmck-ThinkPad-P72>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191128210246.GJ2889@paulmck-ThinkPad-P72>
-User-Agent: NeoMutt/20171215
+        id S1725892AbfK2JWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 04:22:51 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 40F9C1A0407;
+        Fri, 29 Nov 2019 10:22:49 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 81E491A03FE;
+        Fri, 29 Nov 2019 10:22:45 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8DAA2402A7;
+        Fri, 29 Nov 2019 17:22:40 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
+Subject: [v6,1/3] dt-bindings: i2c: support property idle-state
+Date:   Fri, 29 Nov 2019 17:22:20 +0800
+Message-Id: <20191129092222.2706-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/28/19 13:02, Paul E. McKenney wrote:
-> On Thu, Nov 28, 2019 at 05:00:26PM +0000, Qais Yousef wrote:
-> > On 11/28/19 16:56, Qais Yousef wrote:
-> > > On 11/27/19 13:47, Paul E. McKenney wrote:
-> > > > On Mon, Nov 25, 2019 at 11:27:52AM +0000, Qais Yousef wrote:
-> > > > > The core device API performs extra housekeeping bits that are missing
-> > > > > from directly calling cpu_up/down.
-> > > > > 
-> > > > > See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
-> > > > > serialization during LPM") for an example description of what might go
-> > > > > wrong.
-> > > > > 
-> > > > > This also prepares to make cpu_up/down a private interface for anything
-> > > > > but the cpu subsystem.
-> > > > > 
-> > > > > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> > > > > CC: Davidlohr Bueso <dave@stgolabs.net>
-> > > > > CC: "Paul E. McKenney" <paulmck@kernel.org>
-> > > > > CC: Josh Triplett <josh@joshtriplett.org>
-> > > > > CC: linux-kernel@vger.kernel.org
-> > > > 
-> > > > Looks fine from an rcutorture viewpoint, but why not provide an API
-> > > > that pulled lock_device_hotplug() and unlock_device_hotplug() into the
-> > > > online/offline calls?
-> > > 
-> > > I *think* the right way to do what you say is by doing lock_device_hotplug()
-> > > inside device_{online, offline}() - which affects all drivers not just the CPU.
-> 
-> Or there could be a CPU-specific wrapper function that did the needed
-> locking.  (Whether this is worth it or not of course depends on the
-> number of invocations.)
+This supports property idle-state
 
-Okay I see what you mean now. driver/base/memory.c have {add,remove}_memory()
-that does what you say. I think we can replicate this in driver/base/cpu.c too.
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v6:
+	- none
 
-I can certainly do that, better as an improvement on top as I need to audit the
-code to make sure the critical sections weren't relying on this lock to protect
-something else beside the online/offline operation.
+Change in v5:
+	- none
 
-Thanks!
+Change in v4:
+	- none
 
---
-Qais Yousef
+Change in v3:
+	- update subject and description
+	- add some information for property idle-state
+
+Change in v2:
+	- update subject and description
+	- add property idle-state
+
+ Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
+index 30ac6a60f041..7abda506b828 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-mux-pca954x.txt
+@@ -25,6 +25,8 @@ Required Properties:
+ Optional Properties:
+ 
+   - reset-gpios: Reference to the GPIO connected to the reset input.
++  - idle-state: if present, overrides i2c-mux-idle-disconnect,
++    Please refer to Documentation/devicetree/bindings/mux/mux-controller.txt
+   - i2c-mux-idle-disconnect: Boolean; if defined, forces mux to disconnect all
+     children in idle state. This is necessary for example, if there are several
+     multiplexers on the bus and the devices behind them use same I2C addresses.
+-- 
+2.17.1
+
