@@ -2,123 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3B5610D367
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD73D10D36F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:47:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfK2JpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 04:45:10 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39297 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfK2JpJ (ORCPT
+        id S1726853AbfK2Jqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 04:46:54 -0500
+Received: from mail-lf1-f50.google.com ([209.85.167.50]:41552 "EHLO
+        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfK2Jqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 04:45:09 -0500
-Received: by mail-lj1-f195.google.com with SMTP id e10so22102189ljj.6;
-        Fri, 29 Nov 2019 01:45:06 -0800 (PST)
+        Fri, 29 Nov 2019 04:46:52 -0500
+Received: by mail-lf1-f50.google.com with SMTP id m30so20292363lfp.8
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 01:46:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=h89gtr4jirvEqw+istiKuMh6C9n8rYoQsr7cxtnxOQE=;
-        b=LnYAyqGkTPjTtDnkPptBD1c4uizp/XqM/K+oUqJfRVRvqwY8q/C/9JZO1kF9M8Z0/N
-         RgWQXJpX8RkBSnd0oYsTulp32+lThwE1+rbZLZtrNUvmPu+2EZP3pzabBEZerXaahB6M
-         /BoEPVa51+oEJyu4iI1LzRnm1t+iroic76VbNEMti7ji8C37RpxO6JcZoPiacMrsD03a
-         reL8QPnD9yco+0MPd8GHwS03TtDVxsgsLz4QtJ+xwYTIG2FqnxkAOyrxhtcq54f3Me2Z
-         5To/FtbgbjkVmu1DFyZtiqJbu/yU9MFuA8yEuw2iR65JxMoLmkOWdWBnBaiJmgcsYxYU
-         fPmw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1GlpRjYHbCH1VLhj1GGbDkK8pDGEyIE6EbAHuHd+GZA=;
+        b=q9W84uLv7pjhogvkXqLbP/k5nxHNBpWq9J1QjYHlsAr1SFbL+qp30+lBeclfsb/GzZ
+         j7pClPaq9SlMppvVUpXjCmtCNEwrGoPO7X1xsF/i4+kLzC3fzAUbUQJjkeHDDwuhH/zb
+         NjR8gfdn7+c/YRq6rBQLXSS36nm1bX6tVM7DIwbv2Oj5ufdzxD9DkfX4vDBNVFdF/26K
+         f1TMGaa0TpcNMNU8fV/8CnayLEIpr4vL6pKJKVht0A5WLCT7cQk+CJp6qvu7o1+h6wjj
+         auQPw2boB6djmP9DWrxwW2UPKlavniRkXEUE+y2ARzrlBbmipOQ8v22yJ9OwNpfnm6WL
+         qxLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=h89gtr4jirvEqw+istiKuMh6C9n8rYoQsr7cxtnxOQE=;
-        b=a8Kgj7gJVr8Hyebl9ac/wvabT2nymfloZL3M8XDBa39zEenMd/9t05+NMedsLQtC5b
-         JkEzNlvPrskgVAwOPsMssMChoynV5TNQCICegx/jD82txTLeC05NFn6JGAIHKNHS5Ajo
-         Z/7nIQ5a0G5kk0y6kCQiYG+d8FmhLsF96EdanGcUMpBdKUScDpYuFyBDZODgZlePWRQk
-         OeYdxkS3RRRzPQvPoXebTePEQiu3M0oAxhH97qc0ENF9dcDZhLL8fIeeFqIMqFqAC/Ak
-         aVXlVSxwxtbmZ9UgqCN7xXnZPBxiyP8Dmg7Rb6rrU53/ZSLSmDCT1M62RCZ0nt5XJonw
-         0Jqg==
-X-Gm-Message-State: APjAAAXtwrmdjwERMQET6PSeD2MJrWTgVSoMfgT6OMRjKtGg/k/pfMqh
-        A+zGBK1rAN4AnHZ6mcX5T8yZsn+nUTw=
-X-Google-Smtp-Source: APXvYqymHjqtZ5yLRtHmfHQHjzkdwaZzbuI/7qkmGsPIBQkf4vtO2fa7lH85D+4iKu06z/+F/yXJ/g==
-X-Received: by 2002:a2e:3313:: with SMTP id d19mr38009377ljc.240.1575020705682;
-        Fri, 29 Nov 2019 01:45:05 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id a24sm547142ljp.97.2019.11.29.01.45.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Nov 2019 01:45:04 -0800 (PST)
-Subject: Re: [PATCH 1/3] blk-mq: optimise rq sort function
-To:     Nikolay Borisov <nborisov@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1574974577.git.asml.silence@gmail.com>
- <a21e91fff1abe201ebbc010d596b034f7b5123de.1574974577.git.asml.silence@gmail.com>
- <0124910c-4dcf-2143-0ec6-32dad123067c@suse.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <7b1a16db-287f-bba0-fca0-cc7f85f69ec6@gmail.com>
-Date:   Fri, 29 Nov 2019 12:45:03 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1GlpRjYHbCH1VLhj1GGbDkK8pDGEyIE6EbAHuHd+GZA=;
+        b=O4ICsASA85JeE99StzuUAdhBHGuAtf1Rx+IsX+K/74NW/1tMTpQp8jEcESlFVyS4k4
+         gWbvRdKE1e/RPEZo3F3eHIQlMqwyFgpHmm6J0fWArryuqT2OEmRc8hwC48VU3iLprjGl
+         vAQzGWEL1gxpna4UNo80eD0dSTIdIuRRFVLm+T2uNrkf2MXlMWey9yrYNxGl3Y9qRBYH
+         +CSMSDZdeBMpiRHiYmgPo6SFoZSe1wOxnUTuc9V62d57iwsqZMkwStBQj57BZzP8KiZH
+         xycv+JPLXHvyA6EsZNyv6RKiqVBNaK4+ntxCfMqy2m1f6/oR1Mw9GwGAzQIqXJDNdFiE
+         6FhA==
+X-Gm-Message-State: APjAAAW/5cDXn6BdJrly1c7UHQLRjjtv+p+O8n/gfWJ4lGvsLBpLOG+b
+        QgIFBxDUqbVKSSrJzzBXlwZtpdpDCBfAr2pRNcUq/Q==
+X-Google-Smtp-Source: APXvYqziak5rpAuJX+vyu6qoveI3kiclrpYm4tORoy1TjnqQ83VK/QoRTXCkFn8M+I0SFBq2G39fwcQfBRg8TsYn9Ug=
+X-Received: by 2002:ac2:410a:: with SMTP id b10mr7739875lfi.135.1575020810861;
+ Fri, 29 Nov 2019 01:46:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <0124910c-4dcf-2143-0ec6-32dad123067c@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191129085336.15968-1-yuehaibing@huawei.com>
+In-Reply-To: <20191129085336.15968-1-yuehaibing@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 29 Nov 2019 10:46:39 +0100
+Message-ID: <CACRpkdbeKdEAEtoPZH8+fWcZEOqJ6cdGTRSkrKx8L9avxnPQQg@mail.gmail.com>
+Subject: Re: [PATCH -next] gpiolib: of: Make of_gpio_spi_cs_get_count static
+To:     YueHaibing <yuehaibing@huawei.com>, Mark Brown <broonie@kernel.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/2019 11:28 AM, Nikolay Borisov wrote:
-> On 28.11.19 г. 23:11 ч., Pavel Begunkov wrote:
->> Check "!=" in multi-layer comparisons. The same memory usage, fewer
->> instructions, and 2 from 4 jumps are replaced with SETcc.
->>
->> Note, that list_sort() doesn't differ 0 and <0.
->>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> 
-> My first reaction was this is wrong since you no longer return negative
-> values. But then I looked into list_sort/merge and this branch
-> 'if (cmp(priv, a, b) <= 0) {' clearly shows this is correct.
+On Fri, Nov 29, 2019 at 9:53 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Yes, that's why there is a note in the patch description. The same is
-told by list_sort() description.
+> Fix sparse warning:
+>
+> drivers/gpio/gpiolib-of.c:35:5: warning: symbol 'of_gpio_spi_cs_get_count' was not declared. Should it be static?
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-> 
-> So :
-> 
-> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks for taking a look
+Mark merged my patch causing this warning into the SPI tree,
+would you mind resending it to him including my Reviewed-by tag
+and a note to apply it to the SPI tree?
 
-> 
->> ---
->>  block/blk-mq.c | 12 ++++--------
->>  1 file changed, 4 insertions(+), 8 deletions(-)
->>
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 323c9cb28066..f32a3cfdd34e 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -1668,14 +1668,10 @@ static int plug_rq_cmp(void *priv, struct list_head *a, struct list_head *b)
->>  	struct request *rqa = container_of(a, struct request, queuelist);
->>  	struct request *rqb = container_of(b, struct request, queuelist);
->>  
->> -	if (rqa->mq_ctx < rqb->mq_ctx)
->> -		return -1;
->> -	else if (rqa->mq_ctx > rqb->mq_ctx)
->> -		return 1;
->> -	else if (rqa->mq_hctx < rqb->mq_hctx)
->> -		return -1;
->> -	else if (rqa->mq_hctx > rqb->mq_hctx)
->> -		return 1;
->> +	if (rqa->mq_ctx != rqb->mq_ctx)
->> +		return rqa->mq_ctx > rqb->mq_ctx;
->> +	if (rqa->mq_hctx != rqb->mq_hctx)
->> +		return rqa->mq_hctx > rqb->mq_hctx;
->>  
->>  	return blk_rq_pos(rqa) > blk_rq_pos(rqb);
->>  }
->>
-
--- 
-Pavel Begunkov
+Yours,
+Linus Walleij
