@@ -2,98 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE45910DA9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 503AF10DAA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:45:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfK2Ui5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 15:38:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49690 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727040AbfK2Ui4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 15:38:56 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63DDC206E0;
-        Fri, 29 Nov 2019 20:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575059936;
-        bh=3j6IK3gxqY18H5UQcdg7xU+JmmBLUysPA21rIMmh5fU=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=qV3h/3xTQ4pdqUCltsB75EBgxN3PCKpGciLrJaHiUCV+NW8rJ8ZgbyKsa7MFv8TWd
-         +PPQmAofot13Vq7BHsmPMtXxr0yIZhXB5DfZt4U3ZfA7CWZ1nPGhqVQvOYHRWLfUJD
-         3+PoY61aLbEbq15dzIpc/ZBouQssPIkmsYTymve0=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 3926B35227A4; Fri, 29 Nov 2019 12:38:56 -0800 (PST)
-Date:   Fri, 29 Nov 2019 12:38:56 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/14] torture: Replace cpu_up/down with
- device_online/offline
-Message-ID: <20191129203856.GN2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191125112754.25223-1-qais.yousef@arm.com>
- <20191125112754.25223-13-qais.yousef@arm.com>
- <20191127214725.GG2889@paulmck-ThinkPad-P72>
- <20191128165611.7lmjaszjl4gbo7u2@e107158-lin.cambridge.arm.com>
- <20191128170025.ii3vqbj4jpcyghut@e107158-lin.cambridge.arm.com>
- <20191128210246.GJ2889@paulmck-ThinkPad-P72>
- <20191129091344.hf5demtjytv5dw5q@e107158-lin.cambridge.arm.com>
+        id S2387395AbfK2Up4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 15:45:56 -0500
+Received: from mail-pj1-f43.google.com ([209.85.216.43]:45550 "EHLO
+        mail-pj1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbfK2Upz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 15:45:55 -0500
+Received: by mail-pj1-f43.google.com with SMTP id r11so5964962pjp.12
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 12:45:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gg5me5dViZKmX3j5Wl5G7oXUhPYuxdRzN5a2QntEtdY=;
+        b=RPpCWkXjASFdGL8lUGiEm00+1Jw8VqN+E8nmsVIH7HQy+NfX4KSWliROvaWA8TKdv1
+         oPhngwKUltxp7bdjirNdovk/8XIG80Bp26AlNZ7+K30F6VnNMr2YZHFraQMUbw9wJ+9d
+         tW89K16h3pSqiLh3pgZch2pNdOcfEreEC+phSXg73Vvg34YauGy+9yWX1R3KH4wk5Ge3
+         3kg00y+HEjWacssIgkU68/iBqtvMnTcw2fd34yZOxDJnc3Mzn6dDIRucrjxj6oC4NkE3
+         9isiG8wSOIkvFSADyqkBDOVKs8TWlOOyEfHfvQQsALy1Q58Y0BNR/BktgDZKAmJTGAYu
+         2ooQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gg5me5dViZKmX3j5Wl5G7oXUhPYuxdRzN5a2QntEtdY=;
+        b=M+ImKYeZgU64hCKPwep9TKLqcmRMV6niKRHVvS0pa4qqkI9sOyotLeu+EBs2SxlvdE
+         K2mubEJ1ax/FTATGqf6SO0nP8MX4lUiPGHgvwMsFG43ep2ubKNiahDvsxHNJtt2TowMt
+         CAM+a72G/JMOcnXahvSp9sfKLXw9r8y6ySL2hiXFRUvKVJsZF3+2Kg7nN6Sn+W+Ki05p
+         R9G7LBrkbHmHHk+T6fPrTziXFcQr2vOvp0t9oSZHwmrxlV5G+jzxkCs4dR4Et6t8O3nd
+         oGcNk5Aq/VKAXqLwKz6V49vM2SpzF0csLNuqhO+94YcFdtAiBs+DPoBhhO+5pGmjISCd
+         KZPw==
+X-Gm-Message-State: APjAAAUesTHlIfJeqUaaT2/bYMy36+Iq+Nhxy1UghSUn9vTgGVg5XEj6
+        KiTsVoTNE+Xu+kF8XQBXMp9ftOWjJSzUsw==
+X-Google-Smtp-Source: APXvYqzrgh9Qm7BMjFQKa7oMdl/3zmuWcPPllwiqcAAG1hrsImgTL4prpQ+lZjxxJFbWepsZltn+4w==
+X-Received: by 2002:a17:90a:fe07:: with SMTP id ck7mr19937314pjb.99.1575060353342;
+        Fri, 29 Nov 2019 12:45:53 -0800 (PST)
+Received: from ?IPv6:2605:e000:100e:8c61:6938:40fc:d284:b43? ([2605:e000:100e:8c61:6938:40fc:d284:b43])
+        by smtp.gmail.com with ESMTPSA id b1sm15584966pjw.19.2019.11.29.12.45.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Nov 2019 12:45:52 -0800 (PST)
+Subject: Re: Build failure on latest powerpc/merge (311ae9e159d8 io_uring: fix
+ dead-hung for non-iter fixed rw)
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <71cf82d5-5986-43b7-cf1c-acba429a89d6@c-s.fr>
+ <3a95d445-1f5c-7750-f0de-ddc427800b3b@kernel.dk>
+ <4ef71e74-848f-59d4-6b0b-d3a3c52095a0@c-s.fr>
+ <5389b43a-259d-997c-41e6-5e84a91b012a@kernel.dk>
+ <38cb2865-d887-d46d-94ef-4ebccff4dc60@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <884742fe-2eff-48ba-1382-83aab9a37a84@kernel.dk>
+Date:   Fri, 29 Nov 2019 12:45:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191129091344.hf5demtjytv5dw5q@e107158-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <38cb2865-d887-d46d-94ef-4ebccff4dc60@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 09:13:45AM +0000, Qais Yousef wrote:
-> On 11/28/19 13:02, Paul E. McKenney wrote:
-> > On Thu, Nov 28, 2019 at 05:00:26PM +0000, Qais Yousef wrote:
-> > > On 11/28/19 16:56, Qais Yousef wrote:
-> > > > On 11/27/19 13:47, Paul E. McKenney wrote:
-> > > > > On Mon, Nov 25, 2019 at 11:27:52AM +0000, Qais Yousef wrote:
-> > > > > > The core device API performs extra housekeeping bits that are missing
-> > > > > > from directly calling cpu_up/down.
-> > > > > > 
-> > > > > > See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
-> > > > > > serialization during LPM") for an example description of what might go
-> > > > > > wrong.
-> > > > > > 
-> > > > > > This also prepares to make cpu_up/down a private interface for anything
-> > > > > > but the cpu subsystem.
-> > > > > > 
-> > > > > > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> > > > > > CC: Davidlohr Bueso <dave@stgolabs.net>
-> > > > > > CC: "Paul E. McKenney" <paulmck@kernel.org>
-> > > > > > CC: Josh Triplett <josh@joshtriplett.org>
-> > > > > > CC: linux-kernel@vger.kernel.org
-> > > > > 
-> > > > > Looks fine from an rcutorture viewpoint, but why not provide an API
-> > > > > that pulled lock_device_hotplug() and unlock_device_hotplug() into the
-> > > > > online/offline calls?
-> > > > 
-> > > > I *think* the right way to do what you say is by doing lock_device_hotplug()
-> > > > inside device_{online, offline}() - which affects all drivers not just the CPU.
-> > 
-> > Or there could be a CPU-specific wrapper function that did the needed
-> > locking.  (Whether this is worth it or not of course depends on the
-> > number of invocations.)
-> 
-> Okay I see what you mean now. driver/base/memory.c have {add,remove}_memory()
-> that does what you say. I think we can replicate this in driver/base/cpu.c too.
-> 
-> I can certainly do that, better as an improvement on top as I need to audit the
-> code to make sure the critical sections weren't relying on this lock to protect
-> something else beside the online/offline operation.
+On 11/29/19 10:07 AM, Pavel Begunkov wrote:
+> On 29/11/2019 20:16, Jens Axboe wrote:
+>> On 11/29/19 8:14 AM, Christophe Leroy wrote:
+>>>>>
+>>>>> Reverting commit 311ae9e159d8 ("io_uring: fix dead-hung for non-iter
+>>>>> fixed rw") clears the failure.
+>>>>>
+>>>>> Most likely an #include is missing.
+>>>>
+>>>> Huh weird how the build bots didn't catch that. Does the below work?
+>>>
+>>> Yes it works, thanks.
+>>
+>> Thanks for reporting and testing, I've queued it up with your reported
+>> and tested-by.
+>>
+> My bad, thanks for the report and fixing.
 
-Works for me!
+No worries, usually the build bots are great at finding these before
+patches go upstream. They have been unreliable lately, unfortunately.
 
-							Thanx, Paul
+-- 
+Jens Axboe
+
