@@ -2,139 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476D110D5FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 14:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E80BF10D607
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 14:21:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfK2NJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 08:09:55 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:31305 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726360AbfK2NJz (ORCPT
+        id S1726845AbfK2NVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 08:21:52 -0500
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:47326 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726608AbfK2NVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 08:09:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575032993;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EXQRsFdfLYOm/MUUyIhSeoAXYv2SBvvANDEs00Y3qns=;
-        b=ZADPzVbXMRB47SUG6iCE5OQK3JWCNqkYzkV/QeTfDvfUI+u9qyppBY1GY7R+rjAhl44LXJ
-        63TY7nSxoe+ytn2hGewKcfHMDjRiuQzdf2pXTnL8rWM3K2n21c4Q1263yLvplNtSImpGfO
-        nsCyn6kwRwVSmC9/pYxjAO2XLam9sGk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-200-dmcG5Go5PVmnxMR5lf7-tw-1; Fri, 29 Nov 2019 08:09:49 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8DAA2911A4;
-        Fri, 29 Nov 2019 13:09:48 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with SMTP id EA7B85D9E1;
-        Fri, 29 Nov 2019 13:09:46 +0000 (UTC)
-Date:   Fri, 29 Nov 2019 14:09:46 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] perf mmap: declare type for cpu mask of arbitrary
- length
-Message-ID: <20191129130946.GC14169@krava>
-References: <908dbe98-7d8d-0ec1-d4ae-242f3e104979@linux.intel.com>
- <446c4345-cb20-d0ad-3b3d-b34683b1c1e0@linux.intel.com>
+        Fri, 29 Nov 2019 08:21:52 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id B3C3B2E147E;
+        Fri, 29 Nov 2019 16:21:47 +0300 (MSK)
+Received: from iva4-c987840161f8.qloud-c.yandex.net (iva4-c987840161f8.qloud-c.yandex.net [2a02:6b8:c0c:3da5:0:640:c987:8401])
+        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id WVdThNk2bC-Lko8mbA5;
+        Fri, 29 Nov 2019 16:21:47 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1575033707; bh=jRi6N5+4AEBul8ckE0my3E31N2e5qWBXeGfURkjwdqw=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=GKwPlM0VJuneSyS6ItckX4GQB3y2+YyunBe5XsL2iWgKyP5W1/6KVMQLtmd6k4XVT
+         mIclMrp/M93HO73Ls3vGMVE8kOXjFkaiVmp+Wb7/O75lWtQKB8hSVB5CUwjL2t5h9M
+         o9mYjZYo7zG7Zb2Yz4UdWeIF9XVlmerlX07p8Dys=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:1009:4fae:ad87:4eae])
+        by iva4-c987840161f8.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id tYrfCbqUNY-LkWG38D3;
+        Fri, 29 Nov 2019 16:21:46 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH 1/2] kernel: set taint flag 'L' at any kind of lockup
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     Sasha Levin <sashal@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rcu@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Fri, 29 Nov 2019 16:21:46 +0300
+Message-ID: <157503370645.8187.6335564487789994134.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <446c4345-cb20-d0ad-3b3d-b34683b1c1e0@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: dmcG5Go5PVmnxMR5lf7-tw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 01:04:37PM +0300, Alexey Budankov wrote:
->=20
-> Declare a dedicated struct map_cpu_mask type for cpu masks of
-> arbitrary length. Mask is available thru bits pointer and the
-> mask length is kept in nbits field. MMAP_CPU_MASK_BYTES() macro
-> returns mask storage size in bytes. perf_mmap__print_cpu_mask()
-> function can be used to log text representation of the mask.
->=20
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  tools/perf/util/mmap.c | 12 ++++++++++++
->  tools/perf/util/mmap.h | 11 +++++++++++
->  2 files changed, 23 insertions(+)
->=20
-> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-> index 063d1b93c53d..30ff7aef06f2 100644
-> --- a/tools/perf/util/mmap.c
-> +++ b/tools/perf/util/mmap.c
-> @@ -23,6 +23,18 @@
->  #include "mmap.h"
->  #include "../perf.h"
->  #include <internal/lib.h> /* page_size */
-> +#include <linux/bitmap.h>
-> +
-> +#define MASK_SIZE 1023
-> +void perf_mmap__print_cpu_mask(struct mmap_cpu_mask *mask, const char *t=
-ag)
+Any lockup or stall notifies about unexpected lack of progress.
+It's better to know about them for further problem investigations.
 
-'mmap_cpu_mask__scnprintf' name follows the name logic we try to use
+Right now only softlockup has own taint flag. Let's generalize it.
 
-jirka
+This patch renames TAINT_SOFTLOCKUP into TAINT_LOCKUP at sets it for:
+- softlockup
+- hardlockup
+- RCU stalls
+- stuck in workqueues
+- detected task hung
 
-> +{
-> +=09char buf[MASK_SIZE + 1];
-> +=09size_t len;
-> +
-> +=09len =3D bitmap_scnprintf(mask->bits, mask->nbits, buf, MASK_SIZE);
-> +=09buf[len] =3D '\0';
-> +=09pr_debug("%p: %s mask[%ld]: %s\n", mask, tag, mask->nbits, buf);
-> +}
-> =20
->  size_t mmap__mmap_len(struct mmap *map)
->  {
-> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-> index bee4e83f7109..598e2def8a48 100644
-> --- a/tools/perf/util/mmap.h
-> +++ b/tools/perf/util/mmap.h
-> @@ -15,6 +15,15 @@
->  #include "event.h"
-> =20
->  struct aiocb;
-> +
-> +struct mmap_cpu_mask {
-> +=09unsigned long *bits;
-> +=09size_t nbits;
-> +};
-> +
-> +#define MMAP_CPU_MASK_BYTES(m) \
-> +=09(BITS_TO_LONGS(((struct mmap_cpu_mask *)m)->nbits) * sizeof(unsigned =
-long))
-> +
->  /**
->   * struct mmap - perf's ring buffer mmap details
->   *
-> @@ -52,4 +61,6 @@ int perf_mmap__push(struct mmap *md, void *to,
-> =20
->  size_t mmap__mmap_len(struct mmap *map);
-> =20
-> +void perf_mmap__print_cpu_mask(struct mmap_cpu_mask *mask, const char *t=
-ag);
-> +
->  #endif /*__PERF_MMAP_H */
-> --=20
-> 2.20.1
->=20
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ Documentation/admin-guide/sysctl/kernel.rst   |    2 +-
+ Documentation/admin-guide/tainted-kernels.rst |    8 ++++++--
+ include/linux/kernel.h                        |    2 +-
+ kernel/hung_task.c                            |    2 ++
+ kernel/panic.c                                |    2 +-
+ kernel/rcu/tree_stall.h                       |    1 +
+ kernel/watchdog.c                             |    2 +-
+ kernel/watchdog_hld.c                         |    1 +
+ kernel/workqueue.c                            |    1 +
+ tools/debugging/kernel-chktaint               |    2 +-
+ 10 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 032c7cd3cede..60867ec525a4 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -1082,7 +1082,7 @@ ORed together. The letters are seen in "Tainted" line of Oops reports.
+   2048  `(I)`  workaround for bug in platform firmware applied
+   4096  `(O)`  externally-built ("out-of-tree") module was loaded
+   8192  `(E)`  unsigned module was loaded
+- 16384  `(L)`  soft lockup occurred
++ 16384  `(L)`  lockup occurred
+  32768  `(K)`  kernel has been live patched
+  65536  `(X)`  Auxiliary taint, defined and used by for distros
+ 131072  `(T)`  The kernel was built with the struct randomization plugin
+diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+index 71e9184a9079..fc76d0aad9f5 100644
+--- a/Documentation/admin-guide/tainted-kernels.rst
++++ b/Documentation/admin-guide/tainted-kernels.rst
+@@ -96,7 +96,7 @@ Bit  Log  Number  Reason that got the kernel tainted
+  11  _/I    2048  workaround for bug in platform firmware applied
+  12  _/O    4096  externally-built ("out-of-tree") module was loaded
+  13  _/E    8192  unsigned module was loaded
+- 14  _/L   16384  soft lockup occurred
++ 14  _/L   16384  lockup occurred
+  15  _/K   32768  kernel has been live patched
+  16  _/X   65536  auxiliary taint, defined for and used by distros
+  17  _/T  131072  kernel was built with the struct randomization plugin
+@@ -152,7 +152,11 @@ More detailed explanation for tainting
+  13) ``E`` if an unsigned module has been loaded in a kernel supporting
+      module signature.
+ 
+- 14) ``L`` if a soft lockup has previously occurred on the system.
++ 14) ``L`` if some kind of lockup has previously occurred on the system:
++     - soft/hardlockup, see Documentation/admin-guide/lockup-watchdogs.rst
++     - RCU stall, see Documentation/RCU/stallwarn.txt
++     - hung task detected, see CONFIG_DETECT_HUNG_TASK
++     - kernel workqueue lockup, see CONFIG_WQ_WATCHDOG
+ 
+  15) ``K`` if the kernel has been live patched.
+ 
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d83d403dac2e..e8a6808e4f2f 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -591,7 +591,7 @@ extern enum system_states {
+ #define TAINT_FIRMWARE_WORKAROUND	11
+ #define TAINT_OOT_MODULE		12
+ #define TAINT_UNSIGNED_MODULE		13
+-#define TAINT_SOFTLOCKUP		14
++#define TAINT_LOCKUP			14
+ #define TAINT_LIVEPATCH			15
+ #define TAINT_AUX			16
+ #define TAINT_RANDSTRUCT		17
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 14a625c16cb3..521eb2fbf5fc 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -139,6 +139,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		hung_task_show_lock = true;
+ 	}
+ 
++	add_taint(TAINT_LOCKUP, LOCKDEP_STILL_OK);
++
+ 	touch_nmi_watchdog();
+ }
+ 
+diff --git a/kernel/panic.c b/kernel/panic.c
+index f470a038b05b..d7750a45ca8d 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -372,7 +372,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ 	[ TAINT_FIRMWARE_WORKAROUND ]	= { 'I', ' ', false },
+ 	[ TAINT_OOT_MODULE ]		= { 'O', ' ', true },
+ 	[ TAINT_UNSIGNED_MODULE ]	= { 'E', ' ', true },
+-	[ TAINT_SOFTLOCKUP ]		= { 'L', ' ', false },
++	[ TAINT_LOCKUP ]		= { 'L', ' ', false },
+ 	[ TAINT_LIVEPATCH ]		= { 'K', ' ', true },
+ 	[ TAINT_AUX ]			= { 'X', ' ', true },
+ 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index c0b8c458d8a6..181495efff80 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -74,6 +74,7 @@ early_initcall(check_cpu_stall_init);
+ /* If so specified via sysctl, panic, yielding cleaner stall-warning output. */
+ static void panic_on_rcu_stall(void)
+ {
++	add_taint(TAINT_LOCKUP, LOCKDEP_STILL_OK);
+ 	if (sysctl_panic_on_rcu_stall)
+ 		panic("RCU Stall\n");
+ }
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index f41334ef0971..d60b195708f7 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -466,7 +466,7 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
+ 			smp_mb__after_atomic();
+ 		}
+ 
+-		add_taint(TAINT_SOFTLOCKUP, LOCKDEP_STILL_OK);
++		add_taint(TAINT_LOCKUP, LOCKDEP_STILL_OK);
+ 		if (softlockup_panic)
+ 			panic("softlockup: hung tasks");
+ 		__this_cpu_write(soft_watchdog_warn, true);
+diff --git a/kernel/watchdog_hld.c b/kernel/watchdog_hld.c
+index 247bf0b1582c..f77256f47422 100644
+--- a/kernel/watchdog_hld.c
++++ b/kernel/watchdog_hld.c
+@@ -152,6 +152,7 @@ static void watchdog_overflow_callback(struct perf_event *event,
+ 				!test_and_set_bit(0, &hardlockup_allcpu_dumped))
+ 			trigger_allbutself_cpu_backtrace();
+ 
++		add_taint(TAINT_LOCKUP, LOCKDEP_STILL_OK);
+ 		if (hardlockup_panic)
+ 			nmi_panic(regs, "Hard LOCKUP");
+ 
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index bc2e09a8ea61..825a92893882 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5741,6 +5741,7 @@ static void wq_watchdog_timer_fn(struct timer_list *unused)
+ 			pr_cont_pool_info(pool);
+ 			pr_cont(" stuck for %us!\n",
+ 				jiffies_to_msecs(jiffies - pool_ts) / 1000);
++			add_taint(TAINT_LOCKUP, LOCKDEP_STILL_OK);
+ 		}
+ 	}
+ 
+diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+index 2240cb56e6e5..9f24719d8c80 100755
+--- a/tools/debugging/kernel-chktaint
++++ b/tools/debugging/kernel-chktaint
+@@ -168,7 +168,7 @@ if [ `expr $T % 2` -eq 0 ]; then
+ 	addout " "
+ else
+ 	addout "L"
+-	echo " * soft lockup occurred (#14)"
++	echo " * lockup occurred (#14)"
+ fi
+ 
+ T=`expr $T / 2`
 
