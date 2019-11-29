@@ -2,65 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1608510DA9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B18D010DA9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:35:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfK2Ulu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 15:41:50 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:34054 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbfK2Ulu (ORCPT
+        id S1727107AbfK2Uf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 15:35:56 -0500
+Received: from mailbackend.panix.com ([166.84.1.89]:63029 "EHLO
+        mailbackend.panix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbfK2Uf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 15:41:50 -0500
-Received: from localhost (c-73-35-209-67.hsd1.wa.comcast.net [73.35.209.67])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7A33114051729;
-        Fri, 29 Nov 2019 12:41:49 -0800 (PST)
-Date:   Fri, 29 Nov 2019 12:30:31 -0800 (PST)
-Message-Id: <20191129.123031.1495258469954154946.davem@davemloft.net>
-To:     cascardo@canonical.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        sbrivio@redhat.com
-Subject: Re: [PATCH] selftests: pmtu: use -oneline for ip route list cache
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191128185806.23706-1-cascardo@canonical.com>
-References: <20191128185806.23706-1-cascardo@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 29 Nov 2019 12:41:49 -0800 (PST)
+        Fri, 29 Nov 2019 15:35:56 -0500
+Received: from hp-x360n (rrcs-98-153-158-222.west.biz.rr.com [98.153.158.222])
+        by mailbackend.panix.com (Postfix) with ESMTPSA id 47PmVd1m2pzm6L;
+        Fri, 29 Nov 2019 15:35:53 -0500 (EST)
+Date:   Fri, 29 Nov 2019 12:35:51 -0800 (PST)
+From:   "Kenneth R. Crudup" <kenny@panix.com>
+Reply-To: "Kenneth R. Crudup" <kenny@panix.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] ACPI: PM: s2idle: Fix possible suspend lock-up
+In-Reply-To: <2787005.CsmIKtZlk9@kreacher>
+Message-ID: <alpine.DEB.2.21.1911291231510.6038@hp-x360n>
+References: <2787005.CsmIKtZlk9@kreacher>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Date: Thu, 28 Nov 2019 15:58:06 -0300
 
-> Some versions of iproute2 will output more than one line per entry, which
-> will cause the test to fail, like:
-> 
-> TEST: ipv6: list and flush cached exceptions                        [FAIL]
->   can't list cached exceptions
-> 
-> That happens, for example, with iproute2 4.15.0. When using the -oneline
-> option, this will work just fine:
-> 
-> TEST: ipv6: list and flush cached exceptions                        [ OK ]
-> 
-> This also works just fine with a more recent version of iproute2, like
-> 5.4.0.
-> 
-> For some reason, two lines are printed for the IPv4 test no matter what
-> version of iproute2 is used. Use the same -oneline parameter there instead
-> of counting the lines twice.
-> 
-> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+On Thu, 28 Nov 2019, Rafael J. Wysocki wrote:
 
-Applied with Fixes: tag added and queued up for -stable.
+> Please test this series and let me know if it works for you too.
 
-Thanks.
+I've tested this quite a few times against the issues reported on the Linux-PM
+mailing list ("resume failures if the charger is plugged in while suspended
+and the battery is at < 90%" and "spurious wakeups from the EC for non-power
+events") and this patchset has fixed both of these issues (the latter is
+especially surprising and welcome).
+
+I'm pretty happy with it; it's been a while since I've had a consistently
+cold laptop while suspended. Much thanks!
+
+	-Kenny
+
+-- 
+Kenneth R. Crudup  Sr. SW Engineer, Scott County Consulting, Silicon Valley
