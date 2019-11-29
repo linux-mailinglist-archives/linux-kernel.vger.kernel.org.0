@@ -2,68 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDC9510D4C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:27:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B81010D4C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfK2L1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 06:27:01 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:36977 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfK2L1B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:27:01 -0500
-Received: by mail-il1-f198.google.com with SMTP id q1so24654971ile.4
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 03:27:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=1R/eyR91b2qzrd9oYXwpA7kVnLlS3eW/CPo2xuZ2tZs=;
-        b=BynedgFUT17FBjIYrXMvsFm5J0dYZJDkzY5racto+ugp1Q6r+XK9ubKjKJh6aqt6am
-         1UEuv0kqKszEYlFkY4gtaQyYYG+4mN1Y0JURx4DkRGA1zLyx1F3MrMQAHooO92fgpWRo
-         E4/BbEqKwhwW9gha3gXk+PrXv7doP0cwzzvvLAHtC5vrqAKMIuwqbeygyvWmx8mBkSxc
-         GLYGvO6P6v5Oons0SRyG5Foi3aZvlwkMEnCdytykqLLsB8rNfMy5DTK4CFuZIauN6clg
-         zhhq+PnXhna6KnPXJFoHq5WeWoK6ctlRXIy2NstkJ2KTFS09iExtUG6pmJR0qIreUnQ/
-         Qm0w==
-X-Gm-Message-State: APjAAAW8F7ZkzLHygnx7o2yAgknBboNdTuhJBTxnwymJ5pQKtGP38ldF
-        ACugTb84DgaXSvdRwvhJnEqeH2bJZPITUIgVBJx+8LpPTFEZ
-X-Google-Smtp-Source: APXvYqx2WOuve6jGICcXm51Pk+hIsPcOb1OO3yj2Zia1Hs0+ZR99DkvW/INJgLvPm6G6NaW5WS+Y11Kyq0HaFv6HhYvElj2iUAAo
+        id S1726908AbfK2L1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 06:27:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbfK2L1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 06:27:22 -0500
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91616217D7;
+        Fri, 29 Nov 2019 11:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575026841;
+        bh=Iilf3hrD/jR1KBNLxX222L75uOcdkhT4b+H3i+gDWmI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BHZjnUihMjmpd/O6zuY8XAdXYHWcLtxhVxNGaBN683jZGJJogCT0HvbqO6In/lAVR
+         0xS6qejuFnXOORQtowqSOflyOvVzL7AUrUJ0hPz0LmyNKbe6TLApX39GZS7K7gddj0
+         ZHQHB+9JgYY9YfRtVkG0f2xVvZzxncO2zqKygt3E=
+Received: by mail-wm1-f46.google.com with SMTP id p17so8756583wma.1;
+        Fri, 29 Nov 2019 03:27:21 -0800 (PST)
+X-Gm-Message-State: APjAAAXfg22pxf7lmmcQaAxtiE3h82TGGVJmIZNluPxp04i6HdEVh56Y
+        lRqiOubWXtZgoa2iB6nUVEgDfI8uS/5SCdLfMYw=
+X-Google-Smtp-Source: APXvYqwS2mwgtsYX3Aw7PUZdbOQ5JmtZQ7Uc7XV3zHaMU8QX6wE0dUgWkooDMeqLXldNns133Yz+eBYsCwzRTYPJUgo=
+X-Received: by 2002:a7b:ce95:: with SMTP id q21mr13621996wmj.137.1575026840076;
+ Fri, 29 Nov 2019 03:27:20 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:c525:: with SMTP id m5mr52192194ili.91.1575026820788;
- Fri, 29 Nov 2019 03:27:00 -0800 (PST)
-Date:   Fri, 29 Nov 2019 03:27:00 -0800
-In-Reply-To: <20191129104156.GH29518@localhost>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002a380f05987a8239@google.com>
-Subject: Re: WARNING: ODEBUG bug in rsi_probe
-From:   syzbot <syzbot+1d1597a5aa3679c65b9f@syzkaller.appspotmail.com>
-To:     amitkarwar@gmail.com, andreyknvl@google.com, davem@davemloft.net,
-        johan@kernel.org, kvalo@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        siva8118@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <ca14f757-f191-62a0-b896-6b3ba0f9d168@infradead.org>
+In-Reply-To: <ca14f757-f191-62a0-b896-6b3ba0f9d168@infradead.org>
+From:   Guo Ren <guoren@kernel.org>
+Date:   Fri, 29 Nov 2019 19:27:08 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQ52at-NUhA4dTqopHJbYA25wPdGB_fjvmwdiW1CzgkSA@mail.gmail.com>
+Message-ID: <CAJF2gTQ52at-NUhA4dTqopHJbYA25wPdGB_fjvmwdiW1CzgkSA@mail.gmail.com>
+Subject: Re: [PATCH] irqchip: cleanup Kconfig help text
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-csky@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Thx
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+Acked-by: Guo Ren <guoren@kernel.org>
 
-Reported-and-tested-by:  
-syzbot+1d1597a5aa3679c65b9f@syzkaller.appspotmail.com
+On Fri, Nov 29, 2019 at 6:42 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fixes to Kconfig help text:
+>
+> - spell out "hardware"
+> - fix verb usage
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Guo Ren <guoren@kernel.org>
+> Cc: linux-csky@vger.kernel.org
+> ---
+>  drivers/irqchip/Kconfig |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> --- lnx-54.orig/drivers/irqchip/Kconfig
+> +++ lnx-54/drivers/irqchip/Kconfig
+> @@ -434,7 +434,7 @@ config CSKY_MPINTC
+>         help
+>           Say yes here to enable C-SKY SMP interrupt controller driver used
+>           for C-SKY SMP system.
+> -         In fact it's not mmio map in hw and it use ld/st to visit the
+> +         In fact it's not mmio map in hardware and it uses ld/st to visit the
+>           controller's register inside CPU.
+>
+>  config CSKY_APB_INTC
+> @@ -442,7 +442,7 @@ config CSKY_APB_INTC
+>         depends on CSKY
+>         help
+>           Say yes here to enable C-SKY APB interrupt controller driver used
+> -         by C-SKY single core SOC system. It use mmio map apb-bus to visit
+> +         by C-SKY single core SOC system. It uses mmio map apb-bus to visit
+>           the controller's register.
+>
+>  config IMX_IRQSTEER
+>
 
-Tested on:
 
-commit:         d34f9519 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c73d1bb5aeaeae20
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d1597a5aa3679c65b9f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=122808a6e00000
+-- 
+Best Regards
+ Guo Ren
 
-Note: testing is done by a robot and is best-effort only.
+ML: https://lore.kernel.org/linux-csky/
