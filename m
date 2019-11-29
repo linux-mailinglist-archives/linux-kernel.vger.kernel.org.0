@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E900E10D343
+	by mail.lfdr.de (Postfix) with ESMTP id 0748F10D341
 	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:30:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbfK2JaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 04:30:14 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7180 "EHLO huawei.com"
+        id S1726778AbfK2JaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 04:30:10 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7179 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726215AbfK2JaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 04:30:11 -0500
+        id S1725892AbfK2JaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 04:30:10 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1E7589738DB22E99C505;
+        by Forcepoint Email with ESMTP id 229AA85642DF0D5D1CAA;
         Fri, 29 Nov 2019 17:30:09 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 29 Nov 2019 17:29:58 +0800
+ 14.3.439.0; Fri, 29 Nov 2019 17:29:59 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>
 CC:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH next 2/3] debugfs: introduce debugfs_create_single[,_data]
-Date:   Fri, 29 Nov 2019 17:27:51 +0800
-Message-ID: <20191129092752.169902-3-wangkefeng.wang@huawei.com>
+Subject: [PATCH next 3/3] debugfs: introduce debugfs_create_seq[,_data]
+Date:   Fri, 29 Nov 2019 17:27:52 +0800
+Message-ID: <20191129092752.169902-4-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191129092752.169902-1-wangkefeng.wang@huawei.com>
 References: <20191129092752.169902-1-wangkefeng.wang@huawei.com>
@@ -36,83 +36,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like proc_create_single[,_data] in procfs, introduce a similar
-debugfs_create_single[,_data] function, which could drastically
+Like proc_create_seq[,_data] in procfs, introduce a similar
+debugfs_create_seq[,_data] function, which could drastically
 reduces the boilerplate code.
-
-Rename debugfs_devm_entry to debugfs_entry, and reuse debugfs_entry_ops
-code. The struct debugfs_entry instance is dynamically allocated
-and taken as data in debugfs_create_single_data, which need to be
-freed when calling debugfs_remove, using lowest bit of inode->i_private
-to distinguish it.
 
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- fs/debugfs/file.c       | 58 ++++++++++++++++++++++++++++++++++-------
- fs/debugfs/inode.c      |  4 +++
- include/linux/debugfs.h | 18 +++++++++++++
- 3 files changed, 70 insertions(+), 10 deletions(-)
+ fs/debugfs/file.c       | 62 ++++++++++++++++++++++++++++++++++++++++-
+ include/linux/debugfs.h | 16 +++++++++++
+ 2 files changed, 77 insertions(+), 1 deletion(-)
 
 diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 38c17a99eb17..68f0c4b19bef 100644
+index 68f0c4b19bef..77522717c9fb 100644
 --- a/fs/debugfs/file.c
 +++ b/fs/debugfs/file.c
-@@ -1106,21 +1106,24 @@ EXPORT_SYMBOL_GPL(debugfs_create_regset32);
- 
+@@ -1107,7 +1107,10 @@ EXPORT_SYMBOL_GPL(debugfs_create_regset32);
  #endif /* CONFIG_HAS_IOMEM */
  
--struct debugfs_devm_entry {
-+struct debugfs_entry {
- 	int (*read)(struct seq_file *seq, void *data);
--	struct device *dev;
-+	void *data;
+ struct debugfs_entry {
+-	int (*read)(struct seq_file *seq, void *data);
++	union {
++		const struct seq_operations *seq_ops;
++		int (*read)(struct seq_file *seq, void *data);
++	};
+ 	void *data;
  };
  
--static int debugfs_devm_entry_open(struct inode *inode, struct file *f)
-+static int debugfs_entry_open(struct inode *inode, struct file *f)
- {
--	struct debugfs_devm_entry *entry = inode->i_private;
-+	struct debugfs_entry *entry = inode->i_private;
- 
--	return single_open(f, entry->read, entry->dev);
-+	if (debugfs_test_lowest_bit(entry))
-+		entry = debugfs_clear_lowest_bit(entry);
+@@ -1196,3 +1199,60 @@ struct dentry *debugfs_create_single_data(const char *name, umode_t mode,
+ 				   &debugfs_entry_ops);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_single_data);
 +
-+	return single_open(f, entry->read, entry->data);
- }
- 
--static const struct file_operations debugfs_devm_entry_ops = {
-+static const struct file_operations debugfs_entry_ops = {
- 	.owner = THIS_MODULE,
--	.open = debugfs_devm_entry_open,
-+	.open = debugfs_entry_open,
- 	.release = single_release,
- 	.read = seq_read,
- 	.llseek = seq_lseek
-@@ -1141,7 +1144,7 @@ struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char *name,
- 					   int (*read_fn)(struct seq_file *s,
- 							  void *data))
- {
--	struct debugfs_devm_entry *entry;
-+	struct debugfs_entry *entry;
- 
- 	if (IS_ERR(parent))
- 		return ERR_PTR(-ENOENT);
-@@ -1151,10 +1154,45 @@ struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char *name,
- 		return ERR_PTR(-ENOMEM);
- 
- 	entry->read = read_fn;
--	entry->dev = dev;
-+	entry->data = dev;
- 
- 	return debugfs_create_file(name, S_IRUGO, parent, entry,
--				   &debugfs_devm_entry_ops);
-+				   &debugfs_entry_ops);
- }
- EXPORT_SYMBOL_GPL(debugfs_create_devm_seqfile);
- 
++static int debugfs_entry_seq_open(struct inode *inode, struct file *file)
++{
++	struct debugfs_entry *entry = inode->i_private;
++	int ret;
++
++	entry = debugfs_clear_lowest_bit(entry);
++
++	ret = seq_open(file, entry->seq_ops);
++	if (!ret && entry->data) {
++		struct seq_file *seq = file->private_data;
++		seq->private = entry->data;
++	}
++
++	return ret;
++}
++
++static const struct file_operations debugfs_seq_fops = {
++	.open		= debugfs_entry_seq_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
++};
++
 +/**
-+ * debugfs_create_single_data - create a file in the debugfs filesystem
++ * debugfs_create_seq_data - create a file in the debugfs filesystem
 + * @name: a pointer to a string containing the name of the file to create.
 + * @mode: the permission that the file should have.
 + * @parent: a pointer to the parent dentry for this file.  This should be a
@@ -121,15 +100,13 @@ index 38c17a99eb17..68f0c4b19bef 100644
 + * @data: a pointer to something that the caller will want to get to later
 + *        on.  The inode.i_private pointer will point to this value on
 + *        the open() call.
-+ * @read_fn: function pointer called to print the seq_file content.
++ * @seq_ops: seq_operations pointer of the seqfile.
 + *
-+ * This function creates a file in debugfs with the extra data and a seq_file
-+ * show callback.
++ * This function creates a file in debugfs with the extra data and a seq_ops.
 + */
-+struct dentry *debugfs_create_single_data(const char *name, umode_t mode,
-+					  struct dentry *parent, void *data,
-+					  int (*read_fn)(struct seq_file *s,
-+							 void *data))
++struct dentry *debugfs_create_seq_data(const char *name, umode_t mode,
++				       struct dentry *parent, void *data,
++				       const struct seq_operations *seq_ops)
 +{
 +	struct debugfs_entry *entry;
 +
@@ -137,56 +114,39 @@ index 38c17a99eb17..68f0c4b19bef 100644
 +	if (!entry)
 +		return ERR_PTR(-ENOMEM);
 +
-+	entry->read = read_fn;
++	entry->seq_ops = seq_ops;
 +	entry->data = data;
 +
 +	entry = debugfs_set_lowest_bit(entry);
 +
 +	return debugfs_create_file(name, mode, parent, entry,
-+				   &debugfs_entry_ops);
++				   &debugfs_seq_fops);
 +}
-+EXPORT_SYMBOL_GPL(debugfs_create_single_data);
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index cc24e97686d0..58cbb7af2a55 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -197,6 +197,10 @@ static void debugfs_free_inode(struct inode *inode)
- {
- 	if (S_ISLNK(inode->i_mode))
- 		kfree(inode->i_link);
-+
-+	if (debugfs_test_lowest_bit(inode->i_private))
-+		kfree(debugfs_clear_lowest_bit(inode->i_private));
-+
- 	free_inode_nonrcu(inode);
- }
- 
++EXPORT_SYMBOL_GPL(debugfs_create_seq_data);
 diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index bf9b6cafa4c2..82171f183e93 100644
+index 82171f183e93..d32d49983547 100644
 --- a/include/linux/debugfs.h
 +++ b/include/linux/debugfs.h
-@@ -142,6 +142,11 @@ struct dentry *debugfs_create_devm_seqfile(struct device *dev, const char *name,
- 					   int (*read_fn)(struct seq_file *s,
- 							  void *data));
+@@ -147,6 +147,10 @@ struct dentry *debugfs_create_single_data(const char *name, umode_t mode,
+ 					  int (*read_fn)(struct seq_file *s,
+ 							 void *data));
  
-+struct dentry *debugfs_create_single_data(const char *name, umode_t mode,
-+					  struct dentry *parent, void *data,
-+					  int (*read_fn)(struct seq_file *s,
-+							 void *data));
++struct dentry *debugfs_create_seq_data(const char *name, umode_t mode,
++				       struct dentry *parent, void *data,
++				       const struct seq_operations *seq_ops);
 +
  bool debugfs_initialized(void);
  
  ssize_t debugfs_read_file_bool(struct file *file, char __user *user_buf,
-@@ -336,6 +341,16 @@ static inline struct dentry *debugfs_create_devm_seqfile(struct device *dev,
+@@ -351,6 +355,15 @@ static inline struct dentry *debugfs_create_single_data(const char *name,
  	return ERR_PTR(-ENODEV);
  }
  
-+static inline struct dentry *debugfs_create_single_data(const char *name,
-+							umode_t mode,
-+							struct dentry *parent,
-+							void *data,
-+					 int (*read_fn)(struct seq_file *s,
-+							void *data))
++static inline struct dentry *debugfs_create_seq_data(const char *name,
++						     umode_t mode,
++						     struct dentry *parent,
++						     void *data,
++				       const struct seq_operations *seq_ops)
 +{
 +	return ERR_PTR(-ENODEV);
 +}
@@ -194,12 +154,12 @@ index bf9b6cafa4c2..82171f183e93 100644
  static inline ssize_t debugfs_read_file_bool(struct file *file,
  					     char __user *user_buf,
  					     size_t count, loff_t *ppos)
-@@ -352,6 +367,9 @@ static inline ssize_t debugfs_write_file_bool(struct file *file,
+@@ -370,6 +383,9 @@ static inline ssize_t debugfs_write_file_bool(struct file *file,
+ #define debugfs_create_single(name, mode, parent, read) \
+ 	debugfs_create_single_data(name, mode, parent, NULL, read)
  
- #endif
- 
-+#define debugfs_create_single(name, mode, parent, read) \
-+	debugfs_create_single_data(name, mode, parent, NULL, read)
++#define debugfs_create_seq(name, mode, parent, ops) \
++	debugfs_create_seq_data(name, mode, parent, NULL, ops)
 +
  /**
   * debugfs_create_xul - create a debugfs file that is used to read and write an
