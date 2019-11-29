@@ -2,98 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D44410D7AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 16:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D219F10D7C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 16:17:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfK2PJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 10:09:54 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:31896 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfK2PJx (ORCPT
+        id S1727127AbfK2PRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 10:17:08 -0500
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:15245 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfK2PRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 10:09:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1575040192;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=0WKSQYG0YP5GIwNWknC0InKQVJvBVr74yYBpeas3RNM=;
-        b=Uxyrhx294kdS1ofE8vxCwKw+LJs9d7S++dU237OTHePzyLZ2MVdQvl8yob9IU6SfCm
-        2Hx7rerm+w72XgfBH/VZP0pryXdVbZYrhXKlf5WLEU8quc1v9BLYN5757sNh1LLvuCoB
-        //Wv3A6+agIuojUt6jUKYmt9Garp2rsFAunWJHLdeyq5BTOIq+RKr7IciQ9dGfV8XxBK
-        +HHNeTfkvrBEq9DZzpFYEr0sRjHXJUuBomTU3pKewL9eoSYK6TUviOWOCODC+d7nvvZw
-        s+rOPuNGDZzBbIhO50pLW6JSN89iJIRfsVUuA0bh858IC5RHrGJ8RgdCMUNWrQPJRyfj
-        nAnQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/vgwDeoHw=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
-        with ESMTPSA id y07703vATF9pTbf
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Fri, 29 Nov 2019 16:09:51 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH] mips: Fix gettimeofday() in the vdso library
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <0b64c6bb-ffc7-059d-3cb3-012092e0fcf0@arm.com>
-Date:   Fri, 29 Nov 2019 16:09:51 +0100
-Cc:     Paul Burton <paulburton@kernel.org>,
-        mips-creator-ci20-dev@googlegroups.com,
-        letux-kernel@openphoenux.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DCD7A17F-B045-440E-AB66-7F8AB72A19CA@goldelico.com>
-References: <20191129143658.12224-1-vincenzo.frascino@arm.com> <307717BD-3233-4313-BAA8-7431F4C78773@goldelico.com> <0b64c6bb-ffc7-059d-3cb3-012092e0fcf0@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-X-Mailer: Apple Mail (2.3124)
+        Fri, 29 Nov 2019 10:17:07 -0500
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Fri, 29 Nov 2019 10:17:06 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1575040626;
+  h=subject:to:references:from:message-id:date:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=DaycKm/LpFN80ZMKrBVbdlKWv8+WyUR116gism8Plrc=;
+  b=CwfR0mRURPVh494qZIf8FK34eXCGI8zEMFO8z5/sBlyYajvUKHBw6OQ5
+   MPMUwwCMyZu+LE/CwxI99Ooxn8YRPNN8uylo3D8WRLaZTsg7TKxVEN6sO
+   Deykyxq7PRu3zUO/jCtbsWgszxJcDI4+hMln72qc1LyJobvniiuXFjOSI
+   E=;
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: 71h5pEqfTCR8dWxE+4xORG+x0kfkUdLgEXlbcI2+7/823J6hAcpKl1Fw0FbpM57MBZK+yPCYfe
+ +gtwcw1IH3ScW4vp4hK5uAwEShjuK6X4UqcL/F2RNjG4HfM4giLxcY8GfU6M7yfc7nRD7msekC
+ amLf0dR/N/w12VJUi+hd9hDNC2zNNkLQ464UblQ6ZNOV3AngElYA95ivhb1/K7QvCkZ4KH9Dvt
+ tDtfFs/Tv/i/U2nQ56YUn1RxmtlsQi23Xv35u88TcE0HdpUfyWpJspag6R1PSqsxvTj36z9DSd
+ Y+w=
+X-SBRS: 2.7
+X-MesageID: 9345885
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.69,257,1571716800"; 
+   d="scan'208";a="9345885"
+Subject: Re: [Xen-devel] [PATCH 1/3] arm/arm64/xen: use C inlines for
+ privcmd_call
+To:     Julien Grall <julien@xen.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        <jmorris@namei.org>, <sashal@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <steve.capper@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+        <james.morse@arm.com>, <vladimir.murzin@arm.com>,
+        <mark.rutland@arm.com>, <tglx@linutronix.de>,
+        <gregkh@linuxfoundation.org>, <allison@lohutok.net>,
+        <info@metux.net>, <alexios.zavras@intel.com>,
+        <sstabellini@kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <stefan@agner.ch>,
+        <yamada.masahiro@socionext.com>, <xen-devel@lists.xenproject.org>,
+        <linux@armlinux.org.uk>
+References: <20191127184453.229321-1-pasha.tatashin@soleen.com>
+ <20191127184453.229321-2-pasha.tatashin@soleen.com>
+ <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <e785a585-8b71-8a49-285e-2bcb1437500b@citrix.com>
+Date:   Fri, 29 Nov 2019 15:09:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29/11/2019 15:05, Julien Grall wrote:
+> Hi,
+>
+> On 27/11/2019 18:44, Pavel Tatashin wrote:
+>> diff --git a/arch/arm64/include/asm/xen/hypercall.h
+>> b/arch/arm64/include/asm/xen/hypercall.h
+>> index 3522cbaed316..1a74fb28607f 100644
+>> --- a/arch/arm64/include/asm/xen/hypercall.h
+>> +++ b/arch/arm64/include/asm/xen/hypercall.h
+>> @@ -1 +1,29 @@
+>> +#ifndef _ASM_ARM64_XEN_HYPERCALL_H
+>> +#define _ASM_ARM64_XEN_HYPERCALL_H
+>>   #include <xen/arm/hypercall.h>
+>> +#include <linux/uaccess.h>
+>> +
+>> +static inline long privcmd_call(unsigned int call, unsigned long a1,
+>> +                unsigned long a2, unsigned long a3,
+>> +                unsigned long a4, unsigned long a5)
+>
+> I realize that privcmd_call is the only hypercall using Software PAN
+> at the moment. However, dm_op needs the same as hypercall will be
+> issued from userspace as well.
 
-> Am 29.11.2019 um 15:58 schrieb Vincenzo Frascino =
-<vincenzo.frascino@arm.com>:
->=20
-> On 11/29/19 2:52 PM, H. Nikolaus Schaller wrote:
->>=20
->>> Am 29.11.2019 um 15:36 schrieb Vincenzo Frascino =
-<vincenzo.frascino@arm.com>:
->>>=20
->>> The libc provides a discovery mechanism for vDSO library and its
->>> symbols. When a symbol is not exposed by the vDSOs the libc falls =
-back
->>> on the system calls.
->>>=20
->>> With the introduction of the unified vDSO library on mips this =
-behavior
->>> is not honored anymore by the kernel in the case of gettimeofday().
->>>=20
->>> The issue has been noticed and reported due to a dhclient failure on =
-the
->>> CI20 board:
->>>=20
->>> root@letux:~# dhclient
->>> ../../../../lib/isc/unix/time.c:200: Operation not permitted
->>> root@letux:~#
->>>=20
->>> Restore the original behavior fixing gettimeofday() in the vDSO =
-library.
->>>=20
->>> Cc: Paul Burton <paulburton@kernel.org>
->>> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
->>> Testes-by: H. Nikolaus Schaller <hns@goldelico.com> # CI20 with =
-JZ4780
->> ^^^ funny typo... -> Tested-by:
->=20
-> Ops, I copy-pasted it from your email ;) Can't trust you ;)
+And dm_op() won't be the only example as we continue in cleaning up the
+gaping hole that is privcmd.
 
-No :)
+> So I was wondering whether we should create a generic function (e.g.
+> do_xen_hypercall() or do_xen_user_hypercall()) to cover the two
+> hypercalls?
 
-Well, typos happen and nobody seems to notice. My favourite:
+Probably a good idea.
 
-5f9e832c137075045d15cd6899ab0505cfb2ca4b
-
-BR,
-Nikolaus
-
+~Andrew
