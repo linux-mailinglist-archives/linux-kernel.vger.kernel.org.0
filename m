@@ -2,134 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57CA31967A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01DEB1967B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgC1Qpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:42 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50006 "EHLO mx.sdf.org"
+        id S1727674AbgC1Qn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:43:27 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50208 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727749AbgC1Qnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:33 -0400
+        id S1727401AbgC1QnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:20 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhGdv020471
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhC9q026662
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:16 GMT
+        Sat, 28 Mar 2020 16:43:12 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhF9R022227;
-        Sat, 28 Mar 2020 16:43:15 GMT
-Message-Id: <202003281643.02SGhF9R022227@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhCt7025631;
+        Sat, 28 Mar 2020 16:43:12 GMT
+Message-Id: <202003281643.02SGhCt7025631@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Thu, 3 Oct 2019 07:10:40 -0400
-Subject: [RFC PATCH v1 23/50] prandom_seed_state(): Change to 32-bit seed
- type.
+Date:   Fri, 29 Nov 2019 15:24:22 -0500
+Subject: [RFC PATCH v1 14/50] crypto/testmgr.c: use prandom_u32_max() &
+ prandom_bytes()
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It only uses 32 bits of the seed anyway, and the vast majority
-of callers pass in 32-bit values.  The only exceptions are:
-* Several self-tests used a fixed seed of 3141592653589793238ULL.
-  Changed to 3141592653.
-* arch/x86/mm/kaslr.c uses a seed from kaslr_get_random_long().
-  It's already well-mixed, so truncating it is no worse than
-  the previous xor-folding.
+...in a couple of places where they're appropriate.
 
-(We could use the folded equivalent 32-bit seed for the self-tests,
-but we just changed the PRNG algorithm, so the self-tests will
-change across these commits anyway.)
+There are many other places where successive code blocks make calls
+like prandom_u32() % 2 followed immediately by prandom_u32() % 4.
+This could be easily written to use three bits of one call, but
+at some cost in clarity and obvious-correctness, which is more
+important that efficiency in self-test code.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org
 ---
- include/linux/random.h   | 9 +++------
- lib/interval_tree_test.c | 2 +-
- lib/rbtree_test.c        | 2 +-
- lib/test_bpf.c           | 2 +-
- lib/test_parman.c        | 2 +-
- 5 files changed, 7 insertions(+), 10 deletions(-)
+ crypto/testmgr.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 4a325f5cf298f..7956063253261 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -210,14 +210,11 @@ void prandom_seed_early(struct rnd_state *state, u32 seed, bool);
- /**
-  * prandom_seed_state - set seed for prandom_u32_state().
-  * @state: pointer to state structure to receive the seed.
-- * @seed: arbitrary 64-bit value to use as a seed.
-- *        (only 32 bits are actually used)
-+ * @seed: arbitrary 32-bit value to use as a seed.
-  */
--static inline void prandom_seed_state(struct rnd_state *state, u64 seed)
-+static inline void prandom_seed_state(struct rnd_state *state, u32 seed)
- {
--	u32 i = (seed >> 32) ^ (seed << 10) ^ seed;
--
--	prandom_seed_early(state, i, false);
-+	prandom_seed_early(state, seed, false);
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index e8f21f7348a48..bc9252768bdba 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -770,7 +770,7 @@ static void mutate_buffer(u8 *buf, size_t count)
+ 	if (prandom_u32() % 4 == 0) {
+ 		num_flips = min_t(size_t, 1 << (prandom_u32() % 8), count * 8);
+ 		for (i = 0; i < num_flips; i++) {
+-			pos = prandom_u32() % (count * 8);
++			pos = prandom_u32_max(count * 8);
+ 			buf[pos / 8] ^= 1 << (pos % 8);
+ 		}
+ 	}
+@@ -821,8 +821,7 @@ static void generate_random_bytes(u8 *buf, size_t count)
+ 		break;
+ 	default:
+ 		/* Fully random bytes */
+-		for (i = 0; i < count; i++)
+-			buf[i] = (u8)prandom_u32();
++		prandom_bytes(buf, count);
+ 	}
  }
  
- #ifdef CONFIG_ARCH_RANDOM
-diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
-index 8c129c8c638b9..149bca1edbf0d 100644
---- a/lib/interval_tree_test.c
-+++ b/lib/interval_tree_test.c
-@@ -79,7 +79,7 @@ static int interval_tree_test_init(void)
- 
- 	printk(KERN_ALERT "interval tree insert/remove");
- 
--	prandom_seed_state(&rnd, 3141592653589793238ULL);
-+	prandom_seed_state(&rnd, 3141592653);
- 	init();
- 
- 	time1 = get_cycles();
-diff --git a/lib/rbtree_test.c b/lib/rbtree_test.c
-index 41ae3c7570d39..129b653e6d702 100644
---- a/lib/rbtree_test.c
-+++ b/lib/rbtree_test.c
-@@ -251,7 +251,7 @@ static int __init rbtree_test_init(void)
- 
- 	printk(KERN_ALERT "rbtree testing");
- 
--	prandom_seed_state(&rnd, 3141592653589793238ULL);
-+	prandom_seed_state(&rnd, 3141592653);
- 	init();
- 
- 	time1 = get_cycles();
-diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-index cecb230833bed..76697e24ee206 100644
---- a/lib/test_bpf.c
-+++ b/lib/test_bpf.c
-@@ -134,7 +134,7 @@ static int bpf_fill_maxinsns3(struct bpf_test *self)
- 	if (!insn)
- 		return -ENOMEM;
- 
--	prandom_seed_state(&rnd, 3141592653589793238ULL);
-+	prandom_seed_state(&rnd, 3141592653);
- 
- 	for (i = 0; i < len - 1; i++) {
- 		__u32 k = prandom_u32_state(&rnd);
-diff --git a/lib/test_parman.c b/lib/test_parman.c
-index 35e32243693c9..9db1fe1b45083 100644
---- a/lib/test_parman.c
-+++ b/lib/test_parman.c
-@@ -131,7 +131,7 @@ static const struct parman_ops test_parman_lsort_ops = {
- 
- static void test_parman_rnd_init(struct test_parman *test_parman)
- {
--	prandom_seed_state(&test_parman->rnd, 3141592653589793238ULL);
-+	prandom_seed_state(&test_parman->rnd, 3141592653);
- }
- 
- static u32 test_parman_rnd_get(struct test_parman *test_parman)
 -- 
 2.26.0
 
