@@ -2,183 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB55310D649
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 14:49:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5AA310D654
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 14:51:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfK2Ntn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 08:49:43 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:50669 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726853AbfK2Ntn (ORCPT
+        id S1726928AbfK2Nv6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 08:51:58 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:53483 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbfK2Nv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 08:49:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575035381;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3xCy0nxTbAZVp5vEUkYIW3ozNj+sxeQG2POsXKW5FaE=;
-        b=OFtrkQ7dHOKU/FvtLR7+oK4AeWkzlMISiPyJj4Cf25sqhjzONSfK8/bBjiI6hEbvhFBq56
-        JoeDWA6jc5lWe+x3+4Us1Ag9/VgEd+FDRdK/CNyo7WkADZjsoKZTgg79Y1s9g2fjxDJrgP
-        GP83JG+xBylRHd0PyyqiLr/GsB3ZWjc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-QijvxbDoNciiPLjItl4oYQ-1; Fri, 29 Nov 2019 08:49:33 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B86910054E3;
-        Fri, 29 Nov 2019 13:49:32 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B182460BF1;
-        Fri, 29 Nov 2019 13:49:30 +0000 (UTC)
-Date:   Fri, 29 Nov 2019 14:49:29 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ivan Babrou <ivan@cloudflare.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>
-Subject: Re: perf is unable to read dward from go programs
-Message-ID: <20191129134929.GA26903@krava>
-References: <CABWYdi2jvPUq128XDv_VbY=vFknFyJHbUR=0_K9WuA0mFTkPvg@mail.gmail.com>
- <CABWYdi3k9QvFOEd_hFG16LVE=BiokO4hWp50nZcxYwbWfxeE3g@mail.gmail.com>
+        Fri, 29 Nov 2019 08:51:58 -0500
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: h5SHTUUGrFynw3OqVDljNloPVDJf/ril5qn86YWzvZhV88T2PkE3APvVIe3R3c8x5aSbdTnqrU
+ mgjnM1YxoiD4WNtamkfpsRja3cx4qIe/4dimTNcD1gGX5QDi8VoWWAExUdbR23GM5rZPA8Xb2d
+ f78itzV5tPXN8cjFiYPEE1b9kTgzLMGjcUZqjln4NVaEdYcB1yC7CupdrUKUCZtyvjPN6FmEaC
+ zVHqk4tt7U+kWJDsG7CVfiXUaF5mWJ1L2iBcY1jT1jKDZJrNNpUJ2jam+VkJJugINPjsflkr1W
+ 7Os=
+X-IronPort-AV: E=Sophos;i="5.69,257,1571727600"; 
+   d="scan'208";a="57287972"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Nov 2019 06:51:53 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 29 Nov 2019 06:51:53 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Fri, 29 Nov 2019 06:51:50 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <linux@armlinux.org.uk>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <sre@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v3 0/9] SoC and defconfig support for SAM9X60
+Date:   Fri, 29 Nov 2019 15:51:36 +0200
+Message-ID: <1575035505-6310-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CABWYdi3k9QvFOEd_hFG16LVE=BiokO4hWp50nZcxYwbWfxeE3g@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: QijvxbDoNciiPLjItl4oYQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 01:15:20PM -0800, Ivan Babrou wrote:
-> There were no response in linux-perf-users@, so I think it's fair to
-> ask maintainers.
->=20
-> On Fri, Nov 8, 2019 at 3:53 PM Ivan Babrou <ivan@cloudflare.com> wrote:
-> >
-> > I have a simple piece of code that burns CPU for 1s:
-> >
-> > * https://gist.github.com/bobrik/cf022ff6950d09032fa13a984e2272ed
-> >
-> > I can build it just fine: go build -o /tmp/burn burn.go
-> >
-> > And I can see correct stacks if I record with fp:
-> >
-> > perf record -e cpu-clock -g -F 99 /tmp/burn
-> >
-> > But if I record with gwarf:
-> >
-> > perf record -e cpu-clock -g -F 99 --call-graph dwarf /tmp/burn
-> >
-> > Then stacks are lost with the following complaints during "perf script"=
-:
-> >
-> > BFD: Dwarf Error: found dwarf version '376', this reader only handles
-> > version 2, 3 and 4 information.
-> > BFD: Dwarf Error: found dwarf version '31863', this reader only
-> > handles version 2, 3 and 4 information.
-> > BFD: Dwarf Error: found dwarf version '65271', this reader only
-> > handles version 2, 3 and 4 information.
-> > BFD: Dwarf Error: found dwarf version '289', this reader only handles
-> > version 2, 3 and 4 information.
+Hi,
 
-hi,
-the binary generated by go has compressed debug info (on my setup)
-and libunwind (default dwarf unwinder) does not seem to support that
+This series enables proper support for SAM9X60 in Kconfig and
+defconfig.
 
-but when I compile perf with libdw unwind support:
+Thank you,
+Claudiu Beznea
 
-  $ make DEBUG=3D1 VF=3D1 NO_LIBUNWIND=3D1
+Changes in v3:
+- move patch "ARM: at91: Kconfig: add config flag for SAM9X60 SoC" before
+  the patches that uses CONFIG_SOC_SAM9X60
+- sqash defconfig patches (except the savedefconfig one)
 
-I'm getting proper backtraces (below), maybe it's time to change
-the default dwarf unwinder ;-)
+Changes in v2:
+- cahnged cover letter title; previously it was:
+  "add defconfig support for SAM9X60"
+- have new entry in arch/arm/mach-at91/Kconfig for SOC_SAM9X60
+  independent of SOC_AT91SAM9 to be able to select only necessary
+  config flags for SAM9X60 (patches 02/17, 03/17)
+- select POWER_RESET_AT91_RESET and POWER_RESET_AT91_SAMA5D2_SHDWC
+  as for SAMA5D2 (patches 04/17, 05/17)
+- select DEBUG_AT91_RM9200_DBGU (patch 06/17)
+- shaped a bit the patches titles and commit desciptions for defconfig
+  patches (patches 09-17/17)
 
-thanks,
-jirka
+Claudiu Beznea (9):
+  ARM: at91: Kconfig: add sam9x60 pll config flag
+  ARM: at91: Kconfig: add config flag for SAM9X60 SoC
+  ARM: at91: pm: move SAM9X60's PM under its own SoC config flag
+  drivers: soc: atmel: move sam9x60 under its own config flag
+  power: reset: Kconfig: select POWER_RESET_AT91_RESET for sam9x60
+  drivers: soc: atmel: select POWER_RESET_AT91_SAMA5D2_SHDWC for sam9x60
+  ARM: debug-ll: select DEBUG_AT91_RM9200_DBGU for sam9x60
+  ARM: at91/defconfig: use savedefconfig
+  ARM: at91/defconfig: enable config flags for sam9x60 SoC
 
+ arch/arm/Kconfig.debug             |  6 ++---
+ arch/arm/configs/at91_dt_defconfig | 55 ++++++++++++++++++--------------------
+ arch/arm/mach-at91/Kconfig         | 24 +++++++++++++++--
+ arch/arm/mach-at91/Makefile        |  1 +
+ arch/arm/mach-at91/at91sam9.c      | 18 -------------
+ arch/arm/mach-at91/pm.c            |  2 +-
+ arch/arm/mach-at91/sam9x60.c       | 34 +++++++++++++++++++++++
+ drivers/power/reset/Kconfig        |  4 +--
+ drivers/soc/atmel/soc.c            |  5 ++--
+ 9 files changed, 92 insertions(+), 57 deletions(-)
+ create mode 100644 arch/arm/mach-at91/sam9x60.c
 
----
-    51.63%  ex       ex                [.] crypto/sha512.blockAVX2
-            |
-            ---crypto/sha512.blockAVX2
-               |         =20
-                --51.48%--crypto/sha512.block
-                          crypto/sha512.(*digest).Write
-                          crypto/sha512.(*digest).checkSum
-                          crypto/sha512.(*digest).Sum
-                          main.burn
-                          main.main
-                          runtime.main
-                          runtime.goexit
-
-    11.55%  ex       ex                [.] runtime.mallocgc
-            |
-            ---runtime.mallocgc
-               |         =20
-               |--7.45%--runtime.newobject
-               |          |         =20
-               |           --7.45%--main.burn
-               |                     main.main
-               |                     runtime.main
-               |                     runtime.goexit
-               |         =20
-                --3.40%--runtime.growslice
-                          crypto/sha512.(*digest).Sum
-                          main.burn
-                          main.main
-                          runtime.main
-                          runtime.goexit
-
-     3.69%  ex       ex                [.] crypto/sha512.(*digest).Write
-            |
-            ---crypto/sha512.(*digest).Write
-               |         =20
-               |--2.91%--crypto/sha512.(*digest).checkSum
-               |          crypto/sha512.(*digest).Sum
-               |          main.burn
-               |          main.main
-               |          runtime.main
-               |          runtime.goexit
-               |         =20
-                --0.57%--main.burn
-                          main.main
-                          runtime.main
-                          runtime.goexit
-
-     3.44%  ex       ex                [.] runtime.memclrNoHeapPointers
-            |
-            ---runtime.memclrNoHeapPointers
-               |         =20
-                --2.92%--runtime.(*mheap).alloc
-                          runtime.(*mcentral).grow
-                          runtime.(*mcentral).cacheSpan
-                          runtime.(*mcache).refill
-                          runtime.(*mcache).nextFree
-                          runtime.mallocgc
-                          |         =20
-                          |--2.27%--runtime.newobject
-                          |          main.burn
-                          |          main.main
-                          |          runtime.main
-                          |          runtime.goexit
-                          |         =20
-                           --0.64%--runtime.growslice
-                                     crypto/sha512.(*digest).Sum
-                                     main.burn
-                                     main.main
-                                     runtime.main
-                                     runtime.goexit
-...
+-- 
+2.7.4
 
