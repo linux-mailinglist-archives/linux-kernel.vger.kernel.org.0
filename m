@@ -2,128 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9171967A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 384B7196795
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbgC1Qpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:45:50 -0400
-Received: from mx.sdf.org ([205.166.94.20]:50018 "EHLO mx.sdf.org"
+        id S1727815AbgC1QpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:45:08 -0400
+Received: from mx.sdf.org ([205.166.94.20]:49937 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbgC1Qnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:32 -0400
+        id S1727829AbgC1Qno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:44 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhJkQ015420
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhPra027632
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:19 GMT
+        Sat, 28 Mar 2020 16:43:25 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhJI8005124;
-        Sat, 28 Mar 2020 16:43:19 GMT
-Message-Id: <202003281643.02SGhJI8005124@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhPH7029961;
+        Sat, 28 Mar 2020 16:43:25 GMT
+Message-Id: <202003281643.02SGhPH7029961@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Fri, 29 Nov 2019 17:12:18 -0500
-Subject: [RFC PATCH v1 32/50] lib/test*.c: Use prandom_u32_max()
+Date:   Fri, 29 Nov 2019 17:16:39 -0500
+Subject: [RFC PATCH v1 47/50] kernel/bpf/core.c: Use get_random_max32()
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lib/reed_solomon/test_rslib.c alreasy uses prandom_u32();
-lib/test_hexdump.c and lib/test-string_helpers.c were using
-get_random_int() % range, which is needlessly expensive for
-test code.
+Smaller, faster, and a smidge more uniform than %.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Andrii Nakryiko <andriin@fb.com>
+Cc: bpf@vger.kernel.org
+Cc: netdev@vger.kernel.org
 ---
- lib/reed_solomon/test_rslib.c |  4 ++--
- lib/test-string_helpers.c     |  2 +-
- lib/test_hexdump.c            | 10 +++++-----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ kernel/bpf/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/reed_solomon/test_rslib.c b/lib/reed_solomon/test_rslib.c
-index 4eb29f365ece0..58e767c142ef8 100644
---- a/lib/reed_solomon/test_rslib.c
-+++ b/lib/reed_solomon/test_rslib.c
-@@ -183,7 +183,7 @@ static int get_rcw_we(struct rs_control *rs, struct wspace *ws,
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index af6b738cf435c..61713a7f73d85 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -874,7 +874,7 @@ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
+ 	hdr->pages = pages;
+ 	hole = min_t(unsigned int, size - (proglen + sizeof(*hdr)),
+ 		     PAGE_SIZE - sizeof(*hdr));
+-	start = (get_random_int() % hole) & ~(alignment - 1);
++	start = get_random_max32(hole) & ~(alignment - 1);
  
- 		do {
- 			/* Must not choose the same location twice */
--			errloc = prandom_u32() % len;
-+			errloc = prandom_u32_max(len);
- 		} while (errlocs[errloc] != 0);
- 
- 		errlocs[errloc] = 1;
-@@ -194,7 +194,7 @@ static int get_rcw_we(struct rs_control *rs, struct wspace *ws,
- 	for (i = 0; i < eras; i++) {
- 		do {
- 			/* Must not choose the same location twice */
--			errloc = prandom_u32() % len;
-+			errloc = prandom_u32_max(len);
- 		} while (errlocs[errloc] != 0);
- 
- 		derrlocs[i] = errloc;
-diff --git a/lib/test-string_helpers.c b/lib/test-string_helpers.c
-index 25b5cbfb7615b..3349f3ddc528c 100644
---- a/lib/test-string_helpers.c
-+++ b/lib/test-string_helpers.c
-@@ -398,7 +398,7 @@ static int __init test_string_helpers_init(void)
- 	for (i = 0; i < UNESCAPE_ANY + 1; i++)
- 		test_string_unescape("unescape", i, false);
- 	test_string_unescape("unescape inplace",
--			     get_random_int() % (UNESCAPE_ANY + 1), true);
-+			     prandom_u32_max(UNESCAPE_ANY + 1), true);
- 
- 	/* Without dictionary */
- 	for (i = 0; i < (ESCAPE_ANY_NP | ESCAPE_HEX) + 1; i++)
-diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
-index 5144899d3c6b8..54e4efb28b974 100644
---- a/lib/test_hexdump.c
-+++ b/lib/test_hexdump.c
-@@ -149,7 +149,7 @@ static void __init test_hexdump(size_t len, int rowsize, int groupsize,
- static void __init test_hexdump_set(int rowsize, bool ascii)
+ 	/* Leave a random number of instructions before BPF code. */
+ 	*image_ptr = &hdr->image[start];
+@@ -947,7 +947,7 @@ static int bpf_jit_blind_insn(const struct bpf_insn *from,
+ 			      bool emit_zext)
  {
- 	size_t d = min_t(size_t, sizeof(data_b), rowsize);
--	size_t len = get_random_int() % d + 1;
-+	size_t len = prandom_u32_max(d) + 1;
+ 	struct bpf_insn *to = to_buff;
+-	u32 imm_rnd = get_random_int();
++	u32 imm_rnd = get_random_u32();
+ 	s16 off;
  
- 	test_hexdump(len, rowsize, 4, ascii);
- 	test_hexdump(len, rowsize, 2, ascii);
-@@ -208,11 +208,11 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
- static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
- {
- 	unsigned int i = 0;
--	int rs = (get_random_int() % 2 + 1) * 16;
-+	int rs = (prandom_u32() % 2 + 1) * 16;
- 
- 	do {
- 		int gs = 1 << i;
--		size_t len = get_random_int() % rs + gs;
-+		size_t len = prandom_u32_max(rs) + gs;
- 
- 		test_hexdump_overflow(buflen, rounddown(len, gs), rs, gs, ascii);
- 	} while (i++ < 3);
-@@ -223,11 +223,11 @@ static int __init test_hexdump_init(void)
- 	unsigned int i;
- 	int rowsize;
- 
--	rowsize = (get_random_int() % 2 + 1) * 16;
-+	rowsize = (prandom_u32() % 2 + 1) * 16;
- 	for (i = 0; i < 16; i++)
- 		test_hexdump_set(rowsize, false);
- 
--	rowsize = (get_random_int() % 2 + 1) * 16;
-+	rowsize = (prandom_u32() % 2 + 1) * 16;
- 	for (i = 0; i < 16; i++)
- 		test_hexdump_set(rowsize, true);
- 
+ 	BUILD_BUG_ON(BPF_REG_AX  + 1 != MAX_BPF_JIT_REG);
 -- 
 2.26.0
 
