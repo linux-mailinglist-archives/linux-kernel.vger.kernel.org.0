@@ -2,156 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD81610D6EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 15:22:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5129210D6EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 15:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfK2OWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 09:22:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbfK2OWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 09:22:15 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D4E621736;
-        Fri, 29 Nov 2019 14:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575037334;
-        bh=L4aT/ZaY0JmSR279+1eodoce9+qGFKKJ/R7APk7tZdU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dZENaUpz1Y+16ppaBK7AIpH/BkEow9xgNp1m/F7Z7jeEonKXwqxGzBGpUAiLoLieo
-         MX4gfs6LUTQCuj5mfY1lPXEhCsdLyCFH5fZCBy3fB7bsOvS7oHgsPG7EVeR3sqDf5V
-         ZX1Bjlmn3xbHgJNvYrbM5rPtjhiQwtTiNPoWJQmg=
-Date:   Fri, 29 Nov 2019 15:22:12 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH next 3/3] debugfs: introduce debugfs_create_seq[,_data]
-Message-ID: <20191129142212.GB3708031@kroah.com>
-References: <20191129092752.169902-1-wangkefeng.wang@huawei.com>
- <20191129092752.169902-4-wangkefeng.wang@huawei.com>
+        id S1727171AbfK2OXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 09:23:44 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:28701 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726808AbfK2OXn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 09:23:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575037421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BjGu5Y9IqwjrSunQ/XOztUtwME2j3+eRCCCFohsV410=;
+        b=fKV95w7/7UPka8z3Z94AqsEcG2ErfThraHRzE+fgV0UdmpCmziFME2bqPkHSrDEhrooHFC
+        A8QgzzVLufu/frib6Q0NjAttlssFU78kpsE4vCS6NjbwVxvIb9vm8CjphUNHqQzhdiNlPI
+        cfIq7lGu5vSBiRDwKvQoI+PJwfxgBwE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-85-WGPFx22UOli37gEh2klPbw-1; Fri, 29 Nov 2019 09:23:40 -0500
+Received: by mail-wr1-f69.google.com with SMTP id b2so14297827wrj.9
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 06:23:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=kaxeE+6S8sCxKLrCWJSud3mrPDlPxV80NahWl909qwo=;
+        b=uVy+K5Kw+xqO6rZKAckL39a6abXt4nONOdmRiSWL8lJpK8ZNLN4oU7nS7x7YSywznr
+         zwgMJYAXTGCFblJsF2HIuWB3iowsQE82EZPH4hET8x9/R7jROnFe5gbWEEVcUVgOPnqf
+         4gyCRi6o4DjjX00ZOcB9xw4nq660OS+byLIm7b1DOrvDkzt7qKLv0c+Sfywi3tp/Q3RA
+         isqhqs5HQjyw+fKKWln1xp7CEvmZA4upY2Yu45/FxR6qZjtoWE7k+W624jpFhz92QXc4
+         7zNO6ZaLpy73nbemFqL/GQnEgcP85QW0XMLIlWzMpnSUzSIyitmnmD982B/OJqNqci3b
+         BB3A==
+X-Gm-Message-State: APjAAAVMhj4/s8rZP0H1Bh5BHDPxrbptclYMDUUCalEfsSD0mJgS+ViE
+        acg0dQBZ7IgNTxfPm9EljyiHhAmEiWv4j9B0pjpg3xH1K5jI2pTyl77FdCtwB32YBQEhxlC472A
+        bugKZ4fecAlE+SZpERY90al5W
+X-Received: by 2002:adf:f5c2:: with SMTP id k2mr54051079wrp.118.1575037418920;
+        Fri, 29 Nov 2019 06:23:38 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyVv1y+4A+y/39GNkVZoElT6z5O0Pek/hv4gLlJdL8U5Xgc64spiRBOkAodEg1rJHQ8THPcgg==
+X-Received: by 2002:adf:f5c2:: with SMTP id k2mr54051050wrp.118.1575037418670;
+        Fri, 29 Nov 2019 06:23:38 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id b17sm3023411wrx.15.2019.11.29.06.23.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2019 06:23:37 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>
+Subject: Re: [PATCH] KVM: X86: Use APIC_DEST_* macros properly
+In-Reply-To: <20191128193211.32684-1-peterx@redhat.com>
+References: <20191128193211.32684-1-peterx@redhat.com>
+Date:   Fri, 29 Nov 2019 15:23:36 +0100
+Message-ID: <87sgm6damv.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191129092752.169902-4-wangkefeng.wang@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MC-Unique: WGPFx22UOli37gEh2klPbw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 05:27:52PM +0800, Kefeng Wang wrote:
-> Like proc_create_seq[,_data] in procfs, introduce a similar
-> debugfs_create_seq[,_data] function, which could drastically
-> reduces the boilerplate code.
-> 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Peter Xu <peterx@redhat.com> writes:
+
+> Previously we were using either APIC_DEST_PHYSICAL|APIC_DEST_LOGICAL
+> or 0|1 to fill in kvm_lapic_irq.dest_mode, and it's done in an adhoc
+> way.  It's fine imho only because in most cases when we check against
+> dest_mode it's against APIC_DEST_PHYSICAL (which equals to 0).
+> However, that's not consistent, majorly because APIC_DEST_LOGICAL does
+> not equals to 1, so if one day we check irq.dest_mode against
+> APIC_DEST_LOGICAL we'll probably always get a false returned.
+>
+> This patch replaces the 0/1 settings of irq.dest_mode with the macros
+> to make them consistent.
+>
+> CC: Paolo Bonzini <pbonzini@redhat.com>
+> CC: Sean Christopherson <sean.j.christopherson@intel.com>
+> CC: Vitaly Kuznetsov <vkuznets@redhat.com>
+> CC: Nitesh Narayan Lal <nitesh@redhat.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 > ---
->  fs/debugfs/file.c       | 62 ++++++++++++++++++++++++++++++++++++++++-
->  include/linux/debugfs.h | 16 +++++++++++
->  2 files changed, 77 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-> index 68f0c4b19bef..77522717c9fb 100644
-> --- a/fs/debugfs/file.c
-> +++ b/fs/debugfs/file.c
-> @@ -1107,7 +1107,10 @@ EXPORT_SYMBOL_GPL(debugfs_create_regset32);
->  #endif /* CONFIG_HAS_IOMEM */
->  
->  struct debugfs_entry {
-> -	int (*read)(struct seq_file *seq, void *data);
-> +	union {
-> +		const struct seq_operations *seq_ops;
-> +		int (*read)(struct seq_file *seq, void *data);
-> +	};
->  	void *data;
->  };
->  
-> @@ -1196,3 +1199,60 @@ struct dentry *debugfs_create_single_data(const char *name, umode_t mode,
->  				   &debugfs_entry_ops);
->  }
->  EXPORT_SYMBOL_GPL(debugfs_create_single_data);
-> +
-> +static int debugfs_entry_seq_open(struct inode *inode, struct file *file)
-> +{
-> +	struct debugfs_entry *entry = inode->i_private;
-> +	int ret;
-> +
-> +	entry = debugfs_clear_lowest_bit(entry);
-> +
-> +	ret = seq_open(file, entry->seq_ops);
-> +	if (!ret && entry->data) {
-> +		struct seq_file *seq = file->private_data;
-> +		seq->private = entry->data;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct file_operations debugfs_seq_fops = {
-> +	.open		= debugfs_entry_seq_open,
-> +	.read		= seq_read,
-> +	.llseek		= seq_lseek,
-> +	.release	= seq_release,
-> +};
-> +
-> +/**
-> + * debugfs_create_seq_data - create a file in the debugfs filesystem
-> + * @name: a pointer to a string containing the name of the file to create.
-> + * @mode: the permission that the file should have.
-> + * @parent: a pointer to the parent dentry for this file.  This should be a
-> + *          directory dentry if set.  If this parameter is NULL, then the
-> + *          file will be created in the root of the debugfs filesystem.
-> + * @data: a pointer to something that the caller will want to get to later
-> + *        on.  The inode.i_private pointer will point to this value on
-> + *        the open() call.
-> + * @seq_ops: seq_operations pointer of the seqfile.
-> + *
-> + * This function creates a file in debugfs with the extra data and a seq_ops.
-> + */
-> +struct dentry *debugfs_create_seq_data(const char *name, umode_t mode,
-> +				       struct dentry *parent, void *data,
-> +				       const struct seq_operations *seq_ops)
-> +{
-> +	struct debugfs_entry *entry;
-> +
-> +	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +	if (!entry)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	entry->seq_ops = seq_ops;
-> +	entry->data = data;
-> +
-> +	entry = debugfs_set_lowest_bit(entry);
-> +
-> +	return debugfs_create_file(name, mode, parent, entry,
-> +				   &debugfs_seq_fops);
-> +}
-> +EXPORT_SYMBOL_GPL(debugfs_create_seq_data);
-> diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-> index 82171f183e93..d32d49983547 100644
-> --- a/include/linux/debugfs.h
-> +++ b/include/linux/debugfs.h
-> @@ -147,6 +147,10 @@ struct dentry *debugfs_create_single_data(const char *name, umode_t mode,
->  					  int (*read_fn)(struct seq_file *s,
->  							 void *data));
->  
-> +struct dentry *debugfs_create_seq_data(const char *name, umode_t mode,
-> +				       struct dentry *parent, void *data,
-> +				       const struct seq_operations *seq_ops);
-> +
->  bool debugfs_initialized(void);
->  
->  ssize_t debugfs_read_file_bool(struct file *file, char __user *user_buf,
+>  arch/x86/kvm/ioapic.c   | 9 ++++++---
+>  arch/x86/kvm/irq_comm.c | 7 ++++---
+>  arch/x86/kvm/x86.c      | 2 +-
+>  3 files changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+> index 9fd2dd89a1c5..1e091637d5d5 100644
+> --- a/arch/x86/kvm/ioapic.c
+> +++ b/arch/x86/kvm/ioapic.c
+> @@ -331,7 +331,8 @@ static void ioapic_write_indirect(struct kvm_ioapic *=
+ioapic, u32 val)
+>  =09=09=09irq.vector =3D e->fields.vector;
+>  =09=09=09irq.delivery_mode =3D e->fields.delivery_mode << 8;
+>  =09=09=09irq.dest_id =3D e->fields.dest_id;
+> -=09=09=09irq.dest_mode =3D e->fields.dest_mode;
+> +=09=09=09irq.dest_mode =3D e->fields.dest_mode ?
+> +=09=09=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
+>  =09=09=09bitmap_zero(&vcpu_bitmap, 16);
+>  =09=09=09kvm_bitmap_or_dest_vcpus(ioapic->kvm, &irq,
+>  =09=09=09=09=09=09 &vcpu_bitmap);
+> @@ -343,7 +344,8 @@ static void ioapic_write_indirect(struct kvm_ioapic *=
+ioapic, u32 val)
+>  =09=09=09=09 * keep ioapic_handled_vectors synchronized.
+>  =09=09=09=09 */
+>  =09=09=09=09irq.dest_id =3D old_dest_id;
+> -=09=09=09=09irq.dest_mode =3D old_dest_mode;
+> +=09=09=09=09irq.dest_mode =3D old_dest_mode ?
+> +=09=09=09=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
+>  =09=09=09=09kvm_bitmap_or_dest_vcpus(ioapic->kvm, &irq,
+>  =09=09=09=09=09=09=09 &vcpu_bitmap);
+>  =09=09=09}
+> @@ -369,7 +371,8 @@ static int ioapic_service(struct kvm_ioapic *ioapic, =
+int irq, bool line_status)
+> =20
+>  =09irqe.dest_id =3D entry->fields.dest_id;
+>  =09irqe.vector =3D entry->fields.vector;
+> -=09irqe.dest_mode =3D entry->fields.dest_mode;
+> +=09irqe.dest_mode =3D entry->fields.dest_mode ?
+> +=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
+>  =09irqe.trig_mode =3D entry->fields.trig_mode;
+>  =09irqe.delivery_mode =3D entry->fields.delivery_mode << 8;
+>  =09irqe.level =3D 1;
+> diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+> index 8ecd48d31800..673b6afd6dbf 100644
+> --- a/arch/x86/kvm/irq_comm.c
+> +++ b/arch/x86/kvm/irq_comm.c
+> @@ -52,8 +52,8 @@ int kvm_irq_delivery_to_apic(struct kvm *kvm, struct kv=
+m_lapic *src,
+>  =09unsigned long dest_vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)];
+>  =09unsigned int dest_vcpus =3D 0;
+> =20
+> -=09if (irq->dest_mode =3D=3D 0 && irq->dest_id =3D=3D 0xff &&
+> -=09=09=09kvm_lowest_prio_delivery(irq)) {
+> +=09if (irq->dest_mode =3D=3D APIC_DEST_PHYSICAL &&
+> +=09    irq->dest_id =3D=3D 0xff && kvm_lowest_prio_delivery(irq)) {
+>  =09=09printk(KERN_INFO "kvm: apic: phys broadcast and lowest prio\n");
+>  =09=09irq->delivery_mode =3D APIC_DM_FIXED;
+>  =09}
+> @@ -114,7 +114,8 @@ void kvm_set_msi_irq(struct kvm *kvm, struct kvm_kern=
+el_irq_routing_entry *e,
+>  =09=09irq->dest_id |=3D MSI_ADDR_EXT_DEST_ID(e->msi.address_hi);
+>  =09irq->vector =3D (e->msi.data &
+>  =09=09=09MSI_DATA_VECTOR_MASK) >> MSI_DATA_VECTOR_SHIFT;
+> -=09irq->dest_mode =3D (1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.address_l=
+o;
+> +=09irq->dest_mode =3D (1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.address_l=
+o ?
+> +=09    APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
+>  =09irq->trig_mode =3D (1 << MSI_DATA_TRIGGER_SHIFT) & e->msi.data;
+>  =09irq->delivery_mode =3D e->msi.data & 0x700;
+>  =09irq->msi_redir_hint =3D ((e->msi.address_lo
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 3ed167e039e5..3b00d662dc14 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7356,7 +7356,7 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, uns=
+igned long flags, int apicid)
+>  =09struct kvm_lapic_irq lapic_irq;
+> =20
+>  =09lapic_irq.shorthand =3D 0;
+> -=09lapic_irq.dest_mode =3D 0;
+> +=09lapic_irq.dest_mode =3D APIC_DEST_PHYSICAL;
+>  =09lapic_irq.level =3D 0;
+>  =09lapic_irq.dest_id =3D apicid;
+>  =09lapic_irq.msi_redir_hint =3D false;
 
-If you notice, I have been removing the return value of the
-debugfs_create_* functions over the past few kernel versions (look at
-5.5-rc1 for a lot more).  Please don't add any new functions that also
-return a dentry that I then need to go and remove.
+dest_mode is being passed to kvm_apic_match_dest() where we do:
 
-Just have these be void functions, no need to return anything.
+=09case APIC_DEST_NOSHORT:
+=09=09if (dest_mode =3D=3D APIC_DEST_PHYSICAL)
+=09=09=09return kvm_apic_match_physical_addr(target, mda);
+=09=09else
+=09=09=09return kvm_apic_match_logical_addr(target, mda);
 
-thanks,
+I'd suggest we fix this too then (and BUG() in case it's neither).
 
-greg k-h
+--=20
+Vitaly
+
