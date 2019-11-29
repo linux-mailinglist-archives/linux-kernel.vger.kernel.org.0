@@ -2,157 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6067610D89F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 17:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD1410D870
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 17:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfK2QqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 11:46:21 -0500
-Received: from www.linux-watchdog.org ([185.87.125.42]:45454 "EHLO
-        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfK2QqV (ORCPT
+        id S1727059AbfK2Qck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 11:32:40 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:30235 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726934AbfK2Qcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 11:46:21 -0500
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id D55BD40982; Fri, 29 Nov 2019 17:00:45 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org D55BD40982
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1575043245;
-        bh=UUAnjyGizUx/JWccsMa20s8W2efB6yHvwHkFZXoG49Q=;
-        h=Date:From:To:Cc:Subject:From;
-        b=T3nzqIBxiGeuvNMCtOAx3DR4Q7m3DtAbCTwA841PjaLPXzlkHT86rDBFOmiv6EySS
-         TW2X2WRNudkmV7mbDa76eG3DEc4iablTr5eFKcwo4sTJTU95+x7pJ0AvdR+66QdA3E
-         PhVFJrpiBYPVVhM8QKkhcdhTZyibCm07JooPo2XQ=
-Date:   Fri, 29 Nov 2019 17:00:45 +0100
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Borislav Petkov <bp@suse.de>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joel Stanley <joel@jms.id.au>, Julia Cartwright <julia@ni.com>,
-        Kevin Hao <haokexin@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Shuiqing Li <shuiqing.li@unisoc.com>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>
-Subject: [GIT PULL REQUEST] watchdog - v5.5 Merge window
-Message-ID: <20191129160045.GA1996@www.linux-watchdog.org>
+        Fri, 29 Nov 2019 11:32:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575045158;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9V/qFvH8waqtXVKvhRpmWCEM/9qP0sAeZeU83cy8EOE=;
+        b=S3zxl2u7OacaWD/m2W8RQhJXmuV7EEVAXmBkH1S0n6gH8kJ9uvTgHmcndmLjMmW3JyauZd
+        1TBa23TcFcqyVJG7mC9fSjtzrf+2Db/rcALIvQLjsPL0jPYLel7+BgF6m2iJcqVXta1DID
+        c3GMlboYEGwjR9W9Zk/tGeyVeGbP2/Y=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-413-H30r759ON5yFFUksOxzvpg-1; Fri, 29 Nov 2019 11:32:37 -0500
+Received: by mail-qv1-f70.google.com with SMTP id w5so19222067qvp.13
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 08:32:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5iCofYmIjfyUSG8vHZf7wpoJnDoheL6AALy8kyz1tx8=;
+        b=ZCAky/WJnCYVy+psjKXeohcuJ7iN/BwHAU2MvtStTE38CuVxiNtGGpYnxnq3AtCyTV
+         gLd2v/ZDpkpR4hlCl66bSgl6P+WlCjXq3ska9jGbNFovYEfyKNjGI0R6rpiUz8HhC/tq
+         gvwR3RmcdvtoM32dDL+B/aaBVpiwx5FR797uVFSaYTG0QZ4cK0xHIBRt5QJhPVIvsHrU
+         h7eltGKYSWMLNY/r8B3sJinUupE0nRD/dHrOZSHg2WbtOZLSbVrRIYJDmUX85CXUw/eh
+         mUltFI8kltIAMV2k16tlClHrbuMTYhVcV7JLPTqM270S1pOacihd+p+U/YCMRwJ4b7WH
+         AEiQ==
+X-Gm-Message-State: APjAAAUAkjWJ6QAYai7Ud+xKWnvk5uA6s6T9eyF16sScDHf+T6H7Nvat
+        cOtqeAcUKFmAkdsv7pttJVekisF60TLFG9pus/k65oZTLfbOU86m0JPPvyr3vQUsVv0ggZ+k0Vs
+        OwV4DdU4y5+/DVWL2NlpHWB3V
+X-Received: by 2002:a05:620a:2f1:: with SMTP id a17mr9045637qko.252.1575045156580;
+        Fri, 29 Nov 2019 08:32:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwt6klFGFPdiFCxtdNXCaWr4i8+5EKri2pR8sDM3UzAXUglAuAkDeGNQx+NxQAmWUnSI1w0ew==
+X-Received: by 2002:a05:620a:2f1:: with SMTP id a17mr9045611qko.252.1575045156321;
+        Fri, 29 Nov 2019 08:32:36 -0800 (PST)
+Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
+        by smtp.gmail.com with ESMTPSA id d9sm4568329qtj.52.2019.11.29.08.32.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2019 08:32:35 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH v2 0/3] KVM: X86: Cleanups on dest_mode and headers
+Date:   Fri, 29 Nov 2019 11:32:31 -0500
+Message-Id: <20191129163234.18902-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+X-MC-Unique: H30r759ON5yFFUksOxzvpg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Each patch explains itself.
 
-Please pull the watchdog changes for the v5.5 release cycle.
+Please have a look, thanks.
 
-This series contains:
-* Support for NCT6116D
-* Several small fixes and improvements
+Peter Xu (3):
+  KVM: X86: Some cleanups in ioapic.h/lapic.h
+  KVM: X86: Use APIC_DEST_* macros properly
+  KVM: X86: Fixup kvm_apic_match_dest() dest_mode parameter
 
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit 31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c:
+ arch/x86/kvm/ioapic.c   | 9 ++++++---
+ arch/x86/kvm/ioapic.h   | 6 ------
+ arch/x86/kvm/irq_comm.c | 7 ++++---
+ arch/x86/kvm/lapic.c    | 5 +++--
+ arch/x86/kvm/lapic.h    | 7 +++++--
+ arch/x86/kvm/x86.c      | 2 +-
+ 6 files changed, 19 insertions(+), 17 deletions(-)
 
-  Linux 5.4-rc7 (2019-11-10 16:17:15 -0800)
-
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.5-rc1
-
-for you to fetch changes up to 33c26ab4d6beec44bd5f525ffba1c23bf962d4a7:
-
-  watchdog: jz4740: Drop dependency on MACH_JZ47xx (2019-11-18 20:14:47 +0100)
-
-----------------------------------------------------------------
-linux-watchdog 5.5-rc1 tag
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      watchdog: intel-mid_wdt: Add WATCHDOG_NOWAYOUT support
-
-Anson Huang (3):
-      watchdog: imx2_wdt: Remove unnecessary blank line
-      watchdog: imx2_wdt: Use __maybe_unused instead of #if CONFIG_PM_SLEEP
-      watchdog: imx2_wdt: Use 'dev' instead of dereferencing it repeatedly
-
-Borislav Petkov (1):
-      watchdog: sbc7240_wdt: Fix yet another -Wimplicit-fallthrough warning
-
-Eugen Hristev (2):
-      watchdog: sama5d4_wdt: cleanup the bit definitions
-      dt-bindings: watchdog: sama5d4_wdt: add microchip,sam9x60-wdt compatible
-
-Fabio Estevam (5):
-      watchdog: imx7ulp: Pass the wdog instance inimx7ulp_wdt_enable()
-      watchdog: imx7ulp: Remove unused structure member
-      watchdog: imx7ulp: Remove inline annotations
-      watchdog: imx7ulp: Use definitions instead of magic values
-      watchdog: imx7ulp: Fix reboot hang
-
-Geert Uytterhoeven (1):
-      watchdog: wdat_wdt: Spelling s/configrable/configurable/
-
-Joel Stanley (1):
-      watchdog: aspeed: Fix clock behaviour for ast2600
-
-Julia Cartwright (1):
-      watchdog: prevent deferral of watchdogd wakeup on RT
-
-Kevin Hao (1):
-      watchdog: Fix the race between the release of watchdog_core_data and cdev
-
-Matti Vaittinen (1):
-      watchdog: bd70528: Trivial function documentation fix
-
-Michal Simek (1):
-      watchdog: cadence: Do not show error in case of deferred probe
-
-Paul Cercueil (3):
-      watchdog: jz4740: Use WDT clock provided by TCU driver
-      watchdog: jz4740: Use regmap provided by TCU driver
-      watchdog: jz4740: Drop dependency on MACH_JZ47xx
-
-Rasmus Villemoes (1):
-      watchdog: make nowayout sysfs file writable
-
-Shuiqing Li (1):
-      watchdog: sprd: Fix the incorrect pointer getting from driver data
-
-Srikanth Krishnakar (1):
-      watchdog: w83627hf_wdt: Support NCT6116D
-
- Documentation/ABI/testing/sysfs-class-watchdog     |   9 +-
- .../bindings/watchdog/atmel-sama5d4-wdt.txt        |   2 +-
- drivers/watchdog/Kconfig                           |   5 +-
- drivers/watchdog/aspeed_wdt.c                      |  16 +--
- drivers/watchdog/at91sam9_wdt.h                    |  34 ++++---
- drivers/watchdog/bd70528_wdt.c                     |   4 +-
- drivers/watchdog/cadence_wdt.c                     |   6 +-
- drivers/watchdog/imx2_wdt.c                        |  30 +++---
- drivers/watchdog/imx7ulp_wdt.c                     |  45 ++++++---
- drivers/watchdog/intel-mid_wdt.c                   |   1 +
- drivers/watchdog/jz4740_wdt.c                      | 108 ++++++++++-----------
- drivers/watchdog/sbc7240_wdt.c                     |   3 +-
- drivers/watchdog/sprd_wdt.c                        |   6 +-
- drivers/watchdog/w83627hf_wdt.c                    |  11 ++-
- drivers/watchdog/watchdog_dev.c                    | 101 +++++++++++--------
- drivers/watchdog/wdat_wdt.c                        |   2 +-
- 16 files changed, 214 insertions(+), 169 deletions(-)
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
+--=20
+2.21.0
 
