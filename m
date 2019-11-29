@@ -2,78 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EE3910D32A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:23:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE6F210D339
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:25:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfK2JWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 04:22:54 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:55230 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfK2JWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 04:22:52 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A5DE1A03FE;
-        Fri, 29 Nov 2019 10:22:51 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B2981A0D2B;
-        Fri, 29 Nov 2019 10:22:47 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 675A0402DE;
-        Fri, 29 Nov 2019 17:22:42 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: [v6,3/3] arm64: dts: fsl-ls208xa-rdb: fix an errata E-00013
-Date:   Fri, 29 Nov 2019 17:22:22 +0800
-Message-Id: <20191129092222.2706-3-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191129092222.2706-1-biwen.li@nxp.com>
-References: <20191129092222.2706-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726811AbfK2JZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 04:25:13 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45697 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfK2JZM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 04:25:12 -0500
+Received: by mail-lj1-f193.google.com with SMTP id d20so1423760ljc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 01:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mg1s2q4SGEIjUen50+yfiIskGrnLGRT7vDezP+iB3ek=;
+        b=ktkDtU+MQ2A0ntvCYC85sCMclaO55zFflKLdsI6avwawIIlmHsDcE4mn8nJ3AztMEv
+         /Cby7GoxYXup1ExYM3BQmgQXwwmBRJn6aVro0IWVoTMqa0JghFRIhtQsJ/lqSJ5qA3zr
+         MehV1JylaHRE3qimaRKxr9uZSvY7MsCMlu/rzHFHBqy5wxIpyLk0W/JtJwv5UNsLEhqI
+         Dxw3WCwOkkXy8sbssqn2378Js68tUCcht+TUwnuLI8DQO1mDdhR/OHeESiGR+5Za+VlW
+         WTUCQFExToy0WVEcC2iYO6SGwBoaXe6KQGnXu/YWd18dToXPpJUkn+mjZ46/ACfLFkxV
+         A/tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mg1s2q4SGEIjUen50+yfiIskGrnLGRT7vDezP+iB3ek=;
+        b=TyXHXbeAR/cc6B4paAF+3etPBqkzhL5hB2MAdev183ab9MT+lqLPqOshZDl/3v8FGr
+         p6VB7wdLF62u6HxGXfnHoZ9PNDr6f1k5VHYqQQ5Y0a2Hxv9FPDrYjvUK4alE8tDeocTG
+         7/cOD3yo2TQQJ5ilF8W53OstpOdO17bLi/cGXCYzO4CoRmLw8dJSfBZT0uBqbZ0tO2ER
+         IYpKJsGMYcu0wi8KLyVmmAFVi6CiTyPvez06XVXzLQhvwYRdveM+7CXZEcalUJMwxVr7
+         atjZ7cwEKDDuAkrQQ9DsFnLKMuL4PcldE1I2hJ8wR3widAF3BsAeNSJCCd+oBojr00Se
+         7pYQ==
+X-Gm-Message-State: APjAAAVUBrDAySl1gVv4bSNaK35l2F3QHzqJmsIS2CYdBm30PEvbDSUC
+        BFxAo/wHZWz9QPOoMnivNzbxWagIgNtiHUN1VMIYyw==
+X-Google-Smtp-Source: APXvYqzTv0ijDNJAizgamXHOcidWYTyrultraC4Zuh5XFuR7VO2T4//KTaO/9/IsP5Sukin50F6jt4XGVFDVmELqfPI=
+X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr16086638ljm.233.1575019510217;
+ Fri, 29 Nov 2019 01:25:10 -0800 (PST)
+MIME-Version: 1.0
+References: <20191128155438.325738-1-paul.kocialkowski@bootlin.com> <20191128155438.325738-6-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20191128155438.325738-6-paul.kocialkowski@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 29 Nov 2019 10:24:58 +0100
+Message-ID: <CACRpkdaSLsq-oA7t8OL6_6L+ivZE+a83M4JbTZ2HW5E1E7c6yw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] gpio: syscon: Add support for the Xylon LogiCVC GPIOs
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify a channel zero in idle state to
-avoid enterring tri-stated state for PCA9547.
-About E-00013:
-	- Description: I2C1 and I2C3 buses
-	  are missing pull-up.
-	- Impact: When the PCA954x device is tri-stated, the I2C bus
-	  will float. This makes the I2C bus and its associated
-	  downstream devices inaccessible.
-	- Hardware fix: Populate resistors R189 and R190 for I2C1
-	  and resistors R228 and R229 for I2C3.
-	- Software fix: Remove the tri-state option from the PCA954x
-	  driver(PCA954x always on enable status, specify a
-	  channel zero in dts to fix the errata E-00013).
+Hi Paul,
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
-Change in v6:
-	- none
+thanks for your patch!
 
-Change in v5:
-	- specify a channel zero when pca9547 in idle state.
+On Thu, Nov 28, 2019 at 4:54 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
 
- arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> The LogiCVC display hardware block comes with GPIO capabilities
+> that must be exposed separately from the main driver (as GPIOs) for
+> use with regulators and panels. A syscon is used to share the same
+> regmap across the two drivers.
+>
+> Since the GPIO capabilities are pretty simple, add them to the syscon
+> GPIO driver.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+(...)
+> +#define LOGICVC_CTRL_REG               0x40
+> +#define LOGICVC_CTRL_GPIO_SHIFT                11
+> +#define LOGICVC_CTRL_GPIO_BITS         5
+> +
+> +#define LOGICVC_POWER_CTRL_REG         0x78
+> +#define LOGICVC_POWER_CTRL_GPIO_SHIFT  0
+> +#define LOGICVC_POWER_CTRL_GPIO_BITS   4
+> +
+> +static void logicvc_gpio_offset(struct syscon_gpio_priv *priv,
+> +                               unsigned offset, unsigned int *reg,
+> +                               unsigned int *bit)
+> +{
+> +       if (offset >= LOGICVC_CTRL_GPIO_BITS) {
+> +               *reg = LOGICVC_POWER_CTRL_REG;
+> +
+> +               /* To the (virtual) power ctrl offset. */
+> +               offset -= LOGICVC_CTRL_GPIO_BITS;
+> +               /* To the actual bit offset in reg. */
+> +               offset += LOGICVC_POWER_CTRL_GPIO_SHIFT;
+> +       } else {
+> +               *reg = LOGICVC_CTRL_REG;
+> +
+> +               /* To the actual bit offset in reg. */
+> +               offset += LOGICVC_CTRL_GPIO_SHIFT;
+> +       }
+> +
+> +       *bit = BIT(offset);
+> +}
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-index 6fd7f63085c9..412f1bc0db5f 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-@@ -49,6 +49,7 @@
- 		reg = <0x75>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		idle-state = <0>;
- 		i2c@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.17.1
+The gpio-syscon.c is for simple syscons where the lines
+you want to affect are nicely ordered in the registers.
+It is intended to be generic.
 
+This is kind of shoehorning a special case into the generic
+code.
+
+Isn't it more appropriate to create a specific driver for this
+hardware?
+
+Special get/set quirks for any possible quirky offset is
+certainly not the way to go, if this should be supported
+we need generic properties in struct syscon_gpio_data
+to indicate the valid bits and offsets.
+
+Yours,
+Linus Walleij
