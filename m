@@ -2,62 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA3BA10D622
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 14:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B83C910D626
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 14:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfK2Nco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 08:32:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726763AbfK2Nco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 08:32:44 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E7E120869;
-        Fri, 29 Nov 2019 13:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575034362;
-        bh=Cfq5ZK607ycaOvEhaKgpcopj1W/rScjfdVMbA32VOQE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qxbH69XdPxZ6BmRWFheMW6GbMmQrJuQVVyBywQW6+vy9oPSY56QlEkRbjXj7Pl7sL
-         fcjRYOQtfFNNJrx1WXcnwDPbbwATOJm6cWrNpFFCZ39I2FuC4jIGocdJkeyUcLdlx/
-         m5LlegVXCkmbuJEgkd/EMRltQFjv9KkOo3gjvg48=
-Date:   Fri, 29 Nov 2019 14:32:39 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/4] staging: gigaset: fix crashes on probe
-Message-ID: <20191129133239.GA3703941@kroah.com>
-References: <20191129101753.9721-1-johan@kernel.org>
+        id S1726893AbfK2NeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 08:34:05 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2141 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726785AbfK2NeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 08:34:05 -0500
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id AF5A731C83F1C5CE58D3;
+        Fri, 29 Nov 2019 13:34:04 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML714-CAH.china.huawei.com (10.201.108.37) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 29 Nov 2019 13:34:04 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 29 Nov
+ 2019 13:34:04 +0000
+Subject: Re: [Patch v2 3/3] iommu: avoid taking iova_rbtree_lock twice
+To:     Cong Wang <xiyou.wangcong@gmail.com>,
+        <iommu@lists.linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20191129004855.18506-1-xiyou.wangcong@gmail.com>
+ <20191129004855.18506-4-xiyou.wangcong@gmail.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <dea0de02-cedc-7817-5b04-3888e0e86812@huawei.com>
+Date:   Fri, 29 Nov 2019 13:34:03 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191129101753.9721-1-johan@kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191129004855.18506-4-xiyou.wangcong@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml720-chm.china.huawei.com (10.201.108.71) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 11:17:49AM +0100, Johan Hovold wrote:
-> Syzbot has been reporting a GPF on probe in the gigaset ISDN driver,
-> which have since been moved to staging.
+On 29/11/2019 00:48, Cong Wang wrote:
+> Both find_iova() and __free_iova() take iova_rbtree_lock,
+> there is no reason to take and release it twice inside
+> free_iova().
 > 
-> The first patch fixes that issue, and the next one fixes a second crash
-> found during testing.
+> Fold them into the critical section by calling the unlock
+> versions instead.
+
+Since generally the iova would be non-NULL, this seems a reasonable 
+change (which could be mentioned in the commit log)
+
+John
+
 > 
-> The third patch addresses a benign warning in USB core which syzbot is
-> bound to report once the crashes have been fixed.
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+> ---
+>   drivers/iommu/iova.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> And while I hate playing checkpatch games, the final patch addresses a
-> checkpatch warning introduced on purpose by the third patch.
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index 184d4c0e20b5..f46f8f794678 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -390,10 +390,14 @@ EXPORT_SYMBOL_GPL(__free_iova);
+>   void
+>   free_iova(struct iova_domain *iovad, unsigned long pfn)
+>   {
+> -	struct iova *iova = find_iova(iovad, pfn);
+> +	unsigned long flags;
+> +	struct iova *iova;
+>   
+> +	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+> +	iova = private_find_iova(iovad, pfn);
+>   	if (iova)
+> -		__free_iova(iovad, iova);
+> +		private_free_iova(iovad, iova);
+> +	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+>   
+>   }
+>   EXPORT_SYMBOL_GPL(free_iova);
+> 
 
-I'll take these after 5.5-rc1, but then it is time to just delete all of
-drivers/staging/isdn/ from my tree, so don't worry about them after that
-:)
-
-thanks,
-
-greg k-h
