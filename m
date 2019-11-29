@@ -2,122 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 090C410D9D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 19:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0C410DA05
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 20:10:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfK2S7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 13:59:20 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34679 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbfK2S7U (ORCPT
+        id S1727184AbfK2TKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 14:10:53 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40724 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbfK2TKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 13:59:20 -0500
-Received: by mail-qt1-f195.google.com with SMTP id i17so33415578qtq.1;
-        Fri, 29 Nov 2019 10:59:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SIfzHeBggeKvyRBg8l0Zl5fuaymT1ijt6/Qzfa/epTE=;
-        b=W7Rhnu3mrLLQvFsGTyFM9qV6uhEG4ZyZSFoFOo87LQzuPxSBz13zGPGdK2D+T3E997
-         BtcRbVXF5IrPgIaeP6edXnjmPWrK9pBK3ZvfId4jnW6YycDZnJjWkL9bjsIh980ipEBu
-         g8RKZ0iZEJQDS8iY0L/lVadOXsC6zKowkSdYx67fb4sT7ozxLP2Jkyd8pGTrGN88Ti0R
-         RCq5hZ46YowQJHKQrebaXk+CYYpXI0JMk/dC1HrQNtu7ANY4gh4N2L97kptQzLa70p4M
-         Vky7OG9iSd1qQLxUirQcp3ZZQNI0XJPkWyq6XVKgqkWta3F8TAzQp5BPZtqRoJ2uvvaQ
-         NfDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SIfzHeBggeKvyRBg8l0Zl5fuaymT1ijt6/Qzfa/epTE=;
-        b=RePb4ONmm27fw0loUzyn6sBn9Kuu+aDfh7x82jJC899uXtqI9+j/DpK4NfIh4RbY2/
-         QDaUjgmgUs0QOx1Nn/Uw+wN5dPEyL7quF/aHz7QPpPEt4M4sTO19Q32/hk6ys17Ky5z7
-         OU08zJrLrIU+OOv3CmcTOjiw1LSqoUeIBQ7Jf/6yI6FO6yGnrduQeBLsHA0TB2eneqxX
-         3d7DzzDJH9dThdL+Ux1BzqSPYt5QqVsmPcLLV5MzANu8knNOnK7MVh4LR78/55LTlxPf
-         5ZtSGO6vIWktiWLfpyvNWXl5YpTezn8IdafA6FPyMj9WAHAkvJz68sEVYIigCxnF4PIK
-         4SQw==
-X-Gm-Message-State: APjAAAX+EEC5lt5f9gk808mf4eeMsM1bIATmurM1eEO07gmS7fCvkJLv
-        PHhggraB5GGaK+I5gMPBI/0=
-X-Google-Smtp-Source: APXvYqwwzO2+FSEOu8GC6WX1wjpdA6mkF0S2Ntoyk/OIApYeESykFh6CED3VWzm+rd+/YNzqL+R0wQ==
-X-Received: by 2002:ac8:1afc:: with SMTP id h57mr42295281qtk.250.1575053958977;
-        Fri, 29 Nov 2019 10:59:18 -0800 (PST)
-Received: from quaco.ghostprotocols.net (179-240-153-127.3g.claro.net.br. [179.240.153.127])
-        by smtp.gmail.com with ESMTPSA id v189sm10662727qkc.37.2019.11.29.10.59.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 10:59:18 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 32D59405B6; Fri, 29 Nov 2019 15:59:14 -0300 (-03)
-Date:   Fri, 29 Nov 2019 15:59:14 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 04/15] perf tools: Add map_groups to 'struct
- addr_location'
-Message-ID: <20191129185914.GE4063@kernel.org>
-References: <20191112183757.28660-1-acme@kernel.org>
- <20191112183757.28660-5-acme@kernel.org>
- <20191129134056.GE14169@krava>
- <20191129151733.GC26963@kernel.org>
- <20191129160631.GD26963@kernel.org>
- <20191129180354.GB26903@krava>
+        Fri, 29 Nov 2019 14:10:52 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id AE433291EAE
+Received: by earth.universe (Postfix, from userid 1000)
+        id BC5753C0C71; Fri, 29 Nov 2019 15:03:09 +0100 (CET)
+Date:   Fri, 29 Nov 2019 15:03:09 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        od@zcrc.me
+Subject: Re: [PATCH 2/2] power/supply: Add generic USB charger driver
+Message-ID: <20191129140309.ae4urya6f2hussxn@earth.universe>
+References: <20191103220801.10666-1-paul@crapouillou.net>
+ <20191103220801.10666-2-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bajdzh3ywfjytgnd"
 Content-Disposition: inline
-In-Reply-To: <20191129180354.GB26903@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191103220801.10666-2-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Nov 29, 2019 at 07:03:54PM +0100, Jiri Olsa escreveu:
-> On Fri, Nov 29, 2019 at 01:06:31PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Fri, Nov 29, 2019 at 12:17:33PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > Em Fri, Nov 29, 2019 at 02:40:56PM +0100, Jiri Olsa escreveu:
-> > > > > +++ b/tools/perf/util/callchain.c
-> > > > > @@ -1119,8 +1119,8 @@ int fill_callchain_info(struct addr_location *al, struct callchain_cursor_node *
-> > > > >  			goto out;
-> > > > >  	}
-> > > > >  
-> > > > > -	if (al->map->groups == &al->machine->kmaps) {
-> > > > > -		if (machine__is_host(al->machine)) {
-> > > > > +	if (al->mg == &al->mg->machine->kmaps) {
-> > 
-> > > > heya, I'm getting segfault because of this change
-> > 
-> > > > perf record --call-graph dwarf ./ex
-> > 
-> > > > 	(gdb) r report --stdio
-> > > > 	Program received signal SIGSEGV, Segmentation fault.
-> > > > 	fill_callchain_info (al=0x7fffffffa1b0, node=0xcd2bd0, hide_unresolved=false) at util/callchain.c:1122
-> > > > 	1122            if (al->maps == &al->maps->machine->kmaps) {
-> > > > 	(gdb) p al->maps
-> > > > 	$1 = (struct maps *) 0x0
 
-> > > > I wish all those map changes would go through some review,
-> > > > I have no idea how the code works now ;-)
+--bajdzh3ywfjytgnd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > ouch, I did tons of tests, obviously some more, and reviewing, would
-> > > catch these, my bad, will try and fix this...
+Hi Paul,
 
-> > > And yeah, I reproduced the problem, working on a fix.
+On Sun, Nov 03, 2019 at 11:08:01PM +0100, Paul Cercueil wrote:
+> This simple charger driver uses the USB PHY framework to detect the
+> presence of a charger.
+>=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/power/supply/Kconfig               |   7 ++
+>  drivers/power/supply/Makefile              |   1 +
+>  drivers/power/supply/generic-usb-charger.c | 140 +++++++++++++++++++++
+>  3 files changed, 148 insertions(+)
+>  create mode 100644 drivers/power/supply/generic-usb-charger.c
+>=20
+> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> index c84a7b1caeb6..069a91d89a42 100644
+> --- a/drivers/power/supply/Kconfig
+> +++ b/drivers/power/supply/Kconfig
+> @@ -51,6 +51,13 @@ config GENERIC_ADC_BATTERY
+>  	  Say Y here to enable support for the generic battery driver
+>  	  which uses IIO framework to read adc.
+> =20
+> +config GENERIC_USB_CHARGER
+> +	tristate "Generic USB charger"
+> +	depends on USB_PHY
+> +	help
+> +	  Say Y here to enable a generic USB charger driver which uses
+> +	  the USB PHY framework to detect the presence of the charger.
+> +
+>  config MAX8925_POWER
+>  	tristate "MAX8925 battery charger support"
+>  	depends on MFD_MAX8925
+> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+> index 6c7da920ea83..03f9b553bdfc 100644
+> --- a/drivers/power/supply/Makefile
+> +++ b/drivers/power/supply/Makefile
+> @@ -8,6 +8,7 @@ power_supply-$(CONFIG_LEDS_TRIGGERS)	+=3D power_supply_le=
+ds.o
+>  obj-$(CONFIG_POWER_SUPPLY)	+=3D power_supply.o
+>  obj-$(CONFIG_POWER_SUPPLY_HWMON) +=3D power_supply_hwmon.o
+>  obj-$(CONFIG_GENERIC_ADC_BATTERY)	+=3D generic-adc-battery.o
+> +obj-$(CONFIG_GENERIC_USB_CHARGER)	+=3D generic-usb-charger.o
+> =20
+>  obj-$(CONFIG_PDA_POWER)		+=3D pda_power.o
+>  obj-$(CONFIG_APM_POWER)		+=3D apm_power.o
+> diff --git a/drivers/power/supply/generic-usb-charger.c b/drivers/power/s=
+upply/generic-usb-charger.c
+> new file mode 100644
+> index 000000000000..d005acfc33c7
+> --- /dev/null
+> +++ b/drivers/power/supply/generic-usb-charger.c
+> @@ -0,0 +1,140 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Simple USB charger driver
+> + * Copyright (c) 2019 Paul Cercueil <paul@crapouillou.net>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/power_supply.h>
+> +#include <linux/usb/phy.h>
 
-> > Can you try with this one-liner?
+Missing <linux/of.h> for of_match_ptr()
 
-> yep, it fixes the issue for me
+> +
+> +struct usb_charger {
+> +	struct usb_phy *phy;
+> +	struct notifier_block nb;
+> +	struct power_supply_desc desc;
+> +	struct power_supply *charger;
+> +};
+> +
+> +static enum power_supply_property usb_charger_properties[] =3D {
+> +	POWER_SUPPLY_PROP_ONLINE,
+> +};
+> +
+> +static int usb_charger_get_property(struct power_supply *psy,
+> +				    enum power_supply_property psp,
+> +				    union power_supply_propval *val)
+> +{
+> +	struct usb_charger *charger =3D power_supply_get_drvdata(psy);
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_ONLINE:
+> +		val->intval =3D charger->phy->chg_state =3D=3D USB_CHARGER_PRESENT;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int usb_charger_event(struct notifier_block *nb,
+> +			     unsigned long event, void *d)
+> +{
+> +	struct usb_charger *charger =3D container_of(nb, struct usb_charger, nb=
+);
+> +
+> +	power_supply_changed(charger->charger);
+> +
+> +	return 0;
+> +}
+> +
+> +static int usb_charger_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct power_supply_desc *desc;
+> +	struct usb_charger *charger;
+> +	struct power_supply_config cfg =3D {
+> +		.of_node =3D dev->of_node,
+> +	};
+> +	int err;
+> +
+> +	charger =3D devm_kzalloc(dev, sizeof(*charger), GFP_KERNEL);
+> +	if (!charger)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, charger);
+> +	charger->nb.notifier_call =3D usb_charger_event;
+> +	cfg.drv_data =3D charger;
+> +
+> +	if (dev->of_node)
+> +		charger->phy =3D devm_usb_get_phy_by_phandle(dev, "phys", 0);
+> +	else
+> +		charger->phy =3D devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> +	if (IS_ERR(charger->phy)) {
+> +		err =3D PTR_ERR(charger->phy);
+> +		if (err !=3D -EPROBE_DEFER)
+> +			dev_err(dev, "No transceiver configured");
+> +		return err;
+> +	}
+> +
+> +	desc =3D &charger->desc;
+> +	desc->name =3D "usb-charger";
+> +	desc->properties =3D usb_charger_properties;
+> +	desc->num_properties =3D ARRAY_SIZE(usb_charger_properties);
+> +	desc->get_property =3D usb_charger_get_property;
+> +
+> +	switch (charger->phy->chg_type) {
+> +	case SDP_TYPE:
+> +		desc->type =3D POWER_SUPPLY_TYPE_USB;
+> +		break;
+> +	case DCP_TYPE:
+> +		desc->type =3D POWER_SUPPLY_TYPE_USB_DCP;
+> +		break;
+> +	case CDP_TYPE:
+> +		desc->type =3D POWER_SUPPLY_TYPE_USB_CDP;
+> +		break;
+> +	case ACA_TYPE:
+> +		desc->type =3D POWER_SUPPLY_TYPE_USB_ACA;
+> +		break;
+> +	default:
+> +		desc->type =3D POWER_SUPPLY_TYPE_UNKNOWN;
+> +	}
 
-Thanks, I'm taking that as a Tested-by: you, in addition to the
-Reported-by,
+This is deprecated in favour of the POWER_SUPPLY_PROP_USB_TYPE
+property. Set desc->type to POWER_SUPPLY_TYPE_USB and have a
+look at e.g. drivers/power/supply/cros_usbpd-charger.c to see
+how POWER_SUPPLY_PROP_USB_TYPE is supposed to work.
 
-- Arnaldo
+> +	charger->charger =3D devm_power_supply_register(dev, desc, &cfg);
+> +	if (IS_ERR(charger->charger)) {
+> +		dev_err(dev, "Unable to register charger");
+> +		return PTR_ERR(charger->charger);
+> +	}
+> +
+> +	return usb_register_notifier(charger->phy, &charger->nb);
+
+Please register with devm_add_action_or_reset() or (better)
+create a devm_usb_register_notifier().
+
+> +}
+> +
+> +static int usb_charger_remove(struct platform_device *pdev)
+> +{
+> +	struct usb_charger *charger =3D platform_get_drvdata(pdev);
+> +
+> +	usb_unregister_notifier(charger->phy, &charger->nb);
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id usb_charger_of_match[] =3D {
+> +	{ .compatible =3D "usb-charger" },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, usb_charger_of_match);
+> +#endif
+> +
+> +static struct platform_driver usb_charger_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "usb-charger",
+> +		.of_match_table =3D of_match_ptr(usb_charger_of_match),
+> +	},
+> +	.probe =3D usb_charger_probe,
+> +	.remove =3D usb_charger_remove,
+> +};
+> +module_platform_driver(usb_charger_driver);
+> +
+> +MODULE_DESCRIPTION("Simple USB charger driver");
+> +MODULE_AUTHOR("Paul Cercueil <paul@crapouillou.net>");
+> +MODULE_LICENSE("GPL");
+
+-- Sebastian
+
+--bajdzh3ywfjytgnd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl3hJRoACgkQ2O7X88g7
++ppwUQ//S4fkfoZcxF+Bd69hJM9WCajnDkVjzSK6kRqpi7HFltSP4bRf9p/3uLdk
+p9tB0afL5DHlQ8f4+dMBkaFA+47L1G4fuHojEYwsTpj3ClAvUNbbH4RwCko3GBwH
+9LglJrav6t0l8rrQ6gCHgjzVyCvILN8YDdNUI2DSBIzgEi2iNjz2q6gryHD15YMe
+k95eDRTuDBCyEWL50sQBM3iDhFMwoNhauPJ+c5KlmlOCt32kEk0Ng+dqPLkjBRWD
+RwgeQawiHduZJpKAWX3q27dVORcSVwPKfQ85tkkjjsbJ1SUzVFQsNRdcvAZrgb/y
+DTT8KfE0YlU7EfNKfD7ZYHgCVQgCAz3yqjIjU3xHuwu5P29S7sIqS27apKLYrKH3
+5+XLpaN2fu1W5QzjXCJ8AfMKU/HTgDY1zBAGvmFtNNlQLXMKrBcZ1oBWUdKoqkQo
+4sf7jqxvrKq/+x4BkJXTHKZT2bnXa68PdZCixSyOQ9fM7ha4lmo66q1zsHzCyJb9
+8bEQnWBnEBBYdyLNFjAfNBPa+3Jzi3OZQske88pf4ntO2336rqL3/JoNfWYqVejj
+3S6PM/By/lCnlXMOTTAQ9Keip37YigpNB5PHstJ1TU9XxRLkH9l/PuKdbuR9vOnm
+bmTNcGlSd62X3+I4+R6+Czrs8Bc6AUJ2Gyb/bFsT1wz1HJO01R0=
+=k+8E
+-----END PGP SIGNATURE-----
+
+--bajdzh3ywfjytgnd--
