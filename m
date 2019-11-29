@@ -2,39 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 377D210D512
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FB310D4DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfK2LmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 06:42:12 -0500
-Received: from [197.231.251.25] ([197.231.251.25]:39098 "EHLO mx.onatel.bi"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725892AbfK2LmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:42:12 -0500
-Received: from [181.211.251.86] (account amahoro@onatel.bi HELO mail.onatel.bi)
-  by mx.onatel.bi (CommuniGate Pro SMTP 5.4.8)
-  with ESMTPA id 42199958; Tue, 26 Nov 2019 12:25:03 +0200
-To:     "linux kernel" <linux-kernel@vger.kernel.org>,
-        "majordomo" <majordomo@vger.kernel.org>,
-        "informix list" <informix-list@iiug.org>
-From:   Francesco Alfano <amahoro@onatel.bi>
-Subject: =?UTF-8?Q?Fw=3ASpero_davvero_che_tu_stia_avendo_?= =?UTF-8?Q?una_giornata_meravigliosa?=
-Message-ID: <20993d57-f928-4aaa-b797-ff145082d1b3@onatel.bi>
-Date:   Tue, 26 Nov 2019 02:06:10 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1726897AbfK2Laz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 06:30:55 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:21979 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726215AbfK2Laz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 06:30:55 -0500
+X-UUID: 0463d9a3274143959e604d33b956bd31-20191129
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=PwCHJ/ylLxsFTolp1LFDT4a1s0102DjGPATz1zjtxA0=;
+        b=B0kGmm32hS6rMrCce03DSS9/I49LmnvX9Of9xHT/lE4Yysz5JkdCowVMOt2ZRII8RGPauflXRDTpVRv0T0+7II32lMHsf/zwEReNp4o9aO9ByBej+e2FzRcMbHI3TUv3pbabwCw7WTWibWCP3OwLzmF3DzwlF5paVrx67Xv1ZMU=;
+X-UUID: 0463d9a3274143959e604d33b956bd31-20191129
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1743712512; Fri, 29 Nov 2019 19:30:48 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 29 Nov 2019 19:30:42 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 29 Nov 2019 19:30:44 +0800
+Message-ID: <1575027046.24848.4.camel@mtkswgap22>
+Subject: Re: [PATCH v5 3/3] hwrng: add mtk-sec-rng driver
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     Lars Persson <lists@bofh.nu>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        wsd_upstream <wsd_upstream@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Crystal Guo =?UTF-8?Q?=28=E9=83=AD=E6=99=B6=29?= 
+        <Crystal.Guo@mediatek.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Matt Mackall <mpm@selenic.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 29 Nov 2019 19:30:46 +0800
+In-Reply-To: <CADnJP=uhD=J2NrpSwiX8oCTd-u_q05=HhsAV-ErCsXNDwVS0rA@mail.gmail.com>
+References: <1574864578-467-1-git-send-email-neal.liu@mediatek.com>
+         <1574864578-467-4-git-send-email-neal.liu@mediatek.com>
+         <CADnJP=uhD=J2NrpSwiX8oCTd-u_q05=HhsAV-ErCsXNDwVS0rA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Non mi aspettavo nemmeno che esistesse. https://birdwulisa1983.blogspot.am/
+T24gRnJpLCAyMDE5LTExLTI5IGF0IDE4OjAyICswODAwLCBMYXJzIFBlcnNzb24gd3JvdGU6DQo+
+IEhpIE5lYWwsDQo+IA0KPiBPbiBXZWQsIE5vdiAyNywgMjAxOSBhdCAzOjIzIFBNIE5lYWwgTGl1
+IDxuZWFsLmxpdUBtZWRpYXRlay5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRm9yIE1lZGlhVGVrIFNv
+Q3Mgb24gQVJNdjggd2l0aCBUcnVzdFpvbmUgZW5hYmxlZCwgcGVyaXBoZXJhbHMgbGlrZQ0KPiA+
+IGVudHJvcHkgc291cmNlcyBpcyBub3QgYWNjZXNzaWJsZSBmcm9tIG5vcm1hbCB3b3JsZCAobGlu
+dXgpIGFuZA0KPiA+IHJhdGhlciBhY2Nlc3NpYmxlIGZyb20gc2VjdXJlIHdvcmxkIChBVEYvVEVF
+KSBvbmx5LiBUaGlzIGRyaXZlciBhaW1zDQo+ID4gdG8gcHJvdmlkZSBhIGdlbmVyaWMgaW50ZXJm
+YWNlIHRvIEFURiBybmcgc2VydmljZS4NCj4gPg0KPiANCj4gSSBhbSB3b3JraW5nIG9uIHNldmVy
+YWwgU29DcyB0aGF0IGFsc28gd2lsbCBuZWVkIHRoaXMga2luZCBvZiBkcml2ZXINCj4gdG8gZ2V0
+IGVudHJvcHkgZnJvbSBBcm0gdHJ1c3RlZCBmaXJtd2FyZS4NCj4gSWYgeW91IGludGVuZCB0byBt
+YWtlIHRoaXMgYSBnZW5lcmljIGludGVyZmFjZSwgcGxlYXNlIGNsZWFuIHVwIHRoZQ0KPiByZWZl
+cmVuY2VzIHRvIE1lZGlhVGVrIGFuZCBnaXZlIGl0IGEgbW9yZSBnZW5lcmljIG5hbWUuIEZvciBl
+eGFtcGxlDQo+ICJBcm0gVHJ1c3RlZCBGaXJtd2FyZSByYW5kb20gbnVtYmVyIGRyaXZlciIuDQo+
+IA0KPiBJdCB3aWxsIGFsc28gYmUgaGVscGZ1bCBpZiB0aGUgU01DIGNhbGwgbnVtYmVyIGlzIGNv
+bmZpZ3VyYWJsZS4NCj4gDQo+IC0gTGFycw0KDQpZZXMsIEknbSB0cnlpbmcgdG8gbWFrZSB0aGlz
+IHRvIGEgZ2VuZXJpYyBpbnRlcmZhY2UuIEknbGwgdHJ5IHRvIG1ha2UNCkhXL3BsYXRmb3JtIHJl
+bGF0ZWQgZGVwZW5kZW5jeSB0byBiZSBjb25maWd1cmFibGUgYW5kIGxldCBpdCBtb3JlDQpnZW5l
+cmljLg0KVGhhbmtzIGZvciB5b3VyIHN1Z2dlc3Rpb24uDQoNCj4gDQo+IF9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IExpbnV4LW1lZGlhdGVrIG1haWxp
+bmcgbGlzdA0KPiBMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9s
+aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtbWVkaWF0ZWsNCg0K
 
-
-
-
-Pensieri gentili,Francesco Alfano
