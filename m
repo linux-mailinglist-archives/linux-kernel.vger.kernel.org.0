@@ -2,132 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5140310D795
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 16:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8901E10D79F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 16:08:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfK2PFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 10:05:16 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35624 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfK2PFQ (ORCPT
+        id S1727070AbfK2PIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 10:08:06 -0500
+Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:48227 "EHLO
+        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfK2PIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 10:05:16 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n5so15446927wmc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 07:05:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pZkLmZsrqg1ZnWrCcircX/cCYDfgls/suzoB3wFMSt8=;
-        b=aYoowPgB4TwVPykgXsC3r8j1Kl3PlR19Us64akXQkor5XEv+pcl1sEqP+n6ruK1umG
-         c6Xk3gtOb2EtTeBs516NEwGX3zKrB/v9VnYJqOM71q+s4N7BiyRdN1gzC22aXiy4yI/F
-         M/tT3BEeOyyQ8FtzLQjwYWn3tlaxh/w+vfp7p6NFPi3A1ieBjeXYBa1PLVTN4dTK6FL+
-         2nEf2dkN4oWHnjhAgxck067bcRxLZHmiyA/z0w5NBdXMaac/S55BpwJYGQH0OIAgwwdu
-         oZEJRKT6EuEyXgYA4jpR4k+CAPTcyz2CVj0YS9400As4L4KZzuDPMfq4mygcjx8gxwo2
-         S0lw==
-X-Gm-Message-State: APjAAAXS3Zhf2mqpyqiF8GRKkzuoYm+U/Y9SstY01LDB8BnmadlSaoE2
-        YtGLTkYhBvy3+jFaQte0qKw=
-X-Google-Smtp-Source: APXvYqwT6VfzJAERtpYV8+32n7D+mlAnpiG8/vdvqUfElCD9W0Nhlic8udiNMZcbdIiCFN37E1HUpA==
-X-Received: by 2002:a7b:c19a:: with SMTP id y26mr14066014wmi.152.1575039913718;
-        Fri, 29 Nov 2019 07:05:13 -0800 (PST)
-Received: from a483e7b01a66.ant.amazon.com (54-240-197-236.amazon.com. [54.240.197.236])
-        by smtp.gmail.com with ESMTPSA id a15sm29699212wrx.81.2019.11.29.07.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2019 07:05:13 -0800 (PST)
-Subject: Re: [PATCH 1/3] arm/arm64/xen: use C inlines for privcmd_call
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>, jmorris@namei.org,
-        sashal@kernel.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, steve.capper@arm.com,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org,
-        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
-        sstabellini@kernel.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, stefan@agner.ch, yamada.masahiro@socionext.com,
-        xen-devel@lists.xenproject.org, linux@armlinux.org.uk
-References: <20191127184453.229321-1-pasha.tatashin@soleen.com>
- <20191127184453.229321-2-pasha.tatashin@soleen.com>
-From:   Julien Grall <julien@xen.org>
-Message-ID: <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
-Date:   Fri, 29 Nov 2019 15:05:11 +0000
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.2.2
+        Fri, 29 Nov 2019 10:08:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1575040085;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ho3w6fMZjQMUAdMfY9OmFcWJIQUD8dpZ768y2Og+acw=;
+  b=HolJ9iGS7WZs4rN6xLzGGsZHqvPPITgZEuxp4PE7hgdIc40SN2YpUh9/
+   NTFqtA3yRl6lCF8ODeZ17a0UBBYEMsl6ZwA8+7e26N+jdkoD/8th+/hRa
+   oDhPoiJmYfmBDbjgacFWCatKBDv+mjhDiwaNkporQCsKkMlSCAk1bx6Yl
+   Y=;
+Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=roger.pau@citrix.com; spf=Pass smtp.mailfrom=roger.pau@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  roger.pau@citrix.com) identity=pra; client-ip=162.221.158.21;
+  receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
+  roger.pau@citrix.com designates 162.221.158.21 as permitted
+  sender) identity=mailfrom; client-ip=162.221.158.21;
+  receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="roger.pau@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
+  ip4:168.245.78.127 ~all"
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="roger.pau@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: uo7ZQ6Lhm9qvElxVUxtjDCKkJouk31rqD+rniiFpA7qeDLbFelo86ONL8Ao+T2vpe7Q5KKvu3N
+ MHj2KGcYc+pYAmemTK88J6d6U4NiRU6LiCvGxnuArztHn/OZSyMyTF1YrFr2EFWNKkB2KaUZ52
+ xqsDgt3eZArNqBtFUy/LH7j+kTQUevajZMOxXOrQSTm2XtIv6G74/ANKHwA3IHWHnwlYCptasq
+ AjOT0aicg377FQ4uVE0v6D+5FeLxp1D+lWSyJZypSwTwpCRMouYa/Nk3wMA5KFlcFrThzFKuxE
+ 6Sk=
+X-SBRS: 2.7
+X-MesageID: 9402212
+X-Ironport-Server: esa6.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.69,257,1571716800"; 
+   d="scan'208";a="9402212"
+Date:   Fri, 29 Nov 2019 16:07:57 +0100
+From:   Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+To:     "Durrant, Paul" <pdurrant@amazon.com>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Juergen Gross <jgross@suse.com>,
+        <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH v2 2/2] block/xen-blkback: allow module to be cleanly
+ unloaded
+Message-ID: <20191129150757.GA980@Air-de-Roger>
+References: <20191129134306.2738-1-pdurrant@amazon.com>
+ <20191129134306.2738-3-pdurrant@amazon.com>
+ <20191129150006.GZ980@Air-de-Roger>
+ <f06bf1967bdf43ca9b218f9b5c5202a6@EX13D32EUC003.ant.amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <20191127184453.229321-2-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f06bf1967bdf43ca9b218f9b5c5202a6@EX13D32EUC003.ant.amazon.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 27/11/2019 18:44, Pavel Tatashin wrote:
-> diff --git a/arch/arm64/include/asm/xen/hypercall.h b/arch/arm64/include/asm/xen/hypercall.h
-> index 3522cbaed316..1a74fb28607f 100644
-> --- a/arch/arm64/include/asm/xen/hypercall.h
-> +++ b/arch/arm64/include/asm/xen/hypercall.h
-> @@ -1 +1,29 @@
-> +#ifndef _ASM_ARM64_XEN_HYPERCALL_H
-> +#define _ASM_ARM64_XEN_HYPERCALL_H
->   #include <xen/arm/hypercall.h>
-> +#include <linux/uaccess.h>
-> +
-> +static inline long privcmd_call(unsigned int call, unsigned long a1,
-> +				unsigned long a2, unsigned long a3,
-> +				unsigned long a4, unsigned long a5)
-
-I realize that privcmd_call is the only hypercall using Software PAN at 
-the moment. However, dm_op needs the same as hypercall will be issued 
-from userspace as well.
-
-So I was wondering whether we should create a generic function (e.g. 
-do_xen_hypercall() or do_xen_user_hypercall()) to cover the two hypercalls?
-
-> diff --git a/include/xen/arm/hypercall.h b/include/xen/arm/hypercall.h
-> index b40485e54d80..624c8ad7e42a 100644
-> --- a/include/xen/arm/hypercall.h
-> +++ b/include/xen/arm/hypercall.h
-> @@ -30,8 +30,8 @@
->    * IN THE SOFTWARE.
->    */
->   
-> -#ifndef _ASM_ARM_XEN_HYPERCALL_H
-> -#define _ASM_ARM_XEN_HYPERCALL_H
-> +#ifndef _ARM_XEN_HYPERCALL_H
-> +#define _ARM_XEN_HYPERCALL_H
-
-This change feels a bit out of context. Could you split it in a separate 
-patch?
-
->   
->   #include <linux/bug.h>
->   
-> @@ -41,9 +41,9 @@
->   
->   struct xen_dm_op_buf;
->   
-> -long privcmd_call(unsigned call, unsigned long a1,
-> -		unsigned long a2, unsigned long a3,
-> -		unsigned long a4, unsigned long a5);
-> +long arch_privcmd_call(unsigned int call, unsigned long a1,
-> +		       unsigned long a2, unsigned long a3,
-> +		       unsigned long a4, unsigned long a5);
->   int HYPERVISOR_xen_version(int cmd, void *arg);
->   int HYPERVISOR_console_io(int cmd, int count, char *str);
->   int HYPERVISOR_grant_table_op(unsigned int cmd, void *uop, unsigned int count);
-> @@ -88,4 +88,4 @@ MULTI_mmu_update(struct multicall_entry *mcl, struct mmu_update *req,
->   	BUG();
->   }
->   
-> -#endif /* _ASM_ARM_XEN_HYPERCALL_H */
-> +#endif /* _ARM_XEN_HYPERCALL_H */
+On Fri, Nov 29, 2019 at 03:02:37PM +0000, Durrant, Paul wrote:
+> > -----Original Message-----
+> > From: Roger Pau Monné <roger.pau@citrix.com>
+> > Sent: 29 November 2019 15:00
+> > To: Durrant, Paul <pdurrant@amazon.com>
+> > Cc: linux-block@vger.kernel.org; linux-kernel@vger.kernel.org; xen-
+> > devel@lists.xenproject.org; Konrad Rzeszutek Wilk
+> > <konrad.wilk@oracle.com>; Jens Axboe <axboe@kernel.dk>
+> > Subject: Re: [PATCH v2 2/2] block/xen-blkback: allow module to be cleanly
+> > unloaded
+> > 
+> > On Fri, Nov 29, 2019 at 01:43:06PM +0000, Paul Durrant wrote:
+> > > Add a module_exit() to perform the necessary clean-up.
+> > >
+> > > Signed-off-by: Paul Durrant <pdurrant@amazon.com>
+> > 
+> > LGTM:
+> > 
+> > Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+> > 
 > 
+> Thanks.
+> 
+> > AFAICT we should make sure this is not committed before patch 1, or
+> > else you could unload a blkback module that's still in use?
+> > 
+> 
+> Yes, that's correct.
 
-Cheers,
+Given this is a very small change, and not really block related I
+think it would be better for both patches to be committed from the Xen
+tree, if Jens, Juergen and Boris agree.
 
--- 
-Julien Grall
+Thanks, Roger.
