@@ -2,114 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 894B810D777
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 15:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A2310D77D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 15:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfK2OwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 09:52:10 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52525 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726843AbfK2OwK (ORCPT
+        id S1727040AbfK2Oww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 09:52:52 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.25]:10655 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfK2Owv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 09:52:10 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xATEl2rW015649;
-        Fri, 29 Nov 2019 15:51:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=g8lD3rtdXNrCg147P/vL/OTbncUOSvc26kNNxIEODlU=;
- b=kcjurm5sWToNx0YxGPewWYGHrO6fGpUyf6fVE3BiBVSse71WSxfWao+4zlxicrc4hVXw
- 4/2x6utimcqGQPR0/QULgoj2VHX4b2+inZ5O1MGFNWOsUvYjH9kEmtQxk4pFra33P31n
- gMZtS+MnVpo9AvHicIdyxUrN8lopXOiCZuqsNzjTV1XAV/RG2lGF9Oy22/Bb1AQHxAUa
- KnFryJpdfh7UaI9YmZW/54NYzzBO5sHroCSyXnZ5AXPY0JHcb6MlB5zVCgEOaaUYTLMq
- tR4Ytc2/IL1LnhMwgp+s3kjw0a3GpCiKeByP5nxenR/LmY7zY8ynZBC0mDU8csL/g/P6 TA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2whcxjg1nr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 29 Nov 2019 15:51:51 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 778B310002A;
-        Fri, 29 Nov 2019 15:51:49 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4622B2B9FAF;
-        Fri, 29 Nov 2019 15:51:49 +0100 (CET)
-Received: from lmecxl0912.lme.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 29 Nov
- 2019 15:51:48 +0100
-Subject: Re: [PATCH 5/6] ARM: dts: stm32: Adapt STM32MP157 DK boards to stm32
- DT diversity
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20191120144109.25321-1-alexandre.torgue@st.com>
- <20191120144109.25321-6-alexandre.torgue@st.com>
- <CAK8P3a2Bg9KwfEqEE3_NUHxVv=svFGuj--Tnq-w-xFg63cfqAA@mail.gmail.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <92be0a67-c0ed-23bd-08f3-73f71d8bfc3f@st.com>
-Date:   Fri, 29 Nov 2019 15:51:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2Bg9KwfEqEE3_NUHxVv=svFGuj--Tnq-w-xFg63cfqAA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-29_04:2019-11-29,2019-11-29 signatures=0
+        Fri, 29 Nov 2019 09:52:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1575039166;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=o6PLBpFcvA6/3iSigPBPF7OgSgCT09xUz1+oH4ffcqg=;
+        b=RwQSYvu1PqyKGVAYUNSKqPUBH5aZa0tIVTKr39557PiQns/sa08/SIvEKfSoH72GGS
+        AEAc9y6w9CnGpWB70qr6je09PuZ+TKRrv6GhBgRc8vEqt4CwlRYAguP39F64+v7hla9a
+        JKMmbcp0EmAo4T0geW3vYoaSamLnDFdJvkmD3bV1m5swlFGtMYBXBK/c0Ntxej3gnvhU
+        AIUM+djn1Nu+obNAWOGA0oA5oRNsOMaHbSEuw9EhKeCB12cQnRYEEve5hy2FpTi9Izx9
+        1BTRt6B9qIbadk+Ld0ibJ76id8XZcCJondQf298xswDGq7qws7iZM/F3dVrJ/qLns0XP
+        lmew==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/vgwDeoHw=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 45.0.2 DYNA|AUTH)
+        with ESMTPSA id y07703vATEqjTL8
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Fri, 29 Nov 2019 15:52:45 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH] mips: Fix gettimeofday() in the vdso library
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20191129143658.12224-1-vincenzo.frascino@arm.com>
+Date:   Fri, 29 Nov 2019 15:52:45 +0100
+Cc:     Paul Burton <paulburton@kernel.org>,
+        mips-creator-ci20-dev@googlegroups.com,
+        letux-kernel@openphoenux.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <307717BD-3233-4313-BAA8-7431F4C78773@goldelico.com>
+References: <20191129143658.12224-1-vincenzo.frascino@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+> Am 29.11.2019 um 15:36 schrieb Vincenzo Frascino =
+<vincenzo.frascino@arm.com>:
+>=20
+> The libc provides a discovery mechanism for vDSO library and its
+> symbols. When a symbol is not exposed by the vDSOs the libc falls back
+> on the system calls.
+>=20
+> With the introduction of the unified vDSO library on mips this =
+behavior
+> is not honored anymore by the kernel in the case of gettimeofday().
+>=20
+> The issue has been noticed and reported due to a dhclient failure on =
+the
+> CI20 board:
+>=20
+> root@letux:~# dhclient
+> ../../../../lib/isc/unix/time.c:200: Operation not permitted
+> root@letux:~#
+>=20
+> Restore the original behavior fixing gettimeofday() in the vDSO =
+library.
+>=20
+> Cc: Paul Burton <paulburton@kernel.org>
+> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Testes-by: H. Nikolaus Schaller <hns@goldelico.com> # CI20 with JZ4780
+^^^ funny typo... -> Tested-by:
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+> arch/mips/include/asm/vdso/gettimeofday.h | 13 -------------
+> arch/mips/vdso/vgettimeofday.c            | 20 ++++++++++++++++++++
+> 2 files changed, 20 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/arch/mips/include/asm/vdso/gettimeofday.h =
+b/arch/mips/include/asm/vdso/gettimeofday.h
+> index b08825531e9f..0ae9b4cbc153 100644
+> --- a/arch/mips/include/asm/vdso/gettimeofday.h
+> +++ b/arch/mips/include/asm/vdso/gettimeofday.h
+> @@ -26,8 +26,6 @@
+>=20
+> #define __VDSO_USE_SYSCALL		ULLONG_MAX
+>=20
+> -#ifdef CONFIG_MIPS_CLOCK_VSYSCALL
+> -
+> static __always_inline long gettimeofday_fallback(
+> 				struct __kernel_old_timeval *_tv,
+> 				struct timezone *_tz)
+> @@ -48,17 +46,6 @@ static __always_inline long gettimeofday_fallback(
+> 	return error ? -ret : ret;
+> }
+>=20
+> -#else
+> -
+> -static __always_inline long gettimeofday_fallback(
+> -				struct __kernel_old_timeval *_tv,
+> -				struct timezone *_tz)
+> -{
+> -	return -1;
+> -}
+> -
+> -#endif
+> -
+> static __always_inline long clock_gettime_fallback(
+> 					clockid_t _clkid,
+> 					struct __kernel_timespec *_ts)
+> diff --git a/arch/mips/vdso/vgettimeofday.c =
+b/arch/mips/vdso/vgettimeofday.c
+> index 6ebdc37c89fc..6b83b6376a4b 100644
+> --- a/arch/mips/vdso/vgettimeofday.c
+> +++ b/arch/mips/vdso/vgettimeofday.c
+> @@ -17,12 +17,22 @@ int __vdso_clock_gettime(clockid_t clock,
+> 	return __cvdso_clock_gettime32(clock, ts);
+> }
+>=20
+> +#ifdef CONFIG_MIPS_CLOCK_VSYSCALL
+> +
+> +/*
+> + * This is behind the ifdef so that we don't provide the symbol when =
+there's no
+> + * possibility of there being a usable clocksource, because there's =
+nothing we
+> + * can do without it. When libc fails the symbol lookup it should =
+fall back on
+> + * the standard syscall path.
+> + */
+> int __vdso_gettimeofday(struct __kernel_old_timeval *tv,
+> 			struct timezone *tz)
+> {
+> 	return __cvdso_gettimeofday(tv, tz);
+> }
+>=20
+> +#endif /* CONFIG_MIPS_CLOCK_VSYSCALL */
+> +
+> int __vdso_clock_getres(clockid_t clock_id,
+> 			struct old_timespec32 *res)
+> {
+> @@ -43,12 +53,22 @@ int __vdso_clock_gettime(clockid_t clock,
+> 	return __cvdso_clock_gettime(clock, ts);
+> }
+>=20
+> +#ifdef CONFIG_MIPS_CLOCK_VSYSCALL
+> +
+> +/*
+> + * This is behind the ifdef so that we don't provide the symbol when =
+there's no
+> + * possibility of there being a usable clocksource, because there's =
+nothing we
+> + * can do without it. When libc fails the symbol lookup it should =
+fall back on
+> + * the standard syscall path.
+> + */
+> int __vdso_gettimeofday(struct __kernel_old_timeval *tv,
+> 			struct timezone *tz)
+> {
+> 	return __cvdso_gettimeofday(tv, tz);
+> }
+>=20
+> +#endif /* CONFIG_MIPS_CLOCK_VSYSCALL */
+> +
+> int __vdso_clock_getres(clockid_t clock_id,
+> 			struct __kernel_timespec *res)
+> {
+> --=20
+> 2.24.0
+>=20
 
-On 11/29/19 3:20 PM, Arnd Bergmann wrote:
-> On Wed, Nov 20, 2019 at 3:41 PM Alexandre Torgue
-> <alexandre.torgue@st.com> wrote:
->>
->> To handle STM32MP15 SOCs diversity, some updates have to been done.
->> This commit mainly adapt dk1 board to include the correct package and the
->> correct SOC version. A new file has been created to factorize common parts.
->>
->> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
->>
->> diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
->> index 3f869bd67082..1292ac3b6890 100644
->> --- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
->> +++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
->>          model = "STMicroelectronics STM32MP157A-DK1 Discovery Board";
->>          compatible = "st,stm32mp157a-dk1", "st,stm32mp157";
->> -
->> -       aliases {
->> -               ethernet0 = &ethernet0;
->> -               serial0 = &uart4;
->> -       };
->> -
->> -       chosen {
->> -               stdout-path = "serial0:115200n8";
->> -       };
->> -
-> 
-> As a rule, I would leave aliases and chosen nodes in the .dts file and not
-> move them into a shared .dtsi, since they tend to be board specific.
-> 
-> (even if that may not be the case in this particular file)
-
-I agree, I'll move them in V2.
-
-Thanks
-Alex
-
-> 
->        Arnd
-> 
