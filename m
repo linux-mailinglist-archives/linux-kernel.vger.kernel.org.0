@@ -2,160 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D9DE10DA91
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:27:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1608510DA9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:41:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfK2U1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 15:27:38 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43395 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbfK2U1i (ORCPT
+        id S1727154AbfK2Ulu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 15:41:50 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:34054 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbfK2Ulu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 15:27:38 -0500
-Received: by mail-wr1-f65.google.com with SMTP id n1so36625412wra.10
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 12:27:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=GaR4QDEogICF6BoaruX/4IK4ATxHu4FHjlnq71myPpQ=;
-        b=nOjUJ9WefKRISz8pdtkaNVefywLGLBDpj6gXWxGMC2ExoM3nJ1lCKeVwuc0vsJDOAg
-         uj6hrRZXQhL2OBAlFmDRYK0iM6RB5qAJIJ8vdU9s0ldJqY6poi0olxbATpRoZGJ87luB
-         KHyyE7uF9pGmX3AAeRwF1IwFNDbgtb2xLLqiDzudTbxAHV41lnSLE948R4uL/7L7HNhw
-         aMmYCb+1W49+eIoESQEjLAhoNYqr7SDPKm+Lq/L3JeN3ssfwQiYZo/FMJlphq/2PPU2g
-         EqqEElDU705FXGvb1A0rFeExl8hDtsGAX7DOLrL8VMMMkVwEXR6pYDMfYQcLQ7nSVpch
-         kcpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=GaR4QDEogICF6BoaruX/4IK4ATxHu4FHjlnq71myPpQ=;
-        b=dwDMIHy32ZyW82mluDLj913vlHXd+UA9OYi5IaZLqquofnUTO3WTGUmCd3p2Z8cWwM
-         M1nTb/eiQUjwU2FqhwGkdS/4Rda8B5ZEbG0jzyaIpwznt/hybklSNIIXEZef1sj/HhqW
-         ZyZICadQoBqS8Stg5CHnvvTIfRs2stj/3cVQkU76mpvRMW2YwACoxsyuxaYcsgw2K4Ix
-         SOUjwk5NPaPUpbcSE0yd4uhw0LLj1LjJ7sX7wnpbZqnSXLnMtAHwRoSlwyhGV/2vAw8H
-         7qViSG5yzxPesoEXTWT6nhuY5+4eq+nvq18Z7aIVRkZhftgGGJC91vCtKmqKvtqpz1dz
-         oEZw==
-X-Gm-Message-State: APjAAAXJJ47nH9Lum17xMWISV4du0PkRk5TiQmq16zwLKVyBjqVfSYjf
-        +Wfjy+428+0AFrmyV4zLCsHlEqnz
-X-Google-Smtp-Source: APXvYqwCWLkhuY4gUim7D5NcneA/7GsKTl1OvkTU9avBdQAZ+oBVs5uMGl1ZybX4kFXLObkmxf85Bw==
-X-Received: by 2002:adf:f20f:: with SMTP id p15mr5798599wro.370.1575059256587;
-        Fri, 29 Nov 2019 12:27:36 -0800 (PST)
-Received: from ?IPv6:2003:ea:8f2d:7d00:f057:eef9:f4e2:a741? (p200300EA8F2D7D00F057EEF9F4E2A741.dip0.t-ipconnect.de. [2003:ea:8f2d:7d00:f057:eef9:f4e2:a741])
-        by smtp.googlemail.com with ESMTPSA id k127sm8728103wmk.31.2019.11.29.12.27.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Nov 2019 12:27:35 -0800 (PST)
-To:     Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: dma-mapping: use bit macros
-Message-ID: <1519de9e-0bd6-c7e7-a911-d51481dfb415@gmail.com>
-Date:   Fri, 29 Nov 2019 21:27:26 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 29 Nov 2019 15:41:50 -0500
+Received: from localhost (c-73-35-209-67.hsd1.wa.comcast.net [73.35.209.67])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7A33114051729;
+        Fri, 29 Nov 2019 12:41:49 -0800 (PST)
+Date:   Fri, 29 Nov 2019 12:30:31 -0800 (PST)
+Message-Id: <20191129.123031.1495258469954154946.davem@davemloft.net>
+To:     cascardo@canonical.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        sbrivio@redhat.com
+Subject: Re: [PATCH] selftests: pmtu: use -oneline for ip route list cache
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191128185806.23706-1-cascardo@canonical.com>
+References: <20191128185806.23706-1-cascardo@canonical.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 29 Nov 2019 12:41:49 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not necessarily a big leap for mankind, but using bit macros makes
-the code better readable, especially the definition of DMA_BIT_MASK
-is more intuitive.
+From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Date: Thu, 28 Nov 2019 15:58:06 -0300
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- include/linux/dma-mapping.h | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+> Some versions of iproute2 will output more than one line per entry, which
+> will cause the test to fail, like:
+> 
+> TEST: ipv6: list and flush cached exceptions                        [FAIL]
+>   can't list cached exceptions
+> 
+> That happens, for example, with iproute2 4.15.0. When using the -oneline
+> option, this will work just fine:
+> 
+> TEST: ipv6: list and flush cached exceptions                        [ OK ]
+> 
+> This also works just fine with a more recent version of iproute2, like
+> 5.4.0.
+> 
+> For some reason, two lines are printed for the IPv4 test no matter what
+> version of iproute2 is used. Use the same -oneline parameter there instead
+> of counting the lines twice.
+> 
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index a4930310d..a39a6a8d5 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -2,6 +2,7 @@
- #ifndef _LINUX_DMA_MAPPING_H
- #define _LINUX_DMA_MAPPING_H
- 
-+#include <linux/bits.h>
- #include <linux/sizes.h>
- #include <linux/string.h>
- #include <linux/device.h>
-@@ -21,51 +22,51 @@
-  * DMA_ATTR_WEAK_ORDERING: Specifies that reads and writes to the mapping
-  * may be weakly ordered, that is that reads and writes may pass each other.
-  */
--#define DMA_ATTR_WEAK_ORDERING		(1UL << 1)
-+#define DMA_ATTR_WEAK_ORDERING		BIT(1)
- /*
-  * DMA_ATTR_WRITE_COMBINE: Specifies that writes to the mapping may be
-  * buffered to improve performance.
-  */
--#define DMA_ATTR_WRITE_COMBINE		(1UL << 2)
-+#define DMA_ATTR_WRITE_COMBINE		BIT(2)
- /*
-  * DMA_ATTR_NON_CONSISTENT: Lets the platform to choose to return either
-  * consistent or non-consistent memory as it sees fit.
-  */
--#define DMA_ATTR_NON_CONSISTENT		(1UL << 3)
-+#define DMA_ATTR_NON_CONSISTENT		BIT(3)
- /*
-  * DMA_ATTR_NO_KERNEL_MAPPING: Lets the platform to avoid creating a kernel
-  * virtual mapping for the allocated buffer.
-  */
--#define DMA_ATTR_NO_KERNEL_MAPPING	(1UL << 4)
-+#define DMA_ATTR_NO_KERNEL_MAPPING	BIT(4)
- /*
-  * DMA_ATTR_SKIP_CPU_SYNC: Allows platform code to skip synchronization of
-  * the CPU cache for the given buffer assuming that it has been already
-  * transferred to 'device' domain.
-  */
--#define DMA_ATTR_SKIP_CPU_SYNC		(1UL << 5)
-+#define DMA_ATTR_SKIP_CPU_SYNC		BIT(5)
- /*
-  * DMA_ATTR_FORCE_CONTIGUOUS: Forces contiguous allocation of the buffer
-  * in physical memory.
-  */
--#define DMA_ATTR_FORCE_CONTIGUOUS	(1UL << 6)
-+#define DMA_ATTR_FORCE_CONTIGUOUS	BIT(6)
- /*
-  * DMA_ATTR_ALLOC_SINGLE_PAGES: This is a hint to the DMA-mapping subsystem
-  * that it's probably not worth the time to try to allocate memory to in a way
-  * that gives better TLB efficiency.
-  */
--#define DMA_ATTR_ALLOC_SINGLE_PAGES	(1UL << 7)
-+#define DMA_ATTR_ALLOC_SINGLE_PAGES	BIT(7)
- /*
-  * DMA_ATTR_NO_WARN: This tells the DMA-mapping subsystem to suppress
-  * allocation failure reports (similarly to __GFP_NOWARN).
-  */
--#define DMA_ATTR_NO_WARN	(1UL << 8)
-+#define DMA_ATTR_NO_WARN		BIT(8)
- 
- /*
-  * DMA_ATTR_PRIVILEGED: used to indicate that the buffer is fully
-  * accessible at an elevated privilege level (and ideally inaccessible or
-  * at least read-only at lesser-privileged levels).
-  */
--#define DMA_ATTR_PRIVILEGED		(1UL << 9)
-+#define DMA_ATTR_PRIVILEGED		BIT(9)
- 
- /*
-  * A dma_addr_t can hold any valid DMA or bus address for the platform.
-@@ -136,7 +137,7 @@ struct dma_map_ops {
- extern const struct dma_map_ops dma_virt_ops;
- extern const struct dma_map_ops dma_dummy_ops;
- 
--#define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-+#define DMA_BIT_MASK(n)	GENMASK_ULL(n - 1, 0)
- 
- #define DMA_MASK_NONE	0x0ULL
- 
--- 
-2.24.0
+Applied with Fixes: tag added and queued up for -stable.
 
+Thanks.
