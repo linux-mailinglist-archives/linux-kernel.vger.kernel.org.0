@@ -2,62 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C70B10D310
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:14:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AE510D30A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:13:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfK2JOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 04:14:19 -0500
-Received: from olimex.com ([184.105.72.32]:35326 "EHLO olimex.com"
+        id S1726832AbfK2JNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 04:13:49 -0500
+Received: from foss.arm.com ([217.140.110.172]:45060 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726909AbfK2JOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 04:14:19 -0500
-Received: from localhost.localdomain ([94.155.250.134])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 01:14:09 -0800
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Cc:     linux-sunxi@googlegroups.com, Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH 3/3] arm64: dts: allwinner: a64: olinuxino: Fix SDIO supply regulator
-Date:   Fri, 29 Nov 2019 11:13:36 +0200
-Message-Id: <20191129091336.13104-4-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191129091336.13104-1-stefan@olimex.com>
-References: <20191129091336.13104-1-stefan@olimex.com>
+        id S1725892AbfK2JNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 04:13:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB2BE30E;
+        Fri, 29 Nov 2019 01:13:48 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C57BB3F68E;
+        Fri, 29 Nov 2019 01:13:47 -0800 (PST)
+Date:   Fri, 29 Nov 2019 09:13:45 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/14] torture: Replace cpu_up/down with
+ device_online/offline
+Message-ID: <20191129091344.hf5demtjytv5dw5q@e107158-lin.cambridge.arm.com>
+References: <20191125112754.25223-1-qais.yousef@arm.com>
+ <20191125112754.25223-13-qais.yousef@arm.com>
+ <20191127214725.GG2889@paulmck-ThinkPad-P72>
+ <20191128165611.7lmjaszjl4gbo7u2@e107158-lin.cambridge.arm.com>
+ <20191128170025.ii3vqbj4jpcyghut@e107158-lin.cambridge.arm.com>
+ <20191128210246.GJ2889@paulmck-ThinkPad-P72>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191128210246.GJ2889@paulmck-ThinkPad-P72>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A64-OLinuXino uses DCDC1 (VCC-IO) for MMC1 supply. In the dts
-ALDO2 is set, which is VCC-PL. Since DCDC1 is always present, the boards
-are working without a problem.
+On 11/28/19 13:02, Paul E. McKenney wrote:
+> On Thu, Nov 28, 2019 at 05:00:26PM +0000, Qais Yousef wrote:
+> > On 11/28/19 16:56, Qais Yousef wrote:
+> > > On 11/27/19 13:47, Paul E. McKenney wrote:
+> > > > On Mon, Nov 25, 2019 at 11:27:52AM +0000, Qais Yousef wrote:
+> > > > > The core device API performs extra housekeeping bits that are missing
+> > > > > from directly calling cpu_up/down.
+> > > > > 
+> > > > > See commit a6717c01ddc2 ("powerpc/rtas: use device model APIs and
+> > > > > serialization during LPM") for an example description of what might go
+> > > > > wrong.
+> > > > > 
+> > > > > This also prepares to make cpu_up/down a private interface for anything
+> > > > > but the cpu subsystem.
+> > > > > 
+> > > > > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
+> > > > > CC: Davidlohr Bueso <dave@stgolabs.net>
+> > > > > CC: "Paul E. McKenney" <paulmck@kernel.org>
+> > > > > CC: Josh Triplett <josh@joshtriplett.org>
+> > > > > CC: linux-kernel@vger.kernel.org
+> > > > 
+> > > > Looks fine from an rcutorture viewpoint, but why not provide an API
+> > > > that pulled lock_device_hotplug() and unlock_device_hotplug() into the
+> > > > online/offline calls?
+> > > 
+> > > I *think* the right way to do what you say is by doing lock_device_hotplug()
+> > > inside device_{online, offline}() - which affects all drivers not just the CPU.
+> 
+> Or there could be a CPU-specific wrapper function that did the needed
+> locking.  (Whether this is worth it or not of course depends on the
+> number of invocations.)
 
-THis pacth sets the correct regulator.
+Okay I see what you mean now. driver/base/memory.c have {add,remove}_memory()
+that does what you say. I think we can replicate this in driver/base/cpu.c too.
 
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I can certainly do that, better as an improvement on top as I need to audit the
+code to make sure the critical sections weren't relying on this lock to protect
+something else beside the online/offline operation.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index ad3559c576dd..869bb146a9ff 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -140,7 +140,7 @@
- &mmc1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	vmmc-supply = <&reg_aldo2>;
-+	vmmc-supply = <&reg_dcdc1>;
- 	vqmmc-supply = <&reg_dldo4>;
- 	mmc-pwrseq = <&wifi_pwrseq>;
- 	bus-width = <4>;
--- 
-2.17.1
+Thanks!
 
+--
+Qais Yousef
