@@ -2,102 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E2910D923
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 18:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F3210D927
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 18:50:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfK2Rl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 12:41:28 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52169 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbfK2Rl1 (ORCPT
+        id S1727022AbfK2RuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 12:50:00 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38788 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbfK2RuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 12:41:27 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1iakGi-0005XR-JC; Fri, 29 Nov 2019 17:41:25 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     gregkh@linuxfoundation.org
-Cc:     stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v2 2/2] USB: core: Attempt power cycle port when it's in eSS.Disabled state
-Date:   Sat, 30 Nov 2019 01:41:15 +0800
-Message-Id: <20191129174115.31683-2-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191129174115.31683-1-kai.heng.feng@canonical.com>
-References: <20191129174115.31683-1-kai.heng.feng@canonical.com>
+        Fri, 29 Nov 2019 12:50:00 -0500
+Received: by mail-lf1-f68.google.com with SMTP id r14so6968794lfm.5
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 09:49:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=Q7B1pOOucHBt87huxZBlRaeAfEu9kbB/mpRD5aQycvOlNGH6TplJuHQsRKJH4qH0UN
+         yWIKcAwhF//MFVM4/s4zo/x7KtobSF+Pbd54HCT2GwMZTMudeBTQLG365XOvOoIzblrG
+         5T0K9Po5PikQjYWKuzeRBtyiuqfdx5YrKRXmXnfimNY+4UG7y92c6nzcLuQMFJ9VyBXw
+         piRUxmIEwTUVmmIqAh+u/UF/H/S9SDOlUARBYvTSZD2is4I9ZsBeW7vgcIKhIcZtTVVX
+         4UTbLrXcJVaEQbWSCYfCNvcNVb62gcRaEQfDuqepjlqffCgNeFQXz4XdXrYshY3ef5bN
+         3BrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=EUMXLSP3Ey/TVSkNKq7Iaslr73dyyp/WEfNwWS7+74G/c2zogXyWuk9nE8lVuifkOY
+         SwHtDzszv5WHvDFmOBv91jYlHKo0xqZeyBCVVLVYSyAQoF7w37VV+ZF6WRu8Komouqbj
+         rEL9I8gZf2MG6dslMI0Py3JNl6NaIyzoCH0G37eFhJco2JpcFEo1sh3AqaRNgpRNJ6Dg
+         W3KIjJuuoukYPFeFsEWf8KO6rB48RYQvXA1incmCQqsi0OufFI3HT+Bt/FClB33yfaoB
+         ugBplz3E3IpvjFOlEjqm2ak0AB4WKQyfDVzna8J+aAJJRWJgtzBzG61PHy7vJdf/bCvG
+         v7qw==
+X-Gm-Message-State: APjAAAUC64WIEyiYCP+I82ciWs3KNIjTi/sKTSgmZ6pMbtAP4QYh8zxF
+        STK2mUniO0L8jXrMRZvQIIsBxUQW1yFAv0TCCY8=
+X-Google-Smtp-Source: APXvYqwuHQVhvXE3Rmn9Rke4XeTA4CAM0KSo4zk5cknqNS9x0TEWrT5R5gVRvICzIUVKlqgDl3BkCCqELE/H+XBwkZQ=
+X-Received: by 2002:ac2:4adc:: with SMTP id m28mr12689852lfp.26.1575049798083;
+ Fri, 29 Nov 2019 09:49:58 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a2e:a0c7:0:0:0:0:0 with HTTP; Fri, 29 Nov 2019 09:49:57
+ -0800 (PST)
+Reply-To: marianaduran86@hotmail.com
+From:   Mariana Duran <andrewroger36@gmail.com>
+Date:   Fri, 29 Nov 2019 17:49:57 +0000
+Message-ID: <CANRNauF5kJNTNQbP4AqjHLRUAffpCw0yt4F37yq4s-zAmGDiuA@mail.gmail.com>
+Subject: =?UTF-8?B?6K+35Zue5aSN5oiR?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Dell TB16, Realtek USB ethernet (r8152) connects to an SMSC hub which
-then connects to ASMedia xHCI's root hub:
-
-/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 5000M
-    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
-            |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
-
-Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp. USB5537B
-Bus 004 Device 003: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153 Gigabit Ethernet Adapter
-
-The SMSC hub may disconnect after system resume from suspend. When this
-happens, the reset resume attempt fails, and the last resort to disable
-the port and see something comes up later, also fails.
-
-When the issue occurs, the link state stays in eSS.Disabled state
-despite the warm reset attempts. Accoding to spec this can be caused by
-invalid VBus, after some expiremets, the SMSC hub can be brought back
-after a powercycle.
-
-So let's power cycle the port at the end of reset resume attempt, if
-it's in eSS.Disabled state.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v2:
-- Lower dev_info() to dev_dbg().
-
- drivers/usb/core/hub.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 6b6cd76ac5e6..a2e6001046f5 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2739,6 +2739,18 @@ static bool hub_port_warm_reset_required(struct usb_hub *hub, int port1,
- 		|| link_state == USB_SS_PORT_LS_COMP_MOD;
- }
- 
-+static bool hub_port_power_cycle_required(struct usb_hub *hub, int port1,
-+		u16 portstatus)
-+{
-+	u16 link_state;
-+
-+	if (!hub_is_superspeed(hub->hdev))
-+		return false;
-+
-+	link_state = portstatus & USB_PORT_STAT_LINK_STATE;
-+	return link_state == USB_SS_PORT_LS_SS_DISABLED;
-+}
-+
- static void hub_port_power_cycle(struct usb_hub *hub, int port1)
- {
- 	struct usb_port *port_dev = hub->ports[port1  - 1];
-@@ -3601,6 +3613,10 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
- 	if (status < 0) {
- 		dev_dbg(&udev->dev, "can't resume, status %d\n", status);
- 		hub_port_logical_disconnect(hub, port1);
-+		if (hub_port_power_cycle_required(hub, port1, portstatus)) {
-+			dev_dbg(&udev->dev, "device in disabled state, attempt power cycle\n");
-+			hub_port_power_cycle(hub, port1);
-+		}
- 	} else  {
- 		/* Try to enable USB2 hardware LPM */
- 		usb_enable_usb2_hardware_lpm(udev);
--- 
-2.17.1
 
