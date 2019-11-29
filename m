@@ -2,60 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E9810D88A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 17:33:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF8910D894
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 17:36:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfK2Qd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 11:33:28 -0500
-Received: from sonic306-20.consmr.mail.sg3.yahoo.com ([106.10.241.140]:45244
-        "EHLO sonic306-20.consmr.mail.sg3.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727158AbfK2Qd1 (ORCPT
+        id S1727086AbfK2QgB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 29 Nov 2019 11:36:01 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:44102 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfK2QgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 11:33:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com.ph; s=s2048; t=1575045201; bh=u+w+4enpSfCcELgOGbyxJo9ZBxERk39tL4f9H54lgiY=; h=Date:From:Reply-To:Subject:From:Subject; b=bETueXpn3N+R7KBs8Gfl1c9VrDX3Z+xUDlQHGqOAZG90V3XcPxJc9eTLBpfWWCTWu/RBLisYp8F+BBzgVeKd2Bh6OKBstfdTL1cZ6ZQG0TZQwfMp+xfA7WBK2chsoHE+v+DlINyxQHDHyWKSpccqlRGKap4fJ92gjlecmaMYVW/zblzWHNBqCWWiJkuSiUpc2g/nKCc6TegdwrI9sAtpw3DGbvGCsDahQ88W2lS9NWjJekAJwnqdV1GVlte4tL+gJgy7LUnlmtEd7G+1VyMO76QsY5PXjNLEjjKsbo3/vmj0+iTU2usbBewHHY31jP/uYYQE8ofjFDeXfOrkaIlXLw==
-X-YMail-OSG: aQGzQnIVM1mbr4PEPFB0XJZkjIO24qEiDCNchn0CaoX7AOInNhix9xuPlzdJw3.
- Bcgk7rlx7ETS5f_cUSq.D2qiSimuJTgbXeG0fswmImO35EeyxNcJxX1zF9q53qRf2AMa2AAljKLf
- U0I_C9A84zE8IEwvfqfC6fNSifOfT4BYqrgxG7pFCsnbLZkwc0U35gT.TRFWzbMWAfHD7.8elCK3
- xXCN5rGK.gQ7GBASsqf_Jpqdl_9K8N9QaQ1FX1bM1KnQgWEusovTh7qi_htEjKbeor9BIuZzwhs7
- AF8d8sjw3IKP6315F5rH3zgQMjK5ak.SMSN8wqJlvaqhtQn0C3AHu5HFCpQ1TD8TjWDljxCSCcMm
- VBliOGwwjQgVFH.o1B4SxOdgHehIdSoq8KxOE4lYb_rwuA08UlXFjCTMMFP4qMqxP29N_JqnO6YH
- wyWBZclJb9dHoj8_0vBbME0aEQc1H_egUnbHMhh6X1s9fyFMfJesbzQ5P.dmuwENcD_.CitDFDos
- UcnW_XSLhK2ZR.y_N57uo99I9oe.PVoqw7FQzg2VD4WQkYHHD1PPkPLDf99LJn6dm6XCZuMCKyZx
- VWB18SRW6gWfvIElsLezUTh9P7Z2x2xfExQ_Rae7wW4mdfDWXSGegyys1EDKBbuP7TK82.AwkHBX
- x5zio7BbS8Pukh2H9wFrM3R.tsoikV2mIQk6x_QPtbNcKDfOYPZ.X10TaEAd3ZJdTyVSN8e7Egiy
- JPC9XksVhaMfzYDd5_WTV.e2Xiu9uy.TLoF99E2RfP9GKJAYHsLSz58C6V6KSphAZmnenh6lRFyV
- JvdUgCiF_Lb5b0ci4CLfklor_gayefciHtdpj2ssvswdGb1UBZsYlv4L0NvRbm29GRvbDf4MgDzb
- G9bjqO8QOKShrLulrShrcpA1Lr9VVF0TfEiLkQRSuO_fdRGErrGQGtm5CbPIY7JW3fsVhuo4A1OW
- 9BKw4cULJVhEQ.z4lh2BXIY7Qr51ZYIk05VrKFsZdU9O6WF1.AUfoj99YlGy2Y97uXhg6_gpFf8V
- JjJjFAj3cvbPlbH0lFPhcqLsTmsGgNRlBdVbzleImBT3Lg3LCQ.y7eMECbnobBNyLBghxWIz85g3
- pDpX7QfZZWyIyuJrBkupr9HJmYLpf7IO90MitzqjpL_pagqcYvDHBGPe2MlbFXiBh5mfLBCrEXYE
- ll74XAzL.fD7aYQXJ3xlqLS7dIk9TXIqG1XZxvUKxBkoyqDsFpcZP4Lku2Hhn2sssr5VqyfXktxq
- AnBVYHoxiVIASrbymNdoE78WDshtiqU3KBmvtT8p0.cTZAPqLaFrwM5esSj62wXn_Ucw99sEn9aP
- zbPvniQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.sg3.yahoo.com with HTTP; Fri, 29 Nov 2019 16:33:21 +0000
-Date:   Fri, 29 Nov 2019 16:33:20 +0000 (UTC)
-From:   Mayveline Bote <alice00631@yahoo.com.ph>
-Reply-To: mayveline631@aol.com
-Message-ID: <744348868.7056185.1575045200623@mail.yahoo.com>
-Subject: Hello Dear,
+        Fri, 29 Nov 2019 11:36:00 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id A3CB6607BDB2;
+        Fri, 29 Nov 2019 17:35:56 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kOcQPONK-3hk; Fri, 29 Nov 2019 17:35:54 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id D5E1B6083139;
+        Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Au7ORLC9cK4z; Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 8329F607BDB2;
+        Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+Date:   Fri, 29 Nov 2019 17:35:53 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Darrick <darrick.wong@oracle.com>,
+        torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, tytso <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-xfs@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Message-ID: <51833696.101442.1575045353332.JavaMail.zimbra@nod.at>
+In-Reply-To: <20191129142045.7215-1-agruenba@redhat.com>
+References: <20191129142045.7215-1-agruenba@redhat.com>
+Subject: Re: [PATCH v2] fs: Fix page_mkwrite off-by-one errors
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Fix page_mkwrite off-by-one errors
+Thread-Index: OwUcLuBZ37Awg+4d3rXFBEMLhx0YIg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear,
- My name is Mayveline P. Bote, Please I will like to discuss a very important issue that will be of a benefit to you so please if you are interested, I will like you to respond to me in urgently,
- Please do respond to me very urgently so that we can discuss the issue in private. then nobody can read our mails or know what we are discussing.
- Thanks and I wait to hear from you urgently
- Best regards
- Mayveline
+----- Ursprüngliche Mail -----
+> Von: "Andreas Gruenbacher" <agruenba@redhat.com>
+> An: "Christoph Hellwig" <hch@infradead.org>, "Darrick" <darrick.wong@oracle.com>
+> CC: "Andreas Gruenbacher" <agruenba@redhat.com>, "torvalds" <torvalds@linux-foundation.org>, "linux-kernel"
+> <linux-kernel@vger.kernel.org>, "Al Viro" <viro@zeniv.linux.org.uk>, "Jeff Layton" <jlayton@kernel.org>, "Sage Weil"
+> <sage@redhat.com>, "Ilya Dryomov" <idryomov@gmail.com>, "tytso" <tytso@mit.edu>, "Andreas Dilger"
+> <adilger.kernel@dilger.ca>, "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>, linux-xfs@vger.kernel.org,
+> "linux-fsdevel" <linux-fsdevel@vger.kernel.org>, "richard" <richard@nod.at>, "Artem Bityutskiy" <dedekind1@gmail.com>,
+> "Adrian Hunter" <adrian.hunter@intel.com>, ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+> linux-f2fs-devel@lists.sourceforge.net, "linux-mtd" <linux-mtd@lists.infradead.org>, "Chris Mason" <clm@fb.com>, "Josef
+> Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>, "linux-btrfs" <linux-btrfs@vger.kernel.org>
+> Gesendet: Freitag, 29. November 2019 15:20:45
+> Betreff: [PATCH v2] fs: Fix page_mkwrite off-by-one errors
 
+> The check in block_page_mkwrite meant to determine whether an offset is
+> within the inode size is off by one.  This bug has spread to
+> iomap_page_mkwrite and to several filesystems (ubifs, ext4, f2fs, ceph).
+> To fix that, introduce a new page_mkwrite_check_truncate helper that
+> checks for truncate and computes the bytes in the page up to EOF, and
+> use that helper in the above mentioned filesystems and in btrfs.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-DISCLAIMER:
+Thank you for fixing UBIFS!
 
-The message and its attachments are for designated recipient(s) only and may contain privileged, proprietary and private information. If you have received it in error, kindly delete it and notify the sender immediately.
-Mrs. Mayveline P. Bote, accepts no liability for any loss or damage resulting directly and indirectly from the transmission of this e-mail message.
+Acked-by: Richard Weinberger <richard@nod.at>
+
+Thanks,
+//richard
