@@ -2,184 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE6BF10D500
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C611510D50B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfK2Liv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 06:38:51 -0500
-Received: from relay.sw.ru ([185.231.240.75]:46478 "EHLO relay.sw.ru"
+        id S1726917AbfK2LkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 06:40:14 -0500
+Received: from olimex.com ([184.105.72.32]:33569 "EHLO olimex.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726215AbfK2Liu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:38:50 -0500
-Received: from dhcp-172-16-25-5.sw.ru ([172.16.25.5])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1iaebJ-0001SW-HX; Fri, 29 Nov 2019 14:38:17 +0300
-Subject: Re: [PATCH v11 1/4] kasan: support backing vmalloc space with real
- shadow memory
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Daniel Axtens <dja@axtens.net>, Qian Cai <cai@lca.pw>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        id S1726770AbfK2LkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 06:40:06 -0500
+Received: from localhost.localdomain ([94.155.250.134])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 03:39:54 -0800
+From:   Stefan Mavrodiev <stefan@olimex.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Vasily Gorbik <gor@linux.ibm.com>
-References: <20191031093909.9228-1-dja@axtens.net>
- <20191031093909.9228-2-dja@axtens.net> <1573835765.5937.130.camel@lca.pw>
- <871ru5hnfh.fsf@dja-thinkpad.axtens.net>
- <952ec26a-9492-6f71-bab1-c1def887e528@virtuozzo.com>
- <CACT4Y+ZGO8b88fUyFe-WtV3Ubr11ChLY2mqk8YKWN9o0meNtXA@mail.gmail.com>
- <CACT4Y+Z+VhfVpkfg-WFq_kFMY=DE+9b_DCi-mCSPK-udaf_Arg@mail.gmail.com>
- <CACT4Y+Yog=PHF1SsLuoehr2rcbmfvLUW+dv7Vo+1RfdTOx7AUA@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <2297c356-0863-69ce-85b6-8608081295ed@virtuozzo.com>
-Date:   Fri, 29 Nov 2019 14:38:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Yog=PHF1SsLuoehr2rcbmfvLUW+dv7Vo+1RfdTOx7AUA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Cc:     linux-sunxi@googlegroups.com, Stefan Mavrodiev <stefan@olimex.com>
+Subject: [PATCH v2 0/3] arm64: dts: allwinner: a64: olinuxino: Update regulators
+Date:   Fri, 29 Nov 2019 13:39:38 +0200
+Message-Id: <20191129113941.20170-1-stefan@olimex.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch serie updates bank regulators for A64-OLinuXino and 
+A64-OLinuXino-eMMC.
 
+Also, eMMC supply is changed to ELDO1, which is the actual one. The same is
+done for the SDIO card - ALDO2 is changed to DCDC1.
 
-On 11/29/19 2:02 PM, Dmitry Vyukov wrote:
-> On Fri, Nov 29, 2019 at 11:58 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> On Fri, Nov 29, 2019 at 11:43 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->>>
->>> On Tue, Nov 19, 2019 at 10:54 AM Andrey Ryabinin
->>> <aryabinin@virtuozzo.com> wrote:
->>>> On 11/18/19 6:29 AM, Daniel Axtens wrote:
->>>>> Qian Cai <cai@lca.pw> writes:
->>>>>
->>>>>> On Thu, 2019-10-31 at 20:39 +1100, Daniel Axtens wrote:
->>>>>>>     /*
->>>>>>>      * In this function, newly allocated vm_struct has VM_UNINITIALIZED
->>>>>>>      * flag. It means that vm_struct is not fully initialized.
->>>>>>> @@ -3377,6 +3411,9 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
->>>>>>>
->>>>>>>             setup_vmalloc_vm_locked(vms[area], vas[area], VM_ALLOC,
->>>>>>>                              pcpu_get_vm_areas);
->>>>>>> +
->>>>>>> +           /* assume success here */
->>>>>>> +           kasan_populate_vmalloc(sizes[area], vms[area]);
->>>>>>>     }
->>>>>>>     spin_unlock(&vmap_area_lock);
->>>>>>
->>>>>> Here it is all wrong. GFP_KERNEL with in_atomic().
->>>>>
->>>>> I think this fix will work, I will do a v12 with it included.
->>>>
->>>> You can send just the fix. Andrew will fold it into the original patch before sending it to Linus.
->>>>
->>>>
->>>>
->>>>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->>>>> index a4b950a02d0b..bf030516258c 100644
->>>>> --- a/mm/vmalloc.c
->>>>> +++ b/mm/vmalloc.c
->>>>> @@ -3417,11 +3417,14 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
->>>>>
->>>>>                 setup_vmalloc_vm_locked(vms[area], vas[area], VM_ALLOC,
->>>>>                                  pcpu_get_vm_areas);
->>>>> +       }
->>>>> +       spin_unlock(&vmap_area_lock);
->>>>>
->>>>> +       /* populate the shadow space outside of the lock */
->>>>> +       for (area = 0; area < nr_vms; area++) {
->>>>>                 /* assume success here */
->>>>>                 kasan_populate_vmalloc(sizes[area], vms[area]);
->>>>>         }
->>>>> -       spin_unlock(&vmap_area_lock);
->>>>>
->>>>>         kfree(vas);
->>>>>         return vms;
->>>
->>> Hi,
->>>
->>> I am testing this support on next-20191129 and seeing the following warnings:
->>>
->>> BUG: sleeping function called from invalid context at mm/page_alloc.c:4681
->>> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 44, name: kworker/1:1
->>> 4 locks held by kworker/1:1/44:
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at:
->>> __write_once_size include/linux/compiler.h:247 [inline]
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at:
->>> arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at: atomic64_set
->>> include/asm-generic/atomic-instrumented.h:868 [inline]
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at:
->>> atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at: set_work_data
->>> kernel/workqueue.c:615 [inline]
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at:
->>> set_work_pool_and_clear_pending kernel/workqueue.c:642 [inline]
->>>  #0: ffff888067c26d28 ((wq_completion)events){+.+.}, at:
->>> process_one_work+0x88b/0x1750 kernel/workqueue.c:2235
->>>  #1: ffffc900002afdf0 (pcpu_balance_work){+.+.}, at:
->>> process_one_work+0x8c0/0x1750 kernel/workqueue.c:2239
->>>  #2: ffffffff8943f080 (pcpu_alloc_mutex){+.+.}, at:
->>> pcpu_balance_workfn+0xcc/0x13e0 mm/percpu.c:1845
->>>  #3: ffffffff89450c78 (vmap_area_lock){+.+.}, at: spin_lock
->>> include/linux/spinlock.h:338 [inline]
->>>  #3: ffffffff89450c78 (vmap_area_lock){+.+.}, at:
->>> pcpu_get_vm_areas+0x1449/0x3df0 mm/vmalloc.c:3431
->>> Preemption disabled at:
->>> [<ffffffff81a84199>] spin_lock include/linux/spinlock.h:338 [inline]
->>> [<ffffffff81a84199>] pcpu_get_vm_areas+0x1449/0x3df0 mm/vmalloc.c:3431
->>> CPU: 1 PID: 44 Comm: kworker/1:1 Not tainted 5.4.0-next-20191129+ #5
->>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.12.0-1 04/01/2014
->>> Workqueue: events pcpu_balance_workfn
->>> Call Trace:
->>>  __dump_stack lib/dump_stack.c:77 [inline]
->>>  dump_stack+0x199/0x216 lib/dump_stack.c:118
->>>  ___might_sleep.cold.97+0x1f5/0x238 kernel/sched/core.c:6800
->>>  __might_sleep+0x95/0x190 kernel/sched/core.c:6753
->>>  prepare_alloc_pages mm/page_alloc.c:4681 [inline]
->>>  __alloc_pages_nodemask+0x3cd/0x890 mm/page_alloc.c:4730
->>>  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2211
->>>  alloc_pages include/linux/gfp.h:532 [inline]
->>>  __get_free_pages+0xc/0x40 mm/page_alloc.c:4786
->>>  kasan_populate_vmalloc_pte mm/kasan/common.c:762 [inline]
->>>  kasan_populate_vmalloc_pte+0x2f/0x1b0 mm/kasan/common.c:753
->>>  apply_to_pte_range mm/memory.c:2041 [inline]
->>>  apply_to_pmd_range mm/memory.c:2068 [inline]
->>>  apply_to_pud_range mm/memory.c:2088 [inline]
->>>  apply_to_p4d_range mm/memory.c:2108 [inline]
->>>  apply_to_page_range+0x5ca/0xa00 mm/memory.c:2133
->>>  kasan_populate_vmalloc+0x69/0xa0 mm/kasan/common.c:791
->>>  pcpu_get_vm_areas+0x1596/0x3df0 mm/vmalloc.c:3439
->>>  pcpu_create_chunk+0x240/0x7f0 mm/percpu-vm.c:340
->>>  pcpu_balance_workfn+0x1033/0x13e0 mm/percpu.c:1934
->>>  process_one_work+0x9b5/0x1750 kernel/workqueue.c:2264
->>>  worker_thread+0x8b/0xd20 kernel/workqueue.c:2410
->>>  kthread+0x365/0x450 kernel/kthread.c:255
->>>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
->>>
->>>
->>> Not sure if it's the same or not. Is it addressed by something in flight?
->>>
->>> My config:
->>> https://gist.githubusercontent.com/dvyukov/36c7be311fdec9cd51c649f7c3cb2ddb/raw/39c6f864fdd0ffc53f0822b14c354a73c1695fa1/gistfile1.txt
->>
->>
->> I've tried this fix for pcpu_get_vm_areas:
->> https://groups.google.com/d/msg/kasan-dev/t_F2X1MWKwk/h152Z3q2AgAJ
->> and it helps. But this will break syzbot on linux-next soon.
-> 
-> 
-> Can this be related as well?
-> Crashes on accesses to shadow on the ion memory...
+Changes for v2:
+ - Restore the original eMMC vmmc-supply property
+ - Add fixes and kernel tags
 
-Nope, it's vm_map_ram() not being handled
+Stefan Mavrodiev (3):
+  arm64: dts: allwinner: a64: olinuxino: Fix eMMC supply regulator
+  arm64: dts: allwinner: a64: olinuxino: Add bank supply regulators
+  arm64: dts: allwinner: a64: olinuxino: Fix SDIO supply regulator
+
+ .../allwinner/sun50i-a64-olinuxino-emmc.dts    |  6 +++++-
+ .../dts/allwinner/sun50i-a64-olinuxino.dts     | 18 +++++++++++++++++-
+ 2 files changed, 22 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
