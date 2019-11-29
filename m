@@ -2,121 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E100210D910
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 18:27:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E91CF10D8DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 18:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbfK2R1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 12:27:04 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:35734 "EHLO ale.deltatee.com"
+        id S1727090AbfK2RZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 12:25:29 -0500
+Received: from mga14.intel.com ([192.55.52.115]:64167 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfK2R1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 12:27:04 -0500
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1iak2k-0008Lo-N5; Fri, 29 Nov 2019 10:26:59 -0700
-To:     James Sewart <jamessewart@arista.com>
-Cc:     linux-pci@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Dmitry Safonov <dima@arista.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>
-References: <20191120193228.GA103670@google.com>
- <6A902F0D-FE98-4760-ADBB-4D5987D866BE@arista.com>
- <20191126173833.GA16069@infradead.org>
- <547214A9-9FD0-4DD5-80E1-1F5A467A0913@arista.com>
- <9c54c5dd-702c-a19b-38ba-55ab73b24729@deltatee.com>
- <435064D4-00F0-47F5-94D2-2C354F6B1206@arista.com>
- <058383d9-69fe-65e3-e410-eebd99840261@deltatee.com>
- <F26CC19F-66C2-466B-AE30-D65E10BA3022@arista.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d811576e-0f89-2303-a554-2701af5c5647@deltatee.com>
-Date:   Fri, 29 Nov 2019 10:26:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <F26CC19F-66C2-466B-AE30-D65E10BA3022@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: helgaas@kernel.org, alex.williamson@redhat.com, dima@arista.com, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, 0x7f454c46@gmail.com, hch@infradead.org, linux-pci@vger.kernel.org, jamessewart@arista.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v4 1/2] PCI: Add parameter nr_devfns to pci_add_dma_alias
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1726909AbfK2RZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 12:25:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Nov 2019 09:25:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,257,1571727600"; 
+   d="scan'208";a="241108952"
+Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
+  by fmsmga002.fm.intel.com with ESMTP; 29 Nov 2019 09:25:26 -0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, jmattson@google.com,
+        sean.j.christopherson@intel.com
+Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v8 00/10] Enable Sub-Page Write Protection Support
+Date:   Sat, 30 Nov 2019 01:26:59 +0800
+Message-Id: <20191129172709.11347-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+EPT-Based Sub-Page write Protection(SPP) allows Virtual Machine Monitor(VMM)
+specify write-permission for guest physical memory at a sub-page(128 byte)
+granularity. When SPP works, HW enforces write-access check for sub-pages
+within a protected 4KB page.
+
+The feature targets to provide fine-grained memory protection for
+usages such as memory guard and VM introspection etc.
+
+SPP is active when the "sub-page write protection" (bit 23) is 1 in
+Secondary VM-Execution Controls. The feature is backed with a Sub-Page
+Permission Table(SPPT), and subpage permission vector is stored in the
+leaf entry of SPPT. The root page is referenced via a Sub-Page Permission
+Table Pointer (SPPTP) in VMCS.
+
+To enable SPP for guest memory, the guest page should be first mapped
+to a 4KB EPT entry, then set SPP bit 61 of the corresponding entry. 
+While HW walks EPT, it traverses SPPT with the gpa to look up the sub-page
+permission vector within SPPT leaf entry. If the corresponding bit is set,
+write to sub-page is permitted, otherwise, SPP induced EPT violation is generated.
+
+This patch serial passed SPP function test and selftest on Ice-Lake platform.
+
+Please refer to the SPP introduction document in this patch set and
+Intel SDM for details:
+
+Intel SDM:
+https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+
+Patch 1: Documentation for SPP and related API.
+Patch 2: Add control flags for Sub-Page Protection(SPP).
+Patch 3: Add SPP Table setup functions.
+Patch 4: Add functions to create/destroy SPP bitmap block.
+Patch 5: Introduce user-space SPP IOCTLs.
+Patch 6: Set up SPP paging table at vmentry/vmexit.
+Patch 7: Enable Lazy mode SPP protection.
+Patch 8: Handle SPP protected pages when VM memory changes.
+Patch 9: Add SPP protection check in emulation case.
+Patch 10: SPP selftest.
+
+Change logs:
+V7 -> V8:
+  1. Changed ioctl interface definition per Paolo's comments.
+  2. Replaced SPP_INIT ioctl funciton with KVM_ENABLE_CAP.
+  3. Removed SPP bit from X86 feature word.
+  4. Returned instruction length to user-space when SPP induced EPT
+     violation happens, this is to provide flexibility to use SPP,
+     revert write or track write.
+  5. Modified selftest application and added into this serial.
+  6. Simplified SPP permission vector check.
+  7. Moved spp.c and spp.h to kvm/mmu folder.
+  8. Other code fix according to Paolo's feedback and testing.
+
+V6 -> V7:
+  1. Configured all available protected pages once SPP induced vmexit
+     happens since there's no PRESENT bit in SPPT leaf entry.
+  2. Changed SPP protection check flow in tdp_page_fault().
+  3. Code refactor and minior fixes.
+
+V5 -> V6:
+  1. Added SPP protection patch for emulation cases per Jim's review.
+  2. Modified documentation and added API description per Jim's review.
+  3. Other minior changes suggested by Jim.
+
+V4 -> V5:
+  1. Enable SPP support for Hugepage(1GB/2MB) to extend application.
+  2. Make SPP miss vm-exit handler as the unified place to set up SPPT.
+  3. If SPP protected pages are access-tracked or dirty-page-tracked,
+     store SPP flag in reserved address bit, restore it in
+     fast_page_fault() handler.
+  4. Move SPP specific functions to vmx/spp.c and vmx/spp.h
+  5. Rebased code to kernel v5.3
+  6. Other change suggested by KVM community.
+  
+V3 -> V4:
+  1. Modified documentation to make it consistent with patches.
+  2. Allocated SPPT root page in init_spp() instead of vmx_set_cr3() to
+     avoid SPPT miss error.
+  3. Added back co-developers and sign-offs.
+
+V2 -> V3:                                                                
+  1. Rebased patches to kernel 5.1 release                                
+  2. Deferred SPPT setup to EPT fault handler if the page is not
+     available while set_subpage() is being called.
+  3. Added init IOCTL to reduce extra cost if SPP is not used.
+  4. Refactored patch structure, cleaned up cross referenced functions.
+  5. Added code to deal with memory swapping/migration/shrinker cases.
+
+V2 -> V1:
+  1. Rebased to 4.20-rc1
+  2. Move VMCS change to a separated patch.
+  3. Code refine and Bug fix 
 
 
-On 2019-11-29 10:19 a.m., James Sewart wrote:
-> 
-> 
->> On 29 Nov 2019, at 16:50, Logan Gunthorpe <logang@deltatee.com> wrote:
->>
->>
->>
->> On 2019-11-29 5:49 a.m., James Sewart wrote:
->>> pci_add_dma_alias can now be used to create a dma alias for a range of
->>> devfns.
->>>
->>> Signed-off-by: James Sewart <jamessewart@arista.com>
->>> ---
->>> drivers/pci/pci.c    | 23 ++++++++++++++++++-----
->>> drivers/pci/quirks.c | 14 +++++++-------
->>> include/linux/pci.h  |  2 +-
->>> 3 files changed, 26 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->>> index a97e2571a527..9b0e3481fe17 100644
->>> --- a/drivers/pci/pci.c
->>> +++ b/drivers/pci/pci.c
->>> @@ -5857,7 +5857,8 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
->>> /**
->>>  * pci_add_dma_alias - Add a DMA devfn alias for a device
->>>  * @dev: the PCI device for which alias is added
->>> - * @devfn: alias slot and function
->>> + * @devfn_from: alias slot and function
->>> + * @nr_devfns: Number of subsequent devfns to alias
->>>  *
->>>  * This helper encodes an 8-bit devfn as a bit number in dma_alias_mask
->>>  * which is used to program permissible bus-devfn source addresses for DMA
->>> @@ -5873,8 +5874,14 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
->>>  * cannot be left as a userspace activity).  DMA aliases should therefore
->>>  * be configured via quirks, such as the PCI fixup header quirk.
->>>  */
->>> -void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
->>> +void pci_add_dma_alias(struct pci_dev *dev, u8 devfn_from, unsigned nr_devfns)
->>> {
->>> +	int devfn_to;
->>> +
->>> +	if (nr_devfns > U8_MAX+1)
->>> +		nr_devfns = U8_MAX+1;
->>
->> Why +1? That doesn't seem right to me….
-> 
-> U8_MAX is the max number U8 can represent(255) but is one less than the number 
-> of values it can represent(256). devfns can be 0.0 to 1f.7 inclusive(I think) 
-> so the number of possible devfns is 256. Thinking about it, maybe the 
-> zalloc should be U8_MAX+1 too?
-> 
-> I might be wrong though, what do you reckon?
+Yang Weijiang (10):
+  Documentation: Introduce EPT based Subpage Protection and related APIs
+  vmx: spp: Add control flags for Sub-Page Protection(SPP)
+  mmu: spp: Add SPP Table setup functions
+  mmu: spp: Add functions to operate SPP access bitmap
+  x86: spp: Introduce user-space SPP IOCTLs
+  vmx: spp: Set up SPP paging table at vmentry/vmexit
+  mmu: spp: Enable Lazy mode SPP protection
+  mmu: spp: Handle SPP protected pages when VM memory changes
+  x86: spp: Add SPP protection check in emulation
+  kvm: selftests: selftest for Sub-Page protection
 
-Right, yes, but I actually think the original code is wrong. It's only
-allocating a bitmap that holds 255 values and you're trying to insert
-256 ones into that bitmap. It's probably ok, because there's no way to
-allocate an odd sized bitmap, but it's probably worth fixing for clarity.
+ Documentation/virt/kvm/api.txt                |  38 ++
+ Documentation/virtual/kvm/spp_kvm.txt         | 180 ++++++
+ arch/x86/include/asm/kvm_host.h               |  11 +-
+ arch/x86/include/asm/vmx.h                    |  10 +
+ arch/x86/include/uapi/asm/vmx.h               |   2 +
+ arch/x86/kvm/mmu.h                            |   2 +
+ arch/x86/kvm/mmu/mmu.c                        |  75 ++-
+ arch/x86/kvm/mmu/spp.c                        | 611 ++++++++++++++++++
+ arch/x86/kvm/mmu/spp.h                        |  35 +
+ arch/x86/kvm/vmx/capabilities.h               |   5 +
+ arch/x86/kvm/vmx/vmx.c                        | 102 +++
+ arch/x86/kvm/x86.c                            | 134 +++-
+ include/uapi/linux/kvm.h                      |  18 +
+ tools/testing/selftests/kvm/Makefile          |   2 +-
+ tools/testing/selftests/kvm/lib/kvm_util.c    |   1 +
+ tools/testing/selftests/kvm/x86_64/spp_test.c | 234 +++++++
+ 16 files changed, 1455 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
+ create mode 100644 arch/x86/kvm/mmu/spp.c
+ create mode 100644 arch/x86/kvm/mmu/spp.h
+ create mode 100644 tools/testing/selftests/kvm/x86_64/spp_test.c
 
-It also looks wrong in pci_for_each_dma_alias() as well, so I'd probably
-fix both those up in a separate prep-patch.
+-- 
+2.17.2
 
-Logan
