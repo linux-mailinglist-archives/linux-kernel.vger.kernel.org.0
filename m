@@ -2,93 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF2110D2D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 09:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BDE10D2AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 09:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfK2IzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 03:55:19 -0500
-Received: from sender4-pp-o98.zoho.com ([136.143.188.98]:25857 "EHLO
-        sender4-pp-o98.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfK2IzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 03:55:18 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1575017651; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=aHQGL27AFyIrx+4oOxuaIqQQQ05SYfgXcvBgDPo74I4GtjesLSMcmmSf98E4hz0E8fSu2z7kqUVejs8NL3zHAW0a7gU3S7shqull0lJlOaFeg4QiWfxs32e1UkqeGrt+LdQbQ/V2I+V9B0dlztkZBEwBt2rZK8fdvE1Zk5LRiXQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1575017651; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To; 
-        bh=1hGPrm+p5zUCh8vVbV4PGe97UQ4RnYIUCs3Zs7VaTEA=; 
-        b=eyAQlfXg11rewE0YRYgPP0SRA+Znw3khgFYEWhREQsg5kW4qcEF/162fNN0dDCCPZCkjAOkvrZEtSdcg3AsqsPwLIuF+6vCzs9hisj4To48ancE5xeOzyM6UWX11FjkoYLSCRONdT2tIqRqebKuTv7gEZuY1fYYcMYWQ1TDZGLo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=JOkHCOHculHLpgRfs0cQ+GrhUZ6ZNVMhPKMrEMY9S1OFzi8T3JaB/la396AWgcR0vSPX1hg2A4/t
-    vkKWJUOv9ljPKin4glgH++3MSNLieW1c0/8zvcGfgfnDd/nQgO0O  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1575017651;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        bh=1hGPrm+p5zUCh8vVbV4PGe97UQ4RnYIUCs3Zs7VaTEA=;
-        b=cBGFQ57soBFWmCZPK1RiYIEn9CJ3aKspL4ueR2PYYkql0kl14d65Wx3TO0UVdLxZ
-        m1L3qLC4VZ0QSJSDB0mfZjMiebvEz7UQTiQwkNscUfGtPJfR/U7lHSrujMT2Vv7ah31
-        1kwSKTulP8+JC1zARaOS+kcRvNY11cSbbg4ExmGw=
-Received: from zhouyanjie-virtual-machine.localdomain (139.207.146.46 [139.207.146.46]) by mx.zohomail.com
-        with SMTPS id 1575017648817736.2370865952828; Fri, 29 Nov 2019 00:54:08 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
-        jhogan@kernel.org, mripard@kernel.org, shawnguo@kernel.org,
-        mark.rutland@arm.com, syq@debian.org, ralf@linux-mips.org,
-        heiko@sntech.de, icenowy@aosc.io,
-        laurent.pinchart@ideasonboard.com, krzk@kernel.org,
-        geert+renesas@glider.be, paul@crapouillou.net,
-        prasannatsmkumar@gmail.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, 772753199@qq.com
-Subject: [PATCH v6 10/12] MIPS: CU1000: Update defconfig for rtc.
-Date:   Fri, 29 Nov 2019 16:48:51 +0800
-Message-Id: <1575017333-29020-11-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575017333-29020-1-git-send-email-zhouyanjie@zoho.com>
-References: <1575017333-29020-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        id S1726920AbfK2Ivy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 03:51:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbfK2Ivy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 03:51:54 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2B9A2176D;
+        Fri, 29 Nov 2019 08:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575017512;
+        bh=hD42nUg99Rz/8HdFyMo6SgfAxJfUWnVYcASfacCMKek=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c0BXQV5fg0S2pmGMs8hI9v4+xRv5gAXLH8OFmtyzHnmQ4LjOWlS0ZLkZzQtP63YyD
+         p86nCAWtz8eP1UnvNntBX5cTRdMBa7Rv5VvSuo6437do921V7PSbSou0Ajavdk0nWf
+         Uq9Sm5rRJAKj6kVyTm3RLU3ydagpGjV98L4FrtBM=
+Date:   Fri, 29 Nov 2019 09:51:50 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 00/66] 5.4.1-stable review
+Message-ID: <20191129085150.GA3584430@kroah.com>
+References: <20191127202632.536277063@linuxfoundation.org>
+ <ee4a83ba-e746-42f9-34c1-18caf2e369c8@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee4a83ba-e746-42f9-34c1-18caf2e369c8@roeck-us.net>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Selected rtc support by default.
+On Thu, Nov 28, 2019 at 10:47:54AM -0800, Guenter Roeck wrote:
+> On 11/27/19 12:31 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.1 release.
+> > There are 66 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
+> > Anything received after that time might be too late.
+> > 
+> 
+> Build results:
+> 	total: 158 pass: 157 fail: 1
+> Failed builds:
+> 	mips:allmodconfig
+> Qemu test results:
+> 	total: 394 pass: 394 fail: 0
+> 
+> The mips build failure is well known and inherited from mainline.
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
----
+Thanks for testing all of these and letting me know.
 
-Notes:
-    v5:
-    New patch.
-    
-    v5->v6:
-    No change.
-
- arch/mips/configs/cu1000-neo_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/mips/configs/cu1000-neo_defconfig b/arch/mips/configs/cu1000-neo_defconfig
-index eef0c5a..b2c090a 100644
---- a/arch/mips/configs/cu1000-neo_defconfig
-+++ b/arch/mips/configs/cu1000-neo_defconfig
-@@ -63,6 +63,8 @@ CONFIG_GPIO_SYSFS=y
- # CONFIG_USB_SUPPORT is not set
- CONFIG_MMC=y
- CONFIG_MMC_JZ4740=y
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_JZ4740=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_JZ4780=y
- # CONFIG_IOMMU_SUPPORT is not set
--- 
-2.7.4
-
-
+greg k-h
