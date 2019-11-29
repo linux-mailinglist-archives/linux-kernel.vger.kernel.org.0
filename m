@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 322A710DB39
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:39:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0916710DB38
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:39:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387462AbfK2Vjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 16:39:48 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39311 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387424AbfK2Vjq (ORCPT
+        id S2387475AbfK2Vjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 16:39:49 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45576 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387435AbfK2Vjr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 16:39:46 -0500
-Received: by mail-lf1-f67.google.com with SMTP id q6so542612lfb.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:39:43 -0800 (PST)
+        Fri, 29 Nov 2019 16:39:47 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so23533215lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:39:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0VIY072ZJlZj4z1mcJleK9agtZhmef7Eqj9dCGXoaPE=;
-        b=kJAnMVeuP8snQfAobCu21qO8VB0dZHBZDPwF5pdzuZliCBWBT+7/r1Tw/t58TzPqwM
-         1aa98YIogWyt2+iNcVZbXaWIIupi/Pmt+Xr0fC62sXUhkXmgmY+8c4ZreiPAW/TeXWoG
-         8IzwcuIIpzDlF/3ad4TGLYYP9iY76EKv+fWvPb16UmLjI49qPVaj9BXZd+wPztIYrL90
-         JYW25jtOhjy2gqXw15XYCrFv3FauXiP4hNh56HgVC7t6lAg5+2z+TNM9t9KETuSBITjy
-         GHDWYit7hXxO/dGQLTO+bLl3M74QFXmppNBsE7bYL12YBUtwu7jiHCpAs3Yumc6G/IlA
-         fXLg==
+        bh=P7+c1+/bAwglAnZeDLT/AzXmg5yCseUiMi1ICe2LvSE=;
+        b=EzH2qPmCHNHcb1auzi3Ei2y+G1OXB1OrTfx+sjj78yReiH7lHbrViQH4E2FvJIsWG/
+         AkF9Yr9H8uxC2pUaGuz+hZSVNTf677rUiBQqMVNOEjBSS3r+VeOHVRwZ0Js9oWG28AZ9
+         5Sbfky7KacyC9lADKEw4iparWLA+2plZ6VxHZc5DBpMKM6X/RzV4QeY+KQnD8QMXTN1P
+         4M+un0eT+YVHCI4MxEBnlMh5eKIgbAWVJbgJOaBDi0wpzMJFSPjx67ni3yuNyfzOmcij
+         f+cjghCZ7sNG5oc5Z0rpOMOY72FiQdQbum3VyPETOhVS5E2ABk39JjogrTKqqKxziFrp
+         7OZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0VIY072ZJlZj4z1mcJleK9agtZhmef7Eqj9dCGXoaPE=;
-        b=QeiVUMekOyBBDuUkrRWnReNX5MaQFOh1Ki7w5xMuBvjFGcZkj1CzGBp9nwjdIFMjwc
-         MM37aNl1K0qHlYsEmlNDXzNpUwcDgRXalHmSIOloBLhE/BQ8gmKtIyTcBMbOMWDBHfyC
-         0peEKVYTsAwd8t0w8ZRKjqQDOVTI3X0aanIPg0og6wTdwEfVpZiE3lfP4ogZfn+A/8mm
-         favMzPrwN9olwurdpAvUfP0H4PojrZr/E8PpgjyMMKVvbjBtfYdTFu1XWdaCmefYGFrF
-         n1U4zzeEr5LbXBWk6PgD7a89+9obvUfalVK1wYoqGBA6O2eBoYzmUdX26qXCEwVvqSq7
-         Xp/g==
-X-Gm-Message-State: APjAAAWsQ3XU5tlNhiFgPJHccr2Udsh2u6GObWgMfXBx+tM4zDtesL39
-        6OFgv7rWN/k3bOrcrQJROPZLZq7+15Dhkw==
-X-Google-Smtp-Source: APXvYqyPFOJP3LbNcrnULpaVcK05GoYjbZkn25HyDBR+a/U/LXJclR53qLuaVJaE8rGEZpxPtw3NvQ==
-X-Received: by 2002:a19:ed0f:: with SMTP id y15mr36683832lfy.3.1575063582905;
-        Fri, 29 Nov 2019 13:39:42 -0800 (PST)
+        bh=P7+c1+/bAwglAnZeDLT/AzXmg5yCseUiMi1ICe2LvSE=;
+        b=gxmDJbbzFmQHgdESrUOFDDAjL9qdJ8lSBN9/opcZRjzsIOjVkOkLhIPEOOrUOQZ+5j
+         3oprs4nV6MU//p9QDNYMUSzwcb4NFgF9nTPbGObnpGbkYFO7tNsaHqzc7/SI9t99w2ZE
+         SKFGrT7JRfvfMvjoDdn3r+kfU/k65LJKmBwzu/Qe1uVmSuPBnizesrfzLqs7G4nf8SQL
+         olVH82VJz5pnYYpmIuKVcVMDfc5veyzyBnPBOHwF20eZtFweIhqrEIgEcrYjJ+SZWgaN
+         vNY00+AXIkyMVtiPNEL9oy82V/M2TTxgng54heTz0UaZtWOfb8EndQn6C8EufT2dvm2G
+         vnNg==
+X-Gm-Message-State: APjAAAU1rHVoXAFeFqhr/x55BhjkJ2P0fbMQ9vXJWNVD+8KNsYn/Qhli
+        UsPdNuPbwHVRJpY8xxH5Xz8dvZG9b1q8Mg==
+X-Google-Smtp-Source: APXvYqzmK1qfUWNO5+GqLc/J91X2071nazdIN1DT9krqNIkK4AEPNYvVcnX1v7Q8I1+d4adHRrcEnw==
+X-Received: by 2002:ac2:53a8:: with SMTP id j8mr6064945lfh.163.1575063584334;
+        Fri, 29 Nov 2019 13:39:44 -0800 (PST)
 Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
-        by smtp.gmail.com with ESMTPSA id p4sm10817755lji.107.2019.11.29.13.39.41
+        by smtp.gmail.com with ESMTPSA id p4sm10817755lji.107.2019.11.29.13.39.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 13:39:42 -0800 (PST)
+        Fri, 29 Nov 2019 13:39:43 -0800 (PST)
 From:   Niklas Cassel <niklas.cassel@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
@@ -53,9 +53,9 @@ Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 4/5] arm64: defconfig: enable CONFIG_QCOM_CPR
-Date:   Fri, 29 Nov 2019 22:39:14 +0100
-Message-Id: <20191129213917.1301110-5-niklas.cassel@linaro.org>
+Subject: [PATCH v7 5/5] arm64: defconfig: enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM
+Date:   Fri, 29 Nov 2019 22:39:15 +0100
+Message-Id: <20191129213917.1301110-6-niklas.cassel@linaro.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191129213917.1301110-1-niklas.cassel@linaro.org>
 References: <20191129213917.1301110-1-niklas.cassel@linaro.org>
@@ -66,7 +66,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_QCOM_CPR.
+Enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -79,17 +79,17 @@ Changes since v6:
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e76b42b25dd6..4385033c0a34 100644
+index 4385033c0a34..09aaffd473a0 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -438,6 +438,7 @@ CONFIG_GPIO_PCA953X=y
- CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_MAX77620=y
- CONFIG_POWER_AVS=y
-+CONFIG_QCOM_CPR=y
- CONFIG_ROCKCHIP_IODOMAIN=y
- CONFIG_POWER_RESET_MSM=y
- CONFIG_POWER_RESET_XGENE=y
+@@ -88,6 +88,7 @@ CONFIG_ACPI_CPPC_CPUFREQ=m
+ CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
+ CONFIG_ARM_SCPI_CPUFREQ=y
+ CONFIG_ARM_IMX_CPUFREQ_DT=m
++CONFIG_ARM_QCOM_CPUFREQ_NVMEM=y
+ CONFIG_ARM_QCOM_CPUFREQ_HW=y
+ CONFIG_ARM_RASPBERRYPI_CPUFREQ=m
+ CONFIG_ARM_TEGRA186_CPUFREQ=y
 -- 
 2.23.0
 
