@@ -2,91 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F08410D4B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C5210D4BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 12:24:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfK2LXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 06:23:55 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:48624 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfK2LXy (ORCPT
+        id S1727047AbfK2LYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 06:24:05 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41303 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfK2LYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:23:54 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1iaeND-0004K9-PG; Fri, 29 Nov 2019 12:23:43 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5BB6C1C211A;
-        Fri, 29 Nov 2019 12:23:43 +0100 (CET)
-Date:   Fri, 29 Nov 2019 11:23:43 -0000
-From:   "tip-bot2 for Kai-Heng Feng" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] x86/intel: Disable HPET on Intel Ice Lake platforms
-Cc:     "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        feng.tang@intel.com, harry.pan@intel.com, hpa@zytor.com,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191129062303.18982-2-kai.heng.feng@canonical.com>
-References: <20191129062303.18982-2-kai.heng.feng@canonical.com>
+        Fri, 29 Nov 2019 06:24:04 -0500
+Received: from 79.184.255.242.ipv4.supernova.orange.pl (79.184.255.242) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 69300783449412aa; Fri, 29 Nov 2019 12:24:02 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] acpi: Fix Kconfig indentation
+Date:   Fri, 29 Nov 2019 12:24:02 +0100
+Message-ID: <2871482.TlNyQbTRmB@kreacher>
+In-Reply-To: <20191120134310.16355-1-krzk@kernel.org>
+References: <20191120134310.16355-1-krzk@kernel.org>
 MIME-Version: 1.0
-Message-ID: <157502662320.21853.1194845015436593183.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/urgent branch of tip:
+On Wednesday, November 20, 2019 2:43:10 PM CET Krzysztof Kozlowski wrote:
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+> 	$ sed -e 's/^        /\t/' -i */Kconfig
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/acpi/Kconfig | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index 4fb97511a16f..002838d23b86 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -104,9 +104,9 @@ config ACPI_PROCFS_POWER
+>  	depends on X86 && PROC_FS
+>  	help
+>  	  For backwards compatibility, this option allows
+> -          deprecated power /proc/acpi/ directories to exist, even when
+> -          they have been replaced by functions in /sys.
+> -          The deprecated directories (and their replacements) include:
+> +	  deprecated power /proc/acpi/ directories to exist, even when
+> +	  they have been replaced by functions in /sys.
+> +	  The deprecated directories (and their replacements) include:
+>  	  /proc/acpi/battery/* (/sys/class/power_supply/*) and
+>  	  /proc/acpi/ac_adapter/* (sys/class/power_supply/*).
+>  	  This option has no effect on /proc/acpi/ directories
+> @@ -448,7 +448,7 @@ config ACPI_CUSTOM_METHOD
+>  config ACPI_BGRT
+>  	bool "Boottime Graphics Resource Table support"
+>  	depends on EFI && (X86 || ARM64)
+> -        help
+> +	help
+>  	  This driver adds support for exposing the ACPI Boottime Graphics
+>  	  Resource Table, which allows the operating system to obtain
+>  	  data from the firmware boot splash. It will appear under
+> 
 
-Commit-ID:     e0748539e3d594dd26f0d27a270f14720b22a406
-Gitweb:        https://git.kernel.org/tip/e0748539e3d594dd26f0d27a270f14720b22a406
-Author:        Kai-Heng Feng <kai.heng.feng@canonical.com>
-AuthorDate:    Fri, 29 Nov 2019 14:23:03 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 29 Nov 2019 12:17:58 +01:00
+Applying as 5.5 material with a slightly modified subject, thanks!
 
-x86/intel: Disable HPET on Intel Ice Lake platforms
 
-Like CFL and CFL-H, ICL SoC has skewed HPET timer once it hits PC10.
-So let's disable HPET on ICL.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: feng.tang@intel.com
-Cc: harry.pan@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20191129062303.18982-2-kai.heng.feng@canonical.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/early-quirks.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/early-quirks.c b/arch/x86/kernel/early-quirks.c
-index 606711f..2f9ec14 100644
---- a/arch/x86/kernel/early-quirks.c
-+++ b/arch/x86/kernel/early-quirks.c
-@@ -714,6 +714,8 @@ static struct chipset early_qrk[] __initdata = {
- 		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
- 	{ PCI_VENDOR_ID_INTEL, 0x3ec4,
- 		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
-+	{ PCI_VENDOR_ID_INTEL, 0x8a12,
-+		PCI_CLASS_BRIDGE_HOST, PCI_ANY_ID, 0, force_disable_hpet},
- 	{ PCI_VENDOR_ID_BROADCOM, 0x4331,
- 	  PCI_CLASS_NETWORK_OTHER, PCI_ANY_ID, 0, apple_airport_reset},
- 	{}
