@@ -2,263 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E729010D016
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 01:05:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C41310D025
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 01:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfK2AFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 28 Nov 2019 19:05:10 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:41383 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfK2AFH (ORCPT
+        id S1726657AbfK2ARN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 28 Nov 2019 19:17:13 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45396 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfK2ARM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Nov 2019 19:05:07 -0500
-Received: by mail-il1-f200.google.com with SMTP id o185so23251941ila.8
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 16:05:06 -0800 (PST)
+        Thu, 28 Nov 2019 19:17:12 -0500
+Received: by mail-ed1-f68.google.com with SMTP id b5so24228894eds.12
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 16:17:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hKdxAEvC9giOVo+5fI8UhBseDYEwGbYsXK3mw9tmIQY=;
+        b=hVlmWmpzm8h9AJJ3dV8J/Vq5S3tr8XdfS5TULH7gtd+QDlFhFvJl5GIs3pVRxbpuAr
+         vb1xpQaVDVwJEn8ubFxWrx0Sy+N9ZDlY0LzWfmLkB4krIK6/YmWQQ+vvqvlvkaGE6nAX
+         DPJPCbcwVfWu0Kox3IVCt7MSklSiOlMkMdfDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VDTR1lCTWksadLk3KUYhETZt2C7oIh39QbXFeN5+0Z0=;
-        b=CKLMgKxpK7FgxClRAYUbGXh2WONLBFDX+rWITEaYSorYtqWg0VAhBoZf5QrPAudK8T
-         Zls+f4dB1C8+hoPD4Cl9HjzFJCdwDc/IYjW62oxw/rFcDI+D/nRoa/DZDXNJXgmVVhN+
-         cbdXtPMUCFENeX+jFiSi0oW73NtjHB/BbeezufCBSYey1rBLkxxO+WXOYbKfQgKv5PK4
-         ZABdqb8nO0kcKnvwVtDaS3fatqTASZkEc+WVIr+9/iK2vaouOivRoJzQADsDtfMNj0S5
-         VFYKlwLkwgN288qCN1F8wyhErxWzVeFD9B3V/r24C9VQPprxpmrnQX0VG6FRObNnpjK8
-         QAvQ==
-X-Gm-Message-State: APjAAAUcEnFTXUtHj3zZhqCB+Y3A8/5MYq6MgYqtJfRoeLd18Z8CF6yW
-        Sumwx6AOsF66tdKesa7WOz+nItrhsp+tnmE2d2UHM4fkaEYK
-X-Google-Smtp-Source: APXvYqxqpZ2cmRSwqqjgQbImoIAu/Pl1tWYO9+5LfpduBx2n2kFEinHnK9d2wagm7RVurL1x+KyqRNZMk6XtpDvjsNcaqm9kr8g+
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hKdxAEvC9giOVo+5fI8UhBseDYEwGbYsXK3mw9tmIQY=;
+        b=F7ZYe5JJ26aRmH9RE+bmPJbwYX6uF9u9KtxfSubLBiHgxyUtp/e6yCxAfa2+N+4f+B
+         iFx6Wxmd0p8Oie0yF50ldsvW1CRCwDMjHX/Q+i55zoU636BIyvzOPewylayDoOzE+9Up
+         ZBAMSn8xFqTjxp90BzdIULfwSin1FFlN2pd9tgaQJjN3Yz10sBVSY9EH68BtsyhFW1XM
+         5q2eoc7gH7PjatC+GYAHYOu9rb0+g5OF/Q+ZJS0lptJ66/GbMoqFoFQz3QUUnF0erB+U
+         lUd9DoMmTm9+CFMSFxjX0CDunvwWCMBUCLFNeAmhL7q7CXvGOWMAI6GB+94jd3xx5EQG
+         l6QA==
+X-Gm-Message-State: APjAAAUoR/ix/ifzDN6Pob7Fqqv09icNFId905U6ykvYf/VqKeqfCCI0
+        cQtP99rqne8LS/5VXC4KA8Yme5bLlfZbpA==
+X-Google-Smtp-Source: APXvYqzMjNqE6KEQnqr1PkdSrhafKfeQFLmAjwodr9THwlfypzXpEPPcdqH/ubkARhhimEJQZJfP0w==
+X-Received: by 2002:a05:6402:1841:: with SMTP id v1mr1067477edy.290.1574986630191;
+        Thu, 28 Nov 2019 16:17:10 -0800 (PST)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
+        by smtp.gmail.com with ESMTPSA id i7sm886939edr.28.2019.11.28.16.17.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2019 16:17:09 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id y23so3958296wma.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2019 16:17:09 -0800 (PST)
+X-Received: by 2002:a1c:3c42:: with SMTP id j63mr12611006wma.90.1574986628632;
+ Thu, 28 Nov 2019 16:17:08 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a02:a0cf:: with SMTP id i15mr12391279jah.95.1574985906107;
- Thu, 28 Nov 2019 16:05:06 -0800 (PST)
-Date:   Thu, 28 Nov 2019 16:05:06 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075c6e5059870fb7d@google.com>
-Subject: possible deadlock in lookup_slow (2)
-From:   syzbot <syzbot+4821b50cc2e4bd1d0d10@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20191122051608.128717-1-hiroh@chromium.org> <767528be59275265072896e5c679e97575615fdd.camel@ndufresne.ca>
+ <CAAFQd5D3OpAAtX7_0ktz4-aAgWN_G4YBQMR=Vwp7JPopjvRkRA@mail.gmail.com> <f5341ed837529bd38d466d4b655e261d64065912.camel@ndufresne.ca>
+In-Reply-To: <f5341ed837529bd38d466d4b655e261d64065912.camel@ndufresne.ca>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 29 Nov 2019 09:16:57 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Cpk8qG+VgE6+aznBmXu11YG0gNQyCRanZghds-TPKvyg@mail.gmail.com>
+Message-ID: <CAAFQd5Cpk8qG+VgE6+aznBmXu11YG0gNQyCRanZghds-TPKvyg@mail.gmail.com>
+Subject: Re: [PATCH] media: hantro: Support H264 profile control
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     Hirokazu Honda <hiroh@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, Nov 23, 2019 at 1:52 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
+te:
+>
+> Le samedi 23 novembre 2019 =C3=A0 01:00 +0900, Tomasz Figa a =C3=A9crit :
+> > On Sat, Nov 23, 2019 at 12:09 AM Nicolas Dufresne <nicolas@ndufresne.ca=
+> wrote:
+> > > Le vendredi 22 novembre 2019 =C3=A0 14:16 +0900, Hirokazu Honda a =C3=
+=A9crit :
+> > > > The Hantro G1 decoder supports H.264 profiles from Baseline to High=
+, with
+> > > > the exception of the Extended profile.
+> > > >
+> > > > Expose the V4L2_CID_MPEG_VIDEO_H264_PROFILE control, so that the
+> > > > applications can query the driver for the list of supported profile=
+s.
+> > >
+> > > Thanks for this patch. Do you think we could also add the LEVEL contr=
+ol
+> > > so the profile/level enumeration becomes complete ?
+> > >
+> > > I'm thinking it would be nice if the v4l2 compliance test make sure
+> > > that codecs do implement these controls (both stateful and stateless)=
+,
+> > > it's essential for stack with software fallback, or multiple capable
+> > > codec hardware but with different capabilities.
+> > >
+> >
+> > Level is a difficult story, because it also specifies the number of
+> > macroblocks per second, but for decoders like this the number of
+> > macroblocks per second it can handle depends on things the driver
+> > might be not aware of - clock frequencies, DDR throughput, system
+> > load, etc.
+> >
+> > My take on this is that the decoder driver should advertise the
+> > highest resolution the decoder can handle due to hardware constraints.
+> > Performance related things depend on the integration details and
+> > should be managed elsewhere. For example Android and Chrome OS manage
+> > expected decoding performance in per-board configuration files.
+>
+> When you read datasheet, the HW is always rated to maximum level (and
+> it's a range) with the assumption of a single stream. It seems much
+> easier to expose this as-is, statically then to start doing some math
+> with data that isn't fully exposed to the user. This is about filtering
+> of multiple CODEC instances, it does not need to be rocket science,
+> specially that the amount of missing data is important (e.g. usage of
+> tiles, compression, IPP all have an impact on the final performance).
+> All we want to know in userspace is if this HW is even possibly capable
+> of LEVEL X, and if not, we'll look for another one.
+>
 
-syzbot found the following crash on:
+Agreed, one could potentially define it this way, but would it be
+really useful for the userspace and the users? I guess it could enable
+slightly faster fallback to software decoding in the extreme case of
+the hardware not supporting the level at all, but I suspect that the
+majority of cases would be the hardware just being unusably slow.
 
-HEAD commit:    89d57ddd Merge tag 'media/v5.5-1' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=172becbce00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=595c15c951695d1b
-dashboard link: https://syzkaller.appspot.com/bug?extid=4821b50cc2e4bd1d0d10
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Also, as I mentioned before, we already return the range of supported
+resolutions, which in practice should map to the part of the level
+that may depend on hardware capabilities rather than performance, so
+exposing levels as well would add redundancy to the information
+exposed.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4821b50cc2e4bd1d0d10@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-5.4.0-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.3/23269 is trying to acquire lock:
-ffff888092b3e6d0 (&ovl_i_mutex_dir_key[depth]#2){++++}, at:  
-inode_lock_shared include/linux/fs.h:801 [inline]
-ffff888092b3e6d0 (&ovl_i_mutex_dir_key[depth]#2){++++}, at:  
-lookup_slow+0x4a/0x80 fs/namei.c:1679
-
-but task is already holding lock:
-ffff88805aa057d0 (&sig->cred_guard_mutex){+.+.}, at:  
-__do_sys_perf_event_open+0xeaa/0x2c70 kernel/events/core.c:11257
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (&sig->cred_guard_mutex){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1106
-        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1136
-        do_io_accounting+0x1f4/0x820 fs/proc/base.c:2773
-        proc_tgid_io_accounting+0x23/0x30 fs/proc/base.c:2822
-        proc_single_show+0xfd/0x1c0 fs/proc/base.c:756
-        seq_read+0x4ca/0x1110 fs/seq_file.c:229
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_loop_readv_writev fs/read_write.c:701 [inline]
-        do_iter_read+0x4a4/0x660 fs/read_write.c:935
-        vfs_readv+0xf0/0x160 fs/read_write.c:997
-        kernel_readv fs/splice.c:359 [inline]
-        default_file_splice_read+0x482/0x8a0 fs/splice.c:414
-        do_splice_to+0x127/0x180 fs/splice.c:877
-        splice_direct_to_actor+0x2d2/0x970 fs/splice.c:954
-        do_splice_direct+0x1da/0x2a0 fs/splice.c:1063
-        do_sendfile+0x597/0xd00 fs/read_write.c:1464
-        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #3 (&p->lock){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1106
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1121
-        seq_read+0x71/0x1110 fs/seq_file.c:161
-        proc_reg_read+0x1fc/0x2c0 fs/proc/inode.c:223
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_loop_readv_writev fs/read_write.c:701 [inline]
-        do_iter_read+0x4a4/0x660 fs/read_write.c:935
-        vfs_readv+0xf0/0x160 fs/read_write.c:997
-        kernel_readv fs/splice.c:359 [inline]
-        default_file_splice_read+0x482/0x8a0 fs/splice.c:414
-        do_splice_to+0x127/0x180 fs/splice.c:877
-        splice_direct_to_actor+0x2d2/0x970 fs/splice.c:954
-        do_splice_direct+0x1da/0x2a0 fs/splice.c:1063
-        do_sendfile+0x597/0xd00 fs/read_write.c:1464
-        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #2 (sb_writers#4){.+.+}:
-        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
-        __sb_start_write+0x241/0x460 fs/super.c:1672
-        sb_start_write include/linux/fs.h:1650 [inline]
-        mnt_want_write+0x3f/0xc0 fs/namespace.c:354
-        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:21
-        ovl_create_object+0xb3/0x2c0 fs/overlayfs/dir.c:596
-        ovl_create+0x28/0x30 fs/overlayfs/dir.c:627
-        lookup_open+0x12d5/0x1a90 fs/namei.c:3224
-        do_last fs/namei.c:3314 [inline]
-        path_openat+0x14a7/0x46d0 fs/namei.c:3525
-        do_filp_open+0x1a1/0x280 fs/namei.c:3555
-        do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-        ksys_open include/linux/syscalls.h:1385 [inline]
-        __do_sys_creat fs/open.c:1155 [inline]
-        __se_sys_creat fs/open.c:1153 [inline]
-        __x64_sys_creat+0x61/0x80 fs/open.c:1153
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&ovl_i_mutex_dir_key[depth]){++++}:
-        down_write_killable+0x96/0x170 kernel/locking/rwsem.c:1545
-        iterate_dir+0x414/0x5e0 fs/readdir.c:57
-        ovl_dir_read fs/overlayfs/readdir.c:309 [inline]
-        ovl_dir_read_merged+0x199/0x500 fs/overlayfs/readdir.c:374
-        ovl_cache_get fs/overlayfs/readdir.c:426 [inline]
-        ovl_iterate+0x750/0xc50 fs/overlayfs/readdir.c:752
-        iterate_dir+0x208/0x5e0 fs/readdir.c:67
-        ksys_getdents64+0x1ce/0x320 fs/readdir.c:372
-        __do_sys_getdents64 fs/readdir.c:391 [inline]
-        __se_sys_getdents64 fs/readdir.c:388 [inline]
-        __x64_sys_getdents64+0x73/0xb0 fs/readdir.c:388
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&ovl_i_mutex_dir_key[depth]#2){++++}:
-        check_prev_add kernel/locking/lockdep.c:2476 [inline]
-        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-        validate_chain kernel/locking/lockdep.c:2971 [inline]
-        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-        down_read+0x95/0x430 kernel/locking/rwsem.c:1495
-        inode_lock_shared include/linux/fs.h:801 [inline]
-        lookup_slow+0x4a/0x80 fs/namei.c:1679
-        walk_component+0x747/0x1ff0 fs/namei.c:1800
-        lookup_last fs/namei.c:2263 [inline]
-        path_lookupat.isra.0+0x1f5/0x8d0 fs/namei.c:2308
-        filename_lookup+0x1b0/0x3f0 fs/namei.c:2338
-        kern_path+0x36/0x40 fs/namei.c:2424
-        create_local_trace_uprobe+0x87/0x4a0 kernel/trace/trace_uprobe.c:1542
-        perf_uprobe_init+0x131/0x210 kernel/trace/trace_event_perf.c:323
-        perf_uprobe_event_init+0x106/0x1a0 kernel/events/core.c:9162
-        perf_try_init_event+0x135/0x590 kernel/events/core.c:10462
-        perf_init_event kernel/events/core.c:10514 [inline]
-        perf_event_alloc.part.0+0x1571/0x3720 kernel/events/core.c:10794
-        perf_event_alloc kernel/events/core.c:10676 [inline]
-        __do_sys_perf_event_open+0x6f8/0x2c70 kernel/events/core.c:11277
-        __se_sys_perf_event_open kernel/events/core.c:11151 [inline]
-        __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:11151
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   &ovl_i_mutex_dir_key[depth]#2 --> &p->lock --> &sig->cred_guard_mutex
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&sig->cred_guard_mutex);
-                                lock(&p->lock);
-                                lock(&sig->cred_guard_mutex);
-   lock(&ovl_i_mutex_dir_key[depth]#2);
-
-  *** DEADLOCK ***
-
-2 locks held by syz-executor.3/23269:
-  #0: ffff88805aa057d0 (&sig->cred_guard_mutex){+.+.}, at:  
-__do_sys_perf_event_open+0xeaa/0x2c70 kernel/events/core.c:11257
-  #1: ffffffff8ad0e3e8 (&pmus_srcu){....}, at:  
-perf_event_alloc.part.0+0xede/0x3720 kernel/events/core.c:10790
-
-stack backtrace:
-CPU: 0 PID: 23269 Comm: syz-executor.3 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
-  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
-  check_prev_add kernel/locking/lockdep.c:2476 [inline]
-  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-  validate_chain kernel/locking/lockdep.c:2971 [inline]
-  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-  down_read+0x95/0x430 kernel/locking/rwsem.c:1495
-  inode_lock_shared include/linux/fs.h:801 [inline]
-  lookup_slow+0x4a/0x80 fs/namei.c:1679
-  walk_component+0x747/0x1ff0 fs/namei.c:1800
-  lookup_last fs/namei.c:2263 [inline]
-  path_lookupat.isra.0+0x1f5/0x8d0 fs/namei.c:2308
-  filename_lookup+0x1b0/0x3f0 fs/namei.c:2338
-  kern_path+0x36/0x40 fs/namei.c:2424
-  create_local_trace_uprobe+0x87/0x4a0 kernel/trace/trace_uprobe.c:1542
-  perf_uprobe_init+0x131/0x210 kernel/trace/trace_event_perf.c:323
-  perf_uprobe_event_init+0x106/0x1a0 kernel/events/core.c:9162
-  perf_try_init_event+0x135/0x590 kernel/events/core.c:10462
-  perf_init_event kernel/events/core.c:10514 [inline]
-  perf_event_alloc.part.0+0x1571/0x3720 kernel/events/core.c:10794
-  perf_event_alloc kernel/events/core.c:10676 [inline]
-  __do_sys_perf_event_open+0x6f8/0x2c70 kernel/events/core.c:11277
-  __se_sys_perf_event_open kernel/events/core.c:11151 [inline]
-  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:11151
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a649
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ff838acbc78 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 000000000045a649
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 00007ff838acc6d4
-R13: 00000000004c7bb1 R14: 00000000004ddb90 R15: 00000000ffffffff
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > > > Signed-off-by: Hirokazu Honda <hiroh@chromium.org>
+> > > > ---
+> > > >  drivers/staging/media/hantro/hantro_drv.c | 10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > >
+> > > > diff --git a/drivers/staging/media/hantro/hantro_drv.c b/drivers/st=
+aging/media/hantro/hantro_drv.c
+> > > > index 6d9d41170832..9387619235d8 100644
+> > > > --- a/drivers/staging/media/hantro/hantro_drv.c
+> > > > +++ b/drivers/staging/media/hantro/hantro_drv.c
+> > > > @@ -355,6 +355,16 @@ static const struct hantro_ctrl controls[] =3D=
+ {
+> > > >                       .def =3D V4L2_MPEG_VIDEO_H264_START_CODE_ANNE=
+X_B,
+> > > >                       .max =3D V4L2_MPEG_VIDEO_H264_START_CODE_ANNE=
+X_B,
+> > > >               },
+> > > > +     }, {
+> > > > +             .codec =3D HANTRO_H264_DECODER,
+> > > > +             .cfg =3D {
+> > > > +                     .id =3D V4L2_CID_MPEG_VIDEO_H264_PROFILE,
+> > > > +                     .min =3D V4L2_MPEG_VIDEO_H264_PROFILE_BASELIN=
+E,
+> > > > +                     .max =3D V4L2_MPEG_VIDEO_H264_PROFILE_HIGH,
+> > > > +                     .menu_skip_mask =3D
+> > > > +                     BIT(V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED),
+> > > > +                     .def =3D V4L2_MPEG_VIDEO_H264_PROFILE_MAIN,
+> > > > +             }
+> > > >       }, {
+> > > >       },
+> > > >  };
