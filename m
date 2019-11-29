@@ -2,68 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F66A10DB05
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF4110DB07
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387420AbfK2Vfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 16:35:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46194 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387399AbfK2Vf2 (ORCPT
+        id S2387440AbfK2Vfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 16:35:34 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52655 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387425AbfK2Vfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 16:35:28 -0500
+        Fri, 29 Nov 2019 16:35:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575063327;
+        s=mimecast20190719; t=1575063331;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=P5AbgpUfRNxdJPVDFTcfRzPiSipiKvMe/PdnHweHoi8=;
-        b=VuQD0mDKdKc6OMfv1rPW0kk2ULJpTM8M6tfgaySaAk6vpzYKbQO06/D30H4tW8y9RgNwgC
-        cniwOM8FGdkir1fdtdoAt4OS0yKa4Ud02pAc27Esu2yhPF+J/b8xzhOHYs7CKRlN1i7ycS
-        /Kq293yqGgQSoojVsTNvAQavObJcSoM=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-417-JsdRZpvFNHWnWg7RqWgH5w-1; Fri, 29 Nov 2019 16:35:26 -0500
-Received: by mail-qt1-f198.google.com with SMTP id m8so17215488qta.20
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:35:26 -0800 (PST)
+        bh=AVwR89GpLJvgOqcOYsvRfM8XUB2WN/29zxkwIRsm8Ds=;
+        b=SnnQgc2JUer5Z5iiteeGCelFH2r4DK9LlOigRvi6Il0Q6kPA+KLaffNadEqwuxSJKPIUWe
+        WBLtcbnB18iieNOtPjjADwbpnCgLar/QbTEOj0ja9w9IGjFiI2dkIWPqwwKFb3HGSgSomg
+        wKJ4y30ziMfZ4YHL7BlGPsOEN+Ik+Bo=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-145-H3nxuc-MOUSMcxuTgtkD0Q-1; Fri, 29 Nov 2019 16:35:28 -0500
+Received: by mail-qv1-f70.google.com with SMTP id bt18so2773196qvb.19
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:35:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rJUKGGK5QCK7nGpwM9ItG2F9zksWMA0xUQtg22oHDPc=;
-        b=JRakkzxujXRWscDlFGAZT3TnNrhqOd5sR4Az4qlVqFhvJHvB3/o/RpAR9QExhdcbJX
-         cgPPbq7z+olDFbMwPBOY5ydGnSxAWiN3gIFvpwk6eDpQaFwD22dauR+jdHHISPgFMWJo
-         hoERtHVKhdIfSrRcUmAN7IsYUd/g6lEpPa+l4donFqda51/HWV0D0Jkd9tx40uz7Ags5
-         sG/j36sXeR/Bo1aoifUXGkyt1UeRmeYIAVW7MxOUr1ZQGPutxckRXctMtbgoBLMBZ1o6
-         9aLGvnKQ1rUEAb2/2jT7ecTO/b88W+bAX+703w4tkwyFQd4O3MA2BxV0OD1DtYjXU6Kn
-         kRGA==
-X-Gm-Message-State: APjAAAXFMPWpZE/F5kafzg49cYMUbIvYZf4p+a5y7g7eEsrQeMDE3FqR
-        MzMdSL5mVHbvWJ0zGaOffY/4suPgOSxghWjpo5pWzuYcS94wOCtNlMCnf5/dlNt1RdicXpBIduN
-        HwTMJw7FnQXWnfdrU6j1Kx7St
-X-Received: by 2002:aed:2103:: with SMTP id 3mr42418239qtc.132.1575063325390;
-        Fri, 29 Nov 2019 13:35:25 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwvgOZjGvsXBPgfSr/Px2y4ZuxtVQVUzGcdlunaZ0Md4LZTtDyMj7SjYRKhhNcrydFW4faW5A==
-X-Received: by 2002:aed:2103:: with SMTP id 3mr42418207qtc.132.1575063325096;
-        Fri, 29 Nov 2019 13:35:25 -0800 (PST)
+        bh=I/ru2uLWH98VwOEpQ4g8Db5rqCjk9Lo4bBQ00K16x0M=;
+        b=qaurJiDP4UWZAt0/E7/Z0czzoQeSXqOOVOgvHpabNtQ9gzdBuG8ymAENmQgFzMo1JA
+         YwYp5MxzjAQ0/3NLprzWVJP0Fq1FfXtEa6DKhgHEb4Py9BgGwcaYo8pKpR2fR/q9Me8i
+         wRuZOXbOSvidqJMd9uNaIQI0QbQrIc0wsApZhi3ulEiMuISnvFm7lL9XFR3HI1SEaMuT
+         +qDWLzcVnmOJa5jAwdt1VoxGh/1Gv0lMpwPqScyfFo7IJU8UeqSpQ7ypF+zGHXSLj4Rj
+         xfv5SCF5XNq11OpzIlKVr/3H5bsuFODPsrQuiqxaBBBekFo13/4NDF2YE4amHIrovduT
+         ZVtA==
+X-Gm-Message-State: APjAAAUSPhs+bQxp0A+ookCiy6cdLJBw0q90SYm6S83/7Ft8YyMDzIkY
+        wA+LcllIJAF6HMUqF3MESwMMwZf2KuxMQGUH9ERbw8mmP+Iu2B/poQ9/R/mREzZVVmfVSb+2wO8
+        2/CPvgntBZJI3vWgFlg2/Khu7
+X-Received: by 2002:ad4:55e8:: with SMTP id bu8mr15973912qvb.61.1575063326997;
+        Fri, 29 Nov 2019 13:35:26 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyO0sB52jgNAeOKc4OLF6WGBaoE6fp1MHQy2+mrUu67bIMbdQuVzZkL3OSLnKOEKAm8ZgDobg==
+X-Received: by 2002:ad4:55e8:: with SMTP id bu8mr15973883qvb.61.1575063326723;
+        Fri, 29 Nov 2019 13:35:26 -0800 (PST)
 Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id h186sm10679046qkf.64.2019.11.29.13.35.23
+        by smtp.gmail.com with ESMTPSA id h186sm10679046qkf.64.2019.11.29.13.35.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 13:35:24 -0800 (PST)
+        Fri, 29 Nov 2019 13:35:25 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         "Dr . David Alan Gilbert" <dgilbert@redhat.com>, peterx@redhat.com,
         Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH RFC 10/15] KVM: selftests: Use a single binary for dirty/clear log test
-Date:   Fri, 29 Nov 2019 16:35:00 -0500
-Message-Id: <20191129213505.18472-11-peterx@redhat.com>
+Subject: [PATCH RFC 11/15] KVM: selftests: Introduce after_vcpu_run hook for dirty log test
+Date:   Fri, 29 Nov 2019 16:35:01 -0500
+Message-Id: <20191129213505.18472-12-peterx@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191129213505.18472-1-peterx@redhat.com>
 References: <20191129213505.18472-1-peterx@redhat.com>
 MIME-Version: 1.0
-X-MC-Unique: JsdRZpvFNHWnWg7RqWgH5w-1
+X-MC-Unique: H3nxuc-MOUSMcxuTgtkD0Q-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
@@ -72,252 +72,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the clear_dirty_log test, instead merge it into the existing
-dirty_log_test.  It should be cleaner to use this single binary to do
-both tests, also it's a preparation for the upcoming dirty ring test.
+Provide a hook for the checks after vcpu_run() completes.  Preparation
+for the dirty ring test because we'll need to take care of another
+exit reason.
 
-The default test will still be the dirty_log test.  To run the clear
-dirty log test, we need to specify "-M clear-log".
+Since at it, drop the pages_count because after all we have a better
+summary right now with statistics, and clean it up a bit.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- tools/testing/selftests/kvm/Makefile          |   2 -
- .../selftests/kvm/clear_dirty_log_test.c      |   2 -
- tools/testing/selftests/kvm/dirty_log_test.c  | 131 +++++++++++++++---
- 3 files changed, 110 insertions(+), 25 deletions(-)
- delete mode 100644 tools/testing/selftests/kvm/clear_dirty_log_test.c
+ tools/testing/selftests/kvm/dirty_log_test.c | 39 ++++++++++++--------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests=
-/kvm/Makefile
-index 3138a916574a..130a7b1c7ad6 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -26,11 +26,9 @@ TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_dirty_log_test
- TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_set_nested_state_test
- TEST_GEN_PROGS_x86_64 +=3D x86_64/vmx_tsc_adjust_test
- TEST_GEN_PROGS_x86_64 +=3D x86_64/xss_msr_test
--TEST_GEN_PROGS_x86_64 +=3D clear_dirty_log_test
- TEST_GEN_PROGS_x86_64 +=3D dirty_log_test
- TEST_GEN_PROGS_x86_64 +=3D kvm_create_max_vcpus
-=20
--TEST_GEN_PROGS_aarch64 +=3D clear_dirty_log_test
- TEST_GEN_PROGS_aarch64 +=3D dirty_log_test
- TEST_GEN_PROGS_aarch64 +=3D kvm_create_max_vcpus
-=20
-diff --git a/tools/testing/selftests/kvm/clear_dirty_log_test.c b/tools/tes=
-ting/selftests/kvm/clear_dirty_log_test.c
-deleted file mode 100644
-index 749336937d37..000000000000
---- a/tools/testing/selftests/kvm/clear_dirty_log_test.c
-+++ /dev/null
-@@ -1,2 +0,0 @@
--#define USE_CLEAR_DIRTY_LOG
--#include "dirty_log_test.c"
 diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/s=
 elftests/kvm/dirty_log_test.c
-index 3c0ffd34b3b0..a8ae8c0042a8 100644
+index a8ae8c0042a8..3542311f56ff 100644
 --- a/tools/testing/selftests/kvm/dirty_log_test.c
 +++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -128,6 +128,66 @@ static uint64_t host_dirty_count;
- static uint64_t host_clear_count;
- static uint64_t host_track_next_count;
+@@ -168,6 +168,15 @@ static void clear_log_collect_dirty_pages(struct kvm_v=
+m *vm, int slot,
+ =09kvm_vm_clear_dirty_log(vm, slot, bitmap, 0, num_pages);
+ }
 =20
-+enum log_mode_t {
-+=09/* Only use KVM_GET_DIRTY_LOG for logging */
-+=09LOG_MODE_DIRTY_LOG =3D 0,
-+
-+=09/* Use both KVM_[GET|CLEAR]_DIRTY_LOG for logging */
-+=09LOG_MODE_CLERA_LOG =3D 1,
-+
-+=09LOG_MODE_NUM,
-+};
-+
-+/* Mode of logging.  Default is LOG_MODE_DIRTY_LOG */
-+static enum log_mode_t host_log_mode;
-+
-+static void clear_log_create_vm_done(struct kvm_vm *vm)
++static void default_after_vcpu_run(struct kvm_vm *vm)
 +{
-+=09struct kvm_enable_cap cap =3D {};
++=09struct kvm_run *run =3D vcpu_state(vm, VCPU_ID);
 +
-+=09if (!kvm_check_cap(KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2)) {
-+=09=09fprintf(stderr, "KVM_CLEAR_DIRTY_LOG not available, skipping tests\n=
-");
-+=09=09exit(KSFT_SKIP);
-+=09}
-+
-+=09cap.cap =3D KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2;
-+=09cap.args[0] =3D 1;
-+=09vm_enable_cap(vm, &cap);
++=09TEST_ASSERT(get_ucall(vm, VCPU_ID, NULL) =3D=3D UCALL_SYNC,
++=09=09    "Invalid guest sync status: exit_reason=3D%s\n",
++=09=09    exit_reason_str(run->exit_reason));
 +}
 +
-+static void dirty_log_collect_dirty_pages(struct kvm_vm *vm, int slot,
-+=09=09=09=09=09  void *bitmap, uint32_t num_pages)
-+{
-+=09kvm_vm_get_dirty_log(vm, slot, bitmap);
-+}
-+
-+static void clear_log_collect_dirty_pages(struct kvm_vm *vm, int slot,
-+=09=09=09=09=09  void *bitmap, uint32_t num_pages)
-+{
-+=09kvm_vm_get_dirty_log(vm, slot, bitmap);
-+=09kvm_vm_clear_dirty_log(vm, slot, bitmap, 0, num_pages);
-+}
-+
-+struct log_mode {
-+=09const char *name;
-+=09/* Hook when the vm creation is done (before vcpu creation) */
-+=09void (*create_vm_done)(struct kvm_vm *vm);
-+=09/* Hook to collect the dirty pages into the bitmap provided */
-+=09void (*collect_dirty_pages) (struct kvm_vm *vm, int slot,
-+=09=09=09=09     void *bitmap, uint32_t num_pages);
-+} log_modes[LOG_MODE_NUM] =3D {
-+=09{
-+=09=09.name =3D "dirty-log",
-+=09=09.create_vm_done =3D NULL,
-+=09=09.collect_dirty_pages =3D dirty_log_collect_dirty_pages,
-+=09},
-+=09{
-+=09=09.name =3D "clear-log",
-+=09=09.create_vm_done =3D clear_log_create_vm_done,
-+=09=09.collect_dirty_pages =3D clear_log_collect_dirty_pages,
-+=09},
-+};
-+
- /*
-  * We use this bitmap to track some pages that should have its dirty
-  * bit set in the _next_ iteration.  For example, if we detected the
-@@ -137,6 +197,33 @@ static uint64_t host_track_next_count;
-  */
- static unsigned long *host_bmap_track;
+ struct log_mode {
+ =09const char *name;
+ =09/* Hook when the vm creation is done (before vcpu creation) */
+@@ -175,16 +184,20 @@ struct log_mode {
+ =09/* Hook to collect the dirty pages into the bitmap provided */
+ =09void (*collect_dirty_pages) (struct kvm_vm *vm, int slot,
+ =09=09=09=09     void *bitmap, uint32_t num_pages);
++=09/* Hook to call when after each vcpu run */
++=09void (*after_vcpu_run)(struct kvm_vm *vm);
+ } log_modes[LOG_MODE_NUM] =3D {
+ =09{
+ =09=09.name =3D "dirty-log",
+ =09=09.create_vm_done =3D NULL,
+ =09=09.collect_dirty_pages =3D dirty_log_collect_dirty_pages,
++=09=09.after_vcpu_run =3D default_after_vcpu_run,
+ =09},
+ =09{
+ =09=09.name =3D "clear-log",
+ =09=09.create_vm_done =3D clear_log_create_vm_done,
+ =09=09.collect_dirty_pages =3D clear_log_collect_dirty_pages,
++=09=09.after_vcpu_run =3D default_after_vcpu_run,
+ =09},
+ };
 =20
-+static void log_modes_dump(void)
-+{
-+=09int i;
-+
-+=09for (i =3D 0; i < LOG_MODE_NUM; i++)
-+=09=09printf("%s, ", log_modes[i].name);
-+=09puts("\b\b  \b\b");
-+}
-+
-+static void log_mode_create_vm_done(struct kvm_vm *vm)
+@@ -224,6 +237,14 @@ static void log_mode_collect_dirty_pages(struct kvm_vm=
+ *vm, int slot,
+ =09mode->collect_dirty_pages(vm, slot, bitmap, num_pages);
+ }
+=20
++static void log_mode_after_vcpu_run(struct kvm_vm *vm)
 +{
 +=09struct log_mode *mode =3D &log_modes[host_log_mode];
 +
-+=09if (mode->create_vm_done)
-+=09=09mode->create_vm_done(vm);
-+}
-+
-+static void log_mode_collect_dirty_pages(struct kvm_vm *vm, int slot,
-+=09=09=09=09=09 void *bitmap, uint32_t num_pages)
-+{
-+=09struct log_mode *mode =3D &log_modes[host_log_mode];
-+
-+=09TEST_ASSERT(mode->collect_dirty_pages !=3D NULL,
-+=09=09    "collect_dirty_pages() is required for any log mode!");
-+=09mode->collect_dirty_pages(vm, slot, bitmap, num_pages);
++=09if (mode->after_vcpu_run)
++=09=09mode->after_vcpu_run(vm);
 +}
 +
  static void generate_random_array(uint64_t *guest_array, uint64_t size)
  {
  =09uint64_t i;
-@@ -257,6 +344,7 @@ static struct kvm_vm *create_vm(enum vm_guest_mode mode=
-, uint32_t vcpuid,
- #ifdef __x86_64__
- =09vm_create_irqchip(vm);
- #endif
-+=09log_mode_create_vm_done(vm);
- =09vm_vcpu_add_default(vm, vcpuid, guest_code);
- =09return vm;
+@@ -237,31 +258,17 @@ static void *vcpu_worker(void *data)
+ =09int ret;
+ =09struct kvm_vm *vm =3D data;
+ =09uint64_t *guest_array;
+-=09uint64_t pages_count =3D 0;
+-=09struct kvm_run *run;
+-
+-=09run =3D vcpu_state(vm, VCPU_ID);
+=20
+ =09guest_array =3D addr_gva2hva(vm, (vm_vaddr_t)random_array);
+-=09generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+=20
+ =09while (!READ_ONCE(host_quit)) {
++=09=09generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+ =09=09/* Let the guest dirty the random pages */
+ =09=09ret =3D _vcpu_run(vm, VCPU_ID);
+ =09=09TEST_ASSERT(ret =3D=3D 0, "vcpu_run failed: %d\n", ret);
+-=09=09if (get_ucall(vm, VCPU_ID, NULL) =3D=3D UCALL_SYNC) {
+-=09=09=09pages_count +=3D TEST_PAGES_PER_LOOP;
+-=09=09=09generate_random_array(guest_array, TEST_PAGES_PER_LOOP);
+-=09=09} else {
+-=09=09=09TEST_ASSERT(false,
+-=09=09=09=09    "Invalid guest sync status: "
+-=09=09=09=09    "exit_reason=3D%s\n",
+-=09=09=09=09    exit_reason_str(run->exit_reason));
+-=09=09}
++=09=09log_mode_after_vcpu_run(vm);
+ =09}
+=20
+-=09DEBUG("Dirtied %"PRIu64" pages\n", pages_count);
+-
+ =09return NULL;
  }
-@@ -316,14 +404,6 @@ static void run_test(enum vm_guest_mode mode, unsigned=
- long iterations,
- =09bmap =3D bitmap_alloc(host_num_pages);
- =09host_bmap_track =3D bitmap_alloc(host_num_pages);
 =20
--#ifdef USE_CLEAR_DIRTY_LOG
--=09struct kvm_enable_cap cap =3D {};
--
--=09cap.cap =3D KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2;
--=09cap.args[0] =3D 1;
--=09vm_enable_cap(vm, &cap);
--#endif
--
- =09/* Add an extra memory slot for testing dirty logging */
- =09vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
- =09=09=09=09    guest_test_phys_mem,
-@@ -364,11 +444,8 @@ static void run_test(enum vm_guest_mode mode, unsigned=
- long iterations,
- =09while (iteration < iterations) {
- =09=09/* Give the vcpu thread some time to dirty some pages */
- =09=09usleep(interval * 1000);
--=09=09kvm_vm_get_dirty_log(vm, TEST_MEM_SLOT_INDEX, bmap);
--#ifdef USE_CLEAR_DIRTY_LOG
--=09=09kvm_vm_clear_dirty_log(vm, TEST_MEM_SLOT_INDEX, bmap, 0,
--=09=09=09=09       host_num_pages);
--#endif
-+=09=09log_mode_collect_dirty_pages(vm, TEST_MEM_SLOT_INDEX,
-+=09=09=09=09=09     bmap, host_num_pages);
- =09=09vm_dirty_log_verify(bmap);
- =09=09iteration++;
- =09=09sync_global_to_guest(vm, iteration);
-@@ -413,6 +490,9 @@ static void help(char *name)
- =09       TEST_HOST_LOOP_INTERVAL);
- =09printf(" -p: specify guest physical test memory offset\n"
- =09       "     Warning: a low offset can conflict with the loaded test co=
-de.\n");
-+=09printf(" -M: specify the host logging mode "
-+=09       "(default: log-dirty).  Supported modes: \n\t");
-+=09log_modes_dump();
- =09printf(" -m: specify the guest mode ID to test "
- =09       "(default: test all supported modes)\n"
- =09       "     This option may be used multiple times.\n"
-@@ -437,13 +517,6 @@ int main(int argc, char *argv[])
- =09unsigned int host_ipa_limit;
- #endif
-=20
--#ifdef USE_CLEAR_DIRTY_LOG
--=09if (!kvm_check_cap(KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2)) {
--=09=09fprintf(stderr, "KVM_CLEAR_DIRTY_LOG not available, skipping tests\n=
-");
--=09=09exit(KSFT_SKIP);
--=09}
--#endif
--
- #ifdef __x86_64__
- =09vm_guest_mode_params_init(VM_MODE_PXXV48_4K, true, true);
- #endif
-@@ -463,7 +536,7 @@ int main(int argc, char *argv[])
- =09vm_guest_mode_params_init(VM_MODE_P40V48_4K, true, true);
- #endif
-=20
--=09while ((opt =3D getopt(argc, argv, "hi:I:p:m:")) !=3D -1) {
-+=09while ((opt =3D getopt(argc, argv, "hi:I:p:m:M:")) !=3D -1) {
- =09=09switch (opt) {
- =09=09case 'i':
- =09=09=09iterations =3D strtol(optarg, NULL, 10);
-@@ -485,6 +558,22 @@ int main(int argc, char *argv[])
- =09=09=09=09    "Guest mode ID %d too big", mode);
- =09=09=09vm_guest_mode_params[mode].enabled =3D true;
- =09=09=09break;
-+=09=09case 'M':
-+=09=09=09for (i =3D 0; i < LOG_MODE_NUM; i++) {
-+=09=09=09=09if (!strcmp(optarg, log_modes[i].name)) {
-+=09=09=09=09=09DEBUG("Setting log mode to: '%s'\n",
-+=09=09=09=09=09      optarg);
-+=09=09=09=09=09host_log_mode =3D i;
-+=09=09=09=09=09break;
-+=09=09=09=09}
-+=09=09=09}
-+=09=09=09if (i =3D=3D LOG_MODE_NUM) {
-+=09=09=09=09printf("Log mode '%s' is invalid.  "
-+=09=09=09=09       "Please choose from: ", optarg);
-+=09=09=09=09log_modes_dump();
-+=09=09=09=09exit(-1);
-+=09=09=09}
-+=09=09=09break;
- =09=09case 'h':
- =09=09default:
- =09=09=09help(argv[0]);
 --=20
 2.21.0
 
