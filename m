@@ -2,75 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E0810D738
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 15:42:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7238610D73A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 15:43:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfK2OmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 09:42:22 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:36027 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbfK2OmV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 09:42:21 -0500
-Received: by mail-qv1-f68.google.com with SMTP id b18so3192942qvy.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 06:42:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=o17LEtmU5SuMT/EdUhpX6X9L35h59+688Mf2ACq1VtY=;
-        b=SyE3tUQf8xA1AwyKb7tCzcbOolsrrxMZe6SivXahMgd4xalA30PGrwLt6YbAZDTovX
-         usw4c1x40Uj8e+6pYKDSl0bEeHWv/gavGWUNFOR+5KfhSXQUecqODSTgSff26IDfR9du
-         GHNLRWPTte7XbccOysO0SSwzLxomRWWRziawIhG3vZOAcYP+cS5eaoFvDLKcfu+CZxYK
-         NYjU5JZXOHKIff8LJPoKHH5H4s6n8+fXuat1dBGoRnZM0f8evDvfW2215CYolo8VHmma
-         jICY+hUxq711whXGX3rn9zmgfOIQknlliFPs0GCAwLHG84eQ+cQ+3m2I8Oo0QLUzHN3i
-         TyoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=o17LEtmU5SuMT/EdUhpX6X9L35h59+688Mf2ACq1VtY=;
-        b=RULQO7oLnIX5tfL/ufFSp5uA4HAbcviO5G/zrkfCYX1X8jYWmGj5mnLI2GS6SDQrTI
-         Pr54E9SOhkuZsbsxHFtWum+UwcbQI7lFr93MIk/iZKSf6OkeTebnseudENW5VW0/ZPfX
-         v1cbfq/1URGTR6bKors+qHfGDoLMqO9HW2ktcixT7l4LkKh/52opvqrbtCstnafHV0Rd
-         gxZGOSflgzw9LCaVHeikVqW8nlJzfredp7WZe+Bs/y+x8AzNPL/0zxfMc5ppAssJSzK3
-         FG78fFK8wxwbSYmXz/BIxm1Nidilhd5by91LwyqYjAkDgZHuoZMm/9wPs8kqghhwR2Ow
-         TEmw==
-X-Gm-Message-State: APjAAAXAGvMl7JK259tRRi9HZsokpnubBi6iBF1i4M6IRk1JOLSVWm48
-        RltOUq/hUvXKJgQR7eFy8YMF1h+rxDrwGDZSxSU=
-X-Google-Smtp-Source: APXvYqzdeMYbuRPwqJnVQugr2ebu/ioyjj1uNZ1BaGoEX5Af6fSDwxSCHYxDG8mizFeA3189Upzt7mxQ7XyY9wu53W0=
-X-Received: by 2002:a0c:89f2:: with SMTP id 47mr9421190qvs.43.1575038540800;
- Fri, 29 Nov 2019 06:42:20 -0800 (PST)
+        id S1727050AbfK2On1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 09:43:27 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726943AbfK2On0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 09:43:26 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 18471A39C9AFC84A7EED;
+        Fri, 29 Nov 2019 14:43:25 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ LHREML711-CAH.china.huawei.com (10.201.108.34) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 29 Nov 2019 14:43:24 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 29 Nov
+ 2019 14:43:24 +0000
+Subject: Re: [Patch v2 1/3] iommu: match the original algorithm
+To:     Cong Wang <xiyou.wangcong@gmail.com>,
+        <iommu@lists.linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20191129004855.18506-1-xiyou.wangcong@gmail.com>
+ <20191129004855.18506-2-xiyou.wangcong@gmail.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <d0f58734-0c1e-af9d-3437-31cf6c8a86f9@huawei.com>
+Date:   Fri, 29 Nov 2019 14:43:23 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Reply-To: mrahmedmuzashah@gmail.com
-Received: by 2002:ac8:3ffb:0:0:0:0:0 with HTTP; Fri, 29 Nov 2019 06:42:20
- -0800 (PST)
-From:   "Mr.Ahmed Muzashah" <ahmedmuzashah@gmail.com>
-Date:   Fri, 29 Nov 2019 06:42:20 -0800
-X-Google-Sender-Auth: FALPvFZl6Uy69kT97Bv4uC1NMCI
-Message-ID: <CABPSe9BHoWn4EmMCDmhb8=Cu8fGh3n1JV_B0CjH3+mH=XDUsEw@mail.gmail.com>
-Subject: From: Mr.Ahmed Muzashah
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191129004855.18506-2-xiyou.wangcong@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml720-chm.china.huawei.com (10.201.108.71) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good Day,
+On 29/11/2019 00:48, Cong Wang wrote:
+> The IOVA cache algorithm implemented in IOMMU code does not
+> exactly match the original algorithm described in the paper.
+> 
 
-I am Mr.Ahmed Muzashah, account Manager with an investment bank here
-in Burkina Faso. There is a draft account opened in my firm by a
-long-time client of our bank.I have the opportunity of transferring
-the left over fund (15.8 Million UsDollars)Fiftheen Million Eight
-Hundred Thousand United States of American Dollars.
+which paper?
 
-I want to invest this funds and introduce you to our bank for this
-deal and this will be executed under a legitimate arrangement that
-will protect us from any breach of the law.We will share the fund 40%
-for you,50% for me while 10% is for establishing of foundation for the
-poor children in your country.If you are really interested in my
-proposal further details of the fund transfer will be forwarded to
-you.
+> Particularly, it doesn't need to free the loaded empty magazine
+> when trying to put it back to global depot. To make it work, we
+> have to pre-allocate magazines in the depot and only recycle them
+> when all of them are full.
+> 
+> Before this patch, rcache->depot[] contains either full or
+> freed entries, after this patch, it contains either full or
+> empty (but allocated) entries.
 
-Yours Sincerely,
-Mr.Ahmed Muzashah.
+I *quickly* tested this patch and got a small performance gain.
+
+> 
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+> ---
+>   drivers/iommu/iova.c | 45 +++++++++++++++++++++++++++-----------------
+>   1 file changed, 28 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index 41c605b0058f..cb473ddce4cf 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -862,12 +862,16 @@ static void init_iova_rcaches(struct iova_domain *iovad)
+>   	struct iova_cpu_rcache *cpu_rcache;
+>   	struct iova_rcache *rcache;
+>   	unsigned int cpu;
+> -	int i;
+> +	int i, j;
+>   
+>   	for (i = 0; i < IOVA_RANGE_CACHE_MAX_SIZE; ++i) {
+>   		rcache = &iovad->rcaches[i];
+>   		spin_lock_init(&rcache->lock);
+>   		rcache->depot_size = 0;
+> +		for (j = 0; j < MAX_GLOBAL_MAGS; ++j) {
+> +			rcache->depot[j] = iova_magazine_alloc(GFP_KERNEL);
+> +			WARN_ON(!rcache->depot[j]);
+> +		}
+>   		rcache->cpu_rcaches = __alloc_percpu(sizeof(*cpu_rcache), cache_line_size());
+>   		if (WARN_ON(!rcache->cpu_rcaches))
+>   			continue;
+> @@ -900,24 +904,30 @@ static bool __iova_rcache_insert(struct iova_domain *iovad,
+>   
+>   	if (!iova_magazine_full(cpu_rcache->loaded)) {
+>   		can_insert = true;
+> -	} else if (!iova_magazine_full(cpu_rcache->prev)) {
+> +	} else if (iova_magazine_empty(cpu_rcache->prev)) {
+
+is this change strictly necessary?
+
+>   		swap(cpu_rcache->prev, cpu_rcache->loaded);
+>   		can_insert = true;
+>   	} else {
+> -		struct iova_magazine *new_mag = iova_magazine_alloc(GFP_ATOMIC);
+> +		spin_lock(&rcache->lock);
+> +		if (rcache->depot_size < MAX_GLOBAL_MAGS) {
+> +			swap(rcache->depot[rcache->depot_size], cpu_rcache->prev);
+> +			swap(cpu_rcache->prev, cpu_rcache->loaded);
+> +			rcache->depot_size++;
+> +			can_insert = true;
+> +		} else {
+> +			mag_to_free = cpu_rcache->loaded;
+> +		}
+> +		spin_unlock(&rcache->lock);
+> +
+> +		if (mag_to_free) {
+> +			struct iova_magazine *new_mag = iova_magazine_alloc(GFP_ATOMIC);
+>   
+> -		if (new_mag) {
+> -			spin_lock(&rcache->lock);
+> -			if (rcache->depot_size < MAX_GLOBAL_MAGS) {
+> -				rcache->depot[rcache->depot_size++] =
+> -						cpu_rcache->loaded;
+> +			if (new_mag) {
+> +				cpu_rcache->loaded = new_mag;
+> +				can_insert = true;
+>   			} else {
+> -				mag_to_free = cpu_rcache->loaded;
+> +				mag_to_free = NULL;
+>   			}
+> -			spin_unlock(&rcache->lock);
+> -
+> -			cpu_rcache->loaded = new_mag;
+> -			can_insert = true;
+>   		}
+>   	}
+>   
+> @@ -963,14 +973,15 @@ static unsigned long __iova_rcache_get(struct iova_rcache *rcache,
+>   
+>   	if (!iova_magazine_empty(cpu_rcache->loaded)) {
+>   		has_pfn = true;
+> -	} else if (!iova_magazine_empty(cpu_rcache->prev)) {
+> +	} else if (iova_magazine_full(cpu_rcache->prev)) {
+>   		swap(cpu_rcache->prev, cpu_rcache->loaded);
+>   		has_pfn = true;
+>   	} else {
+>   		spin_lock(&rcache->lock);
+>   		if (rcache->depot_size > 0) {
+> -			iova_magazine_free(cpu_rcache->loaded);
+
+it is good to remove this from under the lock, apart from this change
+
+> -			cpu_rcache->loaded = rcache->depot[--rcache->depot_size];
+> +			swap(rcache->depot[rcache->depot_size - 1], cpu_rcache->prev);
+> +			swap(cpu_rcache->prev, cpu_rcache->loaded);
+> +			rcache->depot_size--;
+
+I'm not sure how appropriate the name "depot_size" is any longer.
+
+>   			has_pfn = true;
+>   		}
+>   		spin_unlock(&rcache->lock);
+> @@ -1019,7 +1030,7 @@ static void free_iova_rcaches(struct iova_domain *iovad)
+>   			iova_magazine_free(cpu_rcache->prev);
+>   		}
+>   		free_percpu(rcache->cpu_rcaches);
+> -		for (j = 0; j < rcache->depot_size; ++j)
+> +		for (j = 0; j < MAX_GLOBAL_MAGS; ++j)
+>   			iova_magazine_free(rcache->depot[j]);
+>   	}
+>   }
+> 
+
