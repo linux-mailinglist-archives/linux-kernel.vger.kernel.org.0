@@ -2,70 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA4010D93B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 18:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6A410D93E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 18:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfK2R56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 12:57:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727146AbfK2R56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 12:57:58 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48EF52158A;
-        Fri, 29 Nov 2019 17:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575050277;
-        bh=vJOOfAq3Itw/Da/jBhb+gwC+mqd4jGT+yyfYWoBfvIg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JiaaasDmwLWpaT4HcbZdvzWAQu8WbCJzug4hwNE77iy5qXSzcwV+Q4WEPEji8woKM
-         16Y3mO9CSK4VZuH2Yy0p7rEkVqWMOd+J/y4Z55Nv6AwyBWJUvdT4Z4/wdLEn1A9zfS
-         woNgtdfkmeLyXqNGiNE+a/+uTg++rjz5fTfK2xF4=
-Date:   Fri, 29 Nov 2019 17:57:53 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, bsingharora@gmail.com,
-        dvyukov@google.com, elver@google.com, parri.andrea@gmail.com,
-        stable@vger.kernel.org,
-        syzbot+c5d03165a1bd1dead0c1@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v6] taskstats: fix data-race
-Message-ID: <20191129175752.GB29789@willie-the-truck>
-References: <20191009114809.8643-1-christian.brauner@ubuntu.com>
- <20191021113327.22365-1-christian.brauner@ubuntu.com>
+        id S1727208AbfK2R6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 12:58:20 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:58620 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbfK2R6U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 12:58:20 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xATHwDjG058044;
+        Fri, 29 Nov 2019 11:58:13 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575050293;
+        bh=P1uSBoJmDQ8Q5hjwiJepbv6UkgzRKi6n7TO9FbhvtSs=;
+        h=From:To:CC:Subject:Date;
+        b=zC2MmyuIkoRw3U2qRpJjMXjPe6NJEWZ985i7CfqBhv6IRXMIKjwZr72sU9naqOL9e
+         XFB0d2SV79b8BpNXutvRnMncDCvAKmJMx2me8HFwjJIR4LfA5+hBr58E2nUWiyHcwb
+         KxMtCK1Wva0CCwOQa7uat3MmPbukrv5MeLrmgxQ8=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xATHwDmg059290
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 29 Nov 2019 11:58:13 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 29
+ Nov 2019 11:58:13 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 29 Nov 2019 11:58:13 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xATHwCfi110240;
+        Fri, 29 Nov 2019 11:58:12 -0600
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     <netdev@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>
+CC:     Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Sekhar Nori <nsekhar@ti.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH v2] net: ethernet: ti: ale: ensure vlan/mdb deleted when no members
+Date:   Fri, 29 Nov 2019 19:58:09 +0200
+Message-ID: <20191129175809.815-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191021113327.22365-1-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 01:33:27PM +0200, Christian Brauner wrote:
-> When assiging and testing taskstats in taskstats_exit() there's a race
-> when writing and reading sig->stats when a thread-group with more than
-> one thread exits:
-> 
-> cpu0:
-> thread catches fatal signal and whole thread-group gets taken down
->  do_exit()
->  do_group_exit()
+The recently updated ALE APIs cpsw_ale_del_mcast() and
+cpsw_ale_del_vlan_modify() have an issue and will not delete ALE entry even
+if VLAN/mcast group has no more members. Hence fix it here and delete ALE
+entry if !port_mask.
 
-Nit: I don't think this is the signal-handling path.
+The issue affected only new cpsw switchdev driver.
 
->  taskstats_exit()
->  taskstats_tgid_alloc()
-> The tasks reads sig->stats without holding sighand lock.
-> 
-> cpu1:
-> task calls exit_group()
->  do_exit()
->  do_group_exit()
+Fixes: e85c14370783 ("net: ethernet: ti: ale: modify vlan/mdb api for switchdev")
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/net/ethernet/ti/cpsw_ale.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Nit: These ^^ seem to be the wrong way round.
+diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
+index 929f3d3354e3..ecdbde539eb7 100644
+--- a/drivers/net/ethernet/ti/cpsw_ale.c
++++ b/drivers/net/ethernet/ti/cpsw_ale.c
+@@ -384,7 +384,7 @@ int cpsw_ale_del_mcast(struct cpsw_ale *ale, const u8 *addr, int port_mask,
+ 		       int flags, u16 vid)
+ {
+ 	u32 ale_entry[ALE_ENTRY_WORDS] = {0, 0, 0};
+-	int mcast_members;
++	int mcast_members = 0;
+ 	int idx;
+ 
+ 	idx = cpsw_ale_match_addr(ale, addr, (flags & ALE_VLAN) ? vid : 0);
+@@ -397,11 +397,13 @@ int cpsw_ale_del_mcast(struct cpsw_ale *ale, const u8 *addr, int port_mask,
+ 		mcast_members = cpsw_ale_get_port_mask(ale_entry,
+ 						       ale->port_mask_bits);
+ 		mcast_members &= ~port_mask;
++	}
++
++	if (mcast_members)
+ 		cpsw_ale_set_port_mask(ale_entry, mcast_members,
+ 				       ale->port_mask_bits);
+-	} else {
++	else
+ 		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
+-	}
+ 
+ 	cpsw_ale_write(ale, idx, ale_entry);
+ 	return 0;
+@@ -478,6 +480,10 @@ static void cpsw_ale_del_vlan_modify(struct cpsw_ale *ale, u32 *ale_entry,
+ 	members = cpsw_ale_get_vlan_member_list(ale_entry,
+ 						ale->vlan_field_bits);
+ 	members &= ~port_mask;
++	if (!members) {
++		cpsw_ale_set_entry_type(ale_entry, ALE_TYPE_FREE);
++		return;
++	}
+ 
+ 	untag = cpsw_ale_get_vlan_untag_force(ale_entry,
+ 					      ale->vlan_field_bits);
+-- 
+2.17.1
 
-Will
