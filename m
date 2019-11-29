@@ -2,99 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC2F10D33B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:26:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 795BC10D342
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 10:30:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfK2J04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 04:26:56 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41356 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfK2J0z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 04:26:55 -0500
-Received: by mail-ed1-f66.google.com with SMTP id n24so3826441edo.8;
-        Fri, 29 Nov 2019 01:26:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=61Qn8sc6UymCs2JwYwR9E7PQUQwsg86yGcxrakyfLnc=;
-        b=tKotwCZB1OIyoWhF3qvKTQ0hh+PK+vJ242n4RXT+4dTLsxyyo8UBX7olemY6onxpuy
-         IpimaWFhbSpL9TZU8bZ/b0lXCCJFXv3ut8dhg/R0c9WqnP+g2cawIMj8lZWlwUo6RC3T
-         z+Hbf29JRKIsuXk7iRoI+V2qUUu80krKqm0X8cdGYD4BK6QCJH+Oe1LB8HsqEM+ag3o0
-         zj9ES8+oTgq+u7YgHSF3gBz/HrdKgpGv9HzXp211MMrOp1yr8IbjwSN7m6J1MZs3iRuJ
-         sjAJ/pzpX1DYbURuTyVnikovhmBeq0PLHqlwDT6SYeuulHdcctXNSY2wbj8ToVwYpJ2g
-         uraQ==
-X-Gm-Message-State: APjAAAX/HFaAZod872BKftOB6Xj70BOKeZZd9Og5oubUklfiVDKPZ6re
-        SHz2iYbToTG1ZUx2QDMTJi3S+Tp2kXk=
-X-Google-Smtp-Source: APXvYqxxU2OcafQ4X++3xe7l/4gBufnuLKpfQ4uJVFQqfkICOAryrt5kfMoT0vf0z3VhTRnlgRa8sQ==
-X-Received: by 2002:a50:fc96:: with SMTP id f22mr44140890edq.119.1575019613340;
-        Fri, 29 Nov 2019 01:26:53 -0800 (PST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id o30sm1273065edc.61.2019.11.29.01.26.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Nov 2019 01:26:52 -0800 (PST)
-Received: by mail-wr1-f51.google.com with SMTP id c14so9622216wrn.7;
-        Fri, 29 Nov 2019 01:26:52 -0800 (PST)
-X-Received: by 2002:a05:6000:11c6:: with SMTP id i6mr2960888wrx.178.1575019612588;
- Fri, 29 Nov 2019 01:26:52 -0800 (PST)
+        id S1726821AbfK2JaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 04:30:13 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726360AbfK2JaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 04:30:11 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 26B19E138209BD213821;
+        Fri, 29 Nov 2019 17:30:09 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 29 Nov 2019 17:29:58 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH next 1/3] debugfs: Provide debugfs_[set|clear|test]_lowest_bit()
+Date:   Fri, 29 Nov 2019 17:27:50 +0800
+Message-ID: <20191129092752.169902-2-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191129092752.169902-1-wangkefeng.wang@huawei.com>
+References: <20191129092752.169902-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
-References: <20191129091336.13104-1-stefan@olimex.com> <20191129091336.13104-2-stefan@olimex.com>
-In-Reply-To: <20191129091336.13104-2-stefan@olimex.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 29 Nov 2019 17:26:39 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64oCx90LQScKTiHVyHLd6c7Rgs_g5L79Yr1J8kgS8-Kyg@mail.gmail.com>
-Message-ID: <CAGb2v64oCx90LQScKTiHVyHLd6c7Rgs_g5L79Yr1J8kgS8-Kyg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 1/3] arm64: dts: allwinner: a64: olinuxino:
- Fix eMMC supply regulator
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 5:14 PM Stefan Mavrodiev <stefan@olimex.com> wrote:
->
-> A64-OLinuXino-eMMC uses 1.8V for eMMC supply. This is done via a triple
-> jumper, which sets VCC-PL to either 1.8V or 3.3V. This setting is different
-> for boards with and without eMMC.
->
-> This is not a big issue for DDR52 mode, however the eMMC will not work in
-> HS200/HS400, since these modes explicitly requires 1.8V.
->
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino-emmc.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino-emmc.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino-emmc.dts
-> index 96ab0227e82d..7d135decbd53 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino-emmc.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino-emmc.dts
-> @@ -14,8 +14,8 @@
->  &mmc2 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&mmc2_pins>;
-> -       vmmc-supply = <&reg_dcdc1>;
-> -       vqmmc-supply = <&reg_dcdc1>;
-> +       vmmc-supply = <&reg_eldo1>;
+Provide debugfs_[set|clear|test]_lowest_bit() helper, which
+could test, set and clear the lowest bit of a pointer, and
+will be used in the subsequent patches.
 
-If I'm reading the schematics correctly, VCC on the eMMC is from 3.3V.
-This corresponds to the vmmc-supply property. So you shouldn't change it.
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ fs/debugfs/file.c     | 7 +++----
+ fs/debugfs/inode.c    | 7 +++----
+ fs/debugfs/internal.h | 5 ++++-
+ 3 files changed, 10 insertions(+), 9 deletions(-)
 
-> +       vqmmc-supply = <&reg_eldo1>;
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index dede25247b81..38c17a99eb17 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -50,7 +50,7 @@ const struct file_operations *debugfs_real_fops(const struct file *filp)
+ {
+ 	struct debugfs_fsdata *fsd = F_DENTRY(filp)->d_fsdata;
+ 
+-	if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT) {
++	if (debugfs_test_lowest_bit(fsd)) {
+ 		/*
+ 		 * Urgh, we've been called w/o a protecting
+ 		 * debugfs_file_get().
+@@ -84,15 +84,14 @@ int debugfs_file_get(struct dentry *dentry)
+ 	void *d_fsd;
+ 
+ 	d_fsd = READ_ONCE(dentry->d_fsdata);
+-	if (!((unsigned long)d_fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)) {
++	if (!debugfs_test_lowest_bit(d_fsd)) {
+ 		fsd = d_fsd;
+ 	} else {
+ 		fsd = kmalloc(sizeof(*fsd), GFP_KERNEL);
+ 		if (!fsd)
+ 			return -ENOMEM;
+ 
+-		fsd->real_fops = (void *)((unsigned long)d_fsd &
+-					~DEBUGFS_FSDATA_IS_REAL_FOPS_BIT);
++		fsd->real_fops = debugfs_clear_lowest_bit(d_fsd);
+ 		refcount_set(&fsd->active_users, 1);
+ 		init_completion(&fsd->active_users_drained);
+ 		if (cmpxchg(&dentry->d_fsdata, d_fsd, fsd) != d_fsd) {
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 7b975dbb2bb4..cc24e97686d0 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -211,7 +211,7 @@ static void debugfs_release_dentry(struct dentry *dentry)
+ {
+ 	void *fsd = dentry->d_fsdata;
+ 
+-	if (!((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT))
++	if (!debugfs_test_lowest_bit(fsd))
+ 		kfree(dentry->d_fsdata);
+ }
+ 
+@@ -398,8 +398,7 @@ static struct dentry *__debugfs_create_file(const char *name, umode_t mode,
+ 
+ 	inode->i_op = &debugfs_file_inode_operations;
+ 	inode->i_fop = proxy_fops;
+-	dentry->d_fsdata = (void *)((unsigned long)real_fops |
+-				DEBUGFS_FSDATA_IS_REAL_FOPS_BIT);
++	dentry->d_fsdata = debugfs_set_lowest_bit(real_fops);
+ 
+ 	d_instantiate(dentry, inode);
+ 	fsnotify_create(d_inode(dentry->d_parent), dentry);
+@@ -679,7 +678,7 @@ static void __debugfs_file_removed(struct dentry *dentry)
+ 	 */
+ 	smp_mb();
+ 	fsd = READ_ONCE(dentry->d_fsdata);
+-	if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)
++	if (debugfs_test_lowest_bit(fsd))
+ 		return;
+ 	if (!refcount_dec_and_test(&fsd->active_users))
+ 		wait_for_completion(&fsd->active_users_drained);
+diff --git a/fs/debugfs/internal.h b/fs/debugfs/internal.h
+index f0d73d86cc1a..4dd6df4bc172 100644
+--- a/fs/debugfs/internal.h
++++ b/fs/debugfs/internal.h
+@@ -27,6 +27,9 @@ struct debugfs_fsdata {
+  * In order to distinguish between these two cases, a real fops
+  * pointer gets its lowest bit set.
+  */
+-#define DEBUGFS_FSDATA_IS_REAL_FOPS_BIT BIT(0)
++
++#define debugfs_set_lowest_bit(ptr)	((void *)((unsigned long)(ptr) | BIT(0)))
++#define debugfs_clear_lowest_bit(ptr)	((void *)((unsigned long)(ptr) & ~BIT(0)))
++#define debugfs_test_lowest_bit(ptr)	((unsigned long)(ptr) & BIT(0))
+ 
+ #endif /* _DEBUGFS_INTERNAL_H_ */
+-- 
+2.20.1
 
-vqmmc-supply is from the VCC-PC rail, which is the one you say is triple-
-jumpered. So this change makes sense.
-
-ChenYu
