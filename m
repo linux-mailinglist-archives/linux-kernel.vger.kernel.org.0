@@ -2,136 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BAF10D3D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 11:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40BCB10D3CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 11:19:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfK2KUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 05:20:00 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42795 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfK2KT7 (ORCPT
+        id S1726793AbfK2KT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 05:19:28 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35530 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfK2KT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 05:19:59 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e28so7210688ljo.9;
-        Fri, 29 Nov 2019 02:19:57 -0800 (PST)
+        Fri, 29 Nov 2019 05:19:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j6so22385757lja.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 02:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tpY2pLF0HAewtAE48D1xv731kjs5nuVhUrjH/3/vp2I=;
+        b=QBfEobs7rG/ytrsdlTWoPADEwrTervnGvWy8SkJUm3ySK4Y3PSpVhXcygiwiTi5xSX
+         Xul6YL7sVzHkWpxwAOOMFfDTdw1aWx0K/ixwh4o1BMeMLYejcabrPf93xrDZHTAepwvJ
+         a4fvWJUUbXSjC35jBA+oZ56BtBw0FlMHN+qLqnTQ6YUmDgxBi2OyaeWSZfNcYppwataj
+         SrZhV8KT8wOwp/BkdnOA5dzNdfeSS1NfzGF+rlB3qpp54yfdDC6yAm5Gtpn1VrylzY/o
+         s/qVRxhh+/I/S0D7gFpxY6vYAgztO8V8Tfp1SsdkcQ1sFKrmTRVms/+PSKalH+7NKU3p
+         TLmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YQ9NZqfEPBjz3KOdFZmTMVER3EPMPaak6R0HUkbsMbw=;
-        b=oKPgCgbRr8T57X9c/Iq9osWj3YtMrR2v7/VT/uQIioL3DhkTaORhPyTVQXvAOAadu0
-         wmXpOEFf4jnzNzBn4grJlC7M14SIeAyma8x8+ACkgeTk0chNkzUps/HUuQ2Opb49ILCX
-         SUoVxuNMgE5sjEDMHpH6d6ktmBdWK2hYbXgoa2VWsq7+b/jPDh/9Y46bfq5RKVLjkcfO
-         KkKWpp9h76s5e5cOX7jGROQDu6ftlvGjIIVOfNr/wziM76rMXchEEKgdmoVEpqCo8CEe
-         XnVl7oCXEFamN8O94pLsIh7ISV5LFKvibI1Ht1S9+bLH2xI0Dh1kRCL4c4vZy19ORvB3
-         lGcw==
-X-Gm-Message-State: APjAAAUjm9QP28z8/z/ZeIOsQEL1Xlx66Rnox5EZhgrCofF+rFjLTCm5
-        5h0rlrPMRUdUy0gwS4t8ARniGWOE
-X-Google-Smtp-Source: APXvYqzJB4YmHHDLdWxGw/gxHtBIsdyjdqqfFfBq0afNUwu5NbJ0VZT2+sgpIvQC3mGQpJOi7q44FA==
-X-Received: by 2002:a2e:8016:: with SMTP id j22mr989015ljg.24.1575022796898;
-        Fri, 29 Nov 2019 02:19:56 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id g85sm9990868lfd.66.2019.11.29.02.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 02:19:54 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@xi.terra>)
-        id 1iadNU-0002Yq-Hx; Fri, 29 Nov 2019 11:19:56 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4/4] staging: gigaset: rename endpoint-descriptor identifier
-Date:   Fri, 29 Nov 2019 11:17:53 +0100
-Message-Id: <20191129101753.9721-5-johan@kernel.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191129101753.9721-1-johan@kernel.org>
-References: <20191129101753.9721-1-johan@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tpY2pLF0HAewtAE48D1xv731kjs5nuVhUrjH/3/vp2I=;
+        b=uBRN7LvTLz8773PwtFSRKo85iSAgCVCGa8mxpFg5JdV+ZGfnZuHUuaa3+qkFTs+iM/
+         OoVpfvuod1sL5VJ6czaOxlc9wIuypeUlZd6+uuvIGbUNQu1tQGl7+7g2Sp+qRCFj0NfZ
+         7zGrwCPYZfrUaBerOrjBeCAoT3Jmzd7XhQstGJuUGUoOz/xh3aNSieUf8Ybgu21jh+/+
+         kdOkhXVSw4P1Sca3POUb0KMvgmZRs28S90HdQ1yHJbjCho0ScLTnDlLIoQtj25Z8aG32
+         QZUXRUxDm/7IU0hCenGzXN8j0S8rU/pTtjaB1Tgs+jPFyQxsuQL+7fef1PgrC4vNpYOz
+         n16A==
+X-Gm-Message-State: APjAAAXtyR6W4RP/N5oGTlAjZrTdf1MoQed7/k+KTmwKTAXqAqVBL3La
+        eBezXcSaw4dJYf1H71kNvXI9jJNUEvcWQu/yEmt5aA==
+X-Google-Smtp-Source: APXvYqxN/Y4uVJgF3NNYfvlg1HzJfrX0YEMacBE5k98pOLhcoQOsyYFotp7sjXb0MK/jIgbMdD9NTndp/iqlTAdh7i4=
+X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr16248533ljm.233.1575022766281;
+ Fri, 29 Nov 2019 02:19:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191127135932.7223-1-m.felsch@pengutronix.de>
+ <20191127135932.7223-2-m.felsch@pengutronix.de> <CACRpkdbG=XiQHNZa+zBqdyTDRhyXD5rLxbLjp3qqGbcQeTX26Q@mail.gmail.com>
+ <20191129101542.drtcn44twcyzxqmm@pengutronix.de>
+In-Reply-To: <20191129101542.drtcn44twcyzxqmm@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 29 Nov 2019 11:19:14 +0100
+Message-ID: <CACRpkda-mYbzxL9u-U9AHrFihtAQBaZajrQ-SN=WQH6=bg4swg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] gpio: add support to get local gpio number
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, stwiss.opensource@diasemi.com,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename an endpoint-descriptor pointer to shut up a checkpatch warning
-about a line being over 80 columns, which is bound to generate a bunch
-of clean up patches otherwise.
+On Fri, Nov 29, 2019 at 11:15 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/staging/isdn/gigaset/usb-gigaset.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+> > What about renaming gpio_chip_hwgpio() everywhere
+> > to gpiod_to_offet(), remove it from drivers/gpio/gpiolib.h
+> > and export it in <linux/gpio/consumer.h> instead?
+>
+> That's also possible but then we have to include the consumer.h header
+> within the gpiolib.c and this seems to be wrong. But since I'm not the
+> maintainer it is up to you and Bart. Both ways are possible,
 
-diff --git a/drivers/staging/isdn/gigaset/usb-gigaset.c b/drivers/staging/isdn/gigaset/usb-gigaset.c
-index 6c07c8379711..d5fab2ea25b4 100644
---- a/drivers/staging/isdn/gigaset/usb-gigaset.c
-+++ b/drivers/staging/isdn/gigaset/usb-gigaset.c
-@@ -652,7 +652,7 @@ static int gigaset_probe(struct usb_interface *interface,
- 	struct usb_host_interface *hostif = interface->cur_altsetting;
- 	struct cardstate *cs = NULL;
- 	struct usb_cardstate *ucs = NULL;
--	struct usb_endpoint_descriptor *endpoint;
-+	struct usb_endpoint_descriptor *epd;
- 	int buffer_size;
- 
- 	gig_dbg(DEBUG_ANY, "%s: Check if device matches ...", __func__);
-@@ -703,17 +703,17 @@ static int gigaset_probe(struct usb_interface *interface,
- 	/* save address of controller structure */
- 	usb_set_intfdata(interface, cs);
- 
--	endpoint = &hostif->endpoint[0].desc;
-+	epd = &hostif->endpoint[0].desc;
- 
--	if (!usb_endpoint_dir_out(endpoint) || !usb_endpoint_xfer_bulk(endpoint)) {
-+	if (!usb_endpoint_dir_out(epd) || !usb_endpoint_xfer_bulk(epd)) {
- 		dev_err(&interface->dev, "missing bulk-out endpoint\n");
- 		retval = -ENODEV;
- 		goto error;
- 	}
- 
--	buffer_size = le16_to_cpu(endpoint->wMaxPacketSize);
-+	buffer_size = le16_to_cpu(epd->wMaxPacketSize);
- 	ucs->bulk_out_size = buffer_size;
--	ucs->bulk_out_epnum = usb_endpoint_num(endpoint);
-+	ucs->bulk_out_epnum = usb_endpoint_num(epd);
- 	ucs->bulk_out_buffer = kmalloc(buffer_size, GFP_KERNEL);
- 	if (!ucs->bulk_out_buffer) {
- 		dev_err(cs->dev, "Couldn't allocate bulk_out_buffer\n");
-@@ -728,9 +728,9 @@ static int gigaset_probe(struct usb_interface *interface,
- 		goto error;
- 	}
- 
--	endpoint = &hostif->endpoint[1].desc;
-+	epd = &hostif->endpoint[1].desc;
- 
--	if (!usb_endpoint_dir_in(endpoint) || !usb_endpoint_xfer_int(endpoint)) {
-+	if (!usb_endpoint_dir_in(epd) || !usb_endpoint_xfer_int(epd)) {
- 		dev_err(&interface->dev, "missing int-in endpoint\n");
- 		retval = -ENODEV;
- 		goto error;
-@@ -744,7 +744,7 @@ static int gigaset_probe(struct usb_interface *interface,
- 		retval = -ENOMEM;
- 		goto error;
- 	}
--	buffer_size = le16_to_cpu(endpoint->wMaxPacketSize);
-+	buffer_size = le16_to_cpu(epd->wMaxPacketSize);
- 	ucs->rcvbuf_size = buffer_size;
- 	ucs->rcvbuf = kmalloc(buffer_size, GFP_KERNEL);
- 	if (!ucs->rcvbuf) {
-@@ -754,10 +754,10 @@ static int gigaset_probe(struct usb_interface *interface,
- 	}
- 	/* Fill the interrupt urb and send it to the core */
- 	usb_fill_int_urb(ucs->read_urb, udev,
--			 usb_rcvintpipe(udev, usb_endpoint_num(endpoint)),
-+			 usb_rcvintpipe(udev, usb_endpoint_num(epd)),
- 			 ucs->rcvbuf, buffer_size,
- 			 gigaset_read_int_callback,
--			 cs, endpoint->bInterval);
-+			 cs, epd->bInterval);
- 
- 	retval = usb_submit_urb(ucs->read_urb, GFP_KERNEL);
- 	if (retval) {
--- 
-2.24.0
+What about following the pattern by the clk subsystem and
+create <linux/gpio/private.h> and put it there?
 
+It should be an indication to people to not use these features
+lightly. We can decorate the header file with some warnings.
+
+Yours,
+Linus Walleij
