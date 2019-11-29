@@ -2,199 +2,321 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1985510D978
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 19:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B7A10D97B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 19:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfK2SQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 13:16:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44808 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726985AbfK2SQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 13:16:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C1375B321;
-        Fri, 29 Nov 2019 18:16:39 +0000 (UTC)
-Date:   Fri, 29 Nov 2019 19:16:38 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Vasily Gorbik <gor@linux.ibm.com>
-cc:     heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        jpoimboe@redhat.com, joe.lawrence@redhat.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jikos@kernel.org, pmladek@suse.com, nstange@suse.de,
-        live-patching@vger.kernel.org, lpechacek@suse.cz
-Subject: Re: [PATCH v3 4/4] s390/livepatch: Implement reliable stack tracing
- for the consistency model
-In-Reply-To: <cover.thread-a0061f.your-ad-here.call-01575012971-ext-9115@work.hours>
-Message-ID: <alpine.LSU.2.21.1911291522140.23789@pobox.suse.cz>
-References: <20191106095601.29986-5-mbenes@suse.cz> <cover.thread-a0061f.your-ad-here.call-01575012971-ext-9115@work.hours>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727113AbfK2SQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 13:16:46 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42782 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbfK2SQp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 13:16:45 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 66so19436088otd.9;
+        Fri, 29 Nov 2019 10:16:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=l4xdyO3pbcjV7VFnEpdpI0eB5xd2aaOViAmddhCr718=;
+        b=qVqCrB/NvIAkVnXmiZv6toj/plOAU3xcgXsaNRck03Neip+Xo+z3vb1VtvIiJYpYl4
+         /H9cf1zpYUVGfLhxbcpJ+O3le/fnWQJOhLuWA13Oyp4+L7Tm1ZXTspg1QGH63wCnwwQH
+         6zXvNmQdUr2Jr3CIYoJ9nUUIRFGNcqklGkUrSa2Iz5WfU64k3RxglXCenQlyduE7oRXD
+         BXg3yoF8rLY/H+pRCtSc+EuDLwPp5/pPXahkDDtRYBCqrPSnEZxzf/9OMZaMekAwnRit
+         ia5qeSlHdw/WSN0/M4As5Bs+/tDd99Bv2HVBtCRA4Kt4GQDlvl0eJtzfzDfqUe/jFsun
+         2fPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l4xdyO3pbcjV7VFnEpdpI0eB5xd2aaOViAmddhCr718=;
+        b=OLcALX7KatnWMLmzEXdrV+t/auC0uLMTaPCRDg9yjG+c41cJpERie8Ucj38tZkUNzT
+         JMX7W/8UNpjYNEmvYziRwkJIFRbiQWyIdcawDxwG3OvJvpKRo/s0ETESZhCJZPD3CUf5
+         pphH88lnV8T2mGq+Uv1kcFf8v9AFRzCJpp8CQZgO9/DCtIAOvn8QUb4C1ba70ALaLMul
+         Keaf05046ufxqf2y6FC6oynkqGY9M0v6qy9bVWjcW9HkHlqQ9fmE1cyP35hoZEAI8Oz6
+         ARxFmaL/c8wrsCZi4UU95KSYxCIBVMcvdMtBFEfjy6rJAcWh6wh4Pbko0SSt4k+fK/4x
+         x2LQ==
+X-Gm-Message-State: APjAAAUEYGq5QeHtNjdUFwCgV7Jc+ciiEuJM8uq8JBJGf4wjQetwZOt/
+        oy+2bicUUXcSiAX+McGjNmg=
+X-Google-Smtp-Source: APXvYqxbgJui5nzV2IrxEm8sjBHlPUE1XdAYEN6NBbbf2zSzqSOOoWfLftMFiVNUKkRG0lKRqkS9bg==
+X-Received: by 2002:a9d:7f12:: with SMTP id j18mr2628854otq.17.1575051404246;
+        Fri, 29 Nov 2019 10:16:44 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l73sm3959987oib.0.2019.11.29.10.16.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Nov 2019 10:16:43 -0800 (PST)
+Date:   Fri, 29 Nov 2019 10:16:42 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ben Pai <Ben_Pai@wistron.com>
+Cc:     robh+dt@kernel.org, jdelvare@suse.com,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, corbet@lwn.net, wangat@tw.ibm.com,
+        Andy_YF_Wang@wistron.com, Claire_Ku@wistron.com
+Subject: Re: [ v1] hwmon: (pmbus) Add Wistron power supply pmbus driver
+Message-ID: <20191129181642.GA4062@roeck-us.net>
+References: <20191129060230.14522-1-Ben_Pai@wistron.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191129060230.14522-1-Ben_Pai@wistron.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 29 Nov 2019, Vasily Gorbik wrote:
+On Fri, Nov 29, 2019 at 02:02:30PM +0800, Ben Pai wrote:
+> Add the driver to monitor Wisreon power supplies with hwmon over pmbus.
 
-> On Wed, Nov 06, 2019 at 10:56:01AM +0100, Miroslav Benes wrote:
-> > The livepatch consistency model requires reliable stack tracing
-> > architecture support in order to work properly. In order to achieve
-> > this, two main issues have to be solved. First, reliable and consistent
-> > call chain backtracing has to be ensured. Second, the unwinder needs to
-> > be able to detect stack corruptions and return errors.
-> 
-> I tried to address that in a patch series I pushed here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git/log/?h=livepatch
-> 
-> It partially includes your changes from this patch which have been split
-> in 2 patches:
-> s390/unwind: add stack pointer alignment sanity checks
-> s390/livepatch: Implement reliable stack tracing for the consistency model
-> 
-> The primary goal was to make our backchain unwinder reliable itself. And
-> suitable for livepatching as is (we extra checks at the caller, see
-> below). Besides unwinder changes few things have been improved to avoid
-> special handling during unwinding.
-> - all tasks now have pt_regs at the bottom of task stack.
-> - final backchain always contains 0, no further references to no_dat stack.
-> - successful unwinding means reaching pt_regs at the bottom of task stack,
-> and unwinder guarantees that unwind_error() reflects that.
-> - final pt_regs at the bottom of task stack is never included in unwinding
-> results. It never was for user tasks. And kernel tasks cannot return to
-> that state anyway (and in some cases pt_regs are empty).
-> - unwinder starts unwinding from a reliable state (not "sp" passed as
-> an argument).
+Wistron ?
 
-Great. Thanks for doing that. It all looks good to me and the outcome is 
-definitely better. I obviously still had some misconceptions about the 
-code and it is much clearer now.
-
-> There is also s390 specific unwinder testing module.
->
-> > Idle tasks are a bit special. Their final back chains point to no_dat
-> > stacks. See for reference CALL_ON_STACK() in smp_start_secondary()
-> > callback used in __cpu_up(). The unwinding is stopped there and it is
-> > not considered to be a stack corruption.
-> I changed that with commit:
-> s390: avoid misusing CALL_ON_STACK for task stack setup
-> Now idle tasks are not special, final back chain contains 0.
 > 
-> > ---
-> >  arch/s390/Kconfig             |  1 +
-> >  arch/s390/kernel/dumpstack.c  | 11 +++++++
-> >  arch/s390/kernel/stacktrace.c | 46 ++++++++++++++++++++++++++
-> >  arch/s390/kernel/unwind_bc.c  | 61 +++++++++++++++++++++++++++--------
-> >  4 files changed, 106 insertions(+), 13 deletions(-)
-> > 
-> > --- a/arch/s390/kernel/dumpstack.c
-> > +++ b/arch/s390/kernel/dumpstack.c
-> > @@ -94,12 +94,23 @@ int get_stack_info(unsigned long sp, struct task_struct *task,
-> >  	if (!sp)
-> >  		goto unknown;
-> >  
-> > +	/* Sanity check: ABI requires SP to be aligned 8 bytes. */
-> > +	if (sp & 0x7)
-> > +		goto unknown;
-> > +
-> This has been split in a separate commit:
-> s390/unwind: add stack pointer alignment sanity checks
-> 
-> > +	/*
-> > +	 * The reliable unwinding should not start on nodat_stack, async_stack
-> > +	 * or restart_stack. The task is either current or must be inactive.
-> > +	 */
-> > +	if (unwind_reliable)
-> > +		goto unknown;
-> I moved this check in arch_stack_walk_reliable itself. See below.
-> 
-> >  static bool unwind_use_regs(struct unwind_state *state)
-> > @@ -85,10 +94,13 @@ static bool unwind_use_frame(struct unwind_state *state, unsigned long sp,
-> >  	struct stack_frame *sf;
-> >  	unsigned long ip;
-> >  
-> > -	if (unlikely(outside_of_stack(state, sp))) {
-> > -		if (!update_stack_info(state, sp))
-> > -			goto out_err;
-> > -	}
-> > +	/*
-> > +	 * No need to update stack info when unwind_reliable is true. We should
-> > +	 * be on a task stack and everything else is an error.
-> > +	 */
-> > +	if (unlikely(outside_of_stack(state, sp)) &&
-> > +	    (unwind_reliable || !update_stack_info(state, sp)))
-> > +		goto out_err;
-> I moved this check in arch_stack_walk_reliable itself. See below.
-> 
-> > +	/* Unwind reliable */
-> > +	if ((unsigned long)regs != info->end - sizeof(struct pt_regs))
-> > +		goto out_err;
-> I moved this check in arch_stack_walk_reliable itself. See below.
-> 
-> 
-> > @@ -136,8 +162,17 @@ bool unwind_next_frame(struct unwind_state *state, bool unwind_reliable)
-> >  	sf = (struct stack_frame *) state->sp;
-> >  	sp = READ_ONCE_NOCHECK(sf->back_chain);
-> >  
-> > -	/* Non-zero back-chain points to the previous frame */
-> > -	if (likely(sp))
-> > +	/*
-> > +	 * Non-zero back-chain points to the previous frame
-> > +	 *
-> > +	 * unwind_reliable case: Idle tasks are special. The final
-> > +	 * back-chain points to nodat_stack.  See CALL_ON_STACK() in
-> > +	 * smp_start_secondary() callback used in __cpu_up(). We just
-> > +	 * accept it and look for pt_regs.
-> > +	 */
-> > +	if (likely(sp) &&
-> > +	    (!unwind_reliable || !(is_idle_task(state->task) &&
-> > +				   outside_of_stack(state, sp))))
-> >  		return unwind_use_frame(state, sp, unwind_reliable);
-> This is not needed anymore.
-> 
-> In the end this all boils down to arch_stack_walk_reliable
-> implementation. I made the following changes compaired to your version:
+> Signed-off-by: Ben Pai <Ben_Pai@wistron.com>
 > ---
-> - use plain unwind_for_each_frame
-> - "state.stack_info.type != STACK_TYPE_TASK" guarantees that we are
->   not leaving task stack.
-> - "if (state.regs)" guarantees that we have not met an program interrupt
->   pt_regs (page faults) or preempted. Corresponds to yours:
-> > +	if ((unsigned long)regs != info->end - sizeof(struct pt_regs))
-> > +		goto out_err;
-
-Agreed. All this should be equivalent to the changes I made.
-
-> - I don't see a point in storing "kernel_thread_starter", am I missing
->   something?
-
-No, you don't. It was just for the sake of completeness and it is not 
-worth it.
-
-[...]
- 
-> I'd appreciate if you could give those changes a spin. And check if
-> something is missing or broken. Or share your livepatching testing
-> procedure. If everything goes well, I might include these changes in
-> second pull request for this 5.5 merge window.
+>  drivers/hwmon/pmbus/Kconfig       |   9 ++
+>  drivers/hwmon/pmbus/Makefile      |   1 +
+>  drivers/hwmon/pmbus/wistron-wps.c | 180 ++++++++++++++++++++++++++++++
+>  3 files changed, 190 insertions(+)
+>  create mode 100644 drivers/hwmon/pmbus/wistron-wps.c
 > 
-> I did successfully run ./testing/selftests/livepatch/test-livepatch.sh
+> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> index d62d69bb7e49..ebb7024e58ab 100644
+> --- a/drivers/hwmon/pmbus/Kconfig
+> +++ b/drivers/hwmon/pmbus/Kconfig
+> @@ -219,6 +219,15 @@ config SENSORS_UCD9200
+>  	  This driver can also be built as a module. If so, the module will
+>  	  be called ucd9200.
+>  
+> +config SENSORS_WISTRON_WPS
+> +	tristate "Wistron Power Supply"
+> +	help
+> +	  If you say yes here you get hardware monitoring support for the Wistron
+> +	  power supply.
+> +
+> +	  This driver can also be built as a module. If so, the module will
+> +	  be called wistron-wps.
+> +
+>  config SENSORS_ZL6100
+>  	tristate "Intersil ZL6100 and compatibles"
+>  	help
+> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> index 03bacfcfd660..cad38f99e8c5 100644
+> --- a/drivers/hwmon/pmbus/Makefile
+> +++ b/drivers/hwmon/pmbus/Makefile
+> @@ -25,4 +25,5 @@ obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
+>  obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
+>  obj-$(CONFIG_SENSORS_UCD9000)	+= ucd9000.o
+>  obj-$(CONFIG_SENSORS_UCD9200)	+= ucd9200.o
+> +obj-$(CONFIG_SENSORS_WISTRON_WPS) += wistron-wps.o
+>  obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
+> diff --git a/drivers/hwmon/pmbus/wistron-wps.c b/drivers/hwmon/pmbus/wistron-wps.c
+> new file mode 100644
+> index 000000000000..764496aa9d4f
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/wistron-wps.c
+> @@ -0,0 +1,180 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright 2019 Wistron Corp.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/device.h>
+> +#include <linux/fs.h>
+> +#include <linux/i2c.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pmbus.h>
+> +
+> +#include "pmbus.h"
+> +
+> +#define WPS_ID_CMD				0x99
+> +#define WPS_PN_CMD				0x9A
+> +#define WPS_FW_CMD				0x9B
+> +#define WPS_DATE_CMD				0x9D
+> +#define WPS_SN_CMD				0x9E
+> +
+> +enum {
+> +	WPS_DEBUGFS_ID,
+> +	WPS_DEBUGFS_PN,
+> +	WPS_DEBUGFS_SN,
+> +	WPS_DEBUGFS_FW,
+> +	WPS_DEBUGFS_DATE,
+> +	WPS_DEBUGFS_NUM_ENTRIES
+> +};
+> +
+> +struct wistron_wps {
+> +
+> +	struct i2c_client *client;
+> +
+> +	int debugfs_entries[WPS_DEBUGFS_NUM_ENTRIES];
+> +
+> +};
+> +
+> +#define to_psu(x, y) container_of((x), struct wistron_wps, debugfs_entries[(y)])
 
-'make run_tests' in tools/testing/selftests/livepatch/ would call all the 
-tests in the directory. Especially test-callbacks.sh which stresses the 
-livepatching even more.
- 
-> https://github.com/lpechacek/qa_test_klp seems outdated. I was able to
-> fix and run some tests of it but haven't had time to figure out all of
-> them. Is there a version that would run on top of current Linus tree?
+container_of() doesn't really need the extra ().
 
-Ah, sorry. I should have mentioned that. The code became outdated with 
-recent upstream changes. Libor is working on the updates (CCed).
+> +
+> +static ssize_t wistron_wps_debugfs_op(struct file *file, char __user *buf,
+> +				    size_t count, loff_t *ppos)
 
-Anyway, I ran it here and it all works fine.
+Please align continuation lines with '('.
 
-Tested-by: Miroslav Benes <mbenes@suse.cz>
+> +{
+> +	u8 cmd;
+> +	int rc;
+> +	int *idxp = file->private_data;
+> +	int idx = *idxp;
+> +	struct wistron_wps *psu = to_psu(idxp, idx);
+> +	char data[I2C_SMBUS_BLOCK_MAX] = { 0 };
+> +
+> +	switch (idx) {
+> +	case WPS_DEBUGFS_ID:
+> +		cmd = WPS_ID_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_PN:
+> +		cmd = WPS_PN_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_SN:
+> +		cmd = WPS_SN_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_FW:
+> +		cmd = WPS_FW_CMD;
+> +		break;
+> +	case WPS_DEBUGFS_DATE:
+> +		cmd = WPS_DATE_CMD;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	rc = i2c_smbus_read_block_data(psu->client, cmd, data);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +done:
+> +	data[rc] = '\n';
 
-Thanks a lot
-Miroslav
+The block command can return up to 32 bytes. If it does, the above code
+writes beyond the end of the buffer.
+
+> +	rc += 2;
+
+Why += 2 ? This will report the trailing '\0' to userspace (and require
+an even larger buffer). Is that intentional ?
+
+> +
+> +	return simple_read_from_buffer(buf, count, ppos, data, rc);
+> +}
+> +
+> +static const struct file_operations wistron_wps_fops = {
+> +	.llseek = noop_llseek,
+> +	.read = wistron_wps_debugfs_op,
+> +	.open = simple_open,
+> +};
+> +
+> +static struct pmbus_driver_info wistron_wps_info = {
+> +	.pages = 1,
+> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
+> +		PMBUS_HAVE_PIN | PMBUS_HAVE_POUT | PMBUS_HAVE_FAN12 |
+> +		PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
+> +		PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
+> +		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
+> +		PMBUS_HAVE_STATUS_FAN12,
+> +};
+> +
+> +static struct pmbus_platform_data wistron_wps_pdata = {
+> +	.flags = PMBUS_SKIP_STATUS_CHECK,
+
+This should be explained if it is indeed needed.
+
+> +};
+> +
+> +static int wistron_wps_probe(struct i2c_client *client,
+> +			   const struct i2c_device_id *id)
+
+Please match ( in continuation lines.
+
+> +{
+> +	int i, rc;
+> +	struct dentry *debugfs;
+> +	struct dentry *wistron_wps_dir;
+> +	struct wistron_wps *psu;
+> +
+> +	client->dev.platform_data = &wistron_wps_pdata;
+> +	rc = pmbus_do_probe(client, id, &wistron_wps_info);
+> +	if (rc)
+> +		return rc;
+> +
+> +	psu = devm_kzalloc(&client->dev, sizeof(*psu), GFP_KERNEL);
+> +	if (!psu)
+> +		return 0;
+> +
+> +	psu->client = client;
+> +
+> +	debugfs = pmbus_get_debugfs_dir(client);
+> +	if (!debugfs)
+> +		return 0;
+> +
+> +	wistron_wps_dir = debugfs_create_dir(client->name, debugfs);
+> +	if (!wistron_wps_dir)
+> +		return 0;
+> +
+> +	for (i = 0; i < WPS_DEBUGFS_NUM_ENTRIES; ++i)
+> +		psu->debugfs_entries[i] = i;
+> +
+> +	debugfs_create_file("fru", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_ID],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("part_number", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_PN],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("serial_number", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_SN],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("fw_version", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_FW],
+> +			    &wistron_wps_fops);
+> +	debugfs_create_file("mfr_date", 0444, wistron_wps_dir,
+> +			    &psu->debugfs_entries[WPS_DEBUGFS_DATE],
+> +			    &wistron_wps_fops);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id wistron_wps_id[] = {
+> +	{ "wistron_wps", 1 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, wistron_wps_id);
+> +
+> +static const struct of_device_id wistron_wps_of_match[] = {
+> +	{ .compatible = "wistron,wps" },
+
+This will need to be documented. It is also probably not the best name
+for a devicetree property (what is "wps" ?), but that will be up to
+a DT maintainer to decide.
+
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, wistron_wps_of_match);
+> +
+> +static struct i2c_driver wistron_wps_driver = {
+> +	.driver = {
+> +		.name = "wistron-wps",
+> +		.of_match_table = wistron_wps_of_match,
+> +	},
+> +	.probe = wistron_wps_probe,
+> +	.remove = pmbus_do_remove,
+> +	.id_table = wistron_wps_id,
+> +};
+> +
+> +module_i2c_driver(wistron_wps_driver);
+> +
+> +MODULE_AUTHOR("Ben Pai");
+> +MODULE_DESCRIPTION("PMBus driver for Wistron power supplies");
+> +MODULE_LICENSE("GPL");
