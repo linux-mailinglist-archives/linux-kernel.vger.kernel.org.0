@@ -2,113 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8463810DA61
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:05:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A60E10DA68
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 21:06:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfK2UFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 15:05:25 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:38923 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbfK2UFZ (ORCPT
+        id S1727179AbfK2UFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 15:05:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59637 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726926AbfK2UFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 15:05:25 -0500
-Received: by mail-pj1-f66.google.com with SMTP id v93so10470144pjb.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 12:05:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5ipR+DrBtOJQIudnRaII7nJ3+mq7nKbRqBwicLRMc3w=;
-        b=IU0LNMh0TWniaggb1y5v7B/hYj06AGeQ6rFf4JXFP3ecy8Snmq/f80SwI5lmzFWIrJ
-         tWeJyOxzIUhXa6LVLo+l/RdrzAEalAseSjkKIbR+FPLLc9VzYIasV3qKMRq0GnJU0azI
-         ZcBiRNEHd7jjx1UEILokbjyRcOPFK6vVOXhrA=
+        Fri, 29 Nov 2019 15:05:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575057953;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RP2PHwp5wZl3ztgeJTb35J2c98KyKZ9pDDlofVv46EI=;
+        b=hrUHVKWMIHROTUGhPXm+0v868zAudvzVEXurJaR8hifulObOGO+9qc+KjZkIE5ewHMg7p3
+        usJEIHYqXDz4rf8yt3yzHBMiHSLk1XL/zskhK6NN3eMSjM5uPGq5BVB//B7sup8LVlVNh+
+        Vdhq1aslXHmCjzECr9NT2GZ9x2gzbNQ=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-281-gag-o1OlNwOMuEHnQhiwSw-1; Fri, 29 Nov 2019 15:05:52 -0500
+Received: by mail-lf1-f72.google.com with SMTP id j16so6446259lfk.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 12:05:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5ipR+DrBtOJQIudnRaII7nJ3+mq7nKbRqBwicLRMc3w=;
-        b=R6Xv595X33LBmjnyO+3j8M7dT0QuWpRQsZIwhZbgwqeh2+kxlQgTz0Mo4QHduRcASL
-         oZJe3FfLtmb3vUsue0kMPwzy3ajeHIxivcyQjSsuJJ0tw/U4Wx9h1/MBo+5Pd999JfUo
-         X6KZ85v1xV/Hzz4whtaamKKiOfPbRlNiFLsKmI8pSK6PV01KuEXQfVHzRHI9Nl6YwXQy
-         SrZGNX03XgBl/rI5P3gyHvRJ9BijjMz1X1AzhcgLBOXuBHIJz6Lgn5S6EXFdgfR+hVCb
-         YsHBKJeCf7ztsvn21a2J/GMYyK8Tx0A29dyWE4Tcm//pshx665aV56c5R5SC60AQsrL8
-         Egcg==
-X-Gm-Message-State: APjAAAWQFGvE/IJHybviU2HeRFyrt+rNKLqGYF1EqaFUHOmn9eoB9Te5
-        fjA2pBJWjJQGpLCWv0qeYxpbk4A76ac=
-X-Google-Smtp-Source: APXvYqzv+PIer9ks5zR5Vza4ROybRs9nR2wonFy59tez+ucGy/ExMOXQl27Izq38p0bVRbv+ekYwvw==
-X-Received: by 2002:a17:90a:aa96:: with SMTP id l22mr19758027pjq.112.1575057924147;
-        Fri, 29 Nov 2019 12:05:24 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 83sm25542605pgh.12.2019.11.29.12.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 12:05:23 -0800 (PST)
-Date:   Fri, 29 Nov 2019 15:05:22 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] perf/core: Add SRCU annotation for pmus list walk
-Message-ID: <20191129200522.GA239292@google.com>
-References: <20191119121429.zhcubzdhm672zasg@linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zCyHxNb/EFCllk+iZMx0l93yQzrOq+uBxpToCPQHS9k=;
+        b=DUqiIv6QOaYBcUj6lANGWAEN7j9e6Lm/zP6WNxsot0RenxHC13Hg8nonjYu/30O2z1
+         lJQ5skj02cpxc0N+1wwgbqfVhy7NH544FY3krwqHluwxMUYIrkJZIj3YE7/C2AZD7vRN
+         ITinlmZHWXevEiAHYgUiIqih0d91Vbhr6xIkl4dZkpMRtkX6TbicxaIN9XKGvwWtg+dg
+         GLVU/pI1ZtQc93tTwGTIJs+HvMVHlc2GKdR3Ix5Vnskqv5DdWl8CEZLFmncmVAR3T/tx
+         UCHuUg7BnlsVwZ1Lbj49FJXnqHsbu6ylGP/jXfKa2BKxqEwGcnlptFPHk9Ma4iGDDixn
+         NLpQ==
+X-Gm-Message-State: APjAAAXbB3hLZGNYwC6TI5Sspso0Mc3XPHRS/SzEQ8RcURbJA1KMk5Sw
+        xsViQ/jPPxO8ZkHEF4L7ni33AYYZt1MBRbOR8F6BfdVnxO4V2V2gAvxxjgxXS+cZ7U8PiIWL1Sn
+        sdajLEdyEKJ0eGHEFgG2xLQ0wOlrlSQKyoaOnDNYL
+X-Received: by 2002:a2e:9a41:: with SMTP id k1mr12682048ljj.235.1575057949817;
+        Fri, 29 Nov 2019 12:05:49 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz0eILOnKMVbbahC3Rp/NyuV7+7BmZiagne10VkRMygf99/om+7iSrw3qCYWoCJXV2cv5Un/9KS0XCSQp5JswM=
+X-Received: by 2002:a2e:9a41:: with SMTP id k1mr12682025ljj.235.1575057949585;
+ Fri, 29 Nov 2019 12:05:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119121429.zhcubzdhm672zasg@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1574972621-25750-1-git-send-email-bhsharma@redhat.com> <20191129102421.GA28322@willie-the-truck>
+In-Reply-To: <20191129102421.GA28322@willie-the-truck>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Sat, 30 Nov 2019 01:35:36 +0530
+Message-ID: <CACi5LpNQPw41kGsW+d0PyZaC7gSrbgwT2VxwyO5r3j83h-mkEQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] Append new variables to vmcoreinfo (TCR_EL1.T1SZ
+ for arm64 and MAX_PHYSMEM_BITS for all archs)
+To:     Will Deacon <will@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bhupesh SHARMA <bhupesh.linux@gmail.com>, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        Boris Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morse <james.morse@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dave Anderson <anderson@redhat.com>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+X-MC-Unique: gag-o1OlNwOMuEHnQhiwSw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 01:14:29PM +0100, Sebastian Andrzej Siewior wrote:
-> Since commit
->    28875945ba98d ("rcu: Add support for consolidated-RCU reader checking")
-> 
-> there is an additional check to ensure that a RCU related lock is held
-> while the RCU list is iterated.
-> This section holds the SRCU reader lock instead.
-> 
-> Add annotation to list_for_each_entry_rcu() that pmus_srcu must be
-> acquired during the list traversal.
-> 
+Hi Will,
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+On Fri, Nov 29, 2019 at 3:54 PM Will Deacon <will@kernel.org> wrote:
+>
+> On Fri, Nov 29, 2019 at 01:53:36AM +0530, Bhupesh Sharma wrote:
+> > Changes since v4:
+> > ----------------
+> > - v4 can be seen here:
+> >   http://lists.infradead.org/pipermail/kexec/2019-November/023961.html
+> > - Addressed comments from Dave and added patches for documenting
+> >   new variables appended to vmcoreinfo documentation.
+> > - Added testing report shared by Akashi for PATCH 2/5.
+>
+> Please can you fix your mail setup? The last two times you've sent this
+> series it seems to get split into two threads, which is really hard to
+> track in my inbox:
+>
+> First thread:
+>
+> https://lore.kernel.org/lkml/1574972621-25750-1-git-send-email-bhsharma@r=
+edhat.com/
+>
+> Second thread:
+>
+> https://lore.kernel.org/lkml/1574972716-25858-1-git-send-email-bhsharma@r=
+edhat.com/
 
-thanks,
+There seems to be some issue with my server's msmtp settings. I have
+tried resending the v5 (see
+<http://lists.infradead.org/pipermail/linux-arm-kernel/2019-November/696833=
+.html>).
 
- - Joel
+I hope the threading is ok this time.
 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> 
-> I see the warning in in v5.4-rc during boot. For some reason I don't see
-> it in tip/master during boot but "perf stat w" triggers it again (among
-> other things).
-> 
->  kernel/events/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 5224388872069..dbb3b26a55612 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -10497,7 +10497,7 @@ static struct pmu *perf_init_event(struct perf_event *event)
->  		goto unlock;
->  	}
->  
-> -	list_for_each_entry_rcu(pmu, &pmus, entry) {
-> +	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
->  		ret = perf_try_init_event(pmu, event);
->  		if (!ret)
->  			goto unlock;
-> -- 
-> 2.24.0
-> 
+Thanks for your patience.
+
+Regards,
+Bhupesh
+
