@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E34D019678C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C9171967A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:46:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgC1Qo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:44:56 -0400
-Received: from mx.sdf.org ([205.166.94.20]:49876 "EHLO mx.sdf.org"
+        id S1727993AbgC1Qpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 12:45:50 -0400
+Received: from mx.sdf.org ([205.166.94.20]:50018 "EHLO mx.sdf.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727903AbgC1Qnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:43:55 -0400
+        id S1727722AbgC1Qnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 12:43:32 -0400
 Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
-        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhIZ2029371
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SGhJkQ015420
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
-        Sat, 28 Mar 2020 16:43:18 GMT
+        Sat, 28 Mar 2020 16:43:19 GMT
 Received: (from lkml@localhost)
-        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhI3G001046;
-        Sat, 28 Mar 2020 16:43:18 GMT
-Message-Id: <202003281643.02SGhI3G001046@sdf.org>
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SGhJI8005124;
+        Sat, 28 Mar 2020 16:43:19 GMT
+Message-Id: <202003281643.02SGhJI8005124@sdf.org>
 From:   George Spelvin <lkml@sdf.org>
-Date:   Fri, 29 Nov 2019 17:10:04 -0500
-Subject: [RFC PATCH v1 30/50] kernel/locking/test-ww_mutex.c: Use cheaper
- prandom_u32_max()
+Date:   Fri, 29 Nov 2019 17:12:18 -0500
+Subject: [RFC PATCH v1 32/50] lib/test*.c: Use prandom_u32_max()
 To:     linux-kernel@vger.kernel.org, lkml@sdf.org
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Cc:     Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is test code; it doesn't need crypto-quality random numbers.
-
-Also use the simpler initialize-while-shuffling variant of the
-Fisher-Yates shuffle in get_random_order().
-
-(It's not clear that we need the order[] array at all.
-Could we just shuffle the stress->locks array directly?)
+lib/reed_solomon/test_rslib.c alreasy uses prandom_u32();
+lib/test_hexdump.c and lib/test-string_helpers.c were using
+get_random_int() % range, which is needlessly expensive for
+test code.
 
 Signed-off-by: George Spelvin <lkml@sdf.org>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will@kernel.org>
+Cc: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- kernel/locking/test-ww_mutex.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ lib/reed_solomon/test_rslib.c |  4 ++--
+ lib/test-string_helpers.c     |  2 +-
+ lib/test_hexdump.c            | 10 +++++-----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 3e82f449b4ff7..3fc54d88eb842 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -348,25 +348,18 @@ struct stress {
+diff --git a/lib/reed_solomon/test_rslib.c b/lib/reed_solomon/test_rslib.c
+index 4eb29f365ece0..58e767c142ef8 100644
+--- a/lib/reed_solomon/test_rslib.c
++++ b/lib/reed_solomon/test_rslib.c
+@@ -183,7 +183,7 @@ static int get_rcw_we(struct rs_control *rs, struct wspace *ws,
  
- static int *get_random_order(int count)
+ 		do {
+ 			/* Must not choose the same location twice */
+-			errloc = prandom_u32() % len;
++			errloc = prandom_u32_max(len);
+ 		} while (errlocs[errloc] != 0);
+ 
+ 		errlocs[errloc] = 1;
+@@ -194,7 +194,7 @@ static int get_rcw_we(struct rs_control *rs, struct wspace *ws,
+ 	for (i = 0; i < eras; i++) {
+ 		do {
+ 			/* Must not choose the same location twice */
+-			errloc = prandom_u32() % len;
++			errloc = prandom_u32_max(len);
+ 		} while (errlocs[errloc] != 0);
+ 
+ 		derrlocs[i] = errloc;
+diff --git a/lib/test-string_helpers.c b/lib/test-string_helpers.c
+index 25b5cbfb7615b..3349f3ddc528c 100644
+--- a/lib/test-string_helpers.c
++++ b/lib/test-string_helpers.c
+@@ -398,7 +398,7 @@ static int __init test_string_helpers_init(void)
+ 	for (i = 0; i < UNESCAPE_ANY + 1; i++)
+ 		test_string_unescape("unescape", i, false);
+ 	test_string_unescape("unescape inplace",
+-			     get_random_int() % (UNESCAPE_ANY + 1), true);
++			     prandom_u32_max(UNESCAPE_ANY + 1), true);
+ 
+ 	/* Without dictionary */
+ 	for (i = 0; i < (ESCAPE_ANY_NP | ESCAPE_HEX) + 1; i++)
+diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+index 5144899d3c6b8..54e4efb28b974 100644
+--- a/lib/test_hexdump.c
++++ b/lib/test_hexdump.c
+@@ -149,7 +149,7 @@ static void __init test_hexdump(size_t len, int rowsize, int groupsize,
+ static void __init test_hexdump_set(int rowsize, bool ascii)
  {
--	int *order;
--	int n, r, tmp;
-+	int n, *order;
+ 	size_t d = min_t(size_t, sizeof(data_b), rowsize);
+-	size_t len = get_random_int() % d + 1;
++	size_t len = prandom_u32_max(d) + 1;
  
- 	order = kmalloc_array(count, sizeof(*order), GFP_KERNEL);
--	if (!order)
-+	if (!order || !count)
- 		return order;
- 
--	for (n = 0; n < count; n++)
--		order[n] = n;
--
--	for (n = count - 1; n > 1; n--) {
--		r = get_random_int() % (n + 1);
--		if (r != n) {
--			tmp = order[n];
--			order[n] = order[r];
--			order[r] = tmp;
--		}
-+	order[0] = 0;
-+	for (n = 1; n < count; n++) {
-+		int r = prandom_u32_max(n+1);
-+		order[n] = order[r];
-+		order[r] = n;
- 	}
--
- 	return order;
- }
- 
-@@ -498,7 +491,7 @@ static void stress_one_work(struct work_struct *work)
+ 	test_hexdump(len, rowsize, 4, ascii);
+ 	test_hexdump(len, rowsize, 2, ascii);
+@@ -208,11 +208,11 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
+ static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
  {
- 	struct stress *stress = container_of(work, typeof(*stress), work);
- 	const int nlocks = stress->nlocks;
--	struct ww_mutex *lock = stress->locks + (get_random_int() % nlocks);
-+	struct ww_mutex *lock = stress->locks + prandom_u32_max(nlocks);
- 	int err;
+ 	unsigned int i = 0;
+-	int rs = (get_random_int() % 2 + 1) * 16;
++	int rs = (prandom_u32() % 2 + 1) * 16;
  
  	do {
+ 		int gs = 1 << i;
+-		size_t len = get_random_int() % rs + gs;
++		size_t len = prandom_u32_max(rs) + gs;
+ 
+ 		test_hexdump_overflow(buflen, rounddown(len, gs), rs, gs, ascii);
+ 	} while (i++ < 3);
+@@ -223,11 +223,11 @@ static int __init test_hexdump_init(void)
+ 	unsigned int i;
+ 	int rowsize;
+ 
+-	rowsize = (get_random_int() % 2 + 1) * 16;
++	rowsize = (prandom_u32() % 2 + 1) * 16;
+ 	for (i = 0; i < 16; i++)
+ 		test_hexdump_set(rowsize, false);
+ 
+-	rowsize = (get_random_int() % 2 + 1) * 16;
++	rowsize = (prandom_u32() % 2 + 1) * 16;
+ 	for (i = 0; i < 16; i++)
+ 		test_hexdump_set(rowsize, true);
+ 
 -- 
 2.26.0
 
