@@ -2,97 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07FCB10DA06
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 20:11:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F0410D9DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 20:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfK2TKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 14:10:52 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40726 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfK2TKw (ORCPT
+        id S1727079AbfK2TCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 14:02:33 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:35768 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbfK2TCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 14:10:52 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id B1BE6292BA4
-Received: by earth.universe (Postfix, from userid 1000)
-        id 990293C0C77; Fri, 29 Nov 2019 15:06:01 +0100 (CET)
-Date:   Fri, 29 Nov 2019 15:06:01 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     linux@armlinux.org.uk, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 04/17] power: reset: Kconfig: select
- POWER_RESET_AT91_RESET for sam9x60
-Message-ID: <20191129140601.fgbxwhk2c7rlvvyz@earth.universe>
-References: <1574773941-20649-1-git-send-email-claudiu.beznea@microchip.com>
- <1574773941-20649-5-git-send-email-claudiu.beznea@microchip.com>
+        Fri, 29 Nov 2019 14:02:33 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xATIx7XI022707;
+        Fri, 29 Nov 2019 19:02:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=PMSpyAZwm5n49dSwZWbSUza3afbhx07BpmaBJxUA6eY=;
+ b=Ah15mlbZc28+/ntfcw2uJeT2TY5X7o46m8gJwAB6hxe8t+zIxqhbH4QGVJ+jfyftyys4
+ SodtDo+RPH236douXuWTTMRJPJXm0klYO8BP6PleBT6Pa/R0NAA4M7e2hA2Oq5N0hFO8
+ IHOVJdSUHL2zxs21DSL5j1UxMraE0XTjF0yiaUncs98utz4eQeoNtMTbWWUr6yccSD8w
+ dHmyIFMj2d6DS/RaImxn3ws0turngLE52pAQpvWLLZn3yLV8J33JUT5cIWGcprh1hKer
+ R2sQSyjNjS4qvBDJz9BJefHGUUILYJrUF+7+YfaI3Ginzmbv2sALG/g/dNw8paesBi52 dg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2wevqqwscr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Nov 2019 19:02:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xATIrXnY155220;
+        Fri, 29 Nov 2019 19:02:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wjh0tccg1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Nov 2019 19:02:21 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xATJ2Ifg023014;
+        Fri, 29 Nov 2019 19:02:19 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 29 Nov 2019 11:02:18 -0800
+Date:   Fri, 29 Nov 2019 22:02:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v3 08/10] clk: clock-wizard: Make the output names unique
+Message-ID: <20191129190205.GA3282@kadam>
+References: <cover.1574922435.git.shubhrajyoti.datta@xilinx.com>
+ <d9277db2692bb77a41dfed927cfb791bdcced17d.1574922435.git.shubhrajyoti.datta@xilinx.com>
+ <20191128074505.GC1781@kadam>
+ <CAKfKVtHpP4j32CNA8ioET=wqYPWtzrQvH-A+4n-pcvj1KZy=fg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qqra4xv2pgsrtjif"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1574773941-20649-5-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <CAKfKVtHpP4j32CNA8ioET=wqYPWtzrQvH-A+4n-pcvj1KZy=fg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9456 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911290163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9456 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911290164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 29, 2019 at 05:37:57PM +0530, Shubhrajyoti Datta wrote:
+> On Thu, Nov 28, 2019 at 1:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > On Thu, Nov 28, 2019 at 12:06:15PM +0530, shubhrajyoti.datta@gmail.com wrote:
+> > > From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > >
+> > > Incase there are more than one instance of the clocking wizard.
+> > > And if the output name given is the same then the probe fails.
+> > > Fix the same by appending the device name to the output name to
+> > > make it unique.
+> > >
+> > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > > ---
+> > >  drivers/clk/clk-xlnx-clock-wizard.c | 13 ++++++++-----
+> > >  1 file changed, 8 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
+> > > index 75ea745..9993543 100644
+> > > --- a/drivers/clk/clk-xlnx-clock-wizard.c
+> > > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
+> > > @@ -555,6 +555,9 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >               ret = -ENOMEM;
+> > >               goto err_disable_clk;
+> > >       }
+> > > +     outputs = of_property_count_strings(np, "clock-output-names");
+> > > +     if (outputs == 1)
+> > > +             flags = CLK_SET_RATE_PARENT;
+> > >       clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
+> > >                       (&pdev->dev, clk_name,
+> > >                        __clk_get_name(clk_wzrd->clk_in1),
+> > > @@ -566,9 +569,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >               goto err_disable_clk;
+> > >       }
+> > >
+> > > -     outputs = of_property_count_strings(np, "clock-output-names");
+> > > -     if (outputs == 1)
+> > > -             flags = CLK_SET_RATE_PARENT;
+> > >       clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
+> > >       if (!clk_name) {
+> > >               ret = -ENOMEM;
+> > > @@ -591,6 +591,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >       /* register div per output */
+> > >       for (i = outputs - 1; i >= 0 ; i--) {
+> > >               const char *clkout_name;
+> > > +             const char *clkout_name_wiz;
+> > >
+> > >               if (of_property_read_string_index(np, "clock-output-names", i,
+> > >                                                 &clkout_name)) {
+> > > @@ -599,9 +600,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >                       ret = -EINVAL;
+> > >                       goto err_rm_int_clks;
+> > >               }
+> > > +             clkout_name_wiz = kasprintf(GFP_KERNEL, "%s_%s",
+> > > +                                         dev_name(&pdev->dev), clkout_name);
+> >
+> > If this kasprintf() crashes then clk_wzrd_register_divf() will fail.
 
---qqra4xv2pgsrtjif
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I meant if kasprintf() returns NULL not crashes...  :/
 
-Hi,
+> > But that was a headache to review.  Just add a check for NULL.  We need
+> > a kfree() as well.
 
-On Tue, Nov 26, 2019 at 03:12:08PM +0200, Claudiu Beznea wrote:
-> Select POWER_RESET_AT91_RESET for SAM9X60 SoC.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  drivers/power/reset/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index c721939767eb..886e60017f4d 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -26,7 +26,7 @@ config POWER_RESET_AT91_POWEROFF
->  config POWER_RESET_AT91_RESET
->  	tristate "Atmel AT91 reset driver"
->  	depends on ARCH_AT91
-> -	default SOC_AT91SAM9 || SOC_SAMA5
-> +	default SOC_AT91SAM9 || SOC_SAM9X60 || SOC_SAMA5
->  	help
->  	  This driver supports restart for Atmel AT91SAM9 and SAMA5
->  	  SoCs
+regards,
+dan carpenter
 
-I suppose this will go through ARM:
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
--- Sebastian
-
---qqra4xv2pgsrtjif
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl3hJckACgkQ2O7X88g7
-+pqhDQ//WNmLXqjre475NYvywJrUR10v2JH2NyVYPBlYw5NtMdaj/2qgjlOOA5by
-KaHTlh1gsCthLa5RF+xVpKc9QnKEPnt3ZIHys+QO1vBl50CA4uSdP7SJ0X8pqhSm
-s/KfSa5dlkGF0z3cu6XXJg4c/oG4HSsCGPnGrbwVIaCN1kQBA8ESEBhwyggIu59J
-DjBw092F4Wp+o+McqZW+xR/ILbNhqkqzz5OkJdg5r3XcWr+K3ubNUrfEIKn60+C6
-49PI6hvkvbZHtHRtJgkcxW7TX/IsmFNWGWO0VSPLh7sa5DiD9Pf4Mux3mHAU6uk6
-QaFfWZahcRqNvpwxcqJUqntwawnpIzYmoJfzDoqScHEfU1kZ+p3U/RenNfHBHioQ
-SPO/15E2hC5Anb7JNYbxS4JccBF+0xRmpVIGRqmNJFFRaVvEhRgYuH/LWZqdgQEn
-K/ZPHCXsYS/5cTMNOJ/Ma1FfgVaEbeCXv5r89ExS2/JuHtDXCD3KdC7eIYnwEvJn
-9nYnHxRdBJRH92QpooEUOJI0fXKgBsGBn2lcAwqlt7ctfVNG3fL/aK8E7SuXNomw
-LQyahophFRjRjCKT8ZscFperzBF70gMVXws0eiV2u55ZHVtvXBIEF7BapxxjgI6a
-dg22CtqsGb4xQGY2srR7qjL4rJd9JJuQrQcuRYBwxsRnDG80Wto=
-=HxsT
------END PGP SIGNATURE-----
-
---qqra4xv2pgsrtjif--
