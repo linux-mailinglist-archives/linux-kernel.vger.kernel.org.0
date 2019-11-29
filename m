@@ -2,249 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C1010DB0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D3810DB2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:39:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfK2Vfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 16:35:46 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52644 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387443AbfK2Vff (ORCPT
+        id S1727231AbfK2VjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 16:39:22 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36718 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfK2VjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 16:35:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575063334;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=J/6Vnhm3Bnof3G6qR9jmImN6Mxny1Mm+SQ/fRHV6cvM=;
-        b=DxKzqWEr0ZMlDD8rfE4RDzMIndpiJukKTU1yxvvpZo30VRsqfVfYqHa0XTQFprsJRoD9fV
-        NWemboZvktNGlqDTWIAOGY79L/Z/acXhlHrbV9g166QvQ/vaU9Pq2oDDgnZKHAGsvQERXd
-        VdYWV+PrABWYzshUbdhDqRIJ2pPQ7GA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-335-M-7-q606P2m_R1HSQkMUqA-1; Fri, 29 Nov 2019 16:35:33 -0500
-Received: by mail-qv1-f69.google.com with SMTP id b15so19641200qvw.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:35:33 -0800 (PST)
+        Fri, 29 Nov 2019 16:39:22 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15so33350604lja.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:39:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HoCIkfIpHUEqxrpa5VNin8a9xzNcml7RJzBZOqUbMCI=;
+        b=XhymOJiD3Z2aYsBi1GtNTmqv4cD8lZuV3n18svaQOYIQckWoHxOiES3GCLPpqqi9xF
+         ElUzyTYZ/VPe8tY/gh9Fc7J0JDEg7fGZDsQji6Gy+g9cPS7yVWGpavdASwkXBmAJDo9M
+         6DcZDgXVWSJDqEztf2bZcl8ELnuyOlYW7n1Jk8FnLYoK03OBlPNvo6Ycbn3HBeGzBtHm
+         7r5nNgT4uFYwy6SdusagmXvIC8XfXg2xFDBtKfsLYtVnFoSblrT1l8DZD9NgPZNUGTpB
+         7XNcVK1xyUEjbSFuaQUFZ2T/bWzgDCdIlWlzBqhDIOGiS/yhprw/RB1CRSLOHSV9KDgP
+         Y6Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ABKV7wtXWm4O1KQ//VgIZzpF4hiWiXzcQGJHlUZJvqM=;
-        b=rx1K5giVjuYAAEw8k6RyXVmIg7CSpfjg4Yj4ZY7xQ+btefH2f6mnkrXVUXz+q4d3MF
-         MnMHd+2yEzIctprXUhUfZtoxu3iD11+Hsc4TwnnSTdooAQYQQXZu63Q17VjkPJhJd3NT
-         nWEdQjx78dgtHNueFo8gQWVpGlJ+zu/Fp2nSbHQSK3c3FBmzYLMYL8C1OOHZTHaI1Zuh
-         llMgWZEh6uoU3503GX0N6VJA6Z/xHvwaR0Q0g+2BOqa0idP7NhluFefkpbVXcSaOETEq
-         gi/ekRcKgR50h9QoY7eSctjCweh71PgXUlUxWaiR4tHUITekhhXQnMdOQRLmVuGbFjaS
-         ixjQ==
-X-Gm-Message-State: APjAAAWEBmysahCXOUCCJtYq3ZmqwGnmr8yjTDA9HK2Ce6jFd3WISaKV
-        NzbxOeIikZowE2axFIMm0xK/5X4bQqlaYJe6rDO8eQeRxAczDkndtYBHAopalKusf1v0qa46Eh1
-        i3OwOmBbuSJMQxZt41VUFqYfB
-X-Received: by 2002:a0c:baa5:: with SMTP id x37mr19072007qvf.228.1575063332544;
-        Fri, 29 Nov 2019 13:35:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqx0gzwjNokztQZ2uGe1W03JAxQU4oiBDN2ekwESAnlau3v7lb+68GzvJT2MYI6UKslZ39yUvA==
-X-Received: by 2002:a0c:baa5:: with SMTP id x37mr19071983qvf.228.1575063332220;
-        Fri, 29 Nov 2019 13:35:32 -0800 (PST)
-Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id h186sm10679046qkf.64.2019.11.29.13.35.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HoCIkfIpHUEqxrpa5VNin8a9xzNcml7RJzBZOqUbMCI=;
+        b=NfQOQPWaww2x9OaJhkgNSxNmKldGFgBcXCdVpvclkvEWF/13lkXY7AgTyX+jE06AKP
+         8Sk7G+OQm7nQzfy6se1pAXsLwsS7lkSl0sL43V9IhUinm4mRozZzUwst9XN/coxakVXK
+         R+ccPisDmh7G7dpU+QOR+m6/VLYsaooDi995wzMmU+TAKRzfP7L4xu9pzYdW7AmQyfkb
+         IHIA7K7ZPzaz23rhkUAdQJfwa+XG2veHvUAbeOUfUXcQ/OYmbB2dA/5CF96kklswn1Bh
+         ILzpSC3YqtJpipWXC6VwgwjRRl/Yh9Ii+sxspkXcRofn+Ks++Mcky14R/N4qOYtzajhF
+         MHKw==
+X-Gm-Message-State: APjAAAUvUWiYuq2SkDzjc9cMeGLorl2d776boGVYUPFbHK2dzBhYjpMJ
+        wZJIZnQo7olyMl7rcP4VcXX7bQ==
+X-Google-Smtp-Source: APXvYqzNEPzDYPTg7B0zYEoaYUWO6O51RXUBdgXRZrq4wpucNmLYPHPSkvc02v5pkenXgOWZn5z0ng==
+X-Received: by 2002:a2e:9549:: with SMTP id t9mr2600851ljh.148.1575063560250;
+        Fri, 29 Nov 2019 13:39:20 -0800 (PST)
+Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
+        by smtp.gmail.com with ESMTPSA id b190sm10742234lfd.39.2019.11.29.13.39.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 13:35:31 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>, peterx@redhat.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH RFC 15/15] KVM: selftests: Test dirty ring waitqueue
-Date:   Fri, 29 Nov 2019 16:35:05 -0500
-Message-Id: <20191129213505.18472-16-peterx@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191129213505.18472-1-peterx@redhat.com>
-References: <20191129213505.18472-1-peterx@redhat.com>
+        Fri, 29 Nov 2019 13:39:19 -0800 (PST)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     amit.kucheria@linaro.org, sboyd@kernel.org, vireshk@kernel.org,
+        bjorn.andersson@linaro.org, ulf.hansson@linaro.org,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/5] Add support for QCOM Core Power Reduction
+Date:   Fri, 29 Nov 2019 22:39:10 +0100
+Message-Id: <20191129213917.1301110-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-MC-Unique: M-7-q606P2m_R1HSQkMUqA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a bit tricky, but should still be reasonable.
+This series adds support for Core Power Reduction (CPR), a form of
+Adaptive Voltage Scaling (AVS), found on certain Qualcomm SoCs.
 
-Firstly we introduce a totally new dirty log test type, because we
-need to force vcpu to go into a blocked state by dead loop on vcpu_run
-even if it wants to quit to userspace.
+This series is based on top of the qcs404 cpufreq patch series that
+hasn't landed yet:
+https://patchwork.kernel.org/project/linux-arm-msm/list/?series=207821
+as well as that series' matching device tree changes:
+https://patchwork.kernel.org/project/linux-arm-msm/list/?series=207831
 
-Here the tricky part is we need to read the procfs to make sure the
-vcpu thread is TASK_UNINTERRUPTIBLE.
+For testing purposes, this patch series, including the dependencies
+listed above, is available on the following git tag:
+https://git.linaro.org/people/niklas.cassel/kernel.git/log/?h=cpr-v7
 
-After that, we reset the ring and the reset should kick the vcpu again
-by moving out of that state.
+CPR is a technology that reduces core power on a CPU or on other device.
+It reads voltage settings from efuses (that have been written in
+production), it uses these voltage settings as initial values, for each
+OPP.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c | 101 +++++++++++++++++++
- 1 file changed, 101 insertions(+)
+After moving to a certain OPP, CPR monitors dynamic factors such as
+temperature, etc. and adjusts the voltage for that frequency accordingly
+to save power and meet silicon characteristic requirements.
 
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/s=
-elftests/kvm/dirty_log_test.c
-index c9db136a1f12..41bc015131e1 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -16,6 +16,7 @@
- #include <sys/types.h>
- #include <signal.h>
- #include <errno.h>
-+#include <sys/syscall.h>
- #include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <asm/barrier.h>
-@@ -151,12 +152,16 @@ enum log_mode_t {
- =09/* Use dirty ring for logging */
- =09LOG_MODE_DIRTY_RING =3D 2,
-=20
-+=09/* Dirty ring test but tailored for the waitqueue */
-+=09LOG_MODE_DIRTY_RING_WP =3D 3,
-+
- =09LOG_MODE_NUM,
- };
-=20
- /* Mode of logging.  Default is LOG_MODE_DIRTY_LOG */
- static enum log_mode_t host_log_mode;
- pthread_t vcpu_thread;
-+pid_t vcpu_thread_tid;
- static uint32_t test_dirty_ring_count =3D TEST_DIRTY_RING_COUNT;
-=20
- /* Only way to pass this to the signal handler */
-@@ -221,6 +226,18 @@ static void dirty_ring_create_vm_done(struct kvm_vm *v=
-m)
- =09=09=09     sizeof(struct kvm_dirty_gfn));
- }
-=20
-+static void dirty_ring_wq_create_vm_done(struct kvm_vm *vm)
-+{
-+=09/*
-+=09 * Force to use a relatively small ring size, so easier to get
-+=09 * full.  Better bigger than PML size, hence 1024.
-+=09 */
-+=09test_dirty_ring_count =3D 1024;
-+=09DEBUG("Forcing ring size: %u\n", test_dirty_ring_count);
-+=09vm_enable_dirty_ring(vm, test_dirty_ring_count *
-+=09=09=09     sizeof(struct kvm_dirty_gfn));
-+}
-+
- static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
- =09=09=09=09       struct kvm_dirty_ring_indexes *indexes,
- =09=09=09=09       int slot, void *bitmap,
-@@ -295,6 +312,81 @@ static void dirty_ring_collect_dirty_pages(struct kvm_=
-vm *vm, int slot,
- =09DEBUG("Iteration %ld collected %u pages\n", iteration, count);
- }
-=20
-+/*
-+ * Return 'D' for uninterruptible, 'R' for running, 'S' for
-+ * interruptible, etc.
-+ */
-+static char read_tid_status_char(unsigned int tid)
-+{
-+=09int fd, ret, line =3D 0;
-+=09char buf[128], *c;
-+
-+=09snprintf(buf, sizeof(buf) - 1, "/proc/%u/status", tid);
-+=09fd =3D open(buf, O_RDONLY);
-+=09TEST_ASSERT(fd >=3D 0, "open status file failed: %s", buf);
-+=09ret =3D read(fd, buf, sizeof(buf) - 1);
-+=09TEST_ASSERT(ret > 0, "read status file failed: %d, %d", ret, errno);
-+=09close(fd);
-+
-+=09/* Skip 2 lines */
-+=09for (c =3D buf; c < buf + sizeof(buf) && line < 2; c++) {
-+=09=09if (*c =3D=3D '\n') {
-+=09=09=09line++;
-+=09=09=09continue;
-+=09=09}
-+=09}
-+
-+=09/* Skip "Status:  " */
-+=09while (*c !=3D ':') c++;
-+=09c++;
-+=09while (*c =3D=3D ' ') c++;
-+=09c++;
-+
-+=09return *c;
-+}
-+
-+static void dirty_ring_wq_collect_dirty_pages(struct kvm_vm *vm, int slot,
-+=09=09=09=09=09      void *bitmap, uint32_t num_pages)
-+{
-+=09uint32_t count =3D test_dirty_ring_count;
-+=09struct kvm_run *state =3D vcpu_state(vm, VCPU_ID);
-+=09struct kvm_dirty_ring_indexes *indexes =3D &state->vcpu_ring_indexes;
-+=09uint32_t avail;
-+
-+=09while (count--) {
-+=09=09/*
-+=09=09 * Force vcpu to run enough time to make sure we
-+=09=09 * trigger the ring full case
-+=09=09 */
-+=09=09sem_post(&dirty_ring_vcpu_cont);
-+=09}
-+
-+=09/* Make sure it's stuck */
-+=09TEST_ASSERT(vcpu_thread_tid, "TID not inited");
-+        /*
-+=09 * Wait for /proc/pid/status "Status:" changes to "D". "D"
-+=09 * stands for "D (disk sleep)", TASK_UNINTERRUPTIBLE
-+=09 */
-+=09while (read_tid_status_char(vcpu_thread_tid) !=3D 'D') {
-+=09=09usleep(1000);
-+=09}
-+=09DEBUG("Now VCPU thread dirty ring full\n");
-+
-+=09avail =3D READ_ONCE(indexes->avail_index);
-+=09/* Assuming we've consumed all */
-+=09WRITE_ONCE(indexes->fetch_index, avail);
-+
-+=09kvm_vm_reset_dirty_ring(vm);
-+
-+=09/* Wait for it to be awake */
-+=09while (read_tid_status_char(vcpu_thread_tid) =3D=3D 'D') {
-+=09=09usleep(1000);
-+=09}
-+=09DEBUG("VCPU Thread is successfully waked up\n");
-+
-+=09exit(0);
-+}
-+
- static void dirty_ring_after_vcpu_run(struct kvm_vm *vm, int ret, int err)
- {
- =09struct kvm_run *run =3D vcpu_state(vm, VCPU_ID);
-@@ -353,6 +445,12 @@ struct log_mode {
- =09=09.before_vcpu_join =3D dirty_ring_before_vcpu_join,
- =09=09.after_vcpu_run =3D dirty_ring_after_vcpu_run,
- =09},
-+=09{
-+=09=09.name =3D "dirty-ring-wait-queue",
-+=09=09.create_vm_done =3D dirty_ring_wq_create_vm_done,
-+=09=09.collect_dirty_pages =3D dirty_ring_wq_collect_dirty_pages,
-+=09=09.after_vcpu_run =3D dirty_ring_after_vcpu_run,
-+=09},
- };
-=20
- /*
-@@ -422,6 +520,9 @@ static void *vcpu_worker(void *data)
- =09uint64_t *guest_array;
- =09struct sigaction sigact;
-=20
-+=09vcpu_thread_tid =3D syscall(SYS_gettid);
-+=09printf("VCPU Thread ID: %u\n", vcpu_thread_tid);
-+
- =09current_vm =3D vm;
- =09memset(&sigact, 0, sizeof(sigact));
- =09sigact.sa_handler =3D vcpu_sig_handler;
---=20
-2.21.0
+This driver has been developed together with Jorge Ramirez-Ortiz, and
+is based on an RFC by Stephen Boyd[1], which in turn is based on work
+by others on codeaurora.org[2].
+
+[1] https://lkml.org/lkml/2015/9/18/833
+[2] https://source.codeaurora.org/quic/la/kernel/msm-4.14/tree/drivers/regulator/cpr-regulator.c?h=msm-4.14
+
+Changes since v6:
+(Addressed comments from Ulf Hansson)
+-Initialize mutex later.
+-Take the mutex in cpr_pd_attach_dev(), in case we ever
+implement async attach in the future.
+-Add comment regarding why we get the cpu clock rate.
+-Add comment how we handle unlisted frequencies.
+-Clarify comment regarding why things related to virtual corners
+are performed in cpr_pd_attach_dev().
+-Removed the internal performance_state variable, the performance
+state is instead calculated using the current corner pointer.
+-Save a pointer to the first genpd dev that gets attached,
+and use that rather than get_cpu_device(0), when getting the CPU
+OPP table.
+
+Niklas Cassel (5):
+  dt-bindings: power: avs: Add support for CPR (Core Power Reduction)
+  power: avs: Add support for CPR (Core Power Reduction)
+  arm64: dts: qcom: qcs404: Add CPR and populate OPP table
+  arm64: defconfig: enable CONFIG_QCOM_CPR
+  arm64: defconfig: enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM
+
+ .../bindings/power/avs/qcom,cpr.txt           |  130 ++
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  132 +-
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/power/avs/Kconfig                     |   15 +
+ drivers/power/avs/Makefile                    |    1 +
+ drivers/power/avs/qcom-cpr.c                  | 1792 +++++++++++++++++
+ 7 files changed, 2072 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
+ create mode 100644 drivers/power/avs/qcom-cpr.c
+
+-- 
+2.23.0
 
