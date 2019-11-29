@@ -2,94 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0916710DB38
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D737210DB40
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2019 22:40:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbfK2Vjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 16:39:49 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45576 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387435AbfK2Vjr (ORCPT
+        id S2387450AbfK2Vkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 16:40:40 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38816 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387402AbfK2Vkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 16:39:47 -0500
-Received: by mail-lf1-f66.google.com with SMTP id 203so23533215lfa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 13:39:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=P7+c1+/bAwglAnZeDLT/AzXmg5yCseUiMi1ICe2LvSE=;
-        b=EzH2qPmCHNHcb1auzi3Ei2y+G1OXB1OrTfx+sjj78yReiH7lHbrViQH4E2FvJIsWG/
-         AkF9Yr9H8uxC2pUaGuz+hZSVNTf677rUiBQqMVNOEjBSS3r+VeOHVRwZ0Js9oWG28AZ9
-         5Sbfky7KacyC9lADKEw4iparWLA+2plZ6VxHZc5DBpMKM6X/RzV4QeY+KQnD8QMXTN1P
-         4M+un0eT+YVHCI4MxEBnlMh5eKIgbAWVJbgJOaBDi0wpzMJFSPjx67ni3yuNyfzOmcij
-         f+cjghCZ7sNG5oc5Z0rpOMOY72FiQdQbum3VyPETOhVS5E2ABk39JjogrTKqqKxziFrp
-         7OZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=P7+c1+/bAwglAnZeDLT/AzXmg5yCseUiMi1ICe2LvSE=;
-        b=gxmDJbbzFmQHgdESrUOFDDAjL9qdJ8lSBN9/opcZRjzsIOjVkOkLhIPEOOrUOQZ+5j
-         3oprs4nV6MU//p9QDNYMUSzwcb4NFgF9nTPbGObnpGbkYFO7tNsaHqzc7/SI9t99w2ZE
-         SKFGrT7JRfvfMvjoDdn3r+kfU/k65LJKmBwzu/Qe1uVmSuPBnizesrfzLqs7G4nf8SQL
-         olVH82VJz5pnYYpmIuKVcVMDfc5veyzyBnPBOHwF20eZtFweIhqrEIgEcrYjJ+SZWgaN
-         vNY00+AXIkyMVtiPNEL9oy82V/M2TTxgng54heTz0UaZtWOfb8EndQn6C8EufT2dvm2G
-         vnNg==
-X-Gm-Message-State: APjAAAU1rHVoXAFeFqhr/x55BhjkJ2P0fbMQ9vXJWNVD+8KNsYn/Qhli
-        UsPdNuPbwHVRJpY8xxH5Xz8dvZG9b1q8Mg==
-X-Google-Smtp-Source: APXvYqzmK1qfUWNO5+GqLc/J91X2071nazdIN1DT9krqNIkK4AEPNYvVcnX1v7Q8I1+d4adHRrcEnw==
-X-Received: by 2002:ac2:53a8:: with SMTP id j8mr6064945lfh.163.1575063584334;
-        Fri, 29 Nov 2019 13:39:44 -0800 (PST)
-Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
-        by smtp.gmail.com with ESMTPSA id p4sm10817755lji.107.2019.11.29.13.39.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 13:39:43 -0800 (PST)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 5/5] arm64: defconfig: enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM
-Date:   Fri, 29 Nov 2019 22:39:15 +0100
-Message-Id: <20191129213917.1301110-6-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191129213917.1301110-1-niklas.cassel@linaro.org>
-References: <20191129213917.1301110-1-niklas.cassel@linaro.org>
+        Fri, 29 Nov 2019 16:40:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=h96uA0n8w9fFxw+Ssv4jrOuxU+h8Z8yCjDe5C+8lqL4=; b=TK/owDV6bWEDOl/DwCqd0APJL
+        SVltdiBh22tQcM2vQ2qPf9uWK2fzFJVsFn1Cz7xmg8fdyDUTKV/RyzvNTO1CbAyk8eIlWOn/fA1Rr
+        WUDSYljDEAsp9MaRgGYXbEwcGVxQkwRvuFEdAosRX7v5EBjf+X0M725eRBVFjtM8JhVYXZGlzrQvG
+        bL13yudRW3u9GpQu9c6DU8OYwSz+cVTEjms7C74CifLKQQB9HWgwXqzrQzRYk3D/kOxz2ImMeziWE
+        y5De9C6+6t74vyAAbiAZ0TW9QR68HuUMuK3evWvO5/WTEcUupub5WSHRrQnYayAJGYPgKrnaA00sQ
+        fhiS7eOcw==;
+Received: from [2601:1c0:6280:3f0::5a22]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iao0F-0001hE-FH; Fri, 29 Nov 2019 21:40:39 +0000
+Subject: Re: [PATCH v2] moduleparam: fix kerneldoc
+To:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        linux-kernel@vger.kernel.org
+References: <1575041952-17157-1-git-send-email-fabien.dessenne@st.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4b6a1030-d84d-b2d6-13ac-e7fa102d039d@infradead.org>
+Date:   Fri, 29 Nov 2019 13:40:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1575041952-17157-1-git-send-email-fabien.dessenne@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM.
+On 11/29/19 7:39 AM, Fabien Dessenne wrote:
+> Document missing @args in xxx_param_cb().
+> 
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> ---
+> Changes since v1: do not replace 'lvalue' with 'value'
+> ---
+>  include/linux/moduleparam.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
+> index e5c3e23..5215198 100644
+> --- a/include/linux/moduleparam.h
+> +++ b/include/linux/moduleparam.h
+> @@ -160,6 +160,7 @@ struct kparam_array
+>   * module_param_cb - general callback for a module/cmdline parameter
+>   * @name: a valid C identifier which is the parameter name.
+>   * @ops: the set & get operations for this parameter.
+> + * @args: args for @ops
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-Changes since v6:
--Picked up Bjorn's and Ulf's Reviewed-by.
+should be @arg:
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+>   * @perm: visibility in sysfs.
+>   *
+>   * The ops can have NULL set or get functions.
+> @@ -176,6 +177,7 @@ struct kparam_array
+>   *                    to be evaluated before certain initcall level
+>   * @name: a valid C identifier which is the parameter name.
+>   * @ops: the set & get operations for this parameter.
+> + * @args: args for @ops
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4385033c0a34..09aaffd473a0 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -88,6 +88,7 @@ CONFIG_ACPI_CPPC_CPUFREQ=m
- CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
- CONFIG_ARM_IMX_CPUFREQ_DT=m
-+CONFIG_ARM_QCOM_CPUFREQ_NVMEM=y
- CONFIG_ARM_QCOM_CPUFREQ_HW=y
- CONFIG_ARM_RASPBERRYPI_CPUFREQ=m
- CONFIG_ARM_TEGRA186_CPUFREQ=y
+should be @arg:
+
+>   * @perm: visibility in sysfs.
+>   *
+>   * The ops can have NULL set or get functions.
+> 
+
+and @level needs to be documented here also.
+
+I tested this patch with
+$ ./scripts/kernel-doc -none -function module_param_cb include/linux/moduleparam.h
+
+scripts/kernel-doc does not like this line:
+ * <level>_param_cb - general callback for a module/cmdline parameter
+
+It needs to match the macro name __level_param_cb.
+
 -- 
-2.23.0
+~Randy
 
