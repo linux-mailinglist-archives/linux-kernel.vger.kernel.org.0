@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C2510DEEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 20:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6DF10DEF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 20:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfK3TkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 14:40:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44796 "EHLO mail.kernel.org"
+        id S1727629AbfK3Tk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 14:40:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727601AbfK3TkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 14:40:23 -0500
-Subject: Re: [GIT PULL] f2fs for 5.5
+        id S1727613AbfK3TkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 14:40:25 -0500
+Subject: Re: [GIT PULL] CIFS/SMB3 Fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575142823;
-        bh=9UAxbB/+sQKEZhw/an7RU+qWhMVAXgU+E0K+loUGkzc=;
+        s=default; t=1575142824;
+        bh=FhiMhq/R1cQhVPFIq1w/62PIb3jNUbAbVoZN2SUwwYI=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=HOPSA4MTcLjBcyz7CLWG5myXGF0Dz1uNlSC+wV9k38TRQwV/8pGsQP7xqTWo5lHuR
-         lF8vdAT758dw7reOl3m/xm8iFX2QHqWNC0TDrw+rZrnUE/WSW2IPe9E9f4uAmXQ8L+
-         yooDptqWugpo29mwriMozG78KdKFOdfqP3KdrsZI=
+        b=y1aOTmloZhjQh8TpQIZ6Y1c58XeAuTCldj4S8JTOSfUgE/+u54/f04D51pZjdpE/d
+         q/22BbBPZeiC8CJEyYxN4yZ/z7fPgjxiLzBZZ8XB5LIl9H/4rtHhV/Ts/+RX3C2iQA
+         pSzr+ti26e093MYMpdEtV1jq7C6Mm3mYfIHw6lEM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191127200138.GA47793@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20191127200138.GA47793@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <CAH2r5mtDpwY=MrQ=yN29JeWUqf+ozgYvgnzbnb91VoK8Vg4Zmw@mail.gmail.com>
+References: <CAH2r5mtDpwY=MrQ=yN29JeWUqf+ozgYvgnzbnb91VoK8Vg4Zmw@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191127200138.GA47793@jaegeuk-macbookpro.roam.corp.google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
- tags/f2fs-for-5.5
-X-PR-Tracked-Commit-Id: 803e74be04b32f7785742dcabfc62116718fbb06
+X-PR-Tracked-Message-Id: <CAH2r5mtDpwY=MrQ=yN29JeWUqf+ozgYvgnzbnb91VoK8Vg4Zmw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git
+ tags/5.5-rc-smb3-fixes
+X-PR-Tracked-Commit-Id: 68464b88cc0a735eaacd2c69beffb85d36f25292
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8f45533e9db917147066b24903a0d03a5adb50e1
-Message-Id: <157514282301.12928.2833431195207322730.pr-tracker-bot@kernel.org>
-Date:   Sat, 30 Nov 2019 19:40:23 +0000
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
+X-PR-Merge-Commit-Id: 21b26d2679584c6a60e861aa3e5ca09a6bab0633
+Message-Id: <157514282440.12928.6617531146051742781.pr-tracker-bot@kernel.org>
+Date:   Sat, 30 Nov 2019 19:40:24 +0000
+To:     Steve French <smfrench@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>
+        CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 27 Nov 2019 12:01:38 -0800:
+The pull request you sent on Wed, 27 Nov 2019 17:49:32 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-5.5
+> git://git.samba.org/sfrench/cifs-2.6.git tags/5.5-rc-smb3-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8f45533e9db917147066b24903a0d03a5adb50e1
+https://git.kernel.org/torvalds/c/21b26d2679584c6a60e861aa3e5ca09a6bab0633
 
 Thank you!
 
