@@ -2,143 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 042BB10DE31
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 17:13:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7673B10DE32
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 17:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfK3QFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 11:05:35 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:47388 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfK3QFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 11:05:35 -0500
-Received: from zn.tnic (p200300EC2F231600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f23:1600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 394531EC05B5
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2019 17:05:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1575129934;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:resent-to:
-         resent-from:resent-message-id:in-reply-to:references;
-        bh=58JOWUyVHJnA750X125x9DMXmM9l/Ae0mVfsBCNM2Xo=;
-        b=Rzw0u3V5j55zDitkuDBepOfCXOtIBjFSA0rkP2zq+g6CEoXCvVsIF0rkcvjEWgoJLChIou
-        8mGkZX2ESSWc0pOaM6nl9JADyMUonMtLbmLHbB1P3BJg1hOpUXvxyf2DVKe2vFaFNnzSb5
-        hzgb+JFohg0zNTlcBbzZASWPV5D5xeQ=
-Received: from deliver ([unix socket])
-         by localhost (Cyrus v2.4.17-caldav-beta9-Debian-2.4.17+caldav~beta9-3) with LMTPA;
-         Sat, 30 Nov 2019 16:01:05 +0100
-X-Sieve: CMU Sieve 2.4
-Received: from zn.tnic (p200300EC2F231600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f23:1600:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 43E371EC0235;
-        Sat, 30 Nov 2019 16:01:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1575126065;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=58JOWUyVHJnA750X125x9DMXmM9l/Ae0mVfsBCNM2Xo=;
-        b=MacqzdGO93UUlILvsXlgX7qKtg52ubpJKTrUjXIiwi7AIOjC8ePaZc3fqDcoYcBEny+GQe
-        MBBtWegKkIK9x6aUA7n3eMhhOlqx/72VznMez55U7QTMstxATbYHDRtLsRfyNAQ/E1xOLQ
-        fx6IY+/mpZYqF1T+3hBmz2PTpM+pm3E=
-From:   Borislav Petkov <bp@alien8.de>
-To:     X86 ML <x86@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] x86/ioperm: Save an indentation level in tss_update_io_bitmap()
-Date:   Sat, 30 Nov 2019 16:00:53 +0100
-Message-Id: <20191130150053.23014-1-bp@alien8.de>
-X-Mailer: git-send-email 2.21.0
+        id S1726965AbfK3QNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 11:13:04 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36474 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfK3QNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 11:13:04 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b19so16128761pfd.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2019 08:13:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ODJuHGe9WgQW36Ci2aMzJGsTEI0RMME9CeNAPNQ613E=;
+        b=eCHYX35v0tNsJ8Wyr7huWqSL/Q7uu9HMJts4X7sI/QKLD3KSpwVU1yKPvnWbgBDkck
+         w55L5neeBImSshB4MOgvDxkc/9a3orK3a1S1HHbjOdPtVF8JRjkP0b1vdUZecBgtQ4Bb
+         d660NmRHJmW/YEooGXS1R++4WmwRxc6UkSjVo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ODJuHGe9WgQW36Ci2aMzJGsTEI0RMME9CeNAPNQ613E=;
+        b=e4VySywJUHmMNJg8TnJ5AGbtB+XK5GHgte7zuV7vDYEjDNmnQdSksGkHF5VN4+WtHj
+         4i+FDqI4it+9giXOFf81AO84t65gc4DytJPGYgRjQbvHfZrIX1WOOsrUQ5jg/Xhv9UXL
+         FXwRlY65eKC/mgd4x/ZRfPe8vvQQ/HMCuprgQZSfa2kTzpjFUAh2Xr+7qFmt0bQkIY//
+         2kKA9ekUQ2ctx7jwi8jePIxeAJUI29/+5x+RAWUIyT7q9oHW1E4nBw3UNOhMSuNgxTZH
+         wG1p+y7Oj95lbX4JWed5O/dgknisWt1a6YMXA7VrLA+XZSTsd3Q8CylWi2qT+EE1YuDY
+         +a1w==
+X-Gm-Message-State: APjAAAXk9ElRg+6+DB6WXuq6EAUy5RDablKebf36R6FoMS8PKvyTHOEj
+        IpmEd8FqvURiTRZlsLXFAcE/7w==
+X-Google-Smtp-Source: APXvYqwvXF4TzszA69py9gZ9mkRu3KVHToAXHaiaVpGpYAkkePvJ1gRXWxfBHEFfpcptgaOJhaJtkw==
+X-Received: by 2002:a62:5e04:: with SMTP id s4mr64130438pfb.63.1575130383668;
+        Sat, 30 Nov 2019 08:13:03 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 67sm19071797pfw.82.2019.11.30.08.13.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2019 08:13:02 -0800 (PST)
+Date:   Sat, 30 Nov 2019 08:13:01 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Max Filippov <jcmvbkbc@gmail.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH] tools/testing/selftests/seccomp: change USER_NOTIF_MAGIC
+ definition
+Message-ID: <201911300811.7D70D30@keescook>
+References: <20191129055128.25952-1-jcmvbkbc@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191129055128.25952-1-jcmvbkbc@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Thu, Nov 28, 2019 at 09:51:28PM -0800, Max Filippov wrote:
+> USER_NOTIF_MAGIC is used to both initialize seccomp_notif_resp::val and
+> verify syscall resturn value. On 32-bit architectures syscall return
+> value has type long, but the value of USER_NOTIF_MAGIC has type long
+> long because it doesn't fit into long. As a result all syscall return
+> value comparisons with USER_NOTIF_MAGIC are false. This is also reported
+> by the compiler when '-W' is added to CFLAGS.
 
-... for better readability.
+Hi! Thanks for sending this. There is already a patch in the pipeline
+for getting it fixed; it should show up in Linus's tree soon:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/seccomp&id=223e660bc7638d126a0e4fbace4f33f2895788c4
 
-No functional changes.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
----
- arch/x86/kernel/process.c | 52 +++++++++++++++++++--------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index bd2a11ca5dd6..17ef878fd5dd 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -377,37 +377,37 @@ static void tss_copy_io_bitmap(struct tss_struct *tss, struct io_bitmap *iobm)
- void tss_update_io_bitmap(void)
- {
- 	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
-+	struct thread_struct *t = &current->thread;
- 	u16 *base = &tss->x86_tss.io_bitmap_base;
- 
--	if (test_thread_flag(TIF_IO_BITMAP)) {
--		struct thread_struct *t = &current->thread;
--
--		if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
--			*base = IO_BITMAP_OFFSET_VALID_ALL;
--		} else {
--			struct io_bitmap *iobm = t->io_bitmap;
--			/*
--			 * Only copy bitmap data when the sequence number
--			 * differs. The update time is accounted to the
--			 * incoming task.
--			 */
--			if (tss->io_bitmap.prev_sequence != iobm->sequence)
--				tss_copy_io_bitmap(tss, iobm);
--
--			/* Enable the bitmap */
--			*base = IO_BITMAP_OFFSET_VALID_MAP;
--		}
-+	if (!test_thread_flag(TIF_IO_BITMAP)) {
-+		tss_invalidate_io_bitmap(tss);
-+		return;
-+	}
-+
-+	if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
-+		*base = IO_BITMAP_OFFSET_VALID_ALL;
-+	} else {
-+		struct io_bitmap *iobm = t->io_bitmap;
-+
- 		/*
--		 * Make sure that the TSS limit is covering the io bitmap.
--		 * It might have been cut down by a VMEXIT to 0x67 which
--		 * would cause a subsequent I/O access from user space to
--		 * trigger a #GP because tbe bitmap is outside the TSS
--		 * limit.
-+		 * Only copy bitmap data when the sequence number differs. The
-+		 * update time is accounted to the incoming task.
- 		 */
--		refresh_tss_limit();
--	} else {
--		tss_invalidate_io_bitmap(tss);
-+		if (tss->io_bitmap.prev_sequence != iobm->sequence)
-+			tss_copy_io_bitmap(tss, iobm);
-+
-+		/* Enable the bitmap */
-+		*base = IO_BITMAP_OFFSET_VALID_MAP;
- 	}
-+
-+	/*
-+	 * Make sure that the TSS limit is covering the io bitmap. It might have
-+	 * been cut down by a VMEXIT to 0x67 which would cause a subsequent I/O
-+	 * access from user space to trigger a #GP because tbe bitmap is outside
-+	 * the TSS limit.
-+	 */
-+	refresh_tss_limit();
- }
- #else /* CONFIG_X86_IOPL_IOPERM */
- static inline void switch_to_bitmap(unsigned long tifp) { }
 -- 
-2.21.0
-
+Kees Cook
