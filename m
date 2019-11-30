@@ -2,104 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5D4610DBE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 01:15:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C2710DBF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 01:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfK3ANB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 19:13:01 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21668 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727130AbfK3ANA (ORCPT
+        id S1727193AbfK3AXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 19:23:55 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34823 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbfK3AXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 19:13:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575072779;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mKbyuOkS3PW2MGMOCeB8esOqQ/aSq2T37sj0B9rPVCA=;
-        b=ejl5RgqcNjfqWdj3fof0mggB5SPS7cbM/Ajxtk90O991Krj3csn35jl244KvfRz3qewVpp
-        r5SbuScAozBAwtp7lfCBmu0GWl8H+3dGT6WDOYBY3m0JbSKnArh2vEl7UBbF8R2uRbco/5
-        IQkY98x8Nd9klwEhxtHt0jsM+H+tvUg=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-287-CvXHSUssM6KVYE0hlVRT8w-1; Fri, 29 Nov 2019 19:12:57 -0500
-Received: by mail-pj1-f71.google.com with SMTP id m12so15544059pjs.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 16:12:57 -0800 (PST)
+        Fri, 29 Nov 2019 19:23:55 -0500
+Received: by mail-ua1-f68.google.com with SMTP id y23so3179867ual.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 16:23:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=6G24vS/ghoP5K6p0Mc2RzrXenM3MxrVXZ5/+RE8+w3g=;
+        b=XwPY3Rm0VL0y2wpm7dLPdYbFtSzC3IJvSE9XvObqWVHEf+hBsVEz+/zq1H8Ss2qBFD
+         ngHV172/hCuSEjLmuFfPI1enR1+zrDu6ovof//OxJLicBb2ZQgMxkPUaYeuM3vVR7kql
+         9Ivx4JIU2+/st5Cf9ksr+vLVL6hpT3TAg0rKPNl7be6DxZMlgCz2DrdFmUgFN5Eol48w
+         889GkbQzGyjKBmy/SHLbo2QUUPJRuSZySACgcTXn3aqwIsTdpz+qMNJayH0SrAzQqx9t
+         0pZmSkHg9W4S7FeImwCZwRTYB9XLi6vknw+qyS57dTe1iYpI6RsYRjr/uP1SuLg4PNRU
+         X8Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=H5rAN0lVb9RDPiR1/dzryPNeMEEOLBOdHyVpcyv58Ps=;
-        b=fol4/TVSwe13KaufRw1QqpBjhzTKzbgcrEgrpt20UEPo3L7L7SCCK1S6v4v8G6EuV3
-         3xcVXHM8aCG4eMPnoEFZUn74YJxIgWuuNYoNEOYmVF2p+/4/eaqP6UzTa5q4QzaOqPrf
-         3EuY5wkFfCsTMcNmjAo9DJ9esYFTrW9UJxtrNtwPrq8I8LT22Jz4bwL9ULMXUWuxX8z+
-         CpnZ3Ax+jlKxFrs5GlQb2CGbR3XauffdM+ak/usz70pCE55dyqbvd/xlnzv3SuDXCtUa
-         qI98Ol5nZJyNday3eODF+Ej8MmyvQSqbfLHxM9NXcIn60rncmJJMxBWAAsZahf4+VGy4
-         SEcQ==
-X-Gm-Message-State: APjAAAXBQfS9/hnrZxsrmMfphffB8wYkJXnmyYjH9m7cyIIfWHks8nP+
-        cB/YBmL6ug0UgItaMXcgV4iu7v4B8pKnCeYssjDvCYvnpxeosYVc4DjgxQMcVjgKV8Yn3lFZlv+
-        Plx8cJaaz0I1z2UyN79iH5OGm
-X-Received: by 2002:a17:902:a516:: with SMTP id s22mr16707427plq.295.1575072776009;
-        Fri, 29 Nov 2019 16:12:56 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzMwyPTp0Icx4kxymsXV5XAdBQ+nWGUPwk3u+Z2NJVehlr1bkBur/T2EmX4WPTg2gVS98kU8A==
-X-Received: by 2002:a17:902:a516:: with SMTP id s22mr16707389plq.295.1575072775364;
-        Fri, 29 Nov 2019 16:12:55 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id q6sm13863724pfl.140.2019.11.29.16.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 16:12:54 -0800 (PST)
-Date:   Fri, 29 Nov 2019 17:12:53 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [GIT PULL] tpmdd updates for Linux v5.4
-Message-ID: <20191130001253.rtovohtfbg25uifm@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>
-References: <20190902143121.pjnykevzlajlcrh6@linux.intel.com>
- <CAA9_cmeLnHK4y+usQaWo72nUG3RNsripuZnS-koY4XTRC+mwJA@mail.gmail.com>
- <20191127205800.GA14290@linux.intel.com>
- <20191127205912.GB14290@linux.intel.com>
- <20191128012055.f3a6gq7bjpvuierx@cantor>
- <20191129235322.GB21546@linux.intel.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=6G24vS/ghoP5K6p0Mc2RzrXenM3MxrVXZ5/+RE8+w3g=;
+        b=KSp21h4Vz4WdsGchkuC1mf/TIsow/mDfLZ1sfdM7Di51I+PferutR54zHfS5w0JwOu
+         tSqM6dfQQERGRhRuC8smH8zWCWSXt19yISvXsUS9Fe2HradWfsyq9Li/+nsjJyx99ieA
+         h5p2n3hTYmn8O9j1zdgQblv4RtMDcztJdrbwHY0FZVs+n7tHvmOSS3HwFfFaHfExuFXz
+         WKw1hVCzUTwH8MyNKq+YgiyIuexex91Afri66ubj3c3b2bp0dNVXeHk2xoa4qpeOnUIn
+         hmN6rbSJcixZ312IvkoUTpKwiVYa33yRS0s8cYRNgdM4U1SqkJyPEMVWVTy+qHx+jZ6+
+         TItg==
+X-Gm-Message-State: APjAAAW4jfZW5ueVOPxQ4+WV6xZ6vUkz29k12k1HlOcGdMYEzfMELWwb
+        U/Ecve0T3JEQJHzb9UrLWLJfS4Emadqbpw5+sJ0=
+X-Google-Smtp-Source: APXvYqyTeVMKfKOp5EFTxwoaAEWpAqgB5+UXsDGv1SHu+v7wysFHUhZyXRZMX1h2G5dTGGvrP+4mceRFKRDOBvkpvAY=
+X-Received: by 2002:ab0:300c:: with SMTP id f12mr11101106ual.135.1575073434316;
+ Fri, 29 Nov 2019 16:23:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191129235322.GB21546@linux.intel.com>
-X-MC-Unique: CvXHSUssM6KVYE0hlVRT8w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Received: by 2002:ab0:4930:0:0:0:0:0 with HTTP; Fri, 29 Nov 2019 16:23:54
+ -0800 (PST)
+Reply-To: stellar074maoris@gmail.com
+From:   "Mrs.Stellar Maoris" <hxxxx103natasha@gmail.com>
+Date:   Sat, 30 Nov 2019 00:23:54 +0000
+Message-ID: <CALGAmSs4nBw4-ccwL8Q1t8UBzcQBLZ0VxS5_TJg_jU3RFvoyUA@mail.gmail.com>
+Subject: Hello Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat Nov 30 19, Jarkko Sakkinen wrote:
->On Wed, Nov 27, 2019 at 06:20:55PM -0700, Jerry Snitselaar wrote:
->> There also was that other issue reported on the list about
->> tpm_tis_core_init failing when calling tpm_get_timeouts due to the
->> power gating changes.
->
->Please add a (lore.ko) link for reference to this thread.
->
->/Jarkko
->
+Hello Dear Friend.
+I=E2=80=99m  Mrs. Stellar Maoris  from united state of America  a manger  i=
+n
+HSBC  bank  in   Spain Madrid,  39  years old of age,  single, I am
+sending
+this brief letter  to seek for  your partnership and long term
+relationship, I have an important and urgent issue I want to discuss
+with you privately about Transaction fund worth the sum of $9.5m
+America dollars left by most of the greedy Asia Kuwait politician in
+our bank here in Spain Madrid A fund which suppose to have been use to
+develop the continent.
 
-https://lore.kernel.org/linux-integrity/a60dadce-3650-44ce-8785-2f737ab9b99=
-3@www.fastmail.com/
+If you know that you can invest this fund into a profitable business
+in your country by the end we shall have 50%50 share each, kindly get
+back to me for more detail and procedures.
 
+Your urgent respond will be highly appreciated Awaiting to hear from you as=
+ap.
+My Regard.
+Stellar Maoris
+Email: stellar074maoris@gmail.com
+Phone Number:  +34(62) 768 5146
