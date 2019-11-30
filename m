@@ -2,129 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5563010DE2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 16:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 042BB10DE31
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 17:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbfK3PxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 10:53:25 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45010 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfK3PxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 10:53:24 -0500
-Received: by mail-qt1-f193.google.com with SMTP id g24so29198772qtq.11
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2019 07:53:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=jdRfuJtU8uqmsqgyTo2pn3PG7sCQI4AYvfljBHLyej8=;
-        b=h9Xa8Eyclllyo//fAfdA6VQ/NNyTP9f+uLFtD4bmksqFDq4S1bbFxwzDeEJttovLA+
-         mnwtZFGkAVHm2+wV2IzyZoYpsKsJ2mGHYOGv/vz+DTZx2bwuZsa1brlObLw2VA+4ZGN6
-         Nw9LyJRgKaSgaDal3R88V8Juyb61wmzvdJFLNs4LxfF7Zx10YTWNLoSBEOFLPEZwbjtM
-         htYm2/jz6i4wavsnGNSvO3yVXMGN0MBqufBY3UhFTkEhs20UhTH4m4c5ljTqY/e6b63v
-         /i5m96jPlK/2c5m63NicterXuUVD9gx3YQMVkaWwLLAtjOLkyi5NgBTXzvjoFEiz2GNl
-         tmXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=jdRfuJtU8uqmsqgyTo2pn3PG7sCQI4AYvfljBHLyej8=;
-        b=mww6rguVclzGvS0xpodwD1PBPnED4xzw8a12j2wym3DI40YLLlGOLMtN3VMV87mfQN
-         JH7GnJG16XDhlwgGtwDaX3rQLPMijT0I/N0cujQ98XLC6XEtL+BGa6v9+YoaL8j4uvlz
-         /jmH56mdcL1rLDUnDcTj34XcWjvTq6bTp/WfR8CxV6hqgNEKmuhZyIC5IQW4AEzz5WY2
-         wPJUNeFNwRh1plv0ZZy9MpVMDkWbmdKHQ469zz/GNGyHewDSBEnho9Jn7WltQ888rCUX
-         ugBv00uAnjpKAyUoM9Mew9v6nbTC+4Mbq+CZIyz9yJhYiqPzmbvjohiugLhZXc5qLqDL
-         h1xg==
-X-Gm-Message-State: APjAAAUZ6K2ywWXdxozISVss8VOBgx9YHIqKiKk2e4T8G3V9NuB889Jn
-        d++y58n+IP5dWmY43fFmcCF+7Ezp8jwdVdXMteXlrQ==
-X-Google-Smtp-Source: APXvYqwd50hiQXx0poflgh573lP3ofw793nvHMJ0u0cS4TDPRH9X6wxqaksQSt8m/TXYBMG15l5vLxsJFaq5/XgjMew=
-X-Received: by 2002:ac8:3905:: with SMTP id s5mr40808406qtb.158.1575129203287;
- Sat, 30 Nov 2019 07:53:23 -0800 (PST)
+        id S1726955AbfK3QFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 11:05:35 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47388 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbfK3QFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 11:05:35 -0500
+Received: from zn.tnic (p200300EC2F231600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f23:1600:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 394531EC05B5
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2019 17:05:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1575129934;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:resent-to:
+         resent-from:resent-message-id:in-reply-to:references;
+        bh=58JOWUyVHJnA750X125x9DMXmM9l/Ae0mVfsBCNM2Xo=;
+        b=Rzw0u3V5j55zDitkuDBepOfCXOtIBjFSA0rkP2zq+g6CEoXCvVsIF0rkcvjEWgoJLChIou
+        8mGkZX2ESSWc0pOaM6nl9JADyMUonMtLbmLHbB1P3BJg1hOpUXvxyf2DVKe2vFaFNnzSb5
+        hzgb+JFohg0zNTlcBbzZASWPV5D5xeQ=
+Received: from deliver ([unix socket])
+         by localhost (Cyrus v2.4.17-caldav-beta9-Debian-2.4.17+caldav~beta9-3) with LMTPA;
+         Sat, 30 Nov 2019 16:01:05 +0100
+X-Sieve: CMU Sieve 2.4
+Received: from zn.tnic (p200300EC2F231600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2f23:1600:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 43E371EC0235;
+        Sat, 30 Nov 2019 16:01:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1575126065;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=58JOWUyVHJnA750X125x9DMXmM9l/Ae0mVfsBCNM2Xo=;
+        b=MacqzdGO93UUlILvsXlgX7qKtg52ubpJKTrUjXIiwi7AIOjC8ePaZc3fqDcoYcBEny+GQe
+        MBBtWegKkIK9x6aUA7n3eMhhOlqx/72VznMez55U7QTMstxATbYHDRtLsRfyNAQ/E1xOLQ
+        fx6IY+/mpZYqF1T+3hBmz2PTpM+pm3E=
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] x86/ioperm: Save an indentation level in tss_update_io_bitmap()
+Date:   Sat, 30 Nov 2019 16:00:53 +0100
+Message-Id: <20191130150053.23014-1-bp@alien8.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <000000000000e59aab056e8873ae@google.com> <0000000000000beff305981c5ac6@google.com>
- <20191124193035.GA4203@ZenIV.linux.org.uk> <20191130110645.GA4405@dimstar.local.net>
-In-Reply-To: <20191130110645.GA4405@dimstar.local.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 30 Nov 2019 16:53:12 +0100
-Message-ID: <CACT4Y+bg7bZOSg0P9VXq8yG2odAJMg6b6N2fXxbamOmKiz3ohw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in blkdev_get
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>, coreteam@netfilter.org,
-        David Miller <davem@davemloft.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Chen Gang <gang.chen.5i5j@gmail.com>,
-        Patrick McHardy <kaber@trash.net>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 12:06 PM Duncan Roe <duncan_roe@optusnet.com.au> wrote:
-> > > syzbot has bisected this bug to:
-> > >
-> > > commit 77ef8f5177599efd0cedeb52c1950c1bd73fa5e3
-> > > Author: Chris Metcalf <cmetcalf@ezchip.com>
-> > > Date:   Mon Jan 25 20:05:34 2016 +0000
-> > >
-> > >     tile kgdb: fix bug in copy to gdb regs, and optimize memset
-> > >
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1131bc0ee00000
-> > > start commit:   f5b7769e Revert "debugfs: inode: debugfs_create_dir uses m..
-> > > git tree:       upstream
-> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=1331bc0ee00000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1531bc0ee00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=709f8187af941e84
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=eaeb616d85c9a0afec7d
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177f898f800000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147eb85f800000
-> > >
-> > > Reported-by: syzbot+eaeb616d85c9a0afec7d@syzkaller.appspotmail.com
-> > > Fixes: 77ef8f517759 ("tile kgdb: fix bug in copy to gdb regs, and optimize
-> > > memset")
-> > >
-> > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> >
-> > Seriously?  How can the commit in question (limited to arch/tile/kernel/kgdb.c)
-> > possibly affect a bug that manages to produce a crash report with
-> > RSP: 0018:ffffffff82e03eb8  EFLAGS: 00000282
-> > RAX: 0000000000000000 RBX: ffffffff82e00000 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff81088779
-> > RBP: ffffffff82e03eb8 R08: 0000000000000000 R09: 0000000000000001
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> > R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff82e00000
-> > FS:  0000000000000000(0000) GS:ffff88021fc00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000c420447ff8 CR3: 0000000213184000 CR4: 00000000001406f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > in it?  Unless something very odd has happened to tile, this crash has
-> > been observed on 64bit x86; the names of registers alone are enough
-> > to be certain of that.
-> >
-> > And the binaries produced by an x86 build should not be affected by any
-> > changes in arch/tile; not unless something is very wrong with the build
-> > system.  It's not even that this commit has fixed an earlier bug that
-> > used to mask the one manifested here - it really should have had zero
-> > impact on x86 builds, period.
-> >
-> > So I'm sorry, but I'm calling bullshit.  Something's quite wrong with
-> > the bot - either its build system or the bisection process.
->
-> The acid test would be: does reverting that commit make the problem go away?
->
-> See, for example, https://bugzilla.kernel.org/show_bug.cgi?id=203935
->
-> Cheers ... Duncan.
+From: Borislav Petkov <bp@suse.de>
 
-This is done as part of any bisection by definition, right? The test
-was done on the previous commit (effectively this one reverted) and no
-crash was observed. Otherwise bisection would have been pointed to a
-different commit.
+... for better readability.
+
+No functional changes.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org
+---
+ arch/x86/kernel/process.c | 52 +++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index bd2a11ca5dd6..17ef878fd5dd 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -377,37 +377,37 @@ static void tss_copy_io_bitmap(struct tss_struct *tss, struct io_bitmap *iobm)
+ void tss_update_io_bitmap(void)
+ {
+ 	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
++	struct thread_struct *t = &current->thread;
+ 	u16 *base = &tss->x86_tss.io_bitmap_base;
+ 
+-	if (test_thread_flag(TIF_IO_BITMAP)) {
+-		struct thread_struct *t = &current->thread;
+-
+-		if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
+-			*base = IO_BITMAP_OFFSET_VALID_ALL;
+-		} else {
+-			struct io_bitmap *iobm = t->io_bitmap;
+-			/*
+-			 * Only copy bitmap data when the sequence number
+-			 * differs. The update time is accounted to the
+-			 * incoming task.
+-			 */
+-			if (tss->io_bitmap.prev_sequence != iobm->sequence)
+-				tss_copy_io_bitmap(tss, iobm);
+-
+-			/* Enable the bitmap */
+-			*base = IO_BITMAP_OFFSET_VALID_MAP;
+-		}
++	if (!test_thread_flag(TIF_IO_BITMAP)) {
++		tss_invalidate_io_bitmap(tss);
++		return;
++	}
++
++	if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
++		*base = IO_BITMAP_OFFSET_VALID_ALL;
++	} else {
++		struct io_bitmap *iobm = t->io_bitmap;
++
+ 		/*
+-		 * Make sure that the TSS limit is covering the io bitmap.
+-		 * It might have been cut down by a VMEXIT to 0x67 which
+-		 * would cause a subsequent I/O access from user space to
+-		 * trigger a #GP because tbe bitmap is outside the TSS
+-		 * limit.
++		 * Only copy bitmap data when the sequence number differs. The
++		 * update time is accounted to the incoming task.
+ 		 */
+-		refresh_tss_limit();
+-	} else {
+-		tss_invalidate_io_bitmap(tss);
++		if (tss->io_bitmap.prev_sequence != iobm->sequence)
++			tss_copy_io_bitmap(tss, iobm);
++
++		/* Enable the bitmap */
++		*base = IO_BITMAP_OFFSET_VALID_MAP;
+ 	}
++
++	/*
++	 * Make sure that the TSS limit is covering the io bitmap. It might have
++	 * been cut down by a VMEXIT to 0x67 which would cause a subsequent I/O
++	 * access from user space to trigger a #GP because tbe bitmap is outside
++	 * the TSS limit.
++	 */
++	refresh_tss_limit();
+ }
+ #else /* CONFIG_X86_IOPL_IOPERM */
+ static inline void switch_to_bitmap(unsigned long tifp) { }
+-- 
+2.21.0
+
