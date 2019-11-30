@@ -2,146 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0168C10DBE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 01:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D4610DBE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 01:15:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfK3AAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 19:00:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53126 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727097AbfK3AAn (ORCPT
+        id S1727235AbfK3ANB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 19:13:01 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21668 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727130AbfK3ANA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 19:00:43 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so661464wmc.2;
-        Fri, 29 Nov 2019 16:00:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UHVrDc4hE+bdlqMttAIsSmzHC+8hrXCIgOJb3P4TvLg=;
-        b=OrFT8zpE3v3GDudv1Fk+4KcLjatZs0qg4OT7XnUw4f7XTSAS8lf3fB4EwXwNvRd87M
-         TNyOujOVySBZ6fGDh3kt/yfM1c6Ns7kyNuFwKXn3leFnkQbnSYDjVDHPkHW3Ws3z0z0U
-         dZIMoadJtqb9YgrDuRxsq6ywjuQBeRCG+Q6RA9QuO+AWgIoy2f/MZvJv60xm8RopSHBC
-         xL98JOdwfMLX6sxHW4qXzLS0F43JBtgTtYWgERCRHuTycvFlhPPu8/Mtf+Vb0FjjQTy8
-         RursYHl7JSWKp48tfjmpb5huxFSrg9czRE/926dw2tpeS4Wbqjbut+D1LRpF8NY91jeR
-         2QtA==
+        Fri, 29 Nov 2019 19:13:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575072779;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mKbyuOkS3PW2MGMOCeB8esOqQ/aSq2T37sj0B9rPVCA=;
+        b=ejl5RgqcNjfqWdj3fof0mggB5SPS7cbM/Ajxtk90O991Krj3csn35jl244KvfRz3qewVpp
+        r5SbuScAozBAwtp7lfCBmu0GWl8H+3dGT6WDOYBY3m0JbSKnArh2vEl7UBbF8R2uRbco/5
+        IQkY98x8Nd9klwEhxtHt0jsM+H+tvUg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-287-CvXHSUssM6KVYE0hlVRT8w-1; Fri, 29 Nov 2019 19:12:57 -0500
+Received: by mail-pj1-f71.google.com with SMTP id m12so15544059pjs.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 16:12:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UHVrDc4hE+bdlqMttAIsSmzHC+8hrXCIgOJb3P4TvLg=;
-        b=sWHEABQUCKH5hQQfMWgUxDat4WJ+tNuFX57PC/ZIsTAT/dMGPG2ZBNdaKjIz71PA21
-         oDmQmBTULa3ZTPTzLbDGD8/gr3XuBAgs9w4Hl1UHfFZ+Y38oeIvFvdb5wy6VBFjf++cF
-         9ZOe2c/AzP61mFUzaBf9bFLH3vmORAZpGCy0hS9CHRmfmhOFsyeKamyBc2p61pskH1vQ
-         qjVhhC9VtdrCplkWmFGI+lffNWpnCw81QzcXAVdFwyY6mR3ndebQIrYyvIq1qs4q5BmM
-         g9yY/TDWUP17mu4cEijaKBuhzxPUot5XxNkbU7IY8I2WX93FBhgev26S//fUySSHo9JS
-         vGyQ==
-X-Gm-Message-State: APjAAAUSR9q0ECxIln2ARAmYTusBO9cNu/5Jxrn3/eLdH+PHezqYf5dz
-        6ncoChA3SHu91w3Ii5ka7As=
-X-Google-Smtp-Source: APXvYqz5KzQ+FZoAA4g+4din9ZXFVuMvaxxxUIEVPzdxknXGtDPaFdjeBr1kYaadZpvw3f2LjBUtiA==
-X-Received: by 2002:a1c:9d8d:: with SMTP id g135mr13328699wme.114.1575072040868;
-        Fri, 29 Nov 2019 16:00:40 -0800 (PST)
-Received: from ltop.local ([2a02:a03f:404e:f500:cdc6:e155:f3db:f2f3])
-        by smtp.gmail.com with ESMTPSA id n14sm2755045wmi.26.2019.11.29.16.00.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=H5rAN0lVb9RDPiR1/dzryPNeMEEOLBOdHyVpcyv58Ps=;
+        b=fol4/TVSwe13KaufRw1QqpBjhzTKzbgcrEgrpt20UEPo3L7L7SCCK1S6v4v8G6EuV3
+         3xcVXHM8aCG4eMPnoEFZUn74YJxIgWuuNYoNEOYmVF2p+/4/eaqP6UzTa5q4QzaOqPrf
+         3EuY5wkFfCsTMcNmjAo9DJ9esYFTrW9UJxtrNtwPrq8I8LT22Jz4bwL9ULMXUWuxX8z+
+         CpnZ3Ax+jlKxFrs5GlQb2CGbR3XauffdM+ak/usz70pCE55dyqbvd/xlnzv3SuDXCtUa
+         qI98Ol5nZJyNday3eODF+Ej8MmyvQSqbfLHxM9NXcIn60rncmJJMxBWAAsZahf4+VGy4
+         SEcQ==
+X-Gm-Message-State: APjAAAXBQfS9/hnrZxsrmMfphffB8wYkJXnmyYjH9m7cyIIfWHks8nP+
+        cB/YBmL6ug0UgItaMXcgV4iu7v4B8pKnCeYssjDvCYvnpxeosYVc4DjgxQMcVjgKV8Yn3lFZlv+
+        Plx8cJaaz0I1z2UyN79iH5OGm
+X-Received: by 2002:a17:902:a516:: with SMTP id s22mr16707427plq.295.1575072776009;
+        Fri, 29 Nov 2019 16:12:56 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzMwyPTp0Icx4kxymsXV5XAdBQ+nWGUPwk3u+Z2NJVehlr1bkBur/T2EmX4WPTg2gVS98kU8A==
+X-Received: by 2002:a17:902:a516:: with SMTP id s22mr16707389plq.295.1575072775364;
+        Fri, 29 Nov 2019 16:12:55 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id q6sm13863724pfl.140.2019.11.29.16.12.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 16:00:39 -0800 (PST)
-Date:   Sat, 30 Nov 2019 01:00:37 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Dennis Zhou <dennis@kernel.org>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] fix __percpu annotation in asm-generic
-Message-ID: <20191130000037.zsendu5pk7p75xqf@ltop.local>
-References: <20191126200619.63348-1-luc.vanoostenryck@gmail.com>
- <alpine.DEB.2.21.1911271553560.16980@www.lameter.com>
- <20191127175350.GA52308@dennisz-mbp.dhcp.thefacebook.com>
- <20191127225432.ttwxm3hxtg5utfaz@ltop.local>
- <alpine.DEB.2.21.1911291808530.1365@www.lameter.com>
+        Fri, 29 Nov 2019 16:12:54 -0800 (PST)
+Date:   Fri, 29 Nov 2019 17:12:53 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [GIT PULL] tpmdd updates for Linux v5.4
+Message-ID: <20191130001253.rtovohtfbg25uifm@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>
+References: <20190902143121.pjnykevzlajlcrh6@linux.intel.com>
+ <CAA9_cmeLnHK4y+usQaWo72nUG3RNsripuZnS-koY4XTRC+mwJA@mail.gmail.com>
+ <20191127205800.GA14290@linux.intel.com>
+ <20191127205912.GB14290@linux.intel.com>
+ <20191128012055.f3a6gq7bjpvuierx@cantor>
+ <20191129235322.GB21546@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20191129235322.GB21546@linux.intel.com>
+X-MC-Unique: CvXHSUssM6KVYE0hlVRT8w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1911291808530.1365@www.lameter.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 06:11:59PM +0000, Christopher Lameter wrote:
-> On Wed, 27 Nov 2019, Luc Van Oostenryck wrote:
-> 
-> > 1) it would strip any address space, not just __percpu, so:
-> >    it would need to be combined with __verify_pcpu_ptr() or,
-> >    * a better name should be used,
-> 
-> typeof_cast_kernel() to express the fact that it creates a kernel pointer
-> and ignored the attributes??
+On Sat Nov 30 19, Jarkko Sakkinen wrote:
+>On Wed, Nov 27, 2019 at 06:20:55PM -0700, Jerry Snitselaar wrote:
+>> There also was that other issue reported on the list about
+>> tpm_tis_core_init failing when calling tpm_get_timeouts due to the
+>> power gating changes.
+>
+>Please add a (lore.ko) link for reference to this thread.
+>
+>/Jarkko
+>
 
-typeof_strip_address_space() would, I think, express this better. 
-It's not obvious at all to me that 'kernel' in 'typeof_cast_kernel()'
-relates to the (default) kernel address space.
-Maybe it's just me. I don't know.
+https://lore.kernel.org/linux-integrity/a60dadce-3650-44ce-8785-2f737ab9b99=
+3@www.fastmail.com/
 
-> >    * it should be defined in a generic header, any idea where?
-> 
-> include/linux/compiler-types.h
-
-Yes, OK.
-
-> > 2) while I find the current solution:
-> > 	typeof(T) __kernel __force *ptr = ...;
-> 
-> It would be
-> 
->    typeof_cast_kernel(&T) *xx = xxx
-> 
-> or so?
-
-No, it would not. __percpu, and more generally, the address space
-is a property of the object, not of its address.
-For example, let's say T is a __percpu object:
-	int __percpu obj;
-then '&T' is just a 'normal'/__kernel pointer to it:
-	int __percpu *;
-There is nothing to strip (it would be if the __percpu
-would be 'on the other side of the *': int * __percpu).
-It's exactly the same as with 'const': a 'const char *'
-is not const, only a pointer to const.
-
-The situation with raw_cpu_generic_add_return() is:
-- pcp is a lvalue of of a __percpu object of type T, so:
-	typeof(pcp)  := T __percpu
-- pcp's address is given to raw_cpu_ptr(), so
-	typeof(&pcp) := T __percpu *
-- raw_cpu_ptr() return the corresponding __kernel pointer
-  (adjusted for the current percu offset), so:
-	typeof(raw_cpu_ptr(&pcp)) := T *
-- so, the macro needs to declare a variable __p of type T*
-  hence:
-	typeof(pcp) __kernel __force *__p;
-  or, with this new macro:
-	typeof_cast_kernel(pcp) *__p;
-
-Maybe a better solution would be to directly play at pointer
-level and thus have something like this:
-	typeof_<some good name>(&pcp) __p = raw_cpu_ptr(&pcp);
-or even:
-	__kernel_pointer(&pcp) __p = raw_cpu_ptr(&pcp);
-I dunno.
-
-Note: at implementation level, it complicates things slightly
-      to want this 'strip_percpu' macro to behaves like typeof()
-      because it means that it can take in argument either an
-      expression or a type. And if it's a type, you can't do a
-      simple cast on it, you need to declare an intermediate
-      variable, hence the horrible:
-	  typeof(({ typeof(T) __kernel __force __fakename; __fakename; }))
-
-Note: it would be much much nicer to do all these type generic
-      macros with '__auto_type' (only supported in GCC 4.9 IIUC
-      and supported in sparse but it shouldn't be very hard to do)..
-
-
--- Luc
