@@ -2,89 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6420F10DCD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 07:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A9310DCE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 08:19:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725954AbfK3G60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 01:58:26 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6737 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725298AbfK3G60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 01:58:26 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 98767B9740C456E26BB8;
-        Sat, 30 Nov 2019 14:58:24 +0800 (CST)
-Received: from [127.0.0.1] (10.133.216.73) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Sat, 30 Nov 2019
- 14:58:17 +0800
-Subject: Re: [PATCH] kvm/arm64: change gicv3_cpuif to static likely branch
-To:     Marc Zyngier <maz@kernel.org>
-References: <20191130031443.41696-1-guoheyi@huawei.com>
- <86mucdzx45.wl-maz@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <wanghaibin.wang@huawei.com>, James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        "Suzuki K Poulose" <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>
-From:   Guoheyi <guoheyi@huawei.com>
-Message-ID: <496cb45d-c312-295c-18f2-633ec5acc976@huawei.com>
-Date:   Sat, 30 Nov 2019 14:58:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1726659AbfK3HTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 02:19:11 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:44456 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfK3HTK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 02:19:10 -0500
+Received: by mail-il1-f199.google.com with SMTP id h4so8485004ilh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 23:19:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Iszxj3xslkgFiHBpTht8Zqpoj8q3iHoILKi1CRIqeFo=;
+        b=PYjVJCVQK55V84r4QT6SGQlkiS0G/CFhDOh0Gizef1pvcv28x1OrPigSed3N/ta7f5
+         hRZWnbFauMjS+NYosEB5CC37YxqRM9BP3KAAA0NLj2tadwXOAoec7U6pKLz0bdiA8UcT
+         miwxzMONLswQFHU4q1u6YIuAM7JPHZ29yIIexHY3NgedN/44nI45i8qsXnuSy2A80bwN
+         53EQgNYTf7TPsbU9CDrgCXZ+LdYO7M0VvG0+BLrOkXcSEjiasE+N9JR6gnOztYmOdhro
+         /+BOPEK1fkMj60UwVQfDdXJSU7Qif/klIig/9DAwi5j5Aue4a3tR3eRfxKWUZpMJUxtP
+         SDQQ==
+X-Gm-Message-State: APjAAAWofR08BP3sOBJ64x842e52kdFfOM5i8RiVOUzX64VVVVX75P1W
+        4SZGyxZMnvsawgaU5MquuxmVtt8MKZGuQjI5Ij8LdAJ4P21m
+X-Google-Smtp-Source: APXvYqxMt060BD8gSa++k51h6Fp7squipmwrA4vm7Riv4aIzuKEn/9cvlou91jaqXCGEVS2ftXaKCqBjw7WzXdD6/yYNsXYosfFh
 MIME-Version: 1.0
-In-Reply-To: <86mucdzx45.wl-maz@kernel.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.216.73]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a6b:9302:: with SMTP id v2mr36196070iod.12.1575098348190;
+ Fri, 29 Nov 2019 23:19:08 -0800 (PST)
+Date:   Fri, 29 Nov 2019 23:19:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000087c51905988b297b@google.com>
+Subject: KASAN: use-after-free Read in xlog_alloc_log (2)
+From:   syzbot <syzbot+c732f8644185de340492@syzkaller.appspotmail.com>
+To:     darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    81b6b964 Merge branch 'master' of git://git.kernel.org/pub..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b27696e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=773597fe8d7cb41a
+dashboard link: https://syzkaller.appspot.com/bug?extid=c732f8644185de340492
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c732f8644185de340492@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in xlog_alloc_log+0x1398/0x14b0  
+fs/xfs/xfs_log.c:1495
+Read of size 8 at addr ffff888068139890 by task syz-executor.3/32544
+
+CPU: 0 PID: 32544 Comm: syz-executor.3 Not tainted 5.4.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:634
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+  xlog_alloc_log+0x1398/0x14b0 fs/xfs/xfs_log.c:1495
+  xfs_log_mount+0xdc/0x780 fs/xfs/xfs_log.c:599
+  xfs_mountfs+0xdb9/0x1be0 fs/xfs/xfs_mount.c:811
+  xfs_fs_fill_super+0xd24/0x1750 fs/xfs/xfs_super.c:1732
+  mount_bdev+0x304/0x3c0 fs/super.c:1415
+  xfs_fs_mount+0x35/0x40 fs/xfs/xfs_super.c:1806
+  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
+  vfs_get_tree+0x8e/0x300 fs/super.c:1545
+  do_new_mount fs/namespace.c:2822 [inline]
+  do_mount+0x135a/0x1b50 fs/namespace.c:3142
+  ksys_mount+0xdb/0x150 fs/namespace.c:3351
+  __do_sys_mount fs/namespace.c:3365 [inline]
+  __se_sys_mount fs/namespace.c:3362 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3362
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45d0ca
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 4d 8c fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2a 8c fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f525b430a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f525b430b40 RCX: 000000000045d0ca
+RDX: 00007f525b430ae0 RSI: 0000000020000100 RDI: 00007f525b430b00
+RBP: 0000000000000001 R08: 00007f525b430b40 R09: 00007f525b430ae0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000004
+R13: 00000000004ca258 R14: 00000000004e2870 R15: 00000000ffffffff
+
+Allocated by task 32544:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:510 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
+  __do_kmalloc mm/slab.c:3655 [inline]
+  __kmalloc+0x163/0x770 mm/slab.c:3664
+  kmalloc include/linux/slab.h:561 [inline]
+  kmem_alloc+0x15b/0x4d0 fs/xfs/kmem.c:21
+  kmem_zalloc fs/xfs/kmem.h:68 [inline]
+  xlog_alloc_log+0xcce/0x14b0 fs/xfs/xfs_log.c:1437
+  xfs_log_mount+0xdc/0x780 fs/xfs/xfs_log.c:599
+  xfs_mountfs+0xdb9/0x1be0 fs/xfs/xfs_mount.c:811
+  xfs_fs_fill_super+0xd24/0x1750 fs/xfs/xfs_super.c:1732
+  mount_bdev+0x304/0x3c0 fs/super.c:1415
+  xfs_fs_mount+0x35/0x40 fs/xfs/xfs_super.c:1806
+  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
+  vfs_get_tree+0x8e/0x300 fs/super.c:1545
+  do_new_mount fs/namespace.c:2822 [inline]
+  do_mount+0x135a/0x1b50 fs/namespace.c:3142
+  ksys_mount+0xdb/0x150 fs/namespace.c:3351
+  __do_sys_mount fs/namespace.c:3365 [inline]
+  __se_sys_mount fs/namespace.c:3362 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3362
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 32544:
+  save_stack+0x23/0x90 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  kasan_set_free_info mm/kasan/common.c:332 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
+  __cache_free mm/slab.c:3425 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3756
+  kvfree+0x61/0x70 mm/util.c:593
+  kmem_free fs/xfs/kmem.h:61 [inline]
+  xlog_alloc_log+0xeb5/0x14b0 fs/xfs/xfs_log.c:1497
+  xfs_log_mount+0xdc/0x780 fs/xfs/xfs_log.c:599
+  xfs_mountfs+0xdb9/0x1be0 fs/xfs/xfs_mount.c:811
+  xfs_fs_fill_super+0xd24/0x1750 fs/xfs/xfs_super.c:1732
+  mount_bdev+0x304/0x3c0 fs/super.c:1415
+  xfs_fs_mount+0x35/0x40 fs/xfs/xfs_super.c:1806
+  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
+  vfs_get_tree+0x8e/0x300 fs/super.c:1545
+  do_new_mount fs/namespace.c:2822 [inline]
+  do_mount+0x135a/0x1b50 fs/namespace.c:3142
+  ksys_mount+0xdb/0x150 fs/namespace.c:3351
+  __do_sys_mount fs/namespace.c:3365 [inline]
+  __se_sys_mount fs/namespace.c:3362 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3362
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff888068139800
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 144 bytes inside of
+  1024-byte region [ffff888068139800, ffff888068139c00)
+The buggy address belongs to the page:
+page:ffffea0001a04e40 refcount:1 mapcount:0 mapping:ffff8880aa400c40  
+index:0x0
+raw: 00fffe0000000200 ffffea0002728148 ffffea00015604c8 ffff8880aa400c40
+raw: 0000000000000000 ffff888068139000 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888068139780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff888068139800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff888068139880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                          ^
+  ffff888068139900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888068139980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
-On 2019/11/30 14:39, Marc Zyngier wrote:
-> On Sat, 30 Nov 2019 03:14:43 +0000,
-> Heyi Guo <guoheyi@huawei.com> wrote:
->> Platforms running hypervisor nowadays are normally powerful servers
->> which at least support GICv3, so it should be better to switch
->> kvm_vgic_global_state.gicv3_cpuif to static likely branch, which can
->> reduce two "b" instructions to a single "nop" for GICv3 branches.
->>
->> We don't update arm32 specific code for they may still only have
->> GICv2.
-> There is a number of disputable statements here.
->
-> Out of the fairly large zoo of arm64 systems I have access to, 75% of
-> them are based on GICv2, so they are still the overwhelming majority.
-> Yes, they all run KVM (otherwise I would ignore them).
-Really? I'm surprised to know that... Sorry I didn't see such GICv2 
-platforms in my work, so I made the wrong assumption.
-I don't expect much performance improvement for GICv3 platforms. The 
-precondition for this patch is that few platforms running KVM are using 
-GICv2. If it is not right, please just ignore it.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks,
-HG
-
->
-> Furthermore, I would expect that "powerful servers" are perfectly
-> capable to execute a couple of branches without breaking a sweat.
->
-> Finally, you don't provide any number supporting that:
->
-> - GICv3 systems see a performance improvement across the large variety
->    of CPU implementations
-> - GICv2 systems don't see a performance regression
->
-> Once you provide such numbers, I'll reevaluate my position. Until
-> then, I'm not considering this kind of change.
->
-> Thanks,
->
-> 	M.
->
-
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
