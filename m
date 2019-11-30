@@ -2,85 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFBE410DCFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 08:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4BB410DD01
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 08:53:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbfK3HkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 02:40:10 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55950 "EHLO huawei.com"
+        id S1726645AbfK3HxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 02:53:22 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7182 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725298AbfK3HkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 02:40:10 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 171D3264E0EC660DB655;
-        Sat, 30 Nov 2019 15:40:04 +0800 (CST)
-Received: from linux-XCyijm.huawei.com (10.175.104.212) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 30 Nov 2019 15:39:54 +0800
-From:   Heyi Guo <guoheyi@huawei.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <wanghaibin.wang@huawei.com>, Heyi Guo <guoheyi@huawei.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "Marc Zyngier" <maz@kernel.org>
-Subject: [PATCH] irq/gic-its: gicv4: set VPENDING table as inner-shareable
-Date:   Sat, 30 Nov 2019 15:38:49 +0800
-Message-ID: <20191130073849.38378-1-guoheyi@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S1725899AbfK3HxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 02:53:22 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BA000E188C4B7D4B184A;
+        Sat, 30 Nov 2019 15:53:18 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Sat, 30 Nov 2019
+ 15:53:11 +0800
+Subject: Re: [PATCH V2 1/3] dcache: add a new enum type for
+ 'dentry_d_lock_class'
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+        <viro@zeniv.linux.org.uk>, <rostedt@goodmis.org>,
+        <oleg@redhat.com>, <mchehab+samsung@kernel.org>, <corbet@lwn.net>,
+        <tytso@mit.edu>, <jmorris@namei.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>,
+        <chenxiang66@hisilicon.com>, <xiexiuqi@huawei.com>
+References: <20191130020225.20239-1-yukuai3@huawei.com>
+ <20191130020225.20239-2-yukuai3@huawei.com>
+ <20191130034339.GI20752@bombadil.infradead.org>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <e2e7c9f1-7152-1d74-c434-c2c4d57d0422@huawei.com>
+Date:   Sat, 30 Nov 2019 15:53:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.212]
+In-Reply-To: <20191130034339.GI20752@bombadil.infradead.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.96]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no special reason to set virtual LPI pending table as
-non-shareable. If we choose to hard code the shareability without
-probing, inner-shareable will be a better choice, for all the other
-ITS/GICR tables prefer to be inner-shareable.
 
-What's more, on Hisilicon hip08 it will trigger some kind of bus
-warning when mixing use of different shareabilities.
 
-Signed-off-by: Heyi Guo <guoheyi@huawei.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c   | 2 +-
- include/linux/irqchip/arm-gic-v3.h | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+On 2019/11/30 11:43, Matthew Wilcox wrote:
+> On Sat, Nov 30, 2019 at 10:02:23AM +0800, yu kuai wrote:
+>> However, a single 'DENTRY_D_LOCK_NESTED' may not be enough if more than
+>> two dentry are involed. So, add in 'DENTRY_D_LOCK_NESTED_TWICE'.
+> 
+> No.  These need meaningful names.  Indeed, I think D_LOCK_NESTED is
+> a terrible name.
+> 
+> Looking at the calls:
+> 
+> $ git grep -n nested.*d_lock fs
+> fs/autofs/expire.c:82:          spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/dcache.c:619:                spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/dcache.c:1086:       spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/dcache.c:1303:               spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/dcache.c:2822:               spin_lock_nested(&old_parent->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/dcache.c:2827:                       spin_lock_nested(&target->d_parent->d_lock,
+> fs/dcache.c:2830:       spin_lock_nested(&dentry->d_lock, 2);
+> fs/dcache.c:2831:       spin_lock_nested(&target->d_lock, 3);
+> fs/dcache.c:3121:       spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/libfs.c:112:                 spin_lock_nested(&d->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/libfs.c:341:         spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
+> fs/notify/fsnotify.c:129:                       spin_lock_nested(&child->d_lock, DENTRY_D_LOCK_NESTED);
+> 
+> Most of these would be well-expressed by DENTRY_D_LOCK_CHILD.
+> 
+> The exception is __d_move() where I think we should actually name the
+> different lock classes instead of using a bare '2' and '3'.  Something
+> like this, perhaps:
+> 
+Thanks for looking into this, do you mind if I replace your patch with 
+the first two patches in the patchset?
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 787e8eec9a7f..d31e863bc9ef 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2831,7 +2831,7 @@ static void its_vpe_schedule(struct its_vpe *vpe)
- 	val  = virt_to_phys(page_address(vpe->vpt_page)) &
- 		GENMASK_ULL(51, 16);
- 	val |= GICR_VPENDBASER_RaWaWb;
--	val |= GICR_VPENDBASER_NonShareable;
-+	val |= GICR_VPENDBASER_InnerShareable;
- 	/*
- 	 * There is no good way of finding out if the pending table is
- 	 * empty as we can race against the doorbell interrupt very
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 5cc10cf7cb3e..a184f875e451 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -289,6 +289,9 @@
- #define GICR_VPENDBASER_NonShareable					\
- 	GIC_BASER_SHAREABILITY(GICR_VPENDBASER, NonShareable)
- 
-+#define GICR_VPENDBASER_InnerShareable					\
-+	GIC_BASER_SHAREABILITY(GICR_VPENDBASER, InnerShareable)
-+
- #define GICR_VPENDBASER_nCnB	GIC_BASER_CACHEABILITY(GICR_VPENDBASER, INNER, nCnB)
- #define GICR_VPENDBASER_nC 	GIC_BASER_CACHEABILITY(GICR_VPENDBASER, INNER, nC)
- #define GICR_VPENDBASER_RaWt	GIC_BASER_CACHEABILITY(GICR_VPENDBASER, INNER, RaWt)
--- 
-2.19.1
+Yu Kuai
 
