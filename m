@@ -2,142 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B01CF10DE63
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 18:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B7F110DE6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 18:46:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfK3RLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 12:11:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:50282 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfK3RLr (ORCPT
+        id S1727179AbfK3Rm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 12:42:29 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34538 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbfK3Rm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 12:11:47 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1ib6HO-0003Jn-Mb; Sat, 30 Nov 2019 18:11:39 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4E1791C1E6C;
-        Sat, 30 Nov 2019 18:11:34 +0100 (CET)
-Date:   Sat, 30 Nov 2019 17:11:34 -0000
-From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/ioperm: Save an indentation level in
- tss_update_io_bitmap()
-Cc:     Borislav Petkov <bp@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Sat, 30 Nov 2019 12:42:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id m6so27838141ljc.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2019 09:42:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7OY7cEjDNgu8kaIIhsnYFUXoWVVZdXt/b0h/OEHq0PY=;
+        b=JOZDGt1czSe4MNLzWjpCvKey9irF4zZMRZbgmXvmbswCLh4edHM3+zG0W7AepyQuH5
+         S3UpE5aoX1tumTjLBhmdAur1fzssaA7JclP95veaMEk0fW0Lg9jRSLW4arbfZ1m4grx1
+         2xnyuKZReOfnhOTL1Vmau6ogbpCrBe+7dJuts=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7OY7cEjDNgu8kaIIhsnYFUXoWVVZdXt/b0h/OEHq0PY=;
+        b=rfj0p3jQ7zEtLWGTNwh0BhngSWFZs1+oH93bJLPI3rmzXWjCPCjDXpbnfA3/8qcsQM
+         IyNKjfJlWRdhg1USODOT6vOZ2nsB0YEGJW4FF/V538r9tOzYfa4afq/4eyDatYSovtx/
+         wqZUNZrfAEzQY3EeIyVi81hFwKQZlGXftJ4NRD7Wg7z/BPsqVu6728yjJzsgsraphqUX
+         IdvKxo6ZQSz6Ld+2twyibr1bfJsU6r/5nNoZ8rrkffDf3T0o1bTnz4CImqrhh29jwQfv
+         bBLmnBlwHaCtrVQNnH5wvONGkk2H3bgp/jUPp9M4e2nbnt1s+O3rFBBOfnOBjUoiENdn
+         ++iQ==
+X-Gm-Message-State: APjAAAWk5kwucXBll2t/Zj+ywsPaq9NSC188pZ0lUckJdfJ4iNKYyzBz
+        lKp1TvCXzzgW3mZ1hoC++OA2AFbfhQs=
+X-Google-Smtp-Source: APXvYqwixdahmBHuacw+P82FEvnU02M/bEsoNAxj3OzZ5/W1FW1YDJkDv1U7c9of/9fDIALJv3dVMQ==
+X-Received: by 2002:a2e:9006:: with SMTP id h6mr41177317ljg.231.1575135744898;
+        Sat, 30 Nov 2019 09:42:24 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id u2sm6316863lfl.18.2019.11.30.09.42.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2019 09:42:23 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id r15so21904501lff.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Nov 2019 09:42:23 -0800 (PST)
+X-Received: by 2002:ac2:50cc:: with SMTP id h12mr28807478lfm.29.1575135742985;
+ Sat, 30 Nov 2019 09:42:22 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157513389416.21853.341175495479057538.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <CAPM=9txVpjxR1UAOPpXn-ZqMamAUdzfq_HOEav99A0A0sfFBUw@mail.gmail.com>
+In-Reply-To: <CAPM=9txVpjxR1UAOPpXn-ZqMamAUdzfq_HOEav99A0A0sfFBUw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 30 Nov 2019 09:42:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjryrAniBWJyeEBaye8rnX=S-BT3_c_jRcSZj4xfPvjhw@mail.gmail.com>
+Message-ID: <CAHk-=wjryrAniBWJyeEBaye8rnX=S-BT3_c_jRcSZj4xfPvjhw@mail.gmail.com>
+Subject: Re: [git pull] mm + drm vmwgfx coherent
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas@shipmail.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, Nov 28, 2019 at 5:15 PM Dave Airlie <airlied@gmail.com> wrote:
+>
+> This is just a separated pull for the mm pagewalking + drm/vmwgfx work
+> Thomas did and you were involved in, I've left it separate in case you
+> don't feel as comfortable with it as the other stuff.
 
-Commit-ID:     7b0b8cfd261c569177d64d6e9b1800fbe412fd65
-Gitweb:        https://git.kernel.org/tip/7b0b8cfd261c569177d64d6e9b1800fbe412fd65
-Author:        Borislav Petkov <bp@suse.de>
-AuthorDate:    Sat, 30 Nov 2019 16:00:53 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 30 Nov 2019 18:06:56 +01:00
+Thanks, pulled (and the delay wasn't because of me being nervous about
+the code, it was just because of turkey and a day of rest afterwards).
 
-x86/ioperm: Save an indentation level in tss_update_io_bitmap()
+And I appreciate the separation - not because I wasn't comfortable
+with the final code, but simply because it's a rather different thing
+than the usual drm code. Having that as a separate pull and not mixed
+up with the regular driver updates is just how I prefer it.
 
-... for better readability.
+Thanks,
 
-No functional changes.
-
-[ Minor edit. ]
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/process.c | 52 +++++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index bd2a11c..61e93a3 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -377,37 +377,37 @@ static void tss_copy_io_bitmap(struct tss_struct *tss, struct io_bitmap *iobm)
- void tss_update_io_bitmap(void)
- {
- 	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
-+	struct thread_struct *t = &current->thread;
- 	u16 *base = &tss->x86_tss.io_bitmap_base;
- 
--	if (test_thread_flag(TIF_IO_BITMAP)) {
--		struct thread_struct *t = &current->thread;
--
--		if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
--			*base = IO_BITMAP_OFFSET_VALID_ALL;
--		} else {
--			struct io_bitmap *iobm = t->io_bitmap;
--			/*
--			 * Only copy bitmap data when the sequence number
--			 * differs. The update time is accounted to the
--			 * incoming task.
--			 */
--			if (tss->io_bitmap.prev_sequence != iobm->sequence)
--				tss_copy_io_bitmap(tss, iobm);
--
--			/* Enable the bitmap */
--			*base = IO_BITMAP_OFFSET_VALID_MAP;
--		}
-+	if (!test_thread_flag(TIF_IO_BITMAP)) {
-+		tss_invalidate_io_bitmap(tss);
-+		return;
-+	}
-+
-+	if (IS_ENABLED(CONFIG_X86_IOPL_IOPERM) && t->iopl_emul == 3) {
-+		*base = IO_BITMAP_OFFSET_VALID_ALL;
-+	} else {
-+		struct io_bitmap *iobm = t->io_bitmap;
-+
- 		/*
--		 * Make sure that the TSS limit is covering the io bitmap.
--		 * It might have been cut down by a VMEXIT to 0x67 which
--		 * would cause a subsequent I/O access from user space to
--		 * trigger a #GP because tbe bitmap is outside the TSS
--		 * limit.
-+		 * Only copy bitmap data when the sequence number differs. The
-+		 * update time is accounted to the incoming task.
- 		 */
--		refresh_tss_limit();
--	} else {
--		tss_invalidate_io_bitmap(tss);
-+		if (tss->io_bitmap.prev_sequence != iobm->sequence)
-+			tss_copy_io_bitmap(tss, iobm);
-+
-+		/* Enable the bitmap */
-+		*base = IO_BITMAP_OFFSET_VALID_MAP;
- 	}
-+
-+	/*
-+	 * Make sure that the TSS limit is covering the IO bitmap. It might have
-+	 * been cut down by a VMEXIT to 0x67 which would cause a subsequent I/O
-+	 * access from user space to trigger a #GP because tbe bitmap is outside
-+	 * the TSS limit.
-+	 */
-+	refresh_tss_limit();
- }
- #else /* CONFIG_X86_IOPL_IOPERM */
- static inline void switch_to_bitmap(unsigned long tifp) { }
+              Linus
