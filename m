@@ -2,123 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38BC810DCDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 08:19:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D260710DCE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 08:19:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725944AbfK3HTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 02:19:09 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:43710 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfK3HTJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 02:19:09 -0500
-Received: by mail-io1-f71.google.com with SMTP id b17so9282033ioh.10
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 23:19:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NH7tpAHELzxk/UfVmDatDAWXns7669WAP7vdJ5fhSaU=;
-        b=Wlp0NfEBhU41EnMmqp0eZFXr/8DFrDXk+ontBGke2S7Tg8UZd0tQZJ6smbUFGfE4yb
-         641SpQ0t/SK+GkMyb/cj1vMVyxUE1/G0CaVGiCZoJB4p5OfcNW2R3k5hbGVFNnXCRgT6
-         FbT0P978U3ENIoIFafN0lUcsQ+vIOFhX5quVUGdUHo1SECeYI7uWdWaAZD9PdH4tozMJ
-         fZWRCn13wagsjW7+3AuHqFG6FznB7RoDLOSqEqzZiQzLZgb6mseQv0QohaMkq6daRVfm
-         +rkIhsUy86A4GIkhYEjr3cEQuuz3X2hv/PWRNyv8jXC0y0Npw+3XNLDVV3p1NIT3SBeM
-         lVNg==
-X-Gm-Message-State: APjAAAX8L554MHMy9zv2pkpUf4vzwxP4UYEUfwSXDDDepGEq4NqzwWaX
-        5jOzvcfIVILM1c7koeWaDxjUVnwu9em2QAAwj8iLdahxEOPf
-X-Google-Smtp-Source: APXvYqyb+xnqjU7qMCYcbRW40EATfkt3T1JPj3hrphILwsgi10O9VY2aj0RLDbGgH95QnkFZUJaY4FVAzQcBla/ERhdPpdAN9r3i
+        id S1726946AbfK3HTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 02:19:50 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42362 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725811AbfK3HTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 02:19:50 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B6418840280E0BEBEE0C;
+        Sat, 30 Nov 2019 15:19:47 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 30 Nov
+ 2019 15:19:45 +0800
+Subject: Re: [PATCH] f2fs: Fix direct IO handling
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     Javier Gonzalez <javier@javigon.com>,
+        Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+References: <20191126075719.1046485-1-damien.lemoal@wdc.com>
+ <20191126083443.F1FD5A405B@b06wcsmtp001.portsmouth.uk.ibm.com>
+ <BYAPR04MB5816C82F708612381216895BE7470@BYAPR04MB5816.namprd04.prod.outlook.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <d6c4ca45-5939-2517-776d-c3189f38cff1@huawei.com>
+Date:   Sat, 30 Nov 2019 15:19:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8184:: with SMTP id u4mr45057762ion.155.1575098348491;
- Fri, 29 Nov 2019 23:19:08 -0800 (PST)
-Date:   Fri, 29 Nov 2019 23:19:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008c5bfa05988b29dd@google.com>
-Subject: general protection fault in j1939_jsk_del (2)
-From:   syzbot <syzbot+99e9e1b200a1e363237d@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kernel@pengutronix.de,
-        linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@rempel-privat.de, mkl@pengutronix.de, netdev@vger.kernel.org,
-        robin@protonic.nl, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <BYAPR04MB5816C82F708612381216895BE7470@BYAPR04MB5816.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+-Cc fsdevel mailing list
 
-syzbot found the following crash on:
+On 2019/11/28 10:10, Damien Le Moal wrote:
+> On 2019/11/26 17:34, Ritesh Harjani wrote:
+>> Hello Damien,
+>>
+>> IIUC, you are trying to fix a stale data read by DIO read for the case
+>> you explained in your patch w.r.t. DIO-write forced to write as buffIO.
+>>
+>> Coincidentally I was just looking at the same code path just now.
+>> So I do have a query to you/f2fs group. Below could be silly one, as I
+>> don't understand F2FS in great detail.
+>>
+>> How is the stale data by DIO read, is protected against a mmap
+>> writes via f2fs_vm_page_mkwrite?
+>>
+>> f2fs_vm_page_mkwrite()		 f2fs_direct_IO (read)
+>> 					filemap_write_and_wait_range()
+					 - writepages
+					  lock_page
+					  - writepage
+					  unlock_page
+	lock_page
+>> 	-> f2fs_get_blocks()				
 
-HEAD commit:    81b6b964 Merge branch 'master' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=134af786e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=773597fe8d7cb41a
-dashboard link: https://syzkaller.appspot.com/bug?extid=99e9e1b200a1e363237d
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-userspace arch: i386
+					- f2fs_map_blocks
 
-Unfortunately, I don't have any reproducer for this crash yet.
+>> 					 -> submit_bio()
+>>
+>> 	-> set_page_dirty()
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+99e9e1b200a1e363237d@syzkaller.appspotmail.com
+	unlock_page
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 18385 Comm: syz-executor.1 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__lock_acquire+0x1254/0x4a00 kernel/locking/lockdep.c:3828
-Code: 00 0f 85 96 24 00 00 48 81 c4 f0 00 00 00 5b 41 5c 41 5d 41 5e 41 5f  
-5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f  
-85 0b 28 00 00 49 81 3e 20 59 2a 8a 0f 84 5f ee ff
-RSP: 0018:ffff8880a0397b38 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000218 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff8880a0397c50 R08: 0000000000000001 R09: 0000000000000001
-R10: fffffbfff13d4e58 R11: ffff888093b044c0 R12: 00000000000010c0
-R13: 0000000000000000 R14: 00000000000010c0 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0063) knlGS:00000000f5dcfb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 000000002e521000 CR3: 0000000097a51000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-  _raw_spin_lock_bh+0x33/0x50 kernel/locking/spinlock.c:175
-  spin_lock_bh include/linux/spinlock.h:343 [inline]
-  j1939_jsk_del+0x32/0x210 net/can/j1939/socket.c:89
-  j1939_sk_bind+0x2ea/0x8f0 net/can/j1939/socket.c:448
-  __sys_bind+0x239/0x290 net/socket.c:1648
-  __do_sys_bind net/socket.c:1659 [inline]
-  __se_sys_bind net/socket.c:1657 [inline]
-  __ia32_sys_bind+0x72/0xb0 net/socket.c:1657
-  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
-  do_fast_syscall_32+0x27b/0xe16 arch/x86/entry/common.c:408
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7ff4a39
-Code: 00 00 00 89 d3 5b 5e 5f 5d c3 b8 80 96 98 00 eb c4 8b 04 24 c3 8b 1c  
-24 c3 8b 34 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f5dcf0cc EFLAGS: 00000296 ORIG_RAX: 0000000000000169
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020000000
-RDX: 0000000000000018 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 18385 at kernel/locking/mutex.c:1419  
-mutex_trylock+0x279/0x2f0 kernel/locking/mutex.c:1427
+I guess lock range is as above, so the race can happen, however,
+1) If mkwrite() creates data in hole, direct_IO->f2fs_map_blocks should
+return NEW_ADDR, which means that is a hole of file, so direct_IO should
+read all zeroed data.
+2) If mkwrite() overwrite data in block, mkwrite->f2fs_get_blocks won't
+change old block address, then direct_IO->f2fs_map_blocks could get that
+block address, and won't read stale data.
 
+But I doubt could we read stale data with below race condition:
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+kworker					DIO reader
+- writepages
+					- f2fs_map_blocks
+					 - get old block address
+ - writepage
+  trigger OPU, update old block address to new one
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+someone trigger checkpoint, data in old block address becomes stale,
+then anyone else can write data into there.
+					 - submit_bio
+					  get stale data
+
+Or am I missing something that maybe vfs has did such synchronization.
+
+Thanks,
+
+>>
+>> Is above race possible with current f2fs code?
+>> i.e. f2fs_direct_IO could read the stale data from the blocks
+>> which were allocated due to mmap fault?
+> 
+> The faulted page is locked until the fault is fully processed so direct
+> IO has to wait for that to complete first.
+> 
+>>
+>> Am I missing something here?
+>>
+>> -ritesh
+>>
+>> On 11/26/19 1:27 PM, Damien Le Moal wrote:
+>>> f2fs_preallocate_blocks() identifies direct IOs using the IOCB_DIRECT
+>>> flag for a kiocb structure. However, the file system direct IO handler
+>>> function f2fs_direct_IO() may have decided that a direct IO has to be
+>>> exececuted as a buffered IO using the function f2fs_force_buffered_io().
+>>> This is the case for instance for volumes including zoned block device
+>>> and for unaligned write IOs with LFS mode enabled.
+>>>
+>>> These 2 different methods of identifying direct IOs can result in
+>>> inconsistencies generating stale data access for direct reads after a
+>>> direct IO write that is treated as a buffered write. Fix this
+>>> inconsistency by combining the IOCB_DIRECT flag test with the result
+>>> of f2fs_force_buffered_io().
+>>>
+>>> Reported-by: Javier Gonzalez <javier@javigon.com>
+>>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+>>> ---
+>>>   fs/f2fs/data.c | 4 +++-
+>>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 5755e897a5f0..8ac2d3b70022 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -1073,6 +1073,8 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>>>   	int flag;
+>>>   	int err = 0;
+>>>   	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
+>>> +	bool do_direct_io = direct_io &&
+>>> +		!f2fs_force_buffered_io(inode, iocb, from);
+>>>   
+>>>   	/* convert inline data for Direct I/O*/
+>>>   	if (direct_io) {
+>>> @@ -1081,7 +1083,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>>>   			return err;
+>>>   	}
+>>>   
+>>> -	if (direct_io && allow_outplace_dio(inode, iocb, from))
+>>> +	if (do_direct_io && allow_outplace_dio(inode, iocb, from))
+>>>   		return 0;
+>>>   
+>>>   	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+>>>
+>>
+>>
+> 
+> 
