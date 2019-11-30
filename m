@@ -2,86 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1B610DC38
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 04:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B6BD10DC3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Nov 2019 04:16:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfK3DMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 29 Nov 2019 22:12:44 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39116 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfK3DMo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Nov 2019 22:12:44 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a67so8872695oib.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2019 19:12:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=WGgEYCWgZXji+vHjNuzFMD738jFfCCD95nKu7Eh05bE=;
-        b=PQVf+oPEzyiW61fx5TwYmBLfdALpBJ+JL/9Uf9DA89k6ZTzW5kYLzh/FzFcW+2d4Rq
-         HA57LXXlcIiqjfSDknMUnZS9eMS3ZezohlTKGcB6SO1//1CkNxF+3wbO/HsyK+z2r38N
-         pP/IDdVviUrCmVvfKQX18zwyy2DCEK0lmHz3Wm+p5PLcVtLhQqfI6WoSMxqOSvBX9aAD
-         r8ik8zZLoujdv0ORHeD8Z+p0ud5UVYbj1O5bQ+KalCM7Mcv7myrS+/ENoXL88AnRGSFY
-         /oIspW53BIp3/YfuOJ7NOEDC3c32UllHpuUtUBIF3BNCmBUP18m963CHnAzPZFTo502N
-         RwDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=WGgEYCWgZXji+vHjNuzFMD738jFfCCD95nKu7Eh05bE=;
-        b=oWprBfpSPbvZV2n170p8FnfhomCsYsRTSkp6iQfZ8xfOgdonxcvKqXc6zG2Ed/7snA
-         cSJr6QIiNS0pIrT3FleVSiNa1jYN8O0MDwups+IQqqIWQT4spj7vGEYgNhUrnMXxND68
-         ax9j5JCsXUogbYgDZ9FfTHPsMEnEnqMXK3NSq47j7jahwNk9egEMkVqotJ4+2ImqHiix
-         e3RXR3SjaH6YAZ1ov3iu5cWUB+Fu8yxqWjxLzfHrKtFwcoFqSJJ/T/cv10CXBG/C80jD
-         YqTRozKkbhwNBLf856YOnLviVsMTxC+KKmuFWM0IArrZVyxHqFvsLIsSIdF8+TKFdU3k
-         uefA==
-X-Gm-Message-State: APjAAAViM7R/872po4bKHaif4FR4HWEzbw4vTLNCrba9SSagS49GXevJ
-        W4NvlDk/mqVonqi9NTKw4yW32B8/xpL9ClJGk58=
-X-Google-Smtp-Source: APXvYqxfTHo6+RC/u9nlZsIx0Toxx0NENy9amRtWNHhMxpPxmK+uyEENRnzwtNbRcyy4U5zHfCOWZ4nvjHnhh0E0BME=
-X-Received: by 2002:aca:d988:: with SMTP id q130mr13853011oig.133.1575083563325;
- Fri, 29 Nov 2019 19:12:43 -0800 (PST)
+        id S1727233AbfK3DP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 29 Nov 2019 22:15:59 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6734 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727142AbfK3DP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Nov 2019 22:15:58 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4D0FFA083DCA239A0AD2;
+        Sat, 30 Nov 2019 11:15:57 +0800 (CST)
+Received: from linux-XCyijm.huawei.com (10.175.104.212) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 30 Nov 2019 11:15:49 +0800
+From:   Heyi Guo <guoheyi@huawei.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
+CC:     <wanghaibin.wang@huawei.com>, Heyi Guo <guoheyi@huawei.com>,
+        Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH] kvm/arm64: change gicv3_cpuif to static likely branch
+Date:   Sat, 30 Nov 2019 11:14:43 +0800
+Message-ID: <20191130031443.41696-1-guoheyi@huawei.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Received: by 2002:a9d:6c43:0:0:0:0:0 with HTTP; Fri, 29 Nov 2019 19:12:42
- -0800 (PST)
-From:   "Mr.Patrick Joseph" <mrpatrickjo09@gmail.com>
-Date:   Sat, 30 Nov 2019 04:12:42 +0100
-X-Google-Sender-Auth: SVz3xkJXItW4xsOPCQEtWfOM2bk
-Message-ID: <CACH=7AUYRv-FyJRZVQqBqjgQBsUY4j3BxcwgpFFzndLM4b7szg@mail.gmail.com>
-Subject: Hoping to hear from you soon
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.212]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Sir/Madam,
+Platforms running hypervisor nowadays are normally powerful servers
+which at least support GICv3, so it should be better to switch
+kvm_vgic_global_state.gicv3_cpuif to static likely branch, which can
+reduce two "b" instructions to a single "nop" for GICv3 branches.
 
-Although you might be apprehensive about my email as we have never met
-before. I am Mr.Patrick Joseph, a Banker and Head of Operations with
-Bank here in Burkina Faso West Africa, there is the sum of
-$28.500,000.00 Million Dollars currently in my branch, there were no
-beneficiary stated concerning these funds which means no one would
-ever come to claim it.
+We don't update arm32 specific code for they may still only have
+GICv2.
 
-That is why I ask that can we work together, I will be pleased to work
-with you as trusted person and see that the fund is transferred out of
-my Bank into another Bank Account, Once the funds have been
-transferred to your nominated Bank account we shall then share it in
-the ratio of 60% for me, 40% for you.
+Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Julien Thierry <julien.thierry.kdev@gmail.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Will Deacon <will@kernel.org>
+---
+ arch/arm64/kvm/hyp/switch.c   | 4 ++--
+ include/kvm/arm_vgic.h        | 2 +-
+ virt/kvm/arm/vgic/vgic-init.c | 9 +++++----
+ virt/kvm/arm/vgic/vgic.c      | 9 +++++----
+ 4 files changed, 13 insertions(+), 11 deletions(-)
 
-If you agree to my business proposal.further details of the transfer
-will be forwarded to you as soon as i receive your return mail,
-sending the below information
+diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+index 799e84a40335..57e7d314211a 100644
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -219,7 +219,7 @@ static void __hyp_text __deactivate_vm(struct kvm_vcpu *vcpu)
+ /* Save VGICv3 state on non-VHE systems */
+ static void __hyp_text __hyp_vgic_save_state(struct kvm_vcpu *vcpu)
+ {
+-	if (static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif)) {
++	if (static_branch_likely(&kvm_vgic_global_state.gicv3_cpuif)) {
+ 		__vgic_v3_save_state(vcpu);
+ 		__vgic_v3_deactivate_traps(vcpu);
+ 	}
+@@ -228,7 +228,7 @@ static void __hyp_text __hyp_vgic_save_state(struct kvm_vcpu *vcpu)
+ /* Restore VGICv3 state on non_VEH systems */
+ static void __hyp_text __hyp_vgic_restore_state(struct kvm_vcpu *vcpu)
+ {
+-	if (static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif)) {
++	if (static_branch_likely(&kvm_vgic_global_state.gicv3_cpuif)) {
+ 		__vgic_v3_activate_traps(vcpu);
+ 		__vgic_v3_restore_state(vcpu);
+ 	}
+diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
+index af4f09c02bf1..474e73dd3112 100644
+--- a/include/kvm/arm_vgic.h
++++ b/include/kvm/arm_vgic.h
+@@ -72,7 +72,7 @@ struct vgic_global {
+ 	bool			has_gicv4;
+ 
+ 	/* GIC system register CPU interface */
+-	struct static_key_false gicv3_cpuif;
++	struct static_key_true gicv3_cpuif;
+ 
+ 	u32			ich_vtr_el2;
+ };
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index 6f50c429196d..b03e5c8e1731 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -509,13 +509,14 @@ int kvm_vgic_hyp_init(void)
+ 	switch (gic_kvm_info->type) {
+ 	case GIC_V2:
+ 		ret = vgic_v2_probe(gic_kvm_info);
++		if (!ret) {
++			static_branch_disable(
++				&kvm_vgic_global_state.gicv3_cpuif);
++			kvm_info("GIC system register CPU interface disabled\n");
++		}
+ 		break;
+ 	case GIC_V3:
+ 		ret = vgic_v3_probe(gic_kvm_info);
+-		if (!ret) {
+-			static_branch_enable(&kvm_vgic_global_state.gicv3_cpuif);
+-			kvm_info("GIC system register CPU interface enabled\n");
+-		}
+ 		break;
+ 	default:
+ 		ret = -ENODEV;
+diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+index 45a870cb63f5..9dafeeb1457b 100644
+--- a/virt/kvm/arm/vgic/vgic.c
++++ b/virt/kvm/arm/vgic/vgic.c
+@@ -18,7 +18,7 @@
+ #include "trace.h"
+ 
+ struct vgic_global kvm_vgic_global_state __ro_after_init = {
+-	.gicv3_cpuif = STATIC_KEY_FALSE_INIT,
++	.gicv3_cpuif = STATIC_KEY_TRUE_INIT,
+ };
+ 
+ /*
+@@ -841,12 +841,13 @@ static inline bool can_access_vgic_from_kernel(void)
+ 	 * memory-mapped, and VHE systems can access GICv3 EL2 system
+ 	 * registers.
+ 	 */
+-	return !static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif) || has_vhe();
++	return !static_branch_likely(&kvm_vgic_global_state.gicv3_cpuif) ||
++	       has_vhe();
+ }
+ 
+ static inline void vgic_save_state(struct kvm_vcpu *vcpu)
+ {
+-	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
++	if (!static_branch_likely(&kvm_vgic_global_state.gicv3_cpuif))
+ 		vgic_v2_save_state(vcpu);
+ 	else
+ 		__vgic_v3_save_state(vcpu);
+@@ -873,7 +874,7 @@ void kvm_vgic_sync_hwstate(struct kvm_vcpu *vcpu)
+ 
+ static inline void vgic_restore_state(struct kvm_vcpu *vcpu)
+ {
+-	if (!static_branch_unlikely(&kvm_vgic_global_state.gicv3_cpuif))
++	if (!static_branch_likely(&kvm_vgic_global_state.gicv3_cpuif))
+ 		vgic_v2_restore_state(vcpu);
+ 	else
+ 		__vgic_v3_restore_state(vcpu);
+-- 
+2.19.1
 
-1. Full Name.
-2: Your Private telephone and Fax numbers.
-3. Occupations.
-4. Date Of Birth
-5. Country of Residence.
-6. Your full address.
-
-Hoping to hear from you as soon as possible.
-
-Regards,
-Mr.Patrick Joseph.
