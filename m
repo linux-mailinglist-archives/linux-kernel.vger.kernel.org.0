@@ -2,78 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDBA610E11F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 10:10:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D1F610E14E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 10:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfLAJKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 04:10:02 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:34604 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfLAJKC (ORCPT
+        id S1726389AbfLAJwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 04:52:04 -0500
+Received: from mail-wm1-f45.google.com ([209.85.128.45]:37781 "EHLO
+        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbfLAJwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 04:10:02 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id A87B980656;
-        Sun,  1 Dec 2019 10:09:43 +0100 (CET)
-Date:   Sun, 1 Dec 2019 10:09:41 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: clean up indentation issue
-Message-ID: <20191201090941.GA8753@ravnborg.org>
-References: <20190925120357.10408-1-colin.king@canonical.com>
+        Sun, 1 Dec 2019 04:52:03 -0500
+Received: by mail-wm1-f45.google.com with SMTP id f129so19730078wmf.2;
+        Sun, 01 Dec 2019 01:52:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=o/0gCOK+/J2G5vanbQdNvJpthNmviD8pf8+x/WflIz8=;
+        b=l90aNcz7AvVz0i/UpJMPeo0N7DXsp5eykmdxs90PXWfOK2I5JQiZBkbAvBmC9TajZ8
+         5225bIhoPlpaXdCmiyYNX6LkCy+V8FmpR7Co9yk75dPn/UIbTsh2SrTl48gtuG8ejxSO
+         /Agx+MWNLte++FhIP/ZtcHlMJ/abqmtS4EmR8qSlUustTpqr9f7YPYS3opzzr9AVwgEo
+         LHZS3nW6M7I3zJX3j5GpskGMZhjRq+4mVe7qp2I9mjhk55dpob4YbGAJjKTCXkHBF+4I
+         j+k3YrRGbJis/tWl1io1tPcrdf/gFZlS1zsTITMElklCzI2wKCe4y14qNIeDV1mCovP5
+         tD0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o/0gCOK+/J2G5vanbQdNvJpthNmviD8pf8+x/WflIz8=;
+        b=PGrrMMhPNj2D/PceKtS9bSGfd/7SSu1AUKHP3DKELErzMFDfYIn+MuhEWFz1oUVJTX
+         +lfrpyHHoVhT56SBzoxZEsE2CV2xshswLppeavETxTjfc/v8FNkjyVOdwde5tSBWbFj/
+         1cU+jj5q+2Lz3H4fJqYeiclRNAAiOjfNyLrgu4S+BEtXeYmVRk81TVHgCBXb/bJsLHIc
+         JzQeyenxeVjESpKRT66IKXeXFJarDQj2JICD0tQSRkiAfTXS/e7z24LvSyc1cRwdo+tX
+         rRGf56Mnr3DpCUohMhl9N6Kc8/Xd2h0cPf60ub0DA7oXtgq2Rn5Zs4T0f0nGIeYjBAuf
+         2CyQ==
+X-Gm-Message-State: APjAAAWT7ciKevBKEjwDjoXY5TwzYcV24UFFftrLInIv+TJdQfQn+38l
+        MAY+yStcK5svbxQiYiNh3KuN8yDG
+X-Google-Smtp-Source: APXvYqyx4BhMD58KNQvw5Q/E45c2pzc2hFpeWVtlSygw8nWPQyLVtnfE+M5Y6byNIlhUGhrqXwKN7Q==
+X-Received: by 2002:a1c:9d16:: with SMTP id g22mr23588084wme.27.1575193920886;
+        Sun, 01 Dec 2019 01:52:00 -0800 (PST)
+Received: from ?IPv6:2003:ea:8f4a:6300:1159:8f18:7fad:7ef1? (p200300EA8F4A630011598F187FAD7EF1.dip0.t-ipconnect.de. [2003:ea:8f4a:6300:1159:8f18:7fad:7ef1])
+        by smtp.googlemail.com with ESMTPSA id f1sm33595140wru.6.2019.12.01.01.51.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Dec 2019 01:52:00 -0800 (PST)
+Subject: Re: 5.4 Regression in r8169 with jumbo frames - packet loss/delays
+To:     "Alan J. Wylie" <alan@wylie.me.uk>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <24034.56114.248207.524177@wylie.me.uk>
+ <75146b50-9518-8588-81fa-f2811faf6cca@gmail.com>
+ <24035.32883.173899.812456@wylie.me.uk>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <0ef3ef69-bfb2-11c5-fb63-6b83cffff0ed@gmail.com>
+Date:   Sun, 1 Dec 2019 10:26:58 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925120357.10408-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=DfNHnWVPAAAA:8
-        a=X4VG-in_caqo2OVBQ50A:9 a=CjuIK1q_8ugA:10 a=rjTVMONInIDnV1a_A2c_:22
+In-Reply-To: <24035.32883.173899.812456@wylie.me.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin.
-
-On Wed, Sep 25, 2019 at 01:03:57PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 01.12.2019 09:57, Alan J. Wylie wrote:
+> at 22:37 on Sat 30-Nov-2019 Heiner Kallweit (hkallweit1@gmail.com) wrote:
 > 
-> There is a continue statement that is indented one level too deeply,
-> remove the extraneous tab.
+>> Thanks for the report. A jumbo fix for one chip version may have
+>> revealed an issue with another chip version. Could you please try
+>> the following?
+>> I checked the vendor driver r8168 and there's no special sequence
+>> to configure jumbo mode.
+>>
+>> What would be interesting:
+>> Do you set the (jumbo) MTU before bringing the device up?
+>>
+>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+>> index 0b47db2ff..38d212686 100644
+>> --- a/drivers/net/ethernet/realtek/r8169_main.c
+>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+>> @@ -3873,7 +3873,7 @@ static void rtl_hw_jumbo_enable(struct rtl8169_private *tp)
+>>  	case RTL_GIGA_MAC_VER_27 ... RTL_GIGA_MAC_VER_28:
+>>  		r8168dp_hw_jumbo_enable(tp);
+>>  		break;
+>> -	case RTL_GIGA_MAC_VER_31 ... RTL_GIGA_MAC_VER_34:
+>> +	case RTL_GIGA_MAC_VER_31 ... RTL_GIGA_MAC_VER_33:
+>>  		r8168e_hw_jumbo_enable(tp);
+>>  		break;
+>>  	default:
+>> -- 
+>> 2.24.0
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> That patch fixes the issue for me.
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> index 2bae1db3ff34..7dd67262a2ed 100644
-> --- a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> +++ b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
-> @@ -161,7 +161,7 @@ static int lcd_olinuxino_get_modes(struct drm_panel *panel)
->  				lcd_mode->hactive,
->  				lcd_mode->vactive,
->  				lcd_mode->refresh);
-> -				continue;
-> +			continue;
->  		}
->  
->  		mode->clock = lcd_mode->pixelclock;
+Great, thanks for the feedback!
 
-Thanks, this is the kind of issues that can fool one or take
-focus away when reading code.
-
-Applied to drm-misc-next.
-
-	Sam
+> Thanks
+> 
+> Alan
+> 
+Heineer
