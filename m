@@ -2,107 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB3810E02F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 04:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD4710E04D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 04:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfLADIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 22:08:22 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41211 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbfLADIW (ORCPT
+        id S1727377AbfLADvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 22:51:19 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39082 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfLADvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 22:08:22 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t8so14536691plr.8;
-        Sat, 30 Nov 2019 19:08:22 -0800 (PST)
+        Sat, 30 Nov 2019 22:51:19 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b137so14230525pga.6;
+        Sat, 30 Nov 2019 19:51:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/hLBoSlob5s789wTL2XcH8c7JKpIgMLhl5+fSLzoJ3I=;
-        b=cj6rzPONcjGOwhTU/4/Pf6eRK5WAaZd8Sp+1Lqa61612W3JeRD/lyjfQ/95oWpoW/c
-         fwnu+fL1Sa6kbzA45iWlrVL5xZ/6dk6jY1L35UDqU6/B19RDMcqhAjpb+JjcLv9Z98jF
-         pqN2VAvwZqntIv+lxe70UGSZh9pgJxJkkPfxq6gTg1OKKzNUzKVXb8BM58GVujMSzEKA
-         FtrARdwxEPhEQLKZ8RFAf4B8XKR49ZNXzTItj7yxNJYiKw+SuroqOlkKcYWmxGwa8aoG
-         zvHTuCIKUIHY6OTRhEQb9dL8AKh+WT4u5qbKCdWtTuz+8u9ttuZG4/LJM2uTRETtPgId
-         9biA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jxgA6dJnA/dGvMRrEelT9MYN+n9ka+vhMkWWG7BgB2M=;
+        b=FaXUxc/ieqHGSyxG54PAJ2Nps9gjPrpA0ofS4jtugNSYRbBvJ3I3XutMBnhsUCI6Iw
+         Vqjxja0IfCnhW1ZQairkzedaSQhySx0ML8uycnBl1Hf/IYCTPDFkxx0xyvad9Bp+HXlt
+         iW1ElX+TIxM1lU3SE0ijXzKbJQkst9KZFJwpotBYNUd6HFO1wDo9q6Khal9ChsuyEgnK
+         FIqI3DFEVis5IOmhK10+k5qjP0+ohsRuLre2WltR00n/NpX51E7qWDhvS2OXI3uLJ3B6
+         HzRe3eQJgJcnRN+iS7+i5yQXK9QbXvRlZmliFGL//uqWn2jVfqCxLEhBHXIW4GX2liZJ
+         mraw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/hLBoSlob5s789wTL2XcH8c7JKpIgMLhl5+fSLzoJ3I=;
-        b=YJDfLiy8RLQ/QMRwWSAG6Mxryf+QkRpsQZ78fHjDgMt0XvbJmUcgvuXzroBQXR2Y/R
-         0obUV1o2Efh7kAChPEScHsjLwgU4L5kFnjd6KXAPVY2X9BJ2QPCiBKIEGOlT1VtIO/Et
-         VIWnX/JptvmETRi8aaY0EYnaGADEX0hdFDuKSuIqcJUHYL00nqB5e5yd7fwcjKjXTFC5
-         6ealrACDND3Ax61QTl1FFnhaAUm3ZhV+ZFIPB+MZ3dwsh+Sgzknl7Ro9yjAihHvT9x+i
-         R6GAzyMePw5cy/RTt2dkNy1s+GyvYe1cLgxFRH7rfB1GOYOLYIAY7/TLOtjSBBg/JVKQ
-         Djtg==
-X-Gm-Message-State: APjAAAUkAkY+Xe2DgauIVWWpmjwGecDY7CO3Eoyodn/cWdjtlkrEzUXS
-        20ArUYgU6bHMtt+lljRvVgg=
-X-Google-Smtp-Source: APXvYqywWBIab6N3nl1QSM0j3H0Wyd20G6s9vbEPZ9bdxevDcZ9hzQ5pYeR38wtNgYmuolMfNJgbJQ==
-X-Received: by 2002:a17:902:d905:: with SMTP id c5mr21622944plz.60.1575169701456;
-        Sat, 30 Nov 2019 19:08:21 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p68sm11794487pfp.149.2019.11.30.19.08.20
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jxgA6dJnA/dGvMRrEelT9MYN+n9ka+vhMkWWG7BgB2M=;
+        b=czuTFVG94r82Pqn4RgWxFQWyyq2mSthn535y6JIY84zUanLl5sP+dJbLNrazChtxCM
+         7BY8F2T9TIc00WJQXoJADEBehMqLuTRvZS0h4Y8/MayQyHLOuulPls+AszfKqbIiwTXI
+         ZRnv9x+knyB7mQDWhY2DcyKrjeGhndQJPoRRDIWWHlWIA3/5NliW6axP57GmVnm3Brll
+         tCWqhrM9dpjQlWy5S0TH2BFrNheZJO6j/UMyLJs9jcb5+YyicwqAu21qa9C8tZ7pmqoN
+         mTqGAlMKfraoRUOh7TMZps7zElnrDDvxoLf61xJtv5LZISq5WTmjFLi3SzWavO8GgWcK
+         US7g==
+X-Gm-Message-State: APjAAAW4uUuQqiMDOlX3dbhHlV6NSPPF/g5YssEV1pjYE8SvFD0LfbXg
+        5e4RkxzWj5dQPwYU57Hu/IROEFUM
+X-Google-Smtp-Source: APXvYqyCNUMu2NoyX7GVHrnhdhm32U9ViQxb/MYUOONemByuBlp/v9EEuWquWNP9hRCR7JCJbGObQg==
+X-Received: by 2002:a65:6209:: with SMTP id d9mr24775834pgv.22.1575172278134;
+        Sat, 30 Nov 2019 19:51:18 -0800 (PST)
+Received: from debian.net.fpt ([2405:4800:58f7:32f8:99ed:5ecf:a28d:555e])
+        by smtp.gmail.com with ESMTPSA id c12sm3208096pfo.92.2019.11.30.19.51.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2019 19:08:20 -0800 (PST)
-Date:   Sat, 30 Nov 2019 19:08:18 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Yannick Fertre <yannick.fertre@st.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: goodix - support gt9147 touchpanel
-Message-ID: <20191201030818.GM248138@dtor-ws>
-References: <1574850526-13518-1-git-send-email-yannick.fertre@st.com>
+        Sat, 30 Nov 2019 19:51:17 -0800 (PST)
+From:   Phong Tran <tranmanphong@gmail.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, paulmck@kernel.org,
+        joel@joelfernandes.org
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        rcu@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>
+Subject: [PATCH] ext4: use rcu API in debug_print_tree
+Date:   Sun,  1 Dec 2019 10:51:07 +0700
+Message-Id: <20191201035107.24355-1-tranmanphong@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1574850526-13518-1-git-send-email-yannick.fertre@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 11:28:46AM +0100, Yannick Fertre wrote:
-> From: Yannick Fertré <yannick.fertre@st.com>
-> 
-> Add support for it by adding compatible and supported chip data
-> (default settings used).
-> The chip data on GT9147 is similar to GT912, like
-> - config data register has 0x8047 address
-> - config data register max len is 240
-> - config data checksum has 8-bit
+struct ext4_sb_info.system_blks was marked __rcu.
+But access the pointer without using RCU lock and dereference.
+Sparse warning with __rcu notation:
 
-If it is compatible with gt912 then the driver does not need another
-compatible in the code I think. Rob will tell more.
+block_validity.c:139:29: warning: incorrect type in argument 1 (different address spaces)
+block_validity.c:139:29:    expected struct rb_root const *
+block_validity.c:139:29:    got struct rb_root [noderef] <asn:4> *
 
-> 
-> Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
-> ---
->  drivers/input/touchscreen/goodix.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-> index fb43aa7..b470773 100644
-> --- a/drivers/input/touchscreen/goodix.c
-> +++ b/drivers/input/touchscreen/goodix.c
-> @@ -1045,6 +1045,7 @@ static const struct of_device_id goodix_of_match[] = {
->  	{ .compatible = "goodix,gt9271" },
->  	{ .compatible = "goodix,gt928" },
->  	{ .compatible = "goodix,gt967" },
-> +	{ .compatible = "goodix,gt9147",},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, goodix_of_match);
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+---
+ fs/ext4/block_validity.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
+index d4d4fdfac1a6..1ee04e76bbe0 100644
+--- a/fs/ext4/block_validity.c
++++ b/fs/ext4/block_validity.c
+@@ -133,10 +133,13 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
+ {
+ 	struct rb_node *node;
+ 	struct ext4_system_zone *entry;
++	struct ext4_system_blocks *system_blks;
+ 	int first = 1;
+ 
+ 	printk(KERN_INFO "System zones: ");
+-	node = rb_first(&sbi->system_blks->root);
++	rcu_read_lock();
++	system_blks = rcu_dereference(sbi->system_blks);
++	node = rb_first(&system_blks->root);
+ 	while (node) {
+ 		entry = rb_entry(node, struct ext4_system_zone, node);
+ 		printk(KERN_CONT "%s%llu-%llu", first ? "" : ", ",
+@@ -144,6 +147,7 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
+ 		first = 0;
+ 		node = rb_next(node);
+ 	}
++	rcu_read_unlock();
+ 	printk(KERN_CONT "\n");
+ }
+ 
 -- 
-Dmitry
+2.20.1
+
