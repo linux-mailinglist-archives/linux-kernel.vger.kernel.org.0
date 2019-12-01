@@ -2,98 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E5D10E28D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 17:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF5B10E2A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 17:43:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfLAQYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 11:24:05 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42113 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbfLAQYD (ORCPT
+        id S1727259AbfLAQnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 11:43:02 -0500
+Received: from mailbackend.panix.com ([166.84.1.89]:55647 "EHLO
+        mailbackend.panix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfLAQnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 11:24:03 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a10so7142307qko.9;
-        Sun, 01 Dec 2019 08:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RoeWgDgLObUnZ0KQQuawd0aWkmo9MU3ohnAF6iYl1KE=;
-        b=CDHBQ6ii4gUKoqPd60R7v1VjD/7lRklOCJdNDRn39wGgBxYaH/pmDmYJ+ONuI3vzXR
-         46G7MwPQcJzXnwELV+EHP0fh1fu+/miG7MKBiI8pljYeYOiOiy9yw7WvBV5rdvkyNbmM
-         UoRtPUZp3njhOjLb1fWhycfst0hp++/fWMCSK7oPlIEnwVXiosfkd8t5+LkbCL43x69C
-         0NtHS7rwzu++sZNbMzQ+/Kp9/NzdTWCA/P2HCPPVbftiHZ0aoSptYiN+iEyMsafUawHj
-         e0s/BIKEEcUUcmzecZFw3RIIZOsHUFu0qTNPa9RgB/2J83AfhmjzRKT+L7jR9wg9QcbE
-         AOyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RoeWgDgLObUnZ0KQQuawd0aWkmo9MU3ohnAF6iYl1KE=;
-        b=Jgxccfq/S1DbbwSaeBDagSwKnwKYD3ecgL1MjrkZ3SRplzLlxRrSxB29MMFFv25t/z
-         tiIpBHxFJ5vUukXiSRDbx2DsowSjbkzRkGJGO6X6LxP4TST1AeZzKfIKoqvhG14SPNO4
-         JEvArtcvUoA1oboDh5qVZHc+rO/TdEUYxeAcyGmv+IjYUQodp1f3RWnibYpk59JoCVnJ
-         81xc/iWun4PaLOD6GFLSkurmnSJ0C1yyRaa+i/nMQLVvXCrCSmzCTzzODXfmlo80MqQ5
-         u76t6T2iu0m0C8MqEfNTiaKuqZH/6TNJR/MLlFYATCS32lo/fLkPL3wMpOj3Ai5YbGM1
-         dSWg==
-X-Gm-Message-State: APjAAAVrY0SfXVahLcQCerFEM5H4Ao67eg9ujIrXzda3r+b9O7/tTf+f
-        w75fFdubpreR+HKp0MwPEsk=
-X-Google-Smtp-Source: APXvYqyPTj3pBXMc2lj2I8Vf+T6aTQpkRy3BKK2H0cfD+3Fp2vnRkYQ59fbjRD0G6Mkh6qOoh0+u7A==
-X-Received: by 2002:a37:9bc4:: with SMTP id d187mr25351712qke.17.1575217442605;
-        Sun, 01 Dec 2019 08:24:02 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
-        by smtp.gmail.com with ESMTPSA id y10sm5171195qky.6.2019.12.01.08.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2019 08:24:02 -0800 (PST)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        rfontana@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] media: dvb_dummy_frontend: remove 'extern' keyword from declaration
-Date:   Sun,  1 Dec 2019 13:15:42 -0300
-Message-Id: <20191201161542.69535-7-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191201161542.69535-1-dwlsalmeida@gmail.com>
-References: <20191201161542.69535-1-dwlsalmeida@gmail.com>
+        Sun, 1 Dec 2019 11:43:01 -0500
+Received: from hp-x360n.lan (cpe-108-185-41-56.socal.res.rr.com [108.185.41.56])
+        by mailbackend.panix.com (Postfix) with ESMTPSA id 47QvDx08Mnz1Gtw;
+        Sun,  1 Dec 2019 11:42:56 -0500 (EST)
+Date:   Sun, 1 Dec 2019 08:42:55 -0800 (PST)
+From:   "Kenneth R. Crudup" <kenny@panix.com>
+Reply-To: "Kenneth R. Crudup" <kenny@panix.com>
+To:     Ingo Molnar <mingo@kernel.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>, mceier@gmail.com,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
+Subject: Re: [PATCH] x86/pat: Fix off-by-one bugs in interval tree search
+In-Reply-To: <20191201144947.GA4167@gmail.com>
+Message-ID: <alpine.DEB.2.21.1912010842310.4698@hp-x360n>
+References: <20191127005312.GD20422@shao2-debian> <CAJTyqKPstH9PYk1nMuRJWnXUPTf9wAkphPFi9Yfz6PApLVVE0Q@mail.gmail.com> <20191130212729.ykxstm5kj2p5ir6q@linux-p48b> <CAJTyqKOp+mV1CfpasschSDO4vEDbshE4GPCB6+aX4rJOYSF=7A@mail.gmail.com>
+ <CAHk-=wh--xwpatv_Rcp3WtCPQtg-RVoXYQj8O+1TSw8os7Jtvw@mail.gmail.com> <20191201104624.GA51279@gmail.com> <20191201144947.GA4167@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
-Fix CHECK:AVOID_EXTERNS: extern prototypes should be avoided in .h files
-by removing it.
+On Sun, 1 Dec 2019, Ingo Molnar wrote:
 
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
----
- drivers/media/dvb-frontends/dvb_dummy_fe.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> So it would be nice if everyone who is seeing this bug could test the
+> patch below against Linus's latest tree - does it fix the regression?
 
-diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.h b/drivers/media/dvb-frontends/dvb_dummy_fe.h
-index 35efe2ce1a88..1c82338e0c8a 100644
---- a/drivers/media/dvb-frontends/dvb_dummy_fe.h
-+++ b/drivers/media/dvb-frontends/dvb_dummy_fe.h
-@@ -12,9 +12,9 @@
- #include <media/dvb_frontend.h>
- 
- #if IS_REACHABLE(CONFIG_DVB_DUMMY_FE)
--extern struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void);
--extern struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void);
--extern struct dvb_frontend *dvb_dummy_fe_qam_attach(void);
-+struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void);
-+struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void);
-+struct dvb_frontend *dvb_dummy_fe_qam_attach(void);
- #else
- static inline struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
- {
+I'll be sure to test it later today.
+
+	-Kenny
+
 -- 
-2.24.0
-
+Kenneth R. Crudup  Sr. SW Engineer, Scott County Consulting, Silicon Valley
