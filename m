@@ -2,81 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CED3110E393
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 22:10:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E3910E3BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 22:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbfLAVKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 16:10:48 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37184 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726965AbfLAVKs (ORCPT
+        id S1727307AbfLAV62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 16:58:28 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40744 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbfLAV62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 16:10:48 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u17so10223524lja.4;
-        Sun, 01 Dec 2019 13:10:45 -0800 (PST)
+        Sun, 1 Dec 2019 16:58:28 -0500
+Received: by mail-qk1-f195.google.com with SMTP id a137so28860034qkc.7
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2019 13:58:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K6/nAJ7zRWy4qKArDtOklB/XBpnc4q8n7RTEqKD0nxA=;
-        b=oLf35IhQ2D095BBBi8WNjU8LKJG5D7kAgMegcF33QwoIOJC66xYI1ZGwNATONXYEOE
-         Vg+Ms8f5SaV+fMXWGAz5x6zLNurAtprVN5f4AyDGahxOBNgPxJF+G1eJvjA7vtyzgsT2
-         nosG37knd2kyq+ILkvs/5BO/ApsfPP1aCiKBGjMBgjkJhlhyn0OwQclwKiKBGMmsnwJC
-         RlVwePhLN6t5rmna5MEx6kN5xmMVk7zlxZaNsv/ELutPGbeXAc1RsPRimv2gxUHFFsco
-         TNhhl0BZ4ynJRe0ykYFXolqQrEzPSSEHaEUeSAITP87mbUl9Z8Wy9NeFhnMnOtNNT1IO
-         ivLw==
+        d=jonmasters-org.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wGf8SOslmQtXKi1QI9BMUXk6iVKg26mOeGKK2Ks7MYE=;
+        b=haC2yWerrh/EPaAEWE30LtPPVcYglspCRi6YH2nLwTymB5BM0YVdLfcoNnZKG3q3Bp
+         nOSJ41/CKSvenze+4GkAAoq9bgeuRouOnCj/Es44/V2bwrq26knTKVbWMzAGr0r749mb
+         l9l7id8p4zBh9Bje3/MjsdxqHSo5evu/yTNVQi8BvsDS+18ao29L2rZrywVaBAa5E+Bn
+         x0RXh5ocXSXB2kcnHvuNdkfBFp74hGdBEPxb3dVc9RanQywc+6L9xpOsFqptvfDXXicS
+         mFu5VCz81jgRJ+DlsgqYbP8yL+YXeDjRXyJey+9AqIWUJ9fl43km/G+rUxio59oiON8g
+         B+JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K6/nAJ7zRWy4qKArDtOklB/XBpnc4q8n7RTEqKD0nxA=;
-        b=OFZ0K+Rz1v6yLqj5nduqRd6kVnivf2tntS6cwEHLOMwXxJfcl9tA/vf8t6uBRyUYzv
-         S2nKe3saeQrkKXj6H0zrV7IiKzMrMKgTqhggY11tVyzZzTTrWy2a481I/Um19lUv4Fth
-         FltNBxIfU3HLNjAmu1QVZDf7RN6dQ+vb2RhACZmvWQlLwPJRG+KXpItj21nPVX43Q1F+
-         6vRO502D4I8QDpHq+j7YlnWMGWKe0Gy5plT/0AuEAlgBwOQ/wflD1Z7v0a3G7UokNkfp
-         8wQsCja/OrbvBLvF4vy5+ND1ya7eEKllq3Skh5GSzgs/L+Xzb1IPZVWQTI8BaeocCvvk
-         xwQw==
-X-Gm-Message-State: APjAAAVae2qiMIGePvK7/CF8kDtR3QaQ+4kP5fmKJHQvNK+QGO51HZZD
-        S8BN6u+mmqsnmm/5I4YOMT1KCgBz76OWu1MowP72RsGsyV0=
-X-Google-Smtp-Source: APXvYqyv5egh0CvwLiCaZRW7xONp7kzvGwnRIbz0FdAUGD+mjp2m58+YnCjWj/b/Q0OMmUUt7Y5wOVY81fwn86LVQo0=
-X-Received: by 2002:a2e:7816:: with SMTP id t22mr4851595ljc.161.1575234644720;
- Sun, 01 Dec 2019 13:10:44 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=wGf8SOslmQtXKi1QI9BMUXk6iVKg26mOeGKK2Ks7MYE=;
+        b=hgDqZDOHJZZGvh3/wtkje46hGW8+08DPYGNPVTyIvTcKvHbpcgVRbV0vVweQFtfTPf
+         U7Y1gAat0hjXGPLqDcFJCDeRXELpXmK37YMYSy9AwE9JDXrzG9N+ClEnY9RfHHTdP0hT
+         6Ft2x/1k6juoFVMDs8QlS5fR1OtLmmmyWtAYq8gKWz7M9mrLQXGVafICGhIj2rFNwCVz
+         w+1OUFMDKx8AL8K5CbDvit8CHWCWtdhtzPgcjVapgFeh9gYLBr7NVqhe9n86J9fiK0yq
+         PKZmV5eN8UMMAuQbD88vEI8E7DXIcPW0RbuYtypR8Uu8f+Hm54QKymK1RGotrbFKKoVH
+         Fomg==
+X-Gm-Message-State: APjAAAURpGNiSglFzZiFIxsdXOrzUe/UreDo4bFxwqd7LzLMpSvXVhd2
+        lKCzu7N58SC79F9sU0B72yh0Zg==
+X-Google-Smtp-Source: APXvYqyneloIKBeXc5AlpZqXq7qebSG4Sm7XfSawnJmWBKgRDS3WvxrB+RD3J2nDCv0D3KoFXS2jaA==
+X-Received: by 2002:a37:434d:: with SMTP id q74mr28864727qka.187.1575237507536;
+        Sun, 01 Dec 2019 13:58:27 -0800 (PST)
+Received: from independence.bos.jonmasters.org (24-148-33-89.s2391.c3-0.grn-cbr1.chi-grn.il.cable.rcncustomer.com. [24.148.33.89])
+        by smtp.gmail.com with ESMTPSA id t38sm4905845qta.78.2019.12.01.13.58.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Dec 2019 13:58:27 -0800 (PST)
+Subject: Re: DAX filesystem support on ARMv8
+To:     Bharat Kumar Gogada <bharatku@xilinx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>
+References: <MN2PR02MB63362F7B019844D94D243CE2A5770@MN2PR02MB6336.namprd02.prod.outlook.com>
+ <CAPcyv4j75cQ4dSqyKGuioyyf0O9r0BG0TjFgv+w=64gLah5z6w@mail.gmail.com>
+ <20191112220212.GC7934@bombadil.infradead.org>
+ <MN2PR02MB6336070627E66ED8AE646BACA5710@MN2PR02MB6336.namprd02.prod.outlook.com>
+From:   Jon Masters <jcm@jonmasters.org>
+Organization: World Organi{s,z}ation of Broken Dreams
+Message-ID: <e01ee855-cb11-d059-6c46-836283b9e251@jonmasters.org>
+Date:   Sun, 1 Dec 2019 13:54:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191127231926.162437-1-heidifahim@google.com> <CAMVcs3vKjd8XVku8VUq2R-OKKSq-X2L=h4niFxuoPBe_D63JAA@mail.gmail.com>
-In-Reply-To: <CAMVcs3vKjd8XVku8VUq2R-OKKSq-X2L=h4niFxuoPBe_D63JAA@mail.gmail.com>
-From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Sun, 1 Dec 2019 22:10:18 +0100
-Message-ID: <CAEjAshrJy00VjDu3GY3gV6hu7J8PVcw=1jAeA_-GL02kvXTemQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: testing kunit: Bug fix in test_run_timeout function
-To:     Heidi Fahim <heidifahim@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        David Gow <davidgow@google.com>, Shuah Khan <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kunit-dev@googlegroups.com,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <MN2PR02MB6336070627E66ED8AE646BACA5710@MN2PR02MB6336.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 12:58 AM Heidi Fahim <heidifahim@google.com> wrote:
->
-> On Wed, Nov 27, 2019 at 3:19 PM Heidi Fahim <heidifahim@google.com> wrote:
-> >
-> > Assert in test_run_timeout was not updated with the build_dir argument
-> > and caused the following error:
-> > AssertionError: Expected call: run_kernel(timeout=3453)
-> > Actual call: run_kernel(build_dir=None, timeout=3453)
-> >
-> > Needed to update kunit_tool_test to reflect this fix
-> > https://lkml.org/lkml/2019/9/6/3
->
-> Wrong url, here is the correct link to the fix that caused this bug:
-> https://lkml.org/lkml/2019/9/6/351
+On 11/14/19 1:54 AM, Bharat Kumar Gogada wrote:
+>>
+>> On Tue, Nov 12, 2019 at 09:15:18AM -0800, Dan Williams wrote:
+>>> On Mon, Nov 11, 2019 at 6:12 PM Bharat Kumar Gogada
+>> <bharatku@xilinx.com> wrote:
+>>>>
+>>>> Hi All,
+>>>>
+>>>> As per Documentation/filesystems/dax.txt
+>>>>
+>>>> The DAX code does not work correctly on architectures which have
+>>>> virtually mapped caches such as ARM, MIPS and SPARC.
+>>>>
+>>>> Can anyone please shed light on dax filesystem issue w.r.t ARM architecture
+>> ?
+>>>
+>>> The concern is VIVT caches since the kernel will want to flush pmem
+>>> addresses with different virtual addresses than what userspace is
+>>> using. As far as I know, ARMv8 has VIPT caches, so should not have an
+>>> issue. Willy initially wrote those restrictions, but I am assuming
+>>> that the concern was managing the caches in the presence of virtual
+>>> aliases.
+>>
+>> The kernel will also access data at different virtual addresses from userspace.
+>> So VIVT CPUs will be mmap/read/write incoherent, as well as being flush
+>> incoherent.
+> 
+> Thanks a lot Wilcox and Dan for clarification.
+> So the above restriction only applies to ARM architectures with VIVT caches and not
+> for VIPT caches.
 
-Reviewed-by: SeongJae Park <sjpark@amazon.de>
+VMSAv8-64 (Armv8) requires that data caches behave as if they were PIPT. 
+Meaning there is not a situation as described above.
 
+Jon.
 
-Thanks,
-SeongJae Park
+-- 
+Computer Architect
