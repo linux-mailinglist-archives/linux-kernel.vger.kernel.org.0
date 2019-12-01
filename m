@@ -2,74 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E227D10E232
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 15:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B4B10E235
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 15:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfLAOcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 09:32:14 -0500
-Received: from sonic303-21.consmr.mail.ne1.yahoo.com ([66.163.188.147]:35515
-        "EHLO sonic303-21.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727218AbfLAOcO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 09:32:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1575210732; bh=zPC9p8T5S06DA73PD5F75wViZ/EpBpeYylTS7OqjCU4=; h=Date:From:Reply-To:Subject:From:Subject; b=M95eGAkWI/5vSrgNxGRtCawB/oB3oPBh8V7NP7nT6NArLPvaGW9n7eR53cjjzqWL8tMJI01LfZaPP9tHxLvcWLMffIvAJN7T69MDTOs3ujNhtS/zJaUr524bAoxIFqHsB3zOlEpMH32vpCuqiwL9GjF+ZuZAkZENSPwlsecNoh4119Zd7WaYg1aZte3R5JgXQ0Y2CYBPb+zP7Q74dej0eawXfd9oX2YIscblpFeRzhNoqn683Pz0mO9ohYqZFTrqTfsUgLZqTQmEOjIZU30jmdjzOKYX4q5CNN0qTt+L1kxqdw7DSC+MofVNEMK06jlx06rpapS8cl6uoltRnDM/UQ==
-X-YMail-OSG: R6n8AOEVM1l9H4zIb2.SC1q_MoDxRayOTlveZ_GalwUeBLy9rjVtQA5kNjgbrKW
- SJKwhLYd67YwycriHehvrOEU3TG0ijyDqQYbAZOk31i2tCKb5lfu5y8TyVm5ryV3m5gtcLYqN1Fn
- IPtCST8tFcK9B.bKQT_DcllCbruWjiqTZeBQ8Ws.vJh4DiYyx8RCDeDvB.f995cLQD1EXFpfSnlT
- J1b7y83Rn22ZJVI4WAzU_soce.wDKks0Y9QOEKlCoBz3kOXVFFLnQnzUv_KqvF33ID8lkKzWM_an
- zOJ0n2QKqOs0T2FteA26Fe3JGu93TA7yrWWFegcTQ0shMufQSNNL.wZQkzHQrrPYfaPpzXdjZteb
- rOix3bXUq5.lT8F4C0eexLJKBl1wdNjXGe.7Eis4KgzPUB.UG7TYSbgzWbdw3kI7IYrbXrOAcnKW
- 76cIQNFNrf_r12frD.oJsv2l0EBI0ietbn2OCjHgmmEeBBuCGBySirPjVoy1PzYdsP6I3GPsNUBe
- p1uVr1Rwr7Sy45wAaV87Z8SG5Oi58P8b5JsXdpnoHTgOk0os0Wv.2zDY19SqYKcdZ9cvQqNzblOy
- _ujo0sQhxwFBjGl8gxzuDF.kXl4Mw0jQVQ1C9J1tnHR4RHWFliaWfhQctZSwcgl2TuOIvG0Aayvt
- 9LeUEUDtDoQq.4v4Yozbv4H..SUIpVc0JrDPJxSWRLap_opWOSEOmCiS.FFMKr2V6y0noYxFy23K
- yhaouF2K1xAF4RBsNukfZSsh.ftm8aXhK9KbC01W6XlED2lke1sIRkiuifAWFAdaBI2xom.obm2v
- ECMXJ4dlB6nAt.w5gpa_89u9ABZuZncGKIpq91MOKyRpMKgCCh.ceHoL1tj6shSEvYlvTLPwhQeO
- mVqyU.93Det0loxDsUf7awpBX0ik1_h2ivqPXJS._VsWK4zEiUIcSu4v2ypUpvKjOqrtin3IAof7
- L0JhQAAUDaSFcPx5PpCcF6ezEvzs8kaDUMBDE2vj3kVuVX6orGzrDHdAAnFu1nxRRD_uff9_4VXL
- 0.kw75xPVWGiuZUrzX64OsUTKlspffiXriOyZc7O8kUvQcGZpyJQVMy2uVLq5NIdhEPIMeJ8TuBD
- uB2CLYDKzNyY_10NUDhetbiUUj_iQ.2tIiP_4VRtl_T.7kotu3x2abKVJWwiO413yVdfZo4JfHLf
- rW4.gHF.ax594BTkPh9smGEGep4H0cWBKL5BZzA7eKPYHW4CyvQqTIFH5c.bYDDw36YNUA6SVqSt
- Zt9sEu_1aX8OkYSMPFSXKODAd2ihXKwC.hX5p0N3cw17CavclO2LxfBXRJ1QIiditf7fyc0hdmNP
- 4c8XiizxC
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Sun, 1 Dec 2019 14:32:12 +0000
-Date:   Sun, 1 Dec 2019 14:32:10 +0000 (UTC)
-From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
-Reply-To: ms.lisahugh000@gmail.com
-Message-ID: <132215580.1347666.1575210730440@mail.yahoo.com>
-Subject: I NEED YOUR HELP FOR THIS BUSINESS.
+        id S1727280AbfLAOek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 09:34:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726498AbfLAOej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Dec 2019 09:34:39 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 098B120725;
+        Sun,  1 Dec 2019 14:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575210878;
+        bh=K8rs8jjTNo+YjtPHch9ujxhFdvlkbw04xZ/DlEjvXmA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=X8LvnoV+ZPy/EFvVU0aJRwEOLjieEn833fKjD4mA1VvGWFWPgDzkbvmwPpedC01uS
+         4v5RBKw7xncGiVV7KGxzU4J231F8BfqeXGG69xfzgH/8kE1chbYSSl6hE7tPMqVnJT
+         Ke3CEUQp3PVqEw+u6cztQz1F1v+MEx6/EQdhXnhw=
+Date:   Sun, 1 Dec 2019 09:34:36 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.19 140/219] libceph: drop last_piece logic from
+ write_partial_message_data()
+Message-ID: <20191201143436.GS5861@sasha-vm>
+References: <20191122054911.1750-1-sashal@kernel.org>
+ <20191122054911.1750-133-sashal@kernel.org>
+ <CAOi1vP9MCrPf44V2GMyODH185A0HJcuPsYfVkOAVGkcMRb+=iw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAOi1vP9MCrPf44V2GMyODH185A0HJcuPsYfVkOAVGkcMRb+=iw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 22, 2019 at 03:00:43PM +0100, Ilya Dryomov wrote:
+>On Fri, Nov 22, 2019 at 6:51 AM Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> From: Ilya Dryomov <idryomov@gmail.com>
+>>
+>> [ Upstream commit 1f6b821aef78e3d79e8d598ae59fc7e23fb6c563 ]
+>>
+>> last_piece is for the last piece in the current data item, not in the
+>> entire data payload of the message.  This is harmful for messages with
+>> multiple data items.  On top of that, we don't need to signal the end
+>> of a data payload either because it is always followed by a footer.
+>>
+>> We used to signal "more" unconditionally, until commit fe38a2b67bc6
+>> ("libceph: start defining message data cursor").  Part of a large
+>> series, it introduced cursor->last_piece and also mistakenly inverted
+>> the hint by passing last_piece for "more".  This was corrected with
+>> commit c2cfa1940097 ("libceph: Fix ceph_tcp_sendpage()'s more boolean
+>> usage").
+>>
+>> As it is, last_piece is not helping at all: because Nagle algorithm is
+>> disabled, for a simple message with two 512-byte data items we end up
+>> emitting three packets: front + first data item, second data item and
+>> footer.  Go back to the original pre-fe38a2b67bc6 behavior -- a single
+>> packet in most cases.
+>>
+>> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> ---
+>>  net/ceph/messenger.c | 8 +++-----
+>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+>> index f7d7f32ac673c..6514816947fbe 100644
+>> --- a/net/ceph/messenger.c
+>> +++ b/net/ceph/messenger.c
+>> @@ -1612,7 +1612,6 @@ static int write_partial_message_data(struct ceph_connection *con)
+>>                 struct page *page;
+>>                 size_t page_offset;
+>>                 size_t length;
+>> -               bool last_piece;
+>>                 int ret;
+>>
+>>                 if (!cursor->resid) {
+>> @@ -1620,10 +1619,9 @@ static int write_partial_message_data(struct ceph_connection *con)
+>>                         continue;
+>>                 }
+>>
+>> -               page = ceph_msg_data_next(cursor, &page_offset, &length,
+>> -                                         &last_piece);
+>> -               ret = ceph_tcp_sendpage(con->sock, page, page_offset,
+>> -                                       length, !last_piece);
+>> +               page = ceph_msg_data_next(cursor, &page_offset, &length, NULL);
+>> +               ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
+>> +                                       true);
+>>                 if (ret <= 0) {
+>>                         if (do_datacrc)
+>>                                 msg->footer.data_crc = cpu_to_le32(crc);
+>
+>Hi Sasha,
+>
+>This commit was part of a larger series and shouldn't be backported on
+>its own.  Please drop it.
 
+Now dropped, thanks!
 
-Dear Friend,
-
-I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
-
-Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
-
-I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me forsuccess.
-
-Note/ 50% for you why 50% for me after success of the transfer to your bank
-account.
-
-Below information is what i need from you so will can be reaching each
-other
-
-1)Full name ...
-2)Private telephone number...
-3)Age...
-4)Nationality...
-5)Occupation ...
-
-
-Thanks.
-
-Ms Lisa Hugh
+-- 
+Thanks,
+Sasha
