@@ -2,150 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D75410DFDB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 00:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0102810DFE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 01:05:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfK3X1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 18:27:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbfK3X1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 18:27:34 -0500
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D8662075A;
-        Sat, 30 Nov 2019 23:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575156453;
-        bh=Ig3hXYu5WjaJ0AvqWKk+t2xuR7KeWQIhrIUiuzLS2Hw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QAjfE5/HyuKMVUAoiD3P0PPeXvjG1yOVBToroY67MWQlABL/ilzdxWIf+Qi/abrlU
-         byv2SyjRTMwlA85hZJoKDQ0B3iGBd/BFHqLEZlcpF3SP2AwOgadMYKXPjjFPzze5/d
-         LaKkHeMb932QQ7Tl7M/aH3OSUaMqEDaiswZ6uPAY=
-Date:   Sat, 30 Nov 2019 15:27:31 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        jmattson@redhat.com, ehabkost@redhat.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH 1/3] KVM: x86: fix reporting of AMD speculation bug CPUID
- leaf
-Message-ID: <20191130232731.GA9495@sol.localdomain>
-References: <1566376002-17121-1-git-send-email-pbonzini@redhat.com>
- <1566376002-17121-2-git-send-email-pbonzini@redhat.com>
+        id S1727230AbfLAAFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 19:05:04 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54187 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbfLAAFD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Nov 2019 19:05:03 -0500
+Received: by mail-wm1-f65.google.com with SMTP id u18so17703980wmc.3;
+        Sat, 30 Nov 2019 16:05:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=8K5JMOOJuDsKtyEmvfdHN8uQfnjcYzaCihRkp/YDARc=;
+        b=K8Lu7LPBCX0KlH/pacz/x+73K3l4cTJzWA+gT3N/yFqL7etKpVwsb9HvE1pRRAtMh9
+         eOHJeFA+7dZDdFNRdd6OmDAeNCsxfTECAP++dGGH4UipWrSfvhSgVgrEwNNRabfWxJ53
+         uafgsAvX/6WKunPtoO62bwekK6s2krfTey+RmWx/lo9zAVD+ds6ZReMR8LsMECKEUOxB
+         lnYpvECYsGuC1FfDJ11GF2yomYuxR00d43pCyhHqzTAkNwrsmGHF7Bbn5pkYoZtzzP2G
+         lPfT8ATI+HiCczeJ2gJmecDp6t50S1RdRtsttUSC2vYtAI51sQZpFJN7gusid9+unkXb
+         Ys4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=8K5JMOOJuDsKtyEmvfdHN8uQfnjcYzaCihRkp/YDARc=;
+        b=aXSLQktxy20qz/Pv/QbBJnxrUP1vYMN7+XBzjvReSCv3OMbbjnXdsf18glVU1Aq59l
+         lIS0jiLxRj6wYnipMKVHtq36YwJMTDyb8BiKnl1i24VBSSOYkS1tzOgWoRvBmdwK3+Sq
+         oTnFNWFfN7/JrjEB8+CDnvdkPO8TGYIZTYutnsDHRXcZiFEMRQtrXcfxOLDx0LUsvOgt
+         KBJ38PhpdH8l3MRxg4Ab4EERW9R81EKHbZAQc3y79N05iGNYNB79I5WSw7SY7MOhDWaY
+         8njy7R8NqvTBOtQR0cRNkqggJAIZffnMvtCjLwx0GOB8iGz4H1ucO4JihR495cVEDHdP
+         LnHQ==
+X-Gm-Message-State: APjAAAXGn9LZtI7JlqeHwjh6NYJE6t3jIiYw0+tRmf3F0JIybMKJ7hlA
+        82JHtxhNb/usBIP6NDkLI0tqh9y+
+X-Google-Smtp-Source: APXvYqysgyZlyi5VWunIMaOudty5vDhVLYAUgsnIqcINuuhd2Mk/VYSDa4ZOvX+A9pdsYfesD2ODLw==
+X-Received: by 2002:a1c:a750:: with SMTP id q77mr22444042wme.76.1575158700625;
+        Sat, 30 Nov 2019 16:05:00 -0800 (PST)
+Received: from [192.168.43.93] ([109.126.143.74])
+        by smtp.gmail.com with ESMTPSA id 72sm34387300wrl.73.2019.11.30.16.04.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Nov 2019 16:04:59 -0800 (PST)
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1575144884.git.asml.silence@gmail.com>
+ <b1408bd6cc3f04fe22ce64f97174b6fbf9ffea40.1575144884.git.asml.silence@gmail.com>
+ <20191130220458.GA297712@rani.riverdale.lan>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH v2] block: optimise bvec_iter_advance()
+Message-ID: <74c78d40-8b0c-2e87-d882-8396411a7be5@gmail.com>
+Date:   Sun, 1 Dec 2019 03:04:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1566376002-17121-2-git-send-email-pbonzini@redhat.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191130220458.GA297712@rani.riverdale.lan>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="CHTm4B0gVqLHJKOFLU00v8vDHQ3itIuQZ"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paolo,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--CHTm4B0gVqLHJKOFLU00v8vDHQ3itIuQZ
+Content-Type: multipart/mixed; boundary="nRL8HNEAHx3wbdctGV9uh9llvEhqWdbVD";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Arvind Sankar <nivedita@alum.mit.edu>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <74c78d40-8b0c-2e87-d882-8396411a7be5@gmail.com>
+Subject: Re: [PATCH v2] block: optimise bvec_iter_advance()
+References: <cover.1575144884.git.asml.silence@gmail.com>
+ <b1408bd6cc3f04fe22ce64f97174b6fbf9ffea40.1575144884.git.asml.silence@gmail.com>
+ <20191130220458.GA297712@rani.riverdale.lan>
+In-Reply-To: <20191130220458.GA297712@rani.riverdale.lan>
 
-On Wed, Aug 21, 2019 at 10:26:40AM +0200, Paolo Bonzini wrote:
-> The AMD_* bits have to be set from the vendor-independent
-> feature and bug flags, because KVM_GET_SUPPORTED_CPUID does not care
-> about the vendor and they should be set on Intel processors as well.
-> On top of this, SSBD, STIBP and AMD_SSB_NO bit were not set, and
-> VIRT_SSBD does not have to be added manually because it is a
-> cpufeature that comes directly from the host's CPUID bit.
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/cpuid.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 22c2720cd948..43caeb6059b9 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -729,18 +729,23 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
->  			g_phys_as = phys_as;
->  		entry->eax = g_phys_as | (virt_as << 8);
->  		entry->edx = 0;
-> +		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
-> +		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
->  		/*
-> -		 * IBRS, IBPB and VIRT_SSBD aren't necessarily present in
-> -		 * hardware cpuid
-> +		 * AMD has separate bits for each SPEC_CTRL bit.
-> +		 * arch/x86/kernel/cpu/bugs.c is kind enough to
-> +		 * record that in cpufeatures so use them.
->  		 */
-> -		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
-> +		if (boot_cpu_has(X86_FEATURE_IBPB))
->  			entry->ebx |= F(AMD_IBPB);
-> -		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
-> +		if (boot_cpu_has(X86_FEATURE_IBRS))
->  			entry->ebx |= F(AMD_IBRS);
-> -		if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
-> -			entry->ebx |= F(VIRT_SSBD);
-> -		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
-> -		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
-> +		if (boot_cpu_has(X86_FEATURE_STIBP))
-> +			entry->ebx |= F(AMD_STIBP);
-> +		if (boot_cpu_has(X86_FEATURE_SSBD))
-> +			entry->ebx |= F(AMD_SSBD);
-> +		if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
-> +			entry->ebx |= F(AMD_SSB_NO);
->  		/*
->  		 * The preference is to use SPEC CTRL MSR instead of the
->  		 * VIRT_SPEC MSR.
+--nRL8HNEAHx3wbdctGV9uh9llvEhqWdbVD
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-This patch started causing a warning about an unchecked MSR access, when
-starting a VM.
+On 01/12/2019 01:05, Arvind Sankar wrote:
+> On Sat, Nov 30, 2019 at 11:23:52PM +0300, Pavel Begunkov wrote:
+>> bvec_iter_advance() is quite popular, but compilers fail to do proper
+>> alias analysis and optimise it good enough. The assembly is checked
+>> for gcc 9.2, x86-64.
+>>
+>> - remove @iter->bi_size from min(...), as it's always less than @bytes=
+=2E
+>> Modify at the beginning and forget about it.
+>>
+>> - the compiler isn't able to collapse memory dependencies and remove
+>> writes in the loop. Help it by explicitly using local vars.
+>>
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> ---
+>>
+>> v2: simplify code (Arvind Sankar)
+>>
+>=20
+> Thanks :)
+>=20
+> Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+>=20
+> Btw, I discovered that gcc 9.2 doesn't optimize away the second
+> comparison in something like
 
-Processor is: "AMD Ryzen Threadripper 1950X 16-Core Processor"
+That's unfortunate. IDK, whether it could be easily done in gcc,
+but maybe relay it to compiler guys?
 
-The warning appears both in the host and guest kernel logs.
+>=20
+> 	m =3D min(a,b);
+> 	return m>a;
+>=20
+> So the WARN_ONCE bit doesn't get optimized away even in cases like
+> bio_for_each_bvec where it's guaranteed at compile-time to not trigger.=
 
-On the host:
+>=20
 
-	[   12.121802] unchecked MSR access error: RDMSR from 0x48 at rIP: 0xffffffff8b049765 (svm_vcpu_run+0x6a5/0x720)
-	[   12.121806] Call Trace:
-	[   12.121812]  ? kvm_arch_vcpu_ioctl_run+0x902/0x1b70
-	[   12.121814]  ? kvm_vm_ioctl_irq_line+0x1e/0x30
-	[   12.121817]  ? kvm_vcpu_ioctl+0x21e/0x560
-	[   12.121821]  ? vfs_writev+0xc0/0xf0
-	[   12.121824]  ? do_vfs_ioctl+0x41d/0x690
-	[   12.121826]  ? ksys_ioctl+0x59/0x90
-	[   12.121827]  ? __x64_sys_ioctl+0x11/0x20
-	[   12.121828]  ? do_syscall_64+0x43/0x130
-	[   12.121832]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+That's more like a starting point. The idea is to revise and
+tune/rewrite iteration helpers including *for_each_bvec(). I assume,
+all those are really poorly optimisable (especially with
+-fno-strict-aliasing). So, noted to consider
 
-On the guest:
+--=20
+Pavel Begunkov
 
-	[    0.799090] unchecked MSR access error: WRMSR to 0x48 (tried to write 0x0000000000000004) at rIP: 0xffffffff81028272 (speculation_ctrl_update+0x132/0x2c0)
-	[    0.801823] Call Trace:
-	[    0.801831]  ? seccomp_set_mode_filter+0x18d/0x800
-	[    0.801833]  speculation_ctrl_update_current+0x21/0x30
-	[    0.801837]  task_update_spec_tif+0x1d/0x20
-	[    0.801839]  ssb_prctl_set+0xb5/0xd0
-	[    0.801841]  arch_seccomp_spec_mitigate+0x2a/0x50
-	[    0.801843]  seccomp_set_mode_filter+0x788/0x800
-	[    0.801845]  do_seccomp+0x34/0x200
-	[    0.801849]  __x64_sys_seccomp+0x15/0x20
-	[    0.801852]  do_syscall_64+0x4a/0x1f0
-	[    0.809349]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-	[    0.810548] RIP: 0033:0x7f431db92e9d
-	[    0.811528] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b3 5f 0c 00 f7 d8 64 89 01 48
-	[    0.814754] RSP: 002b:00007ffca5506788 EFLAGS: 00000246 ORIG_RAX: 000000000000013d
-	[    0.816075] RAX: ffffffffffffffda RBX: 0000556956c07580 RCX: 00007f431db92e9d
-	[    0.817367] RDX: 0000556956c023e0 RSI: 0000000000000000 RDI: 0000000000000001
-	[    0.818698] RBP: 0000556956c023e0 R08: 0000000000000007 R09: 0000556956b73730
-	[    0.819948] R10: 0000556956b7101a R11: 0000000000000246 R12: 000000000000002d
-	[    0.821184] R13: 0040000000002001 R14: 00007f431d9b4898 R15: 0000000000000000
 
-The VM still boots though.
+--nRL8HNEAHx3wbdctGV9uh9llvEhqWdbVD--
 
-I've actually been seeing this for a while but haven't had a chance to bisect it
-until now.
+--CHTm4B0gVqLHJKOFLU00v8vDHQ3itIuQZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Reverting the commit (4c6903a0f9d76) on mainline makes the warnings go away.
+-----BEGIN PGP SIGNATURE-----
 
-Any ideas?  Presumably something isn't working as intended.
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl3jA5oACgkQWt5b1Glr
++6V2vA//Q9Y17xFB7dLIXrxr8SSpVI/+BIg0h0ySn/HcPiW9T4I8anzmPkXCx0FP
+0tt1dl2UhlZN+PwudjQnePNOnO4l29XyfU5UYc78aecm3n68zJJ8xQqPq8n1gZH8
+Hx1GoHarsrWIXAR6d1XRM+fesHRdm7SbpIomblooCGfS0dXlx0u7gQLDM5sstQXX
+VOhTipaDpgX/qFyYkce3+fF46JnVwgJevEoYSjPPpmrXqnek0l8RovObjVu5WZYN
+uAlbmKnDhfpuBrz95lkz2WwobUPdu8Y2U9WYaXXB4pjvnXSH3+jArcTTBhk6/Fie
+nbqshXb8R6jkSx6lt7RUe+HHjblzqi+sYGaN7sCEJT4Uawk6V/hQf/sw6yONb9ZD
+ElxvCtTpUntwK5SI1MPogz052wMF/5jklU++9OkQGbP3HU6BcsoSXo96ezklqwx7
+8WqRSr7D9RpBFcLXjFL8UNh0W2ZKh6npyi0Viq5nPVshst3ZkFR7oG+EYpNP3tSi
+UgZ3NswymZPPM9a8Dk/W4jzLxjP1QZOO76V+0+DoxxRoJoJ+Q1mRsdkFPRF+G+Nj
+IQyE1fckYgiOppobJ7N29t4veIJEWpGTkx23PQyo1vmCs+wuZCCHFbpjQstuOun0
+IuifOqdh+z7AzlgU0gRtjpGee9pnbizDDOkpZdjIYzXtmXsOFFI=
+=tmSe
+-----END PGP SIGNATURE-----
 
-- Eric
+--CHTm4B0gVqLHJKOFLU00v8vDHQ3itIuQZ--
