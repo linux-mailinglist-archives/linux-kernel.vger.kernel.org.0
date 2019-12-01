@@ -2,114 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B4B10E235
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 15:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A9610E23A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 15:44:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfLAOek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 09:34:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726498AbfLAOej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 09:34:39 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 098B120725;
-        Sun,  1 Dec 2019 14:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575210878;
-        bh=K8rs8jjTNo+YjtPHch9ujxhFdvlkbw04xZ/DlEjvXmA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X8LvnoV+ZPy/EFvVU0aJRwEOLjieEn833fKjD4mA1VvGWFWPgDzkbvmwPpedC01uS
-         4v5RBKw7xncGiVV7KGxzU4J231F8BfqeXGG69xfzgH/8kE1chbYSSl6hE7tPMqVnJT
-         Ke3CEUQp3PVqEw+u6cztQz1F1v+MEx6/EQdhXnhw=
-Date:   Sun, 1 Dec 2019 09:34:36 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 4.19 140/219] libceph: drop last_piece logic from
- write_partial_message_data()
-Message-ID: <20191201143436.GS5861@sasha-vm>
-References: <20191122054911.1750-1-sashal@kernel.org>
- <20191122054911.1750-133-sashal@kernel.org>
- <CAOi1vP9MCrPf44V2GMyODH185A0HJcuPsYfVkOAVGkcMRb+=iw@mail.gmail.com>
+        id S1726965AbfLAOnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 09:43:20 -0500
+Received: from mta04.svc.cra.dublin.eircom.net ([159.134.118.171]:54662 "HELO
+        mta04.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1726439AbfLAOnU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Dec 2019 09:43:20 -0500
+X-Greylist: delayed 379 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Dec 2019 09:43:18 EST
+Received: (qmail 48994 messnum 4076777 invoked from network[213.94.190.12/avas01.vendorsvc.cra.dublin.eircom.net]); 1 Dec 2019 14:36:36 -0000
+Received: from avas01.vendorsvc.cra.dublin.eircom.net (HELO avas01) (213.94.190.12)
+  by mta04.svc.cra.dublin.eircom.net (qp 48994) with SMTP; 1 Dec 2019 14:36:36 -0000
+Received: from vzmbx43.eircom.net ([86.43.60.56])
+        by Cloudmark Gateway with SMTP
+        id bQKxirsVKvSCGbQKxiKfS0; Sun, 01 Dec 2019 14:36:36 +0000
+X-Spam-Flag: NO
+X-CNFS-Analysis: v=2.2 cv=Vs1TO6+n c=1 sm=1 tr=0
+ a=pgi/oO0IPhCgn3FzazVCEw==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
+ a=p94CGIwvSaIA:10 a=jeM8b-Vrk40A:10 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+ a=lQWrZL7Q7ZgA:10 a=ADsKrdVn5_oA:10 a=ZZnuYtJkoWoA:10
+ a=u-cqGMF9Mb8qadtxIEAA:9 a=tp77xZrL5w-9LVuu:21 a=P6e4BrMchbnZWgjd:21
+ a=QEXdDO2ut3YA:10
+Date:   Sun, 1 Dec 2019 14:36:35 +0000 (GMT)
+From:   Mrs Nisha <d2r0e2@eircom.net>
+Reply-To: mosh.tan7.6@googlemail.com
+Message-ID: <334953900.113867.1575210995548.JavaMail.zimbra@eircom.net>
+Subject: Hello Dear,
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAOi1vP9MCrPf44V2GMyODH185A0HJcuPsYfVkOAVGkcMRb+=iw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [31.41.44.231]
+X-Mailer: Zimbra 8.6.0_GA_1242 (zclient/8.6.0_GA_1242)
+Thread-Topic: Hello Dear,
+Thread-Index: DM1H6XB9wE11N/oEO4vWyXtcMBITFg==
+X-CMAE-Envelope: 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
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 03:00:43PM +0100, Ilya Dryomov wrote:
->On Fri, Nov 22, 2019 at 6:51 AM Sasha Levin <sashal@kernel.org> wrote:
->>
->> From: Ilya Dryomov <idryomov@gmail.com>
->>
->> [ Upstream commit 1f6b821aef78e3d79e8d598ae59fc7e23fb6c563 ]
->>
->> last_piece is for the last piece in the current data item, not in the
->> entire data payload of the message.  This is harmful for messages with
->> multiple data items.  On top of that, we don't need to signal the end
->> of a data payload either because it is always followed by a footer.
->>
->> We used to signal "more" unconditionally, until commit fe38a2b67bc6
->> ("libceph: start defining message data cursor").  Part of a large
->> series, it introduced cursor->last_piece and also mistakenly inverted
->> the hint by passing last_piece for "more".  This was corrected with
->> commit c2cfa1940097 ("libceph: Fix ceph_tcp_sendpage()'s more boolean
->> usage").
->>
->> As it is, last_piece is not helping at all: because Nagle algorithm is
->> disabled, for a simple message with two 512-byte data items we end up
->> emitting three packets: front + first data item, second data item and
->> footer.  Go back to the original pre-fe38a2b67bc6 behavior -- a single
->> packet in most cases.
->>
->> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  net/ceph/messenger.c | 8 +++-----
->>  1 file changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
->> index f7d7f32ac673c..6514816947fbe 100644
->> --- a/net/ceph/messenger.c
->> +++ b/net/ceph/messenger.c
->> @@ -1612,7 +1612,6 @@ static int write_partial_message_data(struct ceph_connection *con)
->>                 struct page *page;
->>                 size_t page_offset;
->>                 size_t length;
->> -               bool last_piece;
->>                 int ret;
->>
->>                 if (!cursor->resid) {
->> @@ -1620,10 +1619,9 @@ static int write_partial_message_data(struct ceph_connection *con)
->>                         continue;
->>                 }
->>
->> -               page = ceph_msg_data_next(cursor, &page_offset, &length,
->> -                                         &last_piece);
->> -               ret = ceph_tcp_sendpage(con->sock, page, page_offset,
->> -                                       length, !last_piece);
->> +               page = ceph_msg_data_next(cursor, &page_offset, &length, NULL);
->> +               ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
->> +                                       true);
->>                 if (ret <= 0) {
->>                         if (do_datacrc)
->>                                 msg->footer.data_crc = cpu_to_le32(crc);
->
->Hi Sasha,
->
->This commit was part of a larger series and shouldn't be backported on
->its own.  Please drop it.
 
-Now dropped, thanks!
 
--- 
-Thanks,
-Sasha
+
+HELLO FRIEND
+
+I AM MRS DHAWAN NISHA PRADEEP, I HAVE BEEN SUFFERING FROM CANCER DISEASE AND THE DOCTOR SAID THAT I HAVE JUST FEW DAYS TO LIVE. I AM FROM ULHASNAGAR, INDIA BUT BASED IN AFRICA BURKINA FASO FOR EIGHT YEARS AS A BUSINESS WOMAN DEALING WITH GOLD EXPORTATION.
+
+I HAVE 4.5 MILLION EURO AT CENTRAL BANK OF WEST AFRICAN STATE (CBOA) HERE IN BURKINA FASO AND I INSTRUCTED THE BANK TO TRANSFER THE FUND TO YOU AS FOREIGNER THAT WILL APPLY TO THE BANK AFTER I HAVE GONE, THAT THEY SHOULD RELEASE THE FUND TO YOU, BUT YOU WILL ASSURE ME THAT YOU WILL TAKE 50% OF THE FUND AND GIVE 50% TO THE ORPHANAGES HOME IN YOUR COUNTRY FOR MY HEART TO REST.
+
+RESPOND TO ME IMMEDIATELY FOR FURTHER DETAILS SINCE I HAVE JUST FEW DAYS TO END MY LIFE DUE TO THE CANCER DISEASE, PLEASE I WANT YOU TO SEND YOUR DETAILS AS LISTED BELOW SO THAT I WILL FORWARD IT TO THE BANK AS REQUESTED FOR THE PROCESSING OF THE TRANSFER OF THE FUND INTO YOUR BANK ACCOUNT.
+
+YOUR COMPLETE NAME
+ADDRESS (HOME/OFFICE)
+YOUR MOBILE NUMBER
+YOUR AGE
+OCCUPATION
+A COPY OF YOUR ID
+
+GOD BLESS YOU AS I WAIT PATIENTLY FOR YOUR QUICK REPLY.
+
+YOURS SINCERELY
+MRS DHAWAN NISHA PRADEEP.
+
+
