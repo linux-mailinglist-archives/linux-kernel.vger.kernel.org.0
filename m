@@ -2,84 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C7010E372
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 21:28:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5AA710E363
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 21:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfLAU2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 15:28:05 -0500
-Received: from hall.aurel32.net ([195.154.113.88]:55868 "EHLO hall.aurel32.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbfLAU2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 15:28:05 -0500
-X-Greylist: delayed 1806 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Dec 2019 15:28:04 EST
-Received: from [2a01:e35:2fdd:a4e1:fe91:fc89:bc43:b814] (helo=ohm.rr44.fr)
-        by hall.aurel32.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <aurelien@aurel32.net>)
-        id 1ibVLh-0005Nk-30; Sun, 01 Dec 2019 20:57:41 +0100
-Received: from aurel32 by ohm.rr44.fr with local (Exim 4.92.3)
-        (envelope-from <aurelien@aurel32.net>)
-        id 1ibVLg-00HScO-Hs; Sun, 01 Dec 2019 20:57:40 +0100
-From:   Aurelien Jarno <aurelien@aurel32.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org, debian-kernel@lists.debian.org,
-        Aurelien Jarno <aurelien@aurel32.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
-        bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools))
-Subject: [PATCH] libbpf: fix readelf output parsing on powerpc with recent binutils
-Date:   Sun,  1 Dec 2019 20:57:28 +0100
-Message-Id: <20191201195728.4161537-1-aurelien@aurel32.net>
-X-Mailer: git-send-email 2.24.0
+        id S1727218AbfLAUEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 15:04:36 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:51313 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbfLAUEg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Dec 2019 15:04:36 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ibVRv-00024M-RZ; Sun, 01 Dec 2019 21:04:08 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 04A071C1FFA;
+        Sun,  1 Dec 2019 21:04:04 +0100 (CET)
+Date:   Sun, 01 Dec 2019 20:04:03 -0000
+From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/mm/pat: Fix off-by-one bugs in interval tree search
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        "Kenneth R. Crudup" <kenny@panix.com>,
+        Mariusz Ceier <mceier+kernel@gmail.com>,
+        Mariusz Ceier <mceier@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191201144947.GA4167@gmail.com>
+References: <20191201144947.GA4167@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <157523064382.21853.5318954116634654015.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On powerpc with recent versions of binutils, readelf outputs an extra
-field when dumping the symbols of an object file. For example:
+The following commit has been merged into the x86/urgent branch of tip:
 
-    35: 0000000000000838    96 FUNC    LOCAL  DEFAULT [<localentry>: 8]     1 btf_is_struct
+Commit-ID:     91298f1a302dad0f0f630413c812818636faa8a0
+Gitweb:        https://git.kernel.org/tip/91298f1a302dad0f0f630413c812818636faa8a0
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Sun, 01 Dec 2019 15:49:47 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sun, 01 Dec 2019 20:57:25 +01:00
 
-The extra "[<localentry>: 8]" prevents the GLOBAL_SYM_COUNT variable to
-be computed correctly and causes the checkabi target to fail.
+x86/mm/pat: Fix off-by-one bugs in interval tree search
 
-Fix that by looking for the symbol name in the last field instead of the
-8th one. This way it should also cope with future extra fields.
+There's a bug in the new PAT code, the conversion of memtype_check_conflict()
+is buggy:
 
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+   8d04a5f97a5f: ("x86/mm/pat: Convert the PAT tree to a generic interval tree")
+
+        dprintk("Overlap at 0x%Lx-0x%Lx\n", match->start, match->end);
+        found_type = match->type;
+
+-       node = rb_next(&match->rb);
+-       while (node) {
+-               match = rb_entry(node, struct memtype, rb);
+-
+-               if (match->start >= end) /* Checked all possible matches */
+-                       goto success;
+-
+-               if (is_node_overlap(match, start, end) &&
+-                   match->type != found_type) {
++       match = memtype_interval_iter_next(match, start, end);
++       while (match) {
++               if (match->type != found_type)
+                        goto failure;
+-               }
+
+-               node = rb_next(&match->rb);
++               match = memtype_interval_iter_next(match, start, end);
+        }
+
+Note how the '>= end' condition to end the interval check, got converted
+into:
+
++       match = memtype_interval_iter_next(match, start, end);
+
+This is subtly off by one, because the interval trees interfaces require
+closed interval parameters:
+
+  include/linux/interval_tree_generic.h
+
+ /*                                                                            \
+  * Iterate over intervals intersecting [start;last]                           \
+  *                                                                            \
+  * Note that a node's interval intersects [start;last] iff:                   \
+  *   Cond1: ITSTART(node) <= last                                             \
+  * and                                                                        \
+  *   Cond2: start <= ITLAST(node)                                             \
+  */                                                                           \
+
+  ...
+
+                if (ITSTART(node) <= last) {            /* Cond1 */           \
+                        if (start <= ITLAST(node))      /* Cond2 */           \
+                                return node;    /* node is leftmost match */  \
+
+[start;last] is a closed interval (note that '<= last' check) - while the
+PAT 'end' parameter is 1 byte beyond the end of the range, because
+ioremap() and the other mapping APIs usually use the [start,end)
+half-open interval, derived from 'size'.
+
+This is what ioremap() does for example:
+
+        /*
+         * Mappings have to be page-aligned
+         */
+        offset = phys_addr & ~PAGE_MASK;
+        phys_addr &= PHYSICAL_PAGE_MASK;
+        size = PAGE_ALIGN(last_addr+1) - phys_addr;
+
+        retval = reserve_memtype(phys_addr, (u64)phys_addr + size,
+                                                pcm, &new_pcm);
+
+phys_addr+size will be on a page boundary, after the last byte of the
+mapped interval.
+
+So the correct parameter to use in the interval tree searches is not
+'end' but 'end-1'.
+
+This could have relevance if conflicting PAT ranges are exactly adjacent,
+for example a future WC region is followed immediately by an already
+mapped UC- region - in this case memtype_check_conflict() would
+incorrectly deny the WC memtype region and downgrade the memtype to UC-.
+
+BTW., rather annoyingly this downgrading is done silently in
+memtype_check_insert():
+
+int memtype_check_insert(struct memtype *new,
+                         enum page_cache_mode *ret_type)
+{
+        int err = 0;
+
+        err = memtype_check_conflict(new->start, new->end, new->type, ret_type);
+        if (err)
+                return err;
+
+        if (ret_type)
+                new->type = *ret_type;
+
+        memtype_interval_insert(new, &memtype_rbroot);
+        return 0;
+}
+
+So on such a conflict we'd just silently get UC- in *ret_type, and write
+it into the new region, never the wiser ...
+
+So assuming that the patch below fixes the primary bug the diagnostics
+side of ioremap() cache attribute downgrades would be another thing to
+fix.
+
+Anyway, I checked all the interval-tree iterations, and most of them are
+off by one - but I think the one related to memtype_check_conflict() is
+the one causing this particular performance regression.
+
+The only correct interval-tree searches were these two:
+
+  arch/x86/mm/pat_interval.c:     match = memtype_interval_iter_first(&memtype_rbroot, 0, ULONG_MAX);
+  arch/x86/mm/pat_interval.c:             match = memtype_interval_iter_next(match, 0, ULONG_MAX);
+
+The ULONG_MAX was hiding the off-by-one in plain sight. :-)
+
+Note that the bug was probably benign in the sense of implementing a too
+strict cache attribute conflict policy and downgrading cache attributes,
+so AFAICS the worst outcome of this bug would be a performance regression,
+not any instabilities.
+
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Reported-by: Kenneth R. Crudup <kenny@panix.com>
+Reported-by: Mariusz Ceier <mceier+kernel@gmail.com>
+Tested-by: Mariusz Ceier <mceier@gmail.com>
+Tested-by: Kenneth R. Crudup <kenny@panix.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20191201144947.GA4167@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/lib/bpf/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/mm/pat_interval.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-index 99425d0be6ff..333900cf3f4f 100644
---- a/tools/lib/bpf/Makefile
-+++ b/tools/lib/bpf/Makefile
-@@ -147,7 +147,7 @@ TAGS_PROG := $(if $(shell which etags 2>/dev/null),etags,ctags)
+diff --git a/arch/x86/mm/pat_interval.c b/arch/x86/mm/pat_interval.c
+index 47a1bf3..6855362 100644
+--- a/arch/x86/mm/pat_interval.c
++++ b/arch/x86/mm/pat_interval.c
+@@ -56,7 +56,7 @@ static struct memtype *memtype_match(u64 start, u64 end, int match_type)
+ {
+ 	struct memtype *match;
  
- GLOBAL_SYM_COUNT = $(shell readelf -s --wide $(BPF_IN_SHARED) | \
- 			   cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' | \
--			   awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$8}' | \
-+			   awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$NF}' | \
- 			   sort -u | wc -l)
- VERSIONED_SYM_COUNT = $(shell readelf -s --wide $(OUTPUT)libbpf.so | \
- 			      grep -Eo '[^ ]+@LIBBPF_' | cut -d@ -f1 | sort -u | wc -l)
-@@ -216,7 +216,7 @@ check_abi: $(OUTPUT)libbpf.so
- 		     "versioned in $(VERSION_SCRIPT)." >&2;		 \
- 		readelf -s --wide $(OUTPUT)libbpf-in.o |		 \
- 		    cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' |	 \
--		    awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$8}'|   \
-+		    awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$NF}'|  \
- 		    sort -u > $(OUTPUT)libbpf_global_syms.tmp;		 \
- 		readelf -s --wide $(OUTPUT)libbpf.so |			 \
- 		    grep -Eo '[^ ]+@LIBBPF_' | cut -d@ -f1 |		 \
--- 
-2.24.0
-
+-	match = memtype_interval_iter_first(&memtype_rbroot, start, end);
++	match = memtype_interval_iter_first(&memtype_rbroot, start, end-1);
+ 	while (match != NULL && match->start < end) {
+ 		if ((match_type == MEMTYPE_EXACT_MATCH) &&
+ 		    (match->start == start) && (match->end == end))
+@@ -66,7 +66,7 @@ static struct memtype *memtype_match(u64 start, u64 end, int match_type)
+ 		    (match->start < start) && (match->end == end))
+ 			return match;
+ 
+-		match = memtype_interval_iter_next(match, start, end);
++		match = memtype_interval_iter_next(match, start, end-1);
+ 	}
+ 
+ 	return NULL; /* Returns NULL if there is no match */
+@@ -79,7 +79,7 @@ static int memtype_check_conflict(u64 start, u64 end,
+ 	struct memtype *match;
+ 	enum page_cache_mode found_type = reqtype;
+ 
+-	match = memtype_interval_iter_first(&memtype_rbroot, start, end);
++	match = memtype_interval_iter_first(&memtype_rbroot, start, end-1);
+ 	if (match == NULL)
+ 		goto success;
+ 
+@@ -89,12 +89,12 @@ static int memtype_check_conflict(u64 start, u64 end,
+ 	dprintk("Overlap at 0x%Lx-0x%Lx\n", match->start, match->end);
+ 	found_type = match->type;
+ 
+-	match = memtype_interval_iter_next(match, start, end);
++	match = memtype_interval_iter_next(match, start, end-1);
+ 	while (match) {
+ 		if (match->type != found_type)
+ 			goto failure;
+ 
+-		match = memtype_interval_iter_next(match, start, end);
++		match = memtype_interval_iter_next(match, start, end-1);
+ 	}
+ success:
+ 	if (newtype)
+@@ -160,7 +160,7 @@ struct memtype *memtype_erase(u64 start, u64 end)
+ struct memtype *memtype_lookup(u64 addr)
+ {
+ 	return memtype_interval_iter_first(&memtype_rbroot, addr,
+-					   addr + PAGE_SIZE);
++					   addr + PAGE_SIZE-1);
+ }
+ 
+ #if defined(CONFIG_DEBUG_FS)
