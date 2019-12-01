@@ -2,98 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD93910E02B
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 04:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D39D610E02D
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 04:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfLADDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 30 Nov 2019 22:03:23 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:44359 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726906AbfLADDX (ORCPT
+        id S1727391AbfLADFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 30 Nov 2019 22:05:49 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:46317 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbfLADFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Nov 2019 22:03:23 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R961e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TjWnwF9_1575169372;
-Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0TjWnwF9_1575169372)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 01 Dec 2019 11:03:00 +0800
-From:   Wen Yang <wenyang@linux.alibaba.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     xlpang@linux.alibaba.com, Wen Yang <wenyang@linux.alibaba.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: core: fix regulator_register() error paths to properly release rdev
-Date:   Sun,  1 Dec 2019 11:02:50 +0800
-Message-Id: <20191201030250.38074-1-wenyang@linux.alibaba.com>
-X-Mailer: git-send-email 2.23.0
+        Sat, 30 Nov 2019 22:05:49 -0500
+Received: by mail-pj1-f65.google.com with SMTP id z21so3590585pjq.13;
+        Sat, 30 Nov 2019 19:05:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rQr7XNF2CkV0Knk0SxxgNZU5CvZQYbz5vW9aYeoWsq4=;
+        b=A6/PGtZag+j6lvjJNB/PcxnJjg1v1PWnsXu6r1NIMIgoRyiH6lxL/uuIGf4Ipvtpjw
+         /BTWeMBYHZ32I94RLV1uEOf59e8V95FS0yUcNYdDsTKakbAZPdIK70zZhds6zhnjCXif
+         Z6MrRdgzsVJNRk3FcaGs/gv0EBS/St3xrkAxMWMyHcNpu7d3hKv8rGutTW59t6kvdNz4
+         Kes3t/UgWM9QZ49PFMRmqhvHQO3/hdWwynSnk0JMSlHuEnK1o91gUP9pkooTEyt4h6fG
+         phF7mBcBU5fnUNhaC5sGrw2zN7OpOB0SgMtKMtA987KVGtHbi2oOo4IMJtkRhqsvEU3f
+         v7Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rQr7XNF2CkV0Knk0SxxgNZU5CvZQYbz5vW9aYeoWsq4=;
+        b=stnZlLg8ZdIkBqdr6xFs6R9KerI1ohJRzvm3e2UNGhoqMbbENCskHOqACi2kTeqWxh
+         252NPv4jG0Q6hX5nF5IS0/NDKuNJJjH681qypM7VfoBRjrGnQPqh5Wnjrf4Kx3jYXtdo
+         R2puxbcXvwllmwZJDOILEuMdHgthu2XT1lY4XBL6PruUb0LXedFxXAu3fhja7B1C+x9U
+         hen15ETvzEnv3HoGIa87ASI0j+L2gq3H1MBPhVvnp+8sFx6vFdS5f7rvV2FPRw3wDYMc
+         8hMoxtu7vBNhJrvJ0tFuvjqbiwGrOugyguBvBmCknuNGUE/AqV4+jHw854vgK4c3bbB0
+         aXHA==
+X-Gm-Message-State: APjAAAXjg2fB6+vJj+Ydl46sloQyT5QNmCGegQvuNGTQulM1DgS0H1rp
+        JC4pQgy2Z4vKxLs2l9WuzQw=
+X-Google-Smtp-Source: APXvYqxkHMMbw3Lgv2DOuluJOoWIpO9xmCGcngM5uTtlOyQj5gKD3ee1fpmnHBQf5ZSGNEZ5y0gQYQ==
+X-Received: by 2002:a17:90a:de4:: with SMTP id 91mr28019984pjv.113.1575169548180;
+        Sat, 30 Nov 2019 19:05:48 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id e188sm4572713pfe.113.2019.11.30.19.05.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Nov 2019 19:05:47 -0800 (PST)
+Date:   Sat, 30 Nov 2019 19:05:45 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Yannick Fertre <yannick.fertre@st.com>
+Cc:     Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: goodix: request_irq: convert gpio to irq
+Message-ID: <20191201030545.GL248138@dtor-ws>
+References: <1574850541-13577-1-git-send-email-yannick.fertre@st.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1574850541-13577-1-git-send-email-yannick.fertre@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several issues with the error handling code of
-the regulator_register() function:
-        ret = device_register(&rdev->dev);
-        if (ret != 0) {
-                put_device(&rdev->dev); --> rdev released
-                goto unset_supplies;
-        }
-...
-unset_supplies:
-...
-        unset_regulator_supplies(rdev); --> use-after-free
-...
-clean:
-        if (dangling_of_gpiod)
-                gpiod_put(config->ena_gpiod);
-        kfree(rdev);                     --> double free
+On Wed, Nov 27, 2019 at 11:29:01AM +0100, Yannick Fertre wrote:
+> From: Yannick Fertré <yannick.fertre@st.com>
+> 
+> Convert gpio to irq if not already done by gpio lib.
 
-We add a variable to record the failure of device_register() and
-move put_device() down a bit to avoid the above issues.
+No, please make sure that dts specifies "interrupts" property. It is
+marked as "required" in the binding.
 
-Fixes: c438b9d01736 ("regulator: core: Move registration of regulator device")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
----
- drivers/regulator/core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 09a3550..4b22622 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -5002,6 +5002,7 @@ struct regulator_dev *
- 	struct regulator_dev *rdev;
- 	bool dangling_cfg_gpiod = false;
- 	bool dangling_of_gpiod = false;
-+	bool reg_device_fail = false;
- 	struct device *dev;
- 	int ret, i;
- 
-@@ -5187,7 +5188,7 @@ struct regulator_dev *
- 	dev_set_drvdata(&rdev->dev, rdev);
- 	ret = device_register(&rdev->dev);
- 	if (ret != 0) {
--		put_device(&rdev->dev);
-+		reg_device_fail = true;
- 		goto unset_supplies;
- 	}
- 
-@@ -5218,7 +5219,10 @@ struct regulator_dev *
- clean:
- 	if (dangling_of_gpiod)
- 		gpiod_put(config->ena_gpiod);
--	kfree(rdev);
-+	if (reg_device_fail)
-+		put_device(&rdev->dev);
-+	else
-+		kfree(rdev);
- 	kfree(config);
- rinse:
- 	if (dangling_cfg_gpiod)
 -- 
-1.8.3.1
-
+Dmitry
