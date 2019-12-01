@@ -2,65 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949C810E366
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 21:10:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B6F10E36B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 21:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfLAUJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 15:09:37 -0500
-Received: from mailbackend.panix.com ([166.84.1.89]:41806 "EHLO
-        mailbackend.panix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbfLAUJh (ORCPT
+        id S1727218AbfLAUSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 15:18:51 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:51630 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfLAUSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 15:09:37 -0500
-Received: from hp-x360n.lan (cpe-108-185-41-56.socal.res.rr.com [108.185.41.56])
-        by mailbackend.panix.com (Postfix) with ESMTPSA id 47QzqJ3Zdxz1QxS;
-        Sun,  1 Dec 2019 15:09:32 -0500 (EST)
-Date:   Sun, 1 Dec 2019 12:09:31 -0800 (PST)
-From:   "Kenneth R. Crudup" <kenny@panix.com>
-Reply-To: "Kenneth R. Crudup" <kenny@panix.com>
-To:     Ingo Molnar <mingo@kernel.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>, mceier@gmail.com,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
-Subject: Re: [PATCH] x86/pat: Fix off-by-one bugs in interval tree search
-In-Reply-To: <20191201195521.GC3615@gmail.com>
-Message-ID: <alpine.DEB.2.21.1912011205350.2748@hp-x360n>
-References: <20191127005312.GD20422@shao2-debian> <CAJTyqKPstH9PYk1nMuRJWnXUPTf9wAkphPFi9Yfz6PApLVVE0Q@mail.gmail.com> <20191130212729.ykxstm5kj2p5ir6q@linux-p48b> <CAJTyqKOp+mV1CfpasschSDO4vEDbshE4GPCB6+aX4rJOYSF=7A@mail.gmail.com>
- <CAHk-=wh--xwpatv_Rcp3WtCPQtg-RVoXYQj8O+1TSw8os7Jtvw@mail.gmail.com> <20191201104624.GA51279@gmail.com> <20191201144947.GA4167@gmail.com> <alpine.DEB.2.21.1912010906030.2748@hp-x360n> <20191201195521.GC3615@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 1 Dec 2019 15:18:51 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2D70C6075EB6;
+        Sun,  1 Dec 2019 21:18:48 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 1qL7f3SkNBTT; Sun,  1 Dec 2019 21:18:47 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id A40D56126B4E;
+        Sun,  1 Dec 2019 21:18:47 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id CChYr051KwzE; Sun,  1 Dec 2019 21:18:47 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 7CBB56075EB6;
+        Sun,  1 Dec 2019 21:18:47 +0100 (CET)
+Date:   Sun, 1 Dec 2019 21:18:47 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Message-ID: <1044415561.103245.1575231527451.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UBI/UBIFS/JFFS2 changes for v5.5-rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
+Thread-Index: p5Yb5RXGCOXDDkhbu+z8eXKDdqTkQw==
+Thread-Topic: UBI/UBIFS/JFFS2 changes for v5.5-rc1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
-> > uncached-minus @ 0xfed91000-0xfed92000
-> > uncached-minus @ 0xff340000-0xff341000
-> > write-combining @ 0x4000000000-0x4010000000
-> > uncached-minus @ 0x4010000000-0x4010001000
+The following changes since commit ec5385196779fb927e7d8d5bf31bef14d7ce98ed:
 
-On Sun, 1 Dec 2019, Ingo Molnar wrote:
+  Merge tag 'iommu-fixes-v5.4-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu (2019-11-17 11:27:44 -0800)
 
-> I believe this is the region that caused the problem, the 0x4010000000
-> 'end' address of the WC region is the same as the 0x4010000000 'start'
-> address of the UC- region that follows it.
+are available in the Git repository at:
 
-> > write-combining @ 0x604a800000-0x604b000000
-> > uncached-minus @ 0x604b100000-0x604b110000
+  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/upstream-5.5-rc1
 
-> This WC region was probably unaffected by the bug.
+for you to fetch changes up to 6e78c01fde9023e0701f3af880c1fd9de6e4e8e3:
 
-For my education, and for completeness' sake, is there a proc/sys entry
-that would tell me which device/module has reserved which PAT region?
+  Revert "jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()" (2019-11-29 11:29:58 +0100)
 
-	-Kenny
+----------------------------------------------------------------
+This pull request contains mostly fixes for UBI, UBIFS and JFFS2:
 
--- 
-Kenneth R. Crudup  Sr. SW Engineer, Scott County Consulting, Silicon Valley
+UBI:
+- Fix a regression around producing a anchor PEB for fastmap.
+  Due to a change in our locking fastmap was unable to produce
+  fresh anchors an re-used the existing one a way to often.
+
+UBIFS:
+- Fixes for endianness. A few places blindly assumed little endian.
+- Fix for a memory leak in the orphan code.
+- Fix for a possible crash during a commit.
+- Revert a wrong bugfix.
+
+JFFS2:
+- Revert a bad bugfix in (false positive from a code checking
+  tool).
+
+----------------------------------------------------------------
+Ben Dooks (Codethink) (3):
+      ubifs: Force prandom result to __le32
+      ubifs: Fixed missed le64_to_cpu() in journal
+      ubifs: Fix type of sup->hash_algo
+
+Joel Stanley (1):
+      Revert "jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()"
+
+Richard Weinberger (2):
+      ubifs: Remove obsolete TODO from dfs_file_write()
+      Revert "ubifs: Fix memory leak bug in alloc_ubifs_info() error path"
+
+Rishi Gupta (1):
+      ubi: Fix warning static is not at beginning of declaration
+
+Sascha Hauer (1):
+      ubi: Fix producing anchor PEBs
+
+Stefan Roese (1):
+      ubi: Print skip_check in ubi_dump_vol_info()
+
+Zhihao Cheng (2):
+      ubifs: do_kill_orphans: Fix a memory leak bug
+      ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
+
+ drivers/mtd/ubi/debug.c      |  1 +
+ drivers/mtd/ubi/fastmap-wl.c | 31 ++++++++++++++++++-------------
+ drivers/mtd/ubi/fastmap.c    | 14 +++++---------
+ drivers/mtd/ubi/ubi.h        |  8 +++++---
+ drivers/mtd/ubi/wl.c         | 32 ++++++++++++++------------------
+ drivers/mtd/ubi/wl.h         |  1 -
+ fs/jffs2/nodelist.c          |  2 +-
+ fs/ubifs/debug.c             | 12 ------------
+ fs/ubifs/journal.c           |  4 ++--
+ fs/ubifs/orphan.c            | 17 ++++++++++-------
+ fs/ubifs/sb.c                |  2 +-
+ fs/ubifs/super.c             |  4 +---
+ fs/ubifs/tnc_commit.c        | 34 +++++++++++++++++++++++++++-------
+ 13 files changed, 85 insertions(+), 77 deletions(-)
