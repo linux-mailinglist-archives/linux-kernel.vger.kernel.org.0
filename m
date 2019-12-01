@@ -2,256 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BA810E22D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 15:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E227D10E232
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 15:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfLAO30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 09:29:26 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9539 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbfLAO30 (ORCPT
+        id S1727258AbfLAOcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 09:32:14 -0500
+Received: from sonic303-21.consmr.mail.ne1.yahoo.com ([66.163.188.147]:35515
+        "EHLO sonic303-21.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727218AbfLAOcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 09:29:26 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5de3ce470000>; Sun, 01 Dec 2019 06:29:27 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 01 Dec 2019 06:29:23 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 01 Dec 2019 06:29:23 -0800
-Received: from [10.25.74.138] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 1 Dec
- 2019 14:29:19 +0000
-Subject: Re: [PATCH 4/4] PCI: pci-epf-test: Add support to defer core
- initialization
-To:     Kishon Vijay Abraham I <kishon@ti.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>, <lorenzo.pieralisi@arm.com>,
-        <andrew.murray@arm.com>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>
-CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20191113090851.26345-1-vidyas@nvidia.com>
- <20191113090851.26345-5-vidyas@nvidia.com>
- <e8e3b8b6-d115-b4d4-19c5-1eae1d8abd0f@ti.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <958fcc14-6794-0328-5c31-0dcc845ee646@nvidia.com>
-Date:   Sun, 1 Dec 2019 19:59:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Sun, 1 Dec 2019 09:32:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1575210732; bh=zPC9p8T5S06DA73PD5F75wViZ/EpBpeYylTS7OqjCU4=; h=Date:From:Reply-To:Subject:From:Subject; b=M95eGAkWI/5vSrgNxGRtCawB/oB3oPBh8V7NP7nT6NArLPvaGW9n7eR53cjjzqWL8tMJI01LfZaPP9tHxLvcWLMffIvAJN7T69MDTOs3ujNhtS/zJaUr524bAoxIFqHsB3zOlEpMH32vpCuqiwL9GjF+ZuZAkZENSPwlsecNoh4119Zd7WaYg1aZte3R5JgXQ0Y2CYBPb+zP7Q74dej0eawXfd9oX2YIscblpFeRzhNoqn683Pz0mO9ohYqZFTrqTfsUgLZqTQmEOjIZU30jmdjzOKYX4q5CNN0qTt+L1kxqdw7DSC+MofVNEMK06jlx06rpapS8cl6uoltRnDM/UQ==
+X-YMail-OSG: R6n8AOEVM1l9H4zIb2.SC1q_MoDxRayOTlveZ_GalwUeBLy9rjVtQA5kNjgbrKW
+ SJKwhLYd67YwycriHehvrOEU3TG0ijyDqQYbAZOk31i2tCKb5lfu5y8TyVm5ryV3m5gtcLYqN1Fn
+ IPtCST8tFcK9B.bKQT_DcllCbruWjiqTZeBQ8Ws.vJh4DiYyx8RCDeDvB.f995cLQD1EXFpfSnlT
+ J1b7y83Rn22ZJVI4WAzU_soce.wDKks0Y9QOEKlCoBz3kOXVFFLnQnzUv_KqvF33ID8lkKzWM_an
+ zOJ0n2QKqOs0T2FteA26Fe3JGu93TA7yrWWFegcTQ0shMufQSNNL.wZQkzHQrrPYfaPpzXdjZteb
+ rOix3bXUq5.lT8F4C0eexLJKBl1wdNjXGe.7Eis4KgzPUB.UG7TYSbgzWbdw3kI7IYrbXrOAcnKW
+ 76cIQNFNrf_r12frD.oJsv2l0EBI0ietbn2OCjHgmmEeBBuCGBySirPjVoy1PzYdsP6I3GPsNUBe
+ p1uVr1Rwr7Sy45wAaV87Z8SG5Oi58P8b5JsXdpnoHTgOk0os0Wv.2zDY19SqYKcdZ9cvQqNzblOy
+ _ujo0sQhxwFBjGl8gxzuDF.kXl4Mw0jQVQ1C9J1tnHR4RHWFliaWfhQctZSwcgl2TuOIvG0Aayvt
+ 9LeUEUDtDoQq.4v4Yozbv4H..SUIpVc0JrDPJxSWRLap_opWOSEOmCiS.FFMKr2V6y0noYxFy23K
+ yhaouF2K1xAF4RBsNukfZSsh.ftm8aXhK9KbC01W6XlED2lke1sIRkiuifAWFAdaBI2xom.obm2v
+ ECMXJ4dlB6nAt.w5gpa_89u9ABZuZncGKIpq91MOKyRpMKgCCh.ceHoL1tj6shSEvYlvTLPwhQeO
+ mVqyU.93Det0loxDsUf7awpBX0ik1_h2ivqPXJS._VsWK4zEiUIcSu4v2ypUpvKjOqrtin3IAof7
+ L0JhQAAUDaSFcPx5PpCcF6ezEvzs8kaDUMBDE2vj3kVuVX6orGzrDHdAAnFu1nxRRD_uff9_4VXL
+ 0.kw75xPVWGiuZUrzX64OsUTKlspffiXriOyZc7O8kUvQcGZpyJQVMy2uVLq5NIdhEPIMeJ8TuBD
+ uB2CLYDKzNyY_10NUDhetbiUUj_iQ.2tIiP_4VRtl_T.7kotu3x2abKVJWwiO413yVdfZo4JfHLf
+ rW4.gHF.ax594BTkPh9smGEGep4H0cWBKL5BZzA7eKPYHW4CyvQqTIFH5c.bYDDw36YNUA6SVqSt
+ Zt9sEu_1aX8OkYSMPFSXKODAd2ihXKwC.hX5p0N3cw17CavclO2LxfBXRJ1QIiditf7fyc0hdmNP
+ 4c8XiizxC
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Sun, 1 Dec 2019 14:32:12 +0000
+Date:   Sun, 1 Dec 2019 14:32:10 +0000 (UTC)
+From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
+Reply-To: ms.lisahugh000@gmail.com
+Message-ID: <132215580.1347666.1575210730440@mail.yahoo.com>
+Subject: I NEED YOUR HELP FOR THIS BUSINESS.
 MIME-Version: 1.0
-In-Reply-To: <e8e3b8b6-d115-b4d4-19c5-1eae1d8abd0f@ti.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575210567; bh=R0xGxFOdur+CeguObMrwAo1cQvjZeJSyyOUZLz2IAp0=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=dZNGqzai/FKSRFv8UH3CuHk1nRWfvN7yIamCZKISnik8dmv8VuX5VPInG3vdGy4i9
-         Bapq+hTPVusDffht2ne+7hhkSljxEf5MT9279o1UNDDTECzQAEWVH0A6Ln83AJJ7tC
-         QtWinDl+cwEW9cWeVyM5Dd/C042gmgP8sagWCu/YNtOWkre9mHlr4bN/AoGQnzwJiC
-         zoJmsPz4wtOp+tbNV+nNwB6MoIdi3bn2+XrTOaG/bFYa9dpzLZS4anMsdKYI8XE5uj
-         iHaTp5rTiV6y50xgN5QyEaID0/ntwDw6I8dtH1eFHsxEjrXg2UXB1jskdMfr4msUYu
-         8036bE/qaF6DQ==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/2019 2:50 PM, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On 13/11/19 2:38 PM, Vidya Sagar wrote:
->> Add support to defer core initialization and to receive a notifier
->> when core is ready to accommodate platforms where core is not for
->> initialization untile reference clock from host is available.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->>   drivers/pci/endpoint/functions/pci-epf-test.c | 114 ++++++++++++------
->>   1 file changed, 77 insertions(+), 37 deletions(-)
->>
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index bddff15052cc..068024fab544 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -360,18 +360,6 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
->>   			   msecs_to_jiffies(1));
->>   }
->>   
->> -static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
->> -				 void *data)
->> -{
->> -	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
->> -	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->> -
->> -	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
->> -			   msecs_to_jiffies(1));
->> -
->> -	return NOTIFY_OK;
->> -}
->> -
->>   static void pci_epf_test_unbind(struct pci_epf *epf)
->>   {
->>   	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->> @@ -428,6 +416,78 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
->>   	return 0;
->>   }
->>   
->> +static int pci_epf_test_core_init(struct pci_epf *epf)
->> +{
->> +	struct pci_epf_header *header = epf->header;
->> +	const struct pci_epc_features *epc_features;
->> +	struct pci_epc *epc = epf->epc;
->> +	struct device *dev = &epf->dev;
->> +	bool msix_capable = false;
->> +	bool msi_capable = true;
->> +	int ret;
->> +
->> +	epc_features = pci_epc_get_features(epc, epf->func_no);
->> +	if (epc_features) {
->> +		msix_capable = epc_features->msix_capable;
->> +		msi_capable = epc_features->msi_capable;
->> +	}
->> +
->> +	ret = pci_epc_write_header(epc, epf->func_no, header);
->> +	if (ret) {
->> +		dev_err(dev, "Configuration header write failed\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = pci_epf_test_set_bar(epf);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (msi_capable) {
->> +		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
->> +		if (ret) {
->> +			dev_err(dev, "MSI configuration failed\n");
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	if (msix_capable) {
->> +		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
->> +		if (ret) {
->> +			dev_err(dev, "MSI-X configuration failed\n");
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
->> +				 void *data)
->> +{
->> +	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
->> +	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->> +	int ret;
->> +
->> +	switch (val) {
->> +	case CORE_INIT:
->> +		ret = pci_epf_test_core_init(epf);
->> +		if (ret)
->> +			return NOTIFY_BAD;
->> +		break;
->> +
->> +	case LINK_UP:
->> +		queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
->> +				   msecs_to_jiffies(1));
->> +		break;
->> +
->> +	default:
->> +		dev_err(&epf->dev, "Invalid EPF test notifier event\n");
->> +		return NOTIFY_BAD;
->> +	}
->> +
->> +	return NOTIFY_OK;
->> +}
->> +
->>   static int pci_epf_test_alloc_space(struct pci_epf *epf)
->>   {
->>   	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->> @@ -496,12 +556,11 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>   {
->>   	int ret;
->>   	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->> -	struct pci_epf_header *header = epf->header;
->>   	const struct pci_epc_features *epc_features;
->>   	enum pci_barno test_reg_bar = BAR_0;
->>   	struct pci_epc *epc = epf->epc;
->> -	struct device *dev = &epf->dev;
->>   	bool linkup_notifier = false;
->> +	bool skip_core_init = false;
->>   	bool msix_capable = false;
->>   	bool msi_capable = true;
->>   
->> @@ -511,6 +570,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>   	epc_features = pci_epc_get_features(epc, epf->func_no);
->>   	if (epc_features) {
->>   		linkup_notifier = epc_features->linkup_notifier;
->> +		skip_core_init = epc_features->skip_core_init;
->>   		msix_capable = epc_features->msix_capable;
->>   		msi_capable = epc_features->msi_capable;
-> 
-> Are these used anywhere in this function?
-Nope. I'll remove them.
 
->>   		test_reg_bar = pci_epc_get_first_free_bar(epc_features);
->> @@ -520,34 +580,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>   	epf_test->test_reg_bar = test_reg_bar;
->>   	epf_test->epc_features = epc_features;
->>   
->> -	ret = pci_epc_write_header(epc, epf->func_no, header);
->> -	if (ret) {
->> -		dev_err(dev, "Configuration header write failed\n");
->> -		return ret;
->> -	}
->> -
->>   	ret = pci_epf_test_alloc_space(epf);
->>   	if (ret)
->>   		return ret;
->>   
->> -	ret = pci_epf_test_set_bar(epf);
->> -	if (ret)
->> -		return ret;
->> -
->> -	if (msi_capable) {
->> -		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
->> -		if (ret) {
->> -			dev_err(dev, "MSI configuration failed\n");
->> -			return ret;
->> -		}
->> -	}
->> -
->> -	if (msix_capable) {
->> -		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
->> -		if (ret) {
->> -			dev_err(dev, "MSI-X configuration failed\n");
->> +	if (!skip_core_init) {
->> +		ret = pci_epf_test_core_init(epf);
->> +		if (ret)
->>   			return ret;
->> -		}
->>   	}
->>   
->>   	if (linkup_notifier) {
-> 
-> This could as well be moved to pci_epf_test_core_init().
-Yes, but I would like to keep only the code that touches hardware in pci_epf_test_core_init()
-to minimize the time it takes to execute it. Is there any strong reason to move it? if not,
-I would prefer to leave it here in this function itself.
 
-> 
-> Thanks
-> Kishon
-> 
+Dear Friend,
 
+I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
+
+Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
+
+I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me forsuccess.
+
+Note/ 50% for you why 50% for me after success of the transfer to your bank
+account.
+
+Below information is what i need from you so will can be reaching each
+other
+
+1)Full name ...
+2)Private telephone number...
+3)Age...
+4)Nationality...
+5)Occupation ...
+
+
+Thanks.
+
+Ms Lisa Hugh
