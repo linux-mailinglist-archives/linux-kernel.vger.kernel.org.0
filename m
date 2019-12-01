@@ -2,91 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E68ED10E36C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 21:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E1110E377
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Dec 2019 21:31:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfLAUS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 15:18:57 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:51648 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfLAUS5 (ORCPT
+        id S1727295AbfLAUbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 15:31:04 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40141 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbfLAUbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 15:18:57 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 23B196075EB6;
-        Sun,  1 Dec 2019 21:18:55 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Xx61N7WiFue1; Sun,  1 Dec 2019 21:18:54 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id CF17D609D2D9;
-        Sun,  1 Dec 2019 21:18:54 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id gvqUPrLA80Gv; Sun,  1 Dec 2019 21:18:54 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id B72596094C4B;
-        Sun,  1 Dec 2019 21:18:54 +0100 (CET)
-Date:   Sun, 1 Dec 2019 21:18:54 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-um <linux-um@lists.infradead.org>
-Message-ID: <1468911323.103246.1575231534725.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] UML changes for v5.5-rc1
+        Sun, 1 Dec 2019 15:31:03 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c14so17027269wrn.7
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Dec 2019 12:31:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k0vP8O4laRZDcbfd6ubx4anqmuOGWDPrB2xGATS7dVE=;
+        b=Yb6qM1OMqo+1YcDltjALP4kv3ykDmgwIUI4nA5PumuzF91PWK3bgrkfn4crd4zmKmZ
+         B9+o2DtRqy7vXoid917HvrLqouXLCN3TXbgI/bYtqDb6xZswJI8lckg3xGyvofVgeqXF
+         KQele5QUACXWx0NQzfVQCh57FABpH9haToUb00KHjr/lO69CtXkotHEhXgtuplQsXN28
+         rvn8LVox6cVgFXJ8oNYa9zXl0e1t2wiMyqPNEbFAPMa7Wcz4GsfM+WJpckthc7/ScbTK
+         SQXv+ySU426qEhQe6goTIdts0gjSWLdn3sJtOc7k0ecvtLiB8x8XzcPBBaosd6eVHEkG
+         dxmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k0vP8O4laRZDcbfd6ubx4anqmuOGWDPrB2xGATS7dVE=;
+        b=imCEpth3KGLyMGpuN/W3YRlAXdQIrlLcJ/DbGr1kf5WeUEzb97yLUZQ+2+CuD5/dkj
+         nLcq8MAlBplYzSHRjQvw0K8Ec09Od5JzlIzDFMTLSeAeCmOt+fPBrf4fISlD9OUGEJEM
+         e78UOwcAN56S9vXbAfik605x9QBZ74FTQa6hS6WBCchB5FK1hEOx8AJf5HyTHy2+G9RN
+         Tbz2Azb4naICf6qcnhC22fpVfjaa3JP1uGcWJ4RIo1WVw1lZAPb2DuaGUwSMT6Kc6EZZ
+         vEiQNX4B/YZPv6IQ2eF5XKAT4OkO7va+NARBSdCUEXGfLsCU0Y7EkUwEpAwGmu/e8USP
+         tAWA==
+X-Gm-Message-State: APjAAAUvWRzaiz9K2B//EZbkr6UBF4qbIUl4yYEohOnSgbb5RLbYVu0Q
+        2cfdFdaaQn0fd0RqNfNuZ8c=
+X-Google-Smtp-Source: APXvYqyr3BbUoX3tPng8PG0eUZIAdsBbMbqxgbOW46Yfui3fhHzohFE2lLXSzZfCBKozHTq8B1yBfQ==
+X-Received: by 2002:adf:ea42:: with SMTP id j2mr29023101wrn.270.1575232261532;
+        Sun, 01 Dec 2019 12:31:01 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id u14sm37571524wrm.51.2019.12.01.12.31.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2019 12:31:00 -0800 (PST)
+Date:   Sun, 1 Dec 2019 21:30:58 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "Kenneth R. Crudup" <kenny@panix.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, mceier@gmail.com,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
+Subject: Re: [PATCH] x86/pat: Fix off-by-one bugs in interval tree search
+Message-ID: <20191201203058.GA82131@gmail.com>
+References: <20191127005312.GD20422@shao2-debian>
+ <CAJTyqKPstH9PYk1nMuRJWnXUPTf9wAkphPFi9Yfz6PApLVVE0Q@mail.gmail.com>
+ <20191130212729.ykxstm5kj2p5ir6q@linux-p48b>
+ <CAJTyqKOp+mV1CfpasschSDO4vEDbshE4GPCB6+aX4rJOYSF=7A@mail.gmail.com>
+ <CAHk-=wh--xwpatv_Rcp3WtCPQtg-RVoXYQj8O+1TSw8os7Jtvw@mail.gmail.com>
+ <20191201104624.GA51279@gmail.com>
+ <20191201144947.GA4167@gmail.com>
+ <alpine.DEB.2.21.1912010906030.2748@hp-x360n>
+ <20191201195521.GC3615@gmail.com>
+ <alpine.DEB.2.21.1912011205350.2748@hp-x360n>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF68 (Linux)/8.8.12_GA_3809)
-Thread-Index: 76qbsLMIGCl1qWUEP3cLHVH+nD3HKw==
-Thread-Topic: UML changes for v5.5-rc1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1912011205350.2748@hp-x360n>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
 
-The following changes since commit e472c64aa4fa6150c6076fd36d101d667d71c30a:
+* Kenneth R. Crudup <kenny@panix.com> wrote:
 
-  Merge tag 'dmaengine-fix-5.4-rc6' of git://git.infradead.org/users/vkoul/slave-dma (2019-10-31 07:34:09 +0000)
+> > > write-combining @ 0x604a800000-0x604b000000
+> > > uncached-minus @ 0x604b100000-0x604b110000
+> 
+> > This WC region was probably unaffected by the bug.
+> 
+> For my education, and for completeness' sake, is there a proc/sys entry
+> that would tell me which device/module has reserved which PAT region?
 
-are available in the Git repository at:
+Not that I know of :-/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git tags/for-linus-5.5-rc1
+I suspect you could run the attached patch and run:
 
-for you to fetch changes up to 9807019a62dc670c73ce8e59e09b41ae458c34b3:
+  dmesg | grep -i 'x86/pat'
 
-  um: Loadable BPF "Firmware" for vector drivers (2019-11-25 22:43:31 +0100)
+To see all the ioremap() activities, with a symbolic name of the caller printed.
 
-----------------------------------------------------------------
-This pull request contains the following changes for UML:
+I'm quite sure 0x604a800000 will be among them, pointing to somewhere 
+like i915_vma_pin_iomap(), ggtt_init_hw() or ggtt_probe_common() in the 
+i915 GPU driver?
 
-- Fixes for our new virtio code
-- Fix for the irqflags tracer
-- Kconfig coding style fixes
-- Allow BPF firmware loading in our vector driver
+Another possibility is that this is the FB framebuffer, mapped by 
+efifb_probe() or so?
 
-----------------------------------------------------------------
-Anton Ivanov (1):
-      um: Loadable BPF "Firmware" for vector drivers
+Patch is untested though. :-)
 
-Johannes Berg (4):
-      um: Don't trace irqflags during shutdown
-      um: virtio: Remove device on disconnect
-      um: virtio: Keep reading on -EAGAIN
-      um: virtio_uml: Disallow modular build
+Thanks,
 
-Krzysztof Kozlowski (1):
-      um: Fix Kconfig indentation
+	Ingo
 
- arch/um/Kconfig               |   2 +-
- arch/um/drivers/Kconfig       |   2 +-
- arch/um/drivers/vector_kern.c | 113 ++++++++++++++++++++++++++++++++++++++----
- arch/um/drivers/vector_kern.h |   8 ++-
- arch/um/drivers/vector_user.c |  94 ++++++++++++++++++++++++++++-------
- arch/um/drivers/vector_user.h |   8 ++-
- arch/um/drivers/virtio_uml.c  |  76 ++++++++++++++++++----------
- arch/um/os-Linux/main.c       |   2 +-
- 8 files changed, 247 insertions(+), 58 deletions(-)
+=================>
+
+ arch/x86/mm/ioremap.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 1ff9c2030b4f..2f0a4f99471a 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -166,6 +166,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
+ 	int retval;
+ 	void __iomem *ret_addr;
+ 
++	printk("# x86/pat: ioremap(%016Lx, %08lx, pcm: %d), caller: %pS\n", phys_addr, size, pcm, caller);
++
+ 	/* Don't allow wraparound or zero size */
+ 	last_addr = phys_addr + size - 1;
+ 	if (!size || last_addr < phys_addr)
+
