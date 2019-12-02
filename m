@@ -2,115 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3675A10F38D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 00:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6029510F364
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 00:30:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfLBXmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 18:42:20 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:4470 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725899AbfLBXmS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 18:42:18 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB2NcMtn029675
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2019 15:42:17 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=uxmNRueyd7miyY/gd74G4GVj0i0RrTsGpZE9jNZv6UI=;
- b=eiSQ2vKRIuYN1zCkmjN8KD5Q44NrMlx1FEEClRNljfugIP4WNGpPhX7Bg2nkulF6f7g2
- SnKXCDR/lxEkDHfmx/FOi8/9QwEqDEdvtPJW6wFVZC3pS33yjHjZGQbKyAplhzLgYrqb
- Erggq6AcdbE6zXjvkPDaGOu19eMC0y7SYoA= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2wnanp0j1d-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 15:42:17 -0800
-Received: from 2401:db00:30:6012:face:0:17:0 (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 2 Dec 2019 15:42:15 -0800
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id A65BE1B2B81CC; Mon,  2 Dec 2019 15:42:13 -0800 (PST)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     <linux-kselftest@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH kselftest-next 2/2] kselftests: memcg: speed up the memory.high test
-Date:   Mon, 2 Dec 2019 15:42:12 -0800
-Message-ID: <20191202234212.4134802-2-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191202234212.4134802-1-guro@fb.com>
-References: <20191202234212.4134802-1-guro@fb.com>
-X-FB-Internal: Safe
+        id S1726190AbfLBXaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 18:30:52 -0500
+Received: from mga07.intel.com ([134.134.136.100]:14390 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbfLBXaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 18:30:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 15:30:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
+   d="scan'208";a="222612595"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga002.jf.intel.com with ESMTP; 02 Dec 2019 15:30:51 -0800
+Date:   Mon, 2 Dec 2019 15:42:44 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Babu Moger <babu.moger@amd.com>,
+        Andre Przywara <Andre.Przywara@arm.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v8 01/13] selftests/resctrl: Add README for resctrl tests
+Message-ID: <20191202234244.GC220960@romley-ivt3.sc.intel.com>
+References: <1574901584-212957-1-git-send-email-fenghua.yu@intel.com>
+ <1574901584-212957-2-git-send-email-fenghua.yu@intel.com>
+ <20191128072338.GA17745@zn.tnic>
+ <20191202185334.GA220960@romley-ivt3.sc.intel.com>
+ <20191202230642.GD32696@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-02_06:2019-11-29,2019-12-02 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015
- phishscore=0 mlxlogscore=643 spamscore=0 adultscore=0 impostorscore=0
- bulkscore=0 mlxscore=0 priorityscore=1501 malwarescore=0 suspectscore=1
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912020203
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202230642.GD32696@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit 0e4b01df8659 ("mm, memcg: throttle allocators when
-failing reclaim over memory.high") allocating memory over memory.high
-became very time consuming. But it's exactly what the memory.high
-test from cgroup kselftests is doing: it tries to allocate 100M with
-30M memory.high value. It takes forever to complete.
+On Tue, Dec 03, 2019 at 12:06:42AM +0100, Borislav Petkov wrote:
+> On Mon, Dec 02, 2019 at 10:53:35AM -0800, Fenghua Yu wrote:
+> > Babu's major contributions are in v5 where he virtually touched every
+> > patch. He sent out v5 and put Signed-off-by: Babu Moger in each patch:
+> > https://lore.kernel.org/patchwork/cover/1033532/
+> > 
+> > That's why I keep his SOB in v6-v8 in each patch.
+> 
+> For that you either need to use
+> 
+> Co-developed-by: Babu
+> 
+> or state the fact that Babu did contribute to the patches in freetext in
+> the commit messages.
+> 
+> As it is now, it is not clear what it means. You could've kept the order
+> from v5 since you took his submission and could've done:
+> 
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> 
+> to show you're the author, Babu handled them further and you're sending
+> the patchset now, but the other thing I suggested above is more clear
+> IMO.
 
-In order to keep it passing (or failing) in a reasonable amount of
-time let's try to allocate only a little over 30M: 31M to be precise.
+Ok. I will add Co-developed-by: Babu in the patches.
 
-With this change test_memcontrol finishes in a reasonable amount of
-time:
-  $ time ./test_memcontrol
-  ok 1 test_memcg_subtree_control
-  ok 2 test_memcg_current
-  ok 3 test_memcg_min
-  ok 4 test_memcg_low
-  ok 5 test_memcg_high
-  ok 6 test_memcg_max
-  ok 7 test_memcg_oom_events
-  ok 8 test_memcg_swap_max
-  ok 9 test_memcg_sock
-  ok 10 test_memcg_oom_group_leaf_events
-  ok 11 test_memcg_oom_group_parent_events
-  ok 12 test_memcg_oom_group_score_events
+Should I send v9 patch set with only the Co-developed-by changes?
 
-  real	0m2.273s
-  user	0m0.064s
-  sys	0m0.739s
+Thanks.
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Chris Down <chris@chrisdown.name>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
----
- tools/testing/selftests/cgroup/test_memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
-index 60bfe53c0289..739fa90448f6 100644
---- a/tools/testing/selftests/cgroup/test_memcontrol.c
-+++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-@@ -606,7 +606,7 @@ static int test_memcg_high(const char *root)
- 	if (cg_write(memcg, "memory.high", "30M"))
- 		goto cleanup;
- 
--	if (cg_run(memcg, alloc_anon, (void *)MB(100)))
-+	if (cg_run(memcg, alloc_anon, (void *)MB(31)))
- 		goto cleanup;
- 
- 	if (!cg_run(memcg, alloc_pagecache_50M_check, NULL))
--- 
-2.17.1
-
+-Fenghua
