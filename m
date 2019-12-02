@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E744510F11C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5397210F114
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:54:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbfLBTyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 14:54:18 -0500
+        id S1728154AbfLBTxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 14:53:55 -0500
 Received: from mga06.intel.com ([134.134.136.31]:62618 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfLBTxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728104AbfLBTxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Dec 2019 14:53:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 11:53:49 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 11:53:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="218438145"
+   d="scan'208";a="218438150"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by fmsmga001.fm.intel.com with ESMTP; 02 Dec 2019 11:53:49 -0800
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -32,9 +32,9 @@ Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
         "Mehta, Sohil" <sohil.mehta@intel.com>,
         Joe Perches <joe@perches.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v5 2/8] iommu/vt-d: Match CPU and IOMMU paging mode
-Date:   Mon,  2 Dec 2019 11:58:23 -0800
-Message-Id: <1575316709-54903-3-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v5 3/8] iommu/vt-d: Reject SVM bind for failed capability check
+Date:   Mon,  2 Dec 2019 11:58:24 -0800
+Message-Id: <1575316709-54903-4-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -43,50 +43,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When setting up first level page tables for sharing with CPU, we need
-to ensure IOMMU can support no less than the levels supported by the
-CPU.
+Add a check during SVM bind to ensure CPU and IOMMU hardware capabilities
+are met.
 
-It is not adequate, as in the current code, to set up 5-level paging
-in PASID entry First Level Paging Mode(FLPM) solely based on CPU.
-
-Currently, intel_pasid_setup_first_level() is only used by native SVM
-code which already checks paging mode matches. However, future use of
-this helper function may not be limited to native SVM.
-https://lkml.org/lkml/2019/11/18/1037
-
-Fixes: 437f35e1cd4c8 ("iommu/vt-d: Add first level page table
-interface")
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Reviewed-by: Eric Auger <eric.auger@redhat.com>
 Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/iommu/intel-pasid.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/iommu/intel-svm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-index 040a445be300..e7cb0b8a7332 100644
---- a/drivers/iommu/intel-pasid.c
-+++ b/drivers/iommu/intel-pasid.c
-@@ -499,8 +499,16 @@ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
- 	}
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 716c543488f6..74df10a39dfc 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -238,6 +238,9 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 	if (!iommu || dmar_disabled)
+ 		return -EINVAL;
  
- #ifdef CONFIG_X86
--	if (cpu_feature_enabled(X86_FEATURE_LA57))
--		pasid_set_flpm(pte, 1);
-+	/* Both CPU and IOMMU paging mode need to match */
-+	if (cpu_feature_enabled(X86_FEATURE_LA57)) {
-+		if (cap_5lp_support(iommu->cap)) {
-+			pasid_set_flpm(pte, 1);
-+		} else {
-+			pr_err("VT-d has no 5-level paging support for CPU\n");
-+			pasid_clear_entry(pte);
-+			return -EINVAL;
-+		}
-+	}
- #endif /* CONFIG_X86 */
- 
- 	pasid_set_domain_id(pte, did);
++	if (!intel_svm_capable(iommu))
++		return -ENOTSUPP;
++
+ 	if (dev_is_pci(dev)) {
+ 		pasid_max = pci_max_pasids(to_pci_dev(dev));
+ 		if (pasid_max < 0)
 -- 
 2.7.4
 
