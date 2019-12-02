@@ -2,76 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B836D10E9D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 12:55:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 052A910E9E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbfLBLzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 06:55:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56950 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726149AbfLBLzt (ORCPT
+        id S1727399AbfLBMDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 07:03:03 -0500
+Received: from smtpq3.tb.mail.iss.as9143.net ([212.54.42.166]:45986 "EHLO
+        smtpq3.tb.mail.iss.as9143.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726149AbfLBMDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 06:55:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575287748;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EuVPluF8Vz2pOHrANYZgmx+snA3qZCVo/pGJeecZlbw=;
-        b=fg8QGGoFJMTm0DOyI6j93rpQeN57Zr49j3wzDTmrbYaTFV3DYK3J9d3B6u3E3W8xiBHz7z
-        uISDDc2U2HnfbCUStiKVeRdxQje/cEYOtS5M8yhjIjmB2+PT/embjX/SKEHUcGmGwAz0vw
-        UQEYI0NAKdtMpXFLWa3odGfExMY4PTM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-138-jpiNLMe-MTubom-DUZiv6Q-1; Mon, 02 Dec 2019 06:55:45 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 25219DB20;
-        Mon,  2 Dec 2019 11:55:44 +0000 (UTC)
-Received: from 10.255.255.10 (ovpn-205-135.brq.redhat.com [10.40.205.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ACD3360BFB;
-        Mon,  2 Dec 2019 11:55:42 +0000 (UTC)
-Date:   Mon, 2 Dec 2019 12:55:40 +0100
-From:   Karel Zak <kzak@redhat.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [MANPAGE] move_mount.2
-Message-ID: <20191202115540.gx2dcimzns7osbra@10.255.255.10>
-References: <10805.1570726908@warthog.procyon.org.uk>
- <11098.1570727091@warthog.procyon.org.uk>
+        Mon, 2 Dec 2019 07:03:03 -0500
+X-Greylist: delayed 1242 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Dec 2019 07:03:02 EST
+Received: from [212.54.42.137] (helo=smtp6.tb.mail.iss.as9143.net)
+        by smtpq3.tb.mail.iss.as9143.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <karsdejong@home.nl>)
+        id 1ibk5q-0004qu-SW
+        for linux-kernel@vger.kernel.org; Mon, 02 Dec 2019 12:42:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=home.nl;
+        s=201809corplgsmtpnl; h=To:Subject:Date:From;
+        bh=YLXC0XBbzlwCAGXJDXKrvYIocVCl4uJewEHmpw/A/Xg=; b=Qeyz9euu5PUo2yiYsI0e02mHAK
+        A/onbgBUpQpLbVD5NFfcAE2SulZ3YalcVU0bEz9bsnMTFTZMTgM/EfNjA+pFxOa1Wh/Y3+g5ZJ0N9
+        TUxWeLJmm0C/LK1jae3MzdeQaUzpk7/bewGPp4WSfMOPLQLlHo15EOUaRPdZQe1KxUGACU/bzO5eD
+        N5gPN/4CzYf1fpwQkilDU6VpFejJX7Wu73Fax26ASw0Iuu8zKofWNHRr7KINRp46Qzmm2as0xom2u
+        tndeoww+nFmqe7gj66l9xHoWNA2kfKeNl1VnJjJYkMoa793iSvz0QzVA+FwM2hnmpb2WsBkxzcXKb
+        d9MrWn5A==;
+Received: from mail-wr1-f41.google.com ([209.85.221.41])
+        by smtp6.tb.mail.iss.as9143.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <karsdejong@home.nl>)
+        id 1ibk5q-00029O-Np
+        for linux-kernel@vger.kernel.org; Mon, 02 Dec 2019 12:42:18 +0100
+Received: by mail-wr1-f41.google.com with SMTP id t2so43786963wrr.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 03:42:18 -0800 (PST)
+X-Gm-Message-State: APjAAAX7S7CcJrP7gxDU2FiW7wxDBN6/cRHJo9mdStyS32doshD9/AF8
+        Csb1d6zWxEAzpbUYfAKRy9MACyGEzHC0HPnR7CA=
+X-Google-Smtp-Source: APXvYqz7beAF7NVKzbZBeYsQhk6HkVllb6e0glkpL5bjyQ+026De230D24PuabZGNA1S9X13vvdS040AL9ds4Hlfc24=
+X-Received: by 2002:a5d:51c6:: with SMTP id n6mr21525943wrv.250.1575286938367;
+ Mon, 02 Dec 2019 03:42:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <11098.1570727091@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: jpiNLMe-MTubom-DUZiv6Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <021330b6-67a2-0b74-c129-5c725dd23810@infradead.org> <CAMuHMdVLusDDB5G1R7=-53sK1bd2+3=s42hr9xkgPtWyjOrozg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVLusDDB5G1R7=-53sK1bd2+3=s42hr9xkgPtWyjOrozg@mail.gmail.com>
+From:   Kars de Jong <karsdejong@home.nl>
+Date:   Mon, 2 Dec 2019 12:42:07 +0100
+X-Gmail-Original-Message-ID: <CACz-3rjOPg_rMt_FbJ5_nKLpjTK-Bv=amGsJpXwqbTBNX4YA7w@mail.gmail.com>
+Message-ID: <CACz-3rjOPg_rMt_FbJ5_nKLpjTK-Bv=amGsJpXwqbTBNX4YA7w@mail.gmail.com>
+Subject: Re: m68k Kconfig warning
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-SourceIP: 209.85.221.41
+X-Authenticated-Sender: karsdejong@home.nl (via SMTP)
+X-Ziggo-spambar: /
+X-Ziggo-spamscore: 0.0
+X-Ziggo-spamreport: CMAE Analysis: v=2.3 cv=ZLepZkzb c=1 sm=1 tr=0 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=pxVhFHJ0LMsA:10 a=tBb2bbeoAAAA:8 a=JfrnYn6hAAAA:8 a=_nT3hX5ytRn4k0QMb7MA:9 a=QEXdDO2ut3YA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=1CNFftbPRP8L7MoqJWF3:22
+X-Ziggo-Spam-Status: No
+X-Spam-Status: No
+X-Spam-Flag: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 06:04:51PM +0100, David Howells wrote:
-> .B MOVE_MOUNT_F_NO_AUTOMOUNT
-> .B MOVE_MOUNT_F_NO_AUTOMOUNT
+Hi Geert & Randy,
 
-The mount.h contains:
+Op wo 27 nov. 2019 om 08:12 schreef Geert Uytterhoeven <geert@linux-m68k.org>:
+> On Wed, Nov 27, 2019 at 2:27 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+> > Just noticed this.  I don't know what the right fix is.
+> > Would you take care of it, please?
+> >
+> > on Linux 5.4, m68k allmodconfig:
+> >
+> > WARNING: unmet direct dependencies detected for NEED_MULTIPLE_NODES
+> >   Depends on [n]: DISCONTIGMEM [=n] || NUMA
+> >   Selected by [y]:
+> >   - SINGLE_MEMORY_CHUNK [=y] && MMU [=y]
+>
+> This has been basically there forever, but working.
 
-    #define MOVE_MOUNT_F_AUTOMOUNTS         0x00000002 /* Follow automounts=
- on from path */
-    #define MOVE_MOUNT_T_AUTOMOUNTS         0x00000020 /* Follow automounts=
- on to path */
+The reason for SINGLE_MEMORY_CHUNK depending on NEED_MULTIPLE_NODES is
+historic due to the way it is implemented.
+I played with it this weekend and I got a working version of FLATMEM,
+which can replace SINGLE_MEMORY_CHUNK.
 
-it means the macros are without the "_NO_".
+I'll clean it up and send a patch later this week. A possible next
+step might be to replace DISCONTIGMEM with SPARSEMEM (since
+DISCONTIGMEM has been deprecated).
 
-    Karel
+Kind regards,
 
---=20
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
-
+Kars.
