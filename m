@@ -2,193 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BE810ED5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 17:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6CD10ED63
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 17:43:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfLBQlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 11:41:08 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:34696 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727438AbfLBQlH (ORCPT
+        id S1727691AbfLBQnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 11:43:32 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45768 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727459AbfLBQnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 11:41:07 -0500
-Received: by mail-il1-f194.google.com with SMTP id w13so272437ilo.1;
-        Mon, 02 Dec 2019 08:41:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OOh+Bc1DWdItpbvyDVMetDcI62XQS3JiY37nnuo0X1o=;
-        b=bVNmOxsEVEp8YH+hiILRG3Pmj4Z+rGdDKJIJ8PbS5u/igb6I9ECpqn1bS+ZIHa29hD
-         Mb4f+KFlFF4W8dmbVbYMk9CWwRcX63uAn9ZRvbOA7pEIkPZVMrfIvTD2InoGmjsf6BpC
-         EPiGHHjnN/9CgI4G18iBQ2yJ56XZ6ZShTIs/qy9OEHiW+CjqmYjIN+cxns0GSWlZ78Cy
-         RcSrPdvf59w/6+V9gjGlqkW9zRZyj+VGYmQ8710JRt7GDe6GqPya7N6x5fLBM9AQvHTP
-         /W4Rtplt/vZgj8kDWyDgX6WpBJyRWbt+sVy+zkz7Le4l9rvmJ+ykCbVpoRhhPOeWkn3x
-         /ZLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OOh+Bc1DWdItpbvyDVMetDcI62XQS3JiY37nnuo0X1o=;
-        b=nXJLcqnt/ytj6mE3SZnpZ3mEiU9gyf2eCcD35MleMk2bYT5FVoAfbh8Kh1TzlHdyUY
-         T2rwjPzo2KHZAq8jgPBS9rresb9rZySwVfoXnCzeJSy/WZI0dOuXYAO07sgNcrvgHCnU
-         LpYA9F/40RnUZOv/FhTb+QbZX/WtnMfDuRgMYB7Vt6+Pu2T7feUqU2qNUI2bFqLaK9QA
-         /k5KRap0egqq+E3Lplb9yGDWU+J2dHFFwd9yd7VOFRySMf8DReG7VPgud8ZYgEwLVaPk
-         FgUEMDLmFhiw/ABwA1Qx0gt9qpWnYVR4hL/yP8JXJ1fLoLEHAryfOAxhGmrxM/kYzqMu
-         6FOw==
-X-Gm-Message-State: APjAAAUic774GJ+ImF+vIkcd1BJvZepjj266rcGDRnUaNzsFaF/0vlzF
-        bVgmbtYe6JkEQ1OaOSj1AW/Ij9Q01rfPsd1iTDM=
-X-Google-Smtp-Source: APXvYqzAaEwIforOBiTI0rbJEPuiD0fNLEyhsjIOukX/xgCyOfdwPSFCmlouh1JsqHdxv3qOTLI5g78cx1qUMuTHvjk=
-X-Received: by 2002:a92:b60e:: with SMTP id s14mr68371769ili.178.1575304866317;
- Mon, 02 Dec 2019 08:41:06 -0800 (PST)
+        Mon, 2 Dec 2019 11:43:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=o7z4AAJInIfL4gKaAcpTvAYmbfUd91xXg4CQ5NXh6Hg=; b=OED4IyTy85CwKHHNf0I7M/htk
+        ZcAmjZQ2PN8ctAtF5U3bxprBSyCP1/Ws5Sd8k0RBVgnjH8CNJ+tJfCw1qL7Q2lLwumHxG7znkiJS0
+        jrz40dFgvwUhsxDK2lfVpE7NtFFAetEy7i4mO4jc0VwvvhXBFnmnFYsHzqA/FEB6LB0i7VNAn8y/V
+        0ibtIKPh3Kz+SUCQhEt/bm7GBLKj3uj5/9D7JkaRk6xvPEwvZNG52wA2H/uCfyraGrlch3xNJg9tM
+        izxfVqqAuBibVLb6OtrUf0hDjACxt/sBvLp3hltyVxoaKAvMbuR7/rX//nWENHnpApRa/6rJ0X3n8
+        akQQTqmcA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ibon7-0001jT-B7; Mon, 02 Dec 2019 16:43:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0A9F83011DD;
+        Mon,  2 Dec 2019 17:41:58 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EC849201DD686; Mon,  2 Dec 2019 17:43:13 +0100 (CET)
+Date:   Mon, 2 Dec 2019 17:43:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, kan.liang@linux.intel.com,
+        mingo@redhat.com, acme@kernel.org, tglx@linutronix.de,
+        bp@alien8.de, linux-kernel@vger.kernel.org, eranian@google.com,
+        vitaly.slobodskoy@intel.com
+Subject: Re: [RFC PATCH 3/8] perf: Init/fini PMU specific data
+Message-ID: <20191202164313.GM2844@hirez.programming.kicks-ass.net>
+References: <1574954071-6321-1-git-send-email-kan.liang@linux.intel.com>
+ <1574954071-6321-3-git-send-email-kan.liang@linux.intel.com>
+ <20191202124055.GC2827@hirez.programming.kicks-ass.net>
+ <20191202145957.GM84886@tassilo.jf.intel.com>
+ <79138ea7-2249-b7e0-3541-8569e593c6e8@linux.intel.com>
 MIME-Version: 1.0
-References: <20191127141544.4277-1-leo.yan@linaro.org> <20191127141544.4277-3-leo.yan@linaro.org>
-In-Reply-To: <20191127141544.4277-3-leo.yan@linaro.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Mon, 2 Dec 2019 09:40:55 -0700
-Message-ID: <CAOCk7NqZmBYN4tY0_V8xzvBfWShDCP8gTa60Aoc78wK2tXx=6A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] tty: serial: msm_serial: Fix deadlock caused by
- recursive output
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79138ea7-2249-b7e0-3541-8569e593c6e8@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 7:16 AM Leo Yan <leo.yan@linaro.org> wrote:
->
-> The uart driver might run into deadlock caused by recursive output; the
-> basic flow is after uart driver has acquired the port spinlock, then it
-> invokes some functions, e.g. dma engine operations and allocate dma
-> descriptor with kzalloc(), if the system has very less free memory, the
-> kernel will give out warning by printing logs, thus recursive output
-> will happen and at the second time the attempting to acquire lock will
-> cause deadlock.  The detailed flow is shown as below:
->
->   msm_uart_irq()
->     spin_lock_irqsave(&port->lock, flags)  => First time to acquire lock
->     msm_handle_tx(port)
->       msm_handle_tx_dma()
->         dmaengine_prep_slave_single()
->           bam_prep_slave_sg()
->             kzalloc()
->                __kmalloc()
->                  ___slab_alloc()
->                    alloc_pages_current()
->                      __alloc_pages_nodemask()
->                        warn_alloc()
->                          printk()
->                            msm_console_write()
->                              __msm_console_write()
->                                spin_lock(&port->lock) => Cause deadlock
->
-> This patch fixes the deadlock issue for recursive output; it adds a
-> variable 'curr_user' to indicate the uart port is used by which CPU, if
-> the CPU has acquired spinlock and wants to execute recursive output,
-> it will directly bail out.  Here we don't choose to avoid locking and
-> print out log, the reason is in this case we don't want to reset the
-> uart port with function msm_reset_dm_count(); otherwise it can introduce
-> confliction with other flows and results in uart port malfunction and
-> later cannot output anymore.
+On Mon, Dec 02, 2019 at 07:38:00PM +0300, Alexey Budankov wrote:
+> 
+> On 02.12.2019 17:59, Andi Kleen wrote:
+> >>
+> >> This is atricous crap. Also it is completely broken for -RT.
+> > 
+> > Well can you please suggest how you would implement it instead?
+> 
+> FWIW,
+> An alternative could probably be to make task_ctx_data allocations
+> on the nearest context switch in, and obvious drawback is slowdown on
+> this critical path, but it could be amortized by static branches.
 
-Is this not fixable?  Sure, fixing the deadlock is an improvement, but
-dropping logs (particularly a memory warning like in your example)
-seems undesirable.
-
->
-> Fixes: 99693945013a ("tty: serial: msm: Add RX DMA support")
-> Fixes: 3a878c430fd6 ("tty: serial: msm: Add TX DMA support")
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  drivers/tty/serial/msm_serial.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-> index 889538182e83..06076cd2948f 100644
-> --- a/drivers/tty/serial/msm_serial.c
-> +++ b/drivers/tty/serial/msm_serial.c
-> @@ -182,6 +182,7 @@ struct msm_port {
->         bool                    break_detected;
->         struct msm_dma          tx_dma;
->         struct msm_dma          rx_dma;
-> +       struct cpumask          curr_user;
->  };
->
->  #define UART_TO_MSM(uart_port) container_of(uart_port, struct msm_port, uart)
-> @@ -436,6 +437,7 @@ static void msm_complete_tx_dma(void *args)
->         u32 val;
->
->         spin_lock_irqsave(&port->lock, flags);
-> +       cpumask_set_cpu(smp_processor_id(), &msm_port->curr_user);
->
->         /* Already stopped */
->         if (!dma->count)
-> @@ -470,6 +472,7 @@ static void msm_complete_tx_dma(void *args)
->
->         msm_handle_tx(port);
->  done:
-> +       cpumask_clear_cpu(smp_processor_id(), &msm_port->curr_user);
->         spin_unlock_irqrestore(&port->lock, flags);
->  }
->
-> @@ -544,6 +547,7 @@ static void msm_complete_rx_dma(void *args)
->         u32 val;
->
->         spin_lock_irqsave(&port->lock, flags);
-> +       cpumask_set_cpu(smp_processor_id(), &msm_port->curr_user);
->
->         /* Already stopped */
->         if (!dma->count)
-> @@ -590,6 +594,7 @@ static void msm_complete_rx_dma(void *args)
->
->         msm_start_rx_dma(msm_port);
->  done:
-> +       cpumask_clear_cpu(smp_processor_id(), &msm_port->curr_user);
->         spin_unlock_irqrestore(&port->lock, flags);
->
->         if (count)
-> @@ -931,6 +936,7 @@ static irqreturn_t msm_uart_irq(int irq, void *dev_id)
->         u32 val;
->
->         spin_lock_irqsave(&port->lock, flags);
-> +       cpumask_set_cpu(smp_processor_id(), &msm_port->curr_user);
->         misr = msm_read(port, UART_MISR);
->         msm_write(port, 0, UART_IMR); /* disable interrupt */
->
-> @@ -962,6 +968,7 @@ static irqreturn_t msm_uart_irq(int irq, void *dev_id)
->                 msm_handle_delta_cts(port);
->
->         msm_write(port, msm_port->imr, UART_IMR); /* restore interrupt */
-> +       cpumask_clear_cpu(smp_processor_id(), &msm_port->curr_user);
->         spin_unlock_irqrestore(&port->lock, flags);
->
->         return IRQ_HANDLED;
-> @@ -1572,6 +1579,7 @@ static inline struct uart_port *msm_get_port_from_line(unsigned int line)
->  static void __msm_console_write(struct uart_port *port, const char *s,
->                                 unsigned int count, bool is_uartdm)
->  {
-> +       struct msm_port *msm_port = UART_TO_MSM(port);
->         int i;
->         int num_newlines = 0;
->         bool replaced = false;
-> @@ -1593,6 +1601,8 @@ static void __msm_console_write(struct uart_port *port, const char *s,
->                 locked = 0;
->         else if (oops_in_progress)
->                 locked = spin_trylock(&port->lock);
-> +       else if (cpumask_test_cpu(smp_processor_id(), &msm_port->curr_user))
-> +               return;
->         else
->                 spin_lock(&port->lock);
->
-> --
-> 2.17.1
->
+Context switch is under a raw_spinlock_t too.
