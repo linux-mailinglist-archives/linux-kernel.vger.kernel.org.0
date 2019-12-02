@@ -2,194 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EE710E589
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 06:43:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB6910E5A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 06:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbfLBFn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 00:43:28 -0500
-Received: from mail-eopbgr20062.outbound.protection.outlook.com ([40.107.2.62]:53134
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725807AbfLBFn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 00:43:28 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dcO9+ZGNEmSIcisQ5xSS3PhebMGsNw5Wbdtp7pUtpEDoEXYnbuf4b8a1GzVMJKr/bvQHgjmReoFRFUrMmAmEbpzGnR90pKvp0iZIma2hnjhIzt7f+i18t7BU5bOkTrr7Dilo4DdpfGSCeA75EkNGifEb8gHDvpe0ZX+n6/higM5E0VEJ1PDvTOEsA8u5KN27wHrtIqgu99GXb1SQ6FnnoP5sZsEM0jOFscF8qaapfrMaUKweGD7Iy/fr3FAnSGjccCQ271oU6WFFQBrn+Jb4Owq/kKctwfQaOg+G9Heil77TycL29edVGo26LiTXgasE0QMn4oVK6iOnnY4oggpStg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s0mGa9R5++e7rDSKn6rr1bc75KdorayaimobJ7+6+Ug=;
- b=cgXEZmGP5l9xuKiwQPPAAHYxFNVR4HDxwEUixkDaaCH6sDhjSLCjRJZ3VrPamAoa/GMA460dDJJY2UW2PgmlwPxFI1t84YHbMpxONsHr8KnAW98rKZ5zA6ibHPCeDZS6ohETKOD8QR/k5GAWLb5iPvA96pmxe9BKGLqu9YB6VBiBHcACoK2ERjbCQgH/tJTyWcz60fNyEywqu68arRCqgZxhNzJCcZaAyiAO0JBIPOYkovZlvHb2sMR0Opfx74FVVKzBCzitH3eMK65h5jTHFbJU+IVGheRyUEY0OITaH4w4wfxDHNzE8kwu+M0U92SHfekd/SasxrA/VnmcqOVEag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s0mGa9R5++e7rDSKn6rr1bc75KdorayaimobJ7+6+Ug=;
- b=rQinLrZ4doCMFz+52/rilIABPn6Lv7n3EfEU9BGRmnYM8kZCjuCI4QX3s9vXB579vhB9rfUepBg0glXWY1UBgTmVmh5BZZXEcfJ+DIT+ww99Vcq10PQGhZkv9KSfEa0CRfZHLVOV7YvdB3sqjEaruAY3WlX7/GFAXnu2vRK5RJk=
-Received: from AM0PR0402MB3556.eurprd04.prod.outlook.com (52.133.43.147) by
- AM0PR0402MB3569.eurprd04.prod.outlook.com (52.133.44.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.18; Mon, 2 Dec 2019 05:43:20 +0000
-Received: from AM0PR0402MB3556.eurprd04.prod.outlook.com
- ([fe80::e885:ac97:fca8:c4e]) by AM0PR0402MB3556.eurprd04.prod.outlook.com
- ([fe80::e885:ac97:fca8:c4e%3]) with mapi id 15.20.2495.014; Mon, 2 Dec 2019
- 05:43:20 +0000
-From:   Kuldeep Singh <kuldeep.singh@nxp.com>
-To:     Michael Walle <michael@walle.cc>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [EXT] [PATCH 3/4] arm64: dts: ls1028a: add FlexSPI node
-Thread-Topic: [EXT] [PATCH 3/4] arm64: dts: ls1028a: add FlexSPI node
-Thread-Index: AQHVojp/XO5z0jeXk0+aNgRvimpOIKedAjswgAA8FYCACSO5MA==
-Date:   Mon, 2 Dec 2019 05:43:20 +0000
-Message-ID: <AM0PR0402MB35568D79CBFDC28B32561085E0430@AM0PR0402MB3556.eurprd04.prod.outlook.com>
-References: <20191123201317.25861-1-michael@walle.cc>
- <20191123201317.25861-4-michael@walle.cc>
- <AM0PR0402MB3556804FB47D182173C6A7AAE0450@AM0PR0402MB3556.eurprd04.prod.outlook.com>
- <afde04b888418e9e4f4fdb946a579e70@walle.cc>
-In-Reply-To: <afde04b888418e9e4f4fdb946a579e70@walle.cc>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kuldeep.singh@nxp.com; 
-x-originating-ip: [92.120.1.70]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7481655d-b4ca-4a14-3752-08d776ea89d2
-x-ms-traffictypediagnostic: AM0PR0402MB3569:|AM0PR0402MB3569:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR0402MB3569AB53833C5DAC733B3F98E0430@AM0PR0402MB3569.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2582;
-x-forefront-prvs: 0239D46DB6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(366004)(376002)(346002)(13464003)(199004)(189003)(5660300002)(966005)(54906003)(229853002)(4326008)(6436002)(66066001)(81166006)(8936002)(11346002)(52536014)(102836004)(186003)(26005)(6506007)(53546011)(76176011)(7696005)(14444005)(256004)(44832011)(71200400001)(71190400001)(76116006)(66946007)(66476007)(66556008)(64756008)(66446008)(14454004)(6246003)(55016002)(6116002)(3846002)(4001150100001)(446003)(86362001)(99286004)(316002)(7736002)(33656002)(6916009)(8676002)(81156014)(74316002)(305945005)(9686003)(6306002)(2906002)(25786009)(478600001)(45080400002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3569;H:AM0PR0402MB3556.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: HgZdN5DE93MNvR3HO7CWqjsg1vxfhfplcYB/48z9mro+3EgBR531KekG+cSy+G/pLR0hBagZhJv5sn2Lkwb7Vj8KssPYXZSWL+zS59c3sO+vSBYM8WGCMsgn9deZZOlfcaS/1tvTztfaTQyVNkKwnfH0ZbswDyyBJQH64utckWNlbYstLjLA43DEHflod3iJieZVne/y79SNSArKgfhxsvQkvcS+7fzvTJ7H++HHBOp7uCtsoFZkqqe2hF2QseKHPyN1ft4Rtx2gRkT0/OJPXf0bhNB/iSitnSZivzaPeUgK9TEk7Otd0HVYA4AAzdcnttWFFq9RBv2UM68axdfemsKOnnop2FANfzigbeSm6Ae/KBCf70ofP2rgdiRQAXYb3kWe7j4q7JeYTFy2+tF2/T8GseGX3MmvzOkX9EeNRcDQuLQ5Zke1uSP0cdpZ2B6g
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726678AbfLBF4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 00:56:01 -0500
+Received: from forward101o.mail.yandex.net ([37.140.190.181]:60330 "EHLO
+        forward101o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725807AbfLBF4A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 00:56:00 -0500
+X-Greylist: delayed 457 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Dec 2019 00:55:59 EST
+Received: from mxback6g.mail.yandex.net (mxback6g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:167])
+        by forward101o.mail.yandex.net (Yandex) with ESMTP id 65B1C3C01542
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Dec 2019 08:48:20 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback6g.mail.yandex.net (mxback/Yandex) with ESMTP id IQ5QdJVuvV-mJpGjn6w;
+        Mon, 02 Dec 2019 08:48:19 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1575265699;
+        bh=us1Vgl2QP5y+xIT14PqHmlP89+YLWUAfmbs9aThDLW8=;
+        h=Message-Id:Date:Subject:To:From;
+        b=ss8XNjE0WBNkzRYQBh5iBelDp3yWhKoJl7hMZPz3Y+ehC207Ze4gTsHzzHM/Apg0d
+         ItLe7M3Add4nndixH8CQX+Sq3qm7SqBKvHubc3BGFDbQsTgx3upFotOmxqrdi1O7TC
+         HMuN4ZwpUwdB12JOa+pI57qnzsD54tU1UxTToJu0=
+Authentication-Results: mxback6g.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by sas1-2bf44b70450e.qloud-c.yandex.net with HTTP;
+        Mon, 02 Dec 2019 08:48:19 +0300
+From:   Andrey Ponomarenko <andrewponomarenko@yandex.ru>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Linux Hardware Trends
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7481655d-b4ca-4a14-3752-08d776ea89d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2019 05:43:20.2215
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3ET/WXoyKIE3NktYwSfIxn3AG+RLmv8V8jE7Go88XrhzilqS7QYNxXGZyb5YEgQCVuPHk8Sn4ohPqVdccqc5rQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3569
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Mon, 02 Dec 2019 08:48:19 +0300
+Message-Id: <3476391575265699@sas1-2bf44b70450e.qloud-c.yandex.net>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello all,
 
-> -----Original Message-----
-> From: Michael Walle <michael@walle.cc>
-> Sent: Tuesday, November 26, 2019 3:38 PM
-> To: Kuldeep Singh <kuldeep.singh@nxp.com>
-> Cc: linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Shawn Guo <shawnguo@kernel.org>; Leo Li
-> <leoyang.li@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark Rutland
-> <mark.rutland@arm.com>
-> Subject: Re: [EXT] [PATCH 3/4] arm64: dts: ls1028a: add FlexSPI node
->=20
-> Caution: EXT Email
->=20
-> Hi Kuldeep,
->=20
-> Am 2019-11-26 07:40, schrieb Kuldeep Singh:
-> > Hi Michael,
-> >
-> >> -----Original Message-----
-> >> From: devicetree-owner@vger.kernel.org
-> >> <devicetree-owner@vger.kernel.org>
-> >> On Behalf Of Michael Walle
-> >> Sent: Sunday, November 24, 2019 1:43 AM
-> >> To: linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> >> linux-
-> >> kernel@vger.kernel.org
-> >> Cc: Shawn Guo <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>;
-> Rob
-> >> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
-> >> Michael Walle <michael@walle.cc>
-> >> Subject: [EXT] [PATCH 3/4] arm64: dts: ls1028a: add FlexSPI node
-> >
-> > There's already a patch[1] sent upstream and is under review.
-> > It includes dts(i) entries for LS1028. I will be sending the next
-> > version
->=20
-> I've seen that, but there wasn't any reply for almost two months now.
-> But
-> if you're sending your next version, this patch can be dropped from this
-> series.
+Today I'm glad to announce a new statistical analysis project called "Trends in Hardware" based on the data collected by Linux community during last 5 years on the Linux Hardware portal: https://linux-hardware.org/?view=trends
 
-Okay.
+With the help of the report one can identify most popular hardware characteristics and track their change over time.
 
---Kuldeep
->=20
-> -michael
->=20
-> >
-> > [1]
-> >
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpatc
-> >
-> hwork.kernel.org%2Fpatch%2F11139365%2F&amp;data=3D02%7C01%7Ckuld
-> eep.sing
-> >
-> h%40nxp.com%7C327363e5ba97483c9add08d77258875d%7C686ea1d3bc2
-> b4c6fa92cd
-> >
-> 99c5c301635%7C0%7C0%7C637103596868168346&amp;sdata=3DyDJ1ggrIuR
-> v1%2Br%2F
-> > 9Ez1uvv0EpFB8Mns5%2Ffn%2F7zG5InA%3D&amp;reserved=3D0
-> >>
-> >> Caution: EXT Email
-> >>
-> >> Signed-off-by: Michael Walle <michael@walle.cc>
-> >> ---
-> >>  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 13 +++++++++++++
-> >>  1 file changed, 13 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >> b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >> index 6730922c2d47..650b277ddd66 100644
-> >> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> >> @@ -260,6 +260,19 @@
-> >>                         status =3D "disabled";
-> >>                 };
-> >>
-> >> +               fspi: spi@20c0000 {
-> >> +                       compatible =3D "nxp,lx2160a-fspi";
-> >> +                       #address-cells =3D <1>;
-> >> +                       #size-cells =3D <0>;
-> >> +                       reg =3D <0x0 0x20c0000 0x0 0x10000>,
-> >> +                             <0x0 0x20000000 0x0 0x10000000>;
-> >> +                       reg-names =3D "fspi_base", "fspi_mmap";
-> >> +                       interrupts =3D <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH=
->;
-> >> +                       clocks =3D <&clockgen 4 3>, <&clockgen 4 3>;
-> >> +                       clock-names =3D "fspi_en", "fspi";
-> >> +                       status =3D "disabled";
-> >> +               };
-> >> +
-> >>                 esdhc: mmc@2140000 {
-> >>                         compatible =3D "fsl,ls1028a-esdhc", "fsl,esdhc=
-";
-> >>                         reg =3D <0x0 0x2140000 0x0 0x10000>;
-> >> --
-> >> 2.20.1
-> >
-> > Regards
-> > Kuldeep
+The report consists of 8 sections currently: OS properties (kernel, arch, DE, boot mode, etc.), Motherboard (model, kind, mfg year, etc.), Hard drives (model, kind, size, failures, etc.), CPU (model, microarch, etc.), Video cards (model, combinations, etc.), Monitors (model, resolution, aspect ratio, density, etc.), Network (controller, kind, usage, etc.) and Compatibility (device driver support).
+
+In each section one can find a pie chart of most popular values and can click on any element to see detailed list of computers and hardware probes. Be careful when interpreting timeline charts, since they interfere with the overall growth of the project popularity (make attention to change in ratio, rather than growth). The project can be considered also as a powerful search engine to find Linux powered computers with interested characteristics.
+
+Most active participants in the study currently are Ubuntu, Rosa, Mint, Endless, Fedora, Arch, Manjaro, Debian, Zorin, openSUSE, KDE neon, Clear Linux and Gentoo. For top distributions in this list one can find most accurate results. Other distributions are also involved in the survey, but with small (inaccurate) data sets yet. However, the total contribution of "small" Linux distributions in "All Linux" survey is significant.
+
+The static version of the report is shared on the Github: https://github.com/linuxhw/Trends
+
+Please suggest new hardware/OS characteristics to track in the project if you are interested and please participate in the study by following instructions on https://github.com/linuxhw/hw-probe.
+
+Thanks!
