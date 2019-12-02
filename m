@@ -2,101 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5038E10F2BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 23:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D6210F2E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 23:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfLBWRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 17:17:10 -0500
-Received: from mga11.intel.com ([192.55.52.93]:59081 "EHLO mga11.intel.com"
+        id S1726179AbfLBW3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 17:29:22 -0500
+Received: from mga09.intel.com ([134.134.136.24]:41070 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbfLBWRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 17:17:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725834AbfLBW3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 17:29:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 14:17:09 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 14:29:21 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="410596616"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga005.fm.intel.com with ESMTP; 02 Dec 2019 14:17:07 -0800
-Date:   Mon, 2 Dec 2019 14:29:02 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v2 2/4] xen-pcifront: Align address of flags to size of
- unsigned long
-Message-ID: <20191202222902.GB220960@romley-ivt3.sc.intel.com>
-References: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
- <1574710984-208305-3-git-send-email-fenghua.yu@intel.com>
- <e236e8fe-3a81-e17a-2286-228bfde9919a@suse.com>
+   d="scan'208";a="218464248"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Dec 2019 14:29:21 -0800
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.121]) by
+ ORSMSX102.amr.corp.intel.com ([169.254.3.246]) with mapi id 14.03.0439.000;
+ Mon, 2 Dec 2019 14:29:20 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>
+CC:     "Yu, Fenghua" <fenghua.yu@intel.com>
+Subject: RE: [PATCH] ia64: remove stale paravirt leftovers
+Thread-Topic: [PATCH] ia64: remove stale paravirt leftovers
+Thread-Index: AQHVh/bwVpusAEgcQUWj23hoyWR/g6ea4/AAgAzLYiA=
+Date:   Mon, 2 Dec 2019 22:29:20 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7F4E7C10@ORSMSX115.amr.corp.intel.com>
+References: <20191021100415.7642-1-jgross@suse.com>
+ <5724dc57-2e1c-7ff4-c8df-758840aeae81@suse.com>
+In-Reply-To: <5724dc57-2e1c-7ff4-c8df-758840aeae81@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOGM5YmJiZTctNjZiOC00OWIxLTkwYzEtYjAyM2U1YTMyMjM3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZ1o5RnlzVmtnbVBuU20zblhjUkFhdnNsSVRFeGZDQUFsZzB4M1dIdlNjeUxNWGROOFFPQ1h1MlFSODA1ODI5eiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e236e8fe-3a81-e17a-2286-228bfde9919a@suse.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 11:02:13AM +0100, Jürgen Groß wrote:
-> On 25.11.19 20:43, Fenghua Yu wrote:
-> >The address of "flags" is passed to atomic bitops which require the 
-> >address is aligned to size of unsigned long.
-> >
-> >Signed-off-by: Fenghua Yu <fenghua.yu@intel.com> ---
-> >  include/xen/interface/io/pciif.h | 7 +++++-- 1 file changed, 5 
-> >  insertions(+), 2 deletions(-)
-> >
-> >diff --git a/include/xen/interface/io/pciif.h 
-> >b/include/xen/interface/io/pciif.h index d9922ae36eb5..639d5fb484a3 
-> >100644 --- a/include/xen/interface/io/pciif.h +++ 
-> >b/include/xen/interface/io/pciif.h @@ -103,8 +103,11 @@ struct 
-> >xen_pcie_aer_op {
-> >  	uint32_t devfn;
-> >  };
-> >  struct xen_pci_sharedinfo { - /* flags - XEN_PCIF_* */ - uint32_t 
-> >flags; + /* flags - XEN_PCIF_*. Force alignment for atomic bit 
-> >operations. */ + union { + uint32_t flags; + unsigned long 
-> >flags_alignment; + };
-> >  	struct xen_pci_op op; struct xen_pcie_aer_op aer_op;
-> >  };
-> >
-> 
-> NAK.
-> 
-> This is an interface definition for communication between Xen dom0 and 
-> guests via shared memory. It can't be changed.
-> 
-> BTW: you should Cc: the maintainers for the files you are modifying.
-> 
-> 
-> Juergen
-
-After spending more time on the patch, actually I find this patch is not 
-needed because there is no split lock issue on the "flags" field:
-
-The bit offsets in all atomic bitops on the "flags" field are always 
-constant values. On x86, an atomic bitop is optimized to use a locked byte
-instruciton which only operates the byte containing the bit. So the
-byte won't across cache line boundaries and there won't be split lock
-issue in the atomic bitops
-
-I will remove this patch in the next version of the patch set.
-
-Thanks.
-
--Fenghua
-
+PiBQaW5nPw0KDQo+IE9uIDIxLjEwLjE5IDEyOjA0LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPiA+
+IFJlbW92ZSB0aGUgbGFzdCBsZWZ0b3ZlcnMgZnJvbSBJQTY0IFhlbiBwdi1ndWVzdCBzdXBwb3J0
+Lg0KPiA+IA0KPiA+IFBBUkFWSVJUIGlzIGxvbmcgZ29uZSBmcm9tIElBNjQgS2NvbmZpZyBhbmQg
+WGVuIElBNjQgc3VwcG9ydCwgdG9vLg0KPiA+IA0KPiA+IER1ZSB0byBsYWNrIG9mIGluZnJhc3Ry
+dWN0dXJlIG5vIHRlc3RpbmcgZG9uZS4NCg0KU29ycnkuIEZvciB0aGUgZGVsYXkuICBJIHBpY2tl
+ZCB0aGlzIHVwIGFuZCBpdCBidWlsZHMgb24gYWxsIG15DQp0ZXN0IGNvbmZpZ3VyYXRpb25zLiAg
+Qm9vdHMgb24gbXkgdGVzdCBtYWNoaW5lIHRvby4NCg0KV2lsbCBwdXNoIHRvIExpbnVzIHNvb24u
+DQoNCi1Ub255DQo=
