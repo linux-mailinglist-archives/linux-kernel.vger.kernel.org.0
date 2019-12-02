@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB3610EF3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BAC10EF18
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfLBSXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:23:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35906 "EHLO mx1.suse.de"
+        id S1727949AbfLBSWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:22:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35922 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727858AbfLBSWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727860AbfLBSWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Dec 2019 13:22:15 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC072AE53;
-        Mon,  2 Dec 2019 18:22:13 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 31659AD75;
+        Mon,  2 Dec 2019 18:22:14 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -22,9 +22,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         James Tai <james.tai@realtek.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 01/14] ARM: dts: rtd1195: Introduce iso and misc syscon
-Date:   Mon,  2 Dec 2019 19:21:51 +0100
-Message-Id: <20191202182205.14629-2-afaerber@suse.de>
+Subject: [PATCH 02/14] arm64: dts: realtek: rtd129x: Introduce CRT, iso and misc syscon
+Date:   Mon,  2 Dec 2019 19:21:52 +0100
+Message-Id: <20191202182205.14629-3-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191202182205.14629-1-afaerber@suse.de>
 References: <20191202182205.14629-1-afaerber@suse.de>
@@ -36,23 +36,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Group watchdog and UART0 into an Isolation syscon mfd node.
-Group UART1 into a Miscellaneous syscon mfd node.
+Group the non-iso reset controller nodes in a CRT syscon mfd node.
+Group reset controller, watchdog and UART0 in an Isolation syscon mfd node.
+Group UART1 and UART2 into a Miscellaneous syscon mfd node.
 
 Cc: James Tai <james.tai@realtek.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- arch/arm/boot/dts/rtd1195.dtsi | 58 +++++++++++++++++++++++++++++-------------
- 1 file changed, 40 insertions(+), 18 deletions(-)
+ arch/arm64/boot/dts/realtek/rtd129x.dtsi | 147 +++++++++++++++++++------------
+ 1 file changed, 90 insertions(+), 57 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.dtsi
-index a8f7b9caacba..a74f530dc439 100644
---- a/arch/arm/boot/dts/rtd1195.dtsi
-+++ b/arch/arm/boot/dts/rtd1195.dtsi
-@@ -100,28 +100,22 @@
+diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
+index 0de9e675be16..34dc09790d0b 100644
+--- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
+@@ -63,70 +63,31 @@
  			#size-cells = <1>;
- 			ranges = <0x0 0x18000000 0x70000>;
+ 			ranges = <0x0 0x98000000 0x200000>;
  
+-			reset1: reset-controller@0 {
+-				compatible = "snps,dw-low-reset";
+-				reg = <0x0 0x4>;
+-				#reset-cells = <1>;
+-			};
+-
+-			reset2: reset-controller@4 {
+-				compatible = "snps,dw-low-reset";
+-				reg = <0x4 0x4>;
+-				#reset-cells = <1>;
+-			};
+-
+-			reset3: reset-controller@8 {
+-				compatible = "snps,dw-low-reset";
+-				reg = <0x8 0x4>;
+-				#reset-cells = <1>;
+-			};
+-
+-			reset4: reset-controller@50 {
+-				compatible = "snps,dw-low-reset";
+-				reg = <0x50 0x4>;
+-				#reset-cells = <1>;
+-			};
+-
+-			iso_reset: reset-controller@7088 {
+-				compatible = "snps,dw-low-reset";
+-				reg = <0x7088 0x4>;
+-				#reset-cells = <1>;
+-			};
+-
 -			wdt: watchdog@7680 {
 -				compatible = "realtek,rtd1295-watchdog";
 -				reg = <0x7680 0x100>;
@@ -63,26 +94,44 @@ index a8f7b9caacba..a74f530dc439 100644
 -				compatible = "snps,dw-apb-uart";
 -				reg = <0x7800 0x400>;
 -				reg-shift = <2>;
-+			iso: syscon@7000 {
++			crt: syscon@0 {
 +				compatible = "syscon", "simple-mfd";
-+				reg = <0x7000 0x1000>;
++				reg = <0x0 0x1800>;
  				reg-io-width = <4>;
 -				clock-frequency = <27000000>;
+-				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
 -				status = "disabled";
 +				#address-cells = <1>;
 +				#size-cells = <1>;
-+				ranges = <0x0 0x7000 0x1000>;
++				ranges = <0x0 0x0 0x1800>;
  			};
  
 -			uart1: serial@1b200 {
 -				compatible = "snps,dw-apb-uart";
 -				reg = <0x1b200 0x100>;
 -				reg-shift = <2>;
++			iso: syscon@7000 {
++				compatible = "syscon", "simple-mfd";
++				reg = <0x7000 0x1000>;
+ 				reg-io-width = <4>;
+-				clock-frequency = <432000000>;
+-				resets = <&reset2 RTD1295_RSTN_UR1>;
+-				status = "disabled";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0x0 0x7000 0x1000>;
+ 			};
+ 
+-			uart2: serial@1b400 {
+-				compatible = "snps,dw-apb-uart";
+-				reg = <0x1b400 0x100>;
+-				reg-shift = <2>;
 +			misc: syscon@1b000 {
 +				compatible = "syscon", "simple-mfd";
 +				reg = <0x1b000 0x1000>;
  				reg-io-width = <4>;
--				clock-frequency = <27000000>;
+-				clock-frequency = <432000000>;
+-				resets = <&reset2 RTD1295_RSTN_UR2>;
 -				status = "disabled";
 +				#address-cells = <1>;
 +				#size-cells = <1>;
@@ -90,12 +139,44 @@ index a8f7b9caacba..a74f530dc439 100644
  			};
  		};
  
-@@ -137,3 +131,31 @@
+@@ -142,3 +103,75 @@
  		};
  	};
  };
 +
++&crt {
++	reset1: reset-controller@0 {
++		compatible = "snps,dw-low-reset";
++		reg = <0x0 0x4>;
++		#reset-cells = <1>;
++	};
++
++	reset2: reset-controller@4 {
++		compatible = "snps,dw-low-reset";
++		reg = <0x4 0x4>;
++		#reset-cells = <1>;
++	};
++
++	reset3: reset-controller@8 {
++		compatible = "snps,dw-low-reset";
++		reg = <0x8 0x4>;
++		#reset-cells = <1>;
++	};
++
++	reset4: reset-controller@50 {
++		compatible = "snps,dw-low-reset";
++		reg = <0x50 0x4>;
++		#reset-cells = <1>;
++	};
++};
++
 +&iso {
++	iso_reset: reset-controller@88 {
++		compatible = "snps,dw-low-reset";
++		reg = <0x88 0x4>;
++		#reset-cells = <1>;
++	};
++
 +	wdt: watchdog@680 {
 +		compatible = "realtek,rtd1295-watchdog";
 +		reg = <0x680 0x100>;
@@ -108,6 +189,7 @@ index a8f7b9caacba..a74f530dc439 100644
 +		reg-shift = <2>;
 +		reg-io-width = <4>;
 +		clock-frequency = <27000000>;
++		resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
 +		status = "disabled";
 +	};
 +};
@@ -118,7 +200,18 @@ index a8f7b9caacba..a74f530dc439 100644
 +		reg = <0x200 0x100>;
 +		reg-shift = <2>;
 +		reg-io-width = <4>;
-+		clock-frequency = <27000000>;
++		clock-frequency = <432000000>;
++		resets = <&reset2 RTD1295_RSTN_UR1>;
++		status = "disabled";
++	};
++
++	uart2: serial@400 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x400 0x100>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clock-frequency = <432000000>;
++		resets = <&reset2 RTD1295_RSTN_UR2>;
 +		status = "disabled";
 +	};
 +};
