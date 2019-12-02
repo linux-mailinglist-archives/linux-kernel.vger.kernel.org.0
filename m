@@ -2,223 +2,332 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42E2D10E7F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 10:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F0D10E803
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 10:55:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbfLBJwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 04:52:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40927 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726087AbfLBJwE (ORCPT
+        id S1727385AbfLBJzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 04:55:12 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46565 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfLBJzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 04:52:04 -0500
-X-UUID: 91d653f0e2f1494d8d57a05a08e14123-20191202
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=A3ws5GGEKRqOLU1wWYe6/80BETyiRzq/ioApqkBTwMQ=;
-        b=fKz+uUWsCOHubUK9lTVtj1V2zlUFFikeTk8Qc8JTkfCREj+t1xy57G2HlCF7fhe1r2GylP62S8/ru+Xc0qTGGhUtCOug1OfMI6nqoHlpbdKWbWq8wSexQVkM6hyZqN5vstNEk1QYWXFNDS0rcOfwlQ4rWgPQBlmRtGscUhseIck=;
-X-UUID: 91d653f0e2f1494d8d57a05a08e14123-20191202
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 841850476; Mon, 02 Dec 2019 17:51:55 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 2 Dec 2019 17:51:49 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 2 Dec 2019 17:51:37 +0800
-Message-ID: <1575280313.19176.1.camel@mtksdaap41>
-Subject: Re: [PATCH v1 4/6] drm/mediatek: update cursors by using async
- atomic update
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Mon, 2 Dec 2019 17:51:53 +0800
-In-Reply-To: <20191128024238.9399-5-bibby.hsieh@mediatek.com>
-References: <20191128024238.9399-1-bibby.hsieh@mediatek.com>
-         <20191128024238.9399-5-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 2 Dec 2019 04:55:12 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1ibiQ9-00037w-Qs; Mon, 02 Dec 2019 10:55:09 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1ibiQ9-0002FL-5L; Mon, 02 Dec 2019 10:55:09 +0100
+Date:   Mon, 2 Dec 2019 10:55:09 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Biwen Li <biwen.li@nxp.com>
+Cc:     shawnguo@kernel.org, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, wsa@the-dreams.de, leoyang.li@nxp.com,
+        aisheng.dong@nxp.com, xiaoning.wang@nxp.com,
+        o.rempel@pengutronix.de, xiaobo.xie@nxp.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        jiafei.pan@nxp.com, linux-arm-kernel@lists.infradead.org,
+        laurentiu.tudor@nxp.com
+Subject: Re: [v5] i2c: imx: support slave mode for imx I2C driver
+Message-ID: <20191202095509.ynxq2dyri36i2fwk@pengutronix.de>
+References: <20191129090513.2150-1-biwen.li@nxp.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191129090513.2150-1-biwen.li@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:17:41 up 147 days, 15:27, 130 users,  load average: 0.08, 0.17,
+ 0.24
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpIaSwgQmliYnk6DQoNCk9uIFRodSwgMjAxOS0xMS0yOCBhdCAxMDo0MiArMDgwMCwgQmliYnkg
-SHNpZWggd3JvdGU6DQo+IFN1cHBvcnQgdG8gYXN5bmMgdXBkYXRlcyBvZiBjdXJzb3JzIGJ5IHVz
-aW5nIHRoZSBuZXcgYXRvbWljDQo+IGludGVyZmFjZSBmb3IgdGhhdC4NCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IEJpYmJ5IEhzaWVoIDxiaWJieS5oc2llaEBtZWRpYXRlay5jb20+DQo+IC0tLQ0KPiAg
-ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jICB8IDM1ICsrKysrKysrKysr
-KysrKysrDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmggIHwgIDIg
-Kw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMgICB8IDIyICsrKysr
-KysrKystDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuaCAgIHwgIDIg
-Kw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxhbmUuYyB8IDUwICsrKysr
-KysrKysrKysrKysrKysrKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
-cGxhbmUuaCB8ICAyICsNCj4gIDYgZmlsZXMgY2hhbmdlZCwgMTEyIGluc2VydGlvbnMoKyksIDEg
-ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsv
-bXRrX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMN
-Cj4gaW5kZXggY2I4N2E1MzhiOGZmLi5iMjZiN2E5ODU4N2IgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9k
-cm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gQEAgLTQyMiw2ICs0MjIsNDEgQEAgaW50IG10
-a19kcm1fY3J0Y19wbGFuZV9jaGVjayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVjdCBkcm1f
-cGxhbmUgKnBsYW5lLA0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiAgDQo+ICt2b2lkIG10a19kcm1f
-Y3J0Y19jdXJzb3JfdXBkYXRlKHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywgc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUsDQo+ICsJCQkJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqbmV3X3N0YXRlKQ0KDQpJ
-IGRvIG5vdCBsaWtlIHRvIHVzZSAnY3Vyc29yJyBmb3IgbmFtaW5nLiBUaGUgYXN5bmMgZnVuY3Rp
-b24gbWF5IGJlIG5vdA0KanVzdCB1c2VkIGZvciBjdXJzb3IuIFRoZSBuYW1lICdhc3luYycgaXMg
-bW9yZSBnZW5lcmFsLg0KDQo+ICt7DQo+ICsJc3RydWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdiA9
-IGNydGMtPmRldi0+ZGV2X3ByaXZhdGU7DQo+ICsJc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2Ny
-dGMgPSB0b19tdGtfY3J0YyhjcnRjKTsNCj4gKwljb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBl
-cl9mdW5jcyAqcGxhbmVfaGVscGVyX2Z1bmNzID0NCj4gKwkJCXBsYW5lLT5oZWxwZXJfcHJpdmF0
-ZTsNCj4gKwlpbnQgaTsNCj4gKw0KPiArCWlmICghbXRrX2NydGMtPmVuYWJsZWQpDQo+ICsJCXJl
-dHVybjsNCj4gKw0KPiArCW11dGV4X2xvY2soJnByaXYtPmh3X2xvY2spOw0KDQpQbGVhc2UgbWFr
-ZSBzdXJlIHdoYXQgdmFyaWFibGUgeW91IHdhbnQgdG8gcHJvdGVjdCwgYW5kIG1ha2UgY3JpdGlj
-YWwNCnNlY3Rpb24gc21hbGxlci4NCg0KPiArCXBsYW5lX2hlbHBlcl9mdW5jcy0+YXRvbWljX3Vw
-ZGF0ZShwbGFuZSwgbmV3X3N0YXRlKTsNCj4gKw0KPiArCWZvciAoaSA9IDA7IGkgPCBtdGtfY3J0
-Yy0+bGF5ZXJfbnI7IGkrKykgew0KPiArCQlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSA9ICZtdGtf
-Y3J0Yy0+cGxhbmVzW2ldOw0KPiArCQlzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0
-ZTsNCj4gKw0KPiArCQlwbGFuZV9zdGF0ZSA9IHRvX210a19wbGFuZV9zdGF0ZShwbGFuZS0+c3Rh
-dGUpOw0KPiArCQlpZiAocGxhbmVfc3RhdGUtPnBlbmRpbmcuY3Vyc29yX2RpcnR5KSB7DQo+ICsJ
-CQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5jb25maWcgPSB0cnVlOw0KPiArCQkJcGxhbmVfc3RhdGUt
-PnBlbmRpbmcuY3Vyc29yX3VwZGF0ZSA9IGZhbHNlOw0KPiArCQkJcGxhbmVfc3RhdGUtPnBlbmRp
-bmcuY3Vyc29yX2RpcnR5ID0gZmFsc2U7DQo+ICsJCX0NCj4gKwl9DQo+ICsJbXRrX2NydGMtPnBl
-bmRpbmdfcGxhbmVzID0gdHJ1ZTsNCj4gKwlpZiAocHJpdi0+ZGF0YS0+c2hhZG93X3JlZ2lzdGVy
-KSB7DQo+ICsJCW10a19kaXNwX211dGV4X2FjcXVpcmUobXRrX2NydGMtPm11dGV4KTsNCj4gKwkJ
-bXRrX2NydGNfZGRwX2NvbmZpZyhjcnRjKTsNCj4gKwkJbXRrX2Rpc3BfbXV0ZXhfcmVsZWFzZSht
-dGtfY3J0Yy0+bXV0ZXgpOw0KPiArCX0NCj4gKwltdXRleF91bmxvY2soJnByaXYtPmh3X2xvY2sp
-Ow0KPiArfQ0KPiArDQo+ICBzdGF0aWMgdm9pZCBtdGtfZHJtX2NydGNfYXRvbWljX2VuYWJsZShz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsDQo+ICAJCQkJICAgICAgIHN0cnVjdCBkcm1fY3J0Y19zdGF0
-ZSAqb2xkX3N0YXRlKQ0KPiAgew0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19kcm1fY3J0Yy5oIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
-Yy5oDQo+IGluZGV4IDZhZmUxYzE5NTU3YS4uZDU3OTU4ZjBiN2I1IDEwMDY0NA0KPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmgNCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5oDQo+IEBAIC0yMSw1ICsyMSw3IEBAIGludCBt
-dGtfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LA0KPiAgCQkJdW5z
-aWduZWQgaW50IHBhdGhfbGVuKTsNCj4gIGludCBtdGtfZHJtX2NydGNfcGxhbmVfY2hlY2soc3Ry
-dWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwNCj4gIAkJCSAgICAg
-c3RydWN0IG10a19wbGFuZV9zdGF0ZSAqc3RhdGUpOw0KPiArdm9pZCBtdGtfZHJtX2NydGNfY3Vy
-c29yX3VwZGF0ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5l
-LA0KPiArCQkJCXN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnBsYW5lX3N0YXRlKTsNCj4gIA0KPiAg
-I2VuZGlmIC8qIE1US19EUk1fQ1JUQ19IICovDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
-ZHJtX2Rydi5jDQo+IGluZGV4IDE2ZTU3NzFkMTgyZS4uMGY3ZmJiNjgyOTVkIDEwMDY0NA0KPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuYw0KPiArKysgYi9kcml2
-ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuYw0KPiBAQCAtMzYsOCArMzYsMjcgQEAN
-Cj4gICNkZWZpbmUgRFJJVkVSX01BSk9SIDENCj4gICNkZWZpbmUgRFJJVkVSX01JTk9SIDANCj4g
-IA0KPiArc3RhdGljIHZvaWQNCj4gK210a19kcm1fYXRvbWljX2hlbHBlcl9jb21taXRfdGFpbF9y
-cG0oc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKm9sZF9zdGF0ZSkNCj4gK3sNCj4gKwlzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2ID0gb2xkX3N0YXRlLT5kZXY7DQo+ICsJc3RydWN0IG10a19kcm1fcHJp
-dmF0ZSAqcHJpdmF0ZSA9IGRldi0+ZGV2X3ByaXZhdGU7DQo+ICsNCj4gKwlkcm1fYXRvbWljX2hl
-bHBlcl93YWl0X2Zvcl9mZW5jZXMoZGV2LCBvbGRfc3RhdGUsIGZhbHNlKTsNCj4gKwltdXRleF9s
-b2NrKCZwcml2YXRlLT5od19sb2NrKTsNCj4gKwlkcm1fYXRvbWljX2hlbHBlcl9jb21taXRfbW9k
-ZXNldF9kaXNhYmxlcyhkZXYsIG9sZF9zdGF0ZSk7DQo+ICsJZHJtX2F0b21pY19oZWxwZXJfY29t
-bWl0X21vZGVzZXRfZW5hYmxlcyhkZXYsIG9sZF9zdGF0ZSk7DQo+ICsJZHJtX2F0b21pY19oZWxw
-ZXJfY29tbWl0X3BsYW5lcyhkZXYsIG9sZF9zdGF0ZSwNCj4gKwkJCQkJRFJNX1BMQU5FX0NPTU1J
-VF9BQ1RJVkVfT05MWSk7DQo+ICsJbXV0ZXhfdW5sb2NrKCZwcml2YXRlLT5od19sb2NrKTsNCg0K
-WW91IGltcGxlbWVudCBtdGsgdmVyc2lvbiBqdXN0IHdhbnQgdG8gYWRkIG11dGV4IHByb3RlY3Qu
-IEJ1dCBJIHRoaW5rDQp5b3Ugc2hvdWxkIG5vdCBwcm90ZWN0IGhlcmUgYmVjYXVzZSB3aGF0IHlv
-dSBzaG91bGQgcHJvdGVjdCBpcyB0aGUNCmNvbW1vbiB2YXJpYWJsZSB0b3VjaGVkIGJ5IHN5bmMg
-cGxhbmUgYW5kIGFzeW5jIHBsYW5lLiBJbg0KbXRrX2RybV9jcnRjX2N1cnNvcl91cGRhdGUoKSwg
-eW91IGFscmVhZHkga25vdyB3aGF0IGlzIHRoZSB2YXJpYWJsZSB5b3UNCm5lZWQgdG8gcHJvdGVj
-dCwgYW5kIHRoZXNlIHZhcmlhYmxlIGlzIHRvdWNoZWQgaW4NCm10a19kcm1fY3J0Y19hdG9taWNf
-Zmx1c2goKSBvciBtdGtfcGxhbmVfYXRvbWljX3VwZGF0ZSgpLCBzbyBJIHRoaW5rIHlvdQ0Kc2hv
-dWxkIGp1c3QgcHJvdGVjdCBpbnNpZGUgdGhlc2UgZnVuY3Rpb24gYW5kIG5lZWQgbm90IHRvIGlt
-cGxlbWVudCB0aGlzDQpmdW5jdGlvbi4NCg0KUmVnYXJkcywNCkNLDQoNCj4gKwlkcm1fYXRvbWlj
-X2hlbHBlcl9mYWtlX3ZibGFuayhvbGRfc3RhdGUpOw0KPiArCWRybV9hdG9taWNfaGVscGVyX2Nv
-bW1pdF9od19kb25lKG9sZF9zdGF0ZSk7DQo+ICsJZHJtX2F0b21pY19oZWxwZXJfd2FpdF9mb3Jf
-dmJsYW5rcyhkZXYsIG9sZF9zdGF0ZSk7DQo+ICsJZHJtX2F0b21pY19oZWxwZXJfY2xlYW51cF9w
-bGFuZXMoZGV2LCBvbGRfc3RhdGUpOw0KPiArfQ0KPiArDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0
-IGRybV9tb2RlX2NvbmZpZ19oZWxwZXJfZnVuY3MgbXRrX2RybV9tb2RlX2NvbmZpZ19oZWxwZXJz
-ID0gew0KPiAtCS5hdG9taWNfY29tbWl0X3RhaWwgPSBkcm1fYXRvbWljX2hlbHBlcl9jb21taXRf
-dGFpbF9ycG0sDQo+ICsJLmF0b21pY19jb21taXRfdGFpbCA9IG10a19kcm1fYXRvbWljX2hlbHBl
-cl9jb21taXRfdGFpbF9ycG0sDQo+ICB9Ow0KPiAgDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRy
-bV9tb2RlX2NvbmZpZ19mdW5jcyBtdGtfZHJtX21vZGVfY29uZmlnX2Z1bmNzID0gew0KPiBAQCAt
-MjYyLDYgKzI4MSw3IEBAIHN0YXRpYyBpbnQgbXRrX2RybV9rbXNfaW5pdChzdHJ1Y3QgZHJtX2Rl
-dmljZSAqZHJtKQ0KPiAgDQo+ICAJZHJtX2ttc19oZWxwZXJfcG9sbF9pbml0KGRybSk7DQo+ICAJ
-ZHJtX21vZGVfY29uZmlnX3Jlc2V0KGRybSk7DQo+ICsJbXV0ZXhfaW5pdCgmcHJpdmF0ZS0+aHdf
-bG9jayk7DQo+ICANCj4gIAlyZXR1cm4gMDsNCj4gIA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsv
-bXRrX2RybV9kcnYuaA0KPiBpbmRleCA5ZjRjZTYwMTc0ZjYuLmM2MWFkYWE5MjYyNiAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmgNCj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmgNCj4gQEAgLTQ4LDYgKzQ4LDgg
-QEAgc3RydWN0IG10a19kcm1fcHJpdmF0ZSB7DQo+ICAJY29uc3Qgc3RydWN0IG10a19tbXN5c19k
-cml2ZXJfZGF0YSAqZGF0YTsNCj4gIAlzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3VzcGVuZF9z
-dGF0ZTsNCj4gIA0KPiArCS8qIGxvY2sgZm9yIGRpc3BsYXkgaHcgYWNjZXNzICovDQo+ICsJc3Ry
-dWN0IG11dGV4IGh3X2xvY2s7DQo+ICAJYm9vbCBkbWFfcGFybXNfYWxsb2NhdGVkOw0KPiAgfTsN
-Cj4gIA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxh
-bmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX3BsYW5lLmMNCj4gaW5kZXgg
-Y2Q3Yzk3ZWI3ZWU2Li5kN2E4ODUzZDk0YTEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9tZWRpYXRlay9tdGtfZHJtX3BsYW5lLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19kcm1fcGxhbmUuYw0KPiBAQCAtNyw2ICs3LDcgQEANCj4gICNpbmNsdWRlIDxkcm0v
-ZHJtX2F0b21pYy5oPg0KPiAgI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX2hlbHBlci5oPg0KPiAg
-I2luY2x1ZGUgPGRybS9kcm1fZm91cmNjLmg+DQo+ICsjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNf
-dWFwaS5oPg0KPiAgI2luY2x1ZGUgPGRybS9kcm1fcGxhbmVfaGVscGVyLmg+DQo+ICAjaW5jbHVk
-ZSA8ZHJtL2RybV9nZW1fZnJhbWVidWZmZXJfaGVscGVyLmg+DQo+ICANCj4gQEAgLTcwLDYgKzcx
-LDUwIEBAIHN0YXRpYyB2b2lkIG10a19kcm1fcGxhbmVfZGVzdHJveV9zdGF0ZShzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwNCj4gIAlrZnJlZSh0b19tdGtfcGxhbmVfc3RhdGUoc3RhdGUpKTsNCj4g
-IH0NCj4gIA0KPiArc3RhdGljIGludCBtdGtfcGxhbmVfYXRvbWljX2FzeW5jX2NoZWNrKHN0cnVj
-dCBkcm1fcGxhbmUgKnBsYW5lLA0KPiArCQkJCQlzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpzdGF0
-ZSkNCj4gK3sNCj4gKwlzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKmNydGNfc3RhdGU7DQo+ICsNCj4g
-KwlpZiAocGxhbmUgIT0gc3RhdGUtPmNydGMtPmN1cnNvcikNCj4gKwkJcmV0dXJuIC1FSU5WQUw7
-DQo+ICsNCj4gKwlpZiAoIXBsYW5lLT5zdGF0ZSkNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsN
-Cj4gKwlpZiAoIXBsYW5lLT5zdGF0ZS0+ZmIpDQo+ICsJCXJldHVybiAtRUlOVkFMOw0KPiArDQo+
-ICsJaWYgKHN0YXRlLT5zdGF0ZSkNCj4gKwkJY3J0Y19zdGF0ZSA9IGRybV9hdG9taWNfZ2V0X2V4
-aXN0aW5nX2NydGNfc3RhdGUoc3RhdGUtPnN0YXRlLA0KPiArCQkJCQkJCQlzdGF0ZS0+Y3J0Yyk7
-DQo+ICsJZWxzZSAvKiBTcGVjaWFsIGNhc2UgZm9yIGFzeW5jaHJvbm91cyBjdXJzb3IgdXBkYXRl
-cy4gKi8NCj4gKwkJY3J0Y19zdGF0ZSA9IHN0YXRlLT5jcnRjLT5zdGF0ZTsNCj4gKw0KPiArCXJl
-dHVybiBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19wbGFuZV9zdGF0ZShwbGFuZS0+c3RhdGUsIGNy
-dGNfc3RhdGUsDQo+ICsJCQkJCQkgICBEUk1fUExBTkVfSEVMUEVSX05PX1NDQUxJTkcsDQo+ICsJ
-CQkJCQkgICBEUk1fUExBTkVfSEVMUEVSX05PX1NDQUxJTkcsDQo+ICsJCQkJCQkgICB0cnVlLCB0
-cnVlKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgbXRrX3BsYW5lX2F0b21pY19hc3luY191
-cGRhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ICsJCQkJCSAgc3RydWN0IGRybV9wbGFu
-ZV9zdGF0ZSAqbmV3X3N0YXRlKQ0KPiArew0KPiArCXN0cnVjdCBtdGtfcGxhbmVfc3RhdGUgKnN0
-YXRlID0gdG9fbXRrX3BsYW5lX3N0YXRlKHBsYW5lLT5zdGF0ZSk7DQo+ICsNCj4gKwlwbGFuZS0+
-c3RhdGUtPmNydGNfeCA9IG5ld19zdGF0ZS0+Y3J0Y194Ow0KPiArCXBsYW5lLT5zdGF0ZS0+Y3J0
-Y195ID0gbmV3X3N0YXRlLT5jcnRjX3k7DQo+ICsJcGxhbmUtPnN0YXRlLT5jcnRjX2ggPSBuZXdf
-c3RhdGUtPmNydGNfaDsNCj4gKwlwbGFuZS0+c3RhdGUtPmNydGNfdyA9IG5ld19zdGF0ZS0+Y3J0
-Y193Ow0KPiArCXBsYW5lLT5zdGF0ZS0+c3JjX3ggPSBuZXdfc3RhdGUtPnNyY194Ow0KPiArCXBs
-YW5lLT5zdGF0ZS0+c3JjX3kgPSBuZXdfc3RhdGUtPnNyY195Ow0KPiArCXBsYW5lLT5zdGF0ZS0+
-c3JjX2ggPSBuZXdfc3RhdGUtPnNyY19oOw0KPiArCXBsYW5lLT5zdGF0ZS0+c3JjX3cgPSBuZXdf
-c3RhdGUtPnNyY193Ow0KPiArCXN0YXRlLT5wZW5kaW5nLmN1cnNvcl91cGRhdGUgPSB0cnVlOw0K
-PiArDQo+ICsJbXRrX2RybV9jcnRjX2N1cnNvcl91cGRhdGUobmV3X3N0YXRlLT5jcnRjLCBwbGFu
-ZSwgbmV3X3N0YXRlKTsNCj4gK30NCj4gKw0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fcGxh
-bmVfZnVuY3MgbXRrX3BsYW5lX2Z1bmNzID0gew0KPiAgCS51cGRhdGVfcGxhbmUgPSBkcm1fYXRv
-bWljX2hlbHBlcl91cGRhdGVfcGxhbmUsDQo+ICAJLmRpc2FibGVfcGxhbmUgPSBkcm1fYXRvbWlj
-X2hlbHBlcl9kaXNhYmxlX3BsYW5lLA0KPiBAQCAtMTQxLDYgKzE4Niw5IEBAIHN0YXRpYyB2b2lk
-IG10a19wbGFuZV9hdG9taWNfdXBkYXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0KPiAgCXN0
-YXRlLT5wZW5kaW5nLnJvdGF0aW9uID0gcGxhbmUtPnN0YXRlLT5yb3RhdGlvbjsNCj4gIAl3bWIo
-KTsgLyogTWFrZSBzdXJlIHRoZSBhYm92ZSBwYXJhbWV0ZXJzIGFyZSBzZXQgYmVmb3JlIHVwZGF0
-ZSAqLw0KPiAgCXN0YXRlLT5wZW5kaW5nLmRpcnR5ID0gdHJ1ZTsNCj4gKw0KPiArCWlmIChzdGF0
-ZS0+cGVuZGluZy5jdXJzb3JfdXBkYXRlKQ0KPiArCQlzdGF0ZS0+cGVuZGluZy5jdXJzb3JfZGly
-dHkgPSB0cnVlOw0KPiAgfQ0KPiAgDQo+ICBzdGF0aWMgdm9pZCBtdGtfcGxhbmVfYXRvbWljX2Rp
-c2FibGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+IEBAIC0xNTgsNiArMjA2LDggQEAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCBkcm1fcGxhbmVfaGVscGVyX2Z1bmNzIG10a19wbGFuZV9oZWxwZXJf
-ZnVuY3MgPSB7DQo+ICAJLmF0b21pY19jaGVjayA9IG10a19wbGFuZV9hdG9taWNfY2hlY2ssDQo+
-ICAJLmF0b21pY191cGRhdGUgPSBtdGtfcGxhbmVfYXRvbWljX3VwZGF0ZSwNCj4gIAkuYXRvbWlj
-X2Rpc2FibGUgPSBtdGtfcGxhbmVfYXRvbWljX2Rpc2FibGUsDQo+ICsJLmF0b21pY19hc3luY191
-cGRhdGUgPSBtdGtfcGxhbmVfYXRvbWljX2FzeW5jX3VwZGF0ZSwNCj4gKwkuYXRvbWljX2FzeW5j
-X2NoZWNrID0gbXRrX3BsYW5lX2F0b21pY19hc3luY19jaGVjaywNCj4gIH07DQo+ICANCj4gIGlu
-dCBtdGtfcGxhbmVfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX3BsYW5l
-ICpwbGFuZSwNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJt
-X3BsYW5lLmggYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5oDQo+IGlu
-ZGV4IDc2MDg4NWUzNWIyNy4uMTEzYTEwMzQ0ODA1IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5oDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfZHJtX3BsYW5lLmgNCj4gQEAgLTIyLDYgKzIyLDggQEAgc3RydWN0IG10a19w
-bGFuZV9wZW5kaW5nX3N0YXRlIHsNCj4gIAl1bnNpZ25lZCBpbnQJCQloZWlnaHQ7DQo+ICAJdW5z
-aWduZWQgaW50CQkJcm90YXRpb247DQo+ICAJYm9vbAkJCQlkaXJ0eTsNCj4gKwlib29sCQkJCWN1
-cnNvcl9kaXJ0eTsNCj4gKwlib29sCQkJCWN1cnNvcl91cGRhdGU7DQo+ICB9Ow0KPiAgDQo+ICBz
-dHJ1Y3QgbXRrX3BsYW5lX3N0YXRlIHsNCg0KDQo=
+Hi,
 
+Some more comments inline.
+
+On Fri, Nov 29, 2019 at 05:05:13PM +0800, Biwen Li wrote:
+> The patch supports slave mode for imx I2C driver
+> 
+> Signed-off-by: Biwen Li <biwen.li@nxp.com>
+> ---
+> Change in v5:
+> 	- fix a bug that cannot determine in what mode(master mode or
+> 	  slave mode)
+> 
+> Change in v4:
+> 	- add MACRO CONFIG_I2C_SLAVE to fix compilation issue
+> 
+> Change in v3:
+> 	- support layerscape and i.mx platform
+> 
+> Change in v2:
+> 	- remove MACRO CONFIG_I2C_SLAVE
+> 
+> 
+>  drivers/i2c/busses/i2c-imx.c | 216 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 198 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index a3b61336fe55..52f70de16900 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -203,6 +203,9 @@ struct imx_i2c_struct {
+>  	struct pinctrl_state *pinctrl_pins_gpio;
+>  
+>  	struct imx_i2c_dma	*dma;
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	struct i2c_client	*slave;
+> +#endif
+>  };
+>  
+>  static const struct imx_i2c_hwdata imx1_i2c_hwdata = {
+> @@ -279,6 +282,14 @@ static inline unsigned char imx_i2c_read_reg(struct imx_i2c_struct *i2c_imx,
+>  	return readb(i2c_imx->base + (reg << i2c_imx->hwdata->regshift));
+>  }
+>  
+> +/* Set up i2c controller register and i2c status register to default value. */
+> +static void i2c_imx_reset_regs(struct imx_i2c_struct *i2c_imx)
+> +{
+> +	imx_i2c_write_reg(i2c_imx->hwdata->i2cr_ien_opcode ^ I2CR_IEN,
+> +			i2c_imx, IMX_I2C_I2CR);
+> +	imx_i2c_write_reg(i2c_imx->hwdata->i2sr_clr_opcode, i2c_imx, IMX_I2C_I2SR);
+> +}
+> +
+>  /* Functions for DMA support */
+>  static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+>  						dma_addr_t phy_addr)
+> @@ -588,23 +599,33 @@ static void i2c_imx_stop(struct imx_i2c_struct *i2c_imx)
+>  	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+>  }
+>  
+> -static irqreturn_t i2c_imx_isr(int irq, void *dev_id)
+> +/* Clear interrupt flag bit */
+> +static void i2c_imx_clr_if_bit(unsigned int status, struct imx_i2c_struct *i2c_imx)
+>  {
+> -	struct imx_i2c_struct *i2c_imx = dev_id;
+> -	unsigned int temp;
+> +	status &= ~I2SR_IIF;
+> +	status |= (i2c_imx->hwdata->i2sr_clr_opcode & I2SR_IIF);
+> +	imx_i2c_write_reg(status, i2c_imx, IMX_I2C_I2SR);
+> +}
+>  
+> -	temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
+> -	if (temp & I2SR_IIF) {
+> -		/* save status register */
+> -		i2c_imx->i2csr = temp;
+> -		temp &= ~I2SR_IIF;
+> -		temp |= (i2c_imx->hwdata->i2sr_clr_opcode & I2SR_IIF);
+> -		imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2SR);
+> -		wake_up(&i2c_imx->queue);
+> -		return IRQ_HANDLED;
+> -	}
+> +/* Clear arbitration lost bit */
+> +static void i2c_imx_clr_al_bit(unsigned int status, struct imx_i2c_struct *i2c_imx)
+> +{
+
+Can you please remove some of the really obvious comments? When a
+function is named clr_al_bit, then it doesn't need a comment which says
+that this function really does this. There are more comments like this
+in the patch.
+
+> +	status &= ~I2SR_IAL;
+> +	status |= (i2c_imx->hwdata->i2sr_clr_opcode & I2SR_IAL);
+> +	imx_i2c_write_reg(status, i2c_imx, IMX_I2C_I2SR);
+> +}
+>  
+> -	return IRQ_NONE;
+> +static irqreturn_t i2c_imx_master_isr(struct imx_i2c_struct *i2c_imx)
+> +{
+> +	unsigned int status;
+> +
+> +	/* Save status register */
+> +	status = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
+> +	i2c_imx->i2csr = status | I2SR_IIF;
+
+Instead of reading the status register again you could set
+i2c_imx->i2csr in the caller.
+
+> +
+> +	wake_up(&i2c_imx->queue);
+> +
+> +	return IRQ_HANDLED;
+>  }
+>  
+>  static int i2c_imx_dma_write(struct imx_i2c_struct *i2c_imx,
+> @@ -900,6 +921,13 @@ static int i2c_imx_xfer(struct i2c_adapter *adapter,
+>  
+>  	dev_dbg(&i2c_imx->adapter.dev, "<%s>\n", __func__);
+>  
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	if (i2c_imx->slave) {
+> +		dev_err(&i2c_imx->adapter.dev, "Please not do operations of master mode in slave mode");
+> +		return -EBUSY;
+> +	}
+> +#endif
+> +
+>  	result = pm_runtime_get_sync(i2c_imx->adapter.dev.parent);
+>  	if (result < 0)
+>  		goto out;
+> @@ -1048,11 +1076,166 @@ static u32 i2c_imx_func(struct i2c_adapter *adapter)
+>  		| I2C_FUNC_SMBUS_READ_BLOCK_DATA;
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +static int i2c_imx_slave_init(struct imx_i2c_struct *i2c_imx)
+> +{
+> +	int temp;
+> +
+> +	/* Resume */
+> +	temp = pm_runtime_get_sync(i2c_imx->adapter.dev.parent);
+> +	if (temp < 0) {
+> +		dev_err(&i2c_imx->adapter.dev, "failed to resume i2c controller");
+> +		return temp;
+> +	}
+> +
+> +	/* Set slave addr. */
+> +	imx_i2c_write_reg((i2c_imx->slave->addr << 1), i2c_imx, IMX_I2C_IADR);
+> +
+> +	i2c_imx_reset_regs(i2c_imx);
+> +
+> +	/* Enable module */
+> +	temp = i2c_imx->hwdata->i2cr_ien_opcode;
+> +	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+> +
+> +	/* Enable interrupt from i2c module */
+> +	temp |= I2CR_IIEN;
+> +	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+
+Do these have to be two register accesses?
+
+> +
+> +	/* Wait controller to be stable */
+> +	usleep_range(50, 150);
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t i2c_imx_slave_isr(struct imx_i2c_struct *i2c_imx)
+> +{
+> +	unsigned int status, ctl;
+> +	u8 value;
+> +
+> +	if (!i2c_imx->slave) {
+> +		dev_err(&i2c_imx->adapter.dev, "cannot deal with slave irq,i2c_imx->slave is null");
+> +		return IRQ_NONE;
+> +	}
+
+This function is never called with !i2c_imx->slave.
+
+> +
+> +	status = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
+> +	ctl = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
+> +	if (status & I2SR_IAL) { /* Arbitration lost */
+> +		i2c_imx_clr_al_bit(status, i2c_imx);
+> +	} else if (status & I2SR_IAAS) { /* Addressed as a slave */
+> +		if (status & I2SR_SRW) { /* Master wants to read from us*/
+> +			dev_dbg(&i2c_imx->adapter.dev, "read requested");
+> +			i2c_slave_event(i2c_imx->slave, I2C_SLAVE_READ_REQUESTED, &value);
+> +
+> +			/* Slave transmit */
+> +			ctl |= I2CR_MTX;
+> +			imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
+> +
+> +			/* Send data */
+> +			imx_i2c_write_reg(value, i2c_imx, IMX_I2C_I2DR);
+> +		} else { /* Master wants to write to us */
+> +			dev_dbg(&i2c_imx->adapter.dev, "write requested");
+> +			i2c_slave_event(i2c_imx->slave,	I2C_SLAVE_WRITE_REQUESTED, &value);
+> +
+> +			/* Slave receive */
+> +			ctl &= ~I2CR_MTX;
+> +			imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
+> +			/* Dummy read */
+> +			imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
+> +		}
+> +	} else if (!(ctl & I2CR_MTX)) { /* Receive mode */
+> +			if (status & I2SR_IBB) { /* No STOP signal detected */
+> +				ctl &= ~I2CR_MTX;
+> +				imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
+> +
+> +				value = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
+> +				i2c_slave_event(i2c_imx->slave,	I2C_SLAVE_WRITE_RECEIVED, &value);
+> +			} else { /* STOP signal is detected */
+> +				dev_dbg(&i2c_imx->adapter.dev,
+> +					"STOP signal detected");
+> +				i2c_slave_event(i2c_imx->slave, I2C_SLAVE_STOP, &value);
+> +			}
+> +	} else if (!(status & I2SR_RXAK)) {	/* Transmit mode received ACK */
+> +		ctl |= I2CR_MTX;
+> +		imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
+> +
+> +		i2c_slave_event(i2c_imx->slave,	I2C_SLAVE_READ_PROCESSED, &value);
+> +
+> +		imx_i2c_write_reg(value, i2c_imx, IMX_I2C_I2DR);
+> +	} else { /* Transmit mode received NAK */
+> +		ctl &= ~I2CR_MTX;
+> +		imx_i2c_write_reg(ctl, i2c_imx, IMX_I2C_I2CR);
+> +		imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR);
+> +	}
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int i2c_imx_reg_slave(struct i2c_client *client)
+> +{
+> +	struct imx_i2c_struct *i2c_imx = i2c_get_adapdata(client->adapter);
+> +	int ret;
+> +	if (i2c_imx->slave)
+> +		return -EBUSY;
+> +
+> +	i2c_imx->slave = client;
+> +
+> +	ret = i2c_imx_slave_init(i2c_imx);
+> +	if (ret < 0)
+> +		dev_err(&i2c_imx->adapter.dev, "failed to switch to slave mode");
+
+The caller already reports an error. No need to do it here again.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static int i2c_imx_unreg_slave(struct i2c_client *client)
+> +{
+> +	struct imx_i2c_struct *i2c_imx = i2c_get_adapdata(client->adapter);
+> +	int ret;
+> +
+> +	if (!i2c_imx->slave)
+> +		return -EINVAL;
+> +
+> +	/* Reset slave address. */
+> +	imx_i2c_write_reg(0, i2c_imx, IMX_I2C_IADR);
+> +
+> +	i2c_imx_reset_regs(i2c_imx);
+> +
+> +	i2c_imx->slave = NULL;
+> +
+> +	/* Suspend */
+> +	ret = pm_runtime_put_sync(i2c_imx->adapter.dev.parent);
+> +	if (ret < 0)
+> +		dev_err(&i2c_imx->adapter.dev, "failed to suspend i2c controller");
+
+I doubt this message is useful.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
