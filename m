@@ -2,84 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC1310E701
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 09:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D81910E704
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 09:47:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbfLBIow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 03:44:52 -0500
-Received: from sonic315-15.consmr.mail.bf2.yahoo.com ([74.6.134.125]:43900
-        "EHLO sonic315-15.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726057AbfLBIow (ORCPT
+        id S1726469AbfLBIrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 03:47:55 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51657 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfLBIrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 03:44:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1575276290; bh=ljzyZM62JhLsFQvRgn4oIHatvoomklO47Xp27/GJmJo=; h=Date:From:Reply-To:Subject:From:Subject; b=C+4wf0D4wWrTiEBUo2MdqWttH9NsamnQFwZy0dVYpiljw8+phIFQrvmsnbU4YF3ExHFZOvHEc+iQPDjJtYA4imnM30dcJ84TqXNDmaL/ANlXDrKvoWqQhevvIFgkCkQ7uPgFhcxe7UZh4U9F3AQysvuZeXXPt/jdMD7Jy9PbtSyjXex5k5/4DjsAchOaz8nV56DGnVDZpczvdnTdH+OESzTUfxhLSrd4Jqt8eW+LZXtWMZDtAHGF6cwhM4E/7YcdFSCgFq/OCwbw1j5U6ekDQruILFNi3oDJJ7TOajYd0Wm96WbIPBW60tLU27I/UOLoMhOrUlOIGIOF7F8pRgkpyw==
-X-YMail-OSG: O0hPEtYVM1mOkGCvfOcCNM4ZnjDsYtnf0qI6.7BIV0qbF_3AO2KBBOcPlBsX17O
- 6stLbp7_XvOedeIsEv7WueuGuz6uXt8kjW3Bgw.5uNxc6L8gIKFTYqCbDdUUe2GPs0iwyMOx3zJb
- l00UU8pWIVXasV5ODEtxlgBKWzWdfV0_DXHBCrKEXR3lmkka.RmRGmFdkc5R7w31LuyqfkpRQmzu
- t9kvHmwF_51GKPQ8vJYwadPVrMsj9V8AQnJLRCYi811viQP4QMi9sPGNN_y5HUle7b3lJXDVopnp
- I52NCoKcSu_OCezB4voC0qgrA5xT2lu6Hzy774LzBNW2aoyYFYSEsV1_UFg1vRNNGStYMod1VBHD
- efIeiXQ8a_YIgPXQf0dm22rToY0a5WAVjdNtVxyi4PlYSb76Kg337uN9iaBDR_mJBZiecI9v9KLO
- PjKjrkRBTy3b3ujvA2R1.TYRl0iZIyquxgiFhwW3f6QiZE0o5H_hRcLh1xrVzcla6Mk2WjuPY9R3
- qxqI_hBfo2eXvHfPbJmZLRrcqxaVFpQlds4S3mDd8e5yaC4sMGNcbqZsUBU0Sy4Bq5kYz.zkijLb
- ChfE9L.xRNrctQDx1lqGoe3BuPEpkLoF0ryKL01LWh7EyZqcUOkL80HEznuFzPEs4xr3dyIA7LIm
- 73C8l1TlYIJRn96TXRFgvzM7GQgekyJjuyghiMhaqWCmhtD19l_qg_yL1J0OPR8U5qZAtQiNpSZB
- TfRuPjxTt0PF31QwVsGihejJz.9Wh4KNX427EGEpH7_SpQOC9jGEbbVbIng27fr.CIe9JJ8U3yNH
- AGpFemUiln0wzSrZsyc43BweeQMpVcXT6JSoS6dyjuTCL.cThmCQuQviJfaQnGGT3VKURbKQKxMZ
- VucJMHhfil7Mfjre8iVJPgMQt3d42hXGixCYUPqbtWEhCar15fdpeveIyqh7qdwvRkndzhIhYRPF
- 6L97gomzivpzvAUBjYW5XhCIT.MaKTQJ_pTP3jY_nMgcwWA4xeAEuqR2ORF8vdeYuMD_4PvwXsrr
- JOYhKusUrUtmLFcAOdOUQMqV4aiTMThVSf9Erj6__GLFNB.YhBYHlekBTepw_kgL6elA4kmIDgZy
- _KzF_fTQcgELAuxX4zP4ewK_mx_v7nGBYINAfBzgUtC7Q1awTccTNx7t5ZUHX5GONy1mV61TFkeI
- WEmh7wTTB052TaxIwBgaMbkk7SxqXgZ9ktTs.R5UgHylE2kU6ppQ1ohOswCkQiW2hGSu9DCMPf10
- yGNoGa.4oz_zWsFjg5fus3w59yJ2RvPEGp63ok9N2XCtm0JCnbguPpX8ScqIq053R91.mtfwERRv
- xYmC3iHtOrhkQl3_WvDM6cq0S
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Mon, 2 Dec 2019 08:44:50 +0000
-Date:   Mon, 2 Dec 2019 08:44:49 +0000 (UTC)
-From:   MRS SABAH IBRAHIM <mrssabah51b@gmail.com>
-Reply-To: mrs2018sabahibrahim1@gmail.com
-Message-ID: <1722889697.4933855.1575276289795@mail.yahoo.com>
-Subject: Compensation for your effort
+        Mon, 2 Dec 2019 03:47:55 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g206so20807562wme.1;
+        Mon, 02 Dec 2019 00:47:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=zyOKweXKHOPtqk+48O/QHHMQCCOb/ibIpSzxHuzne4E=;
+        b=pGVkQKfZstToZiwqGP39z4Wy9KIhn5MnEXy6JSxCglui3LGSJZ/unwHs3izmEj0w9u
+         LHVsZCJH9ZQ+CIsdzkZ1m38wwkYKx560rta1CAzquV/qW7IdGvyLG6W9jEABLuF+zpqy
+         3eQ6+hbSW0uLQVb351xC6/IiXlFMFOQW8sMpToM1i7JiN8wpTxabXrr/cFgtQxjjUaz4
+         P0ijV+6XFt3Vy5QFrrXPXLNhO//G1kYDPEP8czX4NmVCBPi61hBeSBQIctjM2TS15fCP
+         k3VPMklRw6PnpedXaiNk/WDHFfG8sWzf3BCdE+M3MIEYlcfVPQATaP0yT31WWwDQVdFz
+         O6Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zyOKweXKHOPtqk+48O/QHHMQCCOb/ibIpSzxHuzne4E=;
+        b=kW9dHI+gty4Znzz/HcgYS14ejbStwPal+S8MFbD7NdWB5YzsGYMVCRDzQQGTZMgUks
+         5EhaTPXrDbSuCqCcJdbNz/BkjUFi8GLEusVr+z4lMDuXrNljI7jLei3ACY2NAPd3wrjd
+         yyBFtPIf56GhDC9eoccC3IrSVPbXgT3a97jFoMSut4dGm62W7yA86227ZD/0a+VforQz
+         ZED3JJLyk5faW3yW0j9pBlR/J5kMLKLTgELJHkHarh14aacWdEORXnoxnIVhVn5UGoTD
+         /G4hq+6H3gzRKuukzgjbFXY2LDu3lDfJTKS3afqOBS7WZm9xycX+EgFqg6DivN0kTsN6
+         U+Og==
+X-Gm-Message-State: APjAAAWjB3wISBYomwT+rJfyZsvRrfIRKUgalvF8CpgjgvRFcRkXxpR6
+        GjykQzDeLwE2mDVpaYgPC/o=
+X-Google-Smtp-Source: APXvYqz5uCyAD5CSXVQpElDuIk/VKSs+/hEVEVHXQgAf1sWm3bXsklsVGYc8ngStuhcDka3q39loqQ==
+X-Received: by 2002:a1c:6707:: with SMTP id b7mr23290086wmc.54.1575276473006;
+        Mon, 02 Dec 2019 00:47:53 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id h124sm23837188wme.30.2019.12.02.00.47.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Dec 2019 00:47:52 -0800 (PST)
+Date:   Mon, 2 Dec 2019 09:47:50 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+        linux-input@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Kirill Smelkov <kirr@nexedi.com>
+Subject: Re: [PATCH] Input: uinput - Add UI_SET_UNIQ ioctl handler
+Message-ID: <20191202084750.k7lafzzrf3yq2tqs@pali>
+References: <20191127185139.65048-1-abhishekpandit@chromium.org>
+ <20191201145357.ybq5gfty4ulnfasq@pali>
+ <20191202012305.GQ248138@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191202012305.GQ248138@dtor-ws>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Sunday 01 December 2019 17:23:05 Dmitry Torokhov wrote:
+> Hi Pali,
+> 
+> On Sun, Dec 01, 2019 at 03:53:57PM +0100, Pali Rohár wrote:
+> > Hello!
+> > 
+> > On Wednesday 27 November 2019 10:51:39 Abhishek Pandit-Subedi wrote:
+> > > Support setting the uniq attribute of the input device. The uniq
+> > > attribute is used as a unique identifier for the connected device.
+> > > 
+> > > For example, uinput devices created by BlueZ will store the address of
+> > > the connected device as the uniq property.
+> > > 
+> > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > 
+> > ...
+> > 
+> > > diff --git a/include/uapi/linux/uinput.h b/include/uapi/linux/uinput.h
+> > > index c9e677e3af1d..d5b7767c1b02 100644
+> > > --- a/include/uapi/linux/uinput.h
+> > > +++ b/include/uapi/linux/uinput.h
+> > > @@ -145,6 +145,7 @@ struct uinput_abs_setup {
+> > >  #define UI_SET_PHYS		_IOW(UINPUT_IOCTL_BASE, 108, char*)
+> > >  #define UI_SET_SWBIT		_IOW(UINPUT_IOCTL_BASE, 109, int)
+> > >  #define UI_SET_PROPBIT		_IOW(UINPUT_IOCTL_BASE, 110, int)
+> > > +#define UI_SET_UNIQ		_IOW(UINPUT_IOCTL_BASE, 111, char*)
+> > 
+> > I think that usage of char* as type in _IOW would cause compatibility
+> > problems like it is for UI_SET_PHYS (there is UI_SET_PHYS_COMPAT). Size
+> > of char* pointer depends on userspace (32 vs 64bit), so 32bit process on
+> > 64bit kernel would not be able to call this new UI_SET_UNIQ ioctl.
+> > 
+> > I would suggest to define this ioctl as e.g.:
+> > 
+> >   #define UI_SET_UNIQ		_IOW(_IOC_WRITE, UINPUT_IOCTL_BASE, 111, 0)
+> > 
+> > And then in uinput.c code handle it as:
+> > 
+> >   case UI_SET_UNIQ & ~IOCSIZE_MASK:
+> > 
+> > as part of section /* Now check variable-length commands */
+> 
+> If we did not have UI_SET_PHYS in its current form, I'd agree with you,
+> but I think there is benefit in having UI_SET_UNIQ be similar to
+> UI_SET_PHYS.
 
-How are you I hope you are very fine with your entire family? If so
-glory be to  Almighty God.
-I'm happy to inform you about my success in getting those funds
-transferred under the cooperation of a new partner from  GREECE,
-Presently i'm in GREECE for a better treatment  and building of the
-orphanage home projects with the total  money.
+I thought that ioctl is just number, so we can define it as we want. And
+because uinput.c has already switch for variable-length commands it
+would be easy to use it. Final handling can be in separate function like
+for UI_SET_PHYS which can look like same.
 
-Meanwhile, I didn't forget your past efforts and attempts to assist me
-in transferring those funds and use it for the building of the
-orphanage home and helping the less privilege.
+> But you are absolutely correct that in current form the patch is
+> deficient on 64/32 systems, and the compat handling needs to be added
+> before it can be accepted.
 
-Please contact my nurse in Burkina Faso, her  name is Mrs. Manal Yusuf
-, ask her to send you the compensation of $600,000.00USD which i have
-credited with  the ECOBANK bank into an ATM card before i traveled for
-my treatment, you will indicate your contact as my else's business
-associate that tried to help me, but it could not work out for us, and
-I appreciated your good efforts at that time very much. so feel free
-and get in touched with the nurse Mrs. Manal Yusuf (email:
-mrs1manalyusuf@gmail.com ) and instruct her the address where to send
-the ATM card to you.
+Is not better to avoid usage of compat ioctl? Or it is OK to use compat
+ioctl also for new features? I do not know if there are some kernel
+rules for it or not... But for me it sounds like "compatibility layer
+for older code".
 
-Please i am in the hospital here, i would not have much time to check
-emails or  respond to you, but in case you have any important message
-do send me as an update, i might instruct the doctor to check it and
-respond to you, meanwhile, once you received the ATM CARD,  do not
-delay to inform me.
-
-Finally, remember that I had forwarded an instruction to the nurse on
-your behalf to deliver the ATM  card to you, so feel free to get in
-touch with her by email  she will send the ATM card to you without any
-delay.
-
-Thank you and God bless you.
-MRS SABAH IBRAHIM
+-- 
+Pali Rohár
+pali.rohar@gmail.com
