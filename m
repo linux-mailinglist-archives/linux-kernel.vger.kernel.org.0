@@ -2,84 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1505110EC30
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:20:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30C0D10EC35
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfLBPUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 10:20:35 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35829 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfLBPUe (ORCPT
+        id S1727501AbfLBPWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 10:22:01 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:36085 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbfLBPWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 10:20:34 -0500
-Received: by mail-oi1-f196.google.com with SMTP id k196so16386434oib.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 07:20:34 -0800 (PST)
+        Mon, 2 Dec 2019 10:22:01 -0500
+Received: by mail-io1-f72.google.com with SMTP id 202so13868194iou.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 07:22:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PZuADHJjdt3e4tzY3ik1VV2f6I5KfdSAWCDV5TgBy8c=;
-        b=QZaFAz5trun8AhW599sIA/4YZj/jkHqteeiUbRERw3iaWvYtTk2B6ptlWde5ac3fim
-         mwCh6eTCfMSG1iWj+54mm+xOfb7qx0YZJQwN8saMEr0eoTzLrOG219/a8o22QlpHOri0
-         R2lgHBLSpS1TMiNFlVPNDAWuf1z12RDeT/ZSVITQ3T4OF+iKe7Dau8hyEDex+wp22EmG
-         R7dItILHgT+FxuDOK4U5ADTFfiXaoBAMA05helsTqH3mCnNPGqnPzXL4lFVsiNDhRMP5
-         8GofZsXCdZadLrGQGI9cP3nIbo6i8dy6TP2pS9DxDKjm44d0xWK+TWr9+Vw/KI1DWQ7n
-         6yKw==
-X-Gm-Message-State: APjAAAVy/BKuWihUETO9C4+FGq3g7utFUrk80LlTl35cD5tdU/0GflxR
-        BuajlPLBz4gQifZLB6N+eWATlDLFHlb4Nn1dUmQ=
-X-Google-Smtp-Source: APXvYqxcJujnpy6eDi+fniufBaWM+dXwkUtuBqcg/errP/gLT+ZjwUJ1hx2NltqHxVQShTGK67k/PLx269WTrKFYnq4=
-X-Received: by 2002:aca:48cd:: with SMTP id v196mr8555094oia.102.1575300034214;
- Mon, 02 Dec 2019 07:20:34 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=yoaw0PwFg2A6gDglB5LznPWl+Lud/RfolRLMztLbYOM=;
+        b=P09xDfUuPakqoHJ6cgdZuQltMmsv1X459+cxUU9lhuHOGScVnXrsK4rTiSg7wmQalC
+         tmnKYcwWG6LqgdegcZvFkdlgtzf52XcfXPZFEvk7cQXbJ2sgSQO3GeotLOqSbXeJkZKL
+         SahOedAQW5VlKpwonLcL4ydK5og2nLeUVyHfP4ZOCTvU3MK6kXtJzVh1Xem5MtzvaeMJ
+         qs+snHkkuvLocamLrX87FYqEGUldQEjUKEBaFGOEhu0KA5nbVSapdjqKX1ZLGwc8p1ld
+         l6rPzXpNIUceqXIgWgTnm8vp2degiwuYSHlaROBqZaBlS3KzN8gFBp5BwoS9YOB21Wdq
+         NUqA==
+X-Gm-Message-State: APjAAAUGxcCnMoFwij2NFGLyRPZXrBMIMfsSeiHfIPblsFtNgwGWZErq
+        C3UNUMH3mX9hDXuAs/Z4jVjSuz7uIMyQEevBDXzOPKLRutJ3
+X-Google-Smtp-Source: APXvYqygl3XRg/RBFqVukkdgwZRNVl2uCNOuiX78gKyVxsKxIvwL0CTDPj2IidIQmxtbhRnxA50TBWTRjZbP0m4y1guFs+uD5e2O
 MIME-Version: 1.0
-References: <20191202133650.11964-1-linux@roeck-us.net>
-In-Reply-To: <20191202133650.11964-1-linux@roeck-us.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Dec 2019 16:20:23 +0100
-Message-ID: <CAMuHMdUz7gewcFPE=cnVENGdwVp6AZD7U4y1PtwXTAmoGmvGUg@mail.gmail.com>
-Subject: Re: [PATCH] drm/dp_mst: Fix build on systems with STACKTRACE_SUPPORT=n
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lyude Paul <lyude@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:962c:: with SMTP id c41mr29142298jai.74.1575300120660;
+ Mon, 02 Dec 2019 07:22:00 -0800 (PST)
+Date:   Mon, 02 Dec 2019 07:22:00 -0800
+In-Reply-To: <000000000000da160a0598b2c704@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001b5b540598ba2498@google.com>
+Subject: Re: general protection fault in override_creds
+From:   syzbot <syzbot+5320383e16029ba057ff@syzkaller.appspotmail.com>
+To:     Anna.Schumaker@Netapp.com, Anna.Schumaker@netapp.com,
+        axboe@kernel.dk, casey@schaufler-ca.com, dhowells@redhat.com,
+        dvyukov@google.com, io-uring@vger.kernel.org, jannh@google.com,
+        keescook@chromium.org, kstewart@linuxfoundation.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, neilb@suse.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 2:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> On systems with STACKTRACE_SUPPORT=n, we get:
->
-> WARNING: unmet direct dependencies detected for STACKTRACE
->   Depends on [n]: STACKTRACE_SUPPORT
->   Selected by [y]:
->   - STACKDEPOT [=y]
->
-> and build errors such as:
->
-> m68k-linux-ld: kernel/stacktrace.o: in function `stack_trace_save':
-> (.text+0x11c): undefined reference to `save_stack_trace'
->
-> Add the missing deendency on STACKTRACE_SUPPORT.
->
-> Fixes: 12a280c72868 ("drm/dp_mst: Add topology ref history tracking for debugging")
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+syzbot has bisected this bug to:
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+commit 181e448d8709e517c9c7b523fcd209f24eb38ca7
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Mon Nov 25 15:52:30 2019 +0000
 
-Gr{oetje,eeting}s,
+     io_uring: async workers should inherit the user creds
 
-                        Geert
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10424ceae00000
+start commit:   b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=12424ceae00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14424ceae00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ff560c3de405258c
+dashboard link: https://syzkaller.appspot.com/bug?extid=5320383e16029ba057ff
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12dd682ae00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16290abce00000
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Reported-by: syzbot+5320383e16029ba057ff@syzkaller.appspotmail.com
+Fixes: 181e448d8709 ("io_uring: async workers should inherit the user  
+creds")
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
