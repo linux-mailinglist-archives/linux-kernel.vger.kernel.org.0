@@ -2,91 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5022510EA92
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:12:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6472310EA9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:13:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfLBNMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 08:12:34 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46540 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbfLBNMe (ORCPT
+        id S1727495AbfLBNNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 08:13:10 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35167 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727438AbfLBNNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 08:12:34 -0500
-Received: by mail-il1-f195.google.com with SMTP id t17so6471337ilm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 05:12:33 -0800 (PST)
+        Mon, 2 Dec 2019 08:13:09 -0500
+Received: by mail-ot1-f65.google.com with SMTP id o9so9955952ote.2;
+        Mon, 02 Dec 2019 05:13:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
-        b=BEf2S5u+WKP/foav92FT5WfCqzlmahCLdTJQjKbcopLcXE0DdSu4K47gsA7N2xflRs
-         NiOqsHg3qwOGt75ozzvf20Ur7e5SIL6MUn9jPmyHp073CPOo3H5MRraCFl79FnQYzod3
-         mgMFHahcLzaHJgu6DxOPVccGyGzAGYIygDkT7RvGw8a9jU6+w5PL+oIjhRpIR5sFCURP
-         ZVqijgR4s+fbF49rhH5+E/RtV91fPAlMLr84Y/O/ks2tHVaydcu2tr205Xrn/YHrtGTf
-         JnKqPoy+h8WxQRW7wU9N6mJNd/zMCXBIk5lxWqkohI3wC4NPM3Fuu+KmmkPCBPonA4Fy
-         c3eg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WpIVdJ8zzeydWnGV0Hm0bnq5TGbHkB7RgM4W8WL7sQM=;
+        b=ayWr/e+ojhqdyu94ajPFzL4M/3r8yrPBFpdu7nuiYbIwFygf5EZ9TGON0Us19wyU+g
+         V68zxsz72/NemBDm2k+BI3fe74hktkIKR7RGb8FhuVdIZtsUYAw7o9e2HbuMfE8yCxLP
+         88ucrHc5Me/bP5KjJwif2SovclkPZ5qqjqzxbAKDaCDcYj4vc/U/a0m9OR+cl8q3Fj56
+         D5Y2983Lbri5rCyCKWUukztlOgyQ6Wt0kUxIREWGMUD5hqaqiOJiaUzdbkyr9k2SzZN+
+         7Cud5lM13oPBVaDrrwFk6+S1C0Vv+gUzOBPptDT+WNZ7Qvzqf9Rl1ulx7/HUzxlCuB8s
+         K94w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
-        b=Me6EwbmE+tTiTJygVVEILvXgyBjioMIodbEKIsIwJAzihONDnBdAaaat8KSr58PPw9
-         hSZCbugVdc0/dV+mqAyZ9OWBh4zOOUWUw98rrPE1TjOXJPjss/85+glAvav+t7ln+GwD
-         FozxZxTKcrNMiNvmeb53Fh4YVhlxjApFxpHElFWboq0YyuUT6aX8x+PTd6+14iZfaM2t
-         fIK8HCapQlyyAYfXmiVIfolRScq4GSqYHkMavtRuk79EpWMBc6ntv0GuA7he7VwBmZzS
-         d+xo+skgopE4sOBd4jg5NBjabTaXk2D4tVk4OwoXNbni/W76GsX7W6zmfQDc5epelmvJ
-         chSA==
-X-Gm-Message-State: APjAAAUN66x5i+RZKMU/Cr1B4Ydjzraj4r8V00dkkA+iPp8H/9IwGvd3
-        x7gugJbyXByJsTGpXeFBC9QbwbdTCSwDG7iZYA==
-X-Google-Smtp-Source: APXvYqxcjqXvuccfWNuQLShQqBGJERqStzcsvq5tWY7TX2YuN4kQj2gkQN7g5TcIV6qQYhSG5mDXnSU/EM5j5yNKL5E=
-X-Received: by 2002:a92:7ec4:: with SMTP id q65mr33135575ill.263.1575292353049;
- Mon, 02 Dec 2019 05:12:33 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WpIVdJ8zzeydWnGV0Hm0bnq5TGbHkB7RgM4W8WL7sQM=;
+        b=NbqHeU/K8tC8HmYZCYNnLengwlcYPENgkF6AJWa8CvQ9I3me1qbP5yuEvZXzUnPGeq
+         tQfTXZbu7/DN/DxqwbE7YcyifuixpRwz7eRLbJQyqZe+vQETzQ8Z7OrJkCaXxZlllPIk
+         UARhEo30qK29v01gYQffeSMKpbl+6G9GNjNI7Li1UlTTWOXsvGXezMFzVVwH4HTp0M/N
+         A6ayIwLs18NoevXW4HtoXvEtaPdVAS+wMmko0vI10585MPhADVn3ft5ORiP3ZaKJhsac
+         T2oVNnPgtmHbnj/gu9PBYjSAPSV1WSxGDJUy5xxGwl+cxLNsMK3WqXX3AVr7wA6zfstD
+         n5sQ==
+X-Gm-Message-State: APjAAAVUaI0FOMK2o9gIcnSwQTmXFPOiVD5XmLQ3pUHlp8dwgKfpIQ5j
+        Gvf4F0Uw0qrfqPe0oOHkvxQ=
+X-Google-Smtp-Source: APXvYqy4jx57qvDjpsvRN6iwGNeUOPmVPh3Uq+t3tmkFnPEJ9SiuOml5GNtzXGDCfgq9FhDaTZxeHg==
+X-Received: by 2002:a9d:18b:: with SMTP id e11mr19617070ote.305.1575292388688;
+        Mon, 02 Dec 2019 05:13:08 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id y16sm7700673otq.60.2019.12.02.05.13.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Dec 2019 05:13:07 -0800 (PST)
+Date:   Mon, 2 Dec 2019 05:13:06 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christian Brauner <christian@brauner.io>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        linux-alpha@vger.kernel.org
+Subject: Re: [PATCH 19/23] y2038: use compat_{get,set}_itimer on alpha
+Message-ID: <20191202131306.GA6633@roeck-us.net>
+References: <20191108210236.1296047-1-arnd@arndb.de>
+ <20191108211323.1806194-10-arnd@arndb.de>
 MIME-Version: 1.0
-Received: by 2002:a05:6638:18c:0:0:0:0 with HTTP; Mon, 2 Dec 2019 05:12:32
- -0800 (PST)
-Reply-To: suleman_bello@yahoo.com
-From:   Mr Suleman Bello <atmcard024@gmail.com>
-Date:   Mon, 2 Dec 2019 05:12:32 -0800
-Message-ID: <CADOR4gqN=ObPbdJFPWJ11S2FfmmCBkXyX8yj--t-k5JhJUf5Jw@mail.gmail.com>
-Subject: CAN I TRUST YOU?
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108211323.1806194-10-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Fri, Nov 08, 2019 at 10:12:18PM +0100, Arnd Bergmann wrote:
+> The itimer handling for the old alpha osf_setitimer/osf_getitimer
+> system calls is identical to the compat version of getitimer/setitimer,
+> so just use those directly.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Please i want you to read this letter very carefully and i must
-apologize for berging this message into your mail box without any
-formal introduction due to the urgency and confidential of this issue
-and i know that this message will come to you as a surprise, Please
-this is not a joke and i will not like you to joke with it.I am
-Mr.Suleman Bello, a staff in African Development Bank (A.D.B)
-Ouagadougou, Burkina faso West Africa.I discovered existing dormant
-account for years. When I discovered that there had been neither
-continuation nor withdrawals from this account for this long period
-and according to the laws and constitution guiding this banking
-institution, any unserviceable account for more than (7) seven years,
-that fund will be transferred to national treasury as unclaimed fund.
+alpha:allnoconfig, alpha:tinyconfig:
 
-I Hoped that you will not expose or betray this trust and confident
-that i am about to extablish with you for the mutual benefit of you
-and i.I need your urgent assistance in transferring the sum of $10.5
-)million usd into your account within 7 banking days. This money has
-been dormant for years in our Bank, and The request of foreigner in
-this transaction is necessary because our late customer was a
-foreigner and a burkinabe cannot stand as next of kin to a
-foreigner.Because of the static of this transaction I want you to
-stand as the next of kin so that our bank will accord you the
-recognition and have the fund transferred to your account.
+alpha-linux-ld: arch/alpha/kernel/systbls.o: in function `sys_call_table':
+(.data+0x298): undefined reference to `compat_sys_setitimer'
+alpha-linux-ld: (.data+0x2b0): undefined reference to `compat_sys_getitimer'
 
-Upon your response, I shall then provide you with further information
-and more deities that will help you understand the transaction. I am
-expecting your urgent response to enable me inform you on how the
-business will be executed. Please I would like you to keep this
-transaction confidential and as a top secret or delete if you are not
-interested.
-
-Thanks
-Mr.Suleman Bello.
+Guenter
