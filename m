@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BAC10EF18
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:22:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AA0910EF19
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfLBSWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:22:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35922 "EHLO mx1.suse.de"
+        id S1727970AbfLBSWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:22:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35940 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727860AbfLBSWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:22:15 -0500
+        id S1727872AbfLBSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 13:22:16 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 31659AD75;
+        by mx1.suse.de (Postfix) with ESMTP id 9CE78AE65;
         Mon,  2 Dec 2019 18:22:14 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
@@ -22,9 +22,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         James Tai <james.tai@realtek.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 02/14] arm64: dts: realtek: rtd129x: Introduce CRT, iso and misc syscon
-Date:   Mon,  2 Dec 2019 19:21:52 +0100
-Message-Id: <20191202182205.14629-3-afaerber@suse.de>
+Subject: [PATCH 03/14] arm64: dts: realtek: rtd139x: Introduce CRT, iso and misc syscon
+Date:   Mon,  2 Dec 2019 19:21:53 +0100
+Message-Id: <20191202182205.14629-4-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191202182205.14629-1-afaerber@suse.de>
 References: <20191202182205.14629-1-afaerber@suse.de>
@@ -36,21 +36,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Group the non-iso reset controller nodes in a CRT syscon mfd node.
-Group reset controller, watchdog and UART0 in an Isolation syscon mfd node.
+Group the non-iso reset controller nodes into a CRT syscon mfd node.
+Group reset controller, watchdog and UART0 into an Isolation mfd node.
 Group UART1 and UART2 into a Miscellaneous syscon mfd node.
 
 Cc: James Tai <james.tai@realtek.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- arch/arm64/boot/dts/realtek/rtd129x.dtsi | 147 +++++++++++++++++++------------
+ arch/arm64/boot/dts/realtek/rtd139x.dtsi | 147 +++++++++++++++++++------------
  1 file changed, 90 insertions(+), 57 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-index 0de9e675be16..34dc09790d0b 100644
---- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-@@ -63,70 +63,31 @@
+diff --git a/arch/arm64/boot/dts/realtek/rtd139x.dtsi b/arch/arm64/boot/dts/realtek/rtd139x.dtsi
+index c11a505e43e2..3a571f3b7e38 100644
+--- a/arch/arm64/boot/dts/realtek/rtd139x.dtsi
++++ b/arch/arm64/boot/dts/realtek/rtd139x.dtsi
+@@ -61,70 +61,31 @@
  			#size-cells = <1>;
  			ranges = <0x0 0x98000000 0x200000>;
  
@@ -96,14 +96,14 @@ index 0de9e675be16..34dc09790d0b 100644
 -				reg-shift = <2>;
 +			crt: syscon@0 {
 +				compatible = "syscon", "simple-mfd";
-+				reg = <0x0 0x1800>;
++				reg = <0x0 0x1000>;
  				reg-io-width = <4>;
 -				clock-frequency = <27000000>;
 -				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
 -				status = "disabled";
 +				#address-cells = <1>;
 +				#size-cells = <1>;
-+				ranges = <0x0 0x0 0x1800>;
++				ranges = <0x0 0x0 0x1000>;
  			};
  
 -			uart1: serial@1b200 {
@@ -139,7 +139,7 @@ index 0de9e675be16..34dc09790d0b 100644
  			};
  		};
  
-@@ -142,3 +103,75 @@
+@@ -140,3 +101,75 @@
  		};
  	};
  };
