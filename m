@@ -2,100 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0191F10EC6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF57410EC61
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:36:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfLBPjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 10:39:07 -0500
-Received: from smtpbgbr2.qq.com ([54.207.22.56]:33802 "EHLO smtpbgbr2.qq.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbfLBPjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 10:39:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1575301134;
-        bh=qxhDF0663v1hbvbZByeK69uarzcMA+FhFaj7j+FZi1M=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=X39EcDwtdvb1mbB0zPxP+C+ZyfwzT/uPbezVmrJk+6gY0Kwl838ZmbHNS4eyzBtLH
-         5Xbrg8xKbJ90MCH86H1eVvfaUEnVR3T0v6+LnT9gOiIb9nGyIP+6xno87v4mox4u18
-         kQnUEh/ft4hqmfes/UHOgK0+glCe5yHOwQGOnUHk=
-X-QQ-mid: esmtp4t1575301131t81f1i73m
-Received: from Home-PC.lan (unknown [39.180.30.185])
-        by esmtp4.qq.com (ESMTP) with 
-        id ; Mon, 02 Dec 2019 23:38:49 +0800 (CST)
-X-QQ-SSF: 0100000000000040C7101F00000000O
-X-QQ-FEAT: EUGmOqWjSYKrlczS1C5GpZ8p2d1quYLjG/gMMWe9CgTsVmZYPXb7FBtwYAbDH
-        B0wgDV/bUXf1oOmaOAuDJS347kNatFUsZjkHcMQIp92g7q/WDdD/7eAmRsWVK4TYJx5Dfrv
-        hDs60f4EYOEM9jI+mjaKtjTgD1be5qn+jau4+ZaF1q6Lf6uycP5d04KSzv2WVdzb/EudUb/
-        75M9jx2HUWY6bGlBdZrMGAMpv/j8F0g7/oeSF59eWuN5aoDiP6/7v1uwRL7pLcsnzOTt+7+
-        mbtaO2RkIfF4w4kJmbHS8StZOk7irllV8QsA==
-X-QQ-GoodBg: 0
-From:   Jack Chen <redchenjs@foxmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jack Chen <redchenjs@live.com>
-Subject: [PATCH] ARM: dts: rockchip: Add missing cpu operating points for rk3288-tinker
-Date:   Mon,  2 Dec 2019 23:35:40 +0800
-Message-Id: <20191202153540.26143-1-redchenjs@foxmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727529AbfLBPgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 10:36:55 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33685 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbfLBPgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 10:36:55 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so158469lfl.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 07:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bFCuIWDe0r9z0ofPkFsx4bqSW8G0i7zhf1JqfD79wcc=;
+        b=uF58PRRP7rxMmTYQAMZdqiBXiZybfhfExTcFzJUdlL7Qd9+vknGxCJA5hn9Wc/Y/Qp
+         VzLJO5QoUjwtrFWxbIl7n6uGO+VaDBNLSHrHvVdHpsrKjelERqtN/RbiZg9+PxVfPmAw
+         v62mSVW1dDm0VEXft4+hUx/UgKkygByIpvrFooKcCr3L25vgqrlQqTzV3HQwhEd3y3nc
+         1mAs70EP1+jY3CPEgBGr59SM/q84jiM2w9Om2lnCumpn+eAUfqQwUKdXfGsOPtKxB3uY
+         V4jkwFHMxLw29p9Umupqa5dJCRqNY6RSJzCA/lMzEd3dKr/GpmX5h3e4llx61VtGXF86
+         +kBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bFCuIWDe0r9z0ofPkFsx4bqSW8G0i7zhf1JqfD79wcc=;
+        b=mdroIiRXsWUv3juAMtqKxoW5SN8/ksirpDNz5qZyDPtrgMaxw63MBMstkdxo1EUBxT
+         q8EEbTCbnoFrht0RwP6LnNPaJQ0WBQDc9rY7Vvw2fiMOJIGeo5+Xn6CI77PdJGnFzg19
+         5/W9porvP4JoH8sfO31FVONU5H2YuiuO0LuoXuVhrU2AzRE6V3uypCZIwrSNVYzkrj3E
+         W40/MF8zCvSy/Pn0NMgfAUpF7RW8Gp65uzjxvzpZNmjHpXrzI2ZlzbYnVg/tJvdZReCJ
+         CirSrkMhGGRlyLKz4W9OMPedccQNIqdCPE7X+/H2KDgEq2g473AuOCvSQHHv8mopJ98B
+         Bk7w==
+X-Gm-Message-State: APjAAAWbB1mE17pwqsJxODj85W4HR1PKClO7ICichp8oa68P+NiewY7k
+        Q9mwLVSaTzOet/z6ndPYfEHEXOrfa28cpSExLaG9qg==
+X-Google-Smtp-Source: APXvYqxjpo9lN0tubElvQ07MFkjVIu9ZwmINdIgzBNwt5AwOmONgVVXhOdrFPGu6YyxZbigDh3JFs9AKKeNs4TtCP3k=
+X-Received: by 2002:ac2:5107:: with SMTP id q7mr11617478lfb.177.1575301011300;
+ Mon, 02 Dec 2019 07:36:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtp:foxmail.com:bgforeign:bgforeign11
-X-QQ-Bgrelay: 1
+References: <1575036287-6052-1-git-send-email-vincent.guittot@linaro.org> <b8cee573-d1a7-bc26-c6d3-4f9e1a4ad330@arm.com>
+In-Reply-To: <b8cee573-d1a7-bc26-c6d3-4f9e1a4ad330@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Mon, 2 Dec 2019 16:36:39 +0100
+Message-ID: <CAKfTPtCVn+Ep4iMNZZi_MKfO9vnXt3G+LKR70LcLnyEAvfhoiw@mail.gmail.com>
+Subject: Re: [PATCH] sched/cfs: fix spurious active migration
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Chen <redchenjs@live.com>
+On Mon, 2 Dec 2019 at 16:13, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>
+> On 29/11/2019 15:04, Vincent Guittot wrote:
+> > The load balance can fail to find a suitable task during the periodic check
+> > because  the imbalance is smaller than half of the load of the waiting
+> > tasks. This results in the increase of the number of failed load balance,
+> > which can end up to start an active migration. This active migration is
+> > useless because the current running task is not a better choice than the
+> > waiting ones. In fact, the current task was probably not running but
+> > waiting for the CPU during one of the previous attempts and it had already
+> > not been selected.
+> >
+> > When load balance fails too many times to migrate a task, we should relax
+> > the contraint on the maximum load of the tasks that can be migrated
+> > similarly to what is done with cache hotness.
+> >
+> > Before the rework, load balance used to set the imbalance to the average
+> > load_per_task in order to mitigate such situation. This increased the
+> > likelihood of migrating a task but also of selecting a larger task than
+> > needed while more appropriate ones were in the list.
+>
+> Why not use '&& !env->sd->nr_balance_failed' then? Too aggressive? But
 
-The Tinker Board / S devices use a special chip variant called rk3288-c
-and use different operating points with a higher max frequency.
+Yeah I have thought and tried !env->sd->nr_balance_failed. In fact, I
+have tried both and I haven't seen any visible difference in my tests.
+Nevertheless, using !env->sd->nr_balance_failed condition doesn't let
+a chance to the current running task with a possibly correct load to
+become a waiting task during the next load balance and to be selected
+instead of a larger task, which will create another imbalance. Also
+cache_nice_tries increase the number of trials to large domain span to
+select different rqs before migrating a large task. Then,
+env->sd->nr_balance_failed <= env->sd->cache_nice_tries is used in
+can_migrate() for preventing migration because of cache_hotness so we
+are aligned with this condition. At the opposite,
+!env->sd->nr_balance_failed is used with LB_MIN which is disable by
+default.
 
-So add the missing operating points for Tinker Board / S devices, also
-increase the vdd_cpu regulator-max-microvolt to 1400000 uV so that the
-cpu can operate at 1.8 GHz.
-
-Signed-off-by: Jack Chen <redchenjs@live.com>
----
- arch/arm/boot/dts/rk3288-tinker.dtsi | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
-index 81e4e953d4a4..09e83b3d5e7d 100644
---- a/arch/arm/boot/dts/rk3288-tinker.dtsi
-+++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
-@@ -113,6 +113,17 @@
- 	cpu0-supply = <&vdd_cpu>;
- };
- 
-+&cpu_opp_table {
-+	opp-1704000000 {
-+		opp-hz = /bits/ 64 <1704000000>;
-+		opp-microvolt = <1350000>;
-+	};
-+	opp-1800000000 {
-+		opp-hz = /bits/ 64 <1800000000>;
-+		opp-microvolt = <1400000>;
-+	};
-+};
-+
- &gmac {
- 	assigned-clocks = <&cru SCLK_MAC>;
- 	assigned-clock-parents = <&ext_gmac>;
-@@ -175,7 +186,7 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt = <1350000>;
-+				regulator-max-microvolt = <1400000>;
- 				regulator-name = "vdd_arm";
- 				regulator-ramp-delay = <6000>;
- 				regulator-state-mem {
--- 
-2.24.0
+TBH, I don't have a strong opinion between !env->sd->nr_balance_failed
+and env->sd->nr_balance_failed <= env->sd->cache_nice_tries.
 
 
-
+> the average load_per_task was calculated at each load balance attempt,
+> so it would have led to a migration at the first load balance.
+>
+> This would be in sync with the LB_MIN check in the same switch case
+> (migrate_load). Although LB_MIN is false by default.
+>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >
+> > I haven't seen any noticable performance changes on the benchmarks that I
+> > usually run but the problem can be easily highlight with a simple test
+> > with 9 always running tasks on 8 cores.
+> >
+> >  kernel/sched/fair.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index e0d662a..d1b4fa7 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -7433,7 +7433,14 @@ static int detach_tasks(struct lb_env *env)
+> >                           load < 16 && !env->sd->nr_balance_failed)
+> >                               goto next;
+> >
+> > -                     if (load/2 > env->imbalance)
+> > +                     /*
+> > +                      * Make sure that we don't migrate too much load.
+> > +                      * Nevertheless, let relax the constraint if
+> > +                      * scheduler fails to find a good waiting task to
+> > +                      * migrate.
+> > +                      */
+> > +                     if (load/2 > env->imbalance &&
+> > +                         env->sd->nr_balance_failed <= env->sd->cache_nice_tries)
+> >                               goto next;
+> >
+> >                       env->imbalance -= load;
+> >
