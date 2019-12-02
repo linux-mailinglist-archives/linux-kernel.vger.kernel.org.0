@@ -2,136 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F29C10EE23
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:27:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0687010EE2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfLBR1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 12:27:10 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:36886 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727493AbfLBR1K (ORCPT
+        id S1727800AbfLBR1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 12:27:50 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40812 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbfLBR1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:27:10 -0500
-Received: by mail-io1-f72.google.com with SMTP id p2so113718iof.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 09:27:09 -0800 (PST)
+        Mon, 2 Dec 2019 12:27:49 -0500
+Received: by mail-pj1-f66.google.com with SMTP id s35so7879pjb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 09:27:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=orVQek45hbQSbuzOUHFucR+P4QAfww5RSJYpTiz6kMk=;
+        b=E1ZDHCEdlSiRs2pgt0MJ9z0hc0NMboqKJ6DAxfZKh3xlL0N+t0EaKMJXUj/mUCzz2g
+         GmK9qcWj11B1Z7c5zJmuLKI0cJjAFsuqBcW0d3RxcM1PJm1JRwfZEyUxJ+mmVjGyKEwh
+         pQvQ+fC84S/SL0QYkOX8HPS1JX4qDJoT+pkeGWwg0fDrfS1LHqyBMFb/OCo1Qxld1CXD
+         EJbeWQdrJqyq69KCpU4HwRBqXoT9roo3uRe0I2/zbVSGMZvjRRps3nrBqOJSWOQBRzqM
+         dan9oMXAEn29Kbgea+qTVrDcOl0olI/gJ5STJYPmDwjsonGIt5S1RrZrGEj5kgnkUjVs
+         0CcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=TtI8iuODHAY3u2DEuOOaACvhCMI2l1BthLHP25nKwao=;
-        b=cmyy9aAoLcXfYUvzThAv1pLROXCyPwMwyc13n4Orm1CqrN3XDh1YPbwD+QO/EzSokR
-         QTxP38dQzfFw5fPRAL/OndmGfFK2gjDNq58MWtmiYsiWgpMJ0Vc1msieWDvLAbcWDCEE
-         czuyB0eC4/iMGYKQEMu+kv59Bjx+kngBRoxvw36zWB18ikgNsRfq/YcmBaovYmaSAwYE
-         GmkRBSrddehPbzD430vZQ+ah1PT6U7YewnrrEZ4NSTJz1N7F9BczrIWxU2ClvxAKeBnf
-         OI13yriQLjUVyNZVqY59Z11VuFSDVaC3jNkVTxXAT0duxJhqa5+Q/hhCWN+tBRRWhc3a
-         pNug==
-X-Gm-Message-State: APjAAAX9BMYIgd8fSxKN4aMRHW6222dWebcOgFNYoxqEj4NwGctpFioj
-        JxPy7/Dy0UWOw+1m4epOVTj+PGjaANMBSzaPVtCjD25eBf+y
-X-Google-Smtp-Source: APXvYqzUBK8l/nEEBz5DGClMhxGuP7KONlyXZ38j9ZDhKJcotxY5eRC7fYZQz1ryOHK1m0i9QwHV21qsGAKHHh0jtTCyTH+SHdUH
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=orVQek45hbQSbuzOUHFucR+P4QAfww5RSJYpTiz6kMk=;
+        b=EmFPP5xqOlIR8sl4cBfxHMspIcn+mjFpvCAkjbjRYYN1u4H1xPCVEQTJ5Gn267xusC
+         T1hgVeyRIGz9pu4K5+Z3qpj8tx883QzJr6iQ4/+3v9eSMFe+OwU+cU2e1jMWKql3mLEa
+         QLnS5gSz8arK0G4Ptf4rpnAiogGV8joydYVNxqlK4VZJUVE8LcALPr1R1v3tMKFIXLAp
+         i4M+v0eRyQ8foIa8n7f6bFttmWFnDtP9WdUdHw4jVdZfL3VREiCNBJ3fYTGrtgPQZixI
+         t01zaobv6EIpIinsq9xS0XCizXMVlTDSrgzk0IE17wURrub31zWlVzXZ0fVaNSgoOX3S
+         AOKA==
+X-Gm-Message-State: APjAAAVxubXT/WPVcc/TjU9M2UzQREYL4Jd2v7HYGxJfvCjAQKyFD09D
+        p/qpSddAqGGWCCDapfeE18Qh71LhEt02sKXUtqdhwQ==
+X-Google-Smtp-Source: APXvYqzaTKvhv+BQ331cpJ2A58psUjQ8mIb0ogedjAL9QEa7CqlVb1qtoPwOztva/oBIQC9ZAversWAN2WW/C5IN2g4=
+X-Received: by 2002:a17:90a:1505:: with SMTP id l5mr122297pja.73.1575307666825;
+ Mon, 02 Dec 2019 09:27:46 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9f05:: with SMTP id q5mr6659087iot.295.1575307629224;
- Mon, 02 Dec 2019 09:27:09 -0800 (PST)
-Date:   Mon, 02 Dec 2019 09:27:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6f2030598bbe38c@google.com>
-Subject: WARNING in wp_page_copy
-From:   syzbot <syzbot+9301f2f33873407d5b33@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20191128033959.87715-1-pihsun@chromium.org> <d02f4eef9aa674cb36c1d90069a13e7bd02b7e40.camel@perches.com>
+ <CANdKZ0eYSdPC2y5QxN1B7FshewXumrETQohbXrnvbovXMkSe9Q@mail.gmail.com>
+In-Reply-To: <CANdKZ0eYSdPC2y5QxN1B7FshewXumrETQohbXrnvbovXMkSe9Q@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 2 Dec 2019 09:27:35 -0800
+Message-ID: <CAKwvOd=g36hxdU-pspCf78JhLTtxTk2dvStR3SQLhTPeCrELVQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] wireless: Use offsetof instead of custom macro.
+To:     Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Joe Perches <joe@perches.com>, linux-wireless@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CLANG/LLVM BUILD SUPPORT" 
+        <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Nov 28, 2019 at 8:05 PM Pi-Hsun Shih <pihsun@chromium.org> wrote:
+>
+> On Thu, Nov 28, 2019 at 11:54 AM Joe Perches <joe@perches.com> wrote:
+> >
+> > On Thu, 2019-11-28 at 11:39 +0800, Pi-Hsun Shih wrote:
+> > > Use offsetof to calculate offset of a field to take advantage of
+> > > compiler built-in version when possible, and avoid UBSAN warning when
+> > > compiling with Clang:
+> > []
+> > > diff --git a/include/uapi/linux/wireless.h b/include/uapi/linux/wireless.h
+> > []
+> > > @@ -1090,8 +1090,7 @@ struct iw_event {
+> > >  /* iw_point events are special. First, the payload (extra data) come at
+> > >   * the end of the event, so they are bigger than IW_EV_POINT_LEN. Second,
+> > >   * we omit the pointer, so start at an offset. */
+> > > -#define IW_EV_POINT_OFF (((char *) &(((struct iw_point *) NULL)->length)) - \
+> > > -                       (char *) NULL)
+> > > +#define IW_EV_POINT_OFF offsetof(struct iw_point, length)
+> > >  #define IW_EV_POINT_LEN      (IW_EV_LCP_LEN + sizeof(struct iw_point) - \
+> > >                        IW_EV_POINT_OFF)
+> >
+> > This is uapi.  Is offsetof guaranteed to be available?
+>
+> offsetof is already used in other uapi headers
+> (include/uapi/linux/fuse.h FUSE_NAME_OFFSET).
+>
+> Also offsetof is also defined back in C89 standard (in stddef.h), so
+> it should be widely available and should be fine to use here?
+> (Should I add a #ifndef __KERNEL__ #include <stddef.h> to the file?)
 
-syzbot found the following crash on:
+Yes, please, otherwise userspace could have a
+-Wimplicit-function-definition warning from including this header,
+since it would look like a function call to a previously undeclared
+function.
 
-HEAD commit:    a6ed68d6 Merge tag 'drm-next-2019-11-27' of git://anongit...
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=1181e536e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6349516b24252b37
-dashboard link: https://syzkaller.appspot.com/bug?extid=9301f2f33873407d5b33
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Actually, it looks like include/uapi/linux/posix_types.h includes it
+unconditionally, and many other headers under include/uapi/ include
+include/uapi/linux/posix_types.h (unconditionally).  So it may be ok
+to just include stddef.h unconditionally, but please do so in addition
+to the current diff you have.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9301f2f33873407d5b33@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 22897 at mm/memory.c:2223 cow_user_page  
-mm/memory.c:2223 [inline]
-WARNING: CPU: 0 PID: 22897 at mm/memory.c:2223 wp_page_copy+0x123c/0x1860  
-mm/memory.c:2393
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 22897 Comm: syz-executor.4 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  panic+0x2e3/0x75c kernel/panic.c:221
-  __warn.cold+0x2f/0x3e kernel/panic.c:582
-  report_bug+0x289/0x300 lib/bug.c:195
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  fixup_bug arch/x86/kernel/traps.c:169 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-RIP: 0010:cow_user_page mm/memory.c:2223 [inline]
-RIP: 0010:wp_page_copy+0x123c/0x1860 mm/memory.c:2393
-Code: 4c 89 f7 ba 00 10 00 00 48 81 e6 00 f0 ff ff e8 7a 52 c0 05 31 ff 41  
-89 c7 89 c6 e8 be 9e d3 ff 45 85 ff 74 0f e8 34 9d d3 ff <0f> 0b 4c 89 f7  
-e8 aa 44 c0 05 e8 25 9d d3 ff 65 4c 8b 34 25 c0 1e
-RSP: 0018:ffff88806c99f8d0 EFLAGS: 00010202
-RAX: 0000000000040000 RBX: ffff88806c99fb78 RCX: ffffc9000ed9c000
-RDX: 0000000000000230 RSI: ffffffff81a0b77c RDI: 0000000000000005
-RBP: ffff88806c99fa18 R08: ffff888068576680 R09: 0000000000000000
-R10: ffffed100faee7ff R11: ffff88807d773fff R12: ffff88808a082420
-R13: ffffea0001f5dcc0 R14: ffff88807d773000 R15: 0000000000001000
-  do_wp_page+0x543/0x15c0 mm/memory.c:2702
-  handle_pte_fault mm/memory.c:3939 [inline]
-  __handle_mm_fault+0x23ec/0x4040 mm/memory.c:4047
-  handle_mm_fault+0x3b2/0xa50 mm/memory.c:4084
-  do_user_addr_fault arch/x86/mm/fault.c:1441 [inline]
-  __do_page_fault+0x536/0xd80 arch/x86/mm/fault.c:1506
-  do_page_fault+0x38/0x590 arch/x86/mm/fault.c:1530
-  page_fault+0x39/0x40 arch/x86/entry/entry_64.S:1203
-RIP: 0010:__put_user_4+0x1c/0x30 arch/x86/lib/putuser.S:70
-Code: 1f 00 c3 90 66 2e 0f 1f 84 00 00 00 00 00 65 48 8b 1c 25 c0 1e 02 00  
-48 8b 9b 90 14 00 00 48 83 eb 03 48 39 d9 73 4a 0f 1f 00 <89> 01 31 c0 0f  
-1f 00 c3 66 90 66 2e 0f 1f 84 00 00 00 00 00 65 48
-RSP: 0018:ffff88806c99fe18 EFLAGS: 00010297
-RAX: 0000000000000009 RBX: 00007fffffffeffd RCX: 0000000020003ac0
-RDX: 0000000000000058 RSI: ffffffff81a08021 RDI: 0000000000000286
-RBP: ffff88806c99fee0 R08: 0000000000000001 R09: ffff888068576f10
-R10: fffffbfff13cf9e8 R11: ffffffff89e7cf47 R12: 0000000000000006
-R13: 0000000000000009 R14: 000000000000000a R15: 0000000000000000
-  __do_sys_socketpair net/socket.c:1623 [inline]
-  __se_sys_socketpair net/socket.c:1620 [inline]
-  __x64_sys_socketpair+0x97/0xf0 net/socket.c:1620
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a679
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f42bfff6c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000035
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000000045a679
-RDX: 00000000000000be RSI: 0000000000000006 RDI: 0000000000000006
-RBP: 000000000075c118 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020003ac0 R11: 0000000000000246 R12: 00007f42bfff76d4
-R13: 00000000004c9e66 R14: 00000000004e2240 R15: 00000000ffffffff
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Thanks,
+~Nick Desaulniers
