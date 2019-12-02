@@ -2,113 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A40610EDD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AA6710EDE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfLBRGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 12:06:40 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:45866 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727513AbfLBRGk (ORCPT
+        id S1727771AbfLBRJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 12:09:43 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39106 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbfLBRJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:06:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=12vfepLsf3YjzqkbhBhkyf8yhAtAkfl23HqEvJbIYys=; b=zK9GMzrqmWlBy2n7w8dQ32Vqf
-        bv8aGZN49p6N2cxJl8zVgmFND6A2TJ6qR2c+N17WmR7c5M+PhTby3xuCZmjxs8D1e5BFfTTehCC3P
-        fpC8GqCLcf714iQFA+30cAgS2AaxfXmMyMyVEXAQuZQeK97qAGOWN8nJ44do0XzJmylqa6JQjNfOG
-        6MITRiyMF3gFeuz2hM/dahKKuDKCf69x2sLnGWAcQ4ZYmTBsPg9edkoooNdcXI+aGLzZea3WejnXj
-        Td34e9V1X+aEoOdriw5fZaAKVTP7AjKTTHGbceS3WAIVLrTodn4iH3j8tzAJrzDua9grQJsPDwmWK
-        fMmWlKCZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ibp9e-00020p-OC; Mon, 02 Dec 2019 17:06:34 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 363CD301A6C;
-        Mon,  2 Dec 2019 18:05:17 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1D51120D96EC4; Mon,  2 Dec 2019 18:06:33 +0100 (CET)
-Date:   Mon, 2 Dec 2019 18:06:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: UBSAN: Undefined behaviour in arch/x86/events/intel/p6.c:116:29
-Message-ID: <20191202170633.GN2844@hirez.programming.kicks-ass.net>
-References: <02f44ed5-13ac-f9c6-1f35-129c41006900@linux.ee>
+        Mon, 2 Dec 2019 12:09:40 -0500
+Received: by mail-pj1-f68.google.com with SMTP id v93so13909371pjb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 09:09:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RDGGQHWpdkZIj81hxXdfawczIBgk86TVXpxZEqNBkKw=;
+        b=qy1XX0NQtaJmJIk1WSswX5pJZErX2pRnSRnoUqnlqrxvfEfIdPE2rOIZfXv4W1NZX4
+         rGki7kDJGQgC9QNz5h/BMIDI8PcBEHBAET/FtufdP8qVa+7E0j1+0gueUKOZvey7xV40
+         ipOq2+hRM8AUag4zbb8uui/TQI7YALdkbuBkUeU2jw0/LwEC5TJd2lIYmAZsEWM6h4Kz
+         ULeuV/etAnPSASnzO8ReR0Ve6D0Slh2WeHYBc634bc1ZtUxqWo9SnOYUzl/Dg+LIpiOb
+         siGdXVqIA1rMRUNUnhlfzuAqV3jyDSRhDCDSLfFBAfTM+f2wK5f7F3+WE59nxKFLE2nW
+         buHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RDGGQHWpdkZIj81hxXdfawczIBgk86TVXpxZEqNBkKw=;
+        b=Rpm7Gao9u+bgP6By51UKvdDrbp/N+JqXr8VxaNR8ZzqHTAwtuG8QO6eKm0ZvWVAXX9
+         ZfvpKu5y4c8hEZgrqJQsGRn5YCSItNpmifyiRNxBxtAUHGOJra4DoRdkZgRzf2xLKwMt
+         khNutM5NFUmElHXOAUk3GQ2Lv1HU3lrcQ9XmOyBQ+GeNkOcCPDUjGIIdgnzsM9oIqOW8
+         7Uvg2z+cCgZb4oBh1JwDsrjc7whj8kus4nbKLoPi11vt+Z3FyTxezfVEaZaJBz+Ykim6
+         e3rrE4/no+9elHFkoczD5p4JXZeNFglBDETgl32v/8unMPcTwaxWVd7EfXSkFnlV2Nzm
+         gpog==
+X-Gm-Message-State: APjAAAWOMk2/xvXBe+iQUc6HNTgFLLLRH9gpPMQ08SUfynKyVpw/KEFs
+        CB/RbgJfMTQLu4fDd3b1+KjmE6ENyxXo9EUT+95x1w==
+X-Google-Smtp-Source: APXvYqzqsLYh95mI5pQBPTRCrUh++E3DAxgln/usIn0Xc7WWl8bqC9mEjf/KwCQBB6K3knP54p0s/dChqA2Dqaj6CAI=
+X-Received: by 2002:a17:90a:ff02:: with SMTP id ce2mr264576pjb.117.1575306578192;
+ Mon, 02 Dec 2019 09:09:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02f44ed5-13ac-f9c6-1f35-129c41006900@linux.ee>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191127231926.162437-1-heidifahim@google.com>
+In-Reply-To: <20191127231926.162437-1-heidifahim@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 2 Dec 2019 09:09:29 -0800
+Message-ID: <CAFd5g46TG-+baJE29dR8iUdBdWViO_BygKbwUQ5fHv8X3Jkpfw@mail.gmail.com>
+Subject: Re: [PATCH] kunit: testing kunit: Bug fix in test_run_timeout function
+To:     Heidi Fahim <heidifahim@google.com>
+Cc:     David Gow <davidgow@google.com>, shuah <shuah@kernel.org>,
+        SeongJae Park <sj38.park@gmail.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 07:55:08PM +0200, Meelis Roos wrote:
-> While testing 5.4 on a Dell D600 (32-bit), I noticed the old UBSAN warnings from p6 perf events.
-> I remember having seen these warnings on other p6 era computers too.
-> 
-> [    2.795167] ================================================================================
-> [    2.795206] UBSAN: Undefined behaviour in arch/x86/events/intel/p6.c:116:29
-> [    2.795235] index 8 is out of range for type 'u64 [8]'
-> [    2.795265] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-03419-g386403a115f9-dirty #18
-> [    2.795266] Hardware name: Dell Computer Corporation Latitude D600                   /0X2034, BIOS A16 06/29/2005
-> [    2.795268] Call Trace:
-> [    2.795283]  dump_stack+0x16/0x19
-> [    2.795290]  ubsan_epilogue+0xb/0x29
-> [    2.795293]  __ubsan_handle_out_of_bounds.cold+0x43/0x48
-> [    2.795299]  ? sysfs_add_file_mode_ns+0xad/0x180
-> [    2.795304]  p6_pmu_event_map+0x3b/0x50
-> [    2.795306]  is_visible+0x25/0x30
-> [    2.795308]  ? collect_events+0x150/0x150
-> [    2.795310]  internal_create_group+0xd8/0x3e0
-> [    2.795312]  ? collect_events+0x150/0x150
-> [    2.795314]  internal_create_groups.part.0+0x34/0x80
-> [    2.795317]  sysfs_create_groups+0x10/0x20
-> [    2.795321]  device_add+0x536/0x5a0
-> [    2.795326]  ? kvasprintf_const+0x59/0x90
-> [    2.795331]  ? kfree_const+0xf/0x30
-> [    2.795334]  ? kobject_set_name_vargs+0x6a/0xa0
-> [    2.795338]  pmu_dev_alloc+0x8e/0xe0
-> [    2.795344]  perf_event_sysfs_init+0x40/0x78
-> [    2.795346]  ? stack_map_init+0x17/0x17
-> [    2.795347]  do_one_initcall+0x7a/0x1b3
-> [    2.795351]  ? do_early_param+0x75/0x75
-> [    2.795354]  kernel_init_freeable+0x1ae/0x230
-> [    2.795357]  ? rest_init+0x6d/0x6d
-> [    2.795359]  kernel_init+0x9/0xf3
-> [    2.795361]  ? rest_init+0x6d/0x6d
-> [    2.795363]  ret_from_fork+0x2e/0x38
-> [    2.795364] ================================================================================
+On Wed, Nov 27, 2019 at 3:19 PM Heidi Fahim <heidifahim@google.com> wrote:
+>
+> Assert in test_run_timeout was not updated with the build_dir argument
+> and caused the following error:
+> AssertionError: Expected call: run_kernel(timeout=3453)
+> Actual call: run_kernel(build_dir=None, timeout=3453)
+>
+> Needed to update kunit_tool_test to reflect this fix
+> https://lkml.org/lkml/2019/9/6/3
+>
+> Signed-off-by: Heidi Fahim <heidifahim@google.com>
+> Change-Id: I6f161c72c6a5f071a4dc31582ba08b91974502ce
 
-Does something like so fix it?
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 9a89d98c55bd..f0ab61cd2f68 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1642,9 +1642,12 @@ static struct attribute_group x86_pmu_format_group __ro_after_init = {
- 
- ssize_t events_sysfs_show(struct device *dev, struct device_attribute *attr, char *page)
- {
--	struct perf_pmu_events_attr *pmu_attr = \
-+	struct perf_pmu_events_attr *pmu_attr =
- 		container_of(attr, struct perf_pmu_events_attr, attr);
--	u64 config = x86_pmu.event_map(pmu_attr->id);
-+	u64 config = 0;
-+
-+	if (pmu_attr->id < x86_pmu.max_events)
-+		config = x86_pmu.event_map(pmu_attr->id);
- 
- 	/* string trumps id */
- 	if (pmu_attr->event_str)
+Change-Id should not be used on LKML patches. Did you run checkpatch?
