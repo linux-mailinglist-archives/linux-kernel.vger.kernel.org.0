@@ -2,83 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6089410E9E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2010A10E9EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfLBMEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 07:04:24 -0500
-Received: from castroalves.fundaj.gov.br ([200.17.132.4]:46326 "EHLO
-        castroalves.fundaj.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfLBMEY (ORCPT
+        id S1727413AbfLBMKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 07:10:41 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36642 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbfLBMKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 07:04:24 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by castroalves.fundaj.gov.br (Postfix) with ESMTP id 78A6213E5ED;
-        Mon,  2 Dec 2019 09:08:42 -0300 (-03)
-Received: from castroalves.fundaj.gov.br ([127.0.0.1])
-        by localhost (castroalves.fundaj.gov.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Gl9RrrQCZKmY; Mon,  2 Dec 2019 09:08:42 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by castroalves.fundaj.gov.br (Postfix) with ESMTP id AD68E13E5CE;
-        Mon,  2 Dec 2019 09:08:07 -0300 (-03)
-DKIM-Filter: OpenDKIM Filter v2.10.3 castroalves.fundaj.gov.br AD68E13E5CE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fundaj.gov.br;
-        s=25700E94-2A59-11E8-8390-8ACCB82071DA; t=1575288487;
-        bh=TneQeD6wx1qqQv8RtiFbQXbMaWNTvgSHNyqOlckWVQ0=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=Bqb0ClWitAo7kcCMPXynK1bRIQOVcRNsb5sDssEnK5GI9hsfZGd766oPe2WGhdpDa
-         YKnIHlVGJeWeFwEtZHKocR6SNntO343gHGaaUoTWELIhFmHh4+yfO4/xZZ51L95FtM
-         nvam0l3O0EhyJbdpDkJ/19WTa/nWUO8JjLd9IjSVJHeb05D1x68fnJeksBRrm3jEgf
-         qHAi5+YkuzINXg5+w2y79c5ZddtfV38Y7iKkiYg5/SiNPcqMaoMbrCAU0ROqlbwhVj
-         YALxTTKYm7vOnD632DA7EeLTeceEFUOwJmBO3H2A+2G9++EsXvQGl4nK1z9ph0BJuj
-         lFYvKNc4MkLeA==
-X-Virus-Scanned: amavisd-new at fundaj.gov.br
-Received: from castroalves.fundaj.gov.br ([127.0.0.1])
-        by localhost (castroalves.fundaj.gov.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id x5z1dv_EHXtb; Mon,  2 Dec 2019 09:08:07 -0300 (-03)
-Received: from castroalves.fundaj.gov.br (castroalves.fundaj.gov.br [192.168.1.4])
-        by castroalves.fundaj.gov.br (Postfix) with ESMTP id 3AAF113E565;
-        Mon,  2 Dec 2019 09:05:56 -0300 (-03)
-Date:   Mon, 2 Dec 2019 09:05:56 -0300 (BRT)
-From:   Administrador <jaime.ramos@fundaj.gov.br>
-Reply-To: mailsss@mail2world.com
-Message-ID: <573648466.1808544.1575288356144.JavaMail.zimbra@fundaj.gov.br>
-Subject: 
+        Mon, 2 Dec 2019 07:10:40 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p17so17106486wma.1;
+        Mon, 02 Dec 2019 04:10:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H+WNR4Gv7wXCDUGA34sGUVp4d2Py5Z7w/w17ZTUcwFQ=;
+        b=FkGIefBnFAIn4YWM26tn/56KJ0fIicD/2Ti5PnCpw9mEAzAVnUWYB8HZFkVMthf7mO
+         OxV3Y04xyfYZevpNzkPxzQuRgB+OcdxqQ6LJx8bU6WOaK4xLNEdRMjukZOzGHqcz2F3K
+         F+a0xOpSaGQdw9pirQaqXjQUt1S3kaqyoA90mCW8usmPTHD/IVparOHnXHSZ5pxYamLN
+         g7rw4t3WAqM+Z9g3IopZJx0N2W+DVbC8awTc4iPOhDKGNab/JLhsqZkoH0OTqELYj/ER
+         lwIPcu6/NDHVNvWlsryxK3AN91z81hRkzFU+9Tixa4o6+XFs27Pb/c8wgPa2iZXpB9Pz
+         AEkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H+WNR4Gv7wXCDUGA34sGUVp4d2Py5Z7w/w17ZTUcwFQ=;
+        b=VOCeVrI3XNRUF51KbqmMfsYdJB8CU2hACWrby1GHBJSABUnXbQnNG9DkrAVTURF2Vl
+         zyx9bWwmqJg0rtzQ+sf34e1q0vy6OBKiGvU4tAA37IKOcojo1LbAQJHpuVROnoFEhB/d
+         7nb8mAzDs8e5yZHsV/Str3rPe+caZyDxfAnsI/X3+5UgeyUjyVKx3/GlHJSDEiWtJmki
+         Mcmvvb2b1baTqeax8oPgYd05Mj76XXjGU/xxwRlKXNH5lJFoSnQABnpXJHlwgKM+uOkE
+         1hlKy2jkCfQos+jAxyPZS2r2g5ba4XCdnIPhdd7z5Wqke6mcJIeWkbsNHBAaMkvJuKhn
+         YWZQ==
+X-Gm-Message-State: APjAAAUkJVceStNJh/aGaXEQNuHFSsV3Yp+5zAax6kwBWcaRPsGogMi6
+        hU1v+q5fnWJExV9iXQb/FEI=
+X-Google-Smtp-Source: APXvYqwby5asr6kpFgXMYVtMnSO7hotnx0yL3RNXUDyflSFrfvIdfzVWXMcjF161nYpjsEW//WTcUw==
+X-Received: by 2002:a05:600c:54c:: with SMTP id k12mr27760496wmc.124.1575288636871;
+        Mon, 02 Dec 2019 04:10:36 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id e16sm23522479wme.35.2019.12.02.04.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2019 04:10:31 -0800 (PST)
+Date:   Mon, 2 Dec 2019 13:10:29 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [RFC PATCH v5 0/7] Speed booting by sorting ORC unwind tables at
+ build time
+Message-ID: <20191202121029.GA37334@gmail.com>
+References: <20191128110206.2107-1-shile.zhang@linux.alibaba.com>
+ <20191202103248.GB2827@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [106.210.3.121]
-X-Mailer: Zimbra 8.8.8_GA_3025 (zclient/8.8.8_GA_3025)
-Thread-Index: cTa5DtUIycWpVIZqyYJ+NsBqPFCQzA==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202103248.GB2827@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATENCI=C3=93N;
 
-Su buz=C3=B3n ha superado el l=C3=ADmite de almacenamiento, que es de 5 GB =
-definidos por el administrador, quien actualmente est=C3=A1 ejecutando en 1=
-0.9GB, no puede ser capaz de enviar o recibir correo nuevo hasta que vuelva=
- a validar su buz=C3=B3n de correo electr=C3=B3nico. Para revalidar su buz=
-=C3=B3n de correo, env=C3=ADe la siguiente informaci=C3=B3n a continuaci=C3=
-=B3n:
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-nombre:
-Nombre de usuario:
-contrase=C3=B1a:
-Confirmar contrase=C3=B1a:
-E-mail:
-tel=C3=A9fono:
+> On Thu, Nov 28, 2019 at 07:01:59PM +0800, Shile Zhang wrote:
+> > This series refactored the original sortextable tools, add ORC unwind
+> > tables sort at build time.
+> > 
+> > To sort the ORC unwind tables(.orc_unwind & .orc_unwind_ip) can save
+> > about 100ms in my test ENV (2C4G VM w/ Xeon 2.5GHz CPU).
+> > It costs about 30ms sort by new sorttable tool.
+> 
+> IIRC from your previous emails the new build-time sort is actually
+> shorter than that, so even for single build+run scenarios we win.
+> 
+> The code looks good to me, so:
+> 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> Who it going to apply this? I suppose we could take it through -tip,
+> like we do with all x86 and objtool related bits.
 
-Si usted no puede revalidar su buz=C3=B3n, el buz=C3=B3n se deshabilitar=C3=
-=A1!
+Yeah, will apply it once the merge window slows down a bit.
 
-Disculpa las molestias.
-C=C3=B3digo de verificaci=C3=B3n:666690opp4r56 es: 006524
-Correo Soporte T=C3=A9cnico =C2=A9 2019
+Thanks,
 
-=C2=A1gracias
-Sistemas administrador
+	Ingo
