@@ -2,157 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4DA10EA8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5022510EA92
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfLBNMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 08:12:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51046 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbfLBNMJ (ORCPT
+        id S1727478AbfLBNMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 08:12:34 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:46540 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbfLBNMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 08:12:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HcdPKwqbVGtlgcTIZgCIi0isK2Mpc49YUdk5xlaJzq0=; b=eMgFjIw0NhQQ+Z5g2pVLfx0Z/
-        HPRbQ8VD6LzILID+Y2PhharPGvlPAq79MtFYP84MsnbUkInBOAEYpol69Cx+VUXES8ea6kBYRFoXI
-        9LA46DCwTHRcSsg1xO5EVf3HG00L+yJhLHtjGWdwDSMtyJRAyB4gSNFoWDpW4xEoUk1gs=;
-Received: from 188.31.173.115.threembb.co.uk ([188.31.173.115] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iblUM-0003mu-7T; Mon, 02 Dec 2019 13:11:42 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id E6920D020A4; Mon,  2 Dec 2019 13:11:40 +0000 (GMT)
-Date:   Mon, 2 Dec 2019 13:11:40 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "corbet@lwn.net" <corbet@lwn.net>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "hofrat@osadl.org" <hofrat@osadl.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>
-Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Message-ID: <20191202131140.GD1998@sirena.org.uk>
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <20191118162502.GJ9761@sirena.org.uk>
- <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
- <20191119181325.GD3634@sirena.org.uk>
- <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
- <20191119193636.GH3634@sirena.org.uk>
- <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
- <20191129120925.GA5747@sirena.org.uk>
- <297fa021fb243072dbbb7bca455e57c13e8c6843.camel@fi.rohmeurope.com>
+        Mon, 2 Dec 2019 08:12:34 -0500
+Received: by mail-il1-f195.google.com with SMTP id t17so6471337ilm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 05:12:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=BEf2S5u+WKP/foav92FT5WfCqzlmahCLdTJQjKbcopLcXE0DdSu4K47gsA7N2xflRs
+         NiOqsHg3qwOGt75ozzvf20Ur7e5SIL6MUn9jPmyHp073CPOo3H5MRraCFl79FnQYzod3
+         mgMFHahcLzaHJgu6DxOPVccGyGzAGYIygDkT7RvGw8a9jU6+w5PL+oIjhRpIR5sFCURP
+         ZVqijgR4s+fbF49rhH5+E/RtV91fPAlMLr84Y/O/ks2tHVaydcu2tr205Xrn/YHrtGTf
+         JnKqPoy+h8WxQRW7wU9N6mJNd/zMCXBIk5lxWqkohI3wC4NPM3Fuu+KmmkPCBPonA4Fy
+         c3eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Ph/tiCxt6J8lQbta3ZHrGApdLgqUBYn0fpRyKCOIpm8=;
+        b=Me6EwbmE+tTiTJygVVEILvXgyBjioMIodbEKIsIwJAzihONDnBdAaaat8KSr58PPw9
+         hSZCbugVdc0/dV+mqAyZ9OWBh4zOOUWUw98rrPE1TjOXJPjss/85+glAvav+t7ln+GwD
+         FozxZxTKcrNMiNvmeb53Fh4YVhlxjApFxpHElFWboq0YyuUT6aX8x+PTd6+14iZfaM2t
+         fIK8HCapQlyyAYfXmiVIfolRScq4GSqYHkMavtRuk79EpWMBc6ntv0GuA7he7VwBmZzS
+         d+xo+skgopE4sOBd4jg5NBjabTaXk2D4tVk4OwoXNbni/W76GsX7W6zmfQDc5epelmvJ
+         chSA==
+X-Gm-Message-State: APjAAAUN66x5i+RZKMU/Cr1B4Ydjzraj4r8V00dkkA+iPp8H/9IwGvd3
+        x7gugJbyXByJsTGpXeFBC9QbwbdTCSwDG7iZYA==
+X-Google-Smtp-Source: APXvYqxcjqXvuccfWNuQLShQqBGJERqStzcsvq5tWY7TX2YuN4kQj2gkQN7g5TcIV6qQYhSG5mDXnSU/EM5j5yNKL5E=
+X-Received: by 2002:a92:7ec4:: with SMTP id q65mr33135575ill.263.1575292353049;
+ Mon, 02 Dec 2019 05:12:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vni90+aGYgRvsTuO"
-Content-Disposition: inline
-In-Reply-To: <297fa021fb243072dbbb7bca455e57c13e8c6843.camel@fi.rohmeurope.com>
-X-Cookie: Cleanliness is next to impossible.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a05:6638:18c:0:0:0:0 with HTTP; Mon, 2 Dec 2019 05:12:32
+ -0800 (PST)
+Reply-To: suleman_bello@yahoo.com
+From:   Mr Suleman Bello <atmcard024@gmail.com>
+Date:   Mon, 2 Dec 2019 05:12:32 -0800
+Message-ID: <CADOR4gqN=ObPbdJFPWJ11S2FfmmCBkXyX8yj--t-k5JhJUf5Jw@mail.gmail.com>
+Subject: CAN I TRUST YOU?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Friend,
 
---vni90+aGYgRvsTuO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please i want you to read this letter very carefully and i must
+apologize for berging this message into your mail box without any
+formal introduction due to the urgency and confidential of this issue
+and i know that this message will come to you as a surprise, Please
+this is not a joke and i will not like you to joke with it.I am
+Mr.Suleman Bello, a staff in African Development Bank (A.D.B)
+Ouagadougou, Burkina faso West Africa.I discovered existing dormant
+account for years. When I discovered that there had been neither
+continuation nor withdrawals from this account for this long period
+and according to the laws and constitution guiding this banking
+institution, any unserviceable account for more than (7) seven years,
+that fund will be transferred to national treasury as unclaimed fund.
 
-On Mon, Dec 02, 2019 at 07:57:13AM +0000, Vaittinen, Matti wrote:
-> On Fri, 2019-11-29 at 12:09 +0000, Mark Brown wrote:
+I Hoped that you will not expose or betray this trust and confident
+that i am about to extablish with you for the mutual benefit of you
+and i.I need your urgent assistance in transferring the sum of $10.5
+)million usd into your account within 7 banking days. This money has
+been dormant for years in our Bank, and The request of foreigner in
+this transaction is necessary because our late customer was a
+foreigner and a burkinabe cannot stand as next of kin to a
+foreigner.Because of the static of this transaction I want you to
+stand as the next of kin so that our bank will accord you the
+recognition and have the fund transferred to your account.
 
-> > The regulator driver has a bunch fo set_suspend_ operations.
+Upon your response, I shall then provide you with further information
+and more deities that will help you understand the transaction. I am
+expecting your urgent response to enable me inform you on how the
+business will be executed. Please I would like you to keep this
+transaction confidential and as a top secret or delete if you are not
+interested.
 
-> Hmm. I saw these. But unless I am mistaken linux only knows one
-> 'suspend' state whereas the PMIC has a few separate states I can see as
-> 'suspend' states. As far as I understood the set_suspend_voltage does
-> not allow setting separate suspend voltages depending on the "type of
-> suspend" (as there is only one 'suspend' state).
-
-No, look at the bindings - we support a bunch of different
-suspend states matching the different suspend states that the
-kernel as a whole supports.  We don't assume that the device will
-know this but you can always use the current suspend we're going
-for to decide where to update.
-
-> > > (RUN0, ... RUN3) could be mapped to regulator modes
-> > > REGULATOR_MODE_FAST, REGULATOR_MODE_NORMAL, REGULATOR_MODE_IDLE
-> > > and=20
-> > > REGULATOR_MODE_STANDBY. But regulators which are controlled by
-> > > these
-
-> > That doesn't make sense at all, the modes affect the quality of
-> > regulation not the voltage that is set.
-
-> Thanks. I misunderstood this. I thought these states could be used for
-> some adaptive voltages. My understanding is that the RUN0,...RUN3 are
-> designed for that - but I didn't know if regulator framework is
-> designed for this.
-
-The framework doesn't care how a device is controlled, that's up
-to the device.  Like I said I recommend figuring out what
-voltages are useful to have quick access to at runtime, for
-example it's likely that it's good to have quick access to the
-highest voltage that's been set (and/or the top of the
-constraints).
-
-> > The cpufreq code is all there in kernel - drivers/cpufreq.  I can't
-> > remember if Android still has a custom governor in their trees but it
-> > doesn't really make much difference in terms of how it interacts with
-> > the regulator drivers.
-
-> Right. I guess your answers mean that there is no "regulator group
-> control" for "adaptive voltage changes" supported by regulator
-
-I can't parse the above, sorry.  What is "regulator group
-control"?
-
---vni90+aGYgRvsTuO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3lDYkACgkQJNaLcl1U
-h9Amugf/QH6FoZOtAUIIujQELU4pGFVm5XkIvgjpWUWDlNK6CW+CKrdAc/iRcuch
-fpYcI7ht3Nd94mcruUECYYI5fTxj0ECj3mflGdL6c2nl7Sw3D3haNabXsa4XN5CT
-OUIi4NWGhuKUpFSLxgwdApBxJ5Tlri+TWW6Prv9Bf9IM1TMAHvCnIQD8rgSFrYga
-gxL160QzYsJoGI2KqLHFgo8ltWKjQO/jLHNoAL0awmx+Iujh30I8dlU1Laq3atoA
-siWbaqGqJKZLbfFOfaLQrga5DOJSd20ZY0R09niVgOr2xap2wxXaqVCLg7pnSBwV
-LD5cn4UcLr5v0sUXKwN908qjIvMxrg==
-=Fs54
------END PGP SIGNATURE-----
-
---vni90+aGYgRvsTuO--
+Thanks
+Mr.Suleman Bello.
