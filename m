@@ -2,80 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3009A10EC59
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:34:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0191F10EC6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbfLBPel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 10:34:41 -0500
-Received: from node.akkea.ca ([192.155.83.177]:57856 "EHLO node.akkea.ca"
+        id S1727511AbfLBPjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 10:39:07 -0500
+Received: from smtpbgbr2.qq.com ([54.207.22.56]:33802 "EHLO smtpbgbr2.qq.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727445AbfLBPel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 10:34:41 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id A4CEB4E201D;
-        Mon,  2 Dec 2019 15:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1575300330; bh=iHgUsViNgJaJu51knhIGUnBoTr/el9Xe/qUZYMfe4Kw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=OfaJYQTlZ+DVHsr6F2rntHFbnPkuUhcEIY4rZlHbBKirHYBTXK0byFY8PIjxEu0/X
-         E/YbbAzQa2L1ixW0NBsn/5JGdYx+OX3XQ5lIi3ROpXKw+4FeJsp9Kl795g/1R+r0ij
-         GSm9EOBPSRkbMzrwkTwEmsCNgeN5+euUNlPjlINU=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XEeBMcwq-AS1; Mon,  2 Dec 2019 15:25:30 +0000 (UTC)
-Received: from thinkpad-tablet.cg.shawcable.net (S0106905851b613e9.cg.shawcable.net [70.77.244.40])
-        by node.akkea.ca (Postfix) with ESMTPSA id C05364E2003;
-        Mon,  2 Dec 2019 15:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1575300330; bh=iHgUsViNgJaJu51knhIGUnBoTr/el9Xe/qUZYMfe4Kw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=OfaJYQTlZ+DVHsr6F2rntHFbnPkuUhcEIY4rZlHbBKirHYBTXK0byFY8PIjxEu0/X
-         E/YbbAzQa2L1ixW0NBsn/5JGdYx+OX3XQ5lIi3ROpXKw+4FeJsp9Kl795g/1R+r0ij
-         GSm9EOBPSRkbMzrwkTwEmsCNgeN5+euUNlPjlINU=
-From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
-To:     linux-pm@vger.kernel.org
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@puri.sm, "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH 2/2] dts: bindings: max17042_battery: add all of the compatible strings
-Date:   Mon,  2 Dec 2019 08:25:20 -0700
-Message-Id: <20191202152520.27558-3-angus@akkea.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191202152520.27558-1-angus@akkea.ca>
-References: <20191202152520.27558-1-angus@akkea.ca>
+        id S1727431AbfLBPjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 10:39:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1575301134;
+        bh=qxhDF0663v1hbvbZByeK69uarzcMA+FhFaj7j+FZi1M=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=X39EcDwtdvb1mbB0zPxP+C+ZyfwzT/uPbezVmrJk+6gY0Kwl838ZmbHNS4eyzBtLH
+         5Xbrg8xKbJ90MCH86H1eVvfaUEnVR3T0v6+LnT9gOiIb9nGyIP+6xno87v4mox4u18
+         kQnUEh/ft4hqmfes/UHOgK0+glCe5yHOwQGOnUHk=
+X-QQ-mid: esmtp4t1575301131t81f1i73m
+Received: from Home-PC.lan (unknown [39.180.30.185])
+        by esmtp4.qq.com (ESMTP) with 
+        id ; Mon, 02 Dec 2019 23:38:49 +0800 (CST)
+X-QQ-SSF: 0100000000000040C7101F00000000O
+X-QQ-FEAT: EUGmOqWjSYKrlczS1C5GpZ8p2d1quYLjG/gMMWe9CgTsVmZYPXb7FBtwYAbDH
+        B0wgDV/bUXf1oOmaOAuDJS347kNatFUsZjkHcMQIp92g7q/WDdD/7eAmRsWVK4TYJx5Dfrv
+        hDs60f4EYOEM9jI+mjaKtjTgD1be5qn+jau4+ZaF1q6Lf6uycP5d04KSzv2WVdzb/EudUb/
+        75M9jx2HUWY6bGlBdZrMGAMpv/j8F0g7/oeSF59eWuN5aoDiP6/7v1uwRL7pLcsnzOTt+7+
+        mbtaO2RkIfF4w4kJmbHS8StZOk7irllV8QsA==
+X-QQ-GoodBg: 0
+From:   Jack Chen <redchenjs@foxmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jack Chen <redchenjs@live.com>
+Subject: [PATCH] ARM: dts: rockchip: Add missing cpu operating points for rk3288-tinker
+Date:   Mon,  2 Dec 2019 23:35:40 +0800
+Message-Id: <20191202153540.26143-1-redchenjs@foxmail.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtp:foxmail.com:bgforeign:bgforeign11
+X-QQ-Bgrelay: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bindings are missing documentation for some of the compatible
-strings.
+From: Jack Chen <redchenjs@live.com>
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+The Tinker Board / S devices use a special chip variant called rk3288-c
+and use different operating points with a higher max frequency.
+
+So add the missing operating points for Tinker Board / S devices, also
+increase the vdd_cpu regulator-max-microvolt to 1400000 uV so that the
+cpu can operate at 1.8 GHz.
+
+Signed-off-by: Jack Chen <redchenjs@live.com>
 ---
- .../devicetree/bindings/power/supply/max17042_battery.txt   | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/max17042_battery.txt b/Documentation/devicetree/bindings/power/supply/max17042_battery.txt
-index 3f3894aaeebc..f34c5daae9af 100644
---- a/Documentation/devicetree/bindings/power/supply/max17042_battery.txt
-+++ b/Documentation/devicetree/bindings/power/supply/max17042_battery.txt
-@@ -2,7 +2,11 @@ max17042_battery
- ~~~~~~~~~~~~~~~~
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index 81e4e953d4a4..09e83b3d5e7d 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -113,6 +113,17 @@
+ 	cpu0-supply = <&vdd_cpu>;
+ };
  
- Required properties :
-- - compatible : "maxim,max17042"
-+ - compatible : one of the following
-+ * "maxim,max17042"
-+ * "maxim,max17047"
-+ * "maxim,max17050"
-+ * "maxim,max17055"
- 
- Optional properties :
-  - maxim,rsns-microohm : Resistance of rsns resistor in micro Ohms
++&cpu_opp_table {
++	opp-1704000000 {
++		opp-hz = /bits/ 64 <1704000000>;
++		opp-microvolt = <1350000>;
++	};
++	opp-1800000000 {
++		opp-hz = /bits/ 64 <1800000000>;
++		opp-microvolt = <1400000>;
++	};
++};
++
+ &gmac {
+ 	assigned-clocks = <&cru SCLK_MAC>;
+ 	assigned-clock-parents = <&ext_gmac>;
+@@ -175,7 +186,7 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <750000>;
+-				regulator-max-microvolt = <1350000>;
++				regulator-max-microvolt = <1400000>;
+ 				regulator-name = "vdd_arm";
+ 				regulator-ramp-delay = <6000>;
+ 				regulator-state-mem {
 -- 
-2.17.1
+2.24.0
+
+
 
