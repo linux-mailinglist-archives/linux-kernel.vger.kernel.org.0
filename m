@@ -2,143 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12FFE10F166
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 21:13:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6A810F16A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 21:14:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbfLBUNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 15:13:43 -0500
-Received: from mail-qk1-f172.google.com ([209.85.222.172]:45950 "EHLO
-        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbfLBUNl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 15:13:41 -0500
-Received: by mail-qk1-f172.google.com with SMTP id x1so869215qkl.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 12:13:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sBnzwv1UojXwcxoE01fHXt46ZRgERe+2cEMc8lTvX3E=;
-        b=DreL1zkTtshzjI6V8vid1mjQeP7Xu5Jhh4ucMAJDI/aufGo89p2/2FjWEuriutdG/6
-         A6J4ubhi5yiggUNWynoR6LH4+WP/qJXRSWiD1/klNtlKQkRDib8nvBe907UnPdA5vXT/
-         SAWV1S9UfscHSRPXMPugVgxQDX50BoyGuoE2uujTqS9ZX3/vFomSjyPJuptQwAUHt1/D
-         chYqWMnWEkbMTFl5xOVEAhyXnC29sYI8iltxCnZDDgrD4Uv8JtdYghGRGkj0y4+YBP0u
-         LQc8bg0E1RB4toTajCpiaMo241Cvl6uLCLvTkndyjrFqKhGAiK8d5CRwRuvNjD5C/ijy
-         MiJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sBnzwv1UojXwcxoE01fHXt46ZRgERe+2cEMc8lTvX3E=;
-        b=Tnuy7mzdDyLeWsooYhbv77P+hFptmHjH8LvGwbtdWHpm+zXaZtpLiaaYVXwf1b/T2O
-         DdEzcdq+r3mNAZBwbTg2dm3Y+C6plFpHRVoSJxkrPwzeFqBPjLg60TxW9LY6UKe0KZYs
-         YVZo52EzafuwfUmyA3xpk69E2FDvXIBdfoW0ODDzvERDXXqSr1uFxEQSEAm/XNdiHItE
-         LSa6dkD9tPrF2w6CzEVuq6/FewkiZhG4hB36bBELmETlQuUu7amLg1NPpQTQxM2t7TzL
-         HahZwAgkw5BdXQTgY4vKNZijSi9X3xWww68K4DIU1ev4Tjd5N0dWTEKRtkDyYnweO7el
-         H31w==
-X-Gm-Message-State: APjAAAVCrUL6WOdWCeRgXmr88VUT+Z5uWP45qe36400XJemwOlygzhYA
-        KcG6C8Cz13VGHvfiCIU5cZE=
-X-Google-Smtp-Source: APXvYqyNNKabKnJy9SL+NWsZ7LyYz0TW4CMLLMVJiO8Rdt1NNMt7sN2QiHqv19Ep9cYz0AaCQwJ8sQ==
-X-Received: by 2002:a05:620a:1363:: with SMTP id d3mr713037qkl.263.1575317620556;
-        Mon, 02 Dec 2019 12:13:40 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::1:c909])
-        by smtp.gmail.com with ESMTPSA id 13sm350850qke.85.2019.12.02.12.13.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Dec 2019 12:13:39 -0800 (PST)
-Date:   Mon, 2 Dec 2019 12:13:38 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     jiangshanlai@gmail.com, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Workqueues splat due to ending up on wrong CPU
-Message-ID: <20191202201338.GH16681@devbig004.ftw2.facebook.com>
-References: <20191125230312.GP2889@paulmck-ThinkPad-P72>
- <20191126183334.GE2867037@devbig004.ftw2.facebook.com>
- <20191126220533.GU2889@paulmck-ThinkPad-P72>
- <20191127155027.GA15170@paulmck-ThinkPad-P72>
- <20191128161823.GA24667@paulmck-ThinkPad-P72>
- <20191129155850.GA17002@paulmck-ThinkPad-P72>
- <20191202015548.GA13391@paulmck-ThinkPad-P72>
+        id S1727963AbfLBUOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 15:14:46 -0500
+Received: from mga12.intel.com ([192.55.52.136]:59428 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728044AbfLBUOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 15:14:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 12:14:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
+   d="scan'208";a="222559928"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga002.jf.intel.com with ESMTP; 02 Dec 2019 12:14:44 -0800
+Date:   Mon, 2 Dec 2019 12:19:27 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
+        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 0/8] Use 1st-level for DMA remapping
+Message-ID: <20191202121927.2fef85ba@jacob-builder>
+In-Reply-To: <20191128022550.9832-1-baolu.lu@linux.intel.com>
+References: <20191128022550.9832-1-baolu.lu@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191202015548.GA13391@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Paul.
+On Thu, 28 Nov 2019 10:25:42 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-(cc'ing scheduler folks - workqueue rescuer is very occassionally
-triggering a warning which says that it isn't on the cpu it should be
-on under rcu cpu hotplug torture test.  It's checking smp_processor_id
-is the expected one after a successful set_cpus_allowed_ptr() call.)
-
-On Sun, Dec 01, 2019 at 05:55:48PM -0800, Paul E. McKenney wrote:
-> > And hyperthreading seems to have done the trick!  One splat thus far,
-> > shown below.  The run should complete this evening, Pacific Time.
+> Intel VT-d in scalable mode supports two types of page talbes
+tables
+> for DMA translation: the first level page table and the second
+> level page table. The first level page table uses the same
+> format as the CPU page table, while the second level page table
+> keeps compatible with previous formats. The software is able
+> to choose any one of them for DMA remapping according to the use
+> case.
 > 
-> That was the only one for that run, but another 24*56-hour run got three
-> more.  All of them expected to be on CPU 0 (which never goes offline, so
-> why?) and the "XXX" diagnostic never did print.
+> This patchset aims to move IOVA (I/O Virtual Address) translation
+move guest IOVA only, right?
+> to 1st-level page table in scalable mode. This will simplify vIOMMU
+> (IOMMU simulated by VM hypervisor) design by using the two-stage
+> translation, a.k.a. nested mode translation.
+> 
+> As Intel VT-d architecture offers caching mode, guest IOVA (GIOVA)
+> support is now implemented in a shadow page manner. The device
+> simulation software, like QEMU, has to figure out GIOVA->GPA mappings
+> and write them to a shadowed page table, which will be used by the
+> physical IOMMU. Each time when mappings are created or destroyed in
+> vIOMMU, the simulation software has to intervene. Hence, the changes
+> on GIOVA->GPA could be shadowed to host.
+> 
+> 
+>      .-----------.
+>      |  vIOMMU   |
+>      |-----------|                 .--------------------.
+>      |           |IOTLB flush trap |        QEMU        |
+>      .-----------. (map/unmap)     |--------------------|
+>      |GIOVA->GPA |---------------->|    .------------.  |
+>      '-----------'                 |    | GIOVA->HPA |  |
+>      |           |                 |    '------------'  |
+>      '-----------'                 |                    |
+>                                    |                    |
+>                                    '--------------------'
+>                                                 |
+>             <------------------------------------
+>             |
+>             v VFIO/IOMMU API
+>       .-----------.
+>       |  pIOMMU   |
+>       |-----------|
+>       |           |
+>       .-----------.
+>       |GIOVA->HPA |
+>       '-----------'
+>       |           |
+>       '-----------'
+> 
+> In VT-d 3.0, scalable mode is introduced, which offers two-level
+> translation page tables and nested translation mode. Regards to
+> GIOVA support, it can be simplified by 1) moving the GIOVA support
+> over 1st-level page table to store GIOVA->GPA mapping in vIOMMU,
+> 2) binding vIOMMU 1st level page table to the pIOMMU, 3) using pIOMMU
+> second level for GPA->HPA translation, and 4) enable nested (a.k.a.
+> dual-stage) translation in host. Compared with current shadow GIOVA
+> support, the new approach makes the vIOMMU design simpler and more
+> efficient as we only need to flush the pIOMMU IOTLB and possible
+> device-IOTLB when an IOVA mapping in vIOMMU is torn down.
+> 
+>      .-----------.
+>      |  vIOMMU   |
+>      |-----------|                 .-----------.
+>      |           |IOTLB flush trap |   QEMU    |
+>      .-----------.    (unmap)      |-----------|
+>      |GIOVA->GPA |---------------->|           |
+>      '-----------'                 '-----------'
+>      |           |                       |
+>      '-----------'                       |
+>            <------------------------------
+>            |      VFIO/IOMMU          
+>            |  cache invalidation and  
+>            | guest gpd bind interfaces
+>            v
+>      .-----------.
+>      |  pIOMMU   |
+>      |-----------|
+>      .-----------.
+>      |GIOVA->GPA |<---First level
+>      '-----------'
+>      | GPA->HPA  |<---Scond level
+>      '-----------'
+>      '-----------'
+> 
+> This patch set includes two parts. The former part implements the
+> per-domain page table abstraction, which makes the page table
+> difference transparent to various map/unmap APIs. The later part
+s/later/latter/
+> applies the first level page table for IOVA translation unless the
+> DOMAIN_ATTR_NESTING domain attribution has been set, which indicates
+> nested mode in use.
+> 
+Maybe I am reading this wrong, but shouldn't it be the opposite?
+i.e. Use FL page table for IOVA if it is a nesting domain?
 
-Heh, I didn't expect that, so maybe set_cpus_allowed_ptr() is
-returning 0 while not migrating the rescuer task to the target cpu for
-some reason?
+> Based-on-idea-by: Ashok Raj <ashok.raj@intel.com>
+> Based-on-idea-by: Kevin Tian <kevin.tian@intel.com>
+> Based-on-idea-by: Liu Yi L <yi.l.liu@intel.com>
+> Based-on-idea-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Based-on-idea-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+> Based-on-idea-by: Lu Baolu <baolu.lu@linux.intel.com>
+> 
+> Change log:
+> 
+>  v1->v2
+>  - The first series was posted here
+>    https://lkml.org/lkml/2019/9/23/297
+>  - Use per domain page table ops to handle different page tables.
+>  - Use first level for DMA remapping by default on both bare metal
+>    and vm guest.
+>  - Code refine according to code review comments for v1.
+> 
+> Lu Baolu (8):
+>   iommu/vt-d: Add per domain page table ops
+>   iommu/vt-d: Move domain_flush_cache helper into header
+>   iommu/vt-d: Implement second level page table ops
+>   iommu/vt-d: Apply per domain second level page table ops
+>   iommu/vt-d: Add first level page table interfaces
+>   iommu/vt-d: Implement first level page table ops
+>   iommu/vt-d: Identify domains using first level page table
+>   iommu/vt-d: Add set domain DOMAIN_ATTR_NESTING attr
+> 
+>  drivers/iommu/Makefile             |   2 +-
+>  drivers/iommu/intel-iommu.c        | 412
+> +++++++++++++++++++++++------ drivers/iommu/intel-pgtable.c      |
+> 376 ++++++++++++++++++++++++++ include/linux/intel-iommu.h        |
+> 64 ++++- include/trace/events/intel_iommu.h |  60 +++++
+>  5 files changed, 837 insertions(+), 77 deletions(-)
+>  create mode 100644 drivers/iommu/intel-pgtable.c
+> 
 
-The rescuer is always calling to migrate itself, so it must always be
-running.  set_cpus_allowed_ptr() migrates live ones by calling
-stop_one_cpu() which schedules a migration function which runs from a
-highpri task on the target cpu.  Please take a look at the following.
-
-  static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
-  {
-          ...
-	  enabled = stopper->enabled;
-	  if (enabled)
-		  __cpu_stop_queue_work(stopper, work, &wakeq);
-	  else if (work->done)
-		  cpu_stop_signal_done(work->done);
-          ...
-  }
-
-So, if stopper->enabled is clear, it'll signal completion without
-running the work.  stopper->enabled is cleared during cpu hotunplug
-and restored from bringup_cpu() while cpu is being brought back up.
-
-  static int bringup_wait_for_ap(unsigned int cpu)
-  {
-          ...
-	  stop_machine_unpark(cpu);
-          ....
-  }
-
-  static int bringup_cpu(unsigned int cpu)
-  {
-	  ...
-	  ret = __cpu_up(cpu, idle);
-          ...
-	  return bringup_wait_for_ap(cpu);
-  }
-
-__cpu_up() is what marks the cpu online and once the cpu is online,
-kthreads are free to migrate into the cpu, so it looks like there's a
-brief window where a cpu is marked online but the stopper thread is
-still disabled meaning that a kthread may schedule into the cpu but
-not out of it, which would explain the symptom that you were seeing.
-
-This makes the cpumask and the cpu the task is actually on disagree
-and retries would become noops.  I can work around it by excluding
-rescuer attachments against hotplugs but this looks like a genuine cpu
-hotplug bug.
-
-It could be that I'm misreading the code.  What do you guys think?
-
-Thanks.
-
--- 
-tejun
+[Jacob Pan]
