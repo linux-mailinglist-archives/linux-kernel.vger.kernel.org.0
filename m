@@ -2,57 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 124F710E518
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 05:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F68210E51B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 05:42:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfLBEkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Dec 2019 23:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbfLBEkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Dec 2019 23:40:16 -0500
-Subject: Re: [GIT PULL] x86 fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575261616;
-        bh=sreJi2OTxr2OsSIOMiSkF5pqs/q/JH7RL6y+dn7rfHg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=eONshp7WcAsO5ufEXsxhMzYd8cfy8jMw1TyPOenUwkHZvmfsU0mHNUdYFioBPaIH2
-         jTIVN6yVnx5QTuskJ+FfVNYlQ6oo6r5L+2+GdXzjthbsQWDgQxmSv9B4SDVtM9PbLy
-         6Hcj8K3Wl2py0Zn7dzeYO6FUYUkYsZt5zRlbmcTk=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191201222208.GA109470@gmail.com>
-References: <20191201222208.GA109470@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191201222208.GA109470@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-urgent-for-linus
-X-PR-Tracked-Commit-Id: 91298f1a302dad0f0f630413c812818636faa8a0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e5b3fc125d768eacd73bb4dc5019f0ce95635af4
-Message-Id: <157526161638.3812.5119508132122819100.pr-tracker-bot@kernel.org>
-Date:   Mon, 02 Dec 2019 04:40:16 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>
+        id S1727418AbfLBEmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Dec 2019 23:42:06 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:55597 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727298AbfLBEmG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Dec 2019 23:42:06 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id F358822486;
+        Sun,  1 Dec 2019 23:42:04 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Sun, 01 Dec 2019 23:42:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=IKA+jd7OY4n+Q/wgyh1srRVYoa
+        AqL85S33bS34sBvP4=; b=Iwzb7B00DBvxx5xICJBKsN+3qEJlfBN+Zgpig4FU9P
+        hkKMYOJdA8et+ruDutI8Bd3apgwtu1++g8Pt4jjkulMM02wUmGeKALE121z+uZSf
+        xfriG05wVFCd+ibtIzFMk2pSf4fkljG9tmBgunaWd22Hpydvxtavac0Pid6c7Dgk
+        21vQMqcvGmgqapZzLmyyJa5pFHJ2esknxI1Rgh8/WYgnkA3b85ZspUsSoJ1VGHAs
+        ZpVZa+50IBTy+d7P8c1+mL5tnL/W2GnLxoS7asJDDhLrcFHF35EsYQRxg439noZ+
+        Xauy9Q7zy1nsF6cTTCtUX+ZgJw1cOhNFwbJwFpJQqv0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=IKA+jd7OY4n+Q/wgy
+        h1srRVYoaAqL85S33bS34sBvP4=; b=xycrquaqo9dcSLsNomUgVK2uQVQeO/2FZ
+        wnnzuT2G02A2ShIyAu1UXYVhHBzv+ssEqCQkJQ+Jn+I0ZGw+Cu2mUQe1CRifyxM/
+        HdjmZ7BlMOM1mSGXf0JHho7LBA9r2zYXmiM/dz/WtlFJWp9rW1xgL06rTKWeJe+c
+        +c8A0S2kXlZGhT8rrWKCRJ1y9RkXbAZDlCgH4NOTi11qElKhNeGrP4ry+XcB5MTJ
+        V0LG/593yYCypPTvI4Ww3htGaDPun74z9Imes59vA9o1gBFjsGghI6Youu3Qkps5
+        sh3c6UzUzk6wEAkwgVWpAj4PKlC9H3O6W4hPqjk9VoUbGJgacCG8w==
+X-ME-Sender: <xms:G5bkXTkVZfywS2coZmyn3GmSIyxFmeqrMXcq_JI0qg6vsbdHVqEBVQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudejgedgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
+    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
+    ihgurdgruheqnecukfhppeduudekrddvuddurdelvddrudefnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgep
+    td
+X-ME-Proxy: <xmx:G5bkXShp0iQfF5ca8XFVQcyEVgGIDP2hlUR2oNADDSoCRqnEVjHm7A>
+    <xmx:G5bkXZZMExfNIxdpAyB4nYcN45r9BNgjxOYbbw6XfLnC6upt-hrxOg>
+    <xmx:G5bkXexf9CDOKyD_kT3RdFxrKUPTWfHSZ0Q7nB_h2-6dNFFNfkj9fg>
+    <xmx:HJbkXQfIQrLvIOMYEnx00eHSnNJ8deaxhD7Sn2wIZUaLEBGb-W0JyQ>
+Received: from localhost.localdomain (unknown [118.211.92.13])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6970530600BD;
+        Sun,  1 Dec 2019 23:42:01 -0500 (EST)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     joel@jms.id.au
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: aspeed: Fail probe of lpc-ctrl if reserved memory is not aligned
+Date:   Mon,  2 Dec 2019 15:13:47 +1030
+Message-Id: <20191202044347.14508-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 1 Dec 2019 23:22:08 +0100:
+Alignment is a hardware constraint of the LPC2AHB bridge, and misaligned
+reserved memory will present as corrupted data.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e5b3fc125d768eacd73bb4dc5019f0ce95635af4
-
-Thank you!
-
+diff --git a/drivers/soc/aspeed/aspeed-lpc-ctrl.c b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+index 01ed21e8bfee..fec17948cda0 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/log2.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/miscdevice.h>
+ #include <linux/mm.h>
+@@ -241,6 +242,18 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+ 
+ 		lpc_ctrl->mem_size = resource_size(&resm);
+ 		lpc_ctrl->mem_base = resm.start;
++
++		if (!is_power_of_2(lpc_ctrl->mem_size)) {
++			dev_err(dev, "Reserved memory size must be a power of 2, got %zu\n",
++			       (size_t)lpc_ctrl->mem_size);
++			return -EINVAL;
++		}
++
++		if (!IS_ALIGNED(lpc_ctrl->mem_base, lpc_ctrl->mem_size)) {
++			dev_err(dev, "Reserved memory must be naturally aligned for size %zu\n",
++			       (size_t)lpc_ctrl->mem_size);
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	lpc_ctrl->regmap = syscon_node_to_regmap(
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.20.1
+
