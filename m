@@ -2,82 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E6710EAD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:33:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C444610EAEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfLBNdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 08:33:01 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35472 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbfLBNdB (ORCPT
+        id S1727608AbfLBNfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 08:35:53 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:45923 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727406AbfLBNfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 08:33:01 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so12238528wro.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 05:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z+QGY7jr44pYxe54+7M8En72VvMMFxWIK2gqrMhHkc0=;
-        b=le27mUD5UzEV0sC6F+c2OWBzFaCE/ZZFIDGVHEaMHQdzCZ4pKSL6hu1C/MTBt3Baz7
-         XZ5hEl18r+IM/w35GemiYipJGhyW+W6zAYo/fV2aQN4d+/ugKQ3hOVK4mc4MrlMCt69Z
-         6AImhqwukeBqGJHM7m3vIshhmgyiNfvs8LBgpYdPRrsoKsFsFFxYka93um+o7DBBkez6
-         sjfx9V0wKoYfNP1qza7FpXhtvveHssOCpsbi6q+QeIFc7w+/bBF+K1O/oowkekvNic0U
-         ozb5hhWTYjrBNsj19K+USAL/YorGBXuM+haGGDsyMoDAKYsGX/QJ0aTUmNdNY9r986cW
-         bnHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z+QGY7jr44pYxe54+7M8En72VvMMFxWIK2gqrMhHkc0=;
-        b=f7QvY/p3dqa9pfFMjQtVUBQDwTlpb5y2BEoJ8eJ85K92fuQbdBtNPoTJaoTjVtmaBl
-         3QNaB0+FdXClqZlIxvmkba0z/yGKjUrIobe4DCo3Wu00Ha81fVZneOjkD3tH0LXUNmrb
-         tF5GXlrtBfB4Ir3f+PHI6i5ZimyBJL1SeLFmkVhQHgFmm///TOExyLjQU30VgwMQ85+U
-         EdpRUEuQ8kpN299SUsIM/71sqA7jqEFrZSdQa2AJGE/GxNlRVSm7jyWUwL94TQC9mJ4u
-         SIs8j2wKeUPhNDFyzL6Uuol1bHhrDuzST6iUfKhoJuEGwEdvG8aPJtD84TZ40FwTODAs
-         iyWw==
-X-Gm-Message-State: APjAAAUfnULwaVDzv2Zr9ORNIOOXnsWPiU4SqFZXjIY0VCX0qk71mKDC
-        QT1tNgJZDvbY6CHtf+tRG8JTcQ==
-X-Google-Smtp-Source: APXvYqzXLdveSYJmzHMioR623raAZQnudeDTjtbXpxlDpAqRENKmsL2huGVsIN+qfrtE1GNKlFMp4w==
-X-Received: by 2002:a5d:558d:: with SMTP id i13mr27621576wrv.364.1575293577633;
-        Mon, 02 Dec 2019 05:32:57 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id s10sm18753106wrw.12.2019.12.02.05.32.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 05:32:56 -0800 (PST)
-Date:   Mon, 2 Dec 2019 14:32:54 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     airlied@redhat.com, airlied@linux.ie, arnd@arndb.de,
-        fenghua.yu@intel.com, gregkh@linuxfoundation.org,
-        tony.luck@intel.com
-Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] agp: minor fixes, does the maintainer still there
- ?
-Message-ID: <20191202133254.GA21550@Red>
-References: <1574324085-4338-1-git-send-email-clabbe@baylibre.com>
+        Mon, 2 Dec 2019 08:35:53 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id xB2DYIId015793;
+        Mon, 2 Dec 2019 15:34:18 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
+        id A95E160275; Mon,  2 Dec 2019 15:34:18 +0200 (IST)
+From:   amirmizi6@gmail.com
+To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        ayna@linux.vnet.ibm.com, Dan.Morav@nuvoton.com,
+        oren.tanami@nuvoton.com, shmulik.hager@nuvoton.com,
+        amir.mizinski@nuvoton.com, Amir Mizinski <amirmizi6@gmail.com>
+Subject: [PATCH v2 0/5] add tpm i2c ptp driver
+Date:   Mon,  2 Dec 2019 15:33:27 +0200
+Message-Id: <20191202133332.178110-1-amirmizi6@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574324085-4338-1-git-send-email-clabbe@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 08:14:40AM +0000, Corentin Labbe wrote:
-> Hello
-> 
-> This patch serie fixes some minor problem found in the agp subsystem
-> There are no change since v1 (posted two years ago)
-> This is simply a repost for trying to get an answer (gentle ping 6 month
-> ago got no answer also).
-> 
-> Regards
-> 
+From: Amir Mizinski <amirmizi6@gmail.com>
 
-Hello
+This patch set adds support for TPM devices that implement the I2C.
+Interface defined by TCG PTP specification:
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
 
-Does the AGP maintainer still maintain it ?
+The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
 
-Regards
+Interupts are not implemented yet, preparing it for the next patch.
+This patch is based on initial work by oshri Alkoby, Alexander Steffen and Christophe Ricard
+
+Addressed comments from:
+ - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11236257/
+ - Rob Herring: https://patchwork.kernel.org/patch/11236253/
+
+Changes since version 1:
+ - Commit 2/5:
+  - Fixed and extended commit description.
+  - Fixed an issue regarding handeling max retries.
+ - Commit 4/5:
+  - Converted "tpm_tis_i2c.txt" to "tpm-tis-i2c.yaml".
+  - Renamed "tpm_tis-i2c" to "tpm-tis-i2c".
+  - Removed interrupts properties.
+ - Commit 5/5: Replaced "tpm_tis-i2c" with "tpm-tis-i2c" in "tpm_tis_i2c.c".
+
+Amir Mizinski (5):
+  char: tpm: Make implementation of read16 read32 write32 optional
+  char: tpm: Add check_data handle to tpm_tis_phy_ops in order to check
+    data integrity
+  char: tpm: rewrite "tpm_tis_req_canceled()"
+  dt-bindings: tpm: Add YAML schema for TPM TIS I2C options
+  char: tpm: add tpm_tis_i2c driver
+
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         |  38 +++
+ drivers/char/tpm/Kconfig                           |  12 +
+ drivers/char/tpm/Makefile                          |   1 +
+ drivers/char/tpm/tpm_tis_core.c                    | 113 +++++----
+ drivers/char/tpm/tpm_tis_core.h                    |  41 +++-
+ drivers/char/tpm/tpm_tis_i2c.c                     | 272 +++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_spi.c                     |  41 ----
+ 7 files changed, 425 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+ create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
+
+-- 
+2.7.4
+
