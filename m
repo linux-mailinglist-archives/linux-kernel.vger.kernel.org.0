@@ -2,103 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C763110E8C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 11:29:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E7F10E8D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 11:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbfLBK3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 05:29:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57574 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727454AbfLBK3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 05:29:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9B2BCB220;
-        Mon,  2 Dec 2019 10:29:23 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     linux-realtek-soc@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: dts: realtek: rtd1395: Add Realtek Lion Skin EVB
-Date:   Mon,  2 Dec 2019 11:29:10 +0100
-Message-Id: <20191202102910.26916-10-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191202102910.26916-1-afaerber@suse.de>
-References: <20191202102910.26916-1-afaerber@suse.de>
+        id S1727571AbfLBKa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 05:30:26 -0500
+Received: from mail2.sp2max.com.br ([138.185.4.9]:37412 "EHLO
+        mail2.sp2max.com.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727326AbfLBKa0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 05:30:26 -0500
+Received: from [172.17.0.170] (unknown [190.246.35.95])
+        (Authenticated sender: pablo@fliagreco.com.ar)
+        by mail2.sp2max.com.br (Postfix) with ESMTPSA id E837F7B0877;
+        Mon,  2 Dec 2019 07:30:17 -0300 (-03)
+Subject: Re: [PATCH v1] mt76: mt7615: Fix build with older compilers
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Roy Luo <royluo@google.com>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20191201181716.61892-1-pgreco@centosproject.org>
+ <e18d798d-cdf3-da05-c139-403dfc80e8a3@cogentembedded.com>
+From:   =?UTF-8?Q?Pablo_Sebasti=c3=a1n_Greco?= <pgreco@centosproject.org>
+Message-ID: <5e12af27-be82-894a-1abd-25d1f33a5144@centosproject.org>
+Date:   Mon, 2 Dec 2019 07:30:15 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <e18d798d-cdf3-da05-c139-403dfc80e8a3@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-SP2Max-MailScanner-Information: Please contact the ISP for more information
+X-SP2Max-MailScanner-ID: E837F7B0877.A307D
+X-SP2Max-MailScanner: Sem Virus encontrado
+X-SP2Max-MailScanner-SpamCheck: nao spam, SpamAssassin (not cached,
+        escore=-2.9, requerido 6, autolearn=not spam, ALL_TRUSTED -1.00,
+        BAYES_00 -1.90)
+X-SP2Max-MailScanner-From: pgreco@centosproject.org
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a Device Tree for Realtek RTD1395 SoC Lion Skin evaluation board.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- v2: New
- 
- arch/arm64/boot/dts/realtek/Makefile             |  1 +
- arch/arm64/boot/dts/realtek/rtd1395-lionskin.dts | 36 ++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1395-lionskin.dts
+On 2/12/19 06:18, Sergei Shtylyov wrote:
+> Hello!
+>
+> On 01.12.2019 21:17, Pablo Greco wrote:
+>
+>> Some compilers (tested with 4.8.5 from CentOS 7) fail properly process
+>
+>    Fail to?
+Right
+>
+>> FIELD_GET inside an inline function, which ends up in a BUILD_BUG_ON.
+>> Convert inline function to a macro.
+>>
+>> Fixes commit bf92e7685100 ("mt76: mt7615: add support for per-chain
+>> signal strength reporting")
+>
+>    Should be:
+>
+> Fixes: bf92e7685100 ("mt76: mt7615: add support for per-chain signal 
+> strength reporting")
+>
+>    Do not ever break up the Fixes: line and don't insert empty lines 
+> between it and other tags.
+Ack, I'll fix those for v2
+>
+>> Reported in https://lkml.org/lkml/2019/9/21/146
+>>
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>> Signed-off-by: Pablo Greco <pgreco@centosproject.org>
+> [...]
+>
+> MBR, Sergei
 
-diff --git a/arch/arm64/boot/dts/realtek/Makefile b/arch/arm64/boot/dts/realtek/Makefile
-index f614080b5e27..54bd02d11c02 100644
---- a/arch/arm64/boot/dts/realtek/Makefile
-+++ b/arch/arm64/boot/dts/realtek/Makefile
-@@ -9,5 +9,6 @@ dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-zidoo-x9s.dtb
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1296-ds418.dtb
- 
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1395-bpi-m4.dtb
-+dtb-$(CONFIG_ARCH_REALTEK) += rtd1395-lionskin.dtb
- 
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1619-mjolnir.dtb
-diff --git a/arch/arm64/boot/dts/realtek/rtd1395-lionskin.dts b/arch/arm64/boot/dts/realtek/rtd1395-lionskin.dts
-new file mode 100644
-index 000000000000..83f9b536cdea
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd1395-lionskin.dts
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Copyright (c) 2019 Andreas Färber
-+ */
-+
-+/dts-v1/;
-+
-+#include "rtd1395.dtsi"
-+
-+/ {
-+	compatible = "realtek,lion-skin", "realtek,rtd1395";
-+	model = "Realtek Lion Skin EVB";
-+
-+	memory@2f000 {
-+		device_type = "memory";
-+		reg = <0x2f000 0x3ffd1000>; /* boot ROM to 1 GiB or 2 GiB */
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+/* debug console (J1) */
-+&uart0 {
-+	status = "okay";
-+};
-+
-+/* M.2 slot (CON1) */
-+&uart1 {
-+	status = "disabled";
-+};
--- 
-2.16.4
+
+Thanks, Pablo
 
