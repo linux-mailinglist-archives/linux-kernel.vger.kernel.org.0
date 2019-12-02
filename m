@@ -2,114 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB5CB10F0FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFAE510F117
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:54:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbfLBTrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 14:47:08 -0500
-Received: from mga18.intel.com ([134.134.136.126]:10255 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727686AbfLBTrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:47:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 11:47:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="385011647"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 02 Dec 2019 11:47:07 -0800
-Date:   Mon, 2 Dec 2019 11:51:50 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 8/8] iommu/vt-d: Misc macro clean up for SVM
-Message-ID: <20191202115150.616cdad2@jacob-builder>
-In-Reply-To: <3de5bad2f414fb36d1f54dd610ffeecb2c989143.camel@perches.com>
-References: <1574371588-65634-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1574371588-65634-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <38d4586f3aeb21bb08028525db89868acb34e9fd.camel@perches.com>
-        <20191202101553.079898a3@jacob-builder>
-        <3de5bad2f414fb36d1f54dd610ffeecb2c989143.camel@perches.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728179AbfLBTyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 14:54:03 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:53918 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728080AbfLBTyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 14:54:01 -0500
+Received: by mail-il1-f198.google.com with SMTP id d3so634131ilg.20
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 11:54:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=sYedtpyaMKG5whWJkf6dyBRhk3jwnlp5j6dMs2CqDFU=;
+        b=smTZ1gUqa4DIogj1fcAdL9sdXQ/v4JPt7EP1Dmunj3wYgQZDbqWYqijK6sgIDqZw1p
+         9caG/QoAM8sjJ8rILQWq8vhhDKyqrZDj+OE46uu8wffpxzPNMaoNl6ajI4ImY4f8Budf
+         lm6sRoRaymTh3CfIVR+B3dVq57w+xMmosMFN0UqYfOGOv2pxdfec/MrUShs738bJoMOE
+         2qWNy+99/6d9MU316mTUXr7NAQDDx+H8NhGf8ruulc2zFsZNi8C09nAWDLcwA2HMIGue
+         U3xhygZc66TI5nDvBepFhVY4GEGOZDd0OjzqN8nlqaaBtwDedG6miHqNX0aEGcjwUQLX
+         S1Nw==
+X-Gm-Message-State: APjAAAV9I/2bqG3z+tcRGyW5Qq3zJYsYLGEphbIbFURU45cqXH/CHC1x
+        V3qf4mO82qhAhehLJNsXWmeRlwN7/TLVcED1qEFTXUBzKj5f
+X-Google-Smtp-Source: APXvYqwCsGxdE1Q39uMe3w+N7P34H3tGUIGjHKavf2twfv9j9z6nDvvs/vMFI7BQnMa0/lyn5/xB48hDQosPeU+CdJaN0K7ha/dE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:b47:: with SMTP id 68mr1505294jad.49.1575316440400;
+ Mon, 02 Dec 2019 11:54:00 -0800 (PST)
+Date:   Mon, 02 Dec 2019 11:54:00 -0800
+In-Reply-To: <000000000000a6324b0598b2eb59@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d6c9870598bdf090@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in pipe_write
+From:   syzbot <syzbot+838eb0878ffd51f27c41@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 02 Dec 2019 10:22:13 -0800
-Joe Perches <joe@perches.com> wrote:
+syzbot has bisected this bug to:
 
-> On Mon, 2019-12-02 at 10:15 -0800, Jacob Pan wrote:
-> > On Thu, 21 Nov 2019 13:37:10 -0800
-> > Joe Perches <joe@perches.com> wrote:
-> >   
-> > > On Thu, 2019-11-21 at 13:26 -0800, Jacob Pan wrote:  
-> > > > Use combined macros for_each_svm_dev() to simplify SVM device
-> > > > iteration and error checking.    
-> > > []  
-> > > > diff --git a/drivers/iommu/intel-svm.c
-> > > > b/drivers/iommu/intel-svm.c    
-> > > []  
-> > > > +#define for_each_svm_dev(sdev, svm, d)			\
-> > > > +	list_for_each_entry((sdev), &(svm)->devs, list)
-> > > > \
-> > > > +		if ((d) != (sdev)->dev) {} else
-> > > > +
-> > > >  int intel_svm_bind_mm(struct device *dev, int *pasid, int
-> > > > flags, struct svm_dev_ops *ops) {
-> > > >  	struct intel_iommu *iommu =
-> > > > intel_svm_device_to_iommu(dev); @@ -274,15 +278,13 @@ int
-> > > > intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
-> > > > struct svm_dev_ goto out; }
-> > > >  
-> > > > -			list_for_each_entry(sdev, &svm->devs,
-> > > > list) {
-> > > > -				if (dev == sdev->dev) {
-> > > > -					if (sdev->ops != ops) {
-> > > > -						ret = -EBUSY;
-> > > > -						goto out;
-> > > > -					}
-> > > > -					sdev->users++;
-> > > > -					goto success;
-> > > > +			for_each_svm_dev(sdev, svm, dev) {
-> > > > +				if (sdev->ops != ops) {
-> > > > +					ret = -EBUSY;
-> > > > +					goto out;
-> > > >  				}
-> > > > +				sdev->users++;
-> > > > +				goto success;
-> > > >  			}    
-> > > 
-> > > I think this does not read better as this is now a
-> > > for_each loop that exits the loop on the first match.
-> > >   
-> > I think one of the benefits is reduced indentation. What do you
-> > recommend?  
-> 
-> Making the code intelligible for a reader.
-> 
-> At least add a comment describing why there is only
-> a single possible match.
-> 
-> Given the for_each name, it's odd code that only the
-> first match has an action.
-> 
-I will add a comment to explain we are trying to find the matching
-device on the list.
+commit a194dfe6e6f6f7205eea850a420f2bc6a1541209
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Sep 20 15:32:19 2019 +0000
 
-Thanks
+     pipe: Rearrange sequence in pipe_write() to preallocate slot
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16085abce00000
+start commit:   b94ae8ad Merge tag 'seccomp-v5.5-rc1' of git://git.kernel...
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=15085abce00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11085abce00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ff560c3de405258c
+dashboard link: https://syzkaller.appspot.com/bug?extid=838eb0878ffd51f27c41
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146a9f86e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1791d82ae00000
+
+Reported-by: syzbot+838eb0878ffd51f27c41@syzkaller.appspotmail.com
+Fixes: a194dfe6e6f6 ("pipe: Rearrange sequence in pipe_write() to  
+preallocate slot")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
