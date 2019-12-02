@@ -2,185 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B2C10E6A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 09:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A06E10E6B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 09:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfLBIHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 03:07:35 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:11699 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725977AbfLBIHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 03:07:35 -0500
-Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47RHlh4V2zz9txst;
-        Mon,  2 Dec 2019 09:07:28 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=NA9HB3/P; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id jENeedGZyhzE; Mon,  2 Dec 2019 09:07:28 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47RHlh3D7wz9txsq;
-        Mon,  2 Dec 2019 09:07:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1575274048; bh=Pfkmv+6zl1ejxY4eGUsKi0YsAcRI6StbPSFCVUfcymU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NA9HB3/PUOD6nye920wQm+iK82PinDWNtTtkIOcwVa1Q+XpHLjn8keX59KuxuipNS
-         YuhL54JKnZlUk7T5qR8Qwqgs0wSGG0sNjO5ZqcrZWty5f3leLyUVYXHDkyYS9c7jO2
-         JfJ/yrM/TCpcNOqje5a0VIbF206q2vfNm3DUNpsw=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0FD2F8B79B;
-        Mon,  2 Dec 2019 09:07:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id O4E_l5RfgFtW; Mon,  2 Dec 2019 09:07:32 +0100 (CET)
-Received: from [172.25.230.103] (po15451.idsi0.si.c-s.fr [172.25.230.103])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C0DD68B770;
-        Mon,  2 Dec 2019 09:07:32 +0100 (CET)
-Subject: Re: [PATCH v11 0/4] kasan: support backing vmalloc space with real
- shadow memory
-To:     Daniel Axtens <dja@axtens.net>, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, x86@kernel.org, aryabinin@virtuozzo.com,
-        glider@google.com, luto@kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, dvyukov@google.com
-Cc:     linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
-References: <20191031093909.9228-1-dja@axtens.net>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <33b29093-5fbe-c648-a0b1-e3a8525c5631@c-s.fr>
-Date:   Mon, 2 Dec 2019 09:07:31 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726190AbfLBIMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 03:12:47 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42412 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfLBIMr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 03:12:47 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y19so27151535lfl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 00:12:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RXvQHsZsmW6pXP8cWlKu2oB3ye6J64yetODPCUShQls=;
+        b=LDvW5+gU93ELdFLgK+qT5nVScnz7JgrgQhRNku/wapYS8SJVJ0DJqOui367w/7mQxq
+         Au7P5C7DLMSuDtkf/MWrkqjx3ggt2cjLRCY1veJ07zT9Q1Eu1LPn5x1JVqaSg1XnhMZM
+         3wHW/8HPkLuPc9XfhNEKM5So4ssvUYGcLRkL8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RXvQHsZsmW6pXP8cWlKu2oB3ye6J64yetODPCUShQls=;
+        b=WVU+i9k2wNg21NWn2sf1pMlRnh7zfyII4pU+swOpjR6hlVcYaLa64y4shcQi+g+ewM
+         /mxXCUXucntWIxDEPiVxxUZ7kBbMbLz28+sT8/EX4C/YfbuRpmWvhNyKmKYmYExLupZw
+         XqLyI7JYdSTgZPhDaJb3HCcEDms9KSYF5F0WCG9K7maw0VqgqYqvIJ7sNtJrVxzwTJpX
+         4/diRCsDRUxQVwpfoS9Wqgj3/IgFX21SpMf7lnEXhSMKx02f9kdDEac+x8rjGLcskWz8
+         152rYbvD5EV6weEKU8e/lf0msmhETVvsTGbf1qCjXAlme1LvLjEQ/Lu2WI7eLm4F3Vme
+         vnrw==
+X-Gm-Message-State: APjAAAXAHaO6X2upL4qeYPu8exvbNLYZnP+dqqYm1txNr/PgjwHjrep8
+        yALGYO2WiQEU5iYDtoe84N4mdg==
+X-Google-Smtp-Source: APXvYqwlkkFrnJatLGMhg+Y85fDnQNQBGUSaNwCgj8pT5xNS23TPmswcOte86uiWZSUfoOuJ8nIa5g==
+X-Received: by 2002:ac2:4c82:: with SMTP id d2mr29043163lfl.62.1575274363744;
+        Mon, 02 Dec 2019 00:12:43 -0800 (PST)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id t6sm5445106lji.17.2019.12.02.00.12.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Dec 2019 00:12:42 -0800 (PST)
+Subject: Re: [PATCH v6 00/49] QUICC Engine support on ARM, ARM64, PPC64
+To:     Timur Tabi <timur@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Scott Wood <oss@buserror.net>
+References: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
+ <7beef282-1dd8-7c7a-4f6d-d0605d11eab5@kernel.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <fb810251-f444-bd5d-54e3-774d2e1ccdb9@rasmusvillemoes.dk>
+Date:   Mon, 2 Dec 2019 09:12:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191031093909.9228-1-dja@axtens.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7beef282-1dd8-7c7a-4f6d-d0605d11eab5@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/12/2019 17.10, Timur Tabi wrote:
+> On 11/28/19 8:55 AM, Rasmus Villemoes wrote:
+>> There have been several attempts in the past few years to allow
+>> building the QUICC engine drivers for platforms other than PPC32. This
+>> is yet another attempt.
+>>
+>> v5 can be found
+>> here:https://lore.kernel.org/lkml/20191118112324.22725-1-linux@rasmusvillemoes.dk/
+>>
+> 
+> If it helps:
+> 
+> Entire series:
+> Acked-by: Timur Tabi <timur@kernel.org>
 
+Thanks. I'll leave it to Li Yang whether to apply that - they already
+all (except for the last-minute build fix) have your R-b.
 
-Le 31/10/2019 à 10:39, Daniel Axtens a écrit :
-> Currently, vmalloc space is backed by the early shadow page. This
-> means that kasan is incompatible with VMAP_STACK.
-> 
-> This series provides a mechanism to back vmalloc space with real,
-> dynamically allocated memory. I have only wired up x86, because that's
-> the only currently supported arch I can work with easily, but it's
-> very easy to wire up other architectures, and it appears that there is
-> some work-in-progress code to do this on arm64 and s390.
+Li Yang, any chance you could pick up these patches so they have plenty
+of time in -next until 5.6?
 
-There is also work for providing VMAP_STACK on powerpc32. There is a 
-series waiting to be merged at 
-https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=145109
-
-Christophe
-
-> 
-> This has been discussed before in the context of VMAP_STACK:
->   - https://bugzilla.kernel.org/show_bug.cgi?id=202009
->   - https://lkml.org/lkml/2018/7/22/198
->   - https://lkml.org/lkml/2019/7/19/822
-> 
-> In terms of implementation details:
-> 
-> Most mappings in vmalloc space are small, requiring less than a full
-> page of shadow space. Allocating a full shadow page per mapping would
-> therefore be wasteful. Furthermore, to ensure that different mappings
-> use different shadow pages, mappings would have to be aligned to
-> KASAN_SHADOW_SCALE_SIZE * PAGE_SIZE.
-> 
-> Instead, share backing space across multiple mappings. Allocate a
-> backing page when a mapping in vmalloc space uses a particular page of
-> the shadow region. This page can be shared by other vmalloc mappings
-> later on.
-> 
-> We hook in to the vmap infrastructure to lazily clean up unused shadow
-> memory.
-> 
-> Testing with test_vmalloc.sh on an x86 VM with 2 vCPUs shows that:
-> 
->   - Turning on KASAN, inline instrumentation, without vmalloc, introuduces
->     a 4.1x-4.2x slowdown in vmalloc operations.
-> 
->   - Turning this on introduces the following slowdowns over KASAN:
->       * ~1.76x slower single-threaded (test_vmalloc.sh performance)
->       * ~2.18x slower when both cpus are performing operations
->         simultaneously (test_vmalloc.sh sequential_test_order=1)
-> 
-> This is unfortunate but given that this is a debug feature only, not
-> the end of the world. The benchmarks are also a stress-test for the
-> vmalloc subsystem: they're not indicative of an overall 2x slowdown!
-> 
-> 
-> v1: https://lore.kernel.org/linux-mm/20190725055503.19507-1-dja@axtens.net/
-> v2: https://lore.kernel.org/linux-mm/20190729142108.23343-1-dja@axtens.net/
->   Address review comments:
->   - Patch 1: use kasan_unpoison_shadow's built-in handling of
->              ranges that do not align to a full shadow byte
->   - Patch 3: prepopulate pgds rather than faulting things in
-> v3: https://lore.kernel.org/linux-mm/20190731071550.31814-1-dja@axtens.net/
->   Address comments from Mark Rutland:
->   - kasan_populate_vmalloc is a better name
->   - handle concurrency correctly
->   - various nits and cleanups
->   - relax module alignment in KASAN_VMALLOC case
-> v4: https://lore.kernel.org/linux-mm/20190815001636.12235-1-dja@axtens.net/
->   Changes to patch 1 only:
->   - Integrate Mark's rework, thanks Mark!
->   - handle the case where kasan_populate_shadow might fail
->   - poision shadow on free, allowing the alloc path to just
->       unpoision memory that it uses
-> v5: https://lore.kernel.org/linux-mm/20190830003821.10737-1-dja@axtens.net/
->   Address comments from Christophe Leroy:
->   - Fix some issues with my descriptions in commit messages and docs
->   - Dynamically free unused shadow pages by hooking into the vmap book-keeping
->   - Split out the test into a separate patch
->   - Optional patch to track the number of pages allocated
->   - minor checkpatch cleanups
-> v6: https://lore.kernel.org/linux-mm/20190902112028.23773-1-dja@axtens.net/
->   Properly guard freeing pages in patch 1, drop debugging code.
-> v7: https://lore.kernel.org/linux-mm/20190903145536.3390-1-dja@axtens.net/
->      Add a TLB flush on freeing, thanks Mark Rutland.
->      Explain more clearly how I think freeing is concurrency-safe.
-> v8: https://lore.kernel.org/linux-mm/20191001065834.8880-1-dja@axtens.net/
->      rename kasan_vmalloc/shadow_pages to kasan/vmalloc_shadow_pages
-> v9: https://lore.kernel.org/linux-mm/20191017012506.28503-1-dja@axtens.net/
->      (attempt to) address a number of review comments for patch 1.
-> v10: https://lore.kernel.org/linux-mm/20191029042059.28541-1-dja@axtens.net/
->       - rebase on linux-next, pulling in Vlad's new work on splitting the
->         vmalloc locks.
->       - after much discussion of barriers, document where I think they
->         are needed and why. Thanks Mark and Andrey.
->       - clean up some TLB flushing and checkpatch bits
-> v11: Address review comments from Andrey and Vlad, drop patch 5, add benchmarking
->       results.
-> 
-> Daniel Axtens (4):
->    kasan: support backing vmalloc space with real shadow memory
->    kasan: add test for vmalloc
->    fork: support VMAP_STACK with KASAN_VMALLOC
->    x86/kasan: support KASAN_VMALLOC
-> 
->   Documentation/dev-tools/kasan.rst |  63 ++++++++
->   arch/Kconfig                      |   9 +-
->   arch/x86/Kconfig                  |   1 +
->   arch/x86/mm/kasan_init_64.c       |  61 ++++++++
->   include/linux/kasan.h             |  31 ++++
->   include/linux/moduleloader.h      |   2 +-
->   include/linux/vmalloc.h           |  12 ++
->   kernel/fork.c                     |   4 +
->   lib/Kconfig.kasan                 |  16 +++
->   lib/test_kasan.c                  |  26 ++++
->   mm/kasan/common.c                 | 231 ++++++++++++++++++++++++++++++
->   mm/kasan/generic_report.c         |   3 +
->   mm/kasan/kasan.h                  |   1 +
->   mm/vmalloc.c                      |  53 +++++--
->   14 files changed, 500 insertions(+), 13 deletions(-)
-> 
+Thanks,
+Rasmus
