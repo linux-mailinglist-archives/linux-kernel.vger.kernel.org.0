@@ -2,82 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB9510EFDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:13:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9866310EFE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfLBTNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 14:13:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48798 "EHLO mail.kernel.org"
+        id S1728029AbfLBTPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 14:15:21 -0500
+Received: from mga02.intel.com ([134.134.136.20]:37189 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727580AbfLBTNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:13:45 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D9D420848;
-        Mon,  2 Dec 2019 19:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575314024;
-        bh=xPa0X6R5T4e6CEa2s0SLF/tQNyowSG/AuLe3v9UhiTU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OFfA4XXSIukBhUqFK/VHx0x3IEaSdakYD9V9S4aW89Q9zq5PeKYQWEONDx6t7Ze21
-         QBkk/jmZyCAKUK/lRxI6bex7+avShuMTRHoOJMBy4RO2DJIv//sUdG0ohk2zXOXLBG
-         Sm3vNETJvv8pNx6Ctq25FodpLb7DUWdyauDV8N2c=
-Date:   Mon, 2 Dec 2019 20:13:42 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] arm64: dts: allwinner: a64: olinuxino: Fix eMMC
- supply regulator
-Message-ID: <20191202191342.7ttegde7jewn4xra@gilmour.lan>
-References: <20191129113941.20170-1-stefan@olimex.com>
- <20191129113941.20170-2-stefan@olimex.com>
+        id S1727730AbfLBTPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 14:15:21 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 11:15:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
+   d="scan'208";a="218430125"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
+  by fmsmga001.fm.intel.com with ESMTP; 02 Dec 2019 11:15:19 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id BF957300B57; Mon,  2 Dec 2019 11:15:19 -0800 (PST)
+Date:   Mon, 2 Dec 2019 11:15:19 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     kan.liang@linux.intel.com, mingo@redhat.com, acme@kernel.org,
+        tglx@linutronix.de, bp@alien8.de, linux-kernel@vger.kernel.org,
+        eranian@google.com, alexey.budankov@linux.intel.com,
+        vitaly.slobodskoy@intel.com
+Subject: Re: [RFC PATCH 3/8] perf: Init/fini PMU specific data
+Message-ID: <20191202191519.GN84886@tassilo.jf.intel.com>
+References: <1574954071-6321-1-git-send-email-kan.liang@linux.intel.com>
+ <1574954071-6321-3-git-send-email-kan.liang@linux.intel.com>
+ <20191202124055.GC2827@hirez.programming.kicks-ass.net>
+ <20191202145957.GM84886@tassilo.jf.intel.com>
+ <20191202162152.GG2827@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q764rlr5yjz4gv75"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191129113941.20170-2-stefan@olimex.com>
+In-Reply-To: <20191202162152.GG2827@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 02, 2019 at 05:21:52PM +0100, Peter Zijlstra wrote:
+> On Mon, Dec 02, 2019 at 06:59:57AM -0800, Andi Kleen wrote:
+> > > 
+> > > This is atricous crap. Also it is completely broken for -RT.
+> > 
+> > Well can you please suggest how you would implement it instead?
+> 
+> I don't think that is on me; at best I get to explain why it is
 
---q764rlr5yjz4gv75
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Normally code review is expected to be constructive.
 
-On Fri, Nov 29, 2019 at 01:39:39PM +0200, Stefan Mavrodiev wrote:
-> A64-OLinuXino-eMMC uses 1.8V for eMMC supply. This is done via a triple
-> jumper, which sets VCC-PL to either 1.8V or 3.3V. This setting is different
-> for boards with and without eMMC.
->
-> This is not a big issue for DDR52 mode, however the eMMC will not work in
-> HS200/HS400, since these modes explicitly requires 1.8V.
->
-> Fixes: 94f68f3a4b2a ("arm64: dts: allwinner: a64: Add A64 OlinuXino board (with eMMC)")
-> Cc: stable@vger.kernel.org # v5.4
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> completely unacceptible to have O(nr_tasks) and allocations under a
+> raw_spinlock_t, but I was thinking you'd already know that.
 
-Applied, thanks!
-Maxime
+Ok if that's the only problem then a lock breaker + retry 
+if rescheduling is needed + some limit against live lock 
+should be sufficient.
 
---q764rlr5yjz4gv75
-Content-Type: application/pgp-signature; name="signature.asc"
+-Andi
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXeViZgAKCRDj7w1vZxhR
-xVnqAQCN+/fEAa8RYdLvkoYtRzpPTIeiTCvNTyfWakMZS9YKvQEAnFfgnu6qHLWp
-6DXcmrsNxdL1AzYEYmpIY1KhpG4BdgQ=
-=ZRr1
------END PGP SIGNATURE-----
-
---q764rlr5yjz4gv75--
