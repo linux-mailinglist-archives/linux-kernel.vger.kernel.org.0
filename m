@@ -2,82 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81CEE10EA2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:40:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BA5A10EA2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:41:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfLBMkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 07:40:45 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:58717 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727354AbfLBMkp (ORCPT
+        id S1727484AbfLBMl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 07:41:28 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39560 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbfLBMl2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 07:40:45 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1ibl0L-0000Rr-2B; Mon, 02 Dec 2019 13:40:41 +0100
-To:     Daode Huang <huangdaode@hisilicon.com>
-Subject: Re: [PATCH] irqchip/stm32: Fix "WARNING: invalid free of  =?UTF-8?Q?devm=5F=20allocated?=
-X-PHP-Originating-Script: 0:main.inc
+        Mon, 2 Dec 2019 07:41:28 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 77so9724040oty.6;
+        Mon, 02 Dec 2019 04:41:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v4jccqE55GWOauKr9QrlxYG6hq9cbi6xQqZ+qrqIQtU=;
+        b=e/VXVsr9R04p7rr2L8KyP22bNyu1F6kLzFl+N967X4X0EUhKeNAuQOI4d/9URUs7yq
+         vQuJW1nmUjm2aqNs440Oyd9DEiTIA711sJ6T2e9PL7fIQmnsxpMYPfHNh6VgW+K8/d+V
+         tNIgJuABB/Awxdq5MUGiUqWHnudEcjTBXawdbkGhsNyqLNMiWuG5iqLh5pKSkg+m3ev9
+         v6uGUIm1ffsavPKXYR0sN2TlhP4meAwCCnPqibjxybVe2piF1T0gFRDl7s8lGAtfK6RK
+         1vULmE13peVsFlFW0Sv4TJMx5fdwHf36/Ldx2KmlgpTo7FLrcftTcpXPZgY864nTbs4M
+         dIYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v4jccqE55GWOauKr9QrlxYG6hq9cbi6xQqZ+qrqIQtU=;
+        b=pKnAV58376C1Z0M0aquE4y6rK2SZMxd32x0qRvuh3feRrYVulpVdKn08mDJKQbrjf2
+         QsO4pkHIaw8sUQRrwtaVpi2SJyYz+iq99Yx/sv6SI6XdPKfXJc+Rh5htz6/fOJcn/+1r
+         9ppxkgVhqYL+R2mumip4/Cqt9MRRZ06QaRR/tsAyV2m/O91Z9SOSUy0a7Y+QV6q0bT6f
+         XZMsmSLEShsAvBHuuzE+dBLsOVn1WCxBWIc0s3RoA53JkbiQGcGyelEy25Ym7tq0ZGpd
+         s/QznPFVqR3FJVT8obBbJNFK46LN8dkab1LDYDItVVfLWrYnab35L2D33KPR6ekWTeSV
+         C8nQ==
+X-Gm-Message-State: APjAAAWX64I0SnInRDZUhmSrzLBSx5bdHWRAODSIHvUrQpYxcTfLvK6T
+        dmfQg/BS7KlrSSxpvyHKWN5j3OD60v7YVlJypkA=
+X-Google-Smtp-Source: APXvYqx/XM1fQDIxfkHKS+KMfb9rRjJmqVh0BNi2GgrRwqAT69ugp8xH+QePfbWm5VS96dIm7/TEW5Vpfll/SUilniA=
+X-Received: by 2002:a05:6830:1db3:: with SMTP id z19mr22245770oti.152.1575290486057;
+ Mon, 02 Dec 2019 04:41:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 02 Dec 2019 12:40:40 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <jason@lakedaemon.net>, <linux-kernel@vger.kernel.org>,
-        <fabien.dessenne@st.com>, <mcoquelin.stm32@gmail.com>,
-        <tglx@linutronix.de>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <alexandre.torgue@st.com>
-In-Reply-To: <8acaa494701c91b8a8acd60a2390d810@www.loen.fr>
-References: <1574931880-168682-1-git-send-email-huangdaode@hisilicon.com>
- <8acaa494701c91b8a8acd60a2390d810@www.loen.fr>
-Message-ID: <028744c349410eb1f74b7e2b18590c75@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: huangdaode@hisilicon.com, jason@lakedaemon.net, linux-kernel@vger.kernel.org, fabien.dessenne@st.com, mcoquelin.stm32@gmail.com, tglx@linutronix.de, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, alexandre.torgue@st.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+References: <20191115113610.21493-1-sudipm.mukherjee@gmail.com>
+In-Reply-To: <20191115113610.21493-1-sudipm.mukherjee@gmail.com>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Mon, 2 Dec 2019 12:40:49 +0000
+Message-ID: <CADVatmMVcDDys62U31D4zOo4pZ58-YP6O25hAZxNObTTEPpfSg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] libtraceevent: fix lib installation
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        arnaldo.melo@gmail.com, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-02 12:29, Marc Zyngier wrote:
-> On 2019-11-28 09:04, Daode Huang wrote:
->> Since devm_ allocated data can be automaitcally released, it's no
->> need to free it apparently, just remove it.
->>
->> Fixes: cfbf9e497094 ("irqchip/stm32: Use a platform driver for
->> stm32mp1-exti device")
->> Signed-off-by: Daode Huang <huangdaode@hisilicon.com>
->> ---
->>  drivers/irqchip/irq-stm32-exti.c | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-stm32-exti.c
->> b/drivers/irqchip/irq-stm32-exti.c
->> index e00f2fa..46ec0af 100644
->> --- a/drivers/irqchip/irq-stm32-exti.c
->> +++ b/drivers/irqchip/irq-stm32-exti.c
->> @@ -779,8 +779,6 @@ static int __init stm32_exti_init(const struct
->> stm32_exti_drv_data *drv_data,
->>  	irq_domain_remove(domain);
->>  out_unmap:
->>  	iounmap(host_data->base);
->> -	kfree(host_data->chips_data);
->> -	kfree(host_data);
->>  	return ret;
->>  }
+Hi Steve,
+
+On Fri, Nov 15, 2019 at 11:36 AM Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
 >
-> Applied, thanks.
+> When we use 'O=' with make to build libtraceevent in a separate folder
+> it fails to install libtraceevent.a and libtraceevent.so.1.1.0 with the
+> error:
+>   INSTALL  /home/sudip/linux/obj-trace/libtraceevent.a
+>   INSTALL  /home/sudip/linux/obj-trace/libtraceevent.so.1.1.0
+> cp: cannot stat 'libtraceevent.a': No such file or directory
+> Makefile:225: recipe for target 'install_lib' failed
+> make: *** [install_lib] Error 1
+>
+> I used the command:
+> make O=../../../obj-trace DESTDIR=~/test prefix==/usr  install
+>
+> It turns out libtraceevent Makefile, even though it builds in a separate
+> folder, searches for libtraceevent.a and libtraceevent.so.1.1.0 in its
+> source folder.
+> So, add the 'OUTPUT' prefix to the source path so that 'make' looks for
+> the files in the correct place.
+>
+> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> ---
+>  tools/lib/traceevent/Makefile | 1 +
 
-Scratch that. This patch is just wrong, and just reading the code
-makes it obvious. stm32_exti_init() is only called on paths
-that allocate the memory with kmalloc.
+A gentle ping.
+I know its the merge window now. But your ack for these two patches will allow
+me to start with the debian workflow.
 
-Clearly you haven't tried to understand what is going on.
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+--
+Regards
+Sudip
