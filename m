@@ -2,150 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1289610EF7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A32C410EF87
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbfLBSsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:48:01 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38345 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbfLBSsB (ORCPT
+        id S1727988AbfLBStw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:49:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23403 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727978AbfLBStw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:48:01 -0500
-Received: by mail-oi1-f195.google.com with SMTP id b8so659021oiy.5;
-        Mon, 02 Dec 2019 10:48:00 -0800 (PST)
+        Mon, 2 Dec 2019 13:49:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575312591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8nOlZklbXEP/MfMud/ZUPVb3jHYNuzoALbQz6584AH8=;
+        b=JfWmUc2RX14/O87FfXSLO1zBiEsaxRjqDs7Kqpr9M1SqW5NGbQ+Xrgzz9Z0vXTArIS77JJ
+        eoI/Oif0kkUX7K43funi8Xgq03JnhYCfBYm9lWfisyA0e4Tc6na6iR96A/PsAdVp7R57X1
+        cL8P1HToU1hnhBjyN+BhjNk+urVFoHo=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-169-4D_gwrroP6ugE2UW0JeYnA-1; Mon, 02 Dec 2019 13:49:50 -0500
+Received: by mail-qv1-f71.google.com with SMTP id w7so349505qvs.15
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 10:49:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mBpJM7Zj2wSiQOjSDmwoTTIZ3KSKjAbhhQOqtWInyn8=;
-        b=A7aMOrXpKhJy4fk39+qi/ANYq/TUy3hJ06XneZJ5oUT0OFi6rhHC9yRUlq9vS9iAFR
-         mHzY8wyQTwwGj2fVHFWlHn2l0PiT3mGWgVNMXxnPXTUC0y1MVqBKX7+nTMutffctrpd2
-         x8JOeWWdqz65qRlfbS25GyyDioj7MNgdSMp3VUIG9zri8nRaGJ7jn4y8n1Asprwfofrv
-         vDP9wBKSFeoybGjyfoHV+EwJHX/7iWbpZh/AHZgehJFNa9bpOdNBv5N/mbOdmgVhwjz1
-         YRXP7Xlyi2SQat1hID0fUq721cXvoRXXGYmntZ3ZdwGj10+rdZn9v0nEs3bw7CHW92SS
-         RwQA==
-X-Gm-Message-State: APjAAAX4YTCRhzP5CNeDWGhYr9adWNRwanVIknLUrT/UuKud7yTM4XRB
-        ieIV2x6UGNTVqSf8lpjJjQ==
-X-Google-Smtp-Source: APXvYqzdzdPrzk+OWMWznQdm93ETxyP6UWwf6N3cCEdAYlYM58GRWWErDRTEF83uYELHa89BF49evQ==
-X-Received: by 2002:aca:c38c:: with SMTP id t134mr354494oif.175.1575312479937;
-        Mon, 02 Dec 2019 10:47:59 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m133sm104652oia.29.2019.12.02.10.47.58
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=8nOlZklbXEP/MfMud/ZUPVb3jHYNuzoALbQz6584AH8=;
+        b=gEPiM8vFewKtDT2JAdzpv1ybYXg5Q6X6Gl2/K5gZ3EDXtu1mKBufImh1RKGwca5L9a
+         V+ns3jbPrsGSLCoX9bx5fuVCr3glCWUXz8100FWljUYnT4PwJ7qNo0jmdvFbCzLU1ZqE
+         V1HI7eY5j0jtRX1SgvUq0XJHLDTCbWjrVvK2ytzurdeyjqZBBcprQRXY9LOqp5Gl7tch
+         GbArS+rgTdKif6dDE6ZZRXa3BaCiU0D4K2HBL7Mn1aVo2g4/r19rAXAI24N9+fz/bUh3
+         0GmIR4ZB8CCizj7CKhjCG72rZLdvI7ICHEyZmxTgvbEP0e00WJMR5QuZsEiYLl/WTODC
+         g/EQ==
+X-Gm-Message-State: APjAAAXQSkMQh+mVwtQKOrxWlt2QAX7UX2hguCmmduD3PJHMaCHEHz5O
+        7FMWkyStbpB0+6lsgyHQZtKCQ0XPvJ6d3Y/7TqCU+8aBbNoTEix2c24i5S3PIMv7/LcXqbRpsyy
+        ib/LqY/eXdjKYVvrLjko07rlL
+X-Received: by 2002:a37:4b06:: with SMTP id y6mr348923qka.14.1575312589758;
+        Mon, 02 Dec 2019 10:49:49 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwJRF1Uj8hXpkhpro16Z/MJEwD9ISyeLmMqcRIU5Abi4M9QOoQSdoBpNoTX1Z/vjA6P7T3A3A==
+X-Received: by 2002:a37:4b06:: with SMTP id y6mr348899qka.14.1575312589488;
+        Mon, 02 Dec 2019 10:49:49 -0800 (PST)
+Received: from dhcp-10-20-1-90.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id y187sm245824qkd.11.2019.12.02.10.49.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 10:47:59 -0800 (PST)
-Date:   Mon, 2 Dec 2019 12:47:58 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Wen He <wen.he_1@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Walle <michael@walle.cc>, Li Yang <leoyang.li@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v10 1/2] dt/bindings: clk: Add YAML schemas for LS1028A Display
- Clock bindings
-Message-ID: <20191202184758.GA8408@bogus>
-References: <20191127101525.44516-1-wen.he_1@nxp.com>
+        Mon, 02 Dec 2019 10:49:48 -0800 (PST)
+Message-ID: <837a221f0fc89b9ef6d3fbd2ceae479a5c98818a.camel@redhat.com>
+Subject: Re: [PATCH] drm/dp_mst: Fix build on systems with
+ STACKTRACE_SUPPORT=n
+From:   Lyude Paul <lyude@redhat.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 02 Dec 2019 13:49:47 -0500
+In-Reply-To: <CAMuHMdUz7gewcFPE=cnVENGdwVp6AZD7U4y1PtwXTAmoGmvGUg@mail.gmail.com>
+References: <20191202133650.11964-1-linux@roeck-us.net>
+         <CAMuHMdUz7gewcFPE=cnVENGdwVp6AZD7U4y1PtwXTAmoGmvGUg@mail.gmail.com>
+Organization: Red Hat
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191127101525.44516-1-wen.he_1@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: 4D_gwrroP6ugE2UW0JeYnA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 06:15:24PM +0800, Wen He wrote:
-> LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
-> output interface. Add a YAML schema for this.
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+
+I'll go ahead and push this to drm-misc-next, thanks!
+
+On Mon, 2019-12-02 at 16:20 +0100, Geert Uytterhoeven wrote:
+> On Mon, Dec 2, 2019 at 2:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > On systems with STACKTRACE_SUPPORT=n, we get:
+> > 
+> > WARNING: unmet direct dependencies detected for STACKTRACE
+> >   Depends on [n]: STACKTRACE_SUPPORT
+> >   Selected by [y]:
+> >   - STACKDEPOT [=y]
+> > 
+> > and build errors such as:
+> > 
+> > m68k-linux-ld: kernel/stacktrace.o: in function `stack_trace_save':
+> > (.text+0x11c): undefined reference to `save_stack_trace'
+> > 
+> > Add the missing deendency on STACKTRACE_SUPPORT.
+> > 
+> > Fixes: 12a280c72868 ("drm/dp_mst: Add topology ref history tracking for
+> > debugging")
+> > Cc: Lyude Paul <lyude@redhat.com>
+> > Cc: Sean Paul <sean@poorly.run>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Signed-off-by: Wen He <wen.he_1@nxp.com>
-> Signed-off-by: Michael Walle <michael@walle.cc>
-> ---
-> change in v10:
->         - Add optional feild 'vco-frequency'.
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 > 
->  .../devicetree/bindings/clock/fsl,plldig.yaml | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+> Gr{oetje,eeting}s,
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-> new file mode 100644
-> index 000000000000..ee5b5c61a471
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
-> +
-> +maintainers:
-> +  - Wen He <wen.he_1@nxp.com>
-> +
-> +description: |
-> +  NXP LS1028A has a clock domain PXLCLK0 used for the Display output
-> +  interface in the display core, as implemented in TSMC CLN28HPM PLL.
-> +  which generate and offers pixel clocks to Display.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,ls1028a-plldig
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  vco-frequency:
-
-Needs vendor prefix and unit suffix:
-
-fsl,vco-hz
-
-Or you could perhaps just use 'clock-frequency'.
-
-> +     $ref: '/schemas/types.yaml#/definitions/uint32'
-> +     description: Optional for VCO frequency of the PLL in Hertz.
-> +        The VCO frequency of this PLL cannot be changed during runtime
-> +        only at startup. Therefore, the output frequencies are very
-> +        limited and might not even closely match the requested frequency.
-> +        To work around this restriction the user may specify its own
-> +        desired VCO frequency for the PLL. The frequency has to be in the
-> +        range of 650000000 to 1300000000.
-> +        If not set, the default frequency is 1188000000.
-
-A bunch of constraints you've listed here that should be schema rather 
-than freeform text:
-
-minimum: 650000000
-maximum: 1300000000
-default: 1188000000
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +
-> +examples:
-> +  # Display PIXEL Clock node:
-> +  - |
-> +    dpclk: clock-display@f1f0000 {
-> +        compatible = "fsl,ls1028a-plldig";
-> +        reg = <0x0 0xf1f0000 0x0 0xffff>;
-> +        #clock-cells = <0>;
-> +        clocks = <&osc_27m>;
-> +    };
-> +
-> +...
-> -- 
-> 2.17.1
+>                         Geert
 > 
+-- 
+Cheers,
+	Lyude Paul
+
