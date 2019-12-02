@@ -2,64 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1040C10EEB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:48:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE65110EEBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:48:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbfLBRsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 12:48:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59758 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbfLBRsN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:48:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IjKhKcfgs56M77BJcCUDLX9sVHFCM1k5EtqXolSK9BI=; b=to0x0zNLuMR9SJWagjLNUTOhJ
-        Td85PD9p/IMuxIVyZghetmTvmAAHrLd+/4wG00F6N8fga+/bUZtcW1aGl/FQF9DX4IiIUoQFZkGUf
-        o204oydF0rMZfPxQJcsh3/mGxfOcGHRLXGU7IJ1UruYeMPn/nhtmPeW4aACQ7tduAQbkg/vJEUTH1
-        A5QYUGJkAwFLSahVOnlJW179qaf6/BrrecY2Kf+RzDklpRV4pBO1sfsbCMc4duDGVib4DGR4ZblYY
-        NGG8Cg1jfOvB18C2l33uIkNUWc9OFXro8W3VVgeoH16ALAAN7taJWw8+2udWY4nI6ka1ndLYmoJIA
-        h6RA9qdug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ibpnv-0001Q4-QS; Mon, 02 Dec 2019 17:48:11 +0000
-Date:   Mon, 2 Dec 2019 09:48:11 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, arnd@arndb.de
-Subject: Re: [PATCH 7/7] fs: Do not overload update_time
-Message-ID: <20191202174811.GA31468@infradead.org>
-References: <20191130053030.7868-1-deepa.kernel@gmail.com>
- <20191130053030.7868-8-deepa.kernel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191130053030.7868-8-deepa.kernel@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        id S1727848AbfLBRsl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 12:48:41 -0500
+Received: from node.akkea.ca ([192.155.83.177]:34684 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727420AbfLBRsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 12:48:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id D24274E200E;
+        Mon,  2 Dec 2019 17:48:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1575308920; bh=qfKdNZ1HBtViTTD5XHaCa9z4hvXMR4eI/MrZct97QqY=;
+        h=From:To:Cc:Subject:Date;
+        b=Qa0+r9XiQhfbN0jBdjUEoNVNnhYSz41LKL/xNHwYfsxcZHN7V4F5B3vsUAacwh+ns
+         nADerYPHg1nVDYeHK8NLSEVFX/H4TDgEtEYWQUpqXIxxQrCRxmwki0NlCRTVZvjzVy
+         sOjekbkH75Cp9Ge7px6MdRYZg+ozDIJftgaFfPG8=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JuvcBJccax_v; Mon,  2 Dec 2019 17:48:40 +0000 (UTC)
+Received: from thinkpad-tablet.cg.shawcable.net (S0106905851b613e9.cg.shawcable.net [70.77.244.40])
+        by node.akkea.ca (Postfix) with ESMTPSA id 825844E2003;
+        Mon,  2 Dec 2019 17:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1575308920; bh=qfKdNZ1HBtViTTD5XHaCa9z4hvXMR4eI/MrZct97QqY=;
+        h=From:To:Cc:Subject:Date;
+        b=Qa0+r9XiQhfbN0jBdjUEoNVNnhYSz41LKL/xNHwYfsxcZHN7V4F5B3vsUAacwh+ns
+         nADerYPHg1nVDYeHK8NLSEVFX/H4TDgEtEYWQUpqXIxxQrCRxmwki0NlCRTVZvjzVy
+         sOjekbkH75Cp9Ge7px6MdRYZg+ozDIJftgaFfPG8=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     kernel@puri.sm
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>
+Subject: [PATCH 0/2] Add the broadmobi BM818
+Date:   Mon,  2 Dec 2019 10:48:29 -0700
+Message-Id: <20191202174831.13638-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 09:30:30PM -0800, Deepa Dinamani wrote:
-> -	int (*update_time)(struct inode *, struct timespec64 *, int);
-> +	int (*cb)(struct inode *, struct timespec64 *, int);
->  
-> -	update_time = inode->i_op->update_time ? inode->i_op->update_time :
-> +	cb = inode->i_op->update_time ? inode->i_op->update_time :
->  		generic_update_time;
->  
-> -	return update_time(inode, time, flags);
-> +	return cb(inode, time, flags);
+The broadmobi uses slightly different parameters from the option modems
+so add the paramters and document them.
 
-Just killing the pointless local variable cleans the function op, and
-also avoids the expensive indirect call for the common case:
+Angus Ainslie (Purism) (2):
+  sound: codecs: gtm601: add Broadmobi bm818 sound profile
+  ASoC: gtm601: add the broadmobi interface
 
-	if (inode->i_op->update_time)
-		return inode->i_op->update_time(inode, time, flags);
-	return generic_update_time(inode, time, flags);
+ .../devicetree/bindings/sound/gtm601.txt      | 10 +++++--
+ sound/soc/codecs/gtm601.c                     | 29 +++++++++++++++++--
+ 2 files changed, 35 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
+
