@@ -2,116 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A32C410EF87
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 219CF10EF65
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:41:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbfLBStw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:49:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23403 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727978AbfLBStw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:49:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575312591;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8nOlZklbXEP/MfMud/ZUPVb3jHYNuzoALbQz6584AH8=;
-        b=JfWmUc2RX14/O87FfXSLO1zBiEsaxRjqDs7Kqpr9M1SqW5NGbQ+Xrgzz9Z0vXTArIS77JJ
-        eoI/Oif0kkUX7K43funi8Xgq03JnhYCfBYm9lWfisyA0e4Tc6na6iR96A/PsAdVp7R57X1
-        cL8P1HToU1hnhBjyN+BhjNk+urVFoHo=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-169-4D_gwrroP6ugE2UW0JeYnA-1; Mon, 02 Dec 2019 13:49:50 -0500
-Received: by mail-qv1-f71.google.com with SMTP id w7so349505qvs.15
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 10:49:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=8nOlZklbXEP/MfMud/ZUPVb3jHYNuzoALbQz6584AH8=;
-        b=gEPiM8vFewKtDT2JAdzpv1ybYXg5Q6X6Gl2/K5gZ3EDXtu1mKBufImh1RKGwca5L9a
-         V+ns3jbPrsGSLCoX9bx5fuVCr3glCWUXz8100FWljUYnT4PwJ7qNo0jmdvFbCzLU1ZqE
-         V1HI7eY5j0jtRX1SgvUq0XJHLDTCbWjrVvK2ytzurdeyjqZBBcprQRXY9LOqp5Gl7tch
-         GbArS+rgTdKif6dDE6ZZRXa3BaCiU0D4K2HBL7Mn1aVo2g4/r19rAXAI24N9+fz/bUh3
-         0GmIR4ZB8CCizj7CKhjCG72rZLdvI7ICHEyZmxTgvbEP0e00WJMR5QuZsEiYLl/WTODC
-         g/EQ==
-X-Gm-Message-State: APjAAAXQSkMQh+mVwtQKOrxWlt2QAX7UX2hguCmmduD3PJHMaCHEHz5O
-        7FMWkyStbpB0+6lsgyHQZtKCQ0XPvJ6d3Y/7TqCU+8aBbNoTEix2c24i5S3PIMv7/LcXqbRpsyy
-        ib/LqY/eXdjKYVvrLjko07rlL
-X-Received: by 2002:a37:4b06:: with SMTP id y6mr348923qka.14.1575312589758;
-        Mon, 02 Dec 2019 10:49:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwJRF1Uj8hXpkhpro16Z/MJEwD9ISyeLmMqcRIU5Abi4M9QOoQSdoBpNoTX1Z/vjA6P7T3A3A==
-X-Received: by 2002:a37:4b06:: with SMTP id y6mr348899qka.14.1575312589488;
-        Mon, 02 Dec 2019 10:49:49 -0800 (PST)
-Received: from dhcp-10-20-1-90.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id y187sm245824qkd.11.2019.12.02.10.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 10:49:48 -0800 (PST)
-Message-ID: <837a221f0fc89b9ef6d3fbd2ceae479a5c98818a.camel@redhat.com>
-Subject: Re: [PATCH] drm/dp_mst: Fix build on systems with
- STACKTRACE_SUPPORT=n
-From:   Lyude Paul <lyude@redhat.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Mon, 02 Dec 2019 13:49:47 -0500
-In-Reply-To: <CAMuHMdUz7gewcFPE=cnVENGdwVp6AZD7U4y1PtwXTAmoGmvGUg@mail.gmail.com>
-References: <20191202133650.11964-1-linux@roeck-us.net>
-         <CAMuHMdUz7gewcFPE=cnVENGdwVp6AZD7U4y1PtwXTAmoGmvGUg@mail.gmail.com>
-Organization: Red Hat
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31)
+        id S1727549AbfLBSln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:41:43 -0500
+Received: from mga11.intel.com ([192.55.52.93]:43443 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727418AbfLBSlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 13:41:42 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 10:41:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
+   d="scan'208";a="384989972"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga005.jf.intel.com with ESMTP; 02 Dec 2019 10:41:41 -0800
+Date:   Mon, 2 Dec 2019 10:53:35 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Babu Moger <babu.moger@amd.com>,
+        Andre Przywara <Andre.Przywara@arm.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v8 01/13] selftests/resctrl: Add README for resctrl tests
+Message-ID: <20191202185334.GA220960@romley-ivt3.sc.intel.com>
+References: <1574901584-212957-1-git-send-email-fenghua.yu@intel.com>
+ <1574901584-212957-2-git-send-email-fenghua.yu@intel.com>
+ <20191128072338.GA17745@zn.tnic>
 MIME-Version: 1.0
-X-MC-Unique: 4D_gwrroP6ugE2UW0JeYnA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191128072338.GA17745@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+On Thu, Nov 28, 2019 at 08:23:38AM +0100, Borislav Petkov wrote:
+> On Wed, Nov 27, 2019 at 04:39:32PM -0800, Fenghua Yu wrote:
+> > resctrl tests will be implemented. README is added for the tool first.
+> > 
+> > Signed-off-by: Babu Moger <babu.moger@amd.com>
+> > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> 
+> What does this SOB chain mean?
+> 
+> Same question for patches 2,3,4,5,6,7,8,9,13.
+> 
+> So it seems you wanna say that Babu has contributed somehow but it is
+> not clear what/how.
 
-I'll go ahead and push this to drm-misc-next, thanks!
+Babu's major contributions are in v5 where he virtually touched every
+patch. He sent out v5 and put Signed-off-by: Babu Moger in each patch:
+https://lore.kernel.org/patchwork/cover/1033532/
 
-On Mon, 2019-12-02 at 16:20 +0100, Geert Uytterhoeven wrote:
-> On Mon, Dec 2, 2019 at 2:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > On systems with STACKTRACE_SUPPORT=n, we get:
-> > 
-> > WARNING: unmet direct dependencies detected for STACKTRACE
-> >   Depends on [n]: STACKTRACE_SUPPORT
-> >   Selected by [y]:
-> >   - STACKDEPOT [=y]
-> > 
-> > and build errors such as:
-> > 
-> > m68k-linux-ld: kernel/stacktrace.o: in function `stack_trace_save':
-> > (.text+0x11c): undefined reference to `save_stack_trace'
-> > 
-> > Add the missing deendency on STACKTRACE_SUPPORT.
-> > 
-> > Fixes: 12a280c72868 ("drm/dp_mst: Add topology ref history tracking for
-> > debugging")
-> > Cc: Lyude Paul <lyude@redhat.com>
-> > Cc: Sean Paul <sean@poorly.run>
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
--- 
-Cheers,
-	Lyude Paul
+That's why I keep his SOB in v6-v8 in each patch.
+
+Thanks.
+
+-Fenghua
 
