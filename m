@@ -2,82 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA51810EE9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B5410EE32
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfLBRka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 12:40:30 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30015 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727865AbfLBRk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:40:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 09:40:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="208164902"
-Received: from svedurlx-mobl.amr.corp.intel.com (HELO [10.251.129.241]) ([10.251.129.241])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Dec 2019 09:40:25 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: SOF: Intel: Fix build error
-To:     YueHaibing <yuehaibing@huawei.com>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.de,
-        daniel.baluta@nxp.com, arnd@arndb.de, tglx@linutronix.de,
-        rdunlap@infradead.org
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20191127141649.5524-1-yuehaibing@huawei.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <31733dff-0811-b2a4-6201-277d7c5ff619@linux.intel.com>
-Date:   Mon, 2 Dec 2019 11:27:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
-MIME-Version: 1.0
-In-Reply-To: <20191127141649.5524-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727731AbfLBRa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 12:30:27 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:52804 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727493AbfLBRa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 12:30:27 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2HRdLB036130;
+        Mon, 2 Dec 2019 17:29:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=aMZCHhVcUeF+QgDPyWrQiFB5zZTT1FJ/TbkHX9FvOF0=;
+ b=olMADNx2wr8Rk4mVJp//eONtfA2qU1WMMyBAYuljas+ejYiSQz8DXE8yq0VEcyKyvsHJ
+ KdNe/odhRT0o7bNTGvNMu3eK+KUJ2eXldHWKEoDv4FydPBZPcuZh05+AGCOTcZLJ1Ls4
+ 1pUgaapSXSGW5DqmhnhKOj9XWPP3y2iL8OnPk9S7567ilaOedeGE+muqruT6uJXotpz7
+ ckSjOGnJOeBDNTzQAqvKuCgaYevhXYhThWGgs/qc5oWze8oSd6YOgDeMikoU/IfIbY/H
+ AqmMlVKRHRKDPxFQeSTEI/N8Ldm/G+7vPSZtIn0Dk+BAH8I1sRjWJHZ1DTCoB1ewPmc0 hA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2wkgcq1k2g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Dec 2019 17:29:57 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB2HRken172948;
+        Mon, 2 Dec 2019 17:29:56 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wn4qn27q2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Dec 2019 17:29:56 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB2HTsFN006834;
+        Mon, 2 Dec 2019 17:29:54 GMT
+Received: from tomti.i.net-space.pl (/10.175.212.22)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Dec 2019 09:29:53 -0800
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     grub-devel@gnu.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     bp@alien8.de, eric.snowberg@oracle.com, hpa@zytor.com,
+        kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        mingo@redhat.com, phcoder@gmail.com, rdunlap@infradead.org,
+        ross.philipson@oracle.com
+Subject: [GRUB PATCH 1/1] loader/i386/linux: Fix an underflow in the setup_header length calculation
+Date:   Mon,  2 Dec 2019 18:29:39 +0100
+Message-Id: <20191202172939.29271-1-daniel.kiper@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912020147
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912020147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Recent work around x86 Linux kernel loader revealed an underflow in the
+setup_header length calculation and another related issue. Both lead to
+the memory overwrite and later machine crash.
 
+Currently when the GRUB copies the setup_header into the linux_params
+(struct boot_params, traditionally known as "zero page") it assumes the
+setup_header size as sizeof(linux_i386_kernel_header/lh). This is
+incorrect. It should use the value calculated accordingly to the Linux
+kernel boot protocol. Otherwise in case of pretty old kernel, to be
+exact Linux kernel boot protocol, the GRUB may write more into
+linux_params than it was expected to. Fortunately this is not very big
+issue. Though it has to be fixed. However, there is also an underflow
+which is grave. It happens when
 
-On 11/27/19 8:16 AM, YueHaibing wrote:
-> If SND_INTEL_DSP_CONFIG is m and SND_SOC_SOF_PCI is y,
-> building fails:
-> 
-> sound/soc/sof/sof-pci-dev.o: In function `sof_pci_probe':
-> sof-pci-dev.c:(.text+0xb4): undefined reference to `snd_intel_dsp_driver_probe'
-> 
-> Select SND_INTEL_DSP_CONFIG to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 82d9d54a6c0e ("ALSA: hda: add Intel DSP configuration / probe code")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   sound/soc/sof/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/sof/Kconfig b/sound/soc/sof/Kconfig
-> index 71a0fc0..e0b04b5 100644
-> --- a/sound/soc/sof/Kconfig
-> +++ b/sound/soc/sof/Kconfig
-> @@ -14,6 +14,7 @@ config SND_SOC_SOF_PCI
->   	depends on PCI
->   	select SND_SOC_SOF
->   	select SND_SOC_ACPI if ACPI
-> +	select SND_INTEL_DSP_CONFIG
+  sizeof(linux_i386_kernel_header/lh) > "real size of the setup_header".
 
-Thanks for the report. This looks like a valid issue but I don't think 
-the fix is in the right place, we moved all Intel-specific stuff to 
-sound/soc/sof/Intel.
+Then len value wraps around and grub_file_read() reads whole kernel into
+the linux_params overwriting memory past it. This leads to the GRUB
+memory allocator breakage and finally to its crash during boot.
 
-In addition I don't get how this can happen in the first place, we have
-this statement
+The patch fixes both issues. Additionally, it moves the code not related to
+grub_memset(linux_params)/grub_memcpy(linux_params)/grub_file_read(linux_params)
+section outside of it to not confuse the reader.
 
-config SND_SOC_SOF_INTEL_PCI
-	def_tristate SND_SOC_SOF_PCI
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+---
+ grub-core/loader/i386/linux.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Can you share the config that's broken? Thanks!
+diff --git a/grub-core/loader/i386/linux.c b/grub-core/loader/i386/linux.c
+index d0501e229..ee95cd374 100644
+--- a/grub-core/loader/i386/linux.c
++++ b/grub-core/loader/i386/linux.c
+@@ -761,17 +761,12 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+     goto fail;
+ 
+   grub_memset (&linux_params, 0, sizeof (linux_params));
+-  grub_memcpy (&linux_params.setup_sects, &lh.setup_sects, sizeof (lh) - 0x1F1);
+-
+-  linux_params.code32_start = prot_mode_target + lh.code32_start - GRUB_LINUX_BZIMAGE_ADDR;
+-  linux_params.kernel_alignment = (1 << align);
+-  linux_params.ps_mouse = linux_params.padding10 =  0;
+ 
+   /*
+    * The Linux 32-bit boot protocol defines the setup header end
+    * to be at 0x202 + the byte value at 0x201.
+    */
+-  len = 0x202 + *((char *) &linux_params.jump + 1);
++  len = 0x202 + *((char *) &lh.jump + 1);
+ 
+   /* Verify the struct is big enough so we do not write past the end. */
+   if (len > (char *) &linux_params.edd_mbr_sig_buffer - (char *) &linux_params) {
+@@ -779,10 +774,13 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+     goto fail;
+   }
+ 
++  grub_memcpy (&linux_params.setup_sects, &lh.setup_sects, len - 0x1F1);
++
+   /* We've already read lh so there is no need to read it second time. */
+   len -= sizeof(lh);
+ 
+-  if (grub_file_read (file, (char *) &linux_params + sizeof (lh), len) != len)
++  if ((len > 0) &&
++      (grub_file_read (file, (char *) &linux_params + sizeof (lh), len) != len))
+     {
+       if (!grub_errno)
+ 	grub_error (GRUB_ERR_BAD_OS, N_("premature end of file %s"),
+@@ -790,6 +788,9 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+       goto fail;
+     }
+ 
++  linux_params.code32_start = prot_mode_target + lh.code32_start - GRUB_LINUX_BZIMAGE_ADDR;
++  linux_params.kernel_alignment = (1 << align);
++  linux_params.ps_mouse = linux_params.padding10 = 0;
+   linux_params.type_of_loader = GRUB_LINUX_BOOT_LOADER_TYPE;
+ 
+   /* These two are used (instead of cmd_line_ptr) by older versions of Linux,
+-- 
+2.11.0
+
