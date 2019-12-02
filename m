@@ -2,113 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD9C10F12D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:58:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F4C10F13E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 21:01:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfLBT6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 14:58:12 -0500
-Received: from mga02.intel.com ([134.134.136.20]:40173 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbfLBT6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:58:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 11:58:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="385017081"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 02 Dec 2019 11:58:10 -0800
-Date:   Mon, 2 Dec 2019 12:02:52 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        kevin.tian@intel.com, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 0/5] iommu/vt-d: Consolidate various cache flush ops
-Message-ID: <20191202120252.45606c47@jacob-builder>
-In-Reply-To: <20191122030449.28892-1-baolu.lu@linux.intel.com>
-References: <20191122030449.28892-1-baolu.lu@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728068AbfLBUBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 15:01:33 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23645 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727586AbfLBUBc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 15:01:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575316891;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zacL8ZwUfm9ACoXwRxpaHO5nNuk5Pt/tAg3zBrg+MDU=;
+        b=ZR7294q/DRN0lSDPxYCkF7aLSVYZU0ZQ4PBiPpfUDYkU7ORjRJkZNQDbopgrNvYaJ8o550
+        THcHP8o+zIuztEwfo/bnoVYHRVoNDFWyCMcL3NVMPOP4y4kdy4hqt7ClgpMlTt43C48giW
+        twVqlj6Ebnms2UdSDsFRrRpmiUZizeE=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-364-n2vhfZ9JNKS5MpSsA09Vbg-1; Mon, 02 Dec 2019 15:01:28 -0500
+Received: by mail-ot1-f71.google.com with SMTP id c9so249358otm.20
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 12:01:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ijUXKcWVOy6uyc+9TN1aIhkDvnkVi2DmgHGgcMYXyg8=;
+        b=jAgAyTHRans3w2ng2gdRTUAWxzoSuKJh3LRozAvWMCfJ47AGzC3otuWLR6GuFHDtQb
+         LIDq4fH8rKhlyIQwnF79r+OPZ5ej35o29wC50zFKbV1N2vJhyDOi++XSCdqBRwVooSXj
+         u9Wiq48aFtsxEC48fvqomlrcTrTZG8VOCMBq1uw1GmEDHKZukuJUtqmoDh4fRJ1DtuGQ
+         7DM4AA/5U3bQoJvrOspgmzHmmdEzfPwTf94HpTF9uppzmEqGFxpKRAQqswZ37eXAOjWg
+         c6Ga4mdqVbcn7KPwEaFadWdlsRy/Hhmv2eZWJBarCVycDzz5ohxvwv/vLqgDwACu1Spy
+         QpPQ==
+X-Gm-Message-State: APjAAAUKrSI/xwlHFY+fRsI/Xdfhkjh2jexiPRfbLTzw6CTvFoOrXDNA
+        JjmAxLpLlG58wxdWrogjuIzMI8hQFH535Nv1EOjlUx56FbxS4U/k0SVFyBBsY0X4OYKTbspv15Z
+        XiwfOSvLSY1LMhkzbPmeiVooUHMqJulJuamyrtSif
+X-Received: by 2002:a9d:6842:: with SMTP id c2mr587959oto.336.1575316887646;
+        Mon, 02 Dec 2019 12:01:27 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyMdBme1c9WpgSFSgNXAIaU6jfbxGCDDzMLm0j7YrB0Sco90y06wXmXOeN/FpJHGpZ/O6xcsvuz4LhYjQo9Iu8=
+X-Received: by 2002:a9d:6842:: with SMTP id c2mr587947oto.336.1575316887450;
+ Mon, 02 Dec 2019 12:01:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1574324085-4338-1-git-send-email-clabbe@baylibre.com> <20191202133254.GA21550@Red>
+In-Reply-To: <20191202133254.GA21550@Red>
+From:   David Airlie <airlied@redhat.com>
+Date:   Tue, 3 Dec 2019 06:01:15 +1000
+Message-ID: <CAMwc25obOebugXGSNVWd1bjPN+tR82wwFJ6PgqnvZXK4O6xAFw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] agp: minor fixes, does the maintainer still there ?
+To:     LABBE Corentin <clabbe@baylibre.com>
+Cc:     airlied <airlied@linux.ie>, arnd@arndb.de, fenghua.yu@intel.com,
+        "KH, Greg" <gregkh@linuxfoundation.org>,
+        "Luck, Tony" <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+X-MC-Unique: n2vhfZ9JNKS5MpSsA09Vbg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 11:04:44 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Mon, Dec 2, 2019 at 11:33 PM LABBE Corentin <clabbe@baylibre.com> wrote:
+>
+> On Thu, Nov 21, 2019 at 08:14:40AM +0000, Corentin Labbe wrote:
+> > Hello
+> >
+> > This patch serie fixes some minor problem found in the agp subsystem
+> > There are no change since v1 (posted two years ago)
+> > This is simply a repost for trying to get an answer (gentle ping 6 mont=
+h
+> > ago got no answer also).
+> >
+> > Regards
+> >
+>
+> Hello
+>
+> Does the AGP maintainer still maintain it ?
 
-> Intel VT-d 3.0 introduces more caches and interfaces for software to
-> flush when it runs in the scalable mode. Currently various cache flush
-> helpers are scattered around. This consolidates them by putting them
-> in the existing iommu_flush structure.
-> 
-> /* struct iommu_flush - Intel IOMMU cache invalidation ops
->  *
->  * @cc_inv: invalidate context cache
->  * @iotlb_inv: Invalidate IOTLB and paging structure caches when
-> software
->  *             has changed second-level tables.
->  * @p_iotlb_inv: Invalidate IOTLB and paging structure caches when
-> software
->  *               has changed first-level tables.
->  * @pc_inv: invalidate pasid cache
->  * @dev_tlb_inv: invalidate cached mappings used by
-> requests-without-PASID
->  *               from the Device-TLB on a endpoint device.
->  * @p_dev_tlb_inv: invalidate cached mappings used by
-> requests-with-PASID
->  *                 from the Device-TLB on an endpoint device
->  */
-> struct iommu_flush {
->         void (*cc_inv)(struct intel_iommu *iommu, u16 did,
->                        u16 sid, u8 fm, u64 type);
->         void (*iotlb_inv)(struct intel_iommu *iommu, u16 did, u64
-> addr, unsigned int size_order, u64 type);
->         void (*p_iotlb_inv)(struct intel_iommu *iommu, u16 did, u32
-> pasid, u64 addr, unsigned long npages, bool ih);
->         void (*pc_inv)(struct intel_iommu *iommu, u16 did, u32 pasid,
->                        u64 granu);
->         void (*dev_tlb_inv)(struct intel_iommu *iommu, u16 sid, u16
-> pfsid, u16 qdep, u64 addr, unsigned int mask);
->         void (*p_dev_tlb_inv)(struct intel_iommu *iommu, u16 sid, u16
-> pfsid, u32 pasid, u16 qdep, u64 addr,
->                               unsigned long npages);
-> };
-> 
-> The name of each cache flush ops is defined according to the spec
-> section 6.5 so that people are easy to look up them in the spec.
-> 
-Nice consolidation. For nested SVM, I also introduced cache flushed
-helpers as needed.
-https://lkml.org/lkml/2019/10/24/857
+It's maintained but really loathe to touch it, I've no hw to validate
+any changes on so making any changes to it really has to get past my
+internal, I care enough about this change to risk applying anything to
+AGP.
 
-Should I wait for yours to be merged or you want to extend the this
-consolidation after SVA/SVM cache flush? I expect to send my v8 shortly.
+I'll try and look and apply those patches today.
 
-> Best regards,
-> Lu Baolu
-> 
-> Lu Baolu (5):
->   iommu/vt-d: Extend iommu_flush for scalable mode
->   iommu/vt-d: Consolidate pasid cache invalidation
->   iommu/vt-d: Consolidate device tlb invalidation
->   iommu/vt-d: Consolidate pasid-based tlb invalidation
->   iommu/vt-d: Consolidate pasid-based device tlb invalidation
-> 
->  drivers/iommu/dmar.c        |  61 ---------
->  drivers/iommu/intel-iommu.c | 246
-> +++++++++++++++++++++++++++++------- drivers/iommu/intel-pasid.c |
-> 39 +----- drivers/iommu/intel-svm.c   |  60 ++-------
->  include/linux/intel-iommu.h |  39 ++++--
->  5 files changed, 244 insertions(+), 201 deletions(-)
-> 
+Dave.
 
-[Jacob Pan]
