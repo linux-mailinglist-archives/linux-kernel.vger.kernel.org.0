@@ -2,91 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D0210F185
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 21:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B8610F18E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 21:32:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfLBU2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 15:28:34 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38898 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbfLBU22 (ORCPT
+        id S1727553AbfLBUbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 15:31:46 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40426 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbfLBUbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 15:28:28 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y17so869925wrh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 12:28:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1somXtkHoxvC/VbspBH5qSIskfATKri+DPQIL3Oev+8=;
-        b=giCE0LR4sDAsP3tAyxL+P7S3VCqgq4mJ5kRNNuKHc+i6sXaaPgntzv/F3DTBjX1TqX
-         2CYDqVXBCpMrIbiOjElu2WiB+UVgK0iYUDnDAAboH607ksuVqLuJKfYfiVFxBPO/qB+f
-         QYIz64fP3O3SJbB4F0r+QGj67bEwFB8H9a8iDt++UGDF8JvSsAzNKl86guiYx9xtxWhJ
-         RLbA8F98G6G7yUIC797GERJG0wNSbVEYCui6361m2p1XOxxnm+9Yboq/uDF1ZfRLIeWj
-         LRySFtB7c5iI2w7j+tM7d+URYkOhx9ROVsp8zT+FUtedNiEogHzy8WGEVw/n9RNagnvS
-         K4rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1somXtkHoxvC/VbspBH5qSIskfATKri+DPQIL3Oev+8=;
-        b=MKeeLzE1Rgm4rtaFWUU1l9bRWmBm0vzzIfi1bUpbKDYBBkDenV1UmkMIIxoxRxUQTu
-         l0BZw8gGsQ3+uIbP+YppKk9ku/R83minjWLcbEXNvZIwiTJia9wA5pkE5XuXEhrQSclf
-         pQG1RsOKT1pYHKIaCTXw/V6Vmkc/lgLqI4MxZbcKZOAA9PyB3b/1kMpKVq3Avwm7F0c9
-         GtuhwHvR2uBSfASGkna4brusxRhWJJTh5aM9BUVoV7GJRM6Ocs+BQLRsNRvze36BHn5y
-         KyEoSBsU1kTUGxpaD6E8xQQdCRo/D/0M7GZFsT9CvqU8vB5N1cvYmT7kALZW4iFVpSpj
-         f6pw==
-X-Gm-Message-State: APjAAAUyiPKMJVczAL1pVBndR4iNvnG3m6qlw7ZbId8n6u+z+fNgZtIr
-        V85LFWnSBQNazRrkeFo9Ti5rF39CzCU=
-X-Google-Smtp-Source: APXvYqyRB4fpfJOy68WsHtJMDtjbja8mucHxwv8BK3z0oLKfXMWbg9waPUv+7avpWhWs9vzx/Q+XCw==
-X-Received: by 2002:adf:90e7:: with SMTP id i94mr900848wri.47.1575318506359;
-        Mon, 02 Dec 2019 12:28:26 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e34:ed2f:f020:8196:cbcc:fb2c:4975])
-        by smtp.gmail.com with ESMTPSA id k20sm556456wmj.10.2019.12.02.12.28.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 12:28:25 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     viresh.kumar@linaro.org, rui.zhang@intel.com
-Cc:     rjw@rjwysocki.net, edubezval@gmail.com, linux-pm@vger.kernel.org,
-        amit.kucheria@linaro.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 4/4] thermal/drivers/cpu_cooling: Rename to cpufreq_cooling
-Date:   Mon,  2 Dec 2019 21:28:15 +0100
-Message-Id: <20191202202815.22731-4-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191202202815.22731-1-daniel.lezcano@linaro.org>
-References: <20191202202815.22731-1-daniel.lezcano@linaro.org>
+        Mon, 2 Dec 2019 15:31:44 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB2KVS18016993;
+        Mon, 2 Dec 2019 14:31:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575318688;
+        bh=5Z6pCiRczTsYgQn5fCzOc5mk4+KH6wL16PymQnDr8y8=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=eYXPYGYH7sO4YJnmAcvQhTGPUN1O4mVzP8PHJtTZBPYxLilbfXy0n2A8QTFXbgCdK
+         Pse+gKeoZmZ++iXKXMreChEq7j++1GDk33ldUV/53wN9EXMGXe7CJnktOO+Ucp6JqF
+         cFAyAZpA+kSGvQDrcqBqUkEe5iGcDXAUlmZZto58=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB2KVRwN090288
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Dec 2019 14:31:28 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 2 Dec
+ 2019 14:31:27 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 2 Dec 2019 14:31:27 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB2KVOPl106889;
+        Mon, 2 Dec 2019 14:31:25 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <vkoul@kernel.org>
+CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <grygorii.strashko@ti.com>,
+        <t-kristo@ti.com>, <tony@atomide.com>, <vigneshr@ti.com>
+Subject: [PATCH 0/3] dmaengine: ti: k3-udma: Fixes against v6 series
+Date:   Mon, 2 Dec 2019 22:31:25 +0200
+Message-ID: <20191202203128.14348-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <0191128105945.13071-1-peter.ujfalusi@ti.com>
+References: <0191128105945.13071-1-peter.ujfalusi@ti.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we introduced the idle injection cooling device called
-cpuidle_cooling, let's be consistent and rename the cpu_cooling to
-cpufreq_cooling as this one mitigates with OPPs changes.
+Hi Vinod,
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+When I thought that all corner cases are handled I got report of a failure on a
+miss-configured setup:
+UART without lines connected
+Enable HW flow control (nothing is connected)
+Do a small tx like "dd if=/dev/urandom of=/dev/ttyS1 bs=128 count=1"
+
+The result is an interrupt flood caused by constant TDCM reception.
+
+The explanation comes from the DMA split design and explained in patch 3:
+
+"If the peripheral is disabled (or it is not able to send out data) the
+UDMAP will complete a 'short' transfer. In other words: if the amount of
+data can fit into PSI-L and PDMA (and peripheral FIFO) then UDMAP will
+send out the data and return as the transfer is completed, however the
+peripheral did not actually received all the data.
+
+It was wrong to issue a normal teardown on the channel for several reasons:
+UDMAP is not processing any packet so it will just return the TDCM and if
+the peripheral is not consuming data from PDMA then we will have constant
+flood of TDCMs (interrupts).
+After the teardown the channel will be in reset state and we would need to
+reset the rings as well, but it can not be done in interrupt context.
+If the peripheral is just slow to consume data or even there is a delay
+between starting the DMA then we will have again issues detecting the
+state.
+
+We could set force teardown, but that will make PDMA to discard the data
+which is not correct in case of slow or delayed transfer start on the
+peripheral.
+
+The only solution is to use a work and check the progress in there after
+the descriptor is returned and the UDMA and PDMA counters are not showing
+the same number of bytes processed."
+
+I'll squash these to v7, but I thought that this change is better to be visible
+alone as it is kind of a big one on handling the early TX completion.
+
+Regards,
+Peter
 ---
- drivers/thermal/Makefile                             | 2 +-
- drivers/thermal/{cpu_cooling.c => cpufreq_cooling.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/thermal/{cpu_cooling.c => cpufreq_cooling.c} (100%)
+Peter Ujfalusi (3):
+  dmaengine: ti: k3-udma: Correct completed descriptor's residue value
+  dmaengine: ti: k3-udma: Workaround for stale transfers
+  dmaengine: ti: k3-udma: Fix early TX completion against PDMAs
 
-diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index 9c8aa2d4bd28..5c98472ffd8b 100644
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@ -19,7 +19,7 @@ thermal_sys-$(CONFIG_THERMAL_GOV_USER_SPACE)	+= user_space.o
- thermal_sys-$(CONFIG_THERMAL_GOV_POWER_ALLOCATOR)	+= power_allocator.o
- 
- # cpufreq cooling
--thermal_sys-$(CONFIG_CPU_FREQ_THERMAL)	+= cpu_cooling.o
-+thermal_sys-$(CONFIG_CPU_FREQ_THERMAL)	+= cpufreq_cooling.o
- thermal_sys-$(CONFIG_CPU_IDLE_THERMAL)	+= cpuidle_cooling.o
- 
- # clock cooling
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpufreq_cooling.c
-similarity index 100%
-rename from drivers/thermal/cpu_cooling.c
-rename to drivers/thermal/cpufreq_cooling.c
+ drivers/dma/ti/k3-udma.c | 89 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 66 insertions(+), 23 deletions(-)
+
 -- 
-2.17.1
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
