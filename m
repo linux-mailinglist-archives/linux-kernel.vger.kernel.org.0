@@ -2,141 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9818B10F165
+	by mail.lfdr.de (Postfix) with ESMTP id 295A710F164
 	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 21:13:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbfLBUNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 15:13:44 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26069 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728150AbfLBUN3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 15:13:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575317609;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hGyv0HcV61jwW8d05G9E2IdyBpBV7NLYzlcgkoWtE1A=;
-        b=aO+chg+ijsWPtKjp7zVXqrI2PKwa5lqc/bOWKgQBrXbq7v1z2/QIVWK1J9rjYe0NPneNyf
-        R4OjAgIOI8qf22DTqplK3yfSHVK+KyhGvCYcus5gVMqQnAnAegtdsuSH1YzaQwO4tNOBEV
-        GBuHBJAUu7CAxABFaRZEkmRdkmAG308=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-257-frWkKpoUM6efzHCu7mA3XA-1; Mon, 02 Dec 2019 15:13:28 -0500
-Received: by mail-qv1-f71.google.com with SMTP id g6so554998qvp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 12:13:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=D/FzhMnEoda/8HIh8/dn3z8Z/X2H7yZOxK6TY6H8n7g=;
-        b=CPO7rsvRGo3M1i/8zP++e2ePKBPXkMjMh/GFNsFbn+FxgIhDydc6H52RZYFyAy9cej
-         FpTbOIDv7BlxIIqfwIgXClyH2TsMk1yQzhRcBhvhF0fMYIrJCe75+lko/PI6RA0+Wupu
-         2UutV2ngutSvii1HA8rZ+K7uJjpKgDYzuf7VmDmrweBv0VmdBkVkvBKsUWaJ9cnjpN0+
-         FzNnnoZEvSjEamEd50wzHj8oOiCkfUdWEDCr/KfnLDlmDKO1r6QaaPIYj61ywLPQt9Jk
-         5jp9sn7+EUiFO5Yzzz5xAUDfQW6qM6Dvk9TgdvOlnRElfr3ydM/mayizX97QCLg8acyh
-         pvHg==
-X-Gm-Message-State: APjAAAVD9Ww6Rns60vV1izWKSGR3aA8N7OF3xVaHU+/UaRzh7ue736An
-        Wnrgem+/svBPTaAi1UXnEiy6amCLcJFb2pmRCUrubvyZgXjSLtrpJWL7zTGY5UXZkfTnyDoayu0
-        xnOWAMUR8f5/C+sicddc0LvSH
-X-Received: by 2002:ac8:4a8a:: with SMTP id l10mr1303332qtq.198.1575317607420;
-        Mon, 02 Dec 2019 12:13:27 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyJIT5O2PIq2hBfIXIZv6d47L3iz/6K6nfkU3HOvroWZken45053jQWJDbUYGB3TtnE632I4A==
-X-Received: by 2002:ac8:4a8a:: with SMTP id l10mr1303310qtq.198.1575317607172;
-        Mon, 02 Dec 2019 12:13:27 -0800 (PST)
-Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id b6sm342410qtp.5.2019.12.02.12.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 12:13:26 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v3 5/5] KVM: X86: Fix callers of kvm_apic_match_dest() to use correct macros
-Date:   Mon,  2 Dec 2019 15:13:14 -0500
-Message-Id: <20191202201314.543-6-peterx@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191202201314.543-1-peterx@redhat.com>
-References: <20191202201314.543-1-peterx@redhat.com>
+        id S1728215AbfLBUNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 15:13:38 -0500
+Received: from mga18.intel.com ([134.134.136.126]:11966 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728198AbfLBUNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 15:13:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 12:13:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
+   d="scan'208";a="235608334"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 02 Dec 2019 12:13:36 -0800
+Received: from [10.251.15.70] (kliang2-mobl.ccr.corp.intel.com [10.251.15.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 13A5C5800FF;
+        Mon,  2 Dec 2019 12:13:34 -0800 (PST)
+Subject: Re: [RFC PATCH 3/8] perf: Init/fini PMU specific data
+To:     Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, acme@kernel.org, tglx@linutronix.de,
+        bp@alien8.de, linux-kernel@vger.kernel.org, eranian@google.com,
+        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com
+References: <1574954071-6321-1-git-send-email-kan.liang@linux.intel.com>
+ <1574954071-6321-3-git-send-email-kan.liang@linux.intel.com>
+ <20191202124055.GC2827@hirez.programming.kicks-ass.net>
+ <20191202145957.GM84886@tassilo.jf.intel.com>
+ <20191202162152.GG2827@hirez.programming.kicks-ass.net>
+ <20191202191519.GN84886@tassilo.jf.intel.com>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <8612523d-f035-b2aa-28f5-e4122ef59901@linux.intel.com>
+Date:   Mon, 2 Dec 2019 15:13:33 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-MC-Unique: frWkKpoUM6efzHCu7mA3XA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191202191519.GN84886@tassilo.jf.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Callers of kvm_apic_match_dest() should always pass in APIC_DEST_*
-macros for either dest_mode and short_hand parameters.  Fix up all the
-callers of kvm_apic_match_dest() that are not following the rule.
 
-Reported-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reported-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- arch/x86/kvm/ioapic.c   | 11 +++++++----
- arch/x86/kvm/irq_comm.c |  3 ++-
- 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index 901d85237d1c..1082ca8d11e5 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -108,8 +108,9 @@ static void __rtc_irq_eoi_tracking_restore_one(struct k=
-vm_vcpu *vcpu)
- =09union kvm_ioapic_redirect_entry *e;
-=20
- =09e =3D &ioapic->redirtbl[RTC_GSI];
--=09if (!kvm_apic_match_dest(vcpu, NULL, 0,=09e->fields.dest_id,
--=09=09=09=09e->fields.dest_mode))
-+=09if (!kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
-+=09=09=09=09 e->fields.dest_id,
-+=09=09=09=09 kvm_lapic_irq_dest_mode(e->fields.dest_mode)))
- =09=09return;
-=20
- =09new_val =3D kvm_apic_pending_eoi(vcpu, e->fields.vector);
-@@ -237,6 +238,7 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong=
- *ioapic_handled_vectors)
- =09struct dest_map *dest_map =3D &ioapic->rtc_status.dest_map;
- =09union kvm_ioapic_redirect_entry *e;
- =09int index;
-+=09u16 dm;
-=20
- =09spin_lock(&ioapic->lock);
-=20
-@@ -250,8 +252,9 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong=
- *ioapic_handled_vectors)
- =09=09if (e->fields.trig_mode =3D=3D IOAPIC_LEVEL_TRIG ||
- =09=09    kvm_irq_has_notifier(ioapic->kvm, KVM_IRQCHIP_IOAPIC, index) ||
- =09=09    index =3D=3D RTC_GSI) {
--=09=09=09if (kvm_apic_match_dest(vcpu, NULL, 0,
--=09=09=09             e->fields.dest_id, e->fields.dest_mode) ||
-+=09=09=09dm =3D kvm_lapic_irq_dest_mode(e->fields.dest_mode);
-+=09=09=09if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
-+=09=09=09=09=09=09e->fields.dest_id, dm) ||
- =09=09=09    kvm_apic_pending_eoi(vcpu, e->fields.vector))
- =09=09=09=09__set_bit(e->fields.vector,
- =09=09=09=09=09  ioapic_handled_vectors);
-diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
-index 5f59e5ebdbed..e89c2160b39f 100644
---- a/arch/x86/kvm/irq_comm.c
-+++ b/arch/x86/kvm/irq_comm.c
-@@ -417,7 +417,8 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
-=20
- =09=09=09kvm_set_msi_irq(vcpu->kvm, entry, &irq);
-=20
--=09=09=09if (irq.level && kvm_apic_match_dest(vcpu, NULL, 0,
-+=09=09=09if (irq.level &&
-+=09=09=09    kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
- =09=09=09=09=09=09irq.dest_id, irq.dest_mode))
- =09=09=09=09__set_bit(irq.vector, ioapic_handled_vectors);
- =09=09}
---=20
-2.21.0
+On 12/2/2019 2:15 PM, Andi Kleen wrote:
+> On Mon, Dec 02, 2019 at 05:21:52PM +0100, Peter Zijlstra wrote:
+>> On Mon, Dec 02, 2019 at 06:59:57AM -0800, Andi Kleen wrote:
+>>>>
+>>>> This is atricous crap. Also it is completely broken for -RT.
+>>>
+>>> Well can you please suggest how you would implement it instead?
+>>
+>> I don't think that is on me; at best I get to explain why it is
+> 
+> Normally code review is expected to be constructive.
+> 
+>> completely unacceptible to have O(nr_tasks) and allocations under a
+>> raw_spinlock_t, but I was thinking you'd already know that.
+> 
+> Ok if that's the only problem then a lock breaker + retry
+> if rescheduling is needed + some limit against live lock
+> should be sufficient.
+> 
 
+OK. I will move the allocation out of critical sections.
+Here is some pseudo code.
+
+if (atomic_read(&nr_task_data_events))
+	return;
+
+//get current number of threads
+read_lock(&tasklist_lock);
+for_each_process_thread(g, p)
+	num_thread++;
+read_unlock(&tasklist_lock);
+
+//allocate the space for them
+for (i = 0; i < num_thread; i++)
+	data[i] = kzalloc(ctx_size, flags);
+i = 0;
+
+/*
+  * Assign the space to tasks
+  * There may be some new threads created when we allocate space.
+  * new_task will track its number.
+  */
+raw_spin_lock_irqsave(&task_data_events_lock, flags);
+
+if (atomic_inc_return(&nr_task_data_events) > 1)
+	goto unlock;
+
+for_each_process_thread(g, p) {
+	if (i < num_thread)
+		p->perf_ctx_data = data[i++];
+	else
+		new_task++;
+}
+raw_spin_unlock_irqrestore(&task_data_events_lock, flags);
+
+if (i < num_thread)
+	goto end;
+
+/*
+  * Try again to allocate the space for the task created when
+  * we first allocate space.
+  * We don't need to worry about the task created after
+  * atomic_inc_return(). It will be handled in perf_event_fork().
+  * Retry one is enough.
+  */
+for (i = 0; i < new_task; i++)
+	data[i] = kzalloc(ctx_size, flags);
+
+raw_spin_lock_irqsave(&task_data_events_lock, flags);
+
+for_each_process_thread(g, p) {
+	if (i < unallocated)
+		p->perf_ctx_data = data[i++];
+	else
+		WARN_ON
+}
+raw_spin_unlock_irqrestore(&task_data_events_lock, flags);
+
+unlock:
+	raw_spin_unlock_irqrestore(&task_data_events_lock, flags);
+
+end:
+	free unused data[]
+
+Thanks,
+Kan
