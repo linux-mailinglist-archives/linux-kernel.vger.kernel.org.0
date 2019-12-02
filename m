@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1E810ED02
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 17:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F5110ED0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 17:21:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfLBQVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 11:21:44 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40935 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727650AbfLBQVl (ORCPT
+        id S1727708AbfLBQVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 11:21:55 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39875 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727663AbfLBQVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Dec 2019 11:21:41 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so20448278wrn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 08:21:39 -0800 (PST)
+Received: by mail-wr1-f66.google.com with SMTP id y11so41934558wrt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 08:21:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oMBJAp4LSOF18EKZsarCjIvV97iU3KlOms/xsyIv3iQ=;
-        b=bIM2E4qQ6P+LyYmjxXTsCE4nf2gqeqyCpaqijLgjBd5rSLfDIbh7mwl3XW1bBKIca+
-         5R4fnwcgNEiKGlQH7I2Gf+t3VDeCoW/eVANZOH5MtgbkCaU8YMQPy8TXK/gsviJ3PPpA
-         K64lZKCfBUpvGCWnpeq0d3CnYV1mDd7D8qD37vhIwuY5LgxWRTtR60smA6p5EFYhRrZb
-         9mUmPaUs37tYNSOMScuGD7eojrFiwusAvQDYFvbkuS72kXfk5qgVd7kdH/3RVzsoU17L
-         Q19VvRjKxnuiwFpBuiIwN8moJtDbTil9Z7YpRp71rpqTGuVLWgxdxQLnM5burmTv7dYy
-         20Kg==
+        bh=2/SckE1LuT5fuB6gss91UGfXQhSyW3IG3sRJlwZdSOU=;
+        b=PZM1GdGn1/lJzFG0LD8rQni//3m1CWgT7LLmGrYxuS/5/QeSaDoIaSQjYpklGZKqB2
+         4cScoPDEGJ5ZfZzy6zWXDd24NvW4N9lYnA1aWs2YcOBwqcIR7fCxU+pEhWNUQkJeJ8SH
+         vUMYNenjhtW6fQk/+MPzR7K8du0wQfZM5EtI+AMRJRui1Yzow8b6vCR4XR8c/5Z9AckG
+         bxBATOzvVxQwXm6kN3BRCWp7/JvS8vVtyKt6cK/X08si8eZPsboW+LDN6zryizMlz2I7
+         tg8Z+BNQR6eP9vFLaIkX7PH03CHNFOLyXUnvl5ZHms5haEdE+bYON0NIRuUP7tjJi0MV
+         V0Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oMBJAp4LSOF18EKZsarCjIvV97iU3KlOms/xsyIv3iQ=;
-        b=uLh92DsCh//TJW5alsjyCd7eoC/ME9sPeLKuD24Dyz/4apfRZ1EtgaAPxUbEWDX3vB
-         5xQ52iAeA3GPS72wB7sZrd9TtnlB9MQEK0jBQG59HdUK4dH54ro5cs1XSWg2Tq/C+NW6
-         XY6TH65byyF+A2LaIa0tKfq3R1vijEY0djOf+hqD9P2VBdCivMbIomjLaT2NwaPG4HR0
-         yw3p/2Q+48gXT+0lLIkaOOPFApSXwa6KIclljJ5jSM23j6s9XdEu6tbBL3VZV572TG2a
-         fHuzkZOA7UX0U2sHRHPm4rZ6vczBsh1DYmZYrK/Sa1QF8ecSD8LNSvcO2uTK8GJD1vos
-         DqtA==
-X-Gm-Message-State: APjAAAXT1vL8MZPiauNN4r8UJMjrux2RrY3iAKW+twqP8Fd8wjSOyA4x
-        0ajy075fgDl1VU4qjTvZm4l+pA==
-X-Google-Smtp-Source: APXvYqx39MnObvyWdT1npt9UtcGiQgJph3139C2GJsoL7voal1lBRwS03vjO0tJ6oRSzK8TYFGeAHg==
-X-Received: by 2002:a5d:4983:: with SMTP id r3mr54752462wrq.134.1575303699158;
-        Mon, 02 Dec 2019 08:21:39 -0800 (PST)
+        bh=2/SckE1LuT5fuB6gss91UGfXQhSyW3IG3sRJlwZdSOU=;
+        b=s28zqXTJkAxUrMNBgOZ1QnSWyY2GIun2U12Yjd7cpHU4bB5Y7CaXCbLYJ4V6ivm3O+
+         Xm8qqOE+dbJ9kL4y9JeEwhGIyA56aHoiK3259dryimyDHWYNiV5JQyJxVWsrfm/4gEzX
+         jBivDcZZAdmqNLgL89sU/gm2QZb6/UeczJFrJI1CJyIMDAELtWK/9FRH/VI8QTpC58MD
+         OhzgGGrG7Jmsagr5tBvPdVnRabtQf1HZQiKl/fu7e4zYrH+zXCCzwmUycdkkj9Lcnp34
+         aTP1V3Mx7DXXsbQe4EDGHKvRE2BehcfnyCtiTGvLhCSG7mdDU5oCMfGWzC9y2QTnBAB/
+         0gbQ==
+X-Gm-Message-State: APjAAAWQ1qYkGQ+EHWmwyNhDFbZ9a5mf64WpQF3DygXzsICwqWBclStw
+        GXkBc79cLHsTHLpsQ74G7mwgMA==
+X-Google-Smtp-Source: APXvYqy3xNpF3ciZicnpb/URmHtBw2s4159FTTCD7YGG1YzSJr97Sd0KRl//oaQ50TNWjJBjWYNbTw==
+X-Received: by 2002:a5d:6305:: with SMTP id i5mr8541802wru.119.1575303700457;
+        Mon, 02 Dec 2019 08:21:40 -0800 (PST)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id i9sm39204516wrb.2.2019.12.02.08.21.37
+        by smtp.googlemail.com with ESMTPSA id i9sm39204516wrb.2.2019.12.02.08.21.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Dec 2019 08:21:38 -0800 (PST)
+        Mon, 02 Dec 2019 08:21:39 -0800 (PST)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     linux-pm@vger.kernel.org
 Cc:     bjorn.andersson@linaro.org, agross@kernel.org, digetx@gmail.com,
@@ -52,9 +52,9 @@ Cc:     bjorn.andersson@linaro.org, agross@kernel.org, digetx@gmail.com,
         masneyb@onstation.org, sibis@codeaurora.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         georgi.djakov@linaro.org
-Subject: [PATCH v2 3/5] interconnect: qcom: msm8974: Walk the list safely on node removal
-Date:   Mon,  2 Dec 2019 18:21:31 +0200
-Message-Id: <20191202162133.7089-3-georgi.djakov@linaro.org>
+Subject: [PATCH v2 4/5] interconnect: Add a common helper for removing all nodes
+Date:   Mon,  2 Dec 2019 18:21:32 +0200
+Message-Id: <20191202162133.7089-4-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191202162133.7089-1-georgi.djakov@linaro.org>
 References: <20191202162133.7089-1-georgi.djakov@linaro.org>
@@ -65,47 +65,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we will remove items off the list using list_del(), we need to use the
-safe version of list_for_each_entry().
+The removal of all nodes from a provider seem to be a common functionality
+for all existing users and it would make sense to factor out this into a
+a common helper function.
 
-Fixes: 4e60a9568dc6 ("interconnect: qcom: add msm8974 driver")
-Reported-by: Dmitry Osipenko <digetx@gmail.com>
+Suggested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- drivers/interconnect/qcom/msm8974.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/interconnect/core.c           | 22 ++++++++++++++++++++++
+ include/linux/interconnect-provider.h |  6 ++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/drivers/interconnect/qcom/msm8974.c b/drivers/interconnect/qcom/msm8974.c
-index f29974ea9671..ca25f31e5f0b 100644
---- a/drivers/interconnect/qcom/msm8974.c
-+++ b/drivers/interconnect/qcom/msm8974.c
-@@ -643,7 +643,7 @@ static int msm8974_icc_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct icc_onecell_data *data;
- 	struct icc_provider *provider;
--	struct icc_node *node;
-+	struct icc_node *node, *tmp;
- 	size_t num_nodes, i;
- 	int ret;
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 8605c3e05b5e..2633fd223875 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -745,6 +745,28 @@ void icc_node_del(struct icc_node *node)
+ }
+ EXPORT_SYMBOL_GPL(icc_node_del);
  
-@@ -723,7 +723,7 @@ static int msm8974_icc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_del_icc:
--	list_for_each_entry(node, &provider->nodes, node_list) {
-+	list_for_each_entry_safe(node, tmp, &provider->nodes, node_list) {
- 		icc_node_del(node);
- 		icc_node_destroy(node->id);
- 	}
-@@ -739,9 +739,9 @@ static int msm8974_icc_remove(struct platform_device *pdev)
- {
- 	struct msm8974_icc_provider *qp = platform_get_drvdata(pdev);
- 	struct icc_provider *provider = &qp->provider;
--	struct icc_node *n;
++/**
++ * icc_nodes_remove() - remove all previously added nodes from provider
++ * @provider: the interconnect provider we are removing nodes from
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int icc_nodes_remove(struct icc_provider *provider)
++{
 +	struct icc_node *n, *tmp;
++
++	if (WARN_ON(IS_ERR_OR_NULL(provider)))
++		return -EINVAL;
++
++	list_for_each_entry_safe_reverse(n, tmp, &provider->nodes, node_list) {
++		icc_node_del(n);
++		icc_node_destroy(n->id);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(icc_nodes_remove);
++
+ /**
+  * icc_provider_add() - add a new interconnect provider
+  * @provider: the interconnect provider that will be added into topology
+diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
+index 61dfb0beb409..0c494534b4d3 100644
+--- a/include/linux/interconnect-provider.h
++++ b/include/linux/interconnect-provider.h
+@@ -100,6 +100,7 @@ int icc_link_create(struct icc_node *node, const int dst_id);
+ int icc_link_destroy(struct icc_node *src, struct icc_node *dst);
+ void icc_node_add(struct icc_node *node, struct icc_provider *provider);
+ void icc_node_del(struct icc_node *node);
++int icc_nodes_remove(struct icc_provider *provider);
+ int icc_provider_add(struct icc_provider *provider);
+ int icc_provider_del(struct icc_provider *provider);
  
--	list_for_each_entry(n, &provider->nodes, node_list) {
-+	list_for_each_entry_safe(n, tmp, &provider->nodes, node_list) {
- 		icc_node_del(n);
- 		icc_node_destroy(n->id);
- 	}
+@@ -138,6 +139,11 @@ void icc_node_del(struct icc_node *node)
+ {
+ }
+ 
++static inline int icc_nodes_remove(struct icc_provider *provider)
++{
++	return -ENOTSUPP;
++}
++
+ static inline int icc_provider_add(struct icc_provider *provider)
+ {
+ 	return -ENOTSUPP;
