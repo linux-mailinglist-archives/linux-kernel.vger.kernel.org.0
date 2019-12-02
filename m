@@ -2,90 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4131C10EA2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:41:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF7D610EA35
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:47:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfLBMlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 07:41:11 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:44038 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbfLBMlL (ORCPT
+        id S1727413AbfLBMrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 07:47:47 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:50451 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727354AbfLBMrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 07:41:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QQVFiLaKtWz8/87xlWuZWGTM6aKj6MiwHzOhtOqM+Kg=; b=RgVYKa+Fv+UL9Bo3kZWCRmezD
-        v6ob10/58yNO8kTMUqM+WP7DSOCvOqBZQsLxiWqpzNzBHMzN0lhCupEACXAQQ2CXo+SXxWkt+Ow11
-        1MIotONSRD5h97ojPAijNKyfySu6Nm4BGwZgtnkmsMQ0kY+Rp8QDe6Un1R5mzdX2HRsAczi/2p/0J
-        LCT5q2EmdKnifoFUqmzOi7LZ/MLJE8j2qgwEJGpijXMWZygM4+eYKDPm9DJjbbZUTtdquTZNpj5RE
-        Vk9FSkCsyGnaANQ9s26JL2gLat4hMBavpRLUr1OEwEoT7AbtENC3NWy3aba0glXt3AMzkLVQPgrlx
-        6sS40t0AQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ibl0c-0007qf-38; Mon, 02 Dec 2019 12:40:58 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8EEA3301A6C;
-        Mon,  2 Dec 2019 13:39:39 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6AEB220236A49; Mon,  2 Dec 2019 13:40:55 +0100 (CET)
-Date:   Mon, 2 Dec 2019 13:40:55 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     mingo@redhat.com, acme@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, linux-kernel@vger.kernel.org, eranian@google.com,
-        alexey.budankov@linux.intel.com, vitaly.slobodskoy@intel.com,
-        ak@linux.intel.com
-Subject: Re: [RFC PATCH 3/8] perf: Init/fini PMU specific data
-Message-ID: <20191202124055.GC2827@hirez.programming.kicks-ass.net>
-References: <1574954071-6321-1-git-send-email-kan.liang@linux.intel.com>
- <1574954071-6321-3-git-send-email-kan.liang@linux.intel.com>
+        Mon, 2 Dec 2019 07:47:47 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@misterjones.org>)
+        id 1ibl76-0000Yo-Ut; Mon, 02 Dec 2019 13:47:40 +0100
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCH] PCI: layerscape: Add the SRIOV support in host side
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574954071-6321-3-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 02 Dec 2019 12:47:40 +0000
+From:   Marc Zyngier <maz@misterjones.org>
+Cc:     <robh+dt@kernel.org>, <frowand.list@gmail.com>,
+        <minghuan.lian@nxp.com>, <mingkai.hu@nxp.com>, <roy.zang@nxp.com>,
+        <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
+        <bhelgaas@google.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <zhiqiang.hou@nxp.com>
+Organization: Metropolis
+In-Reply-To: <20191202104506.27916-1-xiaowei.bao@nxp.com>
+References: <20191202104506.27916-1-xiaowei.bao@nxp.com>
+Message-ID: <606a00a2edcf077aa868319e0daa4dbc@www.loen.fr>
+X-Sender: maz@misterjones.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: xiaowei.bao@nxp.com, robh+dt@kernel.org, frowand.list@gmail.com, minghuan.lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, bhelgaas@google.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, zhiqiang.hou@nxp.com
+X-SA-Exim-Mail-From: maz@misterjones.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 07:14:26AM -0800, kan.liang@linux.intel.com wrote:
-> +static int
-> +init_system_wide_ctx_data(size_t ctx_size)
+On 2019-12-02 10:45, Xiaowei Bao wrote:
+> GIC get the map relations of devid and stream id from the msi-map
+> property of DTS, our platform add this property in u-boot base on
+> the PCIe device in the bus, but if enable the vf device in kernel,
+> the vf device msi-map will not set, so the vf device can't work,
+> this patch purpose is that manage the stream id and device id map
+> relations dynamically in kernel, and make the new PCIe device work
+> in kernel.
+>
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> ---
+>  drivers/of/irq.c                            |  9 +++
+>  drivers/pci/controller/dwc/pci-layerscape.c | 94
+> +++++++++++++++++++++++++++++
+>  drivers/pci/probe.c                         |  6 ++
+>  drivers/pci/remove.c                        |  6 ++
+>  4 files changed, 115 insertions(+)
+>
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index a296eaf..791e609 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -576,6 +576,11 @@ void __init of_irq_init(const struct
+> of_device_id *matches)
+>  	}
+>  }
+>
+> +u32 __weak ls_pcie_streamid_fix(struct device *dev, u32 rid)
 > +{
-> +	struct task_struct *g, *p;
-> +	int failed_alloc = 0;
-> +	unsigned long flags;
+> +	return rid;
+> +}
 > +
-> +	/*
-> +	 * Allocate perf_ctx_data for all existing threads by the first event.
-> +	 *
-> +	 * The perf_ctx_data for new thread will be allocated in
-> +	 * perf_event_fork(). The perf_event_fork() is called after the thread
-> +	 * is added into the tasklist. It guarantees that any new threads will
-> +	 * not be missed.
-> +	 */
-> +	raw_spin_lock_irqsave(&task_data_events_lock, flags);
-> +	if (atomic_inc_return(&nr_task_data_events) > 1)
-> +		goto unlock;
+>  static u32 __of_msi_map_rid(struct device *dev, struct device_node 
+> **np,
+>  			    u32 rid_in)
+>  {
+> @@ -590,6 +595,10 @@ static u32 __of_msi_map_rid(struct device *dev,
+> struct device_node **np,
+>  		if (!of_map_rid(parent_dev->of_node, rid_in, "msi-map",
+>  				"msi-map-mask", np, &rid_out))
+>  			break;
 > +
-> +	read_lock(&tasklist_lock);
-> +
-> +	for_each_process_thread(g, p) {
-> +		/*
-> +		 * The PMU specific data may already be allocated by
-> +		 * per-process event. Need to update refcounter.
-> +		 * init_task_ctx_data_rcu() is called here.
-> +		 * Do a quick allocation in first round with GFP_ATOMIC.
-> +		 */
-> +		if (init_task_ctx_data_rcu(p, ctx_size, GFP_ATOMIC))
-> +			failed_alloc++;
-> +	}
+> +	if (rid_out == rid_in)
+> +		rid_out = ls_pcie_streamid_fix(parent_dev, rid_in);
 
-This is atricous crap. Also it is completely broken for -RT.
+Over my dead body. Get your firmware to properly program the LUT
+so that it presents the ITS with a reasonable topology. There is
+absolutely no way this kind of change makes it into the kernel.
+
+Thanks,
+
+         M.
+-- 
+Who you jivin' with that Cosmik Debris?
