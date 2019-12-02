@@ -2,94 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23D710F353
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 00:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7791510F35A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 00:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfLBXWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 18:22:52 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45311 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727073AbfLBXWv (ORCPT
+        id S1726388AbfLBXYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 18:24:42 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39213 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfLBXYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 18:22:51 -0500
-Received: by mail-lj1-f194.google.com with SMTP id d20so1447716ljc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 15:22:50 -0800 (PST)
+        Mon, 2 Dec 2019 18:24:42 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e10so1505016ljj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 15:24:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Zivbud+uo79674awuuW6IgbOjr9ZgzEppMzA23/d+3w=;
-        b=UclclWVwgV4xGQBOpFikWRYV32woYv2h8DydWQGIKKlJaO6sY8EY4nxJo08fcognZc
-         deheC2mhwyio+gu1GBFlvBcudM9owVwCIU2NYoX1t4/V4gtGiLscKYRmKWNT/nimRqlH
-         YMCHJCulS4nnZJ4g1AhbL0Pc9o2mOYf7lgYmQ=
+        bh=AzQ+1A7+ETKD73tFjtgF7MkvN8fC39GSMBwN2Sm2LGs=;
+        b=AOzK5o8hu+0IIvPKpWviWtgRkwf04TVyc5XvqhQbrMHvWzfWsQGqIE8DR+b6wesDP5
+         TkI6FvODprL1Yl9ByZr37GnxnuEupSDssPFTacVSJ280XKDF8DR/S0qTm+aEBfcVeoQj
+         urBvNDb/Iqyupc/P8NZdH2CM5I9OFH/H2JGHKi2DIZGh41vqA8Fl47rivdoldWZG+nSe
+         rkYwSisb45DmbOhVfJem8UVM5/4A7Ypfgigo/dwhIjPbY64mEPmjQQXCdmiyAECBd2iu
+         08cbvu+lzysPtRO1GyTRKQ8AJZK3m/xYzC/SHwNTI40VOagOpvTWqLSVyKaSiTOZMCFB
+         LRAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Zivbud+uo79674awuuW6IgbOjr9ZgzEppMzA23/d+3w=;
-        b=Y1BF2ond++s34gt8MyYGDQdLCbRcwpa4gHmmT492VYSr6MKlpft8KwVx1zTw/nz5hk
-         HS5b9OIpvdTSvUpofue+PtImUVBDDE8TGjvfJu/GXLAh9+1bZJM8Kk/kg2xo2gj2YuG1
-         ZMDWIV6reHSXWLyGIR4MXG56EknM9DEpCDecelYBRHen9AGHaQ4nRQPEH2giKAYb+Gf1
-         FtCkTT/2R618Cp72EZu3Jrz3g1ylxf3os5/4lMEc78PGLP32zHFFtLEjv5btS5CbIIeM
-         1b6VQbXWzjk56Xp+q9nwaV/I1lYBaCXMTJCRYjqBpGJbMbFDKtvzNX5cpPXSNGinBYXc
-         qfwA==
-X-Gm-Message-State: APjAAAUSu8685Jzg7sQ7KCq20NZNV/32CgkcnPO3c9KX6XL1TJSRrBbw
-        +H9H3qu2epop4RW3VB/sQV4coK88kAM=
-X-Google-Smtp-Source: APXvYqx+0pe4jM7LC6vcxcxGKIn2z5lc6A7A0qkQY/WpSfEQRSE4P8lObvsEVeTjDrjbYc/rMkR1Pg==
-X-Received: by 2002:a2e:2e14:: with SMTP id u20mr752976lju.120.1575328969137;
-        Mon, 02 Dec 2019 15:22:49 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id l7sm275156lfc.80.2019.12.02.15.22.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2019 15:22:48 -0800 (PST)
-Received: by mail-lf1-f42.google.com with SMTP id l14so1250048lfh.10
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 15:22:47 -0800 (PST)
-X-Received: by 2002:ac2:4946:: with SMTP id o6mr894542lfi.170.1575328967630;
- Mon, 02 Dec 2019 15:22:47 -0800 (PST)
+        bh=AzQ+1A7+ETKD73tFjtgF7MkvN8fC39GSMBwN2Sm2LGs=;
+        b=Ffsucgh/lJc9b0c99/emYRHJEcX3VTj7ypnlnriyxeHwkEIJrHLnW4aO7tlwLo7gbi
+         IrQOsTukIEAX8mX9qnu07M3++dYOiPQEFruR7Mc8329qKYPAELUNcGSEYcmcnxRvBQ6b
+         Xcgna19vxh2NPhl9ZQOZVcxRW8s0oZdJ2hBtZWxmKtFdQ2EOyQsR6v/I47wsaHzKaarm
+         /Mtiz1EK4toUvR/ovP3XIXvmIOCk4E58IEf5uJbu8Xm/SUZpomqAaqCnJjCruTPYEoqD
+         LNrrIYAgWyR/Dhdu6v8zQNNfLIvqdHpWhXFv5B4oVG3/cnsu4lo7JeGpH1R1Y7adoG0Q
+         jvaQ==
+X-Gm-Message-State: APjAAAX0lVzRXAXcWh3IAEElUMxopRM3mqr1wKfX+fUqJwv+rOQpuC5d
+        tDsT6H62dpm87BU1LAtJhSwWysgxtdFfymwc7FmU
+X-Google-Smtp-Source: APXvYqykUQo2KP90VW0MNxkrGcDGJ4i6AJcEymHsB4IKVcZLiqRu7unrYT+Jeupmhlc8Z/8+gCMxFOuX8RJXtya79Bc=
+X-Received: by 2002:a2e:970e:: with SMTP id r14mr712772lji.57.1575329080094;
+ Mon, 02 Dec 2019 15:24:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20191201184814.GA7335@magnolia>
-In-Reply-To: <20191201184814.GA7335@magnolia>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 2 Dec 2019 15:22:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi+0suvJAw8hxLkKJHgYwRy-0vg4-dw9_Co6nQHK-XF9Q@mail.gmail.com>
-Message-ID: <CAHk-=wi+0suvJAw8hxLkKJHgYwRy-0vg4-dw9_Co6nQHK-XF9Q@mail.gmail.com>
-Subject: Re: [GIT PULL] xfs: new code for 5.5
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>
+References: <20191201183347.18122-1-frextrite@gmail.com> <20191202211915.GF17234@google.com>
+In-Reply-To: <20191202211915.GF17234@google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 2 Dec 2019 18:24:29 -0500
+Message-ID: <CAHC9VhTTS43aKQojtoBRRipP7TwhaVnK7DAqpFN0J0_FNLY+sw@mail.gmail.com>
+Subject: Re: [PATCH v3] kernel: audit.c: Add __rcu annotation to RCU pointer
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Amol Grover <frextrite@gmail.com>, Eric Paris <eparis@redhat.com>,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Shuah Khan <skhan@linuxfoundation.org>, paulmck@kernel.org,
+        rcu@vger.kernel.org, rostedt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 1, 2019 at 10:48 AM Darrick J. Wong <djwong@kernel.org> wrote:
+On Mon, Dec 2, 2019 at 4:19 PM Joel Fernandes <joel@joelfernandes.org> wrote:
+> Good idea to CC the following on RCU patches:
+> Paul McKenney
+> Steven Rostedt
+> (Any others on the RCU maintainers list).
+> And, the list: rcu@vger.kernel.org
 >
-> FYI, Stephen Rothwell reported a merge conflict with the y2038 tree at
-> the end of October[1].  His resolution looked pretty straightforward,
-> though the current y2038 for-next branch no longer changes fs/ioctl.c
-> (and the changes that were in it are not in upstream master), so that
-> may not be necessary.
+> Could anyone Ack the patch? Looks safe and straight forward.
 
-The changes and conflicts are definitely still there (now upstream),
-I'm not sure what made you not see them.  But thanks for the note, I
-compared my end result with linux-next to verify.
+FWIW, this looks reasonable to me, but I don't see this as a critical
+fix that needs to go in during the merge window.  Unless I see any
+objections, I'll plan on merging this into audit/next once the merge
+window closes.
 
-My resolution is different from Stephen's. All my non-x86-64 FS_IOC_*
-cases just do "goto found_handler", because the compat case is
-identical for the native case outside of the special x86-64 alignment
-behavior, and I think that's what Arnd meant to happen.
+> On Mon, Dec 02, 2019 at 12:03:48AM +0530, Amol Grover wrote:
+> > Add __rcu annotation to RCU-protected global pointer auditd_conn.
+> >
+> > auditd_conn is an RCU-protected global pointer,i.e., accessed
+> > via RCU methods rcu_dereference() and rcu_assign_pointer(),
+> > hence it must be annotated with __rcu for sparse to report
+> > warnings/errors correctly.
+> >
+> > Fix multiple instances of the sparse error:
+> > error: incompatible types in comparison expression
+> > (different address spaces)
+> >
+> > Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > Signed-off-by: Amol Grover <frextrite@gmail.com>
+> > ---
+> > v3:
+> > - update changelog to be more descriptive
+> >
+> > v2:
+> > - fix erroneous RCU pointer initialization
+> >
+> >  kernel/audit.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index da8dc0db5bd3..ff7cfc61f53d 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -102,12 +102,13 @@ struct audit_net {
+> >   * This struct is RCU protected; you must either hold the RCU lock for reading
+> >   * or the associated spinlock for writing.
+> >   */
+> > -static struct auditd_connection {
+> > +struct auditd_connection {
+> >       struct pid *pid;
+> >       u32 portid;
+> >       struct net *net;
+> >       struct rcu_head rcu;
+> > -} *auditd_conn = NULL;
+> > +};
+> > +static struct auditd_connection __rcu *auditd_conn;
+> >  static DEFINE_SPINLOCK(auditd_conn_lock);
+> >
+> >  /* If audit_rate_limit is non-zero, limit the rate of sending audit records
+> > --
+> > 2.24.0
+> >
 
-There was some other minor difference too, but it's also possible I
-could have messed up, so cc'ing Stephen and Arnd on this just in case
-they have comments.
 
 
-               Linus
+--
+paul moore
+www.paul-moore.com
