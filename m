@@ -2,81 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5F910EEF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9390110EEFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfLBSK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:10:59 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35668 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbfLBSK7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:10:59 -0500
-Received: by mail-pj1-f66.google.com with SMTP id s8so74287pji.2;
-        Mon, 02 Dec 2019 10:10:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OWl5LMlyWthCEsecxcscMjlc8//jLun1U4+HNkZP2EQ=;
-        b=uP8y/LziWCPvQnk7isxZu1yhkNU4fMAOvEeJBpxzG1hUwojItHcdqelLFdCjb+vXJl
-         VdYqUYnEuTe7F/sZ0mW45o+WXnEyj0KFG2EttqOFSnTGHFscKDpd/zWdDyLDVq753J1A
-         Wtp1poTat69yQymDjAaChATPzk6U8M1t7KVGxOJhBTNo26W1p4eocxQ0kTXHRXjQrrOj
-         gi7KUg8UD6eO2zu4BYA2GCtiOzONY2qMV0d1qjhzvNvdmrQWGrA2SVoM6vuQuStLfTts
-         H34wikchwvobC63jBu9jJjtnmLhWgBTmS34tnc+ncdGAdP+Se0sHHhVBNZdB4TxZJl9T
-         ao+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OWl5LMlyWthCEsecxcscMjlc8//jLun1U4+HNkZP2EQ=;
-        b=aYDqIRXz4rXiY9nR01d0mUoVXHHtrOoRhxXkfPOeorwUU6znUpou2dVElpP9jJQsoV
-         9JcjSphYajU9Je7S9vJ+N30Uq5+JNRIiJtMakK2evGpQ/DN8/9E3SoZAaDNbwSvBeYkX
-         wX8hvolAySMdDJ+3F+hEZy3+Df/xFEQlUSr6fldIzeg9NhBRU1nPfdOQT4DkSXfifZEM
-         R9Kg7qpKZ3+IRkPDXGL7ZwExKiS75Oift6pi87NWNlvnk6EXJ8y8YWf0Rqiw2YeN4vi+
-         LM5GuBfMDDKrU9dXFMVmC8pN/g889KVjPthXsr2SRPR+vbvsj98ew1aTmH/ry40NAZRi
-         ELmA==
-X-Gm-Message-State: APjAAAWi9B5EtwzO2iVjZhnjjbie9Gf4E62fzyiW661UidIuc7cnoQaq
-        dUTK2s3e4oezWfQb9Zpos5s=
-X-Google-Smtp-Source: APXvYqwb+PHDoFPOZYqIaZPMZD2O8EccPICF7fxGPPwMqJjvCNUXFL4eFf6NfxpqCyuQOKO87y/vjg==
-X-Received: by 2002:a17:90a:b304:: with SMTP id d4mr409661pjr.142.1575310258156;
-        Mon, 02 Dec 2019 10:10:58 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id h185sm236616pgc.87.2019.12.02.10.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 10:10:57 -0800 (PST)
-Date:   Mon, 2 Dec 2019 10:10:54 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marex@denx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ili210x - add ili2120 support
-Message-ID: <20191202181054.GF50317@dtor-ws>
-References: <20191119180543.120362-1-luca@z3ntu.xyz>
+        id S1727818AbfLBSPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:15:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727670AbfLBSPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 13:15:08 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 074A420718;
+        Mon,  2 Dec 2019 18:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575310507;
+        bh=jPiVcuaAidjifO58kG4+hCHpnuzdzZqrqEC+SolpAOU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P6bhaZwzCNYqu2wRmSwVWP1lQj0PvgQZV5Kj5fZcXqVbd+NH3/s4kDXSgJK/FgUHi
+         2Q61RLf0BQrpim/TpxKnTJUuz3Y80S4xiDyJ5+mYNPHw3LKysj92FXM7TI2d/NdTwS
+         eKuSaewyR5BgM1svvcAdcYqzBeYkaIKP26jHMjHk=
+Date:   Mon, 2 Dec 2019 19:15:05 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kernel@vger.kernel.org,
+        Wambui Karuga <wambui.karugax@gmail.com>
+Subject: Re: [PATCH] staging/octeon: Mark Ethernet driver as BROKEN
+Message-ID: <20191202181505.GA732872@kroah.com>
+References: <20191202141836.9363-1-linux@roeck-us.net>
+ <20191202165231.GA728202@kroah.com>
+ <20191202173620.GA29323@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191119180543.120362-1-luca@z3ntu.xyz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191202173620.GA29323@roeck-us.net>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
+On Mon, Dec 02, 2019 at 09:36:20AM -0800, Guenter Roeck wrote:
+> On Mon, Dec 02, 2019 at 05:52:31PM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Dec 02, 2019 at 06:18:36AM -0800, Guenter Roeck wrote:
+> > > The code doesn't compile due to incompatible pointer errors such as
+> > > 
+> > > drivers/staging/octeon/ethernet-tx.c:649:50: error:
+> > > 	passing argument 1 of 'cvmx_wqe_get_grp' from incompatible pointer type
+> > > 
+> > > This is due to mixing, for example, cvmx_wqe_t with 'struct cvmx_wqe'.
+> > > 
+> > > Unfortunately, one can not just revert the primary offending commit, as doing so
+> > > results in secondary errors. This is made worse by the fact that the "removed"
+> > > typedefs still exist and are used widely outside the staging directory,
+> > > making the entire set of "remove typedef" changes pointless and wrong.
+> > 
+> > Ugh, sorry about that.
+> > 
+> > > Reflect reality and mark the driver as BROKEN.
+> > 
+> > Should I just delete this thing?  No one seems to be using it and there
+> > is no move to get it out of staging at all.
+> > 
+> > Will anyone actually miss it?  It can always come back of someone
+> > does...
+> > 
+> 
+> All it does is causing trouble and misguided attempts to clean it up.
+> If anything, the whole thing goes into the wrong direction (declare a
+> complete set of dummy functions just to be able to build the driver
+> with COMPILE_TEST ? Seriously ?).
+> 
+> I second the motion to drop it. This has been in staging for 10 years.
+> Don't we have some kind of time limit for code in staging ? If not,
+> should we ? If anyone really needs it, that person or group should
+> really invest the time to get it out of staging for good.
 
-On Tue, Nov 19, 2019 at 07:05:43PM +0100, Luca Weiss wrote:
-> This adds support for the Ilitek ili2120 touchscreen found in the
-> Fairphone 2 smartphone.
+10 years?  Ugh, yes, it's time to drop the thing, I'll do so after -rc1
+is out.
 
-The driver has been reworked recently, please update on top of the
-latest version.
+thanks,
 
-Thanks.
-
--- 
-Dmitry
+greg k-h
