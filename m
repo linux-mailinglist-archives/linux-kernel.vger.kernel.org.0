@@ -2,135 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A633410F26F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 22:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E55810F281
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 22:58:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725954AbfLBVz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 16:55:27 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35107 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbfLBVz1 (ORCPT
+        id S1726422AbfLBV6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 16:58:18 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34022 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfLBV6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 16:55:27 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j6so1314848lja.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 13:55:24 -0800 (PST)
+        Mon, 2 Dec 2019 16:58:17 -0500
+Received: by mail-lj1-f194.google.com with SMTP id m6so1326847ljc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 13:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=D8VPfgs8EtF9ws16P6RG86MCdjgDEUTvyqD2NPSMYto=;
-        b=OZd1rysiy4jFHHOTRTgXgZs3lS1Lhgz0q37iEw7HZRqkFdQloV9nTt3R/XAam+7YhW
-         ya2GeXy63to+6kVt3BSXom+hM/WKwzLk1NvyldRsOXHm2zeUr5tWJgQePV8pjedmQlN3
-         LE9b6zhvp1nmtF+JPMhFktnwU/1AcHLOLKuRohUSt/vwqgp6klt8qyB2qYRUsj9bsDYb
-         ZTdaT7pJlt/O1s/rTy927/gWoIJWo/BzW7QsPGL6Y8KJYw+tQZQgDKGglzgpkCRlUCeF
-         jAaeRd7XdnV1oIPgM8SLFZ/gD2Hz1lx1a20XY2qIv5ONTwmIx9HE8/lv90nU61ETE69P
-         dybw==
+        bh=AouDAgA+J4VybjzNvK6JJ1TaiqXLV/JGnpANufytYVM=;
+        b=NWARLlNt+JDbaPQTlbt/lW+z4ZiRUQtoroXOODH5gyyBcR1jSXyl99/JGwHHvI6rjG
+         ilQ6WOfhi1QDoOdZ6MgYvA4Ur6Mi4YohIK3ZW3Dp7b/Fg7mABEzEeRZ9HfixQdriPM3I
+         hXluwApQE6wB/zXtq0ygo/a7X7Oyr+BrlkUV4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=D8VPfgs8EtF9ws16P6RG86MCdjgDEUTvyqD2NPSMYto=;
-        b=c+CrMjeO76rufeRvRjzKbQzWWJZvkYv50spmT6UcvupYB92sE6BX8h3EeXBz1497mj
-         vQFVKCQw/wmmxLGu/UCkXblS1EoDh1FA6xri1WnkuMnTPqbufkTL4ZvcIarknvVmY3B0
-         U/owAvCgGnBterRHfiBEFagWm465J3NCGJOMAzlAxNxuWPWLwHs6+R4J94k7+rxUe136
-         blyKu0adQiUicqzgIb3Dr78mHrXo//uHn42cJdZTcVD9V+6+XTWfGGM6ds2NjuPJMZxX
-         DoUvEGFruuvkTVuV/ib+pJdv6LOVEOKYffZXiOWH4tgaiE0mLksnAe4HdHuCcMFp5wdB
-         EyhA==
-X-Gm-Message-State: APjAAAVEXgWFsnrCdeKEnP5bIeR6yaZArOntw5KXJ2F7QXXMghGRTIQ6
-        jNhe/awIJM1LeDaVSIm/bGm0Gy0ztkxuMcPZiRA=
-X-Google-Smtp-Source: APXvYqxa0qMeSE/+uePTOBBk3fqqhRihvAdxYqnCN4yP9asZ63700puy70Azc+T+T8ymEDB2z5zMui5cw7CttIA5vX8=
-X-Received: by 2002:a2e:999a:: with SMTP id w26mr598071lji.142.1575323723684;
- Mon, 02 Dec 2019 13:55:23 -0800 (PST)
+        bh=AouDAgA+J4VybjzNvK6JJ1TaiqXLV/JGnpANufytYVM=;
+        b=OCbkhjX1jEY77aIn4Qc3pde8lYrRpXOFPjTW4twydEf5avCRXhbXPPxIIPlwnD+Ksu
+         sBiphV/vxXSwAxZvdjqiAF5bKwbWwpqGIqGdBR+zHnc0meLefCrgugc+o7dg8BFo8dra
+         lmh3+0M2NpI6LjVhHrXGgJ87MNHM2OwMqFxhh1zeV6Hts9mvaITobkb9hPq9UbMNlMl8
+         sEb64LXN+cf1F7ohGJR3umaCo7Kq52STZISa0oHLSbOnsRK2r0wf5IXqsDoJ4b6gyL9A
+         8f1ojmb5rbwgvEdZ9L3TFYoe37jS4CdgnolGTaifXT1baf/WV0SSBMg03hD4dX+JrpIp
+         wwBw==
+X-Gm-Message-State: APjAAAX195JluCSMumLo0atRvhmoilMuqRQ0p0NUX0HK7EOTxznmkj1G
+        LGgxwwr54cBJo9n3QDTZevO3E8N0e2o=
+X-Google-Smtp-Source: APXvYqwPgWKOxS4n79qry4oxwHTky6lm8voHpRv2uccgSoPxrsebRuS8t3f5SxkdMyEBFxi7+G9zow==
+X-Received: by 2002:a2e:161b:: with SMTP id w27mr565865ljd.183.1575323894650;
+        Mon, 02 Dec 2019 13:58:14 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id b190sm219852lfd.39.2019.12.02.13.58.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2019 13:58:13 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id z17so1234535ljk.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 13:58:13 -0800 (PST)
+X-Received: by 2002:a2e:9041:: with SMTP id n1mr568601ljg.133.1575323892985;
+ Mon, 02 Dec 2019 13:58:12 -0800 (PST)
 MIME-Version: 1.0
-References: <157483420094.25881.9190014521050510942.stgit@devnote2>
- <157483422375.25881.13508326028469515760.stgit@devnote2> <20191127061910.nbfmzds4k5wxorwz@ast-mbp.dhcp.thefacebook.com>
- <20191127064904.GA52731@gmail.com>
-In-Reply-To: <20191127064904.GA52731@gmail.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Mon, 2 Dec 2019 13:55:12 -0800
-Message-ID: <CAADnVQ+uJ5sWtC18HZATDkfrtUcsKNoTrQ_5SRr7mmU8ziEC9w@mail.gmail.com>
-Subject: Re: [PATCH -tip 2/2] kprobes: Set unoptimized flag after unoptimizing code
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        bristot <bristot@redhat.com>, jbaron@akamai.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <namit@vmware.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>
+References: <1575137443.5563.18.camel@HansenPartnership.com>
+In-Reply-To: <1575137443.5563.18.camel@HansenPartnership.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Dec 2019 13:57:57 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjWNpPW91wyEj4FC4pOimWEUtLVb_RwQgB+9h2OO6ynyA@mail.gmail.com>
+Message-ID: <CAHk-=wjWNpPW91wyEj4FC4pOimWEUtLVb_RwQgB+9h2OO6ynyA@mail.gmail.com>
+Subject: Re: [GIT PULL] first round of SCSI updates for the 5.4+ merge window
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 10:49 PM Ingo Molnar <mingo@kernel.org> wrote:
+On Sat, Nov 30, 2019 at 10:10 AM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
->
-> * Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
->
-> > On Wed, Nov 27, 2019 at 02:57:04PM +0900, Masami Hiramatsu wrote:
-> > > Fix to set unoptimized flag after confirming the code is completely
-> > > unoptimized. Without this fix, when a kprobe hits the intermediate
-> > > modified instruction (the first byte is replaced by int3, but
-> > > latter bytes still be a jump address operand) while unoptimizing,
-> > > it can return to the middle byte of the modified code. And it causes
-> > > an invalid instruction exception in the kernel.
-> > >
-> > > Usually, this is a rare case, but if we put a probe on the function
-> > > called while text patching, it always causes a kernel panic as below.
-> > > (text_poke() is used for patching the code in optprobe)
-> > >
-> > >  # echo p text_poke+5 > kprobe_events
-> > >  # echo 1 > events/kprobes/enable
-> > >  # echo 0 > events/kprobes/enable
-> > >  invalid opcode: 0000 [#1] PREEMPT SMP PTI
-> > >  CPU: 7 PID: 137 Comm: kworker/7:1 Not tainted 5.4.0-rc8+ #29
-> > >  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
-> > >  Workqueue: events kprobe_optimizer
-> > >  RIP: 0010:text_poke+0x9/0x50
-> > >  Code: 01 00 00 5b 5d 41 5c 41 5d c3 89 c0 0f b7 4c 02 fe 66 89 4c 05 fe e9 31 ff ff ff e8 71 ac 03 00 90 55 48 89 f5 53 cc 30 cb fd <1e> ec 08 8b 05 72 98 31 01 85 c0 75 11 48 83 c4 08 48 89 ee 48 89
-> > >  RSP: 0018:ffffc90000343df0 EFLAGS: 00010686
-> > >  RAX: 0000000000000000 RBX: ffffffff81025796 RCX: 0000000000000000
-> > >  RDX: 0000000000000004 RSI: ffff88807c983148 RDI: ffffffff81025796
-> > >  RBP: ffff88807c983148 R08: 0000000000000001 R09: 0000000000000000
-> > >  R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82284fe0
-> > >  R13: ffff88807c983138 R14: ffffffff82284ff0 R15: 0ffff88807d9eee0
-> > >  FS:  0000000000000000(0000) GS:ffff88807d9c0000(0000) knlGS:0000000000000000
-> > >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > >  CR2: 000000000058158b CR3: 000000007b372000 CR4: 00000000000006a0
-> > >  Call Trace:
-> > >   arch_unoptimize_kprobe+0x22/0x28
-> > >   arch_unoptimize_kprobes+0x39/0x87
-> > >   kprobe_optimizer+0x6e/0x290
-> > >   process_one_work+0x2a0/0x610
-> > >   worker_thread+0x28/0x3d0
-> > >   ? process_one_work+0x610/0x610
-> > >   kthread+0x10d/0x130
-> > >   ? kthread_park+0x80/0x80
-> > >   ret_from_fork+0x3a/0x50
-> > >  Modules linked in:
-> > >  ---[ end trace 83b34b22a228711b ]---
-> > >
-> > > This can happen even if we blacklist text_poke() and other functions,
-> > > because there is a small time window which showing the intermediate
-> > > code to other CPUs.
-> > >
-> > > Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
-> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> >
-> > Awesome. It fixes the crash for me.
-> > Tested-by: Alexei Starovoitov <ast@kernel.org>
->
-> Thanks guys - I just pushed out a rebased tree, based on an upstream
-> version that has both the BPF tree and most x86 trees merged, into
-> tip:WIP.core/kprobes. This includes these two fixes as well.
+>    The two major core
+> changes are Al Viro's reworking of sg's handling of copy to/from user,
+> Ming Lei's removal of the host busy counter to avoid contention in the
+> multiqueue case and Damien Le Moal's fixing of residual tracking across
+> error handling.
 
-fwiw. I merged WIP.core/kprobes into my local tree and have been
-testing everything with it. No issues found.
+Math is hard. You say "The two major core changes are.." and then you
+list _three_ changes.
+
+Anyway, the sg copyin/out changes by Al conflicted fairly badly with
+Arnd's compat_ioctl changes.
+
+Al did
+
+  c35a5cfb4150 ("scsi: sg: sg_read(): simplify reading ->pack_id of
+userland sg_io_hdr_t")
+
+which avoided doing a whole allocation of an 'sg_io_hdr_t' to just
+read the one field of it.
+
+But Arnd did
+
+  98aaaec4a150 ("compat_ioctl: reimplement SG_IO handling")
+
+which created a get_sg_io_hdr() helper that copied the 'sg_io_hdr_t'
+from user space the right way for both compat and native, which
+basically relied on the old approach.
+
+So I effectively reverted Al's patch in order to take Arnd's patch in
+the crazy sg legacy case that presumably nobody really cares about
+anyway, since everybody should use SG_IO rather than the sg_read()
+thing. But I know not everybody is.
+
+I added a comment in that place:
+
+              /*
+               * This is stupid.
+               *
+               * We're copying the whole sg_io_hdr_t from user
+               * space just to get the 'pack_id' field. But the
+               * field is at different offsets for the compat
+               * case, so we'll use "get_sg_io_hdr()" to copy
+               * the whole thing and convert it.
+               *
+               * We could do something like just calculating the
+               * offset based of 'in_compat_syscall()', but the
+               * 'compat_sg_io_hdr' definition is in the wrong
+               * place for that.
+               */
+
+since it turns out that the one 'pack_id' field we want does have the
+same format in compat  mode as in native mode ("int" and
+"compat_int_t" are the same), it's just at different offsets. But the
+definition of 'compat_sg_io_hdr' isn't available in that place.
+
+I'm leaving it to Al and Arnd to decide if they want to fix the
+stupidity. I tried to make the minimally invasive merge resolution.
+
+Al, Arnd? Comments?
+
+It looks like linux-next punted on this entirely, and took Al's
+simplified version that doesn't work with the compat case. Maybe I
+should have done the same - if you use read() on the /dev/sg* device,
+you deserve to get broken for the compat case. And it didn't
+historically work anyway. But it was kind of sad to see how Arnd fixed
+it, and then it got broken again.
+
+I really really wish we could get rid of sg_read/sg_write() entirely,
+and have SG_IO_SUBMIT and SG_IO_RECEIVE ioctl's that can handle the
+queued cases that apparently some people need. Because the read/write
+case really is disgusting.
+
+                Linus
