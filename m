@@ -2,117 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D916E10EEF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF78A10EF07
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfLBSLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:11:12 -0500
-Received: from mga12.intel.com ([192.55.52.136]:48020 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727893AbfLBSLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:11:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 10:11:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="213113529"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 02 Dec 2019 10:11:10 -0800
-Date:   Mon, 2 Dec 2019 10:15:53 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 8/8] iommu/vt-d: Misc macro clean up for SVM
-Message-ID: <20191202101553.079898a3@jacob-builder>
-In-Reply-To: <38d4586f3aeb21bb08028525db89868acb34e9fd.camel@perches.com>
-References: <1574371588-65634-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1574371588-65634-9-git-send-email-jacob.jun.pan@linux.intel.com>
-        <38d4586f3aeb21bb08028525db89868acb34e9fd.camel@perches.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727881AbfLBSSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:18:47 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36858 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727721AbfLBSSr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 13:18:47 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB2II2fP131580
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2019 13:18:45 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wkm46v2wt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 13:18:45 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 2 Dec 2019 18:18:41 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Dec 2019 18:18:37 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB2IIaDa52363282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Dec 2019 18:18:36 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 444FB42041;
+        Mon,  2 Dec 2019 18:18:36 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E96C4203F;
+        Mon,  2 Dec 2019 18:18:35 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.147.107])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Dec 2019 18:18:35 +0000 (GMT)
+Subject: Re: [PATCH v9 5/6] IMA: Add support to limit measuring keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Date:   Mon, 02 Dec 2019 13:18:34 -0500
+In-Reply-To: <18b30666-7c44-f81e-8515-189052007e47@linux.microsoft.com>
+References: <20191127015654.3744-1-nramas@linux.microsoft.com>
+         <20191127015654.3744-6-nramas@linux.microsoft.com>
+         <1574880741.4793.292.camel@linux.ibm.com>
+         <18b30666-7c44-f81e-8515-189052007e47@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19120218-0028-0000-0000-000003C39241
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19120218-0029-0000-0000-00002486A8F0
+Message-Id: <1575310714.4793.420.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-02_04:2019-11-29,2019-12-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 suspectscore=2 mlxlogscore=999 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912020155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Nov 2019 13:37:10 -0800
-Joe Perches <joe@perches.com> wrote:
-
-> On Thu, 2019-11-21 at 13:26 -0800, Jacob Pan wrote:
-> > Use combined macros for_each_svm_dev() to simplify SVM device
-> > iteration and error checking.  
-> []
-> > diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c  
-> []
-> > +#define for_each_svm_dev(sdev, svm, d)			\
-> > +	list_for_each_entry((sdev), &(svm)->devs, list)	\
-> > +		if ((d) != (sdev)->dev) {} else
-> > +
-> >  int intel_svm_bind_mm(struct device *dev, int *pasid, int flags,
-> > struct svm_dev_ops *ops) {
-> >  	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
-> > @@ -274,15 +278,13 @@ int intel_svm_bind_mm(struct device *dev, int
-> > *pasid, int flags, struct svm_dev_ goto out;
-> >  			}
-> >  
-> > -			list_for_each_entry(sdev, &svm->devs,
-> > list) {
-> > -				if (dev == sdev->dev) {
-> > -					if (sdev->ops != ops) {
-> > -						ret = -EBUSY;
-> > -						goto out;
-> > -					}
-> > -					sdev->users++;
-> > -					goto success;
-> > +			for_each_svm_dev(sdev, svm, dev) {
-> > +				if (sdev->ops != ops) {
-> > +					ret = -EBUSY;
-> > +					goto out;
-> >  				}
-> > +				sdev->users++;
-> > +				goto success;
-> >  			}  
+On Wed, 2019-11-27 at 16:44 -0800, Lakshmi Ramasubramanian wrote:
+> On 11/27/19 10:52 AM, Mimi Zohar wrote:
 > 
-> I think this does not read better as this is now a
-> for_each loop that exits the loop on the first match.
+> Hi Mimi,
 > 
-I think one of the benefits is reduced indentation. What do you
-recommend?
+> >> +static bool ima_match_keyring(struct ima_rule_entry *rule,
+> >> +			      const char *keyring)
+> >> +{
+> >> +	/*
+> >> +	 * "keyrings=" is specified in the policy in the format below:
+> >> +	 *   keyrings=.builtin_trusted_keys|.ima|.evm
+> >> +	 *
+> >> +	 * Each keyring name in the option is separated by a '|' and
+> >> +	 * the last keyring name is null terminated.
+> >> +	 *
+> >> +	 * The given keyring is considered matched only if
+> >> +	 * the whole keyring name matched a keyring name specified
+> >> +	 * in the "keyrings=" option.
+> >> +	 */
+> >> +	p = strstr(rule->keyrings, keyring);
+> >> +	if (p) {
+> >> +		/*
+> >> +		 * Found a substring match. Check if the character
+> >> +		 * at the end of the keyring name is | (keyring name
+> >> +		 * separator) or is the terminating null character.
+> >> +		 * If yes, we have a whole string match.
+> >> +		 */
+> >> +		p += strlen(keyring);
+> >> +		if (*p == '|' || *p == '\0')
+> >> +			return true;
 
-> >  
-> >  			break;
-> > @@ -427,43 +429,36 @@ int intel_svm_unbind_mm(struct device *dev,
-> > int pasid) goto out;
-> >  	}
-> >  
-> > -	if (!svm)
-> > -		goto out;
-> > -
-> > -	list_for_each_entry(sdev, &svm->devs, list) {  
-> []
-> > +	for_each_svm_dev(sdev, svm, dev) {  
+This code checks that the keyring name isn't suffixed, but not
+prefixed.
+
+> >> +	}
+> >> +
+> > 
+> > Using "while strsep()" would simplify this code, removing the need for
+> > such a long comment.
+> > 
+> > Mimi
 > 
-> I think this should not remove the !svm test above.
+> strsep() modifies the source string (replaces the delimiter with '\0' 
+> and also updates the source string pointer). I am not sure it can be 
+> used for our scenario. Please correct me if I am wrong.
 > 
-Yeah, !svm test should have been part of 6/8. I will fix that.
-
-Thanks,
-
-Jacob 
+> Initial IMA policy:
+> -------------------
+> measure func=KEY_CHECK 
+> keyrings=.ima|.evm|.builtin_trusted_keys|.blacklist template=ima-buf
 > 
+> Policy after adding a key to .ima keyring:
+> ------------------------------------------
+> measure func=KEY_CHECK keyrings=.evm|.builtin_trusted_keys|.blacklist 
+> template=ima-buf
+> 
+> Policy after adding a key to a keyring that is not listed in the policy:
+> ------------------------------------------------------------------------
+> measure func=KEY_CHECK keyrings= template=ima-buf
+> 
+> ********************************************************************************
+> 
+> Please see the description from the man page for strsep():
+> 
+> http://man7.org/linux/man-pages/man3/strsep.3.html
+> 
+> char *strsep(char **stringp, const char *delim);
+> 
+> This function finds the first token in the string *stringp, that is 
+> delimited by one of the bytes in the string delim.  This token is 
+> terminated by overwriting the delimiter with a null byte ('\0'), and 
+> *stringp is updated to point past the token.
 
-[Jacob Pan]
+Yes, you would have to make a copy of the string before using
+strsep().  You could always use kstrdup(), remembering to free it, or
+allocate the memory just once, and then just use memcpy.
+
+Mimi
+
