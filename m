@@ -2,127 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB5D10EC4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 607DE10EC5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 16:34:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfLBPZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 10:25:51 -0500
-Received: from mga14.intel.com ([192.55.52.115]:31689 "EHLO mga14.intel.com"
+        id S1727477AbfLBPel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 10:34:41 -0500
+Received: from node.akkea.ca ([192.155.83.177]:57858 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbfLBPZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 10:25:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 07:25:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,268,1571727600"; 
-   d="scan'208";a="384921871"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 02 Dec 2019 07:25:50 -0800
-Received: from [10.125.253.1] (abudanko-mobl.ccr.corp.intel.com [10.125.253.1])
-        by linux.intel.com (Postfix) with ESMTP id 93D9458048A;
-        Mon,  2 Dec 2019 07:25:47 -0800 (PST)
-Subject: Re: [RFC PATCH 2/8] perf: Helpers for alloc/init/fini PMU specific
- data
-To:     Peter Zijlstra <peterz@infradead.org>, kan.liang@linux.intel.com
-Cc:     mingo@redhat.com, acme@kernel.org, tglx@linutronix.de,
-        bp@alien8.de, linux-kernel@vger.kernel.org, eranian@google.com,
-        vitaly.slobodskoy@intel.com, ak@linux.intel.com
-References: <1574954071-6321-1-git-send-email-kan.liang@linux.intel.com>
- <1574954071-6321-2-git-send-email-kan.liang@linux.intel.com>
- <20191202131646.GD2827@hirez.programming.kicks-ass.net>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <7a119a02-adb8-dc18-2d74-c71903e84afe@linux.intel.com>
-Date:   Mon, 2 Dec 2019 18:25:46 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <20191202131646.GD2827@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727435AbfLBPel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 10:34:41 -0500
+X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Dec 2019 10:34:40 EST
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 5E0E94E2010;
+        Mon,  2 Dec 2019 15:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1575300329; bh=SRlLW1ZF40agOMpOXjZbip0TWQHQvK7ikhKiQ8zf5fI=;
+        h=From:To:Cc:Subject:Date;
+        b=YEu6o5IwAZWA6sJuSU/ES9a9wn22E4Bq5gW8IrGSp34c6AUwu/6BHKMY5voAS15jZ
+         iE7IcHlIOSAHkiRxkr9BLgLeLGkIP4RUAMzdxhC5BcrpI3dKvXqLC1z2+UoZfa+ABt
+         WkfuuJYc8hMgMr0brddBVooHmIIsFJlyzJ3uxuw8=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id e-8yhoq18yFP; Mon,  2 Dec 2019 15:25:29 +0000 (UTC)
+Received: from thinkpad-tablet.cg.shawcable.net (S0106905851b613e9.cg.shawcable.net [70.77.244.40])
+        by node.akkea.ca (Postfix) with ESMTPSA id 727FE4E2003;
+        Mon,  2 Dec 2019 15:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1575300329; bh=SRlLW1ZF40agOMpOXjZbip0TWQHQvK7ikhKiQ8zf5fI=;
+        h=From:To:Cc:Subject:Date;
+        b=YEu6o5IwAZWA6sJuSU/ES9a9wn22E4Bq5gW8IrGSp34c6AUwu/6BHKMY5voAS15jZ
+         iE7IcHlIOSAHkiRxkr9BLgLeLGkIP4RUAMzdxhC5BcrpI3dKvXqLC1z2+UoZfa+ABt
+         WkfuuJYc8hMgMr0brddBVooHmIIsFJlyzJ3uxuw8=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     linux-pm@vger.kernel.org
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@puri.sm, "Angus Ainslie (Purism)" <angus@akkea.ca>
+Subject: [PATCH 0/2] Add MAX17055 fuel guage
+Date:   Mon,  2 Dec 2019 08:25:18 -0700
+Message-Id: <20191202152520.27558-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Extend the max17042_battery driver to include the MAX17055.
 
-On 02.12.2019 16:16, Peter Zijlstra wrote:
-> On Thu, Nov 28, 2019 at 07:14:25AM -0800, kan.liang@linux.intel.com wrote:
-> 
->> +static int
->> +__alloc_task_ctx_data_rcu(struct task_struct *task,
->> +			  size_t ctx_size, gfp_t flags)
->> +{
->> +	struct perf_ctx_data *ctx_data = task->perf_ctx_data;
->> +	int ret;
->> +
->> +	lockdep_assert_held_once(&task->perf_ctx_data_lock);
->> +
->> +	ret = alloc_perf_ctx_data(ctx_size, flags, &ctx_data);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ctx_data->refcount = 1;
->> +
->> +	rcu_assign_pointer(task->perf_ctx_data, ctx_data);
->> +
->> +	return 0;
->> +}
-> 
->> +static int
->> +__init_task_ctx_data_rcu(struct task_struct *task, size_t ctx_size, gfp_t flags)
->> +{
->> +	struct perf_ctx_data *ctx_data = task->perf_ctx_data;
->> +
->> +	lockdep_assert_held_once(&task->perf_ctx_data_lock);
->> +
->> +	if (ctx_data) {
->> +		ctx_data->refcount++;
->> +		return 0;
->> +	}
->> +
->> +	return __alloc_task_ctx_data_rcu(task, ctx_size, flags);
->> +}
-> 
->> +/**
->> + * Free perf_ctx_data RCU pointer for a task
->> + * @task:        Target Task
->> + * @force:       Unconditionally free perf_ctx_data
->> + *
->> + * If force is set, free perf_ctx_data unconditionally.
->> + * Otherwise, free perf_ctx_data when there are no users.
->> + * Lock is required to sync the writers of perf_ctx_data RCU pointer
->> + * and refcount.
->> + */
->> +static void
->> +fini_task_ctx_data_rcu(struct task_struct *task, bool force)
->> +{
->> +	struct perf_ctx_data *ctx_data;
->> +	unsigned long flags;
->> +
->> +	raw_spin_lock_irqsave(&task->perf_ctx_data_lock, flags);
->> +
->> +	ctx_data = task->perf_ctx_data;
->> +	if (!ctx_data)
->> +		goto unlock;
->> +
->> +	if (!force && --ctx_data->refcount)
->> +		goto unlock;
->> +
->> +	RCU_INIT_POINTER(task->perf_ctx_data, NULL);
->> +	call_rcu(&ctx_data->rcu_head, free_perf_ctx_data);
->> +
->> +unlock:
->> +	raw_spin_unlock_irqrestore(&task->perf_ctx_data_lock, flags);
->> +}
-> 
-> All this refcount under lock is an anti-pattern. Also the naming is
-> insane.
+Angus Ainslie (Purism) (2):
+  power: supply: max17042: add MAX17055 support
+  dts: bindings: max17042_battery: add all of the compatible strings
 
-Could you please provide proper patterning examples for such or similar cases?
+ .../power/supply/max17042_battery.txt         |  6 ++-
+ drivers/power/supply/max17042_battery.c       | 15 ++++--
+ include/linux/power/max17042_battery.h        | 48 ++++++++++++++++++-
+ 3 files changed, 64 insertions(+), 5 deletions(-)
 
-Thanks,
-Alexey
+-- 
+2.17.1
+
