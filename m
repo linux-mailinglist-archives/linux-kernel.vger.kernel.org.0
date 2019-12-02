@@ -2,149 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BCC410F2E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 23:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1979D10F2F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 23:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbfLBWkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 17:40:40 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49156 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725853AbfLBWkk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 17:40:40 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6FCBA8EE180;
-        Mon,  2 Dec 2019 14:40:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1575326439;
-        bh=w/oP+1BA9PA+20BsnpDXfjU/W0UeBcXPQE9EA4rXG7E=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Q/TFhfb106IByr2UHFDTsb5mKi9sCvOku2EZUYITsc1bD181AripSFV7XVrDcvMHw
-         ry0b18H8qc/HfPIROWBWvNQf9ou/Rm3IT0I78hArcBZ30hmdEdhgbawqno+xNVWxd7
-         LCm7UPVKKssPKqK52/5mrTiJbngcGlUwAcRsDpvg=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id tlDozYtRc6qk; Mon,  2 Dec 2019 14:40:39 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BF5558EE11D;
-        Mon,  2 Dec 2019 14:40:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1575326439;
-        bh=w/oP+1BA9PA+20BsnpDXfjU/W0UeBcXPQE9EA4rXG7E=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Q/TFhfb106IByr2UHFDTsb5mKi9sCvOku2EZUYITsc1bD181AripSFV7XVrDcvMHw
-         ry0b18H8qc/HfPIROWBWvNQf9ou/Rm3IT0I78hArcBZ30hmdEdhgbawqno+xNVWxd7
-         LCm7UPVKKssPKqK52/5mrTiJbngcGlUwAcRsDpvg=
-Message-ID: <1575326437.24227.19.camel@HansenPartnership.com>
-Subject: Re: [GIT PULL] first round of SCSI updates for the 5.4+ merge window
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 02 Dec 2019 14:40:37 -0800
-In-Reply-To: <CAHk-=wjWNpPW91wyEj4FC4pOimWEUtLVb_RwQgB+9h2OO6ynyA@mail.gmail.com>
-References: <1575137443.5563.18.camel@HansenPartnership.com>
-         <CAHk-=wjWNpPW91wyEj4FC4pOimWEUtLVb_RwQgB+9h2OO6ynyA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726074AbfLBWwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 17:52:02 -0500
+Received: from mail-eopbgr130057.outbound.protection.outlook.com ([40.107.13.57]:17293
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725835AbfLBWwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 17:52:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j+L6IKyFsPNxONHE8p32DtpovjvFP+0kx3L6s7LJ1s+3yRVAyGcloIE92RKyQ+rEJfnELTb8juTIgeHa0A+NALKzoR/0uXviYZ0fg77VPsWSPQJSeqzB8d8nqf1054O50gFNTmfi97XryzU0/VN+5Y4VjUt4ZLoT5L1n8nFBpGDoJ2bktqAIpr4Hv8GGatueo7qMZ1n+aWweCmkvJfWx2/w0Dfx2wEzXaoHJw1qkToO/7MzeeNnuzEET7udzhvknrz/31fjoe+NZWNLS6zoyUO9PpQC1zCxD1RPC34+e1o/mDF4SsbCGVaSvha8bwwyNOee4iic19KONefK/dvVQAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z8FyuXm79w//A8asyiSVH3/UepC+XF9SGERVHtcW1+M=;
+ b=SuHlgac0rtibdh4w5zlA7vIFhDUrxUTBpt2UeCp5vH3t2DxyF4Vvn2hkmXt/4mZz8w6xon4/qUChN/8+wSlkwNuNgNyxYcQVeXVKpKlFhJl/e4lkYk3J11PIBguDcGmlMP9Tb4F1Voloaepucu+ED+ts6Zmzo6VV8CKp56fcrz1pPQ2z0Siz84m6Qu3LBFOyrYXsI0GkyHjR24POoZibHGTgOMWbYzvA5UqUhoOtWDokaBk6VGkvJs4WjdKZ3O2yC1lagvOrz+Oq8XN1bL1CQoXGRdeMTJY81uj4TBjNEdMlPIv8kj8WoZQEGz0pSvymw9Ytnl/nAacu55gBovkkVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z8FyuXm79w//A8asyiSVH3/UepC+XF9SGERVHtcW1+M=;
+ b=ImnkRo0m+54eJ7tv6jesz+T8D2BzdKsVkjbHT2kcVdiKR3s0PahkfVUAx7NFp6DqetPb6j/WWqtre/KrPTjFKscd/fUFD7LbyiX/LiwkERoRNqSfKo4w64qvDZKQAn0gbXqOd4Vnqy/WfDXVO/I9VowiKPrgrNggGfTr+E0Th+Q=
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com (20.179.234.30) by
+ VE1PR04MB6639.eurprd04.prod.outlook.com (10.255.118.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.20; Mon, 2 Dec 2019 22:51:58 +0000
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::e948:7a32:ae88:906d]) by VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::e948:7a32:ae88:906d%4]) with mapi id 15.20.2495.014; Mon, 2 Dec 2019
+ 22:51:57 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Scott Wood <oss@buserror.net>, Timur Tabi <timur@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Qiang Zhao <qiang.zhao@nxp.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: RE: [PATCH v6 44/49] net/wan/fsl_ucc_hdlc: avoid use of
+ IS_ERR_VALUE()
+Thread-Topic: [PATCH v6 44/49] net/wan/fsl_ucc_hdlc: avoid use of
+ IS_ERR_VALUE()
+Thread-Index: AQHVpfw8xYSflyw9IkOdsMxlnEQBn6enLxpw
+Date:   Mon, 2 Dec 2019 22:51:57 +0000
+Message-ID: <VE1PR04MB6687B5428E3E4FA0F8F77DF08F430@VE1PR04MB6687.eurprd04.prod.outlook.com>
+References: <20191128145554.1297-1-linux@rasmusvillemoes.dk>
+ <20191128145554.1297-45-linux@rasmusvillemoes.dk>
+In-Reply-To: <20191128145554.1297-45-linux@rasmusvillemoes.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f8e19fe5-4c13-4dc1-c242-08d7777a3c6a
+x-ms-traffictypediagnostic: VE1PR04MB6639:|VE1PR04MB6639:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VE1PR04MB66394E3D2D3794331BAA4C378F430@VE1PR04MB6639.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0239D46DB6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(136003)(346002)(366004)(39860400002)(13464003)(189003)(199004)(71190400001)(54906003)(305945005)(7696005)(6436002)(55016002)(478600001)(66556008)(9686003)(6116002)(66476007)(3846002)(33656002)(81166006)(6506007)(53546011)(102836004)(229853002)(316002)(26005)(52536014)(81156014)(8676002)(186003)(5660300002)(76176011)(446003)(8936002)(64756008)(66946007)(74316002)(256004)(76116006)(11346002)(2906002)(66066001)(99286004)(6246003)(25786009)(86362001)(14454004)(6916009)(71200400001)(66446008)(7736002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6639;H:VE1PR04MB6687.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: oHI+Ro1l1oUKotJ9dFwGUR+h9jhDj4qj0OJdjxd8pXEJUo0HpRfigtCooYWyPQfW3GPxUZPCykti0e545kdIT94ePVd5XGWj/FNPFCDpaBYRtD3Q/nmrFKtCn6bV/PJlG9qWesacx4regJGyHnok8vtkptn7Ktt1OCpHC5844G4Mxz0ZDfqZGiOj/dZ8gPVO14talZsntRqOIyQWDAyyZnS7InFxQM5vPjDM6rGXh36yBdx29NQV5QXUQzW0L86toxKPeT2HG2tdiNnxu6bMAUg4UdUJ4DP9qwERov4ky2l+mTQjRyLFEbZx+1e3/pPav/5kuQS/hLzD6kHVUReKAyN+eJ1LayTZyTzqnUa/h3ti8mFtqrzEQDuCARuMAYiTe1FBI9B3i4IavS86M96BjeVfcYFzH0hv/gz5EhDlfLH4wnkjQHnTDycWo+NcFpqV
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8e19fe5-4c13-4dc1-c242-08d7777a3c6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2019 22:51:57.8420
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4Cmoq7GJ25Rua++mGquLIq17ARcLHN5IKcLl5Fy30JWq85NVWNdYgiCKuMpoDkPteTmltYYeK4m4dPjOifD+EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6639
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-12-02 at 13:57 -0800, Linus Torvalds wrote:
-> On Sat, Nov 30, 2019 at 10:10 AM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> >    The two major core
-> > changes are Al Viro's reworking of sg's handling of copy to/from
-> > user, Ming Lei's removal of the host busy counter to avoid
-> > contention in the multiqueue case and Damien Le Moal's fixing of
-> > residual tracking across error handling.
-> 
-> Math is hard. You say "The two major core changes are.." and then you
-> list _three_ changes.
 
-Oh ... I wasn't expecting the Spanish Inquisition.
 
-> Anyway, the sg copyin/out changes by Al conflicted fairly badly with
-> Arnd's compat_ioctl changes.
-> 
-> Al did
-> 
->   c35a5cfb4150 ("scsi: sg: sg_read(): simplify reading ->pack_id of
-> userland sg_io_hdr_t")
-> 
-> which avoided doing a whole allocation of an 'sg_io_hdr_t' to just
-> read the one field of it.
-> 
-> But Arnd did
-> 
->   98aaaec4a150 ("compat_ioctl: reimplement SG_IO handling")
-> 
-> which created a get_sg_io_hdr() helper that copied the 'sg_io_hdr_t'
-> from user space the right way for both compat and native, which
-> basically relied on the old approach.
-> 
-> So I effectively reverted Al's patch in order to take Arnd's patch in
-> the crazy sg legacy case that presumably nobody really cares about
-> anyway, since everybody should use SG_IO rather than the sg_read()
-> thing. But I know not everybody is.
-> 
-> I added a comment in that place:
-> 
->               /*
->                * This is stupid.
->                *
->                * We're copying the whole sg_io_hdr_t from user
->                * space just to get the 'pack_id' field. But the
->                * field is at different offsets for the compat
->                * case, so we'll use "get_sg_io_hdr()" to copy
->                * the whole thing and convert it.
->                *
->                * We could do something like just calculating the
->                * offset based of 'in_compat_syscall()', but the
->                * 'compat_sg_io_hdr' definition is in the wrong
->                * place for that.
->                */
-> 
-> since it turns out that the one 'pack_id' field we want does have the
-> same format in compat  mode as in native mode ("int" and
-> "compat_int_t" are the same), it's just at different offsets. But the
-> definition of 'compat_sg_io_hdr' isn't available in that place.
-> 
-> I'm leaving it to Al and Arnd to decide if they want to fix the
-> stupidity. I tried to make the minimally invasive merge resolution.
-> 
-> Al, Arnd? Comments?
-> 
-> It looks like linux-next punted on this entirely, and took Al's
-> simplified version that doesn't work with the compat case. Maybe I
-> should have done the same - if you use read() on the /dev/sg* device,
-> you deserve to get broken for the compat case. And it didn't
-> historically work anyway. But it was kind of sad to see how Arnd
-> fixed it, and then it got broken again.
+> -----Original Message-----
+> From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Sent: Thursday, November 28, 2019 8:56 AM
+> To: Qiang Zhao <qiang.zhao@nxp.com>; Leo Li <leoyang.li@nxp.com>;
+> Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org; Scott Wood <oss@buserror.net>; Timur Tabi
+> <timur@kernel.org>; Rasmus Villemoes <linux@rasmusvillemoes.dk>;
+> netdev@vger.kernel.org
+> Subject: [PATCH v6 44/49] net/wan/fsl_ucc_hdlc: avoid use of
+> IS_ERR_VALUE()
 
-Sorry, I did do a test merge with the current state of your tree when I
-sent the pull request, but, obviously, that didn't include the Arnd
-changes and I've taken to rely on linux-next as the merge problem
-canary for trees you haven't yet pulled.
+Hi David,
 
-> I really really wish we could get rid of sg_read/sg_write() entirely,
-> and have SG_IO_SUBMIT and SG_IO_RECEIVE ioctl's that can handle the
-> queued cases that apparently some people need. Because the read/write
-> case really is disgusting.
+Would you help to review patch 44-47 in the series?  If it is fine with you=
+, I can take these 4 patches with the whole series though soc tree to enabl=
+e the QE drivers on ARM and PPC64 with your ACK.
 
-We're definitely not having a read/write case for the proposed v4
-protocol ... however we are a bit stuck with it for the existing v3
-case.
+Thanks,
+Leo
 
-James
+>=20
+> When building this on a 64-bit platform gcc rightly warns that the error
+> checking is broken (-ENOMEM stored in an u32 does not compare greater
+> than (unsigned long)-MAX_ERRNO). Instead, now that
+> qe_muram_alloc() returns s32, use that type to store the return value and
+> use standard kernel style "ret < 0".
+>=20
+> Reviewed-by: Timur Tabi <timur@kernel.org>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
