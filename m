@@ -2,77 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3E610EA41
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 13:57:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB6110EA5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 14:03:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfLBM5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 07:57:00 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42432 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbfLBM5A (ORCPT
+        id S1727513AbfLBNCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 08:02:46 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:45796 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727466AbfLBNCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 07:57:00 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e28so15804185ljo.9;
-        Mon, 02 Dec 2019 04:56:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Qlt+/dRlgH3WSZzFFBm5SD3CiWvxcdEsgMu4Ka1X8YE=;
-        b=UlyiU5dpvNruuaxcXO7dvcG62On/kdUK4obQpYfELq3M040cPWbk92RXty5c7XyxHQ
-         JlwoKbkid8aIAN5Tj/Q45F++QZmZ8BDp2fKC3o0KiEOLkPMVj/sP/GA1ijguRSSyroJY
-         j071GRkprPF86nKLRiFrKQr1QfIg+WOcCTwil4xkDqnRcrbJgBj574XnFo9nVQx06eqV
-         kcfwKnDmvmw0gf1VF5eHPJ4eSqHqCr0YzpPxG11lmnzUjX/43McgbFIBGFt2hl0/+GAb
-         ebjqRxaO1ouiLadvFFlXedasMYGwWmhPw3n5mRho5odgoUIv9cuc0UPXktHrNHYG+Tma
-         teyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qlt+/dRlgH3WSZzFFBm5SD3CiWvxcdEsgMu4Ka1X8YE=;
-        b=t7NTKna6zMWUSxr1ze5Oe+GT5j3TyhA0q/XxXwiSe190O+uTDgxbEGR9rtzqQksJWF
-         QKG+xlcPd6wXQL1C5q2i3GsoZWUQSZVrYsqyaCBTkCSt2pJgTAeGmA+3JsA8LjMHc4rX
-         vx2jT2m7ZAnF2r/xN2PB4+LdYB0pwzEadNmuolgp0vM0tYWWK1DUQ2q8Hd2WD0Q998PH
-         ngYZdQmAF9PC9vSvKyV/om+SzI5GdtAhPipsqnI6qBI7SAS/BXap6Ci2XLaAl16I0k7m
-         RMQjQZPQjtfyGE6esEnP+dzQH+8cH+LQpDHgDtVlU3wrCiCfBIeHGVoTORcCm9i3f6z/
-         pTgQ==
-X-Gm-Message-State: APjAAAVziH83jLS/9RzGpKhMc/7EIwfFo9Ii7gH5sZEAH7g3lt7+mPhy
-        yEVgd6j5aqPn06YdSxAJJFliHQv/T5ykbIvtgiQ=
-X-Google-Smtp-Source: APXvYqxQdPHL3wwjh1XiiAR4BKUnI9ER2eZEatvhL25goi1fFQraJN0onktSvPLymKxIx9kQLcHq96wvcClwhZw058k=
-X-Received: by 2002:a2e:241a:: with SMTP id k26mr2647022ljk.26.1575291417981;
- Mon, 02 Dec 2019 04:56:57 -0800 (PST)
+        Mon, 2 Dec 2019 08:02:40 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id xB2D1f3T015190;
+        Mon, 2 Dec 2019 15:01:41 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
+        id 8FE4660275; Mon,  2 Dec 2019 15:01:41 +0200 (IST)
+From:   amirmizi6@gmail.com
+To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        ayna@linux.vnet.ibm.com, Dan.Morav@nuvoton.com,
+        oren.tanami@nuvoton.com, shmulik.hager@nuvoton.com,
+        amir.mizinski@nuvoton.com, Amir Mizinski <amirmizi6@gmail.com>
+Subject: [PATCH v1 0/5] add tpm i2c ptp driver
+Date:   Mon,  2 Dec 2019 15:01:27 +0200
+Message-Id: <20191202130132.175382-1-amirmizi6@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <45ef9ee8c6265743a9c30d8e4d9dcbac1ee3aabe.1575286886.git.shengjiu.wang@nxp.com>
-In-Reply-To: <45ef9ee8c6265743a9c30d8e4d9dcbac1ee3aabe.1575286886.git.shengjiu.wang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 2 Dec 2019 09:57:12 -0300
-Message-ID: <CAOMZO5AXnw7QDdfKkZ+FBwuWWvr+t0rRsHQ4muW-T00he2f73Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] ASoC: dt-bindings: fsl_asrc: add compatible string
- for imx8qm & imx8qxp
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 8:56 AM Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
+From: Amir Mizinski <amirmizi6@gmail.com>
 
-> -  - compatible         : Contains "fsl,imx35-asrc" or "fsl,imx53-asrc".
-> +  - compatible         : Contains "fsl,imx35-asrc", "fsl,imx53-asrc",
-> +                         "fsl,imx8qm-asrc", "fsl,imx8qxp-asrc"
+*This patch set adds support for TPM devices that implement the I2C
+interface defined by TCG PTP specification:
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
 
-You missed the word "or" as in the original binding.
+The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
+
+interupts are not implemented yet, preparing it for the next patch.
+this patch is based on initial work by oshri Alkoby, Alexander Steffen and Christophe Ricard
+
+Amir Mizinski (5):
+  char: tpm: Make implementation of read16 read32 write32 optional
+  char: tpm: Add check_data handle to tpm_tis_phy_ops in order to check
+    data integrity
+  char: tpm: rewrite "tpm_tis_req_canceled()"
+  dt-bindings: tpm: Add the TPM TIS I2C device tree binding documentaion
+  char: tpm: add tpm_tis_i2c driver
+
+ .../bindings/security/tpm/tpm_tis_i2c.txt          |  24 ++
+ drivers/char/tpm/Kconfig                           |  12 +
+ drivers/char/tpm/Makefile                          |   1 +
+ drivers/char/tpm/tpm_tis_core.c                    | 109 +++++----
+ drivers/char/tpm/tpm_tis_core.h                    |  41 +++-
+ drivers/char/tpm/tpm_tis_i2c.c                     | 272 +++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_spi.c                     |  41 ----
+ 7 files changed, 407 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm_tis_i2c.txt
+ create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
+
+-- 
+2.7.4
+
