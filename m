@@ -2,197 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB31B10F087
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DB810F0CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfLBTeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 14:34:03 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41296 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728128AbfLBTdr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:33:47 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: aratiu)
-        with ESMTPSA id DC0E4290514
-From:   Adrian Ratiu <adrian.ratiu@collabora.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rockchip@lists.infradead.org
-Cc:     kernel@collabora.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-imx@nxp.com,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.com>,
-        Martyn Welch <martyn.welch@collabora.com>
-Subject: [PATCH v4 4/4] dt-bindings: display: add i.MX6 MIPI DSI host controller doc
-Date:   Mon,  2 Dec 2019 21:33:59 +0200
-Message-Id: <20191202193359.703709-5-adrian.ratiu@collabora.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191202193359.703709-1-adrian.ratiu@collabora.com>
-References: <20191202193359.703709-1-adrian.ratiu@collabora.com>
+        id S1728029AbfLBTlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 14:41:15 -0500
+Received: from mx.ewheeler.net ([173.205.220.69]:49709 "EHLO mx.ewheeler.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727927AbfLBTlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 14:41:15 -0500
+X-Greylist: delayed 385 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Dec 2019 14:41:14 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mx.ewheeler.net (Postfix) with ESMTP id 5EF76A0440;
+        Mon,  2 Dec 2019 19:34:44 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at ewheeler.net
+Received: from mx.ewheeler.net ([127.0.0.1])
+        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id uRQNVO4LW8_g; Mon,  2 Dec 2019 19:34:23 +0000 (UTC)
+Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx.ewheeler.net (Postfix) with ESMTPSA id 1F97BA0693;
+        Mon,  2 Dec 2019 19:34:23 +0000 (UTC)
+Date:   Mon, 2 Dec 2019 19:34:12 +0000 (UTC)
+From:   Eric Wheeler <bcache@lists.ewheeler.net>
+X-X-Sender: lists@mx.ewheeler.net
+To:     Coly Li <colyli@suse.de>
+cc:     kungf <wings.wyang@gmail.com>, kent.overstreet@gmail.com,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcache: add REQ_FUA to avoid data lost in writeback
+ mode
+In-Reply-To: <785fe04f-f841-3083-66db-53fab7bc0577@suse.de>
+Message-ID: <alpine.LRH.2.11.1912021932570.11561@mx.ewheeler.net>
+References: <20191202102409.3980-1-wings.wyang@gmail.com> <785fe04f-f841-3083-66db-53fab7bc0577@suse.de>
+User-Agent: Alpine 2.11 (LRH 23 2013-08-11)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: MULTIPART/MIXED; BOUNDARY="-844282404-2137853158-1575315263=:11561"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This provides an example DT binding for the MIPI DSI host controller
-present on the i.MX6 SoC based on Synopsis DesignWare v1.01 IP.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.com>
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
----
- .../display/imx/fsl,mipi-dsi-imx6.yaml        | 136 ++++++++++++++++++
- 1 file changed, 136 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,mipi-dsi-imx6.yaml
+---844282404-2137853158-1575315263=:11561
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/Documentation/devicetree/bindings/display/imx/fsl,mipi-dsi-imx6.yaml b/Documentation/devicetree/bindings/display/imx/fsl,mipi-dsi-imx6.yaml
-new file mode 100644
-index 000000000000..8c9603c28240
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/imx/fsl,mipi-dsi-imx6.yaml
-@@ -0,0 +1,136 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/fsl,mipi-dsi-imx6.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale i.MX6 DW MIPI DSI Host Controller
-+
-+description:
-+  The DSI host controller is a Synopsys DesignWare MIPI DSI v1.01 IP with a companion PHY IP.
-+
-+  These DT bindings follow the Synopsys DW MIPI DSI bindings defined in
-+  Documentation/devicetree/bindings/display/bridge/dw_mipi_dsi.txt with
-+  the following device-specific properties.
-+
-+properties:
-+  compatible:
-+    const: [ "fsl,imx6q-mipi-dsi", "snps,dw-mipi-dsi" ]
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Module Clock
-+      - description: DSI bus clock
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: pclk
-+      - const: ref
-+    minItems: 2
-+    maxItems: 2
-+
-+  fsl,gpr:
-+    description: Phandle to the iomuxc-gpr region containing the multiplexer control register.
-+    const: *gpr
-+
-+  ports:
-+    type: object
-+    description:
-+      A node containing DSI input & output port nodes with endpoint
-+      definitions as documented in
-+      Documentation/devicetree/bindings/media/video-interfaces.txt
-+      Documentation/devicetree/bindings/graph.txt
-+    properties:
-+      port@0:
-+        type: object
-+        description:
-+          DSI input port node, connected to the ltdc rgb output port.
-+
-+      port@1:
-+        type: object
-+        description:
-+          DSI output port node, connected to a panel or a bridge input port"
-+
-+patternProperties:
-+  "^(panel|panel-dsi)@[0-9]$":
-+    type: object
-+    description:
-+      A node containing the panel or bridge description as documented in
-+      Documentation/devicetree/bindings/display/mipi-dsi-bus.txt
-+    properties:
-+      port:
-+        type: object
-+        description:
-+          Panel or bridge port node, connected to the DSI output port (port@1)
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+required:
-+  - "#address-cells"
-+  - "#size-cells"
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - ports
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    dsi: dsi@21e0000 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        compatible = "fsl,imx6q-mipi-dsi", "snps,dw-mipi-dsi";
-+        reg = <0x021e0000 0x4000>;
-+        interrupts = <0 102 IRQ_TYPE_LEVEL_HIGH>;
-+        fsl,gpr = <&gpr>;
-+        clocks = <&clks IMX6QDL_CLK_MIPI_CORE_CFG>,
-+                 <&clks IMX6QDL_CLK_MIPI_IPG>;
-+        clock-names = "ref", "pclk";
-+
-+        ports {
-+            port@0 {
-+                reg = <0>;
-+                dsi_in: endpoint {
-+                    remote-endpoint = <&ltdc_ep1_out>;
-+                };
-+            };
-+
-+            port@1 {
-+                reg = <1>;
-+                dsi_out: endpoint {
-+                    remote-endpoint = <&panel_in>;
-+                };
-+            };
-+        };
-+
-+        panel@0 {
-+            compatible = "sharp,ls032b3sx01";
-+            reg = <0>;
-+            reset-gpios = <&gpio6 8 GPIO_ACTIVE_LOW>;
-+
-+            ports {
-+                port@0 {
-+                    panel_in: endpoint {
-+                        remote-endpoint = <&dsi_out>;
-+                    };
-+                };
-+            };
-+        };
-+    };
-+
-+...
--- 
-2.24.0
+On Mon, 2 Dec 2019, Coly Li wrote:
+> On 2019/12/2 6:24 下午, kungf wrote:
+> > data may lost when in the follow scene of writeback mode:
+> > 1. client write data1 to bcache
+> > 2. client fdatasync
+> > 3. bcache flush cache set and backing device
+> > if now data1 was not writed back to backing, it was only guaranteed safe in cache.
+> > 4.then cache writeback data1 to backing with only REQ_OP_WRITE
+> > So data1 was not guaranteed in non-volatile storage,  it may lost if  power interruption 
+> > 
+> 
+> Hi,
+> 
+> Do you encounter such problem in real work load ? With bcache journal, I
+> don't see the possibility of data lost with your description.
+> 
+> Correct me if I am wrong.
+> 
+> Coly Li
 
+If this does become necessary, then we should have a sysfs or superblock 
+flag to disable FUA for those with RAID BBUs.
+
+--
+Eric Wheeler
+
+
+
+
+> > Signed-off-by: kungf <wings.wyang@gmail.com>
+> > ---
+> >  drivers/md/bcache/writeback.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+> > index 4a40f9eadeaf..e5cecb60569e 100644
+> > --- a/drivers/md/bcache/writeback.c
+> > +++ b/drivers/md/bcache/writeback.c
+> > @@ -357,7 +357,7 @@ static void write_dirty(struct closure *cl)
+> >  	 */
+> >  	if (KEY_DIRTY(&w->key)) {
+> >  		dirty_init(w);
+> > -		bio_set_op_attrs(&io->bio, REQ_OP_WRITE, 0);
+> > +		bio_set_op_attrs(&io->bio, REQ_OP_WRITE | REQ_FUA, 0);
+> >  		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
+> >  		bio_set_dev(&io->bio, io->dc->bdev);
+> >  		io->bio.bi_end_io	= dirty_endio;
+> > 
+> 
+> 
+---844282404-2137853158-1575315263=:11561--
