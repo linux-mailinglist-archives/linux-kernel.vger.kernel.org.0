@@ -2,240 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB1110EF77
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFFB810EF82
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:48:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbfLBSpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:45:09 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:55305 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbfLBSpI (ORCPT
+        id S1727955AbfLBSsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:48:13 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13156 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbfLBSsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 13:45:08 -0500
-Received: by mail-io1-f70.google.com with SMTP id z21so246130iob.22
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 10:45:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=itCABTGD8qdhBDl50zMwwE7VeQ2i5Gc0+NOJZoEJkF0=;
-        b=GA4erb8z+yUsEullgH+M+p+/olSHyxl4qFP3ul8kEBDIvUfvoXyHl9JNoNoYlWyNH+
-         9VE8JL6VQjqVsSQYmfGRz8sreyDz6zYB9KWuKQElT1FFjWcuscyFQ8tgZj/NVsk+33BF
-         gm+j9PHTLcq1/s5kpi5IMSbIzRJINhg6svnhoTTFQNgxR9rwP8ljUBIYia6daSc4HfC0
-         Rj4P6gQpktAg4Tos11A0lfwStmItni8Py72m/EPRKBQMnRZyYBssf3i5ACmSmhWxd5cT
-         gHCW92yCnoJZU8rDeoIKB2O52HT1eSJCekeP6LnKYUMEif8babENEYAQBN8P8eJrH25l
-         6OLQ==
-X-Gm-Message-State: APjAAAXa0I8JCRowDQNAW4s5k7CqzLqXMFF0Jjp8I+prtQeNH2xQ1I6c
-        uu4gAPymexqWnp6et3g8X0BOsfZzfQaXLG8kTq0xRSkqfOr4
-X-Google-Smtp-Source: APXvYqwIH2+SSVQbUDLmK8P9Y83JayLZp6b4GBVssznSDKXNoVUicLrHRqAEb07CLWNmjC8DqTLUFG4uRqm0DT2C93n7ioURFCvt
+        Mon, 2 Dec 2019 13:48:13 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5de55c360000>; Mon, 02 Dec 2019 10:47:18 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 02 Dec 2019 10:47:31 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 02 Dec 2019 10:47:31 -0800
+Received: from [10.110.103.72] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 2 Dec
+ 2019 18:47:30 +0000
+Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>, <sboyd@kernel.org>
+CC:     <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+ <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
+ <04b093fe-5eff-1ad2-9a8a-7674dcb2318a@nvidia.com>
+ <ebcce0df-bb7a-2f24-cfbc-daaf3ac6bb4f@nvidia.com>
+ <45058e6b-244e-8926-584d-297452873612@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <8afb28cd-a90c-fbc2-1053-70cf6c282057@nvidia.com>
+Date:   Mon, 2 Dec 2019 10:47:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-Received: by 2002:a02:40ca:: with SMTP id n193mr1028204jaa.71.1575312308038;
- Mon, 02 Dec 2019 10:45:08 -0800 (PST)
-Date:   Mon, 02 Dec 2019 10:45:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000880dcc0598bcfac9@google.com>
-Subject: possible deadlock in process_measurement (2)
-From:   syzbot <syzbot+18a1619cceea30ed45af@syzkaller.appspotmail.com>
-To:     dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <45058e6b-244e-8926-584d-297452873612@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575312438; bh=CHAlviqBQHYGThcNJQKlAWx4Yyq6z2eTR+nIne0O7mo=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=SItZfW0yZYRl2taLyxzNuuYEDYBgqAuNzyglraMsnuP+asHFUiN1+DJpsOXbdynP6
+         6Ca1bA6UvcyJQvByLC7N1rRfZ8Izv1uJA+1RJMmEU36zpbyw1Q6H4zRIyX5KLGfg2j
+         4k5MDSfJJ1TGAwe698WcAv77XHJ+owF2AHTtNOVrlDcXIJ4y/Jy1jvy4bdoWv6eyjE
+         A5apg00aL9sa9EkAe/raSDFsHG2aZqJ1myrx5yKVUl6Pk6MHfrft1ZQCDUQQV+4n/5
+         ITMQUpS1kVR9HCuyp8GqKvT2wQG7FlQRlosJj/oLfNmtH0gtc7uK+/aYSQx7cPRQlW
+         78xxSHhFG2HHw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+On 11/28/19 5:06 AM, Dmitry Osipenko wrote:
+> 28.11.2019 00:38, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On 11/27/19 9:02 AM, Sowjanya Komatineni wrote:
+>>> On 11/27/19 6:31 AM, Dmitry Osipenko wrote:
+>>>> 27.11.2019 07:59, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls whic=
+h
+>>>>> are currently registered by Tegra clock driver using clk_regiser_mux
+>>>>> and
+>>>>> clk_register_gate which performs direct Tegra PMC register access.
+>>>>>
+>>>>> When Tegra PMC is in secure mode, any access from non-secure world wi=
+ll
+>>>>> not go through.
+>>>>>
+>>>>> This patch series adds these Tegra PMC clocks and blink controls to
+>>>>> Tegra
+>>>>> PMC driver with PMC as clock provider and removed them from Tegra clo=
+ck
+>>>>> driver. This also adds PMC specific clock id's to use in device tree
+>>>>> and
+>>>>> removed clock ids of PMC clock from Tegra clock driver.
+>>>>>
+>>>>> This series also includes patch to update clock provider from tegra_c=
+ar
+>>>>> to pmc in the device tree tegra210-smaug.dts that uses clk_out_2
+>>>>> from PMC.
+>>>>>
+>>>>> [v2]:=C2=A0=C2=A0=C2=A0 Changes between v1 and v2 are
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0- v2 includes patches for adding clk_out_1, =
+clk_out_2, clk_out_3,
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 blink controls to Tegra PMC driver an=
+d removing clk-tegra-pmc.
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0- feedback related to pmc clocks in Tegra PM=
+C driver from v1
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0- Removed patches for WB0 PLLM overrides and=
+ PLLE IDDQ PMC
+>>>>> programming
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 by the clock driver using helper func=
+tions from Tegra PMC.
+>>>>>
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Note:
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 To use helper functions from PMC driv=
+er, PMC early init need to
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 happen prior to using helper function=
+s and these helper
+>>>>> functions are
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for PLLM Override and PLLE IDDQ progr=
+amming in PMC during
+>>>>> PLLM/PLLE
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock registration which happen in cl=
+ock_init prior to Tegra PMC
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 probe.
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Moving PLLM/PLLE clocks registration =
+to happen after Tegra PMC
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 impacts other clocks EMC, MC and corr=
+esponding tegra_emc_init and
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_mc_init.
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This implementation of configuring PM=
+C registers thru helper
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 functions in clock driver needs prope=
+r changes across PMC, Clock,
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EMC and MC inits to have it work acro=
+ss all Tegra platforms.
+>>>>>
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Currently PLLM Override is not enable=
+d in the bootloader so
+>>>>> proper
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 patches for this fix will be taken ca=
+re separately.
+>>>> Hello Sowjanya,
+>>>>
+>>>> Could you please clarify what do you mean by "PLLM Override not enable=
+d
+>>>> in bootloader"?
+>>>>
+>>>> There is T124 Nyan Big Chromebook which is supported in upstream kerne=
+l,
+>>>> it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
+>>>> which has the PLLM Override set by bootloader as well. It's not clear =
+to
+>>>> me whether this patch series is supposed to break these devices. If th=
+e
+>>>> breakage is the case here, then I'm afraid you can't postpone supporti=
+ng
+>>>> the PLLM Override and a full-featured implementation is needed.
+>>> Hi Dmitry,
+>>>
+>>> Secure boot currently is enabled only on Tegra210 and Tegra210
+>>> bootloader doesn't enable PLLM override.
+>>>
+>>> So PLLM override/PLLE IDDQ being in clock driver currently will not
+>>> break on any of existing Tegra platforms.
+>>>
+>>>> I briefly tried to test this series on T30 and this time it doesn't ha=
+ng
+>>>> on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiF=
+i
+>>>> chip uses the Blink clock source and the clock should be enabled by th=
+e
+>>>> MMC core because this is how DT part looks like:
+>>>>
+>>>> brcm_wifi_pwrseq: wifi-pwrseq {
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "mmc-pwrseq-simple";
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0clocks =3D <&pmc TEGRA_PMC_CLK_BLINK>;
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0clock-names =3D "ext_clock";
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0reset-gpios =3D=C2=A0 <&gpio TEGRA_GPIO(D, 3)=
+ GPIO_ACTIVE_LOW>;
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0post-power-on-delay-ms =3D <300>;
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0power-off-delay-us =3D <300>;
+>>>> };
+>>>>
+>>>> BTW, I=C2=A0 tried this series on a T20 device which also uses the Bli=
+nk
+>>>> clock for WiFi card and it works. So looks like this patchset has some
+>>>> problem in regards to the T30 PMC clocks implementation.
+>>>>
+>>>> [snip]
+>>> Blink init state is set to true for both Tegra20 and Tegra30 and all
+>>> go through the same blink programming sequence.
+>>>
+>>> Will try to add more debug messages to dump registers and will test
+>>> blink through device tree on T30 and will get back...
+>>>
+>>>
+>> define value for BLINK uses BIT macro instead of just position. Will fix
+>> this in v3.
+> Thanks, will try v3 once it will be ready.
+>
+> I took a look through the T20 board's schematics and seems it doesn't
+> use the Blink clock for the WiFi, instead it uses 32k source directly
+> from PMU. While T30 board schematics tells that  32k comes out from the
+> Tegra chip.
+>
+> BTW, I'm curious what's the reason for having Blink clock always-ON on
+> T20/30, any insights? Looks like it's just some relic from old clk
+> driver and it should be safe to drop the always-ON.
 
-HEAD commit:    81b6b964 Merge branch 'master' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17019696e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=333b76551307b2a0
-dashboard link: https://syzkaller.appspot.com/bug?extid=18a1619cceea30ed45af
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+T30 cardhu uses 32K from Tegra to WIFI but its only needed to be on=20
+during WIFI power up sequence and not required to be on during boot.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+I had it enabled as existing clock driver enables it default and dont=20
+want to break things if it was left ON intentionally.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+18a1619cceea30ed45af@syzkaller.appspotmail.com
+Peter/Thierry, Any reason 32K from Blink is enabled to be ON during=20
+clock init for T20/T30 in clock-tegra-pmc driver?
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.4.0-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.2/596 is trying to acquire lock:
-ffff88802b0761a0 (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock  
-include/linux/fs.h:791 [inline]
-ffff88802b0761a0 (&ovl_i_mutex_key[depth]){+.+.}, at:  
-process_measurement+0x6f4/0x1810 security/integrity/ima/ima_main.c:230
+Based on the design T30 uses this for WIFI and WIFI driver should be=20
+handling this clock enable/disable during power up/down sequence,
 
-but task is already holding lock:
-ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at: prepare_bprm_creds  
-fs/exec.c:1409 [inline]
-ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at:  
-__do_execve_file.isra.0+0x376/0x22b0 fs/exec.c:1754
+so we don't have to enable it default during boot right?
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&sig->cred_guard_mutex){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1106
-        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1136
-        lock_trace+0x4a/0xe0 fs/proc/base.c:406
-        proc_pid_personality+0x1c/0xd0 fs/proc/base.c:2961
-        proc_single_show+0xfd/0x1c0 fs/proc/base.c:756
-        seq_read+0x4ca/0x1110 fs/seq_file.c:229
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_loop_readv_writev fs/read_write.c:701 [inline]
-        do_iter_read+0x4a4/0x660 fs/read_write.c:935
-        vfs_readv+0xf0/0x160 fs/read_write.c:997
-        do_preadv+0x1c4/0x280 fs/read_write.c:1089
-        __do_sys_preadv fs/read_write.c:1139 [inline]
-        __se_sys_preadv fs/read_write.c:1134 [inline]
-        __x64_sys_preadv+0x9a/0xf0 fs/read_write.c:1134
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #2 (&p->lock){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-        __mutex_lock+0x156/0x13c0 kernel/locking/mutex.c:1106
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1121
-        seq_read+0x71/0x1110 fs/seq_file.c:161
-        do_loop_readv_writev fs/read_write.c:714 [inline]
-        do_loop_readv_writev fs/read_write.c:701 [inline]
-        do_iter_read+0x4a4/0x660 fs/read_write.c:935
-        vfs_readv+0xf0/0x160 fs/read_write.c:997
-        kernel_readv fs/splice.c:359 [inline]
-        default_file_splice_read+0x482/0x980 fs/splice.c:414
-        do_splice_to+0x127/0x180 fs/splice.c:877
-        splice_direct_to_actor+0x2d2/0x970 fs/splice.c:954
-        do_splice_direct+0x1da/0x2a0 fs/splice.c:1063
-        do_sendfile+0x597/0xd00 fs/read_write.c:1464
-        __do_sys_sendfile64 fs/read_write.c:1525 [inline]
-        __se_sys_sendfile64 fs/read_write.c:1511 [inline]
-        __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (sb_writers#3){.+.+}:
-        percpu_down_read include/linux/percpu-rwsem.h:40 [inline]
-        __sb_start_write+0x241/0x460 fs/super.c:1672
-        sb_start_write include/linux/fs.h:1650 [inline]
-        mnt_want_write+0x3f/0xc0 fs/namespace.c:354
-        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:21
-        ovl_setattr+0xdd/0x8b0 fs/overlayfs/inode.c:27
-        notify_change+0xad7/0xfb0 fs/attr.c:337
-        do_truncate+0x158/0x220 fs/open.c:64
-        handle_truncate fs/namei.c:2998 [inline]
-        do_last fs/namei.c:3414 [inline]
-        path_openat+0x2d63/0x46d0 fs/namei.c:3525
-        do_filp_open+0x1a1/0x280 fs/namei.c:3555
-        do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-        ksys_open include/linux/syscalls.h:1385 [inline]
-        __do_sys_creat fs/open.c:1155 [inline]
-        __se_sys_creat fs/open.c:1153 [inline]
-        __x64_sys_creat+0x61/0x80 fs/open.c:1153
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&ovl_i_mutex_key[depth]){+.+.}:
-        check_prev_add kernel/locking/lockdep.c:2476 [inline]
-        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-        validate_chain kernel/locking/lockdep.c:2971 [inline]
-        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-        down_write+0x93/0x150 kernel/locking/rwsem.c:1534
-        inode_lock include/linux/fs.h:791 [inline]
-        process_measurement+0x6f4/0x1810  
-security/integrity/ima/ima_main.c:230
-        ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:438
-        do_last fs/namei.c:3412 [inline]
-        path_openat+0x113d/0x46d0 fs/namei.c:3525
-        do_filp_open+0x1a1/0x280 fs/namei.c:3555
-        do_open_execat+0x137/0x690 fs/exec.c:857
-        __do_execve_file.isra.0+0x1702/0x22b0 fs/exec.c:1762
-        do_execveat_common fs/exec.c:1868 [inline]
-        do_execve fs/exec.c:1885 [inline]
-        __do_sys_execve fs/exec.c:1961 [inline]
-        __se_sys_execve fs/exec.c:1956 [inline]
-        __x64_sys_execve+0x8f/0xc0 fs/exec.c:1956
-        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   &ovl_i_mutex_key[depth] --> &p->lock --> &sig->cred_guard_mutex
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&sig->cred_guard_mutex);
-                                lock(&p->lock);
-                                lock(&sig->cred_guard_mutex);
-   lock(&ovl_i_mutex_key[depth]);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor.2/596:
-  #0: ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at:  
-prepare_bprm_creds fs/exec.c:1409 [inline]
-  #0: ffff8880547b07d0 (&sig->cred_guard_mutex){+.+.}, at:  
-__do_execve_file.isra.0+0x376/0x22b0 fs/exec.c:1754
-
-stack backtrace:
-CPU: 1 PID: 596 Comm: syz-executor.2 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
-  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
-  check_prev_add kernel/locking/lockdep.c:2476 [inline]
-  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-  validate_chain kernel/locking/lockdep.c:2971 [inline]
-  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-  down_write+0x93/0x150 kernel/locking/rwsem.c:1534
-  inode_lock include/linux/fs.h:791 [inline]
-  process_measurement+0x6f4/0x1810 security/integrity/ima/ima_main.c:230
-  ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:438
-  do_last fs/namei.c:3412 [inline]
-  path_openat+0x113d/0x46d0 fs/namei.c:3525
-  do_filp_open+0x1a1/0x280 fs/namei.c:3555
-  do_open_execat+0x137/0x690 fs/exec.c:857
-  __do_execve_file.isra.0+0x1702/0x22b0 fs/exec.c:1762
-  do_execveat_common fs/exec.c:1868 [inline]
-  do_execve fs/exec.c:1885 [inline]
-  __do_sys_execve fs/exec.c:1961 [inline]
-  __se_sys_execve fs/exec.c:1956 [inline]
-  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1956
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a679
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffbf4072c78 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a679
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffbf40736d4
-R13: 00000000004c0fcd R14: 00000000004d41f0 R15: 00000000ffffffff
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
