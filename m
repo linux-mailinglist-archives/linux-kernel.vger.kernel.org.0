@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D1810EF1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B13CD10EF38
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 19:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfLBSWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 13:22:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35952 "EHLO mx1.suse.de"
+        id S1728096AbfLBSXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 13:23:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35968 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727881AbfLBSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727671AbfLBSWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Dec 2019 13:22:16 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 14E9AAEC6;
+        by mx1.suse.de (Postfix) with ESMTP id 7AABAAECB;
         Mon,  2 Dec 2019 18:22:15 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
@@ -22,9 +22,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         James Tai <james.tai@realtek.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 04/14] arm64: dts: realtek: rtd16xx: Introduce iso and misc syscon
-Date:   Mon,  2 Dec 2019 19:21:54 +0100
-Message-Id: <20191202182205.14629-5-afaerber@suse.de>
+Subject: [PATCH 05/14] ARM: dts: rtd1195: Add CRT syscon node
+Date:   Mon,  2 Dec 2019 19:21:55 +0100
+Message-Id: <20191202182205.14629-6-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191202182205.14629-1-afaerber@suse.de>
 References: <20191202182205.14629-1-afaerber@suse.de>
@@ -36,104 +36,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Group UART0 into an Isolation syscon mfd node.
-Group UART1 and UART2 into a Miscellaneous syscon mfd node.
+Prepare a CRT syscon mfd node.
 
 Cc: James Tai <james.tai@realtek.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- arch/arm64/boot/dts/realtek/rtd16xx.dtsi | 70 +++++++++++++++++++++-----------
- 1 file changed, 46 insertions(+), 24 deletions(-)
+ arch/arm/boot/dts/rtd1195.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/realtek/rtd16xx.dtsi b/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-index 69cc0d941c8d..8f8f2b328cd1 100644
---- a/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-+++ b/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-@@ -118,34 +118,22 @@
+diff --git a/arch/arm/boot/dts/rtd1195.dtsi b/arch/arm/boot/dts/rtd1195.dtsi
+index a74f530dc439..ac37366ff7c4 100644
+--- a/arch/arm/boot/dts/rtd1195.dtsi
++++ b/arch/arm/boot/dts/rtd1195.dtsi
+@@ -100,6 +100,15 @@
  			#size-cells = <1>;
- 			ranges = <0x0 0x98000000 0x200000>;
+ 			ranges = <0x0 0x18000000 0x70000>;
  
--			uart0: serial0@7800 {
--				compatible = "snps,dw-apb-uart";
--				reg = <0x7800 0x400>;
--				reg-shift = <2>;
-+			iso: syscon@7000 {
++			crt: syscon@0 {
 +				compatible = "syscon", "simple-mfd";
-+				reg = <0x7000 0x1000>;
- 				reg-io-width = <4>;
--				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
--				clock-frequency = <27000000>;
--				status = "disabled";
++				reg = <0x0 0x1000>;
++				reg-io-width = <4>;
 +				#address-cells = <1>;
 +				#size-cells = <1>;
-+				ranges = <0x0 0x7000 0x1000>;
- 			};
- 
--			uart1: serial1@1b200 {
--				compatible = "snps,dw-apb-uart";
--				reg = <0x1b200 0x400>;
--				reg-shift = <2>;
-+			misc: syscon@1b000 {
-+				compatible = "syscon", "simple-mfd";
-+				reg = <0x1b000 0x1000>;
- 				reg-io-width = <4>;
--				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
--				clock-frequency = <432000000>;
--				status = "disabled";
--			};
--
--			uart2: serial2@1b400 {
--				compatible = "snps,dw-apb-uart";
--				reg = <0x1b400 0x400>;
--				reg-shift = <2>;
--				reg-io-width = <4>;
--				interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
--				clock-frequency = <432000000>;
--				status = "disabled";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0x1b000 0x1000>;
- 			};
- 		};
- 
-@@ -159,3 +147,37 @@
- 		};
- 	};
- };
++				ranges = <0x0 0x0 0x1000>;
++			};
 +
-+&iso {
-+	uart0: serial0@800 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x800 0x400>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+		clock-frequency = <27000000>;
-+		status = "disabled";
-+	};
-+};
-+
-+&misc {
-+	uart1: serial1@200 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x200 0x400>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+		clock-frequency = <432000000>;
-+		status = "disabled";
-+	};
-+
-+	uart2: serial2@400 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x400 0x400>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+		clock-frequency = <432000000>;
-+		status = "disabled";
-+	};
-+};
+ 			iso: syscon@7000 {
+ 				compatible = "syscon", "simple-mfd";
+ 				reg = <0x7000 0x1000>;
 -- 
 2.16.4
 
