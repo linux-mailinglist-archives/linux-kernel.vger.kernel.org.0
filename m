@@ -2,81 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A770710EE9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:40:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2CB510EE80
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 18:36:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfLBRk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 12:40:29 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30020 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727870AbfLBRk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 12:40:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 09:40:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="208164928"
-Received: from svedurlx-mobl.amr.corp.intel.com (HELO [10.251.129.241]) ([10.251.129.241])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Dec 2019 09:40:26 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: sst: Add missing include
- <linux/io.h>
-To:     YueHaibing <yuehaibing@huawei.com>, cezary.rojewski@intel.com,
-        liam.r.girdwood@linux.intel.com, yang.jie@linux.intel.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        gregkh@linuxfoundation.org, allison@lohutok.net,
-        tglx@linutronix.de, alexios.zavras@intel.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20191128135853.8360-1-yuehaibing@huawei.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <62e5bb2c-14a9-66d0-c89e-c38b5550fb86@linux.intel.com>
-Date:   Mon, 2 Dec 2019 11:32:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1727847AbfLBRg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 12:36:26 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41874 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbfLBRg0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 12:36:26 -0500
+Received: by mail-oi1-f194.google.com with SMTP id e9so397189oif.8
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 09:36:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H8ecUYHrlgXWC+SSFS9i4n7p04mhH9a7a/Cpt3ffH28=;
+        b=Sf35EoFbsWOdMEu192XWwbMrCaO0l/uAPDrg0e504xYEkn5xLLYrLt3jMickShAHVT
+         DH64F4wFjbKE/pHolttk9q+0XZ1ijugRzTfZ3/f4K9rjac7NGmFer9Q+FTfGuNjkU3HP
+         IaTS5BSN7OzgHuJqLPQN2pdu0+xePaLprFm4d6/+TiqiVRVl1/uJPbZ6lI+XPImy5A8c
+         EkgbB7Xuni64tFTY5huQ1ZXswF/cZicGNmmEOfDfvWZfNsQ2cOhIKzwGyAHIKyzzj63o
+         uh2LYyF1XgQ11C0i3Un4mMxh+u5Bkp46ljMqAlzxMnug3NcL5rzApYkTR2KsyNQN3WLV
+         tCRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H8ecUYHrlgXWC+SSFS9i4n7p04mhH9a7a/Cpt3ffH28=;
+        b=cFItT4F9GgR1v88C/PFQeepdDma+zarVLuU/dBfi0t9o3UPPad5z8/OJU5gaDPG0tq
+         NbjZToSjwso7RA4J94SvGe1mh2jEfLFmpMTsIOMfOHaZH7b8TfVe7b4S5ibmaY2tRmIn
+         3AiaYV44aAXmD3W+mYW/SmoqOFJR3TI+5DR+LRgIFGnuwbEtDL+z94dMmrIC56vIYXQc
+         GgGQ6Nj6RJLKzYkopouAJcubQwpoTV/miT2tnzTurrKR8/SCWCW2ilxvOpNVzlo64/Yy
+         II/ZRnS56vKiTuwSN88yhccCkLtFbTw0dhkPnCx2sSO7CO7gkRbWm4R9VWlPargYROOJ
+         Dvfg==
+X-Gm-Message-State: APjAAAXunSHwuD6UNbmEcsW/NsJRdMLx7LSiWw871NDyje8YZZPCRYcD
+        U0AIE6vUNWh8I/ZXmoBHJB0=
+X-Google-Smtp-Source: APXvYqx7tXNNm+AI29xK9RC81iVgBoPBBGKztdz6XPDBAA1/IVCZuJ079W9XxpduM7rMKHViLKHPuw==
+X-Received: by 2002:aca:1903:: with SMTP id l3mr184063oii.16.1575308183838;
+        Mon, 02 Dec 2019 09:36:23 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 47sm11060995otu.37.2019.12.02.09.36.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Dec 2019 09:36:22 -0800 (PST)
+Date:   Mon, 2 Dec 2019 09:36:20 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kernel@vger.kernel.org,
+        Wambui Karuga <wambui.karugax@gmail.com>
+Subject: Re: [PATCH] staging/octeon: Mark Ethernet driver as BROKEN
+Message-ID: <20191202173620.GA29323@roeck-us.net>
+References: <20191202141836.9363-1-linux@roeck-us.net>
+ <20191202165231.GA728202@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20191128135853.8360-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202165231.GA728202@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/28/19 7:58 AM, YueHaibing wrote:
-> Fix build error:
+On Mon, Dec 02, 2019 at 05:52:31PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Dec 02, 2019 at 06:18:36AM -0800, Guenter Roeck wrote:
+> > The code doesn't compile due to incompatible pointer errors such as
+> > 
+> > drivers/staging/octeon/ethernet-tx.c:649:50: error:
+> > 	passing argument 1 of 'cvmx_wqe_get_grp' from incompatible pointer type
+> > 
+> > This is due to mixing, for example, cvmx_wqe_t with 'struct cvmx_wqe'.
+> > 
+> > Unfortunately, one can not just revert the primary offending commit, as doing so
+> > results in secondary errors. This is made worse by the fact that the "removed"
+> > typedefs still exist and are used widely outside the staging directory,
+> > making the entire set of "remove typedef" changes pointless and wrong.
 > 
-> sound/soc/intel/atom/sst/sst.c: In function intel_sst_interrupt_mrfld:
-> sound/soc/intel/atom/sst/sst.c:93:5: error: implicit declaration of function memcpy_fromio;
->   did you mean memcpy32_fromio? [-Werror=implicit-function-declaration]
->       memcpy_fromio(msg->mailbox_data,
->       ^~~~~~~~~~~~~
->       memcpy32_fromio
+> Ugh, sorry about that.
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-that looks legit, we had similar reports for SoundWire.
-
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-> ---
->   sound/soc/intel/atom/sst/sst.c | 1 +
->   1 file changed, 1 insertion(+)
+> > Reflect reality and mark the driver as BROKEN.
 > 
-> diff --git a/sound/soc/intel/atom/sst/sst.c b/sound/soc/intel/atom/sst/sst.c
-> index fbecbb7..68bcec5 100644
-> --- a/sound/soc/intel/atom/sst/sst.c
-> +++ b/sound/soc/intel/atom/sst/sst.c
-> @@ -14,6 +14,7 @@
->   #include <linux/module.h>
->   #include <linux/fs.h>
->   #include <linux/interrupt.h>
-> +#include <linux/io.h>
->   #include <linux/firmware.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/pm_qos.h>
+> Should I just delete this thing?  No one seems to be using it and there
+> is no move to get it out of staging at all.
 > 
+> Will anyone actually miss it?  It can always come back of someone
+> does...
+> 
+
+All it does is causing trouble and misguided attempts to clean it up.
+If anything, the whole thing goes into the wrong direction (declare a
+complete set of dummy functions just to be able to build the driver
+with COMPILE_TEST ? Seriously ?).
+
+I second the motion to drop it. This has been in staging for 10 years.
+Don't we have some kind of time limit for code in staging ? If not,
+should we ? If anyone really needs it, that person or group should
+really invest the time to get it out of staging for good.
+
+Guenter
