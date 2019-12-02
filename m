@@ -2,129 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B99A10E727
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 09:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB4D10E729
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 09:56:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfLBIz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 03:55:58 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:39280 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfLBIz5 (ORCPT
+        id S1727398AbfLBI43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 03:56:29 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40083 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfLBI42 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 03:55:57 -0500
-Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Ywvn2100Q5USYZQ01wvopW; Mon, 02 Dec 2019 09:55:54 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ibhUh-0002ZA-RE; Mon, 02 Dec 2019 09:55:47 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ibhUh-0005lK-Oo; Mon, 02 Dec 2019 09:55:47 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] iio: adc: max9611: Fix too short conversion time delay
-Date:   Mon,  2 Dec 2019 09:55:46 +0100
-Message-Id: <20191202085546.21655-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 2 Dec 2019 03:56:28 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s22so20056848ljs.7;
+        Mon, 02 Dec 2019 00:56:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WPYFSc6bUgUoA1SV431/QgB8DmyOsppkbdFxHRHEutk=;
+        b=K7eFWvyK+bAwwIp/M7Sf8c9iRwtRwAQHl6rt2/nDAeVlPIChNvR1qQ2c24dBvzgGus
+         +VK8rvx8SxzJsnReLvLRmUwGjPr6MeBwqxTwC9A7J9vlRtmKlNZSN18wB1EQrGUZ+jYw
+         UaMcmtsxxzLNwtNcAkA0FN/iymW5iPmhUotGx6YgWUgpLftYHH242KJd1osDgb2KMlSG
+         omA06O2lAIzJ9sMY5UZOfjAR5uC6skYBlroxcTv7Iad/VvYqw2PRLI3xxykTOubuUvsM
+         P7I3xgqKzuF0oq5L1icdv1esfH17Nu2KA7gCp3/D7xcyM10jfwKzBd3oTHC2BIosJOlx
+         +Tig==
+X-Gm-Message-State: APjAAAXHDZUcs8cTbol/YB8vykY0dBhpMUfsRY7dUwwIOTVvaCcQBY8f
+        /MnvnDGaV6PpoKX2zA8wZ9k=
+X-Google-Smtp-Source: APXvYqwcRugcBTfOjDPDPXkeFWaQEM0kotdWM7j0SIiphXnBunGVqGv1pQ+2Y0C3+eqgpWqj2uIkzQ==
+X-Received: by 2002:a2e:8e97:: with SMTP id z23mr1641215ljk.125.1575276984811;
+        Mon, 02 Dec 2019 00:56:24 -0800 (PST)
+Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
+        by smtp.gmail.com with ESMTPSA id l7sm3477674lfc.80.2019.12.02.00.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2019 00:56:24 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@xi.terra>)
+        id 1ibhVL-0003Jx-RD; Mon, 02 Dec 2019 09:56:27 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 0/3] staging: gigaset: fix crashes on probe
+Date:   Mon,  2 Dec 2019 09:56:07 +0100
+Message-Id: <20191202085610.12719-1-johan@kernel.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of commit b9ddd5091160793e ("iio: adc: max9611: Fix temperature
-reading in probe"), max9611 initialization sometimes fails on the
-Salvator-X(S) development board with:
+Syzbot has been reporting a GPF on probe in the gigaset ISDN driver,
+which have since been moved to staging.
 
-    max9611 4-007f: Invalid value received from ADC 0x8000: aborting
-    max9611: probe of 4-007f failed with error -5
+The first patch fixes that issue, and the next one fixes a second crash
+found during testing.
 
-The max9611 driver tests communications with the chip by reading the die
-temperature during the probe function, which returns an invalid value.
+The third patch addresses a benign warning in USB core which syzbot is
+bound to report once the crashes have been fixed.
 
-According to the datasheet, the typical ADC conversion time is 2 ms, but
-no minimum or maximum values are provided.  Maxim Technical Support
-confirmed this was tested with temperature Ta=25 degreeC, and promised
-to inform me if a maximum/minimum value is available (they didn't get
-back to me, so I assume it is not).
+Johan
 
-However, the driver assumes a 1 ms conversion time.  Usually the
-usleep_range() call returns after more than 1.8 ms, hence it succeeds.
-When it returns earlier, the data register may be read too early, and
-the previous measurement value will be returned.  After boot, this is
-the temperature POR (power-on reset) value, causing the failure above.
 
-Fix this by increasing the delay from 1000-2000 µs to 3000-3300 µs.
+Changes in v2
+ - use usb_endpoint_is_bulk_out() and friends in patch 3/3, and drop
+   patch 4/4 which only renamed an identifier.
 
-Note that this issue has always been present, but it was exposed by the
-aformentioned commit.
 
-Fixes: 69780a3bbc0b1e7e ("iio: adc: Add Maxim max9611 ADC driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-After this patch, probing of the two max9611 sensors succeeded during
-ca. 3000 boot cycles on Salvator-X(S) boards, equipped with various
-R-Car H3/M3-W/M3-N SoCs.
+Johan Hovold (3):
+  staging: gigaset: fix general protection fault on probe
+  staging: gigaset: fix illegal free on probe errors
+  staging: gigaset: add endpoint-type sanity check
 
-v2:
-  - Add Reviewed-by,
-  - Add feedback from Maxim Technical Support,
-  - Increase delay from 2000-2200 µs to 3000-3300 µs to play safe.
----
- drivers/iio/adc/max9611.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/staging/isdn/gigaset/usb-gigaset.c | 23 +++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-index da073d72f649f829..135793db4fad6b2c 100644
---- a/drivers/iio/adc/max9611.c
-+++ b/drivers/iio/adc/max9611.c
-@@ -89,6 +89,12 @@
- #define MAX9611_TEMP_SCALE_NUM		1000000
- #define MAX9611_TEMP_SCALE_DIV		2083
- 
-+/*
-+ * Conversion time is 2 ms (typically) at Ta=25 degreeC
-+ * No maximum value is known, so play it safe.
-+ */
-+#define MAX9611_CONV_TIME_US_RANGE	3000, 3300
-+
- struct max9611_dev {
- 	struct device *dev;
- 	struct i2c_client *i2c_client;
-@@ -238,9 +244,9 @@ static int max9611_read_single(struct max9611_dev *max9611,
- 
- 	/*
- 	 * need a delay here to make register configuration
--	 * stabilize. 1 msec at least, from empirical testing.
-+	 * stabilize.
- 	 */
--	usleep_range(1000, 2000);
-+	usleep_range(MAX9611_CONV_TIME_US_RANGE);
- 
- 	ret = i2c_smbus_read_word_swapped(max9611->i2c_client, reg_addr);
- 	if (ret < 0) {
-@@ -507,7 +513,7 @@ static int max9611_init(struct max9611_dev *max9611)
- 			MAX9611_REG_CTRL2, 0);
- 		return ret;
- 	}
--	usleep_range(1000, 2000);
-+	usleep_range(MAX9611_CONV_TIME_US_RANGE);
- 
- 	return 0;
- }
 -- 
-2.17.1
+2.24.0
 
