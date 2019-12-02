@@ -2,28 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46C2A10E8CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 11:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE87710E8C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 11:29:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfLBK3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 05:29:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57520 "EHLO mx1.suse.de"
+        id S1727497AbfLBK31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 05:29:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57536 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727378AbfLBK3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 05:29:22 -0500
+        id S1726330AbfLBK3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 05:29:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EEFA4B279;
-        Mon,  2 Dec 2019 10:29:19 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id E3A61B29F;
+        Mon,  2 Dec 2019 10:29:20 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     linux-realtek-soc@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v2 3/9] arm64: dts: realtek: rtd129x: Introduce r-bus
-Date:   Mon,  2 Dec 2019 11:29:04 +0100
-Message-Id: <20191202102910.26916-4-afaerber@suse.de>
+        James Tai <james.tai@realtek.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org
+Subject: [PATCH v2 4/9] arm64: dts: realtek: rtd129x: Carve out boot ROM from memory
+Date:   Mon,  2 Dec 2019 11:29:05 +0100
+Message-Id: <20191202102910.26916-5-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20191202102910.26916-1-afaerber@suse.de>
 References: <20191202102910.26916-1-afaerber@suse.de>
@@ -35,164 +37,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Model Realtek's register bus in DT.
+Update DS418j, MeLE V9, PROBOX2 AVA, Zidoo X9S and DS418 /memory nodes
+to exclude 0..0x1efff from reg entry and update unit address to match.
+Add this region to /soc ranges and for now just update the /memreserve/s.
 
+Suggested-by: Rob Herring <robh@kernel.org>
+Fixes: 72a7786c0a0d ("ARM64: dts: Add Realtek RTD1295 and Zidoo X9S")
+Fixes: d938a964a966 ("arm64: dts: realtek: Add ProBox2 Ava")
+Fixes: a9ce6f854581 ("arm64: dts: realtek: Add MeLE V9")
+Fixes: cf976f660ee8 ("arm64: dts: realtek: Add RTD1293 and Synology DS418j")
+Fixes: 5133636e41a2 ("arm64: dts: realtek: Add RTD1296 and Synology DS418")
+Cc: James Tai <james.tai@realtek.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- v1 -> v2:
- * Fixed r-bus size from 0x100000 to 0x200000 (James)
- * Renamed node from r-bus to bus (Rob)
+ v2: New
  
- arch/arm64/boot/dts/realtek/rtd129x.dtsi | 136 ++++++++++++++++---------------
- 1 file changed, 72 insertions(+), 64 deletions(-)
+ arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts      | 6 +++---
+ arch/arm64/boot/dts/realtek/rtd1295-mele-v9.dts     | 6 +++---
+ arch/arm64/boot/dts/realtek/rtd1295-probox2-ava.dts | 6 +++---
+ arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts   | 4 ++--
+ arch/arm64/boot/dts/realtek/rtd1296-ds418.dts       | 4 ++--
+ arch/arm64/boot/dts/realtek/rtd129x.dtsi            | 9 +++++----
+ 6 files changed, 18 insertions(+), 17 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts b/arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts
+index b2dd583146b4..b2e44c6c2d22 100644
+--- a/arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts
++++ b/arch/arm64/boot/dts/realtek/rtd1293-ds418j.dts
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+ /*
+- * Copyright (c) 2017 Andreas Färber
++ * Copyright (c) 2017-2019 Andreas Färber
+  */
+ 
+ /dts-v1/;
+@@ -11,9 +11,9 @@
+ 	compatible = "synology,ds418j", "realtek,rtd1293";
+ 	model = "Synology DiskStation DS418j";
+ 
+-	memory@0 {
++	memory@1f000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x40000000>;
++		reg = <0x1f000 0x3ffe1000>; /* boot ROM to 1 GiB */
+ 	};
+ 
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/realtek/rtd1295-mele-v9.dts b/arch/arm64/boot/dts/realtek/rtd1295-mele-v9.dts
+index bd584e99fff9..cf4a57c012a8 100644
+--- a/arch/arm64/boot/dts/realtek/rtd1295-mele-v9.dts
++++ b/arch/arm64/boot/dts/realtek/rtd1295-mele-v9.dts
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2017 Andreas Färber
++ * Copyright (c) 2017-2019 Andreas Färber
+  *
+  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+@@ -12,9 +12,9 @@
+ 	compatible = "mele,v9", "realtek,rtd1295";
+ 	model = "MeLE V9";
+ 
+-	memory@0 {
++	memory@1f000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x80000000>;
++		reg = <0x1f000 0x7ffe1000>; /* boot ROM to 2 GiB */
+ 	};
+ 
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/realtek/rtd1295-probox2-ava.dts b/arch/arm64/boot/dts/realtek/rtd1295-probox2-ava.dts
+index 8e2b0e75298a..14161c3f304d 100644
+--- a/arch/arm64/boot/dts/realtek/rtd1295-probox2-ava.dts
++++ b/arch/arm64/boot/dts/realtek/rtd1295-probox2-ava.dts
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2017 Andreas Färber
++ * Copyright (c) 2017-2019 Andreas Färber
+  *
+  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+@@ -12,9 +12,9 @@
+ 	compatible = "probox2,ava", "realtek,rtd1295";
+ 	model = "PROBOX2 AVA";
+ 
+-	memory@0 {
++	memory@1f000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x80000000>;
++		reg = <0x1f000 0x7ffe1000>; /* boot ROM to 2 GiB */
+ 	};
+ 
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts b/arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts
+index e98e508b9514..4beb37bb9522 100644
+--- a/arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts
++++ b/arch/arm64/boot/dts/realtek/rtd1295-zidoo-x9s.dts
+@@ -11,9 +11,9 @@
+ 	compatible = "zidoo,x9s", "realtek,rtd1295";
+ 	model = "Zidoo X9S";
+ 
+-	memory@0 {
++	memory@1f000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x80000000>;
++		reg = <0x1f000 0x7ffe1000>; /* boot ROM to 2 GiB */
+ 	};
+ 
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/realtek/rtd1296-ds418.dts b/arch/arm64/boot/dts/realtek/rtd1296-ds418.dts
+index 5a051a52bf88..cc706d13da8b 100644
+--- a/arch/arm64/boot/dts/realtek/rtd1296-ds418.dts
++++ b/arch/arm64/boot/dts/realtek/rtd1296-ds418.dts
+@@ -11,9 +11,9 @@
+ 	compatible = "synology,ds418", "realtek,rtd1296";
+ 	model = "Synology DiskStation DS418";
+ 
+-	memory@0 {
++	memory@1f000 {
+ 		device_type = "memory";
+-		reg = <0x0 0x80000000>;
++		reg = <0x1f000 0x7ffe1000>; /* boot ROM to 2 GiB */
+ 	};
+ 
+ 	aliases {
 diff --git a/arch/arm64/boot/dts/realtek/rtd129x.dtsi b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-index 8d80cca945bc..5e755dda7abb 100644
+index 5e755dda7abb..0de9e675be16 100644
 --- a/arch/arm64/boot/dts/realtek/rtd129x.dtsi
 +++ b/arch/arm64/boot/dts/realtek/rtd129x.dtsi
-@@ -55,70 +55,78 @@
- 		/* Exclude up to 2 GiB of RAM */
- 		ranges = <0x80000000 0x80000000 0x80000000>;
+@@ -5,8 +5,8 @@
+  * Copyright (c) 2016-2019 Andreas Färber
+  */
  
--		reset1: reset-controller@98000000 {
--			compatible = "snps,dw-low-reset";
--			reg = <0x98000000 0x4>;
--			#reset-cells = <1>;
--		};
--
--		reset2: reset-controller@98000004 {
--			compatible = "snps,dw-low-reset";
--			reg = <0x98000004 0x4>;
--			#reset-cells = <1>;
--		};
--
--		reset3: reset-controller@98000008 {
--			compatible = "snps,dw-low-reset";
--			reg = <0x98000008 0x4>;
--			#reset-cells = <1>;
--		};
--
--		reset4: reset-controller@98000050 {
--			compatible = "snps,dw-low-reset";
--			reg = <0x98000050 0x4>;
--			#reset-cells = <1>;
--		};
--
--		iso_reset: reset-controller@98007088 {
--			compatible = "snps,dw-low-reset";
--			reg = <0x98007088 0x4>;
--			#reset-cells = <1>;
--		};
--
--		wdt: watchdog@98007680 {
--			compatible = "realtek,rtd1295-watchdog";
--			reg = <0x98007680 0x100>;
--			clocks = <&osc27M>;
--		};
--
--		uart0: serial@98007800 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x98007800 0x400>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			clock-frequency = <27000000>;
--			resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
--			status = "disabled";
--		};
--
--		uart1: serial@9801b200 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x9801b200 0x100>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			clock-frequency = <432000000>;
--			resets = <&reset2 RTD1295_RSTN_UR1>;
--			status = "disabled";
--		};
--
--		uart2: serial@9801b400 {
--			compatible = "snps,dw-apb-uart";
--			reg = <0x9801b400 0x100>;
--			reg-shift = <2>;
--			reg-io-width = <4>;
--			clock-frequency = <432000000>;
--			resets = <&reset2 RTD1295_RSTN_UR2>;
--			status = "disabled";
-+		rbus: bus@98000000 {
-+			compatible = "simple-bus";
-+			reg = <0x98000000 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0x98000000 0x200000>;
-+
-+			reset1: reset-controller@0 {
-+				compatible = "snps,dw-low-reset";
-+				reg = <0x0 0x4>;
-+				#reset-cells = <1>;
-+			};
-+
-+			reset2: reset-controller@4 {
-+				compatible = "snps,dw-low-reset";
-+				reg = <0x4 0x4>;
-+				#reset-cells = <1>;
-+			};
-+
-+			reset3: reset-controller@8 {
-+				compatible = "snps,dw-low-reset";
-+				reg = <0x8 0x4>;
-+				#reset-cells = <1>;
-+			};
-+
-+			reset4: reset-controller@50 {
-+				compatible = "snps,dw-low-reset";
-+				reg = <0x50 0x4>;
-+				#reset-cells = <1>;
-+			};
-+
-+			iso_reset: reset-controller@7088 {
-+				compatible = "snps,dw-low-reset";
-+				reg = <0x7088 0x4>;
-+				#reset-cells = <1>;
-+			};
-+
-+			wdt: watchdog@7680 {
-+				compatible = "realtek,rtd1295-watchdog";
-+				reg = <0x7680 0x100>;
-+				clocks = <&osc27M>;
-+			};
-+
-+			uart0: serial@7800 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x7800 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				clock-frequency = <27000000>;
-+				resets = <&iso_reset RTD1295_ISO_RSTN_UR0>;
-+				status = "disabled";
-+			};
-+
-+			uart1: serial@1b200 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b200 0x100>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				clock-frequency = <432000000>;
-+				resets = <&reset2 RTD1295_RSTN_UR1>;
-+				status = "disabled";
-+			};
-+
-+			uart2: serial@1b400 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b400 0x100>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				clock-frequency = <432000000>;
-+				resets = <&reset2 RTD1295_RSTN_UR2>;
-+				status = "disabled";
-+			};
- 		};
+-/memreserve/	0x0000000000000000 0x0000000000030000;
+-/memreserve/	0x0000000000030000 0x00000000000d0000;
++/memreserve/	0x0000000000000000 0x000000000001f000;
++/memreserve/	0x000000000001f000 0x00000000000e1000;
+ /memreserve/	0x0000000001b00000 0x00000000004be000;
  
- 		gic: interrupt-controller@ff011000 {
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -52,8 +52,9 @@
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-		/* Exclude up to 2 GiB of RAM */
+-		ranges = <0x80000000 0x80000000 0x80000000>;
++		ranges = <0x00000000 0x00000000 0x0001f000>, /* boot ROM */
++			 /* Exclude up to 2 GiB of RAM */
++			 <0x80000000 0x80000000 0x80000000>;
+ 
+ 		rbus: bus@98000000 {
+ 			compatible = "simple-bus";
 -- 
 2.16.4
 
