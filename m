@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAD8910E9AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 12:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F17210E99F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 12:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfLBLmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 06:42:54 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:41294 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbfLBLmy (ORCPT
+        id S1727436AbfLBLkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 06:40:12 -0500
+Received: from castroalves.fundaj.gov.br ([200.17.132.4]:36328 "EHLO
+        castroalves.fundaj.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfLBLkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 06:42:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1575286974; x=1606822974;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=YbPUPuzF4OcGCGbbvQM8HIlqgtczstxhV1wKbI3uy50=;
-  b=t9/wIgv5ixkIQ1Uc1TFXTDkEC2kRE2748Xqv5YBbtN80EetpZmCTxJjQ
-   Qmcr6icoUoIDxuUNaTXzS8XlIu7Y+UhnWCGu2Jmfu+eWINhBvtm3dGfKo
-   m0XOskMYBuLFss7WygkyDoaedioLxZwRDSTw4vh4KisbA+hxF/rDK7kV9
-   o=;
-IronPort-SDR: AA0fXIKQ/10bIqFM5QBP620q61GOx0tbBX6qQmN17T9tElCs2czzrZ/UWkA+OQ5o8eeX53JJIB
- Mu/c4wnp0Drw==
-X-IronPort-AV: E=Sophos;i="5.69,268,1571702400"; 
-   d="scan'208";a="12391585"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2a-119b4f96.us-west-2.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 02 Dec 2019 11:42:47 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-119b4f96.us-west-2.amazon.com (Postfix) with ESMTPS id 090021A122F;
-        Mon,  2 Dec 2019 11:42:45 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 2 Dec 2019 11:42:45 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.217) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 2 Dec 2019 11:42:41 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     <shuah@kernel.org>, <keescook@chromium.org>
-CC:     <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sj38.park@gmail.com>, SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH 2/2] kselftest: Support old perl versions
-Date:   Mon, 2 Dec 2019 12:42:21 +0100
-Message-ID: <20191202114221.827-2-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191202114221.827-1-sjpark@amazon.com>
-References: <20191202114221.827-1-sjpark@amazon.com>
+        Mon, 2 Dec 2019 06:40:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by castroalves.fundaj.gov.br (Postfix) with ESMTP id 082F713D7DD;
+        Mon,  2 Dec 2019 08:44:25 -0300 (-03)
+Received: from castroalves.fundaj.gov.br ([127.0.0.1])
+        by localhost (castroalves.fundaj.gov.br [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 6EsM1Xa-IoC2; Mon,  2 Dec 2019 08:44:24 -0300 (-03)
+Received: from localhost (localhost [127.0.0.1])
+        by castroalves.fundaj.gov.br (Postfix) with ESMTP id D15D313DF9F;
+        Mon,  2 Dec 2019 08:44:23 -0300 (-03)
+DKIM-Filter: OpenDKIM Filter v2.10.3 castroalves.fundaj.gov.br D15D313DF9F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fundaj.gov.br;
+        s=25700E94-2A59-11E8-8390-8ACCB82071DA; t=1575287064;
+        bh=TneQeD6wx1qqQv8RtiFbQXbMaWNTvgSHNyqOlckWVQ0=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=fXzXd4eFcky+AbV0Qkun7bXqZXmZq0v15bVpRRC2f3oclcB/2yCPphHCo+4gwzlHF
+         cA76cwQodKVVPDc2ugVM14ZzAGBKuA8UPdZDZPczLqDDzOmxnAQaznXNMOcIR0VQ1F
+         te5JsAyYyRoGvVmLidB5zde/Gxa3CKZVi7JypgMXzzeoaWJBGPsrAymZpdoywaH/Oc
+         KR9WR7SIHXoB8eDremBlTWIbCaK7P5lxr5CDN2nzVSuTYeeGKezCrpKRq4MShV+CEL
+         vlNWum5FORdhqdDWaTrcBxpa1eZcmGkttjQoIVdxuYB8GhDWTuzNX26kN0qcaqqg5G
+         fpsYV4s1RkRbA==
+X-Virus-Scanned: amavisd-new at fundaj.gov.br
+Received: from castroalves.fundaj.gov.br ([127.0.0.1])
+        by localhost (castroalves.fundaj.gov.br [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id BRgTOfELSlzc; Mon,  2 Dec 2019 08:44:23 -0300 (-03)
+Received: from castroalves.fundaj.gov.br (castroalves.fundaj.gov.br [192.168.1.4])
+        by castroalves.fundaj.gov.br (Postfix) with ESMTP id 8E2FF13D7DD;
+        Mon,  2 Dec 2019 08:44:01 -0300 (-03)
+Date:   Mon, 2 Dec 2019 08:44:01 -0300 (BRT)
+From:   Administrador <jaime.ramos@fundaj.gov.br>
+Reply-To: mailsss@mail2world.com
+Message-ID: <832797945.1801554.1575287041503.JavaMail.zimbra@fundaj.gov.br>
+Subject: 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.161.217]
-X-ClientProxiedBy: EX13D16UWC003.ant.amazon.com (10.43.162.15) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [106.210.3.121]
+X-Mailer: Zimbra 8.8.8_GA_3025 (zclient/8.8.8_GA_3025)
+Thread-Index: 03lnG/0Mxo/C6HJkPEXJi8nA5rsYGQ==
+Thread-Topic: 
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+ATENCI=C3=93N;
 
-On an old perl such as v5.10.1, `kselftest/prefix.pl` gives below error
-message:
+Su buz=C3=B3n ha superado el l=C3=ADmite de almacenamiento, que es de 5 GB =
+definidos por el administrador, quien actualmente est=C3=A1 ejecutando en 1=
+0.9GB, no puede ser capaz de enviar o recibir correo nuevo hasta que vuelva=
+ a validar su buz=C3=B3n de correo electr=C3=B3nico. Para revalidar su buz=
+=C3=B3n de correo, env=C3=ADe la siguiente informaci=C3=B3n a continuaci=C3=
+=B3n:
 
-    Can't locate object method "autoflush" via package "IO::Handle" at kselftest/prefix.pl line 10.
+nombre:
+Nombre de usuario:
+contrase=C3=B1a:
+Confirmar contrase=C3=B1a:
+E-mail:
+tel=C3=A9fono:
 
-This commit fixes the error by explicitly specifying the use of the
-`IO::Handle` package.
+Si usted no puede revalidar su buz=C3=B3n, el buz=C3=B3n se deshabilitar=C3=
+=A1!
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- tools/testing/selftests/kselftest/prefix.pl | 1 +
- 1 file changed, 1 insertion(+)
+Disculpa las molestias.
+C=C3=B3digo de verificaci=C3=B3n:666690opp4r56 es: 006524
+Correo Soporte T=C3=A9cnico =C2=A9 2019
 
-diff --git a/tools/testing/selftests/kselftest/prefix.pl b/tools/testing/selftests/kselftest/prefix.pl
-index ec7e48118183..31f7c2a0a8bd 100755
---- a/tools/testing/selftests/kselftest/prefix.pl
-+++ b/tools/testing/selftests/kselftest/prefix.pl
-@@ -3,6 +3,7 @@
- # Prefix all lines with "# ", unbuffered. Command being piped in may need
- # to have unbuffering forced with "stdbuf -i0 -o0 -e0 $cmd".
- use strict;
-+use IO::Handle;
- 
- binmode STDIN;
- binmode STDOUT;
--- 
-2.17.1
-
+=C2=A1gracias
+Sistemas administrador
