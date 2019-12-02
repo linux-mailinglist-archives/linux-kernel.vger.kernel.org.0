@@ -2,165 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B8810F11B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DBD10F130
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 20:59:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbfLBTyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 14:54:11 -0500
-Received: from mga06.intel.com ([134.134.136.31]:62618 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728124AbfLBTxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:53:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 11:53:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
-   d="scan'208";a="218438166"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Dec 2019 11:53:51 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, "Yi Liu" <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v5 8/8] iommu/vt-d: Misc macro clean up for SVM
-Date:   Mon,  2 Dec 2019 11:58:29 -0800
-Message-Id: <1575316709-54903-9-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1575316709-54903-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1728114AbfLBT7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 14:59:40 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39763 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbfLBT7j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 14:59:39 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 77so661406oty.6;
+        Mon, 02 Dec 2019 11:59:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+7jfpF5EjP9+/bmFBnU6GGWa3nlxlWS/1/GfDBTRGdM=;
+        b=Dg5dpbmCUL5SrXdkfhx33mCy83248kmMvbj99odnFKFsBlsFYDdNzMlXZyrQDeA7G6
+         ocpTjuKAAziMDV5bFfB/eikLzpjThVey1b+S6CKbCiFNPFV+xA2BuTzk09FqQMzFpmVa
+         q0TjUMw989mbHbc/7o1geqNUfFGAjb70u+SFrqHuiWQTpUI0VD8TpyBuO/K/630UiuGu
+         +jPp3Wfxmj4gI6lucZVgHoFhdb10gQPl6yDkna996dipZWlCzcQzT32PlJXaG1u7UspA
+         JFzAA6o/OjylQ4RzoNquyMBbFmgMgGq2gSbNdTJL6SGxpNM0z2FwqQtYsHiqZ1ZMP318
+         0TsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+7jfpF5EjP9+/bmFBnU6GGWa3nlxlWS/1/GfDBTRGdM=;
+        b=QtbLqmufyfBAR2CzYc8uiKdoyufaQ/DOIjKojBVTx9pyVGiQDs8bfOfcW7c1x0DC7r
+         M9yI2qeK7fE1XYj7Ym0oUMNBr15RXYj2jtNgzepNfl8VgiNaONhbiSd/ig1qTGARYVQI
+         aZdyCal42Q1vYRPrrcbeya1X/c9py/B+EGzTJZp2dGsNEerLgZpVRw65ca5+8XZgss7l
+         WGdN9uWufuXrjjLY8hVWv1e39JHaJeZ38aGaBj9X0kTDubbQI+rQQG3WCm30Gt4z7+u6
+         4hrG7X7r2egrmJd/fPkDLppsxZqmAWbgI0WEo026nZ4AkaWr5afVjHtXg5UGWCaLWC4B
+         B55Q==
+X-Gm-Message-State: APjAAAXGuk5MSif6ibc69/MGdX4SYf6M7TK5NAG73PDxzd5QnFYtUTjc
+        4gJWBjdRb9tEj3bdwy4eaIS4VZ952nqdqArsoV2r5KMh
+X-Google-Smtp-Source: APXvYqwzj89Wpxotdt42O6ehJgO4oZi9x4+OkqAxj/3FyDXsWuTEi9VbUfbRPUnrjJStqrGlo10wYBfGOADza89y8vA=
+X-Received: by 2002:a05:6830:2116:: with SMTP id i22mr648274otc.0.1575316778439;
+ Mon, 02 Dec 2019 11:59:38 -0800 (PST)
+MIME-Version: 1.0
+References: <20190919151137.9960-1-TheSven73@gmail.com> <20190919190208.13648-1-TheSven73@gmail.com>
+ <20191202184349.GC734264@kroah.com>
+In-Reply-To: <20191202184349.GC734264@kroah.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 2 Dec 2019 14:59:26 -0500
+Message-ID: <CAGngYiVPbS9zNXPLGqWSs_=b6QbsX97u5bd=5GUMwtGedZ=fqQ@mail.gmail.com>
+Subject: Re: [PATCH 4.4 v1] power: supply: ltc2941-battery-gauge: fix use-after-free
+To:     Greg KH <greg@kroah.com>
+Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use combined macros for_each_svm_dev() to simplify SVM device iteration
-and error checking.
+On Mon, Dec 2, 2019 at 1:43 PM Greg KH <greg@kroah.com> wrote:
+>
+> What is the git commit id of this patch in Linus's tree?
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-svm.c | 79 +++++++++++++++++++++++------------------------
- 1 file changed, 39 insertions(+), 40 deletions(-)
+As far as I know, the mainline version of this patch is still queued up
+in Sebastian's 'fixes' branch, and has not made it out to Linus's
+tree yet.
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 4ed7426473c1..0fcbe631cd5f 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -226,6 +226,10 @@ static const struct mmu_notifier_ops intel_mmuops = {
- static DEFINE_MUTEX(pasid_mutex);
- static LIST_HEAD(global_svm_list);
- 
-+#define for_each_svm_dev(sdev, svm, d)			\
-+	list_for_each_entry((sdev), &(svm)->devs, list)	\
-+		if ((d) != (sdev)->dev) {} else
-+
- int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
- {
- 	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
-@@ -274,15 +278,14 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 				goto out;
- 			}
- 
--			list_for_each_entry(sdev, &svm->devs, list) {
--				if (dev == sdev->dev) {
--					if (sdev->ops != ops) {
--						ret = -EBUSY;
--						goto out;
--					}
--					sdev->users++;
--					goto success;
-+			/* Find the matching device in svm list */
-+			for_each_svm_dev(sdev, svm, dev) {
-+				if (sdev->ops != ops) {
-+					ret = -EBUSY;
-+					goto out;
- 				}
-+				sdev->users++;
-+				goto success;
- 			}
- 
- 			break;
-@@ -427,40 +430,36 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 		goto out;
- 	}
- 
--	list_for_each_entry(sdev, &svm->devs, list) {
--		if (dev == sdev->dev) {
--			ret = 0;
--			sdev->users--;
--			if (!sdev->users) {
--				list_del_rcu(&sdev->list);
--				/* Flush the PASID cache and IOTLB for this device.
--				 * Note that we do depend on the hardware *not* using
--				 * the PASID any more. Just as we depend on other
--				 * devices never using PASIDs that they have no right
--				 * to use. We have a *shared* PASID table, because it's
--				 * large and has to be physically contiguous. So it's
--				 * hard to be as defensive as we might like. */
--				intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
--				intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
--				kfree_rcu(sdev, rcu);
--
--				if (list_empty(&svm->devs)) {
--					ioasid_free(svm->pasid);
--					if (svm->mm)
--						mmu_notifier_unregister(&svm->notifier, svm->mm);
--
--					list_del(&svm->list);
--
--					/* We mandate that no page faults may be outstanding
--					 * for the PASID when intel_svm_unbind_mm() is called.
--					 * If that is not obeyed, subtle errors will happen.
--					 * Let's make them less subtle... */
--					memset(svm, 0x6b, sizeof(*svm));
--					kfree(svm);
--				}
-+	for_each_svm_dev(sdev, svm, dev) {
-+		ret = 0;
-+		sdev->users--;
-+		if (!sdev->users) {
-+			list_del_rcu(&sdev->list);
-+			/* Flush the PASID cache and IOTLB for this device.
-+			 * Note that we do depend on the hardware *not* using
-+			 * the PASID any more. Just as we depend on other
-+			 * devices never using PASIDs that they have no right
-+			 * to use. We have a *shared* PASID table, because it's
-+			 * large and has to be physically contiguous. So it's
-+			 * hard to be as defensive as we might like. */
-+			intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
-+			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
-+			kfree_rcu(sdev, rcu);
-+
-+			if (list_empty(&svm->devs)) {
-+				ioasid_free(svm->pasid);
-+				if (svm->mm)
-+					mmu_notifier_unregister(&svm->notifier, svm->mm);
-+				list_del(&svm->list);
-+				/* We mandate that no page faults may be outstanding
-+				 * for the PASID when intel_svm_unbind_mm() is called.
-+				 * If that is not obeyed, subtle errors will happen.
-+				 * Let's make them less subtle... */
-+				memset(svm, 0x6b, sizeof(*svm));
-+				kfree(svm);
- 			}
--			break;
- 		}
-+		break;
- 	}
-  out:
- 	mutex_unlock(&pasid_mutex);
--- 
-2.7.4
-
+https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git/log/?h=fixes
