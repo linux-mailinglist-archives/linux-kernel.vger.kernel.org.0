@@ -2,127 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F397B10E949
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 12:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8204F10E950
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 12:09:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbfLBLII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 06:08:08 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42566 "EHLO huawei.com"
+        id S1727477AbfLBLJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 06:09:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54660 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727354AbfLBLIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 06:08:07 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E5EFE93BAA5E17831125;
-        Mon,  2 Dec 2019 19:08:04 +0800 (CST)
-Received: from [127.0.0.1] (10.133.216.73) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 2 Dec 2019
- 19:07:59 +0800
-Subject: Re: [PATCH] irq/gic-its: gicv4: set VPENDING table as inner-shareable
-To:     Marc Zyngier <maz@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20191130073849.38378-1-guoheyi@huawei.com>
- <20191201180434.1dba3116@why>
-From:   Guoheyi <guoheyi@huawei.com>
-Message-ID: <aaa0f679-9fde-f877-e125-7e609c555e38@huawei.com>
-Date:   Mon, 2 Dec 2019 19:07:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726330AbfLBLJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 06:09:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22851B2F8;
+        Mon,  2 Dec 2019 11:09:11 +0000 (UTC)
+Subject: Re: [PATCH] bcache: add REQ_FUA to avoid data lost in writeback mode
+To:     kungf <wings.wyang@gmail.com>
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191202102409.3980-1-wings.wyang@gmail.com>
+From:   Coly Li <colyli@suse.de>
+Organization: SUSE Labs
+Message-ID: <785fe04f-f841-3083-66db-53fab7bc0577@suse.de>
+Date:   Mon, 2 Dec 2019 19:08:59 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191201180434.1dba3116@why>
-Content-Type: text/plain; charset="gbk"; format=flowed
+In-Reply-To: <20191202102409.3980-1-wings.wyang@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.133.216.73]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/12/2 6:24 ä¸‹åˆ, kungf wrote:
+> data may lost when in the follow scene of writeback mode:
+> 1. client write data1 to bcache
+> 2. client fdatasync
+> 3. bcache flush cache set and backing device
+> if now data1 was not writed back to backing, it was only guaranteed safe in cache.
+> 4.then cache writeback data1 to backing with only REQ_OP_WRITE
+> So data1 was not guaranteed in non-volatile storage,  it may lost if  power interruptionÂ 
+> 
 
-ÔÚ 2019/12/2 2:04, Marc Zyngier Ð´µÀ:
-> On Sat, 30 Nov 2019 15:38:49 +0800
-> Heyi Guo <guoheyi@huawei.com> wrote:
->
->> There is no special reason to set virtual LPI pending table as
->> non-shareable. If we choose to hard code the shareability without
->> probing, inner-shareable will be a better choice, for all the other
->> ITS/GICR tables prefer to be inner-shareable.
-> One of the issues is that we have strictly no idea what the caches are
-> Inner Shareable with (I've been asking for such clarification for years
-> without getting anywhere). You can have as many disconnected inner
-> shareable domains as you want!
+Hi,
 
-Hisilicon HIP07 and HIP08 are compliant with ARM SBSA and have only one 
-inner shareable domain in the whole system.
+Do you encounter such problem in real work load ? With bcache journal, I
+don't see the possibility of data lost with your description.
 
-What will happen if a system has multiple inner shareable domains? Will 
-Linux still work on such system? Can we declare that Linux only supports 
-one single inner shareable domain?
+Correct me if I am wrong.
 
->
-> I suspect that in the grand scheme of things, the redistributors
-> ought to be in the same inner shareable domain, and that with a bit of
-> luck, the CPUs are there as well. Still, that's a massive guess.
->
->> What's more, on Hisilicon hip08 it will trigger some kind of bus
->> warning when mixing use of different shareabilities.
-> Do you have more information about what the bus is complaining about?
-> Is that because the CPUs have these pages mapped as inner shareable?
+Coly Li
 
-Actually HIP08 L3 Cache will complain on any non-shareable cache entry, 
-for the data coherence cannot be guarenteed for such configuration. This 
-also implies VPENDING table will be allocated and snooped in L3 cache.
-
->
-> I'll give it a go on D05 (HIP07) to find out what changes there.
-
-Thanks,
-
-HG
-
->
-> Thanks,
->
-> 	M.
->
->> Signed-off-by: Heyi Guo <guoheyi@huawei.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Jason Cooper <jason@lakedaemon.net>
->> Cc: Marc Zyngier <maz@kernel.org>
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c   | 2 +-
->>   include/linux/irqchip/arm-gic-v3.h | 3 +++
->>   2 files changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> index 787e8eec9a7f..d31e863bc9ef 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -2831,7 +2831,7 @@ static void its_vpe_schedule(struct its_vpe *vpe)
->>   	val  = virt_to_phys(page_address(vpe->vpt_page)) &
->>   		GENMASK_ULL(51, 16);
->>   	val |= GICR_VPENDBASER_RaWaWb;
->> -	val |= GICR_VPENDBASER_NonShareable;
->> +	val |= GICR_VPENDBASER_InnerShareable;
->>   	/*
->>   	 * There is no good way of finding out if the pending table is
->>   	 * empty as we can race against the doorbell interrupt very
->> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
->> index 5cc10cf7cb3e..a184f875e451 100644
->> --- a/include/linux/irqchip/arm-gic-v3.h
->> +++ b/include/linux/irqchip/arm-gic-v3.h
->> @@ -289,6 +289,9 @@
->>   #define GICR_VPENDBASER_NonShareable					\
->>   	GIC_BASER_SHAREABILITY(GICR_VPENDBASER, NonShareable)
->>   
->> +#define GICR_VPENDBASER_InnerShareable					\
->> +	GIC_BASER_SHAREABILITY(GICR_VPENDBASER, InnerShareable)
->> +
->>   #define GICR_VPENDBASER_nCnB	GIC_BASER_CACHEABILITY(GICR_VPENDBASER, INNER, nCnB)
->>   #define GICR_VPENDBASER_nC 	GIC_BASER_CACHEABILITY(GICR_VPENDBASER, INNER, nC)
->>   #define GICR_VPENDBASER_RaWt	GIC_BASER_CACHEABILITY(GICR_VPENDBASER, INNER, RaWt)
->
->
+> Signed-off-by: kungf <wings.wyang@gmail.com>
+> ---
+>  drivers/md/bcache/writeback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+> index 4a40f9eadeaf..e5cecb60569e 100644
+> --- a/drivers/md/bcache/writeback.c
+> +++ b/drivers/md/bcache/writeback.c
+> @@ -357,7 +357,7 @@ static void write_dirty(struct closure *cl)
+>  	 */
+>  	if (KEY_DIRTY(&w->key)) {
+>  		dirty_init(w);
+> -		bio_set_op_attrs(&io->bio, REQ_OP_WRITE, 0);
+> +		bio_set_op_attrs(&io->bio, REQ_OP_WRITE | REQ_FUA, 0);
+>  		io->bio.bi_iter.bi_sector = KEY_START(&w->key);
+>  		bio_set_dev(&io->bio, io->dc->bdev);
+>  		io->bio.bi_end_io	= dirty_endio;
+> 
 
