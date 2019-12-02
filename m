@@ -2,128 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB11F10F2DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 23:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5038E10F2BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 23:17:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbfLBW2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 17:28:31 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38968 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbfLBW2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 17:28:31 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y11so1244937wrt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 14:28:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BMjiRy3QJEUM7qi9iVtt3EpRL4urnDNurtn48A3AP18=;
-        b=M2STPfwqrNHD9OcY0KGbYeWlNtCjqaz0glKPsVV2z8Rdh22fPf3UgtQSxE2Y4L97X/
-         LTGM6llw3dSR29MPdKwcygrfakK9W82mmZgd19q+dBV6Nkm/EPU4gXaILzTxPZvLPXyz
-         48OvcgS/LYVWFwdxM05VJfxISnJknSx79+rCgh+a4oCnCPm66DmltP3MYtHb6LPxdUVR
-         BN9kEXTtBUdTRN2MhjZ7FUsOqIibXcqzB/c4tqKBVch00IILr/pVeJyCwckMy2HN5fZX
-         FSNjAtsILVfEWtsZ6zeE7NhRVHvShnKrSuv7Q/bAmz2cA5lyPN13UFe3i737os8vHYFI
-         Vfeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BMjiRy3QJEUM7qi9iVtt3EpRL4urnDNurtn48A3AP18=;
-        b=KtDWH8rNglm/wGxlRlN/kDmtuAy6Yu9TojSsPsozJyKFp4QzIepdRcf4SZCvMFxNv4
-         AdWgSnNVH2S63KXSPiBP0r5YXjybiP3gH7WLiXAjNP+RajIQFWkn+WBXa6XkFnazAurx
-         832YDs7Jy+wrp1y4biDbEkh6n/oB2xVUJUq8G0QUsdR4j3kEnSSwXmlpauhN6IZjfCdc
-         YKO1mSH7i/l7tFdons/9SWA9LX3I+msCc1HdqPYI7+TqHMzGVhYFxMfH36F28dqv08yJ
-         QeIRtoOPCcAnpPrQSALy/rJ8dSQkqWam5sHfo+TLs+b2odiAeJLT1MVzecLqHcvu7Ija
-         Ynwg==
-X-Gm-Message-State: APjAAAVp7Lfj8w2j00zQu5xj8SXGA8DiM8icngFb8w4uQDsbcSXorQr4
-        e5Z6m3hEP5fEETdXBfCqaF4=
-X-Google-Smtp-Source: APXvYqxVufMWAPntjkOfUuktfrfgT33XpBapZ9/uwzUSD06bk8TCn9ojcnCzzSD5MJcghbNho4Ksbg==
-X-Received: by 2002:adf:8150:: with SMTP id 74mr1558824wrm.114.1575325709070;
-        Mon, 02 Dec 2019 14:28:29 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id o21sm835335wmc.17.2019.12.02.14.28.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Dec 2019 14:28:28 -0800 (PST)
-Date:   Mon, 2 Dec 2019 22:28:27 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        n-horiguchi@ah.jp.nec.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm/memory-failure.c: not necessary to recalculate
- hpage
-Message-ID: <20191202222827.isaelnqmuyn7zrns@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20191118082003.26240-1-richardw.yang@linux.intel.com>
- <20191118082003.26240-2-richardw.yang@linux.intel.com>
- <fdba31c8-d0c0-83a8-62d1-c04c1e894218@redhat.com>
+        id S1726179AbfLBWRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 17:17:10 -0500
+Received: from mga11.intel.com ([192.55.52.93]:59081 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbfLBWRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 17:17:10 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 14:17:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,270,1571727600"; 
+   d="scan'208";a="410596616"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga005.fm.intel.com with ESMTP; 02 Dec 2019 14:17:07 -0800
+Date:   Mon, 2 Dec 2019 14:29:02 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v2 2/4] xen-pcifront: Align address of flags to size of
+ unsigned long
+Message-ID: <20191202222902.GB220960@romley-ivt3.sc.intel.com>
+References: <1574710984-208305-1-git-send-email-fenghua.yu@intel.com>
+ <1574710984-208305-3-git-send-email-fenghua.yu@intel.com>
+ <e236e8fe-3a81-e17a-2286-228bfde9919a@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <fdba31c8-d0c0-83a8-62d1-c04c1e894218@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e236e8fe-3a81-e17a-2286-228bfde9919a@suse.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 04:07:38PM +0100, David Hildenbrand wrote:
->On 18.11.19 09:20, Wei Yang wrote:
->> hpage is not changed.
->> 
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->> ---
->>   mm/memory-failure.c | 1 -
->>   1 file changed, 1 deletion(-)
->> 
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index 392ac277b17d..9784f4339ae7 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -1319,7 +1319,6 @@ int memory_failure(unsigned long pfn, int flags)
->>   		}
->>   		unlock_page(p);
->>   		VM_BUG_ON_PAGE(!page_count(p), p);
->> -		hpage = compound_head(p);
->>   	}
->>   	/*
->> 
->
->I am *absolutely* no transparent huge page expert (sorry :) ), but won't the
->split_huge_page(p) eventually split the compound page, such that
->compound_head(p) will return something else after that call?
->
+On Tue, Nov 26, 2019 at 11:02:13AM +0100, Jürgen Groß wrote:
+> On 25.11.19 20:43, Fenghua Yu wrote:
+> >The address of "flags" is passed to atomic bitops which require the 
+> >address is aligned to size of unsigned long.
+> >
+> >Signed-off-by: Fenghua Yu <fenghua.yu@intel.com> ---
+> >  include/xen/interface/io/pciif.h | 7 +++++-- 1 file changed, 5 
+> >  insertions(+), 2 deletions(-)
+> >
+> >diff --git a/include/xen/interface/io/pciif.h 
+> >b/include/xen/interface/io/pciif.h index d9922ae36eb5..639d5fb484a3 
+> >100644 --- a/include/xen/interface/io/pciif.h +++ 
+> >b/include/xen/interface/io/pciif.h @@ -103,8 +103,11 @@ struct 
+> >xen_pcie_aer_op {
+> >  	uint32_t devfn;
+> >  };
+> >  struct xen_pci_sharedinfo { - /* flags - XEN_PCIF_* */ - uint32_t 
+> >flags; + /* flags - XEN_PCIF_*. Force alignment for atomic bit 
+> >operations. */ + union { + uint32_t flags; + unsigned long 
+> >flags_alignment; + };
+> >  	struct xen_pci_op op; struct xen_pcie_aer_op aer_op;
+> >  };
+> >
+> 
+> NAK.
+> 
+> This is an interface definition for communication between Xen dom0 and 
+> guests via shared memory. It can't be changed.
+> 
+> BTW: you should Cc: the maintainers for the files you are modifying.
+> 
+> 
+> Juergen
 
-Hi, David
+After spending more time on the patch, actually I find this patch is not 
+needed because there is no split lock issue on the "flags" field:
 
-Took sometime to look into the code and re-think about it. Found maybe we can
-simplify this in another way.
+The bit offsets in all atomic bitops on the "flags" field are always 
+constant values. On x86, an atomic bitop is optimized to use a locked byte
+instruciton which only operates the byte containing the bit. So the
+byte won't across cache line boundaries and there won't be split lock
+issue in the atomic bitops
 
-First, code touches here means split_huge_page() succeeds and "p" is now a PTE
-page. So compound_head(p) == p.
+I will remove this patch in the next version of the patch set.
 
-Then let's look at who will use hpage in the following function. There are two
-uses in current upstream:
+Thanks.
 
-    * page_flags calculation
-    * hwpoison_user_mappings()
+-Fenghua
 
-The first one would be removed in next patch since PageHuge is handled at the
-beginning.
-
-And in the second place, comment says if split succeeds, hpage points to page
-"p".
-
-After all, we don't need to re-calculate hpage after split, and just replace
-hpage in hwpoison_user_mappings() with p is enough.
-
->-- 
->
->Thanks,
->
->David / dhildenb
-
--- 
-Wei Yang
-Help you, Help me
