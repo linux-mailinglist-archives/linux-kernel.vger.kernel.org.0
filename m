@@ -2,83 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E03C10E800
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 10:54:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D6510E7F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Dec 2019 10:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbfLBJym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 04:54:42 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:47164 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfLBJym (ORCPT
+        id S1727298AbfLBJup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 04:50:45 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:38709 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfLBJuo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 04:54:42 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xB29oALQ029104, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com ([172.21.6.12])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xB29oALQ029104
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 2 Dec 2019 17:50:10 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTITCAS11.realtek.com.tw (172.21.6.12) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Mon, 2 Dec 2019 17:49:57 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Mon, 2 Dec 2019 17:49:57 +0800
-Received: from RTEXMB03.realtek.com.tw ([fe80::35ac:d9d0:1393:a902]) by
- RTEXMB03.realtek.com.tw ([fe80::35ac:d9d0:1393:a902%8]) with mapi id
- 15.01.1779.005; Mon, 2 Dec 2019 17:49:57 +0800
-From:   James Tai <james.tai@realtek.com>
-To:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        "linux-realtek-soc@lists.infradead.org" 
-        <linux-realtek-soc@lists.infradead.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/7] arm64: dts: realtek: rtd129x: Use reserved-memory for RPC regions
-Thread-Topic: [PATCH 2/7] arm64: dts: realtek: rtd129x: Use reserved-memory
- for RPC regions
-Thread-Index: AQHVmDzfamWec3ddWkiVVX1ELT676KemGsuAgACXBLA=
-Date:   Mon, 2 Dec 2019 09:49:56 +0000
-Message-ID: <a511b94a991946a1b3f26dcdc485d4fa@realtek.com>
-References: <20191111030434.29977-1-afaerber@suse.de>
- <20191111030434.29977-3-afaerber@suse.de>
- <1f25f2fc-5d31-1d74-b730-78ad7861ffce@suse.de>
-In-Reply-To: <1f25f2fc-5d31-1d74-b730-78ad7861ffce@suse.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.190.187]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 2 Dec 2019 04:50:44 -0500
+Received: by mail-vs1-f68.google.com with SMTP id y195so10050426vsy.5;
+        Mon, 02 Dec 2019 01:50:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ipg1WLEffdYnfTvQd1IRhgK8FSlTc8OcoNS/WRcxcW0=;
+        b=WLqwgQHEsnBfqsvS0rIxr5QM7OYHkYfM8LrhsB/tsD15MrIlhFGlC20BtP6VXNRCg2
+         +xDFCxzkcTzb765X57bQyZi9ZnDRYTXvpfo0Bcz9bOnwq0NLo9RYRW179t9GP4bxrjLz
+         hMxOJkA9Vj2y9ofEct4i+lW4GyT3Hlgm7pUKeiqmud4cHY7sOLc41bBUPisZ1IaP8JyC
+         8Aqvqg4kfjok17Ov7r3V+cLZsKIjpWFRKtPFQ/lNJ7o2NDg+hhbFr4WcLwFZUF7GVYfs
+         QPZOigvEaqvwRoF4jMZKZouMnW/+DzWK6kdMml8cMovOy1fxJ4hEsXtRabToVBlA2Rbq
+         u+6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ipg1WLEffdYnfTvQd1IRhgK8FSlTc8OcoNS/WRcxcW0=;
+        b=sJiG5Grih9fv+PaKT2zEqaZRw/TEl2tA98sfDGXJsEpb6eNrVfS63O4R5JpnpiIvf9
+         4e+dsQN3ifOhXJ6kaUU4n3peAiiZuHyLJa3UNVwD1XFjMTYPdf2wL+7z6iJ7pNdsM8MP
+         6tMVkjx44GaZLJlyMhFrCfE7uqC8dseuEVGZB4nqr8LRrSgXQVCmLaZsJRVcmhvXT0td
+         hfR1qJ6BrDlJAcI+TUgdxhziDBSpdoVaOri0KAIQPbcdaqrFg/XE6bMBXWxqLS3J5kfk
+         MNFxJTK0eWwwzSWFCfqvBWVeuXLr20jhoWkvLqdqSajTfebSWvr500QMC/urhd1pMxGy
+         Ggmg==
+X-Gm-Message-State: APjAAAXoJXiQ5Om85v0vFcfMsYYzVEcHR2Oe1gj1joe1LNvJSjKA/Lds
+        CEqpt0FkTrmDqRlZ6ST5ddR57Yfm7GrNId+gFwA=
+X-Google-Smtp-Source: APXvYqyiVZmMk0LsdmPaDP3UNQX15ikmg1n2j98bbuACw1hpO77IA0X0pLqtYDaZTw+dWTqrH32pe3kfaJ495a89q7I=
+X-Received: by 2002:a05:6102:5c7:: with SMTP id v7mr37986140vsf.85.1575280243731;
+ Mon, 02 Dec 2019 01:50:43 -0800 (PST)
 MIME-Version: 1.0
+References: <20191130180301.5c39d8a4@lwn.net> <CAHk-=wj8tNhu76yxShwOfwVKk=qWznSFkAKyQfu6adcV8JzJkQ@mail.gmail.com>
+ <20191130184512.23c6faaa@lwn.net> <xmqqblss1rjp.fsf@gitster-ct.c.googlers.com>
+ <CAHk-=wj9P8ukXOuTUnpkPNwc8B683Z0Za=-WxpLygMbjEtNxgA@mail.gmail.com> <xmqq7e3g12xo.fsf@gitster-ct.c.googlers.com>
+In-Reply-To: <xmqq7e3g12xo.fsf@gitster-ct.c.googlers.com>
+From:   Amit Choudhary <amitchoudhary2305@gmail.com>
+Date:   Mon, 2 Dec 2019 15:20:08 +0530
+Message-ID: <CAFzckaEQo6CQM9LukikgbtUKZX=eajG+OFNhnDJ_EY7M1V4XKA@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: networking: device drivers: Remove stray asterisks
+To:     Junio C Hamano <gitster@pobox.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Git List Mailing <git@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5kcmVhcywNCg0KPiA+ICAvbWVtcmVzZXJ2ZS8JMHgwMDAwMDAwMDAwMDAwMDAwIDB4MDAw
-MDAwMDAwMDAzMDAwMDsNCj4gPiAtL21lbXJlc2VydmUvCTB4MDAwMDAwMDAwMDAxZjAwMCAweDAw
-MDAwMDAwMDAwMDEwMDA7DQo+ID4gIC9tZW1yZXNlcnZlLwkweDAwMDAwMDAwMDAwMzAwMDAgMHgw
-MDAwMDAwMDAwMGQwMDAwOw0KPiA+ICAvbWVtcmVzZXJ2ZS8JMHgwMDAwMDAwMDAxYjAwMDAwIDB4
-MDAwMDAwMDAwMDRiZTAwMDsNCj4gPiAtL21lbXJlc2VydmUvCTB4MDAwMDAwMDAwMWZmZTAwMCAw
-eDAwMDAwMDAwMDAwMDQwMDA7DQo+ID4NCg0KPiA+ICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW50
-ZXJydXB0LWNvbnRyb2xsZXIvYXJtLWdpYy5oPg0KPiA+ICAjaW5jbHVkZSA8ZHQtYmluZGluZ3Mv
-cmVzZXQvcmVhbHRlayxydGQxMjk1Lmg+DQo+ID4gQEAgLTE5LDYgKzE3LDI1IEBADQo+ID4gIAkj
-YWRkcmVzcy1jZWxscyA9IDwxPjsNCj4gPiAgCSNzaXplLWNlbGxzID0gPDE+Ow0KPiA+DQo+ID4g
-KwlyZXNlcnZlZC1tZW1vcnkgew0KPiA+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiA+ICsJ
-CSNzaXplLWNlbGxzID0gPDE+Ow0KPiA+ICsJCXJhbmdlczsNCj4gPiArDQo+ID4gKwkJcnBjX2Nv
-bW06IHJwY0AxZjAwMCB7DQo+ID4gKwkJCXJlZyA9IDwweDFmMDAwIDB4MTAwMD47DQo+ID4gKwkJ
-fTsNCj4gPiArDQo+ID4gKwkJcnBjX3JpbmdidWY6IHJwY0AxZmZlMDAwIHsNCj4gPiArCQkJcmVn
-ID0gPDB4MWZmZTAwMCAweDQwMDA+Ow0KPiA+ICsJCX07DQo+IA0KPiBIYXZlIHlvdSByZXZpZXdl
-ZCB0aGlzIHBhdGNoIHRvIGJlIGNvcnJlY3Q/IEkuZS4sIGFyZSB0aGUgYWJvdmUgdHdvIHJlZ2lv
-bnMNCj4gcmVzZXJ2ZWQgUkFNIChhc3N1bXB0aW9uIGFib3ZlKSwgb3IgaXMgdGhpcyByYXRoZXIg
-TU1JTyBzaGFkb3dpbmcgUkFNPw0KPiAodGhlbiB3ZSB3b3VsZCBuZWVkIHRvIHVwZGF0ZSB0aGUg
-L21lbW9yeSByZWcgYW5kIC9zb2MgcmFuZ2VzIHByb3BlcnRpZXMpDQo+IA0KPiBUaGF0IGFsc28g
-YWZmZWN0cyBSVEQxNjE5LCB3aGljaCBjdXJyZW50bHkgaGFzIG5laXRoZXIuDQo+IA0KVGhlIFJQ
-QyBjb21tb24gYnVmZmVyIGFuZCBSUEMgcmluZyBidWZmZXIgYWRkcmVzcyBpcyBjb3JyZWN0Lg0K
-DQoNClJlZ2FyZHMsDQpKYW1lcw0KDQoNCg==
+Is it possible that git complains about everything that has ^M in it
+and rejects it (that is without trying to fix it, etc.)
+
+Regards,
+Amit
+
+On Sun, Dec 1, 2019 at 8:58 PM Junio C Hamano <gitster@pobox.com> wrote:
+>
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>
+> > On Sat, Nov 30, 2019 at 10:35 PM Junio C Hamano <gitster@pobox.com> wrote:
+> >>
+> >> OK, so it appears that the tool is working as documented.
+> >
+> > Well, yes and no.
+> >
+> > I think it's a mistake that --no-keep-cr (which is the default) only
+> > acts on the outer envelope.
+> >
+> > Now, *originally* the outer envelope was all that existed so it makes
+> > sense in a historical context of "CR removal happens when splitting
+> > emails in an mbox". And that's the behavior we have.
+>
+> Hmph, first of all, the one I was referring to as "documented" was
+> about --ignore-whitespace, and not --no-keep-cr.
+>
+> And I am not as sure as you seem to be about "--no-keep-cr" either.
+>
+> What was the reason why "--no-keep-cr" was invented and made
+> default?  Wasn't it because RFC says that each line of plaintext
+> transfer of an e-mail is terminated with CRLF?  It would mean that,
+> whether the payload originally had CRLF terminated or LF terminated,
+> we would not be able to tell---the CR may have been there from the
+> beginning, or it could have been added in transit.  And because we
+> (the projects Git was originally designed to serve well) wanted our
+> patches with LF terminated lines most of the time, it made sense to
+> strip CR from CRLF (i.e. assuming that it would be rare that the
+> sender wants to transmit CRLF terminated lines).
+>
+> If the contents were base64 protected from getting munged during
+> transit, we _know_ CRLF in the payload after we decode MIME is what
+> the sender _meant_ to give us, no?  Which leads me to say ...
+>
+> >
+> > But then git learnt to do MIME decoding and extracting things from
+> > base64 etc, and the CR removal wasn't updated to that change.
+>
+> ... I do not think it was a wrong decision (well, I do not think we
+> made the conscious decision to do so, though) not to do that update.
+>
+> I dunno.
+>
