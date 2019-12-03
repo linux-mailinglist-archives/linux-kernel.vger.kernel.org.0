@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8995110FF58
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9172510FF59
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:57:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbfLCN4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:56:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34902 "EHLO mail.kernel.org"
+        id S1727073AbfLCN46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:56:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfLCN4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:56:51 -0500
+        id S1726986AbfLCN4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 08:56:54 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5018F206DF;
-        Tue,  3 Dec 2019 13:56:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FA9820803;
+        Tue,  3 Dec 2019 13:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575381410;
-        bh=MQsWj7qNwLokbOm9Aub8S2S/DyKPqKOXDHxvQCqmaY8=;
+        s=default; t=1575381413;
+        bh=yGD2Tpv8iJsB4nustdK3rvZpMb0g2lBoRl5gKQBqJsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oreWFIBRlUggiWy6WbMtFRSqXWuJQ/RAmVfJI8zL6BcRFtxmFXSWiEV/w5WWC9Puf
-         anABBrtBSpR9GAi7vPsQag6qOLzXv3iUw5yn21gdK4k009Xyug1SunZGE1HUbw10/V
-         JOZBBpMTsMOORzpIrS9uttxPwwB8V6ov9mhpNVo8=
+        b=yLG9ldi9EAMFvNY6iiqdKpoQN2bZ/PJeSRjSNymCIZtNu/ymQnWhCHuvuzrdvZdKx
+         ZbXV8l5vHe/VVOzvLwkGMRn70y0m5MUanpfwtWa5r436SMLWBtShkmKg4n8qwoij2J
+         9k0EmhyztuGK4BvznsJenbGqngObk2PPLxsIbqsw=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -30,10 +30,11 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 12/23] perf machine: Fill map_symbol->maps in append_inlines() to fix segfault
-Date:   Tue,  3 Dec 2019 10:55:55 -0300
-Message-Id: <20191203135606.24902-13-acme@kernel.org>
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Borislav Petkov <bp@suse.de>, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH 13/23] perf bench: Update the copies of x86's mem{cpy,set}_64.S
+Date:   Tue,  3 Dec 2019 10:55:56 -0300
+Message-Id: <20191203135606.24902-14-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191203135606.24902-1-acme@kernel.org>
 References: <20191203135606.24902-1-acme@kernel.org>
@@ -46,43 +47,360 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-I forgot to fill in the map_symbol->maps field in append_inlines() which
-then makes code down the line segfault when trying to deref it.
+And update linux/linkage.h, which requires in turn that we make these
+files switch from ENTRY()/ENDPROC() to SYM_FUNC_START()/SYM_FUNC_END():
 
-It doesn't make any sense to have an addr_location with its 'map' member
-not NULL while its 'maps' is NULL, after all al->maps is where al->map
-is in.
+  tools/perf/arch/arm64/tests/regs_load.S
+  tools/perf/arch/arm/tests/regs_load.S
+  tools/perf/arch/powerpc/tests/regs_load.S
+  tools/perf/arch/x86/tests/regs_load.S
 
-It is done that way so that we don't have to have in each 'struct map' a
-pointer to the 'struct maps' it is in, as we had in the past when we
-would have 'map->mg', before 'struct maps' was combined with 'struct
-map_groups', because there was always a one-to-one relationship for
-these structs.
+We also need to switch SYM_FUNC_START_LOCAL() to SYM_FUNC_START() for
+the functions used directly by 'perf bench', and update
+tools/perf/check_headers.sh to ignore those changes when checking if the
+kernel original files drifted from the copies we carry.
 
-This fixes a segfault when processing DWARF callgraphs in 'perf report'.
+This is to get the changes from:
 
-Reported-by: Jiri Olsa <jolsa@kernel.org>
+  6dcc5627f6ae ("x86/asm: Change all ENTRY+ENDPROC to SYM_FUNC_*")
+  ef1e03152cb0 ("x86/asm: Make some functions local")
+  e9b9d020c487 ("x86/asm: Annotate aliases")
+
+And address these tools/perf build warnings:
+
+  Warning: Kernel ABI header at 'tools/arch/x86/lib/memcpy_64.S' differs from latest version at 'arch/x86/lib/memcpy_64.S'
+  diff -u tools/arch/x86/lib/memcpy_64.S arch/x86/lib/memcpy_64.S
+  Warning: Kernel ABI header at 'tools/arch/x86/lib/memset_64.S' differs from latest version at 'arch/x86/lib/memset_64.S'
+  diff -u tools/arch/x86/lib/memset_64.S arch/x86/lib/memset_64.S
+
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.cz>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 08f6680e627e ("perf tools: Add a 'struct map_groups' pointer to 'struct map_symbol'")
-Link: http://lore.kernel.org/lkml/20191129160631.GD26963@kernel.org
+Link: https://lkml.kernel.org/n/tip-tay3l8x8k11p7y3qcpqh9qh5@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/arch/x86/lib/memcpy_64.S          | 20 +++---
+ tools/arch/x86/lib/memset_64.S          | 16 ++---
+ tools/perf/arch/arm/tests/regs_load.S   |  4 +-
+ tools/perf/arch/arm64/tests/regs_load.S |  4 +-
+ tools/perf/arch/x86/tests/regs_load.S   |  8 +--
+ tools/perf/check-headers.sh             |  4 +-
+ tools/perf/util/include/linux/linkage.h | 89 ++++++++++++++++++++++++-
+ 7 files changed, 114 insertions(+), 31 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 416d174d223c..c8c5410315e8 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2446,6 +2446,7 @@ static int append_inlines(struct callchain_cursor *cursor, struct map_symbol *ms
+diff --git a/tools/arch/x86/lib/memcpy_64.S b/tools/arch/x86/lib/memcpy_64.S
+index 92748660ba51..df767afc690f 100644
+--- a/tools/arch/x86/lib/memcpy_64.S
++++ b/tools/arch/x86/lib/memcpy_64.S
+@@ -28,8 +28,8 @@
+  * Output:
+  * rax original destination
+  */
+-ENTRY(__memcpy)
+-ENTRY(memcpy)
++SYM_FUNC_START_ALIAS(__memcpy)
++SYM_FUNC_START_LOCAL(memcpy)
+ 	ALTERNATIVE_2 "jmp memcpy_orig", "", X86_FEATURE_REP_GOOD, \
+ 		      "jmp memcpy_erms", X86_FEATURE_ERMS
  
- 	list_for_each_entry(ilist, &inline_node->val, list) {
- 		struct map_symbol ilist_ms = {
-+			.maps = ms->maps,
- 			.map = map,
- 			.sym = ilist->symbol,
- 		};
+@@ -41,8 +41,8 @@ ENTRY(memcpy)
+ 	movl %edx, %ecx
+ 	rep movsb
+ 	ret
+-ENDPROC(memcpy)
+-ENDPROC(__memcpy)
++SYM_FUNC_END(memcpy)
++SYM_FUNC_END_ALIAS(__memcpy)
+ EXPORT_SYMBOL(memcpy)
+ EXPORT_SYMBOL(__memcpy)
+ 
+@@ -50,14 +50,14 @@ EXPORT_SYMBOL(__memcpy)
+  * memcpy_erms() - enhanced fast string memcpy. This is faster and
+  * simpler than memcpy. Use memcpy_erms when possible.
+  */
+-ENTRY(memcpy_erms)
++SYM_FUNC_START(memcpy_erms)
+ 	movq %rdi, %rax
+ 	movq %rdx, %rcx
+ 	rep movsb
+ 	ret
+-ENDPROC(memcpy_erms)
++SYM_FUNC_END(memcpy_erms)
+ 
+-ENTRY(memcpy_orig)
++SYM_FUNC_START(memcpy_orig)
+ 	movq %rdi, %rax
+ 
+ 	cmpq $0x20, %rdx
+@@ -182,7 +182,7 @@ ENTRY(memcpy_orig)
+ 
+ .Lend:
+ 	retq
+-ENDPROC(memcpy_orig)
++SYM_FUNC_END(memcpy_orig)
+ 
+ #ifndef CONFIG_UML
+ 
+@@ -193,7 +193,7 @@ MCSAFE_TEST_CTL
+  * Note that we only catch machine checks when reading the source addresses.
+  * Writes to target are posted and don't generate machine checks.
+  */
+-ENTRY(__memcpy_mcsafe)
++SYM_FUNC_START(__memcpy_mcsafe)
+ 	cmpl $8, %edx
+ 	/* Less than 8 bytes? Go to byte copy loop */
+ 	jb .L_no_whole_words
+@@ -260,7 +260,7 @@ ENTRY(__memcpy_mcsafe)
+ 	xorl %eax, %eax
+ .L_done:
+ 	ret
+-ENDPROC(__memcpy_mcsafe)
++SYM_FUNC_END(__memcpy_mcsafe)
+ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
+ 
+ 	.section .fixup, "ax"
+diff --git a/tools/arch/x86/lib/memset_64.S b/tools/arch/x86/lib/memset_64.S
+index f8f3dc0a6690..fd5d25a474b7 100644
+--- a/tools/arch/x86/lib/memset_64.S
++++ b/tools/arch/x86/lib/memset_64.S
+@@ -18,8 +18,8 @@
+  *
+  * rax   original destination
+  */
+-ENTRY(memset)
+-ENTRY(__memset)
++SYM_FUNC_START_ALIAS(memset)
++SYM_FUNC_START(__memset)
+ 	/*
+ 	 * Some CPUs support enhanced REP MOVSB/STOSB feature. It is recommended
+ 	 * to use it when possible. If not available, use fast string instructions.
+@@ -42,8 +42,8 @@ ENTRY(__memset)
+ 	rep stosb
+ 	movq %r9,%rax
+ 	ret
+-ENDPROC(memset)
+-ENDPROC(__memset)
++SYM_FUNC_END(__memset)
++SYM_FUNC_END_ALIAS(memset)
+ 
+ /*
+  * ISO C memset - set a memory block to a byte value. This function uses
+@@ -56,16 +56,16 @@ ENDPROC(__memset)
+  *
+  * rax   original destination
+  */
+-ENTRY(memset_erms)
++SYM_FUNC_START(memset_erms)
+ 	movq %rdi,%r9
+ 	movb %sil,%al
+ 	movq %rdx,%rcx
+ 	rep stosb
+ 	movq %r9,%rax
+ 	ret
+-ENDPROC(memset_erms)
++SYM_FUNC_END(memset_erms)
+ 
+-ENTRY(memset_orig)
++SYM_FUNC_START(memset_orig)
+ 	movq %rdi,%r10
+ 
+ 	/* expand byte value  */
+@@ -136,4 +136,4 @@ ENTRY(memset_orig)
+ 	subq %r8,%rdx
+ 	jmp .Lafter_bad_alignment
+ .Lfinal:
+-ENDPROC(memset_orig)
++SYM_FUNC_END(memset_orig)
+diff --git a/tools/perf/arch/arm/tests/regs_load.S b/tools/perf/arch/arm/tests/regs_load.S
+index 6e2495cc4517..4284307d7822 100644
+--- a/tools/perf/arch/arm/tests/regs_load.S
++++ b/tools/perf/arch/arm/tests/regs_load.S
+@@ -37,7 +37,7 @@
+ 
+ .text
+ .type perf_regs_load,%function
+-ENTRY(perf_regs_load)
++SYM_FUNC_START(perf_regs_load)
+ 	str r0, [r0, #R0]
+ 	str r1, [r0, #R1]
+ 	str r2, [r0, #R2]
+@@ -56,4 +56,4 @@ ENTRY(perf_regs_load)
+ 	str lr, [r0, #PC]	// store pc as lr in order to skip the call
+ 	                        //  to this function
+ 	mov pc, lr
+-ENDPROC(perf_regs_load)
++SYM_FUNC_END(perf_regs_load)
+diff --git a/tools/perf/arch/arm64/tests/regs_load.S b/tools/perf/arch/arm64/tests/regs_load.S
+index 07042511dca9..d49de40b6818 100644
+--- a/tools/perf/arch/arm64/tests/regs_load.S
++++ b/tools/perf/arch/arm64/tests/regs_load.S
+@@ -7,7 +7,7 @@
+ #define LDR_REG(r)	ldr x##r, [x0, 8 * r]
+ #define SP	(8 * 31)
+ #define PC	(8 * 32)
+-ENTRY(perf_regs_load)
++SYM_FUNC_START(perf_regs_load)
+ 	STR_REG(0)
+ 	STR_REG(1)
+ 	STR_REG(2)
+@@ -44,4 +44,4 @@ ENTRY(perf_regs_load)
+ 	str x30, [x0, #PC]
+ 	LDR_REG(1)
+ 	ret
+-ENDPROC(perf_regs_load)
++SYM_FUNC_END(perf_regs_load)
+diff --git a/tools/perf/arch/x86/tests/regs_load.S b/tools/perf/arch/x86/tests/regs_load.S
+index bbe5a0d16e51..80f14f52e3f6 100644
+--- a/tools/perf/arch/x86/tests/regs_load.S
++++ b/tools/perf/arch/x86/tests/regs_load.S
+@@ -28,7 +28,7 @@
+ 
+ .text
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
+-ENTRY(perf_regs_load)
++SYM_FUNC_START(perf_regs_load)
+ 	movq %rax, AX(%rdi)
+ 	movq %rbx, BX(%rdi)
+ 	movq %rcx, CX(%rdi)
+@@ -60,9 +60,9 @@ ENTRY(perf_regs_load)
+ 	movq %r14, R14(%rdi)
+ 	movq %r15, R15(%rdi)
+ 	ret
+-ENDPROC(perf_regs_load)
++SYM_FUNC_END(perf_regs_load)
+ #else
+-ENTRY(perf_regs_load)
++SYM_FUNC_START(perf_regs_load)
+ 	push %edi
+ 	movl 8(%esp), %edi
+ 	movl %eax, AX(%edi)
+@@ -88,7 +88,7 @@ ENTRY(perf_regs_load)
+ 	movl $0, FS(%edi)
+ 	movl $0, GS(%edi)
+ 	ret
+-ENDPROC(perf_regs_load)
++SYM_FUNC_END(perf_regs_load)
+ #endif
+ 
+ /*
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index a1dc16724352..68039a96c1dc 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -110,8 +110,8 @@ for i in $FILES; do
+ done
+ 
+ # diff with extra ignore lines
+-check arch/x86/lib/memcpy_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"'
+-check arch/x86/lib/memset_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"'
++check arch/x86/lib/memcpy_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>" -I"^SYM_FUNC_START\(_LOCAL\)*(memcpy_\(erms\|orig\))"'
++check arch/x86/lib/memset_64.S        '-I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>" -I"^SYM_FUNC_START\(_LOCAL\)*(memset_\(erms\|orig\))"'
+ check include/uapi/asm-generic/mman.h '-I "^#include <\(uapi/\)*asm-generic/mman-common\(-tools\)*.h>"'
+ check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
+ check include/linux/ctype.h	      '-I "isdigit("'
+diff --git a/tools/perf/util/include/linux/linkage.h b/tools/perf/util/include/linux/linkage.h
+index f01d48a8d707..b8a5159361b4 100644
+--- a/tools/perf/util/include/linux/linkage.h
++++ b/tools/perf/util/include/linux/linkage.h
+@@ -5,10 +5,93 @@
+ 
+ /* linkage.h ... for including arch/x86/lib/memcpy_64.S */
+ 
+-#define ENTRY(name)				\
+-	.globl name;				\
++/* Some toolchains use other characters (e.g. '`') to mark new line in macro */
++#ifndef ASM_NL
++#define ASM_NL		 ;
++#endif
++
++#ifndef __ALIGN
++#define __ALIGN		.align 4,0x90
++#define __ALIGN_STR	".align 4,0x90"
++#endif
++
++/* SYM_T_FUNC -- type used by assembler to mark functions */
++#ifndef SYM_T_FUNC
++#define SYM_T_FUNC				STT_FUNC
++#endif
++
++/* SYM_A_* -- align the symbol? */
++#define SYM_A_ALIGN				ALIGN
++
++/* SYM_L_* -- linkage of symbols */
++#define SYM_L_GLOBAL(name)			.globl name
++#define SYM_L_LOCAL(name)			/* nothing */
++
++#define ALIGN __ALIGN
++
++/* === generic annotations === */
++
++/* SYM_ENTRY -- use only if you have to for non-paired symbols */
++#ifndef SYM_ENTRY
++#define SYM_ENTRY(name, linkage, align...)		\
++	linkage(name) ASM_NL				\
++	align ASM_NL					\
+ 	name:
++#endif
++
++/* SYM_START -- use only if you have to */
++#ifndef SYM_START
++#define SYM_START(name, linkage, align...)		\
++	SYM_ENTRY(name, linkage, align)
++#endif
++
++/* SYM_END -- use only if you have to */
++#ifndef SYM_END
++#define SYM_END(name, sym_type)				\
++	.type name sym_type ASM_NL			\
++	.size name, .-name
++#endif
++
++/*
++ * SYM_FUNC_START_ALIAS -- use where there are two global names for one
++ * function
++ */
++#ifndef SYM_FUNC_START_ALIAS
++#define SYM_FUNC_START_ALIAS(name)			\
++	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
++#endif
++
++/* SYM_FUNC_START -- use for global functions */
++#ifndef SYM_FUNC_START
++/*
++ * The same as SYM_FUNC_START_ALIAS, but we will need to distinguish these two
++ * later.
++ */
++#define SYM_FUNC_START(name)				\
++	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
++#endif
++
++/* SYM_FUNC_START_LOCAL -- use for local functions */
++#ifndef SYM_FUNC_START_LOCAL
++/* the same as SYM_FUNC_START_LOCAL_ALIAS, see comment near SYM_FUNC_START */
++#define SYM_FUNC_START_LOCAL(name)			\
++	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN)
++#endif
++
++/* SYM_FUNC_END_ALIAS -- the end of LOCAL_ALIASed or ALIASed function */
++#ifndef SYM_FUNC_END_ALIAS
++#define SYM_FUNC_END_ALIAS(name)			\
++	SYM_END(name, SYM_T_FUNC)
++#endif
+ 
+-#define ENDPROC(name)
++/*
++ * SYM_FUNC_END -- the end of SYM_FUNC_START_LOCAL, SYM_FUNC_START,
++ * SYM_FUNC_START_WEAK, ...
++ */
++#ifndef SYM_FUNC_END
++/* the same as SYM_FUNC_END_ALIAS, see comment near SYM_FUNC_START */
++#define SYM_FUNC_END(name)				\
++	SYM_END(name, SYM_T_FUNC)
++#endif
+ 
+ #endif	/* PERF_LINUX_LINKAGE_H_ */
 -- 
 2.21.0
 
