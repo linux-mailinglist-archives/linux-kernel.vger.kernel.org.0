@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B5E111DCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BB6111BE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730341AbfLCW5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:57:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        id S1727941AbfLCWiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:38:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730530AbfLCW5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:57:15 -0500
+        id S1727924AbfLCWiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:38:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3368A20656;
-        Tue,  3 Dec 2019 22:57:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E01FC20684;
+        Tue,  3 Dec 2019 22:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413834;
-        bh=D0BI7uvsR2toHHS39zyx3t22aAkKT99mkx4mwPedCbo=;
+        s=default; t=1575412690;
+        bh=V7L122m0JCzG3CnlKLZqRrIIAH7E7YKziM47LY8R0HQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S7+1Vn+//yvD2n8heoUgVkU0Wg77mxxpH9yzs2EKz+eUMQxd/G+MmiRlfoLDb2Dv7
-         gDVEXt9TkM7368KzceLt8ku7lGVFmp6ACBDFjUtfpjVeFEB3vR4J1X+NzqmXo86ozf
-         X985RQypeITcwV2eyHLZMPwg2LIBjFBoJlPlNwgU=
+        b=aNAns0xYdf8sVoAAR+lufx6NlZ9PHsgmvVNO2UY/GZvw7yYQBpuoJfgBlOM6WZvIA
+         yo9Tk/GfG85zfYyW9bTgolwPfVmgv7YEKuEH58g7fERR/u2hB7tc/FGpUfPjpfzqpe
+         gd7yxQj4Hh3UpEqEqlFxzfJvuhGmQldlTitE+sok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.19 280/321] media: atmel: atmel-isc: fix asd memory allocation
-Date:   Tue,  3 Dec 2019 23:35:46 +0100
-Message-Id: <20191203223441.692023594@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 27/46] openvswitch: drop unneeded BUG_ON() in ovs_flow_cmd_build_info()
+Date:   Tue,  3 Dec 2019 23:35:47 +0100
+Message-Id: <20191203212742.616954608@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 1e4e25c4959c10728fbfcc6a286f9503d32dfe02 upstream.
+[ Upstream commit 8ffeb03fbba3b599690b361467bfd2373e8c450f ]
 
-The subsystem will free the asd memory on notifier cleanup, if the asd is
-added to the notifier.
-However the memory is freed using kfree.
-Thus, we cannot allocate the asd using devm_*
-This can lead to crashes and problems.
-To test this issue, just return an error at probe, but cleanup the
-notifier beforehand.
+All the callers of ovs_flow_cmd_build_info() already deal with
+error return code correctly, so we can handle the error condition
+in a more gracefull way. Still dump a warning to preserve
+debuggability.
 
-Fixes: 106267444f ("[media] atmel-isc: add the Image Sensor Controller code")
+v1 -> v2:
+ - clarify the commit message
+ - clean the skb and report the error (DaveM)
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: ccb1352e76cf ("net: Add Open vSwitch kernel components.")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/platform/atmel/atmel-isc.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/openvswitch/datapath.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/media/platform/atmel/atmel-isc.c
-+++ b/drivers/media/platform/atmel/atmel-isc.c
-@@ -2062,8 +2062,11 @@ static int isc_parse_dt(struct device *d
- 			break;
- 		}
- 
--		subdev_entity->asd = devm_kzalloc(dev,
--				     sizeof(*subdev_entity->asd), GFP_KERNEL);
-+		/* asd will be freed by the subsystem once it's added to the
-+		 * notifier list
-+		 */
-+		subdev_entity->asd = kzalloc(sizeof(*subdev_entity->asd),
-+					     GFP_KERNEL);
- 		if (!subdev_entity->asd) {
- 			of_node_put(rem);
- 			ret = -ENOMEM;
-@@ -2209,6 +2212,7 @@ static int atmel_isc_probe(struct platfo
- 						   &subdev_entity->notifier);
- 		if (ret) {
- 			dev_err(dev, "fail to register async notifier\n");
-+			kfree(subdev_entity->asd);
- 			goto cleanup_subdev;
- 		}
+--- a/net/openvswitch/datapath.c
++++ b/net/openvswitch/datapath.c
+@@ -886,7 +886,10 @@ static struct sk_buff *ovs_flow_cmd_buil
+ 	retval = ovs_flow_cmd_fill_info(flow, dp_ifindex, skb,
+ 					info->snd_portid, info->snd_seq, 0,
+ 					cmd, ufid_flags);
+-	BUG_ON(retval < 0);
++	if (WARN_ON_ONCE(retval < 0)) {
++		kfree_skb(skb);
++		skb = ERR_PTR(retval);
++	}
+ 	return skb;
+ }
  
 
 
