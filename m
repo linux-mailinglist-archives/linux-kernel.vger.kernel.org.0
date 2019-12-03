@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC03111E4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 165D4111FC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbfLCXAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:00:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53142 "EHLO mail.kernel.org"
+        id S1727991AbfLCWi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfLCW52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:57:28 -0500
+        id S1727981AbfLCWiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:38:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F04520656;
-        Tue,  3 Dec 2019 22:57:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51F8F20684;
+        Tue,  3 Dec 2019 22:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413847;
-        bh=aC1dVxvdq8PyZZwSvJVJJu1e/NRFcdnQdCPGZ0CjNE8=;
+        s=default; t=1575412701;
+        bh=DX3MlaJR24u347KXFwaZUu2joPNmxXCZOAJEq0+M8AE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n7bb7fkUezNH+p0z1jNoI0hHXT9YUqpYhP61pT4RPdM2EeX3SWgxETd6HeNtxCwM4
-         kB+75c4DOnmTXhbGJparQLbM7BPkZoUxZgj66LyT3SN0F6t5iU4U5LgkDcLc/piEmF
-         5Yq+iaXicQ3UqQicLnbwuY18MGJ4y53ZlHgEMqmQ=
+        b=P6bGnEOuP2x+0v0K5rmJxxiU+VTgn5DF5dt9IGGKhn2BvcbsReI2hHAGu95uegbwp
+         7xvy9rAcqxUroT40vJmvIrLQk6myaGx2thlPxG0EayIApMGSKhGbQPrGEv0L+7bcsa
+         eLv3svgtL56aXhx3qVDYVm5R/TRp/VeD5f/27HoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qi Jun Ding <qding@redhat.com>,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org,
+        syzbot+df0d4ec12332661dd1f9@syzkaller.appspotmail.com,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 284/321] openvswitch: fix flow command message size
+Subject: [PATCH 5.4 30/46] net/tls: free the record on encryption error
 Date:   Tue,  3 Dec 2019 23:35:50 +0100
-Message-Id: <20191203223441.910383949@linuxfoundation.org>
+Message-Id: <20191203212746.426711233@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 4e81c0b3fa93d07653e2415fa71656b080a112fd ]
+[ Upstream commit d10523d0b3d78153ee58d19853ced26c9004c8c4 ]
 
-When user-space sets the OVS_UFID_F_OMIT_* flags, and the relevant
-flow has no UFID, we can exceed the computed size, as
-ovs_nla_put_identifier() will always dump an OVS_FLOW_ATTR_KEY
-attribute.
-Take the above in account when computing the flow command message
-size.
+When tls_do_encryption() fails the SG lists are left with the
+SG_END and SG_CHAIN marks in place. One could hope that once
+encryption fails we will never see the record again, but that
+is in fact not true. Commit d3b18ad31f93 ("tls: add bpf support
+to sk_msg handling") added special handling to ENOMEM and ENOSPC
+errors which mean we may see the same record re-submitted.
 
-Fixes: 74ed7ab9264c ("openvswitch: Add support for unique flow IDs.")
-Reported-by: Qi Jun Ding <qding@redhat.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+As suggested by John free the record, the BPF code is already
+doing just that.
+
+Reported-by: syzbot+df0d4ec12332661dd1f9@syzkaller.appspotmail.com
+Fixes: d3b18ad31f93 ("tls: add bpf support to sk_msg handling")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/datapath.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/tls/tls_sw.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -697,9 +697,13 @@ static size_t ovs_flow_cmd_msg_size(cons
- {
- 	size_t len = NLMSG_ALIGN(sizeof(struct ovs_header));
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -766,8 +766,14 @@ static int bpf_exec_tx_verdict(struct sk
  
--	/* OVS_FLOW_ATTR_UFID */
-+	/* OVS_FLOW_ATTR_UFID, or unmasked flow key as fallback
-+	 * see ovs_nla_put_identifier()
-+	 */
- 	if (sfid && ovs_identifier_is_ufid(sfid))
- 		len += nla_total_size(sfid->ufid_len);
-+	else
-+		len += nla_total_size(ovs_key_attr_size());
- 
- 	/* OVS_FLOW_ATTR_KEY */
- 	if (!sfid || should_fill_key(sfid, ufid_flags))
+ 	policy = !(flags & MSG_SENDPAGE_NOPOLICY);
+ 	psock = sk_psock_get(sk);
+-	if (!psock || !policy)
+-		return tls_push_record(sk, flags, record_type);
++	if (!psock || !policy) {
++		err = tls_push_record(sk, flags, record_type);
++		if (err) {
++			*copied -= sk_msg_free(sk, msg);
++			tls_free_open_rec(sk);
++		}
++		return err;
++	}
+ more_data:
+ 	enospc = sk_msg_full(msg);
+ 	if (psock->eval == __SK_NONE) {
 
 
