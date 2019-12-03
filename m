@@ -2,48 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24BC2111C00
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1900A111C5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbfLCWjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49180 "EHLO mail.kernel.org"
+        id S1726834AbfLCWnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727836AbfLCWjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:16 -0500
+        id S1727923AbfLCWnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6122E2073C;
-        Tue,  3 Dec 2019 22:39:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1458F207DD;
+        Tue,  3 Dec 2019 22:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412755;
-        bh=3YuYJgHzPeqfnu9iRUvtg9XL7Q+BuK2tpsB3QoGyXMI=;
+        s=default; t=1575412994;
+        bh=qY0P0E0BvbecrqZR3RJQkrXgiBEdtUhhcKjdkgFs8uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wZqETis+E9fdXXzsH8ZXCtUa7ed1qhaVwXeyOMohVmLZs+VjzgKiVOlIP7L2sAHcD
-         loZ3PAK/xBQ50vrVCBHPKO/apv1FG/x7P4lNoFssGNVfhM7hxiOyV/AP0elWRBEZdU
-         xRKpiiMK1awVzu/rwvjzTjOAyIwh0+RpY71d3IZI=
+        b=WGdYd/ne/+435wbFd9CGgSyHLHlr1pJAJrOSry9OYQ7mAKXlIJNWuC0VwwfuYM/pE
+         y9TD0pLp/xyhppS2IxVqATSMlcdYoxHK49ag++h5NA/6nHuV8tavJUlzh/sxq5DiCq
+         UcZyEKWf3xw9jMNL+N5MFZosL+B2sl1RTP2Bze7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@intel.com>,
-        Austin Clements <austin@google.com>,
-        Barret Rhoden <brho@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        David Chase <drchase@golang.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, ian@airs.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Bleecher Snyder <josharian@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
-Subject: [PATCH 5.4 15/46] x86/fpu: Dont cache access to fpu_fpregs_owner_ctx
-Date:   Tue,  3 Dec 2019 23:35:35 +0100
-Message-Id: <20191203212732.978208719@linuxfoundation.org>
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 096/135] i40e: Fix for ethtool -m issue on X722 NIC
+Date:   Tue,  3 Dec 2019 23:35:36 +0100
+Message-Id: <20191203213037.811098163@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,110 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-commit 59c4bd853abcea95eccc167a7d7fd5f1a5f47b98 upstream.
+[ Upstream commit 4c9da6f2b8a029052c75bd4a61ae229135831177 ]
 
-The state/owner of the FPU is saved to fpu_fpregs_owner_ctx by pointing
-to the context that is currently loaded. It never changed during the
-lifetime of a task - it remained stable/constant.
+This patch contains fix for a problem with command:
+'ethtool -m <dev>'
+which breaks functionality of:
+'ethtool <dev>'
+when called on X722 NIC
 
-After deferred FPU registers loading until return to userland was
-implemented, the content of fpu_fpregs_owner_ctx may change during
-preemption and must not be cached.
+Disallowed update of link phy_types on X722 NIC
+Currently correct value cannot be obtained from FW
+Previously wrong value returned by FW was used and was
+a root cause for incorrect output of 'ethtool <dev>' command
 
-This went unnoticed for some time and was now noticed, in particular
-since gcc 9 is caching that load in copy_fpstate_to_sigframe() and
-reusing it in the retry loop:
-
-  copy_fpstate_to_sigframe()
-    load fpu_fpregs_owner_ctx and save on stack
-    fpregs_lock()
-    copy_fpregs_to_sigframe() /* failed */
-    fpregs_unlock()
-         *** PREEMPTION, another uses FPU, changes fpu_fpregs_owner_ctx ***
-
-    fault_in_pages_writeable() /* succeed, retry */
-
-    fpregs_lock()
-	__fpregs_load_activate()
-	  fpregs_state_valid() /* uses fpu_fpregs_owner_ctx from stack */
-    copy_fpregs_to_sigframe() /* succeeds, random FPU content */
-
-This is a comparison of the assembly produced by gcc 9, without vs with this
-patch:
-
-| # arch/x86/kernel/fpu/signal.c:173:      if (!access_ok(buf, size))
-|        cmpq    %rdx, %rax      # tmp183, _4
-|        jb      .L190   #,
-|-# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
-|-#APP
-|-# 512 "arch/x86/include/asm/fpu/internal.h" 1
-|-       movq %gs:fpu_fpregs_owner_ctx,%rax      #, pfo_ret__
-|-# 0 "" 2
-|-#NO_APP
-|-       movq    %rax, -88(%rbp) # pfo_ret__, %sfp
-…
-|-# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
-|-       movq    -88(%rbp), %rcx # %sfp, pfo_ret__
-|-       cmpq    %rcx, -64(%rbp) # pfo_ret__, %sfp
-|+# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
-|+#APP
-|+# 512 "arch/x86/include/asm/fpu/internal.h" 1
-|+       movq %gs:fpu_fpregs_owner_ctx(%rip),%rax        # fpu_fpregs_owner_ctx, pfo_ret__
-|+# 0 "" 2
-|+# arch/x86/include/asm/fpu/internal.h:512:       return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
-|+#NO_APP
-|+       cmpq    %rax, -64(%rbp) # pfo_ret__, %sfp
-
-Use this_cpu_read() instead this_cpu_read_stable() to avoid caching of
-fpu_fpregs_owner_ctx during preemption points.
-
-The Fixes: tag points to the commit where deferred FPU loading was
-added. Since this commit, the compiler is no longer allowed to move the
-load of fpu_fpregs_owner_ctx somewhere else / outside of the locked
-section. A task preemption will change its value and stale content will
-be observed.
-
- [ bp: Massage. ]
-
-Debugged-by: Austin Clements <austin@google.com>
-Debugged-by: David Chase <drchase@golang.org>
-Debugged-by: Ian Lance Taylor <ian@airs.com>
-Fixes: 5f409e20b7945 ("x86/fpu: Defer FPU state load until return to userspace")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Rik van Riel <riel@surriel.com>
-Tested-by: Borislav Petkov <bp@suse.de>
-Cc: Aubrey Li <aubrey.li@intel.com>
-Cc: Austin Clements <austin@google.com>
-Cc: Barret Rhoden <brho@google.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: David Chase <drchase@golang.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: ian@airs.com
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Josh Bleecher Snyder <josharian@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191128085306.hxfa2o3knqtu4wfn@linutronix.de
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=205663
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/fpu/internal.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/i40e/i40e_common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -509,7 +509,7 @@ static inline void __fpu_invalidate_fpre
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_common.c b/drivers/net/ethernet/intel/i40e/i40e_common.c
+index 906cf68d3453a..4a53bfc017b13 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_common.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_common.c
+@@ -1861,7 +1861,8 @@ i40e_status i40e_aq_get_link_info(struct i40e_hw *hw,
+ 	     hw->aq.fw_min_ver < 40)) && hw_link_info->phy_type == 0xE)
+ 		hw_link_info->phy_type = I40E_PHY_TYPE_10GBASE_SFPP_CU;
  
- static inline int fpregs_state_valid(struct fpu *fpu, unsigned int cpu)
- {
--	return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
-+	return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
- }
+-	if (hw->flags & I40E_HW_FLAG_AQ_PHY_ACCESS_CAPABLE) {
++	if (hw->flags & I40E_HW_FLAG_AQ_PHY_ACCESS_CAPABLE &&
++	    hw->mac.type != I40E_MAC_X722) {
+ 		__le32 tmp;
  
- /*
+ 		memcpy(&tmp, resp->link_type, sizeof(tmp));
+-- 
+2.20.1
+
 
 
