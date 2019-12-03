@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4974A111FDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6887111EA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfLCWja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49662 "EHLO mail.kernel.org"
+        id S1730099AbfLCWxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:53:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbfLCWj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:28 -0500
+        id S1729296AbfLCWxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:53:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF960207DD;
-        Tue,  3 Dec 2019 22:39:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 939F920866;
+        Tue,  3 Dec 2019 22:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412768;
-        bh=L8aTFcBkYlwSH4hb0/HZBFxZiMJsBbKPtEM+pulKXFU=;
+        s=default; t=1575413588;
+        bh=pBpKq8YAfrzjP6r5Cix8xgkbdENAqmPfCWGwTiL6DOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IfJR9JHSXM4BwDgKjuCAT19m9w5uS9qjVVHtQSWbYZoG8mOnUQuCtuw6oJyQFS5JN
-         fZK1eG99na4FYVIXYpsOGcVAG+jSZgQNQpKvC5ndn9ksgc7bi11bB06RciL8zGxUIP
-         /3I3ntE7yccvqKPV475h+gc0pMiTryFrIpqDDvdk=
+        b=PwYYSgnfOu5Yn8hlD96KVPGTexrrVKB9nCQNTRf+rKVPe1D02uAEs1q6shTk4XkDn
+         PS6wi9Rdm5gVNCH/aSie6P6k0VbmP5/Al7udqqbT6j7+8hEVO0Q8+U6r177VNK87SM
+         /qF2qsBfaiinXw5yMO37JDdqIq7169ZEqYVlaDZQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 010/135] soundwire: intel: fix intel_register_dai PDI offsets and numbers
-Date:   Tue,  3 Dec 2019 23:34:10 +0100
-Message-Id: <20191203213007.585191169@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 186/321] f2fs: fix to dirty inode synchronously
+Date:   Tue,  3 Dec 2019 23:34:12 +0100
+Message-Id: <20191203223436.798577872@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit cf9249626f72878b6d205a4965093cba5cce98df ]
+[ Upstream commit b32e019049e959ee10ec359893c9dd5d057dad55 ]
 
-There are two issues, likely copy/paste:
+If user change inode's i_flags via ioctl, let's add it into global
+dirty list, so that checkpoint can guarantee its persistence before
+fsync, it can make checkpoint keeping strong consistency.
 
-1. Use cdns->pcm.num_in instead of stream_num_in for consistency with
-the rest of the code. This was not detected earlier since platforms did
-not have input-only PDIs.
-
-2. use the correct offset for bi-dir PDM, based on IN and OUT
-PDIs. Again this was not detected since PDM was not supported earlier.
-
-Reported-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20190916192348.467-2-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soundwire/intel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index ec25a71d08873..db9c138adb1ff 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -765,7 +765,7 @@ static int intel_register_dai(struct sdw_intel *sdw)
- 	/* Create PCM DAIs */
- 	stream = &cdns->pcm;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c7ea122997695..187bf7e260c99 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1667,7 +1667,7 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
  
--	ret = intel_create_dai(cdns, dais, INTEL_PDI_IN, stream->num_in,
-+	ret = intel_create_dai(cdns, dais, INTEL_PDI_IN, cdns->pcm.num_in,
- 			       off, stream->num_ch_in, true);
- 	if (ret)
- 		return ret;
-@@ -796,7 +796,7 @@ static int intel_register_dai(struct sdw_intel *sdw)
- 	if (ret)
- 		return ret;
+ 	inode->i_ctime = current_time(inode);
+ 	f2fs_set_inode_flags(inode);
+-	f2fs_mark_inode_dirty_sync(inode, false);
++	f2fs_mark_inode_dirty_sync(inode, true);
+ 	return 0;
+ }
  
--	off += cdns->pdm.num_bd;
-+	off += cdns->pdm.num_out;
- 	ret = intel_create_dai(cdns, dais, INTEL_PDI_BD, cdns->pdm.num_bd,
- 			       off, stream->num_ch_bd, false);
- 	if (ret)
 -- 
 2.20.1
 
