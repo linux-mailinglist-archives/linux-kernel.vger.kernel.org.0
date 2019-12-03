@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA4A112007
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A08F9111FA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfLCXLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:11:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56198 "EHLO mail.kernel.org"
+        id S1728591AbfLCWl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728574AbfLCWlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:41:39 -0500
+        id S1728599AbfLCWlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D25AE20684;
-        Tue,  3 Dec 2019 22:41:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C9D6206EC;
+        Tue,  3 Dec 2019 22:41:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412899;
-        bh=plkKtLAsyDuFJg/YpcbFdJkboKAp8rYwkIi9sDfq+jc=;
+        s=default; t=1575412911;
+        bh=tl2BlP5KFSF/9iTakiKZ+ZmyzdBRYiZqwHFpFIWRalw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fLyp/TnhBhbDmQ98czl1PnLXXrb0VyxZGE+vKdVwldvvJOBc4deX0ldK4+qXUONXV
-         PXM06ZX6upgMuRufy/J0sjbZIKvfOmHAktIuKgcbxr0O7BTzDTLfH+QIZbiu2LcCzJ
-         94ogWlwDdtKmaJGBREOaGfxO4IQuUM8No6PYw6Bc=
+        b=O620BjaDHARqiviCQ7IwgtE9cRzrCtlY+SRj+MYWx4oAgr9HO0uEajIDFUG/6IVe7
+         cGc1lFkCYSNcTXXieguXxsnVRefzSLB8w8z/zAxPOD5EGOYboZ2cWI9NdxohaKqZmK
+         yy2GEXygcJ/2A3Vn6mO0/F6jW6yTn/BjDY0inbLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>,
+        Anton Eidelman <anton@lightbitslabs.com>,
+        Keith Busch <kbusch@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 059/135] can: flexcan: increase error counters if skb enqueueing via can_rx_offload_queue_sorted() fails
-Date:   Tue,  3 Dec 2019 23:34:59 +0100
-Message-Id: <20191203213021.829145542@linuxfoundation.org>
+Subject: [PATCH 5.3 064/135] nvme-multipath: fix crash in nvme_mpath_clear_ctrl_paths
+Date:   Tue,  3 Dec 2019 23:35:04 +0100
+Message-Id: <20191203213024.261860605@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -45,66 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Anton Eidelman <anton@lightbitslabs.com>
 
-[ Upstream commit 758124335a9dd649ab820bfb5b328170919ee7dc ]
+[ Upstream commit 763303a83a095a88c3a8a0d1abf97165db2e8bf5 ]
 
-The call to can_rx_offload_queue_sorted() may fail and return an error
-(in the current implementation due to resource shortage). The passed skb
-is consumed.
+nvme_mpath_clear_ctrl_paths() iterates through
+the ctrl->namespaces list while holding ctrl->scan_lock.
+This does not seem to be the correct way of protecting
+from concurrent list modification.
 
-This patch adds incrementing of the appropriate error counters to let
-the device statistics reflect that there's a problem.
+Specifically, nvme_scan_work() sorts ctrl->namespaces
+AFTER unlocking scan_lock.
 
-Reported-by: Martin Hundebøll <martin@geanix.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This may result in the following (rare) crash in ctrl disconnect
+during scan_work:
+
+    BUG: kernel NULL pointer dereference, address: 0000000000000050
+    Oops: 0000 [#1] SMP PTI
+    CPU: 0 PID: 3995 Comm: nvme 5.3.5-050305-generic
+    RIP: 0010:nvme_mpath_clear_current_path+0xe/0x90 [nvme_core]
+    ...
+    Call Trace:
+     nvme_mpath_clear_ctrl_paths+0x3c/0x70 [nvme_core]
+     nvme_remove_namespaces+0x35/0xe0 [nvme_core]
+     nvme_do_delete_ctrl+0x47/0x90 [nvme_core]
+     nvme_sysfs_delete+0x49/0x60 [nvme_core]
+     dev_attr_store+0x17/0x30
+     sysfs_kf_write+0x3e/0x50
+     kernfs_fop_write+0x11e/0x1a0
+     __vfs_write+0x1b/0x40
+     vfs_write+0xb9/0x1a0
+     ksys_write+0x67/0xe0
+     __x64_sys_write+0x1a/0x20
+     do_syscall_64+0x5a/0x130
+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+    RIP: 0033:0x7f8d02bfb154
+
+Fix:
+After taking scan_lock in nvme_mpath_clear_ctrl_paths()
+down_read(&ctrl->namespaces_rwsem) as well to make list traversal safe.
+This will not cause deadlocks because taking scan_lock never happens
+while holding the namespaces_rwsem.
+Moreover, scan work downs namespaces_rwsem in the same order.
+
+Alternative: sort ctrl->namespaces in nvme_scan_work()
+while still holding the scan_lock.
+This would leave nvme_mpath_clear_ctrl_paths() without correct protection
+against ctrl->namespaces modification by anyone other than scan_work.
+
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/flexcan.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/nvme/host/multipath.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
-index 56fa98d7aa90c..a4f0fa94d136a 100644
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -658,6 +658,7 @@ static void flexcan_irq_bus_err(struct net_device *dev, u32 reg_esr)
- 	struct can_frame *cf;
- 	bool rx_errors = false, tx_errors = false;
- 	u32 timestamp;
-+	int err;
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index d320684d25b20..a5c809c85f6d2 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -158,9 +158,11 @@ void nvme_mpath_clear_ctrl_paths(struct nvme_ctrl *ctrl)
+ 	struct nvme_ns *ns;
  
- 	timestamp = priv->read(&regs->timer) << 16;
- 
-@@ -706,7 +707,9 @@ static void flexcan_irq_bus_err(struct net_device *dev, u32 reg_esr)
- 	if (tx_errors)
- 		dev->stats.tx_errors++;
- 
--	can_rx_offload_queue_sorted(&priv->offload, skb, timestamp);
-+	err = can_rx_offload_queue_sorted(&priv->offload, skb, timestamp);
-+	if (err)
-+		dev->stats.rx_fifo_errors++;
+ 	mutex_lock(&ctrl->scan_lock);
++	down_read(&ctrl->namespaces_rwsem);
+ 	list_for_each_entry(ns, &ctrl->namespaces, list)
+ 		if (nvme_mpath_clear_current_path(ns))
+ 			kblockd_schedule_work(&ns->head->requeue_work);
++	up_read(&ctrl->namespaces_rwsem);
+ 	mutex_unlock(&ctrl->scan_lock);
  }
  
- static void flexcan_irq_state(struct net_device *dev, u32 reg_esr)
-@@ -719,6 +722,7 @@ static void flexcan_irq_state(struct net_device *dev, u32 reg_esr)
- 	int flt;
- 	struct can_berr_counter bec;
- 	u32 timestamp;
-+	int err;
- 
- 	timestamp = priv->read(&regs->timer) << 16;
- 
-@@ -750,7 +754,9 @@ static void flexcan_irq_state(struct net_device *dev, u32 reg_esr)
- 	if (unlikely(new_state == CAN_STATE_BUS_OFF))
- 		can_bus_off(dev);
- 
--	can_rx_offload_queue_sorted(&priv->offload, skb, timestamp);
-+	err = can_rx_offload_queue_sorted(&priv->offload, skb, timestamp);
-+	if (err)
-+		dev->stats.rx_fifo_errors++;
- }
- 
- static inline struct flexcan_priv *rx_offload_to_priv(struct can_rx_offload *offload)
 -- 
 2.20.1
 
