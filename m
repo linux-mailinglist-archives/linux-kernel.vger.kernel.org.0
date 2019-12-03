@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F81111C7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC66111E11
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfLCWoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:44:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60608 "EHLO mail.kernel.org"
+        id S1730776AbfLCW70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:59:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728091AbfLCWoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:44:32 -0500
+        id S1730637AbfLCW7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:59:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E22B2084F;
-        Tue,  3 Dec 2019 22:44:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAFEA20674;
+        Tue,  3 Dec 2019 22:59:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413071;
-        bh=Fqy2V9pstkUaLR5WHnRKMDI0Hyl7tpgth3ERKdbjpQw=;
+        s=default; t=1575413961;
+        bh=CnEdM3U0NbENBr3wv6tYegfDKbkCd9CqgvhugeRso1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTk6biJsWme+oDfPtnEEoTIcYN2YPO1uLZTLag9UK9zHwdEGHjAwiDluWtBHtkpnt
-         pciT1J/DrWX65bgd5x0G6DFDjehBgRyikH/vy3Fqn3XA2dX0DoMZaNGtR6dVpYOyfD
-         3E+tLT9AKTws91N6YUee7a7dh+N02Xycc2v3FiMo=
+        b=0ylrokXlZucFlFg9ok6iEzuupZXxDR3oVEVyicjtDibLRl3IGGUkiiYJmxfJORB5I
+         1rux4M0emdIO+ykkYwnSn+KclKBKMnqtj76l1Hj3hSLSPKv2o7iwsFJju+6HBhOGNy
+         QejTYaoZ5TWPI6mq7OkA8Rd8mOzYRnPyN5ctDy5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 121/135] openvswitch: remove another BUG_ON()
-Date:   Tue,  3 Dec 2019 23:36:01 +0100
-Message-Id: <20191203213044.359229942@linuxfoundation.org>
+        stable@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.19 296/321] net: macb: Fix SUBNS increment and increase resolution
+Date:   Tue,  3 Dec 2019 23:36:02 +0100
+Message-Id: <20191203223442.552220690@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Harini Katakam <harini.katakam@xilinx.com>
 
-[ Upstream commit 8a574f86652a4540a2433946ba826ccb87f398cc ]
+commit 7ad342bc58cc5197cd2f12a3c30b3949528c6d83 upstream.
 
-If we can't build the flow del notification, we can simply delete
-the flow, no need to crash the kernel. Still keep a WARN_ON to
-preserve debuggability.
+The subns increment register has 24 bits as follows:
+RegBit[15:0] = Subns[23:8]; RegBit[31:24] = Subns[7:0]
 
-Note: the BUG_ON() predates the Fixes tag, but this change
-can be applied only after the mentioned commit.
+Fix the same in the driver and increase sub ns resolution to the
+best capable, 24 bits. This should be the case on all GEM versions
+that this PTP driver supports.
 
-v1 -> v2:
- - do not leak an skb on error
-
-Fixes: aed067783e50 ("openvswitch: Minimize ovs_flow_cmd_del critical section.")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/openvswitch/datapath.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -1350,7 +1350,10 @@ static int ovs_flow_cmd_del(struct sk_bu
- 						     OVS_FLOW_CMD_DEL,
- 						     ufid_flags);
- 			rcu_read_unlock();
--			BUG_ON(err < 0);
-+			if (WARN_ON_ONCE(err < 0)) {
-+				kfree_skb(reply);
-+				goto out_free;
-+			}
+---
+ drivers/net/ethernet/cadence/macb.h     |    6 +++++-
+ drivers/net/ethernet/cadence/macb_ptp.c |    5 ++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -499,7 +499,11 @@
  
- 			ovs_notify(&dp_flow_genl_family, reply, info);
- 		} else {
-@@ -1358,6 +1361,7 @@ static int ovs_flow_cmd_del(struct sk_bu
- 		}
- 	}
+ /* Bitfields in TISUBN */
+ #define GEM_SUBNSINCR_OFFSET			0
+-#define GEM_SUBNSINCR_SIZE			16
++#define GEM_SUBNSINCRL_OFFSET			24
++#define GEM_SUBNSINCRL_SIZE			8
++#define GEM_SUBNSINCRH_OFFSET			0
++#define GEM_SUBNSINCRH_SIZE			16
++#define GEM_SUBNSINCR_SIZE			24
  
-+out_free:
- 	ovs_flow_free(flow, true);
- 	return 0;
- unlock:
+ /* Bitfields in TI */
+ #define GEM_NSINCR_OFFSET			0
+--- a/drivers/net/ethernet/cadence/macb_ptp.c
++++ b/drivers/net/ethernet/cadence/macb_ptp.c
+@@ -115,7 +115,10 @@ static int gem_tsu_incr_set(struct macb
+ 	 * to take effect.
+ 	 */
+ 	spin_lock_irqsave(&bp->tsu_clk_lock, flags);
+-	gem_writel(bp, TISUBN, GEM_BF(SUBNSINCR, incr_spec->sub_ns));
++	/* RegBit[15:0] = Subns[23:8]; RegBit[31:24] = Subns[7:0] */
++	gem_writel(bp, TISUBN, GEM_BF(SUBNSINCRL, incr_spec->sub_ns) |
++		   GEM_BF(SUBNSINCRH, (incr_spec->sub_ns >>
++			  GEM_SUBNSINCRL_SIZE)));
+ 	gem_writel(bp, TI, GEM_BF(NSINCR, incr_spec->ns));
+ 	spin_unlock_irqrestore(&bp->tsu_clk_lock, flags);
+ 
 
 
