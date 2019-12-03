@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EF6112011
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30EF9111FF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfLCXMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52976 "EHLO mail.kernel.org"
+        id S1728184AbfLCWlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728389AbfLCWkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:40:24 -0500
+        id S1727969AbfLCWkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:40:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E89C20684;
-        Tue,  3 Dec 2019 22:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6032120684;
+        Tue,  3 Dec 2019 22:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412824;
-        bh=zz6hc1y0Nrg95ijcrAaoxy8ZdAJ8NK04RKA1Ad7Z17U=;
+        s=default; t=1575412851;
+        bh=oqC+a1mAJO+/xTx5ZcTc9RFX81hYZCBJddP4MCD+bZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aJri8Pv06JwoXHRGjQc9hc3+2/NNtCtMIVoQp5ttuS0cUidR97+A8JOyCKawKU0+M
-         GMg4cBNDqEmm/ufVlKNgVZeLWmRRG/tp8uMWDioAGLk1n328Iwy3KXg3Q3w0b3cBpf
-         SwZGac6QBoNSsp7TL+08slx9RBhjfVLy3xQD53/k=
+        b=W7uerd2VxPEBajHlfEWp7/RYrJ3V8ZIH68pmKto4c8hzBewKBGWFhcImuJXNMYAQH
+         aItw9tkKPuaTgKKy+uyqeOCzDpATbtSNi9pTanGPHOsjXHN8mhjaQ9fD95/9MXee5E
+         UQaT5xwIlVMRc+zjPecocfIN9KYhfBxFveW6Dwt4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 003/135] net: disallow ancillary data for __sys_{send,recv}msg_file()
-Date:   Tue,  3 Dec 2019 23:34:03 +0100
-Message-Id: <20191203213006.555175458@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 005/135] clk: meson: gxbb: let sar_adc_clk_div set the parent clock rate
+Date:   Tue,  3 Dec 2019 23:34:05 +0100
+Message-Id: <20191203213006.733032204@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -43,90 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit d69e07793f891524c6bbf1e75b9ae69db4450953 ]
+[ Upstream commit 44b09b11b813b8550e6b976ea51593bc23bba8d1 ]
 
-Only io_uring uses (and added) these, and we want to disallow the
-use of sendmsg/recvmsg for anything but regular data transfers.
-Use the newly added prep helper to split the msghdr copy out from
-the core function, to check for msg_control and msg_controllen
-settings. If either is set, we return -EINVAL.
+The meson-saradc driver manually sets the input clock for
+sar_adc_clk_sel. Update the GXBB clock driver (which is used on GXBB,
+GXL and GXM) so the rate settings on sar_adc_clk_div are propagated up
+to sar_adc_clk_sel which will let the common clock framework select the
+best matching parent clock if we want that.
 
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This makes sar_adc_clk_div consistent with the axg-aoclk and g12a-aoclk
+drivers, which both also specify CLK_SET_RATE_PARENT.
+
+Fixes: 33d0fcdfe0e870 ("clk: gxbb: add the SAR ADC clocks and expose them")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/socket.c | 43 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
+ drivers/clk/meson/gxbb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/socket.c b/net/socket.c
-index fbe08d7df7732..d7a106028f0e0 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2357,12 +2357,27 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
- /*
-  *	BSD sendmsg interface
-  */
--long __sys_sendmsg_sock(struct socket *sock, struct user_msghdr __user *msg,
-+long __sys_sendmsg_sock(struct socket *sock, struct user_msghdr __user *umsg,
- 			unsigned int flags)
- {
--	struct msghdr msg_sys;
-+	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
-+	struct sockaddr_storage address;
-+	struct msghdr msg = { .msg_name = &address };
-+	ssize_t err;
-+
-+	err = sendmsg_copy_msghdr(&msg, umsg, flags, &iov);
-+	if (err)
-+		return err;
-+	/* disallow ancillary data requests from this path */
-+	if (msg.msg_control || msg.msg_controllen) {
-+		err = -EINVAL;
-+		goto out;
-+	}
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index dab16d9b1af8b..9834eb2c1b674 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -866,6 +866,7 @@ static struct clk_regmap gxbb_sar_adc_clk_div = {
+ 		.ops = &clk_regmap_divider_ops,
+ 		.parent_names = (const char *[]){ "sar_adc_clk_sel" },
+ 		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
--	return ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
-+	err = ____sys_sendmsg(sock, &msg, flags, NULL, 0);
-+out:
-+	kfree(iov);
-+	return err;
- }
- 
- long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
-@@ -2561,12 +2576,28 @@ static int ___sys_recvmsg(struct socket *sock, struct user_msghdr __user *msg,
-  *	BSD recvmsg interface
-  */
- 
--long __sys_recvmsg_sock(struct socket *sock, struct user_msghdr __user *msg,
-+long __sys_recvmsg_sock(struct socket *sock, struct user_msghdr __user *umsg,
- 			unsigned int flags)
- {
--	struct msghdr msg_sys;
-+	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
-+	struct sockaddr_storage address;
-+	struct msghdr msg = { .msg_name = &address };
-+	struct sockaddr __user *uaddr;
-+	ssize_t err;
- 
--	return ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
-+	err = recvmsg_copy_msghdr(&msg, umsg, flags, &uaddr, &iov);
-+	if (err)
-+		return err;
-+	/* disallow ancillary data requests from this path */
-+	if (msg.msg_control || msg.msg_controllen) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	err = ____sys_recvmsg(sock, &msg, umsg, uaddr, flags, 0);
-+out:
-+	kfree(iov);
-+	return err;
- }
- 
- long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
 -- 
 2.20.1
 
