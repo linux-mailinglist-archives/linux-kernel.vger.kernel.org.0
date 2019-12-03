@@ -2,173 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1A710F5DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 04:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3436E10F5F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 04:51:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfLCDtn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 22:49:43 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:65119 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbfLCDtm (ORCPT
+        id S1727079AbfLCDvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 22:51:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55292 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfLCDvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 22:49:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1575344981; x=1606880981;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Up47yL6qnLqX/ugK19gp59ta07M17uAHLHwuEPg04L4=;
-  b=DNk9G/jicagU/qYudYcrrx4GHUTqP0va1MxsrN+xVa+ifMhlGgQ13htP
-   JRr1qerPuP1m9EzRtnhhAfZSPjVmHfLpnuMMvm7d8hYqZtW3NXSoSvYD8
-   5meF+FJWJDtj49dr4ujES66yzZcRx7uYnlDZ51Dd+FCTvDvUqgmmmUm8H
-   dh7vAdyLT1v0t/jX5M54Fltipr5WzJu7TmEoLfsosMnc4qbUG2nxXkhiL
-   CWnglIuHuROWDk7PmGRk+zzBzT4BpVnEH8zWmq1jya/LXYvmN7P19Kvwp
-   CbVKanvZN/nGzAuJdyxg+i5sWFZhXstSECI4rb6MU8aOJcWg4V/LM8HRH
-   A==;
-IronPort-SDR: UNWsJ1ysMVbD4HsiG1JGWMDZL1Zq+BK5czE/CswVynPNUXbOi9b0U+iXyznDU6TRjJliNxQxbJ
- 5ra4PdZoGCambzKYdg3OQXm+O4cJR8cKA2Awh3pDWb8D/I0SyBymAaaxPfp98rVTFsiWHTLaaW
- R1DoTewR6N19Al19DEKeaNXpf06/psfq6TiAgPK019H4GeA1UzVISQdm7+J1TlNjYZxG33+U7t
- FfT2pn0VlJdJGWUPzUDjQSeHydsKX5vQKxatj6IJb+MIFYjgZBWsgYFtZZ9WGhDfMaZPwIDz7R
- iJc=
-X-IronPort-AV: E=Sophos;i="5.69,271,1571673600"; 
-   d="scan'208";a="231947968"
-Received: from mail-sn1nam01lp2052.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.52])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Dec 2019 11:49:40 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KGDatYs3LJ3vVA9P/AJ0Mjyrsm9aqbe/MLKfqjmkryq7Z0YouDrO0WDRv7+zOtN8p7Oct+45G4EzW005L4PVgN3DvrE/Ad4U7OJlo+Se8Bop3r2CVZVhsUOLEAKrR/MgU45vTkBsS5Nbyrp0Zin/iE6ttr8z1uZ2db3ZhNa8aNhLQMEpgZxN5IYCmSHfFjDDt8yxR34NPmmQs7j9qH09MkaIi62FgX+IW7FCxc5mgxTHMlW1e4rYx+qn7jDflYoJvbUf23Dw5LX2yLbQ3itjD9ZOlfpy34b7EwuAkfhz312EVV8szW90r5giOr62HJYv9onkdH7S83/y5qhJ/cthQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mLLYfNxI13zK+8fy87vWyxAGtShwIFsex/HAb/rxwzg=;
- b=n7SKC9uhvyJnraTcTVIDkyelEavD7GUFiGE4bdJw5Dol9xhHUbb0TB2YOvVXtzTPnRiidVGkNFf2q1s+oJO0lPIcpI92XNRcArJKxEaH84VUQWrzDH/Rn78qJn/aUSQS+BAcdiDTTI5UHwLjkBO1tlSMflBL0XzR6iYN9wxoZzVyK7w1wJSn8glKE4KCttFMSinhr3Zn7jFia0+j7JSoo54eyD7cfVlKPQmkg0YTb08TTIlsdb5MwP86iPO6Z832yZzyq6/pzpqnJX5tFRABYhrkdmOlNtoqt6dYIFDF7zASj3J5VY7G8+ApsdGwKpjnORVX0EH4DDIHC3k0eraV2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mLLYfNxI13zK+8fy87vWyxAGtShwIFsex/HAb/rxwzg=;
- b=VY5zFAmLThGvexX6W1rSvJVVYBTnSOImDUWbz94B3NWTmPIIQYrRvFWQu9dEVcetY1P9xHETKgsIJTx9XSkjqlhcU4jln0Vd9L8O/sZvkt+KbDq8yuHy+lp/w1bU2yTvQSuLt3EBlz4DKT2Cd/uUqHGXFqjDg+8z8B9uiGThw3Y=
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
- MN2PR04MB5807.namprd04.prod.outlook.com (20.179.22.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.19; Tue, 3 Dec 2019 03:49:39 +0000
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::7949:d205:5ad1:1d30]) by MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::7949:d205:5ad1:1d30%7]) with mapi id 15.20.2495.014; Tue, 3 Dec 2019
- 03:49:39 +0000
-From:   Anup Patel <Anup.Patel@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-CC:     Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Anup Patel <anup@brainfault.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anup Patel <Anup.Patel@wdc.com>
-Subject: [PATCH v2 4/4] RISC-V: Select Goldfish RTC driver for QEMU virt
- machine
-Thread-Topic: [PATCH v2 4/4] RISC-V: Select Goldfish RTC driver for QEMU virt
- machine
-Thread-Index: AQHVqYyw2RuSRsIdmEihcdKZ2s83Ow==
-Date:   Tue, 3 Dec 2019 03:49:39 +0000
-Message-ID: <20191203034909.37385-5-anup.patel@wdc.com>
-References: <20191203034909.37385-1-anup.patel@wdc.com>
-In-Reply-To: <20191203034909.37385-1-anup.patel@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BY5PR16CA0027.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::40) To MN2PR04MB6061.namprd04.prod.outlook.com
- (2603:10b6:208:d8::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anup.Patel@wdc.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [12.169.102.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c7c290cd-bc20-467d-4b6e-08d777a3d2b0
-x-ms-traffictypediagnostic: MN2PR04MB5807:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR04MB580798D8DCBCA41C32326DF18D420@MN2PR04MB5807.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1775;
-x-forefront-prvs: 02408926C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(39860400002)(376002)(366004)(346002)(136003)(189003)(199004)(1076003)(66556008)(6116002)(3846002)(66446008)(66476007)(64756008)(66946007)(25786009)(52116002)(76176011)(6506007)(386003)(186003)(305945005)(7736002)(26005)(102836004)(478600001)(316002)(71190400001)(71200400001)(14454004)(44832011)(446003)(256004)(14444005)(11346002)(2616005)(2906002)(66066001)(81166006)(8676002)(50226002)(81156014)(8936002)(110136005)(54906003)(4326008)(5660300002)(99286004)(2171002)(6436002)(36756003)(6486002)(6512007)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5807;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: TUx6+Ex9FS1PqhEQU7EHRWtO9lq0yc5XtrhPxQKVxXbuesuRKxlkc/IEkeeY7sEb/w0e0sc/kzBYIS48hGKZOwRzTMS0CeD08J04yOKsUUY5zKMQPeu8Fezu38pxi/5rTU5PXxpLv9vcxvQaKjVWrjCLgObQ1TQNq6NiXN4P/jc2/GVu0Pjnmvub51/uPWxd8tP94haK9O0P02hHlkLi+e0ve6uXZumTBWIJTeQYgfHoCH7u8Z5WB9/NWzksspHndEYUAVJtFWBt492bZ32rv8qORabuFv+9aoJheLD83XeVxdbLAF2/im71X08HrJnl7W/3wQy05kP0mRIPmxaksDoavST9XDOHFHkmFF+KhAEDtAp4Sr8hEhibC4uFolR/n/GdGT7vyTZOovgMgu/u2P4ml8O6WQ1zeDGUWfl2Pft2E6EwlWDjHPFEhk8qANQE
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 2 Dec 2019 22:51:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BbBVtzqyLX3V7hQkcfe1XWeHTgk9SApN2HtkYlUf5aM=; b=bIgrpTpW8FbPSaXgqF6UMLN3M
+        FUeoNypzpw8d++tw9PLJCtSF4gX4MIuuHVX+IQT2GCK0DZjpMznuyyeM1+Zxd5lc5RBihefQ7vvwK
+        JAXmDbeI1mhUPdzyaz7RmJ7n/+4qtwnZ9pJxVPC6jU8v/Iao1OSOQ7wQwMb4qzXBHM6wCX+1WhsKC
+        +Go4rZvKK+5B00Jwf9Vlw0B7QWYr0QY9RcV9R7h3JVMtHtGkivfdctbkU63lulo71u4yw5DLtRbbD
+        jsdxBbYcdlGSEX82rXZYAvEDW52Lw71QJfxzNB5Tr39ypmEfzKNLJhDVdKt82zsotUR75abVgqFzj
+        hRST76cUw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ibzDF-00056D-TP; Tue, 03 Dec 2019 03:50:57 +0000
+Date:   Mon, 2 Dec 2019 19:50:57 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Alastair D'Silva <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 00/27] Add support for OpenCAPI SCM devices
+Message-ID: <20191203035057.GR20752@bombadil.infradead.org>
+References: <20191203034655.51561-1-alastair@au1.ibm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7c290cd-bc20-467d-4b6e-08d777a3d2b0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 03:49:39.6117
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Uq88zlSiKh4mPh29uXtC9SjjH+unjHpXIDxOQlYD8L2z5lxwv7311SXMsKyu3yb2mVuQDxXySZ/XWRWmwM8abQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5807
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203034655.51561-1-alastair@au1.ibm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We select Goldfish RTC driver using QEMU virt machine kconfig option
-to access RTC device on QEMU virt machine.
+On Tue, Dec 03, 2019 at 02:46:28PM +1100, Alastair D'Silva wrote:
+> This series adds support for OpenCAPI SCM devices, exposing
 
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
-Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
----
- arch/riscv/Kconfig.socs           | 2 ++
- arch/riscv/configs/defconfig      | 1 +
- arch/riscv/configs/rv32_defconfig | 1 +
- 3 files changed, 4 insertions(+)
-
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index bae4907b4880..65cf39867c60 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -28,6 +28,8 @@ config SOC_VIRT
-        select VIRTIO_INPUT
-        select POWER_RESET_SYSCON
-        select POWER_RESET_SYSCON_POWEROFF
-+       select GOLDFISH
-+       select RTC_DRV_GOLDFISH
-        select SIFIVE_PLIC
-        help
-          This enables support for QEMU Virt Machine.
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index bf33bd40ee07..c5e04384ec3d 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -73,6 +73,7 @@ CONFIG_USB_STORAGE=3Dy
- CONFIG_USB_UAS=3Dy
- CONFIG_MMC=3Dy
- CONFIG_MMC_SPI=3Dy
-+CONFIG_RTC_CLASS=3Dy
- CONFIG_EXT4_FS=3Dy
- CONFIG_EXT4_FS_POSIX_ACL=3Dy
- CONFIG_AUTOFS4_FS=3Dy
-diff --git a/arch/riscv/configs/rv32_defconfig b/arch/riscv/configs/rv32_de=
-fconfig
-index 234213b4ea74..7972b1d321c1 100644
---- a/arch/riscv/configs/rv32_defconfig
-+++ b/arch/riscv/configs/rv32_defconfig
-@@ -69,6 +69,7 @@ CONFIG_USB_OHCI_HCD=3Dy
- CONFIG_USB_OHCI_HCD_PLATFORM=3Dy
- CONFIG_USB_STORAGE=3Dy
- CONFIG_USB_UAS=3Dy
-+CONFIG_RTC_CLASS=3Dy
- CONFIG_EXT4_FS=3Dy
- CONFIG_EXT4_FS_POSIX_ACL=3Dy
- CONFIG_AUTOFS4_FS=3Dy
---=20
-2.17.1
+Could we _not_ introduce yet another term for persistent memory?
 
