@@ -2,194 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 715421103C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:42:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A11A61103B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:38:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfLCRmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 12:42:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33157 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfLCRmf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 12:42:35 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b6so4853890wrq.0;
-        Tue, 03 Dec 2019 09:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qE5r3nti027mzy0pKgrnKXkE1RSc8kUqTOaORXIdEtE=;
-        b=a40wQB7Mk7pBuIEzPBChXZl1yBZvbIVXlaeGoAaiJcl8DZczFfOnjnbH4qGRZ0lPoT
-         sRb08dAvwJLNEP5eDKxT0YBpPq2HtoE0w0BQ5jV2bXhdv76SufUrjfF1rhgxyZLThrsp
-         S9blKgXZiiYIkiuBLkMhYny1XboAMLEmBjUeD8rHJy+FiM+s8XPJ0IopkA6ylmfT1Szl
-         nwXDM1qbCCzKRRN1vUDI9Ac8ntundjbrtPnLX/IosvRrhRvDfkqzMorv7i/w36fh/01e
-         CeBmgwklnmeK9BfhSLVbKd+L0W/hQdVrkFJUhf0AWeQCw5G5psDNjeZ/3d/P7bsqKm4N
-         6Ogg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qE5r3nti027mzy0pKgrnKXkE1RSc8kUqTOaORXIdEtE=;
-        b=d3SppsbxuINEqJKZoW2zbGSKdkicLcv/C58vSdD7lHbfIzPOFq2I2GaQ8MMpasU9JM
-         0/8iKf1q9TTrBQmneSVI6Lsf3opUwbp9AY/fP6nX+bELhIW8YPJC3fLzUKzoQE+SZjYD
-         y4ABX2KUgiEwXd+24GLpKubBitPIvSfDlMaoi2XN8mxmZFbmRJ7CsSoBIMm+mEs8wpWb
-         YJGofW2qj0dYGX7ZFa8UJbOXnBsXuUj06Tg/udIUeQVENNo+pE8oA/PUupTwtrfdXY4U
-         fUJ4TwMh3lZ6tIWw52eP/Gcac3QN7pIwMg+hA5sdI2B1VM+T2JyICX5Pk5VCC61uMTW8
-         2/ag==
-X-Gm-Message-State: APjAAAU8oyk/ZqkwTmVRTWTvaTwt9fonJHV7Ai781SLje1YYnRZOg3H0
-        IaAFPgO1vPWgrvTHTaF8OLg=
-X-Google-Smtp-Source: APXvYqyirRyu04jqDg3x30rmhKDhkCSn+pJlYnYt6qaMKeOuedWuhIFZA6+FPRXQ60evaeNBBoHQdg==
-X-Received: by 2002:adf:d4ca:: with SMTP id w10mr6193149wrk.53.1575394951675;
-        Tue, 03 Dec 2019 09:42:31 -0800 (PST)
-Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
-        by smtp.gmail.com with ESMTPSA id x7sm4411960wrq.41.2019.12.03.09.42.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 09:42:30 -0800 (PST)
-Date:   Tue, 3 Dec 2019 18:42:29 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, jonathanh@nvidia.com,
-        talho@nvidia.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bbasu@nvidia.com,
-        mperttunen@nvidia.com
-Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
- get BPMP data
-Message-ID: <20191203174229.GA1721849@ulmo>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+        id S1727221AbfLCRi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 12:38:26 -0500
+Received: from mga18.intel.com ([134.134.136.126]:52343 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726823AbfLCRi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 12:38:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 09:38:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
+   d="scan'208";a="385401803"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga005.jf.intel.com with ESMTP; 03 Dec 2019 09:38:25 -0800
+Date:   Tue, 3 Dec 2019 09:43:08 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        kevin.tian@intel.com, Eric Auger <eric.auger@redhat.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 4/5] iommu/vt-d: Consolidate pasid-based tlb
+ invalidation
+Message-ID: <20191203094308.60e348df@jacob-builder>
+In-Reply-To: <20191122030449.28892-5-baolu.lu@linux.intel.com>
+References: <20191122030449.28892-1-baolu.lu@linux.intel.com>
+        <20191122030449.28892-5-baolu.lu@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Content-Disposition: inline
-In-Reply-To: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 22 Nov 2019 11:04:48 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Dec 03, 2019 at 11:02:26PM +0530, Sumit Gupta wrote:
-> Adding new function of_tegra_bpmp_get() to get BPMP data.
-> This function can be used by other drivers like cpufreq to
-> get BPMP data without adding any property in respective
-> drivers DT node.
-
-What's wrong with adding the property in the DT node? We already do that
-for Tegra186's CPU frequency driver, so it makes sense to continue that
-for Tegra194.
-
-Thierry
-
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> Merge pasid-based tlb invalidation into iommu->flush.p_iotlb_inv.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  drivers/firmware/tegra/bpmp.c | 38 ++++++++++++++++++++++++++++++++++++++
->  include/soc/tegra/bpmp.h      |  5 +++++
->  2 files changed, 43 insertions(+)
->=20
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index 6741fcd..9c3d7f1 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -38,6 +38,44 @@ channel_to_ops(struct tegra_bpmp_channel *channel)
->  	return bpmp->soc->ops;
+>  drivers/iommu/intel-iommu.c | 43
+> +++++++++++++++++++++++++++++++++++++ drivers/iommu/intel-pasid.c |
+> 18 ++-------------- drivers/iommu/intel-svm.c   | 23
+> +++----------------- 3 files changed, 48 insertions(+), 36
+> deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 4eeb18942d3c..fec78cc877c1 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -3032,6 +3032,48 @@ qi_flush_dev_iotlb(struct intel_iommu *iommu,
+> u16 sid, u16 pfsid, qi_submit_sync(&desc, iommu);
 >  }
-> =20
-> +struct tegra_bpmp *of_tegra_bpmp_get(void)
+>  
+> +/* PASID-based IOTLB invalidation */
+> +static void
+> +qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32 pasid, u64
+> addr,
+> +		unsigned long npages, bool ih)
 > +{
-> +	struct platform_device *pdev;
-> +	struct device_node *bpmp_dev;
-> +	struct tegra_bpmp *bpmp;
+> +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
 > +
-> +	/* Check for bpmp device status in DT */
-> +	bpmp_dev =3D of_find_compatible_node(NULL, NULL, "nvidia,tegra186-bpmp"=
-);
-> +	if (!bpmp_dev) {
-> +		bpmp =3D ERR_PTR(-ENODEV);
-> +		goto err_out;
-> +	}
-> +	if (!of_device_is_available(bpmp_dev)) {
-> +		bpmp =3D ERR_PTR(-ENODEV);
-> +		goto err_put;
+> +	/*
+> +	 * npages == -1 means a PASID-selective invalidation,
+> otherwise,
+> +	 * a positive value for Page-selective-within-PASID
+> invalidation.
+> +	 * 0 is not a valid input.
+> +	 */
+> +	if (WARN_ON(!npages)) {
+> +		pr_err("Invalid input npages = %ld\n", npages);
+> +		return;
 > +	}
 > +
-> +	pdev =3D of_find_device_by_node(bpmp_dev);
-> +	if (!pdev) {
-> +		bpmp =3D ERR_PTR(-ENODEV);
-> +		goto err_put;
+> +	if (npages == -1) {
+> +		desc.qw0 = QI_EIOTLB_PASID(pasid) |
+> +				QI_EIOTLB_DID(did) |
+> +				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+> +				QI_EIOTLB_TYPE;
+> +		desc.qw1 = 0;
+Is this based on the latest kernel? seems to be missing the recent
+change for checking page selective cap. So I run into conflict.
+
++       /*                                                                     
++        * Do PASID granu IOTLB invalidation if page selective
+  capability is   
++        * not
+  available.                                                      
++
+  */                                                                    
++       if (pages == -1 || !cap_pgsel_inv(svm->iommu->cap))
+  {                  
++               desc.qw0 = QI_EIOTLB_PASID(svm->pasid)
+  |                       
+
+Seems missing this one in your base?
+
+Refs: v5.3-rc6-2-g8744daf4b069                              
+Author:     Jacob Pan <jacob.jun.pan@linux.intel.com>       
+AuthorDate: Mon Aug 26 08:53:29 2019 -0700                  
+Commit:     Joerg Roedel <jroedel@suse.de>                  
+CommitDate: Tue Sep 3 15:01:27 2019 +0200                   
+                                                            
+    iommu/vt-d: Remove global page flush support            
+
+> +	} else {
+> +		int mask = ilog2(__roundup_pow_of_two(npages));
+> +		unsigned long align = (1ULL << (VTD_PAGE_SHIFT +
+> mask)); +
+> +		if (WARN_ON_ONCE(!ALIGN(addr, align)))
+> +			addr &= ~(align - 1);
+> +
+> +		desc.qw0 = QI_EIOTLB_PASID(pasid) |
+> +				QI_EIOTLB_DID(did) |
+> +				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
+> +				QI_EIOTLB_TYPE;
+> +		desc.qw1 = QI_EIOTLB_ADDR(addr) |
+> +				QI_EIOTLB_IH(ih) |
+> +				QI_EIOTLB_AM(mask);
 > +	}
 > +
-> +	bpmp =3D platform_get_drvdata(pdev);
-> +	if (!bpmp) {
-> +		bpmp =3D ERR_PTR(-EPROBE_DEFER);
-> +		put_device(&pdev->dev);
-> +		goto err_put;
-> +	}
-> +
-> +	return bpmp;
-> +err_put:
-> +	of_node_put(bpmp_dev);
-> +err_out:
-> +	return bpmp;
+> +	qi_submit_sync(&desc, iommu);
 > +}
-> +EXPORT_SYMBOL_GPL(of_tegra_bpmp_get);
 > +
->  struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+>  static void intel_iommu_init_qi(struct intel_iommu *iommu)
 >  {
->  	struct platform_device *pdev;
-> diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-> index f2604e9..21402d9 100644
-> --- a/include/soc/tegra/bpmp.h
-> +++ b/include/soc/tegra/bpmp.h
-> @@ -107,6 +107,7 @@ struct tegra_bpmp_message {
->  };
-> =20
->  #if IS_ENABLED(CONFIG_TEGRA_BPMP)
-> +struct tegra_bpmp *of_tegra_bpmp_get(void);
->  struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
->  void tegra_bpmp_put(struct tegra_bpmp *bpmp);
->  int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
-> @@ -122,6 +123,10 @@ void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp, un=
-signed int mrq,
->  			 void *data);
->  bool tegra_bpmp_mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int m=
-rq);
->  #else
-> +static inline struct tegra_bpmp *of_tegra_bpmp_get(void)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
->  static inline struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
->  {
->  	return ERR_PTR(-ENOTSUPP);
-> --=20
-> 2.7.4
->=20
+>  	/*
+> @@ -3065,6 +3107,7 @@ static void intel_iommu_init_qi(struct
+> intel_iommu *iommu) iommu->flush.iotlb_inv = qi_flush_iotlb;
+>  		iommu->flush.pc_inv = qi_flush_pasid;
+>  		iommu->flush.dev_tlb_inv = qi_flush_dev_iotlb;
+> +		iommu->flush.p_iotlb_inv = qi_flush_piotlb;
+>  		pr_info("%s: Using Queued invalidation\n",
+> iommu->name); }
+>  }
+> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+> index 01dd9c86178b..78ff4eee8595 100644
+> --- a/drivers/iommu/intel-pasid.c
+> +++ b/drivers/iommu/intel-pasid.c
+> @@ -359,20 +359,6 @@ pasid_set_flpm(struct pasid_entry *pe, u64 value)
+>  	pasid_set_bits(&pe->val[2], GENMASK_ULL(3, 2), value << 2);
+>  }
+>  
+> -static void
+> -iotlb_invalidation_with_pasid(struct intel_iommu *iommu, u16 did,
+> u32 pasid) -{
+> -	struct qi_desc desc;
+> -
+> -	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
+> -			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+> QI_EIOTLB_TYPE;
+> -	desc.qw1 = 0;
+> -	desc.qw2 = 0;
+> -	desc.qw3 = 0;
+> -
+> -	qi_submit_sync(&desc, iommu);
+> -}
+> -
+>  static void
+>  devtlb_invalidation_with_pasid(struct intel_iommu *iommu,
+>  			       struct device *dev, int pasid)
+> @@ -409,7 +395,7 @@ void intel_pasid_tear_down_entry(struct
+> intel_iommu *iommu, clflush_cache_range(pte, sizeof(*pte));
+>  
+>  	iommu->flush.pc_inv(iommu, did, pasid, QI_PC_GRAN_PSWD);
+> -	iotlb_invalidation_with_pasid(iommu, did, pasid);
+> +	iommu->flush.p_iotlb_inv(iommu, did, pasid, 0, -1, 0);
+>  
+>  	/* Device IOTLB doesn't need to be flushed in caching mode.
+> */ if (!cap_caching_mode(iommu->cap))
+> @@ -425,7 +411,7 @@ static void pasid_flush_caches(struct intel_iommu
+> *iommu, 
+>  	if (cap_caching_mode(iommu->cap)) {
+>  		iommu->flush.pc_inv(iommu, did, pasid,
+> QI_PC_GRAN_PSWD);
+> -		iotlb_invalidation_with_pasid(iommu, did, pasid);
+> +		iommu->flush.p_iotlb_inv(iommu, did, pasid, 0, -1,
+> 0); } else {
+>  		iommu_flush_write_buffer(iommu);
+>  	}
+> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> index f5594b9981a5..02c6b14f0568 100644
+> --- a/drivers/iommu/intel-svm.c
+> +++ b/drivers/iommu/intel-svm.c
+> @@ -118,27 +118,10 @@ static void intel_flush_svm_range_dev (struct
+> intel_svm *svm, struct intel_svm_d unsigned long address, unsigned
+> long pages, int ih) {
+>  	struct qi_desc desc;
+> +	struct intel_iommu *iommu = svm->iommu;
+>  
+> -	if (pages == -1) {
+> -		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+> -			QI_EIOTLB_DID(sdev->did) |
+> -			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+> -			QI_EIOTLB_TYPE;
+> -		desc.qw1 = 0;
+> -	} else {
+> -		int mask = ilog2(__roundup_pow_of_two(pages));
+> -
+> -		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+> -				QI_EIOTLB_DID(sdev->did) |
+> -				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
+> -				QI_EIOTLB_TYPE;
+> -		desc.qw1 = QI_EIOTLB_ADDR(address) |
+> -				QI_EIOTLB_IH(ih) |
+> -				QI_EIOTLB_AM(mask);
+> -	}
+> -	desc.qw2 = 0;
+> -	desc.qw3 = 0;
+> -	qi_submit_sync(&desc, svm->iommu);
+> +	iommu->flush.p_iotlb_inv(iommu, sdev->did,
+> +				 svm->pasid, address, pages, ih);
+>  
+>  	if (sdev->dev_iotlb) {
+>  		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
 
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3mnoEACgkQ3SOs138+
-s6GpwBAAvaZJp87NoF1TROjbDypFZ2E7Oov0yzlV1zJak8mF3KIV0tKaCHoXheWI
-rcQZm8VFfh/Gqxw63Yk1Gn9nA1KJoqaIUY1On3cMHvY2wtVF7Wh/tFI+5JNXsCIi
-H9et1e5q/J9LaFHxcdNsEeYaocswM31Zy+rNIhT1bpLzvTZObIzbQp5v5eao8U6i
-VUdAUsr5XSj0vcN51HVz6CHFMpQsocQV1AsACAMUny+ajHL/FTmJYa5jvXvhqgpX
-yH593XBFitXrqAhWj3kR6okHC2U9UAd2S9ZXsu15xawQNymTi2mdqnaoeohRajFj
-z9GF5CxNbNCNOBMxvzAkF08s8dQCA/vsSkxQ518Z3BK+dPxu7Leho9yVeNs9muy/
-7fOU5sc+gIBuBB0V/fwP2xiPbvoe/wozI2LtbmDa6akd5rwxYLi3ogJOKtS1QRhN
-JHaTZ08hjuRiL64s8EAfz1VsQYF0MwkfomCfXKMoTCu+8mVXkcMuZcaotXul/Mck
-LMYlsKbCwgLpM4NrNW++q1nTewTXmQpzrLN762Ae23ud7ARns1mwaaGa6UvfxIhE
-cxZVU66dHXKEIdGsA6uSByRKUS8/1le4Iy6zRAu7O88XAbxSydYOm45/ovZTEzAz
-jAymOGgaP0NBMXICJoBLt3/Z0WwBmSAZ/Vir1cbs2jsup+XvzaE=
-=c7iN
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+[Jacob Pan]
