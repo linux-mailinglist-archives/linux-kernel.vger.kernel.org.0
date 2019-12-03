@@ -2,207 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7665510F4E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 03:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D73510F4EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 03:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbfLCCTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 21:19:40 -0500
-Received: from mga07.intel.com ([134.134.136.100]:24453 "EHLO mga07.intel.com"
+        id S1726142AbfLCCXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 21:23:06 -0500
+Received: from ozlabs.org ([203.11.71.1]:54115 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbfLCCTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 21:19:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 18:19:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,271,1571727600"; 
-   d="scan'208";a="222654206"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga002.jf.intel.com with ESMTP; 02 Dec 2019 18:19:35 -0800
-Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] Use 1st-level for DMA remapping
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <20191128022550.9832-1-baolu.lu@linux.intel.com>
- <20191202121927.2fef85ba@jacob-builder>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <608f472b-3eb1-8ea9-1561-cdf2e8191793@linux.intel.com>
-Date:   Tue, 3 Dec 2019 10:19:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1725954AbfLCCXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 21:23:06 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Rm3n2LsCz9sNx;
+        Tue,  3 Dec 2019 13:23:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1575339783;
+        bh=EL9ZyahnDGpSzzlhJ1wKUfVIQDAdvKJz012rP4TCPs0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=q9D3yRsJL7riVhL8NHHJa2KtQWnAkF95p5pT6aNGmzgrs90EOg7VyCDP0Bu23v0/g
+         a/6gqy4VuNywJQ5sUPdmFRUDqVoormLWZoNSZE+esXLj7CsS/bEJB16HICU0m/zX+/
+         KpVi0pthEWNiTWwIE4xjwkX9nnkSeIHBdiCOLLJjuYovXN0KTkQapSMIoETSRtVdtI
+         zphvoNlcS5khjPSNDE1wVFdogx7Eb1R2nlQvTV/qdyRUfFhp53yggf0w6lG5QwvIdp
+         KvCRVQ1ok+PMtwiCMs/jOAL+C5APXlm2B3+1UJO28Bl6JpRTL44VEG5T032WqcM6ys
+         Rwb5s4vlWauGQ==
+Date:   Tue, 3 Dec 2019 13:23:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus <torvalds@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the y2038 tree with the xfs tree
+Message-ID: <20191203132300.3186125c@canb.auug.org.au>
+In-Reply-To: <20191203002258.GE7339@magnolia>
+References: <20191030153046.01efae4a@canb.auug.org.au>
+        <20191203110039.2ec22a17@canb.auug.org.au>
+        <20191203002258.GE7339@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20191202121927.2fef85ba@jacob-builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/G5fteeX4WpkVraxOJWz9wJm";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+--Sig_/G5fteeX4WpkVraxOJWz9wJm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for reviewing it.
+Hi Darrick,
 
-On 12/3/19 4:19 AM, Jacob Pan wrote:
-> On Thu, 28 Nov 2019 10:25:42 +0800
-> Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> 
->> Intel VT-d in scalable mode supports two types of page talbes
-> tables
+On Mon, 2 Dec 2019 16:22:58 -0800 "Darrick J. Wong" <darrick.wong@oracle.co=
+m> wrote:
+>
+> On Tue, Dec 03, 2019 at 11:00:39AM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > This conflict is now between the xfs tree and Linus' tree (and the
+> > merge fix up patch below needs applying to that merge. =20
+>=20
+> There shouldn't be a conflict any more, since Linus just pulled the xfs
+> tree into master and resolved the conflict in the merge commit.
+> (Right?  Or am I missing something here post-turkeyweekend? 8))
 
-Got it, thanks!
+Yeah, it should all be gone in tomorrow's linux-next.
 
->> for DMA translation: the first level page table and the second
->> level page table. The first level page table uses the same
->> format as the CPU page table, while the second level page table
->> keeps compatible with previous formats. The software is able
->> to choose any one of them for DMA remapping according to the use
->> case.
->>
->> This patchset aims to move IOVA (I/O Virtual Address) translation
-> move guest IOVA only, right?
+--=20
+Cheers,
+Stephen Rothwell
 
-No. In v1, only for guest IOVA. This has been changed since v2 according
-to comments during v1 review period. v2 will use first level for both
-host and guest unless nested mode.
+--Sig_/G5fteeX4WpkVraxOJWz9wJm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->> to 1st-level page table in scalable mode. This will simplify vIOMMU
->> (IOMMU simulated by VM hypervisor) design by using the two-stage
->> translation, a.k.a. nested mode translation.
->>
->> As Intel VT-d architecture offers caching mode, guest IOVA (GIOVA)
->> support is now implemented in a shadow page manner. The device
->> simulation software, like QEMU, has to figure out GIOVA->GPA mappings
->> and write them to a shadowed page table, which will be used by the
->> physical IOMMU. Each time when mappings are created or destroyed in
->> vIOMMU, the simulation software has to intervene. Hence, the changes
->> on GIOVA->GPA could be shadowed to host.
->>
->>
->>       .-----------.
->>       |  vIOMMU   |
->>       |-----------|                 .--------------------.
->>       |           |IOTLB flush trap |        QEMU        |
->>       .-----------. (map/unmap)     |--------------------|
->>       |GIOVA->GPA |---------------->|    .------------.  |
->>       '-----------'                 |    | GIOVA->HPA |  |
->>       |           |                 |    '------------'  |
->>       '-----------'                 |                    |
->>                                     |                    |
->>                                     '--------------------'
->>                                                  |
->>              <------------------------------------
->>              |
->>              v VFIO/IOMMU API
->>        .-----------.
->>        |  pIOMMU   |
->>        |-----------|
->>        |           |
->>        .-----------.
->>        |GIOVA->HPA |
->>        '-----------'
->>        |           |
->>        '-----------'
->>
->> In VT-d 3.0, scalable mode is introduced, which offers two-level
->> translation page tables and nested translation mode. Regards to
->> GIOVA support, it can be simplified by 1) moving the GIOVA support
->> over 1st-level page table to store GIOVA->GPA mapping in vIOMMU,
->> 2) binding vIOMMU 1st level page table to the pIOMMU, 3) using pIOMMU
->> second level for GPA->HPA translation, and 4) enable nested (a.k.a.
->> dual-stage) translation in host. Compared with current shadow GIOVA
->> support, the new approach makes the vIOMMU design simpler and more
->> efficient as we only need to flush the pIOMMU IOTLB and possible
->> device-IOTLB when an IOVA mapping in vIOMMU is torn down.
->>
->>       .-----------.
->>       |  vIOMMU   |
->>       |-----------|                 .-----------.
->>       |           |IOTLB flush trap |   QEMU    |
->>       .-----------.    (unmap)      |-----------|
->>       |GIOVA->GPA |---------------->|           |
->>       '-----------'                 '-----------'
->>       |           |                       |
->>       '-----------'                       |
->>             <------------------------------
->>             |      VFIO/IOMMU
->>             |  cache invalidation and
->>             | guest gpd bind interfaces
->>             v
->>       .-----------.
->>       |  pIOMMU   |
->>       |-----------|
->>       .-----------.
->>       |GIOVA->GPA |<---First level
->>       '-----------'
->>       | GPA->HPA  |<---Scond level
->>       '-----------'
->>       '-----------'
->>
->> This patch set includes two parts. The former part implements the
->> per-domain page table abstraction, which makes the page table
->> difference transparent to various map/unmap APIs. The later part
-> s/later/latter/
->> applies the first level page table for IOVA translation unless the
->> DOMAIN_ATTR_NESTING domain attribution has been set, which indicates
->> nested mode in use.
->>
-> Maybe I am reading this wrong, but shouldn't it be the opposite?
-> i.e. Use FL page table for IOVA if it is a nesting domain?
+-----BEGIN PGP SIGNATURE-----
 
-My description seems to a bit confusing. If DOMAIN_ATTR_NESTING is set
-for a domain, the second level will be used to map gPA (guest physical
-address) to hPA (host physical address), and the mappings between gVA (
-guest virtual address) and gPA will be maintained by the guest with the
-page table address binding to host's first level. Otherwise, first level
-will be used for mapping between gPA and hPA, or IOVA and DMA address.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3lxwQACgkQAVBC80lX
+0Gz2Pgf/W+qtlGWltx8FwrLej5hHElz+9Qsxf9biRtTbhblZybgbQ4mICamyW0DR
+dhCUsa2GYCVwAZ/m+eMyFjvpu+Z86PA5sqNWY97ZV7hF9pnWYoxDRb4q/lJyXGLv
+z9QffiYs/l9J7CJNoT/KcCJvcLLz/DU79LB/nUQv4TK4+UOFpYKx+Deq8xK2G5WX
+w5romAXa2JCbGFfXy5Cysr2v2Tqpc4/9IbJ/qC83H2ZA2NK6ajG5pryydXBoTco2
+16rGnqQISq/+VZ8wr1G5OMxM8kueXJx9N566+OX4RqoEuIdsqa71pd7udRO1u78r
+j4VZj8d4hpWSwwJBLeQDh2pMC/5aAg==
+=074M
+-----END PGP SIGNATURE-----
 
-Best regards,
-baolu
-
-> 
->> Based-on-idea-by: Ashok Raj <ashok.raj@intel.com>
->> Based-on-idea-by: Kevin Tian <kevin.tian@intel.com>
->> Based-on-idea-by: Liu Yi L <yi.l.liu@intel.com>
->> Based-on-idea-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Based-on-idea-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
->> Based-on-idea-by: Lu Baolu <baolu.lu@linux.intel.com>
->>
->> Change log:
->>
->>   v1->v2
->>   - The first series was posted here
->>     https://lkml.org/lkml/2019/9/23/297
->>   - Use per domain page table ops to handle different page tables.
->>   - Use first level for DMA remapping by default on both bare metal
->>     and vm guest.
->>   - Code refine according to code review comments for v1.
->>
->> Lu Baolu (8):
->>    iommu/vt-d: Add per domain page table ops
->>    iommu/vt-d: Move domain_flush_cache helper into header
->>    iommu/vt-d: Implement second level page table ops
->>    iommu/vt-d: Apply per domain second level page table ops
->>    iommu/vt-d: Add first level page table interfaces
->>    iommu/vt-d: Implement first level page table ops
->>    iommu/vt-d: Identify domains using first level page table
->>    iommu/vt-d: Add set domain DOMAIN_ATTR_NESTING attr
->>
->>   drivers/iommu/Makefile             |   2 +-
->>   drivers/iommu/intel-iommu.c        | 412
->> +++++++++++++++++++++++------ drivers/iommu/intel-pgtable.c      |
->> 376 ++++++++++++++++++++++++++ include/linux/intel-iommu.h        |
->> 64 ++++- include/trace/events/intel_iommu.h |  60 +++++
->>   5 files changed, 837 insertions(+), 77 deletions(-)
->>   create mode 100644 drivers/iommu/intel-pgtable.c
->>
-> 
-> [Jacob Pan]
-> 
+--Sig_/G5fteeX4WpkVraxOJWz9wJm--
