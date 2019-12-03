@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B0F111EF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:06:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F4D111EED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfLCWtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40152 "EHLO mail.kernel.org"
+        id S1729709AbfLCXFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:05:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbfLCWtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:49:13 -0500
+        id S1729392AbfLCWtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:49:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55A8220684;
-        Tue,  3 Dec 2019 22:49:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 856782084B;
+        Tue,  3 Dec 2019 22:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413352;
-        bh=MqCGkEaFKEvYpnpR5yjcDLhn3RcaqfJeMd3Ts7sMgNM=;
+        s=default; t=1575413379;
+        bh=cPUc9BD9WzvMPqJG1za/uFkew6pNIQo4k/jUTu9jzNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HxF9BIy//Iq/yRrjqSJg9rilW0keTxlqt28wVaC9z7g69Bfl9LD1gAgqZCz0DjjTb
-         Wd/GKkPpVxTZ9n6SG1nBy1NkosE9QB/6rdoO9cIUtJ1ZjRCDXW6PWAXCElTHLqV0rO
-         KvSIgEDLjJDIUnNw6Z1pTV6zQF/CZv3EMYF0lufA=
+        b=tUP+74BUFEJIFNyPTtOZnJGyGhSINbBB4XIHR1LRo4v8VkxKZJcjzn2nvpet4ii9m
+         T1D3ZjXCgXx70H/k5oJm0NwFd0LBqQ/Wjix/jCsWA/hpBp1cPciHmbDDEHsEo84wK7
+         8dMZo0ogiclDacUT1Sqv7C2KJuWZdsbB25iXc2lY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shenghui Wang <shhuiw@foxmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 096/321] bcache: do not mark writeback_running too early
-Date:   Tue,  3 Dec 2019 23:32:42 +0100
-Message-Id: <20191203223432.153600792@linuxfoundation.org>
+Subject: [PATCH 4.19 105/321] iwlwifi: move iwl_nvm_check_version() into dvm
+Date:   Tue,  3 Dec 2019 23:32:51 +0100
+Message-Id: <20191203223432.615096106@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,93 +43,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shenghui Wang <shhuiw@foxmail.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-[ Upstream commit 79b791466e525c98f6aeee9acf5726e7b27f4231 ]
+[ Upstream commit 64866e5da1eabd0c52ff45029b245f5465920031 ]
 
-A fresh backing device is not attached to any cache_set, and
-has no writeback kthread created until first attached to some
-cache_set.
+This function is only half-used by mvm (i.e. only the nvm_version part
+matters, since the calibration version is irrelevant), so it's
+pointless to export it from iwlwifi.  If mvm uses this function, it
+has the additional complexity of setting the calib version to a bogus
+value on all cfg structs.
 
-But bch_cached_dev_writeback_init run
-"
-	dc->writeback_running		= true;
-	WARN_ON(test_and_clear_bit(BCACHE_DEV_WB_RUNNING,
-			&dc->disk.flags));
-"
-for any newly formatted backing devices.
+To avoid this, move the function to dvm and make a simple comparison
+of the nvm_version in mvm instead.
 
-For a fresh standalone backing device, we can get something like
-following even if no writeback kthread created:
-------------------------
-/sys/block/bcache0/bcache# cat writeback_running
-1
-/sys/block/bcache0/bcache# cat writeback_rate_debug
-rate:		512.0k/sec
-dirty:		0.0k
-target:		0.0k
-proportional:	0.0k
-integral:	0.0k
-change:		0.0k/sec
-next io:	-15427384ms
-
-The none ZERO fields are misleading as no alive writeback kthread yet.
-
-Set dc->writeback_running false as no writeback thread created in
-bch_cached_dev_writeback_init().
-
-We have writeback thread created and woken up in bch_cached_dev_writeback
-_start(). Set dc->writeback_running true before bch_writeback_queue()
-called, as a writeback thread will check if dc->writeback_running is true
-before writing back dirty data, and hung if false detected.
-
-After the change, we can get the following output for a fresh standalone
-backing device:
------------------------
-/sys/block/bcache0/bcache$ cat writeback_running
-0
-/sys/block/bcache0/bcache# cat writeback_rate_debug
-rate:		0.0k/sec
-dirty:		0.0k
-target:		0.0k
-proportional:	0.0k
-integral:	0.0k
-change:		0.0k/sec
-next io:	0ms
-
-v1 -> v2:
-  Set dc->writeback_running before bch_writeback_queue() called,
-
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/writeback.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/dvm/main.c | 17 +++++++++++++++++
+ .../wireless/intel/iwlwifi/iwl-eeprom-parse.c | 19 -------------------
+ .../wireless/intel/iwlwifi/iwl-eeprom-parse.h |  5 ++---
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c   |  4 +++-
+ 4 files changed, 22 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
-index ba5395fd386d5..b5fc3c6c7178e 100644
---- a/drivers/md/bcache/writeback.c
-+++ b/drivers/md/bcache/writeback.c
-@@ -781,7 +781,7 @@ void bch_cached_dev_writeback_init(struct cached_dev *dc)
- 	bch_keybuf_init(&dc->writeback_keys);
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
+index 030482b357a3c..06dd4e81b7374 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/main.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
+@@ -1227,6 +1227,23 @@ static int iwl_eeprom_init_hw_params(struct iwl_priv *priv)
+ 	return 0;
+ }
  
- 	dc->writeback_metadata		= true;
--	dc->writeback_running		= true;
-+	dc->writeback_running		= false;
- 	dc->writeback_percent		= 10;
- 	dc->writeback_delay		= 30;
- 	atomic_long_set(&dc->writeback_rate.rate, 1024);
-@@ -810,6 +810,7 @@ int bch_cached_dev_writeback_start(struct cached_dev *dc)
- 		destroy_workqueue(dc->writeback_write_wq);
- 		return PTR_ERR(dc->writeback_thread);
- 	}
-+	dc->writeback_running = true;
++static int iwl_nvm_check_version(struct iwl_nvm_data *data,
++				 struct iwl_trans *trans)
++{
++	if (data->nvm_version >= trans->cfg->nvm_ver ||
++	    data->calib_version >= trans->cfg->nvm_calib_ver) {
++		IWL_DEBUG_INFO(trans, "device EEPROM VER=0x%x, CALIB=0x%x\n",
++			       data->nvm_version, data->calib_version);
++		return 0;
++	}
++
++	IWL_ERR(trans,
++		"Unsupported (too old) EEPROM VER=0x%x < 0x%x CALIB=0x%x < 0x%x\n",
++		data->nvm_version, trans->cfg->nvm_ver,
++		data->calib_version,  trans->cfg->nvm_calib_ver);
++	return -EINVAL;
++}
++
+ static struct iwl_op_mode *iwl_op_mode_dvm_start(struct iwl_trans *trans,
+ 						 const struct iwl_cfg *cfg,
+ 						 const struct iwl_fw *fw,
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c
+index a4c96215933ba..a59bab8345f4e 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c
+@@ -928,22 +928,3 @@ iwl_parse_eeprom_data(struct device *dev, const struct iwl_cfg *cfg,
+ 	return NULL;
+ }
+ IWL_EXPORT_SYMBOL(iwl_parse_eeprom_data);
+-
+-/* helper functions */
+-int iwl_nvm_check_version(struct iwl_nvm_data *data,
+-			     struct iwl_trans *trans)
+-{
+-	if (data->nvm_version >= trans->cfg->nvm_ver ||
+-	    data->calib_version >= trans->cfg->nvm_calib_ver) {
+-		IWL_DEBUG_INFO(trans, "device EEPROM VER=0x%x, CALIB=0x%x\n",
+-			       data->nvm_version, data->calib_version);
+-		return 0;
+-	}
+-
+-	IWL_ERR(trans,
+-		"Unsupported (too old) EEPROM VER=0x%x < 0x%x CALIB=0x%x < 0x%x\n",
+-		data->nvm_version, trans->cfg->nvm_ver,
+-		data->calib_version,  trans->cfg->nvm_calib_ver);
+-	return -EINVAL;
+-}
+-IWL_EXPORT_SYMBOL(iwl_nvm_check_version);
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.h b/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.h
+index 8be50ed12300f..c59dd47cf15d3 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.h
+@@ -7,6 +7,7 @@
+  *
+  * Copyright(c) 2008 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2015 Intel Mobile Communications GmbH
++ * Copyright (C) 2018 Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -33,6 +34,7 @@
+  *
+  * Copyright(c) 2005 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2015 Intel Mobile Communications GmbH
++ * Copyright (C) 2018 Intel Corporation
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -122,9 +124,6 @@ struct iwl_nvm_data *
+ iwl_parse_eeprom_data(struct device *dev, const struct iwl_cfg *cfg,
+ 		      const u8 *eeprom, size_t eeprom_size);
  
- 	WARN_ON(test_and_set_bit(BCACHE_DEV_WB_RUNNING, &dc->disk.flags));
- 	schedule_delayed_work(&dc->writeback_rate_update,
+-int iwl_nvm_check_version(struct iwl_nvm_data *data,
+-			  struct iwl_trans *trans);
+-
+ int iwl_init_sband_channels(struct iwl_nvm_data *data,
+ 			    struct ieee80211_supported_band *sband,
+ 			    int n_channels, enum nl80211_band band);
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+index 2eba6d6f367f8..9808d954dca29 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -547,7 +547,9 @@ int iwl_run_init_mvm_ucode(struct iwl_mvm *mvm, bool read_nvm)
+ 	if (mvm->nvm_file_name)
+ 		iwl_mvm_load_nvm_to_nic(mvm);
+ 
+-	WARN_ON(iwl_nvm_check_version(mvm->nvm_data, mvm->trans));
++	WARN_ONCE(mvm->nvm_data->nvm_version < mvm->trans->cfg->nvm_ver,
++		  "Too old NVM version (0x%0x, required = 0x%0x)",
++		  mvm->nvm_data->nvm_version, mvm->trans->cfg->nvm_ver);
+ 
+ 	/*
+ 	 * abort after reading the nvm in case RF Kill is on, we will complete
 -- 
 2.20.1
 
