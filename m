@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7456E111C83
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0470F111DBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbfLCWou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:44:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32802 "EHLO mail.kernel.org"
+        id S1730443AbfLCW4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:56:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728663AbfLCWor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:44:47 -0500
+        id S1730434AbfLCW42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:56:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73F61206EC;
-        Tue,  3 Dec 2019 22:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B505520866;
+        Tue,  3 Dec 2019 22:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413086;
-        bh=NHzBsxP56xjA1s7nkjexOr7DjOW7Bmyz1+WJUlNZdFQ=;
+        s=default; t=1575413788;
+        bh=Z8aICHbrIM347DJ5/MBMdz5RRjHh6rlblcjp0EeSyYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dhD83EZCs0rRxZtc0mTFwSJcWmgNKj9gY2Vhrg1mFeN8plkZ+x/t4utc2/P5kn/pZ
-         wKSnL77IRnIU0NtQiUY5VmblPToxsSxP7ArC6AY3AKXKhXuaO6/CjGroHPX3FY3C5g
-         Dr9N/s0VFg6u4tYCjG2RB0JIxzfZdLCFPYT3gLck=
+        b=1CEQIKwYK3eOc16aO7G2BlbA0DK3N8Ea1bo8P2ukMElPkMFRe0sN1YCEIRv5m7kNM
+         MiT/E4m8ytrxvZT++2i0hsVpiIO16hKmOmjnltwq8/bkionWHHJoD0eaH+niD6PNHE
+         q+vJR6Ti2Y0MH0YMpWTP8Ze5HGaHLOl+ULGNzCmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 089/135] mac80211: fix ieee80211_txq_setup_flows() failure path
+Subject: [PATCH 4.19 263/321] mm, gup: add missing refcount overflow checks on s390
 Date:   Tue,  3 Dec 2019 23:35:29 +0100
-Message-Id: <20191203213036.056617451@linuxfoundation.org>
+Message-Id: <20191203223440.811248012@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-[ Upstream commit 6dd47d9754ff0589715054b11294771f2c9a16ac ]
+The mainline commit 8fde12ca79af ("mm: prevent get_user_pages() from
+overflowing page refcount") was backported to 4.19.y stable as commit
+d972ebbf42ba. The backport however missed that in 4.19, there are several
+arch-specific gup.c versions with fast gup implementations, so these do not
+prevent refcount overflow.
 
-If ieee80211_txq_setup_flows() fails, we don't clean up LED
-state properly, leading to crashes later on, fix that.
+This stable-only commit fixes the s390 version, and is based on the backport in
+SUSE SLES/openSUSE 4.12-based kernels.
 
-Fixes: dc8b274f0952 ("mac80211: Move up init of TXQs")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
-Link: https://lore.kernel.org/r/20191105154110.1ccf7112ba5d.I0ba865792446d051867b33153be65ce6b063d98c@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+The remaining architectures with own gup.c are sparc, mips, sh. It's unlikely
+the known overflow scenario based on FUSE, which needs 140GB of RAM, is a
+problem for those architectures, and I don't feel confident enough to patch
+them.
+
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/mm/gup.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/net/mac80211/main.c b/net/mac80211/main.c
-index 4c2702f128f3a..868705ed5cbbb 100644
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -1297,8 +1297,8 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
- 	ieee80211_remove_interfaces(local);
-  fail_rate:
- 	rtnl_unlock();
--	ieee80211_led_exit(local);
-  fail_flows:
-+	ieee80211_led_exit(local);
- 	destroy_workqueue(local->workqueue);
-  fail_workqueue:
- 	wiphy_unregister(local->hw.wiphy);
+diff --git a/arch/s390/mm/gup.c b/arch/s390/mm/gup.c
+index 2809d11c7a283..9b5b866d8adf1 100644
+--- a/arch/s390/mm/gup.c
++++ b/arch/s390/mm/gup.c
+@@ -39,7 +39,8 @@ static inline int gup_pte_range(pmd_t *pmdp, pmd_t pmd, unsigned long addr,
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
+ 		head = compound_head(page);
+-		if (!page_cache_get_speculative(head))
++		if (unlikely(WARN_ON_ONCE(page_ref_count(head) < 0)
++		    || !page_cache_get_speculative(head)))
+ 			return 0;
+ 		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
+ 			put_page(head);
+@@ -77,7 +78,8 @@ static inline int gup_huge_pmd(pmd_t *pmdp, pmd_t pmd, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
+ 
+-	if (!page_cache_add_speculative(head, refs)) {
++	if (unlikely(WARN_ON_ONCE(page_ref_count(head) < 0)
++	    || !page_cache_add_speculative(head, refs))) {
+ 		*nr -= refs;
+ 		return 0;
+ 	}
+@@ -151,7 +153,8 @@ static int gup_huge_pud(pud_t *pudp, pud_t pud, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
+ 
+-	if (!page_cache_add_speculative(head, refs)) {
++	if (unlikely(WARN_ON_ONCE(page_ref_count(head) < 0)
++	    || !page_cache_add_speculative(head, refs))) {
+ 		*nr -= refs;
+ 		return 0;
+ 	}
 -- 
 2.20.1
 
