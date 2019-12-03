@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F19112014
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A47CB111FEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbfLCXMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:12:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52428 "EHLO mail.kernel.org"
+        id S1727847AbfLCWkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:40:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728049AbfLCWkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:40:16 -0500
+        id S1727870AbfLCWkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:40:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78FB22073C;
-        Tue,  3 Dec 2019 22:40:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E773E20684;
+        Tue,  3 Dec 2019 22:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412815;
-        bh=6aZUMqtER/CrO+tBsO/WYKls1zOlhwfAyEZ/V2jk7+U=;
+        s=default; t=1575412818;
+        bh=Rpgx27oaH5pyEEWNHINeAj4AJ8nZJiR6iAKPlroSPAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l3UcRbsA35SjTOQXtyhxAEDFvddfuJEklDQqdpLzlrD5sAsKl6Q9N3TjipytVeaKE
-         cbXpIM8TdO605KSsjLQCL8lePI7xxy76VKWoGKDUSNHCzamfw3dAtIyTRWU3n15TVC
-         rShIJjaHNIurUlv+VK5Ck9cCNvXmynZyILiJGNUs=
+        b=iuSfk10Q8BlBYor7c8cX2lJ88MQv8lMQTuzcVudnD88kY9dJQxsFe+gOoj7jTGDbX
+         t3kLo3rw7s5qKh+0sX3N3irdU+91dt75PQbQVY/aXvnL2IktiV7JQ+xvKmNAb8a09N
+         U0hJ6hF9Dj8JLngBv7ZTqblcejp+C0iJ5GVidwco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cheng-Yi Chiang <cychiang@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 027/135] ASoC: rockchip: rockchip_max98090: Enable SHDN to fix headset detection
-Date:   Tue,  3 Dec 2019 23:34:27 +0100
-Message-Id: <20191203213011.147408629@linuxfoundation.org>
+Subject: [PATCH 5.3 028/135] clk: at91: avoid sleeping early
+Date:   Tue,  3 Dec 2019 23:34:28 +0100
+Message-Id: <20191203213011.487609855@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -44,49 +47,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng-Yi Chiang <cychiang@chromium.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 07c1b73e2a027ea9a52677beeb6a943a3e357139 ]
+[ Upstream commit 658fd65cf0b0d511de1718e48d9a28844c385ae0 ]
 
-max98090 spec states that chip needs to be in turned-on state to supply
-mic bias. Enable SHDN dapm widget along with MICBIAS widget to
-actually turn on mic bias for proper headset button detection.
-This is similar to cht_ti_jack_event in
-sound/soc/intel/boards/cht_bsw_max98090_ti.c.
+It is not allowed to sleep to early in the boot process and this may lead
+to kernel issues if the bootloader didn't prepare the slow clock and main
+clock.
 
-Note that due to ts3a227e reports the jack event right away before the
-notifier is registered, if headset is plugged on boot, headset button
-will not get detected until headset is unplugged and plugged. This is
-still an issue to be fixed.
+This results in the following error and dump stack on the AriettaG25:
+   bad: scheduling from the idle thread!
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Link: https://lore.kernel.org/r/20191028095229.99438-1-cychiang@chromium.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Ensure it is possible to sleep, else simply have a delay.
+
+Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Link: https://lkml.kernel.org/r/20190920153906.20887-1-alexandre.belloni@bootlin.com
+Fixes: 80eded6ce8bb ("clk: at91: add slow clks driver")
+Tested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/rockchip/rockchip_max98090.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/at91/clk-main.c |  5 ++++-
+ drivers/clk/at91/sckc.c     | 20 ++++++++++++++++----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-index 782e534d4c0dd..f2add1fe2e79d 100644
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -67,10 +67,13 @@ static int rk_jack_event(struct notifier_block *nb, unsigned long event,
- 	struct snd_soc_jack *jack = (struct snd_soc_jack *)data;
- 	struct snd_soc_dapm_context *dapm = &jack->card->dapm;
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index 311cea0c3ae2b..54b2b2dd2bb57 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -297,7 +297,10 @@ static int clk_main_probe_frequency(struct regmap *regmap)
+ 		regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
+ 		if (mcfr & AT91_PMC_MAINRDY)
+ 			return 0;
+-		usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
++		if (system_state < SYSTEM_RUNNING)
++			udelay(MAINF_LOOP_MIN_WAIT);
++		else
++			usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
+ 	} while (time_before(prep_time, timeout));
  
--	if (event & SND_JACK_MICROPHONE)
-+	if (event & SND_JACK_MICROPHONE) {
- 		snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
--	else
-+		snd_soc_dapm_force_enable_pin(dapm, "SHDN");
-+	} else {
- 		snd_soc_dapm_disable_pin(dapm, "MICBIAS");
-+		snd_soc_dapm_disable_pin(dapm, "SHDN");
-+	}
+ 	return -ETIMEDOUT;
+diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+index 9bfe9a28294a7..fac0ca56d42d9 100644
+--- a/drivers/clk/at91/sckc.c
++++ b/drivers/clk/at91/sckc.c
+@@ -76,7 +76,10 @@ static int clk_slow_osc_prepare(struct clk_hw *hw)
  
- 	snd_soc_dapm_sync(dapm);
+ 	writel(tmp | osc->bits->cr_osc32en, sckcr);
  
+-	usleep_range(osc->startup_usec, osc->startup_usec + 1);
++	if (system_state < SYSTEM_RUNNING)
++		udelay(osc->startup_usec);
++	else
++		usleep_range(osc->startup_usec, osc->startup_usec + 1);
+ 
+ 	return 0;
+ }
+@@ -187,7 +190,10 @@ static int clk_slow_rc_osc_prepare(struct clk_hw *hw)
+ 
+ 	writel(readl(sckcr) | osc->bits->cr_rcen, sckcr);
+ 
+-	usleep_range(osc->startup_usec, osc->startup_usec + 1);
++	if (system_state < SYSTEM_RUNNING)
++		udelay(osc->startup_usec);
++	else
++		usleep_range(osc->startup_usec, osc->startup_usec + 1);
+ 
+ 	return 0;
+ }
+@@ -288,7 +294,10 @@ static int clk_sam9x5_slow_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 	writel(tmp, sckcr);
+ 
+-	usleep_range(SLOWCK_SW_TIME_USEC, SLOWCK_SW_TIME_USEC + 1);
++	if (system_state < SYSTEM_RUNNING)
++		udelay(SLOWCK_SW_TIME_USEC);
++	else
++		usleep_range(SLOWCK_SW_TIME_USEC, SLOWCK_SW_TIME_USEC + 1);
+ 
+ 	return 0;
+ }
+@@ -533,7 +542,10 @@ static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
+ 		return 0;
+ 	}
+ 
+-	usleep_range(osc->startup_usec, osc->startup_usec + 1);
++	if (system_state < SYSTEM_RUNNING)
++		udelay(osc->startup_usec);
++	else
++		usleep_range(osc->startup_usec, osc->startup_usec + 1);
+ 	osc->prepared = true;
+ 
+ 	return 0;
 -- 
 2.20.1
 
