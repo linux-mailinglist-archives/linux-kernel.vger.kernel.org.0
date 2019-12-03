@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC453111BF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A35A111DEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfLCWjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        id S1730642AbfLCW6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:58:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727757AbfLCWi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:38:58 -0500
+        id S1727937AbfLCW6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:58:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A81320684;
-        Tue,  3 Dec 2019 22:38:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73E3A20863;
+        Tue,  3 Dec 2019 22:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412738;
-        bh=vy21C2Jmz7+AosFAmvQpCZ90dK5eCzza5DrZjI7Yfqc=;
+        s=default; t=1575413896;
+        bh=JCoY7mZHq3opaU1WkN9zdL3pS8mGjJQ4hMf3eU8txPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qv3Wndyt4FR3mH7F+sjswNJ/5MFnFT7bAsgaM/2M4b7Q/281EfCXxyTdvEZWpEed3
-         neOq0Uw5rpnT0EqqFiqNY3Ybw05FXMQud/Wm4r90oROs13In4oYL6RpMy4AhDCcB5k
-         15+SkLGKODu0Uy0j2aSSfpNMv1K/b5plrTV67YF0=
+        b=0vpWpd45ZrqTYsYFQGK/NehKGZHzI8X20XeVqh9QpGROgR4u+zVldIozD+C4enam1
+         RX94ppPaUXx0jXL/llydvyoPg/9ulKqQMv45ANpSdXkUg3577QryP40tMEbZS3h7sM
+         Z2cLdt/OvsP1hPdJ6sMbBQHedehX3FGK7mx9dEVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 5.4 43/46] crypto: talitos - Fix build error by selecting LIB_DES
+        stable@vger.kernel.org, Paul Thomas <pthomas8589@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.19 297/321] net: macb driver, check for SKBTX_HW_TSTAMP
 Date:   Tue,  3 Dec 2019 23:36:03 +0100
-Message-Id: <20191203212805.885503932@linuxfoundation.org>
+Message-Id: <20191203223442.602846662@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Paul Thomas <pthomas8589@gmail.com>
 
-commit dbc2e87bd8b6d3cc79730b3a49c5163b4c386b49 upstream.
+commit a62520473f15750cd1432d36b377a06cd7cff8d2 upstream.
 
-The talitos driver needs to select LIB_DES as it needs calls
-des_expand_key.
+Make sure SKBTX_HW_TSTAMP (i.e. SOF_TIMESTAMPING_TX_HARDWARE) has been
+enabled for this skb. It does fix the issue where normal socks that
+aren't expecting a timestamp will not wake up on select, but when a
+user does want a SOF_TIMESTAMPING_TX_HARDWARE it does work.
 
-Fixes: 9d574ae8ebc1 ("crypto: talitos/des - switch to new...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Paul Thomas <pthomas8589@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/cadence/macb_main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -287,6 +287,7 @@ config CRYPTO_DEV_TALITOS
- 	select CRYPTO_AUTHENC
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_HASH
-+	select CRYPTO_LIB_DES
- 	select HW_RANDOM
- 	depends on FSL_SOC
- 	help
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -860,7 +860,9 @@ static void macb_tx_interrupt(struct mac
+ 
+ 			/* First, update TX stats if needed */
+ 			if (skb) {
+-				if (gem_ptp_do_txstamp(queue, skb, desc) == 0) {
++				if (unlikely(skb_shinfo(skb)->tx_flags &
++					     SKBTX_HW_TSTAMP) &&
++				    gem_ptp_do_txstamp(queue, skb, desc) == 0) {
+ 					/* skb now belongs to timestamp buffer
+ 					 * and will be removed later
+ 					 */
 
 
