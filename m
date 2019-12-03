@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B7D111BCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:37:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A158111E27
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfLCWhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:37:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
+        id S1730221AbfLCW6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:58:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbfLCWh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:37:29 -0500
+        id S1729656AbfLCW6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:58:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C94542073C;
-        Tue,  3 Dec 2019 22:37:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCC3420656;
+        Tue,  3 Dec 2019 22:58:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412648;
-        bh=zz6hc1y0Nrg95ijcrAaoxy8ZdAJ8NK04RKA1Ad7Z17U=;
+        s=default; t=1575413881;
+        bh=BBuT6WcOlJ5I5KToApIymCv4XRE2claoTNM1LLNUSx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yEfrvOLat8pydAhjY45f543XpwjBcunsigAN5EgfqMdAxrxSnnTGWubTLEhgCl43g
-         g6mAahtscXPvh8lbKh25pGbtwkq8aylvbQBHiH3bIWeyjgnZwmyB3q6QEWyo5Hp+At
-         b5i+nfgXoXIxvLiCDZbRsmSNHczSbxSdcTYkH858=
+        b=HbeDX6tGz1Gz50j9NWG97zSkySFeW/x9fUbrFB8sk4+nFYTLijpqLLXNYcFvFIRy6
+         shE/38o0xS3OpPBxrxerJMntaGLbGI0HIlwwXz4RK2rBkajQAMW5DtPApi84fCG7Bs
+         MPVeYXmHVwVQpUQFWe+oOc9tpnqsVb2pGRjgbuTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 03/46] net: disallow ancillary data for __sys_{send,recv}msg_file()
-Date:   Tue,  3 Dec 2019 23:35:23 +0100
-Message-Id: <20191203212711.946829051@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 258/321] RDMA/hns: Use GFP_ATOMIC in hns_roce_v2_modify_qp
+Date:   Tue,  3 Dec 2019 23:35:24 +0100
+Message-Id: <20191203223440.555593418@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit d69e07793f891524c6bbf1e75b9ae69db4450953 ]
+[ Upstream commit 4e69cf1fe2c52d189acdd06c1fd99cc258aba61f ]
 
-Only io_uring uses (and added) these, and we want to disallow the
-use of sendmsg/recvmsg for anything but regular data transfers.
-Use the newly added prep helper to split the msghdr copy out from
-the core function, to check for msg_control and msg_controllen
-settings. If either is set, we return -EINVAL.
+The the below commit, hns_roce_v2_modify_qp is called inside spinlock
+while using GFP_KERNEL. Change it to GFP_ATOMIC.
 
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 0425e3e6e0c7 ("RDMA/hns: Support flush cqe for hip08 in kernel space")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/socket.c | 43 +++++++++++++++++++++++++++++++++++++------
- 1 file changed, 37 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/socket.c b/net/socket.c
-index fbe08d7df7732..d7a106028f0e0 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2357,12 +2357,27 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
- /*
-  *	BSD sendmsg interface
-  */
--long __sys_sendmsg_sock(struct socket *sock, struct user_msghdr __user *msg,
-+long __sys_sendmsg_sock(struct socket *sock, struct user_msghdr __user *umsg,
- 			unsigned int flags)
- {
--	struct msghdr msg_sys;
-+	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
-+	struct sockaddr_storage address;
-+	struct msghdr msg = { .msg_name = &address };
-+	ssize_t err;
-+
-+	err = sendmsg_copy_msghdr(&msg, umsg, flags, &iov);
-+	if (err)
-+		return err;
-+	/* disallow ancillary data requests from this path */
-+	if (msg.msg_control || msg.msg_controllen) {
-+		err = -EINVAL;
-+		goto out;
-+	}
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index a5ec900a14ae9..7021444f18b46 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -3446,7 +3446,7 @@ static int hns_roce_v2_modify_qp(struct ib_qp *ibqp,
+ 	struct device *dev = hr_dev->dev;
+ 	int ret = -EINVAL;
  
--	return ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
-+	err = ____sys_sendmsg(sock, &msg, flags, NULL, 0);
-+out:
-+	kfree(iov);
-+	return err;
- }
+-	context = kcalloc(2, sizeof(*context), GFP_KERNEL);
++	context = kcalloc(2, sizeof(*context), GFP_ATOMIC);
+ 	if (!context)
+ 		return -ENOMEM;
  
- long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
-@@ -2561,12 +2576,28 @@ static int ___sys_recvmsg(struct socket *sock, struct user_msghdr __user *msg,
-  *	BSD recvmsg interface
-  */
- 
--long __sys_recvmsg_sock(struct socket *sock, struct user_msghdr __user *msg,
-+long __sys_recvmsg_sock(struct socket *sock, struct user_msghdr __user *umsg,
- 			unsigned int flags)
- {
--	struct msghdr msg_sys;
-+	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
-+	struct sockaddr_storage address;
-+	struct msghdr msg = { .msg_name = &address };
-+	struct sockaddr __user *uaddr;
-+	ssize_t err;
- 
--	return ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
-+	err = recvmsg_copy_msghdr(&msg, umsg, flags, &uaddr, &iov);
-+	if (err)
-+		return err;
-+	/* disallow ancillary data requests from this path */
-+	if (msg.msg_control || msg.msg_controllen) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	err = ____sys_recvmsg(sock, &msg, umsg, uaddr, flags, 0);
-+out:
-+	kfree(iov);
-+	return err;
- }
- 
- long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
 -- 
 2.20.1
 
