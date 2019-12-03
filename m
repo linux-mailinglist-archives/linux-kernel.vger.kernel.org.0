@@ -2,179 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 328DD10FADB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3978110FAEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:39:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbfLCJhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 04:37:19 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37631 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbfLCJhR (ORCPT
+        id S1726291AbfLCJja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 04:39:30 -0500
+Received: from smtprelay0245.hostedemail.com ([216.40.44.245]:45879 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726074AbfLCJj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 04:37:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w15so2782985wru.4
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 01:37:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=n1V4m5uHfTZUZxbvB/zT+U3+jIt/r2ueCcg5F/IHP4U=;
-        b=E65o8GbhaN6dhsWwqzOmls+WOicYbtpQe1WLFww2Jaa7JRztNoOiGZ1KrFWIh7zroa
-         PD3m16AUfEZovja7lfC1k64JxzC1hmTdp7WHe7tGzNB9iXuyUR3Sv1Z0dH1S7tCMx30N
-         cQDUdtZNMQuQKrytVyqyB9a8sWZ4wGV55Rsvb5vj4evXM/2omPE92xA2TQ6i6L/U8YT0
-         z8QnLUuCWiyXCVpdhJS3s4LFc/YsSdeDrdNf4khoh2erPEN/qQJqXyvCEPDWgfAJePgW
-         pFHmVbBmDN9BjHHOHVcntF6yAo27fTWTeDVByAWFYHnYaLg9mdx9jz8IfIvJ3YuOdDRu
-         qP8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=n1V4m5uHfTZUZxbvB/zT+U3+jIt/r2ueCcg5F/IHP4U=;
-        b=p/hrfkyBeY9OrjgLcvRgr9kV4YXkUfWdpHJ8dyg+espjz+vyMIyqb3uUeYVzhy9kkf
-         x7KZsAJWFOUWLRaKMo37cu3TK65knjf+M/nvuTpwY0Tlp16g1iY/a5Vh8Wonjx4oOEMb
-         eKTcbONeRtl65bQNT/LKosMxlB3o+SXzoJfYdtJJyf2tw53zvdWX2DBNROTMufaQ+2pZ
-         F/jMu2XrAXh3Oy0igiEkFwr7CfBM76RW0mGxXKmIuo63ctUlPGa7hNOfY2dgsWfzc9cA
-         NymlYkeDLmOv8YEIvcw6VgOKxgixGy+RuB3KJikd7hbnwPl7Sw1hcKgiM20F/Dp4COhx
-         SA+g==
-X-Gm-Message-State: APjAAAVj/xyCfmWV9ymVpwJZfvqYuaisxx+aSqLtMPAHI5Yi/LbLMhKn
-        9W/JbtcKNeKTlsOZgPTYpbEueUa8mGI=
-X-Google-Smtp-Source: APXvYqwZgnSicZdtM/tuYU44eF8nODj6JRqUZHZKZa0aD8MBSp2wduQjWdsjtvzB8xzUdW3uGc7BuQ==
-X-Received: by 2002:adf:f411:: with SMTP id g17mr3958312wro.89.1575365834904;
-        Tue, 03 Dec 2019 01:37:14 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e34:ed2f:f020:8196:cbcc:fb2c:4975])
-        by smtp.gmail.com with ESMTPSA id w13sm2935751wru.38.2019.12.03.01.37.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 01:37:14 -0800 (PST)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     viresh.kumar@linaro.org, rui.zhang@intel.com
-Cc:     rjw@rjwysocki.net, edubezval@gmail.com, linux-pm@vger.kernel.org,
-        amit.kucheria@linaro.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 4/4] thermal/drivers/cpu_cooling: Rename to cpufreq_cooling
-Date:   Tue,  3 Dec 2019 10:37:04 +0100
-Message-Id: <20191203093704.7037-4-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191203093704.7037-1-daniel.lezcano@linaro.org>
-References: <20191203093704.7037-1-daniel.lezcano@linaro.org>
+        Tue, 3 Dec 2019 04:39:29 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id DD905100E7B4E;
+        Tue,  3 Dec 2019 09:39:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3653:3866:3871:3873:3874:4321:4823:5007:6119:7903:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21451:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: uncle09_8cd93dde3eb45
+X-Filterd-Recvd-Size: 1707
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  3 Dec 2019 09:39:27 +0000 (UTC)
+Message-ID: <7d7c97b0d2aea09f32688bd6644af72b4be121d4.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Look for Kconfig indentation errors
+From:   Joe Perches <joe@perches.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Andy Whitcroft <apw@canonical.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date:   Tue, 03 Dec 2019 01:38:54 -0800
+In-Reply-To: <874kyhkbje.fsf@intel.com>
+References: <1574906800-19901-1-git-send-email-krzk@kernel.org>
+         <87a78gnyaz.fsf@intel.com>
+         <ab3309596fac1c5a0cb4e0abed0cf1ee7ac13a3d.camel@perches.com>
+         <CAJKOXPdqn7+ucwqu2vJFL9ggCerpBz1qN6BSJvcsi4BQ3DU6fg@mail.gmail.com>
+         <ea57f41e30f962227855d4f60a93c89a6bf0b2f0.camel@perches.com>
+         <874kyhkbje.fsf@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we introduced the idle injection cooling device called
-cpuidle_cooling, let's be consistent and rename the cpu_cooling to
-cpufreq_cooling as this one mitigates with OPPs changes.
+On Tue, 2019-12-03 at 11:23 +0200, Jani Nikula wrote:
+> Alternatively, perhaps you could complain about indentation that is not
+> one of 1) empty string, 2) exactly one tab, or 3) exactly one tab
+> followed by exactly two spaces?
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-  V3:
-    - Fix missing name conversion (Viresh Kumar)
----
- Documentation/driver-api/thermal/exynos_thermal.rst  | 2 +-
- MAINTAINERS                                          | 2 +-
- drivers/thermal/Makefile                             | 2 +-
- drivers/thermal/clock_cooling.c                      | 2 +-
- drivers/thermal/{cpu_cooling.c => cpufreq_cooling.c} | 6 +++---
- include/linux/clock_cooling.h                        | 2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
- rename drivers/thermal/{cpu_cooling.c => cpufreq_cooling.c} (99%)
+Way too many false positives.
 
-diff --git a/Documentation/driver-api/thermal/exynos_thermal.rst b/Documentation/driver-api/thermal/exynos_thermal.rst
-index 5bd556566c70..d4e4a5b75805 100644
---- a/Documentation/driver-api/thermal/exynos_thermal.rst
-+++ b/Documentation/driver-api/thermal/exynos_thermal.rst
-@@ -67,7 +67,7 @@ TMU driver description:
- The exynos thermal driver is structured as::
- 
- 					Kernel Core thermal framework
--				(thermal_core.c, step_wise.c, cpu_cooling.c)
-+				(thermal_core.c, step_wise.c, cpufreq_cooling.c)
- 								^
- 								|
- 								|
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d2e92a0360f2..26e4be914765 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16194,7 +16194,7 @@ L:	linux-pm@vger.kernel.org
- S:	Supported
- F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
- F:	Documentation/driver-api/thermal/cpu-idle-cooling.rst
--F:	drivers/thermal/cpu_cooling.c
-+F:	drivers/thermal/cpufreq_cooling.c
- F:	drivers/thermal/cpuidle_cooling.c
- F:	include/linux/cpu_cooling.h
- 
-diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index 9c8aa2d4bd28..5c98472ffd8b 100644
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@ -19,7 +19,7 @@ thermal_sys-$(CONFIG_THERMAL_GOV_USER_SPACE)	+= user_space.o
- thermal_sys-$(CONFIG_THERMAL_GOV_POWER_ALLOCATOR)	+= power_allocator.o
- 
- # cpufreq cooling
--thermal_sys-$(CONFIG_CPU_FREQ_THERMAL)	+= cpu_cooling.o
-+thermal_sys-$(CONFIG_CPU_FREQ_THERMAL)	+= cpufreq_cooling.o
- thermal_sys-$(CONFIG_CPU_IDLE_THERMAL)	+= cpuidle_cooling.o
- 
- # clock cooling
-diff --git a/drivers/thermal/clock_cooling.c b/drivers/thermal/clock_cooling.c
-index 3ad3256c48fd..7cb3ae4b44ee 100644
---- a/drivers/thermal/clock_cooling.c
-+++ b/drivers/thermal/clock_cooling.c
-@@ -7,7 +7,7 @@
-  *  Copyright (C) 2013	Texas Instruments Inc.
-  *  Contact:  Eduardo Valentin <eduardo.valentin@ti.com>
-  *
-- *  Highly based on cpu_cooling.c.
-+ *  Highly based on cpufreq_cooling.c.
-  *  Copyright (C) 2012	Samsung Electronics Co., Ltd(http://www.samsung.com)
-  *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
-  */
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpufreq_cooling.c
-similarity index 99%
-rename from drivers/thermal/cpu_cooling.c
-rename to drivers/thermal/cpufreq_cooling.c
-index 6b9865c786ba..3a3f9cf94b6d 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpufreq_cooling.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- *  linux/drivers/thermal/cpu_cooling.c
-+ *  linux/drivers/thermal/cpufreq_cooling.c
-  *
-  *  Copyright (C) 2012	Samsung Electronics Co., Ltd(http://www.samsung.com)
-  *
-@@ -694,7 +694,7 @@ of_cpufreq_cooling_register(struct cpufreq_policy *policy)
- 	u32 capacitance = 0;
- 
- 	if (!np) {
--		pr_err("cpu_cooling: OF node not available for cpu%d\n",
-+		pr_err("cpufreq_cooling: OF node not available for cpu%d\n",
- 		       policy->cpu);
- 		return NULL;
- 	}
-@@ -705,7 +705,7 @@ of_cpufreq_cooling_register(struct cpufreq_policy *policy)
- 
- 		cdev = __cpufreq_cooling_register(np, policy, capacitance);
- 		if (IS_ERR(cdev)) {
--			pr_err("cpu_cooling: cpu%d failed to register as cooling device: %ld\n",
-+			pr_err("cpufreq_cooling: cpu%d failed to register as cooling device: %ld\n",
- 			       policy->cpu, PTR_ERR(cdev));
- 			cdev = NULL;
- 		}
-diff --git a/include/linux/clock_cooling.h b/include/linux/clock_cooling.h
-index b5cebf766e02..4b0a69863656 100644
---- a/include/linux/clock_cooling.h
-+++ b/include/linux/clock_cooling.h
-@@ -7,7 +7,7 @@
-  *  Copyright (C) 2013	Texas Instruments Inc.
-  *  Contact:  Eduardo Valentin <eduardo.valentin@ti.com>
-  *
-- *  Highly based on cpu_cooling.c.
-+ *  Highly based on cpufreq_cooling.c.
-  *  Copyright (C) 2012	Samsung Electronics Co., Ltd(http://www.samsung.com)
-  *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
-  */
--- 
-2.17.1
+Try something like:
+
+$ git grep -P -oh "^\s*\w+\b" -- '*/Kconfig*' | \
+  perl -p -e 'my $tabs=0;my $spaces=0;while ($_ =~ /^\s/) { if (substr($_,0,1) eq " ") { $spaces++; } else { $tabs++; } $_ = substr($_, 1); } print "tabs: $tabs spaces: $spaces: word: $_";'
+
 
