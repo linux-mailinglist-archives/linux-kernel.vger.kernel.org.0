@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B398C111BFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3393E111C5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfLCWjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
+        id S1728771AbfLCWnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbfLCWjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:11 -0500
+        id S1728766AbfLCWnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2643E2084F;
-        Tue,  3 Dec 2019 22:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5353B206EC;
+        Tue,  3 Dec 2019 22:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412750;
-        bh=Gvbq7mVM0/PgnucgqGPLHNcebP9gPhf52e++PEBwkx4=;
+        s=default; t=1575412985;
+        bh=0i8+MroQvcCp4W7iTdzxkMdymi9RZSRFAFVF573fmOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kxzCXdfK9KkA3fCyUgwp7+aNk+BDX71KHnzzHTxPEydQKmIrsMn1Yj3TBIiUkNRiD
-         9bjeUBnmcIcFr4P+HJcYA4snHmLum+73bgN4I6Zxv0+Snks5mzzAmriCOYZF+VKl60
-         IgjqZAPtN8Mlz1rohsS5pzDq2Bi+UwYHBTzvXKtk=
+        b=Nrfv4qbRLE3D1MafL8V2Cb4sIBVJiRk3xObZkeKtcBYxtoytnThkbwwO7jJsAXZPK
+         4MaJxxEeONEeqrAIeOynybruj39I2hzT+T5y0gCbbzYI1FFDg6yAWR0LUqcNJQBC2v
+         lDyrNRb5uBElCmBlwOiVNUG9uOkDzjOeej4aSZ0g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 5.4 13/46] mei: me: add comet point V device id
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 093/135] pwm: bcm-iproc: Prevent unloading the driver module while in use
 Date:   Tue,  3 Dec 2019 23:35:33 +0100
-Message-Id: <20191203212729.172658977@linuxfoundation.org>
+Message-Id: <20191203213037.242644482@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +47,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit 82b29b9f72afdccb40ea5f3c13c6a3cb65a597bc upstream.
+[ Upstream commit 24906a41eecb73d51974ade0847c21e429beec60 ]
 
-Comet Point (Comet Lake) V device id.
+The owner member of struct pwm_ops must be set to THIS_MODULE to
+increase the reference count of the module such that the module cannot
+be removed while its code is in use.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Link: https://lore.kernel.org/r/20191105150514.14010-2-tomas.winkler@intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: daa5abc41c80 ("pwm: Add support for Broadcom iProc PWM controller")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/mei/hw-me-regs.h |    1 +
- drivers/misc/mei/pci-me.c     |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/pwm/pwm-bcm-iproc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/misc/mei/hw-me-regs.h
-+++ b/drivers/misc/mei/hw-me-regs.h
-@@ -81,6 +81,7 @@
+diff --git a/drivers/pwm/pwm-bcm-iproc.c b/drivers/pwm/pwm-bcm-iproc.c
+index d961a8207b1cb..31b01035d0ab3 100644
+--- a/drivers/pwm/pwm-bcm-iproc.c
++++ b/drivers/pwm/pwm-bcm-iproc.c
+@@ -187,6 +187,7 @@ static int iproc_pwmc_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ static const struct pwm_ops iproc_pwm_ops = {
+ 	.apply = iproc_pwmc_apply,
+ 	.get_state = iproc_pwmc_get_state,
++	.owner = THIS_MODULE,
+ };
  
- #define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
- #define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
-+#define MEI_DEV_ID_CMP_V      0xA3BA  /* Comet Point Lake V */
- 
- #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
- 
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -98,6 +98,7 @@ static const struct pci_device_id mei_me
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_V, MEI_ME_PCH12_CFG)},
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
- 
+ static int iproc_pwmc_probe(struct platform_device *pdev)
+-- 
+2.20.1
+
 
 
