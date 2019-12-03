@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3065111CA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:47:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23CE5111CA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:47:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbfLCWqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:46:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35350 "EHLO mail.kernel.org"
+        id S1729167AbfLCWqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:46:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729153AbfLCWqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:46:06 -0500
+        id S1728593AbfLCWqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:46:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22B2620656;
-        Tue,  3 Dec 2019 22:46:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36BAF20803;
+        Tue,  3 Dec 2019 22:46:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413164;
-        bh=fEQiDUCb39lqUiZBntSH+QRXATIRNjIAz3kmwPEpB0E=;
+        s=default; t=1575413167;
+        bh=SxMYTWTwvv690PHEkEgFWJ16AdvsYYbagNIxxDy1FOE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MvSjZ/htZyB6QuyuQlE9yrmSvrdqR6yDzrVsxwrn21IGMM/L4pZQMzFsez4UkBEu4
-         m+57vx0MxieXpgWAnDfwMihkhhdNU7nop1JeYEqiwClfSA+CRwxfDFVt2OBJMMbScC
-         wNzA6jFZEiWsGZ+048W9Uowz6O8jqnMEONNOppaI=
+        b=luG5rskfxOfJlA5lMzhVsp+DyIi8gE1NyBPtxHpzrkKBaL7pghTho6iZ2rIU7X1a2
+         BPA+P1r/lg0mlEJ2k6yKWOjJBIlqh+grazGUv7UvvAoRBNi1moWNWyOydkLFvPEr15
+         wYxS+cVApXIlhCSAI5q6TKIF41F3ZMHtoI+LfL4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 023/321] clk: ti: clkctrl: Fix failed to enable error with double udelay timeout
-Date:   Tue,  3 Dec 2019 23:31:29 +0100
-Message-Id: <20191203223428.325017363@linuxfoundation.org>
+Subject: [PATCH 4.19 024/321] net: fec: add missed clk_disable_unprepare in remove
+Date:   Tue,  3 Dec 2019 23:31:30 +0100
+Message-Id: <20191203223428.376628375@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -46,53 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 81a41901ffd46bac6df4c95b8290ac259e0feda8 ]
+[ Upstream commit c43eab3eddb4c6742ac20138659a9b701822b274 ]
 
-Commit 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if
-timekeeping is suspended") added handling for cases when timekeeping is
-suspended. But looks like we can still get occasional "failed to enable"
-errors on the PM runtime resume path with udelay() returning faster than
-expected.
+This driver forgets to disable and unprepare clks when remove.
+Add calls to clk_disable_unprepare to fix it.
 
-With ti-sysc interconnect target module driver this leads into device
-failure with PM runtime failing with "failed to enable" clkctrl error.
-
-Let's fix the issue with a delay of two times the desired delay as in
-often done for udelay() to account for the inaccuracy.
-
-Fixes: 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if timekeeping is suspended")
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Link: https://lkml.kernel.org/r/20190930154001.46581-1-tony@atomide.com
-Tested-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/clkctrl.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/freescale/fec_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index dfaa5aad06927..2c2564acad227 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -100,11 +100,12 @@ static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
- 	 * can be from a timer that requires pm_runtime access, which
- 	 * will eventually bring us here with timekeeping_suspended,
- 	 * during both suspend entry and resume paths. This happens
--	 * at least on am43xx platform.
-+	 * at least on am43xx platform. Account for flakeyness
-+	 * with udelay() by multiplying the timeout value by 2.
- 	 */
- 	if (unlikely(_early_timeout || timekeeping_suspended)) {
- 		if (time->cycles++ < timeout) {
--			udelay(1);
-+			udelay(1 * 2);
- 			return false;
- 		}
- 	} else {
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 4cf80de4c471c..1c62a102a223c 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3606,6 +3606,8 @@ fec_drv_remove(struct platform_device *pdev)
+ 		regulator_disable(fep->reg_phy);
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++	clk_disable_unprepare(fep->clk_ahb);
++	clk_disable_unprepare(fep->clk_ipg);
+ 	if (of_phy_is_fixed_link(np))
+ 		of_phy_deregister_fixed_link(np);
+ 	of_node_put(fep->phy_node);
 -- 
 2.20.1
 
