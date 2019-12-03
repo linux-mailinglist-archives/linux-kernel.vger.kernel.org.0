@@ -2,130 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3438611018F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6502E110195
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:53:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbfLCPwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 10:52:08 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:55669 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbfLCPwI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:52:08 -0500
-Received: by mail-io1-f71.google.com with SMTP id z21so2675800iob.22
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 07:52:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=qWkyIPu2o6vdgwTgEGOSkN6/EDBPIm6eU4NPNmjP8sE=;
-        b=CblZ52t4IyIyWPawnWsZvaCoZHPVeb0doBP5uqE8JBPHhk69L2lfHohluWPwLfRgLj
-         PYQxoPACfcMPBDrIOlaEvM3SFXvbgl5UVdCKLYwHUPQQwa9tgLZiHNxzK8A6ISEcayDy
-         vTFc7jnD+eIJDRpq3StPwHLscFFWr8I4uuc90VtcBUDLTcTfY4n+FD2Ifb7F5tgxDoRv
-         ak/rqxWbMRZ2psf00JNgk9EL9TWVSEY28KCNWEN2ihL87aWrgjfNaYIkmUzdMagjy8Yf
-         y6FFXn9q0PdiHFBnSqvhxTrJtHnDstUhvWL17coQMwTxdOuBQzoq2u3/BtqMbgwBUCR6
-         waOw==
-X-Gm-Message-State: APjAAAXzK/SDOMvUCG8Weecj/9S8svz3ZftjuPR2vIeQ+CjsesXTNqX5
-        wv0aw7VWWYAqzD7QF50O+/AaCwvQGU2mfKZ8ANxAh5UMIsJp
-X-Google-Smtp-Source: APXvYqxRRjmcvHXXtfC8p3VqmQ496e1KHf7+NJNVYy0YhwBf9iB2IDre8Q3CFKBUOS2QdbxjInzY+v+6Xr9pVZTGUYCg05DmeGFs
+        id S1726857AbfLCPxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:53:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbfLCPxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 10:53:21 -0500
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05A6D2073F;
+        Tue,  3 Dec 2019 15:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575388400;
+        bh=cKUlQJxyEbNNE534SxNpTQSfjp4RJhfRU1TUcm+QH08=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Nm1H73YFEpWiEJ7OcGsNEJd3BOuiFHQOpmau/UXVgeM0A3bJ4zEmI/hHgl2R62C1y
+         Ms62vpk7yOnX3u1BuWQss6CwRWnVQXsDzid8yYPpfAB1VJO4Tgm8AGk7nzJRGSJKld
+         i6dHTj8CNyyW9bPfXgUO/tMXqTZtxcPv3D8aWTdQ=
+Received: by mail-qv1-f52.google.com with SMTP id t9so1680702qvh.13;
+        Tue, 03 Dec 2019 07:53:19 -0800 (PST)
+X-Gm-Message-State: APjAAAVJ49WG1m4rnxIDzV6bZNgvIYDKKpBsv2NUCEBJIK1euNEkDUZm
+        7u/8oY6z25IWCMPjFJ4zKb1FAEq1P/tWCDr4HA==
+X-Google-Smtp-Source: APXvYqyICjW3HYnUPFqTgR4rEp2A1uuQE3BOephqhDMI2H3gFhNk2aTw/xPKbNHQEIKUpgOnuSfcOdrza+JvE1yn/H8=
+X-Received: by 2002:ad4:450a:: with SMTP id k10mr5459306qvu.136.1575388397912;
+ Tue, 03 Dec 2019 07:53:17 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8744:: with SMTP id k4mr2936669iol.227.1575388327907;
- Tue, 03 Dec 2019 07:52:07 -0800 (PST)
-Date:   Tue, 03 Dec 2019 07:52:07 -0800
-In-Reply-To: <00000000000080f1d305988bb8ba@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ab3afd0598cead51@google.com>
-Subject: Re: BUG: unable to handle kernel paging request in ion_heap_clear_pages
-From:   syzbot <syzbot+be6ccf3081ce8afd1b56@syzkaller.appspotmail.com>
-To:     arve@android.com, christian@brauner.io, devel@driverdev.osuosl.org,
-        dja@axtens.net, dri-devel@lists.freedesktop.org,
-        dvyukov@google.com, gregkh@linuxfoundation.org,
-        joel@joelfernandes.org, kasan-dev@googlegroups.com,
-        labbott@redhat.com, linaro-mm-sig-owner@lists.linaro.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        maco@android.com, sumit.semwal@linaro.org,
-        syzkaller-bugs@googlegroups.com, tkjos@android.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20191203114743.1294-1-nsaenzjulienne@suse.de> <20191203114743.1294-9-nsaenzjulienne@suse.de>
+In-Reply-To: <20191203114743.1294-9-nsaenzjulienne@suse.de>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 3 Dec 2019 09:53:05 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLMCXdnZag3jihV_dzuR+wFaVKFb7q_PdKTxTg0LVA6cw@mail.gmail.com>
+Message-ID: <CAL_JsqLMCXdnZag3jihV_dzuR+wFaVKFb7q_PdKTxTg0LVA6cw@mail.gmail.com>
+Subject: Re: [PATCH v4 8/8] linux/log2.h: Use roundup/dow_pow_two() on 64bit calculations
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Andrew Murray <andrew.murray@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        james.quinlan@broadcom.com, Matthias Brugger <mbrugger@suse.com>,
+        Phil Elwell <phil@raspberrypi.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        PCI <linux-pci@vger.kernel.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-acpi@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        netdev <netdev@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Tue, Dec 3, 2019 at 5:48 AM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> The function now is safe to use while expecting a 64bit value. Use it
+> where relevant.
 
-HEAD commit:    76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=159d0f36e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
-dashboard link: https://syzkaller.appspot.com/bug?extid=be6ccf3081ce8afd1b56
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171f677ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11db659ce00000
+What was wrong with the existing code? This is missing some context.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+be6ccf3081ce8afd1b56@syzkaller.appspotmail.com
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  drivers/acpi/arm64/iort.c                        | 2 +-
+>  drivers/net/ethernet/mellanox/mlx4/en_clock.c    | 3 ++-
+>  drivers/of/device.c                              | 3 ++-
 
-BUG: unable to handle page fault for address: fffff52000680000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 21ffee067 P4D 21ffee067 PUD aa51c067 PMD a8372067 PTE 0
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 3666 Comm: ion_system_heap Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:121 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:135 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:166 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:182 [inline]
-RIP: 0010:check_memory_region+0x9c/0x1a0 mm/kasan/generic.c:192
-Code: c9 4d 0f 49 c1 49 c1 f8 03 45 85 c0 0f 84 10 01 00 00 41 83 e8 01 4e  
-8d 44 c0 08 eb 0d 48 83 c0 08 4c 39 c0 0f 84 a7 00 00 00 <48> 83 38 00 74  
-ed 4c 8d 40 08 eb 09 48 83 c0 01 49 39 c0 74 53 80
-RSP: 0018:ffffc9000cf87ab8 EFLAGS: 00010212
-RAX: fffff52000680000 RBX: fffff52000681600 RCX: ffffffff85d95629
-RDX: 0000000000000001 RSI: 000000000000b000 RDI: ffffc90003400000
-RBP: ffffc9000cf87ad0 R08: fffff52000681600 R09: 0000000000001600
-R10: fffff520006815ff R11: ffffc9000340afff R12: fffff52000680000
-R13: 000000000000b000 R14: 0000000000000000 R15: ffffc9000cf87d08
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffff52000680000 CR3: 00000000a6755000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  memset+0x24/0x40 mm/kasan/common.c:107
-  memset include/linux/string.h:365 [inline]
-  ion_heap_clear_pages+0x49/0x70 drivers/staging/android/ion/ion_heap.c:106
-  ion_heap_sglist_zero+0x245/0x270 drivers/staging/android/ion/ion_heap.c:130
-  ion_heap_buffer_zero+0xf5/0x150 drivers/staging/android/ion/ion_heap.c:145
-  ion_system_heap_free+0x1eb/0x250  
-drivers/staging/android/ion/ion_system_heap.c:163
-  ion_buffer_destroy+0x159/0x2d0 drivers/staging/android/ion/ion.c:93
-  ion_heap_deferred_free+0x29d/0x630  
-drivers/staging/android/ion/ion_heap.c:239
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
-CR2: fffff52000680000
----[ end trace 6d0e26662c48296a ]---
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:121 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:135 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:166 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:182 [inline]
-RIP: 0010:check_memory_region+0x9c/0x1a0 mm/kasan/generic.c:192
-Code: c9 4d 0f 49 c1 49 c1 f8 03 45 85 c0 0f 84 10 01 00 00 41 83 e8 01 4e  
-8d 44 c0 08 eb 0d 48 83 c0 08 4c 39 c0 0f 84 a7 00 00 00 <48> 83 38 00 74  
-ed 4c 8d 40 08 eb 09 48 83 c0 01 49 39 c0 74 53 80
-RSP: 0018:ffffc9000cf87ab8 EFLAGS: 00010212
-RAX: fffff52000680000 RBX: fffff52000681600 RCX: ffffffff85d95629
-RDX: 0000000000000001 RSI: 000000000000b000 RDI: ffffc90003400000
-RBP: ffffc9000cf87ad0 R08: fffff52000681600 R09: 0000000000001600
-R10: fffff520006815ff R11: ffffc9000340afff R12: fffff52000680000
-R13: 000000000000b000 R14: 0000000000000000 R15: ffffc9000cf87d08
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffff52000680000 CR3: 00000000a6755000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+In any case,
 
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/pci/controller/cadence/pcie-cadence-ep.c | 3 ++-
+>  drivers/pci/controller/cadence/pcie-cadence.c    | 3 ++-
+>  drivers/pci/controller/pcie-brcmstb.c            | 3 ++-
+>  drivers/pci/controller/pcie-rockchip-ep.c        | 5 +++--
+>  kernel/dma/direct.c                              | 2 +-
+>  8 files changed, 15 insertions(+), 9 deletions(-)
