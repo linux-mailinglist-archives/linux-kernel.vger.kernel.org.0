@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ADAC111CE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF165111CE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbfLCWsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:48:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38908 "EHLO mail.kernel.org"
+        id S1729309AbfLCWs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:48:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729422AbfLCWsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:48:19 -0500
+        id S1729429AbfLCWsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:48:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA3B120656;
-        Tue,  3 Dec 2019 22:48:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64F682084B;
+        Tue,  3 Dec 2019 22:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413299;
-        bh=um8tu6uAw/zbChLCopYomwAWYNQNltHoeeW4RgTCtXk=;
+        s=default; t=1575413301;
+        bh=SX2sF24SxxN0DTRfvAZ+p3qN/yPB1GS57zgjqYDAA+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S2XQASogancISfoeepPr/Vz7LzHKuibinsIhAbqDhZolLDq0GwzVfnnNPy9tA75Pl
-         +/DbZf8a/vIfdW/ds8O3eiuzdIxDU96AbJE5v0Z37XdviQ16chVAoPWemIm/EZ9K4r
-         ZR0ZFZNTu3dKpriJ3OVSU/DBNiD/km+VCccs0URs=
+        b=FHUDNhreEJDwCDV00pagPZKaNOv3u5PA+Oz4p99KhrTt5Y/JA7665wpgc/kyZAZ/W
+         G/CIh7X2CeuM69rjlEvFE1EZSFpFmuICPUvuraNgSEmahc2CV3gKfrwPJNVZgAhdTo
+         MHe8HCkfe7r/43HdzhZ49NczMspvEcW7V5uvKgpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 074/321] platform/x86: mlx-platform: Fix LED configuration
-Date:   Tue,  3 Dec 2019 23:32:20 +0100
-Message-Id: <20191203223431.012941331@linuxfoundation.org>
+Subject: [PATCH 4.19 075/321] ARM: OMAP1: fix USB configuration for device-only setups
+Date:   Tue,  3 Dec 2019 23:32:21 +0100
+Message-Id: <20191203223431.063871371@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,48 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vadim Pasternak <vadimp@mellanox.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-[ Upstream commit 440f343df1996302d9a3904647ff11b689bf27bc ]
+[ Upstream commit c7b7b5cbd0c859b1546a5a3455d457708bdadf4c ]
 
-Exchange LED configuration between msn201x and next generation systems
-types.
+Currently we do USB configuration only if the host mode (CONFIG_USB)
+is enabled. But it should be done also in the case of device-only setups,
+so change the condition to CONFIG_USB_SUPPORT. This allows to use
+omap_udc on Palm Tungsten E.
 
-Bug was introduced when LED driver activation was added to mlx-platform.
-LED configuration for the three new system MQMB7, MSN37, MSN34 was
-assigned to MSN21 and vice versa. This bug affects MSN21 only and
-likely requires backport to v4.19.
-
-Fixes: 1189456b1cce ("platform/x86: mlx-platform: Add LED platform driver activation")
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/mlx-platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap1/Makefile           | 2 +-
+ arch/arm/mach-omap1/include/mach/usb.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index d17db140cb1fc..69e28c12d5915 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -1421,7 +1421,7 @@ static int __init mlxplat_dmi_msn201x_matched(const struct dmi_system_id *dmi)
- 	mlxplat_hotplug = &mlxplat_mlxcpld_msn201x_data;
- 	mlxplat_hotplug->deferred_nr =
- 		mlxplat_default_channels[i - 1][MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
--	mlxplat_led = &mlxplat_default_ng_led_data;
-+	mlxplat_led = &mlxplat_msn21xx_led_data;
- 	mlxplat_regs_io = &mlxplat_msn21xx_regs_io_data;
+diff --git a/arch/arm/mach-omap1/Makefile b/arch/arm/mach-omap1/Makefile
+index e8ccf51c6f292..ec0235899de20 100644
+--- a/arch/arm/mach-omap1/Makefile
++++ b/arch/arm/mach-omap1/Makefile
+@@ -25,7 +25,7 @@ obj-y					+= $(i2c-omap-m) $(i2c-omap-y)
  
- 	return 1;
-@@ -1439,7 +1439,7 @@ static int __init mlxplat_dmi_qmb7xx_matched(const struct dmi_system_id *dmi)
- 	mlxplat_hotplug = &mlxplat_mlxcpld_default_ng_data;
- 	mlxplat_hotplug->deferred_nr =
- 		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
--	mlxplat_led = &mlxplat_msn21xx_led_data;
-+	mlxplat_led = &mlxplat_default_ng_led_data;
- 	mlxplat_fan = &mlxplat_default_fan_data;
+ led-y := leds.o
  
- 	return 1;
+-usb-fs-$(CONFIG_USB)			:= usb.o
++usb-fs-$(CONFIG_USB_SUPPORT)		:= usb.o
+ obj-y					+= $(usb-fs-m) $(usb-fs-y)
+ 
+ # Specific board support
+diff --git a/arch/arm/mach-omap1/include/mach/usb.h b/arch/arm/mach-omap1/include/mach/usb.h
+index 77867778d4ec7..5429d86c7190d 100644
+--- a/arch/arm/mach-omap1/include/mach/usb.h
++++ b/arch/arm/mach-omap1/include/mach/usb.h
+@@ -11,7 +11,7 @@
+ 
+ #include <linux/platform_data/usb-omap1.h>
+ 
+-#if IS_ENABLED(CONFIG_USB)
++#if IS_ENABLED(CONFIG_USB_SUPPORT)
+ void omap1_usb_init(struct omap_usb_config *pdata);
+ #else
+ static inline void omap1_usb_init(struct omap_usb_config *pdata)
 -- 
 2.20.1
 
