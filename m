@@ -2,54 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80CD10FF83
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:01:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3BEA10FF85
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfLCOBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 09:01:32 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46811 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfLCOBb (ORCPT
+        id S1726339AbfLCOCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 09:02:08 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51844 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfLCOCI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 09:01:31 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1ic8k2-0007By-It; Tue, 03 Dec 2019 15:01:26 +0100
-Message-ID: <e7055ca5eea6e2d975bcbe3e2c572b2ccd4db9a9.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: uniphier: Add SCSSI reset control for each
- channel
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Date:   Tue, 03 Dec 2019 15:01:25 +0100
-In-Reply-To: <1575001159-19648-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1575001159-19648-1-git-send-email-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 3 Dec 2019 09:02:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xeaoGNbeLV4IoTGE0LnChmhbixf+zW4Mkt39CQg7zFA=; b=vnCd5UllBeBFWZHMxn5QAKVD5
+        wbgMX5qycUAYskCv5WyEM6qtJVSzJvE9NW18XjnFTWWY1Vu4MpmJyTsYkq4/hOeKsjZ372Srj2fS7
+        rN8+rBRsQTLioxiy9OQYDzQf3/k5GMw3saEOKzFSxxd4/0O2LF86J2MQjtLnQVrgqpOc9EE61j3ao
+        trsDsWMWwY1NgcD3PCdbbiWIluvez8ZQBCZmLNxx06MiQBt0vb/Fdw8uY1jlG97PMD62iQ5ro3OT8
+        sycHmTowBEnx41TXm7+svDeaXMrok4aIfWcuDR9BNdzzx/8zsE/qisFgdAk6MCT5dR6Fn7KdEsV5X
+        Sv5G6EDSA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ic8kW-0000M4-NB; Tue, 03 Dec 2019 14:01:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5AFE4301A79;
+        Tue,  3 Dec 2019 15:00:37 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A7E2B201A401D; Tue,  3 Dec 2019 15:01:53 +0100 (CET)
+Date:   Tue, 3 Dec 2019 15:01:53 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Schmid, Carsten" <Carsten_Schmid@mentor.com>
+Cc:     "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        walken@google.com, dave@stgolabs.net
+Subject: Re: Crash in fair scheduler
+Message-ID: <20191203140153.GP2844@hirez.programming.kicks-ass.net>
+References: <1575364273836.74450@mentor.com>
+ <20191203103046.GJ2827@hirez.programming.kicks-ass.net>
+ <656260cf50684c11a3122aca88dde0cb@SVR-IES-MBX-03.mgc.mentorg.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <656260cf50684c11a3122aca88dde0cb@SVR-IES-MBX-03.mgc.mentorg.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-11-29 at 13:19 +0900, Kunihiko Hayashi wrote:
-> SCSSI has reset controls for each channel in the SoCs newer than Pro4,
-> so this adds missing reset controls for channel 1, 2 and 3. And more, this
-> moves MCSSI reset ID after SCSSI.
-> 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+On Tue, Dec 03, 2019 at 10:51:46AM +0000, Schmid, Carsten wrote:
 
-Applied to reset/next with Masahiro's Acked-by and Fixes tags.
+> > > struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
+> > > {
+> > > 	struct rb_node *left = rb_first_cached(&cfs_rq->tasks_timeline);
+> > >
+> > > 	if (!left)
+> > > 		return NULL; <<<<<<<<<< the case
+> > >
+> > > 	return rb_entry(left, struct sched_entity, run_node);
+> > > }
+> > 
+> > This the problem, for some reason the rbtree code got that rb_leftmost
+> > thing wrecked.
+> > 
+> Any known issue on rbtree code regarding this?
 
-regards
-Philipp
+I don't recall ever having seen this before. :/ Adding Davidlohr and
+Michel who've poked at the rbtree code 'recently'.
 
+> > > Is this a corner case nobody thought of or do we have cfs_rq data that is
+> > unexpected in it's content?
+> > 
+> > No, the rbtree is corrupt. Your tree has a single node (which matches
+> > with nr_running), but for some reason it thinks rb_leftmost is NULL.
+> > This is wrong, if the tree is non-empty, it must have a leftmost
+> > element.
+> Is there a chance to find the left-most element in the core dump?
+
+If there is only one entry in the tree, then that must also be the
+leftmost entry. See your own later question :-)
+
+> Maybe i can dig deeper to find the root c ause then.
+> Does any of the structs/data in this context point to some memory
+> where i can continue to search?
+
+There are only two places where rb_leftmost are updated,
+rb_insert_color_cached() and rb_erase_cached() (the scheduler does not
+use rb_replace_nod_cached).
+
+We can 'forget' to set leftmost on insertion if @leftmost is somehow
+false, and we can eroneously clear leftmost on erase if rb_next()
+malfunctions.
+
+No clues on which of those two cases happened.
+
+> Where should rb_leftmost point to if only one node is in the tree?
+> To the node itself?
+
+Exatly.
+
+
+I suppose one approach is to add code to both __enqueue_entity() and
+__dequeue_entity() that compares ->rb_leftmost to the result of
+rb_first(). That'd incur some overhead but it'd double check the logic.
