@@ -2,92 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BAB91122AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 06:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32E051122B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:02:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbfLDF5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 00:57:53 -0500
-Received: from mo-csw1516.securemx.jp ([210.130.202.155]:51566 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfLDF5w (ORCPT
+        id S1727127AbfLDGCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 01:02:06 -0500
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:61555 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726217AbfLDGCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 00:57:52 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id xB45vfEV000828; Wed, 4 Dec 2019 14:57:41 +0900
-X-Iguazu-Qid: 34trMIO5KbHSsEZMoA
-X-Iguazu-QSIG: v=2; s=0; t=1575439061; q=34trMIO5KbHSsEZMoA; m=V2vpPc3Sm8twmhncTu+7E1ruTxjV6fReYAEGcFjdpzc=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-        by relay.securemx.jp (mx-mr1512) id xB45veRP011189;
-        Wed, 4 Dec 2019 14:57:40 +0900
-Received: from enc01.localdomain ([106.186.93.100])
-        by imx2.toshiba.co.jp  with ESMTP id xB45vecE019581;
-        Wed, 4 Dec 2019 14:57:40 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-        by enc01.localdomain  with ESMTP id xB45vdwX011619;
-        Wed, 4 Dec 2019 14:57:40 +0900
-Date:   Wed, 4 Dec 2019 14:57:38 +0900
-From:   Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 024/321] net: fec: add missed clk_disable_unprepare
- in remove
-X-TSB-HOP: ON
-Message-ID: <20191204055738.nl5db2xtigoamtbk@toshiba.co.jp>
-References: <20191203223427.103571230@linuxfoundation.org>
- <20191203223428.376628375@linuxfoundation.org>
+        Wed, 4 Dec 2019 01:02:05 -0500
+Received: from [85.158.142.201] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-b.eu-central-1.aws.symcld.net id 3E/CD-12313-7DB47ED5; Wed, 04 Dec 2019 06:01:59 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRWlGSWpSXmKPExsVy8IPnUd3r3s9
+  jDU5u17GYf+Qcq8XhRS8YLW5++sZqcXnXHDaLpdcvMlm07j3C7sDmsWbeGkaPnbPusntsWtXJ
+  5vF5k1wASxRrZl5SfkUCa8a92x4FDzkqOjpWMTYw7mLrYuTiEBJYxyjxdO9G9i5GTiCnQuLsx
+  otsIDavgKnEpg/rwWw2AR2JRzPXM4HYLAIqEh9bTzKC2MIClhLTZswEi4sIBEk8fnSWBWQos8
+  BuRokPFw4wQwwSlDg58wkLiM0sICFx8MULZohlWhLn1qwCGyQhYC8x/f1VoDgHkK0v0XgsFiJ
+  sKPF91jcWCNtcYte660wTGPlnIZk6C8nUBYxMqxgtk4oy0zNKchMzc3QNDQx0DQ2NdU11jQyM
+  9RKrdJP0Ukt1k1PzSooSgbJ6ieXFesWVuck5KXp5qSWbGIHBnVLIenoH46xPb/UOMUpyMCmJ8
+  m5+/CxWiC8pP6UyI7E4I76oNCe1+BCjDAeHkgSvlefzWCHBotT01Iq0zBxgpMGkJTh4lER4Gb
+  yA0rzFBYm5xZnpEKlTjIpS4rwcIAkBkERGaR5cGyy6LzHKSgnzMjIwMAjxFKQW5WaWoMq/YhT
+  nYFQS5lUCmcKTmVcCN/0V0GImoMUHKp+BLC5JREhJNTCJH1uUdP2FyDbmnVKvWitnPWxY9oj9
+  /flvzGcjWis4uwye9L+5z9TSKpSqIa/xd/bXrNT5u+cHcL4SuBdYGhZ/+ZROsEznDbFLT7vDz
+  +xKOfDf9XR//L9HMl5NibbVdXM7AzdN1FNvCgrSv/U1545LXu9O8fy5s1iFlpgWab3/8Kz/5O
+  OU6V1nNycc4uD9y+cyiXFvRJVN7ExN/xOhvz+dXnwx7wZXQp4o64GVNYcZYuZsffnpygeJLV2
+  7nY2WPTVhT7ky9+7/zupO9wVRu8/uv2605OepUJm5rJpn6k9rZpl3fvCOn/TkVehZo8o9mZe4
+  qyME8vY7tboeX7y16pPbBI1Frj+046p8V0vuvxyvxFKckWioxVxUnAgAqPSQVWkDAAA=
+X-Env-Sender: roy.im.opensource@diasemi.com
+X-Msg-Ref: server-10.tower-246.messagelabs.com!1575439318!946274!3
+X-Originating-IP: [193.240.73.197]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.22; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 30550 invoked from network); 4 Dec 2019 06:01:59 -0000
+Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
+  by server-10.tower-246.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 4 Dec 2019 06:01:59 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.468.0; Wed, 4 Dec 2019 06:01:56 +0000
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22266)      id
+ 19B833FB8D; Tue,  3 Dec 2019 07:11:54 +0000 (GMT)
+Message-ID: <cover.1575344415.git.Roy.Im@diasemi.com>
+From:   Roy Im <roy.im.opensource@diasemi.com>
+Date:   Tue, 3 Dec 2019 12:40:15 +0900
+Subject: [PATCH V8 0/3]  da7280: haptic driver submission
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203223428.376628375@linuxfoundation.org>
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 04/12/2019 05:22:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch adds support for the Dialog DA7280 Haptic driver IC.
 
-On Tue, Dec 03, 2019 at 11:31:30PM +0100, Greg Kroah-Hartman wrote:
-> From: Chuhong Yuan <hslester96@gmail.com>
-> 
-> [ Upstream commit c43eab3eddb4c6742ac20138659a9b701822b274 ]
-> 
-> This driver forgets to disable and unprepare clks when remove.
-> Add calls to clk_disable_unprepare to fix it.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+In this patch set the following is provided:
 
+[PATCH V8 1/3] MAINTAINERS file update for DA7280
+[PATCH V8 2/3] DA7280 DT Binding
+[PATCH V8 3/3] DA7280 Driver
 
-This commit also requires the following commit:
+This patch applies against linux-next and v5.4
 
-commit a31eda65ba210741b598044d045480494d0ed52a
-Author: Chuhong Yuan <hslester96@gmail.com>
-Date:   Wed Nov 20 09:25:13 2019 +0800
+Thank you,
+Roy Im, Dialog Semiconductor Ltd.
 
-    net: fec: fix clock count mis-match
+Roy Im (3):
+  MAINTAINERS: da7280 updates to the Dialog Semiconductor search terms
+  dt-bindings: input: Add document bindings for DA7280
+  Input: new da7280 haptic driver
 
-    pm_runtime_put_autosuspend in probe will call runtime suspend to
-    disable clks automatically if CONFIG_PM is defined. (If CONFIG_PM
-    is not defined, its implementation will be empty, then runtime
-    suspend will not be called.)
+ .../devicetree/bindings/input/dlg,da7280.txt       |  109 ++
+ MAINTAINERS                                        |    2 +
+ drivers/input/misc/Kconfig                         |   13 +
+ drivers/input/misc/Makefile                        |    1 +
+ drivers/input/misc/da7280.c                        | 1683 ++++++++++++++++++++
+ drivers/input/misc/da7280.h                        |  412 +++++
+ 6 files changed, 2220 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/dlg,da7280.txt
+ create mode 100644 drivers/input/misc/da7280.c
+ create mode 100644 drivers/input/misc/da7280.h
 
-    Therefore, we can call pm_runtime_get_sync to runtime resume it
-    first to enable clks, which matches the runtime suspend. (Only when
-    CONFIG_PM is defined, otherwise pm_runtime_get_sync will also be
-    empty, then runtime resume will not be called.)
+-- 
+end-of-patch for PATCH V8
 
-    Then it is fine to disable clks without causing clock count mis-match.
-
-    Fixes: c43eab3eddb4 ("net: fec: add missed clk_disable_unprepare in remove")
-    Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-    Acked-by: Fugang Duan <fugang.duan@nxp.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-
-And this should also apply to 5.3.
-
-Best regards,
-  Nobuhiro
