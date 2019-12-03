@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08CD4111C44
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04101111DAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbfLCWmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:42:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57138 "EHLO mail.kernel.org"
+        id S1729846AbfLCWzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:55:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728626AbfLCWmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:42:17 -0500
+        id S1728369AbfLCWzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:55:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE17E2073C;
-        Tue,  3 Dec 2019 22:42:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E05372053B;
+        Tue,  3 Dec 2019 22:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412936;
-        bh=DGfUc6OPcdg+selrsf0vCRMAyp9NIYMTOzMVaFuB3xs=;
+        s=default; t=1575413749;
+        bh=lYKka7mtVHbQ/4kpHelX0YbKeThZTD6/2UrcxUWeCbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pG07fZ7XRAjsg+o6P/4Ae7J0hjEPm2KmLUkTQ2a9dBWOgiUusck31L/TlTsl6BTqC
-         w+f6ahzBA0N0O7a7HA2muSZJlfM3pZnAkAig7OA98fAi7GL34udtlrl+DYS9YfA80w
-         MdSXO4bx2+hEHduwFQU9Y+7PmxLYCxe6mo95YAmc=
+        b=qhaKVk57BDBOIWEpANFJ26mRiqzST0R/8zHvxBvLRmN845ITkCwp/DlwRbd+gEW0M
+         fJ7rE1NmIbE8v0/pFGPSm/TCxLWYf/xnYYULgDseIYxODkY540ktR00UZrVInovTvp
+         oc8i8oBdvlzZVcRBgFicszxfzxgfJ3QNnqbNtG2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaska Uimonen <jaska.uimonen@intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Dragos Tarcatu <dragos_tarcatu@mentor.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 072/135] ASoC: SOF: topology: Fix bytes control size checks
+Subject: [PATCH 4.19 246/321] net: hns3: fix an issue for hclgevf_ae_get_hdev
 Date:   Tue,  3 Dec 2019 23:35:12 +0100
-Message-Id: <20191203213026.735283478@linuxfoundation.org>
+Message-Id: <20191203223439.937342013@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,58 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dragos Tarcatu <dragos_tarcatu@mentor.com>
+From: Peng Li <lipeng321@huawei.com>
 
-[ Upstream commit 9508ef5a980f5d847cad9b932b6ada8f2a3466c1 ]
+[ Upstream commit eed9535f9f716a532ec0c5d6cc7a48584acdf435 ]
 
-When using the example SOF amp widget topology, KASAN dumps this
-when the AMP bytes kcontrol gets loaded:
+HNS3 VF driver support NIC and Roce, hdev stores NIC
+handle and Roce handle, should use correct parameter for
+container_of.
 
-[ 9.579548] BUG: KASAN: slab-out-of-bounds in
-sof_control_load+0x8cc/0xac0 [snd_sof]
-[ 9.588194] Write of size 40 at addr ffff8882314559dc by task
-systemd-udevd/2411
-
-Fix that by rejecting the topology if the bytes data size > max_size
-
-Fixes: 311ce4fe7637d ("ASoC: SOF: Add support for loading topologies")
-Reviewed-by: Jaska Uimonen <jaska.uimonen@intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Signed-off-by: Dragos Tarcatu <dragos_tarcatu@mentor.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20191106145816.9367-1-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sof/topology.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
-index 96230329e678f..355f04663f576 100644
---- a/sound/soc/sof/topology.c
-+++ b/sound/soc/sof/topology.c
-@@ -533,15 +533,16 @@ static int sof_control_load_bytes(struct snd_soc_component *scomp,
- 	struct soc_bytes_ext *sbe = (struct soc_bytes_ext *)kc->private_value;
- 	int max_size = sbe->max;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index beae1e2cd59b1..67db19709deaa 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -26,7 +26,12 @@ MODULE_DEVICE_TABLE(pci, ae_algovf_pci_tbl);
+ static inline struct hclgevf_dev *hclgevf_ae_get_hdev(
+ 	struct hnae3_handle *handle)
+ {
+-	return container_of(handle, struct hclgevf_dev, nic);
++	if (!handle->client)
++		return container_of(handle, struct hclgevf_dev, nic);
++	else if (handle->client->type == HNAE3_CLIENT_ROCE)
++		return container_of(handle, struct hclgevf_dev, roce);
++	else
++		return container_of(handle, struct hclgevf_dev, nic);
+ }
  
--	if (le32_to_cpu(control->priv.size) > max_size) {
-+	/* init the get/put bytes data */
-+	scontrol->size = sizeof(struct sof_ipc_ctrl_data) +
-+		le32_to_cpu(control->priv.size);
-+
-+	if (scontrol->size > max_size) {
- 		dev_err(sdev->dev, "err: bytes data size %d exceeds max %d.\n",
--			control->priv.size, max_size);
-+			scontrol->size, max_size);
- 		return -EINVAL;
- 	}
- 
--	/* init the get/put bytes data */
--	scontrol->size = sizeof(struct sof_ipc_ctrl_data) +
--		le32_to_cpu(control->priv.size);
- 	scontrol->control_data = kzalloc(max_size, GFP_KERNEL);
- 	cdata = scontrol->control_data;
- 	if (!scontrol->control_data)
+ static int hclgevf_tqps_update_stats(struct hnae3_handle *handle)
 -- 
 2.20.1
 
