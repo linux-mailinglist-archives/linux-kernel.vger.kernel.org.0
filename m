@@ -2,106 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B59281100F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC93B1100DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:08:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfLCPMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 10:12:48 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33905 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726057AbfLCPMr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:12:47 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3Ev0d7030223;
-        Tue, 3 Dec 2019 16:07:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=Ys0ox1ao18cOZfxiE9S2+ciC5jFVh+QzhShG4ijPhio=;
- b=WGNpS3znEhwLqh5hvH8FyLX+/jjMFKWWrzJEIUohw1R29GLiH6IZzb5aXa44rzZgSofx
- 0BzsEIjy05zSZ5pXDQrnTLDVJ2qV+aQMdsJQHM0lTkfu0Mvv68gAFSimW/zNQ0dK5oWA
- sHWYmZc2ALRXTRitClj+9Kc0gCxJOCz6XwOdn5zZFEvgORb2XCJU0ZxE7BAUcfMlx++1
- a87Urph9exurYKC60oXEaJfxWMOaPI/+pnCxZixjaB81s+nGfRk9u9QT/rwBQmKVwtUq
- x0I5l4/mPuENDPRiWbO0MHfxXItgCrFN7KnBgwD426NoPYaCSKnHoqVfCnuxP0waVd8z gQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2wkf2xqw64-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Dec 2019 16:07:23 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9E95B10002A;
-        Tue,  3 Dec 2019 16:07:20 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6D12D2BC7B6;
-        Tue,  3 Dec 2019 16:07:20 +0100 (CET)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Dec
- 2019 16:07:20 +0100
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Tue, 3 Dec 2019 16:07:19 +0100
-From:   Olivier MOYSAN <olivier.moysan@st.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "apatard@mandriva.com" <apatard@mandriva.com>
-Subject: Re: [PATCH] ASoC: cs42l51: add dac mux widget in codec routes
-Thread-Topic: [PATCH] ASoC: cs42l51: add dac mux widget in codec routes
-Thread-Index: AQHVqedr55RsnCXb/EmaRp/MuIs00qeociSA
-Date:   Tue, 3 Dec 2019 15:07:19 +0000
-Message-ID: <06c0474b-8b51-0ce6-b2aa-fc3b2c348f04@st.com>
-References: <20191203141627.29471-1-olivier.moysan@st.com>
- <20191203143909.GL1998@sirena.org.uk>
-In-Reply-To: <20191203143909.GL1998@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        id S1726738AbfLCPIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:08:38 -0500
+Received: from foss.arm.com ([217.140.110.172]:44090 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726138AbfLCPIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 10:08:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5FC031B;
+        Tue,  3 Dec 2019 07:08:37 -0800 (PST)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B6683F52E;
+        Tue,  3 Dec 2019 07:08:36 -0800 (PST)
+Subject: Re: Crash in fair scheduler
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1575364273836.74450@mentor.com>
+ <564e45cb-8230-9c3d-24a8-b58e6e88349f@arm.com>
+ <944927a7-b578-c6f9-a73d-25c5b0a39adb@arm.com>
+ <e6178a95-c02e-4fe9-49ee-7446e0d73882@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <f4e810c0-c99a-e78f-a249-9d7efcb37806@arm.com>
+Date:   Tue, 3 Dec 2019 16:08:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <5215F65C3009774EA7992774F10B1559@st.com>
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-03_04:2019-12-02,2019-12-03 signatures=0
+In-Reply-To: <e6178a95-c02e-4fe9-49ee-7446e0d73882@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+On 03/12/2019 12:09, Valentin Schneider wrote:
+> On 03/12/2019 10:40, Dietmar Eggemann wrote:
+>> On 03/12/2019 11:30, Valentin Schneider wrote:
+>>> On 03/12/2019 09:11, Schmid, Carsten wrote:
+>>
+>> [...]
+>>
+>>> That looks a lot like a recent issue we've had, see
+>>>
+>>>   https://lore.kernel.org/lkml/20191108131909.428842459@infradead.org/
+>>>
+>>> The issue is caused by
+>>>   
+>>>   67692435c411 ("sched: Rework pick_next_task() slow-path")
+>>>
+>>> which 5.4-rc2 has (without the fix which landed in -rc7) but 4.14 really
+>>> shouldn't, unless the kernel you're using has had core scheduling somehow
+>>> backported to it?
+>>>
+>>> I've only scraped the surface but I'd like to first ask: can you reproduce
+>>> the issue on v5.4 final ?
+>>
+>> Can't be. 4.14.86 does not have ("sched: Rework pick_next_task()
+>> slow-path").
+>>
+> 
+> Right, which is why I wondered if the kernel under test had had that 
+> backported to it for some reason (e.g. core scheduling). Peter pointed out
+> that this is a slightly different issue (nr_running matches the rbt), so
+> this is probably unrelated.
 
-On 12/3/19 3:39 PM, Mark Brown wrote:
-> On Tue, Dec 03, 2019 at 03:16:27PM +0100, Olivier Moysan wrote:
->
->> -	SND_SOC_DAPM_DAC_E("Left DAC", "Left HiFi Playback",
->> -		CS42L51_POWER_CTL1, 5, 1,
->> -		cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
->> -	SND_SOC_DAPM_DAC_E("Right DAC", "Right HiFi Playback",
->> -		CS42L51_POWER_CTL1, 6, 1,
->> -		cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
->> +	SND_SOC_DAPM_DAC_E("Left DAC", NULL, CS42L51_POWER_CTL1, 5, 1,
->> +			   cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
->> +	SND_SOC_DAPM_DAC_E("Right DAC", NULL, CS42L51_POWER_CTL1, 6, 1,
->> +			   cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
-> This looks like an unrelated formatting change?
-The reason of this change is to replace "HiFi Playback" by NULL, in=20
-order to connect
-DAC widget to DAC mux widget, instead of connecting it directly to Playback=
-.
+I can't reproduce it on Arm64 Juno running 4.14.86. I suppose that there
+is no extra reproducer testcase since the issue happened with
+prev->sched_class eq. &idle_sched_class [prev eq. swapper/X 0] in the
+simple path of pick_next_task_fair().
 
-Regards
-Olivier=
+I'm running with CONFIG_SCHED_AUTOGROUP=y and CONFIG_FAIR_GROUP_SCHED=y
+some taskgroup related tests for hours now. So the sched_entity (se) can
+be a task, an autogroup or a taskgroup in the simple path. pref is
+either swapper/X or migration/X.
