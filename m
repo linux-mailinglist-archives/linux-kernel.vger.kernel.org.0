@@ -2,92 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF81D10FE77
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9ED10FE7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfLCNNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:13:00 -0500
-Received: from mail-lf1-f49.google.com ([209.85.167.49]:38505 "EHLO
-        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfLCNM7 (ORCPT
+        id S1726179AbfLCNQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:16:09 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36768 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725954AbfLCNQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:12:59 -0500
-Received: by mail-lf1-f49.google.com with SMTP id r14so2915060lfm.5;
-        Tue, 03 Dec 2019 05:12:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xL+wwaRMBv9RSY39RaXiUDci1/m24RW4l6zvHxar+tc=;
-        b=npXjDGoyg1aRDYuFip3UFWBcqi0KI7PGwXUdKKMaSdLZpbuXsmOVKspSp1dIxAxMK0
-         +ytYzmmCzX1PU2SZhocTG4K4m/HLJqopdsCf9sk2eUzKOaN7ub6w5/2dVrGoEnbDUu7D
-         yo89c1d7rrj6rgfHD5PwOD5w7lwR/sCyDn01KfwaO8wUyH2CAnB1P5V7ManXBcSr60FK
-         /OvqlFAr/s561m5JLSabtK2+h4DwQAMoHV/8CAmunaUWbKtxs4u/mi9FrzQ+ClxVU5Y1
-         ndsL0wmPosCTTmN/gk/vYwcowBklRHotxOzVcQa84/p5wDUAPTLPLJgCvBxq9DwYZomM
-         4uNw==
+        Tue, 3 Dec 2019 08:16:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575378967;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fEQnMm9l2voQ0J2ySJrhOuYQvNTgK+ssK7Iqm4yZa/E=;
+        b=OZbFSGDbuwIzKApw0qcxpOT8JK8bfu3jPzF+rCWUiZuvEF8dd4uyeLeBQxiUXc7WZd9ZxR
+        I2Y+P0C3aLZrFAxWWMPDIGaNhYeal6FlFOq8pUOhW5MLpvqLShNgwF5qzB8XxFUdKPLiLM
+        JUiqoilC0nOokjaXYsw9FfI0kGSPFk4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-238-s5eeLGFoMRq2Tc1u_0t3Eg-1; Tue, 03 Dec 2019 08:16:05 -0500
+Received: by mail-wr1-f71.google.com with SMTP id z10so1738834wrt.21
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 05:16:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xL+wwaRMBv9RSY39RaXiUDci1/m24RW4l6zvHxar+tc=;
-        b=Mhe2BZ3LhMXaUGvYGLg4GXXFhqGERNEi5Adsw8n5qVISgn0XZbHc+uNFY1OYhP55PR
-         VFbi+MYinWHWO7HAwvzKO709Wx76VKwF7f+R7ProaXAI3fdsybPnf5uPR3QOnzcqlt/I
-         D7WBgOUQ1pLuaaLIT1trmvexFjNkIhAJqgzav/jgwsN+Og5iRnNm0rhWy3iZN68G24+2
-         5b4XnndJzfnsYJHPwkC6sRG58kvKmkt2ToMf7aBzKANFmsyPxgdQE65e3W/rafG1+tEx
-         TFXds4AUfC+XPd99UUWNVF3Gllp4ioZpQ3nVBa7RFqALmkTYaHxZTovZjQRWI/g4J0vO
-         JYJg==
-X-Gm-Message-State: APjAAAX9ijGw7TPu9pnWV+QktLNMbNXtmFZff6TyNkX0BGry56QcrKLk
-        lKpzWGBp2gFq2jdW2f2XDmvt4DP337OILkBpIfA=
-X-Google-Smtp-Source: APXvYqyYlRr2czlmWkaMRwNWwQhGg3p+za24wre1ZLqjna9dtb+Jb7nGBb3H9ISdXGBmfc2ddR6+wWglH31E2UJpZ9g=
-X-Received: by 2002:ac2:4119:: with SMTP id b25mr2718591lfi.90.1575378776541;
- Tue, 03 Dec 2019 05:12:56 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=+B5QIazI4Ie4a7nGrqp3wfpkLneKCu2xyGaxRW5rTQ0=;
+        b=XJ+ajAvKiZU/SHgM7vhY62Tyj0pSqZv7wulCxvjmY4SDeTTL9KiLwa63LE8vAUIceZ
+         j2mUhbY1WpafNARj4wFoGgLX5KvE9KhnqMS7Gf1T8LSjhGmtv0ybs+oXxvhJF+KZvlw1
+         2dU2iapErlxr7ETaJgbIVgh9XjtAl+82Ow5FsPBvcd+SvNKe0QrQthkNS7e4GGI3FsF6
+         pqD1CY5aVMVRlYmx704fD/UxIGvZw6fklf17d2cXxtrKQlxXjHZ8p42ORXUMJQQWTWey
+         mSu/SxryncPX1wHc9RXAJnu73YCeCgQ25NCVIVzV1vKlLk+v7O2NR60QKaJITIWfKl2d
+         7i8Q==
+X-Gm-Message-State: APjAAAWUXEkCyUI8gqIrQ2otShzgwMK7oGXbeDbpwQNa1l/UFohyMWig
+        eQggOg3Nzf9VppZwvj3N3KZ/yQCBRRCZ2rD6JSBUoyfsHAjYLgM7UVaoNAS6wiNS9rmX0QQBnV5
+        q1GkRQ4LRRwool9flt8iHD3wC
+X-Received: by 2002:a7b:cf2d:: with SMTP id m13mr13176985wmg.163.1575378963917;
+        Tue, 03 Dec 2019 05:16:03 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx20PxwcKm/6OsHkVy+Mn1dllQJFtm8ala5wHB808COFtj4Q6UoP/+5NJY7Jwe7grE84SU2cQ==
+X-Received: by 2002:a7b:cf2d:: with SMTP id m13mr13176962wmg.163.1575378963645;
+        Tue, 03 Dec 2019 05:16:03 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id w17sm3631956wrt.89.2019.12.03.05.16.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 05:16:02 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        peterx@redhat.com
+Subject: Re: [PATCH v3 3/5] KVM: X86: Use APIC_DEST_* macros properly in kvm_lapic_irq.dest_mode
+In-Reply-To: <20191202201314.543-4-peterx@redhat.com>
+References: <20191202201314.543-1-peterx@redhat.com> <20191202201314.543-4-peterx@redhat.com>
+Date:   Tue, 03 Dec 2019 14:16:01 +0100
+Message-ID: <87wobdblda.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <08794fde-cdd0-287c-62bf-e2e3b8c80686@gmail.com>
- <20191203101509.wte47aad5k4mqu2y@pengutronix.de> <CAOMZO5Cn993y9VeFN6hPO3-cfNnUKiuFd_rqAZ8htz=dO6t6ig@mail.gmail.com>
-In-Reply-To: <CAOMZO5Cn993y9VeFN6hPO3-cfNnUKiuFd_rqAZ8htz=dO6t6ig@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Dec 2019 10:13:11 -0300
-Message-ID: <CAOMZO5BniszDhWKkoWY=P62kv9cY160r9P=pjpbSOZasxJvdBA@mail.gmail.com>
-Subject: Re: Issue with imx_get_temp()
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     Igor Plyatov <plyatov@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>, linux-pm@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: s5eeLGFoMRq2Tc1u_0t3Eg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 9:04 AM Fabio Estevam <festevam@gmail.com> wrote:
->
-> Hi Marco,
->
-> On Tue, Dec 3, 2019 at 7:15 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
->
-> > Mh.. it seems that the irq gets enabled before a irq-handler is
-> > registered. As your backlog shows the thermal_zone_device_register()
-> > triggers a imx_get_temp() and during boot the irq_enabled is false and
-> > it seems that your temperature is below the alarm_temp. So in such a
-> > case the enable_irq() is executed. I don't know what happens if we
-> > enable a irq without a irq-handler.
->
-> I think your analysis makes sense.
->
-> Should we move the ' data->irq_enabled = true' just prior to calling
-> thermal_zone_device_register()?
+Peter Xu <peterx@redhat.com> writes:
 
-Or maybe we could call thermal_zone_device_register() later?
+> We were using either APIC_DEST_PHYSICAL|APIC_DEST_LOGICAL or 0|1 to
+> fill in kvm_lapic_irq.dest_mode.  It's fine only because in most cases
+> when we check against dest_mode it's against APIC_DEST_PHYSICAL (which
+> equals to 0).  However, that's not consistent.  We'll have problem
+> when we want to start checking against APIC_DEST_PHYSICAL
 
-Igor,
+APIC_DEST_LOGICAL
 
-Does the following patch help?
-http://code.bulix.org/l3rz2e-982595
+> which does not equals to 1.
+>
+> This patch firstly introduces kvm_lapic_irq_dest_mode() helper to take
+> any boolean of destination mode and return the APIC_DEST_* macro.
+> Then, it replaces the 0|1 settings of irq.dest_mode with the helper.
+>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 5 +++++
+>  arch/x86/kvm/ioapic.c           | 8 +++++---
+>  arch/x86/kvm/irq_comm.c         | 7 ++++---
+>  arch/x86/kvm/x86.c              | 2 +-
+>  4 files changed, 15 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
+ost.h
+> index b79cd6aa4075..f815c97b1b57 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1022,6 +1022,11 @@ struct kvm_lapic_irq {
+>  =09bool msi_redir_hint;
+>  };
+> =20
+> +static inline u16 kvm_lapic_irq_dest_mode(bool dest_mode)
+> +{
+> +=09return dest_mode ? APIC_DEST_LOGICAL : APIC_DEST_PHYSICAL;
+> +}
+> +
+>  struct kvm_x86_ops {
+>  =09int (*cpu_has_kvm_support)(void);          /* __init */
+>  =09int (*disabled_by_bios)(void);             /* __init */
+> diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+> index 9fd2dd89a1c5..901d85237d1c 100644
+> --- a/arch/x86/kvm/ioapic.c
+> +++ b/arch/x86/kvm/ioapic.c
+> @@ -331,7 +331,8 @@ static void ioapic_write_indirect(struct kvm_ioapic *=
+ioapic, u32 val)
+>  =09=09=09irq.vector =3D e->fields.vector;
+>  =09=09=09irq.delivery_mode =3D e->fields.delivery_mode << 8;
+>  =09=09=09irq.dest_id =3D e->fields.dest_id;
+> -=09=09=09irq.dest_mode =3D e->fields.dest_mode;
+> +=09=09=09irq.dest_mode =3D
+> +=09=09=09    kvm_lapic_irq_dest_mode(e->fields.dest_mode);
+>  =09=09=09bitmap_zero(&vcpu_bitmap, 16);
+>  =09=09=09kvm_bitmap_or_dest_vcpus(ioapic->kvm, &irq,
+>  =09=09=09=09=09=09 &vcpu_bitmap);
+> @@ -343,7 +344,8 @@ static void ioapic_write_indirect(struct kvm_ioapic *=
+ioapic, u32 val)
+>  =09=09=09=09 * keep ioapic_handled_vectors synchronized.
+>  =09=09=09=09 */
+>  =09=09=09=09irq.dest_id =3D old_dest_id;
+> -=09=09=09=09irq.dest_mode =3D old_dest_mode;
+> +=09=09=09=09irq.dest_mode =3D
+> +=09=09=09=09    kvm_lapic_irq_dest_mode(e->fields.dest_mode);
+>  =09=09=09=09kvm_bitmap_or_dest_vcpus(ioapic->kvm, &irq,
+>  =09=09=09=09=09=09=09 &vcpu_bitmap);
+>  =09=09=09}
+> @@ -369,7 +371,7 @@ static int ioapic_service(struct kvm_ioapic *ioapic, =
+int irq, bool line_status)
+> =20
+>  =09irqe.dest_id =3D entry->fields.dest_id;
+>  =09irqe.vector =3D entry->fields.vector;
+> -=09irqe.dest_mode =3D entry->fields.dest_mode;
+> +=09irqe.dest_mode =3D kvm_lapic_irq_dest_mode(entry->fields.dest_mode);
+>  =09irqe.trig_mode =3D entry->fields.trig_mode;
+>  =09irqe.delivery_mode =3D entry->fields.delivery_mode << 8;
+>  =09irqe.level =3D 1;
+> diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
+> index 8ecd48d31800..5f59e5ebdbed 100644
+> --- a/arch/x86/kvm/irq_comm.c
+> +++ b/arch/x86/kvm/irq_comm.c
+> @@ -52,8 +52,8 @@ int kvm_irq_delivery_to_apic(struct kvm *kvm, struct kv=
+m_lapic *src,
+>  =09unsigned long dest_vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)];
+>  =09unsigned int dest_vcpus =3D 0;
+> =20
+> -=09if (irq->dest_mode =3D=3D 0 && irq->dest_id =3D=3D 0xff &&
+> -=09=09=09kvm_lowest_prio_delivery(irq)) {
+> +=09if (irq->dest_mode =3D=3D APIC_DEST_PHYSICAL &&
+> +=09    irq->dest_id =3D=3D 0xff && kvm_lowest_prio_delivery(irq)) {
+>  =09=09printk(KERN_INFO "kvm: apic: phys broadcast and lowest prio\n");
+>  =09=09irq->delivery_mode =3D APIC_DM_FIXED;
+>  =09}
+> @@ -114,7 +114,8 @@ void kvm_set_msi_irq(struct kvm *kvm, struct kvm_kern=
+el_irq_routing_entry *e,
+>  =09=09irq->dest_id |=3D MSI_ADDR_EXT_DEST_ID(e->msi.address_hi);
+>  =09irq->vector =3D (e->msi.data &
+>  =09=09=09MSI_DATA_VECTOR_MASK) >> MSI_DATA_VECTOR_SHIFT;
+> -=09irq->dest_mode =3D (1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.address_l=
+o;
+> +=09irq->dest_mode =3D kvm_lapic_irq_dest_mode(
+> +=09    (1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.address_lo);
+
+This usage is a bit fishy (I understand that it works, but),
+kvm_lapic_irq_dest_mode()'s input is bool (0/1) but here we're passing
+something different.
+
+I'm not sure kvm_lapic_irq_dest_mode() is even needed here, but in case
+it is I'd suggest to add '!!':
+
+ kvm_lapic_irq_dest_mode(!!((1 << MSI_ADDR_DEST_MODE_SHIFT) & e->msi.addres=
+s_lo))
+
+to make things explicit. I don't like how it looks though.
+
+>  =09irq->trig_mode =3D (1 << MSI_DATA_TRIGGER_SHIFT) & e->msi.data;
+>  =09irq->delivery_mode =3D e->msi.data & 0x700;
+>  =09irq->msi_redir_hint =3D ((e->msi.address_lo
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 3ed167e039e5..3b00d662dc14 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7356,7 +7356,7 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, uns=
+igned long flags, int apicid)
+>  =09struct kvm_lapic_irq lapic_irq;
+> =20
+>  =09lapic_irq.shorthand =3D 0;
+> -=09lapic_irq.dest_mode =3D 0;
+> +=09lapic_irq.dest_mode =3D APIC_DEST_PHYSICAL;
+>  =09lapic_irq.level =3D 0;
+>  =09lapic_irq.dest_id =3D apicid;
+>  =09lapic_irq.msi_redir_hint =3D false;
+
+--=20
+Vitaly
+
