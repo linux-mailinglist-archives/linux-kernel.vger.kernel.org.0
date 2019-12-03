@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38813111C69
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32184111DD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbfLCWnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59486 "EHLO mail.kernel.org"
+        id S1730335AbfLCW5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:57:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728328AbfLCWnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:43:53 -0500
+        id S1728147AbfLCW5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:57:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88A3A207DD;
-        Tue,  3 Dec 2019 22:43:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C711D2053B;
+        Tue,  3 Dec 2019 22:57:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413033;
-        bh=o2kukSFFfU0mbQWuJGg0mw6F6cIceRtU2S4LX75rTso=;
+        s=default; t=1575413850;
+        bh=cHqf/GDQkrLblnHXVBJEh3Se7p/h8tmHw77chspOyJs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hLvQXVRveMNYxjtlGfg1m3J+yebIZvHdDAUi8qlVlhAQS5P47puWQ7cqFJXUESJsN
-         UQw9VKAy/We24hLhK82kCe61LMp6gTB9OB6suNX7QkZN+HN8dO673YQIRhsuFh3c01
-         BuxDo6Z+mvV40pk3R2JQPU8NHBH7PMhqiMz/Kj4o=
+        b=bjh4+GgHDM6oqb6pnA6MRwyttPQkIQlhCeGetcVfBun0Vf0q56zDCrQm3+HGSmIHN
+         N9pc46vovQEO1aSFW+XyqBGI3+3zeaO1o/YTTnFbN8yuBxOgzwqogdCoXHSJYd80E4
+         wFEgh1RceIeRIadm3G76ZrumJg4yn+Q7JnF7Et3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Menglong Dong <dong.menglong@zte.com.cn>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 110/135] macvlan: schedule bc_work even if error
-Date:   Tue,  3 Dec 2019 23:35:50 +0100
-Message-Id: <20191203213041.597917237@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [PATCH 4.19 285/321] sctp: Fix memory leak in sctp_sf_do_5_2_4_dupcook
+Date:   Tue,  3 Dec 2019 23:35:51 +0100
+Message-Id: <20191203223441.964341526@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Menglong Dong <dong.menglong@zte.com.cn>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 1d7ea55668878bb350979c377fc72509dd6f5b21 ]
+[ Upstream commit b6631c6031c746ed004c4221ec0616d7a520f441 ]
 
-While enqueueing a broadcast skb to port->bc_queue, schedule_work()
-is called to add port->bc_work, which processes the skbs in
-bc_queue, to "events" work queue. If port->bc_queue is full, the
-skb will be discarded and schedule_work(&port->bc_work) won't be
-called. However, if port->bc_queue is full and port->bc_work is not
-running or pending, port->bc_queue will keep full and schedule_work()
-won't be called any more, and all broadcast skbs to macvlan will be
-discarded. This case can happen:
+In the implementation of sctp_sf_do_5_2_4_dupcook() the allocated
+new_asoc is leaked if security_sctp_assoc_request() fails. Release it
+via sctp_association_free().
 
-macvlan_process_broadcast() is the pending function of port->bc_work,
-it moves all the skbs in port->bc_queue to the queue "list", and
-processes the skbs in "list". During this, new skbs will keep being
-added to port->bc_queue in macvlan_broadcast_enqueue(), and
-port->bc_queue may already full when macvlan_process_broadcast()
-return. This may happen, especially when there are a lot of real-time
-threads and the process is preempted.
-
-Fix this by calling schedule_work(&port->bc_work) even if
-port->bc_work is full in macvlan_broadcast_enqueue().
-
-Fixes: 412ca1550cbe ("macvlan: Move broadcasts into a work queue")
-Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2277c7cd75e3 ("sctp: Add LSM hooks")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/macvlan.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/sctp/sm_statefuns.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -359,10 +359,11 @@ static void macvlan_broadcast_enqueue(st
- 	}
- 	spin_unlock(&port->bc_queue.lock);
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -2175,8 +2175,10 @@ enum sctp_disposition sctp_sf_do_5_2_4_d
  
-+	schedule_work(&port->bc_work);
-+
- 	if (err)
- 		goto free_nskb;
+ 	/* Update socket peer label if first association. */
+ 	if (security_sctp_assoc_request((struct sctp_endpoint *)ep,
+-					chunk->skb))
++					chunk->skb)) {
++		sctp_association_free(new_asoc);
+ 		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
++	}
  
--	schedule_work(&port->bc_work);
- 	return;
- 
- free_nskb:
+ 	/* Set temp so that it won't be added into hashtable */
+ 	new_asoc->temp = 1;
 
 
