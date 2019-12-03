@@ -2,111 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F02410F744
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 06:25:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA9A10F750
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 06:32:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfLCFZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 00:25:58 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37217 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfLCFZ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 00:25:57 -0500
-Received: by mail-pf1-f195.google.com with SMTP id s18so1250460pfm.4;
-        Mon, 02 Dec 2019 21:25:57 -0800 (PST)
+        id S1727015AbfLCFcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 00:32:13 -0500
+Received: from mail-eopbgr690089.outbound.protection.outlook.com ([40.107.69.89]:35200
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725907AbfLCFcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 00:32:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JeQ6z8QD+pZNXk3ONfS/zPksgi6bYODld2V06G7iCr8b/Vkx4MotoAmAFgr+LsWKU9ebaYhjW5Apz77rsCTX6Zp55MuDWOi+Y9sQRTP9+gODQb8C6RJxErKTu7hjsfb9toIS5030X+xyokMHhp3mqWoLNfacStv2cYfOwbFCoHztkNa0d/o5wxF0w5hsYF4gfBRv33jRDtp4HSWjJoFhYahHGtkeCgIw6j+2BQ5VWoSggEAiYYRWy3yXm3I1ZAGZLtDZrq7E6GnGWBw6+u0JELo4J6jtQSx9Vg3Ujq6DFR36zq2KtFS9p69ohSq8jBHAvkWjW3baPTpQr0ohUgwAVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gTEEFD06D0EkWGzivoVVxvmD+yuMFI4cJFO52RLEY7M=;
+ b=jtTg+eCPs00MBHYxmKZlhaG/ahK8iK2DGyPd8SNv10UNEMDezpKDgnaKLOCXOKV3EOd30XgkS3s6AUMGn1AmFj9uu/x/wNpZtn9uLJY//7To08MouxtakLOqPxYwnbUI7GMdCbUu1kW+AL8DXfBlOLyAiOELK4MoVOdUhMlzXgR1FO251zTCZDzaHm8iBeRJbD3rLfWZ55VBO+1cknVDkgOoCVercvwPzyz+orZeEsqYGK0hyNMeb3LU4G5gre52uNQS4MvMEGFIkc4QMlwUi/2cMDYdgPMZesZsEOSFYx4SMOJfq1Z2NyZPnYCKihHEvfRv5GItNoyWca1Sxyr5Og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M+Srzhos+DQbPdSyVlOGh0ahebrnO+JHC74IMgDA9Bg=;
-        b=eeKGjnxM0XbZKXZOPzIRMe8+dxlQhanLYSuWF9PAKWyivLmsJgQpCJnyComD2mfVwb
-         SBH8A+xfUhFhdp6Tc4hCQQvlTET/BFBN4a2cRki+E4TLh0wEdVFfHiwM9tRHDSzX8XXS
-         jpACCFmiGNed3ljP2KsWf6MRZ4Xllx4dqx4IVK8J+aCCvGoIiwXp+vTOpe4+e6Jwt4TC
-         cD9t5uPXgF+5sNjAoLFNyiY/bAmtBEtS4ku9WLQPU6DL0NYthrOOJkYMTCJgDSoc25Vp
-         6lB2NRAX51XHCoH/DWG5mcoGVy1G+nXEP83lV1bCIaJWVru6OCbNDRc1AgQOcJUXBM+X
-         +uOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M+Srzhos+DQbPdSyVlOGh0ahebrnO+JHC74IMgDA9Bg=;
-        b=rKXxfLM9Yl8If1j1SlBb/lXGL9QF4XIe5CA8M8wS557W63I+nV6X1IEgShdV7/QWWA
-         iE9lQnDbnbZ2ifXMpm5ZDMiw7NAFU5xeCtjsUuhpceQPArf7m7l2lBk+hxkKg61TyRMB
-         TxhnXP7whC+Xq7mvCDj16ArxT0A2g19oYSqRB/ewxbMfJ7ICHcK8nLgfG3sRux+uCFpe
-         TeGdTE93Sr/ZwHeUbRyEV7ufRgDRwJGQo6L66Ys2gzo4O9ehmjazY4sIgtwfNZ9RpGco
-         fDilUOK/g5eMDVJEKi1ebHZSXTiyU8JTiKyJ/Ym46ByodEVftdfipYVuL897J/rlbo1f
-         zZyA==
-X-Gm-Message-State: APjAAAU589XQYWSfwpglFX5qg44+Ua8FIntRPJ4tmazMxXOe3lTLodm4
-        cVQu1TrVFcwrnmohPSIlikvwh4zO
-X-Google-Smtp-Source: APXvYqxQfQdsIkgF7VkUdEOXCBieiD/yZesNsTlRPdQtfxS+Cny46WRXpQ+K97lot9VjQz+YLq+mMA==
-X-Received: by 2002:a63:cb50:: with SMTP id m16mr3448077pgi.425.1575350756962;
-        Mon, 02 Dec 2019 21:25:56 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q22sm1448697pfg.170.2019.12.02.21.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Dec 2019 21:25:56 -0800 (PST)
-Subject: Re: [PATCH 4.4 000/132] 4.4.204-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-References: <20191127202857.270233486@linuxfoundation.org>
- <CA+G9fYs-ugvOrYBZbmieSK1rQrcRh6R9cL3Vz8xK59sB3aAqyg@mail.gmail.com>
- <20191129085350.GE3584430@kroah.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <4808b398-aa8f-01a9-3783-a07344944944@roeck-us.net>
-Date:   Mon, 2 Dec 2019 21:25:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gTEEFD06D0EkWGzivoVVxvmD+yuMFI4cJFO52RLEY7M=;
+ b=IKss/fU+myvqyB9HSdQJGQ9ICEE7HwS0RbeT29jChV+ePgKd3zyeAbE9TnEfaDy6Ftibw4CSKq7jTFklmLSxCsbZlrSE2HUtzl35uGhE5pEVuW+o2PxJMJ4/0Q8hgkC1+85jyq090nUyI8mJqHR79qgqiWFC7dALEAkeRxjbShk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Rijo-john.Thomas@amd.com; 
+Received: from CY4PR12MB1925.namprd12.prod.outlook.com (10.175.62.7) by
+ CY4PR12MB1430.namprd12.prod.outlook.com (10.168.167.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.22; Tue, 3 Dec 2019 05:32:10 +0000
+Received: from CY4PR12MB1925.namprd12.prod.outlook.com
+ ([fe80::cd8b:1d7e:31c2:e8b4]) by CY4PR12MB1925.namprd12.prod.outlook.com
+ ([fe80::cd8b:1d7e:31c2:e8b4%7]) with mapi id 15.20.2495.014; Tue, 3 Dec 2019
+ 05:32:09 +0000
+From:   Rijo Thomas <Rijo-john.Thomas@amd.com>
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc:     Rijo Thomas <Rijo-john.Thomas@amd.com>,
+        Nimesh Easow <Nimesh.Easow@amd.com>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [RFC PATCH v2 0/6] Add TEE interface support to AMD Secure Processor driver
+Date:   Tue,  3 Dec 2019 10:09:15 +0530
+Message-Id: <cover.1575282249.git.Rijo-john.Thomas@amd.com>
+X-Mailer: git-send-email 1.9.1
+Content-Type: text/plain
+X-ClientProxiedBy: MA1PR0101CA0006.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:21::16) To CY4PR12MB1925.namprd12.prod.outlook.com
+ (2603:10b6:903:120::7)
 MIME-Version: 1.0
-In-Reply-To: <20191129085350.GE3584430@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Mailer: git-send-email 1.9.1
+X-Originating-IP: [165.204.156.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 98ff1c47-f031-4742-257f-08d777b22434
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1430:|CY4PR12MB1430:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CY4PR12MB1430D2530248DC59B0097E97CF420@CY4PR12MB1430.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2150;
+X-Forefront-PRVS: 02408926C4
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(39860400002)(366004)(376002)(346002)(199004)(189003)(81156014)(3846002)(50226002)(52116002)(305945005)(2616005)(186003)(316002)(110136005)(6486002)(16586007)(26005)(48376002)(66556008)(66476007)(66946007)(54906003)(14444005)(5660300002)(6666004)(478600001)(14454004)(36756003)(51416003)(8676002)(8936002)(50466002)(99286004)(386003)(6436002)(25786009)(6506007)(7736002)(47776003)(6116002)(86362001)(6512007)(2906002)(66066001)(4326008)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1430;H:CY4PR12MB1925.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rsWiK3Whcu/mMXkR/TLDdyNdhblj8xEuy8i4Pj96CSTT2tNJO8Hma4utVLWQjxOehGsxxF+9I+zL1gPClczB5pI1drpUuuzlwrnSpIfkAns3faHKRsAjbeG9hNu1nyETCEIOlJ84Kn+QQrnYgxbPlB4qCDphLEmNxJjXiCLaXCQXZilS5sThnIrK4EOUD6Hxji0czR6SDpbnfRswnK2QCS/H85plLpn1JVtZU7/XfaIYa8oO4Gbqza82rCsO46G/YYNd/v/6yWDGJTgbAjHu9N+A5Vs8wQYoDsIWwKDYRhwb6A9/eCZM/7SDrVt+VKTLObyNSYyBGH5RLjRgywdpXt/NjOzF8jtctprWaWvGKMf8o8e6yr0KVR7M3RItuCkXGQJPMngiyj1HACP4vM/DhHYAHsfM+Lx0SF5njgK6paSTpVfRxY5GAwfINfnDqXDa
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98ff1c47-f031-4742-257f-08d777b22434
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2019 05:32:09.7273
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +zeAkGPnKd7c1SqTE3+trEovj7Dszdd4QeJOZK6enT5fB+csNBp3zkdViuBAA8g+QlxNwySq+TiqONfi3N7B5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1430
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/29/19 12:53 AM, Greg Kroah-Hartman wrote:
-> On Thu, Nov 28, 2019 at 06:59:17PM +0530, Naresh Kamboju wrote:
->> On Thu, 28 Nov 2019 at 02:04, Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->>>
->>> This is the start of the stable review cycle for the 4.4.204 release.
->>> There are 132 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Fri, 29 Nov 2019 20:18:09 +0000.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>>          https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.204-rc1.gz
->>> or in the git tree and branch at:
->>>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->>>
->>
->> Results from Linaro’s test farm.
->> No regressions on arm64, arm, x86_64, and i386.
-> 
-> As you all are doing run-time tests, it would be interesting to see why
-> I saw failures in the Android networking tests with this and the 4.9
-> queue, but they did not show up in your testing :(
-> 
+The goal of this patch series is to introduce TEE (Trusted Execution
+Environment) interface support to AMD Secure Processor driver. The
+TEE is a secure area of a processor which ensures that sensitive data
+is stored, processed and protected in an isolated and trusted
+environment. The Platform Security Processor (PSP) is a dedicated
+processor which provides TEE to enable HW platform security. It offers
+protection against software attacks generated in Rich Operating System
+(Rich OS) such as Linux running on x86.
 
-Did you solve this problem, or am I going to get into trouble when I merge this
-release ?
+Based on the platform feature support, the PSP is capable of supporting
+either SEV (Secure Encrypted Virtualization) and/or TEE. The first three
+patches in this series is about moving SEV specific functions and data
+structures from PSP device driver file to a dedicated SEV interface
+driver file. The last two patches add TEE interface support to AMD
+Secure Processor driver. This TEE interface will be used by AMD-TEE
+driver to submit command buffers for processing in PSP Trusted Execution
+Environment.
 
-Guenter
+v2:
+* Rebased the patches on cryptodev-2.6 tree with base commit
+  d158367682cd (crypto: atmel - Fix selection of CRYPTO_AUTHENC)
+* Regenerated patch with correct diff-stat to show file rename
+* Used Co-developed-by: tag to give proper credit to co-author
+
+Rijo Thomas (6):
+  crypto: ccp - rename psp-dev files to sev-dev
+  crypto: ccp - create a generic psp-dev file
+  crypto: ccp - move SEV vdata to a dedicated data structure
+  crypto: ccp - check whether PSP supports SEV or TEE before
+    initialization
+  crypto: ccp - add TEE support for Raven Ridge
+  crypto: ccp - provide in-kernel API to submit TEE commands
+
+ drivers/crypto/ccp/Makefile  |    4 +-
+ drivers/crypto/ccp/psp-dev.c | 1020 ++++------------------------------------
+ drivers/crypto/ccp/psp-dev.h |   50 +-
+ drivers/crypto/ccp/sev-dev.c | 1053 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/crypto/ccp/sev-dev.h |   62 +++
+ drivers/crypto/ccp/sp-dev.h  |   17 +-
+ drivers/crypto/ccp/sp-pci.c  |   43 +-
+ drivers/crypto/ccp/tee-dev.c |  364 +++++++++++++++
+ drivers/crypto/ccp/tee-dev.h |  110 +++++
+ include/linux/psp-tee.h      |   73 +++
+ 10 files changed, 1827 insertions(+), 969 deletions(-)
+ create mode 100644 drivers/crypto/ccp/sev-dev.c
+ create mode 100644 drivers/crypto/ccp/sev-dev.h
+ create mode 100644 drivers/crypto/ccp/tee-dev.c
+ create mode 100644 drivers/crypto/ccp/tee-dev.h
+ create mode 100644 include/linux/psp-tee.h
+
+--
+1.9.1
+
