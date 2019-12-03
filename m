@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A712111EBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6CF111ECF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbfLCXDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:03:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45356 "EHLO mail.kernel.org"
+        id S1729835AbfLCWvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:51:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730027AbfLCWwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:52:35 -0500
+        id S1729823AbfLCWvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:51:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AC1720866;
-        Tue,  3 Dec 2019 22:52:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B2B32054F;
+        Tue,  3 Dec 2019 22:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413554;
-        bh=fY0cUHA/BGwsaXhpKpud9uM8lZl5kyKXm4wqjazhbmM=;
+        s=default; t=1575413462;
+        bh=CNp5Bv0TclL9MKLcrB14tMvBBV+oreR/zTbo2XPb6NA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NsV3j//8tn5+dnHpataQD0cBfu8ThIW4pudCaABl0c0rythiMjLVUeeXSOXdgCBwB
-         F1liGAqTAVMPOIw3aCqyo/zZsEiVzF52diw7tqgr9ZD2lJIpgWG+yJz9M33qp9jhXt
-         8pqBpPKZ27uBSKg6e7uw1DWEg0L14IOtzYNvJhcU=
+        b=MHDexBGrpGCUY1JsnYgow4+Dwlqf9y1q0zFHCmb76YabyzcCDj6SFjCsDXgMRA3dh
+         Tc86LwdCz7/nX9TfVsiMP2c/mocBWE8Y4ZmZ+Bgk9ZVBuw9QKetWIp2AiUUGpEozYH
+         icoLh41ySsRwk7S797bAWyJ/uyNiv0eCUzz0Ol7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>,
-        John Crispin <john@phrozen.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 132/321] pinctrl: xway: fix gpio-hog related boot issues
-Date:   Tue,  3 Dec 2019 23:33:18 +0100
-Message-Id: <20191203223434.018968748@linuxfoundation.org>
+Subject: [PATCH 4.19 138/321] bnxt_en: query force speeds before disabling autoneg mode.
+Date:   Tue,  3 Dec 2019 23:33:24 +0100
+Message-Id: <20191203223434.340912492@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -45,87 +46,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Schiller <ms@dev.tdt.de>
+From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
 
-[ Upstream commit 9b4924da4711674e62d97d4f5360446cc78337af ]
+[ Upstream commit 56d374624778652d2a999e18c87a25338b127b41 ]
 
-This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix gpio-hog
-related boot issues").
+With autoneg enabled, PHY loopback test fails. To disable autoneg,
+driver needs to send a valid forced speed to FW. FW is not sending
+async event for invalid speeds. To fix this, query forced speeds
+and send the correct speed when disabling autoneg mode.
 
-It fixes the issue that the gpio ranges needs to be defined before
-gpiochip_add().
-
-Therefore, we also have to swap the order of registering the pinctrl
-driver and registering the gpio chip.
-
-You also have to add the "gpio-ranges" property to the pinctrl device
-node to get it finally working.
-
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-Acked-by: John Crispin <john@phrozen.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-xway.c | 39 +++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index 93f8bd04e7fe6..ae74b260b014b 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1746,14 +1746,6 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	}
- 	xway_pctrl_desc.pins = xway_info.pads;
- 
--	/* register the gpio chip */
--	xway_chip.parent = &pdev->dev;
--	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to register gpio chip\n");
--		return ret;
--	}
--
- 	/* setup the data needed by pinctrl */
- 	xway_pctrl_desc.name	= dev_name(&pdev->dev);
- 	xway_pctrl_desc.npins	= xway_chip.ngpio;
-@@ -1775,10 +1767,33 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* finish with registering the gpio range in pinctrl */
--	xway_gpio_range.npins = xway_chip.ngpio;
--	xway_gpio_range.base = xway_chip.base;
--	pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
-+	/* register the gpio chip */
-+	xway_chip.parent = &pdev->dev;
-+	xway_chip.owner = THIS_MODULE;
-+	xway_chip.of_node = pdev->dev.of_node;
-+	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register gpio chip\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(pdev->dev.of_node, "gpio-ranges")) {
-+		/* finish with registering the gpio range in pinctrl */
-+		xway_gpio_range.npins = xway_chip.ngpio;
-+		xway_gpio_range.base = xway_chip.base;
-+		pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
-+	}
-+
- 	dev_info(&pdev->dev, "Init done\n");
- 	return 0;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index eaa285bf908b9..2240c23b0a4c9 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -2390,17 +2390,37 @@ static int bnxt_hwrm_mac_loopback(struct bnxt *bp, bool enable)
+ 	return hwrm_send_message(bp, &req, sizeof(req), HWRM_CMD_TIMEOUT);
  }
+ 
++static int bnxt_query_force_speeds(struct bnxt *bp, u16 *force_speeds)
++{
++	struct hwrm_port_phy_qcaps_output *resp = bp->hwrm_cmd_resp_addr;
++	struct hwrm_port_phy_qcaps_input req = {0};
++	int rc;
++
++	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_PORT_PHY_QCAPS, -1, -1);
++	mutex_lock(&bp->hwrm_cmd_lock);
++	rc = _hwrm_send_message(bp, &req, sizeof(req), HWRM_CMD_TIMEOUT);
++	if (!rc)
++		*force_speeds = le16_to_cpu(resp->supported_speeds_force_mode);
++
++	mutex_unlock(&bp->hwrm_cmd_lock);
++	return rc;
++}
++
+ static int bnxt_disable_an_for_lpbk(struct bnxt *bp,
+ 				    struct hwrm_port_phy_cfg_input *req)
+ {
+ 	struct bnxt_link_info *link_info = &bp->link_info;
+-	u16 fw_advertising = link_info->advertising;
++	u16 fw_advertising;
+ 	u16 fw_speed;
+ 	int rc;
+ 
+ 	if (!link_info->autoneg)
+ 		return 0;
+ 
++	rc = bnxt_query_force_speeds(bp, &fw_advertising);
++	if (rc)
++		return rc;
++
+ 	fw_speed = PORT_PHY_CFG_REQ_FORCE_LINK_SPEED_1GB;
+ 	if (netif_carrier_ok(bp->dev))
+ 		fw_speed = bp->link_info.link_speed;
 -- 
 2.20.1
 
