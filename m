@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F2E111BEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D232111DD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfLCWic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:38:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47608 "EHLO mail.kernel.org"
+        id S1730572AbfLCW5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:57:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728005AbfLCWi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:38:29 -0500
+        id S1730566AbfLCW5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:57:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA27120684;
-        Tue,  3 Dec 2019 22:38:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E3482053B;
+        Tue,  3 Dec 2019 22:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412709;
-        bh=9dFJH4pPKlk5GhffhpQUM7dSEIwNSARrX0h+XxeiS18=;
+        s=default; t=1575413857;
+        bh=n2IUQ7KcrggrbiGPzFoO3Sp/A7B50+PCHP1UVCN2rUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NrsBZ35hv2/L+9+GwdaL/ONME8t97sunjN1Io1vLw8Muz5MOtEOJ28Df3b1vdi00P
-         LwFDS1uCwdw5VWBlyYGdF0+E6e+7OUFgq8m4BahkVFV9PSya7VQo2IZPBAfCQHqmt5
-         j4rC3lTVza4BN/9j8zH2j7yVhZM8RXb2FS4OBJMU=
+        b=bjnUHWLk6JLB4MHeuDlraipzgBEQhOeTDQklr809i3RikjK/WZpVZHMUhWbttMm18
+         pTA0bcHh6/5MleAVgGZVitTbHcK0jGIyjEIAXitvKWG5Dr1eTBOSUkmPtZKKN028P2
+         Yah2pUEYYVbRt5f8JqPusirJhyFTiPwU4KxmrXpg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 33/46] net/tls: remove the dead inplace_crypto code
-Date:   Tue,  3 Dec 2019 23:35:53 +0100
-Message-Id: <20191203212753.658284453@linuxfoundation.org>
+Subject: [PATCH 4.19 288/321] openvswitch: remove another BUG_ON()
+Date:   Tue,  3 Dec 2019 23:35:54 +0100
+Message-Id: <20191203223442.118482563@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,74 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 9e5ffed37df68d0ccfb2fdc528609e23a1e70ebe ]
+[ Upstream commit 8a574f86652a4540a2433946ba826ccb87f398cc ]
 
-Looks like when BPF support was added by commit d3b18ad31f93
-("tls: add bpf support to sk_msg handling") and
-commit d829e9c4112b ("tls: convert to generic sk_msg interface")
-it broke/removed the support for in-place crypto as added by
-commit 4e6d47206c32 ("tls: Add support for inplace records
-encryption").
+If we can't build the flow del notification, we can simply delete
+the flow, no need to crash the kernel. Still keep a WARN_ON to
+preserve debuggability.
 
-The inplace_crypto member of struct tls_rec is dead, inited
-to zero, and sometimes set to zero again. It used to be
-set to 1 when record was allocated, but the skmsg code doesn't
-seem to have been written with the idea of in-place crypto
-in mind.
+Note: the BUG_ON() predates the Fixes tag, but this change
+can be applied only after the mentioned commit.
 
-Since non trivial effort is required to bring the feature back
-and we don't really have the HW to measure the benefit just
-remove the left over support for now to avoid confusing readers.
+v1 -> v2:
+ - do not leak an skb on error
 
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Fixes: aed067783e50 ("openvswitch: Minimize ovs_flow_cmd_del critical section.")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tls.h |    1 -
- net/tls/tls_sw.c  |    6 +-----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ net/openvswitch/datapath.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/net/tls.h
-+++ b/include/net/tls.h
-@@ -122,7 +122,6 @@ struct tls_rec {
- 	struct list_head list;
- 	int tx_ready;
- 	int tx_flags;
--	int inplace_crypto;
+--- a/net/openvswitch/datapath.c
++++ b/net/openvswitch/datapath.c
+@@ -1345,7 +1345,10 @@ static int ovs_flow_cmd_del(struct sk_bu
+ 						     OVS_FLOW_CMD_DEL,
+ 						     ufid_flags);
+ 			rcu_read_unlock();
+-			BUG_ON(err < 0);
++			if (WARN_ON_ONCE(err < 0)) {
++				kfree_skb(reply);
++				goto out_free;
++			}
  
- 	struct sk_msg msg_plaintext;
- 	struct sk_msg msg_encrypted;
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -705,8 +705,7 @@ static int tls_push_record(struct sock *
+ 			ovs_notify(&dp_flow_genl_family, reply, info);
+ 		} else {
+@@ -1353,6 +1356,7 @@ static int ovs_flow_cmd_del(struct sk_bu
+ 		}
  	}
  
- 	i = msg_pl->sg.start;
--	sg_chain(rec->sg_aead_in, 2, rec->inplace_crypto ?
--		 &msg_en->sg.data[i] : &msg_pl->sg.data[i]);
-+	sg_chain(rec->sg_aead_in, 2, &msg_pl->sg.data[i]);
- 
- 	i = msg_en->sg.end;
- 	sk_msg_iter_var_prev(i);
-@@ -971,8 +970,6 @@ alloc_encrypted:
- 			if (ret)
- 				goto fallback_to_reg_send;
- 
--			rec->inplace_crypto = 0;
--
- 			num_zc++;
- 			copied += try_to_copy;
- 
-@@ -1171,7 +1168,6 @@ alloc_payload:
- 
- 		tls_ctx->pending_open_record_frags = true;
- 		if (full_record || eor || sk_msg_full(msg_pl)) {
--			rec->inplace_crypto = 0;
- 			ret = bpf_exec_tx_verdict(msg_pl, sk, full_record,
- 						  record_type, &copied, flags);
- 			if (ret) {
++out_free:
+ 	ovs_flow_free(flow, true);
+ 	return 0;
+ unlock:
 
 
