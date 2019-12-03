@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4606D111D4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE04111D4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbfLCWwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:52:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44442 "EHLO mail.kernel.org"
+        id S1729969AbfLCWwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:52:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729659AbfLCWvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:51:55 -0500
+        id S1729960AbfLCWv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:51:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A623820862;
-        Tue,  3 Dec 2019 22:51:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A9B02084F;
+        Tue,  3 Dec 2019 22:51:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413515;
-        bh=El87W87gUKdjkEIOxGKkTeim2N3L71k5D8CTxcsCHFc=;
+        s=default; t=1575413517;
+        bh=NuGwt9UuVhd1Ho4x3f8+0NO0nzyik9SvmiHRiNlBNRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0auZauZc34xdPUFmojM8iTQc9v8cBoUqGPTjalAD9CNRZx+Nh1K4S1AfJKcP1m4Ki
-         XcUcKzcFSfk3gXQi7+UE8Q9WYPIBwZthCMRe46lkFn9/wrrWqyRGcKJHKd23FODvgi
-         6p5qYx0VWQgk1baThxw8INjLDmxjUOQr1pf//uL8=
+        b=LfV4/p3B8Z5D9hqy4E89xwnjq9ib1+r6HUtfB16gmd+IhQscVA0uyC3d24zpXvNdp
+         APnpDWNYH7DHdw0aKdoxg+JOvr6MxPRylmmRWSr1Kep0d/TVBAvfY0Cq69byBzKXRu
+         sp3fIVaOIaGpilB7CQeoNl6EfNwlNzJ5XjUDoddk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stafford Horne <shorne@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 156/321] serial: max310x: Fix tx_empty() callback
-Date:   Tue,  3 Dec 2019 23:33:42 +0100
-Message-Id: <20191203223435.260836210@linuxfoundation.org>
+Subject: [PATCH 4.19 157/321] openrisc: Fix broken paths to arch/or32
+Date:   Tue,  3 Dec 2019 23:33:43 +0100
+Message-Id: <20191203223435.311990013@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -43,41 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shiyan <shc_work@mail.ru>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-[ Upstream commit a8da3c7873ea57acb8f9cea58c0af477522965aa ]
+[ Upstream commit 57ce8ba0fd3a95bf29ed741df1c52bd591bf43ff ]
 
-Function max310x_tx_empty() accesses the IRQSTS register, which is
-cleared by IC when reading, so if there is an interrupt status, we
-will lose it. This patch implement the transmitter check only by
-the current FIFO level.
+OpenRISC was mainlined as "openrisc", not "or32".
+vmlinux.lds is generated from vmlinux.lds.S.
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Stafford Horne <shorne@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/max310x.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/openrisc/kernel/entry.S | 2 +-
+ arch/openrisc/kernel/head.S  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index bd3e6cf81af5c..0c35c3c5e3734 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -844,12 +844,9 @@ static void max310x_wq_proc(struct work_struct *ws)
+diff --git a/arch/openrisc/kernel/entry.S b/arch/openrisc/kernel/entry.S
+index 0c826ad6e994c..ee6159d2ed22e 100644
+--- a/arch/openrisc/kernel/entry.S
++++ b/arch/openrisc/kernel/entry.S
+@@ -240,7 +240,7 @@ handler:							;\
+  *	 occured. in fact they never do. if you need them use
+  *	 values saved on stack (for SPR_EPC, SPR_ESR) or content
+  *       of r4 (for SPR_EEAR). for details look at EXCEPTION_HANDLE()
+- *       in 'arch/or32/kernel/head.S'
++ *       in 'arch/openrisc/kernel/head.S'
+  */
  
- static unsigned int max310x_tx_empty(struct uart_port *port)
- {
--	unsigned int lvl, sts;
-+	u8 lvl = max310x_port_read(port, MAX310X_TXFIFOLVL_REG);
+ /* =====================================================[ exceptions] === */
+diff --git a/arch/openrisc/kernel/head.S b/arch/openrisc/kernel/head.S
+index 9fc6b60140f00..31ed257ff0618 100644
+--- a/arch/openrisc/kernel/head.S
++++ b/arch/openrisc/kernel/head.S
+@@ -1728,7 +1728,7 @@ _string_nl:
  
--	lvl = max310x_port_read(port, MAX310X_TXFIFOLVL_REG);
--	sts = max310x_port_read(port, MAX310X_IRQSTS_REG);
--
--	return ((sts & MAX310X_IRQ_TXEMPTY_BIT) && !lvl) ? TIOCSER_TEMT : 0;
-+	return lvl ? 0 : TIOCSER_TEMT;
- }
- 
- static unsigned int max310x_get_mctrl(struct uart_port *port)
+ /*
+  * .data section should be page aligned
+- *	(look into arch/or32/kernel/vmlinux.lds)
++ *	(look into arch/openrisc/kernel/vmlinux.lds.S)
+  */
+ 	.section .data,"aw"
+ 	.align	8192
 -- 
 2.20.1
 
