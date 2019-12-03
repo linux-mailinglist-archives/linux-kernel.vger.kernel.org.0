@@ -2,101 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3108710FD29
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:04:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC5910FD34
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:06:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfLCMEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:04:45 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38666 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfLCMEp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:04:45 -0500
-Received: by mail-lf1-f66.google.com with SMTP id r14so2734307lfm.5;
-        Tue, 03 Dec 2019 04:04:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=41gz7Pr3bu95rsc2AmP+uk3DRv43sggDSJGl0PUK5A8=;
-        b=vbIBHcDr/qXhhDiGkKQDs2V+qghI3vJUjWRJZh+QM0n7WjE7nswn5FuYePJCHdHzT2
-         avY0Mreifj3ivibbFeMUjPiHT+tse5RWRK63vnjmUS+IAjcQYfzm2Xx8LcDAK7FAmJRK
-         +yUPtu9k6n+mzGGTQF8ICWdPsQnKyju/t4JU96PqX2wlaY8qdTg4pn2QAJeK+icv1Lky
-         lfOihAkVdTDKuyvGQSRNZbXxh/DH+GeYqf4cXJLUXlCglkncka1j6IrhzSORGoPely9n
-         b+4NVU8DzzaWt+bB8B1RFgwqtyAi3FMrobRFKfA05P2euNq7kzqUr+nm7yEpv8HcnxE1
-         NJDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=41gz7Pr3bu95rsc2AmP+uk3DRv43sggDSJGl0PUK5A8=;
-        b=KEZikFOT5XHSrE49BS67wCUC83Nebbl/0p2z7hDnOJ5hz43P2CWxfnWu//cAjzAVMr
-         MpIOe/ksmPWNZdiUrXDHw1AmCVaD+4Pj0Wvu40h9Dg9fu4gXmofK/fh3n4yKn3bMU5aQ
-         lhhIPh0qrLATwHM61SJ8NBfLd0qmb5s88LvT4O83nFcD9KVBBPV9ZJ0ryxYP5CfgtWE6
-         TohlKrtVXPXgYWMwbrNkwQUmY3K5AFymcAGXXREh4KU33kTmumqUpCq1B8uJ3P1INRG0
-         Hbjgy3mQRWfiG4Rfg8dUNw1+mIuNSne0idwTNi3O5aDoNvQ8jzgITpIasb3pJCt+Jx7o
-         8iRw==
-X-Gm-Message-State: APjAAAVj1gx1fk8fAE3VGQZ6CyD+CeazCt/aUbbXkfnTZ0J7wn1r0YH6
-        ym88E//GfJurexSNjijlm3C2RKdy1q4GX7IIuZQ=
-X-Google-Smtp-Source: APXvYqzfZ00PJpD/WaW2YVAH/ohfpVaLwioqHtBL+vwNMKZqqB4MnjZ7lOePHAJd+K2wIAXl/jgDkhuvxG7sGPwy6Sc=
-X-Received: by 2002:ac2:4119:: with SMTP id b25mr2532251lfi.90.1575374683194;
- Tue, 03 Dec 2019 04:04:43 -0800 (PST)
+        id S1726365AbfLCMGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:06:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34428 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725838AbfLCMGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:06:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 87EC3AD10;
+        Tue,  3 Dec 2019 12:06:23 +0000 (UTC)
+Date:   Tue, 3 Dec 2019 13:06:22 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        kexec@lists.infradead.org
+Subject: Re: [RFC PATCH v5 2/3] printk-rb: new printk ringbuffer
+ implementation (reader)
+Message-ID: <20191203120622.zux33do54rmjafns@pathway.suse.cz>
+References: <20191128015235.12940-1-john.ogness@linutronix.de>
+ <20191128015235.12940-3-john.ogness@linutronix.de>
 MIME-Version: 1.0
-References: <08794fde-cdd0-287c-62bf-e2e3b8c80686@gmail.com> <20191203101509.wte47aad5k4mqu2y@pengutronix.de>
-In-Reply-To: <20191203101509.wte47aad5k4mqu2y@pengutronix.de>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Dec 2019 09:04:58 -0300
-Message-ID: <CAOMZO5Cn993y9VeFN6hPO3-cfNnUKiuFd_rqAZ8htz=dO6t6ig@mail.gmail.com>
-Subject: Re: Issue with imx_get_temp()
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     Igor Plyatov <plyatov@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>, linux-pm@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191128015235.12940-3-john.ogness@linutronix.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marco,
+On Thu 2019-11-28 02:58:34, John Ogness wrote:
+> Add the reader implementation for the new ringbuffer.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> ---
+>  kernel/printk/printk_ringbuffer.c | 234 ++++++++++++++++++++++++++++++
+>  kernel/printk/printk_ringbuffer.h |  12 +-
+>  2 files changed, 245 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> index 09c32e52fd40..f85762713583 100644
+> --- a/kernel/printk/printk_ringbuffer.c
+> +++ b/kernel/printk/printk_ringbuffer.c
+> @@ -674,3 +674,237 @@ void prb_commit(struct prb_reserved_entry *e)
+>  	local_irq_restore(e->irqflags);
+>  }
+>  EXPORT_SYMBOL(prb_commit);
+> +
+> +/*
+> + * Given @blk_lpos, return a pointer to the raw data from the data block
+> + * and calculate the size of the data part. A NULL pointer is returned
+> + * if @blk_lpos specifies values that could never be legal.
+> + *
+> + * This function (used by readers) performs strict validation on the lpos
+> + * values to possibly detect bugs in the writer code. A WARN_ON_ONCE() is
+> + * triggered if an internal error is detected.
+> + */
+> +static char *get_data(struct prb_data_ring *data_ring,
+> +		      struct prb_data_blk_lpos *blk_lpos,
+> +		      unsigned long *data_size)
+> +{
+> +	struct prb_data_block *db;
+> +
+> +	if (blk_lpos->begin == INVALID_LPOS &&
+> +	    blk_lpos->next == INVALID_LPOS) {
+> +		/* descriptor without a data block */
+> +		return NULL;
+> +	} else if (DATA_WRAPS(data_ring, blk_lpos->begin) ==
+> +		   DATA_WRAPS(data_ring, blk_lpos->next)) {
+> +		/* regular data block */
+> +		if (WARN_ON_ONCE(blk_lpos->next <= blk_lpos->begin))
+> +			return NULL;
+> +		db = to_block(data_ring, blk_lpos->begin);
+> +		*data_size = blk_lpos->next - blk_lpos->begin;
+> +
+> +	} else if ((DATA_WRAPS(data_ring, blk_lpos->begin) + 1 ==
+> +		    DATA_WRAPS(data_ring, blk_lpos->next)) ||
+> +		   ((DATA_WRAPS(data_ring, blk_lpos->begin) ==
+> +		     DATA_WRAPS(data_ring, -1UL)) &&
+> +		    (DATA_WRAPS(data_ring, blk_lpos->next) == 0))) {
 
-On Tue, Dec 3, 2019 at 7:15 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
+I am a bit confused. I would expect that (-1UL + 1) = 0. So the second
+condition after || looks just like a special variant of the first
+valid condition.
 
-> Mh.. it seems that the irq gets enabled before a irq-handler is
-> registered. As your backlog shows the thermal_zone_device_register()
-> triggers a imx_get_temp() and during boot the irq_enabled is false and
-> it seems that your temperature is below the alarm_temp. So in such a
-> case the enable_irq() is executed. I don't know what happens if we
-> enable a irq without a irq-handler.
+Or do I miss anything? Is there a problems with type casting?
 
-I think your analysis makes sense.
 
-Should we move the ' data->irq_enabled = true' just prior to calling
-thermal_zone_device_register()?
+> +		/* wrapping data block */
+> +		db = to_block(data_ring, 0);
+> +		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
+> +
+> +	} else {
+> +		WARN_ON_ONCE(1);
+> +		return NULL;
+> +	}
+> +
+> +	/* A valid data block will always be aligned to the ID size. */
+> +	if (WARN_ON_ONCE(blk_lpos->begin !=
+> +			 ALIGN(blk_lpos->begin, sizeof(db->id))) ||
+> +	    WARN_ON_ONCE(blk_lpos->next !=
+> +			 ALIGN(blk_lpos->next, sizeof(db->id)))) {
+> +		return NULL;
+> +	}
+> +
+> +	/* A valid data block will always have at least an ID. */
+> +	if (WARN_ON_ONCE(*data_size < sizeof(db->id)))
+> +		return NULL;
+> +
+> +	/* Subtract descriptor ID space from size. */
+> +	*data_size -= sizeof(db->id);
+> +
+> +	return &db->data[0];
+> +}
+> +
+> +/* Given @blk_lpos, copy an expected @len of data into the provided buffer. */
+> +static bool copy_data(struct prb_data_ring *data_ring,
+> +		      struct prb_data_blk_lpos *blk_lpos, u16 len, char *buf,
+> +		      unsigned int buf_size)
+> +{
+> +	unsigned long data_size;
+> +	char *data;
+> +
+> +	/* Caller might not want the data. */
+> +	if (!buf || !buf_size)
+> +		return true;
+> +
+> +	data = get_data(data_ring, blk_lpos, &data_size);
+> +	if (!data)
+> +		return false;
+> +
+> +	/* Actual cannot be less than expected. */
+> +	if (WARN_ON_ONCE(data_size < len))
+> +		return false;
 
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -803,6 +803,7 @@ static int imx_thermal_probe(struct platform_device *pdev)
-                goto legacy_cleanup;
-        }
+I do not have a good feeling that the record gets lost here.
 
-+       data->irq_enabled = true;
-        data->tz = thermal_zone_device_register("imx_thermal_zone",
-                                                IMX_TRIP_NUM,
-                                                BIT(IMX_TRIP_PASSIVE), data,
-@@ -837,7 +838,6 @@ static int imx_thermal_probe(struct platform_device *pdev)
-        regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
-                     data->socdata->measure_temp_mask);
+I could imagine that a writer would reserve more space than
+needed in the end. Then it would want to modify desc.info.text_len
+and could do a mistake.
 
--       data->irq_enabled = true;
-        data->mode = THERMAL_DEVICE_ENABLED;
+By other words, I would expect a bug on the writer side here.
+And I would try to preserve the data by calling:
 
-        ret = devm_request_threaded_irq(&pdev->dev, data->irq,
+pr_warn_once("Wrong data_size (%lu) for data: %.*s\n", data_size,
+data_size, data);
+
+Well, I do not resist on it. WARN_ON_ONCE() is fine as well.
+
+> +
+> +	data_size = min_t(u16, buf_size, len);
+> +
+> +	if (!WARN_ON_ONCE(!data_size))
+> +		memcpy(&buf[0], data, data_size);
+> +	return true;
+> +}
+> +
+
+Otherwise it looks good to me. I wonder how the conversion
+of the printk.c code will look with this API.
+
+Best Regards,
+Petr
