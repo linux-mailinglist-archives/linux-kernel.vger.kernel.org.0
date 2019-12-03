@@ -2,133 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD8510FB29
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:54:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E90710FB3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:59:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfLCJyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 04:54:46 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43876 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfLCJyp (ORCPT
+        id S1726251AbfLCJ7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 04:59:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58005 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfLCJ7G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 04:54:45 -0500
-Received: by mail-ot1-f68.google.com with SMTP id p8so2334481oth.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 01:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wVf6LBQRDptqpCKdFOlhcvzs6k4hCdHUr7W60r3qycU=;
-        b=oHI6od5exA7qVjlcTCQw0+n2wjli17j/iVzx3noeDCu4V3HzrIlHduDDkCTJP7l/51
-         Ry07HR27Y9ZPhvbEkcdcVRn4GRv0Ilg6bjPZeZ1v6sNcv/iL9ESjYjNQcKPNpn1nPPeC
-         7hPKzEG9Az4z+JF9fC6AZaKVkNYlye6V5N54248nxcR+C9v3nN01w3UowIXqgqFbFIaB
-         B17JRFf7i7Mf+SFxRgCVTc8d3eSwBxOxEydyc6OIKc2mrwz6v13GeZ0Saeyb4UV7mybb
-         zgZ8VOs9wtivWXnCOF0udd6eJZeTt5crpeYVX7cysYwwZwpxrnS7lK1TXY3/azMwxDP4
-         Xfhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wVf6LBQRDptqpCKdFOlhcvzs6k4hCdHUr7W60r3qycU=;
-        b=QDDozmfd3OyFFJxtGMPns1ffNGpndHqcX+soM9q7N3YQtXpLsDfcVhhMZUY21AAzl5
-         nVXuIXdrceqDyUVkFqpBVft25jMn3m3jnP4Ez9fSbPxLANTLEBGEgfLwq3YgX3OGV5o/
-         I5VRMfUiMBpcvz8yTLnu5FOWAjzlae1Lxph1REatu2X3F8cjwNsvrz76MFb+V1usC1vv
-         LW1RfqPkM5k3Di+PZJurkCvPY5fL2V17nopjKPMA4u1ufaQ8dXizFYcVX1yCkDMwJVk2
-         hmBQzvIChcVuIDaTNahLj25wzrKXZaqaH2t8tgEt06/hu/H2Vsz8xxGZnm0wJIfd5U7k
-         nrrw==
-X-Gm-Message-State: APjAAAXXa9x17L3niN3wWqEIznNL4iO8655bTH0hatC93+3CcmOQgKk/
-        RCjCi1aTzBv5j45U7n0pI4Py+JUhGGtQ4qhFkiE82w==
-X-Google-Smtp-Source: APXvYqz0sCOl2T56rzFFmFxXDNqEA1Su7oYhijes4DWKPsLe4dL2J8rVjvNT5Hduusy2UHqlYckjBc70LYVHXZ91nKA=
-X-Received: by 2002:a9d:32e5:: with SMTP id u92mr2574205otb.85.1575366884881;
- Tue, 03 Dec 2019 01:54:44 -0800 (PST)
+        Tue, 3 Dec 2019 04:59:06 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1ic4xH-0004We-Po; Tue, 03 Dec 2019 10:58:51 +0100
+Received: from [IPv6:2a03:f580:87bc:d400:858e:130c:14c0:366e] (unknown [IPv6:2a03:f580:87bc:d400:858e:130c:14c0:366e])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits)
+         client-signature RSA-PSS (4096 bits))
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 52F1A4873B3;
+        Tue,  3 Dec 2019 09:55:05 +0000 (UTC)
+Subject: Re: [PATCH] MAINTAINERS: add myself as maintainer of MCAN MMIO device
+ driver
+To:     Sriram Dash <sriram.dash@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
+        wg@grandegger.com
+Cc:     mchehab+samsung@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, robh@kernel.org, dmurphy@ti.com,
+        rcsekar@samsung.com, pankaj.dubey@samsung.com,
+        pankj.sharma@samsung.com
+References: <CGME20191203043533epcas5p19bfc21e2b03db7f27c6d84cda6824d27@epcas5p1.samsung.com>
+ <1575347349-32689-1-git-send-email-sriram.dash@samsung.com>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9c9b1f4d-e092-957a-150c-41f2348810e5@pengutronix.de>
+Date:   Tue, 3 Dec 2019 10:55:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <1575352925-17271-1-git-send-email-peng.fan@nxp.com>
- <1575352925-17271-2-git-send-email-peng.fan@nxp.com> <20191203065751.w23dypag4745qv7i@pengutronix.de>
-In-Reply-To: <20191203065751.w23dypag4745qv7i@pengutronix.de>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 3 Dec 2019 10:54:34 +0100
-Message-ID: <CAMpxmJUVN=HqDsHRTD_BhgxZB63yh6S2XHfnzx7LkESvR1NYUg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: bcm-kona: use platform_irq_count
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Peng Fan <peng.fan@nxp.com>,
-        "rjui@broadcom.com" <rjui@broadcom.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "sbranden@broadcom.com" <sbranden@broadcom.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alice Guo <alice.guo@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1575347349-32689-1-git-send-email-sriram.dash@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="AgPODyPcIAY4cJ8CKaolPkD5tAQR8qlUo"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 3 gru 2019 o 07:57 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> On Tue, Dec 03, 2019 at 06:04:27AM +0000, Peng Fan wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Use platform_irq_count to replace of_irq_count
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >
-> > V1:
-> >  Code inspection, not tested
-> >
-> >  drivers/gpio/gpio-bcm-kona.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.=
-c
-> > index 4122683eb1f9..c50721980a7c 100644
-> > --- a/drivers/gpio/gpio-bcm-kona.c
-> > +++ b/drivers/gpio/gpio-bcm-kona.c
-> > @@ -19,7 +19,6 @@
-> >  #include <linux/io.h>
-> >  #include <linux/gpio/driver.h>
-> >  #include <linux/of_device.h>
-> > -#include <linux/of_irq.h>
-> >  #include <linux/init.h>
-> >  #include <linux/irqdomain.h>
-> >  #include <linux/irqchip/chained_irq.h>
-> > @@ -586,7 +585,7 @@ static int bcm_kona_gpio_probe(struct platform_devi=
-ce *pdev)
-> >
-> >       kona_gpio->gpio_chip =3D template_chip;
-> >       chip =3D &kona_gpio->gpio_chip;
-> > -     kona_gpio->num_bank =3D of_irq_count(dev->of_node);
-> > +     kona_gpio->num_bank =3D platform_irq_count(pdev);
->
-> of_irq_count returns 0 or a positive int while platform_irq_count might
-> return a negative error code. This needs handling. Also I wonder why
-> platform_irq_count() is better than of_irq_count() which would be good
-> to describe in the commit log.
->
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--AgPODyPcIAY4cJ8CKaolPkD5tAQR8qlUo
+Content-Type: multipart/mixed; boundary="PMj6IRNcR0cQVRbqraVAABpoCo0rGJrMh";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Sriram Dash <sriram.dash@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-can@vger.kernel.org, wg@grandegger.com
+Cc: mchehab+samsung@kernel.org, davem@davemloft.net,
+ gregkh@linuxfoundation.org, robh@kernel.org, dmurphy@ti.com,
+ rcsekar@samsung.com, pankaj.dubey@samsung.com, pankj.sharma@samsung.com
+Message-ID: <9c9b1f4d-e092-957a-150c-41f2348810e5@pengutronix.de>
+Subject: Re: [PATCH] MAINTAINERS: add myself as maintainer of MCAN MMIO device
+ driver
+References: <CGME20191203043533epcas5p19bfc21e2b03db7f27c6d84cda6824d27@epcas5p1.samsung.com>
+ <1575347349-32689-1-git-send-email-sriram.dash@samsung.com>
+In-Reply-To: <1575347349-32689-1-git-send-email-sriram.dash@samsung.com>
 
-In general I like drivers to use generic APIs whenever possible. There
-are a lot of drivers that use some random of_ routines just because
-the developer didn't know any better and it turns out we now have
-generic device properties and a lot of platform device helpers.
-Consolidation is always good.
+--PMj6IRNcR0cQVRbqraVAABpoCo0rGJrMh
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-Waiting for v2.
+On 12/3/19 5:29 AM, Sriram Dash wrote:
+> Since we are actively working on MMIO MCAN device driver,
+> as discussed with Marc, I am adding myself as a maintainer.
+>=20
+> Signed-off-by: Sriram Dash <sriram.dash@samsung.com>
+> ---
 
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
-|
+Added to linux-can.
+
+Tnx,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+
+--PMj6IRNcR0cQVRbqraVAABpoCo0rGJrMh--
+
+--AgPODyPcIAY4cJ8CKaolPkD5tAQR8qlUo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEmvEkXzgOfc881GuFWsYho5HknSAFAl3mMPUACgkQWsYho5Hk
+nSCPqwgAuOqh+sGM+elUOahNy8zlT0jJUsD5IlZDpXrkto1wfFfTpcp9iDNYWaIx
+uM19pwnc09Jg+S7pkHSFWIGDM0JExgKGwyJ47G04tA4PzBLqcmIUfVbEE8rmzYYQ
+1MQtmkx62Kms3v2OG/Wv1NPWLGAroeD9X+l+pq+jjvrKygZ5QCezj4CNZqwz6KHv
+vmm+U0zNuaR6WjHOrSBVE3MM4gAjhQrBhNsT6F0jaCobatj7lGIrVRA8f9PCRr7H
+0AOXpK9yNyI684MByoxzxqLjDayTREUTFjcEUdtY9ORzf+pdvp4BUTc1Y7PzS0oP
+dZRqRYbMMTq9R2cHzc9pqN357KW62A==
+=a+Sh
+-----END PGP SIGNATURE-----
+
+--AgPODyPcIAY4cJ8CKaolPkD5tAQR8qlUo--
