@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48199111BD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92720111DC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfLCWhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:37:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46240 "EHLO mail.kernel.org"
+        id S1728089AbfLCW47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:56:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727792AbfLCWhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:37:47 -0500
+        id S1730491AbfLCW44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:56:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6BED207DD;
-        Tue,  3 Dec 2019 22:37:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F1B420803;
+        Tue,  3 Dec 2019 22:56:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412667;
-        bh=Ye4jR+CkRjrPNFX6t5EZnz+G8uSEfUhD99Mv+tsNazs=;
+        s=default; t=1575413816;
+        bh=hOChTwOSOH99NKlZRnGJVBGGtiLC3hRZj54IEM5GvXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KkvvJz4zOka0I9AcLZwERWAqaDSX0nx+vg0CnVsY+oZXH9K3Xw2WH9G2yBX8KZ9nk
-         vf5mxWZKrLRHoVuc2tag5ddZjyAwAmXyROxGqHuKYTGL3gVEK+MQOB5LTTJp789861
-         PCXpsg3sGtQVCyFCqNgfx/zoAQrzPnOaFLqvCUIQ=
+        b=gZL3/R51+Fm3n4ej3POLTb8nW7IAL1cD4f89tDcYaz9XyIOsz/Zx7po/L3LZz7T+o
+         V703LimqMPcQR4RcHV+Ru9szkUG4FIzKZ2z1H5Kd/WuNJsURczvTvJYzVWhkv6FWtg
+         UZAlN7eQr1MHNbAhOIVMAW2QKtRKdeSwbwRpE0tQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        David Bauer <mail@david-bauer.net>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 18/46] mdio_bus: dont use managed reset-controller
-Date:   Tue,  3 Dec 2019 23:35:38 +0100
-Message-Id: <20191203212734.825000265@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.19 273/321] mei: bus: prefix device names on bus with the bus name
+Date:   Tue,  3 Dec 2019 23:35:39 +0100
+Message-Id: <20191203223441.330721776@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Bauer <mail@david-bauer.net>
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-[ Upstream commit 32085f25d7b68404055f3525c780142fc72e543f ]
+commit 7a2b9e6ec84588b0be65cc0ae45a65bac431496b upstream.
 
-Geert Uytterhoeven reported that using devm_reset_controller_get leads
-to a WARNING when probing a reset-controlled PHY. This is because the
-device devm_reset_controller_get gets supplied is not actually the
-one being probed.
+Add parent device name to the name of devices on bus to avoid
+device names collisions for same client UUID available
+from different MEI heads. Namely this prevents sysfs collision under
+/sys/bus/mei/device/
 
-Acquire an unmanaged reset-control as well as free the reset_control on
-unregister to fix this.
+In the device part leave just UUID other parameters that are
+required for device matching are not required here and are
+just bloating the name.
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David Bauer <mail@david-bauer.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Link: https://lore.kernel.org/r/20191105150514.14010-1-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/phy/mdio_bus.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -62,8 +62,8 @@ static int mdiobus_register_reset(struct
- 	struct reset_control *reset = NULL;
+---
+ drivers/misc/mei/bus.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -883,15 +883,16 @@ static const struct device_type mei_cl_d
  
- 	if (mdiodev->dev.of_node)
--		reset = devm_reset_control_get_exclusive(&mdiodev->dev,
--							 "phy");
-+		reset = of_reset_control_get_exclusive(mdiodev->dev.of_node,
-+						       "phy");
- 	if (IS_ERR(reset)) {
- 		if (PTR_ERR(reset) == -ENOENT || PTR_ERR(reset) == -ENOTSUPP)
- 			reset = NULL;
-@@ -107,6 +107,8 @@ int mdiobus_unregister_device(struct mdi
- 	if (mdiodev->bus->mdio_map[mdiodev->addr] != mdiodev)
- 		return -EINVAL;
+ /**
+  * mei_cl_bus_set_name - set device name for me client device
++ *  <controller>-<client device>
++ *  Example: 0000:00:16.0-55213584-9a29-4916-badf-0fb7ed682aeb
+  *
+  * @cldev: me client device
+  */
+ static inline void mei_cl_bus_set_name(struct mei_cl_device *cldev)
+ {
+-	dev_set_name(&cldev->dev, "mei:%s:%pUl:%02X",
+-		     cldev->name,
+-		     mei_me_cl_uuid(cldev->me_cl),
+-		     mei_me_cl_ver(cldev->me_cl));
++	dev_set_name(&cldev->dev, "%s-%pUl",
++		     dev_name(cldev->bus->dev),
++		     mei_me_cl_uuid(cldev->me_cl));
+ }
  
-+	reset_control_put(mdiodev->reset_ctrl);
-+
- 	mdiodev->bus->mdio_map[mdiodev->addr] = NULL;
- 
- 	return 0;
+ /**
 
 
