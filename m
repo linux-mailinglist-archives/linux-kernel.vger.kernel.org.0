@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABEE5111E97
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0064112003
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfLCXCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:02:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48798 "EHLO mail.kernel.org"
+        id S1728525AbfLCWlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728821AbfLCWyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:47 -0500
+        id S1728504AbfLCWlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7AD820803;
-        Tue,  3 Dec 2019 22:54:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 001932080F;
+        Tue,  3 Dec 2019 22:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413686;
-        bh=ePJ2pkZNK2a4mQjfJXGV5Pv+SMUz7DMtBlOvjCi1n7Y=;
+        s=default; t=1575412875;
+        bh=vJgGt+XVMnYKZoAG5h05kAuYMAWp/uN3IP2/FWjb6iE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H8CtXLbuNxrHiVOZuLAfXfTlblfxxOBurNXC9cfOLHdCWtt+NpcKIzs5G8rrZkZ/y
-         0y1Je7h8MgEEvU6c2YDWoSvICr7CwoFjn+V/ZhasQRKLZ3Y4OE22qQMwj8khdQOV6p
-         hJT/5hjRQRAzo7jmqxDb9qIvk0YQ3yrxyKX6z1RI=
+        b=2P+itleDkb84vxJrA1s/Lz4e35yVEk10icMmFjNftSQLsZVTrgfBeA8G5gah+R5TX
+         YXFDrn1aSi1xQxCpu0X4sm1r1P2dzPW3IvVHYWoM7dWCJi2waIGoUxAxXiggsvomlQ
+         zhSfMQJj0Crwm8f7efG6hyMW4QX/H8PB4r73S4tU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Jeroen Hofstee <jhofstee@victronenergy.com>,
+        Stephane Grosjean <s.grosjean@peak-system.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 224/321] net/smc: prevent races between smc_lgr_terminate() and smc_conn_free()
-Date:   Tue,  3 Dec 2019 23:34:50 +0100
-Message-Id: <20191203223438.769639679@linuxfoundation.org>
+Subject: [PATCH 5.3 051/135] can: peak_usb: report bus recovery as well
+Date:   Tue,  3 Dec 2019 23:34:51 +0100
+Message-Id: <20191203213019.620878955@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Karsten Graul <kgraul@linux.ibm.com>
+From: Jeroen Hofstee <jhofstee@victronenergy.com>
 
-[ Upstream commit 77f838ace755d2f466536c44dac6c856f62cd901 ]
+[ Upstream commit 128a1b87d3ceb2ba449d5aadb222fe22395adeb0 ]
 
-To prevent races between smc_lgr_terminate() and smc_conn_free() add an
-extra check of the lgr field before accessing it, and cancel a delayed
-free_work when a new smc connection is created.
-This fixes the problem that free_work cleared the lgr variable but
-smc_lgr_terminate() or smc_conn_free() still access it in parallel.
+While the state changes are reported when the error counters increase
+and decrease, there is no event when the bus recovers and the error
+counters decrease again. So add those as well.
 
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Change the state going downward to be ERROR_PASSIVE -> ERROR_WARNING ->
+ERROR_ACTIVE instead of directly to ERROR_ACTIVE again.
+
+Signed-off-by: Jeroen Hofstee <jhofstee@victronenergy.com>
+Cc: Stephane Grosjean <s.grosjean@peak-system.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/can/usb/peak_usb/pcan_usb.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index 18daebcef1813..2c9baf8bf1189 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -128,6 +128,8 @@ static void smc_lgr_unregister_conn(struct smc_connection *conn)
- {
- 	struct smc_link_group *lgr = conn->lgr;
- 
-+	if (!lgr)
-+		return;
- 	write_lock_bh(&lgr->conns_lock);
- 	if (conn->alert_token_local) {
- 		__smc_lgr_unregister_conn(conn);
-@@ -612,6 +614,8 @@ int smc_conn_create(struct smc_sock *smc, bool is_smcd, int srv_first_contact,
- 			local_contact = SMC_REUSE_CONTACT;
- 			conn->lgr = lgr;
- 			smc_lgr_register_conn(conn); /* add smc conn to lgr */
-+			if (delayed_work_pending(&lgr->free_work))
-+				cancel_delayed_work(&lgr->free_work);
- 			write_unlock_bh(&lgr->conns_lock);
- 			break;
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb.c b/drivers/net/can/usb/peak_usb/pcan_usb.c
+index 5a66c9f53aae6..d2539c95adb65 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
+@@ -436,8 +436,8 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
  		}
+ 		if ((n & PCAN_USB_ERROR_BUS_LIGHT) == 0) {
+ 			/* no error (back to active state) */
+-			mc->pdev->dev.can.state = CAN_STATE_ERROR_ACTIVE;
+-			return 0;
++			new_state = CAN_STATE_ERROR_ACTIVE;
++			break;
+ 		}
+ 		break;
+ 
+@@ -460,9 +460,9 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		}
+ 
+ 		if ((n & PCAN_USB_ERROR_BUS_HEAVY) == 0) {
+-			/* no error (back to active state) */
+-			mc->pdev->dev.can.state = CAN_STATE_ERROR_ACTIVE;
+-			return 0;
++			/* no error (back to warning state) */
++			new_state = CAN_STATE_ERROR_WARNING;
++			break;
+ 		}
+ 		break;
+ 
+@@ -501,6 +501,11 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		mc->pdev->dev.can.can_stats.error_warning++;
+ 		break;
+ 
++	case CAN_STATE_ERROR_ACTIVE:
++		cf->can_id |= CAN_ERR_CRTL;
++		cf->data[1] = CAN_ERR_CRTL_ACTIVE;
++		break;
++
+ 	default:
+ 		/* CAN_STATE_MAX (trick to handle other errors) */
+ 		cf->can_id |= CAN_ERR_CRTL;
 -- 
 2.20.1
 
