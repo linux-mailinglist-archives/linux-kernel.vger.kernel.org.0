@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE85111C61
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3D6111DC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbfLCWn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:43:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58830 "EHLO mail.kernel.org"
+        id S1730521AbfLCW5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:57:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728308AbfLCWnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:43:25 -0500
+        id S1730491AbfLCW47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:56:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F0662080F;
-        Tue,  3 Dec 2019 22:43:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3BE62053B;
+        Tue,  3 Dec 2019 22:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413004;
-        bh=yPoiiB8nW+V4aZlHFa+hH08rvxh+w9pWkK2I9swro+E=;
+        s=default; t=1575413819;
+        bh=3zVEiVhIZndM5vNwKXDvLCFqWGmMpmx4nPveMKLCkpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fd61LxV3R1QLkk9j9ZcaWrmU8uDljDn0nOG0JlbN165bj8nSQ9P2iQQAG0jFAOHTa
-         YL33Tc/Mp09CIcoXQNDrRwm7ZmHP21NO8n4SRxk7V6p3V3xImi/oX/AmsVNS+mi9AG
-         m7MluptQRhbdES+7b9/1b7H9GY33gVRwJ+nblisg=
+        b=om/+d6H8sCb6EHxJbthCVqIpf/g1o6VG4zrqpfhVQ+gaRlpO+X/XDIyqOUFuuuEJQ
+         apavZ21oU4s5H8dhfKomYJL8s0BVtenI1dFLHKkAijnkbndSUMBaM8fg54VtrOR8/E
+         9gHPTy8AuytrKCh4Kb7GqVW1AXKlAW846o0h/0AU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5.3 100/135] staging: rtl8192e: fix potential use after free
+        stable@vger.kernel.org,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.19 274/321] mei: me: add comet point V device id
 Date:   Tue,  3 Dec 2019 23:35:40 +0100
-Message-Id: <20191203213039.266015745@linuxfoundation.org>
+Message-Id: <20191203223441.382319372@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-commit b7aa39a2ed0112d07fc277ebd24a08a7b2368ab9 upstream.
+commit 82b29b9f72afdccb40ea5f3c13c6a3cb65a597bc upstream.
 
-The variable skb is released via kfree_skb() when the return value of
-_rtl92e_tx is not zero. However, after that, skb is accessed again to
-read its length, which may result in a use after free bug. This patch
-fixes the bug by moving the release operation to where skb is never
-used later.
+Comet Point (Comet Lake) V device id.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1572965351-6745-1-git-send-email-bianpan2016@163.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Link: https://lore.kernel.org/r/20191105150514.14010-2-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/misc/mei/hw-me-regs.h |    1 +
+ drivers/misc/mei/pci-me.c     |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -1616,14 +1616,15 @@ static void _rtl92e_hard_data_xmit(struc
- 	memcpy((unsigned char *)(skb->cb), &dev, sizeof(dev));
- 	skb_push(skb, priv->rtllib->tx_headroom);
- 	ret = _rtl92e_tx(dev, skb);
--	if (ret != 0)
--		kfree_skb(skb);
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -141,6 +141,7 @@
  
- 	if (queue_index != MGNT_QUEUE) {
- 		priv->rtllib->stats.tx_bytes += (skb->len -
- 						 priv->rtllib->tx_headroom);
- 		priv->rtllib->stats.tx_packets++;
- 	}
-+
-+	if (ret != 0)
-+		kfree_skb(skb);
- }
+ #define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
+ #define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
++#define MEI_DEV_ID_CMP_V      0xA3BA  /* Comet Point Lake V */
  
- static int _rtl92e_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -107,6 +107,7 @@ static const struct pci_device_id mei_me
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_V, MEI_ME_PCH12_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
+ 
 
 
