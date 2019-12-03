@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6BA0111E78
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD5E111FE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbfLCWx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46642 "EHLO mail.kernel.org"
+        id S1728312AbfLCWjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:39:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729690AbfLCWxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:53:24 -0500
+        id S1727746AbfLCWju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:39:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16C7520656;
-        Tue,  3 Dec 2019 22:53:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E70722080A;
+        Tue,  3 Dec 2019 22:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413603;
-        bh=2w/kboaBv4rUB7rYsu5zoyYIANyHwCLGXNh5BOtOEiI=;
+        s=default; t=1575412789;
+        bh=a1E/hLgIhRYjW9bDON/iLCgafdCFwxxJYhxyWJt3LlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KLeBTkM8LuIti+8ZKCUXGTZxhAwjKCd87egDMH+PjlpnJQJtB5Orr1RF5U53PtrOK
-         mwo9rpSQlKd+ECGZKGbc09dRump5kJBVuzn93EEtoWbn6H6fj7tEiYbS0wkuyKydR+
-         jabw2lnRgN3ooeMIfPA8axWqvQ9zUPdEY9dRvPJg=
+        b=oKpmIs7CFXM+Z7ZG3f+CdjTK5yx0frQfibdY6rDS5p5fShCXoRrcxOwPLq9y8XTtL
+         0JM9qib0eY52dPxAzDUWnukytq1vO4fgtoLgRy+2IeBaoyi8SYfEQJQMgHXRPiJF+S
+         RSLj/OYZBILVzSWIZgxRj1hvP5sHx/oJXKnFUmfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Yuantian Tang <andy.tang@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 191/321] net: dsa: bcm_sf2: Propagate error value from mdio_write
-Date:   Tue,  3 Dec 2019 23:34:17 +0100
-Message-Id: <20191203223437.055515275@linuxfoundation.org>
+Subject: [PATCH 5.3 018/135] arm64: dts: ls1028a: fix a compatible issue
+Date:   Tue,  3 Dec 2019 23:34:18 +0100
+Message-Id: <20191203213009.577683390@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Yuantian Tang <andy.tang@nxp.com>
 
-[ Upstream commit e49505f7255be8ced695919c08a29bf2c3d79616 ]
+[ Upstream commit 7eb3894b2fac978f811684e3ccb3cb0ad7820bef ]
 
-Both bcm_sf2_sw_indir_rw and mdiobus_write_nested could fail, so let's
-return their error codes upstream.
+The I2C multiplexer used on ls1028aqds is PCA9547, not PCA9847.
+If the wrong compatible was used, this chip will not be able to
+be probed correctly and hence fail to work.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+Acked-by: Li Yang <leoyang.li@nxp.com>
+Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/bcm_sf2.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 17cec68e56b4f..02a4187d81bd0 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -309,11 +309,10 @@ static int bcm_sf2_sw_mdio_write(struct mii_bus *bus, int addr, int regnum,
- 	 * send them to our master MDIO bus controller
- 	 */
- 	if (addr == BRCM_PSEUDO_PHY_ADDR && priv->indir_phy_mask & BIT(addr))
--		bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
-+		return bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
- 	else
--		mdiobus_write_nested(priv->master_mii_bus, addr, regnum, val);
--
--	return 0;
-+		return mdiobus_write_nested(priv->master_mii_bus, addr,
-+				regnum, val);
- }
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+index de6ef39f3118a..fce9343dc017a 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+@@ -99,7 +99,7 @@
+ 	status = "okay";
  
- static irqreturn_t bcm_sf2_switch_0_isr(int irq, void *dev_id)
+ 	i2c-mux@77 {
+-		compatible = "nxp,pca9847";
++		compatible = "nxp,pca9547";
+ 		reg = <0x77>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 2.20.1
 
