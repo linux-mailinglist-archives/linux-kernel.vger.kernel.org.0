@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C99AB11023D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:27:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4996911022F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:26:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbfLCQ1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:27:16 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:34558 "EHLO
+        id S1727194AbfLCQ0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:26:51 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:34562 "EHLO
         laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbfLCQ0u (ORCPT
+        with ESMTP id S1726847AbfLCQ0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Dec 2019 11:26:50 -0500
 Received: from ramsan ([84.195.182.253])
         by laurent.telenet-ops.be with bizsmtp
-        id ZUSm2100p5USYZQ01USmMd; Tue, 03 Dec 2019 17:26:47 +0100
+        id ZUSm2100q5USYZQ01USmMe; Tue, 03 Dec 2019 17:26:47 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1icB0g-0007ff-JI; Tue, 03 Dec 2019 17:26:46 +0100
+        id 1icB0g-0007fk-K5; Tue, 03 Dec 2019 17:26:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1icB0g-0005Cl-IA; Tue, 03 Dec 2019 17:26:46 +0100
+        id 1icB0g-0005Co-Iy; Tue, 03 Dec 2019 17:26:46 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>
@@ -29,9 +29,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Guenter Roeck <linux@roeck-us.net>, linux-sh@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/7] sh: process: Fix broken lines in register dumps
-Date:   Tue,  3 Dec 2019 17:26:41 +0100
-Message-Id: <20191203162645.19950-4-geert+renesas@glider.be>
+Subject: [PATCH 4/7] sh: sh2007: Modernize printing of kernel messages
+Date:   Tue,  3 Dec 2019 17:26:42 +0100
+Message-Id: <20191203162645.19950-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191203162645.19950-1-geert+renesas@glider.be>
 References: <20191203162645.19950-1-geert+renesas@glider.be>
@@ -40,86 +40,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rejoin the broken lines by using pr_cont().
-Convert the remaining printk() calls to pr_*() while at it.
+  - Convert from printk() to pr_*(),
+  - Add missing continuation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Sample impact:
-
- PC is at dma_alloc_attrs+0x32/0xb0
- PR is at platform_resource_setup_memory+0xbc/0x150
--PC  : 8c043d06 SP  : 8f41fe9c SR  : 40000001
--TEA : 00000000
--R0  : 8c043cd4 R1  : 00000000 R2  : 00000000 R3  : 8c213e7c
-+PC  : 8c043cfa SP  : 8f41fe9c SR  : 40000001 TEA : 8c00369e
-+R0  : 8c043cc8 R1  : 00000000 R2  : 00000000 R3  : 8c213e7c
- R4  : 8c29cc38 R5  : 00100000 R6  : 8f41fecc R7  : 00000cc0
- R8  : 8c29cc38 R9  : 8c29720c R10 : 00000cc0 R11 : 00100000
--R12 : 00000000 R13 : 8f41fecc R14 : 8c274773
--MACH: 00000001 MACL: b16b1ded GBR : 09102e96 PR  : 8c2c0524
-+R12 : 00000000 R13 : 8f41fecc R14 : 8c27479f
-+MACH: 00000001 MACL: b16b1ded GBR : 004c5450 PR  : 8c2c0524
+Compile-tested only.
 ---
- arch/sh/kernel/process_32.c | 38 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 21 deletions(-)
+ arch/sh/boards/board-sh2007.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sh/kernel/process_32.c b/arch/sh/kernel/process_32.c
-index a094633874c373ef..348c245124c2c227 100644
---- a/arch/sh/kernel/process_32.c
-+++ b/arch/sh/kernel/process_32.c
-@@ -30,34 +30,30 @@
- 
- void show_regs(struct pt_regs * regs)
+diff --git a/arch/sh/boards/board-sh2007.c b/arch/sh/boards/board-sh2007.c
+index ef9c87deeb08828c..6ea85e4808512f94 100644
+--- a/arch/sh/boards/board-sh2007.c
++++ b/arch/sh/boards/board-sh2007.c
+@@ -126,14 +126,14 @@ static void __init sh2007_init_irq(void)
+  */
+ static void __init sh2007_setup(char **cmdline_p)
  {
--	printk("\n");
-+	pr_info("\n");
- 	show_regs_print_info(KERN_DEFAULT);
+-	printk(KERN_INFO "SH-2007 Setup...");
++	pr_info("SH-2007 Setup...");
  
--	printk("PC is at %pS\n", (void *)instruction_pointer(regs));
--	printk("PR is at %pS\n", (void *)regs->pr);
-+	pr_info("PC is at %pS\n", (void *)instruction_pointer(regs));
-+	pr_info("PR is at %pS\n", (void *)regs->pr);
+ 	/* setup wait control registers for area 5 */
+ 	__raw_writel(CS5BCR_D, CS5BCR);
+ 	__raw_writel(CS5WCR_D, CS5WCR);
+ 	__raw_writel(CS5PCR_D, CS5PCR);
  
--	printk("PC  : %08lx SP  : %08lx SR  : %08lx ",
--	       regs->pc, regs->regs[15], regs->sr);
-+	pr_info("PC  : %08lx SP  : %08lx SR  : %08lx ", regs->pc,
-+		regs->regs[15], regs->sr);
- #ifdef CONFIG_MMU
--	printk("TEA : %08x\n", __raw_readl(MMU_TEA));
-+	pr_cont("TEA : %08x\n", __raw_readl(MMU_TEA));
- #else
--	printk("\n");
-+	pr_cont("\n");
- #endif
+-	printk(KERN_INFO " done.\n");
++	pr_cont(" done.\n");
+ }
  
--	printk("R0  : %08lx R1  : %08lx R2  : %08lx R3  : %08lx\n",
--	       regs->regs[0],regs->regs[1],
--	       regs->regs[2],regs->regs[3]);
--	printk("R4  : %08lx R5  : %08lx R6  : %08lx R7  : %08lx\n",
--	       regs->regs[4],regs->regs[5],
--	       regs->regs[6],regs->regs[7]);
--	printk("R8  : %08lx R9  : %08lx R10 : %08lx R11 : %08lx\n",
--	       regs->regs[8],regs->regs[9],
--	       regs->regs[10],regs->regs[11]);
--	printk("R12 : %08lx R13 : %08lx R14 : %08lx\n",
--	       regs->regs[12],regs->regs[13],
--	       regs->regs[14]);
--	printk("MACH: %08lx MACL: %08lx GBR : %08lx PR  : %08lx\n",
--	       regs->mach, regs->macl, regs->gbr, regs->pr);
-+	pr_info("R0  : %08lx R1  : %08lx R2  : %08lx R3  : %08lx\n",
-+		regs->regs[0], regs->regs[1], regs->regs[2], regs->regs[3]);
-+	pr_info("R4  : %08lx R5  : %08lx R6  : %08lx R7  : %08lx\n",
-+		regs->regs[4], regs->regs[5], regs->regs[6], regs->regs[7]);
-+	pr_info("R8  : %08lx R9  : %08lx R10 : %08lx R11 : %08lx\n",
-+		regs->regs[8], regs->regs[9], regs->regs[10], regs->regs[11]);
-+	pr_info("R12 : %08lx R13 : %08lx R14 : %08lx\n",
-+		regs->regs[12], regs->regs[13], regs->regs[14]);
-+	pr_info("MACH: %08lx MACL: %08lx GBR : %08lx PR  : %08lx\n",
-+		regs->mach, regs->macl, regs->gbr, regs->pr);
- 
- 	show_trace(NULL, (unsigned long *)regs->regs[15], regs);
- 	show_code(regs);
+ /*
 -- 
 2.17.1
 
