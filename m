@@ -2,105 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F7F11216C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 03:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 134FA112186
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 03:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfLDCaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 21:30:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfLDC37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 21:29:59 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A668A2068E;
-        Wed,  4 Dec 2019 02:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575426599;
-        bh=LFLa7LXATFqm4FwnTSkWP+G8kfSJa+rUzWTwZVV5nOg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R+YxnsXoS/HkZ0FByatns65KPfKH6w5CznCxFTck9jmaCre014TeLDw+GUL1pDSCn
-         wtXE7htGIVw7kxjn4QpTjc87CEuvhbhwCWr9UvU92TDUvLmoJQ27wUNp/AabLPmSGx
-         yidQuQJLa5gFSosC3vjjwZcjlYqOsrtG3Zclu4NA=
-Date:   Wed, 4 Dec 2019 11:29:52 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf probe: Fix to delete multiple probe event
-Message-Id: <20191204112952.7b7d61feb2b14173ae625378@kernel.org>
-In-Reply-To: <157536011452.29277.3647564438675346431.stgit@devnote2>
-References: <157536011452.29277.3647564438675346431.stgit@devnote2>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726955AbfLDCoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 21:44:12 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:50616 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfLDCoM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 21:44:12 -0500
+Received: from localhost.localdomain ([90.126.97.183])
+        by mwinf5d59 with ME
+        id Zek62100A3xPcdm03ek7w5; Wed, 04 Dec 2019 03:44:09 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 04 Dec 2019 03:44:09 +0100
+X-ME-IP: 90.126.97.183
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     sbkim73@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
+        lgirdwood@gmail.com, broonie@kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] regulator: s5m8767: Fix a warning message
+Date:   Tue,  3 Dec 2019 22:48:38 +0100
+Message-Id: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  3 Dec 2019 17:01:54 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Axe a duplicated word ("property") in a warning message.
 
-> Fix to delete multiple probe event with filter correctly.
-> 
-> When we put an event with multiple probes, perf-probe fails
-> to delete with filters. This comes from a failure to list
-> up the event name because of overwrapping its name.
-> 
-> To fix this issue, skip to list up the event which has
-> same name.
-> 
-> Without this patch:
->   # perf probe -l \*
->     probe_perf:map__map_ip (on perf_sample__fprintf_brstackoff:21@
->     probe_perf:map__map_ip (on perf_sample__fprintf_brstackoff:25@
->     probe_perf:map__map_ip (on append_inlines:12@util/machine.c in
->     probe_perf:map__map_ip (on unwind_entry:19@util/machine.c in /
->     probe_perf:map__map_ip (on map__map_ip@util/map.h in /home/mhi
->     probe_perf:map__map_ip (on map__map_ip@util/map.h in /home/mhi
->   # perf probe -d \*
->   "*" does not hit any event.
->     Error: Failed to delete events. Reason: No such file or directory (Code: -2)
-> 
-> With this:
->   # perf probe -d \*
->   Removed event: probe_perf:map__map_ip
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/regulator/s5m8767.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oops, I missed Fixed tag.
-
-Fixes: 72363540c009 ("perf probe: Support multiprobe event")
-
-Thanks,
-
-> Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  tools/perf/util/probe-file.c |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
-> index 5003ba403345..c03a591d41a4 100644
-> --- a/tools/perf/util/probe-file.c
-> +++ b/tools/perf/util/probe-file.c
-> @@ -206,6 +206,9 @@ static struct strlist *__probe_file__get_namelist(int fd, bool include_group)
->  		} else
->  			ret = strlist__add(sl, tev.event);
->  		clear_probe_trace_event(&tev);
-> +		/* Skip if there is same name multi-probe event in the list */
-> +		if (ret == -EEXIST)
-> +			ret = 0;
->  		if (ret < 0)
->  			break;
->  	}
-> 
-
-
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index bdc07739e9a2..12d6b8d2e97e 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -588,7 +588,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 		if (of_property_read_u32(reg_np, "op_mode",
+ 				&rmode->mode)) {
+ 			dev_warn(iodev->dev,
+-				"no op_mode property property at %pOF\n",
++				"no op_mode property at %pOF\n",
+ 				reg_np);
+ 
+ 			rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.20.1
+
