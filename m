@@ -2,150 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE03311022E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:26:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0AA2110239
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:27:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfLCQ0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:26:51 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:42240 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfLCQ0t (ORCPT
+        id S1727272AbfLCQ1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:27:09 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35238 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbfLCQ1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:26:49 -0500
-Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id ZUSm2100b5USYZQ06USmFz; Tue, 03 Dec 2019 17:26:47 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1icB0g-0007fw-Nr; Tue, 03 Dec 2019 17:26:46 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1icB0g-0005Cx-M6; Tue, 03 Dec 2019 17:26:46 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/7] sh: fault: Modernize printing of kernel messages
-Date:   Tue,  3 Dec 2019 17:26:45 +0100
-Message-Id: <20191203162645.19950-8-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191203162645.19950-1-geert+renesas@glider.be>
-References: <20191203162645.19950-1-geert+renesas@glider.be>
+        Tue, 3 Dec 2019 11:27:07 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j6so4560032lja.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:27:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=h9C2n+MHCjplzHYnNi07BHb4f1XYr4XT9zBJ/ZBs22c=;
+        b=eIH8jyxl5W3h1DNl28UBcSMT9HKOFP7K3WZtBxuP8SA78R3JAGPhqIETRpC0p/0PnZ
+         6ImPtiSM2Iq25bO33IRP3XLGPaVqDgB1s0E3mSRYiYbP8aVzat/G+marOMRwudFknMnQ
+         ytEA9H80R2CTGSCu//DBHTUsbUAF08b4h/sI6jZDdF96k7qplucYdFKMTZWQ7qdZa453
+         acmqwidQRarMm51DY4jWQi+whkoycdu+5FTudxuzELEVeKkkpjtrF8dY5or8cbSaKTKo
+         XAGIDW5akXNKwp2q4Z4K41ydX/jGmBqn1tu1ddWK0VJJuXxHPpmHs3EvVByPDMkjIt/M
+         qCVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=h9C2n+MHCjplzHYnNi07BHb4f1XYr4XT9zBJ/ZBs22c=;
+        b=tbnY37C1fIqUg1T/PUyTBiwsgGfxIjCsvlYnKkuWQUbazeO9DAQMcXIa5XIBBfZwwI
+         yBp6l1NGOMKGomOu/ui8aAgVGG2N3ge8ETqa6B8+HjKg/v/P9coSYIgP0X2vN5+v+poY
+         Nn1N0XYYKh3yQJdL26WkbXGU+907OwCOswQ+k9LamgdFbG06KCqq/hxsCP6qk4rWfncl
+         N+g9N+1UqZVZSeAHd3d388h2QZJW8O620tEt7nPnl/0dqaQen5z/ALHWF6WuyE2nNbiy
+         Xnx+t5uS/gLNpsbRkEEgaKbEja3KzEydvGiZfYZHqgv0Pt00nqSr6g4nUMca0He7EBfv
+         7czA==
+X-Gm-Message-State: APjAAAUgkbcrpg3s55Ux3UWvQcx41rzvkszdM8vdTps1ojI6Mb9DfajV
+        FkWUBAGFwqExdzEp3aApPKORVw==
+X-Google-Smtp-Source: APXvYqyAardmg0NrXumsDAT1FVgwWqwgEG/0hNYWrn+HLp1R+TiUT2+UT6Y2ooYr1rAqJuzrRW5Aqg==
+X-Received: by 2002:a05:651c:208:: with SMTP id y8mr3188448ljn.36.1575390424112;
+        Tue, 03 Dec 2019 08:27:04 -0800 (PST)
+Received: from khorivan (57-201-94-178.pool.ukrtel.net. [178.94.201.57])
+        by smtp.gmail.com with ESMTPSA id f13sm1578745ljp.104.2019.12.03.08.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 08:27:03 -0800 (PST)
+Date:   Tue, 3 Dec 2019 18:27:01 +0200
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Po Liu <po.liu@nxp.com>
+Cc:     "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
+        "linville@tuxdriver.com" <linville@tuxdriver.com>,
+        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
+        "simon.horman@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+Subject: Re: [v1,ethtool] ethtool: add setting frame preemption of traffic
+ classes
+Message-ID: <20191203162659.GC2680@khorivan>
+Mail-Followup-To: Po Liu <po.liu@nxp.com>,
+        "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
+        "linville@tuxdriver.com" <linville@tuxdriver.com>,
+        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
+        "simon.horman@netronome.com" <simon.horman@netronome.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
+References: <20191127094448.6206-1-Po.Liu@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191127094448.6206-1-Po.Liu@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  - Convert from printk() to pr_*(),
-  - Add missing continuations,
-  - Use "%llx" to format u64,
-  - Join multiple prints in show_fault_oops() into a single print.
+On Wed, Nov 27, 2019 at 09:58:52AM +0000, Po Liu wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- arch/sh/mm/fault.c | 39 ++++++++++++++++++---------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+Hi Po Liu,
 
-diff --git a/arch/sh/mm/fault.c b/arch/sh/mm/fault.c
-index 5f51456f4fc7167a..a2b0275413e8c29c 100644
---- a/arch/sh/mm/fault.c
-+++ b/arch/sh/mm/fault.c
-@@ -47,10 +47,10 @@ static void show_pte(struct mm_struct *mm, unsigned long addr)
- 			pgd = swapper_pg_dir;
- 	}
- 
--	printk(KERN_ALERT "pgd = %p\n", pgd);
-+	pr_alert("pgd = %p\n", pgd);
- 	pgd += pgd_index(addr);
--	printk(KERN_ALERT "[%08lx] *pgd=%0*Lx", addr,
--	       (u32)(sizeof(*pgd) * 2), (u64)pgd_val(*pgd));
-+	pr_alert("[%08lx] *pgd=%0*llx", addr, (u32)(sizeof(*pgd) * 2),
-+		 (u64)pgd_val(*pgd));
- 
- 	do {
- 		pud_t *pud;
-@@ -61,33 +61,33 @@ static void show_pte(struct mm_struct *mm, unsigned long addr)
- 			break;
- 
- 		if (pgd_bad(*pgd)) {
--			printk("(bad)");
-+			pr_cont("(bad)");
- 			break;
- 		}
- 
- 		pud = pud_offset(pgd, addr);
- 		if (PTRS_PER_PUD != 1)
--			printk(", *pud=%0*Lx", (u32)(sizeof(*pud) * 2),
--			       (u64)pud_val(*pud));
-+			pr_cont(", *pud=%0*llx", (u32)(sizeof(*pud) * 2),
-+				(u64)pud_val(*pud));
- 
- 		if (pud_none(*pud))
- 			break;
- 
- 		if (pud_bad(*pud)) {
--			printk("(bad)");
-+			pr_cont("(bad)");
- 			break;
- 		}
- 
- 		pmd = pmd_offset(pud, addr);
- 		if (PTRS_PER_PMD != 1)
--			printk(", *pmd=%0*Lx", (u32)(sizeof(*pmd) * 2),
--			       (u64)pmd_val(*pmd));
-+			pr_cont(", *pmd=%0*llx", (u32)(sizeof(*pmd) * 2),
-+				(u64)pmd_val(*pmd));
- 
- 		if (pmd_none(*pmd))
- 			break;
- 
- 		if (pmd_bad(*pmd)) {
--			printk("(bad)");
-+			pr_cont("(bad)");
- 			break;
- 		}
- 
-@@ -96,11 +96,11 @@ static void show_pte(struct mm_struct *mm, unsigned long addr)
- 			break;
- 
- 		pte = pte_offset_kernel(pmd, addr);
--		printk(", *pte=%0*Lx", (u32)(sizeof(*pte) * 2),
--		       (u64)pte_val(*pte));
-+		pr_cont(", *pte=%0*llx", (u32)(sizeof(*pte) * 2),
-+			(u64)pte_val(*pte));
- 	} while (0);
- 
--	printk("\n");
-+	pr_cont("\n");
- }
- 
- static inline pmd_t *vmalloc_sync_one(pgd_t *pgd, unsigned long address)
-@@ -188,14 +188,11 @@ show_fault_oops(struct pt_regs *regs, unsigned long address)
- 	if (!oops_may_print())
- 		return;
- 
--	printk(KERN_ALERT "BUG: unable to handle kernel ");
--	if (address < PAGE_SIZE)
--		printk(KERN_CONT "NULL pointer dereference");
--	else
--		printk(KERN_CONT "paging request");
--
--	printk(KERN_CONT " at %08lx\n", address);
--	printk(KERN_ALERT "PC:");
-+	pr_alert("BUG: unable to handle kernel %s at %08lx\n",
-+		 address < PAGE_SIZE ? "NULL pointer dereference"
-+				     : "paging request",
-+		 address);
-+	pr_alert("PC:");
- 	printk_address(regs->pc, 1);
- 
- 	show_pte(NULL, address);
+>IEEE Std 802.1Qbu standard defined the frame preemption of port
+>trffic classes. User can set a value to hardware. The value will
+>be translated to a binary, each bit represent a traffic class.
+>Bit "1" means preemptable traffic class. Bit "0" means express
+>traffic class.  MSB represent high number traffic class.
+>
+>ethtool -k devname
+>
+>This command would show if the tx-preemption feature is available.
+>If hareware set preemption feature. The property would be a fixed
+>value 'on' if hardware support the frame preemption. Feature would
+>show a fixed value 'off' if hardware don't support the frame preemption.
+>
+>ethtool devname
+>
+>This command would show include an item 'preemption'. A following
+>value '0' means all traffic classes are 'express'. A value none zero
+>means traffic classes preemption capabilities. The value will be
+>translated to a binary, each bit represent a traffic class. Bit '1'
+>means preemptable traffic class. Bit '0' means express traffic class.
+>MSB represent high number traffic class.
+>
+>ethtool -s devname preemption N
+
+What about other potential parameters like MAC fragment size, mac hold?
+Shouldn't be it considered along with other FP parameters to provide correct
+interface later?
+
+Say, preemption, lets name it fp-mask or frame-preemption-mask.
+Then other potential setting can be similar and added later:
+
+frame-preemption-mask
+frame-preemption-fragsize
+frame-preemption-machold
+....
+
+mac-hold it's rather flag, at least I've used it as priv-flag.
+so can or so
+
+frame-preemption-flags
+
+>
+>This command would set which traffic classes are frame preemptable.
+>The value will be translated to a binary, each bit represent a
+>traffic class. Bit '1' means preemptable traffic class. Bit '0'
+>means express traffic class. MSB represent high number traffic class.
+>
+>Signed-off-by: Po Liu <Po.Liu@nxp.com>
+>---
+> ethtool-copy.h |  6 +++++-
+> ethtool.8.in   |  8 ++++++++
+> ethtool.c      | 18 ++++++++++++++++++
+> 3 files changed, 31 insertions(+), 1 deletion(-)
+>
+>diff --git a/ethtool-copy.h b/ethtool-copy.h
+>index 9afd2e6..e04bdf3 100644
+>--- a/ethtool-copy.h
+>+++ b/ethtool-copy.h
+>@@ -1662,6 +1662,9 @@ static __inline__ int ethtool_validate_duplex(__u8 duplex)
+> #define AUTONEG_DISABLE		0x00
+> #define AUTONEG_ENABLE		0x01
+>
+>+/* Disable preemtion. */
+>+#define PREEMPTION_DISABLE	0x0
+>+
+> /* MDI or MDI-X status/control - if MDI/MDI_X/AUTO is set then
+>  * the driver is required to renegotiate link
+>  */
+>@@ -1878,7 +1881,8 @@ struct ethtool_link_settings {
+> 	__s8	link_mode_masks_nwords;
+> 	__u8	transceiver;
+> 	__u8	reserved1[3];
+>-	__u32	reserved[7];
+>+	__u32	preemption;
+>+	__u32	reserved[6];
+> 	__u32	link_mode_masks[0];
+> 	/* layout of link_mode_masks fields:
+> 	 * __u32 map_supported[link_mode_masks_nwords];
+>diff --git a/ethtool.8.in b/ethtool.8.in
+>index 062695a..7d612b2 100644
+>--- a/ethtool.8.in
+>+++ b/ethtool.8.in
+>@@ -236,6 +236,7 @@ ethtool \- query or control network driver and hardware settings
+> .B2 autoneg on off
+> .BN advertise
+> .BN phyad
+>+.BN preemption
+> .B2 xcvr internal external
+> .RB [ wol \ \*(WO]
+> .RB [ sopass \ \*(MA]
+>@@ -703,6 +704,13 @@ lB	l	lB.
+> .BI phyad \ N
+> PHY address.
+> .TP
+>+.BI preemption \ N
+>+Set preemptable traffic classes by bits.
+>+.B A
+>+value will be translated to a binary, each bit represent a traffic class.
+>+Bit "1" means preemptable traffic class. Bit "0" means express traffic class.
+>+MSB represent high number traffic class.
+>+.TP
+> .A2 xcvr internal external
+> Selects transceiver type. Currently only internal and external can be
+> specified, in the future further types might be added.
+>diff --git a/ethtool.c b/ethtool.c
+>index acf183d..d5240f8 100644
+>--- a/ethtool.c
+>+++ b/ethtool.c
+>@@ -928,6 +928,12 @@ dump_link_usettings(const struct ethtool_link_usettings *link_usettings)
+> 		}
+> 	}
+>
+>+	if (link_usettings->base.preemption == PREEMPTION_DISABLE)
+>+		fprintf(stdout, "	Preemption: 0x0 (off)\n");
+>+	else
+>+		fprintf(stdout, "	Preemption: 0x%x\n",
+>+			link_usettings->base.preemption);
+>+
+> 	return 0;
+> }
+>
+>@@ -2869,6 +2875,7 @@ static int do_sset(struct cmd_context *ctx)
+> 	int port_wanted = -1;
+> 	int mdix_wanted = -1;
+> 	int autoneg_wanted = -1;
+>+	int preemption_wanted = -1;
+> 	int phyad_wanted = -1;
+> 	int xcvr_wanted = -1;
+> 	u32 *full_advertising_wanted = NULL;
+>@@ -2957,6 +2964,12 @@ static int do_sset(struct cmd_context *ctx)
+> 			} else {
+> 				exit_bad_args();
+> 			}
+>+		} else if (!strcmp(argp[i], "preemption")) {
+>+			gset_changed = 1;
+>+			i += 1;
+>+			if (i >= argc)
+>+				exit_bad_args();
+>+			preemption_wanted = get_u32(argp[i], 16);
+> 		} else if (!strcmp(argp[i], "advertise")) {
+> 			gset_changed = 1;
+> 			i += 1;
+>@@ -3094,6 +3107,9 @@ static int do_sset(struct cmd_context *ctx)
+> 			}
+> 			if (autoneg_wanted != -1)
+> 				link_usettings->base.autoneg = autoneg_wanted;
+>+			if (preemption_wanted != -1)
+>+				link_usettings->base.preemption
+>+					= preemption_wanted;
+> 			if (phyad_wanted != -1)
+> 				link_usettings->base.phy_address = phyad_wanted;
+> 			if (xcvr_wanted != -1)
+>@@ -3186,6 +3202,8 @@ static int do_sset(struct cmd_context *ctx)
+> 				fprintf(stderr, "  not setting transceiver\n");
+> 			if (mdix_wanted != -1)
+> 				fprintf(stderr, "  not setting mdix\n");
+>+			if (preemption_wanted != -1)
+>+				fprintf(stderr, "  not setting preemption\n");
+> 		}
+> 	}
+>
+>-- 
+>2.17.1
+>
+
 -- 
-2.17.1
-
+Regards,
+Ivan Khoronzhuk
