@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 107F2111C02
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 271BF111DEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfLCWj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49492 "EHLO mail.kernel.org"
+        id S1730632AbfLCW6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:58:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbfLCWjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:23 -0500
+        id S1727937AbfLCW6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:58:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF16F207DD;
-        Tue,  3 Dec 2019 22:39:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F29B21789;
+        Tue,  3 Dec 2019 22:58:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412763;
-        bh=yPoiiB8nW+V4aZlHFa+hH08rvxh+w9pWkK2I9swro+E=;
+        s=default; t=1575413891;
+        bh=BH4XAfgjaFQtLYstBfkAK9thIvuj0N1Wx9HIRQw3V8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SFVV8yKizovC3i7sK/1WRWcvD0izFZ4m8q6gGb2Ogg8Nnf1HFKftcBf5z5+ZjEW2I
-         Uh9Au1BasDDY7yXmqpaW+XdJsAIYM+wRY5HkiD3bXr4aVplaySXeGXluYm+HsrS1JB
-         E1XYPX9/4e1uXBUfWjlWySvW6oPZq6yRlbUUs4+0=
+        b=i4TysKpvCY/HMy6uPxi0ykZ9ilLsZIlPxyRd8W9yAVxw3nOf9dWuP/+lklOmxVPJX
+         a54oGMN0DbK+owxbSuGa7+ZnQV2IhFIGlejS1344WvbTEH8mRgqV2hs0esBIfVc4aK
+         fx2E22exJIcMSvKl/wPEyiW624B1830TlAL8pM1w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 5.4 08/46] staging: rtl8192e: fix potential use after free
+        stable@vger.kernel.org, Boris Brezillon <bbrezillon@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 262/321] mtd: Remove a debug trace in mtdpart.c
 Date:   Tue,  3 Dec 2019 23:35:28 +0100
-Message-Id: <20191203212722.065206368@linuxfoundation.org>
+Message-Id: <20191203223440.760013978@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Boris Brezillon <bbrezillon@kernel.org>
 
-commit b7aa39a2ed0112d07fc277ebd24a08a7b2368ab9 upstream.
+[ Upstream commit bda2ab56356b9acdfab150f31c4bac9846253092 ]
 
-The variable skb is released via kfree_skb() when the return value of
-_rtl92e_tx is not zero. However, after that, skb is accessed again to
-read its length, which may result in a use after free bug. This patch
-fixes the bug by moving the release operation to where skb is never
-used later.
+Commit 2b6f0090a333 ("mtd: Check add_mtd_device() ret code") contained
+a leftover of the debug session that led to this bug fix. Remove this
+pr_info().
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/1572965351-6745-1-git-send-email-bianpan2016@163.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 2b6f0090a333 ("mtd: Check add_mtd_device() ret code")
+Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mtd/mtdpart.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -1616,14 +1616,15 @@ static void _rtl92e_hard_data_xmit(struc
- 	memcpy((unsigned char *)(skb->cb), &dev, sizeof(dev));
- 	skb_push(skb, priv->rtllib->tx_headroom);
- 	ret = _rtl92e_tx(dev, skb);
--	if (ret != 0)
--		kfree_skb(skb);
+diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
+index b9b308cde0a5d..10c53364aa70c 100644
+--- a/drivers/mtd/mtdpart.c
++++ b/drivers/mtd/mtdpart.c
+@@ -626,7 +626,6 @@ err_remove_part:
+ 	mutex_unlock(&mtd_partitions_mutex);
  
- 	if (queue_index != MGNT_QUEUE) {
- 		priv->rtllib->stats.tx_bytes += (skb->len -
- 						 priv->rtllib->tx_headroom);
- 		priv->rtllib->stats.tx_packets++;
- 	}
-+
-+	if (ret != 0)
-+		kfree_skb(skb);
+ 	free_partition(new);
+-	pr_info("%s:%i\n", __func__, __LINE__);
+ 
+ 	return ret;
  }
- 
- static int _rtl92e_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
+-- 
+2.20.1
+
 
 
