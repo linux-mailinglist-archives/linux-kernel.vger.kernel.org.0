@@ -2,48 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FEC10F5B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 04:48:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F1D10F5B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 04:48:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfLCDs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 22:48:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30876 "EHLO
+        id S1726983AbfLCDsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 22:48:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35026 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726469AbfLCDs2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726793AbfLCDsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 22:48:28 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB33kmi1093340
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2019 22:48:26 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wm6g99bkx-1
+        Mon, 2 Dec 2019 22:48:30 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB33knrn113964
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2019 22:48:28 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wm6mxtnat-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 22:48:26 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 22:48:28 -0500
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Tue, 3 Dec 2019 03:48:24 -0000
+        Tue, 3 Dec 2019 03:48:25 -0000
 Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Dec 2019 03:48:17 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB33mGp362390408
+        Tue, 3 Dec 2019 03:48:16 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB33mG2Z63569958
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 3 Dec 2019 03:48:16 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDB2B4203F;
-        Tue,  3 Dec 2019 03:48:15 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 549B34204B;
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EADF852052;
         Tue,  3 Dec 2019 03:48:15 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 48B5852054;
         Tue,  3 Dec 2019 03:48:15 +0000 (GMT)
 Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 30B52A01B6;
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 3C14AA03C6;
         Tue,  3 Dec 2019 14:48:12 +1100 (AEDT)
 From:   "Alastair D'Silva" <alastair@au1.ibm.com>
 To:     alastair@d-silva.org
@@ -76,23 +73,28 @@ Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Alexey Kardashevskiy <aik@ozlabs.ru>,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Subject: [PATCH v2 00/27] Add support for OpenCAPI SCM devices
-Date:   Tue,  3 Dec 2019 14:46:28 +1100
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [PATCH v2 01/27] memory_hotplug: Add a bounds check to __add_pages
+Date:   Tue,  3 Dec 2019 14:46:29 +1100
 X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191203034655.51561-1-alastair@au1.ibm.com>
+References: <20191203034655.51561-1-alastair@au1.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19120303-0008-0000-0000-0000033C0FDC
+x-cbid: 19120303-0028-0000-0000-000003C3CC72
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120303-0009-0000-0000-00004A5B2899
-Message-Id: <20191203034655.51561-1-alastair@au1.ibm.com>
+x-cbparentid: 19120303-0029-0000-0000-00002486E431
+Message-Id: <20191203034655.51561-2-alastair@au1.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-12-02_06:2019-11-29,2019-12-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 suspectscore=3 spamscore=0 mlxscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 suspectscore=1 clxscore=1015 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-1910280000 definitions=main-1912030032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -101,101 +103,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alastair D'Silva <alastair@d-silva.org>
 
-This series adds support for OpenCAPI SCM devices, exposing
-them as nvdimms so that we can make use of the existing
-infrastructure.
+On PowerPC, the address ranges allocated to OpenCAPI LPC memory
+are allocated from firmware. These address ranges may be higher
+than what older kernels permit, as we increased the maximum
+permissable address in commit 4ffe713b7587
+("powerpc/mm: Increase the max addressable memory to 2PB"). It is
+possible that the addressable range may change again in the
+future.
 
-V2:
-  - "powerpc: Map & release OpenCAPI LPC memory"
-      - Fix #if -> #ifdef
-      - use pci_dev_id to get the bdfn
-      - use __be64 to hold be data
-      - indent check_hotplug_memory_addressable correctly 
-      - Remove export of check_hotplug_memory_addressable
-  - "ocxl: Conditionally bind SCM devices to the generic OCXL driver"
-      - Improve patch description and remove redundant default
-  - "nvdimm: Add driver for OpenCAPI Storage Class Memory"
-      - Mark a few funcs as static as identified by the 0day bot
-      - Add OCXL dependancies to OCXL_SCM
-      - Use memcpy_mcsafe in scm_ndctl_config_read
-      - Rename scm_foo_offset_0x00 to scm_foo_header_parse & add docs
-      - Name DIMM attribs "ocxl" rather than "scm"
-      - Split out into base + many feature patches
-  - "powerpc: Enable OpenCAPI Storage Class Memory driver on bare metal"
-      - Build DEV_DAX & friends as modules
-  - "ocxl: Conditionally bind SCM devices to the generic OCXL driver"
-      - Patch dropped (easy enough to maintain this out of tree for development)
-  - "ocxl: Tally up the LPC memory on a link & allow it to be mapped"
-      - Add a warning if an unmatched lpc_release is called
-  - "ocxl: Add functions to map/unmap LPC memory"
-      - Use EXPORT_SYMBOL_GPL
+In this scenario, we end up with a bogus section returned from
+__section_nr (see the discussion on the thread "mm: Trigger bug on
+if a section is not found in __section_nr").
 
+Adding a check here means that we fail early and have an
+opportunity to handle the error gracefully, rather than rumbling
+on and potentially accessing an incorrect section.
 
-Alastair D'Silva (27):
-  memory_hotplug: Add a bounds check to __add_pages
-  nvdimm: remove prototypes for nonexistent functions
-  powerpc: Add OPAL calls for LPC memory alloc/release
-  mm/memory_hotplug: Allow check_hotplug_memory_addressable to be called
-    from drivers
-  powerpc: Map & release OpenCAPI LPC memory
-  ocxl: Tally up the LPC memory on a link & allow it to be mapped
-  ocxl: Add functions to map/unmap LPC memory
-  ocxl: Save the device serial number in ocxl_fn
-  ocxl: Free detached contexts in ocxl_context_detach_all()
-  nvdimm: Add driver for OpenCAPI Storage Class Memory
-  nvdimm/ocxl: Add register addresses & status values to header
-  nvdimm/ocxl: Read the capability registers & wait for device ready
-  nvdimm/ocxl: Add support for Admin commands
-  nvdimm/ocxl: Add support for near storage commands
-  nvdimm/ocxl: Register a character device for userspace to interact
-    with
-  nvdimm/ocxl: Implement the Read Error Log command
-  nvdimm/ocxl: Add controller dump IOCTLs
-  nvdimm/ocxl: Add an IOCTL to report controller statistics
-  nvdimm/ocxl: Forward events to userspace
-  nvdimm/ocxl: Add an IOCTL to request controller health & perf data
-  nvdimm/ocxl: Support firmware update via sysfs
-  nvdimm/ocxl: Implement the heartbeat command
-  nvdimm/ocxl: Add debug IOCTLs
-  nvdimm/ocxl: Implement Overwrite
-  nvdimm/ocxl: Expose SMART data via ndctl
-  powerpc: Enable OpenCAPI Storage Class Memory driver on bare metal
-  MAINTAINERS: Add myself & nvdimm/ocxl to ocxl
+Further discussion is also on the thread ("powerpc: Perform a bounds
+check in arch_add_memory")
+http://lkml.kernel.org/r/20190827052047.31547-1-alastair@au1.ibm.com
 
- MAINTAINERS                                |    3 +
- arch/powerpc/configs/powernv_defconfig     |    4 +
- arch/powerpc/include/asm/opal-api.h        |    2 +
- arch/powerpc/include/asm/opal.h            |    3 +
- arch/powerpc/include/asm/pnv-ocxl.h        |    2 +
- arch/powerpc/platforms/powernv/ocxl.c      |   42 +
- arch/powerpc/platforms/powernv/opal-call.c |    2 +
- drivers/misc/ocxl/config.c                 |   50 +
- drivers/misc/ocxl/context.c                |    6 +-
- drivers/misc/ocxl/core.c                   |   60 +
- drivers/misc/ocxl/link.c                   |   60 +
- drivers/misc/ocxl/ocxl_internal.h          |   36 +
- drivers/nvdimm/Kconfig                     |    2 +
- drivers/nvdimm/Makefile                    |    2 +-
- drivers/nvdimm/nd-core.h                   |    4 -
- drivers/nvdimm/ocxl/Kconfig                |   21 +
- drivers/nvdimm/ocxl/Makefile               |    7 +
- drivers/nvdimm/ocxl/scm.c                  | 2220 ++++++++++++++++++++
- drivers/nvdimm/ocxl/scm_internal.c         |  238 +++
- drivers/nvdimm/ocxl/scm_internal.h         |  284 +++
- drivers/nvdimm/ocxl/scm_sysfs.c            |  163 ++
- include/linux/memory_hotplug.h             |    5 +
- include/misc/ocxl.h                        |   19 +
- include/uapi/nvdimm/ocxl-scm.h             |  127 ++
- mm/memory_hotplug.c                        |   21 +
- 25 files changed, 3377 insertions(+), 6 deletions(-)
- create mode 100644 drivers/nvdimm/ocxl/Kconfig
- create mode 100644 drivers/nvdimm/ocxl/Makefile
- create mode 100644 drivers/nvdimm/ocxl/scm.c
- create mode 100644 drivers/nvdimm/ocxl/scm_internal.c
- create mode 100644 drivers/nvdimm/ocxl/scm_internal.h
- create mode 100644 drivers/nvdimm/ocxl/scm_sysfs.c
- create mode 100644 include/uapi/nvdimm/ocxl-scm.h
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+---
+ mm/memory_hotplug.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index f307bd82d750..b5be827ecda5 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -278,6 +278,23 @@ static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
+ 	return 0;
+ }
+ 
++static int check_hotplug_memory_addressable(unsigned long pfn,
++					    unsigned long nr_pages)
++{
++	const u64 max_addr = PFN_PHYS(pfn + nr_pages) - 1;
++
++	if (max_addr >> MAX_PHYSMEM_BITS) {
++		const u64 max_allowed = (1ull << (MAX_PHYSMEM_BITS + 1)) - 1;
++
++		WARN(1,
++		     "Hotplugged memory exceeds maximum addressable address, range=%#llx-%#llx, maximum=%#llx\n",
++		     PFN_PHYS(pfn), max_addr, max_allowed);
++		return -E2BIG;
++	}
++
++	return 0;
++}
++
+ /*
+  * Reasonably generic function for adding memory.  It is
+  * expected that archs that support memory hotplug will
+@@ -291,6 +308,10 @@ int __ref __add_pages(int nid, unsigned long pfn, unsigned long nr_pages,
+ 	unsigned long nr, start_sec, end_sec;
+ 	struct vmem_altmap *altmap = restrictions->altmap;
+ 
++	err = check_hotplug_memory_addressable(pfn, nr_pages);
++	if (err)
++		return err;
++
+ 	if (altmap) {
+ 		/*
+ 		 * Validate altmap is within bounds of the total request
 -- 
 2.23.0
 
