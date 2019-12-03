@@ -2,50 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B277A111E05
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:00:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAA2111C8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:45:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbfLCW7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:59:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55608 "EHLO mail.kernel.org"
+        id S1728746AbfLCWpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:45:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730728AbfLCW7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:59:04 -0500
+        id S1728739AbfLCWpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:45:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7A7C20803;
-        Tue,  3 Dec 2019 22:59:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B826207DD;
+        Tue,  3 Dec 2019 22:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413943;
-        bh=xse6kgt5T0zLm987FtTsfxKSnjkyBAkCk5p8frhNgPk=;
+        s=default; t=1575413102;
+        bh=c6CoG+ElvzE2nJ6/nYqSH5WvSz4hUr4TXIojSkX6nYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rNsVxxg7d6RWxHbd7kPIZSKh44YDZuYotn+fTLSZ7sRFEcBdWJJxVUfUClMxnSgf5
-         7VFD5keOghIau6mncYXeoW4wfl108IXYgjt68aIiyJQjGmPPg0CacDkmV/GH91FrNj
-         fjaOdtKDntK9KXfKEHmBt2A5KZlnWii6GTdDkq4A=
+        b=WzBFtC8VIbdP4pKXUMVYUqBkrtwrubvoBQBXFSEiNTxd9LIR4u396dFr0xll7Y+ce
+         8UFmp4+fn7buo0kov4ytXW5Nh9Yci6pskyAxNq9XNt06yiXE/Os0PA8uPpyQq3TIRS
+         FFW3cxm4XqSsl4/LCt1Ics9wrM0nwOcxT1M+BoF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <yellowriver2010@hotmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.19 299/321] mtd: rawnand: atmel: fix possible object reference leak
-Date:   Tue,  3 Dec 2019 23:36:05 +0100
-Message-Id: <20191203223442.705005398@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 126/135] net/tls: remove the dead inplace_crypto code
+Date:   Tue,  3 Dec 2019 23:36:06 +0100
+Message-Id: <20191203213045.019713052@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,83 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <yellowriver2010@hotmail.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-commit a12085d13997ed15f745f33a0e01002541160179 upstream.
+[ Upstream commit 9e5ffed37df68d0ccfb2fdc528609e23a1e70ebe ]
 
-of_find_device_by_node() takes a reference to the struct device
-when it finds a match via get_device, there is no need to call
-get_device() twice.
-We also should make sure to drop the reference to the device
-taken by of_find_device_by_node() on driver unbind.
+Looks like when BPF support was added by commit d3b18ad31f93
+("tls: add bpf support to sk_msg handling") and
+commit d829e9c4112b ("tls: convert to generic sk_msg interface")
+it broke/removed the support for in-place crypto as added by
+commit 4e6d47206c32 ("tls: Add support for inplace records
+encryption").
 
-Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
-Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Tudor Ambarus <tudor.ambarus@microchip.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+The inplace_crypto member of struct tls_rec is dead, inited
+to zero, and sometimes set to zero again. It used to be
+set to 1 when record was allocated, but the skmsg code doesn't
+seem to have been written with the idea of in-place crypto
+in mind.
+
+Since non trivial effort is required to bring the feature back
+and we don't really have the HW to measure the benefit just
+remove the left over support for now to avoid confusing readers.
+
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mtd/nand/raw/atmel/pmecc.c |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ include/net/tls.h |    1 -
+ net/tls/tls_sw.c  |    6 +-----
+ 2 files changed, 1 insertion(+), 6 deletions(-)
 
---- a/drivers/mtd/nand/raw/atmel/pmecc.c
-+++ b/drivers/mtd/nand/raw/atmel/pmecc.c
-@@ -876,23 +876,32 @@ static struct atmel_pmecc *atmel_pmecc_g
- {
- 	struct platform_device *pdev;
- 	struct atmel_pmecc *pmecc, **ptr;
-+	int ret;
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -121,7 +121,6 @@ struct tls_rec {
+ 	struct list_head list;
+ 	int tx_ready;
+ 	int tx_flags;
+-	int inplace_crypto;
  
- 	pdev = of_find_device_by_node(np);
--	if (!pdev || !platform_get_drvdata(pdev))
-+	if (!pdev)
- 		return ERR_PTR(-EPROBE_DEFER);
-+	pmecc = platform_get_drvdata(pdev);
-+	if (!pmecc) {
-+		ret = -EPROBE_DEFER;
-+		goto err_put_device;
-+	}
+ 	struct sk_msg msg_plaintext;
+ 	struct sk_msg msg_encrypted;
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -705,8 +705,7 @@ static int tls_push_record(struct sock *
+ 	}
  
- 	ptr = devres_alloc(devm_atmel_pmecc_put, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
--		return ERR_PTR(-ENOMEM);
+ 	i = msg_pl->sg.start;
+-	sg_chain(rec->sg_aead_in, 2, rec->inplace_crypto ?
+-		 &msg_en->sg.data[i] : &msg_pl->sg.data[i]);
++	sg_chain(rec->sg_aead_in, 2, &msg_pl->sg.data[i]);
+ 
+ 	i = msg_en->sg.end;
+ 	sk_msg_iter_var_prev(i);
+@@ -971,8 +970,6 @@ alloc_encrypted:
+ 			if (ret)
+ 				goto fallback_to_reg_send;
+ 
+-			rec->inplace_crypto = 0;
 -
--	get_device(&pdev->dev);
--	pmecc = platform_get_drvdata(pdev);
-+	if (!ptr) {
-+		ret = -ENOMEM;
-+		goto err_put_device;
-+	}
+ 			num_zc++;
+ 			copied += try_to_copy;
  
- 	*ptr = pmecc;
+@@ -1171,7 +1168,6 @@ alloc_payload:
  
- 	devres_add(userdev, ptr);
- 
- 	return pmecc;
-+
-+err_put_device:
-+	put_device(&pdev->dev);
-+	return ERR_PTR(ret);
- }
- 
- static const int atmel_pmecc_strengths[] = { 2, 4, 8, 12, 24, 32 };
+ 		tls_ctx->pending_open_record_frags = true;
+ 		if (full_record || eor || sk_msg_full(msg_pl)) {
+-			rec->inplace_crypto = 0;
+ 			ret = bpf_exec_tx_verdict(msg_pl, sk, full_record,
+ 						  record_type, &copied, flags);
+ 			if (ret) {
 
 
