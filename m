@@ -2,76 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9975112017
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10847112013
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfLCXM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:12:26 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43875 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728309AbfLCWjy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:54 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h14so2547406pfe.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:39:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PooeH2U9l4e0abyw2b34fiXdiQuPMqsoVdOri4vyWA8=;
-        b=Z4qWuLdzmbQTwgVTPkTffJkS/6pNJFJU52Pv5anld3AdBN2RKrp/QNd1ONA86GCT4X
-         Ue7OKCSynqRiSFtptrF3HrNk43XMiXsTQ2B0hgCska6BooFqIZFkPDO2/D24Z9Nquoaa
-         wm5Z9A+sS3IkccLQquaDr/DfefHCZZUj9H4vgVMLNNvKvukZfQs7lne9YWKfrNG4zLb9
-         EHOyQnKZfLEu0it+urUIkOotHnUuBQSoEytGqEP1moY7TceKQ3RaPVjFaxcxV680ACSY
-         cAD51x/PTdUvx4vPH5x/HrR9owsPzsP1j9WGcfG4gxtfx0o31QH3nq6CaIq7UZ+E1KoD
-         tfCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PooeH2U9l4e0abyw2b34fiXdiQuPMqsoVdOri4vyWA8=;
-        b=UFpgUwUFnh0aL4+q6SLrToF5SYejsEsS2bTQnd72EidaCM3HkTygYmMkTA0FDkqTth
-         OUwZgEWABTkLBwyFplCxWxYDi8u9e5n7aDLXVXEWvByVZZs9wNxwFqvn8Lcpvp61RtPL
-         /BPevFrLmNaWWW3TNW2YyHrKAAE6kedSb3Jx/JAC8vstB9+KzVcPizdULGdwsZ1PlhxJ
-         Pl4EYccZg2CkRcChehx3Uz+vWQhJiGv4n0KjBJRdXYgEDXaQ88j7w0JkOLFShyyZEsLk
-         u6lwvHaIwCT81zyxShPJMxz+VGo9Bc5Cq3x5yloYcFhHtKlE1Y4uQ4geEgVBtoGe1MDU
-         HwNw==
-X-Gm-Message-State: APjAAAUtaZKJ1+SXOhmgtTuLj6UMntwdtPpZHMwpfT8bNBN6lNIj2C8r
-        sY5fxj0bELhFpnxobdvSerbaMP6r9LwsP164hdkhHg==
-X-Google-Smtp-Source: APXvYqyopdizFtuRaXmHpNZY01aJqLAUpTS7fHYCocl6WpG8VXrtTOu+n9u17wqq8KlX1dRoJ6xGABbIJHbMC+vv96s=
-X-Received: by 2002:aa7:961b:: with SMTP id q27mr238999pfg.23.1575412793102;
- Tue, 03 Dec 2019 14:39:53 -0800 (PST)
-MIME-Version: 1.0
-References: <1575396508-21480-1-git-send-email-sj38.park@gmail.com> <1575396508-21480-4-git-send-email-sj38.park@gmail.com>
-In-Reply-To: <1575396508-21480-4-git-send-email-sj38.park@gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 3 Dec 2019 14:39:42 -0800
-Message-ID: <CAFd5g47CtpRusO1tit3x+65p8EWVy-PSWU1rhwZ6x6ubbig=rQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] kunit: Create default config in '--build_dir'
-To:     SeongJae Park <sj38.park@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, shuah <shuah@kernel.org>,
-        SeongJae Park <sjpark@amazon.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728729AbfLCXMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:12:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728378AbfLCWkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:40:20 -0500
+Subject: Re: [GIT PULL] chrome-platform changes for v5.5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575412820;
+        bh=zcBoHdTzslytluIyMkSAscVTPEWGrZX874Uz8T73zmw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=KQZHdc2eMh32kons3IgcN7k2SNhSxgsqYVSwGRHVUPYnw4MX59JCMoMU3+vyQgv4f
+         VXVLxhAsMjL2xTPZITLLBll/ml6hkAUV2cf9Yn49o6g0xlpymXFJOfzMA7589h/O7N
+         1y7RypFwS9AqFfLCI7iCFSG8+UP9eCLf36MydcNE=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191203215800.GA34130@google.com>
+References: <20191203215800.GA34130@google.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191203215800.GA34130@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git
+ tags/tag-chrome-platform-for-v5.5
+X-PR-Tracked-Commit-Id: 856a0a6e2d09d31fd8f00cc1fc6645196a509d56
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 63de37476ebd1e9bab6a9e17186dc5aa1da9ea99
+Message-Id: <157541282048.26485.8115653042206857597.pr-tracker-bot@kernel.org>
+Date:   Tue, 03 Dec 2019 22:40:20 +0000
+To:     Benson Leung <bleung@google.com>
+Cc:     torvalds@linux-foundation.org, bleung@kernel.org,
+        gwendal@chromium.org, bleung@chromium.org, bleung@google.com,
+        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 10:08 AM SeongJae Park <sj38.park@gmail.com> wrote:
->
-> From: SeongJae Park <sjpark@amazon.de>
->
-> If both '--build_dir' and '--defconfig' are given, the handling of
-> '--defconfig' ignores '--build_dir' option.  This commit modifies the
-> behavior to respect '--build_dir' option.
->
-> Signed-off-by: SeongJae Park <sjpark@amazon.de>
-> Suggested-by: Brendan Higgins <brendanhiggins@google.com>
-> Reported-by: Brendan Higgins <brendanhiggins@google.com>
+The pull request you sent on Tue, 3 Dec 2019 13:58:00 -0800:
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git tags/tag-chrome-platform-for-v5.5
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/63de37476ebd1e9bab6a9e17186dc5aa1da9ea99
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
