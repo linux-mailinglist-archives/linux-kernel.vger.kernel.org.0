@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3EB111ED6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A04BA111EEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbfLCXFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:05:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42716 "EHLO mail.kernel.org"
+        id S1729611AbfLCWtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:49:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729555AbfLCWux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:50:53 -0500
+        id S1728916AbfLCWtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:49:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A36ED2084B;
-        Tue,  3 Dec 2019 22:50:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ABDC20656;
+        Tue,  3 Dec 2019 22:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413452;
-        bh=cjXEwGGp4PCl/lOsXsHNgfLokeRaTE98HV0koLlgZjo=;
+        s=default; t=1575413370;
+        bh=v6CWCIDmY/jllLV2uivZ+MJ32Cm9zV+Rz3VmAy4p4M0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2OEh3Sug43Uytzog4g6cMgcuGs/H2EFgAJKBNtblvclcRDZKQHi89praQZq7v1wfO
-         NDLlJ2wdry2S+YtkOqiBDe6Sg5DCiRQrPSG4gw9Llm2J5HnRgXcYxutN/4GEE79rME
-         pC9QdkgIsTpVAgzaobaRoZUMQKUhwsf9sFJC2328=
+        b=L2Q+LgGMlxzp7ZEQ+QdZpFYCqF7b3MQgeqS6aTC7mrNHMeFI0dK80Bge2khuWp4NI
+         ERGarAez+3IKBFyHssHpoQjFXfowy1DZ1wd+RR8S0e6Rop4MicBg/u5Wywab551GQ8
+         3q2gKrd7SwnUGu6DnP6sxzX3UotqQtpFRlB8vhog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
+        stable@vger.kernel.org, Giridhar Malavali <gmalavali@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 083/321] scsi: lpfc: Enable Management features for IF_TYPE=6
-Date:   Tue,  3 Dec 2019 23:32:29 +0100
-Message-Id: <20191203223431.475605697@linuxfoundation.org>
+Subject: [PATCH 4.19 085/321] scsi: qla2xxx: Fix for FC-NVMe discovery for NPIV port
+Date:   Tue,  3 Dec 2019 23:32:31 +0100
+Message-Id: <20191203223431.578092382@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -46,108 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Giridhar Malavali <gmalavali@marvell.com>
 
-[ Upstream commit 719162bd5bb968203397b9b1d0dd30a9797bbd09 ]
+[ Upstream commit 835aa4f2691e4ed4ed16de81f3cabf17a87a164f ]
 
-Addition of support for if_type=6 missed several checks for interface type,
-resulting in the failure of several key management features such as
-firmware dump and loopback testing.
+This patch fixes NVMe discovery by setting SKIP_PRLI flag, so that PRLI is
+driven by driver and is retried when the NPIV port is detected to have NVMe
+capability.
 
-Correct the checks on the if_type so that both SLI4 IF_TYPE's 2 and 6 are
-supported.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Giridhar Malavali <gmalavali@marvell.com>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_attr.c    | 4 ++--
- drivers/scsi/lpfc/lpfc_bsg.c     | 6 +++---
- drivers/scsi/lpfc/lpfc_els.c     | 2 +-
- drivers/scsi/lpfc/lpfc_hbadisc.c | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/scsi/qla2xxx/qla_attr.c |  2 ++
+ drivers/scsi/qla2xxx/qla_init.c | 10 ++++------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
-index 55cd96e2469c6..3f69a5e4e470a 100644
---- a/drivers/scsi/lpfc/lpfc_attr.c
-+++ b/drivers/scsi/lpfc/lpfc_attr.c
-@@ -1332,7 +1332,7 @@ lpfc_sli4_pdev_reg_request(struct lpfc_hba *phba, uint32_t opcode)
- 		return -EACCES;
+diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+index 15d493f30810f..3e9c49b3184f1 100644
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -2161,6 +2161,8 @@ qla24xx_vport_delete(struct fc_vport *fc_vport)
+ 	    test_bit(FCPORT_UPDATE_NEEDED, &vha->dpc_flags))
+ 		msleep(1000);
  
- 	if ((phba->sli_rev < LPFC_SLI_REV4) ||
--	    (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) !=
-+	    (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) <
- 	     LPFC_SLI_INTF_IF_TYPE_2))
- 		return -EPERM;
++	qla_nvme_delete(vha);
++
+ 	qla24xx_disable_vp(vha);
+ 	qla2x00_wait_for_sess_deletion(vha);
  
-@@ -4264,7 +4264,7 @@ lpfc_link_speed_store(struct device *dev, struct device_attribute *attr,
- 	uint32_t prev_val, if_type;
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 653d535e3052f..f7dd289779b14 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -242,15 +242,13 @@ qla2x00_async_login(struct scsi_qla_host *vha, fc_port_t *fcport,
+ 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha) + 2);
  
- 	if_type = bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf);
--	if (if_type == LPFC_SLI_INTF_IF_TYPE_2 &&
-+	if (if_type >= LPFC_SLI_INTF_IF_TYPE_2 &&
- 	    phba->hba_flag & HBA_FORCED_LINK_SPEED)
- 		return -EPERM;
+ 	sp->done = qla2x00_async_login_sp_done;
+-	if (N2N_TOPO(fcport->vha->hw) && fcport_is_bigger(fcport)) {
++	if (N2N_TOPO(fcport->vha->hw) && fcport_is_bigger(fcport))
+ 		lio->u.logio.flags |= SRB_LOGIN_PRLI_ONLY;
+-	} else {
++	else
+ 		lio->u.logio.flags |= SRB_LOGIN_COND_PLOGI;
  
-diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-index 90745feca8080..99aea52e584b0 100644
---- a/drivers/scsi/lpfc/lpfc_bsg.c
-+++ b/drivers/scsi/lpfc/lpfc_bsg.c
-@@ -2221,7 +2221,7 @@ lpfc_bsg_diag_loopback_mode(struct bsg_job *job)
+-		if (fcport->fc4f_nvme)
+-			lio->u.logio.flags |= SRB_LOGIN_SKIP_PRLI;
+-
+-	}
++	if (fcport->fc4f_nvme)
++		lio->u.logio.flags |= SRB_LOGIN_SKIP_PRLI;
  
- 	if (phba->sli_rev < LPFC_SLI_REV4)
- 		rc = lpfc_sli3_bsg_diag_loopback_mode(phba, job);
--	else if (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) ==
-+	else if (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) >=
- 		 LPFC_SLI_INTF_IF_TYPE_2)
- 		rc = lpfc_sli4_bsg_diag_loopback_mode(phba, job);
- 	else
-@@ -2261,7 +2261,7 @@ lpfc_sli4_bsg_diag_mode_end(struct bsg_job *job)
- 
- 	if (phba->sli_rev < LPFC_SLI_REV4)
- 		return -ENODEV;
--	if (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) !=
-+	if (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) <
- 	    LPFC_SLI_INTF_IF_TYPE_2)
- 		return -ENODEV;
- 
-@@ -2353,7 +2353,7 @@ lpfc_sli4_bsg_link_diag_test(struct bsg_job *job)
- 		rc = -ENODEV;
- 		goto job_error;
- 	}
--	if (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) !=
-+	if (bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) <
- 	    LPFC_SLI_INTF_IF_TYPE_2) {
- 		rc = -ENODEV;
- 		goto job_error;
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index ea2aa5f55ca44..4f4d1b3b3bbc4 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -5559,7 +5559,7 @@ lpfc_els_rcv_rdp(struct lpfc_vport *vport, struct lpfc_iocbq *cmdiocb,
- 	struct ls_rjt stat;
- 
- 	if (phba->sli_rev < LPFC_SLI_REV4 ||
--	    bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) !=
-+	    bf_get(lpfc_sli_intf_if_type, &phba->sli4_hba.sli_intf) <
- 						LPFC_SLI_INTF_IF_TYPE_2) {
- 		rjt_err = LSRJT_UNABLE_TPC;
- 		rjt_expl = LSEXP_REQ_UNSUPPORTED;
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 68f223882d96b..b36b3da323a0a 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -4780,7 +4780,7 @@ lpfc_unreg_rpi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
- 				if (phba->sli_rev == LPFC_SLI_REV4 &&
- 				    (!(vport->load_flag & FC_UNLOADING)) &&
- 				    (bf_get(lpfc_sli_intf_if_type,
--				     &phba->sli4_hba.sli_intf) ==
-+				     &phba->sli4_hba.sli_intf) >=
- 				      LPFC_SLI_INTF_IF_TYPE_2) &&
- 				    (kref_read(&ndlp->kref) > 0)) {
- 					mbox->context1 = lpfc_nlp_get(ndlp);
+ 	ql_dbg(ql_dbg_disc, vha, 0x2072,
+ 	    "Async-login - %8phC hdl=%x, loopid=%x portid=%02x%02x%02x "
 -- 
 2.20.1
 
