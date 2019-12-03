@@ -2,70 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A092F10FFA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C25310FFBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:13:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfLCOLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 09:11:11 -0500
-Received: from mail-vs1-f41.google.com ([209.85.217.41]:33240 "EHLO
-        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfLCOLL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 09:11:11 -0500
-Received: by mail-vs1-f41.google.com with SMTP id n27so2443493vsa.0;
-        Tue, 03 Dec 2019 06:11:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=qTLUegBYXPVqSzZ8JeB8YIYZDh+eRGVTe3arH73i1Hg=;
-        b=Xhbiy6OrTTxt/hCViobblDgaFs+4gw6bycEwq6/tOkvF+lgRF1BEfGAPoBLnE7U/Y2
-         +gnLcX6Fsc7SluFFge3jvj0bVQK8yLgUVufH7ts+yhYtu0hA6mwAFDMt8J+Wq9QWMFg+
-         VIDiIHVthFhl2knwEHl3jcjUH2Q9uYR+XN7n+EZ6H6C1QVOnEA0ga5y3wK88fvh70mcR
-         J+DO/5idC+hegm6yXRVzck6gaXYA2TxnTK7Pf4I3PSkOPGZEyxlS2Jillh1MvfAelNjJ
-         0MPhjq9G8i6f5VNBtuaokQ85rXoq4ykd3IQ9qUHUGKUKJW4IDp4dM4zzLz5FcVlGDgZp
-         QpSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=qTLUegBYXPVqSzZ8JeB8YIYZDh+eRGVTe3arH73i1Hg=;
-        b=VQsI9VTjSCeXWvgAMpdbxVaHLtpW6q4CW/LnvePqEkYxkBZNqMWN0KuZ78vrTHgnLV
-         LcoRiSLsUpTF/fMc0bpzv/ZIQQygoBkDxCLPPDNb5nQamG+TsMzPFviqcxPztht/0H6m
-         i4Jnhg7Y8yZ9+tG978/54lGoeZWoGdyEA2ReV2M0aI3LB5bAo5+5ywJH2E2jY86cT4Tx
-         DbkkplTxzF4yNjlFcC0n3AFtwCOi6+kJ9BON2E4akaYBvIz5HbKcjiTng9K199xKBtYN
-         IUPrrixQKJoFfLKWpBVw7UA9x4sMFw89X1XAoBP9WkRFTICEnvLRQswf6PbNBkXtnV64
-         2OQw==
-X-Gm-Message-State: APjAAAXdeQO2W5D7ZYBiPMJa18j6wuq0iSi2EspUXmUuUy4PidDtWrJD
-        HevqisTGu1SEUzdeumh6zDkJXkW6FhkjDtQcZ4o=
-X-Google-Smtp-Source: APXvYqzqHb2yKwVKshU3kZPfBLtKyqntzMHOciBiiSeYXfaYezKwTIVEeE+9Ppgk5FV95Idtp2s3vmJRbeEykzJduPA=
-X-Received: by 2002:a67:fa52:: with SMTP id j18mr2734055vsq.144.1575382270104;
- Tue, 03 Dec 2019 06:11:10 -0800 (PST)
-MIME-Version: 1.0
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Tue, 3 Dec 2019 19:40:59 +0530
-Message-ID: <CAOuPNLh8dsSCq850afbj4OiHhZ2swBWZP=BTUrXrXhdpTjZs+A@mail.gmail.com>
-Subject: interrupt handler not getting called after resume
-To:     Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        linux-pm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726958AbfLCONi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 09:13:38 -0500
+Received: from mga03.intel.com ([134.134.136.65]:23216 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726195AbfLCONg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 09:13:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 06:13:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
+   d="scan'208";a="218639899"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.50])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Dec 2019 06:13:33 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@redhat.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V5 RESEND 00/14] TopDown metrics support for Icelake
+Date:   Tue,  3 Dec 2019 06:11:58 -0800
+Message-Id: <20191203141212.7704-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I have one general query.
+Icelake has support for measuring the level 1 TopDown metrics
+directly in hardware. This is implemented by an additional METRICS
+register, and a new Fixed Counter 3 that measures pipeline SLOTS.
 
-If an interrupt handler is NOT getting called (for one device) after
-the system resume (from snapshot image), then what could be the issue?
-Note:
-* The suspend worked perfectly fine.
-* The runtime suspend/resume of the system is also working fine.
+New in Icelake
+- Do not require generic counters. This allows to collect TopDown always
+  in addition to other events.
+- Measuring TopDown per thread/process instead of only per core
 
-If anybody have experienced this situation and fixed it, please let us know.
-It will be a great input for further debugging.
+For the Ice Lake implementation of performance metrics, the values in
+PERF_METRICS MSR are derived from fixed counter 3. Software should start
+both registers, PERF_METRICS and fixed counter 3, from zero.
+Additionally, software is recommended to periodically clear both
+registers in order to maintain accurate measurements. The latter is
+required for certain scenarios that involve sampling metrics at high
+rates. Software should always write fixed counter 3 before write to
+PERF_METRICS.
 
-Regards,
-Pintu
+IA32_PERF_GLOBAL_STATUS. OVF_PERF_METRICS[48]: If this bit is set,
+it indicates that some PERF_METRICS-related counter has overflowed and
+a PMI is triggered. Software has to synchronize, e.g. re-start,
+PERF_METRICS as well as fixed counter 3. Otherwise, PERF_METRICS may
+return invalid values.
+
+Limitation
+- To get accurate result and avoid reading the METRICS register multiple
+  times, the TopDown metrics events and SLOTS event have to be in the
+  same group.
+- METRICS and SLOTS registers have to be cleared after each read by SW.
+  That is to prevent the lose of precision.
+- Cannot do sampling read SLOTS and TopDown metric events
+
+Please refer SDM Vol3, 18.3.9.3 Performance Metrics for the details of
+TopDown metrics.
+
+
+Changes since V4:
+- Add description regarding to event-code naming for fixed counters
+- Fix add_nr_metric_event().
+  For leader event, we have to take the accepted metrics events into
+  account.
+  For sibling event, it doesn't need to count accepted metrics events
+  again.
+- Remove is_first_topdown_event_in_group().
+  Force slots in topdown group. Only update topdown events with slots
+  event.
+- Re-use last_period and period_left for saved_metric and saved_slots.
+
+Changes since V3:
+- Separate fixed counter3 definition patch
+- Separate BTS index patch
+- Apply Peter's cleanup patch
+- Fix the name of perf capabilities for perf METRICS
+- Apply patch for mul_u64_u32_div() x86_64 implementation
+- Fix unconditionally allows collecting 4 extra events
+- Add patch to clean up NMI handler by naming global status bit
+- Add patch to reuse event_base_rdpmc for RDPMC userspace support
+
+Changes since V2:
+- Rebase on top of v5.3-rc1
+
+Key changes since V1:
+- Remove variables for reg_idx and enabled_events[] array.
+  The reg_idx can be calculated by idx in runtime.
+  Using existing active_mask to replace enabled_events.
+- Choose value 47 for the fixed index of BTS.
+- Support OVF_PERF_METRICS overflow bit in PMI handler
+- Drops the caching mechanism and related variables
+  New mechanism is to update all active slots/metrics events for the
+  first slots/metrics events in a group. For each group reading, it
+  still only read the slots/perf_metrics MSR once
+- Disable PMU for read of topdown events to avoid the NMI issue
+- Move RDPMC support to a separate patch
+- Using event=0x00,umask=0x1X for topdown metrics events
+- Drop the patch which add REMOVE transaction
+  We can indicate x86_pmu_stop() by checking
+  (event && !test_bit(event->hw.idx, cpuc->active_mask)),
+  which is a good place to save the slots/metrics MSR value
+
+Andi Kleen (2):
+  perf, tools, stat: Support new per thread TopDown metrics
+  perf, tools: Add documentation for topdown metrics
+
+Kan Liang (12):
+  perf/x86/intel: Introduce the fourth fixed counter
+  perf/x86/intel: Set correct mask for TOPDOWN.SLOTS
+  perf/x86/intel: Move BTS index to 47
+  perf/x86/intel: Basic support for metrics counters
+  perf/x86/intel: Fix the name of perf capabilities for perf METRICS
+  perf/x86/intel: Support hardware TopDown metrics
+  perf/x86/intel: Support per thread RDPMC TopDown metrics
+  perf/x86/intel: Export TopDown events for Icelake
+  perf/x86/intel: Disable sampling read slots and topdown
+  perf/x86/intel: Name global status bit in NMI handler
+  perf/x86: Use event_base_rdpmc for RDPMC userspace support
+  perf, tools, stat: Check Topdown Metric group
+
+ arch/x86/events/core.c                 |  86 +++++-
+ arch/x86/events/intel/core.c           | 399 ++++++++++++++++++++++---
+ arch/x86/events/perf_event.h           |  57 +++-
+ arch/x86/include/asm/msr-index.h       |   3 +
+ arch/x86/include/asm/perf_event.h      |  60 +++-
+ include/linux/perf_event.h             |  29 +-
+ tools/perf/Documentation/perf-stat.txt |   9 +-
+ tools/perf/Documentation/topdown.txt   | 235 +++++++++++++++
+ tools/perf/builtin-stat.c              |  97 ++++++
+ tools/perf/util/stat-shadow.c          |  89 ++++++
+ tools/perf/util/stat.c                 |   4 +
+ tools/perf/util/stat.h                 |   8 +
+ 12 files changed, 1007 insertions(+), 69 deletions(-)
+ create mode 100644 tools/perf/Documentation/topdown.txt
+
+-- 
+2.17.1
+
