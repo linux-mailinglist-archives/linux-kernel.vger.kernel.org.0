@@ -2,158 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 069D91100DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B59281100F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfLCPG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 10:06:58 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42250 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfLCPG5 (ORCPT
+        id S1726810AbfLCPMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:12:48 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33905 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726057AbfLCPMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:06:57 -0500
-Received: by mail-pl1-f196.google.com with SMTP id x13so1799706plr.9;
-        Tue, 03 Dec 2019 07:06:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vuBgxT+Qbk3ubYCJQymif0bEiJiXCbEoz1v3OhqyqTo=;
-        b=OcOLLSM21Dry/Jx7rBKSDi7fbfayCR6F2Sw71nKmjXhnewkuGLaC0KJrTWbvJE+Qgn
-         LoM5gF9ZC9LoP2bKmW7ZZo2XqW+NAHswxmzSSNJC2SFez7Z5Xyy1Kr3OApohGUgSo+jH
-         99JfMsHOXyx8V/Ki5WAX2TUTlJAUb1IG5vMllxIE7HlDTe/LWz7C3WgDDJgFyhDeE8Si
-         3rEM1WdOamqJ3J2k/PkcIhAPqnCqE+CEYipSHaPpQaIEx1R0DOg5gRHQqrRyHVK2Hvdd
-         7TTv/fekDOShV9LqmOYQfVVOckKdbfcub4iPGqO2WT3HGeHu+rC+EyB+gMLDfaVjkZJX
-         lvyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vuBgxT+Qbk3ubYCJQymif0bEiJiXCbEoz1v3OhqyqTo=;
-        b=m5rGHEZUClpizcaq+UiP7ayhIBGDy+l2HUKjW+uEAx/IFCTfIYZzS8zBXNLXKo2Cmd
-         Srt/mWjJJQ9nLq3pBRjkVhuEXoetSLy5T0zf+2aZzvx26eKGOld1tDaVGO0uzwr9Mrg7
-         gugcRPyCiX1iXQ5dhs2QdHh470WmcDUIfeKSStvQ+Qug4MwZFEgpPztmrRaYY1Qr7R9Q
-         eRdi/tNI0V270K4rdO6x2yfWt/43LS2lldMbpaU5klgzoJRpZghtjPN0O1BAJT8L/8FJ
-         wXcVuklm69Lix+YHHPedtyek7E7/Glv8XIwAznWg3cagg9P4QWEwH4/DlOw9E7RAbRct
-         78+Q==
-X-Gm-Message-State: APjAAAXG0hjClAsjUGZxnXBRRwa6XWMoTM1ieOQa5TdR96n50tArtI0r
-        3jbixgbMQp4DEPQPp6bzrd4=
-X-Google-Smtp-Source: APXvYqwVUWuvtmoCjjOpXTlhawPaCTM77lQIg8WunkiWSQ50Jtsh07rKO8SxbQZFvar0S/rIQmrtMw==
-X-Received: by 2002:a17:902:8498:: with SMTP id c24mr5227759plo.223.1575385616912;
-        Tue, 03 Dec 2019 07:06:56 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r6sm1925649pfh.91.2019.12.03.07.06.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2019 07:06:55 -0800 (PST)
-Subject: Re: [PATCH 2/3] dt-binding: iio: Add documentation for ADM1177
-To:     Beniamin Bia <beniamin.bia@analog.com>, linux-hwmon@vger.kernel.org
-Cc:     Michael.Hennerich@analog.com, linux-kernel@vger.kernel.org,
-        jdelvare@suse.com, mark.rutland@arm.com, lgirdwood@gmail.com,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        biabeniamin@outlook.com
-References: <20191203135711.13972-1-beniamin.bia@analog.com>
- <20191203135711.13972-2-beniamin.bia@analog.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b7402a4f-1918-1922-a779-c9914be27f1b@roeck-us.net>
-Date:   Tue, 3 Dec 2019 07:06:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191203135711.13972-2-beniamin.bia@analog.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 3 Dec 2019 10:12:47 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3Ev0d7030223;
+        Tue, 3 Dec 2019 16:07:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=Ys0ox1ao18cOZfxiE9S2+ciC5jFVh+QzhShG4ijPhio=;
+ b=WGNpS3znEhwLqh5hvH8FyLX+/jjMFKWWrzJEIUohw1R29GLiH6IZzb5aXa44rzZgSofx
+ 0BzsEIjy05zSZ5pXDQrnTLDVJ2qV+aQMdsJQHM0lTkfu0Mvv68gAFSimW/zNQ0dK5oWA
+ sHWYmZc2ALRXTRitClj+9Kc0gCxJOCz6XwOdn5zZFEvgORb2XCJU0ZxE7BAUcfMlx++1
+ a87Urph9exurYKC60oXEaJfxWMOaPI/+pnCxZixjaB81s+nGfRk9u9QT/rwBQmKVwtUq
+ x0I5l4/mPuENDPRiWbO0MHfxXItgCrFN7KnBgwD426NoPYaCSKnHoqVfCnuxP0waVd8z gQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wkf2xqw64-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Dec 2019 16:07:23 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9E95B10002A;
+        Tue,  3 Dec 2019 16:07:20 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6D12D2BC7B6;
+        Tue,  3 Dec 2019 16:07:20 +0100 (CET)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Dec
+ 2019 16:07:20 +0100
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Tue, 3 Dec 2019 16:07:19 +0100
+From:   Olivier MOYSAN <olivier.moysan@st.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "apatard@mandriva.com" <apatard@mandriva.com>
+Subject: Re: [PATCH] ASoC: cs42l51: add dac mux widget in codec routes
+Thread-Topic: [PATCH] ASoC: cs42l51: add dac mux widget in codec routes
+Thread-Index: AQHVqedr55RsnCXb/EmaRp/MuIs00qeociSA
+Date:   Tue, 3 Dec 2019 15:07:19 +0000
+Message-ID: <06c0474b-8b51-0ce6-b2aa-fc3b2c348f04@st.com>
+References: <20191203141627.29471-1-olivier.moysan@st.com>
+ <20191203143909.GL1998@sirena.org.uk>
+In-Reply-To: <20191203143909.GL1998@sirena.org.uk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.50]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <5215F65C3009774EA7992774F10B1559@st.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-03_04:2019-12-02,2019-12-03 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/3/19 5:57 AM, Beniamin Bia wrote:
-> Documentation for ADM1177 was added.
-> 
+Hello Mark,
 
-Subject still points to iio.
+On 12/3/19 3:39 PM, Mark Brown wrote:
+> On Tue, Dec 03, 2019 at 03:16:27PM +0100, Olivier Moysan wrote:
+>
+>> -	SND_SOC_DAPM_DAC_E("Left DAC", "Left HiFi Playback",
+>> -		CS42L51_POWER_CTL1, 5, 1,
+>> -		cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
+>> -	SND_SOC_DAPM_DAC_E("Right DAC", "Right HiFi Playback",
+>> -		CS42L51_POWER_CTL1, 6, 1,
+>> -		cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
+>> +	SND_SOC_DAPM_DAC_E("Left DAC", NULL, CS42L51_POWER_CTL1, 5, 1,
+>> +			   cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
+>> +	SND_SOC_DAPM_DAC_E("Right DAC", NULL, CS42L51_POWER_CTL1, 6, 1,
+>> +			   cs42l51_pdn_event, SND_SOC_DAPM_PRE_POST_PMD),
+> This looks like an unrelated formatting change?
+The reason of this change is to replace "HiFi Playback" by NULL, in=20
+order to connect
+DAC widget to DAC mux widget, instead of connecting it directly to Playback=
+.
 
-> Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
-> ---
->   .../bindings/hwmon/adi,adm1177.yaml           | 65 +++++++++++++++++++
->   1 file changed, 65 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml b/Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
-> new file mode 100644
-> index 000000000000..abd9354217ba
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/adi,adm1177.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADM1177 Hot Swap Controller and Digital Power Monitor
-> +
-> +maintainers:
-> +  - Michael Hennerich <michael.hennerich@analog.com>
-> +  - Beniamin Bia <beniamin.bia@analog.com>
-> +
-> +description: |
-> +  Analog Devices ADM1177 Hot Swap Controller and Digital Power Monitor
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ADM1177.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,adm1177
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  avcc-supply:
-> +    description:
-> +      Phandle to the Avcc power supply
-> +
-> +  adi,r-sense-micro-ohms:
-> +    description:
-> +      The value of curent sense resistor in microohms.
-
-There is a standard property for that (shunt-resistor-micro-ohms).
-
-> +
-> +  adi,shutdown-threshold-microamp:
-> +    description:
-> +      Specifies the current level at which an over current alert occurs.
-> +
-> +  adi,vrange-high-enable:
-> +    description:
-> +      Specifies which internal voltage divider to be used. A 1 selects
-> +      a 7:2 voltage divider while a 0 selects a 14:1 voltage divider.
-> +    type: boolean
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - adi,r-sense-micro-ohms
-> +  - adi,shutdown-threshold-microamp
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c0 {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        pwmon@5a {
-> +                compatible = "adi,adm1177";
-> +                reg = <0x5a>;
-> +                adi,r-sense-micro-ohms = <50000>; /* 50 mOhm */
-> +                adi,shutdown-threshold-microamp = <1059000>; /* 1.059 A */
-> +                adi,vrange-high-enable;
-> +        };
-> +    };
-> +...
-> 
-
+Regards
+Olivier=
