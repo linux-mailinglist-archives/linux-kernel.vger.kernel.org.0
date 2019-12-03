@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6169F111D71
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74ED4111C12
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfLCWxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:53:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46780 "EHLO mail.kernel.org"
+        id S1728340AbfLCWkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:40:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730145AbfLCWx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:53:29 -0500
+        id S1728329AbfLCWj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:39:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A84972053B;
-        Tue,  3 Dec 2019 22:53:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A4EC20684;
+        Tue,  3 Dec 2019 22:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413609;
-        bh=pkcgl8GLrGanjEtXFJT5zlPNjUrk/9i/0wS56xwsYuk=;
+        s=default; t=1575412797;
+        bh=tgTqtjQG6NGfPPv7jrHYBh94wvo1lsYwTXU/+/CmpLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IcazyrhRLjmeZXGHHDlvnOejbefvQAMZrp7o9rpxmj0dZi9quWvrlMwhFrVyx0UoY
-         oIMVu/Vt3hiXRdU0tcXTxkekmjK1a7jFv72a/C+I4pYNE2f6HGNydVuG9kpH+s4NKU
-         2IY8dOZH7Xn1I+3cMMCOdHjTbTbzkOoLsgwKiY9w=
+        b=P1yBEB9MMJWGDPGTdJrHKSUvsGgnYfZgp4PeipxFNOzaofdmnlhPTvQJ12dpsoNM4
+         WZ8mq+kGZisbCf44kPD5DuOFVfR3uzjmjtpodAgtNiOAKmwParHnUaBnWRHJv5HyWz
+         cL0hzKNxfTnKF8l3NzPSmTIhPP9NBbDFcVhf5I9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 193/321] tipc: fix a missing check of genlmsg_put
-Date:   Tue,  3 Dec 2019 23:34:19 +0100
-Message-Id: <20191203223437.159758033@linuxfoundation.org>
+Subject: [PATCH 5.3 020/135] pinctrl: cherryview: Allocate IRQ chip dynamic
+Date:   Tue,  3 Dec 2019 23:34:20 +0100
+Message-Id: <20191203213009.800350907@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 46273cf7e009231d2b6bc10a926e82b8928a9fb2 ]
+[ Upstream commit 67d33aecd030226f0a577eb683aaa6853ecf8f91 ]
 
-genlmsg_put could fail. The fix inserts a check of its return value, and
-if it fails, returns -EMSGSIZE.
+Keeping the IRQ chip definition static shares it with multiple instances
+of the GPIO chip in the system. This is bad and now we get this warning
+from GPIO library:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+"detected irqchip that is shared with multiple gpiochips: please fix the driver."
+
+Hence, move the IRQ chip definition from being driver static into the struct
+intel_pinctrl. So a unique IRQ chip is used for each GPIO chip instance.
+
+This patch is heavily based on the attachment to the bug by Christoph Marz.
+
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=202543
+Fixes: 6e08d6bbebeb ("pinctrl: Add Intel Cherryview/Braswell pin controller support")
+Depends-on: 83b9dc11312f ("pinctrl: cherryview: Associate IRQ descriptors to irqdomain")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/netlink_compat.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 24 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/net/tipc/netlink_compat.c b/net/tipc/netlink_compat.c
-index 6494d6b5e1b24..fab0384d2b4b3 100644
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -983,6 +983,8 @@ static int tipc_nl_compat_publ_dump(struct tipc_nl_compat_msg *msg, u32 sock)
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 17a248b723b9b..8dfaf8e8c3a09 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -147,6 +147,7 @@ struct chv_pin_context {
+  * @pctldesc: Pin controller description
+  * @pctldev: Pointer to the pin controller device
+  * @chip: GPIO chip in this pin controller
++ * @irqchip: IRQ chip in this pin controller
+  * @regs: MMIO registers
+  * @intr_lines: Stores mapping between 16 HW interrupt wires and GPIO
+  *		offset (in GPIO number space)
+@@ -162,6 +163,7 @@ struct chv_pinctrl {
+ 	struct pinctrl_desc pctldesc;
+ 	struct pinctrl_dev *pctldev;
+ 	struct gpio_chip chip;
++	struct irq_chip irqchip;
+ 	void __iomem *regs;
+ 	unsigned intr_lines[16];
+ 	const struct chv_community *community;
+@@ -1466,16 +1468,6 @@ static int chv_gpio_irq_type(struct irq_data *d, unsigned int type)
+ 	return 0;
+ }
  
- 	hdr = genlmsg_put(args, 0, 0, &tipc_genl_family, NLM_F_MULTI,
- 			  TIPC_NL_PUBL_GET);
-+	if (!hdr)
-+		return -EMSGSIZE;
+-static struct irq_chip chv_gpio_irqchip = {
+-	.name = "chv-gpio",
+-	.irq_startup = chv_gpio_irq_startup,
+-	.irq_ack = chv_gpio_irq_ack,
+-	.irq_mask = chv_gpio_irq_mask,
+-	.irq_unmask = chv_gpio_irq_unmask,
+-	.irq_set_type = chv_gpio_irq_type,
+-	.flags = IRQCHIP_SKIP_SET_WAKE,
+-};
+-
+ static void chv_gpio_irq_handler(struct irq_desc *desc)
+ {
+ 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+@@ -1615,7 +1607,15 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		}
+ 	}
  
- 	nest = nla_nest_start(args, TIPC_NLA_SOCK);
- 	if (!nest) {
+-	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
++	pctrl->irqchip.name = "chv-gpio";
++	pctrl->irqchip.irq_startup = chv_gpio_irq_startup;
++	pctrl->irqchip.irq_ack = chv_gpio_irq_ack;
++	pctrl->irqchip.irq_mask = chv_gpio_irq_mask;
++	pctrl->irqchip.irq_unmask = chv_gpio_irq_unmask;
++	pctrl->irqchip.irq_set_type = chv_gpio_irq_type;
++	pctrl->irqchip.flags = IRQCHIP_SKIP_SET_WAKE;
++
++	ret = gpiochip_irqchip_add(chip, &pctrl->irqchip, 0,
+ 				   handle_bad_irq, IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_err(pctrl->dev, "failed to add IRQ chip\n");
+@@ -1632,7 +1632,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		}
+ 	}
+ 
+-	gpiochip_set_chained_irqchip(chip, &chv_gpio_irqchip, irq,
++	gpiochip_set_chained_irqchip(chip, &pctrl->irqchip, irq,
+ 				     chv_gpio_irq_handler);
+ 	return 0;
+ }
 -- 
 2.20.1
 
