@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 371A7111E2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:01:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A310E111E2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbfLCW4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:56:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50722 "EHLO mail.kernel.org"
+        id S1730412AbfLCW4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:56:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730236AbfLCW4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:56:02 -0500
+        id S1729945AbfLCW4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:56:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83DF220656;
-        Tue,  3 Dec 2019 22:56:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94BB72053B;
+        Tue,  3 Dec 2019 22:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413762;
-        bh=P5MK6TYywY9tI5CraYsnaK8zbolAgZwzdiJIM/eB5SE=;
+        s=default; t=1575413770;
+        bh=2QDZ0dMDTHhItPAm/DVEGvPgpkbqGQphOwS5UzWuQL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMAzsjds5dOJRHFCdzUHkJKWTd9Hf+TlA41B854CmTZ+SuS1AO25znXCDqYQkcVDS
-         /BueBgugyUVR0nG2dSK/QMaHM6jOhT61u7w9ouc8qq/d44rqkh+hBTB8l0A9t23uC6
-         kAP/Xg1lHVOEnyFiNFIy5XhcNRkYRhjAyz8k7d6g=
+        b=ph0OySAyVA9/6UniSEvpke1u0tREPclu+ii3BFkxev4fftblc7I2KYULCb6kwHjck
+         QnTJH/ny/DJ0nSdBdjtX7F+fFG28PODyC9P02VkQrkZhjmUUidGGLr+Tc+6HREP7KA
+         fU4Iax1Je8aObo2KSQdT3+7Mf/Y2/c8NwQY7ZtHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 215/321] net/core/neighbour: tell kmemleak about hash tables
-Date:   Tue,  3 Dec 2019 23:34:41 +0100
-Message-Id: <20191203223438.305235221@linuxfoundation.org>
+        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 216/321] ata: ahci: mvebu: do Armada 38x configuration only on relevant SoCs
+Date:   Tue,  3 Dec 2019 23:34:42 +0100
+Message-Id: <20191203223438.356530142@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -45,81 +43,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-[ Upstream commit 85704cb8dcfd88d351bfc87faaeba1c8214f3177 ]
+[ Upstream commit 96dbcb40e4b1a387cdb9b21f43638c759aebb5a4 ]
 
-This fixes false-positive kmemleak reports about leaked neighbour entries:
+At the beginning, only Armada 38x SoCs where supported by the
+ahci_mvebu.c driver. Commit 15d3ce7b63bd ("ata: ahci_mvebu: add
+support for Armada 3700 variant") introduced Armada 3700 support. As
+opposed to Armada 38x SoCs, the 3700 variants do not have to configure
+mbus and the regret option. This patch took care of avoiding such
+configuration when not needed in the probe function, but failed to do
+the same in the resume path. While doing so looks harmless by
+experience, let's clean the driver logic and avoid doing this useless
+configuration with Armada 3700 SoCs.
 
-unreferenced object 0xffff8885c6e4d0a8 (size 1024):
-  comm "softirq", pid 0, jiffies 4294922664 (age 167640.804s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 20 2c f3 83 ff ff ff ff  ........ ,......
-    08 c0 ef 5f 84 88 ff ff 01 8c 7d 02 01 00 00 00  ..._......}.....
-  backtrace:
-    [<00000000748509fe>] ip6_finish_output2+0x887/0x1e40
-    [<0000000036d7a0d8>] ip6_output+0x1ba/0x600
-    [<0000000027ea7dba>] ip6_send_skb+0x92/0x2f0
-    [<00000000d6e2111d>] udp_v6_send_skb.isra.24+0x680/0x15e0
-    [<000000000668a8be>] udpv6_sendmsg+0x18c9/0x27a0
-    [<000000004bd5fa90>] sock_sendmsg+0xb3/0xf0
-    [<000000008227b29f>] ___sys_sendmsg+0x745/0x8f0
-    [<000000008698009d>] __sys_sendmsg+0xde/0x170
-    [<00000000889dacf1>] do_syscall_64+0x9b/0x400
-    [<0000000081cdb353>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000005767ed39>] 0xffffffffffffffff
+Because the logic is very similar between these two places, it has
+been decided to factorize this code and put it in a "Armada 38x
+configuration function". This function is part of a new
+(per-compatible) platform data structure, so that the addition of such
+configuration function for Armada 3700 will be eased.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 15d3ce7b63bd ("ata: ahci_mvebu: add support for Armada 3700 variant")
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/neighbour.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/ata/ahci_mvebu.c | 68 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 51 insertions(+), 17 deletions(-)
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index c52d6e6b341cf..4721793babed5 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -18,6 +18,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/drivers/ata/ahci_mvebu.c b/drivers/ata/ahci_mvebu.c
+index f9cb51be38ebf..a54214291481f 100644
+--- a/drivers/ata/ahci_mvebu.c
++++ b/drivers/ata/ahci_mvebu.c
+@@ -28,6 +28,10 @@
+ #define AHCI_WINDOW_BASE(win)	(0x64 + ((win) << 4))
+ #define AHCI_WINDOW_SIZE(win)	(0x68 + ((win) << 4))
  
- #include <linux/slab.h>
-+#include <linux/kmemleak.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -363,12 +364,14 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
- 	ret = kmalloc(sizeof(*ret), GFP_ATOMIC);
- 	if (!ret)
- 		return NULL;
--	if (size <= PAGE_SIZE)
-+	if (size <= PAGE_SIZE) {
- 		buckets = kzalloc(size, GFP_ATOMIC);
--	else
-+	} else {
- 		buckets = (struct neighbour __rcu **)
- 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
- 					   get_order(size));
-+		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
-+	}
- 	if (!buckets) {
- 		kfree(ret);
- 		return NULL;
-@@ -388,10 +391,12 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
- 	size_t size = (1 << nht->hash_shift) * sizeof(struct neighbour *);
- 	struct neighbour __rcu **buckets = nht->hash_buckets;
- 
--	if (size <= PAGE_SIZE)
-+	if (size <= PAGE_SIZE) {
- 		kfree(buckets);
--	else
-+	} else {
-+		kmemleak_free(buckets);
- 		free_pages((unsigned long)buckets, get_order(size));
-+	}
- 	kfree(nht);
++struct ahci_mvebu_plat_data {
++	int (*plat_config)(struct ahci_host_priv *hpriv);
++};
++
+ static void ahci_mvebu_mbus_config(struct ahci_host_priv *hpriv,
+ 				   const struct mbus_dram_target_info *dram)
+ {
+@@ -62,6 +66,22 @@ static void ahci_mvebu_regret_option(struct ahci_host_priv *hpriv)
+ 	writel(0x80, hpriv->mmio + AHCI_VENDOR_SPECIFIC_0_DATA);
  }
  
++static int ahci_mvebu_armada_380_config(struct ahci_host_priv *hpriv)
++{
++	const struct mbus_dram_target_info *dram;
++	int rc = 0;
++
++	dram = mv_mbus_dram_info();
++	if (dram)
++		ahci_mvebu_mbus_config(hpriv, dram);
++	else
++		rc = -ENODEV;
++
++	ahci_mvebu_regret_option(hpriv);
++
++	return rc;
++}
++
+ /**
+  * ahci_mvebu_stop_engine
+  *
+@@ -126,13 +146,10 @@ static int ahci_mvebu_resume(struct platform_device *pdev)
+ {
+ 	struct ata_host *host = platform_get_drvdata(pdev);
+ 	struct ahci_host_priv *hpriv = host->private_data;
+-	const struct mbus_dram_target_info *dram;
++	const struct ahci_mvebu_plat_data *pdata = hpriv->plat_data;
+ 
+-	dram = mv_mbus_dram_info();
+-	if (dram)
+-		ahci_mvebu_mbus_config(hpriv, dram);
+-
+-	ahci_mvebu_regret_option(hpriv);
++	if (pdata->plat_config)
++		pdata->plat_config(hpriv);
+ 
+ 	return ahci_platform_resume_host(&pdev->dev);
+ }
+@@ -154,28 +171,31 @@ static struct scsi_host_template ahci_platform_sht = {
+ 
+ static int ahci_mvebu_probe(struct platform_device *pdev)
+ {
++	const struct ahci_mvebu_plat_data *pdata;
+ 	struct ahci_host_priv *hpriv;
+-	const struct mbus_dram_target_info *dram;
+ 	int rc;
+ 
++	pdata = of_device_get_match_data(&pdev->dev);
++	if (!pdata)
++		return -EINVAL;
++
+ 	hpriv = ahci_platform_get_resources(pdev, 0);
+ 	if (IS_ERR(hpriv))
+ 		return PTR_ERR(hpriv);
+ 
++	hpriv->plat_data = (void *)pdata;
++
+ 	rc = ahci_platform_enable_resources(hpriv);
+ 	if (rc)
+ 		return rc;
+ 
+ 	hpriv->stop_engine = ahci_mvebu_stop_engine;
+ 
+-	if (of_device_is_compatible(pdev->dev.of_node,
+-				    "marvell,armada-380-ahci")) {
+-		dram = mv_mbus_dram_info();
+-		if (!dram)
+-			return -ENODEV;
+-
+-		ahci_mvebu_mbus_config(hpriv, dram);
+-		ahci_mvebu_regret_option(hpriv);
++	pdata = hpriv->plat_data;
++	if (pdata->plat_config) {
++		rc = pdata->plat_config(hpriv);
++		if (rc)
++			goto disable_resources;
+ 	}
+ 
+ 	rc = ahci_platform_init_host(pdev, hpriv, &ahci_mvebu_port_info,
+@@ -190,9 +210,23 @@ disable_resources:
+ 	return rc;
+ }
+ 
++static const struct ahci_mvebu_plat_data ahci_mvebu_armada_380_plat_data = {
++	.plat_config = ahci_mvebu_armada_380_config,
++};
++
++static const struct ahci_mvebu_plat_data ahci_mvebu_armada_3700_plat_data = {
++	.plat_config = NULL,
++};
++
+ static const struct of_device_id ahci_mvebu_of_match[] = {
+-	{ .compatible = "marvell,armada-380-ahci", },
+-	{ .compatible = "marvell,armada-3700-ahci", },
++	{
++		.compatible = "marvell,armada-380-ahci",
++		.data = &ahci_mvebu_armada_380_plat_data,
++	},
++	{
++		.compatible = "marvell,armada-3700-ahci",
++		.data = &ahci_mvebu_armada_3700_plat_data,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, ahci_mvebu_of_match);
 -- 
 2.20.1
 
