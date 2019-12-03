@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DD6111D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F64A111C0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbfLCWxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:53:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46502 "EHLO mail.kernel.org"
+        id S1727938AbfLCWjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:39:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730129AbfLCWxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:53:18 -0500
+        id S1728285AbfLCWjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:39:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51D312053B;
-        Tue,  3 Dec 2019 22:53:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16A2920684;
+        Tue,  3 Dec 2019 22:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413597;
-        bh=jQ1iFzeS+vCtqt56Z82AOL2Hls9N2/gLhDuxtgK3EXo=;
+        s=default; t=1575412784;
+        bh=pBxMfA/LO0cfq4iF5n+Gp0OohudChbk11rq/YDa8EcE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DoGOXHdqmoUgxCOzSjae1vbetGjlZQXuZPM1r9AB1F4lVy03vWs4L0vr37u0qjArE
-         zMsVUq+kzWAa2AYFhe9o+ArSSC/D1MPUBNAZdMGnCKdXzwRHcLVOYB0/PdfWpIsT4Q
-         lzSI8wr+5rdqiYImX/5AVqGLruUdcTP99oD0yvqM=
+        b=j6jjfVuCZygD8zbRVZdQafdz0ApaEiuYKuTsPjTdvv5lAtsPvrlLTLCoxIQyjS/qA
+         10jegVuD4jSKKVPnaFdTFMl9TdcLOLa70aj7qi7lz6jzwJdzAeXNXrBzGrg6hVUg4F
+         UcOyn5lpEd0ouSTnvPLYB0497J0D+0yU4biL78eE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 189/321] net: (cpts) fix a missing check of clk_prepare
-Date:   Tue,  3 Dec 2019 23:34:15 +0100
-Message-Id: <20191203223436.953349870@linuxfoundation.org>
+Subject: [PATCH 5.3 016/135] ASoC: kirkwood: fix external clock probe defer
+Date:   Tue,  3 Dec 2019 23:34:16 +0100
+Message-Id: <20191203213008.857821884@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 2d822f2dbab7f4c820f72eb8570aacf3f35855bd ]
+[ Upstream commit 4523817d51bc3b2ef38da768d004fda2c8bc41de ]
 
-clk_prepare() could fail, so let's check its status, and if it fails,
-return its error code upstream.
+When our call to get the external clock fails, we forget to clean up
+the enabled internal clock correctly.  Enable the clock after we have
+obtained all our resources.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 84aac6c79bfd ("ASoC: kirkwood: fix loss of external clock at probe time")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Link: https://lore.kernel.org/r/E1iNGyK-0004oF-6A@rmk-PC.armlinux.org.uk
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ti/cpts.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/kirkwood/kirkwood-i2s.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
-index b96b93c686bf1..4f644ac314fe8 100644
---- a/drivers/net/ethernet/ti/cpts.c
-+++ b/drivers/net/ethernet/ti/cpts.c
-@@ -572,7 +572,9 @@ struct cpts *cpts_create(struct device *dev, void __iomem *regs,
- 		return ERR_CAST(cpts->refclk);
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 3446a113f482e..c323ae314b554 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -559,10 +559,6 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->clk);
  	}
  
--	clk_prepare(cpts->refclk);
-+	ret = clk_prepare(cpts->refclk);
-+	if (ret)
-+		return ERR_PTR(ret);
+-	err = clk_prepare_enable(priv->clk);
+-	if (err < 0)
+-		return err;
+-
+ 	priv->extclk = devm_clk_get(&pdev->dev, "extclk");
+ 	if (IS_ERR(priv->extclk)) {
+ 		if (PTR_ERR(priv->extclk) == -EPROBE_DEFER)
+@@ -578,6 +574,10 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
- 	cpts->cc.read = cpts_systim_read;
- 	cpts->cc.mask = CLOCKSOURCE_MASK(32);
++	err = clk_prepare_enable(priv->clk);
++	if (err < 0)
++		return err;
++
+ 	/* Some sensible defaults - this reflects the powerup values */
+ 	priv->ctl_play = KIRKWOOD_PLAYCTL_SIZE_24;
+ 	priv->ctl_rec = KIRKWOOD_RECCTL_SIZE_24;
 -- 
 2.20.1
 
