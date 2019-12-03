@@ -2,107 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7520610FEF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:39:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91B0810FEF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfLCNjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:39:44 -0500
-Received: from mx2.cyber.ee ([193.40.6.72]:58685 "EHLO mx2.cyber.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfLCNjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:39:44 -0500
-Subject: Re: UBSAN: Undefined behaviour in arch/x86/events/intel/p6.c:116:29
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <02f44ed5-13ac-f9c6-1f35-129c41006900@linux.ee>
- <20191202170633.GN2844@hirez.programming.kicks-ass.net>
-From:   Meelis Roos <mroos@linux.ee>
-Message-ID: <0676c6ec-4475-62dc-b202-a62deaedd2dd@linux.ee>
-Date:   Tue, 3 Dec 2019 15:39:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726474AbfLCNkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:40:32 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38995 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfLCNkc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 08:40:32 -0500
+Received: by mail-yb1-f194.google.com with SMTP id o22so968423ybg.6;
+        Tue, 03 Dec 2019 05:40:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PWU/7wWJMqFgQOzJgxgiFIVxjVPFwmXizK0TOekZqDg=;
+        b=C1wT1exzI2+JnqAQvtk5yzcIapZj8L6gj8q4NmvEZU6boLKk35ngTnivJE6SSaWttN
+         thEPw+fkAmaa6Ye7t/7fSQav4HsPD5z+u1qy01HvbBGa7bc7lyCUNgTm4Xh6D8KK2XbG
+         eq8GR+xu6toCsxCSrw9fi02f42jNOlCOdJIUnr3qJ5MQrNmpULkuYoUHL5Hfog4ZA7nq
+         DEIH3S3pHNNVfS82/mabk7UDpPbdOIPqA8YkiXlWWA7L6g+mhWT+IFpu856wVa4gPQEu
+         rAZ3iSXNY2Sm+PVEAO/drBgBFSK5ubZoyANNhnL+FHbH3v/sn6MTRnKR1KPLy/12jJ12
+         g5Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to
+         :user-agent;
+        bh=PWU/7wWJMqFgQOzJgxgiFIVxjVPFwmXizK0TOekZqDg=;
+        b=QKi+pCQZZSS/fBH606M8K6SfVyvYdoUwZwUp016qvTYPZ5qxzQgw/OEVYOZVhfbrN4
+         IJLs7ketHjeSVg0FaGxPCCs742pVVMApHixRQsYm2lK7TzI7yq45pcerm3oiiYWuH/wo
+         Nisqg7yeInMl/mPctXsn5CiK0DruVddqFEf6wp8jB/MQJzpF3SQjqKaZf3tqolS9MhRz
+         4Y61K3biY+bXBlauQvMjdSz3vqnSmJEo69vjkPJj9+h5DwBVB/I2QhvLZdXNp6Dy7IAk
+         s5P/Sl/WMeRgCp55YlEtRoXaAj3UV+2x3aB3FkJ+/eoPEc+Vpa4SGPyRmkfF83154obr
+         iIcg==
+X-Gm-Message-State: APjAAAXPEuJLW7bY0Lk6pjfPEx1FGXqgzyRJAFEp7PHFe0HR0ljJq8Ow
+        b5DN4YiIKJupmQzqe6OY3w==
+X-Google-Smtp-Source: APXvYqzlVb+uzUqOoJ7sKz3DGqmH2x4xZFKhoXvP+qn/NpgdBgUv9H8D7Fy3Mg2T7hXTvflhiXmg6A==
+X-Received: by 2002:a25:d052:: with SMTP id h79mr4265588ybg.345.1575380429014;
+        Tue, 03 Dec 2019 05:40:29 -0800 (PST)
+Received: from serve.minyard.net ([47.184.136.59])
+        by smtp.gmail.com with ESMTPSA id u2sm1451301ywi.61.2019.12.03.05.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 05:40:28 -0800 (PST)
+Received: from minyard.net (unknown [192.168.27.180])
+        by serve.minyard.net (Postfix) with ESMTPSA id 95ED9180059;
+        Tue,  3 Dec 2019 13:40:27 +0000 (UTC)
+Date:   Tue, 3 Dec 2019 07:40:26 -0600
+From:   Corey Minyard <minyard@acm.org>
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     openipmi-developer@lists.sourceforge.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, joel@jms.id.au, arnd@arndb.de,
+        gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Haiyue Wang <haiyue.wang@linux.intel.com>
+Subject: Re: [PATCH 2/3] ipmi: kcs: Finish configuring ASPEED KCS device
+ before enable
+Message-ID: <20191203134026.GI18165@minyard.net>
+Reply-To: minyard@acm.org
+References: <cover.5630f63168ad5cddf02e9796106f8e086c196907.1575376664.git-series.andrew@aj.id.au>
+ <84315a29b453068373c096c03433e3a326731988.1575376664.git-series.andrew@aj.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20191202170633.GN2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84315a29b453068373c096c03433e3a326731988.1575376664.git-series.andrew@aj.id.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Does something like so fix it?
+On Tue, Dec 03, 2019 at 11:08:24PM +1030, Andrew Jeffery wrote:
+> The currently interrupts are configured after the channel was enabled.
 
-Unfortunately not (tested on top of todays git):
+How about:
 
-[    0.000000] Linux version 5.4.0-11180-g76bb8b05960c-dirty (mroos@d600) (gcc version 9.2.1 20191109 (Debian 9.2.1-19)) #20 Tue Dec 3 15:14:51 EET 2019
-[...]
-[    8.774201] ================================================================================
-[    8.774256] UBSAN: Undefined behaviour in arch/x86/events/intel/p6.c:116:29
-[    8.774297] index 8 is out of range for type 'u64 [8]'
-[    8.774341] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-11180-g76bb8b05960c-dirty #20
-[    8.774345] Hardware name: Dell Computer Corporation Latitude D600                   /0X2034, BIOS A16 06/29/2005
-[    8.774349] Call Trace:
-[    8.774368]  dump_stack+0x16/0x19
-[    8.774377]  ubsan_epilogue+0xb/0x29
-[    8.774384]  __ubsan_handle_out_of_bounds.cold+0x43/0x48
-[    8.774396]  ? sysfs_add_file_mode_ns+0xad/0x180
-[    8.774406]  p6_pmu_event_map+0x3b/0x50
-[    8.774413]  is_visible+0x25/0x30
-[    8.774419]  ? collect_events+0x150/0x150
-[    8.774425]  internal_create_group+0xd8/0x3e0
-[    8.774431]  ? collect_events+0x150/0x150
-[    8.774438]  internal_create_groups.part.0+0x34/0x80
-[    8.774444]  sysfs_create_groups+0x10/0x20
-[    8.774454]  device_add+0x62a/0x710
-[    8.774463]  ? kvasprintf_const+0x59/0x90
-[    8.774471]  ? kfree_const+0xf/0x30
-[    8.774479]  ? kobject_set_name_vargs+0x6a/0xa0
-[    8.774489]  pmu_dev_alloc+0x8e/0xe0
-[    8.774497]  perf_event_sysfs_init+0x40/0x78
-[    8.774503]  ? stack_map_init+0x17/0x17
-[    8.774508]  do_one_initcall+0x7a/0x1b3
-[    8.774519]  ? do_early_param+0x75/0x75
-[    8.774528]  kernel_init_freeable+0x1ae/0x230
-[    8.774537]  ? rest_init+0x6d/0x6d
-[    8.774544]  kernel_init+0x9/0xf3
-[    8.774550]  ? rest_init+0x6d/0x6d
-[    8.774556]  ret_from_fork+0x2e/0x38
-[    8.774562] ================================================================================
-[    8.774606] ================================================================================
-[    8.774649] UBSAN: Undefined behaviour in arch/x86/events/intel/p6.c:116:29
-[    8.774690] load of address (ptrval) with insufficient space
-[    8.774727] for an object of type 'const u64'
-[    8.774765] CPU: 0 PID: 1 Comm: swapper Not tainted 5.4.0-11180-g76bb8b05960c-dirty #20
-[    8.774768] Hardware name: Dell Computer Corporation Latitude D600                   /0X2034, BIOS A16 06/29/2005
-[    8.774771] Call Trace:
-[    8.774777]  dump_stack+0x16/0x19
-[    8.774783]  ubsan_epilogue+0xb/0x29
-[    8.774789]  ubsan_type_mismatch_common.cold+0xd6/0xdb
-[    8.774797]  __ubsan_handle_type_mismatch_v1+0x2d/0x40
-[    8.774804]  p6_pmu_event_map+0x4b/0x50
-[    8.774809]  is_visible+0x25/0x30
-[    8.774815]  ? collect_events+0x150/0x150
-[    8.774820]  internal_create_group+0xd8/0x3e0
-[    8.774826]  ? collect_events+0x150/0x150
-[    8.774833]  internal_create_groups.part.0+0x34/0x80
-[    8.774839]  sysfs_create_groups+0x10/0x20
-[    8.774846]  device_add+0x62a/0x710
-[    8.774854]  ? kvasprintf_const+0x59/0x90
-[    8.774859]  ? kfree_const+0xf/0x30
-[    8.774865]  ? kobject_set_name_vargs+0x6a/0xa0
-[    8.774873]  pmu_dev_alloc+0x8e/0xe0
-[    8.774879]  perf_event_sysfs_init+0x40/0x78
-[    8.774884]  ? stack_map_init+0x17/0x17
-[    8.774890]  do_one_initcall+0x7a/0x1b3
-[    8.774897]  ? do_early_param+0x75/0x75
-[    8.774906]  kernel_init_freeable+0x1ae/0x230
-[    8.774913]  ? rest_init+0x6d/0x6d
-[    8.774920]  kernel_init+0x9/0xf3
-[    8.774926]  ? rest_init+0x6d/0x6d
-[    8.774932]  ret_from_fork+0x2e/0x38
-[    8.774937] ================================================================================
+The interrupts were configured after the channel was enabled, configure
+them before so they will work.
 
+-corey
+
+> 
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+> ---
+>  drivers/char/ipmi/kcs_bmc_aspeed.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c b/drivers/char/ipmi/kcs_bmc_aspeed.c
+> index 3c955946e647..e3dd09022589 100644
+> --- a/drivers/char/ipmi/kcs_bmc_aspeed.c
+> +++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
+> @@ -268,13 +268,14 @@ static int aspeed_kcs_probe(struct platform_device *pdev)
+>  	kcs_bmc->io_inputb = aspeed_kcs_inb;
+>  	kcs_bmc->io_outputb = aspeed_kcs_outb;
+>  
+> +	rc = aspeed_kcs_config_irq(kcs_bmc, pdev);
+> +	if (rc)
+> +		return rc;
+> +
+>  	dev_set_drvdata(dev, kcs_bmc);
+>  
+>  	aspeed_kcs_set_address(kcs_bmc, addr);
+>  	aspeed_kcs_enable_channel(kcs_bmc, true);
+> -	rc = aspeed_kcs_config_irq(kcs_bmc, pdev);
+> -	if (rc)
+> -		return rc;
+>  
+>  	rc = misc_register(&kcs_bmc->miscdev);
+>  	if (rc) {
+> -- 
+> git-series 0.9.1
