@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCCB111D1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:51:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3347111D25
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:51:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbfLCWu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:50:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41990 "EHLO mail.kernel.org"
+        id S1729783AbfLCWui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:50:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbfLCWuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:50:24 -0500
+        id S1729767AbfLCWub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:50:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9315B2080F;
-        Tue,  3 Dec 2019 22:50:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA5AD2084B;
+        Tue,  3 Dec 2019 22:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413424;
-        bh=n7bbc5CvXmVJKbMZHCqQRLTFZI8HbEAAyJkp28oPY4A=;
+        s=default; t=1575413431;
+        bh=9mvyKiStdqWHIi9NvCE4eDL7Uh0tn5Xgra9f21+o9Z4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H/3pqlkM8xWaNe4xe5bMqRfrOsCXdZOhWR9M/vOYHhKkC6KDpqjzkTy+dAsF2E+Ty
-         3HHr89GuOpB8t+fZciKWO99Q7NMLyzvnTRjH1h3rR6gPcNpE5F11WZ3g7cbyUPfNiX
-         3pCjqLe2CHLGDk13VuDYwFrrgkoX+lA5ZIuReV68=
+        b=ikTEjOwBTv1O0FMwOEvq/I962W0wRcnxicmnPotWj7SsA5PGHVSx+96DxMlQur9P2
+         j/2+vF3oAjvmViFcb4GhDnhf/9repUhAbxEc3y2uaB4MG/oqep36VMRSg04KeL2cqR
+         mGjpOmeXx5bH5nC3yDyMZaIp5rEAJNB9u/VlLEwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/321] btrfs: only track ref_heads in delayed_ref_updates
-Date:   Tue,  3 Dec 2019 23:33:07 +0100
-Message-Id: <20191203223433.451314810@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 123/321] HID: intel-ish-hid: fixes incorrect error handling
+Date:   Tue,  3 Dec 2019 23:33:09 +0100
+Message-Id: <20191203223433.553853504@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,49 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 158ffa364bf723fa1ef128060646d23dc3942994 ]
+[ Upstream commit 6e0856d317440a950b17c00a9283114f025e5699 ]
 
-We use this number to figure out how many delayed refs to run, but
-__btrfs_run_delayed_refs really only checks every time we need a new
-delayed ref head, so we always run at least one ref head completely no
-matter what the number of items on it.  Fix the accounting to only be
-adjusted when we add/remove a ref head.
+The memory chunk allocated by hid_allocate_device() should be released
+by hid_destroy_device(), not kfree().
 
-In addition to using this number to limit the number of delayed refs
-run, a future patch is also going to use it to calculate the amount of
-space required for delayed refs space reservation.
-
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 0b28cb4bcb1("HID: intel-ish-hid: ISH HID client driver")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/delayed-ref.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/hid/intel-ish-hid/ishtp-hid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index 62ff545ba1f71..7e5c81e80e15d 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -234,8 +234,6 @@ static inline void drop_delayed_ref(struct btrfs_trans_handle *trans,
- 	ref->in_tree = 0;
- 	btrfs_put_delayed_ref(ref);
- 	atomic_dec(&delayed_refs->num_entries);
--	if (trans->delayed_ref_updates)
--		trans->delayed_ref_updates--;
+diff --git a/drivers/hid/intel-ish-hid/ishtp-hid.c b/drivers/hid/intel-ish-hid/ishtp-hid.c
+index cd23903ddcf19..e918d78e541c0 100644
+--- a/drivers/hid/intel-ish-hid/ishtp-hid.c
++++ b/drivers/hid/intel-ish-hid/ishtp-hid.c
+@@ -222,7 +222,7 @@ int ishtp_hid_probe(unsigned int cur_hid_dev,
+ err_hid_device:
+ 	kfree(hid_data);
+ err_hid_data:
+-	kfree(hid);
++	hid_destroy_device(hid);
+ 	return rv;
  }
  
- static bool merge_ref(struct btrfs_trans_handle *trans,
-@@ -446,7 +444,6 @@ inserted:
- 	if (ref->action == BTRFS_ADD_DELAYED_REF)
- 		list_add_tail(&ref->add_list, &href->ref_add_list);
- 	atomic_inc(&root->num_entries);
--	trans->delayed_ref_updates++;
- 	spin_unlock(&href->lock);
- 	return ret;
- }
 -- 
 2.20.1
 
