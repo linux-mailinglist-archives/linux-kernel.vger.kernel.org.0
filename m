@@ -2,258 +2,445 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19118111ECE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB50111E69
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:02:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730356AbfLCXEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:04:43 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43228 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729883AbfLCWv0 (ORCPT
+        id S1730618AbfLCXB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:01:57 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36798 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfLCXBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:51:26 -0500
-Received: by mail-ot1-f67.google.com with SMTP id p8so4508077oth.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:51:26 -0800 (PST)
+        Tue, 3 Dec 2019 18:01:55 -0500
+Received: by mail-qk1-f195.google.com with SMTP id v19so5295679qkv.3;
+        Tue, 03 Dec 2019 15:01:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DQKFloBE3kmB2Ds1+BFIYLCl9sGC745Q8gW9p6gxpS8=;
-        b=ZyXhg23zZbVM1HXJmU0YnEj7pGzpVTP0LjdaORmCC/z+Vs556N9r4E4Ums+6ExfOmn
-         yuIXtVrP38nk7Ou1oGaRe0DIhaAh2OD1T+gegg1XRRdYUN7pprRk8bpq3QcfkyLeMcBG
-         BldnfvppBcBAsjQA/iDxAg+8AadpfCmzg9kB2eje8z2Y8SgY78fgZJw7ddhgjqVOKt4W
-         RZ9uf5bed1fQEh9DgTjee0agzBgyynd905JMx2tKIC4tM7yRkJ/jaGjrLPINPG/A73Ib
-         eDMPPmLzZGPple6fmFgjtf7l+z8y8NdCbiIagMYU3pOQUnu0a2v7RPTzdANEKCMlnQCU
-         OL1Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IaS4SvPI45yDASGgPA0MR5GDu2HWprEyugIRxy5AF38=;
+        b=qjP40ZxuCI9m1ulzXL/fHYbGLjHv6+X25t0ccAAG/XiUTsLj5iBmy8jO/1K2uYYASE
+         NbbwW/8Evj/rh4Dak1171y2MwXTnzS4n7Nw5rEeptPGWLbzsur2Bu1uRO9g19FvH8MHS
+         K8hcyzq0ywh9ftODRMKnD+klZbiSyFmEnU4RI7EUoOQqZ9E640E4+u3idyVjsv9E+WPh
+         AQAzF4esaSID0uT1XpaPd+hq4XgfAOD7TgLF8RptHzh6rLmesjwaaWntp4UBKS/gqOc8
+         rTSRHkaCOC0xiscUem2JX/INxSJhMx6gNvDOtAWXYsLDCyj6LNE1RK1OqDCO1B9sTJWk
+         5KVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DQKFloBE3kmB2Ds1+BFIYLCl9sGC745Q8gW9p6gxpS8=;
-        b=rDhxl0TIu9y0Khp6CFtZyZjD5G14+ifHz2AdH4M4BaNjfVDwnY/hWdn4An66q7LAtJ
-         tyxqLKypBqPQw2v5SnaQdVurw8J5fAmU32CqBxG+QoBDmb0r7fq0zYTlEm8I3ZNCq76L
-         oXqCZcZM/6w34RpJHV402hg/lPOqOpsTIHrt+YyPqR3XhIPVbdnqXWgIZvLfC9XDlP9x
-         j4PgHLtd+JRcybU3J0jVF5AyFN1XRdPxWpuzqCnhobd9FwWQeWQ4beR97ifbOJJNkUCj
-         EPtXI2amiuL1APxoz968zS568kna8QoAiJ2iDymIe6Cxzc56cP7nlhIW12T7iIaZd8xN
-         fr8g==
-X-Gm-Message-State: APjAAAWz13dPv4/Z5918+sh+/l9R2zW6SyzNfcJkSIiuaZIvSHZcS8uC
-        VAtVcqY6J1vtzbygydrd2xwiQSYXkB36YBQTHlhKgg==
-X-Google-Smtp-Source: APXvYqygaOLyxv+jgF4qCBp1j1QUOYPbX7QxetsewfOVPpzqg+JELY4RcMDfTgGPhcjbfCA4vPk6d3RO012a+GJu8oc=
-X-Received: by 2002:a9d:5d1a:: with SMTP id b26mr209203oti.139.1575413485445;
- Tue, 03 Dec 2019 14:51:25 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IaS4SvPI45yDASGgPA0MR5GDu2HWprEyugIRxy5AF38=;
+        b=QQtUBlgKErh9fuTn0CkHlP9M36syBzyg1uh6fbdiKzuUpmLoSEKtad5os+15OeBPvk
+         5f9yyJh88ExdZ3Fzb557C1HDxhA9mzZ5GpGjFnNegGHHcsidNrVtbr9yXo1ESf6jRrhz
+         oKtrXzOiMiBeUhDh6G4i8kR0djE+aXohXXyfhWDihKDw7MpTISzVLg1wQ4HBFBynliO/
+         4XxYwBd8Ypqht8ziSIsmKe4JEX4PcDWpO+lBGnbl4qv5bFvmOFm20V5PUOccx1lK2rZh
+         xm0jn61/QDLgd7c+MRj0bK5d3eEZX69a0r/4DXEUj9aRdaGpJdPvCNBcTogFllNAWfzJ
+         +zXw==
+X-Gm-Message-State: APjAAAVkbkWQcgcKbzHYQOfc8B4ZiH69r+8mksQLHt3ADGPULpkJnLFm
+        2QnncUSW+A7BIyq/VW2m/MGDnJXTICU=
+X-Google-Smtp-Source: APXvYqw6Pu42SYpEy5f/QIzsMqUBAlc+pGf0foS+jrFc6soi8NPAhx6krK6RC60VteP2CI+bG4dMaw==
+X-Received: by 2002:a37:6694:: with SMTP id a142mr7873822qkc.274.1575414114088;
+        Tue, 03 Dec 2019 15:01:54 -0800 (PST)
+Received: from localhost.localdomain ([187.74.34.131])
+        by smtp.gmail.com with ESMTPSA id s127sm2595244qkc.44.2019.12.03.15.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 15:01:52 -0800 (PST)
+From:   =?UTF-8?q?Lucas=20A=2E=20M=2E=20Magalh=C3=A3es?= 
+        <lucmaga@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        helen.koike@collabora.com, edusbarretto@gmail.com,
+        lkcamp@lists.libreplanetbr.org,
+        "Lucas A . M . Magalhaes" <lucmaga@gmail.com>
+Subject: [PATCH v3 RESEND] media: vimc: fla: Add virtual flash subdevice
+Date:   Tue,  3 Dec 2019 20:01:48 -0300
+Message-Id: <20191203230148.2442-1-lucmaga@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20191201150015.GC18573@shao2-debian> <CAGETcx9r0u=-WSnQ2ZS1KmZSVQqKwvpnhO-w41=jk8iF6BdALA@mail.gmail.com>
- <7e13b7f9-6c0f-0ab5-a6f9-5fb9b41257c9@gmail.com> <CAGETcx_PeYi-j+=0QOQR9c=_4n4becziS8WKKi77bXuNY1hufQ@mail.gmail.com>
- <CAL_JsqKBuCfCvFwbUQwTQxYAR1WL5r5Mnm_RBhHgH0b7_Bkg6w@mail.gmail.com>
-In-Reply-To: <CAL_JsqKBuCfCvFwbUQwTQxYAR1WL5r5Mnm_RBhHgH0b7_Bkg6w@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 3 Dec 2019 14:50:49 -0800
-Message-ID: <CAGETcx9-TZfARQgc7N4=kp1WVvMuxpmw3n3-TmwYO1YNkQKmRw@mail.gmail.com>
-Subject: Re: 5e6669387e ("of/platform: Pause/resume sync state during init
- .."): [ 3.192726] WARNING: CPU: 1 PID: 1 at drivers/base/core.c:688 device_links_supplier_sync_state_resume
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        LKP <lkp@lists.01.org>, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 1:10 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Tue, Dec 3, 2019 at 2:05 PM Saravana Kannan <saravanak@google.com> wrote:
-> >
-> > On Tue, Dec 3, 2019 at 1:01 AM Frank Rowand <frowand.list@gmail.com> wrote:
-> > >
-> > > On 12/2/19 3:19 PM, Saravana Kannan wrote:
-> > > > On Sun, Dec 1, 2019 at 7:00 AM kernel test robot <lkp@intel.com> wrote:
-> > > >>
-> > > >> Greetings,
-> > > >>
-> > > >> 0day kernel testing robot got the below dmesg and the first bad commit is
-> > > >>
-> > > >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > > >>
-> > > >> commit 5e6669387e2287f25f09fd0abd279dae104cfa7e
-> > > >> Author:     Saravana Kannan <saravanak@google.com>
-> > > >> AuthorDate: Wed Sep 4 14:11:24 2019 -0700
-> > > >> Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > >> CommitDate: Fri Oct 4 17:30:19 2019 +0200
-> > > >>
-> > > >>     of/platform: Pause/resume sync state during init and of_platform_populate()
-> > > >>
-> > > >>     When all the top level devices are populated from DT during kernel
-> > > >>     init, the supplier devices could be added and probed before the
-> > > >>     consumer devices are added and linked to the suppliers. To avoid the
-> > > >>     sync_state() callback from being called prematurely, pause the
-> > > >>     sync_state() callbacks before populating the devices and resume them
-> > > >>     at late_initcall_sync().
-> > > >>
-> > > >>     Similarly, when children devices are populated from a module using
-> > > >>     of_platform_populate(), there could be supplier-consumer dependencies
-> > > >>     between the children devices that are populated. To avoid the same
-> > > >>     problem with sync_state() being called prematurely, pause and resume
-> > > >>     sync_state() callbacks across of_platform_populate().
-> > > >>
-> > > >>     Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > >>     Link: https://lore.kernel.org/r/20190904211126.47518-6-saravanak@google.com
-> > > >>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > >>
-> > > >> fc5a251d0f  driver core: Add sync_state driver/bus callback
-> > > >> 5e6669387e  of/platform: Pause/resume sync state during init and of_platform_populate()
-> > > >> 81b6b96475  Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux; tag 'dma-mapping-5.5' of git://git.infradead.org/users/hch/dma-mapping
-> > > >> +-------------------------------------------------------------------------+------------+------------+------------+
-> > > >> |                                                                         | fc5a251d0f | 5e6669387e | 81b6b96475 |
-> > > >> +-------------------------------------------------------------------------+------------+------------+------------+
-> > > >> | boot_successes                                                          | 30         | 0          | 0          |
-> > > >> | boot_failures                                                           | 1          | 11         | 22         |
-> > > >> | Oops:#[##]                                                              | 1          |            |            |
-> > > >> | EIP:unmap_vmas                                                          | 1          |            |            |
-> > > >> | PANIC:double_fault                                                      | 1          |            |            |
-> > > >> | Kernel_panic-not_syncing:Fatal_exception                                | 1          |            |            |
-> > > >> | WARNING:at_drivers/base/core.c:#device_links_supplier_sync_state_resume | 0          | 11         | 22         |
-> > > >> | EIP:device_links_supplier_sync_state_resume                             | 0          | 11         | 22         |
-> > > >> +-------------------------------------------------------------------------+------------+------------+------------+
-> > > >>
-> > > >> If you fix the issue, kindly add following tag
-> > > >> Reported-by: kernel test robot <lkp@intel.com>
-> > > >>
-> > > >> [    3.186107] OF: /testcase-data/phandle-tests/consumer-b: #phandle-cells = 2 found -1
-> > > >> [    3.188595] platform testcase-data:testcase-device2: IRQ index 0 not found
-> > > >> [    3.191047] ### dt-test ### end of unittest - 199 passed, 0 failed
-> > > >> [    3.191932] ------------[ cut here ]------------
-> > > >> [    3.192571] Unmatched sync_state pause/resume!
-> > > >> [    3.192726] WARNING: CPU: 1 PID: 1 at drivers/base/core.c:688 device_links_supplier_sync_state_resume+0x27/0xc0
-> > > >> [    3.195084] Modules linked in:
-> > > >> [    3.195494] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G                T 5.4.0-rc1-00005-g5e6669387e228 #1
-> > > >> [    3.196674] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> > > >> [    3.197693] EIP: device_links_supplier_sync_state_resume+0x27/0xc0
-> > > >> [    3.198680] Code: 00 00 00 3e 8d 74 26 00 57 56 31 d2 53 b8 a0 d0 d9 c1 e8 6c b6 38 00 a1 e4 d0 d9 c1 85 c0 75 13 68 84 ba c4 c1 e8 29 30 b1 ff <0f> 0b 58 eb 7f 8d 74 26 00 83 e8 01 85 c0 a3 e4 d0 d9 c1 75 6f 8b
-> > > >> [    3.201560] EAX: 00000022 EBX: 00000000 ECX: 00000000 EDX: 00000000
-> > > >> [    3.202466] ESI: 000001ab EDI: c02c7f80 EBP: c1e87d27 ESP: c02c7f20
-> > > >> [    3.203301] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010282
-> > > >> [    3.204258] CR0: 80050033 CR2: bfa1bf98 CR3: 01f28000 CR4: 00140690
-> > > >> [    3.205022] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-> > > >> [    3.205919] DR6: fffe0ff0 DR7: 00000400
-> > > >> [    3.206529] Call Trace:
-> > > >> [    3.207011]  ? of_platform_sync_state_init+0x13/0x16
-> > > >> [    3.207719]  ? do_one_initcall+0xda/0x260
-> > > >> [    3.208247]  ? kernel_init_freeable+0x110/0x197
-> > > >> [    3.208906]  ? rest_init+0x120/0x120
-> > > >> [    3.209369]  ? kernel_init+0xa/0x100
-> > > >> [    3.209775]  ? ret_from_fork+0x19/0x24
-> > > >> [    3.210283] ---[ end trace 81d0f2d2ee65199b ]---
-> > > >> [    3.210955] ALSA device list:
-> > > >
-> > > > Rob/Frank,
-> > > >
-> > > > This seems to be an issue with the unit test code not properly
-> > > > cleaning up the state after it's done.
-> > > >
-> > > > Specifically, unittest_data_add() setting up of_root on systems where
-> > > > there's no device tree (of_root == NULL). It doesn't clean up of_root
-> > > > after the tests are done. This affects the of_have_populated_dt() API
-> > > > that in turn affects calls to
-> > > > device_links_supplier_sync_state_pause/resume(). I think unittests
-> > > > shouldn't affect the of_have_populated_dt() API.
-> > > There are at least a couple of reasons why the unittest devicetree data
-> > > needs to remain after the point where devicetree unittests currently
-> > > complete.  So cleaning up (removing the data) is not an option.
-> > >
-> > > I depend on the unittest devicetree entries still existing after the system
-> > > boots and I can log into a shell for some validation of the final result of
-> > > the devicetree data.
-> >
-> > IMHO unittests shouldn't have a residual impact on the system after
-> > they are done. So, I'll agree to disagree on this one.
->
-> They shouldn't be enabled in a production system either. Why would you
-> want the extra boot time?
+From: Lucas A. M. Magalhaes <lucmaga@gmail.com>
 
-Should we ask the kernel test robot folks to not enable OF unittest
-then? It broke my patch, but I wouldn't be surprised if it's silently
-breaking other stuff too. I think we need to do option 4 below.
+Add a virtual subdevice to simulate the flash control API.
+Those are the supported controls:
+v4l2-ctl -d /dev/v4l-subdev6 -L
+Flash Controls
 
->
-> > > There is also a desire for the devicetree unittests to be able to be loaded
-> > > as a module.  That work is not yet scheduled, but I do not want to preclude
-> > > the possibility.  If unittests are loaded from a module then they will
-> > > need some devicetree data to exist that is created in early boot.  That
-> > > data will be in the devicetree when of_platform_sync_state_init() is
-> > > invoked.
-> >
-> > On a normal system, FDT is parsed and of_root is set (or not set) very
-> > early on during setup_arch() before any of the initcall levels are
-> > run. The return value of of_have_populated_dt() isn't expected to
-> > change across initcall levels. But because of the way the unittest is
-> > written (the of_root is changed at late_initcall() level) the return
-> > value of of_have_populated_dt() changes across initcall levels. I
-> > think that's a real problem with the unittest -- it's breaking API
-> > semantics.
->
-> I think what's really desired here is a 'Am I booting using DT' call.
+                       led_mode 0x009c0901 (menu)   : min=0 max=2 default=1 value=1
+                                0: Off
+                                1: Flash
+                                2: Torch
+                  strobe_source 0x009c0902 (menu)   : min=0 max=1 default=0 value=0
+                                0: Software
+                                1: External
+                         strobe 0x009c0903 (button) : flags=write-only, execute-on-write
+                    stop_strobe 0x009c0904 (button) : flags=write-only, execute-on-write
+                  strobe_status 0x009c0905 (bool)   : default=0 value=0 flags=read-only
+                 strobe_timeout 0x009c0906 (int)    : min=50 max=400 step=50 default=50 value=400
+           intensity_flash_mode 0x009c0907 (int)    : min=23040 max=1499600 step=11718 default=23040 value=23040
+           intensity_torch_mode 0x009c0908 (int)    : min=2530 max=187100 step=1460 default=2530 value=2530
+            intensity_indicator 0x009c0909 (int)    : min=0 max=255 step=1 default=0 value=0
+                         faults 0x009c090a (bitmask): max=0x00000002 default=0x00000000 value=0x00000000
 
-I think the community has decided to use of_have_populated_dt() as
-that call. So, we shouldn't break it.
+Co-authored-by: Eduardo Barretto <edusbarretto@gmail.com>
+Signed-off-by: Eduardo Barretto <edusbarretto@gmail.com>
+Signed-off-by: Lucas A. M. Magalhães <lucmaga@gmail.com>
 
->
-> > of_have_populated_dt() is being used to check if DT is present in the
-> > system and different things are done based on that. We can't have that
-> > value change across initcall levels.
-> >
-> > Couple of thoughts:
-> > 1. Don't run unit test if there is no live DT in the system?
->
-> That's pretty much the only case I do run. I use UML to run the tests.
+---
+Hi,
 
-Ah, makes sense.
+I've copied some values from another driver (lm3646) to make it more
+realistic, as suggested by Hans. All values except for
+V4L2_CID_FLASH_INDICATOR_INTENSITY, which I couldn't find any
+implementation.
 
-> > 2. If you don't want to do (1), then at least set up the unit test
-> > data during setup_arch() instead of doing it at some initcall level?
->
-> That further breaks making it a module. The plan is also to move to
-> kunit which probably will preclude some hacky hook into setup_arch().
-> Side effects may need to be fixed for kunit though.
+The v4l-compliance is failing. From the documentation
+V4L2_CID_FLASH_STROBE should just work if the
+V4L2_CID_FLASH_STROBE_SOURCE is "Software" and the
+V4L2_CID_FLASH_LED_MODE is "Flash", otherwise it should fail. With the
+standard values configured for the V4L2_CID_FLASH_STROBE will not fail.
+But during the tests v4l-compliance sets V4L2_CID_FLASH_LED_MODE to
+"Torch" and V4L2_CID_FLASH_STROBE_SOURCE to "External" which makes
+V4L2_CID_FLASH_STROBE to fail. How do I proceed? Should the
+v4l-compliance be changed?
 
-Yup.
+Changes in v3:
+	- Fix style errors
+	- Use more realistic numbers for the controllers
+	- Change from kthread to workqueue
+	- Change commit message for the new controllers values
 
-> > 3. Can you use overlays for the unit tests if they are loaded as a module?
->
-> That was the idea, yes.
->
->
-> 4. Make running the unittests a command line option instead of running
-> if enabled. Still has side effects, but you have to explicitly run it.
+Changes in v2:
+	- Fix v4l2-complience errors
+	- Add V4L2_CID_FLASH_STROBE_STATUS behavior
+	- Add V4L2_CID_FLASH_STROBE restrictions
+	- Remove vimc_fla_g_volatile_ctrl
+	- Remove unnecessarie V4L2_CID_FLASH_CLASS
+	- Change varables names
 
-Hmm... this is another good option. I think this should be done. Do we
-have a consensus on this?
+ drivers/media/platform/vimc/Makefile      |   2 +-
+ drivers/media/platform/vimc/vimc-common.c |   2 +
+ drivers/media/platform/vimc/vimc-common.h |   4 +
+ drivers/media/platform/vimc/vimc-core.c   |   5 +
+ drivers/media/platform/vimc/vimc-flash.c  | 248 ++++++++++++++++++++++
+ 5 files changed, 260 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/media/platform/vimc/vimc-flash.c
 
-> A module would still be my preference. If only there was someone
-> interested in making everything a module... ;)
+diff --git a/drivers/media/platform/vimc/Makefile b/drivers/media/platform/vimc/Makefile
+index a53b2b532e9f..e759bbb04b14 100644
+--- a/drivers/media/platform/vimc/Makefile
++++ b/drivers/media/platform/vimc/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ vimc-y := vimc-core.o vimc-common.o vimc-streamer.o vimc-capture.o \
+-		vimc-debayer.o vimc-scaler.o vimc-sensor.o
++		vimc-debayer.o vimc-scaler.o vimc-sensor.o vimc-flash.o
+ 
+ obj-$(CONFIG_VIDEO_VIMC) += vimc.o
+ 
+diff --git a/drivers/media/platform/vimc/vimc-common.c b/drivers/media/platform/vimc/vimc-common.c
+index a3120f4f7a90..cb786de75573 100644
+--- a/drivers/media/platform/vimc/vimc-common.c
++++ b/drivers/media/platform/vimc/vimc-common.c
+@@ -203,6 +203,8 @@ struct media_pad *vimc_pads_init(u16 num_pads, const unsigned long *pads_flag)
+ 	struct media_pad *pads;
+ 	unsigned int i;
+ 
++	if (!num_pads)
++		return NULL;
+ 	/* Allocate memory for the pads */
+ 	pads = kcalloc(num_pads, sizeof(*pads), GFP_KERNEL);
+ 	if (!pads)
+diff --git a/drivers/media/platform/vimc/vimc-common.h b/drivers/media/platform/vimc/vimc-common.h
+index 698db7c07645..19815f0f4d40 100644
+--- a/drivers/media/platform/vimc/vimc-common.h
++++ b/drivers/media/platform/vimc/vimc-common.h
+@@ -169,6 +169,10 @@ struct vimc_ent_device *vimc_sen_add(struct vimc_device *vimc,
+ 				     const char *vcfg_name);
+ void vimc_sen_rm(struct vimc_device *vimc, struct vimc_ent_device *ved);
+ 
++struct vimc_ent_device *vimc_fla_add(struct vimc_device *vimc,
++				     const char *vcfg_name);
++void vimc_fla_rm(struct vimc_device *vimc, struct vimc_ent_device *ved);
++
+ /**
+  * vimc_pads_init - initialize pads
+  *
+diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
+index 6e3e5c91ae39..5f6c750d3d8d 100644
+--- a/drivers/media/platform/vimc/vimc-core.c
++++ b/drivers/media/platform/vimc/vimc-core.c
+@@ -91,6 +91,11 @@ static struct vimc_ent_config ent_config[] = {
+ 		.add = vimc_cap_add,
+ 		.rm = vimc_cap_rm,
+ 	},
++	{
++		.name = "Flash Controller",
++		.add = vimc_fla_add,
++		.rm = vimc_fla_rm,
++	}
+ };
+ 
+ static const struct vimc_ent_link ent_links[] = {
+diff --git a/drivers/media/platform/vimc/vimc-flash.c b/drivers/media/platform/vimc/vimc-flash.c
+new file mode 100644
+index 000000000000..3918beecec57
+--- /dev/null
++++ b/drivers/media/platform/vimc/vimc-flash.c
+@@ -0,0 +1,248 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * vimc-flash.c Virtual Media Controller Driver
++ *
++ * Copyright (C) 2019
++ * Contributors: Lucas A. M. Magalhães <lamm@lucmaga.dev>
++ *               Eduardo Barretto <edusbarretto@gmail.com>
++ *
++ */
++
++#include <linux/delay.h>
++#include <linux/workqueue.h>
++#include <linux/sched.h>
++#include <linux/vmalloc.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-event.h>
++#include <media/v4l2-subdev.h>
++
++#include "vimc-common.h"
++
++/*
++ * Flash timeout in ms
++ */
++#define VIMC_FLASH_TIMEOUT_MS_MIN 50
++#define VIMC_FLASH_TIMEOUT_MS_MAX 400
++#define VIMC_FLASH_TIMEOUT_MS_STEP 50
++
++/*
++ * Torch intencity in uA
++ */
++#define VIMC_FLASH_TORCH_UA_MIN 2530
++#define VIMC_FLASH_TORCH_UA_MAX 187100
++#define VIMC_FLASH_TORCH_UA_STEP 1460
++
++/*
++ * Flash intencity in uA
++ */
++#define VIMC_FLASH_FLASH_UA_MIN 23040
++#define VIMC_FLASH_FLASH_UA_MAX 1499600
++#define VIMC_FLASH_FLASH_UA_STEP 11718
++
++struct vimc_fla_device {
++	struct vimc_ent_device ved;
++	struct v4l2_subdev sd;
++	struct v4l2_ctrl_handler hdl;
++	int strobe_source;
++	bool is_strobe;
++	int led_mode;
++	int indicator_intensity;
++	int torch_intensity;
++	int flash_intensity;
++	u64 timeout;
++	u64 last_strobe;
++	struct workqueue_struct *wq;
++	struct work_struct work;
++	struct v4l2_ctrl *strobe_status_ctl;
++};
++
++static void vimc_fla_strobe_work(struct work_struct *work)
++{
++	struct vimc_fla_device *vfla =
++		container_of(work, struct vimc_fla_device, work);
++	v4l2_ctrl_s_ctrl(vfla->strobe_status_ctl, true);
++	vfla->last_strobe = ktime_get_ns();
++	while (vfla->is_strobe &&
++	       vfla->last_strobe + vfla->timeout > ktime_get_ns()) {
++		msleep_interruptible(VIMC_FLASH_TIMEOUT_MS_STEP);
++	}
++	v4l2_ctrl_s_ctrl(vfla->strobe_status_ctl, false);
++}
++
++static int vimc_fla_s_ctrl(struct v4l2_ctrl *c)
++{
++	struct vimc_fla_device *vfla =
++		container_of(c->handler, struct vimc_fla_device, hdl);
++
++	switch (c->id) {
++	case V4L2_CID_FLASH_LED_MODE:
++		vfla->led_mode = c->val;
++		return 0;
++	case V4L2_CID_FLASH_STROBE_SOURCE:
++		vfla->strobe_source = c->val;
++		return 0;
++	case V4L2_CID_FLASH_STROBE:
++		if (vfla->led_mode != V4L2_FLASH_LED_MODE_FLASH ||
++		    vfla->strobe_source != V4L2_FLASH_STROBE_SOURCE_SOFTWARE){
++			return -EINVAL;
++		}
++		queue_work(vfla->wq, &vfla->work);
++		return 0;
++	case V4L2_CID_FLASH_STROBE_STATUS:
++		vfla->is_strobe = c->val;
++		return 0;
++	case V4L2_CID_FLASH_STROBE_STOP:
++		vfla->is_strobe = false;
++		return 0;
++	case V4L2_CID_FLASH_TIMEOUT:
++		vfla->timeout = c->val * 1000000; /* MS to NS */
++		return 0;
++	case V4L2_CID_FLASH_INTENSITY:
++		vfla->flash_intensity = c->val;
++		return 0;
++	case V4L2_CID_FLASH_TORCH_INTENSITY:
++		vfla->torch_intensity = c->val;
++		return 0;
++	case V4L2_CID_FLASH_INDICATOR_INTENSITY:
++		vfla->indicator_intensity = c->val;
++		return 0;
++	default:
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static const struct v4l2_ctrl_ops vimc_fla_ctrl_ops = {
++	.s_ctrl = vimc_fla_s_ctrl,
++};
++
++static const struct v4l2_subdev_core_ops vimc_fla_core_ops = {
++	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
++	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
++};
++
++static const struct v4l2_subdev_ops vimc_fla_ops = {
++	.core = &vimc_fla_core_ops,
++};
++
++static void vimc_fla_release(struct v4l2_subdev *sd)
++{
++	struct vimc_fla_device *vfla =
++				container_of(sd, struct vimc_fla_device, sd);
++
++	v4l2_ctrl_handler_free(&vfla->hdl);
++	kfree(vfla);
++}
++
++static const struct v4l2_subdev_internal_ops vimc_fla_int_ops = {
++	.release = vimc_fla_release,
++};
++
++/* initialize device */
++struct vimc_ent_device *vimc_fla_add(struct vimc_device *vimc,
++				     const char *vcfg_name)
++{
++	struct v4l2_device *v4l2_dev = &vimc->v4l2_dev;
++	struct vimc_fla_device *vfla;
++	int ret;
++
++	/* Allocate the vfla struct */
++	vfla = kzalloc(sizeof(*vfla), GFP_KERNEL);
++	if (!vfla)
++		return NULL;
++
++	v4l2_ctrl_handler_init(&vfla->hdl, 4);
++	v4l2_ctrl_new_std_menu(&vfla->hdl, &vimc_fla_ctrl_ops,
++			       V4L2_CID_FLASH_LED_MODE,
++			       V4L2_FLASH_LED_MODE_TORCH, ~0x7,
++			       V4L2_FLASH_LED_MODE_FLASH);
++	v4l2_ctrl_new_std_menu(&vfla->hdl, &vimc_fla_ctrl_ops,
++			       V4L2_CID_FLASH_STROBE_SOURCE, 0x1, ~0x3,
++			       V4L2_FLASH_STROBE_SOURCE_SOFTWARE);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_STROBE, 0, 0, 0, 0);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_STROBE_STOP, 0, 0, 0, 0);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_TIMEOUT, VIMC_FLASH_TIMEOUT_MS_MIN,
++			  VIMC_FLASH_TIMEOUT_MS_MAX,
++			  VIMC_FLASH_TIMEOUT_MS_STEP,
++			  VIMC_FLASH_TIMEOUT_MS_MIN);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_TORCH_INTENSITY,
++			  VIMC_FLASH_TORCH_UA_MIN,
++			  VIMC_FLASH_TORCH_UA_MAX,
++			  VIMC_FLASH_TORCH_UA_STEP,
++			  VIMC_FLASH_TORCH_UA_MIN);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_INTENSITY,
++			  VIMC_FLASH_FLASH_UA_MIN,
++			  VIMC_FLASH_FLASH_UA_MAX,
++			  VIMC_FLASH_FLASH_UA_STEP,
++			  VIMC_FLASH_FLASH_UA_MIN);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_INDICATOR_INTENSITY,
++			  0,
++			  255,
++			  1,
++			  0);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_STROBE_STATUS, 0, 1, 1, 0);
++	v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
++			  V4L2_CID_FLASH_FAULT, 0,
++			  V4L2_FLASH_FAULT_TIMEOUT, 0, 0);
++	vfla->sd.ctrl_handler = &vfla->hdl;
++	if (vfla->hdl.error) {
++		ret = vfla->hdl.error;
++		goto err_free_vfla;
++	}
++	vfla->strobe_status_ctl = v4l2_ctrl_find(&vfla->hdl,
++						 V4L2_CID_FLASH_STROBE_STATUS);
++
++	/* Initialize ved and sd */
++	ret = vimc_ent_sd_register(&vfla->ved, &vfla->sd, v4l2_dev,
++				   vcfg_name,
++				   MEDIA_ENT_F_FLASH, 0, NULL,
++				   &vimc_fla_int_ops, &vimc_fla_ops);
++	if (ret)
++		goto err_free_hdl;
++
++	/* Create processing workqueue */
++	vfla->wq = alloc_workqueue("%s", 0, 0, "vimc-flash thread");
++	if (!vfla->wq)
++		goto err_unregister;
++
++	INIT_WORK(&vfla->work, vimc_fla_strobe_work);
++	/* Initialize standard values */
++	vfla->indicator_intensity = 0;
++	vfla->torch_intensity = 0;
++	vfla->flash_intensity = 0;
++	vfla->is_strobe = false;
++	vfla->timeout = 0;
++	vfla->last_strobe = 0;
++	vfla->strobe_source = V4L2_FLASH_STROBE_SOURCE_SOFTWARE;
++	vfla->led_mode = V4L2_FLASH_LED_MODE_FLASH;
++
++	return &vfla->ved;
++
++err_unregister:
++	vimc_ent_sd_unregister(&vfla->ved, &vfla->sd);
++err_free_hdl:
++	v4l2_ctrl_handler_free(&vfla->hdl);
++err_free_vfla:
++	kfree(vfla);
++
++	return NULL;
++}
++
++void vimc_fla_rm(struct vimc_device *vimc, struct vimc_ent_device *ved)
++{
++	struct vimc_fla_device *vfla;
++
++	if (!ved)
++		return;
++
++	vfla = container_of(ved, struct vimc_fla_device, ved);
++	destroy_workqueue(vfla->wq);
++	vimc_ent_sd_unregister(ved, &vfla->sd);
++}
+-- 
+2.23.0
 
-:)
-
-> > > > I was looking into writing a unittest patch to fix this, but I don't
-> > > > know enough about the FDT parsing code to make sure I don't leak any
-> > > > memory or free stuff that's in use. I'm not sure I can simply set
-> > > > of_root = NULL if it was NULL before the unittest started. Let me know
-> > > > how I should proceed or if you plan to write up a patch for this.
-> > >
-> > > Based on the above, "clean up" of the unittest data is not the solution.
-> > >
-> > > I haven't looked at the mechanism in device_links_supplier_sync_state_resume()
-> > > that leads to the WARN yet.  But is does not seem reasonable for that code
-> > > to be so sensitive to what valid data is in the devicetree that a WARN results.
-> >
-> > Sure, I could easily fix it to work around this. But this seems to be
-> > a genuine problem with the unittest setup IMO.
-
-I'll go ahead and do this (basically always doing it instead of
-checking on of_have_populated_dt()) but I don't want us to forget this
-unittest issue.
-
--Saravana
