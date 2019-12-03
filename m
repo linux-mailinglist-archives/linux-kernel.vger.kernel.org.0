@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 783F3111F0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F057E111F0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbfLCWsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:48:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38680 "EHLO mail.kernel.org"
+        id S1729529AbfLCXGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:06:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729403AbfLCWsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:48:09 -0500
+        id S1728187AbfLCWsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:48:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A39C20862;
-        Tue,  3 Dec 2019 22:48:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC31820656;
+        Tue,  3 Dec 2019 22:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413288;
-        bh=S/UYcjtquDy0CcPqAHpXYiJOsV3eqyYvXDEKlXM21iE=;
+        s=default; t=1575413305;
+        bh=cWK1kp03Or15lWIONAwKQIPs6G7BvNiBb99QgZGfv+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSy415VkfuohadFC920jKaPnYtWxyWld3RePokfg/YlkX/GegUFLr/G4lmW54bJvN
-         DQTUnD0ODyidTW+HVhKVqmsGR5PZU67WDcUjOEJz8gqJVhgsF5hKo6zXh20gVPhcz8
-         TzA9CVLy3xX54boJEkKpg7V1iSQlx5W0ZOPhpVwg=
+        b=v5eG8xQVh++RcJ5Jxwzuaq/0BG0YtQFdwcu7O52PpW2kCUlF4CfMi1KobdjYnEW4e
+         00Bnp67dLjRNPIy2dcEDgyn11DzOYHm4jPQS6VONtG4TUkHwTsudUBH8VXZS9VHBBK
+         pIBOeQNlYnGDAWJV2HCV/MNslb6Vi3ZHS44q1erI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Lijun Ou <oulijun@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/321] ARM: dts: Fix hsi gdd range for omap4
-Date:   Tue,  3 Dec 2019 23:32:16 +0100
-Message-Id: <20191203223430.807658504@linuxfoundation.org>
+Subject: [PATCH 4.19 076/321] RDMA/hns: Fix the bug while use multi-hop of pbl
+Date:   Tue,  3 Dec 2019 23:32:22 +0100
+Message-Id: <20191203223431.115229525@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -45,44 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Lijun Ou <oulijun@huawei.com>
 
-[ Upstream commit e9e685480b74aef3f3d0967dadb52eea3ff625d2 ]
+[ Upstream commit 4af07f01f7a787ba5158352b98c9e3cb74995a1c ]
 
-While reviewing the missing mcasp ranges I noticed omap4 hsi range
-for gdd is wrong so let's fix it.
+It will prevent multiply overflow when defines the pbl for u64 type.
 
-I'm not aware of any omap4 devices in mainline kernel though that use
-hsi though.
-
-Fixes: 84badc5ec5fc ("ARM: dts: omap4: Move l4 child devices to probe
-them with ti-sysc")
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Lijun Ou <oulijun@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap4-l4.dtsi | 4 ++--
+ drivers/infiniband/hw/hns/hns_roce_mr.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap4-l4.dtsi b/arch/arm/boot/dts/omap4-l4.dtsi
-index 6eb26b837446c..5059ecac44787 100644
---- a/arch/arm/boot/dts/omap4-l4.dtsi
-+++ b/arch/arm/boot/dts/omap4-l4.dtsi
-@@ -196,12 +196,12 @@
- 			clock-names = "fck";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			ranges = <0x0 0x58000 0x4000>;
-+			ranges = <0x0 0x58000 0x5000>;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_mr.c b/drivers/infiniband/hw/hns/hns_roce_mr.c
+index 41a538d23b802..c68596d4e8037 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_mr.c
++++ b/drivers/infiniband/hw/hns/hns_roce_mr.c
+@@ -1017,14 +1017,14 @@ struct ib_mr *hns_roce_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
+ 			goto err_umem;
+ 		}
+ 	} else {
+-		int pbl_size = 1;
++		u64 pbl_size = 1;
  
- 			hsi: hsi@0 {
- 				compatible = "ti,omap4-hsi";
- 				reg = <0x0 0x4000>,
--				      <0x4a05c000 0x1000>;
-+				      <0x5000 0x1000>;
- 				reg-names = "sys", "gdd";
- 
- 				clocks = <&l3_init_clkctrl OMAP4_HSI_CLKCTRL 0>;
+ 		bt_size = (1 << (hr_dev->caps.pbl_ba_pg_sz + PAGE_SHIFT)) / 8;
+ 		for (i = 0; i < hr_dev->caps.pbl_hop_num; i++)
+ 			pbl_size *= bt_size;
+ 		if (n > pbl_size) {
+ 			dev_err(dev,
+-			    " MR len %lld err. MR page num is limited to %d!\n",
++			    " MR len %lld err. MR page num is limited to %lld!\n",
+ 			    length, pbl_size);
+ 			ret = -EINVAL;
+ 			goto err_umem;
 -- 
 2.20.1
 
