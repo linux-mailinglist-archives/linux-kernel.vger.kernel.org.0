@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CCF7110234
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59C8511023C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:27:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfLCQ07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:26:59 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:40810 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfLCQ0u (ORCPT
+        id S1727289AbfLCQ1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:27:14 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40514 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727015AbfLCQ0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Dec 2019 11:26:50 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id ZUSm2100W5USYZQ06USmq9; Tue, 03 Dec 2019 17:26:47 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id ZUSm2100W5USYZQ01USmYT; Tue, 03 Dec 2019 17:26:47 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1icB0g-0007fc-I3; Tue, 03 Dec 2019 17:26:46 +0100
+        id 1icB0g-0007fe-IU; Tue, 03 Dec 2019 17:26:46 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1icB0g-0005Cf-Go; Tue, 03 Dec 2019 17:26:46 +0100
+        id 1icB0g-0005Ch-HR; Tue, 03 Dec 2019 17:26:46 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>
@@ -29,9 +29,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Guenter Roeck <linux@roeck-us.net>, linux-sh@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/7] sh: kernel: disassemble: Fix broken lines in disassembly dumps
-Date:   Tue,  3 Dec 2019 17:26:39 +0100
-Message-Id: <20191203162645.19950-2-geert+renesas@glider.be>
+Subject: [PATCH 2/7] sh: dump_stack: Fix broken lines and ptrval in calltrace dumps
+Date:   Tue,  3 Dec 2019 17:26:40 +0100
+Message-Id: <20191203162645.19950-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191203162645.19950-1-geert+renesas@glider.be>
 References: <20191203162645.19950-1-geert+renesas@glider.be>
@@ -40,318 +40,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rejoin the broken lines by using pr_cont().
+Rejoin the broken lines by using pr_cont(), and use "%px" to print
+sensible addresses.
 Convert the remaining printk() calls to pr_*() while at it.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Sample impact:
 
- Code:
--  8c043d00:
--bf.s
--8c043d08
+-Stack: (0x8e8b1d58 to 0x8e8b2000)
+-1d40:
 -
--  8c043d02:
--tst
--r2
--,
--r2
 -
--  8c043d04:
--bf
--8c043d08
 -
--->8c043d06:
--trapa
--#62
 -
--  8c043d08:
--mov.l
--8c043d78 <dma_alloc_attrs+0xa4/0xb0>
--,
--r0
--  ! 8c044d14 <dma_alloc_from_dev_coherent+0x0/0x38>
 -
--  8c043d0a:
--mov
--r15
--,
--r7
 -
--  8c043d0c:
--mov
--r13
--,
--r6
+-8c09a2b4
+-8fb51b40
 -
--  8c043d0e:
--add
--#4
--,
--r7
+-1d60:
+-8fbf400c
+-00000000
+-8c09a7da
+-00000122
+-8fbf4010
+-00000001
+-00000002
+-8fbf4000
 -
--  8c043d10:
--mov
--r11
--,
--r5
--
-+  8c043cf4:  bf.s      8c043cfc
-+  8c043cf6:  tst       r2, r2
-+  8c043cf8:  bf        8c043cfc
-+->8c043cfa:  trapa     #62
-+  8c043cfc:  mov.l     8c043d6c <dma_alloc_attrs+0xa4/0xb0>, r0  ! 8c044d08 <dma_alloc_from_dev_coherent+0x0/0x38>
-+  8c043cfe:  mov       r15, r7
-+  8c043d00:  mov       r13, r6
-+  8c043d02:  add       #4, r7
-+  8c043d04:  mov       r11, r5
----
- arch/sh/kernel/disassemble.c | 103 ++++++++++++++++++-----------------
- 1 file changed, 52 insertions(+), 51 deletions(-)
+-1d80:
+-00000002
+-8fbf400c
+-0030f231
+-00000100
+-8e8b1db0
+-00000000
+-8e8b1dac
+-8c2b64b4
++Stack: (0x8eeabc80 to 0x8eeac000)
++bc80: 8c09a2a8 8fb5cce0 8fbf400c 00000000 8c09a7ce 00000122 8fbf4010 00000002
++bca0: 00000001 8fbf4000 00000001 8fbf400c 0030f231 00000100 8eeabcd8 00000000
++bcc0: 00001000 8c2b64b4 00460000 00000004 232d0f3f 8c21b788 8fb075a4 8fb50e44
 
-diff --git a/arch/sh/kernel/disassemble.c b/arch/sh/kernel/disassemble.c
-index 845543780cc55014..08e1af63edd9623c 100644
---- a/arch/sh/kernel/disassemble.c
-+++ b/arch/sh/kernel/disassemble.c
-@@ -376,148 +376,148 @@ static void print_sh_insn(u32 memaddr, u16 insn)
- 		}
+ [...]
+
+ Call trace:
+- [<(ptrval)>] free_pcppages_bulk+0x106/0x348
+- [<(ptrval)>] __get_free_pages+0xe/0x54
+- [<(ptrval)>] free_unref_page_list+0xca/0x12c
+- [<(ptrval)>] arch_local_irq_restore+0x0/0x24
+- [<(ptrval)>] free_unref_page_commit.isra.141+0x0/0x74
++ [<8c09a7ce>] free_pcppages_bulk+0x106/0x348
++ [<8c21b788>] _cond_resched+0x38/0x54
++ [<8c09bb5a>] free_unref_page_list+0xca/0x12c
++ [<8c002808>] arch_local_irq_restore+0x0/0x24
++ [<8c09aaf8>] free_unref_page_commit.isra.141+0x0/0x74
+---
+ arch/sh/kernel/dumpstack.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/sh/kernel/dumpstack.c b/arch/sh/kernel/dumpstack.c
+index 9f1c9c11d62df46a..6009281f83442ae3 100644
+--- a/arch/sh/kernel/dumpstack.c
++++ b/arch/sh/kernel/dumpstack.c
+@@ -21,32 +21,32 @@ void dump_mem(const char *str, unsigned long bottom, unsigned long top)
+ 	unsigned long p;
+ 	int i;
  
- 	ok:
--		printk("%-8s  ", op->name);
-+		pr_cont("%-8s  ", op->name);
- 		lastsp = (op->arg[0] == A_END);
- 		disp_pc = 0;
- 		for (n = 0; n < 6 && op->arg[n] != A_END; n++) {
- 			if (n && op->arg[1] != A_END)
--				printk(", ");
-+				pr_cont(", ");
- 			switch (op->arg[n]) {
- 			case A_IMM:
--				printk("#%d", (char)(imm));
-+				pr_cont("#%d", (char)(imm));
- 				break;
- 			case A_R0:
--				printk("r0");
-+				pr_cont("r0");
- 				break;
- 			case A_REG_N:
--				printk("r%d", rn);
-+				pr_cont("r%d", rn);
- 				break;
- 			case A_INC_N:
--				printk("@r%d+", rn);
-+				pr_cont("@r%d+", rn);
- 				break;
- 			case A_DEC_N:
--				printk("@-r%d", rn);
-+				pr_cont("@-r%d", rn);
- 				break;
- 			case A_IND_N:
--				printk("@r%d", rn);
-+				pr_cont("@r%d", rn);
- 				break;
- 			case A_DISP_REG_N:
--				printk("@(%d,r%d)", imm, rn);
-+				pr_cont("@(%d,r%d)", imm, rn);
- 				break;
- 			case A_REG_M:
--				printk("r%d", rm);
-+				pr_cont("r%d", rm);
- 				break;
- 			case A_INC_M:
--				printk("@r%d+", rm);
-+				pr_cont("@r%d+", rm);
- 				break;
- 			case A_DEC_M:
--				printk("@-r%d", rm);
-+				pr_cont("@-r%d", rm);
- 				break;
- 			case A_IND_M:
--				printk("@r%d", rm);
-+				pr_cont("@r%d", rm);
- 				break;
- 			case A_DISP_REG_M:
--				printk("@(%d,r%d)", imm, rm);
-+				pr_cont("@(%d,r%d)", imm, rm);
- 				break;
- 			case A_REG_B:
--				printk("r%d_bank", rb);
-+				pr_cont("r%d_bank", rb);
- 				break;
- 			case A_DISP_PC:
- 				disp_pc = 1;
- 				disp_pc_addr = imm + 4 + (memaddr & relmask);
--				printk("%08x <%pS>", disp_pc_addr,
--				       (void *)disp_pc_addr);
-+				pr_cont("%08x <%pS>", disp_pc_addr,
-+					(void *)disp_pc_addr);
- 				break;
- 			case A_IND_R0_REG_N:
--				printk("@(r0,r%d)", rn);
-+				pr_cont("@(r0,r%d)", rn);
- 				break;
- 			case A_IND_R0_REG_M:
--				printk("@(r0,r%d)", rm);
-+				pr_cont("@(r0,r%d)", rm);
- 				break;
- 			case A_DISP_GBR:
--				printk("@(%d,gbr)",imm);
-+				pr_cont("@(%d,gbr)", imm);
- 				break;
- 			case A_R0_GBR:
--				printk("@(r0,gbr)");
-+				pr_cont("@(r0,gbr)");
- 				break;
- 			case A_BDISP12:
- 			case A_BDISP8:
--				printk("%08x", imm + memaddr);
-+				pr_cont("%08x", imm + memaddr);
- 				break;
- 			case A_SR:
--				printk("sr");
-+				pr_cont("sr");
- 				break;
- 			case A_GBR:
--				printk("gbr");
-+				pr_cont("gbr");
- 				break;
- 			case A_VBR:
--				printk("vbr");
-+				pr_cont("vbr");
- 				break;
- 			case A_SSR:
--				printk("ssr");
-+				pr_cont("ssr");
- 				break;
- 			case A_SPC:
--				printk("spc");
-+				pr_cont("spc");
- 				break;
- 			case A_MACH:
--				printk("mach");
-+				pr_cont("mach");
- 				break;
- 			case A_MACL:
--				printk("macl");
-+				pr_cont("macl");
- 				break;
- 			case A_PR:
--				printk("pr");
-+				pr_cont("pr");
- 				break;
- 			case A_SGR:
--				printk("sgr");
-+				pr_cont("sgr");
- 				break;
- 			case A_DBR:
--				printk("dbr");
-+				pr_cont("dbr");
- 				break;
- 			case FD_REG_N:
- 			case F_REG_N:
--				printk("fr%d", rn);
-+				pr_cont("fr%d", rn);
- 				break;
- 			case F_REG_M:
--				printk("fr%d", rm);
-+				pr_cont("fr%d", rm);
- 				break;
- 			case DX_REG_N:
- 				if (rn & 1) {
--					printk("xd%d", rn & ~1);
-+					pr_cont("xd%d", rn & ~1);
- 					break;
+-	printk("%s(0x%08lx to 0x%08lx)\n", str, bottom, top);
++	pr_info("%s(0x%08lx to 0x%08lx)\n", str, bottom, top);
+ 
+ 	for (p = bottom & ~31; p < top; ) {
+-		printk("%04lx: ", p & 0xffff);
++		pr_info("%04lx: ", p & 0xffff);
+ 
+ 		for (i = 0; i < 8; i++, p += 4) {
+ 			unsigned int val;
+ 
+ 			if (p < bottom || p >= top)
+-				printk("         ");
++				pr_cont("         ");
+ 			else {
+ 				if (__get_user(val, (unsigned int __user *)p)) {
+-					printk("\n");
++					pr_cont("\n");
+ 					return;
  				}
- 				/* else, fall through */
- 			case D_REG_N:
--				printk("dr%d", rn);
-+				pr_cont("dr%d", rn);
- 				break;
- 			case DX_REG_M:
- 				if (rm & 1) {
--					printk("xd%d", rm & ~1);
-+					pr_cont("xd%d", rm & ~1);
- 					break;
- 				}
- 				/* else, fall through */
- 			case D_REG_M:
--				printk("dr%d", rm);
-+				pr_cont("dr%d", rm);
- 				break;
- 			case FPSCR_M:
- 			case FPSCR_N:
--				printk("fpscr");
-+				pr_cont("fpscr");
- 				break;
- 			case FPUL_M:
- 			case FPUL_N:
--				printk("fpul");
-+				pr_cont("fpul");
- 				break;
- 			case F_FR0:
--				printk("fr0");
-+				pr_cont("fr0");
- 				break;
- 			case V_REG_N:
--				printk("fv%d", rn*4);
-+				pr_cont("fv%d", rn*4);
- 				break;
- 			case V_REG_M:
--				printk("fv%d", rm*4);
-+				pr_cont("fv%d", rm*4);
- 				break;
- 			case XMTRX_M4:
--				printk("xmtrx");
-+				pr_cont("xmtrx");
- 				break;
- 			default:
- 				return;
-@@ -532,7 +532,7 @@ static void print_sh_insn(u32 memaddr, u16 insn)
- 			else
- 				__get_user(val, (u32 *)disp_pc_addr);
- 
--			printk("  ! %08x <%pS>", val, (void *)val);
-+			pr_cont("  ! %08x <%pS>", val, (void *)val);
+-				printk("%08x ", val);
++				pr_cont("%08x ", val);
+ 			}
  		}
- 
- 		return;
-@@ -541,7 +541,7 @@ static void print_sh_insn(u32 memaddr, u16 insn)
- 
- 	}
- 
--	printk(".word 0x%x%x%x%x", nibs[0], nibs[1], nibs[2], nibs[3]);
-+	pr_info(".word 0x%x%x%x%x", nibs[0], nibs[1], nibs[2], nibs[3]);
- }
- 
- void show_code(struct pt_regs *regs)
-@@ -552,20 +552,21 @@ void show_code(struct pt_regs *regs)
- 	if (regs->pc & 0x1)
- 		return;
- 
--	printk("Code:\n");
-+	pr_info("Code:\n");
- 
- 	for (i = -3 ; i < 6 ; i++) {
- 		unsigned short insn;
- 
- 		if (__get_user(insn, pc + i)) {
--			printk(" (Bad address in pc)\n");
-+			pr_err(" (Bad address in pc)\n");
- 			break;
- 		}
- 
--		printk("%s%08lx:  ", (i ? "  ": "->"), (unsigned long)(pc + i));
-+		pr_info("%s%08lx:  ", (i ? "  " : "->"),
-+			(unsigned long)(pc + i));
- 		print_sh_insn((unsigned long)(pc + i), insn);
 -		printk("\n");
 +		pr_cont("\n");
  	}
+ }
+ 
+ void printk_address(unsigned long address, int reliable)
+ {
+-	printk(" [<%p>] %s%pS\n", (void *) address,
+-			reliable ? "" : "? ", (void *) address);
++	pr_cont(" [<%px>] %s%pS\n", (void *)address, reliable ? "" : "? ",
++		(void *)address);
+ }
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+@@ -108,7 +108,7 @@ stack_reader_dump(struct task_struct *task, struct pt_regs *regs,
+ 
+ static int print_trace_stack(void *data, char *name)
+ {
+-	printk("%s <%s> ", (char *)data, name);
++	pr_info("%s <%s> ", (char *)data, name);
+ 	return 0;
+ }
+ 
+@@ -117,7 +117,7 @@ static int print_trace_stack(void *data, char *name)
+  */
+ static void print_trace_address(void *data, unsigned long addr, int reliable)
+ {
+-	printk("%s", (char *)data);
++	pr_info("%s", (char *)data);
+ 	printk_address(addr, reliable);
+ }
+ 
+@@ -132,11 +132,11 @@ void show_trace(struct task_struct *tsk, unsigned long *sp,
+ 	if (regs && user_mode(regs))
+ 		return;
+ 
+-	printk("\nCall trace:\n");
++	pr_info("\nCall trace:\n");
+ 
+ 	unwind_stack(tsk, regs, sp, &print_trace_ops, "");
  
 -	printk("\n");
-+	pr_info("\n");
- }
++	pr_cont("\n");
+ 
+ 	if (!tsk)
+ 		tsk = current;
 -- 
 2.17.1
 
