@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B85F0111D7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3D03111C1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbfLCWyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:54:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47490 "EHLO mail.kernel.org"
+        id S1728402AbfLCWka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:40:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730212AbfLCWxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:53:54 -0500
+        id S1727635AbfLCWk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:40:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D891820674;
-        Tue,  3 Dec 2019 22:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12F5920684;
+        Tue,  3 Dec 2019 22:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413634;
-        bh=IiqYBFz+atwV5nFvmuzK7M6djh/sadmEpH84Yi6I5dU=;
+        s=default; t=1575412826;
+        bh=4kPvRMRLgZy/2VSwiRkaGhNj7f40GzKfVOJEh+tET2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I5PaXPtc/ZDnuNCgqrnZiU1D0htM0OaNCl3dZLssDIS8T8VIvG8rEpVODpxAmGAo+
-         fg+8YXBftJrYBd0p44FDHSUSvgcTqEdlTUPWEfqSHGyIfZVELLSxgzkgO40QtJN0HY
-         FoEbaJ/5KU8ZdzePZCUMa5WS3de4n96w5dEpP+P4=
+        b=dXdOrqY8t7AbY4aU/csztt7ThLQJfmVwmio20rooTPT5zERJaYdWfIz7x92KEbhYD
+         Md0zawZPNPSXIVWwihDdEKJzHAYsKDZc9vRMIf5nhNnhjlPgg2x7Lh0qf4z3CgtcEQ
+         kHKH9OX8E19VdClZz4GESijQg9v+4P5d+2sZ3WHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Maxime Ripard <mripard@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 202/321] netfilter: nf_tables: fix a missing check of nla_put_failure
-Date:   Tue,  3 Dec 2019 23:34:28 +0100
-Message-Id: <20191203223437.631822664@linuxfoundation.org>
+Subject: [PATCH 5.3 030/135] clk: sunxi-ng: a80: fix the zeroing of bits 16 and 18
+Date:   Tue,  3 Dec 2019 23:34:30 +0100
+Message-Id: <20191203213011.985095233@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit eb8950861c1bfd3eecc8f6faad213e3bca0dc395 ]
+[ Upstream commit cdfc2e2086bf9c465f44e2db25561373b084a113 ]
 
-If nla_nest_start() may fail. The fix checks its return value and goes
-to nla_put_failure if it fails.
+The zero'ing of bits 16 and 18 is incorrect. Currently the code
+is masking with the bitwise-and of BIT(16) & BIT(18) which is
+0, so the updated value for val is always zero. Fix this by bitwise
+and-ing value with the correct mask that will zero bits 16 and 18.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Addresses-Coverity: (" Suspicious &= or |= constant expression")
+Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_api.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 289d079008ee8..ec0f8b5bde0aa 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -5737,6 +5737,8 @@ static int nf_tables_fill_flowtable_info(struct sk_buff *skb, struct net *net,
- 		goto nla_put_failure;
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index dcac1391767f6..ef29582676f6e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -1224,7 +1224,7 @@ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
  
- 	nest = nla_nest_start(skb, NFTA_FLOWTABLE_HOOK);
-+	if (!nest)
-+		goto nla_put_failure;
- 	if (nla_put_be32(skb, NFTA_FLOWTABLE_HOOK_NUM, htonl(flowtable->hooknum)) ||
- 	    nla_put_be32(skb, NFTA_FLOWTABLE_HOOK_PRIORITY, htonl(flowtable->priority)))
- 		goto nla_put_failure;
+ 	/* Enforce d1 = 0, d2 = 0 for Audio PLL */
+ 	val = readl(reg + SUN9I_A80_PLL_AUDIO_REG);
+-	val &= (BIT(16) & BIT(18));
++	val &= ~(BIT(16) | BIT(18));
+ 	writel(val, reg + SUN9I_A80_PLL_AUDIO_REG);
+ 
+ 	/* Enforce P = 1 for both CPU cluster PLLs */
 -- 
 2.20.1
 
