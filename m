@@ -2,291 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF761103B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:37:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 715421103C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfLCRhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 12:37:54 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41820 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfLCRhx (ORCPT
+        id S1727004AbfLCRmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 12:42:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33157 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfLCRmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 12:37:53 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB3HaZ0N092264;
-        Tue, 3 Dec 2019 11:36:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575394595;
-        bh=cW8dd0IJph474lyImc/alBU3rL38u96bd2N6SHoEXxQ=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=Z3lf5yGIMbfvc1k8s4OHOYvPr6E3YQygeoidSfEQRryL/nv9iQT76ag34fDwUQ0oz
-         Vq+K87qkLhJbQkgsz4VJdmQ8wWNFvr2SehqLApldSK6UFa4ZWGR2uGzDFwVH8C7ccT
-         50EiKNp3sx3gialKyZQL+TzQeGvd3tLbXJ4K/SEk=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB3HaZI6105825
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Dec 2019 11:36:35 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 3 Dec
- 2019 11:36:35 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 3 Dec 2019 11:36:35 -0600
-Received: from [158.218.113.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB3HaXL7071601;
-        Tue, 3 Dec 2019 11:36:33 -0600
-Subject: Re: [v1,ethtool] ethtool: add setting frame preemption of traffic
- classes
-To:     Po Liu <po.liu@nxp.com>,
-        "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
-        "linville@tuxdriver.com" <linville@tuxdriver.com>,
-        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
-References: <20191127094448.6206-1-Po.Liu@nxp.com>
- <20191203162659.GC2680@khorivan>
-From:   Murali Karicheri <m-karicheri2@ti.com>
-Message-ID: <62250ff1-ab89-b6c2-051b-93f1650139eb@ti.com>
-Date:   Tue, 3 Dec 2019 12:42:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 3 Dec 2019 12:42:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b6so4853890wrq.0;
+        Tue, 03 Dec 2019 09:42:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qE5r3nti027mzy0pKgrnKXkE1RSc8kUqTOaORXIdEtE=;
+        b=a40wQB7Mk7pBuIEzPBChXZl1yBZvbIVXlaeGoAaiJcl8DZczFfOnjnbH4qGRZ0lPoT
+         sRb08dAvwJLNEP5eDKxT0YBpPq2HtoE0w0BQ5jV2bXhdv76SufUrjfF1rhgxyZLThrsp
+         S9blKgXZiiYIkiuBLkMhYny1XboAMLEmBjUeD8rHJy+FiM+s8XPJ0IopkA6ylmfT1Szl
+         nwXDM1qbCCzKRRN1vUDI9Ac8ntundjbrtPnLX/IosvRrhRvDfkqzMorv7i/w36fh/01e
+         CeBmgwklnmeK9BfhSLVbKd+L0W/hQdVrkFJUhf0AWeQCw5G5psDNjeZ/3d/P7bsqKm4N
+         6Ogg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qE5r3nti027mzy0pKgrnKXkE1RSc8kUqTOaORXIdEtE=;
+        b=d3SppsbxuINEqJKZoW2zbGSKdkicLcv/C58vSdD7lHbfIzPOFq2I2GaQ8MMpasU9JM
+         0/8iKf1q9TTrBQmneSVI6Lsf3opUwbp9AY/fP6nX+bELhIW8YPJC3fLzUKzoQE+SZjYD
+         y4ABX2KUgiEwXd+24GLpKubBitPIvSfDlMaoi2XN8mxmZFbmRJ7CsSoBIMm+mEs8wpWb
+         YJGofW2qj0dYGX7ZFa8UJbOXnBsXuUj06Tg/udIUeQVENNo+pE8oA/PUupTwtrfdXY4U
+         fUJ4TwMh3lZ6tIWw52eP/Gcac3QN7pIwMg+hA5sdI2B1VM+T2JyICX5Pk5VCC61uMTW8
+         2/ag==
+X-Gm-Message-State: APjAAAU8oyk/ZqkwTmVRTWTvaTwt9fonJHV7Ai781SLje1YYnRZOg3H0
+        IaAFPgO1vPWgrvTHTaF8OLg=
+X-Google-Smtp-Source: APXvYqyirRyu04jqDg3x30rmhKDhkCSn+pJlYnYt6qaMKeOuedWuhIFZA6+FPRXQ60evaeNBBoHQdg==
+X-Received: by 2002:adf:d4ca:: with SMTP id w10mr6193149wrk.53.1575394951675;
+        Tue, 03 Dec 2019 09:42:31 -0800 (PST)
+Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
+        by smtp.gmail.com with ESMTPSA id x7sm4411960wrq.41.2019.12.03.09.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 09:42:30 -0800 (PST)
+Date:   Tue, 3 Dec 2019 18:42:29 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, jonathanh@nvidia.com,
+        talho@nvidia.com, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bbasu@nvidia.com,
+        mperttunen@nvidia.com
+Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
+ get BPMP data
+Message-ID: <20191203174229.GA1721849@ulmo>
+References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20191203162659.GC2680@khorivan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Disposition: inline
+In-Reply-To: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Po Liu,
 
-Thanks for working on this! Some suggestion below as we are working on
-adding this support to Texas Instrument's CPSW driver on AM65x family
-of SoCs as well. TRM for that is provided below for your reference.
-Relevant section for IET (Frame pre-emption) is
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-12.2.1.4.6.6.1IET Configuration
+On Tue, Dec 03, 2019 at 11:02:26PM +0530, Sumit Gupta wrote:
+> Adding new function of_tegra_bpmp_get() to get BPMP data.
+> This function can be used by other drivers like cpufreq to
+> get BPMP data without adding any property in respective
+> drivers DT node.
 
-http://www.ti.com/lit/ug/spruid7d/spruid7d.pdf
+What's wrong with adding the property in the DT node? We already do that
+for Tegra186's CPU frequency driver, so it makes sense to continue that
+for Tegra194.
 
-On 12/03/2019 11:27 AM, Ivan Khoronzhuk wrote:
-> On Wed, Nov 27, 2019 at 09:58:52AM +0000, Po Liu wrote:
-> 
-> Hi Po Liu,
-> 
->> IEEE Std 802.1Qbu standard defined the frame preemption of port
->> trffic classes. User can set a value to hardware. The value will
->> be translated to a binary, each bit represent a traffic class.
->> Bit "1" means preemptable traffic class. Bit "0" means express
->> traffic class.  MSB represent high number traffic class.
->>
->> ethtool -k devname
->>
->> This command would show if the tx-preemption feature is available.
->> If hareware set preemption feature. The property would be a fixed
->> value 'on' if hardware support the frame preemption. Feature would
->> show a fixed value 'off' if hardware don't support the frame preemption.
->>
->> ethtool devname
->>
->> This command would show include an item 'preemption'. A following
->> value '0' means all traffic classes are 'express'. A value none zero
->> means traffic classes preemption capabilities. The value will be
->> translated to a binary, each bit represent a traffic class. Bit '1'
->> means preemptable traffic class. Bit '0' means express traffic class.
->> MSB represent high number traffic class.
->>
->> ethtool -s devname preemption N
-> 
-> What about other potential parameters like MAC fragment size, mac hold?
-> Shouldn't be it considered along with other FP parameters to provide 
-> correct
-> interface later?
-> 
-> Say, preemption, lets name it fp-mask or frame-preemption-mask.
-> Then other potential setting can be similar and added later:
-> 
-> frame-preemption-mask
-> frame-preemption-fragsize
-> frame-preemption-machold
-Need additional capabilities as described by Ivan above. Thanks Ivan!
+Thierry
 
-So it would be better to use feature/sub-parameter format so that it can 
-be extended as needed in the future.
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/firmware/tegra/bpmp.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/soc/tegra/bpmp.h      |  5 +++++
+>  2 files changed, 43 insertions(+)
+>=20
+> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+> index 6741fcd..9c3d7f1 100644
+> --- a/drivers/firmware/tegra/bpmp.c
+> +++ b/drivers/firmware/tegra/bpmp.c
+> @@ -38,6 +38,44 @@ channel_to_ops(struct tegra_bpmp_channel *channel)
+>  	return bpmp->soc->ops;
+>  }
+> =20
+> +struct tegra_bpmp *of_tegra_bpmp_get(void)
+> +{
+> +	struct platform_device *pdev;
+> +	struct device_node *bpmp_dev;
+> +	struct tegra_bpmp *bpmp;
+> +
+> +	/* Check for bpmp device status in DT */
+> +	bpmp_dev =3D of_find_compatible_node(NULL, NULL, "nvidia,tegra186-bpmp"=
+);
+> +	if (!bpmp_dev) {
+> +		bpmp =3D ERR_PTR(-ENODEV);
+> +		goto err_out;
+> +	}
+> +	if (!of_device_is_available(bpmp_dev)) {
+> +		bpmp =3D ERR_PTR(-ENODEV);
+> +		goto err_put;
+> +	}
+> +
+> +	pdev =3D of_find_device_by_node(bpmp_dev);
+> +	if (!pdev) {
+> +		bpmp =3D ERR_PTR(-ENODEV);
+> +		goto err_put;
+> +	}
+> +
+> +	bpmp =3D platform_get_drvdata(pdev);
+> +	if (!bpmp) {
+> +		bpmp =3D ERR_PTR(-EPROBE_DEFER);
+> +		put_device(&pdev->dev);
+> +		goto err_put;
+> +	}
+> +
+> +	return bpmp;
+> +err_put:
+> +	of_node_put(bpmp_dev);
+> +err_out:
+> +	return bpmp;
+> +}
+> +EXPORT_SYMBOL_GPL(of_tegra_bpmp_get);
+> +
+>  struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+>  {
+>  	struct platform_device *pdev;
+> diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
+> index f2604e9..21402d9 100644
+> --- a/include/soc/tegra/bpmp.h
+> +++ b/include/soc/tegra/bpmp.h
+> @@ -107,6 +107,7 @@ struct tegra_bpmp_message {
+>  };
+> =20
+>  #if IS_ENABLED(CONFIG_TEGRA_BPMP)
+> +struct tegra_bpmp *of_tegra_bpmp_get(void);
+>  struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
+>  void tegra_bpmp_put(struct tegra_bpmp *bpmp);
+>  int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
+> @@ -122,6 +123,10 @@ void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp, un=
+signed int mrq,
+>  			 void *data);
+>  bool tegra_bpmp_mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int m=
+rq);
+>  #else
+> +static inline struct tegra_bpmp *of_tegra_bpmp_get(void)
+> +{
+> +	return ERR_PTR(-ENOTSUPP);
+> +}
+>  static inline struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+>  {
+>  	return ERR_PTR(-ENOTSUPP);
+> --=20
+> 2.7.4
+>=20
 
-For express/Preemptable mask setting it becomes
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-ethtool -s devname frame-preemption tc-mask  N
+-----BEGIN PGP SIGNATURE-----
 
-For setting min fragment size
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3mnoEACgkQ3SOs138+
+s6GpwBAAvaZJp87NoF1TROjbDypFZ2E7Oov0yzlV1zJak8mF3KIV0tKaCHoXheWI
+rcQZm8VFfh/Gqxw63Yk1Gn9nA1KJoqaIUY1On3cMHvY2wtVF7Wh/tFI+5JNXsCIi
+H9et1e5q/J9LaFHxcdNsEeYaocswM31Zy+rNIhT1bpLzvTZObIzbQp5v5eao8U6i
+VUdAUsr5XSj0vcN51HVz6CHFMpQsocQV1AsACAMUny+ajHL/FTmJYa5jvXvhqgpX
+yH593XBFitXrqAhWj3kR6okHC2U9UAd2S9ZXsu15xawQNymTi2mdqnaoeohRajFj
+z9GF5CxNbNCNOBMxvzAkF08s8dQCA/vsSkxQ518Z3BK+dPxu7Leho9yVeNs9muy/
+7fOU5sc+gIBuBB0V/fwP2xiPbvoe/wozI2LtbmDa6akd5rwxYLi3ogJOKtS1QRhN
+JHaTZ08hjuRiL64s8EAfz1VsQYF0MwkfomCfXKMoTCu+8mVXkcMuZcaotXul/Mck
+LMYlsKbCwgLpM4NrNW++q1nTewTXmQpzrLN762Ae23ud7ARns1mwaaGa6UvfxIhE
+cxZVU66dHXKEIdGsA6uSByRKUS8/1le4Iy6zRAu7O88XAbxSydYOm45/ovZTEzAz
+jAymOGgaP0NBMXICJoBLt3/Z0WwBmSAZ/Vir1cbs2jsup+XvzaE=
+=c7iN
+-----END PGP SIGNATURE-----
 
-ethtool -s devname frame-preemption min-fragsize 64
-
-Also the device may be capable of doing Verify process to detect the
-capability of neighbor device and show the status. So we should have a
-way to show this status as well when user type
-
-ethtool devname
-
-We are working currently to add this feature to CPSW driver on AM65x
-which will be upstream-ed soon. So want to have this done in an
-way that we can extend it later.
-
-Similarly for taprio, there are some parameters that user
-might want to tune such as Max SDU size per tc class. I hope
-we could use ethtool to set the same on a similar way.
-
-Thanks
-
-Murali
-
-> ....
-> 
-> mac-hold it's rather flag, at least I've used it as priv-flag.
-> so can or so
-> 
-> frame-preemption-flags
-> 
->>
->> This command would set which traffic classes are frame preemptable.
->> The value will be translated to a binary, each bit represent a
->> traffic class. Bit '1' means preemptable traffic class. Bit '0'
->> means express traffic class. MSB represent high number traffic class.
->>
->> Signed-off-by: Po Liu <Po.Liu@nxp.com>
->> ---
->> ethtool-copy.h |  6 +++++-
->> ethtool.8.in   |  8 ++++++++
->> ethtool.c      | 18 ++++++++++++++++++
->> 3 files changed, 31 insertions(+), 1 deletion(-)
->>
->> diff --git a/ethtool-copy.h b/ethtool-copy.h
->> index 9afd2e6..e04bdf3 100644
->> --- a/ethtool-copy.h
->> +++ b/ethtool-copy.h
->> @@ -1662,6 +1662,9 @@ static __inline__ int 
->> ethtool_validate_duplex(__u8 duplex)
->> #define AUTONEG_DISABLE        0x00
->> #define AUTONEG_ENABLE        0x01
->>
->> +/* Disable preemtion. */
->> +#define PREEMPTION_DISABLE    0x0
->> +
->> /* MDI or MDI-X status/control - if MDI/MDI_X/AUTO is set then
->>  * the driver is required to renegotiate link
->>  */
->> @@ -1878,7 +1881,8 @@ struct ethtool_link_settings {
->>     __s8    link_mode_masks_nwords;
->>     __u8    transceiver;
->>     __u8    reserved1[3];
->> -    __u32    reserved[7];
->> +    __u32    preemption;
->> +    __u32    reserved[6];
->>     __u32    link_mode_masks[0];
->>     /* layout of link_mode_masks fields:
->>      * __u32 map_supported[link_mode_masks_nwords];
->> diff --git a/ethtool.8.in b/ethtool.8.in
->> index 062695a..7d612b2 100644
->> --- a/ethtool.8.in
->> +++ b/ethtool.8.in
->> @@ -236,6 +236,7 @@ ethtool \- query or control network driver and 
->> hardware settings
->> .B2 autoneg on off
->> .BN advertise
->> .BN phyad
->> +.BN preemption
->> .B2 xcvr internal external
->> .RB [ wol \ \*(WO]
->> .RB [ sopass \ \*(MA]
->> @@ -703,6 +704,13 @@ lB    l    lB.
->> .BI phyad \ N
->> PHY address.
->> .TP
->> +.BI preemption \ N
->> +Set preemptable traffic classes by bits.
->> +.B A
->> +value will be translated to a binary, each bit represent a traffic 
->> class.
->> +Bit "1" means preemptable traffic class. Bit "0" means express 
->> traffic class.
->> +MSB represent high number traffic class.
->> +.TP
->> .A2 xcvr internal external
->> Selects transceiver type. Currently only internal and external can be
->> specified, in the future further types might be added.
->> diff --git a/ethtool.c b/ethtool.c
->> index acf183d..d5240f8 100644
->> --- a/ethtool.c
->> +++ b/ethtool.c
->> @@ -928,6 +928,12 @@ dump_link_usettings(const struct 
->> ethtool_link_usettings *link_usettings)
->>         }
->>     }
->>
->> +    if (link_usettings->base.preemption == PREEMPTION_DISABLE)
->> +        fprintf(stdout, "    Preemption: 0x0 (off)\n");
->> +    else
->> +        fprintf(stdout, "    Preemption: 0x%x\n",
->> +            link_usettings->base.preemption);
->> +
->>     return 0;
->> }
->>
->> @@ -2869,6 +2875,7 @@ static int do_sset(struct cmd_context *ctx)
->>     int port_wanted = -1;
->>     int mdix_wanted = -1;
->>     int autoneg_wanted = -1;
->> +    int preemption_wanted = -1;
->>     int phyad_wanted = -1;
->>     int xcvr_wanted = -1;
->>     u32 *full_advertising_wanted = NULL;
->> @@ -2957,6 +2964,12 @@ static int do_sset(struct cmd_context *ctx)
->>             } else {
->>                 exit_bad_args();
->>             }
->> +        } else if (!strcmp(argp[i], "preemption")) {
->> +            gset_changed = 1;
->> +            i += 1;
->> +            if (i >= argc)
->> +                exit_bad_args();
->> +            preemption_wanted = get_u32(argp[i], 16);
->>         } else if (!strcmp(argp[i], "advertise")) {
->>             gset_changed = 1;
->>             i += 1;
->> @@ -3094,6 +3107,9 @@ static int do_sset(struct cmd_context *ctx)
->>             }
->>             if (autoneg_wanted != -1)
->>                 link_usettings->base.autoneg = autoneg_wanted;
->> +            if (preemption_wanted != -1)
->> +                link_usettings->base.preemption
->> +                    = preemption_wanted;
->>             if (phyad_wanted != -1)
->>                 link_usettings->base.phy_address = phyad_wanted;
->>             if (xcvr_wanted != -1)
->> @@ -3186,6 +3202,8 @@ static int do_sset(struct cmd_context *ctx)
->>                 fprintf(stderr, "  not setting transceiver\n");
->>             if (mdix_wanted != -1)
->>                 fprintf(stderr, "  not setting mdix\n");
->> +            if (preemption_wanted != -1)
->> +                fprintf(stderr, "  not setting preemption\n");
->>         }
->>     }
->>
->> -- 
->> 2.17.1
->>
-> 
-
+--jRHKVT23PllUwdXP--
