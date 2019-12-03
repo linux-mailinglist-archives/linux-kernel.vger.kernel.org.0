@@ -2,137 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6DD111F70
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9975112017
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfLCXIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:08:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729026AbfLCWpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:45:18 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6314D20803;
-        Tue,  3 Dec 2019 22:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413117;
-        bh=7TJDgx84nCACAaNLo8pxn2QH6mbY7YKuaYRX/WxnJX0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PYMBlZqDVW9GzvNO18JOiihTFFP5824AQLvdIvemc9EwKURFeoFQuz2NpmM+NvMp+
-         a36sTNEaEM8Do7LCbx3rI4rmI0mQUErEiV+PDcFj4qyouygVc7RuYkTyYUYXd/dx7n
-         hQ+uETR2JzJS2sZxeSiN2QgD6GmT/EzoGoBMBj28=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com,
-        syzbot+33d7ea72e47de3bdf4e1@syzkaller.appspotmail.com,
-        syzbot+44b6763edfc17144296f@syzkaller.appspotmail.com,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 5.3 132/135] ext4: add more paranoia checking in ext4_expand_extra_isize handling
-Date:   Tue,  3 Dec 2019 23:36:12 +0100
-Message-Id: <20191203213045.748648671@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727257AbfLCXM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:12:26 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43875 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728309AbfLCWjy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:39:54 -0500
+Received: by mail-pf1-f196.google.com with SMTP id h14so2547406pfe.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:39:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PooeH2U9l4e0abyw2b34fiXdiQuPMqsoVdOri4vyWA8=;
+        b=Z4qWuLdzmbQTwgVTPkTffJkS/6pNJFJU52Pv5anld3AdBN2RKrp/QNd1ONA86GCT4X
+         Ue7OKCSynqRiSFtptrF3HrNk43XMiXsTQ2B0hgCska6BooFqIZFkPDO2/D24Z9Nquoaa
+         wm5Z9A+sS3IkccLQquaDr/DfefHCZZUj9H4vgVMLNNvKvukZfQs7lne9YWKfrNG4zLb9
+         EHOyQnKZfLEu0it+urUIkOotHnUuBQSoEytGqEP1moY7TceKQ3RaPVjFaxcxV680ACSY
+         cAD51x/PTdUvx4vPH5x/HrR9owsPzsP1j9WGcfG4gxtfx0o31QH3nq6CaIq7UZ+E1KoD
+         tfCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PooeH2U9l4e0abyw2b34fiXdiQuPMqsoVdOri4vyWA8=;
+        b=UFpgUwUFnh0aL4+q6SLrToF5SYejsEsS2bTQnd72EidaCM3HkTygYmMkTA0FDkqTth
+         OUwZgEWABTkLBwyFplCxWxYDi8u9e5n7aDLXVXEWvByVZZs9wNxwFqvn8Lcpvp61RtPL
+         /BPevFrLmNaWWW3TNW2YyHrKAAE6kedSb3Jx/JAC8vstB9+KzVcPizdULGdwsZ1PlhxJ
+         Pl4EYccZg2CkRcChehx3Uz+vWQhJiGv4n0KjBJRdXYgEDXaQ88j7w0JkOLFShyyZEsLk
+         u6lwvHaIwCT81zyxShPJMxz+VGo9Bc5Cq3x5yloYcFhHtKlE1Y4uQ4geEgVBtoGe1MDU
+         HwNw==
+X-Gm-Message-State: APjAAAUtaZKJ1+SXOhmgtTuLj6UMntwdtPpZHMwpfT8bNBN6lNIj2C8r
+        sY5fxj0bELhFpnxobdvSerbaMP6r9LwsP164hdkhHg==
+X-Google-Smtp-Source: APXvYqyopdizFtuRaXmHpNZY01aJqLAUpTS7fHYCocl6WpG8VXrtTOu+n9u17wqq8KlX1dRoJ6xGABbIJHbMC+vv96s=
+X-Received: by 2002:aa7:961b:: with SMTP id q27mr238999pfg.23.1575412793102;
+ Tue, 03 Dec 2019 14:39:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1575396508-21480-1-git-send-email-sj38.park@gmail.com> <1575396508-21480-4-git-send-email-sj38.park@gmail.com>
+In-Reply-To: <1575396508-21480-4-git-send-email-sj38.park@gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 3 Dec 2019 14:39:42 -0800
+Message-ID: <CAFd5g47CtpRusO1tit3x+65p8EWVy-PSWU1rhwZ6x6ubbig=rQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] kunit: Create default config in '--build_dir'
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, shuah <shuah@kernel.org>,
+        SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+On Tue, Dec 3, 2019 at 10:08 AM SeongJae Park <sj38.park@gmail.com> wrote:
+>
+> From: SeongJae Park <sjpark@amazon.de>
+>
+> If both '--build_dir' and '--defconfig' are given, the handling of
+> '--defconfig' ignores '--build_dir' option.  This commit modifies the
+> behavior to respect '--build_dir' option.
+>
+> Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> Suggested-by: Brendan Higgins <brendanhiggins@google.com>
+> Reported-by: Brendan Higgins <brendanhiggins@google.com>
 
-commit 4ea99936a1630f51fc3a2d61a58ec4a1c4b7d55a upstream.
-
-It's possible to specify a non-zero s_want_extra_isize via debugging
-option, and this can cause bad things(tm) to happen when using a file
-system with an inode size of 128 bytes.
-
-Add better checking when the file system is mounted, as well as when
-we are actually doing the trying to do the inode expansion.
-
-Link: https://lore.kernel.org/r/20191110121510.GH23325@mit.edu
-Reported-by: syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com
-Reported-by: syzbot+33d7ea72e47de3bdf4e1@syzkaller.appspotmail.com
-Reported-by: syzbot+44b6763edfc17144296f@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/ext4/inode.c |   15 +++++++++++++++
- fs/ext4/super.c |   21 ++++++++++++---------
- 2 files changed, 27 insertions(+), 9 deletions(-)
-
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5942,8 +5942,23 @@ static int __ext4_expand_extra_isize(str
- {
- 	struct ext4_inode *raw_inode;
- 	struct ext4_xattr_ibody_header *header;
-+	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
-+	struct ext4_inode_info *ei = EXT4_I(inode);
- 	int error;
- 
-+	/* this was checked at iget time, but double check for good measure */
-+	if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||
-+	    (ei->i_extra_isize & 3)) {
-+		EXT4_ERROR_INODE(inode, "bad extra_isize %u (inode size %u)",
-+				 ei->i_extra_isize,
-+				 EXT4_INODE_SIZE(inode->i_sb));
-+		return -EFSCORRUPTED;
-+	}
-+	if ((new_extra_isize < ei->i_extra_isize) ||
-+	    (new_extra_isize < 4) ||
-+	    (new_extra_isize > inode_size - EXT4_GOOD_OLD_INODE_SIZE))
-+		return -EINVAL;	/* Should never happen */
-+
- 	raw_inode = ext4_raw_inode(iloc);
- 
- 	header = IHDR(inode, raw_inode);
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3544,12 +3544,15 @@ static void ext4_clamp_want_extra_isize(
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct ext4_super_block *es = sbi->s_es;
-+	unsigned def_extra_isize = sizeof(struct ext4_inode) -
-+						EXT4_GOOD_OLD_INODE_SIZE;
- 
--	/* determine the minimum size of new large inodes, if present */
--	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE &&
--	    sbi->s_want_extra_isize == 0) {
--		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
--						     EXT4_GOOD_OLD_INODE_SIZE;
-+	if (sbi->s_inode_size == EXT4_GOOD_OLD_INODE_SIZE) {
-+		sbi->s_want_extra_isize = 0;
-+		return;
-+	}
-+	if (sbi->s_want_extra_isize < 4) {
-+		sbi->s_want_extra_isize = def_extra_isize;
- 		if (ext4_has_feature_extra_isize(sb)) {
- 			if (sbi->s_want_extra_isize <
- 			    le16_to_cpu(es->s_want_extra_isize))
-@@ -3562,10 +3565,10 @@ static void ext4_clamp_want_extra_isize(
- 		}
- 	}
- 	/* Check if enough inode space is available */
--	if (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
--							sbi->s_inode_size) {
--		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
--						       EXT4_GOOD_OLD_INODE_SIZE;
-+	if ((sbi->s_want_extra_isize > sbi->s_inode_size) ||
-+	    (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
-+							sbi->s_inode_size)) {
-+		sbi->s_want_extra_isize = def_extra_isize;
- 		ext4_msg(sb, KERN_INFO,
- 			 "required extra inode space not available");
- 	}
-
-
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
