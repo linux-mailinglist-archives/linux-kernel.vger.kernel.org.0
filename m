@@ -2,100 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D13310F828
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 07:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BADC510F82E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 07:58:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfLCG5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 01:57:14 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35550 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbfLCG5N (ORCPT
+        id S1727387AbfLCG6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 01:58:11 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:48225 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727351AbfLCG6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 01:57:13 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g17so2275489wro.2;
-        Mon, 02 Dec 2019 22:57:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rTUIIMa2Hzz+bG0D78hRLm6CQ+jqv7MwcIq2lP6UkG8=;
-        b=XzpQHiVedEvbcc5uDZ3UD9P6PNM/Q9mKkCl7qz8mmb+djhAofY7885Yx4cRDxHu2nc
-         edoVj/oa0yjA7TJ+EkooBjqeB8G4y9ScfVYSqcG/V5iT1dGg9/SNbaD6TxNcmgyhmJKT
-         ecT0QGp151RbjwAGDaHyTeH/FVB/KHKGM1dctwO1JMJu/nM5fbAFl1dcSEETRokjZHzs
-         w895yd37IjUhPsQBHQ7rwUdbTuLD0FzJqp/mQA+iRxAtjjji8tBbW3QvT8KNcD/2PThT
-         Cvb+7JKUaeBZUd4D1yktjHEvOr1Pz0WsSd8j9vivbulxa8k0Tnd50MCVgH/M+z7ZmDbk
-         j0iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rTUIIMa2Hzz+bG0D78hRLm6CQ+jqv7MwcIq2lP6UkG8=;
-        b=P/8jUhBfEvAMrtfTxc3H4pWDuyeaHIg5j4T1/wdBkr+aH5CNurx1GKDO8TANEW9u+w
-         KHetiaGxrsURyVoEbKbQlHKCMWCDlvjVsAnaZJaTZZeKKSUrBy+Xkdk2CdxI2beresd+
-         CZIJYh1oE5hc95gN9bMLVAHesWH1SJy9zpJYG9lqq3p19dA8ge7o7VvLpnAZuDwmDFze
-         4SzYUiQstOefXF1LxFJLRX5h00oXYCmZIh5ZAHaweL16iShkaHLQ2oNs7tqh0b8JJr+5
-         MSFIfzKWkcuBaTdQ7BBN26xLEvii/lphVjLGFL5DuDlydSTS8LE0BwzPUFWLiEWBHuyh
-         nRuA==
-X-Gm-Message-State: APjAAAXbst/C1hhXwCCqXnAJi4kVgxNUhe0IJHA0ukEqLwv3zdMnm2UW
-        u6K5UfQ8USZukxMYjE4F+i8=
-X-Google-Smtp-Source: APXvYqy24hL+4+zcTBHsYMEZud/htdzwnF7c7NYz5GXAwY2IVKKbL+AkbNL6cOjQdMi9sPgNYY54Aw==
-X-Received: by 2002:a5d:5308:: with SMTP id e8mr3288902wrv.77.1575356231839;
-        Mon, 02 Dec 2019 22:57:11 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id x7sm2258024wrq.41.2019.12.02.22.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 22:57:11 -0800 (PST)
-Date:   Tue, 3 Dec 2019 07:57:09 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20191203065709.GA115767@gmail.com>
-References: <20191203131024.6e36ed88@canb.auug.org.au>
+        Tue, 3 Dec 2019 01:58:11 -0500
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: EsL320TzSSXEuYAKN7rUavHCfzrytzh3c5AYr8n6uN8LVXRI7hcIGmjw3K5+EpGcXy7UoKZJnB
+ V8s7tIonVXD5nLaJfif12KarPV0dwET3ZpVpAepVMpuVYIEbrC3yxk5/aAK1GKuKYpTxcWs2f5
+ +bxIQscJv3l+dMduJY02hWkW3HXt6oauezXfFkcMiZj2YjAdJjuda4iUffxmbc/ZqOch/z21LB
+ 1NCTWgzdCYxA20vEHeDKPmlBsH0DnShF1bhau5qTmq4YbGKhnBCnkYWmg+qod3grC/in15bmVt
+ X5k=
+X-IronPort-AV: E=Sophos;i="5.69,272,1571727600"; 
+   d="scan'208";a="57585459"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Dec 2019 23:58:06 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 2 Dec 2019 23:58:00 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Mon, 2 Dec 2019 23:58:01 -0700
+Date:   Tue, 3 Dec 2019 07:57:51 +0100
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peda@axentia.se" <peda@axentia.se>,
+        "Codrin Ciubotariu - M19940" <Codrin.Ciubotariu@microchip.com>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH 1/3] dt-bindings: i2c: at91: cosmetic formatting of
+ compatible list
+Message-ID: <20191203065751.fgwwko3e63antodb@M43218.corp.atmel.com>
+Mail-Followup-To: Eugen Hristev - M18282 <Eugen.Hristev@microchip.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peda@axentia.se" <peda@axentia.se>,
+        Codrin Ciubotariu - M19940 <Codrin.Ciubotariu@microchip.com>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>
+References: <1575276957-5615-1-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20191203131024.6e36ed88@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1575276957-5615-1-git-send-email-eugen.hristev@microchip.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 02, 2019 at 09:56:35AM +0100, Eugen Hristev - M18282 wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
+> 
+> Format the list of compatibles with one compatible per line.
+> 
+> Suggested-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Thanks
 
-> Hi all,
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-at91.txt | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 > 
-> Today's linux-next merge of the tip tree got a conflict in:
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-at91.txt b/Documentation/devicetree/bindings/i2c/i2c-at91.txt
+> index 2210f43..d35cd63 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-at91.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-at91.txt
+> @@ -1,10 +1,16 @@
+>  I2C for Atmel platforms
+>  
+>  Required properties :
+> -- compatible : Must be "atmel,at91rm9200-i2c", "atmel,at91sam9261-i2c",
+> -     "atmel,at91sam9260-i2c", "atmel,at91sam9g20-i2c", "atmel,at91sam9g10-i2c",
+> -     "atmel,at91sam9x5-i2c", "atmel,sama5d4-i2c", "atmel,sama5d2-i2c" or
+> -     "microchip,sam9x60-i2c"
+> +- compatible : Must be one of:
+> +	"atmel,at91rm9200-i2c",
+> +	"atmel,at91sam9261-i2c",
+> +	"atmel,at91sam9260-i2c",
+> +	"atmel,at91sam9g20-i2c",
+> +	"atmel,at91sam9g10-i2c",
+> +	"atmel,at91sam9x5-i2c",
+> +	"atmel,sama5d4-i2c",
+> +	"atmel,sama5d2-i2c",
+> +	"microchip,sam9x60-i2c".
+>  - reg: physical base address of the controller and length of memory mapped
+>       region.
+>  - interrupts: interrupt number to the cpu.
+> -- 
+> 2.7.4
 > 
->   arch/x86/mm/pat_interval.c
-> 
-> between commit:
-> 
->   91298f1a302d ("x86/mm/pat: Fix off-by-one bugs in interval tree search")
-> 
-> from Linus' tree and commits:
-> 
->   70bfed57a6de ("x86/mm/pat: Move the memtype related files to arch/x86/mm/pat/")
-> 
-> from the tip tree.
-> 
-> I fixed it up (I just removed the file - there may be further updates
-> required) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be mentioned
-> to your upstream maintainer when your tree is submitted for merging.
-> You may also want to consider cooperating with the maintainer of the
-> conflicting tree to minimise any particularly complex conflicts.
-
-No, the correct resolution is to apply the 91298f1a302d fix to the new 
-file - which is in -tip and which I've now also pushed out to -next, so 
--next should pick it up tomorrow.
-
-Thanks,
-
-	Ingo
