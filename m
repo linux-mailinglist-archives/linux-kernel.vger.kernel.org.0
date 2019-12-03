@@ -2,105 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01A3810FC10
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 11:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CCCC10FC11
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 11:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfLCKvw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 3 Dec 2019 05:51:52 -0500
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:49850 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfLCKvv (ORCPT
+        id S1726057AbfLCKxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 05:53:47 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36308 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfLCKxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 05:51:51 -0500
-IronPort-SDR: CL1oci0CjYpmV82W31UJYtyw/2xDAlTlhLPJWfJKDaukkWCmWwVw8POQJELNydo6bYvC2uTeRq
- zDSRH6iqRuceDNHvmOxTRciJHRsqOulBtrekVML3xNxDgWYi9C4sbTx7mRh8sJjh+a1rWOSx3k
- DfrIdZYRg/peJ0Dj90qqmMxodB5hDaZ4PNvx698BD9tNpdjYyUnqDomyYD7covl6R89aaxwhm+
- 6N7rqOmJXfjYs4+IKUFLWYjpgZwUt7agJwb8s5D/S/VpoPdyczNzGhVy4xb4SOxojSuOg+kKeo
- XKc=
-X-IronPort-AV: E=Sophos;i="5.69,272,1571731200"; 
-   d="scan'208";a="43654481"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 03 Dec 2019 02:51:51 -0800
-IronPort-SDR: p4sJTNOtKCKtqUJ6AZsYjOR3ERGgpk48uCLfiUzzIsS6vs7gp0Pdo5JmeHk4C8lCnwKceE/m8b
- Hg6o4GoyvKjTmQKDyOfKVH+pED7eTt79/Y/Ec19aK/wUByPvoj9OEYBQkvJo4Xly4494eMiwnG
- tQjsm9WdIuZEM8X1gFFGBACyF/0xKL/sX7gCLoCmLNOOQb+L14Gyz4nHXdci5/1tJzCVLsVuQ2
- H89tfV0eUw0/vqWs5egiLKLKUNhzd/OUBdb2xFKRfNWTBv+uTeBZmyzc/mtjmQRZmSC4sShg+y
- 0zY=
-From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: AW: Crash in fair scheduler
-Thread-Topic: Crash in fair scheduler
-Thread-Index: AQHVqbfg64Wqju89WkedWbWijDxswKeoNgIAgAADvAA=
-Date:   Tue, 3 Dec 2019 10:51:46 +0000
-Message-ID: <656260cf50684c11a3122aca88dde0cb@SVR-IES-MBX-03.mgc.mentorg.com>
-References: <1575364273836.74450@mentor.com>
- <20191203103046.GJ2827@hirez.programming.kicks-ass.net>
-In-Reply-To: <20191203103046.GJ2827@hirez.programming.kicks-ass.net>
-Accept-Language: de-DE, en-IE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [137.202.0.90]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 3 Dec 2019 05:53:47 -0500
+Received: by mail-oi1-f194.google.com with SMTP id c16so2860244oic.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 02:53:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Hh33m20eFdMMbq7j0e07H2jRKSTT4mxBLnwnFIeSa8c=;
+        b=t31lF0y0WLFdwupPTjUdLJ33Wkx25/tF8Z0n6Hs6PM5Clydb8Qw/+82RZoHIfgjuEZ
+         5Y0imTG2QyPc6C/pflui+ovcCd8mxAHpBCkO6LlQL2Ei6QhhWr9UUR1ptUjg2GKD7nrA
+         Z2lFLiN2KTMJZDFDMAoP1SiO6Ie5euPSDs7/XRiSaZ8iEpSt9WTKnwDRyfRnt+B9EYaf
+         9qeW8z/0rr7Ps3IuBvavpEdE7BkU8fGBSPIWRbJmrF5OLQyZReSeMMndfc/Ksx2ZVsi4
+         z4VjOFPu+X0ZaHITd26Aq3J+AptA9ekOYNofnbh7vvp/Rc5eqGK1gC3HPxZGEZIxmH44
+         TskQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Hh33m20eFdMMbq7j0e07H2jRKSTT4mxBLnwnFIeSa8c=;
+        b=OYRFFjowpBEfrVHUBCvhymJYSHUVLhNtOnsriZi2+Ja6ZdPaPvzNcz0lththWDTTlH
+         V0gMGgPBa5yPHHKF1YymMOSnUd/x0h4Uqwl8lDtiO4xUJW+BCeEm8Y/QFFBLyAc5iaiK
+         wULfkIjwSU316JmXJKoeha0nOlV8CmrGaoprLqxA/xmnRfw1ATlTpyPrdsoGp2S1rYi+
+         NAd2fX1lDzbi4zXsyJc1LIM+jSiTgH6ZwC/2Sfe0/b6/NxF/ydp+i1Dkc0WTfIBOpno5
+         EB+GmZasS15adCTBWIbYngEL83pYlzjlTXZzWgtStSdSwMeQrcDph+AK0HaEcbUQBdvJ
+         B8cA==
+X-Gm-Message-State: APjAAAVpWZLGQQG+O+i+IL60XCEKf0kMsO1ieX3G43GsK29ArJJopxeB
+        9592kdtyXk1FD83a/MZyGaEHqBzqZnZCsGPKB2w=
+X-Google-Smtp-Source: APXvYqytXVz+zSgAtVajnF9NHWzmpVpNZikwlrDKDDbBg6hGX3hIe91ZgxM7mbIAdbl3C8pnbvkQveUdPGuIDEcqSUU=
+X-Received: by 2002:a54:4601:: with SMTP id p1mr2867534oip.50.1575370426070;
+ Tue, 03 Dec 2019 02:53:46 -0800 (PST)
 MIME-Version: 1.0
+References: <MN2PR02MB5727000CBE70BAF31F60FEE4AF420@MN2PR02MB5727.namprd02.prod.outlook.com>
+ <20191203084134.tgzir4mtekpm5xbs@pengutronix.de> <MN2PR02MB57272E3343CA62ADBA0F97E5AF420@MN2PR02MB5727.namprd02.prod.outlook.com>
+ <614898763.105471.1575364223372.JavaMail.zimbra@nod.at> <CALgLF9KPAk_AsecnTMmbdF5qbgqXe7HNOrNariNVbhSr6FVN2g@mail.gmail.com>
+ <20191203104558.vpqav3oxsydoe4aw@pengutronix.de>
+In-Reply-To: <20191203104558.vpqav3oxsydoe4aw@pengutronix.de>
+From:   naga suresh kumar <nagasureshkumarrelli@gmail.com>
+Date:   Tue, 3 Dec 2019 16:23:34 +0530
+Message-ID: <CALgLF9+H-8BdZ0BkmpcEL8B1G1cpPsC+=5oqz6ErnTOhnG7yZQ@mail.gmail.com>
+Subject: Re: ubifs mount failure
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        siva.durga.paladugu@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > we had a crash in the fair scheduler and analysis shows that this could
-> happen again.
-> > Happened on 4.14.86 (LTS series) but failing code path still exists in 5.4-rc2
-> (and 4.14.147 too).
-> 
-> Please, do try if you can reproduce with Linus' latest git. I've no idea
-> what is, or is not, in those stable trees.
-> 
-unfortunately a once issue so far ...
+Hi Sascha,
 
+Tested this patch. and it worked.
+Thanks for your quick response.
 
---- snip ---
-
-> > include/linux/rbtree.h:91:#define rb_first_cached(root) (root)-
-> >rb_leftmost
-> 
-> > struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
-> > {
-> > 	struct rb_node *left = rb_first_cached(&cfs_rq->tasks_timeline);
+On Tue, Dec 3, 2019 at 4:16 PM Sascha Hauer <s.hauer@pengutronix.de> wrote:
+>
+> On Tue, Dec 03, 2019 at 04:06:12PM +0530, naga suresh kumar wrote:
+> > Hi Richard,
 > >
-> > 	if (!left)
-> > 		return NULL; <<<<<<<<<< the case
-> >
-> > 	return rb_entry(left, struct sched_entity, run_node);
-> > }
-> 
-> This the problem, for some reason the rbtree code got that rb_leftmost
-> thing wrecked.
-> 
-Any known issue on rbtree code regarding this?
-
-> > Is this a corner case nobody thought of or do we have cfs_rq data that is
-> unexpected in it's content?
-> 
-> No, the rbtree is corrupt. Your tree has a single node (which matches
-> with nr_running), but for some reason it thinks rb_leftmost is NULL.
-> This is wrong, if the tree is non-empty, it must have a leftmost
-> element.
-Is there a chance to find the left-most element in the core dump?
-Maybe i can dig deeper to find the root c ause then.
-Does any of the structs/data in this context point to some memory
-where i can continue to search?
-Where should rb_leftmost point to if only one node is in the tree?
-To the node itself?
-
-> 
-> Can you reproduce at will? If so, can you please try the latest kernel,
-> and or share the reproducer?
-Unfortunately this was a "once" issue so far; i haven't a reproducer yet.
+> > On Tue, Dec 3, 2019 at 2:40 PM Richard Weinberger <richard@nod.at> wrot=
+e:
+> > >
+> > > ----- Urspr=C3=BCngliche Mail -----
+> > > > Von: "Naga Sureshkumar Relli" <nagasure@xilinx.com>
+> > > > https://elixir.bootlin.com/linux/v5.4/source/fs/ubifs/sb.c#L164
+> > > > we are trying to allocate 4325376 (~4MB)
+> > >
+> > > 4MiB? Is ->min_io_size that large?
+> > if you see https://elixir.bootlin.com/linux/latest/source/fs/ubifs/sb.c=
+#L164
+> > The size is actually ALIGN(tmp, c->min_io_size).
+> > Here tmp is of 4325376 Bytes and min_io_size is 16384 Bytes
+>
+> 'tmp' contains bogus values. Try this:
+>
+> ----------------------------8<--------------------------------
+>
+> From 34f687fce189085f55706b4cddcb288a08f4ee06 Mon Sep 17 00:00:00 2001
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> Date: Tue, 3 Dec 2019 11:41:20 +0100
+> Subject: [PATCH] ubifs: Fix wrong memory allocation
+>
+> In create_default_filesystem() when we allocate the idx node we must use
+> the idx_node_size we calculated just one line before, not tmp, which
+> contains completely other data.
+>
+> Fixes: c4de6d7e4319 ("ubifs: Refactor create_default_filesystem()")
+> Reported-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  fs/ubifs/sb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ubifs/sb.c b/fs/ubifs/sb.c
+> index a551eb3e9b89..6681c18e52b8 100644
+> --- a/fs/ubifs/sb.c
+> +++ b/fs/ubifs/sb.c
+> @@ -161,7 +161,7 @@ static int create_default_filesystem(struct ubifs_inf=
+o *c)
+>         sup =3D kzalloc(ALIGN(UBIFS_SB_NODE_SZ, c->min_io_size), GFP_KERN=
+EL);
+>         mst =3D kzalloc(c->mst_node_alsz, GFP_KERNEL);
+>         idx_node_size =3D ubifs_idx_node_sz(c, 1);
+> -       idx =3D kzalloc(ALIGN(tmp, c->min_io_size), GFP_KERNEL);
+> +       idx =3D kzalloc(ALIGN(idx_node_size, c->min_io_size), GFP_KERNEL)=
+;
+>         ino =3D kzalloc(ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size), GFP_KER=
+NEL);
+>         cs =3D kzalloc(ALIGN(UBIFS_CS_NODE_SZ, c->min_io_size), GFP_KERNE=
+L);
+>
+> --
+> 2.24.0
+>
+>
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
+|
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
 
 Thanks,
-Carsten
+Naga Sureshkumar Relli.
