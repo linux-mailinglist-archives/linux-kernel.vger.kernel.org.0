@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62DA111F75
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 898AC111F7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbfLCXJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:09:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32978 "EHLO mail.kernel.org"
+        id S1729012AbfLCXJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:09:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727798AbfLCWow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:44:52 -0500
+        id S1728260AbfLCWn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 644882080F;
-        Tue,  3 Dec 2019 22:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B12EA20803;
+        Tue,  3 Dec 2019 22:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413091;
-        bh=8ToaJQ695p2SfwWZ5E3MFRCG42I9Nm3w5fQf1fuY/+M=;
+        s=default; t=1575413007;
+        bh=HoAFqpYfa74MQHwNePRBAUOnqHPBhxifuXH9ekCuqMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JCgnMg1D6o7nFoceNzqIJBGEQijX2DBzPlRHE3X+b+hCez2gUfpbQ3d/+9XwWGqDv
-         6rCg6RTUbeElqeCRHhtHd9Ksuj3T2LLmmmkzcbP8sgRQIGt89TQs81xZ90SMXYwqtz
-         FJ5CFuO96xMyRMvTrVZ+tRHxHX82mVJvyy7ZLY+I=
+        b=i3KNQiatbK7zUNYFyu+w+1r6LFutrWKBYdZSZWZWFn/e0roBozFnYUXmPxscr+1dV
+         OZVDVuKB0Ds/P//om9gETwSR8IroWZAxr1XM4lUZxqZtbTpQK3x9R2xB83zu4Q1IJ0
+         8bZNfe0RRv2SjYKrkO7f11yi6FyxRRxwF67t3AjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Wang <kevin1.wang@amd.com>,
-        Kenneth Feng <kenneth.feng@amd.com>,
+        stable@vger.kernel.org, changzhu <Changfeng.Zhu@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 081/135] drm/amd/swSMU: fix smu workload bit map error
-Date:   Tue,  3 Dec 2019 23:35:21 +0100
-Message-Id: <20191203213031.319188482@linuxfoundation.org>
+Subject: [PATCH 5.3 083/135] drm/amdgpu: add warning for GRBM 1-cycle delay issue in gfx9
+Date:   Tue,  3 Dec 2019 23:35:23 +0100
+Message-Id: <20191203213032.716189710@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -45,51 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Wang <kevin1.wang@amd.com>
+From: changzhu <Changfeng.Zhu@amd.com>
 
-[ Upstream commit 38264de0dce80d223f358ce47512378fae0de586 ]
+[ Upstream commit 440a7a54e7ec012ec8b27c27e460dfd6f9a24ddb ]
 
-fix workload bit (WORKLOAD_PPLIB_COMPUTE_BIT) map error
-on vega20 and navi asic.
+It needs to add warning to update firmware in gfx9
+in case that firmware is too old to have function to
+realize dummy read in cp firmware.
 
-fix commit:
-drm/amd/powerplay: add function get_workload_type_map for swsmu
-
-Signed-off-by: Kevin Wang <kevin1.wang@amd.com>
-Reviewed-by: Kenneth Feng <kenneth.feng@amd.com>
+Signed-off-by: changzhu <Changfeng.Zhu@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 2 +-
- drivers/gpu/drm/amd/powerplay/vega20_ppt.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-index 8bf9f541e7fe7..a0ef44d025d61 100644
---- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-@@ -205,7 +205,7 @@ static int navi10_workload_map[] = {
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_POWERSAVING,		WORKLOAD_PPLIB_POWER_SAVING_BIT),
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VIDEO,		WORKLOAD_PPLIB_VIDEO_BIT),
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VR,			WORKLOAD_PPLIB_VR_BIT),
--	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_CUSTOM_BIT),
-+	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_COMPUTE_BIT),
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_CUSTOM,		WORKLOAD_PPLIB_CUSTOM_BIT),
- };
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 75faa56f243a4..b1388d3e72f74 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -538,6 +538,13 @@ static void gfx_v9_0_check_fw_write_wait(struct amdgpu_device *adev)
+ 	adev->gfx.me_fw_write_wait = false;
+ 	adev->gfx.mec_fw_write_wait = false;
  
-diff --git a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-index 6a14497257e43..33ca6c581f219 100644
---- a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-+++ b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
-@@ -219,7 +219,7 @@ static int vega20_workload_map[] = {
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_POWERSAVING,		WORKLOAD_PPLIB_POWER_SAVING_BIT),
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VIDEO,		WORKLOAD_PPLIB_VIDEO_BIT),
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VR,			WORKLOAD_PPLIB_VR_BIT),
--	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_CUSTOM_BIT),
-+	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_COMPUTE_BIT),
- 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_CUSTOM,		WORKLOAD_PPLIB_CUSTOM_BIT),
- };
- 
++	if ((adev->gfx.mec_fw_version < 0x000001a5) ||
++	    (adev->gfx.mec_feature_version < 46) ||
++	    (adev->gfx.pfp_fw_version < 0x000000b7) ||
++	    (adev->gfx.pfp_feature_version < 46))
++		DRM_WARN_ONCE("Warning: check cp_fw_version and update it to realize \
++			      GRBM requires 1-cycle delay in cp firmware\n");
++
+ 	switch (adev->asic_type) {
+ 	case CHIP_VEGA10:
+ 		if ((adev->gfx.me_fw_version >= 0x0000009c) &&
 -- 
 2.20.1
 
