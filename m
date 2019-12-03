@@ -2,100 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8364110302
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9745110306
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbfLCQ6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:58:48 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43106 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfLCQ6s (ORCPT
+        id S1727142AbfLCQ7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:59:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20823 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726785AbfLCQ7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:58:48 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q28so4086568qkn.10
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:58:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=awAZi9esbUnXwgXhwi5bh2eBiqCu026SUTMkAv+bcuk=;
-        b=L22xBp2gKa6uy6Xb4JW/SOWjMtUgH90CP7cHfER4JiCqbsofhlGIkYBC8S714MZd0t
-         JAc4BN2VdOXH1g5oVGh8kWYTew/jD17g0YkmUCJX94s7pIYrgAg3YB0K6+gALQ/CiJJn
-         Jy3N4G13IuXQ5AfbjEVSd0l8y0VL9AoMYh7fI=
+        Tue, 3 Dec 2019 11:59:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575392347;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9idJJsQV/2uEwKnGkN4mjfcfOqrJXpGQnakfdpkG6DI=;
+        b=cGGXHtKA+seDsh6eU6dLZin/AyVSU9ZyJkvkuwD93zh3Nhk5uQmXhnxsBvhdNkuT0efJki
+        oaIDNaqaWpwt/C0XP9TvPOHjV5K+VmBBcfAyEYwTQG/h14wDW773pDTfRGb4an5tO43iqO
+        W9cui3U8Zyfpk+gzZmtbij0k1cVc6XA=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-46-u8BARG33ME-VHI_o5KcYsA-1; Tue, 03 Dec 2019 11:59:06 -0500
+Received: by mail-qt1-f198.google.com with SMTP id z7so2832995qto.23
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:59:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=awAZi9esbUnXwgXhwi5bh2eBiqCu026SUTMkAv+bcuk=;
-        b=Nne5rGsXZl/efxEvfoVZYTpnNoSk5NIiBRvgj64r2QUYqXrdnW8rIeUk+3ukij8Clo
-         kx/W8orH88YPqZ23sdv3L+dLCdGHxLGLSKYknQoLZkBSPfCBvtF3XdPzEiNxAVPf/q1l
-         KqefC/F/4j0mTUZEhVHCi+S9Gu5I2t/2fY+UaV2YfmhkHtNVARfqrNMd+J6wJqDbie7n
-         Ti0AODdPs3u9MUWXqRDxj2arifb374SK1tRzQUhqde6vtBT7LxihY0XPUBby+2Qk/hb4
-         9KoElUDY/xeY+djTGZXbT4HJfo2T+Ag6mAaohe3E3jbG+RzKHn6bxNisPB+prmMDOTSB
-         KGpw==
-X-Gm-Message-State: APjAAAV9TWR+faAfJO4WOB1FJhI0ohCu1eOOwmPqn1/jZxm81jHxxvEH
-        P3/Q2Ze1IQmyR8Reqry6Ms14fA==
-X-Google-Smtp-Source: APXvYqzPRcP0xDwFOlYh6VQJvJ3upogxLDCfmpeKQJYYXPnQMvIQnXAR62SHl+8BMMa/0Qr4zaQT0Q==
-X-Received: by 2002:a37:4782:: with SMTP id u124mr6238808qka.8.1575392327688;
-        Tue, 03 Dec 2019 08:58:47 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::2:49ea])
-        by smtp.gmail.com with ESMTPSA id y10sm1959520qky.6.2019.12.03.08.58.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ki0zcq1Hd91HT74Xqb0k5NM023hUsBT8hpjru9BF2VU=;
+        b=RyxThn1bVkb3pXc3Zgv+PytKNSIJc0/e4I3fcPspP/6ISgjtoDNt/Rt2M+p9HUCVb3
+         Comzfy6En9y4pgPFGisRFgmXtbsksqDe4Wq/8iyQBgo3h+iwrSCkIry4OYNF1N9eJJXx
+         DUYpt0ybHVHhRCPIjfP5lBcuu6FuZnJTcct22jd6EAbcO0s/qn/ltOwJDetsBv4ymwvb
+         vJJY193DUi9sqeNVt+s2PmDKhY8oDzFaVfxi+9GKwQn8w201q51z2FaaszyFJ8N0eVQY
+         Ug+LYt+O9XMsF22gXFDjoSr1JUeDlp9fHc6wGn2mbPn/51UjtOoO57k2pRgoK0aXttmW
+         4ezQ==
+X-Gm-Message-State: APjAAAWVBh+zyFjerxsnDuMOnfYWjyLy6JdbzptdCuRX/iML1Mu9PnMl
+        hruj/I27qu/FU020zcaiyqvtCrbmeCdduafRmuA4WbKJTX2N9mv0QiF/iusdN/Q6B2xbSeneRbM
+        yoHG/TEJdD1FAQFPKoDA6z+Lz
+X-Received: by 2002:ac8:1017:: with SMTP id z23mr5922475qti.154.1575392345724;
+        Tue, 03 Dec 2019 08:59:05 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyJfsAGRsZ+YvZuBbG3sFkoCk1FF9Ev5phxgEhOfqT73zztJ/7/gzPmD1aFE0Ca9XawO46P9Q==
+X-Received: by 2002:ac8:1017:: with SMTP id z23mr5922449qti.154.1575392345471;
+        Tue, 03 Dec 2019 08:59:05 -0800 (PST)
+Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
+        by smtp.gmail.com with ESMTPSA id a16sm482585qkn.48.2019.12.03.08.59.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 08:58:47 -0800 (PST)
-Date:   Tue, 3 Dec 2019 11:58:47 -0500
-From:   Chris Down <chris@chrisdown.name>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH kselftest-next 2/2] kselftests: memcg: speed up the
- memory.high test
-Message-ID: <20191203165847.GB607734@chrisdown.name>
-References: <20191202234212.4134802-1-guro@fb.com>
- <20191202234212.4134802-2-guro@fb.com>
+        Tue, 03 Dec 2019 08:59:04 -0800 (PST)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH v4 0/6] KVM: X86: Cleanups on dest_mode and headers
+Date:   Tue,  3 Dec 2019 11:58:57 -0500
+Message-Id: <20191203165903.22917-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191202234212.4134802-2-guro@fb.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-MC-Unique: u8BARG33ME-VHI_o5KcYsA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman Gushchin writes:
->After commit 0e4b01df8659 ("mm, memcg: throttle allocators when
->failing reclaim over memory.high") allocating memory over memory.high
->became very time consuming. But it's exactly what the memory.high
->test from cgroup kselftests is doing: it tries to allocate 100M with
->30M memory.high value. It takes forever to complete.
->
->In order to keep it passing (or failing) in a reasonable amount of
->time let's try to allocate only a little over 30M: 31M to be precise.
->
->With this change test_memcontrol finishes in a reasonable amount of
->time:
->  $ time ./test_memcontrol
->  ok 1 test_memcg_subtree_control
->  ok 2 test_memcg_current
->  ok 3 test_memcg_min
->  ok 4 test_memcg_low
->  ok 5 test_memcg_high
->  ok 6 test_memcg_max
->  ok 7 test_memcg_oom_events
->  ok 8 test_memcg_swap_max
->  ok 9 test_memcg_sock
->  ok 10 test_memcg_oom_group_leaf_events
->  ok 11 test_memcg_oom_group_parent_events
->  ok 12 test_memcg_oom_group_score_events
->
->  real	0m2.273s
->  user	0m0.064s
->  sys	0m0.739s
->
->Signed-off-by: Roman Gushchin <guro@fb.com>
->Cc: Chris Down <chris@chrisdown.name>
->Cc: Johannes Weiner <hannes@cmpxchg.org>
+v4:
+- address all comments from Vitaly, adding r-bs properly
+- added one more trivial patch:
+  "KVM: X86: Conert the last users of "shorthand =3D 0" to use macros"
 
-Thanks, this makes sense.
+v3:
+- address all the comments from both Vitaly and Sean
+- since at it, added patches:
+  "KVM: X86: Fix kvm_bitmap_or_dest_vcpus() to use irq shorthand"
+  "KVM: X86: Drop KVM_APIC_SHORT_MASK and KVM_APIC_DEST_MASK"
 
-Reviewed-by: Chris Down <chris@chrisdown.name>
+Each patch explains itself.
+
+Please have a look, thanks.
+
+Peter Xu (6):
+  KVM: X86: Fix kvm_bitmap_or_dest_vcpus() to use irq shorthand
+  KVM: X86: Move irrelevant declarations out of ioapic.h
+  KVM: X86: Use APIC_DEST_* macros properly in kvm_lapic_irq.dest_mode
+  KVM: X86: Drop KVM_APIC_SHORT_MASK and KVM_APIC_DEST_MASK
+  KVM: X86: Fix callers of kvm_apic_match_dest() to use correct macros
+  KVM: X86: Conert the last users of "shorthand =3D 0" to use macros
+
+ arch/x86/include/asm/kvm_host.h |  5 +++++
+ arch/x86/kvm/hyperv.c           |  1 +
+ arch/x86/kvm/ioapic.c           | 24 +++++++++++++++---------
+ arch/x86/kvm/ioapic.h           |  6 ------
+ arch/x86/kvm/irq.h              |  3 +++
+ arch/x86/kvm/irq_comm.c         | 12 +++++++-----
+ arch/x86/kvm/lapic.c            |  5 +----
+ arch/x86/kvm/lapic.h            |  7 ++++---
+ arch/x86/kvm/svm.c              |  4 ++--
+ arch/x86/kvm/x86.c              |  4 ++--
+ 10 files changed, 40 insertions(+), 31 deletions(-)
+
+--=20
+2.21.0
+
