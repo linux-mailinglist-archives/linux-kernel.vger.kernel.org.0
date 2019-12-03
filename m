@@ -2,54 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10847112013
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF2A9112008
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbfLCXMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:12:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728378AbfLCWkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:40:20 -0500
-Subject: Re: [GIT PULL] chrome-platform changes for v5.5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412820;
-        bh=zcBoHdTzslytluIyMkSAscVTPEWGrZX874Uz8T73zmw=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=KQZHdc2eMh32kons3IgcN7k2SNhSxgsqYVSwGRHVUPYnw4MX59JCMoMU3+vyQgv4f
-         VXVLxhAsMjL2xTPZITLLBll/ml6hkAUV2cf9Yn49o6g0xlpymXFJOfzMA7589h/O7N
-         1y7RypFwS9AqFfLCI7iCFSG8+UP9eCLf36MydcNE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191203215800.GA34130@google.com>
-References: <20191203215800.GA34130@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191203215800.GA34130@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git
- tags/tag-chrome-platform-for-v5.5
-X-PR-Tracked-Commit-Id: 856a0a6e2d09d31fd8f00cc1fc6645196a509d56
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 63de37476ebd1e9bab6a9e17186dc5aa1da9ea99
-Message-Id: <157541282048.26485.8115653042206857597.pr-tracker-bot@kernel.org>
-Date:   Tue, 03 Dec 2019 22:40:20 +0000
-To:     Benson Leung <bleung@google.com>
-Cc:     torvalds@linux-foundation.org, bleung@kernel.org,
-        gwendal@chromium.org, bleung@chromium.org, bleung@google.com,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org
+        id S1729027AbfLCXLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:11:06 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42485 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbfLCWli (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:38 -0500
+Received: by mail-pl1-f195.google.com with SMTP id x13so2260257plr.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:41:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wvcQSeD9fUy4K6hmpGadBFCY8hD8Kt15D7Xjws7LrzY=;
+        b=WxTExWP/19lbIo0fY+5OW62d08F7PomNap1+0TY5sUtrtzPOGpdsJbNrv4BmOK+wo3
+         3KpKKvycvKGQnbwQUD2Al8L7apeOOVmQ5/fDbHdSyIJ0SrUYLivf7IxloVayeomLb9D6
+         i1CeS+8S8UPrr6e7YawLim1GC2BsdJnla/UxSDKmk6dcYWW0X4LnN+qSgOem6/q0JH3m
+         zeqQ1V0aE3sE3jdkBQHuLBrEXZBzEx8xNJm/0PfIzcR13BAG4CeFZ9QSgIkcL+VUsKYO
+         BitSJLid6c3cE7TDqygbrOv2IZvQU1R+Rvt8Vme7VGWaPlZfQFX56g8xRsw51zgMS6jT
+         noaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wvcQSeD9fUy4K6hmpGadBFCY8hD8Kt15D7Xjws7LrzY=;
+        b=U0m+PFDv5x33wkOTPso/O/HCHQZUlprDYyL57AYh/iy5p1aj0PbZCXdLRHXKe+jvu8
+         Dmpy+rQCsVmoZDnfoWl7yu4r65a4RFfMFOk+MCq6q2znomcgtkDNWBhedMugtih0P22O
+         pVMdXf2Cf+MyM9q+dMbCDGMHFUJY67Nh0uE3YU+Qme61u0zKa2QdS8T8lMnuZzaI5C3A
+         XKls8AaO7uOd5yFapWIqTOvIgND5dw0fSmA3IKBxnuVSisrS4ySTkgiiHEthNH17w89H
+         ndoGdjSWV4zT3ySADTXW7WQ3O4rriikSNc487aaNHsWHELB1kc2xMTqmlUXn4OURObcA
+         veDA==
+X-Gm-Message-State: APjAAAXWJT/HRN1kIKXmHKFItu2B6ct+PEaxOmb35dbOl9ez8stvKJsI
+        i7zLleVWQi6ULbO56VcYrQYPEcZq8mneNg4zFkfAnw==
+X-Google-Smtp-Source: APXvYqwNBKITRg7JLfQdIfZ7Hq2in6sPhBtMwgNhkjM1eOSXrNFrRKWgmizNbNOpj7SVMke2uCVL05noCM3vd+KB1eQ=
+X-Received: by 2002:a17:90a:d155:: with SMTP id t21mr7870642pjw.84.1575412897403;
+ Tue, 03 Dec 2019 14:41:37 -0800 (PST)
+MIME-Version: 1.0
+References: <1575396508-21480-1-git-send-email-sj38.park@gmail.com>
+In-Reply-To: <1575396508-21480-1-git-send-email-sj38.park@gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 3 Dec 2019 14:41:26 -0800
+Message-ID: <CAFd5g46X9WK-xKJFF5AVYXXmM4a2dYD3fy=oi1CGJM1gc9RzuA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Fix nits in the kunit
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, shuah <shuah@kernel.org>,
+        SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 3 Dec 2019 13:58:00 -0800:
+On Tue, Dec 3, 2019 at 10:08 AM SeongJae Park <sj38.park@gmail.com> wrote:
+>
+> This patchset contains trivial fixes for the kunit documentations and the
+> wrapper python scripts.
+>
+> Changes from v2 (https://lore.kernel.org/linux-kselftest/1575361141-6806-1-git-send-email-sj38.park@gmail.com/T/#t):
+>  - Make 'build_dir' if not exists (missed from v3 by mistake)
+>
+> SeongJae Park (5):
+>   docs/kunit/start: Use in-tree 'kunit_defconfig'
+>   kunit: Remove duplicated defconfig creation
+>   kunit: Create default config in '--build_dir'
+>   kunit: Place 'test.log' under the 'build_dir'
+>   kunit: Rename 'kunitconfig' to '.kunitconfig'
+>
+>  Documentation/dev-tools/kunit/start.rst | 13 +++++--------
+>  tools/testing/kunit/kunit.py            | 16 ++++++++++------
+>  tools/testing/kunit/kunit_kernel.py     |  8 ++++----
+>  3 files changed, 19 insertions(+), 18 deletions(-)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git tags/tag-chrome-platform-for-v5.5
+Tested-by: Brendan Higgins <brendanhiggins@google.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/63de37476ebd1e9bab6a9e17186dc5aa1da9ea99
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks!
