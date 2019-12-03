@@ -2,95 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1A20111BBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8808111C57
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfLCWhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:37:06 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36317 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfLCWhG (ORCPT
+        id S1728743AbfLCWm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:42:59 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43421 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728707AbfLCWmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:37:06 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c16so4987554oic.3;
-        Tue, 03 Dec 2019 14:37:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NnWqN+v6idF+rYohPBc8yK8WHdS4XunbYI4eJ0qCx44=;
-        b=qLvXrafEhECzB00M92S5NoPrN0EMhLLOobUfVu4OGWPo4L+CBYM2sWwoYhc9HHmyTo
-         akc1URSkmKipvL6CkfvZ41qvBd0TBPHsoEPXHKgCoGj39gUCFkXPrzpNTQgHl4LJpS+h
-         FLAXEplOUwwaLwc7+Jgwz6buS8FBCQ7eDbgwH1d/XXlhF58qrvEn7PVxmCLyohiOq96M
-         BBJc0yolsK/86LS3v3jSTflu4D4RA/gSuL4mITXhMkRLE9+k5BnDBWLcllRAUGfODAJn
-         6CFVPIWOOkkFU2Oz2SsFaC3rwtUsrtOEEPKYHiWCX0/OvQ1RJJ0dQve5VmvE68vea4jr
-         fiMg==
-X-Gm-Message-State: APjAAAVRzVTeGhcVK9EtadVvHJ5rOodJMkEXHNCuwxVcnbHHyLke6qDt
-        GN7dGJi6e+3phu8W6iCgEg==
-X-Google-Smtp-Source: APXvYqyY+MvnuM+hiACvXhy/3tKtbTc72UkG95+81S0zipokTze6+5MxpHqRBYpAnCxnfaY6IROUJQ==
-X-Received: by 2002:aca:4cc7:: with SMTP id z190mr996oia.10.1575412625132;
-        Tue, 03 Dec 2019 14:37:05 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m2sm1615150oim.13.2019.12.03.14.37.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 14:37:04 -0800 (PST)
-Date:   Tue, 3 Dec 2019 16:37:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Levin Du <djw@t-chip.com.cn>,
-        Akash Gajjar <akash@openedev.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Da Xue <da@lessconfused.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add libretech for
- roc-pc binding
-Message-ID: <20191203223704.GA29109@bogus>
-References: <20191119185817.11216-1-jagan@amarulasolutions.com>
+        Tue, 3 Dec 2019 17:42:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575412970;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+sDgbMqjO9PDnPDuImNP6HXuoqamT1anUKE/7ClETRA=;
+        b=X+aA1rBTY+q2Jy+07ak2Fz1rKtZA7h/F/ulyQxVdO2wXNEoS/gv2WFTau2n2tlu0s4dOuK
+        6GUzweMwmDHRC62i64oM9BQncJzVe55dlqE+bTJwZE1IJm+WFNCJGJ2mAwtpVZO80sG8o6
+        N4QumWRd+pcvxp+jcCIukrDOOwjnGbQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-216-4k8qimMGOBeQPasm2opFyw-1; Tue, 03 Dec 2019 17:42:49 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 411EA800D54;
+        Tue,  3 Dec 2019 22:42:47 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-90.bss.redhat.com [10.20.1.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6637F5DA32;
+        Tue,  3 Dec 2019 22:42:43 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     intel-gfx@lists.freedesktop.org
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Lee Shawn C <shawn.c.lee@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/i915: Assume 100% brightness when not in DPCD control mode
+Date:   Tue,  3 Dec 2019 17:42:35 -0500
+Message-Id: <20191203224236.230930-1-lyude@redhat.com>
+In-Reply-To: <87tv6hinv1.fsf@intel.com>
+References: <87tv6hinv1.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191119185817.11216-1-jagan@amarulasolutions.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-MC-Unique: 4k8qimMGOBeQPasm2opFyw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 20, 2019 at 12:28:16AM +0530, Jagan Teki wrote:
-> Though the ROC-PC is manufactured by firefly, it is co-designed
-> by libretch like other Libretech computer boards from allwinner,
-> amlogic does.
-> 
-> It is always meaningful to keep maintain those vendors who are
-> part of design participation, so add libretech roc-pc compatible
-> with existing binding.
+Currently we always determine the initial panel brightness level by
+simply reading the value from DP_EDP_BACKLIGHT_BRIGHTNESS_MSB/LSB. This
+seems wrong though, because if the panel is not currently in DPCD
+control mode there's not really any reason why there would be any
+brightness value programmed in the first place.
 
-Maybe so, but this is pretty pointless if it's not different h/w. 
-Compatible strings are simply a h/w identifier.
+This appears to be the case on the Lenovo ThinkPad X1 Extreme 2nd
+Generation, where the default value in these registers is always 0 on
+boot despite the fact the panel runs at max brightness by default.
+Getting the initial brightness value correct here is important as well,
+since the panel on this laptop doesn't behave well if it's ever put into
+DPCD control mode while the brightness level is programmed to 0.
 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> index f7470ed1e17d..45728fd22af8 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> @@ -100,6 +100,7 @@ properties:
->        - description: Firefly ROC-RK3399-PC
->          items:
->            - enum:
-> +              - libretech,roc-rk3399-pc
->                - firefly,roc-rk3399-pc
->                - firefly,roc-rk3399-pc-mezzanine
+So, let's fix this by checking what the current backlight control mode
+is before reading the brightness level. If it's in DPCD control mode, we
+return the programmed brightness level. Otherwise we assume 100%
+brightness and return the highest possible brightness level. This also
+prevents us from accidentally programming a brightness level of 0.
 
-This doesn't match your change in the dts. file. The schema says there 
-are 2 strings with the first one being 1 of these 3.
+This is one of the many fixes that gets backlight controls working on
+the ThinkPad X1 Extreme 2nd Generation with optional 4K AMOLED screen.
 
->            - const: rockchip,rk3399
-> -- 
-> 2.18.0.321.gffc6fa0e3
-> 
+Changes since v1:
+* s/DP_EDP_DISPLAY_CONTROL_REGISTER/DP_EDP_BACKLIGHT_MODE_SET_REGISTER/
+  - Jani
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ .../drm/i915/display/intel_dp_aux_backlight.c   | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c b/driver=
+s/gpu/drm/i915/display/intel_dp_aux_backlight.c
+index fad470553cf9..4d467e7d29eb 100644
+--- a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
++++ b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
+@@ -59,8 +59,25 @@ static u32 intel_dp_aux_get_backlight(struct intel_conne=
+ctor *connector)
+ {
+ =09struct intel_dp *intel_dp =3D enc_to_intel_dp(&connector->encoder->base=
+);
+ =09u8 read_val[2] =3D { 0x0 };
++=09u8 mode_reg;
+ =09u16 level =3D 0;
+=20
++=09if (drm_dp_dpcd_readb(&intel_dp->aux,
++=09=09=09      DP_EDP_BACKLIGHT_MODE_SET_REGISTER,
++=09=09=09      &mode_reg) !=3D 1) {
++=09=09DRM_DEBUG_KMS("Failed to read the DPCD register 0x%x\n",
++=09=09=09      DP_EDP_BACKLIGHT_MODE_SET_REGISTER);
++=09=09return 0;
++=09}
++
++=09/*
++=09 * If we're not in DPCD control mode yet, the programmed brightness
++=09 * value is meaningless and we should assume max brightness
++=09 */
++=09if ((mode_reg & DP_EDP_BACKLIGHT_CONTROL_MODE_MASK) !=3D
++=09    DP_EDP_BACKLIGHT_CONTROL_MODE_DPCD)
++=09=09return connector->panel.backlight.max;
++
+ =09if (drm_dp_dpcd_read(&intel_dp->aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
+ =09=09=09     &read_val, sizeof(read_val)) < 0) {
+ =09=09DRM_DEBUG_KMS("Failed to read DPCD register 0x%x\n",
+--=20
+2.23.0
+
