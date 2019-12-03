@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3331111C55
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93534111D8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfLCWm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:42:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57960 "EHLO mail.kernel.org"
+        id S1730308AbfLCWyp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:54:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728711AbfLCWmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:42:51 -0500
+        id S1729804AbfLCWyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E43C20684;
-        Tue,  3 Dec 2019 22:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B066921555;
+        Tue,  3 Dec 2019 22:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412971;
-        bh=hnzD5Qk9dvKC2ddqw81JWpMv4D3eIasuXCukLFQgb6k=;
+        s=default; t=1575413681;
+        bh=Cfh5iaPFdbxtC3r2r5rJvmuhIpcUY0ww7bg/ux2CRcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U6COuy7nTPsbiYZAe/j15QJQxqcYBHKxWOTeQJyXr8o5uPtaxJnWzncQo+g26KIvy
-         gcH2ZKLWk+qEJCPbs6mbSz9Iy1PbH6nZWWetCyQaywZKl3heI+6zxQ6vkxO48nWMSm
-         AgOvwBn/nbk13WTLj2Y55eH2IkULWQ+yiF4h+E3I=
+        b=W6dtR60mEsC+Iy2XTEw/MyebulE0bMB4KcgI5s30RhYFwYyOxfNjFoPXKx74NX0/K
+         AYModSaTIg0/7O91PtBWkigvVlRbAE5iYFGGDB42rec/WELzxjyUw5waC57HRoDtZt
+         HVHBl7mTflZyV5v09Mgn/h6CJ1HuThaq+m7A9Fwk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, wenxu <wenxu@ucloud.cn>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 047/135] bridge: ebtables: dont crash when using dnat target in output chains
-Date:   Tue,  3 Dec 2019 23:34:47 +0100
-Message-Id: <20191203213019.004429000@linuxfoundation.org>
+Subject: [PATCH 4.19 222/321] ip_tunnel: Make none-tunnel-dst tunnel port work with lwtunnel
+Date:   Tue,  3 Dec 2019 23:34:48 +0100
+Message-Id: <20191203223438.666158833@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,61 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: wenxu <wenxu@ucloud.cn>
 
-[ Upstream commit b23c0742c2ce7e33ed79d10e451f70fdb5ca85d1 ]
+[ Upstream commit d71b57532d70c03f4671dd04e84157ac6bf021b0 ]
 
-xt_in() returns NULL in the output hook, skip the pkt_type change for
-that case, redirection only makes sense in broute/prerouting hooks.
+ip l add dev tun type gretap key 1000
+ip a a dev tun 10.0.0.1/24
 
-Reported-by: Tom Yan <tom.ty89@gmail.com>
-Cc: Linus Lüssing <linus.luessing@c0d3.blue>
-Fixes: cf3cb246e277d ("bridge: ebtables: fix reception of frames DNAT-ed to bridge device/port")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Packets with tun-id 1000 can be recived by tun dev. But packet can't
+be sent through dev tun for non-tunnel-dst
+
+With this patch: tunnel-dst can be get through lwtunnel like beflow:
+ip r a 10.0.0.7 encap ip dst 172.168.0.11 dev tun
+
+Signed-off-by: wenxu <wenxu@ucloud.cn>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebt_dnat.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ net/ipv4/ip_tunnel.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/net/bridge/netfilter/ebt_dnat.c b/net/bridge/netfilter/ebt_dnat.c
-index ed91ea31978af..12a4f4d936810 100644
---- a/net/bridge/netfilter/ebt_dnat.c
-+++ b/net/bridge/netfilter/ebt_dnat.c
-@@ -20,7 +20,6 @@ static unsigned int
- ebt_dnat_tg(struct sk_buff *skb, const struct xt_action_param *par)
- {
- 	const struct ebt_nat_info *info = par->targinfo;
--	struct net_device *dev;
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index c4f5602308edc..054d01c16dc6a 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -644,13 +644,19 @@ void ip_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
+ 	dst = tnl_params->daddr;
+ 	if (dst == 0) {
+ 		/* NBMA tunnel */
++		struct ip_tunnel_info *tun_info;
  
- 	if (skb_ensure_writable(skb, ETH_ALEN))
- 		return EBT_DROP;
-@@ -33,10 +32,22 @@ ebt_dnat_tg(struct sk_buff *skb, const struct xt_action_param *par)
- 		else
- 			skb->pkt_type = PACKET_MULTICAST;
- 	} else {
--		if (xt_hooknum(par) != NF_BR_BROUTING)
--			dev = br_port_get_rcu(xt_in(par))->br->dev;
--		else
-+		const struct net_device *dev;
-+
-+		switch (xt_hooknum(par)) {
-+		case NF_BR_BROUTING:
- 			dev = xt_in(par);
-+			break;
-+		case NF_BR_PRE_ROUTING:
-+			dev = br_port_get_rcu(xt_in(par))->br->dev;
-+			break;
-+		default:
-+			dev = NULL;
-+			break;
-+		}
-+
-+		if (!dev) /* NF_BR_LOCAL_OUT */
-+			return info->target;
+ 		if (!skb_dst(skb)) {
+ 			dev->stats.tx_fifo_errors++;
+ 			goto tx_error;
+ 		}
  
- 		if (ether_addr_equal(info->mac, dev->dev_addr))
- 			skb->pkt_type = PACKET_HOST;
+-		if (skb->protocol == htons(ETH_P_IP)) {
++		tun_info = skb_tunnel_info(skb);
++		if (tun_info && (tun_info->mode & IP_TUNNEL_INFO_TX) &&
++		    ip_tunnel_info_af(tun_info) == AF_INET &&
++		    tun_info->key.u.ipv4.dst)
++			dst = tun_info->key.u.ipv4.dst;
++		else if (skb->protocol == htons(ETH_P_IP)) {
+ 			rt = skb_rtable(skb);
+ 			dst = rt_nexthop(rt, inner_iph->daddr);
+ 		}
 -- 
 2.20.1
 
