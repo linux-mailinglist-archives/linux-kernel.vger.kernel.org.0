@@ -2,150 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB5411040E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 19:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37936110412
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 19:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfLCSIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 13:08:53 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32836 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbfLCSIt (ORCPT
+        id S1727368AbfLCSJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 13:09:45 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34778 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbfLCSJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 13:08:49 -0500
-Received: by mail-wr1-f65.google.com with SMTP id b6so4967972wrq.0;
-        Tue, 03 Dec 2019 10:08:48 -0800 (PST)
+        Tue, 3 Dec 2019 13:09:44 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n13so2247737pff.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 10:09:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3nP6VZ8Fjqwgvw9G0ddXuiCEaSnGP/358VA7wzbcUPI=;
-        b=TqWyU0JYS/1QxWfJrpgPb0N3WdqRrJMsCIXH26w2dmUVLbCq//aExSX3fVv1Z/XTiy
-         /5PtnOUdGo8/wT1ifLbawDVCAseNygP8jl0iVfnDXg9TkSPaRH29AI8dpTbZqR5nxYzO
-         19fpDGKUmizGcJAe02oKx8uRBO8e0VB/Y4z1c+kTFHk6IxwYaBwTJNAewyFlHI8RxIwQ
-         QGm2JQhy6WJoQnAJ07Q+9C3f6aX1Ltwqq6s5plp0fGCuXT7QmHaT2fbZI/05ujj2omgB
-         Lkze9Ppo4CcF5Lt6LvYrYjpuooEFlxhmNf/Hc1UFVKAhX5EJMedLVk0faDRDmHqFYcVt
-         RpCQ==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=loykSnf98Wtp3TswEHEtBrf07V1DthMDfsibxgCSjdE=;
+        b=polSkby/2rPftEWzAa2mR2P/AQVU1TyZPkOR2+OvDZVoDx/+YFkLk2AHfp422MbJws
+         MXF0fY0WkdAB2Obk+kK5NspG6Mladz7tkDLx/YrSbCL2WJuhzWHSEyHLw42lS1CmFoHJ
+         5F68HXn7NvaPWpyltr4OM080sSVvgDjTyPonfequpLY+neG1NkT1f/kyGfkvF2OJUXOO
+         Pm0Qy1/alLPv6wCPlGMkPZt1YkvkqT59u4Qh14NkuQmVo5cL7a2T+R8hN0u7EMA0EVXQ
+         GNo75rvQe7rfpfnUY0nAfZdc+UhViTY/ol6Ktgi5wS8Y9pxf+ABFSZF9td10pnED6g8b
+         oBvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3nP6VZ8Fjqwgvw9G0ddXuiCEaSnGP/358VA7wzbcUPI=;
-        b=NinNYLuwutl5MLJOn+bZnhUXxKF2V51Ijn1DXSNQ8TzlO66FsuTw3ucwW4+Y4OZHow
-         Pxijikit2cKRq2JY+x0lx/bucJTVuirPH0/rgKNt3O6NMWRnbDz4JnXc+SFuPRQjOvuA
-         9B+WqYU69XkBUzr8IKGSMsZf0S+9fMhRveqPd6LPxBUdYp/e8i80boVXWbh9RxP3uCf2
-         nWDt7L/jXYx2EChuMuJNsUVchMA1BfxMIuPuzdX7rOHPcCXuevC8zIvHa5l+DaLX/vJT
-         ZmF23CHmRYj0g5PN28RftjwYl+tXjGO6QkS8hnDcOwCLEcA+pHfe8Q7KoeX821ZKIYvJ
-         zk6A==
-X-Gm-Message-State: APjAAAUBLWUxhdiz74QgODtw4PhJQVk9YibqJj2pwhqFuHssKF5/DwvO
-        HKrroDsyrujy26n6Gm9IBwo=
-X-Google-Smtp-Source: APXvYqxunmSS3YEJs+zJB8zE7O7p6NgDz/9D7hcFGKvEsuTvUE5qFlMI3ca8sfDP1HhRV/Fb0t7tgQ==
-X-Received: by 2002:a5d:608a:: with SMTP id w10mr6229894wrt.136.1575396527796;
-        Tue, 03 Dec 2019 10:08:47 -0800 (PST)
-Received: from localhost.localdomain (cable-86-56-100-90.cust.telecolumbus.net. [86.56.100.90])
-        by smtp.gmail.com with ESMTPSA id f11sm3847641wmc.25.2019.12.03.10.08.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 03 Dec 2019 10:08:47 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-To:     brendanhiggins@google.com
-Cc:     corbet@lwn.net, kunit-dev@googlegroups.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        sj38.park@gmail.com, sjpark@amazon.de
-Subject: [PATCH v3 5/5] kunit: Rename 'kunitconfig' to '.kunitconfig'
-Date:   Wed,  4 Dec 2019 03:08:28 +0900
-Message-Id: <1575396508-21480-6-git-send-email-sj38.park@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575396508-21480-1-git-send-email-sj38.park@gmail.com>
-References: <1575396508-21480-1-git-send-email-sj38.park@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=loykSnf98Wtp3TswEHEtBrf07V1DthMDfsibxgCSjdE=;
+        b=NBM3FbiLm82Fw2t7U0AOP5zl+9/N2fDoft5c86gASaPO5ogzHceqwZgIaNyk5apCJo
+         BSyg7VdLko67zIikyG3X5pudvmb7px9OiDvjQyhUMBO4sgNMfXs9XamZ6dtT3P+NNVCr
+         k7Y8lSHNSL5lBYGp8p/JDryvPnXHVfmLwXJln76oGtigRA/snJvpedmpkNvCwottkLvd
+         qPH0FttE7yI8e/QzshiR1DVEQAX2NMKo/O8ZfFXEwYYAgY9+HBZzJQMnsrldhINKjmcB
+         SvHe8NGuYpD8lfJY+BoxNaYJwrmnTRg0XvchVy9IPcHQilV+g7FsLjWQW6pe29LEsM0W
+         T6rQ==
+X-Gm-Message-State: APjAAAUWUdAH5fJP9hGnswdr/OJEAP2fmMUfV3k1WRSrdOYaLY4VMOvt
+        IJ8UuRBC0MkaJbpulJZ33qrxuw==
+X-Google-Smtp-Source: APXvYqwgcBHZb9FDCJA3pZujOlfUAYFHnofoTF/uSqyTQfnonhv6YHeyo017p/RUkIqtyKU4a20hZg==
+X-Received: by 2002:a62:5cc1:: with SMTP id q184mr6181056pfb.116.1575396584005;
+        Tue, 03 Dec 2019 10:09:44 -0800 (PST)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id x11sm4454147pfn.53.2019.12.03.10.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 10:09:43 -0800 (PST)
+Date:   Tue, 3 Dec 2019 10:09:31 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, oss-drivers@netronome.com
+Subject: Re: [PATCH RFC v7 net-next 3/1] netronome: use the new txqueue
+ timeout argument
+Message-ID: <20191203100931.43207030@cakuba.netronome.com>
+In-Reply-To: <20191203072757.429125-2-mst@redhat.com>
+References: <20191203071101.427592-1-mst@redhat.com>
+        <20191203072757.429125-2-mst@redhat.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On Tue, 3 Dec 2019 02:32:14 -0500, Michael S. Tsirkin wrote:
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+> 
+> untested
+> 
+>  drivers/net/ethernet/netronome/nfp/nfp_net_common.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+> index 41a808b14d76..26f1fb19d0aa 100644
+> --- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+> +++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
+> @@ -1323,13 +1323,8 @@ nfp_net_tx_ring_reset(struct nfp_net_dp *dp, struct nfp_net_tx_ring *tx_ring)
+>  static void nfp_net_tx_timeout(struct net_device *netdev, unsigned int txqueue)
+>  {
+>  	struct nfp_net *nn = netdev_priv(netdev);
+> -	int i;
+>  
+> -	for (i = 0; i < nn->dp.netdev->real_num_tx_queues; i++) {
+> -		if (!netif_tx_queue_stopped(netdev_get_tx_queue(netdev, i)))
+> -			continue;
+> -		nn_warn(nn, "TX timeout on ring: %d\n", i);
+> -	}
+> +	nn_warn(nn, "TX timeout on ring: %d\n", txqueue);
 
-This commit renames 'kunitconfig' to '.kunitconfig' so that it can be
-automatically ignored by git and do not disturb people who want to type
-'kernel/' by pressing only the 'k' and then 'tab' key.
+%u
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
----
- Documentation/dev-tools/kunit/start.rst | 12 +++++-------
- tools/testing/kunit/kunit.py            |  2 +-
- tools/testing/kunit/kunit_kernel.py     |  4 ++--
- 3 files changed, 8 insertions(+), 10 deletions(-)
+>  	nn_warn(nn, "TX watchdog timeout\n");
 
-diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
-index 78a0aed..faa6fa9 100644
---- a/Documentation/dev-tools/kunit/start.rst
-+++ b/Documentation/dev-tools/kunit/start.rst
-@@ -21,18 +21,16 @@ The wrapper can be run with:
- 
-    ./tools/testing/kunit/kunit.py run
- 
--Creating a kunitconfig
--======================
-+Creating a .kunitconfig
-+=======================
- The Python script is a thin wrapper around Kbuild as such, it needs to be
--configured with a ``kunitconfig`` file. This file essentially contains the
-+configured with a ``.kunitconfig`` file. This file essentially contains the
- regular Kernel config, with the specific test targets as well.
- 
- .. code-block:: bash
- 
- 	cd $PATH_TO_LINUX_REPO
--	cp arch/um/configs/kunit_defconfig kunitconfig
--
--You may want to add kunitconfig to your local gitignore.
-+	cp arch/um/configs/kunit_defconfig .kunitconfig
- 
- Verifying KUnit Works
- ---------------------
-@@ -147,7 +145,7 @@ and the following to ``drivers/misc/Makefile``:
- 
- 	obj-$(CONFIG_MISC_EXAMPLE_TEST) += example-test.o
- 
--Now add it to your ``kunitconfig``:
-+Now add it to your ``.kunitconfig``:
- 
- .. code-block:: none
- 
-diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
-index 5b22241..257722f 100755
---- a/tools/testing/kunit/kunit.py
-+++ b/tools/testing/kunit/kunit.py
-@@ -108,7 +108,7 @@ def main(argv, linux=None):
- 				type=str, default=None, metavar='build_dir')
- 
- 	run_parser.add_argument('--defconfig',
--				help='Uses a default kunitconfig.',
-+				help='Uses a default .kunitconfig.',
- 				action='store_true')
- 
- 	cli_args = parser.parse_args(argv)
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index 5bec97e..fca1933 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -14,7 +14,7 @@ import os
- import kunit_config
- 
- KCONFIG_PATH = '.config'
--kunitconfig_path = 'kunitconfig'
-+kunitconfig_path = '.kunitconfig'
- 
- class ConfigError(Exception):
- 	"""Represents an error trying to configure the Linux kernel."""
-@@ -111,7 +111,7 @@ class LinuxSourceTree(object):
- 		return True
- 
- 	def build_reconfig(self, build_dir):
--		"""Creates a new .config if it is not a subset of the kunitconfig."""
-+		"""Creates a new .config if it is not a subset of the .kunitconfig."""
- 		kconfig_path = get_kconfig_path(build_dir)
- 		if os.path.exists(kconfig_path):
- 			existing_kconfig = kunit_config.Kconfig()
--- 
-2.7.4
+I think we can drop this warning now.
 
+With that:
+
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+
+Thanks!
