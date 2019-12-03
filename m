@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71E9C111F99
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D62DA111F75
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbfLCXKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:10:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57540 "EHLO mail.kernel.org"
+        id S1728807AbfLCXJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:09:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728327AbfLCWmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:42:33 -0500
+        id S1727798AbfLCWow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:44:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C291206EC;
-        Tue,  3 Dec 2019 22:42:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 644882080F;
+        Tue,  3 Dec 2019 22:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412952;
-        bh=qm5/sHBfu8SWriiyMEBV4y7WHmX7oPbse1mtJOkC930=;
+        s=default; t=1575413091;
+        bh=8ToaJQ695p2SfwWZ5E3MFRCG42I9Nm3w5fQf1fuY/+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dj9YFIUnh/5fCIkTyerhuB4+GEsHI+Vd+FyWEuHl7Tdo4pK2E8J2jT389YKr86KEL
-         8BX16zaLE9M7Gu/gqZ3QBuqAaXguZ2/BRlSkRs/7wQRcr8FTF6MOF7rJLOtByulbiP
-         N0Q9RkKklsrvfqt1xq8SbdpXz+MvwpIVU/90Xqw4=
+        b=JCgnMg1D6o7nFoceNzqIJBGEQijX2DBzPlRHE3X+b+hCez2gUfpbQ3d/+9XwWGqDv
+         6rCg6RTUbeElqeCRHhtHd9Ksuj3T2LLmmmkzcbP8sgRQIGt89TQs81xZ90SMXYwqtz
+         FJ5CFuO96xMyRMvTrVZ+tRHxHX82mVJvyy7ZLY+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
-        Eli Britstein <elibr@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Kevin Wang <kevin1.wang@amd.com>,
+        Kenneth Feng <kenneth.feng@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 078/135] net/mlx5e: Fix eswitch debug print of max fdb flow
-Date:   Tue,  3 Dec 2019 23:35:18 +0100
-Message-Id: <20191203213029.374329807@linuxfoundation.org>
+Subject: [PATCH 5.3 081/135] drm/amd/swSMU: fix smu workload bit map error
+Date:   Tue,  3 Dec 2019 23:35:21 +0100
+Message-Id: <20191203213031.319188482@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -45,34 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roi Dayan <roid@mellanox.com>
+From: Kevin Wang <kevin1.wang@amd.com>
 
-[ Upstream commit f382b0df6946d48fae80a2201ccff43b41382099 ]
+[ Upstream commit 38264de0dce80d223f358ce47512378fae0de586 ]
 
-The value is already the calculation so remove the log prefix.
+fix workload bit (WORKLOAD_PPLIB_COMPUTE_BIT) map error
+on vega20 and navi asic.
 
-Fixes: e52c28024008 ("net/mlx5: E-Switch, Add chains and priorities")
-Signed-off-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Eli Britstein <elibr@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+fix commit:
+drm/amd/powerplay: add function get_workload_type_map for swsmu
+
+Signed-off-by: Kevin Wang <kevin1.wang@amd.com>
+Reviewed-by: Kenneth Feng <kenneth.feng@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 2 +-
+ drivers/gpu/drm/amd/powerplay/vega20_ppt.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-index 35945cdd0a618..3ac6104e9924c 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-@@ -1085,7 +1085,7 @@ static int esw_create_offloads_fdb_tables(struct mlx5_eswitch *esw, int nvports)
- 			    MLX5_CAP_GEN(dev, max_flow_counter_15_0);
- 	fdb_max = 1 << MLX5_CAP_ESW_FLOWTABLE_FDB(dev, log_max_ft_size);
+diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+index 8bf9f541e7fe7..a0ef44d025d61 100644
+--- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+@@ -205,7 +205,7 @@ static int navi10_workload_map[] = {
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_POWERSAVING,		WORKLOAD_PPLIB_POWER_SAVING_BIT),
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VIDEO,		WORKLOAD_PPLIB_VIDEO_BIT),
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VR,			WORKLOAD_PPLIB_VR_BIT),
+-	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_CUSTOM_BIT),
++	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_COMPUTE_BIT),
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_CUSTOM,		WORKLOAD_PPLIB_CUSTOM_BIT),
+ };
  
--	esw_debug(dev, "Create offloads FDB table, min (max esw size(2^%d), max counters(%d), groups(%d), max flow table size(2^%d))\n",
-+	esw_debug(dev, "Create offloads FDB table, min (max esw size(2^%d), max counters(%d), groups(%d), max flow table size(%d))\n",
- 		  MLX5_CAP_ESW_FLOWTABLE_FDB(dev, log_max_ft_size),
- 		  max_flow_counter, ESW_OFFLOADS_NUM_GROUPS,
- 		  fdb_max);
+diff --git a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
+index 6a14497257e43..33ca6c581f219 100644
+--- a/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
++++ b/drivers/gpu/drm/amd/powerplay/vega20_ppt.c
+@@ -219,7 +219,7 @@ static int vega20_workload_map[] = {
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_POWERSAVING,		WORKLOAD_PPLIB_POWER_SAVING_BIT),
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VIDEO,		WORKLOAD_PPLIB_VIDEO_BIT),
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_VR,			WORKLOAD_PPLIB_VR_BIT),
+-	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_CUSTOM_BIT),
++	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_COMPUTE,		WORKLOAD_PPLIB_COMPUTE_BIT),
+ 	WORKLOAD_MAP(PP_SMC_POWER_PROFILE_CUSTOM,		WORKLOAD_PPLIB_CUSTOM_BIT),
+ };
+ 
 -- 
 2.20.1
 
