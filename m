@@ -2,79 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D4EB10FD98
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:27:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7118D10FD9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:29:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfLCM1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:27:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50738 "EHLO mail.kernel.org"
+        id S1726179AbfLCM3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:29:08 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:40834 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbfLCM1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:27:47 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B0A520684;
-        Tue,  3 Dec 2019 12:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575376066;
-        bh=3P5USAcp0mKQWvyvt0d9zvEji4+zn7AmEjAHvZ5jy0g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DNCO7eScWmDjfnTQrODrhFR5I8C4DXW3CqkpLt56rYTP9+CWC+KQvWUFagjM/Xwq2
-         ovJrHhkctL6Jqehif5CNDbNDboPzo+jYbx3gtsfQWzMy/kWQdKCyL077QZBYyiOva5
-         jIJmdr4vu8KNOQAr2GAEZmlztbrDaAageBc33Onw=
-Date:   Tue, 3 Dec 2019 13:27:44 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 185/306] net: hns3: bugfix for buffer not free
- problem during resetting
-Message-ID: <20191203122744.GB2131225@kroah.com>
-References: <20191127203114.766709977@linuxfoundation.org>
- <20191127203128.798931840@linuxfoundation.org>
- <20191129110010.GA4313@amd>
- <20191129143108.GA3708972@kroah.com>
- <20191129222401.GA29788@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191129222401.GA29788@amd>
+        id S1725907AbfLCM3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:29:08 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 882F51A1340;
+        Tue,  3 Dec 2019 13:29:06 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C7F6A1A0383;
+        Tue,  3 Dec 2019 13:29:01 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 77C614028F;
+        Tue,  3 Dec 2019 20:28:55 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     leoyang.li@nxp.com, shawnguo@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, ran.wang_1@nxp.com
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
+Subject: [v5 1/3] soc: fsl: handle RCPM errata A-008646 on SoC LS1021A
+Date:   Tue,  3 Dec 2019 20:28:16 +0800
+Message-Id: <20191203122818.21941-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 11:24:01PM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > > > From: Huazhong Tan <tanhuazhong@huawei.com>
-> > > > 
-> > > > [ Upstream commit 73b907a083b8a8c1c62cb494bc9fbe6ae086c460 ]
-> > > > 
-> > > > When hns3_get_ring_config()/hns3_queue_to_ring()/
-> > > > hns3_get_vector_ring_chain() failed during resetting, the allocated
-> > > > memory has not been freed before these three functions return. So
-> > > > this patch adds error handler in these functions to fix it.
-> > > 
-> > > Correct me if I'm wrong, but... this introduces use-after-free:
-> > > Should it do devm_kfree(&pdev->dev, cur_chain); ?
-> > 
-> > I think Sasha tried to backport a fix for this patch, but that fix broke
-> > the build :(
-> > 
-> > If you want to provide a working backport, I'll be glad to take it.
-> 
-> Actually it looks like problem originated in mainline, and there was
-> more than one problem with this patch.
-> 
-> cda69d244585bc4497d3bb878c22fe2b6ad647c1 should fix it; it needs to be
-> back-ported, too.
+Description:
+	- Reading configuration register RCPM_IPPDEXPCR1
+	  always return zero
 
-Yes, that is the one, can you provide a working backport for this?
+Workaround:
+	- Save register RCPM_IPPDEXPCR1's value to
+	  register SCFG_SPARECR8.(uboot's psci also
+	  need reading value from the register SCFG_SPARECR8
+	  to set register RCPM_IPPDEXPCR1)
 
-thanks,
+Impact:
+	- FlexTimer module will cannot wakeup system in
+	  deep sleep on SoC LS1021A
 
-greg k-h
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v5:
+	- update the patch, because of rcpm driver has updated.
+
+Change in v4:
+	- rename property name
+	  fsl,ippdexpcr-alt-addr -> fsl,ippdexpcr1-alt-addr
+
+Change in v3:
+	- update commit message
+	- rename property name
+	  fsl,rcpm-scfg -> fsl,ippdexpcr-alt-addr
+
+Change in v2:
+  	- fix stype problems
+
+ drivers/soc/fsl/rcpm.c | 47 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 45 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/fsl/rcpm.c b/drivers/soc/fsl/rcpm.c
+index a093dbe6d2cb..775c618f0456 100644
+--- a/drivers/soc/fsl/rcpm.c
++++ b/drivers/soc/fsl/rcpm.c
+@@ -6,13 +6,16 @@
+ //
+ // Author: Ran Wang <ran.wang_1@nxp.com>
+ 
++#include <linux/acpi.h>
+ #include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+-#include <linux/platform_device.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+-#include <linux/kernel.h>
+ 
+ #define RCPM_WAKEUP_CELL_MAX_SIZE	7
+ 
+@@ -37,6 +40,9 @@ static int rcpm_pm_prepare(struct device *dev)
+ 	struct device_node	*np = dev->of_node;
+ 	u32 value[RCPM_WAKEUP_CELL_MAX_SIZE + 1];
+ 	u32 setting[RCPM_WAKEUP_CELL_MAX_SIZE] = {0};
++	struct regmap *scfg_addr_regmap = NULL;
++	u32 reg_offset[RCPM_WAKEUP_CELL_MAX_SIZE + 1];
++	u32 reg_value = 0;
+ 
+ 	rcpm = dev_get_drvdata(dev);
+ 	if (!rcpm)
+@@ -90,6 +96,43 @@ static int rcpm_pm_prepare(struct device *dev)
+ 			tmp |= ioread32be(address);
+ 			iowrite32be(tmp, address);
+ 		}
++		/*
++		 * Workaround of errata A-008646 on SoC LS1021A:
++		 * There is a bug of register ippdexpcr1.
++		 * Reading configuration register RCPM_IPPDEXPCR1
++		 * always return zero. So save ippdexpcr1's value
++		 * to register SCFG_SPARECR8.And the value of
++		 * ippdexpcr1 will be read from SCFG_SPARECR8.
++		 */
++		if (device_property_present(dev, "fsl,ippdexpcr1-alt-addr")) {
++			if (dev_of_node(dev)) {
++				scfg_addr_regmap = syscon_regmap_lookup_by_phandle(np,
++										   "fsl,ippdexpcr1-alt-addr");
++			} else if (is_acpi_node(dev->fwnode)) {
++				dev_err(dev, "not support acpi for rcpm\n");
++				continue;
++			}
++
++			if (scfg_addr_regmap && (i == 1)) {
++				if (device_property_read_u32_array(dev,
++				    "fsl,ippdexpcr1-alt-addr",
++				    reg_offset,
++				    1 + sizeof(u64)/sizeof(u32))) {
++					scfg_addr_regmap = NULL;
++					continue;
++				}
++				/* Read value from register SCFG_SPARECR8 */
++				regmap_read(scfg_addr_regmap,
++					    (u32)(((u64)(reg_offset[1] << (sizeof(u32) * 8) |
++					    reg_offset[2])) & 0xffffffff),
++					    &reg_value);
++				/* Write value to register SCFG_SPARECR8 */
++				regmap_write(scfg_addr_regmap,
++					     (u32)(((u64)(reg_offset[1] << (sizeof(u32) * 8) |
++					     reg_offset[2])) & 0xffffffff),
++					     tmp | reg_value);
++			}
++		}
+ 	}
+ 
+ 	return 0;
+-- 
+2.17.1
+
