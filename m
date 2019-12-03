@@ -2,98 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81590111D08
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:50:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B39111D1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:51:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfLCWtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:49:41 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:33646 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729447AbfLCWti (ORCPT
+        id S1729731AbfLCWuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:50:24 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:44262 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729745AbfLCWuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:49:38 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3MY79D110765;
-        Tue, 3 Dec 2019 22:49:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=uYMuACAdoNAl6fAtZMdOLI9RRVa7NSCuglLVW02y4Vk=;
- b=qAfHc5tUR8AnZ+grEo2Tf/wPWys1CJCprYekENY6UUdzeO4NBXQsRnNdeoRnWFFAY71y
- zNME2blxqhZUPE1kvQ+Ihr5PD+qU8zi40EBdO3+d2s9gzDi4yLhHpTAVHa2IW+pgzXHi
- 1keQKv7Vj9cq3uwGnik3I4uVN2DmKJkT9XP5WXbIuSs9aLwIPwgtb8bDGb+NXPlLJah5
- xY3pUyiGF3oZsrf/NO2W5d+wofNZtqqQM6/Hovpbg0z9eJlB6AQlFtFSBoKiW19uNezl
- t+PbFit8ec8x0s0tlaiTWXZIXEtIzrOWvio2wvKPxaMS116pu63FlYVcD2WY+yhmpxBg 0g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2wkh2raqfm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Dec 2019 22:49:21 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3MYHoO082700;
-        Tue, 3 Dec 2019 22:49:20 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2wnvqx4r8y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Dec 2019 22:49:20 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB3MnHeU021188;
-        Tue, 3 Dec 2019 22:49:17 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Dec 2019 14:49:17 -0800
-Date:   Tue, 3 Dec 2019 14:49:15 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: [GIT PULL] iomap: small cleanups for 5.5
-Message-ID: <20191203224915.GK7335@magnolia>
-References: <20191203160856.GC7323@magnolia>
- <CAHk-=wh3vin7WyMpBGWxZovGp51wa=U0T=TXqnQPVMBiEpdvsQ@mail.gmail.com>
+        Tue, 3 Dec 2019 17:50:22 -0500
+Received: by mail-pj1-f65.google.com with SMTP id w5so2095015pjh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:50:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s72VU58n1uZlGbJBRTu2xgBYvYdIHK25ECXlG0jy3sU=;
+        b=IUFc8UxNwCnljk1TUZeICIsFef5PK+xyx1Cbp5WCC/NRyAH/tbCYjBIAeLuROBwikS
+         7ZJl3nv42a8U9RgG63oQnfjnPKIovit6eCqoPDdhkLgzn5hRk1/nRxJt7ld9HCyyhMlk
+         JILbzRmnm3Y+5cdd/BwZZBnNhnO2dK6/enplmbtWP4BBQol0Ci2cwRgE+JclK44wH0Mw
+         ysEBvJVUVGDWQIELvgX4F94BvuaB1Sa/wk0WN9TVAehOEWdcUBsOn+qYzcqu8cpkUMhu
+         vttwNNE5r1wOhr9igAx4QihOT1fd5iRS1B7bEO+mKA2grij7zGOPJU69UqyOw6P7TKu5
+         SvPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s72VU58n1uZlGbJBRTu2xgBYvYdIHK25ECXlG0jy3sU=;
+        b=AStU3BQaV5pVPxWrc34zV5UbT19EHNG/uve0uNpgaKEI+7hNhBUjWqsMRqpOTCjkj3
+         Dl7A1qjH5kQg9D7EWoC7f5EJi165L63Bao2bFxtEDCjroZoeKyfhbz705nmRyhrO5bmn
+         WL9yPYOjwKGogMHiaup4u8LfbqFewHkFXcW/+ISyahEv8DIbAMCmDoA4pBwhMYfq6/Kx
+         Oj3DSryUuro4Eg8razu82iEbBk+AE0QfMRGx3Yr0s25QTzzwi3+SHRXfDS2yZkKZEvju
+         2orS1D+AhRHgc7EHBG6iyw+HowAmOQdUEEYpZIM5sE8F4OSUPHTIoiWcvD0F/g4WeNO0
+         7v1Q==
+X-Gm-Message-State: APjAAAVYFIx6/UKCyWwOffuPaA4mhwueqOpvvftd6PTIt0Opq1M+eIQT
+        yZa/C/kV1BsrbSLKML5o8WXEaNIgh1cJeqWut3KZrQ==
+X-Google-Smtp-Source: APXvYqwiLcG4Ak+RbWUBVrzm1Y963nmdTKtkyVteu+4h4xn9QeAIwv9XGtBGLGW8JW3XRdI9kKo1W/hNsqcZZ8MX+Ho=
+X-Received: by 2002:a17:90a:c390:: with SMTP id h16mr8324726pjt.131.1575413421318;
+ Tue, 03 Dec 2019 14:50:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh3vin7WyMpBGWxZovGp51wa=U0T=TXqnQPVMBiEpdvsQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912030165
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912030165
+References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com> <1575374868-32601-7-git-send-email-alan.maguire@oracle.com>
+In-Reply-To: <1575374868-32601-7-git-send-email-alan.maguire@oracle.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 3 Dec 2019 14:50:10 -0800
+Message-ID: <CAFd5g47y8t7ZveLvgiTBVBkFE4-zJmPgMykjPNkm03X63Aimnw@mail.gmail.com>
+Subject: Re: [PATCH v5 linux-kselftest-test 6/6] kunit: update documentation
+ to describe module-based build
+To:     Alan Maguire <alan.maguire@oracle.com>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Gow <davidgow@google.com>, adilger.kernel@dilger.ca,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Knut Omang <knut.omang@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 01:21:01PM -0800, Linus Torvalds wrote:
-> On Tue, Dec 3, 2019 at 8:09 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> > Please pull this series containing some more new iomap code for 5.5.
-> > There's not much this time -- just removing some local variables that
-> > don't need to exist in the iomap directio code.
-> 
-> Hmm. The tag message (which was also in the email thanks to git
-> request-pull) is very misleading.
-> 
-> Pulled, but please check these things.
+On Tue, Dec 3, 2019 at 4:08 AM Alan Maguire <alan.maguire@oracle.com> wrote:
+>
+> Documentation should describe how to build kunit and tests as
+> modules.
+>
+> Co-developed-by: Knut Omang <knut.omang@oracle.com>
+> Signed-off-by: Knut Omang <knut.omang@oracle.com>
+> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-Sorry about that sloppiness, I'll avoid that in the future.
-
---D
-
->            Linus
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
