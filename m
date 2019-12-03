@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB8B0111C2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC80111D91
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfLCWlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:41:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55544 "EHLO mail.kernel.org"
+        id S1730047AbfLCWyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:54:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727731AbfLCWlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:41:13 -0500
+        id S1730049AbfLCWyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DC212080A;
-        Tue,  3 Dec 2019 22:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F02F20656;
+        Tue,  3 Dec 2019 22:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412872;
-        bh=EaplAfuheF1sBF4x0lD26ZSodyHdeqvGBmEQkvmT834=;
+        s=default; t=1575413688;
+        bh=WDj1lebzsJppGjn2JeS5Fu1Vx3UyS1VisVUioDpEbow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gSmvNfosgqxixKjFTIsIglyJTlBDnVM6oXOLblal5oM/N1IgbqupWtjdTLky1Wumh
-         T9t07g8SDyGFBtPCDNF9YIhkaYUBBBTtchoiBvWNzZqmOLsqqnGvy8NK4e/2D87U2n
-         nwi6QCQf9VksbzCSdk0yJtMKAHi6d4di3Y3PS8e0=
+        b=XK7GWyltihzqp2N1ObLAkjoBxmSnmDUPAG2JgZAi2mjbsoPsu6nEU5usiStmHPgn4
+         W52iX3ufChsLPVCHIumm+C4Wsk/9941x7MhkLkuk/fVVmfONsbZUSwGY6rLNnnRha1
+         Utl8Kw7KMxYzODuYNCwZjz/PB5MJu/vBBT8Ln+Jw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michal Suchanek <msuchanek@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 050/135] stacktrace: Dont skip first entry on noncurrent tasks
-Date:   Tue,  3 Dec 2019 23:34:50 +0100
-Message-Id: <20191203213019.500970064@linuxfoundation.org>
+Subject: [PATCH 4.19 225/321] net/smc: dont wait for send buffer space when data was already sent
+Date:   Tue,  3 Dec 2019 23:34:51 +0100
+Message-Id: <20191203223438.820789861@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit b0c51f158455e31d5024100cf3580fcd88214b0e ]
+[ Upstream commit 6889b36da78a21a312d8b462c1fa25a03c2ff192 ]
 
-When doing cat /proc/<PID>/stack, the output is missing the first entry.
-When the current code walks the stack starting in stack_trace_save_tsk,
-it skips all scheduler functions (that's OK) plus one more function. But
-this one function should be skipped only for the 'current' task as it is
-stack_trace_save_tsk proper.
+When there is no more send buffer space and at least 1 byte was already
+sent then return to user space. The wait is only done when no data was
+sent by the sendmsg() call.
+This fixes smc_tx_sendmsg() which tried to always send all user data and
+started to wait for free send buffer space when needed. During this wait
+the user space program was blocked in the sendmsg() call and hence not
+able to receive incoming data. When both sides were in such a situation
+then the connection stalled forever.
 
-The original code (before the common infrastructure) skipped one
-function only for the 'current' task -- see save_stack_trace_tsk before
-3599fe12a125. So do so also in the new infrastructure now.
-
-Fixes: 214d8ca6ee85 ("stacktrace: Provide common infrastructure")
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Michal Suchanek <msuchanek@suse.de>
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20191030072545.19462-1-jslaby@suse.cz
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/stacktrace.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/smc/smc_tx.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
-index f5440abb75329..9bbfbdb96ae51 100644
---- a/kernel/stacktrace.c
-+++ b/kernel/stacktrace.c
-@@ -141,7 +141,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *tsk, unsigned long *store,
- 	struct stacktrace_cookie c = {
- 		.store	= store,
- 		.size	= size,
--		.skip	= skipnr + 1,
-+		/* skip this function if they are tracing us */
-+		.skip	= skipnr + !!(current == tsk),
- 	};
+diff --git a/net/smc/smc_tx.c b/net/smc/smc_tx.c
+index 28361aef99825..f1f621675db01 100644
+--- a/net/smc/smc_tx.c
++++ b/net/smc/smc_tx.c
+@@ -163,12 +163,11 @@ int smc_tx_sendmsg(struct smc_sock *smc, struct msghdr *msg, size_t len)
+ 			conn->local_tx_ctrl.prod_flags.urg_data_pending = 1;
  
- 	if (!try_get_task_stack(tsk))
-@@ -298,7 +299,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *task,
- 	struct stack_trace trace = {
- 		.entries	= store,
- 		.max_entries	= size,
--		.skip		= skipnr + 1,
-+		/* skip this function if they are tracing us */
-+		.skip	= skipnr + !!(current == task),
- 	};
+ 		if (!atomic_read(&conn->sndbuf_space) || conn->urg_tx_pend) {
++			if (send_done)
++				return send_done;
+ 			rc = smc_tx_wait(smc, msg->msg_flags);
+-			if (rc) {
+-				if (send_done)
+-					return send_done;
++			if (rc)
+ 				goto out_err;
+-			}
+ 			continue;
+ 		}
  
- 	save_stack_trace_tsk(task, &trace);
 -- 
 2.20.1
 
