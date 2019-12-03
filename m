@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BF5111C89
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F44111E21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfLCWpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33216 "EHLO mail.kernel.org"
+        id S1730452AbfLCXAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:00:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728714AbfLCWo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:44:59 -0500
+        id S1730649AbfLCW62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:58:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C632E20803;
-        Tue,  3 Dec 2019 22:44:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 097322053B;
+        Tue,  3 Dec 2019 22:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413099;
-        bh=ZAElCnF+kBhFRZbe6dsOPCbD8yjQ/4Ks1M5RIlRXWCc=;
+        s=default; t=1575413907;
+        bh=2n4Pb1VYk1er3LK3e5A/i6LbB5hD/TGvKe6nzGWYQxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RhT/eunyRVPZ+Cea9XDD9hBtUk3NDHhgymuFLECJrLYj37pnhBhc5TngMexOoEju0
-         XMTE7S3sWhDz+xurtP3LqwqQsvBO0gnDLaYkbzmXxzNhh4HK2ULZ8jFldKsJedA3ws
-         1PLF8Mu2v6A2Ni6SCI0Uuh6C+q+hZce6gm68cc6Q=
+        b=Bj8QEm5uxifWExK/wOV5q5LA3o3csU1J0AH/WIBgiMOo0IjtFR3XpZQQvpWTk3PXu
+         GvJkJjiPRfU7TO/PvdeD8sk4Fk8MP6m+/roJgWKHUiec1g1XPN+wGW1NdGUaTe/mkV
+         O9ibWBz0SRzOmizqZwnXkEY8zH8X0fS7SwUpl+vM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 5.3 135/135] platform/x86: hp-wmi: Fix ACPI errors caused by passing 0 as input size
+        stable@vger.kernel.org,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 4.19 309/321] clk: stm32mp1: fix HSI divider flag
 Date:   Tue,  3 Dec 2019 23:36:15 +0100
-Message-Id: <20191203213046.334463331@linuxfoundation.org>
+Message-Id: <20191203223443.222565848@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,63 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-commit f3e4f3fc8ee9729c4b1b27a478c68b713df53c0c upstream.
+commit d3f2e33c875de5052e032a9eefa64c897a930ed1 upstream.
 
-The AML code implementing the WMI methods creates a variable length
-field to hold the input data we pass like this:
+The divider of HSI (clk-hsi-div) is power of two divider.
 
-        CreateDWordField (Arg1, 0x0C, DSZI)
-        Local5 = DSZI /* \HWMC.DSZI */
-        CreateField (Arg1, 0x80, (Local5 * 0x08), DAIN)
-
-If we pass 0 as bios_args.datasize argument then (Local5 * 0x08)
-is 0 which results in these errors:
-
-[   71.973305] ACPI BIOS Error (bug): Attempt to CreateField of length zero (20190816/dsopcode-133)
-[   71.973332] ACPI Error: Aborting method \HWMC due to previous error (AE_AML_OPERAND_VALUE) (20190816/psparse-529)
-[   71.973413] ACPI Error: Aborting method \_SB.WMID.WMAA due to previous error (AE_AML_OPERAND_VALUE) (20190816/psparse-529)
-
-And in our HPWMI_WIRELESS2_QUERY calls always failing. for read commands
-like HPWMI_WIRELESS2_QUERY the DSZI value is not used / checked, except for
-read commands where extra input is needed to specify exactly what to read.
-
-So for HPWMI_WIRELESS2_QUERY we can safely pass the size of the expected
-output as insize to hp_wmi_perform_query(), as we are already doing for all
-other HPWMI_READ commands we send. Doing so fixes these errors.
-
-Cc: stable@vger.kernel.org
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=197007
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=201981
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1520703
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 9bee94e7b7da ("clk: stm32mp1: Introduce STM32MP1 clock driver")
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/hp-wmi.c |    4 ++--
+ drivers/clk/clk-stm32mp1.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/platform/x86/hp-wmi.c
-+++ b/drivers/platform/x86/hp-wmi.c
-@@ -380,7 +380,7 @@ static int hp_wmi_rfkill2_refresh(void)
- 	int err, i;
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1655,8 +1655,8 @@ static const struct stm32_mux_cfg ker_mu
  
- 	err = hp_wmi_perform_query(HPWMI_WIRELESS2_QUERY, HPWMI_READ, &state,
--				   0, sizeof(state));
-+				   sizeof(state), sizeof(state));
- 	if (err)
- 		return err;
+ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	/* Oscillator divider */
+-	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
+-	    CLK_DIVIDER_READ_ONLY),
++	DIV(NO_ID, "clk-hsi-div", "clk-hsi", CLK_DIVIDER_POWER_OF_TWO,
++	    RCC_HSICFGR, 0, 2, CLK_DIVIDER_READ_ONLY),
  
-@@ -777,7 +777,7 @@ static int __init hp_wmi_rfkill2_setup(s
- 	int err, i;
- 
- 	err = hp_wmi_perform_query(HPWMI_WIRELESS2_QUERY, HPWMI_READ, &state,
--				   0, sizeof(state));
-+				   sizeof(state), sizeof(state));
- 	if (err)
- 		return err < 0 ? err : -EINVAL;
- 
+ 	/*  External / Internal Oscillators */
+ 	GATE_MP1(CK_HSE, "ck_hse", "clk-hse", 0, RCC_OCENSETR, 8, 0),
 
 
