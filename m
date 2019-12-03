@@ -2,122 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 751C710FB02
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6B8010FB06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:47:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfLCJre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 04:47:34 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36325 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbfLCJre (ORCPT
+        id S1726388AbfLCJrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 04:47:51 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40483 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfLCJrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 04:47:34 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f16so2399081lfm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 01:47:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LBlsPDMutrlKmGK6ispxJ+ONxNie6T+smNqG2/7IGRo=;
-        b=Y949QJfuY8kPUH91G3q2lREJ5bLgeFdqRyUXx3+W2ujbmbNETadIbVHMxY+tPHnmMQ
-         7YQCavJDwZ4bIWs/r08lFxw8+qMva/308JyQpjZG3Q6RGDxqHdJ6W5Tt0ZXyVakSwrmq
-         BTmzZcSwvzWsEjXJQxpViirKa9sC7WpXQ3pIv+mxPyGd6uztqyI2HNV2hCmDGf34Js/2
-         vW+gpPhdpLTXlXJBNM7WR2xhkMFzBMgRGNp03TK3QBhswPFl1jswE2daTtn0hKRukYhc
-         8ke8mRLg2pNF5CjmCBXG2Pkj2coqWavGT0O6TM4koBFwe0HQEQAwIlZrL1Fk00AjPOqJ
-         5XOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LBlsPDMutrlKmGK6ispxJ+ONxNie6T+smNqG2/7IGRo=;
-        b=EL3xtuYkIPt2SYIjIp9RzlZgmuPzuKjcBTwIG8ePKvn+byI54TClw/6DDVwfBbUgva
-         +6xOCYqNgIXPjWqPKJ4eUQ2EUuihig9GUC6Q9v5bPb3m5PW5CRKe8Am66zpsd3HVdKPa
-         Umu5Eqz0ATdN5FGJd/Ips0xeZLMrzvCuxdbVbbls/HgB0A02GeZB+o2b7l2N/weVAZ/F
-         zqCbAZrakdxIucJV+S9BTTMhGXf60pN3H0QgQWKPmKUSurqLjyBY6BKeGwK+ZHZx0pj+
-         hffapMZsVARHhuzwjJYihQ3/AY0dgLiLFL60w4hyfNjk7fNOGzxjHv3UvKv2mxIQuj5Z
-         lsNQ==
-X-Gm-Message-State: APjAAAXoXWieqRRl5y9YpkfQ16reLcRJgu6b8PoHA42W9lABdXBk2fnt
-        QYnGK1CW2wvab9I8//ewjMjiPQ==
-X-Google-Smtp-Source: APXvYqzKRWDqiRYC85MOhaukLO9IBk6JgBuxKJ5+vxvt4puTqMMjzpNwCwUmN7LgJVCP0G/yEC3aHw==
-X-Received: by 2002:a19:3f51:: with SMTP id m78mr2257417lfa.70.1575366452524;
-        Tue, 03 Dec 2019 01:47:32 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c193sm969116lfd.28.2019.12.03.01.47.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 01:47:31 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 9D6C4100494; Tue,  3 Dec 2019 12:47:30 +0300 (+03)
-Date:   Tue, 3 Dec 2019 12:47:30 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm/page_vma_mapped: use PMD_SIZE instead of
- calculating it
-Message-ID: <20191203094730.7oh4j5juh3jsx5dk@box>
-References: <20191128010321.21730-1-richardw.yang@linux.intel.com>
- <20191128083255.ab5rwj7gvktwunik@box.shutemov.name>
- <20191128212226.sfrhfs5m3q7m6tly@master>
- <20191202080315.oqtm3q7cyfkl5rma@box.shutemov.name>
- <20191202222151.xx4g3ry7mrcselh5@master>
+        Tue, 3 Dec 2019 04:47:51 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1ic4mb-0003Hm-Py; Tue, 03 Dec 2019 10:47:49 +0100
+Message-ID: <9e210702979c45c11d16bf5df97b75863da587d0.camel@pengutronix.de>
+Subject: Re: [PATCH v5 1/3] dmaengine: imx-sdma: fix buffer ownership
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Philipp Puschmann <philipp.puschmann@emlix.com>,
+        linux-kernel@vger.kernel.org
+Cc:     jlu@pengutronix.de, yibin.gong@nxp.com, fugang.duan@nxp.com,
+        dan.j.williams@intel.com, vkoul@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 03 Dec 2019 10:47:48 +0100
+In-Reply-To: <20190923135808.815-2-philipp.puschmann@emlix.com>
+References: <20190923135808.815-1-philipp.puschmann@emlix.com>
+         <20190923135808.815-2-philipp.puschmann@emlix.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191202222151.xx4g3ry7mrcselh5@master>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 10:21:51PM +0000, Wei Yang wrote:
-> On Mon, Dec 02, 2019 at 11:03:15AM +0300, Kirill A. Shutemov wrote:
-> >On Thu, Nov 28, 2019 at 09:22:26PM +0000, Wei Yang wrote:
-> >> On Thu, Nov 28, 2019 at 11:32:55AM +0300, Kirill A. Shutemov wrote:
-> >> >On Thu, Nov 28, 2019 at 09:03:20AM +0800, Wei Yang wrote:
-> >> >> At this point, we are sure page is PageTransHuge, which means
-> >> >> hpage_nr_pages is HPAGE_PMD_NR.
-> >> >> 
-> >> >> This is safe to use PMD_SIZE instead of calculating it.
-> >> >> 
-> >> >> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> >> >> ---
-> >> >>  mm/page_vma_mapped.c | 2 +-
-> >> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> >> 
-> >> >> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-> >> >> index eff4b4520c8d..76e03650a3ab 100644
-> >> >> --- a/mm/page_vma_mapped.c
-> >> >> +++ b/mm/page_vma_mapped.c
-> >> >> @@ -223,7 +223,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
-> >> >>  			if (pvmw->address >= pvmw->vma->vm_end ||
-> >> >>  			    pvmw->address >=
-> >> >>  					__vma_address(pvmw->page, pvmw->vma) +
-> >> >> -					hpage_nr_pages(pvmw->page) * PAGE_SIZE)
-> >> >> +					PMD_SIZE)
-> >> >>  				return not_found(pvmw);
-> >> >>  			/* Did we cross page table boundary? */
-> >> >>  			if (pvmw->address % PMD_SIZE == 0) {
-> >> >
-> >> >It is dubious cleanup. Maybe page_size(pvmw->page) instead? It will not
-> >> >break if we ever get PUD THP pages.
-> >> >
-> >> 
-> >> Thanks for your comment.
-> >> 
-> >> I took a look into the code again and found I may miss something.
-> >> 
-> >> I found we support PUD THP pages, whilc hpage_nr_pages() just return
-> >> HPAGE_PMD_NR on PageTransHuge. Why this is not possible to return PUD number?
-> >
-> >We only support PUD THP for DAX. Means, we don't have struct page for it.
-> >
+On Mo, 2019-09-23 at 15:58 +0200, Philipp Puschmann wrote:
+> BD_DONE flag marks ownership of the buffer. When 1 SDMA owns the
+> buffer, when 0 ARM owns it. When processing the buffers in
+> sdma_update_channel_loop the ownership of the currently processed
+> buffer was set to SDMA again before running the callback function of
+> the buffer and while the sdma script may be running in parallel. So
+> there was the possibility to get the buffer overwritten by SDMA
+> before
+> it has been processed by kernel leading to kind of random errors in
+> the
+> upper layers, e.g. bluetooth.
 > 
-> BTW, may I ask why you suggest to use page_size() if we are sure only PMD THP
-> page is used here? To be more generic?
+> Fixes: 1ec1e82f2510 ("dmaengine: Add Freescale i.MX SDMA support")
+> Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
 
-Yeah. I would rather not touch it at all.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
--- 
- Kirill A. Shutemov
+> ---
+> 
+> Changelog v5:
+>  - no changes
+> 
+> Changelog v4:
+>  - fixed the fixes tag
+>  
+> Changelog v3:
+>  - use correct dma_wmb() instead of dma_wb()
+>  - add fixes tag
+> 
+> Changelog v2:
+>  - add dma_wb()
+>  
+>  drivers/dma/imx-sdma.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index 9ba74ab7e912..b42281604e54 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -802,7 +802,6 @@ static void sdma_update_channel_loop(struct
+> sdma_channel *sdmac)
+>  		*/
+>  
+>  		desc->chn_real_count = bd->mode.count;
+> -		bd->mode.status |= BD_DONE;
+>  		bd->mode.count = desc->period_len;
+>  		desc->buf_ptail = desc->buf_tail;
+>  		desc->buf_tail = (desc->buf_tail + 1) % desc->num_bd;
+> @@ -817,6 +816,9 @@ static void sdma_update_channel_loop(struct
+> sdma_channel *sdmac)
+>  		dmaengine_desc_get_callback_invoke(&desc->vd.tx, NULL);
+>  		spin_lock(&sdmac->vc.lock);
+>  
+> +		dma_wmb();
+> +		bd->mode.status |= BD_DONE;
+> +
+>  		if (error)
+>  			sdmac->status = old_status;
+>  	}
+
