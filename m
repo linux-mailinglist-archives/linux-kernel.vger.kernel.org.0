@@ -2,103 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 669B710F8B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:28:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB21F10F90D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:43:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbfLCH2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 02:28:54 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:54154 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfLCH2y (ORCPT
+        id S1727501AbfLCHnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 02:43:24 -0500
+Received: from mailgw.unisannio.it ([193.206.108.11]:40798 "EHLO
+        mailgw.unisannio.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbfLCHnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 02:28:54 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB37O0Ew116400;
-        Tue, 3 Dec 2019 07:28:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=qco2ixbN1TtUc8WP/AJYYaNXEN4NS/EAZ+OClpveUgw=;
- b=OMyMYL36L/LL3zylLL2mgrPXYqiZx7cZdixsUrr7hadOaKlV+6W+E8WCeGTtHz40Oce2
- /grNZL+mb6KW+63B5AfRwayeGwingg+QleUnXQqTOMnCHqX2dvHu9M7bKfgS6MHMJetV
- nTnk3jw+kRC1pg2uW95ODUnBQ2tL04WVVeMWAt3dhWke5wzJ1oUh7/21gkjgDG1n4l5t
- hEuOlY8T1mgQE25jx+xQ7L7BViYcNQjaeT/V7swONC9FHt40ucov6nDOqqHdC23jfcgx
- XhJ/eB0lKHpc5kHIrF44MEKjamY+s+RCxmyM/cf2tuMUAZBvKV4LrS78QCAZY08WUx3M PQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2wkfuu5qgj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Dec 2019 07:28:44 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB37SRmD158987;
-        Tue, 3 Dec 2019 07:28:43 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2wn8k1waee-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Dec 2019 07:28:43 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB37Sep8007933;
-        Tue, 3 Dec 2019 07:28:40 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 02 Dec 2019 23:28:39 -0800
-Date:   Tue, 3 Dec 2019 10:28:24 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/misc: ti-st: remove redundant assignment to
- variable i
-Message-ID: <20191203072824.GA1765@kadam>
-References: <20191202151352.55139-1-colin.king@canonical.com>
+        Tue, 3 Dec 2019 02:43:23 -0500
+X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Dec 2019 02:43:22 EST
+Received: from localhost (unknown [127.0.0.1])
+        by mailgw.unisannio.it (Postfix) with ESMTP id 32FEA501389;
+        Tue,  3 Dec 2019 07:41:20 +0000 (UTC)
+Received: from mailgw.unisannio.it ([127.0.0.1])
+ by localhost (mailgw.unisannio.it [127.0.0.1]) (amavisd-maia, port 10024)
+ with ESMTP id 17074-09; Tue,  3 Dec 2019 08:41:19 +0100 (CET)
+Received: from pamx1.unisannio.it (pamx1.unisannio.it [193.206.108.12])
+        by mailgw.unisannio.it (Postfix) with ESMTP id 2A1525014E0;
+        Tue,  3 Dec 2019 08:41:15 +0100 (CET)
+Received: from webmail.unisannio.it (webmail.unisannio.it [193.206.108.9])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: vacchian)
+        by pamx1.unisannio.it (Postfix) with ESMTPSA id C650D1E030B;
+        Tue,  3 Dec 2019 05:28:49 +0100 (CET)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191202151352.55139-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912030061
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912030060
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 03 Dec 2019 07:28:49 +0300
+From:   "Banca IMI S.P.A" <info.bancaimi.uk@gmail.com>
+To:     undisclosed-recipients:;
+Subject: Finanzielle Hilfe (Darlehen @1,3%)
+Organization: Banca IMI S.P.A
+Reply-To: info.bancaimi.uk@gmail.com
+Mail-Reply-To: info.bancaimi.uk@gmail.com
+Message-ID: <c441d1f7273fc16f42d945bf33280c30@gmail.com>
+X-Sender: info.bancaimi.uk@gmail.com
+User-Agent: Roundcube Webmail/1.3.9
+X-Virus-Scanned: Maia Mailguard 1.0.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 03:13:52PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable i is being initialized with a value that is never
-> read and it is being updated later with a new value in a for-loop.
-> The initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/misc/ti-st/st_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
-> index 2ae9948a91e1..6255d9b88122 100644
-> --- a/drivers/misc/ti-st/st_core.c
-> +++ b/drivers/misc/ti-st/st_core.c
-> @@ -736,7 +736,7 @@ static int st_tty_open(struct tty_struct *tty)
->  
->  static void st_tty_close(struct tty_struct *tty)
->  {
-> -	unsigned char i = ST_MAX_CHANNELS;
-> +	unsigned char i;
->  	unsigned long flags = 0;
 
-I'm surprised that flags doesn't generate a warning as well.
 
-regards,
-dan carpenter
+-- 
+Grüße Herr / Frau,
 
+Benötigen Sie finanzielle Unterstützung (Darlehen)?
+Sprechen Sie mit uns bei Banca IMI S.P.A., wir werden Ihre finanziellen 
+Probleme lösen.
+
+Unser Zinssatz beträgt 1,3%  Bitte bewerben Sie sich jetzt und füllen 
+Sie die folgenden Bewerbungsdetails aus:
+
+Vollständiger Name:____________________
+Darlehensbetrag: _______________________
+Mietzeitraum: ___________________
+Darlehen Zweck: _________________
+Telefon:____________________
+
+Wir warten auf Ihre Bewerbung, damit Ihre Kreditanfrage bearbeitet 
+werden kann.
+
+Mit freundlichen Grüßen
