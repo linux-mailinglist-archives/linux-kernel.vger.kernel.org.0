@@ -2,195 +2,291 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B1771101B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60FEB1101C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:04:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfLCQBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:01:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbfLCQBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:01:33 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727030AbfLCQDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:03:41 -0500
+Received: from bonobo.elm.relay.mailchannels.net ([23.83.212.22]:62195 "EHLO
+        bonobo.elm.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726131AbfLCQDk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 11:03:40 -0500
+X-Sender-Id: dreamhost|x-authsender|stevie@qrpff.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 23DE31A0E5A
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 16:03:39 +0000 (UTC)
+Received: from pdx1-sub0-mail-a9.g.dreamhost.com (100-96-4-107.trex.outbound.svc.cluster.local [100.96.4.107])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 35CEE1A0AE0
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 16:03:38 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|stevie@qrpff.net
+Received: from pdx1-sub0-mail-a9.g.dreamhost.com ([TEMPUNAVAIL].
+ [64.90.62.162])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.18.5);
+        Tue, 03 Dec 2019 16:03:39 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|stevie@qrpff.net
+X-MailChannels-Auth-Id: dreamhost
+X-Lyrical-Fearful: 4590fa411b991331_1575389018625_620993541
+X-MC-Loop-Signature: 1575389018625:4043353571
+X-MC-Ingress-Time: 1575389018624
+Received: from pdx1-sub0-mail-a9.g.dreamhost.com (localhost [127.0.0.1])
+        by pdx1-sub0-mail-a9.g.dreamhost.com (Postfix) with ESMTP id E4240AF64D
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 08:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=qrpff.net; h=mime-version
+        :from:date:message-id:subject:to:cc:content-type; s=qrpff.net;
+         bh=77WoW3CkLyIvTb55IWHyUNylFDU=; b=Ay7mqLpcOlXW88JLFTrS1ruLZ3AE
+        OPpyM6VV14yG6S6DEX9cCoEg738k5JLyfOTmWx0Ji6jy5UqQ9pruq6d0Ho+oJyUR
+        /uxTYIetDoOYgqE9PacognOInxkCJRevrC3YhdzSRBA/WcGJlI/bkF6yFvcRhyAP
+        iuVUL6kw9V8vtxE=
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D6C42068E;
-        Tue,  3 Dec 2019 16:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575388891;
-        bh=Y+MBcXzqSPjcu7EEBe36mxmMjTUX3DFU30w9Jm3s2Po=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=H3l95Tad2MSTXLcwU+pOLxsNROWo7kCb3sgXXiwaxM/uiiJ5a94D8sQQ2gU9dkDvt
-         epfVYP+b45K4mHVjkvwwBotAPyXksLcr1zPY90xtRCF7odLK1kProRLTFNsqB7WvGT
-         WA0bRBwjVV5M8Ex+3e9KCZfHWZssAf3WcC1yngu8=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 1D2EF3522780; Tue,  3 Dec 2019 08:01:28 -0800 (PST)
-Date:   Tue, 3 Dec 2019 08:01:28 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Marco Elver <elver@google.com>, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, will@kernel.org,
-        peterz@infradead.org, boqun.feng@gmail.com, arnd@arndb.de,
-        dvyukov@google.com, linux-arch@vger.kernel.org,
-        kasan-dev@googlegroups.com
-Subject: Re: [PATCH v3 3/3] kcsan: Prefer __always_inline for fast-path
-Message-ID: <20191203160128.GC2889@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191126140406.164870-1-elver@google.com>
- <20191126140406.164870-3-elver@google.com>
- <00ee3b40-0e37-c9ac-3209-d07b233a0c1d@infradead.org>
+        (Authenticated sender: stevie@qrpff.net)
+        by pdx1-sub0-mail-a9.g.dreamhost.com (Postfix) with ESMTPSA id A279AAF63D
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 08:03:31 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id z17so4388719ljk.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:03:31 -0800 (PST)
+X-Gm-Message-State: APjAAAWKZ0NgEIetnU1i3M/O5C6IGRrSOx5BTeR0mzfeGjnz/6UUpbXo
+        9avgq+btXscLZnT+VO9ypbcn78fiKXvVVgzX/8g=
+X-Google-Smtp-Source: APXvYqxnYtyAULgy0CLVafmglqQYuBJM2g0N7H4XjCt/asq8qw6Msu0aT9JUoTab9GNHYZlPouOW5eCykIphcX9s5eY=
+X-Received: by 2002:a2e:4704:: with SMTP id u4mr3062360lja.117.1575389009625;
+ Tue, 03 Dec 2019 08:03:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00ee3b40-0e37-c9ac-3209-d07b233a0c1d@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-DH-BACKEND: pdx1-sub0-mail-a9
+From:   Stephen Oberholtzer <stevie@qrpff.net>
+Date:   Tue, 3 Dec 2019 11:03:18 -0500
+X-Gmail-Original-Message-ID: <CAD_xR9dGuVLsZf1P3C-x7L8_WVkHHMfQCKdvR_ZRkeBXCOxW_w@mail.gmail.com>
+Message-ID: <CAD_xR9dGuVLsZf1P3C-x7L8_WVkHHMfQCKdvR_ZRkeBXCOxW_w@mail.gmail.com>
+Subject: [RFC] chromeos_laptop: Make touchscreen work on C720
+To:     Benson Leung <bleung@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 02, 2019 at 09:30:22PM -0800, Randy Dunlap wrote:
-> On 11/26/19 6:04 AM, Marco Elver wrote:
-> > Prefer __always_inline for fast-path functions that are called outside
-> > of user_access_save, to avoid generating UACCESS warnings when
-> > optimizing for size (CC_OPTIMIZE_FOR_SIZE). It will also avoid future
-> > surprises with compiler versions that change the inlining heuristic even
-> > when optimizing for performance.
-> > 
-> > Report: http://lkml.kernel.org/r/58708908-84a0-0a81-a836-ad97e33dbb62@infradead.org
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Signed-off-by: Marco Elver <elver@google.com>
-> 
-> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+From 627be71ee77f4fc20cdb55c6e0a06826fb43ca9d Mon Sep 17 00:00:00 2001
+From: Stephen Oberholtzer <stevie@qrpff.net>
+Date: Tue, 3 Dec 2019 02:20:28 -0500
+Subject: [RFC] chromeos_laptop: Make touchscreen work on C720
 
-Thank you, Randy!
+I have an old Acer C720 Chromebook reflashed with MrChromebox, running
+Debian.  When I did an upgrade, the touchscreen stopped working; I traced
+it to the kernel.
 
-							Thanx, Paul
+After six hours of bisecting -- if anyone can tell me how to make a kernel
+build take less than 2 hours of CPU time while bisecting, I'd greatly
+appreciate it -- I tracked the problem to commit 7cf432bf0586
+("Input: atmel_mxt_ts - require device properties present when probing").
 
-> Thanks.
-> 
-> > ---
-> > Rebased on: locking/kcsan branch of tip tree.
-> > ---
-> >  kernel/kcsan/atomic.h   |  2 +-
-> >  kernel/kcsan/core.c     | 16 +++++++---------
-> >  kernel/kcsan/encoding.h | 14 +++++++-------
-> >  3 files changed, 15 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/kernel/kcsan/atomic.h b/kernel/kcsan/atomic.h
-> > index 576e03ddd6a3..a9c193053491 100644
-> > --- a/kernel/kcsan/atomic.h
-> > +++ b/kernel/kcsan/atomic.h
-> > @@ -18,7 +18,7 @@
-> >   * than cast to volatile. Eventually, we hope to be able to remove this
-> >   * function.
-> >   */
-> > -static inline bool kcsan_is_atomic(const volatile void *ptr)
-> > +static __always_inline bool kcsan_is_atomic(const volatile void *ptr)
-> >  {
-> >  	/* only jiffies for now */
-> >  	return ptr == &jiffies;
-> > diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-> > index 3314fc29e236..c616fec639cd 100644
-> > --- a/kernel/kcsan/core.c
-> > +++ b/kernel/kcsan/core.c
-> > @@ -78,10 +78,8 @@ static atomic_long_t watchpoints[CONFIG_KCSAN_NUM_WATCHPOINTS + NUM_SLOTS-1];
-> >   */
-> >  static DEFINE_PER_CPU(long, kcsan_skip);
-> >  
-> > -static inline atomic_long_t *find_watchpoint(unsigned long addr,
-> > -					     size_t size,
-> > -					     bool expect_write,
-> > -					     long *encoded_watchpoint)
-> > +static __always_inline atomic_long_t *
-> > +find_watchpoint(unsigned long addr, size_t size, bool expect_write, long *encoded_watchpoint)
-> >  {
-> >  	const int slot = watchpoint_slot(addr);
-> >  	const unsigned long addr_masked = addr & WATCHPOINT_ADDR_MASK;
-> > @@ -146,7 +144,7 @@ insert_watchpoint(unsigned long addr, size_t size, bool is_write)
-> >   *	2. the thread that set up the watchpoint already removed it;
-> >   *	3. the watchpoint was removed and then re-used.
-> >   */
-> > -static inline bool
-> > +static __always_inline bool
-> >  try_consume_watchpoint(atomic_long_t *watchpoint, long encoded_watchpoint)
-> >  {
-> >  	return atomic_long_try_cmpxchg_relaxed(watchpoint, &encoded_watchpoint, CONSUMED_WATCHPOINT);
-> > @@ -160,7 +158,7 @@ static inline bool remove_watchpoint(atomic_long_t *watchpoint)
-> >  	return atomic_long_xchg_relaxed(watchpoint, INVALID_WATCHPOINT) != CONSUMED_WATCHPOINT;
-> >  }
-> >  
-> > -static inline struct kcsan_ctx *get_ctx(void)
-> > +static __always_inline struct kcsan_ctx *get_ctx(void)
-> >  {
-> >  	/*
-> >  	 * In interrupts, use raw_cpu_ptr to avoid unnecessary checks, that would
-> > @@ -169,7 +167,7 @@ static inline struct kcsan_ctx *get_ctx(void)
-> >  	return in_task() ? &current->kcsan_ctx : raw_cpu_ptr(&kcsan_cpu_ctx);
-> >  }
-> >  
-> > -static inline bool is_atomic(const volatile void *ptr)
-> > +static __always_inline bool is_atomic(const volatile void *ptr)
-> >  {
-> >  	struct kcsan_ctx *ctx = get_ctx();
-> >  
-> > @@ -193,7 +191,7 @@ static inline bool is_atomic(const volatile void *ptr)
-> >  	return kcsan_is_atomic(ptr);
-> >  }
-> >  
-> > -static inline bool should_watch(const volatile void *ptr, int type)
-> > +static __always_inline bool should_watch(const volatile void *ptr, int type)
-> >  {
-> >  	/*
-> >  	 * Never set up watchpoints when memory operations are atomic.
-> > @@ -226,7 +224,7 @@ static inline void reset_kcsan_skip(void)
-> >  	this_cpu_write(kcsan_skip, skip_count);
-> >  }
-> >  
-> > -static inline bool kcsan_is_enabled(void)
-> > +static __always_inline bool kcsan_is_enabled(void)
-> >  {
-> >  	return READ_ONCE(kcsan_enabled) && get_ctx()->disable_count == 0;
-> >  }
-> > diff --git a/kernel/kcsan/encoding.h b/kernel/kcsan/encoding.h
-> > index b63890e86449..f03562aaf2eb 100644
-> > --- a/kernel/kcsan/encoding.h
-> > +++ b/kernel/kcsan/encoding.h
-> > @@ -59,10 +59,10 @@ encode_watchpoint(unsigned long addr, size_t size, bool is_write)
-> >  		      (addr & WATCHPOINT_ADDR_MASK));
-> >  }
-> >  
-> > -static inline bool decode_watchpoint(long watchpoint,
-> > -				     unsigned long *addr_masked,
-> > -				     size_t *size,
-> > -				     bool *is_write)
-> > +static __always_inline bool decode_watchpoint(long watchpoint,
-> > +					      unsigned long *addr_masked,
-> > +					      size_t *size,
-> > +					      bool *is_write)
-> >  {
-> >  	if (watchpoint == INVALID_WATCHPOINT ||
-> >  	    watchpoint == CONSUMED_WATCHPOINT)
-> > @@ -78,13 +78,13 @@ static inline bool decode_watchpoint(long watchpoint,
-> >  /*
-> >   * Return watchpoint slot for an address.
-> >   */
-> > -static inline int watchpoint_slot(unsigned long addr)
-> > +static __always_inline int watchpoint_slot(unsigned long addr)
-> >  {
-> >  	return (addr / PAGE_SIZE) % CONFIG_KCSAN_NUM_WATCHPOINTS;
-> >  }
-> >  
-> > -static inline bool matching_access(unsigned long addr1, size_t size1,
-> > -				   unsigned long addr2, size_t size2)
-> > +static __always_inline bool matching_access(unsigned long addr1, size_t size1,
-> > +					    unsigned long addr2, size_t size2)
-> >  {
-> >  	unsigned long end_range1 = addr1 + size1 - 1;
-> >  	unsigned long end_range2 = addr2 + size2 - 1;
-> > 
-> 
-> 
-> -- 
-> ~Randy
-> 
+Looking at https://lkml.org/lkml/2018/5/3/955, it appears that the idea
+was to reassign the responsibility for setting up ACPI data for
+atmel_mxt_ts into chromeos_laptop, which makes a lot of sense, as that
+would tidy up some potential maintenance issues.
+
+However, that doesn't actually work.  The chromeos_laptop code appears to
+categorize every Chromebook as exactly one of the following:
+
+(A) Having I2C devices (declared using DECLARE_CROS_LAPTOP)
+(B) Requiring ACPI munging (declared using DECLARE_ACPI_CROS_LAPTOP)
+
+There's some stuff about a board_info.properties that looks like it's meant
+to do the job for I2C devices, but it doesn't seem to do anything;
+it *definitely* doesn't do what the atmel_mxt_ts driver is expecting.
+
+On the other hand, when I apply the following patch to a recent kernel
+(5.2 is the one I tested), my touchscreen works again.
+
+I'm still not sure if the appropriate solution is to ensure that the
+ACPI properties are set, or if atmel_mxt_ts should be checking both
+ACPI properties and the I2C board_info.properties, however.
+
+>8------------------------------------------------------8<
+
+Fixes: 7cf432bf058 ("Input: atmel_mxt_ts - require device properties
+present when probing")
+
+The ACPI data for the Atmel touchscreen found in many Chromebooks is
+incomplete.  Originally, the atmel_mxt_ts driver had a whitelist of known
+Chromebooks, but that changed in commit 7cf432bf0586 ("Input: atmel_mxt_ts
+ - require device properties present when probing").
+As of that commit, the atmel_mxt_ts driver expects the chromeos_laptop
+driver to inject the required ACPI properties into the device node.
+
+However, this doesn't actually work in all cases -- particularly, the Acer
+C720.  This is because the C720's definition does not contain any rules to
+set up the ACPI properties for the touchscreen.
+
+Signed-off-by: Stephen Oberholtzer <stevie@qrpff.net>
+
+---
+ drivers/platform/chrome/chromeos_laptop.c | 47 +++++++++++++++--------
+ 1 file changed, 31 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/platform/chrome/chromeos_laptop.c
+b/drivers/platform/chrome/chromeos_laptop.c
+index 7abbb6167766..b6487a19f04a 100644
+--- a/drivers/platform/chrome/chromeos_laptop.c
++++ b/drivers/platform/chrome/chromeos_laptop.c
+@@ -228,16 +228,28 @@ static struct notifier_block
+chromeos_laptop_i2c_notifier = {
+     .notifier_call = chromeos_laptop_i2c_notifier_call,
+ };
+
+-#define DECLARE_CROS_LAPTOP(_name)                    \
+-static const struct chromeos_laptop _name __initconst = {        \
++#define _DECLARE_I2C_CROS_LAPTOP(_name)                    \
+     .i2c_peripherals    = _name##_peripherals,            \
+-    .num_i2c_peripherals    = ARRAY_SIZE(_name##_peripherals),    \
++    .num_i2c_peripherals    = ARRAY_SIZE(_name##_peripherals),
++
++#define _DECLARE_ACPI_CROS_LAPTOP(_name)                \
++    .acpi_peripherals    = _name##_peripherals,            \
++    .num_acpi_peripherals    = ARRAY_SIZE(_name##_peripherals),
++
++#define DECLARE_I2C_CROS_LAPTOP(_name)                    \
++static const struct chromeos_laptop _name __initconst = {        \
++    _DECLARE_I2C_CROS_LAPTOP(_name)                    \
+ }
+
+ #define DECLARE_ACPI_CROS_LAPTOP(_name)                    \
+ static const struct chromeos_laptop _name __initconst = {        \
+-    .acpi_peripherals    = _name##_peripherals,            \
+-    .num_acpi_peripherals    = ARRAY_SIZE(_name##_peripherals),    \
++    _DECLARE_ACPI_CROS_LAPTOP(_name)                \
++}
++
++#define DECLARE_I2C_ACPI_CROS_LAPTOP(_name, _acpiname)            \
++static const struct chromeos_laptop _name __initconst = {        \
++    _DECLARE_I2C_CROS_LAPTOP(_name)                    \
++    _DECLARE_ACPI_CROS_LAPTOP(_acpiname)                \
+ }
+
+ static struct i2c_peripheral samsung_series_5_550_peripherals[] __initdata = {
+@@ -259,7 +271,7 @@ static struct i2c_peripheral
+samsung_series_5_550_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_SMBUS,
+     },
+ };
+-DECLARE_CROS_LAPTOP(samsung_series_5_550);
++DECLARE_I2C_CROS_LAPTOP(samsung_series_5_550);
+
+ static struct i2c_peripheral samsung_series_5_peripherals[] __initdata = {
+     /* Light Sensor. */
+@@ -270,7 +282,7 @@ static struct i2c_peripheral
+samsung_series_5_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_SMBUS,
+     },
+ };
+-DECLARE_CROS_LAPTOP(samsung_series_5);
++DECLARE_I2C_CROS_LAPTOP(samsung_series_5);
+
+ static const int chromebook_pixel_tp_keys[] __initconst = {
+     KEY_RESERVED,
+@@ -332,7 +344,7 @@ static struct i2c_peripheral
+chromebook_pixel_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_PANEL,
+     },
+ };
+-DECLARE_CROS_LAPTOP(chromebook_pixel);
++DECLARE_I2C_CROS_LAPTOP(chromebook_pixel);
+
+ static struct i2c_peripheral hp_chromebook_14_peripherals[] __initdata = {
+     /* Touchpad. */
+@@ -345,7 +357,7 @@ static struct i2c_peripheral
+hp_chromebook_14_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_DESIGNWARE,
+     },
+ };
+-DECLARE_CROS_LAPTOP(hp_chromebook_14);
++DECLARE_I2C_CROS_LAPTOP(hp_chromebook_14);
+
+ static struct i2c_peripheral dell_chromebook_11_peripherals[] __initdata = {
+     /* Touchpad. */
+@@ -367,7 +379,7 @@ static struct i2c_peripheral
+dell_chromebook_11_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_DESIGNWARE,
+     },
+ };
+-DECLARE_CROS_LAPTOP(dell_chromebook_11);
++DECLARE_I2C_CROS_LAPTOP(dell_chromebook_11);
+
+ static struct i2c_peripheral toshiba_cb35_peripherals[] __initdata = {
+     /* Touchpad. */
+@@ -380,7 +392,7 @@ static struct i2c_peripheral
+toshiba_cb35_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_DESIGNWARE,
+     },
+ };
+-DECLARE_CROS_LAPTOP(toshiba_cb35);
++DECLARE_I2C_CROS_LAPTOP(toshiba_cb35);
+
+ static struct i2c_peripheral acer_c7_chromebook_peripherals[] __initdata = {
+     /* Touchpad. */
+@@ -393,7 +405,7 @@ static struct i2c_peripheral
+acer_c7_chromebook_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_SMBUS,
+     },
+ };
+-DECLARE_CROS_LAPTOP(acer_c7_chromebook);
++DECLARE_I2C_CROS_LAPTOP(acer_c7_chromebook);
+
+ static struct i2c_peripheral acer_ac700_peripherals[] __initdata = {
+     /* Light Sensor. */
+@@ -404,7 +416,7 @@ static struct i2c_peripheral
+acer_ac700_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_SMBUS,
+     },
+ };
+-DECLARE_CROS_LAPTOP(acer_ac700);
++DECLARE_I2C_CROS_LAPTOP(acer_ac700);
+
+ static struct i2c_peripheral acer_c720_peripherals[] __initdata = {
+     /* Touchscreen. */
+@@ -452,7 +464,8 @@ static struct i2c_peripheral
+acer_c720_peripherals[] __initdata = {
+         .pci_devid    = PCI_DEVID(0, PCI_DEVFN(0x15, 0x2)),
+     },
+ };
+-DECLARE_CROS_LAPTOP(acer_c720);
++
++/* C720 also needs generic_atmel ACPI stuff declared below. */
+
+ static struct i2c_peripheral
+ hp_pavilion_14_chromebook_peripherals[] __initdata = {
+@@ -466,7 +479,7 @@ hp_pavilion_14_chromebook_peripherals[] __initdata = {
+         .type        = I2C_ADAPTER_SMBUS,
+     },
+ };
+-DECLARE_CROS_LAPTOP(hp_pavilion_14_chromebook);
++DECLARE_I2C_CROS_LAPTOP(hp_pavilion_14_chromebook);
+
+ static struct i2c_peripheral cr48_peripherals[] __initdata = {
+     /* Light Sensor. */
+@@ -477,7 +490,7 @@ static struct i2c_peripheral cr48_peripherals[]
+__initdata = {
+         .type        = I2C_ADAPTER_SMBUS,
+     },
+ };
+-DECLARE_CROS_LAPTOP(cr48);
++DECLARE_I2C_CROS_LAPTOP(cr48);
+
+ static const u32 samus_touchpad_buttons[] __initconst = {
+     KEY_RESERVED,
+@@ -520,6 +533,8 @@ static struct acpi_peripheral
+generic_atmel_peripherals[] __initdata = {
+ };
+ DECLARE_ACPI_CROS_LAPTOP(generic_atmel);
+
++DECLARE_I2C_ACPI_CROS_LAPTOP(acer_c720, generic_atmel);
++
+ static const struct dmi_system_id chromeos_laptop_dmi_table[] __initconst = {
+     {
+         .ident = "Samsung Series 5 550",
+-- 
+2.20.1
