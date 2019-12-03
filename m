@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01E6111ED8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3702111ED4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfLCXFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:05:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42400 "EHLO mail.kernel.org"
+        id S1729494AbfLCWuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:50:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729784AbfLCWuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:50:40 -0500
+        id S1729801AbfLCWuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:50:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AE662084F;
-        Tue,  3 Dec 2019 22:50:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A91420848;
+        Tue,  3 Dec 2019 22:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413438;
-        bh=phDPJ1vUMNfzDKLbY2iav8Z5Vj1yusXlB66sPyGRnAY=;
+        s=default; t=1575413449;
+        bh=VnSpNutR+HYM6dXHXuOieaAsfuez/ZwHMECRQRp7HeM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a6TiLhTYxszfqElhpgGDJX3TlqBIDi5YSvH+dD8UDAWx/kYG6nWyYcPZ2PZmOVYDM
-         ZwsDIjqhWw/X9a4Knc94hDbXGSr1NQrcVvwF3he5bGUKbwNKf8eFHVrZPKTCMzyZbl
-         WA0qQJU0r9Ozf+OR+7fPChmzmeSls98PTs0yvZLg=
+        b=lSamdMcr9iUiG6HDzgd9j9Ndys57UznjMp+V3773aWDVrSUdbqfnJG26slXj14Enz
+         X+V1vv5BiYTvQN4bqx5/m4q/CD0T1lY4W7+VKfb+3ccTE8ZXvOjOylnyAs1shQ+KhT
+         FdEKOo20zzFtNsauRfPnen3wtV7siIX8st60/FLE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/321] crypto: user - support incremental algorithm dumps
-Date:   Tue,  3 Dec 2019 23:32:34 +0100
-Message-Id: <20191203223431.731974654@linuxfoundation.org>
+Subject: [PATCH 4.19 092/321] brcmfmac: set F2 watermark to 256 for 4373
+Date:   Tue,  3 Dec 2019 23:32:38 +0100
+Message-Id: <20191203223431.936200745@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,114 +47,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Wright Feng <wright.feng@cypress.com>
 
-[ Upstream commit 0ac6b8fb23c724b015d9ca70a89126e8d1563166 ]
+[ Upstream commit e1a08730eeb0bad4d82c3bc40e74854872de618d ]
 
-CRYPTO_MSG_GETALG in NLM_F_DUMP mode sometimes doesn't return all
-registered crypto algorithms, because it doesn't support incremental
-dumps.  crypto_dump_report() only permits itself to be called once, yet
-the netlink subsystem allocates at most ~64 KiB for the skb being dumped
-to.  Thus only the first recvmsg() returns data, and it may only include
-a subset of the crypto algorithms even if the user buffer passed to
-recvmsg() is large enough to hold all of them.
+We got SDIO_CRC_ERROR with 4373 on SDR104 when doing bi-directional
+throughput test. Enable watermark to 256 to guarantee the operation
+stability.
 
-Fix this by using one of the arguments in the netlink_callback structure
-to keep track of the current position in the algorithm list.  Then
-userspace can do multiple recvmsg() on the socket after sending the dump
-request.  This is the way netlink dumps work elsewhere in the kernel;
-it's unclear why this was different (probably just an oversight).
-
-Also fix an integer overflow when calculating the dump buffer size hint.
-
-Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Wright Feng <wright.feng@cypress.com>
+Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/crypto_user.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ .../broadcom/brcm80211/brcmfmac/sdio.c        | 26 +++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/crypto/crypto_user.c b/crypto/crypto_user.c
-index 3cca814348a26..74cb166097cd2 100644
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -296,30 +296,33 @@ drop_alg:
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+index 53e4962ceb8ae..e487dd78cc024 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -49,6 +49,10 @@
+ #define DCMD_RESP_TIMEOUT	msecs_to_jiffies(2500)
+ #define CTL_DONE_TIMEOUT	msecs_to_jiffies(2500)
  
- static int crypto_dump_report(struct sk_buff *skb, struct netlink_callback *cb)
- {
--	struct crypto_alg *alg;
-+	const size_t start_pos = cb->args[0];
-+	size_t pos = 0;
- 	struct crypto_dump_info info;
--	int err;
++/* watermark expressed in number of words */
++#define DEFAULT_F2_WATERMARK    0x8
++#define CY_4373_F2_WATERMARK    0x40
++
+ #ifdef DEBUG
+ 
+ #define BRCMF_TRAP_INFO_SIZE	80
+@@ -138,6 +142,8 @@ struct rte_console {
+ /* 1: isolate internal sdio signals, put external pads in tri-state; requires
+  * sdio bus power cycle to clear (rev 9) */
+ #define SBSDIO_DEVCTL_PADS_ISO		0x08
++/* 1: enable F2 Watermark */
++#define SBSDIO_DEVCTL_F2WM_ENAB		0x10
+ /* Force SD->SB reset mapping (rev 11) */
+ #define SBSDIO_DEVCTL_SB_RST_CTL	0x30
+ /*   Determined by CoreControl bit */
+@@ -4060,6 +4066,7 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ 	void *nvram;
+ 	u32 nvram_len;
+ 	u8 saveclk;
++	u8 devctl;
+ 
+ 	brcmf_dbg(TRACE, "Enter: dev=%s, err=%d\n", dev_name(dev), err);
+ 
+@@ -4115,8 +4122,23 @@ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ 		brcmf_sdiod_writel(sdiod, core->base + SD_REG(hostintmask),
+ 				   bus->hostintmask, NULL);
+ 
 -
--	if (cb->args[0])
--		goto out;
--
--	cb->args[0] = 1;
-+	struct crypto_alg *alg;
-+	int res;
- 
- 	info.in_skb = cb->skb;
- 	info.out_skb = skb;
- 	info.nlmsg_seq = cb->nlh->nlmsg_seq;
- 	info.nlmsg_flags = NLM_F_MULTI;
- 
-+	down_read(&crypto_alg_sem);
- 	list_for_each_entry(alg, &crypto_alg_list, cra_list) {
--		err = crypto_report_alg(alg, &info);
--		if (err)
--			goto out_err;
-+		if (pos >= start_pos) {
-+			res = crypto_report_alg(alg, &info);
-+			if (res == -EMSGSIZE)
-+				break;
-+			if (res)
-+				goto out;
+-		brcmf_sdiod_writeb(sdiod, SBSDIO_WATERMARK, 8, &err);
++		switch (sdiod->func1->device) {
++		case SDIO_DEVICE_ID_CYPRESS_4373:
++			brcmf_dbg(INFO, "set F2 watermark to 0x%x*4 bytes\n",
++				  CY_4373_F2_WATERMARK);
++			brcmf_sdiod_writeb(sdiod, SBSDIO_WATERMARK,
++					   CY_4373_F2_WATERMARK, &err);
++			devctl = brcmf_sdiod_readb(sdiod, SBSDIO_DEVICE_CTL,
++						   &err);
++			devctl |= SBSDIO_DEVCTL_F2WM_ENAB;
++			brcmf_sdiod_writeb(sdiod, SBSDIO_DEVICE_CTL, devctl,
++					   &err);
++			break;
++		default:
++			brcmf_sdiod_writeb(sdiod, SBSDIO_WATERMARK,
++					   DEFAULT_F2_WATERMARK, &err);
++			break;
 +		}
-+		pos++;
- 	}
--
-+	cb->args[0] = pos;
-+	res = skb->len;
- out:
--	return skb->len;
--out_err:
--	return err;
-+	up_read(&crypto_alg_sem);
-+	return res;
- }
- 
- static int crypto_dump_report_done(struct netlink_callback *cb)
-@@ -503,7 +506,7 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	if ((type == (CRYPTO_MSG_GETALG - CRYPTO_MSG_BASE) &&
- 	    (nlh->nlmsg_flags & NLM_F_DUMP))) {
- 		struct crypto_alg *alg;
--		u16 dump_alloc = 0;
-+		unsigned long dump_alloc = 0;
- 
- 		if (link->dump == NULL)
- 			return -EINVAL;
-@@ -511,16 +514,16 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		down_read(&crypto_alg_sem);
- 		list_for_each_entry(alg, &crypto_alg_list, cra_list)
- 			dump_alloc += CRYPTO_REPORT_MAXSIZE;
-+		up_read(&crypto_alg_sem);
- 
- 		{
- 			struct netlink_dump_control c = {
- 				.dump = link->dump,
- 				.done = link->done,
--				.min_dump_alloc = dump_alloc,
-+				.min_dump_alloc = min(dump_alloc, 65535UL),
- 			};
- 			err = netlink_dump_start(crypto_nlsk, skb, nlh, &c);
- 		}
--		up_read(&crypto_alg_sem);
- 
- 		return err;
- 	}
+ 	} else {
+ 		/* Disable F2 again */
+ 		sdio_disable_func(sdiod->func2);
 -- 
 2.20.1
 
