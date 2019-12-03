@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A4F9111DEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF06111C90
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:45:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbfLCW60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:58:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
+        id S1728587AbfLCWpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728692AbfLCW6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:58:20 -0500
+        id S1729032AbfLCWpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:45:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5E0C2053B;
-        Tue,  3 Dec 2019 22:58:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15D8220803;
+        Tue,  3 Dec 2019 22:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413899;
-        bh=oU25JYGVk3YLHzHCGmBf/zGRZoUGL5FBoo8Zo7Ay7JQ=;
+        s=default; t=1575413120;
+        bh=MP99nh/TM0pE6NtJsYqybo9a6kDwZHzSSkrdsojSgnY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ft/dv0LK553xVLdsZKJubYbR29RYsNBZsWEdL5Kvi1ka3AEM0JVPzxav9ViakQ91u
-         olnaTBVD5oFe4WnmykZKBI6uDMI/u1vqrLKOPRS9GttABe0bF5ELhSngnmZRD3N9DK
-         0U+M1l65LBBdJ+J6ULx8cVMIFghUV9fGul3KRi1w=
+        b=2a127N5pBW+yyL0dMYkngzWpfgdifzJ50DVvK9vywry3/JsJlDhRLMPjZLeF9dJLt
+         5mwSqvqZTfIySC+0bhqIuInP2byH3LSdgIehIaHlrYJXRciuk8WMwfhXj6sDG61GF0
+         /weuv7l76Ns6OSK8Vf1cCqcQaVwlpAwYCEH1e208=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 4.19 306/321] media: stm32-dcmi: fix DMA corruption when stopping streaming
-Date:   Tue,  3 Dec 2019 23:36:12 +0100
-Message-Id: <20191203223443.065564186@linuxfoundation.org>
+        stable@vger.kernel.org, Candle Sun <candle.sun@unisoc.com>,
+        Nianfu Bai <nianfu.bai@unisoc.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Siarhei Vishniakou <svv@google.com>
+Subject: [PATCH 5.3 133/135] HID: core: check whether Usage Page item is after Usage ID items
+Date:   Tue,  3 Dec 2019 23:36:13 +0100
+Message-Id: <20191203213045.992118661@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,88 +46,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hugues Fruchet <hugues.fruchet@st.com>
+From: Candle Sun <candle.sun@unisoc.com>
 
-commit b3ce6f6ff3c260ee53b0f2236e5fd950d46957da upstream.
+commit 1cb0d2aee26335d0bccf29100c7bed00ebece851 upstream.
 
-Avoid call of dmaengine_terminate_all() between
-dmaengine_prep_slave_single() and dmaengine_submit() by locking
-the whole DMA submission sequence.
+Upstream commit 58e75155009c ("HID: core: move Usage Page concatenation
+to Main item") adds support for Usage Page item after Usage ID items
+(such as keyboards manufactured by Primax).
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Usage Page concatenation in Main item works well for following report
+descriptor patterns:
+
+    USAGE_PAGE (Keyboard)                   05 07
+    USAGE_MINIMUM (Keyboard LeftControl)    19 E0
+    USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
+    LOGICAL_MINIMUM (0)                     15 00
+    LOGICAL_MAXIMUM (1)                     25 01
+    REPORT_SIZE (1)                         75 01
+    REPORT_COUNT (8)                        95 08
+    INPUT (Data,Var,Abs)                    81 02
+
+-------------
+
+    USAGE_MINIMUM (Keyboard LeftControl)    19 E0
+    USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
+    LOGICAL_MINIMUM (0)                     15 00
+    LOGICAL_MAXIMUM (1)                     25 01
+    REPORT_SIZE (1)                         75 01
+    REPORT_COUNT (8)                        95 08
+    USAGE_PAGE (Keyboard)                   05 07
+    INPUT (Data,Var,Abs)                    81 02
+
+But it makes the parser act wrong for the following report
+descriptor pattern(such as some Gamepads):
+
+    USAGE_PAGE (Button)                     05 09
+    USAGE (Button 1)                        09 01
+    USAGE (Button 2)                        09 02
+    USAGE (Button 4)                        09 04
+    USAGE (Button 5)                        09 05
+    USAGE (Button 7)                        09 07
+    USAGE (Button 8)                        09 08
+    USAGE (Button 14)                       09 0E
+    USAGE (Button 15)                       09 0F
+    USAGE (Button 13)                       09 0D
+    USAGE_PAGE (Consumer Devices)           05 0C
+    USAGE (Back)                            0a 24 02
+    USAGE (HomePage)                        0a 23 02
+    LOGICAL_MINIMUM (0)                     15 00
+    LOGICAL_MAXIMUM (1)                     25 01
+    REPORT_SIZE (1)                         75 01
+    REPORT_COUNT (11)                       95 0B
+    INPUT (Data,Var,Abs)                    81 02
+
+With Usage Page concatenation in Main item, parser recognizes all the
+11 Usages as consumer keys, it is not the HID device's real intention.
+
+This patch checks whether Usage Page is really defined after Usage ID
+items by comparing usage page using status.
+
+Usage Page concatenation on currently defined Usage Page will always
+do in local parsing when Usage ID items encountered.
+
+When Main item is parsing, concatenation will do again with last
+defined Usage Page if this page has not been used in the previous
+usages concatenation.
+
+Signed-off-by: Candle Sun <candle.sun@unisoc.com>
+Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Siarhei Vishniakou <svv@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/stm32/stm32-dcmi.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/hid/hid-core.c |   51 +++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 45 insertions(+), 6 deletions(-)
 
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -164,6 +164,9 @@ struct stm32_dcmi {
- 	int				errors_count;
- 	int				overrun_count;
- 	int				buffers_count;
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -212,6 +212,18 @@ static unsigned hid_lookup_collection(st
+ }
+ 
+ /*
++ * Concatenate usage which defines 16 bits or less with the
++ * currently defined usage page to form a 32 bit usage
++ */
 +
-+	/* Ensure DMA operations atomicity */
-+	struct mutex			dma_lock;
- };
++static void complete_usage(struct hid_parser *parser, unsigned int index)
++{
++	parser->local.usage[index] &= 0xFFFF;
++	parser->local.usage[index] |=
++		(parser->global.usage_page & 0xFFFF) << 16;
++}
++
++/*
+  * Add a usage to the temporary parser table.
+  */
  
- static inline struct stm32_dcmi *notifier_to_dcmi(struct v4l2_async_notifier *n)
-@@ -314,6 +317,13 @@ static int dcmi_start_dma(struct stm32_d
- 		return ret;
+@@ -222,6 +234,14 @@ static int hid_add_usage(struct hid_pars
+ 		return -1;
  	}
- 
+ 	parser->local.usage[parser->local.usage_index] = usage;
++
 +	/*
-+	 * Avoid call of dmaengine_terminate_all() between
-+	 * dmaengine_prep_slave_single() and dmaengine_submit()
-+	 * by locking the whole DMA submission sequence
++	 * If Usage item only includes usage id, concatenate it with
++	 * currently defined usage page
 +	 */
-+	mutex_lock(&dcmi->dma_lock);
++	if (size <= 2)
++		complete_usage(parser, parser->local.usage_index);
 +
- 	/* Prepare a DMA transaction */
- 	desc = dmaengine_prep_slave_single(dcmi->dma_chan, buf->paddr,
- 					   buf->size,
-@@ -322,6 +332,7 @@ static int dcmi_start_dma(struct stm32_d
- 	if (!desc) {
- 		dev_err(dcmi->dev, "%s: DMA dmaengine_prep_slave_single failed for buffer phy=%pad size=%zu\n",
- 			__func__, &buf->paddr, buf->size);
-+		mutex_unlock(&dcmi->dma_lock);
- 		return -EINVAL;
- 	}
+ 	parser->local.usage_size[parser->local.usage_index] = size;
+ 	parser->local.collection_index[parser->local.usage_index] =
+ 		parser->collection_stack_ptr ?
+@@ -543,13 +563,32 @@ static int hid_parser_local(struct hid_p
+  * usage value."
+  */
  
-@@ -333,9 +344,12 @@ static int dcmi_start_dma(struct stm32_d
- 	dcmi->dma_cookie = dmaengine_submit(desc);
- 	if (dma_submit_error(dcmi->dma_cookie)) {
- 		dev_err(dcmi->dev, "%s: DMA submission failed\n", __func__);
-+		mutex_unlock(&dcmi->dma_lock);
- 		return -ENXIO;
- 	}
- 
-+	mutex_unlock(&dcmi->dma_lock);
+-static void hid_concatenate_usage_page(struct hid_parser *parser)
++static void hid_concatenate_last_usage_page(struct hid_parser *parser)
+ {
+ 	int i;
++	unsigned int usage_page;
++	unsigned int current_page;
 +
- 	dma_async_issue_pending(dcmi->dma_chan);
++	if (!parser->local.usage_index)
++		return;
  
- 	return 0;
-@@ -717,7 +731,9 @@ static void dcmi_stop_streaming(struct v
- 	spin_unlock_irq(&dcmi->irqlock);
+-	for (i = 0; i < parser->local.usage_index; i++)
+-		if (parser->local.usage_size[i] <= 2)
+-			parser->local.usage[i] += parser->global.usage_page << 16;
++	usage_page = parser->global.usage_page;
++
++	/*
++	 * Concatenate usage page again only if last declared Usage Page
++	 * has not been already used in previous usages concatenation
++	 */
++	for (i = parser->local.usage_index - 1; i >= 0; i--) {
++		if (parser->local.usage_size[i] > 2)
++			/* Ignore extended usages */
++			continue;
++
++		current_page = parser->local.usage[i] >> 16;
++		if (current_page == usage_page)
++			break;
++
++		complete_usage(parser, i);
++	}
+ }
  
- 	/* Stop all pending DMA operations */
-+	mutex_lock(&dcmi->dma_lock);
- 	dmaengine_terminate_all(dcmi->dma_chan);
-+	mutex_unlock(&dcmi->dma_lock);
+ /*
+@@ -561,7 +600,7 @@ static int hid_parser_main(struct hid_pa
+ 	__u32 data;
+ 	int ret;
  
- 	pm_runtime_put(dcmi->dev);
+-	hid_concatenate_usage_page(parser);
++	hid_concatenate_last_usage_page(parser);
  
-@@ -1719,6 +1735,7 @@ static int dcmi_probe(struct platform_de
+ 	data = item_udata(item);
  
- 	spin_lock_init(&dcmi->irqlock);
- 	mutex_init(&dcmi->lock);
-+	mutex_init(&dcmi->dma_lock);
- 	init_completion(&dcmi->complete);
- 	INIT_LIST_HEAD(&dcmi->buffers);
+@@ -772,7 +811,7 @@ static int hid_scan_main(struct hid_pars
+ 	__u32 data;
+ 	int i;
+ 
+-	hid_concatenate_usage_page(parser);
++	hid_concatenate_last_usage_page(parser);
+ 
+ 	data = item_udata(item);
  
 
 
