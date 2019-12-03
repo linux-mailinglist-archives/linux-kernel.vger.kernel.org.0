@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 787A5111C45
+	by mail.lfdr.de (Postfix) with ESMTP id 08CD4111C44
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:42:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfLCWmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:42:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57102 "EHLO mail.kernel.org"
+        id S1728646AbfLCWmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:42:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727634AbfLCWmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:42:14 -0500
+        id S1728626AbfLCWmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:42:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7977820848;
-        Tue,  3 Dec 2019 22:42:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE17E2073C;
+        Tue,  3 Dec 2019 22:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412933;
-        bh=TeMxWrB3UXHB/EgbkjabYlZmhItS38mHhSM45D1yGGg=;
+        s=default; t=1575412936;
+        bh=DGfUc6OPcdg+selrsf0vCRMAyp9NIYMTOzMVaFuB3xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UBCWqD7LzPGMz79hWdqJRkFqMgQxENGr3FmxFZ0+1pZUmt5YBQVy9dW8s8SS28z6V
-         quA9Zu/boTuMVyIfhFHiqaz2o5yGimTQE+qY4sTUs0fMo6tv+wj7lCqMo5gW4DQ7Lw
-         KJfmJygzxodkj5DNebwrJLtilvlqUOhir75xxMug=
+        b=pG07fZ7XRAjsg+o6P/4Ae7J0hjEPm2KmLUkTQ2a9dBWOgiUusck31L/TlTsl6BTqC
+         w+f6ahzBA0N0O7a7HA2muSZJlfM3pZnAkAig7OA98fAi7GL34udtlrl+DYS9YfA80w
+         MdSXO4bx2+hEHduwFQU9Y+7PmxLYCxe6mo95YAmc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe Roullier <christophe.roullier@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
+        stable@vger.kernel.org, Jaska Uimonen <jaska.uimonen@intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Dragos Tarcatu <dragos_tarcatu@mentor.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 071/135] ARM: dts: stm32: Fix CAN RAM mapping on stm32mp157c
-Date:   Tue,  3 Dec 2019 23:35:11 +0100
-Message-Id: <20191203213026.657066619@linuxfoundation.org>
+Subject: [PATCH 5.3 072/135] ASoC: SOF: topology: Fix bytes control size checks
+Date:   Tue,  3 Dec 2019 23:35:12 +0100
+Message-Id: <20191203213026.735283478@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -45,45 +47,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Roullier <christophe.roullier@st.com>
+From: Dragos Tarcatu <dragos_tarcatu@mentor.com>
 
-[ Upstream commit 9df50c2e16de7fd739d11d37303afec9e573b46f ]
+[ Upstream commit 9508ef5a980f5d847cad9b932b6ada8f2a3466c1 ]
 
-Split the 10Kbytes CAN message RAM to be able to use simultaneously
-FDCAN1 and FDCAN2 instances.
-First 5Kbytes are allocated to FDCAN1 and last 5Kbytes are used for
-FDCAN2. To do so, set the offset to 0x1400 in mram-cfg for FDCAN2.
+When using the example SOF amp widget topology, KASAN dumps this
+when the AMP bytes kcontrol gets loaded:
 
-Fixes: d44d6e021301 ("ARM: dts: stm32: change CAN RAM mapping on stm32mp157c")
-Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+[ 9.579548] BUG: KASAN: slab-out-of-bounds in
+sof_control_load+0x8cc/0xac0 [snd_sof]
+[ 9.588194] Write of size 40 at addr ffff8882314559dc by task
+systemd-udevd/2411
+
+Fix that by rejecting the topology if the bytes data size > max_size
+
+Fixes: 311ce4fe7637d ("ASoC: SOF: Add support for loading topologies")
+Reviewed-by: Jaska Uimonen <jaska.uimonen@intel.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Signed-off-by: Dragos Tarcatu <dragos_tarcatu@mentor.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20191106145816.9367-1-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/stm32mp157c.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sof/topology.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 0c4e6ebc35291..31556bea2c933 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -914,7 +914,7 @@
- 			interrupt-names = "int0", "int1";
- 			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
- 			clock-names = "hclk", "cclk";
--			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
-+			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
- 			status = "disabled";
- 		};
+diff --git a/sound/soc/sof/topology.c b/sound/soc/sof/topology.c
+index 96230329e678f..355f04663f576 100644
+--- a/sound/soc/sof/topology.c
++++ b/sound/soc/sof/topology.c
+@@ -533,15 +533,16 @@ static int sof_control_load_bytes(struct snd_soc_component *scomp,
+ 	struct soc_bytes_ext *sbe = (struct soc_bytes_ext *)kc->private_value;
+ 	int max_size = sbe->max;
  
-@@ -927,7 +927,7 @@
- 			interrupt-names = "int0", "int1";
- 			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
- 			clock-names = "hclk", "cclk";
--			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
-+			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
- 			status = "disabled";
- 		};
+-	if (le32_to_cpu(control->priv.size) > max_size) {
++	/* init the get/put bytes data */
++	scontrol->size = sizeof(struct sof_ipc_ctrl_data) +
++		le32_to_cpu(control->priv.size);
++
++	if (scontrol->size > max_size) {
+ 		dev_err(sdev->dev, "err: bytes data size %d exceeds max %d.\n",
+-			control->priv.size, max_size);
++			scontrol->size, max_size);
+ 		return -EINVAL;
+ 	}
  
+-	/* init the get/put bytes data */
+-	scontrol->size = sizeof(struct sof_ipc_ctrl_data) +
+-		le32_to_cpu(control->priv.size);
+ 	scontrol->control_data = kzalloc(max_size, GFP_KERNEL);
+ 	cdata = scontrol->control_data;
+ 	if (!scontrol->control_data)
 -- 
 2.20.1
 
