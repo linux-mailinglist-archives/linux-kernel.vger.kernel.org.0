@@ -2,92 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C684810FFA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:12:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21C8510FFB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfLCOMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 09:12:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50573 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725848AbfLCOMx (ORCPT
+        id S1726549AbfLCONN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 09:13:13 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39841 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfLCONM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 09:12:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575382372;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VWT0o3rfY4Pg9dfGakNcTQJLoFgbG8ngbgCDLw3/UgM=;
-        b=gZbmEpU2xPqAW+c9vhEPnbBVWqp5jZ600bb1QbxekplWgvKbMxFmPIBI0FVk7Tft91/U73
-        bXAHximrhM31j7o8AYHacSZQz7Xeq7YVb868Esel3PYkK4IdwOSTtWLNvVOVZP66KhSISV
-        XgiT2PHXRgakHu5ISc7S/VSXVe4NEek=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-42-YNys2k-UPEi9zA0jrKbA7g-1; Tue, 03 Dec 2019 09:12:49 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F0828C1F55;
-        Tue,  3 Dec 2019 14:12:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B55B819C68;
-        Tue,  3 Dec 2019 14:12:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  3 Dec 2019 15:12:46 +0100 (CET)
-Date:   Tue, 3 Dec 2019 15:12:39 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jan Kratochvil <jan.kratochvil@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Pedro Alves <palves@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 0/4] x86: fix get_nr_restart_syscall()
-Message-ID: <20191203141239.GA30688@redhat.com>
-References: <20191126110659.GA14042@redhat.com>
+        Tue, 3 Dec 2019 09:13:12 -0500
+X-Originating-IP: 90.76.211.102
+Received: from localhost.localdomain (lfbn-1-2154-102.w90-76.abo.wanadoo.fr [90.76.211.102])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 7B2586000D;
+        Tue,  3 Dec 2019 14:13:09 +0000 (UTC)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 1/4] dt-bindings: Add Xylon vendor prefix
+Date:   Tue,  3 Dec 2019 15:12:40 +0100
+Message-Id: <20191203141243.251058-2-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191203141243.251058-1-paul.kocialkowski@bootlin.com>
+References: <20191203141243.251058-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20191126110659.GA14042@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: YNys2k-UPEi9zA0jrKbA7g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This version follows the latest recommendation from Linus,
-arch_set_restart_data() just saves ti->status in restart->arch_data.
+Xylon is an electronics company that produces FPGA hardware block designs
+optimized for Xilinx FPGAs.
 
-Andy, I can add another patch or change 4/4 to save the syscall number
-instead, I am fine either way.
-
-However, personally I dislike restart->arch_data, imo 3/4 is all we need.
-
-I agree, set_restart_fn() is better than the ugly ERESTART_RESTARTBLOCK
-check in syscall_return_slowpath() added by v1. But to me the x86-only
-arch_data field in restart_block is much worse than the sticky TS_ flag.
-
-To remind, there is another reason for the "transient" 3/4, 4/4 is not
-easily backportable.
-
-Oleg.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/x86/include/asm/processor.h   |  9 ---------
- arch/x86/include/asm/thread_info.h | 15 ++++++++++++++-
- arch/x86/kernel/signal.c           | 24 +-----------------------
- fs/select.c                        | 10 ++++------
- include/linux/restart_block.h      |  1 +
- include/linux/thread_info.h        | 12 ++++++++++++
- kernel/futex.c                     |  3 +--
- kernel/time/alarmtimer.c           |  2 +-
- kernel/time/hrtimer.c              |  2 +-
- kernel/time/posix-cpu-timers.c     |  2 +-
- 10 files changed, 36 insertions(+), 44 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 967e78c5ec0a..62bbde20ff5e 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1054,6 +1054,8 @@ patternProperties:
+     description: Xilinx
+   "^xunlong,.*":
+     description: Shenzhen Xunlong Software CO.,Limited
++  "^xylon,.*":
++    description: Xylon
+   "^yones-toptech,.*":
+     description: Yones Toptech Co., Ltd.
+   "^ysoft,.*":
+-- 
+2.24.0
 
