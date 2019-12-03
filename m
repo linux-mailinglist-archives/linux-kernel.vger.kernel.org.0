@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 898AC111F7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C6D111FB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbfLCXJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:09:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58902 "EHLO mail.kernel.org"
+        id S1727750AbfLCWhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:37:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728260AbfLCWn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:43:27 -0500
+        id S1727714AbfLCWhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:37:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B12EA20803;
-        Tue,  3 Dec 2019 22:43:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 380D2207DD;
+        Tue,  3 Dec 2019 22:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413007;
-        bh=HoAFqpYfa74MQHwNePRBAUOnqHPBhxifuXH9ekCuqMM=;
+        s=default; t=1575412653;
+        bh=6hPF5tdZKwGefFuOFN1JDyKRb95J50q7shAcN+XnPRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i3KNQiatbK7zUNYFyu+w+1r6LFutrWKBYdZSZWZWFn/e0roBozFnYUXmPxscr+1dV
-         OZVDVuKB0Ds/P//om9gETwSR8IroWZAxr1XM4lUZxqZtbTpQK3x9R2xB83zu4Q1IJ0
-         8bZNfe0RRv2SjYKrkO7f11yi6FyxRRxwF67t3AjI=
+        b=hdKY9pgWr27XG4zoaOoJD5ToyUF9y3X3d3CHFA20H7/qZ5bobliL5Zp7tchyR8nZK
+         /nJ/ClYRlEIhr8SxzjPJVpcx1fQVCFdGb98WDdmEoY2ow+vVm8E1D8UoMxJadc3RGB
+         ED6oymlYFaMgos3d5OOrNp5dYmIweY1oAi2h4n6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, changzhu <Changfeng.Zhu@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 083/135] drm/amdgpu: add warning for GRBM 1-cycle delay issue in gfx9
-Date:   Tue,  3 Dec 2019 23:35:23 +0100
-Message-Id: <20191203213032.716189710@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 5.4 05/46] driver core: platform: use the correct callback type for bus_find_device
+Date:   Tue,  3 Dec 2019 23:35:25 +0100
+Message-Id: <20191203212715.632735792@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: changzhu <Changfeng.Zhu@amd.com>
+From: Sami Tolvanen <samitolvanen@google.com>
 
-[ Upstream commit 440a7a54e7ec012ec8b27c27e460dfd6f9a24ddb ]
+commit 492c88720d36eb662f9f10c1633f7726fbb07fc4 upstream.
 
-It needs to add warning to update firmware in gfx9
-in case that firmware is too old to have function to
-realize dummy read in cp firmware.
+platform_find_device_by_driver calls bus_find_device and passes
+platform_match as the callback function. Casting the function to a
+mismatching type trips indirect call Control-Flow Integrity (CFI) checking.
 
-Signed-off-by: changzhu <Changfeng.Zhu@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This change adds a callback function with the correct type and instead
+of casting the function, explicitly casts the second parameter to struct
+device_driver* as expected by platform_match.
+
+Fixes: 36f3313d6bff9 ("platform: Add platform_find_device_by_driver() helper")
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191112214156.3430-1-samitolvanen@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/base/platform.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 75faa56f243a4..b1388d3e72f74 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -538,6 +538,13 @@ static void gfx_v9_0_check_fw_write_wait(struct amdgpu_device *adev)
- 	adev->gfx.me_fw_write_wait = false;
- 	adev->gfx.mec_fw_write_wait = false;
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1278,6 +1278,11 @@ struct bus_type platform_bus_type = {
+ };
+ EXPORT_SYMBOL_GPL(platform_bus_type);
  
-+	if ((adev->gfx.mec_fw_version < 0x000001a5) ||
-+	    (adev->gfx.mec_feature_version < 46) ||
-+	    (adev->gfx.pfp_fw_version < 0x000000b7) ||
-+	    (adev->gfx.pfp_feature_version < 46))
-+		DRM_WARN_ONCE("Warning: check cp_fw_version and update it to realize \
-+			      GRBM requires 1-cycle delay in cp firmware\n");
++static inline int __platform_match(struct device *dev, const void *drv)
++{
++	return platform_match(dev, (struct device_driver *)drv);
++}
 +
- 	switch (adev->asic_type) {
- 	case CHIP_VEGA10:
- 		if ((adev->gfx.me_fw_version >= 0x0000009c) &&
--- 
-2.20.1
-
+ /**
+  * platform_find_device_by_driver - Find a platform device with a given
+  * driver.
+@@ -1288,7 +1293,7 @@ struct device *platform_find_device_by_d
+ 					      const struct device_driver *drv)
+ {
+ 	return bus_find_device(&platform_bus_type, start, drv,
+-			       (void *)platform_match);
++			       __platform_match);
+ }
+ EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
+ 
 
 
