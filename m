@@ -2,126 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6265210FFBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C88A210FFCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 15:14:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfLCONk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 09:13:40 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36247 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726474AbfLCONg (ORCPT
+        id S1726452AbfLCOOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 09:14:16 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:54788 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbfLCONr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 09:13:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575382416;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XAhp0ornz2YHEQIA4nh6ljvKEWN9EysjuU/tygcjX7Y=;
-        b=TJFNkTYqlGz1C9UVta9Ioda0phyYHqoebZRbSt682I4TlJewtP0fVf04/ztij4zBt0zpbW
-        rB7AYLDz3BMs0hLsbYqIFMlwT3sqI6ZxasrRGbx3SWRVsaDBdREynQXt30KliUG+rv6HB0
-        ZO/kdf0vVGO5cAaGERsTRed5haNPwMc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-410-cvAZVQ41NbKEAcv81iMabA-1; Tue, 03 Dec 2019 09:13:32 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B4E8108AF65;
-        Tue,  3 Dec 2019 14:13:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AEEE7600C8;
-        Tue,  3 Dec 2019 14:13:26 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  3 Dec 2019 15:13:30 +0100 (CET)
-Date:   Tue, 3 Dec 2019 15:13:25 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jan Kratochvil <jan.kratochvil@redhat.com>,
+        Tue, 3 Dec 2019 09:13:47 -0500
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1ic8vq-0002i0-2z; Tue, 03 Dec 2019 15:13:38 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Pedro Alves <palves@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 2/4] x86: mv TS_COMPAT from asm/processor.h to
- asm/thread_info.h
-Message-ID: <20191203141325.GC30688@redhat.com>
-References: <20191126110659.GA14042@redhat.com>
- <20191203141239.GA30688@redhat.com>
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        kexec@lists.infradead.org
+Subject: Re: [RFC PATCH v5 1/3] printk-rb: new printk ringbuffer implementation (writer)
+References: <20191128015235.12940-1-john.ogness@linutronix.de>
+        <20191128015235.12940-2-john.ogness@linutronix.de>
+        <20191202154841.qikvuvqt4btudxzg@pathway.suse.cz>
+Date:   Tue, 03 Dec 2019 15:13:36 +0100
+In-Reply-To: <20191202154841.qikvuvqt4btudxzg@pathway.suse.cz> (Petr Mladek's
+        message of "Mon, 2 Dec 2019 16:48:41 +0100")
+Message-ID: <87fti1bipb.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20191203141239.GA30688@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: cvAZVQ41NbKEAcv81iMabA-1
-X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move TS_COMPAT back to asm/thread_info.h, close to TS_I386_REGS_POKED.
+On 2019-12-02, Petr Mladek <pmladek@suse.com> wrote:
+>> +/*
+>> + * Sanity checker for reserve size. The ringbuffer code assumes that a data
+>> + * block does not exceed the maximum possible size that could fit within the
+>> + * ringbuffer. This function provides that basic size check so that the
+>> + * assumption is safe.
+>> + */
+>> +static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
+>> +{
+>> +	struct prb_data_block *db = NULL;
+>> +
+>> +	/* Writers are not allowed to write data-less records. */
+>> +	if (size == 0)
+>> +		return false;
+>
+> I would personally let this decision to the API caller.
+>
+> The code actually have to support data-less records. They are used
+> when the descriptor is reserved but the data block can't get reserved.
 
-It was moved to asm/processor.h by b9d989c7218a ("x86/asm: Move the
-thread_info::status field to thread_struct"), then later 37a8f7c38339
-("x86/asm: Move 'status' from thread_struct to thread_info") moved the
-'status' field back but TS_COMPAT was forgotten.
+Exactly. Data-less records are how the ringbuffer identifies that data
+has been lost. If users were allowed to store data-less records, that
+destinction is no longer possible (unless I created some extra field in
+the descriptor). Does it even make sense for printk to store data-less
+records explicitly?
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- arch/x86/include/asm/processor.h   | 9 ---------
- arch/x86/include/asm/thread_info.h | 9 +++++++++
- 2 files changed, 9 insertions(+), 9 deletions(-)
+The current printk implementation silently ignores empty messages.
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/proces=
-sor.h
-index 54f5d54..d247a24 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -507,15 +507,6 @@ static inline void arch_thread_struct_whitelist(unsign=
-ed long *offset,
- }
-=20
- /*
-- * Thread-synchronous status.
-- *
-- * This is different from the flags in that nobody else
-- * ever touches our thread-synchronous status, so we don't
-- * have to worry about atomic accesses.
-- */
--#define TS_COMPAT=09=090x0002=09/* 32bit syscall active (64BIT)*/
--
--/*
-  * Set IOPL bits in EFLAGS from given mask
-  */
- static inline void native_set_iopl_mask(unsigned mask)
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thre=
-ad_info.h
-index f945353..b2125c4 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -221,6 +221,15 @@ static inline int arch_within_stack_frames(const void =
-* const stack,
-=20
- #endif
-=20
-+/*
-+ * Thread-synchronous status.
-+ *
-+ * This is different from the flags in that nobody else
-+ * ever touches our thread-synchronous status, so we don't
-+ * have to worry about atomic accesses.
-+ */
-+#define TS_COMPAT=09=090x0002=09/* 32bit syscall active (64BIT)*/
-+
- #ifdef CONFIG_COMPAT
- #define TS_I386_REGS_POKED=090x0004=09/* regs poked by 32-bit ptracer */
- #endif
---=20
-2.5.0
+> The above statement might create false feeling that it could not
+> happen later in the code. It might lead to bugs in writer code.
 
+Then let me change the statement to describe that data-less records are
+used internally by the ringbuffer and cannot be explicitly created by
+writers.
 
+> Also reader API users might not expect to get a "valid" data-less
+> record.
+
+Readers will never see them. The reader API implementation skips over
+data-less records.
+
+John Ogness
