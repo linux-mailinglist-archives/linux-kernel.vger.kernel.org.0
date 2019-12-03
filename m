@@ -2,94 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D73510F4EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 03:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C533E10F4EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 03:23:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbfLCCXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 21:23:06 -0500
-Received: from ozlabs.org ([203.11.71.1]:54115 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbfLCCXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 21:23:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47Rm3n2LsCz9sNx;
-        Tue,  3 Dec 2019 13:23:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1575339783;
-        bh=EL9ZyahnDGpSzzlhJ1wKUfVIQDAdvKJz012rP4TCPs0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=q9D3yRsJL7riVhL8NHHJa2KtQWnAkF95p5pT6aNGmzgrs90EOg7VyCDP0Bu23v0/g
-         a/6gqy4VuNywJQ5sUPdmFRUDqVoormLWZoNSZE+esXLj7CsS/bEJB16HICU0m/zX+/
-         KpVi0pthEWNiTWwIE4xjwkX9nnkSeIHBdiCOLLJjuYovXN0KTkQapSMIoETSRtVdtI
-         zphvoNlcS5khjPSNDE1wVFdogx7Eb1R2nlQvTV/qdyRUfFhp53yggf0w6lG5QwvIdp
-         KvCRVQ1ok+PMtwiCMs/jOAL+C5APXlm2B3+1UJO28Bl6JpRTL44VEG5T032WqcM6ys
-         Rwb5s4vlWauGQ==
-Date:   Tue, 3 Dec 2019 13:23:00 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the y2038 tree with the xfs tree
-Message-ID: <20191203132300.3186125c@canb.auug.org.au>
-In-Reply-To: <20191203002258.GE7339@magnolia>
-References: <20191030153046.01efae4a@canb.auug.org.au>
-        <20191203110039.2ec22a17@canb.auug.org.au>
-        <20191203002258.GE7339@magnolia>
+        id S1726254AbfLCCXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 21:23:17 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6738 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725954AbfLCCXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 21:23:17 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D3460D6C91A6AB2F5720;
+        Tue,  3 Dec 2019 10:23:15 +0800 (CST)
+Received: from [127.0.0.1] (10.57.71.8) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Tue, 3 Dec 2019
+ 10:23:10 +0800
+Subject: Re: ITS restore/save state when HCC == 0
+To:     Marc Zyngier <maz@kernel.org>
+CC:     "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
+        Yangyingliang <yangyingliang@huawei.com>,
+        Linuxarm <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
+References: <fd89d78030914d19939a1fc1c6eb5048@huawei.com>
+ <e04e35e0a14f1507ac4a3d56899adcae@www.loen.fr>
+From:   Yao HongBo <yaohongbo@huawei.com>
+Message-ID: <c8649d75-a9b8-4680-c253-3172774ac33d@huawei.com>
+Date:   Tue, 3 Dec 2019 10:23:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/G5fteeX4WpkVraxOJWz9wJm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <e04e35e0a14f1507ac4a3d56899adcae@www.loen.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.57.71.8]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/G5fteeX4WpkVraxOJWz9wJm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Darrick,
 
-On Mon, 2 Dec 2019 16:22:58 -0800 "Darrick J. Wong" <darrick.wong@oracle.co=
-m> wrote:
->
-> On Tue, Dec 03, 2019 at 11:00:39AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > This conflict is now between the xfs tree and Linus' tree (and the
-> > merge fix up patch below needs applying to that merge. =20
->=20
-> There shouldn't be a conflict any more, since Linus just pulled the xfs
-> tree into master and resolved the conflict in the merge commit.
-> (Right?  Or am I missing something here post-turkeyweekend? 8))
+On 12/2/2019 9:22 PM, Marc Zyngier wrote:
+> Hi Yaohongbo,
+> 
+> In the future, please refrain from sending HTML emails, they
+> don't render very well and force me to reformat your email
+> by hand.
 
-Yeah, it should all be gone in tomorrow's linux-next.
+Sorry. I'll pay attention to this next time.
 
---=20
-Cheers,
-Stephen Rothwell
+> On 2019-12-02 12:52, yaohongbo wrote:
+>> Hi, marc.
+>>
+>> I met a problem with GIC ITS when I try to power off gic logic in
+>> suspend.
+>>
+>> In hisilicon hip08, the value of GIC_TYPER.HCC is zero, so that
+>> ITS_FLAGS_SAVE_SUSPEND_STATE will have no chance to be set to 1.
+> 
+> And that's a good thing. HCC indicates that you have collections that
+> are backed by registers, and not memory. Which means that once the GIC
+> is powered off, the state is lost.
+> 
+>> It goes well for s4, when I simply remove the condition judgement in
+>> the code.
+> 
+> What is "s4"? Doing so means you are reprogramming the ITS with mappings
+> that already exist in the tables, and that is UNPRED territory.
 
---Sig_/G5fteeX4WpkVraxOJWz9wJm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Sorry, I didn't describe it clearly.
+S4 means "suspend to disk".
+In s4, The its will reinit and malloc an new its address.
 
------BEGIN PGP SIGNATURE-----
+My expectation is to reprogram the ITS with original mappings. If ITS_FLAGS_SAVE_SUSPEND_STATE
+is not set, i'll have no chance to use the original its table mappings.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl3lxwQACgkQAVBC80lX
-0Gz2Pgf/W+qtlGWltx8FwrLej5hHElz+9Qsxf9biRtTbhblZybgbQ4mICamyW0DR
-dhCUsa2GYCVwAZ/m+eMyFjvpu+Z86PA5sqNWY97ZV7hF9pnWYoxDRb4q/lJyXGLv
-z9QffiYs/l9J7CJNoT/KcCJvcLLz/DU79LB/nUQv4TK4+UOFpYKx+Deq8xK2G5WX
-w5romAXa2JCbGFfXy5Cysr2v2Tqpc4/9IbJ/qC83H2ZA2NK6ajG5pryydXBoTco2
-16rGnqQISq/+VZ8wr1G5OMxM8kueXJx9N566+OX4RqoEuIdsqa71pd7udRO1u78r
-j4VZj8d4hpWSwwJBLeQDh2pMC/5aAg==
-=074M
------END PGP SIGNATURE-----
+What should i do if i want to restore its state with hcc == 0?
 
---Sig_/G5fteeX4WpkVraxOJWz9wJm--
+Thanks,
+Hongbo.
+> <quote>
+> Behavior is unpredictable if there are interrupts that are mapped to the
+> specified collection and the collection is currently mapped to a Redistributor
+> [...]
+> </quote>
+> 
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>>
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>>
+>> @@ -3670,8 +3670,8 @@ static int __init its_probe_one(struct resource
+>> *res,
+>>
+>>  ctlr |= GITS_CTLR_ImDe;
+>>
+>>  writel_relaxed(ctlr, its->base + GITS_CTLR);
+>>
+>> - if (GITS_TYPER_HCC(typer))
+>>
+>> - its->flags |= ITS_FLAGS_SAVE_SUSPEND_STATE;
+>>
+>> + its->flags |= ITS_FLAGS_SAVE_SUSPEND_STATE;
+>>
+>>  err = its_init_domain(handle, its);
+>>
+>>  if (err)
+>>
+>> @@ -4005,3 +4005,17 @@ int __init its_init(struct fwnode_handle
+>> *handle, struct rdists *rdists,
+>>
+>>  return 0;
+>>
+>> }
+>>
+>> Do you have any suggestion for this case?
+> 
+> The expectations are that across a GIC power-off, the firmware
+> will restore the state of the GIC (recondiguring the various
+> memory tables), and that this is enough for the ITS to be
+> functional again, having reloaded its state from memory.
+> 
+> Does firmware perform this on your machine? Or are there
+> implementation-specific issues that require the ITS to be
+> reprogrammed?
+> 
+> Thanks,
+> 
+>         M.
+
