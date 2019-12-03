@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8557B111E9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD16D111E84
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfLCXCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:02:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47562 "EHLO mail.kernel.org"
+        id S1730233AbfLCWyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:54:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728720AbfLCWx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:53:57 -0500
+        id S1730087AbfLCWyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EE2A20865;
-        Tue,  3 Dec 2019 22:53:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1550520674;
+        Tue,  3 Dec 2019 22:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413637;
-        bh=ZJ8gpXQBhU0zBIqGfk5Yz47S/EoXgQRH3InZOl3iSCY=;
+        s=default; t=1575413639;
+        bh=aSTWXn1mXOhWQyL0OsDJGPKyYnCAWp191htXRIztyUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mKsxlspFcicI+edsttfkauZmJzeYqoPXVP40LHdSuM3bGZBa9bluSxmhiD3pNBkRm
-         9nYKcDvd++jUVHeblcMWD/dt+8kfbesUpjVOJz3Z4SKt+wb4l2ElFRcKaP9GcpdceU
-         9hCbvPeT2WpwtivH6wfYmExKUfgoGc0naS4e70SE=
+        b=OT1Gik5a9+RO5lHEswtIkJN8pem/tXRF2YJvlDukbB2RzrE4G1ha3aQAbsfd0uCL9
+         mDi2Dl+GyvLR64SSPw+jGYNbSaTUCLTF4lw0pyznmqBxBVV96/7SWTmsYiO3nhaOn5
+         iqi8pieMmu0O6u0xnRf/sWuc1gMb31zNUYl38lUs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 203/321] xprtrdma: Prevent leak of rpcrdma_rep objects
-Date:   Tue,  3 Dec 2019 23:34:29 +0100
-Message-Id: <20191203223437.682769675@linuxfoundation.org>
+Subject: [PATCH 4.19 204/321] infiniband: bnxt_re: qplib: Check the return value of send_message
+Date:   Tue,  3 Dec 2019 23:34:30 +0100
+Message-Id: <20191203223437.734205800@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,84 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Aditya Pakki <pakki001@umn.edu>
 
-[ Upstream commit 07e10308ee5da8e6132e0b737ece1c99dd651fb6 ]
+[ Upstream commit 94edd87a1c59f3efa6fdf4e98d6d492e6cec6173 ]
 
-If a reply has been processed but the RPC is later retransmitted
-anyway, the req->rl_reply field still contains the only pointer to
-the old rpcrdma rep. When the next reply comes in, the reply handler
-will stomp on the rl_reply field, leaking the old rep.
+In bnxt_qplib_map_tc2cos(), bnxt_qplib_rcfw_send_message() can return an
+error value but it is lost. Propagate this error to the callers.
 
-A trace event is added to capture such leaks.
-
-This problem seems to be worsened by the restructuring of the RPC
-Call path in v4.20. Fully addressing this issue will require at
-least a re-architecture of the disconnect logic, which is not
-appropriate during -rc.
-
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/trace/events/rpcrdma.h | 28 ++++++++++++++++++++++++++++
- net/sunrpc/xprtrdma/rpc_rdma.c |  4 ++++
- 2 files changed, 32 insertions(+)
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/trace/events/rpcrdma.h b/include/trace/events/rpcrdma.h
-index 53df203b8057a..4c91cadd1871d 100644
---- a/include/trace/events/rpcrdma.h
-+++ b/include/trace/events/rpcrdma.h
-@@ -917,6 +917,34 @@ TRACE_EVENT(xprtrdma_cb_setup,
- DEFINE_CB_EVENT(xprtrdma_cb_call);
- DEFINE_CB_EVENT(xprtrdma_cb_reply);
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+index 4097f3fa25c5f..09e7d3dd30553 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+@@ -775,9 +775,8 @@ int bnxt_qplib_map_tc2cos(struct bnxt_qplib_res *res, u16 *cids)
+ 	req.cos0 = cpu_to_le16(cids[0]);
+ 	req.cos1 = cpu_to_le16(cids[1]);
  
-+TRACE_EVENT(xprtrdma_leaked_rep,
-+	TP_PROTO(
-+		const struct rpc_rqst *rqst,
-+		const struct rpcrdma_rep *rep
-+	),
-+
-+	TP_ARGS(rqst, rep),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned int, task_id)
-+		__field(unsigned int, client_id)
-+		__field(u32, xid)
-+		__field(const void *, rep)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->task_id = rqst->rq_task->tk_pid;
-+		__entry->client_id = rqst->rq_task->tk_client->cl_clid;
-+		__entry->xid = be32_to_cpu(rqst->rq_xid);
-+		__entry->rep = rep;
-+	),
-+
-+	TP_printk("task:%u@%u xid=0x%08x rep=%p",
-+		__entry->task_id, __entry->client_id, __entry->xid,
-+		__entry->rep
-+	)
-+);
-+
- /**
-  ** Server-side RPC/RDMA events
-  **/
-diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
-index c8ae983c6cc01..f2eaf264726be 100644
---- a/net/sunrpc/xprtrdma/rpc_rdma.c
-+++ b/net/sunrpc/xprtrdma/rpc_rdma.c
-@@ -1360,6 +1360,10 @@ void rpcrdma_reply_handler(struct rpcrdma_rep *rep)
- 	spin_unlock(&xprt->recv_lock);
+-	bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp, NULL,
+-				     0);
+-	return 0;
++	return bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp,
++						NULL, 0);
+ }
  
- 	req = rpcr_to_rdmar(rqst);
-+	if (req->rl_reply) {
-+		trace_xprtrdma_leaked_rep(rqst, req->rl_reply);
-+		rpcrdma_recv_buffer_put(req->rl_reply);
-+	}
- 	req->rl_reply = rep;
- 	rep->rr_rqst = rqst;
- 	clear_bit(RPCRDMA_REQ_F_PENDING, &req->rl_flags);
+ int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
 -- 
 2.20.1
 
