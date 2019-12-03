@@ -2,108 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FC5F10FBC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 11:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 116F210FBC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 11:31:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbfLCKaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 05:30:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:50526 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfLCKaw (ORCPT
+        id S1726443AbfLCKbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 05:31:33 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:44426 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfLCKbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 05:30:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Rna2JaW2M6WY+wWsRwUd4SfBNEf14oDaBk5RQKMA9hg=; b=pjJDdnHT+AUhQe+9+Mdn8NFb0
-        vOqy8/jX7I+kbZrJPaPBfN8LcK3afWqNHTnEUwy2JTe9agZ8sz80sPhtcpW/3DVijarJUtpp/SYBE
-        fAawQaC/dPFVGExiRkIMSpLX7T+b88IC9ufnNPjrS6Awg7t54s0ti0Odtv/VcmIBp/1miFqmh7OBD
-        VTh1WnSIAbdaCVAOPiytgFL8wKSboB/EInhh2f4GzvsP632cDSTDw11glWvR9ob3lg9IY16ZzEJHe
-        lwwdvimjxPLjPeQ1FnkS1v2FH0w7EfDqTzPrw/vqFrHMBZfH449nH3opiyW9ZxAg+QuWfAQ8263n6
-        gzyvSuMVQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ic5SC-0006Kd-HL; Tue, 03 Dec 2019 10:30:48 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ABB3B303144;
-        Tue,  3 Dec 2019 11:29:30 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E53BC2061BAF9; Tue,  3 Dec 2019 11:30:46 +0100 (CET)
-Date:   Tue, 3 Dec 2019 11:30:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Schmid, Carsten" <Carsten_Schmid@mentor.com>
-Cc:     "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Crash in fair scheduler
-Message-ID: <20191203103046.GJ2827@hirez.programming.kicks-ass.net>
-References: <1575364273836.74450@mentor.com>
+        Tue, 3 Dec 2019 05:31:31 -0500
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191203103127epoutp015118ac7aee94d49d8f46028323a7ca1d~c1da9GmI42668626686epoutp01S
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 10:31:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191203103127epoutp015118ac7aee94d49d8f46028323a7ca1d~c1da9GmI42668626686epoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575369087;
+        bh=k4smPxscGQus0agxESMLr3cncxJ0TeOpX6R7z78OuEs=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=gG6Bc6JVvPPaTqo7CSH5SH6VhThgD2GfwerLqxYmMHO1GmjGJvb0SsqQgNJCVtkyy
+         qgG6jVw+dGAJ+qlbo4DwH44pl3rCMv4ic37RBNXEVXqCt1vLH8et8AGnSGq4KN9s9a
+         kq86eLFWGvfLw/SRKbuwkr6sKpXSIdakuX79whc8=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20191203103127epcas5p1f7d66300090a96eb363dad698a7cce92~c1daM2YXb0700907009epcas5p1B;
+        Tue,  3 Dec 2019 10:31:27 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        30.A7.19629.F7936ED5; Tue,  3 Dec 2019 19:31:27 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191203103126epcas5p440b714f961f05ce87fcf35f70699c689~c1dZm-Yup0517505175epcas5p4h;
+        Tue,  3 Dec 2019 10:31:26 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191203103126epsmtrp1cd47add7f9a16655907182e738965c9b~c1dZmIGvl0666506665epsmtrp1J;
+        Tue,  3 Dec 2019 10:31:26 +0000 (GMT)
+X-AuditID: b6c32a4b-345ff70000014cad-43-5de6397ff18c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DA.50.06569.E7936ED5; Tue,  3 Dec 2019 19:31:26 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.111.84.32]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191203103122epsmtip22107dabcbc4b6ebbe155a966bc08959d~c1dVjMGzp1815318153epsmtip2W;
+        Tue,  3 Dec 2019 10:31:22 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'sheebab'" <sheebab@cadence.com>, <avri.altman@wdc.com>,
+        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <stanley.chu@mediatek.com>,
+        <beanhuo@micron.com>, <yuehaibing@huawei.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <vigneshr@ti.com>
+Cc:     <mparab@cadence.com>, <rafalc@cadence.com>
+In-Reply-To: <1575367635-22662-1-git-send-email-sheebab@cadence.com>
+Subject: RE: [PATCH] scsi: ufs: Disable autohibern8 feature in Cadence UFS
+Date:   Tue, 3 Dec 2019 16:01:18 +0530
+Message-ID: <011201d5a9c4$d0f99780$72ecc680$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575364273836.74450@mentor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFBe579HXcCclZGAfVZug4m7IsA/AH+fHYWqMCd0NA=
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTYRTGee/ee3c3XVxn6EnLahSlpFYqXCPKoOhmCfZHZNGokTcVdemm
+        piU4afg1q6UEOURSK6EWlpiaWS7zI4s+SIdmpVjOz5TULEapOa+R/z3nnN/zPufAS4vk/aQH
+        HaNO4jVqVZyCkuKa597evhnBg8qtnx6T7IjdSrHP+nMxW9ZdQ7Ad9cUUa+iqo9iKtjmC7X01
+        hVl96wxmddXXKbbkvo5gbz38gNj519/F7KeZIRwi48y5YwSnbx4nOWOZBXH69kbM/arMobhJ
+        Ww/mqhunEdfWXUtw01VeXLbFQIRLj0t3RvJxMSm8xn/XKWn0bKVTQqdz6qtrdrEOtUjzkIQG
+        JhDelXZReUhKy5nHCLpts6RQTCHos5uRUPxEMJ87KfpnyZ8yL1meIGjoK8VCMYpgYnCeclAU
+        4wt15VmL1ErmAQH2sR7CMRAxfmDOLMIOLWH2QmlhB3JoVyYUbK+fLzKY2QAVN+cW+zImGL61
+        FZKCdoH2ogEsvLMWaseLl1ZaB3bb7QWGXgjbAdnWNQLiDi32fJFjB2CeisFS8JFyMLCQa3x2
+        RLC6wmhbtVjQHjByJUssILGQXx8gtNPhVkkrFvRusHQWYwciYryhst5fSFoBl34PEIJTBjlZ
+        coHeCBcnrEtOT7hqMJCC5mDSOEoZ0XrTsrNMy84yLdvf9D/sBsJ30Co+QRsfxWuDEgLU/Dk/
+        rSpem6yO8jt9Nr4KLX48n4N1qOrNoSbE0EjhLLP8GVDKSVWKNi2+CQEtUqyU1YBNKZdFqtLO
+        85qzJzXJcby2CXnSWOEuKyCtJ+RMlCqJj+X5BF7zb0rQEg8d2vCjavXny4pHeud5p95Y6NwX
+        dIBTeYVl7EfTpoKOtzNfXsRlhXk5l+P+4cN3twy7TGd7kGfuHfTe7NOsbl9RsTczXXNREr5H
+        E9EwkfjeGhja3VRvN/QE9OUZTUMBEalG8eimr+MnT710CxnS8W4TsH2wr7rxQuLRgkmlZKZ5
+        5JgCa6NV23xEGq3qL+yuwe10AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsWy7bCSvG6d5bNYg84pYhYvf15lszj4sJPF
+        YtGNbUwWl3fNYbPovr6DzWL58X9MFvdOf2KxaDn2lcWiYcsMNot5GxqYLJZuvclo8f/sB3aL
+        O1+fszjweqzpfM3k0XLkLavHhEUHGD1aTu5n8fi+voPN4+PTWyweW/Z/ZvQ4fmM7k8fnTXIe
+        7Qe6mQK4orhsUlJzMstSi/TtErgy/q7nLrjCU3F66k/2BsajXF2MnBwSAiYSPZ/WsHUxcnEI
+        CexmlHh+YRITREJa4vrGCewQtrDEyn/P2SGKXjBK3H58kRkkwSagK7FjcRtYt4jAXiaJOTen
+        gXUwCxhIfHz5gRGiYyqjxMPd+8A6OAVcJBZOvswIYgsLeEk8PXsYbB2LgIrE8iX/wOK8ApYS
+        b45PZoWwBSVOznzC0sXIATRUT6JtIyPEfHmJ7W/nMENcpyDx8+kyVpASEQErifarshAl4hJH
+        f/YwT2AUnoVk0CyEQbOQDJqFpGMBI8sqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzg
+        yNXS2sF44kT8IUYBDkYlHt6MX09ihVgTy4orcw8xSnAwK4nwbpN4GivEm5JYWZValB9fVJqT
+        WnyIUZqDRUmcVz7/WKSQQHpiSWp2ampBahFMlomDU6qBcX7klbvKU+IFShgrhLarnLt74vH9
+        g2sC20L6nn3Y/JynruyO6fvSi/eCD/lsPrZtclfg4dMvGwp5lr9keMh24FlGtvSjHl+NFQGP
+        /s+VEjH/v6F42oJNXIt0tKJ+664p6DJZbGvdJjNvXsPx4NZr10TnP3Dbrr2o+ZvPVBcva/WU
+        7RcMDLQsq5RYijMSDbWYi4oTAWIkvUXYAgAA
+X-CMS-MailID: 20191203103126epcas5p440b714f961f05ce87fcf35f70699c689
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20191203100929epcas3p3e781cc87ff70f82bc1e708ba654456d2
+References: <CGME20191203100929epcas3p3e781cc87ff70f82bc1e708ba654456d2@epcas3p3.samsung.com>
+        <1575367635-22662-1-git-send-email-sheebab@cadence.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 09:11:14AM +0000, Schmid, Carsten wrote:
-> Hi maintainers of the fair scheduler,
+
+
+> -----Original Message-----
+> From: sheebab <sheebab@cadence.com>
+> Sent: 03 December 2019 15:37
+> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
+> pedrom.sousa@synopsys.com; jejb@linux.ibm.com;
+> martin.petersen@oracle.com; stanley.chu@mediatek.com;
+> beanhuo@micron.com; yuehaibing@huawei.com; linux-scsi@vger.kernel.org;
+> linux-kernel@vger.kernel.org; vigneshr@ti.com
+> Cc: mparab@cadence.com; rafalc@cadence.com; sheebab
+> <sheebab@cadence.com>
+> Subject: [PATCH] scsi: ufs: Disable autohibern8 feature in Cadence UFS
 > 
-> we had a crash in the fair scheduler and analysis shows that this could happen again.
-> Happened on 4.14.86 (LTS series) but failing code path still exists in 5.4-rc2 (and 4.14.147 too).
-
-Please, do try if you can reproduce with Linus' latest git. I've no idea
-what is, or is not, in those stable trees.
-
-> crash> * cfs_rq ffff99a96dda9800
-> struct cfs_rq {
->   load = {  weight = 1048576,  inv_weight = 0  }, 
->   nr_running = 1, 
->   h_nr_running = 1, 
->   exec_clock = 0, 
->   min_vruntime = 190894920101, 
->   tasks_timeline = {  rb_root = {    rb_node = 0xffff99a9502e0d10  },   rb_leftmost = 0x0  }, 
->   curr = 0x0, 
->   next = 0x0, 
->   last = 0x0, 
->   skip = 0x0, 
-
-
-> &cfs_rq->tasks_timeline->rb_leftmost
->   tasks_timeline = {
->     rb_root = {
->       rb_node = 0xffff99a9502e0d10
->     }, 
->     rb_leftmost = 0x0
->   }, 
-
-> include/linux/rbtree.h:91:#define rb_first_cached(root) (root)->rb_leftmost
-
-> struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
-> {
-> 	struct rb_node *left = rb_first_cached(&cfs_rq->tasks_timeline);
+> This patch disables autohibern8 feature in Cadence UFS.
+> The autohibern8 feature has issues due to which unexpected interrupt
+trigger is
+> happening. After the interrupt issue is sorted out autohibern8 feature
+will be re-
+> enabled
 > 
-> 	if (!left)
-> 		return NULL; <<<<<<<<<< the case
+> Signed-off-by: sheebab <sheebab@cadence.com>
+> ---
+Probably we want to mark this as FIX for the older kernel version?
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+>  drivers/scsi/ufs/cdns-pltfrm.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> 	return rb_entry(left, struct sched_entity, run_node);
-> }
+> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c
+b/drivers/scsi/ufs/cdns-pltfrm.c index
+> b2af04c57a39..882425d1166b 100644
+> --- a/drivers/scsi/ufs/cdns-pltfrm.c
+> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
+> @@ -98,6 +98,12 @@ static int cdns_ufs_link_startup_notify(struct ufs_hba
+> *hba,
+>  	 * completed.
+>  	 */
+>  	ufshcd_dme_set(hba, UIC_ARG_MIB(PA_LOCAL_TX_LCC_ENABLE), 0);
+> +
+> +	/*
+> +	 * Disabling Autohibern8 feature in cadence UFS
+> +	 * to mask unexpected interrupt trigger.
+> +	 */
+> +	hba->ahit = 0;
+> 
+>  	return 0;
+>  }
+> --
+> 2.17.1
 
-This the problem, for some reason the rbtree code got that rb_leftmost
-thing wrecked.
 
-> Is this a corner case nobody thought of or do we have cfs_rq data that is unexpected in it's content?
-
-No, the rbtree is corrupt. Your tree has a single node (which matches
-with nr_running), but for some reason it thinks rb_leftmost is NULL.
-This is wrong, if the tree is non-empty, it must have a leftmost
-element.
-
-Can you reproduce at will? If so, can you please try the latest kernel,
-and or share the reproducer?
