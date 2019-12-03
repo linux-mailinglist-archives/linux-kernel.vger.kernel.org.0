@@ -2,146 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A73F10FF1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F1510FF15
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:48:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbfLCNsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:48:36 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39525 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfLCNsf (ORCPT
+        id S1726318AbfLCNsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:48:17 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53859 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726024AbfLCNsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:48:35 -0500
-Received: by mail-pg1-f195.google.com with SMTP id b137so1714876pga.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 05:48:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UUlsRRK2pgCm9l96Sadau8/Jinv10/1VueVd+pNemqM=;
-        b=kxVcUwh6Bbz7GVnMzIw7OTehgR8KgnjaD4BiGmDF/ZlEyM7XbXFeVNJkNUjcS0t6l1
-         ug08pUmwQ8V3G1mAq5V/rr+pNYT5oBj1D04K4ejrpKH8Q0S2oo0oJ4yVDGTkroAclcl8
-         ITvyf4yd9x2XCvuTbtm7VgEqscmkSFDA0Nuxw=
+        Tue, 3 Dec 2019 08:48:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575380896;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P5EBEqGJPiXNRYZecHBTQ2o/Z3ABHvD6lVKEN+XEBDY=;
+        b=UpD+3ND0cPId5lqhRZnixgCSkWtT734DAqgNN5p/HxaOz5xnObdTK8po7vRaL/ZpYfquvv
+        dx46BHirA6r3tcwuGiR4L4+kR20wxCGlURry8SkVWH3gNuXEFPW3Ov2au9dKiiJiBawNcW
+        BwCrjmb5QaddVoHY/0bXDVXXjFUUHrk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-139-ZCHPP63BMb6TteVSxJP0hA-1; Tue, 03 Dec 2019 08:48:13 -0500
+Received: by mail-wr1-f69.google.com with SMTP id z15so1828538wrw.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 05:48:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UUlsRRK2pgCm9l96Sadau8/Jinv10/1VueVd+pNemqM=;
-        b=q95zkyt6dIVap9YNjd2a3JfbPK2t72Sd6DRBXzSgLYqsSmlsbAmgGtB1s2Hvzn+/ww
-         T3RUwnXaUof901kQr9kBUUUHh428gP1dntRyoXMgP621dQZLOXG+t6zq7NahinEKErKx
-         XJ9aENVhFn0QqttjVwR5z6Pd/W+tJcxDOw7feocamByqamlDHT4VknncIikKEodqzzCR
-         aBuYIR7jc/sFXNEFy+R5/cl6hmd5F/q6eRgDHFWO8/sxegDQIHkqZ6WlOf/jsVRovc78
-         aV/Fg6ZAY51N5/VFNKf3FaqCXzHYuiaG6ZZpdm1u3tjZyiM28iS/X+QFp24Czr2g6bhH
-         qlCA==
-X-Gm-Message-State: APjAAAV0m27UoDZB89rkdlpxKfAYihwKcJ0FY3mNivQqfQedUKuC/YNl
-        f+PSKgnmqUY8sUzQiwo8u7Q1hw==
-X-Google-Smtp-Source: APXvYqybsy7gWan3hjAOgJUaGmGoAqpOTEE3wpc7hSQ1++Wb69OSIzyrvfi/r0nKL4x2BRjmdiyFJw==
-X-Received: by 2002:a63:e94d:: with SMTP id q13mr5361869pgj.209.1575380914518;
-        Tue, 03 Dec 2019 05:48:34 -0800 (PST)
-Received: from localhost.localdomain ([115.97.190.29])
-        by smtp.gmail.com with ESMTPSA id y144sm4397892pfb.188.2019.12.03.05.48.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 05:48:34 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     michael@amarulasolutions.com, Icenowy Zheng <icenowy@aosc.io>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v12 1/7] dt-bindings: sun6i-dsi: Document A64 MIPI-DSI controller
-Date:   Tue,  3 Dec 2019 19:18:10 +0530
-Message-Id: <20191203134816.5319-2-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20191203134816.5319-1-jagan@amarulasolutions.com>
-References: <20191203134816.5319-1-jagan@amarulasolutions.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P5EBEqGJPiXNRYZecHBTQ2o/Z3ABHvD6lVKEN+XEBDY=;
+        b=ponpZBorkbe7T5iZOe+8c0bkQUcSJ/oLc6pCctFVYY5GN0z+WiL17bC2Hob+6tsX4i
+         M6IFiy13lI/k/5DwKOsKY1XOFa0h6WItMk0PI8cJWAgyjxRBpvAJvb8J46AHlnbqAV2Y
+         YBLvcMvJKNlmCtfqpklFFT5o8O+Dw7sWhZuhT6bTz2C2qDapXBpk4Do79Abu794h0sD/
+         Kg76f4z0baPnY8i6c8FQ3rbzHXOHFm9XkbFNvQ9BJu4Lz0a/4QhTbzeNbVT0y37AhfQ2
+         euE4ShIdtRaAJ0oX2yeVOiyuSii7NsS45hW/+CTp4hqcaNkaRgS/panB2lrafVJsWbyM
+         WXsA==
+X-Gm-Message-State: APjAAAWq3tcMI1EAHoBaGDX0QmOB95ch4U6D22Gup6C899AN0GgdoaHh
+        tMGsz2FZC5dI2Ti0P6uAOnKpHNM/It4YILM8XjoQbPz1D1qowXZBB0GuJ5RgilHoSQIywieXG4n
+        VIuosglx01DwGtNAgTLsaLiDm
+X-Received: by 2002:a05:600c:230d:: with SMTP id 13mr29075742wmo.12.1575380891891;
+        Tue, 03 Dec 2019 05:48:11 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy1BjGoe1DzkR4woD0VDV01r9r26SUZiRfcr2ar76yyw43E2q/uHXedhVEWM4sCNcuphONk7Q==
+X-Received: by 2002:a05:600c:230d:: with SMTP id 13mr29075727wmo.12.1575380891617;
+        Tue, 03 Dec 2019 05:48:11 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:8dc6:5dd5:2c0a:6a9a? ([2001:b07:6468:f312:8dc6:5dd5:2c0a:6a9a])
+        by smtp.gmail.com with ESMTPSA id u26sm3075492wmj.9.2019.12.03.05.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Dec 2019 05:48:11 -0800 (PST)
+Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <20191129213505.18472-1-peterx@redhat.com>
+ <20191129213505.18472-5-peterx@redhat.com>
+ <20191202201036.GJ4063@linux.intel.com> <20191202211640.GF31681@xz-x1>
+ <20191202215049.GB8120@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <fd882b9f-e510-ff0d-db43-eced75427fc6@redhat.com>
+Date:   Tue, 3 Dec 2019 14:48:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191202215049.GB8120@linux.intel.com>
+Content-Language: en-US
+X-MC-Unique: ZCHPP63BMb6TteVSxJP0hA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MIPI DSI controller in Allwinner A64 is similar to A33.
+On 02/12/19 22:50, Sean Christopherson wrote:
+>>
+>> I discussed this with Paolo, but I think Paolo preferred the per-vm
+>> ring because there's no good reason to choose vcpu0 as what (1)
+>> suggested.  While if to choose (2) we probably need to lock even for
+>> per-cpu ring, so could be a bit slower.
+> Ya, per-vm is definitely better than dumping on vcpu0.  I'm hoping we can
+> find a third option that provides comparable performance without using any
+> per-vcpu rings.
+> 
 
-But unlike A33, A64 doesn't have DSI_SCLK gating so it is valid
-to have separate compatible for A64 on the same driver.
+The advantage of per-vCPU rings is that it naturally: 1) parallelizes
+the processing of dirty pages; 2) makes userspace vCPU thread do more
+work on vCPUs that dirty more pages.
 
-DSI_SCLK uses mod clock-names on dt-bindings, so the same
-is not required for A64.
+I agree that on the producer side we could reserve multiple entries in
+the case of PML (and without PML only one entry should be added at a
+time).  But I'm afraid that things get ugly when the ring is full,
+because you'd have to wait for all vCPUs to finish publishing the
+entries they have reserved.
 
-On that note
-- A64 require minimum of 1 clock like the bus clock
-- A33 require minimum of 2 clocks like both bus, mod clocks
+It's ugly that we _also_ need a per-VM ring, but unfortunately some
+operations do not really have a vCPU that they can refer to.
 
-So, update dt-bindings so-that it can document both A33,
-A64 bindings requirements.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v12:
-- Use 'enum' instead of oneOf+const
-
- .../display/allwinner,sun6i-a31-mipi-dsi.yaml | 20 +++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
-index dafc0980c4fa..b91446475f35 100644
---- a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
-@@ -15,7 +15,9 @@ properties:
-   "#size-cells": true
- 
-   compatible:
--    const: allwinner,sun6i-a31-mipi-dsi
-+    enum:
-+      - allwinner,sun6i-a31-mipi-dsi
-+      - allwinner,sun50i-a64-mipi-dsi
- 
-   reg:
-     maxItems: 1
-@@ -24,6 +26,8 @@ properties:
-     maxItems: 1
- 
-   clocks:
-+    minItems: 1
-+    maxItems: 2
-     items:
-       - description: Bus Clock
-       - description: Module Clock
-@@ -63,13 +67,25 @@ required:
-   - reg
-   - interrupts
-   - clocks
--  - clock-names
-   - phys
-   - phy-names
-   - resets
-   - vcc-dsi-supply
-   - port
- 
-+allOf:
-+  - if:
-+      properties:
-+         compatible:
-+           contains:
-+             const: allwinner,sun6i-a31-mipi-dsi
-+      then:
-+        properties:
-+          clocks:
-+            minItems: 2
-+        required:
-+          - clock-names
-+
- additionalProperties: false
- 
- examples:
--- 
-2.18.0.321.gffc6fa0e3
+Paolo
 
