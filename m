@@ -2,97 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F04110153
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9A911016B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:42:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfLCPbq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 3 Dec 2019 10:31:46 -0500
-Received: from mga18.intel.com ([134.134.136.126]:42173 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbfLCPbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:31:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 07:31:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
-   d="scan'208";a="213443780"
-Received: from kmsmsx156.gar.corp.intel.com ([172.21.138.133])
-  by orsmga006.jf.intel.com with ESMTP; 03 Dec 2019 07:31:43 -0800
-Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.12]) by
- KMSMSX156.gar.corp.intel.com ([169.254.1.162]) with mapi id 14.03.0439.000;
- Tue, 3 Dec 2019 23:23:03 +0800
-From:   "Lu, Brent" <brent.lu@intel.com>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-CC:     Support Opensource <Support.Opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ASoC: da7219: remove SRM lock check retry
-Thread-Topic: [PATCH] ASoC: da7219: remove SRM lock check retry
-Thread-Index: AQHVqaw+ii/fH1J6I0CEgpyDBLMztaeno36AgACHg7D//4yFAIAAv3yg//+DfwCAAIgLEA==
-Date:   Tue, 3 Dec 2019 15:23:03 +0000
-Message-ID: <CF33C36214C39B4496568E5578BE70C7403CAFAE@PGSMSX108.gar.corp.intel.com>
-References: <1575358265-17905-1-git-send-email-brent.lu@intel.com>
- <AM5PR1001MB0994EB497D3BC7D0F4C6FD9080420@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <CF33C36214C39B4496568E5578BE70C7403CA7B2@PGSMSX108.gar.corp.intel.com>
- <AM5PR1001MB09946C295B8DAD5F9C8D191080420@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <CF33C36214C39B4496568E5578BE70C7403CACC7@PGSMSX108.gar.corp.intel.com>
- <AM5PR1001MB0994921AE80726BAC59C552B80420@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-In-Reply-To: <AM5PR1001MB0994921AE80726BAC59C552B80420@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTQ4ZmU3YWEtZDJmZi00M2YyLTg3MGUtZDE4YWFkMWMxMjVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaEh6N2FXOTE3R3JwNDVFWlFJdlFCNEs1WHZHZWpyb0U1d0JmT0JcL1dyaDNvQ3JFMEhRaFBxK0tMK2g4TFVWeTIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726564AbfLCPmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:42:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50160 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfLCPmf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 10:42:35 -0500
+Received: from [81.92.17.147] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1icAHg-0004aI-Cd; Tue, 03 Dec 2019 15:40:16 +0000
+Date:   Tue, 3 Dec 2019 16:40:13 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     linux-kernel@vger.kernel.org,
+        Henning Schild <henning.schild@siemens.com>,
+        Dmitry Safonov <dima@arista.com>, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        Jann Horn <jannh@google.com>, Greg Kurz <groug@kaod.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        linux-fsdevel@vger.kernel.org,
+        =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>,
+        dhowells@redhat.com
+Subject: Re: [PATCH v7 1/1] ns: add binfmt_misc to the user namespace
+Message-ID: <20191203154012.opirpicsuc6ou3cx@wittgenstein>
+References: <20191107140304.8426-1-laurent@vivier.eu>
+ <20191107140304.8426-2-laurent@vivier.eu>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191107140304.8426-2-laurent@vivier.eu>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
+On Thu, Nov 07, 2019 at 03:03:04PM +0100, Laurent Vivier wrote:
+> This patch allows to have a different binfmt_misc configuration
+> for each new user namespace. By default, the binfmt_misc configuration
+> is the one of the previous level, but if the binfmt_misc filesystem is
+> mounted in the new namespace a new empty binfmt instance is created and
+> used in this namespace.
 > 
-> Yes, that's right. I have put in a request with our HW team to again clarify
-> timings, but still awaiting feedback.
+> For instance, using "unshare" we can start a chroot of another
+> architecture and configure the binfmt_misc interpreter without being root
+> to run the binaries in this chroot.
 > 
-> The driver already warns via the kernel logs when SRM lock fails as follows:
+> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> Acked-by: Andrei Vagin <avagin@gmail.com>
+> ---
+>  fs/binfmt_misc.c               | 115 +++++++++++++++++++++++++--------
+>  include/linux/user_namespace.h |  15 +++++
+>  kernel/user.c                  |  14 ++++
+>  kernel/user_namespace.c        |   3 +
+>  4 files changed, 119 insertions(+), 28 deletions(-)
 > 
-> 	dev_warn(component->dev, "SRM failed to lock\n");
-> 
-> What else do you think is needed?
-> 
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index cdb45829354d..ba5f0d2ade96 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -40,9 +40,6 @@ enum {
+>  	VERBOSE_STATUS = 1 /* make it zero to save 400 bytes kernel memory */
+>  };
+>  
+> -static LIST_HEAD(entries);
+> -static int enabled = 1;
+> -
+>  enum {Enabled, Magic};
+>  #define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
+>  #define MISC_FMT_OPEN_BINARY (1 << 30)
+> @@ -62,10 +59,7 @@ typedef struct {
+>  	struct file *interp_file;
+>  } Node;
+>  
+> -static DEFINE_RWLOCK(entries_lock);
+>  static struct file_system_type bm_fs_type;
+> -static struct vfsmount *bm_mnt;
+> -static int entry_count;
+>  
+>  /*
+>   * Max length of the register string.  Determined by:
+> @@ -82,18 +76,37 @@ static int entry_count;
+>   */
+>  #define MAX_REGISTER_LENGTH 1920
+>  
+> +static struct binfmt_namespace *binfmt_ns(struct user_namespace *ns)
+> +{
+> +	struct binfmt_namespace *b_ns;
+> +
+> +	while (ns) {
+> +		b_ns = READ_ONCE(ns->binfmt_ns);
+> +		if (b_ns)
+> +			return b_ns;
+> +		ns = ns->parent;
+> +	}
+> +	/* as the first user namespace is initialized with
+> +	 * &init_binfmt_ns we should never come here
+> +	 * but we try to stay safe by logging a warning
+> +	 * and returning a sane value
+> +	 */
+> +	WARN_ON_ONCE(1);
+> +	return &init_binfmt_ns;
+> +}
+> +
+>  /*
+>   * Check if we support the binfmt
+>   * if we do, return the node, else NULL
+>   * locking is done in load_misc_binary
+>   */
+> -static Node *check_file(struct linux_binprm *bprm)
+> +static Node *check_file(struct binfmt_namespace *ns, struct linux_binprm *bprm)
+>  {
+>  	char *p = strrchr(bprm->interp, '.');
+>  	struct list_head *l;
+>  
+>  	/* Walk all the registered handlers. */
+> -	list_for_each(l, &entries) {
+> +	list_for_each(l, &ns->entries) {
+>  		Node *e = list_entry(l, Node, list);
+>  		char *s;
+>  		int j;
+> @@ -135,17 +148,18 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  	struct file *interp_file = NULL;
+>  	int retval;
+>  	int fd_binary = -1;
+> +	struct binfmt_namespace *ns = binfmt_ns(current_user_ns());
+>  
+>  	retval = -ENOEXEC;
+> -	if (!enabled)
+> +	if (!ns->enabled)
+>  		return retval;
+>  
+>  	/* to keep locking time low, we copy the interpreter string */
+> -	read_lock(&entries_lock);
+> -	fmt = check_file(bprm);
+> +	read_lock(&ns->entries_lock);
+> +	fmt = check_file(ns, bprm);
+>  	if (fmt)
+>  		dget(fmt->dentry);
+> -	read_unlock(&entries_lock);
+> +	read_unlock(&ns->entries_lock);
+>  	if (!fmt)
+>  		return retval;
+>  
+> @@ -611,19 +625,19 @@ static void bm_evict_inode(struct inode *inode)
+>  	kfree(e);
+>  }
+>  
+> -static void kill_node(Node *e)
+> +static void kill_node(struct binfmt_namespace *ns, Node *e)
+>  {
+>  	struct dentry *dentry;
+>  
+> -	write_lock(&entries_lock);
+> +	write_lock(&ns->entries_lock);
+>  	list_del_init(&e->list);
+> -	write_unlock(&entries_lock);
+> +	write_unlock(&ns->entries_lock);
+>  
+>  	dentry = e->dentry;
+>  	drop_nlink(d_inode(dentry));
+>  	d_drop(dentry);
+>  	dput(dentry);
+> -	simple_release_fs(&bm_mnt, &entry_count);
+> +	simple_release_fs(&ns->bm_mnt, &ns->entry_count);
+>  }
+>  
+>  /* /<entry> */
+> @@ -653,6 +667,9 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+>  	struct dentry *root;
+>  	Node *e = file_inode(file)->i_private;
+>  	int res = parse_command(buffer, count);
+> +	struct binfmt_namespace *ns;
+> +
+> +	ns = binfmt_ns(file->f_path.dentry->d_sb->s_user_ns);
 
-Hi Adam,
+Sorry for being so late to the party.
 
-Let's say that the SRM locks in the second loop. The 50ms delay was applied
-but there is no kernel log message about it because the value of srm_lock is
-already true when exiting the loop. If we can print every SRM lock fail before
-msleep() call, it would be a helpful for people resolving timing issues like Cold
-latency.
+The naked dereferences here are not very pretty and also likely mean you
+access the wrong dentry when you do (weird but possible) things like:
 
-do {
-	pll_status = snd_soc_component_read32(component, DA7219_PLL_SRM_STS);
-	if (pll_status & DA7219_PLL_SRM_STS_SRM_LOCK) {
-		break;
-	} else {
-		++i;
-		dev_warn(component->dev, "SRM failed to lock, retry in 50ms\n");
-		msleep(50);
-	}
-} while (i < DA7219_SRM_CHECK_RETRIES);
+mount -t overlay overlay -o lowerdir=/proc/sys/fs/binfmt_misc,workdir=/work,upperdir=/upper /merged
 
+(which might already cause trouble in other parts of this code)
 
-Regards,
-Brent
+so I think it's better if you replace 
+file->f_path.dentry->d_sb->s_user_ns
+with
+file_dentry(file)->d_sb->s_user_ns
+in places where you do naked dereferences now.
