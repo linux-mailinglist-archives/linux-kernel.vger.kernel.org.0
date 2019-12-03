@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7FB111DA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1D18111C3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfLCWzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:55:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50052 "EHLO mail.kernel.org"
+        id S1727919AbfLCWmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:42:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730357AbfLCWzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:55:36 -0500
+        id S1728626AbfLCWmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:42:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F94A2053B;
-        Tue,  3 Dec 2019 22:55:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDA532084B;
+        Tue,  3 Dec 2019 22:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413736;
-        bh=moSTdx0b15r8AFXw/a0cj2pHvsjwbdBEGVmg1DcRV+o=;
+        s=default; t=1575412923;
+        bh=+8IZ96EPLEmXUSJ8lwICHSsmY2hTvpHusQvnP8QJU2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EWCjyUstn1enZ7U66dFBd35gcTpr42Ka/vk6XBdMHLY5cY7ADpvhK7X5J6vkKpGHY
-         w0KZ10z5R/Ix2TYjPQof5MWqBmoyE2RnG7Qo2BV9dZ38RveP3HfmMyZVNWBrZBXyFh
-         M2u01ZqzUQr/zGRv9lcdTSpF8MpBhOgS7CcJjoLs=
+        b=XZT+7aFAmD4aD5ccGltf+H11KPanO+y9c7pNDU8KtTJt2hYebMrrcvQ8L62zr/jCv
+         jDIQkjQhR3vV941e+MQDax6eL4c6O773ue4Zxg8UJIYhg/5j9XqWcd7YtM5FSjmG45
+         vtjthgxaNn/QfMeVh7CH+2EcjUUU03gAvTKRGIps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 241/321] net: dev: Use unsigned integer as an argument to left-shift
-Date:   Tue,  3 Dec 2019 23:35:07 +0100
-Message-Id: <20191203223439.679216273@linuxfoundation.org>
+Subject: [PATCH 5.3 068/135] watchdog: bd70528: Add MODULE_ALIAS to allow module auto loading
+Date:   Tue,  3 Dec 2019 23:35:08 +0100
+Message-Id: <20191203213025.805669276@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,33 +46,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-[ Upstream commit f4d7b3e23d259c44f1f1c39645450680fcd935d6 ]
+[ Upstream commit 81363f248aecd2b5f10547af268a4dfaf8963489 ]
 
-1 << 31 is Undefined Behaviour according to the C standard.
-Use U type modifier to avoid theoretical overflow.
+The bd70528 watchdog driver is probed by MFD driver. Add MODULE_ALIAS
+in order to allow udev to load the module when MFD sub-device cell for
+watchdog is added.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bbc88a0ec9f37 ("watchdog: bd70528: Initial support for ROHM BD70528 watchdog block")
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netdevice.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/bd70528_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 8c2fec0bcb265..5ada5fd9652dd 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -3790,7 +3790,7 @@ static inline u32 netif_msg_init(int debug_value, int default_msg_enable_bits)
- 	if (debug_value == 0)	/* no output */
- 		return 0;
- 	/* set low N bits */
--	return (1 << debug_value) - 1;
-+	return (1U << debug_value) - 1;
- }
- 
- static inline void __netif_tx_lock(struct netdev_queue *txq, int cpu)
+diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
+index b0152fef4fc7e..bc60e036627af 100644
+--- a/drivers/watchdog/bd70528_wdt.c
++++ b/drivers/watchdog/bd70528_wdt.c
+@@ -288,3 +288,4 @@ module_platform_driver(bd70528_wdt);
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+ MODULE_DESCRIPTION("BD70528 watchdog driver");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:bd70528-wdt");
 -- 
 2.20.1
 
