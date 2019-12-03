@@ -2,120 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863C210F3F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 01:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B98910F429
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 01:43:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfLCAlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 19:41:50 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36552 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfLCAlt (ORCPT
+        id S1727319AbfLCAnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 19:43:13 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39668 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727269AbfLCAnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 19:41:49 -0500
-Received: by mail-pl1-f193.google.com with SMTP id k20so854130pls.3;
-        Mon, 02 Dec 2019 16:41:49 -0800 (PST)
+        Mon, 2 Dec 2019 19:43:10 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so1654009ioh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 16:43:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5F3LmlLJ3DLUlNEK9V6ggwNn0/WBf54z3A3fMxHOMC0=;
-        b=qtA92IPcnLG8L/fIoNQ7renoQI235C29BpF+GTBOhKseLGiUYRw7Y8Jb9SvIJklV/c
-         BI/ishToIJ/57CniabwqzeLc32C0/Anc7yWa85UGB+sybPbEp0eul2XJxG4axDzice+U
-         BYJBA34aiDqHU6FTXNM03itIr5CCaW2BHMzpNuw0mpOz3utGO9el+KKP/BXZZMyD/W52
-         TyHRDJ+grfB1aaIVFHSZIjvoho2JBlEQubRthLR7c4MvTP3LdLIgGq3EZZB/jka2pO/3
-         KLDNj60VOR+SZkeb8wKLS/wGNF6WoLfleh7MQMN8iK2ths7wB5yFa17MFYEDqLH1tYIb
-         eKrw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4jnL6iDubLY8gL5JP3QSc0ju+BQUG+h8VIAOn+X5oWQ=;
+        b=T00bsc0APIQpp0kFPoFsLBa72cSKQI8/kvf/jrmlw4YTXIkoV3Uo9vYbKOVb/uvmMa
+         Fx0TgLfE1CVyHBCn7J7nM976Z7PON3M3w+uSZtQ2kTxe+7DNpYO1vky1kHc7MGIzcifk
+         Rsgk4WafvGso2zBq8zzPlQSTSk797b7OEJlbteHeDpdZ+gwvXPs5Nniz0vbM33QLo++f
+         5WJ3xnuNz/Crxcb8d8IUNaOA8+ssCGZqzJbMWlPmvRzBWmuRrGqBI8UecAbi+m6cUljH
+         FvUNkjv38k90sNUFreVKS1i8TAkgxv4pKR1dCeBNykyTp5S+fR9yd6wQ6dhzRH2CzVjC
+         hetg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5F3LmlLJ3DLUlNEK9V6ggwNn0/WBf54z3A3fMxHOMC0=;
-        b=Rv9RFHJCV53gYC7O7Ucwe8jF2ZRcgVtrQhWvqpyc3EX81Ldf8f+uflAaeyMC8Hde6b
-         YB6vGoWMmO7VqMDjWCQ44BBQU5BAFmeME+v+29LTnS1N096kcVJnCjUtQsrEzSuWvh+C
-         hC2Z7+3MKBfJc7WQwdmk6vhEoECWFq2VG50L9QhghlwGBOJcfFIhGcPqy9rV+hZIbjzn
-         w1vPB4j9s4KbAQIp6NdJGmqmjxIvLIPvhiiBGOtAECWC3YPMN8LRmV/2UUTpKPql2OWt
-         WQb2c7K1vb8QspBeNt9HSXCTSC/9QMwp18YEmE6S9C/Hd8YG71UsZGWecHefOQWLKqRO
-         kG3Q==
-X-Gm-Message-State: APjAAAUxKkGRngJq5VKzNUKZs5gK359N4wxp0QNF8NjHM8O4X/P3taSH
-        8wbAKvSX+qXGmyEN3Xd0sAM=
-X-Google-Smtp-Source: APXvYqyLRZcpTsfPKjdg4qt6LU+Ifi6fGkc9DXr47Aaci1PiH2RfLpmCvEa3U2aM3JKz+3kKz/jYqA==
-X-Received: by 2002:a17:90a:1aa3:: with SMTP id p32mr2418600pjp.8.1575333709070;
-        Mon, 02 Dec 2019 16:41:49 -0800 (PST)
-Received: from debian.net.fpt ([2405:4800:58f7:32f8:99ed:5ecf:a28d:555e])
-        by smtp.gmail.com with ESMTPSA id x4sm688788pff.143.2019.12.02.16.41.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 16:41:48 -0800 (PST)
-From:   Phong Tran <tranmanphong@gmail.com>
-To:     mchehab@kernel.org, gregkh@linuxfoundation.org,
-        allison@lohutok.net, tglx@linutronix.de,
-        syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        glider@google.com, syzkaller-bugs@googlegroups.com,
-        Phong Tran <tranmanphong@gmail.com>
-Subject: [PATCH] media: dvb: check return value digitv_ctrl_msg
-Date:   Tue,  3 Dec 2019 07:41:38 +0700
-Message-Id: <20191203004138.21223-1-tranmanphong@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <0000000000004f3d820596d8c51c@google.com>
-References: <0000000000004f3d820596d8c51c@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4jnL6iDubLY8gL5JP3QSc0ju+BQUG+h8VIAOn+X5oWQ=;
+        b=DhF6ynmi9mAssKJKmN5Kx1oC0TyAYlbXUalbAkIHRMPz2j6ZdDweK7/24Ky86tiAuG
+         xFUGx98h6xfS2KCyboMYtzI517Yc1WjRAg0Njnbd6+HAyu2L164FHg9DX8BJaTPsGF/l
+         eeIlNorT6sn7FqjfWPW+Y41uM4+K2BeeidR0/deuidqn7/a8GvqKVCPlt5HpFf0nFbog
+         nRfG0gT1xn/Xg70kOBg/H7hYfgFq9I3HdX4w4MURpINod7mrTONTVgkCl0mWSVPZ0Pkt
+         4bYaA7Bg4fd7dGFmQQHxKQ8G83NGzEMe7kutIC5VSWDtVwPx+W+nh3ky6qWKlovobZl9
+         MqnA==
+X-Gm-Message-State: APjAAAX8EacICCHMhPRo2zyUCkznCPMl2/PwBxeR4M8ZP9OvYDDiF/2N
+        zAMCiVMadLpCXf0bsnjoUlzwrYL73z2UAqTANMU0nQ==
+X-Google-Smtp-Source: APXvYqxJrkK1ZdE65kA4EuWOJ5vb0zsDMEQ4ZrjeW7uzvZYJCxvo09UHOuHs6AjLENBNZOWUxi9WR6+6dwVQ5+rKKQ4=
+X-Received: by 2002:a5e:df06:: with SMTP id f6mr235848ioq.84.1575333788813;
+ Mon, 02 Dec 2019 16:43:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191203004043.174977-1-matthewgarrett@google.com>
+In-Reply-To: <20191203004043.174977-1-matthewgarrett@google.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 2 Dec 2019 16:42:57 -0800
+Message-ID: <CACdnJus7nHdr4p4H1j5as9eB=FG-uX+wy_tjvTQ5ObErDJHdow@mail.gmail.com>
+Subject: Re: [PATCH] [EFI,PCI] Allow disabling PCI busmastering on bridges
+ during boot
+To:     linux-efi <linux-efi@vger.kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, x86@kernel.org,
+        linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For fixing syzbot "KMSAN: uninit-value in digitv_rc_query"
+On Mon, Dec 2, 2019 at 4:40 PM Matthew Garrett
+<matthewgarrett@google.com> wrote:
+>
+> Add an option to disable the busmaster bit in the control register on
+> all PCI bridges before calling ExitBootServices() and passing control to
+> the runtime kernel. System firmware may configure the IOMMU to prevent
+> malicious PCI devices from being able to attack the OS via DMA. However,
+> since firmware can't guarantee that the OS is IOMMU-aware, it will tear
+> down IOMMU configuration when ExitBootServices() is called. This leaves
+> a window between where a hostile device could still cause damage before
+> Linux configures the IOMMU again.
 
-In scenario testing for syzbot, failure reading from
-digitv_ctrl_msg() [1].
-
-Eg:
-[   91.846657][ T3844] dvb-usb: bulk message failed: -22 (7/0)
-
-digitv_rc_query() always return 0. But in this case a wrong thing happens.
-
-Reported-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
-Tested-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
-
-[1]: https://syzkaller.appspot.com/text?tag=CrashLog&x=16860a63600000
-[2]: https://groups.google.com/d/msg/syzkaller-bugs/-TXIJAZ0J9Q/T4PEUQoeAQAJ
-
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
----
- drivers/media/usb/dvb-usb/digitv.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/dvb-usb/digitv.c b/drivers/media/usb/dvb-usb/digitv.c
-index dd5bb230cec1..61bc8945e6b9 100644
---- a/drivers/media/usb/dvb-usb/digitv.c
-+++ b/drivers/media/usb/dvb-usb/digitv.c
-@@ -231,17 +231,21 @@ static struct rc_map_table rc_map_digitv_table[] = {
- static int digitv_rc_query(struct dvb_usb_device *d, u32 *event, int *state)
- {
- 	int i;
--	u8 key[5];
-+	u8 key[5] = { 0 };
- 	u8 b[4] = { 0 };
-+	int ret;
- 
- 	*event = 0;
- 	*state = REMOTE_NO_KEY_PRESSED;
- 
--	digitv_ctrl_msg(d,USB_READ_REMOTE,0,NULL,0,&key[1],4);
--
-+	ret = digitv_ctrl_msg(d, USB_READ_REMOTE, 0, NULL, 0, &key[1], 4);
-+	if (ret < 0)
-+		return ret;
- 	/* Tell the device we've read the remote. Not sure how necessary
- 	   this is, but the Nebula SDK does it. */
--	digitv_ctrl_msg(d,USB_WRITE_REMOTE,0,b,4,NULL,0);
-+	ret = digitv_ctrl_msg(d, USB_WRITE_REMOTE, 0, b, 4, NULL, 0);
-+	if (ret < 0)
-+		return ret;
- 
- 	/* if something is inside the buffer, simulate key press */
- 	if (key[1] != 0)
--- 
-2.20.1
-
+I don't know enough about ARM to know if this makes sense there as well. Anyone?
