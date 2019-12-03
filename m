@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A886111D97
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E8D0111C32
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbfLCWzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:55:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49144 "EHLO mail.kernel.org"
+        id S1728560AbfLCWla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730321AbfLCWy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:59 -0500
+        id S1727988AbfLCWl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7693214AF;
-        Tue,  3 Dec 2019 22:54:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 657E020684;
+        Tue,  3 Dec 2019 22:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413699;
-        bh=zYB41gfG09mqdRPWxWlUgH4vOV0svqU0ru6XZw2f+fE=;
+        s=default; t=1575412887;
+        bh=z9Lv6c8+GmFz9VuW7PWrb5r+yWIK4n3hGIo4aYP7fRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nfOQ6YKmwFX1jXj3bUBCiHsUUwldpfFHtuoU0IWPdqdI3h2fX56mKU7Qo4hY2tzoX
-         PPwNg1qPNQu3J1ZdhETk66fJmJG1PcMlitpjsN8ZaxPY8FItC5BMaDRLeV+vV8KhzE
-         Al2HA0x32hN4fTNZsPXnr1sXAHZ3OPcnRrsm9lOs=
+        b=eWEQPSRYQQL2HQqszhIg6PmSoBPlrSAuuCufnhi+tbp3GbX6OjcG+beSI/d36HST6
+         NhHaR4kSt+dDVl7tt1upHXVtL2pbT2e6e/549uBLm9n76D+KWW1EXM+0CROaC9vpZz
+         tUFMkng2DJRpXx5PTJ1+CB5f7J3TZeEmha3OnCsE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 229/321] blktrace: Show requests without sector
-Date:   Tue,  3 Dec 2019 23:34:55 +0100
-Message-Id: <20191203223439.028520755@linuxfoundation.org>
+Subject: [PATCH 5.3 056/135] can: rx-offload: can_rx_offload_offload_one(): use ERR_PTR() to propagate error value in case of errors
+Date:   Tue,  3 Dec 2019 23:34:56 +0100
+Message-Id: <20191203213020.521176489@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +43,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-[ Upstream commit 0803de78049fe1b0baf44bcddc727b036fb9139b ]
+[ Upstream commit d763ab3044f0bf50bd0e6179f6b2cf1c125d1d94 ]
 
-Currently, blktrace will not show requests that don't have any data as
-rq->__sector is initialized to -1 which is out of device range and thus
-discarded by act_log_check(). This is most notably the case for cache
-flush requests sent to the device. Fix the problem by making
-blk_rq_trace_sector() return 0 for requests without initialized sector.
+Before this patch can_rx_offload_offload_one() returns a pointer to a
+skb containing the read CAN frame or a NULL pointer.
 
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+However the meaning of the NULL pointer is ambiguous, it can either mean
+the requested mailbox is empty or there was an error.
+
+This patch fixes this situation by returning:
+- pointer to skb on success
+- NULL pointer if mailbox is empty
+- ERR_PTR() in case of an error
+
+All users of can_rx_offload_offload_one() have been adopted, no
+functional change intended.
+
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/blktrace_api.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/can/rx-offload.c | 86 ++++++++++++++++++++++++++++++------
+ 1 file changed, 73 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/blktrace_api.h b/include/linux/blktrace_api.h
-index 8804753805ac5..7bb2d8de9f308 100644
---- a/include/linux/blktrace_api.h
-+++ b/include/linux/blktrace_api.h
-@@ -116,7 +116,13 @@ extern void blk_fill_rwbs(char *rwbs, unsigned int op, int bytes);
- 
- static inline sector_t blk_rq_trace_sector(struct request *rq)
- {
--	return blk_rq_is_passthrough(rq) ? 0 : blk_rq_pos(rq);
-+	/*
-+	 * Tracing should ignore starting sector for passthrough requests and
-+	 * requests where starting sector didn't get set.
-+	 */
-+	if (blk_rq_is_passthrough(rq) || blk_rq_pos(rq) == (sector_t)-1)
-+		return 0;
-+	return blk_rq_pos(rq);
+diff --git a/drivers/net/can/rx-offload.c b/drivers/net/can/rx-offload.c
+index e224530a06300..3f5e040f0c712 100644
+--- a/drivers/net/can/rx-offload.c
++++ b/drivers/net/can/rx-offload.c
+@@ -107,39 +107,95 @@ static int can_rx_offload_compare(struct sk_buff *a, struct sk_buff *b)
+ 	return cb_b->timestamp - cb_a->timestamp;
  }
  
- static inline unsigned int blk_rq_trace_nr_sectors(struct request *rq)
+-static struct sk_buff *can_rx_offload_offload_one(struct can_rx_offload *offload, unsigned int n)
++/**
++ * can_rx_offload_offload_one() - Read one CAN frame from HW
++ * @offload: pointer to rx_offload context
++ * @n: number of mailbox to read
++ *
++ * The task of this function is to read a CAN frame from mailbox @n
++ * from the device and return the mailbox's content as a struct
++ * sk_buff.
++ *
++ * If the struct can_rx_offload::skb_queue exceeds the maximal queue
++ * length (struct can_rx_offload::skb_queue_len_max) or no skb can be
++ * allocated, the mailbox contents is discarded by reading it into an
++ * overflow buffer. This way the mailbox is marked as free by the
++ * driver.
++ *
++ * Return: A pointer to skb containing the CAN frame on success.
++ *
++ *         NULL if the mailbox @n is empty.
++ *
++ *         ERR_PTR() in case of an error
++ */
++static struct sk_buff *
++can_rx_offload_offload_one(struct can_rx_offload *offload, unsigned int n)
+ {
+-	struct sk_buff *skb = NULL;
++	struct sk_buff *skb = NULL, *skb_error = NULL;
+ 	struct can_rx_offload_cb *cb;
+ 	struct can_frame *cf;
+ 	int ret;
+ 
+-	/* If queue is full or skb not available, read to discard mailbox */
+ 	if (likely(skb_queue_len(&offload->skb_queue) <
+-		   offload->skb_queue_len_max))
++		   offload->skb_queue_len_max)) {
+ 		skb = alloc_can_skb(offload->dev, &cf);
++		if (unlikely(!skb))
++			skb_error = ERR_PTR(-ENOMEM);	/* skb alloc failed */
++	} else {
++		skb_error = ERR_PTR(-ENOBUFS);		/* skb_queue is full */
++	}
+ 
+-	if (!skb) {
++	/* If queue is full or skb not available, drop by reading into
++	 * overflow buffer.
++	 */
++	if (unlikely(skb_error)) {
+ 		struct can_frame cf_overflow;
+ 		u32 timestamp;
+ 
+ 		ret = offload->mailbox_read(offload, &cf_overflow,
+ 					    &timestamp, n);
+-		if (ret) {
+-			offload->dev->stats.rx_dropped++;
+-			offload->dev->stats.rx_fifo_errors++;
+-		}
+ 
+-		return NULL;
++		/* Mailbox was empty. */
++		if (unlikely(!ret))
++			return NULL;
++
++		/* Mailbox has been read and we're dropping it or
++		 * there was a problem reading the mailbox.
++		 *
++		 * Increment error counters in any case.
++		 */
++		offload->dev->stats.rx_dropped++;
++		offload->dev->stats.rx_fifo_errors++;
++
++		/* There was a problem reading the mailbox, propagate
++		 * error value.
++		 */
++		if (unlikely(ret < 0))
++			return ERR_PTR(ret);
++
++		return skb_error;
+ 	}
+ 
+ 	cb = can_rx_offload_get_cb(skb);
+ 	ret = offload->mailbox_read(offload, cf, &cb->timestamp, n);
+-	if (!ret) {
++
++	/* Mailbox was empty. */
++	if (unlikely(!ret)) {
+ 		kfree_skb(skb);
+ 		return NULL;
+ 	}
+ 
++	/* There was a problem reading the mailbox, propagate error value. */
++	if (unlikely(ret < 0)) {
++		kfree_skb(skb);
++
++		offload->dev->stats.rx_dropped++;
++		offload->dev->stats.rx_fifo_errors++;
++
++		return ERR_PTR(ret);
++	}
++
++	/* Mailbox was read. */
+ 	return skb;
+ }
+ 
+@@ -159,7 +215,7 @@ int can_rx_offload_irq_offload_timestamp(struct can_rx_offload *offload, u64 pen
+ 			continue;
+ 
+ 		skb = can_rx_offload_offload_one(offload, i);
+-		if (!skb)
++		if (IS_ERR_OR_NULL(skb))
+ 			break;
+ 
+ 		__skb_queue_add_sort(&skb_queue, skb, can_rx_offload_compare);
+@@ -190,7 +246,11 @@ int can_rx_offload_irq_offload_fifo(struct can_rx_offload *offload)
+ 	struct sk_buff *skb;
+ 	int received = 0;
+ 
+-	while ((skb = can_rx_offload_offload_one(offload, 0))) {
++	while (1) {
++		skb = can_rx_offload_offload_one(offload, 0);
++		if (IS_ERR_OR_NULL(skb))
++			break;
++
+ 		skb_queue_tail(&offload->skb_queue, skb);
+ 		received++;
+ 	}
 -- 
 2.20.1
 
