@@ -2,74 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B2F110475
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 19:47:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A4211047A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 19:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfLCSrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 13:47:45 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35229 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfLCSro (ORCPT
+        id S1727318AbfLCStE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 13:49:04 -0500
+Received: from adsl-90-150-81-2.jamal.ru ([90.150.81.2]:36590 "EHLO
+        p1.mk-service.top" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfLCStE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 13:47:44 -0500
-Received: by mail-ot1-f67.google.com with SMTP id o9so3906847ote.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 10:47:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pfO60WpFdVXD9ykCy83yYLYqu37ZRkpOI6iazA+g73k=;
-        b=jrBUX3W/cj7i2lJk0w7h8DromxINw5Nmmr4l6t63OkmNeRwhn/r4qAb45sdstr2z26
-         22Xt9iOLQcEzh0BzacyYi/P/Wps71zJ04bWGjsx6zNcvIBDhZ/fdnaZgDVSeH1oJkCyR
-         ad2vhAUE/sJZYQjynBObtGlsFBmX2GAUgjKgixSfKWlJB6/3obaG9loYEGkHYl34c7RO
-         UELCZelTjZVnA4oGPvddVTJAYrovnfb6R16Y4SnZzYhsHNM2Gp7iXz/k72ElCNPeRzrb
-         tuWukCYh8Tgjv1jZpYFq6WxVg/TTZ2Ov34yIlI/rgl3hdD4xXJPUTJF4U8gdFeLJqF/K
-         Tkxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pfO60WpFdVXD9ykCy83yYLYqu37ZRkpOI6iazA+g73k=;
-        b=JfX+RSxkrMVp3eCmZF5AQB++Tv8DeYlUocv7SwhmsOav9E7ATRtgqH9ojt36/wPMgN
-         9+IclHGwTLmnCi4GPSbyiR6p7stw97RPkVilN1zwpqt0W4hx2l3opOxpdl74FFuA+Zus
-         Pw+UVihjV0LFQmiRmjM9m/9Hqfly31uin/oosle0lOMdMvppdpjOztaVppYNORcKp96k
-         wm6OpUKZHmO6WmRyCeWsISlwaQleR6QXE9fIa9Igy+wP4d+pxb8LQCwvPr7LWLfILnFI
-         aOK3gnYUEQcYjVpoQlZnCP4h9Skxd7UWLQtk4ZLDoOLtYxW33ttkFG2pqTlqw1WyoXTi
-         +E2w==
-X-Gm-Message-State: APjAAAVZ9bPwqbhc98g//S2+btTzpWExD3Vyw//l73VdxBJVox2zSZR5
-        sjRQgsO3/e/OsxJpLPGxYuio4+txTgrDpvys+1qbyA==
-X-Google-Smtp-Source: APXvYqwmBgkNOXdWKfFhoRJ5fYuF8t0A71o7eGmZ1W9UCAO3LKG+omVrqIoWLKPd/hqTtznUqwTF6fmD/YdQIIy+Hhg=
-X-Received: by 2002:a9d:3af:: with SMTP id f44mr4143411otf.332.1575398863576;
- Tue, 03 Dec 2019 10:47:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20191203121013.9280-1-will@kernel.org>
-In-Reply-To: <20191203121013.9280-1-will@kernel.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 3 Dec 2019 10:47:32 -0800
-Message-ID: <CALAqxLWbswQmLYJa_ODUDC0XJ5u=y_Nn074qcVAh1HZiTLNy1Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: mm: Fix initialisation of DMA zones on non-NUMA systems
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 3 Dec 2019 13:49:04 -0500
+X-Greylist: delayed 22793 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Dec 2019 13:49:03 EST
+To:     linux-kernel@vger.kernel.org
+From:   Michael Richter <info@p1.mk-service.top>
+Subject: www.vger.kernel.org
+Date:   Tue, 3 Dec 2019 23:49:03 +0500
+Message-ID: <20191203_184903_039437.info@p1.mk-service.top>
+X-Mailer: MAIL
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 4:10 AM Will Deacon <will@kernel.org> wrote:
->
-> John reports that the recently merged commit 1a8e1cef7603 ("arm64: use
-> both ZONE_DMA and ZONE_DMA32") breaks the boot on his DB845C board:
+Sehr geehrte Damen und Herren.
 
-I've also tripped on the same issue with the original HiKey board, and
-can validate that this patch resolves the issue there.
+Ich bin Experte im Bereich Online-Marketing. Ich habe festgestellt, dass Ihre Website korrekt erstellt wurde und gut aussieht,
+sie jedoch nicht für die Google-Suchmaschine optimiert ist.
 
-Tested-by: John Stultz <john.stultz@linaro.org>
+Internetnutzer, die Keywords für Ihre Branche eingeben, sollten Ihre Seite sofort in den Google-Suchergebnissen finden.
 
-thanks
--john
+Wenn Sie herausfinden möchten, welche Fehler Ihre Website aufweist und welche geändert werden müssen,
+damit sie definitiv in den Suchergebnissen erscheint, können wir eine kostenlose Überprüfung der Website durchführen.
+
+Zu diesem Zweck bitten wir Sie, dieses Auditformular auszufüllen und unsere Techniker erstellen für Sie kostenlos einen Auditbericht Ihrer Website.
+Die Durchführung des Audits Ihrer Seite ist völlig kostenlos und unverbindlich.
+
+Außerdem biete ich Ihnen die Optimierung der Website ohne Abonnement an, für die wichtigsten Keywords Ihrer Branche,
+ohne monatliche Gebühren und ohne versteckte Kosten (nur einmalige Gebühr). Das ist derzeit eines der interessantesten Angebote auf dem Markt.
+
+Die Optimierung zielt darauf ab, viele Parameter Ihrer Website zu verbessern. Im Rahmen der Seitenoptimierung nehmen wir Änderungen im Quellcode
+und ggf. im Inhalt der Seite vor, damit diese suchmaschinenfreundlicher wird und damit ihre Position im Ranking deutlich erhöht.
+
+Weitere Informationen finden Sie auf unserer Website:
+
+https://www.seomarketing-top.net
+
+
+Mit freundlichen Grüßen
+Michael Richter
+
