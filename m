@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6CF111ECF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C4C111EC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729835AbfLCWvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:51:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42964 "EHLO mail.kernel.org"
+        id S1729865AbfLCWvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:51:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729823AbfLCWvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:51:03 -0500
+        id S1729855AbfLCWvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:51:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B2B32054F;
-        Tue,  3 Dec 2019 22:51:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CFDA20848;
+        Tue,  3 Dec 2019 22:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413462;
-        bh=CNp5Bv0TclL9MKLcrB14tMvBBV+oreR/zTbo2XPb6NA=;
+        s=default; t=1575413473;
+        bh=v/ELUbqxZyXrZuAAY7IR8tKjXYRyU+EDsOX/Vedj/xw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MHDexBGrpGCUY1JsnYgow4+Dwlqf9y1q0zFHCmb76YabyzcCDj6SFjCsDXgMRA3dh
-         Tc86LwdCz7/nX9TfVsiMP2c/mocBWE8Y4ZmZ+Bgk9ZVBuw9QKetWIp2AiUUGpEozYH
-         icoLh41ySsRwk7S797bAWyJ/uyNiv0eCUzz0Ol7E=
+        b=G0y0tlFrfnFpOHJaarAshSptmdiBJEGKfsBNSQ8f5w0hMQiqINOS30EhXrNb3ip1I
+         b3z2gTHdfEk0sND0HFMPStuAxdwRZO5nEXYbAX7KlMdc/Zy0SlEoLb5k+PjdBMTo90
+         X7eKrfVwhD1E+RzXDE22eus6+eqSmbhWfDDIFSR4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 138/321] bnxt_en: query force speeds before disabling autoneg mode.
-Date:   Tue,  3 Dec 2019 23:33:24 +0100
-Message-Id: <20191203223434.340912492@linuxfoundation.org>
+Subject: [PATCH 4.19 142/321] pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
+Date:   Tue,  3 Dec 2019 23:33:28 +0100
+Message-Id: <20191203223434.546157362@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -46,66 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 56d374624778652d2a999e18c87a25338b127b41 ]
+[ Upstream commit 054f2400f706327f96770219c3065b5131f8f154 ]
 
-With autoneg enabled, PHY loopback test fails. To disable autoneg,
-driver needs to send a valid forced speed to FW. FW is not sending
-async event for invalid speeds. To fix this, query forced speeds
-and send the correct speed when disabling autoneg mode.
+Some values in the Peripheral Function Select Register 10 descriptor are
+shifted by one position, which may cause a peripheral function to be
+programmed incorrectly.
 
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixing this makes all HSCIF0 pins use Function 4 (value 3), like was
+already the case for the HSCK0 pin in field IP10[5:3].
+
+Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 22 ++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index eaa285bf908b9..2240c23b0a4c9 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -2390,17 +2390,37 @@ static int bnxt_hwrm_mac_loopback(struct bnxt *bp, bool enable)
- 	return hwrm_send_message(bp, &req, sizeof(req), HWRM_CMD_TIMEOUT);
- }
- 
-+static int bnxt_query_force_speeds(struct bnxt *bp, u16 *force_speeds)
-+{
-+	struct hwrm_port_phy_qcaps_output *resp = bp->hwrm_cmd_resp_addr;
-+	struct hwrm_port_phy_qcaps_input req = {0};
-+	int rc;
-+
-+	bnxt_hwrm_cmd_hdr_init(bp, &req, HWRM_PORT_PHY_QCAPS, -1, -1);
-+	mutex_lock(&bp->hwrm_cmd_lock);
-+	rc = _hwrm_send_message(bp, &req, sizeof(req), HWRM_CMD_TIMEOUT);
-+	if (!rc)
-+		*force_speeds = le16_to_cpu(resp->supported_speeds_force_mode);
-+
-+	mutex_unlock(&bp->hwrm_cmd_lock);
-+	return rc;
-+}
-+
- static int bnxt_disable_an_for_lpbk(struct bnxt *bp,
- 				    struct hwrm_port_phy_cfg_input *req)
- {
- 	struct bnxt_link_info *link_info = &bp->link_info;
--	u16 fw_advertising = link_info->advertising;
-+	u16 fw_advertising;
- 	u16 fw_speed;
- 	int rc;
- 
- 	if (!link_info->autoneg)
- 		return 0;
- 
-+	rc = bnxt_query_force_speeds(bp, &fw_advertising);
-+	if (rc)
-+		return rc;
-+
- 	fw_speed = PORT_PHY_CFG_REQ_FORCE_LINK_SPEED_1GB;
- 	if (netif_carrier_ok(bp->dev))
- 		fw_speed = bp->link_info.link_speed;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 6502e676d3686..33232041ee86d 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -2213,22 +2213,22 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	    /* IP10_22 [1] */
+ 		FN_CAN_CLK_A, FN_RX4_D,
+ 	    /* IP10_21_19 [3] */
+-		FN_AUDIO_CLKOUT, FN_TX1_E, FN_HRTS0_C, FN_FSE_B,
+-		FN_LCD_M_DISP_B, 0, 0, 0,
++		FN_AUDIO_CLKOUT, FN_TX1_E, 0, FN_HRTS0_C, FN_FSE_B,
++		FN_LCD_M_DISP_B, 0, 0,
+ 	    /* IP10_18_16 [3] */
+-		FN_AUDIO_CLKC, FN_SCK1_E, FN_HCTS0_C, FN_FRB_B,
+-		FN_LCD_VEPWC_B, 0, 0, 0,
++		FN_AUDIO_CLKC, FN_SCK1_E, 0, FN_HCTS0_C, FN_FRB_B,
++		FN_LCD_VEPWC_B, 0, 0,
+ 	    /* IP10_15 [1] */
+ 		FN_AUDIO_CLKB_A, FN_LCD_CLK_B,
+ 	    /* IP10_14_12 [3] */
+ 		FN_AUDIO_CLKA_A, FN_VI1_CLK_B, FN_SCK1_D, FN_IECLK_B,
+ 		FN_LCD_FLM_B, 0, 0, 0,
+ 	    /* IP10_11_9 [3] */
+-		FN_SSI_SDATA3, FN_VI1_7_B, FN_HTX0_C, FN_FWE_B,
+-		FN_LCD_CL2_B, 0, 0, 0,
++		FN_SSI_SDATA3, FN_VI1_7_B, 0, FN_HTX0_C, FN_FWE_B,
++		FN_LCD_CL2_B, 0, 0,
+ 	    /* IP10_8_6 [3] */
+-		FN_SSI_SDATA2, FN_VI1_6_B, FN_HRX0_C, FN_FRE_B,
+-		FN_LCD_CL1_B, 0, 0, 0,
++		FN_SSI_SDATA2, FN_VI1_6_B, 0, FN_HRX0_C, FN_FRE_B,
++		FN_LCD_CL1_B, 0, 0,
+ 	    /* IP10_5_3 [3] */
+ 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
+ 		FN_LCD_DON_B, 0, 0, 0,
 -- 
 2.20.1
 
