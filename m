@@ -2,91 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E824510F4E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 03:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E26C10F4EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 03:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfLCCQL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 21:16:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbfLCCQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 21:16:10 -0500
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE08920674
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 02:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575339370;
-        bh=yspJnuwBkqreWkEPkorkWPkvQhXOPzOAL1ymr79vJOU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=r/lgSuYJHA9HP9QDCMpGXJtGR1kQ9COgoTYtNTB73CZPFjUyca7cWq8rJTPNY1VZY
-         uNoZmzmLzhg0IflxnR9tvZsoOUSejmJNoW3zxhzoeIXuXELH3dYXum6wS5B1ScOzOr
-         96tgp43BHOrf/W/fRTsc6sF7umyuW7ncrbqRkbpw=
-Received: by mail-lf1-f43.google.com with SMTP id f16so1565485lfm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 18:16:09 -0800 (PST)
-X-Gm-Message-State: APjAAAW3k9AlV3slV6MyEzMKL2P9IOyfa4XRBQGr7RwzPq6pLs8rBnP3
-        xmpP4a+1UtuL4LDIpTjC3JftVruToF/eQIoSN2I=
-X-Google-Smtp-Source: APXvYqxdosNhv2sWf/b6mhJ1XhbmHiJ++cn99BHC6sDqkGREBNHW8+XXp+GdqiYIa79ZMvEBXfG6s1JyMX0aCXTaZJY=
-X-Received: by 2002:ac2:5dc7:: with SMTP id x7mr1222841lfq.24.1575339368011;
- Mon, 02 Dec 2019 18:16:08 -0800 (PST)
+        id S1726386AbfLCCT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 21:19:59 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:60625 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726189AbfLCCT7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Dec 2019 21:19:59 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TjlrUB7_1575339596;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TjlrUB7_1575339596)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 03 Dec 2019 10:19:56 +0800
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Subject: [PATCH RESEND] sched/numa: expose per-task pages-migration-failure
+Message-ID: <7038afda-dd08-f01f-5da0-afadf76f5533@linux.alibaba.com>
+Date:   Tue, 3 Dec 2019 10:18:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191202211844.19629-1-enric.balletbo@collabora.com> <20191202211844.19629-2-enric.balletbo@collabora.com>
-In-Reply-To: <20191202211844.19629-2-enric.balletbo@collabora.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 3 Dec 2019 10:15:56 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPdJSLoEX7+34imGuZ6CEE5unajL=byb+h9VT3Bejc353Q@mail.gmail.com>
-Message-ID: <CAJKOXPdJSLoEX7+34imGuZ6CEE5unajL=byb+h9VT3Bejc353Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86_64_defconfig: Normalize x86_64 defconfig
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        groeck@chromium.org, bleung@chromium.org, dtor@chromium.org,
-        fabien.lahoudere@collabora.com, guillaume.tucker@collabora.com,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Dec 2019 at 05:18, Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> make savedefconfig result in some difference, lets normalize the
-> defconfig
->
+NUMA balancing will try to migrate pages between nodes, which
+could caused by memory policy or numa group aggregation, while
+the page migration could failed too for eg when the target node
+run out of memory.
 
-No, for two reasons:
-1. If running savedefconfig at all, split reordering items from
-removal of non needed options. This way we can see exactly what is
-being removed. This patch moves things around so it is not possible to
-understand what exactly you're doing here...
-2. Do not remove options just because other select them in a blind way
-- via savedefconfig. As it turns out, some developers have different
-view on dependencies and they expect that defconfig *explicitly* pulls
-out necessary functions. IOW, they can safely remove any visible
-symbol dependency assuming that defconfigs are selecting this removed
-symbol explicitly. See:
-https://patchwork.kernel.org/patch/11260361/
-(commit which removed DEBUG_FS - Marek Szyprowski will bring it back,
-I think, and Steven Rostedt answer)
+Since this is critical to the performance, admin should know
+how serious the problem is, and take actions before it causing
+too much performance damage, thus this patch expose the counter
+as 'migfailed' in '/proc/PID/sched'.
 
-Best regards,
-Krzysztof
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Michal Koutný <mkoutny@suse.com>
+Acked-by: Mel Gorman <mgorman@suse.de>
+Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+---
+ kernel/sched/debug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->
->  arch/x86/configs/x86_64_defconfig | 90 +++++++++++--------------------
->  1 file changed, 30 insertions(+), 60 deletions(-)
->
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index f7e4579e746c..73c4809c8f37 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -848,6 +848,7 @@ static void sched_show_numa(struct task_struct *p, struct seq_file *m)
+ 	P(total_numa_faults);
+ 	SEQ_printf(m, "current_node=%d, numa_group_id=%d\n",
+ 			task_node(p), task_numa_group_id(p));
++	SEQ_printf(m, "migfailed=%lu\n", p->numa_faults_locality[2]);
+ 	show_numa_stats(p, m);
+ 	mpol_put(pol);
+ #endif
+-- 
+2.14.4.44.g2045bb6
+
