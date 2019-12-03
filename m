@@ -2,92 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFBAF110180
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:45:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC35110187
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:47:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfLCPow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 10:44:52 -0500
-Received: from muru.com ([72.249.23.125]:44012 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfLCPow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:44:52 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id E047F804F;
-        Tue,  3 Dec 2019 15:45:28 +0000 (UTC)
-Date:   Tue, 3 Dec 2019 07:44:47 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Nishanth Menon <nm@ti.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        =?utf-8?B?QW5kcsOp?= Roth <neolynx@gmail.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] ARM: OMAP2+: Fix warnings with broken
- omap2_set_init_voltage()
-Message-ID: <20191203154447.GC35479@atomide.com>
-References: <20190924233222.52757-1-tony@atomide.com>
- <8FFD44DB-73F8-4807-91E1-C97DA8F781BA@goldelico.com>
- <20191202213929.GB35479@atomide.com>
- <EE749881-C3DB-4BBE-85FE-E5AF3D34884F@goldelico.com>
- <BAF5B057-1017-4174-8C3F-4B49B31E2E0D@goldelico.com>
+        id S1726755AbfLCPr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:47:27 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49150 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725997AbfLCPr0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 10:47:26 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3FhX50110151
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Dec 2019 10:47:25 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wnp8rpcmj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 10:47:25 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Tue, 3 Dec 2019 15:47:23 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Dec 2019 15:47:18 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB3FlHbE40304664
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Dec 2019 15:47:17 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CC7864C882;
+        Tue,  3 Dec 2019 15:47:17 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 532584C87F;
+        Tue,  3 Dec 2019 15:47:13 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.91.149])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Dec 2019 15:47:12 +0000 (GMT)
+Subject: Re: [RFC 1/3] Introduce latency-tolerance as an per-task attribute
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, vincent.guittot@linaro.org,
+        patrick.bellasi@matbug.net, valentin.schneider@arm.com,
+        pavel@ucw.cz, dhaval.giani@oracle.com, qperret@qperret.net,
+        David.Laight@ACULAB.COM, morten.rasmussen@arm.com, pjt@google.com,
+        tj@kernel.org, dietmar.eggemann@arm.com, viresh.kumar@linaro.org,
+        rafael.j.wysocki@intel.com, daniel.lezcano@linaro.org
+References: <20191125094618.30298-1-parth@linux.ibm.com>
+ <20191125094618.30298-2-parth@linux.ibm.com>
+ <20191203083654.3ctttimdiujdt7tl@e107158-lin.cambridge.arm.com>
+From:   Parth Shah <parth@linux.ibm.com>
+Date:   Tue, 3 Dec 2019 21:17:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BAF5B057-1017-4174-8C3F-4B49B31E2E0D@goldelico.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191203083654.3ctttimdiujdt7tl@e107158-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19120315-0028-0000-0000-000003C427E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19120315-0029-0000-0000-00002487428C
+Message-Id: <59044b60-a7d8-9508-4975-06afdcfd33cd@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-03_04:2019-12-02,2019-12-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 adultscore=0
+ spamscore=0 phishscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912030120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* H. Nikolaus Schaller <hns@goldelico.com> [191203 12:31]:
-> Ok, dev_pm_opp_find_freq_ceil() is doing what it should do and it
-> returns the first OPP higher or equal than the frequency passed in.
->
-> The real reason for the warning is that the same OPP table is used
-> for vdd_mpu_iva and vdd_core and it appears as if "core" (l3_ick)
-> runs at 200 MHz which does not correspond to a valid OPP.
 
-OK
 
-> So to silcence the warning it suffices to remove
+On 12/3/19 2:06 PM, Qais Yousef wrote:
+> On 11/25/19 15:16, Parth Shah wrote:
+>> Latency-tolerance indicates the latency requirements of a task with respect
+>> to the other tasks in the system. The value of the attribute can be within
+>> the range of [-20, 19] both inclusive to be in-line with the values just
+>> like task nice values.
+>>
+>> latency_tolerance = -20 indicates the task to have the least latency as
+>> compared to the tasks having latency_tolerance = +19.
+>>
+>> The latency_tolerance may affect only the CFS SCHED_CLASS by getting
+>> latency requirements from the userspace.
+>>
+>> Signed-off-by: Parth Shah <parth@linux.ibm.com>
+>> ---
+>>  include/linux/sched.h                   |  3 +++
+>>  include/linux/sched/latency_tolerance.h | 13 +++++++++++++
+>>  2 files changed, 16 insertions(+)
+>>  create mode 100644 include/linux/sched/latency_tolerance.h
+>>
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 2c2e56bd8913..bcc1c1d0856d 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -25,6 +25,7 @@
+>>  #include <linux/resource.h>
+>>  #include <linux/latencytop.h>
+>>  #include <linux/sched/prio.h>
+>> +#include <linux/sched/latency_tolerance.h>
+>>  #include <linux/sched/types.h>
+>>  #include <linux/signal_types.h>
+>>  #include <linux/mm_types_task.h>
+>> @@ -666,6 +667,8 @@ struct task_struct {
+>>  #endif
+>>  	int				on_rq;
+>>  
+>> +	int				latency_tolerance;
+>> +
+>>  	int				prio;
+>>  	int				static_prio;
+>>  	int				normal_prio;
+>> diff --git a/include/linux/sched/latency_tolerance.h b/include/linux/sched/latency_tolerance.h
+>> new file mode 100644
+>> index 000000000000..7a00abe05bc4
+>> --- /dev/null
+>> +++ b/include/linux/sched/latency_tolerance.h
+>> @@ -0,0 +1,13 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef _LINUX_SCHED_LATENCY_TOLERANCE_H
+>> +#define _LINUX_SCHED_LATENCY_TOLERANCE_H
 > 
-> 	omap2_set_init_voltage("core", "l3_ick", "l3_main");
+> nit: Add some description here explaining what latency tolerance is please. You
+> copy paste some text from your cover letter :)
+
+Sure. Will add some text here.
+
 > 
-> The question is now what l3_ick has to do with the OPPs at all
-> and how it should interwork with OPPs and cpufreq.
+> --
+> Qais Youesf
+> 
+>> +
+>> +#define MAX_LATENCY_TOLERANCE	19
+>> +#define MIN_LATENCY_TOLERANCE	-20
+>> +
+>> +#define LATENCY_TOLERANCE_WIDTH	\
+>> +	(MAX_LATENCY_TOLERANCE - MIN_LATENCY_TOLERANCE + 1)
+>> +
+>> +#define DEFAULT_LATENCY_TOLERANCE	0
+>> +
+>> +#endif /* _LINUX_SCHED_LATENCY_TOLERANCE_H */
+>> -- 
+>> 2.17.2
+>>
 
-So what changed then for iva in your configuration then?
-
-At least I'm getting errors for both for 34xx and dm3730 with
-Linux next and reverted commit cf395f7ddb9e ("ARM: OMAP2+: Fix
-warnings with broken omap2_set_init_voltage()"):
-
-omap2_set_init_voltage: unable to find boot up OPP for vdd_mpu_iva
-omap2_set_init_voltage: unable to set vdd_mpu_iva
-omap2_set_init_voltage: unable to find boot up OPP for vdd_core
-omap2_set_init_voltage: unable to set vdd_core
-
-Then for fixing this code, seems like this can all happen from
-a regular device driver init based on the dts data.. We've had
-PM init completely ignore these errors already for years so
-whatever dependency there might be seems non-critical :)
-
-> Or does all this mean we may need a second OPP fable for vdd_core
-> and 200 MHz? But what would it be good for? I have not seen any
-> reference for "core-OPPs" in the TRM.
-
-OK yeah sounds like all the domains need an opp table.
-
-Also, I recall some SoCs having a dependency between having to
-run DSP at a lower rate for higher MPU rates, not sure if omap3
-has such dependencies though.
-
-Regards,
-
-Tony
