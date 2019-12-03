@@ -2,45 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC35110187
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB8A1110191
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:52:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfLCPr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 10:47:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49150 "EHLO
+        id S1726804AbfLCPwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:52:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28366 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725997AbfLCPr0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726189AbfLCPwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:47:26 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3FhX50110151
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Dec 2019 10:47:25 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wnp8rpcmj-1
+        Tue, 3 Dec 2019 10:52:10 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3Fh5qS027827
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Dec 2019 10:52:08 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wnsqtusuh-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 10:47:25 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 10:52:08 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Tue, 3 Dec 2019 15:47:23 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 3 Dec 2019 15:52:06 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Dec 2019 15:47:18 -0000
+        Tue, 3 Dec 2019 15:52:01 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB3FlHbE40304664
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB3Fq0Si5111946
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Dec 2019 15:47:17 GMT
+        Tue, 3 Dec 2019 15:52:00 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC7864C882;
-        Tue,  3 Dec 2019 15:47:17 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id C7D444C893;
+        Tue,  3 Dec 2019 15:52:00 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 532584C87F;
-        Tue,  3 Dec 2019 15:47:13 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 40B184C890;
+        Tue,  3 Dec 2019 15:51:56 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.91.149])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Dec 2019 15:47:12 +0000 (GMT)
-Subject: Re: [RFC 1/3] Introduce latency-tolerance as an per-task attribute
+        Tue,  3 Dec 2019 15:51:55 +0000 (GMT)
+Subject: Re: [RFC 3/3] Allow sched_{get,set}attr to change latency_tolerance
+ of the task
 To:     Qais Yousef <qais.yousef@arm.com>
 Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
         mingo@redhat.com, vincent.guittot@linaro.org,
@@ -50,29 +51,29 @@ Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
         tj@kernel.org, dietmar.eggemann@arm.com, viresh.kumar@linaro.org,
         rafael.j.wysocki@intel.com, daniel.lezcano@linaro.org
 References: <20191125094618.30298-1-parth@linux.ibm.com>
- <20191125094618.30298-2-parth@linux.ibm.com>
- <20191203083654.3ctttimdiujdt7tl@e107158-lin.cambridge.arm.com>
+ <20191125094618.30298-4-parth@linux.ibm.com>
+ <20191203083915.yahl2qd3wnnkqxxs@e107158-lin.cambridge.arm.com>
 From:   Parth Shah <parth@linux.ibm.com>
-Date:   Tue, 3 Dec 2019 21:17:11 +0530
+Date:   Tue, 3 Dec 2019 21:21:55 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20191203083654.3ctttimdiujdt7tl@e107158-lin.cambridge.arm.com>
+In-Reply-To: <20191203083915.yahl2qd3wnnkqxxs@e107158-lin.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 19120315-0028-0000-0000-000003C427E1
+x-cbid: 19120315-0012-0000-0000-000003706DB5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120315-0029-0000-0000-00002487428C
-Message-Id: <59044b60-a7d8-9508-4975-06afdcfd33cd@linux.ibm.com>
+x-cbparentid: 19120315-0013-0000-0000-000021AC2AE4
+Message-Id: <cfb607c1-6be9-853d-cfad-6787f78fa6ad@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-12-03_04:2019-12-02,2019-12-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 adultscore=0
- spamscore=0 phishscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912030120
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-1912030120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -80,76 +81,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 12/3/19 2:06 PM, Qais Yousef wrote:
+On 12/3/19 2:09 PM, Qais Yousef wrote:
 > On 11/25/19 15:16, Parth Shah wrote:
->> Latency-tolerance indicates the latency requirements of a task with respect
->> to the other tasks in the system. The value of the attribute can be within
->> the range of [-20, 19] both inclusive to be in-line with the values just
->> like task nice values.
+>> Introduce the latency_tolerance attribute to sched_attr and provide a
+>> mechanism to change the value with the use of sched_setattr/sched_getattr
+>> syscall.
 >>
->> latency_tolerance = -20 indicates the task to have the least latency as
->> compared to the tasks having latency_tolerance = +19.
->>
->> The latency_tolerance may affect only the CFS SCHED_CLASS by getting
->> latency requirements from the userspace.
+>> Also add new flag "SCHED_FLAG_LATENCY_TOLERANCE" to hint the change in
+>> latency_tolerance of the task on every sched_setattr syscall.
 >>
 >> Signed-off-by: Parth Shah <parth@linux.ibm.com>
 >> ---
->>  include/linux/sched.h                   |  3 +++
->>  include/linux/sched/latency_tolerance.h | 13 +++++++++++++
->>  2 files changed, 16 insertions(+)
->>  create mode 100644 include/linux/sched/latency_tolerance.h
+>>  include/uapi/linux/sched.h       |  4 +++-
+>>  include/uapi/linux/sched/types.h |  2 ++
+>>  kernel/sched/core.c              | 15 +++++++++++++++
+>>  kernel/sched/sched.h             |  1 +
+>>  4 files changed, 21 insertions(+), 1 deletion(-)
 >>
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index 2c2e56bd8913..bcc1c1d0856d 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -25,6 +25,7 @@
->>  #include <linux/resource.h>
->>  #include <linux/latencytop.h>
+>> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+>> index b3105ac1381a..73db430d11b6 100644
+>> --- a/include/uapi/linux/sched.h
+>> +++ b/include/uapi/linux/sched.h
+>> @@ -71,6 +71,7 @@ struct clone_args {
+>>  #define SCHED_FLAG_KEEP_PARAMS		0x10
+>>  #define SCHED_FLAG_UTIL_CLAMP_MIN	0x20
+>>  #define SCHED_FLAG_UTIL_CLAMP_MAX	0x40
+>> +#define SCHED_FLAG_LATENCY_TOLERANCE	0x80
+>>  
+>>  #define SCHED_FLAG_KEEP_ALL	(SCHED_FLAG_KEEP_POLICY | \
+>>  				 SCHED_FLAG_KEEP_PARAMS)
+>> @@ -82,6 +83,7 @@ struct clone_args {
+>>  			 SCHED_FLAG_RECLAIM		| \
+>>  			 SCHED_FLAG_DL_OVERRUN		| \
+>>  			 SCHED_FLAG_KEEP_ALL		| \
+>> -			 SCHED_FLAG_UTIL_CLAMP)
+>> +			 SCHED_FLAG_UTIL_CLAMP		| \
+>> +			 SCHED_FLAG_LATENCY_TOLERANCE)
+>>  
+>>  #endif /* _UAPI_LINUX_SCHED_H */
+>> diff --git a/include/uapi/linux/sched/types.h b/include/uapi/linux/sched/types.h
+>> index c852153ddb0d..960774ac0c70 100644
+>> --- a/include/uapi/linux/sched/types.h
+>> +++ b/include/uapi/linux/sched/types.h
+>> @@ -118,6 +118,8 @@ struct sched_attr {
+>>  	__u32 sched_util_min;
+>>  	__u32 sched_util_max;
+>>  
+>> +	/* latency requirement hints */
+>> +	__s32 sched_latency_tolerance;
+>>  };
+>>  
+>>  #endif /* _UAPI_LINUX_SCHED_TYPES_H */
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index ea7abbf5c1bb..dfd36ec14404 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -4695,6 +4695,9 @@ static void __setscheduler_params(struct task_struct *p,
+>>  	p->rt_priority = attr->sched_priority;
+>>  	p->normal_prio = normal_prio(p);
+>>  	set_load_weight(p, true);
+>> +
+>> +	/* Change latency tolerance of the task if !SCHED_FLAG_KEEP_PARAMS */
+>> +	p->latency_tolerance = attr->sched_latency_tolerance;
+>>  }
+>>  
+>>  /* Actually do priority change: must hold pi & rq lock. */
+>> @@ -4852,6 +4855,13 @@ static int __sched_setscheduler(struct task_struct *p,
+>>  			return retval;
+>>  	}
+>>  
+>> +	if (attr->sched_flags & SCHED_FLAG_LATENCY_TOLERANCE) {
+>> +		if (attr->sched_latency_tolerance > MAX_LATENCY_TOLERANCE)
+>> +			return -EINVAL;
+>> +		if (attr->sched_latency_tolerance < MIN_LATENCY_TOLERANCE)
+>> +			return -EINVAL;
+>> +	}
+>> +
+>>  	if (pi)
+>>  		cpuset_read_lock();
+>>  
+>> @@ -4886,6 +4896,9 @@ static int __sched_setscheduler(struct task_struct *p,
+>>  			goto change;
+>>  		if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)
+>>  			goto change;
+>> +		if (attr->sched_flags & SCHED_FLAG_LATENCY_TOLERANCE &&
+>> +		    attr->sched_latency_tolerance != p->latency_tolerance)
+>> +			goto change;
+>>  
+>>  		p->sched_reset_on_fork = reset_on_fork;
+>>  		retval = 0;
+>> @@ -5392,6 +5405,8 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+>>  	else
+>>  		kattr.sched_nice = task_nice(p);
+>>  
+>> +	kattr.sched_latency_tolerance = p->latency_tolerance;
+>> +
+>>  #ifdef CONFIG_UCLAMP_TASK
+>>  	kattr.sched_util_min = p->uclamp_req[UCLAMP_MIN].value;
+>>  	kattr.sched_util_max = p->uclamp_req[UCLAMP_MAX].value;
+>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+>> index 0db2c1b3361e..bb181175954b 100644
+>> --- a/kernel/sched/sched.h
+>> +++ b/kernel/sched/sched.h
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/sched/nohz.h>
+>>  #include <linux/sched/numa_balancing.h>
 >>  #include <linux/sched/prio.h>
 >> +#include <linux/sched/latency_tolerance.h>
->>  #include <linux/sched/types.h>
->>  #include <linux/signal_types.h>
->>  #include <linux/mm_types_task.h>
->> @@ -666,6 +667,8 @@ struct task_struct {
->>  #endif
->>  	int				on_rq;
->>  
->> +	int				latency_tolerance;
->> +
->>  	int				prio;
->>  	int				static_prio;
->>  	int				normal_prio;
->> diff --git a/include/linux/sched/latency_tolerance.h b/include/linux/sched/latency_tolerance.h
->> new file mode 100644
->> index 000000000000..7a00abe05bc4
->> --- /dev/null
->> +++ b/include/linux/sched/latency_tolerance.h
->> @@ -0,0 +1,13 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _LINUX_SCHED_LATENCY_TOLERANCE_H
->> +#define _LINUX_SCHED_LATENCY_TOLERANCE_H
 > 
-> nit: Add some description here explaining what latency tolerance is please. You
-> copy paste some text from your cover letter :)
+> nit: keep in alphabatical order.
 
-Sure. Will add some text here.
+ok.
 
+> 
+> The series looks good to me except for the 2 minor nits. Thanks for taking care
+> of this!
+
+My pleasure. Infact, I'm trying to write patches around what Subhra posted
+for reducing wakeup scans https://lkml.org/lkml/2019/8/30/829 and few ideas
+from Peter's patch https://lkml.org/lkml/2018/5/30/632. Aim here is to
+reduce scans for lower latency_tolerance tasks and will post out soon which
+uses this feature.
+
+> 
+> Reviewed-by: Qais Yousef <qais.yousef@arm.com>
+
+Thanks. Will add it.
+
+> 
+> Cheers
 > 
 > --
-> Qais Youesf
+> Qais Yousef
 > 
->> +
->> +#define MAX_LATENCY_TOLERANCE	19
->> +#define MIN_LATENCY_TOLERANCE	-20
->> +
->> +#define LATENCY_TOLERANCE_WIDTH	\
->> +	(MAX_LATENCY_TOLERANCE - MIN_LATENCY_TOLERANCE + 1)
->> +
->> +#define DEFAULT_LATENCY_TOLERANCE	0
->> +
->> +#endif /* _LINUX_SCHED_LATENCY_TOLERANCE_H */
+>>  #include <linux/sched/rt.h>
+>>  #include <linux/sched/signal.h>
+>>  #include <linux/sched/smt.h>
 >> -- 
 >> 2.17.2
 >>
