@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB6D111D26
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 000DE111D2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:51:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbfLCWum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:50:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42272 "EHLO mail.kernel.org"
+        id S1729813AbfLCWu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:50:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729592AbfLCWue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:50:34 -0500
+        id S1729594AbfLCWuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:50:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6119E20863;
-        Tue,  3 Dec 2019 22:50:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F8A32054F;
+        Tue,  3 Dec 2019 22:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413433;
-        bh=5PXEbBylnnhAkoiwvd/bOD51FRWOQedouhurN35w0Hc=;
+        s=default; t=1575413454;
+        bh=UxEp8ox6OzQg67AWkKUhgIDhv14VbLfTIqTETNkCDyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XAiKIiacu/ZBGdLmh0phUyAWz8lhId12srbEfTPr9bsc5IQWR5PNgBYYNC5ZAvZRy
-         dK50UCdJanSF9oZhZF08arFOPf/65YCUJiSi0nqgROVMrAGpFCAn7KLDTFP2jCuIvv
-         iPEa+5z00zQEJcGTKGbvtuhtTodyer9AQA1XIuNU=
+        b=mjEFN5Rqe6ezSQRiwre4KETt4a5uKtX12TjWbXbpn0OXgCyZPQRnECWYmThQZW2jh
+         4RvBVsP8f2Tw6bRmpDj+vajFbTcsepjFCy8Prlimp1a72B3fl9NIdqEIANaKcPxxLR
+         z4bmB2B7ZuherE4DZmSIbWCz8MamoSPOqVySNdVc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 124/321] gpio: raspberrypi-exp: decrease refcount on firmware dt node
-Date:   Tue,  3 Dec 2019 23:33:10 +0100
-Message-Id: <20191203223433.605335029@linuxfoundation.org>
+Subject: [PATCH 4.19 127/321] xen/pciback: Check dev_data before using it
+Date:   Tue,  3 Dec 2019 23:33:13 +0100
+Message-Id: <20191203223433.759938991@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -45,34 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-[ Upstream commit 85af74c474b21940e88483fd48f6094145c89d97 ]
+[ Upstream commit 1669907e3d1abfa3f7586e2d55dbbc117b5adba2 ]
 
-We're getting a reference RPi's firmware node in order to be able to
-communicate with it's driver. We should decrease the reference count on
-the dt node after being done with it.
+If pcistub_init_device fails, the release function will be called with
+dev_data set to NULL.  Check it before using it to avoid a NULL pointer
+dereference.
 
-Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-raspberrypi-exp.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/xen-pciback/pci_stub.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-raspberrypi-exp.c b/drivers/gpio/gpio-raspberrypi-exp.c
-index d6d36d537e373..b77ea16ffa031 100644
---- a/drivers/gpio/gpio-raspberrypi-exp.c
-+++ b/drivers/gpio/gpio-raspberrypi-exp.c
-@@ -206,6 +206,7 @@ static int rpi_exp_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	fw = rpi_firmware_get(fw_node);
-+	of_node_put(fw_node);
- 	if (!fw)
- 		return -EPROBE_DEFER;
- 
+diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+index 59661db144e51..097410a7cdb74 100644
+--- a/drivers/xen/xen-pciback/pci_stub.c
++++ b/drivers/xen/xen-pciback/pci_stub.c
+@@ -106,7 +106,8 @@ static void pcistub_device_release(struct kref *kref)
+ 	 * is called from "unbind" which takes a device_lock mutex.
+ 	 */
+ 	__pci_reset_function_locked(dev);
+-	if (pci_load_and_free_saved_state(dev, &dev_data->pci_saved_state))
++	if (dev_data &&
++	    pci_load_and_free_saved_state(dev, &dev_data->pci_saved_state))
+ 		dev_info(&dev->dev, "Could not reload PCI state\n");
+ 	else
+ 		pci_restore_state(dev);
 -- 
 2.20.1
 
