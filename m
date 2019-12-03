@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39434111DE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B7D111BCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:37:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbfLCW5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:57:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53832 "EHLO mail.kernel.org"
+        id S1727727AbfLCWhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:37:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730594AbfLCW5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:57:51 -0500
+        id S1727707AbfLCWh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:37:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 382FB20656;
-        Tue,  3 Dec 2019 22:57:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C94542073C;
+        Tue,  3 Dec 2019 22:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413870;
-        bh=f22FDCR3WqLNWGLPTUVymr8HLIizD922/Aj4S0NdCNo=;
+        s=default; t=1575412648;
+        bh=zz6hc1y0Nrg95ijcrAaoxy8ZdAJ8NK04RKA1Ad7Z17U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F9+X/18vC6pfTMuvk1BHtSuk3JVfYXNnX8FCjj2w/fMElDhvDWCEygCvw6ZpCclJR
-         M9jvmZr5yIhkqSzN3dgTAO8zU42ONRec72DTnT5Ie/UC5MKtN6CaF7V2wSTDe6fA4y
-         Jyte2kgSN/Ntd+WE3t/f+ccjOL/eJjpvk4MWDVqU=
+        b=yEfrvOLat8pydAhjY45f543XpwjBcunsigAN5EgfqMdAxrxSnnTGWubTLEhgCl43g
+         g6mAahtscXPvh8lbKh25pGbtwkq8aylvbQBHiH3bIWeyjgnZwmyB3q6QEWyo5Hp+At
+         b5i+nfgXoXIxvLiCDZbRsmSNHczSbxSdcTYkH858=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yixian Liu <liuyixian@huawei.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 257/321] RDMA/hns: Fix the state of rereg mr
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 03/46] net: disallow ancillary data for __sys_{send,recv}msg_file()
 Date:   Tue,  3 Dec 2019 23:35:23 +0100
-Message-Id: <20191203223440.504039837@linuxfoundation.org>
+Message-Id: <20191203212711.946829051@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yixian Liu <liuyixian@huawei.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit ab22bf05216a6bb4812448f3a8609489047cf311 ]
+[ Upstream commit d69e07793f891524c6bbf1e75b9ae69db4450953 ]
 
-The state of mr after reregister operation should be set to valid
-state. Otherwise, it will keep the same as the state before reregistered.
+Only io_uring uses (and added) these, and we want to disallow the
+use of sendmsg/recvmsg for anything but regular data transfers.
+Use the newly added prep helper to split the msghdr copy out from
+the core function, to check for msg_control and msg_controllen
+settings. If either is set, we return -EINVAL.
 
-Signed-off-by: Yixian Liu <liuyixian@huawei.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Acked-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/socket.c | 43 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 37 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 1eda8a22a4252..a5ec900a14ae9 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -1776,6 +1776,9 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
- 	struct hns_roce_v2_mpt_entry *mpt_entry = mb_buf;
- 	int ret = 0;
- 
-+	roce_set_field(mpt_entry->byte_4_pd_hop_st, V2_MPT_BYTE_4_MPT_ST_M,
-+		       V2_MPT_BYTE_4_MPT_ST_S, V2_MPT_ST_VALID);
+diff --git a/net/socket.c b/net/socket.c
+index fbe08d7df7732..d7a106028f0e0 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2357,12 +2357,27 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
+ /*
+  *	BSD sendmsg interface
+  */
+-long __sys_sendmsg_sock(struct socket *sock, struct user_msghdr __user *msg,
++long __sys_sendmsg_sock(struct socket *sock, struct user_msghdr __user *umsg,
+ 			unsigned int flags)
+ {
+-	struct msghdr msg_sys;
++	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
++	struct sockaddr_storage address;
++	struct msghdr msg = { .msg_name = &address };
++	ssize_t err;
 +
- 	if (flags & IB_MR_REREG_PD) {
- 		roce_set_field(mpt_entry->byte_4_pd_hop_st, V2_MPT_BYTE_4_PD_M,
- 			       V2_MPT_BYTE_4_PD_S, pdn);
++	err = sendmsg_copy_msghdr(&msg, umsg, flags, &iov);
++	if (err)
++		return err;
++	/* disallow ancillary data requests from this path */
++	if (msg.msg_control || msg.msg_controllen) {
++		err = -EINVAL;
++		goto out;
++	}
+ 
+-	return ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL, 0);
++	err = ____sys_sendmsg(sock, &msg, flags, NULL, 0);
++out:
++	kfree(iov);
++	return err;
+ }
+ 
+ long __sys_sendmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
+@@ -2561,12 +2576,28 @@ static int ___sys_recvmsg(struct socket *sock, struct user_msghdr __user *msg,
+  *	BSD recvmsg interface
+  */
+ 
+-long __sys_recvmsg_sock(struct socket *sock, struct user_msghdr __user *msg,
++long __sys_recvmsg_sock(struct socket *sock, struct user_msghdr __user *umsg,
+ 			unsigned int flags)
+ {
+-	struct msghdr msg_sys;
++	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
++	struct sockaddr_storage address;
++	struct msghdr msg = { .msg_name = &address };
++	struct sockaddr __user *uaddr;
++	ssize_t err;
+ 
+-	return ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
++	err = recvmsg_copy_msghdr(&msg, umsg, flags, &uaddr, &iov);
++	if (err)
++		return err;
++	/* disallow ancillary data requests from this path */
++	if (msg.msg_control || msg.msg_controllen) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	err = ____sys_recvmsg(sock, &msg, umsg, uaddr, flags, 0);
++out:
++	kfree(iov);
++	return err;
+ }
+ 
+ long __sys_recvmsg(int fd, struct user_msghdr __user *msg, unsigned int flags,
 -- 
 2.20.1
 
