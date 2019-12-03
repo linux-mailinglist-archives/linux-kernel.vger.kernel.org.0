@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80312111D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8B0111C2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfLCWyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:54:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48734 "EHLO mail.kernel.org"
+        id S1728514AbfLCWlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730305AbfLCWyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:44 -0500
+        id S1727731AbfLCWlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3098920803;
-        Tue,  3 Dec 2019 22:54:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DC212080A;
+        Tue,  3 Dec 2019 22:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413683;
-        bh=jSpGLYFvMA/bog854o9Rps6L7KliDegHUV3SKraVXgo=;
+        s=default; t=1575412872;
+        bh=EaplAfuheF1sBF4x0lD26ZSodyHdeqvGBmEQkvmT834=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hMPowx9QLLO9oGGeEmmSeNi93OKONd3xSUvxH/UtXXd2jL7K2y6mheJvnfPLV7ysb
-         FB8kkSebeqPrRx9uBy8ub005ZVuY2ny/0Iolx84wC+n2KI16/LSKxZyWZbhqZAj64K
-         Hm68qPGo9HS6GX8x/HKjZRI2Kl9aAPdILFC1XNWQ=
+        b=gSmvNfosgqxixKjFTIsIglyJTlBDnVM6oXOLblal5oM/N1IgbqupWtjdTLky1Wumh
+         T9t07g8SDyGFBtPCDNF9YIhkaYUBBBTtchoiBvWNzZqmOLsqqnGvy8NK4e/2D87U2n
+         nwi6QCQf9VksbzCSdk0yJtMKAHi6d4di3Y3PS8e0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Suchanek <msuchanek@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 223/321] decnet: fix DN_IFREQ_SIZE
-Date:   Tue,  3 Dec 2019 23:34:49 +0100
-Message-Id: <20191203223438.717917718@linuxfoundation.org>
+Subject: [PATCH 5.3 050/135] stacktrace: Dont skip first entry on noncurrent tasks
+Date:   Tue,  3 Dec 2019 23:34:50 +0100
+Message-Id: <20191203213019.500970064@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-[ Upstream commit 50c2936634bcb1db78a8ca63249236810c11a80f ]
+[ Upstream commit b0c51f158455e31d5024100cf3580fcd88214b0e ]
 
-Digging through the ioctls with Al because of the previous
-patches, we found that on 64-bit decnet's dn_dev_ioctl()
-is wrong, because struct ifreq::ifr_ifru is actually 24
-bytes (not 16 as expected from struct sockaddr) due to the
-ifru_map and ifru_settings members.
+When doing cat /proc/<PID>/stack, the output is missing the first entry.
+When the current code walks the stack starting in stack_trace_save_tsk,
+it skips all scheduler functions (that's OK) plus one more function. But
+this one function should be skipped only for the 'current' task as it is
+stack_trace_save_tsk proper.
 
-Clearly, decnet expects the ioctl to be called with a struct
-like
-  struct ifreq_dn {
-    char ifr_name[IFNAMSIZ];
-    struct sockaddr_dn ifr_addr;
-  };
+The original code (before the common infrastructure) skipped one
+function only for the 'current' task -- see save_stack_trace_tsk before
+3599fe12a125. So do so also in the new infrastructure now.
 
-since it does
-  struct ifreq *ifr = ...;
-  struct sockaddr_dn *sdn = (struct sockaddr_dn *)&ifr->ifr_addr;
-
-This means that DN_IFREQ_SIZE is too big for what it wants on
-64-bit, as it is
-  sizeof(struct ifreq) - sizeof(struct sockaddr) +
-  sizeof(struct sockaddr_dn)
-
-This assumes that sizeof(struct sockaddr) is the size of ifr_ifru
-but that isn't true.
-
-Fix this to use offsetof(struct ifreq, ifr_ifru).
-
-This indeed doesn't really matter much - the result is that we
-copy in/out 8 bytes more than we should on 64-bit platforms. In
-case the "struct ifreq_dn" lands just on the end of a page though
-it might lead to faults.
-
-As far as I can tell, it has been like this forever, so it seems
-very likely that nobody cares.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 214d8ca6ee85 ("stacktrace: Provide common infrastructure")
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Michal Suchanek <msuchanek@suse.de>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20191030072545.19462-1-jslaby@suse.cz
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/decnet/dn_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/stacktrace.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/decnet/dn_dev.c b/net/decnet/dn_dev.c
-index bfd43e8f2c06e..3235540f6adff 100644
---- a/net/decnet/dn_dev.c
-+++ b/net/decnet/dn_dev.c
-@@ -56,7 +56,7 @@
- #include <net/dn_neigh.h>
- #include <net/dn_fib.h>
+diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+index f5440abb75329..9bbfbdb96ae51 100644
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -141,7 +141,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *tsk, unsigned long *store,
+ 	struct stacktrace_cookie c = {
+ 		.store	= store,
+ 		.size	= size,
+-		.skip	= skipnr + 1,
++		/* skip this function if they are tracing us */
++		.skip	= skipnr + !!(current == tsk),
+ 	};
  
--#define DN_IFREQ_SIZE (sizeof(struct ifreq) - sizeof(struct sockaddr) + sizeof(struct sockaddr_dn))
-+#define DN_IFREQ_SIZE (offsetof(struct ifreq, ifr_ifru) + sizeof(struct sockaddr_dn))
+ 	if (!try_get_task_stack(tsk))
+@@ -298,7 +299,8 @@ unsigned int stack_trace_save_tsk(struct task_struct *task,
+ 	struct stack_trace trace = {
+ 		.entries	= store,
+ 		.max_entries	= size,
+-		.skip		= skipnr + 1,
++		/* skip this function if they are tracing us */
++		.skip	= skipnr + !!(current == task),
+ 	};
  
- static char dn_rt_all_end_mcast[ETH_ALEN] = {0xAB,0x00,0x00,0x04,0x00,0x00};
- static char dn_rt_all_rt_mcast[ETH_ALEN]  = {0xAB,0x00,0x00,0x03,0x00,0x00};
+ 	save_stack_trace_tsk(task, &trace);
 -- 
 2.20.1
 
