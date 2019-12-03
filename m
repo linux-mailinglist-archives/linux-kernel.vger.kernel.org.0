@@ -2,113 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5727210F999
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 09:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 127AF10F9A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 09:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbfLCISL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 03:18:11 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39478 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfLCISK (ORCPT
+        id S1726564AbfLCITQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 03:19:16 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43370 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfLCITQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:18:10 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 77so2148995oty.6;
-        Tue, 03 Dec 2019 00:18:10 -0800 (PST)
+        Tue, 3 Dec 2019 03:19:16 -0500
+Received: by mail-wr1-f66.google.com with SMTP id n1so2424937wra.10;
+        Tue, 03 Dec 2019 00:19:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kzB1OOAN73r9jazBgk7VDDlYJoM5akmDKyZXmPa1LfM=;
+        b=YngqJA4Ur8bjbh7ZkWIr9jCDnTAGV8cpxVF4V4TQRh0dVtapSSpf6AfvRyptWgQyG/
+         45lgDkgV+8IV63hmTIV9pUKDlFD4A/1GoKdLYzfxDO8VMn4xrZrrSSNVGX/9ROpt2vQX
+         6GZMiZ2QzspWxCeymonkeVdahwTiEHmQZlAv7yhQ/D+BucS9vHgNQJDOJ/P37KXvksif
+         39OV8Y+rnKVrTjQJry4mQOTCFQ1ZlNfWxljbghRb1SM7pxWtYsgZN7r8IGqp3hITwDSU
+         OU3pxVE1F6lrT3P68dQ21weoftKzj8Ke1/My/d7qn2SrItsWv8qcyHneI9B/nKjaYcS2
+         fPDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gBtOE1GdWf2jzATlRbrF8r8Pac6d5nQ4OzH7cwGAR94=;
-        b=b+m13b3CkvQfHjFMmIRLCWHuM3weg+qEBDCakTYL5msGW+URm18UNn563N0Kqw0ut0
-         xP+lH3/HGq2BMU+spjBBYcC9Cb+78tpW7yy3ySLggmRmVByCMwTFY/4Ucgo7Akiw1A75
-         mKq37EDgN3klAjpfcS9hSaEsn9XhutvYasivZbdaNzFibSZb9eIiq/vjmdYT4bGqye72
-         69xqvTZx6uZbXcVaAdCu+pl7J5bICfLM9oM9eT7tn7grjfm7cRGDm/txW5VVZiZgdymC
-         7cmXLlpLlGXahovpcl0/xVYTkBbjErfggae43lJxfDghOHpRjJJGJmo0ixWOGHuKJ+vc
-         ZRPQ==
-X-Gm-Message-State: APjAAAVRpMyApozG4Ibe0l5j8+hA7Rzmk6Tvm+WtGxmLkU6Kbl8uBdd3
-        jMSNYPA4mZ0hGvW5CIcvZwYnulIG/ppA1P/HhL8=
-X-Google-Smtp-Source: APXvYqzBuvWMWrwsEDDhZ2tcNfeX7um84g4QQ5ld7WP0VV8LQtkLVFpjZhnV4oe+jaJ4tYQpo65700XzoJh4+uCOqZU=
-X-Received: by 2002:a9d:3a37:: with SMTP id j52mr2353717otc.39.1575361089532;
- Tue, 03 Dec 2019 00:18:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20191127084253.16356-6-geert+renesas@glider.be> <585c4ad9-31fc-e87e-07c4-b8d6aa09c7e4@mentor.com>
-In-Reply-To: <585c4ad9-31fc-e87e-07c4-b8d6aa09c7e4@mentor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Dec 2019 09:17:58 +0100
-Message-ID: <CAMuHMdW-n8ao7t7156WYxRg7v8+ojXsRgHGUOax=9nBo2F5xOw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] gpio: Add GPIO Aggregator/Repeater driver
-To:     Harish Jenny K N <harish_kandiga@mentor.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kzB1OOAN73r9jazBgk7VDDlYJoM5akmDKyZXmPa1LfM=;
+        b=kAOz79v8E5pAfeAqZ4xZ/FT0lCdICR/VBpG40dW/RsZjErNOFbm1KKWV+adpaf5Qo5
+         8tmYwK3x94WaO9oJs74CQtpXrPwbDXOnayfog2xYfm3DYmQ1jssKCJBxh3ip5QumQg54
+         wTWKfcxkBPHS3eMTYoiEHEHm/Q4qFeDaZUcMdGE7evBqEzisXgnvJFjM1j1ZLGI0/tTk
+         xIpg9jy/9lyaOuwAOhzymoXUPiXS+cAP+ZrScKbfxls+4nGmLsY+0CVXH7G8N71ZG5Jw
+         vf/5Lb7nyIsz7z3IwzsNnCSxMmF/ofdhBYitbXIu006AZjVgSOfHlcnxay58mWLEigGl
+         COpA==
+X-Gm-Message-State: APjAAAVxitTXbV417DX4xn3zwo90To0sOJMxqwbRrOMYAryaOxVz9fb0
+        QW0QTMoCkYWP+xlidk0LbhQ=
+X-Google-Smtp-Source: APXvYqwWwavbbzKQunBTS00pOLVHCqVc4H9imfuH+KhO+/E4PnM3Qckm4eqMD1yNEQOgF3vgTLrVpw==
+X-Received: by 2002:adf:e70d:: with SMTP id c13mr3722980wrm.248.1575361153533;
+        Tue, 03 Dec 2019 00:19:13 -0800 (PST)
+Received: from localhost.localdomain (p50991abe.dip0.t-ipconnect.de. [80.153.26.190])
+        by smtp.gmail.com with ESMTPSA id 188sm2048197wmz.13.2019.12.03.00.19.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 03 Dec 2019 00:19:12 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     brendanhiggins@google.com, shuah@kernel.org
+Cc:     corbet@lwn.net, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sjpark@amazon.de,
+        SeongJae Park <sj38.park@gmail.com>
+Subject: [PATCH v2 0/5] Fix nits in the kunit
+Date:   Tue,  3 Dec 2019 17:18:56 +0900
+Message-Id: <1575361141-6806-1-git-send-email-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Harish,
+This patchset contains trivial fixes for the kunit documentations and the
+wrapper python scripts.
 
-On Tue, Dec 3, 2019 at 6:42 AM Harish Jenny K N
-<harish_kandiga@mentor.com> wrote:
-> > +static int gpio_aggregator_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev = &pdev->dev;
-> > +     struct gpio_desc **descs;
-> > +     struct gpiochip_fwd *fwd;
-> > +     int i, n;
-> > +
-> > +     n = gpiod_count(dev, NULL);
-> > +     if (n < 0)
-> > +             return n;
-> > +
-> > +     descs = devm_kmalloc_array(dev, n, sizeof(*descs), GFP_KERNEL);
-> > +     if (!descs)
-> > +             return -ENOMEM;
-> > +
-> > +     for (i = 0; i < n; i++) {
-> > +             descs[i] = devm_gpiod_get_index(dev, NULL, i, GPIOD_ASIS);
->
-> can you please add this check as well as we need to return EPROBE_DEFER.
->
-> if (desc[i] == ERR_PTR(-ENOENT))
-> <                 return -EPROBE_DEFER;
 
-So gpiod_get_index() nevers return -EPROBE_DEFER, but returns -ENOENT
-instead?
-How can a driver distinguish between "GPIO not found" and "gpiochip driver
-not yet initialized"?
-Worse, so the *_optional() variants will return NULL in both cases, too, so
-the caller will always fall back to optional GPIO not present?
+Changes from v1 (https://lore.kernel.org/linux-doc/1575242724-4937-1-git-send-email-sj38.park@gmail.com/):
+ - Remove "docs/kunit/start: Skip wrapper run command" (A similar approach is
+   ongoing)
+ - Make 'build_dir' if not exists
 
-Or am I missing something?
+SeongJae Park (5):
+  docs/kunit/start: Use in-tree 'kunit_defconfig'
+  kunit: Remove duplicated defconfig creation
+  kunit: Create default config in '--build_dir'
+  kunit: Place 'test.log' under the 'build_dir'
+  kunit: Rename 'kunitconfig' to '.kunitconfig'
 
-Gr{oetje,eeting}s,
-
-                        Geert
+ Documentation/dev-tools/kunit/start.rst | 13 +++++--------
+ tools/testing/kunit/kunit.py            | 14 ++++++++------
+ tools/testing/kunit/kunit_kernel.py     |  8 ++++----
+ 3 files changed, 17 insertions(+), 18 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
