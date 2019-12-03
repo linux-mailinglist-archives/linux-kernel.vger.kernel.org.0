@@ -2,103 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1491A10FD90
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:26:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 297FA10FD9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:27:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbfLCMZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:25:56 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59962 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725907AbfLCMZ4 (ORCPT
+        id S1726330AbfLCM1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:27:51 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45482 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfLCM1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:25:56 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3CMvdF170787
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Dec 2019 07:25:52 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wnp8rcbn3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 07:25:52 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 3 Dec 2019 12:25:50 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Dec 2019 12:25:48 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB3CP7YJ49611108
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Dec 2019 12:25:07 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50C9DA4055;
-        Tue,  3 Dec 2019 12:25:47 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49AC7A4051;
-        Tue,  3 Dec 2019 12:25:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.191.79])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Dec 2019 12:25:46 +0000 (GMT)
-Subject: Re: [PATCH v9 5/6] IMA: Add support to limit measuring keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Date:   Tue, 03 Dec 2019 07:25:45 -0500
-In-Reply-To: <20191127015654.3744-6-nramas@linux.microsoft.com>
-References: <20191127015654.3744-1-nramas@linux.microsoft.com>
-         <20191127015654.3744-6-nramas@linux.microsoft.com>
+        Tue, 3 Dec 2019 07:27:50 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so2741785lfa.12;
+        Tue, 03 Dec 2019 04:27:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lPde8Be7r9/wxtONVuki371HY8PY1x8aHotJ6fyWpvE=;
+        b=cyRBSgt8Vp0TMyavVQuKIzKsahinYHMrmjn4ZPsKZLSEf6RsQxIpOxdj6tR3opxY9h
+         UbFZBYZhS5HxvsHmST7Xp0fTATmTm/C4ORawgBhWmiI9WqtdNj6HaM8ixphoEWd0Ac2h
+         F/2TQz7iT3E1bUm9zHS3O8b1fZvxfBVKTh6gEOVff9OK4oLKDelUM+byurOqrfUBb2vP
+         n4nKAEIHBTHcuEmD8UOTJeQBhMtoyRktZDhu9hs6TH1q1eyj56w4S50FcXUMojr8sYFy
+         96RvTCIC9yN+wN37w1lwXsUxwl6G+ufj+VvNCGVkeOYuR0AbcKX5xrgMYYFMqiH6IW7K
+         Z/Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lPde8Be7r9/wxtONVuki371HY8PY1x8aHotJ6fyWpvE=;
+        b=Vl2sEyM9oJrEasHayCcGt2ZEHyqM7LB6r2546NGx9B+cDEwbHVB66s/Q3BqIGO5p0k
+         YDOeI/qRRG4uenTIeTRokvLtfOQXLXTSQFJ5mnQHe4Vw28UdC39u0b3+RGbF5GBdGdgh
+         Wu/l+6yI2al+K3iW6VGcwNfWtkg3lZPyEPSjTDtsnAQoVKzouBbK+o1Db0B7uJGWOwXj
+         tvRB6z7gyl7Aza/U+i0R8/9jMVQE/U1mkBq4sTnm3dfI797DGpdve9rGHUO6nTFiILpH
+         HM3KTqOBSzm8Z9SRNc/MT9ZsUAkv0KZvh20aDEV5DYCU96kopmJ+94rKBT1mTbAwwqqp
+         iJQA==
+X-Gm-Message-State: APjAAAXKoleWtLpA/hJPHH+NWjl6WJhp/hMeNStL34j9RddjmVd2UCrH
+        VsqBf0sLZ/6vFSFAe9GprPAYxo0MlP8aokT6VcU=
+X-Google-Smtp-Source: APXvYqy8e5IHf9NtkAIhwQXFm1S5l12/xlMUAoD1iNKmoiDHVWTZ5buLIbTFKBagaXSyPnPEMslS5vOVw6hlCYghobk=
+X-Received: by 2002:ac2:4194:: with SMTP id z20mr2592432lfh.20.1575376067703;
+ Tue, 03 Dec 2019 04:27:47 -0800 (PST)
+MIME-Version: 1.0
+References: <20191127203114.766709977@linuxfoundation.org> <20191127203119.676489279@linuxfoundation.org>
+ <CA+res+QKCAn8PsSgbkqXNAF0Ov5pOkj=732=M5seWj+-JFQOwQ@mail.gmail.com>
+ <20191202145105.GA571975@kroah.com> <bccbfccd-0e96-29c3-b2ba-2b1800364b08@redhat.com>
+ <CA+res+SffBsmmeEBYfoDwyLHvL8nqW+O=ZKedWCxccmQ9X6itA@mail.gmail.com> <828cf8b7-11ac-e707-57b6-cb598cc37f1b@redhat.com>
+In-Reply-To: <828cf8b7-11ac-e707-57b6-cb598cc37f1b@redhat.com>
+From:   Jack Wang <jack.wang.usish@gmail.com>
+Date:   Tue, 3 Dec 2019 13:27:36 +0100
+Message-ID: <CA+res+Qo1mX_UFEqDD+sm80PZeW4bRN8VZeNudMDaQ=5-Ss=0g@mail.gmail.com>
+Subject: Re: [PATCH 4.19 067/306] KVM: nVMX: move check_vmentry_postreqs()
+ call to nested_vmx_enter_non_root_mode()
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Sasha Levin <sashal@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19120312-0016-0000-0000-000002D0578F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120312-0017-0000-0000-0000333250B9
-Message-Id: <1575375945.5241.16.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-03_02:2019-12-02,2019-12-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=732
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 adultscore=0
- spamscore=0 phishscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912030098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lakshmi,
+snip
+> >
+> > Should we simply revert the patch, maybe also
+> > 9fe573d539a8 ("KVM: nVMX: reset cache/shadows when switching loaded VMCS")
+> >
+> > Both of them are from one big patchset:
+> > https://patchwork.kernel.org/cover/10616179/
+> >
+> > Revert both patches recover the regression I see on kvm-unit-tests.
+>
+> Greg already included the patches that the bot missed, so it's okay.
+>
+> Paolo
+>
+Sorry, I think I gave wrong information initially, it's 9fe573d539a8
+("KVM: nVMX: reset cache/shadows when switching loaded VMCS")
+which caused regression.
 
-On Tue, 2019-11-26 at 17:56 -0800, Lakshmi Ramasubramanian wrote:
-> Limit measuring keys to those keys being loaded onto a given set of
-> keyrings only.
-> 
-> This patch defines a new IMA policy option namely "keyrings=" that
-> can be used to specify a set of keyrings. If this option is specified
-> in the policy for "measure func=KEY_CHECK" then only the keys
-> loaded onto a keyring given in the "keyrings=" option are measured.
-> 
-> Added a new parameter namely "keyring" (name of the keyring) to
-> process_buffer_measurement(). The keyring name is passed to
-> ima_get_action() to determine the required action.
-> ima_match_rules() is updated to check keyring in the policy, if
-> specified, for KEY_CHECK function.
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Should we revert or there's following up fix we should backport?
 
-A keyring can be created by any user with any keyring name, other than
- ones dot prefixed, which are limited to the trusted builtin keyrings.
- With a policy of "func=KEY_CHECK template=ima-buf keyrings=foo", for
-example, keys loaded onto any keyring named "foo" will be measured.
- For files, the IMA policy may be constrained to a particular uid/gid.
- An additional method of identifying or constraining keyring names
-needs to be defined.
-
-Mimi 
-
+Thanks,
+Jack
