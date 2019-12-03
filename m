@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAA2111C8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:45:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C4A111E07
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfLCWpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33350 "EHLO mail.kernel.org"
+        id S1730755AbfLCW7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:59:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728739AbfLCWpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:45:02 -0500
+        id S1730742AbfLCW7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:59:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B826207DD;
-        Tue,  3 Dec 2019 22:45:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60C1520656;
+        Tue,  3 Dec 2019 22:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413102;
-        bh=c6CoG+ElvzE2nJ6/nYqSH5WvSz4hUr4TXIojSkX6nYY=;
+        s=default; t=1575413945;
+        bh=7His517HIkpxcCkY+lqk1TQkXuKS/1654XySQ2ACWI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WzBFtC8VIbdP4pKXUMVYUqBkrtwrubvoBQBXFSEiNTxd9LIR4u396dFr0xll7Y+ce
-         8UFmp4+fn7buo0kov4ytXW5Nh9Yci6pskyAxNq9XNt06yiXE/Os0PA8uPpyQq3TIRS
-         FFW3cxm4XqSsl4/LCt1Ics9wrM0nwOcxT1M+BoF4=
+        b=ERxvnvP/Q2vj2CVI+Z4G/Ax39ORLEdn0lBQdC7QnFBtT7+p6ie6Q7rKD5rt6rMASI
+         nndBkFdtktZLRDPsqjczSpIIp6e16JDaMF3V0RqsUvW46ddpQKQMrXVsH6wwv3YoL8
+         +X9UJ6nIUMm9GiHxvwn3t/x1pnh67oYE8ocSLFrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 126/135] net/tls: remove the dead inplace_crypto code
+        stable@vger.kernel.org, "huijin.park" <huijin.park@samsung.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.19 300/321] mtd: spi-nor: cast to u64 to avoid uint overflows
 Date:   Tue,  3 Dec 2019 23:36:06 +0100
-Message-Id: <20191203213045.019713052@linuxfoundation.org>
+Message-Id: <20191203223442.757758877@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,74 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: huijin.park <huijin.park@samsung.com>
 
-[ Upstream commit 9e5ffed37df68d0ccfb2fdc528609e23a1e70ebe ]
+commit 84a1c2109d23df3543d96231c4fee1757299bb1a upstream.
 
-Looks like when BPF support was added by commit d3b18ad31f93
-("tls: add bpf support to sk_msg handling") and
-commit d829e9c4112b ("tls: convert to generic sk_msg interface")
-it broke/removed the support for in-place crypto as added by
-commit 4e6d47206c32 ("tls: Add support for inplace records
-encryption").
+The "params->size" is defined as "u64".
+And "info->sector_size" and "info->n_sectors" are defined as
+unsigned int and u16.
+Thus, u64 data might have strange data(loss data) if the result
+overflows an unsigned int.
+This patch casts "info->sector_size" to an u64.
 
-The inplace_crypto member of struct tls_rec is dead, inited
-to zero, and sometimes set to zero again. It used to be
-set to 1 when record was allocated, but the skmsg code doesn't
-seem to have been written with the idea of in-place crypto
-in mind.
-
-Since non trivial effort is required to bring the feature back
-and we don't really have the HW to measure the benefit just
-remove the left over support for now to avoid confusing readers.
-
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: huijin.park <huijin.park@samsung.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tls.h |    1 -
- net/tls/tls_sw.c  |    6 +-----
- 2 files changed, 1 insertion(+), 6 deletions(-)
 
---- a/include/net/tls.h
-+++ b/include/net/tls.h
-@@ -121,7 +121,6 @@ struct tls_rec {
- 	struct list_head list;
- 	int tx_ready;
- 	int tx_flags;
--	int inplace_crypto;
+---
+ drivers/mtd/spi-nor/spi-nor.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2459,7 +2459,7 @@ static int spi_nor_init_params(struct sp
+ 	memset(params, 0, sizeof(*params));
  
- 	struct sk_msg msg_plaintext;
- 	struct sk_msg msg_encrypted;
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -705,8 +705,7 @@ static int tls_push_record(struct sock *
- 	}
+ 	/* Set SPI NOR sizes. */
+-	params->size = info->sector_size * info->n_sectors;
++	params->size = (u64)info->sector_size * info->n_sectors;
+ 	params->page_size = info->page_size;
  
- 	i = msg_pl->sg.start;
--	sg_chain(rec->sg_aead_in, 2, rec->inplace_crypto ?
--		 &msg_en->sg.data[i] : &msg_pl->sg.data[i]);
-+	sg_chain(rec->sg_aead_in, 2, &msg_pl->sg.data[i]);
- 
- 	i = msg_en->sg.end;
- 	sk_msg_iter_var_prev(i);
-@@ -971,8 +970,6 @@ alloc_encrypted:
- 			if (ret)
- 				goto fallback_to_reg_send;
- 
--			rec->inplace_crypto = 0;
--
- 			num_zc++;
- 			copied += try_to_copy;
- 
-@@ -1171,7 +1168,6 @@ alloc_payload:
- 
- 		tls_ctx->pending_open_record_frags = true;
- 		if (full_record || eor || sk_msg_full(msg_pl)) {
--			rec->inplace_crypto = 0;
- 			ret = bpf_exec_tx_verdict(msg_pl, sk, full_record,
- 						  record_type, &copied, flags);
- 			if (ret) {
+ 	/* (Fast) Read settings. */
 
 
