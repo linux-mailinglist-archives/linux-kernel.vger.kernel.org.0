@@ -2,87 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB2A711025E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:32:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE9D110265
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfLCQc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:32:56 -0500
-Received: from mga05.intel.com ([192.55.52.43]:6600 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbfLCQc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:32:56 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 08:32:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
-   d="scan'208";a="201056444"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga007.jf.intel.com with ESMTP; 03 Dec 2019 08:32:55 -0800
-Date:   Tue, 3 Dec 2019 08:32:55 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] KVM: X86: Fix callers of kvm_apic_match_dest() to
- use correct macros
-Message-ID: <20191203163255.GA19877@linux.intel.com>
-References: <20191202201314.543-1-peterx@redhat.com>
- <20191202201314.543-6-peterx@redhat.com>
- <87r21lbl0c.fsf@vitty.brq.redhat.com>
- <20191203162747.GD17275@xz-x1>
+        id S1726968AbfLCQdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:33:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35589 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfLCQdp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 11:33:45 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u8so4266544wmu.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:33:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i7Rl2ommOFpZyqjc2xIe8+dnrgxiLpTR5CzNoZds2fo=;
+        b=une3qIndSJoWVUjUi/0G2NHM2XesEgfnFTKtTU+VgTVszaqX3h6Wb+mFixhVGnisgu
+         BkiRet5AUR6u9LLTh7N3nXmJPe6DST9mRqyMqbCjWaLz4kV7AzyBC5ZPQtRSjM6emySf
+         gnHSd9TIzowsdY17wvPIrfZQwL6KJWh6fdudKc/BOCYU95F2QnBBlSYcXaRidjd8NUVe
+         1/mHBV6Zy8wIObKW+ZcnpDneiahFLPFvIHmH9P6Tgysi7bk69dIaPrQExBB1uPenMzRa
+         jElTuYb07v2FBhGMX96XnDGH161CgmXXsBztnxjZjDBgfQUV2uOUsfCP9u8NtphdW7+y
+         SH3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i7Rl2ommOFpZyqjc2xIe8+dnrgxiLpTR5CzNoZds2fo=;
+        b=fDi7j1GBiJ3JVNuXVHxbUj6VILXKrVQTdfAlzk+EELBXA1kJuNhMcrAHhjmbMXTzZW
+         +mypiAR3GjkeeiMi6lR7fzPw/acR5ZvpHt0t23VowWhz/Dz50gv3FKdbY2fUchqFqwOr
+         RRH2C4jYuLd/8T+tpgcVCayUDuiYSFFGgpVFpDtlxt61YjQfQ0FDMMyFD+sVIydAnT/D
+         qWGGN7z3zIJLEKb0dfmMynAj8xV6WdnNVI97rnuvfBoMLhI3MTBDv4tyjEF54x7jCfsW
+         SfODLzH8VjfAAJ3c1p5e9tazrN2KUFlLig10QvKs+eXH+blmIBXCudz3+DASQaFEu+Bo
+         /vxQ==
+X-Gm-Message-State: APjAAAUe7EbjyrO1s/uAFUIYRnJ8ZQcZw2qkynSLSLA5SVsM8Or9WPWr
+        mCN4htMQVGPzW50GFxwJCVw+KjSmaPt4obRn0Syk2w==
+X-Google-Smtp-Source: APXvYqwin1u3AXgG2PuZ9aX89PaAGoHK2R75waW23arJcmIP7D3A/I5KQuhmkVgKQRud4tIQfFjqshT3/nlrzS64a9U=
+X-Received: by 2002:a05:600c:141:: with SMTP id w1mr15345919wmm.61.1575390822794;
+ Tue, 03 Dec 2019 08:33:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203162747.GD17275@xz-x1>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20191203004043.174977-1-matthewgarrett@google.com> <CALCETrWUYapn=vTbKnKFVQ3Y4vG0qHwux0ym_To2NWKPew+vrw@mail.gmail.com>
+In-Reply-To: <CALCETrWUYapn=vTbKnKFVQ3Y4vG0qHwux0ym_To2NWKPew+vrw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 3 Dec 2019 16:33:37 +0000
+Message-ID: <CAKv+Gu8ohahrVVvMO0FfJPQL+Um5HoL=OFegTD25RwBP6rgLHQ@mail.gmail.com>
+Subject: Re: [PATCH] [EFI,PCI] Allow disabling PCI busmastering on bridges
+ during boot
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Matthew Garrett <matthewgarrett@google.com>,
+        linux-efi <linux-efi@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 11:27:47AM -0500, Peter Xu wrote:
-> On Tue, Dec 03, 2019 at 02:23:47PM +0100, Vitaly Kuznetsov wrote:
-> > > @@ -250,8 +252,9 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
-> > >  		if (e->fields.trig_mode == IOAPIC_LEVEL_TRIG ||
-> > >  		    kvm_irq_has_notifier(ioapic->kvm, KVM_IRQCHIP_IOAPIC, index) ||
-> > >  		    index == RTC_GSI) {
-> > > -			if (kvm_apic_match_dest(vcpu, NULL, 0,
-> > > -			             e->fields.dest_id, e->fields.dest_mode) ||
-> > > +			dm = kvm_lapic_irq_dest_mode(e->fields.dest_mode);
-> > 
-> > Nit: you could've defined 'dm' right here in the block (after '{') but
-> > in any case I'd suggest to stick to 'dest_mode' and not shorten it to
-> > 'dm' for consistency.
-> > 
-> > > +			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
-> > > +						e->fields.dest_id, dm) ||
-> > >  			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
-> > >  				__set_bit(e->fields.vector,
-> > >  					  ioapic_handled_vectors);
-> > > diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
-> > > index 5f59e5ebdbed..e89c2160b39f 100644
-> > > --- a/arch/x86/kvm/irq_comm.c
-> > > +++ b/arch/x86/kvm/irq_comm.c
-> > > @@ -417,7 +417,8 @@ void kvm_scan_ioapic_routes(struct kvm_vcpu *vcpu,
-> > >  
-> > >  			kvm_set_msi_irq(vcpu->kvm, entry, &irq);
-> > >  
-> > > -			if (irq.level && kvm_apic_match_dest(vcpu, NULL, 0,
-> > > +			if (irq.level &&
-> > > +			    kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
-> > >  						irq.dest_id, irq.dest_mode))
-> > >  				__set_bit(irq.vector, ioapic_handled_vectors);
-> > >  		}
-> > 
-> > Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> 
-> I'll move the declaration in with your r-b.  'dm' is a silly trick of
-> mine to avoid the 80-char line limit.  Thanks,
+On Tue, 3 Dec 2019 at 15:30, Andy Lutomirski <luto@amacapital.net> wrote:
+>
+> On Mon, Dec 2, 2019 at 4:41 PM Matthew Garrett
+> <matthewgarrett@google.com> wrote:
+> >
+> > Add an option to disable the busmaster bit in the control register on
+> > all PCI bridges before calling ExitBootServices() and passing control to
+> > the runtime kernel. System firmware may configure the IOMMU to prevent
+> > malicious PCI devices from being able to attack the OS via DMA. However,
+> > since firmware can't guarantee that the OS is IOMMU-aware, it will tear
+> > down IOMMU configuration when ExitBootServices() is called. This leaves
+> > a window between where a hostile device could still cause damage before
+> > Linux configures the IOMMU again.
+> >
+> > If CONFIG_EFI_NO_BUSMASTER is enabled or the "disable_busmaster=1"
+> > commandline argument is passed, the EFI stub will clear the busmaster
+> > bit on all PCI bridges before ExitBootServices() is called. This will
+> > prevent any malicious PCI devices from being able to perform DMA until
+> > the kernel reenables busmastering after configuring the IOMMU.
+>
+> I hate to be an obnoxious bikeshedder, but I really dislike the
+> "disable_busmaster" name.  I read this and $SUBJECT as "for some
+> reason, the admin wants to operate the system with busmastering off".
+> What you really want is something more like "disable busmastering
+> before IOMMU initialization".  Maybe
+> "iommu.disable_busmaster_before_init"?
+>
+> Similarly, EFI_NO_BUSMASTER sounds like a permanent state of affairs.
+>
+> Would a similar patch apply to non-EFI boot?  That is, in a BIOS boot,
+> is busmastering on when the kernel is loaded?
+>
 
-The 80-char limit isn't an unbreakable rule, it's ok for a line to run a
-few chars over when there is no better alternative.
+Yes, bus mastering is on, but since legacy BIOS may implement things
+like PS/2 emulation or other compatibility hacks where the PCI masters
+(devices or bridges) may need to be left enabled across the transition
+from firmware into the OS, I don't think it is wise to try and
+implement this feature for it.
+
+So the EFI stub is a reasonable place to put a feature like this,
+except for the fact that [on x86], it does not get invoked unless GRUB
+boots your kernel with 'linuxefi' rather than 'linux', and so in the
+majority of cases, I guess we are essentially doing legacy BIOS boot,
+even on UEFI systems.
