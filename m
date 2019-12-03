@@ -2,116 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E141102C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:45:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB591102E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:52:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfLCQpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:45:44 -0500
-Received: from mga17.intel.com ([192.55.52.151]:59606 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbfLCQpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:45:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 08:45:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
-   d="scan'208";a="222883231"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 03 Dec 2019 08:45:43 -0800
-Date:   Tue, 3 Dec 2019 08:50:26 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        kevin.tian@intel.com, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 0/5] iommu/vt-d: Consolidate various cache flush ops
-Message-ID: <20191203085026.1785292b@jacob-builder>
-In-Reply-To: <f703c267-c946-30cf-7e0e-4de16edcde18@linux.intel.com>
-References: <20191122030449.28892-1-baolu.lu@linux.intel.com>
-        <20191202120252.45606c47@jacob-builder>
-        <f703c267-c946-30cf-7e0e-4de16edcde18@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727065AbfLCQwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:52:00 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2152 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726473AbfLCQv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 11:51:59 -0500
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id D941CE4FB6CFD69213C3;
+        Tue,  3 Dec 2019 16:51:57 +0000 (GMT)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ lhreml705-cah.china.huawei.com (10.201.108.46) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 3 Dec 2019 16:51:57 +0000
+Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 3 Dec 2019
+ 16:51:57 +0000
+Date:   Tue, 3 Dec 2019 16:51:54 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        "rodrigorsdc@gmail.com" <rodrigorsdc@gmail.com>,
+        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
+        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>
+Subject: Re: [PATCH v4] dt-bindings: iio: accel: add binding documentation
+ for ADIS16240
+Message-ID: <20191203165154.00005793@Huawei.com>
+In-Reply-To: <20191203163850.GN1998@sirena.org.uk>
+References: <20191123051927.5016-1-rodrigorsdc@gmail.com>
+        <20191123114119.7b0c3447@archlinux>
+        <a55b9c576eded8c91a985aabbba89180561ab156.camel@analog.com>
+        <20191201114032.1a972dda@archlinux>
+        <20191203163850.GN1998@sirena.org.uk>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.57]
+X-ClientProxiedBy: lhreml718-chm.china.huawei.com (10.201.108.69) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Dec 2019 10:44:45 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Tue, 3 Dec 2019 16:38:50 +0000
+Mark Brown <broonie@kernel.org> wrote:
 
-> Hi Jacob,
+> On Sun, Dec 01, 2019 at 11:40:32AM +0000, Jonathan Cameron wrote:
 > 
-> On 12/3/19 4:02 AM, Jacob Pan wrote:
-> > On Fri, 22 Nov 2019 11:04:44 +0800
-> > Lu Baolu<baolu.lu@linux.intel.com>  wrote:
-> >   
-> >> Intel VT-d 3.0 introduces more caches and interfaces for software
-> >> to flush when it runs in the scalable mode. Currently various
-> >> cache flush helpers are scattered around. This consolidates them
-> >> by putting them in the existing iommu_flush structure.
-> >>
-> >> /* struct iommu_flush - Intel IOMMU cache invalidation ops
-> >>   *
-> >>   * @cc_inv: invalidate context cache
-> >>   * @iotlb_inv: Invalidate IOTLB and paging structure caches when
-> >> software
-> >>   *             has changed second-level tables.
-> >>   * @p_iotlb_inv: Invalidate IOTLB and paging structure caches when
-> >> software
-> >>   *               has changed first-level tables.
-> >>   * @pc_inv: invalidate pasid cache
-> >>   * @dev_tlb_inv: invalidate cached mappings used by
-> >> requests-without-PASID
-> >>   *               from the Device-TLB on a endpoint device.
-> >>   * @p_dev_tlb_inv: invalidate cached mappings used by
-> >> requests-with-PASID
-> >>   *                 from the Device-TLB on an endpoint device
-> >>   */
-> >> struct iommu_flush {
-> >>          void (*cc_inv)(struct intel_iommu *iommu, u16 did,
-> >>                         u16 sid, u8 fm, u64 type);
-> >>          void (*iotlb_inv)(struct intel_iommu *iommu, u16 did, u64
-> >> addr, unsigned int size_order, u64 type);
-> >>          void (*p_iotlb_inv)(struct intel_iommu *iommu, u16 did,
-> >> u32 pasid, u64 addr, unsigned long npages, bool ih);
-> >>          void (*pc_inv)(struct intel_iommu *iommu, u16 did, u32
-> >> pasid, u64 granu);
-> >>          void (*dev_tlb_inv)(struct intel_iommu *iommu, u16 sid,
-> >> u16 pfsid, u16 qdep, u64 addr, unsigned int mask);
-> >>          void (*p_dev_tlb_inv)(struct intel_iommu *iommu, u16 sid,
-> >> u16 pfsid, u32 pasid, u16 qdep, u64 addr,
-> >>                                unsigned long npages);
-> >> };
-> >>
-> >> The name of each cache flush ops is defined according to the spec
-> >> section 6.5 so that people are easy to look up them in the spec.
-> >>  
-> > Nice consolidation. For nested SVM, I also introduced cache flushed
-> > helpers as needed.
-> > https://lkml.org/lkml/2019/10/24/857
-> > 
-> > Should I wait for yours to be merged or you want to extend the this
-> > consolidation after SVA/SVM cache flush? I expect to send my v8
-> > shortly. 
+> > +CC Mark as we probably need a more general view point on
+> > the question of whether SPI mode should be enforced by binding
+> > or in the driver.  
 > 
-> Please base your v8 patch on this series. So it could get more chances
-> for test.
+> Not sure I see the question here, I think I was missing a bit of
+> the conversation?  It's perfectly fine for a driver to specify a
+> mode, if the hardware always uses some unusual mode then there's
+> no sense in forcing every single DT to set the same mode.  On the
+> other hand if there's some configuration for the driver that was
+> handling some board specific configuration that there's already
+> some generic SPI support for setting then it seems odd to have a
+> custom driver specific configuration mechanism.
 > 
-Sounds good.
 
-> I will queue this patch series for internal test after 5.5-rc1 and if
-> everything goes well, I will forward it to Joerg around rc4 for linux-
-> next.
-> 
-> Best regards,
-> baolu
+If the driver picks a mode because that's what it says on the datasheet
+it prevents odd board configurations from working.  The question
+becomes whether it makes sense in general to assume those odd board
+conditions don't exist until we actually have one, or to assume that
+they might and push the burden on to all DT files.
 
-[Jacob Pan]
+Traditionally in IIO at least we've mostly taken the view the DT
+should be right and complete and had bindings state what normal
+parameters must be for it to work (assuming no inverters etc)
+
+If we encode it in the driver, and we later meet such a board we
+end up with a custom dance to query the DT parameters again and
+only override if present.
+
+We can't rely on the core SPI handling because I don't think
+there is any means of specifying a default.
+
+We can adopt the view that in general these weird boards with inverters
+are weird and just handle them when they occur.  Sounds like that is your
+preference, at least for new parts.
+
+For old ones we have no idea if there are boards out there using
+them with inverters so easiest is probably to just carry on putting them
+in the DT bindings.
+
+Jonathan
+
+
