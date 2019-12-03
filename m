@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5EE0111C6A
+	by mail.lfdr.de (Postfix) with ESMTP id 38813111C69
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728881AbfLCWn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:43:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59456 "EHLO mail.kernel.org"
+        id S1728698AbfLCWnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728857AbfLCWnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:43:51 -0500
+        id S1728328AbfLCWnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A21A2073C;
-        Tue,  3 Dec 2019 22:43:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88A3A207DD;
+        Tue,  3 Dec 2019 22:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413030;
-        bh=4Hi7puFYa9ZD/tWeZe+cdHnTgvx3uxgPBqtlp1x6mX4=;
+        s=default; t=1575413033;
+        bh=o2kukSFFfU0mbQWuJGg0mw6F6cIceRtU2S4LX75rTso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1P8zeJElG1YkyHXaIoCE9/V3bhJGJ1PFhyj/PZrwJI9IS3xNtEAFtBZtjEk/f69aa
-         2yb5KjzuEs3QeFkZ5CMYJFnydvfW0232YfIOsUG1aNY9O0UBH9++1dB1J3cp8ss/wo
-         D/URfQtGj0c5xf/21La119dbOUXQsQ/l/hA4KNK8=
+        b=hLvQXVRveMNYxjtlGfg1m3J+yebIZvHdDAUi8qlVlhAQS5P47puWQ7cqFJXUESJsN
+         UQw9VKAy/We24hLhK82kCe61LMp6gTB9OB6suNX7QkZN+HN8dO673YQIRhsuFh3c01
+         BuxDo6Z+mvV40pk3R2JQPU8NHBH7PMhqiMz/Kj4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeroen de Borst <jeroendb@google.com>,
-        Catherine Sullivan <csully@google.com>,
+        stable@vger.kernel.org, Menglong Dong <dong.menglong@zte.com.cn>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 109/135] gve: Fix the queue page list allocated pages count
-Date:   Tue,  3 Dec 2019 23:35:49 +0100
-Message-Id: <20191203213041.231691250@linuxfoundation.org>
+Subject: [PATCH 5.3 110/135] macvlan: schedule bc_work even if error
+Date:   Tue,  3 Dec 2019 23:35:50 +0100
+Message-Id: <20191203213041.597917237@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
 References: <20191203213005.828543156@linuxfoundation.org>
@@ -44,42 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeroen de Borst <jeroendb@google.com>
+From: Menglong Dong <dong.menglong@zte.com.cn>
 
-[ Upstream commit a95069ecb7092d03b2ea1c39ee04514fe9627540 ]
+[ Upstream commit 1d7ea55668878bb350979c377fc72509dd6f5b21 ]
 
-In gve_alloc_queue_page_list(), when a page allocation fails,
-qpl->num_entries will be wrong.  In this case priv->num_registered_pages
-can underflow in gve_free_queue_page_list(), causing subsequent calls
-to gve_alloc_queue_page_list() to fail.
+While enqueueing a broadcast skb to port->bc_queue, schedule_work()
+is called to add port->bc_work, which processes the skbs in
+bc_queue, to "events" work queue. If port->bc_queue is full, the
+skb will be discarded and schedule_work(&port->bc_work) won't be
+called. However, if port->bc_queue is full and port->bc_work is not
+running or pending, port->bc_queue will keep full and schedule_work()
+won't be called any more, and all broadcast skbs to macvlan will be
+discarded. This case can happen:
 
-Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
-Signed-off-by: Jeroen de Borst <jeroendb@google.com>
-Reviewed-by: Catherine Sullivan <csully@google.com>
+macvlan_process_broadcast() is the pending function of port->bc_work,
+it moves all the skbs in port->bc_queue to the queue "list", and
+processes the skbs in "list". During this, new skbs will keep being
+added to port->bc_queue in macvlan_broadcast_enqueue(), and
+port->bc_queue may already full when macvlan_process_broadcast()
+return. This may happen, especially when there are a lot of real-time
+threads and the process is preempted.
+
+Fix this by calling schedule_work(&port->bc_work) even if
+port->bc_work is full in macvlan_broadcast_enqueue().
+
+Fixes: 412ca1550cbe ("macvlan: Move broadcasts into a work queue")
+Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/google/gve/gve_main.c |    3 ++-
+ drivers/net/macvlan.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/google/gve/gve_main.c
-+++ b/drivers/net/ethernet/google/gve/gve_main.c
-@@ -544,7 +544,7 @@ static int gve_alloc_queue_page_list(str
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -359,10 +359,11 @@ static void macvlan_broadcast_enqueue(st
  	}
+ 	spin_unlock(&port->bc_queue.lock);
  
- 	qpl->id = id;
--	qpl->num_entries = pages;
-+	qpl->num_entries = 0;
- 	qpl->pages = kvzalloc(pages * sizeof(*qpl->pages), GFP_KERNEL);
- 	/* caller handles clean up */
- 	if (!qpl->pages)
-@@ -562,6 +562,7 @@ static int gve_alloc_queue_page_list(str
- 		/* caller handles clean up */
- 		if (err)
- 			return -ENOMEM;
-+		qpl->num_entries++;
- 	}
- 	priv->num_registered_pages += pages;
++	schedule_work(&port->bc_work);
++
+ 	if (err)
+ 		goto free_nskb;
  
+-	schedule_work(&port->bc_work);
+ 	return;
+ 
+ free_nskb:
 
 
