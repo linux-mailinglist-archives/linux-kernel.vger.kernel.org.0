@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A84B111CAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F4A111CAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:47:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfLCWqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:46:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35744 "EHLO mail.kernel.org"
+        id S1729199AbfLCWq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:46:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728979AbfLCWqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:46:18 -0500
+        id S1729190AbfLCWq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:46:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2826520803;
-        Tue,  3 Dec 2019 22:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BC03215B2;
+        Tue,  3 Dec 2019 22:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413177;
-        bh=v4pJDpuQCdRigiPbfE1gK/XbbYX/s8SxGZqFRVeCkUk=;
+        s=default; t=1575413185;
+        bh=niyvFOtyYxs5l4rCU3bfoX+734yFXqmXUw/xZMlHfcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FjlwmiPRnOD8Jg57WxkSjr01WZRAeoK4OARxVSTpdc8YK9yRpwjRDCsFc6PbO9iYW
-         ymu7KLeZxDLPiA8yO2uccUmyhtvvjN/DIPkkgmOyauR00ud0SCBkLQ7Hi4M6d4LsVC
-         KklT20mkGShfdtFE1OeHGFzTK7G963/wAemNuZwI=
+        b=Upb3bauYKDI+PlPacnW1xND9AsHAP3QiDG/JR20RQiatC7oQnxCH6dal1XPb8NTT3
+         gnKvBZwHNYU7CO4wyqNvxRZcnKTVesRXYh33sAgUppxKy7ru7/ukcufgS2BzEva/DJ
+         tSfpk35GqOAnbioLlNDxgFPlBnJaJg+Kar4U5CI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/321] can: rx-offload: can_rx_offload_queue_tail(): fix error handling, avoid skb mem leak
-Date:   Tue,  3 Dec 2019 23:31:34 +0100
-Message-Id: <20191203223428.582102977@linuxfoundation.org>
+Subject: [PATCH 4.19 030/321] can: rx-offload: can_rx_offload_offload_one(): increment rx_fifo_errors on queue overflow or OOM
+Date:   Tue,  3 Dec 2019 23:31:36 +0100
+Message-Id: <20191203223428.683914108@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -47,46 +45,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-[ Upstream commit 6caf8a6d6586d44fd72f4aa1021d14aa82affafb ]
+[ Upstream commit 4e9016bee3bf0c24963097edace034ff205b565c ]
 
-If the rx-offload skb_queue is full can_rx_offload_queue_tail() will not
-queue the skb and return with an error.
+If the rx-offload skb_queue is full or the skb allocation fails (due to OOM),
+the mailbox contents is discarded.
 
-This patch frees the skb in case of a full queue, which brings
-can_rx_offload_queue_tail() in line with the
-can_rx_offload_queue_sorted() function, which has been adjusted in the
-previous patch.
+This patch adds the incrementing of the rx_fifo_errors statistics counter.
 
-The return value is adjusted to -ENOBUFS to better reflect the actual
-problem.
-
-The device stats handling is left to the caller.
-
-Fixes: d254586c3453 ("can: rx-offload: Add support for HW fifo based irq offloading")
-Reported-by: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/rx-offload.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/can/rx-offload.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/can/rx-offload.c b/drivers/net/can/rx-offload.c
-index 6cf0d0bc1e8d6..a90005eac8b17 100644
+index e32b65599a5f2..16af09c71cfed 100644
 --- a/drivers/net/can/rx-offload.c
 +++ b/drivers/net/can/rx-offload.c
-@@ -261,8 +261,10 @@ int can_rx_offload_queue_tail(struct can_rx_offload *offload,
- 			      struct sk_buff *skb)
- {
- 	if (skb_queue_len(&offload->skb_queue) >
--	    offload->skb_queue_len_max)
--		return -ENOMEM;
-+	    offload->skb_queue_len_max) {
-+		kfree_skb(skb);
-+		return -ENOBUFS;
-+	}
+@@ -134,8 +134,10 @@ static struct sk_buff *can_rx_offload_offload_one(struct can_rx_offload *offload
  
- 	skb_queue_tail(&offload->skb_queue, skb);
- 	can_rx_offload_schedule(offload);
+ 		ret = offload->mailbox_read(offload, &cf_overflow,
+ 					    &timestamp, n);
+-		if (ret)
++		if (ret) {
+ 			offload->dev->stats.rx_dropped++;
++			offload->dev->stats.rx_fifo_errors++;
++		}
+ 
+ 		return NULL;
+ 	}
 -- 
 2.20.1
 
