@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34DF3111D8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B96111D63
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:53:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbfLCWyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:54:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48406 "EHLO mail.kernel.org"
+        id S1729908AbfLCWw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:52:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730289AbfLCWyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:31 -0500
+        id S1729951AbfLCWwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:52:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BC1B20866;
-        Tue,  3 Dec 2019 22:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7C7F20866;
+        Tue,  3 Dec 2019 22:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413670;
-        bh=/Zi2JJggweyWVP5NRpyxetgFN/YDU6F1gRDEuuhs4u8=;
+        s=default; t=1575413570;
+        bh=nQfw2bvRLVdTkcx1yOgkN4Nc+XNvTeGBrr7DNoc4GdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1GuNilBisqOP/WICEdUB67K6/GXPNOD8Up6u9quk91O1u5FF8nH60cv24chDru+iv
-         xchVdIw59mgA58oo50suHzhLC1aNyMKH2ITsggdnGsA7XihZ9R3hQbdB/jKU6eibYf
-         ST58ZmJwXYf8u1JAl71UhfYFWCK5zHHJTLWwFnqY=
+        b=XQTf8kHRy4cuBIS6xPVeBhQM8YfBFWy3V0C4uR3Ceh/rVT3tVjQDquSQJuL0JTk+e
+         IWySb0G4I33/mmS2KXVouPzR8xF6fBKUQIeuZZDVlnsi0lteOmiEX7gB6Mj9p1XqMX
+         UK+9NRNNhsIgLOtSgR+o7tREQs4fMppzU9B4cLik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Scott Wood <oss@buserror.net>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 178/321] powerpc/83xx: handle machine check caused by watchdog timer
-Date:   Tue,  3 Dec 2019 23:34:04 +0100
-Message-Id: <20191203223436.389585449@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 179/321] powerpc/pseries: Fix node leak in update_lmb_associativity_index()
+Date:   Tue,  3 Dec 2019 23:34:05 +0100
+Message-Id: <20191203223436.441465025@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -43,140 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 0deae39cec6dab3a66794f3e9e83ca4dc30080f1 ]
+[ Upstream commit 47918bc68b7427e961035949cc1501a864578a69 ]
 
-When the watchdog timer is set in interrupt mode, it causes a
-machine check when it times out. The purpose of this mode is to
-ease debugging, not to crash the kernel and reboot the machine.
+In update_lmb_associativity_index() we lookup dr_node using
+of_find_node_by_path() which takes a reference for us. In the
+non-error case we forget to drop the reference. Note that
+find_aa_index() does modify properties of the node, but doesn't need
+an extra reference held once it's returned.
 
-This patch implements a special handling for that, in order to not
-crash the kernel if the watchdog times out while in interrupt or
-within the idle task.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-[scottwood: added missing #include]
-Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/cputable.h |  1 +
- arch/powerpc/include/asm/reg.h      |  2 ++
- arch/powerpc/kernel/cputable.c      | 10 ++++++----
- arch/powerpc/platforms/83xx/misc.c  | 17 +++++++++++++++++
- 4 files changed, 26 insertions(+), 4 deletions(-)
+ arch/powerpc/platforms/pseries/hotplug-memory.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
-index 3ce690e5f345c..59b35b93eadec 100644
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -44,6 +44,7 @@ extern int machine_check_e500(struct pt_regs *regs);
- extern int machine_check_e200(struct pt_regs *regs);
- extern int machine_check_47x(struct pt_regs *regs);
- int machine_check_8xx(struct pt_regs *regs);
-+int machine_check_83xx(struct pt_regs *regs);
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index d93ff494e7781..7f86bc3eaadec 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -202,6 +202,7 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
  
- extern void cpu_down_flush_e500v2(void);
- extern void cpu_down_flush_e500mc(void);
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index 640a4d818772a..af99716615122 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -768,6 +768,8 @@
- #define   SRR1_PROGTRAP		0x00020000 /* Trap */
- #define   SRR1_PROGADDR		0x00010000 /* SRR0 contains subsequent addr */
+ 	aa_index = find_aa_index(dr_node, ala_prop, lmb_assoc);
  
-+#define   SRR1_MCE_MCP		0x00080000 /* Machine check signal caused interrupt */
-+
- #define SPRN_HSRR0	0x13A	/* Save/Restore Register 0 */
- #define SPRN_HSRR1	0x13B	/* Save/Restore Register 1 */
- #define   HSRR1_DENORM		0x00100000 /* Denorm exception */
-diff --git a/arch/powerpc/kernel/cputable.c b/arch/powerpc/kernel/cputable.c
-index 2da01340c84c3..1eab54bc6ee93 100644
---- a/arch/powerpc/kernel/cputable.c
-+++ b/arch/powerpc/kernel/cputable.c
-@@ -1141,6 +1141,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.machine_check		= machine_check_generic,
- 		.platform		= "ppc603",
- 	},
-+#ifdef CONFIG_PPC_83xx
- 	{	/* e300c1 (a 603e core, plus some) on 83xx */
- 		.pvr_mask		= 0x7fff0000,
- 		.pvr_value		= 0x00830000,
-@@ -1151,7 +1152,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.platform		= "ppc603",
- 	},
- 	{	/* e300c2 (an e300c1 core, plus some, minus FPU) on 83xx */
-@@ -1165,7 +1166,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.platform		= "ppc603",
- 	},
- 	{	/* e300c3 (e300c1, plus one IU, half cache size) on 83xx */
-@@ -1179,7 +1180,7 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.num_pmcs		= 4,
- 		.oprofile_cpu_type	= "ppc/e300",
- 		.oprofile_type		= PPC_OPROFILE_FSL_EMB,
-@@ -1196,12 +1197,13 @@ static struct cpu_spec __initdata cpu_specs[] = {
- 		.icache_bsize		= 32,
- 		.dcache_bsize		= 32,
- 		.cpu_setup		= __setup_cpu_603,
--		.machine_check		= machine_check_generic,
-+		.machine_check		= machine_check_83xx,
- 		.num_pmcs		= 4,
- 		.oprofile_cpu_type	= "ppc/e300",
- 		.oprofile_type		= PPC_OPROFILE_FSL_EMB,
- 		.platform		= "ppc603",
- 	},
-+#endif
- 	{	/* default match, we assume split I/D cache & TB (non-601)... */
- 		.pvr_mask		= 0x00000000,
- 		.pvr_value		= 0x00000000,
-diff --git a/arch/powerpc/platforms/83xx/misc.c b/arch/powerpc/platforms/83xx/misc.c
-index d75c9816a5c92..2b6589fe812dd 100644
---- a/arch/powerpc/platforms/83xx/misc.c
-+++ b/arch/powerpc/platforms/83xx/misc.c
-@@ -14,6 +14,7 @@
- #include <linux/of_platform.h>
- #include <linux/pci.h>
++	of_node_put(dr_node);
+ 	dlpar_free_cc_nodes(lmb_node);
  
-+#include <asm/debug.h>
- #include <asm/io.h>
- #include <asm/hw_irq.h>
- #include <asm/ipic.h>
-@@ -150,3 +151,19 @@ void __init mpc83xx_setup_arch(void)
- 
- 	mpc83xx_setup_pci();
- }
-+
-+int machine_check_83xx(struct pt_regs *regs)
-+{
-+	u32 mask = 1 << (31 - IPIC_MCP_WDT);
-+
-+	if (!(regs->msr & SRR1_MCE_MCP) || !(ipic_get_mcp_status() & mask))
-+		return machine_check_generic(regs);
-+	ipic_clear_mcp_status(mask);
-+
-+	if (debugger_fault_handler(regs))
-+		return 1;
-+
-+	die("Watchdog NMI Reset", regs, 0);
-+
-+	return 1;
-+}
+ 	if (aa_index < 0) {
 -- 
 2.20.1
 
