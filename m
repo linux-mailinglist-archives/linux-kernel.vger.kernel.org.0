@@ -2,71 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB21F10F90D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:43:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F66E10F8C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfLCHnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 02:43:24 -0500
-Received: from mailgw.unisannio.it ([193.206.108.11]:40798 "EHLO
-        mailgw.unisannio.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727376AbfLCHnX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 02:43:23 -0500
-X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Dec 2019 02:43:22 EST
-Received: from localhost (unknown [127.0.0.1])
-        by mailgw.unisannio.it (Postfix) with ESMTP id 32FEA501389;
-        Tue,  3 Dec 2019 07:41:20 +0000 (UTC)
-Received: from mailgw.unisannio.it ([127.0.0.1])
- by localhost (mailgw.unisannio.it [127.0.0.1]) (amavisd-maia, port 10024)
- with ESMTP id 17074-09; Tue,  3 Dec 2019 08:41:19 +0100 (CET)
-Received: from pamx1.unisannio.it (pamx1.unisannio.it [193.206.108.12])
-        by mailgw.unisannio.it (Postfix) with ESMTP id 2A1525014E0;
-        Tue,  3 Dec 2019 08:41:15 +0100 (CET)
-Received: from webmail.unisannio.it (webmail.unisannio.it [193.206.108.9])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: vacchian)
-        by pamx1.unisannio.it (Postfix) with ESMTPSA id C650D1E030B;
-        Tue,  3 Dec 2019 05:28:49 +0100 (CET)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 03 Dec 2019 07:28:49 +0300
-From:   "Banca IMI S.P.A" <info.bancaimi.uk@gmail.com>
-To:     undisclosed-recipients:;
-Subject: Finanzielle Hilfe (Darlehen @1,3%)
-Organization: Banca IMI S.P.A
-Reply-To: info.bancaimi.uk@gmail.com
-Mail-Reply-To: info.bancaimi.uk@gmail.com
-Message-ID: <c441d1f7273fc16f42d945bf33280c30@gmail.com>
-X-Sender: info.bancaimi.uk@gmail.com
-User-Agent: Roundcube Webmail/1.3.9
-X-Virus-Scanned: Maia Mailguard 1.0.0
+        id S1727455AbfLCHf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 02:35:29 -0500
+Received: from mga04.intel.com ([192.55.52.120]:33808 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727386AbfLCHf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 02:35:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Dec 2019 23:35:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,272,1571727600"; 
+   d="scan'208";a="235778260"
+Received: from brentlu-desk0.itwn.intel.com ([10.5.253.11])
+  by fmsmga004.fm.intel.com with ESMTP; 02 Dec 2019 23:35:27 -0800
+From:   Brent Lu <brent.lu@intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Brent Lu <brent.lu@intel.com>
+Subject: [PATCH] ASoC: da7219: remove SRM lock check retry
+Date:   Tue,  3 Dec 2019 15:31:05 +0800
+Message-Id: <1575358265-17905-1-git-send-email-brent.lu@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For platforms not able to provide WCLK in the PREPARED runtime state, it
+takes 400ms for codec driver to print the message "SRM failed to lock" in
+the da7219_dai_event() function which is called when DAPM widgets are
+powering up. The latency penalty to audio input/output is too much so the
+retry (8 times) and delay (50ms each retry) are removed.
 
+Another reason is current Cold output latency requirement in Android CDD is
+500ms but will be reduced to 200ms for 2021 platforms. With the 400ms
+latency it would be difficult to pass the Android CTS test.
 
+Signed-off-by: Brent Lu <brent.lu@intel.com>
+---
+ sound/soc/codecs/da7219.c | 3 ++-
+ sound/soc/codecs/da7219.h | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index f83a6ea..042e701 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -833,7 +833,8 @@ static int da7219_dai_event(struct snd_soc_dapm_widget *w,
+ 				srm_lock = true;
+ 			} else {
+ 				++i;
+-				msleep(50);
++				if (i < DA7219_SRM_CHECK_RETRIES)
++					msleep(50);
+ 			}
+ 		} while ((i < DA7219_SRM_CHECK_RETRIES) && (!srm_lock));
+ 
+diff --git a/sound/soc/codecs/da7219.h b/sound/soc/codecs/da7219.h
+index 88b67fe..3149986 100644
+--- a/sound/soc/codecs/da7219.h
++++ b/sound/soc/codecs/da7219.h
+@@ -770,7 +770,7 @@
+ #define DA7219_PLL_INDIV_36_TO_54_MHZ_VAL	16
+ 
+ /* SRM */
+-#define DA7219_SRM_CHECK_RETRIES	8
++#define DA7219_SRM_CHECK_RETRIES	1
+ 
+ /* System Controller */
+ #define DA7219_SYS_STAT_CHECK_RETRIES	6
 -- 
-Grüße Herr / Frau,
+2.7.4
 
-Benötigen Sie finanzielle Unterstützung (Darlehen)?
-Sprechen Sie mit uns bei Banca IMI S.P.A., wir werden Ihre finanziellen 
-Probleme lösen.
-
-Unser Zinssatz beträgt 1,3%  Bitte bewerben Sie sich jetzt und füllen 
-Sie die folgenden Bewerbungsdetails aus:
-
-Vollständiger Name:____________________
-Darlehensbetrag: _______________________
-Mietzeitraum: ___________________
-Darlehen Zweck: _________________
-Telefon:____________________
-
-Wir warten auf Ihre Bewerbung, damit Ihre Kreditanfrage bearbeitet 
-werden kann.
-
-Mit freundlichen Grüßen
