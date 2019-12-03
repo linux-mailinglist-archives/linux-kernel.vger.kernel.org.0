@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97099111FD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 893A1111F28
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbfLCWjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48752 "EHLO mail.kernel.org"
+        id S1728982AbfLCWo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:44:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728117AbfLCWjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:01 -0500
+        id S1728673AbfLCWoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:44:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19EDD20684;
-        Tue,  3 Dec 2019 22:38:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE6CE2073C;
+        Tue,  3 Dec 2019 22:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412740;
-        bh=MP99nh/TM0pE6NtJsYqybo9a6kDwZHzSSkrdsojSgnY=;
+        s=default; t=1575413094;
+        bh=OctZyAQ5oT6et3iOr6pcJzgVHWL+2dgefaniPGCIhEU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0u0p0iLLjAf5EWRIiyeG1XlzoqYLInBmVNRFQ65BO3Lmg8wH2osjAbTxmzIjBMnzE
-         RZNIjG/UrOnIkMHuE0ClCzzEF0n0obzCBZe6EcJpalAKLZbroc46nuEEmH6HzK5g+B
-         EekK0lQB2MCytw5L4tu1tgyZcK6yoyK4gxJ18D/Y=
+        b=c1YyjMv5J3tDcm1c9V31e6aRkOFkqjaGtq7NHCdd2XzAFqlcuYUDtJRiqtr7/87jS
+         1a4jDeWS0b4PKKFs4dY8+DM9mtpm7l4MTu/Wx7THJarG7xDO7gnP+FZrCXxBAzcKaq
+         b60M5tGdrGSlDMQgH06UqUVNtiK0uKvzJZaOIV6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Candle Sun <candle.sun@unisoc.com>,
-        Nianfu Bai <nianfu.bai@unisoc.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Siarhei Vishniakou <svv@google.com>
-Subject: [PATCH 5.4 44/46] HID: core: check whether Usage Page item is after Usage ID items
-Date:   Tue,  3 Dec 2019 23:36:04 +0100
-Message-Id: <20191203212806.707201166@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 125/135] selftests/tls: add a test for fragmented messages
+Date:   Tue,  3 Dec 2019 23:36:05 +0100
+Message-Id: <20191203213044.842266412@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,173 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Candle Sun <candle.sun@unisoc.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-commit 1cb0d2aee26335d0bccf29100c7bed00ebece851 upstream.
+[ Upstream commit 65190f77424d7b82c4aad7326c9cce6bd91a2fcc ]
 
-Upstream commit 58e75155009c ("HID: core: move Usage Page concatenation
-to Main item") adds support for Usage Page item after Usage ID items
-(such as keyboards manufactured by Primax).
+Add a sendmsg test with very fragmented messages. This should
+fill up sk_msg and test the boundary conditions.
 
-Usage Page concatenation in Main item works well for following report
-descriptor patterns:
-
-    USAGE_PAGE (Keyboard)                   05 07
-    USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-    USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-    LOGICAL_MINIMUM (0)                     15 00
-    LOGICAL_MAXIMUM (1)                     25 01
-    REPORT_SIZE (1)                         75 01
-    REPORT_COUNT (8)                        95 08
-    INPUT (Data,Var,Abs)                    81 02
-
--------------
-
-    USAGE_MINIMUM (Keyboard LeftControl)    19 E0
-    USAGE_MAXIMUM (Keyboard Right GUI)      29 E7
-    LOGICAL_MINIMUM (0)                     15 00
-    LOGICAL_MAXIMUM (1)                     25 01
-    REPORT_SIZE (1)                         75 01
-    REPORT_COUNT (8)                        95 08
-    USAGE_PAGE (Keyboard)                   05 07
-    INPUT (Data,Var,Abs)                    81 02
-
-But it makes the parser act wrong for the following report
-descriptor pattern(such as some Gamepads):
-
-    USAGE_PAGE (Button)                     05 09
-    USAGE (Button 1)                        09 01
-    USAGE (Button 2)                        09 02
-    USAGE (Button 4)                        09 04
-    USAGE (Button 5)                        09 05
-    USAGE (Button 7)                        09 07
-    USAGE (Button 8)                        09 08
-    USAGE (Button 14)                       09 0E
-    USAGE (Button 15)                       09 0F
-    USAGE (Button 13)                       09 0D
-    USAGE_PAGE (Consumer Devices)           05 0C
-    USAGE (Back)                            0a 24 02
-    USAGE (HomePage)                        0a 23 02
-    LOGICAL_MINIMUM (0)                     15 00
-    LOGICAL_MAXIMUM (1)                     25 01
-    REPORT_SIZE (1)                         75 01
-    REPORT_COUNT (11)                       95 0B
-    INPUT (Data,Var,Abs)                    81 02
-
-With Usage Page concatenation in Main item, parser recognizes all the
-11 Usages as consumer keys, it is not the HID device's real intention.
-
-This patch checks whether Usage Page is really defined after Usage ID
-items by comparing usage page using status.
-
-Usage Page concatenation on currently defined Usage Page will always
-do in local parsing when Usage ID items encountered.
-
-When Main item is parsing, concatenation will do again with last
-defined Usage Page if this page has not been used in the previous
-usages concatenation.
-
-Signed-off-by: Candle Sun <candle.sun@unisoc.com>
-Signed-off-by: Nianfu Bai <nianfu.bai@unisoc.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Siarhei Vishniakou <svv@google.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hid/hid-core.c |   51 +++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 45 insertions(+), 6 deletions(-)
+ tools/testing/selftests/net/tls.c |   60 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -212,6 +212,18 @@ static unsigned hid_lookup_collection(st
+--- a/tools/testing/selftests/net/tls.c
++++ b/tools/testing/selftests/net/tls.c
+@@ -268,6 +268,38 @@ TEST_F(tls, sendmsg_single)
+ 	EXPECT_EQ(memcmp(buf, test_str, send_len), 0);
  }
  
- /*
-+ * Concatenate usage which defines 16 bits or less with the
-+ * currently defined usage page to form a 32 bit usage
-+ */
-+
-+static void complete_usage(struct hid_parser *parser, unsigned int index)
++#define MAX_FRAGS	64
++#define SEND_LEN	13
++TEST_F(tls, sendmsg_fragmented)
 +{
-+	parser->local.usage[index] &= 0xFFFF;
-+	parser->local.usage[index] |=
-+		(parser->global.usage_page & 0xFFFF) << 16;
++	char const *test_str = "test_sendmsg";
++	char buf[SEND_LEN * MAX_FRAGS];
++	struct iovec vec[MAX_FRAGS];
++	struct msghdr msg;
++	int i, frags;
++
++	for (frags = 1; frags <= MAX_FRAGS; frags++) {
++		for (i = 0; i < frags; i++) {
++			vec[i].iov_base = (char *)test_str;
++			vec[i].iov_len = SEND_LEN;
++		}
++
++		memset(&msg, 0, sizeof(struct msghdr));
++		msg.msg_iov = vec;
++		msg.msg_iovlen = frags;
++
++		EXPECT_EQ(sendmsg(self->fd, &msg, 0), SEND_LEN * frags);
++		EXPECT_EQ(recv(self->cfd, buf, SEND_LEN * frags, MSG_WAITALL),
++			  SEND_LEN * frags);
++
++		for (i = 0; i < frags; i++)
++			EXPECT_EQ(memcmp(buf + SEND_LEN * i,
++					 test_str, SEND_LEN), 0);
++	}
++}
++#undef MAX_FRAGS
++#undef SEND_LEN
++
+ TEST_F(tls, sendmsg_large)
+ {
+ 	void *mem = malloc(16384);
+@@ -694,6 +726,34 @@ TEST_F(tls, recv_lowat)
+ 	EXPECT_EQ(memcmp(send_mem, recv_mem + 10, 5), 0);
+ }
+ 
++TEST_F(tls, recv_rcvbuf)
++{
++	char send_mem[4096];
++	char recv_mem[4096];
++	int rcv_buf = 1024;
++
++	memset(send_mem, 0x1c, sizeof(send_mem));
++
++	EXPECT_EQ(setsockopt(self->cfd, SOL_SOCKET, SO_RCVBUF,
++			     &rcv_buf, sizeof(rcv_buf)), 0);
++
++	EXPECT_EQ(send(self->fd, send_mem, 512, 0), 512);
++	memset(recv_mem, 0, sizeof(recv_mem));
++	EXPECT_EQ(recv(self->cfd, recv_mem, sizeof(recv_mem), 0), 512);
++	EXPECT_EQ(memcmp(send_mem, recv_mem, 512), 0);
++
++	if (self->notls)
++		return;
++
++	EXPECT_EQ(send(self->fd, send_mem, 4096, 0), 4096);
++	memset(recv_mem, 0, sizeof(recv_mem));
++	EXPECT_EQ(recv(self->cfd, recv_mem, sizeof(recv_mem), 0), -1);
++	EXPECT_EQ(errno, EMSGSIZE);
++
++	EXPECT_EQ(recv(self->cfd, recv_mem, sizeof(recv_mem), 0), -1);
++	EXPECT_EQ(errno, EMSGSIZE);
 +}
 +
-+/*
-  * Add a usage to the temporary parser table.
-  */
- 
-@@ -222,6 +234,14 @@ static int hid_add_usage(struct hid_pars
- 		return -1;
- 	}
- 	parser->local.usage[parser->local.usage_index] = usage;
-+
-+	/*
-+	 * If Usage item only includes usage id, concatenate it with
-+	 * currently defined usage page
-+	 */
-+	if (size <= 2)
-+		complete_usage(parser, parser->local.usage_index);
-+
- 	parser->local.usage_size[parser->local.usage_index] = size;
- 	parser->local.collection_index[parser->local.usage_index] =
- 		parser->collection_stack_ptr ?
-@@ -543,13 +563,32 @@ static int hid_parser_local(struct hid_p
-  * usage value."
-  */
- 
--static void hid_concatenate_usage_page(struct hid_parser *parser)
-+static void hid_concatenate_last_usage_page(struct hid_parser *parser)
+ TEST_F(tls, bidir)
  {
- 	int i;
-+	unsigned int usage_page;
-+	unsigned int current_page;
-+
-+	if (!parser->local.usage_index)
-+		return;
- 
--	for (i = 0; i < parser->local.usage_index; i++)
--		if (parser->local.usage_size[i] <= 2)
--			parser->local.usage[i] += parser->global.usage_page << 16;
-+	usage_page = parser->global.usage_page;
-+
-+	/*
-+	 * Concatenate usage page again only if last declared Usage Page
-+	 * has not been already used in previous usages concatenation
-+	 */
-+	for (i = parser->local.usage_index - 1; i >= 0; i--) {
-+		if (parser->local.usage_size[i] > 2)
-+			/* Ignore extended usages */
-+			continue;
-+
-+		current_page = parser->local.usage[i] >> 16;
-+		if (current_page == usage_page)
-+			break;
-+
-+		complete_usage(parser, i);
-+	}
- }
- 
- /*
-@@ -561,7 +600,7 @@ static int hid_parser_main(struct hid_pa
- 	__u32 data;
- 	int ret;
- 
--	hid_concatenate_usage_page(parser);
-+	hid_concatenate_last_usage_page(parser);
- 
- 	data = item_udata(item);
- 
-@@ -772,7 +811,7 @@ static int hid_scan_main(struct hid_pars
- 	__u32 data;
- 	int i;
- 
--	hid_concatenate_usage_page(parser);
-+	hid_concatenate_last_usage_page(parser);
- 
- 	data = item_udata(item);
- 
+ 	char const *test_str = "test_read";
 
 
