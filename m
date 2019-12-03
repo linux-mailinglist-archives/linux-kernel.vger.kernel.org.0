@@ -2,256 +2,306 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0144310FB0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B913C10FB17
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 10:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfLCJt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 04:49:28 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36009 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbfLCJt1 (ORCPT
+        id S1726418AbfLCJuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 04:50:05 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:18874 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfLCJuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 04:49:27 -0500
-Received: by mail-io1-f65.google.com with SMTP id l17so3001319ioj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 01:49:27 -0800 (PST)
+        Tue, 3 Dec 2019 04:50:04 -0500
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: k3I2UDY5nNAVbx9xrj37ZTrVji8M+6+pG3sZ4Rnqxk425cZAzGtI8NFRqLXkkFknK+KQpwTGBI
+ niYAtpou9xstgzKOVonpigAZlKWuwl+bDsCoYYqTclDQ9S/fSdPhZO4Sjyw8O3UGAS2CYTQ/5Z
+ vL2pK+zZj+x8r9RiDJFGKOFRw54PXXy2rimItyeIdu895LXCF0NuG5G2XkvvOvEkQ4FHIKGzQR
+ 3EF5XWsm/jtRWUGWt/Pe+lL2SIaLgGcli5sBzzRo4P5W4TJ/D/TDNHVgWcdAksZlCTBXMQu+1P
+ bm0=
+X-IronPort-AV: E=Sophos;i="5.69,272,1571727600"; 
+   d="scan'208";a="57283125"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Dec 2019 02:50:03 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 3 Dec 2019 02:50:00 -0700
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 3 Dec 2019 02:50:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eRq0IBK3C0TztkifPqpFrEr8NtMspTIFj2pxTq3SXEq/NuuqiGdVw+XKpwCE/Ty3c6Yjqf59fTxxrnOFKdbBnIVjipaVNZkWRox32k3Jka3r0tggdo46F0qIhLDYxDki7F6XdWdPnZDzPzxBg6PQXvLnEtHOZCJUkvyt9wsKFSIURjN3OtVCw/O2A7ju0IvPFr0nxJFsWQEYzH4NpFh8q1lDTMaKdFvk8VYrxloruk26N7/YsqaVYx4GFk55APFtjuAKHdqLY8QNIhoSmbxkCOtI6RSNSUoRfaROXxGVTO0sBFWaQ3Nj56LtJXgCOF40P5e5lwFbkePyh0uPRKJ10Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nCHpQWuvinieAHwdCTciUjXFfyzTGM5bW4PxulzEBm8=;
+ b=DwFJnPSKpBTBy96tzK0jCjdch6Vo7blq9YU4Sq1WcopT6VDcQb46i/xnAL0l+4Z5ni/Ft9IriIWOBqQqGPD0PmXCx0VfWQZVLSd2wwW5CY+AhStHmnf+VbZGJO/EtEhR3H+5wrwuu7PvHjkxHPWkNyRNGRgnWpvl7i7Ab4scTug4YQ0MYLsVkFfeYdR6VTauTjAaktrr4tl8UVp4FijJpUcCy81NR6E/6iHWokWfCKVSHrlNeHXqdv0sCyjZxGo1q6oKxHLtGz8B4+FM7KuCJnMHfJYmALRpn4bejHiDeEdGdPvkaEVk/QzaZctH/WOn6Wdn1JKa2HNvP74LIgGH1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6aXIYJhJk7/8WEwP4jBXdYdOavwAluIwb+mxsH1scbY=;
-        b=Zz7hzYXFTOGzQiN4dOZsw0BipZPdfaJG2RF4YSLHZM0zGSqPB1tujOPLu99MAvvBVa
-         HolPnlveboPOQ1FMdO6YwSZ5M/FtthC0I2OqHxIfuAj+Pa2ueKgCDueoYFhKbmtxqQb4
-         oCUBBy1P1LCn3i1vnMT1hZm3iF/PbyNoDmWAMekJ0NGVlKYzgK7bk6I6rMrSt2AdXvY+
-         3TBsTwL5SPKdN8lp8QJsR9/Z7aw5wGuwLhM1IsdxfFO04OSIaRWK+Tdel2fCEAwdsTCR
-         6HsceOlQ2E988BzTZH3jw84QSGGl9zL1H4I9BvTSHuDiKLuGYa+MvH4mzMWCpkgtHyF/
-         yDyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6aXIYJhJk7/8WEwP4jBXdYdOavwAluIwb+mxsH1scbY=;
-        b=n0Ev12jZA/YOcEr/tysrecDoAmU6wnv7xC3WDIl/YDth0nTXK4/dv0HajXz2nRINWh
-         rd50CHbPQVjpT3p9nc1oabzviYdzA+A6dvWAr4FHY88v7AkAl0LZY3I46XTvbv+IJ0S6
-         0FXeZpbWzDAwatorWDSB06gsDZJva6oTIMu9BhI++C8F93b2pV2g2Sj5cLBnte9fC7oN
-         /38E+pWZgYo9h2C8SQVOO4/UjR2G+WgaNfDR/5pJncW0mtwB5rPLB/VWmK1FiUwF6sen
-         ugw/y1ApbEzqVe8z83DSKEXB7zirikiMXTS8Z/8jWl9zvuRcqn8RwfiFyY9B7HRLyi9G
-         8TMw==
-X-Gm-Message-State: APjAAAV90bfbm3NcX6/phpDmRav5CpwivFm2zUimLoqY+n1Gxg5EcRfK
-        7sSh29DmT8wX+dsA9vDC0HG5EWktss8WtB1AD2x8GIqB
-X-Google-Smtp-Source: APXvYqzKUkeFS68tcrD5KMLK2TmIdIHqUDU5TjdET6m8Y70R++JuYm15PgU/izlEixOZhvhIxHoC411n4I6jPkgxi48=
-X-Received: by 2002:a02:711d:: with SMTP id n29mr1159147jac.114.1575366566810;
- Tue, 03 Dec 2019 01:49:26 -0800 (PST)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nCHpQWuvinieAHwdCTciUjXFfyzTGM5bW4PxulzEBm8=;
+ b=rBOWgV3WJJ9r442ON9YpWuW+Q3Wq2Yx5qEAmT0Jny/J9NXO3+FGB/S8J/c/zzNcPS3q+s1gQKQmTsJKGqEAavrsda2yTHLr74pCu7Mp+5pE2bdye8WpN+9JCM+O0hK7q/cVwvBgqIhh73LYfFPbEKdquGMyZ4SLP56aLJJ45YiY=
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
+ DM5PR11MB1499.namprd11.prod.outlook.com (10.172.36.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.18; Tue, 3 Dec 2019 09:49:58 +0000
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::9039:e0e8:9032:20c1]) by DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::9039:e0e8:9032:20c1%12]) with mapi id 15.20.2495.014; Tue, 3 Dec 2019
+ 09:49:58 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <alexandru.Ardelean@analog.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
+CC:     <alexandre.belloni@bootlin.com>, <lars@metafoo.de>,
+        <Ludovic.Desroches@microchip.com>, <pmeerw@pmeerw.net>,
+        <knaack.h@gmx.de>, <jic23@kernel.org>
+Subject: Re: [PATCH] iio: at91-sama5d2_adc: fix
+ iio_triggered_buffer_{predisable,postenable} positions
+Thread-Topic: [PATCH] iio: at91-sama5d2_adc: fix
+ iio_triggered_buffer_{predisable,postenable} positions
+Thread-Index: AQHVo6GcybDu2MmyfkWfKAIGUFGv9aegRneAgABwyQCAAQdpgIAGeAaA
+Date:   Tue, 3 Dec 2019 09:49:58 +0000
+Message-ID: <60ce6ff9-ba06-2522-e9a0-55e6fd2731ec@microchip.com>
+References: <20191023082508.17583-1-alexandru.ardelean@analog.com>
+ <17cf55869cc418795d0013c0594ed8fc04381d46.camel@analog.com>
+ <9df3d999-0ec6-a282-d24b-8f7df5f14f6d@microchip.com>
+ <e43bf58f-223c-0b12-2912-6f353d866ec3@microchip.com>
+ <74aabb41107ab162660f21e726c88a9dd40ecc5e.camel@analog.com>
+In-Reply-To: <74aabb41107ab162660f21e726c88a9dd40ecc5e.camel@analog.com>
+Accept-Language: en-US, ro-RO
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: FR2P281CA0004.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a::14) To DM5PR11MB1242.namprd11.prod.outlook.com
+ (2603:10b6:3:14::8)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tagtoolbar-keys: D20191203114937754
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 604a65ff-6479-492b-c1a0-08d777d62891
+x-ms-traffictypediagnostic: DM5PR11MB1499:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR11MB149954344A3E74BC9233BBE8E8420@DM5PR11MB1499.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 02408926C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(136003)(366004)(51914003)(189003)(199004)(4001150100001)(86362001)(64756008)(66446008)(8936002)(31686004)(478600001)(2616005)(6116002)(36756003)(6306002)(71190400001)(71200400001)(3846002)(5660300002)(2501003)(99286004)(52116002)(6512007)(76176011)(14454004)(446003)(26005)(81156014)(6506007)(2906002)(7736002)(386003)(305945005)(81166006)(25786009)(5024004)(14444005)(53546011)(66556008)(66946007)(8676002)(966005)(11346002)(102836004)(256004)(186003)(229853002)(6436002)(31696002)(54906003)(6486002)(2201001)(4326008)(316002)(66476007)(6246003)(110136005)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB1499;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZKpkY9cG47JCb4MTO+ZACN+LJhd0kyqoAXUbHdiegvOzT0Gy2JtixWn42YUG084AwFD4DcQoAIaXdLKSmT0H13zf22rbJ/btY56oM5ll7gOWxg7+KPRpaWvIo2/fBLeziN7GW5bXMA+GVHEB9E0OCUGvuibVKFvMginwwgNereK1eZ1n+Rh3IGVCEj089vg5YH8HVZ9845ZksHsI4N7IU0ob4H0MEn3yujPmFX7yNbwv2BlVJqwBNDmrsWonlpTZeXkIolT1wOwIAAwmDwvd049FqDJ6ValccAG5yIy+BdSGRBS6ZV9FM/d3y/b0/A9ScHAX2aEZViNcOBDw7CKjGCr+RW+gqwFCV5Rsviuu57UF72HilJ9LveTuD+R7a6BFmDELc9uMNkqNTOjFn5V69G3lyw6/6iFrfKmvXlpiNmVBFS+zJytWrbLU6yXRluUOOgclgYOQP0bE8NrWDmcqKYABfXPbUGlqw8uaHzfVGY8=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <12988F83C52CD543A0F0CA2B4BDC8B92@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20191003092913.10731-1-brgl@bgdev.pl> <20191003092912.G3pupKBmyct1r9ScP5Skuw9D-_ALcMVSnfMfHAlwe0Y@z>
- <20191202041440.GA1628@roeck-us.net> <CAMpxmJW3i4zmJJ14Xg65+T27kF3sgR1WG0K3FUT6+jeKtiHx=Q@mail.gmail.com>
- <3f8ffe03-98b8-423a-7cba-53961a5600cb@roeck-us.net> <CAMpxmJUmTF3FwacjvTrC+Vvzm8MscS9E=ZyWLbJV87LkQhqVow@mail.gmail.com>
- <5e7aafc9-deb9-9305-afea-2c86e310683f@roeck-us.net>
-In-Reply-To: <5e7aafc9-deb9-9305-afea-2c86e310683f@roeck-us.net>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 3 Dec 2019 10:49:15 +0100
-Message-ID: <CAMRc=MebSL+WA-nHFkaUd0rHTmwLkv2e16D9oO1=PY8-sPnzzQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] drivers: move the early platform device support to arch/sh
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Slaby <jslaby@suse.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-Network-Message-Id: 604a65ff-6479-492b-c1a0-08d777d62891
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 09:49:58.5151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SKxejQvcLyUw/Jp6KQGsperDqb5uSDTBi8CO+KyGvRLrc+DxwOAwvosay6q9xYlAGA2/YLHgXogsboAsdqxVfT8U/BpxOmNjpmM46hY97xg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1499
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 3 gru 2019 o 06:24 Guenter Roeck <linux@roeck-us.net> napisa=C5=82(a):
->
-> On 12/2/19 9:18 AM, Bartosz Golaszewski wrote:
-> > pon., 2 gru 2019 o 14:03 Guenter Roeck <linux@roeck-us.net> napisa=C5=
-=82(a):
-> >>
-> >> On 12/1/19 11:40 PM, Bartosz Golaszewski wrote:
-> >>> pon., 2 gru 2019 o 05:14 Guenter Roeck <linux@roeck-us.net> napisa=C5=
-=82(a):
-> >>>>
-> >>>> On Thu, Oct 03, 2019 at 11:29:12AM +0200, Bartosz Golaszewski wrote:
-> >>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>>>>
-> >>>>> SuperH is the only user of the current implementation of early plat=
-form
-> >>>>> device support. We want to introduce a more robust approach to earl=
-y
-> >>>>> probing. As the first step - move all the current early platform co=
-de
-> >>>>> to arch/sh.
-> >>>>>
-> >>>>> In order not to export internal drivers/base functions to arch code=
- for
-> >>>>> this temporary solution - copy the two needed routines for driver
-> >>>>> matching from drivers/base/platform.c to arch/sh/drivers/platform_e=
-arly.c.
-> >>>>>
-> >>>>> Also: call early_platform_cleanup() from subsys_initcall() so that =
-it's
-> >>>>> called after all early devices are probed.
-> >>>>>
-> >>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>>>
-> >>>> Wondering ... has anyone tested this patch on affected hardware ?
-> >>>> All my qemu boot tests (both sh and sheb) fail because of it.
-> >>>> Bisect log below.
-> >>>>
-> >>>> Guenter
-> >>>>
-> >>>> ---
-> >>>> # bad: [72c0870e3a05d9cd5466d08c3d2a3069ed0a2f9f] Merge branch 'for-=
-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
-> >>>> # good: [89d57dddd7d319ded00415790a0bb3c954b7e386] Merge tag 'media/=
-v5.5-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-medi=
-a
-> >>>> git bisect start 'HEAD' '89d57dddd7d3'
-> >>>> # good: [0a6cad5df541108cfd3fbd79eef48eb824c89bdc] Merge branch 'vmw=
-gfx-coherent' of git://people.freedesktop.org/~thomash/linux into drm-next
-> >>>> git bisect good 0a6cad5df541108cfd3fbd79eef48eb824c89bdc
-> >>>> # bad: [9a3d7fd275be4559277667228902824165153c80] Merge tag 'driver-=
-core-5.5-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/drive=
-r-core
-> >>>> git bisect bad 9a3d7fd275be4559277667228902824165153c80
-> >>>> # good: [59274c7164807d27b24e6c068dfe734f7bea4623] Merge tag 'usb-5.=
-5-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb
-> >>>> git bisect good 59274c7164807d27b24e6c068dfe734f7bea4623
-> >>>> # good: [e71903106721dc53923e90aa484d78bc86c039a9] staging: mt7621-d=
-ma: align to match open parenthesis
-> >>>> git bisect good e71903106721dc53923e90aa484d78bc86c039a9
-> >>>> # good: [8f56e4ebe05c26c30e167519273843476e39e244] Merge tag 'char-m=
-isc-5.5-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-m=
-isc
-> >>>> git bisect good 8f56e4ebe05c26c30e167519273843476e39e244
-> >>>> # good: [8bde9f3d2a217d1635a7c7bdf8ad4c25c9a34b50] Merge tag 'iio-fo=
-r-5.5c' of https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio into s=
-taging-next
-> >>>> git bisect good 8bde9f3d2a217d1635a7c7bdf8ad4c25c9a34b50
-> >>>> # bad: [0628cda318df6baec439ca6e6e274007492f1ccd] mac80211: Use debu=
-gfs_create_xul() helper
-> >>>> git bisect bad 0628cda318df6baec439ca6e6e274007492f1ccd
-> >>>> # bad: [03324507e66c7664c754b1ef92c5c3be24c78aa2] driver core: Allow=
- fwnode_operations.add_links to differentiate errors
-> >>>> git bisect bad 03324507e66c7664c754b1ef92c5c3be24c78aa2
-> >>>> # bad: [313f5dbba41d905d59c820bb2d91ee6c661aff99] debugfs: remove re=
-turn value of debugfs_create_u16()
-> >>>> git bisect bad 313f5dbba41d905d59c820bb2d91ee6c661aff99
-> >>>> # good: [d4387cd117414ba80230f27a514be5ca4a09cfcc] of: property: Cre=
-ate device links for all child-supplier depencencies
-> >>>> git bisect good d4387cd117414ba80230f27a514be5ca4a09cfcc
-> >>>> # bad: [c31e73121f4c1ec45a3e523ac6ce3ce6dafdcec1] base: soc: Handle =
-custom soc information sysfs entries
-> >>>> git bisect bad c31e73121f4c1ec45a3e523ac6ce3ce6dafdcec1
-> >>>> # bad: [201e91091b1d47047f55580b5474e1239f4d17aa] sh: add the sh_ pr=
-efix to early platform symbols
-> >>>> git bisect bad 201e91091b1d47047f55580b5474e1239f4d17aa
-> >>>> # bad: [507fd01d5333338753a1cc26322dfc9f856c109f] drivers: move the =
-early platform device support to arch/sh
-> >>>> git bisect bad 507fd01d5333338753a1cc26322dfc9f856c109f
-> >>>> # first bad commit: [507fd01d5333338753a1cc26322dfc9f856c109f] drive=
-rs: move the early platform device support to arch/sh
-> >>>
-> >>> Hi Guenter,
-> >>>
-> >>> can you post some bootlogs? Is it the same problem everywhere?
-> >>>
-> >>
-> >> I don't have any useful logs. The boot fails too early for that.
-> >>
-> >
-> > Yeah, it touched "early" devices after all...
-> >
-> >> Sorry, I don't understand "everywhere". It fails in mainline and -next=
-, if that is what you mean.
-> >
-> > I referred to "All my qemu boot tests" when saying everywhere.
-> >
-> > I don't have any relevant HW - the idea for this patch is to stop
-> > compiling for everyone a bunch of code that's only used by one largely
-> > irrelevant architecture and free the namespace for a generic early
-> > platform drivers implementation.
-> >
-> > How are you creating your SH qemu images? I'm seeing there's something
-> > in buildroot for superh - maybe I'll be able to bearly_platform_cleanup=
-uild something
-> > useful.
-> >
->
-> Below is a possible fix. As I had suspected, the call to early_platform_c=
-leanup()
-> is in the wrong place.
->
-
-This makes sense. If it fixes the issue - do you want to send it to Greg?
-
-Bart
-
-> Guenter
->
-> ---
->   arch/sh/drivers/platform_early.c | 11 ++---------
->   drivers/base/platform.c          |  4 ++++
->   2 files changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/sh/drivers/platform_early.c b/arch/sh/drivers/platform_=
-early.c
-> index f6d148451dfc..16f33bffd8fc 100644
-> --- a/arch/sh/drivers/platform_early.c
-> +++ b/arch/sh/drivers/platform_early.c
-> @@ -325,9 +325,9 @@ int __init sh_early_platform_driver_probe(char *class=
-_str,
->   }
->
->   /**
-> - * sh_early_platform_cleanup - clean up early platform code
-> + * early_platform_cleanup - clean up early platform code
->    */
-> -static int __init sh_early_platform_cleanup(void)
-> +void early_platform_cleanup(void)
->   {
->         struct platform_device *pd, *pd2;
->
-> @@ -337,11 +337,4 @@ static int __init sh_early_platform_cleanup(void)
->                 list_del(&pd->dev.devres_head);
->                 memset(&pd->dev.devres_head, 0, sizeof(pd->dev.devres_hea=
-d));
->         }
-> -
-> -       return 0;
->   }
-> -/*
-> - * This must happen once after all early devices are probed but before p=
-robing
-> - * real platform devices.
-> - */
-> -subsys_initcall(sh_early_platform_cleanup);
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 7c532548b0a6..3ba153e356ee 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -1325,10 +1325,14 @@ struct device *platform_find_device_by_driver(str=
-uct device *start,
->   }
->   EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
->
-> +void __weak early_platform_cleanup(void) { }
-> +
->   int __init platform_bus_init(void)
->   {
->         int error;
->
-> +       early_platform_cleanup();
-> +
->         error =3D device_register(&platform_bus);
->         if (error) {
->                 put_device(&platform_bus);
->
+DQoNCk9uIDI5LjExLjIwMTkgMDk6MDIsIEFyZGVsZWFuLCBBbGV4YW5kcnUgd3JvdGU6DQoNCj4g
+T24gVGh1LCAyMDE5LTExLTI4IGF0IDE1OjE5ICswMDAwLCBFdWdlbi5IcmlzdGV2QG1pY3JvY2hp
+cC5jb20gd3JvdGU6DQo+Pg0KPiANCj4gSGV5LA0KPiANCj4gU29ycnkgZm9yIHRoZSBsYXRlIHJl
+cGx5Lg0KPiBJJ20gYWxzbyBqdWdnbGluZyBhIGZldyB0aGluZ3MuDQo+IA0KPj4NCj4+IE9uIDI4
+LjExLjIwMTkgMTA6MzYsIEV1Z2VuLkhyaXN0ZXZAbWljcm9jaGlwLmNvbSB3cm90ZToNCj4+DQo+
+Pj4gT24gMjUuMTEuMjAxOSAxNzowMywgQXJkZWxlYW4sIEFsZXhhbmRydSB3cm90ZToNCj4+Pj4g
+T24gV2VkLCAyMDE5LTEwLTIzIGF0IDExOjI1ICswMzAwLCBBbGV4YW5kcnUgQXJkZWxlYW4gd3Jv
+dGU6DQo+Pj4+PiBUaGUgaWlvX3RyaWdnZXJlZF9idWZmZXJfe3ByZWRpc2FibGUscG9zdGVuYWJs
+ZX0gZnVuY3Rpb25zDQo+Pj4+PiBhdHRhY2gvZGV0YWNoDQo+Pj4+PiBwb2xsIGZ1bmN0aW9ucy4N
+Cj4+Pj4+DQo+Pj4+PiBUaGUgaWlvX3RyaWdnZXJlZF9idWZmZXJfcG9zdGVuYWJsZSgpIHNob3Vs
+ZCBiZSBjYWxsZWQgZmlyc3QgdG8NCj4+Pj4+IGF0dGFjaA0KPj4+Pj4gdGhlDQo+Pj4+PiBwb2xs
+IGZ1bmN0aW9uLCBhbmQgdGhlbiB0aGUgZHJpdmVyIGNhbiBpbml0IHRoZSBkYXRhIHRvIGJlDQo+
+Pj4+PiB0cmlnZ2VyZWQuDQo+Pj4+Pg0KPj4+Pj4gU2ltaWxhcmx5LCBpaW9fdHJpZ2dlcmVkX2J1
+ZmZlcl9wcmVkaXNhYmxlKCkgc2hvdWxkIGJlIGNhbGxlZCBsYXN0DQo+Pj4+PiB0bw0KPj4+Pj4g
+Zmlyc3QNCj4+Pj4+IGRpc2FibGUgdGhlIGRhdGEgKHRvIGJlIHRyaWdnZXJlZCkgYW5kIHRoZW4g
+dGhlIHBvbGwgZnVuY3Rpb24NCj4+Pj4+IHNob3VsZCBiZQ0KPj4+Pj4gZGV0YWNoZWQuDQo+Pj4N
+Cj4+PiBIaSBBbGV4YW5kcnUsDQo+Pj4NCj4+PiBTb3JyeSBmb3IgdGhpcyBsYXRlIHJlcGx5LA0K
+Pj4+DQo+Pj4gSSByZW1lbWJlciB0aGF0IGJ5IGFkZGluZyBzcGVjaWZpYyBhdDkxX2FkYyBjb2Rl
+IGZvcg0KPj4+IHByZWRpc2FibGUvcG9zdGVuYWJsZSAsIEkgd2FzIHJlcGxhY2luZyB0aGUgZXhp
+c3Rpbmcgc3RhbmRhcmQgY2FsbGJhY2sNCj4+PiB3aXRoIG15IG93biwgYW5kIGhhdmUgbXkgc3Bl
+Y2lmaWMgYXQ5MSBjb2RlIGJlZm9yZSBwb3N0ZW5hYmxlIGFuZCB0aGVuDQo+Pj4gY2FsbGluZyB0
+aGUgc3Vic3lzdGVtIHBvc3RlbmFibGUsDQo+Pj4gYW5kIGluIHNpbWlsYXIgd2F5LCBmb3IgcHJl
+ZGlzYWJsZSwgZmlyc3QgY2FsbCB0aGUgc3Vic3lzdGVtIHByZWRpc2FibGUNCj4+PiB0aGVuIGRv
+aW5nIG15IHByZWRpc2FibGUgY29kZSAoaW4gcmV2ZXJzZSBvcmRlciBhcyBpbiBwb3N0ZW5hYmxl
+KQ0KPj4+DQo+Pj4gSWYgeW91IHNheSB0aGUgb3JkZXIgc2hvdWxkIGJlIHJldmVyc2VkIChiYXNp
+Y2FsbHkgaGF2ZSB0aGUNCj4+PiBwb2xsZnVuY3Rpb24NCj4+PiBmaXJzdCksIGhvdyBpcyBjdXJy
+ZW50IGNvZGUgd29ya2luZyA/DQo+Pj4gU2hvdWxkIGN1cnJlbnQgY29kZSBmYWlsIGlmIHRoZSBw
+b2xsIGZ1bmN0aW9uIGlzIG5vdCBhdHRhY2hlZCBpbiB0aW1lID8NCj4+PiBPciB0aGVyZSBpcyBh
+IHJhY2UgYmV0d2VlbiB0cmlnZ2VyZWQgZGF0YSBhbmQgdGhlIGF0dGFjaG1lbnQgb2YgdGhlDQo+
+Pj4gcG9sbGZ1bmMgPw0KPj4+DQo+Pj4gSSBhbSB0aGlua2luZyB0aGF0IGF0dGFjaGluZyB0aGUg
+cG9sbGZ1bmMgbGF0ZXIgbWFrZXMgaXQgd29yayBiZWNhdXNlDQo+Pj4gdGhlIERNQSBpcyBub3Qg
+c3RhcnRlZCB5ZXQuIFdoYXQgaGFwcGVucyBpZiB3ZSBoYXZlIHRoZSBwb2xsZnVuYw0KPj4+IGF0
+dGFjaGVkIGJ1dCBETUEgaXMgbm90IHN0YXJ0ZWQgKGJhc2ljYWxseSB0aGUgdHJpZ2dlciBpcyBu
+b3Qgc3RhcnRlZCkNCj4+PiAsDQo+Pj4gY2FuIHRoaXMgbGVhZCB0byB1bmV4cGVjdGVkIGJlaGF2
+aW9yID8gTGlrZSB0aGUgcG9sbGZ1bmMgcG9sbGluZyBidXQgbm8NCj4+PiB0cmlnZ2VyIHN0YXJ0
+ZWQvbm8gRE1BIHN0YXJ0ZWQuDQo+Pg0KPj4gSSBsb29rZWQgYSBiaXQgbW9yZSBpbnRvIHRoZSBj
+b2RlIGFuZCBpbiBETUEgY2FzZSwgdXNpbmcgcG9zdGVuYWJsZQ0KPj4gZmlyc3Qgd2lsbCBsZWFk
+IHRvIGNhbGxpbmcgYXR0YWNoIHBvbGxmdW5jLCB3aGljaCB3aWxsIGFsc28gZW5hYmxlIHRoZQ0K
+Pj4gdHJpZ2dlciwgYnV0IHRoZSBETUEgaXMgbm90IHlldCBzdGFydGVkLg0KPj4gSXMgdGhpcyB0
+aGUgZGVzaXJlZCBlZmZlY3QgPw0KPiANCj4gWWVzLg0KDQpIb3cgaXMgdGhpcyBjb3JyZWN0ID8g
+V2Ugc3RhcnQgdGhlIHRyaWdnZXIgYnV0IGhhdmUgbm8gYnVmZmVyIHRvIGNhcnJ5IA0KdG8uLi4g
+d2hhdCBoYXBwZW5zIHdpdGggdGhlIGRhdGEgPyAtPiBJIHRoaW5rIHdlIGJvdGggaGF2ZSBhbiBh
+bnN3ZXIgdG8gDQp0aGF0LCBhcyB5b3Ugc3RhdGUgYmVsb3cNCg0KPiANCj4+IE5vcm1hbGx5IHdo
+ZW4gdXNpbmcgRE1BIEkgd291bGQgc2F5IHdlDQo+PiB3b3VsZCBuZWVkIHRvIGVuYWJsZSBETUEg
+Zmlyc3QgdG8gYmUgcmVhZHkgdG8gY2FycnkgZGF0YSAoYW5kIGNvaGVyZW50DQo+PiBhcmVhIGV0
+Yy4pIGFuZCB0aGVuIGVuYWJsZSB0aGUgdHJpZ2dlci4NCj4gDQo+IFNvLCB0aGVyZSBpcyBhIGNo
+YW5nZSBpbiBvdXIgdHJlZSBbZnJvbSBzb21lIHRpbWUgYWdvXS4NCj4gU2VlIGhlcmU6DQo+IGh0
+dHBzOi8vZ2l0aHViLmNvbS9hbmFsb2dkZXZpY2VzaW5jL2xpbnV4L2NvbW1pdC9lZWU5N2QxMjY2
+NWZlZjhjZjQyOWExZTUwMzViMjNhZTk2OTcwNWI4DQo+IA0KPiBQYXJ0aWN1bGFybHksIHdoYXQn
+cyBpbnRlcmVzdGluZyBpcyBhcm91bmQgbGluZToNCj4gaHR0cHM6Ly9naXRodWIuY29tL2FuYWxv
+Z2RldmljZXNpbmMvbGludXgvY29tbWl0L2VlZTk3ZDEyNjY1ZmVmOGNmNDI5YTFlNTAzNWIyM2Fl
+OTY5NzA1YjgjZGlmZi0wYTg3NzQ0Y2U5NDVkMmMxYzg5ZWExOWYyMWZiMzViYlI3MjINCj4gQW5k
+IHlvdSBtYXkgbmVlZCB0byBleHBhbmQgc29tZSBzdHVmZiB0byBzZWUgbW9yZSBvZiB0aGUgZnVu
+Y3Rpb24tYm9keS4NCj4gQW5kIHNvbWUgdGhpbmdzIG1heSBoYXZlIGNoYW5nZWQgaW4gdXBzdHJl
+YW0gSUlPIHNpbmNlIHRoYXQgY2hhbmdlLg0KPiANCj4gVGhlIGNoYW5nZSBpcyB0byBtYWtlIHRo
+ZSBwb2xsZnVuYyBhdHRhY2gvZGV0YWNoIGJlY29tZSBwYXJ0IG9mIHRoZSBJSU8NCj4gZnJhbWV3
+b3JrLCBiZWNhdXNlIHBsZW50eSBvZiBkcml2ZXJzIGp1c3QgY2FsbA0KPiBpaW9fdHJpZ2dlcmVk
+X2J1ZmZlcl9wb3N0ZW5hYmxlKCkgJiBpaW9fdHJpZ2dlcmVkX2J1ZmZlcl9wcmVkaXNhYmxlKCkg
+dG8NCj4gbWFudWFsbHkgYXR0YWNoL2RldGFjaCB0aGUgcG9sbGZ1bmMgZm9yIHRyaWdnZXJlZCBi
+dWZmZXJzLg0KDQpPa2F5LCBJIHVuZGVyc3RhbmQgdGhpcy4gYXQ5MS1zYW1hNWQyX2FkYyBkb2Vz
+IG5vdCBtYW51YWxseSANCmF0dGFjaC9kZXRhY2ggdGhlIHBvbGxmdW5jLiBTbyB3aHkgZG8gd2Ug
+bmVlZCB0byBjaGFuZ2UgYW55dGhpbmcgaGVyZSA/DQoNCg0KPiANCj4gVGhhdCBjaGFuZ2UgaXMg
+ZnJvbSAyMDE1LCBhbmQgc2luY2UgdGhlbiwgc29tZSBkcml2ZXJzIHdlcmUgYWRkZWQgdGhhdCBq
+dXN0DQo+IG1hbnVhbGx5IGF0dGFjaC9kZXRhY2ggdGhlIHBvbGxmdW5jIFthbmQgZG8gbm90aGlu
+ZyBtb3JlIHdpdGggdGhlDQo+IHBvc3RlbmFibGUvcHJlZGlzYWJsZSBob29rc10uDQo+IA0KPiBJ
+IHRyaWVkIHRvIHVwc3RyZWFtIGEgbW9yZSBjb21wbGV0ZSB2ZXJzaW9uIG9mIHRoYXQgcGF0Y2gg
+YSB3aGlsZSBhZ28gW3UxXS4NCj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8x
+MDQ4MjE2Ny8NCj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDczNzI5MS8N
+Cj4gDQo+IFRoZSBjb25jbHVzaW9uIHdhcyB0byBmaXJzdCBmaXggdGhlIGF0dGFjaC9kZXRhY2gg
+cG9sbGZ1bmMgb3JkZXIgaW4gYWxsIElJTw0KPiBkcml2ZXJzLCBzbyB0aGF0IHdoZW4gcGF0Y2gg
+W3UxXSBpcyBhcHBsaWVkLCB0aGVyZSBpcyBubyBtb3JlIGRpc2N1c3Npb24NCj4gYWJvdXQgdGhl
+IGNvcnJlY3Qgb3JkZXIgZm9yIGF0dGFjaC9kZXRhY2ggcG9sbGZ1bmMuDQoNCkFsbHJpZ2h0LCB3
+aGF0IGlzIHJlcXVpcmVkIHRvIGJlIGZpeGVkIHJlZ2FyZGluZyB0aGUgb3JkZXIsIGluIHRoaXMg
+DQpzcGVjaWZpYyBjYXNlPyBXZSBlbmFibGUgdGhlIERNQSwgYW5kIHRoZW4gd2UgZG8gdGhlIG5v
+cm1hbCAncG9zdGVuYWJsZScgDQp0aGF0IHdhcyBjYWxsZWQgYW55d2F5IGlmIHdlIGRpZCBub3Qg
+b3ZlcnJpZGUgdGhlICdwb3N0ZW5hYmxlJyBpbiB0aGUgDQpvcHMuIERvIHlvdSB3YW50IHRvIG1v
+dmUgdGhpcyBjb2RlIHRvICdwcmVlbmFibGUnIGFuZCBrZWVwICdwb3N0ZW5hYmxlJyANCnRvIHRo
+ZSBzdGFuZGFyZCBzdWJzeXN0ZW0gb25lID8NCg0KVGhlIHNhbWUgYXBwbGllcyB0byB0aGUgcHJl
+ZGlzYWJsZSwgd2UgZmlyc3QgY2FsbCB0aGUgc3Vic3lzdGVtIA0KJ3ByZWRpc2FibGUnIHRoZW4g
+ZG8gdGhlIHNwZWNpZmljIGF0OTEgc3R1ZmYuIFlvdSB3YW50IHRvIG1vdmUgdGhpcyB0byANCnRo
+ZSAncG9zdGRpc2FibGUnID8NCg0KSSB0aGluayByZXZlcnRpbmcgdGhlIG9yZGVyIGluc2lkZSB0
+aGUgZnVuY3Rpb25zIHRoZW1zZWx2ZXMgaXMgbm90IGdvb2QgDQphcyB3ZSByZXBsYWNlIHRoZSBv
+cmRlciBvZiBzdGFydGluZyB0cmlnZ2VyL0RNQSBzZXR1cC4NClNvLCBjb21pbmcgdG8geW91ciBx
+dWVzdGlvbiBiZWxvdy4uLg0KDQo+IA0KPiBDb21pbmcgYmFjayBoZXJlIFthbmQgdG8geW91ciBx
+dWVzdGlvbl0sIG15IGFuc3dlciBpczogSSBkb24ndCBrbm93IGlmIHRoZQ0KPiBhdDkxIERNQSBu
+ZWVkcyB0byBiZSBlbmFibGVkL2Rpc2FibGVkIGJlZm9yZS9hZnRlciB0aGUgcG9sbGZ1bmMNCj4g
+YXR0YWNoL2RldGFjaC4NCj4gVGhpcyBzb3VuZHMgbGlrZSBzcGVjaWZpYyBzdHVmZiBmb3IgYXQ5
+MSBbd2hpY2ggaXMgZmluZV0uDQo+IA0KPiBJdCBjb3VsZCBiZSB0aGF0IHNvbWUgb3RoZXIgaG9v
+a3MgbWF5IG5lZWQgdG8gdXNlZCB0byBlbmFibGUgRE1BDQo+IGJlZm9yZS9hZnRlciB0aGUgYXR0
+YWNoL2RldGFjaCBwb2xsZnVuYy4gTWF5YmUgcHJlZW5hYmxlKCkvcG9zdGRpc2FibGUoKSA/DQo+
+IA0KPiBJbiBhbnkgY2FzZSwgd2hhdCBJIHdvdWxkIGxpa2UgW3dpdGggdGhpcyBkaXNjdXNzaW9u
+XSwgaXMgdG8gcmVzb2x2ZSBhDQo+IHNpdHVhdGlvbiB3aGVyZSB3ZSBjYW4gZ2V0IGNsb3NlciB0
+byBtb3ZpbmcgdGhlIGF0dGFjaC9wb2xsZnVuYyBjb2RlIHRvIElJTw0KPiBjb3JlLiBTbywgaWYg
+QVQ5MSByZXF1aXJlcyBhIGRpZmZlcmVudCBvcmRlcmluZywgSSB0aGluayB5b3Ugd291bGQgYmUg
+bW9yZQ0KPiBhcHByb3ByaWF0ZSB0byB0ZWxsIG1lLCBhbmQgcHJvcG9zZSBhbiBhbHRlcm5hdGl2
+ZSB0byB0aGlzIHBhdGNoLg0KDQouLi4geWVzLCB0aGlzIGxvb2tzIG1vcmUgYXBwcm9wcmlhdGUs
+IHRvIG1vdmUgdGhpbmdzIHRvIA0KJ3ByZWVuYWJsZS9wb3N0ZGlzYWJsZScsIGlmIHlvdSBmZWVs
+IGxpa2UgJ3Bvc3RlbmFibGUvcHJlZGlzYWJsZScgaXMgbm90IA0KdGhlIHByb3BlciBwbGFjZSB0
+byBwdXQgdGhlbS4NCkJ1dCB0aGUgb3JkZXIgaXRzZWxmLCBmaXJzdCBlbmFibGUgRE1BIHRoZW4g
+dHJpZ2dlciwgYW5kIGRpc2FibGUgaW4gDQpyZXZlcnNlIG9yZGVyLCBJIGRvIG5vdCB0aGluayB0
+aGVyZSBpcyBhbnl0aGluZyB3cm9uZyB3aXRoIHRoYXQ/IEFtIEkgDQptaXN1bmRlcnN0YW5kaW5n
+ID8NCg0KSWYgSm9uYXRoYW4gb3IgTHVkb3ZpYyBoYXZlIGEgZGlmZmVyZW50IGlkZWEsIHBsZWFz
+ZSBsZXQgbWUga25vdy4NCg0KQWxzbywgSSBjYW4gdGVzdCB5b3VyIHBhdGNoIHRvIHNlZSBpZiBl
+dmVyeXRoaW5nIGlzIGZpbmUuDQoNClRoYW5rcywNCkV1Z2VuDQoNCj4gDQo+IFRoYW5rcyA6KQ0K
+PiBBbGV4DQo+IA0KPj4NCj4+Pj4+IEZvciB0aGlzIGRyaXZlciwgdGhlIHByZWRpc2FibGUgJiBw
+b3N0ZW5hYmxlIGhvb2tzIGFyZSBhbHNvIG5lZWQgdG8NCj4+Pj4+IHRha2UNCj4+Pj4+IGludG8g
+Y29uc2lkZXJhdGlvbiB0aGUgdG91Y2hzY3JlZW4sIHNvIHRoZSBob29rcyBuZWVkIHRvIGJlIHB1
+dCBpbg0KPj4+Pj4gcGxhY2VzDQo+Pj4+PiB0aGF0IGF2b2lkIHRoZSBjb2RlIGZvciB0aGF0IGNh
+cmVzIGFib3V0IGl0Lg0KPj4+Pj4NCj4+Pj4NCj4+Pj4gcGluZyBoZXJlDQo+Pj4+DQo+Pj4+PiBT
+aWduZWQtb2ZmLWJ5OiBBbGV4YW5kcnUgQXJkZWxlYW4gPGFsZXhhbmRydS5hcmRlbGVhbkBhbmFs
+b2cuY29tPg0KPj4+Pj4gLS0tDQo+Pj4+PiAgICAgZHJpdmVycy9paW8vYWRjL2F0OTEtc2FtYTVk
+Ml9hZGMuYyB8IDE5ICsrKysrKysrKystLS0tLS0tLS0NCj4+Pj4+ICAgICAxIGZpbGUgY2hhbmdl
+ZCwgMTAgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkNCj4+Pj4+DQo+Pj4+PiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9paW8vYWRjL2F0OTEtc2FtYTVkMl9hZGMuYw0KPj4+Pj4gYi9kcml2ZXJz
+L2lpby9hZGMvYXQ5MS0NCj4+Pj4+IHNhbWE1ZDJfYWRjLmMNCj4+Pj4+IGluZGV4IGUxODUwZjNk
+NWNmMy4uYWMzZTVjNGM5ODQwIDEwMDY0NA0KPj4+Pj4gLS0tIGEvZHJpdmVycy9paW8vYWRjL2F0
+OTEtc2FtYTVkMl9hZGMuYw0KPj4+Pj4gKysrIGIvZHJpdmVycy9paW8vYWRjL2F0OTEtc2FtYTVk
+Ml9hZGMuYw0KPj4+Pj4gQEAgLTg4OSwyMCArODg5LDI0IEBAIHN0YXRpYyBpbnQgYXQ5MV9hZGNf
+YnVmZmVyX3Bvc3RlbmFibGUoc3RydWN0DQo+Pj4+PiBpaW9fZGV2ICppbmRpb19kZXYpDQo+Pj4+
+PiAgICAgICAgICBpZiAoIShpbmRpb19kZXYtPmN1cnJlbnRtb2RlICYgSU5ESU9fQUxMX1RSSUdH
+RVJFRF9NT0RFUykpDQo+Pj4+PiAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOw0KPj4+
+Pj4NCj4+Pj4+ICsgICAgIHJldCA9IGlpb190cmlnZ2VyZWRfYnVmZmVyX3Bvc3RlbmFibGUoaW5k
+aW9fZGV2KTsNCj4+Pj4+ICsgICAgIGlmIChyZXQpDQo+Pj4+PiArICAgICAgICAgICAgIHJldHVy
+biByZXQ7DQo+Pj4+PiArDQo+Pj4+PiAgICAgICAgICAvKiB3ZSBjb250aW51ZSB3aXRoIHRoZSB0
+cmlnZ2VyZWQgYnVmZmVyICovDQo+Pj4+PiAgICAgICAgICByZXQgPSBhdDkxX2FkY19kbWFfc3Rh
+cnQoaW5kaW9fZGV2KTsNCj4+Pj4+ICAgICAgICAgIGlmIChyZXQpIHsNCj4+Pj4+ICAgICAgICAg
+ICAgICAgICAgZGV2X2VycigmaW5kaW9fZGV2LT5kZXYsICJidWZmZXIgcG9zdGVuYWJsZQ0KPj4+
+Pj4gZmFpbGVkXG4iKTsNCj4+Pj4+ICsgICAgICAgICAgICAgaWlvX3RyaWdnZXJlZF9idWZmZXJf
+cHJlZGlzYWJsZShpbmRpb19kZXYpOw0KPj4+Pj4gICAgICAgICAgICAgICAgICByZXR1cm4gcmV0
+Ow0KPj4+Pj4gICAgICAgICAgfQ0KPj4+Pj4NCj4+Pj4+IC0gICAgIHJldHVybiBpaW9fdHJpZ2dl
+cmVkX2J1ZmZlcl9wb3N0ZW5hYmxlKGluZGlvX2Rldik7DQo+Pj4+PiArICAgICByZXR1cm4gMDsN
+Cj4+Pj4+ICAgICB9DQo+Pj4+Pg0KPj4+Pj4gICAgIHN0YXRpYyBpbnQgYXQ5MV9hZGNfYnVmZmVy
+X3ByZWRpc2FibGUoc3RydWN0IGlpb19kZXYgKmluZGlvX2RldikNCj4+Pj4+ICAgICB7DQo+Pj4+
+PiAgICAgICAgICBzdHJ1Y3QgYXQ5MV9hZGNfc3RhdGUgKnN0ID0gaWlvX3ByaXYoaW5kaW9fZGV2
+KTsNCj4+Pj4+IC0gICAgIGludCByZXQ7DQo+Pj4+PiAgICAgICAgICB1OCBiaXQ7DQo+Pj4+Pg0K
+Pj4+Pj4gICAgICAgICAgLyogY2hlY2sgaWYgd2UgYXJlIGRpc2FibGluZyB0cmlnZ2VyZWQgYnVm
+ZmVyIG9yIHRoZQ0KPj4+Pj4gdG91Y2hzY3JlZW4gKi8NCj4+Pj4+IEBAIC05MTYsMTMgKzkyMCw4
+IEBAIHN0YXRpYyBpbnQgYXQ5MV9hZGNfYnVmZmVyX3ByZWRpc2FibGUoc3RydWN0DQo+Pj4+PiBp
+aW9fZGV2DQo+Pj4+PiAqaW5kaW9fZGV2KQ0KPj4+Pj4gICAgICAgICAgaWYgKCEoaW5kaW9fZGV2
+LT5jdXJyZW50bW9kZSAmIElORElPX0FMTF9UUklHR0VSRURfTU9ERVMpKQ0KPj4+Pj4gICAgICAg
+ICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4+Pj4+DQo+Pj4+PiAtICAgICAvKiBjb250aW51
+ZSB3aXRoIHRoZSB0cmlnZ2VyZWQgYnVmZmVyICovDQo+Pj4+PiAtICAgICByZXQgPSBpaW9fdHJp
+Z2dlcmVkX2J1ZmZlcl9wcmVkaXNhYmxlKGluZGlvX2Rldik7DQo+Pj4+PiAtICAgICBpZiAocmV0
+IDwgMCkNCj4+Pj4+IC0gICAgICAgICAgICAgZGV2X2VycigmaW5kaW9fZGV2LT5kZXYsICJidWZm
+ZXIgcHJlZGlzYWJsZQ0KPj4+Pj4gZmFpbGVkXG4iKTsNCj4+Pj4+IC0NCj4+Pj4+ICAgICAgICAg
+IGlmICghc3QtPmRtYV9zdC5kbWFfY2hhbikNCj4+Pj4+IC0gICAgICAgICAgICAgcmV0dXJuIHJl
+dDsNCj4+Pj4+ICsgICAgICAgICAgICAgZ290byBvdXQ7DQo+Pj4+Pg0KPj4+Pj4gICAgICAgICAg
+LyogaWYgd2UgYXJlIHVzaW5nIERNQSB3ZSBtdXN0IGNsZWFyIHJlZ2lzdGVycyBhbmQgZW5kIERN
+QQ0KPj4+Pj4gKi8NCj4+Pj4+ICAgICAgICAgIGRtYWVuZ2luZV90ZXJtaW5hdGVfc3luYyhzdC0+
+ZG1hX3N0LmRtYV9jaGFuKTsNCj4+Pj4+IEBAIC05NDksNyArOTQ4LDkgQEAgc3RhdGljIGludCBh
+dDkxX2FkY19idWZmZXJfcHJlZGlzYWJsZShzdHJ1Y3QNCj4+Pj4+IGlpb19kZXYNCj4+Pj4+ICpp
+bmRpb19kZXYpDQo+Pj4+Pg0KPj4+Pj4gICAgICAgICAgLyogcmVhZCBvdmVyZmxvdyByZWdpc3Rl
+ciB0byBjbGVhciBwb3NzaWJsZSBvdmVyZmxvdyBzdGF0dXMNCj4+Pj4+ICovDQo+Pj4+PiAgICAg
+ICAgICBhdDkxX2FkY19yZWFkbChzdCwgQVQ5MV9TQU1BNUQyX09WRVIpOw0KPj4+Pj4gLSAgICAg
+cmV0dXJuIHJldDsNCj4+Pj4+ICsNCj4+Pj4+ICtvdXQ6DQo+Pj4NCj4+PiBJIHdvdWxkIHByZWZl
+ciBpZiB0aGlzIGxhYmVsIGlzIG5hbWVkIHdpdGggYSBmdW5jdGlvbiBuYW1lIHByZWZpeCwNCj4+
+PiBvdGhlcndpc2UgJ291dCcgaXMgcHJldHR5IGdlbmVyaWMgYW5kIGNhbiBjb2xsaWRlIHdpdGgg
+b3RoZXIgdGhpbmdzIGluDQo+Pj4gdGhlIGZpbGUuLi4gSSB3YW50IHRvIGF2b2lkIGhhdmluZyBh
+biBvdXQyICwgb3V0MyBsYXRlciBpZiBjb2RlDQo+Pj4gY2hhbmdlcy4NCj4+Pg0KPiANCj4gU3Vy
+ZS4NCj4gV2lsbCBkbyB0aGF0Lg0KPiANCj4gSSBkaWQgbm90IGJvdGhlciBtdWNoIHdpdGggdGhl
+c2UgbGFiZWxzLCBiZWNhdXNlIGFmdGVyIGFwcGx5aW5nIFt1MV0sIHNvbWUNCj4gb2YgdGhlbSBb
+bWF5YmUgYWxsXSBzaG91bGQgZ28gYXdheS4NCj4gDQo+IA0KPj4+IFRoYW5rcyBmb3IgdGhlIHBh
+dGNoLA0KPj4+IEV1Z2VuDQo+Pj4NCj4+Pj4+ICsgICAgIHJldHVybiBpaW9fdHJpZ2dlcmVkX2J1
+ZmZlcl9wcmVkaXNhYmxlKGluZGlvX2Rldik7DQo+Pj4+PiAgICAgfQ0KPj4+Pj4NCj4+Pj4+ICAg
+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGlpb19idWZmZXJfc2V0dXBfb3BzIGF0OTFfYnVmZmVyX3Nl
+dHVwX29wcyA9DQo+Pj4+PiB7DQo+Pj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fDQo+Pj4+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0DQo+Pj4+
+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPj4+PiBodHRwOi8vbGlzdHMu
+aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwNCj4+Pj4NCj4g
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
+YWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
+dXgtYXJtLWtlcm5lbA0KPiANCg==
