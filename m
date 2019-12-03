@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AB4111DE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB9ED111E28
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbfLCW6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:58:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54226 "EHLO mail.kernel.org"
+        id S1728672AbfLCXAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730236AbfLCW6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:58:05 -0500
+        id S1729663AbfLCW6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:58:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0298420674;
-        Tue,  3 Dec 2019 22:58:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7C620674;
+        Tue,  3 Dec 2019 22:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413884;
-        bh=pz78iwdXUENbZcbYUMALJIFQGQOKoTGxA9AdC7L3WZw=;
+        s=default; t=1575413886;
+        bh=KPDAVAKouFyIEFHXh9DD1GFKn0HUaQo3/0x6ooC9+u4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5YgEhrs2Kpz8NO52MNXovF+B7aiHGjNAew6fV3mDeJ2AtspGk5urCiZZz8kaXJCy
-         tCNoXS09Qmjz16aXS6bGYeN12WTk1+OHOa8HgxR/6tgRv10Ye/mzY2S6VXC1sfm8Pt
-         OSPxrADFoBARV7Mae8FPt7FGxv4GKM4gr6N4Gn2s=
+        b=09U03Vet6tmzWgQb1WvRHG4ePbTN0CPUdATTQFu8flNuNG5Y79Polp800h+Y9yIla
+         4V3ZRNReMUWptmohGaCL/DIRnAEtVNiZzKmVQ/9e4puyM4ID6yHJIpAX3t2c+IGDfj
+         6X3N6CwzGgLjYh7xm53BrqCH9bpTPOsaxG7BUfD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Gen Zhang <blackgod016574@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 259/321] ASoC: rt5645: Headphone Jack sense inverts on the LattePanda board
-Date:   Tue,  3 Dec 2019 23:35:25 +0100
-Message-Id: <20191203223440.607002578@linuxfoundation.org>
+Subject: [PATCH 4.19 260/321] powerpc/pseries/dlpar: Fix a missing check in dlpar_parse_cc_property()
+Date:   Tue,  3 Dec 2019 23:35:26 +0100
+Message-Id: <20191203223440.658123571@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,58 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Gen Zhang <blackgod016574@gmail.com>
 
-[ Upstream commit 406dcbc55a0a20fd155be889a4a0c4b812f7c18e ]
+[ Upstream commit efa9ace68e487ddd29c2b4d6dd23242158f1f607 ]
 
-The LattePanda board has a sound card chtrt5645, when there is nothing
-plugged in the headphone jack, the system thinks the headphone is
-plugged in, while we plug a headphone in the jack, the system thinks
-the headphone is unplugged.
+In dlpar_parse_cc_property(), 'prop->name' is allocated by kstrdup().
+kstrdup() may return NULL, so it should be checked and handle error.
+And prop should be freed if 'prop->name' is NULL.
 
-If adding quirk=0x21 in the module parameter, the headphone jack can
-work well. So let us fix it via platform_data.
-
-https://bugs.launchpad.net/bugs/182459
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/rt5645.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/powerpc/platforms/pseries/dlpar.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
-index 1dc70f452c1b9..f842db498c741 100644
---- a/sound/soc/codecs/rt5645.c
-+++ b/sound/soc/codecs/rt5645.c
-@@ -3662,6 +3662,11 @@ static const struct rt5645_platform_data jd_mode3_platform_data = {
- 	.jd_mode = 3,
- };
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index e3010b14aea51..c5ffcadab7302 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -63,6 +63,10 @@ static struct property *dlpar_parse_cc_property(struct cc_workarea *ccwa)
  
-+static const struct rt5645_platform_data lattepanda_board_platform_data = {
-+	.jd_mode = 2,
-+	.inv_jd1_1 = true
-+};
-+
- static const struct dmi_system_id dmi_platform_data[] = {
- 	{
- 		.ident = "Chrome Buddy",
-@@ -3759,6 +3764,15 @@ static const struct dmi_system_id dmi_platform_data[] = {
- 		},
- 		.driver_data = (void *)&intel_braswell_platform_data,
- 	},
-+	{
-+		.ident = "LattePanda board",
-+		.matches = {
-+		  DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
-+		  DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+		  DMI_EXACT_MATCH(DMI_BOARD_VERSION, "Default string"),
-+		},
-+		.driver_data = (void *)&lattepanda_board_platform_data,
-+	},
- 	{ }
- };
+ 	name = (char *)ccwa + be32_to_cpu(ccwa->name_offset);
+ 	prop->name = kstrdup(name, GFP_KERNEL);
++	if (!prop->name) {
++		dlpar_free_cc_property(prop);
++		return NULL;
++	}
  
+ 	prop->length = be32_to_cpu(ccwa->prop_length);
+ 	value = (char *)ccwa + be32_to_cpu(ccwa->prop_offset);
 -- 
 2.20.1
 
