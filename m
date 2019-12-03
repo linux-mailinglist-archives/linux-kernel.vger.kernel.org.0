@@ -2,73 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B98910F429
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 01:43:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 392B410F43A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 01:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbfLCAnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 19:43:13 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39668 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbfLCAnK (ORCPT
+        id S1726024AbfLCAtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 19:49:00 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33964 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbfLCAtA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 19:43:10 -0500
-Received: by mail-io1-f65.google.com with SMTP id c16so1654009ioh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 16:43:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4jnL6iDubLY8gL5JP3QSc0ju+BQUG+h8VIAOn+X5oWQ=;
-        b=T00bsc0APIQpp0kFPoFsLBa72cSKQI8/kvf/jrmlw4YTXIkoV3Uo9vYbKOVb/uvmMa
-         Fx0TgLfE1CVyHBCn7J7nM976Z7PON3M3w+uSZtQ2kTxe+7DNpYO1vky1kHc7MGIzcifk
-         Rsgk4WafvGso2zBq8zzPlQSTSk797b7OEJlbteHeDpdZ+gwvXPs5Nniz0vbM33QLo++f
-         5WJ3xnuNz/Crxcb8d8IUNaOA8+ssCGZqzJbMWlPmvRzBWmuRrGqBI8UecAbi+m6cUljH
-         FvUNkjv38k90sNUFreVKS1i8TAkgxv4pKR1dCeBNykyTp5S+fR9yd6wQ6dhzRH2CzVjC
-         hetg==
+        Mon, 2 Dec 2019 19:49:00 -0500
+Received: by mail-pl1-f194.google.com with SMTP id h13so868424plr.1;
+        Mon, 02 Dec 2019 16:49:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4jnL6iDubLY8gL5JP3QSc0ju+BQUG+h8VIAOn+X5oWQ=;
-        b=DhF6ynmi9mAssKJKmN5Kx1oC0TyAYlbXUalbAkIHRMPz2j6ZdDweK7/24Ky86tiAuG
-         xFUGx98h6xfS2KCyboMYtzI517Yc1WjRAg0Njnbd6+HAyu2L164FHg9DX8BJaTPsGF/l
-         eeIlNorT6sn7FqjfWPW+Y41uM4+K2BeeidR0/deuidqn7/a8GvqKVCPlt5HpFf0nFbog
-         nRfG0gT1xn/Xg70kOBg/H7hYfgFq9I3HdX4w4MURpINod7mrTONTVgkCl0mWSVPZ0Pkt
-         4bYaA7Bg4fd7dGFmQQHxKQ8G83NGzEMe7kutIC5VSWDtVwPx+W+nh3ky6qWKlovobZl9
-         MqnA==
-X-Gm-Message-State: APjAAAX8EacICCHMhPRo2zyUCkznCPMl2/PwBxeR4M8ZP9OvYDDiF/2N
-        zAMCiVMadLpCXf0bsnjoUlzwrYL73z2UAqTANMU0nQ==
-X-Google-Smtp-Source: APXvYqxJrkK1ZdE65kA4EuWOJ5vb0zsDMEQ4ZrjeW7uzvZYJCxvo09UHOuHs6AjLENBNZOWUxi9WR6+6dwVQ5+rKKQ4=
-X-Received: by 2002:a5e:df06:: with SMTP id f6mr235848ioq.84.1575333788813;
- Mon, 02 Dec 2019 16:43:08 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gkqruUigiDLwGAs8n/4um0iYijs+j5UqnZLX14xEyPw=;
+        b=fYGNwNz6hWvNXHkEaPW2L/TlVoPEsRkkDioESZb0jTMpBYMXdPs8JorYD88XNAqVMI
+         FOISPgBgSsp2qsQ+AQ1QGpFOQJqWX7ivpXzrgAKJUwSE6PTN1Pgk/cZm1XyT+5UYtVIu
+         pXYDJ8izriH+wZ6qbN4fEDg9Fe34s5RbwsELrUrXmYzeQ47mKc23a423AQiNYv4O+6wf
+         fQEzO9qbrM/iEA4yBY3upRey0HLd6/rx/AYB3M531jYXz3JTuMooyUeYKNMPLg//C493
+         dUaNCnj1dIM/KoPITUzCgd4P52KYTK1QOsiv910oOlOBWhJ7ctf3mcKa2qdAu9vNsmOm
+         FzCg==
+X-Gm-Message-State: APjAAAXcRMnbaf+XfH9ZbCzj+CFwbJwDf5LVnnMYJIOv5ieNyPYKoNRx
+        EbYktKc0djBVxCtcvdiBxxE+ABvZ
+X-Google-Smtp-Source: APXvYqyA2GRBkC9z8d6c2ewOHiJ+bpqNv7hRXmwEyQSIOiiXEtRQjlIon/nX/3CvSP8FcYVUMKSZgQ==
+X-Received: by 2002:a17:90a:8d10:: with SMTP id c16mr2352771pjo.109.1575334139105;
+        Mon, 02 Dec 2019 16:48:59 -0800 (PST)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id c1sm733565pfa.51.2019.12.02.16.48.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2019 16:48:58 -0800 (PST)
+Subject: Re: [PATCH v7 1/2] loop: Report EOPNOTSUPP properly
+To:     Evan Green <evgreen@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+        Martin K Petersen <martin.petersen@oracle.com>
+Cc:     Gwendal Grignou <gwendal@chromium.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191114235008.185111-1-evgreen@chromium.org>
+ <20191114154903.v7.1.I0b2734bafaa1bd6831dec49cdb4730d04be60fc8@changeid>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <7d4508c7-a3fc-67f6-392e-50a6247898aa@acm.org>
+Date:   Mon, 2 Dec 2019 16:48:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191203004043.174977-1-matthewgarrett@google.com>
-In-Reply-To: <20191203004043.174977-1-matthewgarrett@google.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Mon, 2 Dec 2019 16:42:57 -0800
-Message-ID: <CACdnJus7nHdr4p4H1j5as9eB=FG-uX+wy_tjvTQ5ObErDJHdow@mail.gmail.com>
-Subject: Re: [PATCH] [EFI,PCI] Allow disabling PCI busmastering on bridges
- during boot
-To:     linux-efi <linux-efi@vger.kernel.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, x86@kernel.org,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191114154903.v7.1.I0b2734bafaa1bd6831dec49cdb4730d04be60fc8@changeid>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 4:40 PM Matthew Garrett
-<matthewgarrett@google.com> wrote:
->
-> Add an option to disable the busmaster bit in the control register on
-> all PCI bridges before calling ExitBootServices() and passing control to
-> the runtime kernel. System firmware may configure the IOMMU to prevent
-> malicious PCI devices from being able to attack the OS via DMA. However,
-> since firmware can't guarantee that the OS is IOMMU-aware, it will tear
-> down IOMMU configuration when ExitBootServices() is called. This leaves
-> a window between where a hostile device could still cause damage before
-> Linux configures the IOMMU again.
+On 11/14/19 3:50 PM, Evan Green wrote:
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index ef6e251857c8..6a9fe1f9fe84 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -461,7 +461,7 @@ static void lo_complete_rq(struct request *rq)
+>   	if (!cmd->use_aio || cmd->ret < 0 || cmd->ret == blk_rq_bytes(rq) ||
+>   	    req_op(rq) != REQ_OP_READ) {
+>   		if (cmd->ret < 0)
+> -			ret = BLK_STS_IOERR;
+> +			ret = errno_to_blk_status(cmd->ret);
+>   		goto end_io;
+>   	}
+>   
+> @@ -1950,7 +1950,10 @@ static void loop_handle_cmd(struct loop_cmd *cmd)
+>    failed:
+>   	/* complete non-aio request */
+>   	if (!cmd->use_aio || ret) {
+> -		cmd->ret = ret ? -EIO : 0;
+> +		if (ret == -EOPNOTSUPP)
+> +			cmd->ret = ret;
+> +		else
+> +			cmd->ret = ret ? -EIO : 0;
+>   		blk_mq_complete_request(rq);
+>   	}
+>   }
 
-I don't know enough about ARM to know if this makes sense there as well. Anyone?
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
