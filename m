@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8229111C2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C83D111D93
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfLCWlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:41:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55744 "EHLO mail.kernel.org"
+        id S1730319AbfLCWy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:54:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbfLCWlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:41:21 -0500
+        id S1730317AbfLCWyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE7662080F;
-        Tue,  3 Dec 2019 22:41:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2908320803;
+        Tue,  3 Dec 2019 22:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412880;
-        bh=a2EBv3oNWRXuqE2lst0TZQnbTKts5U5zoDGBoKkR5mc=;
+        s=default; t=1575413693;
+        bh=UXrKNNPHHCXadJX4lrOLkoDwl7hPsSWGkSDvnZUS1dI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lVUDDgGqzE5+PZ/2478jtkJ2gJ5ZsEYa95VBINh0MvS3sx4M1/h9PxdSHsXr6YHby
-         NGlwVjg1OtWZX98lDgCiZpjyjv+hxrCpM+b/PBIi4FuVMHiKsZSSKNFBWkGtDYN7PT
-         SL3HwPoHgMoxtL+GkCg71hRb1n9V4GIY7I0QanA4=
+        b=2KyfOvS65pMmKKmY165GS37il9CtZJLFamUI9b0X/GlkdvgbOYhuGR7CnkXMGX+RR
+         mMBitbPLzqwaVxrCyCCOhLVfdvndbrcINdurb2rDq5swVS15mt8F3sxRh7ltM5Ijmw
+         6LYp7XlrOvLY0ILkUB5fQLEfBIp6fkuFVqpR+DgA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 053/135] can: rx-offload: can_rx_offload_queue_tail(): fix error handling, avoid skb mem leak
+Subject: [PATCH 4.19 227/321] xfs: end sync buffer I/O properly on shutdown error
 Date:   Tue,  3 Dec 2019 23:34:53 +0100
-Message-Id: <20191203213020.059748017@linuxfoundation.org>
+Message-Id: <20191203223438.926046943@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Brian Foster <bfoster@redhat.com>
 
-[ Upstream commit 6caf8a6d6586d44fd72f4aa1021d14aa82affafb ]
+[ Upstream commit 465fa17f4a303d9fdff9eac4d45f91ece92e96ca ]
 
-If the rx-offload skb_queue is full can_rx_offload_queue_tail() will not
-queue the skb and return with an error.
+As of commit e339dd8d8b ("xfs: use sync buffer I/O for sync delwri
+queue submission"), the delwri submission code uses sync buffer I/O
+for sync delwri I/O. Instead of waiting on async I/O to unlock the
+buffer, it uses the underlying sync I/O completion mechanism.
 
-This patch frees the skb in case of a full queue, which brings
-can_rx_offload_queue_tail() in line with the
-can_rx_offload_queue_sorted() function, which has been adjusted in the
-previous patch.
+If delwri buffer submission fails due to a shutdown scenario, an
+error is set on the buffer and buffer completion never occurs. This
+can cause xfs_buf_delwri_submit() to deadlock waiting on a
+completion event.
 
-The return value is adjusted to -ENOBUFS to better reflect the actual
-problem.
+We could check the error state before waiting on such buffers, but
+that doesn't serialize against the case of an error set via a racing
+I/O completion. Instead, invoke I/O completion in the shutdown case
+regardless of buffer I/O type.
 
-The device stats handling is left to the caller.
-
-Fixes: d254586c3453 ("can: rx-offload: Add support for HW fifo based irq offloading")
-Reported-by: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/rx-offload.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/xfs/xfs_buf.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/can/rx-offload.c b/drivers/net/can/rx-offload.c
-index 663697439d1c7..d1c8634099450 100644
---- a/drivers/net/can/rx-offload.c
-+++ b/drivers/net/can/rx-offload.c
-@@ -252,8 +252,10 @@ int can_rx_offload_queue_tail(struct can_rx_offload *offload,
- 			      struct sk_buff *skb)
- {
- 	if (skb_queue_len(&offload->skb_queue) >
--	    offload->skb_queue_len_max)
--		return -ENOMEM;
-+	    offload->skb_queue_len_max) {
-+		kfree_skb(skb);
-+		return -ENOBUFS;
-+	}
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index e36124546d0db..c1f7c0d5d608a 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1506,8 +1506,7 @@ __xfs_buf_submit(
+ 		xfs_buf_ioerror(bp, -EIO);
+ 		bp->b_flags &= ~XBF_DONE;
+ 		xfs_buf_stale(bp);
+-		if (bp->b_flags & XBF_ASYNC)
+-			xfs_buf_ioend(bp);
++		xfs_buf_ioend(bp);
+ 		return -EIO;
+ 	}
  
- 	skb_queue_tail(&offload->skb_queue, skb);
- 	can_rx_offload_schedule(offload);
 -- 
 2.20.1
 
