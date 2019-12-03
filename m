@@ -2,140 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3571100F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE8711012C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 16:24:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfLCPP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 10:15:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726057AbfLCPP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:15:26 -0500
-Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726990AbfLCPYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 10:24:25 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38090 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726024AbfLCPYZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 10:24:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575386663;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=A0z0yQVPqG29ag0+Ol/YyJZXC41RYLDBg10RcYmTD30=;
+        b=SYc5/Chkz0Ja0RY67M0/PQA6fSb/4CMX1D7lrlaeq2sD3vU/+/oAox+TcCNzJaf6vj7Twt
+        Lvw5fA2ZL3ckI8Pv1ipfYZH7BhZ/DPSsxji56SjhCc/2s+oPovQWlQEOaVqGi9eNRqzBa/
+        Tp2vcajCxpFuKS1R8A3wzm/knCs//q8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-40-VViTfyV5NWy7UWI2A6Fhtw-1; Tue, 03 Dec 2019 10:17:12 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E00A42073C;
-        Tue,  3 Dec 2019 15:15:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575386124;
-        bh=+JqMigEUmtKPTqcnM6ZbCi/YuA1GoQgvuShVp0TQOLY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=IK/Vv0oJltH1/SQcCB9uNZ+1oGSxUksJq2j9TRAg6+PuJ97y38INjE12t7POU5kCH
-         +cKZVyKeehrpkZS/TFAmn18P6M7MZSQATdh6HBo622xdbj/ivycdvNF34koqO42nva
-         5IFD/mXxlT9GIkzw5+WaCG4uWoLaRP9GdW3M5AjA=
-Subject: Re: [PATCH 2/2] clk: socfpga: agilex: add clock driver for the Agilex
- platform
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20190918013459.15966-1-dinguyen@kernel.org>
- <20190918013459.15966-2-dinguyen@kernel.org>
- <20190918050010.74B4021848@mail.kernel.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4726f580-fe88-5b20-e869-4e31bd63c6e3@kernel.org>
-Date:   Tue, 3 Dec 2019 09:15:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D51612A7E21;
+        Tue,  3 Dec 2019 15:17:10 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA8D060C18;
+        Tue,  3 Dec 2019 15:17:09 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id xB3FH9uX006546;
+        Tue, 3 Dec 2019 10:17:09 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id xB3FH8mW006536;
+        Tue, 3 Dec 2019 10:17:08 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Tue, 3 Dec 2019 10:17:08 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Michael Neuling <mikey@neuling.org>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: tty crash in Linux 4.6
+In-Reply-To: <20191116093614.GB408484@kroah.com>
+Message-ID: <alpine.LRH.2.02.1912031016030.6365@file01.intranet.prod.int.rdu2.redhat.com>
+References: <573A5996.3080305@hurleysoftware.com> <573B3F84.5050201@hurleysoftware.com> <573B5E4C.8030808@hurleysoftware.com> <alpine.LRH.2.02.1607071855150.19053@file01.intranet.prod.int.rdu2.redhat.com> <CAEjGV6zRghiCCMC1+-n+YPeA0Lrq=-vcvdoYpbwE4G=TXWzY3Q@mail.gmail.com>
+ <87po3wusq1.fsf@linkitivity.dja.id.au> <20180322140554.GA3273@kroah.com> <alpine.LRH.2.02.1803270818150.30055@file01.intranet.prod.int.rdu2.redhat.com> <87k1td913u.fsf@linkitivity.dja.id.au> <d8ba132f-e174-2acc-e74c-4e9aed945c30@oracle.com>
+ <20191116093614.GB408484@kroah.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20190918050010.74B4021848@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: VViTfyV5NWy7UWI2A6Fhtw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
 
-On 9/18/19 12:00 AM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2019-09-17 18:34:59)
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index 0cad76021297..ef2c96c0f1e0 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -18,6 +18,7 @@ endif
->>  
 
-<snip>
+On Sat, 16 Nov 2019, Greg Kroah-Hartman wrote:
 
->> +struct clk *agilex_register_pll(const char *name,
->> +                               const char * const *parent_names,
->> +                               u8 num_parents, unsigned long flags,
->> +                               void __iomem *reg, unsigned long offset)
->> +{
->> +       struct clk *clk;
->> +       struct socfpga_pll *pll_clk;
->> +       struct clk_init_data init;
->> +
->> +       pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
->> +       if (WARN_ON(!pll_clk))
->> +               return NULL;
->> +
->> +       pll_clk->hw.reg = reg + offset;
->> +
->> +       if (streq(name, SOCFPGA_BOOT_CLK))
->> +               init.ops = &clk_boot_ops;
->> +       else
->> +               init.ops = &agilex_clk_pll_ops;
->> +
->> +       init.name = name;
->> +       init.flags = flags;
->> +
->> +       init.num_parents = num_parents;
->> +       init.parent_names = parent_names;
-> 
-> Is it possible to use the new way of specifying clk parents here so that
-> we don't have to keep using strings to describe the clk topology?
-> 
+> On Fri, Nov 15, 2019 at 11:21:08AM -0800, Mike Kravetz wrote:
+> > On 4/11/18 9:09 AM, Daniel Axtens wrote:
+> > > Mikulas Patocka <mpatocka@redhat.com> writes:
+> > >=20
+> > >> On Thu, 22 Mar 2018, Greg Kroah-Hartman wrote:
+> > >>
+> > >>> On Fri, Mar 23, 2018 at 12:48:06AM +1100, Daniel Axtens wrote:
+> > >>>> Hi,
+> > >>>>
+> > >>>>>> This patch works, I've had no tty crashes since applying it.
+> > >>>>>>
+> > >>>>>> I've seen that you haven't sent this patch yet to Linux-4.7-rc a=
+nd
+> > >>>>>> Linux-4.6-stable. Will you? Or did you create a different patch?
+> > >>>>>
+> > >>>>> We are hitting this now on powerpc.  This patch never seemed to m=
+ake
+> > >>>>> it upstream (drivers/tty/tty_ldisc.c hasn't been touched in 1 yea=
+r).
+> > >>>>
+> > >>>> I seem to be hitting this too on a kernel that has the 4.6 changes
+> > >>>> backported to 4.4.
+> > >>>>
+> > >>>> Has there been any further progress on getting this accepted?
+> > >>>
+> > >>> Can you try applying 28b0f8a6962a ("tty: make n_tty_read() always a=
+bort
+> > >>> if hangup is in progress") to see if that helps out or not?
+> > >=20
+> > > Sorry for the delay in getting the test results; as with Mikulas,
+> > > 28b0f8a6962a does not help.
+> > >=20
+> > > Regards,
+> > > Daniel
+> > >=20
+> > >>>
+> > >>> thanks,
+> > >>>
+> > >>> greg k-h
+> > >>
+> > >> It doesn't help. I get the same crash as before.
+> > >>
+> > >> Mikulas
+> >=20
+> > Reviving a really old thread.
+> >=20
+> > It looks like this patch never got merged.
+>=20
+> I do not see a patch in this email, so I have no idea what you are
+> referring to, sorry.
+>=20
+> > Did it get resolved in some other way?  I ask because we have a
+> > customer who seems to have hit this issue.
+>=20
+> Can you try with the latest kernel to see if it is resolved or not?
 
-Can you point me to what you mean here? Perhaps a driver that is using
-this new way of specifying clk parents?
+I tested it on the kernel 5.4 and I couldn't reproduce the crash anymore.
 
-Thanks,
-Dinh
+Mikulas
+
+> thanks,
+>=20
+> greg k-h
+>=20
 
