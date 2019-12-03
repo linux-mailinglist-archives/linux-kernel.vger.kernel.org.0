@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A670B111BEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B73F111C72
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfLCWif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:38:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47690 "EHLO mail.kernel.org"
+        id S1728921AbfLCWoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:44:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728017AbfLCWic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:38:32 -0500
+        id S1728916AbfLCWoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:44:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FB5820684;
-        Tue,  3 Dec 2019 22:38:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ADC0206EC;
+        Tue,  3 Dec 2019 22:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412711;
-        bh=L1VuuR2aHnGuXPFOaUKF5kxM3+Aapq+94Dmtx7408LA=;
+        s=default; t=1575413048;
+        bh=2AC5dinst3Ntp9oN+hLsaPSDW5/oiPHCqmHwbgE47Q8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hadJVSH5fjb94Hecd9eiBXrfbndaEkHDSVCyzwYYPQyV2tjxfZN04AN0dvYvQazOo
-         5FUvNBoyDp8N1k3tfS18bVBV5Yfat8idNPE0jyLkb5Kz0N9/YKSPrFFiMDlf9Hua1E
-         955GRSox5UjicRFFIl9WVbyTvQzj+B65m20YunHQ=
+        b=iWAncrs/YUm/C/odp0ZrR3mL5kKkiAdaiAIPVJI0kYEx3aCgYfmKMWVzvDCc89PiC
+         doegAZdkdlGFZAWFTlWIpYdZO/8oy15N/xxYH7MuVyLLTLMFOj2+mYYmzn46zLJVx3
+         lWlKCzu8Ta/sT28ytvOfZsk0gsOsxKHT7r3z0FvY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
+        stable@vger.kernel.org, Dust Li <dust.li@linux.alibaba.com>,
+        Tony Lu <tonylu@linux.alibaba.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 34/46] net/tls: use sg_next() to walk sg entries
-Date:   Tue,  3 Dec 2019 23:35:54 +0100
-Message-Id: <20191203212754.733031040@linuxfoundation.org>
+Subject: [PATCH 5.3 115/135] net: sched: fix `tc -s class show` no bstats on class with nolock subqueues
+Date:   Tue,  3 Dec 2019 23:35:55 +0100
+Message-Id: <20191203213043.050109353@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,78 +45,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Dust Li <dust.li@linux.alibaba.com>
 
-[ Upstream commit c5daa6cccdc2f94aca2c9b3fa5f94e4469997293 ]
+[ Upstream commit 14e54ab9143fa60794d13ea0a66c792a2046a8f3 ]
 
-Partially sent record cleanup path increments an SG entry
-directly instead of using sg_next(). This should not be a
-problem today, as encrypted messages should be always
-allocated as arrays. But given this is a cleanup path it's
-easy to miss was this ever to change. Use sg_next(), and
-simplify the code.
+When a classful qdisc's child qdisc has set the flag
+TCQ_F_CPUSTATS (pfifo_fast for example), the child qdisc's
+cpu_bstats should be passed to gnet_stats_copy_basic(),
+but many classful qdisc didn't do that. As a result,
+`tc -s class show dev DEV` always return 0 for bytes and
+packets in this case.
 
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Pass the child qdisc's cpu_bstats to gnet_stats_copy_basic()
+to fix this issue.
+
+The qstats also has this problem, but it has been fixed
+in 5dd431b6b9 ("net: sched: introduce and use qstats read...")
+and bstats still remains buggy.
+
+Fixes: 22e0f8b9322c ("net: sched: make bstats per cpu and estimator RCU safe")
+Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
+Signed-off-by: Tony Lu <tonylu@linux.alibaba.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tls.h  |    2 +-
- net/tls/tls_main.c |   13 ++-----------
- net/tls/tls_sw.c   |    3 ++-
- 3 files changed, 5 insertions(+), 13 deletions(-)
+ net/sched/sch_mq.c     |    3 ++-
+ net/sched/sch_mqprio.c |    4 ++--
+ net/sched/sch_multiq.c |    2 +-
+ net/sched/sch_prio.c   |    2 +-
+ 4 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/include/net/tls.h
-+++ b/include/net/tls.h
-@@ -395,7 +395,7 @@ int tls_push_sg(struct sock *sk, struct
- 		int flags);
- int tls_push_partial_record(struct sock *sk, struct tls_context *ctx,
- 			    int flags);
--bool tls_free_partial_record(struct sock *sk, struct tls_context *ctx);
-+void tls_free_partial_record(struct sock *sk, struct tls_context *ctx);
+--- a/net/sched/sch_mq.c
++++ b/net/sched/sch_mq.c
+@@ -245,7 +245,8 @@ static int mq_dump_class_stats(struct Qd
+ 	struct netdev_queue *dev_queue = mq_queue_get(sch, cl);
  
- static inline struct tls_msg *tls_msg(struct sk_buff *skb)
- {
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -209,24 +209,15 @@ int tls_push_partial_record(struct sock
- 	return tls_push_sg(sk, ctx, sg, offset, flags);
- }
+ 	sch = dev_queue->qdisc_sleeping;
+-	if (gnet_stats_copy_basic(&sch->running, d, NULL, &sch->bstats) < 0 ||
++	if (gnet_stats_copy_basic(&sch->running, d, sch->cpu_bstats,
++				  &sch->bstats) < 0 ||
+ 	    qdisc_qstats_copy(d, sch) < 0)
+ 		return -1;
+ 	return 0;
+--- a/net/sched/sch_mqprio.c
++++ b/net/sched/sch_mqprio.c
+@@ -557,8 +557,8 @@ static int mqprio_dump_class_stats(struc
+ 		struct netdev_queue *dev_queue = mqprio_queue_get(sch, cl);
  
--bool tls_free_partial_record(struct sock *sk, struct tls_context *ctx)
-+void tls_free_partial_record(struct sock *sk, struct tls_context *ctx)
- {
- 	struct scatterlist *sg;
- 
--	sg = ctx->partially_sent_record;
--	if (!sg)
--		return false;
--
--	while (1) {
-+	for (sg = ctx->partially_sent_record; sg; sg = sg_next(sg)) {
- 		put_page(sg_page(sg));
- 		sk_mem_uncharge(sk, sg->length);
--
--		if (sg_is_last(sg))
--			break;
--		sg++;
+ 		sch = dev_queue->qdisc_sleeping;
+-		if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch),
+-					  d, NULL, &sch->bstats) < 0 ||
++		if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch), d,
++					  sch->cpu_bstats, &sch->bstats) < 0 ||
+ 		    qdisc_qstats_copy(d, sch) < 0)
+ 			return -1;
  	}
- 	ctx->partially_sent_record = NULL;
--	return true;
- }
+--- a/net/sched/sch_multiq.c
++++ b/net/sched/sch_multiq.c
+@@ -330,7 +330,7 @@ static int multiq_dump_class_stats(struc
  
- static void tls_write_space(struct sock *sk)
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -2084,7 +2084,8 @@ void tls_sw_release_resources_tx(struct
- 	/* Free up un-sent records in tx_list. First, free
- 	 * the partially sent record if any at head of tx_list.
- 	 */
--	if (tls_free_partial_record(sk, tls_ctx)) {
-+	if (tls_ctx->partially_sent_record) {
-+		tls_free_partial_record(sk, tls_ctx);
- 		rec = list_first_entry(&ctx->tx_list,
- 				       struct tls_rec, list);
- 		list_del(&rec->list);
+ 	cl_q = q->queues[cl - 1];
+ 	if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch),
+-				  d, NULL, &cl_q->bstats) < 0 ||
++				  d, cl_q->cpu_bstats, &cl_q->bstats) < 0 ||
+ 	    qdisc_qstats_copy(d, cl_q) < 0)
+ 		return -1;
+ 
+--- a/net/sched/sch_prio.c
++++ b/net/sched/sch_prio.c
+@@ -356,7 +356,7 @@ static int prio_dump_class_stats(struct
+ 
+ 	cl_q = q->queues[cl - 1];
+ 	if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch),
+-				  d, NULL, &cl_q->bstats) < 0 ||
++				  d, cl_q->cpu_bstats, &cl_q->bstats) < 0 ||
+ 	    qdisc_qstats_copy(d, cl_q) < 0)
+ 		return -1;
+ 
 
 
