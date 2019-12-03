@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B835111EE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:05:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19B0B111EE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:05:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbfLCXFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:05:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41608 "EHLO mail.kernel.org"
+        id S1730048AbfLCXFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:05:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729706AbfLCWuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:50:08 -0500
+        id S1729722AbfLCWuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:50:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 664032084B;
-        Tue,  3 Dec 2019 22:50:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE7A52084F;
+        Tue,  3 Dec 2019 22:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413407;
-        bh=ZhYdnqrQS3F5kpXHrKSeIvpgv9N6bcqn9/aggzXh2+0=;
+        s=default; t=1575413415;
+        bh=ak0oafLdw9C8TV8kEB7ReTBdXAP8KMKwZSruFOSqZQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nyelvraSY2FqgKJXebIUs2XDHlpl9oUwfpLDtnUNpKGw1lm7A/rNB+fmbwEyVmcPA
-         kZJNnZOGsFDK7ym4GQAt0Qmoa1KjgSLgenaM3mGii2NAnmmyz9p9hGTlKeV/4wTovQ
-         ZcE0sETi7Ny3FZmf1dkU1/0J+QUIvcmAwoTo6DF8=
+        b=fwfZdm6BemskkcR1IMIXGjDEJr+tRpqHkjLPWYUMB9YskHf4eXYoZzvqCBNTUoZWf
+         h5C9bGXJxfqyUi+NDCi44dYi0tVO5truMbjbajRAPB+QcvkDtGQGVrvLvur6wcce1n
+         HTrzUEPLB3Y/v+JYGhkKqu7eHC1xTwsBviFGWyug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 115/321] mtd: rawnand: sunxi: Write pageprog related opcodes to WCMD_SET
-Date:   Tue,  3 Dec 2019 23:33:01 +0100
-Message-Id: <20191203223433.131001848@linuxfoundation.org>
+Subject: [PATCH 4.19 118/321] btrfs: fix ncopies raid_attr for RAID56
+Date:   Tue,  3 Dec 2019 23:33:04 +0100
+Message-Id: <20191203223433.297773312@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -45,36 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
 
-[ Upstream commit 732774437ae01d9882e60314e303898e63c7f038 ]
+[ Upstream commit da612e31aee51bd13231c78a47c714b543bd3ad8 ]
 
-The opcodes used by the controller when doing batched page prog should
-be written in NFC_REG_WCMD_SET not FC_REG_RCMD_SET. Luckily, the
-default NFC_REG_WCMD_SET value matches the one we set in the driver
-which explains why we didn't notice the problem.
+RAID5 and RAID6 profile store one copy of the data, not 2 or 3. These
+values are not yet used anywhere so there's no change.
 
-Fixes: 614049a8d904 ("mtd: nand: sunxi: add support for DMA assisted operations")
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/nand/raw/sunxi_nand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/volumes.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
-index 1f0b7ee38df56..5b5f4d25a3e12 100644
---- a/drivers/mtd/nand/raw/sunxi_nand.c
-+++ b/drivers/mtd/nand/raw/sunxi_nand.c
-@@ -1397,7 +1397,7 @@ static int sunxi_nfc_hw_ecc_write_page_dma(struct mtd_info *mtd,
- 	sunxi_nfc_randomizer_enable(mtd);
- 
- 	writel((NAND_CMD_RNDIN << 8) | NAND_CMD_PAGEPROG,
--	       nfc->regs + NFC_REG_RCMD_SET);
-+	       nfc->regs + NFC_REG_WCMD_SET);
- 
- 	dma_async_issue_pending(nfc->dmac);
- 
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index f84c18e86c816..5bbcdcff68a9e 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -96,7 +96,7 @@ const struct btrfs_raid_attr btrfs_raid_array[BTRFS_NR_RAID_TYPES] = {
+ 		.devs_min	= 2,
+ 		.tolerated_failures = 1,
+ 		.devs_increment	= 1,
+-		.ncopies	= 2,
++		.ncopies	= 1,
+ 		.raid_name	= "raid5",
+ 		.bg_flag	= BTRFS_BLOCK_GROUP_RAID5,
+ 		.mindev_error	= BTRFS_ERROR_DEV_RAID5_MIN_NOT_MET,
+@@ -108,7 +108,7 @@ const struct btrfs_raid_attr btrfs_raid_array[BTRFS_NR_RAID_TYPES] = {
+ 		.devs_min	= 3,
+ 		.tolerated_failures = 2,
+ 		.devs_increment	= 1,
+-		.ncopies	= 3,
++		.ncopies	= 1,
+ 		.raid_name	= "raid6",
+ 		.bg_flag	= BTRFS_BLOCK_GROUP_RAID6,
+ 		.mindev_error	= BTRFS_ERROR_DEV_RAID6_MIN_NOT_MET,
 -- 
 2.20.1
 
