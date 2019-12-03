@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCFE111DB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3331111C55
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730429AbfLCW4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:56:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51300 "EHLO mail.kernel.org"
+        id S1728566AbfLCWm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:42:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730335AbfLCW4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:56:20 -0500
+        id S1728711AbfLCWmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:42:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CA9220656;
-        Tue,  3 Dec 2019 22:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E43C20684;
+        Tue,  3 Dec 2019 22:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413780;
-        bh=DVaKPiUmHGKWMJgDHNMiWfSzaP1Ywwb9Top1BdaLCeo=;
+        s=default; t=1575412971;
+        bh=hnzD5Qk9dvKC2ddqw81JWpMv4D3eIasuXCukLFQgb6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fackK0Pzl1sDQ8ERjI7u5YA/say3tSKm9p3GxSOr37KYsEnssm9uQCdDs5G0e7i4Q
-         g6TJfJMmd9AWHbFgc1Th+VVwZY1Z7JfUrzgAKZY4RW83bhvZyM9suY+IuOQW0ZjsxX
-         qvxyOnolZfrRlwr65fThkQuOF6dOSt63XQeJDJx8=
+        b=U6COuy7nTPsbiYZAe/j15QJQxqcYBHKxWOTeQJyXr8o5uPtaxJnWzncQo+g26KIvy
+         gcH2ZKLWk+qEJCPbs6mbSz9Iy1PbH6nZWWetCyQaywZKl3heI+6zxQ6vkxO48nWMSm
+         AgOvwBn/nbk13WTLj2Y55eH2IkULWQ+yiF4h+E3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>,
+        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 220/321] gpu: ipu-v3: pre: dont trigger update if buffer address doesnt change
-Date:   Tue,  3 Dec 2019 23:34:46 +0100
-Message-Id: <20191203223438.564186639@linuxfoundation.org>
+Subject: [PATCH 5.3 047/135] bridge: ebtables: dont crash when using dnat target in output chains
+Date:   Tue,  3 Dec 2019 23:34:47 +0100
+Message-Id: <20191203213019.004429000@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit eb0200a4357da100064971689d3a0e9e3cf57f33 ]
+[ Upstream commit b23c0742c2ce7e33ed79d10e451f70fdb5ca85d1 ]
 
-On a NOP double buffer update where current buffer address is the same
-as the next buffer address, the SDW_UPDATE bit clears too late. As we
-are now using this bit to determine when it is safe to signal flip
-completion to userspace this will delay completion of atomic commits
-where one plane doesn't change the buffer by a whole frame period.
+xt_in() returns NULL in the output hook, skip the pkt_type change for
+that case, redirection only makes sense in broute/prerouting hooks.
 
-Fix this by remembering the last buffer address and just skip the
-double buffer update if it would not change the buffer address.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-[p.zabel@pengutronix.de: initialize last_bufaddr in ipu_pre_configure]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reported-by: Tom Yan <tom.ty89@gmail.com>
+Cc: Linus Lüssing <linus.luessing@c0d3.blue>
+Fixes: cf3cb246e277d ("bridge: ebtables: fix reception of frames DNAT-ed to bridge device/port")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/ipu-v3/ipu-pre.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ net/bridge/netfilter/ebt_dnat.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-pre.c b/drivers/gpu/ipu-v3/ipu-pre.c
-index 2f8db9d625514..4a28f3fbb0a28 100644
---- a/drivers/gpu/ipu-v3/ipu-pre.c
-+++ b/drivers/gpu/ipu-v3/ipu-pre.c
-@@ -106,6 +106,7 @@ struct ipu_pre {
- 	void			*buffer_virt;
- 	bool			in_use;
- 	unsigned int		safe_window_end;
-+	unsigned int		last_bufaddr;
- };
+diff --git a/net/bridge/netfilter/ebt_dnat.c b/net/bridge/netfilter/ebt_dnat.c
+index ed91ea31978af..12a4f4d936810 100644
+--- a/net/bridge/netfilter/ebt_dnat.c
++++ b/net/bridge/netfilter/ebt_dnat.c
+@@ -20,7 +20,6 @@ static unsigned int
+ ebt_dnat_tg(struct sk_buff *skb, const struct xt_action_param *par)
+ {
+ 	const struct ebt_nat_info *info = par->targinfo;
+-	struct net_device *dev;
  
- static DEFINE_MUTEX(ipu_pre_list_mutex);
-@@ -185,6 +186,7 @@ void ipu_pre_configure(struct ipu_pre *pre, unsigned int width,
- 
- 	writel(bufaddr, pre->regs + IPU_PRE_CUR_BUF);
- 	writel(bufaddr, pre->regs + IPU_PRE_NEXT_BUF);
-+	pre->last_bufaddr = bufaddr;
- 
- 	val = IPU_PRE_PREF_ENG_CTRL_INPUT_PIXEL_FORMAT(0) |
- 	      IPU_PRE_PREF_ENG_CTRL_INPUT_ACTIVE_BPP(active_bpp) |
-@@ -242,7 +244,11 @@ void ipu_pre_update(struct ipu_pre *pre, unsigned int bufaddr)
- 	unsigned short current_yblock;
- 	u32 val;
- 
-+	if (bufaddr == pre->last_bufaddr)
-+		return;
+ 	if (skb_ensure_writable(skb, ETH_ALEN))
+ 		return EBT_DROP;
+@@ -33,10 +32,22 @@ ebt_dnat_tg(struct sk_buff *skb, const struct xt_action_param *par)
+ 		else
+ 			skb->pkt_type = PACKET_MULTICAST;
+ 	} else {
+-		if (xt_hooknum(par) != NF_BR_BROUTING)
+-			dev = br_port_get_rcu(xt_in(par))->br->dev;
+-		else
++		const struct net_device *dev;
 +
- 	writel(bufaddr, pre->regs + IPU_PRE_NEXT_BUF);
-+	pre->last_bufaddr = bufaddr;
++		switch (xt_hooknum(par)) {
++		case NF_BR_BROUTING:
+ 			dev = xt_in(par);
++			break;
++		case NF_BR_PRE_ROUTING:
++			dev = br_port_get_rcu(xt_in(par))->br->dev;
++			break;
++		default:
++			dev = NULL;
++			break;
++		}
++
++		if (!dev) /* NF_BR_LOCAL_OUT */
++			return info->target;
  
- 	do {
- 		if (time_after(jiffies, timeout)) {
+ 		if (ether_addr_equal(info->mac, dev->dev_addr))
+ 			skb->pkt_type = PACKET_HOST;
 -- 
 2.20.1
 
