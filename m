@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E28111DCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8414F111C64
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbfLCW5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:57:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52624 "EHLO mail.kernel.org"
+        id S1728835AbfLCWnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730526AbfLCW5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:57:10 -0500
+        id S1728631AbfLCWnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CC9020865;
-        Tue,  3 Dec 2019 22:57:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1820D2080F;
+        Tue,  3 Dec 2019 22:43:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413829;
-        bh=hg3O3/S4lttXG+2JlF6GAvLeIN89WGF2hMXQbXeBU/Q=;
+        s=default; t=1575413017;
+        bh=Bl5HF763uz37dvHlnO+fYfAMU1dfaMnL3BK6UUDKfgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mHb+o8CKyjzmtw7zmVVRYExBjRn2+20MLBqLqHlWBknL0MQIME4v8uqN4Agb6rltC
-         04ZF0tG63FXDXjg2WCL9VfOyCXpQQJH9dwmoY7RKZAiFQBfo/yWu67S1z8bIgY37Yk
-         aLprnI5CORgwkgsmoYUQQnzVKXeCSnYDNmphiViU=
+        b=Up6YCdSCQAnLnbc0krfrtdu8ziLQOSAwHi37Y5YcpRiWrbhhk2DMQXlmueKBRdENY
+         ajSlmI+55K2QFRrLttn3nUJnmyRP22jBGszRZ6HjQR5XVGkNnwDnGv5ehLJk80NoM1
+         Qz3dixSKb51aLyufPEXBiMJBGW/AZnKtd5vGBlRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.19 278/321] net: macb: fix error format in dev_err()
+        stable@vger.kernel.org,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 5.3 104/135] mei: bus: prefix device names on bus with the bus name
 Date:   Tue,  3 Dec 2019 23:35:44 +0100
-Message-Id: <20191203223441.589593297@linuxfoundation.org>
+Message-Id: <20191203213040.249954854@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,88 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Ceresoli <luca@lucaceresoli.net>
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-commit f413cbb332a0b5251a790f396d0eb4ebcade5dec upstream.
+commit 7a2b9e6ec84588b0be65cc0ae45a65bac431496b upstream.
 
-Errors are negative numbers. Using %u shows them as very large positive
-numbers such as 4294967277 that don't make sense. Use the %d format
-instead, and get a much nicer -19.
+Add parent device name to the name of devices on bus to avoid
+device names collisions for same client UUID available
+from different MEI heads. Namely this prevents sysfs collision under
+/sys/bus/mei/device/
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Fixes: b48e0bab142f ("net: macb: Migrate to devm clock interface")
-Fixes: 93b31f48b3ba ("net/macb: unify clock management")
-Fixes: 421d9df0628b ("net/macb: merge at91_ether driver into macb driver")
-Fixes: aead88bd0e99 ("net: ethernet: macb: Add support for rx_clk")
-Fixes: f5473d1d44e4 ("net: macb: Support clock management for tsu_clk")
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+In the device part leave just UUID other parameters that are
+required for device matching are not required here and are
+just bloating the name.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Link: https://lore.kernel.org/r/20191105150514.14010-1-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/cadence/macb_main.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/misc/mei/bus.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -3328,7 +3328,7 @@ static int macb_clk_init(struct platform
- 		if (!err)
- 			err = -ENODEV;
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -873,15 +873,16 @@ static const struct device_type mei_cl_d
  
--		dev_err(&pdev->dev, "failed to get macb_clk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to get macb_clk (%d)\n", err);
- 		return err;
- 	}
+ /**
+  * mei_cl_bus_set_name - set device name for me client device
++ *  <controller>-<client device>
++ *  Example: 0000:00:16.0-55213584-9a29-4916-badf-0fb7ed682aeb
+  *
+  * @cldev: me client device
+  */
+ static inline void mei_cl_bus_set_name(struct mei_cl_device *cldev)
+ {
+-	dev_set_name(&cldev->dev, "mei:%s:%pUl:%02X",
+-		     cldev->name,
+-		     mei_me_cl_uuid(cldev->me_cl),
+-		     mei_me_cl_ver(cldev->me_cl));
++	dev_set_name(&cldev->dev, "%s-%pUl",
++		     dev_name(cldev->bus->dev),
++		     mei_me_cl_uuid(cldev->me_cl));
+ }
  
-@@ -3337,7 +3337,7 @@ static int macb_clk_init(struct platform
- 		if (!err)
- 			err = -ENODEV;
- 
--		dev_err(&pdev->dev, "failed to get hclk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to get hclk (%d)\n", err);
- 		return err;
- 	}
- 
-@@ -3351,25 +3351,25 @@ static int macb_clk_init(struct platform
- 
- 	err = clk_prepare_enable(*pclk);
- 	if (err) {
--		dev_err(&pdev->dev, "failed to enable pclk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to enable pclk (%d)\n", err);
- 		return err;
- 	}
- 
- 	err = clk_prepare_enable(*hclk);
- 	if (err) {
--		dev_err(&pdev->dev, "failed to enable hclk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to enable hclk (%d)\n", err);
- 		goto err_disable_pclk;
- 	}
- 
- 	err = clk_prepare_enable(*tx_clk);
- 	if (err) {
--		dev_err(&pdev->dev, "failed to enable tx_clk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to enable tx_clk (%d)\n", err);
- 		goto err_disable_hclk;
- 	}
- 
- 	err = clk_prepare_enable(*rx_clk);
- 	if (err) {
--		dev_err(&pdev->dev, "failed to enable rx_clk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to enable rx_clk (%d)\n", err);
- 		goto err_disable_txclk;
- 	}
- 
-@@ -3839,7 +3839,7 @@ static int at91ether_clk_init(struct pla
- 
- 	err = clk_prepare_enable(*pclk);
- 	if (err) {
--		dev_err(&pdev->dev, "failed to enable pclk (%u)\n", err);
-+		dev_err(&pdev->dev, "failed to enable pclk (%d)\n", err);
- 		return err;
- 	}
- 
+ /**
 
 
