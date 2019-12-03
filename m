@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20C8D111D8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BAE111C22
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730303AbfLCWyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:54:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48538 "EHLO mail.kernel.org"
+        id S1728164AbfLCWku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:40:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727937AbfLCWyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:35 -0500
+        id S1727778AbfLCWkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:40:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 157CC20866;
-        Tue,  3 Dec 2019 22:54:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 519D12084F;
+        Tue,  3 Dec 2019 22:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413675;
-        bh=cvFZvCXWVi56kGin9wBixbYsa4vDrv6sQdpsJCuvV0I=;
+        s=default; t=1575412846;
+        bh=/qMwCBjS5OxIf9Vf7TWIcYvIx/qWc11hFZuyuHJAh88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bHSXQvwT/++yF7cxqziH3bKfUNTasYBIZ+IUYnhfuCRIpxZ/AJpjooTKEAxYrEIu5
-         Kc/clvb/1afVSPk80CvwkO+d2O2rPQWX2VcE+4sjbV8ZmRN09OKVcipgyliO83/8oO
-         zk5fzPX7ChHpN6HypFNFytqtIpGJCsnY+LlMomVM=
+        b=R4GFW+rA22G/0533d+yYSaTRtsHjl41hXn5TDO1+M36kkBnLRSsEVaxdfyikve+SB
+         YvITYCz5Uth9X7PQUl8t7yi0eV1sHkIU1OrrcLPnbdmKiYsaYPuxIDRT86SdBxU9q7
+         dptoakK+hIeWxxr6tBZhTr2FLnPh32aiA+YnCyTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huang Shijie <sjhuang@iluvatar.ai>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Skidanov <alexey.skidanov@intel.com>,
-        Olof Johansson <olof@lixom.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 212/321] lib/genalloc.c: include vmalloc.h
+Subject: [PATCH 5.3 038/135] idr: Fix idr_alloc_u32 on 32-bit systems
 Date:   Tue,  3 Dec 2019 23:34:38 +0100
-Message-Id: <20191203223438.149719034@linuxfoundation.org>
+Message-Id: <20191203213013.806415298@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,41 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-[ Upstream commit 35004f2e55807a1a1491db24ab512dd2f770a130 ]
+[ Upstream commit b7e9728f3d7fc5c5c8508d99f1675212af5cfd49 ]
 
-Fixes build break on most ARM/ARM64 defconfigs:
+Attempting to allocate an entry at 0xffffffff when one is already
+present would succeed in allocating one at 2^32, which would confuse
+everything.  Return -ENOSPC in this case, as expected.
 
-  lib/genalloc.c: In function 'gen_pool_add_virt':
-  lib/genalloc.c:190:10: error: implicit declaration of function 'vzalloc_node'; did you mean 'kzalloc_node'?
-  lib/genalloc.c:190:8: warning: assignment to 'struct gen_pool_chunk *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-  lib/genalloc.c: In function 'gen_pool_destroy':
-  lib/genalloc.c:254:3: error: implicit declaration of function 'vfree'; did you mean 'kfree'?
-
-Fixes: 6862d2fc8185 ('lib/genalloc.c: use vzalloc_node() to allocate the bitmap')
-Cc: Huang Shijie <sjhuang@iluvatar.ai>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Skidanov <alexey.skidanov@intel.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/genalloc.c | 1 +
- 1 file changed, 1 insertion(+)
+ lib/radix-tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index f365d71cdc774..7e85d1e37a6ea 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -35,6 +35,7 @@
- #include <linux/interrupt.h>
- #include <linux/genalloc.h>
- #include <linux/of_device.h>
-+#include <linux/vmalloc.h>
- 
- static inline size_t chunk_size(const struct gen_pool_chunk *chunk)
- {
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 18c1dfbb17654..c8fa1d2745302 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -1529,7 +1529,7 @@ void __rcu **idr_get_free(struct radix_tree_root *root,
+ 			offset = radix_tree_find_next_bit(node, IDR_FREE,
+ 							offset + 1);
+ 			start = next_index(start, node, offset);
+-			if (start > max)
++			if (start > max || start == 0)
+ 				return ERR_PTR(-ENOSPC);
+ 			while (offset == RADIX_TREE_MAP_SIZE) {
+ 				offset = node->offset + 1;
 -- 
 2.20.1
 
