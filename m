@@ -2,129 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8808111C57
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81590111D08
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:50:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfLCWm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:42:59 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43421 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728707AbfLCWmv (ORCPT
+        id S1729650AbfLCWtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:49:41 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:33646 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729447AbfLCWti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:42:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575412970;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+sDgbMqjO9PDnPDuImNP6HXuoqamT1anUKE/7ClETRA=;
-        b=X+aA1rBTY+q2Jy+07ak2Fz1rKtZA7h/F/ulyQxVdO2wXNEoS/gv2WFTau2n2tlu0s4dOuK
-        6GUzweMwmDHRC62i64oM9BQncJzVe55dlqE+bTJwZE1IJm+WFNCJGJ2mAwtpVZO80sG8o6
-        N4QumWRd+pcvxp+jcCIukrDOOwjnGbQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-4k8qimMGOBeQPasm2opFyw-1; Tue, 03 Dec 2019 17:42:49 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 411EA800D54;
-        Tue,  3 Dec 2019 22:42:47 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-90.bss.redhat.com [10.20.1.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6637F5DA32;
-        Tue,  3 Dec 2019 22:42:43 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     intel-gfx@lists.freedesktop.org
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Lee Shawn C <shawn.c.lee@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/i915: Assume 100% brightness when not in DPCD control mode
-Date:   Tue,  3 Dec 2019 17:42:35 -0500
-Message-Id: <20191203224236.230930-1-lyude@redhat.com>
-In-Reply-To: <87tv6hinv1.fsf@intel.com>
-References: <87tv6hinv1.fsf@intel.com>
+        Tue, 3 Dec 2019 17:49:38 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3MY79D110765;
+        Tue, 3 Dec 2019 22:49:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=uYMuACAdoNAl6fAtZMdOLI9RRVa7NSCuglLVW02y4Vk=;
+ b=qAfHc5tUR8AnZ+grEo2Tf/wPWys1CJCprYekENY6UUdzeO4NBXQsRnNdeoRnWFFAY71y
+ zNME2blxqhZUPE1kvQ+Ihr5PD+qU8zi40EBdO3+d2s9gzDi4yLhHpTAVHa2IW+pgzXHi
+ 1keQKv7Vj9cq3uwGnik3I4uVN2DmKJkT9XP5WXbIuSs9aLwIPwgtb8bDGb+NXPlLJah5
+ xY3pUyiGF3oZsrf/NO2W5d+wofNZtqqQM6/Hovpbg0z9eJlB6AQlFtFSBoKiW19uNezl
+ t+PbFit8ec8x0s0tlaiTWXZIXEtIzrOWvio2wvKPxaMS116pu63FlYVcD2WY+yhmpxBg 0g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2wkh2raqfm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 22:49:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3MYHoO082700;
+        Tue, 3 Dec 2019 22:49:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2wnvqx4r8y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 22:49:20 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB3MnHeU021188;
+        Tue, 3 Dec 2019 22:49:17 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Dec 2019 14:49:17 -0800
+Date:   Tue, 3 Dec 2019 14:49:15 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>
+Subject: Re: [GIT PULL] iomap: small cleanups for 5.5
+Message-ID: <20191203224915.GK7335@magnolia>
+References: <20191203160856.GC7323@magnolia>
+ <CAHk-=wh3vin7WyMpBGWxZovGp51wa=U0T=TXqnQPVMBiEpdvsQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: 4k8qimMGOBeQPasm2opFyw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh3vin7WyMpBGWxZovGp51wa=U0T=TXqnQPVMBiEpdvsQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912030165
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912030165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we always determine the initial panel brightness level by
-simply reading the value from DP_EDP_BACKLIGHT_BRIGHTNESS_MSB/LSB. This
-seems wrong though, because if the panel is not currently in DPCD
-control mode there's not really any reason why there would be any
-brightness value programmed in the first place.
+On Tue, Dec 03, 2019 at 01:21:01PM -0800, Linus Torvalds wrote:
+> On Tue, Dec 3, 2019 at 8:09 AM Darrick J. Wong <djwong@kernel.org> wrote:
+> > Please pull this series containing some more new iomap code for 5.5.
+> > There's not much this time -- just removing some local variables that
+> > don't need to exist in the iomap directio code.
+> 
+> Hmm. The tag message (which was also in the email thanks to git
+> request-pull) is very misleading.
+> 
+> Pulled, but please check these things.
 
-This appears to be the case on the Lenovo ThinkPad X1 Extreme 2nd
-Generation, where the default value in these registers is always 0 on
-boot despite the fact the panel runs at max brightness by default.
-Getting the initial brightness value correct here is important as well,
-since the panel on this laptop doesn't behave well if it's ever put into
-DPCD control mode while the brightness level is programmed to 0.
+Sorry about that sloppiness, I'll avoid that in the future.
 
-So, let's fix this by checking what the current backlight control mode
-is before reading the brightness level. If it's in DPCD control mode, we
-return the programmed brightness level. Otherwise we assume 100%
-brightness and return the highest possible brightness level. This also
-prevents us from accidentally programming a brightness level of 0.
+--D
 
-This is one of the many fixes that gets backlight controls working on
-the ThinkPad X1 Extreme 2nd Generation with optional 4K AMOLED screen.
-
-Changes since v1:
-* s/DP_EDP_DISPLAY_CONTROL_REGISTER/DP_EDP_BACKLIGHT_MODE_SET_REGISTER/
-  - Jani
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- .../drm/i915/display/intel_dp_aux_backlight.c   | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c b/driver=
-s/gpu/drm/i915/display/intel_dp_aux_backlight.c
-index fad470553cf9..4d467e7d29eb 100644
---- a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-@@ -59,8 +59,25 @@ static u32 intel_dp_aux_get_backlight(struct intel_conne=
-ctor *connector)
- {
- =09struct intel_dp *intel_dp =3D enc_to_intel_dp(&connector->encoder->base=
-);
- =09u8 read_val[2] =3D { 0x0 };
-+=09u8 mode_reg;
- =09u16 level =3D 0;
-=20
-+=09if (drm_dp_dpcd_readb(&intel_dp->aux,
-+=09=09=09      DP_EDP_BACKLIGHT_MODE_SET_REGISTER,
-+=09=09=09      &mode_reg) !=3D 1) {
-+=09=09DRM_DEBUG_KMS("Failed to read the DPCD register 0x%x\n",
-+=09=09=09      DP_EDP_BACKLIGHT_MODE_SET_REGISTER);
-+=09=09return 0;
-+=09}
-+
-+=09/*
-+=09 * If we're not in DPCD control mode yet, the programmed brightness
-+=09 * value is meaningless and we should assume max brightness
-+=09 */
-+=09if ((mode_reg & DP_EDP_BACKLIGHT_CONTROL_MODE_MASK) !=3D
-+=09    DP_EDP_BACKLIGHT_CONTROL_MODE_DPCD)
-+=09=09return connector->panel.backlight.max;
-+
- =09if (drm_dp_dpcd_read(&intel_dp->aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
- =09=09=09     &read_val, sizeof(read_val)) < 0) {
- =09=09DRM_DEBUG_KMS("Failed to read DPCD register 0x%x\n",
---=20
-2.23.0
-
+>            Linus
