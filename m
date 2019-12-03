@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F28F2111D83
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AD3111C20
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730273AbfLCWyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:54:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48010 "EHLO mail.kernel.org"
+        id S1728445AbfLCWkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:40:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729996AbfLCWyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:15 -0500
+        id S1728138AbfLCWkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:40:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D1FD2053B;
-        Tue,  3 Dec 2019 22:54:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53CD42084B;
+        Tue,  3 Dec 2019 22:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413655;
-        bh=6N6utb28xFcbw1WnBmmazrCLf9h//ber+CLlhqfmkag=;
+        s=default; t=1575412841;
+        bh=Y3JzWDCNjD/s/xO5SK0WpMAQ7VKjLb8pxh3zBIVmCuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i52HfPUQdzR/Vf6lndjcgQhmCNUhYejymT1K3XgnVwYs8xgrHirVdIJngmMxUHbnz
-         y1whCsAYcyd0Wn5GH7cIQrGoH6/zq9dxNCTCtoZWvY0vnitt2oopWrXk9pMYQl9+LQ
-         7IkojV4TuXgjEpqLNXTY0+dIotO3eS2tkJMs+lso=
+        b=z2u2at9q/6m3fqrn0OoLzWP9Bn9oV+yfCyqQkrhTjuLYHvcja4A8DfaX/Kba3VpXn
+         OVdAXw5q+TYcma5rGdP1VtMHpBLNKR7nFXtqfkUJIOD6WG9fW4O/2sx3CREImU10Hy
+         Ui7kih170GJJb1cutEpLjvC4Tzsimn4GA/df8bfE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huang Shijie <sjhuang@iluvatar.ai>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Skidanov <alexey.skidanov@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 209/321] lib/genalloc.c: use vzalloc_node() to allocate the bitmap
-Date:   Tue,  3 Dec 2019 23:34:35 +0100
-Message-Id: <20191203223437.994770876@linuxfoundation.org>
+Subject: [PATCH 5.3 036/135] idr: Fix idr_get_next_ul race with idr_remove
+Date:   Tue,  3 Dec 2019 23:34:36 +0100
+Message-Id: <20191203213013.337775167@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +44,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Shijie <sjhuang@iluvatar.ai>
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-[ Upstream commit 6862d2fc81859f88c1f3f660886427893f2b4f3f ]
+[ Upstream commit 5a74ac4c4a97bd8b7dba054304d598e2a882fea6 ]
 
-Some devices may have big memory on chip, such as over 1G.  In some
-cases, the nbytes maybe bigger then 4M which is the bounday of the
-memory buddy system (4K default).
+Commit 5c089fd0c734 ("idr: Fix idr_get_next race with idr_remove")
+neglected to fix idr_get_next_ul().  As far as I can tell, nobody's
+actually using this interface under the RCU read lock, but fix it now
+before anybody decides to use it.
 
-So use vzalloc_node() to allocate the bitmap.  Also use vfree to free
-it.
-
-Link: http://lkml.kernel.org/r/20181225015701.6289-1-sjhuang@iluvatar.ai
-Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Skidanov <alexey.skidanov@intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 5c089fd0c734 ("idr: Fix idr_get_next race with idr_remove")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/genalloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/idr.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 5deb25c40a5a1..f365d71cdc774 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -187,7 +187,7 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
- 	int nbytes = sizeof(struct gen_pool_chunk) +
- 				BITS_TO_LONGS(nbits) * sizeof(long);
+diff --git a/lib/idr.c b/lib/idr.c
+index 66a3748924828..c2cf2c52bbde5 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -215,7 +215,7 @@ int idr_for_each(const struct idr *idr,
+ EXPORT_SYMBOL(idr_for_each);
  
--	chunk = kzalloc_node(nbytes, GFP_KERNEL, nid);
-+	chunk = vzalloc_node(nbytes, nid);
- 	if (unlikely(chunk == NULL))
- 		return -ENOMEM;
- 
-@@ -251,7 +251,7 @@ void gen_pool_destroy(struct gen_pool *pool)
- 		bit = find_next_bit(chunk->bits, end_bit, 0);
- 		BUG_ON(bit < end_bit);
- 
--		kfree(chunk);
-+		vfree(chunk);
+ /**
+- * idr_get_next() - Find next populated entry.
++ * idr_get_next_ul() - Find next populated entry.
+  * @idr: IDR handle.
+  * @nextid: Pointer to an ID.
+  *
+@@ -224,7 +224,7 @@ EXPORT_SYMBOL(idr_for_each);
+  * to the ID of the found value.  To use in a loop, the value pointed to by
+  * nextid must be incremented by the user.
+  */
+-void *idr_get_next(struct idr *idr, int *nextid)
++void *idr_get_next_ul(struct idr *idr, unsigned long *nextid)
+ {
+ 	struct radix_tree_iter iter;
+ 	void __rcu **slot;
+@@ -245,18 +245,14 @@ void *idr_get_next(struct idr *idr, int *nextid)
  	}
- 	kfree_const(pool->name);
- 	kfree(pool);
+ 	if (!slot)
+ 		return NULL;
+-	id = iter.index + base;
+-
+-	if (WARN_ON_ONCE(id > INT_MAX))
+-		return NULL;
+ 
+-	*nextid = id;
++	*nextid = iter.index + base;
+ 	return entry;
+ }
+-EXPORT_SYMBOL(idr_get_next);
++EXPORT_SYMBOL(idr_get_next_ul);
+ 
+ /**
+- * idr_get_next_ul() - Find next populated entry.
++ * idr_get_next() - Find next populated entry.
+  * @idr: IDR handle.
+  * @nextid: Pointer to an ID.
+  *
+@@ -265,22 +261,17 @@ EXPORT_SYMBOL(idr_get_next);
+  * to the ID of the found value.  To use in a loop, the value pointed to by
+  * nextid must be incremented by the user.
+  */
+-void *idr_get_next_ul(struct idr *idr, unsigned long *nextid)
++void *idr_get_next(struct idr *idr, int *nextid)
+ {
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
+-	unsigned long base = idr->idr_base;
+ 	unsigned long id = *nextid;
++	void *entry = idr_get_next_ul(idr, &id);
+ 
+-	id = (id < base) ? 0 : id - base;
+-	slot = radix_tree_iter_find(&idr->idr_rt, &iter, id);
+-	if (!slot)
++	if (WARN_ON_ONCE(id > INT_MAX))
+ 		return NULL;
+-
+-	*nextid = iter.index + base;
+-	return rcu_dereference_raw(*slot);
++	*nextid = id;
++	return entry;
+ }
+-EXPORT_SYMBOL(idr_get_next_ul);
++EXPORT_SYMBOL(idr_get_next);
+ 
+ /**
+  * idr_replace() - replace pointer for given ID.
 -- 
 2.20.1
 
