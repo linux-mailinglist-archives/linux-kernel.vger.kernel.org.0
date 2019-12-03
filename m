@@ -2,84 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEC0C10FF64
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF51C10FF66
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:57:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbfLCN52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:57:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfLCN50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:57:26 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86C5020409;
-        Tue,  3 Dec 2019 13:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575381446;
-        bh=5HsrQ91rsRMjs222G21GWWlJX7cH7KjfErCjL0wtVL8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vq4mOm1zFHUgzh98S2HHxpLnjTV27QxJldI7qAayvC9PWKmYe67CQdFM9lZM0b48g
-         EHsGLLLYGz48ZiJNS4U/qTmHdfaYDt+UR2R2YT/56yIXqKpLplLRj+7Tx1vBaPUOXx
-         NbJzOY+nzUia2YSncSU7WvVxcOGYZr0U79Wb/FTk=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-trace-devel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 23/23] libtraceevent: Copy pkg-config file to output folder when using O=
-Date:   Tue,  3 Dec 2019 10:56:06 -0300
-Message-Id: <20191203135606.24902-24-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191203135606.24902-1-acme@kernel.org>
-References: <20191203135606.24902-1-acme@kernel.org>
+        id S1726564AbfLCN5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:57:40 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58434 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727180AbfLCN5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 08:57:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pGZjUh8ellhVGI9ssg4DQAJRtWM/oSsrAhWz58uDLYE=; b=K+oWswS7BbZQhmXrTzt62YVxf
+        mKNwgluw/QFfsuhI2q2SwT2RGIfB+UDz+XkbodHVayXzf4yZ7U49NGvpJETvrCpbzXtFKKe0ncN5F
+        z6psPTwUdiyKtaWK2e1noIWYD+8MPgF0q5TJg5ftlWJ0jKgOyoxoykYbaP8J2zz7psj19Eh4snUbU
+        hfs/OXm9cR1EtryubmeT6YOH4/24FbG8gPGIVAQnIfvxnFFjfFQFRCnUIHBOMbBk35mty6yv3ZH+w
+        p1QwiAlusOVQVbSUVFmbnmZjsqCs/12YIeIKqZgxSOg3M5PdmftpMCXuZBdzfMwupQO1aGNv04Zcz
+        c0SdgoDgw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ic8fb-0005Ec-5g; Tue, 03 Dec 2019 13:56:51 +0000
+Date:   Tue, 3 Dec 2019 05:56:51 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        linux-fsdevel@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: introduce is_dot_dotdot helper for cleanup
+Message-ID: <20191203135651.GU20752@bombadil.infradead.org>
+References: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575377810-3574-1-git-send-email-yangtiezhu@loongson.cn>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+On Tue, Dec 03, 2019 at 08:56:50PM +0800, Tiezhu Yang wrote:
+> There exists many similar and duplicate codes to check "." and "..",
+> so introduce is_dot_dotdot helper to make the code more clean.
+> 
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+> 
+> v2:
+>   - use the better performance implementation of is_dot_dotdot
+>   - make it static inline and move it to include/linux/fs.h
 
-When we use 'O=' with make to build libtraceevent in a separate folder
-it still copies 'libtraceevent.pc' to its source folder. Modify the
-Makefile so that it uses the output folder to copy the pkg-config file
-and install from there.
+Ugh, not more crap in fs.h.
 
-Signed-off-by: Sudipm Mukherjee <sudipm.mukherjee@gmail.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: linux-trace-devel@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20191115113610.21493-2-sudipm.mukherjee@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/lib/traceevent/Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+$ ls -l --sort=size include/linux |head
+-rw-r--r--  1 willy willy 154148 Nov 29 22:35 netdevice.h
+-rw-r--r--  1 willy willy 130488 Nov 29 22:35 skbuff.h
+-rw-r--r--  1 willy willy 123540 Nov 29 22:35 pci_ids.h
+-rw-r--r--  1 willy willy 118991 Nov 29 22:35 fs.h
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 83446fe2cf01..c5a03356a999 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -208,10 +208,11 @@ define do_install
- 	$(INSTALL) $(if $3,-m $3,) $1 '$(DESTDIR_SQ)$2'
- endef
- 
--PKG_CONFIG_FILE = libtraceevent.pc
-+PKG_CONFIG_SOURCE_FILE = libtraceevent.pc
-+PKG_CONFIG_FILE := $(addprefix $(OUTPUT),$(PKG_CONFIG_SOURCE_FILE))
- define do_install_pkgconfig_file
- 	if [ -n "${pkgconfig_dir}" ]; then 					\
--		cp -f ${PKG_CONFIG_FILE}.template ${PKG_CONFIG_FILE}; 		\
-+		cp -f ${PKG_CONFIG_SOURCE_FILE}.template ${PKG_CONFIG_FILE};	\
- 		sed -i "s|INSTALL_PREFIX|${1}|g" ${PKG_CONFIG_FILE}; 		\
- 		sed -i "s|LIB_VERSION|${EVENT_PARSE_VERSION}|g" ${PKG_CONFIG_FILE}; \
- 		sed -i "s|LIB_DIR|${libdir}|g" ${PKG_CONFIG_FILE}; \
--- 
-2.21.0
+I think this probably fits well in namei.h.  And I think it works
+better with bare 'name' and 'len' arguments, rather than taking a qstr.
 
+And, as I asked twice in the last round of review, did you benchmark
+this change?
