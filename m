@@ -2,139 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 617FA10F68C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 05:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C163E10F66F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 05:57:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfLCE6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 23:58:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35611 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfLCE6E (ORCPT
+        id S1726955AbfLCE5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 23:57:22 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44093 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbfLCE5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 23:58:04 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g17so2021008wro.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 20:58:03 -0800 (PST)
+        Mon, 2 Dec 2019 23:57:22 -0500
+Received: by mail-vs1-f67.google.com with SMTP id p6so1498880vsj.11
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 20:57:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ovwMqTunBsTOC/CqSHDUi6kBW0F5coIGszg1T7U+mmc=;
-        b=JyHSTtEqJjBunwy7X6C8u0emC8YOkh//6Huc6rS1+xcedJ3UizEM5ZQ/oF0Z3ZbzoG
-         LBMVE4VHnS2u5w9kuBLc9nuYTSq+3/h+m+K1OMNqtstxQaMjMMTjUjWCNSVmwSAjx5TS
-         o/Vb5DygLM1Qe07q6f75jMdySlqCy26WdiP2c=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ml7IBhdccfwW8j+1FG8S3XplDMBYZxcPTBvONmJE1w4=;
+        b=hzBgzHbtVIyov5zqV3RPememS0AoB5zpkOlw8cfhalKrZwGNpYSLoE0xQf4l02oWrV
+         FQIwZiBvAZGZJ/BLUAO+1ElZTAkEskhn665uiBkS/GtVX27yP0iD3c5CkHdCKNx9l6In
+         UFupIM/RbBb37lwylN9sEEofwxfW2F/UqYr5luhxyHmAL1N16l9X7W2mEZvw/ZNL6z5H
+         Bw0S6R/TIziKvfDb0bRK17RsVL3J33ww8NtVkfr2CaQtHOH+X9xfeD6ku0Dv40XKt/eg
+         yOyby/1W9LCUCJpSHehZru40vphONetoeBGtYAtubxFjaRwoy0ue+KAF6POvHQs4DZ9a
+         Fwow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ovwMqTunBsTOC/CqSHDUi6kBW0F5coIGszg1T7U+mmc=;
-        b=V8Ru501tq3AlA/jEXYBMFGPuTdWsyYJ0xGY0LK0GZRJAmO+Q7Im5o8hu5Om7/rnq89
-         9Lz8wH3XU96eUzB9HujcprDzUZgYZgdwCvB0af7YRdWzmo6awK3KBg4mUVYDppUaBp4N
-         f4H0i/3QHYWQm4OETAQCzcmPSLxhdbec6hBf40Z90RsbP1mpj0ZrVXhKcRELPQQXZN/L
-         Ie7uxms3UEX+x8+IVIGpu+HKsVZWzq9ckKl+D6oQOyxOQ0gz6E77k7m761jlJC7fO3NF
-         ubMmcfNgIq4JAJ4lQBDWAYG5+f6arxoXr5+7nEFZlwx4rTCokoq4FKZbxr07adf7nghr
-         wGgQ==
-X-Gm-Message-State: APjAAAWb27MlyH6AHedfqG4i59v/uwgvU4fz7Hdwgy9o+MVSACWARTwh
-        iNZ4F6plyIBFpjr0H/UHf8mHXw==
-X-Google-Smtp-Source: APXvYqz9UG6+uRLARgRC4h9K9ngpNM/yLeVYRm7UAEuQb7CC8hxxsUUj/XOI97lXY4CwxOy7a5RBnw==
-X-Received: by 2002:adf:f108:: with SMTP id r8mr2821276wro.390.1575349082332;
-        Mon, 02 Dec 2019 20:58:02 -0800 (PST)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id k4sm1667807wmk.26.2019.12.02.20.57.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Dec 2019 20:58:01 -0800 (PST)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v3 6/6] arm64: dts: Change PCIe INTx mapping for NS2
-Date:   Tue,  3 Dec 2019 10:27:06 +0530
-Message-Id: <1575349026-8743-7-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575349026-8743-1-git-send-email-srinath.mannam@broadcom.com>
-References: <1575349026-8743-1-git-send-email-srinath.mannam@broadcom.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ml7IBhdccfwW8j+1FG8S3XplDMBYZxcPTBvONmJE1w4=;
+        b=qG4yPiJbaoiwSeaDt4Z0OQgoYjwEUmHb4rs7vPn/9WLx2Vl54FUqwP6Brc5XexiAtn
+         5J/g+IFMhYwPhcE1yCiUHH1fXKJUkDYb1VezMrMWaX13zIQ/MSwQ1XTcmYWMXfp6QIvL
+         IY/AwfcJHQdNdej7KxsG1KcywuUxECE8O8KkK1FBJfjgmK4xWeFEXztzbRb9K+S7TG3X
+         WKkhcj9nPctkB7F8yopYhAjdeziDevgGmkfM1oOjPJaqfyZE84AbIAxAijyDOMsTFhC4
+         z/A6mOeT/hWGDgv0yKe7fAoDCoZfE5do1miuYi5A9SV8/WQtEJ0tuV7HiBvZ+89Fuda0
+         Q5ZQ==
+X-Gm-Message-State: APjAAAXEGsPtwsMrsMSO+6BJ2UtUJEM1L1UWLTjLYKZrlD8PuF3S7iWm
+        Vxs7PCTk0OPRGK33Nm1YvKnfmbcC0Oka8OiACsWQdQ==
+X-Google-Smtp-Source: APXvYqzzuJ7zVrjIE0Y2zaZ/PAovWXEvXm3YYHoOqOoTi9vqEY52XFNHaanurVBB7nEb72UyUNt1t6NXf2SV3i7mJvQ=
+X-Received: by 2002:a05:6102:1261:: with SMTP id q1mr1756256vsg.182.1575349040559;
+ Mon, 02 Dec 2019 20:57:20 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1573499020.git.amit.kucheria@linaro.org>
+ <4b949a4f401a7f9d403ed0f0c16c7feb083f3524.1573499020.git.amit.kucheria@linaro.org>
+ <5dcdda2a.1c69fb81.27852.ac35@mx.google.com>
+In-Reply-To: <5dcdda2a.1c69fb81.27852.ac35@mx.google.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 3 Dec 2019 10:27:09 +0530
+Message-ID: <CAHLCerNw_FuFeqDfckjmsSE+=ZGCn5EkvquUtDn7EEVjrw9aVQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drivers: thermal: tsens: Add critical interrupt support
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, sivaa@codeaurora.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ray Jui <ray.jui@broadcom.com>
+On Fri, Nov 15, 2019 at 4:20 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Amit Kucheria (2019-11-11 11:21:27)
+> > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> > index 4359a4247ac3..2989cb952cdb 100644
+> > --- a/drivers/thermal/qcom/tsens-common.c
+> > +++ b/drivers/thermal/qcom/tsens-common.c
+> > @@ -321,6 +357,65 @@ static inline u32 masked_irq(u32 hw_id, u32 mask, enum tsens_ver ver)
+> >         return 0;
+> >  }
+> >
+> > +/**
+> > + * tsens_critical_irq_thread - Threaded interrupt handler for critical interrupts
+> > + * @irq: irq number
+> > + * @data: tsens controller private data
+> > + *
+> > + * Check all sensors to find ones that violated their critical threshold limits.
+> > + * Clear and then re-enable the interrupt.
+> > + *
+> > + * The level-triggered interrupt might deassert if the temperature returned to
+> > + * within the threshold limits by the time the handler got scheduled. We
+> > + * consider the irq to have been handled in that case.
+> > + *
+> > + * Return: IRQ_HANDLED
+> > + */
+> > +irqreturn_t tsens_critical_irq_thread(int irq, void *data)
+> > +{
+> > +       struct tsens_priv *priv = data;
+> > +       struct tsens_irq_data d;
+> > +       bool enable = true, disable = false;
+>
+> Why not just use true and false in the one place these variables are
+> used?
 
-Change the PCIe INTx mapping to model the 4 INTx interrupts in the
-IRQ domain of the iProc PCIe controller itself
+Will fix.
 
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
----
- arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi | 28 ++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+> > +       unsigned long flags;
+> > +       int temp, ret, i;
+> > +
+> > +       for (i = 0; i < priv->num_sensors; i++) {
+> > +               struct tsens_sensor *s = &priv->sensor[i];
+>
+> Maybe make this const?
 
-diff --git a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-index 15f7b0e..489bfd5 100644
---- a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
-@@ -117,8 +117,11 @@
- 		dma-coherent;
- 
- 		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 0>;
--		interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie0_intc 0>,
-+				<0 0 0 2 &pcie0_intc 1>,
-+				<0 0 0 3 &pcie0_intc 2>,
-+				<0 0 0 4 &pcie0_intc 3>;
- 
- 		linux,pci-domain = <0>;
- 
-@@ -140,6 +143,13 @@
- 		phy-names = "pcie-phy";
- 
- 		msi-parent = <&v2m0>;
-+		pcie0_intc: interrupt-controller {
-+			compatible = "brcm,iproc-intc";
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- 
- 	pcie4: pcie@50020000 {
-@@ -148,8 +158,11 @@
- 		dma-coherent;
- 
- 		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 0>;
--		interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie4_intc 0>,
-+				<0 0 0 2 &pcie4_intc 1>,
-+				<0 0 0 3 &pcie4_intc 2>,
-+				<0 0 0 4 &pcie4_intc 3>;
- 
- 		linux,pci-domain = <4>;
- 
-@@ -171,6 +184,13 @@
- 		phy-names = "pcie-phy";
- 
- 		msi-parent = <&v2m0>;
-+		pcie4_intc: interrupt-controller {
-+			compatible = "brcm,iproc-intc";
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- 
- 	pcie8: pcie@60c00000 {
--- 
-2.7.4
+OK.
 
+>
+> > +               u32 hw_id = s->hw_id;
+> > +
+> > +               if (IS_ERR(priv->sensor[i].tzd))
+>
+> IS_ERR(s->tzd)?
+
+Yup.
+
+>
+> > +                       continue;
+> > +               if (!tsens_threshold_violated(priv, hw_id, &d))
+> > +                       continue;
+> > +               ret = get_temp_tsens_valid(s, &temp);
+>
+> Can this accept a const 's'?
+
+Yes.
+
+> > +               if (ret) {
+> > +                       dev_err(priv->dev, "[%u] %s: error reading sensor\n", hw_id, __func__);
+> > +                       continue;
+> > +               }
+> > +
+> > +               spin_lock_irqsave(&priv->ul_lock, flags);
+> > +
+> > +               tsens_read_irq_state(priv, hw_id, s, &d);
+> > +
+> > +               if (d.crit_viol &&
+> > +                   !masked_irq(hw_id, d.crit_irq_mask, tsens_version(priv))) {
+> > +                       tsens_set_interrupt(priv, hw_id, CRITICAL, disable);
+> > +                       if (d.crit_thresh > temp) {
+> > +                               dev_dbg(priv->dev, "[%u] %s: re-arm upper\n",
+> > +                                       priv->sensor[i].hw_id, __func__);
+>
+> hw_id instead of priv->sensor...?
+
+Done. Will fixup for older code in a separate patch.
+
+> > +                       } else {
+> > +                               dev_dbg(priv->dev, "[%u] %s: TZ update trigger (%d mC)\n",
+> > +                                       hw_id, __func__, temp);
+> > +                       }
+> > +                       tsens_set_interrupt(priv, hw_id, CRITICAL, enable);
+> > +               }
+> > +
+> > +               spin_unlock_irqrestore(&priv->crit_lock, flags);
+> > +       }
+> > +
+> > +       return IRQ_HANDLED;
+> > +}
+> > +
+> >  /**
+> >   * tsens_irq_thread - Threaded interrupt handler for uplow interrupts
+> >   * @irq: irq number
+> > diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> > index 7d317660211e..784c4976c4f9 100644
+> > --- a/drivers/thermal/qcom/tsens.c
+> > +++ b/drivers/thermal/qcom/tsens.c
+> > @@ -121,6 +121,27 @@ static int tsens_register(struct tsens_priv *priv)
+> >
+> >         enable_irq_wake(irq);
+> >
+> > +       if (tsens_version(priv) > VER_1_X) {
+> > +               irq = platform_get_irq_byname(pdev, "critical");
+> > +               if (irq < 0) {
+> > +                       ret = irq;
+> > +                       goto err_put_device;
+> > +               }
+> > +
+> > +               ret = devm_request_threaded_irq(&pdev->dev, irq,
+> > +                                               NULL, tsens_critical_irq_thread,
+> > +                                               IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+> > +                                               dev_name(&pdev->dev), priv);
+> > +               if (ret) {
+> > +                       dev_err(&pdev->dev, "%s: failed to get critical irq\n", __func__);
+> > +                       goto err_put_device;
+>
+> Do we need to disable_irq_wake() for the previous irq here?
+
+Or we could just move the earlier enable_irq_wake() to after
+successful registration of the critical interrupt to avoid the error
+branch. See v2 posting.
+
+
+
+> > +               }
+> > +
+> > +               enable_irq_wake(irq);
+> > +       }
+> > +
+> > +       return 0;
+> > +
+> >  err_put_device:
+> >         put_device(&pdev->dev);
+> >         return ret;
