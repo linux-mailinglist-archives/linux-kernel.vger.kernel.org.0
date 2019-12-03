@@ -2,113 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623FA10F862
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC72910F856
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfLCHK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 02:10:58 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34389 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfLCHKz (ORCPT
+        id S1727411AbfLCHKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 02:10:44 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:16605 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727349AbfLCHKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 02:10:55 -0500
-Received: by mail-lj1-f195.google.com with SMTP id m6so2555828ljc.1;
-        Mon, 02 Dec 2019 23:10:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T2oE/2ITTWUYWdiRD1UkVYx9tpV5y/qN7WKbuS8zqvk=;
-        b=IpBzg5jomg2hqfZqFOL+4Z2qK4TAHWstGJIqb3mUCDL03GtM9q3IV+COWDN4ecHtGY
-         hdt6Z7toqPcgqf5AZAhBo0ytu6mgjjiPzmRNloS/zzSUbWAjh+96Nif5bwoK30/ehJnC
-         A9RI/GDiS1peoHcV8dT5QZ+v1SCGYEPWBenTEdumCoQZcSSihbpkvdIEIhMlKhMKUer1
-         2koz2qyOdSuAxWUqdvFPvfb30mU/CkXoP84mKKRBnoKhhRx0TxQXXpAN7xKzm48NjsTX
-         FGyUzMcbLcj2mss86iVwSA7racaih2s4SG0Tw50FeLXM+2fxF21iNxuLtcDnmE5bsbph
-         tdog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T2oE/2ITTWUYWdiRD1UkVYx9tpV5y/qN7WKbuS8zqvk=;
-        b=H1830PYOg058ozingUnh64aQMGC+pBEN8/MDMpBFHypBtWVwn5v82DpXJuEx792ueN
-         NOSVsB+dG3mSMdBjVs+2lpzyaV+42gWwwVO7esF7RYDMJBkjEKYN47i1GjD25mER+thi
-         3AXvYdCN/8nFBw9+w2oU8ELsGn2FTFf82Xd1E3O5j9Znfelc9dK/7KNf7Ynjle30R1zi
-         ujQg0NXqaJA+9KBkrtRNHcx93wSPUnA5cl9QN7wv3cYuWSnv6cAXb3gjNs91jamt5MjV
-         bLwGr7LdSNvYnx9Ca6wDmS9cizcCQHcl8kjBibdbpg+M+8ASJvq6WSYIuuL7ILuGzJMv
-         ApDA==
-X-Gm-Message-State: APjAAAUbTcbCegqu4V/cku4dmDCvTZ6nu1occuGU/z+/Blrd99YYYq86
-        zntGY+QSX5wdRlUE3dyiIDpAsiUQ+pwI/u//JFo=
-X-Google-Smtp-Source: APXvYqweZp802KOAOJ8BisQDD2SIzdLKUOS/xVrxSfjAi42aOc57eQ5eEjmiqISt4Ij5722rvuc/8ygCbAkkgbksSQk=
-X-Received: by 2002:a2e:7816:: with SMTP id t22mr1625051ljc.161.1575357053013;
- Mon, 02 Dec 2019 23:10:53 -0800 (PST)
+        Tue, 3 Dec 2019 02:10:44 -0500
+X-UUID: fd8c583ac3894792ad25a7da05373773-20191203
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=RwR1gaBEERJeJ54o0Zn/3vUhZcwHLLvEJhQPdIaUvZQ=;
+        b=MvCeNJZofVnOCX6BdEvU3YCvEriFTgWH2Q360g0PwXWb4szdXfke83RCr9ifP6BuVoKFWVv03gxrmR97dLoLWLcxolwOaU5wS590yv/Kvra9ynfRMk+fGtECYiMJELECL0SoPem+YOMpwjAUVAX47YD0hR0dyHm+GoXyeJZNZVg=;
+X-UUID: fd8c583ac3894792ad25a7da05373773-20191203
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1119062967; Tue, 03 Dec 2019 15:10:38 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 3 Dec 2019 15:10:26 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 3 Dec 2019 15:10:19 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
+        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH v2 0/6] drm/mediatek: fix cursor issue and apply CMDQ in MTK DRM
+Date:   Tue, 3 Dec 2019 15:10:30 +0800
+Message-ID: <20191203071036.14158-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <1575242724-4937-1-git-send-email-sj38.park@gmail.com> <20191203070025.GA4206@google.com>
-In-Reply-To: <20191203070025.GA4206@google.com>
-From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Tue, 3 Dec 2019 08:10:26 +0100
-Message-ID: <CAEjAshraUy20gEEaff69=b11DhB7zbz8WHT=6wOuw6C2FyJwYA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] Fix nits in the kunit
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SeongJae Park <sjpark@amazon.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 8:00 AM Brendan Higgins
-<brendanhiggins@google.com> wrote:
->
-> On Mon, Dec 02, 2019 at 08:25:18AM +0900, SeongJae Park wrote:
-> > From: SeongJae Park <sjpark@amazon.de>
-> >
-> > This patchset contains trivial fixes for the kunit documentations and the
-> > wrapper python scripts.
-> >
-> > SeongJae Park (6):
-> >   docs/kunit/start: Use in-tree 'kunit_defconfig'
-> >   docs/kunit/start: Skip wrapper run command
-> >   kunit: Remove duplicated defconfig creation
-> >   kunit: Create default config in 'build_dir'
-> >   kunit: Place 'test.log' under the 'build_dir'
-> >   kunit: Rename 'kunitconfig' to '.kunitconfig'
-> >
-> >  Documentation/dev-tools/kunit/start.rst | 19 +++++--------------
-> >  tools/testing/kunit/kunit.py            | 10 ++++++----
-> >  tools/testing/kunit/kunit_kernel.py     |  6 +++---
-> >  3 files changed, 14 insertions(+), 21 deletions(-)
->
-> I applied your patchset to torvalds/master, ran the command:
->
-> tools/testing/kunit/kunit.py run --timeout=60 --jobs=8 --defconfig --build_dir=.kunit
->
-> and got the error:
->
-> Traceback (most recent call last):
->   File "tools/testing/kunit/kunit.py", line 140, in <module>
->     main(sys.argv[1:])
->   File "tools/testing/kunit/kunit.py", line 123, in main
->     create_default_kunitconfig()
->   File "tools/testing/kunit/kunit.py", line 36, in create_default_kunitconfig
->     kunit_kernel.KUNITCONFIG_PATH)
->   File "/usr/lib/python3.7/shutil.py", line 121, in copyfile
->     with open(dst, 'wb') as fdst:
-> FileNotFoundError: [Errno 2] No such file or directory: '.kunit/.kunitconfig'
->
-> It seems that it expects the build_dir to already exist; however, I
-> don't think this is clear from the error message. Would you mind
-> addressing that here?
+VGhlIENNRFEgKENvbW1hbmQgUXVldWUpIGluIE1UODE4MyBpcyB1c2VkIHRvIGhlbHAgdXBkYXRl
+IGFsbA0KcmVsZXZhbnQgZGlzcGxheSBjb250cm9sbGVyIHJlZ2lzdGVycyB3aXRoIGNyaXRpY2Fs
+IHRpbWUgbGltYXRpb24uDQpUaGlzIHBhdGNoIGFkZCBjbWRxIGludGVyZmFjZSBpbiBkZHBfY29t
+cCBpbnRlcmZhY2UsIGxldCBhbGwNCmRkcF9jb21wIGludGVyZmFjZSBjYW4gc3VwcG9ydCBjcHUv
+Y21kcSBmdW5jdGlvbiBhdCB0aGUgc2FtZSB0aW1lLg0KDQpUaGVzZSBwYXRjaGVzIGFsc28gY2Fu
+IGZpeHVwIGN1cnNvciBtb3ZpbmcgaXMgbm90IHNtb290aA0Kd2hlbiBoZWF2eSBsb2FkIGluIHdl
+YmdsLg0KDQpUaGlzIHBhdGNoIGRlcGVuZHMgb24gcHRhY2g6DQphZGQgZHJtIHN1cHBvcnQgZm9y
+IE1UODE4Mw0KKGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTExMjE1MTkvKQ0K
+c3VwcG9ydCBnY2Ugb24gbXQ4MTgzIHBsYXRmb3JtDQooaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVs
+Lm9yZy9jb3Zlci8xMTI1NTE0NykNCmRybS9tZWRpYXRlazogUmVmYWN0b3IgcGxhbmUgaW5pdC9j
+aGVjayBhbmQgc3VwcG9ydCByb3RhdGlvbg0KKGh0dHBzOi8vcHctZW1lcmlsLmZyZWVkZXNrdG9w
+Lm9yZy9zZXJpZXMvNjkwMTUvKQ0KZHJtL21lZGlhdGVrOiBDaGVjayByZXR1cm4gdmFsdWUgb2Yg
+bXRrX2RybV9kZHBfY29tcF9mb3JfcGxhbmUNCihodHRwczovL2xvcmUua2VybmVsLm9yZy9wYXRj
+aHdvcmsvcGF0Y2gvMTE1NDUxNy8pDQoNCkNoYW5nZXMgc2luY2UgdjE6DQogLSByZW1vdmUgcmVk
+dW5kYW50IGNvZGUNCiAtIG1lcmdlIHRoZSBkdXBsaWNhdGUgY29kZQ0KIC0gdXNlIGFzeW5jIGlu
+c3RlYWQgb2YgY3Vyc29yDQoNCkNoYW5nZXMgc2luY2UgdjA6DQogLSByZW1vdmUgcmVkdW5kYW50
+IGNvZGUNCiAtIHJlbW92ZSBwYXRjaA0KICAgImRybS9tZWRpYXRlazogZml4IGF0b21pY19zdGF0
+ZSByZWZlcmVuY2UgY291bnRpbmciDQogICBBZnRlciByZW1vdmUgdGhpcyBwYXRjaCwgdGhlIGlz
+c3VlIHdlIG1ldCBiZWZvcmUgaXMgZ29uZS4NCiAgIFNvIEkgZG8gbm90IGFkZCBhbnkgZXh0cmEg
+Y29kZSB0byBkbyBzb21ldGhpbmcuDQoNCg0KQmliYnkgSHNpZWggKDYpOg0KICBkcm0vbWVkaWF0
+ZWs6IHVzZSBEUk0gY29yZSdzIGF0b21pYyBjb21taXQgaGVscGVyDQogIGRybS9tZWRpYXRlazog
+aGFuZGxlIGV2ZW50cyB3aGVuIGVuYWJsaW5nL2Rpc2FibGluZyBjcnRjDQogIGRybS9tZWRpYXRl
+azogdXBkYXRlIGN1cnNvcnMgYnkgdXNpbmcgYXN5bmMgYXRvbWljIHVwZGF0ZQ0KICBkcm0vbWVk
+aWF0ZWs6IHJlbW92ZSB1bnVzZWQgZXh0ZXJuYWwgZnVuY3Rpb24NCiAgZHJtL21lZGlhdGVrOiBz
+dXBwb3J0IENNRFEgaW50ZXJmYWNlIGluIGRkcCBjb21wb25lbnQNCiAgZHJtL21lZGlhdGVrOiBh
+cHBseSBDTURRIGNvbnRyb2wgZmxvdw0KDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19k
+aXNwX2NvbG9yLmMgICB8ICAgNyArLQ0KIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlz
+cF9vdmwuYyAgICAgfCAgNjcgKysrKy0tLS0NCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
+X2Rpc3BfcmRtYS5jICAgIHwgIDQzICsrLS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
+a19kcm1fY3J0Yy5jICAgICB8IDE2OCArKysrKysrKysrKysrKysrLS0tLQ0KIGRyaXZlcnMvZ3B1
+L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuaCAgICAgfCAgIDIgKw0KIGRyaXZlcnMvZ3B1L2Ry
+bS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21wLmMgfCAxMzYgKysrKysrKysrKysrLS0tLQ0KIGRy
+aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21wLmggfCAgNDcgKysrLS0tDQog
+ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMgICAgICB8ICA4NiArLS0tLS0t
+LS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmggICAgICB8ICAgNyAt
+DQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxhbmUuYyAgICB8ICA1MCArKysr
+KysNCiBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5oICAgIHwgICAyICsN
+CiAxMSBmaWxlcyBjaGFuZ2VkLCAzOTMgaW5zZXJ0aW9ucygrKSwgMjIyIGRlbGV0aW9ucygtKQ0K
+DQotLSANCjIuMTguMA0K
 
-Thank you for sharing this.  I will take a look!
-
-
-Thanks,
-SeongJae Park
->
-> Cheers!
