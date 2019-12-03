@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF4DD111DBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADBF2111C5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbfLCW4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51790 "EHLO mail.kernel.org"
+        id S1728057AbfLCWnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbfLCW4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:56:39 -0500
+        id S1728062AbfLCWnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABA8C2053B;
-        Tue,  3 Dec 2019 22:56:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CCB520803;
+        Tue,  3 Dec 2019 22:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413798;
-        bh=iWz+xQsYxy64C4DLxGQ1cBWmn/n02k3AjJMBZLWgd68=;
+        s=default; t=1575412988;
+        bh=r8RD+TSm9031sECWo8nDnwzU0EStJIFqQDq83ZJfoHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eUjiaV25zopfMcz0oXvpuGjyHWaFhBDCtltkyMNlqe5OA905AKijuaYPtnEBI4Hws
-         Pj99aiZ35QZEA4EnwahaTxzs3nKVZAJ1EIRR+/1bp5sH2byzDSIKn2Ode8gqJxob5Y
-         K8gzJ9ddC82FamSaq2A0QSSGyZnejPxIvOvK5ePg=
+        b=gt8IbxeNjcvr94q9u1ilwzGrIiFygN7B5/Qu1hf+ckuFgNESMMppRKdyqe9JKO3wW
+         wvbgGI1quzkklYhffQ/VjNtpJPtpWueWG7PuewACa00TCcktZOgLuePa32CicBCJLa
+         zid9F0Kj/4DHQk5MQ87a4ULZxaH0OM+ssQBEk2oE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.19 267/321] clk: at91: generated: set audio_pll_allowed in at91_clk_register_generated()
-Date:   Tue,  3 Dec 2019 23:35:33 +0100
-Message-Id: <20191203223441.016118835@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 094/135] ice: fix potential infinite loop because loop counter being too small
+Date:   Tue,  3 Dec 2019 23:35:34 +0100
+Message-Id: <20191203213037.340554510@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit c1e4580a1d0ff510d56268c1fc7fcfeec366fe70 upstream.
+[ Upstream commit 615457a226f042bffc3a1532afb244cab37460d4 ]
 
-Set gck->audio_pll_allowed in at91_clk_register_generated. This makes it
-easier to do it from code that is not parsing device tree.
+Currently the for-loop counter i is a u8 however it is being checked
+against a maximum value hw->num_tx_sched_layers which is a u16. Hence
+there is a potential wrap-around of counter i back to zero if
+hw->num_tx_sched_layers is greater than 255.  Fix this by making i
+a u16.
 
-Also, this fixes an issue where the resulting clk_hw can be dereferenced
-before being tested for error.
-
-Fixes: 1a1a36d72e3d ("clk: at91: clk-generated: make gclk determine audio_pll rate")
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Addresses-Coverity: ("Infinite loop")
+Fixes: b36c598c999c ("ice: Updates to Tx scheduler code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/clk-generated.c |   28 ++++++++++------------------
- 1 file changed, 10 insertions(+), 18 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_sched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -284,7 +284,7 @@ static void clk_generated_startup(struct
- static struct clk_hw * __init
- at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 			    const char *name, const char **parent_names,
--			    u8 num_parents, u8 id,
-+			    u8 num_parents, u8 id, bool pll_audio,
- 			    const struct clk_range *range)
- {
- 	struct clk_generated *gck;
-@@ -308,6 +308,7 @@ at91_clk_register_generated(struct regma
- 	gck->regmap = regmap;
- 	gck->lock = lock;
- 	gck->range = *range;
-+	gck->audio_pll_allowed = pll_audio;
+diff --git a/drivers/net/ethernet/intel/ice/ice_sched.c b/drivers/net/ethernet/intel/ice/ice_sched.c
+index 2a232504379d2..602b0fd84c29e 100644
+--- a/drivers/net/ethernet/intel/ice/ice_sched.c
++++ b/drivers/net/ethernet/intel/ice/ice_sched.c
+@@ -1052,7 +1052,7 @@ enum ice_status ice_sched_query_res_alloc(struct ice_hw *hw)
+ 	struct ice_aqc_query_txsched_res_resp *buf;
+ 	enum ice_status status = 0;
+ 	__le16 max_sibl;
+-	u8 i;
++	u16 i;
  
- 	clk_generated_startup(gck);
- 	hw = &gck->hw;
-@@ -333,7 +334,6 @@ static void __init of_sama5d2_clk_genera
- 	struct device_node *gcknp;
- 	struct clk_range range = CLK_RANGE(0, 0);
- 	struct regmap *regmap;
--	struct clk_generated *gck;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
-@@ -350,6 +350,8 @@ static void __init of_sama5d2_clk_genera
- 		return;
- 
- 	for_each_child_of_node(np, gcknp) {
-+		bool pll_audio = false;
-+
- 		if (of_property_read_u32(gcknp, "reg", &id))
- 			continue;
- 
-@@ -362,24 +364,14 @@ static void __init of_sama5d2_clk_genera
- 		of_at91_get_clk_range(gcknp, "atmel,clk-output-range",
- 				      &range);
- 
-+		if (of_device_is_compatible(np, "atmel,sama5d2-clk-generated") &&
-+		    (id == GCK_ID_I2S0 || id == GCK_ID_I2S1 ||
-+		     id == GCK_ID_CLASSD))
-+			pll_audio = true;
-+
- 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
- 						  parent_names, num_parents,
--						  id, &range);
--
--		gck = to_clk_generated(hw);
--
--		if (of_device_is_compatible(np,
--					    "atmel,sama5d2-clk-generated")) {
--			if (gck->id == GCK_ID_SSC0 || gck->id == GCK_ID_SSC1 ||
--			    gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
--			    gck->id == GCK_ID_CLASSD)
--				gck->audio_pll_allowed = true;
--			else
--				gck->audio_pll_allowed = false;
--		} else {
--			gck->audio_pll_allowed = false;
--		}
--
-+						  id, pll_audio, &range);
- 		if (IS_ERR(hw))
- 			continue;
- 
+ 	if (hw->layer_info)
+ 		return status;
+-- 
+2.20.1
+
 
 
