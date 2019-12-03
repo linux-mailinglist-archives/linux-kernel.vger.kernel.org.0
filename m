@@ -2,137 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64E6311030C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:59:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29EF0110316
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:01:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfLCQ70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:59:26 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36716 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727297AbfLCQ7Y (ORCPT
+        id S1727015AbfLCRBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 12:01:20 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:42363 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfLCRBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:59:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575392363;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CokILJJqXdrHsv0tjIebaIYM+c7ZHf6WdfuYQQUg9IQ=;
-        b=FpFtJ7hcWcugPKuaSpr136ywnm393ACePd22SzlnCTNTpGKOV5N+Iz1G6CUaBKRb94SkZc
-        5b81gXZSuIlJhdLlWbk8PrJNAYEnWVKk3IlR9dmrXXzzPEGK2PVl8cZ5+y288T08yyApSF
-        X6WJd6AECWVUPYNZVRI/zuka6U8i7IM=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-244-jf6Fn3B6NziIpS4zvXmi2w-1; Tue, 03 Dec 2019 11:59:15 -0500
-Received: by mail-qt1-f199.google.com with SMTP id x8so2856065qtq.14
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:59:15 -0800 (PST)
+        Tue, 3 Dec 2019 12:01:19 -0500
+Received: by mail-qv1-f68.google.com with SMTP id q19so1808058qvy.9;
+        Tue, 03 Dec 2019 09:01:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=10sAMBZMUjFRsxR8aABeO1fVDktZCwcXIz8Qs0BHrSI=;
+        b=bY77NiQkC69ov7j7OMLKkUXv6HhSowFkfYiDrdT5MFbfThUXtqBo0fzqZq+McugIVR
+         Q2QfuUadPMWiGjz4Vdu+S8qoCsTOkSExFSHJD7xV3SM/IjGKWQV+9ckB97Ev33USoYkM
+         TzkTtdEZWGzt/TbReefLvdSPrMonuXVK5cYQgJHIZCA+LuEoBJo2iQM2Z4b24hYZSvgb
+         7ByROBx5EPuzD3EhiuwVqB3DMS5MB5E0a09Sv8ImxbvrKW6W68Cvr8By+qApje890sKN
+         8RBrvnIkZNH3iY+i4bocTfPL4JdCR6qQJX6DJSHNmAOpm3OhVjdhVTkXonnaLRnFnRO0
+         AFjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rby7OAxJWRGIY59KJwhRvRc4bijIHbG4l5NvhzcAxK8=;
-        b=RHOPlVymGcaJJXBrgdwyzw1wmUnwOLbJvL6DX1mI1PbcfK2PrOiC/Wm3BBGISjhIq0
-         xRSKVKlSq5U1wOydRwIii5PAQcDXE/1K5fILWZB/ATC6Oz5dBVTMumrGK6huZ9IfX9Ir
-         UXxSGVIEq2g9iQOFsm6F++7PNtRBUZcM3Nw3gQfHcp/BjgeuE+7qMgaiebE9BPBPiX5K
-         ljtSYe7pwrIRLP9H7FglPd/IsLkNBv3yIO+AeVdk8eNqS/wuJuscJgekvIqafRr0KTQ7
-         U8V+7o5Setsh3XWdVGTbYxZDBrIrxaPicHDhCWcr7mnBr37+NxCyntQ5rHfZ2gW/MA8z
-         gQ4Q==
-X-Gm-Message-State: APjAAAXolMpdfeGHpbCo/jMv3MmFW/3aI84eEliR1AO2eH6+3M4BtWWh
-        zRzSlNZG9BxQx4/OPQVfbU2GHY/QqxsOD2v/s3KB/jPXZR8VAj2HWJyA7onyDha5J1s4IcY0Vu3
-        cqEAdLLO23hMZAahtxv2tBxqi
-X-Received: by 2002:a05:620a:2010:: with SMTP id c16mr5938046qka.386.1575392354613;
-        Tue, 03 Dec 2019 08:59:14 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzQfVoMDRqDnxNfwvnqyaXyIDMNqHRLocnfax32ITgCaGfDAssMZDEsbnRydHQ5WTxKScDc7A==
-X-Received: by 2002:a05:620a:2010:: with SMTP id c16mr5938019qka.386.1575392354373;
-        Tue, 03 Dec 2019 08:59:14 -0800 (PST)
-Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id a16sm482585qkn.48.2019.12.03.08.59.12
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=10sAMBZMUjFRsxR8aABeO1fVDktZCwcXIz8Qs0BHrSI=;
+        b=UG4xotlAx0b0MmIEXJZx/4RlpGzzw5lOeGnMJWrBcMVMZXLLg6JQDXt/cTGvt3lEKE
+         m+UwuAYiEUcGsyOyGd33yTFIQvanKpf3+3I9QuUCsczehqFyP4IRkY8WAyvTFX41cPl5
+         vtbBy5TDWbK4n+IbF5xWV1RRzUprltSUJeZoq7Y3tayHMcDi8ZZh5n3zgV9IaT0rvZMI
+         vyWW7yiae/tH0jvg/ZchGT5R6efGKgqAhwOuPYaNuPEp8bPXGv97UacsY08p8r3HkmK0
+         E5EFyACdDeTp3SJ8wGaskIaRqSrbQvWAlQLgGyPHyWgVxj8kA3qHW5TXHaCSmqt24d6S
+         /5Ag==
+X-Gm-Message-State: APjAAAXmMitp/LwpOJ4+a9buUWmO2tn/i1i3lNcpCtpV8q+mAcUeOrKL
+        Y0UK6yJ/juAohls29GcKcvE+jXPvOk3B7w==
+X-Google-Smtp-Source: APXvYqzU6RtFIOwEITHm1Sqpx6zVqf5CvLcV04Vc9oAuR1Wi3o/5oFzruFpcsdbB9tUU46vP3NflIA==
+X-Received: by 2002:a05:6214:429:: with SMTP id a9mr6176316qvy.200.1575392478385;
+        Tue, 03 Dec 2019 09:01:18 -0800 (PST)
+Received: from localhost.localdomain ([177.220.176.179])
+        by smtp.gmail.com with ESMTPSA id c184sm2066760qke.118.2019.12.03.09.01.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 08:59:13 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v4 6/6] KVM: X86: Conert the last users of "shorthand = 0" to use macros
-Date:   Tue,  3 Dec 2019 11:59:03 -0500
-Message-Id: <20191203165903.22917-7-peterx@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191203165903.22917-1-peterx@redhat.com>
-References: <20191203165903.22917-1-peterx@redhat.com>
+        Tue, 03 Dec 2019 09:01:17 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 6038EC3B9B; Tue,  3 Dec 2019 14:01:14 -0300 (-03)
+Date:   Tue, 3 Dec 2019 14:01:14 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] netfilter: nf_flow_table_offload: Correct memcpy size
+ for flow_overload_mangle
+Message-ID: <20191203170114.GB377782@localhost.localdomain>
+References: <20191203160345.24743-1-labbott@redhat.com>
 MIME-Version: 1.0
-X-MC-Unique: jf6Fn3B6NziIpS4zvXmi2w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203160345.24743-1-labbott@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the last users of "shorthand =3D 0" to use APIC_DEST_NOSHORT.
+On Tue, Dec 03, 2019 at 11:03:45AM -0500, Laura Abbott wrote:
+> The sizes for memcpy in flow_offload_mangle don't match
+> the source variables, leading to overflow errors on some
+> build configurations:
+> 
+> In function 'memcpy',
+>     inlined from 'flow_offload_mangle' at net/netfilter/nf_flow_table_offload.c:112:2,
+>     inlined from 'flow_offload_port_dnat' at net/netfilter/nf_flow_table_offload.c:373:2,
+>     inlined from 'nf_flow_rule_route_ipv4' at net/netfilter/nf_flow_table_offload.c:424:3:
+> ./include/linux/string.h:376:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+>   376 |    __read_overflow2();
+>       |    ^~~~~~~~~~~~~~~~~~
+> make[2]: *** [scripts/Makefile.build:266: net/netfilter/nf_flow_table_offload.o] Error 1
+> 
+> Fix this by using the corresponding type.
+> 
+> Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> Seen on a Fedora powerpc little endian build with -O3 but it looks like
+> it is correctly catching an error with doing a memcpy outside the source
+> variable.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- arch/x86/kvm/ioapic.c   | 4 ++--
- arch/x86/kvm/irq_comm.c | 2 +-
- arch/x86/kvm/x86.c      | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Hi,
 
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index f53daeaaeb37..77538fd77dc2 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -330,7 +330,7 @@ static void ioapic_write_indirect(struct kvm_ioapic *io=
-apic, u32 val)
- =09=09if (e->fields.delivery_mode =3D=3D APIC_DM_FIXED) {
- =09=09=09struct kvm_lapic_irq irq;
-=20
--=09=09=09irq.shorthand =3D 0;
-+=09=09=09irq.shorthand =3D APIC_DEST_NOSHORT;
- =09=09=09irq.vector =3D e->fields.vector;
- =09=09=09irq.delivery_mode =3D e->fields.delivery_mode << 8;
- =09=09=09irq.dest_id =3D e->fields.dest_id;
-@@ -379,7 +379,7 @@ static int ioapic_service(struct kvm_ioapic *ioapic, in=
-t irq, bool line_status)
- =09irqe.trig_mode =3D entry->fields.trig_mode;
- =09irqe.delivery_mode =3D entry->fields.delivery_mode << 8;
- =09irqe.level =3D 1;
--=09irqe.shorthand =3D 0;
-+=09irqe.shorthand =3D APIC_DEST_NOSHORT;
- =09irqe.msi_redir_hint =3D false;
-=20
- =09if (irqe.trig_mode =3D=3D IOAPIC_EDGE_TRIG)
-diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
-index 7d083f71fc8e..9d711c2451c7 100644
---- a/arch/x86/kvm/irq_comm.c
-+++ b/arch/x86/kvm/irq_comm.c
-@@ -121,7 +121,7 @@ void kvm_set_msi_irq(struct kvm *kvm, struct kvm_kernel=
-_irq_routing_entry *e,
- =09irq->msi_redir_hint =3D ((e->msi.address_lo
- =09=09& MSI_ADDR_REDIRECTION_LOWPRI) > 0);
- =09irq->level =3D 1;
--=09irq->shorthand =3D 0;
-+=09irq->shorthand =3D APIC_DEST_NOSHORT;
- }
- EXPORT_SYMBOL_GPL(kvm_set_msi_irq);
-=20
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3b00d662dc14..f6d778436e15 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7355,7 +7355,7 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, unsig=
-ned long flags, int apicid)
- {
- =09struct kvm_lapic_irq lapic_irq;
-=20
--=09lapic_irq.shorthand =3D 0;
-+=09lapic_irq.shorthand =3D APIC_DEST_NOSHORT;
- =09lapic_irq.dest_mode =3D APIC_DEST_PHYSICAL;
- =09lapic_irq.level =3D 0;
- =09lapic_irq.dest_id =3D apicid;
---=20
-2.21.0
+It is right but the fix is not. In that call trace:
 
+flow_offload_port_dnat() {
+...
+        u32 mask = ~htonl(0xffff);
+        __be16 port;
+...
+        flow_offload_mangle(entry, flow_offload_l4proto(flow), offset,
+	                            (u8 *)&port, (u8 *)&mask);
+}
+
+port should have a 32b storage as well, and aligned with the mask.
+
+> ---
+>  net/netfilter/nf_flow_table_offload.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/netfilter/nf_flow_table_offload.c b/net/netfilter/nf_flow_table_offload.c
+> index c54c9a6cc981..526f894d0bdb 100644
+> --- a/net/netfilter/nf_flow_table_offload.c
+> +++ b/net/netfilter/nf_flow_table_offload.c
+> @@ -108,8 +108,8 @@ static void flow_offload_mangle(struct flow_action_entry *entry,
+>  	entry->id = FLOW_ACTION_MANGLE;
+>  	entry->mangle.htype = htype;
+>  	entry->mangle.offset = offset;
+> -	memcpy(&entry->mangle.mask, mask, sizeof(u32));
+> -	memcpy(&entry->mangle.val, value, sizeof(u32));
+                                   ^^^^^         ^^^ which is &port in the call above
+> +	memcpy(&entry->mangle.mask, mask, sizeof(u8));
+> +	memcpy(&entry->mangle.val, value, sizeof(u8));
+
+This fix would cause it to copy only the first byte, which is not the
+intention.
+
+>  }
+>  
+>  static inline struct flow_action_entry *
+> -- 
+> 2.21.0
+> 
