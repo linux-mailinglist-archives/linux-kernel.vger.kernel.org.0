@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38709111F9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF1CD111E64
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbfLCWmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:42:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56660 "EHLO mail.kernel.org"
+        id S1730237AbfLCXBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:01:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728613AbfLCWl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:41:57 -0500
+        id S1730373AbfLCWzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:55:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0708320862;
-        Tue,  3 Dec 2019 22:41:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB4D220863;
+        Tue,  3 Dec 2019 22:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412917;
-        bh=Cob9II1USz9OZYAyMh+qKhCiH3vFEAJWdyas8rtimoE=;
+        s=default; t=1575413741;
+        bh=5SJfNXeOwIOAk15jkQn2Gv0V++ANh4fNNJIoak3Vnec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JaPixY+tSnPWY2O5MWBYz3AFaIyH07TK240diQS6zUsoMo1iCHrO7oGrKJlLmvv3n
-         GmFcT9zOr3KE4I04ueSpN36evM42YVr8rqf5gEGvgBmseoBQyGpq1gt54Uk1tLDN8E
-         f1z+eFdh9F19RNpjXWy6Shg8K5GHhHmou1zgX5Pc=
+        b=PUuRaA3HqPkRekHVz8BkhDchXgNyWLy7M26z6tsnO6bwd5oCMhuJE5CKdGZdN1wYq
+         ObrXoX5QZz768CbYpM7k5SufoNP0keBb7L3YcnW5BZ2YbPntHDxltLvLaXnR1v6sVb
+         mwiW3TnBhcVXhlPQeQ/Zaht3RtFaEDTw5jWvPxNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xingyu Chen <xingyu.chen@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org, Peng Sun <sironhide0null@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 066/135] watchdog: meson: Fix the wrong value of left time
-Date:   Tue,  3 Dec 2019 23:35:06 +0100
-Message-Id: <20191203213025.240489620@linuxfoundation.org>
+Subject: [PATCH 4.19 243/321] bpf: drop refcount if bpf_map_new_fd() fails in map_create()
+Date:   Tue,  3 Dec 2019 23:35:09 +0100
+Message-Id: <20191203223439.782973932@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,45 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+From: Peng Sun <sironhide0null@gmail.com>
 
-[ Upstream commit 2c77734642d52448aca673e889b39f981110828b ]
+[ Upstream commit 352d20d611414715353ee65fc206ee57ab1a6984 ]
 
-The left time value is wrong when we get it by sysfs. The left time value
-should be equal to preset timeout value minus elapsed time value. According
-to the Meson-GXB/GXL datasheets which can be found at [0], the timeout value
-is saved to BIT[0-15] of the WATCHDOG_TCNT, and elapsed time value is saved
-to BIT[16-31] of the WATCHDOG_TCNT.
+In bpf/syscall.c, map_create() first set map->usercnt to 1, a file
+descriptor is supposed to return to userspace. When bpf_map_new_fd()
+fails, drop the refcount.
 
-[0]: http://linux-meson.com
-
-Fixes: 683fa50f0e18 ("watchdog: Add Meson GXBB Watchdog Driver")
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fixes: bd5f5f4ecb78 ("bpf: Add BPF_MAP_GET_FD_BY_ID")
+Signed-off-by: Peng Sun <sironhide0null@gmail.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/meson_gxbb_wdt.c | 4 ++--
+ kernel/bpf/syscall.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
-index d17c1a6ed7234..5a9ca10fbcfa0 100644
---- a/drivers/watchdog/meson_gxbb_wdt.c
-+++ b/drivers/watchdog/meson_gxbb_wdt.c
-@@ -89,8 +89,8 @@ static unsigned int meson_gxbb_wdt_get_timeleft(struct watchdog_device *wdt_dev)
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 90bb0c05c10e9..596959288eb9e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -559,12 +559,12 @@ static int map_create(union bpf_attr *attr)
+ 	err = bpf_map_new_fd(map, f_flags);
+ 	if (err < 0) {
+ 		/* failed to allocate fd.
+-		 * bpf_map_put() is needed because the above
++		 * bpf_map_put_with_uref() is needed because the above
+ 		 * bpf_map_alloc_id() has published the map
+ 		 * to the userspace and the userspace may
+ 		 * have refcnt-ed it through BPF_MAP_GET_FD_BY_ID.
+ 		 */
+-		bpf_map_put(map);
++		bpf_map_put_with_uref(map);
+ 		return err;
+ 	}
  
- 	reg = readl(data->reg_base + GXBB_WDT_TCNT_REG);
- 
--	return ((reg >> GXBB_WDT_TCNT_CNT_SHIFT) -
--		(reg & GXBB_WDT_TCNT_SETUP_MASK)) / 1000;
-+	return ((reg & GXBB_WDT_TCNT_SETUP_MASK) -
-+		(reg >> GXBB_WDT_TCNT_CNT_SHIFT)) / 1000;
- }
- 
- static const struct watchdog_ops meson_gxbb_wdt_ops = {
 -- 
 2.20.1
 
