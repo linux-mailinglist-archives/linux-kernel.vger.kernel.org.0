@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B732910FE96
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAACC10FE9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfLCNW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:22:57 -0500
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:22353 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbfLCNW4 (ORCPT
+        id S1726521AbfLCNXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:23:04 -0500
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:56114 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfLCNXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:22:56 -0500
+        Tue, 3 Dec 2019 08:23:03 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 4A90548703;
-        Tue,  3 Dec 2019 14:22:53 +0100 (CET)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=PlsKcmez;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id B9AE53F5DF;
+        Tue,  3 Dec 2019 14:23:00 +0100 (CET)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Z6lzECFT;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,22 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nu9E_Svur_te; Tue,  3 Dec 2019 14:22:52 +0100 (CET)
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id njdJjHyyqHaO; Tue,  3 Dec 2019 14:22:57 +0100 (CET)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 183F448493;
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 119E93F569;
         Tue,  3 Dec 2019 14:22:52 +0100 (CET)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 0E18E36253B;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 2F380362542;
         Tue,  3 Dec 2019 14:22:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1575379370; bh=yW4Kv+tDJBfAXwh/Zhx3QElV1XLWl/OFJo8EITEcphM=;
+        t=1575379370; bh=e1wYTAwwWqMQYijfh6tIDDQywC9mAhqJLyo2GIA6MnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PlsKcmezF1e2T4UarZuiKhE+rIGTi/TmSXByMxAUpX+723J9X00lHxA6EimnSLFgh
-         HoC0bW64iAFubi8mXCQA3mScWREVTWMCy7rw3YX/SEZb4sxsze6txHiQ4qhrFpHOEx
-         D2QGUVQXvcy/beERmNhB9wn4e8jCOJjU+lgyIAdo=
+        b=Z6lzECFTtszlfFDZPSJ4FfQU7eCI7x9zyw13y6hBfEyjWFWCTyKgMZ0VgbMHfGLzv
+         pV5jRgcmDtHz5upBlXqjZFZ3z5yyMb8rmQgipBkGVIBN0J9txWDSTkf+OstmRphXtx
+         u9QEJ6lUCPbfKN2hOhhGyTR9dbqCzKApCcqe7LW4=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
         Ralph Campbell <rcampbell@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH 7/8] drm/ttm: Introduce a huge page aligning TTM range manager.
-Date:   Tue,  3 Dec 2019 14:22:38 +0100
-Message-Id: <20191203132239.5910-8-thomas_os@shipmail.org>
+Subject: [PATCH 8/8] drm/vmwgfx: Hook up the helpers to align buffer objects
+Date:   Tue,  3 Dec 2019 14:22:39 +0100
+Message-Id: <20191203132239.5910-9-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191203132239.5910-1-thomas_os@shipmail.org>
 References: <20191203132239.5910-1-thomas_os@shipmail.org>
@@ -71,11 +71,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Using huge page-table entries require that the start of a buffer object
-is huge page size aligned. So introduce a ttm_bo_man_get_node_huge()
-function that attempts to accomplish this for allocations that are larger
-than the huge page size, and provide a new range-manager instance that
-uses that function.
+Start using the helpers that align buffer object user-space addresses and
+buffer object vram addresses to huge page boundaries.
+This is to improve the chances of allowing huge page-table entries.
 
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Michal Hocko <mhocko@suse.com>
@@ -86,128 +84,67 @@ Cc: "Jérôme Glisse" <jglisse@redhat.com>
 Cc: "Christian König" <christian.koenig@amd.com>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 ---
- drivers/gpu/drm/ttm/ttm_bo_manager.c | 92 ++++++++++++++++++++++++++++
- include/drm/ttm/ttm_bo_driver.h      |  1 +
- 2 files changed, 93 insertions(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        | 13 +++++++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h        |  1 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c |  2 +-
+ 3 files changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_manager.c b/drivers/gpu/drm/ttm/ttm_bo_manager.c
-index 18d3debcc949..26aa1a2ae7f1 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_manager.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_manager.c
-@@ -89,6 +89,89 @@ static int ttm_bo_man_get_node(struct ttm_mem_type_manager *man,
- 	return 0;
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index e962048f65d2..5452cabb4a2e 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -1215,6 +1215,18 @@ static void vmw_remove(struct pci_dev *pdev)
+ 	drm_put_dev(dev);
  }
  
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+static int ttm_bo_insert_aligned(struct drm_mm *mm, struct drm_mm_node *node,
-+				 unsigned long align_pages,
-+				 const struct ttm_place *place,
-+				 struct ttm_mem_reg *mem,
-+				 unsigned long lpfn,
-+				 enum drm_mm_insert_mode mode)
++static unsigned long
++vmw_get_unmapped_area(struct file *file, unsigned long uaddr,
++		      unsigned long len, unsigned long pgoff,
++		      unsigned long flags)
 +{
-+	if (align_pages >= mem->page_alignment &&
-+	    (!mem->page_alignment || align_pages % mem->page_alignment == 0)) {
-+		return drm_mm_insert_node_in_range(mm, node,
-+						   mem->num_pages,
-+						   align_pages, 0,
-+						   place->fpfn, lpfn, mode);
-+	}
++	struct drm_file *file_priv = file->private_data;
++	struct vmw_private *dev_priv = vmw_priv(file_priv->minor->dev);
 +
-+	return -ENOSPC;
++	return drm_get_unmapped_area(file, uaddr, len, pgoff, flags,
++				     &dev_priv->vma_manager);
 +}
 +
-+static int ttm_bo_man_get_node_huge(struct ttm_mem_type_manager *man,
-+				    struct ttm_buffer_object *bo,
-+				    const struct ttm_place *place,
-+				    struct ttm_mem_reg *mem)
-+{
-+	struct ttm_range_manager *rman = (struct ttm_range_manager *) man->priv;
-+	struct drm_mm *mm = &rman->mm;
-+	struct drm_mm_node *node;
-+	unsigned long align_pages;
-+	unsigned long lpfn;
-+	enum drm_mm_insert_mode mode = DRM_MM_INSERT_BEST;
-+	int ret;
-+
-+	node = kzalloc(sizeof(*node), GFP_KERNEL);
-+	if (!node)
-+		return -ENOMEM;
-+
-+	lpfn = place->lpfn;
-+	if (!lpfn)
-+		lpfn = man->size;
-+
-+	mode = DRM_MM_INSERT_BEST;
-+	if (place->flags & TTM_PL_FLAG_TOPDOWN)
-+		mode = DRM_MM_INSERT_HIGH;
-+
-+	spin_lock(&rman->lock);
-+	if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)) {
-+		align_pages = (HPAGE_PUD_SIZE >> PAGE_SHIFT);
-+		if (mem->num_pages >= align_pages) {
-+			ret = ttm_bo_insert_aligned(mm, node, align_pages,
-+						    place, mem, lpfn, mode);
-+			if (!ret)
-+				goto found_unlock;
-+		}
-+	}
-+
-+	align_pages = (HPAGE_PMD_SIZE >> PAGE_SHIFT);
-+	if (mem->num_pages >= align_pages) {
-+		ret = ttm_bo_insert_aligned(mm, node, align_pages, place, mem,
-+					    lpfn, mode);
-+		if (!ret)
-+			goto found_unlock;
-+	}
-+
-+	ret = drm_mm_insert_node_in_range(mm, node, mem->num_pages,
-+					  mem->page_alignment, 0,
-+					  place->fpfn, lpfn, mode);
-+found_unlock:
-+	spin_unlock(&rman->lock);
-+
-+	if (unlikely(ret)) {
-+		kfree(node);
-+	} else {
-+		mem->mm_node = node;
-+		mem->start = node->start;
-+	}
-+
-+	return 0;
-+}
-+#else
-+#define ttm_bo_man_get_node_huge ttm_bo_man_get_node
-+#endif
-+
-+
- static void ttm_bo_man_put_node(struct ttm_mem_type_manager *man,
- 				struct ttm_mem_reg *mem)
+ static int vmwgfx_pm_notifier(struct notifier_block *nb, unsigned long val,
+ 			      void *ptr)
  {
-@@ -154,3 +237,12 @@ const struct ttm_mem_type_manager_func ttm_bo_manager_func = {
- 	.debug = ttm_bo_man_debug
- };
- EXPORT_SYMBOL(ttm_bo_manager_func);
-+
-+const struct ttm_mem_type_manager_func ttm_bo_manager_huge_func = {
-+	.init = ttm_bo_man_init,
-+	.takedown = ttm_bo_man_takedown,
-+	.get_node = ttm_bo_man_get_node_huge,
-+	.put_node = ttm_bo_man_put_node,
-+	.debug = ttm_bo_man_debug
-+};
-+EXPORT_SYMBOL(ttm_bo_manager_huge_func);
-diff --git a/include/drm/ttm/ttm_bo_driver.h b/include/drm/ttm/ttm_bo_driver.h
-index cac7a8a0825a..868bd0d4be6a 100644
---- a/include/drm/ttm/ttm_bo_driver.h
-+++ b/include/drm/ttm/ttm_bo_driver.h
-@@ -888,5 +888,6 @@ int ttm_bo_pipeline_gutting(struct ttm_buffer_object *bo);
- pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp);
- 
- extern const struct ttm_mem_type_manager_func ttm_bo_manager_func;
-+extern const struct ttm_mem_type_manager_func ttm_bo_manager_huge_func;
- 
+@@ -1386,6 +1398,7 @@ static const struct file_operations vmwgfx_driver_fops = {
+ 	.compat_ioctl = vmw_compat_ioctl,
  #endif
+ 	.llseek = noop_llseek,
++	.get_unmapped_area = vmw_get_unmapped_area,
+ };
+ 
+ static struct drm_driver driver = {
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+index 8656a97448c3..9b3a5d940024 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+@@ -929,6 +929,7 @@ extern int vmw_mmap(struct file *filp, struct vm_area_struct *vma);
+ 
+ extern void vmw_validation_mem_init_ttm(struct vmw_private *dev_priv,
+ 					size_t gran);
++
+ /**
+  * TTM buffer object driver - vmwgfx_ttm_buffer.c
+  */
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+index d8ea3dd10af0..c319fe0ca912 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c
+@@ -754,7 +754,7 @@ static int vmw_init_mem_type(struct ttm_bo_device *bdev, uint32_t type,
+ 		break;
+ 	case TTM_PL_VRAM:
+ 		/* "On-card" video ram */
+-		man->func = &ttm_bo_manager_func;
++		man->func = &ttm_bo_manager_huge_func;
+ 		man->gpu_offset = 0;
+ 		man->flags = TTM_MEMTYPE_FLAG_FIXED | TTM_MEMTYPE_FLAG_MAPPABLE;
+ 		man->available_caching = TTM_PL_FLAG_CACHED;
 -- 
 2.21.0
 
