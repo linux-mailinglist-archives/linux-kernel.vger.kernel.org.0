@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCDE9111EC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F6F111EBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbfLCXEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:04:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44356 "EHLO mail.kernel.org"
+        id S1730409AbfLCXDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:03:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727120AbfLCWvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:51:53 -0500
+        id S1729811AbfLCWwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:52:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FF4F2084B;
-        Tue,  3 Dec 2019 22:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5E6720865;
+        Tue,  3 Dec 2019 22:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413512;
-        bh=NtarbQ3mMcuCpzgGK4ZA5qZrc+60HUEkX7IGiYZOgdw=;
+        s=default; t=1575413552;
+        bh=5NqZWv/lrf+4gV1AJubypYGwHZ9tJ+dRz9dCQ+jRxVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T5i2NpWvlODP+VLuLtfiVjz1SY8T0qKES/YL4ske8yX+24SY0nPePaPaxS9yqBj8Z
-         Z+97UhLg3NQwQnkEGIp6qM2+PyE6jCdn1le+iWSDY6Dn7YqjTOzouub98b92Mqqrts
-         49NNenJG+NaR0066zDpYqgLPsvArI9PIMb2sC3jk=
+        b=itUQo19btgEPs4TlaeL5KmDBZkU+6FUn3xlqA3G5buf82zG56iZEA1v6z5zNWK/Sg
+         70omz4nAi9S37E1gkSFE+7M+LcuCX5E1Dh9kV8+r4h1Bv4lfu7BnMzLUkstLDzSerk
+         gyblJnOPUj9NFjlshn40tjK8dhtqKrvsX3gpjJTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Righi <righi.andrea@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yonghong Song <yhs@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 129/321] kprobes/x86: Show x86-64 specific blacklisted symbols correctly
-Date:   Tue,  3 Dec 2019 23:33:15 +0100
-Message-Id: <20191203223433.864161315@linuxfoundation.org>
+Subject: [PATCH 4.19 131/321] memory: omap-gpmc: Get the header of the enum
+Date:   Tue,  3 Dec 2019 23:33:17 +0100
+Message-Id: <20191203223433.967451527@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -53,50 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit fe6e65615415987629a2dda583b4495677d8c388 ]
+[ Upstream commit a0752e9c3097b2c4fccd618802938e0951038dfa ]
 
-Show x86-64 specific blacklisted symbols in debugfs.
+Commit 21abf103818a
+("gpio: Pass a flag to gpiochip_request_own_desc()")
+started to pass an enum gpiod_flags but this file is
+not including the header file that defines that enum
+and the compiler spits:
 
-Since x86-64 prohibits probing on symbols which are in
-entry text, those should be shown.
+drivers/memory/omap-gpmc.c: In function
+			    'gpmc_probe_generic_child':
+drivers/memory/omap-gpmc.c:2174:9: error: type of formal
+				   parameter 4 is incomplete
+         0);
+         ^
 
-Tested-by: Andrea Righi <righi.andrea@gmail.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yonghong Song <yhs@fb.com>
-Link: http://lkml.kernel.org/r/154503488425.26176.17136784384033608516.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 21abf103818a ("gpio: Pass a flag to gpiochip_request_own_desc()")
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/kprobes/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/memory/omap-gpmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index e83a057564d1b..173e915e11d54 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -1140,6 +1140,12 @@ bool arch_within_kprobe_blacklist(unsigned long addr)
- 		is_in_entry_trampoline_section;
- }
- 
-+int __init arch_populate_kprobe_blacklist(void)
-+{
-+	return kprobe_add_area_blacklist((unsigned long)__entry_text_start,
-+					 (unsigned long)__entry_text_end);
-+}
-+
- int __init arch_init_kprobes(void)
- {
- 	return 0;
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index c215287e80cf3..1c6a7c16e0c17 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -21,6 +21,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/io.h>
+ #include <linux/gpio/driver.h>
++#include <linux/gpio/consumer.h> /* GPIO descriptor enum */
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+ #include <linux/platform_device.h>
 -- 
 2.20.1
 
