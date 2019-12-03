@@ -2,146 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB9E010FD6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B62D410FD7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:18:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfLCMK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:10:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725773AbfLCMK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:10:57 -0500
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F49C20659;
-        Tue,  3 Dec 2019 12:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575375056;
-        bh=mM13KHxBngohOxFi/TTFeMlKRJJ80enDLR3A+PBKNYg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YJq54cNGOravzW6GKl2E/rJ1C/BJibT6H/beqkESWRLue1bUynPWXuNY7N+wW6/zH
-         fP7avqLbUEo+Q7OMcHsTF0rM2UBgQF8zMof3ZaYih+p45LV7/+89Bz82xezXXTFoVx
-         q4jsxxEKSoz9xBFXRYeOKrjzRBsG7dddYcExEwRk=
-From:   Will Deacon <will@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH] arm64: mm: Fix initialisation of DMA zones on non-NUMA systems
-Date:   Tue,  3 Dec 2019 12:10:13 +0000
-Message-Id: <20191203121013.9280-1-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        id S1726224AbfLCMRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:17:43 -0500
+Received: from mail-eopbgr740085.outbound.protection.outlook.com ([40.107.74.85]:35990
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725907AbfLCMRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:17:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kPiacHwhjhyvwDrf47lgcbGWyduJgalPV9KwSO2ZixMkfaneKt5zHGKimwPuevLasvONOj73kass1M6qMXYk8mAvyTlQSj1ZtU1WlU6yKQ1B8d6HBAroDKtxr4SNuY2cbT++PFDUACZoO0bLToiy9dBR7WIo8o6vEwZRoqNgYL3Gupa7JHFz+T+OumMzRSRNvzKNw68HsP+amA/KvsPiRMZmtuQYnaGBp87Qnb0df+kVJCCtBkBsoSoVCmwLCcrk++0LEeDtGlF0KI2QyliXcJ+mSjZza2Uv08HKUHXmMkLLgfc6FT5BLF0UbPPWktZCRdERQQgypTLBnyWPbZXEfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3bC/DBH+Fsqt9IFQLULfciwewb1aPMv738DvhiWhzDc=;
+ b=T88Avg77KjzAIBM4cBJPONjs96Jb0sIaidGbs1zamOvnG0Jyr2+gk6SivAV/Tpoqm9hebE/Yj42mqkYL1m2noPbAXDWRocVrv7/UOVfWNyL/7tYqb61UVbAZ9RaDZYCgqUOZPhIdUGataVCaAQVIaBMXODO/d48jkmN3BJlE0KyiSzaxGMrhCd6eeG2iHab0eKmbImxQ5N0/bfzj5iy0mucFW7oETUjLhrz4fFK4VLlxIaN3cAlYEIMS59XVqdtb/j0HdGtNOZz8NGJrHQXlBWIWQofOW210KLSUoCeQOJUy0rblAZCXQ2YQTsV5CAuLHBazrXEnA9OPHqAdk1Ur9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3bC/DBH+Fsqt9IFQLULfciwewb1aPMv738DvhiWhzDc=;
+ b=qtgHH97nrT07HFCbnV/BMWld+yBjCNd98uTd/Eb6adfiZ7rlli3tGEyLxUrgxXpCG5fZn7vuLg8EQZv7T/2hIqcrl4yJEoSHxMWcvFw0veZ/H9YmA+XQXB5VlpwUsbhb9GP4mN4F/JL8SGY6EVB8nCMIEz6+hBUbMHlgPf40s+M=
+Received: from SN6PR02CA0009.namprd02.prod.outlook.com (2603:10b6:805:a2::22)
+ by DM6PR02MB4779.namprd02.prod.outlook.com (2603:10b6:5:16::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.22; Tue, 3 Dec
+ 2019 12:16:56 +0000
+Received: from CY1NAM02FT014.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::204) by SN6PR02CA0009.outlook.office365.com
+ (2603:10b6:805:a2::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.18 via Frontend
+ Transport; Tue, 3 Dec 2019 12:16:56 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT014.mail.protection.outlook.com (10.152.75.142) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
+ via Frontend Transport; Tue, 3 Dec 2019 12:16:55 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <srinivas.neeli@xilinx.com>)
+        id 1ic76t-0006qd-EU; Tue, 03 Dec 2019 04:16:55 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <srinivas.neeli@xilinx.com>)
+        id 1ic76o-0006DO-Aw; Tue, 03 Dec 2019 04:16:50 -0800
+Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xB3CGfvb025018;
+        Tue, 3 Dec 2019 04:16:41 -0800
+Received: from [10.140.6.6] (helo=xhdappanad40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <srinivas.neeli@xilinx.com>)
+        id 1ic76f-0006CV-4p; Tue, 03 Dec 2019 04:16:41 -0800
+From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
+To:     wg@grandegger.com, mkl@pengutronix.de, davem@davemloft.net,
+        michal.simek@xilinx.com, appanad@xilinx.com
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        git@xilinx.com, nagasure@xilinx.com,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>
+Subject: [PATCH V2] can: xilinx_can: Fix missing Rx can packets on CANFD2.0
+Date:   Tue,  3 Dec 2019 17:46:36 +0530
+Message-Id: <1575375396-3403-1-git-send-email-srinivas.neeli@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(39860400002)(346002)(136003)(189003)(199004)(356004)(7696005)(70586007)(51416003)(50226002)(81156014)(336012)(5660300002)(316002)(6666004)(186003)(2616005)(26005)(8676002)(16586007)(70206006)(8936002)(81166006)(426003)(305945005)(44832011)(107886003)(106002)(9786002)(6636002)(48376002)(4326008)(50466002)(36756003)(36386004)(2906002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4779;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 21c6aa24-7193-491a-6511-08d777eab051
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4779:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB47793B736800DA643558DD81AF420@DM6PR02MB4779.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-Forefront-PRVS: 02408926C4
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Iyq/kJnNGjkrPIa/KQlIA5eAf/mtyN3JvzqXwIGkN8HQbir3StVJRrlZ7FOzkcTFWPMwisL6yIKWqK/ewdLTt2alirq0lkv19QYtGbYZzG5lAnD1fAqUyaFEfp6bma0RLT6zxu2rOPjnKAAB4UMhHrn+K4kKuTWqikyu4Tmvlesz1EE/JlwSpPrIBGMMs7qBJg0j9ldRZ3J8sB/1ds5XgQhlcXfYbGbwg/1801EDfND3+S6iwBuqxLIATIJtxCuDYNlUh9DGkL4AsiFrSqY9lCsd9uritcWCCEC5l8JoXudCVj0xY77j33fawCPvMbTbxqJ5JfcPiDqQ5e93Hn3Rr+A/s7BkSN+V8frJVWc/M8qwB5Bg74FFM3FKKvUpJZEsrU4NQlNT0bku9+xdXdwWkDag2Gkw2TVGojl571gnUZz7yb/VNTS1MFWT3Kj47xKY
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2019 12:16:55.9090
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21c6aa24-7193-491a-6511-08d777eab051
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4779
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John reports that the recently merged commit 1a8e1cef7603 ("arm64: use
-both ZONE_DMA and ZONE_DMA32") breaks the boot on his DB845C board:
+CANFD2.0 core uses BRAM for storing acceptance filter ID(AFID) and MASK
+(AFMASK)registers. So by default AFID and AFMASK registers contain random
+data. Due to random data, we are not able to receive all CAN ids.
 
-  | Booting Linux on physical CPU 0x0000000000 [0x517f803c]
-  | Linux version 5.4.0-mainline-10675-g957a03b9e38f
-  | Machine model: Thundercomm Dragonboard 845c
-  | [...]
-  | Built 1 zonelists, mobility grouping on.  Total pages: -188245
-  | Kernel command line: earlycon
-  | firmware_class.path=/vendor/firmware/ androidboot.hardware=db845c
-  | init=/init androidboot.boot_devices=soc/1d84000.ufshc
-  | printk.devkmsg=on buildvariant=userdebug root=/dev/sda2
-  | androidboot.bootdevice=1d84000.ufshc androidboot.serialno=c4e1189c
-  | androidboot.baseband=sda
-  | msm_drm.dsi_display0=dsi_lt9611_1080_video_display:
-  | androidboot.slot_suffix=_a skip_initramfs rootwait ro init=/init
-  |
-  | <hangs indefinitely here>
+Initializing AFID and AFMASK registers with Zero before enabling
+acceptance filter to receive all packets irrespective of ID and Mask.
 
-This is because, when CONFIG_NUMA=n, zone_sizes_init() fails to handle
-memblocks that fall entirely within the ZONE_DMA region and erroneously ends up
-trying to add a negatively-sized region into the following ZONE_DMA32, which is
-later interpreted as a large unsigned region by the core MM code.
-
-Rework the non-NUMA implementation of zone_sizes_init() so that the start
-address of the memblock being processed is adjusted according to the end of the
-previous zone, which is then range-checked before updating the hole information
-of subsequent zones.
-
-Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lore.kernel.org/lkml/CALAqxLVVcsmFrDKLRGRq7GewcW405yTOxG=KR3csVzQ6bXutkA@mail.gmail.com
-Fixes: 1a8e1cef7603 ("arm64: use both ZONE_DMA and ZONE_DMA32")
-Reported-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Fixes: 0db9071353a0 ("can: xilinx: add can 2.0 support")
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
 ---
- arch/arm64/mm/init.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ drivers/net/can/xilinx_can.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Compile-tested only.
-
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index be9481cdf3b9..b65dffdfb201 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -214,15 +214,14 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
- {
- 	struct memblock_region *reg;
- 	unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
--	unsigned long max_dma32 = min;
--	unsigned long __maybe_unused max_dma = min;
-+	unsigned long __maybe_unused max_dma, max_dma32;
+diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
+index 464af939cd8a..c1dbab8c896d 100644
+--- a/drivers/net/can/xilinx_can.c
++++ b/drivers/net/can/xilinx_can.c
+@@ -60,6 +60,8 @@ enum xcan_reg {
+ 	XCAN_TXMSG_BASE_OFFSET	= 0x0100, /* TX Message Space */
+ 	XCAN_RXMSG_BASE_OFFSET	= 0x1100, /* RX Message Space */
+ 	XCAN_RXMSG_2_BASE_OFFSET	= 0x2100, /* RX Message Space */
++	XCAN_AFR_2_MASK_OFFSET	= 0x0A00, /* Acceptance Filter MASK */
++	XCAN_AFR_2_ID_OFFSET	= 0x0A04, /* Acceptance Filter ID */
+ };
  
- 	memset(zone_size, 0, sizeof(zone_size));
+ #define XCAN_FRAME_ID_OFFSET(frame_base)	((frame_base) + 0x00)
+@@ -1809,6 +1811,11 @@ static int xcan_probe(struct platform_device *pdev)
  
-+	max_dma = max_dma32 = min;
- #ifdef CONFIG_ZONE_DMA
--	max_dma = PFN_DOWN(arm64_dma_phys_limit);
-+	max_dma = max_dma32 = PFN_DOWN(arm64_dma_phys_limit);
- 	zone_size[ZONE_DMA] = max_dma - min;
--	max_dma32 = max_dma;
- #endif
- #ifdef CONFIG_ZONE_DMA32
- 	max_dma32 = PFN_DOWN(arm64_dma32_phys_limit);
-@@ -236,25 +235,23 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
- 		unsigned long start = memblock_region_memory_base_pfn(reg);
- 		unsigned long end = memblock_region_memory_end_pfn(reg);
+ 	pm_runtime_put(&pdev->dev);
  
--		if (start >= max)
--			continue;
- #ifdef CONFIG_ZONE_DMA
--		if (start < max_dma) {
--			unsigned long dma_end = min_not_zero(end, max_dma);
-+		if (start >= min && start < max_dma) {
-+			unsigned long dma_end = min(end, max_dma);
- 			zhole_size[ZONE_DMA] -= dma_end - start;
-+			start = dma_end;
- 		}
- #endif
- #ifdef CONFIG_ZONE_DMA32
--		if (start < max_dma32) {
-+		if (start >= max_dma && start < max_dma32) {
- 			unsigned long dma32_end = min(end, max_dma32);
--			unsigned long dma32_start = max(start, max_dma);
--			zhole_size[ZONE_DMA32] -= dma32_end - dma32_start;
-+			zhole_size[ZONE_DMA32] -= dma32_end - start;
-+			start = dma32_end;
- 		}
- #endif
--		if (end > max_dma32) {
-+		if (start >= max_dma32 && start < max) {
- 			unsigned long normal_end = min(end, max);
--			unsigned long normal_start = max(start, max_dma32);
--			zhole_size[ZONE_NORMAL] -= normal_end - normal_start;
-+			zhole_size[ZONE_NORMAL] -= normal_end - start;
- 		}
- 	}
- 
++	if (priv->devtype.flags & XCAN_FLAG_CANFD_2) {
++		priv->write_reg(priv, XCAN_AFR_2_ID_OFFSET, 0x00000000);
++		priv->write_reg(priv, XCAN_AFR_2_MASK_OFFSET, 0x00000000);
++	}
++
+ 	netdev_dbg(ndev, "reg_base=0x%p irq=%d clock=%d, tx buffers: actual %d, using %d\n",
+ 		   priv->reg_base, ndev->irq, priv->can.clock.freq,
+ 		   hw_tx_max, priv->tx_max);
 -- 
-2.17.1
+2.7.4
 
