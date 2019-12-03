@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 945F5111C01
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17708111C5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfLCWjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:39:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
+        id S1728471AbfLCWnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727836AbfLCWjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:39:21 -0500
+        id S1728621AbfLCWnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EC5F2084F;
-        Tue,  3 Dec 2019 22:39:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19D242080F;
+        Tue,  3 Dec 2019 22:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412760;
-        bh=o2kukSFFfU0mbQWuJGg0mw6F6cIceRtU2S4LX75rTso=;
+        s=default; t=1575412999;
+        bh=klQsIEaLdkvQn9mXHsL/19l5ID92BD8wx7KpDUk+fkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1vZRE1lxwufewIgVTxLwyx4G0Zchq7TdzMECJlDzClZvyh+jATbe95XIyUPYJbuof
-         53dzIQEJO9jzR9Xu74vh0Zo594uV+4ylarL0tNkPLq2ZIWjIBDUq093xJroNEC1Xtk
-         eZaBv/8TxFXWXpUmZnF0nbxHC9TJho2+FhoxYQxc=
+        b=mJdGdmIGRz3oLROk0L33hn8gQ8wGsx4+ziLVN0kqTRBdrP7pd+c12nvxaqS1Ew+CT
+         TPlaDKtZCT4TFGXJEbtt1bdKe5sN4xNzNfkneSmPGO3VDLOPO1bj6DqWInainGR3yB
+         ZhLjCOggbdaYksopKfkGK9eYso9a47O9CIjLPHgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Menglong Dong <dong.menglong@zte.com.cn>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 17/46] macvlan: schedule bc_work even if error
-Date:   Tue,  3 Dec 2019 23:35:37 +0100
-Message-Id: <20191203212733.796192448@linuxfoundation.org>
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 5.3 098/135] usb: dwc2: use a longer core rest timeout in dwc2_core_reset()
+Date:   Tue,  3 Dec 2019 23:35:38 +0100
+Message-Id: <20191203213038.401637058@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Menglong Dong <dong.menglong@zte.com.cn>
+From: Mathias Kresin <dev@kresin.me>
 
-[ Upstream commit 1d7ea55668878bb350979c377fc72509dd6f5b21 ]
+commit 6689f0f4bb14e50917ba42eb9b41c25e0184970c upstream.
 
-While enqueueing a broadcast skb to port->bc_queue, schedule_work()
-is called to add port->bc_work, which processes the skbs in
-bc_queue, to "events" work queue. If port->bc_queue is full, the
-skb will be discarded and schedule_work(&port->bc_work) won't be
-called. However, if port->bc_queue is full and port->bc_work is not
-running or pending, port->bc_queue will keep full and schedule_work()
-won't be called any more, and all broadcast skbs to macvlan will be
-discarded. This case can happen:
+Testing on different generations of Lantiq MIPS SoC based boards, showed
+that it takes up to 1500 us until the core reset bit is cleared.
 
-macvlan_process_broadcast() is the pending function of port->bc_work,
-it moves all the skbs in port->bc_queue to the queue "list", and
-processes the skbs in "list". During this, new skbs will keep being
-added to port->bc_queue in macvlan_broadcast_enqueue(), and
-port->bc_queue may already full when macvlan_process_broadcast()
-return. This may happen, especially when there are a lot of real-time
-threads and the process is preempted.
+The driver from the vendor SDK (ifxhcd) uses a 1 second timeout. Use the
+same timeout to fix wrong hang detections and make the driver work for
+Lantiq MIPS SoCs.
 
-Fix this by calling schedule_work(&port->bc_work) even if
-port->bc_work is full in macvlan_broadcast_enqueue().
+At least till kernel 4.14 the hanging reset only caused a warning but
+the driver was probed successful. With kernel 4.19 errors out with
+EBUSY.
 
-Fixes: 412ca1550cbe ("macvlan: Move broadcasts into a work queue")
-Signed-off-by: Menglong Dong <dong.menglong@zte.com.cn>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: linux-stable <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/macvlan.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -359,10 +359,11 @@ static void macvlan_broadcast_enqueue(st
- 	}
- 	spin_unlock(&port->bc_queue.lock);
+---
+ drivers/usb/dwc2/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/dwc2/core.c
++++ b/drivers/usb/dwc2/core.c
+@@ -524,7 +524,7 @@ int dwc2_core_reset(struct dwc2_hsotg *h
+ 	greset |= GRSTCTL_CSFTRST;
+ 	dwc2_writel(hsotg, greset, GRSTCTL);
  
-+	schedule_work(&port->bc_work);
-+
- 	if (err)
- 		goto free_nskb;
- 
--	schedule_work(&port->bc_work);
- 	return;
- 
- free_nskb:
+-	if (dwc2_hsotg_wait_bit_clear(hsotg, GRSTCTL, GRSTCTL_CSFTRST, 50)) {
++	if (dwc2_hsotg_wait_bit_clear(hsotg, GRSTCTL, GRSTCTL_CSFTRST, 10000)) {
+ 		dev_warn(hsotg->dev, "%s: HANG! Soft Reset timeout GRSTCTL GRSTCTL_CSFTRST\n",
+ 			 __func__);
+ 		return -EBUSY;
 
 
