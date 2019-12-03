@@ -2,256 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AFE410F6BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 06:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38FC110F6D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 06:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfLCFLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 00:11:43 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:38405 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbfLCFLk (ORCPT
+        id S1726640AbfLCFUF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 00:20:05 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33870 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbfLCFUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 00:11:40 -0500
-Received: by mail-pf1-f201.google.com with SMTP id c23so1457901pfn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 21:11:39 -0800 (PST)
+        Tue, 3 Dec 2019 00:20:04 -0500
+Received: by mail-pf1-f195.google.com with SMTP id n13so1253073pff.1;
+        Mon, 02 Dec 2019 21:20:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=8c3eVVk8ABGDZTJOomUNLBljUeAWHPLfmm8OYMOygK0=;
-        b=oteLf7N3qbZYVjncqfLGA35MNoLNyK5bhXImCiwSRn+6fiSbsFuJbMRE6gWfyVjNPe
-         Og932LtndCbABZdP1w0ocZDRInigouXSWrDI3b8o3dKLEFTZKzkADdIKDQYo4b/DHdFk
-         mbMDSCm3b0aqMpX0xNVYs8YjTftAE9V3OzJr1klNESjbku9d/N6rK+PeOBegUEgZ0CII
-         cIVtfx0krdmO0+9m0DyAzo4H+HvtdeikT93i5iYvInW+TE3f7JX61Ee4NEmpN632Mw83
-         CnGeO3lKi2fHV9V7pvjyUBedXrE45c7uAyu85CRsKhyQsT3S3O3fPS8xBRflmMvRYGPr
-         YR3Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Lo1FIdw7u0NV2Tgo0tQfhnWJEQxmW3ioGg2cCeozVqA=;
+        b=Ztb0RreyoIgcYMObe/fxFbZfmUwBOO9ZNQVyf+0wUkqB4IUF8iX0Aj4QAEgwK2Y8HM
+         9R9J2WuuwQAzhlQ/JTsmxUblpgOZSEXSlTYpieISOLR+lxkkznNggFCdSHSHCjpIqfV7
+         /xfCn0FBK0DACW28QfMqcF/4QzP3mvELDENsDx94okHKtlscY7ccBwXgRl5XhA2ZeExO
+         JSpLajE42kSVi4FjSO+rDXerjrHBAEwhAUn3qReScV8VZLmL+FP5uXu88tMcR4sQc4xI
+         mZycIOiu7BQgSsmJ7DMs0dilebUnmKiNVXx2Vhj+jT13hSRhf6hCmXcJlxcxNITmsd5n
+         SpQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=8c3eVVk8ABGDZTJOomUNLBljUeAWHPLfmm8OYMOygK0=;
-        b=EWv3+90u7g0bB6g/OfBuLlHLjMup2J5+nMzsJEzTJcDW0Wge4W0OW9mqTaiU9PMf/X
-         xRQzvTVaPhUaTzODaYO/jL+Hk9/pxncTr+J4nWA+FChlbWwvkXNOXJHHOlDayleQrn3g
-         WWhq7aM17zLCZIOixFeJ64BqiHRMYZADsAixCpZv0j0k+sF80poY98baZx17CJwIjcIV
-         aq7hVPfYJLxVlEQEdMqByWs1F6A4Ffq1U92O4SEJwYyScoJ8/yqFp49CYPZvc30l2oJ8
-         V44n1J3++O9ydaRm2y8ymelioobSaFdTVeH5hakQR2/GxbPk7KpnIekKDfj/vR0T6GD+
-         7+NA==
-X-Gm-Message-State: APjAAAXmx7x3x0/tJST9101nH2WsHxGyZvhWFcUoSQ6/WQM4xvYKqbms
-        HnaV84F/6yfgd6H8SC/EuU+Xj1UeM+Q=
-X-Google-Smtp-Source: APXvYqxs0GmfjTuZRzU9OqqYkBnp2/dJZPB77L72bpUcJ78IvKiht+67nFiNcmf43OSpi5CswMqkIUEsYvs=
-X-Received: by 2002:a63:c849:: with SMTP id l9mr3486754pgi.330.1575349898899;
- Mon, 02 Dec 2019 21:11:38 -0800 (PST)
-Date:   Mon,  2 Dec 2019 21:10:49 -0800
-In-Reply-To: <20191203051049.44573-1-drosen@google.com>
-Message-Id: <20191203051049.44573-9-drosen@google.com>
-Mime-Version: 1.0
-References: <20191203051049.44573-1-drosen@google.com>
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH 8/8] ext4: Optimize match for casefolded encrypted dirs
-From:   Daniel Rosenberg <drosen@google.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Lo1FIdw7u0NV2Tgo0tQfhnWJEQxmW3ioGg2cCeozVqA=;
+        b=FaewhzjznJ8gUADr9XNN+Sz1PXWM16WhTsnJE1NL6gUhNfSMzvbJIbxPMCEoX8Vq2D
+         X8aDOPu58IjZTk5ck2GV7sv9G9RnUeTx+0etFFpYhB5iZ4XxNKJieFTTrTegEi+wkHsT
+         LAcKuItYWTkfDiS/0pnubibGXuN2zzgiMXrsoltE+CHrAJclhoYQVSUeQ6Cj+lTas1Jj
+         Kz7K6HdslPUy5JkRIUavM7ykHgtpAfLYq05OOVgcbgZoCmnwUUVHHAz6AndC3+tW3iRg
+         Trsldac6MyUEK7Afycy38xjJGIrTOqQZO+xOwCaULFn62k6ImLykQEdODta3YlDdhH9t
+         CAUg==
+X-Gm-Message-State: APjAAAVLcM/b68TpbUL7BB3k/7WNX5fh8moExhUHR7Q9Fvjmi5KtLKKq
+        z5qfrE+95gclFIeNeK9j6jZPbrJZ
+X-Google-Smtp-Source: APXvYqxzZDh2NfeBrYDTnnOf9/hdb2fm1fLorKVVSa377tbXVjQqr8t/Sr3B1HKNXY0bY7gwbZcU3Q==
+X-Received: by 2002:aa7:9465:: with SMTP id t5mr2899660pfq.18.1575350404175;
+        Mon, 02 Dec 2019 21:20:04 -0800 (PST)
+Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id h9sm1451915pgk.84.2019.12.02.21.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2019 21:20:03 -0800 (PST)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
+        ceph-devel@vger.kernel.org, hirofumi@mail.parknet.co.jp,
+        jlayton@kernel.org, linux-cifs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, richard@nod.at,
+        stfrench@microsoft.com
+Subject: [PATCH v2 0/6] Delete timespec64_trunc()
+Date:   Mon,  2 Dec 2019 21:19:39 -0800
+Message-Id: <20191203051945.9440-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matching names with casefolded encrypting directories requires
-decrypting entries to confirm case since we are case preserving. We can
-avoid needing to decrypt if our hash values don't match.
+This series aims at deleting timespec64_trunc().
+There is a new api: timestamp_truncate() that is the
+replacement api. The api additionally does a limits
+check on the filesystem timestamps.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/ext4/ext4.h  | 17 ++++++++-------
- fs/ext4/namei.c | 57 ++++++++++++++++++++++++++-----------------------
- 2 files changed, 39 insertions(+), 35 deletions(-)
+The suggestion to open code some of the truncate logic
+came from Al Viro. And, this does make the code in some
+filesystems easy to follow.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index f06bab489d37..f104c46a6895 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2393,9 +2393,9 @@ extern unsigned ext4_free_clusters_after_init(struct super_block *sb,
- ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
- 
- #ifdef CONFIG_UNICODE
--extern void ext4_fname_setup_ci_filename(struct inode *dir,
-+extern int ext4_fname_setup_ci_filename(struct inode *dir,
- 					 const struct qstr *iname,
--					 struct fscrypt_str *fname);
-+					 struct ext4_filename *fname);
- #endif
- 
- #ifdef CONFIG_FS_ENCRYPTION
-@@ -2426,9 +2426,9 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, iname, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, iname, fname);
- #endif
--	return 0;
-+	return err;
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-@@ -2445,9 +2445,9 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, &dentry->d_name, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
- #endif
--	return 0;
-+	return err;
- }
- 
- static inline void ext4_fname_free_filename(struct ext4_filename *fname)
-@@ -2472,15 +2472,16 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 					    int lookup,
- 					    struct ext4_filename *fname)
- {
-+	int err = 0;
- 	fname->usr_fname = iname;
- 	fname->disk_name.name = (unsigned char *) iname->name;
- 	fname->disk_name.len = iname->len;
- 
- #ifdef CONFIG_UNICODE
--	ext4_fname_setup_ci_filename(dir, iname, &fname->cf_name);
-+	err = ext4_fname_setup_ci_filename(dir, iname, fname);
- #endif
- 
--	return 0;
-+	return err;
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index f536cfc626bd..58b58fb532ba 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -784,7 +784,9 @@ dx_probe(struct ext4_filename *fname, struct inode *dir,
- 	if (hinfo->hash_version <= DX_HASH_TEA)
- 		hinfo->hash_version += EXT4_SB(dir->i_sb)->s_hash_unsigned;
- 	hinfo->seed = EXT4_SB(dir->i_sb)->s_hash_seed;
--	if (fname && fname_name(fname))
-+	/* hash is already computed for encrypted casefolded directory */
-+	if (fname && fname_name(fname) &&
-+				!(IS_ENCRYPTED(dir) && IS_CASEFOLDED(dir)))
- 		ext4fs_dirhash(dir, fname_name(fname), fname_len(fname), hinfo);
- 	hash = hinfo->hash;
- 
-@@ -1352,19 +1354,21 @@ int ext4_ci_compare(struct inode *parent, const struct qstr *name,
- 	return ret;
- }
- 
--void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
--				  struct fscrypt_str *cf_name)
-+int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
-+				  struct ext4_filename *name)
- {
-+	struct fscrypt_str *cf_name = &name->cf_name;
-+	struct dx_hash_info *hinfo = &name->hinfo;
- 	int len;
- 
--	if (!IS_CASEFOLDED(dir) || !dir->i_sb->s_encoding) {
-+	if (!needs_casefold(dir) || !dir->i_sb->s_encoding) {
- 		cf_name->name = NULL;
--		return;
-+		return 0;
- 	}
- 
- 	cf_name->name = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
- 	if (!cf_name->name)
--		return;
-+		return -ENOMEM;
- 
- 	len = utf8_casefold(dir->i_sb->s_encoding,
- 			    iname, cf_name->name,
-@@ -1372,10 +1376,18 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- 	if (len <= 0) {
- 		kfree(cf_name->name);
- 		cf_name->name = NULL;
--		return;
- 	}
- 	cf_name->len = (unsigned) len;
-+	if (!IS_ENCRYPTED(dir))
-+		return 0;
- 
-+	hinfo->hash_version = DX_HASH_SIPHASH;
-+	hinfo->seed = NULL;
-+	if (cf_name->name)
-+		ext4fs_dirhash(dir, cf_name->name, cf_name->len, hinfo);
-+	else
-+		ext4fs_dirhash(dir, iname->name, iname->len, hinfo);
-+	return 0;
- }
- #endif
- 
-@@ -1405,16 +1417,12 @@ static bool ext4_match(struct inode *parent,
- 			struct qstr cf = {.name = fname->cf_name.name,
- 					  .len = fname->cf_name.len};
- 			if (IS_ENCRYPTED(parent)) {
--				struct dx_hash_info hinfo;
--
--				hinfo.hash_version = DX_HASH_SIPHASH;
--				hinfo.seed = NULL;
--				ext4fs_dirhash(parent, fname->cf_name.name,
--						fname_len(fname), &hinfo);
--				if (hinfo.hash != EXT4_DIRENT_HASH(de) ||
--						hinfo.minor_hash !=
--						    EXT4_DIRENT_MINOR_HASH(de))
-+				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
-+					fname->hinfo.minor_hash !=
-+						EXT4_DIRENT_MINOR_HASH(de)) {
-+
- 					return 0;
-+				}
- 			}
- 			return !ext4_ci_compare(parent, &cf, de->name,
- 							de->name_len, true);
-@@ -2036,15 +2044,11 @@ void ext4_insert_dentry(struct inode *dir,
- 	de->name_len = fname_len(fname);
- 	memcpy(de->name, fname_name(fname), fname_len(fname));
- 	if (ext4_hash_in_dirent(dir)) {
--		struct dx_hash_info hinfo;
-+		struct dx_hash_info *hinfo = &fname->hinfo;
- 
--		hinfo.hash_version = DX_HASH_SIPHASH;
--		hinfo.seed = NULL;
--		ext4fs_dirhash(dir, fname_usr_name(fname),
--				fname_len(fname), &hinfo);
--		EXT4_EXTENDED_DIRENT(de)->hash = cpu_to_le32(hinfo.hash);
-+		EXT4_EXTENDED_DIRENT(de)->hash = cpu_to_le32(hinfo->hash);
- 		EXT4_EXTENDED_DIRENT(de)->minor_hash =
--				cpu_to_le32(hinfo.minor_hash);
-+						cpu_to_le32(hinfo->minor_hash);
- 	}
- }
- 
-@@ -2195,10 +2199,9 @@ static int make_indexed_dir(handle_t *handle, struct ext4_filename *fname,
- 	if (fname->hinfo.hash_version <= DX_HASH_TEA)
- 		fname->hinfo.hash_version += EXT4_SB(dir->i_sb)->s_hash_unsigned;
- 	fname->hinfo.seed = EXT4_SB(dir->i_sb)->s_hash_seed;
--	if (ext4_hash_in_dirent(dir))
--		ext4fs_dirhash(dir, fname_usr_name(fname),
--				fname_len(fname), &fname->hinfo);
--	else
-+
-+	/* casefolded encrypted hashes are computed on fname setup */
-+	if (!ext4_hash_in_dirent(dir))
- 		ext4fs_dirhash(dir, fname_name(fname),
- 				fname_len(fname), &fname->hinfo);
- 
+The series also does some update_time() cleanup as
+suggested by Al Viro.
+
+Deepa Dinamani (6):
+  fs: fat: Eliminate timespec64_trunc() usage
+  fs: cifs: Delete usage of timespec64_trunc
+  fs: ceph: Delete timespec64_trunc() usage
+  fs: ubifs: Eliminate timespec64_trunc() usage
+  fs: Delete timespec64_trunc()
+  fs: Do not overload update_time
+
+ fs/ceph/mds_client.c |  4 +---
+ fs/cifs/inode.c      | 13 +++++++------
+ fs/fat/misc.c        | 10 +++++++++-
+ fs/inode.c           | 33 +++------------------------------
+ fs/ubifs/sb.c        | 11 ++++-------
+ include/linux/fs.h   |  1 -
+ 6 files changed, 24 insertions(+), 48 deletions(-)
+
 -- 
-2.24.0.393.g34dc348eaf-goog
+Changes since v1:
+* Dropped the atime comparison (patch 2/7) taken through cifs tree.
+* Refactored update_time according to review comments.
+2.17.1
 
+Cc: ceph-devel@vger.kernel.org
+Cc: hirofumi@mail.parknet.co.jp
+Cc: jlayton@kernel.org
+Cc: linux-cifs@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org
+Cc: richard@nod.at
+Cc: stfrench@microsoft.com
