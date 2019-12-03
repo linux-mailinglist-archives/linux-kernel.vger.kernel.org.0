@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C05111D87
+	by mail.lfdr.de (Postfix) with ESMTP id 59EB6111D86
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbfLCWya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:54:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48172 "EHLO mail.kernel.org"
+        id S1729511AbfLCWy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:54:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730275AbfLCWyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:20 -0500
+        id S1730270AbfLCWyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74D4A20674;
-        Tue,  3 Dec 2019 22:54:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3DFE2053B;
+        Tue,  3 Dec 2019 22:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413660;
-        bh=3STd+I0ZH/0LNTU+Yvg39crAO7P5nDqtGIPmBwkDu20=;
+        s=default; t=1575413663;
+        bh=8r2JsTAyGjsvZ0Gg6ZeGqXJwOS6tHIwxhleHmJXJ/Q4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lyCiKwMNHu0oIzT3vQWX2pI5btv6pezBPByf9Jc53PUbwEpmnWH1BEVHZWJETNlD3
-         q/EfrD76EBahbD0qbjL+VyDpu8Svz8IQh7HLUFdJO6frl8U8RO+p2PAo9VDWukM52q
-         V65uVRx+Y2HfZ3wC3YCms6rCjC33iVEjU55CJTe0=
+        b=skYij4SJ8F6CnFj+vXGi92Q3Aru/KMQCoDH78WHpHc/YLrHn8yCDfSOMNfd6QSBu6
+         ARGOYHOJYohXdpGSVNtmxqm/rTZsDU2NKigCwrDZ5P3SxPQIdrGLnDNVISlM9XWuaq
+         cZ64prz2QqanEjy0zSohZIoEEPswdtW8aujGLu+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Roland Kammerer <roland.kammerer@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 174/321] drbd: fix print_st_err()s prototype to match the definition
-Date:   Tue,  3 Dec 2019 23:34:00 +0100
-Message-Id: <20191203223436.183111067@linuxfoundation.org>
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 175/321] IB/rxe: Make counters thread safe
+Date:   Tue,  3 Dec 2019 23:34:01 +0100
+Message-Id: <20191203223436.234359386@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -46,37 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 2c38f035117331eb78d0504843c79ea7c7fabf37 ]
+[ Upstream commit d5108e69fe013ff47ab815b849caba9cc33ca1e5 ]
 
-print_st_err() is defined with its 4th argument taking an
-'enum drbd_state_rv' but its prototype use an int for it.
+Current rxe device counters are not thread safe.
+When multiple QPs are used, they can be racy.
+Make them thread safe by making it atomic64.
 
-Fix this by using 'enum drbd_state_rv' in the prototype too.
-
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 0b1e5b99a48b ("IB/rxe: Add port protocol stats")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_state.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/sw/rxe/rxe_hw_counters.c | 2 +-
+ drivers/infiniband/sw/rxe/rxe_verbs.h       | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_state.h b/drivers/block/drbd/drbd_state.h
-index ea58301d0895c..b2a390ba73a05 100644
---- a/drivers/block/drbd/drbd_state.h
-+++ b/drivers/block/drbd/drbd_state.h
-@@ -131,7 +131,7 @@ extern enum drbd_state_rv _drbd_set_state(struct drbd_device *, union drbd_state
- 					  enum chg_state_flags,
- 					  struct completion *done);
- extern void print_st_err(struct drbd_device *, union drbd_state,
--			union drbd_state, int);
-+			union drbd_state, enum drbd_state_rv);
+diff --git a/drivers/infiniband/sw/rxe/rxe_hw_counters.c b/drivers/infiniband/sw/rxe/rxe_hw_counters.c
+index 6aeb7a165e469..ea4542a9d69e6 100644
+--- a/drivers/infiniband/sw/rxe/rxe_hw_counters.c
++++ b/drivers/infiniband/sw/rxe/rxe_hw_counters.c
+@@ -59,7 +59,7 @@ int rxe_ib_get_hw_stats(struct ib_device *ibdev,
+ 		return -EINVAL;
  
- enum drbd_state_rv
- _conn_request_state(struct drbd_connection *connection, union drbd_state mask, union drbd_state val,
+ 	for (cnt = 0; cnt  < ARRAY_SIZE(rxe_counter_name); cnt++)
+-		stats->value[cnt] = dev->stats_counters[cnt];
++		stats->value[cnt] = atomic64_read(&dev->stats_counters[cnt]);
+ 
+ 	return ARRAY_SIZE(rxe_counter_name);
+ }
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index a0ec28d2b71a4..6a75f96b90962 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -409,16 +409,16 @@ struct rxe_dev {
+ 	spinlock_t		mmap_offset_lock; /* guard mmap_offset */
+ 	int			mmap_offset;
+ 
+-	u64			stats_counters[RXE_NUM_OF_COUNTERS];
++	atomic64_t		stats_counters[RXE_NUM_OF_COUNTERS];
+ 
+ 	struct rxe_port		port;
+ 	struct list_head	list;
+ 	struct crypto_shash	*tfm;
+ };
+ 
+-static inline void rxe_counter_inc(struct rxe_dev *rxe, enum rxe_counters cnt)
++static inline void rxe_counter_inc(struct rxe_dev *rxe, enum rxe_counters index)
+ {
+-	rxe->stats_counters[cnt]++;
++	atomic64_inc(&rxe->stats_counters[index]);
+ }
+ 
+ static inline struct rxe_dev *to_rdev(struct ib_device *dev)
 -- 
 2.20.1
 
