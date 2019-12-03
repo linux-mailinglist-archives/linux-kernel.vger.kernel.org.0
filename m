@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D03D4111E93
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24102111E70
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:02:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfLCXCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:02:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
+        id S1728713AbfLCWzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730101AbfLCWzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:55:02 -0500
+        id S1729095AbfLCWzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:55:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E82520803;
-        Tue,  3 Dec 2019 22:55:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D566820803;
+        Tue,  3 Dec 2019 22:55:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413701;
-        bh=CQuBCBvKAAsOoZocCAsqj8Qd5e+iFxFP6/c3gZsHpI8=;
+        s=default; t=1575413709;
+        bh=geeeVQ63UDrNG1JfFxbc//qDRyzxsQyqhEbu7hEACLY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kJcNxhej0VcBTpBcJdUIMFfFhB5ov3OEWketlX5ODP+4N0HcW15N3S1sn5ut8+UGw
-         0mNRmI9pMz51IbVdeGb6iFiT2nF2wO4z4ZO+1MsxZ3ObNj4Wvgv/YJB+5JPuPq+sB7
-         Oj5r/Db3115KDNKEsbPa+lWNnO5YdJ47NZZWsWpI=
+        b=WICSmkavbHDbDoRuwMZC9k4Zb7FLxsIcPtxMdT9WXjf2M3OhHfuSjwZpEsyz9c21z
+         vQJOgrqJWV0i/RHz1xdjQpxpWQETKvUzClMubEGdg9aj3V+VoROSiNf3tOuZF2LAQu
+         H9vRkgC8sJVqXQHtGCwEEfGAe28L4Db1bh4lPTpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 230/321] net/smc: fix byte_order for rx_curs_confirmed
-Date:   Tue,  3 Dec 2019 23:34:56 +0100
-Message-Id: <20191203223439.079727632@linuxfoundation.org>
+Subject: [PATCH 4.19 232/321] ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI
+Date:   Tue,  3 Dec 2019 23:34:58 +0100
+Message-Id: <20191203223439.187234389@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,79 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ubraun@linux.ibm.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit ccc8ca9b90acb45a3309f922b2591b07b4e070ec ]
+[ Upstream commit 323fb7b947b265753de34703dbbf8acc8ea3a4de ]
 
-The recent change in the rx_curs_confirmed assignment disregards
-byte order, which causes problems on little endian architectures.
-This patch fixes it.
+Make sure i2s->rclk_srcrate is properly initialized also during
+playback through the secondary DAI.
 
-Fixes: b8649efad879 ("net/smc: fix sender_free computation") (net-tree)
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_cdc.c |  4 +---
- net/smc/smc_cdc.h | 19 ++++++++++---------
- 2 files changed, 11 insertions(+), 12 deletions(-)
+ sound/soc/samsung/i2s.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/net/smc/smc_cdc.c b/net/smc/smc_cdc.c
-index 8f691b5a44ddf..333e4353498f8 100644
---- a/net/smc/smc_cdc.c
-+++ b/net/smc/smc_cdc.c
-@@ -106,9 +106,7 @@ int smc_cdc_msg_send(struct smc_connection *conn,
- 
- 	conn->tx_cdc_seq++;
- 	conn->local_tx_ctrl.seqno = conn->tx_cdc_seq;
--	smc_host_msg_to_cdc((struct smc_cdc_msg *)wr_buf,
--			    &conn->local_tx_ctrl, conn);
--	smc_curs_copy(&cfed, &((struct smc_host_cdc_msg *)wr_buf)->cons, conn);
-+	smc_host_msg_to_cdc((struct smc_cdc_msg *)wr_buf, conn, &cfed);
- 	rc = smc_wr_tx_send(link, (struct smc_wr_tx_pend_priv *)pend);
- 	if (!rc)
- 		smc_curs_copy(&conn->rx_curs_confirmed, &cfed, conn);
-diff --git a/net/smc/smc_cdc.h b/net/smc/smc_cdc.h
-index 2377a51772d51..34d2e1450320a 100644
---- a/net/smc/smc_cdc.h
-+++ b/net/smc/smc_cdc.h
-@@ -186,26 +186,27 @@ static inline int smc_curs_diff_large(unsigned int size,
- 
- static inline void smc_host_cursor_to_cdc(union smc_cdc_cursor *peer,
- 					  union smc_host_cursor *local,
-+					  union smc_host_cursor *save,
- 					  struct smc_connection *conn)
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index ce00fe2f6aae3..d4bde4834ce5f 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -604,6 +604,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 	unsigned int fmt)
  {
--	union smc_host_cursor temp;
--
--	smc_curs_copy(&temp, local, conn);
--	peer->count = htonl(temp.count);
--	peer->wrap = htons(temp.wrap);
-+	smc_curs_copy(save, local, conn);
-+	peer->count = htonl(save->count);
-+	peer->wrap = htons(save->wrap);
- 	/* peer->reserved = htons(0); must be ensured by caller */
- }
- 
- static inline void smc_host_msg_to_cdc(struct smc_cdc_msg *peer,
--				       struct smc_host_cdc_msg *local,
--				       struct smc_connection *conn)
-+				       struct smc_connection *conn,
-+				       union smc_host_cursor *save)
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow, mod_slave;
+ 	u32 mod, tmp = 0;
+ 	unsigned long flags;
+@@ -661,7 +662,8 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
+ 		 * clock configuration assigned in DT is not overwritten.
+ 		 */
+-		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL &&
++		    other->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -699,6 +701,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
  {
-+	struct smc_host_cdc_msg *local = &conn->local_tx_ctrl;
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	u32 mod, mask = 0, val = 0;
+ 	struct clk *rclksrc;
+ 	unsigned long flags;
+@@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	i2s->frmclk = params_rate(params);
+ 
+ 	rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++	if (!rclksrc || IS_ERR(rclksrc))
++		rclksrc = other->clk_table[CLK_I2S_RCLK_SRC];
 +
- 	peer->common.type = local->common.type;
- 	peer->len = local->len;
- 	peer->seqno = htons(local->seqno);
- 	peer->token = htonl(local->token);
--	smc_host_cursor_to_cdc(&peer->prod, &local->prod, conn);
--	smc_host_cursor_to_cdc(&peer->cons, &local->cons, conn);
-+	smc_host_cursor_to_cdc(&peer->prod, &local->prod, save, conn);
-+	smc_host_cursor_to_cdc(&peer->cons, &local->cons, save, conn);
- 	peer->prod_flags = local->prod_flags;
- 	peer->conn_state_flags = local->conn_state_flags;
- }
+ 	if (rclksrc && !IS_ERR(rclksrc))
+ 		i2s->rclk_srcrate = clk_get_rate(rclksrc);
+ 
 -- 
 2.20.1
 
