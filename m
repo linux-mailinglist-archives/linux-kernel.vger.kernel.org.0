@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3407E111E55
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD321111FD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:16:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbfLCXBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:01:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51870 "EHLO mail.kernel.org"
+        id S1728211AbfLCWjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:39:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729231AbfLCW4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:56:41 -0500
+        id S1727850AbfLCWjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:39:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F82320803;
-        Tue,  3 Dec 2019 22:56:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4BDE207DD;
+        Tue,  3 Dec 2019 22:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413801;
-        bh=klQsIEaLdkvQn9mXHsL/19l5ID92BD8wx7KpDUk+fkw=;
+        s=default; t=1575412758;
+        bh=4Hi7puFYa9ZD/tWeZe+cdHnTgvx3uxgPBqtlp1x6mX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b84PSBlyXmiVIikg0oGPW1gteEYDvWzMwx2HVEin+7pYHSda0OmwcZhZZZ782clG0
-         WI6DFpTybzFju9HaiNWf/R32LfzpY7tNDNaawvRi+DyzWIZ2CnVUIA9M2ZpID1xfjx
-         oIi0PUSaqXgxdrEbI/nHPtMNcZ+qMwaxFl/dLMik=
+        b=sEEJmQkr85TyA++YBeasVmLoubQC4/Did/d5PNzK3B58xG3bTlgQidmJ1SKQ6ILrw
+         jlqR1AvDZDaOn5nzk/3poWHpBEvSsVcM7YjZXj6nvuqiDvHYs5+fRcv79ncaEonFon
+         COLKqeTTAD7CybjZWLJgqED50rVwFv+pEkw7cTU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.19 268/321] usb: dwc2: use a longer core rest timeout in dwc2_core_reset()
-Date:   Tue,  3 Dec 2019 23:35:34 +0100
-Message-Id: <20191203223441.067373492@linuxfoundation.org>
+        stable@vger.kernel.org, Jeroen de Borst <jeroendb@google.com>,
+        Catherine Sullivan <csully@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 16/46] gve: Fix the queue page list allocated pages count
+Date:   Tue,  3 Dec 2019 23:35:36 +0100
+Message-Id: <20191203212733.526080403@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Kresin <dev@kresin.me>
+From: Jeroen de Borst <jeroendb@google.com>
 
-commit 6689f0f4bb14e50917ba42eb9b41c25e0184970c upstream.
+[ Upstream commit a95069ecb7092d03b2ea1c39ee04514fe9627540 ]
 
-Testing on different generations of Lantiq MIPS SoC based boards, showed
-that it takes up to 1500 us until the core reset bit is cleared.
+In gve_alloc_queue_page_list(), when a page allocation fails,
+qpl->num_entries will be wrong.  In this case priv->num_registered_pages
+can underflow in gve_free_queue_page_list(), causing subsequent calls
+to gve_alloc_queue_page_list() to fail.
 
-The driver from the vendor SDK (ifxhcd) uses a 1 second timeout. Use the
-same timeout to fix wrong hang detections and make the driver work for
-Lantiq MIPS SoCs.
-
-At least till kernel 4.14 the hanging reset only caused a warning but
-the driver was probed successful. With kernel 4.19 errors out with
-EBUSY.
-
-Cc: linux-stable <stable@vger.kernel.org> # 4.19+
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
+Signed-off-by: Jeroen de Borst <jeroendb@google.com>
+Reviewed-by: Catherine Sullivan <csully@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/dwc2/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/google/gve/gve_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/core.c
-+++ b/drivers/usb/dwc2/core.c
-@@ -524,7 +524,7 @@ int dwc2_core_reset(struct dwc2_hsotg *h
- 	greset |= GRSTCTL_CSFTRST;
- 	dwc2_writel(hsotg, greset, GRSTCTL);
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -544,7 +544,7 @@ static int gve_alloc_queue_page_list(str
+ 	}
  
--	if (dwc2_hsotg_wait_bit_clear(hsotg, GRSTCTL, GRSTCTL_CSFTRST, 50)) {
-+	if (dwc2_hsotg_wait_bit_clear(hsotg, GRSTCTL, GRSTCTL_CSFTRST, 10000)) {
- 		dev_warn(hsotg->dev, "%s: HANG! Soft Reset timeout GRSTCTL GRSTCTL_CSFTRST\n",
- 			 __func__);
- 		return -EBUSY;
+ 	qpl->id = id;
+-	qpl->num_entries = pages;
++	qpl->num_entries = 0;
+ 	qpl->pages = kvzalloc(pages * sizeof(*qpl->pages), GFP_KERNEL);
+ 	/* caller handles clean up */
+ 	if (!qpl->pages)
+@@ -562,6 +562,7 @@ static int gve_alloc_queue_page_list(str
+ 		/* caller handles clean up */
+ 		if (err)
+ 			return -ENOMEM;
++		qpl->num_entries++;
+ 	}
+ 	priv->num_registered_pages += pages;
+ 
 
 
