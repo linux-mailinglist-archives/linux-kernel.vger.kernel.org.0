@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2240111BD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E81D111C85
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:45:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfLCWhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:37:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46186 "EHLO mail.kernel.org"
+        id S1728976AbfLCWoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:44:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727782AbfLCWhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:37:45 -0500
+        id S1728673AbfLCWou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:44:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AE432158C;
-        Tue,  3 Dec 2019 22:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF07220803;
+        Tue,  3 Dec 2019 22:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412664;
-        bh=rbxxTSCTtzeyzH8V7lyMIsbwabxAb/eHcLvFhgCc4qA=;
+        s=default; t=1575413089;
+        bh=OWfCKaB2Nn/jWj+jLTsqNNgX25+36blG7TPdm0AhVCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kCrD1/Utpr7BG8+WVAo+gReJTnoz30uBVbwE8ILcA2gLXao/M/1XqN0fhLE2w7+05
-         tVU4nG1/kKVWu6LV8TuRmco1odSGhlYTjCW7uBlMcGy+6raAY8B42vfA6pNKciBp3Y
-         VbL4CTEPNdmjH8YFM4aUaCK9WFzrcTtjrCPWKZe8=
+        b=HEAZZgjFnBD04EfTMR/DO6Rmi3+GWjvj71os4KNU0XwDWQkAtoq2zFXMOAIQIw+yC
+         33RQpjX4a3xkIb+1qy7JWxd4Kboa4qs/X/sqMN2TXW8CEHnt4/NDCxHx+0b0YIXlrR
+         0sAmU/giZ8hOLjbGAEpizZoX1QkB1qdqjrxmv0XE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 5.4 09/46] staging: rtl8723bs: Drop ACPI device ids
-Date:   Tue,  3 Dec 2019 23:35:29 +0100
-Message-Id: <20191203212723.466453730@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 090/135] net/fq_impl: Switch to kvmalloc() for memory allocation
+Date:   Tue,  3 Dec 2019 23:35:30 +0100
+Message-Id: <20191203213036.344531573@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,38 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Toke Høiland-Jørgensen <toke@redhat.com>
 
-commit 2d9d2491530a156b9a5614adf9dc79285e35d55e upstream.
+[ Upstream commit 71e67c3bd127cfe7863f54e4b087eba1cc8f9a7a ]
 
-The driver only binds by SDIO device-ids, all the ACPI device-id does
-is causing the driver to load unnecessarily on devices where the DSDT
-contains a bogus OBDA8723 device.
+The FQ implementation used by mac80211 allocates memory using kmalloc(),
+which can fail; and Johannes reported that this actually happens in
+practice.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191111113846.24940-2-hdegoede@redhat.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To avoid this, switch the allocation to kvmalloc() instead; this also
+brings fq_impl in line with all the FQ qdiscs.
 
+Fixes: 557fc4a09803 ("fq: add fair queuing framework")
+Reported-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Link: https://lore.kernel.org/r/20191105155750.547379-1-toke@redhat.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8723bs/os_dep/sdio_intf.c |    6 ------
- 1 file changed, 6 deletions(-)
+ include/net/fq_impl.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-+++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-@@ -23,13 +23,7 @@ static const struct sdio_device_id sdio_
- 	{ SDIO_DEVICE(0x024c, 0xb723), },
- 	{ /* end: all zeroes */				},
- };
--static const struct acpi_device_id acpi_ids[] = {
--	{"OBDA8723", 0x0000},
--	{}
--};
--
- MODULE_DEVICE_TABLE(sdio, sdio_ids);
--MODULE_DEVICE_TABLE(acpi, acpi_ids);
+diff --git a/include/net/fq_impl.h b/include/net/fq_impl.h
+index 107c0d700ed6f..38a9a3d1222b7 100644
+--- a/include/net/fq_impl.h
++++ b/include/net/fq_impl.h
+@@ -313,7 +313,7 @@ static int fq_init(struct fq *fq, int flows_cnt)
+ 	fq->limit = 8192;
+ 	fq->memory_limit = 16 << 20; /* 16 MBytes */
  
- static int rtw_drv_init(struct sdio_func *func, const struct sdio_device_id *id);
- static void rtw_dev_remove(struct sdio_func *func);
+-	fq->flows = kcalloc(fq->flows_cnt, sizeof(fq->flows[0]), GFP_KERNEL);
++	fq->flows = kvcalloc(fq->flows_cnt, sizeof(fq->flows[0]), GFP_KERNEL);
+ 	if (!fq->flows)
+ 		return -ENOMEM;
+ 
+@@ -331,7 +331,7 @@ static void fq_reset(struct fq *fq,
+ 	for (i = 0; i < fq->flows_cnt; i++)
+ 		fq_flow_reset(fq, &fq->flows[i], free_func);
+ 
+-	kfree(fq->flows);
++	kvfree(fq->flows);
+ 	fq->flows = NULL;
+ }
+ 
+-- 
+2.20.1
+
 
 
