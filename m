@@ -2,112 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA05110521
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 20:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A6B110529
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 20:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfLCTbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 14:31:14 -0500
-Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:39358 "EHLO
-        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727385AbfLCTbN (ORCPT
+        id S1727509AbfLCTbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 14:31:48 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:35986 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727433AbfLCTbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 14:31:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 538823F79C;
-        Tue,  3 Dec 2019 20:31:10 +0100 (CET)
-Authentication-Results: pio-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=jUDRzMDs;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hehyB8a_Sx59; Tue,  3 Dec 2019 20:31:09 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id A66153F4CF;
-        Tue,  3 Dec 2019 20:31:08 +0100 (CET)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 2375B362501;
-        Tue,  3 Dec 2019 20:31:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1575401468; bh=GgpXsnJVZPKyPe+h+0gIt+VQkmGTuW5nmRdMrtnMCT8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jUDRzMDsGPJvk0017GCqWL8w/RwWA/9L3q2eiH3OKffW6LTeyvYqK2UFvt561ftiN
-         wasrY82tz2l++RDhSJKGJbIhKugSzN9YtRvhKCaaVEFsvvagkkJ+o/SZEyF3ve9iUe
-         edTj+I5iYtmQCNd02pOlVcQTXfeGs3fZE13W2wOQ=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pv-drivers@vmware.com
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jim Gill <jgill@vmware.com>
-Subject: [PATCH RESEND 2/2] scsi: vmw_pvscsi: Silence dma mapping errors
-Date:   Tue,  3 Dec 2019 20:30:52 +0100
-Message-Id: <20191203193052.7583-2-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191203193052.7583-1-thomas_os@shipmail.org>
-References: <20191203193052.7583-1-thomas_os@shipmail.org>
+        Tue, 3 Dec 2019 14:31:45 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3JOcB9165372;
+        Tue, 3 Dec 2019 19:31:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=qEl+pOhRr3g+RbA74TF3EJsh7AdX920CBSilgxsTtEA=;
+ b=TyhNG6phCS4TQJ7F8PPU0jytfzaRchoWR6IbfN7EznnBQ/F0L+jvwdG88mZ1u5+kgpLZ
+ 6BEjm/u8DxAD7qZI9poq6jroazrTa9BNAxhYM69DmOYZUbgPdQmY/v181yS9PZ6BRHAe
+ dVgcPbpj1uBaxy1L8FZEJX2WJ1QZcyt5mwJH/+AeDtnFjhhnLpifjoic1/NHm8BF1BzP
+ n2A3L5DnkRiFSDZ/18BPHf0h9mIJXhhup5SwnS/RqYcjjGY+YpewUOJACi52ZrSpIfS2
+ rEBf2OHZwpAj/ui+N+1Bzw+xcxwwOnOvBPuVku/rNgOToZFrLVf5oW0Bl+e82BcctOSd Sg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2wkgcq9x9c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 19:31:35 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3JEcmg133392;
+        Tue, 3 Dec 2019 19:31:35 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2wn7pqmm1x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 19:31:34 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB3JVT6O009168;
+        Tue, 3 Dec 2019 19:31:30 GMT
+Received: from localhost.localdomain (/98.229.125.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Dec 2019 11:31:29 -0800
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-crypto@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v2 0/5] padata lockdep, cpumask, and doc fixes
+Date:   Tue,  3 Dec 2019 14:31:09 -0500
+Message-Id: <20191203193114.238912-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=984
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912030143
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912030143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+This series depends on all of Herbert's recent padata fixes to reduce
+merge conflicts on his end:
 
-These errors typically occur with swiotlb when the swiotlb buffer is full.
-But they are transient and would typically unnecessarily worry a user.
-Instead of errors, print debug messages.
+  crypto: pcrypt - Do not clear MAY_SLEEP flag in original request
+  padata: Remove unused padata_remove_cpu
+  [v3] crypto: pcrypt - Avoid deadlock by using per-instance padata queues
+  crypto: pcrypt - Fix user-after-free on module unload
+  padata: Remove broken queue flushing 
 
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Acked-by: Jim Gill <jgill@vmware.com>
----
- drivers/scsi/vmw_pvscsi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If this should be based on something else, please let me know.
 
-diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
-index 8a09d184a320..c3f010df641e 100644
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -365,7 +365,7 @@ static int pvscsi_map_buffers(struct pvscsi_adapter *adapter,
- 		int segs = scsi_dma_map(cmd);
- 
- 		if (segs == -ENOMEM) {
--			scmd_printk(KERN_ERR, cmd,
-+			scmd_printk(KERN_DEBUG, cmd,
- 				    "vmw_pvscsi: Failed to map cmd sglist for DMA.\n");
- 			return -ENOMEM;
- 		} else if (segs > 1) {
-@@ -392,7 +392,7 @@ static int pvscsi_map_buffers(struct pvscsi_adapter *adapter,
- 		ctx->dataPA = dma_map_single(&adapter->dev->dev, sg, bufflen,
- 					     cmd->sc_data_direction);
- 		if (dma_mapping_error(&adapter->dev->dev, ctx->dataPA)) {
--			scmd_printk(KERN_ERR, cmd,
-+			scmd_printk(KERN_DEBUG, cmd,
- 				    "vmw_pvscsi: Failed to map direct data buffer for DMA.\n");
- 			return -ENOMEM;
- 		}
-@@ -725,7 +725,7 @@ static int pvscsi_queue_ring(struct pvscsi_adapter *adapter,
- 				cmd->sense_buffer, SCSI_SENSE_BUFFERSIZE,
- 				DMA_FROM_DEVICE);
- 		if (dma_mapping_error(&adapter->dev->dev, ctx->sensePA)) {
--			scmd_printk(KERN_ERR, cmd,
-+			scmd_printk(KERN_DEBUG, cmd,
- 				    "vmw_pvscsi: Failed to map sense buffer for DMA.\n");
- 			ctx->sensePA = 0;
- 			return -ENOMEM;
+Thanks,
+Daniel
+
+v2:
+ - documentation patch RST-ized according to Jon's comments
+ - "validate cpumask" patch added
+ - rebased onto v5.4 and updated since Herbert's fixes have changed
+
+Daniel Jordan (5):
+  padata: validate cpumask without removed CPU during offline
+  padata: always acquire cpu_hotplug_lock before pinst->lock
+  padata: remove cpumask change notifier
+  padata: remove reorder_objects
+  padata: update documentation
+
+ Documentation/core-api/index.rst  |   1 +
+ Documentation/core-api/padata.rst | 169 ++++++++++++++++++++++++++++++
+ Documentation/padata.txt          | 163 ----------------------------
+ crypto/pcrypt.c                   |   1 -
+ include/linux/cpuhotplug.h        |   1 +
+ include/linux/padata.h            |  28 ++---
+ kernel/padata.c                   | 124 ++++++++--------------
+ 7 files changed, 220 insertions(+), 267 deletions(-)
+ create mode 100644 Documentation/core-api/padata.rst
+ delete mode 100644 Documentation/padata.txt
+
+
+base-commit: 219d54332a09e8d8741c1e1982f5eae56099de85
+prerequisite-patch-id: e31e7b28eb12a2c7e1e04261f4e890f83a57bd19
+prerequisite-patch-id: 00f7ca687bd9df6281e9ced0925a865b2fa7b297
+prerequisite-patch-id: 9f3bb985b34d29ff30e44b8829545736de02186f
+prerequisite-patch-id: fe09ee84131ee649b90ee291fbbeda32e90c42fe
+prerequisite-patch-id: f2e5a29f78e2403677ad50d870d90022932bc2b6
 -- 
-2.21.0
+2.24.0
 
