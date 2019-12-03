@@ -2,219 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 832D01105BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 21:14:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E881105CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 21:15:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbfLCUOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 15:14:43 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:40413 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727287AbfLCUOm (ORCPT
+        id S1727506AbfLCUPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 15:15:23 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:39386 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbfLCUPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 15:14:42 -0500
-Received: by mail-qv1-f66.google.com with SMTP id i3so2110223qvv.7;
-        Tue, 03 Dec 2019 12:14:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e39PPmDB1hLhTj1mcvYV8QS1l9HhaGJEr3w3upRH5oo=;
-        b=EH5ZUeyfyIINg7bLAPpoNTnBt8gnP1BzNlTE1snYybmxey/T+St/+lCyyL4y4Q/HWe
-         XORmuuvxEFHQbUzwlWc5BFzfGO4y3nBr5frCFxXkaI5ULR3ZUZLqTC6XVrrdMrlu9fpc
-         WSXiCJfBapng2KV7nTAS5L/LwIsT1am/xlbQfMRz6X1CjauIyDL9ld+nHDAiUmvpVaXI
-         H9UI1frQfXtiH+ojRGtrknI18Z8o/KEeviralLp/sOcImVLYAdpIDMv2nFH4XfDbBlb8
-         eweKcdnBVNzJURWl1PGaATgKF5IXkTYjEI9i4/kiKXgsipHzIgZI7r7zdE1WV39pmg7D
-         iyvg==
+        Tue, 3 Dec 2019 15:15:11 -0500
+Received: by mail-io1-f70.google.com with SMTP id u13so3298954iol.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 12:15:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=e39PPmDB1hLhTj1mcvYV8QS1l9HhaGJEr3w3upRH5oo=;
-        b=YJdQXwwMbNlpW6QtHy0NEiFsGpS60UfIzrxDZCNqM+JNfriw3N5JlqG0k9Am3FYQwa
-         HCqdHVTUO1uOnpdx4GyaLngrYlX6lTu1bxh6qN6E4Q7r6iHtboTFdhKMNWYHUJjQpldL
-         IxmDDzW7FLOKEfVJmY3gSoNzBaZyxt+MDVKO9Ik7LmU9E6cSlZAr67Pk4pYLSMhphRcq
-         xIUQHO/ZqeYuV8u6UhiA9E44XNdZzNxbGoH/ILIOBxhyozVQEkJ1oL/LpgGISsR9T+NS
-         95wiXxpMbYhF/d+FKwEEYxSlcDR7WUb9L5R/leO73Y5xDktMQHmCD69tgKCAIdCAVNG6
-         XdzQ==
-X-Gm-Message-State: APjAAAVv4CfAcN2woXpnoybka4Kp9e+UYKfDxCEwWD6d+K9tswXOpiVS
-        nixUCc/+WdVKtWN261bBFQ==
-X-Google-Smtp-Source: APXvYqzJycZq/XaJ37MLYoJWXN2T6RawatpKUirnrpPgEmyhHbnSxFHsAVI3vd8hYFqL0cJuvnJe6Q==
-X-Received: by 2002:ad4:55ec:: with SMTP id bu12mr7150738qvb.107.1575404081478;
-        Tue, 03 Dec 2019 12:14:41 -0800 (PST)
-Received: from gabell.cable.rcn.com (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id l34sm2437104qtd.71.2019.12.03.12.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 12:14:41 -0800 (PST)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        d.hatayama@fujitsu.com, Eric Biederman <ebiederm@xmission.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH v2 2/2] efi: arm64: Introduce /proc/efi/memreserve to tell the persistent pages
-Date:   Tue,  3 Dec 2019 15:14:10 -0500
-Message-Id: <20191203201410.28045-3-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191203201410.28045-1-msys.mizuma@gmail.com>
-References: <20191203201410.28045-1-msys.mizuma@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=0gd16BcLnxoQDcUHfvdMRR4Bdp1gWQG0XmUMMbLF+V8=;
+        b=tAvJAO5eaaAYb2IVG+DjGf50RkU4iV3J2hrC4kyaqZ7Zhr6fO9SF52NHevnkNQT5tv
+         N6Uk8Jf7pAmyuOVJuIDoGbeoqm3SwhNf2VUgsTrMzwdhlod1P+6MeuX1cCEJXdufgHkV
+         gT2hloDAy4l61qJFWXgb5cVZM3n76Pj94UcG0ASaEOO5dZwGHR2NzcUqWiBxlQ3pdc54
+         o5x2F2jb7Dzw2AIeHkzsBI02JJeRO3NyEV5lSJir70W9PsvurVt/htRg6VhBjH0zkXZp
+         cSBc6eQwCxdp5XBASwSsMonFLH1kuRWJ7KVpeXqRuMItgEgzMSp2aEJlw02yY0tQGh4d
+         arbQ==
+X-Gm-Message-State: APjAAAVNE0paDJXsKO1G0+QM5LiD71mCNB4NDwXG8dcL/zmZatkhu8sb
+        0nrBfwdi5pkGj1L9vguJ6rMgP5tbyrSzGnYFddWwKYoG9n/8
+X-Google-Smtp-Source: APXvYqwNFNTJ1WYTiJTv72iNEoj5CdIIjqcklyGmJS99WmuvwGtpJ5gF1Kc7x4awLVACLd84qCxX6JfrPrBInNmW5Txb3RDzu1VQ
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:156:: with SMTP id v22mr3647414iot.180.1575404110763;
+ Tue, 03 Dec 2019 12:15:10 -0800 (PST)
+Date:   Tue, 03 Dec 2019 12:15:10 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006663de0598d25ab1@google.com>
+Subject: KASAN: use-after-free Write in release_tty
+From:   syzbot <syzbot+522643ab5729b0421998@syzkaller.appspotmail.com>
+To:     daniel.vetter@ffwll.ch, ghalat@redhat.com,
+        gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-kernel@vger.kernel.org, nico@fluxnic.net, sam@ravnborg.org,
+        syzkaller-bugs@googlegroups.com, textshell@uchuujin.de,
+        tomli@tomli.me
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Hello,
 
-kexec reboot stops in early boot sequence because efi_config_parse_tables()
-refers garbage data. We can see the log with memblock=debug kernel option:
+syzbot found the following crash on:
 
-  efi:  ACPI 2.0=0x9821790014  PROP=0x8757f5c0  SMBIOS 3.0=0x9820740000  MEMRESERVE=0x9820bfdc58
-  memblock_reserve: [0x0000009820bfdc58-0x0000009820bfdc67] efi_config_parse_tables+0x228/0x278
-  memblock_reserve: [0x0000000082760000-0x00000000324d07ff] efi_config_parse_tables+0x228/0x278
-  memblock_reserve: [0xcc4f84ecc0511670-0x5f6e5214a7fd91f9] efi_config_parse_tables+0x244/0x278
-  memblock_reserve: [0xd2fd4144b9af693d-0xad0c1db1086f40a2] efi_config_parse_tables+0x244/0x278
-  memblock_reserve: [0x0c719bb159b1fadc-0x5aa6e62a1417ce12] efi_config_parse_tables+0x244/0x278
-  ...
+HEAD commit:    596cf45c Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13dc7aeae00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8ab2e0e09c2a82
+dashboard link: https://syzkaller.appspot.com/bug?extid=522643ab5729b0421998
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f5d59ce00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1214042ae00000
 
-That happens because 0x82760000, struct linux_efi_memreserve, is destroyed.
-0x82760000 is pointed from efi.mem_reseve, and efi.mem_reserve points the
-head page of LPI pending table and LPI property table which are allocated by
-gic_reserve_range().
+Bisection is inconclusive: the bug happens on the oldest tested release.
 
-The destroyer is kexec. kexec locates the initrd to the area:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b01edae00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=14701edae00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10701edae00000
 
-  ]# kexec -d -l /boot/vmlinuz-5.4.0-rc7 /boot/initramfs-5.4.0-rc7.img --reuse-cmdline
-  ...
-  initrd: base 82290000, size 388dd8ah (59301258)
-  ...
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+522643ab5729b0421998@syzkaller.appspotmail.com
 
-From dynamic debug log. initrd is located in segment[1]:
-  machine_kexec_prepare:70:
-    kexec kimage info:
-      type:        0
-      start:       85b30680
-      head:        0
-      nr_segments: 4
-        segment[0]: 0000000080480000 - 0000000082290000, 0x1e10000 bytes, 481 pages
-        segment[1]: 0000000082290000 - 0000000085b20000, 0x3890000 bytes, 905 pages
-        segment[2]: 0000000085b20000 - 0000000085b30000, 0x10000 bytes, 1 pages
-        segment[3]: 0000000085b30000 - 0000000085b40000, 0x10000 bytes, 1 pages
+==================================================================
+BUG: KASAN: use-after-free in con_shutdown+0x85/0x90  
+drivers/tty/vt/vt.c:3278
+Write of size 8 at addr ffff88809b797108 by task syz-executor613/9470
 
-kexec searches the memory region to locate initrd through
-"System RAM" in /proc/iomem. The pending tables are included in
-"System RAM" because they are allocated by alloc_pages(), so kexec
-destroys the LPI pending tables.
+CPU: 0 PID: 9470 Comm: syz-executor613 Not tainted 5.4.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:638
+  __asan_report_store8_noabort+0x17/0x20 mm/kasan/generic_report.c:140
+  con_shutdown+0x85/0x90 drivers/tty/vt/vt.c:3278
+  release_tty+0xd3/0x470 drivers/tty/tty_io.c:1511
+  tty_release_struct+0x3c/0x50 drivers/tty/tty_io.c:1626
+  tty_release+0xbcb/0xe90 drivers/tty/tty_io.c:1786
+  __fput+0x2ff/0x890 fs/file_table.c:280
+  ____fput+0x16/0x20 fs/file_table.c:313
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x8e7/0x2ef0 kernel/exit.c:797
+  do_group_exit+0x135/0x360 kernel/exit.c:895
+  __do_sys_exit_group kernel/exit.c:906 [inline]
+  __se_sys_exit_group kernel/exit.c:904 [inline]
+  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:904
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x443c38
+Code: 00 00 be 3c 00 00 00 eb 19 66 0f 1f 84 00 00 00 00 00 48 89 d7 89 f0  
+0f 05 48 3d 00 f0 ff ff 77 21 f4 48 89 d7 44 89 c0 0f 05 <48> 3d 00 f0 ff  
+ff 76 e0 f7 d8 64 41 89 01 eb d8 0f 1f 84 00 00 00
+RSP: 002b:00007ffd7eba55f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000443c38
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004c37b0 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 000000000000000f R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d5180 R14: 0000000000000000 R15: 0000000000000000
 
-Introduce /proc/efi/memreserve to tell the pages pointed by
-efi.mem_reserve so that kexec can avoid the area to locate initrd.
+Allocated by task 9465:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:512 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:485
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:526
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
+  kmalloc include/linux/slab.h:556 [inline]
+  kzalloc include/linux/slab.h:670 [inline]
+  vc_allocate drivers/tty/vt/vt.c:1085 [inline]
+  vc_allocate+0x1fc/0x760 drivers/tty/vt/vt.c:1066
+  con_install+0x52/0x410 drivers/tty/vt/vt.c:3229
+  tty_driver_install_tty drivers/tty/tty_io.c:1228 [inline]
+  tty_init_dev drivers/tty/tty_io.c:1341 [inline]
+  tty_init_dev+0xf7/0x460 drivers/tty/tty_io.c:1318
+  tty_open_by_driver drivers/tty/tty_io.c:1985 [inline]
+  tty_open+0x4a5/0xbb0 drivers/tty/tty_io.c:2033
+  chrdev_open+0x245/0x6b0 fs/char_dev.c:414
+  do_dentry_open+0x4e6/0x1380 fs/open.c:797
+  vfs_open+0xa0/0xd0 fs/open.c:914
+  do_last fs/namei.c:3412 [inline]
+  path_openat+0x10e4/0x4710 fs/namei.c:3529
+  do_filp_open+0x1a1/0x280 fs/namei.c:3559
+  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
+  __do_sys_open fs/open.c:1115 [inline]
+  __se_sys_open fs/open.c:1110 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Freed by task 9471:
+  save_stack+0x23/0x90 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  kasan_set_free_info mm/kasan/common.c:334 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:473
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:482
+  __cache_free mm/slab.c:3426 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3757
+  vt_disallocate_all+0x2bd/0x3e0 drivers/tty/vt/vt_ioctl.c:323
+  vt_ioctl+0xc38/0x26d0 drivers/tty/vt/vt_ioctl.c:816
+  tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2658
+  vfs_ioctl fs/ioctl.c:47 [inline]
+  file_ioctl fs/ioctl.c:539 [inline]
+  do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:726
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:743
+  __do_sys_ioctl fs/ioctl.c:750 [inline]
+  __se_sys_ioctl fs/ioctl.c:748 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:748
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88809b797000
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 264 bytes inside of
+  2048-byte region [ffff88809b797000, ffff88809b797800)
+The buggy address belongs to the page:
+page:ffffea00026de5c0 refcount:1 mapcount:0 mapping:ffff8880aa400e00  
+index:0x0
+raw: 00fffe0000000200 ffffea00025c8248 ffffea00023a9a88 ffff8880aa400e00
+raw: 0000000000000000 ffff88809b797000 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88809b797000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809b797080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88809b797100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                       ^
+  ffff88809b797180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88809b797200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/firmware/efi/efi.c | 75 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 72 insertions(+), 3 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index d8157cb34..80bbe0b3e 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -325,17 +325,87 @@ static __init int efivar_ssdt_load(void)
- static inline int efivar_ssdt_load(void) { return 0; }
- #endif
- 
-+static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
-+
- #ifdef CONFIG_PROC_FS
- static struct proc_dir_entry *proc_efi;
-+#ifdef CONFIG_KEXEC
-+static int memreserve_show(struct seq_file *m, void *v)
-+{
-+	struct linux_efi_memreserve *rsv;
-+	phys_addr_t start, end;
-+	unsigned long prsv;
-+	int count, i;
-+
-+	if ((efi_memreserve_root == (void *)ULONG_MAX) ||
-+			(!efi_memreserve_root))
-+		return -ENODEV;
-+
-+	for (prsv = efi_memreserve_root->next; prsv; prsv = rsv->next) {
-+		rsv = memremap(prsv, sizeof(*rsv), MEMREMAP_WB);
-+		if (!rsv) {
-+			pr_err("Could not map efi_memreserve\n");
-+			return -ENOMEM;
-+		}
-+		count = atomic_read(&rsv->count);
-+		for (i = 0; i < count; i++) {
-+			start = rsv->entry[i].base;
-+			end = start + rsv->entry[i].size - 1;
-+
-+			seq_printf(m, "%pa-%pa\n", &start, &end);
-+		}
-+		memunmap(rsv);
-+	}
-+
-+	return 0;
-+}
-+
-+static int memreserve_open(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, memreserve_show, NULL);
-+}
-+
-+static const struct file_operations memreserve_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= memreserve_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static int __init efi_proc_memreserve(void)
-+{
-+	struct proc_dir_entry *pde;
-+
-+	if ((efi_memreserve_root == (void *)ULONG_MAX) ||
-+			(!efi_memreserve_root))
-+		return 0;
-+
-+	pde = proc_create("memreserve", 0444, proc_efi, &memreserve_fops);
-+	if (!pde) {
-+		pr_err("/proc/efi: Cannot create /proc/efi/memreserve file.\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+#else
-+static inline int efi_proc_memreserve(void) { return 0; }
-+#endif /* CONFIG_KEXEC */
-+
- static int __init efi_proc_init(void)
- {
-+	int error = 1;
-+
- 	proc_efi = proc_mkdir("efi", NULL);
- 	if (!proc_efi) {
- 		pr_err("/proc/efi: Cannot create /proc/efi directroy.\n");
--		return 1;
-+		return error;
- 	}
- 
--	return 0;
-+	error = efi_proc_memreserve();
-+
-+	return error;
- }
- #else
- static inline int efi_proc_init(void) { return 0; }
-@@ -986,7 +1056,6 @@ int efi_status_to_err(efi_status_t status)
- }
- 
- static DEFINE_SPINLOCK(efi_mem_reserve_persistent_lock);
--static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
- 
- static int __init efi_memreserve_map_root(void)
- {
--- 
-2.18.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
