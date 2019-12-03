@@ -2,146 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C98C910FD5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:09:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9E010FD6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfLCMJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:09:12 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:46302 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbfLCMJL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:09:11 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3Bs2uf147819;
-        Tue, 3 Dec 2019 12:08:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=CNr0y+ZoPApz+Tp45+kJAccK/U23wlJ3cxKmAvkb2ZI=;
- b=XshhpMXm4z9mCI2Ceys9JEAiTAY87sFJ/a8ze8ca63aECp348cHrJAt1IzPUtrXqCRpA
- hHhtmT5dZIHCgfKK/u2LAcBJP6xtXHyp3PmonrbUqrZY1r2y9oE04oYYew6u46P5+GA4
- kLy1K/PxYhGxAXl01KOQh887yCsumleADosj1T2VAKowVJfIwi8XYw1Lqi3BW+l4NLWK
- ckGBhygeLdEb9zsWrsvXDYEmNHqU47/UBhG5UsotU0rE8XKoV3UVYSOqJXWs6AfPWrUd
- yyuD6C84X1cLsane1EUP4eu9oWLoz7z4hR9E7mt7GgtXAWNo4yB3Qw6O7GzSyp7VutfF 1w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2wkgcq75ws-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Dec 2019 12:08:52 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3BsX9a161922;
-        Tue, 3 Dec 2019 12:08:52 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2wn4qpupdp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Dec 2019 12:08:51 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB3C8oM6027265;
-        Tue, 3 Dec 2019 12:08:50 GMT
-Received: from dhcp-10-175-211-120.vpn.oracle.com (/10.175.211.120)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Dec 2019 04:08:49 -0800
-From:   Alan Maguire <alan.maguire@oracle.com>
-To:     brendanhiggins@google.com, linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
-        keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
-        andriy.shevchenko@linux.intel.com, corbet@lwn.net,
-        davidgow@google.com, adilger.kernel@dilger.ca, tytso@mit.edu,
-        mcgrof@kernel.org, linux-doc@vger.kernel.org,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Knut Omang <knut.omang@oracle.com>
-Subject: [PATCH v5 linux-kselftest-test 6/6] kunit: update documentation to describe module-based build
-Date:   Tue,  3 Dec 2019 12:07:48 +0000
-Message-Id: <1575374868-32601-7-git-send-email-alan.maguire@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com>
-References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912030096
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=4 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912030096
+        id S1726418AbfLCMK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:10:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725773AbfLCMK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:10:57 -0500
+Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F49C20659;
+        Tue,  3 Dec 2019 12:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575375056;
+        bh=mM13KHxBngohOxFi/TTFeMlKRJJ80enDLR3A+PBKNYg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YJq54cNGOravzW6GKl2E/rJ1C/BJibT6H/beqkESWRLue1bUynPWXuNY7N+wW6/zH
+         fP7avqLbUEo+Q7OMcHsTF0rM2UBgQF8zMof3ZaYih+p45LV7/+89Bz82xezXXTFoVx
+         q4jsxxEKSoz9xBFXRYeOKrjzRBsG7dddYcExEwRk=
+From:   Will Deacon <will@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH] arm64: mm: Fix initialisation of DMA zones on non-NUMA systems
+Date:   Tue,  3 Dec 2019 12:10:13 +0000
+Message-Id: <20191203121013.9280-1-will@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation should describe how to build kunit and tests as
-modules.
+John reports that the recently merged commit 1a8e1cef7603 ("arm64: use
+both ZONE_DMA and ZONE_DMA32") breaks the boot on his DB845C board:
 
-Co-developed-by: Knut Omang <knut.omang@oracle.com>
-Signed-off-by: Knut Omang <knut.omang@oracle.com>
-Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+  | Booting Linux on physical CPU 0x0000000000 [0x517f803c]
+  | Linux version 5.4.0-mainline-10675-g957a03b9e38f
+  | Machine model: Thundercomm Dragonboard 845c
+  | [...]
+  | Built 1 zonelists, mobility grouping on.  Total pages: -188245
+  | Kernel command line: earlycon
+  | firmware_class.path=/vendor/firmware/ androidboot.hardware=db845c
+  | init=/init androidboot.boot_devices=soc/1d84000.ufshc
+  | printk.devkmsg=on buildvariant=userdebug root=/dev/sda2
+  | androidboot.bootdevice=1d84000.ufshc androidboot.serialno=c4e1189c
+  | androidboot.baseband=sda
+  | msm_drm.dsi_display0=dsi_lt9611_1080_video_display:
+  | androidboot.slot_suffix=_a skip_initramfs rootwait ro init=/init
+  |
+  | <hangs indefinitely here>
+
+This is because, when CONFIG_NUMA=n, zone_sizes_init() fails to handle
+memblocks that fall entirely within the ZONE_DMA region and erroneously ends up
+trying to add a negatively-sized region into the following ZONE_DMA32, which is
+later interpreted as a large unsigned region by the core MM code.
+
+Rework the non-NUMA implementation of zone_sizes_init() so that the start
+address of the memblock being processed is adjusted according to the end of the
+previous zone, which is then range-checked before updating the hole information
+of subsequent zones.
+
+Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Link: https://lore.kernel.org/lkml/CALAqxLVVcsmFrDKLRGRq7GewcW405yTOxG=KR3csVzQ6bXutkA@mail.gmail.com
+Fixes: 1a8e1cef7603 ("arm64: use both ZONE_DMA and ZONE_DMA32")
+Reported-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Will Deacon <will@kernel.org>
 ---
- Documentation/dev-tools/kunit/faq.rst   |  3 ++-
- Documentation/dev-tools/kunit/index.rst |  3 +++
- Documentation/dev-tools/kunit/usage.rst | 16 ++++++++++++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
+ arch/arm64/mm/init.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/dev-tools/kunit/faq.rst b/Documentation/dev-tools/kunit/faq.rst
-index bf20951..ea55b24 100644
---- a/Documentation/dev-tools/kunit/faq.rst
-+++ b/Documentation/dev-tools/kunit/faq.rst
-@@ -29,7 +29,8 @@ Yes, well, mostly.
+Compile-tested only.
+
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index be9481cdf3b9..b65dffdfb201 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -214,15 +214,14 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+ {
+ 	struct memblock_region *reg;
+ 	unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
+-	unsigned long max_dma32 = min;
+-	unsigned long __maybe_unused max_dma = min;
++	unsigned long __maybe_unused max_dma, max_dma32;
  
- For the most part, the KUnit core framework (what you use to write the tests)
- can compile to any architecture; it compiles like just another part of the
--kernel and runs when the kernel boots. However, there is some infrastructure,
-+kernel and runs when the kernel boots, or when built as a module, when the
-+module is loaded.  However, there is some infrastructure,
- like the KUnit Wrapper (``tools/testing/kunit/kunit.py``) that does not support
- other architectures.
+ 	memset(zone_size, 0, sizeof(zone_size));
  
-diff --git a/Documentation/dev-tools/kunit/index.rst b/Documentation/dev-tools/kunit/index.rst
-index 26ffb46..7ddc385 100644
---- a/Documentation/dev-tools/kunit/index.rst
-+++ b/Documentation/dev-tools/kunit/index.rst
-@@ -48,6 +48,9 @@ to a standalone program that can be run like any other program directly inside
- of a host operating system; to be clear, it does not require any virtualization
- support; it is just a regular program.
++	max_dma = max_dma32 = min;
+ #ifdef CONFIG_ZONE_DMA
+-	max_dma = PFN_DOWN(arm64_dma_phys_limit);
++	max_dma = max_dma32 = PFN_DOWN(arm64_dma_phys_limit);
+ 	zone_size[ZONE_DMA] = max_dma - min;
+-	max_dma32 = max_dma;
+ #endif
+ #ifdef CONFIG_ZONE_DMA32
+ 	max_dma32 = PFN_DOWN(arm64_dma32_phys_limit);
+@@ -236,25 +235,23 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+ 		unsigned long start = memblock_region_memory_base_pfn(reg);
+ 		unsigned long end = memblock_region_memory_end_pfn(reg);
  
-+Alternatively, kunit and kunit tests can be built as modules and tests will
-+run when the test module is loaded.
-+
- KUnit is fast. Excluding build time, from invocation to completion KUnit can run
- several dozen tests in only 10 to 20 seconds; this might not sound like a big
- deal to some people, but having such fast and easy to run tests fundamentally
-diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
-index c6e6963..82f9213 100644
---- a/Documentation/dev-tools/kunit/usage.rst
-+++ b/Documentation/dev-tools/kunit/usage.rst
-@@ -539,6 +539,22 @@ Interspersed in the kernel logs you might see the following:
- 
- Congratulations, you just ran a KUnit test on the x86 architecture!
- 
-+In a similar manner, kunit and kunit tests can also be built as modules,
-+so if you wanted to run tests in this way you might add the following config
-+options to your ``.config``:
-+
-+.. code-block:: none
-+
-+	CONFIG_KUNIT=m
-+	CONFIG_KUNIT_EXAMPLE_TEST=m
-+
-+Once the kernel is built and installed, a simple
-+
-+.. code-block:: bash
-+	modprobe example-test
-+
-+...will run the tests.
-+
- Writing new tests for other architectures
- -----------------------------------------
+-		if (start >= max)
+-			continue;
+ #ifdef CONFIG_ZONE_DMA
+-		if (start < max_dma) {
+-			unsigned long dma_end = min_not_zero(end, max_dma);
++		if (start >= min && start < max_dma) {
++			unsigned long dma_end = min(end, max_dma);
+ 			zhole_size[ZONE_DMA] -= dma_end - start;
++			start = dma_end;
+ 		}
+ #endif
+ #ifdef CONFIG_ZONE_DMA32
+-		if (start < max_dma32) {
++		if (start >= max_dma && start < max_dma32) {
+ 			unsigned long dma32_end = min(end, max_dma32);
+-			unsigned long dma32_start = max(start, max_dma);
+-			zhole_size[ZONE_DMA32] -= dma32_end - dma32_start;
++			zhole_size[ZONE_DMA32] -= dma32_end - start;
++			start = dma32_end;
+ 		}
+ #endif
+-		if (end > max_dma32) {
++		if (start >= max_dma32 && start < max) {
+ 			unsigned long normal_end = min(end, max);
+-			unsigned long normal_start = max(start, max_dma32);
+-			zhole_size[ZONE_NORMAL] -= normal_end - normal_start;
++			zhole_size[ZONE_NORMAL] -= normal_end - start;
+ 		}
+ 	}
  
 -- 
-1.8.3.1
+2.17.1
 
