@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2475111F8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A05E111E99
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfLCXKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:10:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57892 "EHLO mail.kernel.org"
+        id S1730692AbfLCXCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:02:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728686AbfLCWms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:42:48 -0500
+        id S1730038AbfLCWyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65AF020684;
-        Tue,  3 Dec 2019 22:42:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 694C020866;
+        Tue,  3 Dec 2019 22:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412967;
-        bh=5gOlZR1tvFzT779USqpuu7JWs+nEHLrWwYc3pmbp98Q=;
+        s=default; t=1575413678;
+        bh=1RMGphbcr6JtM+J9UMC6O9MEbcjofAiElGx6HGAXfr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HEXhV8s4Q/Vk6wNeaPFvy6zbKnuXtgp7Mk0cWiSyqNaiUkFd/fq8pFogWbB7iM661
-         WeJ6YHA+pf0Y9cqr2dScgROtpwhXTiJkGv8JJRYta6b2HdsIGGx+HjjhermQdQ+dlz
-         O/N+Qlqm+oYM2Ct1XV2Rd2+SBvaCn8wZSJ+/V5hw=
+        b=zXw84mdtoHB6YMMMiEzUP2h+MknwtcDVw099o5Jdespnk2FNyaskO+S0lpNNwOYU0
+         OMU5PeUF2kU6A6YPlCo5la/p5Q4NrRAS8i9VMpGv4uhrDw/QpKsNyX9jQ1M+nHbmEs
+         zDQt83v33QMbsUlt4QuAr3WH7GZuAiPKvHB2d66I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jozsef Kadlecsik <kadlec@netfilter.org>,
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 046/135] netfilter: ipset: Fix nla_policies to fully support NL_VALIDATE_STRICT
-Date:   Tue,  3 Dec 2019 23:34:46 +0100
-Message-Id: <20191203213018.708261928@linuxfoundation.org>
+Subject: [PATCH 4.19 221/321] sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
+Date:   Tue,  3 Dec 2019 23:34:47 +0100
+Message-Id: <20191203223438.615420676@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+References: <20191203223427.103571230@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,161 +44,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit 1289975643f4cdecb071dc641059a47679fd170f ]
+[ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
 
-Since v5.2 (commit "netlink: re-add parse/validate functions in strict
-mode") NL_VALIDATE_STRICT is enabled. Fix the ipset nla_policies which did
-not support strict mode and convert from deprecated parsings to verified ones.
+Use a bitmap to keep track of which partition types we've already seen;
+ for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
+ thus skip adding that partition.
+Duplicate partitions occur because of the A/B backup scheme used by newer
+ sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
+ they have the same name, causing us not to expose any MTDs at all.
 
-Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_core.c        | 41 ++++++++++++++++--------
- net/netfilter/ipset/ip_set_hash_net.c    |  1 +
- net/netfilter/ipset/ip_set_hash_netnet.c |  1 +
- 3 files changed, 30 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
-index e7288eab75126..d73d1828216a6 100644
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -296,7 +296,8 @@ ip_set_get_ipaddr4(struct nlattr *nla,  __be32 *ipaddr)
+diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
+index 7eeac3d6cfe89..a497aace7e4f4 100644
+--- a/drivers/net/ethernet/sfc/ef10.c
++++ b/drivers/net/ethernet/sfc/ef10.c
+@@ -6042,22 +6042,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
+ 	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
+ 	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
+ };
++#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
  
- 	if (unlikely(!flag_nested(nla)))
- 		return -IPSET_ERR_PROTOCOL;
--	if (nla_parse_nested_deprecated(tb, IPSET_ATTR_IPADDR_MAX, nla, ipaddr_policy, NULL))
-+	if (nla_parse_nested(tb, IPSET_ATTR_IPADDR_MAX, nla,
-+			     ipaddr_policy, NULL))
- 		return -IPSET_ERR_PROTOCOL;
- 	if (unlikely(!ip_set_attr_netorder(tb, IPSET_ATTR_IPADDR_IPV4)))
- 		return -IPSET_ERR_PROTOCOL;
-@@ -314,7 +315,8 @@ ip_set_get_ipaddr6(struct nlattr *nla, union nf_inet_addr *ipaddr)
- 	if (unlikely(!flag_nested(nla)))
- 		return -IPSET_ERR_PROTOCOL;
- 
--	if (nla_parse_nested_deprecated(tb, IPSET_ATTR_IPADDR_MAX, nla, ipaddr_policy, NULL))
-+	if (nla_parse_nested(tb, IPSET_ATTR_IPADDR_MAX, nla,
-+			     ipaddr_policy, NULL))
- 		return -IPSET_ERR_PROTOCOL;
- 	if (unlikely(!ip_set_attr_netorder(tb, IPSET_ATTR_IPADDR_IPV6)))
- 		return -IPSET_ERR_PROTOCOL;
-@@ -934,7 +936,8 @@ static int ip_set_create(struct net *net, struct sock *ctnl,
- 
- 	/* Without holding any locks, create private part. */
- 	if (attr[IPSET_ATTR_DATA] &&
--	    nla_parse_nested_deprecated(tb, IPSET_ATTR_CREATE_MAX, attr[IPSET_ATTR_DATA], set->type->create_policy, NULL)) {
-+	    nla_parse_nested(tb, IPSET_ATTR_CREATE_MAX, attr[IPSET_ATTR_DATA],
-+			     set->type->create_policy, NULL)) {
- 		ret = -IPSET_ERR_PROTOCOL;
- 		goto put_out;
- 	}
-@@ -1281,6 +1284,14 @@ dump_attrs(struct nlmsghdr *nlh)
- 	}
- }
- 
-+static const struct nla_policy
-+ip_set_dump_policy[IPSET_ATTR_CMD_MAX + 1] = {
-+	[IPSET_ATTR_PROTOCOL]	= { .type = NLA_U8 },
-+	[IPSET_ATTR_SETNAME]	= { .type = NLA_NUL_STRING,
-+				    .len = IPSET_MAXNAMELEN - 1 },
-+	[IPSET_ATTR_FLAGS]	= { .type = NLA_U32 },
-+};
-+
- static int
- dump_init(struct netlink_callback *cb, struct ip_set_net *inst)
+ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 					struct efx_mcdi_mtd_partition *part,
+-					unsigned int type)
++					unsigned int type,
++					unsigned long *found)
  {
-@@ -1292,9 +1303,9 @@ dump_init(struct netlink_callback *cb, struct ip_set_net *inst)
- 	ip_set_id_t index;
- 	int ret;
+ 	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
+ 	const struct efx_ef10_nvram_type_info *info;
+ 	size_t size, erase_size, outlen;
++	int type_idx = 0;
+ 	bool protected;
+ 	int rc;
  
--	ret = nla_parse_deprecated(cda, IPSET_ATTR_CMD_MAX, attr,
--				   nlh->nlmsg_len - min_len,
--				   ip_set_setname_policy, NULL);
-+	ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, attr,
-+			nlh->nlmsg_len - min_len,
-+			ip_set_dump_policy, NULL);
- 	if (ret)
- 		return ret;
+-	for (info = efx_ef10_nvram_types; ; info++) {
+-		if (info ==
+-		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
++	for (type_idx = 0; ; type_idx++) {
++		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
+ 			return -ENODEV;
++		info = efx_ef10_nvram_types + type_idx;
+ 		if ((type & ~info->type_mask) == info->type)
+ 			break;
+ 	}
+@@ -6070,6 +6073,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 	if (protected)
+ 		return -ENODEV; /* hide it */
  
-@@ -1543,9 +1554,9 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
- 		memcpy(&errmsg->msg, nlh, nlh->nlmsg_len);
- 		cmdattr = (void *)&errmsg->msg + min_len;
++	/* If we've already exposed a partition of this type, hide this
++	 * duplicate.  All operations on MTDs are keyed by the type anyway,
++	 * so we can't act on the duplicate.
++	 */
++	if (__test_and_set_bit(type_idx, found))
++		return -EEXIST;
++
+ 	part->nvram_type = type;
  
--		ret = nla_parse_deprecated(cda, IPSET_ATTR_CMD_MAX, cmdattr,
--					   nlh->nlmsg_len - min_len,
--					   ip_set_adt_policy, NULL);
-+		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
-+				nlh->nlmsg_len - min_len, ip_set_adt_policy,
-+				NULL);
+ 	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
+@@ -6098,6 +6108,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ {
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
++	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
+ 	struct efx_mcdi_mtd_partition *parts;
+ 	size_t outlen, n_parts_total, i, n_parts;
+ 	unsigned int type;
+@@ -6126,11 +6137,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ 	for (i = 0; i < n_parts_total; i++) {
+ 		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
+ 					i);
+-		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
+-		if (rc == 0)
+-			n_parts++;
+-		else if (rc != -ENODEV)
++		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
++						  found);
++		if (rc == -EEXIST || rc == -ENODEV)
++			continue;
++		if (rc)
+ 			goto fail;
++		n_parts++;
+ 	}
  
- 		if (ret) {
- 			nlmsg_free(skb2);
-@@ -1596,7 +1607,9 @@ static int ip_set_ad(struct net *net, struct sock *ctnl,
- 
- 	use_lineno = !!attr[IPSET_ATTR_LINENO];
- 	if (attr[IPSET_ATTR_DATA]) {
--		if (nla_parse_nested_deprecated(tb, IPSET_ATTR_ADT_MAX, attr[IPSET_ATTR_DATA], set->type->adt_policy, NULL))
-+		if (nla_parse_nested(tb, IPSET_ATTR_ADT_MAX,
-+				     attr[IPSET_ATTR_DATA],
-+				     set->type->adt_policy, NULL))
- 			return -IPSET_ERR_PROTOCOL;
- 		ret = call_ad(ctnl, skb, set, tb, adt, flags,
- 			      use_lineno);
-@@ -1606,7 +1619,8 @@ static int ip_set_ad(struct net *net, struct sock *ctnl,
- 		nla_for_each_nested(nla, attr[IPSET_ATTR_ADT], nla_rem) {
- 			if (nla_type(nla) != IPSET_ATTR_DATA ||
- 			    !flag_nested(nla) ||
--			    nla_parse_nested_deprecated(tb, IPSET_ATTR_ADT_MAX, nla, set->type->adt_policy, NULL))
-+			    nla_parse_nested(tb, IPSET_ATTR_ADT_MAX, nla,
-+					     set->type->adt_policy, NULL))
- 				return -IPSET_ERR_PROTOCOL;
- 			ret = call_ad(ctnl, skb, set, tb, adt,
- 				      flags, use_lineno);
-@@ -1655,7 +1669,8 @@ static int ip_set_utest(struct net *net, struct sock *ctnl, struct sk_buff *skb,
- 	if (!set)
- 		return -ENOENT;
- 
--	if (nla_parse_nested_deprecated(tb, IPSET_ATTR_ADT_MAX, attr[IPSET_ATTR_DATA], set->type->adt_policy, NULL))
-+	if (nla_parse_nested(tb, IPSET_ATTR_ADT_MAX, attr[IPSET_ATTR_DATA],
-+			     set->type->adt_policy, NULL))
- 		return -IPSET_ERR_PROTOCOL;
- 
- 	rcu_read_lock_bh();
-@@ -1961,7 +1976,7 @@ static const struct nfnl_callback ip_set_netlink_subsys_cb[IPSET_MSG_MAX] = {
- 	[IPSET_CMD_LIST]	= {
- 		.call		= ip_set_dump,
- 		.attr_count	= IPSET_ATTR_CMD_MAX,
--		.policy		= ip_set_setname_policy,
-+		.policy		= ip_set_dump_policy,
- 	},
- 	[IPSET_CMD_SAVE]	= {
- 		.call		= ip_set_dump,
-diff --git a/net/netfilter/ipset/ip_set_hash_net.c b/net/netfilter/ipset/ip_set_hash_net.c
-index c259cbc3ef453..3d932de0ad295 100644
---- a/net/netfilter/ipset/ip_set_hash_net.c
-+++ b/net/netfilter/ipset/ip_set_hash_net.c
-@@ -368,6 +368,7 @@ static struct ip_set_type hash_net_type __read_mostly = {
- 		[IPSET_ATTR_IP_TO]	= { .type = NLA_NESTED },
- 		[IPSET_ATTR_CIDR]	= { .type = NLA_U8 },
- 		[IPSET_ATTR_TIMEOUT]	= { .type = NLA_U32 },
-+		[IPSET_ATTR_LINENO]	= { .type = NLA_U32 },
- 		[IPSET_ATTR_CADT_FLAGS]	= { .type = NLA_U32 },
- 		[IPSET_ATTR_BYTES]	= { .type = NLA_U64 },
- 		[IPSET_ATTR_PACKETS]	= { .type = NLA_U64 },
-diff --git a/net/netfilter/ipset/ip_set_hash_netnet.c b/net/netfilter/ipset/ip_set_hash_netnet.c
-index a3ae69bfee668..4398322fad592 100644
---- a/net/netfilter/ipset/ip_set_hash_netnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_netnet.c
-@@ -476,6 +476,7 @@ static struct ip_set_type hash_netnet_type __read_mostly = {
- 		[IPSET_ATTR_CIDR]	= { .type = NLA_U8 },
- 		[IPSET_ATTR_CIDR2]	= { .type = NLA_U8 },
- 		[IPSET_ATTR_TIMEOUT]	= { .type = NLA_U32 },
-+		[IPSET_ATTR_LINENO]	= { .type = NLA_U32 },
- 		[IPSET_ATTR_CADT_FLAGS]	= { .type = NLA_U32 },
- 		[IPSET_ATTR_BYTES]	= { .type = NLA_U64 },
- 		[IPSET_ATTR_PACKETS]	= { .type = NLA_U64 },
+ 	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
 -- 
 2.20.1
 
