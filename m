@@ -2,164 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 724DA10F665
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 05:52:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F060110F674
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 05:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfLCEwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 23:52:49 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:12015 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfLCEwt (ORCPT
+        id S1727030AbfLCE5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Dec 2019 23:57:32 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43901 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbfLCE5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 23:52:49 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191203045245epoutp03c174688fb815e4631f6b85453c6ab6ff~cw1r5R_IP1425114251epoutp03z
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Dec 2019 04:52:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191203045245epoutp03c174688fb815e4631f6b85453c6ab6ff~cw1r5R_IP1425114251epoutp03z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575348765;
-        bh=xmJU0vFcQ0KvSSiUfaN4Scg6dcjYCAueY7Rz3xbGdes=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Q6Zs69CtY/fHJw61+GF5Ofz7pqDmqTzT+ocfYlijQHfVJlHzkmA7bl21LViA+tfw8
-         QEgPNav32VV4TvHZWntg67uqVgfRLGoIIRWr4dzmwaE/dDpLK28g7Gjwf0pOXSuT4L
-         7epKc+L6BulVSZdqCt0NKscVP+x5A58llGuXFFhE=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191203045244epcas1p3d26b5c662075923003846892953fc38a~cw1rQSe6-2749727497epcas1p3_;
-        Tue,  3 Dec 2019 04:52:44 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47RqNV2sDLzMqYkk; Tue,  3 Dec
-        2019 04:52:42 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        72.36.48019.A1AE5ED5; Tue,  3 Dec 2019 13:52:42 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191203045241epcas1p304f6496a75fe1a323bcdad5b4018f286~cw1od5o912749727497epcas1p3v;
-        Tue,  3 Dec 2019 04:52:41 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191203045241epsmtrp2bda2424507eed869ae504ca6fc0852c5~cw1ocz90q3052430524epsmtrp2q;
-        Tue,  3 Dec 2019 04:52:41 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-45-5de5ea1aef68
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        18.21.06569.91AE5ED5; Tue,  3 Dec 2019 13:52:41 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191203045241epsmtip229100121f225985f3095f125b11c10e8~cw1oOKq892451924519epsmtip2H;
-        Tue,  3 Dec 2019 04:52:41 +0000 (GMT)
-Subject: Re: [PATCH 22/30] drm/exynos: mic: Use drm_bridge_init()
-To:     Mihail Atanassov <Mihail.Atanassov@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc:     nd <nd@arm.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <77306b25-e9b2-5b91-9d98-04e6d9e7299b@samsung.com>
-Date:   Tue, 3 Dec 2019 13:54:59 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191126131541.47393-23-mihail.atanassov@arm.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDJsWRmVeSWpSXmKPExsWy7bCmvq7Uq6exBufvClv0njvJZPF/20Rm
-        iytf37NZvLh3kcWi//FrZovz5zewW5xtesNusenxNVaLy7vmsFnMOL+PyeLm5WMsFmeW9zBb
-        zJj8ks2B12PNvDWMHnu/LWDx2LSqk81j+7cHrB73u48zeWxeUu/Rt2UVo8fnTXIBHFHZNhmp
-        iSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAJysplCXmlAKF
-        AhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCiwL9IoTc4tL89L1kvNzrQwNDIxMgQoTsjPmvHnL
-        UrCCu2LP3ndMDYyrOLsYOTkkBEwkphxdxtbFyMUhJLCDUWLa9sWsEM4nRokdv46xQzjfGCXu
-        bH/JCtPy8MMaqKq9jBJ3l/1kBkkICbxnlDjysxjEFhZwlJjx8w9Yg4hAmcS/s/OZQRqYBf4y
-        S7y/uYIRJMEmoCoxccV9NhCbV8BO4uWLU2ANLAIqEpvvLwZq4OAQFYiQOP01EaJEUOLkzCcs
-        IGFOAXuJJ5NrQcLMAuISt57MZ4Kw5SWat84GWyUhsIpd4uf0JqijXSQO/2hkgbCFJV4d38IO
-        YUtJfH63lw3CLpd49u4Z2HwJgRqJb3MrIExjiYsrUkBMZgFNifW79CGKFSV2/p7LCLGVT+Ld
-        1x5WiGpeiY42IYgSJYljF28wQtgSEheWTGSDKPGQmH+ucgKj4iwkX81C8sosJK/MQti7gJFl
-        FaNYakFxbnpqsWGBCXJEb2IEp2Qtix2Me875HGIU4GBU4uHN+PUkVog1say4MvcQowQHs5II
-        7zaJp7FCvCmJlVWpRfnxRaU5qcWHGE2BYT6RWUo0OR+YL/JK4g1NjYyNjS1MDM1MDQ2VxHk5
-        flyMFRJITyxJzU5NLUgtgulj4uCUamBMYTklnGybrM7ec8EzznjXv+IAByM7Be29xhY99Y9W
-        V6VvKdxwe1uwttukLfVn0oMWPrHo5+Py3WrFqVCn757YeulTxemPT6Zz31FjP/h45pej/x8L
-        LVLfanf8582rN+8/MdBd/Svs/QuT1scLtkpdEjXL0v6r9XdHxlTDC/NyeRTsz1tsX/dciaU4
-        I9FQi7moOBEAEbbVoN8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsWy7bCSvK7kq6exBlvbxSx6z51ksvi/bSKz
-        xZWv79ksXty7yGLR//g1s8X58xvYLc42vWG32PT4GqvF5V1z2CxmnN/HZHHz8jEWizPLe5gt
-        Zkx+yebA67Fm3hpGj73fFrB4bFrVyeax/dsDVo/73ceZPDYvqffo27KK0ePzJrkAjigum5TU
-        nMyy1CJ9uwSujDlv3rIUrOCu2LP3HVMD4yrOLkZODgkBE4mHH9awdjFycQgJ7GaUeL/uD3sX
-        IwdQQkJiy1YOCFNY4vDhYoiSt4wSHffns4D0Cgs4Ssz4+YcVxBYRKJPY0XyYGaSIWeA/s8Sx
-        2Xuhhh5jlDh1dhIbSBWbgKrExBX3wWxeATuJly9OgXWzCKhIbL6/mBnEFhWIkHi+/QYjRI2g
-        xMmZT1hAruAUsJd4MrkWJMwsoC7xZ94lZghbXOLWk/lMELa8RPPW2cwTGIVmIemehaRlFpKW
-        WUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI5GLa0djCdOxB9iFOBgVOLh
-        zfj1JFaINbGsuDL3EKMEB7OSCO82iaexQrwpiZVVqUX58UWlOanFhxilOViUxHnl849FCgmk
-        J5akZqemFqQWwWSZODilGhh5BBQVze5s7J+/hnlvg3vi3hiPU9WFSuq8/MoVrnofOK7rKNqe
-        6bueN1/56t2iFv8TM9z+bfZh/b1oXibH7HTGGYHKBoZ6fe73er7G/7/14j7TaS8b9zXf6nvb
-        bv1dsH/Zwl03XLRXeB5VL54bejEz8FfOzOdHkvUqe42cdsmmb6g/cbzx+Q4lluKMREMt5qLi
-        RABpiFDBwgIAAA==
-X-CMS-MailID: 20191203045241epcas1p304f6496a75fe1a323bcdad5b4018f286
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191126131754epcas5p250f5357a8a31292a83620680f68444cb
-References: <20191126131541.47393-1-mihail.atanassov@arm.com>
-        <CGME20191126131754epcas5p250f5357a8a31292a83620680f68444cb@epcas5p2.samsung.com>
-        <20191126131541.47393-23-mihail.atanassov@arm.com>
+        Mon, 2 Dec 2019 23:57:32 -0500
+Received: by mail-wr1-f67.google.com with SMTP id n1so1926710wra.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 20:57:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=pbRW1viad/GHjUmf3l7SOTRxkxISCKNgTFW5qUzFG18=;
+        b=WLmdWgtocCq7SfivDEJxGQ0qYWEVC1FNP6Ngu0ZWhp++etMTGHgs+n3xeIFW14fTiV
+         yhMj5yJWWCPDS2EsRAWEKGXN55BwurbaZnbUTdFro30TSZBmm596DFT99kyC5Rb5b2Zp
+         hE6zmZw+W99FOnPwPVSHB2AwA5Hq6AacNcqZg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pbRW1viad/GHjUmf3l7SOTRxkxISCKNgTFW5qUzFG18=;
+        b=hDTVmYDEaM5sYbLumMGfJamBU5gd/r/7ikHPd9V8tZCf1gcNq8JB3t5rX3bwcqyhsn
+         MveSjxp9dm13nMUGtkEM8q/Vm8YzEQ4IC6JwrTEQPq4AYlsaUzJzOFiyMpWD8EpEnlvI
+         bIOhgepskzz13+tr0vfOHvdCVwfN6TELWOl0Ghi+ZFc1wcJkgeVTuUlxmVY075J8zg+A
+         +J5olZMdoCFCZhBrPgtnfuJc+v26Hbpk5pnP0FqF9u4amB9+m/DuZmt07A9vzDWgmPSY
+         vsTIPfpjL6f7IThGZBG/kVHH3kVhs33//ruyK7g54MU7sobJa/pFO3YQicB3bgAD5Fje
+         CUew==
+X-Gm-Message-State: APjAAAWrwt5p+mCTaHiZggLwQiLHV8u7aOaAIjwUYkCRepdSSwNw7lgM
+        tE6ujctYjMf5ixaUV5ns3DxJUQ==
+X-Google-Smtp-Source: APXvYqyUrHD9fDQwouHUkuIiwPBscZSDLCvUsyiXCIoV/4MEv6faKFnYd8o4XCGdWtnIMoM9UkEcaw==
+X-Received: by 2002:a5d:5284:: with SMTP id c4mr2679212wrv.376.1575349049792;
+        Mon, 02 Dec 2019 20:57:29 -0800 (PST)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id k4sm1667807wmk.26.2019.12.02.20.57.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Dec 2019 20:57:29 -0800 (PST)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH v3 0/6] PAXB INTx support with proper model
+Date:   Tue,  3 Dec 2019 10:27:00 +0530
+Message-Id: <1575349026-8743-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series adds PCIe legacy interrupt (INTx) support to the iProc
+PCIe driver by modeling it with its own IRQ domain. All 4 interrupts INTA,
+INTB, INTC, INTD share the same interrupt line connected to the GIC
+in the system. This is now modeled by using its own IRQ domain.
 
-19. 11. 26. 오후 10:16에 Mihail Atanassov 이(가) 쓴 글:
-> No functional change: no logic depends on driver_private being NULL, so
-> it's safe to set it earlier in exynos_mic_probe.
-Acked-by: Inki Dae <inki.dae@samsung.com>
+Also update all relevant devicetree files to adapt to the new model.
 
-And tested this patch on TM2 and TM2E boards.
-Tested-by: Inki Dae <inki.dae@samsung.com>
+This patch set is based on Linux-5.4.
 
-Thanks,
-Inki Dae
+Changes from v2:
+  - Addressed Lorenzo's comments
+    - Corrected INTx to PIN mapping.
 
-> 
-> Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_mic.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> index f41d75923557..caad348a5646 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> @@ -309,10 +309,6 @@ static const struct drm_bridge_funcs mic_bridge_funcs = {
->  static int exynos_mic_bind(struct device *dev, struct device *master,
->  			   void *data)
->  {
-> -	struct exynos_mic *mic = dev_get_drvdata(dev);
-> -
-> -	mic->bridge.driver_private = mic;
-> -
->  	return 0;
->  }
->  
-> @@ -422,9 +418,7 @@ static int exynos_mic_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, mic);
->  
-> -	mic->bridge.funcs = &mic_bridge_funcs;
-> -	mic->bridge.of_node = dev->of_node;
-> -
-> +	drm_bridge_init(&mic->bridge, dev, &mic_bridge_funcs, NULL, mic);
->  	drm_bridge_add(&mic->bridge);
->  
->  	pm_runtime_enable(dev);
-> 
+Changes from v1:
+  - Addressed Rob, Lorenzo, Arnd's comments
+    - Used child node for interrupt controller.
+  - Addressed Andy Shevchenko's comments
+    - Replaced while loop with do-while.
+
+Ray Jui (6):
+  dt-bindings: pci: Update iProc PCI binding for INTx support
+  PCI: iproc: Add INTx support with better modeling
+  arm: dts: Change PCIe INTx mapping for Cygnus
+  arm: dts: Change PCIe INTx mapping for NSP
+  arm: dts: Change PCIe INTx mapping for HR2
+  arm64: dts: Change PCIe INTx mapping for NS2
+
+ .../devicetree/bindings/pci/brcm,iproc-pcie.txt    |  48 ++++++++--
+ arch/arm/boot/dts/bcm-cygnus.dtsi                  |  30 ++++++-
+ arch/arm/boot/dts/bcm-hr2.dtsi                     |  30 ++++++-
+ arch/arm/boot/dts/bcm-nsp.dtsi                     |  45 ++++++++--
+ arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi   |  28 +++++-
+ drivers/pci/controller/pcie-iproc.c                | 100 ++++++++++++++++++++-
+ drivers/pci/controller/pcie-iproc.h                |   6 ++
+ 7 files changed, 260 insertions(+), 27 deletions(-)
+
+-- 
+2.7.4
+
