@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D596111CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E54F0111D16
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:50:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbfLCWtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:49:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39902 "EHLO mail.kernel.org"
+        id S1729502AbfLCWuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:50:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729510AbfLCWtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:49:02 -0500
+        id S1729684AbfLCWuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:50:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B47B20684;
-        Tue,  3 Dec 2019 22:49:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEB2C2084B;
+        Tue,  3 Dec 2019 22:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413341;
-        bh=eyU1uN6m4e8tsqe9BadBCFEWGiABRBv7Mkj8eycyImE=;
+        s=default; t=1575413400;
+        bh=O/VI7sXUGSsNwzPIEjdS0sm34QNGBeHgpdnhGgXZJwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1TAYLwY89V48WHWk4TgVP3mcVNTBnY+IfWnWEaM65sj8kY+N1p7UMbV4bRbIg99cK
-         spjrkoWVcINHtwXAFIavGWlJ6nT6ztN6MkbGmcLU4E9JYIeVafqy7UhP59gMK7xVIP
-         gKA7pmpRaz1fbHWpctyAh4zbiQv4iAqBi5wK6FQ8=
+        b=wlDqx/68gwYpvj4+WkX1Caa9dYyR7uSFeP02FkkZubdt1pGqi6tc3ZtG8Ek1LfjVk
+         wwXSwwv8GhjQpmRda7A6+fV4rtE2V+guQk+1oxla+LFWy4NsLT4J7SbrXKcJvulgae
+         7rkDsRVCuuXXGNujJfIwk1I3LVjovmD1fpT3y8SE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 084/321] scsi: qla2xxx: Fix NPIV handling for FC-NVMe
-Date:   Tue,  3 Dec 2019 23:32:30 +0100
-Message-Id: <20191203223431.527072152@linuxfoundation.org>
+        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 086/321] nvme: provide fallback for discard alloc failure
+Date:   Tue,  3 Dec 2019 23:32:32 +0100
+Message-Id: <20191203223431.629531090@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,78 +45,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Himanshu Madhani <hmadhani@marvell.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 5e6803b409ba3c18434de6693062d98a470bcb1e ]
+[ Upstream commit cb5b7262b011cfb793519bf97e54dff5282da23c ]
 
-This patch fixes issues with NPIV port with FC-NVMe. Clean up code for
-remoteport delete and also call nvme_delete when deleting VPs.
+When boxes are run near (or to) OOM, we have a problem with the discard
+page allocation in nvme. If we fail allocating the special page, we
+return busy, and it'll get retried. But since ordering is honored for
+dispatch requests, we can keep retrying this same IO and failing. Behind
+that IO could be requests that want to free memory, but they never get
+the chance.
 
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Allocate a fixed discard page per controller for a safe fallback, and use
+that if the initial allocation fails.
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_nvme.c | 16 +++-------------
- drivers/scsi/qla2xxx/qla_os.c   |  2 ++
- 2 files changed, 5 insertions(+), 13 deletions(-)
+ drivers/nvme/host/core.c | 41 ++++++++++++++++++++++++++++++++++------
+ drivers/nvme/host/nvme.h |  3 +++
+ 2 files changed, 38 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
-index e6545cb9a2c19..5590d6e8b5762 100644
---- a/drivers/scsi/qla2xxx/qla_nvme.c
-+++ b/drivers/scsi/qla2xxx/qla_nvme.c
-@@ -474,21 +474,10 @@ static int qla_nvme_post_cmd(struct nvme_fc_local_port *lport,
- 	int rval = -ENODEV;
- 	srb_t *sp;
- 	struct qla_qpair *qpair = hw_queue_handle;
--	struct nvme_private *priv;
-+	struct nvme_private *priv = fd->private;
- 	struct qla_nvme_rport *qla_rport = rport->private;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 44da9fe5b27b8..250ccf3108e98 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -551,9 +551,19 @@ static blk_status_t nvme_setup_discard(struct nvme_ns *ns, struct request *req,
+ 	struct nvme_dsm_range *range;
+ 	struct bio *bio;
  
--	if (!fd || !qpair) {
--		ql_log(ql_log_warn, NULL, 0x2134,
--		    "NO NVMe request or Queue Handle\n");
--		return rval;
--	}
--
--	priv = fd->private;
- 	fcport = qla_rport->fcport;
--	if (!fcport) {
--		ql_log(ql_log_warn, NULL, 0x210e, "No fcport ptr\n");
--		return rval;
--	}
+-	range = kmalloc_array(segments, sizeof(*range), GFP_ATOMIC);
+-	if (!range)
+-		return BLK_STS_RESOURCE;
++	range = kmalloc_array(segments, sizeof(*range),
++				GFP_ATOMIC | __GFP_NOWARN);
++	if (!range) {
++		/*
++		 * If we fail allocation our range, fallback to the controller
++		 * discard page. If that's also busy, it's safe to return
++		 * busy, as we know we can make progress once that's freed.
++		 */
++		if (test_and_set_bit_lock(0, &ns->ctrl->discard_page_busy))
++			return BLK_STS_RESOURCE;
++
++		range = page_address(ns->ctrl->discard_page);
++	}
  
- 	vha = fcport->vha;
- 
-@@ -517,6 +506,7 @@ static int qla_nvme_post_cmd(struct nvme_fc_local_port *lport,
- 	sp->name = "nvme_cmd";
- 	sp->done = qla_nvme_sp_done;
- 	sp->qpair = qpair;
-+	sp->vha = vha;
- 	nvme = &sp->u.iocb_cmd;
- 	nvme->u.nvme.desc = fd;
- 
-@@ -564,7 +554,7 @@ static void qla_nvme_remoteport_delete(struct nvme_fc_remote_port *rport)
- 		schedule_work(&fcport->free_work);
+ 	__rq_for_each_bio(bio, req) {
+ 		u64 slba = nvme_block_nr(ns, bio->bi_iter.bi_sector);
+@@ -568,7 +578,10 @@ static blk_status_t nvme_setup_discard(struct nvme_ns *ns, struct request *req,
  	}
  
--	fcport->nvme_flag &= ~(NVME_FLAG_REGISTERED | NVME_FLAG_DELETING);
-+	fcport->nvme_flag &= ~NVME_FLAG_DELETING;
- 	ql_log(ql_log_info, fcport->vha, 0x2110,
- 	    "remoteport_delete of %p completed.\n", fcport);
- }
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 3e892e013658d..183bfda8f5d11 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -3538,6 +3538,8 @@ qla2x00_delete_all_vps(struct qla_hw_data *ha, scsi_qla_host_t *base_vha)
- 		spin_unlock_irqrestore(&ha->vport_slock, flags);
- 		mutex_unlock(&ha->vport_lock);
+ 	if (WARN_ON_ONCE(n != segments)) {
+-		kfree(range);
++		if (virt_to_page(range) == ns->ctrl->discard_page)
++			clear_bit_unlock(0, &ns->ctrl->discard_page_busy);
++		else
++			kfree(range);
+ 		return BLK_STS_IOERR;
+ 	}
  
-+		qla_nvme_delete(vha);
+@@ -653,8 +666,13 @@ void nvme_cleanup_cmd(struct request *req)
+ 				blk_rq_bytes(req) >> ns->lba_shift);
+ 	}
+ 	if (req->rq_flags & RQF_SPECIAL_PAYLOAD) {
+-		kfree(page_address(req->special_vec.bv_page) +
+-		      req->special_vec.bv_offset);
++		struct nvme_ns *ns = req->rq_disk->private_data;
++		struct page *page = req->special_vec.bv_page;
 +
- 		fc_vport_terminate(vha->fc_vport);
- 		scsi_host_put(vha->host);
++		if (page == ns->ctrl->discard_page)
++			clear_bit_unlock(0, &ns->ctrl->discard_page_busy);
++		else
++			kfree(page_address(page) + req->special_vec.bv_offset);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(nvme_cleanup_cmd);
+@@ -3551,6 +3569,7 @@ static void nvme_free_ctrl(struct device *dev)
+ 	ida_simple_remove(&nvme_instance_ida, ctrl->instance);
+ 	kfree(ctrl->effects);
+ 	nvme_mpath_uninit(ctrl);
++	kfree(ctrl->discard_page);
  
+ 	if (subsys) {
+ 		mutex_lock(&subsys->lock);
+@@ -3592,6 +3611,14 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
+ 	memset(&ctrl->ka_cmd, 0, sizeof(ctrl->ka_cmd));
+ 	ctrl->ka_cmd.common.opcode = nvme_admin_keep_alive;
+ 
++	BUILD_BUG_ON(NVME_DSM_MAX_RANGES * sizeof(struct nvme_dsm_range) >
++			PAGE_SIZE);
++	ctrl->discard_page = alloc_page(GFP_KERNEL);
++	if (!ctrl->discard_page) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
+ 	ret = ida_simple_get(&nvme_instance_ida, 0, 0, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto out;
+@@ -3629,6 +3656,8 @@ out_free_name:
+ out_release_instance:
+ 	ida_simple_remove(&nvme_instance_ida, ctrl->instance);
+ out:
++	if (ctrl->discard_page)
++		__free_page(ctrl->discard_page);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nvme_init_ctrl);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 2653e1f4196d5..cc4273f119894 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -238,6 +238,9 @@ struct nvme_ctrl {
+ 	u16 maxcmd;
+ 	int nr_reconnects;
+ 	struct nvmf_ctrl_options *opts;
++
++	struct page *discard_page;
++	unsigned long discard_page_busy;
+ };
+ 
+ struct nvme_subsystem {
 -- 
 2.20.1
 
