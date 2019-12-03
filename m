@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B707111D95
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C3C111C31
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbfLCWzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:55:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49072 "EHLO mail.kernel.org"
+        id S1728325AbfLCWl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730211AbfLCWy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:57 -0500
+        id S1728550AbfLCWlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9713220863;
-        Tue,  3 Dec 2019 22:54:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D68B82084B;
+        Tue,  3 Dec 2019 22:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413696;
-        bh=/Y/AFb/HLWd/GJdXfqnLvWAYyyhntv+qURI/r1g4Xjc=;
+        s=default; t=1575412885;
+        bh=VbReP7Qkbf3t3xJNhOIE20IUIgjrJJkVWaMD9BCNTDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=amUI+Gj3P2TbGV4lT3wqjNOfAdmkHqCy5wvd8cEofleYGhWJBak3b7gBgWf4hZTeM
-         1AOJaorPZJq1jelAOnVb3zHBMoqDgsvHe+wIw9cBowan2+R0FcKYYqFa8PbKnIg7y/
-         NG3r2jVc8rMpJVnj1cc7qr3sL7Dsk944F7iHyR80=
+        b=MQDNCXplqanrNyczn6msiZuQdwNfI2L57OyRPSpAVD7ZJ2lDVXmmVYynf2R4Qm/Sd
+         0uOwTsS+HE3nT/c6vRzfP70wPEJjEONE7d1b8sMP7dIt9V4h6xcXotw0894WTWOelX
+         LMNBeqsJVOi7gH4zO40B4SHpgnxVT9tWw998MXrY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 228/321] net/smc: fix sender_free computation
-Date:   Tue,  3 Dec 2019 23:34:54 +0100
-Message-Id: <20191203223438.977526894@linuxfoundation.org>
+Subject: [PATCH 5.3 055/135] can: rx-offload: can_rx_offload_offload_one(): increment rx_fifo_errors on queue overflow or OOM
+Date:   Tue,  3 Dec 2019 23:34:55 +0100
+Message-Id: <20191203213020.458989998@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,120 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ubraun@linux.ibm.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-[ Upstream commit b8649efad879c69c7ab1f19ce8814fcabef1f72b ]
+[ Upstream commit 4e9016bee3bf0c24963097edace034ff205b565c ]
 
-In some scenarios a separate consumer cursor update is necessary.
-The decision is made in smc_tx_consumer_cursor_update(). The
-sender_free computation could be wrong:
+If the rx-offload skb_queue is full or the skb allocation fails (due to OOM),
+the mailbox contents is discarded.
 
-The rx confirmed cursor is always smaller than or equal to the
-rx producer cursor. The parameters in the smc_curs_diff() call
-have to be exchanged, otherwise sender_free might even be negative.
+This patch adds the incrementing of the rx_fifo_errors statistics counter.
 
-And if more data arrives local_rx_ctrl.prod might be updated, enabling
-a cursor difference between local_rx_ctrl.prod and rx confirmed cursor
-larger than the RMB size. This case is not covered by smc_curs_diff().
-Thus function smc_curs_diff_large() is introduced here.
-
-If a recvmsg() is processed in parallel, local_tx_ctrl.cons might
-change during smc_cdc_msg_send. Make sure rx_curs_confirmed is updated
-with the actually sent local_tx_ctrl.cons value.
-
-Fixes: e82f2e31f559 ("net/smc: optimize consumer cursor updates")
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_cdc.c |  5 +++--
- net/smc/smc_cdc.h | 26 +++++++++++++++++++++++++-
- net/smc/smc_tx.c  |  3 ++-
- 3 files changed, 30 insertions(+), 4 deletions(-)
+ drivers/net/can/rx-offload.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/smc/smc_cdc.c b/net/smc/smc_cdc.c
-index ed5dcf03fe0b6..8f691b5a44ddf 100644
---- a/net/smc/smc_cdc.c
-+++ b/net/smc/smc_cdc.c
-@@ -96,6 +96,7 @@ int smc_cdc_msg_send(struct smc_connection *conn,
- 		     struct smc_wr_buf *wr_buf,
- 		     struct smc_cdc_tx_pend *pend)
- {
-+	union smc_host_cursor cfed;
- 	struct smc_link *link;
- 	int rc;
+diff --git a/drivers/net/can/rx-offload.c b/drivers/net/can/rx-offload.c
+index bdc27481b57f9..e224530a06300 100644
+--- a/drivers/net/can/rx-offload.c
++++ b/drivers/net/can/rx-offload.c
+@@ -125,8 +125,10 @@ static struct sk_buff *can_rx_offload_offload_one(struct can_rx_offload *offload
  
-@@ -107,10 +108,10 @@ int smc_cdc_msg_send(struct smc_connection *conn,
- 	conn->local_tx_ctrl.seqno = conn->tx_cdc_seq;
- 	smc_host_msg_to_cdc((struct smc_cdc_msg *)wr_buf,
- 			    &conn->local_tx_ctrl, conn);
-+	smc_curs_copy(&cfed, &((struct smc_host_cdc_msg *)wr_buf)->cons, conn);
- 	rc = smc_wr_tx_send(link, (struct smc_wr_tx_pend_priv *)pend);
- 	if (!rc)
--		smc_curs_copy(&conn->rx_curs_confirmed,
--			      &conn->local_tx_ctrl.cons, conn);
-+		smc_curs_copy(&conn->rx_curs_confirmed, &cfed, conn);
+ 		ret = offload->mailbox_read(offload, &cf_overflow,
+ 					    &timestamp, n);
+-		if (ret)
++		if (ret) {
+ 			offload->dev->stats.rx_dropped++;
++			offload->dev->stats.rx_fifo_errors++;
++		}
  
- 	return rc;
- }
-diff --git a/net/smc/smc_cdc.h b/net/smc/smc_cdc.h
-index 934df4473a7ce..2377a51772d51 100644
---- a/net/smc/smc_cdc.h
-+++ b/net/smc/smc_cdc.h
-@@ -135,7 +135,9 @@ static inline void smc_curs_copy_net(union smc_cdc_cursor *tgt,
- #endif
- }
- 
--/* calculate cursor difference between old and new, where old <= new */
-+/* calculate cursor difference between old and new, where old <= new and
-+ * difference cannot exceed size
-+ */
- static inline int smc_curs_diff(unsigned int size,
- 				union smc_host_cursor *old,
- 				union smc_host_cursor *new)
-@@ -160,6 +162,28 @@ static inline int smc_curs_comp(unsigned int size,
- 	return smc_curs_diff(size, old, new);
- }
- 
-+/* calculate cursor difference between old and new, where old <= new and
-+ * difference may exceed size
-+ */
-+static inline int smc_curs_diff_large(unsigned int size,
-+				      union smc_host_cursor *old,
-+				      union smc_host_cursor *new)
-+{
-+	if (old->wrap < new->wrap)
-+		return min_t(int,
-+			     (size - old->count) + new->count +
-+			     (new->wrap - old->wrap - 1) * size,
-+			     size);
-+
-+	if (old->wrap > new->wrap) /* wrap has switched from 0xffff to 0x0000 */
-+		return min_t(int,
-+			     (size - old->count) + new->count +
-+			     (new->wrap + 0xffff - old->wrap) * size,
-+			     size);
-+
-+	return max_t(int, 0, (new->count - old->count));
-+}
-+
- static inline void smc_host_cursor_to_cdc(union smc_cdc_cursor *peer,
- 					  union smc_host_cursor *local,
- 					  struct smc_connection *conn)
-diff --git a/net/smc/smc_tx.c b/net/smc/smc_tx.c
-index f1f621675db01..0ecbbdc337b82 100644
---- a/net/smc/smc_tx.c
-+++ b/net/smc/smc_tx.c
-@@ -595,7 +595,8 @@ void smc_tx_consumer_update(struct smc_connection *conn, bool force)
- 	if (to_confirm > conn->rmbe_update_limit) {
- 		smc_curs_copy(&prod, &conn->local_rx_ctrl.prod, conn);
- 		sender_free = conn->rmb_desc->len -
--			      smc_curs_diff(conn->rmb_desc->len, &prod, &cfed);
-+			      smc_curs_diff_large(conn->rmb_desc->len,
-+						  &cfed, &prod);
+ 		return NULL;
  	}
- 
- 	if (conn->local_rx_ctrl.prod_flags.cons_curs_upd_req ||
 -- 
 2.20.1
 
