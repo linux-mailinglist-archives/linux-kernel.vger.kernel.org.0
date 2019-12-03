@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97B1F111D9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:55:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4C4111C36
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbfLCWzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:55:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49322 "EHLO mail.kernel.org"
+        id S1728348AbfLCWli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:41:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730208AbfLCWzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:55:07 -0500
+        id S1727981AbfLCWle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:41:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 593242053B;
-        Tue,  3 Dec 2019 22:55:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1650820684;
+        Tue,  3 Dec 2019 22:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413706;
-        bh=A/Gyt4u7QrLQqefxIrkznJtIypsCEwCYUtwHl31T/So=;
+        s=default; t=1575412893;
+        bh=rU29GQKb3JthhKJVz13Cku6tYwkfIafBv+cnoeqH27E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ovbfBS2pC+Lj7cyRQ5By+jgbmBnKuBgvla+2GnKDDxJMd+kSg0kgB/XfmSWV294+K
-         EWoaNlwXn4WSS5GuDwZ/3yHkSAp2IGQmC5+XKVXr3lvkd1AZqoVjqVULuZpsrZJ+JJ
-         +SKU9iZQtW5M8HsoaKty+EKR7dfMX3JFlAicyMu0=
+        b=ynky+d2g2CIYcBd7QNblCDB6czpCMh8eAyNRj1i+7wmh4Zi/ZDX4dQNv5FdeUydiG
+         lVUKC2Sn3a1Vn1A7pqSCh+539wzMLKvAd21Lo+dN8UYrYWu1osc5ib9aT1CGBsKIye
+         RaQEk19+GZIiP9orqsp7dcXKJxcUslxxtbqHNto8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
-        Jon Maloy <maloy@donjonn.com>,
-        Hoang Le <hoang.h.le@dektech.com.au>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 231/321] tipc: fix skb may be leaky in tipc_link_input
-Date:   Tue,  3 Dec 2019 23:34:57 +0100
-Message-Id: <20191203223439.130939993@linuxfoundation.org>
+Subject: [PATCH 5.3 058/135] can: rx-offload: can_rx_offload_irq_offload_fifo(): continue on error
+Date:   Tue,  3 Dec 2019 23:34:58 +0100
+Message-Id: <20191203213021.202307197@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hoang Le <hoang.h.le@dektech.com.au>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-[ Upstream commit 7384b538d3aed2ed49d3575483d17aeee790fb06 ]
+[ Upstream commit 1f7f504dcd9d1262437bdcf4fa071e41dec1af03 ]
 
-When we free skb at tipc_data_input, we return a 'false' boolean.
-Then, skb passed to subcalling tipc_link_input in tipc_link_rcv,
+In case of a resource shortage, i.e. the rx_offload queue will overflow
+or a skb fails to be allocated (due to OOM),
+can_rx_offload_offload_one() will call mailbox_read() to discard the
+mailbox and return an ERR_PTR.
 
-<snip>
-1303 int tipc_link_rcv:
-...
-1354    if (!tipc_data_input(l, skb, l->inputq))
-1355        rc |= tipc_link_input(l, skb, l->inputq);
-</snip>
+If the hardware FIFO is empty can_rx_offload_offload_one() will return
+NULL.
 
-Fix it by simple changing to a 'true' boolean when skb is being free-ed.
-Then, tipc_link_rcv will bypassed to subcalling tipc_link_input as above
-condition.
+In case a CAN frame was read from the hardware,
+can_rx_offload_offload_one() returns the skb containing it.
 
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Acked-by: Jon Maloy <maloy@donjonn.com>
-Signed-off-by: Hoang Le <hoang.h.le@dektech.com.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Without this patch can_rx_offload_irq_offload_fifo() bails out if no skb
+returned, regardless of the reason.
+
+Similar to can_rx_offload_irq_offload_timestamp() in case of a resource
+shortage the whole FIFO should be discarded, to avoid an IRQ storm and
+give the system some time to recover. However if the FIFO is empty the
+loop can be left.
+
+With this patch the loop is left in case of empty FIFO, but not on
+errors.
+
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/link.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/rx-offload.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/tipc/link.c b/net/tipc/link.c
-index 6344aca4487b6..0fbf8ea18ce04 100644
---- a/net/tipc/link.c
-+++ b/net/tipc/link.c
-@@ -1114,7 +1114,7 @@ static bool tipc_data_input(struct tipc_link *l, struct sk_buff *skb,
- 	default:
- 		pr_warn("Dropping received illegal msg type\n");
- 		kfree_skb(skb);
--		return false;
-+		return true;
- 	};
- }
+diff --git a/drivers/net/can/rx-offload.c b/drivers/net/can/rx-offload.c
+index 2ea8676579a9c..84cae167e42f6 100644
+--- a/drivers/net/can/rx-offload.c
++++ b/drivers/net/can/rx-offload.c
+@@ -248,7 +248,9 @@ int can_rx_offload_irq_offload_fifo(struct can_rx_offload *offload)
  
+ 	while (1) {
+ 		skb = can_rx_offload_offload_one(offload, 0);
+-		if (IS_ERR_OR_NULL(skb))
++		if (IS_ERR(skb))
++			continue;
++		if (!skb)
+ 			break;
+ 
+ 		skb_queue_tail(&offload->skb_queue, skb);
 -- 
 2.20.1
 
