@@ -2,229 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A11A61103B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:38:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A62701103CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 18:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfLCRi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 12:38:26 -0500
-Received: from mga18.intel.com ([134.134.136.126]:52343 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726823AbfLCRi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 12:38:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 09:38:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
-   d="scan'208";a="385401803"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 03 Dec 2019 09:38:25 -0800
-Date:   Tue, 3 Dec 2019 09:43:08 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        kevin.tian@intel.com, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 4/5] iommu/vt-d: Consolidate pasid-based tlb
- invalidation
-Message-ID: <20191203094308.60e348df@jacob-builder>
-In-Reply-To: <20191122030449.28892-5-baolu.lu@linux.intel.com>
-References: <20191122030449.28892-1-baolu.lu@linux.intel.com>
-        <20191122030449.28892-5-baolu.lu@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726755AbfLCRpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 12:45:44 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:43484 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbfLCRpo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 12:45:44 -0500
+Received: by mail-pj1-f67.google.com with SMTP id g4so1789347pjs.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 09:45:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z7N6iQZ6w+KnK1x580YAK+IgWlbj+L7z26/RNYAhP3E=;
+        b=QpxjuqLNn8DPHEmW8Mne7bHFbkHFrWcadhd3+9wt8gWJJIslzBTmim1TD5pOW0dvaA
+         bC76EQ7govwprkNb75aGyD6KHY8ymXR5N5w6Caa7L8wSLQ8o6YSIh5c8qGyJKwLNR5rV
+         6tCVzWrx/V9AD8Wf/hpe4/4M2sZYDEa5fP87n24haNU0l1cBwtmastId7QhfBbfz8tpB
+         nWWGDUBjCE44/t64p3fJ3FPUQNbKUKjxqw+zdrcFFOL8bd+Lh7WxRAF0+EazzRUNLgF8
+         4eSmnS+upC3AWrGrfZYAOw40jtAJYKZ0evSwDw4C01BQqyVmi2IWQBkkHsc/FPsTTzL+
+         PB5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z7N6iQZ6w+KnK1x580YAK+IgWlbj+L7z26/RNYAhP3E=;
+        b=HvNHhqAqoVoGtrW74W0Q3otMTsErgPLxzfFbrwuSBHaPzetv4/pY6uk3OSvUnnxfvA
+         8xVRCDisvD6FaeovLELYhvdjcYc2CmW8XqD5H1q39M+0vOJVVNKzHgE7LUBtS/qBsxep
+         3oi5s5wfjnVpqI4x7KYS5SyJ8yvBF4nrfAL5k7rHGfPIgGztJhW04N0y5YO5pOv/H7AT
+         GAp5YUW+y8l7dwcUKm470uOOucbSqeCBN1DT5ZvraoEvGFGk1Ac6+CE1Zb/HA8jVnwNi
+         PElvtYyHB5haerQoUMGPgPxxpyxSSEeDy++668ACoIT0IODOK+lzoMX+JxLye8wq7Sxy
+         Iy1w==
+X-Gm-Message-State: APjAAAWitpI/zGTC3yXDWRAWREoG+B/+FKse7AdzinX/E6mHIpqcfdfn
+        qEY0/LF0c3bdGhLerstya3cKEjGrtfsHOL9QdDVOvA==
+X-Google-Smtp-Source: APXvYqykkKXbum3SSjV3LDPg92I2gZuwgqFvaKWHVvCaYAZ8GyCh+gaXA/1WQQhyvLYBi43QZL+p4VYGPLTqotMNZac=
+X-Received: by 2002:a17:90a:ff12:: with SMTP id ce18mr4019224pjb.117.1575395143149;
+ Tue, 03 Dec 2019 09:45:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1575242724-4937-1-git-send-email-sj38.park@gmail.com>
+ <20191203070025.GA4206@google.com> <CAEjAshraUy20gEEaff69=b11DhB7zbz8WHT=6wOuw6C2FyJwYA@mail.gmail.com>
+ <CAEjAsho98ER1RQ6=++ECmoCJxw2mMrGqV4jAgW5wgfb8eEM9eQ@mail.gmail.com>
+In-Reply-To: <CAEjAsho98ER1RQ6=++ECmoCJxw2mMrGqV4jAgW5wgfb8eEM9eQ@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 3 Dec 2019 09:45:31 -0800
+Message-ID: <CAFd5g46qPPsKJFqs07Eiea0Nim=YDWbOUndJu=JbW--VcTb-ww@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Fix nits in the kunit
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2019 11:04:48 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Tue, Dec 3, 2019 at 12:26 AM SeongJae Park <sj38.park@gmail.com> wrote:
+>
+> You're right, the error was due to the assumption of the existence of the
+> build_dir.  The "kunit: Create default config in '--build_dir'" patch made the
+> bug.  I fixed it in the second version patchset[1].
+>
+> [1] https://lore.kernel.org/linux-doc/1575361141-6806-1-git-send-email-sj38.park@gmail.com/
 
-> Merge pasid-based tlb invalidation into iommu->flush.p_iotlb_inv.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/intel-iommu.c | 43
-> +++++++++++++++++++++++++++++++++++++ drivers/iommu/intel-pasid.c |
-> 18 ++-------------- drivers/iommu/intel-svm.c   | 23
-> +++----------------- 3 files changed, 48 insertions(+), 36
-> deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 4eeb18942d3c..fec78cc877c1 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -3032,6 +3032,48 @@ qi_flush_dev_iotlb(struct intel_iommu *iommu,
-> u16 sid, u16 pfsid, qi_submit_sync(&desc, iommu);
->  }
->  
-> +/* PASID-based IOTLB invalidation */
-> +static void
-> +qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32 pasid, u64
-> addr,
-> +		unsigned long npages, bool ih)
-> +{
-> +	struct qi_desc desc = {.qw2 = 0, .qw3 = 0};
-> +
-> +	/*
-> +	 * npages == -1 means a PASID-selective invalidation,
-> otherwise,
-> +	 * a positive value for Page-selective-within-PASID
-> invalidation.
-> +	 * 0 is not a valid input.
-> +	 */
-> +	if (WARN_ON(!npages)) {
-> +		pr_err("Invalid input npages = %ld\n", npages);
-> +		return;
-> +	}
-> +
-> +	if (npages == -1) {
-> +		desc.qw0 = QI_EIOTLB_PASID(pasid) |
-> +				QI_EIOTLB_DID(did) |
-> +				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-> +				QI_EIOTLB_TYPE;
-> +		desc.qw1 = 0;
-Is this based on the latest kernel? seems to be missing the recent
-change for checking page selective cap. So I run into conflict.
+After trying your new patches, I am still getting the
+"FileNotFoundError" when the given build_dir has not been created.
 
-+       /*                                                                     
-+        * Do PASID granu IOTLB invalidation if page selective
-  capability is   
-+        * not
-  available.                                                      
-+
-  */                                                                    
-+       if (pages == -1 || !cap_pgsel_inv(svm->iommu->cap))
-  {                  
-+               desc.qw0 = QI_EIOTLB_PASID(svm->pasid)
-  |                       
-
-Seems missing this one in your base?
-
-Refs: v5.3-rc6-2-g8744daf4b069                              
-Author:     Jacob Pan <jacob.jun.pan@linux.intel.com>       
-AuthorDate: Mon Aug 26 08:53:29 2019 -0700                  
-Commit:     Joerg Roedel <jroedel@suse.de>                  
-CommitDate: Tue Sep 3 15:01:27 2019 +0200                   
-                                                            
-    iommu/vt-d: Remove global page flush support            
-
-> +	} else {
-> +		int mask = ilog2(__roundup_pow_of_two(npages));
-> +		unsigned long align = (1ULL << (VTD_PAGE_SHIFT +
-> mask)); +
-> +		if (WARN_ON_ONCE(!ALIGN(addr, align)))
-> +			addr &= ~(align - 1);
-> +
-> +		desc.qw0 = QI_EIOTLB_PASID(pasid) |
-> +				QI_EIOTLB_DID(did) |
-> +				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
-> +				QI_EIOTLB_TYPE;
-> +		desc.qw1 = QI_EIOTLB_ADDR(addr) |
-> +				QI_EIOTLB_IH(ih) |
-> +				QI_EIOTLB_AM(mask);
-> +	}
-> +
-> +	qi_submit_sync(&desc, iommu);
-> +}
-> +
->  static void intel_iommu_init_qi(struct intel_iommu *iommu)
->  {
->  	/*
-> @@ -3065,6 +3107,7 @@ static void intel_iommu_init_qi(struct
-> intel_iommu *iommu) iommu->flush.iotlb_inv = qi_flush_iotlb;
->  		iommu->flush.pc_inv = qi_flush_pasid;
->  		iommu->flush.dev_tlb_inv = qi_flush_dev_iotlb;
-> +		iommu->flush.p_iotlb_inv = qi_flush_piotlb;
->  		pr_info("%s: Using Queued invalidation\n",
-> iommu->name); }
->  }
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index 01dd9c86178b..78ff4eee8595 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -359,20 +359,6 @@ pasid_set_flpm(struct pasid_entry *pe, u64 value)
->  	pasid_set_bits(&pe->val[2], GENMASK_ULL(3, 2), value << 2);
->  }
->  
-> -static void
-> -iotlb_invalidation_with_pasid(struct intel_iommu *iommu, u16 did,
-> u32 pasid) -{
-> -	struct qi_desc desc;
-> -
-> -	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
-> -			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-> QI_EIOTLB_TYPE;
-> -	desc.qw1 = 0;
-> -	desc.qw2 = 0;
-> -	desc.qw3 = 0;
-> -
-> -	qi_submit_sync(&desc, iommu);
-> -}
-> -
->  static void
->  devtlb_invalidation_with_pasid(struct intel_iommu *iommu,
->  			       struct device *dev, int pasid)
-> @@ -409,7 +395,7 @@ void intel_pasid_tear_down_entry(struct
-> intel_iommu *iommu, clflush_cache_range(pte, sizeof(*pte));
->  
->  	iommu->flush.pc_inv(iommu, did, pasid, QI_PC_GRAN_PSWD);
-> -	iotlb_invalidation_with_pasid(iommu, did, pasid);
-> +	iommu->flush.p_iotlb_inv(iommu, did, pasid, 0, -1, 0);
->  
->  	/* Device IOTLB doesn't need to be flushed in caching mode.
-> */ if (!cap_caching_mode(iommu->cap))
-> @@ -425,7 +411,7 @@ static void pasid_flush_caches(struct intel_iommu
-> *iommu, 
->  	if (cap_caching_mode(iommu->cap)) {
->  		iommu->flush.pc_inv(iommu, did, pasid,
-> QI_PC_GRAN_PSWD);
-> -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> +		iommu->flush.p_iotlb_inv(iommu, did, pasid, 0, -1,
-> 0); } else {
->  		iommu_flush_write_buffer(iommu);
->  	}
-> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> index f5594b9981a5..02c6b14f0568 100644
-> --- a/drivers/iommu/intel-svm.c
-> +++ b/drivers/iommu/intel-svm.c
-> @@ -118,27 +118,10 @@ static void intel_flush_svm_range_dev (struct
-> intel_svm *svm, struct intel_svm_d unsigned long address, unsigned
-> long pages, int ih) {
->  	struct qi_desc desc;
-> +	struct intel_iommu *iommu = svm->iommu;
->  
-> -	if (pages == -1) {
-> -		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-> -			QI_EIOTLB_DID(sdev->did) |
-> -			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-> -			QI_EIOTLB_TYPE;
-> -		desc.qw1 = 0;
-> -	} else {
-> -		int mask = ilog2(__roundup_pow_of_two(pages));
-> -
-> -		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-> -				QI_EIOTLB_DID(sdev->did) |
-> -				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
-> -				QI_EIOTLB_TYPE;
-> -		desc.qw1 = QI_EIOTLB_ADDR(address) |
-> -				QI_EIOTLB_IH(ih) |
-> -				QI_EIOTLB_AM(mask);
-> -	}
-> -	desc.qw2 = 0;
-> -	desc.qw3 = 0;
-> -	qi_submit_sync(&desc, svm->iommu);
-> +	iommu->flush.p_iotlb_inv(iommu, sdev->did,
-> +				 svm->pasid, address, pages, ih);
->  
->  	if (sdev->dev_iotlb) {
->  		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
-
-[Jacob Pan]
+> Thanks,
+> SeongJae Park
+>
+> On Tue, Dec 3, 2019 at 8:10 AM SeongJae Park <sj38.park@gmail.com> wrote:
+> >
+> > On Tue, Dec 3, 2019 at 8:00 AM Brendan Higgins
+> > <brendanhiggins@google.com> wrote:
+> > >
+> > > On Mon, Dec 02, 2019 at 08:25:18AM +0900, SeongJae Park wrote:
+> > > > From: SeongJae Park <sjpark@amazon.de>
+> > > >
+> > > > This patchset contains trivial fixes for the kunit documentations and the
+> > > > wrapper python scripts.
+> > > >
+> > > > SeongJae Park (6):
+> > > >   docs/kunit/start: Use in-tree 'kunit_defconfig'
+> > > >   docs/kunit/start: Skip wrapper run command
+> > > >   kunit: Remove duplicated defconfig creation
+> > > >   kunit: Create default config in 'build_dir'
+> > > >   kunit: Place 'test.log' under the 'build_dir'
+> > > >   kunit: Rename 'kunitconfig' to '.kunitconfig'
+> > > >
+> > > >  Documentation/dev-tools/kunit/start.rst | 19 +++++--------------
+> > > >  tools/testing/kunit/kunit.py            | 10 ++++++----
+> > > >  tools/testing/kunit/kunit_kernel.py     |  6 +++---
+> > > >  3 files changed, 14 insertions(+), 21 deletions(-)
+> > >
+> > > I applied your patchset to torvalds/master, ran the command:
+> > >
+> > > tools/testing/kunit/kunit.py run --timeout=60 --jobs=8 --defconfig --build_dir=.kunit
+> > >
+> > > and got the error:
+> > >
+> > > Traceback (most recent call last):
+> > >   File "tools/testing/kunit/kunit.py", line 140, in <module>
+> > >     main(sys.argv[1:])
+> > >   File "tools/testing/kunit/kunit.py", line 123, in main
+> > >     create_default_kunitconfig()
+> > >   File "tools/testing/kunit/kunit.py", line 36, in create_default_kunitconfig
+> > >     kunit_kernel.KUNITCONFIG_PATH)
+> > >   File "/usr/lib/python3.7/shutil.py", line 121, in copyfile
+> > >     with open(dst, 'wb') as fdst:
+> > > FileNotFoundError: [Errno 2] No such file or directory: '.kunit/.kunitconfig'
+> > >
+> > > It seems that it expects the build_dir to already exist; however, I
+> > > don't think this is clear from the error message. Would you mind
+> > > addressing that here?
+> >
+> > Thank you for sharing this.  I will take a look!
+> >
+> >
+> > Thanks,
+> > SeongJae Park
+> > >
+> > > Cheers!
