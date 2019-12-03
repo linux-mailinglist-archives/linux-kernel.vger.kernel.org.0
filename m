@@ -2,263 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0AA2110239
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C27F311023E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:27:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbfLCQ1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:27:09 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35238 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbfLCQ1H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:27:07 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j6so4560032lja.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:27:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h9C2n+MHCjplzHYnNi07BHb4f1XYr4XT9zBJ/ZBs22c=;
-        b=eIH8jyxl5W3h1DNl28UBcSMT9HKOFP7K3WZtBxuP8SA78R3JAGPhqIETRpC0p/0PnZ
-         6ImPtiSM2Iq25bO33IRP3XLGPaVqDgB1s0E3mSRYiYbP8aVzat/G+marOMRwudFknMnQ
-         ytEA9H80R2CTGSCu//DBHTUsbUAF08b4h/sI6jZDdF96k7qplucYdFKMTZWQ7qdZa453
-         acmqwidQRarMm51DY4jWQi+whkoycdu+5FTudxuzELEVeKkkpjtrF8dY5or8cbSaKTKo
-         XAGIDW5akXNKwp2q4Z4K41ydX/jGmBqn1tu1ddWK0VJJuXxHPpmHs3EvVByPDMkjIt/M
-         qCVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=h9C2n+MHCjplzHYnNi07BHb4f1XYr4XT9zBJ/ZBs22c=;
-        b=tbnY37C1fIqUg1T/PUyTBiwsgGfxIjCsvlYnKkuWQUbazeO9DAQMcXIa5XIBBfZwwI
-         yBp6l1NGOMKGomOu/ui8aAgVGG2N3ge8ETqa6B8+HjKg/v/P9coSYIgP0X2vN5+v+poY
-         Nn1N0XYYKh3yQJdL26WkbXGU+907OwCOswQ+k9LamgdFbG06KCqq/hxsCP6qk4rWfncl
-         N+g9N+1UqZVZSeAHd3d388h2QZJW8O620tEt7nPnl/0dqaQen5z/ALHWF6WuyE2nNbiy
-         Xnx+t5uS/gLNpsbRkEEgaKbEja3KzEydvGiZfYZHqgv0Pt00nqSr6g4nUMca0He7EBfv
-         7czA==
-X-Gm-Message-State: APjAAAUgkbcrpg3s55Ux3UWvQcx41rzvkszdM8vdTps1ojI6Mb9DfajV
-        FkWUBAGFwqExdzEp3aApPKORVw==
-X-Google-Smtp-Source: APXvYqyAardmg0NrXumsDAT1FVgwWqwgEG/0hNYWrn+HLp1R+TiUT2+UT6Y2ooYr1rAqJuzrRW5Aqg==
-X-Received: by 2002:a05:651c:208:: with SMTP id y8mr3188448ljn.36.1575390424112;
-        Tue, 03 Dec 2019 08:27:04 -0800 (PST)
-Received: from khorivan (57-201-94-178.pool.ukrtel.net. [178.94.201.57])
-        by smtp.gmail.com with ESMTPSA id f13sm1578745ljp.104.2019.12.03.08.27.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 08:27:03 -0800 (PST)
-Date:   Tue, 3 Dec 2019 18:27:01 +0200
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Po Liu <po.liu@nxp.com>
-Cc:     "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
-        "linville@tuxdriver.com" <linville@tuxdriver.com>,
-        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
-Subject: Re: [v1,ethtool] ethtool: add setting frame preemption of traffic
- classes
-Message-ID: <20191203162659.GC2680@khorivan>
-Mail-Followup-To: Po Liu <po.liu@nxp.com>,
-        "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
-        "linville@tuxdriver.com" <linville@tuxdriver.com>,
-        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>
-References: <20191127094448.6206-1-Po.Liu@nxp.com>
+        id S1727317AbfLCQ1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:27:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbfLCQ1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 11:27:33 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 166BE2068E;
+        Tue,  3 Dec 2019 16:27:32 +0000 (UTC)
+Date:   Tue, 3 Dec 2019 11:27:30 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Prateek Sood <prsood@codeaurora.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        kaushalk@codeaurora.org
+Subject: Re: [PATCH] trace: circular dependency for trace_types_lock and
+ event_mutex
+Message-ID: <20191203112730.77b334f6@gandalf.local.home>
+In-Reply-To: <0101016ecc80a1fa-27cc3e87-c16d-4cd6-b3c6-9c893010fdef-000000@us-west-2.amazonses.com>
+References: <0101016ecc80a1fa-27cc3e87-c16d-4cd6-b3c6-9c893010fdef-000000@us-west-2.amazonses.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191127094448.6206-1-Po.Liu@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2019 at 09:58:52AM +0000, Po Liu wrote:
 
-Hi Po Liu,
+Hi Prateek,
 
->IEEE Std 802.1Qbu standard defined the frame preemption of port
->trffic classes. User can set a value to hardware. The value will
->be translated to a binary, each bit represent a traffic class.
->Bit "1" means preemptable traffic class. Bit "0" means express
->traffic class.  MSB represent high number traffic class.
->
->ethtool -k devname
->
->This command would show if the tx-preemption feature is available.
->If hareware set preemption feature. The property would be a fixed
->value 'on' if hardware support the frame preemption. Feature would
->show a fixed value 'off' if hardware don't support the frame preemption.
->
->ethtool devname
->
->This command would show include an item 'preemption'. A following
->value '0' means all traffic classes are 'express'. A value none zero
->means traffic classes preemption capabilities. The value will be
->translated to a binary, each bit represent a traffic class. Bit '1'
->means preemptable traffic class. Bit '0' means express traffic class.
->MSB represent high number traffic class.
->
->ethtool -s devname preemption N
+Thanks for the patch. Note, I think a better subject is:
 
-What about other potential parameters like MAC fragment size, mac hold?
-Shouldn't be it considered along with other FP parameters to provide correct
-interface later?
+ tracing: Fix lock inversion caused by trace_event_enable_tgid_record()
 
-Say, preemption, lets name it fp-mask or frame-preemption-mask.
-Then other potential setting can be similar and added later:
 
-frame-preemption-mask
-frame-preemption-fragsize
-frame-preemption-machold
-....
+On Tue, 3 Dec 2019 16:03:32 +0000
+Prateek Sood <prsood@codeaurora.org> wrote:
 
-mac-hold it's rather flag, at least I've used it as priv-flag.
-so can or so
+>        Task T2                             Task T3
+> trace_options_core_write()            subsystem_open()
+> 
+>  mutex_lock(trace_types_lock)           mutex_lock(event_mutex)
+> 
+>  set_tracer_flag()
+> 
+>    trace_event_enable_tgid_record()       mutex_lock(trace_types_lock)
+> 
+>     mutex_lock(event_mutex)
+> 
+> This gives a circular dependency deadlock between trace_types_lock and
+> event_mutex. To fix this invert the usage of trace_types_lock and event_mutex
+> in trace_options_core_write(). This keeps the sequence of lock usage consistent.
+> 
+> Change-Id: I3752a77c59555852c2241f7775ec4a1960c15c15
 
-frame-preemption-flags
+What's this Change-Id? Something internal?
 
->
->This command would set which traffic classes are frame preemptable.
->The value will be translated to a binary, each bit represent a
->traffic class. Bit '1' means preemptable traffic class. Bit '0'
->means express traffic class. MSB represent high number traffic class.
->
->Signed-off-by: Po Liu <Po.Liu@nxp.com>
->---
-> ethtool-copy.h |  6 +++++-
-> ethtool.8.in   |  8 ++++++++
-> ethtool.c      | 18 ++++++++++++++++++
-> 3 files changed, 31 insertions(+), 1 deletion(-)
->
->diff --git a/ethtool-copy.h b/ethtool-copy.h
->index 9afd2e6..e04bdf3 100644
->--- a/ethtool-copy.h
->+++ b/ethtool-copy.h
->@@ -1662,6 +1662,9 @@ static __inline__ int ethtool_validate_duplex(__u8 duplex)
-> #define AUTONEG_DISABLE		0x00
-> #define AUTONEG_ENABLE		0x01
->
->+/* Disable preemtion. */
->+#define PREEMPTION_DISABLE	0x0
->+
-> /* MDI or MDI-X status/control - if MDI/MDI_X/AUTO is set then
->  * the driver is required to renegotiate link
->  */
->@@ -1878,7 +1881,8 @@ struct ethtool_link_settings {
-> 	__s8	link_mode_masks_nwords;
-> 	__u8	transceiver;
-> 	__u8	reserved1[3];
->-	__u32	reserved[7];
->+	__u32	preemption;
->+	__u32	reserved[6];
-> 	__u32	link_mode_masks[0];
-> 	/* layout of link_mode_masks fields:
-> 	 * __u32 map_supported[link_mode_masks_nwords];
->diff --git a/ethtool.8.in b/ethtool.8.in
->index 062695a..7d612b2 100644
->--- a/ethtool.8.in
->+++ b/ethtool.8.in
->@@ -236,6 +236,7 @@ ethtool \- query or control network driver and hardware settings
-> .B2 autoneg on off
-> .BN advertise
-> .BN phyad
->+.BN preemption
-> .B2 xcvr internal external
-> .RB [ wol \ \*(WO]
-> .RB [ sopass \ \*(MA]
->@@ -703,6 +704,13 @@ lB	l	lB.
-> .BI phyad \ N
-> PHY address.
-> .TP
->+.BI preemption \ N
->+Set preemptable traffic classes by bits.
->+.B A
->+value will be translated to a binary, each bit represent a traffic class.
->+Bit "1" means preemptable traffic class. Bit "0" means express traffic class.
->+MSB represent high number traffic class.
->+.TP
-> .A2 xcvr internal external
-> Selects transceiver type. Currently only internal and external can be
-> specified, in the future further types might be added.
->diff --git a/ethtool.c b/ethtool.c
->index acf183d..d5240f8 100644
->--- a/ethtool.c
->+++ b/ethtool.c
->@@ -928,6 +928,12 @@ dump_link_usettings(const struct ethtool_link_usettings *link_usettings)
-> 		}
-> 	}
->
->+	if (link_usettings->base.preemption == PREEMPTION_DISABLE)
->+		fprintf(stdout, "	Preemption: 0x0 (off)\n");
->+	else
->+		fprintf(stdout, "	Preemption: 0x%x\n",
->+			link_usettings->base.preemption);
->+
-> 	return 0;
-> }
->
->@@ -2869,6 +2875,7 @@ static int do_sset(struct cmd_context *ctx)
-> 	int port_wanted = -1;
-> 	int mdix_wanted = -1;
-> 	int autoneg_wanted = -1;
->+	int preemption_wanted = -1;
-> 	int phyad_wanted = -1;
-> 	int xcvr_wanted = -1;
-> 	u32 *full_advertising_wanted = NULL;
->@@ -2957,6 +2964,12 @@ static int do_sset(struct cmd_context *ctx)
-> 			} else {
-> 				exit_bad_args();
-> 			}
->+		} else if (!strcmp(argp[i], "preemption")) {
->+			gset_changed = 1;
->+			i += 1;
->+			if (i >= argc)
->+				exit_bad_args();
->+			preemption_wanted = get_u32(argp[i], 16);
-> 		} else if (!strcmp(argp[i], "advertise")) {
-> 			gset_changed = 1;
-> 			i += 1;
->@@ -3094,6 +3107,9 @@ static int do_sset(struct cmd_context *ctx)
-> 			}
-> 			if (autoneg_wanted != -1)
-> 				link_usettings->base.autoneg = autoneg_wanted;
->+			if (preemption_wanted != -1)
->+				link_usettings->base.preemption
->+					= preemption_wanted;
-> 			if (phyad_wanted != -1)
-> 				link_usettings->base.phy_address = phyad_wanted;
-> 			if (xcvr_wanted != -1)
->@@ -3186,6 +3202,8 @@ static int do_sset(struct cmd_context *ctx)
-> 				fprintf(stderr, "  not setting transceiver\n");
-> 			if (mdix_wanted != -1)
-> 				fprintf(stderr, "  not setting mdix\n");
->+			if (preemption_wanted != -1)
->+				fprintf(stderr, "  not setting preemption\n");
-> 		}
-> 	}
->
->-- 
->2.17.1
->
+I'll be adding:
 
--- 
-Regards,
-Ivan Khoronzhuk
+ Link: http://lkml.kernel.org/r/0101016ecc80a1fa-27cc3e87-c16d-4cd6-b3c6-9c893010fdef-000000@us-west-2.amazonses.com
+
+I'll test this out, and probably even add a stable tag.
+
+-- Steve
+
+
+
+> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+> ---
+>  kernel/trace/trace.c              | 6 ++++++
+>  kernel/trace/trace_events.c       | 8 ++++----
+>  kernel/trace/trace_irqsoff.c      | 4 ++++
+>  kernel/trace/trace_sched_wakeup.c | 4 ++++
+>  4 files changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 6a0ee91..2c09aa1 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -4590,6 +4590,8 @@ int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set)
+>  
+>  int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
+>  {
+> +	lockdep_assert_held(&event_mutex);
+> +
+>  	/* do nothing if flag is already set */
+>  	if (!!(tr->trace_flags & mask) == !!enabled)
+>  		return 0;
+> @@ -4657,6 +4659,7 @@ static int trace_set_options(struct trace_array *tr, char *option)
+>  
+>  	cmp += len;
+>  
+> +	mutex_lock(&event_mutex);
+>  	mutex_lock(&trace_types_lock);
+>  
+>  	ret = match_string(trace_options, -1, cmp);
+> @@ -4667,6 +4670,7 @@ static int trace_set_options(struct trace_array *tr, char *option)
+>  		ret = set_tracer_flag(tr, 1 << ret, !neg);
+>  
+>  	mutex_unlock(&trace_types_lock);
+> +	mutex_unlock(&event_mutex);
+>  
+>  	/*
+>  	 * If the first trailing whitespace is replaced with '\0' by strstrip,
+> @@ -7972,9 +7976,11 @@ static void get_tr_index(void *data, struct trace_array **ptr,
+>  	if (val != 0 && val != 1)
+>  		return -EINVAL;
+>  
+> +	mutex_lock(&event_mutex);
+>  	mutex_lock(&trace_types_lock);
+>  	ret = set_tracer_flag(tr, 1 << index, val);
+>  	mutex_unlock(&trace_types_lock);
+> +	mutex_unlock(&event_mutex);
+>  
+>  	if (ret < 0)
+>  		return ret;
+> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+> index fba87d1..995061b 100644
+> --- a/kernel/trace/trace_events.c
+> +++ b/kernel/trace/trace_events.c
+> @@ -320,7 +320,8 @@ void trace_event_enable_cmd_record(bool enable)
+>  	struct trace_event_file *file;
+>  	struct trace_array *tr;
+>  
+> -	mutex_lock(&event_mutex);
+> +	lockdep_assert_held(&event_mutex);
+> +
+>  	do_for_each_event_file(tr, file) {
+>  
+>  		if (!(file->flags & EVENT_FILE_FL_ENABLED))
+> @@ -334,7 +335,6 @@ void trace_event_enable_cmd_record(bool enable)
+>  			clear_bit(EVENT_FILE_FL_RECORDED_CMD_BIT, &file->flags);
+>  		}
+>  	} while_for_each_event_file();
+> -	mutex_unlock(&event_mutex);
+>  }
+>  
+>  void trace_event_enable_tgid_record(bool enable)
+> @@ -342,7 +342,8 @@ void trace_event_enable_tgid_record(bool enable)
+>  	struct trace_event_file *file;
+>  	struct trace_array *tr;
+>  
+> -	mutex_lock(&event_mutex);
+> +	lockdep_assert_held(&event_mutex);
+> +
+>  	do_for_each_event_file(tr, file) {
+>  		if (!(file->flags & EVENT_FILE_FL_ENABLED))
+>  			continue;
+> @@ -356,7 +357,6 @@ void trace_event_enable_tgid_record(bool enable)
+>  				  &file->flags);
+>  		}
+>  	} while_for_each_event_file();
+> -	mutex_unlock(&event_mutex);
+>  }
+>  
+>  static int __ftrace_event_enable_disable(struct trace_event_file *file,
+> diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+> index a745b0c..887cdb5 100644
+> --- a/kernel/trace/trace_irqsoff.c
+> +++ b/kernel/trace/trace_irqsoff.c
+> @@ -560,8 +560,10 @@ static int __irqsoff_tracer_init(struct trace_array *tr)
+>  	save_flags = tr->trace_flags;
+>  
+>  	/* non overwrite screws up the latency tracers */
+> +	mutex_lock(&event_mutex);
+>  	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, 1);
+>  	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, 1);
+> +	mutex_unlock(&event_mutex);
+>  
+>  	tr->max_latency = 0;
+>  	irqsoff_trace = tr;
+> @@ -586,8 +588,10 @@ static void __irqsoff_tracer_reset(struct trace_array *tr)
+>  
+>  	stop_irqsoff_tracer(tr, is_graph(tr));
+>  
+> +	mutex_lock(&event_mutex);
+>  	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, lat_flag);
+>  	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, overwrite_flag);
+> +	mutex_unlock(&event_mutex);
+>  	ftrace_reset_array_ops(tr);
+>  
+>  	irqsoff_busy = false;
+> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+> index 5e43b96..0bc67d1 100644
+> --- a/kernel/trace/trace_sched_wakeup.c
+> +++ b/kernel/trace/trace_sched_wakeup.c
+> @@ -671,8 +671,10 @@ static int __wakeup_tracer_init(struct trace_array *tr)
+>  	save_flags = tr->trace_flags;
+>  
+>  	/* non overwrite screws up the latency tracers */
+> +	mutex_lock(&event_mutex);
+>  	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, 1);
+>  	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, 1);
+> +	mutex_unlock(&event_mutex);
+>  
+>  	tr->max_latency = 0;
+>  	wakeup_trace = tr;
+> @@ -722,8 +724,10 @@ static void wakeup_tracer_reset(struct trace_array *tr)
+>  	/* make sure we put back any tasks we are tracing */
+>  	wakeup_reset(tr);
+>  
+> +	mutex_lock(&event_mutex);
+>  	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, lat_flag);
+>  	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, overwrite_flag);
+> +	mutex_unlock(&event_mutex);
+>  	ftrace_reset_array_ops(tr);
+>  	wakeup_busy = false;
+>  }
+
