@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F35310FF53
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0601C10FF74
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:58:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfLCN4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:56:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
+        id S1726877AbfLCN6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:58:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726645AbfLCN43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:56:29 -0500
+        id S1726697AbfLCN4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 08:56:32 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57A5520848;
-        Tue,  3 Dec 2019 13:56:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 134F22080A;
+        Tue,  3 Dec 2019 13:56:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575381388;
-        bh=pLgOWVZBZgZugcj+aiRpf+WnBp/1XUSfPXe88YCTmns=;
+        s=default; t=1575381391;
+        bh=IrLpZ2UHKbC6Xn8lyJxmNoUkNe51oQQ+qRh3tyfd9DA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aYIDLa2xc8kShYNslxg6XJa8JZ48lobLS8QjYxgGGDwHd9tr6i8txKDdY8PGNZdbO
-         eS4Xv2c+M3n92bAhT2iO9Uor2Wm2+n45/104bE1mnmqQDXM+x+QyEv4iH7q5mhZiQM
-         Sy78WX6QHIUwde2H6jYHdjFwZcP3gf40eGeKg3RM=
+        b=hXpH0h3Bn7cY66KsZBXIw+8Msfk1PQmJhcYjVjp+ea5szELcnDKztfA9DZbABj7Q7
+         Xnp8xyIrVUV0k34ZRqHYSF0wCdWdGXBXzw8IU3xR39IXCPxLfLWx2mFkZGYXFw+vEE
+         5PBQaWOKuAtrIS42hvx1frsirgrBztTLpBS9yhV0=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,9 +31,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 05/23] perf stat: Use affinity for closing file descriptors
-Date:   Tue,  3 Dec 2019 10:55:48 -0300
-Message-Id: <20191203135606.24902-6-acme@kernel.org>
+Subject: [PATCH 06/23] perf stat: Factor out open error handling
+Date:   Tue,  3 Dec 2019 10:55:49 -0300
+Message-Id: <20191203135606.24902-7-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191203135606.24902-1-acme@kernel.org>
 References: <20191203135606.24902-1-acme@kernel.org>
@@ -46,79 +46,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Closing a perf fd can also trigger an IPI to the target CPU.
+Factor out the open error handling into a separate function.  This is
+useful for followon patches who need to duplicate this.
 
-Use the same affinity technique as we use for reading/enabling events to
-closing to optimize the CPU transitions.
-
-Before on a large test case with 94 CPUs:
-
-  % time     seconds  usecs/call     calls    errors syscall
-  ------ ----------- ----------- --------- --------- ----------------
-   32.56    3.085463          50     61483           close
-
-  After:
-
-   10.54    0.735704          11     61485           close
+No behavior change intended.
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lore.kernel.org/lkml/20191121001522.180827-8-andi@firstfloor.org
+Link: http://lore.kernel.org/lkml/20191121001522.180827-9-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ tools/perf/builtin-stat.c | 100 +++++++++++++++++++++++---------------
+ 1 file changed, 60 insertions(+), 40 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index dae6e846b2f8..2e8d38a324be 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -18,6 +18,7 @@
- #include "debug.h"
- #include "units.h"
- #include <internal/lib.h> // page_size
-+#include "affinity.h"
- #include "../perf.h"
- #include "asm/bug.h"
- #include "bpf-event.h"
-@@ -1169,9 +1170,35 @@ void perf_evlist__set_selected(struct evlist *evlist,
- void evlist__close(struct evlist *evlist)
- {
- 	struct evsel *evsel;
-+	struct affinity affinity;
-+	int cpu, i;
- 
--	evlist__for_each_entry_reverse(evlist, evsel)
--		evsel__close(evsel);
-+	/*
-+	 * With perf record core.cpus is usually NULL.
-+	 * Use the old method to handle this for now.
-+	 */
-+	if (!evlist->core.cpus) {
-+		evlist__for_each_entry_reverse(evlist, evsel)
-+			evsel__close(evsel);
-+		return;
-+	}
-+
-+	if (affinity__setup(&affinity) < 0)
-+		return;
-+	evlist__for_each_cpu(evlist, i, cpu) {
-+		affinity__set(&affinity, cpu);
-+
-+		evlist__for_each_entry_reverse(evlist, evsel) {
-+			if (evsel__cpu_iter_skip(evsel, cpu))
-+			    continue;
-+			perf_evsel__close_cpu(&evsel->core, evsel->cpu_iter - 1);
-+		}
-+	}
-+	affinity__cleanup(&affinity);
-+	evlist__for_each_entry_reverse(evlist, evsel) {
-+		perf_evsel__free_fd(&evsel->core);
-+		perf_evsel__free_id(&evsel->core);
-+	}
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 0a15253b438c..1d9d7161815e 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -420,6 +420,57 @@ static bool is_target_alive(struct target *_target,
+ 	return false;
  }
  
- static int perf_evlist__create_syswide_maps(struct evlist *evlist)
++enum counter_recovery {
++	COUNTER_SKIP,
++	COUNTER_RETRY,
++	COUNTER_FATAL,
++};
++
++static enum counter_recovery stat_handle_error(struct evsel *counter)
++{
++	char msg[BUFSIZ];
++	/*
++	 * PPC returns ENXIO for HW counters until 2.6.37
++	 * (behavior changed with commit b0a873e).
++	 */
++	if (errno == EINVAL || errno == ENOSYS ||
++	    errno == ENOENT || errno == EOPNOTSUPP ||
++	    errno == ENXIO) {
++		if (verbose > 0)
++			ui__warning("%s event is not supported by the kernel.\n",
++				    perf_evsel__name(counter));
++		counter->supported = false;
++
++		if ((counter->leader != counter) ||
++		    !(counter->leader->core.nr_members > 1))
++			return COUNTER_SKIP;
++	} else if (perf_evsel__fallback(counter, errno, msg, sizeof(msg))) {
++		if (verbose > 0)
++			ui__warning("%s\n", msg);
++		return COUNTER_RETRY;
++	} else if (target__has_per_thread(&target) &&
++		   evsel_list->core.threads &&
++		   evsel_list->core.threads->err_thread != -1) {
++		/*
++		 * For global --per-thread case, skip current
++		 * error thread.
++		 */
++		if (!thread_map__remove(evsel_list->core.threads,
++					evsel_list->core.threads->err_thread)) {
++			evsel_list->core.threads->err_thread = -1;
++			return COUNTER_RETRY;
++		}
++	}
++
++	perf_evsel__open_strerror(counter, &target,
++				  errno, msg, sizeof(msg));
++	ui__error("%s\n", msg);
++
++	if (child_pid != -1)
++		kill(child_pid, SIGTERM);
++	return COUNTER_FATAL;
++}
++
+ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ {
+ 	int interval = stat_config.interval;
+@@ -469,47 +520,16 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 				goto try_again;
+ 			}
+ 
+-			/*
+-			 * PPC returns ENXIO for HW counters until 2.6.37
+-			 * (behavior changed with commit b0a873e).
+-			 */
+-			if (errno == EINVAL || errno == ENOSYS ||
+-			    errno == ENOENT || errno == EOPNOTSUPP ||
+-			    errno == ENXIO) {
+-				if (verbose > 0)
+-					ui__warning("%s event is not supported by the kernel.\n",
+-						    perf_evsel__name(counter));
+-				counter->supported = false;
+-
+-				if ((counter->leader != counter) ||
+-				    !(counter->leader->core.nr_members > 1))
+-					continue;
+-			} else if (perf_evsel__fallback(counter, errno, msg, sizeof(msg))) {
+-                                if (verbose > 0)
+-                                        ui__warning("%s\n", msg);
+-                                goto try_again;
+-			} else if (target__has_per_thread(&target) &&
+-				   evsel_list->core.threads &&
+-				   evsel_list->core.threads->err_thread != -1) {
+-				/*
+-				 * For global --per-thread case, skip current
+-				 * error thread.
+-				 */
+-				if (!thread_map__remove(evsel_list->core.threads,
+-							evsel_list->core.threads->err_thread)) {
+-					evsel_list->core.threads->err_thread = -1;
+-					goto try_again;
+-				}
++			switch (stat_handle_error(counter)) {
++			case COUNTER_FATAL:
++				return -1;
++			case COUNTER_RETRY:
++				goto try_again;
++			case COUNTER_SKIP:
++				continue;
++			default:
++				break;
+ 			}
+-
+-			perf_evsel__open_strerror(counter, &target,
+-						  errno, msg, sizeof(msg));
+-			ui__error("%s\n", msg);
+-
+-			if (child_pid != -1)
+-				kill(child_pid, SIGTERM);
+-
+-			return -1;
+ 		}
+ 		counter->supported = true;
+ 
 -- 
 2.21.0
 
