@@ -2,148 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7421210F9AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 09:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 005EC10F9B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 09:20:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfLCIT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 03:19:28 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50560 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbfLCITW (ORCPT
+        id S1726971AbfLCIUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 03:20:19 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36481 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726443AbfLCIUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:19:22 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so1997839wmg.0;
-        Tue, 03 Dec 2019 00:19:20 -0800 (PST)
+        Tue, 3 Dec 2019 03:20:19 -0500
+Received: by mail-pl1-f193.google.com with SMTP id k20so1399729pls.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 00:20:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hrxYiLpa3QTymxbUAIdHVm+JWAvpyOBH5sypJmOwe7c=;
-        b=HEB7pHIFMe8tGDiqif9q6gOd0S0IlCgYJebKo6KUjXI6/jQuLq8MBWNpVIZpwI2tFE
-         Kor7si9mr1kcjzjkw/89qU+Pw3StyZYreX+j+U5tChsCh0J6AOPBLubUoszpR0ApZbYP
-         vKsZTfSFixVG95knJ3gpy+cjiTIsjB4CYeD+hxP37hsab3ZIP5/napk6ZciZyuHig9rW
-         DbOMndMJHLUHFVbalFRn255Y7NEDyiBtNpnQPzPtQPItMcYDiIE/1n78v7MEd9RkjEU0
-         jAFg6ua4DqsRaWtcFE97RWJ8OodPfLfd79MNh9vc3KsonphCBgmkj+QaeegbyYZnx7We
-         wJdA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mGX/Qw/QlAgVNhbc/CwDXm2ZrxOehhMz8zofTjV1tOE=;
+        b=OJIsuzgzNGmRV0oijngBJXHD1RhjsjgMEBxYJkrxN6bRa0/YoZgPQ882PIUtLO8C48
+         6pB3KozspwEMvRWTBwVj4a0p4GM6wMMEV69k7G89dgd7GtxN7/ZEwosYfawGxDx3ueAc
+         yac8jrt2dzJ7bUzjpgsZEZgSyDL+rhlQcUAUEkRKoZ1CAK80Wr+PfmilSzr4E8n3ZH7B
+         cNYEQ6Jh7QbV+nhcAw2m049J9atvvHHBcjWpaDIwRMDPbw5ZDFU7BlbgvsfgdZVZAHJ+
+         X/W9uu60vCySUthEbwHFfSJ68nkntiXLSCdQOXZ3+jUWSHeBQCFr6wRzqcGIrI+W1goD
+         jRcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hrxYiLpa3QTymxbUAIdHVm+JWAvpyOBH5sypJmOwe7c=;
-        b=n0jdN4MOFoUip/9eOgFQ1ZLOU8/IavC3uLf4Fj+q4j56lvN4em3N0T4zJKV/guNB0z
-         UBXwWhxANUFm1/zqdxLNjChFUmbgQ+BcXtzavdFqrzNWMJ2x8Ow5FMTYeLSEn2GNnTd3
-         3cPXgrkXL7wB+6U7vDfa/2FK4CSxMeO66N1Diwmga7O0jdCqZRJBNiMCpe30bmyddrjU
-         BOKSDpwKf/ucguribH+GxjzltpTDC9jOFIE2Lh7c+veIEVugEyx1k4krZk/06xGTT1bL
-         y7G1tHLAeLIiWKsV/M4CsXj6NQR1oyjq7YEH7heU5Au4ezEIjN+wzM5wkbJqpUf2RCZg
-         SgxA==
-X-Gm-Message-State: APjAAAWjztiDcbzqeAt1j8c5ArOUNomS+O/mqBbZkLl5N+j9LopZbVPk
-        6/BRUETQpZ7dcxwLVvuGYH4=
-X-Google-Smtp-Source: APXvYqxOfbxqVAk5joKQvTT+mo/q8KQ2fLmYjsAmLWIaeBZW9B+YiUDwVNl8ONBIKD3hkuRHy2tkIg==
-X-Received: by 2002:a1c:8086:: with SMTP id b128mr30595682wmd.80.1575361159979;
-        Tue, 03 Dec 2019 00:19:19 -0800 (PST)
-Received: from localhost.localdomain (p50991abe.dip0.t-ipconnect.de. [80.153.26.190])
-        by smtp.gmail.com with ESMTPSA id 188sm2048197wmz.13.2019.12.03.00.19.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 03 Dec 2019 00:19:19 -0800 (PST)
-From:   SeongJae Park <sj38.park@gmail.com>
-To:     brendanhiggins@google.com, shuah@kernel.org
-Cc:     corbet@lwn.net, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sjpark@amazon.de
-Subject: [PATCH v2 5/5] kunit: Rename 'kunitconfig' to '.kunitconfig'
-Date:   Tue,  3 Dec 2019 17:19:01 +0900
-Message-Id: <1575361141-6806-6-git-send-email-sj38.park@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575361141-6806-1-git-send-email-sj38.park@gmail.com>
-References: <1575361141-6806-1-git-send-email-sj38.park@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mGX/Qw/QlAgVNhbc/CwDXm2ZrxOehhMz8zofTjV1tOE=;
+        b=om5rtncL2k605YmRrjebYlNJ+rFrGEYJDX5JVAhZFSuhu8AgFBZGD8vksEWv9sjFET
+         d0vvaCl6A6kCsdoaIwTy/a7TBJF75HQ7vMKudGICdeUHcpf7V8JgKX80oB/1jlt+SzO/
+         7a5mqkaoSVUjZDWCUA+9bjzsiHAaY/qKKK0xCGmmkEYJgrYDrXupEH3FBPVCd2N0C2T2
+         QXQjoRD9OujjmjclywK8HUMFT/0tMH5Ct42OA5ZUD3Vhr+MgbksREaAGd3gitYqoJNdy
+         MBWujAZofvl4Yk3AdB2Za3RvkoPKbJnFrholmEJ2r3wZryfTMIghM5VJ6QIUapRvNjIK
+         jwTg==
+X-Gm-Message-State: APjAAAXkmaSlsf0c86GxuI+vm+7NzbJ3aUQodPaXy0+WoWbFPgSzO8RR
+        x6jcCW7kitvJhC7V2r6EplmlIA==
+X-Google-Smtp-Source: APXvYqyaVfBGooL9JepKXPJ5LeTcCb6fJCU9gsU8lH/OhfBnTDrtp7m6iPiwQY58K9rnXAELuK1+NQ==
+X-Received: by 2002:a17:90a:9bc7:: with SMTP id b7mr4191398pjw.72.1575361218554;
+        Tue, 03 Dec 2019 00:20:18 -0800 (PST)
+Received: from localhost ([122.171.112.123])
+        by smtp.gmail.com with ESMTPSA id g7sm2488969pfq.33.2019.12.03.00.20.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Dec 2019 00:20:17 -0800 (PST)
+Date:   Tue, 3 Dec 2019 13:50:16 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rui.zhang@intel.com, rjw@rjwysocki.net, edubezval@gmail.com,
+        linux-pm@vger.kernel.org, amit.kucheria@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 4/4] thermal/drivers/cpu_cooling: Rename to
+ cpufreq_cooling
+Message-ID: <20191203082016.i5imbaxk6glapmo6@vireshk-i7>
+References: <20191202202815.22731-1-daniel.lezcano@linaro.org>
+ <20191202202815.22731-4-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202202815.22731-4-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On 02-12-19, 21:28, Daniel Lezcano wrote:
+> As we introduced the idle injection cooling device called
+> cpuidle_cooling, let's be consistent and rename the cpu_cooling to
+> cpufreq_cooling as this one mitigates with OPPs changes.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/Makefile                             | 2 +-
+>  drivers/thermal/{cpu_cooling.c => cpufreq_cooling.c} | 0
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+>  rename drivers/thermal/{cpu_cooling.c => cpufreq_cooling.c} (100%)
+> 
+> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+> index 9c8aa2d4bd28..5c98472ffd8b 100644
+> --- a/drivers/thermal/Makefile
+> +++ b/drivers/thermal/Makefile
+> @@ -19,7 +19,7 @@ thermal_sys-$(CONFIG_THERMAL_GOV_USER_SPACE)	+= user_space.o
+>  thermal_sys-$(CONFIG_THERMAL_GOV_POWER_ALLOCATOR)	+= power_allocator.o
+>  
+>  # cpufreq cooling
+> -thermal_sys-$(CONFIG_CPU_FREQ_THERMAL)	+= cpu_cooling.o
+> +thermal_sys-$(CONFIG_CPU_FREQ_THERMAL)	+= cpufreq_cooling.o
+>  thermal_sys-$(CONFIG_CPU_IDLE_THERMAL)	+= cpuidle_cooling.o
+>  
+>  # clock cooling
+> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpufreq_cooling.c
+> similarity index 100%
+> rename from drivers/thermal/cpu_cooling.c
+> rename to drivers/thermal/cpufreq_cooling.c
 
-This commit renames 'kunitconfig' to '.kunitconfig' so that it can be
-automatically ignored by git and do not disturb people who want to type
-'kernel/' by pressing only the 'k' and then 'tab' key.
+This isn't enough. Please grep for cpu_cooling and you will see other places
+that you need to fix as well :)
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- Documentation/dev-tools/kunit/start.rst | 12 +++++-------
- tools/testing/kunit/kunit.py            |  2 +-
- tools/testing/kunit/kunit_kernel.py     |  4 ++--
- 3 files changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
-index 78a0aed..faa6fa9 100644
---- a/Documentation/dev-tools/kunit/start.rst
-+++ b/Documentation/dev-tools/kunit/start.rst
-@@ -21,18 +21,16 @@ The wrapper can be run with:
- 
-    ./tools/testing/kunit/kunit.py run
- 
--Creating a kunitconfig
--======================
-+Creating a .kunitconfig
-+=======================
- The Python script is a thin wrapper around Kbuild as such, it needs to be
--configured with a ``kunitconfig`` file. This file essentially contains the
-+configured with a ``.kunitconfig`` file. This file essentially contains the
- regular Kernel config, with the specific test targets as well.
- 
- .. code-block:: bash
- 
- 	cd $PATH_TO_LINUX_REPO
--	cp arch/um/configs/kunit_defconfig kunitconfig
--
--You may want to add kunitconfig to your local gitignore.
-+	cp arch/um/configs/kunit_defconfig .kunitconfig
- 
- Verifying KUnit Works
- ---------------------
-@@ -147,7 +145,7 @@ and the following to ``drivers/misc/Makefile``:
- 
- 	obj-$(CONFIG_MISC_EXAMPLE_TEST) += example-test.o
- 
--Now add it to your ``kunitconfig``:
-+Now add it to your ``.kunitconfig``:
- 
- .. code-block:: none
- 
-diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
-index 02a54d8..8c0b2c4 100755
---- a/tools/testing/kunit/kunit.py
-+++ b/tools/testing/kunit/kunit.py
-@@ -108,7 +108,7 @@ def main(argv, linux=None):
- 				type=str, default=None, metavar='build_dir')
- 
- 	run_parser.add_argument('--defconfig',
--				help='Uses a default kunitconfig.',
-+				help='Uses a default .kunitconfig.',
- 				action='store_true')
- 
- 	cli_args = parser.parse_args(argv)
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index 5bec97e..fca1933 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -14,7 +14,7 @@ import os
- import kunit_config
- 
- KCONFIG_PATH = '.config'
--kunitconfig_path = 'kunitconfig'
-+kunitconfig_path = '.kunitconfig'
- 
- class ConfigError(Exception):
- 	"""Represents an error trying to configure the Linux kernel."""
-@@ -111,7 +111,7 @@ class LinuxSourceTree(object):
- 		return True
- 
- 	def build_reconfig(self, build_dir):
--		"""Creates a new .config if it is not a subset of the kunitconfig."""
-+		"""Creates a new .config if it is not a subset of the .kunitconfig."""
- 		kconfig_path = get_kconfig_path(build_dir)
- 		if os.path.exists(kconfig_path):
- 			existing_kconfig = kunit_config.Kconfig()
 -- 
-2.7.4
-
+viresh
