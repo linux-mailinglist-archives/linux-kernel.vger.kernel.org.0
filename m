@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF165111CE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:48:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8B8111CE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:48:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729309AbfLCWs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:48:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
+        id S1729448AbfLCWsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:48:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729429AbfLCWsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:48:22 -0500
+        id S1729317AbfLCWs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:48:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64F682084B;
-        Tue,  3 Dec 2019 22:48:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3526820862;
+        Tue,  3 Dec 2019 22:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413301;
-        bh=SX2sF24SxxN0DTRfvAZ+p3qN/yPB1GS57zgjqYDAA+o=;
+        s=default; t=1575413307;
+        bh=MqOdMBcFN7cKpxoPq7s5s29VjuTXuCthvZFz0pCPqiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FHUDNhreEJDwCDV00pagPZKaNOv3u5PA+Oz4p99KhrTt5Y/JA7665wpgc/kyZAZ/W
-         G/CIh7X2CeuM69rjlEvFE1EZSFpFmuICPUvuraNgSEmahc2CV3gKfrwPJNVZgAhdTo
-         MHe8HCkfe7r/43HdzhZ49NczMspvEcW7V5uvKgpM=
+        b=xVnuhXVWZfmQ7YneRNSsKvFjG9SGzV2N2VF9tCs6KbPohVzkh7eFeTVOdSfqy4DDB
+         16t7c0RPHGyVtOVkZf/bpNb0pgTqw7y6GtdnlLssfw6Kdocv8Sj1ZT4mQ1/2Pi/Qop
+         umZ8XFE5rENHQR+JqLshkg0AYlC/eT7r8zJTVAfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 075/321] ARM: OMAP1: fix USB configuration for device-only setups
-Date:   Tue,  3 Dec 2019 23:32:21 +0100
-Message-Id: <20191203223431.063871371@linuxfoundation.org>
+Subject: [PATCH 4.19 077/321] arm64: preempt: Fix big-endian when checking preempt count in assembly
+Date:   Tue,  3 Dec 2019 23:32:23 +0100
+Message-Id: <20191203223431.166680020@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,49 +46,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit c7b7b5cbd0c859b1546a5a3455d457708bdadf4c ]
+[ Upstream commit 7faa313f05cad184e8b17750f0cbe5216ac6debb ]
 
-Currently we do USB configuration only if the host mode (CONFIG_USB)
-is enabled. But it should be done also in the case of device-only setups,
-so change the condition to CONFIG_USB_SUPPORT. This allows to use
-omap_udc on Palm Tungsten E.
+Commit 396244692232 ("arm64: preempt: Provide our own implementation of
+asm/preempt.h") extended the preempt count field in struct thread_info
+to 64 bits, so that it consists of a 32-bit count plus a 32-bit flag
+indicating whether or not the current task needs rescheduling.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Whilst the asm-offsets definition of TSK_TI_PREEMPT was updated to point
+to this new field, the assembly usage was left untouched meaning that a
+32-bit load from TSK_TI_PREEMPT on a big-endian machine actually returns
+the reschedule flag instead of the count.
+
+Whilst we could fix this by pointing TSK_TI_PREEMPT at the count field,
+we're actually better off reworking the two assembly users so that they
+operate on the whole 64-bit value in favour of inspecting the thread
+flags separately in order to determine whether a reschedule is needed.
+
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reported-by: "kernelci.org bot" <bot@kernelci.org>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/Makefile           | 2 +-
- arch/arm/mach-omap1/include/mach/usb.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/assembler.h | 8 +++-----
+ arch/arm64/kernel/entry.S          | 6 ++----
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/Makefile b/arch/arm/mach-omap1/Makefile
-index e8ccf51c6f292..ec0235899de20 100644
---- a/arch/arm/mach-omap1/Makefile
-+++ b/arch/arm/mach-omap1/Makefile
-@@ -25,7 +25,7 @@ obj-y					+= $(i2c-omap-m) $(i2c-omap-y)
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 5a97ac8531682..0c100506a29aa 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -683,11 +683,9 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
+ 	.macro		if_will_cond_yield_neon
+ #ifdef CONFIG_PREEMPT
+ 	get_thread_info	x0
+-	ldr		w1, [x0, #TSK_TI_PREEMPT]
+-	ldr		x0, [x0, #TSK_TI_FLAGS]
+-	cmp		w1, #PREEMPT_DISABLE_OFFSET
+-	csel		x0, x0, xzr, eq
+-	tbnz		x0, #TIF_NEED_RESCHED, .Lyield_\@	// needs rescheduling?
++	ldr		x0, [x0, #TSK_TI_PREEMPT]
++	sub		x0, x0, #PREEMPT_DISABLE_OFFSET
++	cbz		x0, .Lyield_\@
+ 	/* fall through to endif_yield_neon */
+ 	.subsection	1
+ .Lyield_\@ :
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 5f800384cb9a8..bb68323530458 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -622,10 +622,8 @@ el1_irq:
+ 	irq_handler
  
- led-y := leds.o
- 
--usb-fs-$(CONFIG_USB)			:= usb.o
-+usb-fs-$(CONFIG_USB_SUPPORT)		:= usb.o
- obj-y					+= $(usb-fs-m) $(usb-fs-y)
- 
- # Specific board support
-diff --git a/arch/arm/mach-omap1/include/mach/usb.h b/arch/arm/mach-omap1/include/mach/usb.h
-index 77867778d4ec7..5429d86c7190d 100644
---- a/arch/arm/mach-omap1/include/mach/usb.h
-+++ b/arch/arm/mach-omap1/include/mach/usb.h
-@@ -11,7 +11,7 @@
- 
- #include <linux/platform_data/usb-omap1.h>
- 
--#if IS_ENABLED(CONFIG_USB)
-+#if IS_ENABLED(CONFIG_USB_SUPPORT)
- void omap1_usb_init(struct omap_usb_config *pdata);
- #else
- static inline void omap1_usb_init(struct omap_usb_config *pdata)
+ #ifdef CONFIG_PREEMPT
+-	ldr	w24, [tsk, #TSK_TI_PREEMPT]	// get preempt count
+-	cbnz	w24, 1f				// preempt count != 0
+-	ldr	x0, [tsk, #TSK_TI_FLAGS]	// get flags
+-	tbz	x0, #TIF_NEED_RESCHED, 1f	// needs rescheduling?
++	ldr	x24, [tsk, #TSK_TI_PREEMPT]	// get preempt count
++	cbnz	x24, 1f				// preempt count != 0
+ 	bl	el1_preempt
+ 1:
+ #endif
 -- 
 2.20.1
 
