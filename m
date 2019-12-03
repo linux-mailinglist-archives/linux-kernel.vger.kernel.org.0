@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58533111DDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:59:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F7F111BF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730589AbfLCW5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:57:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53592 "EHLO mail.kernel.org"
+        id S1728062AbfLCWio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:38:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730361AbfLCW5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:57:44 -0500
+        id S1728036AbfLCWik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:38:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC20C2053B;
-        Tue,  3 Dec 2019 22:57:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 898D420684;
+        Tue,  3 Dec 2019 22:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413863;
-        bh=DeXZqWfdQmpH8xcGCtSwtUO03nsd2mpATwa+Nni2ybc=;
+        s=default; t=1575412720;
+        bh=+2CN5l6mJ8eMxZslm+VysI6hfxmKHCqxHd9jh/oSp9Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WjZqJovLmcMD0CDW/vHQdiyq+cQ2cEVgCly3pjWhpnHJDP/heIXmWODoAWCd3TUiJ
-         7o5WOA/9/cJqLBtAW3eI7uD52470/+gW5Eq1v7fvUntKizBbscehkK5quFHm0Bnl3N
-         Dy5BPfDelGBUtDGxuRPmyqpjfFFXgZpGP3WgFtH4=
+        b=fDzP1sU4X67u/Mj3nKpwXQm1WCsbS1a51Ka1l6vOBrzBQT2F9P6UnenaaU4hAOHy0
+         idogk3SPIWUK7UIcRWbCXpus1qS7o+BfRLKUshe+Zqe1tVJymzHF3O81BzJC+ZdtaA
+         3OYRCLtCK5ao2vS5Qhg4q7cvA92AVxDxvMepzw8E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         John Rutherford <john.rutherford@dektech.com.au>,
         Jon Maloy <jon.maloy@ericsson.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 290/321] tipc: fix link name length check
-Date:   Tue,  3 Dec 2019 23:35:56 +0100
-Message-Id: <20191203223442.233998868@linuxfoundation.org>
+Subject: [PATCH 5.4 37/46] tipc: fix link name length check
+Date:   Tue,  3 Dec 2019 23:35:57 +0100
+Message-Id: <20191203212758.728217209@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -67,7 +67,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/net/tipc/netlink_compat.c
 +++ b/net/tipc/netlink_compat.c
-@@ -548,7 +548,7 @@ static int tipc_nl_compat_link_stat_dump
+@@ -550,7 +550,7 @@ static int tipc_nl_compat_link_stat_dump
  	if (len <= 0)
  		return -EINVAL;
  
@@ -76,7 +76,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if (!string_is_valid(name, len))
  		return -EINVAL;
  
-@@ -830,7 +830,7 @@ static int tipc_nl_compat_link_reset_sta
+@@ -822,7 +822,7 @@ static int tipc_nl_compat_link_reset_sta
  	if (len <= 0)
  		return -EINVAL;
  
