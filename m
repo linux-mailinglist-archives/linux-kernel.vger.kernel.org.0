@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6365111CC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:48:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39194111CDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729272AbfLCWrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:47:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37236 "EHLO mail.kernel.org"
+        id S1729163AbfLCWsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:48:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728674AbfLCWrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:47:10 -0500
+        id S1729396AbfLCWsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:48:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF01320803;
-        Tue,  3 Dec 2019 22:47:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED2E620656;
+        Tue,  3 Dec 2019 22:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413229;
-        bh=GIM1rBHGL//1MEi1HpkGhR+sbhN+5rBTbBl27q9aGcE=;
+        s=default; t=1575413286;
+        bh=6ziXoorEpCDVd81qU1RUbKYkrr9kZ2VkhGB1ugj7cXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=toSWmjIEGfW0yAPJDt8oWP+8of1PFQU73wegVlamjCMONcOsqTu9nPuYrAII9C2L/
-         xnMJpDJkqLPlCGEoxR2nBWBqGS0zGGJuWS0ObVyu7c9Z87x6AnV9Oxr/pWXzBmxpTD
-         /byDZNcXDt20DssmpvCEvqgU2u568usLR+Rj7O9U=
+        b=kldZUAHwHejz1e4fddtUy+NNVz1f6eehkeyDxoghDKoF+aKmUEenHLYdB5g2gXNV9
+         jJZk68vU78kToTYweLoNmRsDLG4fGhSgpmr6lGHff/lMXn9CmbpDgQTbA49tZYKXUj
+         Fysb4x/IJtur1zod3ok0P2PKwxC9XS5zeLrA2TKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/321] net: mscc: ocelot: fix __ocelot_rmw_ix prototype
-Date:   Tue,  3 Dec 2019 23:31:47 +0100
-Message-Id: <20191203223429.248755444@linuxfoundation.org>
+Subject: [PATCH 4.19 043/321] net/fq_impl: Switch to kvmalloc() for memory allocation
+Date:   Tue,  3 Dec 2019 23:31:49 +0100
+Message-Id: <20191203223429.350978817@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,37 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
+From: Toke Høiland-Jørgensen <toke@redhat.com>
 
-[ Upstream commit 17fdd7638cb687cd7f15a48545f25d738f0101e0 ]
+[ Upstream commit 71e67c3bd127cfe7863f54e4b087eba1cc8f9a7a ]
 
-The "read-modify-write register index" function is declared with a
-confusing prototype: the "mask" and "reg" arguments are swapped.
+The FQ implementation used by mac80211 allocates memory using kmalloc(),
+which can fail; and Johannes reported that this actually happens in
+practice.
 
-Fortunately, this does not affect callers so far. Both arguments are
-u32, and the wrapper macros (ocelot_rmw_ix etc) have the arguments in
-the correct order (the one from ocelot_io.c).
+To avoid this, switch the allocation to kvmalloc() instead; this also
+brings fq_impl in line with all the FQ qdiscs.
 
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 557fc4a09803 ("fq: add fair queuing framework")
+Reported-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Link: https://lore.kernel.org/r/20191105155750.547379-1-toke@redhat.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mscc/ocelot.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/fq_impl.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
-index 616bec30dfa3f..3d8c6f38e76b9 100644
---- a/drivers/net/ethernet/mscc/ocelot.h
-+++ b/drivers/net/ethernet/mscc/ocelot.h
-@@ -541,7 +541,7 @@ void __ocelot_write_ix(struct ocelot *ocelot, u32 val, u32 reg, u32 offset);
- #define ocelot_write_rix(ocelot, val, reg, ri) __ocelot_write_ix(ocelot, val, reg, reg##_RSZ * (ri))
- #define ocelot_write(ocelot, val, reg) __ocelot_write_ix(ocelot, val, reg, 0)
+diff --git a/include/net/fq_impl.h b/include/net/fq_impl.h
+index 89a012905ef0b..4b3e18ff8e6f2 100644
+--- a/include/net/fq_impl.h
++++ b/include/net/fq_impl.h
+@@ -312,7 +312,7 @@ static int fq_init(struct fq *fq, int flows_cnt)
+ 	fq->limit = 8192;
+ 	fq->memory_limit = 16 << 20; /* 16 MBytes */
  
--void __ocelot_rmw_ix(struct ocelot *ocelot, u32 val, u32 reg, u32 mask,
-+void __ocelot_rmw_ix(struct ocelot *ocelot, u32 val, u32 mask, u32 reg,
- 		     u32 offset);
- #define ocelot_rmw_ix(ocelot, val, m, reg, gi, ri) __ocelot_rmw_ix(ocelot, val, m, reg, reg##_GSZ * (gi) + reg##_RSZ * (ri))
- #define ocelot_rmw_gix(ocelot, val, m, reg, gi) __ocelot_rmw_ix(ocelot, val, m, reg, reg##_GSZ * (gi))
+-	fq->flows = kcalloc(fq->flows_cnt, sizeof(fq->flows[0]), GFP_KERNEL);
++	fq->flows = kvcalloc(fq->flows_cnt, sizeof(fq->flows[0]), GFP_KERNEL);
+ 	if (!fq->flows)
+ 		return -ENOMEM;
+ 
+@@ -330,7 +330,7 @@ static void fq_reset(struct fq *fq,
+ 	for (i = 0; i < fq->flows_cnt; i++)
+ 		fq_flow_reset(fq, &fq->flows[i], free_func);
+ 
+-	kfree(fq->flows);
++	kvfree(fq->flows);
+ 	fq->flows = NULL;
+ }
+ 
 -- 
 2.20.1
 
