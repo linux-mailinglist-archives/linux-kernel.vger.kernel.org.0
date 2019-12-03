@@ -2,69 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D061105D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 21:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E62A1105DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 21:19:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfLCUSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 15:18:53 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:56051 "EHLO
+        id S1727493AbfLCUTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 15:19:51 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56103 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727309AbfLCUSx (ORCPT
+        by vger.kernel.org with ESMTP id S1726079AbfLCUTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 15:18:53 -0500
+        Tue, 3 Dec 2019 15:19:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575404331;
+        s=mimecast20190719; t=1575404390;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QzfchXBORmVAXVWCchalHt0Yn1js9G37mDNvONQ3Wls=;
-        b=BCuAMHPfyZpG8I9aKGXGyLHrazi+WMWRziA54L8OLUR63lFFMJX4KNo4qMZ//xec18ggK6
-        qss696NrS7Z15+TTPp6KgBi/bj60ECBf97p0GQLGR1XgRUSAtQ59h8ZUuNDxqjxoN7DmNA
-        +J67jEtogTZ1kj7dTcvXqLgr8Acopxk=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-436-zvL-YLsUOz--jNGYvX_WVg-1; Tue, 03 Dec 2019 15:18:50 -0500
-Received: by mail-qt1-f198.google.com with SMTP id t20so3343369qtr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 12:18:50 -0800 (PST)
+        bh=vvoBxuvp3G0/XLbvffQRipup1lCyNBJiGiUdnNoPbls=;
+        b=h7QOH9fKDTe8uO3xFTJ2KhQsA2cB/McXPPrqBTcP1ehOQd75gWcC0D0JDfzTEWefqzByjS
+        F5AKsNzJx4ate24mJFyEsBhJetX8KOeRfdlWxfecIqHFNE0VoZYKHvCu3cLTfH4k7q0R1K
+        6BcdOBQOC0zT8DTl0yZi35pV41pS4j4=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-24-aWMtr73wNcenDs-Qh4wH_g-1; Tue, 03 Dec 2019 15:19:48 -0500
+Received: by mail-qv1-f71.google.com with SMTP id a4so2993320qvn.14
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 12:19:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=1eT8WcO+phWqOZ5pmGdX1qqI1UY1VLfXJPwN7V6jCjo=;
-        b=jht9JJPtVzi6Wh3cYufEF55AhqTbEtQRUGdcJ13uS0qN0u+7V3WsTZS0chi4dvyu02
-         tCw/fvpFve9yLCW6qEkOcluHpKpOSA6wn2rDuTtp+PxnHtAp8/W9UFKYkI4keINmRhd0
-         GQSCcN3/TJBHyuz+BK/D/bqOvAdQIDWdUUtTJPALGJw8QLxNpoPyPNZUIlLVZ1CgOGB5
-         EL0BpZojceyu/qrnXGwY/whzmFEuwWouH+x4jK9bbkeKU1SeiZIO/HGXyhX6Pn+b612u
-         6UC3y0wAIjKtnh7lJ5yGXJY6090MLIYH+bJYZoQK88Etu9LnmFw1B8synWDXC+lzU5w1
-         Iq2A==
-X-Gm-Message-State: APjAAAVgDtI5eqKpayB/tD6nL0VqW3hg+2YjRWIN6CqwOBtiuGKEzN6L
-        9sYgWbaSFCnsr6GBSMr7h/4gQn8YhJk+9vGUb5P/Fmy2zsDDPK5DtVWe14n9dN71yWvsM5dU3pl
-        RxETrwPsZ99sUuh3pikrh12hy
-X-Received: by 2002:ae9:e30e:: with SMTP id v14mr6993492qkf.344.1575404329219;
-        Tue, 03 Dec 2019 12:18:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqysczwdd3R/V/nqPtkylMkEJge0arlFCdi6l3hYYdJyHzUT6UlaH9W1E/8BHEBhaPjqmCAnFg==
-X-Received: by 2002:ae9:e30e:: with SMTP id v14mr6993469qkf.344.1575404329019;
-        Tue, 03 Dec 2019 12:18:49 -0800 (PST)
+        bh=QmtzDLYDSTNcDSWhu8MKh0ZRRQ2IxQ2t+dts0IfGnuc=;
+        b=EaiSheX414WcpjobAnJMdMXpeyqojxM+W31GNjknW2Lio3VVv20ARluZ+0KcJzgxjs
+         TMv1lmMHUxzc1lMtEZfi07PE8Jfo4uprrcEib847xdpcPfdlaasmNOmvO6Y/bGTJNXq7
+         +vG+SiillDaWYmIl9XY6xh9nUgMD/B+vq5yQsCmTZRdO4+6EnPFRVbBI5vVwxg9oQYOT
+         fGWRJ0ZyRYZan6DC3gDeurgYdc+dehrrAbC99PN05jCbCqaaFBF3o52C1h80FDDhDPHH
+         SnwtHzobXnJLdQt9TZiXxowVZhVwPEcU8p0mkPo0OpxdrV8/jKWM913Q9c10fJByWwtC
+         yarg==
+X-Gm-Message-State: APjAAAVUggoVS1Ti7QDYdPedi/1RzW9iG+67slAexHr13X4Fcd0FNI0Q
+        1DAlpoF95KAgQkAnQ8Yu+KbkDeVdNw02T+3aQQr/QLnr7mT09XgHoXzqhDhjCefYF3FApr4kH/I
+        /QxYcqevQnMGmz++kjtbnO/FX
+X-Received: by 2002:a05:620a:210e:: with SMTP id l14mr7328301qkl.18.1575404388181;
+        Tue, 03 Dec 2019 12:19:48 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzNAGftONrxG7OOOmA1p2XeS+kBT15c+ObkoyL77kRsuzntoDuyINOMAAxBlSMFnthhkga2lw==
+X-Received: by 2002:a05:620a:210e:: with SMTP id l14mr7328279qkl.18.1575404387958;
+        Tue, 03 Dec 2019 12:19:47 -0800 (PST)
 Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id s127sm2357687qkc.44.2019.12.03.12.18.45
+        by smtp.gmail.com with ESMTPSA id s44sm2425816qts.22.2019.12.03.12.19.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 12:18:48 -0800 (PST)
-Date:   Tue, 3 Dec 2019 15:18:43 -0500
+        Tue, 03 Dec 2019 12:19:47 -0800 (PST)
+Date:   Tue, 3 Dec 2019 15:19:42 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     linux-kernel@vger.kernel.org, Julio Faracco <jcfaracco@gmail.com>
 Cc:     netdev@vger.kernel.org, davem@davemloft.net, mst@redhat.com,
         jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        dnmendes76@gmail.com, Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH RFC net-next v8 3/3] netronome: use the new txqueue timeout
- argument
-Message-ID: <20191203201804.662066-4-mst@redhat.com>
+        dnmendes76@gmail.com
+Subject: [PATCH RFC net-next v8 2/3] mlx4: use new txqueue timeout argument
+Message-ID: <20191203201804.662066-3-mst@redhat.com>
 References: <20191203201804.662066-1-mst@redhat.com>
 MIME-Version: 1.0
 In-Reply-To: <20191203201804.662066-1-mst@redhat.com>
 X-Mailer: git-send-email 2.22.0.678.g13338e74b8
 X-Mutt-Fcc: =sent
-X-MC-Unique: zvL-YLsUOz--jNGYvX_WVg-1
+X-MC-Unique: aWMtr73wNcenDs-Qh4wH_g-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
@@ -75,38 +74,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 ---
 
-Changes from v7:
-=09combine two warnings into one
+changes from v7:
+=09build fix
 
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/=
-net/ethernet/netronome/nfp/nfp_net_common.c
-index 41a808b14d76..eb1f9bed4833 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -1323,14 +1323,8 @@ nfp_net_tx_ring_reset(struct nfp_net_dp *dp, struct =
-nfp_net_tx_ring *tx_ring)
- static void nfp_net_tx_timeout(struct net_device *netdev, unsigned int txq=
-ueue)
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/e=
+thernet/mellanox/mlx4/en_netdev.c
+index aa348230bd39..2c2ff1f0ea6d 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -1367,20 +1367,14 @@ static void mlx4_en_tx_timeout(struct net_device *d=
+ev, unsigned int txqueue)
  {
- =09struct nfp_net *nn =3D netdev_priv(netdev);
+ =09struct mlx4_en_priv *priv =3D netdev_priv(dev);
+ =09struct mlx4_en_dev *mdev =3D priv->mdev;
 -=09int i;
++=09struct mlx4_en_tx_ring *tx_ring =3D priv->tx_ring[TX][txqueue];
 =20
--=09for (i =3D 0; i < nn->dp.netdev->real_num_tx_queues; i++) {
--=09=09if (!netif_tx_queue_stopped(netdev_get_tx_queue(netdev, i)))
+ =09if (netif_msg_timer(priv))
+ =09=09en_warn(priv, "Tx timeout called on port:%d\n", priv->port);
+=20
+-=09for (i =3D 0; i < priv->tx_ring_num[TX]; i++) {
+-=09=09struct mlx4_en_tx_ring *tx_ring =3D priv->tx_ring[TX][i];
+-
+-=09=09if (!netif_tx_queue_stopped(netdev_get_tx_queue(dev, i)))
 -=09=09=09continue;
--=09=09nn_warn(nn, "TX timeout on ring: %d\n", i);
+-=09=09en_warn(priv, "TX timeout on queue: %d, QP: 0x%x, CQ: 0x%x, Cons: 0x=
+%x, Prod: 0x%x\n",
+-=09=09=09i, tx_ring->qpn, tx_ring->sp_cqn,
+-=09=09=09tx_ring->cons, tx_ring->prod);
 -=09}
--=09nn_warn(nn, "TX watchdog timeout\n");
-+=09nn_warn(nn, "TX watchdog timeout on ring: %u\n", txqueue);
- }
++=09en_warn(priv, "TX timeout on queue: %d, QP: 0x%x, CQ: 0x%x, Cons: 0x%x,=
+ Prod: 0x%x\n",
++=09=09txqueue, tx_ring->qpn, tx_ring->sp_cqn,
++=09=09tx_ring->cons, tx_ring->prod);
 =20
- /* Receive processing
+ =09priv->port_stats.tx_timeout++;
+ =09en_dbg(DRV, priv, "Scheduling watchdog\n");
 --=20
 MST
 
