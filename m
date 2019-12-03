@@ -2,221 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6ED710FF21
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:48:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E95CB10FF36
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 14:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLCNsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 08:48:45 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20326 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726330AbfLCNsn (ORCPT
+        id S1726957AbfLCNt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 08:49:29 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58424 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726086AbfLCNt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:48:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575380921;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2426TUXH46Dvbw7yzD1hSMTjB99OXECttwgkoFd/DRo=;
-        b=VsFJBHH0VVa/qyNMUtytPY/+epTaxLEVw5/wspYCVVau1GJrGZzTWFJcIaeYWlnht5BVAi
-        ZfESldp1BCcyMDaskzDw/ag3oksqrR1ttVmF7v5SIiEXsO2WZKj279mxF6o0fxXAmSOS/D
-        N/6rOPDJF/st0OP+ATNeaDn8xhOuOJw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-176-dR6Bu5Q8O12bf7__N6_-gQ-1; Tue, 03 Dec 2019 08:48:38 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55C6E800D41;
-        Tue,  3 Dec 2019 13:48:37 +0000 (UTC)
-Received: from bfoster (dhcp-41-2.bos.redhat.com [10.18.41.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A51715C28F;
-        Tue,  3 Dec 2019 13:48:36 +0000 (UTC)
-Date:   Tue, 3 Dec 2019 08:48:36 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     syzbot <syzbot+c732f8644185de340492@syzkaller.appspotmail.com>
-Cc:     darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in xlog_alloc_log (2)
-Message-ID: <20191203134836.GC18418@bfoster>
-References: <00000000000087c51905988b297b@google.com>
+        Tue, 3 Dec 2019 08:49:29 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB3DgIOx015268;
+        Tue, 3 Dec 2019 14:49:12 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=aUjKg25Cf5lmzJtCypgppJCtT5TP5s8zd2LxslojreM=;
+ b=PTM6wWmLt9Y003352fCUqBlRRhPfMu0x8vr+cavl7iwkYIs3Wp/3h7xfKxYfKjchot8i
+ 4ly7ScOQfx8Umpb5A+tPj107dduvFxTwslZ5ViHFkNU5cq5y2kCDuT7L4NQaTdShdDdq
+ lGfnYg/C7qc8L2sYqP6rEYzTxCi8gfUXgVJtUQ2tWPmXpPpr9MSFDN963X93RxsdVwWL
+ mLnmz96pGFKDlzQOYPI7rhpOB/7FGr0nM49Cq6oI3au8mVOdYO6Y9DYnnqiSlJVWgvac
+ S9D2v0U2iO9IAb0Vhd+K0wT8GZ1qDkv/bj1ucor6g6qWHGHrROePzh3b7aF5nu6BzjgP Bg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2wkg6kfhfa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Dec 2019 14:49:11 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3F111100034;
+        Tue,  3 Dec 2019 14:49:11 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B8502BC7AF;
+        Tue,  3 Dec 2019 14:49:11 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Dec 2019 14:49:10
+ +0100
+From:   Pascal Paillet <p.paillet@st.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <p.paillet@st.com>
+Subject: [PATCH] regulator: Convert stm32-pwr regulator to json-schema
+Date:   Tue, 3 Dec 2019 14:49:10 +0100
+Message-ID: <20191203134910.26470-1-p.paillet@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <00000000000087c51905988b297b@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: dR6Bu5Q8O12bf7__N6_-gQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-03_03:2019-12-02,2019-12-03 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 11:19:08PM -0800, syzbot wrote:
-> Hello,
->=20
-> syzbot found the following crash on:
->=20
-> HEAD commit:    81b6b964 Merge branch 'master' of git://git.kernel.org/pu=
-b..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13b27696e0000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D773597fe8d7cb=
-41a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc732f8644185de3=
-40492
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->=20
-> Unfortunately, I don't have any reproducer for this crash yet.
->=20
+Convert the stm32-pwr regulator binding to DT schema format using
+json-schema.
 
-It looks like the out_free_iclog: error path in xlog_alloc_log() doesn't
-handle the case of a fully initialized iclog list. It uses an iclog !=3D
-NULL check to terminate the freeing loop, and that might never occur if
-we failed after the linked list was set up. I've confirmed with a simple
-error injection test and will send a patch..
+Signed-off-by: Pascal Paillet <p.paillet@st.com>
+---
+ .../regulator/st,stm32mp1-pwr-reg.txt         | 43 ------------
+ .../regulator/st,stm32mp1-pwr-reg.yaml        | 67 +++++++++++++++++++
+ 2 files changed, 67 insertions(+), 43 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
 
-Brian
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit=
-:
-> Reported-by: syzbot+c732f8644185de340492@syzkaller.appspotmail.com
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: use-after-free in xlog_alloc_log+0x1398/0x14b0
-> fs/xfs/xfs_log.c:1495
-> Read of size 8 at addr ffff888068139890 by task syz-executor.3/32544
->=20
-> CPU: 0 PID: 32544 Comm: syz-executor.3 Not tainted 5.4.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x197/0x210 lib/dump_stack.c:118
->  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:=
-374
->  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
->  kasan_report+0x12/0x20 mm/kasan/common.c:634
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
->  xlog_alloc_log+0x1398/0x14b0 fs/xfs/xfs_log.c:1495
->  xfs_log_mount+0xdc/0x780 fs/xfs/xfs_log.c:599
->  xfs_mountfs+0xdb9/0x1be0 fs/xfs/xfs_mount.c:811
->  xfs_fs_fill_super+0xd24/0x1750 fs/xfs/xfs_super.c:1732
->  mount_bdev+0x304/0x3c0 fs/super.c:1415
->  xfs_fs_mount+0x35/0x40 fs/xfs/xfs_super.c:1806
->  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
->  vfs_get_tree+0x8e/0x300 fs/super.c:1545
->  do_new_mount fs/namespace.c:2822 [inline]
->  do_mount+0x135a/0x1b50 fs/namespace.c:3142
->  ksys_mount+0xdb/0x150 fs/namespace.c:3351
->  __do_sys_mount fs/namespace.c:3365 [inline]
->  __se_sys_mount fs/namespace.c:3362 [inline]
->  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3362
->  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x45d0ca
-> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 4d 8c fb ff c3 66 2e 0=
-f
-> 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
- ff
-> 0f 83 2a 8c fb ff c3 66 0f 1f 84 00 00 00 00 00
-> RSP: 002b:00007f525b430a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007f525b430b40 RCX: 000000000045d0ca
-> RDX: 00007f525b430ae0 RSI: 0000000020000100 RDI: 00007f525b430b00
-> RBP: 0000000000000001 R08: 00007f525b430b40 R09: 00007f525b430ae0
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000004
-> R13: 00000000004ca258 R14: 00000000004e2870 R15: 00000000ffffffff
->=20
-> Allocated by task 32544:
->  save_stack+0x23/0x90 mm/kasan/common.c:69
->  set_track mm/kasan/common.c:77 [inline]
->  __kasan_kmalloc mm/kasan/common.c:510 [inline]
->  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:483
->  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:524
->  __do_kmalloc mm/slab.c:3655 [inline]
->  __kmalloc+0x163/0x770 mm/slab.c:3664
->  kmalloc include/linux/slab.h:561 [inline]
->  kmem_alloc+0x15b/0x4d0 fs/xfs/kmem.c:21
->  kmem_zalloc fs/xfs/kmem.h:68 [inline]
->  xlog_alloc_log+0xcce/0x14b0 fs/xfs/xfs_log.c:1437
->  xfs_log_mount+0xdc/0x780 fs/xfs/xfs_log.c:599
->  xfs_mountfs+0xdb9/0x1be0 fs/xfs/xfs_mount.c:811
->  xfs_fs_fill_super+0xd24/0x1750 fs/xfs/xfs_super.c:1732
->  mount_bdev+0x304/0x3c0 fs/super.c:1415
->  xfs_fs_mount+0x35/0x40 fs/xfs/xfs_super.c:1806
->  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
->  vfs_get_tree+0x8e/0x300 fs/super.c:1545
->  do_new_mount fs/namespace.c:2822 [inline]
->  do_mount+0x135a/0x1b50 fs/namespace.c:3142
->  ksys_mount+0xdb/0x150 fs/namespace.c:3351
->  __do_sys_mount fs/namespace.c:3365 [inline]
->  __se_sys_mount fs/namespace.c:3362 [inline]
->  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3362
->  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->=20
-> Freed by task 32544:
->  save_stack+0x23/0x90 mm/kasan/common.c:69
->  set_track mm/kasan/common.c:77 [inline]
->  kasan_set_free_info mm/kasan/common.c:332 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:471
->  kasan_slab_free+0xe/0x10 mm/kasan/common.c:480
->  __cache_free mm/slab.c:3425 [inline]
->  kfree+0x10a/0x2c0 mm/slab.c:3756
->  kvfree+0x61/0x70 mm/util.c:593
->  kmem_free fs/xfs/kmem.h:61 [inline]
->  xlog_alloc_log+0xeb5/0x14b0 fs/xfs/xfs_log.c:1497
->  xfs_log_mount+0xdc/0x780 fs/xfs/xfs_log.c:599
->  xfs_mountfs+0xdb9/0x1be0 fs/xfs/xfs_mount.c:811
->  xfs_fs_fill_super+0xd24/0x1750 fs/xfs/xfs_super.c:1732
->  mount_bdev+0x304/0x3c0 fs/super.c:1415
->  xfs_fs_mount+0x35/0x40 fs/xfs/xfs_super.c:1806
->  legacy_get_tree+0x108/0x220 fs/fs_context.c:647
->  vfs_get_tree+0x8e/0x300 fs/super.c:1545
->  do_new_mount fs/namespace.c:2822 [inline]
->  do_mount+0x135a/0x1b50 fs/namespace.c:3142
->  ksys_mount+0xdb/0x150 fs/namespace.c:3351
->  __do_sys_mount fs/namespace.c:3365 [inline]
->  __se_sys_mount fs/namespace.c:3362 [inline]
->  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3362
->  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->=20
-> The buggy address belongs to the object at ffff888068139800
->  which belongs to the cache kmalloc-1k of size 1024
-> The buggy address is located 144 bytes inside of
->  1024-byte region [ffff888068139800, ffff888068139c00)
-> The buggy address belongs to the page:
-> page:ffffea0001a04e40 refcount:1 mapcount:0 mapping:ffff8880aa400c40
-> index:0x0
-> raw: 00fffe0000000200 ffffea0002728148 ffffea00015604c8 ffff8880aa400c40
-> raw: 0000000000000000 ffff888068139000 0000000100000002 0000000000000000
-> page dumped because: kasan: bad access detected
->=20
-> Memory state around the buggy address:
->  ffff888068139780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff888068139800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff888068139880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                          ^
->  ffff888068139900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff888068139980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->=20
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
+deleted file mode 100644
+index e372dd3f0c8a..000000000000
+--- a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
++++ /dev/null
+@@ -1,43 +0,0 @@
+-STM32MP1 PWR Regulators
+------------------------
+-
+-Available Regulators in STM32MP1 PWR block are:
+-  - reg11 for regulator 1V1
+-  - reg18 for regulator 1V8
+-  - usb33 for the swtich USB3V3
+-
+-Required properties:
+-- compatible: Must be "st,stm32mp1,pwr-reg"
+-- list of child nodes that specify the regulator reg11, reg18 or usb33
+-  initialization data for defined regulators. The definition for each of
+-  these nodes is defined using the standard binding for regulators found at
+-  Documentation/devicetree/bindings/regulator/regulator.txt.
+-- vdd-supply: phandle to the parent supply/regulator node for vdd input
+-- vdd_3v3_usbfs-supply: phandle to the parent supply/regulator node for usb33
+-
+-Example:
+-
+-pwr_regulators: pwr@50001000 {
+-	compatible = "st,stm32mp1,pwr-reg";
+-	reg = <0x50001000 0x10>;
+-	vdd-supply = <&vdd>;
+-	vdd_3v3_usbfs-supply = <&vdd_usb>;
+-
+-	reg11: reg11 {
+-		regulator-name = "reg11";
+-		regulator-min-microvolt = <1100000>;
+-		regulator-max-microvolt = <1100000>;
+-	};
+-
+-	reg18: reg18 {
+-		regulator-name = "reg18";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-	};
+-
+-	usb33: usb33 {
+-		regulator-name = "usb33";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+new file mode 100644
+index 000000000000..f661728ebdeb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/st,stm32mp1-pwr-reg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STM32MP1 PWR voltage regulators
++
++maintainers:
++  - Pascal Paillet <p.paillet@st.com>
++
++allOf:
++  - $ref: "regulator.yaml#"
++
++properties:
++  compatible:
++    const: st,stm32mp1,pwr-reg
++
++  reg:
++    maxItems: 1
++
++  vdd-supply:
++    description: Input supply phandle(s) for vdd input
++
++  vdd_3v3_usbfs-supply:
++    description: Input supply phandle(s) for vdd_3v3_usbfs input
++
++patternProperties:
++  "^(reg11|reg18|usb33)":
++    type: object
++
++    allOf:
++      - $ref: "regulator.yaml#"
++
++required:
++   - compatible
++   - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pwr@50001000 {
++      compatible = "st,stm32mp1,pwr-reg";
++      reg = <0x50001000 0x10>;
++      vdd-supply = <&vdd>;
++      vdd_3v3_usbfs-supply = <&vdd_usb>;
++
++      reg11 {
++        regulator-name = "reg11";
++        regulator-min-microvolt = <1100000>;
++        regulator-max-microvolt = <1100000>;
++      };
++
++      reg18 {
++        regulator-name = "reg18";
++        regulator-min-microvolt = <1800000>;
++        regulator-max-microvolt = <1800000>;
++      };
++
++      usb33 {
++        regulator-name = "usb33";
++        regulator-min-microvolt = <3300000>;
++        regulator-max-microvolt = <3300000>;
++      };
++    };
++...
+-- 
+2.17.1
 
