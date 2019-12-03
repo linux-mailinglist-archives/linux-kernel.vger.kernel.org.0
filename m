@@ -2,81 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95EF5111EC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:04:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A259111F30
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730416AbfLCXEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:04:30 -0500
-Received: from valentin-vidic.from.hr ([94.229.67.141]:59581 "EHLO
-        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729913AbfLCWvi (ORCPT
+        id S1728116AbfLCWpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:45:22 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42343 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728773AbfLCWpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:51:38 -0500
-X-Greylist: delayed 368 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Dec 2019 17:51:37 EST
-X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
-Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
-        id 30A4B239; Tue,  3 Dec 2019 23:45:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-        d=valentin-vidic.from.hr; s=2017; t=1575413122;
-        bh=pW9/x/Zaa3RBLFywltpoZxMRWGFuvmhPgETDh4Fc5RA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=IboLnfXAwYBH5cDl563Z2p5sUk3zV8gtKgyIx/XyP86yTJ2r3n79OTDACpt5Eis1+
-         BcK+IDjy82l6MgnAupVWz3UcXYSnEGXouP3E5jEmlwISUFL9yLAPJGTmVB3sTqSlgX
-         TQ4TrXqInWPMqIjejWn4MQea7aBs2cYhCYpkG1A4xoaVav2+pcb7e50BGATudGcSZY
-         J3mYfEEQiRX/Rc57jvKXturlpqbDFohMPjbZhNUVsyd59TqroBUQcTS2Ni48zW9JDi
-         ZviYxGuIOKP8IPfkF9f7ANI44vSDADmp7E4I2eDUa5aN6uCTYV1iA/xvvjXoTpYO7p
-         zYMWszZNzrsKA==
-From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
-To:     Boris Pismenny <borisp@mellanox.com>,
-        Aviad Yehezkel <aviadye@mellanox.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Valentin Vidic <vvidic@valentin-vidic.from.hr>
-Subject: [PATCH] net/tls: Fix return values for setsockopt
-Date:   Tue,  3 Dec 2019 23:44:58 +0100
-Message-Id: <20191203224458.24338-1-vvidic@valentin-vidic.from.hr>
-X-Mailer: git-send-email 2.20.1
+        Tue, 3 Dec 2019 17:45:15 -0500
+Received: by mail-pf1-f194.google.com with SMTP id l22so2556509pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:45:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qd7P+RAsKeedZrqHSNazeNqcDpe7+eVvkyWsa2Q207Q=;
+        b=iXMrnw93nP/soNBqfRzeL/LguWO2PkOg2jKyU1LfmhQ8cwNGaFd8qWTj1ngdPLbuZs
+         2V4t+5GyeScz7/QEokG4fQ+4fgTCRXC5hc6v+uUyIW/eepTWFvSu+HQA017iTYKOaN1t
+         fNOxy5KxTaiI/RBqvWjCH8e03nPVxe/jBysKTJWN9v9olf6QeUWbxPqaMdVSFELa+ZnT
+         Yh8wD4+Cagsxb4NudI+PNBY6O5OnrZ7ihaB8UKAHI4Xq1X7o2bVir7T3/0hy0/wiWvJR
+         2qSKD1ImpOVpVwTR7efn5Oxc4qTw24IFdfabSYnAt8ljytwn9zlOfL5FjtOq2T+VwFa5
+         DMmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qd7P+RAsKeedZrqHSNazeNqcDpe7+eVvkyWsa2Q207Q=;
+        b=S84n0KvfBj5y/0HeYkMtHMPj52nMulE9GZCHM4/FzHVG8gBW1b7JsYlzcJu7QSZ1LK
+         eGl7kUmF02k2SZUwUOoU4iDpEnyxUt5ithG6suOg8nCZGjj+vEtGea2lTcNSfziugXvW
+         JTjNCbLZhFezvaDkbVhMd0rdT14gRfxMXCQna4Vo3ifSaD0qx5EClFOl6Uxmq7UjJz43
+         ly//BfE/Z3J6dcsWo3iFr6bBMpDW+PovK6YJKxGW4JYk7tMxWLZ54sVD98lgPZiEFLW7
+         +H1Wrt67H0UhB8RXzUY0lbkUaihoYvK5C0288cpeeO6v1SIbdzWv5Z86sNU8fhIjJche
+         laQQ==
+X-Gm-Message-State: APjAAAWBodaLM8TRRBNp3hkRm58c9f1Z/Xjy+mh5euH4LDMO3BSeCrgX
+        Osy45+1RHl8PV2EQH2gFaQ7Y7AbUcXrFpI+P9Wj48ypbGGGS3g==
+X-Google-Smtp-Source: APXvYqwcKBHbJdc+KCshtot/o7I0++tDm8qDfLRf4tv06Kw+/aPlM9T1C8nXAryH6sAPWx+2axjFe1oWQ0uD10x8T1Q=
+X-Received: by 2002:a63:480f:: with SMTP id v15mr22272pga.201.1575413114597;
+ Tue, 03 Dec 2019 14:45:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com> <1575374868-32601-5-git-send-email-alan.maguire@oracle.com>
+In-Reply-To: <1575374868-32601-5-git-send-email-alan.maguire@oracle.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 3 Dec 2019 14:45:03 -0800
+Message-ID: <CAFd5g45vriC61WvPL_FMbTUjJTRqHW6_Le=7PcMiR-rFmf_9wQ@mail.gmail.com>
+Subject: Re: [PATCH v5 linux-kselftest-test 4/6] kunit: remove timeout
+ dependence on sysctl_hung_task_timeout_seconds
+To:     Alan Maguire <alan.maguire@oracle.com>
+Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Gow <davidgow@google.com>, adilger.kernel@dilger.ca,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Knut Omang <knut.omang@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ENOTSUPP is not available in userspace:
+On Tue, Dec 3, 2019 at 4:08 AM Alan Maguire <alan.maguire@oracle.com> wrote:
+>
+> In discussion of how to handle timeouts, it was noted that if
+> sysctl_hung_task_timeout_seconds is exceeded for a kunit test,
+> the test task will be killed and an oops generated.  This should
+> suffice as a means of debugging such timeout issues for now.
+>
+> Hence remove use of sysctl_hung_task_timeout_secs, which has the
+> added benefit of avoiding the need to export that symbol from
+> the core kernel.
+>
+> Co-developed-by: Knut Omang <knut.omang@oracle.com>
+> Signed-off-by: Knut Omang <knut.omang@oracle.com>
+> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-  setsockopt failed, 524, Unknown error 524
-
-Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
----
- net/tls/tls_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index bdca31ffe6da..5830b8e02a36 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -496,7 +496,7 @@ static int do_tls_setsockopt_conf(struct sock *sk, char __user *optval,
- 	/* check version */
- 	if (crypto_info->version != TLS_1_2_VERSION &&
- 	    crypto_info->version != TLS_1_3_VERSION) {
--		rc = -ENOTSUPP;
-+		rc = -EINVAL;
- 		goto err_crypto_info;
- 	}
- 
-@@ -723,7 +723,7 @@ static int tls_init(struct sock *sk)
- 	 * share the ulp context.
- 	 */
- 	if (sk->sk_state != TCP_ESTABLISHED)
--		return -ENOTSUPP;
-+		return -ENOTCONN;
- 
- 	/* allocate tls context */
- 	write_lock_bh(&sk->sk_callback_lock);
--- 
-2.20.1
-
+Acked-by: Brendan Higgins <brendanhiggins@google.com>
