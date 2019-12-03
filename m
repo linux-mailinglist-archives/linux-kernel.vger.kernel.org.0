@@ -2,235 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE6B10FDDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A317910FDD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:40:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfLCMlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:41:24 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725997AbfLCMlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:41:23 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 87ECA5F4C71101B31B1E;
-        Tue,  3 Dec 2019 20:41:21 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 3 Dec 2019 20:41:15 +0800
-From:   Hongbo Yao <yaohongbo@huawei.com>
-To:     <linuxarm@huawei.com>, <robdclark@gmail.com>, <sean@poorly.run>,
-        <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <linux-kernel@vger.kernel.org>
-CC:     <yaohongbo@huawei.com>
-Subject: [PATCH] drm/msm/dpu: Fix compile warnings
-Date:   Tue, 3 Dec 2019 20:38:58 +0800
-Message-ID: <20191203123858.17036-1-yaohongbo@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726182AbfLCMk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:40:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:30336 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726098AbfLCMk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:40:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 04:40:26 -0800
+X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
+   d="scan'208";a="204961932"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 04:40:21 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lee Shawn C <shawn.c.lee@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] drm/i915: Assume 100% brightness when not in DPCD control mode
+In-Reply-To: <20191122231616.2574-3-lyude@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191122231616.2574-1-lyude@redhat.com> <20191122231616.2574-3-lyude@redhat.com>
+Date:   Tue, 03 Dec 2019 14:40:18 +0200
+Message-ID: <87tv6hinv1.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the following command will get compile warnings:
-make W=1 drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.o ARCH=arm64
+On Fri, 22 Nov 2019, Lyude Paul <lyude@redhat.com> wrote:
+> Currently we always determine the initial panel brightness level by
+> simply reading the value from DP_EDP_BACKLIGHT_BRIGHTNESS_MSB/LSB. This
+> seems wrong though, because if the panel is not currently in DPCD
+> control mode there's not really any reason why there would be any
+> brightness value programmed in the first place.
+>
+> This appears to be the case on the Lenovo ThinkPad X1 Extreme 2nd
+> Generation, where the default value in these registers is always 0 on
+> boot despite the fact the panel runs at max brightness by default.
+> Getting the initial brightness value correct here is important as well,
+> since the panel on this laptop doesn't behave well if it's ever put into
+> DPCD control mode while the brightness level is programmed to 0.
+>
+> So, let's fix this by checking what the current backlight control mode
+> is before reading the brightness level. If it's in DPCD control mode, we
+> return the programmed brightness level. Otherwise we assume 100%
+> brightness and return the highest possible brightness level. This also
+> prevents us from accidentally programming a brightness level of 0.
+>
+> This is one of the many fixes that gets backlight controls working on
+> the ThinkPad X1 Extreme 2nd Generation with optional 4K AMOLED screen.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  .../gpu/drm/i915/display/intel_dp_aux_backlight.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
+> index fad470553cf9..0bf8772bc7bb 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
+> @@ -59,8 +59,23 @@ static u32 intel_dp_aux_get_backlight(struct intel_connector *connector)
+>  {
+>  	struct intel_dp *intel_dp = enc_to_intel_dp(&connector->encoder->base);
+>  	u8 read_val[2] = { 0x0 };
+> +	u8 control_reg;
+>  	u16 level = 0;
+>  
+> +	if (drm_dp_dpcd_readb(&intel_dp->aux, DP_EDP_DISPLAY_CONTROL_REGISTER,
 
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function
-‘_dpu_crtc_program_lm_output_roi’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:91:19: warning: variable
-‘dpu_crtc’ set but not used [-Wunused-but-set-variable]
-  struct dpu_crtc *dpu_crtc;
-                   ^~~~~~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function
-‘dpu_crtc_atomic_begin’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:428:35: warning: variable
-‘smmu_state’ set but not used [-Wunused-but-set-variable]
-  struct dpu_crtc_smmu_state_data *smmu_state;
-                                   ^~~~~~~~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function
-‘dpu_crtc_atomic_flush’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:489:25: warning: variable
-‘event_thread’ set but not used [-Wunused-but-set-variable]
-  struct msm_drm_thread *event_thread;
-                         ^~~~~~~~~~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function
-‘dpu_crtc_destroy_state’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:565:19: warning: variable
-‘dpu_crtc’ set but not used [-Wunused-but-set-variable]
-  struct dpu_crtc *dpu_crtc;
-                   ^~~~~~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function
-‘dpu_crtc_duplicate_state’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:664:19: warning: variable
-‘dpu_crtc’ set but not used [-Wunused-but-set-variable]
-  struct dpu_crtc *dpu_crtc;
-                   ^~~~~~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function
-‘dpu_crtc_disable’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:693:26: warning: variable
-‘priv’ set but not used [-Wunused-but-set-variable]
-  struct msm_drm_private *priv;
-                          ^~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:691:27: warning: variable
-‘mode’ set but not used [-Wunused-but-set-variable]
-  struct drm_display_mode *mode;
-                           ^~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function ‘dpu_crtc_enable’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:766:26: warning: variable
-‘priv’ set but not used [-Wunused-but-set-variable]
-  struct msm_drm_private *priv;
-                          ^~~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c: In function ‘dpu_crtc_init’:
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:1292:18: warning: variable
-‘kms’ set but not used [-Wunused-but-set-variable]
-  struct dpu_kms *kms = NULL;
-                  ^~~
-drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c:663: warning: Excess function
-parameter 'Returns' description in 'dpu_crtc_duplicate_state'
+Shouldn't that be DP_EDP_BACKLIGHT_MODE_SET_REGISTER instead?
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 23 -----------------------
- 1 file changed, 23 deletions(-)
+> +			      &control_reg) != 1) {
+> +		DRM_DEBUG_KMS("Failed to read the DPCD register 0x%x\n",
+> +			      DP_EDP_DISPLAY_CONTROL_REGISTER);
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * If we're not in DPCD control mode yet, the programmed brightness
+> +	 * value is meaningless and we should assume max brightness
+> +	 */
+> +	if (!(control_reg & DP_EDP_BACKLIGHT_CONTROL_MODE_DPCD))
+> +		return connector->panel.backlight.max;
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index ce59adff06aa..00bf35d2ef24 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -88,11 +88,9 @@ static void _dpu_crtc_setup_blend_cfg(struct dpu_crtc_mixer *mixer,
- 
- static void _dpu_crtc_program_lm_output_roi(struct drm_crtc *crtc)
- {
--	struct dpu_crtc *dpu_crtc;
- 	struct dpu_crtc_state *crtc_state;
- 	int lm_idx, lm_horiz_position;
- 
--	dpu_crtc = to_dpu_crtc(crtc);
- 	crtc_state = to_dpu_crtc_state(crtc->state);
- 
- 	lm_horiz_position = 0;
-@@ -425,7 +423,6 @@ static void dpu_crtc_atomic_begin(struct drm_crtc *crtc,
- 	struct drm_encoder *encoder;
- 	struct drm_device *dev;
- 	unsigned long flags;
--	struct dpu_crtc_smmu_state_data *smmu_state;
- 
- 	if (!crtc) {
- 		DPU_ERROR("invalid crtc\n");
-@@ -443,7 +440,6 @@ static void dpu_crtc_atomic_begin(struct drm_crtc *crtc,
- 	dpu_crtc = to_dpu_crtc(crtc);
- 	cstate = to_dpu_crtc_state(crtc->state);
- 	dev = crtc->dev;
--	smmu_state = &dpu_crtc->smmu_state;
- 
- 	_dpu_crtc_setup_lm_bounds(crtc, crtc->state);
- 
-@@ -486,7 +482,6 @@ static void dpu_crtc_atomic_flush(struct drm_crtc *crtc,
- 	struct drm_device *dev;
- 	struct drm_plane *plane;
- 	struct msm_drm_private *priv;
--	struct msm_drm_thread *event_thread;
- 	unsigned long flags;
- 	struct dpu_crtc_state *cstate;
- 
-@@ -508,8 +503,6 @@ static void dpu_crtc_atomic_flush(struct drm_crtc *crtc,
- 		return;
- 	}
- 
--	event_thread = &priv->event_thread[crtc->index];
--
- 	if (dpu_crtc->event) {
- 		DPU_DEBUG("already received dpu_crtc->event\n");
- 	} else {
-@@ -562,7 +555,6 @@ static void dpu_crtc_atomic_flush(struct drm_crtc *crtc,
- static void dpu_crtc_destroy_state(struct drm_crtc *crtc,
- 		struct drm_crtc_state *state)
- {
--	struct dpu_crtc *dpu_crtc;
- 	struct dpu_crtc_state *cstate;
- 
- 	if (!crtc || !state) {
-@@ -570,7 +562,6 @@ static void dpu_crtc_destroy_state(struct drm_crtc *crtc,
- 		return;
- 	}
- 
--	dpu_crtc = to_dpu_crtc(crtc);
- 	cstate = to_dpu_crtc_state(state);
- 
- 	DPU_DEBUG("crtc%d\n", crtc->base.id);
-@@ -657,11 +648,9 @@ static void dpu_crtc_reset(struct drm_crtc *crtc)
- /**
-  * dpu_crtc_duplicate_state - state duplicate hook
-  * @crtc: Pointer to drm crtc structure
-- * @Returns: Pointer to new drm_crtc_state structure
-  */
- static struct drm_crtc_state *dpu_crtc_duplicate_state(struct drm_crtc *crtc)
- {
--	struct dpu_crtc *dpu_crtc;
- 	struct dpu_crtc_state *cstate, *old_cstate;
- 
- 	if (!crtc || !crtc->state) {
-@@ -669,7 +658,6 @@ static struct drm_crtc_state *dpu_crtc_duplicate_state(struct drm_crtc *crtc)
- 		return NULL;
- 	}
- 
--	dpu_crtc = to_dpu_crtc(crtc);
- 	old_cstate = to_dpu_crtc_state(crtc->state);
- 	cstate = kmemdup(old_cstate, sizeof(*old_cstate), GFP_KERNEL);
- 	if (!cstate) {
-@@ -688,9 +676,7 @@ static void dpu_crtc_disable(struct drm_crtc *crtc,
- {
- 	struct dpu_crtc *dpu_crtc;
- 	struct dpu_crtc_state *cstate;
--	struct drm_display_mode *mode;
- 	struct drm_encoder *encoder;
--	struct msm_drm_private *priv;
- 	unsigned long flags;
- 	bool release_bandwidth = false;
- 
-@@ -700,8 +686,6 @@ static void dpu_crtc_disable(struct drm_crtc *crtc,
- 	}
- 	dpu_crtc = to_dpu_crtc(crtc);
- 	cstate = to_dpu_crtc_state(crtc->state);
--	mode = &cstate->base.adjusted_mode;
--	priv = crtc->dev->dev_private;
- 
- 	DRM_DEBUG_KMS("crtc%d\n", crtc->base.id);
- 
-@@ -763,14 +747,12 @@ static void dpu_crtc_enable(struct drm_crtc *crtc,
- {
- 	struct dpu_crtc *dpu_crtc;
- 	struct drm_encoder *encoder;
--	struct msm_drm_private *priv;
- 	bool request_bandwidth;
- 
- 	if (!crtc || !crtc->dev || !crtc->dev->dev_private) {
- 		DPU_ERROR("invalid crtc\n");
- 		return;
- 	}
--	priv = crtc->dev->dev_private;
- 
- 	pm_runtime_get_sync(crtc->dev->dev);
- 
-@@ -1288,13 +1270,8 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane,
- {
- 	struct drm_crtc *crtc = NULL;
- 	struct dpu_crtc *dpu_crtc = NULL;
--	struct msm_drm_private *priv = NULL;
--	struct dpu_kms *kms = NULL;
- 	int i;
- 
--	priv = dev->dev_private;
--	kms = to_dpu_kms(priv->kms);
--
- 	dpu_crtc = kzalloc(sizeof(*dpu_crtc), GFP_KERNEL);
- 	if (!dpu_crtc)
- 		return ERR_PTR(-ENOMEM);
+It's not just a bit, I think you need to check (control_reg & mask) ==
+value.
+
+BR,
+Jani.
+
+> +
+>  	if (drm_dp_dpcd_read(&intel_dp->aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
+>  			     &read_val, sizeof(read_val)) < 0) {
+>  		DRM_DEBUG_KMS("Failed to read DPCD register 0x%x\n",
+
 -- 
-2.20.1
-
+Jani Nikula, Intel Open Source Graphics Center
