@@ -2,152 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 655A71102DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E141102C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfLCQuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:50:12 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33393 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfLCQuL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:50:11 -0500
-Received: by mail-qk1-f193.google.com with SMTP id c124so4133252qkg.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:50:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=a9/PBomxUuzf05dVa0qKQjlWzeKSr/09qta+lJxPwCo=;
-        b=W+ZWlwnwP8+cRP6PtLMf9H9SyirlbdAZ6JnCoz9a4ikMgXcfKrMmOP6g0nedHY+NHS
-         hD6BM99v4GDrfxxsEUDE2K5Z7yDS883J3EzLLoCx38I1pcXiWmC+FeAhTKDuQiChYcL0
-         VS5e3EPlPZHcawDb0kJ2d++QzTVz4PsCiHEQpg16kOMhm8DlemOxp4MgrqjSD/odc6Oe
-         5HG/2QSKWFi7QZcTxNnaiMbIu2aCbbGz4ZxGMiDfGxGi3B9bxBOeZoI+n1Q4Y61+I/ME
-         b+KbU19jcWEGxTnDo862eoaaXCvaAMvgWX76bbuV7hJUgs6dduuxywcZ5KibsmrYlnyy
-         YgPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=a9/PBomxUuzf05dVa0qKQjlWzeKSr/09qta+lJxPwCo=;
-        b=SwhiRO4j9TR9J46nQzYwHz4B44Ov4ZRQMD3CcXx7+GfqO8A2ePyg+uqfLsBn3oT2bg
-         d1+4+7MLxy0tX+qarJQAEyKfiIwZJYlZDVHeJCkkmJ7bLxpeOFvRfiF3pdm+RzVWCjgV
-         amYh0B0uPF3nIFe883KnEN6DF2IYHAB3DUum5NwRlkmYlSTOhA/ei8c/ZMB3eJei0f1c
-         frRisejopZU2LLaTD34g8cPfrfgtaJ7DMXLOGE7mOZGueB2EUnN25DVBoLO5TOOlbbrA
-         epHgCacfXN/c1VeLjb5QdVONcDG/zU7D5VZcyLWgVuFexrVhX6sbdByGVYIgMALXjTn6
-         BSzA==
-X-Gm-Message-State: APjAAAXAx6mVUQY4+w3TNBbjkK3kppas04xy/eLIQz+SCHhmH6euIEme
-        vlp0GLpf8KjKA8ESQR6cGKQBfS08gwtkUwhR/oGxiA==
-X-Google-Smtp-Source: APXvYqyyMSapp57PMKRK9e7v/eq30nlueUFP+6Kk+2LK/nnTcOGxgsOUzP7MRoCBv1l3I+FaZJfyM1xV+rQ9cjpaRAQ=
-X-Received: by 2002:a37:6087:: with SMTP id u129mr5948252qkb.219.1575391810641;
- Tue, 03 Dec 2019 08:50:10 -0800 (PST)
+        id S1726926AbfLCQpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:45:44 -0500
+Received: from mga17.intel.com ([192.55.52.151]:59606 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbfLCQpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 11:45:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 08:45:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,273,1571727600"; 
+   d="scan'208";a="222883231"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga002.jf.intel.com with ESMTP; 03 Dec 2019 08:45:43 -0800
+Date:   Tue, 3 Dec 2019 08:50:26 -0800
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        kevin.tian@intel.com, Eric Auger <eric.auger@redhat.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 0/5] iommu/vt-d: Consolidate various cache flush ops
+Message-ID: <20191203085026.1785292b@jacob-builder>
+In-Reply-To: <f703c267-c946-30cf-7e0e-4de16edcde18@linux.intel.com>
+References: <20191122030449.28892-1-baolu.lu@linux.intel.com>
+        <20191202120252.45606c47@jacob-builder>
+        <f703c267-c946-30cf-7e0e-4de16edcde18@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20191119134706.10893-1-benjamin.gaignard@st.com>
-In-Reply-To: <20191119134706.10893-1-benjamin.gaignard@st.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Tue, 3 Dec 2019 17:50:00 +0100
-Message-ID: <CA+M3ks7gN7kpau1hN94vq0nhOfdc=9KFoSrM4TJE_2diyMMiRA@mail.gmail.com>
-Subject: Re: [PATCH] drm/modes: remove unused variables
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mer. 20 nov. 2019 =C3=A0 00:29, Benjamin Gaignard
-<benjamin.gaignard@st.com> a =C3=A9crit :
->
-> When compiling with W=3D1 few warnings about unused variables show up.
-> This patch removes all the involved variables.
->
+On Tue, 3 Dec 2019 10:44:45 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-Gentle ping to reviewers.
-Thanks,
-Benjamin
+> Hi Jacob,
+> 
+> On 12/3/19 4:02 AM, Jacob Pan wrote:
+> > On Fri, 22 Nov 2019 11:04:44 +0800
+> > Lu Baolu<baolu.lu@linux.intel.com>  wrote:
+> >   
+> >> Intel VT-d 3.0 introduces more caches and interfaces for software
+> >> to flush when it runs in the scalable mode. Currently various
+> >> cache flush helpers are scattered around. This consolidates them
+> >> by putting them in the existing iommu_flush structure.
+> >>
+> >> /* struct iommu_flush - Intel IOMMU cache invalidation ops
+> >>   *
+> >>   * @cc_inv: invalidate context cache
+> >>   * @iotlb_inv: Invalidate IOTLB and paging structure caches when
+> >> software
+> >>   *             has changed second-level tables.
+> >>   * @p_iotlb_inv: Invalidate IOTLB and paging structure caches when
+> >> software
+> >>   *               has changed first-level tables.
+> >>   * @pc_inv: invalidate pasid cache
+> >>   * @dev_tlb_inv: invalidate cached mappings used by
+> >> requests-without-PASID
+> >>   *               from the Device-TLB on a endpoint device.
+> >>   * @p_dev_tlb_inv: invalidate cached mappings used by
+> >> requests-with-PASID
+> >>   *                 from the Device-TLB on an endpoint device
+> >>   */
+> >> struct iommu_flush {
+> >>          void (*cc_inv)(struct intel_iommu *iommu, u16 did,
+> >>                         u16 sid, u8 fm, u64 type);
+> >>          void (*iotlb_inv)(struct intel_iommu *iommu, u16 did, u64
+> >> addr, unsigned int size_order, u64 type);
+> >>          void (*p_iotlb_inv)(struct intel_iommu *iommu, u16 did,
+> >> u32 pasid, u64 addr, unsigned long npages, bool ih);
+> >>          void (*pc_inv)(struct intel_iommu *iommu, u16 did, u32
+> >> pasid, u64 granu);
+> >>          void (*dev_tlb_inv)(struct intel_iommu *iommu, u16 sid,
+> >> u16 pfsid, u16 qdep, u64 addr, unsigned int mask);
+> >>          void (*p_dev_tlb_inv)(struct intel_iommu *iommu, u16 sid,
+> >> u16 pfsid, u32 pasid, u16 qdep, u64 addr,
+> >>                                unsigned long npages);
+> >> };
+> >>
+> >> The name of each cache flush ops is defined according to the spec
+> >> section 6.5 so that people are easy to look up them in the spec.
+> >>  
+> > Nice consolidation. For nested SVM, I also introduced cache flushed
+> > helpers as needed.
+> > https://lkml.org/lkml/2019/10/24/857
+> > 
+> > Should I wait for yours to be merged or you want to extend the this
+> > consolidation after SVA/SVM cache flush? I expect to send my v8
+> > shortly. 
+> 
+> Please base your v8 patch on this series. So it could get more chances
+> for test.
+> 
+Sounds good.
 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  drivers/gpu/drm/drm_modes.c | 22 +++-------------------
->  1 file changed, 3 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-> index 88232698d7a0..aca901aff042 100644
-> --- a/drivers/gpu/drm/drm_modes.c
-> +++ b/drivers/gpu/drm/drm_modes.c
-> @@ -233,7 +233,7 @@ struct drm_display_mode *drm_cvt_mode(struct drm_devi=
-ce *dev, int hdisplay,
->                 /* 3) Nominal HSync width (% of line period) - default 8 =
-*/
->  #define CVT_HSYNC_PERCENTAGE   8
->                 unsigned int hblank_percentage;
-> -               int vsyncandback_porch, vback_porch, hblank;
-> +               int vsyncandback_porch, hblank;
->
->                 /* estimated the horizontal period */
->                 tmp1 =3D HV_FACTOR * 1000000  -
-> @@ -249,7 +249,6 @@ struct drm_display_mode *drm_cvt_mode(struct drm_devi=
-ce *dev, int hdisplay,
->                 else
->                         vsyncandback_porch =3D tmp1;
->                 /* 10. Find number of lines in back porch */
-> -               vback_porch =3D vsyncandback_porch - vsync;
->                 drm_mode->vtotal =3D vdisplay_rnd + 2 * vmargin +
->                                 vsyncandback_porch + CVT_MIN_V_PORCH;
->                 /* 5) Definition of Horizontal blanking time limitation *=
-/
-> @@ -386,9 +385,8 @@ drm_gtf_mode_complex(struct drm_device *dev, int hdis=
-play, int vdisplay,
->         int top_margin, bottom_margin;
->         int interlace;
->         unsigned int hfreq_est;
-> -       int vsync_plus_bp, vback_porch;
-> -       unsigned int vtotal_lines, vfieldrate_est, hperiod;
-> -       unsigned int vfield_rate, vframe_rate;
-> +       int vsync_plus_bp;
-> +       unsigned int vtotal_lines;
->         int left_margin, right_margin;
->         unsigned int total_active_pixels, ideal_duty_cycle;
->         unsigned int hblank, total_pixels, pixel_freq;
-> @@ -451,23 +449,9 @@ drm_gtf_mode_complex(struct drm_device *dev, int hdi=
-splay, int vdisplay,
->         /* [V SYNC+BP] =3D RINT(([MIN VSYNC+BP] * hfreq_est / 1000000)) *=
-/
->         vsync_plus_bp =3D MIN_VSYNC_PLUS_BP * hfreq_est / 1000;
->         vsync_plus_bp =3D (vsync_plus_bp + 500) / 1000;
-> -       /*  9. Find the number of lines in V back porch alone: */
-> -       vback_porch =3D vsync_plus_bp - V_SYNC_RQD;
->         /*  10. Find the total number of lines in Vertical field period: =
-*/
->         vtotal_lines =3D vdisplay_rnd + top_margin + bottom_margin +
->                         vsync_plus_bp + GTF_MIN_V_PORCH;
-> -       /*  11. Estimate the Vertical field frequency: */
-> -       vfieldrate_est =3D hfreq_est / vtotal_lines;
-> -       /*  12. Find the actual horizontal period: */
-> -       hperiod =3D 1000000 / (vfieldrate_rqd * vtotal_lines);
-> -
-> -       /*  13. Find the actual Vertical field frequency: */
-> -       vfield_rate =3D hfreq_est / vtotal_lines;
-> -       /*  14. Find the Vertical frame frequency: */
-> -       if (interlaced)
-> -               vframe_rate =3D vfield_rate / 2;
-> -       else
-> -               vframe_rate =3D vfield_rate;
->         /*  15. Find number of pixels in left margin: */
->         if (margins)
->                 left_margin =3D (hdisplay_rnd * GTF_MARGIN_PERCENTAGE + 5=
-00) /
-> --
-> 2.15.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> I will queue this patch series for internal test after 5.5-rc1 and if
+> everything goes well, I will forward it to Joerg around rc4 for linux-
+> next.
+> 
+> Best regards,
+> baolu
+
+[Jacob Pan]
