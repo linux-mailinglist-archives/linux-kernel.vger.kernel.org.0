@@ -2,148 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2066110F67B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 05:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2255810F696
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 06:02:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfLCE5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Dec 2019 23:57:43 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49418 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727107AbfLCE5l (ORCPT
+        id S1726182AbfLCFC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 00:02:57 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:34813 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfLCFC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Dec 2019 23:57:41 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB34ptBx142070
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Dec 2019 23:57:40 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wkm47ctkd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 23:57:39 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Tue, 3 Dec 2019 04:57:37 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Dec 2019 04:57:30 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB34vTUx48955466
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Dec 2019 04:57:29 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1AA85A404D;
-        Tue,  3 Dec 2019 04:57:29 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD2D9A4040;
-        Tue,  3 Dec 2019 04:57:28 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Dec 2019 04:57:28 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 40E50A01B6;
-        Tue,  3 Dec 2019 15:57:26 +1100 (AEDT)
-Subject: Re: [PATCH v2 26/27] powerpc: Enable OpenCAPI Storage Class Memory
- driver on bare metal
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     Andrew Donnellan <ajd@linux.ibm.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kurz <groug@kaod.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org
-Date:   Tue, 03 Dec 2019 15:57:27 +1100
-In-Reply-To: <a993926f-72c0-af1c-220c-38dd90377ef0@linux.ibm.com>
-References: <20191203034655.51561-1-alastair@au1.ibm.com>
-         <20191203034655.51561-27-alastair@au1.ibm.com>
-         <a993926f-72c0-af1c-220c-38dd90377ef0@linux.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        Tue, 3 Dec 2019 00:02:56 -0500
+Received: by mail-ua1-f67.google.com with SMTP id w20so871681uap.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 21:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7ERmn5rq1lNnKn/P5AfwLSlBRWPm9K3lY7uKonmiuBQ=;
+        b=POxFZTmnXWUJj/QSh7bNjrQKeTsKp9x3JT1UUj5Ox6CqdlasjfT0Sd+kJ3yIifanpH
+         HW2KVRp/PAkRCh2/C7bnkMFPgn4E1kk6Bzfl6NKEJgMromg15+AgJGXTCKsn4fDbGhNN
+         OSh5T7Lb8Ux1Hea4sE7xKWAMtj2ar9CYDt0pFzeBeufb8xWPARB2lBCWO9vTD8ITG15l
+         6tte8NbCCmSfn4qKmeTnC0WLC2yg8+vRWEd31YGTDiCbzpmVDG7f7SM2yJwQz9r5509K
+         uLrb+EceyEOJqhtbWNSDxAD+Ll3BJHT3t2BjpEjLLZYAgHbkeB1sHX4dS8mduopLI8uj
+         7NWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7ERmn5rq1lNnKn/P5AfwLSlBRWPm9K3lY7uKonmiuBQ=;
+        b=UiQAao3ZHMWbbIEV9TsTuOlfabKL5Wi+AnFaxi79zXBI4yz1yBcDYEOjp7zFuBe8FB
+         U7DniThgRq8kAzkQ4hex1bDs+ZjfugicJOrHEkP47MZgtO7fokDIjjlUbF+9qMDtOdN/
+         vnVoxaRGxvYfu/qinLC33NGGn3R9/k5eAeiwTItfCmoc0v0td113KBnVPacNVqQ7nnAN
+         /CfCTZ7+92YlHenqTYjAnKomIDtTyukYcMRDnPunFZDm31sKxwJ7OQacB5kIgbOTFnYl
+         UbhOxNIDhmd4vjX/n7+bsNbuexSGFBm4luP0rVYrqfrr5PyjSFDrdYtKlB1Nz1ejzwOw
+         k7ew==
+X-Gm-Message-State: APjAAAV/cOwNSmLzZYTCP868Wbvz9F6ZGPY48FI0FDXGT2xVkkeLrEdz
+        8Ts/zP0VWeDcMKeKD4Ds0lJGX3QGCFU+1WWe8FFY3g==
+X-Google-Smtp-Source: APXvYqyk8mjX0oY3ryDpuMEExI9RS0dYRl+SayJdvhnyj2hjEpQI3jjLtCw/e3hNiCcN7gK3acNuNVLsVTiJEV5H3RE=
+X-Received: by 2002:ab0:7027:: with SMTP id u7mr2136566ual.94.1575349375038;
+ Mon, 02 Dec 2019 21:02:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19120304-0028-0000-0000-000003C3D5B3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120304-0029-0000-0000-00002486ED8B
-Message-Id: <2734b940e2eb68e500a03bc5d90689e5948259c2.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-02_06:2019-11-29,2019-12-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
- impostorscore=0 adultscore=0 suspectscore=0 mlxlogscore=811 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912030043
+References: <cover.1573499020.git.amit.kucheria@linaro.org>
+ <4b949a4f401a7f9d403ed0f0c16c7feb083f3524.1573499020.git.amit.kucheria@linaro.org>
+ <20191112193852.GC3140946@builder> <CAHLCerN1VXhU0VQWN15PB2R16mkCV0i6Mn3+LW=xXtB5_7Z6JQ@mail.gmail.com>
+ <20191128214339.GL82109@yoga>
+In-Reply-To: <20191128214339.GL82109@yoga>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 3 Dec 2019 10:32:43 +0530
+Message-ID: <CAHLCerPmdTTfANng2uNnTRs0-Sz+jtstOD9N0MbLEvV3DYDUFw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drivers: thermal: tsens: Add critical interrupt support
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>, sivaa@codeaurora.org,
+        Andy Gross <agross@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-03 at 15:54 +1100, Andrew Donnellan wrote:
-> On 3/12/19 2:46 pm, Alastair D'Silva wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> > 
-> > Enable OpenCAPI Storage Class Memory driver on bare metal
-> > 
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> 
-> I'd suggest a summary line more like
-> 
-> powerpc/configs: Enable OpenCAPI SCM driver in powernv_defconfig
-> 
-> and a commit message to match.
-> 
+On Fri, Nov 29, 2019 at 3:13 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 28 Nov 10:46 PST 2019, Amit Kucheria wrote:
+>
+> > On Wed, Nov 13, 2019 at 1:08 AM Bjorn Andersson
+> > <bjorn.andersson@linaro.org> wrote:
+> > >
+> > > On Mon 11 Nov 11:21 PST 2019, Amit Kucheria wrote:
+> > >
+> > > > TSENS IP v2.x adds critical threshold interrupt support for each sensor
+> > > > in addition to the upper/lower threshold interrupt. Add support in the
+> > > > driver.
+> > > >
+> > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > > ---
+> > > >  drivers/thermal/qcom/tsens-common.c | 129 ++++++++++++++++++++++++++--
+> > > >  drivers/thermal/qcom/tsens-v2.c     |   8 +-
+> > > >  drivers/thermal/qcom/tsens.c        |  21 +++++
+> > > >  drivers/thermal/qcom/tsens.h        |  73 ++++++++++++++++
+> > > >  4 files changed, 220 insertions(+), 11 deletions(-)
+> > > >
+> > > > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> > > > index 4359a4247ac3..2989cb952cdb 100644
+> > > > --- a/drivers/thermal/qcom/tsens-common.c
+> > > > +++ b/drivers/thermal/qcom/tsens-common.c
+> > > > @@ -23,6 +23,10 @@
+> > > >   * @low_thresh:     lower threshold temperature value
+> > > >   * @low_irq_mask:   mask register for lower threshold irqs
+> > > >   * @low_irq_clear:  clear register for lower threshold irqs
+> > > > + * @crit_viol:      critical threshold violated
+> > >
+> > > "violated" as in "temperature is above crit_thresh"?
+> >
+> > Yes.
+> >
+> > >
+> > > > + * @crit_thresh:    critical threshold temperature value
+> > > > + * @crit_irq_mask:  mask register for critical threshold irqs
+> > > > + * @crit_irq_clear: clear register for critical threshold irqs
+> > > >   *
+> > > [..]
+> > > > diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> > > > index 7d317660211e..784c4976c4f9 100644
+> > > > --- a/drivers/thermal/qcom/tsens.c
+> > > > +++ b/drivers/thermal/qcom/tsens.c
+> > > > @@ -121,6 +121,27 @@ static int tsens_register(struct tsens_priv *priv)
+> > > >
+> > > >       enable_irq_wake(irq);
+> > > >
+> > > > +     if (tsens_version(priv) > VER_1_X) {
+> > > > +             irq = platform_get_irq_byname(pdev, "critical");
+> > > > +             if (irq < 0) {
+> > >
+> > > Treating this as a fatal error breaks backwards compatibility with
+> > > current devicetree; and even within your patch series, tsens should fail
+> > > to probe between this patch and the application of patch 3.
+> >
+> > Good catch.
+> >
+> > > Please flip this around and do:
+> > >
+> > > irq = platform_get_irq_byname(pdev, "critical");
+> > > if (irq >= 0 && tsens_version(priv) > VER_1_X) {
+> > >         request_irq()...
+> > > }
+> >
+> > Won't this still break with current devicetree since irq < 0 until
+> > patch 3? Or are you saying we shouldn't check for
+> > platform_get_irq_byname() failure?
+> >
+>
+> I'm trying to say that dtsi without "critical" defined should cause the
+> driver to simply skip this segment, not fail to initialize.
+>
+> > I can see two ways out:
+> > 1. We patch the dtsi before the code change.
+>
+> You're expected to maintain backwards compatibility with existing dtb
+> files out there. The support for critical interrupt is an additional
+> feature, so you should be able to do this by detecting if "critical" is
+> defined (e.g. by checking the return value of
+> platform_get_irq_byname()).
+>
+> > 2. We make critical interrupt failure non-fatal by just printing some
+> > messages and still returning success.
+> >
+>
+> Try to make it as specific as possible (without adding a bunch of code)
+> and throw in a dev_info() if no "critical" is found.
 
-OK.
+I believe I have now addressed the problem in v2 explicitly overriding
+the return value in case of failure in the critical interrupt irq
+setup path and simply printing a warning.
 
-> 
-> > ---
-> >   arch/powerpc/configs/powernv_defconfig | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/arch/powerpc/configs/powernv_defconfig
-> > b/arch/powerpc/configs/powernv_defconfig
-> > index 6658cceb928c..a8f46aece8a4 100644
-> > --- a/arch/powerpc/configs/powernv_defconfig
-> > +++ b/arch/powerpc/configs/powernv_defconfig
-> > @@ -352,3 +352,7 @@ CONFIG_KVM_BOOK3S_64=m
-> >   CONFIG_KVM_BOOK3S_64_HV=m
-> >   CONFIG_VHOST_NET=m
-> >   CONFIG_PRINTK_TIME=y
-> > +CONFIG_OCXL_SCM=m
-> > +CONFIG_DEV_DAX=m
-> > +CONFIG_DEV_DAX_PMEM=m
-> > +CONFIG_FS_DAX=m
-> > 
--- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
+In hindsight, critical interrupt support should've been added in the
+same series as uplow interrupt support so avoid having to support
+"intermediate" DTS file state for one kernel version.
 
+Regards,
+Amit
