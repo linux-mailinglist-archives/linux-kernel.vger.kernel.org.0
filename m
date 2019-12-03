@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E73E111C7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB55111BCE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbfLCWon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:44:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60778 "EHLO mail.kernel.org"
+        id S1727761AbfLCWhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:37:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728823AbfLCWoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:44:39 -0500
+        id S1727722AbfLCWhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:37:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7117B207DD;
-        Tue,  3 Dec 2019 22:44:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0C0B2073C;
+        Tue,  3 Dec 2019 22:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413078;
-        bh=BiAWvKfoHGAKRlj5CSh0QhwnBtGaHcGsgpYFPZmmYSs=;
+        s=default; t=1575412656;
+        bh=klQsIEaLdkvQn9mXHsL/19l5ID92BD8wx7KpDUk+fkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SZFeNq1fxz/WdFgghlFgON2aSh3cmfz+AkGRDD5/ylo+t+kAAHfOSxR433Hu7473m
-         kmidOMGa2iiPrvGpaQYkBVuG/9Xzwqy3/6ugBS0VbZi55o56Wxv6XolImUmhXIXkVo
-         5jxFqoJ3woqto2vb14DeNaVwJNdzfJt1lxh2TlhQ=
+        b=KWVMQ9fbZ2HoZvK4+WzTM2G+XC2R/H8QZrPFENjvQc8/TiZUsSROeGwY4o3k5eNPj
+         NCKAdaQ973ig1MNV5vuEs20IeDUA7vGmgQJplTz6rLhpTfw7sN2C0FNfMmtC4dwNeP
+         ac+phyoTcESEhgMgPdk0ImyTjg7iulTiUXWDuIWc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 086/135] net: stmmac: xgmac: Fix TSA selection
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 5.4 06/46] usb: dwc2: use a longer core rest timeout in dwc2_core_reset()
 Date:   Tue,  3 Dec 2019 23:35:26 +0100
-Message-Id: <20191203213034.476395405@linuxfoundation.org>
+Message-Id: <20191203212716.752250752@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
-References: <20191203213005.828543156@linuxfoundation.org>
+In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
+References: <20191203212705.175425505@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Mathias Kresin <dev@kresin.me>
 
-[ Upstream commit 97add93fbcfa566735d6a4b96684110d356ebd35 ]
+commit 6689f0f4bb14e50917ba42eb9b41c25e0184970c upstream.
 
-When we change between Transmission Scheduling Algorithms, we need to
-clear previous values so that the new chosen algorithm is correctly
-selected.
+Testing on different generations of Lantiq MIPS SoC based boards, showed
+that it takes up to 1500 us until the core reset bit is cleared.
 
-Fixes: ec6ea8e3eee9 ("net: stmmac: Add CBS support in XGMAC2")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The driver from the vendor SDK (ifxhcd) uses a 1 second timeout. Use the
+same timeout to fix wrong hang detections and make the driver work for
+Lantiq MIPS SoCs.
+
+At least till kernel 4.14 the hanging reset only caused a warning but
+the driver was probed successful. With kernel 4.19 errors out with
+EBUSY.
+
+Cc: linux-stable <stable@vger.kernel.org> # 4.19+
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/dwc2/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-index 91d7dec2540a1..341c7a70fc71a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-@@ -196,6 +196,7 @@ static void dwxgmac2_config_cbs(struct mac_device_info *hw,
- 	writel(low_credit, ioaddr + XGMAC_MTL_TCx_LOCREDIT(queue));
+--- a/drivers/usb/dwc2/core.c
++++ b/drivers/usb/dwc2/core.c
+@@ -524,7 +524,7 @@ int dwc2_core_reset(struct dwc2_hsotg *h
+ 	greset |= GRSTCTL_CSFTRST;
+ 	dwc2_writel(hsotg, greset, GRSTCTL);
  
- 	value = readl(ioaddr + XGMAC_MTL_TCx_ETS_CONTROL(queue));
-+	value &= ~XGMAC_TSA;
- 	value |= XGMAC_CC | XGMAC_CBS;
- 	writel(value, ioaddr + XGMAC_MTL_TCx_ETS_CONTROL(queue));
- }
--- 
-2.20.1
-
+-	if (dwc2_hsotg_wait_bit_clear(hsotg, GRSTCTL, GRSTCTL_CSFTRST, 50)) {
++	if (dwc2_hsotg_wait_bit_clear(hsotg, GRSTCTL, GRSTCTL_CSFTRST, 10000)) {
+ 		dev_warn(hsotg->dev, "%s: HANG! Soft Reset timeout GRSTCTL GRSTCTL_CSFTRST\n",
+ 			 __func__);
+ 		return -EBUSY;
 
 
