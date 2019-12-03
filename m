@@ -2,178 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CC5910FD34
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 788D710FD6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 13:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfLCMGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 07:06:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34428 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725838AbfLCMGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 07:06:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 87EC3AD10;
-        Tue,  3 Dec 2019 12:06:23 +0000 (UTC)
-Date:   Tue, 3 Dec 2019 13:06:22 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        kexec@lists.infradead.org
-Subject: Re: [RFC PATCH v5 2/3] printk-rb: new printk ringbuffer
- implementation (reader)
-Message-ID: <20191203120622.zux33do54rmjafns@pathway.suse.cz>
-References: <20191128015235.12940-1-john.ogness@linutronix.de>
- <20191128015235.12940-3-john.ogness@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191128015235.12940-3-john.ogness@linutronix.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1726131AbfLCMKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 07:10:45 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:47574 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfLCMKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 07:10:45 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3BsiGg148452;
+        Tue, 3 Dec 2019 12:08:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=PAN8N/BNBLs9CxXc911l9Xu6pKmv8bJSEV2cpQz7Xw8=;
+ b=qJ0o9Qc2pcXFFDbYVEBMf5tZmDJeh/P0NcTBhPWBlzLjo6EAX6dgcp1+Mh012weFyHdc
+ xsZiuvFU2GoRWsQpaySCb90xVIqwUJ9jnJAssud46wbZHBvEycBXbVmwHX4I8vkMU1ag
+ mWG3j88uRF+L9qAO0cc0Zt3I+61a8RqqFXXpfUI+I8qs2HNlXOKIk470V/aH4EO8PD7l
+ bghc6RCKKAHzWdXla10aCegpFdFQFXovhn9bB2g4XbxKKzBslCVxuOw9iECmF4tVmUBb
+ uBVTOQN1mG37SdpMTHZTOpaq9Ktm9CUXk8hAR9enGwgwJHpaZ9o1SfKzlOfDuQp9lvSM Og== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2wkgcq75tm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 12:08:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB3BsWV4195197;
+        Tue, 3 Dec 2019 12:08:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2wn8k2gxs5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Dec 2019 12:08:19 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB3C8C4l025088;
+        Tue, 3 Dec 2019 12:08:12 GMT
+Received: from dhcp-10-175-211-120.vpn.oracle.com (/10.175.211.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Dec 2019 04:08:12 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     brendanhiggins@google.com, linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com, corbet@lwn.net,
+        davidgow@google.com, adilger.kernel@dilger.ca, tytso@mit.edu,
+        mcgrof@kernel.org, linux-doc@vger.kernel.org,
+        Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH v5 linux-kselftest-test 0/6] kunit: support building core/tests as modules
+Date:   Tue,  3 Dec 2019 12:07:42 +0000
+Message-Id: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912030096
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9459 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912030096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-11-28 02:58:34, John Ogness wrote:
-> Add the reader implementation for the new ringbuffer.
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> ---
->  kernel/printk/printk_ringbuffer.c | 234 ++++++++++++++++++++++++++++++
->  kernel/printk/printk_ringbuffer.h |  12 +-
->  2 files changed, 245 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-> index 09c32e52fd40..f85762713583 100644
-> --- a/kernel/printk/printk_ringbuffer.c
-> +++ b/kernel/printk/printk_ringbuffer.c
-> @@ -674,3 +674,237 @@ void prb_commit(struct prb_reserved_entry *e)
->  	local_irq_restore(e->irqflags);
->  }
->  EXPORT_SYMBOL(prb_commit);
-> +
-> +/*
-> + * Given @blk_lpos, return a pointer to the raw data from the data block
-> + * and calculate the size of the data part. A NULL pointer is returned
-> + * if @blk_lpos specifies values that could never be legal.
-> + *
-> + * This function (used by readers) performs strict validation on the lpos
-> + * values to possibly detect bugs in the writer code. A WARN_ON_ONCE() is
-> + * triggered if an internal error is detected.
-> + */
-> +static char *get_data(struct prb_data_ring *data_ring,
-> +		      struct prb_data_blk_lpos *blk_lpos,
-> +		      unsigned long *data_size)
-> +{
-> +	struct prb_data_block *db;
-> +
-> +	if (blk_lpos->begin == INVALID_LPOS &&
-> +	    blk_lpos->next == INVALID_LPOS) {
-> +		/* descriptor without a data block */
-> +		return NULL;
-> +	} else if (DATA_WRAPS(data_ring, blk_lpos->begin) ==
-> +		   DATA_WRAPS(data_ring, blk_lpos->next)) {
-> +		/* regular data block */
-> +		if (WARN_ON_ONCE(blk_lpos->next <= blk_lpos->begin))
-> +			return NULL;
-> +		db = to_block(data_ring, blk_lpos->begin);
-> +		*data_size = blk_lpos->next - blk_lpos->begin;
-> +
-> +	} else if ((DATA_WRAPS(data_ring, blk_lpos->begin) + 1 ==
-> +		    DATA_WRAPS(data_ring, blk_lpos->next)) ||
-> +		   ((DATA_WRAPS(data_ring, blk_lpos->begin) ==
-> +		     DATA_WRAPS(data_ring, -1UL)) &&
-> +		    (DATA_WRAPS(data_ring, blk_lpos->next) == 0))) {
+The current kunit execution model is to provide base kunit functionality
+and tests built-in to the kernel.  The aim of this series is to allow
+building kunit itself and tests as modules.  This in turn allows a
+simple form of selective execution; load the module you wish to test.
+In doing so, kunit itself (if also built as a module) will be loaded as
+an implicit dependency.
 
-I am a bit confused. I would expect that (-1UL + 1) = 0. So the second
-condition after || looks just like a special variant of the first
-valid condition.
+Because this requires a core API modification - if a module delivers
+multiple suites, they must be declared with the kunit_test_suites()
+macro - we're proposing this patch set as a candidate to be applied to the
+test tree before too many kunit consumers appear.  We attempt to deal
+with existing consumers in patch 3.
 
-Or do I miss anything? Is there a problems with type casting?
+Changes since v4:
+ - fixed signoff chain to use Co-developed-by: prior to Knut's signoff
+   (Stephen, all patches)
+ - added Reviewed-by, Tested-by for patches 1, 2, 4 and 6
+ - updated comment describing try-catch-impl.h (Stephen, patch 2)
+ - fixed MODULE_LICENSEs to be GPL v2 (Stephen, patches 3, 5)
+ - added __init to kunit_init() (Stephen, patch 5)
 
+Changes since v3:
+ - removed symbol lookup patch for separate submission later
+ - removed use of sysctl_hung_task_timeout_seconds (patch 4, as discussed
+   with Brendan and Stephen)
+ - disabled build of string-stream-test when CONFIG_KUNIT_TEST=m; this
+   is to avoid having to deal with symbol lookup issues
+ - changed string-stream-impl.h back to string-stream.h (Brendan)
+ - added module build support to new list, ext4 tests
 
-> +		/* wrapping data block */
-> +		db = to_block(data_ring, 0);
-> +		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
-> +
-> +	} else {
-> +		WARN_ON_ONCE(1);
-> +		return NULL;
-> +	}
-> +
-> +	/* A valid data block will always be aligned to the ID size. */
-> +	if (WARN_ON_ONCE(blk_lpos->begin !=
-> +			 ALIGN(blk_lpos->begin, sizeof(db->id))) ||
-> +	    WARN_ON_ONCE(blk_lpos->next !=
-> +			 ALIGN(blk_lpos->next, sizeof(db->id)))) {
-> +		return NULL;
-> +	}
-> +
-> +	/* A valid data block will always have at least an ID. */
-> +	if (WARN_ON_ONCE(*data_size < sizeof(db->id)))
-> +		return NULL;
-> +
-> +	/* Subtract descriptor ID space from size. */
-> +	*data_size -= sizeof(db->id);
-> +
-> +	return &db->data[0];
-> +}
-> +
-> +/* Given @blk_lpos, copy an expected @len of data into the provided buffer. */
-> +static bool copy_data(struct prb_data_ring *data_ring,
-> +		      struct prb_data_blk_lpos *blk_lpos, u16 len, char *buf,
-> +		      unsigned int buf_size)
-> +{
-> +	unsigned long data_size;
-> +	char *data;
-> +
-> +	/* Caller might not want the data. */
-> +	if (!buf || !buf_size)
-> +		return true;
-> +
-> +	data = get_data(data_ring, blk_lpos, &data_size);
-> +	if (!data)
-> +		return false;
-> +
-> +	/* Actual cannot be less than expected. */
-> +	if (WARN_ON_ONCE(data_size < len))
-> +		return false;
+Changes since v2:
+ - moved string-stream.h header to lib/kunit/string-stream-impl.h (Brendan)
+   (patch 1)
+ - split out non-exported interfaces in try-catch-impl.h (Brendan)
+   (patch 2)
+ - added kunit_find_symbol() and KUNIT_INIT_SYMBOL to lookup non-exported
+   symbols (patches 3, 4)
+ - removed #ifdef MODULE around module licenses (Randy, Brendan, Andy)
+   (patch 4)
+ - replaced kunit_test_suite() with kunit_test_suites() rather than
+   supporting both (Brendan) (patch 4)
+ - lookup sysctl_hung_task_timeout_secs as kunit may be built as a module
+   and the symbol may not be available (patch 5)
 
-I do not have a good feeling that the record gets lost here.
+Alan Maguire (6):
+  kunit: move string-stream.h to lib/kunit
+  kunit: hide unexported try-catch interface in try-catch-impl.h
+  kunit: allow kunit tests to be loaded as a module
+  kunit: remove timeout dependence on sysctl_hung_task_timeout_seconds
+  kunit: allow kunit to be loaded as a module
+  kunit: update documentation to describe module-based build
 
-I could imagine that a writer would reserve more space than
-needed in the end. Then it would want to modify desc.info.text_len
-and could do a mistake.
+ Documentation/dev-tools/kunit/faq.rst              |  3 +-
+ Documentation/dev-tools/kunit/index.rst            |  3 ++
+ Documentation/dev-tools/kunit/usage.rst            | 16 ++++++++++
+ fs/ext4/Kconfig                                    |  2 +-
+ fs/ext4/Makefile                                   |  5 +++
+ fs/ext4/inode-test.c                               |  4 ++-
+ include/kunit/assert.h                             |  3 +-
+ include/kunit/test.h                               | 35 ++++++++++++++------
+ include/kunit/try-catch.h                          | 10 ------
+ kernel/sysctl-test.c                               |  4 ++-
+ lib/Kconfig.debug                                  |  4 +--
+ lib/kunit/Kconfig                                  |  6 ++--
+ lib/kunit/Makefile                                 | 14 +++++---
+ lib/kunit/assert.c                                 | 10 ++++++
+ lib/kunit/{example-test.c => kunit-example-test.c} |  4 ++-
+ lib/kunit/{test-test.c => kunit-test.c}            |  7 ++--
+ lib/kunit/string-stream-test.c                     |  5 +--
+ lib/kunit/string-stream.c                          |  3 +-
+ {include => lib}/kunit/string-stream.h             |  0
+ lib/kunit/test.c                                   | 25 ++++++++++++++-
+ lib/kunit/try-catch-impl.h                         | 27 ++++++++++++++++
+ lib/kunit/try-catch.c                              | 37 +++++-----------------
+ lib/list-test.c                                    |  4 ++-
+ 23 files changed, 160 insertions(+), 71 deletions(-)
+ rename lib/kunit/{example-test.c => kunit-example-test.c} (97%)
+ rename lib/kunit/{test-test.c => kunit-test.c} (98%)
+ rename {include => lib}/kunit/string-stream.h (100%)
+ create mode 100644 lib/kunit/try-catch-impl.h
 
-By other words, I would expect a bug on the writer side here.
-And I would try to preserve the data by calling:
+-- 
+1.8.3.1
 
-pr_warn_once("Wrong data_size (%lu) for data: %.*s\n", data_size,
-data_size, data);
-
-Well, I do not resist on it. WARN_ON_ONCE() is fine as well.
-
-> +
-> +	data_size = min_t(u16, buf_size, len);
-> +
-> +	if (!WARN_ON_ONCE(!data_size))
-> +		memcpy(&buf[0], data, data_size);
-> +	return true;
-> +}
-> +
-
-Otherwise it looks good to me. I wonder how the conversion
-of the printk.c code will look with this API.
-
-Best Regards,
-Petr
