@@ -2,211 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8E41101BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 841421101C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfLCQDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:03:32 -0500
-Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:59440
-        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726131AbfLCQDc (ORCPT
+        id S1727200AbfLCQDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:03:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37958 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726131AbfLCQDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 11:03:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575389011;
-        h=From:To:Cc:Subject:Date:Message-Id;
-        bh=/Oji1XfOeHWM5w73YnSdVFFyOQQ7sN1E/xUaeAITslU=;
-        b=VpXrUP7tJNyLCkCrp92zQCKJhf/3BCBC2roXBepJH5apzw9a77/wztWh64HcpXUf
-        YeUVhU/ftcD7kZDAoC6x2fxj7Xdo60gnOf9j1TomnBIkSvhPRFhjrWcULts/eYJDrYD
-        IvdpEyg/5jxptUYf2SIh8NrP0NOcfDyjAakQNqrE=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575389011;
-        h=From:To:Cc:Subject:Date:Message-Id:Feedback-ID;
-        bh=/Oji1XfOeHWM5w73YnSdVFFyOQQ7sN1E/xUaeAITslU=;
-        b=H1uFvqZcSlniwO1p0jGtVu6RM+VzMkjk8JBBArbznm7varLckUWbKk929K6Cbw9+
-        MRMSy7qep17XSDn40S8zdESnWQjTNGMuECUNY8B5BPnbHxs4gPqFd0wdBL0f1kqSFST
-        R9b6Nmk9D3VuK1TmATtvbi0bHu3T9ew2sELpiglg=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99A38C447A0
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=prsood@codeaurora.org
-From:   Prateek Sood <prsood@codeaurora.org>
-To:     rostedt@goodmis.org, mingo@redhat.com
-Cc:     linux-kernel@vger.kernel.org, kaushalk@codeaurora.org,
-        Prateek Sood <prsood@codeaurora.org>
-Subject: [PATCH] trace: circular dependency for trace_types_lock and event_mutex
-Date:   Tue, 3 Dec 2019 16:03:31 +0000
-Message-ID: <0101016ecc809d86-ef995a42-fbd1-437d-917e-bd05fe7732c6-000000@us-west-2.amazonses.com>
-X-Mailer: git-send-email 1.9.1
-X-SES-Outgoing: 2019.12.03-54.240.27.18
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Tue, 3 Dec 2019 11:03:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575389033;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=L/S9YEoC00wo/Of2441RPzayHTUYnY3vnFh0QpGH2VA=;
+        b=dtYCn58+LwA3LmDHU2X/Nmo3uMCS2e2LbJXoYhdkLUNn+8OFMD5qQYLIB2zWsN0e/ZIh7h
+        lgP1JeOBzKVbvFqSU1GSysX6BdNR7C8m8liMl9qVtEC0/tHQ/XAjVSMfmXnlHu7M1qxctk
+        uiyGE0dEA25RXlNtHioQDAsdQliz3Zg=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-40-Ps-krIttNZSF5PHW70sGqA-1; Tue, 03 Dec 2019 11:03:49 -0500
+Received: by mail-qt1-f199.google.com with SMTP id u9so2751676qte.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:03:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ilQ0+r0UBu4+GolSe7bf072ArjOFjAUnGKdJuleehSk=;
+        b=bAU1OGrCvg011hKt4x/4AE3tFmHbbBZOWo3I6wtNqn59g6tB3cdPSjbMJhIOQqoVO1
+         ElFFhCGgoM7UfXj2Y/5Bq98USjqpdajXUnp8JBZFS/+Yl1c9hIzkGXbuBhHOuFk3FmK6
+         yIzFQ9o6bXMba9zns+K4o3vjU9jwi39qszKky5oYfwbOmXdhzJtuQgTVEGF0Z0rhq/do
+         wcq+VD6cbocIoS0D/+4NMKOKJjyCg5reO2pV1yT9W3pLKEDQKLfIqEpVGFaoK79HMb0M
+         WZYLpjUuq3kGGS9q8y5+br8vhOK+DcBl9xJ2lEjKNN/8Tm9ysRQ/kIfB/mvc+V18vDpv
+         whLQ==
+X-Gm-Message-State: APjAAAX1MDy37mxV9T+nVBPKsDxLOaW2lKwIs0+5aUOwxISOh9v0T//w
+        A/zciuiJkA68NZHQ4/58KhhWKP6whMtoIfGQb9bLAjiGYLFEWkDNI61QlIqRIcFSVzG1la3Z24N
+        2L7JJpEZrTN3OGiu9pgCFtw49
+X-Received: by 2002:ac8:461a:: with SMTP id p26mr5490197qtn.317.1575389028707;
+        Tue, 03 Dec 2019 08:03:48 -0800 (PST)
+X-Google-Smtp-Source: APXvYqw4fOIwDRRPp6l7y0lv2pBkxHBG2W7El3I1jqcWKz1A9rg9pHTFG2qYGS/ZbAA+/l6HxaYdUQ==
+X-Received: by 2002:ac8:461a:: with SMTP id p26mr5490164qtn.317.1575389028362;
+        Tue, 03 Dec 2019 08:03:48 -0800 (PST)
+Received: from labbott-redhat.redhat.com (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
+        by smtp.gmail.com with ESMTPSA id i19sm1930260qki.124.2019.12.03.08.03.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 08:03:47 -0800 (PST)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Laura Abbott <labbott@redhat.com>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: [PATCH] netfilter: nf_flow_table_offload: Correct memcpy size for flow_overload_mangle
+Date:   Tue,  3 Dec 2019 11:03:45 -0500
+Message-Id: <20191203160345.24743-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+X-MC-Unique: Ps-krIttNZSF5PHW70sGqA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-       Task T2                             Task T3
-trace_options_core_write()            subsystem_open()
+The sizes for memcpy in flow_offload_mangle don't match
+the source variables, leading to overflow errors on some
+build configurations:
 
- mutex_lock(trace_types_lock)           mutex_lock(event_mutex)
+In function 'memcpy',
+    inlined from 'flow_offload_mangle' at net/netfilter/nf_flow_table_offlo=
+ad.c:112:2,
+    inlined from 'flow_offload_port_dnat' at net/netfilter/nf_flow_table_of=
+fload.c:373:2,
+    inlined from 'nf_flow_rule_route_ipv4' at net/netfilter/nf_flow_table_o=
+ffload.c:424:3:
+./include/linux/string.h:376:4: error: call to '__read_overflow2' declared =
+with attribute error: detected read beyond size of object passed as 2nd par=
+ameter
+  376 |    __read_overflow2();
+      |    ^~~~~~~~~~~~~~~~~~
+make[2]: *** [scripts/Makefile.build:266: net/netfilter/nf_flow_table_offlo=
+ad.o] Error 1
 
- set_tracer_flag()
+Fix this by using the corresponding type.
 
-   trace_event_enable_tgid_record()       mutex_lock(trace_types_lock)
-
-    mutex_lock(event_mutex)
-
-This gives a circular dependency deadlock between trace_types_lock and
-event_mutex. To fix this invert the usage of trace_types_lock and event_mutex
-in trace_options_core_write(). This keeps the sequence of lock usage consistent.
-
-Change-Id: I3752a77c59555852c2241f7775ec4a1960c15c15
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+Fixes: c29f74e0df7a ("netfilter: nf_flow_table: hardware offload support")
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
- kernel/trace/trace.c              | 6 ++++++
- kernel/trace/trace_events.c       | 8 ++++----
- kernel/trace/trace_irqsoff.c      | 4 ++++
- kernel/trace/trace_sched_wakeup.c | 4 ++++
- 4 files changed, 18 insertions(+), 4 deletions(-)
+Seen on a Fedora powerpc little endian build with -O3 but it looks like
+it is correctly catching an error with doing a memcpy outside the source
+variable.
+---
+ net/netfilter/nf_flow_table_offload.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 6a0ee91..2c09aa1 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4590,6 +4590,8 @@ int trace_keep_overwrite(struct tracer *tracer, u32 mask, int set)
- 
- int set_tracer_flag(struct trace_array *tr, unsigned int mask, int enabled)
- {
-+	lockdep_assert_held(&event_mutex);
-+
- 	/* do nothing if flag is already set */
- 	if (!!(tr->trace_flags & mask) == !!enabled)
- 		return 0;
-@@ -4657,6 +4659,7 @@ static int trace_set_options(struct trace_array *tr, char *option)
- 
- 	cmp += len;
- 
-+	mutex_lock(&event_mutex);
- 	mutex_lock(&trace_types_lock);
- 
- 	ret = match_string(trace_options, -1, cmp);
-@@ -4667,6 +4670,7 @@ static int trace_set_options(struct trace_array *tr, char *option)
- 		ret = set_tracer_flag(tr, 1 << ret, !neg);
- 
- 	mutex_unlock(&trace_types_lock);
-+	mutex_unlock(&event_mutex);
- 
- 	/*
- 	 * If the first trailing whitespace is replaced with '\0' by strstrip,
-@@ -7972,9 +7976,11 @@ static void get_tr_index(void *data, struct trace_array **ptr,
- 	if (val != 0 && val != 1)
- 		return -EINVAL;
- 
-+	mutex_lock(&event_mutex);
- 	mutex_lock(&trace_types_lock);
- 	ret = set_tracer_flag(tr, 1 << index, val);
- 	mutex_unlock(&trace_types_lock);
-+	mutex_unlock(&event_mutex);
- 
- 	if (ret < 0)
- 		return ret;
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index fba87d1..995061b 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -320,7 +320,8 @@ void trace_event_enable_cmd_record(bool enable)
- 	struct trace_event_file *file;
- 	struct trace_array *tr;
- 
--	mutex_lock(&event_mutex);
-+	lockdep_assert_held(&event_mutex);
-+
- 	do_for_each_event_file(tr, file) {
- 
- 		if (!(file->flags & EVENT_FILE_FL_ENABLED))
-@@ -334,7 +335,6 @@ void trace_event_enable_cmd_record(bool enable)
- 			clear_bit(EVENT_FILE_FL_RECORDED_CMD_BIT, &file->flags);
- 		}
- 	} while_for_each_event_file();
--	mutex_unlock(&event_mutex);
+diff --git a/net/netfilter/nf_flow_table_offload.c b/net/netfilter/nf_flow_=
+table_offload.c
+index c54c9a6cc981..526f894d0bdb 100644
+--- a/net/netfilter/nf_flow_table_offload.c
++++ b/net/netfilter/nf_flow_table_offload.c
+@@ -108,8 +108,8 @@ static void flow_offload_mangle(struct flow_action_entr=
+y *entry,
+ =09entry->id =3D FLOW_ACTION_MANGLE;
+ =09entry->mangle.htype =3D htype;
+ =09entry->mangle.offset =3D offset;
+-=09memcpy(&entry->mangle.mask, mask, sizeof(u32));
+-=09memcpy(&entry->mangle.val, value, sizeof(u32));
++=09memcpy(&entry->mangle.mask, mask, sizeof(u8));
++=09memcpy(&entry->mangle.val, value, sizeof(u8));
  }
- 
- void trace_event_enable_tgid_record(bool enable)
-@@ -342,7 +342,8 @@ void trace_event_enable_tgid_record(bool enable)
- 	struct trace_event_file *file;
- 	struct trace_array *tr;
- 
--	mutex_lock(&event_mutex);
-+	lockdep_assert_held(&event_mutex);
-+
- 	do_for_each_event_file(tr, file) {
- 		if (!(file->flags & EVENT_FILE_FL_ENABLED))
- 			continue;
-@@ -356,7 +357,6 @@ void trace_event_enable_tgid_record(bool enable)
- 				  &file->flags);
- 		}
- 	} while_for_each_event_file();
--	mutex_unlock(&event_mutex);
- }
- 
- static int __ftrace_event_enable_disable(struct trace_event_file *file,
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index a745b0c..887cdb5 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -560,8 +560,10 @@ static int __irqsoff_tracer_init(struct trace_array *tr)
- 	save_flags = tr->trace_flags;
- 
- 	/* non overwrite screws up the latency tracers */
-+	mutex_lock(&event_mutex);
- 	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, 1);
- 	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, 1);
-+	mutex_unlock(&event_mutex);
- 
- 	tr->max_latency = 0;
- 	irqsoff_trace = tr;
-@@ -586,8 +588,10 @@ static void __irqsoff_tracer_reset(struct trace_array *tr)
- 
- 	stop_irqsoff_tracer(tr, is_graph(tr));
- 
-+	mutex_lock(&event_mutex);
- 	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, lat_flag);
- 	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, overwrite_flag);
-+	mutex_unlock(&event_mutex);
- 	ftrace_reset_array_ops(tr);
- 
- 	irqsoff_busy = false;
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index 5e43b96..0bc67d1 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -671,8 +671,10 @@ static int __wakeup_tracer_init(struct trace_array *tr)
- 	save_flags = tr->trace_flags;
- 
- 	/* non overwrite screws up the latency tracers */
-+	mutex_lock(&event_mutex);
- 	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, 1);
- 	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, 1);
-+	mutex_unlock(&event_mutex);
- 
- 	tr->max_latency = 0;
- 	wakeup_trace = tr;
-@@ -722,8 +724,10 @@ static void wakeup_tracer_reset(struct trace_array *tr)
- 	/* make sure we put back any tasks we are tracing */
- 	wakeup_reset(tr);
- 
-+	mutex_lock(&event_mutex);
- 	set_tracer_flag(tr, TRACE_ITER_LATENCY_FMT, lat_flag);
- 	set_tracer_flag(tr, TRACE_ITER_OVERWRITE, overwrite_flag);
-+	mutex_unlock(&event_mutex);
- 	ftrace_reset_array_ops(tr);
- 	wakeup_busy = false;
- }
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., 
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+=20
+ static inline struct flow_action_entry *
+--=20
+2.21.0
 
