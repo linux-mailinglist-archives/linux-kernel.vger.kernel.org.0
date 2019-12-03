@@ -2,259 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB3D110523
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 20:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E2C11053A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 20:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfLCTbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 14:31:22 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35922 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727385AbfLCTbW (ORCPT
+        id S1727411AbfLCTdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 14:33:45 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:9947 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbfLCTdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 14:31:22 -0500
-Received: from localhost (unknown [IPv6:2610:98:8005::647])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id BAB152904A2;
-        Tue,  3 Dec 2019 19:31:19 +0000 (GMT)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 4/8] vfs: Fold casefolding into vfs
-Organization: Collabora
-References: <20191203051049.44573-1-drosen@google.com>
-        <20191203051049.44573-5-drosen@google.com>
-Date:   Tue, 03 Dec 2019 14:31:16 -0500
-In-Reply-To: <20191203051049.44573-5-drosen@google.com> (Daniel Rosenberg's
-        message of "Mon, 2 Dec 2019 21:10:45 -0800")
-Message-ID: <851rtlcikb.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 3 Dec 2019 14:33:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1575401637; x=1606937637;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=WzwxpGeDXydgm3WX4Wp3Q2mVZpVA2UO5jaLMGpzzqcY=;
+  b=n2DJRJef1N3HIAGgVyfVt1EnQmlmMDuscPgolXDuzxFusbp0mWQmO7WN
+   ZusognPBN6EDqncjVGFeKLQsCAyEkKaVefo8vis5j1dP0AKD8m9OGzW8i
+   Q4IE8KJ6NcDM3ezhI2lfjoit+1AbklbptnOnS4zXWUsp6Dbr527hKKMJ8
+   tUrg9UfKSvl6QMKmGIM6mTnbpFjRVFucMnTbtXEtdU9qffZyV/VXnYkAZ
+   ViYtU9xSaHea483NBAxqAFILRxfPMPlNGlNyeX00FUaa0tdso2PqbW3bC
+   aU3UzVNdKcu58+uv42fBeDI/qQAMSuaLB3eU5ENuoJ2HVY60NdoybnsHQ
+   w==;
+IronPort-SDR: 0JVaxiI+K1XX3X3mbPNbP0Qu536RBmWAw7aY8zcGeYfff6d1j6es9loVpW6Fo3YBiaqjB3fMB6
+ n5wb9yJOSHyHpXdfeFj2l7FhRWyRZsnZwAd5vafqB3ksNtIpG6lbe4V3Le39c40gj0QzYVy/DV
+ nJusAICrmf2MwlKbyPZJhntoqdUrqvt8wPlUtRlqFFydqqctODGBTy/2N04V0OX3POwVuqCu/N
+ Te+9NQtp/ujZOmMY99bIwY8KtkkFbcp52JAOnW6x1hLNQfKA0Hv419tkol27aL2mZMG2aXsdBD
+ 9DU=
+X-IronPort-AV: E=Sophos;i="5.69,274,1571673600"; 
+   d="scan'208";a="225983875"
+Received: from mail-co1nam03lp2053.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([104.47.40.53])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2019 03:33:56 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SHaAsWHrVEsCQQTHziLyzetzHDM8W5Cy0zpIN8/UsLVtQIx2r947yPJhrC6hvNmN3O/TdYID5CSEJ1Zo6gdMiGdEtSYGVKRSagAjF3ypzBDws6HXyV/PAY8xQazOpYbJH4WYH3gssqgSo2pQFf2oPaezGSzXW7ooHb1BeZZSbcnsOghM8tv33Fhd9urUiU+VJp/Zl8Sk1rUyfiTzdwbOoQJ6u1v67u2lhw4E1TYwdLREHMaqtPrMmJp7fC8ZHfOQLwQT/bluo7oWxBQFavN5r2vnWfxveyu5E6fP/4J0x+m279NYG49XfxKj02hwZN4wtU3BuQIX2qOXTGOzuVm9sQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WzwxpGeDXydgm3WX4Wp3Q2mVZpVA2UO5jaLMGpzzqcY=;
+ b=a9vIpgF2kvOmM5I/SP1+guRNVpLr+pR+/TzSzwK2hzUm52j2AOWBxrlOqsUZWasiiR/AwzAD0w3FvPDmzkeniZ5MwSNclYYnmnqgIbo/41gRSYPlQ+feEF/8TDGUZ7Y172B5VGJBNHDIBcDiMnM3BIc3cVtaFWcsnDyvU6ZDN93ex0sUvHrENc61V0KNZttieec15dGH5r82cXS+fiqmsTzYCt1P4mn/CRJi6kc+Ggj0C05s/eD0yd57A1fKsCspaAgOGdNuqAFzYuqzHpNwcWOkLpvVEW7643QMZoWeXEi14gLY8AxpYtwdKTmL+CGsKU3KP39f/5oodhbuW8SsKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WzwxpGeDXydgm3WX4Wp3Q2mVZpVA2UO5jaLMGpzzqcY=;
+ b=L0X6F/ASnoGI7kkOopiRaGL3gGGnlzlPQWEjuSMuPbAbMCp0P4Dl/w9xdACXzFYJ1tEW1FRMVDqkX/cnLCN5eL9t643NtKr+5sb56VcFCSdFo/PRknmhtV1F+SN8LtkAjqjtvscWUCxPIuF+uaLV3pXE3p1PFxGCNefIMs3vGHk=
+Received: from BYAPR04MB4901.namprd04.prod.outlook.com (52.135.232.206) by
+ BYAPR04MB4951.namprd04.prod.outlook.com (52.135.232.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.22; Tue, 3 Dec 2019 19:33:42 +0000
+Received: from BYAPR04MB4901.namprd04.prod.outlook.com
+ ([fe80::112d:6934:52da:df11]) by BYAPR04MB4901.namprd04.prod.outlook.com
+ ([fe80::112d:6934:52da:df11%7]) with mapi id 15.20.2495.014; Tue, 3 Dec 2019
+ 19:33:42 +0000
+From:   Alistair Francis <Alistair.Francis@wdc.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>
+CC:     "hch@lst.de" <hch@lst.de>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] RISC-V: Add kconfig option for QEMU virt machine
+Thread-Topic: [PATCH v2 1/4] RISC-V: Add kconfig option for QEMU virt machine
+Thread-Index: AQHVqYyr/RMj/iyeVEuQTvGzYoAZAKeozHwA
+Date:   Tue, 3 Dec 2019 19:33:41 +0000
+Message-ID: <2aa53495207f48d50489eda3fcbdd1f02779f85d.camel@wdc.com>
+References: <20191203034909.37385-1-anup.patel@wdc.com>
+         <20191203034909.37385-2-anup.patel@wdc.com>
+In-Reply-To: <20191203034909.37385-2-anup.patel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alistair.Francis@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 06d53ab7-1ebd-4ffc-aaaa-08d77827b491
+x-ms-traffictypediagnostic: BYAPR04MB4951:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB49516DB10749C8B413BF40AB90420@BYAPR04MB4951.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:2399;
+x-forefront-prvs: 02408926C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(39860400002)(376002)(346002)(366004)(136003)(199004)(189003)(8676002)(86362001)(8936002)(6506007)(76176011)(2501003)(81166006)(81156014)(26005)(2616005)(118296001)(229853002)(102836004)(11346002)(36756003)(478600001)(6486002)(446003)(14454004)(316002)(6512007)(66476007)(66946007)(76116006)(2906002)(7736002)(6246003)(54906003)(71200400001)(110136005)(66556008)(6436002)(71190400001)(66446008)(5660300002)(64756008)(2171002)(186003)(6116002)(4326008)(3846002)(25786009)(99286004)(256004)(305945005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4951;H:BYAPR04MB4901.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QhWY78z1b3s5DT87XLnvIz00CiNkvQNINvlZSemUYf4UQ94tLSYL79oWcbGRvKis75zRugDjXHoAhRUuFx688N1UX3ZrP7BFlvOYzWtRzBPztgqYj/XB+qovS4jRNm872ullXPWTuttQV0vwo1dkTfOtVMMTtLUlc/Nyo1+9LjYBQL1m4JlcyqMwSMmHg3sBaCFFwQQlHcFBG6MDggOaoSEqcPK9RdUoqW7o8TKEI4lDDkS+dhBci8o+anREGcemEbOutMx4rJBFN9ASsU1rECRPDChWxdfgOd0WIgLlLJHTYxOnPrbwbXolGwZPu/x8kDOFeRox20sutlyhAXJrgHbADxgb18H59PLB5jBbT4EIVURko8Jx8ZWMp0+YVRaMriO+EI0LvmytmG62RCuH5nIK1kmZgAARf9nDxZ1TR/i2n9isgKlhX7dVnsrKoTlD
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F94957C4591BBC46B574E2C513EDBB13@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06d53ab7-1ebd-4ffc-aaaa-08d77827b491
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 19:33:42.2958
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U5r8TLpKEeUvSwTrWTzWtFTqqMh8JVcyv/mbVazn1G8ytVL4rfceyrQQZit5Fcp4QpEfmHxth4u+KSqCgkbxQ59Cju4E4xLeqVL9cdDo+kw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4951
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Rosenberg <drosen@google.com> writes:
-
-> Ext4 and F2fs are both using casefolding, and they, along with any other
-> filesystem that adds the feature, will be using identical dentry_ops.
-> Additionally, those dentry ops interfere with the dentry_ops required
-> for fscrypt once we add support for casefolding and encryption.
-> Moving this into the vfs removes code duplication as well as the
-> complication with encryption.
->
-> Currently this is pretty close to just moving the existing f2fs/ext4
-> code up a level into the vfs, although there is a lot of room for
-> improvement now.
->
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> ---
->  fs/dcache.c        | 35 +++++++++++++++++++++++++++++++++++
->  fs/namei.c         | 43 ++++++++++++++++++++++++++++++++++++++++---
->  include/linux/fs.h | 12 ++++++++++++
->  3 files changed, 87 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index f7931b682a0d..575f3c2c3f77 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -32,6 +32,7 @@
->  #include <linux/bit_spinlock.h>
->  #include <linux/rculist_bl.h>
->  #include <linux/list_lru.h>
-> +#include <linux/unicode.h>
->  #include "internal.h"
->  #include "mount.h"
->  
-> @@ -228,6 +229,13 @@ static inline int dentry_string_cmp(const unsigned char *cs, const unsigned char
->  
->  #endif
->  
-> +bool needs_casefold(const struct inode *dir)
-> +{
-> +	return IS_CASEFOLDED(dir) &&
-> +			(!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir));
-> +}
-> +EXPORT_SYMBOL(needs_casefold);
-> +
->  static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *ct, unsigned tcount)
->  {
->  	/*
-> @@ -247,7 +255,19 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  	 * be no NUL in the ct/tcount data)
->  	 */
->  	const unsigned char *cs = READ_ONCE(dentry->d_name.name);
-> +#ifdef CONFIG_UNICODE
-> +	struct inode *parent = dentry->d_parent->d_inode;
->  
-> +	if (unlikely(needs_casefold(parent))) {
-> +		const struct qstr n1 = QSTR_INIT(cs, tcount);
-> +		const struct qstr n2 = QSTR_INIT(ct, tcount);
-> +		int result = utf8_strncasecmp(dentry->d_sb->s_encoding,
-> +						&n1, &n2);
-> +
-> +		if (result >= 0 || sb_has_enc_strict_mode(dentry->d_sb))
-> +			return result;
-> +	}
-> +#endif
->  	return dentry_string_cmp(cs, ct, tcount);
->  }
->  
-> @@ -2404,7 +2424,22 @@ struct dentry *d_hash_and_lookup(struct dentry *dir, struct qstr *name)
->  	 * calculate the standard hash first, as the d_op->d_hash()
->  	 * routine may choose to leave the hash value unchanged.
->  	 */
-> +#ifdef CONFIG_UNICODE
-> +	unsigned char *hname = NULL;
-> +	int hlen = name->len;
-> +
-> +	if (IS_CASEFOLDED(dir->d_inode)) {
-> +		hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +		if (!hname)
-> +			return ERR_PTR(-ENOMEM);
-> +		hlen = utf8_casefold(dir->d_sb->s_encoding,
-> +					name, hname, PATH_MAX);
-> +	}
-> +	name->hash = full_name_hash(dir, hname ?: name->name, hlen);
-> +	kfree(hname);
-> +#else
->  	name->hash = full_name_hash(dir, name->name, name->len);
-> +#endif
->  	if (dir->d_flags & DCACHE_OP_HASH) {
->  		int err = dir->d_op->d_hash(dir, name);
->  		if (unlikely(err < 0))
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 2dda552bcf7a..b8d5cb0994ec 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -39,6 +39,7 @@
->  #include <linux/bitops.h>
->  #include <linux/init_task.h>
->  #include <linux/uaccess.h>
-> +#include <linux/unicode.h>
->  
->  #include "internal.h"
->  #include "mount.h"
-> @@ -2062,6 +2063,10 @@ static inline u64 hash_name(const void *salt, const char *name)
->  static int link_path_walk(const char *name, struct nameidata *nd)
->  {
->  	int err;
-> +#ifdef CONFIG_UNICODE
-> +	char *hname = NULL;
-> +	int hlen = 0;
-> +#endif
->  
->  	if (IS_ERR(name))
->  		return PTR_ERR(name);
-> @@ -2078,9 +2083,21 @@ static int link_path_walk(const char *name, struct nameidata *nd)
->  		err = may_lookup(nd);
->  		if (err)
->  			return err;
-> -
-> +#ifdef CONFIG_UNICODE
-> +		if (needs_casefold(nd->path.dentry->d_inode)) {
-> +			struct qstr str = QSTR_INIT(name, PATH_MAX);
-> +
-> +			hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +			if (!hname)
-> +				return -ENOMEM;
-> +			hlen = utf8_casefold(nd->path.dentry->d_sb->s_encoding,
-> +						&str, hname, PATH_MAX);
-> +		}
-> +		hash_len = hash_name(nd->path.dentry, hname ?: name);
-> +		kfree(hname);
-
-It would be nice to reuse the memory allocation for the entire path walk
-instead of allocating and freeing several times in a row.  Still not
-ideal, but I don't see how we could not have at least one allocation here.
-
-> +#else
->  		hash_len = hash_name(nd->path.dentry, name);
-> -
-> +#endif
->  		type = LAST_NORM;
->  		if (name[0] == '.') switch (hashlen_len(hash_len)) {
->  			case 2:
-> @@ -2452,9 +2469,29 @@ EXPORT_SYMBOL(vfs_path_lookup);
->  static int lookup_one_len_common(const char *name, struct dentry *base,
->  				 int len, struct qstr *this)
->  {
-> +#ifdef CONFIG_UNICODE
-> +	char *hname = NULL;
-> +	int hlen = len;
-> +
-> +	if (needs_casefold(base->d_inode)) {
-> +		struct qstr str = QSTR_INIT(name, len);
-> +
-> +		hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +		if (!hname)
-> +			return -ENOMEM;
-> +		hlen = utf8_casefold(base->d_sb->s_encoding,
-> +					&str, hname, PATH_MAX);
-> +	}
-> +	this->hash = full_name_hash(base, hname ?: name, hlen);
-> +	kvfree(hname);
-> +#else
-> +	this->hash = full_name_hash(base, name, len);
-> +#endif
->  	this->name = name;
->  	this->len = len;
-> -	this->hash = full_name_hash(base, name, len);
-> +#ifdef CONFIG_UNICODE
-> +	kfree(hname);
-> +#endif
->  	if (!len)
->  		return -EACCES;
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c159a8bdee8b..38d1c20f3e6f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1382,6 +1382,12 @@ extern int send_sigurg(struct fown_struct *fown);
->  #define SB_ACTIVE	(1<<30)
->  #define SB_NOUSER	(1<<31)
->  
-> +/* These flags relate to encoding and casefolding */
-> +#define SB_ENC_STRICT_MODE_FL	(1 << 0)
-> +
-> +#define sb_has_enc_strict_mode(sb) \
-> +	(sb->s_encoding_flags & SB_ENC_STRICT_MODE_FL)
-> +
->  /*
->   *	Umount options
->   */
-> @@ -1449,6 +1455,10 @@ struct super_block {
->  #endif
->  #ifdef CONFIG_FS_VERITY
->  	const struct fsverity_operations *s_vop;
-> +#endif
-> +#ifdef CONFIG_UNICODE
-> +	struct unicode_map *s_encoding;
-> +	__u16 s_encoding_flags;
->  #endif
->  	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
->  	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
-> @@ -2044,6 +2054,8 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
->  #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
->  				 (inode)->i_rdev == WHITEOUT_DEV)
->  
-> +extern bool needs_casefold(const struct inode *dir);
-> +
->  static inline bool HAS_UNMAPPED_ID(struct inode *inode)
->  {
->  	return !uid_valid(inode->i_uid) || !gid_valid(inode->i_gid);
-
--- 
-Gabriel Krisman Bertazi
+T24gVHVlLCAyMDE5LTEyLTAzIGF0IDAzOjQ5ICswMDAwLCBBbnVwIFBhdGVsIHdyb3RlOg0KPiBX
+ZSBhZGQga2NvbmZpZyBvcHRpb24gZm9yIFFFTVUgdmlydCBtYWNoaW5lIGFuZCBzZWxlY3QgYWxs
+DQo+IHJlcXVpcmVkIFZJUlRJTyBkcml2ZXJzIHVzaW5nIHRoaXMga2NvbmZpZyBvcHRpb24uDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBbnVwIFBhdGVsIDxhbnVwLnBhdGVsQHdkYy5jb20+DQo+IFJl
+dmlld2VkLWJ5OiBBdGlzaCBQYXRyYSA8YXRpc2gucGF0cmFAd2RjLmNvbT4NCj4gUmV2aWV3ZWQt
+Ynk6IFBhbG1lciBEYWJiZWx0IDxwYWxtZXJkYWJiZWx0QGdvb2dsZS5jb20+DQoNClJldmlld2Vk
+LWJ5OiBBbGlzdGFpciBGcmFuY2lzIDxhbGlzdGFpci5mcmFuY2lzQHdkYy5jb20+DQoNCkFsaXN0
+YWlyDQoNCj4gLS0tDQo+ICBhcmNoL3Jpc2N2L0tjb25maWcuc29jcyB8IDIwICsrKysrKysrKysr
+KysrKysrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL2FyY2gvcmlzY3YvS2NvbmZpZy5zb2NzIGIvYXJjaC9yaXNjdi9LY29uZmlnLnNv
+Y3MNCj4gaW5kZXggNTM2YzBlZjRhZWU4Li42MjM4Mzk1MWJmMmUgMTAwNjQ0DQo+IC0tLSBhL2Fy
+Y2gvcmlzY3YvS2NvbmZpZy5zb2NzDQo+ICsrKyBiL2FyY2gvcmlzY3YvS2NvbmZpZy5zb2NzDQo+
+IEBAIC0xMCw0ICsxMCwyNCBAQCBjb25maWcgU09DX1NJRklWRQ0KPiAgICAgICAgIGhlbHANCj4g
+ICAgICAgICAgIFRoaXMgZW5hYmxlcyBzdXBwb3J0IGZvciBTaUZpdmUgU29DIHBsYXRmb3JtIGhh
+cmR3YXJlLg0KPiAgDQo+ICtjb25maWcgU09DX1ZJUlQNCj4gKyAgICAgICBib29sICJRRU1VIFZp
+cnQgTWFjaGluZSINCj4gKyAgICAgICBzZWxlY3QgVklSVElPX1BDSQ0KPiArICAgICAgIHNlbGVj
+dCBWSVJUSU9fQkFMTE9PTg0KPiArICAgICAgIHNlbGVjdCBWSVJUSU9fTU1JTw0KPiArICAgICAg
+IHNlbGVjdCBWSVJUSU9fQ09OU09MRQ0KPiArICAgICAgIHNlbGVjdCBWSVJUSU9fTkVUDQo+ICsg
+ICAgICAgc2VsZWN0IE5FVF85UF9WSVJUSU8NCj4gKyAgICAgICBzZWxlY3QgVklSVElPX0JMSw0K
+PiArICAgICAgIHNlbGVjdCBTQ1NJX1ZJUlRJTw0KPiArICAgICAgIHNlbGVjdCBEUk1fVklSVElP
+X0dQVQ0KPiArICAgICAgIHNlbGVjdCBIV19SQU5ET01fVklSVElPDQo+ICsgICAgICAgc2VsZWN0
+IFJQTVNHX0NIQVINCj4gKyAgICAgICBzZWxlY3QgUlBNU0dfVklSVElPDQo+ICsgICAgICAgc2Vs
+ZWN0IENSWVBUT19ERVZfVklSVElPDQo+ICsgICAgICAgc2VsZWN0IFZJUlRJT19JTlBVVA0KPiAr
+ICAgICAgIHNlbGVjdCBTSUZJVkVfUExJQw0KPiArICAgICAgIGhlbHANCj4gKyAgICAgICAgIFRo
+aXMgZW5hYmxlcyBzdXBwb3J0IGZvciBRRU1VIFZpcnQgTWFjaGluZS4NCj4gKw0KPiAgZW5kbWVu
+dQ0K
