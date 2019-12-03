@@ -2,263 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D899011066A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 22:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA458111B06
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 22:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfLCVVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 16:21:08 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37006 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbfLCVVI (ORCPT
+        id S1727507AbfLCVam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 16:30:42 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33720 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726583AbfLCVam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 16:21:08 -0500
-Received: from localhost (unknown [IPv6:2610:98:8005::647])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E95F128C59C;
-        Tue,  3 Dec 2019 21:21:04 +0000 (GMT)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Daniel Rosenberg <drosen@google.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 4/8] vfs: Fold casefolding into vfs
-Organization: Collabora
-References: <20191203051049.44573-1-drosen@google.com>
-        <20191203051049.44573-5-drosen@google.com>
-        <20191203074154.GA216261@architecture4> <85wobdb3hp.fsf@collabora.com>
-        <20191203203414.GA727@sol.localdomain>
-Date:   Tue, 03 Dec 2019 16:21:02 -0500
-In-Reply-To: <20191203203414.GA727@sol.localdomain> (Eric Biggers's message of
-        "Tue, 3 Dec 2019 12:34:14 -0800")
-Message-ID: <85zhg96r7l.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 3 Dec 2019 16:30:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575408640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oVkHv3p11mXgV99QlMIl1/3VrE+Xsk2FfcjR6WYk0Vk=;
+        b=NBQT62eh6XBZYq21ZnJIz+QWEdZiep7p0AmtnfnR0+hHcuBNgRzSGH4FM68wYH1us5Eg2E
+        q6tIggSHgVMtfvX4VIe+8L/uZqF9KJHqW/Ic/QVD3TCV8w9xxkLwLQDkC77OfH0Ai1OMUp
+        r/FM+dMox7pR16P8i78DNtW7m9T8msw=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-348-KgjCbRt-NZGC9U6zhpT7dw-1; Tue, 03 Dec 2019 16:30:37 -0500
+Received: by mail-qt1-f198.google.com with SMTP id j14so3483445qtr.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 13:30:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=oVkHv3p11mXgV99QlMIl1/3VrE+Xsk2FfcjR6WYk0Vk=;
+        b=EMGzwqAcyKXA81jhjtoTeyBr5xTi/oy2MZa4laMdtkAjTYYTBuQXe/sUOmur4m7xZ2
+         TrzZvp8fRINFHJcZOG614GKGQTgAlrNQ7lLNarZ3RHlM8rf76FbeczqDOZvGrFo93kXE
+         SbA6gx1rtip0uydjFErtBa+tf7DnILVonsgNmNbTpoFb+716Lx03KVcn0MQs7fo/mGme
+         XR1s/90+EDd1uLcEn4GqrbkeAkoAh2/cFuvxhq95K1C/VZwK0JtFasmxWaFQ9MCeux+0
+         5Ff966xCbiYGAsRixLxsuq4LjOGQq1dtlDGPJSFMHp2Ba4X++CQZrYMyxXsKyQpSNPht
+         mbpQ==
+X-Gm-Message-State: APjAAAUx4/ZTbONlJB9nL38iM9cUK5nJroqH9K8NjpW/+9iM3ImDz7wB
+        nY1onvPhNUOQDXutSPs+ynaZaVTSEA78Pz5NGTdK96vxnFzg8uTExWQF89p6KENKeViU5j1vADn
+        WsHJ4FZxiU4jfqR/WHX+rB7QW
+X-Received: by 2002:a05:620a:1663:: with SMTP id d3mr7770114qko.204.1575408636933;
+        Tue, 03 Dec 2019 13:30:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx54quaeILrvI+YvFwX3cJ/jz6a0mLjjFo5Z7L28rGml0sLqP9j6m4hoyBRsSJspupT20C76w==
+X-Received: by 2002:a05:620a:1663:: with SMTP id d3mr7770089qko.204.1575408636721;
+        Tue, 03 Dec 2019 13:30:36 -0800 (PST)
+Received: from dhcp-10-20-1-90.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id k50sm2628629qtc.90.2019.12.03.13.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 13:30:35 -0800 (PST)
+Message-ID: <b35216fce6ed8f822d9147b2fa96a7cd840d96a9.camel@redhat.com>
+Subject: Re: [PATCH] drm/dp_mst: Fix build on systems with
+ STACKTRACE_SUPPORT=n
+From:   Lyude Paul <lyude@redhat.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 03 Dec 2019 16:30:34 -0500
+In-Reply-To: <20191203093334.GB624164@phenom.ffwll.local>
+References: <20191202133650.11964-1-linux@roeck-us.net>
+         <CAMuHMdUz7gewcFPE=cnVENGdwVp6AZD7U4y1PtwXTAmoGmvGUg@mail.gmail.com>
+         <837a221f0fc89b9ef6d3fbd2ceae479a5c98818a.camel@redhat.com>
+         <20191203093334.GB624164@phenom.ffwll.local>
+Organization: Red Hat
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31)
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MC-Unique: KgjCbRt-NZGC9U6zhpT7dw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
+On Tue, 2019-12-03 at 10:33 +0100, Daniel Vetter wrote:
+> On Mon, Dec 02, 2019 at 01:49:47PM -0500, Lyude Paul wrote:
+> > Reviewed-by: Lyude Paul <lyude@redhat.com>
+> > 
+> > I'll go ahead and push this to drm-misc-next, thanks!
+> 
+> drm-misc-next-fixes since it's in the merge window. drm-misc-next is for
+> 5.6 already.
+> -Daniel
 
-> On Tue, Dec 03, 2019 at 02:42:10PM -0500, Gabriel Krisman Bertazi wrote:
->> Gao Xiang <gaoxiang25@huawei.com> writes:
-
->> I think Daniel's approach of moving this into VFS is the simplest way to
->> actually solve the issue, instead of extending and duplicating a lot of
->> functionality into filesystem hooks to support the possible mixes of
->> case-insensitive, overlayfs and fscrypt.
->> 
->
-> I think we can actually get everything we want using dentry_operations only,
-> since the filesystem can set ->d_op during ->lookup() (like what is done for
-> encrypted filenames now) rather than at dentry allocation time.  And fs/crypto/
-> can export fscrypt_d_revalidate() rather than setting ->d_op itself.
-
-Problem is, differently from fscrypt, case-insensitive uses the d_hash()
-hook and for a lookup, we actually use
-dentry->d_parent->d_ops->d_hash().  Which works well, until you are flipping the
-casefold flag.  Then the dentry already exists and you need to modify
-the d_ops on the fly, which I couldn't find precedent anywhere.  I tried
-invalidating the dentry whenever we flip the flag, but then if it has
-negative dentries as children,I wasn't able to reliably invalidate it,
-and that's when I reached the limit of my knowledge in VFS.  In
-particular, in every attempt I made to implement it like this, I was
-able to race and do a case-insensitive lookup on a directory that was
-just made case sensitive.
-
-I'm not saying there isn't a way.  But it is a bit harder than this
-proposal. I tried it already and still didn't manage to make it work.
-Maybe someone who better understands vfs.
-
-> It's definitely ugly to have to handle the 3 cases of encrypt, casefold, and
-> encrypt+casefold separately -- and this will need to be duplicated for each
-> filesystem.  But we do have to weigh that against adding additional complexity
-> and overhead to the VFS for everyone.  If we do go with the VFS changes, please
-> try to make them as simple and unobtrusive as possible.
-
-Well, it is just not case-insensitive+fscrypt. Also overlayfs
-there. Probably more.  So we have much more cases.  I understand the VFS
-changes need to be very well thought, but when I worked on this it
-started to look a more correct solution than using the hooks.
-
-> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-> index 3719efa546c6..cfa44adff2b3 100644
-> --- a/fs/crypto/crypto.c
-> +++ b/fs/crypto/crypto.c
-> @@ -290,7 +290,7 @@ EXPORT_SYMBOL(fscrypt_decrypt_block_inplace);
->   * Validate dentries in encrypted directories to make sure we aren't potentially
->   * caching stale dentries after a key has been added.
->   */
-> -static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
-> +int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
->  {
->  	struct dentry *dir;
->  	int err;
-> @@ -329,10 +329,7 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
->  
->  	return valid;
->  }
-> -
-> -const struct dentry_operations fscrypt_d_ops = {
-> -	.d_revalidate = fscrypt_d_revalidate,
-> -};
-> +EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
->  
->  /**
->   * fscrypt_initialize() - allocate major buffers for fs encryption.
-> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-> index 130b50e5a011..4420670ac40a 100644
-> --- a/fs/crypto/fscrypt_private.h
-> +++ b/fs/crypto/fscrypt_private.h
-> @@ -233,7 +233,6 @@ extern int fscrypt_crypt_block(const struct inode *inode,
->  			       unsigned int len, unsigned int offs,
->  			       gfp_t gfp_flags);
->  extern struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags);
-> -extern const struct dentry_operations fscrypt_d_ops;
->  
->  extern void __printf(3, 4) __cold
->  fscrypt_msg(const struct inode *inode, const char *level, const char *fmt, ...);
-> diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-> index bb3b7fcfdd48..ec81b6a597aa 100644
-> --- a/fs/crypto/hooks.c
-> +++ b/fs/crypto/hooks.c
-> @@ -116,7 +116,6 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
->  		spin_lock(&dentry->d_lock);
->  		dentry->d_flags |= DCACHE_ENCRYPTED_NAME;
->  		spin_unlock(&dentry->d_lock);
-> -		d_set_d_op(dentry, &fscrypt_d_ops);
->  	}
->  	return err;
->  }
-> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-> index 9fdd2b269d61..bd3c14e6b24a 100644
-> --- a/fs/ext4/dir.c
-> +++ b/fs/ext4/dir.c
-> @@ -704,9 +704,47 @@ static int ext4_d_hash(const struct dentry *dentry, struct qstr *str)
->  	kfree(norm);
->  	return ret;
->  }
-> +#endif /* !CONFIG_UNICODE */
->  
-> -const struct dentry_operations ext4_dentry_ops = {
-> +#ifdef CONFIG_UNICODE
-> +static const struct dentry_operations ext4_ci_dentry_ops = {
-> +	.d_hash = ext4_d_hash,
-> +	.d_compare = ext4_d_compare,
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +static const struct dentry_operations ext4_encrypted_dentry_ops = {
-> +	.d_revalidate = fscrypt_d_revalidate,
-> +};
-> +#endif
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE) && IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static const struct dentry_operations ext4_encrypted_ci_dentry_ops = {
->  	.d_hash = ext4_d_hash,
->  	.d_compare = ext4_d_compare,
-> +	.d_revalidate = fscrypt_d_revalidate,
->  };
->  #endif
-> +
-> +void ext4_set_d_ops(struct inode *dir, struct dentry *dentry)
-> +{
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME) {
-> +#ifdef CONFIG_UNICODE
-> +		if (IS_CASEFOLDED(dir)) {
-> +			d_set_d_op(dentry, &ext4_encrypted_ci_dentry_ops);
-> +			return;
-> +		}
-> +#endif
-> +		d_set_d_op(dentry, &ext4_encrypted_dentry_ops);
-> +		return;
-> +	}
-> +#endif
-> +#ifdef CONFIG_UNICODE
-> +	if (IS_CASEFOLDED(dir)) {
-> +		d_set_d_op(dentry, &ext4_ci_dentry_ops);
-> +		return;
-> +	}
-> +#endif
-> +}
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index f8578caba40d..00a10015a53c 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -2499,6 +2499,8 @@ static inline  unsigned char get_dtype(struct super_block *sb, int filetype)
->  extern int ext4_check_all_de(struct inode *dir, struct buffer_head *bh,
->  			     void *buf, int buf_size);
->  
-> +void ext4_set_d_ops(struct inode *dir, struct dentry *dentry);
-> +
->  /* fsync.c */
->  extern int ext4_sync_file(struct file *, loff_t, loff_t, int);
->  
-> @@ -3097,10 +3099,6 @@ static inline void ext4_unlock_group(struct super_block *sb,
->  /* dir.c */
->  extern const struct file_operations ext4_dir_operations;
->  
-> -#ifdef CONFIG_UNICODE
-> -extern const struct dentry_operations ext4_dentry_ops;
-> -#endif
-> -
->  /* file.c */
->  extern const struct inode_operations ext4_file_inode_operations;
->  extern const struct file_operations ext4_file_operations;
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index a856997d87b5..4df1d074b393 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -1608,6 +1608,7 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
->  	struct buffer_head *bh;
->  
->  	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
-> +	ext4_set_d_ops(dir, dentry);
->  	if (err == -ENOENT)
->  		return NULL;
->  	if (err)
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 1d82b56d9b11..ac593e9af270 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -4498,11 +4498,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
->  		goto failed_mount4;
->  	}
->  
-> -#ifdef CONFIG_UNICODE
-> -	if (sbi->s_encoding)
-> -		sb->s_d_op = &ext4_dentry_ops;
-> -#endif
-> -
->  	sb->s_root = d_make_root(root);
->  	if (!sb->s_root) {
->  		ext4_msg(sb, KERN_ERR, "get root dentry failed");
-> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> index 1a7bffe78ed5..0de461f2225a 100644
-> --- a/include/linux/fscrypt.h
-> +++ b/include/linux/fscrypt.h
-> @@ -120,6 +120,8 @@ static inline struct page *fscrypt_pagecache_page(struct page *bounce_page)
->  
->  extern void fscrypt_free_bounce_page(struct page *bounce_page);
->  
-> +extern int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
-> +
->  /* policy.c */
->  extern int fscrypt_ioctl_set_policy(struct file *, const void __user *);
->  extern int fscrypt_ioctl_get_policy(struct file *, void __user *);
-
+Ahh, that explains things :). Pushed, thanks for the patches!
+> 
+> > On Mon, 2019-12-02 at 16:20 +0100, Geert Uytterhoeven wrote:
+> > > On Mon, Dec 2, 2019 at 2:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > > > On systems with STACKTRACE_SUPPORT=n, we get:
+> > > > 
+> > > > WARNING: unmet direct dependencies detected for STACKTRACE
+> > > >   Depends on [n]: STACKTRACE_SUPPORT
+> > > >   Selected by [y]:
+> > > >   - STACKDEPOT [=y]
+> > > > 
+> > > > and build errors such as:
+> > > > 
+> > > > m68k-linux-ld: kernel/stacktrace.o: in function `stack_trace_save':
+> > > > (.text+0x11c): undefined reference to `save_stack_trace'
+> > > > 
+> > > > Add the missing deendency on STACKTRACE_SUPPORT.
+> > > > 
+> > > > Fixes: 12a280c72868 ("drm/dp_mst: Add topology ref history tracking
+> > > > for
+> > > > debugging")
+> > > > Cc: Lyude Paul <lyude@redhat.com>
+> > > > Cc: Sean Paul <sean@poorly.run>
+> > > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > > 
+> > > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > 
+> > > Gr{oetje,eeting}s,
+> > > 
+> > >                         Geert
+> > > 
+> > -- 
+> > Cheers,
+> > 	Lyude Paul
+> > 
 -- 
-Gabriel Krisman Bertazi
+Cheers,
+	Lyude Paul
+
