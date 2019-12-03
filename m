@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AD9110307
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACB2711030F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 17:59:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbfLCQ7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 11:59:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:25010 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727166AbfLCQ7L (ORCPT
+        id S1727213AbfLCQ7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 11:59:13 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33127 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726785AbfLCQ7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Dec 2019 11:59:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -18,52 +18,52 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kn/llSEPws9Kaihse6HkAcboPO6kvjhOBVqBu50kJWM=;
-        b=AtZfHsHHjqnUlLGpKpb6eZI+/geWxML182skjGbCec9i0zNJncY+Kh9uoXLuLKOlAAoxQp
-        RajA8MpwWVwnwM1ThQGEkJGzbDJmv/RdRVKl+u6khYWXAZ89uWHYXBU0BNuB4GnBt4c1Wx
-        dowooXiRIP5Q4pT9ZLvz9Na6FqbhaVU=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-236-m3IAcfcyO5ulUkf1mPvdcQ-1; Tue, 03 Dec 2019 11:59:07 -0500
-Received: by mail-qk1-f197.google.com with SMTP id q13so2604805qke.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:59:07 -0800 (PST)
+        bh=5z9DSSJjWBkwMoPX0AiQMG2lTnPniK2p7yuPt+JjwOw=;
+        b=KsxictvdNx9MTScpIwVs/ACT/BgSQ7btAVjU/wak6ALfrMo28pHEsqc1uWdXfDEVQqc9LB
+        pD8EnYGlFVv3UrUmZ7TwhX1Stw9XdJAKPUIg6ZNuReuYQyYqt/ZL7b73JTllHLNkvkEVzX
+        4IoM3ttGgRr2HQrN37UCTwb3I6yg2IY=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-200-UyIkOFLkMLeAAhEMplNlLg-1; Tue, 03 Dec 2019 11:59:09 -0500
+Received: by mail-qt1-f200.google.com with SMTP id x8so2855823qtq.14
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 08:59:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qDMFszQpTCz8aKUy2p2BRtrOo8b1SfrY7qPPp6I+jnk=;
-        b=VH5o913467WW9iaAUv8owc41+2diOcGI46F8vTeivSse4jhZdq8LmWWirFBlaJmT72
-         YSWMv1v2DbqcjZi6DlTSJqLIwP7ze9qIrPtCgormGMqZR4/BYvLIQPlbI98hKu9B/en4
-         JcWLdZNXZLa7QPULbBiMEc6GTnVQwyk2h767Qx6qZDN508C9X46BJ/yAkdLAJ1h+pj27
-         YfU3ZzfRhzZTrHVFGAcGVDR1cLTdf3q/Ba/LTxAELZ8mz3z9d5be1LoMGTxWQ+g3RQWl
-         rGNZc5mGeYUksY/GD5k1guvKCiiHN8LruYPILRFUnW84FYNBYEclOFKGTsZirSzwwkoJ
-         UKQw==
-X-Gm-Message-State: APjAAAU2Q/JjiOf7e083/LbhImQOHRMxM1SkTHXYlYcavgFHR8XJDP7O
-        5JI1TJIc9lLl/jTilj8ylTLTnov+3oBnO56Im5tfmncImJnRyCzX/KsHzoDyxusLitWDoxEfxyM
-        6RuNeQME23tAcr2cUF75RH63K
-X-Received: by 2002:ac8:1017:: with SMTP id z23mr5821774qti.94.1575392347081;
-        Tue, 03 Dec 2019 08:59:07 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxg/JOE/OtM1jHS/faP8zXtfiNcD6HKzy7U3+/q3M6bfRuQ5NZYhl14b7ItPtyjdu5wi5+3bg==
-X-Received: by 2002:ac8:1017:: with SMTP id z23mr5821756qti.94.1575392346887;
-        Tue, 03 Dec 2019 08:59:06 -0800 (PST)
+        bh=v2wRBhbJMNEdghlygF10/9hA60Iod/Z62OhKSAkteiI=;
+        b=CpsJyJDo60N933JvJwBRDqCl+Hbmjynpm2IP0ApKTkjBak8Fi21yy9KgSWeD0oMiGO
+         1ew4KDaPy7LqCC66pdlZMdtR5XGKRGfGCg11EP2/3WOi3q6xugmuxZlE/YohXorb2ZCY
+         om4ef14QwcBoEnb69wEf4NnbGCT7RsKUg+2au8gMaPjkR+PpVreYU1G2g9D6M+CVvLyK
+         l8OD73QVn2tqSCWtpIx3WrChcomKQ3mr5oL08lMIphdd7fhCXSvi5anTu97zPClxU8YV
+         0xDmI7bFVCrSqU/b0gHVadRp7ieXGErdcRX2KFVSKu1nC2iclySGpnRwH4jWT4v72SDW
+         BpSw==
+X-Gm-Message-State: APjAAAUAjS3oeRv/1BddFqU/Bp/QV1M5lljdd3rYjGU/PHKOkBq11zF3
+        mR8v52jrdzDm5qSbmy7elRURdnH2XznP9YZ/wu5hF3t0jXR5OuQWCk7JvR6WUv9/vYScrLKJPtB
+        3g7CxI4MfSbLsGSfRdFJUgJWC
+X-Received: by 2002:a37:a3c1:: with SMTP id m184mr6052527qke.49.1575392348560;
+        Tue, 03 Dec 2019 08:59:08 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyG8wKpsZ7GEJ5gyhStD0FO722TIQr2qgwbQ3M/iVrKE5wtsIGvlcXpXI0BPSfAtXE+sbQMSg==
+X-Received: by 2002:a37:a3c1:: with SMTP id m184mr6052500qke.49.1575392348302;
+        Tue, 03 Dec 2019 08:59:08 -0800 (PST)
 Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id a16sm482585qkn.48.2019.12.03.08.59.05
+        by smtp.gmail.com with ESMTPSA id a16sm482585qkn.48.2019.12.03.08.59.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 08:59:05 -0800 (PST)
+        Tue, 03 Dec 2019 08:59:07 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v4 1/6] KVM: X86: Fix kvm_bitmap_or_dest_vcpus() to use irq shorthand
-Date:   Tue,  3 Dec 2019 11:58:58 -0500
-Message-Id: <20191203165903.22917-2-peterx@redhat.com>
+Subject: [PATCH v4 2/6] KVM: X86: Move irrelevant declarations out of ioapic.h
+Date:   Tue,  3 Dec 2019 11:58:59 -0500
+Message-Id: <20191203165903.22917-3-peterx@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191203165903.22917-1-peterx@redhat.com>
 References: <20191203165903.22917-1-peterx@redhat.com>
 MIME-Version: 1.0
-X-MC-Unique: m3IAcfcyO5ulUkf1mPvdcQ-1
+X-MC-Unique: UyIkOFLkMLeAAhEMplNlLg-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
@@ -72,31 +72,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 3rd parameter of kvm_apic_match_dest() is the irq shorthand,
-rather than the irq delivery mode.
+kvm_apic_match_dest() is declared in both ioapic.h and lapic.h.
+Remove the declaration in ioapic.h.
 
-Fixes: 7ee30bc132c6 ("KVM: x86: deliver KVM IOAPIC scan request to target v=
-CPUs")
+kvm_apic_compare_prio() is declared in ioapic.h but defined in
+lapic.c.  Move the declaration to lapic.h.
+
+kvm_irq_delivery_to_apic() is declared in ioapic.h but defined in
+irq_comm.c.  Move the declaration to irq.h.
+
+hyperv.c needs to use kvm_irq_delivery_to_apic(). Include irq.h in
+hyperv.c.
+
 Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/x86/kvm/lapic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/hyperv.c | 1 +
+ arch/x86/kvm/ioapic.h | 6 ------
+ arch/x86/kvm/irq.h    | 3 +++
+ arch/x86/kvm/lapic.h  | 2 +-
+ 4 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index cf9177b4a07f..1eabe58bb6d5 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1151,7 +1151,7 @@ void kvm_bitmap_or_dest_vcpus(struct kvm *kvm, struct=
- kvm_lapic_irq *irq,
- =09=09=09if (!kvm_apic_present(vcpu))
- =09=09=09=09continue;
- =09=09=09if (!kvm_apic_match_dest(vcpu, NULL,
--=09=09=09=09=09=09 irq->delivery_mode,
-+=09=09=09=09=09=09 irq->shorthand,
- =09=09=09=09=09=09 irq->dest_id,
- =09=09=09=09=09=09 irq->dest_mode))
- =09=09=09=09continue;
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 23ff65504d7e..c7d4640b7b1c 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -33,6 +33,7 @@
+ #include <trace/events/kvm.h>
+=20
+ #include "trace.h"
++#include "irq.h"
+=20
+ #define KVM_HV_MAX_SPARSE_VCPU_SET_BITS DIV_ROUND_UP(KVM_MAX_VCPUS, 64)
+=20
+diff --git a/arch/x86/kvm/ioapic.h b/arch/x86/kvm/ioapic.h
+index ea1a4e0297da..2fb2e3c80724 100644
+--- a/arch/x86/kvm/ioapic.h
++++ b/arch/x86/kvm/ioapic.h
+@@ -116,9 +116,6 @@ static inline int ioapic_in_kernel(struct kvm *kvm)
+ }
+=20
+ void kvm_rtc_eoi_tracking_restore_one(struct kvm_vcpu *vcpu);
+-bool kvm_apic_match_dest(struct kvm_vcpu *vcpu, struct kvm_lapic *source,
+-=09=09int short_hand, unsigned int dest, int dest_mode);
+-int kvm_apic_compare_prio(struct kvm_vcpu *vcpu1, struct kvm_vcpu *vcpu2);
+ void kvm_ioapic_update_eoi(struct kvm_vcpu *vcpu, int vector,
+ =09=09=09int trigger_mode);
+ int kvm_ioapic_init(struct kvm *kvm);
+@@ -126,9 +123,6 @@ void kvm_ioapic_destroy(struct kvm *kvm);
+ int kvm_ioapic_set_irq(struct kvm_ioapic *ioapic, int irq, int irq_source_=
+id,
+ =09=09       int level, bool line_status);
+ void kvm_ioapic_clear_all(struct kvm_ioapic *ioapic, int irq_source_id);
+-int kvm_irq_delivery_to_apic(struct kvm *kvm, struct kvm_lapic *src,
+-=09=09=09     struct kvm_lapic_irq *irq,
+-=09=09=09     struct dest_map *dest_map);
+ void kvm_get_ioapic(struct kvm *kvm, struct kvm_ioapic_state *state);
+ void kvm_set_ioapic(struct kvm *kvm, struct kvm_ioapic_state *state);
+ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu,
+diff --git a/arch/x86/kvm/irq.h b/arch/x86/kvm/irq.h
+index 7c6233d37c64..f173ab6b407e 100644
+--- a/arch/x86/kvm/irq.h
++++ b/arch/x86/kvm/irq.h
+@@ -113,5 +113,8 @@ int apic_has_pending_timer(struct kvm_vcpu *vcpu);
+=20
+ int kvm_setup_default_irq_routing(struct kvm *kvm);
+ int kvm_setup_empty_irq_routing(struct kvm *kvm);
++int kvm_irq_delivery_to_apic(struct kvm *kvm, struct kvm_lapic *src,
++=09=09=09     struct kvm_lapic_irq *irq,
++=09=09=09     struct dest_map *dest_map);
+=20
+ #endif
+diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
+index 39925afdfcdc..0b9bbadd1f3c 100644
+--- a/arch/x86/kvm/lapic.h
++++ b/arch/x86/kvm/lapic.h
+@@ -83,7 +83,7 @@ int kvm_lapic_reg_read(struct kvm_lapic *apic, u32 offset=
+, int len,
+ =09=09       void *data);
+ bool kvm_apic_match_dest(struct kvm_vcpu *vcpu, struct kvm_lapic *source,
+ =09=09=09   int short_hand, unsigned int dest, int dest_mode);
+-
++int kvm_apic_compare_prio(struct kvm_vcpu *vcpu1, struct kvm_vcpu *vcpu2);
+ bool __kvm_apic_update_irr(u32 *pir, void *regs, int *max_irr);
+ bool kvm_apic_update_irr(struct kvm_vcpu *vcpu, u32 *pir, int *max_irr);
+ void kvm_apic_update_ppr(struct kvm_vcpu *vcpu);
 --=20
 2.21.0
 
