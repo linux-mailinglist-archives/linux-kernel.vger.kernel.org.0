@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE7D111CB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:47:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8B0F111CB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbfLCWqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:46:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36440 "EHLO mail.kernel.org"
+        id S1727864AbfLCWqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:46:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729225AbfLCWql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:46:41 -0500
+        id S1728487AbfLCWqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:46:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0065B20656;
-        Tue,  3 Dec 2019 22:46:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81B2E2080F;
+        Tue,  3 Dec 2019 22:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413200;
-        bh=1XraHiRGdK3fOvZxkYKzP947PwRAKgEMsREczj6U/sU=;
+        s=default; t=1575413206;
+        bh=vAnPksW0U2gh/kfgefM3vVRIFgL1xdGj0P8wJE6kLOE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZhGqivVu0Gvui1/Jr2QFAluinGn08RiynNqt8oQVa0lDgdcupu36ZPEQiSfs33VC3
-         7u5LHXh+/IEzM//FqJNcdSJ6wsOWTNhPOVPPop+rObfbbMNNPOnilyBebn3f3Pg3R0
-         eIwpectwnlTiOIlTw5kI0TEIkeSmn/NDKpzUWAns=
+        b=hzbf5L6SQFQvBil3+dd3tQ30Oq8aFquad2PnIOZWkbFWdwt6Rzm8OHhEuRjmadN6z
+         g6BNUe2QbIX/YeyuuGiDuof2sfvc6Y672EiPcIVhsuo8GOC1X3uDy7bLr5pS/MQ6vu
+         l1IoxBN3x7bYvf1D38q5MlqP64gg7Eo3M2+2yL+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xingyu Chen <xingyu.chen@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 036/321] watchdog: meson: Fix the wrong value of left time
-Date:   Tue,  3 Dec 2019 23:31:42 +0100
-Message-Id: <20191203223428.992358523@linuxfoundation.org>
+Subject: [PATCH 4.19 038/321] scripts/gdb: fix debugging modules compiled with hot/cold partitioning
+Date:   Tue,  3 Dec 2019 23:31:44 +0100
+Message-Id: <20191203223429.093986368@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -47,45 +49,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit 2c77734642d52448aca673e889b39f981110828b ]
+[ Upstream commit 8731acc5068eb3f422a45c760d32198175c756f8 ]
 
-The left time value is wrong when we get it by sysfs. The left time value
-should be equal to preset timeout value minus elapsed time value. According
-to the Meson-GXB/GXL datasheets which can be found at [0], the timeout value
-is saved to BIT[0-15] of the WATCHDOG_TCNT, and elapsed time value is saved
-to BIT[16-31] of the WATCHDOG_TCNT.
+gcc's -freorder-blocks-and-partition option makes it group frequently
+and infrequently used code in .text.hot and .text.unlikely sections
+respectively.  At least when building modules on s390, this option is
+used by default.
 
-[0]: http://linux-meson.com
+gdb assumes that all code is located in .text section, and that .text
+section is located at module load address.  With such modules this is no
+longer the case: there is code in .text.hot and .text.unlikely, and
+either of them might precede .text.
 
-Fixes: 683fa50f0e18 ("watchdog: Add Meson GXBB Watchdog Driver")
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Fix by explicitly telling gdb the addresses of code sections.
+
+It might be tempting to do this for all sections, not only the ones in
+the white list.  Unfortunately, gdb appears to have an issue, when
+telling it about e.g. loadable .note.gnu.build-id section causes it to
+think that non-loadable .note.Linux section is loaded at address 0,
+which in turn causes NULL pointers to be resolved to bogus symbols.  So
+keep using the white list approach for the time being.
+
+Link: http://lkml.kernel.org/r/20191028152734.13065-1-iii@linux.ibm.com
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Kieran Bingham <kbingham@kernel.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/meson_gxbb_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/gdb/linux/symbols.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
-index 69adeab3fde70..0a6672789640c 100644
---- a/drivers/watchdog/meson_gxbb_wdt.c
-+++ b/drivers/watchdog/meson_gxbb_wdt.c
-@@ -89,8 +89,8 @@ static unsigned int meson_gxbb_wdt_get_timeleft(struct watchdog_device *wdt_dev)
- 
- 	reg = readl(data->reg_base + GXBB_WDT_TCNT_REG);
- 
--	return ((reg >> GXBB_WDT_TCNT_CNT_SHIFT) -
--		(reg & GXBB_WDT_TCNT_SETUP_MASK)) / 1000;
-+	return ((reg & GXBB_WDT_TCNT_SETUP_MASK) -
-+		(reg >> GXBB_WDT_TCNT_CNT_SHIFT)) / 1000;
- }
- 
- static const struct watchdog_ops meson_gxbb_wdt_ops = {
+diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+index 004b0ac7fa72d..4644f1a83b578 100644
+--- a/scripts/gdb/linux/symbols.py
++++ b/scripts/gdb/linux/symbols.py
+@@ -99,7 +99,8 @@ lx-symbols command."""
+             attrs[n]['name'].string(): attrs[n]['address']
+             for n in range(int(sect_attrs['nsections']))}
+         args = []
+-        for section_name in [".data", ".data..read_mostly", ".rodata", ".bss"]:
++        for section_name in [".data", ".data..read_mostly", ".rodata", ".bss",
++                             ".text", ".text.hot", ".text.unlikely"]:
+             address = section_name_to_address.get(section_name)
+             if address:
+                 args.append(" -s {name} {addr}".format(
 -- 
 2.20.1
 
