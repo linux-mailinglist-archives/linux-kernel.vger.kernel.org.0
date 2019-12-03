@@ -2,124 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1576D10FA2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 09:51:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C849310FA39
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 09:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbfLCIvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 03:51:35 -0500
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:63297 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbfLCIve (ORCPT
+        id S1726107AbfLCIzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 03:55:07 -0500
+Received: from retiisi.org.uk ([95.216.213.190]:45714 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725773AbfLCIzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:51:34 -0500
-IronPort-SDR: dsSR1wFM82w41QEe91uCLCS3a93jGz8SCMS1FIQofYoPqq9j2vabdlMnkkUnO85HGlOE3JlEWx
- hxZzpZh/lfzIdFDWw1Li1pvIT8RCb1JqeuWvpdSjEtjz06NWapo6dAdKmHkbsCB09eUqGJrEEW
- 5dDpCEyM5CAwO8OxKNrGBjQGqSC2WDdqJPOVcL1IwxvsYX7a9svPcg0UwfrgXWpCB6LFjHu6fZ
- HEHTIKV5Mabg+/ydxLFir7TdQp1aPxfB5g6X0OGItiVvdrVchRx3M1Nq5MB0RwkDJWk4BCtyVp
- 7+w=
-X-IronPort-AV: E=Sophos;i="5.69,272,1571731200"; 
-   d="scan'208";a="45593533"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa1.mentor.iphmx.com with ESMTP; 03 Dec 2019 00:51:33 -0800
-IronPort-SDR: V31aPAlTL4Jd77N/4vFkI/ULg0cF5PBYkzlUKlSwB5TqW2oengXeZXGIIUezjAPeS45uGXetRj
- k8fdcbh6lAth0z2rEc/o8A8Yjx1Gs9FJcj8ClHn/v7e9trEbTEqyktunDgxc+NGMNzDE3uUt+H
- tVPkPMHeGKWmqIn4OYYFVSQrHux/WyXhsdu22AjmEmoi5aXIBAP1OBiJIM2OD+5+c39ZCXjbpa
- 5nlSWx1IxowCPCDsJce0jzoNxMJv4XdCFGcMxbpF2S+x4ddCnnoky/Je4mZZIOCotBY7rKE4oJ
- 6+w=
-Subject: Re: [PATCH v3 5/7] gpio: Add GPIO Aggregator/Repeater driver
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20191127084253.16356-6-geert+renesas@glider.be>
- <585c4ad9-31fc-e87e-07c4-b8d6aa09c7e4@mentor.com>
- <CAMuHMdW-n8ao7t7156WYxRg7v8+ojXsRgHGUOax=9nBo2F5xOw@mail.gmail.com>
-From:   Harish Jenny K N <harish_kandiga@mentor.com>
-Message-ID: <d44598a5-184e-078c-1d6c-a99b522f7e26@mentor.com>
-Date:   Tue, 3 Dec 2019 14:21:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 3 Dec 2019 03:55:06 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3F903634C87;
+        Tue,  3 Dec 2019 10:54:18 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1ic3wn-0001NZ-OF; Tue, 03 Dec 2019 10:54:17 +0200
+Date:   Tue, 3 Dec 2019 10:54:17 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, c.barrett@framos.com,
+        a.brela@framos.com, peter.griffin@linaro.org
+Subject: Re: [PATCH 3/5] media: i2c: imx290: Add RAW12 mode support
+Message-ID: <20191203085417.GB5282@valkosipuli.retiisi.org.uk>
+References: <20191129190541.30315-1-manivannan.sadhasivam@linaro.org>
+ <20191129190541.30315-4-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW-n8ao7t7156WYxRg7v8+ojXsRgHGUOax=9nBo2F5xOw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-05.mgc.mentorg.com (139.181.222.5) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191129190541.30315-4-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Manivannan,
 
-On 03/12/19 1:47 PM, Geert Uytterhoeven wrote:
-> Hi Harish,
->
-> On Tue, Dec 3, 2019 at 6:42 AM Harish Jenny K N
-> <harish_kandiga@mentor.com> wrote:
->>> +static int gpio_aggregator_probe(struct platform_device *pdev)
->>> +{
->>> +     struct device *dev = &pdev->dev;
->>> +     struct gpio_desc **descs;
->>> +     struct gpiochip_fwd *fwd;
->>> +     int i, n;
->>> +
->>> +     n = gpiod_count(dev, NULL);
->>> +     if (n < 0)
->>> +             return n;
->>> +
->>> +     descs = devm_kmalloc_array(dev, n, sizeof(*descs), GFP_KERNEL);
->>> +     if (!descs)
->>> +             return -ENOMEM;
->>> +
->>> +     for (i = 0; i < n; i++) {
->>> +             descs[i] = devm_gpiod_get_index(dev, NULL, i, GPIOD_ASIS);
->> can you please add this check as well as we need to return EPROBE_DEFER.
->>
->> if (desc[i] == ERR_PTR(-ENOENT))
->> <                 return -EPROBE_DEFER;
-> So gpiod_get_index() nevers return -EPROBE_DEFER, but returns -ENOENT
-> instead?
-> How can a driver distinguish between "GPIO not found" and "gpiochip driver
-> not yet initialized"?
-> Worse, so the *_optional() variants will return NULL in both cases, too, so
-> the caller will always fall back to optional GPIO not present?
->
-> Or am I missing something?
->
-> Gr{oetje,eeting}s,
->
->                         Geert
+On Sat, Nov 30, 2019 at 12:35:39AM +0530, Manivannan Sadhasivam wrote:
+> IMX290 is capable of outputting frames in both Raw Bayer (packed) 10 and
+> 12 bit formats. Since the driver already supports RAW10 mode, let's add
+> the missing RAW12 mode as well.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/media/i2c/imx290.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> index e218c959a729..d5bb3a59ac46 100644
+> --- a/drivers/media/i2c/imx290.c
+> +++ b/drivers/media/i2c/imx290.c
+> @@ -75,6 +75,7 @@ struct imx290 {
+>  	struct clk *xclk;
+>  	struct regmap *regmap;
+>  	int nlanes;
+> +	u8 bpp;
+>  
+>  	struct v4l2_subdev sd;
+>  	struct v4l2_fwnode_endpoint ep;
+> @@ -98,6 +99,7 @@ struct imx290_pixfmt {
+>  
+>  static const struct imx290_pixfmt imx290_formats[] = {
+>  	{ MEDIA_BUS_FMT_SRGGB10_1X10 },
+> +	{ MEDIA_BUS_FMT_SRGGB12_1X12 },
+>  };
+>  
+>  static const struct regmap_config imx290_regmap_config = {
+> @@ -265,6 +267,18 @@ static const struct imx290_regval imx290_10bit_settings[] = {
+>  	{ 0x300b, 0x00},
+>  };
+>  
+> +static const struct imx290_regval imx290_12bit_settings[] = {
+> +	{ 0x3005, 0x01 },
+> +	{ 0x3046, 0x01 },
+> +	{ 0x3129, 0x00 },
+> +	{ 0x317c, 0x00 },
+> +	{ 0x31ec, 0x0e },
+> +	{ 0x3441, 0x0c },
+> +	{ 0x3442, 0x0c },
+> +	{ 0x300a, 0xf0 },
+> +	{ 0x300b, 0x00 },
+> +};
+> +
+>  /* supported link frequencies */
+>  static const s64 imx290_link_freq[] = {
+>  	IMX290_DEFAULT_LINK_FREQ,
+> @@ -550,6 +564,21 @@ static int imx290_write_current_format(struct imx290 *imx290,
+>  			dev_err(imx290->dev, "Could not set format registers\n");
+>  			return ret;
+>  		}
+> +
+> +		imx290->bpp = 10;
+> +
+> +		break;
+> +	case MEDIA_BUS_FMT_SRGGB12_1X12:
+> +		ret = imx290_set_register_array(imx290, imx290_12bit_settings,
+> +						ARRAY_SIZE(
+> +							imx290_12bit_settings));
+> +		if (ret < 0) {
+> +			dev_err(imx290->dev, "Could not set format registers\n");
+> +			return ret;
+> +		}
+> +
+> +		imx290->bpp = 12;
+> +
+>  		break;
+>  	default:
+>  		dev_err(imx290->dev, "Unknown pixel format\n");
+> @@ -910,6 +939,9 @@ static int imx290_probe(struct i2c_client *client)
+>  		goto free_err;
+>  	}
+>  
+> +	/* Default bits per pixel value */
+> +	imx290->bpp = 10;
 
+Where is the format being initialised at the moment? Nowhere?
 
-We had earlier tested our changes on 4.14 kernel and the explicit return of -EPROBE_DEFER was needed in the inverter driver.
+If that is the case, I think it should be fixed before this patch.
 
-probably the commit 6662ae6af82df10259a70c7569b4c12ea7f3ba93 ( gpiolib: Keep returning EPROBE_DEFER when we should)
+> +
+>  	mutex_init(&imx290->lock);
+>  
+>  	v4l2_ctrl_handler_init(&imx290->ctrls, 4);
 
-has fixed the issue and now it returns -EPROBE_DEFER.  you can ignore this comment as of now. I will test and let you know if needed.
+-- 
+Kind regards,
 
-
-Thanks,
-
-Harish
-
+Sakari Ailus
