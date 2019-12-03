@@ -2,106 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 351BD10F8DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0A510F907
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 08:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbfLCHgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 02:36:20 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:38870 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbfLCHgT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 02:36:19 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xB37Zu97014079, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xB37Zu97014079
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 3 Dec 2019 15:35:56 +0800
-Received: from james-BS01.localdomain (172.21.190.33) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server id
- 14.3.468.0; Tue, 3 Dec 2019 15:35:55 +0800
-From:   James Tai <james.tai@realtek.com>
-To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-CC:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        cylee12 <cylee12@realtek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 6/6] dt-bindings: clk: realtek: add rtd1619 clock controller bindings
-Date:   Tue, 3 Dec 2019 15:35:40 +0800
-Message-ID: <20191203073540.9321-7-james.tai@realtek.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203073540.9321-1-james.tai@realtek.com>
-References: <20191203073540.9321-1-james.tai@realtek.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+        id S1727503AbfLCHkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 02:40:53 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:50370 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727450AbfLCHkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 02:40:52 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 325FC1A0348;
+        Tue,  3 Dec 2019 08:40:51 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 403D41A0971;
+        Tue,  3 Dec 2019 08:40:46 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E06E5402BC;
+        Tue,  3 Dec 2019 15:40:39 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, arnd@arndb.de,
+        aisheng.dong@nxp.com, tglx@linutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] ARM: imx: Enable ARM_ERRATA_814220 for i.MX6UL and i.MX7D
+Date:   Tue,  3 Dec 2019 15:38:40 +0800
+Message-Id: <1575358720-27624-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: cylee12 <cylee12@realtek.com>
+i.MX6UL and i.MX7D have Cortex-A7 inside, need to enable ARM_ERRATA_814220
+for proper workaround.
 
-Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
-Signed-off-by: James Tai <james.tai@realtek.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- .../bindings/clock/realtek,clocks.txt         | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/realtek,clocks.txt
+ arch/arm/mach-imx/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/realtek,clocks.txt b/Documentation/devicetree/bindings/clock/realtek,clocks.txt
-new file mode 100644
-index 000000000000..db101508ac6a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/realtek,clocks.txt
-@@ -0,0 +1,38 @@
-+Realtek Clock/Reset Controller
-+==============================
-+
-+Realtek CRT/ISO controller device-tree binding for Realtek Platforms.
-+
-+This binding uses the common clock binding[1].
-+
-+The controller node should be the child of a syscon node with the required
-+propertise:
-+
-+- compatible :
-+	should contain only one of the following:
-+		"realtek,rtd1619-cc" for RTD1619 CRT clock controller,
-+		"realtek,rtd1619-ic" for RTD1619 ISO clock controller,
-+
-+- #clock-cells : should be 1.
-+
-+- #reset-cells : should be 1.
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Example:
-+
-+	crt@98000000 {
-+		compatible = "realtek,rtd1619-crt", "simple-mfd", "syscon";
-+		reg = <0x98000000 0x1000>;
-+
-+		cc: cc@98000000 {
-+			compatible = "realtek,rtd1619-cc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+	};
-+
-+	consumer {
-+		clocks = <&cc CC_CKE_GSPI>;
-+	};
-+
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 593bf15..4326c8f 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -520,6 +520,7 @@ config SOC_IMX6UL
+ 	bool "i.MX6 UltraLite support"
+ 	select PINCTRL_IMX6UL
+ 	select SOC_IMX6
++	select ARM_ERRATA_814220
+ 
+ 	help
+ 	  This enables support for Freescale i.MX6 UltraLite processor.
+@@ -556,6 +557,7 @@ config SOC_IMX7D
+ 	select PINCTRL_IMX7D
+ 	select SOC_IMX7D_CA7 if ARCH_MULTI_V7
+ 	select SOC_IMX7D_CM4 if ARM_SINGLE_ARMV7M
++	select ARM_ERRATA_814220
+ 	help
+ 		This enables support for Freescale i.MX7 Dual processor.
+ 
 -- 
-2.24.0
+2.7.4
 
