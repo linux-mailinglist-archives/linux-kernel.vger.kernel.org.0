@@ -2,105 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C8A111DD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E95111BB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:36:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730560AbfLCW5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:57:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730552AbfLCW5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:57:33 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5070B2053B;
-        Tue,  3 Dec 2019 22:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413852;
-        bh=h9hAePb4rgYiXNu8nffA2t81ggA4eShFI9X4lZFf2fs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NaB0qSXGk0+qoW1h+XI9oIyQw5ZraglgVhA2MIQKrOxeImipIKVWZxtbi41DwqSQQ
-         rLtGwMq6UPS5W2Qz8unFE5M5Nz8Lrr/S9/OWeg0Ks6/w/c74miy9tr0H709aZF7vua
-         BIcv8av1KqKEJzPw6mEb45zqQbPNMZnlvWvBX/vk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4d5170758f3762109542@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jouni Hogander <jouni.hogander@unikie.com>
-Subject: [PATCH 4.19 286/321] slip: Fix use-after-free Read in slip_open
-Date:   Tue,  3 Dec 2019 23:35:52 +0100
-Message-Id: <20191203223442.015989795@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727602AbfLCWgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:36:06 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44883 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbfLCWgF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:36:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id x7so2288031pgl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:36:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r06+KrKZmbSJH6UUm02fNkOof8/gjixGbcfjblQ+qRs=;
+        b=qmmaebzoB44V44DUoG8FAhCTP3bWZxhuWc/e85o0mdI6Hg+gGv8FZsbinUlNKbd+cB
+         SML2TNJLyK+1Kz5vJTHNbPffrS+dZYi3mWcVJEvQXoePAoP/scqeV34UCbocwPR6YFB6
+         R4C/xrXvcfFez3m0kS8tQZ97SM/tpq2yM16XDitDpBR9BwH4IuYvXRNj9zz8dtypvU4Z
+         JgmqbL+mAilAq2eBnhxfjTy+simzyTz5k7LbYN9oWVWjzwPzTekeGkc9P3LScLtACFmK
+         MBXNDmluF4EhFW2ZAuR87z06qoWJveYtsGKQsHRz45F5zAAjEwhvdPwulQQGoFKsAC21
+         wGFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r06+KrKZmbSJH6UUm02fNkOof8/gjixGbcfjblQ+qRs=;
+        b=oC8SPVHo0Q5f4Wng072F+2rDxyqvbRlMvb8oojgdO1GADAsOWfbiubTdnO7fCTZSHl
+         vZOaEm5u6ijuHPdx/hzmBN8gqSJQEQ8kdTB+Qkfav8Q+oeW9wg77i/zf9NyeVvKAy+UR
+         4WvP/7vidF+L9twT1yzmwYiKDDU1quBMl6r38K/JZNEAS4edbR30WELjIhy8+bsPMO5i
+         kPc/uZApfkW0K2s7xZARFCa+LjyapIjAOALSHN+rjEViUdziYWQsajr774Y4ITZqOpUy
+         bw8dl1H6/1ohcr1izwkmQQwi9yAtt/J4ukx5gvxoftPPPcIG+vcnPapgyZUpOP8MmnY7
+         GpbQ==
+X-Gm-Message-State: APjAAAUCnKlJ0XpVZwGIyCzRrPOEBmexGs8ADLfzfuKLbWb1WLpgzQUv
+        IzM26B1fBzxoJUtCh6l5JInvOjUX/z4M/cWD5j76LQ==
+X-Google-Smtp-Source: APXvYqxWObr1MDrGkYFSZAzjU0wyoXqLlbyFY+LBrt8mBQKO1DqOKm01gXn/4tlInbMN4BHmYN9VZEP1u5qBzoGNkK8=
+X-Received: by 2002:a63:480f:: with SMTP id v15mr7802935pga.201.1575412564268;
+ Tue, 03 Dec 2019 14:36:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1575242724-4937-1-git-send-email-sj38.park@gmail.com>
+ <20191203070025.GA4206@google.com> <CAEjAshraUy20gEEaff69=b11DhB7zbz8WHT=6wOuw6C2FyJwYA@mail.gmail.com>
+ <CAEjAsho98ER1RQ6=++ECmoCJxw2mMrGqV4jAgW5wgfb8eEM9eQ@mail.gmail.com>
+ <CAFd5g46qPPsKJFqs07Eiea0Nim=YDWbOUndJu=JbW--VcTb-ww@mail.gmail.com> <CAEjAshpTAj_aYBUG1PWoyPajT69hWptXOZKwydg6duTNV5=aLQ@mail.gmail.com>
+In-Reply-To: <CAEjAshpTAj_aYBUG1PWoyPajT69hWptXOZKwydg6duTNV5=aLQ@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 3 Dec 2019 14:35:53 -0800
+Message-ID: <CAFd5g46VZ10FeKJspSQXWc+zHervGQk5brOxei+S53OO5kYfTQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Fix nits in the kunit
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SeongJae Park <sjpark@amazon.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Hogander <jouni.hogander@unikie.com>
+On Tue, Dec 3, 2019 at 10:11 AM SeongJae Park <sj38.park@gmail.com> wrote:
+>
+> On Tue, Dec 3, 2019 at 6:45 PM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> >
+> > On Tue, Dec 3, 2019 at 12:26 AM SeongJae Park <sj38.park@gmail.com> wrote:
+> > >
+> > > You're right, the error was due to the assumption of the existence of the
+> > > build_dir.  The "kunit: Create default config in '--build_dir'" patch made the
+> > > bug.  I fixed it in the second version patchset[1].
+> > >
+> > > [1] https://lore.kernel.org/linux-doc/1575361141-6806-1-git-send-email-sj38.park@gmail.com/
+> >
+> > After trying your new patches, I am still getting the
+> > "FileNotFoundError" when the given build_dir has not been created.
+>
+> Sorry, apparently my mistake...  Sent v3 fixing it:
+> https://lore.kernel.org/linux-kselftest/1575396508-21480-1-git-send-email-sj38.park@gmail.com/T/#t
 
-[ Upstream commit e58c1912418980f57ba2060017583067f5f71e52 ]
+Awesome, looks like that works now!
 
-Slip_open doesn't clean-up device which registration failed from the
-slip_devs device list. On next open after failure this list is iterated
-and freed device is accessed. Fix this by calling sl_free_netdev in error
-path.
+Thanks for taking care of this!
 
-Here is the trace from the Syzbot:
-
-__dump_stack lib/dump_stack.c:77 [inline]
-dump_stack+0x197/0x210 lib/dump_stack.c:118
-print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-__kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-kasan_report+0x12/0x20 mm/kasan/common.c:634
-__asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-sl_sync drivers/net/slip/slip.c:725 [inline]
-slip_open+0xecd/0x11b7 drivers/net/slip/slip.c:801
-tty_ldisc_open.isra.0+0xa3/0x110 drivers/tty/tty_ldisc.c:469
-tty_set_ldisc+0x30e/0x6b0 drivers/tty/tty_ldisc.c:596
-tiocsetd drivers/tty/tty_io.c:2334 [inline]
-tty_ioctl+0xe8d/0x14f0 drivers/tty/tty_io.c:2594
-vfs_ioctl fs/ioctl.c:46 [inline]
-file_ioctl fs/ioctl.c:509 [inline]
-do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:696
-ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-__do_sys_ioctl fs/ioctl.c:720 [inline]
-__se_sys_ioctl fs/ioctl.c:718 [inline]
-__x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 3b5a39979daf ("slip: Fix memory leak in slip_open error path")
-Reported-by: syzbot+4d5170758f3762109542@syzkaller.appspotmail.com
-Cc: David Miller <davem@davemloft.net>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Signed-off-by: Jouni Hogander <jouni.hogander@unikie.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/slip/slip.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/net/slip/slip.c
-+++ b/drivers/net/slip/slip.c
-@@ -855,6 +855,7 @@ err_free_chan:
- 	sl->tty = NULL;
- 	tty->disc_data = NULL;
- 	clear_bit(SLF_INUSE, &sl->flags);
-+	sl_free_netdev(sl->dev);
- 	free_netdev(sl->dev);
- 
- err_exit:
-
-
+> Thanks,
+> SeongJae Park
+>
+>
+> >
+> > > Thanks,
+> > > SeongJae Park
+> > >
+> > > On Tue, Dec 3, 2019 at 8:10 AM SeongJae Park <sj38.park@gmail.com> wrote:
+> > > >
+> > > > On Tue, Dec 3, 2019 at 8:00 AM Brendan Higgins
+> > > > <brendanhiggins@google.com> wrote:
+> > > > >
+> > > > > On Mon, Dec 02, 2019 at 08:25:18AM +0900, SeongJae Park wrote:
+> > > > > > From: SeongJae Park <sjpark@amazon.de>
+> > > > > >
+> > > > > > This patchset contains trivial fixes for the kunit documentations and the
+> > > > > > wrapper python scripts.
+> > > > > >
+> > > > > > SeongJae Park (6):
+> > > > > >   docs/kunit/start: Use in-tree 'kunit_defconfig'
+> > > > > >   docs/kunit/start: Skip wrapper run command
+> > > > > >   kunit: Remove duplicated defconfig creation
+> > > > > >   kunit: Create default config in 'build_dir'
+> > > > > >   kunit: Place 'test.log' under the 'build_dir'
+> > > > > >   kunit: Rename 'kunitconfig' to '.kunitconfig'
+> > > > > >
+> > > > > >  Documentation/dev-tools/kunit/start.rst | 19 +++++--------------
+> > > > > >  tools/testing/kunit/kunit.py            | 10 ++++++----
+> > > > > >  tools/testing/kunit/kunit_kernel.py     |  6 +++---
+> > > > > >  3 files changed, 14 insertions(+), 21 deletions(-)
+> > > > >
+> > > > > I applied your patchset to torvalds/master, ran the command:
+> > > > >
+> > > > > tools/testing/kunit/kunit.py run --timeout=60 --jobs=8 --defconfig --build_dir=.kunit
+> > > > >
+> > > > > and got the error:
+> > > > >
+> > > > > Traceback (most recent call last):
+> > > > >   File "tools/testing/kunit/kunit.py", line 140, in <module>
+> > > > >     main(sys.argv[1:])
+> > > > >   File "tools/testing/kunit/kunit.py", line 123, in main
+> > > > >     create_default_kunitconfig()
+> > > > >   File "tools/testing/kunit/kunit.py", line 36, in create_default_kunitconfig
+> > > > >     kunit_kernel.KUNITCONFIG_PATH)
+> > > > >   File "/usr/lib/python3.7/shutil.py", line 121, in copyfile
+> > > > >     with open(dst, 'wb') as fdst:
+> > > > > FileNotFoundError: [Errno 2] No such file or directory: '.kunit/.kunitconfig'
+> > > > >
+> > > > > It seems that it expects the build_dir to already exist; however, I
+> > > > > don't think this is clear from the error message. Would you mind
+> > > > > addressing that here?
+> > > >
+> > > > Thank you for sharing this.  I will take a look!
+> > > >
+> > > >
+> > > > Thanks,
+> > > > SeongJae Park
+> > > > >
+> > > > > Cheers!
