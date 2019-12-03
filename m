@@ -2,93 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53BA10FBE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 11:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F0810FBED
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 11:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfLCKm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 05:42:26 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33576 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfLCKm0 (ORCPT
+        id S1726098AbfLCKqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 05:46:03 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54071 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfLCKqD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 05:42:26 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y206so1672676pfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 02:42:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=mDOjh0YxAcj3d8RndJSAN9V+W3quaYyax74GVZZlpRtvL7zVYf0jA8sDkMHlA+GJaQ
-         PI9kW9xFORv7sfmA+AmkTfzJUBDYpqZLhoLZdx28vXjsMCuBGj9vUPXjJkrX+ghiMdmj
-         mL56L9CZklza4C88b+kHXEVYzavzCkRLWjNWYrQf0j/aoCX2VcD2Q6YxLVQmAwmzh0NA
-         PSlTaSEM+fBIaVMTJ9q48YYyJFtzKuLPOQxTfEYfyYohAO08sAi68NNTnF3R78svRgsC
-         YdKeYRP6nKL2GcDlip+6m0NuL6v/kb3d1Yb9Bh69aL2ylXXD/Qmi0qT/oiXD9zRJPFsi
-         jc/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=MS67Yc5EGUm/u0SK0Q0RhoKpzxxQu+7P0sk51LDBCPtLC0PXeXUa05cTUxn2roaaTC
-         GSvyqWe8lp1X9gb6QFfPTnDnrZy1gNe1lfUpsex9ynJzddJ0hcA6g8cJDRoZMfNtCg4H
-         vAlfuuK8rWCgMlSyt4+mgT6fvuh/W3tDDf/bCySD6botkVnv7MaLfNIRwvloFAaTvqRR
-         OQN9fV7TdUGsRof8Kbx/I0T6hTXB8ZbOeORxCtGfF+MF1S8CYbbwTx1xXEcjWM1DVbI5
-         P9wr05YKhSQEdv/DILLn2XaQUA04icJHI5/P9cMdasen00gDpmDHD0/j/oz4JshGocYQ
-         8pPQ==
-X-Gm-Message-State: APjAAAXEvfwMdAeOF5mgPb4FEvMZ8MIZBFsr4ddwPjEKVvQBbCw8S57o
-        TFH4BZUEA1chzRM7HTVT3Fq84DXH1gNyb5u53FU=
-X-Google-Smtp-Source: APXvYqzdgsLvpsaaHCQHktipn8URXU5HOphN6Nn+Jf939bbnEeITSaq1AXMaxgGzP5BpKqX6xcFAy1ayG5LlfH2x1A8=
-X-Received: by 2002:a63:1624:: with SMTP id w36mr4353788pgl.404.1575369745550;
- Tue, 03 Dec 2019 02:42:25 -0800 (PST)
+        Tue, 3 Dec 2019 05:46:03 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1ic5gu-000196-VF; Tue, 03 Dec 2019 11:46:00 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1ic5gs-0007aN-U8; Tue, 03 Dec 2019 11:45:58 +0100
+Date:   Tue, 3 Dec 2019 11:45:58 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     naga suresh kumar <nagasureshkumarrelli@gmail.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        siva durga paladugu <siva.durga.paladugu@xililnx.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Subject: Re: ubifs mount failure
+Message-ID: <20191203104558.vpqav3oxsydoe4aw@pengutronix.de>
+References: <MN2PR02MB5727000CBE70BAF31F60FEE4AF420@MN2PR02MB5727.namprd02.prod.outlook.com>
+ <20191203084134.tgzir4mtekpm5xbs@pengutronix.de>
+ <MN2PR02MB57272E3343CA62ADBA0F97E5AF420@MN2PR02MB5727.namprd02.prod.outlook.com>
+ <614898763.105471.1575364223372.JavaMail.zimbra@nod.at>
+ <CALgLF9KPAk_AsecnTMmbdF5qbgqXe7HNOrNariNVbhSr6FVN2g@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90b:46c3:0:0:0:0 with HTTP; Tue, 3 Dec 2019 02:42:25
- -0800 (PST)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <ed7293954@gmail.com>
-Date:   Tue, 3 Dec 2019 11:42:25 +0100
-Message-ID: <CAN9Ept+o5j=bG488N0Ubju4wbWSjCQnkhEuqxjFQ6ST0chQzVQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALgLF9KPAk_AsecnTMmbdF5qbgqXe7HNOrNariNVbhSr6FVN2g@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:45:00 up 148 days, 16:55, 148 users,  load average: 0.14, 0.11,
+ 0.12
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+On Tue, Dec 03, 2019 at 04:06:12PM +0530, naga suresh kumar wrote:
+> Hi Richard,
+> 
+> On Tue, Dec 3, 2019 at 2:40 PM Richard Weinberger <richard@nod.at> wrote:
+> >
+> > ----- Ursprüngliche Mail -----
+> > > Von: "Naga Sureshkumar Relli" <nagasure@xilinx.com>
+> > > https://elixir.bootlin.com/linux/v5.4/source/fs/ubifs/sb.c#L164
+> > > we are trying to allocate 4325376 (~4MB)
+> >
+> > 4MiB? Is ->min_io_size that large?
+> if you see https://elixir.bootlin.com/linux/latest/source/fs/ubifs/sb.c#L164
+> The size is actually ALIGN(tmp, c->min_io_size).
+> Here tmp is of 4325376 Bytes and min_io_size is 16384 Bytes
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+'tmp' contains bogus values. Try this:
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+----------------------------8<--------------------------------
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+From 34f687fce189085f55706b4cddcb288a08f4ee06 Mon Sep 17 00:00:00 2001
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Tue, 3 Dec 2019 11:41:20 +0100
+Subject: [PATCH] ubifs: Fix wrong memory allocation
+
+In create_default_filesystem() when we allocate the idx node we must use
+the idx_node_size we calculated just one line before, not tmp, which
+contains completely other data.
+
+Fixes: c4de6d7e4319 ("ubifs: Refactor create_default_filesystem()")
+Reported-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ fs/ubifs/sb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ubifs/sb.c b/fs/ubifs/sb.c
+index a551eb3e9b89..6681c18e52b8 100644
+--- a/fs/ubifs/sb.c
++++ b/fs/ubifs/sb.c
+@@ -161,7 +161,7 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 	sup = kzalloc(ALIGN(UBIFS_SB_NODE_SZ, c->min_io_size), GFP_KERNEL);
+ 	mst = kzalloc(c->mst_node_alsz, GFP_KERNEL);
+ 	idx_node_size = ubifs_idx_node_sz(c, 1);
+-	idx = kzalloc(ALIGN(tmp, c->min_io_size), GFP_KERNEL);
++	idx = kzalloc(ALIGN(idx_node_size, c->min_io_size), GFP_KERNEL);
+ 	ino = kzalloc(ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size), GFP_KERNEL);
+ 	cs = kzalloc(ALIGN(UBIFS_CS_NODE_SZ, c->min_io_size), GFP_KERNEL);
+ 
+-- 
+2.24.0
 
 
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
