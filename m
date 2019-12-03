@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 903BF111E9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA75111E8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:03:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbfLCXCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 18:02:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48302 "EHLO mail.kernel.org"
+        id S1730291AbfLCWyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:54:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbfLCWy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:54:26 -0500
+        id S1730288AbfLCWy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:54:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2925620674;
-        Tue,  3 Dec 2019 22:54:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F7F52053B;
+        Tue,  3 Dec 2019 22:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413665;
-        bh=ihPG//jNFj6mdLcSyAiHByfXaouHt8MxyYWi42hQ/NQ=;
+        s=default; t=1575413668;
+        bh=W70HprwceHM95eqhp/i6jc2jryBT4sBo1lOQnbLjKaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q4++BbNGtEKxJMh9D6x1cMzoOzZ6iuHfiaJwN3fq//nd7sWRtNPoXap3O5WofYDwx
-         fYi+l3JFbSc3epfwVnuSkzThhHo/+BzkyL0VbfF0J+pGGY1gLOfWvnjMAkWdhvTIq4
-         ouwM2nyCQrslPf5TkyR1MWZ9XOIYIQ/se+ZBo4Ac=
+        b=PUEh16/cu/G4TC0P/4tsI5vh3mVxq7sakja7lXv88k4ROwcyYZ9H4KS9NaOtkFDf0
+         Hdh8L2XFoD4E4+YGZ8nqoD9Akhj/8g84+kRwszv8absxn9GCTu2t3mOLdLaor+ucKQ
+         B/KIfn/j9rgoe5kL+UBzGeIhkiqpNQETVCV/c8ao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 176/321] bpf/cpumap: make sure frame_size for build_skb is aligned if headroom isnt
-Date:   Tue,  3 Dec 2019 23:34:02 +0100
-Message-Id: <20191203223436.285585148@linuxfoundation.org>
+Subject: [PATCH 4.19 177/321] regulator: tps65910: fix a missing check of return value
+Date:   Tue,  3 Dec 2019 23:34:03 +0100
+Message-Id: <20191203223436.338800816@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -44,41 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 77ea5f4cbe2084db9ab021ba73fb7eadf1610884 ]
+[ Upstream commit cd07e3701fa6a4c68f8493ee1d12caa18d46ec6a ]
 
-The frame_size passed to build_skb must be aligned, else it is
-possible that the embedded struct skb_shared_info gets unaligned.
+tps65910_reg_set_bits() may fail. The fix checks if it fails, and if so,
+returns with its error code.
 
-For correctness make sure that xdpf->headroom in included in the
-alignment. No upstream drivers can hit this, as all XDP drivers provide
-an aligned headroom.  This was discovered when playing with implementing
-XDP support for mvneta, which have a 2 bytes DSA header, and this
-Marvell ARM64 platform didn't like doing atomic operations on an
-unaligned skb_shinfo(skb)->dataref addresses.
-
-Fixes: 1c601d829ab0 ("bpf: cpumap xdp_buff to skb conversion and allocation")
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/cpumap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/tps65910-regulator.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index 24aac0d0f4127..8974b3755670e 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -183,7 +183,7 @@ static struct sk_buff *cpu_map_build_skb(struct bpf_cpu_map_entry *rcpu,
- 	 * is not at a fixed memory location, with mixed length
- 	 * packets, which is bad for cache-line hotness.
- 	 */
--	frame_size = SKB_DATA_ALIGN(xdpf->len) + xdpf->headroom +
-+	frame_size = SKB_DATA_ALIGN(xdpf->len + xdpf->headroom) +
- 		SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
+index 02ccdaa226a73..5ebb6ee73f077 100644
+--- a/drivers/regulator/tps65910-regulator.c
++++ b/drivers/regulator/tps65910-regulator.c
+@@ -1102,8 +1102,10 @@ static int tps65910_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pmic);
  
- 	pkt_data_start = xdpf->data - xdpf->headroom;
+ 	/* Give control of all register to control port */
+-	tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
++	err = tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
+ 				DEVCTRL_SR_CTL_I2C_SEL_MASK);
++	if (err < 0)
++		return err;
+ 
+ 	switch (tps65910_chip_id(tps65910)) {
+ 	case TPS65910:
 -- 
 2.20.1
 
