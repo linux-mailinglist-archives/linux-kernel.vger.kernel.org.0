@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4232F111BF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D460111C7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:44:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfLCWi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:38:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48600 "EHLO mail.kernel.org"
+        id S1728957AbfLCWok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:44:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728097AbfLCWiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:38:55 -0500
+        id S1728484AbfLCWoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:44:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A6BB20863;
-        Tue,  3 Dec 2019 22:38:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F01CE20803;
+        Tue,  3 Dec 2019 22:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412734;
-        bh=IC6o68mrLdx4mysFXDFXgdZP+YGES3DYn46twtdjoEg=;
+        s=default; t=1575413076;
+        bh=DX3MlaJR24u347KXFwaZUu2joPNmxXCZOAJEq0+M8AE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X/jGHXz7Tkrc/xgNH9cAEX1HqNIZ4NsgPzzwZ7KELSwIQCudpTkNUQPgfV9XMjL32
-         bUNx7Tnjv0JXshuHArqBKYTpWdBJIId8Qt8n5C/sZoUz3XoVG2XtfLpO7Cck38HFE2
-         zPlvjD+BkuIsMKTDhQBJ15EIdVR3nRzpoGMHI+A4=
+        b=rKwgIbk7AQ8ces+yi8Vxl7NJumHYCs7YtmelPmr2qxK9Y9p67UCYsAbk9cbLS1YP+
+         5dZB6wsy+y4isLNTgoin72wu4LSwMzuWu43gU3jT6z+/Ki71sn5kj6LHeSUMchcdEx
+         37HhMuf+xc3MOy1noJSAP63/WmmqTPKMv+/jqiMM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 5.4 42/46] Revert "jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()"
-Date:   Tue,  3 Dec 2019 23:36:02 +0100
-Message-Id: <20191203212805.427358245@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+df0d4ec12332661dd1f9@syzkaller.appspotmail.com,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 123/135] net/tls: free the record on encryption error
+Date:   Tue,  3 Dec 2019 23:36:03 +0100
+Message-Id: <20191203213044.695046895@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joel Stanley <joel@jms.id.au>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-commit 6e78c01fde9023e0701f3af880c1fd9de6e4e8e3 upstream.
+[ Upstream commit d10523d0b3d78153ee58d19853ced26c9004c8c4 ]
 
-This reverts commit f2538f999345405f7d2e1194c0c8efa4e11f7b3a. The patch
-stopped JFFS2 from being able to mount an existing filesystem with the
-following errors:
+When tls_do_encryption() fails the SG lists are left with the
+SG_END and SG_CHAIN marks in place. One could hope that once
+encryption fails we will never see the record again, but that
+is in fact not true. Commit d3b18ad31f93 ("tls: add bpf support
+to sk_msg handling") added special handling to ENOMEM and ENOSPC
+errors which mean we may see the same record re-submitted.
 
- jffs2: error: (77) jffs2_build_inode_fragtree: Add node to tree failed -22
- jffs2: error: (77) jffs2_do_read_inode_internal: Failed to build final fragtree for inode #5377: error -22
+As suggested by John free the record, the BPF code is already
+doing just that.
 
-Fixes: f2538f999345 ("jffs2: Fix possible null-pointer dereferences...")
-Cc: stable@vger.kernel.org
-Suggested-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Reported-by: syzbot+df0d4ec12332661dd1f9@syzkaller.appspotmail.com
+Fixes: d3b18ad31f93 ("tls: add bpf support to sk_msg handling")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/jffs2/nodelist.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tls/tls_sw.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/fs/jffs2/nodelist.c
-+++ b/fs/jffs2/nodelist.c
-@@ -226,7 +226,7 @@ static int jffs2_add_frag_to_fragtree(st
- 		lastend = this->ofs + this->size;
- 	} else {
- 		dbg_fragtree2("lookup gave no frag\n");
--		return -EINVAL;
-+		lastend = 0;
- 	}
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -766,8 +766,14 @@ static int bpf_exec_tx_verdict(struct sk
  
- 	/* See if we ran off the end of the fragtree */
+ 	policy = !(flags & MSG_SENDPAGE_NOPOLICY);
+ 	psock = sk_psock_get(sk);
+-	if (!psock || !policy)
+-		return tls_push_record(sk, flags, record_type);
++	if (!psock || !policy) {
++		err = tls_push_record(sk, flags, record_type);
++		if (err) {
++			*copied -= sk_msg_free(sk, msg);
++			tls_free_open_rec(sk);
++		}
++		return err;
++	}
+ more_data:
+ 	enospc = sk_msg_full(msg);
+ 	if (psock->eval == __SK_NONE) {
 
 
