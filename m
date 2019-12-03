@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E75111E2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B09111F95
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbfLCW4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51040 "EHLO mail.kernel.org"
+        id S1728662AbfLCWmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:42:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730217AbfLCW4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:56:13 -0500
+        id S1728343AbfLCWmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:42:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 152E120656;
-        Tue,  3 Dec 2019 22:56:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 812C020803;
+        Tue,  3 Dec 2019 22:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413772;
-        bh=wmuwLo9bIBTT0JivJn4LAhmhc3tLHqU1eGFflp9iTqU=;
+        s=default; t=1575412955;
+        bh=Sh1A6WczwZM9OYsqHw8JzdjYAOOxO4WI8CWupzY34jc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nOW5Ga3GMWjFCoKlnc/IY2zVvb+iOib7bijATZ72Y8CwG5meN0JljvwafyajvKJgl
-         2mTmMEA2060cnqQhHhiVRdD3X8BEIAomH0IlGb9KqBylo4Gs5MBpYZE1epZxW2oNKU
-         vxVQHFLTFfWuX/XkmpfG72ABR2G0clN9Kkg+N+IY=
+        b=W6IX0gFMfaPYosoSSd+VSLT96dpCM6RX/crfvAlaGzSgZEs9ZZ4OkhWyCxPsnr3rj
+         iZsbWXvMRDX4yUzoxeGRyjBZFftOTkJP5hYXXX+f21S6E/ByzcYLYruSAhAdzF01Gf
+         QdFSY1Yodc1cIKA4NooGowqplLDGUVkccov5rOAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jens Axboe <axboe@fb.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 217/321] PCI/MSI: Return -ENOSPC from pci_alloc_irq_vectors_affinity()
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.3 043/135] clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
 Date:   Tue,  3 Dec 2019 23:34:43 +0100
-Message-Id: <20191203223438.408663775@linuxfoundation.org>
+Message-Id: <20191203213015.983469970@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-References: <20191203223427.103571230@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,95 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit 77f88abd4a6f73a1a68dbdc0e3f21575fd508fc3 ]
+[ Upstream commit 9982b0f69b49931b652d35f86f519be2ccfc7027 ]
 
-The API of pci_alloc_irq_vectors_affinity() says it returns -ENOSPC if
-fewer than @min_vecs interrupt vectors are available for @dev.
+ti_clk_register() calls it already so the driver should not create
+duplicated alias.
 
-However, if a device supports MSI-X but not MSI and a caller requests
-@min_vecs that can't be satisfied by MSI-X, we previously returned -EINVAL
-(from the failed attempt to enable MSI), not -ENOSPC.
-
-When -ENOSPC is returned, callers may reduce the number IRQs they request
-and try again.  Most callers can use the @min_vecs and @max_vecs
-parameters to avoid this retry loop, but that doesn't work when using IRQ
-affinity "nr_sets" because rebalancing the sets is driver-specific.
-
-This return value bug has been present since pci_alloc_irq_vectors() was
-added in v4.10 by aff171641d18 ("PCI: Provide sensible IRQ vector
-alloc/free routines"), but it wasn't an issue because @min_vecs/@max_vecs
-removed the need for callers to iteratively reduce the number of IRQs
-requested and retry the allocation, so they didn't need to distinguish
--ENOSPC from -EINVAL.
-
-In v5.0, 6da4b3ab9a6e ("genirq/affinity: Add support for allocating
-interrupt sets") added IRQ sets to the interface, which reintroduced the
-need to check for -ENOSPC and possibly reduce the number of IRQs requested
-and retry the allocation.
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-[bhelgaas: changelog]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Link: https://lkml.kernel.org/r/20191002083436.10194-1-peter.ujfalusi@ti.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/msi.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/clk/ti/clk-dra7-atl.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index af24ed50a2452..971dddf62374f 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1155,7 +1155,8 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
- 				   const struct irq_affinity *affd)
- {
- 	static const struct irq_affinity msi_default_affd;
--	int vecs = -ENOSPC;
-+	int msix_vecs = -ENOSPC;
-+	int msi_vecs = -ENOSPC;
+diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+index a01ca9395179a..f65e16c4f3c4b 100644
+--- a/drivers/clk/ti/clk-dra7-atl.c
++++ b/drivers/clk/ti/clk-dra7-atl.c
+@@ -174,7 +174,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+ 	struct clk_init_data init = { NULL };
+ 	const char **parent_names = NULL;
+ 	struct clk *clk;
+-	int ret;
  
- 	if (flags & PCI_IRQ_AFFINITY) {
- 		if (!affd)
-@@ -1166,16 +1167,17 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
- 	}
+ 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+ 	if (!clk_hw) {
+@@ -207,11 +206,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+ 	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
  
- 	if (flags & PCI_IRQ_MSIX) {
--		vecs = __pci_enable_msix_range(dev, NULL, min_vecs, max_vecs,
--				affd);
--		if (vecs > 0)
--			return vecs;
-+		msix_vecs = __pci_enable_msix_range(dev, NULL, min_vecs,
-+						    max_vecs, affd);
-+		if (msix_vecs > 0)
-+			return msix_vecs;
- 	}
- 
- 	if (flags & PCI_IRQ_MSI) {
--		vecs = __pci_enable_msi_range(dev, min_vecs, max_vecs, affd);
--		if (vecs > 0)
--			return vecs;
-+		msi_vecs = __pci_enable_msi_range(dev, min_vecs, max_vecs,
-+						  affd);
-+		if (msi_vecs > 0)
-+			return msi_vecs;
- 	}
- 
- 	/* use legacy irq if allowed */
-@@ -1186,7 +1188,9 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
- 		}
- 	}
- 
--	return vecs;
-+	if (msix_vecs == -ENOSPC)
-+		return -ENOSPC;
-+	return msi_vecs;
- }
- EXPORT_SYMBOL(pci_alloc_irq_vectors_affinity);
- 
+ 	if (!IS_ERR(clk)) {
+-		ret = ti_clk_add_alias(NULL, clk, node->name);
+-		if (ret) {
+-			clk_unregister(clk);
+-			goto cleanup;
+-		}
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		kfree(parent_names);
+ 		return;
 -- 
 2.20.1
 
