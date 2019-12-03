@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F7A111BDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08EDD111C65
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:43:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfLCWiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:38:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
+        id S1728842AbfLCWnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbfLCWiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:38:05 -0500
+        id S1728836AbfLCWnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:43:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C923A20684;
-        Tue,  3 Dec 2019 22:38:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 827DE2073C;
+        Tue,  3 Dec 2019 22:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575412685;
-        bh=h9hAePb4rgYiXNu8nffA2t81ggA4eShFI9X4lZFf2fs=;
+        s=default; t=1575413020;
+        bh=Gvbq7mVM0/PgnucgqGPLHNcebP9gPhf52e++PEBwkx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yZjKcSRNC7xGjQHBV18JKiX0SZCXRN28sHeDL9GqDnsNfImMgFMPMNYSyin7AV2Tn
-         FUiHCvFsZ5trcQgqCHXCOTXNyVZpKKYJC+7by1JMqZzgqU5sjEbm/g6UjMi47q/+QE
-         myBE2r7WSymVaG8NtOB4A0F9DPwD9XB4YTSvRasg=
+        b=EZLMn7CF4Lf3v/DGTxn1YjtTDG4FgagGamg/aEy3yqIdLOTgvL25gzmgtLHOvd+Vh
+         ctu8l2XnVLbEcNjDFSp9mrkbt0u6yV/iViBNFLZ+aSnqGKLTcxpHotAjGRpCpYRcGY
+         O6gCrS3KriehR0oZR3fO6uPbptlZtq3+rJVRleW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+4d5170758f3762109542@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jouni Hogander <jouni.hogander@unikie.com>
-Subject: [PATCH 5.4 25/46] slip: Fix use-after-free Read in slip_open
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 5.3 105/135] mei: me: add comet point V device id
 Date:   Tue,  3 Dec 2019 23:35:45 +0100
-Message-Id: <20191203212739.816120146@linuxfoundation.org>
+Message-Id: <20191203213040.474020711@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191203212705.175425505@linuxfoundation.org>
-References: <20191203212705.175425505@linuxfoundation.org>
+In-Reply-To: <20191203213005.828543156@linuxfoundation.org>
+References: <20191203213005.828543156@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,60 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jouni Hogander <jouni.hogander@unikie.com>
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-[ Upstream commit e58c1912418980f57ba2060017583067f5f71e52 ]
+commit 82b29b9f72afdccb40ea5f3c13c6a3cb65a597bc upstream.
 
-Slip_open doesn't clean-up device which registration failed from the
-slip_devs device list. On next open after failure this list is iterated
-and freed device is accessed. Fix this by calling sl_free_netdev in error
-path.
+Comet Point (Comet Lake) V device id.
 
-Here is the trace from the Syzbot:
-
-__dump_stack lib/dump_stack.c:77 [inline]
-dump_stack+0x197/0x210 lib/dump_stack.c:118
-print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-__kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-kasan_report+0x12/0x20 mm/kasan/common.c:634
-__asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-sl_sync drivers/net/slip/slip.c:725 [inline]
-slip_open+0xecd/0x11b7 drivers/net/slip/slip.c:801
-tty_ldisc_open.isra.0+0xa3/0x110 drivers/tty/tty_ldisc.c:469
-tty_set_ldisc+0x30e/0x6b0 drivers/tty/tty_ldisc.c:596
-tiocsetd drivers/tty/tty_io.c:2334 [inline]
-tty_ioctl+0xe8d/0x14f0 drivers/tty/tty_io.c:2594
-vfs_ioctl fs/ioctl.c:46 [inline]
-file_ioctl fs/ioctl.c:509 [inline]
-do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:696
-ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-__do_sys_ioctl fs/ioctl.c:720 [inline]
-__se_sys_ioctl fs/ioctl.c:718 [inline]
-__x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 3b5a39979daf ("slip: Fix memory leak in slip_open error path")
-Reported-by: syzbot+4d5170758f3762109542@syzkaller.appspotmail.com
-Cc: David Miller <davem@davemloft.net>
-Cc: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Signed-off-by: Jouni Hogander <jouni.hogander@unikie.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Link: https://lore.kernel.org/r/20191105150514.14010-2-tomas.winkler@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/slip/slip.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/slip/slip.c
-+++ b/drivers/net/slip/slip.c
-@@ -855,6 +855,7 @@ err_free_chan:
- 	sl->tty = NULL;
- 	tty->disc_data = NULL;
- 	clear_bit(SLF_INUSE, &sl->flags);
-+	sl_free_netdev(sl->dev);
- 	free_netdev(sl->dev);
+---
+ drivers/misc/mei/hw-me-regs.h |    1 +
+ drivers/misc/mei/pci-me.c     |    1 +
+ 2 files changed, 2 insertions(+)
+
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -81,6 +81,7 @@
  
- err_exit:
+ #define MEI_DEV_ID_CMP_LP     0x02e0  /* Comet Point LP */
+ #define MEI_DEV_ID_CMP_LP_3   0x02e4  /* Comet Point LP 3 (iTouch) */
++#define MEI_DEV_ID_CMP_V      0xA3BA  /* Comet Point Lake V */
+ 
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -98,6 +98,7 @@ static const struct pci_device_id mei_me
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP, MEI_ME_PCH12_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_LP_3, MEI_ME_PCH8_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_CMP_V, MEI_ME_PCH12_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
+ 
 
 
