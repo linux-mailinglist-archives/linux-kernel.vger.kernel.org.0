@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C7DD111D19
+	by mail.lfdr.de (Postfix) with ESMTP id BBEFC111D1A
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 23:51:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbfLCWuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:50:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41662 "EHLO mail.kernel.org"
+        id S1729730AbfLCWuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 17:50:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729709AbfLCWuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:50:11 -0500
+        id S1729550AbfLCWuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 17:50:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F04BC20656;
-        Tue,  3 Dec 2019 22:50:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A4CC2084B;
+        Tue,  3 Dec 2019 22:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575413410;
-        bh=ifwruHAoHqHKLv+HjbF5JGJp7pgttRgm2PgncmfAWrs=;
+        s=default; t=1575413412;
+        bh=Ig6GLgtVxG8RAfqsFCQe+ELgsgqLjsT/38hfFIajrIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E5ATwxt3U9nExAcPozaFCfeUjqBfr1MlMKqF2Opy+j/yozm+8FGDwYm1aZtSCifEu
-         5G349eM9TcEZXwwUEs/zh8oxM009Bvyof+aWl5WWPifQJ3I0JSzeujOH1ucCOZ3oGY
-         Cbkwbo0DVrFFSpI/fI///NoVWOoxvE5OtCC474Eo=
+        b=TdMDyptmaG6czaQbc50rY2NROXgZ9jy2r3dJhyWewuiojIRxYFGRO6QVePbz37LYO
+         2hWHK6HAEspK0kpNx5HWtxdpQEz0DZzcPVw10mq6ygd6RyNH+CJ6md3QBlQQcF8oyx
+         KzZvH61SuxWfcJ6/7YF2LUNtssntMl0ce+gR3jGE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 116/321] usb: ehci-omap: Fix deferred probe for phy handling
-Date:   Tue,  3 Dec 2019 23:33:02 +0100
-Message-Id: <20191203223433.182056324@linuxfoundation.org>
+Subject: [PATCH 4.19 117/321] btrfs: Check for missing device before bio submission in btrfs_map_bio
+Date:   Tue,  3 Dec 2019 23:33:03 +0100
+Message-Id: <20191203223433.233907706@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
 References: <20191203223427.103571230@linuxfoundation.org>
@@ -48,54 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roger Quadros <rogerq@ti.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-[ Upstream commit 8dc7623bf608495b6e6743e805807c7840673573 ]
+[ Upstream commit fc8a168aa9ab1680c2bd52bf9db7c994e0f2524f ]
 
-PHY model is being used on omap5 platforms even if port mode
-is not OMAP_EHCI_PORT_MODE_PHY. So don't guess if PHY is required
-or not based on PHY mode.
+Before btrfs_map_bio submits all stripe bios it does a number of checks
+to ensure the device for every stripe is present. However, it doesn't do
+a DEV_STATE_MISSING check, instead this is relegated to the lower level
+btrfs_schedule_bio (in the async submission case, sync submission
+doesn't check DEV_STATE_MISSING at all). Additionally
+btrfs_schedule_bios does the duplicate device->bdev check which has
+already been performed in btrfs_map_bio.
 
-If PHY is provided in device tree, it must be required. So, if
-devm_usb_get_phy_by_phandle() gives us an error code other
-than -ENODEV (no PHY) then error out.
+This patch moves the DEV_STATE_MISSING check in btrfs_map_bio and
+removes the duplicate device->bdev check. Doing so ensures that no bio
+cloning/submission happens for both async/sync requests in the face of
+missing device. This makes the async io submission path slightly shorter
+in terms of instruction count. No functional changes.
 
-This fixes USB Ethernet on omap5-uevm if PHY happens to
-probe after EHCI thus causing a -EPROBE_DEFER.
-
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Reported-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/ehci-omap.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/btrfs/volumes.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-omap.c b/drivers/usb/host/ehci-omap.c
-index 7e4c13346a1ee..7d20296cbe9f9 100644
---- a/drivers/usb/host/ehci-omap.c
-+++ b/drivers/usb/host/ehci-omap.c
-@@ -159,11 +159,12 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
- 		/* get the PHY device */
- 		phy = devm_usb_get_phy_by_phandle(dev, "phys", i);
- 		if (IS_ERR(phy)) {
--			/* Don't bail out if PHY is not absolutely necessary */
--			if (pdata->port_mode[i] != OMAP_EHCI_PORT_MODE_PHY)
-+			ret = PTR_ERR(phy);
-+			if (ret == -ENODEV) { /* no PHY */
-+				phy = NULL;
- 				continue;
-+			}
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index a8297e7489d98..f84c18e86c816 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6106,12 +6106,6 @@ static noinline void btrfs_schedule_bio(struct btrfs_device *device,
+ 	int should_queue = 1;
+ 	struct btrfs_pending_bios *pending_bios;
  
--			ret = PTR_ERR(phy);
- 			if (ret != -EPROBE_DEFER)
- 				dev_err(dev, "Can't get PHY for port %d: %d\n",
- 					i, ret);
+-	if (test_bit(BTRFS_DEV_STATE_MISSING, &device->dev_state) ||
+-	    !device->bdev) {
+-		bio_io_error(bio);
+-		return;
+-	}
+-
+ 	/* don't bother with additional async steps for reads, right now */
+ 	if (bio_op(bio) == REQ_OP_READ) {
+ 		btrfsic_submit_bio(bio);
+@@ -6240,7 +6234,8 @@ blk_status_t btrfs_map_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 
+ 	for (dev_nr = 0; dev_nr < total_devs; dev_nr++) {
+ 		dev = bbio->stripes[dev_nr].dev;
+-		if (!dev || !dev->bdev ||
++		if (!dev || !dev->bdev || test_bit(BTRFS_DEV_STATE_MISSING,
++						   &dev->dev_state) ||
+ 		    (bio_op(first_bio) == REQ_OP_WRITE &&
+ 		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))) {
+ 			bbio_error(bbio, first_bio, logical);
 -- 
 2.20.1
 
