@@ -2,101 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA67F10F7EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 07:41:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EBFB10F7F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 07:42:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfLCGlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 01:41:02 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:36214 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbfLCGlC (ORCPT
+        id S1727318AbfLCGmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 01:42:16 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:35687 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfLCGmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 01:41:02 -0500
-Received: by mail-pj1-f68.google.com with SMTP id n96so1114356pjc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 22:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=txqB93EC07vnRxRZaCApt0VS2Bxm0RCf+BrdUWlZ5n8=;
-        b=mQgWYUsazi3iLKeYXps0csdlVmrHlYsQ8PPJW+N+TvkqBxRZLF3r9hThklk0JAeT/E
-         95g4K9LXGYqaiyl3PMjAA8hEHNCwh0BHK3lCTFehF1JZCKBWQHbkK6vJgg494kuCoDG0
-         llgHa+eD0gQ3/JVO/nYpmFM2RtR0AE9/LCgiwjx4ateE5sRsltCWYyijqdVXbwi+HRes
-         vAHJESd5WrwgpkCCzoDg870kMIk27sNmUhT66e6ZAP2rm/l3UZyLLgaVD9YwyJnpCc/5
-         27YtK8VqP5y5D1N+TabQGA+Y7kir+ClhGf7zWb5Uesoh0JkPs0xH/jNkTmocqNFHv3Oy
-         ZduA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=txqB93EC07vnRxRZaCApt0VS2Bxm0RCf+BrdUWlZ5n8=;
-        b=hfrLNEJI/AK8e3cfuuDGwVLP2c/EU9ogDWB+wUtKk+wvINHvaQVdXem1Ffzc+peeq9
-         ukhG93vjLjbKT+ZIVIXDtWcYulqFMRM6qcQE9mIQcM2l7hSXp3AjK9weLECP/ibVqi/Y
-         pTAn7fflnEJLpiTzQQviS0ek6n4mFRqDcztztqUA6x67wqBIA5yZ9+zoUmu5O3mA0alY
-         scXpeBO4fuIwwSVC51Rjo0lTpxwKQ2/HNWEwlr5cB08WC/ndOZa39GKrlzhocUtO6yCM
-         tR8SQju+x9bYfIFoyCdcP/4fkMJufwNn6CFsse55c1+sK9Fwgz1eeGH8w67tPJSoHz3s
-         1gmA==
-X-Gm-Message-State: APjAAAWy2Uq/RFrZtqIClabB08DJOehUGg9s6gD9S+E9itOhoWH+MPXl
-        ZBnYMaMPWEzyNofg3aZt7Q4Zr5YPjLfrsMYjSf7uaA==
-X-Google-Smtp-Source: APXvYqxFV1COUKvWUrh7FKcPNPvAl5pzHEfFxQVmduhIljm7Zx5aez1Zqxp7kxFQPcnSN/a6hmWpDnEap+IdDr9XjLE=
-X-Received: by 2002:a17:902:9f98:: with SMTP id g24mr3446029plq.325.1575355260934;
- Mon, 02 Dec 2019 22:41:00 -0800 (PST)
+        Tue, 3 Dec 2019 01:42:15 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xB36fxQx002046;
+        Tue, 3 Dec 2019 15:41:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xB36fxQx002046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1575355319;
+        bh=d1TaPWKkweQ1rY/9jQKGxR8RbctwUl4ZdBH262gE6Ek=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SwoYHX5ogHo9RL8Nc+N0vXtoMdM8NTbmdzHaNGMQ8mkQAHOL/krz6QWLr4Vn72MfY
+         OSPm4OaSQgfPeghIdjSFPVKurVV4Xy94Oj7MQBwgH6ptJ3vMjxhRLLFZXS4PWfmiUA
+         H+3M1wPKDdPRfYCJbv7nrR6FEeXsW80r09rOsxFGVYzix4//vA5PBuTlv4w82VJSwZ
+         M5twJrrM7vL8yd/iXmHzDlkHiEL/XxvPOAOlfcQLae//PzwCdFxrjI3Ydqbt6OlzOj
+         iOEKDYVL4rR3wZYDxQ1Q7KHFhcrD7JIXTDhePJ04lvB2YzzFcbU8l0X3mVkYKj0Htg
+         ARgPMppx73Zbg==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id n27so1685569vsa.0;
+        Mon, 02 Dec 2019 22:41:59 -0800 (PST)
+X-Gm-Message-State: APjAAAVWGdEYYebf8uWhcG94343K8IDlsICABzwOHU0u7SyVDdGc97NC
+        kfP/TqR3ynAKgV8wsW4MRT+DhUI/2SfjNU0ou8g=
+X-Google-Smtp-Source: APXvYqzLsiH4HRQY9QqmGR/SA97yO7NrrmjdmBWFjksc9y+rkTjK3+4kSlw3fdNk79ycV87KfqHrKT+gli71BIb+qN8=
+X-Received: by 2002:a67:f6c2:: with SMTP id v2mr1763077vso.54.1575355318341;
+ Mon, 02 Dec 2019 22:41:58 -0800 (PST)
 MIME-Version: 1.0
-References: <1575242724-4937-1-git-send-email-sj38.park@gmail.com> <1575242724-4937-5-git-send-email-sj38.park@gmail.com>
-In-Reply-To: <1575242724-4937-5-git-send-email-sj38.park@gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 2 Dec 2019 22:40:49 -0800
-Message-ID: <CAFd5g46bb_46dCpu3t=qT0FMqifS8wodnhjWC7jfpkuhT1ngAQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] kunit: Create default config in 'build_dir'
-To:     SeongJae Park <sj38.park@gmail.com>
-Cc:     shuah <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+References: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 3 Dec 2019 15:41:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
+Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: Add SCSSI clock gate for each channel
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SeongJae Park <sjpark@amazon.de>
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 1, 2019 at 3:25 PM SeongJae Park <sj38.park@gmail.com> wrote:
+On Fri, Nov 29, 2019 at 1:16 PM Kunihiko Hayashi
+<hayashi.kunihiko@socionext.com> wrote:
 >
-> From: SeongJae Park <sjpark@amazon.de>
+> SCSSI has clock gates for each channel in the SoCs newer than Pro4,
+> so this adds missing clock gates for channel 1, 2 and 3. And more, this
+> moves MCSSI clock ID after SCSSI.
 >
-> If both '--build_dir' and '--defconfig' are given, the handling of
-> '--defconfig' ignores '--build_dir' option.  This commit modifies the
-> behavior to respect '--build_dir' option.
->
-> Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > ---
->  tools/testing/kunit/kunit.py | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
-> index f8f2695..1746330 100755
-> --- a/tools/testing/kunit/kunit.py
-> +++ b/tools/testing/kunit/kunit.py
-> @@ -114,6 +114,11 @@ def main(argv, linux=None):
->         cli_args = parser.parse_args(argv)
->
->         if cli_args.subcommand == 'run':
-> +               if cli_args.build_dir:
-> +                       kunit_kernel.KUNITCONFIG_PATH = os.path.join(
 
-If you are going to modify the value of KUNITCONFIG_PATH can you
-rename the variable to make it lower_snake_case? UPPER_SNAKE_CASE in
-Python is usually (at least in this directory) used to indicate the
-variable is a constant.
 
-> +                               cli_args.build_dir,
-> +                               kunit_kernel.KUNITCONFIG_PATH)
-> +
->                 if cli_args.defconfig:
->                         create_default_kunitconfig()
+Fixes: ff388ee36516 ("clk: uniphier: add clock frequency support for SPI")
+
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
+
+>  drivers/clk/uniphier/clk-uniphier-peri.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
 >
+> diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
+> index 9caa529..3e32db9 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-peri.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-peri.c
+> @@ -18,8 +18,8 @@
+>  #define UNIPHIER_PERI_CLK_FI2C(idx, ch)                                        \
+>         UNIPHIER_CLK_GATE("i2c" #ch, (idx), "i2c", 0x24, 24 + (ch))
+>
+> -#define UNIPHIER_PERI_CLK_SCSSI(idx)                                   \
+> -       UNIPHIER_CLK_GATE("scssi", (idx), "spi", 0x20, 17)
+> +#define UNIPHIER_PERI_CLK_SCSSI(idx, ch)                               \
+> +       UNIPHIER_CLK_GATE("scssi" #ch, (idx), "spi", 0x20, 17 + (ch))
+>
+>  #define UNIPHIER_PERI_CLK_MCSSI(idx)                                   \
+>         UNIPHIER_CLK_GATE("mcssi", (idx), "spi", 0x24, 14)
+> @@ -35,7 +35,7 @@ const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
+>         UNIPHIER_PERI_CLK_I2C(6, 2),
+>         UNIPHIER_PERI_CLK_I2C(7, 3),
+>         UNIPHIER_PERI_CLK_I2C(8, 4),
+> -       UNIPHIER_PERI_CLK_SCSSI(11),
+> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
+>         { /* sentinel */ }
+>  };
+>
+> @@ -51,7 +51,10 @@ const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
+>         UNIPHIER_PERI_CLK_FI2C(8, 4),
+>         UNIPHIER_PERI_CLK_FI2C(9, 5),
+>         UNIPHIER_PERI_CLK_FI2C(10, 6),
+> -       UNIPHIER_PERI_CLK_SCSSI(11),
+> -       UNIPHIER_PERI_CLK_MCSSI(12),
+> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
+> +       UNIPHIER_PERI_CLK_SCSSI(12, 1),
+> +       UNIPHIER_PERI_CLK_SCSSI(13, 2),
+> +       UNIPHIER_PERI_CLK_SCSSI(14, 3),
+> +       UNIPHIER_PERI_CLK_MCSSI(15),
+>         { /* sentinel */ }
+>  };
 > --
 > 2.7.4
 >
+
+-- 
+Best Regards
+Masahiro Yamada
