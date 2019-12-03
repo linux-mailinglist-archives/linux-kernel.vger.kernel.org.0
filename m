@@ -2,122 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EBFB10F7F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 07:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A12FE10F7FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 07:43:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfLCGmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 01:42:16 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:35687 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfLCGmP (ORCPT
+        id S1727329AbfLCGnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 01:43:47 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:34884 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbfLCGnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 01:42:15 -0500
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id xB36fxQx002046;
-        Tue, 3 Dec 2019 15:41:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xB36fxQx002046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1575355319;
-        bh=d1TaPWKkweQ1rY/9jQKGxR8RbctwUl4ZdBH262gE6Ek=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=SwoYHX5ogHo9RL8Nc+N0vXtoMdM8NTbmdzHaNGMQ8mkQAHOL/krz6QWLr4Vn72MfY
-         OSPm4OaSQgfPeghIdjSFPVKurVV4Xy94Oj7MQBwgH6ptJ3vMjxhRLLFZXS4PWfmiUA
-         H+3M1wPKDdPRfYCJbv7nrR6FEeXsW80r09rOsxFGVYzix4//vA5PBuTlv4w82VJSwZ
-         M5twJrrM7vL8yd/iXmHzDlkHiEL/XxvPOAOlfcQLae//PzwCdFxrjI3Ydqbt6OlzOj
-         iOEKDYVL4rR3wZYDxQ1Q7KHFhcrD7JIXTDhePJ04lvB2YzzFcbU8l0X3mVkYKj0Htg
-         ARgPMppx73Zbg==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id n27so1685569vsa.0;
-        Mon, 02 Dec 2019 22:41:59 -0800 (PST)
-X-Gm-Message-State: APjAAAVWGdEYYebf8uWhcG94343K8IDlsICABzwOHU0u7SyVDdGc97NC
-        kfP/TqR3ynAKgV8wsW4MRT+DhUI/2SfjNU0ou8g=
-X-Google-Smtp-Source: APXvYqzLsiH4HRQY9QqmGR/SA97yO7NrrmjdmBWFjksc9y+rkTjK3+4kSlw3fdNk79ycV87KfqHrKT+gli71BIb+qN8=
-X-Received: by 2002:a67:f6c2:: with SMTP id v2mr1763077vso.54.1575355318341;
- Mon, 02 Dec 2019 22:41:58 -0800 (PST)
+        Tue, 3 Dec 2019 01:43:47 -0500
+Received: by mail-pj1-f68.google.com with SMTP id w23so29238pjd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Dec 2019 22:43:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cEGTgxRGdDj6W2EYyG4VZuBBv7xt+SBCI6XOXHZWHJk=;
+        b=jWh0uDRmn4BxfEJcpQT1SJWeF1vuWBV4t1aBQKrYRvPeqlY0LeGKunz+aL5wsFS5CB
+         C9POZgQY5BMLaMZYhUT/BaJibe5aXKUkLwED4ow4eqojmZCVZkXCIjwIJ2tLqS6w0Jkz
+         CboW71cXML5/ZTtJRXUgR9H/CAA077+ufOVyx7sCANZlVy6zy/83rkhgIJIRUZSutUeE
+         ZWZg+LbDqW2coEBoN+KJGYSkTvXpHmP/BlV/uZPGttC/b8A+Jpu3NyNLAaABnsSJTPH+
+         qyCPys3F0hFoGq5Km40JRbqRgy9No4hPP1B2HNnmxV9nwh1mwOsiQjVB5ch3qGUw6DyF
+         BSTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cEGTgxRGdDj6W2EYyG4VZuBBv7xt+SBCI6XOXHZWHJk=;
+        b=o7KwG1y0Ck48lJZkMC4vUnO2y1DNQXloPO8QDd32/men1Nuootpb8zfPuvy+1M+RWK
+         GOX7BJpu8JkA4vGVwHSOpxcOviVz7paHb9cqZDGpM36VeeMsFZLsPT+Z4savGgOsMrRH
+         Wp8d68xpH03/6HoMnjrgXxBYm68a6NUNtYD86Tz4MweXvOo3IEM5aMzYPtq2m3P1RsG8
+         c2UIJeer7wLZPdGTYSvefjPwS8WPZDV5YOduaWuBiY5S+wRn6EXMrFgbrB9l9zeED0Zj
+         HfacARQooNhY/2Ozfs3m5Yyrtb+Ttx1h5vr/v9QW0ljt2rnPIW6mcbLfWLfWEUy956tE
+         W3lA==
+X-Gm-Message-State: APjAAAUxdMxxRCk5vQBTv6mTjRDumJNr/Pxu4ft+XjWbJvjn0TtIY7Mj
+        /THmBs9NeHcuj/6TmObVxAB8DA==
+X-Google-Smtp-Source: APXvYqwcNHUHXFiQgO/rqZKPE/lAtGo5B105XBKe40csH7F5K3Nds1jXuQGP75FC1my2Q0xENSK/iQ==
+X-Received: by 2002:a17:90a:a4f:: with SMTP id o73mr3787706pjo.97.1575355426450;
+        Mon, 02 Dec 2019 22:43:46 -0800 (PST)
+Received: from localhost ([122.171.112.123])
+        by smtp.gmail.com with ESMTPSA id s2sm1925598pfb.109.2019.12.02.22.43.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Dec 2019 22:43:45 -0800 (PST)
+Date:   Tue, 3 Dec 2019 12:13:43 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rui.zhang@intel.com, rjw@rjwysocki.net, edubezval@gmail.com,
+        linux-pm@vger.kernel.org, amit.kucheria@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/4] thermal/drivers/Kconfig: Convert the CPU cooling
+ device to a choice
+Message-ID: <20191203064343.4lu3ut6rs6kyq7nh@vireshk-i7>
+References: <20191202202815.22731-1-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-References: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
-In-Reply-To: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 3 Dec 2019 15:41:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
-Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: Add SCSSI clock gate for each channel
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191202202815.22731-1-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 1:16 PM Kunihiko Hayashi
-<hayashi.kunihiko@socionext.com> wrote:
->
-> SCSSI has clock gates for each channel in the SoCs newer than Pro4,
-> so this adds missing clock gates for channel 1, 2 and 3. And more, this
-> moves MCSSI clock ID after SCSSI.
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+On 02-12-19, 21:28, Daniel Lezcano wrote:
+> The next changes will add a new way to cool down a CPU by injecting
+> idle cycles. With the current configuration, a CPU cooling device is
+> the cpufreq cooling device. As we want to add a new CPU cooling
+> device, let's convert the CPU cooling to a choice giving a list of CPU
+> cooling devices. At this point, there is obviously only one CPU
+> cooling device.
+> 
+> There is no functional changes.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
+>   V2:
+>     - Default CPU_FREQ_COOLING when CPU_THERMAL is set (Viresh Kumar)
+> ---
+>  drivers/thermal/Kconfig     | 14 ++++++++++++--
+>  drivers/thermal/Makefile    |  2 +-
+>  include/linux/cpu_cooling.h |  6 +++---
+>  3 files changed, 16 insertions(+), 6 deletions(-)
 
-
-Fixes: ff388ee36516 ("clk: uniphier: add clock frequency support for SPI")
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
-
->  drivers/clk/uniphier/clk-uniphier-peri.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
-> index 9caa529..3e32db9 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-peri.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-peri.c
-> @@ -18,8 +18,8 @@
->  #define UNIPHIER_PERI_CLK_FI2C(idx, ch)                                        \
->         UNIPHIER_CLK_GATE("i2c" #ch, (idx), "i2c", 0x24, 24 + (ch))
->
-> -#define UNIPHIER_PERI_CLK_SCSSI(idx)                                   \
-> -       UNIPHIER_CLK_GATE("scssi", (idx), "spi", 0x20, 17)
-> +#define UNIPHIER_PERI_CLK_SCSSI(idx, ch)                               \
-> +       UNIPHIER_CLK_GATE("scssi" #ch, (idx), "spi", 0x20, 17 + (ch))
->
->  #define UNIPHIER_PERI_CLK_MCSSI(idx)                                   \
->         UNIPHIER_CLK_GATE("mcssi", (idx), "spi", 0x24, 14)
-> @@ -35,7 +35,7 @@ const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
->         UNIPHIER_PERI_CLK_I2C(6, 2),
->         UNIPHIER_PERI_CLK_I2C(7, 3),
->         UNIPHIER_PERI_CLK_I2C(8, 4),
-> -       UNIPHIER_PERI_CLK_SCSSI(11),
-> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
->         { /* sentinel */ }
->  };
->
-> @@ -51,7 +51,10 @@ const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
->         UNIPHIER_PERI_CLK_FI2C(8, 4),
->         UNIPHIER_PERI_CLK_FI2C(9, 5),
->         UNIPHIER_PERI_CLK_FI2C(10, 6),
-> -       UNIPHIER_PERI_CLK_SCSSI(11),
-> -       UNIPHIER_PERI_CLK_MCSSI(12),
-> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
-> +       UNIPHIER_PERI_CLK_SCSSI(12, 1),
-> +       UNIPHIER_PERI_CLK_SCSSI(13, 2),
-> +       UNIPHIER_PERI_CLK_SCSSI(14, 3),
-> +       UNIPHIER_PERI_CLK_MCSSI(15),
->         { /* sentinel */ }
->  };
-> --
-> 2.7.4
->
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Best Regards
-Masahiro Yamada
+viresh
