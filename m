@@ -2,55 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF37911043D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 19:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E28110450
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Dec 2019 19:35:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfLCS3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 13:29:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44766 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726131AbfLCS3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 13:29:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 28A55B25AA;
-        Tue,  3 Dec 2019 18:29:36 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id D2555DA7D9; Tue,  3 Dec 2019 19:29:30 +0100 (CET)
-Date:   Tue, 3 Dec 2019 19:29:29 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Yunfeng Ye <yeyunfeng@huawei.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
-        "linfeilong@huawei.com" <linfeilong@huawei.com>
-Subject: Re: [PATCH v2] btrfs: remove unused condition check in
- btrfs_page_mkwrite()
-Message-ID: <20191203182929.GT2734@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Yunfeng Ye <yeyunfeng@huawei.com>,
-        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
-        "linfeilong@huawei.com" <linfeilong@huawei.com>
-References: <d0053a0b-7fd0-153a-8a49-a0950005135c@huawei.com>
+        id S1727223AbfLCSfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 13:35:38 -0500
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:39942 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbfLCSfi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 13:35:38 -0500
+Received: by mail-qt1-f176.google.com with SMTP id z22so4795508qto.7
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 10:35:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+mPpij2urIiFa+tGhxc3F5vXjgowsH5MsfLmE//ET0E=;
+        b=eFpGufSMKcL/mX8THLDgjTjkvYdjrL0SOxx35M3oj/ID7pJCebwdLuGxRFePfkOdQU
+         RCBFNo566AUXmwLq4NN7B7bw+/+W0PHUsSkKc0IeVkFS/f/LwrS50YG69BiPUsuoLKpG
+         SOE0wIqaJiYLkA38FJOLzoOeEpl6741La82mEof938Pzv7Ce23/jC2peDKJT81j4wXx1
+         xb0PlElEt7xjnN3y6aZykLmHZlAyNBkQrDIb49Guq15kRL3/eCxfqCCr1S48IZ2FLSFG
+         +3ae8zefxFsSgSjK02+w4zbuMWK572aCBvOCHqRV3BumGeATgp72K53qJFKkGEbSlmyd
+         BA+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+mPpij2urIiFa+tGhxc3F5vXjgowsH5MsfLmE//ET0E=;
+        b=QToSNUxKPqIAzkZgg3VZoeXcDzlYAskQVexFLk1/Psjk+zFkPXDj7XkoWKtr4KWfCL
+         ERtn4OgJl1f1ed0k6TeQCmmyEBVWSBida8d7puOdYjZq7BBfNTb1A5eNnhOUZQ1oVcb/
+         MNJ3zSUBGXGmFBWuaHrDxFHcLIK9CEuifQ5TeIFSAML4y2qzmupieZthdCN8GFc4WFdv
+         cR0s/nef5uJNNa0KbDeNmPBW7mIsucBTrcbRBiq0poDD46XA0yyNtUwWNsTH8zvCE1Xm
+         im5nCm5U/I0GszyIdk5rbk/ISt/LQWK4B3UvdhkX+3WmnhxlVoGTcIvEhVvlw51q3GUh
+         pTpw==
+X-Gm-Message-State: APjAAAUPGsoniNCO2VCMnUS2rYhm0r0CWfCVWc8wGDjMK8NIjiYtE7cG
+        CuZEA674Decr5r+/p329x2+uwA==
+X-Google-Smtp-Source: APXvYqyVLo1MCokVY2fKXLO30tW+QSUcrD93wzVwb6SzRrl2LVaIhJkSsPCvZcpBlad5+BJaDYruRQ==
+X-Received: by 2002:ac8:173c:: with SMTP id w57mr6544619qtj.39.1575398134049;
+        Tue, 03 Dec 2019 10:35:34 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::3:cbfe])
+        by smtp.gmail.com with ESMTPSA id q187sm2251776qkd.92.2019.12.03.10.35.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 10:35:33 -0800 (PST)
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jingfeng Xie <xiejingfeng@linux.alibaba.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] psi: two division fixes
+Date:   Tue,  3 Dec 2019 13:35:22 -0500
+Message-Id: <20191203183524.41378-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0053a0b-7fd0-153a-8a49-a0950005135c@huawei.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 04:59:25PM +0800, Yunfeng Ye wrote:
-> The condition '!ret2' is always true. commit 717beb96d969 ("Btrfs: fix
-> regression in btrfs_page_mkwrite() from vm_fault_t conversion") left
-> behind the check after moving this code out of the goto, so remove the
-> unused condition check.
-> 
-> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-> Reviewed-by: Omar Sandoval <osandov@fb.com>
+Hi Peter,
 
-Added to misc-next, thanks.
+here is a patch that should fix the rare div0 crashes reported by
+Jingfeng, and a second patch for a div32-with-64-bit-divisor issue
+spotted during code review.
+
+Can you please take a look and route them through the scheduler tree?
+
+Thanks!
+
+ kernel/sched/psi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+
