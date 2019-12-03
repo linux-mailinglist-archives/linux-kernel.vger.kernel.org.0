@@ -2,91 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A259111F30
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5424111F6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 00:10:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfLCWpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 17:45:22 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42343 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbfLCWpP (ORCPT
+        id S1729185AbfLCXIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 18:08:16 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36696 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728973AbfLCWp4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 17:45:15 -0500
-Received: by mail-pf1-f194.google.com with SMTP id l22so2556509pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 14:45:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qd7P+RAsKeedZrqHSNazeNqcDpe7+eVvkyWsa2Q207Q=;
-        b=iXMrnw93nP/soNBqfRzeL/LguWO2PkOg2jKyU1LfmhQ8cwNGaFd8qWTj1ngdPLbuZs
-         2V4t+5GyeScz7/QEokG4fQ+4fgTCRXC5hc6v+uUyIW/eepTWFvSu+HQA017iTYKOaN1t
-         fNOxy5KxTaiI/RBqvWjCH8e03nPVxe/jBysKTJWN9v9olf6QeUWbxPqaMdVSFELa+ZnT
-         Yh8wD4+Cagsxb4NudI+PNBY6O5OnrZ7ihaB8UKAHI4Xq1X7o2bVir7T3/0hy0/wiWvJR
-         2qSKD1ImpOVpVwTR7efn5Oxc4qTw24IFdfabSYnAt8ljytwn9zlOfL5FjtOq2T+VwFa5
-         DMmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qd7P+RAsKeedZrqHSNazeNqcDpe7+eVvkyWsa2Q207Q=;
-        b=S84n0KvfBj5y/0HeYkMtHMPj52nMulE9GZCHM4/FzHVG8gBW1b7JsYlzcJu7QSZ1LK
-         eGl7kUmF02k2SZUwUOoU4iDpEnyxUt5ithG6suOg8nCZGjj+vEtGea2lTcNSfziugXvW
-         JTjNCbLZhFezvaDkbVhMd0rdT14gRfxMXCQna4Vo3ifSaD0qx5EClFOl6Uxmq7UjJz43
-         ly//BfE/Z3J6dcsWo3iFr6bBMpDW+PovK6YJKxGW4JYk7tMxWLZ54sVD98lgPZiEFLW7
-         +H1Wrt67H0UhB8RXzUY0lbkUaihoYvK5C0288cpeeO6v1SIbdzWv5Z86sNU8fhIjJche
-         laQQ==
-X-Gm-Message-State: APjAAAWBodaLM8TRRBNp3hkRm58c9f1Z/Xjy+mh5euH4LDMO3BSeCrgX
-        Osy45+1RHl8PV2EQH2gFaQ7Y7AbUcXrFpI+P9Wj48ypbGGGS3g==
-X-Google-Smtp-Source: APXvYqwcKBHbJdc+KCshtot/o7I0++tDm8qDfLRf4tv06Kw+/aPlM9T1C8nXAryH6sAPWx+2axjFe1oWQ0uD10x8T1Q=
-X-Received: by 2002:a63:480f:: with SMTP id v15mr22272pga.201.1575413114597;
- Tue, 03 Dec 2019 14:45:14 -0800 (PST)
+        Tue, 3 Dec 2019 17:45:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575413155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DiiGSGkRP92W9wYg+3MzqszVWv8338ggO0jEY4QJvxc=;
+        b=CHOC9yt2eJ59833H7h6k4c2n92PIaOHbZ2N9xGjkZ771wAq9K7PhdbG19NZ+1s5/lJCn26
+        XJQVj8D+bP4dHMntLtVC9oZgzybRrzNIhEsBKZk70f8IcdVS3m9DCWkRaLM3aDuATNn4cB
+        vf1bE3Ej0Tj3BgMgjWOxdnHCXa5eBNU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-306-391Gr8fNMrS7PiPeCrcKvg-1; Tue, 03 Dec 2019 17:45:54 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7589A18AAFA4;
+        Tue,  3 Dec 2019 22:45:52 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-124-16.rdu2.redhat.com [10.10.124.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 72127600D1;
+        Tue,  3 Dec 2019 22:45:48 +0000 (UTC)
+Subject: Re: [PATCH] x86/tsc: Fix incorrect enabling of __use_tsc static_key
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+References: <20191203204053.12956-1-longman@redhat.com>
+ <CA+CK2bBvoM5bb0q2Ha7-+_6Pt5Qx_Vptx7zs2cEYUVuU=vWt7Q@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <1dfd996c-ef25-a622-879a-977f57193ca7@redhat.com>
+Date:   Tue, 3 Dec 2019 17:45:47 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com> <1575374868-32601-5-git-send-email-alan.maguire@oracle.com>
-In-Reply-To: <1575374868-32601-5-git-send-email-alan.maguire@oracle.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 3 Dec 2019 14:45:03 -0800
-Message-ID: <CAFd5g45vriC61WvPL_FMbTUjJTRqHW6_Le=7PcMiR-rFmf_9wQ@mail.gmail.com>
-Subject: Re: [PATCH v5 linux-kselftest-test 4/6] kunit: remove timeout
- dependence on sysctl_hung_task_timeout_seconds
-To:     Alan Maguire <alan.maguire@oracle.com>
-Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
-        andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        David Gow <davidgow@google.com>, adilger.kernel@dilger.ca,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Knut Omang <knut.omang@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CA+CK2bBvoM5bb0q2Ha7-+_6Pt5Qx_Vptx7zs2cEYUVuU=vWt7Q@mail.gmail.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: 391Gr8fNMrS7PiPeCrcKvg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 4:08 AM Alan Maguire <alan.maguire@oracle.com> wrote:
+On 12/3/19 3:54 PM, Pavel Tatashin wrote:
+> On Tue, Dec 3, 2019 at 3:41 PM Waiman Long <longman@redhat.com> wrote:
+>> After applying the commit 4763f03d3d18 ("x86/tsc: Use TSC as sched clock
+>> early") and the commit 608008a45798 ("x86/tsc: Consolidate init code"),
+>> some x86 systems boot up with the following warnings:
+>>
+>> [    0.000000] tsc: Fast TSC calibration using PIT
+>> [    0.000000] tsc: Detected 2599.853 MHz processor
+>> [    0.000000] ------------[ cut here ]------------
+>> [    0.000000] static_key_enable_cpuslocked(): static key
+>> '__use_tsc+0x0/0x10' used before call to jump_label_init()
+>> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:132 static_key_enable_cpuslocked+0x7b/0x80
+>> [    0.000000] Modules linked in:
+>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-154.el8.x86_64 #1
+>> [    0.000000] Hardware name: Dell Inc. PowerEdge R730/072T6D, BIOS 2.4.3 01/17/2017
+>> [    0.000000] RIP: 0010:static_key_enable_cpuslocked+0x7b/0x80
+>>   :
+>> [    0.000000] Call Trace:
+>> [    0.000000]  ? static_key_enable+0x16/0x20
+>> [    0.000000]  ? setup_arch+0x43f/0xf68
+>> [    0.000000]  ? printk+0x58/0x6f
+>> [    0.000000]  ? start_kernel+0x63/0x55b
+>> [    0.000000]  ? load_ucode_bsp+0xfb/0x12e
+>> [    0.000000]  ? secondary_startup_64+0xb7/0xc0
+>> [    0.000000] ---[ end trace fc2166797a50a8e0 ]---
+>>   :
+>> [ 1781.404905] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.000 msecs
+>> [ 1781.409905] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.000 msecs
+>> [ 1781.412905] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.000 msecs
+>> [ 1781.578905] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.000 msecs
+>> [ 1781.973905] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.000 msecs
+>>   :
+>>
+>> In this particular case,
+>>
+>>   setup_arch() => tsc_early_init()
+>>                => tsc_enable_sched_clock()
+>>                => static_branch_enable()
+>>
+>> However, jump_label_init() is called after setup_arch(). Before the
+>> 2 commits listed above, static_branch_enable() was only called in
+>> tsc_init() which is after jump_label_init().
+> Hi Waiman,
 >
-> In discussion of how to handle timeouts, it was noted that if
-> sysctl_hung_task_timeout_seconds is exceeded for a kunit test,
-> the test task will be killed and an oops generated.  This should
-> suffice as a means of debugging such timeout issues for now.
+> jump_label_init() is called from setup_arch():
+> https://soleen.com/source/xref/linux/arch/x86/kernel/setup.c?r=11a98f37#911
 >
-> Hence remove use of sysctl_hung_task_timeout_secs, which has the
-> added benefit of avoiding the need to export that symbol from
-> the core kernel.
+>  tsc_early_init() early init is also called from setup_arch() but later:
+> https://soleen.com/source/xref/linux/arch/x86/kernel/setup.c?r=11a98f37#1053
 >
-> Co-developed-by: Knut Omang <knut.omang@oracle.com>
-> Signed-off-by: Knut Omang <knut.omang@oracle.com>
-> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> I think that the kernel where this problem is seen, might be missing
+> 8990cac6e5ea7fa57607736019fe8dca961b998f x86/jump_label: Initialize
+> static branching early
+> Or some other patches from that series.
+>
+> Thank you,
+> Pasha
+>
+Yes, you are right. I overlooked the jump_label_init() call in
+arch/x86/kernel/setup.c. The test kernel that I used did not have that
+patch.
 
-Acked-by: Brendan Higgins <brendanhiggins@google.com>
+Sorry for the noise.
+
+Thanks,
+Longman
+
