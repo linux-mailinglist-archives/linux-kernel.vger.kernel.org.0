@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACBD7113173
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A91113176
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729124AbfLDR7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:59:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35932 "EHLO mail.kernel.org"
+        id S1729182AbfLDR7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:59:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729095AbfLDR70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:59:26 -0500
+        id S1728598AbfLDR7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:59:40 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F01DC20833;
-        Wed,  4 Dec 2019 17:59:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 809F520863;
+        Wed,  4 Dec 2019 17:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482365;
-        bh=jcXj7HV4yf5/Cm5saoBjX27s47NqlAsf2IvWyuAQFSo=;
+        s=default; t=1575482380;
+        bh=ZqhmHdJec/fQf7pPzyr/UMoumkzN9Rp2eK3BlGc4qY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i+L/GJ1NG9aJm/D0KM10lboKnxj/JXenb6iOQNVWKLm+uyoZF5xVyiGEvF/y/7+Ig
-         dt5WKICDoEbkjSh4NtmMOvHoDIzPeqPtDbJo43PXXmkud9Yd1TqBEdqtZRZVOUhy2R
-         PhGDJrbOPEo6NCC9bSJD7PBjvp1Ge/RSLDjtv5jc=
+        b=LdDylDUHz6d7hcBZYEPHK+VIA9ht4eOBCxI2/I7btbNw55/RrKcvez696TnkJJYVL
+         dGJPNKzu13OzTlc1tLxwQJT2akKHSl4KEwPA59uVmPMHXo6f8R+GZNJi0PNyd9xXB3
+         y/bKiUzWSxJwNHCVbVd8EcV4HcW0rm+cUTD9/LLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 59/92] ocfs2: clear journal dirty flag after shutdown journal
-Date:   Wed,  4 Dec 2019 18:49:59 +0100
-Message-Id: <20191204174333.945293828@linuxfoundation.org>
+Subject: [PATCH 4.4 64/92] net/core/neighbour: tell kmemleak about hash tables
+Date:   Wed,  4 Dec 2019 18:50:04 +0100
+Message-Id: <20191204174334.204047938@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -51,55 +45,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit d85400af790dba2aa294f0a77e712f166681f977 ]
+[ Upstream commit 85704cb8dcfd88d351bfc87faaeba1c8214f3177 ]
 
-Dirty flag of the journal should be cleared at the last stage of umount,
-if do it before jbd2_journal_destroy(), then some metadata in uncommitted
-transaction could be lost due to io error, but as dirty flag of journal
-was already cleared, we can't find that until run a full fsck.  This may
-cause system panic or other corruption.
+This fixes false-positive kmemleak reports about leaked neighbour entries:
 
-Link: http://lkml.kernel.org/r/20181121020023.3034-3-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+unreferenced object 0xffff8885c6e4d0a8 (size 1024):
+  comm "softirq", pid 0, jiffies 4294922664 (age 167640.804s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 20 2c f3 83 ff ff ff ff  ........ ,......
+    08 c0 ef 5f 84 88 ff ff 01 8c 7d 02 01 00 00 00  ..._......}.....
+  backtrace:
+    [<00000000748509fe>] ip6_finish_output2+0x887/0x1e40
+    [<0000000036d7a0d8>] ip6_output+0x1ba/0x600
+    [<0000000027ea7dba>] ip6_send_skb+0x92/0x2f0
+    [<00000000d6e2111d>] udp_v6_send_skb.isra.24+0x680/0x15e0
+    [<000000000668a8be>] udpv6_sendmsg+0x18c9/0x27a0
+    [<000000004bd5fa90>] sock_sendmsg+0xb3/0xf0
+    [<000000008227b29f>] ___sys_sendmsg+0x745/0x8f0
+    [<000000008698009d>] __sys_sendmsg+0xde/0x170
+    [<00000000889dacf1>] do_syscall_64+0x9b/0x400
+    [<0000000081cdb353>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    [<000000005767ed39>] 0xffffffffffffffff
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/journal.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ net/core/neighbour.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-index 722eb5bc9b8f0..2301011428a1d 100644
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -1017,7 +1017,8 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
- 			mlog_errno(status);
- 	}
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index b3b242f7ecfd2..bba672482a0ef 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -18,6 +18,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
--	if (status == 0) {
-+	/* Shutdown the kernel journal system */
-+	if (!jbd2_journal_destroy(journal->j_journal) && !status) {
- 		/*
- 		 * Do not toggle if flush was unsuccessful otherwise
- 		 * will leave dirty metadata in a "clean" journal
-@@ -1026,9 +1027,6 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
- 		if (status < 0)
- 			mlog_errno(status);
- 	}
--
--	/* Shutdown the kernel journal system */
--	jbd2_journal_destroy(journal->j_journal);
- 	journal->j_journal = NULL;
+ #include <linux/slab.h>
++#include <linux/kmemleak.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -325,12 +326,14 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+ 	ret = kmalloc(sizeof(*ret), GFP_ATOMIC);
+ 	if (!ret)
+ 		return NULL;
+-	if (size <= PAGE_SIZE)
++	if (size <= PAGE_SIZE) {
+ 		buckets = kzalloc(size, GFP_ATOMIC);
+-	else
++	} else {
+ 		buckets = (struct neighbour __rcu **)
+ 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+ 					   get_order(size));
++		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
++	}
+ 	if (!buckets) {
+ 		kfree(ret);
+ 		return NULL;
+@@ -350,10 +353,12 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
+ 	size_t size = (1 << nht->hash_shift) * sizeof(struct neighbour *);
+ 	struct neighbour __rcu **buckets = nht->hash_buckets;
  
- 	OCFS2_I(inode)->ip_open_count--;
+-	if (size <= PAGE_SIZE)
++	if (size <= PAGE_SIZE) {
+ 		kfree(buckets);
+-	else
++	} else {
++		kmemleak_free(buckets);
+ 		free_pages((unsigned long)buckets, get_order(size));
++	}
+ 	kfree(nht);
+ }
+ 
 -- 
 2.20.1
 
