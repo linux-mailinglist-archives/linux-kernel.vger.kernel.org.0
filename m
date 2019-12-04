@@ -2,103 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF84A112EB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB12112EB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:40:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbfLDPkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:40:02 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:44107 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728526AbfLDPkB (ORCPT
+        id S1728552AbfLDPkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:40:42 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36415 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728366AbfLDPkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:40:01 -0500
-Received: by mail-pj1-f65.google.com with SMTP id w5so3129660pjh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:40:00 -0800 (PST)
+        Wed, 4 Dec 2019 10:40:41 -0500
+Received: by mail-qk1-f195.google.com with SMTP id v19so307486qkv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:40:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yf0/AyAbsCQScuwSh0FkTQfwVgWv8tTjAbyxzK0zN18=;
-        b=u6pokYYSDBN0Rp74jlq4km9163s/bxCbqqwQgKLvwLLq7hphPCk1dgf878+h0qVVmM
-         oV7Vue9ENHkWIJGRL7X1hXiu7FUUrbQYBpuBn1nz9Kjrd62+TdmBaVDPebDuggsEami0
-         S0WXUL9OT1MT+WRt/jL2wKJFluZcb3sg62uSg=
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FzcsaP9w6MtdwnTCcp16VdCAYOhvH887rp/95iRWQVQ=;
+        b=kl4D5bwqnbSucJmMwroPQGUi8vdiy/KN3BwAawDv0FO/VVAdiPtbDITjYyGGah4BF3
+         a/73mNg8kI48HQdaNb1QKKqoPvqL5X2enjy0liqn2PB7ZmacHQldTWntbtMxCGCwtr8e
+         kh7MayOaGH8NXvoKfqDpMI0d8WB64uuz6gkOx6vbgndE8NqHbqLnG5uruiE+iRaT1JHW
+         LsKNr6Dj4ztOWcJHsrBalH4XlKVwrsTkMSdODFciIRV2DiBhoxF7lpzYJA+mhSiGK3He
+         yQQMOyZckfKmtublkzjnoCNEzCnsghEFqEPafDb7NUZ/UowQA2yBG5dQ3pdsMYN4F+xj
+         knLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yf0/AyAbsCQScuwSh0FkTQfwVgWv8tTjAbyxzK0zN18=;
-        b=VcAtFn18PlhHQk1ASiwQhCCdnFkS60dpv2AQ+mlol9pkTKztbkB5c8PFg74iMP8noD
-         VB9s0kAh5leQaVfCzJk78+E1MN9vAPK/+YAROvTbzOBgvjLZ0VhgXBthjhbMAcbim8PW
-         p3OupjLph8bvnpw5DP6dUW061wtswrVYaex0jmK0gKcIORLIxJgclNnR9XAgIbgCHkjl
-         s+kFxMFMcmMJIDlSy3m5S480tNoqj9bRC/4qEj4f2mmTxYQz8eKftSTtjuGWgX9SEdbs
-         8Ne8wDvB8WZDies+DMShHHyk30Hi75KXoOUXQ7aI1BrvhZjceYA9lMfsnPjzpM77nayG
-         t67g==
-X-Gm-Message-State: APjAAAVpZk0e2kL7YIzoA7lIVAVAZrXY9EfO/SjrQSoTETw+RaElQRzS
-        fed5E/4VUB2dxR0VNytDZOZ3Ww==
-X-Google-Smtp-Source: APXvYqydWvp2jT88+hxu6Hv9v4Gi45t2Z6QCPGmLhAy/GxOqbXhW3/mndI4tvMOl+WYPILBjfEd8DQ==
-X-Received: by 2002:a17:90a:9bc6:: with SMTP id b6mr3975479pjw.77.1575474000054;
-        Wed, 04 Dec 2019 07:40:00 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id u3sm7370858pjn.0.2019.12.04.07.39.59
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FzcsaP9w6MtdwnTCcp16VdCAYOhvH887rp/95iRWQVQ=;
+        b=KVvw3EvlqPfvAGx3l2dG5En21FUSkMbzm1w44QJ9TOfX8fWfCuDLUG4dHZXCKFPpE/
+         UW+ikM9XRAJnsxMzQAsuk+HrbruIdsXvhbVO87TYMxiOYyqsdz5NnMy+odv7vnDjXV6F
+         5vWBH4kFaXnfP10uagvRTi6WlVuEFXII/dlTdF9k9232gjii1y9+W0fDoH/Ag9pCleHu
+         f2jortpb1i8SVW4qbaYPj+W5xPG5hAQVQjrnzccrjWsOOEuZdvtOsVBeT0ba/YCG898e
+         DmKkuBOCa2pTF6rFDCXyUuhYickqzMcHNXsS95pyPMrnkZsMQU5ZVwNkkD2pfS9mWiS/
+         PmEg==
+X-Gm-Message-State: APjAAAUHnVmPUJ2clyTZkF/4GjOeEzOS4j+4LAYWO3joiQf3YSCOXN7T
+        hOrFkPO0TiI9H2hvlkgMwcdUFQ==
+X-Google-Smtp-Source: APXvYqwbHqmSIMaGHCldLdUxFkVwopIpvrtZm5CXX9fnNsfkRpFdzeM155lG9p5Sq1HX4dEysXr66g==
+X-Received: by 2002:a37:27cf:: with SMTP id n198mr3600708qkn.188.1575474040601;
+        Wed, 04 Dec 2019 07:40:40 -0800 (PST)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id y28sm3937692qtk.65.2019.12.04.07.40.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:39:59 -0800 (PST)
-Date:   Wed, 4 Dec 2019 10:39:58 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Amol Grover <frextrite@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, rcu@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-Subject: Re: [PATCH] doc: listRCU: Add some more listRCU patterns in the
- kernel
-Message-ID: <20191204153958.GA17404@google.com>
-References: <20191203063941.6981-1-frextrite@gmail.com>
- <20191203064132.38d75348@lwn.net>
- <20191204082412.GA6959@workstation-kernel-dev>
- <20191204074833.44bcc079@lwn.net>
+        Wed, 04 Dec 2019 07:40:39 -0800 (PST)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
+        thiruan@microsoft.com, bryankel@microsoft.com,
+        tee-dev@lists.linaro.org, ilias.apalodimas@linaro.org,
+        sumit.garg@linaro.org, rdunlap@infradead.org
+Subject: [PATCH v4 0/1] tpm/tpm_ftpm_tee: add shutdown call back
+Date:   Wed,  4 Dec 2019 10:40:37 -0500
+Message-Id: <20191204154038.2276810-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204074833.44bcc079@lwn.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 07:48:33AM -0700, Jonathan Corbet wrote:
-> On Wed, 4 Dec 2019 13:54:12 +0530
-> Amol Grover <frextrite@gmail.com> wrote:
-> 
-> > The cross-reference of the functions should be done automatically by sphinx
-> > while generating HTML, right? But when compiled none of the functions were
-> > cross-referenced hence "``" was added around the methods (and other symbols)
-> > to distinguish them from normal text.
+Changes from v3:
+ - Synced with mainline
+ - Added Tested-by Sasha Levin, and Reviewed-by: Jarkko Sakkinen.
 
-Amol, when I tried your patch -- some functions were cross-referenced. Some
-were not. I don't think all were not cross referenced.
+Previous versions:
+v3:
+https://lore.kernel.org/lkml/20191016163114.985542-1-pasha.tatashin@soleen.com
+v2:
+https://lore.kernel.org/lkml/20191014202135.429009-1-pasha.tatashin@soleen.com
+v1:
+https://lore.kernel.org/lkml/20191011145721.59257-1-pasha.tatashin@soleen.com
 
-> 
-> If there's nothing to cross-reference to (i.e. no kerneldoc comments)
-> then the reference obviously won't be generated.  I would still ask that
-> you leave out the literal markers; they will block linking to any docs
-> added in the future, and they clutter up the text - the plain-text reading
-> experience is important too.
 
-Actually I had asked Amol privately to add the backticks. It appeared super
-weird in my browser when some function calls were rendered monospace while
-others weren't. Not all functions were successfully cross referenced for me.
-May be it is my kernel version?
+Pavel Tatashin (1):
+  tpm/tpm_ftpm_tee: add shutdown call back
 
-Amol, do as Jon said and send a v2. Then I will test your patch again.
+ drivers/char/tpm/tpm_ftpm_tee.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-thanks,
-
- - Joel
+-- 
+2.24.0
 
