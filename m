@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9FF11324C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D817911324F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfLDSHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:07:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56810 "EHLO mail.kernel.org"
+        id S1730143AbfLDSHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:07:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730735AbfLDSHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:07:15 -0500
+        id S1730737AbfLDSHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:07:18 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 489EF20675;
-        Wed,  4 Dec 2019 18:07:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B090020675;
+        Wed,  4 Dec 2019 18:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482834;
-        bh=ahGw9jj1bgc2R6YpDVM+vcCzvPCOLLd12SQ1T1FgOBY=;
+        s=default; t=1575482837;
+        bh=XOT+X/DKPEi5dZaEYS+gn3/ARlU0Jl/JFo1hv2SUL3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBa13yPIyYF7M9XdJW749oxOg/v9WceDMUZqj2O7fAtodXJBkysGfNAfjTm9zbsPk
-         xPraFtwM5yZEeIhWlw5CpT5ermtqnruNBIKsvellJhpL24gGyfeGkMngQ7cvI0GdbS
-         hoGgPfTCRIag0ZfC97UuHu+AFeNaRaW0faSX6eVc=
+        b=lDCZe4hy0JCCggl8/0GCLeCOzypJVFbuslUzE/g2dK6VGwl+WezOCZDLlpJ/F3evA
+         A4o3KRqKGUKc/D3GGib2pNjvhXo5UtONfceY4Cv0tcHn51CIdaUzh9oUxg0ylsusvX
+         SGsaFj3zoGVSpqtGbo/776hpMoKHie289ENqS+lo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Boris Brezillon <bbrezillon@kernel.org>,
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 154/209] mtd: Remove a debug trace in mtdpart.c
-Date:   Wed,  4 Dec 2019 18:56:06 +0100
-Message-Id: <20191204175334.090160032@linuxfoundation.org>
+Subject: [PATCH 4.14 155/209] mm, gup: add missing refcount overflow checks on s390
+Date:   Wed,  4 Dec 2019 18:56:07 +0100
+Message-Id: <20191204175334.154600538@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -43,33 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <bbrezillon@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-[ Upstream commit bda2ab56356b9acdfab150f31c4bac9846253092 ]
+The mainline commit 8fde12ca79af ("mm: prevent get_user_pages() from
+overflowing page refcount") was backported to 4.14.y stable as commit
+04198de24771. The backport however missed that in 4.14, there are several
+arch-specific gup.c versions with fast gup implementations, so these do not
+prevent refcount overflow.
 
-Commit 2b6f0090a333 ("mtd: Check add_mtd_device() ret code") contained
-a leftover of the debug session that led to this bug fix. Remove this
-pr_info().
+This stable-only commit fixes the s390 version, and is based on the backport in
+SUSE SLES/openSUSE 4.12-based kernels.
 
-Fixes: 2b6f0090a333 ("mtd: Check add_mtd_device() ret code")
-Signed-off-by: Boris Brezillon <bbrezillon@kernel.org>
+The remaining architectures with own gup.c are sparc, mips, sh. It's unlikely
+the known overflow scenario based on FUSE, which needs 140GB of RAM, is a
+problem for those architectures, and I don't feel confident enough to patch
+them.
+
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/mtdpart.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/s390/mm/gup.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index 27d9785487d69..45626b0eed643 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -698,7 +698,6 @@ err_remove_part:
- 	mutex_unlock(&mtd_partitions_mutex);
+diff --git a/arch/s390/mm/gup.c b/arch/s390/mm/gup.c
+index 05c8abd864f1d..9bce54eac0b07 100644
+--- a/arch/s390/mm/gup.c
++++ b/arch/s390/mm/gup.c
+@@ -39,7 +39,8 @@ static inline int gup_pte_range(pmd_t *pmdp, pmd_t pmd, unsigned long addr,
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
+ 		head = compound_head(page);
+-		if (!page_cache_get_speculative(head))
++		if (unlikely(WARN_ON_ONCE(page_ref_count(head) < 0)
++		    || !page_cache_get_speculative(head)))
+ 			return 0;
+ 		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
+ 			put_page(head);
+@@ -77,7 +78,8 @@ static inline int gup_huge_pmd(pmd_t *pmdp, pmd_t pmd, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
- 	free_partition(new);
--	pr_info("%s:%i\n", __func__, __LINE__);
+-	if (!page_cache_add_speculative(head, refs)) {
++	if (unlikely(WARN_ON_ONCE(page_ref_count(head) < 0)
++	    || !page_cache_add_speculative(head, refs))) {
+ 		*nr -= refs;
+ 		return 0;
+ 	}
+@@ -151,7 +153,8 @@ static int gup_huge_pud(pud_t *pudp, pud_t pud, unsigned long addr,
+ 		refs++;
+ 	} while (addr += PAGE_SIZE, addr != end);
  
- 	return ret;
- }
+-	if (!page_cache_add_speculative(head, refs)) {
++	if (unlikely(WARN_ON_ONCE(page_ref_count(head) < 0)
++	    || !page_cache_add_speculative(head, refs))) {
+ 		*nr -= refs;
+ 		return 0;
+ 	}
 -- 
 2.20.1
 
