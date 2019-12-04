@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C7C4113298
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DDF8113344
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfLDSJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:09:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35768 "EHLO mail.kernel.org"
+        id S1731666AbfLDSQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:16:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731127AbfLDSJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:09:43 -0500
+        id S1731753AbfLDSNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:13:35 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 196F320865;
-        Wed,  4 Dec 2019 18:09:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4509320674;
+        Wed,  4 Dec 2019 18:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482982;
-        bh=l47c64PsrpscUGGizhGJxFgNTfZWhasGVRjUzNmShLM=;
+        s=default; t=1575483214;
+        bh=Oq84LTVSVC75WPxhcTGPrRuAJow9CRZ9cyQfe033SG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zzCvb1J3W+fu1Y3c/RDc9/a6NUj5cDZFevIdX+vI3Bo5vSrgTCulcaEY5HKBi3qFI
-         Ng/F+/rncLHN5MeEFq93nM5s0yminmDxnoDn26wKEKQNl68+VDUFdlkVJl0ehn8lLZ
-         wBKGxXTQbZ+3Tmd8uCt7TAVwT6X5+ICHHcGQKfcE=
+        b=D+p+UrNCTgWJ2QcBtvTFluOkX0Tq1Of/q6/VJ5pQJ6otrZ5MDfhTGAMlUUSMJAUlQ
+         4ZHloam7fyfffNvqJux8bTLQRoUwSyGsi7kZmoE5iGlVxz3l42VFXuvv0ydWdlKJ4a
+         9rb99W/QXpm6/pyuLetfF4bNQfHh1jLbglKt6vjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 4.14 192/209] futex: Mark the begin of futex exit explicitly
-Date:   Wed,  4 Dec 2019 18:56:44 +0100
-Message-Id: <20191204175336.705199503@linuxfoundation.org>
+        stable@vger.kernel.org, Jian Luo <luojian5@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 100/125] scsi: libsas: Support SATA PHY connection rate unmatch fixing during discovery
+Date:   Wed,  4 Dec 2019 18:56:45 +0100
+Message-Id: <20191204175325.182554385@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,160 +45,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: John Garry <john.garry@huawei.com>
 
-commit 18f694385c4fd77a09851fd301236746ca83f3cb upstream.
+[ Upstream commit cec9771d2e954650095aa37a6a97722c8194e7d2 ]
 
-Instead of relying on PF_EXITING use an explicit state for the futex exit
-and set it in the futex exit function. This moves the smp barrier and the
-lock/unlock serialization into the futex code.
+   +----------+             +----------+
+   |          |             |          |
+   |          |--- 3.0 G ---|          |--- 6.0 G --- SAS  disk
+   |          |             |          |
+   |          |--- 3.0 G ---|          |--- 6.0 G --- SAS  disk
+   |initiator |             |          |
+   | device   |--- 3.0 G ---| Expander |--- 6.0 G --- SAS  disk
+   |          |             |          |
+   |          |--- 3.0 G ---|          |--- 6.0 G --- SATA disk  -->failed to connect
+   |          |             |          |
+   |          |             |          |--- 6.0 G --- SATA disk  -->failed to connect
+   |          |             |          |
+   +----------+             +----------+
 
-As with the DEAD state this is restricted to the exit path as exec
-continues to use the same task struct.
+According to Serial Attached SCSI - 1.1 (SAS-1.1):
+If an expander PHY attached to a SATA PHY is using a physical link rate
+greater than the maximum connection rate supported by the pathway from an
+STP initiator port, a management application client should use the SMP PHY
+CONTROL function (see 10.4.3.10) to set the PROGRAMMED MAXIMUM PHYSICAL
+LINK RATE field of the expander PHY to the maximum connection rate
+supported by the pathway from that STP initiator port.
 
-This allows to simplify that logic in a next step.
+Currently libsas does not support checking if this condition occurs, nor
+rectifying when it does.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.539409004@linutronix.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Such a condition is not at all common, however it has been seen on some
+pre-silicon environments where the initiator PHY only supports a 1.5 Gbit
+maximum linkrate, mated with 12G expander PHYs and 3/6G SATA phy.
 
+This patch adds support for checking and rectifying this condition during
+initial device discovery only.
+
+We do support checking min pathway connection rate during revalidation phase,
+when new devices can be detected in the topology. However we do not
+support in the case of the the user reprogramming PHY linkrates, such that
+min pathway condition is not met/maintained.
+
+A note on root port PHY rates:
+The libsas root port PHY rates calculation is broken. Libsas sets the
+rates (min, max, and current linkrate) of a root port to the same linkrate
+of the first PHY member of that same port. In doing so, it assumes that
+all other PHYs which subsequently join the port to have the same
+negotiated linkrate, when they could actually be different.
+
+In practice this doesn't happen, as initiator and expander PHYs are
+normally initialised with consistent min/max linkrates.
+
+This has not caused an issue so far, so leave alone for now.
+
+Tested-by: Jian Luo <luojian5@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/futex.h |   31 +++----------------------------
- kernel/exit.c         |   13 +------------
- kernel/futex.c        |   37 ++++++++++++++++++++++++++++++++++++-
- 3 files changed, 40 insertions(+), 41 deletions(-)
+ drivers/scsi/libsas/sas_expander.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -55,6 +55,7 @@ union futex_key {
- #ifdef CONFIG_FUTEX
- enum {
- 	FUTEX_STATE_OK,
-+	FUTEX_STATE_EXITING,
- 	FUTEX_STATE_DEAD,
- };
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index d44f18f773c0f..b7e4493d3dc16 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -806,6 +806,26 @@ static struct domain_device *sas_ex_discover_end_dev(
  
-@@ -69,33 +70,7 @@ static inline void futex_init_task(struc
- 	tsk->futex_state = FUTEX_STATE_OK;
- }
- 
--/**
-- * futex_exit_done - Sets the tasks futex state to FUTEX_STATE_DEAD
-- * @tsk:	task to set the state on
-- *
-- * Set the futex exit state of the task lockless. The futex waiter code
-- * observes that state when a task is exiting and loops until the task has
-- * actually finished the futex cleanup. The worst case for this is that the
-- * waiter runs through the wait loop until the state becomes visible.
-- *
-- * This has two callers:
-- *
-- * - futex_mm_release() after the futex exit cleanup has been done
-- *
-- * - do_exit() from the recursive fault handling path.
-- *
-- * In case of a recursive fault this is best effort. Either the futex exit
-- * code has run already or not. If the OWNER_DIED bit has been set on the
-- * futex then the waiter can take it over. If not, the problem is pushed
-- * back to user space. If the futex exit code did not run yet, then an
-- * already queued waiter might block forever, but there is nothing which
-- * can be done about that.
-- */
--static inline void futex_exit_done(struct task_struct *tsk)
--{
--	tsk->futex_state = FUTEX_STATE_DEAD;
--}
--
-+void futex_exit_recursive(struct task_struct *tsk);
- void futex_exit_release(struct task_struct *tsk);
- void futex_exec_release(struct task_struct *tsk);
- 
-@@ -103,7 +78,7 @@ long do_futex(u32 __user *uaddr, int op,
- 	      u32 __user *uaddr2, u32 val2, u32 val3);
- #else
- static inline void futex_init_task(struct task_struct *tsk) { }
--static inline void futex_exit_done(struct task_struct *tsk) { }
-+static inline void futex_exit_recursive(struct task_struct *tsk) { }
- static inline void futex_exit_release(struct task_struct *tsk) { }
- static inline void futex_exec_release(struct task_struct *tsk) { }
- #endif
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -803,23 +803,12 @@ void __noreturn do_exit(long code)
- 	 */
- 	if (unlikely(tsk->flags & PF_EXITING)) {
- 		pr_alert("Fixing recursive fault but reboot is needed!\n");
--		futex_exit_done(tsk);
-+		futex_exit_recursive(tsk);
- 		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule();
- 	}
- 
- 	exit_signals(tsk);  /* sets PF_EXITING */
--	/*
--	 * Ensure that all new tsk->pi_lock acquisitions must observe
--	 * PF_EXITING. Serializes against futex.c:attach_to_pi_owner().
--	 */
--	smp_mb();
--	/*
--	 * Ensure that we must observe the pi_state in exit_mm() ->
--	 * mm_release() -> exit_pi_state_list().
--	 */
--	raw_spin_lock_irq(&tsk->pi_lock);
--	raw_spin_unlock_irq(&tsk->pi_lock);
- 
- 	if (unlikely(in_atomic())) {
- 		pr_info("note: %s[%d] exited with preempt_count %d\n",
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -3702,10 +3702,45 @@ void futex_exec_release(struct task_stru
- 		exit_pi_state_list(tsk);
- }
- 
-+/**
-+ * futex_exit_recursive - Set the tasks futex state to FUTEX_STATE_DEAD
-+ * @tsk:	task to set the state on
-+ *
-+ * Set the futex exit state of the task lockless. The futex waiter code
-+ * observes that state when a task is exiting and loops until the task has
-+ * actually finished the futex cleanup. The worst case for this is that the
-+ * waiter runs through the wait loop until the state becomes visible.
-+ *
-+ * This is called from the recursive fault handling path in do_exit().
-+ *
-+ * This is best effort. Either the futex exit code has run already or
-+ * not. If the OWNER_DIED bit has been set on the futex then the waiter can
-+ * take it over. If not, the problem is pushed back to user space. If the
-+ * futex exit code did not run yet, then an already queued waiter might
-+ * block forever, but there is nothing which can be done about that.
-+ */
-+void futex_exit_recursive(struct task_struct *tsk)
-+{
-+	tsk->futex_state = FUTEX_STATE_DEAD;
-+}
+ #ifdef CONFIG_SCSI_SAS_ATA
+ 	if ((phy->attached_tproto & SAS_PROTOCOL_STP) || phy->attached_sata_dev) {
++		if (child->linkrate > parent->min_linkrate) {
++			struct sas_phy_linkrates rates = {
++				.maximum_linkrate = parent->min_linkrate,
++				.minimum_linkrate = parent->min_linkrate,
++			};
++			int ret;
 +
- void futex_exit_release(struct task_struct *tsk)
- {
-+	tsk->futex_state = FUTEX_STATE_EXITING;
-+	/*
-+	 * Ensure that all new tsk->pi_lock acquisitions must observe
-+	 * FUTEX_STATE_EXITING. Serializes against attach_to_pi_owner().
-+	 */
-+	smp_mb();
-+	/*
-+	 * Ensure that we must observe the pi_state in exit_pi_state_list().
-+	 */
-+	raw_spin_lock_irq(&tsk->pi_lock);
-+	raw_spin_unlock_irq(&tsk->pi_lock);
-+
- 	futex_exec_release(tsk);
--	futex_exit_done(tsk);
-+
-+	tsk->futex_state = FUTEX_STATE_DEAD;
- }
- 
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
++			pr_notice("ex %016llx phy%02d SATA device linkrate > min pathway connection rate, attempting to lower device linkrate\n",
++				   SAS_ADDR(child->sas_addr), phy_id);
++			ret = sas_smp_phy_control(parent, phy_id,
++						  PHY_FUNC_LINK_RESET, &rates);
++			if (ret) {
++				pr_err("ex %016llx phy%02d SATA device could not set linkrate (%d)\n",
++				       SAS_ADDR(child->sas_addr), phy_id, ret);
++				goto out_free;
++			}
++			pr_notice("ex %016llx phy%02d SATA device set linkrate successfully\n",
++				  SAS_ADDR(child->sas_addr), phy_id);
++			child->linkrate = child->min_linkrate;
++		}
+ 		res = sas_get_ata_info(child, phy);
+ 		if (res)
+ 			goto out_free;
+-- 
+2.20.1
+
 
 
