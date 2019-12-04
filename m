@@ -2,112 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F3B9112ED5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:44:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BF9112EDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfLDPoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:44:06 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:11672 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728230AbfLDPoF (ORCPT
+        id S1728500AbfLDPob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:44:31 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34042 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728216AbfLDPob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:44:05 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB4FgT5I032608;
-        Wed, 4 Dec 2019 16:43:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=1KHVlGbdLUlS3MHsthncrt/yqL0wVHBN/1Q/sr0hK2s=;
- b=nUjjADABVBv2TZocy1HQV0Anci+89vfs6nf+tmUEpEDAAVxAOAUmFz6E/pDP6wf6tSir
- AYlGfI0KfQJB7GHJ1+Vj/KF+yQhR48jc1AA+CPJNcaHssvKTN1MRAhm+dgWHb+vE7kOd
- 8JWbuJNvu31ooF3r33GVLi8zWp5YUpljgwWqmM+c15AZ3CSqMnMTGD+hnSUSrhXrtKRM
- pUGZ4YjBH2LXKGey2d4n9UdK/VqKNlPXI6sQoRdsptVepvleUd1vvKN8AOFj3amSrAsq
- Dzjgpzwjosyfqs0vOzfHIH6wYk4pxHMAs+FNaKGX1nIeUNeqt7HOJH0pThd3zCGUigKC SA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2wkes2wxy9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Dec 2019 16:43:44 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EF612100034;
-        Wed,  4 Dec 2019 16:43:43 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E3DE82C71B5;
-        Wed,  4 Dec 2019 16:43:43 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 4 Dec 2019 16:43:43
- +0100
-From:   Olivier Moysan <olivier.moysan@st.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
-Subject: [PATCH 3/3] ASoC: stm32: spdifrx: fix input pin state management
-Date:   Wed, 4 Dec 2019 16:43:33 +0100
-Message-ID: <20191204154333.7152-4-olivier.moysan@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191204154333.7152-1-olivier.moysan@st.com>
-References: <20191204154333.7152-1-olivier.moysan@st.com>
+        Wed, 4 Dec 2019 10:44:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jaqgzM0fZ1bmgfEy1YIkwABQnEP68MUdp+w37tK5PBs=; b=Qn/LUqf4p/zFTHNJp0eyHLvWT
+        YxGBlpRhNZ1hphz6KDFTQcycn/j0x8mcesVr9s1iD/yJ6aRm7y7WSSDlufnln2VO5zRxcsLagNXYw
+        bVDEegqCK7HrL8lrG5XyQRIFMPyV2VqkBjtCeFmTKAXRov2Phwr5YSvobfYkgvBzb0GH+nTE76MAP
+        FPtdwY4ZKG6OrICTCnhdoglW8+371/FX0w8WOGPqCZGjCOzYj9Y2rHDwkHiSk3732+pkxtV7WJGh0
+        g/3jEYN0PLvSJd7s56PxDnqHiRb+U52715ig11TZNQmmUCHUp4jpV8m2Gh66+X9P8yFpg2uOTuMq1
+        lPP9ds/fw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1icWpG-0001wV-Na; Wed, 04 Dec 2019 15:44:26 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id DD7833060AF;
+        Wed,  4 Dec 2019 16:43:07 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 89EEB2871C357; Wed,  4 Dec 2019 16:44:24 +0100 (CET)
+Date:   Wed, 4 Dec 2019 16:44:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Meelis Roos <mroos@linux.ee>, LKML <linux-kernel@vger.kernel.org>,
+        x86@kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: UBSAN: Undefined behaviour in arch/x86/events/intel/p6.c:116:29
+Message-ID: <20191204154424.GA2810@hirez.programming.kicks-ass.net>
+References: <02f44ed5-13ac-f9c6-1f35-129c41006900@linux.ee>
+ <20191202170633.GN2844@hirez.programming.kicks-ass.net>
+ <0676c6ec-4475-62dc-b202-a62deaedd2dd@linux.ee>
+ <20191204121540.GE20746@krava>
+ <20191204150656.GX2844@hirez.programming.kicks-ass.net>
+ <20191204152444.GA15573@krava>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-04_03:2019-12-04,2019-12-04 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204152444.GA15573@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changing input state in iec capture control is not safe,
-as the pin state may be changed concurrently by ASoC
-framework.
-Remove pin state handling in iec capture control.
+On Wed, Dec 04, 2019 at 04:24:44PM +0100, Jiri Olsa wrote:
 
-Note: This introduces a restriction on capture control,
-when pin sleep state is defined in device tree. In this case
-channel status can be captured only when an audio stream
-capture is active.
+> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> > index 9a89d98c55bd..f17417644665 100644
+> > --- a/arch/x86/events/core.c
+> > +++ b/arch/x86/events/core.c
+> > @@ -1642,9 +1643,12 @@ static struct attribute_group x86_pmu_format_group __ro_after_init = {
+> >  
+> >  ssize_t events_sysfs_show(struct device *dev, struct device_attribute *attr, char *page)
+> >  {
+> > -	struct perf_pmu_events_attr *pmu_attr = \
+> > +	struct perf_pmu_events_attr *pmu_attr =
+> 
+> ugh, did this do something weird? ;-)
 
-Fixes: f68c2a682d44 ("ASoC: stm32: spdifrx: add power management")
+No, but it's weird to explicitly concat the line outside of a macro, so
+if 'fixed' it.
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
----
- sound/soc/stm/stm32_spdifrx.c | 4 ----
- 1 file changed, 4 deletions(-)
+> >  		container_of(attr, struct perf_pmu_events_attr, attr);
+> > -	u64 config = x86_pmu.event_map(pmu_attr->id);
+> > +	u64 config = 0;
+> > +
+> > +	if (pmu_attr->id < x86_pmu.max_events)
+> > +		x86_pmu.event_map(pmu_attr->id);
+> 
+> hum, should this be assigned to config?
+> 
+> 		config = x86_pmu.event_map(pmu_attr->id);
 
-diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
-index 3cb8e6db3eeb..3769d9ce5dbe 100644
---- a/sound/soc/stm/stm32_spdifrx.c
-+++ b/sound/soc/stm/stm32_spdifrx.c
-@@ -12,7 +12,6 @@
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
--#include <linux/pinctrl/consumer.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
-@@ -484,8 +483,6 @@ static int stm32_spdifrx_get_ctrl_data(struct stm32_spdifrx_data *spdifrx)
- 	memset(spdifrx->cs, 0, SPDIFRX_CS_BYTES_NB);
- 	memset(spdifrx->ub, 0, SPDIFRX_UB_BYTES_NB);
- 
--	pinctrl_pm_select_default_state(&spdifrx->pdev->dev);
--
- 	ret = stm32_spdifrx_dma_ctrl_start(spdifrx);
- 	if (ret < 0)
- 		return ret;
-@@ -517,7 +514,6 @@ static int stm32_spdifrx_get_ctrl_data(struct stm32_spdifrx_data *spdifrx)
- 
- end:
- 	clk_disable_unprepare(spdifrx->kclk);
--	pinctrl_pm_select_sleep_state(&spdifrx->pdev->dev);
- 
- 	return ret;
- }
--- 
-2.17.1
+D'oh... Yes.
 
+> >  
+> >  	/* string trumps id */
+> >  	if (pmu_attr->event_str)
