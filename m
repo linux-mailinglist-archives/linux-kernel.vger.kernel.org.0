@@ -2,333 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E405A11304B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05B1A11305E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfLDQz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 11:55:57 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41236 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbfLDQz5 (ORCPT
+        id S1728947AbfLDRAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:00:38 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:49579 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728388AbfLDRAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 11:55:57 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4GsVWb112486;
-        Wed, 4 Dec 2019 10:54:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575478471;
-        bh=lW5PKBvi48YJF7fIkLzfyMM9Iv2FXBYD/7nel/gzXv0=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=HuHGdgMwJaLEwtplq12FWz/L4g52TSfATIXTHfEL1fI4AI0mYInk79MkK1iteiuRv
-         7amC0rIQYxe/dXTb2owJrFtfJ7D9rS2gEFo8TjnMflz2tiProEqVOq4MIDSk6W5UGn
-         QDhf0KCRbqMCvS1XnrX1p9MbjnP6St6qeO4haVx8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4GsVXJ044253
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Dec 2019 10:54:31 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
- 2019 10:54:31 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Dec 2019 10:54:31 -0600
-Received: from [158.218.113.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4GsJZr061204;
-        Wed, 4 Dec 2019 10:54:21 -0600
-Subject: Re: [EXT] Re: [v1,ethtool] ethtool: add setting frame preemption of
- traffic classes
-To:     Po Liu <po.liu@nxp.com>,
-        "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
-        "linville@tuxdriver.com" <linville@tuxdriver.com>,
-        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "vinicius.gomes@intel.com" <vinicius.gomes@intel.com>,
-        "simon.horman@netronome.com" <simon.horman@netronome.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Xiaoliang Yang <xiaoliang.yang_1@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
-        Jerry Huang <jerry.huang@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-References: <20191127094448.6206-1-Po.Liu@nxp.com>
- <20191203162659.GC2680@khorivan>
- <62250ff1-ab89-b6c2-051b-93f1650139eb@ti.com>
- <VE1PR04MB649677D690436632ED407178925D0@VE1PR04MB6496.eurprd04.prod.outlook.com>
-From:   Murali Karicheri <m-karicheri2@ti.com>
-Message-ID: <1e451e89-a801-5f6d-e7e6-5563dc95267d@ti.com>
-Date:   Wed, 4 Dec 2019 11:59:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 4 Dec 2019 12:00:38 -0500
+Received: from mail-qk1-f182.google.com ([209.85.222.182]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MCska-1iTiJI2YF6-008vVh; Wed, 04 Dec 2019 18:00:36 +0100
+Received: by mail-qk1-f182.google.com with SMTP id c124so620287qkg.0;
+        Wed, 04 Dec 2019 09:00:36 -0800 (PST)
+X-Gm-Message-State: APjAAAV92IBGwtXPI7tNil5GVxY6Zl1hErhGDWZFwLN5fGXVoeRTBaDv
+        3mGmJFfYxJLsGs7kW78u9/1YRJ5R0cK9BEgcbaU=
+X-Google-Smtp-Source: APXvYqyju4yYkK00mL/AsNtNlWm+YmNdlZuI5KYTs+RGpdQmIhVd7rRwq31u5YA40lcBh9xqo7sNWsOElixbKEUtbUw=
+X-Received: by 2002:a37:84a:: with SMTP id 71mr3947065qki.138.1575478835330;
+ Wed, 04 Dec 2019 09:00:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <VE1PR04MB649677D690436632ED407178925D0@VE1PR04MB6496.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191120154148.22067-1-orson.zhai@unisoc.com> <20191120154148.22067-2-orson.zhai@unisoc.com>
+ <20191204163830.GA25135@bogus>
+In-Reply-To: <20191204163830.GA25135@bogus>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 4 Dec 2019 18:00:17 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3_r6z6Qk133=4gUzJ0rYmMH7sDDqpEF8ZVXS_bc3OtkQ@mail.gmail.com>
+Message-ID: <CAK8P3a3_r6z6Qk133=4gUzJ0rYmMH7sDDqpEF8ZVXS_bc3OtkQ@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] dt-bindings: syscon: Add syscon-names to refer to
+ syscon easily
+To:     Rob Herring <robh@kernel.org>
+Cc:     Orson Zhai <orson.zhai@unisoc.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kevin.tang@unisoc.com, baolin.wang@unisoc.com,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:r3y+zLBOHRQgdfAtqoipBPFk9rDdEY3DswcS7DxPYiywq28rt5x
+ KiNnTg0N94OtxOciKlyn2WECD0LfoK7rbllL8vxWPlKQ/NBelQNeG7pVmr9VzBQIicvWcdz
+ eFR0JRWT4gR4I8kNMgLU4XCTpvKw88MiSeNZM+0nL3TuElEdqZibbfaTbOJmqpA41Mm9Rx7
+ PyU5HnuzEp7MSCMrdjFSw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:I9DA6lRZ5js=:+AZx6ppjpOQjuQ9CSM5rZr
+ S9s6uNN0Sm7NqQOJ1r6gWiJdREfJbgmO/2uZuOGQzwX0XVhw53QUqDDk3oJhwNJRPpOJpAek0
+ ZA1BB0F6ap+I2FSMMncb+evQLhJQ3pM9pLIAJADfQieLx0DMk/K86aYLzwkv34K+socqPOMJX
+ KRSkWBr1cQR0fg/YAySmbIGwQwdR4JAItXjuSpMk/RBEULbS0yUAm0fRs035c4E1VvlxQ9KxX
+ qPhnblcuZLfjgTZSFMK/qiOkeFlzkD/rogD5tWEr5D+/gIR3N8iWwzQG5yIc9E/+/NbDyBJod
+ d78LRyPVR0m5jcAF5a5AEy5cGP8+0njblnalbihdm/LPZ6lTLj39Pah/owoaZ067Ez7UN3eY3
+ lfIRmWuua6jVlLrf+PP7DvppfkyYOUPd/t4Ws5rpyVcWfEQcl89GFJj281x76igtkn3Q6mFJw
+ gF8hXfTcy8d4jHSWHQ7rEfq3WEAjaxdiGjpiRKno0FSa84UqQHGKHYFqefmUks6pV/0Zfp3d4
+ vVwkFSmwLr/R7ISlU5RNgc1FB47H4udaIs47YTpcEPcXSLLtA1QR/oG3itCf59MBLDqxVQnTE
+ s65aypf01eB9HX1yhlA/8T29bs4MA7XVOtN/0iDoDq+W5DaZhoeAQBUBwKSA0AY7aldppB3fg
+ 86NyspZ0jPrRkfvaT8MvQsIVFMXRrjp3IiF/hnUdXcz6vqC2W5g1uVPhHm9TMjfEPRM8cOAVL
+ RBASl+VPrCKNSWlh7qPmqqKRk3voVrA8p1OC6/1CtaehNPdmiywVXW9FCUu2FPjEJj2NRCcsJ
+ Ha3wdbdpblgFgdFYOdkxRqvFY4CXjkTVwEQTcI/wkNTHfSkvF9oqP/CJEX6Swv/z3rClwD4/l
+ BFSeueTPbBrATLXF0ZgA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/04/2019 03:14 AM, Po Liu wrote:
-> Hi Murali, Ivan,
-> 
-> Thank you for your feedback. Maybe it is better to use "RFC" type for these patches for the discussion.
-> 
-Yes please.
+On Wed, Dec 4, 2019 at 5:38 PM Rob Herring <robh@kernel.org> wrote:
+> On Wed, Nov 20, 2019 at 11:41:47PM +0800, Orson Zhai wrote:
+> > Make life easier when syscon consumer want to access multiple syscon
+> > nodes with dozens of items.
+> > Add syscon-names and relative properties to help to manage different
+> > cases when accessing more than one syscon node even with arguments.
+> >
+> > Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+> > ---
+> >  .../devicetree/bindings/mfd/syscon.txt        | 43 +++++++++++++++++++
+> >  1 file changed, 43 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/syscon.txt b/Documentation/devicetree/bindings/mfd/syscon.txt
+> > index 25d9e9c2fd53..4c7bdb74bb0a 100644
+> > --- a/Documentation/devicetree/bindings/mfd/syscon.txt
+> > +++ b/Documentation/devicetree/bindings/mfd/syscon.txt
+> > @@ -30,3 +30,46 @@ hwlock1: hwspinlock@40500000 {
+> >         reg = <0x40500000 0x1000>;
+> >         #hwlock-cells = <1>;
+> >  };
+> > +
+> > +
+> > +
+> > +==Syscon Name==
+> > +
+> > +Syscon name is a helper to be used in consumer nodes who refer to system
+> > +controller node. It provides a way to refer to syscon node by names with
+> > +phandle args in syscon consumer node. It will help people who have a lot
+> > +of syscon references to be managed. It is not a must feature and has no
+> > +effect to syscon node itself at all.
+> > +
+> > +Required properties:
+> > +- syscons: List of phandles and any number of arguments if needed. Arguments
+> > +  is specific to differnet vendors and its usage should be described at each
+> > +  vendor's bindings. For example: In Unisoc SoCs, the 1st arg will be treated
+> > +  as register address offset and the 2nd is bit mask.
+> > +
+> > +- syscon-names:        List of syscon node name strings sorted in the same order as
+> > +  what it represents in property syscons.
+> > +
+> > +Optional property:
+> > +- #.*-cells: Represents the number of arguments in single phandle in syscons
+> > +  list. ".*" is vendor specific. If this property is not set, default value
+> > +  will be 0.
+>
+> This breaks the normal pattern of how '#.*-cells' works. While Arnd
+> suggests removing it, I don't think that works well either with having a
+> generic 'syscons' property. That means every syscon in a system has to
+> have the same number of cells.
+>
+> I don't really want to see syscon binding expanded. Really, I'd like
+> 'syscon' to go away. It's nothing more than a flag to create a regmap.
 
-Murali
-> 
-> Br,
-> Po Liu
-> 
->> -----Original Message-----
->> From: Murali Karicheri <m-karicheri2@ti.com>
->> Sent: 2019年12月4日 1:42
->> To: Po Liu <po.liu@nxp.com>; rmk+kernel@armlinux.org.uk;
->> linville@tuxdriver.com; netdev-owner@vger.kernel.org; davem@davemloft.net;
->> linux-kernel@vger.kernel.org; netdev@vger.kernel.org;
->> vinicius.gomes@intel.com; simon.horman@netronome.com; Claudiu Manoil
->> <claudiu.manoil@nxp.com>; Vladimir Oltean <vladimir.oltean@nxp.com>;
->> Xiaoliang Yang <xiaoliang.yang_1@nxp.com>; Roy Zang <roy.zang@nxp.com>;
->> Mingkai Hu <mingkai.hu@nxp.com>; Jerry Huang <jerry.huang@nxp.com>; Leo
->> Li <leoyang.li@nxp.com>
->> Subject: [EXT] Re: [v1,ethtool] ethtool: add setting frame preemption of traffic
->> classes
->>
->> Caution: EXT Email
->>
->> Hi Po Liu,
->>
->> Thanks for working on this! Some suggestion below as we are working on adding
->> this support to Texas Instrument's CPSW driver on AM65x family of SoCs as well.
->> TRM for that is provided below for your reference.
->> Relevant section for IET (Frame pre-emption) is
->>
->> 12.2.1.4.6.6.1IET Configuration
->>
->> https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.ti.c
->> om%2Flit%2Fug%2Fspruid7d%2Fspruid7d.pdf&amp;data=02%7C01%7Cpo.liu%
->> 40nxp.com%7C15544a9db1ff422e2fdf08d77817647f%7C686ea1d3bc2b4c6fa
->> 92cd99c5c301635%7C0%7C1%7C637109914194485742&amp;sdata=VD5kg%
->> 2FY1SDDWjwMZHjgUNlFrcvXnDvdIPGblWkx4DXs%3D&amp;reserved=0
->>
->> On 12/03/2019 11:27 AM, Ivan Khoronzhuk wrote:
->>> On Wed, Nov 27, 2019 at 09:58:52AM +0000, Po Liu wrote:
->>>
->>> Hi Po Liu,
->>>
->>>> IEEE Std 802.1Qbu standard defined the frame preemption of port
->>>> trffic classes. User can set a value to hardware. The value will be
->>>> translated to a binary, each bit represent a traffic class.
->>>> Bit "1" means preemptable traffic class. Bit "0" means express
->>>> traffic class.  MSB represent high number traffic class.
->>>>
->>>> ethtool -k devname
->>>>
->>>> This command would show if the tx-preemption feature is available.
->>>> If hareware set preemption feature. The property would be a fixed
->>>> value 'on' if hardware support the frame preemption. Feature would
->>>> show a fixed value 'off' if hardware don't support the frame preemption.
->>>>
->>>> ethtool devname
->>>>
->>>> This command would show include an item 'preemption'. A following
->>>> value '0' means all traffic classes are 'express'. A value none zero
->>>> means traffic classes preemption capabilities. The value will be
->>>> translated to a binary, each bit represent a traffic class. Bit '1'
->>>> means preemptable traffic class. Bit '0' means express traffic class.
->>>> MSB represent high number traffic class.
->>>>
->>>> ethtool -s devname preemption N
->>>
->>> What about other potential parameters like MAC fragment size, mac hold?
->>> Shouldn't be it considered along with other FP parameters to provide
->>> correct interface later?
->>>
->>> Say, preemption, lets name it fp-mask or frame-preemption-mask.
->>> Then other potential setting can be similar and added later:
->>>
->>> frame-preemption-mask
->>> frame-preemption-fragsize
->>> frame-preemption-machold
->> Need additional capabilities as described by Ivan above. Thanks Ivan!
->>
->> So it would be better to use feature/sub-parameter format so that it can be
->> extended as needed in the future.
->>
->> For express/Preemptable mask setting it becomes
->>
->> ethtool -s devname frame-preemption tc-mask  N
->>
->> For setting min fragment size
->>
->> ethtool -s devname frame-preemption min-fragsize 64
->>
-> 
-> I thought the fragment size set 64 is enough for Qbv.  Anyway, if you prefer more details setting. I think it is better to set a specific serial type. For example, '-p' for set  tc-mask  N  and min-fragsize 64, '-P' for status.
-> 
->> Also the device may be capable of doing Verify process to detect the capability
->> of neighbor device and show the status. So we should have a way to show this
-> 
-> The verify process maybe disabled as default.
-> 
->> status as well when user type
->>
->> ethtool devname
->>
->> We are working currently to add this feature to CPSW driver on AM65x which
->> will be upstream-ed soon. So want to have this done in an way that we can
->> extend it later.
->> Similarly for taprio, there are some parameters that user might want to tune
->> such as Max SDU size per tc class. I hope we could use ethtool to set the same
->> on a similar way.
-> 
-> Furthermore, this setting could be extend for a serial setting for mac and traffic class.
-> 
->>
->> Thanks
->>
->> Murali
->>
->>> ....
->>>
->>> mac-hold it's rather flag, at least I've used it as priv-flag.
->>> so can or so
->>>
->>> frame-preemption-flags
->>>
->>>>
->>>> This command would set which traffic classes are frame preemptable.
->>>> The value will be translated to a binary, each bit represent a
->>>> traffic class. Bit '1' means preemptable traffic class. Bit '0'
->>>> means express traffic class. MSB represent high number traffic class.
->>>>
->>>> Signed-off-by: Po Liu <Po.Liu@nxp.com>
->>>> ---
->>>> ethtool-copy.h |  6 +++++-
->>>> ethtool.8.in   |  8 ++++++++
->>>> ethtool.c      | 18 ++++++++++++++++++
->>>> 3 files changed, 31 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/ethtool-copy.h b/ethtool-copy.h index 9afd2e6..e04bdf3
->>>> 100644
->>>> --- a/ethtool-copy.h
->>>> +++ b/ethtool-copy.h
->>>> @@ -1662,6 +1662,9 @@ static __inline__ int
->>>> ethtool_validate_duplex(__u8 duplex)
->>>> #define AUTONEG_DISABLE        0x00
->>>> #define AUTONEG_ENABLE        0x01
->>>>
->>>> +/* Disable preemtion. */
->>>> +#define PREEMPTION_DISABLE    0x0
->>>> +
->>>> /* MDI or MDI-X status/control - if MDI/MDI_X/AUTO is set then
->>>>   * the driver is required to renegotiate link  */ @@ -1878,7 +1881,8
->>>> @@ struct ethtool_link_settings {
->>>>      __s8    link_mode_masks_nwords;
->>>>      __u8    transceiver;
->>>>      __u8    reserved1[3];
->>>> -    __u32    reserved[7];
->>>> +    __u32    preemption;
->>>> +    __u32    reserved[6];
->>>>      __u32    link_mode_masks[0];
->>>>      /* layout of link_mode_masks fields:
->>>>       * __u32 map_supported[link_mode_masks_nwords];
->>>> diff --git a/ethtool.8.in b/ethtool.8.in index 062695a..7d612b2
->>>> 100644
->>>> --- a/ethtool.8.in
->>>> +++ b/ethtool.8.in
->>>> @@ -236,6 +236,7 @@ ethtool \- query or control network driver and
->>>> hardware settings
->>>> .B2 autoneg on off
->>>> .BN advertise
->>>> .BN phyad
->>>> +.BN preemption
->>>> .B2 xcvr internal external
->>>> .RB [ wol \ \*(WO]
->>>> .RB [ sopass \ \*(MA]
->>>> @@ -703,6 +704,13 @@ lB    l    lB.
->>>> .BI phyad \ N
->>>> PHY address.
->>>> .TP
->>>> +.BI preemption \ N
->>>> +Set preemptable traffic classes by bits.
->>>> +.B A
->>>> +value will be translated to a binary, each bit represent a traffic
->>>> class.
->>>> +Bit "1" means preemptable traffic class. Bit "0" means express
->>>> traffic class.
->>>> +MSB represent high number traffic class.
->>>> +.TP
->>>> .A2 xcvr internal external
->>>> Selects transceiver type. Currently only internal and external can be
->>>> specified, in the future further types might be added.
->>>> diff --git a/ethtool.c b/ethtool.c
->>>> index acf183d..d5240f8 100644
->>>> --- a/ethtool.c
->>>> +++ b/ethtool.c
->>>> @@ -928,6 +928,12 @@ dump_link_usettings(const struct
->>>> ethtool_link_usettings *link_usettings)
->>>>          }
->>>>      }
->>>>
->>>> +    if (link_usettings->base.preemption == PREEMPTION_DISABLE)
->>>> +        fprintf(stdout, "    Preemption: 0x0 (off)\n");
->>>> +    else
->>>> +        fprintf(stdout, "    Preemption: 0x%x\n",
->>>> +            link_usettings->base.preemption);
->>>> +
->>>>      return 0;
->>>> }
->>>>
->>>> @@ -2869,6 +2875,7 @@ static int do_sset(struct cmd_context *ctx)
->>>>      int port_wanted = -1;
->>>>      int mdix_wanted = -1;
->>>>      int autoneg_wanted = -1;
->>>> +    int preemption_wanted = -1;
->>>>      int phyad_wanted = -1;
->>>>      int xcvr_wanted = -1;
->>>>      u32 *full_advertising_wanted = NULL; @@ -2957,6 +2964,12 @@
->>>> static int do_sset(struct cmd_context *ctx)
->>>>              } else {
->>>>                  exit_bad_args();
->>>>              }
->>>> +        } else if (!strcmp(argp[i], "preemption")) {
->>>> +            gset_changed = 1;
->>>> +            i += 1;
->>>> +            if (i >= argc)
->>>> +                exit_bad_args();
->>>> +            preemption_wanted = get_u32(argp[i], 16);
->>>>          } else if (!strcmp(argp[i], "advertise")) {
->>>>              gset_changed = 1;
->>>>              i += 1;
->>>> @@ -3094,6 +3107,9 @@ static int do_sset(struct cmd_context *ctx)
->>>>              }
->>>>              if (autoneg_wanted != -1)
->>>>                  link_usettings->base.autoneg = autoneg_wanted;
->>>> +            if (preemption_wanted != -1)
->>>> +                link_usettings->base.preemption
->>>> +                    = preemption_wanted;
->>>>              if (phyad_wanted != -1)
->>>>                  link_usettings->base.phy_address = phyad_wanted;
->>>>              if (xcvr_wanted != -1)
->>>> @@ -3186,6 +3202,8 @@ static int do_sset(struct cmd_context *ctx)
->>>>                  fprintf(stderr, "  not setting transceiver\n");
->>>>              if (mdix_wanted != -1)
->>>>                  fprintf(stderr, "  not setting mdix\n");
->>>> +            if (preemption_wanted != -1)
->>>> +                fprintf(stderr, "  not setting preemption\n");
->>>>          }
->>>>      }
->>>>
->>>> --
->>>> 2.17.1
->>>>
->>>
-> 
+Not expanding the syscon binding is the point about not having a #*-cells:
+In the examples that Orson listed, the cell count would always be
+specific to the user of the syscon regmap, and not interpreted by the
+syscon itself.
 
+> I think it is better to keep the property names specific to exactly what
+> the functionality is for each syscon phandle rather than a generic
+> binding.
+>
+> What are the eamples of where you want to use this?
+
+I think generally speaking this would be useful for random registers that
+logically belong to one device but are grouped with other unrelated
+registers in a syscon, and that are in a different register offset for
+each chip that has them. Using named properties instead of a list
+of phandle/arg tuples with names is clearly a simpler alternative
+and more like we do it today, but I can also see some API simplification
+with Orson's patch without the binding getting out of hand.
+
+> Keep in mind that
+> this sort of connection should *only* be used for things that have no
+> other binding and kernel subsystem.
+
++1
+
+       Arnd
