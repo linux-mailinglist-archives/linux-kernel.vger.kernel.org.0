@@ -2,322 +2,453 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6879911310E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 894D111313A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbfLDRs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:48:56 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38999 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727852AbfLDRs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:48:56 -0500
-Received: by mail-io1-f66.google.com with SMTP id c16so527428ioh.6;
-        Wed, 04 Dec 2019 09:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=efwyYDVEiM7aGDZKhgrFkRs+3EAMj4oWKFlAtJhblEI=;
-        b=ItoU88XZuzrZO3bd6W+JkwY8rfR0JDmQyDRLJ68ui3CPx+xeIPZ7iS55ewh7T7Oe+2
-         7paueF4MTjXbVG8rSQtr61c0KgwiHevS8vAvtIbZq1Gs8YPuROZzzgoqnZ+xiVMWPB5L
-         mk3O4jaqPLlg1kGHabfG/udlMaV1dYiLtiDq01MJV+s0vPQmAx0ieKo/IhQRjFGe6aBU
-         PuUxn9VPLfDhcAhOn3qBVQqdXkSA6DBzGovCkdhuaxKAF5i/bhCvNDMfP69Jt9ilRw79
-         zdGS62OnO0oyfEmBtH3OFeLUbS6Z8UlzhFPMWqYSNtwps714Lp6/TB/yBKsWXWI+YnIk
-         SoNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=efwyYDVEiM7aGDZKhgrFkRs+3EAMj4oWKFlAtJhblEI=;
-        b=aHWdSAahgTQybN9/OWltGNlvpqnsapUvDsRIIOMTwYHqi8jJYRvO1nyYbjnpkRChBD
-         ii6ulIDsYIqXMZLmQDoZEEPRB49wa5gY/Xk1X11XCTv1oRMzwVBRusQ3BbOrQGnndnDR
-         i0eflmBSiSZlZgK6XLn1aQo3Lrxt0s2DWI8Pup7VJBpOIhN79wxi0NdLruZrSRoE4aqE
-         a7FndgBDIB7dbKADZ9Lc4CWSDYvdmJSyqpmqvzR12hZSV1W4UQaOwXIsP+PROC+HNT+M
-         72JDoVazCH7YbYJqAIl83piUWOwpipGA10zc23E+/AFwbuiWhG7P8okdId4JFSXu2MoM
-         QLeg==
-X-Gm-Message-State: APjAAAU73BVHvQCjwt19bgBAAvW+Ery6i6Y//Qwb6votWzztnin0kU/w
-        zWpbkP3qnZTqoVubWxSRtG/Z8yYmIrpSjvZjUH0=
-X-Google-Smtp-Source: APXvYqx+HiNOZY/r+DvcC0thyFzKBj6fe/NmVDty9GuUTcYoZ/bJj6+o/WNB1el+D0yRPX6IZnoj/cUJ8jKynfWRSR8=
-X-Received: by 2002:a02:7f54:: with SMTP id r81mr4203735jac.121.1575481734573;
- Wed, 04 Dec 2019 09:48:54 -0800 (PST)
+        id S1728285AbfLDR5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728244AbfLDR5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:57:30 -0500
+Received: from localhost (unknown [217.68.49.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B5E720675;
+        Wed,  4 Dec 2019 17:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575482248;
+        bh=XEqpM9cdYfrr4p/VpjjyN+0Zvnnml/Z6xGEroPToKLE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=C31pAvaUvxTX9RWffJUUHFUP/L2icUbxG0PRQuhygFZaxOYBLqBbNc/XqULskt0Vg
+         knhwII0fpdWqzWly9ll5kZY3oKrVL3QCV6x7g0PzkLl15p72Ef127rjHRbVmiGLPow
+         UpNX2LR2iVBJZWQB0KEhgtNHNXOPv9y6QSi4BwdA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/92] 4.4.206-stable review
+Date:   Wed,  4 Dec 2019 18:49:00 +0100
+Message-Id: <20191204174327.215426506@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20191119214454.24996.66289.stgit@localhost.localdomain>
- <20191119214653.24996.90695.stgit@localhost.localdomain> <65de00cf-5969-ea2e-545b-2228a4c859b0@redhat.com>
- <20191128115436-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20191128115436-mutt-send-email-mst@kernel.org>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Wed, 4 Dec 2019 09:48:43 -0800
-Message-ID: <CAKgT0Uc7g2iOSwwVMZtKg2e2S6SehNoZnOLPiRUfb0PxotUkbw@mail.gmail.com>
-Subject: Re: [PATCH v14 6/6] virtio-balloon: Add support for providing unused
- page reports to host
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Oscar Salvador <osalvador@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.206-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.206-rc1
+X-KernelTest-Deadline: 2019-12-06T17:43+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 9:00 AM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Thu, Nov 28, 2019 at 04:25:54PM +0100, David Hildenbrand wrote:
-> > On 19.11.19 22:46, Alexander Duyck wrote:
-> > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > >
-> > > Add support for the page reporting feature provided by virtio-balloon.
-> > > Reporting differs from the regular balloon functionality in that is is
-> > > much less durable than a standard memory balloon. Instead of creating a
-> > > list of pages that cannot be accessed the pages are only inaccessible
-> > > while they are being indicated to the virtio interface. Once the
-> > > interface has acknowledged them they are placed back into their respective
-> > > free lists and are once again accessible by the guest system.
-> >
-> > Maybe add something like "In contrast to ordinary balloon
-> > inflation/deflation, the guest can reuse all reported pages immediately
-> > after reporting has finished, without having to notify the hypervisor
-> > about it (e.g., VIRTIO_BALLOON_F_MUST_TELL_HOST does not apply)."
->
-> Maybe we can make apply. The effect of reporting a page is effectively
-> putting it in a balloon then immediately taking it out. Maybe without
-> VIRTIO_BALLOON_F_MUST_TELL_HOST the pages can be reused before host
-> marked buffers used?
->
-> We didn't teach existing page hinting to behave like this, but maybe we
-> should, and maybe it's not too late, not a long time passed
-> since it was merged, and the whole shrinker based thing
-> seems to have been broken ...
->
->
-> BTW generally UAPI patches will have to be sent to virtio-dev
-> mailing list before they are merged.
->
-> > [...]
-> >
-> > >  /*
-> > >   * Balloon device works in 4K page units.  So each page is pointed to by
-> > > @@ -37,6 +38,9 @@
-> > >  #define VIRTIO_BALLOON_FREE_PAGE_SIZE \
-> > >     (1 << (VIRTIO_BALLOON_FREE_PAGE_ORDER + PAGE_SHIFT))
-> > >
-> > > +/*  limit on the number of pages that can be on the reporting vq */
-> > > +#define VIRTIO_BALLOON_VRING_HINTS_MAX     16
-> >
-> > Maybe rename that from HINTS to REPORTS
-> >
-> > > +
-> > >  #ifdef CONFIG_BALLOON_COMPACTION
-> > >  static struct vfsmount *balloon_mnt;
-> > >  #endif
-> > > @@ -46,6 +50,7 @@ enum virtio_balloon_vq {
-> > >     VIRTIO_BALLOON_VQ_DEFLATE,
-> > >     VIRTIO_BALLOON_VQ_STATS,
-> > >     VIRTIO_BALLOON_VQ_FREE_PAGE,
-> > > +   VIRTIO_BALLOON_VQ_REPORTING,
-> > >     VIRTIO_BALLOON_VQ_MAX
-> > >  };
-> > >
-> > > @@ -113,6 +118,10 @@ struct virtio_balloon {
-> > >
-> > >     /* To register a shrinker to shrink memory upon memory pressure */
-> > >     struct shrinker shrinker;
-> > > +
-> > > +   /* Unused page reporting device */
-> >
-> > Sounds like the device is unused :D
-> >
-> > "Device info for reporting unused pages" ?
-> >
-> > I am in general wondering, should we rename "unused" to "free". I.e.,
-> > "free page reporting" instead of "unused page reporting"? Or what was
-> > the motivation behind using "unused" ?
-> >
-> > > +   struct virtqueue *reporting_vq;
-> > > +   struct page_reporting_dev_info pr_dev_info;
-> > >  };
-> > >
-> > >  static struct virtio_device_id id_table[] = {
-> > > @@ -152,6 +161,32 @@ static void tell_host(struct virtio_balloon *vb, struct virtqueue *vq)
-> > >
-> > >  }
-> > >
-> > > +void virtballoon_unused_page_report(struct page_reporting_dev_info *pr_dev_info,
-> > > +                               unsigned int nents)
-> > > +{
-> > > +   struct virtio_balloon *vb =
-> > > +           container_of(pr_dev_info, struct virtio_balloon, pr_dev_info);
-> > > +   struct virtqueue *vq = vb->reporting_vq;
-> > > +   unsigned int unused, err;
-> > > +
-> > > +   /* We should always be able to add these buffers to an empty queue. */
-> >
-> > This comment somewhat contradicts the error handling (and comment)
-> > below. Maybe just drop it?
-> >
-> > > +   err = virtqueue_add_inbuf(vq, pr_dev_info->sg, nents, vb,
-> > > +                             GFP_NOWAIT | __GFP_NOWARN);
-> > > +
-> > > +   /*
-> > > +    * In the extremely unlikely case that something has changed and we
-> > > +    * are able to trigger an error we will simply display a warning
-> > > +    * and exit without actually processing the pages.
-> > > +    */
-> > > +   if (WARN_ON(err))
-> > > +           return;
-> >
-> > Maybe WARN_ON_ONCE? (to not flood the log on recurring errors)
-> >
-> > > +
-> > > +   virtqueue_kick(vq);
-> > > +
-> > > +   /* When host has read buffer, this completes via balloon_ack */
-> > > +   wait_event(vb->acked, virtqueue_get_buf(vq, &unused));
-> >
-> > Is it safe to rely on the same ack-ing mechanism as the inflate/deflate
-> > queue? What if both mechanisms are used concurrently and race/both wait
-> > for the hypervisor?
-> >
-> > Maybe we need a separate vb->acked + callback function.
-> >
-> > > +}
-> > > +
-> > >  static void set_page_pfns(struct virtio_balloon *vb,
-> > >                       __virtio32 pfns[], struct page *page)
-> > >  {
-> > > @@ -476,6 +511,7 @@ static int init_vqs(struct virtio_balloon *vb)
-> > >     names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
-> > >     names[VIRTIO_BALLOON_VQ_STATS] = NULL;
-> > >     names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> > > +   names[VIRTIO_BALLOON_VQ_REPORTING] = NULL;
-> > >
-> > >     if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-> > >             names[VIRTIO_BALLOON_VQ_STATS] = "stats";
-> > > @@ -487,11 +523,19 @@ static int init_vqs(struct virtio_balloon *vb)
-> > >             callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> > >     }
-> > >
-> > > +   if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING)) {
-> > > +           names[VIRTIO_BALLOON_VQ_REPORTING] = "reporting_vq";
-> > > +           callbacks[VIRTIO_BALLOON_VQ_REPORTING] = balloon_ack;
-> > > +   }
-> > > +
-> > >     err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
-> > >                                      vqs, callbacks, names, NULL, NULL);
-> > >     if (err)
-> > >             return err;
-> > >
-> > > +   if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING))
-> > > +           vb->reporting_vq = vqs[VIRTIO_BALLOON_VQ_REPORTING];
-> > > +
-> >
-> > I'd register these in the same order they are defined (IOW, move this
-> > further down)
-> >
-> > >     vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
-> > >     vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
-> > >     if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-> > > @@ -932,12 +976,30 @@ static int virtballoon_probe(struct virtio_device *vdev)
-> > >             if (err)
-> > >                     goto out_del_balloon_wq;
-> > >     }
-> > > +
-> > > +   vb->pr_dev_info.report = virtballoon_unused_page_report;
-> > > +   if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING)) {
-> > > +           unsigned int capacity;
-> > > +
-> > > +           capacity = min_t(unsigned int,
-> > > +                            virtqueue_get_vring_size(vb->reporting_vq),
-> > > +                            VIRTIO_BALLOON_VRING_HINTS_MAX);
-> > > +           vb->pr_dev_info.capacity = capacity;
-> > > +
-> > > +           err = page_reporting_register(&vb->pr_dev_info);
-> > > +           if (err)
-> > > +                   goto out_unregister_shrinker;
-> > > +   }
-> >
-> > It can happen here that we start reporting before marking the device
-> > ready. Can that be problematic?
-> >
-> > Maybe we have to ignore any reports in virtballoon_unused_page_report()
-> > until ready...
-> >
-> > > +
-> > >     virtio_device_ready(vdev);
-> > >
-> > >     if (towards_target(vb))
-> > >             virtballoon_changed(vdev);
-> > >     return 0;
-> > >
-> > > +out_unregister_shrinker:
-> > > +   if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-> > > +           virtio_balloon_unregister_shrinker(vb);
-> >
-> > A sync is done implicitly, right? So after this call, we won't get any
-> > new callbacks/are stuck in a callback.
-> >
-> > >  out_del_balloon_wq:
-> > >     if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
-> > >             destroy_workqueue(vb->balloon_wq);
-> > > @@ -966,6 +1028,8 @@ static void virtballoon_remove(struct virtio_device *vdev)
-> > >  {
-> > >     struct virtio_balloon *vb = vdev->priv;
-> > >
-> > > +   if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING))
-> > > +           page_reporting_unregister(&vb->pr_dev_info);
-> >
-> > Dito, same question regarding syncs.
-> >
-> > >     if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-> > >             virtio_balloon_unregister_shrinker(vb);
-> > >     spin_lock_irq(&vb->stop_update_lock);
-> > > @@ -1038,6 +1102,7 @@ static int virtballoon_validate(struct virtio_device *vdev)
-> > >     VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
-> > >     VIRTIO_BALLOON_F_FREE_PAGE_HINT,
-> > >     VIRTIO_BALLOON_F_PAGE_POISON,
-> > > +   VIRTIO_BALLOON_F_REPORTING,
-> > >  };
-> > >
-> > >  static struct virtio_driver virtio_balloon_driver = {
-> > > diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-> > > index a1966cd7b677..19974392d324 100644
-> > > --- a/include/uapi/linux/virtio_balloon.h
-> > > +++ b/include/uapi/linux/virtio_balloon.h
-> > > @@ -36,6 +36,7 @@
-> > >  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM    2 /* Deflate balloon on OOM */
-> > >  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT    3 /* VQ to report free pages */
-> > >  #define VIRTIO_BALLOON_F_PAGE_POISON       4 /* Guest is using page poisoning */
-> > > +#define VIRTIO_BALLOON_F_REPORTING 5 /* Page reporting virtqueue */
-> > >
-> > >  /* Size of a PFN in the balloon interface. */
-> > >  #define VIRTIO_BALLOON_PFN_SHIFT 12
-> > >
-> > >
-> >
-> > Small and powerful patch :)
-> >
-> > --
-> > Thanks,
-> >
-> > David / dhildenb
->
->
+This is the start of the stable review cycle for the 4.4.206 release.
+There are 92 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Fri, 06 Dec 2019 17:42:37 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.206-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.206-rc1
+
+Hans de Goede <hdegoede@redhat.com>
+    platform/x86: hp-wmi: Fix ACPI errors caused by too small buffer
+
+Lionel Debieve <lionel.debieve@st.com>
+    hwrng: stm32 - fix unbalanced pm_runtime_enable
+
+Candle Sun <candle.sun@unisoc.com>
+    HID: core: check whether Usage Page item is after Usage ID items
+
+Dust Li <dust.li@linux.alibaba.com>
+    net: sched: fix `tc -s class show` no bstats on class with nolock subqueues
+
+John Rutherford <john.rutherford@dektech.com.au>
+    tipc: fix link name length check
+
+Paolo Abeni <pabeni@redhat.com>
+    openvswitch: remove another BUG_ON()
+
+Paolo Abeni <pabeni@redhat.com>
+    openvswitch: drop unneeded BUG_ON() in ovs_flow_cmd_build_info()
+
+Jouni Hogander <jouni.hogander@unikie.com>
+    slip: Fix use-after-free Read in slip_open
+
+Paolo Abeni <pabeni@redhat.com>
+    openvswitch: fix flow command message size
+
+Menglong Dong <dong.menglong@zte.com.cn>
+    macvlan: schedule bc_work even if error
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    pwm: Clear chip_data in pwm_put()
+
+Luca Ceresoli <luca@lucaceresoli.net>
+    net: macb: fix error format in dev_err()
+
+Eugen Hristev <eugen.hristev@microchip.com>
+    media: v4l2-ctrl: fix flags for DO_WHITE_BALANCE
+
+Alexander Usyskin <alexander.usyskin@intel.com>
+    mei: bus: prefix device names on bus with the bus name
+
+Fabio D'Urso <fabiodurso@hotmail.it>
+    USB: serial: ftdi_sio: add device IDs for U-Blox C099-F9P
+
+Pan Bian <bianpan2016@163.com>
+    staging: rtl8192e: fix potential use after free
+
+Boris Brezillon <bbrezillon@kernel.org>
+    mtd: Remove a debug trace in mtdpart.c
+
+Gen Zhang <blackgod016574@gmail.com>
+    powerpc/pseries/dlpar: Fix a missing check in dlpar_parse_cc_property()
+
+John Garry <john.garry@huawei.com>
+    scsi: libsas: Check SMP PHY control function result
+
+James Morse <james.morse@arm.com>
+    ACPI / APEI: Switch estatus pool to use vmalloc memory
+
+John Garry <john.garry@huawei.com>
+    scsi: libsas: Support SATA PHY connection rate unmatch fixing during discovery
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    net: dev: Use unsigned integer as an argument to left-shift
+
+Eric Dumazet <edumazet@google.com>
+    net: fix possible overflow in __sk_mem_raise_allocated()
+
+Bert Kenward <bkenward@solarflare.com>
+    sfc: initialise found bitmap in efx_ef10_mtd_probe
+
+Hoang Le <hoang.h.le@dektech.com.au>
+    tipc: fix skb may be leaky in tipc_link_input
+
+Johannes Berg <johannes.berg@intel.com>
+    decnet: fix DN_IFREQ_SIZE
+
+Edward Cree <ecree@solarflare.com>
+    sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
+
+Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+    net/core/neighbour: fix kmemleak minimal reference count for hash tables
+
+Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+    net/core/neighbour: tell kmemleak about hash tables
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    tipc: fix memory leak in tipc_nl_compat_publ_dump
+
+Boris Brezillon <bbrezillon@kernel.org>
+    mtd: Check add_mtd_device() ret code
+
+Olof Johansson <olof@lixom.net>
+    lib/genalloc.c: include vmalloc.h
+
+Huang Shijie <sjhuang@iluvatar.ai>
+    lib/genalloc.c: use vzalloc_node() to allocate the bitmap
+
+Junxiao Bi <junxiao.bi@oracle.com>
+    ocfs2: clear journal dirty flag after shutdown journal
+
+Kangjie Lu <kjlu@umn.edu>
+    tipc: fix a missing check of genlmsg_put
+
+Kangjie Lu <kjlu@umn.edu>
+    atl1e: checking the status of atl1e_write_phy_reg
+
+Kangjie Lu <kjlu@umn.edu>
+    net: stmicro: fix a missing check of clk_prepare
+
+Richard Weinberger <richard@nod.at>
+    um: Make GCOV depend on !KCOV
+
+Aditya Pakki <pakki001@umn.edu>
+    net/net_namespace: Check the return value of register_pernet_subsys()
+
+Kangjie Lu <kjlu@umn.edu>
+    regulator: tps65910: fix a missing check of return value
+
+Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+    drbd: fix print_st_err()'s prototype to match the definition
+
+Lars Ellenberg <lars.ellenberg@linbit.com>
+    drbd: reject attach of unsuitable uuids even if connected
+
+Benjamin Herrenschmidt <benh@kernel.crashing.org>
+    powerpc/44x/bamboo: Fix PCI range
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    powerpc/mm: Make NULL pointer deferences explicit on bad page faults.
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    powerpc/prom: fix early DEBUG messages
+
+Kyle Roeschley <kyle.roeschley@ni.com>
+    ath6kl: Fix off by one error in scan completion
+
+Kyle Roeschley <kyle.roeschley@ni.com>
+    ath6kl: Only use match sets when firmware supports it
+
+Varun Prakash <varun@chelsio.com>
+    scsi: csiostor: fix incorrect dma device in case of vport
+
+Anatoliy Glagolev <glagolig@gmail.com>
+    scsi: qla2xxx: deadlock by configfs_depend_item
+
+Bart Van Assche <bvanassche@acm.org>
+    RDMA/srp: Propagate ib_post_send() failures to the SCSI mid-layer
+
+Geert Uytterhoeven <geert@linux-m68k.org>
+    openrisc: Fix broken paths to arch/or32
+
+Alexander Shiyan <shc_work@mail.ru>
+    serial: max310x: Fix tx_empty() callback
+
+Kangjie Lu <kjlu@umn.edu>
+    drivers/regulator: fix a missing check of return value
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    powerpc/xmon: fix dump_segments()
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    powerpc/book3s/32: fix number of bats in p/v_block_mapped()
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    IB/qib: Fix an error code in qib_sdma_verbs_send()
+
+Nick Bowler <nbowler@draconx.ca>
+    xfs: Align compat attrlist_by_handle with native implementation.
+
+Bob Peterson <rpeterso@redhat.com>
+    gfs2: take jdata unstuff into account in do_grow
+
+Peter Hutterer <peter.hutterer@who-t.net>
+    HID: doc: fix wrong data structure reference for UHID_OUTPUT
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    pinctrl: sh-pfc: sh7264: Fix PFCR3 and PFCR0 register configuration
+
+Michael Mueller <mimu@linux.ibm.com>
+    KVM: s390: unregister debug feature on failing arch init
+
+Ross Lagerwall <ross.lagerwall@citrix.com>
+    xen/pciback: Check dev_data before using it
+
+Josef Bacik <jbacik@fb.com>
+    btrfs: only track ref_heads in delayed_ref_updates
+
+Lepton Wu <ytht.net@gmail.com>
+    VSOCK: bind to random port for VMADDR_PORT_ANY
+
+Krzysztof Kozlowski <krzk@kernel.org>
+    gpiolib: Fix return value of gpio_to_desc() stub if !GPIOLIB
+
+Masahiro Yamada <yamada.masahiro@socionext.com>
+    microblaze: move "... is ready" messages to arch/microblaze/Makefile
+
+Masahiro Yamada <yamada.masahiro@socionext.com>
+    microblaze: adjust the help to the real behavior
+
+Pan Bian <bianpan2016@163.com>
+    ubi: Do not drop UBI device reference before using
+
+Pan Bian <bianpan2016@163.com>
+    ubi: Put MTD device after it is not used
+
+Darrick J. Wong <darrick.wong@oracle.com>
+    xfs: require both realtime inodes to mount
+
+Pan Bian <bianpan2016@163.com>
+    rtl818x: fix potential use after free
+
+Brian Norris <briannorris@chromium.org>
+    mwifiex: debugfs: correct histogram spacing, formatting
+
+Pan Bian <bianpan2016@163.com>
+    mwifiex: fix potential NULL dereference and use after free
+
+Eric Biggers <ebiggers@google.com>
+    crypto: user - support incremental algorithm dumps
+
+Hans de Goede <hdegoede@redhat.com>
+    ACPI / LPSS: Ignore acpi_device_fix_up_power() return value
+
+Arnd Bergmann <arnd@arndb.de>
+    ARM: ks8695: fix section mismatch warning
+
+Thomas Meyer <thomas@m3y3r.de>
+    PM / AVS: SmartReflex: NULL check before some freeing functions is not needed
+
+Suzuki K Poulose <Suzuki.Poulose@arm.com>
+    arm64: smp: Handle errors reported by the firmware
+
+Helge Deller <deller@gmx.de>
+    parisc: Fix HP SDC hpa address output
+
+Helge Deller <deller@gmx.de>
+    parisc: Fix serio address output
+
+Fabio Estevam <festevam@gmail.com>
+    ARM: dts: imx53-voipac-dmm-668: Fix memory node duplication
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    ARM: debug-imx: only define DEBUG_IMX_UART_PORT if needed
+
+James Smart <jsmart2021@gmail.com>
+    scsi: lpfc: Fix dif and first burst use in write commands
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    block: drbd: remove a stray unlock in __drbd_send_protocol()
+
+Ilya Leoshkevich <iii@linux.ibm.com>
+    scripts/gdb: fix debugging modules compiled with hot/cold partitioning
+
+Jeroen Hofstee <jhofstee@victronenergy.com>
+    can: c_can: D_CAN: c_can_chip_config(): perform a sofware reset on open
+
+Jeroen Hofstee <jhofstee@victronenergy.com>
+    can: peak_usb: report bus recovery as well
+
+Randy Dunlap <rdunlap@infradead.org>
+    reset: fix reset_control_ops kerneldoc comment
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    clk: samsung: exynos5420: Preserve PLL configuration during suspend/resume
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    ASoC: kirkwood: fix external clock probe defer
+
+Xiaojun Sang <xsang@codeaurora.org>
+    ASoC: compress: fix unsigned integer overflow check
+
+
+-------------
+
+Diffstat:
+
+ Documentation/hid/uhid.txt                         |  2 +-
+ Makefile                                           |  4 +-
+ arch/arm/Kconfig.debug                             | 28 ++++++------
+ arch/arm/boot/dts/imx53-voipac-dmm-668.dtsi        |  8 +---
+ arch/arm/mach-ks8695/board-acs5k.c                 |  2 +-
+ arch/arm64/kernel/smp.c                            |  1 +
+ arch/microblaze/Makefile                           | 12 ++---
+ arch/microblaze/boot/Makefile                      |  4 --
+ arch/openrisc/kernel/entry.S                       |  2 +-
+ arch/openrisc/kernel/head.S                        |  2 +-
+ arch/powerpc/boot/dts/bamboo.dts                   |  4 +-
+ arch/powerpc/kernel/prom.c                         |  6 +--
+ arch/powerpc/mm/fault.c                            | 17 ++++----
+ arch/powerpc/mm/ppc_mmu_32.c                       |  4 +-
+ arch/powerpc/platforms/pseries/dlpar.c             |  4 ++
+ arch/powerpc/xmon/xmon.c                           |  2 +-
+ arch/s390/kvm/kvm-s390.c                           | 17 ++++++--
+ arch/um/Kconfig.debug                              |  1 +
+ crypto/crypto_user.c                               | 37 ++++++++--------
+ drivers/acpi/acpi_lpss.c                           |  7 +--
+ drivers/acpi/apei/ghes.c                           | 30 ++++++-------
+ drivers/block/drbd/drbd_main.c                     |  1 -
+ drivers/block/drbd/drbd_nl.c                       |  6 +--
+ drivers/block/drbd/drbd_receiver.c                 | 19 ++++++++
+ drivers/block/drbd/drbd_state.h                    |  2 +-
+ drivers/char/hw_random/stm32-rng.c                 |  8 ++++
+ drivers/clk/samsung/clk-exynos5420.c               |  6 +++
+ drivers/hid/hid-core.c                             | 51 +++++++++++++++++++---
+ drivers/infiniband/hw/qib/qib_sdma.c               |  4 +-
+ drivers/infiniband/ulp/srp/ib_srp.c                |  1 +
+ drivers/input/serio/gscps2.c                       |  4 +-
+ drivers/input/serio/hp_sdc.c                       |  4 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c               |  1 +
+ drivers/misc/mei/bus.c                             |  9 ++--
+ drivers/mtd/mtdcore.h                              |  2 +-
+ drivers/mtd/mtdpart.c                              | 35 ++++++++++++---
+ drivers/mtd/ubi/build.c                            |  2 +-
+ drivers/mtd/ubi/kapi.c                             |  2 +-
+ drivers/net/can/c_can/c_can.c                      | 26 +++++++++++
+ drivers/net/can/usb/peak_usb/pcan_usb.c            | 15 ++++---
+ drivers/net/ethernet/atheros/atl1e/atl1e_main.c    |  4 +-
+ drivers/net/ethernet/cadence/macb.c                | 12 ++---
+ drivers/net/ethernet/sfc/ef10.c                    | 29 ++++++++----
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c  |  4 +-
+ drivers/net/macvlan.c                              |  3 +-
+ drivers/net/slip/slip.c                            |  1 +
+ drivers/net/wireless/ath/ath6kl/cfg80211.c         |  4 +-
+ drivers/net/wireless/mwifiex/debugfs.c             | 14 +++---
+ drivers/net/wireless/mwifiex/scan.c                | 18 ++++----
+ drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |  3 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c                |  9 +++-
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c                | 16 +++----
+ drivers/platform/x86/hp-wmi.c                      |  6 +--
+ drivers/power/avs/smartreflex.c                    |  3 +-
+ drivers/pwm/core.c                                 |  1 +
+ drivers/pwm/pwm-samsung.c                          |  1 -
+ drivers/regulator/palmas-regulator.c               |  5 ++-
+ drivers/regulator/tps65910-regulator.c             |  4 +-
+ drivers/scsi/csiostor/csio_init.c                  |  2 +-
+ drivers/scsi/libsas/sas_expander.c                 | 29 +++++++++++-
+ drivers/scsi/lpfc/lpfc_scsi.c                      | 18 ++++++++
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c                 | 48 ++++----------------
+ drivers/scsi/qla2xxx/tcm_qla2xxx.h                 |  3 --
+ drivers/staging/rtl8192e/rtl8192e/rtl_core.c       |  5 ++-
+ drivers/tty/serial/max310x.c                       |  7 +--
+ drivers/usb/serial/ftdi_sio.c                      |  3 ++
+ drivers/usb/serial/ftdi_sio_ids.h                  |  7 +++
+ drivers/xen/xen-pciback/pci_stub.c                 |  3 +-
+ fs/btrfs/delayed-ref.c                             |  3 --
+ fs/gfs2/bmap.c                                     |  2 +
+ fs/ocfs2/journal.c                                 |  6 +--
+ fs/xfs/xfs_ioctl32.c                               |  6 +++
+ fs/xfs/xfs_rtalloc.c                               |  4 +-
+ include/linux/gpio/consumer.h                      |  2 +-
+ include/linux/netdevice.h                          |  2 +-
+ include/linux/reset-controller.h                   |  2 +-
+ include/net/sock.h                                 |  2 +-
+ lib/genalloc.c                                     |  5 ++-
+ net/core/neighbour.c                               | 13 ++++--
+ net/core/net_namespace.c                           |  3 +-
+ net/core/sock.c                                    |  2 +-
+ net/decnet/dn_dev.c                                |  2 +-
+ net/openvswitch/datapath.c                         | 17 ++++++--
+ net/sched/sch_mq.c                                 |  2 +-
+ net/sched/sch_mqprio.c                             |  3 +-
+ net/sched/sch_multiq.c                             |  2 +-
+ net/sched/sch_prio.c                               |  2 +-
+ net/tipc/link.c                                    |  2 +-
+ net/tipc/netlink_compat.c                          |  8 +++-
+ net/vmw_vsock/af_vsock.c                           |  7 ++-
+ scripts/gdb/linux/symbols.py                       |  3 +-
+ sound/core/compress_offload.c                      |  2 +-
+ sound/soc/kirkwood/kirkwood-i2s.c                  |  8 ++--
+ 93 files changed, 493 insertions(+), 271 deletions(-)
+
+
