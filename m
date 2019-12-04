@@ -2,438 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2934112ADD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4DCF112AD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:01:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfLDMCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:02:44 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:52816 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727472AbfLDMCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:02:42 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 63A8F1A047C;
-        Wed,  4 Dec 2019 13:02:38 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 20B011A0474;
-        Wed,  4 Dec 2019 13:02:32 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 70DB7402BC;
-        Wed,  4 Dec 2019 20:02:24 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz,
-        tiwai@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] ASoC: fsl_asrc: Add support for imx8qm & imx8qxp
-Date:   Wed,  4 Dec 2019 20:00:19 +0800
-Message-Id: <f33dfe3157b5ab200e09ccbf9ab73d31fac6664b.1575452454.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <b9352edb014c1ee8530c0fd8829c2b044b3da649.1575452454.git.shengjiu.wang@nxp.com>
-References: <b9352edb014c1ee8530c0fd8829c2b044b3da649.1575452454.git.shengjiu.wang@nxp.com>
-In-Reply-To: <b9352edb014c1ee8530c0fd8829c2b044b3da649.1575452454.git.shengjiu.wang@nxp.com>
-References: <b9352edb014c1ee8530c0fd8829c2b044b3da649.1575452454.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727781AbfLDMBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:01:08 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:35009 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbfLDMBH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 07:01:07 -0500
+Received: by mail-pj1-f65.google.com with SMTP id w23so1843025pjd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 04:01:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=rxuqclm9QwY2ereJARQY1d6ZkLRCh/xjgCtTC93zfPo=;
+        b=o226C2dULfmUDr0BQEdkSMrxbKZlF0YsReHlmWpu0HD1jCMAuRmq8WvVsuQEdsdGUq
+         iYbof4d1IwosFjuLWbPl5Gj7UuXXt3hmkiFAEG8NrImPOFIKaDbVpHDQjaF+8NF1xQul
+         +00MaeYlFYj1olJiEnSNyu9J++ZTWHpWwzoQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=rxuqclm9QwY2ereJARQY1d6ZkLRCh/xjgCtTC93zfPo=;
+        b=psaKV2un6dy6riJ4+rietCtvz2eIb083U6hivSu2QZXxdEqA4AqPnpmRKTS7LhKgjD
+         HUz+KaEtvynkNwCIJthNLvRY/LcVT/uy05OmDRec81kamEY3b09q83RMiFVqCEX0GEFj
+         aaSkdNj1aA8CMazF/MocfOVpEHh7zVx+n4p6cclf/eA25S84JjvkqcGrpZB7xGkQ4U5g
+         LSgK/Z7WfTujX8pI6TaksWyeH6FvdqGlyRxVOBExAEiEUSpi8cbtOmvziKdKc3SB9iRb
+         BEe1DOvNx1tu9v5wCCZuRLzZn2jjo2fwsw+ojaCc0JKFarvm555CCOf3OOvHgGoq6Rx8
+         0FtQ==
+X-Gm-Message-State: APjAAAWW64Mn3eFOFqiZz+E6eUkCvIozAm9JZQjGfndvQMuZLNFsIxzO
+        CuvsebY0ejwP5UM5GuM6qyZ15A==
+X-Google-Smtp-Source: APXvYqyiU64pxVtfwk19lTp6OAlAwooc2uydvO+Tn53C5HmVtdHu3CyDzSs9eFN6bLk3EPcRccKYvQ==
+X-Received: by 2002:a17:902:bf08:: with SMTP id bi8mr2861953plb.75.1575460866914;
+        Wed, 04 Dec 2019 04:01:06 -0800 (PST)
+Received: from localhost (2001-44b8-1113-6700-7daa-d2ea-7edb-cfe8.static.ipv6.internode.on.net. [2001:44b8:1113:6700:7daa:d2ea:7edb:cfe8])
+        by smtp.gmail.com with ESMTPSA id u7sm7598987pfh.84.2019.12.04.04.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 04:01:06 -0800 (PST)
+From:   Daniel Axtens <dja@axtens.net>
+To:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
+        aryabinin@virtuozzo.com, glider@google.com,
+        linux-kernel@vger.kernel.org, dvyukov@google.com
+Cc:     Qian Cai <cai@lca.pw>
+Subject: Re: [PATCH] kasan: support vmalloc backing of vm_map_ram()
+In-Reply-To: <20191129154519.30964-1-dja@axtens.net>
+References: <20191129154519.30964-1-dja@axtens.net>
+Date:   Wed, 04 Dec 2019 23:01:02 +1100
+Message-ID: <87h82ge1vl.fsf@dja-thinkpad.axtens.net>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two asrc module in imx8qm & imx8qxp, each module has
-different clock configuration, and the DMA type is EDMA.
+I've realised this throws a few compile warnings, I'll respin it.
 
-So in this patch, we define the new clocks, refine the clock map,
-and include struct fsl_asrc_soc_data for different soc usage.
+Daniel Axtens <dja@axtens.net> writes:
 
-The EDMA channel is fixed with each dma request, one dma request
-corresponding to one dma channel. So we need to request dma
-channel with dma request of asrc module.
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
-changes in v2
-- use !use_edma to wrap code in fsl_asrc_dma
-- add Acked-by: Nicolin Chen
-
-changes in v3
-- remove the acked-by for commit is updated
-- read "fsl,asrc-clk-map" property, and update table
-  clk_map_imx8qm.
-
-changes in v4
-- Add table clk_map_imx8qxp
-- add Acked-by: Nicolin Chen
-
-changes in v5
-- none
-
- sound/soc/fsl/fsl_asrc.c     | 125 +++++++++++++++++++++++++++++------
- sound/soc/fsl/fsl_asrc.h     |  64 +++++++++++++++++-
- sound/soc/fsl/fsl_asrc_dma.c |  39 +++++++----
- 3 files changed, 193 insertions(+), 35 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index a3cfceea7d2f..0dcebc24c312 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -41,26 +41,65 @@ static struct snd_pcm_hw_constraint_list fsl_asrc_rate_constraints = {
-  * The following tables map the relationship between asrc_inclk/asrc_outclk in
-  * fsl_asrc.h and the registers of ASRCSR
-  */
--static unsigned char input_clk_map_imx35[] = {
-+static unsigned char input_clk_map_imx35[ASRC_CLK_MAP_LEN] = {
- 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
- };
- 
--static unsigned char output_clk_map_imx35[] = {
-+static unsigned char output_clk_map_imx35[ASRC_CLK_MAP_LEN] = {
- 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
- };
- 
- /* i.MX53 uses the same map for input and output */
--static unsigned char input_clk_map_imx53[] = {
-+static unsigned char input_clk_map_imx53[ASRC_CLK_MAP_LEN] = {
- /*	0x0  0x1  0x2  0x3  0x4  0x5  0x6  0x7  0x8  0x9  0xa  0xb  0xc  0xd  0xe  0xf */
- 	0x0, 0x1, 0x2, 0x7, 0x4, 0x5, 0x6, 0x3, 0x8, 0x9, 0xa, 0xb, 0xc, 0xf, 0xe, 0xd,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
- };
- 
--static unsigned char output_clk_map_imx53[] = {
-+static unsigned char output_clk_map_imx53[ASRC_CLK_MAP_LEN] = {
- /*	0x0  0x1  0x2  0x3  0x4  0x5  0x6  0x7  0x8  0x9  0xa  0xb  0xc  0xd  0xe  0xf */
- 	0x8, 0x9, 0xa, 0x7, 0xc, 0x5, 0x6, 0xb, 0x0, 0x1, 0x2, 0x3, 0x4, 0xf, 0xe, 0xd,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
-+	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
- };
- 
--static unsigned char *clk_map[2];
-+/**
-+ * i.MX8QM/i.MX8QXP uses the same map for input and output.
-+ * clk_map_imx8qm[0] is for i.MX8QM asrc0
-+ * clk_map_imx8qm[1] is for i.MX8QM asrc1
-+ * clk_map_imx8qxp[0] is for i.MX8QXP asrc0
-+ * clk_map_imx8qxp[1] is for i.MX8QXP asrc1
-+ */
-+static unsigned char clk_map_imx8qm[2][ASRC_CLK_MAP_LEN] = {
-+	{
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	},
-+	{
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0x7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0xb, 0xc, 0xf, 0xf, 0xd, 0xe, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	0x4, 0x5, 0x6, 0xf, 0x8, 0x9, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	},
-+};
-+
-+static unsigned char clk_map_imx8qxp[2][ASRC_CLK_MAP_LEN] = {
-+	{
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0xf, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xf, 0xf,
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	},
-+	{
-+	0xf, 0xf, 0xf, 0xf, 0xf, 0x7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
-+	0x0, 0x1, 0x2, 0x3, 0x7, 0x8, 0xf, 0xf, 0x9, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	0xf, 0xf, 0x6, 0xf, 0xf, 0xf, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
-+	},
-+};
- 
- /**
-  * Select the pre-processing and post-processing options
-@@ -353,8 +392,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
- 	}
- 
- 	/* Validate input and output clock sources */
--	clk_index[IN] = clk_map[IN][config->inclk];
--	clk_index[OUT] = clk_map[OUT][config->outclk];
-+	clk_index[IN] = asrc_priv->clk_map[IN][config->inclk];
-+	clk_index[OUT] = asrc_priv->clk_map[OUT][config->outclk];
- 
- 	/* We only have output clock for ideal ratio mode */
- 	clk = asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
-@@ -398,13 +437,13 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
- 	/* Set the channel number */
- 	channels = config->channel_num;
- 
--	if (asrc_priv->channel_bits < 4)
-+	if (asrc_priv->soc->channel_bits < 4)
- 		channels /= 2;
- 
- 	/* Update channels for current pair */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRCNCR,
--			   ASRCNCR_ANCi_MASK(index, asrc_priv->channel_bits),
--			   ASRCNCR_ANCi(index, channels, asrc_priv->channel_bits));
-+			   ASRCNCR_ANCi_MASK(index, asrc_priv->soc->channel_bits),
-+			   ASRCNCR_ANCi(index, channels, asrc_priv->soc->channel_bits));
- 
- 	/* Default setting: Automatic selection for processing mode */
- 	regmap_update_bits(asrc_priv->regmap, REG_ASRCTR,
-@@ -531,7 +570,7 @@ static int fsl_asrc_dai_startup(struct snd_pcm_substream *substream,
- 	struct fsl_asrc *asrc_priv = snd_soc_dai_get_drvdata(dai);
- 
- 	/* Odd channel number is not valid for older ASRC (channel_bits==3) */
--	if (asrc_priv->channel_bits == 3)
-+	if (asrc_priv->soc->channel_bits == 3)
- 		snd_pcm_hw_constraint_step(substream->runtime, 0,
- 					   SNDRV_PCM_HW_PARAM_CHANNELS, 2);
- 
-@@ -905,6 +944,7 @@ static int fsl_asrc_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	void __iomem *regs;
- 	int irq, ret, i;
-+	u32 map_idx;
- 	char tmp[16];
- 
- 	asrc_priv = devm_kzalloc(&pdev->dev, sizeof(*asrc_priv), GFP_KERNEL);
-@@ -964,14 +1004,37 @@ static int fsl_asrc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	asrc_priv->soc = of_device_get_match_data(&pdev->dev);
-+	if (!asrc_priv->soc) {
-+		dev_err(&pdev->dev, "failed to get soc data\n");
-+		return -ENODEV;
-+	}
-+
- 	if (of_device_is_compatible(np, "fsl,imx35-asrc")) {
--		asrc_priv->channel_bits = 3;
--		clk_map[IN] = input_clk_map_imx35;
--		clk_map[OUT] = output_clk_map_imx35;
--	} else {
--		asrc_priv->channel_bits = 4;
--		clk_map[IN] = input_clk_map_imx53;
--		clk_map[OUT] = output_clk_map_imx53;
-+		asrc_priv->clk_map[IN] = input_clk_map_imx35;
-+		asrc_priv->clk_map[OUT] = output_clk_map_imx35;
-+	} else if (of_device_is_compatible(np, "fsl,imx53-asrc")) {
-+		asrc_priv->clk_map[IN] = input_clk_map_imx53;
-+		asrc_priv->clk_map[OUT] = output_clk_map_imx53;
-+	} else if (of_device_is_compatible(np, "fsl,imx8qm-asrc") ||
-+		   of_device_is_compatible(np, "fsl,imx8qxp-asrc")) {
-+		ret = of_property_read_u32(np, "fsl,asrc-clk-map", &map_idx);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to get clk map index\n");
-+			return ret;
-+		}
-+
-+		if (map_idx > 1) {
-+			dev_err(&pdev->dev, "unsupported clk map index\n");
-+			return -EINVAL;
-+		}
-+		if (of_device_is_compatible(np, "fsl,imx8qm-asrc")) {
-+			asrc_priv->clk_map[IN] = clk_map_imx8qm[map_idx];
-+			asrc_priv->clk_map[OUT] = clk_map_imx8qm[map_idx];
-+		} else {
-+			asrc_priv->clk_map[IN] = clk_map_imx8qxp[map_idx];
-+			asrc_priv->clk_map[OUT] = clk_map_imx8qxp[map_idx];
-+		}
- 	}
- 
- 	ret = fsl_asrc_init(asrc_priv);
-@@ -1113,9 +1176,31 @@ static const struct dev_pm_ops fsl_asrc_pm = {
- 	SET_SYSTEM_SLEEP_PM_OPS(fsl_asrc_suspend, fsl_asrc_resume)
- };
- 
-+static const struct fsl_asrc_soc_data fsl_asrc_imx35_data = {
-+	.use_edma = false,
-+	.channel_bits = 3,
-+};
-+
-+static const struct fsl_asrc_soc_data fsl_asrc_imx53_data = {
-+	.use_edma = false,
-+	.channel_bits = 4,
-+};
-+
-+static const struct fsl_asrc_soc_data fsl_asrc_imx8qm_data = {
-+	.use_edma = true,
-+	.channel_bits = 4,
-+};
-+
-+static const struct fsl_asrc_soc_data fsl_asrc_imx8qxp_data = {
-+	.use_edma = true,
-+	.channel_bits = 4,
-+};
-+
- static const struct of_device_id fsl_asrc_ids[] = {
--	{ .compatible = "fsl,imx35-asrc", },
--	{ .compatible = "fsl,imx53-asrc", },
-+	{ .compatible = "fsl,imx35-asrc", .data = &fsl_asrc_imx35_data },
-+	{ .compatible = "fsl,imx53-asrc", .data = &fsl_asrc_imx53_data },
-+	{ .compatible = "fsl,imx8qm-asrc", .data = &fsl_asrc_imx8qm_data },
-+	{ .compatible = "fsl,imx8qxp-asrc", .data = &fsl_asrc_imx8qxp_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, fsl_asrc_ids);
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index 2b57e8c53728..8a821132d9d0 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -308,6 +308,29 @@ enum asrc_inclk {
- 	INCLK_SSI3_TX = 0x0b,
- 	INCLK_SPDIF_TX = 0x0c,
- 	INCLK_ASRCK1_CLK = 0x0f,
-+
-+	/* clocks for imx8 */
-+	INCLK_AUD_PLL_DIV_CLK0 = 0x10,
-+	INCLK_AUD_PLL_DIV_CLK1 = 0x11,
-+	INCLK_AUD_CLK0         = 0x12,
-+	INCLK_AUD_CLK1         = 0x13,
-+	INCLK_ESAI0_RX_CLK     = 0x14,
-+	INCLK_ESAI0_TX_CLK     = 0x15,
-+	INCLK_SPDIF0_RX        = 0x16,
-+	INCLK_SPDIF1_RX        = 0x17,
-+	INCLK_SAI0_RX_BCLK     = 0x18,
-+	INCLK_SAI0_TX_BCLK     = 0x19,
-+	INCLK_SAI1_RX_BCLK     = 0x1a,
-+	INCLK_SAI1_TX_BCLK     = 0x1b,
-+	INCLK_SAI2_RX_BCLK     = 0x1c,
-+	INCLK_SAI3_RX_BCLK     = 0x1d,
-+	INCLK_ASRC0_MUX_CLK    = 0x1e,
-+
-+	INCLK_ESAI1_RX_CLK     = 0x20,
-+	INCLK_ESAI1_TX_CLK     = 0x21,
-+	INCLK_SAI6_TX_BCLK     = 0x22,
-+	INCLK_HDMI_RX_SAI0_RX_BCLK     = 0x24,
-+	INCLK_HDMI_TX_SAI0_TX_BCLK     = 0x25,
- };
- 
- enum asrc_outclk {
-@@ -325,9 +348,33 @@ enum asrc_outclk {
- 	OUTCLK_SSI3_RX = 0x0b,
- 	OUTCLK_SPDIF_RX = 0x0c,
- 	OUTCLK_ASRCK1_CLK = 0x0f,
-+
-+	/* clocks for imx8 */
-+	OUTCLK_AUD_PLL_DIV_CLK0 = 0x10,
-+	OUTCLK_AUD_PLL_DIV_CLK1 = 0x11,
-+	OUTCLK_AUD_CLK0         = 0x12,
-+	OUTCLK_AUD_CLK1         = 0x13,
-+	OUTCLK_ESAI0_RX_CLK     = 0x14,
-+	OUTCLK_ESAI0_TX_CLK     = 0x15,
-+	OUTCLK_SPDIF0_RX        = 0x16,
-+	OUTCLK_SPDIF1_RX        = 0x17,
-+	OUTCLK_SAI0_RX_BCLK     = 0x18,
-+	OUTCLK_SAI0_TX_BCLK     = 0x19,
-+	OUTCLK_SAI1_RX_BCLK     = 0x1a,
-+	OUTCLK_SAI1_TX_BCLK     = 0x1b,
-+	OUTCLK_SAI2_RX_BCLK     = 0x1c,
-+	OUTCLK_SAI3_RX_BCLK     = 0x1d,
-+	OUTCLK_ASRCO_MUX_CLK    = 0x1e,
-+
-+	OUTCLK_ESAI1_RX_CLK     = 0x20,
-+	OUTCLK_ESAI1_TX_CLK     = 0x21,
-+	OUTCLK_SAI6_TX_BCLK     = 0x22,
-+	OUTCLK_HDMI_RX_SAI0_RX_BCLK     = 0x24,
-+	OUTCLK_HDMI_TX_SAI0_TX_BCLK     = 0x25,
- };
- 
- #define ASRC_CLK_MAX_NUM	16
-+#define ASRC_CLK_MAP_LEN	0x30
- 
- enum asrc_word_width {
- 	ASRC_WIDTH_24_BIT = 0,
-@@ -387,6 +434,17 @@ struct dma_block {
- 	unsigned int length;
- };
- 
-+/**
-+ * fsl_asrc_soc_data: soc specific data
-+ *
-+ * @use_edma: using edma as dma device or not
-+ * @channel_bits: width of ASRCNCR register for each pair
-+ */
-+struct fsl_asrc_soc_data {
-+	bool use_edma;
-+	unsigned int channel_bits;
-+};
-+
- /**
-  * fsl_asrc_pair: ASRC Pair private data
-  *
-@@ -431,8 +489,9 @@ struct fsl_asrc_pair {
-  * @asrck_clk: clock sources to driver ASRC internal logic
-  * @lock: spin lock for resource protection
-  * @pair: pair pointers
-- * @channel_bits: width of ASRCNCR register for each pair
-+ * @soc: soc specific data
-  * @channel_avail: non-occupied channel numbers
-+ * @clk_map: clock map for input/output clock
-  * @asrc_rate: default sample rate for ASoC Back-Ends
-  * @asrc_width: default sample width for ASoC Back-Ends
-  * @regcache_cfg: store register value of REG_ASRCFG
-@@ -450,8 +509,9 @@ struct fsl_asrc {
- 	spinlock_t lock;
- 
- 	struct fsl_asrc_pair *pair[ASRC_PAIR_MAX_NUM];
--	unsigned int channel_bits;
-+	const struct fsl_asrc_soc_data *soc;
- 	unsigned int channel_avail;
-+	unsigned char *clk_map[2];
- 
- 	int asrc_rate;
- 	int asrc_width;
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index d6146de9acd2..48486a78b7b4 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -197,21 +197,34 @@ static int fsl_asrc_dma_hw_params(struct snd_soc_component *component,
- 	dma_cap_set(DMA_SLAVE, mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	/* Get DMA request of Back-End */
--	tmp_chan = dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
--	tmp_data = tmp_chan->private;
--	pair->dma_data.dma_request = tmp_data->dma_request;
--	dma_release_channel(tmp_chan);
-+	/*
-+	 * An EDMA DEV_TO_DEV channel is fixed and bound with DMA event of each
-+	 * peripheral, unlike SDMA channel that is allocated dynamically. So no
-+	 * need to configure dma_request and dma_request2, but get dma_chan via
-+	 * dma_request_slave_channel directly with dma name of Front-End device
-+	 */
-+	if (!asrc_priv->soc->use_edma) {
-+		/* Get DMA request of Back-End */
-+		tmp_chan = dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
-+		tmp_data = tmp_chan->private;
-+		pair->dma_data.dma_request = tmp_data->dma_request;
-+		dma_release_channel(tmp_chan);
- 
--	/* Get DMA request of Front-End */
--	tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
--	tmp_data = tmp_chan->private;
--	pair->dma_data.dma_request2 = tmp_data->dma_request;
--	pair->dma_data.peripheral_type = tmp_data->peripheral_type;
--	pair->dma_data.priority = tmp_data->priority;
--	dma_release_channel(tmp_chan);
-+		/* Get DMA request of Front-End */
-+		tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
-+		tmp_data = tmp_chan->private;
-+		pair->dma_data.dma_request2 = tmp_data->dma_request;
-+		pair->dma_data.peripheral_type = tmp_data->peripheral_type;
-+		pair->dma_data.priority = tmp_data->priority;
-+		dma_release_channel(tmp_chan);
-+
-+		pair->dma_chan[dir] =
-+			dma_request_channel(mask, filter, &pair->dma_data);
-+	} else {
-+		pair->dma_chan[dir] =
-+			fsl_asrc_get_dma_channel(pair, dir);
-+	}
- 
--	pair->dma_chan[dir] = dma_request_channel(mask, filter, &pair->dma_data);
- 	if (!pair->dma_chan[dir]) {
- 		dev_err(dev, "failed to request DMA channel for Back-End\n");
- 		return -EINVAL;
--- 
-2.21.0
-
+> This fixes some crashes in xfs, binder and the i915 mock_selftests,
+> with kasan vmalloc, where no shadow space was being allocated when
+> vm_map_ram was called.
+>
+> vm_map_ram has two paths, a path that uses vmap_block and a path
+> that uses alloc_vmap_area. The alloc_vmap_area path is straight-forward,
+> we handle it like most other allocations.
+>
+> For the vmap_block case, we map a shadow for the entire vmap_block
+> when the block is allocated, and unpoison it piecewise in vm_map_ram().
+> It already gets cleaned up when the block is released in the lazy vmap
+> area freeing path.
+>
+> For both cases, we need to tweak the interface to allow for vmalloc
+> addresses that don't have an attached vm_struct.
+>
+> Reported-by: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Qian Cai <cai@lca.pw>
+> Thanks-to: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Signed-off-by: Daniel Axtens <dja@axtens.net>
+> ---
+>  include/linux/kasan.h |  6 ++++++
+>  mm/kasan/common.c     | 37 +++++++++++++++++++++++--------------
+>  mm/vmalloc.c          | 24 ++++++++++++++++++++++++
+>  3 files changed, 53 insertions(+), 14 deletions(-)
+>
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index 4f404c565db1..0b50b59a8ff5 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -207,6 +207,7 @@ static inline void *kasan_reset_tag(const void *addr)
+>  #ifdef CONFIG_KASAN_VMALLOC
+>  int kasan_populate_vmalloc(unsigned long requested_size,
+>  			   struct vm_struct *area);
+> +int kasan_populate_vmalloc_area(unsigned long size, void *addr);
+>  void kasan_poison_vmalloc(void *start, unsigned long size);
+>  void kasan_release_vmalloc(unsigned long start, unsigned long end,
+>  			   unsigned long free_region_start,
+> @@ -218,6 +219,11 @@ static inline int kasan_populate_vmalloc(unsigned long requested_size,
+>  	return 0;
+>  }
+>  
+> +static inline int kasan_populate_vmalloc_area(unsigned long size, void *addr)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline void kasan_poison_vmalloc(void *start, unsigned long size) {}
+>  static inline void kasan_release_vmalloc(unsigned long start,
+>  					 unsigned long end,
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index df3371d5c572..27d8522ffaad 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -779,27 +779,15 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+>  
+>  int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
+>  {
+> -	unsigned long shadow_start, shadow_end;
+>  	int ret;
+> -
+> -	shadow_start = (unsigned long)kasan_mem_to_shadow(area->addr);
+> -	shadow_start = ALIGN_DOWN(shadow_start, PAGE_SIZE);
+> -	shadow_end = (unsigned long)kasan_mem_to_shadow(area->addr +
+> -							area->size);
+> -	shadow_end = ALIGN(shadow_end, PAGE_SIZE);
+> -
+> -	ret = apply_to_page_range(&init_mm, shadow_start,
+> -				  shadow_end - shadow_start,
+> -				  kasan_populate_vmalloc_pte, NULL);
+> +	ret = kasan_populate_vmalloc_area(area->size, area->addr);
+>  	if (ret)
+>  		return ret;
+>  
+> -	flush_cache_vmap(shadow_start, shadow_end);
+> +	area->flags |= VM_KASAN;
+>  
+>  	kasan_unpoison_shadow(area->addr, requested_size);
+>  
+> -	area->flags |= VM_KASAN;
+> -
+>  	/*
+>  	 * We need to be careful about inter-cpu effects here. Consider:
+>  	 *
+> @@ -838,6 +826,27 @@ int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
+>  	return 0;
+>  }
+>  
+> +int kasan_populate_vmalloc_area(unsigned long size, void *addr)
+> +{
+> +	unsigned long shadow_start, shadow_end;
+> +	int ret;
+> +
+> +	shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
+> +	shadow_start = ALIGN_DOWN(shadow_start, PAGE_SIZE);
+> +	shadow_end = (unsigned long)kasan_mem_to_shadow(addr + size);
+> +	shadow_end = ALIGN(shadow_end, PAGE_SIZE);
+> +
+> +	ret = apply_to_page_range(&init_mm, shadow_start,
+> +				  shadow_end - shadow_start,
+> +				  kasan_populate_vmalloc_pte, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	flush_cache_vmap(shadow_start, shadow_end);
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Poison the shadow for a vmalloc region. Called as part of the
+>   * freeing process at the time the region is freed.
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index bf030516258c..2896189e351f 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1509,6 +1509,13 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+>  		return ERR_CAST(va);
+>  	}
+>  
+> +	err = kasan_populate_vmalloc_area(VMAP_BLOCK_SIZE, va->va_start);
+> +	if (unlikely(err)) {
+> +		kfree(vb);
+> +		free_vmap_area(va);
+> +		return ERR_PTR(err);
+> +	}
+> +
+>  	err = radix_tree_preload(gfp_mask);
+>  	if (unlikely(err)) {
+>  		kfree(vb);
+> @@ -1554,6 +1561,7 @@ static void free_vmap_block(struct vmap_block *vb)
+>  	spin_unlock(&vmap_block_tree_lock);
+>  	BUG_ON(tmp != vb);
+>  
+> +	/* free_vmap_area will take care of freeing the shadow */
+>  	free_vmap_area_noflush(vb->va);
+>  	kfree_rcu(vb, rcu_head);
+>  }
+> @@ -1780,6 +1788,8 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>  	if (likely(count <= VMAP_MAX_ALLOC)) {
+>  		debug_check_no_locks_freed(mem, size);
+>  		vb_free(mem, size);
+> +		kasan_poison_vmalloc(mem, size);
+> +
+>  		return;
+>  	}
+>  
+> @@ -1787,6 +1797,7 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>  	BUG_ON(!va);
+>  	debug_check_no_locks_freed((void *)va->va_start,
+>  				    (va->va_end - va->va_start));
+> +	/* vmap area purging will clean up the KASAN shadow later */
+>  	free_unmap_vmap_area(va);
+>  }
+>  EXPORT_SYMBOL(vm_unmap_ram);
+> @@ -1817,6 +1828,11 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
+>  		if (IS_ERR(mem))
+>  			return NULL;
+>  		addr = (unsigned long)mem;
+> +
+> +		/*
+> +		 * We don't need to call kasan_populate_vmalloc_area here, as
+> +		 * it's done at block allocation time.
+> +		 */
+>  	} else {
+>  		struct vmap_area *va;
+>  		va = alloc_vmap_area(size, PAGE_SIZE,
+> @@ -1826,7 +1842,15 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
+>  
+>  		addr = va->va_start;
+>  		mem = (void *)addr;
+> +
+> +		if (kasan_populate_vmalloc_area(size, mem)) {
+> +			vm_unmap_ram(mem, count);
+> +			return NULL;
+> +		}
+>  	}
+> +
+> +	kasan_unpoison_shadow(mem, size);
+> +
+>  	if (vmap_page_range(addr, addr + size, prot, pages) < 0) {
+>  		vm_unmap_ram(mem, count);
+>  		return NULL;
+> -- 
+> 2.20.1
