@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12DE9112536
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD08112515
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:33:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfLDIen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:34:43 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56391 "EHLO
+        id S1727325AbfLDIds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:33:48 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56343 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbfLDIdw (ORCPT
+        with ESMTP id S1725951AbfLDIdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:33:52 -0500
+        Wed, 4 Dec 2019 03:33:47 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1icQ6J-0005Fm-4C; Wed, 04 Dec 2019 09:33:35 +0100
+        id 1icQ6J-0005Fp-9a; Wed, 04 Dec 2019 09:33:35 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C8E351C2656;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EFB611C2657;
         Wed,  4 Dec 2019 09:33:34 +0100 (CET)
 Date:   Wed, 04 Dec 2019 08:33:34 -0000
-From:   "tip-bot2 for Masami Hiramatsu" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/kprobes] x86/alternatives: Sync bp_patching update for
- avoiding NULL pointer exception
-Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+Subject: [tip: core/kprobes] x86/alternatives: Use INT3_INSN_SIZE
+Cc:     Ingo Molnar <mingo@kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <157483421229.25881.15314414408559963162.stgit@devnote2>
-References: <157483421229.25881.15314414408559963162.stgit@devnote2>
+In-Reply-To: <20191111132458.460144656@infradead.org>
+References: <20191111132458.460144656@infradead.org>
 MIME-Version: 1.0
-Message-ID: <157544841472.21853.14922550331474190716.tip-bot2@tip-bot2>
+Message-ID: <157544841488.21853.11724270583897887740.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -55,79 +56,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/kprobes branch of tip:
 
-Commit-ID:     285a54efe3861976af9d15e85ff8c91a78d1407b
-Gitweb:        https://git.kernel.org/tip/285a54efe3861976af9d15e85ff8c91a78d1407b
-Author:        Masami Hiramatsu <mhiramat@kernel.org>
-AuthorDate:    Wed, 27 Nov 2019 14:56:52 +09:00
+Commit-ID:     76ffa7204b1ad7d321ac3a0292fdf3975d14866b
+Gitweb:        https://git.kernel.org/tip/76ffa7204b1ad7d321ac3a0292fdf3975d14866b
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 11 Nov 2019 14:08:26 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Wed, 27 Nov 2019 07:44:25 +01:00
 
-x86/alternatives: Sync bp_patching update for avoiding NULL pointer exception
+x86/alternatives: Use INT3_INSN_SIZE
 
-ftracetest multiple_kprobes.tc testcase hits the following NULL pointer
-exception:
+Use INT3_INSN_SIZE instead of sizeof(int3).
 
- BUG: kernel NULL pointer dereference, address: 0000000000000000
- PGD 800000007bf60067 P4D 800000007bf60067 PUD 7bf5f067 PMD 0
- Oops: 0000 [#1] PREEMPT SMP PTI
- RIP: 0010:poke_int3_handler+0x39/0x100
- Call Trace:
-  <IRQ>
-  do_int3+0xd/0xf0
-  int3+0x42/0x50
-  RIP: 0010:sched_clock+0x6/0x10
-
-poke_int3_handler+0x39 was alternatives:958:
-
-  static inline void *text_poke_addr(struct text_poke_loc *tp)
-  {
-          return _stext + tp->rel_addr; <------ Here is line #958
-  }
-
-This seems to be caused by tp (bp_patching.vec) being NULL but
-bp_patching.nr_entries != 0. There is a small chance for this
-to happen, because we have no synchronization between the zeroing
-of bp_patching.nr_entries and before clearing bp_patching.vec.
-
-Steve suggested we could fix this by adding sync_core(), because int3
-is done with interrupts disabled, and the on_each_cpu() requires
-all CPUs to have had their interrupts enabled.
-
- [ mingo: Edited the comments and the changelog. ]
-
-Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Suggested-by: Ingo Molnar <mingo@kernel.org>
 Tested-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Fixes: c0213b0ac03c ("x86/alternative: Batch of patch operations")
-Link: https://lkml.kernel.org/r/157483421229.25881.15314414408559963162.stgit@devnote2
+Link: https://lkml.kernel.org/r/20191111132458.460144656@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/kernel/alternative.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 4552795..30e8673 100644
+index 6455902..4552795 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -1134,8 +1134,14 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
- 	 * sync_core() implies an smp_mb() and orders this store against
- 	 * the writing of the new instruction.
+@@ -1088,7 +1088,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	 * First step: add a int3 trap to the address that will be patched.
  	 */
--	bp_patching.vec = NULL;
- 	bp_patching.nr_entries = 0;
-+	/*
-+	 * This sync_core () call ensures that all INT3 handlers in progress
-+	 * have finished. This allows poke_int3_handler() after this to
-+	 * avoid touching bp_paching.vec by checking nr_entries == 0.
-+	 */
-+	text_poke_sync();
-+	bp_patching.vec = NULL;
- }
+ 	for (i = 0; i < nr_entries; i++)
+-		text_poke(text_poke_addr(&tp[i]), &int3, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), &int3, INT3_INSN_SIZE);
  
- void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
+ 	text_poke_sync();
+ 
+@@ -1098,10 +1098,10 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	for (do_sync = 0, i = 0; i < nr_entries; i++) {
+ 		int len = text_opcode_size(tp[i].opcode);
+ 
+-		if (len - sizeof(int3) > 0) {
+-			text_poke(text_poke_addr(&tp[i]) + sizeof(int3),
+-				  (const char *)tp[i].text + sizeof(int3),
+-				  len - sizeof(int3));
++		if (len - INT3_INSN_SIZE > 0) {
++			text_poke(text_poke_addr(&tp[i]) + INT3_INSN_SIZE,
++				  (const char *)tp[i].text + INT3_INSN_SIZE,
++				  len - INT3_INSN_SIZE);
+ 			do_sync++;
+ 		}
+ 	}
+@@ -1123,7 +1123,7 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 		if (tp[i].text[0] == INT3_INSN_OPCODE)
+ 			continue;
+ 
+-		text_poke(text_poke_addr(&tp[i]), tp[i].text, sizeof(int3));
++		text_poke(text_poke_addr(&tp[i]), tp[i].text, INT3_INSN_SIZE);
+ 		do_sync++;
+ 	}
+ 
