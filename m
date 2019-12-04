@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84C5E112BD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA75112BDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:45:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbfLDMoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:44:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34966 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726832AbfLDMoj (ORCPT
+        id S1727869AbfLDMpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:45:55 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63404 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726832AbfLDMpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:44:39 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB4CgJnU085212;
-        Wed, 4 Dec 2019 07:44:31 -0500
+        Wed, 4 Dec 2019 07:45:54 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB4Ci9F2132410;
+        Wed, 4 Dec 2019 07:45:39 -0500
 Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wnjeb0a5m-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2wntctddr4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Dec 2019 07:44:30 -0500
+        Wed, 04 Dec 2019 07:40:42 -0500
 Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
         by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB4CZ8p3022319;
         Wed, 4 Dec 2019 12:37:30 GMT
@@ -66,11 +66,11 @@ User-Agent: Mutt/1.5.23 (2014-03-12)
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-12-04_03:2019-12-04,2019-12-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 spamscore=0 mlxlogscore=999 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912040103
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
+ spamscore=0 mlxscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912040103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
