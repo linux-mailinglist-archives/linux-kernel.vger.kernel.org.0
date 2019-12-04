@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 013691133FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1105211324B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731208AbfLDSVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:21:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56578 "EHLO mail.kernel.org"
+        id S1730733AbfLDSHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:07:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729039AbfLDSHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:07:10 -0500
+        id S1730720AbfLDSHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:07:12 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72A8120675;
-        Wed,  4 Dec 2019 18:07:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD2B720674;
+        Wed,  4 Dec 2019 18:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482829;
-        bh=2m71RfjpJMhsE/hnMO23RQYRMaw/9glv4FzCsCZ4loM=;
+        s=default; t=1575482832;
+        bh=5flbKH9/7SuKJsXQ0njpu5dTP+T8KsdOIIJV4h6GRxQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rQui2GjLfDTqEpVBBhzrgtYOMQXY0oWUKYTxO7pgJRQONBdQ1T5EMfKWVhQjuCO3v
-         LAgnuihfW0EnFNmhmZ9RPU0dSTEtx2OhcgNfNRb7B3/lC8vB/S4Rcxbu3xfn6icHsU
-         UdyC7lKI+s3JMaixBbEY94DBgCuF5ZHQWI+0o1j4=
+        b=b4mJawuB+gfQdJNdfqFB2+UBM4TrX/STsd3+BahrOFhs+zBK6rMOp9DV9QltGX8N8
+         7cvcnq0f44BjV5o0m7ZEcGfbqpblpEFW23YzaXUbecO33eLXJgok1vdy3ooiC/9CVK
+         VjoCfUMsqtGrVDdaBJ3g5pEUw6mS3PlZ6rhW+bFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Luo <luojian5@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Gen Zhang <blackgod016574@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 152/209] scsi: libsas: Check SMP PHY control function result
-Date:   Wed,  4 Dec 2019 18:56:04 +0100
-Message-Id: <20191204175333.958242641@linuxfoundation.org>
+Subject: [PATCH 4.14 153/209] powerpc/pseries/dlpar: Fix a missing check in dlpar_parse_cc_property()
+Date:   Wed,  4 Dec 2019 18:56:05 +0100
+Message-Id: <20191204175334.024557953@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -45,48 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Gen Zhang <blackgod016574@gmail.com>
 
-[ Upstream commit 01929a65dfa13e18d89264ab1378854a91857e59 ]
+[ Upstream commit efa9ace68e487ddd29c2b4d6dd23242158f1f607 ]
 
-Currently the SMP PHY control execution result is checked, however the
-function result for the command is not.
+In dlpar_parse_cc_property(), 'prop->name' is allocated by kstrdup().
+kstrdup() may return NULL, so it should be checked and handle error.
+And prop should be freed if 'prop->name' is NULL.
 
-As such, we may be missing all potential errors, like SMP FUNCTION FAILED,
-INVALID REQUEST FRAME LENGTH, etc., meaning the PHY control request has
-failed.
-
-In some scenarios we need to ensure the function result is accepted, so add
-a check for this.
-
-Tested-by: Jian Luo <luojian5@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/libsas/sas_expander.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/dlpar.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 63c44eaabf69e..f77d72f01da91 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -614,7 +614,14 @@ int sas_smp_phy_control(struct domain_device *dev, int phy_id,
- 	}
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index f4e6565dd7a94..fb2876a84fbe6 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -63,6 +63,10 @@ static struct property *dlpar_parse_cc_property(struct cc_workarea *ccwa)
  
- 	res = smp_execute_task(dev, pc_req, PC_REQ_SIZE, pc_resp,PC_RESP_SIZE);
--
-+	if (res) {
-+		pr_err("ex %016llx phy%02d PHY control failed: %d\n",
-+		       SAS_ADDR(dev->sas_addr), phy_id, res);
-+	} else if (pc_resp[2] != SMP_RESP_FUNC_ACC) {
-+		pr_err("ex %016llx phy%02d PHY control failed: function result 0x%x\n",
-+		       SAS_ADDR(dev->sas_addr), phy_id, pc_resp[2]);
-+		res = pc_resp[2];
+ 	name = (char *)ccwa + be32_to_cpu(ccwa->name_offset);
+ 	prop->name = kstrdup(name, GFP_KERNEL);
++	if (!prop->name) {
++		dlpar_free_cc_property(prop);
++		return NULL;
 +	}
- 	kfree(pc_resp);
- 	kfree(pc_req);
- 	return res;
+ 
+ 	prop->length = be32_to_cpu(ccwa->prop_length);
+ 	value = (char *)ccwa + be32_to_cpu(ccwa->prop_offset);
 -- 
 2.20.1
 
