@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 205F7113295
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 467EA1132FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731130AbfLDSJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:09:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35686 "EHLO mail.kernel.org"
+        id S1731781AbfLDSNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:13:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730809AbfLDSJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:09:40 -0500
+        id S1731770AbfLDSNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:13:32 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB03C20862;
-        Wed,  4 Dec 2019 18:09:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBF5D20674;
+        Wed,  4 Dec 2019 18:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482980;
-        bh=TwRb2Jo2UO6eKV3XNXiuSSacNPsSiJZvcfN6vNluiqw=;
+        s=default; t=1575483212;
+        bh=b/jHQB1x+5NehrmLNVjMgte8dWT+yjMVkd02sMqx1aQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0N/3HbaqIReTq/o+KFh9F164+Ah489n5yGckI5EAMhVLdOspaWXjko/CRURtCl+dQ
-         zLd6RbruESwXZKe1XJimVC8iWpHOxAmW9ev3qX98/SjpZtqNCZO2FPym+pT6uXRGm8
-         xukQP+YMqiV4maFHHzyxk6xqQIptgfnuxwQf2Zxw=
+        b=GCrd8xQ2Q3IuiSOeL/m5V+UIRNsiJerydITjVgHk2WFNyZAsek1d3I4CmAg+JFUYe
+         IgEa3BBmvZtlfE7fvETTiHoM0oPaG3B70S37h7+FdJbw0aYB78zhR69gGwcDVaSQQC
+         x2doLCOZqAOg4Th7tIThYR05la8DHPFPLkjTHL+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 4.14 191/209] futex: Set task::futex_state to DEAD right after handling futex exit
-Date:   Wed,  4 Dec 2019 18:56:43 +0100
-Message-Id: <20191204175336.636498362@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 099/125] iommu/amd: Fix NULL dereference bug in match_hid_uid
+Date:   Wed,  4 Dec 2019 18:56:44 +0100
+Message-Id: <20191204175325.116801683@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit f24f22435dcc11389acc87e5586239c1819d217c upstream.
+[ Upstream commit bb6bccba390c7d743c1e4427de4ef284c8cc6869 ]
 
-Setting task::futex_state in do_exit() is rather arbitrarily placed for no
-reason. Move it into the futex code.
+Add a non-NULL check to fix potential NULL pointer dereference
+Cleanup code to call function once.
 
-Note, this is only done for the exit cleanup as the exec cleanup cannot set
-the state to FUTEX_STATE_DEAD because the task struct is still in active
-use.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.439511191@linutronix.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Fixes: 2bf9a0a12749b ('iommu/amd: Add iommu support for ACPI HID devices')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/exit.c  |    1 -
- kernel/futex.c |    1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -893,7 +893,6 @@ void __noreturn do_exit(long code)
- 	 * Make sure we are holding no locks:
- 	 */
- 	debug_check_no_locks_held();
--	futex_exit_done(tsk);
- 
- 	if (tsk->io_context)
- 		exit_io_context(tsk);
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -3705,6 +3705,7 @@ void futex_exec_release(struct task_stru
- void futex_exit_release(struct task_struct *tsk)
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index e81acb2b6ee7d..c898c70472bb2 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -176,10 +176,14 @@ static struct lock_class_key reserved_rbtree_key;
+ static inline int match_hid_uid(struct device *dev,
+ 				struct acpihid_map_entry *entry)
  {
- 	futex_exec_release(tsk);
-+	futex_exit_done(tsk);
- }
++	struct acpi_device *adev = ACPI_COMPANION(dev);
+ 	const char *hid, *uid;
  
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+-	hid = acpi_device_hid(ACPI_COMPANION(dev));
+-	uid = acpi_device_uid(ACPI_COMPANION(dev));
++	if (!adev)
++		return -ENODEV;
++
++	hid = acpi_device_hid(adev);
++	uid = acpi_device_uid(adev);
+ 
+ 	if (!hid || !(*hid))
+ 		return -ENODEV;
+-- 
+2.20.1
+
 
 
