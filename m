@@ -2,91 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF93011238C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11382112392
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfLDHZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:25:53 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34671 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfLDHZx (ORCPT
+        id S1727177AbfLDH1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:27:50 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33263 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfLDH1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:25:53 -0500
-Received: by mail-pf1-f195.google.com with SMTP id n13so3195515pff.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 23:25:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zR+uj71pLrF+TYYen/2/kUtrnB5mPrIgI3pLhx/lk30=;
-        b=vOASrEDnsGz5TKzN+imtDHh3hqQYpURnQe6UIFHeRWuv6ghVmWym6ek15gTR1/dtT3
-         UjIiH5ElHrc0Raz+YxTKzwUuGiub8j/PxZIdsWXzI8x/4811vAMj8SMWnvplVb3P5kpI
-         +WKszxQ6FUar5peGEJaIxzS8cHmw+IHJfGfvPODmRFUaeTI14VskLEei5bSf3p0sXwaw
-         8F38vcHLrtSF2rK5gL2cniZoNjUw72S8ZTeWQjZimV0lWQ2bJUPvxuOyuYJmB09YBvFq
-         wr1jnlmHGzi7/gKRFvGvuqBIfpmFGOFJMz4R1EFKR2u4dSRKyBKMIoEpRKqK5BK8yXUi
-         l55A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zR+uj71pLrF+TYYen/2/kUtrnB5mPrIgI3pLhx/lk30=;
-        b=pMFdZP+aRsK8PUmS0yYrthdmtPnICP7kLophbBzjmoLRDttp6Bn8/fGq7PVGdO01T5
-         UjzJHVKV+VaQqG6b7IcM8NsQ00D+r2K245D6s+yVGKUfbRSriJUp2xjvzOl7QDW8KnwT
-         f9BNPLLlNgWMooqO+8uyChNU5Qv2QoqU8R3w6ao7GrYxBXYbMgFKo06oC74FR4JDhy6Y
-         8c7z9+ILKNHHXqvr2Xf/MPPGeir2zGfwAnNhQXMU36N1GBF80m84X1xgptqiOtzvt2hq
-         6Bm/3T5bsGX4H+MG5GnQAOxHzlT6pj3P5SCkf4/4rvsv+BWjz++b6Wq6Z9E8m3x6h0lU
-         LzWA==
-X-Gm-Message-State: APjAAAX/KEXIDWeQwZdWy0i2PmeeMAYFuOIdKs2H5P4FaJW2Y6kCXQvd
-        8HW285IZkZ2sluwcjJC8PN/c8TZvH+M=
-X-Google-Smtp-Source: APXvYqy8+V11CEePA8+sdZlLaDk/bbqQXTg5l6/Ygh5zsq7kuxLH0J/8QAlcLycCuJzrDXTMkByIuA==
-X-Received: by 2002:a63:c250:: with SMTP id l16mr2000245pgg.38.1575444352407;
-        Tue, 03 Dec 2019 23:25:52 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id e23sm5224651pjt.23.2019.12.03.23.25.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 23:25:51 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Roger Quadros <rogerq@ti.com>, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] phy: ti-pipe3: fix missed clk_disable_unprepare in remove
-Date:   Wed,  4 Dec 2019 15:25:40 +0800
-Message-Id: <20191204072540.1452-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        Wed, 4 Dec 2019 02:27:50 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1icP4b-0004xz-E4; Wed, 04 Dec 2019 08:27:45 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1icP4b-0007QK-0N; Wed, 04 Dec 2019 08:27:45 +0100
+Date:   Wed, 4 Dec 2019 08:27:44 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "rjui@broadcom.com" <rjui@broadcom.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alice Guo <alice.guo@nxp.com>
+Subject: Re: [PATCH v2 2/2] gpio: bcm-kona: use platform_irq_count
+Message-ID: <20191204072744.b7ytzi5gffjcq6sj@pengutronix.de>
+References: <1575433106-16171-1-git-send-email-peng.fan@nxp.com>
+ <1575433106-16171-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <1575433106-16171-2-git-send-email-peng.fan@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver calls clk_prepare_enable in probe but forgets to call
-clk_disable_unprepare in remove.
-Add the missed call to fix it.
+On Wed, Dec 04, 2019 at 04:20:45AM +0000, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> platform_irq_count() is the more generic way (independent of
+> device trees) to determine the count of available interrupts. So
+> use this instead.
+> 
+> As platform_irq_count() might return an error code (which
+> of_irq_count doesn't) some additional handling is necessary.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> 
+> V2:
+>  Update commit log, and add err handling
+>  Not tested, just code inspection
+> 
+>  drivers/gpio/gpio-bcm-kona.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+> index 4122683eb1f9..52ff56166263 100644
+> --- a/drivers/gpio/gpio-bcm-kona.c
+> +++ b/drivers/gpio/gpio-bcm-kona.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/io.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/of_device.h>
+> -#include <linux/of_irq.h>
+>  #include <linux/init.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/irqchip/chained_irq.h>
+> @@ -586,11 +585,18 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+>  
+>  	kona_gpio->gpio_chip = template_chip;
+>  	chip = &kona_gpio->gpio_chip;
+> -	kona_gpio->num_bank = of_irq_count(dev->of_node);
+> -	if (kona_gpio->num_bank == 0) {
+> +	ret = platform_irq_count(pdev);
+> +	if (!ret) {
+>  		dev_err(dev, "Couldn't determine # GPIO banks\n");
+>  		return -ENOENT;
+> +	} else if (ret < 0) {
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "Couldn't determine GPIO banks: %d\n",
+> +				ret);
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/phy/ti/phy-ti-pipe3.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+You can use the new %pe feature here:
 
-diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
-index edd6859afba8..19fd1005a440 100644
---- a/drivers/phy/ti/phy-ti-pipe3.c
-+++ b/drivers/phy/ti/phy-ti-pipe3.c
-@@ -850,6 +850,12 @@ static int ti_pipe3_probe(struct platform_device *pdev)
- 
- static int ti_pipe3_remove(struct platform_device *pdev)
- {
-+	struct ti_pipe3 *phy = platform_get_drvdata(pdev);
-+
-+	if (phy->mode == PIPE3_MODE_SATA) {
-+		clk_disable_unprepare(phy->refclk);
-+		phy->sata_refclk_enabled = false;
-+	}
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
+	dev_err(dev, "Couldn't determine GPIO banks: %pe\n",
+		ERR_PTR(ret));
+
+> +		return ret;
+>  	}
+> +	kona_gpio->num_bank = ret;
+> +
+
+Looks otherwise ok.
+
+Best regards
+Uwe
+
 -- 
-2.24.0
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
