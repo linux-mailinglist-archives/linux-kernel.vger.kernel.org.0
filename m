@@ -2,100 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95DC0112CF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFDC7112D03
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbfLDNxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 08:53:01 -0500
-Received: from zimbra2.kalray.eu ([92.103.151.219]:45892 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727849AbfLDNxB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:53:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id E665927E06C1;
-        Wed,  4 Dec 2019 14:52:59 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id AXnIOwQeJpuJ; Wed,  4 Dec 2019 14:52:59 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 6571027E1514;
-        Wed,  4 Dec 2019 14:52:59 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 6571027E1514
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1575467579;
-        bh=l+sKtua1XQcGeyC5IHvScFDmfWCdcMfwZhdZEKd20y8=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=FPxnmvX/7mQY7hzhONZ5AQctLwUL5cCyFuyZSoaKqfQpT2V4V2BHx36FhxL2fkoUy
-         /1v63znvh7sOuaRt+5DHR1JXFL+4NvoFr46S2tEwOY6xpvvYQiGvZ8Vw0O5r+Qts4x
-         lwc3LiT0SPxR7vvWNOypzGzw4usO1atEA+WMaWp8=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2LF3YxJNRt_T; Wed,  4 Dec 2019 14:52:59 +0100 (CET)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 4BD8127E06C1;
-        Wed,  4 Dec 2019 14:52:59 +0100 (CET)
-Date:   Wed, 4 Dec 2019 14:52:59 +0100 (CET)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        "open list, GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Message-ID: <696316719.95315119.1575467579136.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <CAHp75VcqqqAv1iiwjNqGVcadmdzbjHt8f_ap7DKd3LWC=wwkhw@mail.gmail.com>
-References: <20191204101042.4275-6-cleger@kalray.eu> <CAHp75VcqqqAv1iiwjNqGVcadmdzbjHt8f_ap7DKd3LWC=wwkhw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: pinctrl: dw: move sps,dwapb-gpio.txt
- to pinctrl
+        id S1727973AbfLDN4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 08:56:02 -0500
+Received: from foss.arm.com ([217.140.110.172]:56176 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbfLDN4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 08:56:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3C9A328;
+        Wed,  4 Dec 2019 05:56:00 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A48CB3F68E;
+        Wed,  4 Dec 2019 05:55:59 -0800 (PST)
+Date:   Wed, 4 Dec 2019 13:55:57 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Quentin Perret <qperret@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Null pointer crash at find_idlest_group on db845c w/ linus/master
+Message-ID: <20191204135556.w7xsog6oywrfkaqj@e107158-lin.cambridge.arm.com>
+References: <CALAqxLXrWWnWi32BR1F8JOtrGt1y2Kzj__zWopLx1ZfRy3EZKA@mail.gmail.com>
+ <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
+ <20191204094216.u7yld5r3zelp22lf@e107158-lin.cambridge.arm.com>
+ <20191204100925.GA15727@linaro.org>
+ <629cca09-dde7-5d77-42e1-c68f2c1820d2@arm.com>
+ <CAKfTPtDZLFn7msw88pTE_wr-BJo2ErqxpOW+ah0Jjcg6vE3SLw@mail.gmail.com>
+ <20191204133224.uiqbkbpseree7xou@e107158-lin.cambridge.arm.com>
+ <CAKfTPtBP1wm706ZjZhW+BV5XUcONfJcGteeyoJQUhQsYPsY4tg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.12_GA_3794 (ZimbraWebClient - GC75 (Linux)/8.8.12_GA_3794)
-Thread-Topic: dt-bindings: pinctrl: dw: move sps,dwapb-gpio.txt to pinctrl
-Thread-Index: G/WlHVySL02P41vqPDBPH0jBOUDTkw==
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBP1wm706ZjZhW+BV5XUcONfJcGteeyoJQUhQsYPsY4tg@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/04/19 14:48, Vincent Guittot wrote:
+> if we want to initialize local_sgs, it should be something like
+> local_sgs =  {
+> .avg_load = UINT_MAX,
+> .group_type = group_overloaded,
+> };
 
------ On 4 Dec, 2019, at 13:45, Andy Shevchenko andy.shevchenko@gmail.com wrote:
-
-> On Wed, Dec 4, 2019 at 12:13 PM Clement Leger <cleger@kalray.eu> wrote:
->>
->> Since the driver has been moved to pinctrl and now supports it, move the
->> documentation into pinctrl folder. In the same time, add documentation
->> for pinctrl properties such has snps,has-pinctrl and description of pin
->> alternate functions.
-> 
->> +- snps,has-pinctrl : If present, register the pinctrl controller.
-> 
-> I'm wondering why we can't always assume pin control?
-
-This hardware IP is configured when instantiated to include support for
-muxing. If configured without support, the registers will exists but won't
-configure anything.
-I guess that it's not really a problem but it will lead to unusable
-pin muxing.
++1
 
 > 
->> -F:     Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
->> +F:     Documentation/devicetree/bindings/pinctrl/snps-dwapb-gpio.txt
-> 
-> I guess this should be a part of patch 2 when you move driver w/o
-> changes to a new folder.
+> to make sure that we will not select local. This doesn't reflect any
+> kind of reality whereas local=NULL is more meaningful and more robust
+> IMO
 
-Agreed. I will do that,
+It's just defensive programming from my side :) I don't feel strongly about it
+though.
 
 Thanks
 
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
+--
+Qais Yousef
