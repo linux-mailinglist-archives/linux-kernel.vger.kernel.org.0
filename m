@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C14611315A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 125AB11315B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfLDR6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:58:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33124 "EHLO mail.kernel.org"
+        id S1728850AbfLDR6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:58:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfLDR6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:58:30 -0500
+        id S1728812AbfLDR6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:58:35 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5658320675;
-        Wed,  4 Dec 2019 17:58:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27DC22081B;
+        Wed,  4 Dec 2019 17:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482309;
-        bh=ghWIX+m6hgr7up8H2IEj/4iJDmGytA1qPuXv0RVTtfE=;
+        s=default; t=1575482314;
+        bh=0VH8yrhi9GC0ENQNA7KNwTLpwZFqByhMisUPcy4OreE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Guqk+KFpeAPLFXvQMIUgLc4l3EFALMevUeJTNWdCJJPjNDKDfOSGU4S7mS+8lIns
-         DLLFY0viUaZUMueVvzgSrIGrfC/UqhZPQfYL3PlGxkA0T0p/s2A7WAyKWKUFyiGXst
-         DdwmwWmFnXgD45j9QG0UUdL5F2y0v7Frk93Qs+P8=
+        b=dK9srWF5LWUjdL4dFMpeSXr6X5pGL4U6wDsnwh/Ri8eiHYS/E9MY3MGTexV+iHW3R
+         7RazH7dXVWWaxgh018HgMMB1SjwmKqvtpyzhUhQJ1evR7hOPFPMETEFeqpoEx2kDnl
+         pS5D64fKSVKiqOTHKch98UgdSjhV4+4YGYZftk0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Hutterer <peter.hutterer@who-t.net>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 34/92] HID: doc: fix wrong data structure reference for UHID_OUTPUT
-Date:   Wed,  4 Dec 2019 18:49:34 +0100
-Message-Id: <20191204174332.635009886@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Bowler <nbowler@draconx.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 36/92] xfs: Align compat attrlist_by_handle with native implementation.
+Date:   Wed,  4 Dec 2019 18:49:36 +0100
+Message-Id: <20191204174332.736774344@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -43,30 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Hutterer <peter.hutterer@who-t.net>
+From: Nick Bowler <nbowler@draconx.ca>
 
-[ Upstream commit 46b14eef59a8157138dc02f916a7f97c73b3ec53 ]
+[ Upstream commit c456d64449efe37da50832b63d91652a85ea1d20 ]
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+While inspecting the ioctl implementations, I noticed that the compat
+implementation of XFS_IOC_ATTRLIST_BY_HANDLE does not do exactly the
+same thing as the native implementation.  Specifically, the "cursor"
+does not appear to be written out to userspace on the compat path,
+like it is on the native path.
+
+This adjusts the compat implementation to copy out the cursor just
+like the native implementation does.  The attrlist cursor does not
+require any special compat handling.  This fixes xfstests xfs/269
+on both IA-32 and x32 userspace, when running on an amd64 kernel.
+
+Signed-off-by: Nick Bowler <nbowler@draconx.ca>
+Fixes: 0facef7fb053b ("xfs: in _attrlist_by_handle, copy the cursor back to userspace")
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/hid/uhid.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/xfs_ioctl32.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/hid/uhid.txt b/Documentation/hid/uhid.txt
-index c8656dd029a91..958fff9453044 100644
---- a/Documentation/hid/uhid.txt
-+++ b/Documentation/hid/uhid.txt
-@@ -160,7 +160,7 @@ them but you should handle them according to your needs.
-   UHID_OUTPUT:
-   This is sent if the HID device driver wants to send raw data to the I/O
-   device on the interrupt channel. You should read the payload and forward it to
--  the device. The payload is of type "struct uhid_data_req".
-+  the device. The payload is of type "struct uhid_output_req".
-   This may be received even though you haven't received UHID_OPEN, yet.
+diff --git a/fs/xfs/xfs_ioctl32.c b/fs/xfs/xfs_ioctl32.c
+index 1a05d8ae327db..e7372cef5ac33 100644
+--- a/fs/xfs/xfs_ioctl32.c
++++ b/fs/xfs/xfs_ioctl32.c
+@@ -346,6 +346,7 @@ xfs_compat_attrlist_by_handle(
+ {
+ 	int			error;
+ 	attrlist_cursor_kern_t	*cursor;
++	compat_xfs_fsop_attrlist_handlereq_t __user *p = arg;
+ 	compat_xfs_fsop_attrlist_handlereq_t al_hreq;
+ 	struct dentry		*dentry;
+ 	char			*kbuf;
+@@ -380,6 +381,11 @@ xfs_compat_attrlist_by_handle(
+ 	if (error)
+ 		goto out_kfree;
  
-   UHID_GET_REPORT:
++	if (copy_to_user(&p->pos, cursor, sizeof(attrlist_cursor_kern_t))) {
++		error = -EFAULT;
++		goto out_kfree;
++	}
++
+ 	if (copy_to_user(compat_ptr(al_hreq.buffer), kbuf, al_hreq.buflen))
+ 		error = -EFAULT;
+ 
 -- 
 2.20.1
 
