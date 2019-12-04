@@ -2,57 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24834113816
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:21:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB1F811380C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbfLDXVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 18:21:44 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43112 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfLDXVn (ORCPT
+        id S1728343AbfLDXVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 18:21:02 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:37799 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbfLDXVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:21:43 -0500
-Received: by mail-lj1-f195.google.com with SMTP id a13so1240699ljm.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:21:42 -0800 (PST)
+        Wed, 4 Dec 2019 18:21:02 -0500
+Received: by mail-qv1-f65.google.com with SMTP id t7so577683qve.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:21:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cl8V4L186TosF/Foo+q0QrKTNn4dTHR6LIi9ACqiBcU=;
-        b=AE0BRV5bLa+uNHAmKvhtTBvjE80e4SGtol/mGUZwRXzmA9JbICpa/9qcgzzUtLz7/M
-         9j4dSuNkgY7Bmzcpq78KE7Ss8vruQEIoUqSOyyqle9kuADuWUFtK1lgwhUB3DjU1DTz8
-         2Ysvd7vuFYaTyCI2mu2If7sx7doKGn7Mvw42bcbAwp7eZjbuBTjd6gfT93CXR2ux8PWh
-         8YK7wvYDnQh+cjQS9SDg3qRDLbAkRspbI3QIL32RBl3wuYOPKhF7sBW52xTU/qylgda8
-         gQwg6IDikZDt4i32x8F98uAyPY+J5nB7Gge0GoE3bIOKkn+3WW9wcZ2trO/Q6xMQaAih
-         0I4w==
+        bh=GKIfn1X+i6X56lqVXfyDzwPMZCzheNRzcKTaF4L1NP0=;
+        b=XFyzL5rTBwrAztY5nL0Ms1sPvQucTdFNTX8M14EOWrh36IgXf4zoI522rtxEKRoa52
+         iLqCy/91jRbUTDBGb3bllaMoyeqCln4xl1FZqj+b3eCzWUr5TgFGFbAmfZ/qpae4CijU
+         35EW4FQh7ww/prBUP0rcMSvO++mJcfO+k+fB3+BP0A1lGoquComcKT6UDiDreQjckSUg
+         k2hjQvUPo2N86qG8pbxlMAC6Kn6AAxDYJsEGt+O6B9zeTaxWSo/9qm7e42sxKv/Xabey
+         MFKaBloUYjQUJ5KZCxkfZDaZn+HAuOoWlPpNu3Gh25wuUFzC7MSzHyNs/Xar9ayJQjzK
+         BvGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cl8V4L186TosF/Foo+q0QrKTNn4dTHR6LIi9ACqiBcU=;
-        b=euwP1ghw0PueesvOKWYhdo+9FSw0PIIjM1zForJxdv6UkgjgM9M7upQJ4193zoAIMX
-         Gl9vO6IRtbWVe9lgQza+j7lCaCarvEmisd4nMaRUkZ6ZQa/mrf7DT247TWmrMz3HPcYv
-         xrb4IDgnwR18Eld+jT/+rStjLwaNE3J+oshb1iZULfwHakh8e0dBEhcwLW9uR+fQL7HE
-         8lnzx992Xa+kEaKuJ5au0UIv4cB8d1HPNlSBb7ujIM1wXW2zJIYYGepuFfyHFqA3hCVp
-         JRKB8/0T6PKUFOE6frvWIcPTKLNjqvcTx8huSX4ptQ3AEQw9kt138d230G8ImomyraUO
-         fUGA==
-X-Gm-Message-State: APjAAAUYsnD0kkgPUkMrPjktcjMnhld0AmNNxNRZXMv3pUv/9ldrS55x
-        ma2+rcPxdxkRk5kADOm5MEzeIA==
-X-Google-Smtp-Source: APXvYqx1jcCUzhn2w8sQ4CXIhEpr80go+HYVRZUiUrM0uEPJqXQgzz8JzMZV56rRJDJwjmYFPAI1pQ==
-X-Received: by 2002:a2e:9194:: with SMTP id f20mr3599265ljg.154.1575501701983;
-        Wed, 04 Dec 2019 15:21:41 -0800 (PST)
-Received: from localhost.localdomain (c-21cd225c.014-348-6c756e10.bbcust.telenor.se. [92.34.205.33])
-        by smtp.gmail.com with ESMTPSA id q186sm3975832ljq.30.2019.12.04.15.21.40
+        bh=GKIfn1X+i6X56lqVXfyDzwPMZCzheNRzcKTaF4L1NP0=;
+        b=tqatoBQobvBedum+QK0tB7xUUHxhYaZg/t+841DG0mzjrtSLkJi3yysGizt+1F5qEa
+         ggH5m4EJxDG+Vko92x6R0q05Ra4SPr9uSrzvEKPjIGtw059gkBtZ1JPRyxV6CG7zop6W
+         UTxeKpQ7gtGs4gccFEI2gq/dPE8U8T9kdWKcdW/b/zXMEk0NcCewLcrclmIMgaa9I4EC
+         1gr+Oy0IajsfBXv4+edKrRPp3BjDtAlkJz040FaaN41Ql8PnyD8/NR0fR0xPZFH+H7cM
+         o0MDWjgbmHUwN2OSXu8l0TP3luV1vQAXrBqz3IgQhiMvv3AgV2hSQ2GTTkNNYe9cps3r
+         iEWQ==
+X-Gm-Message-State: APjAAAWEf9UWfOi1TkfzB8JlilOHZufNlVsiqQUBke72ovWI93j15OAd
+        +JBIiEE7W76Uqfjn4x6XxUv3gA==
+X-Google-Smtp-Source: APXvYqwN8rVvbdjEWOZ3Dsr7ynba65KMLwXI/KiByr8BhvRWV22aS+4kNOZAN22diwAm+JbXcarUcQ==
+X-Received: by 2002:ad4:4949:: with SMTP id o9mr4823945qvy.189.1575501661393;
+        Wed, 04 Dec 2019 15:21:01 -0800 (PST)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id t38sm4667864qta.78.2019.12.04.15.20.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 15:21:40 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH] mfd: motorola-cpcap: Do not hardcode SPI mode flags
-Date:   Thu,  5 Dec 2019 00:19:31 +0100
-Message-Id: <20191204231931.21378-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        Wed, 04 Dec 2019 15:21:00 -0800 (PST)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, steve.capper@arm.com,
+        linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com,
+        tglx@linutronix.de, gregkh@linuxfoundation.org,
+        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
+        sstabellini@kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com, stefan@agner.ch, yamada.masahiro@socionext.com,
+        xen-devel@lists.xenproject.org, linux@armlinux.org.uk,
+        andrew.cooper3@citrix.com, julien@xen.org
+Subject: [PATCH v4 0/6] Use C inlines for uaccess
+Date:   Wed,  4 Dec 2019 18:20:52 -0500
+Message-Id: <20191204232058.2500117-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,43 +68,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current use of mode flags to us SPI_MODE_0 and
-SPI_CS_HIGH is fragile: it overwrites anything already
-assigned by the SPI core. Change it thusly:
+Changelog:
 
-- Just |= the SPI_MODE_0 so we keep other flags
-- Assign ^= SPI_CS_HIGH since we might be active high
-  already, and that is usually the case with GPIOs used
-  for chip select, even if they are in practice active low.
+v4:
+	- Split the first patch into two as Julien Grall 
+	- Also as Mark Rutland suggested removed alternatives
+	  from __asm_flush_cache_user_range.
+v3:
+	- Added Acked-by from Stefano Stabellini
+	- Addressed comments from Mark Rutland
+v2:
+	- Addressed Russell King's concern by not adding
+	  uaccess_* to ARM.
+	- Removed the accidental change to xtensa
 
-Add a comment clarifying why ^= SPI_CS_HIGH is the right
-choice here.
+Convert the remaining uaccess_* calls from ASM macros to C inlines.
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mfd/motorola-cpcap.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+These patches apply against linux-next. I boot tested ARM64, and
+compile tested ARM change
 
-diff --git a/drivers/mfd/motorola-cpcap.c b/drivers/mfd/motorola-cpcap.c
-index 52f38e57cdc1..a3bc61b8008c 100644
---- a/drivers/mfd/motorola-cpcap.c
-+++ b/drivers/mfd/motorola-cpcap.c
-@@ -279,7 +279,13 @@ static int cpcap_probe(struct spi_device *spi)
- 	spi_set_drvdata(spi, cpcap);
- 
- 	spi->bits_per_word = 16;
--	spi->mode = SPI_MODE_0 | SPI_CS_HIGH;
-+	spi->mode |= SPI_MODE_0;
-+	/*
-+	 * Active high should be defined as "inverse polarity" as GPIO-based
-+	 * chip selects can be logically active high but inverted by the GPIO
-+	 * library.
-+	 */
-+	spi->mode ^= SPI_CS_HIGH;
- 
- 	ret = spi_setup(spi);
- 	if (ret)
+Previous discussions:
+v3: https://lore.kernel.org/lkml/20191127184453.229321-1-pasha.tatashin@soleen.com
+v2: https://lore.kernel.org/lkml/20191122022406.590141-1-pasha.tatashin@soleen.com
+v1: https://lore.kernel.org/lkml/20191121184805.414758-1-pasha.tatashin@soleen.com
+
+Pavel Tatashin (6):
+  arm/arm64/xen: hypercall.h add includes guards
+  arm/arm64/xen: use C inlines for privcmd_call
+  arm64: remove uaccess_ttbr0 asm macros from cache functions
+  arm64: remove __asm_flush_icache_range
+  arm64: move ARM64_HAS_CACHE_DIC/_IDC from asm to C
+  arm64: remove the rest of asm-uaccess.h
+
+ arch/arm/include/asm/assembler.h       |  2 +-
+ arch/arm/include/asm/xen/hypercall.h   | 10 ++++
+ arch/arm/xen/enlighten.c               |  2 +-
+ arch/arm/xen/hypercall.S               |  4 +-
+ arch/arm64/include/asm/asm-uaccess.h   | 61 -----------------------
+ arch/arm64/include/asm/cacheflush.h    | 51 +++++++++++++++++--
+ arch/arm64/include/asm/xen/hypercall.h | 28 +++++++++++
+ arch/arm64/kernel/entry.S              | 27 +++++++++-
+ arch/arm64/lib/clear_user.S            |  2 +-
+ arch/arm64/lib/copy_from_user.S        |  2 +-
+ arch/arm64/lib/copy_in_user.S          |  2 +-
+ arch/arm64/lib/copy_to_user.S          |  2 +-
+ arch/arm64/mm/cache.S                  | 68 +++++---------------------
+ arch/arm64/mm/flush.c                  |  3 +-
+ arch/arm64/xen/hypercall.S             | 19 +------
+ include/xen/arm/hypercall.h            | 12 ++---
+ 16 files changed, 143 insertions(+), 152 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/asm-uaccess.h
+
 -- 
-2.23.0
+2.24.0
 
