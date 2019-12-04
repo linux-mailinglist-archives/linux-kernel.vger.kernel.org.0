@@ -2,139 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A46FA113718
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 22:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AE3D11371F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 22:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbfLDVbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 16:31:33 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41838 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727982AbfLDVbd (ORCPT
+        id S1728214AbfLDVgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 16:36:09 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3149 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727982AbfLDVgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 16:31:33 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c9so958401wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 13:31:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=P9WTTZRLRM+029UNpBwsR+Cxljh6zZ8kekbGiDPSaNw=;
-        b=L4dhxhHhtek3UDFMmvtpVRJIHmtltA1pBFc6qBmCouWyDln7UPHqumNq7iIZJcwv/v
-         4crV2BvoeS9esfCggW2wM5WfxhAJ9cpJ2BFUdnEPQYzVhRnzwpxwv9ThUw2wM0m82AoV
-         gWIki8Ui3z/2d7CFjOwNyUBaGIXZd6i1rr5YP5bKxkdmG52Bd8+uxBbM7VUNnntSRgYt
-         OGmcQm2np9xQX9OTODlmqNwzHVdx0ufYSteICb86Q5Ep/gz7Pqyzd2NO86t3ILTS9Tts
-         Omgbmp9wEFkYtywZG3Xna4/Nw9lUyyewemyT/qzM6DLXAf4aOANoXnP0ReP7awKvOiTL
-         dwYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P9WTTZRLRM+029UNpBwsR+Cxljh6zZ8kekbGiDPSaNw=;
-        b=llTXZF+EF/4v7KnLT2a9NgaI8I+V6nfznJ1NKBuuvZbBr75023aNJijO/cj6dCCUM3
-         REgzvuxapeTNYcxxsawa4TDqMGODdi+xYVHQKbmkc4BZQvjZo/Ee4BeBFCk3K15xvNml
-         8G5llydhR6qpSn3KlgWYoJSxCQLHtI/l8N6dy6xNWE4kWffFD25NKimSMRYAg9qt/jbe
-         TVG1yUYZ/mMX/Z3K17ZOwDxVnSXQ3Xei64t1F+o3g1gKzYTwEM91yQr/Ru1b7CEUH0DC
-         E+u2+8QuOLlmYf+sRwac8xOG0Tj0FeZzQ7APu7FqLijTcIQoJBZeKdfaTAmyCMu7Kiz5
-         XoTw==
-X-Gm-Message-State: APjAAAUDu2KkLd7EjzqxHQ9hVsLXuJMrt2x8tiKzIYwIh6GVN/RWilfr
-        S1xidSeZJxx6AOXRzu02jMaKDw==
-X-Google-Smtp-Source: APXvYqymt/FpF0Y4CUk1yN6WZHOudDXJgso3elEvZpByzyvHmiBrc7lEPc1AGYdulmDaD5eHfmoNlg==
-X-Received: by 2002:a5d:6349:: with SMTP id b9mr6636603wrw.346.1575495090344;
-        Wed, 04 Dec 2019 13:31:30 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:d965:ceae:a314:6edb? ([2a01:e34:ed2f:f020:d965:ceae:a314:6edb])
-        by smtp.googlemail.com with ESMTPSA id k8sm9768534wrl.3.2019.12.04.13.31.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2019 13:31:29 -0800 (PST)
-Subject: Re: [PATCH] clocksource: fix Kconfig miscues
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <4deb42a9-82f2-72f9-891f-972a9a399f4f@infradead.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7cc2c5fc-d54e-1af7-cdcb-ce76dfee3fd1@linaro.org>
-Date:   Wed, 4 Dec 2019 22:31:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 16:36:06 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5de826c00000>; Wed, 04 Dec 2019 13:36:00 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 04 Dec 2019 13:36:04 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 04 Dec 2019 13:36:04 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Dec
+ 2019 21:36:04 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 4 Dec 2019 21:36:04 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5de826c40002>; Wed, 04 Dec 2019 13:36:04 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+CC:     Ira Weiny <ira.weiny@intel.com>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v2 0/2] IB/umem: use get_user_pages_fast() to pin DMA pages
+Date:   Wed, 4 Dec 2019 13:36:01 -0800
+Message-ID: <20191204213603.464373-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <4deb42a9-82f2-72f9-891f-972a9a399f4f@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575495361; bh=Nnc1MC2/LMUzNv7k8FsJhkVnIIlePIHcyFpDrOinfto=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=OwenzducFKmfsuvf5HLZY+As5/XTqa/6XBIa+n8pLfv5mttxQ+V1yvNFPbiA/qx93
+         WBxiaXr8MsNomOAVZYqsTI9HRKZ+8M6QG+rBEoz+RELZcCsfn/WWIFWThWj7kYk9M1
+         Vr9H/49oqEcTUc2rEIObV2Ko/E1DQVtnTyUQTUEGrL0yI6jDp7uk9M/um8y2viyxt0
+         VOmWWnZahe9xzuyx4rAcJTUrZYjdDtOw4+EADjFH3EQ3tVuqF9r8ZUHbmL4pH2d9ti
+         +ymLDMHGiiK+hRkVVqEZLlyWItKUPf52CZbMGZKSW1hLVajRKs3dIW+1CJCXvUU9qu
+         shKiLnXHQ8F2A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/11/2019 06:10, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix lots of typo, spelling, punctuation, and grammar miscues in
-> drivers/clocksource/Kconfig.
+Hi,
 
-Applied, thanks for the patch
+The reason I'm posting this is to request a review for patch 1. Once
+everything seems OK, these two patches are going to be part of a larger
+set (again, destined for linux-mm) that introduces FOLL_PIN and renames
+some get_user_pages() cases to pin_user_pages(). I'm doing this a little
+before -rc1, because it's a small and easy thing to get out of the way
+early.
 
+These are ultimately destined to go in via linux-mm (as opposed to
+linux-rdma), in order to change some names in just one kernel release
+cycle.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+The first version of this patchset only had the IB/umem changes
+(patch 2), and I also lacked a runtime Infiniband test, so
+Leon Romanovsky reported a failure [1]. Patch 1 fixes that failure.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Since v1, I have (finally!) set up a basic two-node Infiniband system,
+and as a result, I've reproduced the failure that Leon saw, via a
+trivial run of "ib_write_bw", and confirmed that it's fixed in this
+new patchset. Sorry it took me so long to do that; I am going to vaguely
+blame "OFED" for the delay. :)
+
+Entertaining IB side note: Jason: sure enough, as you mentioned, the
+OFED installation did in fact hopelessly mangle my system. Once I went
+back to a clean distro installation without all those OFED goodies,
+everything Just Worked on the first try. Much simpler to understand,
+too. ha.
+
+This applies to today's linux.git: commit aedc0650f913 ("Merge tag
+'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm").
+
+[1] https://lore.kernel.org/r/20191124100724.GH136476@unreal
+
+John Hubbard (2):
+  mm/gup: allow FOLL_FORCE for get_user_pages_fast()
+  IB/umem: use get_user_pages_fast() to pin DMA pages
+
+ drivers/infiniband/core/umem.c | 17 ++++++-----------
+ mm/gup.c                       |  3 ++-
+ 2 files changed, 8 insertions(+), 12 deletions(-)
+
+--=20
+2.24.0
 
