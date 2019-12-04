@@ -2,84 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B366112B0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:09:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8106E112B04
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:08:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbfLDMJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:09:01 -0500
-Received: from mga03.intel.com ([134.134.136.65]:14982 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727445AbfLDMJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:09:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 04:08:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,277,1571727600"; 
-   d="scan'208";a="412563600"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.95])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Dec 2019 04:08:55 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf inject: Fix processing of ID index for injected instruction tracing
-Date:   Wed,  4 Dec 2019 14:08:00 +0200
-Message-Id: <20191204120800.8138-1-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1727797AbfLDMIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:08:17 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33024 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbfLDMIQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 07:08:16 -0500
+Received: by mail-lj1-f195.google.com with SMTP id 21so7845087ljr.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 04:08:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n53lGt+YzNiyRiDyZo76uBdQF7IlqBjHXPOJ4vHrqxM=;
+        b=vFaMtUKtLpQSTyGB1kwgIGUx3nSPgfGss6k8BSSqjQpqh6HDYV39976MRwkvxutXzZ
+         MfwNPyjFY8zn7m1sNwuk6+1NmmYS+MuWaergGtY5QiPgaxvSbjYY70HdBawELXXRgD9n
+         mibvueJC6kcfT9egfIx58Z3UROFxYZfprxn5sHYRdPNMcVxePgnyFEc++QO+XMdVr3Wh
+         IKXP5p2P6jJou3YHdOtzwnBXAJlBl6Nx4Q36L46YXhw2e+OsMo1EHUJMAOuA9v25an6d
+         UMJR79vfy/CaGRLfJBdqATu8wj7d05zJPTSmCH6uZJNcz0O94kFL9dYhzU/zt4KUXefr
+         TOtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n53lGt+YzNiyRiDyZo76uBdQF7IlqBjHXPOJ4vHrqxM=;
+        b=Ak6bAd0Yiie2LsWWLGeoBU/4NG3W32gaIic9oWXBVpc34SnbR2wI4eb8eEI5Xz8Frs
+         aIBQ8M0IO8cUaIhJcK0cI/4STZgEUWxuXopm1PZjz5DrdXrMu+YwzN8F5L1anmOi3eEc
+         isAFWU4kSqwQPvfmG1dHajXT5tGSJrfI6Sj3zCD619lw5IbTEZiVmnnEYIyhP+1O0moS
+         kGqPTzTITxRJpmNfAFxAEjEfMr/kWBq4i1loWlFb+VQstpWZ6/b7bMqcAImUCsVr3Cca
+         JHhZ+jtBbn9RKIS0tlTUJT28yzj7vT3fnH80H7dUdwViXYK3NvrIxcHxKNXXkQTMdtQi
+         wbWg==
+X-Gm-Message-State: APjAAAUXxyUjia8tueaNuTGljyxcxpO8Xl1DJ2Ivyoxi9CNvH5Pc/+rT
+        ZRei+IMjc3va4mQcnBpFdnT1Gp7/mXen/1EZUHD3dw==
+X-Google-Smtp-Source: APXvYqwYl6M8KJAY3zpIafM4EqB+qy8opvw7tnEAbVEfzA/pmcP4QnqZojgcUzQslA2Rcy3AbjG8nZzR7MwkxaiuJmw=
+X-Received: by 2002:a05:651c:208:: with SMTP id y8mr1812145ljn.36.1575461293758;
+ Wed, 04 Dec 2019 04:08:13 -0800 (PST)
+MIME-Version: 1.0
+References: <CALAqxLXrWWnWi32BR1F8JOtrGt1y2Kzj__zWopLx1ZfRy3EZKA@mail.gmail.com>
+ <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
+ <20191204094216.u7yld5r3zelp22lf@e107158-lin.cambridge.arm.com>
+ <20191204100925.GA15727@linaro.org> <629cca09-dde7-5d77-42e1-c68f2c1820d2@arm.com>
+In-Reply-To: <629cca09-dde7-5d77-42e1-c68f2c1820d2@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 4 Dec 2019 13:08:02 +0100
+Message-ID: <CAKfTPtDZLFn7msw88pTE_wr-BJo2ErqxpOW+ah0Jjcg6vE3SLw@mail.gmail.com>
+Subject: Re: Null pointer crash at find_idlest_group on db845c w/ linus/master
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Qais Yousef <qais.yousef@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Quentin Perret <qperret@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ID index event is used when decoding, but can result in the
-following error:
+On Wed, 4 Dec 2019 at 11:41, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> On 04/12/2019 10:09, Vincent Guittot wrote:
+> > Now, we test that a group has at least one allowed CPU for the task so we
+> > could skip the local group with the correct/wrong p->cpus_ptr
+> >
+> > The path is used for fork/exec ibut also for wakeup path for b.L when the task doesn't fit in the CPUs
+> >
+> > So we can probably imagine a scenario where we change task affinity while
+> > sleeping. If the wakeup happens on a CPU that belongs to the group that is not
+> > allowed, we can imagine that we skip the local_group
+> >
+>
+> Shoot, I think you're right. If it is the local group that is NULL, then
+> we most likely splat on:
+>
+>                 if (local->sgc->max_capacity >= idlest->sgc->max_capacity)
+>                         return NULL;
+>
+> We don't splat before because we just use local_sgs, which is uninitialized
+> but on the stack.
+>
+> Also; does it really have to involve an affinity "race"? AFAIU affinity
+> could have been changed a while back, but the waking CPU isn't allowed
+> so we skip the local_group (in simpler cases where each CPU is a group).
 
- $ perf record --aux-sample -e '{intel_pt//,branch-misses}:u' ls
- $ perf inject -i perf.data -o perf.data.inj --itrace=be
- $ perf script -i perf.data.inj
- 0x1020 [0x410]: failed to process type: 69 [No such file or directory]
+In fact, this will depend of the uninitialized values of local_sgs. I
+have been able to reproduce the situation where we skip local group
+but not to trigger the crash because the values already in the stack
+don't trigger the misfit comparison.
 
-Fix by having 'perf inject' drop the ID index event.
-
-Fixes: c0a6de06c446 ("perf record: Add support for AUX area sampling")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/builtin-inject.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
-
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 9664a72a089d..7e124a7b8bfd 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -403,17 +403,6 @@ static int perf_event__repipe_tracing_data(struct perf_session *session,
- 	return err;
- }
- 
--static int perf_event__repipe_id_index(struct perf_session *session,
--				       union perf_event *event)
--{
--	int err;
--
--	perf_event__repipe_synth(session->tool, event);
--	err = perf_event__process_id_index(session, event);
--
--	return err;
--}
--
- static int dso__read_build_id(struct dso *dso)
- {
- 	if (dso->has_build_id)
-@@ -651,7 +640,7 @@ static int __cmd_inject(struct perf_inject *inject)
- 		inject->tool.comm	    = perf_event__repipe_comm;
- 		inject->tool.namespaces	    = perf_event__repipe_namespaces;
- 		inject->tool.exit	    = perf_event__repipe_exit;
--		inject->tool.id_index	    = perf_event__repipe_id_index;
-+		inject->tool.id_index	    = perf_event__process_id_index;
- 		inject->tool.auxtrace_info  = perf_event__process_auxtrace_info;
- 		inject->tool.auxtrace	    = perf_event__process_auxtrace;
- 		inject->tool.aux	    = perf_event__drop_aux;
--- 
-2.17.1
-
+I  wait for John feedback to confirm that this fix his problem and
+will send a clean version of the patch
+>
+>
