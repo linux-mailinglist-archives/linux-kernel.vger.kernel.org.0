@@ -2,108 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A11321128D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 11:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 020681128D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 11:06:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfLDKF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 05:05:56 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43516 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbfLDKFy (ORCPT
+        id S1727577AbfLDKGr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Dec 2019 05:06:47 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:55142 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726893AbfLDKGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 05:05:54 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d16so3153195wre.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 02:05:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aa/PDEF2Bw8Qk1nIOGLiLyjqeTR32fS388AjMQcdSb0=;
-        b=oKCE/2aTpDTBQsuRcdkMMCSiM2z0PXLpYXwRx15wB48GBkdc40Gmkxk+aG+syH+tZi
-         VBb11f441bHNjn8aWMisfJrIfaRHpci+icNxQq3NkEEDr/stCmEUXlJzUv2pVzWvnjmU
-         vvq/+AEB9Rgf/fm6j5U0xDTPpbsJo+/ToiQrxSiviwUrcwR7QOLVQiqd/dL4C5CCFIRo
-         bAk9itMr+K54hIsYMeDuo4E0yyFWabAmhj0icz7oLIrMhMYWmFX5oKwqoVbcPJzS1Xmr
-         z/OmE0NeJ3bwJS2Odn9aSbIVjjSuUUu2S6Ol5LQyAVYUjUdwzx0yqL7wCSYC02OP1OIp
-         yLHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aa/PDEF2Bw8Qk1nIOGLiLyjqeTR32fS388AjMQcdSb0=;
-        b=P7TeFK6gDr6Y+phQS9bhMmZsauQlc15qRLtQMhGzV7kfmRZqbz+QWHeHMUowgXVy35
-         2mCKDyakfENmCawiKmMSuaBSoqeDcHeLOaXnFcEYT9rGkOuExi8RYLW4JxDzDBCB2K8d
-         7iHD1wB+b5A5Sd7BYEL3z3NteBvDTFWKwNkeNLvcclaroSHfLspMJ8v34v6LTVZvGJml
-         i7AI4jHeKqUWNXi/Yde+r7Kk71AbIZ5I/sZfFqclmToKSJVV8YC56rJIhf362uPXhOU0
-         b6lp1zXX3LkTvYoHY9gwgo0mnSvw/6hvgk04l9OBYlMT0/cBDpQWZ99MocaR/z+76/Tf
-         QskQ==
-X-Gm-Message-State: APjAAAUFBzyaLN5V1wQKtelb8vFcw6u8UJActw3A2BXlJFIeT0eKL+YG
-        HHOYWVD08MjXKqfXKoe5ShQ=
-X-Google-Smtp-Source: APXvYqyq9PEWAPLkLOxxiLhP1cQpA57zORVCDrYZzafsKZqFMGCiTllY0gW8wJGczxRRihbNnczxXA==
-X-Received: by 2002:a5d:62d0:: with SMTP id o16mr2933755wrv.197.1575453952707;
-        Wed, 04 Dec 2019 02:05:52 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id w188sm6473193wmg.32.2019.12.04.02.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 02:05:51 -0800 (PST)
-Date:   Wed, 4 Dec 2019 11:05:50 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -tip] kprobes: Lock rcu_read_lock() while searching kprobe
-Message-ID: <20191204100549.GB114697@gmail.com>
-References: <157527193358.11113.14859628506665612104.stgit@devnote2>
- <20191202210854.GD17234@google.com>
- <20191203071329.GC115767@gmail.com>
- <20191203175712.GI2889@paulmck-ThinkPad-P72>
+        Wed, 4 Dec 2019 05:06:46 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-230-uXAw4WH1P6aWgBVH6XDs0A-1; Wed, 04 Dec 2019 10:06:43 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 4 Dec 2019 10:06:42 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 4 Dec 2019 10:06:42 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: RE: [PATCH] x86: Optimise x86 IP checksum code
+Thread-Topic: [PATCH] x86: Optimise x86 IP checksum code
+Thread-Index: AdWpzyHtgEC6Bj0rR0OBHDPJtRbpCgAtCXoAAADaK7A=
+Date:   Wed, 4 Dec 2019 10:06:42 +0000
+Message-ID: <4eb6bf799d5848e6829a89bae96c359e@AcuMS.aculab.com>
+References: <c92db041c78e4d81a70aaf4249393901@AcuMS.aculab.com>
+ <20191204091450.GQ2844@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191204091450.GQ2844@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203175712.GI2889@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: uXAw4WH1P6aWgBVH6XDs0A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Paul E. McKenney <paulmck@kernel.org> wrote:
-
-> >  * This list-traversal primitive may safely run concurrently with
-> >  * the _rcu list-mutation primitives such as hlist_add_head_rcu()
-> >  * as long as the traversal is guarded by rcu_read_lock().
-> >  */
-> > #define hlist_for_each_entry_rcu(pos, head, member, cond...)            \
-> > 
-> > is actively harmful. Why is it there?
+From: Peter Zijlstra
+> Sent: 04 December 2019 09:15
+> On Tue, Dec 03, 2019 at 11:52:09AM +0000, David Laight wrote:
 > 
-> For cases where common code might be invoked both from the reader
-> (with RCU protection) and from the updater (protected by some
-> lock).  This common code can then use the optional argument to
-> hlist_for_each_entry_rcu() to truthfully tell lockdep that it might be
-> called with either form of protection in place.
+> > I did get about 12 bytes/clock using adox/adcx but that would need run-time
+> > patching and some AMD cpu that support the instructions run them very slowly.
 > 
-> This also combines with the __rcu tag used to mark RCU-protected
-> pointers, in which case sparse complains when a non-RCU API is applied
-> to these pointers, to get back to your earlier question about use of
-> hlist_for_each_entry_rcu() within the update-side lock.
-> 
-> But what are you seeing as actively harmful about all of this?
-> What should we be doing instead?
+> Isn't that was we have alternative_call() for?
 
-Yeah, so basically in the write-locked path hlist_for_each_entry() 
-generates (slightly) more efficient code than hlist_for_each_entry_rcu(), 
-correct?
+You'd need to do a run-time check even if the instructions are supported.
 
-Also, the principle of passing warning flags around is problematic - but 
-I can see the point in this specific case.
+Getting the ad[oc]x loop to work is a lot of effort for little gain.
+I only tested the loop, not the alignment code - which is tricky since
+the loop needs significant unrolling (on Intel cpu adc and jmp need ports
+0 or 5 - so you can only do two per clock).
+It might be worth doing it on AMD Ryzen where you can use the 'loop'
+instruction - but then you'd need to setup multiple base registers and
+would be processing memory backwards (loses prefetches).
 
-Thanks,
+Quite likely you'd need a reasonably long buffer to get any benefit.
+(a few kb at least).
 
-	Ingo
+In any case, even in 2004 (the last time this code was changed in git)
+it was pointed out that performance isn't that critical.
+Interestingly in 2004 only AMD cpus were likely to run the adc chain
+at 1 instruction/clock - all the intel ones took 2.
+4 bytes/clock can be trivially achieved in C by adding 32 bit words
+to a 64 bit register.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
