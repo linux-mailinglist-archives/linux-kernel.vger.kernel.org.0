@@ -2,72 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C7211237B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9758E112382
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfLDHUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:20:12 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12645 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725958AbfLDHUL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:20:11 -0500
-X-UUID: e75ae8e96c784b838a1fb6fd2ce691bf-20191204
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=32Tnt40dZXjr4Tv/qzDO3kCW1vUpG7jJjRmXOdyYdQ8=;
-        b=HWjCPuitjcfQB8ZPKlR8Td4sa7eb3gOkNUSgr1LjwBjcAfiMMmsTOtTMpVWNI8+e3Vtsm0KWwMpRw9wOMONdHW7NEyhPdlKNg//xNqwgx6tB0JdXXrJbznL5lb8MqgdDknKNXWQoaRcNdm75VAz/hgAeg8szzsBkBJEdRsYsQQU=;
-X-UUID: e75ae8e96c784b838a1fb6fd2ce691bf-20191204
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <chaotian.jing@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 2041926307; Wed, 04 Dec 2019 15:20:02 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 4 Dec 2019 15:19:49 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 4 Dec 2019 15:19:06 +0800
-From:   Chaotian Jing <chaotian.jing@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <hsinyi@google.com>
-Subject: [PATCH] mmc: mediatek: fix CMD_TA to 2 for MT8173 HS200/HS400 mode
-Date:   Wed, 4 Dec 2019 15:19:58 +0800
-Message-ID: <20191204071958.18553-1-chaotian.jing@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        id S1727257AbfLDHVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:21:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfLDHVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 02:21:38 -0500
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABE8C207DD;
+        Wed,  4 Dec 2019 07:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575444097;
+        bh=Q7UQtyjeL4VxDdPZbdi+q/RbmUIJQHrhYLQLjTPSM8w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=scjli08YhzbQ71a5MiUEEXeyW3ha1zKopSZljr0w79UvE+JTYeSW7guqDE4URontH
+         cY4S1vi9qNsekE213yRoedqvPleTmgApZFv+7aVcKRsKsIet2wXlvZhif8eBGkljHu
+         jedJV77FMHCj0FOG0ax9xRsOg+D3AIIVckXKlZu4=
+Received: by mail-lj1-f180.google.com with SMTP id d20so6759750ljc.12;
+        Tue, 03 Dec 2019 23:21:36 -0800 (PST)
+X-Gm-Message-State: APjAAAUCHuefyBShJ8ntz8fW/idFBVfOmOIytUtDJZcbfAzQBSX1AHgY
+        cvCgWn6Oet7LKliXGab1CIe+bVMJgR4/DHT42/Y=
+X-Google-Smtp-Source: APXvYqwNNK1x1NLVWqTX1pUtd2l/D+1CGp50LeHoWr4EsfqECHGq9Ol2fRGuTlaaBQ9PWKKVzxVNQbuhTjUQLBKNMoM=
+X-Received: by 2002:a2e:9d9a:: with SMTP id c26mr981936ljj.225.1575444094869;
+ Tue, 03 Dec 2019 23:21:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20191202152520.27558-1-angus@akkea.ca> <20191202152520.27558-2-angus@akkea.ca>
+In-Reply-To: <20191202152520.27558-2-angus@akkea.ca>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 4 Dec 2019 15:21:23 +0800
+X-Gmail-Original-Message-ID: <CAJKOXPcpW_uK=Y5+S0YmabrkAQ87vQZrjC5g3cB7WENbW49nPg@mail.gmail.com>
+Message-ID: <CAJKOXPcpW_uK=Y5+S0YmabrkAQ87vQZrjC5g3cB7WENbW49nPg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] power: supply: max17042: add MAX17055 support
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kernel@puri.sm
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dGhlcmUgaXMgYSBjaGFuY2UgdGhhdCBhbHdheXMgZ2V0IHJlc3BvbnNlIENSQyBlcnJvciBhZnRl
-ciBIUzIwMCB0dW5pbmcsDQp0aGUgcmVhc29uIGlzIHRoYXQgbmVlZCBzZXQgQ01EX1RBIHRvIDIu
-IHRoaXMgbW9kaWZpY2F0aW9uIGlzIG9ubHkgZm9yDQpNVDgxNzMuDQoNClNpZ25lZC1vZmYtYnk6
-IENoYW90aWFuIEppbmcgPGNoYW90aWFuLmppbmdAbWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVy
-cy9tbWMvaG9zdC9tdGstc2QuYyB8IDIgKysNCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jIGIvZHJpdmVycy9t
-bWMvaG9zdC9tdGstc2QuYw0KaW5kZXggMTg5ZTQyNjc0ZDg1Li4wMTBmZTI5YTQ4ODggMTAwNjQ0
-DQotLS0gYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jDQorKysgYi9kcml2ZXJzL21tYy9ob3N0
-L210ay1zZC5jDQpAQCAtMjI4LDYgKzIyOCw3IEBADQogI2RlZmluZSBNU0RDX1BBVENIX0JJVF9T
-UENQVVNIICAgICgweDEgPDwgMjkpCS8qIFJXICovDQogI2RlZmluZSBNU0RDX1BBVENIX0JJVF9E
-RUNSQ1RNTyAgICgweDEgPDwgMzApCS8qIFJXICovDQogDQorI2RlZmluZSBNU0RDX1BBVENIX0JJ
-VDFfQ01EVEEgICAgICgweDcgPDwgMykgICAgLyogUlcgKi8NCiAjZGVmaW5lIE1TRENfUEFUQ0hf
-QklUMV9TVE9QX0RMWSAgKDB4ZiA8PCA4KSAgICAvKiBSVyAqLw0KIA0KICNkZWZpbmUgTVNEQ19Q
-QVRDSF9CSVQyX0NGR1JFU1AgICAoMHgxIDw8IDE1KSAgIC8qIFJXICovDQpAQCAtMTg4MSw2ICsx
-ODgyLDcgQEAgc3RhdGljIGludCBoczQwMF90dW5lX3Jlc3BvbnNlKHN0cnVjdCBtbWNfaG9zdCAq
-bW1jLCB1MzIgb3Bjb2RlKQ0KIA0KIAkvKiBzZWxlY3QgRU1NQzUwIFBBRCBDTUQgdHVuZSAqLw0K
-IAlzZHJfc2V0X2JpdHMoaG9zdC0+YmFzZSArIFBBRF9DTURfVFVORSwgQklUKDApKTsNCisJc2Ry
-X3NldF9maWVsZChob3N0LT5iYXNlICsgTVNEQ19QQVRDSF9CSVQxLCBNU0RDX1BBVENIX0JJVDFf
-Q01EVEEsIDIpOw0KIA0KIAlpZiAobW1jLT5pb3MudGltaW5nID09IE1NQ19USU1JTkdfTU1DX0hT
-MjAwIHx8DQogCSAgICBtbWMtPmlvcy50aW1pbmcgPT0gTU1DX1RJTUlOR19VSFNfU0RSMTA0KQ0K
-LS0gDQoyLjE4LjANCg==
+On Mon, 2 Dec 2019 at 23:27, Angus Ainslie (Purism) <angus@akkea.ca> wrote:
+>
+> The MAX17055 is very similar to the MAX17042 so extend the driver.
+>
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> ---
+>  drivers/power/supply/max17042_battery.c | 15 ++++++--
+>  include/linux/power/max17042_battery.h  | 48 ++++++++++++++++++++++++-
+>  2 files changed, 59 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+> index 0dfad2cf13fe..cecf6e2d8329 100644
+> --- a/drivers/power/supply/max17042_battery.c
+> +++ b/drivers/power/supply/max17042_battery.c
+> @@ -282,6 +282,8 @@ static int max17042_get_property(struct power_supply *psy,
+>         case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+>                 if (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17042)
+>                         ret = regmap_read(map, MAX17042_V_empty, &data);
+> +               else if (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17055)
+> +                       ret = regmap_read(map, MAX17055_V_empty, &data);
+>                 else
+>                         ret = regmap_read(map, MAX17047_V_empty, &data);
+>                 if (ret < 0)
+> @@ -627,7 +629,8 @@ static void max17042_write_config_regs(struct max17042_chip *chip)
+>                         config->filter_cfg);
+>         regmap_write(map, MAX17042_RelaxCFG, config->relax_cfg);
+>         if (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17047 ||
+> -                       chip->chip_type == MAXIM_DEVICE_TYPE_MAX17050)
+> +                       chip->chip_type == MAXIM_DEVICE_TYPE_MAX17050 ||
+> +                       chip->chip_type == MAXIM_DEVICE_TYPE_MAX17055)
+>                 regmap_write(map, MAX17047_FullSOCThr,
+>                                                 config->full_soc_thresh);
+>  }
+> @@ -758,6 +761,8 @@ static inline void max17042_override_por_values(struct max17042_chip *chip)
+>
+>         if (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17042)
+>                 max17042_override_por(map, MAX17042_V_empty, config->vempty);
+> +       if (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17055)
+> +               max17042_override_por(map, MAX17055_V_empty, config->vempty);
+>         else
+>                 max17042_override_por(map, MAX17047_V_empty, config->vempty);
+>         max17042_override_por(map, MAX17042_TempNom, config->temp_nom);
+> @@ -765,7 +770,8 @@ static inline void max17042_override_por_values(struct max17042_chip *chip)
+>         max17042_override_por(map, MAX17042_FCTC, config->fctc);
+>         max17042_override_por(map, MAX17042_RCOMP0, config->rcomp0);
+>         max17042_override_por(map, MAX17042_TempCo, config->tcompc0);
+> -       if (chip->chip_type) {
+> +       if (chip->chip_type &&
+> +           (chip->chip_type != MAXIM_DEVICE_TYPE_MAX17055)) {
 
+Since the list is growing, I would prefer here similar approach as in
+max17042_write_config_regs() - explicitly list devices (white list,
+not black list).
+
+>                 max17042_override_por(map, MAX17042_EmptyTempCo,
+>                                                 config->empty_tempco);
+>                 max17042_override_por(map, MAX17042_K_empty0,
+> @@ -929,7 +935,8 @@ max17042_get_default_pdata(struct max17042_chip *chip)
+>         if (!pdata)
+>                 return pdata;
+>
+> -       if (chip->chip_type != MAXIM_DEVICE_TYPE_MAX17042) {
+> +       if (chip->chip_type != MAXIM_DEVICE_TYPE_MAX17042 &&
+> +           chip->chip_type != MAXIM_DEVICE_TYPE_MAX17055) {
+
+The same.
+
+Best regards,
+Krzysztof
