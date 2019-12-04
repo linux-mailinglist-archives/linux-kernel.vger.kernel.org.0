@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F6011326B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5EB111333F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbfLDSIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:08:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59646 "EHLO mail.kernel.org"
+        id S1731791AbfLDSNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:13:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730108AbfLDSIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:08:14 -0500
+        id S1731529AbfLDSNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:13:40 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 186FD2084B;
-        Wed,  4 Dec 2019 18:08:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D1620674;
+        Wed,  4 Dec 2019 18:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482893;
-        bh=/n3t1xx4E6vJKYu04wiFuxWUGEF1QQRoib6GpmcHQWw=;
+        s=default; t=1575483219;
+        bh=6N6utb28xFcbw1WnBmmazrCLf9h//ber+CLlhqfmkag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ijsM9bnsxXr/H4+Kx0viNVKbHRDhpPDd6NrJOsxh+dfKa2+op6RQ3DlCgW3cVReu2
-         H6NLDOA6S2fGUxHen13Os5IgWHErHbQ8bSmtV9Y51G8mo8fxYq8/v00D8JtBzzCMql
-         eJk+MFdvO9BFe6+Dg3pAWId+qPKH4hJZW5EprAc4=
+        b=hF7+1AV0iiwtvWl8WPPcVM2ukel8Xhp9M4dfdqbM3ed8SK5blH+YI+qEfwe1AhshR
+         nspRI3s7p4AfW2BPw7woKH8hiPZDynIDafGCyCef3EHOC4/iahfp89PzufTKT4XZHJ
+         XqJAd5fYwtwUQ2n8VFcGHbB/KTWcIS6Ip6Te34MU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e3b35fe7918ff0ee474e@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.14 176/209] sctp: cache netns in sctp_ep_common
-Date:   Wed,  4 Dec 2019 18:56:28 +0100
-Message-Id: <20191204175335.604579240@linuxfoundation.org>
+        stable@vger.kernel.org, Huang Shijie <sjhuang@iluvatar.ai>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Skidanov <alexey.skidanov@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 084/125] lib/genalloc.c: use vzalloc_node() to allocate the bitmap
+Date:   Wed,  4 Dec 2019 18:56:29 +0100
+Message-Id: <20191204175324.156152919@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,110 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Huang Shijie <sjhuang@iluvatar.ai>
 
-[ Upstream commit 312434617cb16be5166316cf9d08ba760b1042a1 ]
+[ Upstream commit 6862d2fc81859f88c1f3f660886427893f2b4f3f ]
 
-This patch is to fix a data-race reported by syzbot:
+Some devices may have big memory on chip, such as over 1G.  In some
+cases, the nbytes maybe bigger then 4M which is the bounday of the
+memory buddy system (4K default).
 
-  BUG: KCSAN: data-race in sctp_assoc_migrate / sctp_hash_obj
+So use vzalloc_node() to allocate the bitmap.  Also use vfree to free
+it.
 
-  write to 0xffff8880b67c0020 of 8 bytes by task 18908 on cpu 1:
-    sctp_assoc_migrate+0x1a6/0x290 net/sctp/associola.c:1091
-    sctp_sock_migrate+0x8aa/0x9b0 net/sctp/socket.c:9465
-    sctp_accept+0x3c8/0x470 net/sctp/socket.c:4916
-    inet_accept+0x7f/0x360 net/ipv4/af_inet.c:734
-    __sys_accept4+0x224/0x430 net/socket.c:1754
-    __do_sys_accept net/socket.c:1795 [inline]
-    __se_sys_accept net/socket.c:1792 [inline]
-    __x64_sys_accept+0x4e/0x60 net/socket.c:1792
-    do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
-    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-  read to 0xffff8880b67c0020 of 8 bytes by task 12003 on cpu 0:
-    sctp_hash_obj+0x4f/0x2d0 net/sctp/input.c:894
-    rht_key_get_hash include/linux/rhashtable.h:133 [inline]
-    rht_key_hashfn include/linux/rhashtable.h:159 [inline]
-    rht_head_hashfn include/linux/rhashtable.h:174 [inline]
-    head_hashfn lib/rhashtable.c:41 [inline]
-    rhashtable_rehash_one lib/rhashtable.c:245 [inline]
-    rhashtable_rehash_chain lib/rhashtable.c:276 [inline]
-    rhashtable_rehash_table lib/rhashtable.c:316 [inline]
-    rht_deferred_worker+0x468/0xab0 lib/rhashtable.c:420
-    process_one_work+0x3d4/0x890 kernel/workqueue.c:2269
-    worker_thread+0xa0/0x800 kernel/workqueue.c:2415
-    kthread+0x1d4/0x200 drivers/block/aoe/aoecmd.c:1253
-    ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:352
-
-It was caused by rhashtable access asoc->base.sk when sctp_assoc_migrate
-is changing its value. However, what rhashtable wants is netns from asoc
-base.sk, and for an asoc, its netns won't change once set. So we can
-simply fix it by caching netns since created.
-
-Fixes: d6c0256a60e6 ("sctp: add the rhashtable apis for sctp global transport hashtable")
-Reported-by: syzbot+e3b35fe7918ff0ee474e@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/20181225015701.6289-1-sjhuang@iluvatar.ai
+Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexey Skidanov <alexey.skidanov@intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/sctp/structs.h |    3 +++
- net/sctp/associola.c       |    1 +
- net/sctp/endpointola.c     |    1 +
- net/sctp/input.c           |    4 ++--
- 4 files changed, 7 insertions(+), 2 deletions(-)
+ lib/genalloc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/net/sctp/structs.h
-+++ b/include/net/sctp/structs.h
-@@ -1181,6 +1181,9 @@ struct sctp_ep_common {
- 	/* What socket does this endpoint belong to?  */
- 	struct sock *sk;
+diff --git a/lib/genalloc.c b/lib/genalloc.c
+index 5deb25c40a5a1..f365d71cdc774 100644
+--- a/lib/genalloc.c
++++ b/lib/genalloc.c
+@@ -187,7 +187,7 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
+ 	int nbytes = sizeof(struct gen_pool_chunk) +
+ 				BITS_TO_LONGS(nbits) * sizeof(long);
  
-+	/* Cache netns and it won't change once set */
-+	struct net *net;
-+
- 	/* This is where we receive inbound chunks.  */
- 	struct sctp_inq	  inqueue;
+-	chunk = kzalloc_node(nbytes, GFP_KERNEL, nid);
++	chunk = vzalloc_node(nbytes, nid);
+ 	if (unlikely(chunk == NULL))
+ 		return -ENOMEM;
  
---- a/net/sctp/associola.c
-+++ b/net/sctp/associola.c
-@@ -80,6 +80,7 @@ static struct sctp_association *sctp_ass
- 	/* Discarding const is appropriate here.  */
- 	asoc->ep = (struct sctp_endpoint *)ep;
- 	asoc->base.sk = (struct sock *)sk;
-+	asoc->base.net = sock_net(sk);
+@@ -251,7 +251,7 @@ void gen_pool_destroy(struct gen_pool *pool)
+ 		bit = find_next_bit(chunk->bits, end_bit, 0);
+ 		BUG_ON(bit < end_bit);
  
- 	sctp_endpoint_hold(asoc->ep);
- 	sock_hold(asoc->base.sk);
---- a/net/sctp/endpointola.c
-+++ b/net/sctp/endpointola.c
-@@ -165,6 +165,7 @@ static struct sctp_endpoint *sctp_endpoi
- 
- 	/* Remember who we are attached to.  */
- 	ep->base.sk = sk;
-+	ep->base.net = sock_net(sk);
- 	sock_hold(ep->base.sk);
- 
- 	return ep;
---- a/net/sctp/input.c
-+++ b/net/sctp/input.c
-@@ -813,7 +813,7 @@ static inline int sctp_hash_cmp(struct r
- 	if (!sctp_transport_hold(t))
- 		return err;
- 
--	if (!net_eq(sock_net(t->asoc->base.sk), x->net))
-+	if (!net_eq(t->asoc->base.net, x->net))
- 		goto out;
- 	if (x->lport != htons(t->asoc->base.bind_addr.port))
- 		goto out;
-@@ -828,7 +828,7 @@ static inline __u32 sctp_hash_obj(const
- {
- 	const struct sctp_transport *t = data;
- 	const union sctp_addr *paddr = &t->ipaddr;
--	const struct net *net = sock_net(t->asoc->base.sk);
-+	const struct net *net = t->asoc->base.net;
- 	__be16 lport = htons(t->asoc->base.bind_addr.port);
- 	__u32 addr;
- 
+-		kfree(chunk);
++		vfree(chunk);
+ 	}
+ 	kfree_const(pool->name);
+ 	kfree(pool);
+-- 
+2.20.1
+
 
 
