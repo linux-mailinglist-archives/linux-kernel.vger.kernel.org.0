@@ -2,97 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4C6113104
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6877D11310C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbfLDRpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:45:51 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:49952 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728216AbfLDRpr (ORCPT
+        id S1728267AbfLDRq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:46:29 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40691 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfLDRq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:45:47 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4HjduI077775;
-        Wed, 4 Dec 2019 11:45:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575481539;
-        bh=y0bu3gi4LiyPCwtS8SHQGzSTP8+Hg44usGmaPjP+Eg8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=IkLYDaJW8E6kT7KeQMbXhGTZCYonCP+wcdSTDUnG+8BqYmk34o1cDXmXq1pHLRtdv
-         K0zV8tJM8EGIeGywbbgeBULwNCHNgtD6GOUnXBOvI3ElZgAE99V1A81bZrvK7QTExz
-         dKGX2TtdlnTCgw4bercNc4wfU8eis1F1frpU3ei8=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4Hjd8f113290
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Dec 2019 11:45:39 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
- 2019 11:45:39 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Dec 2019 11:45:39 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4HjcN4019620;
-        Wed, 4 Dec 2019 11:45:39 -0600
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     Randy Dunlap <rdunlap@infradead.org>, <netdev@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Tony Lindgren <tony@atomide.com>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH 2/2] arm: omap2plus_defconfig: enable NET_SWITCHDEV
-Date:   Wed, 4 Dec 2019 19:45:33 +0200
-Message-ID: <20191204174533.32207-3-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191204174533.32207-1-grygorii.strashko@ti.com>
-References: <20191204174533.32207-1-grygorii.strashko@ti.com>
+        Wed, 4 Dec 2019 12:46:29 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g6so24530plp.7;
+        Wed, 04 Dec 2019 09:46:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+Ef0Di1Mlcu80Pa6OnzfRhYDxxXa3qHYCdrx2xSTUmc=;
+        b=G4LQ6SqcaxFkJGoL1gpd4ycNNviowxOzXjMa51EICkpxjrYYKiJD3loZwTL+Gkv4It
+         8tnh8Jh31009rAnHy7t5m5o9L4JQhj8UnsU/g/TZX+KIIy7cF4uxsqWlPNw14XbfGt5L
+         ZfMFGGCNIBRexdOkiAXYyvTNGmrQRg1Ekd0r1RaXg1PWZBupfKwBcjUCD9n0bIG3JdN2
+         /uZc71iqkVP4G/1nsUfAbPkpEpXihYZ2kT1OSmLohRYMzGE0oONmwZ79plxW1S9qLJDm
+         e6wmAkszZTetCNq+go9X7sZJxsGFbn1A+Y21YkkSpp0UCJO3nHHsetNaD51Gd59goGP5
+         ei9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+Ef0Di1Mlcu80Pa6OnzfRhYDxxXa3qHYCdrx2xSTUmc=;
+        b=sTndvu00bd62VfRAT3e0Z792RxLVXA5QZNESEXgFZgL+5B+dXkKoRgFdewu2JzdOs0
+         SNPFM0hP2MoId3c5PG9U353WYuJYlGlORIgGPrXbRWkfm8U8APBobWB+22bzndSiB384
+         4H7eN/2z40dEbhnT9+SlgfaTpKXY/ckFb2YwK8maQkwxHhO3B5MpcRFaPZwE2IizvcpT
+         QwMZWAMKKOjj3ajNI1/urofloQ0anvPN2gAKIBp2CnBt9OBqXJwg05G4X0U3P55UKwvj
+         ydbBwEL2tbWaCv1TGSuxkWXZZsk7R/g7AX0DtVad3F6cQPwrGk4MZNgiR+8lakGP1q0C
+         PkFA==
+X-Gm-Message-State: APjAAAW5IDu3lWaguT4Dn5ySM3jVgOkVdHIT8qLkMOCwazL8mFSSamgN
+        pCT5t3KGsVEoL5F2DZxmvdg+mwjzidmrLZKIiBA=
+X-Google-Smtp-Source: APXvYqxiM25mDXDKoFbGOZwJwH0bs15OaVwiQHsUdLywdLhGhJgTIeOLfUI/3u70DWdr0QFAtP0DkmvBfaWiUg2YCwo=
+X-Received: by 2002:a17:902:9308:: with SMTP id bc8mr4717449plb.18.1575481588283;
+ Wed, 04 Dec 2019 09:46:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191204101042.4275-1-cleger@kalray.eu> <CAHp75VcMm3PPAgfFPLzVwg_RN7_vQfRmufvWiPOkYaErdGiNsw@mail.gmail.com>
+ <2116673293.95313020.1575466238935.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <2116673293.95313020.1575466238935.JavaMail.zimbra@kalray.eu>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 4 Dec 2019 19:46:18 +0200
+Message-ID: <CAHp75VdrsM8hzKdOo0AnRoEeTK-KKy-A-Aj_7yuEp9ZMNUjZ7g@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add pinctrl support for dwapb gpio driver
+To:     =?UTF-8?Q?Cl=C3=A9ment_Leger?= <cleger@kalray.eu>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Hoan Tran <hoan@os.amperecomputing.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TI_CPSW_SWITCHDEV definition in Kconfig was changed from "select
-NET_SWITCHDEV" to "depends on NET_SWITCHDEV", and therefore it is required
-to explicitelly enable NET_SWITCHDEV config option in omap2plus_defconfig.
+On Wed, Dec 4, 2019 at 3:30 PM Cl=C3=A9ment Leger <cleger@kalray.eu> wrote:
+> ----- On 4 Dec, 2019, at 13:24, Andy Shevchenko andy.shevchenko@gmail.com=
+ wrote:
+> > On Wed, Dec 4, 2019 at 12:13 PM Clement Leger <cleger@kalray.eu> wrote:
 
-Fixes: 3727d259ddaf ("arm: omap2plus_defconfig: enable new cpsw switchdev driver")
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- arch/arm/configs/omap2plus_defconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> > This series misses at least GPIO ACPI maintainers to be Cc'ed to for
+> > the certain changes.
+> > Moreover, I would like to see entire series in the future in my mailbox=
+.
+>
+> Sorry, I messed up with get_maintainer.pl while sending the serie.
 
-diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 89cce8d4bc6b..7bbef86a4e76 100644
---- a/arch/arm/configs/omap2plus_defconfig
-+++ b/arch/arm/configs/omap2plus_defconfig
-@@ -92,6 +92,7 @@ CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
- CONFIG_NETFILTER=y
- CONFIG_PHONET=m
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- CONFIG_CAN_C_CAN=m
- CONFIG_CAN_C_CAN_PLATFORM=m
-@@ -182,6 +183,7 @@ CONFIG_SMSC911X=y
- # CONFIG_NET_VENDOR_STMICRO is not set
- CONFIG_TI_DAVINCI_EMAC=y
- CONFIG_TI_CPSW=y
-+CONFIG_TI_CPSW_SWITCHDEV=y
- CONFIG_TI_CPTS=y
- # CONFIG_NET_VENDOR_VIA is not set
- # CONFIG_NET_VENDOR_WIZNET is not set
-@@ -554,4 +556,3 @@ CONFIG_DEBUG_INFO_DWARF4=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_SCHEDSTATS=y
- # CONFIG_DEBUG_BUGVERBOSE is not set
--CONFIG_TI_CPSW_SWITCHDEV=y
--- 
-2.17.1
+It's not your fault. I sent a patch to update MAINTAINERS to include
+header file under GPIO ACPI record.
 
+> I can resend it properly if needed.
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
