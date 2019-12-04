@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C30C711329D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB261133E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731183AbfLDSKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:10:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36138 "EHLO mail.kernel.org"
+        id S1731511AbfLDST6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:19:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731140AbfLDSJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:09:50 -0500
+        id S1730492AbfLDSI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:08:58 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 529D420675;
-        Wed,  4 Dec 2019 18:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 612D9206DF;
+        Wed,  4 Dec 2019 18:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482989;
-        bh=LOLqvixBSxMP5KYAl65i7gSikQHjB3I3I8XCQBbPr3k=;
+        s=default; t=1575482937;
+        bh=uKXpVmh/ikjybWUv3q4M6l44VxMqVZPCOOxvCGn/hNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PtQUcBzbg1WDwFwjIbNmrMqAxsNM5pD3vVvFwMAKJeiZqne55UAMP/Oh5xVONfWzH
-         RVn29KqCj1Ns+poEBO+4LmLNkSWZs5ioVe9qkPj0fqmGI1tEGo2ysIkMOsc9x52GRj
-         IufPNcQPNRw2818Un139k+9bRtEsByGl45jLStFI=
+        b=Fc4O9KjFdvSfwHaXAPfLY5GRa6TE73cnot8JhkXOMQzyV9aizjQAo4HrZ4ChBVxDF
+         R6QENAeeuClt5KYL6yOyGZ5n0gNDQYeHBbjGyG+RFsc7r/7TOwhmWFMVLNysusAsQa
+         YANzj438BFydLv22l1sRMlk0kWtJ31KoLz6jmJRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 4.14 195/209] futex: Add mutex around futex exit
-Date:   Wed,  4 Dec 2019 18:56:47 +0100
-Message-Id: <20191204175336.909515067@linuxfoundation.org>
+Subject: [PATCH 4.14 196/209] futex: Provide distinct return value when owner is exiting
+Date:   Wed,  4 Dec 2019 18:56:48 +0100
+Message-Id: <20191204175336.977670539@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -46,81 +46,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 3f186d974826847a07bc7964d79ec4eded475ad9 upstream.
+commit ac31c7ff8624409ba3c4901df9237a616c187a5d upstream.
 
-The mutex will be used in subsequent changes to replace the busy looping of
-a waiter when the futex owner is currently executing the exit cleanup to
-prevent a potential live lock.
+attach_to_pi_owner() returns -EAGAIN for various cases:
+
+ - Owner task is exiting
+ - Futex value has changed
+
+The caller drops the held locks (hash bucket, mmap_sem) and retries the
+operation. In case of the owner task exiting this can result in a live
+lock.
+
+As a preparatory step for seperating those cases, provide a distinct return
+value (EBUSY) for the owner exiting case.
+
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191106224556.845798895@linutronix.de
+Link: https://lkml.kernel.org/r/20191106224556.935606117@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/futex.h |    1 +
- include/linux/sched.h |    1 +
- kernel/futex.c        |   16 ++++++++++++++++
- 3 files changed, 18 insertions(+)
+ kernel/futex.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -68,6 +68,7 @@ static inline void futex_init_task(struc
- 	INIT_LIST_HEAD(&tsk->pi_state_list);
- 	tsk->pi_state_cache = NULL;
- 	tsk->futex_state = FUTEX_STATE_OK;
-+	mutex_init(&tsk->futex_exit_mutex);
- }
- 
- void futex_exit_recursive(struct task_struct *tsk);
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -959,6 +959,7 @@ struct task_struct {
- #endif
- 	struct list_head		pi_state_list;
- 	struct futex_pi_state		*pi_state_cache;
-+	struct mutex			futex_exit_mutex;
- 	unsigned int			futex_state;
- #endif
- #ifdef CONFIG_PERF_EVENTS
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
-@@ -3721,12 +3721,23 @@ static void futex_cleanup(struct task_st
-  */
- void futex_exit_recursive(struct task_struct *tsk)
- {
-+	/* If the state is FUTEX_STATE_EXITING then futex_exit_mutex is held */
-+	if (tsk->futex_state == FUTEX_STATE_EXITING)
-+		mutex_unlock(&tsk->futex_exit_mutex);
- 	tsk->futex_state = FUTEX_STATE_DEAD;
- }
+@@ -1182,11 +1182,11 @@ static int handle_exit_race(u32 __user *
+ 	u32 uval2;
  
- static void futex_cleanup_begin(struct task_struct *tsk)
- {
  	/*
-+	 * Prevent various race issues against a concurrent incoming waiter
-+	 * including live locks by forcing the waiter to block on
-+	 * tsk->futex_exit_mutex when it observes FUTEX_STATE_EXITING in
-+	 * attach_to_pi_owner().
-+	 */
-+	mutex_lock(&tsk->futex_exit_mutex);
-+
-+	/*
- 	 * Switch the state to FUTEX_STATE_EXITING under tsk->pi_lock.
- 	 *
- 	 * This ensures that all subsequent checks of tsk->futex_state in
-@@ -3749,6 +3760,11 @@ static void futex_cleanup_end(struct tas
- 	 * take another loop until it becomes visible.
+-	 * If the futex exit state is not yet FUTEX_STATE_DEAD, wait
+-	 * for it to finish.
++	 * If the futex exit state is not yet FUTEX_STATE_DEAD, tell the
++	 * caller that the alleged owner is busy.
  	 */
- 	tsk->futex_state = state;
-+	/*
-+	 * Drop the exit protection. This unblocks waiters which observed
-+	 * FUTEX_STATE_EXITING to reevaluate the state.
-+	 */
-+	mutex_unlock(&tsk->futex_exit_mutex);
- }
+ 	if (tsk && tsk->futex_state != FUTEX_STATE_DEAD)
+-		return -EAGAIN;
++		return -EBUSY;
  
- void futex_exec_release(struct task_struct *tsk)
+ 	/*
+ 	 * Reread the user space value to handle the following situation:
+@@ -2093,12 +2093,13 @@ retry_private:
+ 			if (!ret)
+ 				goto retry;
+ 			goto out;
++		case -EBUSY:
+ 		case -EAGAIN:
+ 			/*
+ 			 * Two reasons for this:
+-			 * - Owner is exiting and we just wait for the
++			 * - EBUSY: Owner is exiting and we just wait for the
+ 			 *   exit to complete.
+-			 * - The user space value changed.
++			 * - EAGAIN: The user space value changed.
+ 			 */
+ 			double_unlock_hb(hb1, hb2);
+ 			hb_waiters_dec(hb2);
+@@ -2859,12 +2860,13 @@ retry_private:
+ 			goto out_unlock_put_key;
+ 		case -EFAULT:
+ 			goto uaddr_faulted;
++		case -EBUSY:
+ 		case -EAGAIN:
+ 			/*
+ 			 * Two reasons for this:
+-			 * - Task is exiting and we just wait for the
++			 * - EBUSY: Task is exiting and we just wait for the
+ 			 *   exit to complete.
+-			 * - The user space value changed.
++			 * - EAGAIN: The user space value changed.
+ 			 */
+ 			queue_unlock(hb);
+ 			put_futex_key(&q.key);
 
 
