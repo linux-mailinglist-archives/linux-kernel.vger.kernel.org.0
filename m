@@ -2,143 +2,323 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 268E31124B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:25:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 593FD1124FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:30:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfLDIZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:25:11 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:56584 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfLDIZK (ORCPT
+        id S1727365AbfLDIaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:30:18 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:54048 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbfLDIaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:25:10 -0500
-Received: by mail-il1-f197.google.com with SMTP id e5so5193137ile.23
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 00:25:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2cEbeBD4AwlS2HZ8HF8Ggnp8dQCTypz93AZ8GB5LeME=;
-        b=Fbi7dxNAHxAI9rNVVs66kh6DCGUolDe5QRBS+i0z+aCYDkG8C9rMB8QS1O+OkH+gCU
-         pzOCM/s1aTZirdHa2gcGrrDovBIqJwF2dRtUZ2+FqazvQXGKlrQYLspaaxrCVltuey3B
-         rjwwSofbR43H/PYIdy9J0kvQbWKOcHwfWiC6idU/dVTxCvBTILhQqK99q0a94rfpOJPj
-         +vU/OCywuup+BYLpB1Ro1Cr+FxxRWMOGQFQv1tDncxspFjnF0QVDl3LhXADxhJJm8oCK
-         zcFNTfgwW9DkUILrWsepCmoq9ueb+XLXD8i4+9o40U7+bAE3KJK0cSkH+jYFmG20CKJk
-         Jhcg==
-X-Gm-Message-State: APjAAAWAaU2/oBLQWXA5ftJGUK9rKX81yxZUQC/duoAE1LntyPtxRT16
-        WaIt2p095QJwhW3qMqrqXhHnxhuTBO7T3cakwY5hJUd94xpZ
-X-Google-Smtp-Source: APXvYqylfg0AJYJdMW9vDSIGwHGUqOCGx5SNZx078ScZ9SSlf2BYyPIPN73Cp4ENjFxpb2qpVM0/9fdZBhJXrF8PgqLTMLADYub/
-MIME-Version: 1.0
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr2505342ilg.137.1575447909525;
- Wed, 04 Dec 2019 00:25:09 -0800 (PST)
-Date:   Wed, 04 Dec 2019 00:25:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000027a850598dc8df1@google.com>
-Subject: general protection fault in do_con_write
-From:   syzbot <syzbot+017265e8553724e514e8@syzkaller.appspotmail.com>
-To:     daniel.vetter@ffwll.ch, ghalat@redhat.com,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, nico@fluxnic.net, sam@ravnborg.org,
-        syzkaller-bugs@googlegroups.com, textshell@uchuujin.de,
-        tomli@tomli.me
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Wed, 4 Dec 2019 03:30:18 -0500
+Received: from localhost (unknown [192.168.167.69])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 576DD79864;
+        Wed,  4 Dec 2019 16:30:12 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P29210T140217073772288S1575447928786120_;
+        Wed, 04 Dec 2019 16:25:30 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <8fabd335a09b755d178ee73c5a87b63f>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 5/5] clk: rockchip: support pll setting by auto
+Date:   Wed,  4 Dec 2019 16:25:27 +0800
+Message-Id: <20191204082527.19957-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191204081859.19454-1-zhangqing@rock-chips.com>
+References: <20191204081859.19454-1-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+If setting freq is not support in rockchip_pll_rate_table,
+It can calculate and set pll params by auto.
 
-syzbot found the following crash on:
-
-HEAD commit:    76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1535d196e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
-dashboard link: https://syzkaller.appspot.com/bug?extid=017265e8553724e514e8
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a2bb7ae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c20cdee00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+017265e8553724e514e8@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 9613 Comm: syz-executor287 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:do_con_write.part.0+0xa01/0x1ef0 drivers/tty/vt/vt.c:2760
-Code: 7e fe ff ff 45 01 ef e8 8d cc 95 fd 48 8b 85 c8 fe ff ff 80 38 00 0f  
-85 71 12 00 00 49 8b 9e a0 03 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 14 20  
-48 89 d8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85
-RSP: 0018:ffffc90001d776e8 EFLAGS: 00010203
-RAX: 0000000020000001 RBX: 000000010000000e RCX: ffffffff83df2da0
-RDX: 0000000000000000 RSI: ffffffff83df2df3 RDI: 0000000000000003
-RBP: ffffc90001d77878 R08: ffff88809a546580 R09: ffff88809a546e10
-R10: fffffbfff14b0ab0 R11: ffffffff8a585587 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffff88809b2b9000 R15: 00000000000007fe
-FS:  0000000001678880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9ea7b34000 CR3: 00000000985d9000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  do_con_write drivers/tty/vt/vt.c:3146 [inline]
-  con_put_char+0xfa/0x110 drivers/tty/vt/vt.c:3145
-  tty_put_char+0xc5/0x160 drivers/tty/tty_io.c:3031
-  __process_echoes+0x37c/0xa40 drivers/tty/n_tty.c:708
-  flush_echoes drivers/tty/n_tty.c:829 [inline]
-  __receive_buf drivers/tty/n_tty.c:1648 [inline]
-  n_tty_receive_buf_common+0xc77/0x2b70 drivers/tty/n_tty.c:1742
-  n_tty_receive_buf+0x31/0x40 drivers/tty/n_tty.c:1771
-  tiocsti drivers/tty/tty_io.c:2198 [inline]
-  tty_ioctl+0x949/0x14f0 drivers/tty/tty_io.c:2574
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444099
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffde6924f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000444099
-RDX: 0000000020000040 RSI: 0000000000005412 RDI: 0000000000000004
-RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
-R10: 000000000000000f R11: 0000000000000246 R12: 0000000000401da0
-R13: 0000000000401e30 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 7e8070a124b9d12d ]---
-RIP: 0010:do_con_write.part.0+0xa01/0x1ef0 drivers/tty/vt/vt.c:2760
-Code: 7e fe ff ff 45 01 ef e8 8d cc 95 fd 48 8b 85 c8 fe ff ff 80 38 00 0f  
-85 71 12 00 00 49 8b 9e a0 03 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 14 20  
-48 89 d8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85
-RSP: 0018:ffffc90001d776e8 EFLAGS: 00010203
-RAX: 0000000020000001 RBX: 000000010000000e RCX: ffffffff83df2da0
-RDX: 0000000000000000 RSI: ffffffff83df2df3 RDI: 0000000000000003
-RBP: ffffc90001d77878 R08: ffff88809a546580 R09: ffff88809a546e10
-R10: fffffbfff14b0ab0 R11: ffffffff8a585587 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffff88809b2b9000 R15: 00000000000007fe
-FS:  0000000001678880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9ea7b34000 CR3: 00000000985d9000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/clk/rockchip/clk-pll.c | 215 ++++++++++++++++++++++++++++++---
+ 1 file changed, 200 insertions(+), 15 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 390e9473807a..ac8c62c531f0 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -14,6 +14,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/clk.h>
++#include <linux/gcd.h>
+ #include "clk.h"
+ 
+ #define PLL_MODE_MASK		0x3
+@@ -46,6 +47,198 @@ struct rockchip_clk_pll {
+ #define to_rockchip_clk_pll_nb(nb) \
+ 			container_of(nb, struct rockchip_clk_pll, clk_nb)
+ 
++#define MHZ			(1000UL * 1000UL)
++#define KHZ			(1000UL)
++
++/* CLK_PLL_TYPE_RK3066_AUTO type ops */
++#define PLL_FREF_MIN		(269 * KHZ)
++#define PLL_FREF_MAX		(2200 * MHZ)
++
++#define PLL_FVCO_MIN		(440 * MHZ)
++#define PLL_FVCO_MAX		(2200 * MHZ)
++
++#define PLL_FOUT_MIN		(27500 * KHZ)
++#define PLL_FOUT_MAX		(2200 * MHZ)
++
++#define PLL_NF_MAX		(4096)
++#define PLL_NR_MAX		(64)
++#define PLL_NO_MAX		(16)
++
++/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
++#define MIN_FOUTVCO_FREQ	(800 * MHZ)
++#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
++
++static struct rockchip_pll_rate_table auto_table;
++
++static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
++{
++	return &auto_table;
++}
++
++static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
++					u32 *postdiv1,
++					u32 *postdiv2,
++					u32 *foutvco)
++{
++	unsigned long freq;
++
++	if (fout_hz < MIN_FOUTVCO_FREQ) {
++		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
++			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
++				freq = fout_hz * (*postdiv1) * (*postdiv2);
++				if (freq >= MIN_FOUTVCO_FREQ &&
++				    freq <= MAX_FOUTVCO_FREQ) {
++					*foutvco = freq;
++					return 0;
++				}
++			}
++		}
++		pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to 2000M,fout = %lu\n",
++		       fout_hz);
++	} else {
++		*postdiv1 = 1;
++		*postdiv2 = 1;
++	}
++	return 0;
++}
++
++static struct rockchip_pll_rate_table *
++rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
++			     unsigned long fin_hz,
++			     unsigned long fout_hz)
++{
++	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
++	/* FIXME set postdiv1/2 always 1*/
++	u32 foutvco = fout_hz;
++	u64 fin_64, frac_64;
++	u32 f_frac, postdiv1, postdiv2;
++	unsigned long clk_gcd = 0;
++
++	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
++		return NULL;
++
++	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
++	rate_table->postdiv1 = postdiv1;
++	rate_table->postdiv2 = postdiv2;
++	rate_table->dsmpd = 1;
++
++	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
++		fin_hz /= MHZ;
++		foutvco /= MHZ;
++		clk_gcd = gcd(fin_hz, foutvco);
++		rate_table->refdiv = fin_hz / clk_gcd;
++		rate_table->fbdiv = foutvco / clk_gcd;
++
++		rate_table->frac = 0;
++
++		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = %u, postdiv1 = %u, postdiv2 = %u, frac = %u\n",
++			 fin_hz, fout_hz, clk_gcd, rate_table->refdiv,
++			 rate_table->fbdiv, rate_table->postdiv1,
++			 rate_table->postdiv2, rate_table->frac);
++	} else {
++		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz = %lu, fout_INT_mhz = %lu\n",
++			 fin_hz, fout_hz,
++			 fin_hz / MHZ * MHZ,
++			 fout_hz / MHZ * MHZ);
++		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
++			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
++		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
++		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
++		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
++		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
++			 rate_table->refdiv, rate_table->fbdiv);
++
++		rate_table->frac = 0;
++
++		f_frac = (foutvco % MHZ);
++		fin_64 = fin_hz;
++		do_div(fin_64, (u64)rate_table->refdiv);
++		frac_64 = (u64)f_frac << 24;
++		do_div(frac_64, fin_64);
++		rate_table->frac = (u32)frac_64;
++		if (rate_table->frac > 0)
++			rate_table->dsmpd = 0;
++		pr_debug("frac = %x\n", rate_table->frac);
++	}
++	return rate_table;
++}
++
++static struct rockchip_pll_rate_table *
++rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
++				    unsigned long fin_hz,
++				    unsigned long fout_hz)
++{
++	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
++	u32 nr, nf, no, nonr;
++	u32 nr_out, nf_out, no_out;
++	u32 n;
++	u32 numerator, denominator;
++	u64 fref, fvco, fout;
++	unsigned long clk_gcd = 0;
++
++	nr_out = PLL_NR_MAX + 1;
++	no_out = 0;
++	nf_out = 0;
++
++	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
++		return NULL;
++
++	clk_gcd = gcd(fin_hz, fout_hz);
++
++	numerator = fout_hz / clk_gcd;
++	denominator = fin_hz / clk_gcd;
++
++	for (n = 1;; n++) {
++		nf = numerator * n;
++		nonr = denominator * n;
++		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
++			break;
++
++		for (no = 1; no <= PLL_NO_MAX; no++) {
++			if (!(no == 1 || !(no % 2)))
++				continue;
++
++			if (nonr % no)
++				continue;
++			nr = nonr / no;
++
++			if (nr > PLL_NR_MAX)
++				continue;
++
++			fref = fin_hz / nr;
++			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
++				continue;
++
++			fvco = fref * nf;
++			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
++				continue;
++
++			fout = fvco / no;
++			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
++				continue;
++
++			/* select the best from all available PLL settings */
++			if ((no > no_out) ||
++			    ((no == no_out) && (nr < nr_out))) {
++				nr_out = nr;
++				nf_out = nf;
++				no_out = no;
++			}
++		}
++	}
++
++	/* output the best PLL setting */
++	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
++		rate_table->nr = nr_out;
++		rate_table->nf = nf_out;
++		rate_table->no = no_out;
++	} else {
++		return NULL;
++	}
++
++	return rate_table;
++}
++
+ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
+ 			    struct rockchip_clk_pll *pll, unsigned long rate)
+ {
+@@ -57,24 +250,16 @@ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
+ 			return &rate_table[i];
+ 	}
+ 
+-	return NULL;
++	if (pll->type == pll_rk3066)
++		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
++	else
++		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
+ }
+ 
+ static long rockchip_pll_round_rate(struct clk_hw *hw,
+ 			    unsigned long drate, unsigned long *prate)
+ {
+-	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+-	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
+-	int i;
+-
+-	/* Assumming rate_table is in descending order */
+-	for (i = 0; i < pll->rate_count; i++) {
+-		if (drate >= rate_table[i].rate)
+-			return rate_table[i].rate;
+-	}
+-
+-	/* return minimum supported value */
+-	return rate_table[i - 1].rate;
++	return drate;
+ }
+ 
+ /*
+@@ -154,7 +339,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+ 	struct rockchip_pll_rate_table cur;
+-	u64 rate64 = prate;
++	u64 rate64 = prate, frac_rate64 = prate;
+ 
+ 	rockchip_rk3036_pll_get_params(pll, &cur);
+ 
+@@ -163,7 +348,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	if (cur.dsmpd == 0) {
+ 		/* fractional mode */
+-		u64 frac_rate64 = prate * cur.frac;
++		frac_rate64 *= cur.frac;
+ 
+ 		do_div(frac_rate64, cur.refdiv);
+ 		rate64 += frac_rate64 >> 24;
+-- 
+2.17.1
+
+
+
