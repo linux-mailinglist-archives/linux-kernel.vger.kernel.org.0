@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3153E113260
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE551133D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730835AbfLDSH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:07:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58748 "EHLO mail.kernel.org"
+        id S1730913AbfLDSIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:08:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730825AbfLDSHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:07:54 -0500
+        id S1730347AbfLDSIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:08:21 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9952320675;
-        Wed,  4 Dec 2019 18:07:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6265B20674;
+        Wed,  4 Dec 2019 18:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482874;
-        bh=QApcd85KJGu+VIAEdaq2EaYQKmtUl3gmpV+llI2BE+Y=;
+        s=default; t=1575482900;
+        bh=n+Wons8GrY+1VzeMZgkyPKXji48Eh6cjTU8tvUR/bUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hg9rSd+endKIW5Y2rY3fLhDf9NecJi0XHKHgjNNuwKiNg4ezNiyq4zEzOjOuWLr5h
-         +332D6DiY7MW0Eo+s5XhPv4DnnzTZYgsyQ3as4BAE1kdd2Lhidc2IN1aD4Tc3eGWmV
-         RwcFfFC3+a/rWvM5i2GjmsSsGH3Bhkwx4t6cWfL8=
+        b=iFsB0G0ABE8UEbWk+H0qeS0zgaFMc88tHYbVvOj/1k4BtGiHOonCz7g69cmzgwSk/
+         irx3ZxIq6Izo/+CWAVJd/kRrVh48EJKT+8X276GVOnsj1NRcnfjA2ILguBS8m5nT23
+         OXDy/nCtaAoOIbHYMEGsxuITJWw94jDnyBTo1Taw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Sun <sironhide0null@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 142/209] bpf: decrease usercnt if bpf_map_new_fd() fails in bpf_map_get_fd_by_id()
-Date:   Wed,  4 Dec 2019 18:55:54 +0100
-Message-Id: <20191204175333.088896488@linuxfoundation.org>
+Subject: [PATCH 4.14 143/209] net: dev: Use unsigned integer as an argument to left-shift
+Date:   Wed,  4 Dec 2019 18:55:55 +0100
+Message-Id: <20191204175333.161893781@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -45,36 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Sun <sironhide0null@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 781e62823cb81b972dc8652c1827205cda2ac9ac ]
+[ Upstream commit f4d7b3e23d259c44f1f1c39645450680fcd935d6 ]
 
-In bpf/syscall.c, bpf_map_get_fd_by_id() use bpf_map_inc_not_zero()
-to increase the refcount, both map->refcnt and map->usercnt. Then, if
-bpf_map_new_fd() fails, should handle map->usercnt too.
+1 << 31 is Undefined Behaviour according to the C standard.
+Use U type modifier to avoid theoretical overflow.
 
-Fixes: bd5f5f4ecb78 ("bpf: Add BPF_MAP_GET_FD_BY_ID")
-Signed-off-by: Peng Sun <sironhide0null@gmail.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/syscall.c | 2 +-
+ include/linux/netdevice.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 59d2e94ecb798..34110450a78f2 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1354,7 +1354,7 @@ static int bpf_map_get_fd_by_id(const union bpf_attr *attr)
- 
- 	fd = bpf_map_new_fd(map);
- 	if (fd < 0)
--		bpf_map_put(map);
-+		bpf_map_put_with_uref(map);
- 
- 	return fd;
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 40b830d55fe50..4725a9d9597fc 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3522,7 +3522,7 @@ static inline u32 netif_msg_init(int debug_value, int default_msg_enable_bits)
+ 	if (debug_value == 0)	/* no output */
+ 		return 0;
+ 	/* set low N bits */
+-	return (1 << debug_value) - 1;
++	return (1U << debug_value) - 1;
  }
+ 
+ static inline void __netif_tx_lock(struct netdev_queue *txq, int cpu)
 -- 
 2.20.1
 
