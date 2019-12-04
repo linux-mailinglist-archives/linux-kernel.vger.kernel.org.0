@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61A0B112F32
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0457B112F36
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:00:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbfLDQAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 11:00:17 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43186 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbfLDQAP (ORCPT
+        id S1728883AbfLDQAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 11:00:32 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35210 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728837AbfLDQAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 11:00:15 -0500
-Received: by mail-qt1-f194.google.com with SMTP id q8so194875qtr.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 08:00:14 -0800 (PST)
+        Wed, 4 Dec 2019 11:00:16 -0500
+Received: by mail-qt1-f196.google.com with SMTP id s8so257018qte.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 08:00:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=AH9Zqm50+NfM1iWI5KoXJ3ULW24qoAyNsWFwS8TvaKI=;
-        b=Se+GtdqPYx3xghEzAGZthtisSe0ZQjQrvlWzeSNSy/PBuc1k2WDaJOz1Ua2HdHbt90
-         vlYAYKeycRP8dZ0IYThzw9EfzySjQKGlpoSBQzYMMrtStHE76eOKP52iZqlnK6p0cP7j
-         gT72AJ1psutEHuFmURZrNMBYKB+do8ORxZYR3rBjdiebQPNlmtDslGtvzobm5T2JsnT2
-         tFBaua2a3xWKA+xX7IB2HWT+jnLcqRDwisuhdJIO+SubNOlZa7pcKM397Kwg7mWXRtHu
-         lyNxrkrxhgTHykYLF+DjPfPhNu3BQG990kW5kOOBEEk/z2zD5LPSL8WW7vOt5Oo3P4e0
-         iyZA==
+        bh=aEpoNSBZELpHiRBNE1QFjkWf+vscZ+r++2h/PQNGFz0=;
+        b=YKxssQdB2nkSnRmDmbfn5VCUiH5kqdrBHhbh+V3b4+nr+z646g3JHqhL6bblZaZaLH
+         Rolew7pKXT73uPrvNQPOfjbj5yFybvuIL+TGTxyv/SHYnwPFptcBj2Gfmz/yiObNOB3L
+         d3ZOegLclFJOcKXZieLuGA/BK//Tvs3rEwrY/kExmgnSkmmoUukhtI9DSuJb9bLdZ2LC
+         QvjS6/CRT8KGswjL0iNrFCpWp/G7OC2M+db/Cqjgb7Yuxl1VlJFI1X72s31ILNWj0aC8
+         TETaKaSfO2mkYxI+ENwonI0JyKT5GYCW4FBjVz0YLjw3JQdvtJ7S9X8uVUIbFPjW1zrz
+         ZFhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AH9Zqm50+NfM1iWI5KoXJ3ULW24qoAyNsWFwS8TvaKI=;
-        b=mYXfHZNTimBEMpoSeLY2P2OmC/SsTZYTtjUdFRnj7wc9dsjpEdu6arXHxcY5Z4Sxxy
-         wnJq3jcCZsgqXLNIuUg9ZYgzs726XpJJK44FDkcQvNHl/sX912I5bD+hj8v2RVRTgZSQ
-         MMSixUFU3j+4aaPo4j66zne1nuTwKUV5TaOWhWKoSnPQ+ISKOAEbxkXWk/2aywBSAtwz
-         WqubLA7B8Z7804Sp9R294SGk+ltcgHNJv0mFXBd7JcZyymey6U7xfFI5Xv2sLFrPblW6
-         NSNOPI7vpGNWo8FauJHSLSy5mmjcvnFxXZPvboJeCyaKQj3BhWvnTcnsXX0LfXei7pKN
-         0G5A==
-X-Gm-Message-State: APjAAAW/WQALWS5+k2hK2dn/jgmLksCBDRtpXmaHDgHSavgqr/g7r1pL
-        KJn0SBW5tcBx9wcchFnKU+VlpQ==
-X-Google-Smtp-Source: APXvYqy2qMRBi3u87BVr/0hJi/9zKWwZkhz36ju8Yj72sdPE1OrC/7nG0llQRtLFJTezSaUkAAYoRQ==
-X-Received: by 2002:aed:2d01:: with SMTP id h1mr3410420qtd.239.1575475213602;
-        Wed, 04 Dec 2019 08:00:13 -0800 (PST)
+        bh=aEpoNSBZELpHiRBNE1QFjkWf+vscZ+r++2h/PQNGFz0=;
+        b=Tj3Sw/L2NNEb3MsWafIWnll2vAd7KSyB8ejwuE6AgUHmvAyyq6jK6Lww3S/3RhLspx
+         UaRDixcV5uakrNrpzKxmmedZbAEUqK9hswPnDeYz7IMJ297MvYMYxYj+UXAEOZ/2XJeb
+         DyWmuRxDvvQfflg27x+5bxx1d1Gv+vqTK8zgbKjxaJI/cGRFFHu/mjfuOUUWPuQr7Cdk
+         R2zIQF5KLHJWWBSVuqoRWdhaVkiEF3jyqk4mfQqA6DLfZRMRhwdlontQOiPzhYz33zcV
+         SgAbjmLCXRuSEQpchQMBjyeFTuGUn0Ua6qQ+2VVAzS6v+VNPB1N+GHWk8JoU9QiW9SXb
+         ebKQ==
+X-Gm-Message-State: APjAAAUeOb1J4LxXB3/HaX2OouMmwk1QK06ZELCR+HUXuBtR3/16mq9p
+        r0ug38fzP1mojlFYVQ77qDJ1Pw==
+X-Google-Smtp-Source: APXvYqx6afAt2ZT0wnIMzmN9acj0tBCpZ5+3kIS/dhv4aZ1jIEtj4FSFJYdsTEufDSKLyhfBgevqsg==
+X-Received: by 2002:ac8:4509:: with SMTP id q9mr3224598qtn.214.1575475215043;
+        Wed, 04 Dec 2019 08:00:15 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.08.00.12
+        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.08.00.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 08:00:12 -0800 (PST)
+        Wed, 04 Dec 2019 08:00:14 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v8 22/25] arm64: kexec: kexec EL2 vectors
-Date:   Wed,  4 Dec 2019 10:59:35 -0500
-Message-Id: <20191204155938.2279686-23-pasha.tatashin@soleen.com>
+Subject: [PATCH v8 23/25] arm64: kexec: configure trans_pgd page table for kexec
+Date:   Wed,  4 Dec 2019 10:59:36 -0500
+Message-Id: <20191204155938.2279686-24-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
 References: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
@@ -68,124 +68,212 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we have a EL2 mode without VHE, the EL2 vectors are needed in order
-to switch to EL2 and jump to new world with hyperivsor privileges.
+Configure a page table located in kexec-safe memory that has
+the following mappings:
+
+1. identity mapping for text of relocation function with executable
+   permission.
+2. identity mapping for argument for relocation function.
+3. linear mappings for all source ranges
+4. linear mappings for all destination ranges.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/include/asm/kexec.h      |  5 +++++
- arch/arm64/kernel/asm-offsets.c     |  1 +
- arch/arm64/kernel/machine_kexec.c   |  5 +++++
- arch/arm64/kernel/relocate_kernel.S | 34 +++++++++++++++++++++++++++++
- 4 files changed, 45 insertions(+)
+ arch/arm64/include/asm/kexec.h    |  14 ++++
+ arch/arm64/kernel/asm-offsets.c   |   5 ++
+ arch/arm64/kernel/machine_kexec.c | 104 +++++++++++++++++++++++++++++-
+ 3 files changed, 122 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 8cad34e7a9d9..414a0a41a60a 100644
+index 414a0a41a60a..df911a4aa8ce 100644
 --- a/arch/arm64/include/asm/kexec.h
 +++ b/arch/arm64/include/asm/kexec.h
-@@ -95,6 +95,7 @@ static inline void crash_post_resume(void) {}
- extern const unsigned long kexec_relocate_code_size;
- extern const unsigned char kexec_relocate_code_start[];
- extern const unsigned long kexec_kern_reloc_offset;
-+extern const unsigned long kexec_el2_vectors_offset;
+@@ -98,6 +98,10 @@ extern const unsigned long kexec_kern_reloc_offset;
+ extern const unsigned long kexec_el2_vectors_offset;
  #endif
  
++#define KEXEC_SRC_START	PAGE_OFFSET
++#define KEXEC_DST_START	(PAGE_OFFSET + \
++			((UL(0xffffffffffffffff) - PAGE_OFFSET) >> 1) + 1)
++
  /*
-@@ -104,6 +105,9 @@ extern const unsigned long kexec_kern_reloc_offset;
-  *		kernel, or purgatory entry address).
-  * kern_arg0	first argument to kernel is its dtb address. The other
-  *		arguments are currently unused, and must be set to 0
-+ * el2_vector	If present means that relocation routine will go to EL1
-+ *		from EL2 to do the copy, and then back to EL2 to do the jump
-+ *		to new world.
+  * kern_reloc_arg is passed to kernel relocation function as an argument.
+  * head		kimage->head, allows to traverse through relocation segments.
+@@ -108,6 +112,11 @@ extern const unsigned long kexec_el2_vectors_offset;
+  * el2_vector	If present means that relocation routine will go to EL1
+  *		from EL2 to do the copy, and then back to EL2 to do the jump
+  *		to new world.
++ * trans_ttbr0	idmap for relocation function and its argument
++ * trans_ttbr1	linear map for source/destination addresses.
++ * src_addr	linear map for source pages.
++ * dst_addr	linear map for destination pages.
++ * copy_len	Number of bytes that need to be copied
   */
  struct kern_reloc_arg {
  	phys_addr_t head;
-@@ -112,6 +116,7 @@ struct kern_reloc_arg {
- 	phys_addr_t kern_arg1;
+@@ -117,6 +126,11 @@ struct kern_reloc_arg {
  	phys_addr_t kern_arg2;
  	phys_addr_t kern_arg3;
-+	phys_addr_t el2_vector;
+ 	phys_addr_t el2_vector;
++	phys_addr_t trans_ttbr0;
++	phys_addr_t trans_ttbr1;
++	void *src_addr;
++	void *dst_addr;
++	unsigned long copy_len;
  };
  
  #define ARCH_HAS_KIMAGE_ARCH
 diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 448230684749..ff974b648347 100644
+index ff974b648347..63060ea51727 100644
 --- a/arch/arm64/kernel/asm-offsets.c
 +++ b/arch/arm64/kernel/asm-offsets.c
-@@ -136,6 +136,7 @@ int main(void)
-   DEFINE(KEXEC_KRELOC_KERN_ARG1,	offsetof(struct kern_reloc_arg, kern_arg1));
+@@ -137,6 +137,11 @@ int main(void)
    DEFINE(KEXEC_KRELOC_KERN_ARG2,	offsetof(struct kern_reloc_arg, kern_arg2));
    DEFINE(KEXEC_KRELOC_KERN_ARG3,	offsetof(struct kern_reloc_arg, kern_arg3));
-+  DEFINE(KEXEC_KRELOC_EL2_VECTOR,	offsetof(struct kern_reloc_arg, el2_vector));
+   DEFINE(KEXEC_KRELOC_EL2_VECTOR,	offsetof(struct kern_reloc_arg, el2_vector));
++  DEFINE(KEXEC_KRELOC_TRANS_TTBR0,	offsetof(struct kern_reloc_arg, trans_ttbr0));
++  DEFINE(KEXEC_KRELOC_TRANS_TTBR1,	offsetof(struct kern_reloc_arg, trans_ttbr1));
++  DEFINE(KEXEC_KRELOC_SRC_ADDR,	offsetof(struct kern_reloc_arg, src_addr));
++  DEFINE(KEXEC_KRELOC_DST_ADDR,	offsetof(struct kern_reloc_arg, dst_addr));
++  DEFINE(KEXEC_KRELOC_COPY_LEN,	offsetof(struct kern_reloc_arg, copy_len));
  #endif
    return 0;
  }
 diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 5e7b1f6569c4..ac6ade7c96ff 100644
+index ac6ade7c96ff..8edcc4be0b15 100644
 --- a/arch/arm64/kernel/machine_kexec.c
 +++ b/arch/arm64/kernel/machine_kexec.c
-@@ -84,6 +84,11 @@ int machine_kexec_post_load(struct kimage *kimage)
- 	kern_reloc_arg->head = kimage->head;
- 	kern_reloc_arg->entry_addr = kimage->start;
- 	kern_reloc_arg->kern_arg0 = kimage->arch.dtb_mem;
-+	/* Setup vector table only when EL2 is available, but no VHE */
-+	if (is_hyp_mode_available() && !is_kernel_in_hyp_mode()) {
-+		kern_reloc_arg->el2_vector = __pa(reloc_code)
-+						+ kexec_el2_vectors_offset;
+@@ -20,6 +20,7 @@
+ #include <asm/mmu.h>
+ #include <asm/mmu_context.h>
+ #include <asm/page.h>
++#include <asm/trans_pgd.h>
+ 
+ #include "cpu-reset.h"
+ 
+@@ -70,10 +71,102 @@ static void *kexec_page_alloc(void *arg)
+ 	return page_address(page);
+ }
+ 
++/*
++ * Map source segments starting from KEXEC_SRC_START, and map destination
++ * segments starting from KEXEC_DST_START, and return size of copy in
++ * *copy_len argument.
++ * Relocation function essentially needs to do:
++ * memcpy(KEXEC_DST_START, KEXEC_SRC_START, copy_len);
++ */
++static int map_segments(struct kimage *kimage, pgd_t *pgdp,
++			struct trans_pgd_info *info,
++			unsigned long *copy_len)
++{
++	unsigned long *ptr = 0;
++	unsigned long dest = 0;
++	unsigned long src_va = KEXEC_SRC_START;
++	unsigned long dst_va = KEXEC_DST_START;
++	unsigned long len = 0;
++	unsigned long entry, addr;
++	int rc;
++
++	for (entry = kimage->head; !(entry & IND_DONE); entry = *ptr++) {
++		addr = entry & PAGE_MASK;
++
++		switch (entry & IND_FLAGS) {
++		case IND_DESTINATION:
++			dest = addr;
++			break;
++		case IND_INDIRECTION:
++			ptr = __va(addr);
++			if (rc)
++				return rc;
++			break;
++		case IND_SOURCE:
++			rc = trans_pgd_map_page(info, pgdp, __va(addr),
++						src_va, PAGE_KERNEL);
++			if (rc)
++				return rc;
++			rc = trans_pgd_map_page(info, pgdp, __va(dest),
++						dst_va, PAGE_KERNEL);
++			if (rc)
++				return rc;
++			dest += PAGE_SIZE;
++			src_va += PAGE_SIZE;
++			dst_va += PAGE_SIZE;
++			len += PAGE_SIZE;
++		}
 +	}
++	*copy_len = len;
++
++	return 0;
++}
++
++static int mmu_relocate_setup(struct kimage *kimage, void *reloc_code,
++			      struct kern_reloc_arg *kern_reloc_arg)
++{
++	struct trans_pgd_info info = {
++		.trans_alloc_page	= kexec_page_alloc,
++		.trans_alloc_arg	= kimage,
++	};
++
++	pgd_t *trans_ttbr0 = kexec_page_alloc(kimage);
++	pgd_t *trans_ttbr1 = kexec_page_alloc(kimage);
++	int rc;
++
++	if (!trans_ttbr0 || !trans_ttbr1)
++		return -ENOMEM;
++
++	rc = map_segments(kimage, trans_ttbr1, &info,
++			  &kern_reloc_arg->copy_len);
++	if (rc)
++		return rc;
++
++	/* Map relocation function va == pa */
++	rc = trans_pgd_map_page(&info, trans_ttbr0,  reloc_code,
++				__pa(reloc_code), PAGE_KERNEL_EXEC);
++	if (rc)
++		return rc;
++
++	/* Map relocation function argument va == pa */
++	rc = trans_pgd_map_page(&info, trans_ttbr0, kern_reloc_arg,
++				__pa(kern_reloc_arg), PAGE_KERNEL);
++	if (rc)
++		return rc;
++
++	kern_reloc_arg->trans_ttbr0 = phys_to_ttbr(__pa(trans_ttbr0));
++	kern_reloc_arg->trans_ttbr1 = phys_to_ttbr(__pa(trans_ttbr1));
++	kern_reloc_arg->src_addr = (void *)KEXEC_SRC_START;
++	kern_reloc_arg->dst_addr = (void *)KEXEC_DST_START;
++
++	return 0;
++}
++
+ int machine_kexec_post_load(struct kimage *kimage)
+ {
+ 	void *reloc_code = page_to_virt(kimage->control_code_page);
+ 	struct kern_reloc_arg *kern_reloc_arg = kexec_page_alloc(kimage);
++	int rc = 0;
+ 
+ 	if (!kern_reloc_arg)
+ 		return -ENOMEM;
+@@ -89,9 +182,18 @@ int machine_kexec_post_load(struct kimage *kimage)
+ 		kern_reloc_arg->el2_vector = __pa(reloc_code)
+ 						+ kexec_el2_vectors_offset;
+ 	}
++
++	/*
++	 * If relocation is not needed, we do not need to enable MMU in
++	 * relocation routine, therefore do not create page tables for
++	 * scenarios such as crash kernel
++	 */
++	if (!(kimage->head & IND_DONE))
++		rc = mmu_relocate_setup(kimage, reloc_code, kern_reloc_arg);
++
  	kexec_image_info(kimage);
  
- 	return 0;
-diff --git a/arch/arm64/kernel/relocate_kernel.S b/arch/arm64/kernel/relocate_kernel.S
-index 3c05220a79ab..67efa42575a5 100644
---- a/arch/arm64/kernel/relocate_kernel.S
-+++ b/arch/arm64/kernel/relocate_kernel.S
-@@ -88,6 +88,38 @@ ENTRY(arm64_relocate_new_kernel)
- .ltorg
- END(arm64_relocate_new_kernel)
+-	return 0;
++	return rc;
+ }
  
-+.macro el1_sync_64
-+	br	x4			/* Jump to new world from el2 */
-+	.fill 31, 4, 0			/* Set other 31 instr to zeroes */
-+.endm
-+
-+.macro invalid_vector label
-+\label:
-+	b \label
-+	.fill 31, 4, 0			/* Set other 31 instr to zeroes */
-+.endm
-+
-+/* el2 vectors - switch el2 here while we restore the memory image. */
-+	.align 11
-+ENTRY(kexec_el2_vectors)
-+	invalid_vector el2_sync_invalid_sp0	/* Synchronous EL2t */
-+	invalid_vector el2_irq_invalid_sp0	/* IRQ EL2t */
-+	invalid_vector el2_fiq_invalid_sp0	/* FIQ EL2t */
-+	invalid_vector el2_error_invalid_sp0	/* Error EL2t */
-+	invalid_vector el2_sync_invalid_spx	/* Synchronous EL2h */
-+	invalid_vector el2_irq_invalid_spx	/* IRQ EL2h */
-+	invalid_vector el2_fiq_invalid_spx	/* FIQ EL2h */
-+	invalid_vector el2_error_invalid_spx	/* Error EL2h */
-+		el1_sync_64			/* Synchronous 64-bit EL1 */
-+	invalid_vector el1_irq_invalid_64	/* IRQ 64-bit EL1 */
-+	invalid_vector el1_fiq_invalid_64	/* FIQ 64-bit EL1 */
-+	invalid_vector el1_error_invalid_64	/* Error 64-bit EL1 */
-+	invalid_vector el1_sync_invalid_32	/* Synchronous 32-bit EL1 */
-+	invalid_vector el1_irq_invalid_32	/* IRQ 32-bit EL1 */
-+	invalid_vector el1_fiq_invalid_32	/* FIQ 32-bit EL1 */
-+	invalid_vector el1_error_invalid_32	/* Error 32-bit EL1 */
-+END(kexec_el2_vectors)
-+
- .Lkexec_relocate_code_end:
- .org	KEXEC_CONTROL_PAGE_SIZE
- .align 3	/* To keep the 64-bit values below naturally aligned. */
-@@ -99,3 +131,5 @@ GLOBAL(kexec_relocate_code_size)
- 	.quad	.Lkexec_relocate_code_end - kexec_relocate_code_start
- GLOBAL(kexec_kern_reloc_offset)
- 	.quad	arm64_relocate_new_kernel - kexec_relocate_code_start
-+GLOBAL(kexec_el2_vectors_offset)
-+	.quad	kexec_el2_vectors - kexec_relocate_code_start
+ 
 -- 
 2.24.0
 
