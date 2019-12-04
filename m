@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BD371132BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9FC9113244
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731448AbfLDSL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:11:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
+        id S1730690AbfLDSHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:07:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731440AbfLDSL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:11:27 -0500
+        id S1730686AbfLDSHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:07:00 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 447432089C;
-        Wed,  4 Dec 2019 18:11:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DE8E20674;
+        Wed,  4 Dec 2019 18:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483086;
-        bh=bd+l4JctyoeYXCZJ2Dfc0BfpyirtBreCT9vLJuWcGOo=;
+        s=default; t=1575482819;
+        bh=gmEmMwBpratgRQVW/qWF9gmbRLer7I/p+Mnl3cfi5xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rjAkDddWKbBZKSztYunsL3NkbmvQzbBsrvnWNi7T+M8kZfp/QSP7mRuEmP/LiJHif
-         1o1ddUmZv/5bCOHDvV0Oz8kR//CJSDCxyHeFK6xj5J4CLvPLPSU1HJut6Anv/MDNxg
-         AlLw8vc2Edi06WRwzMsrKohkNWQXiVbfru9oXizQ=
+        b=wmR8FX3UOcFS0Q/Def3bV/MC3MHt6VUiHTzew3VfL6mX34Tm7IwAF0WT4bhmMAo0d
+         U+S6TrQRmOcyPqSYXMf240t+324nvhLqb+87ZBSimrzzG5D9NHsQD3ilTosjDfd+Rf
+         ECxCt9BypuPIkux509n7xfZ8YNUbEx7Ni9oQ0+gg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Bowler <nbowler@draconx.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 047/125] xfs: Align compat attrlist_by_handle with native implementation.
+Subject: [PATCH 4.14 140/209] net: fix possible overflow in __sk_mem_raise_allocated()
 Date:   Wed,  4 Dec 2019 18:55:52 +0100
-Message-Id: <20191204175321.829538950@linuxfoundation.org>
+Message-Id: <20191204175332.945381018@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Bowler <nbowler@draconx.ca>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit c456d64449efe37da50832b63d91652a85ea1d20 ]
+[ Upstream commit 5bf325a53202b8728cf7013b72688c46071e212e ]
 
-While inspecting the ioctl implementations, I noticed that the compat
-implementation of XFS_IOC_ATTRLIST_BY_HANDLE does not do exactly the
-same thing as the native implementation.  Specifically, the "cursor"
-does not appear to be written out to userspace on the compat path,
-like it is on the native path.
+With many active TCP sockets, fat TCP sockets could fool
+__sk_mem_raise_allocated() thanks to an overflow.
 
-This adjusts the compat implementation to copy out the cursor just
-like the native implementation does.  The attrlist cursor does not
-require any special compat handling.  This fixes xfstests xfs/269
-on both IA-32 and x32 userspace, when running on an amd64 kernel.
+They would increase their share of the memory, instead
+of decreasing it.
 
-Signed-off-by: Nick Bowler <nbowler@draconx.ca>
-Fixes: 0facef7fb053b ("xfs: in _attrlist_by_handle, copy the cursor back to userspace")
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_ioctl32.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/net/sock.h | 2 +-
+ net/core/sock.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_ioctl32.c b/fs/xfs/xfs_ioctl32.c
-index 321f57721b922..8f18756ee405e 100644
---- a/fs/xfs/xfs_ioctl32.c
-+++ b/fs/xfs/xfs_ioctl32.c
-@@ -346,6 +346,7 @@ xfs_compat_attrlist_by_handle(
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 780c6c0a86f04..0af46cbd3649c 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1232,7 +1232,7 @@ static inline void sk_sockets_allocated_inc(struct sock *sk)
+ 	percpu_counter_inc(sk->sk_prot->sockets_allocated);
+ }
+ 
+-static inline int
++static inline u64
+ sk_sockets_allocated_read_positive(struct sock *sk)
  {
- 	int			error;
- 	attrlist_cursor_kern_t	*cursor;
-+	compat_xfs_fsop_attrlist_handlereq_t __user *p = arg;
- 	compat_xfs_fsop_attrlist_handlereq_t al_hreq;
- 	struct dentry		*dentry;
- 	char			*kbuf;
-@@ -380,6 +381,11 @@ xfs_compat_attrlist_by_handle(
- 	if (error)
- 		goto out_kfree;
+ 	return percpu_counter_read_positive(sk->sk_prot->sockets_allocated);
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 7ccbcd853cbce..90ccbbf9e6b00 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2357,7 +2357,7 @@ int __sk_mem_raise_allocated(struct sock *sk, int size, int amt, int kind)
+ 	}
  
-+	if (copy_to_user(&p->pos, cursor, sizeof(attrlist_cursor_kern_t))) {
-+		error = -EFAULT;
-+		goto out_kfree;
-+	}
-+
- 	if (copy_to_user(compat_ptr(al_hreq.buffer), kbuf, al_hreq.buflen))
- 		error = -EFAULT;
+ 	if (sk_has_memory_pressure(sk)) {
+-		int alloc;
++		u64 alloc;
  
+ 		if (!sk_under_memory_pressure(sk))
+ 			return 1;
 -- 
 2.20.1
 
