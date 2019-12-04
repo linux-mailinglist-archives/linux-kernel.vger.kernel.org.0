@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4FB61132F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D944113409
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731719AbfLDSNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:13:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42074 "EHLO mail.kernel.org"
+        id S1730079AbfLDSGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:06:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731697AbfLDSNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:13:06 -0500
+        id S1729976AbfLDSGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:06:38 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CD9E206DF;
-        Wed,  4 Dec 2019 18:13:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68BBA20674;
+        Wed,  4 Dec 2019 18:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483185;
-        bh=2ruCfQM2uGTJfrjE1Ri3MmU/nY3aN8p9UYu2mdRhDEo=;
+        s=default; t=1575482797;
+        bh=8m/MqRha1T/Gf1VwXx+GBM1pGru1K/qiMgwuwyeqJvE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zaf+4cAtE3cDtAELm1ylCjq0FiB7RmtK3R1wDxVJ2d6Bm/u+GirEhNtKTk7+cjg96
-         DZ8KxxfUTZfzJSYtiUNikGpUvsTW6fX97nhOxTyGrAwYqv5AkIbji+BY88FewYXRrL
-         a+xFHnZaHM5MgPa933JXgLhqdpzXd+9jxshAEkCw=
+        b=RTeOLKVe0+HqPJSgcbGhNLbUrFXOHEF30K8Uej6Pmx60vb7SBXeFlAF1pcUQgXxFI
+         iWMDJd/LJxwLSf6lUrucisA5hrnf5Jx77StnJvp+d03xwQYs28TnsOm/IXLzzCuUhM
+         GIzXeWsqDTU9I+Mr+cgLNjjDYOTEtAHNE7/6r0vo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 042/125] pinctrl: sh-pfc: sh7264: Fix PFCR3 and PFCR0 register configuration
-Date:   Wed,  4 Dec 2019 18:55:47 +0100
-Message-Id: <20191204175321.521763463@linuxfoundation.org>
+Subject: [PATCH 4.14 136/209] net/smc: prevent races between smc_lgr_terminate() and smc_conn_free()
+Date:   Wed,  4 Dec 2019 18:55:48 +0100
+Message-Id: <20191204175332.612859920@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Karsten Graul <kgraul@linux.ibm.com>
 
-[ Upstream commit 1b99d0c80bbe1810572c2cb77b90f67886adfa8d ]
+[ Upstream commit 77f838ace755d2f466536c44dac6c856f62cd901 ]
 
-The Port F Control Register 3 (PFCR3) contains only a single field.
-However, counting from left to right, it is the fourth field, not the
-first field.
-Insert the missing dummy configuration values (3 fields of 16 values) to
-fix this.
+To prevent races between smc_lgr_terminate() and smc_conn_free() add an
+extra check of the lgr field before accessing it, and cancel a delayed
+free_work when a new smc connection is created.
+This fixes the problem that free_work cleared the lgr variable but
+smc_lgr_terminate() or smc_conn_free() still access it in parallel.
 
-The descriptor for the Port F Control Register 0 (PFCR0) lacks the
-description for the 4th field (PF0 Mode, PF0MD[2:0]).
-Add the missing configuration values to fix this.
-
-Fixes: a8d42fc4217b1ea1 ("sh-pfc: Add sh7264 pinmux support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh7264.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/smc/smc_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7264.c b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-index 8070765311dbf..e1c34e19222ee 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-@@ -1716,6 +1716,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	},
+diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
+index f04a037dc9677..0de788fa43e95 100644
+--- a/net/smc/smc_core.c
++++ b/net/smc/smc_core.c
+@@ -103,6 +103,8 @@ static void smc_lgr_unregister_conn(struct smc_connection *conn)
+ 	struct smc_link_group *lgr = conn->lgr;
+ 	int reduced = 0;
  
- 	{ PINMUX_CFG_REG("PFCR3", 0xfffe38a8, 16, 4) {
-+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 		PF12MD_000, PF12MD_001, 0, PF12MD_011,
- 		PF12MD_100, PF12MD_101, 0, 0,
- 		0, 0, 0, 0, 0, 0, 0, 0 }
-@@ -1759,8 +1762,10 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		0, 0, 0, 0, 0, 0, 0, 0,
- 		PF1MD_000, PF1MD_001, PF1MD_010, PF1MD_011,
- 		PF1MD_100, PF1MD_101, 0, 0,
--		0, 0, 0, 0, 0, 0, 0, 0
--	 }
-+		0, 0, 0, 0, 0, 0, 0, 0,
-+		PF0MD_000, PF0MD_001, PF0MD_010, PF0MD_011,
-+		PF0MD_100, PF0MD_101, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0 }
- 	},
- 
- 	{ PINMUX_CFG_REG("PFIOR0", 0xfffe38b2, 16, 1) {
++	if (!lgr)
++		return;
+ 	write_lock_bh(&lgr->conns_lock);
+ 	if (conn->alert_token_local) {
+ 		reduced = 1;
+@@ -431,6 +433,8 @@ int smc_conn_create(struct smc_sock *smc, __be32 peer_in_addr,
+ 			local_contact = SMC_REUSE_CONTACT;
+ 			conn->lgr = lgr;
+ 			smc_lgr_register_conn(conn); /* add smc conn to lgr */
++			if (delayed_work_pending(&lgr->free_work))
++				cancel_delayed_work(&lgr->free_work);
+ 			write_unlock_bh(&lgr->conns_lock);
+ 			break;
+ 		}
 -- 
 2.20.1
 
