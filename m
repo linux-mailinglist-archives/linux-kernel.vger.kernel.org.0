@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C891130AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E1CA1130B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbfLDRVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:21:12 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:46413 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727990AbfLDRVL (ORCPT
+        id S1728258AbfLDRXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:23:17 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45479 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727033AbfLDRXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:21:11 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 701412DD;
-        Wed,  4 Dec 2019 12:21:10 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 04 Dec 2019 12:21:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=9ubeIjKC3jZuuIvS2hBfJBMANKt
-        1k1oLz7fj1WuUt7s=; b=Tbyfly3TVKDkoiUoZHQg7xXLS4G8NNXqpAl9Zn4cPGT
-        qgS/K8vabLIqQd88j1nBdXzqXKCbAfYAFQs46HLrRun23yguwIx0KvpIpMWtM9hn
-        LqQNiCmmtB/i4uFCuprmxN1qJ5l3cXAbDo1J13M38lC6T62cB1B9JnRGHAlqSVtR
-        bwfLAQx4DSUMRSTezwYxKnSxzFNfvQwRX0EHBZQJiz6x+ez6sq21JQhTKJxjj/pH
-        D+pOJB+gYFm07otVzWwHZSqnI63n2rS6rcnFY+M3SKclQibTcalNCiqG7+/5Zf0A
-        Gmg1Qfa2jph6WTncBo4JdmViPWwbFPVeWV4CYP4EXMg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=9ubeIj
-        KC3jZuuIvS2hBfJBMANKt1k1oLz7fj1WuUt7s=; b=Ts2EdpLfqSs9gQczjnkO9C
-        7QkOTVrTNGaHKVCXUjWU0g7oDboJKzukD8SxblkLKvcEQvEBG2fOVGcxCf9OR+q2
-        0RGtdRdph2ZNGl++zumD0MbIkzCGBwueCsKkHT52jlMIJoz8zXSkqXpyjPCilEEP
-        ofcpL48l1n3P6h/r9e44WQlsaIqlzYkIUTkjJ5BktuliHrk802ygOzocsEXS7NNp
-        bV2knn2Nkz7NbzDmpceBeDQNTjaW/pgm03g3d4hR8L6CuYwB2m4MKJ5DObHEQEah
-        Oo5tNNGycmd+KEAiSuK5Yo+XWuDuvUvd3N2SfY0G4aAgzbRXTY60mt2mDtO2ky+w
-        ==
-X-ME-Sender: <xms:BevnXXs_LZpeXpopEPqildbfm6FG-Fszj_6rxpRhnFSzVwrydHw98g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudejledgleejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujgesthdtre
-    dttddtvdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheq
-    necukfhppedvudejrdeikedrgeelrdejvdenucfrrghrrghmpehmrghilhhfrhhomhepgh
-    hrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:BevnXdhXsmiuw9ovucuwAEMXY8GHHHeL7cVDQ6pQtPYPW8fSzzO0sQ>
-    <xmx:BevnXXy8IQXGBtANZ2gRQYNGx1xvmRNgbAtCmzL68lemVtlYdSaZjg>
-    <xmx:BevnXT5KMz5urWivHUhElwWvT3i7V_kqzGmDEkKah2MLZKbgCSlE_g>
-    <xmx:BuvnXWYKJDSmn5Q4J3B3HwduuwA5SU4jr56jpRY3lxRPaXTbgzsyUA>
-Received: from localhost (unknown [217.68.49.72])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 44E5B30600AA;
-        Wed,  4 Dec 2019 12:21:09 -0500 (EST)
-Date:   Wed, 4 Dec 2019 18:21:07 +0100
-From:   Greg KH <greg@kroah.com>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: make usb_interrupt_msg() a static inline
-Message-ID: <20191204172107.GF3627415@kroah.com>
-References: <20191204143035.31751-1-info@metux.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204143035.31751-1-info@metux.net>
+        Wed, 4 Dec 2019 12:23:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575480195;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/ijlA2Y8tQ65LgRVW6J4BfY/7PWvTIeCK61lJ/PdESM=;
+        b=CrD+oDZBaxW4pXqFvJjLEUt6gowQGtqFYv1d7PQFfDobn18wdpEF2efDhQSzClqAqX1Qr9
+        QIQnZ/dKcJyXcYix5uEYHkhG+sfkwhsMFTD1uA74ypRNzgxaeIpptmU8SCv9g3QopQR+gO
+        Ust9fEdmCRy7jWF14zWNRJQ2onCUxKc=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-281-i0WXJIHWMYKmw-OksvUNPQ-1; Wed, 04 Dec 2019 12:23:14 -0500
+Received: by mail-qk1-f197.google.com with SMTP id a186so177177qkb.18
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 09:23:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WImDtnT/OC0iIgg7U312qsc7ZNGeTEU307A4KTpQNWQ=;
+        b=kMLj/WuP15lJHX60zVipWRYLPTs6QMN9RspnykHVgn3RwdwiGCJ07bJxHey0uYsEkJ
+         mN9ETegckwvdq+HZkmX5skW85db66UiRUSamckH4wL/2NfxeRq/86jmRO5Ta2LESt255
+         OKeDOY6bWIrnnGNgzxqjiMXEVBk1mcyK7asXx/mI18rGPaRv9uB/69MtoxHw0ytkdkID
+         jWjQVXvhHKb5kHK6c9AW3pAoO9AwWt8rs6a1dJOeYiUCPSSA+vKpOFl32mlzxznj8YJN
+         6ZFUP2SJZrnZ8iUgXriuES2+FV/JdTY22QbdMVwDNGxpHLC/9eMEB0kYNneo/3Hr/ZOV
+         DxCw==
+X-Gm-Message-State: APjAAAWySucqpY3i/gqplXrLtRlB40DsLR1jBmXA4NiCKxqj53c1xrVG
+        1tLhWz9V1VZS9+f5C5dCJLYWoJEQ4Dzn/aTvSLybHzs3SkrYfUQUGnLu+T8TGGxehUEZQDp2iPS
+        IE1C672BpA1UuLj/8LMSNn/9+
+X-Received: by 2002:ac8:5448:: with SMTP id d8mr3793159qtq.205.1575480194386;
+        Wed, 04 Dec 2019 09:23:14 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwjZllkTJMVO8gUft4TF37TJtGxExThuw0OqUtgK8eLV5ii8XWfVEyUSs8xU1asSX8TohyEuQ==
+X-Received: by 2002:ac8:5448:: with SMTP id d8mr3793143qtq.205.1575480194184;
+        Wed, 04 Dec 2019 09:23:14 -0800 (PST)
+Received: from trix.remote.csb ([75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id d13sm3964871qkk.136.2019.12.04.09.23.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 09:23:13 -0800 (PST)
+From:   trix@redhat.com
+To:     bigeasy@linutronix.de, tglx@linutronix.de, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org
+Cc:     Tom Rix <trix@redhat.com>
+Subject: [PATCH RT 5.2] signal: remove noop call to __sigqueue_free
+Date:   Wed,  4 Dec 2019 09:22:42 -0800
+Message-Id: <20191204172242.21058-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
+X-MC-Unique: i0WXJIHWMYKmw-OksvUNPQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 03:30:35PM +0100, Enrico Weigelt, metux IT consult wrote:
-> usb_interrupt_msg() effectively is just an alias for usb_bulk_msg(),
-> no need for being an real function, thus converting it to an
-> inline function.
-> 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+From: Tom Rix <trix@redhat.com>
 
-You also didn't even cc: the proper people as per
-scripts/get_maintainer.pl so you obviously didn't even want the patch to
-be reviewed or applied :(
+By inspection, this call does not do anything.
+
+static void __sigqueue_free(struct sigqueue *q)
+{
+=09if (q->flags & SIGQUEUE_PREALLOC)  <-- redundant flag check --+
+=09=09return;                                               |
+=09atomic_dec(&q->user->sigpending);                             |
+=09free_uid(q->user);                                            |
+=09kmem_cache_free(sigqueue_cachep, q);                          |
+}                                                                     |
+                                                                      |
+static void sigqueue_free_current(struct sigqueue *q)                 |
+{                                                                     |
+=09struct user_struct *up;                                       |
+                                                                      |
+=09if (q->flags & SIGQUEUE_PREALLOC)  <-- first flag check ------+
+=09=09return;                                               |
+                                                                      |
+=09up =3D q->user;                                                 |
+=09if (rt_prio(current->normal_prio) && !put_task_cache(current, |
+=09=09atomic_dec(&up->sigpending);                          |
+=09=09free_uid(up);                                         |
+=09} else                                                        |
+=09=09__sigqueue_free(q);  <--- this call will noop --------+
+}
+
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ kernel/signal.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 7bf4b399d307..4389cfde3f86 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -486,8 +486,7 @@ static void sigqueue_free_current(struct sigqueue *q)
+ =09if (rt_prio(current->normal_prio) && !put_task_cache(current, q)) {
+ =09=09atomic_dec(&up->sigpending);
+ =09=09free_uid(up);
+-=09} else
+-=09=09  __sigqueue_free(q);
++=09}
+ }
+=20
+ void flush_sigqueue(struct sigpending *queue)
+--=20
+2.18.1
+
