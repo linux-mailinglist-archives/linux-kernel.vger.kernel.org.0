@@ -2,104 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57067112EB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ADD5112EC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:42:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbfLDPkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:40:00 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:43878 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbfLDPj6 (ORCPT
+        id S1728482AbfLDPmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:42:07 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59640 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728329AbfLDPmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:39:58 -0500
-Received: by mail-pj1-f65.google.com with SMTP id g4so3130878pjs.10;
-        Wed, 04 Dec 2019 07:39:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j0coACmS6cX4bpqEIAC6FvUjz2tQ6QO1d04l0/4uREE=;
-        b=lsvY4NBlwKoCDeXexA6iYMQuVyI8QL3dR5wb5XfIcZ6iT8/3F3Jhp7PHA9+e+1T1HB
-         sxNCk09kKv0v/wESWOiW0cWzSe/LrJ39i1EIijj0KHoBfDyIaSFu21h1IJn0xpQh/LFe
-         YbE7NVwRLwtf13wV37Q2rA1QN+ZmJPgBb6iGtOVKCxWtpuRXauYmxK6CVFBcyiCIFYcZ
-         swSgicuzn71hPEZksrEIZYlVK4McHiHKmXi9cePt6/wpjYkcWB1Q3lf1oiZgD3hNyHpu
-         q9JAmR0b/Anbt8liGTZSWOEMM6VH5yqh+uiXiD3EsYbXb5T0D4ghVNNtbr521PVZyqEa
-         cdvQ==
-X-Gm-Message-State: APjAAAVbVzkvA/7gW3r9GFH8j2aKwaj9h05f0zfHmESgleq3TIWHI9jL
-        PkMruGTLovbeosp4f60UDfgye6nziwQ=
-X-Google-Smtp-Source: APXvYqwRBUMgY8ItWArwVSMxfB0K+ay+Tb4jg30YdZl3x5bC9Mza98iPkCYSeYJjeRVjeVZUkJBwew==
-X-Received: by 2002:a17:90a:778a:: with SMTP id v10mr2140503pjk.26.1575473997542;
-        Wed, 04 Dec 2019 07:39:57 -0800 (PST)
-Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
-        by smtp.gmail.com with ESMTPSA id s27sm8748361pfd.88.2019.12.04.07.39.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:39:56 -0800 (PST)
-Date:   Wed, 4 Dec 2019 07:40:48 -0800
-From:   Paul Burton <paulburton@kernel.org>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] MIPS: Use __copy_{to,from}_user() for emulated FP
- loads/stores
-Message-ID: <20191204154048.eotzglp4rdlx4yzl@lantea.localdomain>
-References: <20191203204933.1642259-1-paulburton@kernel.org>
- <f5e09155580d417e9dcd07b1c20786ed@AcuMS.aculab.com>
+        Wed, 4 Dec 2019 10:42:06 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB4FXeEH113462;
+        Wed, 4 Dec 2019 15:41:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=KgsAba1FdT9OQZ+ZSq4w/XKsZDjEGA6oMyloCPN9eIU=;
+ b=IyO4AiioCxPSvnIBR60Gx8+6/zbnxC3Nr0zZbI8gxtmQjaXg3QS831XlTqTLJ9eoRQhJ
+ MiZvAkk9XjgI/wOUEnAbEUyivTvS0l6nuPv0a99wcxBuSWwjKfYVaXqsv8SUKnaQIojN
+ KnUwKX9Y/WrvIHMablpjqMOv3X/BwIYO7BK3QAIk9bej1FOloQpk+YM9xlT2fRkYKOr6
+ RvMSmRNHHnVJ/BmT4UFYPlsHVhaSYvuHwJSCR6Camsy30FE5IrTgEAssGlfqW8jnGy0g
+ gwKYwkMO87BK6j7jmuADxmKKxlqc/j0HQGjc3cqb0tPUgVKS+DEVROn7IfcblYbwzYOu lg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2wkh2rf330-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Dec 2019 15:41:42 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB4FdIdo027892;
+        Wed, 4 Dec 2019 15:41:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2wp16b0b15-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Dec 2019 15:41:41 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB4FfdM3023513;
+        Wed, 4 Dec 2019 15:41:39 GMT
+Received: from dhcp-10-175-179-22.vpn.oracle.com (/10.175.179.22)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 04 Dec 2019 07:41:38 -0800
+Date:   Wed, 4 Dec 2019 15:41:28 +0000 (GMT)
+From:   Alan Maguire <alan.maguire@oracle.com>
+X-X-Sender: alan@dhcp-10-175-179-22.vpn.oracle.com
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        David Gow <davidgow@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>, adilger.kernel@dilger.ca,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Knut Omang <knut.omang@oracle.com>
+Subject: Re: [PATCH v5 linux-kselftest-test 3/6] kunit: allow kunit tests to
+ be loaded as a module
+In-Reply-To: <20191204003851.GF86484@mit.edu>
+Message-ID: <alpine.LRH.2.20.1912041531160.5511@dhcp-10-175-179-22.vpn.oracle.com>
+References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com> <1575374868-32601-4-git-send-email-alan.maguire@oracle.com> <CAFd5g47dRP9HvsZD3sqzzfbAthNq8gxEdh57owo3CqVHLNOf6w@mail.gmail.com> <20191204003851.GF86484@mit.edu>
+User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f5e09155580d417e9dcd07b1c20786ed@AcuMS.aculab.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9461 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912040130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9461 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912040130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On Tue, 3 Dec 2019, Theodore Y. Ts'o wrote:
 
-On Wed, Dec 04, 2019 at 11:14:08AM +0000, David Laight wrote:
-> From: Paul Burton
-> > Sent: 03 December 2019 20:50
-> > Our FPU emulator currently uses __get_user() & __put_user() to perform
-> > emulated loads & stores. This is problematic because __get_user() &
-> > __put_user() are only suitable for naturally aligned memory accesses,
-> > and the address we're accessing is entirely under the control of
-> > userland.
+> On Tue, Dec 03, 2019 at 09:54:25AM -0800, Brendan Higgins wrote:
+> > On Tue, Dec 3, 2019 at 4:08 AM Alan Maguire <alan.maguire@oracle.com> wrote:
+> > >
+> > > As tests are added to kunit, it will become less feasible to execute
+> > > all built tests together.  By supporting modular tests we provide
+> > > a simple way to do selective execution on a running system; specifying
+> > >
+> > > CONFIG_KUNIT=y
+> > > CONFIG_KUNIT_EXAMPLE_TEST=m
+> > >
+> > > ...means we can simply "insmod example-test.ko" to run the tests.
+> > >
+> > > To achieve this we need to do the following:
+> > >
+> > > o export the required symbols in kunit
+> > > o string-stream tests utilize non-exported symbols so for now we skip
+> > >   building them when CONFIG_KUNIT_TEST=m.
+> > > o support a new way of declaring test suites.  Because a module cannot
+> > >   do multiple late_initcall()s, we provide a kunit_test_suites() macro
+> > >   to declare multiple suites within the same module at once.
+> > > o some test module names would have been too general ("test-test"
+> > >   and "example-test" for kunit tests, "inode-test" for ext4 tests);
+> > >   rename these as appropriate ("kunit-test", "kunit-example-test"
+> > >   and "ext4-inode-test" respectively).
+> > >
+> > > Co-developed-by: Knut Omang <knut.omang@oracle.com>
+> > > Signed-off-by: Knut Omang <knut.omang@oracle.com>
+> > > Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
 > > 
-> > This allows userland to cause a kernel panic by simply performing an
-> > unaligned floating point load or store - the kernel will handle the
-> > address error exception by attempting to emulate the instruction, and in
-> > the process it may generate another address error exception itself.
-> > This time the exception is taken with EPC pointing at the kernels FPU
-> > emulation code, and we hit a die_if_kernel() in
-> > emulate_load_store_insn().
+> > Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
 > 
-> Won't this be true of almost all code that uses get_user() and put_user()
-> (with or without the leading __).
-
-Only if the address being accessed is under the control of userland to
-the extent that it can create an unaligned address. You're right that
-may be more widespread though; it needs checking...
-
-We used to have separate get_user_unaligned() & put_user_unaligned()
-which would suggest that it's expected that get_user() & put_user()
-require their accesses be aligned, but they were removed by commit
-3170d8d226c2 ("kill {__,}{get,put}_user_unaligned()") in v4.13.
-
-But perhaps we should just take the second AdEL exception & recover via
-the fixups table. We definitely don't right now... Needs further
-investigation...
-
-> > Fix this up by using __copy_from_user() instead of __get_user() and
-> > __copy_to_user() instead of __put_user(). These replacements will handle
-> > arbitrary alignment without problems.
+> Acked-by: Theodore Ts'o <tytso@mit.edu> # for ext4 bits
 > 
-> They'll also kill performance.....
 
-Sure they're heavier, but if you're hitting the FPU emulator you're
-already slow - trapping to the kernel for instruction emulation is
-hardly a hot path. If you care about performance at all then this is
-already a code path to avoid at all costs.
+Thanks for taking a look!
 
-Thanks,
-    Paul
+> 
+> I do have one question, out of curiosity --- for people who aren't
+> using UML to run Kunit tests, and are either running the kunit tests
+> during boot, or when the module is loaded, is there the test framework
+> to automatically extract the test reports out of dmesg?
+> 
+> I can boot a kernel with kunit tests enabled using kvm, and I see it
+> splatted intermixed with the rest of the kernel boot messages.  This
+> is how I tested the 32-bit ext4 inode test fix.  But I had to manually
+> find the test output.  Is that the expected way people are supposed to
+> be using Kunit tests w/o using UML and the python runner?
+>
+
+Looks like Brendan's got something coming to resolve this;
+I've also got a patch that I was hoping to send out soon
+that might help.  The idea is that each test suite would create
+a debugfs representation under /sys/kernel/debug/kunit;
+specifically:
+
+/sys/kernel/debug/kunit/results/<suite>
+/sys/kernel/debug/kunit/results/<suite>-tests
+
+...where cat'ing the former shows the full set of results,
+and the latter is a directory within which we can display
+individual test results in test-case-specific files.
+
+This is all done by ensuring that when tests log information,
+they log to a per-test-case log buffer as well as to dmesg.
+
+If the above sounds useful, I'll try and polish up the patch
+for submission. Thanks!
+
+Alan
+
+> Thanks,
+> 
+> 						- Ted
+> 
