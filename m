@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4D18112B2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 731AB112B2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:15:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbfLDMPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:15:43 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52450 "EHLO
+        id S1727781AbfLDMPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:15:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52604 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbfLDMPm (ORCPT
+        with ESMTP id S1727445AbfLDMPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:15:42 -0500
+        Wed, 4 Dec 2019 07:15:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=nJI9bFopWb7W81ncH/qoxkAYT5bre4TUTX6Zr90oAKg=; b=mDD+AJe531Ju
-        DCfXeQkdUwL0LFlYTBn7QHCuvSeLMKpcpFQmbvXvjyXtFSdhThL7SO72Bwt6RRx/XewFtnUX/qC2x
-        ZZhxsIYFVcxkKnHj+Jhiwn8Fe2k6T2oFtZUzPX3Md+cshV1PbHLcEOHM9CzDjSf64LmoiIaP1w3kv
-        kakwI=;
+        List-Archive; bh=RC+7zXRqYsH/Z5uX+H5Hl29YUyIBfWV7tx5prRznMfA=; b=hj2ibWPZpWE1
+        IcPuy11+8LfYQb6ykvMY99RVVIThhNll6CCNgiEB16q0NhUXwQhDvvo0ljO5Y3ZfoFdUST0jX7U6q
+        8KBP7oZKHLs0jiOuM6xvncERo0IM++DASspd4yK094sfbGdzKKSDdXEwDA3m4GsnQs0hBG5eC2pYA
+        F/cek=;
 Received: from fw-tnat-cam3.arm.com ([217.140.106.51] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1icTZA-0000AV-ST; Wed, 04 Dec 2019 12:15:36 +0000
+        id 1icTZF-0000Ag-7X; Wed, 04 Dec 2019 12:15:41 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 383D3D003B4; Wed,  4 Dec 2019 12:15:36 +0000 (GMT)
+        id EC183D003B4; Wed,  4 Dec 2019 12:15:40 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     broonie@kernel.org, b.zolnierkie@samsung.com,
-        kernel-janitors@vger.kernel.org, krzk@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        sbkim73@samsung.com
-Subject: Applied "regulator: s5m8767: Fix a warning message" to the regulator tree
-In-Reply-To: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
-Message-Id: <applied-20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
+To:     Huanpeng Xin <huanpeng.xin@unisoc.com>
+Cc:     baolin.wang7@gmail.com, Baolin Wang <baolin.wang7@gmail.com>,
+        broonie@kernel.org, huanpeng.xin@unisoc.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, orsonzhai@gmail.com,
+        zhang.lyra@gmail.com
+Subject: Applied "spi: sprd: Fix the incorrect SPI register" to the spi tree
+In-Reply-To: <b4f7f89ec0fdc595335687bfbd9f962213bc4a1d.1575443510.git.baolin.wang7@gmail.com>
+Message-Id: <applied-b4f7f89ec0fdc595335687bfbd9f962213bc4a1d.1575443510.git.baolin.wang7@gmail.com>
 X-Patchwork-Hint: ignore
-Date:   Wed,  4 Dec 2019 12:15:36 +0000 (GMT)
+Date:   Wed,  4 Dec 2019 12:15:40 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +48,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: s5m8767: Fix a warning message
+   spi: sprd: Fix the incorrect SPI register
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,34 +73,36 @@ to this mail.
 Thanks,
 Mark
 
-From f3c7f7b636ef5061906aa119eccc2b8dbbaf7199 Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 3 Dec 2019 22:48:38 +0100
-Subject: [PATCH] regulator: s5m8767: Fix a warning message
+From 5e9c5236b7b86779b53b762f7e66240c3f18314b Mon Sep 17 00:00:00 2001
+From: Huanpeng Xin <huanpeng.xin@unisoc.com>
+Date: Wed, 4 Dec 2019 15:13:59 +0800
+Subject: [PATCH] spi: sprd: Fix the incorrect SPI register
 
-Axe a duplicated word ("property") in a warning message.
+The original code used an incorrect SPI register to initialize the SPI
+controller in sprd_spi_init_hw(), thus fix it.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Link: https://lore.kernel.org/r/20191203214838.9680-1-christophe.jaillet@wanadoo.fr
+Fixes: e7d973a31c24 ("spi: sprd: Add SPI driver for Spreadtrum SC9860")
+Signed-off-by: Huanpeng Xin <huanpeng.xin@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Link: https://lore.kernel.org/r/b4f7f89ec0fdc595335687bfbd9f962213bc4a1d.1575443510.git.baolin.wang7@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/s5m8767.c | 2 +-
+ drivers/spi/spi-sprd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index bdc07739e9a2..12d6b8d2e97e 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -588,7 +588,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
- 		if (of_property_read_u32(reg_np, "op_mode",
- 				&rmode->mode)) {
- 			dev_warn(iodev->dev,
--				"no op_mode property property at %pOF\n",
-+				"no op_mode property at %pOF\n",
- 				reg_np);
+diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
+index 2ee1feb41681..6678f1cbc566 100644
+--- a/drivers/spi/spi-sprd.c
++++ b/drivers/spi/spi-sprd.c
+@@ -678,7 +678,7 @@ static int sprd_spi_init_hw(struct sprd_spi *ss, struct spi_transfer *t)
+ 	if (d->unit != SPI_DELAY_UNIT_SCK)
+ 		return -EINVAL;
  
- 			rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
+-	val = readl_relaxed(ss->base + SPRD_SPI_CTL7);
++	val = readl_relaxed(ss->base + SPRD_SPI_CTL0);
+ 	val &= ~(SPRD_SPI_SCK_REV | SPRD_SPI_NG_TX | SPRD_SPI_NG_RX);
+ 	/* Set default chip selection, clock phase and clock polarity */
+ 	val |= ss->hw_mode & SPI_CPHA ? SPRD_SPI_NG_RX : SPRD_SPI_NG_TX;
 -- 
 2.20.1
 
