@@ -2,139 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8238C112793
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 10:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E9C1127AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 10:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfLDJdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 04:33:45 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37824 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbfLDJdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 04:33:45 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f129so7064833wmf.2;
-        Wed, 04 Dec 2019 01:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YeNtWDC9yu11do01uPKTJ8tyebtIOy7shSOEQ51fT68=;
-        b=VikpHcZ/reaArIFbOLJ3gQSRFkNOPGrLauDrC0fLeiR21Fz+fUOrdyW99c3Aqxnp3L
-         1CCnO5O00SzkOX5S1XBhBhW/eg1MGxf0L1QCpHNEF9UTzJVddG5cE4+vpbbGQIs1jsGf
-         AOo600Ba5zeGMQyRTUdWbN+ybT8r1odwz2vP6DKqqj4Kxlj0+hw4LUDPfCGYU1bYeDdY
-         y3IsxOiRk1pyqrJAzDS4E7/V7ZEBg7dWPHKsqA9fFP+GzGdyLb+yG37FJr3L4B38+HY4
-         UcCa7GLc2OEhCcAMr1MbF506qY3IxDMbRguqTHjkwpJd1UwOdgSVoz8Z3+mjAyGUcEEc
-         nU+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YeNtWDC9yu11do01uPKTJ8tyebtIOy7shSOEQ51fT68=;
-        b=aLVjKUA+4joYxjvY6Tv2FYmdsySCX3a1fM7HlpxHkWP0im/2pRHrIN8FYhNKHpG0sz
-         gg4J7XKv95/crMvYvJdcGLpsgHDDtJ5T1nCOlAWiJtqUkRshRvGPRxL/cfZaz+EIECIx
-         +1768QD9qt3+lCL+Wnh66TbIcP6MVQFG0mJh5Hf8zR9mm3pESQz+aSCbqfcZmFFL0dTj
-         6Y9Vv0wvzMWZqSiOM4lefW3SLj/72CWnwC0jSQ2e0VdHMqfDg80Fs2ZO68mVTijKgX9L
-         9SwJ30fs84a9g+6e1bO7DqAuNYu5PvqYzu/waHPozflmvc4yCKMbJcGc74GdPw088iyh
-         2i4Q==
-X-Gm-Message-State: APjAAAWPQIV2ZN+Qe+t1EYblAoavr0TT4AQl4KVPKr7Zuty/Q8kTp0N9
-        BdFLroGgOXDx2umn3K1BTVo=
-X-Google-Smtp-Source: APXvYqxBP76BkvTJP+49l9MBIT/rXI0NnxazAIoLHMw/CZzKXZCC4KbLPemmwIXB7IIi+kePIhR6dQ==
-X-Received: by 2002:a05:600c:24ce:: with SMTP id 14mr36627444wmu.122.1575452022150;
-        Wed, 04 Dec 2019 01:33:42 -0800 (PST)
-Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
-        by smtp.gmail.com with ESMTPSA id c6sm5947752wmb.9.2019.12.04.01.33.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 01:33:40 -0800 (PST)
-Date:   Wed, 4 Dec 2019 10:33:39 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>, Sumit Gupta <sumitg@nvidia.com>,
-        rjw@rjwysocki.net, catalin.marinas@arm.com, will@kernel.org,
-        jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bbasu@nvidia.com,
-        mperttunen@nvidia.com, devicetree@vger.kernel.org
-Subject: Re: [TEGRA194_CPUFREQ Patch 1/3] firmware: tegra: adding function to
- get BPMP data
-Message-ID: <20191204093339.GA2784830@ulmo>
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <20191203174229.GA1721849@ulmo>
- <9404232d-84ce-a117-89dd-f2d8de80993e@kapsi.fi>
- <20191204091703.d32to5omdm3eynon@vireshk-i7>
+        id S1727351AbfLDJf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 04:35:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53710 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725922AbfLDJf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 04:35:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 37E3EAEE9;
+        Wed,  4 Dec 2019 09:35:54 +0000 (UTC)
+Subject: Re: [PATCH] drm/modes: remove unused variables
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20191119134706.10893-1-benjamin.gaignard@st.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
+ BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
+ irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
+ clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
+ mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
+ KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
+ Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
+ UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
+ RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
+ dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
+ ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
+ 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
+ wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
+ h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
+ n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
+ aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
+ HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
+ 3H26qrE=
+Message-ID: <8056f838-3ebf-26db-f5be-3e78d61aa512@suse.de>
+Date:   Wed, 4 Dec 2019 10:35:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
+In-Reply-To: <20191119134706.10893-1-benjamin.gaignard@st.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Content-Disposition: inline
-In-Reply-To: <20191204091703.d32to5omdm3eynon@vireshk-i7>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+ protocol="application/pgp-signature";
+ boundary="sfffbartdCm1Hzdfhnc51iGLfbb1MgGtC"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--sfffbartdCm1Hzdfhnc51iGLfbb1MgGtC
+Content-Type: multipart/mixed; boundary="lZmjsAE54TEvtdZz45WVLMIwSBvAYr6Mu";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Benjamin Gaignard <benjamin.gaignard@st.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, sean@poorly.run,
+ airlied@linux.ie, daniel@ffwll.ch
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Message-ID: <8056f838-3ebf-26db-f5be-3e78d61aa512@suse.de>
+Subject: Re: [PATCH] drm/modes: remove unused variables
+References: <20191119134706.10893-1-benjamin.gaignard@st.com>
+In-Reply-To: <20191119134706.10893-1-benjamin.gaignard@st.com>
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--lZmjsAE54TEvtdZz45WVLMIwSBvAYr6Mu
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2019 at 02:47:03PM +0530, Viresh Kumar wrote:
-> On 04-12-19, 10:45, Mikko Perttunen wrote:
-> > Now, my original patchset (which this series is based on) did add
-> > nvidia,bpmp properties on the CPU DT nodes itself and query BPMP based =
-on
-> > that. A change is still required for that since tegra_bpmp_get() curren=
-tly
-> > takes a 'struct device *' which we don't have for a CPU DT node.
+Hi
+
+Am 19.11.19 um 14:47 schrieb Benjamin Gaignard:
+> When compiling with W=3D1 few warnings about unused variables show up.
+> This patch removes all the involved variables.
 >=20
-> I may be missing the context, but the CPUs always have a struct device
-> * for them, which we get via a call to get_cpu_device(cpu), isn't ?
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+>  drivers/gpu/drm/drm_modes.c | 22 +++-------------------
+>  1 file changed, 3 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> index 88232698d7a0..aca901aff042 100644
+> --- a/drivers/gpu/drm/drm_modes.c
+> +++ b/drivers/gpu/drm/drm_modes.c
+> @@ -233,7 +233,7 @@ struct drm_display_mode *drm_cvt_mode(struct drm_de=
+vice *dev, int hdisplay,
+>  		/* 3) Nominal HSync width (% of line period) - default 8 */
+>  #define CVT_HSYNC_PERCENTAGE	8
+>  		unsigned int hblank_percentage;
+> -		int vsyncandback_porch, vback_porch, hblank;
+> +		int vsyncandback_porch, hblank;
+> =20
+>  		/* estimated the horizontal period */
+>  		tmp1 =3D HV_FACTOR * 1000000  -
+> @@ -249,7 +249,6 @@ struct drm_display_mode *drm_cvt_mode(struct drm_de=
+vice *dev, int hdisplay,
+>  		else
+>  			vsyncandback_porch =3D tmp1;
+>  		/* 10. Find number of lines in back porch */
+> -		vback_porch =3D vsyncandback_porch - vsync;
+>  		drm_mode->vtotal =3D vdisplay_rnd + 2 * vmargin +
+>  				vsyncandback_porch + CVT_MIN_V_PORCH;
+>  		/* 5) Definition of Horizontal blanking time limitation */
+> @@ -386,9 +385,8 @@ drm_gtf_mode_complex(struct drm_device *dev, int hd=
+isplay, int vdisplay,
+>  	int top_margin, bottom_margin;
+>  	int interlace;
+>  	unsigned int hfreq_est;
+> -	int vsync_plus_bp, vback_porch;
+> -	unsigned int vtotal_lines, vfieldrate_est, hperiod;
+> -	unsigned int vfield_rate, vframe_rate;
+> +	int vsync_plus_bp;
+> +	unsigned int vtotal_lines;
+>  	int left_margin, right_margin;
+>  	unsigned int total_active_pixels, ideal_duty_cycle;
+>  	unsigned int hblank, total_pixels, pixel_freq;
+> @@ -451,23 +449,9 @@ drm_gtf_mode_complex(struct drm_device *dev, int h=
+display, int vdisplay,
+>  	/* [V SYNC+BP] =3D RINT(([MIN VSYNC+BP] * hfreq_est / 1000000)) */
+>  	vsync_plus_bp =3D MIN_VSYNC_PLUS_BP * hfreq_est / 1000;
+>  	vsync_plus_bp =3D (vsync_plus_bp + 500) / 1000;
+> -	/*  9. Find the number of lines in V back porch alone: */
+> -	vback_porch =3D vsync_plus_bp - V_SYNC_RQD;
+>  	/*  10. Find the total number of lines in Vertical field period: */
+>  	vtotal_lines =3D vdisplay_rnd + top_margin + bottom_margin +
+>  			vsync_plus_bp + GTF_MIN_V_PORCH;
+> -	/*  11. Estimate the Vertical field frequency: */
+> -	vfieldrate_est =3D hfreq_est / vtotal_lines;
+> -	/*  12. Find the actual horizontal period: */
+> -	hperiod =3D 1000000 / (vfieldrate_rqd * vtotal_lines);
+> -
+> -	/*  13. Find the actual Vertical field frequency: */
+> -	vfield_rate =3D hfreq_est / vtotal_lines;
+> -	/*  14. Find the Vertical frame frequency: */
+> -	if (interlaced)
+> -		vframe_rate =3D vfield_rate / 2;
+> -	else
+> -		vframe_rate =3D vfield_rate;
 
-Yeah, the code that registers this device is in drivers/base/cpu.c in
-register_cpu(). It even retrieves the device tree node for the CPU from
-device tree and stores it in cpu->dev.of_node, so we should be able to
-just pass &cpu->dev to tegra_bpmp_get() in order to retrieve a reference
-to the BPMP.
+The amount of unused code is quite large, which makes me wonder if
+there's something missing below where these variables are supposed to be
+used.
 
-That said, I'm wondering if perhaps we could just add a compatible
-string to the /cpus node for cases like this where we don't have an
-actual device representing the CPU complex. There are a number of CPU
-frequency drivers that register dummy devices just so that they have
-something to bind a driver to.
+If these variables can be removed, comments should mention that steps 9
+and 11 to 14 are being left out. After all, the function is fairly
+explicit about implementing the GTF algorithm step by step.
 
-If we allow the /cpus node to represent the CPU complex (if no other
-"device" does that yet), we can add a compatible string and have the
-cpufreq driver match on that.
+Best regards
+Thomas
 
-Of course this would be slightly difficult to retrofit into existing
-drivers because they'd need to remain backwards compatible with existing
-device trees. But it would allow future drivers to do this a little more
-elegantly. For some SoCs this may not matter, but especially once you
-start depending on additional resources this would come in handy.
+>  	/*  15. Find number of pixels in left margin: */
+>  	if (margins)
+>  		left_margin =3D (hdisplay_rnd * GTF_MARGIN_PERCENTAGE + 500) /
+>=20
 
-Adding Rob and the device tree mailing list for feedback on this idea.
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
 
-Thierry
 
---WIyZ46R2i8wDzkSu
+--lZmjsAE54TEvtdZz45WVLMIwSBvAYr6Mu--
+
+--sfffbartdCm1Hzdfhnc51iGLfbb1MgGtC
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3nfW4ACgkQ3SOs138+
-s6EIBg//a33VPigHL3zRzIUiZIv2SFgdhCGaVV3e7V9z0U/4X7XG5IjvjUG7ISo6
-9/GToldoBLjsmrJ9RmHniEBjuR9af4X3MwnqjRwXMkCKIU64wV70CmTluzFsjV79
-SLwNhFLHqkjQlBXyuk6/DTvTcouVR2jlmQqffGDCzI7ZYmlHI/Xy9aLR6bdmwtgU
-TfaGwkRbI7uzy1QOWQv5Ed/02JJUT/vWoeL77SN7lBIY39ublmVSO9rB7Y+ZMnpJ
-bv2oxl8Gfq0Re5Qfv+vU/aigDlzg8E3aKlHKv7B0yfKcYexN6q3zP3kAwWlwiybn
-XYhKfO7BUnocYKojIUKnufQa4Zh3DIvseivUmSVPchNEcyUPNyDY+kr9ENcrxO18
-Nim4nwnVPtOq8IXVnAtl+96AMp5bsrDDJIbTkhRAX4+A16y3BWtxcpVE1oxXdBVc
-itup4GIYycanGGdlrkVwtbvehoZGVnleMiJ47naJBZK6HnRqp9T46H50i2SEXp7V
-kJHhLpSFaiCqxfSAHcjLnm+rpc4S0aNJ0s4W9Q2NKGpZvfpEid4a+sW5L7pWPL56
-Q5ozI4pP8STS2DsbMRtiXYXYHoG9NQFtfWQwhWgtNHQgqlVKnJc2wGAE4lLQx0dU
-aEDCx5ImpUEngi26C7Zd+8ja0Y1FHbg+tELsHWytryF+YfUNmUI=
-=uBL9
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl3nffYACgkQaA3BHVML
+eiMuxQgAujArLx8zCUeLyffw6jwoRdIykRccpQ9vIcfalO67kjMBvuLH4TuYkhxa
+TMzgqIViKE9QeQzYuSMtrY+Csvys7Rpy7AF0NgxyrdeQ0cNT/MGlJvdxYpmtxxrz
+gpSLC7U4wyPnDbK1co0EIT5FJlIhJ05gQbmd6QAkkFFeBAFHHJ/3eiDsjGptYQIG
+pF0OQaDcCDopr8U8f3ZRhySpTXZp1juSDVXTDbIRZpWhgOy8nG8cOXjKhvPQxkuH
+8COEua8l9tK+6Cdvd/u7sONBp6envrZxDFqv/TYLmvueGzwYvKXw8SmSyuAhbMI3
+sfz+5ROOL9VnH2o7UlF+YLs4q5EUNQ==
+=+FHY
 -----END PGP SIGNATURE-----
 
---WIyZ46R2i8wDzkSu--
+--sfffbartdCm1Hzdfhnc51iGLfbb1MgGtC--
