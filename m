@@ -2,383 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0DF1125D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:49:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A625112620
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:58:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbfLDItW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:49:22 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51905 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfLDItW (ORCPT
+        id S1726893AbfLDI6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:58:02 -0500
+Received: from esa19.fujitsucc.c3s2.iphmx.com ([216.71.158.62]:27545 "EHLO
+        esa19.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725830AbfLDI6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:49:22 -0500
-X-Originating-IP: 90.65.102.129
-Received: from localhost (lfbn-1-1480-129.w90-65.abo.wanadoo.fr [90.65.102.129])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 0B3E124000F;
-        Wed,  4 Dec 2019 08:49:16 +0000 (UTC)
-Date:   Wed, 4 Dec 2019 09:49:16 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        groeck@chromium.org, bleung@chromium.org, dtor@chromium.org,
-        gwendal@chromium.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-iio@vger.kernel.org, Nick Vaccaro <nvaccaro@chromium.org>,
-        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
-        linux-rtc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Mark Brown <broonie@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: Re: [PATCH] cros_ec: treewide: Remove 'include/linux/mfd/cros_ec.h'
-Message-ID: <20191204084916.GM909634@piout.net>
-References: <20191203145018.14015-1-enric.balletbo@collabora.com>
+        Wed, 4 Dec 2019 03:58:01 -0500
+X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Dec 2019 03:57:59 EST
+IronPort-SDR: K+f4mbaE01CgUn+kI/mlNa5K7e4l6f/coIQaM7cS+wVnUzaGBKkbyAqYlw8wedy3v+00QiP2Gg
+ cwrK4gQCCHQ2wWEI8UtkeDI6GuTJFXA652IaYvSB5mrAyXIuTeVg0tzMB/dryc/1QYG8dUgKc/
+ HsPMjJ4X5nKn5W5EZRaHq0FeoEuq8hhSYLnK8g0w1koGWJ+8pGCeeJKsVrrp/5VEhjAheY4f7b
+ h5pNPm5OOhU1Fh7bcM2Pco0QWPoWXg9VBIwvpgurOfw5pRd7lriZwd6IUYRsXYOLRbq2pKxms3
+ sAE=
+X-IronPort-AV: E=McAfee;i="6000,8403,9460"; a="8204856"
+X-IronPort-AV: E=Sophos;i="5.69,276,1571670000"; 
+   d="scan'208";a="8204856"
+Received: from mail-ty1jpn01lp2058.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([104.47.93.58])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 17:50:48 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CL623QkuUIqWnPvgnMOqB9eDxzSrIoV4k2i1XkpXTms1LYxfbd5h+Sgc4jj6aFsI6GUrPEPTMqzvy2K5yCOpAM+aMirVKV7RdRnOIQIchu+Zlhp0Ibx9lrZgYK0njDM+lLD2ebB3bfFY1YZ3/yMLDFufzYYR1gEHCpGZ5VH6Lrznxsp3w/c9AZkV8LniXFK3WdAv3kx7Y/DCU1KQBinHUgfndpg+n/qVMbJj+PdfMXjgQkJx6573Oxwo/VjM4pPAdQZboiiZELLBHSdP6A5tGc+ixhCgH3/yuN/WeAWuuw6ex4v7W34TMEyAjQOdcVNpspN887/KTdDwZXEdS8ypDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hiB7hX9hszm0/OqvPC6wE5sIe/RIF1baZHyUyB5YDsU=;
+ b=TFzE/V7IxREKdSo7/0A89+B99jGXFmsC4cjhgE/5yVoaB0bzoT3ePtyHjWx33z3Oa9D+Fs5QH48Dn2r9iAnR2p+4vjn6vMnlEq8+GNQqqCVPPdpevBKSqP2ld0PwXXYKTb5DNZwjh0HplwWwabofdEksSP0vh7JdKYZnwRvfpBVkQWofpxjfwmGEykK+BKMWiZgot66s9JlhEJAbzESIzmOa00uirRwO+NE/QS7KTMUUag+Ha22mJD3fkoms0VT2j6iGZNNidML+cNog7kwf7wMtUL602lm78uF0NN+f+mmib3AQXEqaIBvZ07XZQmaAInvPYgCsjiCKtoqijwwWqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hiB7hX9hszm0/OqvPC6wE5sIe/RIF1baZHyUyB5YDsU=;
+ b=JnOB2fuxxmHMSJxrVtGyTxpYUTKbS3qsOodyQzmIJeN4pIXauzTTfUNMf/sP3/JkuX6jC999oE2GCM+JpC0mRBNqs8gAsdGa5D/hFKBcDq0fTgCtQzD5ui/+V3npQkpOZsgIuP7AMQbgPUZT14GyHbacEbHizMV3aGkfVMi79T0=
+Received: from OSBPR01MB4006.jpnprd01.prod.outlook.com (20.178.98.151) by
+ OSBPR01MB5192.jpnprd01.prod.outlook.com (20.179.181.82) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.22; Wed, 4 Dec 2019 08:50:44 +0000
+Received: from OSBPR01MB4006.jpnprd01.prod.outlook.com
+ ([fe80::5849:132c:5ff5:db9b]) by OSBPR01MB4006.jpnprd01.prod.outlook.com
+ ([fe80::5849:132c:5ff5:db9b%6]) with mapi id 15.20.2495.014; Wed, 4 Dec 2019
+ 08:50:44 +0000
+From:   "d.hatayama@fujitsu.com" <d.hatayama@fujitsu.com>
+To:     'Masayoshi Mizuma' <msys.mizuma@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "m.mizuma@jp.fujitsu.com" <m.mizuma@jp.fujitsu.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] efi: arm64: Introduce /proc/efi/memreserve to tell
+ the persistent pages
+Thread-Topic: [PATCH v2 2/2] efi: arm64: Introduce /proc/efi/memreserve to
+ tell the persistent pages
+Thread-Index: AQHVqhZSNuQ9EyZnsEKKmGhUlfiRKKeppb1Q
+Date:   Wed, 4 Dec 2019 08:50:44 +0000
+Message-ID: <OSBPR01MB400616833DA3511C46279AD3955D0@OSBPR01MB4006.jpnprd01.prod.outlook.com>
+References: <20191203201410.28045-1-msys.mizuma@gmail.com>
+ <20191203201410.28045-3-msys.mizuma@gmail.com>
+In-Reply-To: <20191203201410.28045-3-msys.mizuma@gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=d.hatayama@fujitsu.com; 
+x-originating-ip: [210.162.184.119]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0ee9612d-cc92-469e-35c5-08d778970cf5
+x-ms-traffictypediagnostic: OSBPR01MB5192:|OSBPR01MB5192:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSBPR01MB519289FCC28711B8E61BF263955D0@OSBPR01MB5192.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0241D5F98C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(366004)(376002)(39860400002)(189003)(199004)(13464003)(74316002)(8676002)(229853002)(26005)(11346002)(9686003)(81166006)(8936002)(55016002)(6506007)(25786009)(6436002)(478600001)(76176011)(446003)(71190400001)(53546011)(7696005)(71200400001)(186003)(102836004)(4326008)(14454004)(99286004)(76116006)(81156014)(7736002)(33656002)(256004)(6116002)(54906003)(66946007)(3846002)(305945005)(64756008)(66446008)(66476007)(66556008)(6246003)(110136005)(2906002)(85182001)(5660300002)(86362001)(52536014)(14444005)(316002)(777600001);DIR:OUT;SFP:1101;SCL:1;SRVR:OSBPR01MB5192;H:OSBPR01MB4006.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VwebyWw8lOg1YHkAwILcWETdEa52F5/Z/GDsGn9kChwAXINqC3XNUtg4GAL509KjZ9RmxF1uPMGjXZMsATQuDXiiO4aT0dusoitkYibhowS3Q6VTEMjvzW71TclzcdSO7zMbawcKNcOUPiYt3DscuLHnLSkpMqphnFRZvi39IXqwnUtrw2dkGeLt6GwG2NjdHIwFu1mxA9jMN8fDozzRDYcgoA6TvFnl2oX7M1QZChU4zcis9wDCiAZPT3ZzQd7KjQ/NOoy+9VAe/xR5VkJ9oSvIDhAIpXO1APVWjL6kd1dmigqsMnUhl/Yv7Du9LK3SBcHFtMwk3vpGdC6OwibqcJXoBjrbV45JqqfwGnNSdqkH9wIurnQY2A9hxwxnM/L4POpPkYGX6o1nc2rIaRRWeWVZ35abx1v/AMiRRpGeS8bac+9SHq73ECgWcAtmfG0o6z/KUeffXWOarlMs6GEpWobu1znvCI2DSqqxmNfDXCtOD4fJ9imEUa4YVEswBDzIZJ0SdwaH9eIiOCXx6x9gKg==
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203145018.14015-1-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ee9612d-cc92-469e-35c5-08d778970cf5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2019 08:50:44.7666
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NZSL7F9TNVepWnr+jnNVpNcgGBTCPPDr6gpz3qs6FgPn6SwQPwFQTaBMMEoJV03UZA5D+i+dqXUL9/7/xgt57RhHwOS6rqR3HaKdx+Ntuo4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB5192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2019 15:50:18+0100, Enric Balletbo i Serra wrote:
-> This header file now only includes the cros_ec_dev struct, however, is the
-> 'include/linux/platform_data/cros_ec_proto.h' who contains the definition of
-> all the Chrome OS EC related structs. There is no reason to have a
-> separate include for this struct so move to the place where other
-> structs are defined. That way, we can remove the include itself, but also
-> simplify the common pattern
-> 
->     #include <linux/mfd/cros_ec.h>
->     #include <linux/platform_data/cros_ec_proto.h>
-> 
-> for a single include
-> 
->     #include <linux/platform_data/cros_ec_proto.h>
-> 
-> The changes to remove the cros_ec.h include were generated with the
-> following shell script:
-> 
->     git grep -l "<linux/mfd/cros_ec.h>" | xargs sed -i '/<linux\/mfd\/cros_ec.h>/d'
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
+
+> -----Original Message-----
+> From: linux-kernel-owner@vger.kernel.org
+> [mailto:linux-kernel-owner@vger.kernel.org] On Behalf Of Masayoshi Mizuma
+> Sent: Wednesday, December 4, 2019 5:14 AM
+> To: Ard Biesheuvel <ard.biesheuvel@linaro.org>;
+> linux-arm-kernel@lists.infradead.org; linux-efi@vger.kernel.org
+> Cc: Masayoshi Mizuma <msys.mizuma@gmail.com>; Mizuma, Masayoshi/=1B$B?e4V=
+=1B(B =1B$BM}?N=1B(B
+> <m.mizuma@jp.fujitsu.com>; linux-kernel@vger.kernel.org;
+> kexec@lists.infradead.org; Hatayama, Daisuke/=1B$BH*;3=1B(B =1B$BBgJe=1B(=
+B
+> <d.hatayama@fujitsu.com>; Eric Biederman <ebiederm@xmission.com>; Matthia=
+s
+> Brugger <matthias.bgg@gmail.com>
+> Subject: [PATCH v2 2/2] efi: arm64: Introduce /proc/efi/memreserve to tel=
+l the
+> persistent pages
+>=20
+> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+>=20
+> kexec reboot stops in early boot sequence because efi_config_parse_tables=
+()
+> refers garbage data. We can see the log with memblock=3Ddebug kernel opti=
+on:
+>=20
+>   efi:  ACPI 2.0=3D0x9821790014  PROP=3D0x8757f5c0  SMBIOS 3.0=3D0x982074=
+0000
+> MEMRESERVE=3D0x9820bfdc58
+>   memblock_reserve: [0x0000009820bfdc58-0x0000009820bfdc67]
+> efi_config_parse_tables+0x228/0x278
+>   memblock_reserve: [0x0000000082760000-0x00000000324d07ff]
+> efi_config_parse_tables+0x228/0x278
+>   memblock_reserve: [0xcc4f84ecc0511670-0x5f6e5214a7fd91f9]
+> efi_config_parse_tables+0x244/0x278
+>   memblock_reserve: [0xd2fd4144b9af693d-0xad0c1db1086f40a2]
+> efi_config_parse_tables+0x244/0x278
+>   memblock_reserve: [0x0c719bb159b1fadc-0x5aa6e62a1417ce12]
+> efi_config_parse_tables+0x244/0x278
+>   ...
+>=20
+> That happens because 0x82760000, struct linux_efi_memreserve, is destroye=
+d.
+> 0x82760000 is pointed from efi.mem_reseve, and efi.mem_reserve points the
+> head page of LPI pending table and LPI property table which are allocated=
+ by
+> gic_reserve_range().
+>=20
+> The destroyer is kexec. kexec locates the initrd to the area:
+>=20
+>   ]# kexec -d -l /boot/vmlinuz-5.4.0-rc7 /boot/initramfs-5.4.0-rc7.img
+> --reuse-cmdline
+>   ...
+>   initrd: base 82290000, size 388dd8ah (59301258)
+>   ...
+>=20
+> From dynamic debug log. initrd is located in segment[1]:
+>   machine_kexec_prepare:70:
+>     kexec kimage info:
+>       type:        0
+>       start:       85b30680
+>       head:        0
+>       nr_segments: 4
+>         segment[0]: 0000000080480000 - 0000000082290000, 0x1e10000 bytes,=
+ 481
+> pages
+>         segment[1]: 0000000082290000 - 0000000085b20000, 0x3890000 bytes,=
+ 905
+> pages
+>         segment[2]: 0000000085b20000 - 0000000085b30000, 0x10000 bytes, 1
+> pages
+>         segment[3]: 0000000085b30000 - 0000000085b40000, 0x10000 bytes, 1
+> pages
+>=20
+> kexec searches the memory region to locate initrd through
+> "System RAM" in /proc/iomem. The pending tables are included in
+> "System RAM" because they are allocated by alloc_pages(), so kexec
+> destroys the LPI pending tables.
+>=20
+> Introduce /proc/efi/memreserve to tell the pages pointed by
+> efi.mem_reserve so that kexec can avoid the area to locate initrd.
+>=20
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 > ---
-> 
->  drivers/iio/accel/cros_ec_accel_legacy.c      |  1 -
->  .../common/cros_ec_sensors/cros_ec_sensors.c  |  1 -
->  .../cros_ec_sensors/cros_ec_sensors_core.c    |  1 -
->  drivers/iio/light/cros_ec_light_prox.c        |  1 -
->  drivers/iio/pressure/cros_ec_baro.c           |  1 -
->  .../media/platform/cros-ec-cec/cros-ec-cec.c  |  1 -
->  drivers/mfd/cros_ec_dev.c                     |  1 -
->  drivers/platform/chrome/cros_ec_chardev.c     |  1 -
->  drivers/platform/chrome/cros_ec_debugfs.c     |  1 -
->  drivers/platform/chrome/cros_ec_lightbar.c    |  1 -
->  drivers/platform/chrome/cros_ec_sensorhub.c   |  1 -
->  drivers/platform/chrome/cros_ec_sysfs.c       |  1 -
->  drivers/platform/chrome/cros_ec_vbc.c         |  1 -
->  drivers/platform/chrome/cros_usbpd_logger.c   |  1 -
->  drivers/power/supply/cros_usbpd-charger.c     |  1 -
->  drivers/rtc/rtc-cros-ec.c                     |  1 -
->  include/linux/mfd/cros_ec.h                   | 35 -------------------
->  include/linux/platform_data/cros_ec_proto.h   | 23 +++++++++++-
->  18 files changed, 22 insertions(+), 52 deletions(-)
->  delete mode 100644 include/linux/mfd/cros_ec.h
-> 
-> diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-> index 65f85faf6f31..68e847c6255e 100644
-> --- a/drivers/iio/accel/cros_ec_accel_legacy.c
-> +++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-> @@ -18,7 +18,6 @@
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/kernel.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/platform_data/cros_ec_commands.h>
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> index 7dce04473467..576e45faafaf 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> @@ -16,7 +16,6 @@
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/kernel.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> index 81a7f692de2f..d3a3626c7cd8 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> @@ -13,7 +13,6 @@
->  #include <linux/iio/kfifo_buf.h>
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/kernel.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/platform_data/cros_ec_commands.h>
-> diff --git a/drivers/iio/light/cros_ec_light_prox.c b/drivers/iio/light/cros_ec_light_prox.c
-> index d85a391e50c5..7a838e2956f4 100644
-> --- a/drivers/iio/light/cros_ec_light_prox.c
-> +++ b/drivers/iio/light/cros_ec_light_prox.c
-> @@ -14,7 +14,6 @@
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/kernel.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/drivers/iio/pressure/cros_ec_baro.c b/drivers/iio/pressure/cros_ec_baro.c
-> index 2354302375de..d2a67dceb996 100644
-> --- a/drivers/iio/pressure/cros_ec_baro.c
-> +++ b/drivers/iio/pressure/cros_ec_baro.c
-> @@ -14,7 +14,6 @@
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/kernel.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/platform_data/cros_ec_commands.h>
-> diff --git a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-> index 4a3b3810fd89..72c70f123650 100644
-> --- a/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-> +++ b/drivers/media/platform/cros-ec-cec/cros-ec-cec.c
-> @@ -14,7 +14,6 @@
->  #include <linux/cec.h>
->  #include <linux/slab.h>
->  #include <linux/interrupt.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
->  #include <media/cec.h>
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index c4b977a5dd96..8da4e4cef26f 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -6,7 +6,6 @@
->   */
->  
->  #include <linux/mfd/core.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/of_platform.h>
-> diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
-> index 74ded441bb50..c65e70bc168d 100644
-> --- a/drivers/platform/chrome/cros_ec_chardev.c
-> +++ b/drivers/platform/chrome/cros_ec_chardev.c
-> @@ -13,7 +13,6 @@
->  #include <linux/init.h>
->  #include <linux/device.h>
->  #include <linux/fs.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/miscdevice.h>
->  #include <linux/module.h>
->  #include <linux/notifier.h>
-> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-> index 6ae484989d1f..ecfada00e6c5 100644
-> --- a/drivers/platform/chrome/cros_ec_debugfs.c
-> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
-> @@ -7,7 +7,6 @@
->  #include <linux/debugfs.h>
->  #include <linux/delay.h>
->  #include <linux/fs.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/platform_data/cros_ec_commands.h>
-> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-> index c0f2eec35a48..b4c110c5fee0 100644
-> --- a/drivers/platform/chrome/cros_ec_lightbar.c
-> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
-> @@ -8,7 +8,6 @@
->  #include <linux/device.h>
->  #include <linux/fs.h>
->  #include <linux/kobject.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/drivers/platform/chrome/cros_ec_sensorhub.c b/drivers/platform/chrome/cros_ec_sensorhub.c
-> index 04d8879689e9..79fefd3bb0fa 100644
-> --- a/drivers/platform/chrome/cros_ec_sensorhub.c
-> +++ b/drivers/platform/chrome/cros_ec_sensorhub.c
-> @@ -9,7 +9,6 @@
->  #include <linux/init.h>
->  #include <linux/device.h>
->  #include <linux/module.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
->  #include <linux/platform_data/cros_ec_sensorhub.h>
-> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-> index 74d36b8d4f46..07dac97ad57c 100644
-> --- a/drivers/platform/chrome/cros_ec_sysfs.c
-> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
-> @@ -8,7 +8,6 @@
->  #include <linux/device.h>
->  #include <linux/fs.h>
->  #include <linux/kobject.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-> index f11a1283e5c8..8edae465105c 100644
-> --- a/drivers/platform/chrome/cros_ec_vbc.c
-> +++ b/drivers/platform/chrome/cros_ec_vbc.c
-> @@ -6,7 +6,6 @@
->  
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/drivers/platform/chrome/cros_usbpd_logger.c b/drivers/platform/chrome/cros_usbpd_logger.c
-> index 374cdd1e868a..7de3ea75ef46 100644
-> --- a/drivers/platform/chrome/cros_usbpd_logger.c
-> +++ b/drivers/platform/chrome/cros_usbpd_logger.c
-> @@ -6,7 +6,6 @@
->   */
->  
->  #include <linux/ktime.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/math64.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
-> diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-> index 6cc7c3910e09..0aca0da41cb7 100644
-> --- a/drivers/power/supply/cros_usbpd-charger.c
-> +++ b/drivers/power/supply/cros_usbpd-charger.c
-> @@ -5,7 +5,6 @@
->   * Copyright (c) 2014 - 2018 Google, Inc
->   */
->  
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/drivers/rtc/rtc-cros-ec.c b/drivers/rtc/rtc-cros-ec.c
-> index d043d30f05bc..f7343c289cab 100644
-> --- a/drivers/rtc/rtc-cros-ec.c
-> +++ b/drivers/rtc/rtc-cros-ec.c
-> @@ -5,7 +5,6 @@
->  // Author: Stephen Barber <smbarber@chromium.org>
->  
->  #include <linux/kernel.h>
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-> deleted file mode 100644
-> index 61c2875c2a40..000000000000
-> --- a/include/linux/mfd/cros_ec.h
-> +++ /dev/null
-> @@ -1,35 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> -/*
-> - * ChromeOS EC multi-function device
-> - *
-> - * Copyright (C) 2012 Google, Inc
-> - */
-> -
-> -#ifndef __LINUX_MFD_CROS_EC_H
-> -#define __LINUX_MFD_CROS_EC_H
-> -
-> -#include <linux/device.h>
-> -
-> -/**
-> - * struct cros_ec_dev - ChromeOS EC device entry point.
-> - * @class_dev: Device structure used in sysfs.
-> - * @ec_dev: cros_ec_device structure to talk to the physical device.
-> - * @dev: Pointer to the platform device.
-> - * @debug_info: cros_ec_debugfs structure for debugging information.
-> - * @has_kb_wake_angle: True if at least 2 accelerometer are connected to the EC.
-> - * @cmd_offset: Offset to apply for each command.
-> - * @features: Features supported by the EC.
-> - */
-> -struct cros_ec_dev {
-> -	struct device class_dev;
-> -	struct cros_ec_device *ec_dev;
-> -	struct device *dev;
-> -	struct cros_ec_debugfs *debug_info;
-> -	bool has_kb_wake_angle;
-> -	u16 cmd_offset;
-> -	u32 features[2];
-> -};
-> -
-> -#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
-> -
-> -#endif /* __LINUX_MFD_CROS_EC_H */
-> diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-> index 30098a551523..119b9951c055 100644
-> --- a/include/linux/platform_data/cros_ec_proto.h
-> +++ b/include/linux/platform_data/cros_ec_proto.h
-> @@ -12,7 +12,6 @@
->  #include <linux/mutex.h>
->  #include <linux/notifier.h>
->  
-> -#include <linux/mfd/cros_ec.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  
->  #define CROS_EC_DEV_NAME	"cros_ec"
-> @@ -185,6 +184,28 @@ struct cros_ec_platform {
->  	u16 cmd_offset;
->  };
->  
-> +/**
-> + * struct cros_ec_dev - ChromeOS EC device entry point.
-> + * @class_dev: Device structure used in sysfs.
-> + * @ec_dev: cros_ec_device structure to talk to the physical device.
-> + * @dev: Pointer to the platform device.
-> + * @debug_info: cros_ec_debugfs structure for debugging information.
-> + * @has_kb_wake_angle: True if at least 2 accelerometer are connected to the EC.
-> + * @cmd_offset: Offset to apply for each command.
-> + * @features: Features supported by the EC.
-> + */
-> +struct cros_ec_dev {
-> +	struct device class_dev;
-> +	struct cros_ec_device *ec_dev;
-> +	struct device *dev;
-> +	struct cros_ec_debugfs *debug_info;
-> +	bool has_kb_wake_angle;
-> +	u16 cmd_offset;
-> +	u32 features[2];
+>  drivers/firmware/efi/efi.c | 75 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 72 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index d8157cb34..80bbe0b3e 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -325,17 +325,87 @@ static __init int efivar_ssdt_load(void)
+>  static inline int efivar_ssdt_load(void) { return 0; }
+>  #endif
+>=20
+> +static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
+> +
+>  #ifdef CONFIG_PROC_FS
+>  static struct proc_dir_entry *proc_efi;
+> +#ifdef CONFIG_KEXEC
+> +static int memreserve_show(struct seq_file *m, void *v)
+> +{
+> +	struct linux_efi_memreserve *rsv;
+> +	phys_addr_t start, end;
+> +	unsigned long prsv;
+> +	int count, i;
+> +
+> +	if ((efi_memreserve_root =3D=3D (void *)ULONG_MAX) ||
+> +			(!efi_memreserve_root))
+> +		return -ENODEV;
+> +
+> +	for (prsv =3D efi_memreserve_root->next; prsv; prsv =3D rsv->next) {
+> +		rsv =3D memremap(prsv, sizeof(*rsv), MEMREMAP_WB);
+> +		if (!rsv) {
+> +			pr_err("Could not map efi_memreserve\n");
+> +			return -ENOMEM;
+> +		}
+> +		count =3D atomic_read(&rsv->count);
+> +		for (i =3D 0; i < count; i++) {
+> +			start =3D rsv->entry[i].base;
+> +			end =3D start + rsv->entry[i].size - 1;
+> +
+> +			seq_printf(m, "%pa-%pa\n", &start, &end);
+> +		}
+
+It looks to me that we reach the same issue as sysfs if
+memreserve_show() calls seq_printf multiple times this way.
+Default buffer size of struct seq_file is also PAGE_SIZE.
+We can configure default buffer size using single_open_size(),
+but I think it better to do the same thing as /proc/iomem
+(and /proc/mounts and many others) than choosing a certain
+size as default value.
+
+Looking into implementation of /proc/iomem, its show method, r_show(),
+calls seq_printf() only once; in other words, r_show() is
+called the number of lines of /proc/iomem, which is equal to
+the number of resource objects. Then, there is no buffer size
+issue because "%pa-%pa\n" consumes at most (16 + 16 + 2) bytes
+per line.
+
+How about doing as /proc/iomem?
+
+> +		memunmap(rsv);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int memreserve_open(struct inode *inode, struct file *filp)
+> +{
+> +	return single_open(filp, memreserve_show, NULL);
+> +}
+> +
+> +static const struct file_operations memreserve_fops =3D {
+> +	.owner		=3D THIS_MODULE,
+> +	.open		=3D memreserve_open,
+> +	.read		=3D seq_read,
+> +	.llseek		=3D seq_lseek,
+> +	.release	=3D single_release,
 > +};
 > +
-> +#define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
+> +static int __init efi_proc_memreserve(void)
+> +{
+> +	struct proc_dir_entry *pde;
 > +
->  int cros_ec_suspend(struct cros_ec_device *ec_dev);
->  
->  int cros_ec_resume(struct cros_ec_device *ec_dev);
-> -- 
-> 2.20.1
-> 
+> +	if ((efi_memreserve_root =3D=3D (void *)ULONG_MAX) ||
+> +			(!efi_memreserve_root))
+> +		return 0;
+> +
+> +	pde =3D proc_create("memreserve", 0444, proc_efi, &memreserve_fops);
+> +	if (!pde) {
+> +		pr_err("/proc/efi: Cannot create /proc/efi/memreserve
+> file.\n");
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +#else
+> +static inline int efi_proc_memreserve(void) { return 0; }
+> +#endif /* CONFIG_KEXEC */
+> +
+>  static int __init efi_proc_init(void)
+>  {
+> +	int error =3D 1;
+> +
+>  	proc_efi =3D proc_mkdir("efi", NULL);
+>  	if (!proc_efi) {
+>  		pr_err("/proc/efi: Cannot create /proc/efi directroy.\n");
+> -		return 1;
+> +		return error;
+>  	}
+>=20
+> -	return 0;
+> +	error =3D efi_proc_memreserve();
+> +
+> +	return error;
+>  }
+>  #else
+>  static inline int efi_proc_init(void) { return 0; }
+> @@ -986,7 +1056,6 @@ int efi_status_to_err(efi_status_t status)
+>  }
+>=20
+>  static DEFINE_SPINLOCK(efi_mem_reserve_persistent_lock);
+> -static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
+>=20
+>  static int __init efi_memreserve_map_root(void)
+>  {
+> --
+> 2.18.1
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
