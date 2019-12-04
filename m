@@ -2,123 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74CA91131BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:03:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 852ED113455
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbfLDSCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:02:01 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41991 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729275AbfLDSB4 (ORCPT
+        id S1730968AbfLDSXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:23:49 -0500
+Received: from mail-pj1-f41.google.com ([209.85.216.41]:36539 "EHLO
+        mail-pj1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730041AbfLDSD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:01:56 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e10so143607edv.9;
-        Wed, 04 Dec 2019 10:01:54 -0800 (PST)
+        Wed, 4 Dec 2019 13:03:26 -0500
+Received: by mail-pj1-f41.google.com with SMTP id n96so134103pjc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:03:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mvp9L8yGr+7Q73cf5DiMFkH0tKxVcTrdu8kuP8KT/wA=;
-        b=AnLIlKDxiENCXMUrbqTM8dDUPRPRHtCYpWJQ8og66XUs0vdaxN8hGdg8m117J2krEJ
-         SJ2rAhNZms6onCSAEhb1qbbpGHdAC1mNwB1yBzp4a46YCvh4DYplVBpVi9hnAnUdTk3V
-         7u+AMPmaRBp2zv5wG50ryD9qcrQW5TYYYwRmOFGRps5AMuyfZUiqtmkQZCMW1y1LJeOa
-         DRVwsjJb7aZBa4lcDk/NWOrtV9UDX2xwfA8hVKNB2z+B1q8U/7/BNl9KF3mOCI0qisZE
-         E+Pm16Xc42UW7lkGqqQY1hd/GGQfyoVxJXRWw9ipzYEk34PlwrqXzIRMfYLNeN/9jAsg
-         NaAA==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=ijtrVw014HGnTW9f8Rq13/UqYaPlJnd5tBfrouhme2o=;
+        b=AgpV/o1mZnIgpAoH4UnBkTb2AeEunM3wEMYlVCwuhsRc6nHGn5DE/z4qeh3ghh7U0v
+         wr+NUpnjFmgN1P8892diAPNYpY9tOeprR3UYoD4VYXMxu+EvknPXfN/fmiEwVL5wXAg0
+         XfWR408SuH8S99y6n0G6t9sAx41qS+xGg5g3myoDHxM4i2LXjlkO4llddsvG97ePbY0r
+         VOQlH2Ptc8TKsbkSDyYFY67mDb7GmTxAesh/wNPYehgkXnzYnY/hKXfOcpT8A7EgJ3qF
+         R6nr+Ue9+CovAkhG/6RcwfL82u395TdL+Ws/iP+odjGMyIyuKQpyOuFchN3x4+rZE6PL
+         fCuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mvp9L8yGr+7Q73cf5DiMFkH0tKxVcTrdu8kuP8KT/wA=;
-        b=EEYwIaKxo8kTZrJJuv1zBAzl97GY1n6+NM7G8zOqAg6JMNN+ZzGkgAypPSHNQaBzRd
-         0BqKpgayJBvbveJcakn6zAdPkDrw10Ct/MGguGy0TF6gMhLava5/u7ECBnDzPXUOTNXK
-         abnPnK5hkIISiDM0uPpASsGiKQsED5I3ggNCAOjD6PaH/ycjr568bU+s1iR+AFF/GaxF
-         aumXaQg7L5qFUWbGuxxtppEpE9nasNVCf1POGtqnfRE5goPa5gHdWjdPFpK3jQuLx80K
-         5dg7gQXpzp+YVCs7RlVPWyMIgKSdsvjMfuuYvgdvr0nVPwsZFa/BkZI05SgVDZHFQr+a
-         /Atg==
-X-Gm-Message-State: APjAAAWduixBQLK/55H3wzIFnnyN0FLvHMGhsrPcukO3KvOniCyD7NN8
-        PPpD+xD9moCccQox8dXLveshkeScr4ULOhfHzhSdNw==
-X-Google-Smtp-Source: APXvYqyH+H1j/zREsxP/LJQ/Q6PhP0dprWgGzUYK4IWlJ02sNpCzzk2ec/2tRbkR3GG2lr++MiA4m7gV4rTsfvod+5U=
-X-Received: by 2002:aa7:d64f:: with SMTP id v15mr5520399edr.71.1575482513957;
- Wed, 04 Dec 2019 10:01:53 -0800 (PST)
-MIME-Version: 1.0
-References: <1574465484-7115-1-git-send-email-jcrouse@codeaurora.org>
- <0101016e95751c0b-33c9379b-6b8c-43b1-8785-e5e1b6f084f1-000000@us-west-2.amazonses.com>
- <3a283a7c-df75-a30a-1bcb-74e631f06a71@arm.com>
-In-Reply-To: <3a283a7c-df75-a30a-1bcb-74e631f06a71@arm.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Wed, 4 Dec 2019 10:01:42 -0800
-Message-ID: <CAF6AEGuxgUQNuSQVECiUzpj4DM0R7UYme0Q9ggF1a=JCxAJsBA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: arm-smmu: Add Adreno GPU variant
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=ijtrVw014HGnTW9f8Rq13/UqYaPlJnd5tBfrouhme2o=;
+        b=YQbcR/CEAKel645i5jpV3BVQ0G45UA7hpp3hyT3QcHQ8hAvvXPRwIXyqhjzmO8Zbl3
+         B6CnjhBSCqe0LSmofUSI1Q56uC2pcn8xNOiMI7JuMuU2A4Zma9Yzg5QzELj79nisdLmS
+         5VycW36SserkUugwPz+/1/Uw2hiouoF/STIICwswRuOv+xuEK8imZp4E16QqYZRV07yA
+         kcllQMHTVOBGuwh/mGW1V6vivzYIRuQG52Yxf3fBfC1M+QAWEpIUzaOZlzXHyIQCjcaH
+         R7IAFBU1JhXlqhNYgGVkyayXV+jEb8mYmGxakxTZi3UZoYE61AlpqIUBdDc7Z6koOd/E
+         8YkQ==
+X-Gm-Message-State: APjAAAVvHOdXWQ0hEuVO2AJ4MxxkSGPrzsBpimg6ind7V2LkWHQwDevg
+        9use/9CGf/cTgk6rjlAgNEjfzTy3QH5pJw==
+X-Google-Smtp-Source: APXvYqyzYudsKkRidnGnkIulUuTR6Y+Np/HmPhERtPjwaOBOpllO4bNdwLkfP8g5KfKzCW8F2YK7Pg==
+X-Received: by 2002:a17:90a:1b45:: with SMTP id q63mr4697389pjq.91.1575482605037;
+        Wed, 04 Dec 2019 10:03:25 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id k60sm7536612pjh.22.2019.12.04.10.03.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 04 Dec 2019 10:03:24 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <6C8DAF47-CA09-4F3B-BF32-2D7044C1EE78@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
+Date:   Wed, 4 Dec 2019 11:03:18 -0700
+In-Reply-To: <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Daniel Phillips <daniel@phunq.net>
+References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
+ <20191127142508.GB5143@mit.edu>
+ <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 7:56 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 22/11/2019 11:31 pm, Jordan Crouse wrote:
-> > Add a compatible string to identify SMMUs that are attached
-> > to Adreno GPU devices that wish to support split pagetables.
->
-> A software policy decision is not, in itself, a good justification for a
-> DT property. Is the GPU SMMU fundamentally different in hardware* from
-> the other SMMU(s) in any given SoC?
 
-The GPU CP has some sort of mechanism to switch pagetables.. although
-I guess under the firmware it is all the same.  Jordan should know
-better..
+--Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
-BR,
--R
+On Dec 1, 2019, at 6:45 PM, Daniel Phillips <daniel@phunq.net> wrote:
+> 
+> On 2019-11-27 6:25 a.m., Theodore Y. Ts'o wrote:
+>> (3) It's not particularly well documented...
+> 
+> We regard that as an issue needing attention. Here is a pretty picture
+> to get started:
+> 
+>   https://github.com/danielbot/Shardmap/wiki/Shardmap-media-format
 
-> (* where "hardware" may encompass hypervisor shenanigans)
->
-> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > ---
-> >
-> >   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> > index 6515dbe..db9f826 100644
-> > --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> > +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> > @@ -31,6 +31,12 @@ properties:
-> >                 - qcom,sdm845-smmu-v2
-> >             - const: qcom,smmu-v2
-> >
-> > +      - description: Qcom Adreno GPU SMMU iplementing split pagetables
-> > +        items:
-> > +          - enum:
-> > +              - qcom,adreno-smmu-v2
-> > +          - const: qcom,smmu-v2
->
-> Given that we already have per-SoC compatibles for Qcom SMMUs in
-> general, this seems suspiciously vague.
->
-> Robin.
->
-> > +
-> >         - description: Qcom SoCs implementing "arm,mmu-500"
-> >           items:
-> >             - enum:
-> >
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+The shardmap diagram is good conceptually, but it would be useful
+to add a legend on the empty side of the diagram that shows the on-disk
+structures.
+
+> 
+> This needs some explaining. The bottom part of the directory file is
+> a simple linear range of directory blocks, with a freespace map block
+> appearing once every 4K blocks or so. This freespace mapping needs a
+> post of its own, it is somewhat subtle. This will be a couple of posts
+> in the future.
+> 
+> The Shardmap index appears at a higher logical address, sufficiently
+> far above the directory base to accommodate a reasonable number of
+> record entry blocks below it. We try not to place the index at so high
+> an address that the radix tree gets extra levels, slowing everything
+> down.
+> 
+> When the index needs to be expanded, either because some shard exceeded
+> a threshold number of entries, or the record entry blocks ran into the
+> the bottom of the index, then a new index tier with more shards is
+> created at a higher logical address. The lower index tier is not copied
+> immediately to the upper tier, but rather, each shard is incrementally
+> split when it hits the threshold because of an insert. This bounds the
+> latency of any given insert to the time needed to split one shard, which
+> we target nominally at less than one millisecond. Thus, Shardmap takes a
+> modest step in the direction of real time response.
+> 
+> Each index tier is just a simple array of shards, each of which fills
+> up with 8 byte entries from bottom to top. The count of entries in each
+> shard is stored separately in a table just below the shard array. So at
+> shard load time, we can determine rapidly from the count table which
+> tier a given shard belongs to. There are other advantages to breaking
+> the shard counts out separately having to do with the persistent memory
+> version of Shardmap, interesting details that I will leave for later.
+> 
+> When all lower tier shards have been deleted, the lower tier may be
+> overwritten by the expanding record entry block region. In practice,
+> a Shardmap file normally has just one tier most of the time, the other
+> tier existing only long enough to complete the incremental expansion
+> of the shard table, insert by insert.
+> 
+> There is a small header in the lowest record entry block, giving the
+> positions of the one or two index tiers, count of entry blocks, and
+> various tuning parameters such as maximum shard size and average depth
+> of cache hash collision lists.
+> 
+> That is it for media format. Very simple, is it not? My next post
+> will explain the Shardmap directory block format, with a focus on
+> deficiencies of the traditional Ext2 format that were addressed.
+> 
+> Regards,
+> 
+> Daniel
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl3n9OcACgkQcqXauRfM
+H+AzhQ/+LelpZVYoTlu0opEs5vyM+LBrYxtxWSYLpaFZMSFNERgkFMDEjbSF0qWp
+dIIZ4iOlI8OArkugvZk85BzQgQY8ZUZizyQSdzFBXDt/d9Gyew/Sbntkuv0UMZS+
+HhVM1Jr8tgFLYqjAijm+mDVyPh1ZAAMo9+jYAKTLQwOdqovCBtLRD9v7HOaCSYlU
+dZ094nsG7mDVmWztOO4KLG419h50OUK+q2nnuLwjV6Por0kA9penEo7XjZLecuIz
+X2GdIecu0SWh4E7hbsKjylkOC8AKQYibgv380MOJaNp9WBYeoHv3HaXmO0achr6T
+f5vHbhFoKRpochhRkKAOlknEY1h89AkyfqyDTfA95Yw0nND9nG8+PLUVOfP9mt72
+INqEdUY4gVIRR488YG3Dn9X4yGva6tI5v5oDx7JLvVa5Josk57AMIuvKIdsqluF0
+7g+lFY50CnWzfiATloSLhJEB3BohIm4PrLWyyjn27EE/BJpsZSvABxfDGpOSuCPr
+cNr68nQ4dw3E4PzTpuxhF3L/wlQNiG6OUbdFPfeyxxZfcoCFKrphzDWAW9iySS3x
+2P7kKDVP8SiCZQ5NUWtc8/YI6MwhA6Lcz7fQYL8+9DWdN2Ha1PZ1lU+/CqrAZIbJ
+It472/u392OJbPcAWJ5Gze52JsEDeLfj1ZzV58+MHmCvqoKJxb8=
+=M/DF
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D--
