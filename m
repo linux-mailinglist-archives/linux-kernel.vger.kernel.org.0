@@ -2,294 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 752C71124A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB0B61124A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbfLDIWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:22:20 -0500
-Received: from a27-186.smtp-out.us-west-2.amazonses.com ([54.240.27.186]:59552
-        "EHLO a27-186.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727635AbfLDIWQ (ORCPT
+        id S1727299AbfLDIXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:23:11 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36352 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfLDIXL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:22:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575447735;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        bh=y/oX2bh9QX8WcWjXBSwEOXS/IKLIsMVTKHPjuzm/4tg=;
-        b=A6ql4A1s6dzH2Q/s53lPwEna9co7NrhwaDHR5SQThDcLV6JNxOmK7XjeKPRMi0CV
-        XZYymVEpJPzQccT5XmeiwpasuwgrPCiAJGg3oTHAmM7A4QoWeseO3ViMCcLcqqhHLpi
-        Ep9YSiQiPhtGQihwcF9izE0JBBTKVxu+jL52hPxQ=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575447735;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:Feedback-ID;
-        bh=y/oX2bh9QX8WcWjXBSwEOXS/IKLIsMVTKHPjuzm/4tg=;
-        b=OPN/dN8p5CkWlKh5EmBDDkX90q6mldz9lgXZ+FMPrcYOeFSq/ycIMfXvFdelTaJi
-        nd3/bQFgvXRSL7ig4Wu4aCeRGTK+0l0cGCWaWJbnQMQwoZLCV/DGP3FApzr52CQmv9k
-        6GwK0Knn7voteJ0BOKFi9o5ddFrPM9dZ9gOdDkoY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90C8CC447B8
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
-        robh+dt@kernel.org
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 3/3] clk: qcom: Add modem clock controller driver for  SC7180
-Date:   Wed, 4 Dec 2019 08:22:14 +0000
-Message-ID: <0101016ed000aa2f-ac50e86c-7955-4182-8beb-d2af2d9ff7d0-000000@us-west-2.amazonses.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575447687-9296-1-git-send-email-tdas@codeaurora.org>
-References: <1575447687-9296-1-git-send-email-tdas@codeaurora.org>
-X-SES-Outgoing: 2019.12.04-54.240.27.186
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Wed, 4 Dec 2019 03:23:11 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n12so240247lfe.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 00:23:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iNLZ5EFhyGYEYKe0bk/S6N+Rizxb+dV+RJ9rOKhS1WI=;
+        b=XGCwoAUNRn+Bpd6Gdzt+F3qbHh9k8woADTDuQCNJSaVAJgqN05uxvOtaCczux0Dt6R
+         A3nCmkkrxzzlrmOl6s9Dywby+QM4jCNREGoSpNfVVXskyq6eKlpDn8Htaj7VS3eTUTWT
+         qJ5sFn59lnN/+5irZ4OhJ+eSkH7e9Y218PfCshGZAQcdhAuo9TksX/LXC/zB1aXAI6uV
+         ejjXVHArlFuRhPaJeoWmCFyv1NTtT8JqstfEHmlMPZLnDkhnCsM2xA+9038lsTt5/cDD
+         Zv1eOXFYcGU4kwnFpDVHF23aI0yKQ+46isfviA08sXOjzO1bfjysrC+i2lyAkxJ4bNjR
+         CiDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iNLZ5EFhyGYEYKe0bk/S6N+Rizxb+dV+RJ9rOKhS1WI=;
+        b=IwCY9fQ29crPo5giqpC6fCJZiR3sfPVKCd+yTvCFfSNxPXi3xETXeEh7iaTsEp+cDN
+         wL2ari/M1dtgDd/XZdq69J92l97CYjkScr1yIrAQ/CY3dBadRzgotpvnAdJ+6vxGS+to
+         cqYcwqUu90uJg70mDW5UNCew/qrItGR9ZT+U0mmWebo9g+5/ysKRb6SqwB7ZWeEhhF7d
+         YY11Cf/bzxhp9LZ/jayKHgzgDFQQYNMGtPOJPPabEaYlzCChJEkNu12XJMN9VpuxTDrM
+         sHx8Sj2mirT4QD1nAFSynTEREq7hr0gvM0s2LW5NbJt27dDNWj3yWrhggypxFfRqHDdO
+         Aqlw==
+X-Gm-Message-State: APjAAAU/k+phwyl1A8yjq2HwaE8595lSCg+Y1JOYKImUgeUr41YL4imS
+        LmxEQnp/7aue0i5UAsfun94VCABnz2sppjRP9SXPhvM4vFU=
+X-Google-Smtp-Source: APXvYqxxAErQTB0mbJc+tPLhqPmL9gLF4ofCWmYAkDTiPj+zfYCerH+It3g2PIVwb/vbx6/J4hCEuke3bZKCzIMe+bU=
+X-Received: by 2002:a19:f701:: with SMTP id z1mr1272434lfe.133.1575447788424;
+ Wed, 04 Dec 2019 00:23:08 -0800 (PST)
+MIME-Version: 1.0
+References: <CALAqxLXrWWnWi32BR1F8JOtrGt1y2Kzj__zWopLx1ZfRy3EZKA@mail.gmail.com>
+ <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
+In-Reply-To: <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 4 Dec 2019 09:22:56 +0100
+Message-ID: <CAKfTPtCvckhXQ97RR5X+QW49RRa0EK8gZV-Ajy8FzVeaw3PccQ@mail.gmail.com>
+Subject: Re: Null pointer crash at find_idlest_group on db845c w/ linus/master
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Quentin Perret <qperret@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the modem clock controller found on SC7180
-based devices. This would allow modem drivers to probe and
-control their clocks.
+On Wed, 4 Dec 2019 at 09:06, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> Hi John,
+>
+> On Tue, 3 Dec 2019 at 20:15, John Stultz <john.stultz@linaro.org> wrote:
+> >
+> > With today's linus/master on db845c running android, I'm able to
+> > fairly easily reproduce the following crash. I've not had a chance to
+> > bisect it yet, but I'm suspecting its connected to Vincent's recent
+> > rework.
+>
+> Does the crash happen randomly or after a specific action ?
+> I have a db845 so I can try to reproduce it locally.
+>
+> >
+> > If you have any suggestions, or need me to test anything, please let me know.
+> >
+> > thanks
+> > -john
+> >
+> > [  136.157069] Unable to handle kernel NULL pointer dereference at
+> > virtual address 0000000000000010
+> > [  136.165937] Mem abort info:
+> > [  136.168765]   ESR = 0x96000005
+> > [  136.171862]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > [  136.177229]   SET = 0, FnV = 0
+> > [  136.180320]   EA = 0, S1PTW = 0
+> > [  136.183502] Data abort info:
+> > [  136.186426]   ISV = 0, ISS = 0x00000005
+> > [  136.190302]   CM = 0, WnR = 0
+> > [  136.193316] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000175f7e000
+> > [  136.199814] [0000000000000010] pgd=0000000000000000, pud=0000000000000000
+> > [  136.206666] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+> > [  136.212295] Modules linked in:
+> > [  136.215397] CPU: 7 PID: 50 Comm: kauditd Tainted: G        W
+> >  5.4.0-mainline-11225-g9c5add21ff63 #1252
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig      |  9 +++++
- drivers/clk/qcom/Makefile     |  1 +
- drivers/clk/qcom/gcc-sc7180.c | 70 ++++++++++++++++++++++++++++++++
- drivers/clk/qcom/mss-sc7180.c | 93 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 173 insertions(+)
- create mode 100644 drivers/clk/qcom/mss-sc7180.c
+Do you have the sha1 that you use for your test ?
+The one above doesn't seem to point on a valid commit in linus/master
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 3b33ef1..5d4b6e5 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -245,6 +245,15 @@ config SC_GCC_7180
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
- 	  I2C, USB, UFS, SDCC, etc.
-
-+config SC_MSS_7180
-+	tristate "SC7180 MSS Clock Controller"
-+	select SC_GCC_7180
-+	help
-+	  Support for the MSS clock controller on Qualcomm Technologies, Inc
-+	  SC7180 devices.
-+	  Say Y if you want to use the MSS branch clocks of the MSS clock
-+	  controller to reset the MSS subsystem.
-+
- config SDM_CAMCC_845
- 	tristate "SDM845 Camera Clock Controller"
- 	select SDM_GCC_845
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index d899661..0e66bc6 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
- obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
- obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
-+obj-$(CONFIG_SC_MSS_7180) += mss-sc7180.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-index 38424e6..7b3a705 100644
---- a/drivers/clk/qcom/gcc-sc7180.c
-+++ b/drivers/clk/qcom/gcc-sc7180.c
-@@ -2165,6 +2165,71 @@ static struct clk_branch gcc_video_xo_clk = {
- 	},
- };
-
-+static struct clk_branch gcc_mss_cfg_ahb_clk = {
-+	.halt_reg = 0x8a000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_cfg_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_mfab_axis_clk = {
-+	.halt_reg = 0x8a004,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8a004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_mfab_axis_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_nav_axi_clk = {
-+	.halt_reg = 0x8a00c,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8a00c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_nav_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_snoc_axi_clk = {
-+	.halt_reg = 0x8a150,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a150,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_snoc_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_q6_memnoc_axi_clk = {
-+	.halt_reg = 0x8a154,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a154,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_q6_memnoc_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct gdsc ufs_phy_gdsc = {
- 	.gdscr = 0x77004,
- 	.pd = {
-@@ -2334,6 +2399,11 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GPLL7] = &gpll7.clkr,
- 	[GPLL4] = &gpll4.clkr,
- 	[GPLL1] = &gpll1.clkr,
-+	[GCC_MSS_CFG_AHB_CBCR] = &gcc_mss_cfg_ahb_clk.clkr,
-+	[GCC_MSS_MFAB_AXIS_CBCR] = &gcc_mss_mfab_axis_clk.clkr,
-+	[GCC_MSS_NAV_AXI_CBCR] = &gcc_mss_nav_axi_clk.clkr,
-+	[GCC_MSS_Q6_MEMNOC_AXI_CBCR] = &gcc_mss_q6_memnoc_axi_clk.clkr,
-+	[GCC_MSS_SNOC_AXI_CBCR] = &gcc_mss_snoc_axi_clk.clkr,
- };
-
- static const struct qcom_reset_map gcc_sc7180_resets[] = {
-diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
-new file mode 100644
-index 0000000..319cf89
---- /dev/null
-+++ b/drivers/clk/qcom/mss-sc7180.c
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,mss-sc7180.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+
-+static struct clk_branch mss_axi_nav_clk = {
-+	.halt_reg = 0xbc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xbc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mss_axi_nav_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch mss_axi_crypto_clk = {
-+	.halt_reg = 0xcc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xcc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "mss_axi_crypto_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct regmap_config mss_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
-+};
-+
-+static struct clk_regmap *mss_sc7180_clocks[] = {
-+	[MSS_AXI_CRYPTO_CLK] = &mss_axi_crypto_clk.clkr,
-+	[MSS_AXI_NAV_CLK] = &mss_axi_nav_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc mss_sc7180_desc = {
-+	.config = &mss_regmap_config,
-+	.clks = mss_sc7180_clocks,
-+	.num_clks = ARRAY_SIZE(mss_sc7180_clocks),
-+};
-+
-+static int mss_sc7180_probe(struct platform_device *pdev)
-+{
-+	return qcom_cc_probe(pdev, &mss_sc7180_desc);
-+}
-+
-+static const struct of_device_id mss_sc7180_match_table[] = {
-+	{ .compatible = "qcom,sc7180-mss" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
-+
-+static struct platform_driver mss_sc7180_driver = {
-+	.probe		= mss_sc7180_probe,
-+	.driver		= {
-+		.name		= "sc7180-mss",
-+		.of_match_table = mss_sc7180_match_table,
-+	},
-+};
-+
-+static int __init mss_sc7180_init(void)
-+{
-+	return platform_driver_register(&mss_sc7180_driver);
-+}
-+subsys_initcall(mss_sc7180_init);
-+
-+static void __exit mss_sc7180_exit(void)
-+{
-+	platform_driver_unregister(&mss_sc7180_driver);
-+}
-+module_exit(mss_sc7180_exit);
-+
-+MODULE_DESCRIPTION("QTI MSS SC7180 Driver");
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+> > [  136.225390] Hardware name: Thundercomm Dragonboard 845c (DT)
+> > [  136.231111] pstate: 60c00085 (nZCv daIf +PAN +UAO)
+> > [  136.235971] pc : find_idlest_group.isra.95+0x368/0x690
+> > [  136.241159] lr : find_idlest_group.isra.95+0x210/0x690
+> > [  136.246347] sp : ffffffc01036b890
+> > [  136.249708] x29: ffffffc01036b890 x28: ffffffe7d7450480
+> > [  136.255077] x27: ffffff80f81f0000 x26: 0000000000000000
+> > [  136.260445] x25: 0000000000000000 x24: ffffffc01036b998
+> > [  136.265810] x23: ffffff80f8e40a00 x22: ffffffe7d7719e30
+> > [  136.271175] x21: ffffff80f8f16520 x20: ffffff80f8f16180
+> > [  136.276539] x19: ffffffe7d771a610 x18: ffffffe7d71d1ef0
+> > [  136.281908] x17: 0000000000000000 x16: 0000000000000000
+> > [  136.287274] x15: 0000000000000001 x14: 6f3a753d74786574
+> > [  136.292644] x13: 6e6f637420383637 x12: 632c323135633a30
+> > [  136.298007] x11: 0000000000000070 x10: 0000000000000002
+> > [  136.303371] x9 : 0000000000000000 x8 : 0000000000000075
+> > [  136.308737] x7 : ffffff80f8f16000 x6 : ffffffe7d7450000
+> > [  136.314099] x5 : 0000000000000004 x4 : 0000000000000000
+> > [  136.319465] x3 : 000000000000025c x2 : ffffff80f8f16780
+> > [  136.324836] x1 : 0000000000000000 x0 : 0000000000000002
+> > [  136.330198] Call trace:
+> > [  136.332680]  find_idlest_group.isra.95+0x368/0x690
+> > [  136.337528]  select_task_rq_fair+0x4e4/0xd88
+> > [  136.341848]  try_to_wake_up+0x21c/0x7f8
+> > [  136.345735]  default_wake_function+0x34/0x48
+> > [  136.350053]  pollwake+0x98/0xc8
+> > [  136.353233]  __wake_up_common+0x90/0x158
+> > [  136.357202]  __wake_up_common_lock+0x88/0xd0
+> > [  136.361519]  __wake_up_sync_key+0x40/0x50
+> > [  136.365584]  sock_def_readable+0x44/0x78
+> > [  136.369560]  __netlink_sendskb+0x44/0x58
+> > [  136.373525]  netlink_unicast+0x220/0x258
+> > [  136.377496]  kauditd_send_queue+0xa4/0x158
+> > [  136.381643]  kauditd_thread+0xf4/0x248
+> > [  136.385438]  kthread+0x130/0x138
+> > [  136.388706]  ret_from_fork+0x10/0x1c
+> > [  136.392332] Code: 54001340 7100081f 540016e1 a9478ba1 (f9400821)
+> > [  136.398493] ---[ end trace 47d254973801b2c4 ]---
+> > [  136.403162] Kernel panic - not syncing: Fatal exception
+> > [  136.408445] SMP: stopping secondary CPUs
+> > [  136.412440] Kernel Offset: 0x27c6200000 from 0xffffffc010000000
+> > [  136.418417] PHYS_OFFSET: 0xffffffe140000000
+> > [  136.422655] CPU features: 0x00002,2a80a218
