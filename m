@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2E4113413
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F851133A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfLDSGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:06:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53436 "EHLO mail.kernel.org"
+        id S1731640AbfLDSSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:18:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729860AbfLDSF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:05:59 -0500
+        id S1731324AbfLDSKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:10:50 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10AF4214AF;
-        Wed,  4 Dec 2019 18:05:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B755220674;
+        Wed,  4 Dec 2019 18:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482758;
-        bh=6N6utb28xFcbw1WnBmmazrCLf9h//ber+CLlhqfmkag=;
+        s=default; t=1575483050;
+        bh=9FiMZ05AyP9vz7NADwi6aGobRVfRNQnwiHXVl7PW3TM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NxsY90JbwBYe3RhxwtiIzRlS8abwU66UlztifQlw7lN3QR5YHptSpggBwo/TdpRKR
-         OfY5jWsF0hqQHzyHYI0TeDEfHPIXByF+7bZpTmAR87Bd8Et5F0UMd6Fk+5Nsy4Xcs6
-         f8CWl+PQ+YwXEb+yI8FTBRK8Hy1YMMnnZemHyLzU=
+        b=Rszgw9KYMNuK8mhNTu4sh6yg/9SPYWKZwfjh+TQiiMKLOS43DfnvPKwo+fLWdNihP
+         0oWObN/ezM61MYAH6ziM4p3CEl9+48GMMp3xL+qJ8QIwrOZfq1bCSpISyVr3gkwk0r
+         5Q0y450NhibkZovc+IWkhLhmu0DpLzB8gjhvEVeQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huang Shijie <sjhuang@iluvatar.ai>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Skidanov <alexey.skidanov@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 122/209] lib/genalloc.c: use vzalloc_node() to allocate the bitmap
-Date:   Wed,  4 Dec 2019 18:55:34 +0100
-Message-Id: <20191204175331.471748780@linuxfoundation.org>
+Subject: [PATCH 4.9 030/125] ubi: Do not drop UBI device reference before using
+Date:   Wed,  4 Dec 2019 18:55:35 +0100
+Message-Id: <20191204175320.478059871@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Shijie <sjhuang@iluvatar.ai>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 6862d2fc81859f88c1f3f660886427893f2b4f3f ]
+[ Upstream commit e542087701f09418702673631a908429feb3eae0 ]
 
-Some devices may have big memory on chip, such as over 1G.  In some
-cases, the nbytes maybe bigger then 4M which is the bounday of the
-memory buddy system (4K default).
+The UBI device reference is dropped but then the device is used as a
+parameter of ubi_err. The bug is introduced in changing ubi_err's
+behavior. The old ubi_err does not require a UBI device as its first
+parameter, but the new one does.
 
-So use vzalloc_node() to allocate the bitmap.  Also use vfree to free
-it.
-
-Link: http://lkml.kernel.org/r/20181225015701.6289-1-sjhuang@iluvatar.ai
-Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Skidanov <alexey.skidanov@intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 32608703310 ("UBI: Extend UBI layer debug/messaging capabilities")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/genalloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/ubi/kapi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 5deb25c40a5a1..f365d71cdc774 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -187,7 +187,7 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
- 	int nbytes = sizeof(struct gen_pool_chunk) +
- 				BITS_TO_LONGS(nbits) * sizeof(long);
- 
--	chunk = kzalloc_node(nbytes, GFP_KERNEL, nid);
-+	chunk = vzalloc_node(nbytes, nid);
- 	if (unlikely(chunk == NULL))
- 		return -ENOMEM;
- 
-@@ -251,7 +251,7 @@ void gen_pool_destroy(struct gen_pool *pool)
- 		bit = find_next_bit(chunk->bits, end_bit, 0);
- 		BUG_ON(bit < end_bit);
- 
--		kfree(chunk);
-+		vfree(chunk);
- 	}
- 	kfree_const(pool->name);
- 	kfree(pool);
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index 88b1897aeb40f..7826f7c4ec2fb 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -227,9 +227,9 @@ out_unlock:
+ out_free:
+ 	kfree(desc);
+ out_put_ubi:
+-	ubi_put_device(ubi);
+ 	ubi_err(ubi, "cannot open device %d, volume %d, error %d",
+ 		ubi_num, vol_id, err);
++	ubi_put_device(ubi);
+ 	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(ubi_open_volume);
 -- 
 2.20.1
 
