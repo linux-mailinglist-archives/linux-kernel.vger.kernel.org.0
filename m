@@ -2,342 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2081A112DF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73485112DF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbfLDPAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:00:38 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46502 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbfLDPAg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:00:36 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191204150035euoutp014500697a68037b47ca0f0b7cbba49b42~dMxrh9w6p2300423004euoutp01l
-        for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2019 15:00:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191204150035euoutp014500697a68037b47ca0f0b7cbba49b42~dMxrh9w6p2300423004euoutp01l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575471635;
-        bh=vBSwE8A0E5JhNbi7W86Ls3sR6OAyN6GmkcssEKOy6us=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YykSpnQEstmTHuPldWWzoqVr+iij4ForZ28DEy0iHszAudaapAm6nd/I1zfI4m9mq
-         9IVMb+ZbIGA1GRPZAN9lWc/RILuaBQd+74dPHa9pPPW27SfwD0Gw+yJT7SoUGTIgQD
-         AQBbcFVXwwBY8PoaLZtOrNpzt8MBPgs+CjdCMM60=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191204150034eucas1p2f4f2adfd5739de835ef1892aa6b39899~dMxrVWU262912729127eucas1p2X;
-        Wed,  4 Dec 2019 15:00:34 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 26.68.60698.21AC7ED5; Wed,  4
-        Dec 2019 15:00:34 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191204150034eucas1p1b6e7f43a6be59ed2e0a4e55ccdefc750~dMxq4-bz43262132621eucas1p1B;
-        Wed,  4 Dec 2019 15:00:34 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191204150034eusmtrp101baa07d12e7ea03e4766ac3e04c3d23~dMxq4b2nj1235012350eusmtrp1g;
-        Wed,  4 Dec 2019 15:00:34 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-c3-5de7ca126fef
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C9.ED.08375.21AC7ED5; Wed,  4
-        Dec 2019 15:00:34 +0000 (GMT)
-Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191204150033eusmtip1daffbe23f5a0fa94b7153fa0b25aad3f~dMxqXntom1853818538eusmtip1Q;
-        Wed,  4 Dec 2019 15:00:33 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@samsung.com>
-To:     k.konieczny@samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v2 3/3] devfreq: move statistics to separate struct
-Date:   Wed,  4 Dec 2019 16:00:18 +0100
-Message-Id: <20191204150018.5234-4-k.konieczny@samsung.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204150018.5234-1-k.konieczny@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djP87pCp57HGvSssrTYOGM9q8X1L89Z
-        LRZ8msFqcf78BnaLs01v2C0u75rDZvG59wijxdojd9ktbjeuYHPg9Ni0qpPNo2/LKkaPz5vk
-        ApijuGxSUnMyy1KL9O0SuDIW7u9jLvhuV9F1ahlTA+MS4y5GTg4JAROJ9SdfM3YxcnEICaxg
-        lLi3fTczhPOFUeLAzN1sEM5nRonjRxcCZTjAWlas9YKIL2eU2L9/Ihtcx6knHYwgc9kE9CUO
-        nj3JAmKLCEhLdC6ayARSxCxwjEli16G/rCAJYQFniQv7HoI1sAioSmzbdAnM5hWwlpjzYT8b
-        xDZ5iTlvNUDCnAI2Eh9ff4IqEZQ4OfMJ2HxmoJLmrbPBzpYQ6GeXuLTxOjPEcy4Sl1b3s0DY
-        whKvjm9hh7BlJE5P7oGKl0s8XdjHDtHcwijxoP0jVMJa4vDxi6wgRzALaEqs36UPcY+jxOqp
-        8hAmn8SNt4IQJ/BJTNo2HRo+vBIdbUIQM1Qlnp/qYYKwpSW6/q9jhbA9JE4sb2OawKg4C8kz
-        s5A8Mwth7QJG5lWM4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiBieb0v+NfdzDu+5N0iFGA
-        g1GJh7dh0/NYIdbEsuLK3EOMEhzMSiK82ySexgrxpiRWVqUW5ccXleakFh9ilOZgURLnrWZ4
-        EC0kkJ5YkpqdmlqQWgSTZeLglGpgvHJt2+V3SUxHJqUfKzJ02Sse5NtfFvUl19F+tUdpUqLc
-        dcOnk/NWrYliPz7dsvBj4TaOxX2my6pvfp6XkbtjO+8k9Tspls4G20K+eS2XFT4xl6dHgv39
-        g8wlV7Y/jPU6HvZ2xTqfJ9/fr/z9OXh7VHvpjmdGXEZnDn6Y4RHMLT3Xwd5Pd/OrL0osxRmJ
-        hlrMRcWJAHon/oIwAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4XV2hU89jDT7skbbYOGM9q8X1L89Z
-        LRZ8msFqcf78BnaLs01v2C0u75rDZvG59wijxdojd9ktbjeuYHPg9Ni0qpPNo2/LKkaPz5vk
-        Apij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIW
-        7u9jLvhuV9F1ahlTA+MS4y5GDg4JAROJFWu9uhg5OYQEljJK3D5UD2JLCEhLNJ5ezQRhC0v8
-        udbF1sXIBVTziVFi9sEFYAk2AX2Jg2dPsoDYIkANnYsmgsWZBc4wSfxqqQCxhQWcJS7se8gI
-        YrMIqEps23QJzOYVsJaY82E/G8QN8hJz3mqAhDkFbCQ+vv7ECHGPtUTP03dsEOWCEidnPmGB
-        GC8v0bx1NvMERoFZSFKzkKQWMDKtYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIyHbcd+bt7B
-        eGlj8CFGAQ5GJR7ehk3PY4VYE8uKK3MPMUpwMCuJ8G6TeBorxJuSWFmVWpQfX1Sak1p8iNEU
-        6IeJzFKiyfnAWM0riTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cCY
-        rjN3/Ym+WZ+DNxzvUj7b+24v88wZB0ulu57N/lO4MneybZKK6M8C1trr+Sb583IvbT84Ze/S
-        u3y/Xzk+vql40lOuann/usXvdtZI88hfsqq9Lnle6m7Vn/LAYMNDb7qv75/RvqXy64bwddn2
-        geEF6nuP/Fu8YhfjvMhF6w8dXNfjmDevaGqElxJLcUaioRZzUXEiAFMslTadAgAA
-X-CMS-MailID: 20191204150034eucas1p1b6e7f43a6be59ed2e0a4e55ccdefc750
-X-Msg-Generator: CA
+        id S1728195AbfLDPBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:01:22 -0500
+Received: from mail-eopbgr130078.outbound.protection.outlook.com ([40.107.13.78]:62592
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727878AbfLDPBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 10:01:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ds8+R7WYJcL3hU/9c9ACQ6Nov31hzq5BsgN3XxZRC2QSdtZKnILJexrDcPnaWHLKbDu36/b06+EwJEScWCY2gnp4I3///7elras0xFjX6ar/owKc6Kb2a5rlrJWxI2dUQrpPIV8maPjSf/aNRL2ODzvZfn2xKEbt9StpCn17PMIDXsGrU96UJsU/gFufpB623WKbREqluBm3YRndKfSo/yubMnqgwWGomYbIc/2rl4Izeb4/piRh46YtUUEguWPbp/MsSnSuyRcqQ8epU75necWHO86cGkOdENHQ+DQp/ZBjvrmI8H+KtTYeCJVEY9dssIvJp38hmZcgi7KC1uO4Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BJ9cKUQVIKWI/ktqhl/84zXUYvMczbyd2aOAZMwNcbI=;
+ b=kzwWuYNQEjbaLeaP16CzjTwPlxIhPsNkt4CPJG9c1GF/I2yzsuYi0Ms2ni46z4aMsjv+/Ym2fpBRbhwPI0EY0RqfRRw9F017zk5V/zia/DjHnvfoBO4IJ0eYU9wgdq/Eq/3cMwzkCOmX51FOXsxZ8LIWFkbWfdgjhrxKkx2XVU0Bst1UzudOGvFdDo/fa75JTpnKHxFYAgohNtnjEd2OAcvne3P5tHUnoyC4Rav7lC7Rlkcfm+5NAe6yvHs/X4Daew67BOCsghYGC5896Zw0+q/ecsszvt2dZyOoTfDUKJNFmwZ21V2GxDnlbGwxOCmX2UT3SOUgxmN2FTGDByKTMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BJ9cKUQVIKWI/ktqhl/84zXUYvMczbyd2aOAZMwNcbI=;
+ b=OqxMq2u19CnxKn2hsmyo1DGGnb3XyAgIjI75mo1XOVl4nJvoFPZTtkeWugwbG56bsduL/8O3lv18xOdpY9CJE8KKIxC6nmhcjvV9YqDh/0aYYBqJRNoj6sZPAVPDy6oCjg2o0cPc1rNcaVkAhYAv3szs5dWUQ95k8pnmIslMUwM=
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.51.208) by
+ VI1PR04MB7022.eurprd04.prod.outlook.com (10.186.157.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.13; Wed, 4 Dec 2019 15:01:18 +0000
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::71d2:55b3:810d:c75b]) by VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::71d2:55b3:810d:c75b%7]) with mapi id 15.20.2495.014; Wed, 4 Dec 2019
+ 15:01:18 +0000
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     Ioana Ciornei <ioana.ciornei@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bus: fsl-mc: properly empty-initialize structure
+Thread-Topic: [PATCH] bus: fsl-mc: properly empty-initialize structure
+Thread-Index: AQHVqq9Vr1zFh3okmEmQd2FiJW+WsKeqEf2A
+Date:   Wed, 4 Dec 2019 15:01:18 +0000
+Message-ID: <d73e2812-c53e-c480-2c61-b2c57c3c193d@nxp.com>
+References: <20191204142950.30206-1-ioana.ciornei@nxp.com>
+In-Reply-To: <20191204142950.30206-1-ioana.ciornei@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=laurentiu.tudor@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 47aecbde-44e2-4a14-6f34-08d778cad156
+x-ms-traffictypediagnostic: VI1PR04MB7022:|VI1PR04MB7022:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB7022E3EB5FB439E8248743D9EC5D0@VI1PR04MB7022.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2582;
+x-forefront-prvs: 0241D5F98C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(39860400002)(376002)(346002)(136003)(199004)(189003)(6246003)(8936002)(86362001)(6512007)(81166006)(478600001)(6436002)(81156014)(14454004)(8676002)(229853002)(6486002)(31686004)(2501003)(4326008)(71200400001)(71190400001)(316002)(31696002)(110136005)(25786009)(76176011)(99286004)(7736002)(64756008)(66446008)(11346002)(102836004)(2616005)(6116002)(66476007)(3846002)(66556008)(305945005)(5660300002)(26005)(6506007)(53546011)(186003)(76116006)(91956017)(66946007)(2906002)(44832011)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB7022;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: okVCZu6lkKBXj1h3ja/1EZNQarL8VvX+UjCa9RrefwG41ldGODfo/cYbO1g9yMH8i/SCK2lI5KLVc/ILjJPEAB2O4lpeplJ74zLDLHJUm5T/vktQMeojEE2/aArKn4JnLTyDA2bb0/L92odQzSCdewQ8F82WA5d2OZF2PjMiLAX8QzVTIhIqTCwb4TxI1YXau2jhcA9LC3JZ0KxWAz/JMZWYGLEqQcCVIepHmR3zVn39X9otxhA0rQIqwVC7iPUjypaouU4PImB+GKpt8lEobynQ9I9qUgvt2nKK7OIeB2pIockCi6sA6lLqPRe2TeOkWzSR0YsdHemcoMhBEyPQAko1CVTXEgQGhMCFJJ1693hpDXuqGLk4lOw71xcxcvDWjMwPLIw5OmkzCYlVLbcBkhX9NnQH1OoPMKGDtFFtlhri51ZkdkjDkCNpPjw5vBLs
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191204150034eucas1p1b6e7f43a6be59ed2e0a4e55ccdefc750
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191204150034eucas1p1b6e7f43a6be59ed2e0a4e55ccdefc750
-References: <20191204150018.5234-1-k.konieczny@samsung.com>
-        <CGME20191204150034eucas1p1b6e7f43a6be59ed2e0a4e55ccdefc750@eucas1p1.samsung.com>
+Content-ID: <7224FC9B4D571849A3F47DDFCE084EDB@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47aecbde-44e2-4a14-6f34-08d778cad156
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2019 15:01:18.5634
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OcmFUKA86nRiWEMK9WyaCXBn4Zu6kuTiBC+p9KkNtc7UAwvbE3NfVaDS/50ypF4MzOG8JP59J9DkU8SU6gpb3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Count time and transitions between devfreq frequencies in separate struct
-for improved code readability and maintenance.
-
-Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
----
-Changes in v2:
- squash three patches into one, do not modify devfreq_profile and separate stats
- into devfreq_stats
-
- drivers/devfreq/devfreq.c | 68 +++++++++++++++++++++++----------------
- include/linux/devfreq.h   | 31 ++++++++++++------
- 2 files changed, 62 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 901af3b66a76..4d50c8f10bd2 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -198,6 +198,7 @@ static int set_freq_table(struct devfreq *devfreq)
-  */
- int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- {
-+	struct devfreq_stats *stats = devfreq->stats;
- 	int lev, prev_lev, ret = 0;
- 	unsigned long long cur_time;
- 
-@@ -214,8 +215,8 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- 		goto out;
- 	}
- 
--	devfreq->time_in_state[prev_lev] +=
--			 cur_time - devfreq->last_stat_updated;
-+	stats->time_in_state[prev_lev] +=
-+			 cur_time - stats->last_stat_updated;
- 
- 	lev = devfreq_get_freq_level(devfreq, freq);
- 	if (lev < 0) {
-@@ -224,13 +225,12 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
- 	}
- 
- 	if (lev != prev_lev) {
--		devfreq->trans_table[(prev_lev *
--				devfreq->profile->max_state) + lev]++;
--		devfreq->total_trans++;
-+		stats->trans_table[(prev_lev * stats->max_state) + lev]++;
-+		stats->total_trans++;
- 	}
- 
- out:
--	devfreq->last_stat_updated = cur_time;
-+	stats->last_stat_updated = cur_time;
- 	return ret;
- }
- EXPORT_SYMBOL(devfreq_update_status);
-@@ -525,7 +525,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
- 			msecs_to_jiffies(devfreq->profile->polling_ms));
- 
- out_update:
--	devfreq->last_stat_updated = get_jiffies_64();
-+	devfreq->stats->last_stat_updated = get_jiffies_64();
- 	devfreq->stop_polling = false;
- 
- 	if (devfreq->profile->get_cur_freq &&
-@@ -735,28 +735,38 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_out;
- 	}
- 
--	devfreq->trans_table = devm_kzalloc(&devfreq->dev,
-+	devfreq->stats = devm_kzalloc(&devfreq->dev, sizeof(*devfreq->stats),
-+				      GFP_KERNEL);
-+	if (!devfreq->stats) {
-+		mutex_unlock(&devfreq->lock);
-+		err = -ENOMEM;
-+		goto err_devfreq;
-+	}
-+
-+	devfreq->stats->freq_table = devfreq->profile->freq_table;
-+	devfreq->stats->max_state = devfreq->profile->max_state;
-+	devfreq->stats->trans_table = devm_kzalloc(&devfreq->dev,
- 			array3_size(sizeof(unsigned int),
--				    devfreq->profile->max_state,
--				    devfreq->profile->max_state),
-+				    devfreq->stats->max_state,
-+				    devfreq->stats->max_state),
- 			GFP_KERNEL);
--	if (!devfreq->trans_table) {
-+	if (!devfreq->stats->trans_table) {
- 		mutex_unlock(&devfreq->lock);
- 		err = -ENOMEM;
- 		goto err_devfreq;
- 	}
- 
--	devfreq->time_in_state = devm_kcalloc(&devfreq->dev,
--			devfreq->profile->max_state,
--			sizeof(*devfreq->time_in_state),
-+	devfreq->stats->time_in_state = devm_kcalloc(&devfreq->dev,
-+			devfreq->stats->max_state,
-+			sizeof(*devfreq->stats->time_in_state),
- 			GFP_KERNEL);
--	if (!devfreq->time_in_state) {
-+	if (!devfreq->stats->time_in_state) {
- 		mutex_unlock(&devfreq->lock);
- 		err = -ENOMEM;
- 		goto err_devfreq;
- 	}
- 
--	devfreq->last_stat_updated = get_jiffies_64();
-+	devfreq->stats->last_stat_updated = get_jiffies_64();
- 
- 	srcu_init_notifier_head(&devfreq->transition_notifier_list);
- 
-@@ -1435,9 +1445,10 @@ static ssize_t trans_stat_show(struct device *dev,
- 			       struct device_attribute *attr, char *buf)
- {
- 	struct devfreq *devfreq = to_devfreq(dev);
-+	struct devfreq_stats *stats = devfreq->stats;
-+	unsigned int max_state = stats->max_state;
- 	ssize_t len;
- 	int i, j;
--	unsigned int max_state = devfreq->profile->max_state;
- 
- 	if (max_state == 0)
- 		return sprintf(buf, "Not Supported.\n");
-@@ -1454,28 +1465,28 @@ static ssize_t trans_stat_show(struct device *dev,
- 	len += sprintf(buf + len, "           :");
- 	for (i = 0; i < max_state; i++)
- 		len += sprintf(buf + len, "%10lu",
--				devfreq->profile->freq_table[i]);
-+				stats->freq_table[i]);
- 
- 	len += sprintf(buf + len, "   time(ms)\n");
- 
- 	for (i = 0; i < max_state; i++) {
--		if (devfreq->profile->freq_table[i]
-+		if (stats->freq_table[i]
- 					== devfreq->previous_freq) {
- 			len += sprintf(buf + len, "*");
- 		} else {
- 			len += sprintf(buf + len, " ");
- 		}
- 		len += sprintf(buf + len, "%10lu:",
--				devfreq->profile->freq_table[i]);
-+				stats->freq_table[i]);
- 		for (j = 0; j < max_state; j++)
- 			len += sprintf(buf + len, "%10u",
--				devfreq->trans_table[(i * max_state) + j]);
-+				stats->trans_table[(i * max_state) + j]);
- 		len += sprintf(buf + len, "%10llu\n", (u64)
--			jiffies64_to_msecs(devfreq->time_in_state[i]));
-+			jiffies64_to_msecs(stats->time_in_state[i]));
- 	}
- 
- 	len += sprintf(buf + len, "Total transition : %u\n",
--					devfreq->total_trans);
-+					stats->total_trans);
- 	return len;
- }
- 
-@@ -1484,16 +1495,17 @@ static ssize_t trans_stat_store(struct device *dev,
- 				const char *buf, size_t count)
- {
- 	struct devfreq *df = to_devfreq(dev);
--	unsigned int cnt = df->profile->max_state;
-+	struct devfreq_stats *stats = df->stats;
-+	unsigned int cnt = stats->max_state;
- 
- 	if (cnt == 0)
- 		return count;
- 
- 	mutex_lock(&df->lock);
--	memset(df->time_in_state, 0, cnt * sizeof(u64));
--	memset(df->trans_table, 0, cnt * cnt * sizeof(int));
--	df->last_stat_updated = get_jiffies_64();
--	df->total_trans = 0;
-+	memset(stats->time_in_state, 0, cnt * sizeof(u64));
-+	memset(stats->trans_table, 0, cnt * cnt * sizeof(int));
-+	stats->last_stat_updated = get_jiffies_64();
-+	stats->total_trans = 0;
- 	mutex_unlock(&df->lock);
- 
- 	return count;
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index b81a86e47fb9..2715719924e7 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -106,6 +106,25 @@ struct devfreq_dev_profile {
- 	unsigned int max_state;
- };
- 
-+/**
-+ * struct devfreq_stats - Devfreq's transitions stats counters
-+ * @freq_table:		List of frequencies in ascending order.
-+ * @max_state:		The size of freq_table.
-+ * @total_trans:	Number of devfreq transitions.
-+ * @trans_table:	Statistics of devfreq transitions.
-+ * @time_in_state:	Statistics of devfreq states.
-+ * @last_stat_updated:	The last time stats were updated.
-+ */
-+struct devfreq_stats {
-+	unsigned long *freq_table;
-+	unsigned int max_state;
-+
-+	unsigned int total_trans;
-+	unsigned int *trans_table;
-+	u64 *time_in_state;
-+	unsigned long long last_stat_updated;
-+};
-+
- /**
-  * struct devfreq - Device devfreq structure
-  * @node:	list node - contains the devices with devfreq that have been
-@@ -131,10 +150,7 @@ struct devfreq_dev_profile {
-  * @suspend_freq:	 frequency of a device set during suspend phase.
-  * @resume_freq:	 frequency of a device set in resume phase.
-  * @suspend_count:	 suspend requests counter for a device.
-- * @total_trans:	Number of devfreq transitions
-- * @trans_table:	Statistics of devfreq transitions
-- * @time_in_state:	Statistics of devfreq states
-- * @last_stat_updated:	The last time stat updated
-+ * @stats:	Statistics of devfreq transitions and states times
-  * @transition_notifier_list: list head of DEVFREQ_TRANSITION_NOTIFIER notifier
-  *
-  * This structure stores the devfreq information for a give device.
-@@ -171,11 +187,8 @@ struct devfreq {
- 	unsigned long resume_freq;
- 	atomic_t suspend_count;
- 
--	/* information for device frequency transition */
--	unsigned int total_trans;
--	unsigned int *trans_table;
--	u64 *time_in_state;
--	unsigned long long last_stat_updated;
-+	/* information for device frequency transitions */
-+	struct devfreq_stats *stats;
- 
- 	struct srcu_notifier_head transition_notifier_list;
- };
--- 
-2.24.0
-
+DQoNCk9uIDA0LjEyLjIwMTkgMTY6MjksIElvYW5hIENpb3JuZWkgd3JvdGU6DQo+IFVzZSB0aGUg
+cHJvcGVyIGZvcm0gb2YgdGhlIGVtcHR5IGluaXRpYWxpemVyIHdoZW4gd29ya2luZyB3aXRoDQo+
+IHN0cnVjdHVyZXMgdGhhdCBjb250YWluIGFuIGFycmF5LiBPdGhlcndpc2UsIG9sZGVyIGdjYyB2
+ZXJzaW9ucyAoZWcgZ2NjDQo+IDQuOSkgd2lsbCBjb21wbGFpbiBhYm91dCB0aGlzLg0KPiANCj4g
+Rml4ZXM6IDFhYzIxMGQxMjhlZiAoImJ1czogZnNsLW1jOiBhZGQgdGhlIGZzbF9tY19nZXRfZW5k
+cG9pbnQgZnVuY3Rpb24iKQ0KPiBSZXBvcnRlZC1ieToga2J1aWxkIHRlc3Qgcm9ib3QgPGxrcEBp
+bnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IElvYW5hIENpb3JuZWkgPGlvYW5hLmNpb3JuZWlA
+bnhwLmNvbT4NCg0KVGhhbmtzLA0KDQpBY2tlZC1ieTogTGF1cmVudGl1IFR1ZG9yIDxsYXVyZW50
+aXUudHVkb3JAbnhwLmNvbT4NCg0KLS0tDQpCZXN0IFJlZ2FyZHMsIExhdXJlbnRpdQ0KDQo+IC0t
+LQ0KPiAgIGRyaXZlcnMvYnVzL2ZzbC1tYy9mc2wtbWMtYnVzLmMgfCA2ICsrKy0tLQ0KPiAgIDEg
+ZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9idXMvZnNsLW1jL2ZzbC1tYy1idXMuYyBiL2RyaXZlcnMvYnVzL2Zz
+bC1tYy9mc2wtbWMtYnVzLmMNCj4gaW5kZXggYTA3Y2MxOWJlY2RiLi5jNzhkMTBlYTY0MWYgMTAw
+NjQ0DQo+IC0tLSBhL2RyaXZlcnMvYnVzL2ZzbC1tYy9mc2wtbWMtYnVzLmMNCj4gKysrIGIvZHJp
+dmVycy9idXMvZnNsLW1jL2ZzbC1tYy1idXMuYw0KPiBAQCAtNzE1LDkgKzcxNSw5IEBAIEVYUE9S
+VF9TWU1CT0xfR1BMKGZzbF9tY19kZXZpY2VfcmVtb3ZlKTsNCj4gICBzdHJ1Y3QgZnNsX21jX2Rl
+dmljZSAqZnNsX21jX2dldF9lbmRwb2ludChzdHJ1Y3QgZnNsX21jX2RldmljZSAqbWNfZGV2KQ0K
+PiAgIHsNCj4gICAJc3RydWN0IGZzbF9tY19kZXZpY2UgKm1jX2J1c19kZXYsICplbmRwb2ludDsN
+Cj4gLQlzdHJ1Y3QgZnNsX21jX29ial9kZXNjIGVuZHBvaW50X2Rlc2MgPSB7IDAgfTsNCj4gLQlz
+dHJ1Y3QgZHByY19lbmRwb2ludCBlbmRwb2ludDEgPSB7IDAgfTsNCj4gLQlzdHJ1Y3QgZHByY19l
+bmRwb2ludCBlbmRwb2ludDIgPSB7IDAgfTsNCj4gKwlzdHJ1Y3QgZnNsX21jX29ial9kZXNjIGVu
+ZHBvaW50X2Rlc2MgPSB7eyAwIH19Ow0KPiArCXN0cnVjdCBkcHJjX2VuZHBvaW50IGVuZHBvaW50
+MSA9IHt7IDAgfX07DQo+ICsJc3RydWN0IGRwcmNfZW5kcG9pbnQgZW5kcG9pbnQyID0ge3sgMCB9
+fTsNCj4gICAJaW50IHN0YXRlLCBlcnI7DQo+ICAgDQo+ICAgCW1jX2J1c19kZXYgPSB0b19mc2xf
+bWNfZGV2aWNlKG1jX2Rldi0+ZGV2LnBhcmVudCk7DQo+IA==
