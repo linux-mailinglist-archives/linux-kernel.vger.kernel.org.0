@@ -2,173 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 553341122E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DB51122E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfLDG0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 01:26:18 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:21249 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725791AbfLDG0R (ORCPT
+        id S1727065AbfLDGbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 01:31:19 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44238 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfLDGbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 01:26:17 -0500
-X-UUID: e42a7ee415124e08871f82b6a2075fe0-20191204
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=dZh9f2aKbDwDYA2AsbYkUX+7UYvyYAk1oinw0XAVMlc=;
-        b=UEjladCi+Jzo23dxdz2Tkjt3LSdfcnKnjtDVkNz0g5mASWvTR/xUYsKNqSkK8/Yx5n2mg69dFweB/H/DenKL80ItvLqS2wvo7dnhERFs6W1+lL4fwq9t3oyVe3nltOuReWtmMmtbM2c41/ph1ZWoyK7jsfeh4ORvG2K3p1Rex44=;
-X-UUID: e42a7ee415124e08871f82b6a2075fe0-20191204
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1257451723; Wed, 04 Dec 2019 14:26:12 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 4 Dec 2019 14:25:59 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 4 Dec 2019 14:25:17 +0800
-Message-ID: <1575440771.29074.2.camel@mtksdaap41>
-Subject: Re: [PATCH v2 3/6] drm/mediatek: update cursors by using async
- atomic update
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Wed, 4 Dec 2019 14:26:11 +0800
-In-Reply-To: <20191203071036.14158-4-bibby.hsieh@mediatek.com>
-References: <20191203071036.14158-1-bibby.hsieh@mediatek.com>
-         <20191203071036.14158-4-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 4 Dec 2019 01:31:19 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB46T5E5052836;
+        Wed, 4 Dec 2019 06:31:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=LDsen7ptk7tsQBaPePRbudj2yMR0eeO7aaitOS++uvc=;
+ b=ZfBIirHvT+CBVUpviIxxWVRERbBcCuLUMeemPOprZ6ZePnjFrHFv9HHNtM8pxpW2AB32
+ QGsSvJpW3QD1u2YQH0BoMM7UcAPg6hpZFxy0Gz1Yg+KmS9sIPKKHfLt2bKzxkvY3tlnr
+ 5ymOougA72MrPOB/eArziWAT0nuXgOu4u09lJmhnfN1mK4wMhubGyXz6jnLbEbQX9uPU
+ 41vvStCnHvrCNpEuIxsmI6J1i0qXyk0JSEDTqvEQDyvHRRUmbAghf8YTzwSW+DxhxMcV
+ Ir1DV96OPsrQXklDaxDfkodkoWaGccw5i2Rww0nqroHHAZ4dXyW5iLryNAgAV5HHgElV pQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2wkh2rc6xf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Dec 2019 06:31:07 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB46Sj6S030440;
+        Wed, 4 Dec 2019 06:31:06 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2wnvqxq21w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 04 Dec 2019 06:31:06 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB46V5X3007232;
+        Wed, 4 Dec 2019 06:31:05 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Dec 2019 22:31:05 -0800
+Date:   Wed, 4 Dec 2019 09:30:58 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Mao Wenan <maowenan@huawei.com>
+Cc:     sre@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] power: supply: ab8500: Drop pointless static
+ qualifier in ab8500_btemp_batctrl_volt_to_res()
+Message-ID: <20191204063058.GE1765@kadam>
+References: <20191204010506.159128-1-maowenan@huawei.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204010506.159128-1-maowenan@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912040046
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9460 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912040046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpZb3UgbW92ZSB0aGUgbXV0ZXggcHJvdGVjdGlvbiB0byBbUEFUQ0ggdjIg
-Ni82XSBkcm0vbWVkaWF0ZWs6IGFwcGx5IENNRFENCmNvbnRyb2wgZmxvdywgYnV0IHRoZSByYWNl
-IGNvbmRpdGlvbiBleGlzdCBpbiB0aGlzIHBhdGNoLiBTbyB5b3Ugc2hvdWxkDQptb3ZlIHRoYXQg
-YmFjayBpbiB0aGlzIHBhdGNoLg0KDQpSZWdhcmRzLA0KQ0sNCg0KT24gVHVlLCAyMDE5LTEyLTAz
-IGF0IDE1OjEwICswODAwLCBCaWJieSBIc2llaCB3cm90ZToNCj4gU3VwcG9ydCB0byBhc3luYyB1
-cGRhdGVzIG9mIGN1cnNvcnMgYnkgdXNpbmcgdGhlIG5ldyBhdG9taWMNCj4gaW50ZXJmYWNlIGZv
-ciB0aGF0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1l
-ZGlhdGVrLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9j
-cnRjLmMgIHwgMzMgKysrKysrKysrKysrKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
-L210a19kcm1fY3J0Yy5oICB8ICAyICsNCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
-ZHJtX3BsYW5lLmMgfCA1MCArKysrKysrKysrKysrKysrKysrKysrKysNCj4gIGRyaXZlcnMvZ3B1
-L2RybS9tZWRpYXRlay9tdGtfZHJtX3BsYW5lLmggfCAgMiArDQo+ICA0IGZpbGVzIGNoYW5nZWQs
-IDg3IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVk
-aWF0ZWsvbXRrX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9j
-cnRjLmMNCj4gaW5kZXggNGMyNWFkMjE4MmIwLi5iMjNmZTc0YjhiMGEgMTAwNjQ0DQo+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gQEAgLTQyMiw2ICs0MjIsMzkgQEAg
-aW50IG10a19kcm1fY3J0Y19wbGFuZV9jaGVjayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVj
-dCBkcm1fcGxhbmUgKnBsYW5lLA0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiAgDQo+ICt2b2lkIG10
-a19kcm1fY3J0Y19hc3luY191cGRhdGUoc3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwNCj4gKwkJCSAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpuZXdf
-c3RhdGUpDQo+ICt7DQo+ICsJc3RydWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdiA9IGNydGMtPmRl
-di0+ZGV2X3ByaXZhdGU7DQo+ICsJc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2NydGMgPSB0b19t
-dGtfY3J0YyhjcnRjKTsNCj4gKwljb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBlcl9mdW5jcyAq
-cGxhbmVfaGVscGVyX2Z1bmNzID0NCj4gKwkJCXBsYW5lLT5oZWxwZXJfcHJpdmF0ZTsNCj4gKwlp
-bnQgaTsNCj4gKw0KPiArCWlmICghbXRrX2NydGMtPmVuYWJsZWQpDQo+ICsJCXJldHVybjsNCj4g
-Kw0KPiArCXBsYW5lX2hlbHBlcl9mdW5jcy0+YXRvbWljX3VwZGF0ZShwbGFuZSwgbmV3X3N0YXRl
-KTsNCj4gKw0KPiArCWZvciAoaSA9IDA7IGkgPCBtdGtfY3J0Yy0+bGF5ZXJfbnI7IGkrKykgew0K
-PiArCQlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSA9ICZtdGtfY3J0Yy0+cGxhbmVzW2ldOw0KPiAr
-CQlzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0ZTsNCj4gKw0KPiArCQlwbGFuZV9z
-dGF0ZSA9IHRvX210a19wbGFuZV9zdGF0ZShwbGFuZS0+c3RhdGUpOw0KPiArCQlpZiAocGxhbmVf
-c3RhdGUtPnBlbmRpbmcuYXN5bmNfZGlydHkpIHsNCj4gKwkJCXBsYW5lX3N0YXRlLT5wZW5kaW5n
-LmNvbmZpZyA9IHRydWU7DQo+ICsJCQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5hc3luY191cGRhdGUg
-PSBmYWxzZTsNCj4gKwkJCXBsYW5lX3N0YXRlLT5wZW5kaW5nLmFzeW5jX2RpcnR5ID0gZmFsc2U7
-DQo+ICsJCX0NCj4gKwl9DQo+ICsJbXRrX2NydGMtPnBlbmRpbmdfcGxhbmVzID0gdHJ1ZTsNCj4g
-KwlpZiAocHJpdi0+ZGF0YS0+c2hhZG93X3JlZ2lzdGVyKSB7DQo+ICsJCW10a19kaXNwX211dGV4
-X2FjcXVpcmUobXRrX2NydGMtPm11dGV4KTsNCj4gKwkJbXRrX2NydGNfZGRwX2NvbmZpZyhjcnRj
-KTsNCj4gKwkJbXRrX2Rpc3BfbXV0ZXhfcmVsZWFzZShtdGtfY3J0Yy0+bXV0ZXgpOw0KPiArCX0N
-Cj4gK30NCj4gKw0KPiAgc3RhdGljIHZvaWQgbXRrX2RybV9jcnRjX2F0b21pY19lbmFibGUoc3Ry
-dWN0IGRybV9jcnRjICpjcnRjLA0KPiAgCQkJCSAgICAgICBzdHJ1Y3QgZHJtX2NydGNfc3RhdGUg
-Km9sZF9zdGF0ZSkNCj4gIHsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRl
-ay9tdGtfZHJtX2NydGMuaCBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMu
-aA0KPiBpbmRleCA2YWZlMWMxOTU1N2EuLmEyYjQ2NzdhNDUxYyAxMDA2NDQNCj4gLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5oDQo+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuaA0KPiBAQCAtMjEsNSArMjEsNyBAQCBpbnQgbXRr
-X2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwNCj4gIAkJCXVuc2ln
-bmVkIGludCBwYXRoX2xlbik7DQo+ICBpbnQgbXRrX2RybV9jcnRjX3BsYW5lX2NoZWNrKHN0cnVj
-dCBkcm1fY3J0YyAqY3J0Yywgc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ICAJCQkgICAgIHN0
-cnVjdCBtdGtfcGxhbmVfc3RhdGUgKnN0YXRlKTsNCj4gK3ZvaWQgbXRrX2RybV9jcnRjX2FzeW5j
-X3VwZGF0ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0K
-PiArCQkJICAgICAgIHN0cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnBsYW5lX3N0YXRlKTsNCj4gIA0K
-PiAgI2VuZGlmIC8qIE1US19EUk1fQ1JUQ19IICovDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
-L210a19kcm1fcGxhbmUuYw0KPiBpbmRleCBjZDdjOTdlYjdlZTYuLjZiZGI0MmYwNjhmYiAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxhbmUuYw0KPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jDQo+IEBAIC03LDYg
-KzcsNyBAQA0KPiAgI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljLmg+DQo+ICAjaW5jbHVkZSA8ZHJt
-L2RybV9hdG9taWNfaGVscGVyLmg+DQo+ICAjaW5jbHVkZSA8ZHJtL2RybV9mb3VyY2MuaD4NCj4g
-KyNpbmNsdWRlIDxkcm0vZHJtX2F0b21pY191YXBpLmg+DQo+ICAjaW5jbHVkZSA8ZHJtL2RybV9w
-bGFuZV9oZWxwZXIuaD4NCj4gICNpbmNsdWRlIDxkcm0vZHJtX2dlbV9mcmFtZWJ1ZmZlcl9oZWxw
-ZXIuaD4NCj4gIA0KPiBAQCAtNzAsNiArNzEsNTAgQEAgc3RhdGljIHZvaWQgbXRrX2RybV9wbGFu
-ZV9kZXN0cm95X3N0YXRlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0KPiAgCWtmcmVlKHRvX210
-a19wbGFuZV9zdGF0ZShzdGF0ZSkpOw0KPiAgfQ0KPiAgDQo+ICtzdGF0aWMgaW50IG10a19wbGFu
-ZV9hdG9taWNfYXN5bmNfY2hlY2soc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ICsJCQkJCXN0
-cnVjdCBkcm1fcGxhbmVfc3RhdGUgKnN0YXRlKQ0KPiArew0KPiArCXN0cnVjdCBkcm1fY3J0Y19z
-dGF0ZSAqY3J0Y19zdGF0ZTsNCj4gKw0KPiArCWlmIChwbGFuZSAhPSBzdGF0ZS0+Y3J0Yy0+Y3Vy
-c29yKQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCWlmICghcGxhbmUtPnN0YXRlKQ0K
-PiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCWlmICghcGxhbmUtPnN0YXRlLT5mYikNCj4g
-KwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsNCj4gKwlpZiAoc3RhdGUtPnN0YXRlKQ0KPiArCQljcnRj
-X3N0YXRlID0gZHJtX2F0b21pY19nZXRfZXhpc3RpbmdfY3J0Y19zdGF0ZShzdGF0ZS0+c3RhdGUs
-DQo+ICsJCQkJCQkJCXN0YXRlLT5jcnRjKTsNCj4gKwllbHNlIC8qIFNwZWNpYWwgY2FzZSBmb3Ig
-YXN5bmNocm9ub3VzIGN1cnNvciB1cGRhdGVzLiAqLw0KPiArCQljcnRjX3N0YXRlID0gc3RhdGUt
-PmNydGMtPnN0YXRlOw0KPiArDQo+ICsJcmV0dXJuIGRybV9hdG9taWNfaGVscGVyX2NoZWNrX3Bs
-YW5lX3N0YXRlKHBsYW5lLT5zdGF0ZSwgY3J0Y19zdGF0ZSwNCj4gKwkJCQkJCSAgIERSTV9QTEFO
-RV9IRUxQRVJfTk9fU0NBTElORywNCj4gKwkJCQkJCSAgIERSTV9QTEFORV9IRUxQRVJfTk9fU0NB
-TElORywNCj4gKwkJCQkJCSAgIHRydWUsIHRydWUpOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9p
-ZCBtdGtfcGxhbmVfYXRvbWljX2FzeW5jX3VwZGF0ZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwN
-Cj4gKwkJCQkJICBzdHJ1Y3QgZHJtX3BsYW5lX3N0YXRlICpuZXdfc3RhdGUpDQo+ICt7DQo+ICsJ
-c3RydWN0IG10a19wbGFuZV9zdGF0ZSAqc3RhdGUgPSB0b19tdGtfcGxhbmVfc3RhdGUocGxhbmUt
-PnN0YXRlKTsNCj4gKw0KPiArCXBsYW5lLT5zdGF0ZS0+Y3J0Y194ID0gbmV3X3N0YXRlLT5jcnRj
-X3g7DQo+ICsJcGxhbmUtPnN0YXRlLT5jcnRjX3kgPSBuZXdfc3RhdGUtPmNydGNfeTsNCj4gKwlw
-bGFuZS0+c3RhdGUtPmNydGNfaCA9IG5ld19zdGF0ZS0+Y3J0Y19oOw0KPiArCXBsYW5lLT5zdGF0
-ZS0+Y3J0Y193ID0gbmV3X3N0YXRlLT5jcnRjX3c7DQo+ICsJcGxhbmUtPnN0YXRlLT5zcmNfeCA9
-IG5ld19zdGF0ZS0+c3JjX3g7DQo+ICsJcGxhbmUtPnN0YXRlLT5zcmNfeSA9IG5ld19zdGF0ZS0+
-c3JjX3k7DQo+ICsJcGxhbmUtPnN0YXRlLT5zcmNfaCA9IG5ld19zdGF0ZS0+c3JjX2g7DQo+ICsJ
-cGxhbmUtPnN0YXRlLT5zcmNfdyA9IG5ld19zdGF0ZS0+c3JjX3c7DQo+ICsJc3RhdGUtPnBlbmRp
-bmcuYXN5bmNfdXBkYXRlID0gdHJ1ZTsNCj4gKw0KPiArCW10a19kcm1fY3J0Y19hc3luY191cGRh
-dGUobmV3X3N0YXRlLT5jcnRjLCBwbGFuZSwgbmV3X3N0YXRlKTsNCj4gK30NCj4gKw0KPiAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCBkcm1fcGxhbmVfZnVuY3MgbXRrX3BsYW5lX2Z1bmNzID0gew0KPiAg
-CS51cGRhdGVfcGxhbmUgPSBkcm1fYXRvbWljX2hlbHBlcl91cGRhdGVfcGxhbmUsDQo+ICAJLmRp
-c2FibGVfcGxhbmUgPSBkcm1fYXRvbWljX2hlbHBlcl9kaXNhYmxlX3BsYW5lLA0KPiBAQCAtMTQx
-LDYgKzE4Niw5IEBAIHN0YXRpYyB2b2lkIG10a19wbGFuZV9hdG9taWNfdXBkYXRlKHN0cnVjdCBk
-cm1fcGxhbmUgKnBsYW5lLA0KPiAgCXN0YXRlLT5wZW5kaW5nLnJvdGF0aW9uID0gcGxhbmUtPnN0
-YXRlLT5yb3RhdGlvbjsNCj4gIAl3bWIoKTsgLyogTWFrZSBzdXJlIHRoZSBhYm92ZSBwYXJhbWV0
-ZXJzIGFyZSBzZXQgYmVmb3JlIHVwZGF0ZSAqLw0KPiAgCXN0YXRlLT5wZW5kaW5nLmRpcnR5ID0g
-dHJ1ZTsNCj4gKw0KPiArCWlmIChzdGF0ZS0+cGVuZGluZy5hc3luY191cGRhdGUpDQo+ICsJCXN0
-YXRlLT5wZW5kaW5nLmFzeW5jX2RpcnR5ID0gdHJ1ZTsNCj4gIH0NCj4gIA0KPiAgc3RhdGljIHZv
-aWQgbXRrX3BsYW5lX2F0b21pY19kaXNhYmxlKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0KPiBA
-QCAtMTU4LDYgKzIwNiw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX3BsYW5lX2hlbHBlcl9m
-dW5jcyBtdGtfcGxhbmVfaGVscGVyX2Z1bmNzID0gew0KPiAgCS5hdG9taWNfY2hlY2sgPSBtdGtf
-cGxhbmVfYXRvbWljX2NoZWNrLA0KPiAgCS5hdG9taWNfdXBkYXRlID0gbXRrX3BsYW5lX2F0b21p
-Y191cGRhdGUsDQo+ICAJLmF0b21pY19kaXNhYmxlID0gbXRrX3BsYW5lX2F0b21pY19kaXNhYmxl
-LA0KPiArCS5hdG9taWNfYXN5bmNfdXBkYXRlID0gbXRrX3BsYW5lX2F0b21pY19hc3luY191cGRh
-dGUsDQo+ICsJLmF0b21pY19hc3luY19jaGVjayA9IG10a19wbGFuZV9hdG9taWNfYXN5bmNfY2hl
-Y2ssDQo+ICB9Ow0KPiAgDQo+ICBpbnQgbXRrX3BsYW5lX2luaXQoc3RydWN0IGRybV9kZXZpY2Ug
-KmRldiwgc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5oIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
-L210a19kcm1fcGxhbmUuaA0KPiBpbmRleCA3NjA4ODVlMzViMjcuLjQxODgyNDY1ZGQ2NyAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxhbmUuaA0KPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5oDQo+IEBAIC0yMiw2
-ICsyMiw4IEBAIHN0cnVjdCBtdGtfcGxhbmVfcGVuZGluZ19zdGF0ZSB7DQo+ICAJdW5zaWduZWQg
-aW50CQkJaGVpZ2h0Ow0KPiAgCXVuc2lnbmVkIGludAkJCXJvdGF0aW9uOw0KPiAgCWJvb2wJCQkJ
-ZGlydHk7DQo+ICsJYm9vbAkJCQlhc3luY19kaXJ0eTsNCj4gKwlib29sCQkJCWFzeW5jX3VwZGF0
-ZTsNCj4gIH07DQo+ICANCj4gIHN0cnVjdCBtdGtfcGxhbmVfc3RhdGUgew0KDQo=
+On Wed, Dec 04, 2019 at 09:05:06AM +0800, Mao Wenan wrote:
+> There is no need to have the 'T *v' variable static
+> since new value always be assigned before use it.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  drivers/power/supply/ab8500_btemp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/ab8500_btemp.c b/drivers/power/supply/ab8500_btemp.c
+> index 909f0242bacb..d3d4f7327d1b 100644
+> --- a/drivers/power/supply/ab8500_btemp.c
+> +++ b/drivers/power/supply/ab8500_btemp.c
+> @@ -180,7 +180,7 @@ static int ab8500_btemp_batctrl_volt_to_res(struct ab8500_btemp *di,
+>  static int ab8500_btemp_read_batctrl_voltage(struct ab8500_btemp *di)
+>  {
+>  	int vbtemp, ret;
+> -	static int prev;
+> +	int prev;
+
+No.  We use it first on linux-next (yesterday).  It needs to be static.
+
+regards,
+dan carpenter
 
