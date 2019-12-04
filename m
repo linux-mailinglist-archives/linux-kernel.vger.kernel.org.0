@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E608113138
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C70C11314B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:58:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbfLDR53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:57:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58158 "EHLO mail.kernel.org"
+        id S1728536AbfLDR6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:58:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbfLDR50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:57:26 -0500
+        id S1728495AbfLDR56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:57:58 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 062C82073B;
-        Wed,  4 Dec 2019 17:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C83820675;
+        Wed,  4 Dec 2019 17:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482246;
-        bh=nPEWjF0dK8mtdwVv8wVLGr4RFLQuZAZNFBZ6cZq1WZ0=;
+        s=default; t=1575482278;
+        bh=WbqjUggnJDh4A988fik+6/iGaJLlVSosFqW9yVNwscw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AeBmme82DmafsgM9Vb3sLSVVbSHkyr39Vo27+LdVO8NGrxLXM+QJnEYejjxrQXwxV
-         h7Ou3RkLp92LToAXh5kvs9uEmWRyJ/d7NbTkRC26bu2T6nU1ff/isvnz15wnBiWWpM
-         A12Xe1Xe2SKpp6y4XHDLu94DLp+pnfV302GV1hWs=
+        b=2VIEOHNieQLJtSNAD1kcNnhRoHnwEhIbdXNfNwlvUfSFMjztikfci8anMi60prYwo
+         eWhuWRxO3a4+CftekiMP4C2HepQnTpUHp+kjCSIXr/Blri4WaduzVGqvXkF53oyOKs
+         RqHCuAcxWH2V4nB4mx/mGUxnxJE/VfRf/7t00rQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Jeroen Hofstee <jhofstee@victronenergy.com>,
+        Stephane Grosjean <s.grosjean@peak-system.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 02/92] ASoC: kirkwood: fix external clock probe defer
-Date:   Wed,  4 Dec 2019 18:49:02 +0100
-Message-Id: <20191204174327.965499564@linuxfoundation.org>
+Subject: [PATCH 4.4 05/92] can: peak_usb: report bus recovery as well
+Date:   Wed,  4 Dec 2019 18:49:05 +0100
+Message-Id: <20191204174328.702650875@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -44,49 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Jeroen Hofstee <jhofstee@victronenergy.com>
 
-[ Upstream commit 4523817d51bc3b2ef38da768d004fda2c8bc41de ]
+[ Upstream commit 128a1b87d3ceb2ba449d5aadb222fe22395adeb0 ]
 
-When our call to get the external clock fails, we forget to clean up
-the enabled internal clock correctly.  Enable the clock after we have
-obtained all our resources.
+While the state changes are reported when the error counters increase
+and decrease, there is no event when the bus recovers and the error
+counters decrease again. So add those as well.
 
-Fixes: 84aac6c79bfd ("ASoC: kirkwood: fix loss of external clock at probe time")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Link: https://lore.kernel.org/r/E1iNGyK-0004oF-6A@rmk-PC.armlinux.org.uk
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Change the state going downward to be ERROR_PASSIVE -> ERROR_WARNING ->
+ERROR_ACTIVE instead of directly to ERROR_ACTIVE again.
+
+Signed-off-by: Jeroen Hofstee <jhofstee@victronenergy.com>
+Cc: Stephane Grosjean <s.grosjean@peak-system.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/kirkwood/kirkwood-i2s.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/can/usb/peak_usb/pcan_usb.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
-index 3a36d60e17850..0a5d9fb6fc84b 100644
---- a/sound/soc/kirkwood/kirkwood-i2s.c
-+++ b/sound/soc/kirkwood/kirkwood-i2s.c
-@@ -570,10 +570,6 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->clk);
- 	}
- 
--	err = clk_prepare_enable(priv->clk);
--	if (err < 0)
--		return err;
--
- 	priv->extclk = devm_clk_get(&pdev->dev, "extclk");
- 	if (IS_ERR(priv->extclk)) {
- 		if (PTR_ERR(priv->extclk) == -EPROBE_DEFER)
-@@ -589,6 +585,10 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb.c b/drivers/net/can/usb/peak_usb/pcan_usb.c
+index e626c2afbbb11..0e1fc6c4360e7 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
+@@ -441,8 +441,8 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
  		}
- 	}
+ 		if ((n & PCAN_USB_ERROR_BUS_LIGHT) == 0) {
+ 			/* no error (back to active state) */
+-			mc->pdev->dev.can.state = CAN_STATE_ERROR_ACTIVE;
+-			return 0;
++			new_state = CAN_STATE_ERROR_ACTIVE;
++			break;
+ 		}
+ 		break;
  
-+	err = clk_prepare_enable(priv->clk);
-+	if (err < 0)
-+		return err;
+@@ -465,9 +465,9 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		}
+ 
+ 		if ((n & PCAN_USB_ERROR_BUS_HEAVY) == 0) {
+-			/* no error (back to active state) */
+-			mc->pdev->dev.can.state = CAN_STATE_ERROR_ACTIVE;
+-			return 0;
++			/* no error (back to warning state) */
++			new_state = CAN_STATE_ERROR_WARNING;
++			break;
+ 		}
+ 		break;
+ 
+@@ -506,6 +506,11 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		mc->pdev->dev.can.can_stats.error_warning++;
+ 		break;
+ 
++	case CAN_STATE_ERROR_ACTIVE:
++		cf->can_id |= CAN_ERR_CRTL;
++		cf->data[1] = CAN_ERR_CRTL_ACTIVE;
++		break;
 +
- 	/* Some sensible defaults - this reflects the powerup values */
- 	priv->ctl_play = KIRKWOOD_PLAYCTL_SIZE_24;
- 	priv->ctl_rec = KIRKWOOD_RECCTL_SIZE_24;
+ 	default:
+ 		/* CAN_STATE_MAX (trick to handle other errors) */
+ 		cf->can_id |= CAN_ERR_CRTL;
 -- 
 2.20.1
 
