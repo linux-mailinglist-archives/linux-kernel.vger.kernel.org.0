@@ -2,215 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 528BE112F2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA0DF112F26
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfLDP76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:59:58 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46957 "EHLO
+        id S1728642AbfLDP7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:59:37 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40151 "EHLO
         mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728709AbfLDP7w (ORCPT
+        with ESMTP id S1728621AbfLDP7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:59:52 -0500
-Received: by mail-qk1-f193.google.com with SMTP id f5so298821qkm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:51 -0800 (PST)
+        Wed, 4 Dec 2019 10:59:33 -0500
+Received: by mail-qk1-f193.google.com with SMTP id a137so344971qkc.7;
+        Wed, 04 Dec 2019 07:59:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=CRoxRB8IFeyVTKMx5ypVP5zpyTfws7d6gsb5dpS33vY=;
-        b=Sok0tvbQLMnworXiNYVhIsHwglGthkb3F+IhAdIcuhFulkUCzxnNQoenHOV9jZOFjI
-         j+LhEcYyCn9ROvSInEYKmOhJuEOPmmQ08vXVphxlZ2ehSYtzVB52PEXPd228QW3V74bh
-         cAaSTg7fOOZQ3NITCQCB1rwrp/WGVCUOy6xrabpfn66awnzPzV69K6GT9ulg6YMTgbXj
-         uRAuoIS70KFRfBdgKsaRb61RQkg7X6LVBK5drx/E0YOZIem865LxPGCr5r703CATQc8U
-         rOrWA2d25zRlVOYA7M4U9udGrIjq30jlrkiJt8irQv3CKskg4Iik/g8iaoL+WRUNkLv6
-         6VXw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=yRIWo7lKKgqJCu/aBUPmRsLV0Wkkk5/DYmont9tq1qI=;
+        b=rk5spJZk1saeoY744UNyx+wXqmmNfCrwihWJBMslEhpdRoRXMOEL/weiPQc+ZajJfI
+         nIv2riK0GB72szsbYLQZbOdoE3KqvkEO+c9yvtS1s70+mXQ3A/wQoZyYfG6x2zP3AnCk
+         k5dwdXNyuRDyTqmI0V7qpvZgwhbZexcldeZEyOdHYqF+J45z00RZD7eZI+UL1lMdWbPV
+         Vn4wzxXB84/vPmNHM2qnuUnRcFs/YZLW32es3UCXvBi1zcL3ftsu2c/nmeNEvjrv2o+N
+         9Usucm3+1n5m/eJzYWQIEAfRdpwg2QfFyplmuat1byjjOZ1a5PegX7i3fmaWMH4LHGsJ
+         ShyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CRoxRB8IFeyVTKMx5ypVP5zpyTfws7d6gsb5dpS33vY=;
-        b=CGQbDs8h22ETHpX/gH7HcuAzMHnfSq9TnPC1Se6CJifmPOsMQCCIzXR3OAMMUY5b2r
-         iLbBuUZMjVgoLoQzJhNAjaxJuH2K5JxlHPxU9O1RZRFKP6ue5bQeovZokMk/rhdneHsJ
-         EKA/eRFSKc8HdO9RYW8Etuoe1uhqJao0UcDyXG1U6MZ67lOjc3tUiRHSE5bv5I7bTneA
-         nYluRkv8ZEt3QHPkxgsalxIlG1wSilZAp92kL3hlMypQH7oZS3A3KiKtC6fBEv8c7ag4
-         OJEJZbXvdbuoX6ockIfkqJmA/bmHbSTCeOQ+XcMNSkBmBzPQB++N3QH+6kZJD5wFL2DM
-         8u2w==
-X-Gm-Message-State: APjAAAW3x4/2/iGGQPi+rTPZVKjxCF9ikW09Ec6oPCTWqJ36pvHASgCI
-        lhfPzenl4Tdkbe30e1VCWf+QMA==
-X-Google-Smtp-Source: APXvYqyVmMQxr7dKNkbJcOcAyAvUUs0ErG6tRUeh+GTtJpJDytBoHcBnlTjVSMoH9TY9Eceuj5dpxQ==
-X-Received: by 2002:a37:514:: with SMTP id 20mr3502735qkf.321.1575475191178;
-        Wed, 04 Dec 2019 07:59:51 -0800 (PST)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.49
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=yRIWo7lKKgqJCu/aBUPmRsLV0Wkkk5/DYmont9tq1qI=;
+        b=X4Q5kk9bkehYWGbGpxOdaCP8t3eR3A7xibV1HlhmRhDiOtpkayxs9Q83cA3ZhZAqpW
+         aASUtyzB73EbuKfIGjzbDd9qg3ancbmHbDmXXaubBYB1E7/yVtA57Ls2AM9styCYhrKa
+         6fhcva+Io/9TtS0rRJjaPCLs1E7Og0XZ8QcN3T8uFRym1jUSgN65mSpH0UflICc1UIBI
+         qgP9z7uhT1Z5r1laeTv8qGypK1QHJmd01DL4aCXwXlezhhfrLfauE1cn/+3MQgOD2xQM
+         k+CgsbN1nILxyqSo8Yt3Xs7d+0ARs+h1cAhIcvrIhX203ZFAzYQzTsxst98XPXW6agnd
+         JEBg==
+X-Gm-Message-State: APjAAAWpA0A9R6x0kRzJBh1KQYGxVOjgfUCn/8G5GnsuR9yPAOtNUffz
+        Altyk/99uoVAa/Fu3qJ0KzA=
+X-Google-Smtp-Source: APXvYqw6YVY5BvKuYFjKrTa10B9ON4/0NJEdCx3hp8wekexd4CoYPvPrdFofnV0kKgvQRFItAs68eg==
+X-Received: by 2002:a37:7bc7:: with SMTP id w190mr3680024qkc.132.1575475172496;
+        Wed, 04 Dec 2019 07:59:32 -0800 (PST)
+Received: from smtp.gmail.com (gwcrusp.semfio.usp.br. [143.107.150.86])
+        by smtp.gmail.com with ESMTPSA id c16sm4002902qtm.48.2019.12.04.07.59.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:59:50 -0800 (PST)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        ebiederm@xmission.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        james.morse@arm.com, vladimir.murzin@arm.com,
-        matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
-        mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
-        tglx@linutronix.de
-Subject: [PATCH v8 07/25] arm64: hibernate: remove gotos as they are not needed
-Date:   Wed,  4 Dec 2019 10:59:20 -0500
-Message-Id: <20191204155938.2279686-8-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
-References: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
+        Wed, 04 Dec 2019 07:59:31 -0800 (PST)
+Date:   Wed, 4 Dec 2019 12:59:23 -0300
+From:   Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To:     jic23@kernel.org, robh@kernel.org
+Cc:     dragos.bogdan@analog.com, alexandru.ardelean@analog.com,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH v2 1/2] dt-bindings: iio: adc: ad7292: fix channel constraint
+Message-ID: <20191204155918.5ot4tplceqjeul6a@smtp.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Usually, gotos are used to handle cleanup after exception, but in case of
-create_safe_exec_page and swsusp_arch_resume there are no clean-ups. So,
-simply return the errors directly.
+Change items property of AD7292 channels to correctly constrain their
+quantity.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: James Morse <james.morse@arm.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
 ---
- arch/arm64/kernel/hibernate.c | 49 ++++++++++++-----------------------
- 1 file changed, 17 insertions(+), 32 deletions(-)
+Changelog V2
+- Shortened the message to make it closer to 50 columns.
 
-diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-index 34297716643f..83c41a2f8400 100644
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -198,7 +198,6 @@ static int create_safe_exec_page(void *src_start, size_t length,
- 				 unsigned long dst_addr,
- 				 phys_addr_t *phys_dst_addr)
- {
--	int rc = 0;
- 	pgd_t *trans_pgd;
- 	pgd_t *pgdp;
- 	pud_t *pudp;
-@@ -206,47 +205,37 @@ static int create_safe_exec_page(void *src_start, size_t length,
- 	pte_t *ptep;
- 	unsigned long dst = get_safe_page(GFP_ATOMIC);
+ Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
+index b68be3aaf587..18f1032b86f3 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7292.yaml
+@@ -53,7 +53,8 @@ patternProperties:
+         description: |
+           The channel number. It can have up to 8 channels numbered from 0 to 7.
+         items:
+-          maximum: 7
++          - minimum: 0
++            maximum: 7
  
--	if (!dst) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	if (!dst)
-+		return -ENOMEM;
- 
- 	memcpy((void *)dst, src_start, length);
- 	__flush_icache_range(dst, dst + length);
- 
- 	trans_pgd = (void *)get_safe_page(GFP_ATOMIC);
--	if (!trans_pgd) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	if (!trans_pgd)
-+		return -ENOMEM;
- 
- 	pgdp = pgd_offset_raw(trans_pgd, dst_addr);
- 	if (pgd_none(READ_ONCE(*pgdp))) {
- 		pudp = (void *)get_safe_page(GFP_ATOMIC);
--		if (!pudp) {
--			rc = -ENOMEM;
--			goto out;
--		}
-+		if (!pudp)
-+			return -ENOMEM;
- 		pgd_populate(&init_mm, pgdp, pudp);
- 	}
- 
- 	pudp = pud_offset(pgdp, dst_addr);
- 	if (pud_none(READ_ONCE(*pudp))) {
- 		pmdp = (void *)get_safe_page(GFP_ATOMIC);
--		if (!pmdp) {
--			rc = -ENOMEM;
--			goto out;
--		}
-+		if (!pmdp)
-+			return -ENOMEM;
- 		pud_populate(&init_mm, pudp, pmdp);
- 	}
- 
- 	pmdp = pmd_offset(pudp, dst_addr);
- 	if (pmd_none(READ_ONCE(*pmdp))) {
- 		ptep = (void *)get_safe_page(GFP_ATOMIC);
--		if (!ptep) {
--			rc = -ENOMEM;
--			goto out;
--		}
-+		if (!ptep)
-+			return -ENOMEM;
- 		pmd_populate_kernel(&init_mm, pmdp, ptep);
- 	}
- 
-@@ -272,8 +261,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
- 
- 	*phys_dst_addr = virt_to_phys((void *)dst);
- 
--out:
--	return rc;
-+	return 0;
- }
- 
- #define dcache_clean_range(start, end)	__flush_dcache_area(start, (end - start))
-@@ -482,7 +470,7 @@ static int copy_page_tables(pgd_t *dst_pgdp, unsigned long start,
-  */
- int swsusp_arch_resume(void)
- {
--	int rc = 0;
-+	int rc;
- 	void *zero_page;
- 	size_t exit_size;
- 	pgd_t *tmp_pg_dir;
-@@ -498,12 +486,11 @@ int swsusp_arch_resume(void)
- 	tmp_pg_dir = (pgd_t *)get_safe_page(GFP_ATOMIC);
- 	if (!tmp_pg_dir) {
- 		pr_err("Failed to allocate memory for temporary page tables.\n");
--		rc = -ENOMEM;
--		goto out;
-+		return -ENOMEM;
- 	}
- 	rc = copy_page_tables(tmp_pg_dir, PAGE_OFFSET, PAGE_END);
- 	if (rc)
--		goto out;
-+		return rc;
- 
- 	/*
- 	 * We need a zero page that is zero before & after resume in order to
-@@ -512,8 +499,7 @@ int swsusp_arch_resume(void)
- 	zero_page = (void *)get_safe_page(GFP_ATOMIC);
- 	if (!zero_page) {
- 		pr_err("Failed to allocate zero page.\n");
--		rc = -ENOMEM;
--		goto out;
-+		return -ENOMEM;
- 	}
- 
- 	/*
-@@ -531,7 +517,7 @@ int swsusp_arch_resume(void)
- 				   &phys_hibernate_exit);
- 	if (rc) {
- 		pr_err("Failed to create safe executable page for hibernate_exit code.\n");
--		goto out;
-+		return rc;
- 	}
- 
- 	/*
-@@ -558,8 +544,7 @@ int swsusp_arch_resume(void)
- 		       resume_hdr.reenter_kernel, restore_pblist,
- 		       resume_hdr.__hyp_stub_vectors, virt_to_phys(zero_page));
- 
--out:
--	return rc;
-+	return 0;
- }
- 
- int hibernate_resume_nonboot_cpu_disable(void)
+       diff-channels:
+         description: see Documentation/devicetree/bindings/iio/adc/adc.txt
 -- 
-2.24.0
+2.23.0
 
