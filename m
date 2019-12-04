@@ -2,252 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BFC113811
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36334113819
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfLDXVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 18:21:16 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35599 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728419AbfLDXVM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:21:12 -0500
-Received: by mail-qk1-f195.google.com with SMTP id v23so1699414qkg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:21:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=ZHIYboDwl4EWd97Tklkdkm+url9a5Lp8rxT6bERrC+M=;
-        b=i1g8jJxL0yaISsSkQcVG1T+YRVLPQorkORTVckOF1ul4UmdgjxetevbONnxu7GHHR6
-         WXK96ycRVB4k6ym6P0dlJ6VstgCOx1UZBEAX/OKcv1s2MPsWxgrk5CYfyx4cV6pd9Bw5
-         jUsEz55BdSZdY6HhBAwTU4pjFn1ewPD8PlkxMk6lZhxQkCzDxJaV1DXZuXgeL6O172ce
-         zJ2PNOb2JKEKgzLuvO8xUfDa7vPnEm7mX+/dOykrVC8c2EX4Wux0z26m27bI2YNOPLNh
-         oAQa/+PV4LAQAqd/k1eK3LpIC4vlgv+RQN+BcKlhvKmUX7V+YJHfxJL87xtqtSABCsrW
-         1OWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZHIYboDwl4EWd97Tklkdkm+url9a5Lp8rxT6bERrC+M=;
-        b=kHtl6GNBFmGSfAlh5jCRwvWC0vIXm8JbjwmQlpagVk6GibwU8s0+1goHmU/lJXMqlD
-         AyFofmiDtIx7KkjxaEwgZ7wOdRSNRFk4W3Uo2ZedMB38B6afTMsFnLRx+ulhkdn+iNeo
-         DeL8zMmTlw6gi/zo5E7hlv++dGD7SmrR9lLGhS7jI5jiwlhHppuO7I6l1793bq7xlNp3
-         GVjOKYFODGfU+lsTVTgpdCQMAoKKFR4oxuWC71rS2Ft5XYDuh8ZAzNe+xAx7eCKSa7zf
-         k+150Ta6j7OTI6bak2ma7nrnWeoQBQE8w6cun7hsamXJBTrlHyZNVWcORNNx+X4zmfgz
-         N9bw==
-X-Gm-Message-State: APjAAAUob0rALUdP5wuWucILiugoMPHkTbuj0ZzrOL1Lm0vhlDMazBBJ
-        gNqliTsIBuie5eJSPL+CjIbAOg==
-X-Google-Smtp-Source: APXvYqyth5Vky9Sws+q1XOgIKaCf88qENA0eXdBaqBMhh1L+UlvBd0q1SnZjvczRgcyocJAH0Tk8+g==
-X-Received: by 2002:a37:6691:: with SMTP id a139mr5530912qkc.393.1575501671951;
-        Wed, 04 Dec 2019 15:21:11 -0800 (PST)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id t38sm4667864qta.78.2019.12.04.15.21.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 15:21:11 -0800 (PST)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, steve.capper@arm.com,
-        linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com,
-        tglx@linutronix.de, gregkh@linuxfoundation.org,
-        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
-        sstabellini@kernel.org, boris.ostrovsky@oracle.com,
-        jgross@suse.com, stefan@agner.ch, yamada.masahiro@socionext.com,
-        xen-devel@lists.xenproject.org, linux@armlinux.org.uk,
-        andrew.cooper3@citrix.com, julien@xen.org
-Subject: [PATCH v4 6/6] arm64: remove the rest of asm-uaccess.h
-Date:   Wed,  4 Dec 2019 18:20:58 -0500
-Message-Id: <20191204232058.2500117-7-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204232058.2500117-1-pasha.tatashin@soleen.com>
-References: <20191204232058.2500117-1-pasha.tatashin@soleen.com>
+        id S1728393AbfLDXW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 18:22:28 -0500
+Received: from foss.arm.com ([217.140.110.172]:39562 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727116AbfLDXW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 18:22:28 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7C4D328;
+        Wed,  4 Dec 2019 15:22:27 -0800 (PST)
+Received: from [10.0.2.15] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47C243F718;
+        Wed,  4 Dec 2019 15:22:26 -0800 (PST)
+Subject: Re: [PATCH] sched/fair: fix find_idlest_group() to handle CPU
+ affinity
+To:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+        peterz@infradead.org, juri.lelli@redhat.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, linux-kernel@vger.kernel.org
+Cc:     john.stultz@linaro.org, qais.yousef@arm.com
+References: <1575483700-22153-1-git-send-email-vincent.guittot@linaro.org>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <738ad52b-d94e-c31a-3d40-56a0aba64453@arm.com>
+Date:   Wed, 4 Dec 2019 23:22:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1575483700-22153-1-git-send-email-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __uaccess_ttbr0_disable and __uaccess_ttbr0_enable,
-are the last two macros defined in asm-uaccess.h.
+On 04/12/2019 18:21, Vincent Guittot wrote:
+> Because of CPU affinity, the local group can be skipped which breaks the
+> assumption that statistics are always collected for local group. With
+> uninitialized local_sgs, the comparison is meaningless and the behavior
+> unpredictable. This can even end up to use local pointer which is to
+> NULL in this case.
+> 
+> If the local group has been skipped because of CPU affinity, we return
+> the idlest group.
+> 
 
-For now move them to entry.S where they are used. Eventually,
-these macros should be replaced with C wrappers to reduce the
-maintenance burden.
+I stared at find_idlest_group() before the rework out of curiosity and
+AFAICT the "never visit local group" thing was there already. However, we
+would only use the load and spare capacity of that group, and the relevant
+variables where initialized to ULONG_MAX and 0 respectively. This would lead
+us to return 'idlest' (or 'most_spare_sg', but it's the same as 'idlest' now).
 
-Also, once these macros are unified with the C counterparts, it
-is a good idea to check that PAN is in correct state on every
-enable/disable calls.
+So IMO this is just restoring the previous behaviour, which is what we want
+methinks.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
----
- arch/arm64/include/asm/asm-uaccess.h | 39 ----------------------------
- arch/arm64/kernel/entry.S            | 27 ++++++++++++++++++-
- arch/arm64/lib/clear_user.S          |  2 +-
- arch/arm64/lib/copy_from_user.S      |  2 +-
- arch/arm64/lib/copy_in_user.S        |  2 +-
- arch/arm64/lib/copy_to_user.S        |  2 +-
- arch/arm64/mm/cache.S                |  1 -
- 7 files changed, 30 insertions(+), 45 deletions(-)
- delete mode 100644 arch/arm64/include/asm/asm-uaccess.h
-
-diff --git a/arch/arm64/include/asm/asm-uaccess.h b/arch/arm64/include/asm/asm-uaccess.h
-deleted file mode 100644
-index fba2a69f7fef..000000000000
---- a/arch/arm64/include/asm/asm-uaccess.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_ASM_UACCESS_H
--#define __ASM_ASM_UACCESS_H
--
--#include <asm/alternative.h>
--#include <asm/kernel-pgtable.h>
--#include <asm/mmu.h>
--#include <asm/sysreg.h>
--#include <asm/assembler.h>
--
--/*
-- * User access enabling/disabling macros.
-- */
--#ifdef CONFIG_ARM64_SW_TTBR0_PAN
--	.macro	__uaccess_ttbr0_disable, tmp1
--	mrs	\tmp1, ttbr1_el1			// swapper_pg_dir
--	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
--	sub	\tmp1, \tmp1, #RESERVED_TTBR0_SIZE	// reserved_ttbr0 just before swapper_pg_dir
--	msr	ttbr0_el1, \tmp1			// set reserved TTBR0_EL1
--	isb
--	add	\tmp1, \tmp1, #RESERVED_TTBR0_SIZE
--	msr	ttbr1_el1, \tmp1		// set reserved ASID
--	isb
--	.endm
--
--	.macro	__uaccess_ttbr0_enable, tmp1, tmp2
--	get_current_task \tmp1
--	ldr	\tmp1, [\tmp1, #TSK_TI_TTBR0]	// load saved TTBR0_EL1
--	mrs	\tmp2, ttbr1_el1
--	extr    \tmp2, \tmp2, \tmp1, #48
--	ror     \tmp2, \tmp2, #16
--	msr	ttbr1_el1, \tmp2		// set the active ASID
--	isb
--	msr	ttbr0_el1, \tmp1		// set the non-PAN TTBR0_EL1
--	isb
--	.endm
--#endif
--
--#endif
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 583f71abbe98..446d90ab31af 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -22,8 +22,8 @@
- #include <asm/mmu.h>
- #include <asm/processor.h>
- #include <asm/ptrace.h>
-+#include <asm/kernel-pgtable.h>
- #include <asm/thread_info.h>
--#include <asm/asm-uaccess.h>
- #include <asm/unistd.h>
- 
- /*
-@@ -143,6 +143,31 @@ alternative_cb_end
- #endif
- 	.endm
- 
-+#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-+	.macro	__uaccess_ttbr0_disable, tmp1
-+	mrs	\tmp1, ttbr1_el1		// swapper_pg_dir
-+	bic	\tmp1, \tmp1, #TTBR_ASID_MASK
-+	sub	\tmp1, \tmp1, #RESERVED_TTBR0_SIZE // reserved_ttbr0 just before swapper_pg_dir
-+	msr	ttbr0_el1, \tmp1		// set reserved TTBR0_EL1
-+	isb
-+	add	\tmp1, \tmp1, #RESERVED_TTBR0_SIZE
-+	msr	ttbr1_el1, \tmp1		// set reserved ASID
-+	isb
-+	.endm
-+
-+	.macro	__uaccess_ttbr0_enable, tmp1, tmp2
-+	get_current_task \tmp1
-+	ldr	\tmp1, [\tmp1, #TSK_TI_TTBR0]	// load saved TTBR0_EL1
-+	mrs	\tmp2, ttbr1_el1
-+	extr	\tmp2, \tmp2, \tmp1, #48
-+	ror	\tmp2, \tmp2, #16
-+	msr	ttbr1_el1, \tmp2		// set the active ASID
-+	isb
-+	msr	ttbr0_el1, \tmp1		// set the non-PAN TTBR0_EL1
-+	isb
-+	.endm
-+#endif
-+
- 	.macro	kernel_entry, el, regsize = 64
- 	.if	\regsize == 32
- 	mov	w0, w0				// zero upper 32 bits of x0
-diff --git a/arch/arm64/lib/clear_user.S b/arch/arm64/lib/clear_user.S
-index aeafc03e961a..b0b4a86a09e2 100644
---- a/arch/arm64/lib/clear_user.S
-+++ b/arch/arm64/lib/clear_user.S
-@@ -6,7 +6,7 @@
-  */
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- 
- 	.text
-diff --git a/arch/arm64/lib/copy_from_user.S b/arch/arm64/lib/copy_from_user.S
-index ebb3c06cbb5d..142bc7505518 100644
---- a/arch/arm64/lib/copy_from_user.S
-+++ b/arch/arm64/lib/copy_from_user.S
-@@ -5,7 +5,7 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- #include <asm/cache.h>
- 
-diff --git a/arch/arm64/lib/copy_in_user.S b/arch/arm64/lib/copy_in_user.S
-index 3d8153a1ebce..04dc48ca26f7 100644
---- a/arch/arm64/lib/copy_in_user.S
-+++ b/arch/arm64/lib/copy_in_user.S
-@@ -7,7 +7,7 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- #include <asm/cache.h>
- 
-diff --git a/arch/arm64/lib/copy_to_user.S b/arch/arm64/lib/copy_to_user.S
-index 357eae2c18eb..8f3218ae88ab 100644
---- a/arch/arm64/lib/copy_to_user.S
-+++ b/arch/arm64/lib/copy_to_user.S
-@@ -5,7 +5,7 @@
- 
- #include <linux/linkage.h>
- 
--#include <asm/asm-uaccess.h>
-+#include <asm/alternative.h>
- #include <asm/assembler.h>
- #include <asm/cache.h>
- 
-diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
-index 0093bb9fcd12..627be857b8d0 100644
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -12,7 +12,6 @@
- #include <asm/assembler.h>
- #include <asm/cpufeature.h>
- #include <asm/alternative.h>
--#include <asm/asm-uaccess.h>
- 
- /*
-  *	__asm_flush_cache_user_range(start,end)
--- 
-2.24.0
-
+Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
