@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23ED6112497
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFF211249B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfLDIWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:22:06 -0500
-Received: from lucky1.263xmail.com ([211.157.147.135]:56352 "EHLO
+        id S1727633AbfLDIWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:22:10 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:57640 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbfLDIWF (ORCPT
+        with ESMTP id S1727337AbfLDIWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:22:05 -0500
+        Wed, 4 Dec 2019 03:22:08 -0500
 Received: from localhost (unknown [192.168.167.13])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 0E0FC4BD55;
+        by lucky1.263xmail.com (Postfix) with ESMTP id D91BF79906;
         Wed,  4 Dec 2019 16:21:59 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -22,9 +22,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P8551T139845177427712S1575447579673282_;
-        Wed, 04 Dec 2019 16:19:42 +0800 (CST)
+        Wed, 04 Dec 2019 16:19:43 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <a2268dcd35cb21faf6c277875473bfec>
+X-UNIQUE-TAG: <0747cfb5f6f826420574473ff9633a35>
 X-RL-SENDER: zhangqing@rock-chips.com
 X-SENDER: zhangqing@rock-chips.com
 X-LOGIN-NAME: zhangqing@rock-chips.com
@@ -39,9 +39,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
         Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 2/5] clk: rockchip: fix up the frac clk get rate error
-Date:   Wed,  4 Dec 2019 16:18:56 +0800
-Message-Id: <20191204081859.19454-3-zhangqing@rock-chips.com>
+Subject: [PATCH v4 3/5] clk: rockchip: add a clock-type for muxes based in the pmugrf
+Date:   Wed,  4 Dec 2019 16:18:57 +0800
+Message-Id: <20191204081859.19454-4-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191204081859.19454-1-zhangqing@rock-chips.com>
 References: <20191204081859.19454-1-zhangqing@rock-chips.com>
@@ -50,46 +50,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-support fractional divider with only one level parent clock
+Rockchip socs often have some tiny number of muxes not controlled from
+the core clock controller but through bits set in the pmugrf.
+Use MUXPMUGRF() to cover this special clock-type.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/rockchip/clk.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/clk/rockchip/clk.c |  9 +++++++++
+ drivers/clk/rockchip/clk.h | 17 +++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
 diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index fac5a4a3f5c3..8f77c3f9fab7 100644
+index 8f77c3f9fab7..4f238f2851ac 100644
 --- a/drivers/clk/rockchip/clk.c
 +++ b/drivers/clk/rockchip/clk.c
-@@ -190,16 +190,21 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
- 	if (((rate * 20 > p_rate) && (p_rate % rate != 0)) ||
- 	    (fd->max_prate && fd->max_prate < p_rate)) {
- 		p_parent = clk_hw_get_parent(clk_hw_get_parent(hw));
--		p_parent_rate = clk_hw_get_rate(p_parent);
--		*parent_rate = p_parent_rate;
--		if (fd->max_prate && p_parent_rate > fd->max_prate) {
--			div = DIV_ROUND_UP(p_parent_rate, fd->max_prate);
--			*parent_rate = p_parent_rate / div;
-+		if (!p_parent) {
-+			*parent_rate = p_rate;
-+		} else {
-+			p_parent_rate = clk_hw_get_rate(p_parent);
-+			*parent_rate = p_parent_rate;
-+			if (fd->max_prate && p_parent_rate > fd->max_prate) {
-+				div = DIV_ROUND_UP(p_parent_rate,
-+						   fd->max_prate);
-+				*parent_rate = p_parent_rate / div;
-+			}
- 		}
+@@ -407,6 +407,8 @@ struct rockchip_clk_provider * __init rockchip_clk_init(struct device_node *np,
  
- 		if (*parent_rate < rate * 20) {
--			pr_err("%s parent_rate(%ld) is low than rate(%ld)*20, fractional div is not allowed\n",
--			       clk_hw_get_name(hw), *parent_rate, rate);
-+			pr_warn("%s p_rate(%ld) is low than rate(%ld)*20, use integer or half-div\n",
-+				clk_hw_get_name(hw), *parent_rate, rate);
- 			*m = 0;
- 			*n = 1;
- 			return;
+ 	ctx->grf = syscon_regmap_lookup_by_phandle(ctx->cru_node,
+ 						   "rockchip,grf");
++	ctx->pmugrf = syscon_regmap_lookup_by_phandle(ctx->cru_node,
++						   "rockchip,pmugrf");
+ 
+ 	return ctx;
+ 
+@@ -482,6 +484,13 @@ void __init rockchip_clk_register_branches(
+ 				list->mux_shift, list->mux_width,
+ 				list->mux_flags);
+ 			break;
++		case branch_muxpmugrf:
++			clk = rockchip_clk_register_muxgrf(list->name,
++				list->parent_names, list->num_parents,
++				flags, ctx->pmugrf, list->muxdiv_offset,
++				list->mux_shift, list->mux_width,
++				list->mux_flags);
++			break;
+ 		case branch_divider:
+ 			if (list->div_table)
+ 				clk = clk_register_divider_table(NULL,
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 0d401ce09a54..ae059b7744f9 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -238,6 +238,7 @@ struct rockchip_clk_provider {
+ 	struct clk_onecell_data clk_data;
+ 	struct device_node *cru_node;
+ 	struct regmap *grf;
++	struct regmap *pmugrf;
+ 	spinlock_t lock;
+ };
+ 
+@@ -390,6 +391,7 @@ enum rockchip_clk_branch_type {
+ 	branch_composite,
+ 	branch_mux,
+ 	branch_muxgrf,
++	branch_muxpmugrf,
+ 	branch_divider,
+ 	branch_fraction_divider,
+ 	branch_gate,
+@@ -662,6 +664,21 @@ struct rockchip_clk_branch {
+ 		.gate_offset	= -1,				\
+ 	}
+ 
++#define MUXPMUGRF(_id, cname, pnames, f, o, s, w, mf)		\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_muxpmugrf,		\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= o,				\
++		.mux_shift	= s,				\
++		.mux_width	= w,				\
++		.mux_flags	= mf,				\
++		.gate_offset	= -1,				\
++	}
++
+ #define DIV(_id, cname, pname, f, o, s, w, df)			\
+ 	{							\
+ 		.id		= _id,				\
 -- 
 2.17.1
 
