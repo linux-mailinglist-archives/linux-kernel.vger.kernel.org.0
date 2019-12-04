@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC22511338D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACA39113248
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbfLDSRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40308 "EHLO mail.kernel.org"
+        id S1730709AbfLDSHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:07:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730757AbfLDSLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:11:54 -0500
+        id S1729039AbfLDSHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:07:05 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A14F20675;
-        Wed,  4 Dec 2019 18:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6388D206DF;
+        Wed,  4 Dec 2019 18:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483113;
-        bh=krRnmuaqC7qVirxcwWinxCXHxJDjFmPmqqWCcCAM/RA=;
+        s=default; t=1575482824;
+        bh=WbGhciv/qtk73dVy7tm29B/NrK/nbLd9KuYwwCP2gxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VJVe6mLhE6qRoK4vpzmnU0tz0yftqcUntotGuHnnm9RPzdr441ig9LP+qxSpUkxyn
-         e+kQ/RMvj8DaTukRR8i2/TPuec1hQIEBCX692WCYKOUJ0cmK3Z6HC/KnV2CZJJZ+uV
-         0B/KYKk6wraC/K/w5PtvZj8A9jd4Px3iiyJ05ZY0=
+        b=euvaVx0ussl4iv/ZGgRkSKvNkJqSrUtodz4jsaUh/NcskhXT5RKr1H1nr0TgG3yj7
+         e8Bl4bveiv4MsGT7RQXQbfifTJG8u9+a6qqxNvM1UCoU5VUvMrcVL5DWJ9kZpy7I0t
+         qow1dPGOO3E4lWUzfckCdELt1Fy5pzmsypR0fbho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        James Morse <james.morse@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 057/125] scsi: csiostor: fix incorrect dma device in case of vport
+Subject: [PATCH 4.14 150/209] ACPI / APEI: Dont wait to serialise with oops messages when panic()ing
 Date:   Wed,  4 Dec 2019 18:56:02 +0100
-Message-Id: <20191204175322.442459743@linuxfoundation.org>
+Message-Id: <20191204175333.828341942@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Varun Prakash <varun@chelsio.com>
+From: James Morse <james.morse@arm.com>
 
-[ Upstream commit 9934613edcb40b92a216122876cd3b7e76d08390 ]
+[ Upstream commit 78b0b690f6558ed788dccafa45965325dd11ba89 ]
 
-In case of ->vport_create() call scsi_add_host_with_dma() instead of
-scsi_add_host() to pass correct dma device.
+oops_begin() exists to group printk() messages with the oops message
+printed by die(). To reach this caller we know that platform firmware
+took this error first, then notified the OS via NMI with a 'panic'
+severity.
 
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Don't wait for another CPU to release the die-lock before panic()ing,
+our only goal is to print this fatal error and panic().
+
+This code is always called in_nmi(), and since commit 42a0bb3f7138
+("printk/nmi: generic solution for safe printk in NMI"), it has been
+safe to call printk() from this context. Messages are batched in a
+per-cpu buffer and printed via irq-work, or a call back from panic().
+
+Link: https://patchwork.kernel.org/patch/10313555/
+Acked-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/csiostor/csio_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/apei/ghes.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/scsi/csiostor/csio_init.c b/drivers/scsi/csiostor/csio_init.c
-index dbe416ff46c27..776b992786881 100644
---- a/drivers/scsi/csiostor/csio_init.c
-+++ b/drivers/scsi/csiostor/csio_init.c
-@@ -648,7 +648,7 @@ csio_shost_init(struct csio_hw *hw, struct device *dev,
- 	if (csio_lnode_init(ln, hw, pln))
- 		goto err_shost_put;
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 5889f6407fea8..9c31c7cd5cb5e 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -33,7 +33,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/timer.h>
+ #include <linux/cper.h>
+-#include <linux/kdebug.h>
+ #include <linux/platform_device.h>
+ #include <linux/mutex.h>
+ #include <linux/ratelimit.h>
+@@ -936,7 +935,6 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
  
--	if (scsi_add_host(shost, dev))
-+	if (scsi_add_host_with_dma(shost, dev, &hw->pdev->dev))
- 		goto err_lnode_exit;
- 
- 	return ln;
+ 		sev = ghes_severity(ghes->estatus->error_severity);
+ 		if (sev >= GHES_SEV_PANIC) {
+-			oops_begin();
+ 			ghes_print_queued_estatus();
+ 			__ghes_panic(ghes);
+ 		}
 -- 
 2.20.1
 
