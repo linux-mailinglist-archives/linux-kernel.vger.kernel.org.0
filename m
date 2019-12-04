@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 063F41134E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C50B1134C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfLDS0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:26:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35288 "EHLO mail.kernel.org"
+        id S1729108AbfLDR7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:59:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729054AbfLDR7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:59:13 -0500
+        id S1729088AbfLDR7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:59:23 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E173F2081B;
-        Wed,  4 Dec 2019 17:59:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACD8620833;
+        Wed,  4 Dec 2019 17:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482353;
-        bh=5PDxv2/YHr0FuhBfzhJ5z8m8H8XgdsUBLgg/TREY904=;
+        s=default; t=1575482363;
+        bh=uVmrMTReuiw8qke0Vz4udyQimZmWzBpfxFe56+DKeUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KU2+0clrtJO89CxL08NHR/JETP6taS4kUKnbjIRophGiFi1HSkMJzv3WmNAZ7UHFp
-         ljf/sdgh/SKy8s3j3VeoMYPbuGaeWWFcXwZA2BvEzFMPYuI4KlVS/N/AxjG1CeEske
-         HlwkA48krzJCKj0/HVl9uEDjqGdnt8+TKanz21/k=
+        b=MvApvX3CVnyoBloVTHrHJ4KUTzUTJxCECCehqbJyxv21QJlbWW5Jo0P7Lq/Hk7FyZ
+         q81K1o6PEmNIVRMXWF3WWaBc1yNHh2S4Kuy0bUyoxmfBG3S4T67BbADdoRlgCJlTsz
+         JkbKogNr2ThT0ZM6GMUB+thcJGYXsYx9COvPS1ww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 54/92] net/net_namespace: Check the return value of register_pernet_subsys()
-Date:   Wed,  4 Dec 2019 18:49:54 +0100
-Message-Id: <20191204174333.689045762@linuxfoundation.org>
+Subject: [PATCH 4.4 58/92] tipc: fix a missing check of genlmsg_put
+Date:   Wed,  4 Dec 2019 18:49:58 +0100
+Message-Id: <20191204174333.893817920@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -45,36 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 0eb987c874dc93f9c9d85a6465dbde20fdd3884c ]
+[ Upstream commit 46273cf7e009231d2b6bc10a926e82b8928a9fb2 ]
 
-In net_ns_init(), register_pernet_subsys() could fail while registering
-network namespace subsystems. The fix checks the return value and
-sends a panic() on failure.
+genlmsg_put could fail. The fix inserts a check of its return value, and
+if it fails, returns -EMSGSIZE.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/net_namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/tipc/netlink_compat.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index 087ce1598b746..01bfe28b20a19 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -778,7 +778,8 @@ static int __init net_ns_init(void)
+diff --git a/net/tipc/netlink_compat.c b/net/tipc/netlink_compat.c
+index d2bf92e711505..4f6fbd2f29add 100644
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -926,6 +926,8 @@ static int tipc_nl_compat_publ_dump(struct tipc_nl_compat_msg *msg, u32 sock)
  
- 	mutex_unlock(&net_mutex);
+ 	hdr = genlmsg_put(args, 0, 0, &tipc_genl_family, NLM_F_MULTI,
+ 			  TIPC_NL_PUBL_GET);
++	if (!hdr)
++		return -EMSGSIZE;
  
--	register_pernet_subsys(&net_ns_ops);
-+	if (register_pernet_subsys(&net_ns_ops))
-+		panic("Could not register network namespace subsystems");
- 
- 	rtnl_register(PF_UNSPEC, RTM_NEWNSID, rtnl_net_newid, NULL, NULL);
- 	rtnl_register(PF_UNSPEC, RTM_GETNSID, rtnl_net_getid, rtnl_net_dumpid,
+ 	nest = nla_nest_start(args, TIPC_NLA_SOCK);
+ 	if (!nest) {
 -- 
 2.20.1
 
