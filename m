@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE1D113159
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C30AC11315F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:59:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbfLDR63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:58:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
+        id S1728293AbfLDR6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:58:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728720AbfLDR6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:58:25 -0500
+        id S1728229AbfLDR6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:58:44 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E9A620675;
-        Wed,  4 Dec 2019 17:58:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DB2B20865;
+        Wed,  4 Dec 2019 17:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482305;
-        bh=SW33faG0QdwdMLwIaMIhaWkEIxY3MQr5swYVYVOmzg4=;
+        s=default; t=1575482324;
+        bh=QLRIQ6w2SD3IKDPtQP3oJZdEEthwGbIiI78k4VHxfbc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fq/EFgZLha7gnUG5jvl/V6YIdfg0V0xEj0UZ97I6jRWFpLzqk2Hj9ru2hdi2XvvCS
-         el32U5W9tDIOUYQ7hsyL+JFB9dqA+gkMHQsGfvPxS9cXeeWYbuYEUGlVZjxf6CLL2W
-         KLe4/5Eg6cBcdp7kOzmdl1pEd49iydXhz9k0JCIs=
+        b=zgkblvC1bcvC2jzrpXfuZbHmSXieiv88LRH5iaaLo6RTZ7PVxrn5zclO77gIKwv5B
+         XOu74uAnFQXGZPx83d7bI3cs8pzvcneykmu7jhgG9w8HhYvdg00ohSeCSxC8gvXPoL
+         l4fG4iiziAoI70zBFJ878sqcEnkGEPMIdihrYwEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jeroen Hofstee <jhofstee@victronenergy.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 06/92] can: c_can: D_CAN: c_can_chip_config(): perform a sofware reset on open
-Date:   Wed,  4 Dec 2019 18:49:06 +0100
-Message-Id: <20191204174329.171128563@linuxfoundation.org>
+Subject: [PATCH 4.4 07/92] scripts/gdb: fix debugging modules compiled with hot/cold partitioning
+Date:   Wed,  4 Dec 2019 18:49:07 +0100
+Message-Id: <20191204174329.362456823@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -45,76 +49,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeroen Hofstee <jhofstee@victronenergy.com>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit 23c5a9488f076bab336177cd1d1a366bd8ddf087 ]
+[ Upstream commit 8731acc5068eb3f422a45c760d32198175c756f8 ]
 
-When the CAN interface is closed it the hardwre is put in power down
-mode, but does not reset the error counters / state. Reset the D_CAN on
-open, so the reported state and the actual state match.
+gcc's -freorder-blocks-and-partition option makes it group frequently
+and infrequently used code in .text.hot and .text.unlikely sections
+respectively.  At least when building modules on s390, this option is
+used by default.
 
-According to [1], the C_CAN module doesn't have the software reset.
+gdb assumes that all code is located in .text section, and that .text
+section is located at module load address.  With such modules this is no
+longer the case: there is code in .text.hot and .text.unlikely, and
+either of them might precede .text.
 
-[1] http://www.bosch-semiconductors.com/media/ip_modules/pdf_2/c_can_fd8/users_manual_c_can_fd8_r210_1.pdf
+Fix by explicitly telling gdb the addresses of code sections.
 
-Signed-off-by: Jeroen Hofstee <jhofstee@victronenergy.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+It might be tempting to do this for all sections, not only the ones in
+the white list.  Unfortunately, gdb appears to have an issue, when
+telling it about e.g. loadable .note.gnu.build-id section causes it to
+think that non-loadable .note.Linux section is loaded at address 0,
+which in turn causes NULL pointers to be resolved to bogus symbols.  So
+keep using the white list approach for the time being.
+
+Link: http://lkml.kernel.org/r/20191028152734.13065-1-iii@linux.ibm.com
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Kieran Bingham <kbingham@kernel.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/c_can/c_can.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ scripts/gdb/linux/symbols.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/c_can/c_can.c b/drivers/net/can/c_can/c_can.c
-index 7d35f6737499c..4ead5a18b7940 100644
---- a/drivers/net/can/c_can/c_can.c
-+++ b/drivers/net/can/c_can/c_can.c
-@@ -52,6 +52,7 @@
- #define CONTROL_EX_PDR		BIT(8)
- 
- /* control register */
-+#define CONTROL_SWR		BIT(15)
- #define CONTROL_TEST		BIT(7)
- #define CONTROL_CCE		BIT(6)
- #define CONTROL_DISABLE_AR	BIT(5)
-@@ -572,6 +573,26 @@ static void c_can_configure_msg_objects(struct net_device *dev)
- 				   IF_MCONT_RCV_EOB);
- }
- 
-+static int c_can_software_reset(struct net_device *dev)
-+{
-+	struct c_can_priv *priv = netdev_priv(dev);
-+	int retry = 0;
-+
-+	if (priv->type != BOSCH_D_CAN)
-+		return 0;
-+
-+	priv->write_reg(priv, C_CAN_CTRL_REG, CONTROL_SWR | CONTROL_INIT);
-+	while (priv->read_reg(priv, C_CAN_CTRL_REG) & CONTROL_SWR) {
-+		msleep(20);
-+		if (retry++ > 100) {
-+			netdev_err(dev, "CCTRL: software reset failed\n");
-+			return -EIO;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Configure C_CAN chip:
-  * - enable/disable auto-retransmission
-@@ -581,6 +602,11 @@ static void c_can_configure_msg_objects(struct net_device *dev)
- static int c_can_chip_config(struct net_device *dev)
- {
- 	struct c_can_priv *priv = netdev_priv(dev);
-+	int err;
-+
-+	err = c_can_software_reset(dev);
-+	if (err)
-+		return err;
- 
- 	/* enable automatic retransmission */
- 	priv->write_reg(priv, C_CAN_CTRL_REG, CONTROL_ENABLE_AR);
+diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
+index 627750cb420d0..9b71c65504a38 100644
+--- a/scripts/gdb/linux/symbols.py
++++ b/scripts/gdb/linux/symbols.py
+@@ -99,7 +99,8 @@ lx-symbols command."""
+             attrs[n]['name'].string(): attrs[n]['address']
+             for n in range(int(sect_attrs['nsections']))}
+         args = []
+-        for section_name in [".data", ".data..read_mostly", ".rodata", ".bss"]:
++        for section_name in [".data", ".data..read_mostly", ".rodata", ".bss",
++                             ".text", ".text.hot", ".text.unlikely"]:
+             address = section_name_to_address.get(section_name)
+             if address:
+                 args.append(" -s {name} {addr}".format(
 -- 
 2.20.1
 
