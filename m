@@ -2,132 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6FC0113859
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94572113855
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:46:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbfLDXqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 18:46:34 -0500
-Received: from mail-pj1-f73.google.com ([209.85.216.73]:48276 "EHLO
-        mail-pj1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfLDXqe (ORCPT
+        id S1728374AbfLDXqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 18:46:06 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36469 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbfLDXqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:46:34 -0500
-Received: by mail-pj1-f73.google.com with SMTP id o34so738748pjb.15
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:46:33 -0800 (PST)
+        Wed, 4 Dec 2019 18:46:05 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n12so970883lfe.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:46:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=XbMDMBiURPy3ztmL5BAB2zOV5tyLvPs4cZrgza5Nb04=;
-        b=vvoOr97XSjgqRQXRYI8xsRGNB6sMUmPJTH35AVLEBHzUCUIf4TKeH576HHqX2DdT0w
-         DhkNeyy0KVEz2UHvNOJCElCM2pXaipK4dATie/v1T8VW/ccwD1N0GFTfowS08R32R1SI
-         +apUVj/M3+8f8mDGLFFC94QGu82UmZUQrHi0cMEPAnZ9V/l7nxaNUos7BqQ8bONSu77b
-         elzOYuGfWpDdmLcLjbijtSEn/4qf5nzJdt1AFxRQsf3rOyD09xoS07pye9fewtGQ/USy
-         M9kZ2gfcTq7zc9Bwb/bv3Z0+6u7faqvqCb6Zr0iadYYGSy5kwc/GvSJ90Btej1GZgtnk
-         2m1w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1oLuXTqP88AIJllnfUv70RaPKExVa3V8VYnwKFzXr90=;
+        b=uQsVwqfRLCAJ44cXxreDwyi2t/pF9+6ktyX482qqhirs8nOUetXz3CJa6gX0d+StLI
+         4hrMtR2KUPZJw5V9yHYkuSxlHVrR0NcTxV66wok3kLyVEuiOdQ+87ZkDHjo1SaVe3qUt
+         ExxMY9tZrB37RkXAXo4+S8vuXV0/TIiZ+XYFCBFZcfDXc3VafGj58nQzO9kGCJoKepaQ
+         45rWBnslFVJvwRITTvab0lm9wGC+o0gvis1jyeSwupr14EAS+0r5nhMkr0FKXIXS8wql
+         EzUis/tSIFpQC3T4HIAyyWycETuiTV5ec3iLux8doePS9L+H9xv35IDJsOa4ul4uNfwO
+         BGxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=XbMDMBiURPy3ztmL5BAB2zOV5tyLvPs4cZrgza5Nb04=;
-        b=akovUNlmvNseieFnuF5AITZ760cVt4LvdmfCxomYHOhbXD3lGuombZPEe+zSL9/K+s
-         14D8k64IiD9yct4Xc2ufSwnbM/21yf/z9X5v+AUZ40YLTPCJyenXNERdqq3M4eiw5AbS
-         3vZnSibekVf7nSL0b23y6Wn7Ax2V1ouRUMmzvJAkH3pe7Dc3DUauk2GSLmHPQ62GetOD
-         tH56Ua6bIVdcpe0lSVVhwu05FeD05Xlf5DoymINIPXL97i1hetVQPAnOdawn9eo6byBy
-         XxaiiiCAaWKM9SoezHCzCEjANFz2bchLu+JQa/2Vmw70As24Hzyiq9R7UudFYRorKiMJ
-         eYaw==
-X-Gm-Message-State: APjAAAXi9/wI9gFlu5H5LKhg0PEt/NPalIof3r61wUcgnGEb5JWVPAUT
-        4gbaaqYeVYjuZNTTHvknJu88e9RjWii7SP1QMEuYpQ==
-X-Google-Smtp-Source: APXvYqz47avrpcjXVQ+1KDiyygY87m+93a0IsuajGxXEGgl8sxMDZj0iTIaMcFs25SnHdkR0uy27q47QcmEbuf3o5rKViw==
-X-Received: by 2002:a65:56c9:: with SMTP id w9mr6061182pgs.296.1575503193275;
- Wed, 04 Dec 2019 15:46:33 -0800 (PST)
-Date:   Wed,  4 Dec 2019 15:45:22 -0800
-Message-Id: <20191204234522.42855-1-brendanhiggins@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH v1] staging: exfat: fix multiple definition error of `rename_file'
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     valdis.kletnieks@vt.edu
-Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, davidgow@google.com,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1oLuXTqP88AIJllnfUv70RaPKExVa3V8VYnwKFzXr90=;
+        b=hWNlvjEKN61rjTd8KduXO2Ko2SGnnyOVaIJ7e+LQlKaQ4770H9xtXeOl5STq1I20FO
+         kN31ZYmTg6ntIwAAcYG7xDJZ1fkthnERUX9e3U+MESY1zqJIz+u9ih11Go3h2k0dlH72
+         sUyteEYDrD+tyUtlcBL+hE1FQGoz184pbg88JFZjhyFeG90mFYZJ7lbH1gcTik8lL1ZP
+         oDzUy11xO660zHPC0Fc/btalV7+PZBRGt5udBgXYOmBQzps5mggYIlRnftIXMPDJ4ywv
+         yizaDEsUUDSWAA1Rdq1+EJ42Ua75d9tC4YxxN29leY/ccTaTUe/jDBflI9o3ZkhPjTC2
+         qS+Q==
+X-Gm-Message-State: APjAAAWllzJFu7O15+6dYkzTNvmglpOHAbJYS7v4ymkIPCDPL9y2V/N6
+        TjGoiPCnKQy4GmHaauZ/fJzCRaIj3sCUvRMPa37/+w==
+X-Google-Smtp-Source: APXvYqyqVwBh7QLOCMY5WcVcMFSXciWG0BZOqFwPI5/16XD9DuCX7jpZucNx06M4rxkCfx9c/Kf2nRnArTuT/U4S8QM=
+X-Received: by 2002:ac2:5b86:: with SMTP id o6mr3552742lfn.44.1575503163840;
+ Wed, 04 Dec 2019 15:46:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20191204110219.GV25745@shell.armlinux.org.uk> <fb88206c-a094-df37-04af-71a1174fb0f6@gmail.com>
+In-Reply-To: <fb88206c-a094-df37-04af-71a1174fb0f6@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 5 Dec 2019 00:45:51 +0100
+Message-ID: <CACRpkdZzzaaDM_Y8-Zf8AQrmfcVd+i0Uk0vYccnizG73cjEooA@mail.gmail.com>
+Subject: Re: "leds: gpio: Use generic support for composing LED names" breaks
+ gpio debugfs
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-`rename_file' was exported but not properly namespaced causing a
-multiple definition error because `rename_file' is already defined in
-fs/hostfs/hostfs_user.c:
+On Wed, Dec 4, 2019 at 9:52 PM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
 
-ld: drivers/staging/exfat/exfat_core.o: in function `rename_file':
-drivers/staging/exfat/exfat_core.c:2327: multiple definition of
-`rename_file'; fs/hostfs/hostfs_user.o:fs/hostfs/hostfs_user.c:350:
-first defined here
-make: *** [Makefile:1077: vmlinux] Error 1
+> It seem that the only proper solution would be introducing a new
+> pre_register_cdev(const char *name) op to the LED core, that would allow
+> drivers to come up with their implementation thereof. In this particular
+> case leds-gpio driver would need to put there gpiod initialization.
 
-This error can be reproduced on ARCH=um by selecting:
+I don't know the particulars but if it helps you can at any point
+call:
+int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
 
-CONFIG_EXFAT_FS=y
-CONFIG_HOSTFS=y
+For any successfully obtained descriptor, to set the consumer name,
+i.e. the text appearing in debugfs and the GPIO character device.
 
-Add a namespace prefix exfat_* to fix this error.
-
-Reported-by: Brendan Higgins <brendanhiggins@google.com>
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/staging/exfat/exfat.h       | 4 ++--
- drivers/staging/exfat/exfat_core.c  | 4 ++--
- drivers/staging/exfat/exfat_super.c | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 2aac1e000977e..51c665a924b76 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -805,8 +805,8 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
- s32 create_file(struct inode *inode, struct chain_t *p_dir,
- 		struct uni_name_t *p_uniname, u8 mode, struct file_id_t *fid);
- void remove_file(struct inode *inode, struct chain_t *p_dir, s32 entry);
--s32 rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
--		struct uni_name_t *p_uniname, struct file_id_t *fid);
-+s32 exfat_rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
-+		      struct uni_name_t *p_uniname, struct file_id_t *fid);
- s32 move_file(struct inode *inode, struct chain_t *p_olddir, s32 oldentry,
- 	      struct chain_t *p_newdir, struct uni_name_t *p_uniname,
- 	      struct file_id_t *fid);
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index d2d3447083c7b..7017e22b0f7a8 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -2322,8 +2322,8 @@ void remove_file(struct inode *inode, struct chain_t *p_dir, s32 entry)
- 	fs_func->delete_dir_entry(sb, p_dir, entry, 0, num_entries);
- }
- 
--s32 rename_file(struct inode *inode, struct chain_t *p_dir, s32 oldentry,
--		struct uni_name_t *p_uniname, struct file_id_t *fid)
-+s32 exfat_rename_file(struct inode *inode, struct chain_t *p_dir, s32 oldentry,
-+		      struct uni_name_t *p_uniname, struct file_id_t *fid)
- {
- 	s32 ret, newentry = -1, num_old_entries, num_new_entries;
- 	sector_t sector_old, sector_new;
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 6e481908c59f6..9f91853b189b0 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -1262,8 +1262,8 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
- 	fs_set_vol_flags(sb, VOL_DIRTY);
- 
- 	if (olddir.dir == newdir.dir)
--		ret = rename_file(new_parent_inode, &olddir, dentry, &uni_name,
--				  fid);
-+		ret = exfat_rename_file(new_parent_inode, &olddir, dentry,
-+					&uni_name, fid);
- 	else
- 		ret = move_file(new_parent_inode, &olddir, dentry, &newdir,
- 				&uni_name, fid);
--- 
-2.24.0.393.g34dc348eaf-goog
-
+Yours,
+Linus Walleij
