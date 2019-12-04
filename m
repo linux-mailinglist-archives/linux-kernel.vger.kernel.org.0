@@ -2,124 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB5C112FB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB571112FB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbfLDQLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 11:11:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48462 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727912AbfLDQLO (ORCPT
+        id S1728666AbfLDQMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 11:12:45 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42869 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbfLDQMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 11:11:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=72LNbJrxc9NI8EQkst4zx3kMXmKGJx6Z/v7rruWC6F4=; b=Dho7oe/xPqW/+92cUdOOQdss5
-        4v7DPRlIQ/N+zdLdeHA5TTlkPd8hvvyn6BLDy/s+ZjbXRj/ON8avYZ7JjWlcVaNNao+dI/o6bOwhP
-        Dzyt+m6odRb+AHboYFEPLOTegx2jYevNrsdch2w+zfLr6MaXb+q+i06raBMpjCFjtFUb8j/D35Qst
-        mXkaSzdkE1kuSBsSNAK918xniqhWSEyVfBq0xUmrZmEr1ysF7p/YNWsFcX4Pi39EPcUH2+MW+YMzM
-        7pnilJ4OS7D4UCnH2jLxC1ERSkClK7zS+UjRkLV5NyHuRCXtMBXVYITTHzZPJ0MC0Cj3ygaPvlcsY
-        pPMkNsqaQ==;
-Received: from [2601:1c0:6280:3f0::3deb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1icXFA-0003VC-Ta; Wed, 04 Dec 2019 16:11:12 +0000
-Subject: Re: linux-next: Tree for Dec 3 (switchdev & TI_CPSW_SWITCHDEV)
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Ivan Vecera <ivecera@redhat.com>, linux-omap@vger.kernel.org
-References: <20191203155405.31404722@canb.auug.org.au>
- <58aebf62-54f8-9084-147b-801ea65327bb@infradead.org>
- <f2700b07-df9b-94ce-0323-a4fece236838@ti.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <af707faa-7f95-0d6f-3f72-1746161e09a8@infradead.org>
-Date:   Wed, 4 Dec 2019 08:11:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 11:12:42 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e28so8740359ljo.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 08:12:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aEQbr8zROwuWUFHCrCgNlAMwSOCb9/WQ7f8S4z9pFJg=;
+        b=Xb0MwDerHtPwvjsigudnnRH7PiA0KhgNJlRZ9+gidTBzuLsMRSxPFwwXwHzIeJW8yd
+         IxRHnjqjZMDbMAiPeWVYbu4DsxbpcrfH+tr5v4S4DjbCrXS9suO4Cel8ojNDFVngB5e+
+         aFxlbObTmA+PkxWoyT3E4B+RmIaFJXxpLNMwTxAYRzqI0rMPEy1V+2MKT8nC54E1x4pd
+         LJWK1S+g2zlobPV0/lLnXG/gY3yCMFOO5ZZ0OYR3U654Hoz2eIs102hVoHQNrHXYC84K
+         fw8aqQAObYFb030P7RJdvL6Dxf4lDBGgC2xxqV2exakkTs5YkKC0/P+rHMcvzGgjOHtH
+         RX3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aEQbr8zROwuWUFHCrCgNlAMwSOCb9/WQ7f8S4z9pFJg=;
+        b=EdV8oCJdkvZcpD7Fair5MTpoK3PdEZRxR3nKZ90aGo2/qTg5Y/B2dz+KrPXHLEGPjo
+         /xLd3RQpuAuiyKaRMTxTvgC0CMxWq4y4up52H1KDPQM0rA7vW6bK9tkRP8p3QdjOd1uB
+         yL+7SxPobrX59SiDMpqaoLGe0gXxP0CknWGcIc5NaueZpjmr6IdD1Bgl2iUfxWtFWWu5
+         48AexfzYcVI6rWfTwGCILNnAC5HtQDictOJQFmHBYDcpqVT2s7YRqohekuwZm/x5kUaW
+         pbrvF+6V3K3Bub6Im86zWFORfiEwva4JqHGL2+850Szz1cmypGEd+eN8Zonf7WxrOQfK
+         7sIA==
+X-Gm-Message-State: APjAAAXUER64ddIyjkc13DGUlkx+HR5xWgN8qJuhR7YXDPfI+xFCeU0T
+        C5Vr2MnjNkCGzkVzTvjIC13JTtjlbXfyhg46ibB0Nw==
+X-Google-Smtp-Source: APXvYqxC6r2RurR4t3Y1ptw9iBisVHKMHSzGYcgkldL9Zzs1xJr8iEa2fZ/dwcVjVKixaOUAmm08lzzSwT0aFNs+Qmk=
+X-Received: by 2002:a2e:6a14:: with SMTP id f20mr2605748ljc.87.1575475958449;
+ Wed, 04 Dec 2019 08:12:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f2700b07-df9b-94ce-0323-a4fece236838@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191203155907.2086-1-valentin.schneider@arm.com>
+ <20191203155907.2086-2-valentin.schneider@arm.com> <CAKfTPtC-9nxGCAq8ck0Av6zuqCySvO87oP4hhBE=qKL3gxu+ow@mail.gmail.com>
+ <7d6d959d-3767-1a12-4c80-e7d52a48c396@arm.com>
+In-Reply-To: <7d6d959d-3767-1a12-4c80-e7d52a48c396@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 4 Dec 2019 17:12:26 +0100
+Message-ID: <CAKfTPtA3ZLkNn4BEDctLo6VxvgHv_cvQSFx5N_+ERGToa+3FLg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] sched/uclamp: Make uclamp_util_*() helpers use and
+ return UL values
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Quentin Perret <qperret@google.com>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/19 7:35 AM, Grygorii Strashko wrote:
-> 
-> 
-> On 04/12/2019 01:43, Randy Dunlap wrote:
->> On 12/2/19 8:54 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Please do not add any material for v5.6 to your linux-next included
->>> trees until after v5.5-rc1 has been released.
->>>
->>> Changes since 20191202:
->>
->> I am seeing this (happens to be on i386; I doubt that it matters):
->> CONFIG_COMPILE_TEST=y
->>
->>
->> WARNING: unmet direct dependencies detected for NET_SWITCHDEV
->>    Depends on [n]: NET [=y] && INET [=n]
->>    Selected by [y]:
->>    - TI_CPSW_SWITCHDEV [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_TI [=y] && (ARCH_DAVINCI || ARCH_OMAP2PLUS || COMPILE_TEST [=y])
->>
->> because TI_CPSW_SWITCHDEV blindly selects NET_SWITCHDEV even though
->> INET is not set/enabled, while NET_SWITCHDEV depends on INET.
->>
->> However, the build succeeds, including net/switchdev/*.
->>
->> So why does NET_SWITCHDEV depend on INET?
->>
->> It looks like TI_CPSW_SWITCHDEV should depend on INET (based on the
->> Kconfig rules), but in practice it doesn't seem to matter to the build.
->>
-> 
-> Thanks for reporting this. I'd like to ask for some advice of how to proceed?
-> a) change it to "depends on NET_SWITCHDEV" (as it's done in other drivers),
-> but this will require to add NET_SWITCHDEV in defconfig
+On Wed, 4 Dec 2019 at 17:03, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> On 04/12/2019 15:22, Vincent Guittot wrote:
+> >> @@ -2303,15 +2303,15 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
+> >>  unsigned int uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
+> >
+> > Why not changing uclamp_eff_value to return unsigned long too ? The
+> > returned value represents a utilization to be compared with other
+> > utilization value
+> >
+>
+> IMO uclamp_eff_value() is a simple accessor to uclamp_se.value
+> (unsigned int), which is why I didn't want to change its return type.
+> I see it as being the task equivalent of rq->uclamp[clamp_id].value, IOW
+> "give me the uclamp value for that clamp index". It just happens to be a
+> bit more intricate for tasks than for rqs.
 
-IMO TI_CPSW_SWITCHDEV should depend on NET_SWITCHDEV, as other drivers do that.
+But then you have to take care of casting the returned value in
+several places here and in patch 3
 
-That will require to add NET_SWITCHDEV in what defconfig?
-To me, it just means that whoever is doing the kernel config must enable/set
-NET_SWITCHDEV first, same as other drivers that depend on NET_SWITCHDEV.
-
-> b) change it to "imply NET_SWITCHDEV", but then NET_SWITCHDEV can be switched off
-> manually or by random build and cause build failure of cpsw_new.
-> To fix build below diff can be used, but TI_CPSW_SWITCHDEV will not be functional
-> 
-> ---
-> diff --git a/drivers/net/ethernet/ti/cpsw_new.c b/drivers/net/ethernet/ti/cpsw_new.c
-> index 71215db7934b..22e8fc548d48 100644
-> --- a/drivers/net/ethernet/ti/cpsw_new.c
-> +++ b/drivers/net/ethernet/ti/cpsw_new.c
-> @@ -368,8 +368,9 @@ static void cpsw_rx_handler(void *token, int len, int status)
->                 page_pool_recycle_direct(pool, page);
->                 goto requeue;
->         }
-> -
-> +#ifdef CONFIG_NET_SWITCHDEV
->         skb->offload_fwd_mark = priv->offload_fwd_mark;
-> +#endif
->         skb_reserve(skb, headroom);
->         skb_put(skb, len);
->         skb->dev = ndev;
-> 
-> Thank you.
-> 
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> uclamp_util() & uclamp_util_with() do explicitly return a utilization,
+> so here it makes sense (in my mind, that is) to return UL.
