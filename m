@@ -2,127 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43A371134B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74CA91131BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:03:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfLDR6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:58:36 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42458 "EHLO
+        id S1729744AbfLDSCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:02:01 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41991 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfLDR6d (ORCPT
+        with ESMTP id S1729275AbfLDSB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:58:33 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e10so133700edv.9
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 09:58:31 -0800 (PST)
+        Wed, 4 Dec 2019 13:01:56 -0500
+Received: by mail-ed1-f67.google.com with SMTP id e10so143607edv.9;
+        Wed, 04 Dec 2019 10:01:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=e9gkQnU+5q50cQeHx8NRu5HJQyIM32Z6cVBwYXSVjIU=;
-        b=TfH3rUb9CyqcTteFkO3C0xlnbKPaPL+cKMDbTylgoIZRtg9/X9I+YsgFYMbiZXeyWH
-         6PlZPH1K/5P+XHiHenDCQt4FvrDjS/BrRzDZryGe9Twd6Hm2D/PuFfB0RuI7ndN7FRkU
-         53yRO+n+zxjDbzNLl19rt+Ux9N0QapQxf/PcuW0FZFx9aDV2esnmpEXuzPCGcvshVi5c
-         mRfJ/YtyltCIrh/P45bL1k1m4RChqhZSyzX/Jcbu3guo/ePbUMweg/D/uJvHeIaqg4Gm
-         5uP20oOpH/SKLR8di/NnPJ5v5R0wamwgPJl5jM6Ru4CREPcSt4DIS2z6vz82RA/SVf34
-         r3SA==
+        bh=mvp9L8yGr+7Q73cf5DiMFkH0tKxVcTrdu8kuP8KT/wA=;
+        b=AnLIlKDxiENCXMUrbqTM8dDUPRPRHtCYpWJQ8og66XUs0vdaxN8hGdg8m117J2krEJ
+         SJ2rAhNZms6onCSAEhb1qbbpGHdAC1mNwB1yBzp4a46YCvh4DYplVBpVi9hnAnUdTk3V
+         7u+AMPmaRBp2zv5wG50ryD9qcrQW5TYYYwRmOFGRps5AMuyfZUiqtmkQZCMW1y1LJeOa
+         DRVwsjJb7aZBa4lcDk/NWOrtV9UDX2xwfA8hVKNB2z+B1q8U/7/BNl9KF3mOCI0qisZE
+         E+Pm16Xc42UW7lkGqqQY1hd/GGQfyoVxJXRWw9ipzYEk34PlwrqXzIRMfYLNeN/9jAsg
+         NaAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=e9gkQnU+5q50cQeHx8NRu5HJQyIM32Z6cVBwYXSVjIU=;
-        b=XyvwXrjf72jb4JmpIHp7JlpNI/+G3lX5laQL38iNo2bQiKjonnnGn2KNln+0Z62ldo
-         hxAyU8KTdgdX4WEFqVUCnV0t5cdxWmyR/Awf/LXRjx6ZER6LmHwnvWpFNOaOvWa8a83d
-         cGT5XsikV545qO5QQuaQN2TOqiZd5w5scV2b8qXBfY2HVPMnHvk+KwqO1soVHRkItf0F
-         K3DLt42GbjtBXdK/UckY+Bg3o2LPzoz9XetPScQ4cMY5UTGl7jleiEWYO97w0BI9s8Zh
-         z1+5CUZCYmgif9eB82hNyAZbXTX4MG8cZTbMqnK069qDo17meauoaZSubKsniTnbcoHB
-         3V/A==
-X-Gm-Message-State: APjAAAVEaUJc38ZKe4xP0Ofs6vf5X5rRLFZ9SIldrV0nwEH0tWv2Yh7J
-        fgW8fAb7AeG8BufuWROIiCr9pr92GJxM+brOaZDnyw==
-X-Google-Smtp-Source: APXvYqyAOfG2c7wdnsuR/CLNurVK9MGZsX+GmC1nBIDZq14OwnspMmSoQUW6yoePy6mVNE4fFTYRVftmoUuum47tYGo=
-X-Received: by 2002:aa7:d445:: with SMTP id q5mr5540834edr.16.1575482311052;
- Wed, 04 Dec 2019 09:58:31 -0800 (PST)
+        bh=mvp9L8yGr+7Q73cf5DiMFkH0tKxVcTrdu8kuP8KT/wA=;
+        b=EEYwIaKxo8kTZrJJuv1zBAzl97GY1n6+NM7G8zOqAg6JMNN+ZzGkgAypPSHNQaBzRd
+         0BqKpgayJBvbveJcakn6zAdPkDrw10Ct/MGguGy0TF6gMhLava5/u7ECBnDzPXUOTNXK
+         abnPnK5hkIISiDM0uPpASsGiKQsED5I3ggNCAOjD6PaH/ycjr568bU+s1iR+AFF/GaxF
+         aumXaQg7L5qFUWbGuxxtppEpE9nasNVCf1POGtqnfRE5goPa5gHdWjdPFpK3jQuLx80K
+         5dg7gQXpzp+YVCs7RlVPWyMIgKSdsvjMfuuYvgdvr0nVPwsZFa/BkZI05SgVDZHFQr+a
+         /Atg==
+X-Gm-Message-State: APjAAAWduixBQLK/55H3wzIFnnyN0FLvHMGhsrPcukO3KvOniCyD7NN8
+        PPpD+xD9moCccQox8dXLveshkeScr4ULOhfHzhSdNw==
+X-Google-Smtp-Source: APXvYqyH+H1j/zREsxP/LJQ/Q6PhP0dprWgGzUYK4IWlJ02sNpCzzk2ec/2tRbkR3GG2lr++MiA4m7gV4rTsfvod+5U=
+X-Received: by 2002:aa7:d64f:: with SMTP id v15mr5520399edr.71.1575482513957;
+ Wed, 04 Dec 2019 10:01:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20191127184453.229321-1-pasha.tatashin@soleen.com>
- <20191127184453.229321-2-pasha.tatashin@soleen.com> <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
-In-Reply-To: <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Wed, 4 Dec 2019 12:58:20 -0500
-Message-ID: <CA+CK2bBWVLZkFo5e8gQUuiqz_b2oCOtD7-9GkCwf9BsFn9wwaA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm/arm64/xen: use C inlines for privcmd_call
-To:     Julien Grall <julien@xen.org>
-Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, steve.capper@arm.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
+References: <1574465484-7115-1-git-send-email-jcrouse@codeaurora.org>
+ <0101016e95751c0b-33c9379b-6b8c-43b1-8785-e5e1b6f084f1-000000@us-west-2.amazonses.com>
+ <3a283a7c-df75-a30a-1bcb-74e631f06a71@arm.com>
+In-Reply-To: <3a283a7c-df75-a30a-1bcb-74e631f06a71@arm.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 4 Dec 2019 10:01:42 -0800
+Message-ID: <CAF6AEGuxgUQNuSQVECiUzpj4DM0R7UYme0Q9ggF1a=JCxAJsBA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: arm-smmu: Add Adreno GPU variant
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        Stefan Agner <stefan@agner.ch>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        xen-devel@lists.xenproject.org,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 10:05 AM Julien Grall <julien@xen.org> wrote:
+On Wed, Dec 4, 2019 at 7:56 AM Robin Murphy <robin.murphy@arm.com> wrote:
 >
-> Hi,
+> On 22/11/2019 11:31 pm, Jordan Crouse wrote:
+> > Add a compatible string to identify SMMUs that are attached
+> > to Adreno GPU devices that wish to support split pagetables.
 >
-> On 27/11/2019 18:44, Pavel Tatashin wrote:
-> > diff --git a/arch/arm64/include/asm/xen/hypercall.h b/arch/arm64/include/asm/xen/hypercall.h
-> > index 3522cbaed316..1a74fb28607f 100644
-> > --- a/arch/arm64/include/asm/xen/hypercall.h
-> > +++ b/arch/arm64/include/asm/xen/hypercall.h
-> > @@ -1 +1,29 @@
-> > +#ifndef _ASM_ARM64_XEN_HYPERCALL_H
-> > +#define _ASM_ARM64_XEN_HYPERCALL_H
-> >   #include <xen/arm/hypercall.h>
-> > +#include <linux/uaccess.h>
-> > +
-> > +static inline long privcmd_call(unsigned int call, unsigned long a1,
-> > +                             unsigned long a2, unsigned long a3,
-> > +                             unsigned long a4, unsigned long a5)
->
-> I realize that privcmd_call is the only hypercall using Software PAN at
-> the moment. However, dm_op needs the same as hypercall will be issued
-> from userspace as well.
+> A software policy decision is not, in itself, a good justification for a
+> DT property. Is the GPU SMMU fundamentally different in hardware* from
+> the other SMMU(s) in any given SoC?
 
-The clean-up I am working on now is specific to moving current PAN
-useage to C wraps. Once dm_op requires to use PAN it will need to be
-used the C variants, because ASM versions are going to be removed by
-this series.
+The GPU CP has some sort of mechanism to switch pagetables.. although
+I guess under the firmware it is all the same.  Jordan should know
+better..
 
+BR,
+-R
+
+> (* where "hardware" may encompass hypervisor shenanigans)
 >
-> So I was wondering whether we should create a generic function (e.g.
-> do_xen_hypercall() or do_xen_user_hypercall()) to cover the two hypercalls?
->
-> > diff --git a/include/xen/arm/hypercall.h b/include/xen/arm/hypercall.h
-> > index b40485e54d80..624c8ad7e42a 100644
-> > --- a/include/xen/arm/hypercall.h
-> > +++ b/include/xen/arm/hypercall.h
-> > @@ -30,8 +30,8 @@
-> >    * IN THE SOFTWARE.
-> >    */
+> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> > ---
 > >
-> > -#ifndef _ASM_ARM_XEN_HYPERCALL_H
-> > -#define _ASM_ARM_XEN_HYPERCALL_H
-> > +#ifndef _ARM_XEN_HYPERCALL_H
-> > +#define _ARM_XEN_HYPERCALL_H
+> >   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 6 ++++++
+> >   1 file changed, 6 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> > index 6515dbe..db9f826 100644
+> > --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> > +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> > @@ -31,6 +31,12 @@ properties:
+> >                 - qcom,sdm845-smmu-v2
+> >             - const: qcom,smmu-v2
+> >
+> > +      - description: Qcom Adreno GPU SMMU iplementing split pagetables
+> > +        items:
+> > +          - enum:
+> > +              - qcom,adreno-smmu-v2
+> > +          - const: qcom,smmu-v2
 >
-> This change feels a bit out of context. Could you split it in a separate
-> patch?
-
-Makes sense, I am splitting this into a separate patch.
-
-Thank you,
-Pasha
+> Given that we already have per-SoC compatibles for Qcom SMMUs in
+> general, this seems suspiciously vague.
+>
+> Robin.
+>
+> > +
+> >         - description: Qcom SoCs implementing "arm,mmu-500"
+> >           items:
+> >             - enum:
+> >
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
