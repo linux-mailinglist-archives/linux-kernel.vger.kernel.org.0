@@ -2,75 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ADB311239A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97D1B11239F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:31:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfLDHa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:30:58 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6746 "EHLO huawei.com"
+        id S1727154AbfLDHbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:31:31 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6747 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725958AbfLDHa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:30:57 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D9EB019BD49D9D2B1B99;
-        Wed,  4 Dec 2019 15:30:54 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 4 Dec 2019 15:30:44 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <eddie.huang@mediatek.com>, <sean.wang@mediatek.com>,
-        <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <matthias.bgg@gmail.com>, <dan.carpenter@oracle.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH v2 -next] rtc: mt6397: drop free_irq of devm_xx allocated irq
-Date:   Wed, 4 Dec 2019 15:28:26 +0800
-Message-ID: <20191204072826.117432-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191204063444.GF1765@kadam>
-References: <20191204063444.GF1765@kadam>
+        id S1725958AbfLDHbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 02:31:31 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3F60F3216FAD16662644;
+        Wed,  4 Dec 2019 15:31:30 +0800 (CST)
+Received: from [127.0.0.1] (10.133.216.73) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Dec 2019
+ 15:31:23 +0800
+To:     Mike Waychison <mikew@google.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        wanghaibin 00208455 <wanghaibin.wang@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From:   Guoheyi <guoheyi@huawei.com>
+Subject: firmware: dmi-sysfs: why is the access mode of dmi sysfs entries
+ restricted to 0400?
+Message-ID: <42bb2db8-66e0-3df4-75b7-98b2b2bcfca8@huawei.com>
+Date:   Wed, 4 Dec 2019 15:31:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.216.73]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rtc->irq is requested by devm_request_threaded_irq,
-and request_threaded_irq. IRQs requested with this
-function will be automatically freed on driver detach.
-This patch remove unused error label as well.
+Hi,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v2: remove error label as Dan Carpenter suggest.
- drivers/rtc/rtc-mt6397.c | 7 -------
- 1 file changed, 7 deletions(-)
+Why is the access mode of dmi sysfs entries restricted to 0400? Is it 
+for security concern? If it is, which information do we consider as privacy?
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 5249fc99fd5f..14f3c4915260 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -287,13 +287,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	rtc->rtc_dev->ops = &mtk_rtc_ops;
- 
- 	ret = rtc_register_device(rtc->rtc_dev);
--	if (ret)
--		goto out_free_irq;
--
--	return 0;
--
--out_free_irq:
--	free_irq(rtc->irq, rtc);
- 	return ret;
- }
- 
--- 
-2.20.1
+We would like to fetch CPU information from non-root application, is 
+there feasible way to do that?
+
+Any advice is appreciated.
+
+Thanks,
+
+Heyi
+
 
