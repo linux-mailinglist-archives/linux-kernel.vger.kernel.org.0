@@ -2,192 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA021122D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:17:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEAA91122D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfLDGQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 01:16:59 -0500
-Received: from mga07.intel.com ([134.134.136.100]:59519 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfLDGQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 01:16:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 22:16:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,276,1571727600"; 
-   d="scan'208";a="412469165"
-Received: from yuanwan1-mobl.ccr.corp.intel.com ([10.249.174.225])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Dec 2019 22:16:56 -0800
-Message-ID: <7f4da1c663268f53f2123424c1b8abdbe8316556.camel@intel.com>
-Subject: [GIT PULL] Thermal management updates for v5.5-rc1
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Date:   Wed, 04 Dec 2019 14:16:55 +0800
+        id S1726794AbfLDGYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 01:24:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15432 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725791AbfLDGYh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 01:24:37 -0500
+X-UUID: 11f23f8276b24a098e06585469657245-20191204
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=onmReCYD7W/Vup2pHh/rp8OuhOnAHM7QSGZUnYNplWU=;
+        b=SSiHqlRMM5/wJhvJIrH0KzvUl4ot25xcvYXU4Mvpw4bv/Nb4o34dPP4JdmrnoCrDZDd8NeWymEQXxgvfnS80DkzMrEYD5Fp/WiSa/WmbbTXT7qwlZ7opkrwDH20cpt5u3oop71JLU26vP5gDKbsduJdeEzb1P2PdH/KzGDtoTFs=;
+X-UUID: 11f23f8276b24a098e06585469657245-20191204
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1899191122; Wed, 04 Dec 2019 14:24:31 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 4 Dec 2019 14:24:25 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 4 Dec 2019 14:23:36 +0800
+Message-ID: <1575440670.29074.0.camel@mtksdaap41>
+Subject: Re: [PATCH v2 4/6] drm/mediatek: remove unused external function
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
+        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date:   Wed, 4 Dec 2019 14:24:30 +0800
+In-Reply-To: <20191203071036.14158-5-bibby.hsieh@mediatek.com>
+References: <20191203071036.14158-1-bibby.hsieh@mediatek.com>
+         <20191203071036.14158-5-bibby.hsieh@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Linus,
-
-Please pull from
-  git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
-thermal/next
-
-to receive the latest Thermal Management updates for v5.5-rc1 with
-top-most commit 163b00cde7cf2206e248789d2780121ad5e6a70b:
-
-  thermal: Fix deadlock in thermal thermal_zone_device_check (2019-11-
-14 22:41:09 +0800)
-
-on top of commit a99d8080aaf358d5d23581244e5da23b35e340b9:
-
-  Linux 5.4-rc6 (2019-11-03 14:07:26 -0800)
-
-Specifics:
-
-- Fix a deadlock regression in thermal core framework, which is
-introduced in 5.3. (Wei Wang)
-
-- Initialize thermal control framework earlier to enable thermal
-mitigation during boot. (Amit Kucheria)
-
-- Convert the Intelligent Power Allocator (IPA) thermal governor to
-follow the generic PM_EM instead of its own Energy Model. (Quentin
-Perret)
-
-- Introduce a new Amlogic soc thermal driver. (Guillaume La Roque)
-
-- Add interrupt support for tsens thermal driver. (Amit Kucheria)
-
-- Add support for MSM8956/8976 in tsens thermal driver.
-(AngeloGioacchino Del Regno)
-
-- Add support for r8a774b1 in rcar thermal driver. (Biju Das)
-
-- Add support for Thermal Monitor Unit v2 in qoriq thermal driver.
-(Yuantian Tang)
-
-- Some other fixes/cleanups on thermal core framework and soc thermal
-drivers. (Colin Ian King, Daniel Lezcano, Hsin-Yi Wang, Tian Tao)
-
-thanks,
-rui
-
-----------------------------------------------------------------
-Amit Kucheria (13):
-      drivers: thermal: tsens: Get rid of id field in tsens_sensor
-      drivers: thermal: tsens: Simplify code flow in tsens_probe
-      drivers: thermal: tsens: Add __func__ identifier to debug
-statements
-      drivers: thermal: tsens: Add debugfs support
-      dt-bindings: thermal: tsens: Convert over to a yaml schema
-      drivers: thermal: tsens: Create function to return sign-extended
-temperature
-      drivers: thermal: tsens: Add interrupt support
-      thermal: Remove netlink support
-      thermal: Initialize thermal subsystem earlier
-      cpufreq: Initialize the governors in core_initcall
-      cpufreq: Initialize cpufreq-dt driver earlier
-      clk: qcom: Initialize clock drivers earlier
-      cpufreq: qcom-hw: Move driver initialization earlier
-
-AngeloGioacchino Del Regno (2):
-      thermal: qcom: tsens-v1: Add support for MSM8956 and MSM8976
-      dt: thermal: tsens: Document compatible for MSM8976/56
-
-Biju Das (2):
-      thermal: rcar_gen3_thermal: Add r8a774b1 support
-      dt-bindings: thermal: rcar-gen3-thermal: Add r8a774b1 support
-
-Colin Ian King (2):
-      thermal: qcom: tsens-v1: Fix kfree of a non-pointer value
-      drivers: thermal: tsens: fix potential integer overflow on
-multiply
-
-Daniel Lezcano (2):
-      thermal: cpu_cooling: Remove pointless dependency on CONFIG_OF
-      thermal: cpu_cooling: Reorder the header file
-
-Guillaume La Roque (3):
-      dt-bindings: thermal: Add DT bindings documentation for Amlogic
-Thermal
-      thermal: amlogic: Add thermal driver to support G12 SoCs
-      MAINTAINERS: add entry for Amlogic Thermal driver
-
-Hsin-Yi Wang (1):
-      thermal-generic-adc: Silent error message for EPROBE_DEFER
-
-Quentin Perret (4):
-      arm64: defconfig: Enable CONFIG_ENERGY_MODEL
-      PM / EM: Declare EM data types unconditionally
-      thermal: cpu_cooling: Make the power-related code depend on IPA
-      thermal: cpu_cooling: Migrate to using the EM framework
-
-Tian Tao (1):
-      thermal: no need to set .owner when using module_platform_driver
-
-Wei Wang (1):
-      thermal: Fix deadlock in thermal thermal_zone_device_check
-
-Yuantian Tang (1):
-      thermal: qoriq: add thermal monitor unit version 2 support
-
- .../bindings/thermal/amlogic,thermal.yaml          |  54 +++
- .../devicetree/bindings/thermal/qcom-tsens.txt     |  55 ---
- .../devicetree/bindings/thermal/qcom-tsens.yaml    | 170 +++++++
- .../bindings/thermal/rcar-gen3-thermal.txt         |   1 +
- Documentation/driver-api/thermal/sysfs-api.rst     |  26 +-
- MAINTAINERS                                        |  10 +
- arch/arm64/configs/defconfig                       |   1 +
- drivers/clk/qcom/clk-rpmh.c                        |   2 +-
- drivers/clk/qcom/gcc-qcs404.c                      |   2 +-
- drivers/clk/qcom/gcc-sdm845.c                      |   2 +-
- drivers/cpufreq/cpufreq-dt-platdev.c               |   2 +-
- drivers/cpufreq/cpufreq_conservative.c             |   2 +-
- drivers/cpufreq/cpufreq_ondemand.c                 |   2 +-
- drivers/cpufreq/cpufreq_performance.c              |   2 +-
- drivers/cpufreq/cpufreq_powersave.c                |   2 +-
- drivers/cpufreq/cpufreq_userspace.c                |   2 +-
- drivers/cpufreq/qcom-cpufreq-hw.c                  |   2 +-
- drivers/thermal/Kconfig                            |  12 +
- drivers/thermal/Makefile                           |   1 +
- drivers/thermal/amlogic_thermal.c                  | 333 +++++++++++++
- drivers/thermal/cpu_cooling.c                      | 404 +++++++----
------
- drivers/thermal/qcom/tsens-8960.c                  |   4 +-
- drivers/thermal/qcom/tsens-common.c                | 529
-+++++++++++++++++++--
- drivers/thermal/qcom/tsens-v0_1.c                  |  11 +
- drivers/thermal/qcom/tsens-v1.c                    | 198 +++++++-
- drivers/thermal/qcom/tsens-v2.c                    |  13 +
- drivers/thermal/qcom/tsens.c                       |  62 ++-
- drivers/thermal/qcom/tsens.h                       | 288 +++++++++--
- drivers/thermal/qoriq_thermal.c                    | 120 ++++-
- drivers/thermal/rcar_gen3_thermal.c                |   4 +
- drivers/thermal/thermal-generic-adc.c              |   9 +-
- drivers/thermal/thermal_core.c                     | 107 +----
- drivers/thermal/thermal_mmio.c                     |   1 -
- include/linux/cpu_cooling.h                        |  18 +-
- include/linux/energy_model.h                       |   3 +-
- include/linux/thermal.h                            |  11 -
- kernel/sched/cpufreq_schedutil.c                   |   2 +-
- 37 files changed, 1878 insertions(+), 589 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
- delete mode 100644 Documentation/devicetree/bindings/thermal/qcom-
-tsens.txt
- create mode 100644 Documentation/devicetree/bindings/thermal/qcom-
-tsens.yaml
- create mode 100644 drivers/thermal/amlogic_thermal.c
+SGksIEJpYmJ5Og0KDQpPbiBUdWUsIDIwMTktMTItMDMgYXQgMTU6MTAgKzA4MDAsIEJpYmJ5IEhz
+aWVoIHdyb3RlOg0KPiBsYXllcl9vbiBhbmQgbGF5ZXJfb2ZmIGJvdGggYXJlIHVudXNlZCBleHRl
+cm5hbCBmdW5jdGlvbiwNCj4gcmVtb3ZlIHRoZW0gZnJvbSBtdGtfZGRwX2NvbXBfZnVuY3Mgc3Ry
+dWN0dXJlLg0KPiANCg0KUmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQoN
+Cj4gU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1lZGlhdGVrLmNvbT4N
+Cj4gLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsLmMgICAgIHwg
+IDIgLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21wLmggfCAx
+NiAtLS0tLS0tLS0tLS0tLS0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDE4IGRlbGV0aW9ucygtKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9vdmwu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9vdmwuYw0KPiBpbmRleCA3MjJh
+NWFkYjc5ZGMuLjhhMzIyNDg2NzFjMyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21l
+ZGlhdGVrL210a19kaXNwX292bC5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
+dGtfZGlzcF9vdmwuYw0KPiBAQCAtMzE0LDggKzMxNCw2IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+bXRrX2RkcF9jb21wX2Z1bmNzIG10a19kaXNwX292bF9mdW5jcyA9IHsNCj4gIAkuZGlzYWJsZV92
+YmxhbmsgPSBtdGtfb3ZsX2Rpc2FibGVfdmJsYW5rLA0KPiAgCS5zdXBwb3J0ZWRfcm90YXRpb25z
+ID0gbXRrX292bF9zdXBwb3J0ZWRfcm90YXRpb25zLA0KPiAgCS5sYXllcl9uciA9IG10a19vdmxf
+bGF5ZXJfbnIsDQo+IC0JLmxheWVyX29uID0gbXRrX292bF9sYXllcl9vbiwNCj4gLQkubGF5ZXJf
+b2ZmID0gbXRrX292bF9sYXllcl9vZmYsDQo+ICAJLmxheWVyX2NoZWNrID0gbXRrX292bF9sYXll
+cl9jaGVjaywNCj4gIAkubGF5ZXJfY29uZmlnID0gbXRrX292bF9sYXllcl9jb25maWcsDQo+ICAJ
+LmJnY2xyX2luX29uID0gbXRrX292bF9iZ2Nscl9pbl9vbiwNCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9jb21wLmggYi9kcml2ZXJzL2dwdS9kcm0v
+bWVkaWF0ZWsvbXRrX2RybV9kZHBfY29tcC5oDQo+IGluZGV4IGVjNTVjNzQ4OGNjMy4uNjUzZWYx
+Y2IzNzQ4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9k
+ZHBfY29tcC5oDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcF9j
+b21wLmgNCj4gQEAgLTc5LDggKzc5LDYgQEAgc3RydWN0IG10a19kZHBfY29tcF9mdW5jcyB7DQo+
+ICAJdm9pZCAoKmRpc2FibGVfdmJsYW5rKShzdHJ1Y3QgbXRrX2RkcF9jb21wICpjb21wKTsNCj4g
+IAl1bnNpZ25lZCBpbnQgKCpzdXBwb3J0ZWRfcm90YXRpb25zKShzdHJ1Y3QgbXRrX2RkcF9jb21w
+ICpjb21wKTsNCj4gIAl1bnNpZ25lZCBpbnQgKCpsYXllcl9ucikoc3RydWN0IG10a19kZHBfY29t
+cCAqY29tcCk7DQo+IC0Jdm9pZCAoKmxheWVyX29uKShzdHJ1Y3QgbXRrX2RkcF9jb21wICpjb21w
+LCB1bnNpZ25lZCBpbnQgaWR4KTsNCj4gLQl2b2lkICgqbGF5ZXJfb2ZmKShzdHJ1Y3QgbXRrX2Rk
+cF9jb21wICpjb21wLCB1bnNpZ25lZCBpbnQgaWR4KTsNCj4gIAlpbnQgKCpsYXllcl9jaGVjayko
+c3RydWN0IG10a19kZHBfY29tcCAqY29tcCwNCj4gIAkJCSAgIHVuc2lnbmVkIGludCBpZHgsDQo+
+ICAJCQkgICBzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlICpzdGF0ZSk7DQo+IEBAIC0xNTEsMjAgKzE0
+OSw2IEBAIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgaW50IG10a19kZHBfY29tcF9sYXllcl9ucihz
+dHJ1Y3QgbXRrX2RkcF9jb21wICpjb21wKQ0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiAgDQo+IC1z
+dGF0aWMgaW5saW5lIHZvaWQgbXRrX2RkcF9jb21wX2xheWVyX29uKHN0cnVjdCBtdGtfZGRwX2Nv
+bXAgKmNvbXAsDQo+IC0JCQkJCSB1bnNpZ25lZCBpbnQgaWR4KQ0KPiAtew0KPiAtCWlmIChjb21w
+LT5mdW5jcyAmJiBjb21wLT5mdW5jcy0+bGF5ZXJfb24pDQo+IC0JCWNvbXAtPmZ1bmNzLT5sYXll
+cl9vbihjb21wLCBpZHgpOw0KPiAtfQ0KPiAtDQo+IC1zdGF0aWMgaW5saW5lIHZvaWQgbXRrX2Rk
+cF9jb21wX2xheWVyX29mZihzdHJ1Y3QgbXRrX2RkcF9jb21wICpjb21wLA0KPiAtCQkJCQkgIHVu
+c2lnbmVkIGludCBpZHgpDQo+IC17DQo+IC0JaWYgKGNvbXAtPmZ1bmNzICYmIGNvbXAtPmZ1bmNz
+LT5sYXllcl9vZmYpDQo+IC0JCWNvbXAtPmZ1bmNzLT5sYXllcl9vZmYoY29tcCwgaWR4KTsNCj4g
+LX0NCj4gLQ0KPiAgc3RhdGljIGlubGluZSBpbnQgbXRrX2RkcF9jb21wX2xheWVyX2NoZWNrKHN0
+cnVjdCBtdGtfZGRwX2NvbXAgKmNvbXAsDQo+ICAJCQkJCSAgIHVuc2lnbmVkIGludCBpZHgsDQo+
+ICAJCQkJCSAgIHN0cnVjdCBtdGtfcGxhbmVfc3RhdGUgKnN0YXRlKQ0KDQo=
 
