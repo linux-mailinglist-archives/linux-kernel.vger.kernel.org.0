@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9FC9113244
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B271133F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730690AbfLDSHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:07:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56112 "EHLO mail.kernel.org"
+        id S1731478AbfLDSVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:21:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730686AbfLDSHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:07:00 -0500
+        id S1730162AbfLDSH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:07:27 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DE8E20674;
-        Wed,  4 Dec 2019 18:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A0C120675;
+        Wed,  4 Dec 2019 18:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482819;
-        bh=gmEmMwBpratgRQVW/qWF9gmbRLer7I/p+Mnl3cfi5xk=;
+        s=default; t=1575482847;
+        bh=em/d8aYF1bMtjXSLVU4kj2JcBOP0Eed2tRCO1S+7JDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wmR8FX3UOcFS0Q/Def3bV/MC3MHt6VUiHTzew3VfL6mX34Tm7IwAF0WT4bhmMAo0d
-         U+S6TrQRmOcyPqSYXMf240t+324nvhLqb+87ZBSimrzzG5D9NHsQD3ilTosjDfd+Rf
-         ECxCt9BypuPIkux509n7xfZ8YNUbEx7Ni9oQ0+gg=
+        b=bukLjOdVPzrVA3NsJkT+23QIR14Cuv64vUMuHOSI+1Qp894+Hx+8GkSghbTUDY37z
+         OKay1JR9NO8ihUt75MwD/fiAFqOt7X5VouPHJCO2Axfv64Vv2zcs8jcwNRQhuCv0x8
+         w/9hZ54XrUXnJqgaisBcCnJUBUPq3RLnoF96ke6Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Marcin Stojek <marcin.stojek@nokia.com>,
+        Maciej Kwiecien <maciej.kwiecien@nokia.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 140/209] net: fix possible overflow in __sk_mem_raise_allocated()
-Date:   Wed,  4 Dec 2019 18:55:52 +0100
-Message-Id: <20191204175332.945381018@linuxfoundation.org>
+Subject: [PATCH 4.14 141/209] sctp: dont compare hb_timer expire date before starting it
+Date:   Wed,  4 Dec 2019 18:55:53 +0100
+Message-Id: <20191204175333.019542367@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -44,50 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Maciej Kwiecien <maciej.kwiecien@nokia.com>
 
-[ Upstream commit 5bf325a53202b8728cf7013b72688c46071e212e ]
+[ Upstream commit d1f20c03f48102e52eb98b8651d129b83134cae4 ]
 
-With many active TCP sockets, fat TCP sockets could fool
-__sk_mem_raise_allocated() thanks to an overflow.
+hb_timer might not start at all for a particular transport because its
+start is conditional. In a result a node is not sending heartbeats.
 
-They would increase their share of the memory, instead
-of decreasing it.
+Function sctp_transport_reset_hb_timer has two roles:
+    - initial start of hb_timer for a given transport,
+    - update expire date of hb_timer for a given transport.
+The function is optimized to update timer's expire only if it is before
+a new calculated one but this comparison is invalid for a timer which
+has not yet started. Such a timer has expire == 0 and if a new expire
+value is bigger than (MAX_JIFFIES / 2 + 2) then "time_before" macro will
+fail and timer will not start resulting in no heartbeat packets send by
+the node.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+This was found when association was initialized within first 5 mins
+after system boot due to jiffies init value which is near to MAX_JIFFIES.
+
+Test kernel version: 4.9.154 (ARCH=arm)
+hb_timer.expire = 0;                //initialized, not started timer
+new_expire = MAX_JIFFIES / 2 + 2;   //or more
+time_before(hb_timer.expire, new_expire) == false
+
+Fixes: ba6f5e33bdbb ("sctp: avoid refreshing heartbeat timer too often")
+Reported-by: Marcin Stojek <marcin.stojek@nokia.com>
+Tested-by: Marcin Stojek <marcin.stojek@nokia.com>
+Signed-off-by: Maciej Kwiecien <maciej.kwiecien@nokia.com>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/sock.h | 2 +-
- net/core/sock.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/sctp/transport.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 780c6c0a86f04..0af46cbd3649c 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -1232,7 +1232,7 @@ static inline void sk_sockets_allocated_inc(struct sock *sk)
- 	percpu_counter_inc(sk->sk_prot->sockets_allocated);
- }
+diff --git a/net/sctp/transport.c b/net/sctp/transport.c
+index 43105cf04bc45..274df899e7bfa 100644
+--- a/net/sctp/transport.c
++++ b/net/sctp/transport.c
+@@ -210,7 +210,8 @@ void sctp_transport_reset_hb_timer(struct sctp_transport *transport)
  
--static inline int
-+static inline u64
- sk_sockets_allocated_read_positive(struct sock *sk)
- {
- 	return percpu_counter_read_positive(sk->sk_prot->sockets_allocated);
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 7ccbcd853cbce..90ccbbf9e6b00 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2357,7 +2357,7 @@ int __sk_mem_raise_allocated(struct sock *sk, int size, int amt, int kind)
- 	}
- 
- 	if (sk_has_memory_pressure(sk)) {
--		int alloc;
-+		u64 alloc;
- 
- 		if (!sk_under_memory_pressure(sk))
- 			return 1;
+ 	/* When a data chunk is sent, reset the heartbeat interval.  */
+ 	expires = jiffies + sctp_transport_timeout(transport);
+-	if (time_before(transport->hb_timer.expires, expires) &&
++	if ((time_before(transport->hb_timer.expires, expires) ||
++	     !timer_pending(&transport->hb_timer)) &&
+ 	    !mod_timer(&transport->hb_timer,
+ 		       expires + prandom_u32_max(transport->rto)))
+ 		sctp_transport_hold(transport);
 -- 
 2.20.1
 
