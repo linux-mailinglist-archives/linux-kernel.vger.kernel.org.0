@@ -2,101 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49E6B112E6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35629112E53
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbfLDP3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:29:21 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34703 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbfLDP3U (ORCPT
+        id S1728369AbfLDP2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:28:07 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37386 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728287AbfLDP2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:29:20 -0500
-Received: by mail-lj1-f194.google.com with SMTP id m6so8623274ljc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:29:19 -0800 (PST)
+        Wed, 4 Dec 2019 10:28:07 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w15so9137682wru.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:28:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JXuW32MEVpBGX+oYxjJlbOSqN8m13R4+8nxsyFB6KSo=;
-        b=NzzfLl3Ft2yWy0eGxjDMMRdiFd9HpDaDtBPQfI86Ry+T74t9MJJzS/nEUjgdDWH+Ns
-         l5vCfZPTel14OWP7F4RgXtKZ2zcVC/WkIJrrR5/y2iP5Z59vNoyKfiNMHsYMYn+0a15s
-         svTEJ7nYtBcG1pazF6M7+QWi49eVyFJbT/gSY3vzZRpipA9dPG3Cr25byAsuUX9m295C
-         CG2HjYw45+R+1Ev/YiQ6pwGOQLvypadluuGeWp/CTlcUd6xP56SQ9EY59CPIQXbZLhWv
-         AyYEHBYvLW5GjHaXQhvFWFcKRyl0jkKUlqXg8LGEAHbmyedWQ8ga7zTeo8rF/hP1yzRL
-         8X2A==
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=n0PMYgXBxpTJTwUFndMR8j8g1X+3mghMk/wqd/jqgb4=;
+        b=cPNuQoPsK/IaM6bjnT9f9fznnLZV6W3amrqNwE5KT0g0fAzb0IB/r7CZzMMmqG5ooF
+         bH1J5zqnHViwUlMvEZUMnhKSdwt5CVERjPLQwXJJ59xzXl4TkPThLLFguRiCuTZqZLgh
+         p8o9z51+Io63YGZ1D9Y3mBoy3VbQcM+CbjGLvPNMOhaoW6Hz6VFWLzT4xI3Xe6Ft6jSG
+         SWNl6f5cKTA5UVJI9eL/iWIM3Xqav0Ge9KFr1dzDqT+TaR4jNStC23Z+6MfNvMlDZFg5
+         vHOUT9n0pWZu63JbNZUgt5Wr8SRaNB8EYuYCYVvGYsz6+agsYFdQQOU/RNfLOp2vMOnS
+         7XbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JXuW32MEVpBGX+oYxjJlbOSqN8m13R4+8nxsyFB6KSo=;
-        b=DQp7tuZXn9RvT7xMfPej3qj84fMuNRQz/fbr9ePpWIUIXhBz9VPGYqHYVzOf2qWStP
-         Hvx+9NGfybmHRR73sAWVMHTBRz0WJx0O9oHVlOEZrj63OV+BhclUOUHY2iDijJqP5IS2
-         RTp+4SMRNCQTZcKlZRPmoJkl99RiX5lZype1Wss7HSl24u6AgZLCh5d7lcePDrbnhWtx
-         fMBgEQEYrRy/3mV5+H7GgOSxGOZs6oybsgEzFlO4uWR4k3Cm3br8vuWjwNfvuDg61Bwa
-         2eSIoOc8bgxZBpMmPN8QBcnZqihdO23Z7ezLHOPRfiM/4hZ2P2Twf8StG03DVV/rVZp7
-         B73g==
-X-Gm-Message-State: APjAAAWduIMkXYsJFSXqo9eZqv90dy5LUl+wJF4jheLbB3mIK0a2BUQN
-        q8wxVKPoUzbzGNe8xkFXq+YLEcQv7Ay0nA==
-X-Google-Smtp-Source: APXvYqyWK4G41MaUOKkT9fJC8zvVih/07GuHxet3dUH/XaSUTa7hbcaHBPLzkHpRlp5QcLkBwkbNQA==
-X-Received: by 2002:a2e:294e:: with SMTP id u75mr2399912lje.173.1575473359152;
-        Wed, 04 Dec 2019 07:29:19 -0800 (PST)
-Received: from localhost.localdomain (c-21cd225c.014-348-6c756e10.bbcust.telenor.se. [92.34.205.33])
-        by smtp.gmail.com with ESMTPSA id n11sm3266870ljg.15.2019.12.04.07.29.17
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=n0PMYgXBxpTJTwUFndMR8j8g1X+3mghMk/wqd/jqgb4=;
+        b=ssoJvp1IQlNNdxv6l82wqAt2phbxE134YESyBx9mkIjH0khvm0TeEsHuiT/Pbo+cgV
+         /y0LX/bpa7EueLQI8K2ijdVgwMfxMU3IM9sB8gkUPc0fNR2hsDEhqhS2idUJ4QsPCzzs
+         DxOXdlPCkMePCLrLC9GVXw0G3fq3C6uIv7IWa6Asfw9X5kl+RWUXD2DNB6isMDgQflv2
+         QWStJwMD27SJmpSp5TkxCwdMS5pw7Ph2dMQMuTFDxuArH9KcdYtf7JqZljJydduqKf9T
+         QcBRiEfvMsnrFZn0W9l6hUkKmlwPanI3mr6+jyI2PC46HZdg4Q5lsP67PjbkJRpnYJB9
+         Tl0A==
+X-Gm-Message-State: APjAAAXpUJoZXdcisPAuMHEELq9V/usUfk/q2GsgW1Qzhiu1W9LENQoS
+        H6CuG2DLKCyRtauIiub3mBF04Q==
+X-Google-Smtp-Source: APXvYqzg1TyHqcrLbHlAbi08TX3/2GpmskSRV7ZVEsEDmRuvJ1eZlWpKFOWi870svMg0kU8UUNR6OA==
+X-Received: by 2002:adf:eb46:: with SMTP id u6mr4788809wrn.239.1575473284403;
+        Wed, 04 Dec 2019 07:28:04 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id b2sm8607869wrr.76.2019.12.04.07.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:29:17 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH] mfd: mc13xxx-spi: Do not hardcode SPI mode flags
-Date:   Wed,  4 Dec 2019 16:27:15 +0100
-Message-Id: <20191204152715.12553-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.23.0
+        Wed, 04 Dec 2019 07:28:03 -0800 (PST)
+Message-ID: <5de7d083.1c69fb81.82fe2.b0da@mx.google.com>
+Date:   Wed, 04 Dec 2019 07:28:03 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Kernel: v5.4-9340-g16839329da69
+X-Kernelci-Tree: ardb
+X-Kernelci-Branch: for-kernelci
+X-Kernelci-Lab-Name: lab-collabora
+Subject: ardb/for-kernelci bisection: boot on rk3288-rock2-square
+To:     tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        enric.balletbo@collabora.com, khilman@baylibre.com,
+        mgalka@collabora.com, Ard Biesheuvel <ardb@kernel.org>,
+        broonie@kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current use of mode flags to us SPI_MODE_0 and
-SPI_CS_HIGH is fragile: it overwrites anything already
-assigned by the SPI core. Change it thusly:
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-- Just |= the SPI_MODE_0 so we keep other flags
-- Assign ^= SPI_CS_HIGH since we might be active high
-  already, and that is usually the case with GPIOs used
-  for chip select, even if they are in practice active low.
+ardb/for-kernelci bisection: boot on rk3288-rock2-square
 
-Add a comment clarifying why ^= SPI_CS_HIGH is the right
-choice here.
+Summary:
+  Start:      16839329da69 enable extra tests by default
+  Details:    https://kernelci.org/boot/id/5de791acd6451dc5be960f08
+  Plain log:  https://storage.kernelci.org//ardb/for-kernelci/v5.4-9340-g16=
+839329da69/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/boot-r=
+k3288-rock2-square.txt
+  HTML log:   https://storage.kernelci.org//ardb/for-kernelci/v5.4-9340-g16=
+839329da69/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/boot-r=
+k3288-rock2-square.html
+  Result:     16839329da69 enable extra tests by default
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mfd/mc13xxx-spi.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-diff --git a/drivers/mfd/mc13xxx-spi.c b/drivers/mfd/mc13xxx-spi.c
-index 286ddcf5ddc6..9885e5f8210a 100644
---- a/drivers/mfd/mc13xxx-spi.c
-+++ b/drivers/mfd/mc13xxx-spi.c
-@@ -134,7 +134,13 @@ static int mc13xxx_spi_probe(struct spi_device *spi)
- 
- 	dev_set_drvdata(&spi->dev, mc13xxx);
- 
--	spi->mode = SPI_MODE_0 | SPI_CS_HIGH;
-+	spi->mode |= SPI_MODE_0;
-+	/*
-+	 * We want the inverse of what is set in the SPI core, if this
-+	 * is accomplished with a GPIO line then inversion semantics may
-+	 * be handled in the GPIO library.
-+	 */
-+	spi->mode ^= SPI_CS_HIGH;
- 
- 	mc13xxx->irq = spi->irq;
- 
--- 
-2.23.0
+Parameters:
+  Tree:       ardb
+  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git
+  Branch:     for-kernelci
+  Target:     rk3288-rock2-square
+  CPU arch:   arm
+  Lab:        lab-collabora
+  Compiler:   gcc-8
+  Config:     multi_v7_defconfig+CONFIG_SMP=3Dn
+  Test suite: boot
 
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit 16839329da69263e7360f3819bae01bcf4b220ec
+Author: Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue Dec 3 12:29:31 2019 +0000
+
+    enable extra tests by default
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 5575d48473bd..36af840aa820 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -140,7 +140,6 @@ if CRYPTO_MANAGER2
+ =
+
+ config CRYPTO_MANAGER_DISABLE_TESTS
+ 	bool "Disable run-time self tests"
+-	default y
+ 	help
+ 	  Disable run-time self tests that normally take place at
+ 	  algorithm registration.
+@@ -148,6 +147,7 @@ config CRYPTO_MANAGER_DISABLE_TESTS
+ config CRYPTO_MANAGER_EXTRA_TESTS
+ 	bool "Enable extra run-time crypto self tests"
+ 	depends on DEBUG_KERNEL && !CRYPTO_MANAGER_DISABLE_TESTS
++	default y
+ 	help
+ 	  Enable extra run-time self tests of registered crypto algorithms,
+ 	  including randomized fuzz tests.
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 88f33c0efb23..5df87bcf6c4d 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -40,7 +40,7 @@ static bool notests;
+ module_param(notests, bool, 0644);
+ MODULE_PARM_DESC(notests, "disable crypto self-tests");
+ =
+
+-static bool panic_on_fail;
++static bool panic_on_fail =3D true;
+ module_param(panic_on_fail, bool, 0444);
+ =
+
+ #ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [b94ae8ad9fe79da61231999f347f79645b909bda] Merge tag 'seccomp-v5.5-=
+rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+git bisect good b94ae8ad9fe79da61231999f347f79645b909bda
+# bad: [16839329da69263e7360f3819bae01bcf4b220ec] enable extra tests by def=
+ault
+git bisect bad 16839329da69263e7360f3819bae01bcf4b220ec
+# good: [25cbf24a7eec7c3dee4113b2e98b572e128009b7] crypto: aead - move cryp=
+to_aead_maxauthsize() to <crypto/aead.h>
+git bisect good 25cbf24a7eec7c3dee4113b2e98b572e128009b7
+# good: [7b19c7a82950ed034645fa92adce29cd6163ed3e] crypto: testmgr - check =
+skcipher min_keysize
+git bisect good 7b19c7a82950ed034645fa92adce29cd6163ed3e
+# good: [062752a354aaf03b46b86cba5fdaa2fd5c932860] crypto: testmgr - create=
+ struct aead_extra_tests_ctx
+git bisect good 062752a354aaf03b46b86cba5fdaa2fd5c932860
+# good: [2cd56a00fff8584e342164c65e6b55da61f79c4a] crypto: testmgr - genera=
+te inauthentic AEAD test vectors
+git bisect good 2cd56a00fff8584e342164c65e6b55da61f79c4a
+# first bad commit: [16839329da69263e7360f3819bae01bcf4b220ec] enable extra=
+ tests by default
+---------------------------------------------------------------------------=
+----
