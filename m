@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F9F113810
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3D0113813
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:21:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfLDXVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 18:21:12 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39202 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728419AbfLDXVJ (ORCPT
+        id S1728567AbfLDXVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 18:21:21 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43604 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728482AbfLDXVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:21:09 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d124so1665285qke.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:21:08 -0800 (PST)
+        Wed, 4 Dec 2019 18:21:11 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q28so1639125qkn.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:21:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=cJGBuyv8MEIEHzLn/Uzof9JuYF+NT8m3hWWPuvSYlYo=;
-        b=Cqr2IaSkSM3+ylTz/1+aa0wyv0GTLmyzuvfeKqJdPU6Ym61dE8ilpQ/o6O3zLo76yG
-         yWs4zxmVduoS9thvdX42Qhy/yXxpxLqmowjGfyNWNr2CrS0btzvUZX1xjS5/NQKuKc9m
-         09+5SGckvzu6mOOsgNPtOpMxLWPdDl8+PqcmsBcfflKtmm4meriKJKjLOG29yS1QWciV
-         0Wcks1MLbJb1W3cxbNWfbO8w7CCl3rfq/IVgDaUT9y3uk+unlYn3uMSIPYga04jFVfkX
-         ZrVptH6pK0eqeK+rnhBPLi9SvwE1cFLa6IaeQSpSBwJircBHJEjEs6Y3XEWblHYg0XxR
-         IQmw==
+        bh=jgWMYHD023tAXPY9yBvY7HlxUi3NtG7yB+YFJsFM+4s=;
+        b=GnME/3GQIkWEOnq+HnWtjzDW7KOeACVPsdHQBWSmyQiiOW1JrEqbNdO1yXHOHEGGLa
+         uiDQATmlJ+LFhPgQXv8Zf0F4NJElVwhSGKvmCcAUMQv+wEkB+XJDpMyg6iSNtxNh7VMy
+         4YRsLqt/0+myzBWoF8xlK6sHJAEmEPWcOsskDtof8qDxEGxli6obH0/ql8HXvOYyNOx0
+         E4CqVF/g/r8Y9BXPjdTCfVR8SCXfFoQnrtKWfB6fqzn7mEoF7LZSIahhhG8TlbwvWdi0
+         eV1TWGsF+FoGohnl0fwH163lctm1VQfxvAxKHjBKsqfJP8bqMssseBKgpDoDEsAqYzvT
+         ACgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cJGBuyv8MEIEHzLn/Uzof9JuYF+NT8m3hWWPuvSYlYo=;
-        b=NT10eDrTIriWqW1DyIe9PDX/Xf4SPHIDi8XcsucBWmDRoUKkhOf4si3lQUU/qt7ySN
-         LjQlOoe/7uSTm7Me3zMqdU42tGc0LpHpThVqoWxl734yasEQXRNMS5zSR2IMc2iFO4/s
-         EUc1+kXjBwq9cMpDs3RzfgNZeDutfTNQ+QiFHfCE7cCqqA2NMtCs4P7mJhSJiTtZrOyi
-         plKDQPU9Gk3QnOy8zfomKb1Ex6jCDkDIncxXGYgGJzaH6+V8c2sjeBQb22BhSsnQsNj2
-         A8aqLdqKv7X6DMDdTyy72DIbDm4NDoMAm8i5UulnIjstx9xJbv7pbhAi1OwlHugGDEkK
-         ATlA==
-X-Gm-Message-State: APjAAAUpKM0tJ4PKXQ1p97ZAWweClFhR2GZ2G7LpEqkmcc9xBIcgBPRw
-        qXq2UdtJYUFjKIUn2FCKUwsZNQ==
-X-Google-Smtp-Source: APXvYqyIMm2ogNBIfOvl3Mqg4T1YApxStKZp5KMJvJR//w2WVxMty/nhPiOLBe4oOlxwY24OIF3FHA==
-X-Received: by 2002:ae9:e115:: with SMTP id g21mr53454qkm.187.1575501668421;
-        Wed, 04 Dec 2019 15:21:08 -0800 (PST)
+        bh=jgWMYHD023tAXPY9yBvY7HlxUi3NtG7yB+YFJsFM+4s=;
+        b=TRKzPpGRRMrsCw0rZKyVzuWnE9aeL8crYcDvWAjPRO6/kLOInKP/QfWAKj9ygv7VeJ
+         66a3TF/846niBwbW50meMQ6f3CjsZrVRXn5HaBJmXyni8HWcLdVTvZTvJjr9gk3NvWJK
+         50gX/KDO5/BgUpKzF5FPBflb2myAOFxzbJQeytDcj+8YPNWVELw9/J1mAB9NDNRi+RjK
+         k6Lm5Opzlkaz4RxOwOlII2mDGaxurI4arr8l/C16O+mPrWi6tncvpP90xINHshz9qnSV
+         lpRmU1fvCcZOnYMo3Bk2If1SSPsK0kFxHRl5k0ErEetwAuaL/m/uA3gC3Tl6i4t0rPMO
+         iS1w==
+X-Gm-Message-State: APjAAAW6S7kwqsl7dK82HOVqZRyzpaS3ZqacvMx660L5myzDSMJigIp9
+        HIJTmDiOWFa8JAd85+KD2317yw==
+X-Google-Smtp-Source: APXvYqxYW3lHiAaEktvIv9R2Rs4Q7wh7u41fkOvqH028QUBhjHchCrv3OL1EskvJ6xR8p1wI4qmnmw==
+X-Received: by 2002:a05:620a:102e:: with SMTP id a14mr5398925qkk.159.1575501670158;
+        Wed, 04 Dec 2019 15:21:10 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id t38sm4667864qta.78.2019.12.04.15.21.06
+        by smtp.gmail.com with ESMTPSA id t38sm4667864qta.78.2019.12.04.15.21.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 15:21:07 -0800 (PST)
+        Wed, 04 Dec 2019 15:21:09 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
@@ -57,9 +57,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         jgross@suse.com, stefan@agner.ch, yamada.masahiro@socionext.com,
         xen-devel@lists.xenproject.org, linux@armlinux.org.uk,
         andrew.cooper3@citrix.com, julien@xen.org
-Subject: [PATCH v4 4/6] arm64: remove __asm_flush_icache_range
-Date:   Wed,  4 Dec 2019 18:20:56 -0500
-Message-Id: <20191204232058.2500117-5-pasha.tatashin@soleen.com>
+Subject: [PATCH v4 5/6] arm64: move ARM64_HAS_CACHE_DIC/_IDC from asm to C
+Date:   Wed,  4 Dec 2019 18:20:57 -0500
+Message-Id: <20191204232058.2500117-6-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204232058.2500117-1-pasha.tatashin@soleen.com>
 References: <20191204232058.2500117-1-pasha.tatashin@soleen.com>
@@ -70,85 +70,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__asm_flush_icache_range is an alias to __asm_flush_cache_user_range,
-but now that these functions are called from C wrappers the fall
-through can instead be done at a higher level.
+The assmbly functions __asm_flush_cache_user_range and
+__asm_invalidate_icache_range have alternatives:
 
-Remove the __asm_flush_icache_range alias in assembly, and instead call
-__flush_cache_user_range() from __flush_icache_range().
+alternative_if ARM64_HAS_CACHE_DIC
+...
+
+alternative_if ARM64_HAS_CACHE_IDC
+...
+
+But, the implementation of those alternatives is trivial and therefore
+can be done in the C inline wrappers.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/include/asm/cacheflush.h |  5 +----
- arch/arm64/mm/cache.S               | 14 --------------
- arch/arm64/mm/flush.c               |  2 +-
- 3 files changed, 2 insertions(+), 19 deletions(-)
+ arch/arm64/include/asm/cacheflush.h | 19 +++++++++++++++++++
+ arch/arm64/mm/cache.S               | 27 +++++----------------------
+ arch/arm64/mm/flush.c               |  1 +
+ 3 files changed, 25 insertions(+), 22 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cacheflush.h b/arch/arm64/include/asm/cacheflush.h
-index 431f8da2dd02..ea563344b4ad 100644
+index ea563344b4ad..4eb244ee7154 100644
 --- a/arch/arm64/include/asm/cacheflush.h
 +++ b/arch/arm64/include/asm/cacheflush.h
-@@ -61,7 +61,6 @@
-  *		- kaddr  - page address
-  *		- size   - region size
-  */
--extern void __asm_flush_icache_range(unsigned long start, unsigned long end);
- extern long __asm_flush_cache_user_range(unsigned long start,
- 					 unsigned long end);
- extern int  __asm_invalidate_icache_range(unsigned long start,
-@@ -83,9 +82,7 @@ static inline void __flush_cache_user_range(unsigned long start,
- 
- static inline void __flush_icache_range(unsigned long start, unsigned long end)
+@@ -75,8 +75,22 @@ extern void sync_icache_aliases(void *kaddr, unsigned long len);
+ static inline void __flush_cache_user_range(unsigned long start,
+ 					    unsigned long end)
  {
--	uaccess_ttbr0_enable();
--	__asm_flush_icache_range(start, end);
--	uaccess_ttbr0_disable();
-+	__flush_cache_user_range(start, end);
++	if (cpus_have_const_cap(ARM64_HAS_CACHE_IDC)) {
++		dsb(ishst);
++		if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)) {
++			isb();
++			return;
++		}
++	}
++
+ 	uaccess_ttbr0_enable();
+ 	__asm_flush_cache_user_range(start, end);
++
++	if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC))
++		isb();
++	else
++		__asm_invalidate_icache_range(start, end);
++
+ 	uaccess_ttbr0_disable();
  }
  
- static inline int invalidate_icache_range(unsigned long start,
+@@ -90,6 +104,11 @@ static inline int invalidate_icache_range(unsigned long start,
+ {
+ 	int ret;
+ 
++	if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)) {
++		isb();
++		return 0;
++	}
++
+ 	uaccess_ttbr0_enable();
+ 	ret = __asm_invalidate_icache_range(start, end);
+ 	uaccess_ttbr0_disable();
 diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
-index 602b9aa8603a..1981cbaf5d92 100644
+index 1981cbaf5d92..0093bb9fcd12 100644
 --- a/arch/arm64/mm/cache.S
 +++ b/arch/arm64/mm/cache.S
-@@ -14,19 +14,6 @@
- #include <asm/alternative.h>
- #include <asm/asm-uaccess.h>
- 
--/*
-- *	__asm_flush_icache_range(start,end)
-- *
-- *	Ensure that the I and D caches are coherent within specified region.
-- *	This is typically used when code has been written to a memory region,
-- *	and will be executed.
-- *
-- *	- start   - virtual start address of region
-- *	- end     - virtual end address of region
-- */
--ENTRY(__asm_flush_icache_range)
--	/* FALLTHROUGH */
+@@ -25,30 +25,18 @@
+  *	- end     - virtual end address of region
+  */
+ ENTRY(__asm_flush_cache_user_range)
+-alternative_if ARM64_HAS_CACHE_IDC
+-	dsb	ishst
+-	b	7f
+-alternative_else_nop_endif
+ 	dcache_line_size x2, x3
+ 	sub	x3, x2, #1
+ 	bic	x4, x0, x3
+-1:
+-user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
++1:	user_alt 3f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+ 	add	x4, x4, x2
+ 	cmp	x4, x1
+ 	b.lo	1b
+ 	dsb	ish
 -
- /*
-  *	__asm_flush_cache_user_range(start,end)
-  *
-@@ -62,7 +49,6 @@ alternative_else_nop_endif
- 1:	ret
- 9:	mov	x0, #-EFAULT
- 	b	1b
--ENDPROC(__asm_flush_icache_range)
+-7:
+-alternative_if ARM64_HAS_CACHE_DIC
+-	isb
+-	b	8f
+-alternative_else_nop_endif
+-	invalidate_icache_by_line x0, x1, x2, x3, 9f
+-8:	mov	x0, #0
+-1:	ret
+-9:	mov	x0, #-EFAULT
+-	b	1b
++	mov	x0, #0
++2:	ret
++3:	mov	x0, #-EFAULT
++	b	2b
  ENDPROC(__asm_flush_cache_user_range)
  
  /*
+@@ -60,11 +48,6 @@ ENDPROC(__asm_flush_cache_user_range)
+  *	- end     - virtual end address of region
+  */
+ ENTRY(__asm_invalidate_icache_range)
+-alternative_if ARM64_HAS_CACHE_DIC
+-	mov	x0, xzr
+-	isb
+-	ret
+-alternative_else_nop_endif
+ 	invalidate_icache_by_line x0, x1, x2, x3, 2f
+ 	mov	x0, xzr
+ 1:	ret
 diff --git a/arch/arm64/mm/flush.c b/arch/arm64/mm/flush.c
-index b23f34d23f31..61521285f27d 100644
+index 61521285f27d..adfdacb163ad 100644
 --- a/arch/arm64/mm/flush.c
 +++ b/arch/arm64/mm/flush.c
-@@ -75,7 +75,7 @@ EXPORT_SYMBOL(flush_dcache_page);
- /*
+@@ -76,6 +76,7 @@ EXPORT_SYMBOL(flush_dcache_page);
   * Additional functions defined in assembly.
   */
--EXPORT_SYMBOL(__asm_flush_icache_range);
-+EXPORT_SYMBOL(__asm_flush_cache_user_range);
+ EXPORT_SYMBOL(__asm_flush_cache_user_range);
++EXPORT_SYMBOL(__asm_invalidate_icache_range);
  
  #ifdef CONFIG_ARCH_HAS_PMEM_API
  void arch_wb_cache_pmem(void *addr, size_t size)
