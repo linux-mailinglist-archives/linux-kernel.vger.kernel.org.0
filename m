@@ -2,151 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E02112EBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57067112EB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:40:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbfLDPkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:40:45 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43817 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728366AbfLDPkn (ORCPT
+        id S1728533AbfLDPkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:40:00 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:43878 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728465AbfLDPj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:40:43 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q28so256094qkn.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:40:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=TKYIamcANZtYnmd1DLMg7mRBVJgMxnDC2sAqJEPIU6o=;
-        b=MnN7qOb/Aw5hzyId41e+MvM96sCf/2c9FL9dits2novfdCy38l1/jJBsE1+wc4CuQQ
-         wJ6Niv+OzgPFjhdWNvF5jLiIqcA7oN//EoCsfCB2ZNOzcq2M0zI0Orgz+dmeNVH+GvJA
-         gOc3ooWHdDMsuUfWywZwnY2gzvT3IzCIpuqxFfrlccfJKdFW91lXLM9Y1u/dy9s7T3KN
-         I6AgMBz1p0Pf1QQ+UK8fEJlZv5SO1z74BKGRINlVNqAT55wfRmGFV5SECzpLWjlYfb2b
-         FCgn29hXTwL/HXrrQzMlDGu/tGJqh/6IB/UcRDvmaC1OeHDCYh5IHIA7Z096X8tbng5F
-         Wmyw==
+        Wed, 4 Dec 2019 10:39:58 -0500
+Received: by mail-pj1-f65.google.com with SMTP id g4so3130878pjs.10;
+        Wed, 04 Dec 2019 07:39:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TKYIamcANZtYnmd1DLMg7mRBVJgMxnDC2sAqJEPIU6o=;
-        b=TATWlqhTsjIoLxAyOtX1YqTF1eKnTI17FWUUp3kzGnzV3j/hGT+kH37jM5ZpNf6pv4
-         oa25y2j5nZWwCJSpNihLW7fvanbe3OixyQ6mqW1BA/Qmq3ozBMWb9DtCYke09EQhHkIY
-         WXI7v3GWBTWcuhbfyReuTkuu/aMjDiwL667oW5Fq3i5nErDbzQJqtEkb8LULW4DDWCDS
-         VuVWg7/AEtkTBCxnvg1mD8/phrSpk51yKFmGd3lM0ivZzPiyZdY6P+Zzu/kpkydhF6RD
-         r4Q6uQG8D8hSMl09vTMawvOv7hzu0cHFcWv/zxgK0AEPm6OwZ0KYMRG5v29SgNAuvc9J
-         2M1g==
-X-Gm-Message-State: APjAAAUK03IsEP5RbD/RPzTSvvWpp6rFcQa6PJpAhEisgHswXttUj4Q+
-        Lppv43DJiacpSiQ91MD6BhA73w==
-X-Google-Smtp-Source: APXvYqzaHMZ7ljtRRla518W1B2GOaSGHFhofv7ElsnTVyzHk/MSaxlYFr3gvMJQ2QFU6avcGGFW/IA==
-X-Received: by 2002:a37:7186:: with SMTP id m128mr3526332qkc.384.1575474042150;
-        Wed, 04 Dec 2019 07:40:42 -0800 (PST)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id y28sm3937692qtk.65.2019.12.04.07.40.40
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j0coACmS6cX4bpqEIAC6FvUjz2tQ6QO1d04l0/4uREE=;
+        b=lsvY4NBlwKoCDeXexA6iYMQuVyI8QL3dR5wb5XfIcZ6iT8/3F3Jhp7PHA9+e+1T1HB
+         sxNCk09kKv0v/wESWOiW0cWzSe/LrJ39i1EIijj0KHoBfDyIaSFu21h1IJn0xpQh/LFe
+         YbE7NVwRLwtf13wV37Q2rA1QN+ZmJPgBb6iGtOVKCxWtpuRXauYmxK6CVFBcyiCIFYcZ
+         swSgicuzn71hPEZksrEIZYlVK4McHiHKmXi9cePt6/wpjYkcWB1Q3lf1oiZgD3hNyHpu
+         q9JAmR0b/Anbt8liGTZSWOEMM6VH5yqh+uiXiD3EsYbXb5T0D4ghVNNtbr521PVZyqEa
+         cdvQ==
+X-Gm-Message-State: APjAAAVbVzkvA/7gW3r9GFH8j2aKwaj9h05f0zfHmESgleq3TIWHI9jL
+        PkMruGTLovbeosp4f60UDfgye6nziwQ=
+X-Google-Smtp-Source: APXvYqwRBUMgY8ItWArwVSMxfB0K+ay+Tb4jg30YdZl3x5bC9Mza98iPkCYSeYJjeRVjeVZUkJBwew==
+X-Received: by 2002:a17:90a:778a:: with SMTP id v10mr2140503pjk.26.1575473997542;
+        Wed, 04 Dec 2019 07:39:57 -0800 (PST)
+Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
+        by smtp.gmail.com with ESMTPSA id s27sm8748361pfd.88.2019.12.04.07.39.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:40:41 -0800 (PST)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
-        thiruan@microsoft.com, bryankel@microsoft.com,
-        tee-dev@lists.linaro.org, ilias.apalodimas@linaro.org,
-        sumit.garg@linaro.org, rdunlap@infradead.org
-Subject: [PATCH v4 1/1] tpm/tpm_ftpm_tee: add shutdown call back
-Date:   Wed,  4 Dec 2019 10:40:38 -0500
-Message-Id: <20191204154038.2276810-2-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204154038.2276810-1-pasha.tatashin@soleen.com>
-References: <20191204154038.2276810-1-pasha.tatashin@soleen.com>
+        Wed, 04 Dec 2019 07:39:56 -0800 (PST)
+Date:   Wed, 4 Dec 2019 07:40:48 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: Use __copy_{to,from}_user() for emulated FP
+ loads/stores
+Message-ID: <20191204154048.eotzglp4rdlx4yzl@lantea.localdomain>
+References: <20191203204933.1642259-1-paulburton@kernel.org>
+ <f5e09155580d417e9dcd07b1c20786ed@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f5e09155580d417e9dcd07b1c20786ed@AcuMS.aculab.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add shutdown call back to close existing session with fTPM TA
-to support kexec scenario.
+Hi David,
 
-Add parentheses to function names in comments as specified in kdoc.
+On Wed, Dec 04, 2019 at 11:14:08AM +0000, David Laight wrote:
+> From: Paul Burton
+> > Sent: 03 December 2019 20:50
+> > Our FPU emulator currently uses __get_user() & __put_user() to perform
+> > emulated loads & stores. This is problematic because __get_user() &
+> > __put_user() are only suitable for naturally aligned memory accesses,
+> > and the address we're accessing is entirely under the control of
+> > userland.
+> > 
+> > This allows userland to cause a kernel panic by simply performing an
+> > unaligned floating point load or store - the kernel will handle the
+> > address error exception by attempting to emulate the instruction, and in
+> > the process it may generate another address error exception itself.
+> > This time the exception is taken with EPC pointing at the kernels FPU
+> > emulation code, and we hit a die_if_kernel() in
+> > emulate_load_store_insn().
+> 
+> Won't this be true of almost all code that uses get_user() and put_user()
+> (with or without the leading __).
 
-Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Sasha Levin <sashal@kernel.org>
----
- drivers/char/tpm/tpm_ftpm_tee.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+Only if the address being accessed is under the control of userland to
+the extent that it can create an unaligned address. You're right that
+may be more widespread though; it needs checking...
 
-diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
-index 6640a14dbe48..22bf553ccf9d 100644
---- a/drivers/char/tpm/tpm_ftpm_tee.c
-+++ b/drivers/char/tpm/tpm_ftpm_tee.c
-@@ -32,7 +32,7 @@ static const uuid_t ftpm_ta_uuid =
- 		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
- 
- /**
-- * ftpm_tee_tpm_op_recv - retrieve fTPM response.
-+ * ftpm_tee_tpm_op_recv() - retrieve fTPM response.
-  * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h.
-  * @buf:	the buffer to store data.
-  * @count:	the number of bytes to read.
-@@ -61,7 +61,7 @@ static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- }
- 
- /**
-- * ftpm_tee_tpm_op_send - send TPM commands through the TEE shared memory.
-+ * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared memory.
-  * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h
-  * @buf:	the buffer to send.
-  * @len:	the number of bytes to send.
-@@ -208,7 +208,7 @@ static int ftpm_tee_match(struct tee_ioctl_version_data *ver, const void *data)
- }
- 
- /**
-- * ftpm_tee_probe - initialize the fTPM
-+ * ftpm_tee_probe() - initialize the fTPM
-  * @pdev: the platform_device description.
-  *
-  * Return:
-@@ -298,7 +298,7 @@ static int ftpm_tee_probe(struct platform_device *pdev)
- }
- 
- /**
-- * ftpm_tee_remove - remove the TPM device
-+ * ftpm_tee_remove() - remove the TPM device
-  * @pdev: the platform_device description.
-  *
-  * Return:
-@@ -328,6 +328,19 @@ static int ftpm_tee_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+/**
-+ * ftpm_tee_shutdown() - shutdown the TPM device
-+ * @pdev: the platform_device description.
-+ */
-+static void ftpm_tee_shutdown(struct platform_device *pdev)
-+{
-+	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
-+
-+	tee_shm_free(pvt_data->shm);
-+	tee_client_close_session(pvt_data->ctx, pvt_data->session);
-+	tee_client_close_context(pvt_data->ctx);
-+}
-+
- static const struct of_device_id of_ftpm_tee_ids[] = {
- 	{ .compatible = "microsoft,ftpm" },
- 	{ }
-@@ -341,6 +354,7 @@ static struct platform_driver ftpm_tee_driver = {
- 	},
- 	.probe = ftpm_tee_probe,
- 	.remove = ftpm_tee_remove,
-+	.shutdown = ftpm_tee_shutdown,
- };
- 
- module_platform_driver(ftpm_tee_driver);
--- 
-2.24.0
+We used to have separate get_user_unaligned() & put_user_unaligned()
+which would suggest that it's expected that get_user() & put_user()
+require their accesses be aligned, but they were removed by commit
+3170d8d226c2 ("kill {__,}{get,put}_user_unaligned()") in v4.13.
 
+But perhaps we should just take the second AdEL exception & recover via
+the fixups table. We definitely don't right now... Needs further
+investigation...
+
+> > Fix this up by using __copy_from_user() instead of __get_user() and
+> > __copy_to_user() instead of __put_user(). These replacements will handle
+> > arbitrary alignment without problems.
+> 
+> They'll also kill performance.....
+
+Sure they're heavier, but if you're hitting the FPU emulator you're
+already slow - trapping to the kernel for instruction emulation is
+hardly a hot path. If you care about performance at all then this is
+already a code path to avoid at all costs.
+
+Thanks,
+    Paul
