@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C40211326E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76229113270
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbfLDSIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59788 "EHLO mail.kernel.org"
+        id S1730909AbfLDSI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:08:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730885AbfLDSIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:08:16 -0500
+        id S1730478AbfLDSIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:08:19 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A81320675;
-        Wed,  4 Dec 2019 18:08:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F12CE20833;
+        Wed,  4 Dec 2019 18:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482896;
-        bh=GKrDquQmMc8HbmJnc35y54RKrxR7EJFTx2TQSEMwkZE=;
+        s=default; t=1575482898;
+        bh=vD5DbcQuHNyFqCaTV3uL3AGJnv5Np/Ak+3dxUMn/pOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wj3biG7SsbsUcjFhHT4VNUxsQWCyAIS5Q4po/L/A/6ho8LBWquaoDoN5eMR9rnklW
-         eY5OWwR5KhhwG3j2wTyk0dufGkU3mSCAdev2K9PddDzyRNqZVAWR/xKQ4Gy2hRy7G1
-         9d7kgphPqwKx3NheNGPWFLPT0z5wqPPpr9ymroZY=
+        b=qlw9oEXqBWvp/oDs0MjWhm1xsFpGxfX6MJSWy66zq5hPtOyP4aSzhocu47mm2PW/6
+         BLPJUAlLs+zGtnjFXuXtAj4k2oUhTomYjDybS+Fd36OeU4jxnux2HUk1uCTBi75Q0I
+         sIMKDZ32Q0zj8uanJ8VWtk2QF7CaoFPbCYzOGqwI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dust Li <dust.li@linux.alibaba.com>,
-        Tony Lu <tonylu@linux.alibaba.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 177/209] net: sched: fix `tc -s class show` no bstats on class with nolock subqueues
-Date:   Wed,  4 Dec 2019 18:56:29 +0100
-Message-Id: <20191204175335.671731498@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com,
+        syzbot+33d7ea72e47de3bdf4e1@syzkaller.appspotmail.com,
+        syzbot+44b6763edfc17144296f@syzkaller.appspotmail.com,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.14 178/209] ext4: add more paranoia checking in ext4_expand_extra_isize handling
+Date:   Wed,  4 Dec 2019 18:56:30 +0100
+Message-Id: <20191204175335.742169887@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -45,83 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dust Li <dust.li@linux.alibaba.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 14e54ab9143fa60794d13ea0a66c792a2046a8f3 ]
+commit 4ea99936a1630f51fc3a2d61a58ec4a1c4b7d55a upstream.
 
-When a classful qdisc's child qdisc has set the flag
-TCQ_F_CPUSTATS (pfifo_fast for example), the child qdisc's
-cpu_bstats should be passed to gnet_stats_copy_basic(),
-but many classful qdisc didn't do that. As a result,
-`tc -s class show dev DEV` always return 0 for bytes and
-packets in this case.
+It's possible to specify a non-zero s_want_extra_isize via debugging
+option, and this can cause bad things(tm) to happen when using a file
+system with an inode size of 128 bytes.
 
-Pass the child qdisc's cpu_bstats to gnet_stats_copy_basic()
-to fix this issue.
+Add better checking when the file system is mounted, as well as when
+we are actually doing the trying to do the inode expansion.
 
-The qstats also has this problem, but it has been fixed
-in 5dd431b6b9 ("net: sched: introduce and use qstats read...")
-and bstats still remains buggy.
-
-Fixes: 22e0f8b9322c ("net: sched: make bstats per cpu and estimator RCU safe")
-Signed-off-by: Dust Li <dust.li@linux.alibaba.com>
-Signed-off-by: Tony Lu <tonylu@linux.alibaba.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://lore.kernel.org/r/20191110121510.GH23325@mit.edu
+Reported-by: syzbot+f8d6f8386ceacdbfff57@syzkaller.appspotmail.com
+Reported-by: syzbot+33d7ea72e47de3bdf4e1@syzkaller.appspotmail.com
+Reported-by: syzbot+44b6763edfc17144296f@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/sch_mq.c     |    3 ++-
- net/sched/sch_mqprio.c |    4 ++--
- net/sched/sch_multiq.c |    2 +-
- net/sched/sch_prio.c   |    2 +-
- 4 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/net/sched/sch_mq.c
-+++ b/net/sched/sch_mq.c
-@@ -191,7 +191,8 @@ static int mq_dump_class_stats(struct Qd
- 	struct netdev_queue *dev_queue = mq_queue_get(sch, cl);
+---
+ fs/ext4/inode.c |   15 +++++++++++++++
+ fs/ext4/super.c |   21 ++++++++++++---------
+ 2 files changed, 27 insertions(+), 9 deletions(-)
+
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5751,8 +5751,23 @@ static int __ext4_expand_extra_isize(str
+ {
+ 	struct ext4_inode *raw_inode;
+ 	struct ext4_xattr_ibody_header *header;
++	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
++	struct ext4_inode_info *ei = EXT4_I(inode);
+ 	int error;
  
- 	sch = dev_queue->qdisc_sleeping;
--	if (gnet_stats_copy_basic(&sch->running, d, NULL, &sch->bstats) < 0 ||
-+	if (gnet_stats_copy_basic(&sch->running, d, sch->cpu_bstats,
-+				  &sch->bstats) < 0 ||
- 	    gnet_stats_copy_queue(d, NULL, &sch->qstats, sch->q.qlen) < 0)
- 		return -1;
- 	return 0;
---- a/net/sched/sch_mqprio.c
-+++ b/net/sched/sch_mqprio.c
-@@ -366,8 +366,8 @@ static int mqprio_dump_class_stats(struc
- 		struct netdev_queue *dev_queue = mqprio_queue_get(sch, cl);
++	/* this was checked at iget time, but double check for good measure */
++	if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||
++	    (ei->i_extra_isize & 3)) {
++		EXT4_ERROR_INODE(inode, "bad extra_isize %u (inode size %u)",
++				 ei->i_extra_isize,
++				 EXT4_INODE_SIZE(inode->i_sb));
++		return -EFSCORRUPTED;
++	}
++	if ((new_extra_isize < ei->i_extra_isize) ||
++	    (new_extra_isize < 4) ||
++	    (new_extra_isize > inode_size - EXT4_GOOD_OLD_INODE_SIZE))
++		return -EINVAL;	/* Should never happen */
++
+ 	raw_inode = ext4_raw_inode(iloc);
  
- 		sch = dev_queue->qdisc_sleeping;
--		if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch),
--					  d, NULL, &sch->bstats) < 0 ||
-+		if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch), d,
-+					  sch->cpu_bstats, &sch->bstats) < 0 ||
- 		    gnet_stats_copy_queue(d, NULL,
- 					  &sch->qstats, sch->q.qlen) < 0)
- 			return -1;
---- a/net/sched/sch_multiq.c
-+++ b/net/sched/sch_multiq.c
-@@ -340,7 +340,7 @@ static int multiq_dump_class_stats(struc
+ 	header = IHDR(inode, raw_inode);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3458,12 +3458,15 @@ static void ext4_clamp_want_extra_isize(
+ {
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	struct ext4_super_block *es = sbi->s_es;
++	unsigned def_extra_isize = sizeof(struct ext4_inode) -
++						EXT4_GOOD_OLD_INODE_SIZE;
  
- 	cl_q = q->queues[cl - 1];
- 	if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch),
--				  d, NULL, &cl_q->bstats) < 0 ||
-+				  d, cl_q->cpu_bstats, &cl_q->bstats) < 0 ||
- 	    gnet_stats_copy_queue(d, NULL, &cl_q->qstats, cl_q->q.qlen) < 0)
- 		return -1;
- 
---- a/net/sched/sch_prio.c
-+++ b/net/sched/sch_prio.c
-@@ -298,7 +298,7 @@ static int prio_dump_class_stats(struct
- 
- 	cl_q = q->queues[cl - 1];
- 	if (gnet_stats_copy_basic(qdisc_root_sleeping_running(sch),
--				  d, NULL, &cl_q->bstats) < 0 ||
-+				  d, cl_q->cpu_bstats, &cl_q->bstats) < 0 ||
- 	    gnet_stats_copy_queue(d, NULL, &cl_q->qstats, cl_q->q.qlen) < 0)
- 		return -1;
- 
+-	/* determine the minimum size of new large inodes, if present */
+-	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE &&
+-	    sbi->s_want_extra_isize == 0) {
+-		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
+-						     EXT4_GOOD_OLD_INODE_SIZE;
++	if (sbi->s_inode_size == EXT4_GOOD_OLD_INODE_SIZE) {
++		sbi->s_want_extra_isize = 0;
++		return;
++	}
++	if (sbi->s_want_extra_isize < 4) {
++		sbi->s_want_extra_isize = def_extra_isize;
+ 		if (ext4_has_feature_extra_isize(sb)) {
+ 			if (sbi->s_want_extra_isize <
+ 			    le16_to_cpu(es->s_want_extra_isize))
+@@ -3476,10 +3479,10 @@ static void ext4_clamp_want_extra_isize(
+ 		}
+ 	}
+ 	/* Check if enough inode space is available */
+-	if (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
+-							sbi->s_inode_size) {
+-		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
+-						       EXT4_GOOD_OLD_INODE_SIZE;
++	if ((sbi->s_want_extra_isize > sbi->s_inode_size) ||
++	    (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
++							sbi->s_inode_size)) {
++		sbi->s_want_extra_isize = def_extra_isize;
+ 		ext4_msg(sb, KERN_INFO,
+ 			 "required extra inode space not available");
+ 	}
 
 
