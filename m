@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E78DB1134AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B98D1134F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfLDR6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:58:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59586 "EHLO mail.kernel.org"
+        id S1729502AbfLDS2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:28:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728467AbfLDR54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:57:56 -0500
+        id S1728541AbfLDR6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:58:03 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3869E2173B;
-        Wed,  4 Dec 2019 17:57:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7555E2084F;
+        Wed,  4 Dec 2019 17:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482275;
-        bh=Qawu1cW5CeHOX3fCanhGZXuPj8DJp9inTsgrwyuJqyo=;
+        s=default; t=1575482282;
+        bh=JjkMZRxTwNONSFOYQHMxJzRrh51/ljojQTltNjp4x1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mRePMaKe97TosOQ1u/Pjzj9feuCK3KpKFbRUKR60NKkm0DbIEVo6gSh5H0na8ImCO
-         YeHhjtfhWK+2L+f7xrfNPUG4oCUXbbOuaos5C+pFA0tSZZ6ZlCHfUXC0sxHTzGcJFq
-         FYnFoxTfVLS61ErFNe/COxep+PlbOVQUysZ3Fcl0=
+        b=mPXrEkVcrl0+Dlo/NxE2GA0o+tWXaaaFbnuVAsABRRbn+Y0hA489Q2Gy5MVuTJjXN
+         /fopYcwsrlEdS+31cpGhQs0M3tktTkYvr62arx29OEOUsD13u7/HOW7+McmOTch6qX
+         qcYpbykPDoCvXuNkfMzpAe7/iYPa7KBvFEHPEM9I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Bill ODonnell <billodo@redhat.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 22/92] xfs: require both realtime inodes to mount
-Date:   Wed,  4 Dec 2019 18:49:22 +0100
-Message-Id: <20191204174331.256766422@linuxfoundation.org>
+Subject: [PATCH 4.4 24/92] ubi: Do not drop UBI device reference before using
+Date:   Wed,  4 Dec 2019 18:49:24 +0100
+Message-Id: <20191204174331.646682407@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -45,43 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 64bafd2f1e484e27071e7584642005d56516cb77 ]
+[ Upstream commit e542087701f09418702673631a908429feb3eae0 ]
 
-Since mkfs always formats the filesystem with the realtime bitmap and
-summary inodes immediately after the root directory, we should expect
-that both of them are present and loadable, even if there isn't a
-realtime volume attached.  There's no reason to skip this if rbmino ==
-NULLFSINO; in fact, this causes an immediate crash if the there /is/ a
-realtime volume and someone writes to it.
+The UBI device reference is dropped but then the device is used as a
+parameter of ubi_err. The bug is introduced in changing ubi_err's
+behavior. The old ubi_err does not require a UBI device as its first
+parameter, but the new one does.
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Bill O'Donnell <billodo@redhat.com>
+Fixes: 32608703310 ("UBI: Extend UBI layer debug/messaging capabilities")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/xfs_rtalloc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mtd/ubi/kapi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_rtalloc.c b/fs/xfs/xfs_rtalloc.c
-index ab1bac6a3a1c0..919b6544b61a3 100644
---- a/fs/xfs/xfs_rtalloc.c
-+++ b/fs/xfs/xfs_rtalloc.c
-@@ -1225,13 +1225,11 @@ xfs_rtmount_inodes(
- 	xfs_sb_t	*sbp;
- 
- 	sbp = &mp->m_sb;
--	if (sbp->sb_rbmino == NULLFSINO)
--		return 0;
- 	error = xfs_iget(mp, NULL, sbp->sb_rbmino, 0, 0, &mp->m_rbmip);
- 	if (error)
- 		return error;
- 	ASSERT(mp->m_rbmip != NULL);
--	ASSERT(sbp->sb_rsumino != NULLFSINO);
-+
- 	error = xfs_iget(mp, NULL, sbp->sb_rsumino, 0, 0, &mp->m_rsumip);
- 	if (error) {
- 		IRELE(mp->m_rbmip);
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index e844887732fbd..1db375caef71b 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -227,9 +227,9 @@ out_unlock:
+ out_free:
+ 	kfree(desc);
+ out_put_ubi:
+-	ubi_put_device(ubi);
+ 	ubi_err(ubi, "cannot open device %d, volume %d, error %d",
+ 		ubi_num, vol_id, err);
++	ubi_put_device(ubi);
+ 	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(ubi_open_volume);
 -- 
 2.20.1
 
