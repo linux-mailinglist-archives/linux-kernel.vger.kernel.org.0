@@ -2,67 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9680113386
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D51281133E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbfLDSRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:17:05 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:47750 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731966AbfLDSRB (ORCPT
+        id S1731163AbfLDSTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:19:45 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33140 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728482AbfLDSTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:17:01 -0500
-Received: by mail-il1-f197.google.com with SMTP id d4so363612ile.14
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:17:01 -0800 (PST)
+        Wed, 4 Dec 2019 13:19:42 -0500
+Received: by mail-lj1-f195.google.com with SMTP id 21so441833ljr.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:19:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TO3M4JRDwYEQYalzC1JJGfXlWb3K9ShCnnIC37XGBvg=;
+        b=JdRLHNFl/zP5IdAJrHumL9k5kT+8N/SXMgaszfW6wKBo84jtVsc8GDMDEnHdUfzsxb
+         UH5/xrbFYWjsnujb1VgNV0ifwdAa6m2rUr/VbbeTKuNW4BHdAB17wKII+KD6isEytVz9
+         8kEgho3g4wpnYqC27M7LDRh8voiRk1Fr197UjvGqnmez4aSHveJEcfdpWGs4ON0Kb58l
+         TPd/YkqWWyCAHUvV5oZqSTPSe4c20GL8w5run9Fva+GzuNglr8j/ZmchkzY5PT9zY4le
+         EKDlDTR/jCYBd92gms9jcyKKt3MPmcpzYfYz25tbx2QBYpR3qsI/DNV9BYYPR+kf4+gG
+         D2TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=4wdFb/go3+wXQG1FazkaJLX0eWR/JfQ2cs/FXkmodVM=;
-        b=YNWBHMv8UNxQn4PPGriMzA8qCH8XCaegV16l2DLys9f22naRXGRN8MtiaowcVDzg4Y
-         zceTk2k3GMYzJf7OgY91AJzWuYsTwSvf0d1STDOlkxKwsgD+xq8GEaZXH/fDZNqnHS5a
-         vXRa78qgYcUkdyXjLynufWuNR51LuEf9ikfcL4lE6lS3qgUPmVt7sfv4Bs4EQdpKnneT
-         M0L92AFC/3Xzk0l1Znvk7DOq/Yxz9ti6uyC/EHD5NCnNir5EHHPq7Fp2Ppjam7SHUc+/
-         g4WTJk0CL3DoHZjWK/hH1ZRY+FPdGwo0tvModAnSkOuR/8ufhPyYxB3JmzJJu8855O84
-         ekXw==
-X-Gm-Message-State: APjAAAUORIx7LfqhykEmjdFFBuOFTGeiLac5Lx+qu7q/ok/gMNOQLfeh
-        UwsG5bss29NQK4l1PY8NZjY/F1SLqX7Z7yHyuFDKlEJe4R3a
-X-Google-Smtp-Source: APXvYqxfEJfcqqHIsUcy3WUxOi+VGXY6BPT7GEEyyyT795+CsrgW5AxgzYvjkVDBbiwQc8KpAHs0g0CC3cd5CmVN4OqVVyq0yZ6f
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TO3M4JRDwYEQYalzC1JJGfXlWb3K9ShCnnIC37XGBvg=;
+        b=eFceCEEcKDk31XPZB9pzxAfByFDxzcDbVvfwmiE79m+Gfk0jmb7cgXRemmzcn4jQGG
+         PKxW3hfcQW+Wrzqz32mJzKAkG50Zd1hpx6CQbBdnewRo5d+eobdOddM/KWZwFCbs6ybZ
+         TGvAa6LJ2S/5am3WWA7izWmViPrCUcLQMbu6AVTAShAWyV/DPBUhTuUTydAr7wnwxW9y
+         dhrrYRVnZ7GPLVWPSoQrRMCWD4kcs1XuOShsiZCtM86RVF/+NrDiQAVfbKlNSMBzxOg7
+         QQQdj0KTXZ6vrPMVhO1TLIP8Ay5NmWOGODEhwmn/zhoK787opfK4X2GiUj0tF6XSxiiq
+         za0w==
+X-Gm-Message-State: APjAAAXxt1cx4+7IcbaGJgDHVDChPJ4FxOaxF9pr50iA5bk01Jp31EMU
+        XC2vPU89JjHeVwhX5UvFclXpiLIpMNDIuGquxxVvSA==
+X-Google-Smtp-Source: APXvYqyzBiR+Ed0b5BcuFC05QaXCBuLCHt63QfZjPhGoegC3WP3wGNcc6ShbnjkYko3wnz8eotLLdLInGe+67+UCcjQ=
+X-Received: by 2002:a05:651c:239:: with SMTP id z25mr510830ljn.48.1575483580174;
+ Wed, 04 Dec 2019 10:19:40 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a02:40c6:: with SMTP id n189mr4320421jaa.18.1575483421189;
- Wed, 04 Dec 2019 10:17:01 -0800 (PST)
-Date:   Wed, 04 Dec 2019 10:17:01 -0800
-In-Reply-To: <1575471809.30318.6.camel@suse.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ab6be80598e4d18d@google.com>
-Subject: Re: KASAN: use-after-free Read in si470x_int_in_callback (2)
-From:   syzbot <syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, hverkuil@xs4all.nl,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org, oneukum@suse.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <CALAqxLXrWWnWi32BR1F8JOtrGt1y2Kzj__zWopLx1ZfRy3EZKA@mail.gmail.com>
+ <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
+ <20191204094216.u7yld5r3zelp22lf@e107158-lin.cambridge.arm.com>
+ <20191204100925.GA15727@linaro.org> <CALAqxLWCFNJzNvgrSKSs3s42O=D6EPmnvwPTWV_k-QH7v7VNtQ@mail.gmail.com>
+In-Reply-To: <CALAqxLWCFNJzNvgrSKSs3s42O=D6EPmnvwPTWV_k-QH7v7VNtQ@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 4 Dec 2019 19:19:26 +0100
+Message-ID: <CAKfTPtC-G+avBrixS35emnqUvW_MMjRBLyy=WxRB=bvS62zg_w@mail.gmail.com>
+Subject: Re: Null pointer crash at find_idlest_group on db845c w/ linus/master
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Qais Yousef <qais.yousef@arm.com>,
+        Quentin Perret <qperret@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 4 Dec 2019 at 19:16, John Stultz <john.stultz@linaro.org> wrote:
+>
+> On Wed, Dec 4, 2019 at 2:09 AM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > Le Wednesday 04 Dec 2019 =C3=A0 09:42:17 (+0000), Qais Yousef a =C3=A9c=
+rit :
+> > > On 12/04/19 09:06, Vincent Guittot wrote:
+> > > > Hi John,
+> > > >
+> > > > On Tue, 3 Dec 2019 at 20:15, John Stultz <john.stultz@linaro.org> w=
+rote:
+> > > > >
+> > > > > With today's linus/master on db845c running android, I'm able to
+> > > > > fairly easily reproduce the following crash. I've not had a chanc=
+e to
+> > > > > bisect it yet, but I'm suspecting its connected to Vincent's rece=
+nt
+> > > > > rework.
+> > > >
+> > > > Does the crash happen randomly or after a specific action ?
+> > > > I have a db845 so I can try to reproduce it locally.
+> > >
+> > > Isn't there a chance we use local_sgs without initializing it in that=
+ function?
+> >
+> > Normally not because the cpu belongs to its sched_domain
+> >
+> > Now, we test that a group has at least one allowed CPU for the task so =
+we
+> > could skip the local group with the correct/wrong p->cpus_ptr
+> >
+> > The path is used for fork/exec ibut also for wakeup path for b.L when t=
+he task doesn't fit in the CPUs
+> >
+> > So we can probably imagine a scenario where we change task affinity whi=
+le
+> > sleeping. If the wakeup happens on a CPU that belongs to the group that=
+ is not
+> > allowed, we can imagine that we skip the local_group
+> >
+> > John,
+> >
+> > Could you try the fix below ?
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 08a233e..bcd216d 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -8417,6 +8417,10 @@ find_idlest_group(struct sched_domain *sd, struc=
+t task_struct *p,
+> >         if (!idlest)
+> >                 return NULL;
+> >
+> > +       /* The local group has been skipped because of cpu affinity */
+> > +       if (!local)
+> > +               return idlest;
+> > +
+> >         /*
+> >          * If the local group is idler than the selected idlest group
+> >          * don't try and push the task.
+>
+> This patch does seem to solve the issue for me! Thanks so much!
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+Thanks for testing
 
-Reported-and-tested-by:  
-syzbot+9ca7a12fd736d93e0232@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         22be26f7 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=387eccb7ac68ec5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9ca7a12fd736d93e0232
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1063382ee00000
-
-Note: testing is done by a robot and is best-effort only.
+>
+> Tested-by: John Stultz <john.stultz@linaro.org>
+> -john
