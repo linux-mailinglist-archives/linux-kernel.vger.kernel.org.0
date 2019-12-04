@@ -2,300 +2,322 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B29EB112A4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 12:37:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE73C112AC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 12:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfLDLhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 06:37:00 -0500
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:38947 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbfLDLg7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 06:36:59 -0500
+        id S1727812AbfLDLzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 06:55:03 -0500
+Received: from mail.manjaro.org ([176.9.38.148]:38224 "EHLO manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727786AbfLDLzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 06:55:03 -0500
+X-Greylist: delayed 1042 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Dec 2019 06:55:02 EST
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id E54F047BA8;
-        Wed,  4 Dec 2019 12:36:56 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=PlXbStpw;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id JlA6HdtsDBLF; Wed,  4 Dec 2019 12:36:55 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id E4C0B3F802;
-        Wed,  4 Dec 2019 12:36:48 +0100 (CET)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id F2FA8360608;
-        Wed,  4 Dec 2019 12:36:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1575459408; bh=YaxGHckT/+4Bzy1VBWGGWN9Dy0KBMg6XIzVFkcyn1+0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PlXbStpwEvZtnm6PVOT4yH9HBJ32oNP4sYGwOMbRVPq/l76dIjSHvGPyvn58mVENG
-         5JQ76oRbcNSe2mWCpP8VXgrLF1qtkN4YddXdUB+XWDD+fn5c+MITWOVb2ybhQbzFal
-         qfFuZZoP+FKVMIN18ZnryNopm/2pYWKxICI6s/ew=
-Subject: Re: [PATCH 6/8] drm: Add a drm_get_unmapped_area() helper
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20191203132239.5910-1-thomas_os@shipmail.org>
- <20191203132239.5910-7-thomas_os@shipmail.org>
- <e091063c-2c4a-866e-acdb-9efb1e20d737@amd.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <98af5b11-1034-91fa-aa38-5730f116d1cd@shipmail.org>
-Date:   Wed, 4 Dec 2019 12:36:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by manjaro.org (Postfix) with ESMTP id D5EF37E0BBC;
+        Wed,  4 Dec 2019 12:37:38 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ftLbewQiqTYd; Wed,  4 Dec 2019 12:37:35 +0100 (CET)
+Subject: Re: [ANNOUNCE] v5.2.21-rt14
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20191204095144.kvpbinxqptdszvqq@linutronix.de>
+From:   Bernhard Landauer <bernhard@manjaro.org>
+Message-ID: <902943c5-9fee-ef45-2b5d-8baa6fa00685@manjaro.org>
+Date:   Wed, 4 Dec 2019 12:37:34 +0100
 MIME-Version: 1.0
-In-Reply-To: <e091063c-2c4a-866e-acdb-9efb1e20d737@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191204095144.kvpbinxqptdszvqq@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/19 12:11 PM, Christian König wrote:
-> Am 03.12.19 um 14:22 schrieb Thomas Hellström (VMware):
->> From: Thomas Hellstrom <thellstrom@vmware.com>
->>
->> This helper is used to align user-space buffer object addresses to
->> huge page boundaries, minimizing the chance of alignment mismatch
->> between user-space addresses and physical addresses.
+Sorry if maybe I have missed any announcements here, but my I ask if you
+are planning on releasing patches for kernels >5,2 in the near future?
+Or is this project being faded out altogether?
+
+kind regards
+Bernhard
+
+On 04.12.19 10:51, Sebastian Andrzej Siewior wrote:
+> Dear RT folks!
 >
-> Mhm, I'm wondering if that is really such a good idea.
-
-Could you elaborate? What drawbacks do you see?
-Note that this is the way other subsystems are doing it. Take a look at 
-shmem_get_unmapped_area() for instance.
-
+> I'm pleased to announce the v5.2.21-rt14 patch set. 
 >
-> Wouldn't it be sufficient if userspace uses MAP_HUGETLB?
-
-MAP_HUGETLB is something different and appears to be tied to the kernel 
-persistent huge page mechanism, whereas the TTM huge pages is tided to 
-the THP functionality (although skipped by khugepaged).
-
-Thanks,
-
-Thomas
-
-
-
+> Changes since v5.2.21-rt13:
 >
-> Regards,
-> Christian.
+>   - printk. The "emergency loglevel" was used to determine which
+>     messages are printed directly on the console (if atomic write is
+>     available (8250 only right now)). By default messages with the log
+>     level KERN_WARNING (and less) were printed directly.
+>     As part of the current printk rework it has been decided that only
+>     messages which lead to system failure like BUG(), panic() should use
+>     the direct interface. Patch by John Ogness.
 >
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->> Cc: Ralph Campbell <rcampbell@nvidia.com>
->> Cc: "Jérôme Glisse" <jglisse@redhat.com>
->> Cc: "Christian König" <christian.koenig@amd.com>
->> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
->> ---
->>   drivers/gpu/drm/drm_file.c | 130 +++++++++++++++++++++++++++++++++++++
->>   include/drm/drm_file.h     |   5 ++
->>   2 files changed, 135 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
->> index ea34bc991858..e5b4024cd397 100644
->> --- a/drivers/gpu/drm/drm_file.c
->> +++ b/drivers/gpu/drm/drm_file.c
->> @@ -31,6 +31,8 @@
->>    * OTHER DEALINGS IN THE SOFTWARE.
->>    */
->>   +#include <uapi/asm/mman.h>
->> +
->>   #include <linux/dma-fence.h>
->>   #include <linux/module.h>
->>   #include <linux/pci.h>
->> @@ -41,6 +43,7 @@
->>   #include <drm/drm_drv.h>
->>   #include <drm/drm_file.h>
->>   #include <drm/drm_print.h>
->> +#include <drm/drm_vma_manager.h>
->>     #include "drm_crtc_internal.h"
->>   #include "drm_internal.h"
->> @@ -754,3 +757,130 @@ void drm_send_event(struct drm_device *dev, 
->> struct drm_pending_event *e)
->>       spin_unlock_irqrestore(&dev->event_lock, irqflags);
->>   }
->>   EXPORT_SYMBOL(drm_send_event);
->> +
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +/*
->> + * drm_addr_inflate() attempts to construct an aligned area by 
->> inflating
->> + * the area size and skipping the unaligned start of the area.
->> + * adapted from shmem_get_unmapped_area()
->> + */
->> +static unsigned long drm_addr_inflate(unsigned long addr,
->> +                      unsigned long len,
->> +                      unsigned long pgoff,
->> +                      unsigned long flags,
->> +                      unsigned long huge_size)
->> +{
->> +    unsigned long offset, inflated_len;
->> +    unsigned long inflated_addr;
->> +    unsigned long inflated_offset;
->> +
->> +    offset = (pgoff << PAGE_SHIFT) & (huge_size - 1);
->> +    if (offset && offset + len < 2 * huge_size)
->> +        return addr;
->> +    if ((addr & (huge_size - 1)) == offset)
->> +        return addr;
->> +
->> +    inflated_len = len + huge_size - PAGE_SIZE;
->> +    if (inflated_len > TASK_SIZE)
->> +        return addr;
->> +    if (inflated_len < len)
->> +        return addr;
->> +
->> +    inflated_addr = current->mm->get_unmapped_area(NULL, 0, 
->> inflated_len,
->> +                               0, flags);
->> +    if (IS_ERR_VALUE(inflated_addr))
->> +        return addr;
->> +    if (inflated_addr & ~PAGE_MASK)
->> +        return addr;
->> +
->> +    inflated_offset = inflated_addr & (huge_size - 1);
->> +    inflated_addr += offset - inflated_offset;
->> +    if (inflated_offset > offset)
->> +        inflated_addr += huge_size;
->> +
->> +    if (inflated_addr > TASK_SIZE - len)
->> +        return addr;
->> +
->> +    return inflated_addr;
->> +}
->> +
->> +/**
->> + * drm_get_unmapped_area() - Get an unused user-space virtual memory 
->> area
->> + * suitable for huge page table entries.
->> + * @file: The struct file representing the address space being 
->> mmap()'d.
->> + * @uaddr: Start address suggested by user-space.
->> + * @len: Length of the area.
->> + * @pgoff: The page offset into the address space.
->> + * @flags: mmap flags
->> + * @mgr: The address space manager used by the drm driver. This 
->> argument can
->> + * probably be removed at some point when all drivers use the same
->> + * address space manager.
->> + *
->> + * This function attempts to find an unused user-space virtual 
->> memory area
->> + * that can accommodate the size we want to map, and that is properly
->> + * aligned to facilitate huge page table entries matching actual
->> + * huge pages or huge page aligned memory in buffer objects. Buffer 
->> objects
->> + * are assumed to start at huge page boundary pfns (io memory) or be
->> + * populated by huge pages aligned to the start of the buffer object
->> + * (system- or coherent memory). Adapted from shmem_get_unmapped_area.
->> + *
->> + * Return: aligned user-space address.
->> + */
->> +unsigned long drm_get_unmapped_area(struct file *file,
->> +                    unsigned long uaddr, unsigned long len,
->> +                    unsigned long pgoff, unsigned long flags,
->> +                    struct drm_vma_offset_manager *mgr)
->> +{
->> +    unsigned long addr;
->> +    unsigned long inflated_addr;
->> +    struct drm_vma_offset_node *node;
->> +
->> +    if (len > TASK_SIZE)
->> +        return -ENOMEM;
->> +
->> +    /* Adjust mapping offset to be zero at bo start */
->> +    drm_vma_offset_lock_lookup(mgr);
->> +    node = drm_vma_offset_lookup_locked(mgr, pgoff, 1);
->> +    if (node)
->> +        pgoff -= node->vm_node.start;
->> +    drm_vma_offset_unlock_lookup(mgr);
->> +
->> +    addr = current->mm->get_unmapped_area(file, uaddr, len, pgoff, 
->> flags);
->> +    if (IS_ERR_VALUE(addr))
->> +        return addr;
->> +    if (addr & ~PAGE_MASK)
->> +        return addr;
->> +    if (addr > TASK_SIZE - len)
->> +        return addr;
->> +
->> +    if (len < HPAGE_PMD_SIZE)
->> +        return addr;
->> +    if (flags & MAP_FIXED)
->> +        return addr;
->> +    /*
->> +     * Our priority is to support MAP_SHARED mapped hugely;
->> +     * and support MAP_PRIVATE mapped hugely too, until it is COWed.
->> +     * But if caller specified an address hint, respect that as before.
->> +     */
->> +    if (uaddr)
->> +        return addr;
->> +
->> +    inflated_addr = drm_addr_inflate(addr, len, pgoff, flags,
->> +                     HPAGE_PMD_SIZE);
->> +
->> +    if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
->> +        len >= HPAGE_PUD_SIZE)
->> +        inflated_addr = drm_addr_inflate(inflated_addr, len, pgoff,
->> +                         flags, HPAGE_PUD_SIZE);
->> +    return inflated_addr;
->> +}
->> +#else /* CONFIG_TRANSPARENT_HUGEPAGE */
->> +unsigned long drm_get_unmapped_area(struct file *file,
->> +                    unsigned long uaddr, unsigned long len,
->> +                    unsigned long pgoff, unsigned long flags,
->> +                    struct drm_vma_offset_manager *mgr)
->> +{
->> +    return current->mm->get_unmapped_area(file, uaddr, len, pgoff, 
->> flags);
->> +}
->> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->> +EXPORT_SYMBOL_GPL(drm_get_unmapped_area);
->> diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
->> index 67af60bb527a..4719cc80d547 100644
->> --- a/include/drm/drm_file.h
->> +++ b/include/drm/drm_file.h
->> @@ -386,5 +386,10 @@ void drm_event_cancel_free(struct drm_device *dev,
->>                  struct drm_pending_event *p);
->>   void drm_send_event_locked(struct drm_device *dev, struct 
->> drm_pending_event *e);
->>   void drm_send_event(struct drm_device *dev, struct 
->> drm_pending_event *e);
->> +struct drm_vma_offset_manager;
->> +unsigned long drm_get_unmapped_area(struct file *file,
->> +                    unsigned long uaddr, unsigned long len,
->> +                    unsigned long pgoff, unsigned long flags,
->> +                    struct drm_vma_offset_manager *mgr);
->>     #endif /* _DRM_FILE_H_ */
-
-
+>   - Cherry pick a X86-FPU patch from upstream to avoid a miss
+>     compilation with gcc-9.
+>
+>   - Make the spin_lock() section also part of a rcu read section on RT.
+>
+>   - PowerPC on 32bit did not compile due to a missing function since the
+>     softirq rework. It also did not boot due to a bug in the
+>     lazy-preempt code. It compiles and it has been verified in qemu on a
+>     book-E target (due to lack of real hardware) that it boots again.
+>
+>   - RT did not compile if CONFIG_HOTPLUG_CPU was not defined. Reported
+>     by Dick Hollenbeck.
+>
+> Known issues
+>      - None
+>
+> The delta patch against v5.2.21-rt13 is appended below and can be found here:
+>  
+>      https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.2/incr/patch-5.2.21-rt13-rt14.patch.xz
+>
+> You can get this release via the git tree at:
+>
+>     git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v5.2.21-rt14
+>
+> The RT patch against v5.2.21 can be found here:
+>
+>     https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.2/older/patch-5.2.21-rt14.patch.xz
+>
+> The split quilt queue is available at:
+>
+>     https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.2/older/patches-5.2.21-rt14.tar.xz
+>
+> Sebastian
+>
+> diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+> index d37b373104502..004944258387b 100644
+> --- a/arch/powerpc/kernel/entry_32.S
+> +++ b/arch/powerpc/kernel/entry_32.S
+> @@ -893,10 +893,10 @@ user_exc_return:		/* r10 contains MSR_KERNEL here */
+>  	bne	restore_kuap
+>  	andi.	r8,r8,_TIF_NEED_RESCHED
+>  	bne+	1f
+> -	lwz	r0,TI_PREEMPT_LAZY(r9)
+> +	lwz	r0,TI_PREEMPT_LAZY(r2)
+>  	cmpwi	0,r0,0          /* if non-zero, just restore regs and return */
+>  	bne	restore_kuap
+> -	lwz	r0,TI_FLAGS(r9)
+> +	lwz	r0,TI_FLAGS(r2)
+>  	andi.	r0,r0,_TIF_NEED_RESCHED_LAZY
+>  	beq+	restore_kuap
+>  1:
+> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+> index 4c95c365058aa..44c48e34d7994 100644
+> --- a/arch/x86/include/asm/fpu/internal.h
+> +++ b/arch/x86/include/asm/fpu/internal.h
+> @@ -509,7 +509,7 @@ static inline void __fpu_invalidate_fpregs_state(struct fpu *fpu)
+>  
+>  static inline int fpregs_state_valid(struct fpu *fpu, unsigned int cpu)
+>  {
+> -	return fpu == this_cpu_read_stable(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+> +	return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;
+>  }
+>  
+>  /*
+> diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+> index d559e3a0379c2..7653dd58b4b21 100644
+> --- a/include/linux/preempt.h
+> +++ b/include/linux/preempt.h
+> @@ -100,9 +100,9 @@
+>  				   (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
+>  #ifdef CONFIG_PREEMPT_RT_FULL
+>  
+> -#define softirq_count()		((long)get_current()->softirq_count)
+> +#define softirq_count()		(current->softirq_count)
+>  #define in_softirq()		(softirq_count())
+> -#define in_serving_softirq()	(get_current()->softirq_count & SOFTIRQ_OFFSET)
+> +#define in_serving_softirq()	(current->softirq_count & SOFTIRQ_OFFSET)
+>  
+>  #else
+>  
+> diff --git a/kernel/cpu.c b/kernel/cpu.c
+> index e1bf3c698a321..5bfd13a5cc49d 100644
+> --- a/kernel/cpu.c
+> +++ b/kernel/cpu.c
+> @@ -877,7 +877,9 @@ static int take_cpu_down(void *_param)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PREEMPT_RT_BASE
+>  struct task_struct *takedown_cpu_task;
+> +#endif
+>  
+>  static int takedown_cpu(unsigned int cpu)
+>  {
+> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+> index bb5c09c49c504..ba4b151bf4517 100644
+> --- a/kernel/locking/rtmutex.c
+> +++ b/kernel/locking/rtmutex.c
+> @@ -1143,6 +1143,7 @@ void __sched rt_spin_lock_slowunlock(struct rt_mutex *lock)
+>  void __lockfunc rt_spin_lock(spinlock_t *lock)
+>  {
+>  	sleeping_lock_inc();
+> +	rcu_read_lock();
+>  	migrate_disable();
+>  	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+>  	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
+> @@ -1158,6 +1159,7 @@ void __lockfunc __rt_spin_lock(struct rt_mutex *lock)
+>  void __lockfunc rt_spin_lock_nested(spinlock_t *lock, int subclass)
+>  {
+>  	sleeping_lock_inc();
+> +	rcu_read_lock();
+>  	migrate_disable();
+>  	spin_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
+>  	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
+> @@ -1171,6 +1173,7 @@ void __lockfunc rt_spin_unlock(spinlock_t *lock)
+>  	spin_release(&lock->dep_map, 1, _RET_IP_);
+>  	rt_spin_lock_fastunlock(&lock->lock, rt_spin_lock_slowunlock);
+>  	migrate_enable();
+> +	rcu_read_unlock();
+>  	sleeping_lock_dec();
+>  }
+>  EXPORT_SYMBOL(rt_spin_unlock);
+> @@ -1202,6 +1205,7 @@ int __lockfunc rt_spin_trylock(spinlock_t *lock)
+>  	ret = __rt_mutex_trylock(&lock->lock);
+>  	if (ret) {
+>  		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
+> +		rcu_read_lock();
+>  	} else {
+>  		migrate_enable();
+>  		sleeping_lock_dec();
+> @@ -1218,6 +1222,7 @@ int __lockfunc rt_spin_trylock_bh(spinlock_t *lock)
+>  	ret = __rt_mutex_trylock(&lock->lock);
+>  	if (ret) {
+>  		sleeping_lock_inc();
+> +		rcu_read_lock();
+>  		migrate_disable();
+>  		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
+>  	} else
+> @@ -1234,6 +1239,7 @@ int __lockfunc rt_spin_trylock_irqsave(spinlock_t *lock, unsigned long *flags)
+>  	ret = __rt_mutex_trylock(&lock->lock);
+>  	if (ret) {
+>  		sleeping_lock_inc();
+> +		rcu_read_lock();
+>  		migrate_disable();
+>  		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
+>  	}
+> diff --git a/kernel/locking/rwlock-rt.c b/kernel/locking/rwlock-rt.c
+> index c3b91205161cc..0ae8c62ea8320 100644
+> --- a/kernel/locking/rwlock-rt.c
+> +++ b/kernel/locking/rwlock-rt.c
+> @@ -310,6 +310,7 @@ int __lockfunc rt_read_trylock(rwlock_t *rwlock)
+>  	ret = do_read_rt_trylock(rwlock);
+>  	if (ret) {
+>  		rwlock_acquire_read(&rwlock->dep_map, 0, 1, _RET_IP_);
+> +		rcu_read_lock();
+>  	} else {
+>  		migrate_enable();
+>  		sleeping_lock_dec();
+> @@ -327,6 +328,7 @@ int __lockfunc rt_write_trylock(rwlock_t *rwlock)
+>  	ret = do_write_rt_trylock(rwlock);
+>  	if (ret) {
+>  		rwlock_acquire(&rwlock->dep_map, 0, 1, _RET_IP_);
+> +		rcu_read_lock();
+>  	} else {
+>  		migrate_enable();
+>  		sleeping_lock_dec();
+> @@ -338,6 +340,7 @@ EXPORT_SYMBOL(rt_write_trylock);
+>  void __lockfunc rt_read_lock(rwlock_t *rwlock)
+>  {
+>  	sleeping_lock_inc();
+> +	rcu_read_lock();
+>  	migrate_disable();
+>  	rwlock_acquire_read(&rwlock->dep_map, 0, 0, _RET_IP_);
+>  	do_read_rt_lock(rwlock);
+> @@ -347,6 +350,7 @@ EXPORT_SYMBOL(rt_read_lock);
+>  void __lockfunc rt_write_lock(rwlock_t *rwlock)
+>  {
+>  	sleeping_lock_inc();
+> +	rcu_read_lock();
+>  	migrate_disable();
+>  	rwlock_acquire(&rwlock->dep_map, 0, 0, _RET_IP_);
+>  	do_write_rt_lock(rwlock);
+> @@ -358,6 +362,7 @@ void __lockfunc rt_read_unlock(rwlock_t *rwlock)
+>  	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
+>  	do_read_rt_unlock(rwlock);
+>  	migrate_enable();
+> +	rcu_read_unlock();
+>  	sleeping_lock_dec();
+>  }
+>  EXPORT_SYMBOL(rt_read_unlock);
+> @@ -367,6 +372,7 @@ void __lockfunc rt_write_unlock(rwlock_t *rwlock)
+>  	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
+>  	do_write_rt_unlock(rwlock);
+>  	migrate_enable();
+> +	rcu_read_unlock();
+>  	sleeping_lock_dec();
+>  }
+>  EXPORT_SYMBOL(rt_write_unlock);
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 9d9523431178b..2b4616fd4fd4b 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1767,15 +1767,8 @@ static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
+>  			con->wrote_history = 1;
+>  			con->printk_seq = seq - 1;
+>  		}
+> -		if (con->write_atomic && level < emergency_console_loglevel &&
+> -		    facility == 0) {
+> -			/* skip emergency messages, already printed */
+> -			if (con->printk_seq < seq)
+> -				con->printk_seq = seq;
+> -			continue;
+> -		}
+>  		if (con->flags & CON_BOOT && facility == 0) {
+> -			/* skip emergency messages, already printed */
+> +			/* skip boot messages, already printed */
+>  			if (con->printk_seq < seq)
+>  				con->printk_seq = seq;
+>  			continue;
+> @@ -3161,7 +3154,7 @@ static bool console_can_emergency(int level)
+>  	for_each_console(con) {
+>  		if (!(con->flags & CON_ENABLED))
+>  			continue;
+> -		if (con->write_atomic && level < emergency_console_loglevel)
+> +		if (con->write_atomic && oops_in_progress)
+>  			return true;
+>  		if (con->write && (con->flags & CON_BOOT))
+>  			return true;
+> @@ -3177,7 +3170,7 @@ static void call_emergency_console_drivers(int level, const char *text,
+>  	for_each_console(con) {
+>  		if (!(con->flags & CON_ENABLED))
+>  			continue;
+> -		if (con->write_atomic && level < emergency_console_loglevel) {
+> +		if (con->write_atomic && oops_in_progress) {
+>  			con->write_atomic(con, text, text_len);
+>  			continue;
+>  		}
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 6383ade320f23..ef9621815f37e 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -7384,9 +7384,11 @@ void migrate_enable(void)
+>  
+>  	p->migrate_disable = 0;
+>  	rq->nr_pinned--;
+> +#ifdef CONFIG_HOTPLUG_CPU
+>  	if (rq->nr_pinned == 0 && unlikely(!cpu_active(cpu)) &&
+>  	    takedown_cpu_task)
+>  		wake_up_process(takedown_cpu_task);
+> +#endif
+>  
+>  	if (!p->migrate_disable_scheduled)
+>  		goto out;
+> diff --git a/localversion-rt b/localversion-rt
+> index 9f7d0bdbffb18..08b3e75841adc 100644
+> --- a/localversion-rt
+> +++ b/localversion-rt
+> @@ -1 +1 @@
+> --rt13
+> +-rt14
