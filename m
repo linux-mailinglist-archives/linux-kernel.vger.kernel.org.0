@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292AA113280
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A44A1132F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730964AbfLDSIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:08:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60828 "EHLO mail.kernel.org"
+        id S1731467AbfLDSNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:13:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730018AbfLDSIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:08:35 -0500
+        id S1731727AbfLDSNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:13:16 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9CA02089C;
-        Wed,  4 Dec 2019 18:08:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1533206DF;
+        Wed,  4 Dec 2019 18:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482915;
-        bh=bs5/xyBHOfej+Iw29Cr0qxNf9qYZqmH7Je52HSZx7Pg=;
+        s=default; t=1575483195;
+        bh=DgcQXiIgyHSxGbSxUc51xg1P7nmKC/rS5icNxdhZ+EU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AqgTkTwnsmVEkRNfiOy58zCCVjXQ7osseV400aDK8zmovWXPq/giPnPeFt2zNepsv
-         pEhJRwrKqBx/6Ya9HkoiGi5D6N0pWPCFqmDPY/WzVCQcQT6S0TNBrZ4PSIdAsb1/BH
-         kPMNPdROXZSCZHKxMsuDfN4nVS8ENc1OTXA8l62M=
+        b=CbWN/u5fbQ+QidC1SUk89vWwsCcqgkZWOsVYt6G3i7c7pnP4DdpNaNtb3NLebr9PH
+         0e+KYARz5Ma8KSDrWiYPJXnWEp85RhEvSJqFHuytN4nizbhMKuBiwBcUz5O7J394CD
+         MwMOHe2d0fL0Gjur468bcv2ZxcmXwkyTJSorFJZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "huijin.park" <huijin.park@samsung.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.14 184/209] mtd: spi-nor: cast to u64 to avoid uint overflows
-Date:   Wed,  4 Dec 2019 18:56:36 +0100
-Message-Id: <20191204175336.157081208@linuxfoundation.org>
+        stable@vger.kernel.org, wenxu <wenxu@ucloud.cn>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 092/125] ip_tunnel: Make none-tunnel-dst tunnel port work with lwtunnel
+Date:   Wed,  4 Dec 2019 18:56:37 +0100
+Message-Id: <20191204175324.656279180@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: huijin.park <huijin.park@samsung.com>
+From: wenxu <wenxu@ucloud.cn>
 
-commit 84a1c2109d23df3543d96231c4fee1757299bb1a upstream.
+[ Upstream commit d71b57532d70c03f4671dd04e84157ac6bf021b0 ]
 
-The "params->size" is defined as "u64".
-And "info->sector_size" and "info->n_sectors" are defined as
-unsigned int and u16.
-Thus, u64 data might have strange data(loss data) if the result
-overflows an unsigned int.
-This patch casts "info->sector_size" to an u64.
+ip l add dev tun type gretap key 1000
+ip a a dev tun 10.0.0.1/24
 
-Signed-off-by: huijin.park <huijin.park@samsung.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Packets with tun-id 1000 can be recived by tun dev. But packet can't
+be sent through dev tun for non-tunnel-dst
 
+With this patch: tunnel-dst can be get through lwtunnel like beflow:
+ip r a 10.0.0.7 encap ip dst 172.168.0.11 dev tun
+
+Signed-off-by: wenxu <wenxu@ucloud.cn>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/spi-nor/spi-nor.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_tunnel.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2382,7 +2382,7 @@ static int spi_nor_init_params(struct sp
- 	memset(params, 0, sizeof(*params));
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index e6ee6acac80c4..a4db2d79b9134 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -653,13 +653,19 @@ void ip_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
+ 	dst = tnl_params->daddr;
+ 	if (dst == 0) {
+ 		/* NBMA tunnel */
++		struct ip_tunnel_info *tun_info;
  
- 	/* Set SPI NOR sizes. */
--	params->size = info->sector_size * info->n_sectors;
-+	params->size = (u64)info->sector_size * info->n_sectors;
- 	params->page_size = info->page_size;
+ 		if (!skb_dst(skb)) {
+ 			dev->stats.tx_fifo_errors++;
+ 			goto tx_error;
+ 		}
  
- 	/* (Fast) Read settings. */
+-		if (skb->protocol == htons(ETH_P_IP)) {
++		tun_info = skb_tunnel_info(skb);
++		if (tun_info && (tun_info->mode & IP_TUNNEL_INFO_TX) &&
++		    ip_tunnel_info_af(tun_info) == AF_INET &&
++		    tun_info->key.u.ipv4.dst)
++			dst = tun_info->key.u.ipv4.dst;
++		else if (skb->protocol == htons(ETH_P_IP)) {
+ 			rt = skb_rtable(skb);
+ 			dst = rt_nexthop(rt, inner_iph->daddr);
+ 		}
+-- 
+2.20.1
+
 
 
