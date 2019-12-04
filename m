@@ -2,83 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E42B3112215
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 05:29:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2161311222F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 05:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfLDE3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 23:29:16 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:45972 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfLDE3Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 23:29:16 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id xB44SEjv007912;
-        Wed, 4 Dec 2019 13:28:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xB44SEjv007912
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1575433694;
-        bh=aZBc4IVru6RGfaR7ceRLbfahtURpRZYF6EvcHQYceI0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HTXFfWeetey0nr5Exo6zi1nh1p8lFfnNhnAYaHttpJ+kadz/VQguBJe3bfSLKGTVt
-         9CkBdwN/f2IMZ6UarVAWoE+EOE4nd+6aloabRz0AABRnWTrpg5XlgELfWvTADuGSn4
-         dVX5N7gLfUKbvE6K+6EUMPYq/cRCiuPCcalsx2ME41KXgVqYb3VsBx37gKeI20QDH6
-         9tfU8h0aEyKfMkcqcGMU0tGNjjsWGWJ0zXuxjF1QZwIDy72uytQrHahlC11Xj5roNJ
-         tjb/d+g1uI4QmW9+VgrxNGOzVzgGxgxJ1osThXLnv9aJwZxdWuOwDO5iZwkJYDtoy5
-         SJe04muS2z5vQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     patches@arm.linux.org.uk
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: decompressor: use CONFIG option instead of cc-option
-Date:   Wed,  4 Dec 2019 13:28:12 +0900
-Message-Id: <20191204042813.7484-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726958AbfLDEnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 23:43:47 -0500
+Received: from ozlabs.org ([203.11.71.1]:53171 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726835AbfLDEnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 23:43:47 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 47SR7h0Jhfz9sR8; Wed,  4 Dec 2019 15:43:43 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1575434624;
+        bh=0ftyPdnyKfQDnu98YNE3xbdhD7agELawu01H6mP95Lg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ky1DOXdYVtCpC5d0qcti91YI0bdeBD2fIKsbHOMcDGQOiJfZ4xu4AzrEyMH5cD1Os
+         T+mAfdqlKTX+hMSvTaTVpSjCqPJpw6FbHB5EddfRBnBpOWjTu85RRyaUuh9ZdmvTxd
+         UCbY0E5bEH8hvB7ssamFhTqc/ymW+lIdBW6T2wgU=
+Date:   Wed, 4 Dec 2019 14:36:18 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@ozlabs.org,
+        mdroth@linux.vnet.ibm.com, hch@lst.de, andmike@us.ibm.com,
+        sukadev@linux.vnet.ibm.com, mst@redhat.com, ram.n.pai@gmail.com,
+        cai@lca.pw, tglx@linutronix.de, bauerman@linux.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] powerpc/pseries/iommu: Share the per-cpu TCE page
+ with the hypervisor.
+Message-ID: <20191204033618.GA5031@umbus.fritz.box>
+References: <1575269124-17885-2-git-send-email-linuxram@us.ibm.com>
+ <f08ace25-fa94-990b-1b6d-a1c0f30d6348@ozlabs.ru>
+ <20191203020850.GA12354@oc0525413822.ibm.com>
+ <0b56ce3e-6c32-5f3b-e7cc-0d419a61d71d@ozlabs.ru>
+ <20191203040509.GB12354@oc0525413822.ibm.com>
+ <a0f19e65-81eb-37bd-928b-7a57a8660e3d@ozlabs.ru>
+ <20191203165204.GA5079@oc0525413822.ibm.com>
+ <3a17372a-fcee-efbf-0a05-282ffb1adc90@ozlabs.ru>
+ <20191204004958.GB5063@oc0525413822.ibm.com>
+ <5963ff32-2119-be7c-d1e5-63457888a73b@ozlabs.ru>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Disposition: inline
+In-Reply-To: <5963ff32-2119-be7c-d1e5-63457888a73b@ozlabs.ru>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig stage (arch/Kconfig) has already evaluated whether the
-compiler supports -fno-stack-protector.
 
-You can use CONFIG_CC_HAS_STACKPROTECTOR_NONE instead of invoking
-the compiler to check the flag here.
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+On Wed, Dec 04, 2019 at 12:08:09PM +1100, Alexey Kardashevskiy wrote:
+>=20
+>=20
+> On 04/12/2019 11:49, Ram Pai wrote:
+> > On Wed, Dec 04, 2019 at 11:04:04AM +1100, Alexey Kardashevskiy wrote:
+> >>
+> >>
+> >> On 04/12/2019 03:52, Ram Pai wrote:
+> >>> On Tue, Dec 03, 2019 at 03:24:37PM +1100, Alexey Kardashevskiy wrote:
+> >>>>
+> >>>>
+> >>>> On 03/12/2019 15:05, Ram Pai wrote:
+> >>>>> On Tue, Dec 03, 2019 at 01:15:04PM +1100, Alexey Kardashevskiy wrot=
+e:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 03/12/2019 13:08, Ram Pai wrote:
+> >>>>>>> On Tue, Dec 03, 2019 at 11:56:43AM +1100, Alexey Kardashevskiy wr=
+ote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 02/12/2019 17:45, Ram Pai wrote:
+> >>>>>>>>> H_PUT_TCE_INDIRECT hcall uses a page filled with TCE entries, a=
+s one of
+> >>>>>>>>> its parameters. One page is dedicated per cpu, for the lifetime=
+ of the
+> >>>>>>>>> kernel for this purpose. On secure VMs, contents of this page, =
+when
+> >>>>>>>>> accessed by the hypervisor, retrieves encrypted TCE entries.  H=
+ypervisor
+> >>>>>>>>> needs to know the unencrypted entries, to update the TCE table
+> >>>>>>>>> accordingly.  There is nothing secret or sensitive about these =
+entries.
+> >>>>>>>>> Hence share the page with the hypervisor.
+> >>>>>>>>
+> >>>>>>>> This unsecures a page in the guest in a random place which creat=
+es an
+> >>>>>>>> additional attack surface which is hard to exploit indeed but
+> >>>>>>>> nevertheless it is there.
+> >>>>>>>> A safer option would be not to use the
+> >>>>>>>> hcall-multi-tce hyperrtas option (which translates FW_FEATURE_MU=
+LTITCE
+> >>>>>>>> in the guest).
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> Hmm... How do we not use it?  AFAICT hcall-multi-tce option gets =
+invoked
+> >>>>>>> automatically when IOMMU option is enabled.
+> >>>>>>
+> >>>>>> It is advertised by QEMU but the guest does not have to use it.
+> >>>>>
+> >>>>> Are you suggesting that even normal-guest, not use hcall-multi-tce?
+> >>>>> or just secure-guest? =20
+> >>>>
+> >>>>
+> >>>> Just secure.
+> >>>
+> >>> hmm..  how are the TCE entries communicated to the hypervisor, if
+> >>> hcall-multi-tce is disabled?
+> >>
+> >> Via H_PUT_TCE which updates 1 entry at once (sets or clears).
+> >> hcall-multi-tce  enables H_PUT_TCE_INDIRECT (512 entries at once) and
+> >> H_STUFF_TCE (clearing, up to 4bln at once? many), these are simply an
+> >> optimization.
+> >=20
+> > Do you still think, secure-VM should use H_PUT_TCE and not
+> > H_PUT_TCE_INDIRECT?  And normal VM should use H_PUT_TCE_INDIRECT?
+> > Is there any advantage of special casing it for secure-VMs.
+>=20
+>=20
+> Reducing the amount of insecure memory at random location.
 
-KernelVersion: v5.5-rc1
+The other approach we could use for that - which would still allow
+H_PUT_TCE_INDIRECT, would be to allocate the TCE buffer page from the
+same pool that we use for the bounce buffers.  I assume there must
+already be some sort of allocator for that?
 
+> > In fact, we could make use of as much optimization as possible.
+> >=20
+> >=20
+> >>
+> >>>>>> Is not this for pci+swiotlb?=20
+> > ..snip..
+> >>>>> This patch is purely to help the hypervisor setup the TCE table, in=
+ the
+> >>>>> presence of a IOMMU.
+> >>>>
+> >>>> Then the hypervisor should be able to access the guest pages mapped =
+for
+> >>>> DMA and these pages should be made unsecure for this to work. Where/=
+when
+> >>>> does this happen?
+> >>>
+> >>> This happens in the SWIOTLB code.  The code to do that is already
+> >>> upstream. =20
+> >>>
+> >>> The sharing of the pages containing the SWIOTLB bounce buffers is done
+> >>> in init_svm() which calls swiotlb_update_mem_attributes() which calls
+> >>> set_memory_decrypted().  In the case of pseries, set_memory_decrypted=
+() calls=20
+> >>> uv_share_page().
+> >>
+> >>
+> >> This does not seem enough as when you enforce iommu_platform=3Don, QEMU
+> >> starts accessing virtio buffers via IOMMU so bounce buffers have to be
+> >> mapped explicitly, via H_PUT_TCE&co, where does this happen?
+> >>
+> >=20
+> > I think, it happens at boot time. Every page of the guest memory is TCE
+> > mapped, if iommu is enabled. SWIOTLB pages get implicitly TCE-mapped
+> > as part of that operation.
+>=20
+>=20
+> Ah I see. This works via the huge dma window. Ok, makes sense now.
+>=20
+> It just seems like a waste that we could map swiotlb 1:1 via the always
+> existing small DMA window but instead we rely on a huge window to map
+> these small buffers. This way we are wasting the entire 32bit window and
+> most of the huge window. We may fix it in the future (not right now) but
+> for now I would still avoid unsecuring additional memory. Thanks,
+>=20
+>=20
 
- arch/arm/boot/compressed/Makefile | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
 
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index a1e883c5e5c4..da599c3a1193 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -110,12 +110,12 @@ endif
- 
- # -fstack-protector-strong triggers protection checks in this code,
- # but it is being used too early to link to meaningful stack_chk logic.
--nossp_flags := $(call cc-option, -fno-stack-protector)
--CFLAGS_atags_to_fdt.o := $(nossp_flags)
--CFLAGS_fdt.o := $(nossp_flags)
--CFLAGS_fdt_ro.o := $(nossp_flags)
--CFLAGS_fdt_rw.o := $(nossp_flags)
--CFLAGS_fdt_wip.o := $(nossp_flags)
-+nossp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
-+CFLAGS_atags_to_fdt.o := $(nossp-flags-y)
-+CFLAGS_fdt.o := $(nossp-flags-y)
-+CFLAGS_fdt_ro.o := $(nossp-flags-y)
-+CFLAGS_fdt_rw.o := $(nossp-flags-y)
-+CFLAGS_fdt_wip.o := $(nossp-flags-y)
- 
- ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin -I$(obj)
- asflags-y := -DZIMAGE
--- 
-2.17.1
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl3nKbAACgkQbDjKyiDZ
+s5KMexAAllYYsecO3NDQbhy2gO0VyzjwweSDd5tosdQl/Knkeu7XeCBfKQN3mIrG
+fO8k2+HZHX2LLPyopjnit5VOwKgIigv2y4HKHRrAKWrLsbFVYpm1M/VC2Dz3TBmt
+v0RYeiaVtXtpHEJcPHRj6WmKjiEG2DwiAFQoT76PjTj4HTQBAp9GYEfddPKbjhhF
+wrxR5h3SOOuLaaP1o8lkWTTkUCkUTfMNUiKBeC3xedeAsvUldXihSUgENeAKjxMS
+nOvMcA8JJ6M7acLILT6/xOrrLPkjn+wWfbo0B40c9GQfnSWGbb+OZRwaIoefowKk
+1IgSXJtM3aYqJadcObgTD0MCp0PaEBpKEe66QxTP2gxKKgpD71TMG5kYqYbqTs2t
+LHUGq7HegCQe5aOZ4hBHvCHb4VqztxNz0woJTD3GjtxmFiwlsrQ1FCK51OT+s0rr
+Ga5inejhc+BTuho7XFPxNyQ0piFq3uBGTRJ5vIkygMUWnxVMSVi0DYSxbqC9J5qm
+M7Ezhlca7c5m7sh5LG1ULrh+GZEZx/Li5iUWytolJnuV12v4eGAyEcux14mik8wh
+pa/1OmU+7K+tCIP3lTzzcPqMNjRDbOhYIVahaByzAvztET4x2uj4AadGHCdhTUsu
+AaKRc+4helF5D6sbcsxwY1h2VrR7c7ZrTlFdHa7Xd+LXlepo+OY=
+=k2sc
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
