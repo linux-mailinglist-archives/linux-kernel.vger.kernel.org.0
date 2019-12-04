@@ -2,97 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F0A112D00
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26663112D13
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbfLDNz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 08:55:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:56142 "EHLO foss.arm.com"
+        id S1728022AbfLDN6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 08:58:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbfLDNz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:55:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5E0A1FB;
-        Wed,  4 Dec 2019 05:55:57 -0800 (PST)
-Received: from [192.168.1.18] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9EB5A3F68E;
-        Wed,  4 Dec 2019 05:55:53 -0800 (PST)
-Subject: Re: [PATCH v7 16/25] arm: Add support for generic vDSO (causing
- crash)
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        id S1727838AbfLDN6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 08:58:47 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2231B2073C;
+        Wed,  4 Dec 2019 13:58:46 +0000 (UTC)
+Date:   Wed, 4 Dec 2019 08:58:43 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Bernhard Landauer <bernhard@manjaro.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
- <20190621095252.32307-17-vincenzo.frascino@arm.com>
- <20191204135159.GA7210@roeck-us.net>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <6cdf4734-4065-09c1-8623-1bf523b38c1b@arm.com>
-Date:   Wed, 4 Dec 2019 13:58:25 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Subject: Re: [ANNOUNCE] v5.2.21-rt14
+Message-ID: <20191204085843.5cfcfd25@gandalf.local.home>
+In-Reply-To: <902943c5-9fee-ef45-2b5d-8baa6fa00685@manjaro.org>
+References: <20191204095144.kvpbinxqptdszvqq@linutronix.de>
+        <902943c5-9fee-ef45-2b5d-8baa6fa00685@manjaro.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20191204135159.GA7210@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+On Wed, 4 Dec 2019 12:37:34 +0100
+Bernhard Landauer <bernhard@manjaro.org> wrote:
 
-On 12/4/19 1:51 PM, Guenter Roeck wrote:
-> On Fri, Jun 21, 2019 at 10:52:43AM +0100, Vincenzo Frascino wrote:
->> The arm vDSO library requires some adaptations to use to take advantage
->> of the newly introduced generic vDSO library.
->>
->> Introduce the following changes:
->>  - Modification vdso.c to be compliant with the common vdso datapage
->>  - Use of lib/vdso for gettimeofday
->>  - Implementation of elf note
->>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> 
-> This patch causes a crash with qemu's mcimx6ul-evk emulation while running
-> imx_v6_v7_defconfig.
-> 
+> Sorry if maybe I have missed any announcements here, but my I ask if you
+> are planning on releasing patches for kernels >5,2 in the near future?
+> Or is this project being faded out altogether?
 
-Thank you for reporting this. Could you please provide some details on how I can
-reproduce the scenario you are describing?
+Hopefully in the near future this project will be part of mainline.
 
-> [   19.976852] Run /sbin/init as init process
-> [   20.044931] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
-> 
-> There is nothing else useful in the log, unfortunately.
-> 
-> Reverting the following three patches fixes the problem.
-> 
-> 74d06efb9c2f ARM: 8932/1: Add clock_gettime64 entry point
-> 052e76a31b4a ARM: 8931/1: Add clock_getres entry point
-> 20e2fc42312f ARM: 8930/1: Add support for generic vDSO
-> 
-> Guenter
-> 
-
--- 
-Regards,
-Vincenzo
+-- Steve
