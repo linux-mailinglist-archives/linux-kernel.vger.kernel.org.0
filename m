@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4FB1133AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91CC1113424
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:22:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731922AbfLDSSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:18:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37914 "EHLO mail.kernel.org"
+        id S1731142AbfLDSWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:22:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731274AbfLDSKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:10:34 -0500
+        id S1729776AbfLDSFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:05:46 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C94E820675;
-        Wed,  4 Dec 2019 18:10:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AC7D20659;
+        Wed,  4 Dec 2019 18:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483033;
-        bh=AfZKqJHeZ2R2QINf8sSlLG5/pEKH8/9gZ7eadsA2v0M=;
+        s=default; t=1575482745;
+        bh=CcGoJg+UihYBaV8Tf12lR+9gsdgjxSjD2C2kvFXqYcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGOyeImDmHLlXEkKmDmMZ+ovmSbFqmFfFMjfvybqjkiZ66Kq730FaQwSJQhouj6+5
-         H9UWMbrsyldUo452EpTaqgYX6g3KdhW+Um6Pr6k2HJGywQ4bimz0q//R+3KoRhHBCI
-         6c8vfHn11ydw23jMncTHG6/0zzA6WWG9/0zlIDDM=
+        b=WV0SKNYv7xUHczwgmcrOkJHxPsWG4HMP0JhEVf0AVmyw2QymHqp7oehCQxvfPEOoW
+         LlqGqGxEwMl/KXOsAmsNxYHoBmb/i7IabE70bac6xCrCB2K8MCED6mKhLFWv1enUTS
+         ydjFxk/okd8fhrgGOumQL0g/Gq4muaFtFWT+a9Do=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 024/125] crypto: user - support incremental algorithm dumps
-Date:   Wed,  4 Dec 2019 18:55:29 +0100
-Message-Id: <20191204175319.287249039@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Peng Hao <peng.hao2@zte.com.cn>,
+        Zhao Qiang <qiang.zhao@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 118/209] net/wan/fsl_ucc_hdlc: Avoid double free in ucc_hdlc_probe()
+Date:   Wed,  4 Dec 2019 18:55:30 +0100
+Message-Id: <20191204175331.248253856@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,114 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 0ac6b8fb23c724b015d9ca70a89126e8d1563166 ]
+[ Upstream commit 40752b3eae29f8ca2378e978a02bd6dbeeb06d16 ]
 
-CRYPTO_MSG_GETALG in NLM_F_DUMP mode sometimes doesn't return all
-registered crypto algorithms, because it doesn't support incremental
-dumps.  crypto_dump_report() only permits itself to be called once, yet
-the netlink subsystem allocates at most ~64 KiB for the skb being dumped
-to.  Thus only the first recvmsg() returns data, and it may only include
-a subset of the crypto algorithms even if the user buffer passed to
-recvmsg() is large enough to hold all of them.
+This patch fixes potential double frees if register_hdlc_device() fails.
 
-Fix this by using one of the arguments in the netlink_callback structure
-to keep track of the current position in the algorithm list.  Then
-userspace can do multiple recvmsg() on the socket after sending the dump
-request.  This is the way netlink dumps work elsewhere in the kernel;
-it's unclear why this was different (probably just an oversight).
-
-Also fix an integer overflow when calculating the dump buffer size hint.
-
-Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Peng Hao <peng.hao2@zte.com.cn>
+CC: Zhao Qiang <qiang.zhao@nxp.com>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: linuxppc-dev@lists.ozlabs.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/crypto_user.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/crypto/crypto_user.c b/crypto/crypto_user.c
-index c90a1727cd2c6..60cf7d163731b 100644
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -277,30 +277,33 @@ drop_alg:
- 
- static int crypto_dump_report(struct sk_buff *skb, struct netlink_callback *cb)
- {
--	struct crypto_alg *alg;
-+	const size_t start_pos = cb->args[0];
-+	size_t pos = 0;
- 	struct crypto_dump_info info;
--	int err;
--
--	if (cb->args[0])
--		goto out;
--
--	cb->args[0] = 1;
-+	struct crypto_alg *alg;
-+	int res;
- 
- 	info.in_skb = cb->skb;
- 	info.out_skb = skb;
- 	info.nlmsg_seq = cb->nlh->nlmsg_seq;
- 	info.nlmsg_flags = NLM_F_MULTI;
- 
-+	down_read(&crypto_alg_sem);
- 	list_for_each_entry(alg, &crypto_alg_list, cra_list) {
--		err = crypto_report_alg(alg, &info);
--		if (err)
--			goto out_err;
-+		if (pos >= start_pos) {
-+			res = crypto_report_alg(alg, &info);
-+			if (res == -EMSGSIZE)
-+				break;
-+			if (res)
-+				goto out;
-+		}
-+		pos++;
+diff --git a/drivers/net/wan/fsl_ucc_hdlc.c b/drivers/net/wan/fsl_ucc_hdlc.c
+index 18b648648adb2..289dff262948d 100644
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -1114,7 +1114,6 @@ static int ucc_hdlc_probe(struct platform_device *pdev)
+ 	if (register_hdlc_device(dev)) {
+ 		ret = -ENOBUFS;
+ 		pr_err("ucc_hdlc: unable to register hdlc device\n");
+-		free_netdev(dev);
+ 		goto free_dev;
  	}
--
-+	cb->args[0] = pos;
-+	res = skb->len;
- out:
--	return skb->len;
--out_err:
--	return err;
-+	up_read(&crypto_alg_sem);
-+	return res;
- }
  
- static int crypto_dump_report_done(struct netlink_callback *cb)
-@@ -483,7 +486,7 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 	if ((type == (CRYPTO_MSG_GETALG - CRYPTO_MSG_BASE) &&
- 	    (nlh->nlmsg_flags & NLM_F_DUMP))) {
- 		struct crypto_alg *alg;
--		u16 dump_alloc = 0;
-+		unsigned long dump_alloc = 0;
- 
- 		if (link->dump == NULL)
- 			return -EINVAL;
-@@ -491,16 +494,16 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 		down_read(&crypto_alg_sem);
- 		list_for_each_entry(alg, &crypto_alg_list, cra_list)
- 			dump_alloc += CRYPTO_REPORT_MAXSIZE;
-+		up_read(&crypto_alg_sem);
- 
- 		{
- 			struct netlink_dump_control c = {
- 				.dump = link->dump,
- 				.done = link->done,
--				.min_dump_alloc = dump_alloc,
-+				.min_dump_alloc = min(dump_alloc, 65535UL),
- 			};
- 			err = netlink_dump_start(crypto_nlsk, skb, nlh, &c);
- 		}
--		up_read(&crypto_alg_sem);
- 
- 		return err;
- 	}
 -- 
 2.20.1
 
