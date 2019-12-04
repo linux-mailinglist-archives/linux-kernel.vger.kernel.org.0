@@ -2,60 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 134FA112186
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 03:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B31112171
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 03:33:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfLDCoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 21:44:12 -0500
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:50616 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfLDCoM (ORCPT
+        id S1726766AbfLDCdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 21:33:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49826 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfLDCdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 21:44:12 -0500
-Received: from localhost.localdomain ([90.126.97.183])
-        by mwinf5d59 with ME
-        id Zek62100A3xPcdm03ek7w5; Wed, 04 Dec 2019 03:44:09 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 04 Dec 2019 03:44:09 +0100
-X-ME-IP: 90.126.97.183
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     sbkim73@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        lgirdwood@gmail.com, broonie@kernel.org
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] regulator: s5m8767: Fix a warning message
-Date:   Tue,  3 Dec 2019 22:48:38 +0100
-Message-Id: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Tue, 3 Dec 2019 21:33:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KEvl8E2uqYzHXXBcWxExEanjkQOayE/IO/ACRjvE+vk=; b=h7d2D8DDkM4aY5V970X2F32Wt
+        XYLmNR6BcaCV/zpo0sxeqEN3Ogl0N9JjO4hS7WplSX8z9qhvTYS2adrRqOQym2ZWt+zMfHD7nHWGM
+        1FQd4U3M44atyYGl36B3+tJXwbHjTbdF7Qezv41U7P1+hejdPlu2TZJ7+ktsRczuJFwHP8zy2wlGq
+        gdiEU3FG3mOD38i35RvphKQrEcdS71RMkzxF9VA+RAdFD5a0GwliNP/l4UWB6ZBrtDD0cm9wXsO4s
+        i/OKq3AxhgY6HyJ/oszTumKybPWYqxKc4zkr7xSgBxjpkDLWHimU5Q3zTg9O6WgTsDrtISrfU3UOs
+        Z+76RA0eQ==;
+Received: from [2601:1c0:6280:3f0::5a22]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1icKTT-0001ej-Ge; Wed, 04 Dec 2019 02:33:13 +0000
+Subject: Re: [PATCH v3 1/2] sched/numa: introduce per-cgroup NUMA locality
+ info
+To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <2398e8a4-a3ad-3660-3aba-298730d209b2@linux.alibaba.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d5f109b8-be26-c025-1d6d-ec3b3354c4b1@infradead.org>
+Date:   Tue, 3 Dec 2019 18:33:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
+In-Reply-To: <2398e8a4-a3ad-3660-3aba-298730d209b2@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Axe a duplicated word ("property") in a warning message.
+On 12/2/19 10:00 PM, 王贇 wrote:
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 4d8d145c41d2..9c086f716a6d 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -817,6 +817,15 @@ config NUMA_BALANCING_DEFAULT_ENABLED
+>  	  If set, automatic NUMA balancing will be enabled if running on a NUMA
+>  	  machine.
+> 
+> +config CGROUP_NUMA_LOCALITY
+> +	bool "The per-cgroup NUMA Locality"
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/regulator/s5m8767.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I would drop "The".
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index bdc07739e9a2..12d6b8d2e97e 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -588,7 +588,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
- 		if (of_property_read_u32(reg_np, "op_mode",
- 				&rmode->mode)) {
- 			dev_warn(iodev->dev,
--				"no op_mode property property at %pOF\n",
-+				"no op_mode property at %pOF\n",
- 				reg_np);
- 
- 			rmode->mode = S5M8767_OPMODE_NORMAL_MODE;
+> +	default n
+> +	depends on CGROUP_SCHED && NUMA_BALANCING
+> +	help
+> +	  This option enable the collection of per-cgroup NUMA locality info,
+
+	              enables
+
+> +	  to tell whether NUMA Balancing is working well for a particular
+> +	  workload.
+> +
+>  menuconfig CGROUPS
+>  	bool "Control Group support"
+>  	select KERNFS
+
+
 -- 
-2.20.1
-
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
