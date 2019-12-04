@@ -2,215 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC7F21135BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 20:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C2E1135BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 20:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfLDTb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 14:31:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727978AbfLDTb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 14:31:57 -0500
-Received: from linux-8ccs (x2f7fec9.dyn.telefonica.de [2.247.254.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EFC820409;
-        Wed,  4 Dec 2019 19:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575487916;
-        bh=ctu9RwlHjv4upjNSW0WkBkI6dkqaoeEKbM7GREKBB/c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p7oWeY3dWzFF3f9LBOiJLOFd88G0sqZWw1uGsQCqWsl70Wryb8Te7/IVmWEMwtdVc
-         WNKzIgbWUTzoLCxS5DzpH7OE4+CYBy+qDle+kCCuA9bKjBiofRyUUxkoomsxK+g0SU
-         9j1AwqWUydZd7I+W+lkzDVm+FUWB2MGyDbgScuBA=
-Date:   Wed, 4 Dec 2019 20:31:51 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Fabien Dessenne <fabien.dessenne@st.com>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] moduleparam: fix kerneldoc
-Message-ID: <20191204193150.GA22824@linux-8ccs>
-References: <1575277277-4435-1-git-send-email-fabien.dessenne@st.com>
+        id S1728242AbfLDTcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 14:32:42 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46207 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727978AbfLDTcm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 14:32:42 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a124so304849oii.13;
+        Wed, 04 Dec 2019 11:32:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VIykNz8gTrjJYYcuHvCZ7rZIZIyIF9AyyoN6mQ8XTak=;
+        b=Wx+Pthfb7oeHeq89StbB3kh4fgVgIAhdfUvZRN8RlQ3nSFp3e+i4CYA+yLzreDVrBa
+         IoO/NP7PzWMxo2eZcIHE3jo+zDzh73XBgPVi+ZQBRy2I7DkK7tGLesVJgmOkCX0Fqzka
+         d5BYSJ996yway/Ekb6mhyvDidYHlVjwfqcG33gAU7zK1wnC8q2kz2ryLn16LWbKjeLad
+         m2zL/CDnByg4GIyLL6z13JRz6EXy6CjBYZGx7wq0NOeg5qFdFjSVazlT0WnRcM6s3wW1
+         ag18iT6mAAF+5+b2xU1jjetGryiThx922mLrlGm+tjoZ0IFeRT8uI6/4YL2rJ50OO2Eq
+         nzjA==
+X-Gm-Message-State: APjAAAWbNIOb3JPCvd0Jv+UFQXD3DUHsQ6QRPZj3jrtfoiKfDpUoHPDN
+        sj3GmOMt5e8pLpiOnQPGYw==
+X-Google-Smtp-Source: APXvYqyL9rITgSoXHv8RFYgfyg9XG3viSLqSKUMigSf5Mv7C3OVPAyHFxBK3gRgkRj3Xsvy21/dcQw==
+X-Received: by 2002:a54:4781:: with SMTP id o1mr3877662oic.117.1575487961356;
+        Wed, 04 Dec 2019 11:32:41 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j25sm2483560otl.71.2019.12.04.11.32.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 11:32:40 -0800 (PST)
+Date:   Wed, 4 Dec 2019 13:32:40 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Akash Gajjar <akash@openedev.com>, Tom Cubie <tom@radxa.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: arm: rockchip: Add VMARC RK3399Pro
+ SOM binding
+Message-ID: <20191204193240.GA6772@bogus>
+References: <20191121141445.28712-1-jagan@amarulasolutions.com>
+ <20191121141445.28712-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1575277277-4435-1-git-send-email-fabien.dessenne@st.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
+In-Reply-To: <20191121141445.28712-2-jagan@amarulasolutions.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Fabien Dessenne [02/12/19 10:01 +0100]:
->Document missing @arg in xxx_param_cb().
->Describe all parameters of module_param_[named_]unsafe() and all
->*_param_cb() to make ./scripts/kernel-doc happy.
->
->Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+On Thu, Nov 21, 2019 at 07:44:41PM +0530, Jagan Teki wrote:
+> VMARC RK3399Pro SOM is a standard SMARC SOM design with
+> Rockchip RK3399Pro SoC, which is designed by Vamrs.
+> 
+> Since it is a standard SMARC design, it can be easily
+> mounted on the supporting Carrier board. Radxa has
+> suitable carrier board to mount and use it as a final
+> version board.
+> 
+> Add dt-bindings for it.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v2:
+> - none
+> 
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> index 45728fd22af8..51aa458833a9 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -526,4 +526,9 @@ properties:
+>          items:
+>            - const: tronsmart,orion-r68-meta
+>            - const: rockchip,rk3368
+> +
+> +      - description: Vamrs VMARC RK3399Pro SOM
+> +        items:
+> +          - const: vamrs,rk3399pro-vmarc-som
 
-Looks good, I'll apply this to modules-next after the merge window ends.
+Why do you need this? You just override it in your dts files, so it is 
+not really used. Perhaps the top-level should have all 3 compatibles? If 
+so, then the schemas are wrong.
 
-Thanks!
-
-Jessica
-
->---
->Changes since v2: @arg not @args + fix other kernel-doc warnings
->Changes since v1: do not replace 'lvalue' with 'value'
->---
-> include/linux/moduleparam.h | 82 ++++++++++++++++++++++++++++++++++++++++++---
-> 1 file changed, 77 insertions(+), 5 deletions(-)
->
->diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
->index e5c3e23..3ef917f 100644
->--- a/include/linux/moduleparam.h
->+++ b/include/linux/moduleparam.h
->@@ -128,6 +128,9 @@ struct kparam_array
->
-> /**
->  * module_param_unsafe - same as module_param but taints kernel
->+ * @name: the variable to alter, and exposed parameter name.
->+ * @type: the type of the parameter
->+ * @perm: visibility in sysfs.
->  */
-> #define module_param_unsafe(name, type, perm)			\
-> 	module_param_named_unsafe(name, name, type, perm)
->@@ -150,6 +153,10 @@ struct kparam_array
->
-> /**
->  * module_param_named_unsafe - same as module_param_named but taints kernel
->+ * @name: a valid C identifier which is the parameter name.
->+ * @value: the actual lvalue to alter.
->+ * @type: the type of the parameter
->+ * @perm: visibility in sysfs.
->  */
-> #define module_param_named_unsafe(name, value, type, perm)		\
-> 	param_check_##type(name, &(value));				\
->@@ -160,6 +167,7 @@ struct kparam_array
->  * module_param_cb - general callback for a module/cmdline parameter
->  * @name: a valid C identifier which is the parameter name.
->  * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->  * @perm: visibility in sysfs.
->  *
->  * The ops can have NULL set or get functions.
->@@ -171,36 +179,96 @@ struct kparam_array
-> 	__module_param_call(MODULE_PARAM_PREFIX, name, ops, arg, perm, -1,    \
-> 			    KERNEL_PARAM_FL_UNSAFE)
->
->+#define __level_param_cb(name, ops, arg, perm, level)			\
->+	__module_param_call(MODULE_PARAM_PREFIX, name, ops, arg, perm, level, 0)
-> /**
->- * <level>_param_cb - general callback for a module/cmdline parameter
->- *                    to be evaluated before certain initcall level
->+ * core_param_cb - general callback for a module/cmdline parameter
->+ *                 to be evaluated before core initcall level
->  * @name: a valid C identifier which is the parameter name.
->  * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->  * @perm: visibility in sysfs.
->  *
->  * The ops can have NULL set or get functions.
->  */
->-#define __level_param_cb(name, ops, arg, perm, level)			\
->-	__module_param_call(MODULE_PARAM_PREFIX, name, ops, arg, perm, level, 0)
->-
-> #define core_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 1)
->
->+/**
->+ * postcore_param_cb - general callback for a module/cmdline parameter
->+ *                     to be evaluated before postcore initcall level
->+ * @name: a valid C identifier which is the parameter name.
->+ * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->+ * @perm: visibility in sysfs.
->+ *
->+ * The ops can have NULL set or get functions.
->+ */
-> #define postcore_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 2)
->
->+/**
->+ * arch_param_cb - general callback for a module/cmdline parameter
->+ *                 to be evaluated before arch initcall level
->+ * @name: a valid C identifier which is the parameter name.
->+ * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->+ * @perm: visibility in sysfs.
->+ *
->+ * The ops can have NULL set or get functions.
->+ */
-> #define arch_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 3)
->
->+/**
->+ * subsys_param_cb - general callback for a module/cmdline parameter
->+ *                   to be evaluated before subsys initcall level
->+ * @name: a valid C identifier which is the parameter name.
->+ * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->+ * @perm: visibility in sysfs.
->+ *
->+ * The ops can have NULL set or get functions.
->+ */
-> #define subsys_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 4)
->
->+/**
->+ * fs_param_cb - general callback for a module/cmdline parameter
->+ *               to be evaluated before fs initcall level
->+ * @name: a valid C identifier which is the parameter name.
->+ * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->+ * @perm: visibility in sysfs.
->+ *
->+ * The ops can have NULL set or get functions.
->+ */
-> #define fs_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 5)
->
->+/**
->+ * device_param_cb - general callback for a module/cmdline parameter
->+ *                   to be evaluated before device initcall level
->+ * @name: a valid C identifier which is the parameter name.
->+ * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->+ * @perm: visibility in sysfs.
->+ *
->+ * The ops can have NULL set or get functions.
->+ */
-> #define device_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 6)
->
->+/**
->+ * late_param_cb - general callback for a module/cmdline parameter
->+ *                 to be evaluated before late initcall level
->+ * @name: a valid C identifier which is the parameter name.
->+ * @ops: the set & get operations for this parameter.
->+ * @arg: args for @ops
->+ * @perm: visibility in sysfs.
->+ *
->+ * The ops can have NULL set or get functions.
->+ */
-> #define late_param_cb(name, ops, arg, perm)		\
-> 	__level_param_cb(name, ops, arg, perm, 7)
->
->@@ -263,6 +331,10 @@ static inline void kernel_param_unlock(struct module *mod)
->
-> /**
->  * core_param_unsafe - same as core_param but taints kernel
->+ * @name: the name of the cmdline and sysfs parameter (often the same as var)
->+ * @var: the variable
->+ * @type: the type of the parameter
->+ * @perm: visibility in sysfs
->  */
-> #define core_param_unsafe(name, var, type, perm)		\
-> 	param_check_##type(name, &(var));				\
->-- 
->2.7.4
->
+> +          - const: rockchip,rk3399pro
+>  ...
+> -- 
+> 2.18.0.321.gffc6fa0e3
+> 
