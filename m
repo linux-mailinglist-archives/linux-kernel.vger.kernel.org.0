@@ -2,198 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209EF1122D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:13:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA021122D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:17:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbfLDGNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 01:13:37 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34079 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfLDGNg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 01:13:36 -0500
-Received: by mail-ed1-f65.google.com with SMTP id cx19so5581941edb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 22:13:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=87Ai/2GBcoKT6fPUij1cG0QGHCMEFL+e1yuViHU4bI0=;
-        b=jLRSP252BPRHKnFzTkeVM2nQnu9zlZWlYg40vA1moDpFLFl6Gucf8MPRDDQELvBBNM
-         +/rcr/9SuaeRVu7ZP0eXGTQwlhWmixr94Js1SeZQIB/MMh6Ir3RF6ErERvgyeEgn9eAF
-         QRbmV+svqBfG7XHjDXEauI+urlRFyEwYGFFIg6GwtepNUX0XbNh2li/wZl6p/BFIWGjF
-         8IkIJAcpgzC9Ts8w5g3dlnmxKMhgXTeSd4LGF1aPNbyAgCCU9Ye0/7D4stgLRmu5h59e
-         SVt94OcmMFx6+uRMaaHzFsod952JTySKYJtfwt1IjaPq6vymOFLgdqG25hR58lTiY+7r
-         W55Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=87Ai/2GBcoKT6fPUij1cG0QGHCMEFL+e1yuViHU4bI0=;
-        b=L0gNkauw2ynRqWn3+8MdKH1i6BpOaImGj0oQ3lMcqFMY6ztoFgHgP5QE6NSfs5ar5c
-         tVG9Jxd4/hTwRHop7lYeuoYtBL8/uSHXiKWzhaD4Ypw74awt6YErxJmPQIKvSJMtTOrd
-         uLujp056uj0tyfkTZXMl+up3faqafne9ttClBP/XDesVHomPSt/ZruTYos1V8w1cHhlA
-         DWZLfcUFRbCf2FGr+y2f/u+uFZPZ2GROhcREJuKgvM8AEMgJyL29qDockGKrmxCfi2uq
-         91NcRHwVg9n6lVvQPo1M+3ijLT9PDGgPokWdU2mtS/9bQ1xCDKAaXesdqrH0G6oN6DA7
-         Uj1w==
-X-Gm-Message-State: APjAAAWf+ltVcoT6wjKJhsWW8MiTCh9N0SFFUInqzwtsWIVwgTxqA2/+
-        fG7WqGcrb1GYYXcp5FZ7h3IUZInB6f4z8XJavbA=
-X-Google-Smtp-Source: APXvYqyNIk1C2c5BxdS1lstyDxH8vHJG7tYTPiXTFdZx4gXRSNQbWhRSDSLJjVCQfC1T7Xt5x+1i+P6dpe77QNSFaNc=
-X-Received: by 2002:aa7:d44a:: with SMTP id q10mr2221137edr.45.1575440014305;
- Tue, 03 Dec 2019 22:13:34 -0800 (PST)
-MIME-Version: 1.0
-References: <fd89d78030914d19939a1fc1c6eb5048@huawei.com> <e04e35e0a14f1507ac4a3d56899adcae@www.loen.fr>
- <c8649d75-a9b8-4680-c253-3172774ac33d@huawei.com> <c03d0b67a814288402b90bcdba600d26@www.loen.fr>
-In-Reply-To: <c03d0b67a814288402b90bcdba600d26@www.loen.fr>
-From:   Ivid Suvarna <ivid.suvarna@gmail.com>
-Date:   Wed, 4 Dec 2019 11:43:23 +0530
-Message-ID: <CABXF_AA+93p+1yVeDwmeMG3cn_2vUbvycN7TeV=8cDJ6bd8Leg@mail.gmail.com>
-Subject: Re: ITS restore/save state when HCC == 0
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Yao HongBo <yaohongbo@huawei.com>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        Yangyingliang <yangyingliang@huawei.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        james.morse@arm.com
+        id S1726925AbfLDGQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 01:16:59 -0500
+Received: from mga07.intel.com ([134.134.136.100]:59519 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725791AbfLDGQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 01:16:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2019 22:16:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,276,1571727600"; 
+   d="scan'208";a="412469165"
+Received: from yuanwan1-mobl.ccr.corp.intel.com ([10.249.174.225])
+  by fmsmga006.fm.intel.com with ESMTP; 03 Dec 2019 22:16:56 -0800
+Message-ID: <7f4da1c663268f53f2123424c1b8abdbe8316556.camel@intel.com>
+Subject: [GIT PULL] Thermal management updates for v5.5-rc1
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Date:   Wed, 04 Dec 2019 14:16:55 +0800
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 3, 2019 at 9:46 PM Marc Zyngier <maz@kernel.org> wrote:
->
-> + James, who wrote most (if not all) of the arm64 hibernate code
->
-> On 2019-12-03 02:23, Yao HongBo wrote:
-> > On 12/2/2019 9:22 PM, Marc Zyngier wrote:
-> >> Hi Yaohongbo,
-> >>
-> >> In the future, please refrain from sending HTML emails, they
-> >> don't render very well and force me to reformat your email
-> >> by hand.
-> >
-> > Sorry. I'll pay attention to this next time.
-> >
-> >> On 2019-12-02 12:52, yaohongbo wrote:
-> >>> Hi, marc.
-> >>>
-> >>> I met a problem with GIC ITS when I try to power off gic logic in
-> >>> suspend.
-> >>>
-> >>> In hisilicon hip08, the value of GIC_TYPER.HCC is zero, so that
-> >>> ITS_FLAGS_SAVE_SUSPEND_STATE will have no chance to be set to 1.
-> >>
-> >> And that's a good thing. HCC indicates that you have collections
-> >> that
-> >> are backed by registers, and not memory. Which means that once the
-> >> GIC
-> >> is powered off, the state is lost.
-> >>
-> >>> It goes well for s4, when I simply remove the condition judgement
-> >>> in
-> >>> the code.
-> >>
-> >> What is "s4"? Doing so means you are reprogramming the ITS with
-> >> mappings
-> >> that already exist in the tables, and that is UNPRED territory.
-> >
-> > Sorry, I didn't describe it clearly.
-> > S4 means "suspend to disk".
-> > In s4, The its will reinit and malloc an new its address.
->
-> Huh, hibernate... Yeah, this is not expected to work, I'm afraid.
->
-> > My expectation is to reprogram the ITS with original mappings. If
-> > ITS_FLAGS_SAVE_SUSPEND_STATE
-> > is not set, i'll have no chance to use the original its table
-> > mappings.
-> >
-> > What should i do if i want to restore its state with hcc == 0?
->
-> HCC is the least of the problems, and there are plenty more issues:
->
-> - I'm not sure what guarantees that the tables are at the same
->    address in the booting kernel and the the resumed kernel.
->    That covers all the ITS tables and as well as the RDs'.
->
-> - It could well be that restoring the ITS base addresses is enough
->    for everything to resume correctly, but this needs some serious
->    investigation. Worse case, we will need to replay the whole of
->    the ITS programming.
->
-> - This is going to interact more or less badly with the normal suspend
->    to RAM code...
->
-> - The ITS is only the tip of the iceberg. The whole of the SMMU setup
->    needs to be replayed, or devices won't resume correctly (I just tried
->    on a D05).
->
-> Anyway, with the hack below, I've been able to get D05 to resume
-> up to the point where devices try to do DMA, and then it was dead.
-> There is definitely some work to be done there...
->
->          M.
->
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c
-> b/drivers/irqchip/irq-gic-v3-its.c
-> index 4ba31de4a875..a05fc6bac203 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -27,6 +27,7 @@
->   #include <linux/of_platform.h>
->   #include <linux/percpu.h>
->   #include <linux/slab.h>
-> +#include <linux/suspend.h>
->   #include <linux/syscore_ops.h>
->
->   #include <linux/irqchip.h>
-> @@ -42,6 +43,7 @@
->   #define ITS_FLAGS_WORKAROUND_CAVIUM_22375     (1ULL << 1)
->   #define ITS_FLAGS_WORKAROUND_CAVIUM_23144     (1ULL << 2)
->   #define ITS_FLAGS_SAVE_SUSPEND_STATE          (1ULL << 3)
-> +#define ITS_FLAGS_SAVE_HIBERNATE_STATE         (1ULL << 4)
->
->   #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING   (1 << 0)
->   #define RDIST_FLAGS_RD_TABLES_PREALLOCATED    (1 << 1)
-> @@ -3517,8 +3519,16 @@ static int its_save_disable(void)
->         raw_spin_lock(&its_lock);
->         list_for_each_entry(its, &its_nodes, entry) {
->                 void __iomem *base;
-> +               u64 flags;
->
-> -               if (!(its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE))
-> +               if (system_entering_hibernation())
-> +                       its->flags |= ITS_FLAGS_SAVE_HIBERNATE_STATE;
-> +
-> +               flags = its->flags;
-> +               flags &= (ITS_FLAGS_SAVE_SUSPEND_STATE |
-> +                         ITS_FLAGS_SAVE_HIBERNATE_STATE);
-> +
-> +               if (!flags)
->                         continue;
->
->                 base = its->base;
-> @@ -3559,11 +3569,17 @@ static void its_restore_enable(void)
->         raw_spin_lock(&its_lock);
->         list_for_each_entry(its, &its_nodes, entry) {
->                 void __iomem *base;
-> +               u64 flags;
->                 int i;
->
-> -               if (!(its->flags & ITS_FLAGS_SAVE_SUSPEND_STATE))
-> +               flags = its->flags;
-> +               flags &= (ITS_FLAGS_SAVE_SUSPEND_STATE |
-> +                         ITS_FLAGS_SAVE_HIBERNATE_STATE);
-> +               if (!flags)
->                         continue;
->
-> +               its->flags &= ~ITS_FLAGS_SAVE_HIBERNATE_STATE;
-> +
->                 base = its->base;
->
->                 /*
+Hi, Linus,
 
-How about this one to reinit GIC for restore:
- - https://source.codeaurora.org/quic/la/kernel/msm-4.14/commit/drivers/irqchip/irq-gic-v3.c?h=msm-4.14&id=b0079fb73c08e195498ba2b2ea9623b0cc0f5fed
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
+thermal/next
+
+to receive the latest Thermal Management updates for v5.5-rc1 with
+top-most commit 163b00cde7cf2206e248789d2780121ad5e6a70b:
+
+  thermal: Fix deadlock in thermal thermal_zone_device_check (2019-11-
+14 22:41:09 +0800)
+
+on top of commit a99d8080aaf358d5d23581244e5da23b35e340b9:
+
+  Linux 5.4-rc6 (2019-11-03 14:07:26 -0800)
+
+Specifics:
+
+- Fix a deadlock regression in thermal core framework, which is
+introduced in 5.3. (Wei Wang)
+
+- Initialize thermal control framework earlier to enable thermal
+mitigation during boot. (Amit Kucheria)
+
+- Convert the Intelligent Power Allocator (IPA) thermal governor to
+follow the generic PM_EM instead of its own Energy Model. (Quentin
+Perret)
+
+- Introduce a new Amlogic soc thermal driver. (Guillaume La Roque)
+
+- Add interrupt support for tsens thermal driver. (Amit Kucheria)
+
+- Add support for MSM8956/8976 in tsens thermal driver.
+(AngeloGioacchino Del Regno)
+
+- Add support for r8a774b1 in rcar thermal driver. (Biju Das)
+
+- Add support for Thermal Monitor Unit v2 in qoriq thermal driver.
+(Yuantian Tang)
+
+- Some other fixes/cleanups on thermal core framework and soc thermal
+drivers. (Colin Ian King, Daniel Lezcano, Hsin-Yi Wang, Tian Tao)
+
+thanks,
+rui
+
+----------------------------------------------------------------
+Amit Kucheria (13):
+      drivers: thermal: tsens: Get rid of id field in tsens_sensor
+      drivers: thermal: tsens: Simplify code flow in tsens_probe
+      drivers: thermal: tsens: Add __func__ identifier to debug
+statements
+      drivers: thermal: tsens: Add debugfs support
+      dt-bindings: thermal: tsens: Convert over to a yaml schema
+      drivers: thermal: tsens: Create function to return sign-extended
+temperature
+      drivers: thermal: tsens: Add interrupt support
+      thermal: Remove netlink support
+      thermal: Initialize thermal subsystem earlier
+      cpufreq: Initialize the governors in core_initcall
+      cpufreq: Initialize cpufreq-dt driver earlier
+      clk: qcom: Initialize clock drivers earlier
+      cpufreq: qcom-hw: Move driver initialization earlier
+
+AngeloGioacchino Del Regno (2):
+      thermal: qcom: tsens-v1: Add support for MSM8956 and MSM8976
+      dt: thermal: tsens: Document compatible for MSM8976/56
+
+Biju Das (2):
+      thermal: rcar_gen3_thermal: Add r8a774b1 support
+      dt-bindings: thermal: rcar-gen3-thermal: Add r8a774b1 support
+
+Colin Ian King (2):
+      thermal: qcom: tsens-v1: Fix kfree of a non-pointer value
+      drivers: thermal: tsens: fix potential integer overflow on
+multiply
+
+Daniel Lezcano (2):
+      thermal: cpu_cooling: Remove pointless dependency on CONFIG_OF
+      thermal: cpu_cooling: Reorder the header file
+
+Guillaume La Roque (3):
+      dt-bindings: thermal: Add DT bindings documentation for Amlogic
+Thermal
+      thermal: amlogic: Add thermal driver to support G12 SoCs
+      MAINTAINERS: add entry for Amlogic Thermal driver
+
+Hsin-Yi Wang (1):
+      thermal-generic-adc: Silent error message for EPROBE_DEFER
+
+Quentin Perret (4):
+      arm64: defconfig: Enable CONFIG_ENERGY_MODEL
+      PM / EM: Declare EM data types unconditionally
+      thermal: cpu_cooling: Make the power-related code depend on IPA
+      thermal: cpu_cooling: Migrate to using the EM framework
+
+Tian Tao (1):
+      thermal: no need to set .owner when using module_platform_driver
+
+Wei Wang (1):
+      thermal: Fix deadlock in thermal thermal_zone_device_check
+
+Yuantian Tang (1):
+      thermal: qoriq: add thermal monitor unit version 2 support
+
+ .../bindings/thermal/amlogic,thermal.yaml          |  54 +++
+ .../devicetree/bindings/thermal/qcom-tsens.txt     |  55 ---
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    | 170 +++++++
+ .../bindings/thermal/rcar-gen3-thermal.txt         |   1 +
+ Documentation/driver-api/thermal/sysfs-api.rst     |  26 +-
+ MAINTAINERS                                        |  10 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/clk-rpmh.c                        |   2 +-
+ drivers/clk/qcom/gcc-qcs404.c                      |   2 +-
+ drivers/clk/qcom/gcc-sdm845.c                      |   2 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   2 +-
+ drivers/cpufreq/cpufreq_conservative.c             |   2 +-
+ drivers/cpufreq/cpufreq_ondemand.c                 |   2 +-
+ drivers/cpufreq/cpufreq_performance.c              |   2 +-
+ drivers/cpufreq/cpufreq_powersave.c                |   2 +-
+ drivers/cpufreq/cpufreq_userspace.c                |   2 +-
+ drivers/cpufreq/qcom-cpufreq-hw.c                  |   2 +-
+ drivers/thermal/Kconfig                            |  12 +
+ drivers/thermal/Makefile                           |   1 +
+ drivers/thermal/amlogic_thermal.c                  | 333 +++++++++++++
+ drivers/thermal/cpu_cooling.c                      | 404 +++++++----
+-----
+ drivers/thermal/qcom/tsens-8960.c                  |   4 +-
+ drivers/thermal/qcom/tsens-common.c                | 529
++++++++++++++++++++--
+ drivers/thermal/qcom/tsens-v0_1.c                  |  11 +
+ drivers/thermal/qcom/tsens-v1.c                    | 198 +++++++-
+ drivers/thermal/qcom/tsens-v2.c                    |  13 +
+ drivers/thermal/qcom/tsens.c                       |  62 ++-
+ drivers/thermal/qcom/tsens.h                       | 288 +++++++++--
+ drivers/thermal/qoriq_thermal.c                    | 120 ++++-
+ drivers/thermal/rcar_gen3_thermal.c                |   4 +
+ drivers/thermal/thermal-generic-adc.c              |   9 +-
+ drivers/thermal/thermal_core.c                     | 107 +----
+ drivers/thermal/thermal_mmio.c                     |   1 -
+ include/linux/cpu_cooling.h                        |  18 +-
+ include/linux/energy_model.h                       |   3 +-
+ include/linux/thermal.h                            |  11 -
+ kernel/sched/cpufreq_schedutil.c                   |   2 +-
+ 37 files changed, 1878 insertions(+), 589 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+ delete mode 100644 Documentation/devicetree/bindings/thermal/qcom-
+tsens.txt
+ create mode 100644 Documentation/devicetree/bindings/thermal/qcom-
+tsens.yaml
+ create mode 100644 drivers/thermal/amlogic_thermal.c
+
