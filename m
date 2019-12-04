@@ -2,105 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D67E41130FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:44:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27242113105
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:46:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfLDRov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:44:51 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:32878 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727912AbfLDRou (ORCPT
+        id S1728183AbfLDRpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:45:46 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:49950 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbfLDRpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:44:50 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y206so209960pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 09:44:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F9Qa6Puv7ezBDFINsGITxUb0gdMtfeyJWNm86YFTPaA=;
-        b=kZJJDJE+eSZPXPBjvuRAiamWZtJg0meXDZiJSBQ/OgKPdYcV/vRtTi+g2tm2BMxS4S
-         yBq0QCAF+CWwh5KNJGF5NjXTm2avaYTBI4IJU0omAS7KBFBoripTGSJ1wTpU9lLGF425
-         P7R5G6u4RTAHq59GpetEHVthgwzineIep1X3E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F9Qa6Puv7ezBDFINsGITxUb0gdMtfeyJWNm86YFTPaA=;
-        b=hShMN7+bY/hsrpXBSrTZivmcTZWQHSOkREkP0sC199sRpyArvQZlAO3bIHkhChX7+e
-         1LJwgJWcmWfoxFqZTSj1tZOyPA2IG9OuvFUmdyjoBgkIBPV8dd25vawL7GZgx8TMf1+G
-         ZPaEmXyu+iNtPqMbdE6J1appdxM31hXBAFB+IZv/hBFpKHbBozH/DTKtKS0Ca6xKXr48
-         dJ42AulvbWY0+ArJnh0z6+RjdCW/rYQNXGdzaZpkK6UfwomE1ZYWtBcHH4I1ytzKV6Gp
-         RoC73WiFbgA7cK0hC1WK1ubbD7mpJt0QenOrYlTNWPjs5WFJXbZHt0ESWEl/nZm3KswC
-         uvKQ==
-X-Gm-Message-State: APjAAAUN25lBfpZ6ptUpJ8kIqiE/+1jXBDHsA6oYIVY9dCEUAjKBbdX6
-        wOaRw6JbNPOwW8ZNIOX8SbFHNg==
-X-Google-Smtp-Source: APXvYqwgcPT4G/249WAVQBUzpvpK20eSRwudnC4aE++PyedRE5c3ZYx0sSLwuLtcw8WjbZy5uVsoPA==
-X-Received: by 2002:a62:e817:: with SMTP id c23mr4358423pfi.24.1575481489391;
-        Wed, 04 Dec 2019 09:44:49 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id k4sm8512292pfa.25.2019.12.04.09.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 09:44:48 -0800 (PST)
-Date:   Wed, 4 Dec 2019 12:44:47 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     madhuparnabhowmik04@gmail.com
-Cc:     paulmck@kernel.org, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] Include: Linux: rculist_nulls: Add docbook comment
- headers
-Message-ID: <20191204174447.GE34402@google.com>
-References: <20191204120357.11658-1-madhuparnabhowmik04@gmail.com>
+        Wed, 4 Dec 2019 12:45:46 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4Hjap8077764;
+        Wed, 4 Dec 2019 11:45:36 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575481536;
+        bh=QEMrw5/Z9z3JNqDZq8b18WA934p6CJvirSUEPVYw+dA=;
+        h=From:To:CC:Subject:Date;
+        b=eyN1hPzpRNUszDrsknKMKRK6Aty/IACTlByrKDqO2LKN74HOXo6gBSbSkGhLNv91l
+         56bxGuQ3OET6OKgsAfxi5VEmJQxN371DLnU6Jq6bh+JoPrWAlC8azBAd34ISNvTJwC
+         AVxh15Axi9pPHjUgjgQU8BqCILbqyMzUoANJoqBQ=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4HjaQr113249
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Dec 2019 11:45:36 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
+ 2019 11:45:36 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 4 Dec 2019 11:45:36 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4HjZMT019571;
+        Wed, 4 Dec 2019 11:45:36 -0600
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+To:     Randy Dunlap <rdunlap@infradead.org>, <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Tony Lindgren <tony@atomide.com>
+CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH 0/2] net: ethernet: ti: cpsw_switchdev: fix unmet direct dependencies detected for NET_SWITCHDEV
+Date:   Wed, 4 Dec 2019 19:45:31 +0200
+Message-ID: <20191204174533.32207-1-grygorii.strashko@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204120357.11658-1-madhuparnabhowmik04@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 05:33:57PM +0530, madhuparnabhowmik04@gmail.com wrote:
-> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> 
-> This patch adds docbook comment headers for hlist_nulls_first_rcu
-> and hlist_nulls_next_rcu in rculist_nulls.h.
-> 
-> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+This series fixes Kconfig warning with CONFIG_COMPILE_TEST=y reported by
+Randy Dunlap <rdunlap@infradead.org> [1]
 
-Thanks. Could you send this to the list? I'd like Paul to review or apply
-this one.
+[1] https://lkml.org/lkml/2019/12/3/1373
 
- - Joel
+Grygorii Strashko (2):
+  net: ethernet: ti: cpsw_switchdev: fix unmet direct dependencies
+    detected for NET_SWITCHDEV
+  arm: omap2plus_defconfig: enable NET_SWITCHDEV
 
-> ---
->  include/linux/rculist_nulls.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.h
-> index 517a06f36c7a..d796ef18ec52 100644
-> --- a/include/linux/rculist_nulls.h
-> +++ b/include/linux/rculist_nulls.h
-> @@ -38,9 +38,17 @@ static inline void hlist_nulls_del_init_rcu(struct hlist_nulls_node *n)
->  	}
->  }
->  
-> +/**
-> + * hlist_nulls_first_rcu - returns the first element of the hash list.
-> + * @head: the head for your list.
-> + */
->  #define hlist_nulls_first_rcu(head) \
->  	(*((struct hlist_nulls_node __rcu __force **)&(head)->first))
->  
-> +/**
-> + * hlist_nulls_next_rcu - returns the element of the list next to @node.
-> + * @node: Element of the list.
-> + */
->  #define hlist_nulls_next_rcu(node) \
->  	(*((struct hlist_nulls_node __rcu __force **)&(node)->next))
->  
-> -- 
-> 2.17.1
-> 
+ arch/arm/configs/omap2plus_defconfig | 3 ++-
+ drivers/net/ethernet/ti/Kconfig      | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
