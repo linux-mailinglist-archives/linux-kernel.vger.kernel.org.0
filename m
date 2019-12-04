@@ -2,93 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6832911236A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06140112371
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:16:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfLDHOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:14:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbfLDHOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:14:20 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DD82206DF;
-        Wed,  4 Dec 2019 07:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575443659;
-        bh=Cwv1kql4NHvUwwQgzVHWaWKIlK5ISRIKAetwzq4MSnE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O2BvOavbnZnLGfNrzYPOt8r3wb3gV/o5U95NoWdokw+R3FiRIWnc84L75hC75OFpc
-         fA/eBnwD4CeOj8d3qh0RhGcLOABAfSdqqjaO9V9v7TasyRqIFrr3reoKIRbSwdA8ie
-         RJmlLjuRtCYFvw9RIE5rOPiwtP9/jT6F89Yez+KU=
-Date:   Wed, 4 Dec 2019 08:14:16 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 024/321] net: fec: add missed clk_disable_unprepare
- in remove
-Message-ID: <20191204071416.GB3513626@kroah.com>
-References: <20191203223427.103571230@linuxfoundation.org>
- <20191203223428.376628375@linuxfoundation.org>
- <20191204055738.nl5db2xtigoamtbk@toshiba.co.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204055738.nl5db2xtigoamtbk@toshiba.co.jp>
+        id S1727219AbfLDHQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:16:55 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55133 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfLDHQy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 02:16:54 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so5799592wmj.4
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 23:16:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=faPNT/f5uZo8iaeYVLQEwdlcOY2/BBdz04dTFvoUITs=;
+        b=cveiedzLTF5mS2Zqe/QUDDb+gQEYISQzEcCxIXxHIgCwuxsCD7IguOlhvwF1mEGg2o
+         yQZ+GKi3S7RZugEX2dkJs+rijyMXZKk0ktN2VTREOuTi+3slnANkRK+oG28LjgVp8dOU
+         aRRNb6+jvjPH6c/s0rsEwy/2dNj0u5hr4PfC8SmRhLoDd+K3kv+3NDa+pL8ohSdCBFqT
+         JOtBJGFlRL9fL3dQwWe/MH2MdP2fds1j9Ia8voFpqlD9rm8OZeuWIUGC74Ifxn1ihlYy
+         ZnrUOB2wEuQgmQSX1hrYqSg4+FQ0wmsYZrefxHyXN5AgX1K1dJlmi0+qwBXLw01dMoo8
+         n5dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=faPNT/f5uZo8iaeYVLQEwdlcOY2/BBdz04dTFvoUITs=;
+        b=B2uMuteRUQPLnzxaAlXi11951CCuNQa5Ts5Swh03glum+cp3AHBxo1BEZEkydEhZcC
+         ph+wW4pteW9WmIihxoaCy78mCtgZARctdj7gyxbp3p8z3vZgDGaGWCPemqYtfkIv7LW7
+         CJujtPqr+6dQ3Pl1AqIrJrlmDe703wPQSpF0J4t+H05tWPnz1ndUh/JKX2VQmEEeks56
+         TnVQO2eiq5/0W3Yf5jZ6wO73LtKjiB5TfGeJ7KilAg1z5zUwgVk6RF9YVM1apd4n8uYZ
+         fM5okNCotUf7PDAGwg67cBa1VC4n+w717PXLmxOGpORrvl1ZExXH8nlrcyHZiD91z/+j
+         RcGA==
+X-Gm-Message-State: APjAAAX1+EWZtm4MWmk9ofqiz8lRGKwTij1XtD1QfMGHv6kL/+cWVClY
+        7qKjPvupK/e4I+5RsMJ0qcWNcg==
+X-Google-Smtp-Source: APXvYqw1e9Sba16z73Xn9TIg9bIDlbIodXDWx2BbrTyW3EZXd6bcOtv3skaMKAl+1FJ8nPB6WxGrFw==
+X-Received: by 2002:a1c:a70e:: with SMTP id q14mr13797771wme.142.1575443812562;
+        Tue, 03 Dec 2019 23:16:52 -0800 (PST)
+Received: from glaroque-ThinkPad-T480.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id m7sm2319337wrr.40.2019.12.03.23.16.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 23:16:52 -0800 (PST)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, khilman@baylibre.com
+Subject: [PATCH] bluetooth: hci_bcm: enable IRQ capability from node
+Date:   Wed,  4 Dec 2019 08:16:51 +0100
+Message-Id: <20191204071651.14977-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 02:57:38PM +0900, Nobuhiro Iwamatsu wrote:
-> Hi,
-> 
-> On Tue, Dec 03, 2019 at 11:31:30PM +0100, Greg Kroah-Hartman wrote:
-> > From: Chuhong Yuan <hslester96@gmail.com>
-> > 
-> > [ Upstream commit c43eab3eddb4c6742ac20138659a9b701822b274 ]
-> > 
-> > This driver forgets to disable and unprepare clks when remove.
-> > Add calls to clk_disable_unprepare to fix it.
-> > 
-> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> 
-> 
-> This commit also requires the following commit:
-> 
-> commit a31eda65ba210741b598044d045480494d0ed52a
-> Author: Chuhong Yuan <hslester96@gmail.com>
-> Date:   Wed Nov 20 09:25:13 2019 +0800
-> 
->     net: fec: fix clock count mis-match
-> 
->     pm_runtime_put_autosuspend in probe will call runtime suspend to
->     disable clks automatically if CONFIG_PM is defined. (If CONFIG_PM
->     is not defined, its implementation will be empty, then runtime
->     suspend will not be called.)
-> 
->     Therefore, we can call pm_runtime_get_sync to runtime resume it
->     first to enable clks, which matches the runtime suspend. (Only when
->     CONFIG_PM is defined, otherwise pm_runtime_get_sync will also be
->     empty, then runtime resume will not be called.)
-> 
->     Then it is fine to disable clks without causing clock count mis-match.
-> 
->     Fixes: c43eab3eddb4 ("net: fec: add missed clk_disable_unprepare in remove")
->     Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
->     Acked-by: Fugang Duan <fugang.duan@nxp.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
-> 
-> 
-> And this should also apply to 5.3.
+Actually IRQ can be found from GPIO but all platorms don't support
+gpiod_to_irq, it's the case on amlogic chip.
+so to have possibility to use interrupt mode we need to add interrupts
+field in node and support it in driver.
 
-Thanks, now queued up.
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+---
+ drivers/bluetooth/hci_bcm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-greg k-h
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 7646636f2d18..9b024e1e36e2 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1372,6 +1372,7 @@ static struct platform_driver bcm_driver = {
+ static int bcm_serdev_probe(struct serdev_device *serdev)
+ {
+ 	struct bcm_device *bcmdev;
++	struct platform_device *pdev;
+ 	int err;
+ 
+ 	bcmdev = devm_kzalloc(&serdev->dev, sizeof(*bcmdev), GFP_KERNEL);
+@@ -1384,6 +1385,8 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+ #endif
+ 	bcmdev->serdev_hu.serdev = serdev;
+ 	serdev_device_set_drvdata(serdev, bcmdev);
++	pdev = to_platform_device(bcmdev->dev);
++	bcmdev->irq = platform_get_irq(pdev, 0);
+ 
+ 	if (has_acpi_companion(&serdev->dev))
+ 		err = bcm_acpi_probe(bcmdev);
+-- 
+2.17.1
+
