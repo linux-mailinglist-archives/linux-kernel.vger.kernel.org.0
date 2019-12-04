@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF60113222
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:06:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01FF61132B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:12:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729770AbfLDSGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:06:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
+        id S1730578AbfLDSKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:10:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbfLDSF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:05:56 -0500
+        id S1731325AbfLDSKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:10:48 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77E4520675;
-        Wed,  4 Dec 2019 18:05:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54C9120833;
+        Wed,  4 Dec 2019 18:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482756;
-        bh=qcNO1Caxm6NWbnY5JlZralMjIeX6Rv+MxU4i3SGAiy8=;
+        s=default; t=1575483047;
+        bh=GNrThHvp51OQUW6thM0FBK86TAxOtmVirBWYAuPFsDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pwSeYMoklIVm9GAuzxbsgIkd+2YE/GbMcZWaMbfpWnahIgsvwYSN2jEOpa/T1MSsr
-         V7IHknNeMeaC2irzrI1NJlU2POtFpyMFoGb2DEFVyl4UgYih+qlLozGuTGy8Fuz5V/
-         8DRP7anlaNMaToROjec/HgXgYzEL/ig3/kYGidYU=
+        b=SeqAPmI+A8yJmeFpIU4VjpsLHdg2W86VahPFY1bn+ZcPIKLg8B4BDhUkShCUSmkGz
+         YCwfzVn3SkAKdnODVyFuLzEF8cLlZb7fKoSGTPBqU5TwtSK5bTFBmizS3i75c5JbqU
+         uZrwPADCkh3cppkdHXFJ2eawNgrJL1tloxUMAC9g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        "Reported-by: Marian Mihailescu" <mihailescu2m@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 095/209] powerpc/mm: Make NULL pointer deferences explicit on bad page faults.
-Date:   Wed,  4 Dec 2019 18:55:07 +0100
-Message-Id: <20191204175328.405038792@linuxfoundation.org>
+Subject: [PATCH 4.9 003/125] clk: samsung: exynos5420: Preserve PLL configuration during suspend/resume
+Date:   Wed,  4 Dec 2019 18:55:08 +0100
+Message-Id: <20191204175310.136962421@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 49a502ea23bf9dec47f8f3c3960909ff409cd1bb ]
+[ Upstream commit e9323b664ce29547d996195e8a6129a351c39108 ]
 
-As several other arches including x86, this patch makes it explicit
-that a bad page fault is a NULL pointer dereference when the fault
-address is lower than PAGE_SIZE
+Properly save and restore all top PLL related configuration registers
+during suspend/resume cycle. So far driver only handled EPLL and RPLL
+clocks, all other were reset to default values after suspend/resume cycle.
+This caused for example lower G3D (MALI Panfrost) performance after system
+resume, even if performance governor has been selected.
 
-In the mean time, this page makes all bad_page_fault() messages
-shorter so that they remain on one single line. And it prefixes them
-by "BUG: " so that they get easily grepped.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-[mpe: Avoid pr_cont()]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/fault.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index 52863deed65df..5fc8a010fdf07 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -581,21 +581,22 @@ void bad_page_fault(struct pt_regs *regs, unsigned long address, int sig)
- 	switch (regs->trap) {
- 	case 0x300:
- 	case 0x380:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"data at address 0x%08lx\n", regs->dar);
-+		pr_alert("BUG: %s at 0x%08lx\n",
-+			 regs->dar < PAGE_SIZE ? "Kernel NULL pointer dereference" :
-+			 "Unable to handle kernel data access", regs->dar);
- 		break;
- 	case 0x400:
- 	case 0x480:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"instruction fetch\n");
-+		pr_alert("BUG: Unable to handle kernel instruction fetch%s",
-+			 regs->nip < PAGE_SIZE ? " (NULL pointer?)\n" : "\n");
- 		break;
- 	case 0x600:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"unaligned access at address 0x%08lx\n", regs->dar);
-+		pr_alert("BUG: Unable to handle kernel unaligned access at 0x%08lx\n",
-+			 regs->dar);
- 		break;
- 	default:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"unknown fault\n");
-+		pr_alert("BUG: Unable to handle unknown paging fault at 0x%08lx\n",
-+			 regs->dar);
- 		break;
- 	}
- 	printk(KERN_ALERT "Faulting instruction address: 0x%08lx\n",
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 13c09a740840b..2bb88d1251136 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -170,12 +170,18 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	CPLL_CON0,
++	DPLL_CON0,
+ 	EPLL_CON0,
+ 	EPLL_CON1,
+ 	EPLL_CON2,
+ 	RPLL_CON0,
+ 	RPLL_CON1,
+ 	RPLL_CON2,
++	IPLL_CON0,
++	SPLL_CON0,
++	VPLL_CON0,
++	MPLL_CON0,
+ 	SRC_TOP0,
+ 	SRC_TOP1,
+ 	SRC_TOP2,
 -- 
 2.20.1
 
