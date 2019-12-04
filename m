@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AAD511236E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:15:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E7E112367
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:14:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbfLDHOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:14:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43561 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbfLDHOm (ORCPT
+        id S1727244AbfLDHOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:14:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39442 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfLDHOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:14:42 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h14so3154629pfe.10;
-        Tue, 03 Dec 2019 23:14:41 -0800 (PST)
+        Wed, 4 Dec 2019 02:14:14 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y11so7153596wrt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 23:14:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id;
-        bh=yyLimGD4f12DqzRTDHXGiQPmCcJPxnl3/Nn96acsv98=;
-        b=NWPoNEpr+2n1OE+peRK1EqCGnArK/SkCMhZR0QpNKiiv3Rd8vMTzfibhm9vtm1wYK2
-         YqmiYIM2+V/DhvZ/2flVIAn5iHxC7BmgV83d8Aj+YMnmBYH0oRBEFSEeUDPnEby2WtsK
-         owk1Kd4goB65oRfx++EoLTN5ecczZvhZfFFXm4VAKo+QEZ4H63MfEoZ8isDCZ+dEO2oS
-         yPl1tRK/OeDHEW0+onwKbT7CagyjBrAiGWQ+UEzjaserorjprekSAs5fvY0gYpdRcc0r
-         RBEKq6NZNFTR6aC7S7sDs8yFpxZXR8Zte4V00deAY4OQP/7KH3+M8vcFhlimtUAHTiN6
-         BjtA==
+        bh=faPNT/f5uZo8iaeYVLQEwdlcOY2/BBdz04dTFvoUITs=;
+        b=peIsFVorQnWepGPOfBNBZe45ZXcl5mpOqPoMHX8IOEUf1fn4okHL/y7Pa74ipFV7GD
+         cTmSQwqp9fRwL/vTYVqMUTw5C1MQHDslN+//Vi8OSIBreTBfwJ8ljsM4prVjG2rFNCah
+         LeicfS6tlqh06809CAta+BGy33TV1JGJ5O1eB0wBhQI8tn1Bj57BoUE9DS3ZBSVKlvgZ
+         6xh+rDqxqtkL8Tb3RDA+XPbA9GoG3Z3Hon6p1BuYcl7QHh0RaRk9nH2IqDfTqhbozBdK
+         mB9gmxOd4/3OZMQKb2RiP6BxRSdRFIMRBhZI5yosPQeZbErEhSUr9w7t/Sj/QrUIIvy1
+         tpiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yyLimGD4f12DqzRTDHXGiQPmCcJPxnl3/Nn96acsv98=;
-        b=PKoJ505LvqgaDnk+WgEaFnUIJSiZXvuVg0qguQaAaYRMi2FSXfPucQcfFTO1UiO248
-         n2Y7gTu6H0LWxfd82pJxS3w7Ro8BqRG8ZWbB2St5h8AqsmOC2lBPx7cWrJVNOjrFCUYi
-         S95Mmepd0fUPXpDyxuVs1xEbu6pZlwz8hzW6aELjlapua1h2V9ltCDwyZo0xOwC01o6P
-         n/m8WvmFh7X5oZg9v3/VRO6nrPxbZR4lP73pACyElKbi70GB8FvhjHfVcmR3I3Vavr5l
-         QqV/5AZyEkNFF78s97/YcA003Ah7JE4n7Jr5wlD9iXWsQDND7x1WZwQci/ZlgROEPNxR
-         S0yw==
-X-Gm-Message-State: APjAAAWzSAZFuEGomEmqmIukqqomrxbya8Emq57TlGl80z5Z+DAx+RJC
-        l7juo6z3/aZAxmOasfaZ8UI=
-X-Google-Smtp-Source: APXvYqwmiSTz4VuzXFxIWjnodDj3ScjphNtZmai9HxMeTn/1ZOshDjZamXqvEzddOsc1Teq19EcqcQ==
-X-Received: by 2002:a62:7b46:: with SMTP id w67mr2080477pfc.113.1575443681576;
-        Tue, 03 Dec 2019 23:14:41 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id q12sm848316pfh.158.2019.12.03.23.14.38
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 03 Dec 2019 23:14:40 -0800 (PST)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     broonie@kernel.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang7@gmail.com,
-        huanpeng.xin@unisoc.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: sprd: Fix the incorrect SPI register
-Date:   Wed,  4 Dec 2019 15:13:59 +0800
-Message-Id: <b4f7f89ec0fdc595335687bfbd9f962213bc4a1d.1575443510.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.7.9.5
+        bh=faPNT/f5uZo8iaeYVLQEwdlcOY2/BBdz04dTFvoUITs=;
+        b=Q230KsiTegPsJqUEQmTwRhVgOYT1HnaWGpvKvNIDZ3mKt88oMtze4qWHfBHJj/ftdg
+         sHM6TJqB2U0KQnn5KKvAvVtyu2h+OvmV8GmbEoNZFyv40YNOIp6rqDgSKY3GAYmZRYWZ
+         dNoPpP9ugVsNFcMcGKN+zArXHLzKy1286Lt/33kBDDZWl9/W1s7FUdkgPko+rXmHxO1k
+         T2fsm4FVWo3+iPzZvEyiyOUSLSW3ZYvBPS3cPZmKhxRueO0H7JY6zcbIISREfzQDF62W
+         hZIu8NZWdPeVijnRboBW2uq+KZ+fDHW7483eybo3Mq9VglCZNnpo0cnuBngIFOObuw0W
+         rPTw==
+X-Gm-Message-State: APjAAAVIZ1WHQYgbws7HcxeiZxwZ/W+ICPf7WVxGdCccFb/jzi04vEJK
+        8jLmBjtYdFeOocVGAvNtgZ5Axg==
+X-Google-Smtp-Source: APXvYqzD+bj2dB60P1mwGmgJ0xT8Xw/FI3kBxaFo3ktA55T4hDKZCn/mogaPOBLxwLnhnhi+FcGYpw==
+X-Received: by 2002:a5d:5403:: with SMTP id g3mr2210292wrv.302.1575443652648;
+        Tue, 03 Dec 2019 23:14:12 -0800 (PST)
+Received: from glaroque-ThinkPad-T480.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id v15sm5417592wmh.24.2019.12.03.23.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 23:14:12 -0800 (PST)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     marcel@holtmann.org, ohan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, khilman@baylibre.com
+Subject: [PATCH] bluetooth: hci_bcm: enable IRQ capability from node
+Date:   Wed,  4 Dec 2019 08:14:11 +0100
+Message-Id: <20191204071411.13624-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huanpeng Xin <huanpeng.xin@unisoc.com>
+Actually IRQ can be found from GPIO but all platorms don't support
+gpiod_to_irq, it's the case on amlogic chip.
+so to have possibility to use interrupt mode we need to add interrupts
+field in node and support it in driver.
 
-The original code used an incorrect SPI register to initialize the SPI
-controller in sprd_spi_init_hw(), thus fix it.
-
-Fixes: e7d973a31c24 ("spi: sprd: Add SPI driver for Spreadtrum SC9860")
-Signed-off-by: Huanpeng Xin <huanpeng.xin@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 ---
- drivers/spi/spi-sprd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/hci_bcm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
-index 2ee1feb..6678f1c 100644
---- a/drivers/spi/spi-sprd.c
-+++ b/drivers/spi/spi-sprd.c
-@@ -678,7 +678,7 @@ static int sprd_spi_init_hw(struct sprd_spi *ss, struct spi_transfer *t)
- 	if (d->unit != SPI_DELAY_UNIT_SCK)
- 		return -EINVAL;
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 7646636f2d18..9b024e1e36e2 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1372,6 +1372,7 @@ static struct platform_driver bcm_driver = {
+ static int bcm_serdev_probe(struct serdev_device *serdev)
+ {
+ 	struct bcm_device *bcmdev;
++	struct platform_device *pdev;
+ 	int err;
  
--	val = readl_relaxed(ss->base + SPRD_SPI_CTL7);
-+	val = readl_relaxed(ss->base + SPRD_SPI_CTL0);
- 	val &= ~(SPRD_SPI_SCK_REV | SPRD_SPI_NG_TX | SPRD_SPI_NG_RX);
- 	/* Set default chip selection, clock phase and clock polarity */
- 	val |= ss->hw_mode & SPI_CPHA ? SPRD_SPI_NG_RX : SPRD_SPI_NG_TX;
+ 	bcmdev = devm_kzalloc(&serdev->dev, sizeof(*bcmdev), GFP_KERNEL);
+@@ -1384,6 +1385,8 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+ #endif
+ 	bcmdev->serdev_hu.serdev = serdev;
+ 	serdev_device_set_drvdata(serdev, bcmdev);
++	pdev = to_platform_device(bcmdev->dev);
++	bcmdev->irq = platform_get_irq(pdev, 0);
+ 
+ 	if (has_acpi_companion(&serdev->dev))
+ 		err = bcm_acpi_probe(bcmdev);
 -- 
-1.7.9.5
+2.17.1
 
