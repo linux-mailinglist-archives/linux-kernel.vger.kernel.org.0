@@ -2,103 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5C81136C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 21:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A21971136BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 21:50:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfLDUwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 15:52:31 -0500
-Received: from relay.sw.ru ([185.231.240.75]:50772 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727889AbfLDUwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 15:52:31 -0500
-Received: from [192.168.15.5]
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1icbcl-0001ny-LQ; Wed, 04 Dec 2019 23:51:51 +0300
-Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Cc:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, ghalat@redhat.com,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <0000000000002cfc3a0598d42b70@google.com>
- <CAKMK7uFAfw4M6B8WaHx6FBkYDmUBTQ6t3D8RE5BbMt=_5vyp9A@mail.gmail.com>
- <CACT4Y+aV9vzJ6gs9r2RAQP+dQ_vkOc5H6hWu-prF1ECruAE_5w@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <6632ddb6-37bf-dc42-e355-2443c17e6da0@virtuozzo.com>
-Date:   Wed, 4 Dec 2019 23:49:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728146AbfLDUu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 15:50:29 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33733 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbfLDUu3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 15:50:29 -0500
+Received: by mail-ed1-f68.google.com with SMTP id l63so691015ede.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 12:50:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hq3LxKYOOomc+/QE33SRTklsyQdBe2jME5WH5NYH7Hk=;
+        b=XofnVsh9JkrhplZ0OE7AUH7DsGvWdzLDYNfCfoxP0l7uUCOPFmiZWxdtwZzblCYEz8
+         nzcH3SxfKhsCeer285czBZtVUVdiqAvyDPXXHbvpBPdshfdh4w4FF5Ng8H+oA31OjfUI
+         vZPAxNhB2mjGDNunaPVs6r6Df+EF+XB70UgvdAQdXKp02x6VP+txnFgTTh5mY2PbTWBh
+         aPKP8kNjSZ9Nvrd6ldUJWoy7jknWIGTYAA4U6EpTMVIIsriQ4TSB6X2dF7Rx8utkpo3r
+         RjUET3r64LH2ttN2w9Ab+JOyQfISd+xC71qLWTi6TcfKwVeInFWLiTuMVy3Xo0/BLupS
+         8Apg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hq3LxKYOOomc+/QE33SRTklsyQdBe2jME5WH5NYH7Hk=;
+        b=MA6l8HLgbcU+S72xdTUZ5x3gBPoTIypWBlvYrBtWHU9Jzjhzm8Ic3KEdRl1Y2mwYGW
+         9IMK5+7LRdCWAVNYdCaTYrLL4dBwRwGlrYyJN29N3a7NlHhI7GBGIbKwrvdUC81FhdRY
+         Q8NhijLDE/gjSWfVaqIW35lH+7yjNdo9pM3/27z8WQPq8b2PvsNhPeY7FMLT6wMtFMHw
+         KGBSZEu35cC+i4KjRp3dJs9Dx4JjCdoCCJf4GtVUQcRju+8ZRq7lN1/Gxuz+XGdhyXs7
+         u3vUyPn2hKz5hM0gIrB2D7kqRg8UlCM43fCjcoEcOZoXNPReKJ8kH96pRRCFjAplqpau
+         H06w==
+X-Gm-Message-State: APjAAAVapB7uZC/yMyp6MH6tUv2+d2N2pIV1lkovkxBSM4cWQUr2j9na
+        c+vcgxr1dO6EVhlwqum6e8exVTap8n5B9r2F4PtTrQ==
+X-Google-Smtp-Source: APXvYqwMdNLsGxvlCa1i0ErELJP4i0sWpocovAjl4xGOHiGed8ZySML2zMNhKfShRaQbEjYyznCmIueYA6VatjBeKCI=
+X-Received: by 2002:a17:906:3798:: with SMTP id n24mr5230843ejc.15.1575492627075;
+ Wed, 04 Dec 2019 12:50:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+aV9vzJ6gs9r2RAQP+dQ_vkOc5H6hWu-prF1ECruAE_5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191127184453.229321-1-pasha.tatashin@soleen.com>
+ <20191127184453.229321-3-pasha.tatashin@soleen.com> <20191128145151.GB22314@lakrids.cambridge.arm.com>
+In-Reply-To: <20191128145151.GB22314@lakrids.cambridge.arm.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Wed, 4 Dec 2019 15:50:15 -0500
+Message-ID: <CA+CK2bDPjLSECOeduZY7hVPreYYCTpgNMd4aTGSy=35E86W72Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: remove uaccess_ttbr0 asm macros from cache functions
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, steve.capper@arm.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        Stefan Agner <stefan@agner.ch>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xen-devel@lists.xenproject.org,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 28, 2019 at 9:51 AM Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> On Wed, Nov 27, 2019 at 01:44:52PM -0500, Pavel Tatashin wrote:
+> > We currently duplicate the logic to enable/disable uaccess via TTBR0,
+> > with C functions and assembly macros. This is a maintenenace burden
+> > and is liable to lead to subtle bugs, so let's get rid of the assembly
+> > macros, and always use the C functions. This requires refactoring
+> > some assembly functions to have a C wrapper.
+>
+> [...]
+>
+> > +static inline int invalidate_icache_range(unsigned long start,
+> > +                                       unsigned long end)
+> > +{
+> > +     int rv;
+>
+> Please make this 'ret', for consistency with other arm64 code. We only
+> use 'rv' in one place where it's short for "Revision and Variant", and
+> 'ret' is our usual name for a temporary variable used to hold a return
+> value.
 
+OK
 
-On 12/4/19 9:33 AM, Dmitry Vyukov wrote:
-> On Tue, Dec 3, 2019 at 11:37 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->>
->> On Tue, Dec 3, 2019 at 11:25 PM syzbot
->> <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com> wrote:
->>>
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=10bfe282e00000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=4455ca3b3291de891abc
->>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11181edae00000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105cbb7ae00000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:380 [inline]
->>> BUG: KASAN: slab-out-of-bounds in fbcon_get_font+0x2b2/0x5e0
->>> drivers/video/fbdev/core/fbcon.c:2465
->>> Read of size 16 at addr ffff888094b0aa10 by task syz-executor414/9999
->>
->> So fbcon allocates some memory, security/tomoyo goes around and frees
->> it, fbcon goes boom because the memory is gone. I'm kinda leaning
->> towards "not an fbcon bug". Adding relevant security folks and mailing
->> lists.
->>
->> But from a very quick look in tomoyo it loosk more like "machine on
->> fire, random corruption all over". No idea what's going on here.
-> 
-> Hi Daniel,
-> 
-> This is an out-of-bounds access, not use-after-free.
-> I don't know why we print the free stack at all (maybe +Andrey knows),
-> but that's what KASAN did from day one. I filed
-> https://bugzilla.kernel.org/show_bug.cgi?id=198425 which I think is a
-> good idea, I will add your confusion as a data point :)
+>
+> > +
+> > +     if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)) {
+> > +             isb();
+> > +             return 0;
+> > +     }
+> > +     uaccess_ttbr0_enable();
+>
+> Please place a newline between these two, for consistency with other
+> arm64 code.
 
-Because we have that information (free stack) and it usually better to provide
-all the information we have rather than hide it. You never known what information
-might be needed to fix the bug.
-Free memory might be reused and what we report as OOB might be an UAF and free stack
-could be useful in such case.
+OK
+
+>
+> > +     rv = asm_invalidate_icache_range(start, end);
+> > +     uaccess_ttbr0_disable();
+> > +
+> > +     return rv;
+> > +}
+> > +
+> >  static inline void flush_icache_range(unsigned long start, unsigned long end)
+> >  {
+> >       __flush_icache_range(start, end);
+> > diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+> > index db767b072601..a48b6dba304e 100644
+> > --- a/arch/arm64/mm/cache.S
+> > +++ b/arch/arm64/mm/cache.S
+> > @@ -15,7 +15,7 @@
+> >  #include <asm/asm-uaccess.h>
+> >
+> >  /*
+> > - *   flush_icache_range(start,end)
+> > + *   __asm_flush_icache_range(start,end)
+> >   *
+> >   *   Ensure that the I and D caches are coherent within specified region.
+> >   *   This is typically used when code has been written to a memory region,
+> > @@ -24,11 +24,11 @@
+> >   *   - start   - virtual start address of region
+> >   *   - end     - virtual end address of region
+> >   */
+> > -ENTRY(__flush_icache_range)
+> > +ENTRY(__asm_flush_icache_range)
+> >       /* FALLTHROUGH */
+> >
+> >  /*
+> > - *   __flush_cache_user_range(start,end)
+> > + *   __asm_flush_cache_user_range(start,end)
+> >   *
+> >   *   Ensure that the I and D caches are coherent within specified region.
+> >   *   This is typically used when code has been written to a memory region,
+> > @@ -37,8 +37,7 @@ ENTRY(__flush_icache_range)
+> >   *   - start   - virtual start address of region
+> >   *   - end     - virtual end address of region
+> >   */
+> > -ENTRY(__flush_cache_user_range)
+> > -     uaccess_ttbr0_enable x2, x3, x4
+> > +ENTRY(__asm_flush_cache_user_range)
+> >  alternative_if ARM64_HAS_CACHE_IDC
+>
+> It's unfortunate that we pulled the IDC alternative out for
+> invalidate_icache_range(), but not here.
+
+Good point. I will fix that in a separate patch.
+
+Thank you,
+Pasha
