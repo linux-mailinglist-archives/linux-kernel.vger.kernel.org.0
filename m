@@ -2,155 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C185C113809
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24834113816
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:21:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfLDXST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 18:18:19 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:36316 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbfLDXSS (ORCPT
+        id S1728592AbfLDXVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 18:21:44 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43112 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbfLDXVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:18:18 -0500
-Received: by mail-pj1-f66.google.com with SMTP id n96so451809pjc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:18:18 -0800 (PST)
+        Wed, 4 Dec 2019 18:21:43 -0500
+Received: by mail-lj1-f195.google.com with SMTP id a13so1240699ljm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:21:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bMFgfwVDLyNfP+n9tPTAj8QY4bC2HsMSOAGKRA9gakw=;
-        b=MtSlA/OgS15E0uba3TIek4yo6Dv72Ih5Vz8TtayNLcYj9ko9Y5pcJja4pXlDi+U5B2
-         OzrIhaayNaSUVeiGvMc3+qo1sSa3EgJ+AupbHkkOI9WA9YMvGRb8L6EbA1y0nROXEUzq
-         DLekXMbit5LGIAikGGF/a6V21GXdqB1vVViqVj9DWbn3bDTmE1RQTdmSpi3ceBVwG8X4
-         +RdlDSRJZH67fNHiUDPIpFR2b9qTJvdcCugWSM4lang0P7FFhrNPfmnNSsvwOGYMAa/t
-         Da8KmVghIDsNP9WG/dmjuj/U+HPlXUbXm2G7PwKgGY8EAOc1R7+MLdFwE4WaevwUll23
-         YYAA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cl8V4L186TosF/Foo+q0QrKTNn4dTHR6LIi9ACqiBcU=;
+        b=AE0BRV5bLa+uNHAmKvhtTBvjE80e4SGtol/mGUZwRXzmA9JbICpa/9qcgzzUtLz7/M
+         9j4dSuNkgY7Bmzcpq78KE7Ss8vruQEIoUqSOyyqle9kuADuWUFtK1lgwhUB3DjU1DTz8
+         2Ysvd7vuFYaTyCI2mu2If7sx7doKGn7Mvw42bcbAwp7eZjbuBTjd6gfT93CXR2ux8PWh
+         8YK7wvYDnQh+cjQS9SDg3qRDLbAkRspbI3QIL32RBl3wuYOPKhF7sBW52xTU/qylgda8
+         gQwg6IDikZDt4i32x8F98uAyPY+J5nB7Gge0GoE3bIOKkn+3WW9wcZ2trO/Q6xMQaAih
+         0I4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bMFgfwVDLyNfP+n9tPTAj8QY4bC2HsMSOAGKRA9gakw=;
-        b=H5ay/DtGp1YZVIVFeTbSJdsJp+faTsaXTMuQcV3TFjuK4XVtJsuf5ZgVFkZWflUgqi
-         WqJmvoU2BroIn2WiNkJmBF/LFQED7DHSUTgF4CoTqzoedhImUj87Gb5MtklMOmwVrLYL
-         LbdFjK0JoM4bTMemdzvm0hq9Yny8KxAe5c7kMcc0AjDrjXf+K2SPLeO6cGyXigAWzVuy
-         Q2qjQ/QQITTySGRC0KMm1XIHVQNd4ULGPPGXsXN9UqhcW361PLPZCK5SoSx58/BOiMIX
-         1nj82UdwtjCxn578+gjk0FXvJ30js8mPEol1EBeT/CaJVSE1Bq85GBJy1PQyk8ArFo2u
-         QUrA==
-X-Gm-Message-State: APjAAAW0PgRFwjXuvydxSoa2G0PuXPuQqxiGOBYifSdHTyy3aUiM2/Ft
-        SFpzSTpO9Cu5bw+zukXSxpZdhsrJI4FrYBPQD6cTyg==
-X-Google-Smtp-Source: APXvYqxyypwjL3djnDA4vB8jmSAsCckKucoAckitJOpn/REINR7zthvw1tWILnDJLcTdY3b7XdQhBRvlBPMCVLzrJ40=
-X-Received: by 2002:a17:902:8216:: with SMTP id x22mr5812405pln.179.1575501497559;
- Wed, 04 Dec 2019 15:18:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cl8V4L186TosF/Foo+q0QrKTNn4dTHR6LIi9ACqiBcU=;
+        b=euwP1ghw0PueesvOKWYhdo+9FSw0PIIjM1zForJxdv6UkgjgM9M7upQJ4193zoAIMX
+         Gl9vO6IRtbWVe9lgQza+j7lCaCarvEmisd4nMaRUkZ6ZQa/mrf7DT247TWmrMz3HPcYv
+         xrb4IDgnwR18Eld+jT/+rStjLwaNE3J+oshb1iZULfwHakh8e0dBEhcwLW9uR+fQL7HE
+         8lnzx992Xa+kEaKuJ5au0UIv4cB8d1HPNlSBb7ujIM1wXW2zJIYYGepuFfyHFqA3hCVp
+         JRKB8/0T6PKUFOE6frvWIcPTKLNjqvcTx8huSX4ptQ3AEQw9kt138d230G8ImomyraUO
+         fUGA==
+X-Gm-Message-State: APjAAAUYsnD0kkgPUkMrPjktcjMnhld0AmNNxNRZXMv3pUv/9ldrS55x
+        ma2+rcPxdxkRk5kADOm5MEzeIA==
+X-Google-Smtp-Source: APXvYqx1jcCUzhn2w8sQ4CXIhEpr80go+HYVRZUiUrM0uEPJqXQgzz8JzMZV56rRJDJwjmYFPAI1pQ==
+X-Received: by 2002:a2e:9194:: with SMTP id f20mr3599265ljg.154.1575501701983;
+        Wed, 04 Dec 2019 15:21:41 -0800 (PST)
+Received: from localhost.localdomain (c-21cd225c.014-348-6c756e10.bbcust.telenor.se. [92.34.205.33])
+        by smtp.gmail.com with ESMTPSA id q186sm3975832ljq.30.2019.12.04.15.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 15:21:40 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH] mfd: motorola-cpcap: Do not hardcode SPI mode flags
+Date:   Thu,  5 Dec 2019 00:19:31 +0100
+Message-Id: <20191204231931.21378-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20191204225446.202981-1-dima@golovin.in>
-In-Reply-To: <20191204225446.202981-1-dima@golovin.in>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 4 Dec 2019 15:18:05 -0800
-Message-ID: <CAKwvOdm-bhuJMRRN3tyNdb88+_TFd4m3b-7gX0-91VG4djzp+Q@mail.gmail.com>
-Subject: Re: [PATCH] x86/boot: kbuild: allow readelf executable to be specified
-To:     Dmitry Golovin <dima@golovin.in>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Bruce Ashfield <bruce.ashfield@gmail.com>,
-        Ross Philipson <ross.philipson@oracle.com>,
-        Ross Burton <ross.burton@intel.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Daniel Kiper <daniel.kiper@oracle.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        tony.luck@intel.com, fenghua.yu@intel.com,
-        linux-ia64@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 2:55 PM Dmitry Golovin <dima@golovin.in> wrote:
->
-> Introduce a new READELF variable to top-level Makefile, so the name of
-> readelf binary can be specified.
+The current use of mode flags to us SPI_MODE_0 and
+SPI_CS_HIGH is fragile: it overwrites anything already
+assigned by the SPI core. Change it thusly:
 
-Thanks for the patch!
+- Just |= the SPI_MODE_0 so we keep other flags
+- Assign ^= SPI_CS_HIGH since we might be active high
+  already, and that is usually the case with GPIOs used
+  for chip select, even if they are in practice active low.
 
-This is a general cleanup that should improve cross compilation
-(readelf should be treated as ever binary in the list like
-objcopy/objdump/etc), and allow us to use binutils substitutes for
-readelf that aren't called `readelf` (ie. `llvm-readelf`).
+Add a comment clarifying why ^= SPI_CS_HIGH is the right
+choice here.
 
->
-> Before this change the name of the binary was hardcoded to
-> "$(CROSS_COMPILE)readelf" which might not be present for every
-> toolchain.
->
-> This allows to build with LLVM Object Reader by using make parameter
-> READELF=llvm-readelf.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/771
-> Signed-off-by: Dmitry Golovin <dima@golovin.in>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/mfd/motorola-cpcap.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-No need to explicitly CC me; I monitor our list like a hawk.
-
-> ---
->  Makefile                          | 3 ++-
->  arch/x86/boot/compressed/Makefile | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 999a197d67d2..612a55d25442 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -414,6 +414,7 @@ STRIP               = $(CROSS_COMPILE)strip
->  OBJCOPY                = $(CROSS_COMPILE)objcopy
->  OBJDUMP                = $(CROSS_COMPILE)objdump
->  OBJSIZE                = $(CROSS_COMPILE)size
-> +READELF                = $(CROSS_COMPILE)readelf
->  PAHOLE         = pahole
->  LEX            = flex
->  YACC           = bison
-> @@ -472,7 +473,7 @@ GCC_PLUGINS_CFLAGS :=
->  CLANG_FLAGS :=
->
->  export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
-> -export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE PAHOLE LEX YACC AWK INSTALLKERNEL
-> +export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE READELF PAHOLE LEX YACC AWK INSTALLKERNEL
->  export PERL PYTHON PYTHON2 PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
->  export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_MODULE
->
-> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-> index aa976adb7094..1dac210f7d44 100644
-> --- a/arch/x86/boot/compressed/Makefile
-> +++ b/arch/x86/boot/compressed/Makefile
-> @@ -103,7 +103,7 @@ vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_thunk_$(BITS).o
->  quiet_cmd_check_data_rel = DATAREL $@
->  define cmd_check_data_rel
->         for obj in $(filter %.o,$^); do \
-> -               ${CROSS_COMPILE}readelf -S $$obj | grep -qF .rel.local && { \
-> +               $(READELF) -S $$obj | grep -qF .rel.local && { \
-
-Grepping the kernel sources for `READELF`, it looks like
-arch/ia64/Makefile makes the same mistake. Would you mind fixing both
-cases in the same patch (v2)?  I'm also curious about it's use in
-arch/ia64/scripts/unwcheck.py, and scripts/faddr2line. +ia64
-maintainers and list.
-
-I think if you simply remove the assignment on line 17 of
-arch/ia64/Makefile you should be fine.
-
->                         echo "error: $$obj has data relocations!" >&2; \
->                         exit 1; \
->                 } || true; \
-> --
-> 2.23.0
->
-
-
+diff --git a/drivers/mfd/motorola-cpcap.c b/drivers/mfd/motorola-cpcap.c
+index 52f38e57cdc1..a3bc61b8008c 100644
+--- a/drivers/mfd/motorola-cpcap.c
++++ b/drivers/mfd/motorola-cpcap.c
+@@ -279,7 +279,13 @@ static int cpcap_probe(struct spi_device *spi)
+ 	spi_set_drvdata(spi, cpcap);
+ 
+ 	spi->bits_per_word = 16;
+-	spi->mode = SPI_MODE_0 | SPI_CS_HIGH;
++	spi->mode |= SPI_MODE_0;
++	/*
++	 * Active high should be defined as "inverse polarity" as GPIO-based
++	 * chip selects can be logically active high but inverted by the GPIO
++	 * library.
++	 */
++	spi->mode ^= SPI_CS_HIGH;
+ 
+ 	ret = spi_setup(spi);
+ 	if (ret)
 -- 
-Thanks,
-~Nick Desaulniers
+2.23.0
+
