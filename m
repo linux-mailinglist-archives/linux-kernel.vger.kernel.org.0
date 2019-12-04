@@ -2,74 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C508D112A33
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 12:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C159112A3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 12:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfLDLdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 06:33:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727268AbfLDLdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 06:33:17 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 701C020637;
-        Wed,  4 Dec 2019 11:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575459196;
-        bh=/JHiz2KIdlsuSMIGuTWB++APfysh52tpv3cjf0DfXIs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vQFAdRPVtLGN6tVS4n8E+qoQTrGa7zC4pyb1tB2ytI54dTK+7rCiFuPKQV9vgRIS6
-         +cCkba4E+ihxTkHZK8VVubQL5UGy5UWmdsE/KxjnAcjBjMudaENEODAkH7ZwYDj40S
-         xw4GTwtiyRM/gEN/ZW6yEPpjWPwv2OueJTLTvCAc=
-Date:   Wed, 4 Dec 2019 19:33:09 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Bobby Jones <rjones@gateworks.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: imx: ventana: add fxos8700 on gateworks boards
-Message-ID: <20191204113307.GH3365@dragon>
-References: <20191021205426.28825-1-rjones@gateworks.com>
- <CALAE=UAEFobA2SXOTJWAqexg+VNN_VTXGLGH+VwqqjKkuFwddg@mail.gmail.com>
+        id S1727742AbfLDLe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 06:34:58 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:61670 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbfLDLe5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 06:34:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575459297; x=1606995297;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=Bzn/WoKTnTRsZTO04w/szontO0zw5vES16CetCc4zbU=;
+  b=B/ofvsRjWzHEsW9ng7v27/2mBCm0K72pFsRdokEtfbldrQqiWZom5Mfu
+   MCxm5DmJI5SHDyjkY42OdUeywccu8dXTjvJyGrxs079SMdCUYRK6qS7t8
+   FbSHZ/dToEhNvWsKqZTTOEDPLItdHD7TB6aXxRwu+1P162ibafW+tU6wX
+   I=;
+IronPort-SDR: jCSDk7Xv2epMaj4kKWdPfyDpKCdj/3O+4jKjssgB2+nbR+jDo3lFgYUzXjjo4HYwtJHhjsCzoL
+ 4Irh0isXjsNA==
+X-IronPort-AV: E=Sophos;i="5.69,277,1571702400"; 
+   d="scan'208";a="12914899"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 04 Dec 2019 11:34:46 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com (Postfix) with ESMTPS id 2E602281ED5;
+        Wed,  4 Dec 2019 11:34:38 +0000 (UTC)
+Received: from EX13D31EUA004.ant.amazon.com (10.43.165.161) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 4 Dec 2019 11:34:38 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.249) by
+ EX13D31EUA004.ant.amazon.com (10.43.165.161) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 4 Dec 2019 11:34:34 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <konrad.wilk@oracle.com>, <roger.pau@citrix.com>, <axboe@kernel.dk>
+CC:     <sj38.park@gmail.com>, <xen-devel@lists.xenproject.org>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        SeongJae Park <sjpark@amazon.com>
+Subject: [PATCH 0/2] xen/blkback: Aggressively shrink page pools if a memory pressure is detected
+Date:   Wed, 4 Dec 2019 12:34:17 +0100
+Message-ID: <20191204113419.2298-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAE=UAEFobA2SXOTJWAqexg+VNN_VTXGLGH+VwqqjKkuFwddg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.249]
+X-ClientProxiedBy: EX13D21UWB003.ant.amazon.com (10.43.161.212) To
+ EX13D31EUA004.ant.amazon.com (10.43.165.161)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 07, 2019 at 11:10:19AM -0800, Bobby Jones wrote:
-> Hello Shawn,
-> 
-> I just wanted to follow up with this and see if you had a chance to
-> look at this. I submitted this after responding to Marco on my initial
-> submission but haven't heard anything since and didn't want it to fall
-> through the cracks. It may be worth mentioning that both the bindings
-> for the fxos8700 and lsm9ds1 have been accepted by iio.
-> 
-> In addition to this submission I have the following that I'd like to
-> check in on as well:
-> 
-> [PATCH] ARM: dts: imx: imx6qdl-gw553x.dtsi: add lsm9ds1 iio imu/magn support
-> [PATCH] ARM: dts: imx: Add GW5907
-> [PATCH] ARM: dts: imx: Add GW5912
-> [PATCH] ARM: dts: imx: Add GW5913
-> [PATCH] ARM: dts: imx: Add GW5910
-> 
-> Please let me know if there's anything I can do. Thanks!
+Each `blkif` has a free pages pool for the grant mapping.  The size of
+the pool starts from zero and be increased on demand while processing
+the I/O requests.  If current I/O requests handling is finished or 100
+milliseconds has passed since last I/O requests handling, it checks and
+shrinks the pool to not exceed the size limit, `max_buffer_pages`.
 
-Hmm, did you copy me on those patches?  I cannot find them in my
-mailbox.
+Therefore, `blkfront` running guests can cause a memory pressure in the
+`blkback` running guest by attaching arbitrarily large number of block
+devices and inducing I/O.  This patchset avoids such problematic
+situations by shrinking the pools aggressively (further the limit) for a
+while if a memory pressure is detected.
 
-Shawn
+
+Discussions
+===========
+
+The shrinking mechanism returns only pages in the pool which are not
+currently be used by blkback.  In other words, the pages that will be
+shrunk are not mapped with foreign pages.  Because this patchset is
+changing only the shrink limit but uses the shrinking mechanism as is,
+this patchset does not introduce security issues such as improper
+unmappings.
+
+The first patch keeps the aggressive shrinking limit for one milisecond
+from last memory pressure detected time.  The duration should be neither
+too short nor too long.  If it is too long, free pages pool shrinking
+overhead can reduce the I/O performance.  If it is too short, blkback
+will not free enough pages to reduce the memory pressure.  I set the
+value as 1 millisecond by default because I believe that 1 millisecond
+is a short duration in terms of I/O while it is a long duration in terms
+of memory operations.  Also, as the original shrinking mechanism works
+for every 100 milliseconds, this could be a somewhat reasonable choice.
+In actual, the default value worked well for my test (refer to below
+section for the detail of the test).  Nevertheless, the proper duration
+would depends on given configurations and workloads.  The second patch
+therefore allows users to set it via a module parameter interface.
+
+
+Memory Pressure Test
+====================
+
+To show whether this patchset fixes the above mentioned memory pressure
+situation well, I configured a test environment.  On the `blkfront`
+running guest instances of a virtualized environment, I attach
+arbitrarily large number of network-backed volume devices and induce I/O
+to those.  Meanwhile, I measure the number of pages that swapped in and
+out on the `blkback` running guest.  The test ran twice, once for the
+`blkback` before this patchset and once for that after this patchset.
+
+Roughly speaking, this patchset has reduced those numbers 130x (pswpin)
+and 34x (pswpout) as below:
+
+    		pswpin	pswpout
+    before	76,672	185,799
+    after	   587	  5,402
+
+
+Performance Overhead Test
+=========================
+
+This patchset could incur I/O performance degradation under memory
+pressure because the aggressive shrinking will require more page
+allocations.  To show the overhead, I artificially made an aggressive
+pages pool shrinking situation and measured the I/O performance of a
+`blkfront` running guest.
+
+For the artificial shrinking, I set the `blkback.max_buffer_pages` using
+the `/sys/module/xen_blkback/parameters/max_buffer_pages` file.  We set
+the value to `1024` and `0`.  The `1024` is the default value.  Setting
+the value as `0` incurs the worst-case aggressive shrinking stress.
+
+For the I/O performance measurement, I use a simple `dd` command.
+
+Default Performance
+-------------------
+
+    [dom0]# echo 1024 >  /sys/module/xen_blkback/parameters/max_buffer_pages
+    [instance]$ for i in {1..5}; do dd if=/dev/zero of=file bs=4k count=$((256*512)); sync; done
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 11.7257 s, 45.8 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8827 s, 38.7 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8781 s, 38.7 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8737 s, 38.7 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8702 s, 38.7 MB/s
+
+Worst-case Performance
+----------------------
+
+    [dom0]# echo 0 >  /sys/module/xen_blkback/parameters/max_buffer_pages
+    [instance]$ for i in {1..5}; do dd if=/dev/zero of=file bs=4k count=$((256*512)); sync; done
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 11.7257 s, 45.8 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.878 s, 38.7 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8746 s, 38.7 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8786 s, 38.7 MB/s
+    131072+0 records in
+    131072+0 records out
+    536870912 bytes (537 MB) copied, 13.8749 s, 38.7 MB/s
+
+In short, even worst case aggressive pools shrinking makes no visible
+performance degradation.  I think this is due to the slow speed of the
+I/O.  In other words, the additional page allocation overhead is hidden
+under the much slower I/O time.
+
+SeongJae Park (2):
+  xen/blkback: Aggressively shrink page pools if a memory pressure is
+    detected
+  blkback: Add a module parameter for aggressive pool shrinking duration
+
+ drivers/block/xen-blkback/blkback.c | 35 +++++++++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
