@@ -2,86 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 734EB1132F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4ACA113380
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbfLDSNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:13:25 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38404 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730848AbfLDSNT (ORCPT
+        id S1731921AbfLDSQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:16:50 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39055 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729413AbfLDSQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:13:19 -0500
-Received: by mail-io1-f66.google.com with SMTP id u7so621046iop.5
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:13:18 -0800 (PST)
+        Wed, 4 Dec 2019 13:16:47 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a67so124763oib.6
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:16:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KbjMhMLQ8ZXCsns4nZuVxnFXeq+4FdUf6xW1nrBKHDw=;
-        b=Rvfdm8IAQbF27G90nuZjBxEtcEwJxiB+bs/eGLAXjvZ3cwULZ8T/egv/YLoZKttmIj
-         o1UWTzyXjGfnAMRtOhBpUqnTaJP57qFcUyVVwmBiTDAs5V6Zhw8PuczWhc03XzKEtNSZ
-         8vJVYsZKIQpZn4jXmdJBTjqCcmM6WRAm+LTyZvla3DgF+BexG/WPMWfQNgP9XBWhEGRC
-         SR+miCcfuOkXH+qpUZ4L3/+E0wZ2WHflhUTlS7EgoOwhWMSiNhnpwRLi7xOZKojlV4Kw
-         2QzONISlvHJdT/DQE+/uFSGIvTNWqGVS/y/1LKJr/wxuCC8AU3AavkB4gcEpPngiZ5Rg
-         jBpw==
+         :cc:content-transfer-encoding;
+        bh=RJiGCVDVNvMUec0vnffC5xd6aiSG8EGa8XBGiB3SH6Y=;
+        b=HdwU3Xjio6qVM797Gg+0rVHEecpKj//UQe7Ir9bm8Q6qKRO8u7PxKsO4EqIz9OOmNL
+         qkxb6Mj1mCCzt8c6g0GAGfIpjUXDvKhIeokrXfalmO9WWUAc6jlEAMJqkL+gDG9UUrxP
+         9o2un3BXIkbLY4IkAWXaEmeYv9bg2nTbVdzAwt9cZJdILY7tMP1FYT7m7P9dmzHZSLdK
+         i0ySfs3obSahHJxIDjyUKlo77FqFOTcd3O7DCHqINZzyy57eFYx0T6JNh53HsrQqe6gX
+         Il9wj6nwM9k8qXKPjDo/3pD/F4vr/fckjhJ4Px5c9rJC6DVNZDN9QwgeFZFM1Pqo66r/
+         DR2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KbjMhMLQ8ZXCsns4nZuVxnFXeq+4FdUf6xW1nrBKHDw=;
-        b=cVpEBePu0vUF23DYvWfeOf1HcWpL7Lk0qw7WlL1cstEL+yUzgYvZWeo/5xTyO8fB6f
-         W5RpRW5LI2w4QP/UT2NUlN8x0K6wEylFoR5PQj6+xCg4aVxzWUBG67Smwm/OlLOswQ+P
-         umCP/FEsizoVOndCFUBTumuGaYPpM24CZTWZFYYZ7G0nhl682sCWdJ0ESFLiY1iR99dA
-         JARWeOESkfhtPHt8DVwbj8s7dNxyQg+j19cpnZYbi3l1IWw2tcczf/7z14a0jqKeM1/H
-         YYyWXf73EfLl8ygdMHJ2KEiF7tZtgYLpASa7K5AM6AQvd3/LJQIT7zYWfRAVzi1sRa/T
-         Oz7g==
-X-Gm-Message-State: APjAAAX27Bp+uNdyrDjF1V3+HoLgkXcxx2ixOg46Ml3jcsGDQLaAHzr1
-        5722/aE3AzGEJbZVdmDw4gl1eW3lg4fz3NbXtay+VA==
-X-Google-Smtp-Source: APXvYqxckBA87s67w7YakD4b8GgZOryNfAxTyy+qPNdE82bEdoxtjPjZlJ/tt5IIpRik/K/Mqv7mj95v0hKcPAjDjZo=
-X-Received: by 2002:a02:3309:: with SMTP id c9mr4378013jae.52.1575483198285;
- Wed, 04 Dec 2019 10:13:18 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RJiGCVDVNvMUec0vnffC5xd6aiSG8EGa8XBGiB3SH6Y=;
+        b=qUEOkelf4i0/3n/0hMTvO6ZeHX70WDexemqFa8/ZhLBwrWydACDBiSz8wJboQi9FaI
+         9WqLJ96TgUheGzp7ZmAg5PRP9Jb6MQOgYPbHdQKcFdoiM28AHTVQh8jyZn9C1FrZfxqv
+         mU4R8k/PNXUqzreaVyILl/1cY7YLqO0zREQaMn5pg6eD0Xiia0gxC2h+pXmPah6SudMP
+         Ylp+TgX5/4e7v81rJGQNsTiLEUnF9PSqfhhlwlxaFHBJc72BgH1EXkO82DcpcVs4jMRm
+         7+1EdswAYVGGA3Fs/lrHwyNgsXeW5jeQTTvmFMJNHQW6XiD6JR+JOvKeqGaZcrByINSZ
+         Oz1A==
+X-Gm-Message-State: APjAAAUQ4XP1hRkiOI/ZDA7jal+LpVAxxV2IKwyKTpD9hvIzgWVwLtHL
+        azjXwnh9Z754evCCAURMM/tRx+415BZk5kE6kC9GMg==
+X-Google-Smtp-Source: APXvYqw3PWCM0wVvL9/6FyExQg2AyBx7rh8aobv8hkKHc/mdV9bLffMBbC21KnXrGEGKgVgVn+uV6PAjz4boZ5E3850=
+X-Received: by 2002:aca:b588:: with SMTP id e130mr3680860oif.169.1575483406820;
+ Wed, 04 Dec 2019 10:16:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20191128165002.6234-1-mathieu.poirier@linaro.org>
- <20191128165002.6234-7-mathieu.poirier@linaro.org> <20191203194330.GA2847072@kroah.com>
-In-Reply-To: <20191203194330.GA2847072@kroah.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 4 Dec 2019 11:13:05 -0700
-Message-ID: <CANLsYkyBBp_bAjsEuS=ZDY=Qza67PrwyWJUaDdBHTe1ZM1=2jw@mail.gmail.com>
-Subject: Re: [stable 4.19][PATCH 06/17] remoteproc: fix rproc_da_to_va in case
- of unallocated carveout
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "# 4 . 7" <stable@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <CALAqxLXrWWnWi32BR1F8JOtrGt1y2Kzj__zWopLx1ZfRy3EZKA@mail.gmail.com>
+ <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
+ <20191204094216.u7yld5r3zelp22lf@e107158-lin.cambridge.arm.com> <20191204100925.GA15727@linaro.org>
+In-Reply-To: <20191204100925.GA15727@linaro.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 4 Dec 2019 10:16:36 -0800
+Message-ID: <CALAqxLWCFNJzNvgrSKSs3s42O=D6EPmnvwPTWV_k-QH7v7VNtQ@mail.gmail.com>
+Subject: Re: Null pointer crash at find_idlest_group on db845c w/ linus/master
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Qais Yousef <qais.yousef@arm.com>,
+        Quentin Perret <qperret@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Dec 2019 at 12:43, Greg KH <gregkh@linuxfoundation.org> wrote:
+On Wed, Dec 4, 2019 at 2:09 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
 >
-> On Thu, Nov 28, 2019 at 09:49:51AM -0700, Mathieu Poirier wrote:
-> > From: Loic Pallardy <loic.pallardy@st.com>
+> Le Wednesday 04 Dec 2019 =C3=A0 09:42:17 (+0000), Qais Yousef a =C3=A9cri=
+t :
+> > On 12/04/19 09:06, Vincent Guittot wrote:
+> > > Hi John,
+> > >
+> > > On Tue, 3 Dec 2019 at 20:15, John Stultz <john.stultz@linaro.org> wro=
+te:
+> > > >
+> > > > With today's linus/master on db845c running android, I'm able to
+> > > > fairly easily reproduce the following crash. I've not had a chance =
+to
+> > > > bisect it yet, but I'm suspecting its connected to Vincent's recent
+> > > > rework.
+> > >
+> > > Does the crash happen randomly or after a specific action ?
+> > > I have a db845 so I can try to reproduce it locally.
 > >
-> > commit 74457c40f97a98142bb13153395d304ad3c85cdd upstream
-> >
-> > With introduction of rproc_alloc_registered_carveouts() which
-> > delays carveout allocation just before the start of the remote
-> > processor, rproc_da_to_va() could be called before all carveouts
-> > are allocated.
-> > This patch adds a check in rproc_da_to_va() to return NULL if
-> > carveout is not allocated.
-> >
-> > Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
+> > Isn't there a chance we use local_sgs without initializing it in that f=
+unction?
 >
-> This commit only shows up in 4.20, not 4.19, so why is this patch
-> relevant for 4.19?
+> Normally not because the cpu belongs to its sched_domain
+>
+> Now, we test that a group has at least one allowed CPU for the task so we
+> could skip the local group with the correct/wrong p->cpus_ptr
+>
+> The path is used for fork/exec ibut also for wakeup path for b.L when the=
+ task doesn't fit in the CPUs
+>
+> So we can probably imagine a scenario where we change task affinity while
+> sleeping. If the wakeup happens on a CPU that belongs to the group that i=
+s not
+> allowed, we can imagine that we skip the local_group
+>
+> John,
+>
+> Could you try the fix below ?
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 08a233e..bcd216d 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8417,6 +8417,10 @@ find_idlest_group(struct sched_domain *sd, struct =
+task_struct *p,
+>         if (!idlest)
+>                 return NULL;
+>
+> +       /* The local group has been skipped because of cpu affinity */
+> +       if (!local)
+> +               return idlest;
+> +
+>         /*
+>          * If the local group is idler than the selected idlest group
+>          * don't try and push the task.
 
-Your scripts are better than mine...
+This patch does seem to solve the issue for me! Thanks so much!
 
->
-> thanks,
->
-> greg k-h
+Tested-by: John Stultz <john.stultz@linaro.org>
+-john
