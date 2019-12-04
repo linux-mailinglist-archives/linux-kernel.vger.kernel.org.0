@@ -2,47 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F23E0112529
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B6611252B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:34:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfLDIe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:34:26 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56435 "EHLO
+        id S1727459AbfLDId7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:33:59 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56420 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbfLDIeA (ORCPT
+        with ESMTP id S1727419AbfLDId5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:34:00 -0500
+        Wed, 4 Dec 2019 03:33:57 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1icQ6J-0005Fx-Sb; Wed, 04 Dec 2019 09:33:36 +0100
+        id 1icQ6S-0005LT-HV; Wed, 04 Dec 2019 09:33:44 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 896191C2656;
-        Wed,  4 Dec 2019 09:33:35 +0100 (CET)
-Date:   Wed, 04 Dec 2019 08:33:35 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C581E1C265A;
+        Wed,  4 Dec 2019 09:33:36 +0100 (CET)
+Date:   Wed, 04 Dec 2019 08:33:36 -0000
 From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/kprobes] module: Remove set_all_modules_text_*()
+Subject: [tip: core/kprobes] x86/ftrace: Use text_gen_insn()
 Cc:     Alexei Starovoitov <ast@kernel.org>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Chen <deanbo422@gmail.com>,
         Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191111132458.284298307@infradead.org>
-References: <20191111132458.284298307@infradead.org>
+In-Reply-To: <20191111132457.932808000@infradead.org>
+References: <20191111132457.932808000@infradead.org>
 MIME-Version: 1.0
-Message-ID: <157544841542.21853.3750826406774748874.tip-bot2@tip-bot2>
+Message-ID: <157544841669.21853.8836111598709777786.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -58,20 +55,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the core/kprobes branch of tip:
 
-Commit-ID:     958de668197651bbf2b4b9528f204ab5a0f1af65
-Gitweb:        https://git.kernel.org/tip/958de668197651bbf2b4b9528f204ab5a0f1af65
+Commit-ID:     67c1d4a28064f9ec63df03f7798e4a334176a9cd
+Gitweb:        https://git.kernel.org/tip/67c1d4a28064f9ec63df03f7798e4a334176a9cd
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 15 Oct 2019 21:07:31 +02:00
+AuthorDate:    Wed, 09 Oct 2019 12:44:14 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 27 Nov 2019 07:44:25 +01:00
+CommitterDate: Wed, 27 Nov 2019 07:44:24 +01:00
 
-module: Remove set_all_modules_text_*()
+x86/ftrace: Use text_gen_insn()
 
-Now that there are no users of set_all_modules_text_*() left, remove
-it.
-
-While it appears nds32 uses it, it does not have STRICT_MODULE_RWX and
-therefore ends up with the NOP stubs.
+Replace the ftrace_code_union with the generic text_gen_insn() helper,
+which does exactly this.
 
 Tested-by: Alexei Starovoitov <ast@kernel.org>
 Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
@@ -79,115 +73,163 @@ Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Alexei Starovoitov <ast@kernel.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Greentime Hu <green.hu@gmail.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vincent Chen <deanbo422@gmail.com>
-Link: https://lkml.kernel.org/r/20191111132458.284298307@infradead.org
+Link: https://lkml.kernel.org/r/20191111132457.932808000@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/nds32/kernel/ftrace.c | 12 +----------
- include/linux/module.h     |  4 +---
- kernel/module.c            | 43 +-------------------------------------
- 3 files changed, 59 deletions(-)
+ arch/x86/include/asm/text-patching.h | 30 ++++++++++++++++++++++++-
+ arch/x86/kernel/alternative.c        | 26 +----------------------
+ arch/x86/kernel/ftrace.c             | 32 +++++----------------------
+ 3 files changed, 36 insertions(+), 52 deletions(-)
 
-diff --git a/arch/nds32/kernel/ftrace.c b/arch/nds32/kernel/ftrace.c
-index fd2a54b..22ab77e 100644
---- a/arch/nds32/kernel/ftrace.c
-+++ b/arch/nds32/kernel/ftrace.c
-@@ -89,18 +89,6 @@ int __init ftrace_dyn_arch_init(void)
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index 93e4266..ad8f9f4 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -80,7 +80,35 @@ static inline int text_opcode_size(u8 opcode)
+ 	return size;
+ }
+ 
+-extern void *text_gen_insn(u8 opcode, const void *addr, const void *dest);
++union text_poke_insn {
++	u8 text[POKE_MAX_OPCODE_SIZE];
++	struct {
++		u8 opcode;
++		s32 disp;
++	} __attribute__((packed));
++};
++
++static __always_inline
++void *text_gen_insn(u8 opcode, const void *addr, const void *dest)
++{
++	static union text_poke_insn insn; /* per instance */
++	int size = text_opcode_size(opcode);
++
++	insn.opcode = opcode;
++
++	if (size > 1) {
++		insn.disp = (long)dest - (long)(addr + size);
++		if (size == 2) {
++			/*
++			 * Ensure that for JMP9 the displacement
++			 * actually fits the signed byte.
++			 */
++			BUG_ON((insn.disp >> 31) != (insn.disp >> 7));
++		}
++	}
++
++	return &insn.text;
++}
+ 
+ extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index f8f34f9..cfcfadf 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1247,29 +1247,3 @@ void __ref text_poke_bp(void *addr, const void *opcode, size_t len, const void *
+ 	text_poke_loc_init(&tp, addr, opcode, len, emulate);
+ 	text_poke_bp_batch(&tp, 1);
+ }
+-
+-union text_poke_insn {
+-	u8 text[POKE_MAX_OPCODE_SIZE];
+-	struct {
+-		u8 opcode;
+-		s32 disp;
+-	} __attribute__((packed));
+-};
+-
+-void *text_gen_insn(u8 opcode, const void *addr, const void *dest)
+-{
+-	static union text_poke_insn insn; /* text_mutex */
+-	int size = text_opcode_size(opcode);
+-
+-	lockdep_assert_held(&text_mutex);
+-
+-	insn.opcode = opcode;
+-
+-	if (size > 1) {
+-		insn.disp = (long)dest - (long)(addr + size);
+-		if (size == 2)
+-			BUG_ON((insn.disp >> 31) != (insn.disp >> 7));
+-	}
+-
+-	return &insn.text;
+-}
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 3d8adeb..2a179fb 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -63,24 +63,6 @@ int ftrace_arch_code_modify_post_process(void)
  	return 0;
  }
  
--int ftrace_arch_code_modify_prepare(void)
+-union ftrace_code_union {
+-	char code[MCOUNT_INSN_SIZE];
+-	struct {
+-		char op;
+-		int offset;
+-	} __attribute__((packed));
+-};
+-
+-static const char *ftrace_text_replace(char op, unsigned long ip, unsigned long addr)
 -{
--	set_all_modules_text_rw();
--	return 0;
+-	static union ftrace_code_union calc;
+-
+-	calc.op = op;
+-	calc.offset = (int)(addr - (ip + MCOUNT_INSN_SIZE));
+-
+-	return calc.code;
 -}
 -
--int ftrace_arch_code_modify_post_process(void)
--{
--	set_all_modules_text_ro();
--	return 0;
--}
--
- static unsigned long gen_sethi_insn(unsigned long addr)
+ static const char *ftrace_nop_replace(void)
  {
- 	unsigned long opcode = 0x46000000;
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 6d20895..daae847 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -846,13 +846,9 @@ extern int module_sysfs_initialized;
- #define __MODULE_STRING(x) __stringify(x)
+ 	return ideal_nops[NOP_ATOMIC5];
+@@ -88,7 +70,7 @@ static const char *ftrace_nop_replace(void)
  
- #ifdef CONFIG_STRICT_MODULE_RWX
--extern void set_all_modules_text_rw(void);
--extern void set_all_modules_text_ro(void);
- extern void module_enable_ro(const struct module *mod, bool after_init);
- extern void module_disable_ro(const struct module *mod);
- #else
--static inline void set_all_modules_text_rw(void) { }
--static inline void set_all_modules_text_ro(void) { }
- static inline void module_enable_ro(const struct module *mod, bool after_init) { }
- static inline void module_disable_ro(const struct module *mod) { }
- #endif
-diff --git a/kernel/module.c b/kernel/module.c
-index acf7962..5cd9bed 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2029,49 +2029,6 @@ static void module_enable_nx(const struct module *mod)
- 	frob_writable_data(&mod->init_layout, set_memory_nx);
+ static const char *ftrace_call_replace(unsigned long ip, unsigned long addr)
+ {
+-	return ftrace_text_replace(CALL_INSN_OPCODE, ip, addr);
++	return text_gen_insn(CALL_INSN_OPCODE, (void *)ip, (void *)addr);
  }
  
--/* Iterate through all modules and set each module's text as RW */
--void set_all_modules_text_rw(void)
--{
--	struct module *mod;
--
--	if (!rodata_enabled)
--		return;
--
--	mutex_lock(&module_mutex);
--	list_for_each_entry_rcu(mod, &modules, list) {
--		if (mod->state == MODULE_STATE_UNFORMED)
--			continue;
--
--		frob_text(&mod->core_layout, set_memory_rw);
--		frob_text(&mod->init_layout, set_memory_rw);
--	}
--	mutex_unlock(&module_mutex);
--}
--
--/* Iterate through all modules and set each module's text as RO */
--void set_all_modules_text_ro(void)
--{
--	struct module *mod;
--
--	if (!rodata_enabled)
--		return;
--
--	mutex_lock(&module_mutex);
--	list_for_each_entry_rcu(mod, &modules, list) {
--		/*
--		 * Ignore going modules since it's possible that ro
--		 * protection has already been disabled, otherwise we'll
--		 * run into protection faults at module deallocation.
--		 */
--		if (mod->state == MODULE_STATE_UNFORMED ||
--			mod->state == MODULE_STATE_GOING)
--			continue;
--
--		frob_text(&mod->core_layout, set_memory_ro);
--		frob_text(&mod->init_layout, set_memory_ro);
--	}
--	mutex_unlock(&module_mutex);
--}
- #else /* !CONFIG_STRICT_MODULE_RWX */
- static void module_enable_nx(const struct module *mod) { }
- #endif /*  CONFIG_STRICT_MODULE_RWX */
+ static int ftrace_verify_code(unsigned long ip, const char *old_code)
+@@ -480,20 +462,20 @@ void arch_ftrace_update_trampoline(struct ftrace_ops *ops)
+ /* Return the address of the function the trampoline calls */
+ static void *addr_from_call(void *ptr)
+ {
+-	union ftrace_code_union calc;
++	union text_poke_insn call;
+ 	int ret;
+ 
+-	ret = probe_kernel_read(&calc, ptr, MCOUNT_INSN_SIZE);
++	ret = probe_kernel_read(&call, ptr, CALL_INSN_SIZE);
+ 	if (WARN_ON_ONCE(ret < 0))
+ 		return NULL;
+ 
+ 	/* Make sure this is a call */
+-	if (WARN_ON_ONCE(calc.op != 0xe8)) {
+-		pr_warn("Expected e8, got %x\n", calc.op);
++	if (WARN_ON_ONCE(call.opcode != CALL_INSN_OPCODE)) {
++		pr_warn("Expected E8, got %x\n", call.opcode);
+ 		return NULL;
+ 	}
+ 
+-	return ptr + MCOUNT_INSN_SIZE + calc.offset;
++	return ptr + CALL_INSN_SIZE + call.disp;
+ }
+ 
+ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
+@@ -562,7 +544,7 @@ extern void ftrace_graph_call(void);
+ 
+ static const char *ftrace_jmp_replace(unsigned long ip, unsigned long addr)
+ {
+-	return ftrace_text_replace(JMP32_INSN_OPCODE, ip, addr);
++	return text_gen_insn(JMP32_INSN_OPCODE, (void *)ip, (void *)addr);
+ }
+ 
+ static int ftrace_mod_jmp(unsigned long ip, void *func)
