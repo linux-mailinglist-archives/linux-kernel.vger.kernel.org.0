@@ -2,67 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC89112387
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:24:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58AA311238A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfLDHY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:24:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfLDHY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:24:28 -0500
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 607782073C;
-        Wed,  4 Dec 2019 07:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575444267;
-        bh=g32jXlk9gooeXc/rEl5GPkIYcA7V982G7RhVOMorfFM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WRiK49CYh0zI0iLhQCm6exjjXbXPpLccnPxf6CDHD2GA2QmlgFISIwDjSnWjffkmN
-         HtT9tRlq7a3gbqOGLz/79n9/NfLhbqr+ty/Q51PVvl4EInmVuvuDHgLv84dm8X5+Uh
-         iMFEqKn1qsZYqBuy0GMPtiIGxFRShs0/htQGq39E=
-Received: by mail-lf1-f48.google.com with SMTP id y19so5242832lfl.9;
-        Tue, 03 Dec 2019 23:24:27 -0800 (PST)
-X-Gm-Message-State: APjAAAUsEufXCWXeyMeqi2ACQQT38LRGK4+9zphM3NUJawg++1sUSCzS
-        2F4yvyZrT7MeVpKmuE0k+ERMoEE6mSVPh2rHNEQ=
-X-Google-Smtp-Source: APXvYqyZj5hG43avAQDS4diZdVOL2YioF5gDqQQ5VOHxWAKXDYqVS0Q900reo+BNrYF954/v8dguT51I0oxN+c8dzzI=
-X-Received: by 2002:ac2:5a1a:: with SMTP id q26mr1171509lfn.33.1575444265597;
- Tue, 03 Dec 2019 23:24:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20191202152520.27558-1-angus@akkea.ca> <20191202152520.27558-3-angus@akkea.ca>
-In-Reply-To: <20191202152520.27558-3-angus@akkea.ca>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 4 Dec 2019 15:24:14 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPcWGkkFbKaOx12iUfejRdQF4x_MZiRqTiTpMspuhsAsfg@mail.gmail.com>
-Message-ID: <CAJKOXPcWGkkFbKaOx12iUfejRdQF4x_MZiRqTiTpMspuhsAsfg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dts: bindings: max17042_battery: add all of the
- compatible strings
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
+        id S1727228AbfLDHYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:24:32 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42191 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfLDHYa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 02:24:30 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1icP1M-0004T6-5Q; Wed, 04 Dec 2019 08:24:24 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1icP1K-0007HP-Jt; Wed, 04 Dec 2019 08:24:22 +0100
+Date:   Wed, 4 Dec 2019 08:24:22 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "rjui@broadcom.com" <rjui@broadcom.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "sbranden@broadcom.com" <sbranden@broadcom.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel@puri.sm
-Content-Type: text/plain; charset="UTF-8"
+        Alice Guo <alice.guo@nxp.com>, kernel@pengutronix.de
+Subject: Re: [PATCH v2 1/2] gpio: mvebu: use platform_irq_count
+Message-ID: <20191204072422.vfo3mrrcaav75jv4@pengutronix.de>
+References: <1575433106-16171-1-git-send-email-peng.fan@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1575433106-16171-1-git-send-email-peng.fan@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Dec 2019 at 23:26, Angus Ainslie (Purism) <angus@akkea.ca> wrote:
->
-> The bindings are missing documentation for some of the compatible
-> strings.
->
-> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-> ---
->  .../devicetree/bindings/power/supply/max17042_battery.txt   | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+On Wed, Dec 04, 2019 at 04:20:41AM +0000, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> platform_irq_count() is the more generic way (independent of
+> device trees) to determine the count of available interrupts. So
+> use this instead.
+> 
+> As platform_irq_count() might return an error code (which
+> of_irq_count doesn't) some additional handling is necessary.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-and-Commit-Log-Provided-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+:-)
+Best regards
+Uwe
 
-Best regards,
-Krzysztof
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
