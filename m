@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B351123C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A26371123C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:54:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfLDHy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:54:27 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56192 "EHLO
+        id S1727409AbfLDHyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:54:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56129 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbfLDHyY (ORCPT
+        with ESMTP id S1727321AbfLDHyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:54:24 -0500
+        Wed, 4 Dec 2019 02:54:04 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1icPTr-0004Qf-U9; Wed, 04 Dec 2019 08:53:51 +0100
+        id 1icPTy-0004RS-Bf; Wed, 04 Dec 2019 08:53:58 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8CB0E1C2563;
-        Wed,  4 Dec 2019 08:53:51 +0100 (CET)
-Date:   Wed, 04 Dec 2019 07:53:51 -0000
-From:   "tip-bot2 for Sudip Mukherjee" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0F2AA1C2563;
+        Wed,  4 Dec 2019 08:53:53 +0100 (CET)
+Date:   Wed, 04 Dec 2019 07:53:52 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] libtraceevent: Fix lib installation with O=
-Cc:     Sudipm Mukherjee <sudipm.mukherjee@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-trace-devel@vger.kernel.org,
+Subject: [tip: perf/urgent] tools headers uapi: Sync linux/stat.h with the
+ kernel sources
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191115113610.21493-1-sudipm.mukherjee@gmail.com>
-References: <20191115113610.21493-1-sudipm.mukherjee@gmail.com>
+In-Reply-To: <tip-thcy60dpry5qrpn7nmc58bwg@git.kernel.org>
+References: <tip-thcy60dpry5qrpn7nmc58bwg@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <157544603147.21853.6345719846964569767.tip-bot2@tip-bot2>
+Message-ID: <157544603294.21853.9731827151832315062.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,55 +51,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     587db8ebdac2c5eb3a8851e16b26f2e2711ab797
-Gitweb:        https://git.kernel.org/tip/587db8ebdac2c5eb3a8851e16b26f2e2711ab797
-Author:        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-AuthorDate:    Fri, 15 Nov 2019 11:36:09 
+Commit-ID:     c66f2566db340b04c113ea1d930651246d9d4049
+Gitweb:        https://git.kernel.org/tip/c66f2566db340b04c113ea1d930651246d9d4049
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Mon, 02 Dec 2019 12:24:52 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 02 Dec 2019 21:58:20 -03:00
+CommitterDate: Mon, 02 Dec 2019 12:24:52 -03:00
 
-libtraceevent: Fix lib installation with O=
+tools headers uapi: Sync linux/stat.h with the kernel sources
 
-When we use 'O=' with make to build libtraceevent in a separate folder
-it fails to install libtraceevent.a and libtraceevent.so.1.1.0 with the
-error:
+To pick the changes from:
 
-  INSTALL  /home/sudip/linux/obj-trace/libtraceevent.a
-  INSTALL  /home/sudip/linux/obj-trace/libtraceevent.so.1.1.0
+  3ad2522c64cf ("statx: define STATX_ATTR_VERITY")
 
-  cp: cannot stat 'libtraceevent.a': No such file or directory
-  Makefile:225: recipe for target 'install_lib' failed
-  make: *** [install_lib] Error 1
+That don't trigger any changes in tooling.
 
-I used the command:
+This silences this perf build warning:
 
-  make O=../../../obj-trace DESTDIR=~/test prefix==/usr  install
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/stat.h' differs from latest version at 'include/uapi/linux/stat.h'
+  diff -u tools/include/uapi/linux/stat.h include/uapi/linux/stat.h
 
-It turns out libtraceevent Makefile, even though it builds in a separate
-folder, searches for libtraceevent.a and libtraceevent.so.1.1.0 in its
-source folder.
+At some point we wi'll beautify structs passed in pointers to syscalls
+and then we'll need to have tables for these defines, for now update the
+file to silence the warning as this file is used for doing this type of
+number -> string translations for other defines found in these file.
 
-So, add the 'OUTPUT' prefix to the source path so that 'make' looks for
-the files in the correct place.
-
-Signed-off-by: Sudipm Mukherjee <sudipm.mukherjee@gmail.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: linux-trace-devel@vger.kernel.org
-Link: http://lore.kernel.org/lkml/20191115113610.21493-1-sudipm.mukherjee@gmail.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-thcy60dpry5qrpn7nmc58bwg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ tools/include/uapi/linux/stat.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index cbb429f..83446fe 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -97,6 +97,7 @@ EVENT_PARSE_VERSION = $(EP_VERSION).$(EP_PATCHLEVEL).$(EP_EXTRAVERSION)
+diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
+index 7b35e98..ad80a5c 100644
+--- a/tools/include/uapi/linux/stat.h
++++ b/tools/include/uapi/linux/stat.h
+@@ -167,8 +167,8 @@ struct statx {
+ #define STATX_ATTR_APPEND		0x00000020 /* [I] File is append-only */
+ #define STATX_ATTR_NODUMP		0x00000040 /* [I] File is not to be dumped */
+ #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+-
+ #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
++#define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
  
- LIB_TARGET  = libtraceevent.a libtraceevent.so.$(EVENT_PARSE_VERSION)
- LIB_INSTALL = libtraceevent.a libtraceevent.so*
-+LIB_INSTALL := $(addprefix $(OUTPUT),$(LIB_INSTALL))
  
- INCLUDES = -I. -I $(srctree)/tools/include $(CONFIG_INCLUDES)
- 
+ #endif /* _UAPI_LINUX_STAT_H */
