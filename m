@@ -2,159 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2FF61123C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0077F1123EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:55:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfLDHyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:54:18 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:56144 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfLDHyG (ORCPT
+        id S1727447AbfLDHza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:55:30 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45880 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbfLDHza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:54:06 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1icPU1-0004Xq-LX; Wed, 04 Dec 2019 08:54:01 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5AB9C1C2650;
-        Wed,  4 Dec 2019 08:53:55 +0100 (CET)
-Date:   Wed, 04 Dec 2019 07:53:55 -0000
-From:   "tip-bot2 for Andi Kleen" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf evsel: Add iterator to iterate over events
- ordered by CPU
-Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191121001522.180827-6-andi@firstfloor.org>
-References: <20191121001522.180827-6-andi@firstfloor.org>
+        Wed, 4 Dec 2019 02:55:30 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so5284457lfa.12;
+        Tue, 03 Dec 2019 23:55:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HtkivZBfXW8xPuS5rhk5w6nuW6W4kAYRPy9pdM4dJ+E=;
+        b=btrEjsK+1YjS66nqCBcUA8vnICeA+hjizys7/ZujzuHIiNl7HH3Bxik8h3axHHIxUW
+         7QQ11YfImJLjWULvDmNj6po/N8Aq31lSCLU9Ky3OPqXoGnSUg7sbJ8U+7gZBBZftmFIc
+         mNJn6dOHliFL6PIVwVbOitHy9PbA9HuKixRODy9u0ALsAsq0Wd3cSWrcIEzoQhI05K6y
+         7K2m5xA5NEeHZHBLBVxD4LeoNOPFbHcCVvES8d4SO688FP8A5rqyLOrSn+vQPeuBmn4H
+         5xGi5ZLLnlKrH/XJKHDArIfHE6/tR2UmHzoAry1M0BEzIUoCxZpP44aeTEJwbcaKKBls
+         sLmQ==
+X-Gm-Message-State: APjAAAW7u6976Yk/5q/Q/3RvWUvYNoWgPfWGCLJ4lj6Xam9rsdoeVVjW
+        z+XEmQ86zhPzFdr1e+dkfiw=
+X-Google-Smtp-Source: APXvYqxTYNz2ToQ6maz5hD/npVXS7ml7RLVheYsAoH5Vcd+r/fnc/M7OrTdKeax3pCn5eMxYCrglrQ==
+X-Received: by 2002:ac2:48b6:: with SMTP id u22mr1281287lfg.164.1575446127352;
+        Tue, 03 Dec 2019 23:55:27 -0800 (PST)
+Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
+        by smtp.gmail.com with ESMTPSA id u2sm2752309lfd.4.2019.12.03.23.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 23:55:26 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@kernel.org>)
+        id 1icPVV-0003JY-2n; Wed, 04 Dec 2019 08:55:33 +0100
+Date:   Wed, 4 Dec 2019 08:55:33 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Ikjoon Jang <ikjn@chromium.org>
+Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+        GregKroah-Hartman <gregkh@linuxfoundation.org>,
+        RobHerring <robh+dt@kernel.org>,
+        MarkRutland <mark.rutland@arm.com>,
+        AlanStern <stern@rowland.harvard.edu>,
+        SuwanKim <suwan.kim027@gmail.com>,
+        "GustavoA . R . Silva" <gustavo@embeddedor.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>
+Subject: Re: [PATCH v4 2/2] usb: overridable hub bInterval by device node
+Message-ID: <20191204075533.GI10631@localhost>
+References: <20191203101552.199339-1-ikjn@chromium.org>
+ <20191203165301.GH10631@localhost>
+ <CAATdQgCqYrd_aXN5GDsso+F3WadNx3DQKK3Efk3tgkrv2VXjyw@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <157544603527.21853.4588479986568202605.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAATdQgCqYrd_aXN5GDsso+F3WadNx3DQKK3Efk3tgkrv2VXjyw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Wed, Dec 04, 2019 at 03:04:53PM +0800, Ikjoon Jang wrote:
+> On Wed, Dec 4, 2019 at 12:52 AM Johan Hovold <johan@kernel.org> wrote:
+> >
+> > On Tue, Dec 03, 2019 at 06:15:52PM +0800, Ikjoon Jang wrote:
+> > > This patch enables hub device to override its own endpoint descriptor's
+> > > bInterval when the hub has a device node with "hub,interval" property.
+> > >
+> > > When we know reducing autosuspend delay for built-in HIDs is better for
+> > > power saving, we can reduce it to the optimal value. But if a parent hub
+> > > has a long bInterval, mouse lags a lot from more frequent autosuspend.
+> > > So this enables overriding bInterval for a hard wired hub device only
+> > > when we know that reduces the power consumption.
+> >
+> > I think I saw you argue about why this shouldn't simply be configured at
+> > runtime. Please include that here too, I can't seem to remember why...
+> 
+> Okay.
+> 
+> >
+> > > Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+> > > Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> > > ---
+> > >  drivers/usb/core/config.c | 9 +++++++++
+> > >  1 file changed, 9 insertions(+)
+> > >
+> > > diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
+> > > index 5f40117e68e7..95ec5af42a1c 100644
+> > > --- a/drivers/usb/core/config.c
+> > > +++ b/drivers/usb/core/config.c
+> > > @@ -6,6 +6,7 @@
+> > >  #include <linux/usb.h>
+> > >  #include <linux/usb/ch9.h>
+> > >  #include <linux/usb/hcd.h>
+> > > +#include <linux/usb/of.h>
+> > >  #include <linux/usb/quirks.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/slab.h>
+> > > @@ -257,6 +258,14 @@ static int usb_parse_endpoint(struct device *ddev, int cfgno, int inum,
+> > >       memcpy(&endpoint->desc, d, n);
+> > >       INIT_LIST_HEAD(&endpoint->urb_list);
+> > >
+> > > +     /* device node property overrides bInterval */
+> > > +     if (usb_of_has_combined_node(to_usb_device(ddev))) {
+> >
+> > Not only hubs have combined nodes so you probably need to check
+> > bDeviceClass here instead.
+> 
+> yes, you're right, I didn't think of that case:
+> if (to_usb_device(ddev)->descriptor.bDeviceClass == USB_CLASS_HUB &&
+> ddev->of_node && !of_property_read_u32(...))
+> 
+> Or is it better to check bInterfaceClass, for composite devices with a
+> hub interface inside?
+> if (ifp->desc.bInterfaceClass == USB_CLASS_HUB && ddev->of_node &&
+> !of_property_read_u32(...))
+> 
+> I think checking bInterfaceClass is better.
 
-Commit-ID:     a8cbe40fe9f4ba499cc60b8b6a6851c2c1963797
-Gitweb:        https://git.kernel.org/tip/a8cbe40fe9f4ba499cc60b8b6a6851c2c1963797
-Author:        Andi Kleen <ak@linux.intel.com>
-AuthorDate:    Wed, 20 Nov 2019 16:15:15 -08:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Fri, 29 Nov 2019 12:20:45 -03:00
+Yep, that seems better (but please use two conditionals for
+readability).
 
-perf evsel: Add iterator to iterate over events ordered by CPU
+But related to my question above, why do you need to do this during
+enumeration? Why not just set the lower interval value in the hub
+driver?
 
-Add some common code that is needed to iterate over all events
-in CPU order. Used in followon patches
+> > > +             u32 interval = 0;
+> > > +             if (!of_property_read_u32(ddev->of_node, "hub,interval",
+> > > +                                 &interval))
+> > > +                     d->bInterval = min_t(u8, interval, 255);
+> >
+> > You want min_t(u32, ...) here to avoid surprises when someone specifies
+> > a value > 255.
+> 
+> yes, thanks.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lore.kernel.org/lkml/20191121001522.180827-6-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cpumap.h |  1 +
- tools/perf/util/evlist.c | 32 ++++++++++++++++++++++++++++++++
- tools/perf/util/evlist.h |  8 ++++++++
- tools/perf/util/evsel.h  |  1 +
- 4 files changed, 42 insertions(+)
+And I guess you should really be honouring bInterval as a maximum value,
+right?
 
-diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
-index 57943f3..3a442f0 100644
---- a/tools/perf/util/cpumap.h
-+++ b/tools/perf/util/cpumap.h
-@@ -63,4 +63,5 @@ int cpu_map__build_map(struct perf_cpu_map *cpus, struct perf_cpu_map **res,
- 
- int cpu_map__cpu(struct perf_cpu_map *cpus, int idx);
- bool cpu_map__has(struct perf_cpu_map *cpus, int cpu);
-+
- #endif /* __PERF_CPUMAP_H */
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index fdce590..dae6e84 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -342,6 +342,38 @@ static int perf_evlist__nr_threads(struct evlist *evlist,
- 		return perf_thread_map__nr(evlist->core.threads);
- }
- 
-+void evlist__cpu_iter_start(struct evlist *evlist)
-+{
-+	struct evsel *pos;
-+
-+	/*
-+	 * Reset the per evsel cpu_iter. This is needed because
-+	 * each evsel's cpumap may have a different index space,
-+	 * and some operations need the index to modify
-+	 * the FD xyarray (e.g. open, close)
-+	 */
-+	evlist__for_each_entry(evlist, pos)
-+		pos->cpu_iter = 0;
-+}
-+
-+bool evsel__cpu_iter_skip_no_inc(struct evsel *ev, int cpu)
-+{
-+	if (ev->cpu_iter >= ev->core.cpus->nr)
-+		return true;
-+	if (cpu >= 0 && ev->core.cpus->map[ev->cpu_iter] != cpu)
-+		return true;
-+	return false;
-+}
-+
-+bool evsel__cpu_iter_skip(struct evsel *ev, int cpu)
-+{
-+	if (!evsel__cpu_iter_skip_no_inc(ev, cpu)) {
-+		ev->cpu_iter++;
-+		return false;
-+	}
-+	return true;
-+}
-+
- void evlist__disable(struct evlist *evlist)
- {
- 	struct evsel *pos;
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 3655b9e..22e2f58 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -334,9 +334,17 @@ void perf_evlist__to_front(struct evlist *evlist,
- #define evlist__for_each_entry_safe(evlist, tmp, evsel) \
- 	__evlist__for_each_entry_safe(&(evlist)->core.entries, tmp, evsel)
- 
-+#define evlist__for_each_cpu(evlist, index, cpu)	\
-+	evlist__cpu_iter_start(evlist);			\
-+	perf_cpu_map__for_each_cpu (cpu, index, (evlist)->core.all_cpus)
-+
- void perf_evlist__set_tracking_event(struct evlist *evlist,
- 				     struct evsel *tracking_evsel);
- 
-+void evlist__cpu_iter_start(struct evlist *evlist);
-+bool evsel__cpu_iter_skip(struct evsel *ev, int cpu);
-+bool evsel__cpu_iter_skip_no_inc(struct evsel *ev, int cpu);
-+
- struct evsel *
- perf_evlist__find_evsel_by_str(struct evlist *evlist, const char *str);
- 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index ddc5ee6..b10d5ba 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -95,6 +95,7 @@ struct evsel {
- 	bool			collect_stat;
- 	bool			weak_group;
- 	bool			percore;
-+	int			cpu_iter;
- 	const char		*pmu_name;
- 	struct {
- 		perf_evsel__sb_cb_t	*cb;
+> > > +     }
+> > > +
+> > >       /*
+> > >        * Fix up bInterval values outside the legal range.
+> > >        * Use 10 or 8 ms if no proper value can be guessed.
+
+Johan
