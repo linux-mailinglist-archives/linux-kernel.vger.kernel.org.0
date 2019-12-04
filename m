@@ -2,158 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D279C113856
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:46:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC1611385E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 00:49:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfLDXqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 18:46:15 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43160 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfLDXqO (ORCPT
+        id S1728419AbfLDXty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 18:49:54 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:34919 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbfLDXty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:46:14 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d16so1243394wre.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:46:13 -0800 (PST)
+        Wed, 4 Dec 2019 18:49:54 -0500
+Received: by mail-il1-f193.google.com with SMTP id g12so1294274ild.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 15:49:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LyGjF/rkwWS2ExVqCvEb3Z2JEo92ZJuKNi25eoJBxHc=;
-        b=xAwbsMb9aGoP+r+OnPfZiWzavaYkWeAUkslEMZ5t8lulO827ECG9YLZf/4V0X+QTEq
-         +fcAR+I+bFz4gn4MgmF6Yjcmar85AxQ34GcwUGYxKDUcJtIJSkrmVANDtIOAhqkp8oMD
-         Umbje+bIHdpMhEoASH2A34tyT6xaMolpvsghDsXwE1Sxj2C4j9hwo8wYDws8fYkzbgt/
-         Wsj9pB2I7lqJgzBJfRp7L+wIx5B6zNkNVMIUU8tE97/hdKBFnWBBw4VYnojJ011/3+P0
-         wG+y3keXvprViGb2tt+aM5E/QqCDAxI/NachcjtP/whXFNEH+qBqGeZHsTbvUUdl5Aq2
-         cxjg==
+        bh=h5X4f/AmLuxg/+orpbQ8vNVjOBBpqULuDh6/v91vlCw=;
+        b=Ni5bNSDFaGBs291vzHt85pwFJADVa/O6oYLrtdNMUO5SDSZTZ6zOtF3YoeVPYc2O5H
+         t0ajMLuauJ5myzsSZWGyhIoj70+PtfrXh0EeDyAWaz9TOFsvMkKApJ2Ys6FWOVK/Rq4g
+         ANqJxch4RSQy4dkK2bvugSwofH2GSn2XQ02d8fcXPcGOg+wwA/rR78Nl3D/9nebyHOQd
+         UIi8+QnKMHt39CS8GzQcNzcgY7g/9OxBMRulJuUBaJesF8mUprIIdvXQvfj8I/zxwbEs
+         wGbIrb+aKC/UaOhEyahbc9mAeFQrpnEiJKyVfRZggN08jyYDDqefdCZx1iVH4p+gUez2
+         urbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LyGjF/rkwWS2ExVqCvEb3Z2JEo92ZJuKNi25eoJBxHc=;
-        b=WZXNrBxB36u023kP9W0UC7RrspGdrp3c4UVYYe/VaEUiGtJZzIiRcSxR5+FFF/gIo7
-         EP+8VqkWsDImev+9JoK3gLw68sQi9uIIjkwpZEarvPhwRT1FO4md9AgrIa6dJSsfED1J
-         WjiLqR2NOSoxQKTSMl2fK06bSU3ZPy+y9KY0T0BGuwuhMscp1L53P14VhUCDAQsVMnxl
-         ghu1rQoPplEsnOpdKJ5W5cdygEHl+X3TAAkozdfaS8Y269FjeZK38g0j5BHlAOWmln6/
-         JhT7OXY3+k+0DdFzk7JWvCzulTL72aF5saCAOnDiU1MVYl0jKF0CcYVneJgYXiWp92Hd
-         s0ZA==
-X-Gm-Message-State: APjAAAUyREYRA6/g/aRduNOt7n8voInQw4hBuFDOUUCimYyzaq9GCrP/
-        Pzuq68wf0aeGY7wf27anZJamumVpgsCTsat8pYUkyw==
-X-Google-Smtp-Source: APXvYqzbuVfNGh5XRBrOq8FbFMia6iU8j+JSQQYBokkifbU6uegHzqiCIV16VOfXrmTaR5k6tR5UELbQb5Ra2iDYlqk=
-X-Received: by 2002:adf:d850:: with SMTP id k16mr6450667wrl.96.1575503172158;
- Wed, 04 Dec 2019 15:46:12 -0800 (PST)
+        bh=h5X4f/AmLuxg/+orpbQ8vNVjOBBpqULuDh6/v91vlCw=;
+        b=a/OMgjpbVHWqP/WwycmPSq5EFQsTUku4TKTfGzxbGgBbv3em1HKQSAMKouJhmL27fu
+         J/r7Q7n4pRKp68gFZ+rxq6VewPZebAOfbCgEaaoQWp3arIEAveKqFRzqXwog/u0JOw0O
+         j+cFBSvUVfFMAiGp9XX9rKrEPMT3J5UNZkcC0sfcwDvGdDf/lHC23x5zqGhO5Z9g8u9G
+         x9Gfpbj/h8YxmoJaIacGEDa0WZ7pb7npTRqP2pPRmyR62rQ+zZBNyoxeVsgqZk5TOYh/
+         cBDEr4plOjSbsAgWbPHJRQDjJH3XYB34qW9HN560hbP1FygFe3c/FfHJw4NAltLGCLGv
+         zy7Q==
+X-Gm-Message-State: APjAAAVr8+6L/buP0sEvte84RjXxQeXdw2fNSltzEeRulZLWFAlaEcO1
+        XiNgJFho+v2T/NimVQGAOL/B3IEUXs9Ia/131fassg==
+X-Google-Smtp-Source: APXvYqyUDfNhYgze0SOXXeC77kbbQ3925dDTt7baEElbwCJs4ZcpDLSv5wVcJfRDgbe4SUyY8UTdtmb3PCESziZc6ac=
+X-Received: by 2002:a92:8141:: with SMTP id e62mr5916069ild.119.1575503390644;
+ Wed, 04 Dec 2019 15:49:50 -0800 (PST)
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.9999.1912040050430.56420@viisi.sifive.com>
- <CAAhSdy2id0FoLBxWwN7WHEk5Am770BizkK=sZO0-G54MtYa6DQ@mail.gmail.com>
- <9044bad02aa6553cdb2523294500b50fccf3fd2a.camel@wdc.com> <alpine.DEB.2.21.9999.1912041128400.186402@viisi.sifive.com>
- <81530734312456aab8b9625d7e9bb071c43db1c5.camel@wdc.com>
-In-Reply-To: <81530734312456aab8b9625d7e9bb071c43db1c5.camel@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 5 Dec 2019 05:16:00 +0530
-Message-ID: <CAAhSdy1WRKV7WoXH1ij+yfnjg5z6JidAy1zo26XCnUhOfSE4+g@mail.gmail.com>
-Subject: Re: [GIT PULL] Second set of RISC-V updates for v5.5-rc1
-To:     Alistair Francis <Alistair.Francis@wdc.com>
-Cc:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
+References: <1574101067-5638-1-git-send-email-pbonzini@redhat.com> <1574101067-5638-5-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <1574101067-5638-5-git-send-email-pbonzini@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Wed, 4 Dec 2019 15:49:39 -0800
+Message-ID: <CALMp9eTKMzg2pNEZxhqAejAquFg8NxKRrBzzNUKRY78JLGjS5A@mail.gmail.com>
+Subject: Re: [PATCH 4/5] KVM: vmx: implement MSR_IA32_TSX_CTRL disable RTM functionality
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 1:20 AM Alistair Francis
-<Alistair.Francis@wdc.com> wrote:
+On Mon, Nov 18, 2019 at 10:17 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> On Wed, 2019-12-04 at 11:38 -0800, Paul Walmsley wrote:
-> > Alistair, Anup,
-> >
-> > On Wed, 4 Dec 2019, Alistair Francis wrote:
-> >
-> > > On Wed, 2019-12-04 at 18:22 +0530, Anup Patel wrote:
-> > >
-> > > > I had commented on your patch but my comments are still
-> > > > not addressed.
-> > > >
-> > > > Various debug options enabled by this patch have performance
-> > > > impact. Instead of enabling these debug options in primary
-> > > > defconfigs, I suggest to have separate debug defconfigs with
-> > > > these options enabled.
-> > >
-> > > +1
-> > >
-> > > OE uses the defconfig (as I'm sure other distros do) and slowing
-> > > down
-> > > users seems like a bad idea.
-> >
-> > While I respect your points of view, our defconfigs are oriented
-> > towards
-> > kernel developers.  This is particularly important when right now the
-> > only
+> The current guest mitigation of TAA is both too heavy and not really
+> sufficient.  It is too heavy because it will cause some affected CPUs
+> (those that have MDS_NO but lack TAA_NO) to fall back to VERW and
+> get the corresponding slowdown.  It is not really sufficient because
+> it will cause the MDS_NO bit to disappear upon microcode update, so
+> that VMs started before the microcode update will not be runnable
+> anymore afterwards, even with tsx=on.
 >
-> That is just not what happens though.
+> Instead, if tsx=on on the host, we can emulate MSR_IA32_TSX_CTRL for
+> the guest and let it run without the VERW mitigation.  Even though
+> MSR_IA32_TSX_CTRL is quite heavyweight, and we do not want to write
+> it on every vmentry, we can use the shared MSR functionality because
+> the host kernel need not protect itself from TSX-based side-channels.
 >
-> It is too much to expect every distro to maintain a defconfig for RISC-
-> V. There are constantly new features that need to be enabled/disabled
-> in the configs and it isn't always clear to outsiders. Which is why we
-> currently use the defconfig as a base and apply extra features that
-> distro want on top.
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 34 +++++++++++++++++++++++++++++++---
+>  arch/x86/kvm/x86.c     | 23 +++++------------------
+>  2 files changed, 36 insertions(+), 21 deletions(-)
 >
-> Expecting every distro to have a kernel developers level of knowledge
-> about configuring Kconfigs is just unrealistic.
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 04a8212704c1..ed25fe7d5234 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -450,6 +450,7 @@ noinline void invept_error(unsigned long ext, u64 eptp, gpa_t gpa)
+>         MSR_SYSCALL_MASK, MSR_LSTAR, MSR_CSTAR,
+>  #endif
+>         MSR_EFER, MSR_TSC_AUX, MSR_STAR,
+> +       MSR_IA32_TSX_CTRL,
+>  };
 >
-> > RISC-V hardware on the market are test chips.  Our expectation is
-> > that
+>  #if IS_ENABLED(CONFIG_HYPERV)
+> @@ -1683,6 +1684,9 @@ static void setup_msrs(struct vcpu_vmx *vmx)
+>         index = __find_msr_index(vmx, MSR_TSC_AUX);
+>         if (index >= 0 && guest_cpuid_has(&vmx->vcpu, X86_FEATURE_RDTSCP))
+>                 move_msr_up(vmx, index, save_nmsrs++);
+> +       index = __find_msr_index(vmx, MSR_IA32_TSX_CTRL);
+> +       if (index >= 0)
+> +               move_msr_up(vmx, index, save_nmsrs++);
 >
-> Treating RISC-V as a test architecture seems like a good way to make
-> sure that is all it ever is.
+>         vmx->save_nmsrs = save_nmsrs;
+>         vmx->guest_msrs_ready = false;
+> @@ -1782,6 +1786,11 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  #endif
+>         case MSR_EFER:
+>                 return kvm_get_msr_common(vcpu, msr_info);
+> +       case MSR_IA32_TSX_CTRL:
+> +               if (!msr_info->host_initiated &&
+> +                   !(vcpu->arch.arch_capabilities & ARCH_CAP_TSX_CTRL_MSR))
+> +                       return 1;
+> +               goto find_shared_msr;
+>         case MSR_IA32_UMWAIT_CONTROL:
+>                 if (!msr_info->host_initiated && !vmx_has_waitpkg(vmx))
+>                         return 1;
+> @@ -1884,8 +1893,9 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>                 if (!msr_info->host_initiated &&
+>                     !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
+>                         return 1;
+> -               /* Else, falls through */
+> +               goto find_shared_msr;
+>         default:
+> +       find_shared_msr:
+>                 msr = find_msr_entry(vmx, msr_info->index);
+>                 if (msr) {
+>                         msr_info->data = msr->data;
+> @@ -2001,6 +2011,13 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>                                               MSR_IA32_SPEC_CTRL,
+>                                               MSR_TYPE_RW);
+>                 break;
+> +       case MSR_IA32_TSX_CTRL:
+> +               if (!msr_info->host_initiated &&
+> +                   !(vcpu->arch.arch_capabilities & ARCH_CAP_TSX_CTRL_MSR))
+> +                       return 1;
+> +               if (data & ~(TSX_CTRL_RTM_DISABLE | TSX_CTRL_CPUID_CLEAR))
+> +                       return 1;
+> +               goto find_shared_msr;
+>         case MSR_IA32_PRED_CMD:
+>                 if (!msr_info->host_initiated &&
+>                     !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+> @@ -2152,8 +2169,10 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>                 /* Check reserved bit, higher 32 bits should be zero */
+>                 if ((data >> 32) != 0)
+>                         return 1;
+> -               /* Else, falls through */
+> +               goto find_shared_msr;
+> +
+>         default:
+> +       find_shared_msr:
+>                 msr = find_msr_entry(vmx, msr_index);
+>                 if (msr) {
+>                         u64 old_msr_data = msr->data;
+> @@ -4234,7 +4253,16 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
+>                         continue;
+>                 vmx->guest_msrs[j].index = i;
+>                 vmx->guest_msrs[j].data = 0;
+> -               vmx->guest_msrs[j].mask = -1ull;
+> +
+> +               switch (index) {
+> +               case MSR_IA32_TSX_CTRL:
+> +                       /* No need to pass TSX_CTRL_CPUID_CLEAR through.  */
+> +                       vmx->guest_msrs[j].mask = ~(u64)TSX_CTRL_CPUID_CLEAR;
+> +                       break;
+> +               default:
+> +                       vmx->guest_msrs[j].mask = -1ull;
+> +                       break;
+> +               }
+>                 ++vmx->nmsrs;
+>         }
 >
-> > distros and benchmarkers will create their own Kconfigs for their
-> > needs.
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 648e84e728fc..fc54e3905fe3 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1314,29 +1314,16 @@ static u64 kvm_get_arch_capabilities(void)
+>                 data |= ARCH_CAP_MDS_NO;
 >
-> Like I said, that isn't true. After this patch is applied (and it makes
-> it to a release) all OE users will now have a slower RISC-V kernel.
-> This also applies to buildroot and probably other distos.
+>         /*
+> -        * On TAA affected systems, export MDS_NO=0 when:
+> -        *      - TSX is enabled on the host, i.e. X86_FEATURE_RTM=1.
+> -        *      - Updated microcode is present. This is detected by
+> -        *        the presence of ARCH_CAP_TSX_CTRL_MSR and ensures
+> -        *        that VERW clears CPU buffers.
+> -        *
+> -        * When MDS_NO=0 is exported, guests deploy clear CPU buffer
+> -        * mitigation and don't complain:
+> -        *
+> -        *      "Vulnerable: Clear CPU buffers attempted, no microcode"
+> -        *
+> -        * If TSX is disabled on the system, guests are also mitigated against
+> -        * TAA and clear CPU buffer mitigation is not required for guests.
+> +        * On TAA affected systems:
+> +        *      - nothing to do if TSX is disabled on the host.
+> +        *      - we emulate TSX_CTRL if present on the host.
+> +        *        This lets the guest use VERW to clear CPU buffers.
+>          */
+>         if (!boot_cpu_has(X86_FEATURE_RTM))
+> -               data &= ~ARCH_CAP_TAA_NO;
+> +               data &= ~(ARCH_CAP_TAA_NO | ARCH_CAP_TSX_CTRL_MSR);
+>         else if (!boot_cpu_has_bug(X86_BUG_TAA))
+>                 data |= ARCH_CAP_TAA_NO;
+> -       else if (data & ARCH_CAP_TSX_CTRL_MSR)
+> -               data &= ~ARCH_CAP_MDS_NO;
 >
-> Now image some company wants to investigate using a RISC-V chip for
-> their embedded project. They use OE/buildroot to build a quick test
-> setup and boot Linux. It now runs significantly slower then some other
-> architecture and they don't choose RISC-V.
->
-> Slowing down all users to help kernel developers debug seems like the
-> wrong direction. Kernel developers should know enough to be able to
-> turn on the required configs, why does this need to be the default?
+> -       /* KVM does not emulate MSR_IA32_TSX_CTRL.  */
+> -       data &= ~ARCH_CAP_TSX_CTRL_MSR;
 
-I quickly tried hackbench on SiFive Unleashed board with latest Linus
-tree master branch (having your patch) and I am seeing 12% slowdown.
+Shouldn't kvm be masking off any bits that it doesn't know about here?
+Who knows what future features we may claim to support?
 
-I am sure if I try more heavier benchmarks (such as stress-ng) then
-the slowdown will be even more.
-
-Here are the detailed numbers:
-
-Command: ./hackbench 32
-Number of Tasks: 32*40 (== 1280)
-Average Time (without debug options): 3.10525
-Average Time (with debug options): 3.471 (11.78% slower)
-
-Command: ./hackbench 64
-Number of Tasks: 64*40 (== 2560)
-Average Time (without debug options): 6.3015
-Average Time (with debug options): 7.05875 (12.017% slower)
-
-Command: ./hackbench 128
-Number of Tasks: 128*40 (== 5120)
-Average Time (without debug options): 12.6275
-Average Time (with debug options): 14.1455 (12.0214% slower)
-
-It is this performance impact due to which other architectures (such as
-x86 and ARM64) don't have these debug options enabled in their defconfigs.
-
-I will send a patch to move these debug options to separate debug
-defconfigs so that people have a way to build a debug kernel.
-
-Regards,
-Anup
+>         return data;
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_get_arch_capabilities);
+> --
+> 1.8.3.1
+>
+>
