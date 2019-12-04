@@ -2,151 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B27D1137BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 453A21137C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfLDWll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 17:41:41 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:50178 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728383AbfLDWlj (ORCPT
+        id S1728392AbfLDWmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 17:42:53 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39325 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727989AbfLDWmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 17:41:39 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id F34DD20BE482;
-        Wed,  4 Dec 2019 14:41:37 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F34DD20BE482
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1575499298;
-        bh=ScSwEyZVOR1vts7e3eQmnQ7pZQAe+Gm5XUx2QTgbWGY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bGBWRhQYtmMx00NQfj8HkqB+ar5xp8uovBNqnHBtn0Gboy1Cnj/xplDMhqcx20Wo8
-         Yh+y0I0CpVyWHbQuw/WJniwhaXJa/enQC3Sh70SPFvQ9f+LCMC4InVec2JM1ls+R/Y
-         M31KEU+3s02K9WQoHE4MtDK87DHlAkThCHFZyx4A=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v10 6/6] IMA: Read keyrings= option from the IMA policy
-Date:   Wed,  4 Dec 2019 14:41:31 -0800
-Message-Id: <20191204224131.3384-7-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191204224131.3384-1-nramas@linux.microsoft.com>
-References: <20191204224131.3384-1-nramas@linux.microsoft.com>
+        Wed, 4 Dec 2019 17:42:52 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 2so562874pfx.6;
+        Wed, 04 Dec 2019 14:42:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pF5bjopQFQ3A+SmApS9xhaC/5lZoT7rSCk2k4/K0fE4=;
+        b=Q7CxIZRtAxRwNYXgAnY2x8ZSABqYYcEYAir0rRuMfUunI+Fxerl//0q8FcT1DVmfjn
+         XzXlJHh5j9uevlTyhz8h7q0o/RYfQjR0ZjoUo1D/1KGJJTkieQNF5JZ4NqchzW7b0e5o
+         qcz616/VCrszZCijm1L7szNpT5eayAgJDHDiTgul0LaYivT7+p5yYoaZAhQSSY8UL+VK
+         dakBEb/CPTPdW4tJVWL77/zTSxlTzK6E7k+j7lqiksgGkRFYf8y5NXzocpls2ycBrtWl
+         XM37VPKiRXfJW9osEbPEDJKsDKQKdFjQuH40qCYHeXzudpIzHdVg84WYRO24o04dPWeK
+         fS+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pF5bjopQFQ3A+SmApS9xhaC/5lZoT7rSCk2k4/K0fE4=;
+        b=gfr8SyQ6eryTJiXeTI3RsVZ3ymNKNsL8U3wwJxBlBN0EwOWder0msdmdpQODlZ5/br
+         YEW+OZYM5PNchoY5SBEY/EpBD7OCPck5iu6memrdsAIdpLtCYHDGXJpdu6EJJB65US3l
+         117Q9GBWNKp+wAXgDlB1Df8DjEwNcjO5PSpIXnOE/suMglT2qagRQLYji7AfRedxg8e7
+         gX/oRleLnR9seubuHieZnuE/xrnkSAQC9TV4vOZzRVdieIPEGQ5QvjtMP5S4yqPoG+XP
+         RqpPln6/pk1ZYLuWFcekAkVG5VjF4WRzLTert+z0I5pcYbufmPq+oS/h5lILsaX6ohgv
+         WLTA==
+X-Gm-Message-State: APjAAAWbiatoC5da41dZNRCmE0hkCn6m76UEH6s3qQdwPi7pzctqbVyw
+        kOye8bjSmiQRX1Ohae0emKM/PYGb2WCubev8rYs=
+X-Google-Smtp-Source: APXvYqymNpUaoVnbcqpxgLX98vJUDKoclbK7ri5vX4NtbmNr3chcTbHAfQl60OLoWW3pvhXgQw4moYc5eOJhW+lBB58=
+X-Received: by 2002:a63:e14a:: with SMTP id h10mr5900277pgk.74.1575499371944;
+ Wed, 04 Dec 2019 14:42:51 -0800 (PST)
+MIME-Version: 1.0
+References: <20191204155941.17814-1-brgl@bgdev.pl> <20191204155941.17814-2-brgl@bgdev.pl>
+In-Reply-To: <20191204155941.17814-2-brgl@bgdev.pl>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 5 Dec 2019 00:42:39 +0200
+Message-ID: <CAHp75VcqYsKUzxGUhn8aHg_u-B=FkqmTU2YS+yyVNfAPu+715w@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] tools: gpio: implement gpio-watch
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read "keyrings=" option, if specified in the IMA policy, and store in
-the list of IMA rules when the configured IMA policy is read.
+On Wed, Dec 4, 2019 at 7:19 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> Add a simple program that allows to test the new LINECHANGED_FD ioctl().
 
-This patch defines a new policy token enum namely Opt_keyrings
-and an option flag IMA_KEYRINGS for reading "keyrings=" option
-from the IMA policy.
+> --- a/tools/gpio/.gitignore
+> +++ b/tools/gpio/.gitignore
+> @@ -1,4 +1,5 @@
+>  gpio-event-mon
+>  gpio-hammer
+>  lsgpio
+> +gpio-watch
 
-Updated ima_parse_rule() to parse "keyrings=" option in the policy.
-Updated ima_policy_show() to display "keyrings=" option.
+Perhaps keep it sorted?
 
-The following example illustrates how key measurement can be verified.
+> +++ b/tools/gpio/gpio-watch.c
+> @@ -0,0 +1,112 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * gpio-watch - monitor unrequested lines for property changes using the
+> + *              character device
+> + *
+> + * Copyright (C) 2019 BayLibre SAS
+> + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> + */
+> +
+> +#include <ctype.h>
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <linux/gpio.h>
+> +#include <poll.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/ioctl.h>
+> +#include <unistd.h>
+> +
+> +static bool isnumber(const char *str)
+> +{
+> +       size_t sz = strlen(str);
+> +       int i;
+> +
+> +       for (i = 0; i < sz; i++) {
+> +               if (!isdigit(str[i]))
+> +                       return false;
+> +       }
+> +
+> +       return true;
+> +}
 
-Sample "key" measurement rule in the IMA policy:
+strtoul() will do the same.
 
-measure func=KEY_CHECK uid=0 keyrings=.ima|.evm template=ima-buf
+char *p;
+unsigned long dummy; // do we need it?
+dummy = strtoul(..., &p);
+return *p == '\0';
 
-Display "key" measurement in the IMA measurement list:
+> +int main(int argc, char **argv)
+> +{
+> +       struct gpioline_info_changed chg;
+> +       struct gpioline_info req;
+> +       struct pollfd pfd;
+> +       int fd, i, j, ret;
+> +       char *event;
+> +       ssize_t rd;
+> +
+> +       if (argc < 3)
+> +               goto err_usage;
+> +
+> +       fd = open(argv[1], O_RDWR | O_CLOEXEC);
+> +       if (fd < 0) {
+> +               perror("unable to open gpiochip");
+> +               return EXIT_FAILURE;
+> +       }
+> +
+> +       for (i = 0, j = 2; i < argc - 2; i++, j++) {
+> +               if (!isnumber(argv[j]))
+> +                       goto err_usage;
+> +
+> +               memset(&req, 0, sizeof(req));
+> +               req.line_offset = atoi(argv[j]);
 
-cat /sys/kernel/security/ima/ascii_runtime_measurements
+Oh, why not to call strtoul() directly?
 
-10 faf3...e702 ima-buf sha256:27c915b8ddb9fae7214cf0a8a7043cc3eeeaa7539bcb136f8427067b5f6c3b7b .ima 308202863082...4aee
+> +
+> +               ret = ioctl(fd, GPIO_GET_LINEINFO_WATCH_IOCTL, &req);
+> +               if (ret) {
+> +                       perror("unable to set up line watch");
 
-Verify "key" measurement data for a key added to ".ima" keyring:
+Don't you need to unwatch previously added ones?
 
-cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | grep ".ima" | cut -d' ' -f 6 | xxd -r -p |tee ima-cert.der | sha256sum | cut -d' ' -f 1
+> +                       return EXIT_FAILURE;
+> +               }
+> +       }
 
-The output of the above command should match the sha256 hash
-in the "key" measurement entry in the IMA measurement list.
+> +       for (;;) {
+> +               ret = poll(&pfd, 1, 5000);
+> +               if (ret < 0) {
+> +                       perror("error polling the linechanged fd");
+> +                       return EXIT_FAILURE;
+> +               } else if (ret > 0) {
+> +                       memset(&chg, 0, sizeof(chg));
 
-The file namely "ima-cert.der" generated by the above command
-should be a valid x509 certificate (in DER format) and should match
-the one that was used to import the key to the .ima keyring.
-The certificate file can be verified using openssl tool.
+> +                       rd = read(pfd.fd, &chg, sizeof(chg));
+> +                       if (rd < 0 || rd != sizeof(chg)) {
+> +                               if (rd != sizeof(chg))
+> +                                       errno = EIO;
+> +
+> +                               perror("error reading line change event");
+> +                               return EXIT_FAILURE;
+> +                       }
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+Shouldn't we handle the -EINTR?
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 5db990c8b02d..73030a69d546 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
-+#define IMA_KEYRINGS	0x0400
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -821,7 +822,8 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
--	Opt_permit_directio, Opt_pcr, Opt_template, Opt_err
-+	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-+	Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -857,6 +859,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1106,6 +1109,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
-+
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEY_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1481,6 +1501,13 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
+> +               }
+> +       }
+> +
+> +       return 0;
+
+
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
