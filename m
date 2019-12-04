@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A73E112F2A
+	by mail.lfdr.de (Postfix) with ESMTP id F3F3B112F2B
 	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbfLDP7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:59:46 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35983 "EHLO
+        id S1728697AbfLDP7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:59:50 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35987 "EHLO
         mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728652AbfLDP7o (ORCPT
+        with ESMTP id S1728660AbfLDP7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:59:44 -0500
-Received: by mail-qk1-f196.google.com with SMTP id v19so375785qkv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:44 -0800 (PST)
+        Wed, 4 Dec 2019 10:59:46 -0500
+Received: by mail-qk1-f196.google.com with SMTP id v19so375877qkv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=uS5983uJoHZy5JiqeIGQWhAtmT2ue7W1CVbOZjIqk6g=;
-        b=ZtlqW1OByAmf47tXyRsopiX+BaNBesr84wke0vTVLOd+GkIrY+k3iBOCn8+k3BhroD
-         UNPyg/sFg82rChe6aGKjY90pK15vcnyPSHWI/ntL/xrCb92iqtTCUuFQDgzNKJ3heYcj
-         aamqSO5AfV4WR7UoOsASk9fB/ywo0S5VTXfuTqiZNofg+uS4jCiKICD+fWy0+/ahLoap
-         dC7A63cF49Lmtymqy1AMRt03PDqSLFIz9dhvMvNL4HhZmvcOOqWAj0KpmU9tEjjVDK+Z
-         LjhirTdzsonzWezv7RaT1Qz2fpdpTFzh8noDuDAhec1ZgziXt4/L1/RYgTO0O77TxhMn
-         VFMw==
+        bh=O1/Snxb5riMEM2rJi1KMG7s6/Tztu9n9IW8tHLsuHwY=;
+        b=VtXAM4U7F7l2niWs2bjUA1/FCfevZyxkmFcPuFpFGUqREEmkRI3IPJjFp/9sWZ4P9u
+         34P5r/HciRoHPUgQ2zh1WhfBQ9dc+I9oLLrYVFxPfMSm5eSXfqAPsS25DRtrkU4qMfCV
+         JVFGC9KseajBUqOruNg/NZ83Q44tZwVme4EI3Pja3lk4UB6zPf1enKsubGZs2zAZkd0w
+         zFjnBvC4MnF7DMg65bT++dNi7nJy1b0S2Szx2B3XbhBdFh69wkxvEaNLmYfxSD0WYG+x
+         BKX5FJ2uiYbnPo22WYYeynb4LanTaDONnrGZItg/BIAaFidFw2MowkE73FNI6Xz0B2eO
+         Sgvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uS5983uJoHZy5JiqeIGQWhAtmT2ue7W1CVbOZjIqk6g=;
-        b=ZvsGRANRPQpX93JMamJ85z2uiIhCoOYCeOps4pedu2IqCoxV1wMB1TX0S8Gd0pUOpS
-         +2x55D1UniSDXz14F8nJDGKwdZzHfpCg81nnt6JSjvMns5gPa4MbCHWBKYhRDNzqECSa
-         bZVvJGcpE1OmlcSrfgfCQDUUU4qU2fuwhA1CHajXlp6kO/9l5nWw9lLNMAztLGktiDAW
-         6A2Ojv4gtmHHZlXDvGLFE+6hemavwPG3BOGgiufP9fPhK/3Oh1VCChS4IodPkbM+iTSc
-         zG2auFQmg/uzRcDm1KYwA2Aipt7dPjnS4opUpJB3Rrwlv2qHNeHCSQBuYZngjCmetRtZ
-         77uA==
-X-Gm-Message-State: APjAAAUgXddk5vMsEil5P/y8qajEbClU3IWH5zazSm09ap1pLBmBOYdy
-        mPj9e7qEHRsZGV0zwqtvPaoxEg==
-X-Google-Smtp-Source: APXvYqxd8yp8Dngio2HO2NRx40UjWPIBx2dPgEFDiwpELJdmzYKJ7ihFd7m3wohPBcadKXvewYRGxg==
-X-Received: by 2002:a37:8e45:: with SMTP id q66mr3685650qkd.129.1575475183874;
-        Wed, 04 Dec 2019 07:59:43 -0800 (PST)
+        bh=O1/Snxb5riMEM2rJi1KMG7s6/Tztu9n9IW8tHLsuHwY=;
+        b=kDXL84sZv3H+xlnaiVq0A+kTaaI4eFX1i0ALCc6b5gtiG+FgW2am2U9FDg+qOIrBkx
+         tjMlwVQpRbzUYR4n7YuoKU9FGYI7Dz9RVV4Ei0keYDWjbJVc+wBmmX8JENjtfUbww/4p
+         jDK0q2f7NXqSrCRgSRZUR0znmXT6gDLCp8kmPbxF8g9jhy0k9J11/GsKD9MSSj2l759S
+         l+kzLb4JTDCBZ9ZMJUtQPlE0VC7LRrDKtlcxaQqXMQuNXPDxnZXxef1pS4q2qSdMYTip
+         yL3NWmdPwkFX52Loe6orzcFgd3MrooaBrjX7SyxjV6ooyDeI2jBoVoZBeB6bDem1Hb/M
+         ttRg==
+X-Gm-Message-State: APjAAAVUhp3Dwa6dVHQhWrNQ06rfWGKT2A2V3eJOM/g4cB2h9z99NzFL
+        amfzsjjOHFoBDD32MQIb4NvQTg==
+X-Google-Smtp-Source: APXvYqwnoYhlsay18cGYdgO8tha/3l6PdDeLuAJb0cJ+NbXd/YkMJZLdic0YIGKGxuueYGo1dLyIrg==
+X-Received: by 2002:a05:620a:844:: with SMTP id u4mr3825309qku.368.1575475185340;
+        Wed, 04 Dec 2019 07:59:45 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.42
+        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:59:43 -0800 (PST)
+        Wed, 04 Dec 2019 07:59:44 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v8 02/25] kexec: add machine_kexec_post_load()
-Date:   Wed,  4 Dec 2019 10:59:15 -0500
-Message-Id: <20191204155938.2279686-3-pasha.tatashin@soleen.com>
+Subject: [PATCH v8 03/25] arm64: kexec: remove unnecessary debug prints
+Date:   Wed,  4 Dec 2019 10:59:16 -0500
+Message-Id: <20191204155938.2279686-4-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
 References: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
@@ -68,81 +68,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is the same as machine_kexec_prepare(), but is called after segments are
-loaded. This way, can do processing work with already loaded relocation
-segments. One such example is arm64: it has to have segments loaded in
-order to create a page table, but it cannot do it during kexec time,
-because at that time allocations won't be possible anymore.
+The kexec_image_info() outputs all the necessary information about the
+upcoming kexec. The extra debug printfs in machine_kexec() are not
+needed.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Acked-by: Dave Young <dyoung@redhat.com>
 ---
- kernel/kexec.c          | 4 ++++
- kernel/kexec_core.c     | 6 ++++++
- kernel/kexec_file.c     | 4 ++++
- kernel/kexec_internal.h | 2 ++
- 4 files changed, 16 insertions(+)
+ arch/arm64/kernel/machine_kexec.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index bc933c0db9bf..f977786fe498 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -159,6 +159,10 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+index 0df8493624e0..8e9c924423b4 100644
+--- a/arch/arm64/kernel/machine_kexec.c
++++ b/arch/arm64/kernel/machine_kexec.c
+@@ -160,18 +160,6 @@ void machine_kexec(struct kimage *kimage)
  
- 	kimage_terminate(image);
+ 	kexec_image_info(kimage);
  
-+	ret = machine_kexec_post_load(image);
-+	if (ret)
-+		goto out;
-+
- 	/* Install the new kernel and uninstall the old */
- 	image = xchg(dest_image, image);
- 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index f7ae04b8de6f..c19c0dad1ebe 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -589,6 +589,12 @@ static void kimage_free_extra_pages(struct kimage *image)
- 	kimage_free_page_list(&image->unusable_pages);
- 
- }
-+
-+int __weak machine_kexec_post_load(struct kimage *image)
-+{
-+	return 0;
-+}
-+
- void kimage_terminate(struct kimage *image)
- {
- 	if (*image->entry != 0)
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index a2df93948665..faa74d5f6941 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -441,6 +441,10 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
- 
- 	kimage_terminate(image);
- 
-+	ret = machine_kexec_post_load(image);
-+	if (ret)
-+		goto out;
-+
+-	pr_debug("%s:%d: control_code_page:        %p\n", __func__, __LINE__,
+-		kimage->control_code_page);
+-	pr_debug("%s:%d: reboot_code_buffer_phys:  %pa\n", __func__, __LINE__,
+-		&reboot_code_buffer_phys);
+-	pr_debug("%s:%d: reboot_code_buffer:       %p\n", __func__, __LINE__,
+-		reboot_code_buffer);
+-	pr_debug("%s:%d: relocate_new_kernel:      %p\n", __func__, __LINE__,
+-		arm64_relocate_new_kernel);
+-	pr_debug("%s:%d: relocate_new_kernel_size: 0x%lx(%lu) bytes\n",
+-		__func__, __LINE__, arm64_relocate_new_kernel_size,
+-		arm64_relocate_new_kernel_size);
+-
  	/*
- 	 * Free up any temporary buffers allocated which are not needed
- 	 * after image has been loaded
-diff --git a/kernel/kexec_internal.h b/kernel/kexec_internal.h
-index 48aaf2ac0d0d..39d30ccf8d87 100644
---- a/kernel/kexec_internal.h
-+++ b/kernel/kexec_internal.h
-@@ -13,6 +13,8 @@ void kimage_terminate(struct kimage *image);
- int kimage_is_destination_range(struct kimage *image,
- 				unsigned long start, unsigned long end);
- 
-+int machine_kexec_post_load(struct kimage *image);
-+
- extern struct mutex kexec_mutex;
- 
- #ifdef CONFIG_KEXEC_FILE
+ 	 * Copy arm64_relocate_new_kernel to the reboot_code_buffer for use
+ 	 * after the kernel is shut down.
 -- 
 2.24.0
 
