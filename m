@@ -2,127 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBAB112498
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6003112490
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:21:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbfLDIWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:22:06 -0500
-Received: from lucky1.263xmail.com ([211.157.147.133]:45822 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbfLDIWG (ORCPT
+        id S1727409AbfLDIVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:21:48 -0500
+Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:52962
+        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726166AbfLDIVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:22:06 -0500
-Received: from localhost (unknown [192.168.167.13])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 6C0777F3AA;
-        Wed,  4 Dec 2019 16:22:00 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P8551T139845177427712S1575447579673282_;
-        Wed, 04 Dec 2019 16:19:44 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <e77fa5e94fe2c140714d5ceaf031ceb3>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 4/5] clk: rockchip: add pll up and down when change pll freq
-Date:   Wed,  4 Dec 2019 16:18:58 +0800
-Message-Id: <20191204081859.19454-5-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191204081859.19454-1-zhangqing@rock-chips.com>
-References: <20191204081859.19454-1-zhangqing@rock-chips.com>
+        Wed, 4 Dec 2019 03:21:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575447706;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        bh=gZXkqSU/a39Efrt2FbC+7Z4ewg5zJcA9TZ31Pu4BsP4=;
+        b=LgOMDRmhi/mlsEUaHcCZkzExiFb++eHZLy/X14LVUIvKWVkMCwhi8Tf24b+VyuVF
+        EGn0VS40pJYorExhcc0vqaJ0HHLNtxS6Es6fYsleOJJ+zZrmQNXOSpd6VqaMJNYkbcE
+        I8hf6c2UAUIqooWyXEfCzxAjZNL4t5otsDoSW/Z4=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575447706;
+        h=From:To:Cc:Subject:Date:Message-Id:Feedback-ID;
+        bh=gZXkqSU/a39Efrt2FbC+7Z4ewg5zJcA9TZ31Pu4BsP4=;
+        b=NfP1Of3rnNRqBwZ/q9J0wwH5yv59Gs9/Y+AYUvKclhdSQTPt1i6HnbCR0+moLY4h
+        yWaO2N3ikueNuHQpA/Ztf6oAp7hCjqhqEIC+gR6jH1OSjkPHMYeBWijbKPGryYp/7q8
+        lQXQAZiUjT6imfVLn4svsMkmJCqr+90z2YLatVOs=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 636C6C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
+        robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/3] Add modem Clock controller (MSS CC) driver for SC7180
+Date:   Wed, 4 Dec 2019 08:21:46 +0000
+Message-ID: <0101016ed0003c0a-c3f2e19a-eb6f-42f6-b66f-4cabb055e828-000000@us-west-2.amazonses.com>
+X-Mailer: git-send-email 2.7.4
+X-SES-Outgoing: 2019.12.04-54.240.27.56
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-set pll sequence:
-	->set pll to slow mode or other plls
-	->set pll down
-	->set pll params
-	->set pll up
-	->wait pll lock status
-	->set pll to normal mode
-
-To slove the system error:
-wait_pll_lock: timeout waiting for pll to lock
-pll_set_params: pll update unsucessful,
-		trying to restore old params
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-pll.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 198417d56300..390e9473807a 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -199,6 +199,11 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
- 		rate_change_remuxed = 1;
- 	}
- 
-+	/* set pll power down */
-+	writel(HIWORD_UPDATE(RK3036_PLLCON1_PWRDOWN,
-+			     RK3036_PLLCON1_PWRDOWN, 0),
-+	       pll->reg_base + RK3036_PLLCON(1));
-+
- 	/* update pll values */
- 	writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3036_PLLCON0_FBDIV_MASK,
- 					  RK3036_PLLCON0_FBDIV_SHIFT) |
-@@ -220,6 +225,11 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
- 	pllcon |= rate->frac << RK3036_PLLCON2_FRAC_SHIFT;
- 	writel_relaxed(pllcon, pll->reg_base + RK3036_PLLCON(2));
- 
-+	/* set pll power up */
-+	writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 0),
-+	       pll->reg_base + RK3036_PLLCON(1));
-+	udelay(1);
-+
- 	/* wait for the pll to lock */
- 	ret = rockchip_pll_wait_lock(pll);
- 	if (ret) {
-@@ -676,6 +686,11 @@ static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
- 		rate_change_remuxed = 1;
- 	}
- 
-+	/* set pll power down */
-+	writel(HIWORD_UPDATE(RK3399_PLLCON3_PWRDOWN,
-+			     RK3399_PLLCON3_PWRDOWN, 0),
-+	       pll->reg_base + RK3399_PLLCON(3));
-+
- 	/* update pll values */
- 	writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3399_PLLCON0_FBDIV_MASK,
- 						  RK3399_PLLCON0_FBDIV_SHIFT),
-@@ -699,6 +714,12 @@ static int rockchip_rk3399_pll_set_params(struct rockchip_clk_pll *pll,
- 					    RK3399_PLLCON3_DSMPD_SHIFT),
- 		       pll->reg_base + RK3399_PLLCON(3));
- 
-+	/* set pll power up */
-+	writel(HIWORD_UPDATE(0,
-+			     RK3399_PLLCON3_PWRDOWN, 0),
-+	       pll->reg_base + RK3399_PLLCON(3));
-+	udelay(1);
-+
- 	/* wait for the pll to lock */
- 	ret = rockchip_rk3399_pll_wait_lock(pll);
- 	if (ret) {
--- 
-2.17.1
+Add driver support for Modem clock controller for SC7180 and also
+update device tree bindings for the various clocks supported in the
+clock controller.
 
 
+Taniya Das (3):
+  dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
+  dt-bindings: clock: Introduce QCOM Modem clock  bindings
+  clk: qcom: Add modem clock controller driver for  SC7180
+
+ .../devicetree/bindings/clock/qcom,mss.yaml        | 40 ++++++++++
+ drivers/clk/qcom/Kconfig                           |  9 +++
+ drivers/clk/qcom/Makefile                          |  1 +
+ drivers/clk/qcom/gcc-sc7180.c                      | 70 ++++++++++++++++
+ drivers/clk/qcom/mss-sc7180.c                      | 93 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sc7180.h        |  5 ++
+ include/dt-bindings/clock/qcom,mss-sc7180.h        | 12 +++
+ 7 files changed, 230 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mss.yaml
+ create mode 100644 drivers/clk/qcom/mss-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
