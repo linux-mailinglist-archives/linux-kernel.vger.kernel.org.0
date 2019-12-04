@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E14B1132C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63001113234
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731196AbfLDSLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:11:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
+        id S1730538AbfLDSGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:06:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731490AbfLDSLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:11:44 -0500
+        id S1729540AbfLDSGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:06:20 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54F2520675;
-        Wed,  4 Dec 2019 18:11:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5D352081B;
+        Wed,  4 Dec 2019 18:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483103;
-        bh=wkEHc2vi4TFrHFuiD99EPJJTFGKpOOfZk8ZzaLYIR4g=;
+        s=default; t=1575482780;
+        bh=gsezTrwdiq3nD9JRIcpdArOxVKjnR8lRYMoWPJV6N7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RbKZk8RmV0tHzaMqE6ns+lWCBVEC9mHPAachGJwMgar9xi9qHMDudJ6QQOBAne7cf
-         rxBwOgElKfGbNNiuKZquc0KfkIISDFsBRUsWFBFCV+wJRbG1SCUWbmUWrQqVUJMlHG
-         hrtpUG8CugljXlpFFKWOHrciHahsgwXLuJQY3YpA=
+        b=zGOz9UalFvhyLLmAdCQnbbVTrYKNB0NQKN0lj8zvqX1i3Yn1xuKX2ELI/UFi6Voci
+         XQNTp8PDZldeI9TQbelGLETnGtkn/4jinIWZbloT4ZLEYhUiUdl96Aw8U0iFLK3EW7
+         zI6ygNMtn3RqXT7X2Ug9TP5Z15qto7Wwv5kfixU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 036/125] btrfs: only track ref_heads in delayed_ref_updates
-Date:   Wed,  4 Dec 2019 18:55:41 +0100
-Message-Id: <20191204175321.176847148@linuxfoundation.org>
+Subject: [PATCH 4.14 130/209] net/core/neighbour: fix kmemleak minimal reference count for hash tables
+Date:   Wed,  4 Dec 2019 18:55:42 +0100
+Message-Id: <20191204175332.089424655@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit 158ffa364bf723fa1ef128060646d23dc3942994 ]
+[ Upstream commit 01b833ab44c9e484060aad72267fc7e71beb559b ]
 
-We use this number to figure out how many delayed refs to run, but
-__btrfs_run_delayed_refs really only checks every time we need a new
-delayed ref head, so we always run at least one ref head completely no
-matter what the number of items on it.  Fix the accounting to only be
-adjusted when we add/remove a ref head.
+This should be 1 for normal allocations, 0 disables leak reporting.
 
-In addition to using this number to limit the number of delayed refs
-run, a future patch is also going to use it to calculate the amount of
-space required for delayed refs space reservation.
-
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 85704cb8dcfd ("net/core/neighbour: tell kmemleak about hash tables")
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/delayed-ref.c | 3 ---
- 1 file changed, 3 deletions(-)
+ net/core/neighbour.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index 8d93854a4b4f3..74c17db752014 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -193,8 +193,6 @@ static inline void drop_delayed_ref(struct btrfs_trans_handle *trans,
- 	ref->in_tree = 0;
- 	btrfs_put_delayed_ref(ref);
- 	atomic_dec(&delayed_refs->num_entries);
--	if (trans->delayed_ref_updates)
--		trans->delayed_ref_updates--;
- }
- 
- static bool merge_ref(struct btrfs_trans_handle *trans,
-@@ -445,7 +443,6 @@ add_delayed_ref_tail_merge(struct btrfs_trans_handle *trans,
- add_tail:
- 	list_add_tail(&ref->list, &href->ref_list);
- 	atomic_inc(&root->num_entries);
--	trans->delayed_ref_updates++;
- 	spin_unlock(&href->lock);
- 	return ret;
- }
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index 9a28a21a51f05..2664ad58e5c01 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -368,7 +368,7 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+ 		buckets = (struct neighbour __rcu **)
+ 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+ 					   get_order(size));
+-		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
++		kmemleak_alloc(buckets, size, 1, GFP_ATOMIC);
+ 	}
+ 	if (!buckets) {
+ 		kfree(ret);
 -- 
 2.20.1
 
