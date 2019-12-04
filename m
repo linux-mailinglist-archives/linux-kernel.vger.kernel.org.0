@@ -2,85 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E09112BEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:47:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2331C112BD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:45:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfLDMq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:46:59 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46638 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbfLDMq6 (ORCPT
+        id S1727850AbfLDMpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:45:19 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45811 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfLDMpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:46:58 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4CkkgD061262;
-        Wed, 4 Dec 2019 06:46:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575463606;
-        bh=7qbekqxk5cyz305GNEwUDyut5GgLfq4GzPplRlk6THw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=f6PpFrzsuN9/5muENmAeFIPnOxWw0GvGFDJ6h/ZNf8dhKOl4oD/UtuABqnZ2zCz7J
-         qKn8X7tJ12O1rfx83fi9hsldZHRD8f2dSNHgMOFTRnqdlAr8CAAjDEhK5F++UQdePn
-         0SPQ1d+c9CnXOMrpm154+XUy0KpgxCJMQMgayr3I=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4Ckklx103420
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Dec 2019 06:46:46 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
- 2019 06:46:45 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Dec 2019 06:46:45 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4CkjDu113804;
-        Wed, 4 Dec 2019 06:46:45 -0600
-Subject: Re: [PATCH v15 06/19] leds: lp50xx: Add the LP50XX family of the RGB
- LED driver
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     kbuild test robot <lkp@intel.com>, <kbuild-all@lists.01.org>,
-        <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191028183629.11779-7-dmurphy@ti.com>
- <201910302027.2hNdR993%lkp@intel.com>
- <29321f74-8200-90cd-40f9-8f5bdb86e34e@ti.com> <20191125150730.GA3816@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <e05148a1-2588-0b08-2bcf-1ef819c33683@ti.com>
-Date:   Wed, 4 Dec 2019 06:44:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 07:45:19 -0500
+Received: by mail-ua1-f66.google.com with SMTP id w10so2683584uar.12
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 04:45:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I9943LC2W7GsN2VUvqciqhs/8irYc/Qkc8ElGhd6zWY=;
+        b=D1ekevAWvG+e76RI65wfYbzcBE//kYMXdoapAplUlqEKsH4lspdwwbuzCIsIT2rtnh
+         teHLwE8FcjmIdJ49WoIO3Bf/vg4AcQL7Yv79j4W0JTj/5Rx7UxGyWPInSerl/AM+bSvW
+         orZxCtyqnmw2Qq/FMPznXPj0oUldse3cTNv7YVtcHf5lhwwN/LN57yq1yI8lYTuEngev
+         VkDvmAwvtRUgHtsdWqsAYP27U9sCFGQVBeHYsA2CwWd92QIjCLCq7Mm1k9EIlW1+xtDs
+         qpsKc57ER7izsMdTaHgEOanMx2naxLKsqvXDiCbBFL3YS7pS4HlBCNYocQ/XzbAvnz83
+         ykGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I9943LC2W7GsN2VUvqciqhs/8irYc/Qkc8ElGhd6zWY=;
+        b=HWaBppUJBosDSaFvKm2eblhUpOejvKm+mvsROYmOlzZeUQQ3NE2gFpdQQtbXTKL2Ee
+         DtP8Q/L4tcUkj41x60xI0dHkUVGOZFmq/PzQzwjo9urvINDInqj/0QEPVgOccrl70n9L
+         7EzRcihTDxEs51fkCBaaKPMon5Xb3XndHUD0Gz3Vm8a4fyH0IJ3RVsmr9gmNE6MQimkg
+         7g04umULLy/eTJB/v2nU1tdJNMDYDeUSYCzxnxMGYaDLjz18exqucY+a+PYT6/olJ+Tu
+         EWLZxpnot3+tO8lppVSTrw+U+M/uh9fQLRli9vh04xzzpwJKipsyJX8uke+wdbxDuTeW
+         5wqg==
+X-Gm-Message-State: APjAAAXKtwJcEpMzvyZBVtRZ9y93Odtk3XkRDqa/bT/c0NePX1Ouyy0H
+        GBNWcz2M8YXDoKukS0rx1GOA/CCJm3X5uCboJE5YS45kmF0qJQ==
+X-Google-Smtp-Source: APXvYqzuDbb/FE6aisnhUS4N4Cr5qvRQgmOLAGnNdex1jh+7Kfj7K66vq/MMKaXX5/JENpgqwfDSOBiCzC2R8WXXQus=
+X-Received: by 2002:ab0:7027:: with SMTP id u7mr2326314ual.94.1575463517590;
+ Wed, 04 Dec 2019 04:45:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191125150730.GA3816@amd>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191015061349.141448-1-wvw@google.com> <CAHLCerNffKDgJKqaVTH3Kp_QfBLtm2M4H80xFDy=2fGXTVQR+w@mail.gmail.com>
+ <CAHLCerN0CWOox-_=ywVO40R9LCahBRoU6Myg3Ca3p_TkZyJAMw@mail.gmail.com>
+ <CAGXk5yp4uSCESvve5j_LbCr7b_55DqBagjNr_Dsdi=HppSpBPg@mail.gmail.com>
+ <CAHLCerN4ymf7LOGQPRLuAwirwCUaQGynrnUMfgU6+frDswey5A@mail.gmail.com> <CAGXk5ypP0qSm-GMbHJy+hQtYN1hw6Ow6XgeO9JDni0bD1bFSVg@mail.gmail.com>
+In-Reply-To: <CAGXk5ypP0qSm-GMbHJy+hQtYN1hw6Ow6XgeO9JDni0bD1bFSVg@mail.gmail.com>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Wed, 4 Dec 2019 18:15:06 +0530
+Message-ID: <CAHLCerOD2wOJq7QNGBOcLvkMz4wvc1+6Hk2+ZD__NFged3tLcw@mail.gmail.com>
+Subject: Re: [PATCH] thermal: create softlink by name for thermal_zone and cooling_device
+To:     Wei Wang <wvw@google.com>
+Cc:     Wei Wang <wei.vince.wang@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
-
-On 11/25/19 9:07 AM, Pavel Machek wrote:
-> On Wed 2019-10-30 11:43:10, Dan Murphy wrote:
->> Pavel
->>
->> On 10/30/19 7:07 AM, kbuild test robot wrote:
->>> Hi Dan,
->>>
->>> I love your patch! Yet something to improve:
->>>
->>> [auto build test ERROR on j.anaszewski-leds/for-next]
->> You might want to get your tree to be the base now.
-> Do you have an idea who I need to contact?
-
-Not sure maybe the mail list for the kbuild lkp@intel.com?
-
-
-
+On Mon, Nov 11, 2019 at 11:22 PM Wei Wang <wvw@google.com> wrote:
 >
-> Best regards,
-> 									Pavel
+> On Sun, Nov 10, 2019 at 9:26 PM Amit Kucheria
+> <amit.kucheria@verdurent.com> wrote:
+> >
+> > On Thu, Oct 17, 2019 at 3:04 AM Wei Wang <wvw@google.com> wrote:
+> > >
+> > > On Wed, Oct 16, 2019 at 10:16 AM Amit Kucheria
+> > > <amit.kucheria@verdurent.com> wrote:
+> > > >
+> > > > On Wed, Oct 16, 2019 at 10:20 PM Amit Kucheria
+> > > > <amit.kucheria@verdurent.com> wrote:
+> > > > >
+> > > > > On Tue, Oct 15, 2019 at 11:43 AM Wei Wang <wvw@google.com> wrote:
+> > > > > >
+> > > > > > The paths thermal_zone%d and cooling_device%d are not intuitive and the
+> > > > > > numbers are subject to change due to device tree change. This usually
+> > > > > > leads to tree traversal in userspace code.
+> > > > > > The patch creates `tz-by-name' and `cdev-by-name' for thermal zone and
+> > > > > > cooling_device respectively.
+> > > > >
+> > > > > I like this.
+> > > > >
+> > > > > > Signed-off-by: Wei Wang <wvw@google.com>
+> > > > > > ---
+> > > > > >  drivers/thermal/thermal_core.c | 23 +++++++++++++++++++++--
+> > > > > >  1 file changed, 21 insertions(+), 2 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> > > > > > index d4481cc8958f..0ff8fb1d7b0a 100644
+> > > > > > --- a/drivers/thermal/thermal_core.c
+> > > > > > +++ b/drivers/thermal/thermal_core.c
+> > > > > > @@ -22,6 +22,7 @@
+> > > > > >  #include <net/netlink.h>
+> > > > > >  #include <net/genetlink.h>
+> > > > > >  #include <linux/suspend.h>
+> > > > > > +#include <linux/kobject.h>
+> > > > > >
+> > > > > >  #define CREATE_TRACE_POINTS
+> > > > > >  #include <trace/events/thermal.h>
+> > > > > > @@ -46,6 +47,8 @@ static DEFINE_MUTEX(poweroff_lock);
+> > > > > >
+> > > > > >  static atomic_t in_suspend;
+> > > > > >  static bool power_off_triggered;
+> > > > > > +static struct kobject *cdev_link_kobj;
+> > > > > > +static struct kobject *tz_link_kobj;
+> > > > > >
+> > > > > >  static struct thermal_governor *def_governor;
+> > > > > >
+> > > > > > @@ -954,7 +957,7 @@ __thermal_cooling_device_register(struct device_node *np,
+> > > > > >         struct thermal_zone_device *pos = NULL;
+> > > > > >         int result;
+> > > > > >
+> > > > > > -       if (type && strlen(type) >= THERMAL_NAME_LENGTH)
+> > > > > > +       if (!type || !type[0] || strlen(type) >= THERMAL_NAME_LENGTH)
+> > > > > >                 return ERR_PTR(-EINVAL);
+> > > > >
+> > > > > This should be a separate fix, if needed.
+> > > Agree, but the link now requires that "" as invalid _type_.
+> >
+> > I'm not sure I understand. What does this change have to do with
+> > adding symlinks below?
+> >
+>
+> cdev->type will be used later in sysfs_create_link and adding "" as
+> symlink is kind of bad practise AIUI.
+>
+
+Perhaps I'm being dense here, in which case my apologies.
+
+But what stops us from splitting the patch into two?
+1. Make type == "" as invalid by using your change above and fixing up
+the strlcpy(cdev->type....) further down.
+2. Create the actual symlinks in a separate patch.
+
+Regards,
+Amit
+
+> > > > >
+> > > > > >         if (!ops || !ops->get_max_state || !ops->get_cur_state ||
+> > > > > > @@ -989,9 +992,15 @@ __thermal_cooling_device_register(struct device_node *np,
+> > > > > >                 return ERR_PTR(result);
+> > > > > >         }
+> > > > > >
+> > > > > > -       /* Add 'this' new cdev to the global cdev list */
+> > > > > > +       /* Add 'this' new cdev to the global cdev list and create link*/
+> > > > > >         mutex_lock(&thermal_list_lock);
+> > > > > >         list_add(&cdev->node, &thermal_cdev_list);
+> > > > > > +       if (!cdev_link_kobj)
+> > > > > > +               cdev_link_kobj = kobject_create_and_add("cdev-by-name",
+> > > > > > +                                               cdev->device.kobj.parent);
+> > > > > > +       if (!cdev_link_kobj || sysfs_create_link(cdev_link_kobj,
+> > > > > > +                                               &cdev->device.kobj, cdev->type))
+> > > > > > +               dev_err(&cdev->device, "Failed to create cdev-by-name link\n");
+> > > > >
+> > > > > Any reason not to use the following form instead? It seems easier to read.
+> > > > >
+> > > > > if (!cdev_link_kobj) {
+> > > > >                cdev_link_kobj = kobject_create_and_add("cdev-by-name",
+> > > > >                                                cdev->device.kobj.parent);
+> > > > >               ret = sysfs_create_link(cdev_link_kobj,
+> > > > >                                               &cdev->device.kobj, cdev->type))
+> > > > >               if (ret)
+> > > > >                        dev_err(&cdev->device, "Failed to create
+> > > > > cdev-by-name link\n");
+> > > > > }
+> > > >
+> > > > I can now see why you had to do that - none of the other links would
+> > > > get created after the first one.
+> > > >
+> > > > Perhaps create the directories in the __init functions and only create
+> > > > the links here?
+> > > >
+> > > AFAICT, this is no such API except the private get_device_parent()
+> > > under driver/base/. Also the lazy initialization makes sense in such
+> > > case when there is no thermal device attached. Looks like the class
+> > > dir is also lazy-initialized when first device registered
+> > > https://elixir.bootlin.com/linux/v5.3.5/source/drivers/base/core.c#L1790.
+> >
+> > OK.
+> >
+> > > >
+> > > > > >         mutex_unlock(&thermal_list_lock);
+> > > > > >
+> > > > > >         /* Update binding information for 'this' new cdev */
+> > > > > > @@ -1157,6 +1166,8 @@ void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
+> > > > > >                         }
+> > > > > >                 }
+> > > > > >         }
+> > > > > > +       if (cdev_link_kobj)
+> > > > > > +               sysfs_remove_link(cdev_link_kobj, cdev->type);
+> > > > > >
+> > > > > >         mutex_unlock(&thermal_list_lock);
+> > > > > >
+> > > > > > @@ -1340,6 +1351,12 @@ thermal_zone_device_register(const char *type, int trips, int mask,
+> > > > > >
+> > > > > >         mutex_lock(&thermal_list_lock);
+> > > > > >         list_add_tail(&tz->node, &thermal_tz_list);
+> > > > > > +       if (!tz_link_kobj)
+> > > > > > +               tz_link_kobj = kobject_create_and_add("tz-by-name",
+> > > > > > +                                               tz->device.kobj.parent);
+> > > > > > +       if (!tz_link_kobj || sysfs_create_link(tz_link_kobj,
+> > > > > > +                                               &tz->device.kobj, tz->type))
+> > > > > > +               dev_err(&tz->device, "Failed to create tz-by-name link\n");
+> > > > >
+> > > > > Same as above.
+> > > > >
+> > > > > >         mutex_unlock(&thermal_list_lock);
+> > > > > >
+> > > > > >         /* Bind cooling devices for this zone */
+> > > > > > @@ -1411,6 +1428,8 @@ void thermal_zone_device_unregister(struct thermal_zone_device *tz)
+> > > > > >                         }
+> > > > > >                 }
+> > > > > >         }
+> > > > > > +       if (tz_link_kobj)
+> > > > > > +               sysfs_remove_link(tz_link_kobj, tz->type);
+> > > > > >
+> > > > > >         mutex_unlock(&thermal_list_lock);
+> > > > > >
+> > > > > > --
+> > > > > > 2.23.0.700.g56cf767bdb-goog
+> > > > > >
