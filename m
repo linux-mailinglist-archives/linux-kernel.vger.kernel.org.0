@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26120112F4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93BFA112F4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbfLDQB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 11:01:27 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37014 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728663AbfLDP7u (ORCPT
+        id S1728942AbfLDQBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 11:01:20 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36003 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728716AbfLDP7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:59:50 -0500
-Received: by mail-qt1-f195.google.com with SMTP id w47so238236qtk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:50 -0800 (PST)
+        Wed, 4 Dec 2019 10:59:53 -0500
+Received: by mail-qk1-f193.google.com with SMTP id v19so376325qkv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=sFepLZ6OnMRK4naYG+XlGBDsSgO0TlfIvhlIxKEb6bM=;
-        b=JXM+kNuk9RiCYtsIMlqMyIdJMHztdqZg6ijzEGxxBoF9lerD5P5KGUDjwUcMJS0S7r
-         ibicDlEt4RLrqxI+O7W4Fz48t9BPVxX017AGcAGQG01oqX9fCcZEG39xiCQC6r4eV/Bx
-         v2lI23dFHYdeB7kasjpnJaae4QVzJ38kW1H2Ofz0l15eyAMc9PwQHPEPu93Xr+TZa62N
-         JnGTxELo82oUym1FdKtT03COXJW1ONpyYG1MjzugbDrF4LjG8qQuNtjB9Uj/70daOJA4
-         qKiCe94BG+2kgt24Q8XBeUCwiZNzydHzwQCCLMemYIBgDEG3TfjDN7J2zxLMZDn0uWX4
-         APpw==
+        bh=fVYvb4CPMnyIVG1hgy1MDDfoLwRyTtZYsYaQvsi8498=;
+        b=dZgMVj5phzD4WJ2lOv72Eli/7A96+5Gpb3Ad7wS4GpAFxm3R0rC/e/T/q93LuYYwPm
+         4Uz5Q8I/DWN0wNungTmuJGHv9zyRMvbTlDr5/OzwP5GoC30b30nMCyYmFdgSAwxtMCMr
+         s6GVlkYLM0/inwraONhs7ey8QePReOKIsyMKUfWui2nc3itEsnkD96RTEB8rvLSAdnIE
+         gtTPLG5LSyobuU4GMuMU/5vT8Hc9i1eSaNPjx2L0ArP8dc3LXawEBRgI5ydHEvRBT4TF
+         bSgRb+cyZ1GQ1BQQp9DFLSr5KzZM+QJWqW7HmPTzU/iVWuCWZJxYtxCvbzaIsVERIBY1
+         MihQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sFepLZ6OnMRK4naYG+XlGBDsSgO0TlfIvhlIxKEb6bM=;
-        b=UuOa+JEtqBSKEpgIMOm4HbIyGMSJTZedxHodQq1M54k0g59bbQyxZM7ymv5t8oINrW
-         FtErPFvtDHWdy/moT4nbPUOLDIgPoPOTwKSb0HThxo9gMnw2JGnSv2D86UepaUwi+X6N
-         8vvJShQXUPZ7W2LBpbdNY48JpMh2AG9FHinJB9ycJnLotvOqABEgd7VxID0rBZYl8KNR
-         erAoLWkDmhCC/EbqZq3C0bNWc431WqWPtSYhUz5gPxbmZh1jiMMoJgyJmcnSTDzpdHGD
-         mywRAA2AKfd5tWOwr0nc3w/SFkuH6gHBI8X5MYSu57KeiquN7v5bB9Txge3G3U7Y3EHP
-         IXaw==
-X-Gm-Message-State: APjAAAXXDhxpZkmajTViHQZQv41XpgWsjsXdRnnPSndi3ubpOIQ2a4Ad
-        XKCw8zzBjtWaAkFejnZqA4TUUQ==
-X-Google-Smtp-Source: APXvYqx1pQqGZR+fje1UxGEllxPX0PSwVlnKObHzQ1pC9MqOEi/b0A2MPL6Hl2FZSZSFPrAFQuyz6g==
-X-Received: by 2002:ac8:7557:: with SMTP id b23mr1062511qtr.38.1575475189752;
-        Wed, 04 Dec 2019 07:59:49 -0800 (PST)
+        bh=fVYvb4CPMnyIVG1hgy1MDDfoLwRyTtZYsYaQvsi8498=;
+        b=HMTUxT4+eadDbbmjb9QhOSRq2W5HVMYI8jvpjxTFIq2oylkgwZRjcmtNrtLPLnqStz
+         nEh6OS8kH7UhwnxhQnNNrUnCruHhDvNuplrjwu0muhL90kRQorUI39Hm6G8ciyNfo/7H
+         dlMGCCUoVDtaEN1kuj1JPomMhHxAkrfmthJnycjn5+JxuEjDxz0q26mbQOJToOqXvySm
+         cBEd0UiUYXmm8SHnU700VR+w7BH3yaTYvR5DOrO8yV0aSAoHmHN2Lt+zBJ4vAXxCJQGC
+         kKUcUzTnOwtc49PsInP2ca4JDEwogIgZg5PD0QJEvaRZVImtfWwYOX70pMJUKIi2Kkhl
+         9W1w==
+X-Gm-Message-State: APjAAAU5ub5D1lIqUNXkrnVubcgtO41cPUKi9caPo9ydLv6eKvfptdl2
+        HIaAIxUSTgIL9mNuCm+lORT7jNvNrFs=
+X-Google-Smtp-Source: APXvYqw8jqG/hkE99HXXnyk9J4EEotNsFaWyu6oqW81IWVO4OQqs2JZQD9LGJEKBgl2Hhffa8MbTdw==
+X-Received: by 2002:a05:620a:1459:: with SMTP id i25mr2498599qkl.36.1575475192642;
+        Wed, 04 Dec 2019 07:59:52 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.48
+        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:59:49 -0800 (PST)
+        Wed, 04 Dec 2019 07:59:52 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v8 06/25] arm64: hibernate: use get_safe_page directly
-Date:   Wed,  4 Dec 2019 10:59:19 -0500
-Message-Id: <20191204155938.2279686-7-pasha.tatashin@soleen.com>
+Subject: [PATCH v8 08/25] arm64: hibernate: rename dst to page in create_safe_exec_page
+Date:   Wed,  4 Dec 2019 10:59:21 -0500
+Message-Id: <20191204155938.2279686-9-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
 References: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
@@ -68,91 +68,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-create_safe_exec_page() uses hibernate's allocator to create a set of page
-table to map a single page that will contain the relocation code.
+create_safe_exec_page() allocates a safe page and maps it at a
+specific location, also this function returns the physical address
+of newly allocated page.
 
-Remove the allocator related arguments, and use get_safe_page directly, as
-it is done in other local functions in this file to simplify function
-prototype.
+The destination VA, and PA are specified in arguments: dst_addr,
+phys_dst_addr
 
-Removing this function pointer makes it easier to refactor the code later.
+However, within the function it uses "dst" which has unsigned long
+type, but is actually a pointers in the current virtual space. This
+is confusing to read.
+
+Rename dst to more appropriate page (page that is created), and also
+change its time to "void *"
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: James Morse <james.morse@arm.com>
 ---
- arch/arm64/kernel/hibernate.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ arch/arm64/kernel/hibernate.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-index ef46ce66d7e8..34297716643f 100644
+index 83c41a2f8400..1ca8af685e96 100644
 --- a/arch/arm64/kernel/hibernate.c
 +++ b/arch/arm64/kernel/hibernate.c
-@@ -196,9 +196,7 @@ EXPORT_SYMBOL(arch_hibernation_header_restore);
-  */
- static int create_safe_exec_page(void *src_start, size_t length,
+@@ -198,18 +198,18 @@ static int create_safe_exec_page(void *src_start, size_t length,
  				 unsigned long dst_addr,
--				 phys_addr_t *phys_dst_addr,
--				 void *(*allocator)(gfp_t mask),
--				 gfp_t mask)
-+				 phys_addr_t *phys_dst_addr)
+ 				 phys_addr_t *phys_dst_addr)
  {
- 	int rc = 0;
++	void *page = (void *)get_safe_page(GFP_ATOMIC);
  	pgd_t *trans_pgd;
-@@ -206,7 +204,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	pgd_t *pgdp;
  	pud_t *pudp;
  	pmd_t *pmdp;
  	pte_t *ptep;
--	unsigned long dst = (unsigned long)allocator(mask);
-+	unsigned long dst = get_safe_page(GFP_ATOMIC);
+-	unsigned long dst = get_safe_page(GFP_ATOMIC);
  
- 	if (!dst) {
- 		rc = -ENOMEM;
-@@ -216,7 +214,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
- 	memcpy((void *)dst, src_start, length);
- 	__flush_icache_range(dst, dst + length);
+-	if (!dst)
++	if (!page)
+ 		return -ENOMEM;
  
--	trans_pgd = allocator(mask);
-+	trans_pgd = (void *)get_safe_page(GFP_ATOMIC);
- 	if (!trans_pgd) {
- 		rc = -ENOMEM;
- 		goto out;
-@@ -224,7 +222,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+-	memcpy((void *)dst, src_start, length);
+-	__flush_icache_range(dst, dst + length);
++	memcpy(page, src_start, length);
++	__flush_icache_range((unsigned long)page, (unsigned long)page + length);
  
- 	pgdp = pgd_offset_raw(trans_pgd, dst_addr);
- 	if (pgd_none(READ_ONCE(*pgdp))) {
--		pudp = allocator(mask);
-+		pudp = (void *)get_safe_page(GFP_ATOMIC);
- 		if (!pudp) {
- 			rc = -ENOMEM;
- 			goto out;
-@@ -234,7 +232,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	trans_pgd = (void *)get_safe_page(GFP_ATOMIC);
+ 	if (!trans_pgd)
+@@ -240,7 +240,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	}
  
- 	pudp = pud_offset(pgdp, dst_addr);
- 	if (pud_none(READ_ONCE(*pudp))) {
--		pmdp = allocator(mask);
-+		pmdp = (void *)get_safe_page(GFP_ATOMIC);
- 		if (!pmdp) {
- 			rc = -ENOMEM;
- 			goto out;
-@@ -244,7 +242,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	ptep = pte_offset_kernel(pmdp, dst_addr);
+-	set_pte(ptep, pfn_pte(virt_to_pfn(dst), PAGE_KERNEL_EXEC));
++	set_pte(ptep, pfn_pte(virt_to_pfn(page), PAGE_KERNEL_EXEC));
  
- 	pmdp = pmd_offset(pudp, dst_addr);
- 	if (pmd_none(READ_ONCE(*pmdp))) {
--		ptep = allocator(mask);
-+		ptep = (void *)get_safe_page(GFP_ATOMIC);
- 		if (!ptep) {
- 			rc = -ENOMEM;
- 			goto out;
-@@ -530,8 +528,7 @@ int swsusp_arch_resume(void)
- 	 */
- 	rc = create_safe_exec_page(__hibernate_exit_text_start, exit_size,
- 				   (unsigned long)hibernate_exit,
--				   &phys_hibernate_exit,
--				   (void *)get_safe_page, GFP_ATOMIC);
-+				   &phys_hibernate_exit);
- 	if (rc) {
- 		pr_err("Failed to create safe executable page for hibernate_exit code.\n");
- 		goto out;
+ 	/*
+ 	 * Load our new page tables. A strict BBM approach requires that we
+@@ -259,7 +259,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	write_sysreg(phys_to_ttbr(virt_to_phys(trans_pgd)), ttbr0_el1);
+ 	isb();
+ 
+-	*phys_dst_addr = virt_to_phys((void *)dst);
++	*phys_dst_addr = virt_to_phys(page);
+ 
+ 	return 0;
+ }
 -- 
 2.24.0
 
