@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF763113237
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CF31132F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730564AbfLDSGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:06:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54840 "EHLO mail.kernel.org"
+        id S1731711AbfLDSNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:13:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730024AbfLDSG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:06:28 -0500
+        id S1731353AbfLDSNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:13:01 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B2D620833;
-        Wed,  4 Dec 2019 18:06:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B353620674;
+        Wed,  4 Dec 2019 18:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482787;
-        bh=m46hbcDViVWHgP9ujJrVxd/nsrnZXJ5GEUJVDJ3t0e8=;
+        s=default; t=1575483181;
+        bh=8rpbA/I/vOJX++ZcZmL05DkRyFxZUOMgDCs+tabDovA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SmbCPz05r2JuORJNQdc/y4Tnxi/VKpw3DOW3TuG+/D39ktQHz2wEO+JglIVaKeUqu
-         koGAthXDKtUTzKRsvlP2+ZDS3OlXv531QJZvE5ICsuUIPYXVf7fHcCEhoYpUPQ9aAh
-         jsC0lgxhg6sCB/LdS7MzP53UWOTiyPlt1kIij2HA=
+        b=qxtoLOQYsZEEfzdJMyW5qo9N+kbdSmVza8qC2b/z56s9kTlAL/TTPojVvbOQEEzmF
+         84WdD7hkSMqiNPNgHdRxcvUx8gzy7jlguCgvM6Eu7pBlPr4lzGKZJHuVsg1FiD4GMz
+         IyW6w2SLgSdOJtdjfZErDJasvdEYdfLTm0IAhvdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 132/209] gpu: ipu-v3: pre: dont trigger update if buffer address doesnt change
-Date:   Wed,  4 Dec 2019 18:55:44 +0100
-Message-Id: <20191204175332.267410745@linuxfoundation.org>
+Subject: [PATCH 4.9 040/125] net/mlx5: Continue driver initialization despite debugfs failure
+Date:   Wed,  4 Dec 2019 18:55:45 +0100
+Message-Id: <20191204175321.407733280@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit eb0200a4357da100064971689d3a0e9e3cf57f33 ]
+[ Upstream commit 199fa087dc6b503baad06712716fac645a983e8a ]
 
-On a NOP double buffer update where current buffer address is the same
-as the next buffer address, the SDW_UPDATE bit clears too late. As we
-are now using this bit to determine when it is safe to signal flip
-completion to userspace this will delay completion of atomic commits
-where one plane doesn't change the buffer by a whole frame period.
+The failure to create debugfs entry is unpleasant event, but not enough
+to abort drier initialization. Align the mlx5_core code to debugfs design
+and continue execution whenever debugfs_create_dir() successes or not.
 
-Fix this by remembering the last buffer address and just skip the
-double buffer update if it would not change the buffer address.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-[p.zabel@pengutronix.de: initialize last_bufaddr in ipu_pre_configure]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Reviewed-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/ipu-v3/ipu-pre.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-pre.c b/drivers/gpu/ipu-v3/ipu-pre.c
-index 1d1612e28854b..6fd4af647f599 100644
---- a/drivers/gpu/ipu-v3/ipu-pre.c
-+++ b/drivers/gpu/ipu-v3/ipu-pre.c
-@@ -102,6 +102,7 @@ struct ipu_pre {
- 	void			*buffer_virt;
- 	bool			in_use;
- 	unsigned int		safe_window_end;
-+	unsigned int		last_bufaddr;
- };
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index d676088512cf8..c9fb589690ee9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -786,11 +786,9 @@ static int mlx5_pci_init(struct mlx5_core_dev *dev, struct mlx5_priv *priv)
  
- static DEFINE_MUTEX(ipu_pre_list_mutex);
-@@ -177,6 +178,7 @@ void ipu_pre_configure(struct ipu_pre *pre, unsigned int width,
+ 	priv->numa_node = dev_to_node(&dev->pdev->dev);
  
- 	writel(bufaddr, pre->regs + IPU_PRE_CUR_BUF);
- 	writel(bufaddr, pre->regs + IPU_PRE_NEXT_BUF);
-+	pre->last_bufaddr = bufaddr;
+-	priv->dbg_root = debugfs_create_dir(dev_name(&pdev->dev), mlx5_debugfs_root);
+-	if (!priv->dbg_root) {
+-		dev_err(&pdev->dev, "Cannot create debugfs dir, aborting\n");
+-		return -ENOMEM;
+-	}
++	if (mlx5_debugfs_root)
++		priv->dbg_root =
++			debugfs_create_dir(pci_name(pdev), mlx5_debugfs_root);
  
- 	val = IPU_PRE_PREF_ENG_CTRL_INPUT_PIXEL_FORMAT(0) |
- 	      IPU_PRE_PREF_ENG_CTRL_INPUT_ACTIVE_BPP(active_bpp) |
-@@ -218,7 +220,11 @@ void ipu_pre_update(struct ipu_pre *pre, unsigned int bufaddr)
- 	unsigned short current_yblock;
- 	u32 val;
- 
-+	if (bufaddr == pre->last_bufaddr)
-+		return;
-+
- 	writel(bufaddr, pre->regs + IPU_PRE_NEXT_BUF);
-+	pre->last_bufaddr = bufaddr;
- 
- 	do {
- 		if (time_after(jiffies, timeout)) {
+ 	err = mlx5_pci_enable_device(dev);
+ 	if (err) {
 -- 
 2.20.1
 
