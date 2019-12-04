@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96FC61133BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B4E2113435
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:22:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbfLDSKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:10:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36498 "EHLO mail.kernel.org"
+        id S1731074AbfLDSWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:22:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731154AbfLDSJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:09:57 -0500
+        id S1729984AbfLDSFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:05:05 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EAE820674;
-        Wed,  4 Dec 2019 18:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 753A3206DF;
+        Wed,  4 Dec 2019 18:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482997;
-        bh=vAnPksW0U2gh/kfgefM3vVRIFgL1xdGj0P8wJE6kLOE=;
+        s=default; t=1575482704;
+        bh=VvRfFCC/KgixHFcsaFYlG0r52DlU90PC4AO4Z5QVs/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GvomKAyUeaun0WjaMumI5jeqDVhAsjtczato01pOjDJ77ZsgqiJpNfxBnDHqwl9bG
-         HDPbcO9stTtK1FThEtbLgrp39kCvH4BwkBguwk/BMfJGeZICqNWXM9qEpbY8tYWDFs
-         JL1MlUikQ4M/1t+GqiDm5W/tX0fai7Tz/+VF73fw=
+        b=dZ1P4uI0/CN3dJ77rZ/c1eXkJoc9kC2gWEs3L3sm/S5Mi6CAMhwKGL0ruMGbJUbUH
+         q262zNpD3metNIDiB5wtC5i4kL46gZHMx7+JpIMlhcbw1L73HBhIWJIhGTGb99qfEE
+         AdXSVASmrlsyzy4onIOUA3jsXZeBuSY/uS5O3fxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 010/125] scripts/gdb: fix debugging modules compiled with hot/cold partitioning
+Subject: [PATCH 4.14 103/209] IB/rxe: Make counters thread safe
 Date:   Wed,  4 Dec 2019 18:55:15 +0100
-Message-Id: <20191204175313.652097284@linuxfoundation.org>
+Message-Id: <20191204175328.951209411@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,56 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 8731acc5068eb3f422a45c760d32198175c756f8 ]
+[ Upstream commit d5108e69fe013ff47ab815b849caba9cc33ca1e5 ]
 
-gcc's -freorder-blocks-and-partition option makes it group frequently
-and infrequently used code in .text.hot and .text.unlikely sections
-respectively.  At least when building modules on s390, this option is
-used by default.
+Current rxe device counters are not thread safe.
+When multiple QPs are used, they can be racy.
+Make them thread safe by making it atomic64.
 
-gdb assumes that all code is located in .text section, and that .text
-section is located at module load address.  With such modules this is no
-longer the case: there is code in .text.hot and .text.unlikely, and
-either of them might precede .text.
-
-Fix by explicitly telling gdb the addresses of code sections.
-
-It might be tempting to do this for all sections, not only the ones in
-the white list.  Unfortunately, gdb appears to have an issue, when
-telling it about e.g. loadable .note.gnu.build-id section causes it to
-think that non-loadable .note.Linux section is loaded at address 0,
-which in turn causes NULL pointers to be resolved to bogus symbols.  So
-keep using the white list approach for the time being.
-
-Link: http://lkml.kernel.org/r/20191028152734.13065-1-iii@linux.ibm.com
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Kieran Bingham <kbingham@kernel.org>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 0b1e5b99a48b ("IB/rxe: Add port protocol stats")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/gdb/linux/symbols.py | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/sw/rxe/rxe_hw_counters.c | 2 +-
+ drivers/infiniband/sw/rxe/rxe_verbs.h       | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/gdb/linux/symbols.py b/scripts/gdb/linux/symbols.py
-index 004b0ac7fa72d..4644f1a83b578 100644
---- a/scripts/gdb/linux/symbols.py
-+++ b/scripts/gdb/linux/symbols.py
-@@ -99,7 +99,8 @@ lx-symbols command."""
-             attrs[n]['name'].string(): attrs[n]['address']
-             for n in range(int(sect_attrs['nsections']))}
-         args = []
--        for section_name in [".data", ".data..read_mostly", ".rodata", ".bss"]:
-+        for section_name in [".data", ".data..read_mostly", ".rodata", ".bss",
-+                             ".text", ".text.hot", ".text.unlikely"]:
-             address = section_name_to_address.get(section_name)
-             if address:
-                 args.append(" -s {name} {addr}".format(
+diff --git a/drivers/infiniband/sw/rxe/rxe_hw_counters.c b/drivers/infiniband/sw/rxe/rxe_hw_counters.c
+index 6aeb7a165e469..ea4542a9d69e6 100644
+--- a/drivers/infiniband/sw/rxe/rxe_hw_counters.c
++++ b/drivers/infiniband/sw/rxe/rxe_hw_counters.c
+@@ -59,7 +59,7 @@ int rxe_ib_get_hw_stats(struct ib_device *ibdev,
+ 		return -EINVAL;
+ 
+ 	for (cnt = 0; cnt  < ARRAY_SIZE(rxe_counter_name); cnt++)
+-		stats->value[cnt] = dev->stats_counters[cnt];
++		stats->value[cnt] = atomic64_read(&dev->stats_counters[cnt]);
+ 
+ 	return ARRAY_SIZE(rxe_counter_name);
+ }
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index b2b76a316ebae..d1cc89f6f2e33 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -410,16 +410,16 @@ struct rxe_dev {
+ 	spinlock_t		mmap_offset_lock; /* guard mmap_offset */
+ 	int			mmap_offset;
+ 
+-	u64			stats_counters[RXE_NUM_OF_COUNTERS];
++	atomic64_t		stats_counters[RXE_NUM_OF_COUNTERS];
+ 
+ 	struct rxe_port		port;
+ 	struct list_head	list;
+ 	struct crypto_shash	*tfm;
+ };
+ 
+-static inline void rxe_counter_inc(struct rxe_dev *rxe, enum rxe_counters cnt)
++static inline void rxe_counter_inc(struct rxe_dev *rxe, enum rxe_counters index)
+ {
+-	rxe->stats_counters[cnt]++;
++	atomic64_inc(&rxe->stats_counters[index]);
+ }
+ 
+ static inline struct rxe_dev *to_rdev(struct ib_device *dev)
 -- 
 2.20.1
 
