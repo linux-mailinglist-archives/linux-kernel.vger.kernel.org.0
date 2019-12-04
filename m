@@ -2,249 +2,302 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4DCF112AD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:01:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030C6112AE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfLDMBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:01:08 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:35009 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbfLDMBH (ORCPT
+        id S1727822AbfLDMCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:02:51 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46218 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727472AbfLDMCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:01:07 -0500
-Received: by mail-pj1-f65.google.com with SMTP id w23so1843025pjd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 04:01:07 -0800 (PST)
+        Wed, 4 Dec 2019 07:02:50 -0500
+Received: by mail-oi1-f193.google.com with SMTP id a124so6548618oii.13;
+        Wed, 04 Dec 2019 04:02:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=rxuqclm9QwY2ereJARQY1d6ZkLRCh/xjgCtTC93zfPo=;
-        b=o226C2dULfmUDr0BQEdkSMrxbKZlF0YsReHlmWpu0HD1jCMAuRmq8WvVsuQEdsdGUq
-         iYbof4d1IwosFjuLWbPl5Gj7UuXXt3hmkiFAEG8NrImPOFIKaDbVpHDQjaF+8NF1xQul
-         +00MaeYlFYj1olJiEnSNyu9J++ZTWHpWwzoQI=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=I/wNnqfcW4ZqavTcDtDeP4DdimYQ/CbMfwcHPxLORcU=;
+        b=IYB+fl6oiS7WVYNm6UizdS/dbsz6W9GVR4XYnydRvQ0ZlHII7Px4LdYgywQOB7vWvr
+         8LgFbx4H2Upl7Cn9wsk0BHhVEh1Q/cgrRij2gzwLTmzkIc9toHHkqw7mgPHAJ5wzwkgy
+         DwsZ+dczIx3jBNYYnN70fdv25xRJxjWdo/qTrfvVGpETJCusxh0mAaLaJBgCs32EAqPk
+         Ubf/BOrPJJ0QAiAGFIQ6NFaM2V+hA8+K/LavEYQ0uW/MguPRaiwWOEjuwvFNuY93nvjx
+         5LYlmty4nWyvV4xnjMg8bikOzKzL3jaBbzmPewXdp7sErAU++naAQ1JZucY/RmrsaZrQ
+         Dtrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=rxuqclm9QwY2ereJARQY1d6ZkLRCh/xjgCtTC93zfPo=;
-        b=psaKV2un6dy6riJ4+rietCtvz2eIb083U6hivSu2QZXxdEqA4AqPnpmRKTS7LhKgjD
-         HUz+KaEtvynkNwCIJthNLvRY/LcVT/uy05OmDRec81kamEY3b09q83RMiFVqCEX0GEFj
-         aaSkdNj1aA8CMazF/MocfOVpEHh7zVx+n4p6cclf/eA25S84JjvkqcGrpZB7xGkQ4U5g
-         LSgK/Z7WfTujX8pI6TaksWyeH6FvdqGlyRxVOBExAEiEUSpi8cbtOmvziKdKc3SB9iRb
-         BEe1DOvNx1tu9v5wCCZuRLzZn2jjo2fwsw+ojaCc0JKFarvm555CCOf3OOvHgGoq6Rx8
-         0FtQ==
-X-Gm-Message-State: APjAAAWW64Mn3eFOFqiZz+E6eUkCvIozAm9JZQjGfndvQMuZLNFsIxzO
-        CuvsebY0ejwP5UM5GuM6qyZ15A==
-X-Google-Smtp-Source: APXvYqyiU64pxVtfwk19lTp6OAlAwooc2uydvO+Tn53C5HmVtdHu3CyDzSs9eFN6bLk3EPcRccKYvQ==
-X-Received: by 2002:a17:902:bf08:: with SMTP id bi8mr2861953plb.75.1575460866914;
-        Wed, 04 Dec 2019 04:01:06 -0800 (PST)
-Received: from localhost (2001-44b8-1113-6700-7daa-d2ea-7edb-cfe8.static.ipv6.internode.on.net. [2001:44b8:1113:6700:7daa:d2ea:7edb:cfe8])
-        by smtp.gmail.com with ESMTPSA id u7sm7598987pfh.84.2019.12.04.04.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 04:01:06 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        aryabinin@virtuozzo.com, glider@google.com,
-        linux-kernel@vger.kernel.org, dvyukov@google.com
-Cc:     Qian Cai <cai@lca.pw>
-Subject: Re: [PATCH] kasan: support vmalloc backing of vm_map_ram()
-In-Reply-To: <20191129154519.30964-1-dja@axtens.net>
-References: <20191129154519.30964-1-dja@axtens.net>
-Date:   Wed, 04 Dec 2019 23:01:02 +1100
-Message-ID: <87h82ge1vl.fsf@dja-thinkpad.axtens.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=I/wNnqfcW4ZqavTcDtDeP4DdimYQ/CbMfwcHPxLORcU=;
+        b=bQeg+ba/gA6J0nD5BJMJtdftG8JpD5hrvU/oHUIrUIvFlKl8UCksATxomAhhXdWgiD
+         tNurA0bAIhe/PxcQmA8XAi7lY7nhA/SALlqUcSSAplttwMBPDWNiMD7SUTJgE2k0Dtg3
+         G+RGy+XREgSHsRdBZPy3U+F10D20+BNqzi0uu73s9bF3NflEKg2qHoIoAgl/r0mpR5k+
+         of8+SOc87rCdabAAIShHmlxgpXGLDpcqgZa2HAaaxEcXkfvX6lai1/XyWOqrSXEKmeMr
+         xXrp9gPtH9Pxm+2MPUbwrdO+ZdT8BdWN2Y6umZ0WCFS8l3jdi5l2YmwHFy9grcbN6MKq
+         Kv/A==
+X-Gm-Message-State: APjAAAWd5iLE/czO24TW0K/KcfOEW1re0p/QTUEREeRlqaSbRC4utfvx
+        OMYMLUNTzgWe2DWihUuQ9D518L0eUiudwIQs6kM=
+X-Google-Smtp-Source: APXvYqys2hbbLQs/l6VGOlnshpcn40iqrNce0dKse5iFNBHnievNd7zQLIm4YS8hOeNTRMeuOpALpmLfw+cBz1JpNdg=
+X-Received: by 2002:aca:b805:: with SMTP id i5mr2248499oif.110.1575460968940;
+ Wed, 04 Dec 2019 04:02:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20191127185139.65048-1-abhishekpandit@chromium.org>
+ <20191201145357.ybq5gfty4ulnfasq@pali> <20191202012305.GQ248138@dtor-ws>
+ <20191202084750.k7lafzzrf3yq2tqs@pali> <20191202175440.GA50317@dtor-ws>
+ <20191202185340.nae4lljten5jqp3y@pali> <20191202193628.GI50317@dtor-ws>
+ <20191202230947.ld5ibnczdpkekfcm@pali> <20191203173821.4u6uzxeaqnt3gyz3@pali> <20191203191112.GJ50317@dtor-ws>
+In-Reply-To: <20191203191112.GJ50317@dtor-ws>
+From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date:   Wed, 4 Dec 2019 14:02:36 +0200
+Message-ID: <CABBYNZ+D8E1BA--T+dQfWTH31G2zHYvc1mxicm+p7WwA2O-THw@mail.gmail.com>
+Subject: Re: [PATCH] Input: uinput - Add UI_SET_UNIQ ioctl handler
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+        linux-input@vger.kernel.org,
+        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Kirill Smelkov <kirr@nexedi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've realised this throws a few compile warnings, I'll respin it.
+Hi Dmitry,
 
-Daniel Axtens <dja@axtens.net> writes:
+On Tue, Dec 3, 2019 at 9:11 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Tue, Dec 03, 2019 at 06:38:21PM +0100, Pali Roh=C3=A1r wrote:
+> > On Tuesday 03 December 2019 00:09:47 Pali Roh=C3=A1r wrote:
+> > > On Monday 02 December 2019 11:36:28 Dmitry Torokhov wrote:
+> > > > On Mon, Dec 02, 2019 at 07:53:40PM +0100, Pali Roh=C3=A1r wrote:
+> > > > > On Monday 02 December 2019 09:54:40 Dmitry Torokhov wrote:
+> > > > > > On Mon, Dec 02, 2019 at 09:47:50AM +0100, Pali Roh=C3=A1r wrote=
+:
+> > > > > > > On Sunday 01 December 2019 17:23:05 Dmitry Torokhov wrote:
+> > > > > > > > Hi Pali,
+> > > > > > > >
+> > > > > > > > On Sun, Dec 01, 2019 at 03:53:57PM +0100, Pali Roh=C3=A1r w=
+rote:
+> > > > > > > > > Hello!
+> > > > > > > > >
+> > > > > > > > > On Wednesday 27 November 2019 10:51:39 Abhishek Pandit-Su=
+bedi wrote:
+> > > > > > > > > > Support setting the uniq attribute of the input device.=
+ The uniq
+> > > > > > > > > > attribute is used as a unique identifier for the connec=
+ted device.
+> > > > > > > > > >
+> > > > > > > > > > For example, uinput devices created by BlueZ will store=
+ the address of
+> > > > > > > > > > the connected device as the uniq property.
+> > > > > > > > > >
+> > > > > > > > > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@c=
+hromium.org>
+> > > > > > > > >
+> > > > > > > > > ...
+> > > > > > > > >
+> > > > > > > > > > diff --git a/include/uapi/linux/uinput.h b/include/uapi=
+/linux/uinput.h
+> > > > > > > > > > index c9e677e3af1d..d5b7767c1b02 100644
+> > > > > > > > > > --- a/include/uapi/linux/uinput.h
+> > > > > > > > > > +++ b/include/uapi/linux/uinput.h
+> > > > > > > > > > @@ -145,6 +145,7 @@ struct uinput_abs_setup {
+> > > > > > > > > >  #define UI_SET_PHYS          _IOW(UINPUT_IOCTL_BASE, 1=
+08, char*)
+> > > > > > > > > >  #define UI_SET_SWBIT         _IOW(UINPUT_IOCTL_BASE, 1=
+09, int)
+> > > > > > > > > >  #define UI_SET_PROPBIT               _IOW(UINPUT_IOCTL=
+_BASE, 110, int)
+> > > > > > > > > > +#define UI_SET_UNIQ          _IOW(UINPUT_IOCTL_BASE, 1=
+11, char*)
+> > > > > > > > >
+> > > > > > > > > I think that usage of char* as type in _IOW would cause c=
+ompatibility
+> > > > > > > > > problems like it is for UI_SET_PHYS (there is UI_SET_PHYS=
+_COMPAT). Size
+> > > > > > > > > of char* pointer depends on userspace (32 vs 64bit), so 3=
+2bit process on
+> > > > > > > > > 64bit kernel would not be able to call this new UI_SET_UN=
+IQ ioctl.
+> > > > > > > > >
+> > > > > > > > > I would suggest to define this ioctl as e.g.:
+> > > > > > > > >
+> > > > > > > > >   #define UI_SET_UNIQ           _IOW(_IOC_WRITE, UINPUT_I=
+OCTL_BASE, 111, 0)
+> > > > > > > > >
+> > > > > > > > > And then in uinput.c code handle it as:
+> > > > > > > > >
+> > > > > > > > >   case UI_SET_UNIQ & ~IOCSIZE_MASK:
+> > > > > > > > >
+> > > > > > > > > as part of section /* Now check variable-length commands =
+*/
+> > > > > > > >
+> > > > > > > > If we did not have UI_SET_PHYS in its current form, I'd agr=
+ee with you,
+> > > > > > > > but I think there is benefit in having UI_SET_UNIQ be simil=
+ar to
+> > > > > > > > UI_SET_PHYS.
+> > > > > > >
+> > > > > > > I thought that ioctl is just number, so we can define it as w=
+e want. And
+> > > > > > > because uinput.c has already switch for variable-length comma=
+nds it
+> > > > > > > would be easy to use it. Final handling can be in separate fu=
+nction like
+> > > > > > > for UI_SET_PHYS which can look like same.
+> > > > > >
+> > > > > > Yes, we can define ioctl number as whatever we want. What I was=
+ trying
+> > > > > > to say, right now users do this:
+> > > > > >
+> > > > > >       rc =3D ioctl(fd, UI_SET_PHYS, "whatever");
+> > > > > >       ...
+> > > > > >
+> > > > > > and with UI_SET_UNIQ they expect the following to work:
+> > > > > >
+> > > > > >       rc =3D ioctl(fd, UI_SET_UNIQ, "whatever");
+> > > > > >       ...
+> > > > >
+> > > > > And would not following definition
+> > > > >
+> > > > >   #define UI_SET_UNIQ _IOW(_IOC_WRITE, UINPUT_IOCTL_BASE, 111, 0)
+> > > > >
+> > > > > allow userspace to call
+> > > > >
+> > > > >   rc =3D ioctl(fd, UI_SET_UNIQ, "whatever");
+> > > > >
+> > > > > as you want?
+> > > >
+> > > > OK, so what you are saying is that we can have whatever in the size
+> > > > portion of ioctl number and simply ignore it in the driver
+> > >
+> > > Yes.
+> > >
+> > > > (and I do not
+> > > > think we need to do any of "UI_SET_UNIQ & ~IOCSIZE_MASK" really).
+> > >
+> > > You are right, we do not need to clear any IOCSIZE_MASK. As ioctl num=
+ber
+> > > would be always sam constant number. So it would be really simple. So
+> > > original patch would work if UI_SET_UNIQ define would be changed to
+> > > above with _IOW() macro.
+> > >
+> > > > While this would work, I am not sure it is the best option as I thi=
+nk
+> > > > we'd have to comment extensively why we have arbitrary number in pl=
+ace
+> > > > of the size.
+> > >
+> > > Comment can be added. But this is as ioctl is going to accept variabl=
+e
+> > > length array (not fixed array), zero value make sense for me (zero as=
+ we
+> > > do not know exact size).
+> > >
+> > > > And we still do not really save anything, as we still have to go th=
+rough
+> > > > compat ioctl handler (since we have it already) and it is very simp=
+le to
+> > > > add a case for UI_SET_UNIQ there...
+> > >
+> > > Yes, compat ioctl is still used. But my proposed solution does not
+> > > involve to define a new compact ioctl number just for sizeof(char *).
+> > >
+> > > I'm looking at this particular problem from side, that there is no
+> > > reason to define two new ioctl numbers for UI_SET_UNIQ (one normal
+> > > number and one compat number), when one number is enough. It is one n=
+ew
+> > > ioctl call, so one ioctl number should be enough.
+> > >
+> > > And also with my proposed solution with ioctl size=3D0 it simplify
+> > > implementation of UI_SET_UNIQ as it is not needed to implement also
+> > > UI_SET_UNIQ_COMPAT ioctl nor touch compat ioct code path. Basically
+> > > original patch (with changed UI_SET_UNIQ macro) is enough.
+> > >
+> > > But of of course, this is my view of this problem and I would not be
+> > > against your decision from maintainer position. Both solutions would
+> > > work correctly and bring same behavior for userspace applications.
+> >
+> >
+> > Hi Dmitry!
+> >
+> > I was looking again at those _IOW defines for ioctl calls and I have
+> > another argument why not specify 'char *' in _IOW:
+> >
+> > All ioctls in _IOW() specify as a third macro argument type which is
+> > passed as pointer to the third argument for ioctl() syscall.
+> >
+> > So e.g.:
+> >
+> >   #define EVIOCSCLOCKID _IOW('E', 0xa0, int)
+> >
+> > is called from userspace as:
+> >
+> >   int val;
+> >   ioctl(fd, EVIOCSCLOCKID, &val);
+> >
+> > Or
+> >
+> >   #define EVIOCSMASK _IOW('E', 0x93, struct input_mask)
+> >
+> > is called as:
+> >
+> >   struct input_mask val;
+> >   ioctl(fd, EVIOCSMASK, &val);
+> >
+> > So basically third argument for _IOW specify size of byte buffer passed
+> > as third argument for ioctl(). In _IOW is not specified pointer to
+> > struct input_mask, but struct input_mask itself.
+> >
+> > And in case you define
+> >
+> >   #define MY_NEW_IOCTL _IOW(UINPUT_IOCTL_BASE, 200, char*)
+> >
+> > then you by above usage you should pass data as:
+> >
+> >   char *val =3D "DATA";
+> >   ioctl(fd, MY_NEW_IOCTL, &val);
+> >
+> > Which is not same as just:
+> >
+> >   ioctl(fd, MY_NEW_IOCTL, "DATA");
+> >
+> > As in former case you passed pointer to pointer to data and in later
+> > case you passed only pointer to data.
+> >
+> > It just mean that UI_SET_PHYS is already defined inconsistently which i=
+s
+> > also reason why compat ioctl for it was introduced.
+>
+> Yes, you are right. UI_SET_PHYS is messed up. I guess the question is
+> what to do with all of this...
+>
+> Maybe we should define
+>
+> #define UI_SET_PHYS_STR(len)    _IOC(_IOC_WRITE, UINPUT_IOCTL_BASE, 111, =
+len)
+> #define UI_SET_UNIQ_STR(len)    _IOC(_IOC_WRITE, UINPUT_IOCTL_BASE, 112, =
+len)
+>
+> and mark UI_SET_PHYS as deprecated/wrong? This will allow us to specify
+> exactly how much data kernel is supposed to fetch from userspace instead
+> of trying to rely on a null-terminated string.
+>
+> It would also be very helpful if BlueZ did not accept changes that use
+> this brand new ioctl until after we agreed on how it should look like.
+> Luiz, can it be reverted for now please?
 
-> This fixes some crashes in xfs, binder and the i915 mock_selftests,
-> with kasan vmalloc, where no shadow space was being allocated when
-> vm_map_ram was called.
->
-> vm_map_ram has two paths, a path that uses vmap_block and a path
-> that uses alloc_vmap_area. The alloc_vmap_area path is straight-forward,
-> we handle it like most other allocations.
->
-> For the vmap_block case, we map a shadow for the entire vmap_block
-> when the block is allocated, and unpoison it piecewise in vm_map_ram().
-> It already gets cleaned up when the block is released in the lazy vmap
-> area freeing path.
->
-> For both cases, we need to tweak the interface to allow for vmalloc
-> addresses that don't have an attached vm_struct.
->
-> Reported-by: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Thanks-to: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Signed-off-by: Daniel Axtens <dja@axtens.net>
-> ---
->  include/linux/kasan.h |  6 ++++++
->  mm/kasan/common.c     | 37 +++++++++++++++++++++++--------------
->  mm/vmalloc.c          | 24 ++++++++++++++++++++++++
->  3 files changed, 53 insertions(+), 14 deletions(-)
->
-> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-> index 4f404c565db1..0b50b59a8ff5 100644
-> --- a/include/linux/kasan.h
-> +++ b/include/linux/kasan.h
-> @@ -207,6 +207,7 @@ static inline void *kasan_reset_tag(const void *addr)
->  #ifdef CONFIG_KASAN_VMALLOC
->  int kasan_populate_vmalloc(unsigned long requested_size,
->  			   struct vm_struct *area);
-> +int kasan_populate_vmalloc_area(unsigned long size, void *addr);
->  void kasan_poison_vmalloc(void *start, unsigned long size);
->  void kasan_release_vmalloc(unsigned long start, unsigned long end,
->  			   unsigned long free_region_start,
-> @@ -218,6 +219,11 @@ static inline int kasan_populate_vmalloc(unsigned long requested_size,
->  	return 0;
->  }
->  
-> +static inline int kasan_populate_vmalloc_area(unsigned long size, void *addr)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline void kasan_poison_vmalloc(void *start, unsigned long size) {}
->  static inline void kasan_release_vmalloc(unsigned long start,
->  					 unsigned long end,
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index df3371d5c572..27d8522ffaad 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -779,27 +779,15 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
->  
->  int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
->  {
-> -	unsigned long shadow_start, shadow_end;
->  	int ret;
-> -
-> -	shadow_start = (unsigned long)kasan_mem_to_shadow(area->addr);
-> -	shadow_start = ALIGN_DOWN(shadow_start, PAGE_SIZE);
-> -	shadow_end = (unsigned long)kasan_mem_to_shadow(area->addr +
-> -							area->size);
-> -	shadow_end = ALIGN(shadow_end, PAGE_SIZE);
-> -
-> -	ret = apply_to_page_range(&init_mm, shadow_start,
-> -				  shadow_end - shadow_start,
-> -				  kasan_populate_vmalloc_pte, NULL);
-> +	ret = kasan_populate_vmalloc_area(area->size, area->addr);
->  	if (ret)
->  		return ret;
->  
-> -	flush_cache_vmap(shadow_start, shadow_end);
-> +	area->flags |= VM_KASAN;
->  
->  	kasan_unpoison_shadow(area->addr, requested_size);
->  
-> -	area->flags |= VM_KASAN;
-> -
->  	/*
->  	 * We need to be careful about inter-cpu effects here. Consider:
->  	 *
-> @@ -838,6 +826,27 @@ int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
->  	return 0;
->  }
->  
-> +int kasan_populate_vmalloc_area(unsigned long size, void *addr)
-> +{
-> +	unsigned long shadow_start, shadow_end;
-> +	int ret;
-> +
-> +	shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
-> +	shadow_start = ALIGN_DOWN(shadow_start, PAGE_SIZE);
-> +	shadow_end = (unsigned long)kasan_mem_to_shadow(addr + size);
-> +	shadow_end = ALIGN(shadow_end, PAGE_SIZE);
-> +
-> +	ret = apply_to_page_range(&init_mm, shadow_start,
-> +				  shadow_end - shadow_start,
-> +				  kasan_populate_vmalloc_pte, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	flush_cache_vmap(shadow_start, shadow_end);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Poison the shadow for a vmalloc region. Called as part of the
->   * freeing process at the time the region is freed.
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index bf030516258c..2896189e351f 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -1509,6 +1509,13 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
->  		return ERR_CAST(va);
->  	}
->  
-> +	err = kasan_populate_vmalloc_area(VMAP_BLOCK_SIZE, va->va_start);
-> +	if (unlikely(err)) {
-> +		kfree(vb);
-> +		free_vmap_area(va);
-> +		return ERR_PTR(err);
-> +	}
-> +
->  	err = radix_tree_preload(gfp_mask);
->  	if (unlikely(err)) {
->  		kfree(vb);
-> @@ -1554,6 +1561,7 @@ static void free_vmap_block(struct vmap_block *vb)
->  	spin_unlock(&vmap_block_tree_lock);
->  	BUG_ON(tmp != vb);
->  
-> +	/* free_vmap_area will take care of freeing the shadow */
->  	free_vmap_area_noflush(vb->va);
->  	kfree_rcu(vb, rcu_head);
->  }
-> @@ -1780,6 +1788,8 @@ void vm_unmap_ram(const void *mem, unsigned int count)
->  	if (likely(count <= VMAP_MAX_ALLOC)) {
->  		debug_check_no_locks_freed(mem, size);
->  		vb_free(mem, size);
-> +		kasan_poison_vmalloc(mem, size);
-> +
->  		return;
->  	}
->  
-> @@ -1787,6 +1797,7 @@ void vm_unmap_ram(const void *mem, unsigned int count)
->  	BUG_ON(!va);
->  	debug_check_no_locks_freed((void *)va->va_start,
->  				    (va->va_end - va->va_start));
-> +	/* vmap area purging will clean up the KASAN shadow later */
->  	free_unmap_vmap_area(va);
->  }
->  EXPORT_SYMBOL(vm_unmap_ram);
-> @@ -1817,6 +1828,11 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
->  		if (IS_ERR(mem))
->  			return NULL;
->  		addr = (unsigned long)mem;
-> +
-> +		/*
-> +		 * We don't need to call kasan_populate_vmalloc_area here, as
-> +		 * it's done at block allocation time.
-> +		 */
->  	} else {
->  		struct vmap_area *va;
->  		va = alloc_vmap_area(size, PAGE_SIZE,
-> @@ -1826,7 +1842,15 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
->  
->  		addr = va->va_start;
->  		mem = (void *)addr;
-> +
-> +		if (kasan_populate_vmalloc_area(size, mem)) {
-> +			vm_unmap_ram(mem, count);
-> +			return NULL;
-> +		}
->  	}
-> +
-> +	kasan_unpoison_shadow(mem, size);
-> +
->  	if (vmap_page_range(addr, addr + size, prot, pages) < 0) {
->  		vm_unmap_ram(mem, count);
->  		return NULL;
-> -- 
-> 2.20.1
+Sure, it has been reverted, I guess we will have to settle on the
+kernel changes first before we do any changes to userspace.
+
+--=20
+Luiz Augusto von Dentz
