@@ -2,157 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFACE112F0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:55:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A83112F0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfLDPz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:55:26 -0500
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:46962 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbfLDPzZ (ORCPT
+        id S1728471AbfLDP4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:56:12 -0500
+Received: from egyptian.birch.relay.mailchannels.net ([23.83.209.56]:45257
+        "EHLO egyptian.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727828AbfLDP4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:55:25 -0500
-Received: by mail-lj1-f181.google.com with SMTP id z17so8652075ljk.13
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:55:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wk62nr6sbOubH5V981U5bO4DJZQBAJzhc3G8JnkhcXc=;
-        b=dpvYNX1vc4sOsBjpwU9IS/ZDKlXUNagdF4ysbJ/RDb2GyI2GGnkGQzSJ0yOXjBD43I
-         Y3pS4licyZea9QXxVa+f4vDBKKKCVtz8KKa43rp3sIThqOIfZnp9gCBs1qrUGAFcdOnW
-         yhQW6FudRKNtFcYJvSJYRdBbccw+3DbkXp7Ia2++GCXyJt0MlLbB71ZI8WDKR6kvfAzh
-         oc0FyJjadzsX4sBRykCx98C1Za//o/4g4Uv1uN3PYSw4DfMUSrd1fsNArRG9u94UB0Iq
-         lNuFtdzPeGOnCqXo5c9q3qCCgJ9YD4x2d50ZVdtNkba/9uMZ1zL3qbLYegj7tWDbiMOV
-         gAqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wk62nr6sbOubH5V981U5bO4DJZQBAJzhc3G8JnkhcXc=;
-        b=PcfxpyBwbWWTrJg6joplNP00T39sejHpS5qSVBxlI13L+86jSnucBRO2CcLLmYmc/S
-         8ycNmPgPjbhFIKbYZ4QsJ59pY8ipjUn31MBpsw6G4OTFp87S4bNXhKcpAY2zOGEjao1w
-         kG9R0Wyo15My5SMVZcTc607KMLDcJpcToYL33rtKvB/Wbzy5nUaMyYrEcLgWXj5pFWTr
-         jgFFrEOTTCMqpWudxI3GrFH4Smh0QG5q05Opvo4SQPE/0JxBHzcrXVGiP/IZPsooJXdi
-         FwM7lVuRK/DzPX7crLBvE8Dq4mLS/j++Pxs9Z5KL+VCMAzg3YGHBJhez3V3Ipc7BvJ3V
-         Y7rw==
-X-Gm-Message-State: APjAAAVaiF5vax8ZUD1m0CrTg1qa2pqEO1fts5Aoj6gF+TMUKDxmCwM7
-        Amojm0iV7n9cUlDCWnX+aNfJ9Q==
-X-Google-Smtp-Source: APXvYqxhqLtPOowpum4KN4g7ig/X0+ftjB1WE0M/T4ebVegWv8K4yETmgOmPjz6PG5wwpZ224NeclQ==
-X-Received: by 2002:a2e:81c7:: with SMTP id s7mr2471914ljg.3.1575474922031;
-        Wed, 04 Dec 2019 07:55:22 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
-        by smtp.gmail.com with ESMTPSA id 22sm3829543ljw.9.2019.12.04.07.55.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Dec 2019 07:55:21 -0800 (PST)
-Message-ID: <9ed62cfea37bfebfb76e378d482bd521c7403c1f.camel@dubeyko.com>
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-From:   Vyacheslav Dubeyko <slava@dubeyko.com>
-To:     Daniel Phillips <daniel@phunq.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date:   Wed, 04 Dec 2019 18:55:20 +0300
-In-Reply-To: <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
-         <20191127142508.GB5143@mit.edu>
-         <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
+        Wed, 4 Dec 2019 10:56:11 -0500
+X-Sender-Id: dreamhost|x-authsender|stevie@qrpff.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 7AFAC1A209E
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2019 15:56:10 +0000 (UTC)
+Received: from pdx1-sub0-mail-a93.g.dreamhost.com (100-96-14-7.trex.outbound.svc.cluster.local [100.96.14.7])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id B6ABB1A1F01
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2019 15:56:09 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|stevie@qrpff.net
+Received: from pdx1-sub0-mail-a93.g.dreamhost.com ([TEMPUNAVAIL].
+ [64.90.62.162])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.18.5);
+        Wed, 04 Dec 2019 15:56:10 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|stevie@qrpff.net
+X-MailChannels-Auth-Id: dreamhost
+X-Cellar-Snatch: 3b33244459eec7ad_1575474970196_2248684031
+X-MC-Loop-Signature: 1575474970196:3262206106
+X-MC-Ingress-Time: 1575474970196
+Received: from pdx1-sub0-mail-a93.g.dreamhost.com (localhost [127.0.0.1])
+        by pdx1-sub0-mail-a93.g.dreamhost.com (Postfix) with ESMTP id 318FA818B3
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2019 07:56:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=qrpff.net; h=mime-version
+        :from:date:message-id:subject:to:cc:content-type; s=qrpff.net;
+         bh=/Kn4LfddrJDyvMKQRu8wpyUc8WA=; b=qDRuLg+sjOGlLjUfxZbrjUHoHfpw
+        zT3IIn+0asZeMUTtjYxIH4oIGFYGjC3dPLc4dztZnWcuZThpUsUIudtQgxOKZd6s
+        wl7wdFMgPQ2RtS+7v65LjZhCSENAx/6wj8np565Fpi4vpZNxU0Pa5DXZ1wbmFFaQ
+        eZk1AwwSHouRGOk=
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stevie@qrpff.net)
+        by pdx1-sub0-mail-a93.g.dreamhost.com (Postfix) with ESMTPSA id 7B1AB8155F
+        for <linux-kernel@vger.kernel.org>; Wed,  4 Dec 2019 07:55:55 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id z17so8653962ljk.13
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:55:55 -0800 (PST)
+X-Gm-Message-State: APjAAAU6pIsy9+RUIksohi883m3h9fo0q+CJNDHTAgo2TaU0c6xgOyoY
+        BnikxLcHJcpR1nJKbdD4Ge4YMZ3C23XLoikhaqY=
+X-Google-Smtp-Source: APXvYqxQkYTuc245sv1m5iD+qbiatoI2NghXpwEq2lr0SndWytpOUMy/6bKZ79GTRYts4BsJ8Y8W7Di0GXEOM/65RqM=
+X-Received: by 2002:a2e:88d6:: with SMTP id a22mr2341326ljk.163.1575474953331;
+ Wed, 04 Dec 2019 07:55:53 -0800 (PST)
+MIME-Version: 1.0
+X-DH-BACKEND: pdx1-sub0-mail-a93
+From:   Stephen Oberholtzer <stevie@qrpff.net>
+Date:   Wed, 4 Dec 2019 10:55:42 -0500
+X-Gmail-Original-Message-ID: <CAD_xR9dfgVeBkm9PZ5gk1fB37vEj+__5O6HUoK6SW3zoOwhDiw@mail.gmail.com>
+Message-ID: <CAD_xR9dfgVeBkm9PZ5gk1fB37vEj+__5O6HUoK6SW3zoOwhDiw@mail.gmail.com>
+Subject: Re: [RFC] chromeos_laptop: Make touchscreen work on C720
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Benson Leung <bleung@chromium.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-12-01 at 17:45 -0800, Daniel Phillips wrote:
-> On 2019-11-27 6:25 a.m., Theodore Y. Ts'o wrote:
-> > (3) It's not particularly well documented...
-> 
-> We regard that as an issue needing attention. Here is a pretty
-> picture
-> to get started:
-> 
->    https://github.com/danielbot/Shardmap/wiki/Shardmap-media-format
-> 
-> This needs some explaining. The bottom part of the directory file is
-> a simple linear range of directory blocks, with a freespace map block
-> appearing once every 4K blocks or so. This freespace mapping needs a
-> post of its own, it is somewhat subtle. This will be a couple of
-> posts
-> in the future.
-> 
-> The Shardmap index appears at a higher logical address, sufficiently
-> far above the directory base to accommodate a reasonable number of
-> record entry blocks below it. We try not to place the index at so
-> high
-> an address that the radix tree gets extra levels, slowing everything
-> down.
-> 
-> When the index needs to be expanded, either because some shard
-> exceeded
-> a threshold number of entries, or the record entry blocks ran into
-> the
-> the bottom of the index, then a new index tier with more shards is
-> created at a higher logical address. The lower index tier is not
-> copied
-> immediately to the upper tier, but rather, each shard is
-> incrementally
-> split when it hits the threshold because of an insert. This bounds
-> the
-> latency of any given insert to the time needed to split one shard,
-> which
-> we target nominally at less than one millisecond. Thus, Shardmap
-> takes a
-> modest step in the direction of real time response.
-> 
-> Each index tier is just a simple array of shards, each of which fills
-> up with 8 byte entries from bottom to top. The count of entries in
-> each
-> shard is stored separately in a table just below the shard array. So
-> at
-> shard load time, we can determine rapidly from the count table which
-> tier a given shard belongs to. There are other advantages to breaking
-> the shard counts out separately having to do with the persistent
-> memory
-> version of Shardmap, interesting details that I will leave for later.
-> 
-> When all lower tier shards have been deleted, the lower tier may be
-> overwritten by the expanding record entry block region. In practice,
-> a Shardmap file normally has just one tier most of the time, the
-> other
-> tier existing only long enough to complete the incremental expansion
-> of the shard table, insert by insert.
-> 
-> There is a small header in the lowest record entry block, giving the
-> positions of the one or two index tiers, count of entry blocks, and
-> various tuning parameters such as maximum shard size and average
-> depth
-> of cache hash collision lists.
-> 
-> That is it for media format. Very simple, is it not? My next post
-> will explain the Shardmap directory block format, with a focus on
-> deficiencies of the traditional Ext2 format that were addressed.
-> 
+On Tue, Dec 3, 2019 at 2:36 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Hi Stephen,
+>
+> Does the new kernel work with the original firmware (it should as that's
+> what it's been tested with)?
 
-I've tried to take a look into the source code. And it was not easy
-try. :) I expected to have the bird-fly understanding from shardmap.h
-file. My expectation was to find the initial set of structure
-declarations with the good comments. But, frankly speaking, it's very
-complicated path for the concept understanding. Even from C++ point of
-view, the class declarations look very complicated if there are mixing
-of fields with methods declarations. It's tough to read such
-implementation.
+It took some finagling -- MrChromebox is UEFI, but the stock firmware
+boots with SeaBIOS -- but I was able to confirm that yes, the
+touchscreen works in 4.19 when booting from stock firmware.
 
-So, I believe it makes sense to declare the necessary set of structures
-in the file's beginning with the good comments. Even it will be good to
-split the structure declarations and methods in different files. I
-believe it will ease the way to understand the concept. Otherwise, it
-will be tough to review such code.
+> Acer C720 did not use ACPI to describe its devices, it relied on static
+> board support to instantiate touchscreen and trackpad and other devices.
 
-Thanks,
-Viacheslav Dubeyko.
+> I see that MrChromebox BIOS declares the peripherals on Peppy via ACPI.
+> I'd recommend reaching out and ask to update the binding (maybe switch
+> from ATML0001 to PRP0001 and full OF-style binding to avoid confusion).
 
+(This is my first-ever foray into anything involving Linux and I2C,
+ACPI, _or_ multi-module cooperation, and lucky me, I get all three!
+Good thing it's easy to verify that a touchscreen is working.  I also
+have no idea what "OF-style binding" is.)
 
+Approaching from the perspective of "I'm designing a brand new kind of
+machine that runs Linux, uses ACPI tables, and has one or more Atmel
+MXT chips", several things become apparent:
+
+* The driver expects a strange "compatible" property that communicates
+no useful information.  The property's value is not read, only its
+existence, which is one bit of information. '1' is interpreted as
+'this is a supported device', while '0' is interpreted as 'this is not
+a supported device'.  But if it's not a supported device, why was the
+driver loaded in the first place?
+
+* If it's a touchpad, the driver needs to know what buttons the
+various GPIOs are mapped to.
+  (Conceivably, it doesn't need to be a touchpad; in my hypothetical
+machine, it could also be a touchscreen that also has some input
+buttons wired up through the MXT chip, because that saved a nickel per
+unit. To support that, however, we would also need an indicator
+specifying whether it's a touchscreen or a touchpad, as the driver
+interprets 'has buttons' as 'is touchpad'.)
+
+This leads to my first question: With this in mind, couldn't simply
+removing the "compatible" check work?
+On any existing machine where this driver is loaded and working, the
+chromeos_laptop driver has already run and set up the appropriate
+device properties first.
+
+--
+Stephen
