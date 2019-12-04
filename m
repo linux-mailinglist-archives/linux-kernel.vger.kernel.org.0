@@ -2,65 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9772B112140
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 03:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4448A11213A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 03:02:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfLDCEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 21:04:41 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7629 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726131AbfLDCEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 21:04:40 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 00030B68322770FDCDDD;
-        Wed,  4 Dec 2019 10:04:37 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 4 Dec 2019 10:04:27 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <eddie.huang@mediatek.com>, <sean.wang@mediatek.com>,
-        <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <matthias.bgg@gmail.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] rtc: mt6397: drop free_irq of devm_xx allocated irq
-Date:   Wed, 4 Dec 2019 10:02:09 +0800
-Message-ID: <20191204020209.10363-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726549AbfLDCCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 21:02:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726131AbfLDCCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Dec 2019 21:02:47 -0500
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 741A12073B;
+        Wed,  4 Dec 2019 02:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575424966;
+        bh=6JGhp6hKDiAgsLbhCIIDGicEe/fmHWv0q/ZPw2vNp+A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FVULFVOJUSyS1NR+SsbcWjV/cv/rpuOIfNNYzZ1AqVWzoEQ0JkJnLjeIWr9IERPD1
+         dyI50ic2/u/Yfe/DBB/sqpLyva1fXVdKr96EhJesB8b51fHFzm4vyZS0uku63DKfmF
+         Xeg2R4CQpaZTRrc/a2kLPqoV95VFdaO7p5fJrqPo=
+Date:   Wed, 4 Dec 2019 10:02:37 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] ARM: dts: imx7ulp: Add cpu clock-frequency property
+Message-ID: <20191204020236.GK9767@dragon>
+References: <1572918578-13544-1-git-send-email-Anson.Huang@nxp.com>
+ <20191202134748.GB21897@dragon>
+ <DB3PR0402MB39164DF380E6B13558E758E7F5420@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB3PR0402MB39164DF380E6B13558E758E7F5420@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rtc->irq is requested by devm_request_threaded_irq,
-and request_threaded_irq. IRQs requested with this
-function will be automatically freed on driver detach.
++ Vincent
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/rtc/rtc-mt6397.c | 1 -
- 1 file changed, 1 deletion(-)
+On Tue, Dec 03, 2019 at 01:09:22AM +0000, Anson Huang wrote:
+> 
+> > Subject: Re: [PATCH] ARM: dts: imx7ulp: Add cpu clock-frequency property
+> > 
+> > On Tue, Nov 05, 2019 at 09:49:38AM +0800, Anson Huang wrote:
+> > > Add "clock-frequency" property to avoid below warning on i.MX7ULP:
+> > >
+> > > [    0.011762] /cpus/cpu@0 missing clock-frequency property
+> > >
+> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > ---
+> > >  arch/arm/boot/dts/imx7ulp.dtsi | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/arch/arm/boot/dts/imx7ulp.dtsi
+> > > b/arch/arm/boot/dts/imx7ulp.dtsi index d37a192..87b2237 100644
+> > > --- a/arch/arm/boot/dts/imx7ulp.dtsi
+> > > +++ b/arch/arm/boot/dts/imx7ulp.dtsi
+> > > @@ -41,6 +41,7 @@
+> > >  			compatible = "arm,cortex-a7";
+> > >  			device_type = "cpu";
+> > >  			reg = <0>;
+> > > +			clock-frequency = <500210526>;
+> > 
+> > I cannot find the binding doc for this property.  What is the definition of it,
+> > the maximum frequency that the cpu could possibly run at?
+> 
+> 
+> The code is as below, maybe the property is missing from the beginning of this code,
+> this property should mean the current frequency of CPU running at I think:
+> 
+> arch/arm/kernel/topology.c
+> 
+> 122                 rate = of_get_property(cn, "clock-frequency", &len);
+> 123                 if (!rate || len != 4) {
+> 124                         pr_err("%pOF missing clock-frequency property\n", cn);
+> 125                         continue;
+> 126                 }
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 5249fc99fd5f..d6a10111137a 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -293,7 +293,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	return 0;
- 
- out_free_irq:
--	free_irq(rtc->irq, rtc);
- 	return ret;
- }
- 
--- 
-2.20.1
+Yes, I can find the code, but not bindings for it.  Considering
+frequency of a CPU can be scaled in a quite wide range, we need
+a clear understanding on this property.  IIUIC, the property is used to
+calculate the capacity of CPU, it should be the maximum frequency the
+CPU could possibly scale to?
 
+Shawn
