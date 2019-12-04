@@ -2,134 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEA75112BDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05173112B9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:38:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfLDMpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:45:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63404 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726832AbfLDMpy (ORCPT
+        id S1727769AbfLDMiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:38:00 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:54886 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfLDMiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:45:54 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB4Ci9F2132410;
-        Wed, 4 Dec 2019 07:45:39 -0500
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wntctddr4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Dec 2019 07:40:42 -0500
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB4CZ8p3022319;
-        Wed, 4 Dec 2019 12:37:30 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma01dal.us.ibm.com with ESMTP id 2wkg26xf7u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Dec 2019 12:37:30 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB4CbT5J40632730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Dec 2019 12:37:29 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4C8A2805A;
-        Wed,  4 Dec 2019 12:37:29 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 97A812805C;
-        Wed,  4 Dec 2019 12:37:29 +0000 (GMT)
-Received: from sofia.ibm.com (unknown [9.124.31.190])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  4 Dec 2019 12:37:29 +0000 (GMT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id ACABD2E2EB4; Wed,  4 Dec 2019 18:07:28 +0530 (IST)
-Date:   Wed, 4 Dec 2019 18:07:28 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] powerpc/sysfs: Show idle_purr and idle_spurr for
- every CPU
-Message-ID: <20191204123728.GD5197@in.ibm.com>
-Reply-To: ego@linux.vnet.ibm.com
-References: <1574856072-30972-1-git-send-email-ego@linux.vnet.ibm.com>
- <1574856072-30972-3-git-send-email-ego@linux.vnet.ibm.com>
- <9b8f82b0-86dd-d524-aae6-34f8c33bd2c2@linux.vnet.ibm.com>
+        Wed, 4 Dec 2019 07:38:00 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 39BFF1C25EC; Wed,  4 Dec 2019 13:37:58 +0100 (CET)
+Date:   Wed, 4 Dec 2019 13:37:57 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com
+Subject: Re: [PATCH v7 2/2] leds: Add control of the voltage/current
+ regulator to the LED core
+Message-ID: <20191125163738.GC3816@amd>
+References: <20191021174751.4421-1-jjhiblot@ti.com>
+ <20191021174751.4421-3-jjhiblot@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
 Content-Disposition: inline
-In-Reply-To: <9b8f82b0-86dd-d524-aae6-34f8c33bd2c2@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-04_03:2019-12-04,2019-12-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- bulkscore=0 adultscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
- spamscore=0 mlxscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-1912040103
+In-Reply-To: <20191021174751.4421-3-jjhiblot@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kamalesh,
 
-On Tue, Dec 03, 2019 at 07:07:53PM +0530, Kamalesh Babulal wrote:
-> On 11/27/19 5:31 PM, Gautham R. Shenoy wrote:
-> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-> > 
-> > On Pseries LPARs, to calculate utilization, we need to know the
-> > [S]PURR ticks when the CPUs were busy or idle.
-> > 
-> > The total PURR and SPURR ticks are already exposed via the per-cpu
-> > sysfs files /sys/devices/system/cpu/cpuX/purr and
-> > /sys/devices/system/cpu/cpuX/spurr.
-> > 
-> > This patch adds support for exposing the idle PURR and SPURR ticks via
-> > /sys/devices/system/cpu/cpuX/idle_purr and
-> > /sys/devices/system/cpu/cpuX/idle_spurr.
-> 
-> The patch looks good to me, with a minor file mode nit pick mentioned below.
-> 
-> > 
-> > Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-> > ---
-> >  arch/powerpc/kernel/sysfs.c | 32 ++++++++++++++++++++++++++++++++
-> >  1 file changed, 32 insertions(+)
-> > 
-> > diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-> > index 80a676d..42ade55 100644
-> > --- a/arch/powerpc/kernel/sysfs.c
-> > +++ b/arch/powerpc/kernel/sysfs.c
-> > @@ -1044,6 +1044,36 @@ static ssize_t show_physical_id(struct device *dev,
-> >  }
-> >  static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
-> > 
-> > +static ssize_t idle_purr_show(struct device *dev,
-> > +			      struct device_attribute *attr, char *buf)
-> > +{
-> > +	struct cpu *cpu = container_of(dev, struct cpu, dev);
-> > +	unsigned int cpuid = cpu->dev.id;
-> > +	struct lppaca *cpu_lppaca_ptr = paca_ptrs[cpuid]->lppaca_ptr;
-> > +	u64 idle_purr_cycles = be64_to_cpu(cpu_lppaca_ptr->wait_state_cycles);
-> > +
-> > +	return sprintf(buf, "%llx\n", idle_purr_cycles);
-> > +}
-> > +static DEVICE_ATTR_RO(idle_purr);
-> 
-> per cpu purr/spurr sysfs file is created with file mode 0400. Using
-> DEVICE_ATTR_RO for their idle_* variants will create sysfs files with 0444 as
-> their file mode, you should probably use DEVICE_ATTR() with file mode 0400 to
-> have consist permission for both variants.
+--CdrF4e02JqNVZeln
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for catching this. I missed checking the permissions of purr
-and spurr. Will send another version.
+Hi!
 
+> A LED is usually powered by a voltage/current regulator. Let the LED core
+> know about it. This allows the LED core to turn on or off the power supply
+> as needed.
+>=20
+> Because turning ON/OFF a regulator might block, it is not done
+> synchronously but done in a workqueue. Turning ON the regulator is
+> always
 
-> 
-> -- 
-> Kamalesh
+How will this interact with LEDs that can be used from atomic context?
+
+> +static ssize_t regulator_auto_off_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t size)
+> +{
+> +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> +	ssize_t ret =3D size;
+> +	bool auto_off;
+> +
+> +	if (strncmp(buf, "enable\n", size) =3D=3D 0)
+> +		auto_off =3D true;
+> +	else if (strncmp(buf, "disable\n", size) =3D=3D 0)
+> +		auto_off =3D false;
+> +	else
+> +		return -EINVAL;
+
+Sounds like device power management to me. Is it compatible with that?
+
+> @@ -135,6 +203,8 @@ static void set_brightness_delayed(struct work_struct=
+ *ws)
+>  	    (led_cdev->flags & LED_HW_PLUGGABLE)))
+>  		dev_err(led_cdev->dev,
+>  			"Setting an LED's brightness failed (%d)\n", ret);
+> +
+> +	 led_handle_regulator(led_cdev);
+>  }
+>
+
+You only modify set_brigthness_delays, so this will not work at all
+for non-blocking LEDs, right?
+
+>  static void led_set_software_blink(struct led_classdev *led_cdev,
+> @@ -189,6 +259,7 @@ static void led_blink_setup(struct led_classdev *led_=
+cdev,
+>  void led_init_core(struct led_classdev *led_cdev)
+>  {
+>  	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
+> +	INIT_DELAYED_WORK(&led_cdev->reg_off_work, turn_off_regulator_delayed);
+> =20
+
+Could this re-use the workqueue? Many systems will not need
+regulators, so this is overhead...
+
+> +			/*
+> +			 * the regulator must  be turned off. This cannot be
+
+Use "The", and fix double spaces between must and be.
+
+> +		} else if (regulator_on && old =3D=3D REG_R_OFF_U_OFF) {
+> +			/*
+> +			 * the regulator must be enabled. This cannot be here
+
+"The"
+
+> +		/*
+> +		 * small optimization. Cancel the work that had been started
+
+"Small."
+
+> +#include <linux/regulator/consumer.h>
+> +
+> +/*
+> + * The regulator state tracks 2 boolean variables:
+> + * - the state of regulator (or more precisely the state required by
+> + *   led core layer, as many users can interact with the same regulator).
+> + *   It is tracked by bit 0.
+> + * - the state last asked-for by the LED user. It is tracked by bit 1.
+> + */
+> +#define REG_R_ON BIT(0)
+> +#define REG_U_ON BIT(1)
+> +
+> +enum {	REG_R_OFF_U_OFF =3D 0,
+> +	REG_R_ON_U_OFF =3D REG_R_ON,
+> +	REG_R_OFF_U_ON =3D REG_U_ON,
+> +	REG_R_ON_U_ON =3D REG_R_ON | REG_U_ON
+> +};
+
+That's quite weird use of enum.
+
+> +++ b/include/linux/leds.h
+> @@ -149,6 +149,15 @@ struct led_classdev {
+> =20
+>  	/* Ensures consistent access to the LED Flash Class device */
+>  	struct mutex		led_access;
+> +
+> +	/* regulator */
+
+"Regulator".
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--CdrF4e02JqNVZeln
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXeeopQAKCRAw5/Bqldv6
+8uypAJ9qIc1TE8M1YLh8IbRiajmjRpCowACcDMrhUrZ+kLOC4MH0sIilzbC58Bo=
+=AhQV
+-----END PGP SIGNATURE-----
+
+--CdrF4e02JqNVZeln--
