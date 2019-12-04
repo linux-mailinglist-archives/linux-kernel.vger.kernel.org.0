@@ -2,55 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CDCC113083
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5A711309F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfLDRNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:13:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:59112 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbfLDRNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:13:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FB7231B;
-        Wed,  4 Dec 2019 09:12:58 -0800 (PST)
-Received: from [10.37.12.197] (unknown [10.37.12.197])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B509D3F52E;
-        Wed,  4 Dec 2019 09:12:54 -0800 (PST)
-Subject: Re: [PATCH v7 16/25] arm: Add support for generic vDSO (causing
- crash)
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
- <20190621095252.32307-17-vincenzo.frascino@arm.com>
- <20191204135159.GA7210@roeck-us.net>
- <6cdf4734-4065-09c1-8623-1bf523b38c1b@arm.com>
- <20191204161641.GA28130@roeck-us.net>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <e35a7f71-2477-fa52-01e4-301199e99c2e@arm.com>
-Date:   Wed, 4 Dec 2019 17:15:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728042AbfLDRRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:17:19 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58384 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbfLDRRT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:17:19 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 3AACF260419
+Subject: Re: ardb/for-kernelci bisection: boot on rk3288-rock2-square
+To:     Ard Biesheuvel <ardb@kernel.org>, mgalka@collabora.com,
+        broonie@kernel.org, enric.balletbo@collabora.com,
+        tomeu.vizoso@collabora.com, khilman@baylibre.com
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <5de7d155.1c69fb81.c06f8.3583@mx.google.com>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <377fa169-7ae5-479f-023c-e282d8c19f3a@collabora.com>
+Date:   Wed, 4 Dec 2019 17:17:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191204161641.GA28130@roeck-us.net>
+In-Reply-To: <5de7d155.1c69fb81.c06f8.3583@mx.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -59,95 +42,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
-
-On 12/4/19 4:16 PM, Guenter Roeck wrote:
-> On Wed, Dec 04, 2019 at 01:58:25PM +0000, Vincenzo Frascino wrote:
->> Hi Guenter,
->>
->> On 12/4/19 1:51 PM, Guenter Roeck wrote:
->>> On Fri, Jun 21, 2019 at 10:52:43AM +0100, Vincenzo Frascino wrote:
->>>> The arm vDSO library requires some adaptations to use to take advantage
->>>> of the newly introduced generic vDSO library.
->>>>
->>>> Introduce the following changes:
->>>>  - Modification vdso.c to be compliant with the common vdso datapage
->>>>  - Use of lib/vdso for gettimeofday
->>>>  - Implementation of elf note
->>>>
->>>> Cc: Russell King <linux@armlinux.org.uk>
->>>> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>>
->>> This patch causes a crash with qemu's mcimx6ul-evk emulation while running
->>> imx_v6_v7_defconfig.
->>>
->>
->> Thank you for reporting this. Could you please provide some details on how I can
->> reproduce the scenario you are describing?
->>
-> - Build imx_v6_v7_defconfig
-> - Get root file system or initrd, for example from
->   https://github.com/groeck/linux-build-test/tree/master/rootfs/arm
-> - Run image. Example, with initrd:
-> 	qemu-system-arm -M mcimx6ul-evk -kernel arch/arm/boot/zImage \
-> 		-no-reboot -initrd rootfs-armv7a.cpio \
-> 		-m 256 -display none -serial null \
-> 		--append 'rdinit=/sbin/init earlycon=ec_imx6q,mmio,0x21e8000,115200n8 console=ttymxc1,115200'
-> 		-dtb arch/arm/boot/dts/imx6ul-14x14-evk.dtb \
-> 		-nographic -monitor null -serial stdio
+On 04/12/2019 15:31, kernelci.org bot wrote:
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> *                                                               *
+> * If you do send a fix, please include this trailer:            *
+> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> *                                                               *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 > 
-> qemu has to be v3.1 or later to support the machine.
+> ardb/for-kernelci bisection: boot on rk3288-rock2-square
 > 
-
-Thanks for this. Could you please try the patch below the scissors? Seems fixing
-the issue for me.
-
-> Hope this helps,
-> Guenter
+> Summary:
+>   Start:      16839329da69 enable extra tests by default
+>   Details:    https://kernelci.org/boot/id/5de79104990bc03e5a960f0b
+>   Plain log:  https://storage.kernelci.org//ardb/for-kernelci/v5.4-9340-g16839329da69/arm/multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y/gcc-8/lab-collabora/boot-rk3288-rock2-square.txt
+>   HTML log:   https://storage.kernelci.org//ardb/for-kernelci/v5.4-9340-g16839329da69/arm/multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y/gcc-8/lab-collabora/boot-rk3288-rock2-square.html
+>   Result:     16839329da69 enable extra tests by default
 > 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       ardb
+>   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git
+>   Branch:     for-kernelci
+>   Target:     rk3288-rock2-square
+>   CPU arch:   arm
+>   Lab:        lab-collabora
+>   Compiler:   gcc-8
+>   Config:     multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y
+>   Test suite: boot
+> 
+> Breaking commit found:
+> 
+> -------------------------------------------------------------------------------
+> commit 16839329da69263e7360f3819bae01bcf4b220ec
+> Author: Ard Biesheuvel <ardb@kernel.org>
+> Date:   Tue Dec 3 12:29:31 2019 +0000
+> 
+>     enable extra tests by default
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 5575d48473bd..36af840aa820 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -140,7 +140,6 @@ if CRYPTO_MANAGER2
+>  
+>  config CRYPTO_MANAGER_DISABLE_TESTS
+>  	bool "Disable run-time self tests"
+> -	default y
+>  	help
+>  	  Disable run-time self tests that normally take place at
+>  	  algorithm registration.
+> @@ -148,6 +147,7 @@ config CRYPTO_MANAGER_DISABLE_TESTS
+>  config CRYPTO_MANAGER_EXTRA_TESTS
+>  	bool "Enable extra run-time crypto self tests"
+>  	depends on DEBUG_KERNEL && !CRYPTO_MANAGER_DISABLE_TESTS
+> +	default y
+>  	help
+>  	  Enable extra run-time self tests of registered crypto algorithms,
+>  	  including randomized fuzz tests.
+> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+> index 88f33c0efb23..5df87bcf6c4d 100644
+> --- a/crypto/testmgr.c
+> +++ b/crypto/testmgr.c
+> @@ -40,7 +40,7 @@ static bool notests;
+>  module_param(notests, bool, 0644);
+>  MODULE_PARM_DESC(notests, "disable crypto self-tests");
+>  
+> -static bool panic_on_fail;
+> +static bool panic_on_fail = true;
+>  module_param(panic_on_fail, bool, 0444);
+>  
+>  #ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+> -------------------------------------------------------------------------------
 
--- 
-Regards,
-Vincenzo
 
---->8---
+Seems legit, from the log:
 
-Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Date:   Wed Dec 4 16:58:55 2019 +0000
+<3>[   18.186181] rk3288-crypto ff8a0000.cypto-controller: [rk_load_data:123] pcopy err
+<3>[   18.199432] alg: skcipher: ecb-aes-rk encryption failed on test vector \"random: len=0 klen=32\"; expected_error=0, actual_error=-22, cfg=\"random: inplace use_finup nosimd src_divs=[100.0%@+2054] key_offset=16\"
+<0>[   18.220458] Kernel panic - not syncing: alg: self-tests for ecb-aes-rk (ecb(aes)) failed in panic_on_fail mode!
 
-    arm: Fix __arch_get_hw_counter() access to CNTVCT
+Let me know if you need any help with testing a fix on this
+platform or anything.
 
-    __arch_get_hw_counter() should check clock_mode to see if it can access
-    CNTVCT. With the conversion to unified vDSO this check has been left out.
+Also, as you probably only want this to be enabled in KernelCI
+and not merged upstream, we could have a config fragment to
+enable the config with your branch and maybe even others.
 
-    This causes on imx v6 and v7 (imx_v6_v7_defconfig) and other platforms to
-    hang at boot during the execution of the init process as per below:
+Guillaume
 
-    [   19.976852] Run /sbin/init as init process
-    [   20.044931] Kernel panic - not syncing: Attempted to kill init!
-    exitcode=0x00000004
 
-    Fix the problem verifying that clock_mode is set coherently before
-    accessing CNTVCT.
-
-    Cc: Russell King <linux@armlinux.org.uk>
-    Reported-by: Guenter Roeck <linux@roeck-us.net>
-    Investigated-by: Arnd Bergmann <arnd@arndb.de>
-    Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-
-diff --git a/arch/arm/include/asm/vdso/gettimeofday.h
-b/arch/arm/include/asm/vdso/gettimeofday.h
-index 5b879ae7afc1..0ad2429c324f 100644
---- a/arch/arm/include/asm/vdso/gettimeofday.h
-+++ b/arch/arm/include/asm/vdso/gettimeofday.h
-@@ -75,6 +75,9 @@ static __always_inline u64 __arch_get_hw_counter(int clock_mode)
- #ifdef CONFIG_ARM_ARCH_TIMER
-        u64 cycle_now;
-
-+       if (!clock_mode)
-+               return -EINVAL;
-+
-        isb();
-        cycle_now = read_sysreg(CNTVCT);
-
+> Git bisection log:
+> 
+> -------------------------------------------------------------------------------
+> git bisect start
+> # good: [b94ae8ad9fe79da61231999f347f79645b909bda] Merge tag 'seccomp-v5.5-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+> git bisect good b94ae8ad9fe79da61231999f347f79645b909bda
+> # bad: [16839329da69263e7360f3819bae01bcf4b220ec] enable extra tests by default
+> git bisect bad 16839329da69263e7360f3819bae01bcf4b220ec
+> # good: [25cbf24a7eec7c3dee4113b2e98b572e128009b7] crypto: aead - move crypto_aead_maxauthsize() to <crypto/aead.h>
+> git bisect good 25cbf24a7eec7c3dee4113b2e98b572e128009b7
+> # good: [7b19c7a82950ed034645fa92adce29cd6163ed3e] crypto: testmgr - check skcipher min_keysize
+> git bisect good 7b19c7a82950ed034645fa92adce29cd6163ed3e
+> # good: [062752a354aaf03b46b86cba5fdaa2fd5c932860] crypto: testmgr - create struct aead_extra_tests_ctx
+> git bisect good 062752a354aaf03b46b86cba5fdaa2fd5c932860
+> # good: [2cd56a00fff8584e342164c65e6b55da61f79c4a] crypto: testmgr - generate inauthentic AEAD test vectors
+> git bisect good 2cd56a00fff8584e342164c65e6b55da61f79c4a
+> # first bad commit: [16839329da69263e7360f3819bae01bcf4b220ec] enable extra tests by default
+> -------------------------------------------------------------------------------
+> 
 
