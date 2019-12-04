@@ -2,95 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9E4112394
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ADB311239A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfLDH23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:28:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42342 "EHLO mx1.suse.de"
+        id S1727084AbfLDHa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:30:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6746 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725958AbfLDH23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:28:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 349DBACA5;
-        Wed,  4 Dec 2019 07:28:27 +0000 (UTC)
-Subject: Re: perf record doesn't work on rtd129x SoC
-To:     Wang YanQing <udknight@gmail.com>
-References: <20191204045559.GA10458@udknight>
-Cc:     linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-realtek-soc@lists.infradead.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <f90748d0-8112-3aa8-0c88-e35a8d6e72d3@suse.de>
-Date:   Wed, 4 Dec 2019 08:28:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1725958AbfLDHa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 02:30:57 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D9EB019BD49D9D2B1B99;
+        Wed,  4 Dec 2019 15:30:54 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 4 Dec 2019 15:30:44 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <eddie.huang@mediatek.com>, <sean.wang@mediatek.com>,
+        <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <matthias.bgg@gmail.com>, <dan.carpenter@oracle.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Mao Wenan <maowenan@huawei.com>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH v2 -next] rtc: mt6397: drop free_irq of devm_xx allocated irq
+Date:   Wed, 4 Dec 2019 15:28:26 +0800
+Message-ID: <20191204072826.117432-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191204063444.GF1765@kadam>
+References: <20191204063444.GF1765@kadam>
 MIME-Version: 1.0
-In-Reply-To: <20191204045559.GA10458@udknight>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi YanQing,
+rtc->irq is requested by devm_request_threaded_irq,
+and request_threaded_irq. IRQs requested with this
+function will be automatically freed on driver detach.
+This patch remove unused error label as well.
 
-+ LAKML + Mark + Will
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v2: remove error label as Dan Carpenter suggest.
+ drivers/rtc/rtc-mt6397.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-Am 04.12.19 um 05:55 schrieb Wang YanQing:
-> I use "perf record" to debug performance issue on RTD1296 SOC, it does't work, but
-> the "perf stat" is ok!
-
-Thanks for the report - which board, branch and (base) tag are you
-testing against? And are you building perf yourself from kernel sources,
-or are you using some distro package?
-
-I only have Busybox in my initrd on DS418; I have not tested perf.
-
-> After some dig in the kernel, I find the reason is no pmu overflow interrupt, I think
-> below pmu configuration isn't right for RTD1296:
-> "
->         arm_pmu: arm-pmu {
->                 compatible = "arm,cortex-a53-pmu";
->                 interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
->         };
-> "
-> 
-> We need 4 PMU SPI for RTD1296 (4 cores), and I guess the 48 isn't right too.
-
-Note that above rtd129x.dtsi snippet is not complete. See rtd1296.dtsi:
-
-&arm_pmu {
-	interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-};
-
-48 and high/4 match what I see in the latest BSP:
-
-https://github.com/BPI-SINOVOIP/BPI-M4-bsp/blob/master/linux-rtk/arch/arm64/boot/dts/realtek/rtd129x/rtd-1296.dtsi#L116
-
-> Any suggestion is welcome.
-> 
-> Thanks!
-
-The only difference I see is "arm,cortex-a53-pmu" vs. "arm,armv8-pmuv3".
-By my reading of arch/arm64/kernel/perf_event.c the only difference
-between the two should be the name and an extra cache_map. You could try
-the other compatible string in your .dts, but I doubt it'll help.
-
-Hopefully the Realtek or Arm guys can shed some light.
-
-Regards,
-Andreas
-
+diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+index 5249fc99fd5f..14f3c4915260 100644
+--- a/drivers/rtc/rtc-mt6397.c
++++ b/drivers/rtc/rtc-mt6397.c
+@@ -287,13 +287,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtc_dev->ops = &mtk_rtc_ops;
+ 
+ 	ret = rtc_register_device(rtc->rtc_dev);
+-	if (ret)
+-		goto out_free_irq;
+-
+-	return 0;
+-
+-out_free_irq:
+-	free_irq(rtc->irq, rtc);
+ 	return ret;
+ }
+ 
 -- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+2.20.1
+
