@@ -2,105 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5887A1137A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8771137B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:40:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfLDWeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 17:34:20 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33282 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbfLDWeU (ORCPT
+        id S1728214AbfLDWkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 17:40:49 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38635 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbfLDWks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 17:34:20 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y206so568048pfb.0;
-        Wed, 04 Dec 2019 14:34:19 -0800 (PST)
+        Wed, 4 Dec 2019 17:40:48 -0500
+Received: by mail-lf1-f66.google.com with SMTP id r14so866788lfm.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 14:40:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mj73wwGTzwobUOE10qqPsX0ktiedj3Elx2zmgNCccJ4=;
-        b=iwtBMr1Hy8CtJSLeMmSrtMcwOz8IGWK9v6+xEobUDXXH8VKGJqbTqEJKziPAyeSpfh
-         fFBDCFEBHtdsEVDinSCI9eTBZUh+yG2I5rIDJiUXno77WEgA+GLQovsTStPRniyylUHS
-         C/Ex0fjDVBBw/byoQ4R8gvurZIpQl8qyW90cCSmwPWIoMeA2m77RrgdH10p8ZVJS2GkJ
-         DHXDT+wctNxP/KWd3WiPZeB/s7ESwtkBgZTX5fntMlegK5HVvYI6e8vCAtlz7e61I6RF
-         nKvC3BCe1r5gv0uy15Hiignm1cdTiEbpsj/P9nlsStE5GURRf0J7ywG8tKe3APyWAquC
-         zsOA==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PXU0l6hsLNwOEAachYcf3O/SAhU82EqIUjlmH0om7uk=;
+        b=F96XFSXRmW86ugKdykHTCw+//Ckr2I37FfACIGnU9BIPH5uQDgSkjEaFAJjn5FOd9N
+         ghzJbE0W0zDlD4xBGKMbcWs9mdQDJlJ4RRJYRRWH2dTttCzUlySAKLwlWjfdlQd8Inpj
+         AqnY9qnCilK/APl5c93l5GJXqWw6TnVlqwrsKPxnYgTZNyiiQu7DegGpw3qSy4GvEviy
+         yvkyIeft4+SJpKxQs2wvH7TkCm/iL2cR87+qLAvXqYcjDTidd5oqLe+teimX0iYs5uob
+         CS8JXtTgcwFeaCuPij5HAP/bR66jxE9lT2dsEgLl1xkrD+tIrcB1JW5znVjUp6InIpZx
+         fIiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mj73wwGTzwobUOE10qqPsX0ktiedj3Elx2zmgNCccJ4=;
-        b=nwd8QrbwUT0FphsXR8EepEynSc7NsxHnYCnwOjuD0kD//n/5ziKqejHcfyY/3eiUxm
-         WQ1WXcdbuuhmNpIodvbIZ1Zy0apkhxK0OuT7g8vxpkeSvzQxThuQY3juAlIivsIlrPox
-         TvAMRfnO7RCU/njlW2eRpyIQadpnQyYm2UmcQ/E5ZPobQsUVPVasspiN1MlU6SOBbBg3
-         1uRO5VgGQWzZ5RxlthP/h+3kzaO8bYjcsEPrj8Mgmjt3EY3T/5tzBS2cBmZ6PNEreq/E
-         hxw0wuu/Y65+pBVATKn+jlm+gT1kpa1EFUEbQh+cntRYVKOmV+rdvUeY8ScS+E5LDyLD
-         +EKw==
-X-Gm-Message-State: APjAAAX+nPhl+kGZeIlPxnnhfN4v2aCwj5fEoAfGtu4C+y9tnhsyB6ez
-        1fpDjx4TJxAu2xc3lCG2CQUAK7RUtCj5Q0MSgJQ=
-X-Google-Smtp-Source: APXvYqzPL1VrsxAaAH8m3fWGppI2f1+2DcKVlmnPfqF6XpjI2H4L2ZPs+A6+Lo5lRyIykXrMDIaljzx1oqqwPYahj9g=
-X-Received: by 2002:a63:2b51:: with SMTP id r78mr5964208pgr.4.1575498859478;
- Wed, 04 Dec 2019 14:34:19 -0800 (PST)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PXU0l6hsLNwOEAachYcf3O/SAhU82EqIUjlmH0om7uk=;
+        b=rBYgerIQMixk2i6NQD/5sa0OQ1UbnUzrl8XMIwKyFWb2+Ne0LV1cnSc3hRhUNGPyI6
+         77DrM3HFKBiYrYz2rMJt4QZP2rJhF/ZcBvS0jyW7+n+Vna7M1io3IbyNvOINvpJ4LVlO
+         lpZy3GYpd3q7ZzQbpQHrjlXS+Hf2gdJt+NFvBWJyEXYYvb/resirAyMLrcLR7XZ7kScf
+         O4z6txZoXHqy/htO70YpTR87SSlRJbAYroOChYXSE5XaRMr+BDfs0E+OpDCM+HXnDgzK
+         yRfZiHuumql6ZXSWORe1o955lRxNWhC9TKTjpAqFhwxVHKanuqQ3bLRC9fTSjV6HXT4l
+         Fbow==
+X-Gm-Message-State: APjAAAV04eTxcsxa6h989aA34MKp4yClZs0WrPYmJkVI0rkbyhqp8XkT
+        tsHbGezUNc65YhdCBzT9zhc=
+X-Google-Smtp-Source: APXvYqwIqR7t1ouhgP9BBoaid56UlfHiPWLcqeM8nXJ6uLkUo4RIKcPrFGz8TtL+baL1omb7r/wJVg==
+X-Received: by 2002:a19:4f46:: with SMTP id a6mr3490704lfk.143.1575499246564;
+        Wed, 04 Dec 2019 14:40:46 -0800 (PST)
+Received: from pc636 (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
+        by smtp.gmail.com with ESMTPSA id m16sm3932304ljb.47.2019.12.04.14.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 14:40:45 -0800 (PST)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Wed, 4 Dec 2019 23:40:37 +0100
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        Daniel Axtens <dja@axtens.net>, Qian Cai <cai@lca.pw>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        syzbot+82e323920b78d54aaed5@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/2] kasan: fix crashes on access to memory mapped by
+ vm_map_ram()
+Message-ID: <20191204224037.GA12896@pc636>
+References: <20191204204534.32202-1-aryabinin@virtuozzo.com>
 MIME-Version: 1.0
-References: <20191204155941.17814-1-brgl@bgdev.pl>
-In-Reply-To: <20191204155941.17814-1-brgl@bgdev.pl>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 5 Dec 2019 00:34:07 +0200
-Message-ID: <CAHp75VdiAtHtdrUP2EmLULh86oO37ha8si10gFKYRavXCEwRRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] gpiolib: add new ioctl() for monitoring changes
- in line info
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204204534.32202-1-aryabinin@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 6:03 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Currently there is no way for user-space to be informed about changes
-> in status of GPIO lines e.g. when someone else requests the line or its
-> config changes. We can only periodically re-read the line-info. This
-> is fine for simple one-off user-space tools, but any daemon that provides
-> a centralized access to GPIO chips would benefit hugely from an event
-> driven line info synchronization.
->
-> This patch adds a new ioctl() that allows user-space processes to reuse
-> the file descriptor associated with the character device for watching
-> any changes in line properties. Every such event contains the updated
-> line information.
->
-> Currently the events are generated on three types of status changes: when
-> a line is requested, when it's released and when its config is changed.
-> The first two are self-explanatory. For the third one: this will only
-> happen when another user-space process calls the new SET_CONFIG ioctl()
-> as any changes that can happen from within the kernel (i.e.
-> set_transitory() or set_debounce()) are of no interest to user-space.
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 4d3b3d60d893..a5412f14f57f 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1073,6 +1073,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	struct vmap_area *va, *pva;
+>  	unsigned long addr;
+>  	int purged = 0;
+> +	int ret = -EBUSY;
+>  
+>  	BUG_ON(!size);
+>  	BUG_ON(offset_in_page(size));
+> @@ -1139,6 +1140,10 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	va->va_end = addr + size;
+>  	va->vm = NULL;
+>  
+> +	ret = kasan_populate_vmalloc(addr, size);
+> +	if (ret)
+> +		goto out;
+> +
+But it introduces another issues when is CONFIG_KASAN_VMALLOC=y. If
+the kasan_populate_vmalloc() gets failed for some reason it just
+leaves the function, that will lead to waste of vmap space.
 
-> +/**
-> + * struct gpioline_info_changed - Information about a change in status
-> + * of a GPIO line
-> + * @timestamp: estimate of time of status change occurrence, in nanoseconds
-> + * @event_type: one of GPIOLINE_CHANGED_REQUESTED, GPIOLINE_CHANGED_RELEASED
-> + * and GPIOLINE_CHANGED_CONFIG
-> + * @info: updated line information
-> + */
-> +struct gpioline_info_changed {
-> +       __u64 timestamp;
-> +       __u32 event_type;
-> +       struct gpioline_info info;
-> +       __u32 padding[4]; /* for future use */
-> +};
+>  	spin_lock(&vmap_area_lock);
+>  	insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
+>  	spin_unlock(&vmap_area_lock);
+>
+     ret = kasan_populate_vmalloc(addr, size);
+     if (ret) {
+         free_vmap_area(va);
+         return ERR_PTR(-EBUSY);;
+     }
 
-Has this been tested against 64-bit kernel / 32-bit userspace case?
-
--- 
-With Best Regards,
-Andy Shevchenko
+> @@ -1169,8 +1174,9 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  		pr_warn("vmap allocation for size %lu failed: use vmalloc=<size> to increase size\n",
+>  			size);
+>  
+> +out:
+>  	kmem_cache_free(vmap_area_cachep, va);
+> -	return ERR_PTR(-EBUSY);
+> +	return ERR_PTR(ret);
+>  }
+>  
