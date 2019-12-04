@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE4A11334F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4960E11323A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfLDSNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:13:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42016 "EHLO mail.kernel.org"
+        id S1730579AbfLDSGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:06:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731694AbfLDSNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:13:04 -0500
+        id S1729976AbfLDSGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:06:36 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DE9120675;
-        Wed,  4 Dec 2019 18:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D989421772;
+        Wed,  4 Dec 2019 18:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483183;
-        bh=H8nhKXKNYwhdnZ1oxHBgqJQ/mhf3pJpP7CyzoovXYOM=;
+        s=default; t=1575482795;
+        bh=fIDkp3nQknwUGs/jEnpCYRRi9+4jX4CW2Ox9ygyMYls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I2haSGN5OPdse+JH8vzf+qpvHEC6gKpLF2CtdbH//ACY1pSckI/KfhKCavcoJSb4I
-         fTDYpQj2mUuyNjgqKfqZqy0HaCTiMNPT4WoHrBxMsPsUpzvenF3gQM1fMfg5m4u2bg
-         fNDBPovvMK+oTvok/sycOVEa0su+6DCNXGzDMBS8=
+        b=Cibv5LKQ94tqGT2y4C9E6vgHXrjyfjsBGahICzSIMs0BI/yxhuv/XiRmbZqszTruK
+         Dg08Y7mOF3835YNdOtrw/yWjTIJyaXr/eTwUkK+1cKPX4hgiIHy+BhH3sJ3LCh6ONt
+         YCBBrmx53c8dkEoynN+XUqIWecBvBuhD/MkxnqZQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Mueller <mimu@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 041/125] KVM: s390: unregister debug feature on failing arch init
-Date:   Wed,  4 Dec 2019 18:55:46 +0100
-Message-Id: <20191204175321.465417797@linuxfoundation.org>
+Subject: [PATCH 4.14 135/209] decnet: fix DN_IFREQ_SIZE
+Date:   Wed,  4 Dec 2019 18:55:47 +0100
+Message-Id: <20191204175332.530697021@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,65 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Mueller <mimu@linux.ibm.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
+[ Upstream commit 50c2936634bcb1db78a8ca63249236810c11a80f ]
 
-Make sure the debug feature and its allocated resources get
-released upon unsuccessful architecture initialization.
+Digging through the ioctls with Al because of the previous
+patches, we found that on 64-bit decnet's dn_dev_ioctl()
+is wrong, because struct ifreq::ifr_ifru is actually 24
+bytes (not 16 as expected from struct sockaddr) due to the
+ifru_map and ifru_settings members.
 
-A related indication of the issue will be reported as kernel
-message.
+Clearly, decnet expects the ioctl to be called with a struct
+like
+  struct ifreq_dn {
+    char ifr_name[IFNAMSIZ];
+    struct sockaddr_dn ifr_addr;
+  };
 
-Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+since it does
+  struct ifreq *ifr = ...;
+  struct sockaddr_dn *sdn = (struct sockaddr_dn *)&ifr->ifr_addr;
+
+This means that DN_IFREQ_SIZE is too big for what it wants on
+64-bit, as it is
+  sizeof(struct ifreq) - sizeof(struct sockaddr) +
+  sizeof(struct sockaddr_dn)
+
+This assumes that sizeof(struct sockaddr) is the size of ifr_ifru
+but that isn't true.
+
+Fix this to use offsetof(struct ifreq, ifr_ifru).
+
+This indeed doesn't really matter much - the result is that we
+copy in/out 8 bytes more than we should on 64-bit platforms. In
+case the "struct ifreq_dn" lands just on the end of a page though
+it might lead to faults.
+
+As far as I can tell, it has been like this forever, so it seems
+very likely that nobody cares.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ net/decnet/dn_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 37c254677ccda..d8fd2eadcda7f 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -319,19 +319,30 @@ static void kvm_s390_cpu_feat_init(void)
+diff --git a/net/decnet/dn_dev.c b/net/decnet/dn_dev.c
+index df042b6d80b83..22876a197ebec 100644
+--- a/net/decnet/dn_dev.c
++++ b/net/decnet/dn_dev.c
+@@ -56,7 +56,7 @@
+ #include <net/dn_neigh.h>
+ #include <net/dn_fib.h>
  
- int kvm_arch_init(void *opaque)
- {
-+	int rc;
-+
- 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
- 	if (!kvm_s390_dbf)
- 		return -ENOMEM;
+-#define DN_IFREQ_SIZE (sizeof(struct ifreq) - sizeof(struct sockaddr) + sizeof(struct sockaddr_dn))
++#define DN_IFREQ_SIZE (offsetof(struct ifreq, ifr_ifru) + sizeof(struct sockaddr_dn))
  
- 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
--		debug_unregister(kvm_s390_dbf);
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto out_debug_unreg;
- 	}
- 
- 	kvm_s390_cpu_feat_init();
- 
- 	/* Register floating interrupt controller interface. */
--	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	if (rc) {
-+		pr_err("Failed to register FLIC rc=%d\n", rc);
-+		goto out_debug_unreg;
-+	}
-+	return 0;
-+
-+out_debug_unreg:
-+	debug_unregister(kvm_s390_dbf);
-+	return rc;
- }
- 
- void kvm_arch_exit(void)
+ static char dn_rt_all_end_mcast[ETH_ALEN] = {0xAB,0x00,0x00,0x04,0x00,0x00};
+ static char dn_rt_all_rt_mcast[ETH_ALEN]  = {0xAB,0x00,0x00,0x03,0x00,0x00};
 -- 
 2.20.1
 
