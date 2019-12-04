@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9D1B11334C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00461113231
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731726AbfLDSNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:13:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
+        id S1730149AbfLDSGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:06:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731714AbfLDSNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:13:11 -0500
+        id S1728703AbfLDSGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:06:15 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4442E20675;
-        Wed,  4 Dec 2019 18:13:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6979C2081B;
+        Wed,  4 Dec 2019 18:06:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483190;
-        bh=7B2zsv4wmb26jk/t27o3Uj0Jm6oJDggdc1ltkcsGrAc=;
+        s=default; t=1575482774;
+        bh=/L/TkAQJT0J4xvQNLca+HqP2gcZgkXxvLBXfz2f2Gc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AIitDm7o9WlDatRUvQrd8u4C7PUf5+aRBl8ZR1GxR3X3nGXyygsbz8ajIps0by3dD
-         2ee/XrMm/93LbC4fTTJCpfqF9EWPPhs2QXElOogzoa/0ZLWBvd+KpQx53VPwi53PYP
-         UWcOF3UPeGNhxnRmdeF9VXcyE5BTF9KoE0ce+g1Q=
+        b=dlmHFIyF3+kCct3FjBC6UpyngS+GSHBJYrEKcHmj5j79He1wE3fCMUwJ2DXUbb6nZ
+         dJanG1ZmFofxjlywlSy3gAbJvmVFGQzaDQ1G11CsvQNLFnXTJXNARSK/XTMz+YlZnE
+         wwU9jtbNDdV4aPgJGaVt+5gjPWTwohBRc1n+mMFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lepton Wu <ytht.net@gmail.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 034/125] VSOCK: bind to random port for VMADDR_PORT_ANY
-Date:   Wed,  4 Dec 2019 18:55:39 +0100
-Message-Id: <20191204175321.062982160@linuxfoundation.org>
+Subject: [PATCH 4.14 128/209] net/core/neighbour: tell kmemleak about hash tables
+Date:   Wed,  4 Dec 2019 18:55:40 +0100
+Message-Id: <20191204175331.916266715@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +45,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lepton Wu <ytht.net@gmail.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-[ Upstream commit 8236b08cf50f85bbfaf48910a0b3ee68318b7c4b ]
+[ Upstream commit 85704cb8dcfd88d351bfc87faaeba1c8214f3177 ]
 
-The old code always starts from fixed port for VMADDR_PORT_ANY. Sometimes
-when VMM crashed, there is still orphaned vsock which is waiting for
-close timer, then it could cause connection time out for new started VM
-if they are trying to connect to same port with same guest cid since the
-new packets could hit that orphaned vsock. We could also fix this by doing
-more in vhost_vsock_reset_orphans, but any way, it should be better to start
-from a random local port instead of a fixed one.
+This fixes false-positive kmemleak reports about leaked neighbour entries:
 
-Signed-off-by: Lepton Wu <ytht.net@gmail.com>
-Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
+unreferenced object 0xffff8885c6e4d0a8 (size 1024):
+  comm "softirq", pid 0, jiffies 4294922664 (age 167640.804s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 20 2c f3 83 ff ff ff ff  ........ ,......
+    08 c0 ef 5f 84 88 ff ff 01 8c 7d 02 01 00 00 00  ..._......}.....
+  backtrace:
+    [<00000000748509fe>] ip6_finish_output2+0x887/0x1e40
+    [<0000000036d7a0d8>] ip6_output+0x1ba/0x600
+    [<0000000027ea7dba>] ip6_send_skb+0x92/0x2f0
+    [<00000000d6e2111d>] udp_v6_send_skb.isra.24+0x680/0x15e0
+    [<000000000668a8be>] udpv6_sendmsg+0x18c9/0x27a0
+    [<000000004bd5fa90>] sock_sendmsg+0xb3/0xf0
+    [<000000008227b29f>] ___sys_sendmsg+0x745/0x8f0
+    [<000000008698009d>] __sys_sendmsg+0xde/0x170
+    [<00000000889dacf1>] do_syscall_64+0x9b/0x400
+    [<0000000081cdb353>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    [<000000005767ed39>] 0xffffffffffffffff
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/vmw_vsock/af_vsock.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/core/neighbour.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 7566395e526d2..18f377306884b 100644
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -97,6 +97,7 @@
- #include <linux/mutex.h>
- #include <linux/net.h>
- #include <linux/poll.h>
-+#include <linux/random.h>
- #include <linux/skbuff.h>
- #include <linux/smp.h>
- #include <linux/socket.h>
-@@ -501,9 +502,13 @@ out:
- static int __vsock_bind_stream(struct vsock_sock *vsk,
- 			       struct sockaddr_vm *addr)
- {
--	static u32 port = LAST_RESERVED_PORT + 1;
-+	static u32 port = 0;
- 	struct sockaddr_vm new_addr;
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index eb3efeabac91d..9a28a21a51f05 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -18,6 +18,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-+	if (!port)
-+		port = LAST_RESERVED_PORT + 1 +
-+			prandom_u32_max(U32_MAX - LAST_RESERVED_PORT);
-+
- 	vsock_addr_init(&new_addr, addr->svm_cid, addr->svm_port);
+ #include <linux/slab.h>
++#include <linux/kmemleak.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -361,12 +362,14 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+ 	ret = kmalloc(sizeof(*ret), GFP_ATOMIC);
+ 	if (!ret)
+ 		return NULL;
+-	if (size <= PAGE_SIZE)
++	if (size <= PAGE_SIZE) {
+ 		buckets = kzalloc(size, GFP_ATOMIC);
+-	else
++	} else {
+ 		buckets = (struct neighbour __rcu **)
+ 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+ 					   get_order(size));
++		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
++	}
+ 	if (!buckets) {
+ 		kfree(ret);
+ 		return NULL;
+@@ -386,10 +389,12 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
+ 	size_t size = (1 << nht->hash_shift) * sizeof(struct neighbour *);
+ 	struct neighbour __rcu **buckets = nht->hash_buckets;
  
- 	if (addr->svm_port == VMADDR_PORT_ANY) {
+-	if (size <= PAGE_SIZE)
++	if (size <= PAGE_SIZE) {
+ 		kfree(buckets);
+-	else
++	} else {
++		kmemleak_free(buckets);
+ 		free_pages((unsigned long)buckets, get_order(size));
++	}
+ 	kfree(nht);
+ }
+ 
 -- 
 2.20.1
 
