@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7342D112830
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 10:45:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA72112865
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 10:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfLDJph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 04:45:37 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11929 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfLDJpg (ORCPT
+        id S1727388AbfLDJt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 04:49:59 -0500
+Received: from mail-vk1-f176.google.com ([209.85.221.176]:36345 "EHLO
+        mail-vk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfLDJt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 04:45:36 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5de7803b0000>; Wed, 04 Dec 2019 01:45:32 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 04 Dec 2019 01:45:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 04 Dec 2019 01:45:35 -0800
-Received: from [10.21.133.51] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Dec
- 2019 09:45:33 +0000
-Subject: Re: [PATCH 4.19 000/321] 4.19.88-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20191203223427.103571230@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
-Date:   Wed, 4 Dec 2019 09:45:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 04:49:59 -0500
+Received: by mail-vk1-f176.google.com with SMTP id i4so1952157vkc.3;
+        Wed, 04 Dec 2019 01:49:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pPIJ9M8+mSe3OeAXCE+fj/3dGRagMu8jXvBF/uDza34=;
+        b=cXtA9Yptfjo8ePQAqvUGePG60nWRObXSX42QTc+c9FwtujDvR9ZEnH4F+TSMnpA0Wh
+         oC4zo10iCmvaHbQ2tY1mcsutd71XBkBZxHBpsa+OMIKSFjHw4DnqKkNjBnaBdNVgZviZ
+         QStk480dlgw0qkHufnq0myyOQrwFKS1amp6vOXy/nBAFHKrwjti4hyS6QMgMwxx/ASDc
+         z/w0o3d1mdWNZHgbRAbxXVgP/yR470eozuhigjg+M5z0ew7sPRoOajiP0UZ8c6N6aGgR
+         Nwcx0wY1PaA3VUwL4oum8Zse0r9sHnQx7iwt5Al5bti6ru0vs0kz9S8lEAIy5Hf4AegX
+         pBMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pPIJ9M8+mSe3OeAXCE+fj/3dGRagMu8jXvBF/uDza34=;
+        b=UO92pHQSGzMRcZ3RRqdt/sJVurbaeR1l5MVFaCvM6jzNAdtaSS2raLNURdgrk+rPRH
+         XReOJKAtET26Ta/Z+iW6ybXGRI4a34OFzAHGRtUTctBZqfCjVfrcnQByf5/54l/lhfiC
+         AtsWjKpotvrZP8jZQWCdHjdBE5OAitBZq9vqcV6p5aegrwINNsAbXoly4XaaWwWQ1kUZ
+         vJJRxPza9uvSnKn/JO5i9fbMD7QXlFeWCZyPom/8pEzOxjRvau0ASU8gsS+qBJdNNFBO
+         qW/6AYsXC0w/zMp4rpg6o1zd1G9lFCcmUP361xcob5IguT076RiKVa6S0oZ2Ha8E9G9v
+         BOzg==
+X-Gm-Message-State: APjAAAVngQ9dfJYI3WAG2GdRoRaDk0LE7ML8MCuge5m8X74lt/QmfOoH
+        2wjjq/dxU1plKcCR50FOV7YqofuXNKGwjhlxNJY=
+X-Google-Smtp-Source: APXvYqwcmEszgaP2f+aEFuCk64GgbEQC+Y3ruLWXWwDDA0lNHGnXECgPDn5L2c4lKmDY2WgkAnD6nw9PVtHk309L/8c=
+X-Received: by 2002:a05:6122:1065:: with SMTP id k5mr1378302vko.14.1575452997897;
+ Wed, 04 Dec 2019 01:49:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575452732; bh=26kyV1gW8PkF4sKzVfX5NP+tngMmMEqR9KtT7T85FsI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Yx0L+75pxw8ZP0uaEQ5SM3bjGZqwgInjobvUKwV8P5F3PIgHm4bpjZju6W+VE2wwS
-         4dev6EXK3woPZ/KGEXl+KqXYzdvI3Fq+1ldHOE1kXL2toeJJg91vggQKUSdG5UGR0w
-         3EjqY/NesEP0jZCFFTzKodk2DOGKkBrhDXPJbvj9/J/AD4MhZE7yiDFKBM0Hxy8SRw
-         11ZvC59DJnib1BVC4+Z1d+RRJDu9wYk8OZ8qykIXMdD4JzeGaeg6rF6mQ3g95g+UZd
-         WZyM0BRSB6B8Z2t3BXHiMPFizyTxRPiIGx7Mw+Il2h+s4OOvKkmoVRkG/U7F1LMsDj
-         UW6vimPZAmNUg==
+References: <CAOuPNLh8dsSCq850afbj4OiHhZ2swBWZP=BTUrXrXhdpTjZs+A@mail.gmail.com>
+ <CAK7N6vpawfLSVcHCg_3aQ0M8L=j77ZeGfmUZ-J4hpUkWu0fkWA@mail.gmail.com>
+In-Reply-To: <CAK7N6vpawfLSVcHCg_3aQ0M8L=j77ZeGfmUZ-J4hpUkWu0fkWA@mail.gmail.com>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Wed, 4 Dec 2019 15:19:46 +0530
+Message-ID: <CAOuPNLii26WcDnwD7ZkMX6ux7VRspw7nMEKJK0QF+j95YCHPOw@mail.gmail.com>
+Subject: Re: interrupt handler not getting called after resume
+To:     anish singh <anish198519851985@gmail.com>
+Cc:     Kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        linux-pm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 4 Dec 2019 at 00:28, anish singh <anish198519851985@gmail.com> wrote:
+>
+> On Tue, Dec 3, 2019 at 6:12 AM Pintu Agarwal <pintu.ping@gmail.com> wrote:
+> >
+> > Hi All,
+> >
+> > I have one general query.
+> >
+> > If an interrupt handler is NOT getting called (for one device) after
+> > the system resume (from snapshot image), then what could be the issue?
+>
+> Most likely during resume the interrupt was not enabled. So check
+> irq status registers to see in the working and non working case.
+>
+Oh sorry, I forgot to mention one thing.
+After resume, I can see that the interrupts are visible under /proc/interrupts.
+# cat /proc/interrupts
+           CPU0       CPU1
+[...]
+416:          1          0       IPU  (null)
+417:          0          0       IPU  (null)
+418:          0          0       IPU  imx_drm  ===> HDMI
+419:       2242       2       IPU  imx_drm   ===> LCD
+[...]
 
-On 03/12/2019 22:31, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.88 release.
-> There are 321 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 05 Dec 2019 22:30:32 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.88-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-> Pseudo-Shortlog of commits:
-
-...
-
-> Ding Tao <miyatsu@qq.com>
->     arm64: dts: marvell: armada-37xx: Enable emmc on espressobin
-
-The above commit is causing the following build failure for ARM64 ...
-
-  DTC     arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb
-arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
-(phandle_references): /soc/internal-regs@d0000000/sdhci@d0000: Reference
-to non-existent node or label "sdio_pins"
-
-arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
-(phandle_references): /soc/internal-regs@d0000000/sdhci@d8000: Reference
-to non-existent node or label "mmc_pins"
-
-Cheers
-Jon
-
--- 
-nvpublic
+The interrupts are coming only for LCD display and thus its irq
+handler is getting called.
+But the interrupts are not coming for HDMI case, thus HDMI gives
+"vblank timeout issue".
+Apart from this I also tried calling enable_irq(irq) after resume, but
+it did not help much.
