@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C0D1132DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB8811325B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731609AbfLDSMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:12:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41054 "EHLO mail.kernel.org"
+        id S1730279AbfLDSHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:07:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730664AbfLDSMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:12:25 -0500
+        id S1730233AbfLDSHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:07:39 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AAB120674;
-        Wed,  4 Dec 2019 18:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02B4020833;
+        Wed,  4 Dec 2019 18:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483145;
-        bh=wHJe79NNS5CsHxiLb0Fd9Du263Rb0zhqLGb4CJ3nlQs=;
+        s=default; t=1575482859;
+        bh=a447VtLoBcHspGJtXTLPnO8EL1HGKQ6WjUQ/PY3aloY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VlohIWxCClo2rupVkw8NgrJ9NjNBZg7iRKJW6BKEg4bH4J8uhrlN9L4mALgA6PRnC
-         +Ix9VtK1ltqdPodUuFa95OYhyYQ9INUle9eE5ZPhFNL4B0WT4nOVeK+ve6PKkbmlNe
-         PlcEz9ovCVV4FLfFzPLN1WB/d0dzPD8KvFR6DwwM=
+        b=Iho0DmX3aOeh2j17CEIL1BNtzIjNp01GL56OGZzq/v0FFGs5eutxXZI2Rq5dSZYAS
+         27b99GaEHS6OZepssPaoowMhbSdI/JlgNjF+/NeEpmfQ0XXDzkTtGbGCSqrD8NueVg
+         N9BDytPatP0UvGwLTnSojQ3cLu0w0MllA7mfWCYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 069/125] regulator: tps65910: fix a missing check of return value
-Date:   Wed,  4 Dec 2019 18:56:14 +0100
-Message-Id: <20191204175323.179287296@linuxfoundation.org>
+        stable@vger.kernel.org, JD <jdtxs00@gmail.com>,
+        Paul Wouters <paul@nohats.ca>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: [PATCH 4.14 163/209] xfrm: Fix memleak on xfrm state destroy
+Date:   Wed,  4 Dec 2019 18:56:15 +0100
+Message-Id: <20191204175334.705921054@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
-[ Upstream commit cd07e3701fa6a4c68f8493ee1d12caa18d46ec6a ]
+commit 86c6739eda7d2a03f2db30cbee67a5fb81afa8ba upstream.
 
-tps65910_reg_set_bits() may fail. The fix checks if it fails, and if so,
-returns with its error code.
+We leak the page that we use to create skb page fragments
+when destroying the xfrm_state. Fix this by dropping a
+page reference if a page was assigned to the xfrm_state.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: cac2661c53f3 ("esp4: Avoid skb_cow_data whenever possible")
+Reported-by: JD <jdtxs00@gmail.com>
+Reported-by: Paul Wouters <paul@nohats.ca>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/regulator/tps65910-regulator.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/xfrm/xfrm_state.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
-index 696116ebdf50a..9cde7b0757011 100644
---- a/drivers/regulator/tps65910-regulator.c
-+++ b/drivers/regulator/tps65910-regulator.c
-@@ -1102,8 +1102,10 @@ static int tps65910_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pmic);
- 
- 	/* Give control of all register to control port */
--	tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
-+	err = tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
- 				DEVCTRL_SR_CTL_I2C_SEL_MASK);
-+	if (err < 0)
-+		return err;
- 
- 	switch (tps65910_chip_id(tps65910)) {
- 	case TPS65910:
--- 
-2.20.1
-
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -449,6 +449,8 @@ static void xfrm_state_gc_destroy(struct
+ 		x->type->destructor(x);
+ 		xfrm_put_type(x->type);
+ 	}
++	if (x->xfrag.page)
++		put_page(x->xfrag.page);
+ 	xfrm_dev_state_free(x);
+ 	security_xfrm_state_free(x);
+ 	kfree(x);
 
 
