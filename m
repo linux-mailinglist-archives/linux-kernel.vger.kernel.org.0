@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E18C71132EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF763113237
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:08:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfLDSND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:13:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41910 "EHLO mail.kernel.org"
+        id S1730564AbfLDSGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:06:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731687AbfLDSNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:13:00 -0500
+        id S1730024AbfLDSG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:06:28 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B627206DF;
-        Wed,  4 Dec 2019 18:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B2D620833;
+        Wed,  4 Dec 2019 18:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483178;
-        bh=zs1S8QTcATifZyvgM4wdwaUFVuzz3zhjmwNFWrMfG6c=;
+        s=default; t=1575482787;
+        bh=m46hbcDViVWHgP9ujJrVxd/nsrnZXJ5GEUJVDJ3t0e8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jSWWi97NS1sJX8GMlCMKpRa8qg4P2UGUbqnxMXF3gqbWCdsabvK4P/2gFPqa2h//S
-         Ucxftjs/9j6IZcjWM8egEVv8+55C2lYPujUH1g+NfUboMmPAkItqqJg1jvR4jYhuZ2
-         8OSXkcAbU7jcFuzC3pZtPdxbbGXt3Ttp81N0nMS4=
+        b=SmbCPz05r2JuORJNQdc/y4Tnxi/VKpw3DOW3TuG+/D39ktQHz2wEO+JglIVaKeUqu
+         koGAthXDKtUTzKRsvlP2+ZDS3OlXv531QJZvE5ICsuUIPYXVf7fHcCEhoYpUPQ9aAh
+         jsC0lgxhg6sCB/LdS7MzP53UWOTiyPlt1kIij2HA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>,
-        John Crispin <john@phrozen.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 039/125] pinctrl: xway: fix gpio-hog related boot issues
+Subject: [PATCH 4.14 132/209] gpu: ipu-v3: pre: dont trigger update if buffer address doesnt change
 Date:   Wed,  4 Dec 2019 18:55:44 +0100
-Message-Id: <20191204175321.352052626@linuxfoundation.org>
+Message-Id: <20191204175332.267410745@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,87 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Schiller <ms@dev.tdt.de>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit 9b4924da4711674e62d97d4f5360446cc78337af ]
+[ Upstream commit eb0200a4357da100064971689d3a0e9e3cf57f33 ]
 
-This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix gpio-hog
-related boot issues").
+On a NOP double buffer update where current buffer address is the same
+as the next buffer address, the SDW_UPDATE bit clears too late. As we
+are now using this bit to determine when it is safe to signal flip
+completion to userspace this will delay completion of atomic commits
+where one plane doesn't change the buffer by a whole frame period.
 
-It fixes the issue that the gpio ranges needs to be defined before
-gpiochip_add().
+Fix this by remembering the last buffer address and just skip the
+double buffer update if it would not change the buffer address.
 
-Therefore, we also have to swap the order of registering the pinctrl
-driver and registering the gpio chip.
-
-You also have to add the "gpio-ranges" property to the pinctrl device
-node to get it finally working.
-
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-Acked-by: John Crispin <john@phrozen.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+[p.zabel@pengutronix.de: initialize last_bufaddr in ipu_pre_configure]
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-xway.c | 39 +++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ drivers/gpu/ipu-v3/ipu-pre.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index dd85ad1807f52..8ea1c6e2a6b2b 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1748,14 +1748,6 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	}
- 	xway_pctrl_desc.pins = xway_info.pads;
+diff --git a/drivers/gpu/ipu-v3/ipu-pre.c b/drivers/gpu/ipu-v3/ipu-pre.c
+index 1d1612e28854b..6fd4af647f599 100644
+--- a/drivers/gpu/ipu-v3/ipu-pre.c
++++ b/drivers/gpu/ipu-v3/ipu-pre.c
+@@ -102,6 +102,7 @@ struct ipu_pre {
+ 	void			*buffer_virt;
+ 	bool			in_use;
+ 	unsigned int		safe_window_end;
++	unsigned int		last_bufaddr;
+ };
  
--	/* register the gpio chip */
--	xway_chip.parent = &pdev->dev;
--	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to register gpio chip\n");
--		return ret;
--	}
--
- 	/* setup the data needed by pinctrl */
- 	xway_pctrl_desc.name	= dev_name(&pdev->dev);
- 	xway_pctrl_desc.npins	= xway_chip.ngpio;
-@@ -1777,10 +1769,33 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+ static DEFINE_MUTEX(ipu_pre_list_mutex);
+@@ -177,6 +178,7 @@ void ipu_pre_configure(struct ipu_pre *pre, unsigned int width,
  
--	/* finish with registering the gpio range in pinctrl */
--	xway_gpio_range.npins = xway_chip.ngpio;
--	xway_gpio_range.base = xway_chip.base;
--	pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
-+	/* register the gpio chip */
-+	xway_chip.parent = &pdev->dev;
-+	xway_chip.owner = THIS_MODULE;
-+	xway_chip.of_node = pdev->dev.of_node;
-+	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register gpio chip\n");
-+		return ret;
-+	}
+ 	writel(bufaddr, pre->regs + IPU_PRE_CUR_BUF);
+ 	writel(bufaddr, pre->regs + IPU_PRE_NEXT_BUF);
++	pre->last_bufaddr = bufaddr;
+ 
+ 	val = IPU_PRE_PREF_ENG_CTRL_INPUT_PIXEL_FORMAT(0) |
+ 	      IPU_PRE_PREF_ENG_CTRL_INPUT_ACTIVE_BPP(active_bpp) |
+@@ -218,7 +220,11 @@ void ipu_pre_update(struct ipu_pre *pre, unsigned int bufaddr)
+ 	unsigned short current_yblock;
+ 	u32 val;
+ 
++	if (bufaddr == pre->last_bufaddr)
++		return;
 +
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(pdev->dev.of_node, "gpio-ranges")) {
-+		/* finish with registering the gpio range in pinctrl */
-+		xway_gpio_range.npins = xway_chip.ngpio;
-+		xway_gpio_range.base = xway_chip.base;
-+		pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
-+	}
-+
- 	dev_info(&pdev->dev, "Init done\n");
- 	return 0;
- }
+ 	writel(bufaddr, pre->regs + IPU_PRE_NEXT_BUF);
++	pre->last_bufaddr = bufaddr;
+ 
+ 	do {
+ 		if (time_after(jiffies, timeout)) {
 -- 
 2.20.1
 
