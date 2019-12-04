@@ -2,100 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCFBC112E7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F19112E80
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 16:31:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfLDPb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:31:26 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:57386 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728256AbfLDPbZ (ORCPT
+        id S1728490AbfLDPbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:31:37 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54622 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728384AbfLDPbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:31:25 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB4FTVrB117073;
-        Wed, 4 Dec 2019 15:31:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : in-reply-to : message-id : references : mime-version :
- content-type; s=corp-2019-08-05;
- bh=3HXTEHGjRHmK560JTL3C3ZVMunILMgZmaWDSgV/yAWc=;
- b=NavOD1sqByyqk0LtmIBRd41E+pizBK+QBKTPXQorgMkOR3N34bUeKcga6ZksLatgdlpZ
- ecF3d7hB8Vim/ut4EfNnmXVw9thzBFtAR1KiEkWKgmwwCA2BjcbfjakIx7njcy7Mtyrn
- dwJCWhspPecbwtaeCJ7RHU0cs8ZpDyKXJp2aH2JWVMpG1NAxOO8oHV2eMvHQ4vONYgIm
- Nq5egI+u32gElcEVuwuJyrB06P9qwSc48jDrUUx42dEb7Ei/xWdp9evKaQznaRKm1mko
- Wy0rEi83SfZ1+BDcbHDAz+sWiMGU8/nojfMUxj+ZRfIFau1mQslp+KjKUIqlqEjMCT3v gA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2wkgcqf3wv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Dec 2019 15:31:01 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB4FTODa195008;
-        Wed, 4 Dec 2019 15:31:00 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2wp16aytx4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 04 Dec 2019 15:31:00 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xB4FUxiF020567;
-        Wed, 4 Dec 2019 15:30:59 GMT
-Received: from dhcp-10-175-179-22.vpn.oracle.com (/10.175.179.22)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 04 Dec 2019 07:30:59 -0800
-Date:   Wed, 4 Dec 2019 15:30:46 +0000 (GMT)
-From:   Alan Maguire <alan.maguire@oracle.com>
-X-X-Sender: alan@dhcp-10-175-179-22.vpn.oracle.com
-To:     Iurii Zaikin <yzaikin@google.com>
-cc:     Alan Maguire <alan.maguire@oracle.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        catalin.marinas@arm.com, joe.lawrence@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
-        andriy.shevchenko@linux.intel.com, corbet@lwn.net,
-        David Gow <davidgow@google.com>, adilger.kernel@dilger.ca,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Knut Omang <knut.omang@oracle.com>
-Subject: Re: [PATCH v5 linux-kselftest-test 3/6] kunit: allow kunit tests to
- be loaded as a module
-In-Reply-To: <CAAXuY3rYZHac4o1bqqnbR_1g12dtqmJHVp8Taky00J4-+2hwZA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.20.1912041530210.5511@dhcp-10-175-179-22.vpn.oracle.com>
-References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com> <1575374868-32601-4-git-send-email-alan.maguire@oracle.com> <CAAXuY3rYZHac4o1bqqnbR_1g12dtqmJHVp8Taky00J4-+2hwZA@mail.gmail.com>
-User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
+        Wed, 4 Dec 2019 10:31:37 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b11so139731wmj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:31:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=ijoLCBnJ3pPexA/GR1FIE4d3lIT82dN/vPnRiftiEjE=;
+        b=E3DsFqNYYoNk3wJ8krQcMebT9+rMBTieirdWX7fi/YE5D0FA1P8YnZ4k8ZZNAJObnb
+         fwLjJ+H6rCS2tv9FYx6CjYeL8ThmCGHLTgz1oQ2HYmorHjwTAm/xeNKu04RpHTjQgQSG
+         AGMUyh6S3BMEQ2BLImO5bJKMED3wiqljPM4VykXcD+mEnl571jShECGkL0tKNNGvDoji
+         nfb8k2Z2q5tf+39Edjv03J1+IuyiwI+cL3VIBnhH/7Rb68MAKPpO7r9CJBczn9CI13DP
+         V6MxlO0bM2m5y3GEm0o639CBJoTN6oHCbL6mrpT1tHVhxqbw3lA4dmRFoeoT9dGPwlCV
+         RyAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=ijoLCBnJ3pPexA/GR1FIE4d3lIT82dN/vPnRiftiEjE=;
+        b=q+/9qEyZyaVr26CPDeCklTKgn8X9k62bua1NqiYKx4al1qiBj2p0huSJRzWz8eGr+s
+         3eJcLeihWQxCtVhNwfZnKYDhhh8OaZrHjyQJQujxCDzIASONmdLDfXcVOD9Vc2Xjs8uC
+         JvuWBQA//4HTuqW2wPm61J5sUw49Iws1fEPcV35mEa2XliP9SUmwovKb0BmESD6Fq0+o
+         t5crfWJ06ZPjiOTRFEEDFNOz2Tj0fY18rV6jQe1RDolrdI9PhrovAK1qQxiVHdt9qIoA
+         vK9hmA+R3vLvvgUvnEB7RomVnqw1tTquiBVxyfgMJrtYpwtdEBBrp2UB73PcI5PtMfzL
+         sqIA==
+X-Gm-Message-State: APjAAAXE+facVqFIeCGeMlsc7z3g5c+869VDMR1qBUbP4GyBniLyNGMj
+        blMqubQXnUbUypPRcVjB15xtdQ==
+X-Google-Smtp-Source: APXvYqxbr+RDuWTYR72YaOoOSelg81h69keK+nXeReh9jM343ocfrIvOsVlWJnN/+vq+YcyK7XaPRw==
+X-Received: by 2002:a1c:a906:: with SMTP id s6mr133439wme.125.1575473494478;
+        Wed, 04 Dec 2019 07:31:34 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id u10sm6971432wmd.1.2019.12.04.07.31.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 07:31:33 -0800 (PST)
+Message-ID: <5de7d155.1c69fb81.c06f8.3583@mx.google.com>
+Date:   Wed, 04 Dec 2019 07:31:33 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9461 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=988
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912040129
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9461 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912040129
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Kernel: v5.4-9340-g16839329da69
+X-Kernelci-Tree: ardb
+X-Kernelci-Branch: for-kernelci
+X-Kernelci-Lab-Name: lab-collabora
+Subject: ardb/for-kernelci bisection: boot on rk3288-rock2-square
+To:     Ard Biesheuvel <ardb@kernel.org>, mgalka@collabora.com,
+        guillaume.tucker@collabora.com, broonie@kernel.org,
+        enric.balletbo@collabora.com, tomeu.vizoso@collabora.com,
+        khilman@baylibre.com
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Dec 2019, Iurii Zaikin wrote:
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-> > +ifeq ($(CONFIG_EXT4_KUNIT_TESTS),y)
-> >  ext4-$(CONFIG_EXT4_KUNIT_TESTS)                += inode-test.o
-> > +else
-> > +obj-$(CONFIG_EXT4_KUNIT_TESTS)         += ext4-inode-test.o
-> > +ext4-inode-test-objs                   += inode-test.o
-> > +endif
-> Why not rename it unconditionally?
-> 
+ardb/for-kernelci bisection: boot on rk3288-rock2-square
 
-Good point - I've fixed this in v6. Thanks for the review!
+Summary:
+  Start:      16839329da69 enable extra tests by default
+  Details:    https://kernelci.org/boot/id/5de79104990bc03e5a960f0b
+  Plain log:  https://storage.kernelci.org//ardb/for-kernelci/v5.4-9340-g16=
+839329da69/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc-8/=
+lab-collabora/boot-rk3288-rock2-square.txt
+  HTML log:   https://storage.kernelci.org//ardb/for-kernelci/v5.4-9340-g16=
+839329da69/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc-8/=
+lab-collabora/boot-rk3288-rock2-square.html
+  Result:     16839329da69 enable extra tests by default
 
-Alan
+Checks:
+  revert:     PASS
+  verify:     PASS
+
+Parameters:
+  Tree:       ardb
+  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git
+  Branch:     for-kernelci
+  Target:     rk3288-rock2-square
+  CPU arch:   arm
+  Lab:        lab-collabora
+  Compiler:   gcc-8
+  Config:     multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
+  Test suite: boot
+
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit 16839329da69263e7360f3819bae01bcf4b220ec
+Author: Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue Dec 3 12:29:31 2019 +0000
+
+    enable extra tests by default
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 5575d48473bd..36af840aa820 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -140,7 +140,6 @@ if CRYPTO_MANAGER2
+ =
+
+ config CRYPTO_MANAGER_DISABLE_TESTS
+ 	bool "Disable run-time self tests"
+-	default y
+ 	help
+ 	  Disable run-time self tests that normally take place at
+ 	  algorithm registration.
+@@ -148,6 +147,7 @@ config CRYPTO_MANAGER_DISABLE_TESTS
+ config CRYPTO_MANAGER_EXTRA_TESTS
+ 	bool "Enable extra run-time crypto self tests"
+ 	depends on DEBUG_KERNEL && !CRYPTO_MANAGER_DISABLE_TESTS
++	default y
+ 	help
+ 	  Enable extra run-time self tests of registered crypto algorithms,
+ 	  including randomized fuzz tests.
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 88f33c0efb23..5df87bcf6c4d 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -40,7 +40,7 @@ static bool notests;
+ module_param(notests, bool, 0644);
+ MODULE_PARM_DESC(notests, "disable crypto self-tests");
+ =
+
+-static bool panic_on_fail;
++static bool panic_on_fail =3D true;
+ module_param(panic_on_fail, bool, 0444);
+ =
+
+ #ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [b94ae8ad9fe79da61231999f347f79645b909bda] Merge tag 'seccomp-v5.5-=
+rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+git bisect good b94ae8ad9fe79da61231999f347f79645b909bda
+# bad: [16839329da69263e7360f3819bae01bcf4b220ec] enable extra tests by def=
+ault
+git bisect bad 16839329da69263e7360f3819bae01bcf4b220ec
+# good: [25cbf24a7eec7c3dee4113b2e98b572e128009b7] crypto: aead - move cryp=
+to_aead_maxauthsize() to <crypto/aead.h>
+git bisect good 25cbf24a7eec7c3dee4113b2e98b572e128009b7
+# good: [7b19c7a82950ed034645fa92adce29cd6163ed3e] crypto: testmgr - check =
+skcipher min_keysize
+git bisect good 7b19c7a82950ed034645fa92adce29cd6163ed3e
+# good: [062752a354aaf03b46b86cba5fdaa2fd5c932860] crypto: testmgr - create=
+ struct aead_extra_tests_ctx
+git bisect good 062752a354aaf03b46b86cba5fdaa2fd5c932860
+# good: [2cd56a00fff8584e342164c65e6b55da61f79c4a] crypto: testmgr - genera=
+te inauthentic AEAD test vectors
+git bisect good 2cd56a00fff8584e342164c65e6b55da61f79c4a
+# first bad commit: [16839329da69263e7360f3819bae01bcf4b220ec] enable extra=
+ tests by default
+---------------------------------------------------------------------------=
+----
