@@ -2,141 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE3F113065
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6426113088
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:13:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbfLDRCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:02:43 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:34930 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728801AbfLDRCm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:02:42 -0500
-Received: by mail-pj1-f66.google.com with SMTP id w23so72661pjd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 09:02:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Eu3IyJHMQvuKhJZsYp2g7JJil3jVEh0AYfjqL0o1IiE=;
-        b=QmoH0UexrWMCC1IIRTlz1PwJWQ6h2dxtiUk7KvO3NzCeEmPQZo3S3GKwDDa6xuwAso
-         ZamUti0ojZ3jtqWW1PT1k+GCtau2iCzY1JRJUI0N8JxzE1f+lOz6PBNx/rzMdlcinqBu
-         1FTP8v36bHZVo/GlZYEGqdFxUWCYxHdxSBbOLJd/LUD/6raGJRBjaqyKOaUD5jl4EJJ/
-         LcOJkKnLuCMX9N2XsR2bssttYgqtw8euGbU2mPp3gb7dtbXQoKEwXT2/WxxVMFAVyV+Z
-         eipg2msnalCwO17Uhru4JhR0Q+VWryVf0Dh0SAwjZ4ITsQPp8csF1Co1ivCPwxes6CcB
-         qn/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Eu3IyJHMQvuKhJZsYp2g7JJil3jVEh0AYfjqL0o1IiE=;
-        b=p899SyXhZhdcql8Z8kYj5CpfsTFiREHUR8JNNCG9OB5UOHe10QgaIdYam71M5/DS9L
-         uchvtoYlKWk2Dm81etOcC2u9jbob/NWoCcAKDp3ugI6i+Oa7GXWumicCNgw4ypUXHZ6u
-         iadhNpChCbI4CTNWcsTe2Oqg+Pw5xROFXj/kjhJGfYTC1QQAnEhoajbGhKv+/sk5uxCl
-         ist3G+tE4XRHuF8zMOpY4sBuXgJMHfD1MDV9f7X+Mmu48VdmjR9EA05d4+Int/fuisZm
-         e/wfqRwQj302udR6vVvmzh4AbkcWx88AzZ3DqNyFWfwtOVBhywAW014jxkgaevx8otzw
-         u/3w==
-X-Gm-Message-State: APjAAAV4NSxgeDnSXA0vuelgbacupesBDr/yx11MPKktMcuX6hS/qAVL
-        aV44th3mHYpF2rzGA3UO0lEoZB5QKTgNhaQUAmOeaA==
-X-Google-Smtp-Source: APXvYqzrNQd3LocGGri7/gY6Hv0QqlU+RA0bb+qoQL4Gk6NCjiROT8Lilv2qq9FysgmHO6jzOSBR6S18uymGHTubEZg=
-X-Received: by 2002:a17:90a:1f4b:: with SMTP id y11mr4270989pjy.123.1575478961561;
- Wed, 04 Dec 2019 09:02:41 -0800 (PST)
+        id S1728850AbfLDRNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:13:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbfLDRNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:13:25 -0500
+Received: from localhost (unknown [217.68.49.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 126A32081B;
+        Wed,  4 Dec 2019 17:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575479604;
+        bh=yi8pZN5CQSKLpi2NID6vVJBfFqOTr4KpY2Z1FCauBzw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XNKq94QgXKX8nVhI/J7QhYiUDjhbwY8KtyxLNou9b9o1MV8OXgPfeFRKHi/gCizA0
+         rwSgo5EKKacd/cGU9qQ0Es9+LKKw+szgH3BHlNh06V5S1LDsI0H1apXEtKFqjFra5R
+         A8Z0lTI9u15NS6Z136HiA4LdFUPgEKGzhOhLvoKM=
+Date:   Wed, 4 Dec 2019 18:13:22 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Amol Grover <frextrite@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 00/46] 5.4.2-stable review
+Message-ID: <20191204171322.GB3627415@kroah.com>
+References: <20191203212705.175425505@linuxfoundation.org>
+ <20191204132318.GA14649@workstation-kernel-dev>
 MIME-Version: 1.0
-References: <20191204081307.138765-1-pihsun@chromium.org>
-In-Reply-To: <20191204081307.138765-1-pihsun@chromium.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 4 Dec 2019 09:02:30 -0800
-Message-ID: <CAKwvOdnLxXeGYfEL+fgVts3cW71gMsP42mysQYtKse_STUErzQ@mail.gmail.com>
-Subject: Re: [PATCH v2] wireless: Use offsetof instead of custom macro.
-To:     Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     linux-wireless@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:CLANG/LLVM BUILD SUPPORT" 
-        <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204132318.GA14649@workstation-kernel-dev>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 12:13 AM Pi-Hsun Shih <pihsun@chromium.org> wrote:
->
-> Use offsetof to calculate offset of a field to take advantage of
-> compiler built-in version when possible, and avoid UBSAN warning when
-> compiling with Clang:
->
-> ==================================================================
-> UBSAN: Undefined behaviour in net/wireless/wext-core.c:525:14
-> member access within null pointer of type 'struct iw_point'
-> CPU: 3 PID: 165 Comm: kworker/u16:3 Tainted: G S      W         4.19.23 #43
-> Workqueue: cfg80211 __cfg80211_scan_done [cfg80211]
-> Call trace:
->  dump_backtrace+0x0/0x194
->  show_stack+0x20/0x2c
->  __dump_stack+0x20/0x28
->  dump_stack+0x70/0x94
->  ubsan_epilogue+0x14/0x44
->  ubsan_type_mismatch_common+0xf4/0xfc
->  __ubsan_handle_type_mismatch_v1+0x34/0x54
->  wireless_send_event+0x3cc/0x470
->  ___cfg80211_scan_done+0x13c/0x220 [cfg80211]
->  __cfg80211_scan_done+0x28/0x34 [cfg80211]
->  process_one_work+0x170/0x35c
->  worker_thread+0x254/0x380
->  kthread+0x13c/0x158
->  ret_from_fork+0x10/0x18
-> ===================================================================
->
-> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-> ---
->
-> Change since v1:
->  * Add #include <stddef.h>
+On Wed, Dec 04, 2019 at 06:53:18PM +0530, Amol Grover wrote:
+> On Tue, Dec 03, 2019 at 11:35:20PM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.2 release.
+> > There are 46 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 05 Dec 2019 21:20:36 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.2-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
+> > 
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >     Linux 5.4.2-rc1
+> > 
+> > Hans de Goede <hdegoede@redhat.com>
+> >     platform/x86: hp-wmi: Fix ACPI errors caused by passing 0 as input size
+> > 
+> > Hans de Goede <hdegoede@redhat.com>
+> >     platform/x86: hp-wmi: Fix ACPI errors caused by too small buffer
+> > 
+> > Candle Sun <candle.sun@unisoc.com>
+> >     HID: core: check whether Usage Page item is after Usage ID items
+> > 
+> > Herbert Xu <herbert@gondor.apana.org.au>
+> >     crypto: talitos - Fix build error by selecting LIB_DES
+> > 
+> > Joel Stanley <joel@jms.id.au>
+> >     Revert "jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()"
+> > 
+> > Theodore Ts'o <tytso@mit.edu>
+> >     ext4: add more paranoia checking in ext4_expand_extra_isize handling
+> > 
+> > Heiner Kallweit <hkallweit1@gmail.com>
+> >     r8169: fix resume on cable plug-in
+> > 
+> > Heiner Kallweit <hkallweit1@gmail.com>
+> >     r8169: fix jumbo configuration for RTL8168evl
+> > 
+> > Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+> >     selftests: pmtu: use -oneline for ip route list cache
+> > 
+> > John Rutherford <john.rutherford@dektech.com.au>
+> >     tipc: fix link name length check
+> > 
+> > Jakub Kicinski <jakub.kicinski@netronome.com>
+> >     selftests: bpf: correct perror strings
+> > 
+> > Jakub Kicinski <jakub.kicinski@netronome.com>
+> >     selftests: bpf: test_sockmap: handle file creation failures gracefully
+> > 
+> > Jakub Kicinski <jakub.kicinski@netronome.com>
+> >     net/tls: use sg_next() to walk sg entries
+> > 
+> > Jakub Kicinski <jakub.kicinski@netronome.com>
+> >     net/tls: remove the dead inplace_crypto code
+> > 
+> > Jakub Kicinski <jakub.kicinski@netronome.com>
+> >     selftests/tls: add a test for fragmented messages
+> > 
+> 
+> Hi,
+> I'm not sure if this is relevant but I tested out the latest revision
+> of tools/testing/selftests/net/tls (run as sudo) with 5.3.9, 5.3.13,
+> and 5.4.1, and all of them resulted in Oops. I'm not sure that it
+> happens only on my PC but the old version worked fine on all 3 kernels.
+> 
+> More information available in this thread:
+> https://lore.kernel.org/stable/20191203171817.GA24581@workstation-portable/
 
-Thanks for following up on the feedback.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Any specific commit cause this issue?  Should I drop one/any of these?
 
->
-> ---
->  include/uapi/linux/wireless.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/include/uapi/linux/wireless.h b/include/uapi/linux/wireless.h
-> index 86eca3208b6b..a2c006a364e0 100644
-> --- a/include/uapi/linux/wireless.h
-> +++ b/include/uapi/linux/wireless.h
-> @@ -74,6 +74,8 @@
->  #include <linux/socket.h>              /* for "struct sockaddr" et al  */
->  #include <linux/if.h>                  /* for IFNAMSIZ and co... */
->
-> +#include <stddef.h>                     /* for offsetof */
-> +
->  /***************************** VERSION *****************************/
->  /*
->   * This constant is used to know the availability of the wireless
-> @@ -1090,8 +1092,7 @@ struct iw_event {
->  /* iw_point events are special. First, the payload (extra data) come at
->   * the end of the event, so they are bigger than IW_EV_POINT_LEN. Second,
->   * we omit the pointer, so start at an offset. */
-> -#define IW_EV_POINT_OFF (((char *) &(((struct iw_point *) NULL)->length)) - \
-> -                         (char *) NULL)
-> +#define IW_EV_POINT_OFF offsetof(struct iw_point, length)
->  #define IW_EV_POINT_LEN        (IW_EV_LCP_LEN + sizeof(struct iw_point) - \
->                          IW_EV_POINT_OFF)
->
->
-> base-commit: c5db92909beddadddb705b92d3388ea50b01e1a2
-> --
-> 2.24.0.393.g34dc348eaf-goog
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20191204081307.138765-1-pihsun%40chromium.org.
+thanks,
 
-
-
--- 
-Thanks,
-~Nick Desaulniers
+greg k-h
