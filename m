@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5D2112F4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26120112F4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbfLDP7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 10:59:52 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37006 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728669AbfLDP7r (ORCPT
+        id S1728950AbfLDQB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 11:01:27 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37014 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728663AbfLDP7u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:59:47 -0500
-Received: by mail-qt1-f196.google.com with SMTP id w47so238055qtk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:47 -0800 (PST)
+        Wed, 4 Dec 2019 10:59:50 -0500
+Received: by mail-qt1-f195.google.com with SMTP id w47so238236qtk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=2gHoWz5U3gDvwOIWS+f4ZdY50s/vcrKHXb/YTJoNTqU=;
-        b=a8S4mBC3Dt23xxnDE1I9wz9WiyUF1CmXE2b5cIfPza4Al587zhEJsQ3/UfRwm9U+G/
-         rRRqctcvpDnT6sJ4PjIsg0jEuIdwrHHFaf9DZrY+XcZa5X5HqfADC4/ZE/fK2jOaAWgU
-         W2eTwrnf5+BiTNu9IleEmtU0sXaYA1ww/f2Z04R08eCD67sNZB4PEOIQ3156ZCKhqt1Q
-         F/b9ovj2Jub3p4xim85ROV4ZHUG0gj54u/9VbLyh6qveLWICy/KpXEvfQm/MlfKFqDLS
-         8vFiPKLYJ57TxShn7SFwh0QWW3AfkDec3XUS+DjVhJwEFPhmbNHzu28bBSQFiNURWkoT
-         4eLA==
+        bh=sFepLZ6OnMRK4naYG+XlGBDsSgO0TlfIvhlIxKEb6bM=;
+        b=JXM+kNuk9RiCYtsIMlqMyIdJMHztdqZg6ijzEGxxBoF9lerD5P5KGUDjwUcMJS0S7r
+         ibicDlEt4RLrqxI+O7W4Fz48t9BPVxX017AGcAGQG01oqX9fCcZEG39xiCQC6r4eV/Bx
+         v2lI23dFHYdeB7kasjpnJaae4QVzJ38kW1H2Ofz0l15eyAMc9PwQHPEPu93Xr+TZa62N
+         JnGTxELo82oUym1FdKtT03COXJW1ONpyYG1MjzugbDrF4LjG8qQuNtjB9Uj/70daOJA4
+         qKiCe94BG+2kgt24Q8XBeUCwiZNzydHzwQCCLMemYIBgDEG3TfjDN7J2zxLMZDn0uWX4
+         APpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2gHoWz5U3gDvwOIWS+f4ZdY50s/vcrKHXb/YTJoNTqU=;
-        b=fTd6JIRjGyvOckWcrXllUlzUBt6eJXJOrfaB7M6QjktHAH2YoOvpmBxDX5N7Yde2/a
-         rkC3UG830dBBA+o35THvZOrqrmpHWhu1KdmP0rOPqznYAvFA8XRQdltBEe2Yt2ZSK3Gi
-         2H2UodustRR/LCJ0pjClIns+MylCKpOmkPGcAv8S8TWElqtilv38fMAs55bcSWwEfEF/
-         lLYUYtaWwlKurA+vyOQU0r36gxp0UX+dP0elJV5409IBTytHfWdVsg3fEDdVxCUdyTEi
-         kYedQFKJyRWqaLfEam+vaUo7h0SyDm66heqv4ogHPM6m+xBiWAmgaVjPNJTA3N1llEZZ
-         iBrw==
-X-Gm-Message-State: APjAAAWSjYgVzFl6ZSD+uU3LuuRr9YVU7bouNEapdg4urE+9E0BtGAdJ
-        CFrl+KHqDneU8lTF91ZoS6J1FA==
-X-Google-Smtp-Source: APXvYqx9KAIwGf5i0C+05hdOsoH1Qz53bF4Ua1D78Kp4D5OsFHhBK4l+6RncFcIz1n4N/yJalTasNg==
-X-Received: by 2002:ac8:5319:: with SMTP id t25mr3419613qtn.242.1575475186888;
-        Wed, 04 Dec 2019 07:59:46 -0800 (PST)
+        bh=sFepLZ6OnMRK4naYG+XlGBDsSgO0TlfIvhlIxKEb6bM=;
+        b=UuOa+JEtqBSKEpgIMOm4HbIyGMSJTZedxHodQq1M54k0g59bbQyxZM7ymv5t8oINrW
+         FtErPFvtDHWdy/moT4nbPUOLDIgPoPOTwKSb0HThxo9gMnw2JGnSv2D86UepaUwi+X6N
+         8vvJShQXUPZ7W2LBpbdNY48JpMh2AG9FHinJB9ycJnLotvOqABEgd7VxID0rBZYl8KNR
+         erAoLWkDmhCC/EbqZq3C0bNWc431WqWPtSYhUz5gPxbmZh1jiMMoJgyJmcnSTDzpdHGD
+         mywRAA2AKfd5tWOwr0nc3w/SFkuH6gHBI8X5MYSu57KeiquN7v5bB9Txge3G3U7Y3EHP
+         IXaw==
+X-Gm-Message-State: APjAAAXXDhxpZkmajTViHQZQv41XpgWsjsXdRnnPSndi3ubpOIQ2a4Ad
+        XKCw8zzBjtWaAkFejnZqA4TUUQ==
+X-Google-Smtp-Source: APXvYqx1pQqGZR+fje1UxGEllxPX0PSwVlnKObHzQ1pC9MqOEi/b0A2MPL6Hl2FZSZSFPrAFQuyz6g==
+X-Received: by 2002:ac8:7557:: with SMTP id b23mr1062511qtr.38.1575475189752;
+        Wed, 04 Dec 2019 07:59:49 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.45
+        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:59:46 -0800 (PST)
+        Wed, 04 Dec 2019 07:59:49 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v8 04/25] arm64: kexec: make dtb_mem always enabled
-Date:   Wed,  4 Dec 2019 10:59:17 -0500
-Message-Id: <20191204155938.2279686-5-pasha.tatashin@soleen.com>
+Subject: [PATCH v8 06/25] arm64: hibernate: use get_safe_page directly
+Date:   Wed,  4 Dec 2019 10:59:19 -0500
+Message-Id: <20191204155938.2279686-7-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
 References: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
@@ -68,56 +68,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, dtb_mem is enabled only when CONFIG_KEXEC_FILE is
-enabled. This adds ugly ifdefs to c files.
+create_safe_exec_page() uses hibernate's allocator to create a set of page
+table to map a single page that will contain the relocation code.
 
-Always enabled dtb_mem, when it is not used, it is NULL.
-Change the dtb_mem to phys_addr_t, as it is a physical address.
+Remove the allocator related arguments, and use get_safe_page directly, as
+it is done in other local functions in this file to simplify function
+prototype.
+
+Removing this function pointer makes it easier to refactor the code later.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Matthias Brugger <mbrugger@suse.com>
 ---
- arch/arm64/include/asm/kexec.h    | 4 ++--
- arch/arm64/kernel/machine_kexec.c | 6 +-----
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ arch/arm64/kernel/hibernate.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 12a561a54128..ad6afed69078 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -90,14 +90,14 @@ static inline void crash_prepare_suspend(void) {}
- static inline void crash_post_resume(void) {}
- #endif
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index ef46ce66d7e8..34297716643f 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -196,9 +196,7 @@ EXPORT_SYMBOL(arch_hibernation_header_restore);
+  */
+ static int create_safe_exec_page(void *src_start, size_t length,
+ 				 unsigned long dst_addr,
+-				 phys_addr_t *phys_dst_addr,
+-				 void *(*allocator)(gfp_t mask),
+-				 gfp_t mask)
++				 phys_addr_t *phys_dst_addr)
+ {
+ 	int rc = 0;
+ 	pgd_t *trans_pgd;
+@@ -206,7 +204,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	pud_t *pudp;
+ 	pmd_t *pmdp;
+ 	pte_t *ptep;
+-	unsigned long dst = (unsigned long)allocator(mask);
++	unsigned long dst = get_safe_page(GFP_ATOMIC);
  
--#ifdef CONFIG_KEXEC_FILE
- #define ARCH_HAS_KIMAGE_ARCH
+ 	if (!dst) {
+ 		rc = -ENOMEM;
+@@ -216,7 +214,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	memcpy((void *)dst, src_start, length);
+ 	__flush_icache_range(dst, dst + length);
  
- struct kimage_arch {
- 	void *dtb;
--	unsigned long dtb_mem;
-+	phys_addr_t dtb_mem;
- };
+-	trans_pgd = allocator(mask);
++	trans_pgd = (void *)get_safe_page(GFP_ATOMIC);
+ 	if (!trans_pgd) {
+ 		rc = -ENOMEM;
+ 		goto out;
+@@ -224,7 +222,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
  
-+#ifdef CONFIG_KEXEC_FILE
- extern const struct kexec_file_ops kexec_image_ops;
+ 	pgdp = pgd_offset_raw(trans_pgd, dst_addr);
+ 	if (pgd_none(READ_ONCE(*pgdp))) {
+-		pudp = allocator(mask);
++		pudp = (void *)get_safe_page(GFP_ATOMIC);
+ 		if (!pudp) {
+ 			rc = -ENOMEM;
+ 			goto out;
+@@ -234,7 +232,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
  
- struct kimage;
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 8e9c924423b4..ae1bad0156cd 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -203,11 +203,7 @@ void machine_kexec(struct kimage *kimage)
- 	 * In kexec_file case, the kernel starts directly without purgatory.
+ 	pudp = pud_offset(pgdp, dst_addr);
+ 	if (pud_none(READ_ONCE(*pudp))) {
+-		pmdp = allocator(mask);
++		pmdp = (void *)get_safe_page(GFP_ATOMIC);
+ 		if (!pmdp) {
+ 			rc = -ENOMEM;
+ 			goto out;
+@@ -244,7 +242,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 
+ 	pmdp = pmd_offset(pudp, dst_addr);
+ 	if (pmd_none(READ_ONCE(*pmdp))) {
+-		ptep = allocator(mask);
++		ptep = (void *)get_safe_page(GFP_ATOMIC);
+ 		if (!ptep) {
+ 			rc = -ENOMEM;
+ 			goto out;
+@@ -530,8 +528,7 @@ int swsusp_arch_resume(void)
  	 */
- 	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start,
--#ifdef CONFIG_KEXEC_FILE
--						kimage->arch.dtb_mem);
--#else
--						0);
--#endif
-+			 kimage->arch.dtb_mem);
- 
- 	BUG(); /* Should never get here. */
- }
+ 	rc = create_safe_exec_page(__hibernate_exit_text_start, exit_size,
+ 				   (unsigned long)hibernate_exit,
+-				   &phys_hibernate_exit,
+-				   (void *)get_safe_page, GFP_ATOMIC);
++				   &phys_hibernate_exit);
+ 	if (rc) {
+ 		pr_err("Failed to create safe executable page for hibernate_exit code.\n");
+ 		goto out;
 -- 
 2.24.0
 
