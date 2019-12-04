@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 114D2113389
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F24D1132D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731893AbfLDSRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:17:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40868 "EHLO mail.kernel.org"
+        id S1730794AbfLDSMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:12:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731569AbfLDSMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:12:19 -0500
+        id S1731594AbfLDSMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:12:21 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FBF920865;
-        Wed,  4 Dec 2019 18:12:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A188120675;
+        Wed,  4 Dec 2019 18:12:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483137;
-        bh=tDid7wWhwSEwo+cSH6ZJlxwNTRky9xCPIrL50w6xETA=;
+        s=default; t=1575483140;
+        bh=LHiUdUHDdThUMjt+1McqXD4GQsQ6DLH4P+4atOmQcvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q2rFIcknFZCNFjqNdGw17FSeU+fqoENBwegTBAnMAHA0P8VdBg3/iSEUFx9Hl5OtY
-         4+5dpn+jqWbPzcKZfGd9aO/RE4C7gv0GeLDtDzCze9sYMKD/5lmdNxeeMczdO2oa1L
-         R6KuWjrN1bROTO56pxt1haikCrz5WVwnPzvwNE7U=
+        b=bpsjrKXQCYUM6ddudViiuisxB3TRHvsHAbN1EWrIzuPVqQyFa9/rPadLX12rgbYYM
+         ++EbmwfPOD60axc4gCKzbWRWh+fNFd+GiRW0H8V6ZoWfHhw+hy4x/gJXOoD/UBdnP6
+         obk0/a2iyMEdTtjKLtwfqRQBXgPfdg1K2qrkBjHo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 066/125] drbd: reject attach of unsuitable uuids even if connected
-Date:   Wed,  4 Dec 2019 18:56:11 +0100
-Message-Id: <20191204175322.984130757@linuxfoundation.org>
+Subject: [PATCH 4.9 067/125] drbd: do not block when adjusting "disk-options" while IO is frozen
+Date:   Wed,  4 Dec 2019 18:56:12 +0100
+Message-Id: <20191204175323.049531441@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
 References: <20191204175308.377746305@linuxfoundation.org>
@@ -45,98 +45,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lars Ellenberg <lars.ellenberg@linbit.com>
 
-[ Upstream commit fe43ed97bba3b11521abd934b83ed93143470e4f ]
+[ Upstream commit f708bd08ecbdc23d03aaedf5b3311ebe44cfdb50 ]
 
-Multiple failure scenario:
-a) all good
-   Connected Primary/Secondary UpToDate/UpToDate
-b) lose disk on Primary,
-   Connected Primary/Secondary Diskless/UpToDate
-c) continue to write to the device,
-   changes only make it to the Secondary storage.
-d) lose disk on Secondary,
-   Connected Primary/Secondary Diskless/Diskless
-e) now try to re-attach on Primary
+"suspending" IO is overloaded.
+It can mean "do not allow new requests" (obviously),
+but it also may mean "must not complete pending IO",
+for example while the fencing handlers do their arbitration.
 
-This would have succeeded before, even though that is clearly the
-wrong data set to attach to (missing the modifications from c).
-Because we only compared our "effective" and the "to-be-attached"
-data generation uuid tags if (device->state.conn < C_CONNECTED).
+When adjusting disk options, we suspend io (disallow new requests), then
+wait for the activity-log to become unused (drain all IO completions),
+and possibly replace it with a new activity log of different size.
 
-Fix: change that constraint to (device->state.pdsk != D_UP_TO_DATE)
-compare the uuids, and reject the attach.
+If the other "suspend IO" aspect is active, pending IO completions won't
+happen, and we would block forever (unkillable drbdsetup process).
 
-This patch also tries to improve the reverse scenario:
-first lose Secondary, then Primary disk,
-then try to attach the disk on Secondary.
-
-Before this patch, the attach on the Secondary succeeds, but since commit
-drbd: disconnect, if the wrong UUIDs are attached on a connected peer
-the Primary will notice unsuitable data, and drop the connection hard.
-
-Though unfortunately at a point in time during the handshake where
-we cannot easily abort the attach on the peer without more
-refactoring of the handshake.
-
-We now reject any attach to "unsuitable" uuids,
-as long as we can see a Primary role,
-unless we already have access to "good" data.
+Fix this by skipping the activity log adjustment if the "al-extents"
+setting did not change. Also, in case it did change, fail early without
+blocking if it looks like we would block forever.
 
 Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c       |  6 +++---
- drivers/block/drbd/drbd_receiver.c | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+), 3 deletions(-)
+ drivers/block/drbd/drbd_nl.c | 37 ++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index abee91940a36d..ff26f676f24d1 100644
+index ff26f676f24d1..b809f325c2bea 100644
 --- a/drivers/block/drbd/drbd_nl.c
 +++ b/drivers/block/drbd/drbd_nl.c
-@@ -1927,9 +1927,9 @@ int drbd_adm_attach(struct sk_buff *skb, struct genl_info *info)
+@@ -1508,6 +1508,30 @@ static void sanitize_disk_conf(struct drbd_device *device, struct disk_conf *dis
+ 	}
+ }
+ 
++static int disk_opts_check_al_size(struct drbd_device *device, struct disk_conf *dc)
++{
++	int err = -EBUSY;
++
++	if (device->act_log &&
++	    device->act_log->nr_elements == dc->al_extents)
++		return 0;
++
++	drbd_suspend_io(device);
++	/* If IO completion is currently blocked, we would likely wait
++	 * "forever" for the activity log to become unused. So we don't. */
++	if (atomic_read(&device->ap_bio_cnt))
++		goto out;
++
++	wait_event(device->al_wait, lc_try_lock(device->act_log));
++	drbd_al_shrink(device);
++	err = drbd_check_al_size(device, dc);
++	lc_unlock(device->act_log);
++	wake_up(&device->al_wait);
++out:
++	drbd_resume_io(device);
++	return err;
++}
++
+ int drbd_adm_disk_opts(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	struct drbd_config_context adm_ctx;
+@@ -1570,15 +1594,12 @@ int drbd_adm_disk_opts(struct sk_buff *skb, struct genl_info *info)
  		}
  	}
  
--	if (device->state.conn < C_CONNECTED &&
--	    device->state.role == R_PRIMARY && device->ed_uuid &&
--	    (device->ed_uuid & ~((u64)1)) != (nbc->md.uuid[UI_CURRENT] & ~((u64)1))) {
-+	if (device->state.pdsk != D_UP_TO_DATE && device->ed_uuid &&
-+	    (device->state.role == R_PRIMARY || device->state.peer == R_PRIMARY) &&
-+            (device->ed_uuid & ~((u64)1)) != (nbc->md.uuid[UI_CURRENT] & ~((u64)1))) {
- 		drbd_err(device, "Can only attach to data with current UUID=%016llX\n",
- 		    (unsigned long long)device->ed_uuid);
- 		retcode = ERR_DATA_NOT_CURRENT;
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index bbd50d7dce43d..a10ff6e8c20b7 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -4452,6 +4452,25 @@ static int receive_state(struct drbd_connection *connection, struct packet_info
- 	if (peer_state.conn == C_AHEAD)
- 		ns.conn = C_BEHIND;
- 
-+	/* TODO:
-+	 * if (primary and diskless and peer uuid != effective uuid)
-+	 *     abort attach on peer;
-+	 *
-+	 * If this node does not have good data, was already connected, but
-+	 * the peer did a late attach only now, trying to "negotiate" with me,
-+	 * AND I am currently Primary, possibly frozen, with some specific
-+	 * "effective" uuid, this should never be reached, really, because
-+	 * we first send the uuids, then the current state.
-+	 *
-+	 * In this scenario, we already dropped the connection hard
-+	 * when we received the unsuitable uuids (receive_uuids().
-+	 *
-+	 * Should we want to change this, that is: not drop the connection in
-+	 * receive_uuids() already, then we would need to add a branch here
-+	 * that aborts the attach of "unsuitable uuids" on the peer in case
-+	 * this node is currently Diskless Primary.
-+	 */
-+
- 	if (device->p_uuid && peer_state.disk >= D_NEGOTIATING &&
- 	    get_ldev_if_state(device, D_NEGOTIATING)) {
- 		int cr; /* consider resync */
+-	drbd_suspend_io(device);
+-	wait_event(device->al_wait, lc_try_lock(device->act_log));
+-	drbd_al_shrink(device);
+-	err = drbd_check_al_size(device, new_disk_conf);
+-	lc_unlock(device->act_log);
+-	wake_up(&device->al_wait);
+-	drbd_resume_io(device);
+-
++	err = disk_opts_check_al_size(device, new_disk_conf);
+ 	if (err) {
++		/* Could be just "busy". Ignore?
++		 * Introduce dedicated error code? */
++		drbd_msg_put_info(adm_ctx.reply_skb,
++			"Try again without changing current al-extents setting");
+ 		retcode = ERR_NOMEM;
+ 		goto fail_unlock;
+ 	}
 -- 
 2.20.1
 
