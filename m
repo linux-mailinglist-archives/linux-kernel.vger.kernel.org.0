@@ -2,154 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48016112BD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E09112BEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:47:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfLDMn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:43:27 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39401 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbfLDMn1 (ORCPT
+        id S1727937AbfLDMq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:46:59 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46638 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbfLDMq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:43:27 -0500
-Received: by mail-pl1-f194.google.com with SMTP id o9so3136688plk.6;
-        Wed, 04 Dec 2019 04:43:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rroQt6MWI6gXv5LyOkAfcaRFmaX8lqvLShAzpXM9Ft8=;
-        b=ng5Uk4LKFFOh1mK0Ub9D1oVeuP5KRHZ0rkKuV3FtsnaGVOX2rqT+LueF1mQM8pCnDs
-         F/AafqRuEk3R4mCNu7nmM3L/MeU0VfQd14QLxj+QXV9rdq7WqdqwnveBP0YBRb44rbJV
-         wZoYP8+6WodwkTMoX+RrMRVtUAkNqMDqEzuprwvBdBggrpWXmvY5t5OTwfoTO1Pl/S9f
-         7Z5UPWH4K6GKvLfRHkI0BzL3zzEM/OPLHy+3wkto0x4ye0/0aExQtmXtWdBAV9YhPA6g
-         QCWOBvt4UnxewjKbbeKmdaDfnxG2ECopbS4CRGHV9oEgbONYt1pnJGrqNrDjQ9cMJcDU
-         mbcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rroQt6MWI6gXv5LyOkAfcaRFmaX8lqvLShAzpXM9Ft8=;
-        b=qEbUXljZ4uBBrk9sSQNCiOJ3iQK2jx4rfwpulFLbSOW6pXyGI8kwtyx8sLBgI5O89M
-         0mdcgVLrh4MOVzir77ftKlCUxzPrGLsSQnprEgMEdhAtKEda2bY5BJ6VJlkIf2taI7IG
-         5WO5Lfp2z6m78gB8kxUIdqFw0ThN1YJy/WL3U3JRV9r2igikq8r2Jf5t/W1ozAB5/rE/
-         mNawQkM4g5uoG2x9GFZ8N+c+uIaFYTu9YnRM7GGrO2iO4Ckmbr2cdZW1g3JSOYS02u5f
-         RzJ4dLMLF2hgl2mD/IYQ3dpwpeeK/5jGJHlLouxnreqaNf3pZDFGLGn2Jyhj0b/a/6Mg
-         096Q==
-X-Gm-Message-State: APjAAAWCwO5sike00u51AKOeoyElwPcVLv1ROTpRJXA9E7o9Lr2QflAK
-        OX9dkLIVbaTRoTe7WKlnWow7PoANywqQdanayaYV9Vtk
-X-Google-Smtp-Source: APXvYqz7AaBnpNMIJzne2dUq7oVvam/+4QrlvzHjQUCxAK3jUCAWujCihCWQIAOys66hOcMU+4f5alZ4AnA/TpY24Ho=
-X-Received: by 2002:a17:90a:c68f:: with SMTP id n15mr3156655pjt.20.1575463406708;
- Wed, 04 Dec 2019 04:43:26 -0800 (PST)
+        Wed, 4 Dec 2019 07:46:58 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4CkkgD061262;
+        Wed, 4 Dec 2019 06:46:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575463606;
+        bh=7qbekqxk5cyz305GNEwUDyut5GgLfq4GzPplRlk6THw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=f6PpFrzsuN9/5muENmAeFIPnOxWw0GvGFDJ6h/ZNf8dhKOl4oD/UtuABqnZ2zCz7J
+         qKn8X7tJ12O1rfx83fi9hsldZHRD8f2dSNHgMOFTRnqdlAr8CAAjDEhK5F++UQdePn
+         0SPQ1d+c9CnXOMrpm154+XUy0KpgxCJMQMgayr3I=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4Ckklx103420
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 4 Dec 2019 06:46:46 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
+ 2019 06:46:45 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 4 Dec 2019 06:46:45 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4CkjDu113804;
+        Wed, 4 Dec 2019 06:46:45 -0600
+Subject: Re: [PATCH v15 06/19] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     kbuild test robot <lkp@intel.com>, <kbuild-all@lists.01.org>,
+        <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20191028183629.11779-7-dmurphy@ti.com>
+ <201910302027.2hNdR993%lkp@intel.com>
+ <29321f74-8200-90cd-40f9-8f5bdb86e34e@ti.com> <20191125150730.GA3816@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e05148a1-2588-0b08-2bcf-1ef819c33683@ti.com>
+Date:   Wed, 4 Dec 2019 06:44:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191204101042.4275-5-cleger@kalray.eu>
-In-Reply-To: <20191204101042.4275-5-cleger@kalray.eu>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 4 Dec 2019 14:43:16 +0200
-Message-ID: <CAHp75VdQ6VooLVAfA1z98-bBcfQuR7AomaO8F19AGRjeBtByEQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] pinctrl: dw: add pinctrl support for dwapb gpio driver
-To:     Clement Leger <cleger@kalray.eu>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191125150730.GA3816@amd>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 12:12 PM Clement Leger <cleger@kalray.eu> wrote:
+Pavel
+
+On 11/25/19 9:07 AM, Pavel Machek wrote:
+> On Wed 2019-10-30 11:43:10, Dan Murphy wrote:
+>> Pavel
+>>
+>> On 10/30/19 7:07 AM, kbuild test robot wrote:
+>>> Hi Dan,
+>>>
+>>> I love your patch! Yet something to improve:
+>>>
+>>> [auto build test ERROR on j.anaszewski-leds/for-next]
+>> You might want to get your tree to be the base now.
+> Do you have an idea who I need to contact?
+
+Not sure maybe the mail list for the kbuild lkp@intel.com?
+
+
+
 >
-> Synopsys designware gpio controller also has pinmuxing functionnality.
-
-DesignWare
-pin muxing
-functionality
-
-(Please, run a spell checker)
-
-> Pinmuxing allows to choose between software and hardware mode. When
-
-Pin muxing
-
-> using hardware mode, an external signal controls the pin output.
->
-> This patch adds support for pinctrl framework in the gpio driver. This
-
-GPIO
-
-> support is conditionned by the snps,has-pinctrl device tree property.
-
-conditioned
-
-> Indeed, the functionnality can be detected only if the gpio IP has been
-
-functionality
-
-> configured using paremeters encoding which is not always present. If
-
-parameters
-
-> property is present, then the pinctrl will be registered and will
-
-> allow switching to the "hw" functionnality and hence enable the
-
-functionality
-
-> alternate function.
-
-> +static const struct pinctrl_pin_desc dwapb_pins[] = {
-...
-> +       DWAPB_PINCTRL_PIN(31)
-
-Keep comma in such cases.
-
-> +};
-
-Can't you split adding pin control data to a separate patch?
-
-> +/* One pin per group */
-> +static const char * const dwapb_gpio_groups[] = {
-...
-> +       "pin31"
-
-Keep comma here.
-
-> +};
-
-Can't we generate these lists dynamically?
-
-> +       dev_info(gpio->dev, "Setting func %s on pin %d",
-> +               dwapb_gpio_functions[selector], group);
-
-Noise!
-
-> +       ret = pinctrl_enable(port->pctl);
-> +       if (ret) {
-> +               dev_err(gpio->dev, "pinctrl enable failed\n");
-> +               return ret;
-> +       }
-
-Not sure why it's needed at all.
-
-> +       range = &port->range;
-> +       range->name = dev_name(gpio->dev);
-> +       range->id = port->idx;
-> +       range->pin_base = 0;
-> +       range->base = port->gc.base;
-> +       range->npins = pp->ngpio;
-> +       range->gc = &port->gc;
-> +
-> +       pinctrl_add_gpio_range(port->pctl, range);
-
-Can you use new callback for this?
-
-> -               .name   = "gpio-dwapb",
-> +               .name   = "pinctrl-dwapb",
-
-This will break existing users.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> Best regards,
+> 									Pavel
