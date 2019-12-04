@@ -2,123 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99399112B85
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEFEC112B89
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:33:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfLDMcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:32:35 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35682 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfLDMcf (ORCPT
+        id S1727859AbfLDMdV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 4 Dec 2019 07:33:21 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45354 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbfLDMdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:32:35 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4CWXoF033651;
-        Wed, 4 Dec 2019 06:32:33 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575462753;
-        bh=6G/9MRzKyVc1RjmQv1A+jIRb9kngu1DhAJbeluXOOKQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=m6yfe3kY/NEtb7u7K6Ev7IBbFJKxUXBdHIXUmzS7vm6991ZdIyMikG2DaXHe8DTgH
-         R4ZGVcJBqoLHBNg3kj4AucB0LqXGuGjQpvagZZ7+ams3WvI3V9NtB0i+amHbvAhMeF
-         EDuYGGieeLWdMICKoxUstgjIm+JNGMIWsftNVcD8=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4CWX8B052924
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Dec 2019 06:32:33 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
- 2019 06:32:33 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Dec 2019 06:32:33 -0600
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4CWWuq119399;
-        Wed, 4 Dec 2019 06:32:32 -0600
-Subject: Re: [PATCH v2] phy: ti-pipe3: make clk operations symmetric in probe
- and remove
-To:     Chuhong Yuan <hslester96@gmail.com>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20191204114759.3754-1-hslester96@gmail.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <2dd4749d-edca-3b63-4804-d51b13f3724d@ti.com>
-Date:   Wed, 4 Dec 2019 14:32:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 07:33:21 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v10so4597557oiv.12;
+        Wed, 04 Dec 2019 04:33:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=S0UWQ5eiPole4dtyMpW+QWxdEfHVw9PtKgJf/N5G9BE=;
+        b=SonrTHC0vp7Sgvtcx4CF3OKoS2va/b1Qcq7FYck7P2eQIFF19+VITPX511q2sKk26I
+         qTzToMfleDujWMCFeSusEjeGAUpQ/9eMGYmiNr++UhC3swkJ6OUXIRXakQOajp7+Xcz4
+         kP1h4HI9rT0cBTu/Yj38v2hUP3bxNQwiKeGZ6QWordh9i4IX6iTWTPcIeITnrWjomlyQ
+         KYzOmsU6ut7sOVkStBDoDTmHCZQnHBV892u4jUZmvuoMJqPHWNzBeJHswsyoSltLIhEO
+         XRohnK4aFMZX+rSIL0ODpM6kCii7cwzxSxDi1yunwX+ZxZ/SX4aXth6CA5ss299eLStp
+         Kgig==
+X-Gm-Message-State: APjAAAXeoMexw2L4p4g1Q4VZwcjCQinlLQSsBxo0xonglcqpoESDIjMc
+        PIfyArQRPa4BbfC3L+X86nPao5r++wC3vXm6pVM=
+X-Google-Smtp-Source: APXvYqzb0EPNSu3UgjjKauWV01/SR7f84yg5f0P7XG0wUME17ghX3UNDGcccyOdk37JFXAIVeBt6IZuJXPTA7xlaSIc=
+X-Received: by 2002:aca:36c5:: with SMTP id d188mr2423967oia.54.1575462799999;
+ Wed, 04 Dec 2019 04:33:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191204114759.3754-1-hslester96@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190219103148.192029670@infradead.org> <20190219103233.443069009@infradead.org>
+ <CAMuHMdW3nwckjA9Bt-_Dmf50B__sZH+9E5s0_ziK1U_y9onN=g@mail.gmail.com> <20191204104733.GR2844@hirez.programming.kicks-ass.net>
+In-Reply-To: <20191204104733.GR2844@hirez.programming.kicks-ass.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 4 Dec 2019 13:32:58 +0100
+Message-ID: <CAMuHMdXs_Fm93t=O9jJPLxcREZy-T53Z_U_RtHcvaWyV+ESdjg@mail.gmail.com>
+Subject: Re: [PATCH v6 10/18] sh/tlb: Convert SH to generic mmu_gather
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hoi Peter,
 
+On Wed, Dec 4, 2019 at 11:48 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Dec 03, 2019 at 12:19:00PM +0100, Geert Uytterhoeven wrote:
+> > On Tue, Feb 19, 2019 at 11:35 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > Generic mmu_gather provides everything SH needs (range tracking and
+> > > cache coherency).
+> > >
+> > > Cc: Will Deacon <will.deacon@arm.com>
+> > > Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Nick Piggin <npiggin@gmail.com>
+> > > Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> > > Cc: Rich Felker <dalias@libc.org>
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >
+> > I got remote access to an SH7722-based Migo-R again, which spews a long
+> > sequence of BUGs during userspace startup.  I've bisected this to commit
+> > c5b27a889da92f4a ("sh/tlb: Convert SH to generic mmu_gather").
+>
+> Whoopsy.. also, is this really the first time anybody booted an SH
+> kernel in over a year ?!?
 
-On 04/12/2019 13:47, Chuhong Yuan wrote:
-> The driver calls clk_prepare_enable in probe but the corresponding
-> clk_disable_unprepare() is in ti_pipe3_disable_clocks().
-> Move clk_disable_unprepare() to remove to make them symmetric.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Nah, but the v5.4-rc3 I booted recently on qemu -M r2d had
+CONFIG_PGTABLE_LEVELS=2, so it didn't show the problem.
 
-Acked-by: Roger Quadros <rogerq@ti.com>
+> > Do you have a clue?
+>
+> Does the below help?
 
-> ---
-> Changes in v2:
->    - Modify commit message.
->    - Delete the clk_disable_unprepare() in ti_pipe3_disable_clocks().
-> 
->   drivers/phy/ti/phy-ti-pipe3.c | 18 +++++++-----------
->   1 file changed, 7 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
-> index edd6859afba8..a87946589eb7 100644
-> --- a/drivers/phy/ti/phy-ti-pipe3.c
-> +++ b/drivers/phy/ti/phy-ti-pipe3.c
-> @@ -850,6 +850,12 @@ static int ti_pipe3_probe(struct platform_device *pdev)
->   
->   static int ti_pipe3_remove(struct platform_device *pdev)
->   {
-> +	struct ti_pipe3 *phy = platform_get_drvdata(pdev);
-> +
-> +	if (phy->mode == PIPE3_MODE_SATA) {
-> +		clk_disable_unprepare(phy->refclk);
-> +		phy->sata_refclk_enabled = false;
-> +	}
->   	pm_runtime_disable(&pdev->dev);
->   
->   	return 0;
-> @@ -900,18 +906,8 @@ static void ti_pipe3_disable_clocks(struct ti_pipe3 *phy)
->   {
->   	if (!IS_ERR(phy->wkupclk))
->   		clk_disable_unprepare(phy->wkupclk);
-> -	if (!IS_ERR(phy->refclk)) {
-> +	if (!IS_ERR(phy->refclk))
->   		clk_disable_unprepare(phy->refclk);
-> -		/*
-> -		 * SATA refclk needs an additional disable as we left it
-> -		 * on in probe to avoid Errata i783
-> -		 */
-> -		if (phy->sata_refclk_enabled) {
-> -			clk_disable_unprepare(phy->refclk);
-> -			phy->sata_refclk_enabled = false;
-> -		}
-> -	}
-> -
->   	if (!IS_ERR(phy->div_clk))
->   		clk_disable_unprepare(phy->div_clk);
->   }
-> 
+Unfortunately not.
+
+> diff --git a/arch/sh/include/asm/pgalloc.h b/arch/sh/include/asm/pgalloc.h
+> index 22d968bfe9bb..73a2c00de6c5 100644
+> --- a/arch/sh/include/asm/pgalloc.h
+> +++ b/arch/sh/include/asm/pgalloc.h
+> @@ -36,9 +36,8 @@ do {                                                  \
+>  #if CONFIG_PGTABLE_LEVELS > 2
+>  #define __pmd_free_tlb(tlb, pmdp, addr)                        \
+>  do {                                                   \
+> -       struct page *page = virt_to_page(pmdp);         \
+> -       pgtable_pmd_page_dtor(page);                    \
+> -       tlb_remove_page((tlb), page);                   \
+> +       pgtable_pmd_page_dtor(pmdp);                    \
+
+expected ‘struct page *’ but argument is of type ‘pmd_t * {aka struct
+<anonymous> *}’
+
+> +       tlb_remove_page((tlb), (pmdp));                 \
+
+likewise
+
+>  } while (0);
+>  #endif
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-cheers,
--roger
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
