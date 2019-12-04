@@ -2,68 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF948112C15
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C18A5112C32
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:03:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfLDMw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:52:58 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7633 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726215AbfLDMw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:52:58 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1DE918E8D495979774EA;
-        Wed,  4 Dec 2019 20:52:56 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Dec 2019
- 20:52:46 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
-        <zhengbin13@huawei.com>
-Subject: [PATCH] clk: remove set but not used variable 'fref'
-Date:   Wed, 4 Dec 2019 21:14:03 +0800
-Message-ID: <20191204131403.11526-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1727635AbfLDNDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 08:03:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52458 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbfLDNDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 08:03:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VAw+exV6zFNd79GLsJ/i683SHwBX9ctSDVhWZEuWOOo=; b=V9NFCvdSmtkVG2Erzr/1Lg4wA
+        WPk5PvNGR+PQCfY+6HS/6i3CBsIjfOt6+DqPNrwPgGaILBpaSAkNwQZfiGFUaB395Bw1IhWlq6RUz
+        R3w7Z94R6RpKPBBGEzWa8KS1dfIgd1C1Sqg6a8HFsNgQcP9hE3s1/ufXIdaFr81MhT0h+YzUlQleV
+        pPyNAzssNUd0iT3dSLt71WgPiSL/hnwhYhosH3jrPywToVGSq96EJXlYPYLtqlQZLCnHn2wF1vf2J
+        R3oHrIsvK2sKKA3k0Eh2MY75cpD1mqJu3LQ6Zr0I/MDcGmpgTRK90NOWRIy6E6duNqMMR5OJigo7m
+        AACJbWy5A==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1icUJi-000462-KO; Wed, 04 Dec 2019 13:03:43 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        iommu@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: make dma_addressing_limited work for memory encryption setups v2
+Date:   Wed,  4 Dec 2019 14:03:37 +0100
+Message-Id: <20191204130339.22804-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/clk/clk-bm1880.c: In function ‘bm1880_pll_rate_calc’:
-drivers/clk/clk-bm1880.c:477:13: warning: variable ‘fref’ set but not
-used [-Wunused-but-set-variable]
+Hi all,
 
-It is never used, so can be removed.
+this little series fixes dma_addressing_limited to return true for
+systems that use bounce buffers due to memory encryption.
 
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
- drivers/clk/clk-bm1880.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-index 4cd175afce9b..e6d6599d310a 100644
---- a/drivers/clk/clk-bm1880.c
-+++ b/drivers/clk/clk-bm1880.c
-@@ -474,11 +474,10 @@ static struct bm1880_composite_clock bm1880_composite_clks[] = {
- static unsigned long bm1880_pll_rate_calc(u32 regval, unsigned long parent_rate)
- {
- 	u64 numerator;
--	u32 fbdiv, fref, refdiv;
-+	u32 fbdiv, refdiv;
- 	u32 postdiv1, postdiv2, denominator;
- 
- 	fbdiv = (regval >> 16) & 0xfff;
--	fref = parent_rate;
- 	refdiv = regval & 0x1f;
- 	postdiv1 = (regval >> 8) & 0x7;
- 	postdiv2 = (regval >> 12) & 0x7;
--- 
-2.17.2
-
+Changes since v1:
+ - take SWIOTLB_FORCE into account
