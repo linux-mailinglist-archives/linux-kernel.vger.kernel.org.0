@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B4E2113435
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6408511320A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:05:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731074AbfLDSWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:22:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51198 "EHLO mail.kernel.org"
+        id S1729968AbfLDSFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:05:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbfLDSFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:05:05 -0500
+        id S1730327AbfLDSFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:05:08 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 753A3206DF;
-        Wed,  4 Dec 2019 18:05:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2210A20659;
+        Wed,  4 Dec 2019 18:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482704;
-        bh=VvRfFCC/KgixHFcsaFYlG0r52DlU90PC4AO4Z5QVs/Y=;
+        s=default; t=1575482707;
+        bh=tmPBE1L64k7gFUNouMWYajVti7VOhZkUSGOVv4eEhyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dZ1P4uI0/CN3dJ77rZ/c1eXkJoc9kC2gWEs3L3sm/S5Mi6CAMhwKGL0ruMGbJUbUH
-         q262zNpD3metNIDiB5wtC5i4kL46gZHMx7+JpIMlhcbw1L73HBhIWJIhGTGb99qfEE
-         AdXSVASmrlsyzy4onIOUA3jsXZeBuSY/uS5O3fxg=
+        b=qefD5XYMAtRy5IIp+fhB7kWtS7PkAMkwe0j9CM1507GmBGi0AmnE4edWFH2FKSNxD
+         GqCCfbbCLkc2Tugo3qOWLx+NIoZaAEWW4AofbNHF3EkJuxXFvtl4BSVZr3yS07fRyJ
+         oylB7B55yD8GyBRYzusIif3SOLge+KgqWEypZo8k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 103/209] IB/rxe: Make counters thread safe
-Date:   Wed,  4 Dec 2019 18:55:15 +0100
-Message-Id: <20191204175328.951209411@linuxfoundation.org>
+Subject: [PATCH 4.14 104/209] regulator: tps65910: fix a missing check of return value
+Date:   Wed,  4 Dec 2019 18:55:16 +0100
+Message-Id: <20191204175329.020935217@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -44,60 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit d5108e69fe013ff47ab815b849caba9cc33ca1e5 ]
+[ Upstream commit cd07e3701fa6a4c68f8493ee1d12caa18d46ec6a ]
 
-Current rxe device counters are not thread safe.
-When multiple QPs are used, they can be racy.
-Make them thread safe by making it atomic64.
+tps65910_reg_set_bits() may fail. The fix checks if it fails, and if so,
+returns with its error code.
 
-Fixes: 0b1e5b99a48b ("IB/rxe: Add port protocol stats")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_hw_counters.c | 2 +-
- drivers/infiniband/sw/rxe/rxe_verbs.h       | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/regulator/tps65910-regulator.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_hw_counters.c b/drivers/infiniband/sw/rxe/rxe_hw_counters.c
-index 6aeb7a165e469..ea4542a9d69e6 100644
---- a/drivers/infiniband/sw/rxe/rxe_hw_counters.c
-+++ b/drivers/infiniband/sw/rxe/rxe_hw_counters.c
-@@ -59,7 +59,7 @@ int rxe_ib_get_hw_stats(struct ib_device *ibdev,
- 		return -EINVAL;
+diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
+index 81672a58fcc23..194fa0cbbc048 100644
+--- a/drivers/regulator/tps65910-regulator.c
++++ b/drivers/regulator/tps65910-regulator.c
+@@ -1102,8 +1102,10 @@ static int tps65910_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pmic);
  
- 	for (cnt = 0; cnt  < ARRAY_SIZE(rxe_counter_name); cnt++)
--		stats->value[cnt] = dev->stats_counters[cnt];
-+		stats->value[cnt] = atomic64_read(&dev->stats_counters[cnt]);
+ 	/* Give control of all register to control port */
+-	tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
++	err = tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
+ 				DEVCTRL_SR_CTL_I2C_SEL_MASK);
++	if (err < 0)
++		return err;
  
- 	return ARRAY_SIZE(rxe_counter_name);
- }
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-index b2b76a316ebae..d1cc89f6f2e33 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -410,16 +410,16 @@ struct rxe_dev {
- 	spinlock_t		mmap_offset_lock; /* guard mmap_offset */
- 	int			mmap_offset;
- 
--	u64			stats_counters[RXE_NUM_OF_COUNTERS];
-+	atomic64_t		stats_counters[RXE_NUM_OF_COUNTERS];
- 
- 	struct rxe_port		port;
- 	struct list_head	list;
- 	struct crypto_shash	*tfm;
- };
- 
--static inline void rxe_counter_inc(struct rxe_dev *rxe, enum rxe_counters cnt)
-+static inline void rxe_counter_inc(struct rxe_dev *rxe, enum rxe_counters index)
- {
--	rxe->stats_counters[cnt]++;
-+	atomic64_inc(&rxe->stats_counters[index]);
- }
- 
- static inline struct rxe_dev *to_rdev(struct ib_device *dev)
+ 	switch (tps65910_chip_id(tps65910)) {
+ 	case TPS65910:
 -- 
 2.20.1
 
