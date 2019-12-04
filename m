@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 493F9113291
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 432891133C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:19:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbfLDSJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:09:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35228 "EHLO mail.kernel.org"
+        id S1730807AbfLDSJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:09:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730521AbfLDSJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:09:28 -0500
+        id S1731069AbfLDSJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:09:31 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D90F20863;
-        Wed,  4 Dec 2019 18:09:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2D7420833;
+        Wed,  4 Dec 2019 18:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482968;
-        bh=fn5ihxksOkvHYhFfgCE8xyhI+MbV1Hr1ZAb+Xisteog=;
+        s=default; t=1575482970;
+        bh=HLzYD/HbGyf9vZgF+em7Xrr/GbFuua27gc0B8hIZUeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EiM/0bM76rHYklSSaBBMGnGZDbRUCe98LKJCiJe1r27YTcN+FHSqToyHsqbFRFaM4
-         ToLTYXjIn8qP9FsRGhjcLVQl5Ng+5Vrn5Ahevt4zcaUYSYzv8CwbXRBMWJGGQXJ3l5
-         LuNYjmeSNlVteF+hvHbBRWOFQX3F0Ow06sWDStQI=
+        b=tAODdpRmvUj+C0q4Hgi6OdJbcSey+4Jp2Bzy9QToiyc6qduo3HKGnY4INg9B7Vyk/
+         oKtZOAH7UGImJBxY/le5WoSNW4ts4ieu1r3I6FVG0vxOofhade5K/qSLIRJ6ZWs3Be
+         00EQU4NyddFWeOhe14DmaIcV2KV2wZ4cQdPh0wgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.14 207/209] platform/x86: hp-wmi: Fix ACPI errors caused by too small buffer
-Date:   Wed,  4 Dec 2019 18:56:59 +0100
-Message-Id: <20191204175337.737546972@linuxfoundation.org>
+Subject: [PATCH 4.14 208/209] platform/x86: hp-wmi: Fix ACPI errors caused by passing 0 as input size
+Date:   Wed,  4 Dec 2019 18:57:00 +0100
+Message-Id: <20191204175337.805782234@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -45,27 +45,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-commit 16245db1489cd9aa579506f64afeeeb13d825a93 upstream.
+commit f3e4f3fc8ee9729c4b1b27a478c68b713df53c0c upstream.
 
-The HP WMI calls may take up to 128 bytes of data as input, and
-the AML methods implementing the WMI calls, declare a couple of fields for
-accessing input in different sizes, specifycally the HWMC method contains:
+The AML code implementing the WMI methods creates a variable length
+field to hold the input data we pass like this:
 
-        CreateField (Arg1, 0x80, 0x0400, D128)
+        CreateDWordField (Arg1, 0x0C, DSZI)
+        Local5 = DSZI /* \HWMC.DSZI */
+        CreateField (Arg1, 0x80, (Local5 * 0x08), DAIN)
 
-Even though we do not use any of the WMI command-types which need a buffer
-of this size, the APCI interpreter still tries to create it as it is
-declared in generoc code at the top of the HWMC method which runs before
-the code looks at which command-type is requested.
+If we pass 0 as bios_args.datasize argument then (Local5 * 0x08)
+is 0 which results in these errors:
 
-This results in many of these errors on many different HP laptop models:
+[   71.973305] ACPI BIOS Error (bug): Attempt to CreateField of length zero (20190816/dsopcode-133)
+[   71.973332] ACPI Error: Aborting method \HWMC due to previous error (AE_AML_OPERAND_VALUE) (20190816/psparse-529)
+[   71.973413] ACPI Error: Aborting method \_SB.WMID.WMAA due to previous error (AE_AML_OPERAND_VALUE) (20190816/psparse-529)
 
-[   14.459261] ACPI Error: Field [D128] at 1152 exceeds Buffer [NULL] size 160 (bits) (20170303/dsopcode-236)
-[   14.459268] ACPI Error: Method parse/execution failed [\HWMC] (Node ffff8edcc61507f8), AE_AML_BUFFER_LIMIT (20170303/psparse-543)
-[   14.459279] ACPI Error: Method parse/execution failed [\_SB.WMID.WMAA] (Node ffff8edcc61523c0), AE_AML_BUFFER_LIMIT (20170303/psparse-543)
+And in our HPWMI_WIRELESS2_QUERY calls always failing. for read commands
+like HPWMI_WIRELESS2_QUERY the DSZI value is not used / checked, except for
+read commands where extra input is needed to specify exactly what to read.
 
-This commit increases the size of the data element of the bios_args struct
-to 128 bytes fixing these errors.
+So for HPWMI_WIRELESS2_QUERY we can safely pass the size of the expected
+output as insize to hp_wmi_perform_query(), as we are already doing for all
+other HPWMI_READ commands we send. Doing so fixes these errors.
 
 Cc: stable@vger.kernel.org
 BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=197007
@@ -76,37 +78,28 @@ Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/hp-wmi.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/platform/x86/hp-wmi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/drivers/platform/x86/hp-wmi.c
 +++ b/drivers/platform/x86/hp-wmi.c
-@@ -78,7 +78,7 @@ struct bios_args {
- 	u32 command;
- 	u32 commandtype;
- 	u32 datasize;
--	u32 data;
-+	u8 data[128];
- };
+@@ -393,7 +393,7 @@ static int hp_wmi_rfkill2_refresh(void)
+ 	int err, i;
  
- enum hp_wmi_commandtype {
-@@ -229,7 +229,7 @@ static int hp_wmi_perform_query(int quer
- 		.command = command,
- 		.commandtype = query,
- 		.datasize = insize,
--		.data = 0,
-+		.data = { 0 },
- 	};
- 	struct acpi_buffer input = { sizeof(struct bios_args), &args };
- 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
-@@ -241,7 +241,7 @@ static int hp_wmi_perform_query(int quer
+ 	err = hp_wmi_perform_query(HPWMI_WIRELESS2_QUERY, HPWMI_READ, &state,
+-				   0, sizeof(state));
++				   sizeof(state), sizeof(state));
+ 	if (err)
+ 		return err;
  
- 	if (WARN_ON(insize > sizeof(args.data)))
- 		return -EINVAL;
--	memcpy(&args.data, buffer, insize);
-+	memcpy(&args.data[0], buffer, insize);
+@@ -790,7 +790,7 @@ static int __init hp_wmi_rfkill2_setup(s
+ 	int err, i;
  
- 	wmi_evaluate_method(HPWMI_BIOS_GUID, 0, mid, &input, &output);
+ 	err = hp_wmi_perform_query(HPWMI_WIRELESS2_QUERY, HPWMI_READ, &state,
+-				   0, sizeof(state));
++				   sizeof(state), sizeof(state));
+ 	if (err)
+ 		return err < 0 ? err : -EINVAL;
  
 
 
