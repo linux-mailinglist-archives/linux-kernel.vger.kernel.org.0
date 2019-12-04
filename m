@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA6D1134DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 868E911317F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:01:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbfLDS0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:26:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36698 "EHLO mail.kernel.org"
+        id S1728775AbfLDSAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:00:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729167AbfLDR7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:59:42 -0500
+        id S1729187AbfLDR7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:59:52 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E699E20866;
-        Wed,  4 Dec 2019 17:59:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A424820675;
+        Wed,  4 Dec 2019 17:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482382;
-        bh=5h0OygXDoZNLicE0SwzE2o2UOc4LtmIgD5yjgZUBFkM=;
+        s=default; t=1575482392;
+        bh=64j4seBtU2BgtBMuT/TmYWkYcog1hhKB+5Xq/rBFpZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kKA0vYGNpeL8Q1RnEwx1hTtHjbY1noQljRX8+hE9bwV++qqUdwY2nWbjcYgWzkG8I
-         Cz6S+eT6w1XY4NWZHvL98qm3q5BAxQJSfFk04KBT+kWdnjqiYvfzIxuQ/Qr5IDc4N/
-         8PIob6EoT/SD+38v6IhRW7hfmGf9j6rC2ChLgfeQ=
+        b=zKZbg5yqCnqQhks1VMkJM4pC3N3zmCZPKpuTgE915yq2JTz59vRRwHESJLonIInRx
+         upeQ8TVcHO4UAt7VoFuA6FcIB+hCCkHK817E6zyA40OyjENzjPh/IIccTSmQOg9zdy
+         OEXLlBunWRrTPsrpOVc6zX6rs+Qob542Y4RM7iSk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Bert Kenward <bkenward@solarflare.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 65/92] net/core/neighbour: fix kmemleak minimal reference count for hash tables
-Date:   Wed,  4 Dec 2019 18:50:05 +0100
-Message-Id: <20191204174334.256959625@linuxfoundation.org>
+Subject: [PATCH 4.4 69/92] sfc: initialise found bitmap in efx_ef10_mtd_probe
+Date:   Wed,  4 Dec 2019 18:50:09 +0100
+Message-Id: <20191204174334.466362087@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
 References: <20191204174327.215426506@linuxfoundation.org>
@@ -46,34 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Bert Kenward <bkenward@solarflare.com>
 
-[ Upstream commit 01b833ab44c9e484060aad72267fc7e71beb559b ]
+[ Upstream commit c65285428b6e7797f1bb063f33b0ae7e93397b7b ]
 
-This should be 1 for normal allocations, 0 disables leak reporting.
+The bitmap of found partitions in efx_ef10_mtd_probe was not
+initialised, causing partitions to be suppressed based off whatever
+value was in the bitmap at the start.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
-Fixes: 85704cb8dcfd ("net/core/neighbour: tell kmemleak about hash tables")
+Fixes: 3366463513f5 ("sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe")
+Signed-off-by: Bert Kenward <bkenward@solarflare.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/neighbour.c | 2 +-
+ drivers/net/ethernet/sfc/ef10.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index bba672482a0ef..8aef689b8f32d 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -332,7 +332,7 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
- 		buckets = (struct neighbour __rcu **)
- 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
- 					   get_order(size));
--		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
-+		kmemleak_alloc(buckets, size, 1, GFP_ATOMIC);
- 	}
- 	if (!buckets) {
- 		kfree(ret);
+diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
+index 79a1031c3ef77..6dcd436e6e323 100644
+--- a/drivers/net/ethernet/sfc/ef10.c
++++ b/drivers/net/ethernet/sfc/ef10.c
+@@ -4499,7 +4499,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ {
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
+-	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
++	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT) = { 0 };
+ 	struct efx_mcdi_mtd_partition *parts;
+ 	size_t outlen, n_parts_total, i, n_parts;
+ 	unsigned int type;
 -- 
 2.20.1
 
