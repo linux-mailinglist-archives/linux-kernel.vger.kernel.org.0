@@ -2,123 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73FF0112B82
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:32:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C2E112B87
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:33:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbfLDMcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:32:15 -0500
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:39275 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfLDMcP (ORCPT
+        id S1727846AbfLDMc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:32:59 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:38765 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbfLDMc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:32:15 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 5B7EE48749;
-        Wed,  4 Dec 2019 13:32:13 +0100 (CET)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=VtOUQDUS;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id CXe1WEAFpsSI; Wed,  4 Dec 2019 13:32:12 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 4CEC048748;
-        Wed,  4 Dec 2019 13:32:08 +0100 (CET)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 4B4E2360608;
-        Wed,  4 Dec 2019 13:32:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1575462728; bh=LYhit8ToubKk0QgCgXtdE9QywuXKbd7AYpsvoNTHpF8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=VtOUQDUSHGDnRjVQQTOXPWOKG1GPg7X3aXX24xXApU5wpb2efYc4q2cjNC507RBm2
-         H7vQ2x06V5nvSi44lD232WnoVbZmVpnYArHV9VkQX0vv6yRGUDzXpWuV/2v7uP60cu
-         acj+1pbggGd0tzLuFJhSWXOo3pL6Ds2HANrQiE8o=
-Subject: Re: [PATCH 6/8] drm: Add a drm_get_unmapped_area() helper
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20191203132239.5910-1-thomas_os@shipmail.org>
- <20191203132239.5910-7-thomas_os@shipmail.org>
- <e091063c-2c4a-866e-acdb-9efb1e20d737@amd.com>
- <98af5b11-1034-91fa-aa38-5730f116d1cd@shipmail.org>
- <3cc5b796-20c6-9f4c-3f62-d844f34d81b7@amd.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <90a8d09a-b3ab-cd00-0cfb-1a4c72e91836@shipmail.org>
-Date:   Wed, 4 Dec 2019 13:32:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 4 Dec 2019 07:32:59 -0500
+Received: from [192.168.1.155] ([77.9.37.28]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M8QBa-1igtgG0OFE-004VLl; Wed, 04 Dec 2019 13:32:56 +0100
+Subject: Re: [PATCH 0/8] gpiolib: add an ioctl() for monitoring line status
+ changes
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20191127133510.10614-1-brgl@bgdev.pl>
+ <CACRpkdZ6e0GaE9KBJ1-E+cS_KnPY-EKLNxJFqjArr28hYMQqOg@mail.gmail.com>
+ <CAMRc=McH6m3Lsvz8g1JSD_c-QNdb-Kh0+8BH5EKcEW2vM2VYJA@mail.gmail.com>
+ <CACRpkdaW8YxjEBN0jX5AYmzGyftGv=b-KOCsjMMxoqqESBDsyA@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <d0f29707-cbb6-fbee-3d54-f336a11442ad@metux.net>
+Date:   Wed, 4 Dec 2019 13:32:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <3cc5b796-20c6-9f4c-3f62-d844f34d81b7@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CACRpkdaW8YxjEBN0jX5AYmzGyftGv=b-KOCsjMMxoqqESBDsyA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Provags-ID: V03:K1:P8p5gsbkmlK/nhLLbj0OHfS7vEIZ0B4Q+tmfhuq8IxroMZsY0LD
+ t+plKHAAFYyxPRPgNydEkfvfRQWNFdouboKN0KldW2NpMlYe413aRSCer8b1vceSQelt2B+
+ jGdgmoBPHsntoZkDLRqTpQdu+FR+QvLidio40ITdTiVzOCud2fC2yfDTeoemcF2gUCLjNrk
+ KBe8l4e6xU6f+4JfN/3cQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1OPu09XnPTQ=:W0M7J3XICdpFopuXx7+PWK
+ 94WS0KcLpc0tP68teJNRmXdbsxwZCOjEnE7PZRkN+ft0cN9dIsr2gPoddwjDYCnFUSjsXz8I9
+ w2pnlhOPDq6I+CqoaaJ5UncKrra2bcX5ZW+C68Nfn9fmHcXppr+gY7kE2UC+Itc267Z9e+p6I
+ 1M8xmycWJzE20MYBBEa5w1Bnxgm1Hea7B8UAEN6/1XYCsz++U2azMM813Rbwq5eu4Lc9P8P0w
+ RYZYvqSSX/rsHBZmMajELzr108Cs+Re8/uqsxmnE2dOa/WaohnpyMMwa6fuGNext6Ty7GNDxQ
+ moB+0D5osuGDppo4Tg9vp+j90EGGh9bVj3kvX5mO4tWo3AAirmND+Y5MS735F1uQnkUTwhZte
+ eb9nGiEFhTWH31+L87V8tXzQFPuO+h0HPU+F7/eGtS5+i4q/HW3UPa+pAv+AKrlALPx04JwU5
+ IaydQh0eGlKxlhyfxC397kaCIjqk6tqPGYq2pxUZ22CmOJN46z3GqCjBKUHPmeURPtdoHmh4j
+ vVza9cUCp8j91ioNRfVrbgqnWrN/PHO/2QKF1YnOPfdHQUk8DvSzVp53Z14pj8b/pK2gBZfKs
+ hBO9irNo0g4VsCW30UylXrto938wupc0IE0qKBACs9uvmwNZ3s0QENdcFNbPUsvV0hwHSe9+D
+ cCabNWueL8O88P6laIJXCslYOe0tOABs0ScA3RgUtrwb09HenH8a+g9QpbjBmeTZgx8N1VR57
+ FAYDNwE4NqyZv8XEbW0w4XY8tvVS9hoM59OsmlsglLwZqymJn5a2UB3zyAmLJgQ92gkg90zde
+ b7IFpC+kSiKIS4qrXR12nFJ58TbiW5FgbeGa2cbE5aI4svQsrvtTG+i8hmFFcnVRnudKGoEFJ
+ JMlU+TzcIY0d4DcUp/fQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/19 1:08 PM, Christian König wrote:
-> Am 04.12.19 um 12:36 schrieb Thomas Hellström (VMware):
->> On 12/4/19 12:11 PM, Christian König wrote:
->>> Am 03.12.19 um 14:22 schrieb Thomas Hellström (VMware):
->>>> From: Thomas Hellstrom <thellstrom@vmware.com>
->>>>
->>>> This helper is used to align user-space buffer object addresses to
->>>> huge page boundaries, minimizing the chance of alignment mismatch
->>>> between user-space addresses and physical addresses.
->>>
->>> Mhm, I'm wondering if that is really such a good idea.
->>
->> Could you elaborate? What drawbacks do you see?
->
-> Main problem for me seems to be that I don't fully understand what the 
-> get_unmapped_area callback is doing.
+On 29.11.19 13:57, Linus Walleij wrote:
 
-It makes sure that, if there is a chance that we could use huge 
-page-table entries, virtual address huge page boundaries are perfectly 
-aligned to physical address huge page boundaries, which is if not a CPU 
-hardware requirement, at least a kernel requirement currently.
+Hi,
+
+> My own pet peeve is the industrial automation and control use
+> case: here we have the design space where people today use
+> either PLC:s or RaspberryPi's or Beagle boards, or even some
+> custom computers.
+> 
+> For me personally that is a design space we should cover and
+> if this helps the RaspberryPi to do that better I'm all for it.
+
+Yeah, I also have clients in that field. The main problem here,
+IMHO is their way of thinking: no device abstraction at all, but all
+pretty much hardwired for specific installations (also the reason,
+why they'll fail miserable on the new IOT field :p). These folks are
+still used to the ancient pure PLC way, where there isn't even anything
+like an operating system.
+
+IMHO, it's an educational problem: people need to understand that
+there're device abstractions for good reasons, and they should respect
+and use them. Basically, they have to understand the concept of
+modularization and abstractions. IEC 1131-3 obviously isn't made for
+that.
+
+For example, take simple heating installation. Pumps won't be controlled
+by raw inverter configuration anymore, but rpm or m²/sec. Temp or flow
+sensors don't give raw numbers, but degress Kelvin or m^/sec, etc.
+In that case, the corresponding subsystem would be IIO - no need to ever
+care about gpios, pwms, etc, directly.
+
+Following this modular approach, everything suddenly gets much easier,
+eg. replacing a pump by a different model just requires a minor
+reconfiguration instead of rewriting huge parts of the plc code.
+
+I've managed to teach this to an Siemens field technician in one evening
+with a few beers, so it can't be that hard to understand.
+
+> An especially interesting case is multiple GPIO expanders
+> plugged in on pluggable busses such as PCI or USB. I think
+> that kind of discoverability and dynamically expandable GPIO
+> blocks is something people in the industry are quite keen to
+> get.
+
+Smells like a case for oftree overlays ...
+
+> What we need to do is to make it dirt simple to use GPIOs for
+> custom hacks and construction of factories and doorstops
+> and what not, while at the same time strongly discouraging
+> it to be used to manage hardware such as laptops, tablets
+> or phones from userspace. That's maybe hard, and we might
+> be victims of our own success ...
+
+I contradict. We should encourage industrial/construction folks to
+do decently structured, professional engineering - IOW: use
+modularization and highlevel drivers, instead of tinkering with
+raw gpios directly like a school kid.
 
 
->
-> For example why do we need to use drm_vma_offset_lookup_locked() to 
-> adjust the pgoff?
->
-> The mapped offset should be completely irrelevant for finding some 
-> piece of userspace address space or am I totally off here?
+--mtx
 
-
-Because the unmodified pgoff assumes that physical address boundaries 
-are perfectly aligned with file offset boundaries, which is typical for 
-all other subsystems.
-
-That's not true for TTM, however, where a buffer object start physical 
-address may be huge page aligned, but the file offset is always page 
-aligned. We could of course change that to align also file offsets to 
-huge page size boundaries, but with the above adjustment, that's not 
-needed. I opted for the adjustment.
-
-Thanks,
-
-Thomas
-
-
+-- 
+Dringender Hinweis: aufgrund existenzieller Bedrohung durch "Emotet"
+sollten Sie *niemals* MS-Office-Dokumente via E-Mail annehmen/öffenen,
+selbst wenn diese von vermeintlich vertrauenswürdigen Absendern zu
+stammen scheinen. Andernfalls droht Totalschaden.
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
