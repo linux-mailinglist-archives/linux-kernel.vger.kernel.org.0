@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D74113219
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:05:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 827A4113419
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:22:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730076AbfLDSFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:05:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52560 "EHLO mail.kernel.org"
+        id S1730452AbfLDSFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:05:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbfLDSFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:05:38 -0500
+        id S1730425AbfLDSFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:05:41 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB90B20659;
-        Wed,  4 Dec 2019 18:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3743C20659;
+        Wed,  4 Dec 2019 18:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482738;
-        bh=c2DkTy4DJDy46PvyizCrjeXPqUguuY8YxnhHujB8QQk=;
+        s=default; t=1575482740;
+        bh=I+9HfdYWanbujl1taV32XPKQTdpZAE/Rjg/alK72ODc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZxEQQzaEioyDiMfCZNHto8xArieFnq9nK0rxVHnfp1JsuJdu/6nVrnbb++mjyJjn
-         TTZDuPKTqyUXC8Vti1yzVrOSvE+OwTBBvZVPH1IyvDFEFUP20N2OYw8CpbUpTaxkRZ
-         el0wNHQlQwBEaOcjocxWksNHHqijdNe4Vvq/9YwQ=
+        b=EJ1rkX6eyCkMZJM6jmqzkqVB4nzjHB1AUEziSqsBWE986wkZK0wP7zj76mMwWgb+z
+         9Kk0+ISZom4rao7f6JyltpOIazIRJF3S+5zTLOcPnGuSzEmFY6zUhCp4avobHP11NY
+         vRC92T7yDZkhEgCamFkuhbXi8V3ITVRCSHvCMBbU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 115/209] net: dsa: bcm_sf2: Propagate error value from mdio_write
-Date:   Wed,  4 Dec 2019 18:55:27 +0100
-Message-Id: <20191204175331.040110263@linuxfoundation.org>
+Subject: [PATCH 4.14 116/209] atl1e: checking the status of atl1e_write_phy_reg
+Date:   Wed,  4 Dec 2019 18:55:28 +0100
+Message-Id: <20191204175331.108807474@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
 References: <20191204175321.609072813@linuxfoundation.org>
@@ -46,37 +46,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit e49505f7255be8ced695919c08a29bf2c3d79616 ]
+[ Upstream commit ff07d48d7bc0974d4f96a85a4df14564fb09f1ef ]
 
-Both bcm_sf2_sw_indir_rw and mdiobus_write_nested could fail, so let's
-return their error codes upstream.
+atl1e_write_phy_reg() could fail. The fix issues an error message when
+it fails.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/bcm_sf2.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/atheros/atl1e/atl1e_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index af666951a9592..94ad2fdd6ef0d 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -432,11 +432,10 @@ static int bcm_sf2_sw_mdio_write(struct mii_bus *bus, int addr, int regnum,
- 	 * send them to our master MDIO bus controller
- 	 */
- 	if (addr == BRCM_PSEUDO_PHY_ADDR && priv->indir_phy_mask & BIT(addr))
--		bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
-+		return bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
- 	else
--		mdiobus_write_nested(priv->master_mii_bus, addr, regnum, val);
--
--	return 0;
-+		return mdiobus_write_nested(priv->master_mii_bus, addr,
-+				regnum, val);
+diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
+index 4f7e195af0bc6..0d08039981b54 100644
+--- a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
++++ b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
+@@ -472,7 +472,9 @@ static void atl1e_mdio_write(struct net_device *netdev, int phy_id,
+ {
+ 	struct atl1e_adapter *adapter = netdev_priv(netdev);
+ 
+-	atl1e_write_phy_reg(&adapter->hw, reg_num & MDIO_REG_ADDR_MASK, val);
++	if (atl1e_write_phy_reg(&adapter->hw,
++				reg_num & MDIO_REG_ADDR_MASK, val))
++		netdev_err(netdev, "write phy register failed\n");
  }
  
- static irqreturn_t bcm_sf2_switch_0_isr(int irq, void *dev_id)
+ static int atl1e_mii_ioctl(struct net_device *netdev,
 -- 
 2.20.1
 
