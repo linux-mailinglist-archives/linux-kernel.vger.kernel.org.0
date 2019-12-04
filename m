@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D775311329B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75E641132A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:12:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731172AbfLDSKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:10:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36384 "EHLO mail.kernel.org"
+        id S1731258AbfLDSKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:10:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730618AbfLDSJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:09:55 -0500
+        id S1731251AbfLDSKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:10:21 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3824420865;
-        Wed,  4 Dec 2019 18:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B680A20675;
+        Wed,  4 Dec 2019 18:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482994;
-        bh=DFBgrIvg0BuTOOkN8cvpbyIpAt5L15g4xAD3vpifjs4=;
+        s=default; t=1575483021;
+        bh=nPEWjF0dK8mtdwVv8wVLGr4RFLQuZAZNFBZ6cZq1WZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AFDBqZyNTtyoZnKMNLUF8CgIh7Ht0vb6F/VkB5rxj46z4gZ/k2E80NYv9YGpt/KbX
-         XA4iWMHVXbq3Gq4c8UD5ssafTUk08zmLjNJ+k9RC5LQjBR718l8GrxzeDjbOPSbCxS
-         rf1SiwM1O/8D5i+dZkKmK7hhK0Gm9tn7H+USmDpU=
+        b=AtHz7VeC/wJneye7pa5irX4lrNYPM85WIRwrtAQKVuRVyp1YfzSeMcM1UnGkUdPsa
+         UckkAE1z1jZ2IPgUIzPU7g0Fu3ywihlnEYJl6qDCS1fUv7HwmTKApmQsxHtSNkXGYR
+         AxIgX7mFz7JxUpsS+aB9FsH21ycV2Hu1ZlRgV3L8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaojun Sang <xsang@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 001/125] ASoC: compress: fix unsigned integer overflow check
-Date:   Wed,  4 Dec 2019 18:55:06 +0100
-Message-Id: <20191204175309.112404439@linuxfoundation.org>
+Subject: [PATCH 4.9 002/125] ASoC: kirkwood: fix external clock probe defer
+Date:   Wed,  4 Dec 2019 18:55:07 +0100
+Message-Id: <20191204175309.653122850@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
 References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,36 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaojun Sang <xsang@codeaurora.org>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit d3645b055399538415586ebaacaedebc1e5899b0 ]
+[ Upstream commit 4523817d51bc3b2ef38da768d004fda2c8bc41de ]
 
-Parameter fragments and fragment_size are type of u32. U32_MAX is
-the correct check.
+When our call to get the external clock fails, we forget to clean up
+the enabled internal clock correctly.  Enable the clock after we have
+obtained all our resources.
 
-Signed-off-by: Xiaojun Sang <xsang@codeaurora.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Link: https://lore.kernel.org/r/20191021095432.5639-1-srinivas.kandagatla@linaro.org
+Fixes: 84aac6c79bfd ("ASoC: kirkwood: fix loss of external clock at probe time")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Link: https://lore.kernel.org/r/E1iNGyK-0004oF-6A@rmk-PC.armlinux.org.uk
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/compress_offload.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/kirkwood/kirkwood-i2s.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 2e2d184684911..7ae8e24dc1e61 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -529,7 +529,7 @@ static int snd_compress_check_input(struct snd_compr_params *params)
- {
- 	/* first let's check the buffer parameter's */
- 	if (params->buffer.fragment_size == 0 ||
--	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size ||
-+	    params->buffer.fragments > U32_MAX / params->buffer.fragment_size ||
- 	    params->buffer.fragments == 0)
- 		return -EINVAL;
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 3a36d60e17850..0a5d9fb6fc84b 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -570,10 +570,6 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->clk);
+ 	}
  
+-	err = clk_prepare_enable(priv->clk);
+-	if (err < 0)
+-		return err;
+-
+ 	priv->extclk = devm_clk_get(&pdev->dev, "extclk");
+ 	if (IS_ERR(priv->extclk)) {
+ 		if (PTR_ERR(priv->extclk) == -EPROBE_DEFER)
+@@ -589,6 +585,10 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	err = clk_prepare_enable(priv->clk);
++	if (err < 0)
++		return err;
++
+ 	/* Some sensible defaults - this reflects the powerup values */
+ 	priv->ctl_play = KIRKWOOD_PLAYCTL_SIZE_24;
+ 	priv->ctl_rec = KIRKWOOD_RECCTL_SIZE_24;
 -- 
 2.20.1
 
