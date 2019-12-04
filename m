@@ -2,338 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E1F112B06
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:08:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA3C112B10
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:09:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbfLDMIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:08:20 -0500
-Received: from mail-eopbgr680078.outbound.protection.outlook.com ([40.107.68.78]:59457
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727445AbfLDMIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:08:17 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BLLJT6hWtoRecfURTtq3u5qg2vIL32KHnXIYlACo88mZMwlfZZTBydLJMJfVukTqkzMVMm69/eHEmHCe1xGWVsGl1nOdk7qMyzXPe21BAWXHYYpzLrpyxQFFFJ/pxQKWSLl906rc2vSEQUyc4l/N18NdppS74IxoonxMLPoSuFFlhSIb/HMuWD5CXNpLU5eOI7nuRnTmO9ZMQVLf9KoLD0mqa0WSaPbrLABPWIxAiVOrSIwc7YcEy/SU65w25gaMtcruyqv+s++yKXqvXqW7KJZsCsRFv4uJjjtTsgzSYMIA0+ydKcehKMwrCSi2VsayvEcWEMY3iB6vkbA2K5G3Cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9R8orIXzWLcvtbaHq48bFNI79eqxECS3bX4fh4GcKw4=;
- b=IVF4qzkh9p6z7bysFdARznGkD3I+qSVsRNo/zpV7jseKOA+r8XAPOK3PMfdfAvmsfj7BFXF6Kn1iaTtodvYwXpAR0WKVT5FEum6vasO2D9i3vLTp9omgQrhyUnjqg8cs/nhhGP8pnZfCfgmKPmR/FXPIROygAa7fn2Hb3EWM9b91RJ+l1vHlvLaT8+X0yLXXhB/qFuF9sjIttwztI9C01CJEDGp4XjmMIyZ03WYnWxvqvih54hfPsqoF5DP8CbC8GKDTgEjruyHhUXQf5VLvT82I5WVNnZhWLrfanCi7WBTxzDsbY8Wx0z/vDzA0wwSwr5ToZqkR7uZ+AlYRebswMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1727803AbfLDMJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:09:33 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:46507 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbfLDMJd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 07:09:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9R8orIXzWLcvtbaHq48bFNI79eqxECS3bX4fh4GcKw4=;
- b=0U4+H7VqK4ZUBeEx1/PcaujNcOo/OUNz6aaWrTOq/ZAIilU0IrWfce3fQzEtDhqrw6n8lZFhooInmkYl2Xi5qE2o0Zc74G1umPU9GBDQ5B1oHxIQafK9St3ezE6lalDuLHsBeZrRybICXRMpJYfJ0xE3ovIk/3EUrvM17W5RZQg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com (10.175.88.22) by
- DM5PR12MB1692.namprd12.prod.outlook.com (10.172.34.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.21; Wed, 4 Dec 2019 12:08:13 +0000
-Received: from DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::80df:f8b:e547:df84]) by DM5PR12MB1705.namprd12.prod.outlook.com
- ([fe80::80df:f8b:e547:df84%12]) with mapi id 15.20.2495.014; Wed, 4 Dec 2019
- 12:08:13 +0000
-Subject: Re: [PATCH 6/8] drm: Add a drm_get_unmapped_area() helper
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20191203132239.5910-1-thomas_os@shipmail.org>
- <20191203132239.5910-7-thomas_os@shipmail.org>
- <e091063c-2c4a-866e-acdb-9efb1e20d737@amd.com>
- <98af5b11-1034-91fa-aa38-5730f116d1cd@shipmail.org>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <3cc5b796-20c6-9f4c-3f62-d844f34d81b7@amd.com>
-Date:   Wed, 4 Dec 2019 13:08:06 +0100
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575461372; x=1606997372;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=0XU4I7wfx1XBSj0BFbZC9Xa7eD2pt9HXv+vFrvgGosk=;
+  b=a3RVxmLZJ+QxCLCZlYVTFQDTFxjReRRcSMKyx2VCUIJP2OhJvugZfhZm
+   kOABMbEsKxc5DpJOe+AH5T1rw7v835nZn3dgwAWUnPcmgmAEoC4orkNLV
+   DdV4xQ6WXJR8EGjzJr5StI93RhxJM31E21b+DvQyYGNW38qxzDRptK2y0
+   A=;
+IronPort-SDR: pPAh3VyOKYzmvWOsJiLjzYBAm32158CHQmvaLASrfxIVhw/Vd2V9GFkK4QdemQZ6v2teZ/0XXt
+ hOgcUUWlP9RQ==
+X-IronPort-AV: E=Sophos;i="5.69,277,1571702400"; 
+   d="scan'208";a="11545631"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 04 Dec 2019 12:09:19 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (Postfix) with ESMTPS id 86FCCA26C9;
+        Wed,  4 Dec 2019 12:09:17 +0000 (UTC)
+Received: from EX13D32EUC002.ant.amazon.com (10.43.164.94) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 4 Dec 2019 12:09:16 +0000
+Received: from EX13MTAUEE001.ant.amazon.com (10.43.62.200) by
+ EX13D32EUC002.ant.amazon.com (10.43.164.94) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 4 Dec 2019 12:09:15 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.28.85.76) by
+ mail-relay.amazon.com (10.43.62.226) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Wed, 4 Dec 2019 12:09:13 +0000
+Subject: Re: [Xen-devel] [PATCH 0/2] xen/blkback: Aggressively shrink page
+ pools if a memory pressure is detected
+To:     "Durrant, Paul" <pdurrant@amazon.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "roger.pau@citrix.com" <roger.pau@citrix.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+CC:     "sj38.park@gmail.com" <sj38.park@gmail.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191204113419.2298-1-sjpark@amazon.com>
+ <62c68f53cc0145ad9d0dfb167b50eac4@EX13D32EUC003.ant.amazon.com>
+From:   <sjpark@amazon.com>
+Message-ID: <fcf414ab-4ee4-bafc-6683-5527df7a9731@amazon.com>
+Date:   Wed, 4 Dec 2019 13:09:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
-In-Reply-To: <98af5b11-1034-91fa-aa38-5730f116d1cd@shipmail.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
+In-Reply-To: <62c68f53cc0145ad9d0dfb167b50eac4@EX13D32EUC003.ant.amazon.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-ClientProxiedBy: FR2P281CA0001.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::11) To DM5PR12MB1705.namprd12.prod.outlook.com
- (2603:10b6:3:10c::22)
-MIME-Version: 1.0
-X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 1d2de4a8-7c2b-40cf-a9f2-08d778b2a2d0
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1692:
-X-Microsoft-Antispam-PRVS: <DM5PR12MB1692151338B635105023A35D835D0@DM5PR12MB1692.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
-X-Forefront-PRVS: 0241D5F98C
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(366004)(136003)(39860400002)(199004)(189003)(52116002)(2906002)(76176011)(81156014)(25786009)(6246003)(316002)(305945005)(54906003)(7736002)(99286004)(58126008)(2616005)(6486002)(4326008)(6506007)(81166006)(53546011)(50466002)(86362001)(7416002)(11346002)(6512007)(229853002)(65956001)(478600001)(14454004)(23676004)(8936002)(66476007)(6436002)(31696002)(66946007)(36756003)(66556008)(186003)(6666004)(66574012)(31686004)(6116002)(14444005)(5660300002)(8676002)(2870700001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1692;H:DM5PR12MB1705.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Kn3XnIiJIW2VEXr0di7f/llViNg9DArh5TXLc7AYwd8c/7PUT/hV+F/4NJP9PF1bW/BlELQzfBrBJAKPcM4CGKEDNisDLTnHtv8H+eu3n0SJ0lEDgmPfRE/3CVdiVxkQ6EGdA9hgxm52+hyMMrwDvKv5qb7U/qsvGN90EGu79RVEvz9WH5qHea7KCCMetEy6ZE0XqT8pgfkrwxUIgW2Zl+/zMN2W4juPFBDwP9RVfG4IBIJ/dM24se+dg6wVwaZODsFNrBnsFrJsT4ueSTZESsdv9gJXzOaEi6iwSxmaehOZuRtXQ78U97DlB6jDEdKZgxT+Igvh3huOJBwfGKRZ1lk6QoTPhbw8wCuluB7T/EcFN6zAa67ifVFeB+7sST3dM3FeuVfbEQFIb+WJIld9k8dbXWXKZlGF1rIFDqV4QZB0zfZL3cTY9f/a7qwHfgMK
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d2de4a8-7c2b-40cf-a9f2-08d778b2a2d0
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2019 12:08:13.0289
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tS86RwcXuvKOyJBkPtqnxQ/wt7lIPdAsw/9vDl7h3ol0EMMJQb87wPhmU+9oB8ZI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1692
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 04.12.19 um 12:36 schrieb Thomas Hellström (VMware):
-> On 12/4/19 12:11 PM, Christian König wrote:
->> Am 03.12.19 um 14:22 schrieb Thomas Hellström (VMware):
->>> From: Thomas Hellstrom <thellstrom@vmware.com>
->>>
->>> This helper is used to align user-space buffer object addresses to
->>> huge page boundaries, minimizing the chance of alignment mismatch
->>> between user-space addresses and physical addresses.
+On 04.12.19 12:52, Durrant, Paul wrote:
+>> -----Original Message-----
+>> From: Xen-devel <xen-devel-bounces@lists.xenproject.org> On Behalf Of
+>> SeongJae Park
+>> Sent: 04 December 2019 11:34
+>> To: konrad.wilk@oracle.com; roger.pau@citrix.com; axboe@kernel.dk
+>> Cc: sj38.park@gmail.com; xen-devel@lists.xenproject.org; linux-
+>> block@vger.kernel.org; linux-kernel@vger.kernel.org; Park, Seongjae
+>> <sjpark@amazon.com>
+>> Subject: [Xen-devel] [PATCH 0/2] xen/blkback: Aggressively shrink page
+>> pools if a memory pressure is detected
 >>
->> Mhm, I'm wondering if that is really such a good idea.
->
-> Could you elaborate? What drawbacks do you see?
-
-Main problem for me seems to be that I don't fully understand what the 
-get_unmapped_area callback is doing.
-
-For example why do we need to use drm_vma_offset_lookup_locked() to 
-adjust the pgoff?
-
-The mapped offset should be completely irrelevant for finding some piece 
-of userspace address space or am I totally off here?
-
-> Note that this is the way other subsystems are doing it. Take a look 
-> at shmem_get_unmapped_area() for instance.
->
+>> Each `blkif` has a free pages pool for the grant mapping.  The size of
+>> the pool starts from zero and be increased on demand while processing
+>> the I/O requests.  If current I/O requests handling is finished or 100
+>> milliseconds has passed since last I/O requests handling, it checks and
+>> shrinks the pool to not exceed the size limit, `max_buffer_pages`.
 >>
->> Wouldn't it be sufficient if userspace uses MAP_HUGETLB?
->
-> MAP_HUGETLB is something different and appears to be tied to the 
-> kernel persistent huge page mechanism, whereas the TTM huge pages is 
-> tided to the THP functionality (although skipped by khugepaged).
+>> Therefore, `blkfront` running guests can cause a memory pressure in the
+>> `blkback` running guest by attaching arbitrarily large number of block
+>> devices and inducing I/O.
+> OOI... How do guests unilaterally cause the attachment of arbitrary numbers of PV devices?
+Good point.  Many systems have their limit for the maximum number of the
+devices.  Thus, 'arbitrarily' large number of devices cannot be attached.  So,
+there is the upperbound.  System administrators might be able to avoid the
+memory pressure problem by setting the limit low enough or giving more memory
+to the 'blkback' running guest.
 
-Ok, that makes sense. Over all we want to be transparent here.
+However, many systems also tempt to set the limit high enough so that guests
+can satisfy and to give minimal memory to the 'blkback' running guest for cost
+efficiency.
 
-Regards,
-Christian.
+I believe this patchset can be helpful for such situations.
+
+Anyway, using the term 'arbitrarily' is obvisously my fault.  I will update the
+description in the next version of patchset.
+
+
+Thanks,
+SeongJae Park
 
 >
-> Thanks,
->
-> Thomas
->
->
->
->>
->> Regards,
->> Christian.
->>
->>>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: Michal Hocko <mhocko@suse.com>
->>> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->>> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>> Cc: "Jérôme Glisse" <jglisse@redhat.com>
->>> Cc: "Christian König" <christian.koenig@amd.com>
->>> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
->>> ---
->>>   drivers/gpu/drm/drm_file.c | 130 
->>> +++++++++++++++++++++++++++++++++++++
->>>   include/drm/drm_file.h     |   5 ++
->>>   2 files changed, 135 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
->>> index ea34bc991858..e5b4024cd397 100644
->>> --- a/drivers/gpu/drm/drm_file.c
->>> +++ b/drivers/gpu/drm/drm_file.c
->>> @@ -31,6 +31,8 @@
->>>    * OTHER DEALINGS IN THE SOFTWARE.
->>>    */
->>>   +#include <uapi/asm/mman.h>
->>> +
->>>   #include <linux/dma-fence.h>
->>>   #include <linux/module.h>
->>>   #include <linux/pci.h>
->>> @@ -41,6 +43,7 @@
->>>   #include <drm/drm_drv.h>
->>>   #include <drm/drm_file.h>
->>>   #include <drm/drm_print.h>
->>> +#include <drm/drm_vma_manager.h>
->>>     #include "drm_crtc_internal.h"
->>>   #include "drm_internal.h"
->>> @@ -754,3 +757,130 @@ void drm_send_event(struct drm_device *dev, 
->>> struct drm_pending_event *e)
->>>       spin_unlock_irqrestore(&dev->event_lock, irqflags);
->>>   }
->>>   EXPORT_SYMBOL(drm_send_event);
->>> +
->>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +/*
->>> + * drm_addr_inflate() attempts to construct an aligned area by 
->>> inflating
->>> + * the area size and skipping the unaligned start of the area.
->>> + * adapted from shmem_get_unmapped_area()
->>> + */
->>> +static unsigned long drm_addr_inflate(unsigned long addr,
->>> +                      unsigned long len,
->>> +                      unsigned long pgoff,
->>> +                      unsigned long flags,
->>> +                      unsigned long huge_size)
->>> +{
->>> +    unsigned long offset, inflated_len;
->>> +    unsigned long inflated_addr;
->>> +    unsigned long inflated_offset;
->>> +
->>> +    offset = (pgoff << PAGE_SHIFT) & (huge_size - 1);
->>> +    if (offset && offset + len < 2 * huge_size)
->>> +        return addr;
->>> +    if ((addr & (huge_size - 1)) == offset)
->>> +        return addr;
->>> +
->>> +    inflated_len = len + huge_size - PAGE_SIZE;
->>> +    if (inflated_len > TASK_SIZE)
->>> +        return addr;
->>> +    if (inflated_len < len)
->>> +        return addr;
->>> +
->>> +    inflated_addr = current->mm->get_unmapped_area(NULL, 0, 
->>> inflated_len,
->>> +                               0, flags);
->>> +    if (IS_ERR_VALUE(inflated_addr))
->>> +        return addr;
->>> +    if (inflated_addr & ~PAGE_MASK)
->>> +        return addr;
->>> +
->>> +    inflated_offset = inflated_addr & (huge_size - 1);
->>> +    inflated_addr += offset - inflated_offset;
->>> +    if (inflated_offset > offset)
->>> +        inflated_addr += huge_size;
->>> +
->>> +    if (inflated_addr > TASK_SIZE - len)
->>> +        return addr;
->>> +
->>> +    return inflated_addr;
->>> +}
->>> +
->>> +/**
->>> + * drm_get_unmapped_area() - Get an unused user-space virtual 
->>> memory area
->>> + * suitable for huge page table entries.
->>> + * @file: The struct file representing the address space being 
->>> mmap()'d.
->>> + * @uaddr: Start address suggested by user-space.
->>> + * @len: Length of the area.
->>> + * @pgoff: The page offset into the address space.
->>> + * @flags: mmap flags
->>> + * @mgr: The address space manager used by the drm driver. This 
->>> argument can
->>> + * probably be removed at some point when all drivers use the same
->>> + * address space manager.
->>> + *
->>> + * This function attempts to find an unused user-space virtual 
->>> memory area
->>> + * that can accommodate the size we want to map, and that is properly
->>> + * aligned to facilitate huge page table entries matching actual
->>> + * huge pages or huge page aligned memory in buffer objects. Buffer 
->>> objects
->>> + * are assumed to start at huge page boundary pfns (io memory) or be
->>> + * populated by huge pages aligned to the start of the buffer object
->>> + * (system- or coherent memory). Adapted from shmem_get_unmapped_area.
->>> + *
->>> + * Return: aligned user-space address.
->>> + */
->>> +unsigned long drm_get_unmapped_area(struct file *file,
->>> +                    unsigned long uaddr, unsigned long len,
->>> +                    unsigned long pgoff, unsigned long flags,
->>> +                    struct drm_vma_offset_manager *mgr)
->>> +{
->>> +    unsigned long addr;
->>> +    unsigned long inflated_addr;
->>> +    struct drm_vma_offset_node *node;
->>> +
->>> +    if (len > TASK_SIZE)
->>> +        return -ENOMEM;
->>> +
->>> +    /* Adjust mapping offset to be zero at bo start */
->>> +    drm_vma_offset_lock_lookup(mgr);
->>> +    node = drm_vma_offset_lookup_locked(mgr, pgoff, 1);
->>> +    if (node)
->>> +        pgoff -= node->vm_node.start;
->>> +    drm_vma_offset_unlock_lookup(mgr);
->>> +
->>> +    addr = current->mm->get_unmapped_area(file, uaddr, len, pgoff, 
->>> flags);
->>> +    if (IS_ERR_VALUE(addr))
->>> +        return addr;
->>> +    if (addr & ~PAGE_MASK)
->>> +        return addr;
->>> +    if (addr > TASK_SIZE - len)
->>> +        return addr;
->>> +
->>> +    if (len < HPAGE_PMD_SIZE)
->>> +        return addr;
->>> +    if (flags & MAP_FIXED)
->>> +        return addr;
->>> +    /*
->>> +     * Our priority is to support MAP_SHARED mapped hugely;
->>> +     * and support MAP_PRIVATE mapped hugely too, until it is COWed.
->>> +     * But if caller specified an address hint, respect that as 
->>> before.
->>> +     */
->>> +    if (uaddr)
->>> +        return addr;
->>> +
->>> +    inflated_addr = drm_addr_inflate(addr, len, pgoff, flags,
->>> +                     HPAGE_PMD_SIZE);
->>> +
->>> +    if (IS_ENABLED(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD) &&
->>> +        len >= HPAGE_PUD_SIZE)
->>> +        inflated_addr = drm_addr_inflate(inflated_addr, len, pgoff,
->>> +                         flags, HPAGE_PUD_SIZE);
->>> +    return inflated_addr;
->>> +}
->>> +#else /* CONFIG_TRANSPARENT_HUGEPAGE */
->>> +unsigned long drm_get_unmapped_area(struct file *file,
->>> +                    unsigned long uaddr, unsigned long len,
->>> +                    unsigned long pgoff, unsigned long flags,
->>> +                    struct drm_vma_offset_manager *mgr)
->>> +{
->>> +    return current->mm->get_unmapped_area(file, uaddr, len, pgoff, 
->>> flags);
->>> +}
->>> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>> +EXPORT_SYMBOL_GPL(drm_get_unmapped_area);
->>> diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
->>> index 67af60bb527a..4719cc80d547 100644
->>> --- a/include/drm/drm_file.h
->>> +++ b/include/drm/drm_file.h
->>> @@ -386,5 +386,10 @@ void drm_event_cancel_free(struct drm_device *dev,
->>>                  struct drm_pending_event *p);
->>>   void drm_send_event_locked(struct drm_device *dev, struct 
->>> drm_pending_event *e);
->>>   void drm_send_event(struct drm_device *dev, struct 
->>> drm_pending_event *e);
->>> +struct drm_vma_offset_manager;
->>> +unsigned long drm_get_unmapped_area(struct file *file,
->>> +                    unsigned long uaddr, unsigned long len,
->>> +                    unsigned long pgoff, unsigned long flags,
->>> +                    struct drm_vma_offset_manager *mgr);
->>>     #endif /* _DRM_FILE_H_ */
->
+>   Paul
 >
 
