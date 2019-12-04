@@ -2,155 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB98311280C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 10:44:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7342D112830
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 10:45:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbfLDJo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 04:44:56 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:30983 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727459AbfLDJot (ORCPT
+        id S1727716AbfLDJph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 04:45:37 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11929 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfLDJpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 04:44:49 -0500
-X-UUID: 8ad73c0e4d554d14993d1bc73616ca3f-20191204
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=VcoIehMe+46z0sneQ8TvV0LGJmr02/Jryq1p3LPajfg=;
-        b=alesoQI7SKo2B6YOZC6zLDQO5UQ62X6Owm+ot6SdT8zmVLu+p8BWR7j0UkoHRuZhf+nog9417g2P218OgcJxP0chgLUWfsqFYFsFPb+cqowauD53kS4zu+d/zJ+/9sEWx2WmawVodnH8gMCVbOu4dYEY2UwBOsz2MaiHw+lm4/k=;
-X-UUID: 8ad73c0e4d554d14993d1bc73616ca3f-20191204
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 721765084; Wed, 04 Dec 2019 17:44:44 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 4 Dec 2019 17:44:38 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 4 Dec 2019 17:43:49 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3 6/6] drm/mediatek: apply CMDQ control flow
-Date:   Wed, 4 Dec 2019 17:44:41 +0800
-Message-ID: <20191204094441.5116-7-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191204094441.5116-1-bibby.hsieh@mediatek.com>
-References: <20191204094441.5116-1-bibby.hsieh@mediatek.com>
+        Wed, 4 Dec 2019 04:45:36 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5de7803b0000>; Wed, 04 Dec 2019 01:45:32 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 04 Dec 2019 01:45:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 04 Dec 2019 01:45:35 -0800
+Received: from [10.21.133.51] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 4 Dec
+ 2019 09:45:33 +0000
+Subject: Re: [PATCH 4.19 000/321] 4.19.88-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20191203223427.103571230@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
+Date:   Wed, 4 Dec 2019 09:45:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191203223427.103571230@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575452732; bh=26kyV1gW8PkF4sKzVfX5NP+tngMmMEqR9KtT7T85FsI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Yx0L+75pxw8ZP0uaEQ5SM3bjGZqwgInjobvUKwV8P5F3PIgHm4bpjZju6W+VE2wwS
+         4dev6EXK3woPZ/KGEXl+KqXYzdvI3Fq+1ldHOE1kXL2toeJJg91vggQKUSdG5UGR0w
+         3EjqY/NesEP0jZCFFTzKodk2DOGKkBrhDXPJbvj9/J/AD4MhZE7yiDFKBM0Hxy8SRw
+         11ZvC59DJnib1BVC4+Z1d+RRJDu9wYk8OZ8qykIXMdD4JzeGaeg6rF6mQ3g95g+UZd
+         WZyM0BRSB6B8Z2t3BXHiMPFizyTxRPiIGx7Mw+Il2h+s4OOvKkmoVRkG/U7F1LMsDj
+         UW6vimPZAmNUg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VW5saWtlIG90aGVyIFNvQ3MsIE1UODE4MyBkb2VzIG5vdCBoYXZlICJzaGFkb3ciDQpyZWdpc3Rl
-cnMgZm9yIHBlcmZvcm1haW5nIGFuIGF0b21pYyB2aWRlbyBtb2RlDQpzZXQgb3IgcGFnZSBmbGlw
-IGF0IHZibGFuay92c3luYy4NCg0KVGhlIENNRFEgKENvbW1lbmQgUXVldWUpIGluIE1UODE4MyBp
-cyB1c2VkIHRvIGhlbHANCnVwZGF0ZSBhbGwgcmVsZXZhbnQgZGlzcGxheSBjb250cm9sbGVyIHJl
-Z2lzdGVycw0Kd2l0aCBjcml0aWNhbCB0aW1lIGxpbWF0aW9uLg0KDQpTaWduZWQtb2ZmLWJ5OiBZ
-VCBTaGVuIDx5dC5zaGVuQG1lZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IENLIEh1IDxjay5o
-dUBtZWRpYXRlay5jb20+DQpTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBl
-bmd1dHJvbml4LmRlPg0KU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1l
-ZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IFlvbmdxaWFuZyBOaXUgPHlvbmdxaWFuZy5uaXVA
-bWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
-Yy5jIHwgODAgKysrKysrKysrKysrKysrKysrKysrKysrLQ0KIDEgZmlsZSBjaGFuZ2VkLCA3NyBp
-bnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kcm1fY3J0Yy5jDQppbmRleCA5ZjFmZjJmM2YxMDQuLjkzNDAzNDZlMjcyNyAxMDA2NDQNCi0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQpAQCAtMTIsNiArMTIsOCBAQA0KICNp
-bmNsdWRlIDxkcm0vZHJtX3BsYW5lX2hlbHBlci5oPg0KICNpbmNsdWRlIDxkcm0vZHJtX3Byb2Jl
-X2hlbHBlci5oPg0KICNpbmNsdWRlIDxkcm0vZHJtX3ZibGFuay5oPg0KKyNpbmNsdWRlIDxsaW51
-eC9vZl9hZGRyZXNzLmg+DQorI2luY2x1ZGUgPGxpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5o
-Pg0KIA0KICNpbmNsdWRlICJtdGtfZHJtX2Rydi5oIg0KICNpbmNsdWRlICJtdGtfZHJtX2NydGMu
-aCINCkBAIC00Miw2ICs0NCw5IEBAIHN0cnVjdCBtdGtfZHJtX2NydGMgew0KIAl1bnNpZ25lZCBp
-bnQJCQlsYXllcl9ucjsNCiAJYm9vbAkJCQlwZW5kaW5nX3BsYW5lczsNCiANCisJc3RydWN0IGNt
-ZHFfY2xpZW50CQkqY21kcV9jbGllbnQ7DQorCXUzMgkJCQljbWRxX2V2ZW50Ow0KKw0KIAl2b2lk
-IF9faW9tZW0JCQkqY29uZmlnX3JlZ3M7DQogCWNvbnN0IHN0cnVjdCBtdGtfbW1zeXNfcmVnX2Rh
-dGEgKm1tc3lzX3JlZ19kYXRhOw0KIAlzdHJ1Y3QgbXRrX2Rpc3BfbXV0ZXgJCSptdXRleDsNCkBA
-IC01OSw2ICs2NCwxMSBAQCBzdHJ1Y3QgbXRrX2NydGNfc3RhdGUgew0KIAl1bnNpZ25lZCBpbnQJ
-CQlwZW5kaW5nX3dpZHRoOw0KIAl1bnNpZ25lZCBpbnQJCQlwZW5kaW5nX2hlaWdodDsNCiAJdW5z
-aWduZWQgaW50CQkJcGVuZGluZ192cmVmcmVzaDsNCisJc3RydWN0IGNtZHFfcGt0CQkJKmNtZHFf
-aGFuZGxlOw0KK307DQorDQorc3RydWN0IG10a19jbWRxX2NiX2RhdGEgew0KKwlzdHJ1Y3QgY21k
-cV9wa3QJCQkqY21kcV9oYW5kbGU7DQogfTsNCiANCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBtdGtf
-ZHJtX2NydGMgKnRvX210a19jcnRjKHN0cnVjdCBkcm1fY3J0YyAqYykNCkBAIC0yMzMsNiArMjQz
-LDQ3IEBAIHN0cnVjdCBtdGtfZGRwX2NvbXAgKm10a19kcm1fZGRwX2NvbXBfZm9yX3BsYW5lKHN0
-cnVjdCBkcm1fY3J0YyAqY3J0YywNCiAJcmV0dXJuIE5VTEw7DQogfQ0KIA0KKyNpZmRlZiBDT05G
-SUdfTVRLX0NNRFENCitzdGF0aWMgdm9pZCBkZHBfY21kcV9jYihzdHJ1Y3QgY21kcV9jYl9kYXRh
-IGRhdGEpDQorew0KKwlzdHJ1Y3QgbXRrX2NtZHFfY2JfZGF0YSAqY2JfZGF0YSA9IGRhdGEuZGF0
-YTsNCisNCisJY21kcV9wa3RfZGVzdHJveShjYl9kYXRhLT5jbWRxX2hhbmRsZSk7DQorCWtmcmVl
-KGNiX2RhdGEpOw0KK30NCisNCitzdGF0aWMgdm9pZCBtdGtfY21kcV9hY3F1aXJlKHN0cnVjdCBk
-cm1fY3J0YyAqY3J0YykNCit7DQorCXN0cnVjdCBtdGtfY3J0Y19zdGF0ZSAqbXRrX2NydGNfc3Rh
-dGUgPQ0KKwkJCXRvX210a19jcnRjX3N0YXRlKGNydGMtPnN0YXRlKTsNCisJc3RydWN0IG10a19k
-cm1fY3J0YyAqbXRrX2NydGMgPSB0b19tdGtfY3J0YyhjcnRjKTsNCisNCisJbXRrX2NydGNfc3Rh
-dGUtPmNtZHFfaGFuZGxlID0NCisJCQljbWRxX3BrdF9jcmVhdGUobXRrX2NydGMtPmNtZHFfY2xp
-ZW50LA0KKwkJCQkJUEFHRV9TSVpFKTsNCisJY21kcV9wa3RfY2xlYXJfZXZlbnQobXRrX2NydGNf
-c3RhdGUtPmNtZHFfaGFuZGxlLA0KKwkJCSAgICAgbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KKwlj
-bWRxX3BrdF93ZmUobXRrX2NydGNfc3RhdGUtPmNtZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21kcV9l
-dmVudCk7DQorfQ0KKw0KK3N0YXRpYyB2b2lkIG10a19jbWRxX3JlbGVhc2Uoc3RydWN0IGRybV9j
-cnRjICpjcnRjKQ0KK3sNCisJc3RydWN0IG10a19jcnRjX3N0YXRlICptdGtfY3J0Y19zdGF0ZSA9
-DQorCQkJdG9fbXRrX2NydGNfc3RhdGUoY3J0Yy0+c3RhdGUpOw0KKwlzdHJ1Y3QgbXRrX2NtZHFf
-Y2JfZGF0YSAqY2JfZGF0YTsNCisNCisJY2JfZGF0YSA9IGttYWxsb2Moc2l6ZW9mKCpjYl9kYXRh
-KSwgR0ZQX0tFUk5FTCk7DQorCWlmICghY2JfZGF0YSkgew0KKwkJRFJNX0RFVl9FUlJPUihjcnRj
-LT5kZXYtPmRldiwgIkZhaWxlZCB0byBhbGxvYyBjYl9kYXRhXG4iKTsNCisJCXJldHVybjsNCisJ
-fQ0KKw0KKwljYl9kYXRhLT5jbWRxX2hhbmRsZSA9IG10a19jcnRjX3N0YXRlLT5jbWRxX2hhbmRs
-ZTsNCisJY21kcV9wa3RfZmx1c2hfYXN5bmMobXRrX2NydGNfc3RhdGUtPmNtZHFfaGFuZGxlLA0K
-KwkJCSAgICAgZGRwX2NtZHFfY2IsIGNiX2RhdGEpOw0KK30NCisjZW5kaWYNCisNCiBzdGF0aWMg
-aW50IG10a19jcnRjX2RkcF9od19pbml0KHN0cnVjdCBtdGtfZHJtX2NydGMgKm10a19jcnRjKQ0K
-IHsNCiAJc3RydWN0IGRybV9jcnRjICpjcnRjID0gJm10a19jcnRjLT5iYXNlOw0KQEAgLTM5Myw3
-ICs0NDQsOCBAQCBzdGF0aWMgdm9pZCBtdGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1fY3J0
-YyAqY3J0YykNCiAJaWYgKHN0YXRlLT5wZW5kaW5nX2NvbmZpZykgew0KIAkJbXRrX2RkcF9jb21w
-X2NvbmZpZyhjb21wLCBzdGF0ZS0+cGVuZGluZ193aWR0aCwNCiAJCQkJICAgIHN0YXRlLT5wZW5k
-aW5nX2hlaWdodCwNCi0JCQkJICAgIHN0YXRlLT5wZW5kaW5nX3ZyZWZyZXNoLCAwLCBOVUxMKTsN
-CisJCQkJICAgIHN0YXRlLT5wZW5kaW5nX3ZyZWZyZXNoLCAwLA0KKwkJCQkgICAgc3RhdGUtPmNt
-ZHFfaGFuZGxlKTsNCiANCiAJCXN0YXRlLT5wZW5kaW5nX2NvbmZpZyA9IGZhbHNlOw0KIAl9DQpA
-QCAtNDEzLDcgKzQ2NSw4IEBAIHN0YXRpYyB2b2lkIG10a19jcnRjX2RkcF9jb25maWcoc3RydWN0
-IGRybV9jcnRjICpjcnRjKQ0KIA0KIAkJCWlmIChjb21wKQ0KIAkJCQltdGtfZGRwX2NvbXBfbGF5
-ZXJfY29uZmlnKGNvbXAsIGxvY2FsX2xheWVyLA0KLQkJCQkJCQkgIHBsYW5lX3N0YXRlLCBOVUxM
-KTsNCisJCQkJCQkJICBwbGFuZV9zdGF0ZSwNCisJCQkJCQkJICBzdGF0ZS0+Y21kcV9oYW5kbGUp
-Ow0KIAkJCXBsYW5lX3N0YXRlLT5wZW5kaW5nLmNvbmZpZyA9IGZhbHNlOw0KIAkJfQ0KIAkJbXRr
-X2NydGMtPnBlbmRpbmdfcGxhbmVzID0gZmFsc2U7DQpAQCAtNDUyLDYgKzUwNSwxMyBAQCBzdGF0
-aWMgdm9pZCBtdGtfZHJtX2NydGNfaHdfY29uZmlnKHN0cnVjdCBtdGtfZHJtX2NydGMgKm10a19j
-cnRjKQ0KIAkJbXRrX2NydGNfZGRwX2NvbmZpZyhjcnRjKTsNCiAJCW10a19kaXNwX211dGV4X3Jl
-bGVhc2UobXRrX2NydGMtPm11dGV4KTsNCiAJfQ0KKyNpZmRlZiBDT05GSUdfTVRLX0NNRFENCisJ
-aWYgKG10a19jcnRjLT5jbWRxX2NsaWVudCkgew0KKwkJbXRrX2NtZHFfYWNxdWlyZShjcnRjKTsN
-CisJCW10a19jcnRjX2RkcF9jb25maWcoY3J0Yyk7DQorCQltdGtfY21kcV9yZWxlYXNlKGNydGMp
-Ow0KKwl9DQorI2VuZGlmDQogCW11dGV4X3VubG9jaygmbXRrX2NydGMtPmh3X2xvY2spOw0KIH0N
-CiANCkBAIC01MjgsNiArNTg4LDcgQEAgc3RhdGljIHZvaWQgbXRrX2RybV9jcnRjX2F0b21pY19k
-aXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywNCiAJbXRrX2NydGMtPnBlbmRpbmdfcGxhbmVz
-ID0gdHJ1ZTsNCiANCiAJLyogV2FpdCBmb3IgcGxhbmVzIHRvIGJlIGRpc2FibGVkICovDQorCW10
-a19kcm1fY3J0Y19od19jb25maWcobXRrX2NydGMpOw0KIAlkcm1fY3J0Y193YWl0X29uZV92Ymxh
-bmsoY3J0Yyk7DQogDQogCWRybV9jcnRjX3ZibGFua19vZmYoY3J0Yyk7DQpAQCAtNjE5LDcgKzY4
-MCw3IEBAIHZvaWQgbXRrX2NydGNfZGRwX2lycShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVj
-dCBtdGtfZGRwX2NvbXAgKmNvbXApDQogCXN0cnVjdCBtdGtfZHJtX2NydGMgKm10a19jcnRjID0g
-dG9fbXRrX2NydGMoY3J0Yyk7DQogCXN0cnVjdCBtdGtfZHJtX3ByaXZhdGUgKnByaXYgPSBjcnRj
-LT5kZXYtPmRldl9wcml2YXRlOw0KIA0KLQlpZiAoIXByaXYtPmRhdGEtPnNoYWRvd19yZWdpc3Rl
-cikNCisJaWYgKCFwcml2LT5kYXRhLT5zaGFkb3dfcmVnaXN0ZXIgJiYgIW10a19jcnRjLT5jbWRx
-X2NsaWVudCkNCiAJCW10a19jcnRjX2RkcF9jb25maWcoY3J0Yyk7DQogDQogCW10a19kcm1fZmlu
-aXNoX3BhZ2VfZmxpcChtdGtfY3J0Yyk7DQpAQCAtNzYzLDUgKzgyNCwxOCBAQCBpbnQgbXRrX2Ry
-bV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwNCiAJcHJpdi0+bnVtX3Bp
-cGVzKys7DQogCW11dGV4X2luaXQoJm10a19jcnRjLT5od19sb2NrKTsNCiANCisjaWZkZWYgQ09O
-RklHX01US19DTURRDQorCW10a19jcnRjLT5jbWRxX2NsaWVudCA9DQorCQkJY21kcV9tYm94X2Ny
-ZWF0ZShkZXYsIGRybV9jcnRjX2luZGV4KCZtdGtfY3J0Yy0+YmFzZSksDQorCQkJCQkgMjAwMCk7
-DQorCW9mX3Byb3BlcnR5X3JlYWRfdTMyX2luZGV4KGRldi0+b2Zfbm9kZSwgIm1lZGlhdGVrLGdj
-ZS1ldmVudHMiLA0KKwkJCQkgICBkcm1fY3J0Y19pbmRleCgmbXRrX2NydGMtPmJhc2UpLA0KKwkJ
-CQkgICAmbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KKwlpZiAoSVNfRVJSKG10a19jcnRjLT5jbWRx
-X2NsaWVudCkpIHsNCisJCWRldl9kYmcoZGV2LCAibXRrX2NydGMgJWQgZmFpbGVkIHRvIGNyZWF0
-ZSBtYWlsYm94IGNsaWVudCwgd3JpdGluZyByZWdpc3RlciBieSBDUFUgbm93XG4iLA0KKwkJCWRy
-bV9jcnRjX2luZGV4KCZtdGtfY3J0Yy0+YmFzZSkpOw0KKwkJbXRrX2NydGMtPmNtZHFfY2xpZW50
-ID0gTlVMTDsNCisJfQ0KKyNlbmRpZg0KIAlyZXR1cm4gMDsNCiB9DQotLSANCjIuMTguMA0K
 
+On 03/12/2019 22:31, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.88 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 05 Dec 2019 22:30:32 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.88-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
+
+...
+
+> Ding Tao <miyatsu@qq.com>
+>     arm64: dts: marvell: armada-37xx: Enable emmc on espressobin
+
+The above commit is causing the following build failure for ARM64 ...
+
+  DTC     arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb
+arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+(phandle_references): /soc/internal-regs@d0000000/sdhci@d0000: Reference
+to non-existent node or label "sdio_pins"
+
+arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtb: ERROR
+(phandle_references): /soc/internal-regs@d0000000/sdhci@d8000: Reference
+to non-existent node or label "mmc_pins"
+
+Cheers
+Jon
+
+-- 
+nvpublic
