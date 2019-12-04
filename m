@@ -2,114 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E8771137B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:40:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FEC11137B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:41:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfLDWkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 17:40:49 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38635 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfLDWks (ORCPT
+        id S1728524AbfLDWlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 17:41:42 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:50118 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbfLDWlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 17:40:48 -0500
-Received: by mail-lf1-f66.google.com with SMTP id r14so866788lfm.5
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 14:40:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PXU0l6hsLNwOEAachYcf3O/SAhU82EqIUjlmH0om7uk=;
-        b=F96XFSXRmW86ugKdykHTCw+//Ckr2I37FfACIGnU9BIPH5uQDgSkjEaFAJjn5FOd9N
-         ghzJbE0W0zDlD4xBGKMbcWs9mdQDJlJ4RRJYRRWH2dTttCzUlySAKLwlWjfdlQd8Inpj
-         AqnY9qnCilK/APl5c93l5GJXqWw6TnVlqwrsKPxnYgTZNyiiQu7DegGpw3qSy4GvEviy
-         yvkyIeft4+SJpKxQs2wvH7TkCm/iL2cR87+qLAvXqYcjDTidd5oqLe+teimX0iYs5uob
-         CS8JXtTgcwFeaCuPij5HAP/bR66jxE9lT2dsEgLl1xkrD+tIrcB1JW5znVjUp6InIpZx
-         fIiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PXU0l6hsLNwOEAachYcf3O/SAhU82EqIUjlmH0om7uk=;
-        b=rBYgerIQMixk2i6NQD/5sa0OQ1UbnUzrl8XMIwKyFWb2+Ne0LV1cnSc3hRhUNGPyI6
-         77DrM3HFKBiYrYz2rMJt4QZP2rJhF/ZcBvS0jyW7+n+Vna7M1io3IbyNvOINvpJ4LVlO
-         lpZy3GYpd3q7ZzQbpQHrjlXS+Hf2gdJt+NFvBWJyEXYYvb/resirAyMLrcLR7XZ7kScf
-         O4z6txZoXHqy/htO70YpTR87SSlRJbAYroOChYXSE5XaRMr+BDfs0E+OpDCM+HXnDgzK
-         yRfZiHuumql6ZXSWORe1o955lRxNWhC9TKTjpAqFhwxVHKanuqQ3bLRC9fTSjV6HXT4l
-         Fbow==
-X-Gm-Message-State: APjAAAV04eTxcsxa6h989aA34MKp4yClZs0WrPYmJkVI0rkbyhqp8XkT
-        tsHbGezUNc65YhdCBzT9zhc=
-X-Google-Smtp-Source: APXvYqwIqR7t1ouhgP9BBoaid56UlfHiPWLcqeM8nXJ6uLkUo4RIKcPrFGz8TtL+baL1omb7r/wJVg==
-X-Received: by 2002:a19:4f46:: with SMTP id a6mr3490704lfk.143.1575499246564;
-        Wed, 04 Dec 2019 14:40:46 -0800 (PST)
-Received: from pc636 (h5ef52e31.seluork.dyn.perspektivbredband.net. [94.245.46.49])
-        by smtp.gmail.com with ESMTPSA id m16sm3932304ljb.47.2019.12.04.14.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 14:40:45 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Wed, 4 Dec 2019 23:40:37 +0100
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        Daniel Axtens <dja@axtens.net>, Qian Cai <cai@lca.pw>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        syzbot+82e323920b78d54aaed5@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/2] kasan: fix crashes on access to memory mapped by
- vm_map_ram()
-Message-ID: <20191204224037.GA12896@pc636>
-References: <20191204204534.32202-1-aryabinin@virtuozzo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204204534.32202-1-aryabinin@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 4 Dec 2019 17:41:39 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id EBAA720B4760;
+        Wed,  4 Dec 2019 14:41:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EBAA720B4760
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1575499297;
+        bh=Z+y91JgRIwnVc0sS4RRMc6nimO0sgKyY/41suDsck/8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DO212QUuZfeFv3smDOawM0rDF0RXJLk1iyPWKqNDXV1R5nuV69FhLHwyyndrT4j5O
+         M6NEZmZKJAJ7PV4GzZ8NpomJLrjuEWQmG+rr5a4LnnufhzfNyPsM3gt+cFBmuDf8dJ
+         G5JTXcfCITdccr+c5mzoYM/LvuA2wngD4LcXbDR0=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v10 0/6] KEYS: Measure keys when they are created or updated
+Date:   Wed,  4 Dec 2019 14:41:25 -0800
+Message-Id: <20191204224131.3384-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 4d3b3d60d893..a5412f14f57f 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -1073,6 +1073,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
->  	struct vmap_area *va, *pva;
->  	unsigned long addr;
->  	int purged = 0;
-> +	int ret = -EBUSY;
->  
->  	BUG_ON(!size);
->  	BUG_ON(offset_in_page(size));
-> @@ -1139,6 +1140,10 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
->  	va->va_end = addr + size;
->  	va->vm = NULL;
->  
-> +	ret = kasan_populate_vmalloc(addr, size);
-> +	if (ret)
-> +		goto out;
-> +
-But it introduces another issues when is CONFIG_KASAN_VMALLOC=y. If
-the kasan_populate_vmalloc() gets failed for some reason it just
-leaves the function, that will lead to waste of vmap space.
+Keys created or updated in the system are currently not measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether or not the trusted keys keyring(s), for instance, contain
+only known good (trusted) keys.
 
->  	spin_lock(&vmap_area_lock);
->  	insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
->  	spin_unlock(&vmap_area_lock);
->
-     ret = kasan_populate_vmalloc(addr, size);
-     if (ret) {
-         free_vmap_area(va);
-         return ERR_PTR(-EBUSY);;
-     }
+IMA measures system files, command line arguments passed to kexec,
+boot aggregate, etc. It can be used to measure keys as well.
+But there is no mechanism available in the kernel for IMA to
+know when a key is created or updated.
 
-> @@ -1169,8 +1174,9 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
->  		pr_warn("vmap allocation for size %lu failed: use vmalloc=<size> to increase size\n",
->  			size);
->  
-> +out:
->  	kmem_cache_free(vmap_area_cachep, va);
-> -	return ERR_PTR(-EBUSY);
-> +	return ERR_PTR(ret);
->  }
->  
+This change aims to address measuring keys created or updated
+in the system.
+
+To achieve the above the following changes have been made:
+
+ - Added a new IMA hook namely, ima_post_key_create_or_update, which
+   measures the key. This IMA hook is called from key_create_or_update
+   function. The key measurement can be controlled through IMA policy.
+
+   A new IMA policy function KEY_CHECK has been added to measure keys.
+   "keyrings=" option can be specified for KEY_CHECK to limit
+   measuring the keys loaded onto the specified keyrings only.
+
+   uid can be specified to further restrict key measurement for keys
+   created by specific user.
+
+   # measure keys loaded onto any keyring
+   measure func=KEY_CHECK
+
+   # measure keys loaded onto the IMA keyring only for root user
+   measure func=KEY_CHECK uid=0 keyring=".ima"
+
+   # measure keys on the BUILTIN and IMA keyrings into a different PCR
+   measure func=KEY_CHECK keyring=".builtin_trusted_keys|.ima" pcr=11
+
+Testing performed:
+
+  * Booted the kernel with this change.
+  * When KEY_CHECK policy is set IMA measures keys loaded
+    onto any keyring (keyrings= option not specified).
+  * Keys are not measured when KEY_CHECK is not set.
+  * When keyrings= option is specified for KEY_CHECK then only the keys
+    loaded onto a keyring specified in the option is measured.
+  * When uid is specified in the policy the key is measured
+    only when the current user id matches the one given in the policy.
+  * Added a new key to a keyring.
+    => Added keys to .ima and .evm keyrings.
+  * Added the same key again.
+    => Add the same key to .ima and .evm keyrings.
+
+Change Log:
+
+  v10:
+
+  => Added check for user id (uid) in ima_match_keyring()
+  => Updated ima_match_keyring() function to use strsep() to
+     check for keyring match.
+  => Edited key measurement validation description.
+
+  v9:
+
+  => Changed the measured key data from just the public key to
+     the entire payload passed to key_create_or_update() function.
+     This payload is the certificate from which the key is created
+     or updated by key_create_or_update() function.
+  => Added check in process_buffer_measurement() to return
+     immediately if ima_policy_flag is set to zero.
+
+  v8:
+
+  => Updated ima_match_keyring() function to check for
+     whole keyring name match.
+  => Used CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE instead of
+     CONFIG_KEYS to build ima_asymmetric_keys.c and enable
+     the IMA hook to measure keys since this config handles
+     the required build time dependencies better.
+  => Updated patch description to illustrate verification
+     of key measurement.
+
+  v7:
+
+  => Removed CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS option and used
+     CONFIG_KEYS instead for ima_asymmetric_keys.c
+  => Added the patches related to "keyrings=" option support to
+     this patch set.
+
+  v6:
+
+  => Rebased the changes to v5.4-rc7
+  => Renamed KEYRING_CHECK to KEY_CHECK per Mimi's suggestion.
+  => Excluded the patches that add support for limiting key
+     measurement to specific keyrings ("keyrings=" option
+     for "measure func=KEY_CHECK" in the IMA policy).
+     Also, excluded the patches that add support for deferred
+     processing of keys (queue support).
+     These patches will be added in separate patch sets later.
+
+  v5:
+
+  => Reorganized the patches to add measurement of keys through
+     the IMA hook without any queuing and then added queuing support.
+  => Updated the queuing functions to minimize code executed inside mutex.
+  => Process queued keys after custom IMA policies have been applied.
+
+  v4:
+
+  => Rebased the changes to v5.4-rc3
+  => Applied the following dependent patch set first
+     and then added new changes.
+  https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
+  => Refactored the patch set to separate out changes related to
+     func KEYRING_CHECK and options keyrings into different patches.
+  => Moved the functions to queue and dequeue keys for measurement
+     from ima_queue.c to a new file ima_asymmetric_keys.c.
+  => Added a new config namely CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
+     to compile ima_asymmetric_keys.c
+
+  v3:
+
+  => Added KEYRING_CHECK for measuring keys. This can optionally specify
+     keyrings to measure.
+  => Updated ima_get_action() and related functions to return
+     the keyrings if specified in the policy.
+  => process_buffer_measurement() function is updated to take keyring
+     as a parameter. The key will be measured if the policy includes
+     the keyring in the list of measured keyrings. If the policy does not
+     specify any keyrings then all keys are measured.
+
+  v2:
+
+  => Per suggestion from Mimi reordered the patch set to first
+     enable measuring keys added or updated in the system.
+     And, then scope the measurement to keys added to 
+     builtin_trusted_keys keyring through ima policy.
+  => Removed security_key_create_or_update function and instead
+     call ima hook, to measure the key, directly from 
+     key_create_or_update function.
+
+  v1:
+
+  => LSM function for key_create_or_update. It calls ima.
+  => Added ima hook for measuring keys
+  => ima measures keys based on ima policy.
+
+  v0:
+
+  => Added LSM hook for key_create_or_update.
+  => Measure keys added to builtin or secondary trusted keys keyring.
+
+Lakshmi Ramasubramanian (6):
+  IMA: Check IMA policy flag
+  IMA: Add KEY_CHECK func to measure keys
+  IMA: Define an IMA hook to measure keys
+  KEYS: Call the IMA hook to measure keys
+  IMA: Add support to limit measuring keys
+  IMA: Read keyrings= option from the IMA policy
+
+ Documentation/ABI/testing/ima_policy         | 16 +++-
+ include/linux/ima.h                          | 14 +++
+ security/integrity/ima/Makefile              |  1 +
+ security/integrity/ima/ima.h                 |  9 +-
+ security/integrity/ima/ima_api.c             |  8 +-
+ security/integrity/ima/ima_appraise.c        |  4 +-
+ security/integrity/ima/ima_asymmetric_keys.c | 58 ++++++++++++
+ security/integrity/ima/ima_main.c            | 12 ++-
+ security/integrity/ima/ima_policy.c          | 96 ++++++++++++++++++--
+ security/keys/key.c                          | 10 ++
+ 10 files changed, 208 insertions(+), 20 deletions(-)
+ create mode 100644 security/integrity/ima/ima_asymmetric_keys.c
+
+-- 
+2.17.1
+
