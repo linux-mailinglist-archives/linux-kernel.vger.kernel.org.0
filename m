@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372D8112F52
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:01:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5D2112F4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 17:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbfLDQBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 11:01:39 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35977 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbfLDP7n (ORCPT
+        id S1728712AbfLDP7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 10:59:52 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37006 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728669AbfLDP7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 10:59:43 -0500
-Received: by mail-qk1-f194.google.com with SMTP id v19so375689qkv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:42 -0800 (PST)
+        Wed, 4 Dec 2019 10:59:47 -0500
+Received: by mail-qt1-f196.google.com with SMTP id w47so238055qtk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 07:59:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=qBcLX2nsb5/KJrXmAdZJZWt+pM1z+3tYC2JPC3UMBs8=;
-        b=o8I+WyKVJqvU6pwBBmPvlwEgfrNAEk4GlYMzitCRr179qPaMpPv/Dsf4RkzNVOlWbj
-         SJtTzHuGepA5AFsEpqT2l8HQvW8RyrkGvHmGT4cczfTeeoOGcOTCg3hmg4mGwvsyk2fO
-         hVVTKnnabhrr6kUqDnPj9LO3g64XfrwcmnpbRIYHSWIPsQZ+VTvCmCGhjS4uWz8KW+jE
-         r2tBKt+5dh4dAw1tfkanz5dGvcgPMAwaczJWITsGCOabbajiT+q35hete04JyPLxcINt
-         Rknlv8ifyhk2/6/N5SvtCMHoFTVUc/64uBMV9TEhm+L9zO4lcNPZgOHo6T81EbgmcPaT
-         oV8w==
+        bh=2gHoWz5U3gDvwOIWS+f4ZdY50s/vcrKHXb/YTJoNTqU=;
+        b=a8S4mBC3Dt23xxnDE1I9wz9WiyUF1CmXE2b5cIfPza4Al587zhEJsQ3/UfRwm9U+G/
+         rRRqctcvpDnT6sJ4PjIsg0jEuIdwrHHFaf9DZrY+XcZa5X5HqfADC4/ZE/fK2jOaAWgU
+         W2eTwrnf5+BiTNu9IleEmtU0sXaYA1ww/f2Z04R08eCD67sNZB4PEOIQ3156ZCKhqt1Q
+         F/b9ovj2Jub3p4xim85ROV4ZHUG0gj54u/9VbLyh6qveLWICy/KpXEvfQm/MlfKFqDLS
+         8vFiPKLYJ57TxShn7SFwh0QWW3AfkDec3XUS+DjVhJwEFPhmbNHzu28bBSQFiNURWkoT
+         4eLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qBcLX2nsb5/KJrXmAdZJZWt+pM1z+3tYC2JPC3UMBs8=;
-        b=QHyRI2nQyXHcwxylkVJarGrNrg36WrOj76/0KJnN53MT9mNb816cUgCRC3dPLuTYVX
-         LT8kq1s3iIn01xF0QKesFbEwUiEyijhDv+o1i3kAgImOLBzH6kHC6Kfy8KzwHG7Ymkjw
-         dEk+PbvaRahPkX7ppzXdIlAzG/JJX8oB9amQxlXP9idm3WsM6mtR3qywHyGgVv0B/yvi
-         1v1VCDTF3xu2+VbNRLSXki4HAfse/dmEbu1f5pSjdMAPj+gLq7wRpf7VlwiKuhZ32rQf
-         Mxa8yn4ZEeDTTxQolQi5FQOC8jTMiWdXtOGoVfYS+ZCurI2KFwdsAkqBn4C48JkpHlx7
-         sP7Q==
-X-Gm-Message-State: APjAAAW87n/2/uNyp2lLRHOI4PFfurQ9fhZ6IDqLPFgKvwbgY9/eYIHc
-        a7RZFP113/nQ25w7SFkFpUCfkQ==
-X-Google-Smtp-Source: APXvYqx+YMl+m84asmEHoO0Kw7pl99uqkPfePC/y7TScpNcsYrQoGCWoBXTxiv8VGxyurKQil3dt6Q==
-X-Received: by 2002:a37:a40d:: with SMTP id n13mr3808120qke.167.1575475182344;
-        Wed, 04 Dec 2019 07:59:42 -0800 (PST)
+        bh=2gHoWz5U3gDvwOIWS+f4ZdY50s/vcrKHXb/YTJoNTqU=;
+        b=fTd6JIRjGyvOckWcrXllUlzUBt6eJXJOrfaB7M6QjktHAH2YoOvpmBxDX5N7Yde2/a
+         rkC3UG830dBBA+o35THvZOrqrmpHWhu1KdmP0rOPqznYAvFA8XRQdltBEe2Yt2ZSK3Gi
+         2H2UodustRR/LCJ0pjClIns+MylCKpOmkPGcAv8S8TWElqtilv38fMAs55bcSWwEfEF/
+         lLYUYtaWwlKurA+vyOQU0r36gxp0UX+dP0elJV5409IBTytHfWdVsg3fEDdVxCUdyTEi
+         kYedQFKJyRWqaLfEam+vaUo7h0SyDm66heqv4ogHPM6m+xBiWAmgaVjPNJTA3N1llEZZ
+         iBrw==
+X-Gm-Message-State: APjAAAWSjYgVzFl6ZSD+uU3LuuRr9YVU7bouNEapdg4urE+9E0BtGAdJ
+        CFrl+KHqDneU8lTF91ZoS6J1FA==
+X-Google-Smtp-Source: APXvYqx9KAIwGf5i0C+05hdOsoH1Qz53bF4Ua1D78Kp4D5OsFHhBK4l+6RncFcIz1n4N/yJalTasNg==
+X-Received: by 2002:ac8:5319:: with SMTP id t25mr3419613qtn.242.1575475186888;
+        Wed, 04 Dec 2019 07:59:46 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.40
+        by smtp.gmail.com with ESMTPSA id w21sm4177585qth.17.2019.12.04.07.59.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 07:59:41 -0800 (PST)
+        Wed, 04 Dec 2019 07:59:46 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -55,9 +55,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com, steve.capper@arm.com, rfontana@redhat.com,
         tglx@linutronix.de
-Subject: [PATCH v8 01/25] kexec: quiet down kexec reboot
-Date:   Wed,  4 Dec 2019 10:59:14 -0500
-Message-Id: <20191204155938.2279686-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v8 04/25] arm64: kexec: make dtb_mem always enabled
+Date:   Wed,  4 Dec 2019 10:59:17 -0500
+Message-Id: <20191204155938.2279686-5-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
 References: <20191204155938.2279686-1-pasha.tatashin@soleen.com>
@@ -68,44 +68,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is a regular kexec command sequence and output:
-=====
-$ kexec --reuse-cmdline -i --load Image
-$ kexec -e
-[  161.342002] kexec_core: Starting new kernel
+Currently, dtb_mem is enabled only when CONFIG_KEXEC_FILE is
+enabled. This adds ugly ifdefs to c files.
 
-Welcome to Buildroot
-buildroot login:
-=====
-
-Even when "quiet" kernel parameter is specified, "kexec_core: Starting
-new kernel" is printed.
-
-This message has  KERN_EMERG level, but there is no emergency, it is a
-normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
-
-Machines that have slow console baud rate benefit from less output.
+Always enabled dtb_mem, when it is not used, it is NULL.
+Change the dtb_mem to phys_addr_t, as it is a physical address.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Simon Horman <horms@verge.net.au>
-Acked-by: Dave Young <dyoung@redhat.com>
 ---
- kernel/kexec_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/kexec.h    | 4 ++--
+ arch/arm64/kernel/machine_kexec.c | 6 +-----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 15d70a90b50d..f7ae04b8de6f 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -1171,7 +1171,7 @@ int kernel_kexec(void)
- 		 * CPU hotplug again; so re-enable it here.
- 		 */
- 		cpu_hotplug_enable();
--		pr_emerg("Starting new kernel\n");
-+		pr_notice("Starting new kernel\n");
- 		machine_shutdown();
- 	}
+diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+index 12a561a54128..ad6afed69078 100644
+--- a/arch/arm64/include/asm/kexec.h
++++ b/arch/arm64/include/asm/kexec.h
+@@ -90,14 +90,14 @@ static inline void crash_prepare_suspend(void) {}
+ static inline void crash_post_resume(void) {}
+ #endif
  
+-#ifdef CONFIG_KEXEC_FILE
+ #define ARCH_HAS_KIMAGE_ARCH
+ 
+ struct kimage_arch {
+ 	void *dtb;
+-	unsigned long dtb_mem;
++	phys_addr_t dtb_mem;
+ };
+ 
++#ifdef CONFIG_KEXEC_FILE
+ extern const struct kexec_file_ops kexec_image_ops;
+ 
+ struct kimage;
+diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+index 8e9c924423b4..ae1bad0156cd 100644
+--- a/arch/arm64/kernel/machine_kexec.c
++++ b/arch/arm64/kernel/machine_kexec.c
+@@ -203,11 +203,7 @@ void machine_kexec(struct kimage *kimage)
+ 	 * In kexec_file case, the kernel starts directly without purgatory.
+ 	 */
+ 	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start,
+-#ifdef CONFIG_KEXEC_FILE
+-						kimage->arch.dtb_mem);
+-#else
+-						0);
+-#endif
++			 kimage->arch.dtb_mem);
+ 
+ 	BUG(); /* Should never get here. */
+ }
 -- 
 2.24.0
 
