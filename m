@@ -2,121 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02046112357
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 926F5112365
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfLDHLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:11:46 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39104 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725958AbfLDHLp (ORCPT
+        id S1727254AbfLDHNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:13:06 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:26016 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbfLDHNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:11:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575443504;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=a3GIPUfE5I/ZyJJRgqWyUDcz6F8Tn8l5oMVwt7sXiPo=;
-        b=EYkrsiJ2gPNCRrqnmh6zt8P7DtfyQajaUpPbEDyofmvBp7PN85hlt7c95yOss8krXt3oLO
-        h/wNwaLxstrN1FM+DPU72fYgouUrKm1F8jzlw/vrIJwdM3zqmtn46fTpYYeEEjDX6XMyuv
-        fqighRxYd+NFiSDGBec1EPCewSPy15U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-338-7Dzj02e6PQOVam7-eHRalg-1; Wed, 04 Dec 2019 02:11:41 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F13C418A8CA1;
-        Wed,  4 Dec 2019 07:11:39 +0000 (UTC)
-Received: from lacos-laptop-7.usersys.redhat.com (ovpn-116-154.ams2.redhat.com [10.36.116.154])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2870860C85;
-        Wed,  4 Dec 2019 07:11:37 +0000 (UTC)
-Subject: Re: [PATCH] [EFI,PCI] Allow disabling PCI busmastering on bridges
- during boot
-To:     Matthew Garrett <mjg59@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191203004043.174977-1-matthewgarrett@google.com>
- <CACdnJus7nHdr4p4H1j5as9eB=FG-uX+wy_tjvTQ5ObErDJHdow@mail.gmail.com>
- <CAKv+Gu8emrf7WbTyGc8QDykX_hZbrVtxJKkRVbGFhd8rd13yww@mail.gmail.com>
- <CACdnJusMeC+G3wq_oDGTYi1CBMWDiuq4NdANTBmhNBTDu5zCug@mail.gmail.com>
-From:   Laszlo Ersek <lersek@redhat.com>
-Message-ID: <41cecdd8-f411-00c4-be82-be5d4d13fcb1@redhat.com>
-Date:   Wed, 4 Dec 2019 08:11:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACdnJusMeC+G3wq_oDGTYi1CBMWDiuq4NdANTBmhNBTDu5zCug@mail.gmail.com>
+        Wed, 4 Dec 2019 02:13:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1575443585; x=1606979585;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zP/QANpMdBLvnNprMnSG+WGFn9a1TbYeLrqVu8MI7uQ=;
+  b=cYXUZNfJLLM6Gc+jvMClbwUCTq8FOX2AfRLL26Oih1yFC0gMgeescUzb
+   +ls66oQ2x8H27KLDeBb9Z9Nd6tQQ8F5SyFQ44gCW8H0TP/me4K9gvkyWd
+   VezGvVuejWrEA+yIDZ9oqbanZK3EHVM3Zx2Vm/q3CtAUpv7VKSXG2c6ZO
+   KCzNTMoYFYE46jxbLMOfeAIM78fiquy8eSIa+CIFv2wWMW3NzM5nPgtWQ
+   H1wBcKFzU5YicDTmLMhbj1Tvw08pfh2FRrI0cgK9OEQyRvT33pTykosTn
+   KGAJeJf0yyOaz9h1/mGi02rJndol/ZbelJ5QYG3rNr3TJjv/UQs9DWaGy
+   g==;
+IronPort-SDR: OWwmMcgNv92L2tGRe3sXIG+Ykyhd66GWN+EsJOcsQt7UKYItzAai370jvwhnuIWl86nb9u9TMc
+ 0fLgVx+DXD7PazKKhg4inS8+DfEFZuJeMt1zwvO9063X2Rlq4mM1EOE4RVvs722Hu39HYPKwXL
+ vwavUU7Nmm7r+SMXI5LXQE6RxtEvkN1o/cFEJjZlkT9BPUuyNFjSWHx5ZTHVVGZRx3Cgy5vXR4
+ wabNHss1NrWG+9OU51LXRsa4xnCuob686lswHZFiGG5eY8m0T/gevXot0FaMnmWHfxueIYkQdl
+ W1M=
+X-IronPort-AV: E=Sophos;i="5.69,276,1571673600"; 
+   d="scan'208";a="129012732"
+Received: from mail-sn1nam02lp2053.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.53])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Dec 2019 15:13:00 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HGe7Suzi9QPZfT+KzCXN6ExKhvG2FX9zjoEYQyQ82B0gutsXEq0pSNRU/PsBkURD9VW+ZGaJ4poeeqZJF5hmgfUNuHhRkMK4zeFLraha9Cq9XDLgcmxjrr/5yN5p15oP+6AklNWamNzqMVUzb/2V1hWGTucI49QADWJfPWMDY7IKX06z44addMovd09JZc4A56C9Duu1UB6Pn2OzcgvoMv3764Lg/4kPvY1ZCzfrsvvAPrznbQ40jTfrD8EVx5Pbr/OVyUiGwsFgKRYmGXLDu5mNubiGxhiOzjeH7GM14dvZ4Xq7iHserF99IzZmBsNPGxunsWg3raOfULA+1oB/2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqJm8s1Oj2cJV6Xj/fM7N/M3rOYj4LesTPCWZ3O6xVA=;
+ b=j6ujCVuu1pQMIDWGPenEQd3N98Jkaey95Oe/nvypG7FOXFF3IdtoMyvXu3RLM7G98+fxzItHG8EanCTJUdfPvf5sGFBlXPVe+xpsh31clfjxrAkTjRz+B1wNfDZs5ZhPjBJ5pL3sqWw1us5TVaoqx4PgFtuB/aRlPCip4p8rfDi8jYdXh+tS3QUoFicGtztjKMKh+2YnkoTc8CQKJDWRYeNzrKpAWe3R+z7R4D6VTVPyx8/t0uSDqNUitOi2a27VjifRzZj2UQuxrsGos7uFXED+8IHQaRZpepG7qrxBMn82KXEdAZ/RAyfA+UQ7ub0fTBSO8oJtBiXlF8wCTeqwSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LqJm8s1Oj2cJV6Xj/fM7N/M3rOYj4LesTPCWZ3O6xVA=;
+ b=uyLBqutAii7mvI6BrFnkHDBTz7hUrYcCGo4ICAf7+8/FTgaCGrKCjEenKJvv7zPVMbiy6i5f5U/M/SC3ZhgDBAE9QvU6tB8bwguKZk9Y870AlLzr9tBn+aGkV2eIqzMK2j0ssENErENFKo6xq7Ah6fKA1736BcM4uQZUGcisQg0=
+Received: from MN2PR04MB6991.namprd04.prod.outlook.com (10.186.144.209) by
+ MN2PR04MB6846.namprd04.prod.outlook.com (10.186.145.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.13; Wed, 4 Dec 2019 07:12:59 +0000
+Received: from MN2PR04MB6991.namprd04.prod.outlook.com
+ ([fe80::9447:fa71:53df:f866]) by MN2PR04MB6991.namprd04.prod.outlook.com
+ ([fe80::9447:fa71:53df:f866%3]) with mapi id 15.20.2495.014; Wed, 4 Dec 2019
+ 07:12:59 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Bean Huo <huobean@gmail.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "pedrom.sousa@synopsys.com" <pedrom.sousa@synopsys.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
+        "beanhuo@micron.com" <beanhuo@micron.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "tomas.winkler@intel.com" <tomas.winkler@intel.com>,
+        "cang@codeaurora.org" <cang@codeaurora.org>
+CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH RESEND] scsi: ufs: delete unused structure filed tc
+Thread-Topic: [PATCH RESEND] scsi: ufs: delete unused structure filed tc
+Thread-Index: AQHVqkBQqDGlHgUBgECpOiaklQka/6epj7gQ
+Date:   Wed, 4 Dec 2019 07:12:59 +0000
+Message-ID: <MN2PR04MB699129A4ADCCA58322AD8EDDFC5D0@MN2PR04MB6991.namprd04.prod.outlook.com>
+References: <20191204011507.4662-1-huobean@gmail.com>
+In-Reply-To: <20191204011507.4662-1-huobean@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: 7Dzj02e6PQOVam7-eHRalg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 513c29da-054c-47b8-2406-08d778896520
+x-ms-traffictypediagnostic: MN2PR04MB6846:
+x-microsoft-antispam-prvs: <MN2PR04MB68465D4203E5DA06215E1A3AFC5D0@MN2PR04MB6846.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0241D5F98C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39860400002)(346002)(396003)(136003)(366004)(199004)(189003)(2501003)(6506007)(478600001)(2906002)(229853002)(7736002)(74316002)(305945005)(8936002)(8676002)(81166006)(11346002)(81156014)(25786009)(33656002)(446003)(4326008)(9686003)(55016002)(54906003)(110136005)(6246003)(76116006)(66946007)(64756008)(66476007)(66556008)(66446008)(14444005)(256004)(6436002)(316002)(71190400001)(71200400001)(52536014)(5660300002)(26005)(6116002)(102836004)(186003)(3846002)(76176011)(7696005)(7416002)(86362001)(14454004)(99286004)(2201001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6846;H:MN2PR04MB6991.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: hRIBWdeWC8zEreyZ4R8PR2yKywSUdDdN3jE0HldyQgIp9Ubnk9TeUC7Y/Yjwo0Wg7nuDuBOuUHzgLJAl3GU6CdZYY+mojUOk86OIHuYzn03/nCi9pvvYph49SISDqOgUQ9egqlNUeXn6phmzaCtO0a5j/zwuPRssrFkycOptU6h5Dm7at95glauOHfEVIrQWeZ9w90+MQQhY5TuamWCLAGsfdJlbwa2Aq1vIk+rJl2DucYPrzmbaBhLzNG6YfIrvt+JLrZ60PkJeVbrdo3bIo1rAmFgx+7q68Kf6eJ2kZtGz4QMVLfwWfINlBED38K8W1v+mj1iolN6w7g3ZJNK+hoaYOIcOvKZF4sYtH9LGwpxOw4Je8BQgJNdZRBc38MbmwyqCShuQeAvyhnQ1joOz3YPbJukN1vR8uFTrZ6n7BL+igk9zM7WWY14UbnNoQrTDYLN563QZNN5cNJvol3RpTIpHHKfOsDwhyZZtyoGz/OS6JTMqQNxTkulaEStW0wEe
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 513c29da-054c-47b8-2406-08d778896520
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2019 07:12:59.7248
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pafZZKEmVqVqRd63QWzawjq4BdrT9LsoxbHc4z2+lH8e8RKsjU5hrbtn/59KHPsDTDryIL6PcYlIQkb0mrgL/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6846
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/19 20:40, Matthew Garrett wrote:
-> On Tue, Dec 3, 2019 at 3:54 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> 
->> There is no reason this shouldn't apply to ARM, but disabling bus
->> mastering like that before the drivers themselves get a chance to do
->> so is likely to cause trouble. Network devices or storage controllers
->> that are still running and have live descriptor rings in DMA memory
->> shouldn't get the rug pulled from under their feet like that by
->> blindly disabling the BM attribute on all root ports before their
->> drivers have had the opportunity to do this cleanly.
-> 
-> Yes, whether this causes problems is going to be influenced by the
-> behaviour of the hardware on the system. That's why I'm not defaulting
-> it to being enabled :)
-> 
->> One trick we implemented in EDK2 for memory encryption was to do the
->> following (Laszlo, mind correcting me here if I am remembering this
->> wrong?)
->> - create an event X
->> - register an AtExitBootServices event that signals event X in its handler
->> - in the handler of event X, iterate over all PPBs to clear the bus
->> master attribute
->> - for bonus points, do the same for the PCIe devices themselves,
->> because root ports are known to exist that entirely ignore the BM
->> attribute
->>
->> This way, event X should get handled after all the drivers' EBS event
->> handlers have been called.
-> 
-> Can we guarantee that this happens before IOMMU state teardown?
+> From: Bean Huo <beanhuo@micron.com>
+>=20
+> Delete unused structure field tc in structure utp_upiu_req, since no pers=
+on uses
+Typo tc -> tr
 
-In OVMF, the handler of "event X" is in the IOMMU driver itself, so it's
-the IOMMU driver that takes care of blacklisting everything *after*
-other drivers had a chance to clean up.
+Thanks,
+Avri
 
-But in this case, we'd have to insert the PPB clearing *before* the
-(platform's) IOMMU driver's EBS handler (because the latter is going to
-deny, not permit, everything); and we can't modify the IOMMU driver.
 
-I guess we could install an EBS handler with TPL_NOTIFY (PciIo usage
-appears permitted at TPL_NOTIFY, from "Table 27. TPL Restrictions"). But:
-- if the IOMMU driver's EBS handler is also to be enqueued at
-TPL_NOTIFY, then the order will be unspecified
-- if a PCI driver sets up an EBS handler at TPL_CALLBACK, then in our
-handler we could shut down a PPB in front of a device bound by that
-driver too early.
-
-Handling dependencies between event notification functions is a
-never-ending struggle in UEFI, AFAICT.
-
-> I don't think there's a benefit to clearing the bit on endpoint devices,
-> if they're malicious they're just going to turn it back on anyway.
-> 
-
-Thanks
-Laszlo
+> it for task management.
+>=20
+> Fixes: df032bf27a41 ("scsi: ufs: Add a bsg endpoint that supports UPIUs")
+> Signed-off-by: Bean Huo <beanhuo@micron.com>
+> ---
+>  include/uapi/scsi/scsi_bsg_ufs.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/include/uapi/scsi/scsi_bsg_ufs.h b/include/uapi/scsi/scsi_bs=
+g_ufs.h
+> index 9988db6ad244..d55f2176dfd4 100644
+> --- a/include/uapi/scsi/scsi_bsg_ufs.h
+> +++ b/include/uapi/scsi/scsi_bsg_ufs.h
+> @@ -68,14 +68,13 @@ struct utp_upiu_cmd {
+>   * @header:UPIU header structure DW-0 to DW-2
+>   * @sc: fields structure for scsi command DW-3 to DW-7
+>   * @qr: fields structure for query request DW-3 to DW-7
+> + * @uc: use utp_upiu_query to host the 4 dwords of uic command
+>   */
+>  struct utp_upiu_req {
+>         struct utp_upiu_header header;
+>         union {
+>                 struct utp_upiu_cmd             sc;
+>                 struct utp_upiu_query           qr;
+> -               struct utp_upiu_query           tr;
+> -               /* use utp_upiu_query to host the 4 dwords of uic command=
+ */
+>                 struct utp_upiu_query           uc;
+>         };
+>  };
+> --
+> 2.17.1
 
