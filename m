@@ -2,177 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5346D11234E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02046112357
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 08:11:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfLDHKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 02:10:38 -0500
-Received: from mail-qt1-f181.google.com ([209.85.160.181]:33599 "EHLO
-        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfLDHKi (ORCPT
+        id S1727261AbfLDHLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 02:11:46 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:39104 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725958AbfLDHLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:10:38 -0500
-Received: by mail-qt1-f181.google.com with SMTP id d5so6778909qto.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 23:10:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FoH24prRqjuYLXuwyUpm8iFK/jB9SCwX9PmqD0+uB3k=;
-        b=dAZovbzV5b5d/sU3m2nFWIn3kT2RzhUfvdoV74Hs70IdTHVUaObf67ed8gAw9GunIt
-         7mcUjEsbonBBeSV/SGSDjP4ojbAkK05wUILd9/NFWoPwq4JIhf7fmaDUTAhCnI+81ksr
-         EAPBPRykfVcjK+twCfyPhHhLO9c0nCRdaHMNodoBbNndt6g0RsoAfbXNbfwX3O3ZIiCg
-         I3nD5/mJQ74tGRmCUck/16C5E5K8UEvnx0bN9efIDDRDJCJnlhSz67Ei2459JPIBJ+bU
-         akTdN58OpV8IOu2M6NTO7ZWnxsoivwZfiIIeD3u4emJqWYYKNelgmp3sIB0Fts8WWLSz
-         y1mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FoH24prRqjuYLXuwyUpm8iFK/jB9SCwX9PmqD0+uB3k=;
-        b=I8K3K2/ePnmy2QyJB/ENEECtxtuOOfGBpOzdbjUBOcVuDonD2bqqLRJpBXz6qmATGx
-         o+AHWfixASvdYGlS6KYikoLun4aQg3nFx3xpEeggX7CF8yyp+pknkKUeMJaQ7OBSdWTf
-         kNVfC4zNEt3TG8+vNfHdtVZ1PFqfl6QDq0iOCobZ+knUlABTw06hUv7aSsklWcU0obE2
-         ecKARsF9N2JVzzBUW9BRdn96fqjbaIoQooon00WkjwPQza+yFQHUxVAldKqydwByQlhI
-         1yoNc9AF16vGaMjm8ADnXqeHolm+nTvFFlM5mQ40195TWLPcDQyMPsJr4rSNVaJoiakc
-         KNsw==
-X-Gm-Message-State: APjAAAXI0mbOz3SCA2Tvjo1md+7dUn01+QfoZpuDsJ77GsnTSQ0U5cJZ
-        rwYUANlQOvU1SYCAe1i+FGfE/PpzshGdMeFcd2QWHA==
-X-Google-Smtp-Source: APXvYqzdZWkOTSjtEhCab5JFf8/MyIT+x2Q9c27MNI4zCxtt6eydpzFhKrh/KAeIx4HawkCuL8Q6xLqs1rmdQUKrDxY=
-X-Received: by 2002:ac8:3177:: with SMTP id h52mr1491863qtb.264.1575443436869;
- Tue, 03 Dec 2019 23:10:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20191203093704.7037-1-daniel.lezcano@linaro.org>
- <20191203093704.7037-2-daniel.lezcano@linaro.org> <CAP245DV=kd=LdvgZ2x1Q8-ZahpS3423Z9vHXw91N20aQ6DKxAQ@mail.gmail.com>
- <7e851d43-ecb5-179a-ebfd-847dffd29636@linaro.org>
-In-Reply-To: <7e851d43-ecb5-179a-ebfd-847dffd29636@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 4 Dec 2019 12:40:25 +0530
-Message-ID: <CAP245DXJZ9pTmFBD2EcOk6pkbYr+n1tR1o2AAZvGeiaf=U1rHQ@mail.gmail.com>
-Subject: Re: [PATCH V3 2/4] thermal/drivers/cpu_cooling: Add idle cooling
- device documentation
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        Wed, 4 Dec 2019 02:11:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575443504;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a3GIPUfE5I/ZyJJRgqWyUDcz6F8Tn8l5oMVwt7sXiPo=;
+        b=EYkrsiJ2gPNCRrqnmh6zt8P7DtfyQajaUpPbEDyofmvBp7PN85hlt7c95yOss8krXt3oLO
+        h/wNwaLxstrN1FM+DPU72fYgouUrKm1F8jzlw/vrIJwdM3zqmtn46fTpYYeEEjDX6XMyuv
+        fqighRxYd+NFiSDGBec1EPCewSPy15U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-338-7Dzj02e6PQOVam7-eHRalg-1; Wed, 04 Dec 2019 02:11:41 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F13C418A8CA1;
+        Wed,  4 Dec 2019 07:11:39 +0000 (UTC)
+Received: from lacos-laptop-7.usersys.redhat.com (ovpn-116-154.ams2.redhat.com [10.36.116.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2870860C85;
+        Wed,  4 Dec 2019 07:11:37 +0000 (UTC)
+Subject: Re: [PATCH] [EFI,PCI] Allow disabling PCI busmastering on bridges
+ during boot
+To:     Matthew Garrett <mjg59@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20191203004043.174977-1-matthewgarrett@google.com>
+ <CACdnJus7nHdr4p4H1j5as9eB=FG-uX+wy_tjvTQ5ObErDJHdow@mail.gmail.com>
+ <CAKv+Gu8emrf7WbTyGc8QDykX_hZbrVtxJKkRVbGFhd8rd13yww@mail.gmail.com>
+ <CACdnJusMeC+G3wq_oDGTYi1CBMWDiuq4NdANTBmhNBTDu5zCug@mail.gmail.com>
+From:   Laszlo Ersek <lersek@redhat.com>
+Message-ID: <41cecdd8-f411-00c4-be82-be5d4d13fcb1@redhat.com>
+Date:   Wed, 4 Dec 2019 08:11:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CACdnJusMeC+G3wq_oDGTYi1CBMWDiuq4NdANTBmhNBTDu5zCug@mail.gmail.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: 7Dzj02e6PQOVam7-eHRalg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 12:20 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
->
-> Hi Amit,
->
-> thanks for the review.
->
->
-> On 04/12/2019 05:24, Amit Kucheria wrote:
->
-> [ ... ]
->
-> >> +the CPUs will have to wakeup from a deep sleep state.
-> >> +
-> >> +     ^
-> >> +     |
-> >> +     |
-> >> +     |-------       -------       -------
-> >> +     |_______|_____|_______|_____|_______|___________
-> >> +
-> >> +      <----->
-> >> +       idle  <---->
-> >> +              running
-> >> +
-> >> +With the fixed idle injection duration, we can give a value which is
-> >> +an acceptable performance drop off or latency when we reach a specifi=
-c
-> >> +temperature and we begin to mitigate by varying the Idle injection
-> >> +period.
-> >> +
-> >
-> > I'm not sure what it the purpose of this statement. You've described
-> > how the period value starts at a maximum and is adjusted dynamically
-> > below.
->
-> We can have different way to inject idle periods. We can increase the
-> idle duration and/or keep this duration constant but make a variation of
-> the period. This statement clarify the method which is the latter
-> because we want to have a constant latency per period easier to deal with=
-.
+On 12/03/19 20:40, Matthew Garrett wrote:
+> On Tue, Dec 3, 2019 at 3:54 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> 
+>> There is no reason this shouldn't apply to ARM, but disabling bus
+>> mastering like that before the drivers themselves get a chance to do
+>> so is likely to cause trouble. Network devices or storage controllers
+>> that are still running and have live descriptor rings in DMA memory
+>> shouldn't get the rug pulled from under their feet like that by
+>> blindly disabling the BM attribute on all root ports before their
+>> drivers have had the opportunity to do this cleanly.
+> 
+> Yes, whether this causes problems is going to be influenced by the
+> behaviour of the hardware on the system. That's why I'm not defaulting
+> it to being enabled :)
+> 
+>> One trick we implemented in EDK2 for memory encryption was to do the
+>> following (Laszlo, mind correcting me here if I am remembering this
+>> wrong?)
+>> - create an event X
+>> - register an AtExitBootServices event that signals event X in its handler
+>> - in the handler of event X, iterate over all PPBs to clear the bus
+>> master attribute
+>> - for bonus points, do the same for the PCIe devices themselves,
+>> because root ports are known to exist that entirely ignore the BM
+>> attribute
+>>
+>> This way, event X should get handled after all the drivers' EBS event
+>> handlers have been called.
+> 
+> Can we guarantee that this happens before IOMMU state teardown?
 
-I think I read period as duration leading to confusion. I suggest
-using duty-cycle instead of period throughout this series. I think it
-will improve the explanation.
+In OVMF, the handler of "event X" is in the IOMMU driver itself, so it's
+the IOMMU driver that takes care of blacklisting everything *after*
+other drivers had a chance to clean up.
 
-The above paragraph could be rewritten as:
+But in this case, we'd have to insert the PPB clearing *before* the
+(platform's) IOMMU driver's EBS handler (because the latter is going to
+deny, not permit, everything); and we can't modify the IOMMU driver.
 
-"We use a fixed duration of idle injection that gives an acceptable
-performance penalty and a fixed latency. Mitigation can be increased
-or decreased by modulating the duty cycle of the idle injection."
+I guess we could install an EBS handler with TPL_NOTIFY (PciIo usage
+appears permitted at TPL_NOTIFY, from "Table 27. TPL Restrictions"). But:
+- if the IOMMU driver's EBS handler is also to be enqueued at
+TPL_NOTIFY, then the order will be unspecified
+- if a PCI driver sets up an EBS handler at TPL_CALLBACK, then in our
+handler we could shut down a PPB in front of a device bound by that
+driver too early.
 
-Perhaps you could also enhance your ascii art above to show fixed
-duration idles and different duty cyles to drive home the point.
+Handling dependencies between event notification functions is a
+never-ending struggle in UEFI, AFAICT.
 
-> >> +The mitigation begins with a maximum period value which decrease when
-> >
-> > Shouldn't the idle injection period increase to get more cooling effect=
-?
->
-> The period is the opposite of the frequency. The highest the period, the
-> lowest the frequency, thus less idle cycles and lesser cooling effect.
+> I don't think there's a benefit to clearing the bit on endpoint devices,
+> if they're malicious they're just going to turn it back on anyway.
+> 
 
-Yeah, I definitely confused period with duration :-)
+Thanks
+Laszlo
 
-> >> +more cooling effect is requested. When the period duration is equal t=
-o
-> >> +the idle duration, then we are in a situation the platform can=E2=80=
-=99t
-> >> +dissipate the heat enough and the mitigation fails. In this case the
-> >> +situation is considered critical and there is nothing to do. The idle
-> >> +injection duration must be changed by configuration and until we reac=
-h
-> >> +the cooling effect, otherwise an additionnal cooling device must be
-> >
-> > typo: additional
-> >
-> >> +used or ultimately decrease the SoC performance by dropping the
-> >> +highest OPP point of the SoC.
-> >> +
-> >> +The idle injection duration value must comply with the constraints:
-> >> +
-> >> +- It is lesser or equal to the latency we tolerate when the mitigatio=
-n
-> >
-> > s/lesser/less than/
-> >
-> >> +  begins. It is platform dependent and will depend on the user
-> >> +  experience, reactivity vs performance trade off we want. This value
-> >> +  should be specified.
-> >> +
-> >> +- It is greater than the idle state=E2=80=99s target residency we wan=
-t to go
-> >> +  for thermal mitigation, otherwise we end up consuming more energy.
-> >> +
-> >> +Minimum period
-> >> +--------------
-> >> +
-> >> +The idle injection duration being fixed, it is obvious the minimum
-> >
-> > Change to:
-> > When the idle injection duration is fixed,
-> >
->
-> The idle duration is always fixed in the cpuidle cooling device, why do
-> you want to add the sentence above?
-
-Ignore for now.
-
-Regards,
-Amit
