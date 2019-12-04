@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F5D11340D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C57113368
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730640AbfLDSGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55766 "EHLO mail.kernel.org"
+        id S1731396AbfLDSLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:11:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728490AbfLDSGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:06:51 -0500
+        id S1731382AbfLDSLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:11:07 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C604E206DF;
-        Wed,  4 Dec 2019 18:06:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C87E920865;
+        Wed,  4 Dec 2019 18:11:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482810;
-        bh=6nw8p55LQxTrXbv68h7YR+Jq/74C7CEpUk0H1DdNjX0=;
+        s=default; t=1575483067;
+        bh=WbqjUggnJDh4A988fik+6/iGaJLlVSosFqW9yVNwscw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lNcL4r7RMPXErkAAJ1cB5s8ekT/Xo7k7SlxSD01eYFCm/MkMM2yjRyvMxkl5x4WrT
-         DzN9AaDj3jr7iQIlxVpWL16HWEqWzuM73xLyLBl7GMiZVGwt4gCr2i2q5AddbwFk/i
-         laq9ww2qWRAb9HzZeNeLdyY4I7hYU3Wze5CxBRlM=
+        b=RmGrkZghHZeUhTQgVtPzM0G0UktqPJ7PmdBDq3PR+pXPqM5izVhIegwC+Ce7uKrZn
+         TwlqBJCMl8oulNVo+lq04TCoF6tVZaBqiDf09f7j3M7nb1ON+3JAiXMyXNRI3i5rAh
+         84RpMm6TsL8Ja2LOESvf4Dld8xE3HG+0FVAlX70k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 099/209] drbd: ignore "all zero" peer volume sizes in handshake
-Date:   Wed,  4 Dec 2019 18:55:11 +0100
-Message-Id: <20191204175328.678898763@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jeroen Hofstee <jhofstee@victronenergy.com>,
+        Stephane Grosjean <s.grosjean@peak-system.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 007/125] can: peak_usb: report bus recovery as well
+Date:   Wed,  4 Dec 2019 18:55:12 +0100
+Message-Id: <20191204175312.017613060@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,114 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: Jeroen Hofstee <jhofstee@victronenergy.com>
 
-[ Upstream commit 94c43a13b8d6e3e0dd77b3536b5e04a84936b762 ]
+[ Upstream commit 128a1b87d3ceb2ba449d5aadb222fe22395adeb0 ]
 
-During handshake, if we are diskless ourselves, we used to accept any size
-presented by the peer.
+While the state changes are reported when the error counters increase
+and decrease, there is no event when the bus recovers and the error
+counters decrease again. So add those as well.
 
-Which could be zero if that peer was just brought up and connected
-to us without having a disk attached first, in which case both
-peers would just "flip" their volume sizes.
+Change the state going downward to be ERROR_PASSIVE -> ERROR_WARNING ->
+ERROR_ACTIVE instead of directly to ERROR_ACTIVE again.
 
-Now, even a diskless node will ignore "zero" sizes
-presented by a diskless peer.
-
-Also a currently Diskless Primary will refuse to shrink during handshake:
-it may be frozen, and waiting for a "suitable" local disk or peer to
-re-appear (on-no-data-accessible suspend-io). If the peer is smaller
-than what we used to be, it is not suitable.
-
-The logic for a diskless node during handshake is now supposed to be:
-believe the peer, if
- - I don't have a current size myself
- - we agree on the size anyways
- - I do have a current size, am Secondary, and he has the only disk
- - I do have a current size, am Primary, and he has the only disk,
-   which is larger than my current size
-
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jeroen Hofstee <jhofstee@victronenergy.com>
+Cc: Stephane Grosjean <s.grosjean@peak-system.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_receiver.c | 33 +++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ drivers/net/can/usb/peak_usb/pcan_usb.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 8fbdfaacc2226..08586bc5219bf 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3977,6 +3977,7 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 	struct o_qlim *o = (connection->agreed_features & DRBD_FF_WSAME) ? p->qlim : NULL;
- 	enum determine_dev_size dd = DS_UNCHANGED;
- 	sector_t p_size, p_usize, p_csize, my_usize;
-+	sector_t new_size, cur_size;
- 	int ldsc = 0; /* local disk size changed */
- 	enum dds_flags ddsf;
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb.c b/drivers/net/can/usb/peak_usb/pcan_usb.c
+index e626c2afbbb11..0e1fc6c4360e7 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
+@@ -441,8 +441,8 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		}
+ 		if ((n & PCAN_USB_ERROR_BUS_LIGHT) == 0) {
+ 			/* no error (back to active state) */
+-			mc->pdev->dev.can.state = CAN_STATE_ERROR_ACTIVE;
+-			return 0;
++			new_state = CAN_STATE_ERROR_ACTIVE;
++			break;
+ 		}
+ 		break;
  
-@@ -3984,6 +3985,7 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 	if (!peer_device)
- 		return config_unknown_volume(connection, pi);
- 	device = peer_device->device;
-+	cur_size = drbd_get_capacity(device->this_bdev);
+@@ -465,9 +465,9 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		}
  
- 	p_size = be64_to_cpu(p->d_size);
- 	p_usize = be64_to_cpu(p->u_size);
-@@ -3994,7 +3996,6 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 	device->p_size = p_size;
+ 		if ((n & PCAN_USB_ERROR_BUS_HEAVY) == 0) {
+-			/* no error (back to active state) */
+-			mc->pdev->dev.can.state = CAN_STATE_ERROR_ACTIVE;
+-			return 0;
++			/* no error (back to warning state) */
++			new_state = CAN_STATE_ERROR_WARNING;
++			break;
+ 		}
+ 		break;
  
- 	if (get_ldev(device)) {
--		sector_t new_size, cur_size;
- 		rcu_read_lock();
- 		my_usize = rcu_dereference(device->ldev->disk_conf)->disk_size;
- 		rcu_read_unlock();
-@@ -4012,7 +4013,6 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 		/* Never shrink a device with usable data during connect.
- 		   But allow online shrinking if we are connected. */
- 		new_size = drbd_new_dev_size(device, device->ldev, p_usize, 0);
--		cur_size = drbd_get_capacity(device->this_bdev);
- 		if (new_size < cur_size &&
- 		    device->state.disk >= D_OUTDATED &&
- 		    device->state.conn < C_CONNECTED) {
-@@ -4077,9 +4077,36 @@ static int receive_sizes(struct drbd_connection *connection, struct packet_info
- 		 *
- 		 * However, if he sends a zero current size,
- 		 * take his (user-capped or) backing disk size anyways.
-+		 *
-+		 * Unless of course he does not have a disk himself.
-+		 * In which case we ignore this completely.
- 		 */
-+		sector_t new_size = p_csize ?: p_usize ?: p_size;
- 		drbd_reconsider_queue_parameters(device, NULL, o);
--		drbd_set_my_capacity(device, p_csize ?: p_usize ?: p_size);
-+		if (new_size == 0) {
-+			/* Ignore, peer does not know nothing. */
-+		} else if (new_size == cur_size) {
-+			/* nothing to do */
-+		} else if (cur_size != 0 && p_size == 0) {
-+			drbd_warn(device, "Ignored diskless peer device size (peer:%llu != me:%llu sectors)!\n",
-+					(unsigned long long)new_size, (unsigned long long)cur_size);
-+		} else if (new_size < cur_size && device->state.role == R_PRIMARY) {
-+			drbd_err(device, "The peer's device size is too small! (%llu < %llu sectors); demote me first!\n",
-+					(unsigned long long)new_size, (unsigned long long)cur_size);
-+			conn_request_state(peer_device->connection, NS(conn, C_DISCONNECTING), CS_HARD);
-+			return -EIO;
-+		} else {
-+			/* I believe the peer, if
-+			 *  - I don't have a current size myself
-+			 *  - we agree on the size anyways
-+			 *  - I do have a current size, am Secondary,
-+			 *    and he has the only disk
-+			 *  - I do have a current size, am Primary,
-+			 *    and he has the only disk,
-+			 *    which is larger than my current size
-+			 */
-+			drbd_set_my_capacity(device, new_size);
-+		}
- 	}
+@@ -506,6 +506,11 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 		mc->pdev->dev.can.can_stats.error_warning++;
+ 		break;
  
- 	if (get_ldev(device)) {
++	case CAN_STATE_ERROR_ACTIVE:
++		cf->can_id |= CAN_ERR_CRTL;
++		cf->data[1] = CAN_ERR_CRTL_ACTIVE;
++		break;
++
+ 	default:
+ 		/* CAN_STATE_MAX (trick to handle other errors) */
+ 		cf->can_id |= CAN_ERR_CRTL;
 -- 
 2.20.1
 
