@@ -2,82 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C75E0112AFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B366112B0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:09:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbfLDMH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:07:29 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:33144 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727445AbfLDMH2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:07:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575461247;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QX3Jr8BVT6bq8JjJGdnB3TP6g5ApuFdu1TbuAgwMefo=;
-        b=DM7hfePS0FOI9fJgEq2XzTdR5WnhDldXTZJyBnIWE/TICKKDDabM0o91aPee5aCt5SG5ml
-        MNw2Dmm2WzaXtHxJaNPc5ARUG9sFH0THwaYaGP91DXaU2S5qz8YJbYFBleZHWKs7TOXTmv
-        pNld36fGeIwiBL1SeTlM00bbVvElOdw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-138-cLa41l0vPe24b7d6QDvc6A-1; Wed, 04 Dec 2019 07:07:13 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2BD5A107ACC4;
-        Wed,  4 Dec 2019 12:07:12 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 558685D6AE;
-        Wed,  4 Dec 2019 12:07:10 +0000 (UTC)
-Date:   Wed, 4 Dec 2019 13:07:07 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     acme@kernel.org, kan.liang@intel.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        ak@linux.intel.com, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] perf report: Few fixes
-Message-ID: <20191204120707.GC20746@krava>
-References: <20191114132213.5419-1-ravi.bangoria@linux.ibm.com>
-MIME-Version: 1.0
-In-Reply-To: <20191114132213.5419-1-ravi.bangoria@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: cLa41l0vPe24b7d6QDvc6A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        id S1727752AbfLDMJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:09:01 -0500
+Received: from mga03.intel.com ([134.134.136.65]:14982 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727445AbfLDMJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 07:09:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 04:08:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,277,1571727600"; 
+   d="scan'208";a="412563600"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.95])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Dec 2019 04:08:55 -0800
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf inject: Fix processing of ID index for injected instruction tracing
+Date:   Wed,  4 Dec 2019 14:08:00 +0200
+Message-Id: <20191204120800.8138-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 06:52:10PM +0530, Ravi Bangoria wrote:
-> v1: https://lore.kernel.org/r/20191112054946.5869-1-ravi.bangoria@linux.i=
-bm.com
->=20
-> v1 fixed a segfault when -F phys_daddr is used in perf report without
-> --mem-mode. Arnaldo suggested to bail out the option completely in
-> such case instead of showing 0 values.
->=20
-> Ravi Bangoria (3):
->   perf hists: Replace pr_err with ui__error
->   perf report: Make -F more strict like -s
->   perf report: Error out for mem mode fields if mem info is not
->     available
->=20
->  tools/perf/builtin-report.c |  8 ++++++++
->  tools/perf/util/sort.c      | 16 +++++++++++-----
->  2 files changed, 19 insertions(+), 5 deletions(-)
+The ID index event is used when decoding, but can result in the
+following error:
 
-looks good
+ $ perf record --aux-sample -e '{intel_pt//,branch-misses}:u' ls
+ $ perf inject -i perf.data -o perf.data.inj --itrace=be
+ $ perf script -i perf.data.inj
+ 0x1020 [0x410]: failed to process type: 69 [No such file or directory]
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Fix by having 'perf inject' drop the ID index event.
 
-thanks,
-jirka
+Fixes: c0a6de06c446 ("perf record: Add support for AUX area sampling")
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/builtin-inject.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index 9664a72a089d..7e124a7b8bfd 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -403,17 +403,6 @@ static int perf_event__repipe_tracing_data(struct perf_session *session,
+ 	return err;
+ }
+ 
+-static int perf_event__repipe_id_index(struct perf_session *session,
+-				       union perf_event *event)
+-{
+-	int err;
+-
+-	perf_event__repipe_synth(session->tool, event);
+-	err = perf_event__process_id_index(session, event);
+-
+-	return err;
+-}
+-
+ static int dso__read_build_id(struct dso *dso)
+ {
+ 	if (dso->has_build_id)
+@@ -651,7 +640,7 @@ static int __cmd_inject(struct perf_inject *inject)
+ 		inject->tool.comm	    = perf_event__repipe_comm;
+ 		inject->tool.namespaces	    = perf_event__repipe_namespaces;
+ 		inject->tool.exit	    = perf_event__repipe_exit;
+-		inject->tool.id_index	    = perf_event__repipe_id_index;
++		inject->tool.id_index	    = perf_event__process_id_index;
+ 		inject->tool.auxtrace_info  = perf_event__process_auxtrace_info;
+ 		inject->tool.auxtrace	    = perf_event__process_auxtrace;
+ 		inject->tool.aux	    = perf_event__drop_aux;
+-- 
+2.17.1
 
