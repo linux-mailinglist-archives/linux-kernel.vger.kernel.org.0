@@ -2,108 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC4F1134EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BDE1134F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfLDS10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:27:26 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56970 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbfLDS1V (ORCPT
+        id S1730381AbfLDS1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:27:42 -0500
+Received: from www62.your-server.de ([213.133.104.62]:40604 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729345AbfLDS1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:27:21 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB4IR9uL118997;
-        Wed, 4 Dec 2019 12:27:09 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575484029;
-        bh=Uet6ftlBWt6BLt4lGobOQD5+cFdGEWSfTiuKL7t91js=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=SbzuqJJ3+pluoOby71dsCavu5VY1IJbySeO+FHIVH2JAUN6StofHWG/cC1GLh6F17
-         LDw6r7+PbTZtCvHUaRrRIxN8e7jV2AdctsNbU4vKyqu7FaEfhAMgi5d53K/QIjCtlc
-         q58YXAV6zNHqrtQk9b87TGsUYr4gve4UuoeudWu4=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB4IR9Tb051413
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 4 Dec 2019 12:27:09 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 4 Dec
- 2019 12:27:07 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 4 Dec 2019 12:27:07 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB4IR4nI106520;
-        Wed, 4 Dec 2019 12:27:05 -0600
-Subject: Re: [PATCH v6 03/15] drm/bridge: tc358767: Simplify polling in
- tc_link_training()
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        <dri-devel@lists.freedesktop.org>
-CC:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>, Jyri Sarha <jsarha@ti.com>
-References: <20190619052716.16831-1-andrew.smirnov@gmail.com>
- <20190619052716.16831-4-andrew.smirnov@gmail.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <0d84fa72-bc96-9b88-cd89-c04327109e0e@ti.com>
-Date:   Wed, 4 Dec 2019 20:27:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 13:27:40 -0500
+Received: from [194.230.159.159] (helo=localhost)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1icZN2-0004rF-GG; Wed, 04 Dec 2019 19:27:28 +0100
+Date:   Wed, 4 Dec 2019 19:27:27 +0100
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCHv4 0/6] perf/bpftool: Allow to link libbpf dynamically
+Message-ID: <20191204182727.GA29780@localhost.localdomain>
+References: <20191202131847.30837-1-jolsa@kernel.org>
+ <CAEf4BzY_D9JHjuU6K=ciS70NSy2UvSm_uf1NfN_tmFz1445Jiw@mail.gmail.com>
+ <87wobepgy0.fsf@toke.dk>
+ <CAADnVQK-arrrNrgtu48_f--WCwR5ki2KGaX=mN2qmW_AcRyb=w@mail.gmail.com>
+ <877e3cpdc9.fsf@toke.dk>
+ <CAADnVQJeC9FQDXhv34KTiFSRq-=x4cBaspj-bTXdQ1=7prphcA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190619052716.16831-4-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQJeC9FQDXhv34KTiFSRq-=x4cBaspj-bTXdQ1=7prphcA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25653/Wed Dec  4 10:46:42 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
+On Wed, Dec 04, 2019 at 09:39:59AM -0800, Alexei Starovoitov wrote:
+> On Wed, Dec 4, 2019 at 2:58 AM Toke Høiland-Jørgensen <toke@redhat.com> wrote:
+> > Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> > > On Mon, Dec 2, 2019 at 1:15 PM Toke Høiland-Jørgensen <toke@redhat.com> wrote:
+> > >>
+> > >> Ah, that is my mistake: I was getting dynamic libbpf symbols with this
+> > >> approach, but that was because I had the version of libbpf.so in my
+> > >> $LIBDIR that had the patch to expose the netlink APIs as versioned
+> > >> symbols; so it was just pulling in everything from the shared library.
+> > >>
+> > >> So what I was going for was exactly what you described above; but it
+> > >> seems that doesn't actually work. Too bad, and sorry for wasting your
+> > >> time on this :/
+> > >
+> > > bpftool is currently tightly coupled with libbpf and very likely
+> > > in the future the dependency will be even tighter.
+> > > In that sense bpftool is an extension of libbpf and libbpf is an extension
+> > > of bpftool.
+> > > Andrii is working on set of patches to generate user space .c code
+> > > from bpf program.
+> > > bpftool will be generating the code that is specific for the version
+> > > bpftool and for
+> > > the version of libbpf. There will be compatibility layers as usual.
+> > > But in general the situation where a bug in libbpf is so criticial
+> > > that bpftool needs to repackaged is imo less likely than a bug in
+> > > bpftool that will require re-packaging of libbpf.
+> > > bpftool is quite special. It's not a typical user of libbpf.
+> > > The other way around is more correct. libbpf is a user of the code
+> > > that bpftool generates and both depend on each other.
+> > > perf on the other side is what typical user space app that uses
+> > > libbpf will look like.
+> > > I think keeping bpftool in the kernel while packaging libbpf
+> > > out of github was an oversight.
+> > > I think we need to mirror bpftool into github/libbpf as well
+> > > and make sure they stay together. The version of libbpf == version of bpftool.
+> > > Both should come from the same package and so on.
+> > > May be they can be two different packages but
+> > > upgrading one should trigger upgrade of another and vice versa.
+> > > I think one package would be easier though.
+> > > Thoughts?
+> >
+> > Yup, making bpftool explicitly the "libbpf command line interface" makes
+> > sense and would help clarify the relationship between the two. As Jiri
+> > said, we are already moving in that direction packaging-wise...
+> 
+> Awesome. Let's figure out the logistics.
+> Should we do:
+> git mv tools/bpf/bpftool/ tools/lib/bpf/
+> and appropriate adjustment to Makefiles ?
+> or keep it where it is and only add to
+> https://github.com/libbpf/libbpf/blob/master/scripts/sync-kernel.sh ?
 
-On 19/06/2019 08:27, Andrey Smirnov wrote:
+I'd be in preference of the latter aka keeping where it is.
 
-> @@ -748,22 +748,19 @@ static int tc_set_video_mode(struct tc_data *tc,
->   
->   static int tc_wait_link_training(struct tc_data *tc)
->   {
-> -	u32 timeout = 1000;
->   	u32 value;
->   	int ret;
->   
-> -	do {
-> -		udelay(1);
-> -		tc_read(DP0_LTSTAT, &value);
-> -	} while ((!(value & LT_LOOPDONE)) && (--timeout));
-> -
-> -	if (timeout == 0) {
-> +	ret = tc_poll_timeout(tc, DP0_LTSTAT, LT_LOOPDONE,
-> +			      LT_LOOPDONE, 1, 1000);
-
-This seems to break DP at least with some monitors for me. I think it's just a timeout problem, as 
-increasing the values helps.
-
-Using ktime, I can see that during link training, the first call takes ~2ms, the second ~7ms. I 
-think this worked before, as udelay(1) takes much longer than 1 us.
-
-We have 1000us limit in a few other places too, which I don't see causing issues, but might need 
-increasing too.
-
-Also, 1us sleep_us may be a bit too small to be sane. If the loops take milliseconds, probably 100us 
-or even more would make sense.
-
-This didn't cause any issues with your display?
-
-  Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks,
+Daniel
