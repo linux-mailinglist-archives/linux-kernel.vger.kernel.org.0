@@ -2,80 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9C61137D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F25191137E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:55:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfLDWxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 17:53:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728011AbfLDWxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 17:53:15 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D90E52464F;
-        Wed,  4 Dec 2019 22:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575499994;
-        bh=nSce+C0PV3nNdjCe0SnUxQ5HD4mnSnWmbA4HaJPR62w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=veiNJx7i6rZD7MlLzz1MscyYOIJP30VUvfOdBvr6LudveLFrcX9O3W1lDClYj/wR+
-         sx/2tW2Vg6sFLtOrXzkgzRORhHxeo9rEM7Q/C+FXwpn7BUJOD4EqlhqmWWsLG6MVsK
-         YQ1h4Yg+D7ua7rgMThwaulZqcdhFlQTOGzMyqcOQ=
-Date:   Wed, 4 Dec 2019 23:53:12 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: [PATCH 4.9 105/125] mm, gup: add missing refcount overflow
- checks on x86 and s390
-Message-ID: <20191204225312.GB3715390@kroah.com>
-References: <20191204175308.377746305@linuxfoundation.org>
- <20191204175325.500930880@linuxfoundation.org>
- <7ca516fa-c526-b5e6-4b7c-855f229112ac@suse.cz>
- <20191204203711.GA3685601@kroah.com>
+        id S1728393AbfLDWzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 17:55:32 -0500
+Received: from forward104j.mail.yandex.net ([5.45.198.247]:58843 "EHLO
+        forward104j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728284AbfLDWzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 17:55:31 -0500
+Received: from mxback26o.mail.yandex.net (mxback26o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::77])
+        by forward104j.mail.yandex.net (Yandex) with ESMTP id 100914A0BFF;
+        Thu,  5 Dec 2019 01:55:27 +0300 (MSK)
+Received: from myt2-416899e1d7e0.qloud-c.yandex.net (myt2-416899e1d7e0.qloud-c.yandex.net [2a02:6b8:c00:1caf:0:640:4168:99e1])
+        by mxback26o.mail.yandex.net (mxback/Yandex) with ESMTP id CiCpCrHJu0-tQXeZx5L;
+        Thu, 05 Dec 2019 01:55:27 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=golovin.in; s=mail; t=1575500127;
+        bh=A0Ogu7gZHOBeP65sd0xtu2h11UWTeto1NUvcxcTaNio=;
+        h=Subject:To:From:Cc:Date:Message-Id;
+        b=jE0Xif/Fuj4dQpqsnEzIGuJnf00yVfKn/AwRBBClcsTLclfG67clFYiNlw4uGFxUz
+         UrJD01D870ksmiuhUS7sNWx59LOmwf5ywibSBqWUF+Pv9NeRGVi4Cq2Kvfx+o5AM8j
+         6etU6pOBx1cRhpNOfFkV/QXjuHZonbXPVLWh1btk=
+Authentication-Results: mxback26o.mail.yandex.net; dkim=pass header.i=@golovin.in
+Received: by myt2-416899e1d7e0.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id QEcSBchbvx-tOVumEJ1;
+        Thu, 05 Dec 2019 01:55:25 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Dmitry Golovin <dima@golovin.in>
+Cc:     Dmitry Golovin <dima@golovin.in>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Bruce Ashfield <bruce.ashfield@gmail.com>,
+        Ross Philipson <ross.philipson@oracle.com>,
+        Ross Burton <ross.burton@intel.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Daniel Kiper <daniel.kiper@oracle.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH] x86/boot: kbuild: allow readelf executable to be specified
+Date:   Thu,  5 Dec 2019 00:54:41 +0200
+Message-Id: <20191204225446.202981-1-dima@golovin.in>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204203711.GA3685601@kroah.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 09:37:11PM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Dec 04, 2019 at 07:27:44PM +0100, Vlastimil Babka wrote:
-> > On 12/4/19 6:56 PM, Greg Kroah-Hartman wrote:
-> > > From: Vlastimil Babka <vbabka@suse.cz>
-> > > 
-> > > The mainline commit 8fde12ca79af ("mm: prevent get_user_pages() from
-> > > overflowing page refcount") was backported to 4.9.y stable as commit
-> > > 2ed768cfd895. The backport however missed that in 4.9, there are several
-> > > arch-specific gup.c versions with fast gup implementations, so these do not
-> > > prevent refcount overflow.
-> > > 
-> > > This is partially fixed for x86 in stable-only commit d73af79742e7 ("x86, mm,
-> > > gup: prevent get_page() race with munmap in paravirt guest"). This stable-only
-> > > commit adds missing parts to x86 version, as well as s390 version, both taken
-> > > from the SUSE SLES/openSUSE 4.12-based kernels.
-> > > 
-> > > The remaining architectures with own gup.c are sparc, mips, sh. It's unlikely
-> > > the known overflow scenario based on FUSE, which needs 140GB of RAM, is a
-> > > problem for those architectures, and I don't feel confident enough to patch
-> > > them.
-> > > 
-> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > 
-> > No, this one had a leak bug and I've sent updated version:
-> > https://lore.kernel.org/linux-mm/e274291b-054f-2fad-28e8-59fabf312e61@suse.cz/
-> 
-> Ugh.  Ok, let me go fix that up...
+Introduce a new READELF variable to top-level Makefile, so the name of
+readelf binary can be specified.
 
-Now done and I've pushed out a -rc2 with that fix in it.
+Before this change the name of the binary was hardcoded to
+"$(CROSS_COMPILE)readelf" which might not be present for every
+toolchain.
 
-thanks,
+This allows to build with LLVM Object Reader by using make parameter
+READELF=llvm-readelf.
 
-greg k-h
+Link: https://github.com/ClangBuiltLinux/linux/issues/771
+Signed-off-by: Dmitry Golovin <dima@golovin.in>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+---
+ Makefile                          | 3 ++-
+ arch/x86/boot/compressed/Makefile | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 999a197d67d2..612a55d25442 100644
+--- a/Makefile
++++ b/Makefile
+@@ -414,6 +414,7 @@ STRIP		= $(CROSS_COMPILE)strip
+ OBJCOPY		= $(CROSS_COMPILE)objcopy
+ OBJDUMP		= $(CROSS_COMPILE)objdump
+ OBJSIZE		= $(CROSS_COMPILE)size
++READELF		= $(CROSS_COMPILE)readelf
+ PAHOLE		= pahole
+ LEX		= flex
+ YACC		= bison
+@@ -472,7 +473,7 @@ GCC_PLUGINS_CFLAGS :=
+ CLANG_FLAGS :=
+ 
+ export ARCH SRCARCH CONFIG_SHELL BASH HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
+-export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE PAHOLE LEX YACC AWK INSTALLKERNEL
++export CPP AR NM STRIP OBJCOPY OBJDUMP OBJSIZE READELF PAHOLE LEX YACC AWK INSTALLKERNEL
+ export PERL PYTHON PYTHON2 PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
+ export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS LDFLAGS_MODULE
+ 
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index aa976adb7094..1dac210f7d44 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -103,7 +103,7 @@ vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_thunk_$(BITS).o
+ quiet_cmd_check_data_rel = DATAREL $@
+ define cmd_check_data_rel
+ 	for obj in $(filter %.o,$^); do \
+-		${CROSS_COMPILE}readelf -S $$obj | grep -qF .rel.local && { \
++		$(READELF) -S $$obj | grep -qF .rel.local && { \
+ 			echo "error: $$obj has data relocations!" >&2; \
+ 			exit 1; \
+ 		} || true; \
+-- 
+2.23.0
+
