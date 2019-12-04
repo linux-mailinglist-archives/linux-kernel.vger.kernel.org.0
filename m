@@ -2,111 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D480113331
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A371134B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfLDSPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:15:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730466AbfLDSOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:14:43 -0500
-Received: from localhost (unknown [217.68.49.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0010E20866;
-        Wed,  4 Dec 2019 18:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483282;
-        bh=Ei5tQVIeRmqV5Most0Nt45YuJ+JcLbWOWCdSTlLFX5w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o/ITI/fIx/DogVGrqv2qWMIW5rsZhbOuJlBypVIWXJvgfDTZbvzJ9mfKjMFfvxYTA
-         6ANEZ5rDRU8F9RQiLChhReCig2htDfLsgoUfNRVrTZ3wVkxnyR1nZSoJqIwEQyrloQ
-         OJnaupBCdDcDwWVSj4niAdY8foR/z2t6NAq6SmWc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH 4.9 125/125] net: fec: fix clock count mis-match
-Date:   Wed,  4 Dec 2019 18:57:10 +0100
-Message-Id: <20191204175327.061631078@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728832AbfLDR6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:58:36 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42458 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728777AbfLDR6d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:58:33 -0500
+Received: by mail-ed1-f67.google.com with SMTP id e10so133700edv.9
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 09:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e9gkQnU+5q50cQeHx8NRu5HJQyIM32Z6cVBwYXSVjIU=;
+        b=TfH3rUb9CyqcTteFkO3C0xlnbKPaPL+cKMDbTylgoIZRtg9/X9I+YsgFYMbiZXeyWH
+         6PlZPH1K/5P+XHiHenDCQt4FvrDjS/BrRzDZryGe9Twd6Hm2D/PuFfB0RuI7ndN7FRkU
+         53yRO+n+zxjDbzNLl19rt+Ux9N0QapQxf/PcuW0FZFx9aDV2esnmpEXuzPCGcvshVi5c
+         mRfJ/YtyltCIrh/P45bL1k1m4RChqhZSyzX/Jcbu3guo/ePbUMweg/D/uJvHeIaqg4Gm
+         5uP20oOpH/SKLR8di/NnPJ5v5R0wamwgPJl5jM6Ru4CREPcSt4DIS2z6vz82RA/SVf34
+         r3SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e9gkQnU+5q50cQeHx8NRu5HJQyIM32Z6cVBwYXSVjIU=;
+        b=XyvwXrjf72jb4JmpIHp7JlpNI/+G3lX5laQL38iNo2bQiKjonnnGn2KNln+0Z62ldo
+         hxAyU8KTdgdX4WEFqVUCnV0t5cdxWmyR/Awf/LXRjx6ZER6LmHwnvWpFNOaOvWa8a83d
+         cGT5XsikV545qO5QQuaQN2TOqiZd5w5scV2b8qXBfY2HVPMnHvk+KwqO1soVHRkItf0F
+         K3DLt42GbjtBXdK/UckY+Bg3o2LPzoz9XetPScQ4cMY5UTGl7jleiEWYO97w0BI9s8Zh
+         z1+5CUZCYmgif9eB82hNyAZbXTX4MG8cZTbMqnK069qDo17meauoaZSubKsniTnbcoHB
+         3V/A==
+X-Gm-Message-State: APjAAAVEaUJc38ZKe4xP0Ofs6vf5X5rRLFZ9SIldrV0nwEH0tWv2Yh7J
+        fgW8fAb7AeG8BufuWROIiCr9pr92GJxM+brOaZDnyw==
+X-Google-Smtp-Source: APXvYqyAOfG2c7wdnsuR/CLNurVK9MGZsX+GmC1nBIDZq14OwnspMmSoQUW6yoePy6mVNE4fFTYRVftmoUuum47tYGo=
+X-Received: by 2002:aa7:d445:: with SMTP id q5mr5540834edr.16.1575482311052;
+ Wed, 04 Dec 2019 09:58:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191127184453.229321-1-pasha.tatashin@soleen.com>
+ <20191127184453.229321-2-pasha.tatashin@soleen.com> <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
+In-Reply-To: <957930d0-8317-9086-c7a1-8de857f358c2@xen.org>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Wed, 4 Dec 2019 12:58:20 -0500
+Message-ID: <CA+CK2bBWVLZkFo5e8gQUuiqz_b2oCOtD7-9GkCwf9BsFn9wwaA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm/arm64/xen: use C inlines for privcmd_call
+To:     Julien Grall <julien@xen.org>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, steve.capper@arm.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        Stefan Agner <stefan@agner.ch>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xen-devel@lists.xenproject.org,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+On Fri, Nov 29, 2019 at 10:05 AM Julien Grall <julien@xen.org> wrote:
+>
+> Hi,
+>
+> On 27/11/2019 18:44, Pavel Tatashin wrote:
+> > diff --git a/arch/arm64/include/asm/xen/hypercall.h b/arch/arm64/include/asm/xen/hypercall.h
+> > index 3522cbaed316..1a74fb28607f 100644
+> > --- a/arch/arm64/include/asm/xen/hypercall.h
+> > +++ b/arch/arm64/include/asm/xen/hypercall.h
+> > @@ -1 +1,29 @@
+> > +#ifndef _ASM_ARM64_XEN_HYPERCALL_H
+> > +#define _ASM_ARM64_XEN_HYPERCALL_H
+> >   #include <xen/arm/hypercall.h>
+> > +#include <linux/uaccess.h>
+> > +
+> > +static inline long privcmd_call(unsigned int call, unsigned long a1,
+> > +                             unsigned long a2, unsigned long a3,
+> > +                             unsigned long a4, unsigned long a5)
+>
+> I realize that privcmd_call is the only hypercall using Software PAN at
+> the moment. However, dm_op needs the same as hypercall will be issued
+> from userspace as well.
 
-commit a31eda65ba210741b598044d045480494d0ed52a upstream.
+The clean-up I am working on now is specific to moving current PAN
+useage to C wraps. Once dm_op requires to use PAN it will need to be
+used the C variants, because ASM versions are going to be removed by
+this series.
 
-pm_runtime_put_autosuspend in probe will call runtime suspend to
-disable clks automatically if CONFIG_PM is defined. (If CONFIG_PM
-is not defined, its implementation will be empty, then runtime
-suspend will not be called.)
+>
+> So I was wondering whether we should create a generic function (e.g.
+> do_xen_hypercall() or do_xen_user_hypercall()) to cover the two hypercalls?
+>
+> > diff --git a/include/xen/arm/hypercall.h b/include/xen/arm/hypercall.h
+> > index b40485e54d80..624c8ad7e42a 100644
+> > --- a/include/xen/arm/hypercall.h
+> > +++ b/include/xen/arm/hypercall.h
+> > @@ -30,8 +30,8 @@
+> >    * IN THE SOFTWARE.
+> >    */
+> >
+> > -#ifndef _ASM_ARM_XEN_HYPERCALL_H
+> > -#define _ASM_ARM_XEN_HYPERCALL_H
+> > +#ifndef _ARM_XEN_HYPERCALL_H
+> > +#define _ARM_XEN_HYPERCALL_H
+>
+> This change feels a bit out of context. Could you split it in a separate
+> patch?
 
-Therefore, we can call pm_runtime_get_sync to runtime resume it
-first to enable clks, which matches the runtime suspend. (Only when
-CONFIG_PM is defined, otherwise pm_runtime_get_sync will also be
-empty, then runtime resume will not be called.)
+Makes sense, I am splitting this into a separate patch.
 
-Then it is fine to disable clks without causing clock count mis-match.
-
-Fixes: c43eab3eddb4 ("net: fec: add missed clk_disable_unprepare in remove")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Acked-by: Fugang Duan <fugang.duan@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/net/ethernet/freescale/fec_main.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3530,6 +3530,11 @@ fec_drv_remove(struct platform_device *p
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
- 	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+
-+	ret = pm_runtime_get_sync(&pdev->dev);
-+	if (ret < 0)
-+		return ret;
- 
- 	cancel_work_sync(&fep->tx_timeout_work);
- 	fec_ptp_stop(pdev);
-@@ -3537,15 +3542,17 @@ fec_drv_remove(struct platform_device *p
- 	fec_enet_mii_remove(fep);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
--	pm_runtime_put(&pdev->dev);
--	pm_runtime_disable(&pdev->dev);
--	clk_disable_unprepare(fep->clk_ahb);
--	clk_disable_unprepare(fep->clk_ipg);
-+
- 	if (of_phy_is_fixed_link(np))
- 		of_phy_deregister_fixed_link(np);
- 	of_node_put(fep->phy_node);
- 	free_netdev(ndev);
- 
-+	clk_disable_unprepare(fep->clk_ahb);
-+	clk_disable_unprepare(fep->clk_ipg);
-+	pm_runtime_put_noidle(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
- 	return 0;
- }
- 
-
-
+Thank you,
+Pasha
