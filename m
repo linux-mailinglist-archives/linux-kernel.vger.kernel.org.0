@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1B2D113400
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C51D113362
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbfLDSGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:06:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53688 "EHLO mail.kernel.org"
+        id S1731360AbfLDSK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:10:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730487AbfLDSGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:06:04 -0500
+        id S1731341AbfLDSKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:10:55 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1308320866;
-        Wed,  4 Dec 2019 18:06:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A882120674;
+        Wed,  4 Dec 2019 18:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575482763;
-        bh=/Ilz3DQrQMnik72iidlCKhIT7D03qFszYXIadrSkDLE=;
+        s=default; t=1575483055;
+        bh=H1WBjtuVHU+q1pByMDCrOf3M0NmQW+pm/fk8+btGKfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ixf/4sNDIUh12dM8Oygq9DiS7W0tWgFy2SSCFwTV6YRvoSxcR0OdjKlxmhI6uneQR
-         TBpXkMPPWMihGrxp1RaCleIcAzv7mVepo6w0nLiY+5Qj0oJSPTaRqfz/4MidwNhghc
-         hz+gQC8iDf5kFslaW0x8QSxrLpdc2pgPlu/zK+9k=
+        b=SbJg0nyB1UVD/tw2XKZPvn/lA9xc63eB4IvK4e0ed2ll86Tvo/28DPu9d57FLBFdo
+         PRNDi+jCpz3czBm8pEj8X6LM7jWRxXkGRPPLsnL0V6UswvkIPJ7Dpq8EvNqzyZRtoV
+         0Ha6R90+hqeCVRfZz+VonYOM1tKagshNGw81UAIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@gmx.us>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 124/209] drivers/base/platform.c: kmemleak ignore a known leak
-Date:   Wed,  4 Dec 2019 18:55:36 +0100
-Message-Id: <20191204175331.600922320@linuxfoundation.org>
+Subject: [PATCH 4.9 032/125] microblaze: move "... is ready" messages to arch/microblaze/Makefile
+Date:   Wed,  4 Dec 2019 18:55:37 +0100
+Message-Id: <20191204175320.947271294@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
-References: <20191204175321.609072813@linuxfoundation.org>
+In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
+References: <20191204175308.377746305@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,81 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@gmx.us>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 967d3010df8b6f6f9aa95c198edc5fe3646ebf36 ]
+[ Upstream commit 2e14f94cf4bc2f15ca5362e81ca3a987c79e3062 ]
 
-unreferenced object 0xffff808ec6dc5a80 (size 128):
-  comm "swapper/0", pid 1, jiffies 4294938063 (age 2560.530s)
-  hex dump (first 32 bytes):
-    ff ff ff ff 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
-    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-  backtrace:
-    [<00000000476dcf8c>] kmem_cache_alloc_trace+0x430/0x500
-    [<000000004f708d37>] platform_device_register_full+0xbc/0x1e8
-    [<000000006c2a7ec7>] acpi_create_platform_device+0x370/0x450
-    [<00000000ef135642>] acpi_default_enumeration+0x34/0x78
-    [<000000003bd9a052>] acpi_bus_attach+0x2dc/0x3e0
-    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
-    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
-    [<000000002968643e>] acpi_bus_scan+0xb0/0x110
-    [<0000000010dd0bd7>] acpi_scan_init+0x1a8/0x410
-    [<00000000965b3c5a>] acpi_init+0x408/0x49c
-    [<00000000ed4b9fe2>] do_one_initcall+0x178/0x7f4
-    [<00000000a5ac5a74>] kernel_init_freeable+0x9d4/0xa9c
-    [<0000000070ea6c15>] kernel_init+0x18/0x138
-    [<00000000fb8fff06>] ret_from_fork+0x10/0x1c
-    [<0000000041273a0d>] 0xffffffffffffffff
+To prepare for more fixes, move this to arch/microblaze/Makefile.
+Otherwise, the same "... is ready" would be printed multiple times.
 
-Then, faddr2line pointed out this line,
-
-/*
- * This memory isn't freed when the device is put,
- * I don't have a nice idea for that though.  Conceptually
- * dma_mask in struct device should not be a pointer.
- * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
- */
-pdev->dev.dma_mask =
-	kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
-
-Since this leak has existed for more than 8 years and it does not
-reference other parts of the memory, let kmemleak ignore it, so users
-don't need to waste time reporting this in the future.
-
-Link: http://lkml.kernel.org/r/20181206160751.36211-1-cai@gmx.us
-Signed-off-by: Qian Cai <cai@gmx.us>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/platform.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/microblaze/Makefile      | 2 ++
+ arch/microblaze/boot/Makefile | 4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 9045c5f3734e8..f1105de0d9fed 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -27,6 +27,7 @@
- #include <linux/clk/clk-conf.h>
- #include <linux/limits.h>
- #include <linux/property.h>
-+#include <linux/kmemleak.h>
+diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
+index 5e1e18540a571..491676a6cde57 100644
+--- a/arch/microblaze/Makefile
++++ b/arch/microblaze/Makefile
+@@ -75,9 +75,11 @@ archclean:
  
- #include "base.h"
- #include "power/power.h"
-@@ -526,6 +527,8 @@ struct platform_device *platform_device_register_full(
- 		if (!pdev->dev.dma_mask)
- 			goto err;
+ linux.bin linux.bin.gz linux.bin.ub: vmlinux
+ 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
++	@echo 'Kernel: $(boot)/$@ is ready' ' (#'`cat .version`')'
  
-+		kmemleak_ignore(pdev->dev.dma_mask);
-+
- 		*pdev->dev.dma_mask = pdevinfo->dma_mask;
- 		pdev->dev.coherent_dma_mask = pdevinfo->dma_mask;
- 	}
+ simpleImage.%: vmlinux
+ 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
++	@echo 'Kernel: $(boot)/$@ is ready' ' (#'`cat .version`')'
+ 
+ define archhelp
+   echo '* linux.bin    - Create raw binary'
+diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
+index 0f3fe6a151dce..22bed08ec7f28 100644
+--- a/arch/microblaze/boot/Makefile
++++ b/arch/microblaze/boot/Makefile
+@@ -8,15 +8,12 @@ OBJCOPYFLAGS := -R .note -R .comment -R .note.gnu.build-id -O binary
+ 
+ $(obj)/linux.bin: vmlinux FORCE
+ 	$(call if_changed,objcopy)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ $(obj)/linux.bin.ub: $(obj)/linux.bin FORCE
+ 	$(call if_changed,uimage)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ $(obj)/linux.bin.gz: $(obj)/linux.bin FORCE
+ 	$(call if_changed,gzip)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
+ 
+ quiet_cmd_cp = CP      $< $@$2
+ 	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
+@@ -34,6 +31,5 @@ $(obj)/simpleImage.%: vmlinux FORCE
+ 	$(call if_changed,objcopy)
+ 	$(call if_changed,uimage)
+ 	$(call if_changed,strip,.strip)
+-	@echo 'Kernel: $(UIMAGE_OUT) is ready' ' (#'`cat .version`')'
+ 
+ clean-files += simpleImage.*.unstrip linux.bin.ub dts/*.dtb
 -- 
 2.20.1
 
