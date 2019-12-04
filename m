@@ -2,217 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246D911230C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63C4B112311
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 07:54:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfLDGuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 01:50:20 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36937 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfLDGuT (ORCPT
+        id S1727117AbfLDGyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 01:54:07 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35557 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbfLDGyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 01:50:19 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f129so6570300wmf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 22:50:17 -0800 (PST)
+        Wed, 4 Dec 2019 01:54:06 -0500
+Received: by mail-qk1-f194.google.com with SMTP id v23so6185637qkg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Dec 2019 22:54:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VMtFfNaDx2oQbuDbsEhYc0lGTSp37MnP2fz0v39AX38=;
-        b=ubAR+keAfnqKsKRDax35KDypRtW1p4omzCQbjDV0j6l5ZWClhQonZQ3XJZ6+WJPigv
-         JR57d2F9hBaspWrC7wXL3RtPnKSBzz6sOtSRVN/77+c+0BLe9q+2Byl16C35ykFdLa9F
-         6Z/zvGFvmPrYD17rtWxc/+Qgk8v24ivMiCz0ViX6mj581M6ACT4mY9ORLPirq4y72iXY
-         fMwqrB98LQ4iKFTfxm6u1K3SKdf4TtAzWW/NVTjf8BKyAzPWuawNBFXIIjS073kUy6Z8
-         sSz8HYgeTN/BkiUAbe1fpV97JhSMyKyZQALPzTWNsZ2kBqAVRr/7xC8SSynPoMwntVKI
-         nBbw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NPK31KT4fxLwD0F1AZDz2V/fu+xIHdUgpNu7HrMjbFw=;
+        b=BOkMzCMzR5sKMnF42GmwGVTEJc+LOb23dsZlRHel6sRqIWvouhTx3uSjuj56W+eI6i
+         WKFjyajdaq7/klhycZJpOZ1C5uY21UsOGiG3SpNpVOEnp0+cjCk+LYKRMS3fgkriAub8
+         nlHDa2FMR8/XmMhwk20tOkMU7HMQ5vmevU7ui4yNMQ51MSLv6jRXrtVe2iukGrm6XIBU
+         vGbD2kLuak4JrxMh1o/1pLHbGaeWJKVG7AbvqgJWVtMDRZkN1JqlAgO8mU4Ox2Exa1tC
+         Mj5rKh2JP3pCY5Jxm8w4XU444Krqs9wk1QO+o+2WiulmzqgHnVKwfLTC/2Na+ibHlTMY
+         OeNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=VMtFfNaDx2oQbuDbsEhYc0lGTSp37MnP2fz0v39AX38=;
-        b=b2cev61qZ7WhF3+CryY7Nbh/kMXcCljOP66RT7MoJ4RkdCNtwIe1ch/93xjhybE1wX
-         lV4pzPisJ0u111f8OnO19M3GmVsrvG7mxBt3xVqd+REOjMpj13f77pSK76GogwjdRbdX
-         jhWhUsIIdHl5e6rWikT+avLfXr8QkmXtejfp+BPe9o+G3LpizMxb9YhvXCY5LVY/hsvN
-         uk12kdgV20rOKcd/Q4P7hP8hdUUQVy30iLi1SozLiWAYrl2fx8E28qkrP6XlKVeUnUD4
-         llW0iTjM/0Mcl/Pyd6/S/tAdNXL1gHkQYZVIL2JBDx4pG+2r70dZLNo9GFmyINwza7Or
-         gbIw==
-X-Gm-Message-State: APjAAAVlt6D5W1Y6qcT4Xrr4v+W4587Z9tYePS9oacz44m//XYI4cM4D
-        6jtOWamdeig2pWOwu8ZdMqeAhxxTBVA=
-X-Google-Smtp-Source: APXvYqzODzsaM1aq4feIQfYsxRLRXvV+5Nl/RsGmQqd9AUtp5aYNvfTSQD6LHYKGokZZMY4/NYOYQg==
-X-Received: by 2002:a1c:ed05:: with SMTP id l5mr40539160wmh.161.1575442216099;
-        Tue, 03 Dec 2019 22:50:16 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:b5a4:1c65:b54:363a? ([2a01:e34:ed2f:f020:b5a4:1c65:b54:363a])
-        by smtp.googlemail.com with ESMTPSA id n14sm5529954wmi.26.2019.12.03.22.50.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Dec 2019 22:50:15 -0800 (PST)
-Subject: Re: [PATCH V3 2/4] thermal/drivers/cpu_cooling: Add idle cooling
- device documentation
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191203093704.7037-1-daniel.lezcano@linaro.org>
- <20191203093704.7037-2-daniel.lezcano@linaro.org>
- <CAP245DV=kd=LdvgZ2x1Q8-ZahpS3423Z9vHXw91N20aQ6DKxAQ@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7e851d43-ecb5-179a-ebfd-847dffd29636@linaro.org>
-Date:   Wed, 4 Dec 2019 07:50:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NPK31KT4fxLwD0F1AZDz2V/fu+xIHdUgpNu7HrMjbFw=;
+        b=sdwLBcUWQTpjtTi9RKCDbiAYGDRIin35/SDkfUwHJJl9BMdR6ZMaXkxiZ6PoHYdtq/
+         i8TLlY2uv2LyGFVLnvEXjxqS1t0N0QqZGFSymhPc8HLMvttIvyQDC07bIDn3ADl9xmRa
+         6GsyjekGtme8vaFID1Zxf2l8l8GKeotqFcVauMUSrT21UNagvKbIac/222bfO8NVnhV5
+         Gryzau8WZaOPlNPNlZ7i32npg+uj7K60pmnlHmpGqWKg5UaVvp2tSeWjn6PfRpr7vEX3
+         HcF07HOJ+GmjSXsLcF6IJL0b5/CHuMOX2+4dIj62kjudMSJSLpnI69Ao4AJuiryBO2NY
+         4hhw==
+X-Gm-Message-State: APjAAAWRUGSOXFr2sIb4kbQhvCUPTzWp6YItlclOCO5xvi7hNR4SzTlw
+        mCmCKS8a+FwIe5mIZMHoC0OnWfx9OtRoSv42OLbAfQ==
+X-Google-Smtp-Source: APXvYqyKONKPMM3S6T9nyyBFpC5NnDRt2Bm9tOCUttMMCINdvVilsB2+tf+V3DS0oKZWvWvW5H/afsAEiU8hht6KyQ0=
+X-Received: by 2002:a37:9d12:: with SMTP id g18mr1356251qke.43.1575442445437;
+ Tue, 03 Dec 2019 22:54:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAP245DV=kd=LdvgZ2x1Q8-ZahpS3423Z9vHXw91N20aQ6DKxAQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <000000000000dd04830598d50133@google.com> <0000000000009574da0598d7ccfa@google.com>
+In-Reply-To: <0000000000009574da0598d7ccfa@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 4 Dec 2019 07:53:54 +0100
+Message-ID: <CACT4Y+aEzDb2r=wjAD=qWyE=_JCfH8pzdoWCdLQsCmWmahLhaw@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in tty_open
+To:     syzbot <syzbot+9af6d43c1beabec8fd05@syzkaller.appspotmail.com>
+Cc:     Gleb Natapov <gleb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        gwshan@linux.vnet.ibm.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Jiri Slaby <jslaby@suse.com>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Russell Currey <ruscur@russell.cc>, stewart@linux.vnet.ibm.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 4, 2019 at 3:45 AM syzbot
+<syzbot+9af6d43c1beabec8fd05@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this bug to:
+>
+> commit 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+> Author: Russell Currey <ruscur@russell.cc>
+> Date:   Mon Feb 8 04:08:20 2016 +0000
+>
+>      powerpc/powernv: Remove support for p5ioc2
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e5fc32e00000
+> start commit:   76bb8b05 Merge tag 'kbuild-v5.5' of git://git.kernel.org/p..
+> git tree:       upstream
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=17e5fc32e00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13e5fc32e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9af6d43c1beabec8fd05
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d15061e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b69aeae00000
+>
+> Reported-by: syzbot+9af6d43c1beabec8fd05@syzkaller.appspotmail.com
+> Fixes: 2de50e9674fc ("powerpc/powernv: Remove support for p5ioc2")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Hi Amit,
-
-thanks for the review.
-
-
-On 04/12/2019 05:24, Amit Kucheria wrote:
-
-[ ... ]
-
->> +the CPUs will have to wakeup from a deep sleep state.
->> +
->> +     ^
->> +     |
->> +     |
->> +     |-------       -------       -------
->> +     |_______|_____|_______|_____|_______|___________
->> +
->> +      <----->
->> +       idle  <---->
->> +              running
->> +
->> +With the fixed idle injection duration, we can give a value which is
->> +an acceptable performance drop off or latency when we reach a specific
->> +temperature and we begin to mitigate by varying the Idle injection
->> +period.
->> +
-> 
-> I'm not sure what it the purpose of this statement. You've described
-> how the period value starts at a maximum and is adjusted dynamically
-> below.
-
-We can have different way to inject idle periods. We can increase the
-idle duration and/or keep this duration constant but make a variation of
-the period. This statement clarify the method which is the latter
-because we want to have a constant latency per period easier to deal with.
-
->> +The mitigation begins with a maximum period value which decrease when
-> 
-> Shouldn't the idle injection period increase to get more cooling effect?
-
-The period is the opposite of the frequency. The highest the period, the
-lowest the frequency, thus less idle cycles and lesser cooling effect.
-
->> +more cooling effect is requested. When the period duration is equal to
->> +the idle duration, then we are in a situation the platform can’t
->> +dissipate the heat enough and the mitigation fails. In this case the
->> +situation is considered critical and there is nothing to do. The idle
->> +injection duration must be changed by configuration and until we reach
->> +the cooling effect, otherwise an additionnal cooling device must be
-> 
-> typo: additional
-> 
->> +used or ultimately decrease the SoC performance by dropping the
->> +highest OPP point of the SoC.
->> +
->> +The idle injection duration value must comply with the constraints:
->> +
->> +- It is lesser or equal to the latency we tolerate when the mitigation
-> 
-> s/lesser/less than/
-> 
->> +  begins. It is platform dependent and will depend on the user
->> +  experience, reactivity vs performance trade off we want. This value
->> +  should be specified.
->> +
->> +- It is greater than the idle state’s target residency we want to go
->> +  for thermal mitigation, otherwise we end up consuming more energy.
->> +
->> +Minimum period
->> +--------------
->> +
->> +The idle injection duration being fixed, it is obvious the minimum
-> 
-> Change to:
-> When the idle injection duration is fixed,
-> 
-
-The idle duration is always fixed in the cpuidle cooling device, why do
-you want to add the sentence above?
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+This should have been detected as "does not affect binary", but there
+is something I don't understand/missing:
+This is bisected to 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+and it has this parent:
+$ git log -n 1 --format="%P" 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+388f7b1d6e8ca06762e2454d28d6c3c55ad0fe95
+But the parent was never tested during bisection... how is this possible?
+Mentioned this here:
+https://github.com/google/syzkaller/issues/1271#issuecomment-561504032
