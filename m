@@ -2,91 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75357112BE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:46:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC64112BED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfLDMqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 07:46:53 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:36738 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727906AbfLDMqw (ORCPT
+        id S1727896AbfLDMrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:47:41 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49656 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfLDMrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 07:46:52 -0500
-Received: by mail-pj1-f65.google.com with SMTP id n96so2979643pjc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 04:46:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=Y1+ypYYA0J58fd/Gt8KdYVGZSoMEWvzVsHs7uL+Ye15SB5q6xuTu+2MBA7l7wGhhlD
-         YEcLxkHpX2PlRXfa763vxkxclY/P7Za4viG2dV1H+MsvpXRBkkHfuEa5l1yOBy+lNavu
-         LO+mTfZQcSgzS7IYxDtzOXQd3AYl/WDPGEAd2GTc9k/uEiS6pHxMtrsRN0IHJTF6bt4p
-         sIEjW8ntGcjoEjz69TrZN/+ntieWGqoUi3ItCYFyeZMj01zqFYHEJieRTQfRinGVbuDK
-         6rUudeKKvbGQdnQNyiS3g/Ow0e0ZjDVrJAVZYeH1OBBnohJIwmjsqXt54tXLcdbz2lDQ
-         Sncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=Mh78MfY5GP0nvp8vRJrI93RFLHYs/AMCmUl1KoR516KrCqtFhdMtjYVfx6WWHcy1Y2
-         QsuUF8VYJjhLjh+MGYITyvzb2klc1hUdHQlqaqaRpWAhoxbChULuem2WLLiPV6QVghHT
-         azbE6XNuMC0z5ZFKzfb5cVzG/XwoXEaYu1XqcRE/353nJZfPeEOW8OkZ+k9ivvwAACmT
-         8n/4VFpDWdMXDqXxT2LtrfOWPtxNthFQspqGGB2hK0PpOEO//nJgOVTPGhBsQ1rOuQ9Z
-         50X3dgI1IaOCVQUE7ajWDeQUnEyhHdglSGbiIWoIyi9B9svtR0hEsqPA9Nq1YWeF83li
-         oo+g==
-X-Gm-Message-State: APjAAAWJuaVJbxDTTgDiLhblqZjXYSV7aFzDKcpJ1VA0MU78ySqrbk8i
-        T6VyvMXAltn6ifjI0Zv4sHnSpq1tSwyImgLMgac=
-X-Google-Smtp-Source: APXvYqyURCL1KTN3riGYyWZLJZXWFzu2tLdASLkTOv3g0hvdMXRZvqF+xhDtI4K0sJFJu22HxaQftX/6RcHk/G4p8GE=
-X-Received: by 2002:a17:902:6909:: with SMTP id j9mr3216782plk.136.1575463611834;
- Wed, 04 Dec 2019 04:46:51 -0800 (PST)
+        Wed, 4 Dec 2019 07:47:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wvspINbC0rd5pzrtB6IdbMhDRhq0Gg7sBdygu5GhV/g=; b=xXhDP38bEFkCILphtkcyG2GaF
+        jidMnvmM6z0sQcofRm5Aly/bnCMFa4fyoRZ3t1zviZvzBW8vHhdofmGYIIvsI0HWA7sUyoO7fpHO1
+        dmDDWh8zmi2YVI2jdiU9VV335soA8GuPDJYV1Epa55tPSvam/KNjhcpvcvPkwY3bhqWtY=;
+Received: from fw-tnat-cam3.arm.com ([217.140.106.51] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1icU3p-0000LL-Hi; Wed, 04 Dec 2019 12:47:17 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 10DC4D003B4; Wed,  4 Dec 2019 12:47:17 +0000 (GMT)
+Date:   Wed, 4 Dec 2019 12:47:17 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>, "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Message-ID: <20191204124717.GR1998@sirena.org.uk>
+References: <20191118162502.GJ9761@sirena.org.uk>
+ <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
+ <20191119181325.GD3634@sirena.org.uk>
+ <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
+ <20191119193636.GH3634@sirena.org.uk>
+ <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
+ <20191129120925.GA5747@sirena.org.uk>
+ <297fa021fb243072dbbb7bca455e57c13e8c6843.camel@fi.rohmeurope.com>
+ <20191202131140.GD1998@sirena.org.uk>
+ <72a1f4c5768b8c08c2669ea01e60d1b614095a43.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90b:110b:0:0:0:0 with HTTP; Wed, 4 Dec 2019 04:46:51
- -0800 (PST)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <missdonnahistory@gmail.com>
-Date:   Wed, 4 Dec 2019 13:46:51 +0100
-Message-ID: <CACROPfEsc7amPoFd7ffGwMXxX99RfFX8UgtmUyK2oNYxj834WQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="r7tUYVWcdYzDJoZW"
+Content-Disposition: inline
+In-Reply-To: <72a1f4c5768b8c08c2669ea01e60d1b614095a43.camel@fi.rohmeurope.com>
+X-Cookie: Cleanliness is next to impossible.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
 
-My name is Joe Akaba I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+--r7tUYVWcdYzDJoZW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:joeakaba00@gmail.com
+On Mon, Dec 02, 2019 at 02:02:41PM +0000, Vaittinen, Matti wrote:
+> On Mon, 2019-12-02 at 13:11 +0000, Mark Brown wrote:
 
-Many thanks in advance,
-Mr.Joe Akaba
+> > No, look at the bindings - we support a bunch of different
+> > suspend states matching the different suspend states that the
+> > kernel as a whole supports.  We don't assume that the device will
+> > know this but you can always use the current suspend we're going
+> > for to decide where to update.
 
+> Hm. So if I understand this correctly, you mean user should set the
+> suspend 'target' - and then call the set_suspend_voltage for this
+> state. To set voltages for all states one should do loop
 
-Hallo
+The general idea is that we set the suspend state during the
+process of suspending rather than in advance - that way when the
+hardware doesn't understand different types of suspsend things
+work fine.
 
-Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8.5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+> get_current_mode()
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: joeakaba00@gmail.com
+> for_all_modes() {
+> 	set_mode()
+> 	set_voltage()
+> }
 
-Vielen Dank im Voraus,
-Mr.Joe Akaba
+> restore_original_mode()
+
+> am I on a right track? I'll try to see if I can find some examples of
+> this - thanks.
+
+I don't understand the save and restore of mode?  If setting the
+suspend configuration affects the runtime state then the hardware
+doesn't support suspend configuration.
+
+> > The framework doesn't care how a device is controlled, that's up
+> > to the device.  Like I said I recommend figuring out what
+> > voltages are useful to have quick access to at runtime, for
+> > example it's likely that it's good to have quick access to the
+> > highest voltage that's been set (and/or the top of the
+> > constraints).
+
+> Problem is that the run-level controlled regulator can't be
+> individually controlled (unless it is only regulator in the group). I
+
+Regulators that have to be controlled en masse aren't really
+supported by the API, it only understands regulators that are
+individually controllable.
+
+> But just to confirm, I meant for example assigning bucks 1,2,6 and 7
+> into a group which 'state' is changed via GPIO line. Say 'states' are
+> RUN0, RUN1. For each of these bucks we can define a voltage and
+> enable/disable status which is to be used on RUN0, and another
+> voltage/state tuple for RUN1.
+
+So you could also just create a group consisting of a single
+regulator?  That would be fine for the API.
+
+--r7tUYVWcdYzDJoZW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3nqtQACgkQJNaLcl1U
+h9DtkQf/ZOvqt/xvJrkjQ2zSreCV2pRVglwsGchtoOcrs1gS/5iuRXJb8Fic/clC
+BMt7wBK5Zqeu6q2A3oqQ85hPjYMipgmMfwDQzNCGMTHN+EpVvmYX0R8PXWM5yEiP
+SJJ3ZVZHk2TqOIhiGwFbBpYnm3u/J5AbHeHXPXKVMuyMap2OVfXFx2DNexM1vC4X
+Kj70z8B9MA7Hv+VBbmOK/+nsQiRVkr8FyZjoefUdmIF1vPHqMWXA9S8+jziZoyZS
+6QZ5EJFXS99omTKYYeOL4R6RlrMW/Ln5HWRWWuXVNV8uvt3xqQNln9QMSNYzHGAn
+3fl1ynbYU1UiEsY07AKvLnboLE0iDA==
+=9lBU
+-----END PGP SIGNATURE-----
+
+--r7tUYVWcdYzDJoZW--
