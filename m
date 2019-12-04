@@ -2,71 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 424F41130CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 341CC1130D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:32:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbfLDRaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:30:12 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:37038 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbfLDRaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:30:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=lAsG+T4/3QI7MFHFX6DTkoBl6UOaIUr3qpKXn/UuyzU=; b=v9Bfxxq7/fD63NH2anKtkms+QE
-        zT1nIfBwxeIHbzjfzDHTmQj/mjqQEYJ/mln0h91fRLQ+1WxljHQFNOCM891gV2GacAz/+CjE4n4PS
-        RvFqkVPlKlU3g4f93Q4jpgxqLBU6lrLT9v8h7a5+VdBFr9fNZeSckZOK1mbt+K4/oQJs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.92.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1icYTY-0003Dk-D6; Wed, 04 Dec 2019 18:30:08 +0100
-Date:   Wed, 4 Dec 2019 18:30:08 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Mian Yousaf Kaukab <ykaukab@suse.de>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tharvey@gateworks.com,
-        davem@davemloft.net, rric@kernel.org, sgoutham@cavium.com,
-        sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH v1] net: thunderx: start phy before starting
- autonegotiation
-Message-ID: <20191204173008.GG21904@lunn.ch>
-References: <20191204172351.29709-1-ykaukab@suse.de>
+        id S1728230AbfLDRc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 12:32:29 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35572 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbfLDRc3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:32:29 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u8so655939wmu.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 09:32:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Da4Y4n3NMFC/79t5RanRXSUf1h1wEAGbNHxtuyP+xmM=;
+        b=Z94DkfufL6HVtq5BV+uU20SpiNvgoUy4yY7ngu6G+RM2sQ61nJWU0ONGFvbdr3OHma
+         1b2mX5hK51qYdj2ZJoQOaVqYP/s3a3LWaCAcXBfcarUlEgBlLeR1ca1g05W+pqZLpqQX
+         lWi5zlONVDlMnk4ggJvH9UWRudA3BA80Zg6mupRiQF/DEJFAdUfClAPcKJnV3nVFu4SZ
+         NAfasXzjoMYKW+qu6iRGTRSnR1RRkwv2q8qEApfbaoOd6/m7hLTApOmGpU4q9KS7AkPY
+         ApgF91e03Pog4Fj7AQrsNtW45l4Hudi/0bq+ptZgPsFb9eTnK+NZF8zdQDAOFtPKDbn9
+         ZPYA==
+X-Gm-Message-State: APjAAAUz+FIOhU3zE38p6iL47nPNqRSQ/cxD0F+LvetWWgC/72txAOpy
+        y1oyhWsX5aqF5luDi46Okes=
+X-Google-Smtp-Source: APXvYqz2+J1w4/+Mka97KTYvxkWaEPcEfNDGA9xqF4/DUTq+CSCHZZfIrpdSQSf8NDotGd4eWrU1Kw==
+X-Received: by 2002:a1c:1dd3:: with SMTP id d202mr677882wmd.130.1575480747146;
+        Wed, 04 Dec 2019 09:32:27 -0800 (PST)
+Received: from localhost (ip-37-188-170-11.eurotel.cz. [37.188.170.11])
+        by smtp.gmail.com with ESMTPSA id c9sm6995939wmc.47.2019.12.04.09.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 09:32:26 -0800 (PST)
+Date:   Wed, 4 Dec 2019 18:32:24 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: SLUB: purpose of sysfs events on cache creation/removal
+Message-ID: <20191204173224.GN25242@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1911261632030.9857@www.lameter.com>
+ <20191126165420.GL20912@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1911271535560.16935@www.lameter.com>
+ <20191127162400.GT20912@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1911271625110.17727@www.lameter.com>
+ <20191127174317.GD26807@dhcp22.suse.cz>
+ <20191204132812.GF25242@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1912041524290.18825@www.lameter.com>
+ <20191204153225.GM25242@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1912041652410.29709@www.lameter.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191204172351.29709-1-ykaukab@suse.de>
+In-Reply-To: <alpine.DEB.2.21.1912041652410.29709@www.lameter.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 06:23:51PM +0100, Mian Yousaf Kaukab wrote:
-> Since commit 2b3e88ea6528 ("net: phy: improve phy state checking")
-> phy_start_aneg() expects phy state to be >= PHY_UP. Call phy_start()
-> before calling phy_start_aneg() during probe so that autonegotiation
-> is initiated.
+[Cc akpm - the email thread starts
+http://lkml.kernel.org/r/20191126121901.GE20912@dhcp22.suse.cz]
+
+On Wed 04-12-19 16:53:47, Cristopher Lameter wrote:
+> On Wed, 4 Dec 2019, Michal Hocko wrote:
 > 
-> As phy_start() takes care of calling phy_start_aneg(), drop the explicit
-> call to phy_start_aneg().
+> > As I've said I believe it is quite risky. But if you as a maintainer
+> > believe this is the right thing to do I will not object. Care to send a
+> > patch?
 > 
-> Network fails without this patch on Octeon TX.
+> From: Christoph Lameter <cl@linux.com>
+> Subject: slub: Remove userspace notifier for cache add/remove
 > 
-> Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
-> ---
-> v1: 
+> Kmem caches are internal kernel structures so it is strange that
+> userspace notifiers would be needed. And I am not aware of any use
+> of these notifiers. These notifiers may just exist because in the
+> initial slub release the sysfs code was copied from another
+> subsystem.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
+> 
+> Index: linux/mm/slub.c
+> ===================================================================
+> --- linux.orig/mm/slub.c	2019-12-02 15:13:23.948312925 +0000
+> +++ linux/mm/slub.c	2019-12-04 16:32:34.648550310 +0000
+> @@ -5632,19 +5632,6 @@ static struct kobj_type slab_ktype = {
+>  	.release = kmem_cache_release,
+>  };
+> 
+> -static int uevent_filter(struct kset *kset, struct kobject *kobj)
+> -{
+> -	struct kobj_type *ktype = get_ktype(kobj);
+> -
+> -	if (ktype == &slab_ktype)
+> -		return 1;
+> -	return 0;
+> -}
+> -
+> -static const struct kset_uevent_ops slab_uevent_ops = {
+> -	.filter = uevent_filter,
+> -};
+> -
+>  static struct kset *slab_kset;
+> 
+>  static inline struct kset *cache_kset(struct kmem_cache *s)
+> @@ -5712,7 +5699,6 @@ static void sysfs_slab_remove_workfn(str
+>  #ifdef CONFIG_MEMCG
+>  	kset_unregister(s->memcg_kset);
+>  #endif
+> -	kobject_uevent(&s->kobj, KOBJ_REMOVE);
+>  out:
+>  	kobject_put(&s->kobj);
+>  }
+> @@ -5770,7 +5756,6 @@ static int sysfs_slab_add(struct kmem_ca
+>  	}
+>  #endif
+> 
+> -	kobject_uevent(&s->kobj, KOBJ_ADD);
+>  	if (!unmergeable) {
+>  		/* Setup first alias */
+>  		sysfs_slab_alias(s, s->name);
+> @@ -5851,7 +5836,7 @@ static int __init slab_sysfs_init(void)
+> 
+>  	mutex_lock(&slab_mutex);
+> 
+> -	slab_kset = kset_create_and_add("slab", &slab_uevent_ops, kernel_kobj);
+> +	slab_kset = kset_create_and_add("slab", NULL, kernel_kobj);
+>  	if (!slab_kset) {
+>  		mutex_unlock(&slab_mutex);
+>  		pr_err("Cannot register slab subsystem.\n");
 
-This should really be v2.
-
-You should add fixes: tag
-
-And the subject line should indicate which tree this is for:
-
-[PATCH v2 net] net: thunderx: start phy before starting autonegotiation
-
-https://www.kernel.org/doc/html/latest/networking/netdev-FAQ.html
-
-       Andrew
+-- 
+Michal Hocko
+SUSE Labs
