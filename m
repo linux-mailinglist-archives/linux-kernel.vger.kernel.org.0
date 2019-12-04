@@ -2,118 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76AB1124F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 954CF112538
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 09:34:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfLDIaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 03:30:03 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42929 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfLDIaC (ORCPT
+        id S1727261AbfLDIds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 03:33:48 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56342 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbfLDIdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 03:30:02 -0500
-Received: by mail-pf1-f195.google.com with SMTP id l22so3261071pff.9;
-        Wed, 04 Dec 2019 00:30:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=26Svodx2iKimpEDX28qyUXASc5gWZTuY5LBcruAtYsQ=;
-        b=KKZ+O0qQLp376LkvoLp+WaBAY1gCrMaSJqGMWi4S6126B1TeH6x48Xb8ngBRJIQc4F
-         3QAbr2qXsqfgY6bBbrmVpx7DJZh3AcAVN/OhQxB1W9OpHyvXnlWafkDYFUJUuaxE3lvU
-         cCh1rAALzHNb1CE+yvUyA6ql7xgTnsB+XrmeqJYTLh20JxMAm75L8JIRGzvgUrbCsv4e
-         B+eaNcCE0NqBZmMcBWbN5onY15Vdj7MydB5ggqh2P+2Y0fQ5o710inQhwTl9o9xz/8ih
-         tsaHh/wyC4jr98DqSeZCNAG4QxH/ZlWbuwQ3Nsp25rlkIpeZteEX1q1eLvBFWoliSr0W
-         BSfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=26Svodx2iKimpEDX28qyUXASc5gWZTuY5LBcruAtYsQ=;
-        b=Ns26/PsTPjJzt/P2VXQrg2CGAsHaRo7OToaT+9cdKrKErVTlH5OqgCRbOcj5TjF+zE
-         K5/YmS+PbO0uyTmFh02umssSp5gk62a3/dU5AHOLbsFJexGZXY6SRatF4kHpPAn2gvvA
-         11J/kSDnXppLDw/7qglm6Bi84kU/aJgGcAPLcO9AsIOxbZcixqEtiweXYMLhr/AT32CB
-         LyXcOycaAFlnkJSUTn56um3heq22REdu4YruhaeDIDhDtamA8d/jP8Xt0QKYeTr0GryO
-         amSbWaKousD2N0B6Xn/2uIGKHs929jXzwMW04ocCwjQqphqrBLi+SdJ3v6wqOM7HVNA9
-         +IVA==
-X-Gm-Message-State: APjAAAWqaE+EhPsXZRdv8SLNaum1W4ame4Zettqc4TxEnqSWPPORp46o
-        qXCuLEn/Rt8SYOZUBoGQpSzh0RfY//malxBn5dA=
-X-Google-Smtp-Source: APXvYqzjAZ0vAhPhJSIR2kF3EuRKWdrEJY88vgQI+LDDt1kDWp6YChc0yxSHIbzB8zqEI/D6eXIErZ/TdjfYIfEZpgM=
-X-Received: by 2002:a62:1a09:: with SMTP id a9mr2343166pfa.64.1575448202017;
- Wed, 04 Dec 2019 00:30:02 -0800 (PST)
+        Wed, 4 Dec 2019 03:33:47 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1icQ6J-0005Fk-0b; Wed, 04 Dec 2019 09:33:35 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 961681C2655;
+        Wed,  4 Dec 2019 09:33:34 +0100 (CET)
+Date:   Wed, 04 Dec 2019 08:33:34 -0000
+From:   "tip-bot2 for Masami Hiramatsu" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: core/kprobes] kprobes: Set unoptimized flag after unoptimizing code
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>, bristot@redhat.com,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <157483422375.25881.13508326028469515760.stgit@devnote2>
+References: <157483422375.25881.13508326028469515760.stgit@devnote2>
 MIME-Version: 1.0
-References: <1575349026-8743-1-git-send-email-srinath.mannam@broadcom.com>
- <1575349026-8743-3-git-send-email-srinath.mannam@broadcom.com>
- <20191203155514.GE18399@e119886-lin.cambridge.arm.com> <CAHp75Vf7d=Gw24MTq2q3BKspkLEDDM24GVK4Zh_4zfZEzVuZjw@mail.gmail.com>
- <40fffa66-4b06-a851-84c2-4de36d5c6777@broadcom.com>
-In-Reply-To: <40fffa66-4b06-a851-84c2-4de36d5c6777@broadcom.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 4 Dec 2019 10:29:51 +0200
-Message-ID: <CAHp75VfyKAg4OhzUa4swGXOGTvJ5fVO8mhGSG=5HAUP__M-URQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] PCI: iproc: Add INTx support with better modeling
-To:     Ray Jui <ray.jui@broadcom.com>
-Cc:     Andrew Murray <andrew.murray@arm.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <157544841446.21853.5014344352579147600.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 12:09 AM Ray Jui <ray.jui@broadcom.com> wrote:
-> On 12/3/19 11:27 AM, Andy Shevchenko wrote:
-> > On Tue, Dec 3, 2019 at 5:55 PM Andrew Murray <andrew.murray@arm.com> wrote:
-> >> On Tue, Dec 03, 2019 at 10:27:02AM +0530, Srinath Mannam wrote:
-> >
-> >>> +     /* go through INTx A, B, C, D until all interrupts are handled */
-> >>> +     do {
-> >>> +             status = iproc_pcie_read_reg(pcie, IPROC_PCIE_INTX_CSR);
-> >>
-> >> By performing this read once and outside of the do/while loop you may improve
-> >> performance. I wonder how probable it is to get another INTx whilst handling
-> >> one?
-> >
-> > May I ask how it can be improved?
-> > One read will be needed any way, and so does this code.
-> >
->
-> I guess the current code will cause the IPROC_PCIE_INTX_CSR register to
-> be read TWICE, if it's ever set to start with.
->
-> But then if we do it outside of the while loop, if we ever receive an
-> interrupt while servicing one, the interrupt will still need to be
-> serviced, and in this case, it will cause additional context switch
-> overhead by going out and back in the interrupt context.
->
-> My take is that it's probably more ideal to leave this portion of code
-> as it is.
+The following commit has been merged into the core/kprobes branch of tip:
 
-Can't we simple drop a do-while completely and leave only
-for_each_set_bit() loop?
+Commit-ID:     f66c0447cca1281116224d474cdb37d6a18e4b5b
+Gitweb:        https://git.kernel.org/tip/f66c0447cca1281116224d474cdb37d6a18e4b5b
+Author:        Masami Hiramatsu <mhiramat@kernel.org>
+AuthorDate:    Wed, 27 Nov 2019 14:57:04 +09:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 27 Nov 2019 07:44:25 +01:00
 
->
-> >>> +             for_each_set_bit(bit, &status, PCI_NUM_INTX) {
-> >>> +                     virq = irq_find_mapping(pcie->irq_domain, bit);
-> >>> +                     if (virq)
-> >>> +                             generic_handle_irq(virq);
-> >>> +                     else
-> >>> +                             dev_err(dev, "unexpected INTx%u\n", bit);
-> >>> +             }
-> >>> +     } while ((status & SYS_RC_INTX_MASK) != 0);
-> >
+kprobes: Set unoptimized flag after unoptimizing code
 
+Set the unoptimized flag after confirming the code is completely
+unoptimized. Without this fix, when a kprobe hits the intermediate
+modified instruction (the first byte is replaced by an INT3, but
+later bytes can still be a jump address operand) while unoptimizing,
+it can return to the middle byte of the modified code, which causes
+an invalid instruction exception in the kernel.
 
+Usually, this is a rare case, but if we put a probe on the function
+call while text patching, it always causes a kernel panic as below:
 
--- 
-With Best Regards,
-Andy Shevchenko
+ # echo p text_poke+5 > kprobe_events
+ # echo 1 > events/kprobes/enable
+ # echo 0 > events/kprobes/enable
+
+invalid opcode: 0000 [#1] PREEMPT SMP PTI
+ RIP: 0010:text_poke+0x9/0x50
+ Call Trace:
+  arch_unoptimize_kprobe+0x22/0x28
+  arch_unoptimize_kprobes+0x39/0x87
+  kprobe_optimizer+0x6e/0x290
+  process_one_work+0x2a0/0x610
+  worker_thread+0x28/0x3d0
+  ? process_one_work+0x610/0x610
+  kthread+0x10d/0x130
+  ? kthread_park+0x80/0x80
+  ret_from_fork+0x3a/0x50
+
+text_poke() is used for patching the code in optprobes.
+
+This can happen even if we blacklist text_poke() and other functions,
+because there is a small time window during which we show the intermediate
+code to other CPUs.
+
+ [ mingo: Edited the changelog. ]
+
+Tested-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bristot@redhat.com
+Fixes: 6274de4984a6 ("kprobes: Support delayed unoptimizing")
+Link: https://lkml.kernel.org/r/157483422375.25881.13508326028469515760.stgit@devnote2
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/kprobes.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 53534aa..34e28b2 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -510,6 +510,8 @@ static void do_unoptimize_kprobes(void)
+ 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
+ 	/* Loop free_list for disarming */
+ 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
++		/* Switching from detour code to origin */
++		op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 		/* Disarm probes if marked disabled */
+ 		if (kprobe_disabled(&op->kp))
+ 			arch_disarm_kprobe(&op->kp);
+@@ -649,6 +651,7 @@ static void force_unoptimize_kprobe(struct optimized_kprobe *op)
+ {
+ 	lockdep_assert_cpus_held();
+ 	arch_unoptimize_kprobe(op);
++	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 	if (kprobe_disabled(&op->kp))
+ 		arch_disarm_kprobe(&op->kp);
+ }
+@@ -676,7 +679,6 @@ static void unoptimize_kprobe(struct kprobe *p, bool force)
+ 		return;
+ 	}
+ 
+-	op->kp.flags &= ~KPROBE_FLAG_OPTIMIZED;
+ 	if (!list_empty(&op->list)) {
+ 		/* Dequeue from the optimization queue */
+ 		list_del_init(&op->list);
