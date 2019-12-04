@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A385112C80
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F3E112C8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:27:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfLDNXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 08:23:50 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:41661 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727503AbfLDNXt (ORCPT
+        id S1727867AbfLDN1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 08:27:43 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37164 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbfLDN1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:23:49 -0500
-X-Originating-IP: 93.34.114.233
-Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1981D1C000E;
-        Wed,  4 Dec 2019 13:23:46 +0000 (UTC)
-Date:   Wed, 4 Dec 2019 14:25:57 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-media@vger.kernel.org, adam.ford@logicpd.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] media: ov5640: Fix check for PLL1 exceeding max
- allowed rate
-Message-ID: <20191204132557.pl6rwfprtcwewato@uno.localdomain>
-References: <20191204130907.19799-1-aford173@gmail.com>
+        Wed, 4 Dec 2019 08:27:43 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w15so8625000wru.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 05:27:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rsyQqCu1aUv9ntw3UAX1WSAMJmeLw7xkIDrzIKtETZ4=;
+        b=MU1eCT8sFGWjc7CRq0KeHYfizNyHUoLKtwOeRdD543mFgMFGmVPnh8Y9mZwgRyFBD/
+         LG5n5FMspnAvVbtwPAeZ2dK0mY3iwWkMYPt30MYG5p4mNgsZ/DzIDeHNr8DEkqVXekoc
+         KY6xhMaZW6lRV1YrZZH8zS8/YMkBPTJws4pp2kRkTjXDOgu4h/cnq430ihY5MkcURqWI
+         LDiIMDegYNCcgd0XJf96PHW637aBOi7xfpfYJpP6LOP83t0WNCH20SBpBss9sMy9bViX
+         AjNRCE8oVnMbkhVqvV+xHK6qtzf7UoGLv8BrmmgACR1J8YkWNqa5SEHNtSV38/5dEYpV
+         gNTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rsyQqCu1aUv9ntw3UAX1WSAMJmeLw7xkIDrzIKtETZ4=;
+        b=Y/bkx8AnzTQjn15oxlALkXdr/uJ0oJwxA2YC0BlFE5auzZsWIDSZQ+cr0DT24zXA8Z
+         7BHqENl5Di1zJCiBQMyklnfzA5IDIMMbMgXjPiVUyUbovjGwOZ0BK6j9w30B4rLaZ0qK
+         QR1E+UdvOh5pEWmiCLjog2h+N8kz0m/ABA1DqS2mjdJKVR7tKNZUmB01GdFiIkVSckfp
+         VTAHK9UrQoe+L64/px1EzcQQiVamwJKknNAxhg5mATN8xYM/tKWureaAW6dti8WhkHeY
+         WB0VrYDGmzX04+T8E68BX6srlj2tDQV3kqghX1GwbAE1KFyilIkOYckThnY1dvb1qBq6
+         3Dzw==
+X-Gm-Message-State: APjAAAW6Mtwpj9gPwJng7qbMYRVwWMWHdtinuUul8ewUTXYxilq/0qfZ
+        jDTxJI/hE1KXrpse2DBb/lQyJA==
+X-Google-Smtp-Source: APXvYqw2s2zyttj+n9kShAjj6xY9xEM3Y9PDoHEKIdHgBMiVi/KMg3tL//PdhtB8DwkoR30FpHYqVQ==
+X-Received: by 2002:a5d:6551:: with SMTP id z17mr4287802wrv.269.1575466061045;
+        Wed, 04 Dec 2019 05:27:41 -0800 (PST)
+Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id c15sm8094632wrt.1.2019.12.04.05.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 05:27:40 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: spi-nor: add Gigadevice gd25lq128d support
+Date:   Wed,  4 Dec 2019 14:27:13 +0100
+Message-Id: <20191204132713.6195-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pfnkt6rdap5wnatk"
-Content-Disposition: inline
-In-Reply-To: <20191204130907.19799-1-aford173@gmail.com>
-User-Agent: NeoMutt/20180716
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Tested on the Amlogic aml-libretech-pc platform which does not support
+dual or quad modes
 
---pfnkt6rdap5wnatk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
-Hi Adam,
+ Datasheet is available here:
+ http://www.elm-tech.com/en/products/spi-flash-memory/gd25lq128/gd25lq128.pdf
 
-On Wed, Dec 04, 2019 at 07:09:07AM -0600, Adam Ford wrote:
-> The PLL calculation routine checks the wrong variable name 'rate'
-> when it should be called '_rate' when checking to see whether or
-> not the PLL1 output frequency exceeds 1GHz.
->
-> This patch changes it to the correct variable '_rate'
->
-> Acked-by: Jacopo Mondi <jacopo@jmondi.org>
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+ drivers/mtd/spi-nor/spi-nor.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Why have you dropped the fixes tag you had in v1?
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 1d8621d43160..d394f3861ecd 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2231,6 +2231,11 @@ static const struct flash_info spi_nor_ids[] = {
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+ 			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
+ 	},
++	{
++		"gd25lq128d", INFO(0xc86018, 0, 64 * 1024, 256,
++			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
++			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
++	},
+ 	{
+ 		"gd25q256", INFO(0xc84019, 0, 64 * 1024, 512,
+ 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
+-- 
+2.23.0
 
-Fixes: aa2882481cad ("media: ov5640: Adjust the clock based on the expected rate")
-
-I'm not the one who collects patches, so maybe wait for Sakari or Hans
-to tell you if you need to resend or not :)
-
-Thanks
-   j
-
-> ---
-> V2:  No code change.  Only change commit description to be less confusing.
->
-> diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-> index 5e495c833d32..bb968e764f31 100644
-> --- a/drivers/media/i2c/ov5640.c
-> +++ b/drivers/media/i2c/ov5640.c
-> @@ -874,7 +874,7 @@ static unsigned long ov5640_calc_sys_clk(struct ov5640_dev *sensor,
->  			 * We have reached the maximum allowed PLL1 output,
->  			 * increase sysdiv.
->  			 */
-> -			if (!rate)
-> +			if (!_rate)
->  				break;
->
->  			/*
-> --
-> 2.20.1
->
-
---pfnkt6rdap5wnatk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl3ns+UACgkQcjQGjxah
-Vjx7YQ//Sg6XzeO8UFJxAJwhfAJEh3cA00oW7HjzsxIlwH3LeNSYNjALQXhFKfhX
-pDFmF9tkj8ybix0dqaGRgB9KYbokIRIyEWhjoBDOqWkxXOrkYeZFG9l4dyGMpggg
-+4B5v280dkpL3y9y1rgJEUaXJZe5P2q4t1LEElfhxuOirrfzrWFYg1WaDEPmynwF
-Zlt+zpsT0brKbouqN/okbaJmnqhnYvdIHfL2fWNOJJaokZLVKNGSBorZ3DdD6jFL
-MJ6yRy3pPbP9EsQzOGrE1FMd2LQRSCInzi7kIiwcszaTs1/1Bu2guS+F41NpT2pW
-L57uxvasgHoB/7C4OTq7XQuhJ9PYWP10kp3EvH1/joS3YSJUybkEUaqN3PvmkuKn
-uEmzBFU/Km7lSJ8pfdforEgvczhpGkeZvP5QvdZQ4uH4S3RT5mgZuCiVHlDPYf6h
-LSEw3XARKz7fyhiug+EfjrFViYuMHXCw5HVkCjbPn+ELyRefeJ4mWH9x8tIQOwqN
-rSZCWndQhQp6/QUzUH3uMvZPXZfhCXk33njwoN0uMsm7EGLNmjDqCQblz39VYe7w
-tMWQBN2V5gbZiX2V4Eq215Q5On6tlwEHTqdcJvQFRjNjGgBTC72dp9Kcyp48i1yy
-GVBf9l1/DWAkO1EuCFvDWW0gAKK7JThzWjaQVD7l/F2Zmsn54Q8=
-=9DB8
------END PGP SIGNATURE-----
-
---pfnkt6rdap5wnatk--
