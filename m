@@ -2,125 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E914113160
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 18:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6169A1134E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfLDR6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 12:58:51 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38621 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728892AbfLDR6p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 12:58:45 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so212309pfc.5;
-        Wed, 04 Dec 2019 09:58:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3qnc/DourAqKXGB8UexuKZfhfQtrrL3DnO6ZS7E2dpQ=;
-        b=KKSjtAbgjQCv82EVwdoro4f52/90n5yCUHxG8IULoz7ohvN4vitOIY2YSHRadcioVL
-         BIx+JrM+9MJlNmNjQuA/RN67FTuo0sYlbWtkZo2bfsg6qvGGcxQ5F8dey72dHgkmHYwW
-         VtmZRVrET/ylJX9oXmurT9Cx+dEVeY62RqvToYx5CjVDVll96NQMQGJob8pJblBjjT7w
-         1intd91Qos7FhYBFac5baWA48xYNs2HD02o7JwGS0oNvV0JSW7E/9qZQzcdeCAKqRArI
-         FSDunxb2dGWah1ARojP2gj0ck+vplzcoSE1mE2qXyfsYWQlTz4ZfSTnZaTEdbvr1s+4+
-         rxWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3qnc/DourAqKXGB8UexuKZfhfQtrrL3DnO6ZS7E2dpQ=;
-        b=CmpdCMUsJq7iJVcIh9h5Wy9k1b7VDlEh2r4J2VGZwpqgj9BEzP6XR5aFoUD7L/9pDD
-         a1XCSixNhGwl0KtRqFhrsJuFkL6WQJNveU8Mw82tq+nShhzOsePm2AcFIQRexrJP15YG
-         65m+vf4giy9YEHDy4iy1LWHFNOP4USZHNNgyF0xBikRMZVjjv8Ywwnp0V/lSHdJTpAd1
-         CX6+VkuspLgSNAY0xFmISy9id5geIqQX2JMvzix7OXdUY47iGS9Ys9CjBBy1x4OI1ScV
-         75WpXzuI+ORFTTYjEa8Fo71kIvejQcMKUk/VCM+I5/kPcDkC9SRuFQr1n/wATKHekezz
-         b1uQ==
-X-Gm-Message-State: APjAAAVaNsoPY0dT6hgdcCN4PpEnTwVa5wSnG0vCJZgzXB3Y4OUtlPrH
-        RZ9mA4ar2G1fi8IrEvi74KpgnqVAhfUyj8CMpGjW/xd9I5o=
-X-Google-Smtp-Source: APXvYqz0Dsrj0gSyIghA8gf8j2wFq83ExJKRTKEdu92Mm+R3nl5Bdz56n1irUdrVmavcZVcLUaaCkkqZRR5Ia5Tf2l8=
-X-Received: by 2002:a62:1944:: with SMTP id 65mr4859751pfz.151.1575482325114;
- Wed, 04 Dec 2019 09:58:45 -0800 (PST)
+        id S1730002AbfLDS0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:26:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728358AbfLDR67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 12:58:59 -0500
+Received: from localhost (unknown [217.68.49.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4641420863;
+        Wed,  4 Dec 2019 17:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575482338;
+        bh=r7wqaF6k5AKKWznTAOwQ33pGuMlmJ/ecwfN0IvJdRUw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LF1WPbnU7rirtLM8uoc1F3OaAel2ucuLPRDrJBXHkyvMgq015Q1W9SHjoh+Gdi+Kk
+         lmLjcO8QZlopMqMkYp0pwA8UQvvIAj60fj23js9oo9ZCkKPFJHE5Q4Zr0De/cDnTFl
+         CFhKykznCBy52sA4ddqcIlhd2jPlCDlcTRH45jAo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Reported-by: Marian Mihailescu" <mihailescu2m@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 03/92] clk: samsung: exynos5420: Preserve PLL configuration during suspend/resume
+Date:   Wed,  4 Dec 2019 18:49:03 +0100
+Message-Id: <20191204174328.318163643@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191204174327.215426506@linuxfoundation.org>
+References: <20191204174327.215426506@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-References: <20191204101042.4275-5-cleger@kalray.eu> <CAHp75VdQ6VooLVAfA1z98-bBcfQuR7AomaO8F19AGRjeBtByEQ@mail.gmail.com>
- <1988869450.95325741.1575471003953.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <1988869450.95325741.1575471003953.JavaMail.zimbra@kalray.eu>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 4 Dec 2019 19:58:35 +0200
-Message-ID: <CAHp75Vc6oU2nNkKT8N+6RomSxHVXu0AvwoZVBKvTERLQ68Kz_Q@mail.gmail.com>
-Subject: Re: [PATCH 4/5] pinctrl: dw: add pinctrl support for dwapb gpio driver
-To:     =?UTF-8?Q?Cl=C3=A9ment_Leger?= <cleger@kalray.eu>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        "open list, GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 4:50 PM Cl=C3=A9ment Leger <cleger@kalray.eu> wrote:
-> ----- On 4 Dec, 2019, at 13:43, Andy Shevchenko andy.shevchenko@gmail.com=
- wrote:
-> > On Wed, Dec 4, 2019 at 12:12 PM Clement Leger <cleger@kalray.eu> wrote:
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> > Can't you split adding pin control data to a separate patch?
->
-> Yes even if the first one will not be buildable.
+[ Upstream commit e9323b664ce29547d996195e8a6129a351c39108 ]
 
-It will. Just split it wisely.
-I'm preparing Intel Lynxpoint conversion (you may see the approach
-here [1]) and I stumbled over similar problem.
+Properly save and restore all top PLL related configuration registers
+during suspend/resume cycle. So far driver only handled EPLL and RPLL
+clocks, all other were reset to default values after suspend/resume cycle.
+This caused for example lower G3D (MALI Panfrost) performance after system
+resume, even if performance governor has been selected.
 
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git/comm=
-it/?h=3Dreview-andy&id=3Dddbf10ea98c1c96de98fb5878ca0d0042e912f6a
+Reported-by: Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> > Can't we generate these lists dynamically?
->
-> Indeed, these list could be dynamically generated. However, since they
-> can be shared between all pinctrl instances of this driver I thought
-> it was better to keep them common and simply restrict the number
-> of pins at pinctrl registration. But as I said, I can generate them if
-> you want.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index bde71b07f15e7..c94de13ce3627 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -166,12 +166,18 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	CPLL_CON0,
++	DPLL_CON0,
+ 	EPLL_CON0,
+ 	EPLL_CON1,
+ 	EPLL_CON2,
+ 	RPLL_CON0,
+ 	RPLL_CON1,
+ 	RPLL_CON2,
++	IPLL_CON0,
++	SPLL_CON0,
++	VPLL_CON0,
++	MPLL_CON0,
+ 	SRC_TOP0,
+ 	SRC_TOP1,
+ 	SRC_TOP2,
+-- 
+2.20.1
 
-OK, let's wait for subsys maintainers to comment on this.
 
-> >> +       ret =3D pinctrl_enable(port->pctl);
-> >> +       if (ret) {
-> >> +               dev_err(gpio->dev, "pinctrl enable failed\n");
-> >> +               return ret;
-> >> +       }
-> >
-> > Not sure why it's needed at all.
->
-> I saw a comment over "pinctrl_register" in pinctrl.h saying:
->
-> /* Please use pinctrl_register_and_init() and pinctrl_enable() instead */
->
-> So I switched to pinctrl_register_and_init + pinctrl_enable.
 
-I read the code and do not see any evidence you have to use above.
-Do you plan to do something in between of those two calls?
-
-> > Can you use new callback for this?
->
-> Do you mean the gpiochip add_pin_ranges callback ?
-> If so, I will look at it.
-
-I meant ->add_pin_ranges() which is part of GPIO chip structure.
-
-> >> -               .name   =3D "gpio-dwapb",
-> >> +               .name   =3D "pinctrl-dwapb",
-> >
-> > This will break existing users.
->
-> Ok, I will revert that.
-
-You may fix users at the same time.
-Either fine with me.
-
---
-With Best Regards,
-Andy Shevchenko
