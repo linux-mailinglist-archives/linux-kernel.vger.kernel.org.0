@@ -2,173 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852ED113455
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 734EB1132F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730968AbfLDSXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:23:49 -0500
-Received: from mail-pj1-f41.google.com ([209.85.216.41]:36539 "EHLO
-        mail-pj1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730041AbfLDSD0 (ORCPT
+        id S1731749AbfLDSNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:13:25 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38404 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730848AbfLDSNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:03:26 -0500
-Received: by mail-pj1-f41.google.com with SMTP id n96so134103pjc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:03:25 -0800 (PST)
+        Wed, 4 Dec 2019 13:13:19 -0500
+Received: by mail-io1-f66.google.com with SMTP id u7so621046iop.5
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 10:13:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=ijtrVw014HGnTW9f8Rq13/UqYaPlJnd5tBfrouhme2o=;
-        b=AgpV/o1mZnIgpAoH4UnBkTb2AeEunM3wEMYlVCwuhsRc6nHGn5DE/z4qeh3ghh7U0v
-         wr+NUpnjFmgN1P8892diAPNYpY9tOeprR3UYoD4VYXMxu+EvknPXfN/fmiEwVL5wXAg0
-         XfWR408SuH8S99y6n0G6t9sAx41qS+xGg5g3myoDHxM4i2LXjlkO4llddsvG97ePbY0r
-         VOQlH2Ptc8TKsbkSDyYFY67mDb7GmTxAesh/wNPYehgkXnzYnY/hKXfOcpT8A7EgJ3qF
-         R6nr+Ue9+CovAkhG/6RcwfL82u395TdL+Ws/iP+odjGMyIyuKQpyOuFchN3x4+rZE6PL
-         fCuA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KbjMhMLQ8ZXCsns4nZuVxnFXeq+4FdUf6xW1nrBKHDw=;
+        b=Rvfdm8IAQbF27G90nuZjBxEtcEwJxiB+bs/eGLAXjvZ3cwULZ8T/egv/YLoZKttmIj
+         o1UWTzyXjGfnAMRtOhBpUqnTaJP57qFcUyVVwmBiTDAs5V6Zhw8PuczWhc03XzKEtNSZ
+         8vJVYsZKIQpZn4jXmdJBTjqCcmM6WRAm+LTyZvla3DgF+BexG/WPMWfQNgP9XBWhEGRC
+         SR+miCcfuOkXH+qpUZ4L3/+E0wZ2WHflhUTlS7EgoOwhWMSiNhnpwRLi7xOZKojlV4Kw
+         2QzONISlvHJdT/DQE+/uFSGIvTNWqGVS/y/1LKJr/wxuCC8AU3AavkB4gcEpPngiZ5Rg
+         jBpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=ijtrVw014HGnTW9f8Rq13/UqYaPlJnd5tBfrouhme2o=;
-        b=YQbcR/CEAKel645i5jpV3BVQ0G45UA7hpp3hyT3QcHQ8hAvvXPRwIXyqhjzmO8Zbl3
-         B6CnjhBSCqe0LSmofUSI1Q56uC2pcn8xNOiMI7JuMuU2A4Zma9Yzg5QzELj79nisdLmS
-         5VycW36SserkUugwPz+/1/Uw2hiouoF/STIICwswRuOv+xuEK8imZp4E16QqYZRV07yA
-         kcllQMHTVOBGuwh/mGW1V6vivzYIRuQG52Yxf3fBfC1M+QAWEpIUzaOZlzXHyIQCjcaH
-         R7IAFBU1JhXlqhNYgGVkyayXV+jEb8mYmGxakxTZi3UZoYE61AlpqIUBdDc7Z6koOd/E
-         8YkQ==
-X-Gm-Message-State: APjAAAVvHOdXWQ0hEuVO2AJ4MxxkSGPrzsBpimg6ind7V2LkWHQwDevg
-        9use/9CGf/cTgk6rjlAgNEjfzTy3QH5pJw==
-X-Google-Smtp-Source: APXvYqyzYudsKkRidnGnkIulUuTR6Y+Np/HmPhERtPjwaOBOpllO4bNdwLkfP8g5KfKzCW8F2YK7Pg==
-X-Received: by 2002:a17:90a:1b45:: with SMTP id q63mr4697389pjq.91.1575482605037;
-        Wed, 04 Dec 2019 10:03:25 -0800 (PST)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id k60sm7536612pjh.22.2019.12.04.10.03.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Dec 2019 10:03:24 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <6C8DAF47-CA09-4F3B-BF32-2D7044C1EE78@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-Date:   Wed, 4 Dec 2019 11:03:18 -0700
-In-Reply-To: <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Daniel Phillips <daniel@phunq.net>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <20191127142508.GB5143@mit.edu>
- <6b6242d9-f88b-824d-afe9-d42382a93b34@phunq.net>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KbjMhMLQ8ZXCsns4nZuVxnFXeq+4FdUf6xW1nrBKHDw=;
+        b=cVpEBePu0vUF23DYvWfeOf1HcWpL7Lk0qw7WlL1cstEL+yUzgYvZWeo/5xTyO8fB6f
+         W5RpRW5LI2w4QP/UT2NUlN8x0K6wEylFoR5PQj6+xCg4aVxzWUBG67Smwm/OlLOswQ+P
+         umCP/FEsizoVOndCFUBTumuGaYPpM24CZTWZFYYZ7G0nhl682sCWdJ0ESFLiY1iR99dA
+         JARWeOESkfhtPHt8DVwbj8s7dNxyQg+j19cpnZYbi3l1IWw2tcczf/7z14a0jqKeM1/H
+         YYyWXf73EfLl8ygdMHJ2KEiF7tZtgYLpASa7K5AM6AQvd3/LJQIT7zYWfRAVzi1sRa/T
+         Oz7g==
+X-Gm-Message-State: APjAAAX27Bp+uNdyrDjF1V3+HoLgkXcxx2ixOg46Ml3jcsGDQLaAHzr1
+        5722/aE3AzGEJbZVdmDw4gl1eW3lg4fz3NbXtay+VA==
+X-Google-Smtp-Source: APXvYqxckBA87s67w7YakD4b8GgZOryNfAxTyy+qPNdE82bEdoxtjPjZlJ/tt5IIpRik/K/Mqv7mj95v0hKcPAjDjZo=
+X-Received: by 2002:a02:3309:: with SMTP id c9mr4378013jae.52.1575483198285;
+ Wed, 04 Dec 2019 10:13:18 -0800 (PST)
+MIME-Version: 1.0
+References: <20191128165002.6234-1-mathieu.poirier@linaro.org>
+ <20191128165002.6234-7-mathieu.poirier@linaro.org> <20191203194330.GA2847072@kroah.com>
+In-Reply-To: <20191203194330.GA2847072@kroah.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 4 Dec 2019 11:13:05 -0700
+Message-ID: <CANLsYkyBBp_bAjsEuS=ZDY=Qza67PrwyWJUaDdBHTe1ZM1=2jw@mail.gmail.com>
+Subject: Re: [stable 4.19][PATCH 06/17] remoteproc: fix rproc_da_to_va in case
+ of unallocated carveout
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "# 4 . 7" <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 3 Dec 2019 at 12:43, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Nov 28, 2019 at 09:49:51AM -0700, Mathieu Poirier wrote:
+> > From: Loic Pallardy <loic.pallardy@st.com>
+> >
+> > commit 74457c40f97a98142bb13153395d304ad3c85cdd upstream
+> >
+> > With introduction of rproc_alloc_registered_carveouts() which
+> > delays carveout allocation just before the start of the remote
+> > processor, rproc_da_to_va() could be called before all carveouts
+> > are allocated.
+> > This patch adds a check in rproc_da_to_va() to return NULL if
+> > carveout is not allocated.
+> >
+> > Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
+>
+> This commit only shows up in 4.20, not 4.19, so why is this patch
+> relevant for 4.19?
 
---Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+Your scripts are better than mine...
 
-On Dec 1, 2019, at 6:45 PM, Daniel Phillips <daniel@phunq.net> wrote:
-> 
-> On 2019-11-27 6:25 a.m., Theodore Y. Ts'o wrote:
->> (3) It's not particularly well documented...
-> 
-> We regard that as an issue needing attention. Here is a pretty picture
-> to get started:
-> 
->   https://github.com/danielbot/Shardmap/wiki/Shardmap-media-format
-
-The shardmap diagram is good conceptually, but it would be useful
-to add a legend on the empty side of the diagram that shows the on-disk
-structures.
-
-> 
-> This needs some explaining. The bottom part of the directory file is
-> a simple linear range of directory blocks, with a freespace map block
-> appearing once every 4K blocks or so. This freespace mapping needs a
-> post of its own, it is somewhat subtle. This will be a couple of posts
-> in the future.
-> 
-> The Shardmap index appears at a higher logical address, sufficiently
-> far above the directory base to accommodate a reasonable number of
-> record entry blocks below it. We try not to place the index at so high
-> an address that the radix tree gets extra levels, slowing everything
-> down.
-> 
-> When the index needs to be expanded, either because some shard exceeded
-> a threshold number of entries, or the record entry blocks ran into the
-> the bottom of the index, then a new index tier with more shards is
-> created at a higher logical address. The lower index tier is not copied
-> immediately to the upper tier, but rather, each shard is incrementally
-> split when it hits the threshold because of an insert. This bounds the
-> latency of any given insert to the time needed to split one shard, which
-> we target nominally at less than one millisecond. Thus, Shardmap takes a
-> modest step in the direction of real time response.
-> 
-> Each index tier is just a simple array of shards, each of which fills
-> up with 8 byte entries from bottom to top. The count of entries in each
-> shard is stored separately in a table just below the shard array. So at
-> shard load time, we can determine rapidly from the count table which
-> tier a given shard belongs to. There are other advantages to breaking
-> the shard counts out separately having to do with the persistent memory
-> version of Shardmap, interesting details that I will leave for later.
-> 
-> When all lower tier shards have been deleted, the lower tier may be
-> overwritten by the expanding record entry block region. In practice,
-> a Shardmap file normally has just one tier most of the time, the other
-> tier existing only long enough to complete the incremental expansion
-> of the shard table, insert by insert.
-> 
-> There is a small header in the lowest record entry block, giving the
-> positions of the one or two index tiers, count of entry blocks, and
-> various tuning parameters such as maximum shard size and average depth
-> of cache hash collision lists.
-> 
-> That is it for media format. Very simple, is it not? My next post
-> will explain the Shardmap directory block format, with a focus on
-> deficiencies of the traditional Ext2 format that were addressed.
-> 
-> Regards,
-> 
-> Daniel
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl3n9OcACgkQcqXauRfM
-H+AzhQ/+LelpZVYoTlu0opEs5vyM+LBrYxtxWSYLpaFZMSFNERgkFMDEjbSF0qWp
-dIIZ4iOlI8OArkugvZk85BzQgQY8ZUZizyQSdzFBXDt/d9Gyew/Sbntkuv0UMZS+
-HhVM1Jr8tgFLYqjAijm+mDVyPh1ZAAMo9+jYAKTLQwOdqovCBtLRD9v7HOaCSYlU
-dZ094nsG7mDVmWztOO4KLG419h50OUK+q2nnuLwjV6Por0kA9penEo7XjZLecuIz
-X2GdIecu0SWh4E7hbsKjylkOC8AKQYibgv380MOJaNp9WBYeoHv3HaXmO0achr6T
-f5vHbhFoKRpochhRkKAOlknEY1h89AkyfqyDTfA95Yw0nND9nG8+PLUVOfP9mt72
-INqEdUY4gVIRR488YG3Dn9X4yGva6tI5v5oDx7JLvVa5Josk57AMIuvKIdsqluF0
-7g+lFY50CnWzfiATloSLhJEB3BohIm4PrLWyyjn27EE/BJpsZSvABxfDGpOSuCPr
-cNr68nQ4dw3E4PzTpuxhF3L/wlQNiG6OUbdFPfeyxxZfcoCFKrphzDWAW9iySS3x
-2P7kKDVP8SiCZQ5NUWtc8/YI6MwhA6Lcz7fQYL8+9DWdN2Ha1PZ1lU+/CqrAZIbJ
-It472/u392OJbPcAWJ5Gze52JsEDeLfj1ZzV58+MHmCvqoKJxb8=
-=M/DF
------END PGP SIGNATURE-----
-
---Apple-Mail=_E878DF10-FEBB-4C96-9C44-6FDCE30B3F8D--
+>
+> thanks,
+>
+> greg k-h
