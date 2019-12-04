@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F12113335
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34A0D113293
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 19:11:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731763AbfLDSPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 13:15:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43612 "EHLO mail.kernel.org"
+        id S1731103AbfLDSJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 13:09:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbfLDSOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 13:14:16 -0500
+        id S1731076AbfLDSJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 13:09:33 -0500
 Received: from localhost (unknown [217.68.49.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 846FE20674;
-        Wed,  4 Dec 2019 18:14:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5453320674;
+        Wed,  4 Dec 2019 18:09:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575483256;
-        bh=MBR4kE6kntoCbO0Wu7sIJIXGDvpYrsBMg0KIwE56k+M=;
+        s=default; t=1575482972;
+        bh=dbyZp+xybfQ+kEBZ9QafyIkcBlBHcHxTME3B22Hds74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jkULXJIAm/ZotmKAwEW7dydlpuPZVKY0HFyyHvfyzObm/+zIOsDDDg0QW2xjzNRGJ
-         8yYGZc3bs+66RTsZQtpCCjwTOOimIlGZRJC8k+ecrAxz4kVq0//P1Bv+C7JEny3XIt
-         h5uyBotLrbqxNKqtmkVnWgJ0U6rFuUeVBol1bNJ0=
+        b=14y6ceWTOafVBSuoOEIKtisyiFjYdm7BmowtppvT2Rr5VXg4yO5888LD266NIJPON
+         lCKkU5wEDtfOvpY+Rtx8cV68pg/CcBxtA8f+R56Cu+4GICkVp9uluKSK6v2zGaGk5w
+         pLjkwtX3XBOjN6p7oXbvtpeTo/qjlOOglpL9wD34=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qi Jun Ding <qding@redhat.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 115/125] openvswitch: fix flow command message size
-Date:   Wed,  4 Dec 2019 18:57:00 +0100
-Message-Id: <20191204175326.136116021@linuxfoundation.org>
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH 4.14 209/209] net: fec: fix clock count mis-match
+Date:   Wed,  4 Dec 2019 18:57:01 +0100
+Message-Id: <20191204175337.873317389@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191204175308.377746305@linuxfoundation.org>
-References: <20191204175308.377746305@linuxfoundation.org>
+In-Reply-To: <20191204175321.609072813@linuxfoundation.org>
+References: <20191204175321.609072813@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 4e81c0b3fa93d07653e2415fa71656b080a112fd ]
+commit a31eda65ba210741b598044d045480494d0ed52a upstream.
 
-When user-space sets the OVS_UFID_F_OMIT_* flags, and the relevant
-flow has no UFID, we can exceed the computed size, as
-ovs_nla_put_identifier() will always dump an OVS_FLOW_ATTR_KEY
-attribute.
-Take the above in account when computing the flow command message
-size.
+pm_runtime_put_autosuspend in probe will call runtime suspend to
+disable clks automatically if CONFIG_PM is defined. (If CONFIG_PM
+is not defined, its implementation will be empty, then runtime
+suspend will not be called.)
 
-Fixes: 74ed7ab9264c ("openvswitch: Add support for unique flow IDs.")
-Reported-by: Qi Jun Ding <qding@redhat.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Therefore, we can call pm_runtime_get_sync to runtime resume it
+first to enable clks, which matches the runtime suspend. (Only when
+CONFIG_PM is defined, otherwise pm_runtime_get_sync will also be
+empty, then runtime resume will not be called.)
+
+Then it is fine to disable clks without causing clock count mis-match.
+
+Fixes: c43eab3eddb4 ("net: fec: add missed clk_disable_unprepare in remove")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Acked-by: Fugang Duan <fugang.duan@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/openvswitch/datapath.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -738,9 +738,13 @@ static size_t ovs_flow_cmd_msg_size(cons
- {
- 	size_t len = NLMSG_ALIGN(sizeof(struct ovs_header));
+---
+ drivers/net/ethernet/freescale/fec_main.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3565,6 +3565,11 @@ fec_drv_remove(struct platform_device *p
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
+ 	struct device_node *np = pdev->dev.of_node;
++	int ret;
++
++	ret = pm_runtime_get_sync(&pdev->dev);
++	if (ret < 0)
++		return ret;
  
--	/* OVS_FLOW_ATTR_UFID */
-+	/* OVS_FLOW_ATTR_UFID, or unmasked flow key as fallback
-+	 * see ovs_nla_put_identifier()
-+	 */
- 	if (sfid && ovs_identifier_is_ufid(sfid))
- 		len += nla_total_size(sfid->ufid_len);
-+	else
-+		len += nla_total_size(ovs_key_attr_size());
+ 	cancel_work_sync(&fep->tx_timeout_work);
+ 	fec_ptp_stop(pdev);
+@@ -3572,15 +3577,17 @@ fec_drv_remove(struct platform_device *p
+ 	fec_enet_mii_remove(fep);
+ 	if (fep->reg_phy)
+ 		regulator_disable(fep->reg_phy);
+-	pm_runtime_put(&pdev->dev);
+-	pm_runtime_disable(&pdev->dev);
+-	clk_disable_unprepare(fep->clk_ahb);
+-	clk_disable_unprepare(fep->clk_ipg);
++
+ 	if (of_phy_is_fixed_link(np))
+ 		of_phy_deregister_fixed_link(np);
+ 	of_node_put(fep->phy_node);
+ 	free_netdev(ndev);
  
- 	/* OVS_FLOW_ATTR_KEY */
- 	if (!sfid || should_fill_key(sfid, ufid_flags))
++	clk_disable_unprepare(fep->clk_ahb);
++	clk_disable_unprepare(fep->clk_ipg);
++	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
+ 	return 0;
+ }
+ 
 
 
