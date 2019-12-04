@@ -2,138 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9CF113570
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 20:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6420611357E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 20:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbfLDTHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 14:07:44 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51903 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728902AbfLDTHf (ORCPT
+        id S1729096AbfLDTL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 14:11:56 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36236 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728735AbfLDTLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 14:07:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575486454;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uQ4VjfIYrglflf3rJiON69ppSn0JgIlW3dfwal7bm4Y=;
-        b=FC9f1fOaqdUgUzVhMtE1qFNBHdWpMXGExkViZIgqj2rWMg/Grt6XyORigHb6d7j2exSQLW
-        Tv8JsXNYI8DbShN+GQ9M6INr89pFDQ8V0cNwbzRz5dFsk1viXCp702Vv1i7WPNHKqTdiy9
-        Upv/m16kZD6+qtnTLyNRuMlWLYNHvu0=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-313-Tg5ztKzeM2K4ZiFzTq0ZDQ-1; Wed, 04 Dec 2019 14:07:33 -0500
-Received: by mail-qt1-f200.google.com with SMTP id g13so605795qtq.16
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 11:07:33 -0800 (PST)
+        Wed, 4 Dec 2019 14:11:55 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n12so458017lfe.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 11:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JYuqMASZpiTe5nuiGY93MH6O0/HdXIaFU15wVqM7e9k=;
+        b=D1JWQWqNFljOCLqlZW2gu9wWPuOlND9c9MnAhvPP3jVIFgam6A39PXzihi8Qt4VTqm
+         hTeuKHG81pakLfV7aqlfciEBXe+6dAcFC8VoTOmzBMXQs/LtT/J3CJwxuSifLa3oaw+x
+         pB3w9G5bQQWuxY8rARr8pNP8mqx+REMLTQ+8QSU5OtyJPolDrG7f2VHVoMmZpJ5aG9I6
+         OnufAoPZpyhc860plE3xH0M5g/Ew/zpoaAadgonQOFHgE3vP2J6CGrJdCdMk7d4V68x+
+         K+SeACmxrIwenNfvHI0oz0jqBnp0UEuj/J2BvDtntY6E0WSAzJVwxeadvdC19gmlzq71
+         pj+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wqX1WpDnk793hPGykZVwJa0dz2ySQCsCHFOl+w7F7+Q=;
-        b=JaslevRnA+WAy1S+CX53p9JNxgLHpYBHY4LN3mnh7v9IPgM37/bzIp6LTmQG68MXFm
-         SR/kAuyejfcBKOLRmiNsdPJYAfAO9/vZefyIQ8HhnhUgnIOI77aaaYUG+Uf9SnHpavj+
-         4d1/8Q3dzUTsDE+xkV/S/nQOzYChID/FsUz1yMl4+DN7FyIsznqEtXRnYuc2eSfMzNqj
-         8QCuUTDGYQoo5wsxJ75LQNCPa7AhVCst4Ol5RklUn6CaXo5Rk5ffVN5VHtDxf2HCeaAp
-         k0KL/c4RT/OFz/X7Cz422l7nTrV86/KUzvDGgI0eLs39SsSaYHUgAWrS3ab3jWgXYN45
-         t7ww==
-X-Gm-Message-State: APjAAAWM/GK/SYHcJ4qsC9L6FuqZAbJWhWtXBfHp6bX94BOdKxARQnJP
-        eXd7L0qeAQW+5S6NIqA4N+wfMn6TcanobeJUnw4g7U0QeulyVd+Eu8w8X8m30/QugD7T6VnpSSf
-        6YzDEHxbwriCLfDHUmYvFgmDf
-X-Received: by 2002:ad4:4908:: with SMTP id bh8mr4161473qvb.251.1575486452788;
-        Wed, 04 Dec 2019 11:07:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwEvT/Ded38f7safdU21KIFiL1aXou5MYGRU1P1kBbugrZwGKwljjsV/vT2lZcdGelzIUricw==
-X-Received: by 2002:ad4:4908:: with SMTP id bh8mr4161445qvb.251.1575486452527;
-        Wed, 04 Dec 2019 11:07:32 -0800 (PST)
-Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id y18sm4072126qtn.11.2019.12.04.11.07.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 11:07:31 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        peterx@redhat.com, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH v5 6/6] KVM: X86: Conert the last users of "shorthand = 0" to use macros
-Date:   Wed,  4 Dec 2019 14:07:21 -0500
-Message-Id: <20191204190721.29480-7-peterx@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191204190721.29480-1-peterx@redhat.com>
-References: <20191204190721.29480-1-peterx@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JYuqMASZpiTe5nuiGY93MH6O0/HdXIaFU15wVqM7e9k=;
+        b=lOMVk+wH8BfIfaN1x644eiQfKmd3YIHRbarNVQRW/q6xcpCaDovna/1JaH5rMnLejD
+         8/Rc6YMkwLHSbs10ubcY/KAIgVKQOW3FiMZwitV8qz0v6zONVvqA+mCSPdC9u4MTxBPn
+         dt2qvpzQ80gJAnT6rSPZP6Gmb7OHGUqWTR1DYG3NYYvcG08v7joxQEBlY86erqtqvWw2
+         E9IETGo9JPohp5X9kCCaeRpHZ40O1LRFxd5wBKbqmq1aVwjyOZY8VgLzdPoBdNQb9xQm
+         /ja4FFEtmsS1BHEVkypkOtDypQV9lrXB3DZDFOYbfqKkxuw1e7Wlx75+LsPutmMiYDWA
+         qXqw==
+X-Gm-Message-State: APjAAAUf+GPSJaXb0lzsQLqKC3/VfeayFL0jWWxjgn2lHZAEiKrmkvSC
+        Xw55kRITzBAKZ9twm4MfJQV50sCfq4AJEZN5i8F1PA==
+X-Google-Smtp-Source: APXvYqw9yp5+BS+JOuXjIZQucnuG7GqzCi20RPTauPFIxq2vEXvlXKZihUVuZuEM4l35uFfuGxig6bYiTWk4oeHdWjg=
+X-Received: by 2002:a19:5057:: with SMTP id z23mr3018046lfj.132.1575486713192;
+ Wed, 04 Dec 2019 11:11:53 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: Tg5ztKzeM2K4ZiFzTq0ZDQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
+References: <20191203223427.103571230@linuxfoundation.org> <79c636e7-145b-3062-04a3-f03c78d51318@nvidia.com>
+ <20191204112936.GA3565947@kroah.com>
+In-Reply-To: <20191204112936.GA3565947@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 5 Dec 2019 00:41:41 +0530
+Message-ID: <CA+G9fYtba3Hhd7QikcWSEjYK0mwGBNuaXctnO5f1COsRP7qkSw@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/321] 4.19.88-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the last users of "shorthand =3D 0" to use APIC_DEST_NOSHORT.
+> Thanks for letting me know, I'll go drop this one and push out a -rc2
+> with that removed.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- arch/x86/kvm/ioapic.c   | 4 ++--
- arch/x86/kvm/irq_comm.c | 2 +-
- arch/x86/kvm/x86.c      | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index f53daeaaeb37..77538fd77dc2 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -330,7 +330,7 @@ static void ioapic_write_indirect(struct kvm_ioapic *io=
-apic, u32 val)
- =09=09if (e->fields.delivery_mode =3D=3D APIC_DM_FIXED) {
- =09=09=09struct kvm_lapic_irq irq;
-=20
--=09=09=09irq.shorthand =3D 0;
-+=09=09=09irq.shorthand =3D APIC_DEST_NOSHORT;
- =09=09=09irq.vector =3D e->fields.vector;
- =09=09=09irq.delivery_mode =3D e->fields.delivery_mode << 8;
- =09=09=09irq.dest_id =3D e->fields.dest_id;
-@@ -379,7 +379,7 @@ static int ioapic_service(struct kvm_ioapic *ioapic, in=
-t irq, bool line_status)
- =09irqe.trig_mode =3D entry->fields.trig_mode;
- =09irqe.delivery_mode =3D entry->fields.delivery_mode << 8;
- =09irqe.level =3D 1;
--=09irqe.shorthand =3D 0;
-+=09irqe.shorthand =3D APIC_DEST_NOSHORT;
- =09irqe.msi_redir_hint =3D false;
-=20
- =09if (irqe.trig_mode =3D=3D IOAPIC_EDGE_TRIG)
-diff --git a/arch/x86/kvm/irq_comm.c b/arch/x86/kvm/irq_comm.c
-index 7d083f71fc8e..9d711c2451c7 100644
---- a/arch/x86/kvm/irq_comm.c
-+++ b/arch/x86/kvm/irq_comm.c
-@@ -121,7 +121,7 @@ void kvm_set_msi_irq(struct kvm *kvm, struct kvm_kernel=
-_irq_routing_entry *e,
- =09irq->msi_redir_hint =3D ((e->msi.address_lo
- =09=09& MSI_ADDR_REDIRECTION_LOWPRI) > 0);
- =09irq->level =3D 1;
--=09irq->shorthand =3D 0;
-+=09irq->shorthand =3D APIC_DEST_NOSHORT;
- }
- EXPORT_SYMBOL_GPL(kvm_set_msi_irq);
-=20
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3b00d662dc14..f6d778436e15 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7355,7 +7355,7 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, unsig=
-ned long flags, int apicid)
- {
- =09struct kvm_lapic_irq lapic_irq;
-=20
--=09lapic_irq.shorthand =3D 0;
-+=09lapic_irq.shorthand =3D APIC_DEST_NOSHORT;
- =09lapic_irq.dest_mode =3D APIC_DEST_PHYSICAL;
- =09lapic_irq.level =3D 0;
- =09lapic_irq.dest_id =3D apicid;
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.19.88-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: ba731ec12c667db0f1f85e4bfe11387587feb243
+git describe: v4.19.87-322-gba731ec12c66
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.87-322-gba731ec12c66
+
+
+No regressions (compared to build v4.19.87)
+
+No fixes (compared to build v4.19.87)
+
+Ran 21276 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* kvm-unit-tests
+* libhugetlbfs
+* linux-log-parser
+* ltp-containers-tests
+* ltp-commands-tests
+* ltp-dio-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-sched-tests
+* ltp-cap_bounds-tests
+* ltp-cpuhotplug-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* perf
+* v4l2-compliance
+
 --=20
-2.21.0
-
+Linaro LKFT
+https://lkft.linaro.org
