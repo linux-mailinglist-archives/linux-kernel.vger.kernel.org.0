@@ -2,120 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1465E112CDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81684112CDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:48:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfLDNs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 08:48:29 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39242 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbfLDNs2 (ORCPT
+        id S1727993AbfLDNsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 08:48:53 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:57053 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbfLDNsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:48:28 -0500
-Received: by mail-lj1-f195.google.com with SMTP id e10so8183682ljj.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 05:48:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZUCgkZkQGlomAJOzbgMFScKepIlz1LFeHjuD70SyCDU=;
-        b=DOABLru4O3YLSC1Udp2kl5pZ+lWsZIGKvq5CRAFXe2rMUOCADT30wVieq72PNjLVBo
-         DebY7P0Ttqsf2TDtWHJlpAW78tod/eky8WZdj3Frxhiq+BPU5iZme2DGk3lSVk36o4Vs
-         3jDHwJF0yLZZrx6XEayGFjFGLaaAENOhpVP3SqGBQEtpDYPAGMfKSSykXOt9hsBOUrvD
-         pgYaUuuALfDemB2IUMmBVsK5XQNNlRxBc3R7Pul2f9Al+Ar1wDuzyDcOpubWc2kv1lkI
-         TIqBxjAIjzfF4pSyyTOaSf265a9FZ49biREUrILtvmD/v4WeL3KSLEb5lFZMhSI3G3dx
-         bEyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZUCgkZkQGlomAJOzbgMFScKepIlz1LFeHjuD70SyCDU=;
-        b=dOQ1zGamZ2/9mQnyKCBWIi66FWS90lsCIesOapcYzF7xl5setwa5+i3SdpxHnGRkQV
-         wrAQzhruPEbf6EfdsmjQaut5g84C6KsFsBlDPkB2n/5boqtkX82OE+Y3ZfUZ0Di5vHin
-         nLEq1krFXf5CrzL3TRes6a2ZdNwgZVC24eJajHIwfnwt52XdUyLCBx+o1auBDFfgXv5o
-         iu2R2vUEQR0oLkk0OENMUkpoRkl4ewufNN9o+ldqPtSdgLInJJ/90CK+3W3U/KIAXIPi
-         gOQmYFn9Y7S7ziOl1YobP3ILO5P8Z4wmiWMGCDLolVQb9kVzewcFtFSb8N/cD20kGdCs
-         CENg==
-X-Gm-Message-State: APjAAAUZTpULeVIITXhvGUekERr6Wc6VZ4U0+D9CxQzMt8ZKZGyuAzzy
-        SbQZ1nkNHvEP1SLklz14YuBPmLTRvQgpjnmgC9CG1g==
-X-Google-Smtp-Source: APXvYqyrors0Lqeum2YuOO9Y8I+L0AwkZy7afmR5sEZYatmvTAx4oky7L2jHZKumkSC+T6KuYakYrUq5tskDHSP4HeQ=
-X-Received: by 2002:a2e:9a51:: with SMTP id k17mr2001305ljj.206.1575467306357;
- Wed, 04 Dec 2019 05:48:26 -0800 (PST)
+        Wed, 4 Dec 2019 08:48:53 -0500
+Received: from [192.168.1.155] ([77.9.37.28]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MMFdY-1iJKH617Ti-00JHVh; Wed, 04 Dec 2019 14:48:42 +0100
+Subject: Re: [PATCH 1/2] Enlist running kernel modules information
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191203094845.610692-1-unixbhaskar@gmail.com>
+ <CAK7LNASyrYv+pufwe4CfiNvd7NtriLw=FRdLOtu7CrbmZDSVHg@mail.gmail.com>
+ <20191204041543.GA1086470@ArchLinux>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <6ff74f67-11d3-d16f-8aeb-828c01455961@metux.net>
+Date:   Wed, 4 Dec 2019 14:48:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <CALAqxLXrWWnWi32BR1F8JOtrGt1y2Kzj__zWopLx1ZfRy3EZKA@mail.gmail.com>
- <CAKfTPtAvnLY3brp9iy_aHNu0rMM8nLfgeLc3CXEkMk3bwU1weA@mail.gmail.com>
- <20191204094216.u7yld5r3zelp22lf@e107158-lin.cambridge.arm.com>
- <20191204100925.GA15727@linaro.org> <629cca09-dde7-5d77-42e1-c68f2c1820d2@arm.com>
- <CAKfTPtDZLFn7msw88pTE_wr-BJo2ErqxpOW+ah0Jjcg6vE3SLw@mail.gmail.com> <20191204133224.uiqbkbpseree7xou@e107158-lin.cambridge.arm.com>
-In-Reply-To: <20191204133224.uiqbkbpseree7xou@e107158-lin.cambridge.arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 4 Dec 2019 14:48:13 +0100
-Message-ID: <CAKfTPtBP1wm706ZjZhW+BV5XUcONfJcGteeyoJQUhQsYPsY4tg@mail.gmail.com>
-Subject: Re: Null pointer crash at find_idlest_group on db845c w/ linus/master
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Quentin Perret <qperret@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <Patrick.Bellasi@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191204041543.GA1086470@ArchLinux>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:rQIVarqS/mfesrZjkt5lAqLbU6vFNbEJjc6FQ1P0T6hgR7f1DFX
+ d4kEALAgNCfgQd6BFYGXiVR+sTCv/aHdCGLYYaJSiUIX9QnZQwPl0o7Ora0p4SQQIFNItnV
+ NRxNyPbQagCuBpVyBNFKEZ3wd1UNQiTxODAK0I2QDNL+Tu90jZQo2f8PzXfShJD0+2m0nRt
+ cHwne+onFShMYgZRg11bg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lo7bEjXTHo4=:B9dgbOwiewS8hx95KrTyF+
+ 2Y1jf2Xid7R4lj571gmGCgWYYpytxErGrVeDj48tq5m/mP+AuL7Ne9ktj5bQPfp1/vy4A00kY
+ tVPZ6KyQGGYvV7gMXRd8FDP8Hs0RsLlmPU8EaGU02nvD/6QNolWdoj6jLrLteO0fKYRDiTFFQ
+ u3rNRKgkkzamQ65mOiYJ3koFZ2ErJ4QpcQxPHlWvIbxg9r6Fx6eVNES9tQwY60rWjFIYAnSv2
+ /BPGSkKE67eRcHw0as8KoFQAEFIhsmxVcxYLaotsmjS8VbbG+zmu9t0AzhTdeMqZm/bEZmqni
+ UQfxGaIF4v1iBFPWrGvHDjhuCTzwmDJ2tzF3xnoT6LDM3bcuIt/kBr55wnrvOU36on2NM+xaC
+ 98BlnebnxPGPDAS91o43XAwtg9zQVZLXDMl8PlbuCsXpDKPlxnhlZzvw0pKjqOxPUI4VNyaaA
+ xuLfmgh9Vd/Pk+rJ3eMTJ4rx5zBafLErEZYupbuqxHn5QBpy2mI5/e37HiaMY0CpD4oY2wM/e
+ ZkRWP7cNpDJuKc7i75NFR+ZMN//lJqFySxCeIUvekjfeVSzQ4Vu61hxYsAIvh0nT3Ae5+ui5f
+ Lx4usy2dk64E6a56fk6dJ4Ew1sG6tMFwHl0Hv+yScZi9sbic7SHIDyDfy2GeLU0tBPO+o2Z28
+ 6L1VOTX6WMJa5Mvndp6c12N9Na/Vst5iMgdEgh8ojF5EmeqtQRYciAzx+EjoKfi+khcwmwSF0
+ fyf/YrbJH8kF1rTssMTTFbLv53HG/LMk5Xe4tST2Axug1i0X/AeGTuGQXU1zjD5P5RcOzoBYI
+ JYavRk8XkmZ8Owp9a8LnpYTAfSRKakWBtRHnrEjhjIKyCsTiGfLsNhO+yEpEfHEOUuRtc0VFz
+ WyJgShqW/pK8lo0xHOUQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Dec 2019 at 14:32, Qais Yousef <qais.yousef@arm.com> wrote:
->
-> On 12/04/19 13:08, Vincent Guittot wrote:
-> > On Wed, 4 Dec 2019 at 11:41, Valentin Schneider
-> > <valentin.schneider@arm.com> wrote:
-> > >
-> > > On 04/12/2019 10:09, Vincent Guittot wrote:
-> > > > Now, we test that a group has at least one allowed CPU for the task so we
-> > > > could skip the local group with the correct/wrong p->cpus_ptr
-> > > >
-> > > > The path is used for fork/exec ibut also for wakeup path for b.L when the task doesn't fit in the CPUs
-> > > >
-> > > > So we can probably imagine a scenario where we change task affinity while
-> > > > sleeping. If the wakeup happens on a CPU that belongs to the group that is not
-> > > > allowed, we can imagine that we skip the local_group
-> > > >
-> > >
-> > > Shoot, I think you're right. If it is the local group that is NULL, then
-> > > we most likely splat on:
-> > >
-> > >                 if (local->sgc->max_capacity >= idlest->sgc->max_capacity)
-> > >                         return NULL;
-> > >
-> > > We don't splat before because we just use local_sgs, which is uninitialized
-> > > but on the stack.
-> > >
-> > > Also; does it really have to involve an affinity "race"? AFAIU affinity
-> > > could have been changed a while back, but the waking CPU isn't allowed
-> > > so we skip the local_group (in simpler cases where each CPU is a group).
-> >
-> > In fact, this will depend of the uninitialized values of local_sgs. I
-> > have been able to reproduce the situation where we skip local group
-> > but not to trigger the crash because the values already in the stack
-> > don't trigger the misfit comparison.
->
-> Will it be expensive to initialize local_sgs = {0}?
+On 04.12.19 05:22, Bhaskar Chowdhury wrote:
 
-if we want to initialize local_sgs, it should be something like
-local_sgs =  {
-.avg_load = UINT_MAX,
-.group_type = group_overloaded,
-};
+Hi,
 
-to make sure that we will not select local. This doesn't reflect any
-kind of reality whereas local=NULL is more meaningful and more robust
-IMO
+> I think the usefulness comes from developers wants to see what are the
+> modules are using by the running kernel in formatted way.
+> This is very simple way to enlist all the modules with descriptions of
+> it.So , they can easily parse it with other scripts.
+
+IMHO, this is a good thing to have. I can even imagine it shipped by
+distros, for better bug reports.
+
+OTOH, if it's about the currently running kernel and loaded modules, why
+not putting this into /proc or /sys ?
 
 
->
-> --
-> Qais Yousef
+--mtx
+
+-- 
+Dringender Hinweis: aufgrund existenzieller Bedrohung durch "Emotet"
+sollten Sie *niemals* MS-Office-Dokumente via E-Mail annehmen/öffenen,
+selbst wenn diese von vermeintlich vertrauenswürdigen Absendern zu
+stammen scheinen. Andernfalls droht Totalschaden.
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
