@@ -2,210 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 155FD1128D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 11:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C1B1128D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 11:05:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbfLDKF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 05:05:58 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55707 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727502AbfLDKF4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 05:05:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575453953;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3bzkOfkSPb6+yZQ19D8wPgL9epYwdepj3FzmNzcMCF4=;
-        b=JLndBXFhsEDzVoYAgiJXRSZ3DpCgJGatFWp26fBx9AVCyW11QWQ3QVxI0JRySR09bTAWjt
-        YWw9zwkTNxVC5S3Nb1WRXxa9E1VCjXfJ87X3wTUIfJm+ofG5kDne7eVzePzvqHY0RVqBJC
-        GHzF5R148b8+jrueZD1Je4ey3wPUxRo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-298-73BQKKcqNS-C3gTDf6i_6w-1; Wed, 04 Dec 2019 05:05:50 -0500
-Received: by mail-wr1-f72.google.com with SMTP id w6so3375030wrm.16
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 02:05:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3bzkOfkSPb6+yZQ19D8wPgL9epYwdepj3FzmNzcMCF4=;
-        b=cfRH3JX7r3mik3DRykXhLXHL1RDKeyC6X0ajk3tCqzpR7pLmiMlmi+wj6sAeRihOOx
-         t/2phmMov+WGIaECFVSoqh+FDMJ8kWue/+ZAKDxG6Q6pHGDAxtxfZSxlyRHOapYbHlKc
-         w8HgokQZ3hfeRSphPGn0F0DDsdqF294uCxluM+vsSB8mUZHKCHhpfYf4xc1rChD22uIZ
-         s4oXpOcQZvID93O/ARSJEF4ViWywV6u7rvHBncDrLDB24gBrpyh+HpupXVxlM/A/dRxV
-         mndO3W8h4Tajynbn+wPAw1JBDxmYuk2C/0KW5Al02z/6yOg2zAtvdBxeILyD446oKSxp
-         k6MA==
-X-Gm-Message-State: APjAAAXyu7+iIuDlYTBcezSHU9uRomY8RknuiTR3ZI5IrC8V2PFi9lNy
-        ozWPwOE2xq7KdQMs32McO1En+A/2osuovHMS4kVJYeYm3NCKnpbv1bmWpZJLG7JJ9OcdW9MowGx
-        r0raeI/tkkhl11j4pLtzRM/aZ
-X-Received: by 2002:a1c:6389:: with SMTP id x131mr24167544wmb.174.1575453949342;
-        Wed, 04 Dec 2019 02:05:49 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzAiISuDcUWRbEN4GA4CkChNhzcGczIBRYMip+8ZZRMkK0DKzpZdJ6CixN1sArGDUdLUzH2jQ==
-X-Received: by 2002:a1c:6389:: with SMTP id x131mr24167500wmb.174.1575453948930;
-        Wed, 04 Dec 2019 02:05:48 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:8dc6:5dd5:2c0a:6a9a? ([2001:b07:6468:f312:8dc6:5dd5:2c0a:6a9a])
-        by smtp.gmail.com with ESMTPSA id k4sm6458033wmk.26.2019.12.04.02.05.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2019 02:05:48 -0800 (PST)
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com>
- <20191202201036.GJ4063@linux.intel.com> <20191202211640.GF31681@xz-x1>
- <20191202215049.GB8120@linux.intel.com>
- <fd882b9f-e510-ff0d-db43-eced75427fc6@redhat.com>
- <20191203184600.GB19877@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <374f18f1-0592-9b70-adbb-0a72cc77d426@redhat.com>
-Date:   Wed, 4 Dec 2019 11:05:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727491AbfLDKFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 05:05:51 -0500
+Received: from mx.socionext.com ([202.248.49.38]:25693 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727420AbfLDKFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 05:05:50 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 04 Dec 2019 19:05:48 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 7D8B2603AB;
+        Wed,  4 Dec 2019 19:05:48 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 4 Dec 2019 19:06:21 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id E71B11A01CF;
+        Wed,  4 Dec 2019 19:05:47 +0900 (JST)
+Received: from [10.213.132.48] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id B6A79120456;
+        Wed,  4 Dec 2019 19:05:47 +0900 (JST)
+Date:   Wed, 04 Dec 2019 19:05:47 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/2] PCI: uniphier: Add checking whether PERST# is deasserted
+Cc:     <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+In-Reply-To: <20191122205316.297B.4A936039@socionext.com>
+References: <20191121164705.GA14229@e121166-lin.cambridge.arm.com> <20191122205316.297B.4A936039@socionext.com>
+Message-Id: <20191204190547.333C.4A936039@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20191203184600.GB19877@linux.intel.com>
-Content-Language: en-US
-X-MC-Unique: 73BQKKcqNS-C3gTDf6i_6w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/19 19:46, Sean Christopherson wrote:
-> On Tue, Dec 03, 2019 at 02:48:10PM +0100, Paolo Bonzini wrote:
->> On 02/12/19 22:50, Sean Christopherson wrote:
->>>>
->>>> I discussed this with Paolo, but I think Paolo preferred the per-vm
->>>> ring because there's no good reason to choose vcpu0 as what (1)
->>>> suggested.  While if to choose (2) we probably need to lock even for
->>>> per-cpu ring, so could be a bit slower.
->>> Ya, per-vm is definitely better than dumping on vcpu0.  I'm hoping we can
->>> find a third option that provides comparable performance without using any
->>> per-vcpu rings.
->>>
->>
->> The advantage of per-vCPU rings is that it naturally: 1) parallelizes
->> the processing of dirty pages; 2) makes userspace vCPU thread do more
->> work on vCPUs that dirty more pages.
->>
->> I agree that on the producer side we could reserve multiple entries in
->> the case of PML (and without PML only one entry should be added at a
->> time).  But I'm afraid that things get ugly when the ring is full,
->> because you'd have to wait for all vCPUs to finish publishing the
->> entries they have reserved.
+On Fri, 22 Nov 2019 20:53:16 +0900 <hayashi.kunihiko@socionext.com> wrote:
+
+> Hello Lorenzo,
 > 
-> Ah, I take it the intended model is that userspace will only start pulling
-> entries off the ring when KVM explicitly signals that the ring is "full"?
-
-No, it's not.  But perhaps in the asynchronous case you can delay
-pushing the reserved entries to the consumer until a moment where no
-CPUs have left empty slots in the ring buffer (somebody must have done
-multi-producer ring buffers before).  In the ring-full case that is
-harder because it requires synchronization.
-
-> Rather than reserve entries, what if vCPUs reserved an entire ring?  Create
-> a pool of N=nr_vcpus rings that are shared by all vCPUs.  To mark pages
-> dirty, a vCPU claims a ring, pushes the pages into the ring, and then
-> returns the ring to the pool.  If pushing pages hits the soft limit, a
-> request is made to drain the ring and the ring is not returned to the pool
-> until it is drained.
+> On Thu, 21 Nov 2019 16:47:05 +0000 <lorenzo.pieralisi@arm.com> wrote:
 > 
-> Except for acquiring a ring, which likely can be heavily optimized, that'd
-> allow parallel processing (#1), and would provide a facsimile of #2 as
-> pushing more pages onto a ring would naturally increase the likelihood of
-> triggering a drain.  And it might be interesting to see the effect of using
-> different methods of ring selection, e.g. pure round robin, LRU, last used
-> on the current vCPU, etc...
-
-If you are creating nr_vcpus rings, and draining is done on the vCPU
-thread that has filled the ring, why not create nr_vcpus+1?  The current
-code then is exactly the same as pre-claiming a ring per vCPU and never
-releasing it, and using a spinlock to claim the per-VM ring.
-
-However, we could build on top of my other suggestion to add
-slot->as_id, and wrap kvm_get_running_vcpu() with a nice API, mimicking
-exactly what you've suggested.  Maybe even add a scary comment around
-kvm_get_running_vcpu() suggesting that users only do so to avoid locking
-and wrap it with a nice API.  Similar to what get_cpu/put_cpu do with
-smp_processor_id.
-
-1) Add a pointer from struct kvm_dirty_ring to struct
-kvm_dirty_ring_indexes:
-
-vcpu->dirty_ring->data = &vcpu->run->vcpu_ring_indexes;
-kvm->vm_dirty_ring->data = *kvm->vm_run->vm_ring_indexes;
-
-2) push the ring choice and locking to two new functions
-
-struct kvm_ring *kvm_get_dirty_ring(struct kvm *kvm)
-{
-	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
-
-	if (vcpu && !WARN_ON_ONCE(vcpu->kvm != kvm)) {
-		return &vcpu->dirty_ring;
-	} else {
-		/*
-		 * Put onto per vm ring because no vcpu context.
-		 * We'll kick vcpu0 if ring is full.
-		 */
-		spin_lock(&kvm->vm_dirty_ring->lock);
-		return &kvm->vm_dirty_ring;
-	}
-}
-
-void kvm_put_dirty_ring(struct kvm *kvm,
-			struct kvm_dirty_ring *ring)
-{
-	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
-	bool full = kvm_dirty_ring_used(ring) >= ring->soft_limit;
-
-	if (ring == &kvm->vm_dirty_ring) {
-		if (vcpu == NULL)
-			vcpu = kvm->vcpus[0];
-		spin_unlock(&kvm->vm_dirty_ring->lock);
-	}
-
-	if (full)
-		kvm_make_request(KVM_REQ_DIRTY_RING_FULL, vcpu);
-}
-
-3) simplify kvm_dirty_ring_push to
-
-void kvm_dirty_ring_push(struct kvm_dirty_ring *ring,
-			 u32 slot, u64 offset)
-{
-	/* left as an exercise to the reader */
-}
-
-and mark_page_dirty_in_ring to
-
-static void mark_page_dirty_in_ring(struct kvm *kvm,
-				    struct kvm_memory_slot *slot,
-				    gfn_t gfn)
-{
-	struct kvm_dirty_ring *ring;
-
-	if (!kvm->dirty_ring_size)
-		return;
-
-	ring = kvm_get_dirty_ring(kvm);
-	kvm_dirty_ring_push(ring, (slot->as_id << 16) | slot->id,
-			    gfn - slot->base_gfn);
-	kvm_put_dirty_ring(kvm, ring);
-}
-
-Paolo
-
->> It's ugly that we _also_ need a per-VM ring, but unfortunately some
->> operations do not really have a vCPU that they can refer to.
+> > On Fri, Nov 08, 2019 at 04:30:27PM +0900, Kunihiko Hayashi wrote:
+> > > > However, If I understand correctly, doesn't your solution only work some
+> > > > of the time? What happens if you boot both machines at the same time,
+> > > > and PERST# isn't asserted prior to the kernel booting?
+> > > 
+> > > I think it contains an annoying problem.
+> > > 
+> > > If PERST# isn't toggled prior to the kernel booting, PERST# remains asserted
+> > > and the RC driver can't access PCI bus.
+> > > 
+> > > As a result, this patch works and deasserts PERST# (and EP configuration will
+> > > be lost). So boot sequence needs to include deasserting PERST#.
+> > 
+> > I am sorry but I have lost you. Can you explain to us why checking
+> > that PERST# is deasserted guarantees you that:
+> > 
+> > - The EP has bootstrapped
+> > - It is safe not to toggle it again (and also skip
+> >   uniphier_pcie_ltssm_enable())
+> > 
+> > Please provide details of the HW configuration so that we understand
+> > what's actually supposed to happen and why this patch fixes the
+> > issue you are facing.
 > 
+> I tried to connect between the following boards, and do pci-epf-test:
+>  - "RC board": UniPhier ld20 board that has DWC RC controller
+>  - "EP board": UniPhier legacy board that has DWC EP controller
+> 
+> This EP has power-on-state configuration, but it's necessary to set
+> class ID, BAR sizes, etc. after starting up.
+> 
+> In case of that starting up RC board before EP board, the RC driver
+> can't establish link. So we need to boot EP board first.
+
+At that point, I've considered why RC can't establish link,
+and found that the waitng time was too short.
+
+- EP/RC: power on both boards
+
+- RC: start up the kernel on RC board
+
+- RC: wait for link up (long time enough)
+
+- EP: start up the kernel on EP board
+
+- EP: configurate pci-epf-test
+
+When the endpoint  configuration is done and the EP driver enables LTSSM,
+the RC driver will quit from waiting for link up.
+
+Currently DWC RC driver calls dwc_pcie_wait_for_link(), however,
+the function tries to link up 10 times only, that is defined
+as LINK_WAIT_MAX_RETRIES in pcie-designware.h, it's too short
+to configurate the endpoint.
+
+Now the patch to bypass PERST# is not necessary.
+
+Instead for DWC RC drivers, I think that the number of retries
+should be changed according to the usage.
+And the same issue remains with other RC drivers.
+
+Thank you,
+
+---
+Best Regards,
+Kunihiko Hayashi
 
