@@ -2,149 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC6111379B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:28:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7C41137AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 23:36:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfLDW2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 17:28:40 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32939 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfLDW2k (ORCPT
+        id S1728321AbfLDWgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 17:36:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40086 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728053AbfLDWgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 17:28:40 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d5so1499410qto.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 14:28:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HEYQS05MAbHQwQXy7WM1nS2KzK94OdilVdY0KXKLqkE=;
-        b=nBBqCbSsH0vcRIuqTjqwqF/EPv2RAANnvUThDsrRZBrruFYliF8PrDiOf6Scgm0RY2
-         DJPg2KOtzdwA/U2nGZskH7q7Z7mhcfHO2GFWW11I3RSBKgYud2CT6Nt7+XA3Lgtdl/Ch
-         UKw9GK4ulIcQUY+toc/6lnj69rW84l7LM30IwsJhLWCeDAfU5uJ3sTwyvRz/67d/7vPX
-         nkGWFWdwJOYYmXs81hND0MONdW0epBMFL7PT9n3QLBqAoSJhrf2OEmOWbyc+sDhjbYZ/
-         pffBWpsN+rlsMM9ozBiZ+tPF0JgTM9aWm0x+3x8KYqDZpJaQb7u9bbvZSWCVgyw456GV
-         3ZbQ==
-X-Gm-Message-State: APjAAAXARjCs8N2cz2aeAhx9hahbzrgWYxGHIagbm88VFtgPm5O14zpo
-        XFyLvf8Fsf2nzpQZUmONexg=
-X-Google-Smtp-Source: APXvYqw144SltBipb0Heq13NL02ySiBx3f1aMaIVU+2+KzH6pACZiCQCdgFg7UHDk/vby/lCKgODwA==
-X-Received: by 2002:ac8:259c:: with SMTP id e28mr4999167qte.323.1575498519587;
-        Wed, 04 Dec 2019 14:28:39 -0800 (PST)
-Received: from dennisz-mbp ([2620:10d:c091:500::f69c])
-        by smtp.gmail.com with ESMTPSA id d6sm4345036qkb.103.2019.12.04.14.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 14:28:38 -0800 (PST)
-Date:   Wed, 4 Dec 2019 17:28:37 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, linux-kernel@vger.kernel.org,
-        Christoph Lameter <cl@linux.com>, Tejun Heo <tj@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH v2] fix __percpu annotation in asm-generic
-Message-ID: <20191204222837.GA51250@dennisz-mbp>
-References: <20191204010623.65384-1-luc.vanoostenryck@gmail.com>
+        Wed, 4 Dec 2019 17:36:12 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB4MZtcw079935;
+        Wed, 4 Dec 2019 17:35:55 -0500
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wnej0veca-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Dec 2019 17:30:58 -0500
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB4MOnnk012691;
+        Wed, 4 Dec 2019 22:29:08 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma02dal.us.ibm.com with ESMTP id 2wkg273hkx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Dec 2019 22:29:08 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB4MT7Np24838566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Dec 2019 22:29:07 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D19A3B205F;
+        Wed,  4 Dec 2019 22:29:07 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E102AB2065;
+        Wed,  4 Dec 2019 22:29:06 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.16.170.189])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Dec 2019 22:29:06 +0000 (GMT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204010623.65384-1-luc.vanoostenryck@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 04 Dec 2019 16:29:49 -0600
+From:   Adriana Kobylak <anoo@linux.ibm.com>
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     linux-aspeed@lists.ozlabs.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, Adriana Kobylak <anoo@us.ibm.com>,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linux-aspeed 
+        <linux-aspeed-bounces+anoo=linux.ibm.com@lists.ozlabs.org>
+Subject: Re: [PATCH 08/14] ARM: dts: swift: Cleanup gpio-keys-polled
+ properties
+In-Reply-To: <78ea3e17108c7c8fded921f5673777fc415cd66e.1575369656.git-series.andrew@aj.id.au>
+References: <cover.08e3a6c95159f017b753d0f240086d1a7923758b.1575369656.git-series.andrew@aj.id.au>
+ <78ea3e17108c7c8fded921f5673777fc415cd66e.1575369656.git-series.andrew@aj.id.au>
+Message-ID: <450addb633e8572a019ccaec5fd48248@linux.vnet.ibm.com>
+X-Sender: anoo@linux.ibm.com
+User-Agent: Roundcube Webmail/1.0.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-04_03:2019-12-04,2019-12-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912040187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 02:06:23AM +0100, Luc Van Oostenryck wrote:
-> The generic implementation of raw_cpu_generic_add_return() is:
+On 2019-12-03 06:04, Andrew Jeffery wrote:
+> dtbs_check gave the following warning:
 > 
->         #define raw_cpu_generic_add_return(pcp, val)            \
->         ({                                                      \
->                 typeof(&(pcp)) __p = raw_cpu_ptr(&(pcp));       \
->                                                                 \
->                 *__p += val;                                    \
->                 *__p;                                           \
->         })
+>     Warning (avoid_unnecessary_addr_size): /gpio-keys-polled:
+> unnecessary #address-cells/#size-cells without "ranges" or child "reg"
+> property
 > 
-> where the 'pcp' argument is a __percpu lvalue.
-> There, the variable '__p' is declared as a __percpu pointer
-> the type of the address of 'pcp') but:
-> 1) the value assigned to it, the return value of raw_cpu_ptr(), is
->    a plain (__kernel) pointer, not a __percpu one.
-> 2) this variable is dereferenced just after while a __percpu
->    pointer is implicitly __noderef.
-> 
-> So, fix the declaration of the 'pcp' variable to its correct type:
-> the plain (non-percpu) pointer corresponding to pcp's address,
-> using the fact that typeof() ignores the address space and the
-> 'noderef' attribute of its agument.
-> 
-> Same for raw_cpu_generic_xchg(), raw_cpu_generic_cmpxchg() &
-> raw_cpu_generic_cmpxchg_double().
-> 
-> This removes 209 warnings on ARM, 525 on ARM64, 220 on x86 &
-> more than 2600 on ppc64 (all of them with the default config).
-> 
-> Cc: Dennis Zhou <dennis@kernel.org>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+> Cc: Adriana Kobylak <anoo@us.ibm.com>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+
+Reviewed-by: Adriana Kobylak <anoo@us.ibm.com>
+Tested-by: Adriana Kobylak <anoo@us.ibm.com>
+
 > ---
+>  arch/arm/boot/dts/aspeed-bmc-opp-swift.dts | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> Change since v1:
-> * use the fact that typeof() ignore the address space of its argument.
+> diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-swift.dts
+> b/arch/arm/boot/dts/aspeed-bmc-opp-swift.dts
+> index 0831bc1f5a4c..555d79405884 100644
+> --- a/arch/arm/boot/dts/aspeed-bmc-opp-swift.dts
+> +++ b/arch/arm/boot/dts/aspeed-bmc-opp-swift.dts
+> @@ -82,8 +82,6 @@
 > 
->  include/asm-generic/percpu.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  	gpio-keys-polled {
+>  		compatible = "gpio-keys-polled";
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+>  		poll-interval = <1000>;
 > 
-> diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
-> index c2de013b2cf4..35e4a53b83e6 100644
-> --- a/include/asm-generic/percpu.h
-> +++ b/include/asm-generic/percpu.h
-> @@ -74,7 +74,7 @@ do {									\
->  
->  #define raw_cpu_generic_add_return(pcp, val)				\
->  ({									\
-> -	typeof(&(pcp)) __p = raw_cpu_ptr(&(pcp));			\
-> +	typeof(pcp) *__p = raw_cpu_ptr(&(pcp));				\
->  									\
->  	*__p += val;							\
->  	*__p;								\
-> @@ -82,7 +82,7 @@ do {									\
->  
->  #define raw_cpu_generic_xchg(pcp, nval)					\
->  ({									\
-> -	typeof(&(pcp)) __p = raw_cpu_ptr(&(pcp));			\
-> +	typeof(pcp) *__p = raw_cpu_ptr(&(pcp));				\
->  	typeof(pcp) __ret;						\
->  	__ret = *__p;							\
->  	*__p = nval;							\
-> @@ -91,7 +91,7 @@ do {									\
->  
->  #define raw_cpu_generic_cmpxchg(pcp, oval, nval)			\
->  ({									\
-> -	typeof(&(pcp)) __p = raw_cpu_ptr(&(pcp));			\
-> +	typeof(pcp) *__p = raw_cpu_ptr(&(pcp));				\
->  	typeof(pcp) __ret;						\
->  	__ret = *__p;							\
->  	if (__ret == (oval))						\
-> @@ -101,8 +101,8 @@ do {									\
->  
->  #define raw_cpu_generic_cmpxchg_double(pcp1, pcp2, oval1, oval2, nval1, nval2) \
->  ({									\
-> -	typeof(&(pcp1)) __p1 = raw_cpu_ptr(&(pcp1));			\
-> -	typeof(&(pcp2)) __p2 = raw_cpu_ptr(&(pcp2));			\
-> +	typeof(pcp1) *__p1 = raw_cpu_ptr(&(pcp1));			\
-> +	typeof(pcp2) *__p2 = raw_cpu_ptr(&(pcp2));			\
->  	int __ret = 0;							\
->  	if (*__p1 == (oval1) && *__p2  == (oval2)) {			\
->  		*__p1 = nval1;						\
-> -- 
-> 2.24.0
-> 
-
-I've applied this for-5.6.
-
-Thanks,
-Dennis
+>  		scm0-presence {
