@@ -2,276 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 445B1112CDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:48:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8929D112CE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbfLDNsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 08:48:42 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46597 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbfLDNsl (ORCPT
+        id S1728004AbfLDNs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 08:48:56 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44438 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727972AbfLDNsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:48:41 -0500
-Received: by mail-qk1-f196.google.com with SMTP id f5so7102112qkm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 05:48:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kjtKZQgAJfat4nV98ffIVr09JJKAt0JciPj76qkRygI=;
-        b=XFKFxuIo/3r2okVn4VRckypd5Xj1FM40gNcjly+L3J+v08sH5ihWzpmww7VLOw/C2l
-         q6XbKx4vxxo3VS8nIqw6iROMGlX8cSiqJ7tCowWUOMlQzXCGs8kx/DQ7Htr6rx5vhzmy
-         /rc7Dd6EPvm78K3dxyNWlmp1v+ZQR1RUIU2z1dmJTfQL9AIjmKbfk/Rs+lbiUDrgaTn3
-         W8/dMwIPyq66HHivmDrZk90DfxV9vEz5bV8pofHqzhlV/JK9BTQpbwmm1dk8AxymxNWO
-         ruNX72M+ehyeOZ23olIWcY9SrAeS7sbi6YfYucbsLJhwqwTTmp4ZVRxzFSdug2pyRiyv
-         9sJw==
+        Wed, 4 Dec 2019 08:48:54 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q10so8622866wrm.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 05:48:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kjtKZQgAJfat4nV98ffIVr09JJKAt0JciPj76qkRygI=;
-        b=cPpWx62zBOm9xmkho7tROrxY4qVZ1fZPA3mMXJwpjaEdFxKXu4FjK3pxAIWRyheB9u
-         x1tynAzKe/alvJcdvogJGbJqNTmYe1hVv2LbHw27MYaqEhZUrU+zKyYEUVSnDOYnh0yy
-         ieWZLm70YqfupEpFj2d9U08flge1AA9lpznPiV77RlTG6EZvi+s638t8T+ghtNJ2DZfp
-         3KIgvS1srAcj/hCVn7cG6friX4aaD/TmZfsKtl6mKenw2meLfp0huq5Ks71sVloTlC/1
-         T0/Bzl8nGIO6r92l1ZI3nr57+BHPDmXg98VcPJT0aFitLZ+tqp3rtEsonXoBOKeQIw7m
-         BykA==
-X-Gm-Message-State: APjAAAVkBfEjYX8/pRPQjpwNunp2J6RJVuHzYdwqDb064Y0TrNJuYtep
-        W/kFSTjNpvGRJL3ziwr2enw=
-X-Google-Smtp-Source: APXvYqw7cx0tldR19GNFpsQEo5p2LaTIklKafAx1hbJVFKwcgq63Ng/ykKiJlEnqx0H3pCPUhlJ05w==
-X-Received: by 2002:a37:b4c6:: with SMTP id d189mr2969324qkf.33.1575467320335;
-        Wed, 04 Dec 2019 05:48:40 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id y28sm3761003qtk.65.2019.12.04.05.48.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=qKt3fgYEHdyVjIAjoOhERCvfE0DFlu+fhVdi9xPnJdk=;
+        b=CVdZQ3pFsu74FoWs3/jTRafSytujQJEovTahfYVcYa2k9jmZmGavC4qXoCqCvk9eLy
+         w7N8VHkc7dT0djny+a7fLPtGv/rO0YjYOzQmQ3wz+boVv0lgdKehoykpDODXRDMr8Ye/
+         C5+paj5Yy4MRceeQ2vRk28l+bZOs7TLIMR5uXu9KEclDqrv/s0s//EliUT002r36xqLz
+         J5zSyIfFaU+V5scVGxuAv1CpT73fGWutmaRxdd5WA3MKkTPWsGm4T8aFZw865st4qUP3
+         7kCHz8D8Wdt4a+Tbpj48w/P2Y084l4atC1bMCXGZrySd2aDVBMOP5FCvgWYw5WeRrXEV
+         1f/Q==
+X-Gm-Message-State: APjAAAVx+mY+wX+M5yXAgiAIt8M1Qgv/zrgLuvL5iG1r7Fz5y3aOdura
+        eXgubGWs2i8tqeKtXurjLCE=
+X-Google-Smtp-Source: APXvYqzUiAsWvg1avw6/n9S8BdQL0pHzBtuvBpKCZhCyP0XWFnjFNbmmp8KFGWWwfhW5J3HZ9PnlQw==
+X-Received: by 2002:a05:6000:160d:: with SMTP id u13mr4341444wrb.22.1575467331881;
+        Wed, 04 Dec 2019 05:48:51 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id o15sm8765601wra.83.2019.12.04.05.48.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 05:48:39 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 635EA4121E; Wed,  4 Dec 2019 10:48:36 -0300 (-03)
-Date:   Wed, 4 Dec 2019 10:48:36 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] perf record: adapt affinity to machines with
- #CPUs > 1K
-Message-ID: <20191204134836.GA31283@kernel.org>
-References: <d1aead99-474a-46d3-36be-36dbb8e5581b@linux.intel.com>
- <96d7e2ff-ce8b-c1e0-d52c-aa59ea96f0ea@linux.intel.com>
+        Wed, 04 Dec 2019 05:48:51 -0800 (PST)
+Date:   Wed, 4 Dec 2019 14:48:50 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, pv-drivers@vmware.com,
+        linux-graphics-maintainer@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v2 1/2] mm: Add and export vmf_insert_mixed_prot()
+Message-ID: <20191204134850.GG25242@dhcp22.suse.cz>
+References: <20191203104853.4378-1-thomas_os@shipmail.org>
+ <20191203104853.4378-2-thomas_os@shipmail.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <96d7e2ff-ce8b-c1e0-d52c-aa59ea96f0ea@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191203104853.4378-2-thomas_os@shipmail.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Dec 03, 2019 at 02:45:27PM +0300, Alexey Budankov escreveu:
+On Tue 03-12-19 11:48:52, Thomas Hellström (VMware) wrote:
+> From: Thomas Hellstrom <thellstrom@vmware.com>
 > 
-> Use struct mmap_cpu_mask type for tool's thread and mmap data
-> buffers to overcome current 1024 CPUs mask size limitation of
-> cpu_set_t type.
-> 
-> Currently glibc cpu_set_t type has internal mask size limit
-> of 1024 CPUs. Moving to struct mmap_cpu_mask type allows
-> overcoming that limit. tools bitmap API is used to manipulate
-> objects of struct mmap_cpu_mask type.
+> The TTM module today uses a hack to be able to set a different page
+> protection than struct vm_area_struct::vm_page_prot. To be able to do
+> this properly, add and export vmf_insert_mixed_prot().
 
-Had to apply this to fix the build in some toolchains/arches:
-
-[acme@quaco perf]$ git diff
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 7bc83755ef8c..4c301466101b 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -2508,10 +2508,10 @@ int cmd_record(int argc, const char **argv)
-                rec->affinity_mask.nbits = cpu__max_cpu();
-                rec->affinity_mask.bits = bitmap_alloc(rec->affinity_mask.nbits);
-                if (!rec->affinity_mask.bits) {
--                       pr_err("Failed to allocate thread mask for %ld cpus\n", rec->affinity_mask.nbits);
-+                       pr_err("Failed to allocate thread mask for %zd cpus\n", rec->affinity_mask.nbits);
-                        return -ENOMEM;
-                }
--               pr_debug2("thread mask[%ld]: empty\n", rec->affinity_mask.nbits);
-+               pr_debug2("thread mask[%zd]: empty\n", rec->affinity_mask.nbits);
-        }
-
-        err = record__auxtrace_init(rec);
-
-
- 
-> Reported-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  tools/perf/builtin-record.c | 28 ++++++++++++++++++++++------
->  tools/perf/util/mmap.c      | 28 ++++++++++++++++++++++------
->  tools/perf/util/mmap.h      |  2 +-
->  3 files changed, 45 insertions(+), 13 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index fb19ef63cc35..7bc83755ef8c 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -62,6 +62,7 @@
->  #include <linux/string.h>
->  #include <linux/time64.h>
->  #include <linux/zalloc.h>
-> +#include <linux/bitmap.h>
->  
->  struct switch_output {
->  	bool		 enabled;
-> @@ -93,7 +94,7 @@ struct record {
->  	bool			timestamp_boundary;
->  	struct switch_output	switch_output;
->  	unsigned long long	samples;
-> -	cpu_set_t		affinity_mask;
-> +	struct mmap_cpu_mask	affinity_mask;
->  	unsigned long		output_max_size;	/* = 0: unlimited */
->  };
->  
-> @@ -961,10 +962,15 @@ static struct perf_event_header finished_round_event = {
->  static void record__adjust_affinity(struct record *rec, struct mmap *map)
->  {
->  	if (rec->opts.affinity != PERF_AFFINITY_SYS &&
-> -	    !CPU_EQUAL(&rec->affinity_mask, &map->affinity_mask)) {
-> -		CPU_ZERO(&rec->affinity_mask);
-> -		CPU_OR(&rec->affinity_mask, &rec->affinity_mask, &map->affinity_mask);
-> -		sched_setaffinity(0, sizeof(rec->affinity_mask), &rec->affinity_mask);
-> +	    !bitmap_equal(rec->affinity_mask.bits, map->affinity_mask.bits,
-> +			  rec->affinity_mask.nbits)) {
-> +		bitmap_zero(rec->affinity_mask.bits, rec->affinity_mask.nbits);
-> +		bitmap_or(rec->affinity_mask.bits, rec->affinity_mask.bits,
-> +			  map->affinity_mask.bits, rec->affinity_mask.nbits);
-> +		sched_setaffinity(0, MMAP_CPU_MASK_BYTES(&rec->affinity_mask),
-> +				  (cpu_set_t *)rec->affinity_mask.bits);
-> +		if (verbose == 2)
-> +			mmap_cpu_mask__scnprintf(&rec->affinity_mask, "thread");
->  	}
->  }
->  
-> @@ -2433,7 +2439,6 @@ int cmd_record(int argc, const char **argv)
->  # undef REASON
->  #endif
->  
-> -	CPU_ZERO(&rec->affinity_mask);
->  	rec->opts.affinity = PERF_AFFINITY_SYS;
->  
->  	rec->evlist = evlist__new();
-> @@ -2499,6 +2504,16 @@ int cmd_record(int argc, const char **argv)
->  
->  	symbol__init(NULL);
->  
-> +	if (rec->opts.affinity != PERF_AFFINITY_SYS) {
-> +		rec->affinity_mask.nbits = cpu__max_cpu();
-> +		rec->affinity_mask.bits = bitmap_alloc(rec->affinity_mask.nbits);
-> +		if (!rec->affinity_mask.bits) {
-> +			pr_err("Failed to allocate thread mask for %ld cpus\n", rec->affinity_mask.nbits);
-> +			return -ENOMEM;
-> +		}
-> +		pr_debug2("thread mask[%ld]: empty\n", rec->affinity_mask.nbits);
-> +	}
-> +
->  	err = record__auxtrace_init(rec);
->  	if (err)
->  		goto out;
-> @@ -2613,6 +2628,7 @@ int cmd_record(int argc, const char **argv)
->  
->  	err = __cmd_record(&record, argc, argv);
->  out:
-> +	bitmap_free(rec->affinity_mask.bits);
->  	evlist__delete(rec->evlist);
->  	symbol__exit();
->  	auxtrace_record__free(rec->itr);
-> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-> index 43c12b4a3e17..832d2cb94b2c 100644
-> --- a/tools/perf/util/mmap.c
-> +++ b/tools/perf/util/mmap.c
-> @@ -219,6 +219,8 @@ static void perf_mmap__aio_munmap(struct mmap *map __maybe_unused)
->  
->  void mmap__munmap(struct mmap *map)
->  {
-> +	bitmap_free(map->affinity_mask.bits);
-> +
->  	perf_mmap__aio_munmap(map);
->  	if (map->data != NULL) {
->  		munmap(map->data, mmap__mmap_len(map));
-> @@ -227,7 +229,7 @@ void mmap__munmap(struct mmap *map)
->  	auxtrace_mmap__munmap(&map->auxtrace_mmap);
->  }
->  
-> -static void build_node_mask(int node, cpu_set_t *mask)
-> +static void build_node_mask(int node, struct mmap_cpu_mask *mask)
->  {
->  	int c, cpu, nr_cpus;
->  	const struct perf_cpu_map *cpu_map = NULL;
-> @@ -240,17 +242,23 @@ static void build_node_mask(int node, cpu_set_t *mask)
->  	for (c = 0; c < nr_cpus; c++) {
->  		cpu = cpu_map->map[c]; /* map c index to online cpu index */
->  		if (cpu__get_node(cpu) == node)
-> -			CPU_SET(cpu, mask);
-> +			set_bit(cpu, mask->bits);
->  	}
->  }
->  
-> -static void perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
-> +static int perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
->  {
-> -	CPU_ZERO(&map->affinity_mask);
-> +	map->affinity_mask.nbits = cpu__max_cpu();
-> +	map->affinity_mask.bits = bitmap_alloc(map->affinity_mask.nbits);
-> +	if (!map->affinity_mask.bits)
-> +		return -1;
-> +
->  	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1)
->  		build_node_mask(cpu__get_node(map->core.cpu), &map->affinity_mask);
->  	else if (mp->affinity == PERF_AFFINITY_CPU)
-> -		CPU_SET(map->core.cpu, &map->affinity_mask);
-> +		set_bit(map->core.cpu, map->affinity_mask.bits);
-> +
-> +	return 0;
->  }
->  
->  int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
-> @@ -261,7 +269,15 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, int cpu)
->  		return -1;
->  	}
->  
-> -	perf_mmap__setup_affinity_mask(map, mp);
-> +	if (mp->affinity != PERF_AFFINITY_SYS &&
-> +		perf_mmap__setup_affinity_mask(map, mp)) {
-> +		pr_debug2("failed to alloc mmap affinity mask, error %d\n",
-> +			  errno);
-> +		return -1;
-> +	}
-> +
-> +	if (verbose == 2)
-> +		mmap_cpu_mask__scnprintf(&map->affinity_mask, "mmap");
->  
->  	map->core.flush = mp->flush;
->  
-> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-> index ef51667fabcb..9d5f589f02ae 100644
-> --- a/tools/perf/util/mmap.h
-> +++ b/tools/perf/util/mmap.h
-> @@ -40,7 +40,7 @@ struct mmap {
->  		int		 nr_cblocks;
->  	} aio;
->  #endif
-> -	cpu_set_t	affinity_mask;
-> +	struct mmap_cpu_mask	affinity_mask;
->  	void		*data;
->  	int		comp_level;
->  };
-> -- 
-> 2.20.1
-> 
-
+A new symbol should be added in a patch that adds a new user which is
+not the case here.
 -- 
-
-- Arnaldo
+Michal Hocko
+SUSE Labs
