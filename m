@@ -2,87 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F713112C2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 14:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF948112C15
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 13:53:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfLDNAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 08:00:09 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:56672 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbfLDNAJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:00:09 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 8E02E1C246E; Wed,  4 Dec 2019 14:00:07 +0100 (CET)
-Date:   Wed, 4 Dec 2019 14:00:07 +0100
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 073/321] bus: ti-sysc: Check for no-reset and
- no-idle flags at the child level
-Message-ID: <20191204130007.GB25176@duo.ucw.cz>
-References: <20191203223427.103571230@linuxfoundation.org>
- <20191203223430.961774111@linuxfoundation.org>
+        id S1727852AbfLDMw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 07:52:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7633 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726215AbfLDMw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 07:52:58 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1DE918E8D495979774EA;
+        Wed,  4 Dec 2019 20:52:56 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 4 Dec 2019
+ 20:52:46 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
+        <zhengbin13@huawei.com>
+Subject: [PATCH] clk: remove set but not used variable 'fref'
+Date:   Wed, 4 Dec 2019 21:14:03 +0800
+Message-ID: <20191204131403.11526-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
-Content-Disposition: inline
-In-Reply-To: <20191203223430.961774111@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+drivers/clk/clk-bm1880.c: In function ‘bm1880_pll_rate_calc’:
+drivers/clk/clk-bm1880.c:477:13: warning: variable ‘fref’ set but not
+used [-Wunused-but-set-variable]
 
---St7VIuEGZ6dlpu13
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is never used, so can be removed.
 
-On Tue 2019-12-03 23:32:19, Greg Kroah-Hartman wrote:
-> From: Tony Lindgren <tony@atomide.com>
->=20
-> [ Upstream commit 4014c08ba39476a18af546186da625a6833a1529 ]
->=20
-> With ti-sysc, we need to now have the device tree properties for
-> ti,no-reset-on-init and ti,no-idle-on-init at the module level instead
-> of the child device level.
->=20
-> Let's check for these properties at the child device level to enable
-> quirks, and warn about moving the properties to the module level.
->=20
-> Otherwise am335x-evm based boards tagging gpio1 with ti,no-reset-on-init
-> will have their DDR power disabled if wired up in such a tricky way.
->=20
-> Note that this should not be an issue for earlier kernels as we don't
-> rely on this until the dts files have been updated to probe with ti-sysc
-> interconnect target driver.
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ drivers/clk/clk-bm1880.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-This is queued for 4.19-stable, but the comment seems to say it is not
-needed in the older kernels.
+diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+index 4cd175afce9b..e6d6599d310a 100644
+--- a/drivers/clk/clk-bm1880.c
++++ b/drivers/clk/clk-bm1880.c
+@@ -474,11 +474,10 @@ static struct bm1880_composite_clock bm1880_composite_clks[] = {
+ static unsigned long bm1880_pll_rate_calc(u32 regval, unsigned long parent_rate)
+ {
+ 	u64 numerator;
+-	u32 fbdiv, fref, refdiv;
++	u32 fbdiv, refdiv;
+ 	u32 postdiv1, postdiv2, denominator;
+ 
+ 	fbdiv = (regval >> 16) & 0xfff;
+-	fref = parent_rate;
+ 	refdiv = regval & 0x1f;
+ 	postdiv1 = (regval >> 8) & 0x7;
+ 	postdiv2 = (regval >> 12) & 0x7;
+-- 
+2.17.2
 
-Tony, do we want this in 4.19?
-
-Best regards,
-							Pavel
-						=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---St7VIuEGZ6dlpu13
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXeet1wAKCRAw5/Bqldv6
-8ukEAKCxbTfOmsBX9h7gTCQD+NhQM6N2SwCePPnbgcNyJZVhJvwwHX7aARNci/w=
-=VUBL
------END PGP SIGNATURE-----
-
---St7VIuEGZ6dlpu13--
