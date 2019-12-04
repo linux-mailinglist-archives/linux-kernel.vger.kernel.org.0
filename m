@@ -2,107 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429C71121C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 04:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FBE1121C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Dec 2019 04:11:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfLDDKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Dec 2019 22:10:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36607 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfLDDKQ (ORCPT
+        id S1727024AbfLDDLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Dec 2019 22:11:15 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:40734 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbfLDDLP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Dec 2019 22:10:16 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b19so2868376pfd.3;
-        Tue, 03 Dec 2019 19:10:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yiyDDHELLu91Yg2Toujn+sD7fMeLzTV+cltZc+zA9ok=;
-        b=SgPTXfpx0nRKHkWNSTnPfkqt1Fe1WuYLfr7WaWvijqmGsmRMtpgYhZiKRNgy0Hn1Gk
-         FQa/Wx0lCd+jkf0YkIrTxpAzzIR2EqpFU5yyAen4IuNsDtPF8uMxKG8rgdXJhKZNF9ut
-         MMW1QnmvSmoANhn/j+iCewDFoyHFHp8lNSWbPXy6BkLaydzBKx4eg+aKwHQOacKrMtBN
-         FRig1GHyhem4ReVJOQ6E9LhmCVc2Fix0PDjuaaq3JgeeWbVjNcr/t8Cc2K+Bfynme90F
-         QfaHitLStq8ykhrzw1XE0cmXg4Eb++qXaPsXiKvg8dnfdNIMtGLSUOmup7BLJMF+Yh5p
-         9vuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yiyDDHELLu91Yg2Toujn+sD7fMeLzTV+cltZc+zA9ok=;
-        b=njkokoFItxH4BuEChU/hz+qiqSAXzHlCMwd6M4dhJ0t/zFYzePUg5bTT+zBDuHfa4O
-         h0fdldxRJUzJ402DOHDb39eUfiEAQw3mFWVMg1vwncbC5nSHVYmwAzz4dyFsQv4FOCfT
-         O0QN3cTzyioroxFqH0f0iGrwti6THqwI0Cv9bpxQu+9pCdwsCFy/6xp38oeiXdBnV6qW
-         ip9yrfzNZI6THHEZODiAO2RKUfp3kZJwYSqCA4BSwF+tpKIxTJmmE4NOd9fuGcoJhhc+
-         T2x01vsFdtbVpV6FkFsGMhy8IULzAkLIHFE0Og6Zsw+wFf4gaIAn/M9ZCdW33x1WZiel
-         ZM7Q==
-X-Gm-Message-State: APjAAAWtTzn5eSkLhfC6JPIqhMsEjBGK7KaVPvgjGGn9bCDdnrhefhWb
-        PJlbnmreuIWeNbY955Jafjs=
-X-Google-Smtp-Source: APXvYqxeIQRBA0Yrk5XUXzy4fTVh5A8rdb4VMC9xb46PwQWepX1G479M+lHNy330e96tMuCMNr4NKw==
-X-Received: by 2002:aa7:8a8b:: with SMTP id a11mr1306022pfc.207.1575429015536;
-        Tue, 03 Dec 2019 19:10:15 -0800 (PST)
-Received: from MacBook-Pro.jd.com ([111.200.23.19])
-        by smtp.googlemail.com with ESMTPSA id 20sm4747289pgw.71.2019.12.03.19.10.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Dec 2019 19:10:15 -0800 (PST)
-From:   Yanhu Cao <gmayyyha@gmail.com>
-To:     jlayton@kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
-Subject: [PATCH] ceph: check set quota operation support before syncing setxattr.
-Date:   Wed,  4 Dec 2019 11:10:05 +0800
-Message-Id: <20191204031005.2638-1-gmayyyha@gmail.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
+        Tue, 3 Dec 2019 22:11:15 -0500
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xB43B2G7013793;
+        Wed, 4 Dec 2019 12:11:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xB43B2G7013793
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1575429063;
+        bh=OD6ZQkAKcfx+YiJQA3rzeNZXiVaoJsqUibyp2cAgwHE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=C+PE5c2J+nN44agT+fzZT75ONd0sul+LPjjMDpeeX0NcLRCfP6hz9jzRex3LIstfC
+         U9s+/qKyl/ZMlFKKJ08AMW+Nkz7+Uj64yVdW3gDh277EEMOoO3I8LZABSXGVvEmzNv
+         8NRj8ArRE3O5YUlSaxQExMxTTv2G04jqLExZeqOVOEfb/W53wQYGoms2UxXu7GREzY
+         lUw45WDDgXGy7ljI1Fc4mYM+NVdE2oGZjWRfYCAsm9KNWMl6FXijV1rfpTxtQdM8IL
+         5mTwryE2B+SBfUHc5x3mgtE2v8bWIei7LHqT8dn+eWpG4elhJIm/rjTXub0xoffRa4
+         HBF8wW1gMX1Cw==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id g23so3880832vsr.7;
+        Tue, 03 Dec 2019 19:11:02 -0800 (PST)
+X-Gm-Message-State: APjAAAUWaQnCnBAtgDb8uQnlWo7P7XjVDIPugSO7zNIZ0CKBJmUnko5j
+        wa7Y8aVMU2boQQMNu9cx0NEhdlvgOkw3SCETXE8=
+X-Google-Smtp-Source: APXvYqw+AlfTjSelh5hDgmM9BpC8X+GbvHpy0XY4uyDgJW384KMB/Sc0nnEaybp/Ufha0RQ2lmfcMqDlvlGLzq+hqv4=
+X-Received: by 2002:a67:30c3:: with SMTP id w186mr328431vsw.179.1575429061823;
+ Tue, 03 Dec 2019 19:11:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191203094845.610692-1-unixbhaskar@gmail.com>
+In-Reply-To: <20191203094845.610692-1-unixbhaskar@gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 4 Dec 2019 12:10:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASyrYv+pufwe4CfiNvd7NtriLw=FRdLOtu7CrbmZDSVHg@mail.gmail.com>
+Message-ID: <CAK7LNASyrYv+pufwe4CfiNvd7NtriLw=FRdLOtu7CrbmZDSVHg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Enlist running kernel modules information
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Environment
------------
-ceph version: 12.2.*
-kernel version: 4.19+
+On Tue, Dec 3, 2019 at 6:49 PM Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
+>
+> This is new file to show running kernel modules list.One line bash
+> script.
+>
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> ---
+>  scripts/kernel_modules_info.sh | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100755 scripts/kernel_modules_info.sh
+>
+> diff --git a/scripts/kernel_modules_info.sh b/scripts/kernel_modules_info.sh
+> new file mode 100755
+> index 000000000000..f005c47a3aa6
+> --- /dev/null
+> +++ b/scripts/kernel_modules_info.sh
+> @@ -0,0 +1,23 @@
+> +#!/bin/bash -
+> +#SPDX-License-Identifier: GPL-2.0
+> +#===============================================================================
+> +#
+> +#          FILE: kernel_modules_info.sh
+> +#
+> +#         USAGE: ./kernel_modules_info.sh
+> +#
+> +#   DESCRIPTION:  Running kernel modules information.
+> +#
+> +#       OPTIONS: ---
+> +#  REQUIREMENTS: awk
+> +#          BUGS: ---
+> +#         NOTES: ---
+> +#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+> +#  ORGANIZATION: Independent
+> +#       CREATED: 12/03/2019 13:52
+> +#      REVISION:  ---
+> +#===============================================================================
+> +
+> +set -o nounset                              # Treat unset variables as an error
+> +
+> +awk '{print $1}' "/proc/modules" | xargs modinfo | awk '/^(filename|desc|depends)/'
 
-setfattr quota operation actually sends op to MDS, and settings
-effective. but kclient outputs 'Operation not supported'. This may confuse
-users' understandings.
 
-If the kernel version and ceph version are not compatible, should check
-quota operations are supported first, then do sync_setxattr.
 
-reference: https://docs.ceph.com/docs/master/cephfs/quota/
+I want to see a good reason (e.g. useful for other developers) for upstreaming.
+This script looks like your custom script, which you can maintain locally.
 
-Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
----
- fs/ceph/xattr.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index cb18ee637cb7..189aace75186 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
- 				    "during filling trace\n", inode);
- 		err = -EBUSY;
- 	} else {
--		err = ceph_sync_setxattr(inode, name, value, size, flags);
--		if (err >= 0 && check_realm) {
-+		err = 0;
-+		if (check_realm) {
- 			/* check if snaprealm was created for quota inode */
- 			spin_lock(&ci->i_ceph_lock);
- 			if ((ci->i_max_files || ci->i_max_bytes) &&
-@@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
- 				err = -EOPNOTSUPP;
- 			spin_unlock(&ci->i_ceph_lock);
- 		}
-+		if (err == 0)
-+			err = ceph_sync_setxattr(inode, name, value, size, flags);
- 	}
- out:
- 	ceph_free_cap_flush(prealloc_cf);
+
 -- 
-2.21.0 (Apple Git-122.2)
-
+Best Regards
+Masahiro Yamada
