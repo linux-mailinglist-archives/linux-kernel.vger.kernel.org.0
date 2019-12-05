@@ -2,247 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 633B61138E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 01:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CC91138D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 01:32:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbfLEAgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 19:36:41 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:41795 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbfLEAgk (ORCPT
+        id S1728481AbfLEAcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 19:32:02 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:36605 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbfLEAcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 19:36:40 -0500
-Received: by mail-pj1-f67.google.com with SMTP id ca19so515308pjb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 16:36:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=v9E5rlSkQJQrSqIO0YcWMYwFioVqcs/hD8v34GkQHRU=;
-        b=H6FPhFB96uqLT7ljNNjqB3p4lAgPxhM/m/mQpQqMFvV4f0EZW+BVyDPGQ0o1AavKBD
-         szUdzCxFGY9pyStlH1eTP7iS12JnCDGS2xkQN1t0kgKfCYez2XOYiJohT3jV+9wAwN/s
-         /RzpsEoBU3RidFffc9s6pH3CKGiLwqooAapEVz+/GjB1WNa81i5sifAEzlnaa1nCpkwS
-         uvHV1CdHbGjDMRBmbgapEtAZ8wgcU0Cg/4qTVF0OW/xCbKhOa2E7/KYwKoGUCNs7cWej
-         /P10YyBVu9VSVepgGe/AOANUOYW49r7KEi40gMnOexA308huChpOOCbDcT0tpk9C5diE
-         8WBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=v9E5rlSkQJQrSqIO0YcWMYwFioVqcs/hD8v34GkQHRU=;
-        b=uG93LdXnf+75TgDkAhoYk2TPtURyRSpE7E+0Vrml2vGfgbib6ZLoK9ykeUCCYRJ36f
-         Hz/LiD7ECjgNPlsR0eBRvi+jlZap+2+rGxjRqOLLIsuAUm3Eg4dt4e+c2Gvs3pWlcFnh
-         X10rVOlx/h56SEOfN90J0pK8RrFLiXAfG7ZKpY+4FmxvqA1iqkHy2WgZyT/cPI+hsc8O
-         BEEuBCXXHauhqgIe1NZpP6T/3hpZGqd+5c+9VhRtQ1N8x71+iIVxaD0AG1raCBo+N+Eg
-         C8s4k7EMlVzTXiAoaNnKe1PQge2mKLK8crkN3h1Vm2cKzVA54yVeXPTsBdqg4nvX1tRs
-         Lwgw==
-X-Gm-Message-State: APjAAAU69x6XrvauLXw3VtXlRo3Lrx/Hs79HeWonVHzmO762TP70v82t
-        mQSZFG1A6g3iIY/8+PAi+5hsfKfcusXesg==
-X-Google-Smtp-Source: APXvYqxe8uQ05ZDEjkaV79c/Q46eo2bQVYhf9xsRWl8ToZUfVmwP0I3hIfhaNxnbz8BOa0oE5wZMCA==
-X-Received: by 2002:a17:902:8507:: with SMTP id bj7mr6005857plb.69.1575506198773;
-        Wed, 04 Dec 2019 16:36:38 -0800 (PST)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id j16sm8905983pfi.165.2019.12.04.16.36.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Dec 2019 16:36:37 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <13F44A87-CAAE-4090-B26C-73EC2AF56765@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_D0697059-1FC1-40CA-9626-39043366B48C";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC] Thing 1: Shardmap fox Ext4
-Date:   Wed, 4 Dec 2019 17:36:32 -0700
-In-Reply-To: <f385445b-4941-cc48-e05d-51480a01f4aa@phunq.net>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Daniel Phillips <daniel@phunq.net>
-References: <176a1773-f5ea-e686-ec7b-5f0a46c6f731@phunq.net>
- <20191127142508.GB5143@mit.edu>
- <c3636a43-6ae9-25d4-9483-34770b6929d0@phunq.net>
- <20191128022817.GE22921@mit.edu>
- <3b5f28e5-2b88-47bb-1b32-5c2fed989f0b@phunq.net>
- <20191130175046.GA6655@mit.edu>
- <76ddbdba-55ba-3426-2e29-0fa17db9b6d8@phunq.net>
- <23F33101-065E-445A-AE5C-D05E35E2B78B@dilger.ca>
- <f385445b-4941-cc48-e05d-51480a01f4aa@phunq.net>
-X-Mailer: Apple Mail (2.3273)
+        Wed, 4 Dec 2019 19:32:02 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191205003159epoutp0135702f9a547fa7c5a8bbb9d4af433ffc~dUklfuPir2529625296epoutp017
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2019 00:31:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191205003159epoutp0135702f9a547fa7c5a8bbb9d4af433ffc~dUklfuPir2529625296epoutp017
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575505919;
+        bh=KuYsxdaQllsL9jhgWWVnCcPlMyTS/bIlDftBqHVglWs=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ikpHJVRuWMpT409usVgz2PRNDLml3qUNVlqxOyleDIGOSYSqMgkxS8AX49YuPQUvf
+         HnJ+WSLckK3WUR/idd1buA83ZG8fHTYvy/VoAh2WfDXWQK9dBOW4WOZWSrD7oQ8umh
+         5bH+vQmUMEQr8jguXyjWiGkM81DIGsxTuyxhwa2Q=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191205003159epcas1p4988e06bb4aead83ec44708133b7415a9~dUkk_HBtY1456714567epcas1p4P;
+        Thu,  5 Dec 2019 00:31:59 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47SxVg686PzMqYkt; Thu,  5 Dec
+        2019 00:31:55 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        80.0D.52419.7FF48ED5; Thu,  5 Dec 2019 09:31:51 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191205003150epcas1p3112cde988243614d4855e100c50186a1~dUkdO3G752048420484epcas1p3-;
+        Thu,  5 Dec 2019 00:31:50 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191205003150epsmtrp11e03eb412a077b4265707a217afc5154~dUkdOKKf02217722177epsmtrp1k;
+        Thu,  5 Dec 2019 00:31:50 +0000 (GMT)
+X-AuditID: b6c32a37-59fff7000001ccc3-26-5de84ff71110
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.89.06569.6FF48ED5; Thu,  5 Dec 2019 09:31:50 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191205003150epsmtip214118351c0f5ff116bb935ac06a3e1bd~dUkdA8MPc2333323333epsmtip2b;
+        Thu,  5 Dec 2019 00:31:50 +0000 (GMT)
+Subject: Re: [PATCH v2 2/3] devfreq: add clearing transitions stats
+To:     Kamil Konieczny <k.konieczny@samsung.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <e707f735-49d0-44dc-a7c3-586ee6563cbe@samsung.com>
+Date:   Thu, 5 Dec 2019 09:38:05 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
+MIME-Version: 1.0
+In-Reply-To: <20191204150018.5234-3-k.konieczny@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+Xa2s2O4/FqZbyNqnfyjDHOnuTyZSlSYXSjBqBCGnfSwibux
+        sw0rqiVhZtmdsmEqlZTrPsTsutBBGSwNu1+oKCtjtdAyK6i2HSP/+/F8z8Pzve/3UYSygVRR
+        pRYHb7dwJpocJW3tmK5J/b7ig15zrlfNXqw9L2Mb+2tlbFfXBTkbrAjJ2Z4rdSQ7UBNA7NnA
+        Czn7bOspch6V5/PuIPN2t3hR3oBvUj5RWJZl5LkS3q7mLcXWklKLIZteWlC0oEg3W8OkMnPY
+        DFpt4cx8Nr1wWX5qbqkpcgNa7eJMzoiUzwkCnZaTZbc6HbzaaBUc2TRvKzHZ5thmCpxZcFoM
+        M4ut5kxGo5mlixjXlhlvNG+X2nxJ5R2dftKNGpTVKI4CnA6NP/dLqtEoSonbEBwKnkHRAyXu
+        R3AnXCjyIILWd5v+BX42uWVi4DqCJwcaCNEURvD+5pooj8ULoH5bbUwfh1Mh1NZERAMErpdA
+        6FC3LHpA4hTwf3hMRjkBT4EHQ29izQqcA96dQzFdipNh8OFJaZQT8SrobN027BkDnUfexvQ4
+        nAXdj8IxP4GT4OnbBonIk+HSp7pYMeAwCQ9fPybEERbCH2+fVOSx8PFWi1xkFfTtqRzmjdDc
+        GSDFcBWCFr94a8Ba8DcdiDRQkYbpcP5KmihPgcu/jiKxeDR8/rZLFrUAVkBV5fCqp0LPqxcS
+        kSfA8e07yL2I9owYxzNiBM+IETz/yxqR1IvG8zbBbOAFxqYd+dg+FPucKRlt6MLdZe0IU4iO
+        V7h97/VKGecS1pvbEVAEPU7RCr16paKEW7+Bt1uL7E4TL7QjXWTb+whVYrE18tUtjiJGN0ur
+        1bLpzGwdw9BJCmronl6JDZyDL+N5G2//l5NQcSo3ip+4ZeB0Ql2OMT43JS/dE9KXb7g643do
+        an2g2bm/yrXka7DCfO17QuazRYeHXgoFNc8d/rTKuuV7K+yu4Mrd/YN/fp+4urj2QbA3OTMn
+        I95Uo1pp6E9ew5TfGD2/7b7QJL9d0Nu32jVt87owW1g9ce7t+Qc/zj3WE3Dfsnl/fHmdu5iW
+        CkaOSSHsAvcXboSf0bIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJXveb/4tYg7eX9Sw2zljParHg0wxW
+        i/PnN7BbnG16w25xedccNovPvUcYLdYeuctucbtxBZsDh8emVZ1sHn1bVjF6fN4kF8AcxWWT
+        kpqTWZZapG+XwJWxb2U7S8Em8YrDJ/ezNTDOF+pi5OSQEDCR+LW0gbWLkYtDSGA3o8TRtR8Y
+        IRKSEtMuHmXuYuQAsoUlDh8uhqh5yyhx7OEKsBphAWeJeS0zmEFsEQFdiTc7ljKDFDELLGCS
+        mH9zIgtEx0FGiQmfXrCCVLEJaEnsf3GDDcTmF1CUuPrjMdgkXgE7iVXdP8DiLAIqEt+uLWcB
+        sUUFwiR2LnnMBFEjKHFy5hOwOKeAjcSF6+/B6pkF1CX+zLvEDGGLS9x6Mp8JwpaX2P52DvME
+        RuFZSNpnIWmZhaRlFpKWBYwsqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxguNIS2sH
+        44kT8YcYBTgYlXh4b2x5HivEmlhWXJl7iFGCg1lJhHebxNNYId6UxMqq1KL8+KLSnNTiQ4zS
+        HCxK4rzy+ccihQTSE0tSs1NTC1KLYLJMHJxSDYyW15PmyRRfULTxj37gl/HsxFE9tq3mi8yZ
+        o79GXvh4fVLKDw2+yRLyr0Ws33E/bXh6Tl4mPPL9151fONdyXGyq/cZlXZRs8qTn3pR9dvv8
+        20PuO0sElj/I49u7ye9po7uuygZZv6qopiKzLyURGwNqS96G152fvCWi8HH8tF8+IhwSXE9P
+        LVViKc5INNRiLipOBADKNiinnwIAAA==
+X-CMS-MailID: 20191205003150epcas1p3112cde988243614d4855e100c50186a1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191204150033eucas1p164374e7f15cb9a74b7432ca1a822dc10
+References: <20191204150018.5234-1-k.konieczny@samsung.com>
+        <CGME20191204150033eucas1p164374e7f15cb9a74b7432ca1a822dc10@eucas1p1.samsung.com>
+        <20191204150018.5234-3-k.konieczny@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/5/19 12:00 AM, Kamil Konieczny wrote:
+> Add clearing transition table and time in states devfreq statistics
+> by writing to trans_stat file in devfreq sysfs.
 
---Apple-Mail=_D0697059-1FC1-40CA-9626-39043366B48C
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Have to add command example how to reset the trans_stat via sysfs
+on patch description.
 
-On Dec 4, 2019, at 2:44 PM, Daniel Phillips <daniel@phunq.net> wrote:
->=20
-> On 2019-12-04 10:31 a.m., Andreas Dilger wrote:
->> One important use case that we have for Lustre that is not yet in the
->> upstream ext4[*] is the ability to do parallel directory operations.
->> This means we can create, lookup, and/or unlink entries in the same
->> directory concurrently, to increase parallelism for large =
-directories.
->=20
-> This is a requirement for an upcoming transactional version of user =
-space
-> Shardmap. In the database world they call it "row locking". I am =
-working
-> on a hash based scheme with single record granularity that maps onto =
-the
-> existing shard buckets, which should be nice and efficient, maybe a =
-bit
-> tricky with respect to rehash but looks not too bad.
->=20
-> Per-shard rw locks are a simpler alternative, but might get a bit =
-fiddly
-> if you need to lock multiple entries in the same directory at the same
-> time, which is required for mv is it not?
+And, have to add how to do it on documentation file as following:
+On next version, please contain the following modification with this patch.
 
-We currently have a "big filesystem lock" (BFL) for rename(), as rename
-is not an operation many people care about the performance.  We've
-discussed a number of times to optimize this for the common cases of
-rename a regular file within a single directory and rename a regular
-file between directories, but no plans at all to optimize rename of
-directories between parents.
-
->> This is implemented by progressively locking the htree root and index
->> blocks (typically read-only), then leaf blocks (read-only for lookup,
->> read-write for insert/delete).  This provides improved parallelism
->> as the directory grows in size.
->=20
-> This will be much easier and more efficient with Shardmap because =
-there
-> are only three levels: top level shard array; shard hash bucket; =
-record
-> block. Locking applies only to cache, so no need to worry about =
-possible
-> upper tier during incremental "reshard".
->=20
-> I think Shardmap will also split more cleanly across metadata nodes =
-than
-> HTree.
-
-We don't really split "htree" across metadata nodes, that is handled by
-Lustre at a higher level than the underlying filesystem.  Hash filename
-with per-directory hash type, modulo number of directory shards to find
-index within that directory, then map index to a directory shard on a
-particular server.  The backing filesystem directories are normal from
-the POV of the local filesystem.
-
->> Will there be some similar ability in Shardmap to have parallel ops?
->=20
-> This work is already in progress for user space Shardmap. If there is
-> also a kernel use case then we can just go forward assuming that this
-> work or some variation of it applies to both.
->=20
-> We need VFS changes to exploit parallel dirops in general, I think,
-> confirmed by your comment below. Seems like a good bit of work for
-> somebody. I bet the benchmarks will show well, suitable grist for a
-> master's thesis I would think.
->=20
-> Fine-grained directory locking may have a small enough footprint in
-> the Shardmap kernel port that there is no strong argument for getting
-> rid of it, just because VFS doesn't support it yet. Really, this has
-> the smell of a VFS flaw (interested in Al's comments...)
-
-I think that the VFS could get 95% of the benefit for 10% of the effort
-would be by allowing only rename of regular files within a directory
-with only a per-directory mutex.  The only workload that I know which
-does a lot of rename is rsync, or parallel versions of it, that create
-temporary files during data transfer, then rename the file over the
-target atomically after the data is sync'd to disk.
-
->> Also, does Shardmap have the ability to shrink as entries are =
-removed?
->=20
-> No shrink so far. What would you suggest? Keeping in mind that =
-POSIX+NFS
-> semantics mean that we cannot in general defrag on the fly. I planned =
-to
-> just hole_punch blocks that happen to become completely empty.
->=20
-> This aspect has so far not gotten attention because, historically, we
-> just never shrink a directory except via fsck/tools. What would you
-> like to see here? Maybe an ioctl to invoke directory defrag? A mode
-> bit to indicate we don't care about persistent telldir cookies?
-
-There are a few patches floating around to shrink ext4 directories which
-I'd like to see landed at some point.  The current code is sub-optimal,
-in that it only tries to shrink "easy" blocks from the end of directory,
-but hopefully there can be more aggressive shrinking in later patches.
-
-> How about automatic defrag that only runs when directory open count is
-> zero, plus a flag to disable?
-
-As long as the shrinking doesn't break POSIX readdir ordering semantics.
-I'm obviously not savvy on the Shardmap details, but I'd think that the
-shards need to be garbage collected/packed periodically since they are
-log structured (write at end, tombstones for unlinks), so that would be
-an opportunity to shrink the shards?
-
->> [*] we've tried to submit the pdirops patch a couple of times, but =
-the
->> main blocker is that the VFS has a single directory mutex and =
-couldn't
->> use the added functionality without significant VFS changes.
->=20
-> How significant would it be, really nasty or just somewhat nasty? I =
-bet
-> the resulting efficiencies would show up in some general use cases.
-
-As stated above, I think the common case could be implemented relatively
-easily (rename within a directory), then maybe rename files across
-directories, and maybe never rename subdirectories across directories.
-
->> Patch at =
-https://git.whamcloud.com/?p=3Dfs/lustre-release.git;f=3Dldiskfs/kernel_pa=
-tches/patches/rhel8/ext4-pdirop.patch;hb=3DHEAD
->=20
-> This URL gives me =
-git://git.whamcloud.com/fs/lustre-release.git/summary,
-> am I missing something?
-
-Just walk down the tree for the "f=3Dldiskfs/..." pathname...
+diff --git a/Documentation/ABI/testing/sysfs-class-devfreq b/Documentation/ABI/testing/sysfs-class-devfreq
+index 75897e2fde43..c172ff838643 100644
+--- a/Documentation/ABI/testing/sysfs-class-devfreq
++++ b/Documentation/ABI/testing/sysfs-class-devfreq
+@@ -60,7 +60,10 @@ Description:
+                the number of transitions between states.
+                In order to activate this ABI, the devfreq target device
+                driver should provide the list of available frequencies
+-               with its profile.
++               with its profile. If need to reset the statistics of devfreq
++               behavior on a specific device, enter 0(zero) to 'trans_stat'
++               as following:
++                       echo 0 > /sys/class/devfreq/.../trans_stat
+ 
+ What:          /sys/class/devfreq/.../userspace/set_freq
+ Date:          September 2011
 
 
-Cheers, Andreas
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
+> ---
+> Changes in v2:
+>  instead of creating new sysfs file, add new functionality to trans_stat
+>  and clear stats when anything is writen to it
+> 
+>  drivers/devfreq/devfreq.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 0e2030403e4a..901af3b66a76 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -1478,7 +1478,27 @@ static ssize_t trans_stat_show(struct device *dev,
+>  					devfreq->total_trans);
+>  	return len;
+>  }
+> -static DEVICE_ATTR_RO(trans_stat);
+> +
+> +static ssize_t trans_stat_store(struct device *dev,
+> +				struct device_attribute *attr,
+> +				const char *buf, size_t count)
+> +{
+> +	struct devfreq *df = to_devfreq(dev);
+> +	unsigned int cnt = df->profile->max_state;
+> +
+
+Why don't you check the input value is whether value is 0(zero) or not?
+If user enter the any value to 'trans_stat', devfreq core
+reset the statistics data. I want to decide the fixed value
+for the reset as following:
+
+	echo 0 > /sys/class/devfreq/devfreqX/trans_stat
+
+> +	if (cnt == 0)
+> +		return count;
+> +
+> +	mutex_lock(&df->lock);
+> +	memset(df->time_in_state, 0, cnt * sizeof(u64));
+> +	memset(df->trans_table, 0, cnt * cnt * sizeof(int));
+> +	df->last_stat_updated = get_jiffies_64();
+> +	df->total_trans = 0;
+> +	mutex_unlock(&df->lock);
+> +
+> +	return count;
+> +}
+> +static DEVICE_ATTR_RW(trans_stat);
+>  
+>  static struct attribute *devfreq_attrs[] = {
+>  	&dev_attr_name.attr,
+> 
 
 
-
-
-
-
---Apple-Mail=_D0697059-1FC1-40CA-9626-39043366B48C
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl3oURAACgkQcqXauRfM
-H+BGjA//aKtPVyYUXuoYzd2v6YYF5Qa9HLnQMbdiCMTzHWE1sKsfZ1cydSR6v4Bt
-MXMmnLHmHHoQsKkQ4TztCik13YmekmSHFnj+THNWKqYhcyq2AuPyftpbWXWZjuWB
-HgxzMC0Mmz0gXlK7UPwd1DDCLBn8sasp5eeBl3esWmHq88qcmXss8YuR40nLeKkC
-X4wycj7A/uGH8L5++jSmqBCcR6mHbM8f+vp0llpP9mr1U5tjvki/0Rk/1ngTRRLM
-DiAfcwBLtmi7Tqzi8Q9Nw97CwZCrGl/Q9zqPlTxdPQ4il/aT45UD2KlA6x5q1kY/
-gyIUUojXIc4eIDOE5oNmVDsEBZMncI/psS9l0Z7NCMbGSA91ylCMgH5bvzvJjBHH
-tULJbRAAKOSVJZ8EHnx5KBnLhInz026ELoZn8zjaWUg+0c6fEIi9Y3Z5SvkZnvOJ
-43j/SOIRSdaFKywHuTxvVI4llt4j8VszXRGmDM1tlswdYJB23aSRboJ8MFcA7blP
-c8bLKsgzsdCtBkLYKTl6sxnBxeksq5/7AEWqqLgvliYwr+Zi5CLDOLKTPcD7X7sQ
-++7yW/ahZJtgDeuUShlffU5PpZGqiLharxdpFlzGD8RjOvb9piWq8QW/PLzlhZ31
-8/MyNWQ8Zv7+l0RzS9VcvoVk/R8vtJtZKL+T9tF7kD6aU/PSKJY=
-=Kq/v
------END PGP SIGNATURE-----
-
---Apple-Mail=_D0697059-1FC1-40CA-9626-39043366B48C--
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
