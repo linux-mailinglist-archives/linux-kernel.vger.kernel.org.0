@@ -2,208 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22B9B113B0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1978113B15
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726007AbfLEFM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 00:12:27 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:52283 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725283AbfLEFM0 (ORCPT
+        id S1726082AbfLEFPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 00:15:08 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41572 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfLEFPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 00:12:26 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 38BB51139;
-        Thu,  5 Dec 2019 00:12:25 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 05 Dec 2019 00:12:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=OcGOcjgbjDbXhRFRmTxXVWekMCp8pr9
-        sY/eGCy50+pc=; b=IGgGGX6nygzYeMRAuPtYZw3fiM0jvZb9PtW2O25Fg0pmjgn
-        UVQC50cgtaBSI6cLxgZ3A+TbwgAd02qhI5z9bLJLsfAUipsJx6TChIwebpF9UUab
-        cJJZ+oWYn5bkgosbpuoupFO5JqycFjcK2IewpP07vYnu6uF9nrwvVXYv0l/fkJcF
-        skfECRNxr15xRbLyrpnJl9tzeg+vUrhA2NjV1VK3z7s7SrFmd4A5T2bsC4PKGe3+
-        YsIA9Vp4cMhPdFZ3O82yrr27GoP35csRuMxY4wpcyfMbvta6Za1e5LABYpJXOyp7
-        B9xfz3qQqd/sz/kj26hUot9xtgh76Mb0QphLfyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=OcGOcj
-        gbjDbXhRFRmTxXVWekMCp8pr9sY/eGCy50+pc=; b=VME74QkLeVUgjLL9EdP3nx
-        jdqmJ4I7jplAb8AZesVe4aXcvuy6a3pKBHXLd1u98LA39Io4PVTbDNhFInPvlNFN
-        DAQ7tvSiS7BfG3YJlc2GLbvTtYAykQGbN57Neznky3DeDImYdQ8fnHrn9CYI4nwq
-        qt/8BCJtutVQ7sO5ERTAB6IjhtvU+Q+cFrg43QeR5BKC0EPfBLxYUYK+FQYGuMS5
-        Mfs1ev+/SUnfd+Mp2A4pVOVt1gOCyfflw/79wIEU8p6YI3ZnJofqt9bUR9jrrZ4n
-        vm/CvPurJeo1yyLcUpjnEG8kj11zxDeSnRNhqYu81KIV6v9Rqncbmr/3SToREmuw
-        ==
-X-ME-Sender: <xms:tpHoXfXjBfrqitweBu_-Tfd0tpSNTD4h1miiFV-cuezKlF39kZE4OQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudektddgjeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:tpHoXSHV5wVpzIItG4V38koyhb_ASsPS4z9k_qsNJdKgxI1gm7ovQA>
-    <xmx:tpHoXYUCwyuGwkEtBOqooG_cUGip6TrD3Xydw6XW5ZGQK5DmIu0aNQ>
-    <xmx:tpHoXdBXVJqyMAvZ45t7UFh-lrsgR2Eb89qrk2hHZ-bY4Y2i2Bq6Iw>
-    <xmx:uZHoXbComF-gtYvPAgGU0gUiRS5vnTGEAE-EbbQ6OY-x9yzhM1x0Pg>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 740ECE00A2; Thu,  5 Dec 2019 00:12:22 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-612-g13027cc-fmstable-20191203v1
-Mime-Version: 1.0
-Message-Id: <40d554c0-de62-4d45-bbcc-dd3a3aa12a65@www.fastmail.com>
-In-Reply-To: <CAL_Jsq+3qXJbTu9G42g11PLJH-A0XeSQmJKj0obO32QFna3dEA@mail.gmail.com>
-References: <cover.5630f63168ad5cddf02e9796106f8e086c196907.1575376664.git-series.andrew@aj.id.au>
- <3da2492c244962c27b21aad87bfa6bf74f568f1d.1575376664.git-series.andrew@aj.id.au>
- <CAL_Jsq+3qXJbTu9G42g11PLJH-A0XeSQmJKj0obO32QFna3dEA@mail.gmail.com>
-Date:   Thu, 05 Dec 2019 15:43:39 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Rob Herring" <robh+dt@kernel.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        "Corey Minyard" <minyard@acm.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Joel Stanley" <joel@jms.id.au>, "Arnd Bergmann" <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?Re:_[PATCH_1/3]_dt-bindings:_ipmi:_aspeed:_Introduce_a_v2_bind?=
- =?UTF-8?Q?ing_for_KCS?=
-Content-Type: text/plain
+        Thu, 5 Dec 2019 00:15:07 -0500
+Received: by mail-pl1-f195.google.com with SMTP id bd4so726759plb.8;
+        Wed, 04 Dec 2019 21:15:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pik8NFF0x8ORqK3iKOBC400ObajkGGjl3DNLr2vNq4c=;
+        b=nEeRGPdPW5PapHVRJzENC8q5hvdUffDMRFkxC+R0sElMr2QEd41x1EaPJgwJ/OED6Q
+         nBkoyCAxkq2C4yoY/kazQmVVpOwkWZvd+BUgyGLw14B38/wnBoJnXo/PbHgYsfUtA5eB
+         ClF795YiSjEeuIt4EpQecdzz46VUK+ED063SDp1z157n7fchP5uwUAvm8GizqdlI2J8H
+         o9NmDi3e1FIcfnU33qTmXdfE3dpeDxg+Wu0RxNUECtpA/m4xMUN+v7HOuA3aqqlIKPRA
+         biD5m6py4LRD2KXezk+vrJnAyFjTGn0gbYsz7F26i4oJ7w45FnPebP+C2hRcYTYJtY+I
+         CseQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=pik8NFF0x8ORqK3iKOBC400ObajkGGjl3DNLr2vNq4c=;
+        b=AcNiR0MGLnFdqHvQhMd3QiEAXUoefwrHXL8OwqyGxy0Vd5sE/q0KKfpqupSptfO2kk
+         fmLVS0W6SpWWd74qJh19nSosxD+CHul4ug18VM3YooGrBFu6fBgKo4GlGsSTQQjMa3fH
+         nKaSMQkFBY77mtqeYjglVqYOSdtsHZIqP2PCR5vVZFfe7qEBVcbEGPYB8i9vh3iRv1rg
+         KUUOojxy8Jc5rw0qav2zf+WZpxruzY7WupbsICqA+Wb8lpZ4PwQe4GBnZe8h9/EHzN+t
+         pTL6IrJfRJze2LPXrYx5HdVRuHbVV+CiRYH8fK2GzUZzz5JoeT01eVo+CW2EQswEbBmm
+         dGhw==
+X-Gm-Message-State: APjAAAWThsA+xtw8047d3fBljIaoCmgjum0t5zUT6dRfowJqlQLnwjs0
+        JCpPstSoBQBVXN+/Ai/NeeI=
+X-Google-Smtp-Source: APXvYqz/wUb2Py7PwTNJK/QXkBECBF3gjxYytODhvYvH0JM58UJuv+9AKF5NAaNtXbnZPs8++iNqkw==
+X-Received: by 2002:a17:90b:244:: with SMTP id fz4mr7491746pjb.27.1575522907057;
+        Wed, 04 Dec 2019 21:15:07 -0800 (PST)
+Received: from Slackware ([103.231.91.38])
+        by smtp.gmail.com with ESMTPSA id b190sm10428210pfg.66.2019.12.04.21.15.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 21:15:06 -0800 (PST)
+Date:   Thu, 5 Dec 2019 10:44:54 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fix the SPDX syntax and bash interprester pointer
+Message-ID: <20191205051454.GB1795@Slackware>
+Mail-Followup-To: Bhaskar Chowdhury <unixbhaskar@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191203095339.615774-1-unixbhaskar@gmail.com>
+ <56303cd3-fcf8-49cd-f66a-4db7e382774c@infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5QAgd0e35j3NYeGe"
+Content-Disposition: inline
+In-Reply-To: <56303cd3-fcf8-49cd-f66a-4db7e382774c@infradead.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--5QAgd0e35j3NYeGe
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 4 Dec 2019, at 01:01, Rob Herring wrote:
-> On Tue, Dec 3, 2019 at 6:36 AM Andrew Jeffery <andrew@aj.id.au> wrote:
-> >
-> > The v2 binding utilises reg and renames some of the v1 properties.
-> >
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > ---
-> >  Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt | 20 +++++---
-> >  1 file changed, 14 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt b/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-> > index d98a9bf45d6c..76b180ebbde4 100644
-> > --- a/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-> > +++ b/Documentation/devicetree/bindings/ipmi/aspeed-kcs-bmc.txt
-> > @@ -1,9 +1,10 @@
-> > -* Aspeed KCS (Keyboard Controller Style) IPMI interface
-> > +# Aspeed KCS (Keyboard Controller Style) IPMI interface
-> >
-> >  The Aspeed SOCs (AST2400 and AST2500) are commonly used as BMCs
-> >  (Baseboard Management Controllers) and the KCS interface can be
-> >  used to perform in-band IPMI communication with their host.
-> >
-> > +## v1
-> >  Required properties:
-> >  - compatible : should be one of
-> >      "aspeed,ast2400-kcs-bmc"
-> > @@ -12,14 +13,21 @@ Required properties:
-> >  - kcs_chan : The LPC channel number in the controller
-> >  - kcs_addr : The host CPU IO map address
-> >
-> > +## v2
-> > +Required properties:
-> > +- compatible : should be one of
-> > +    "aspeed,ast2400-kcs-bmc-v2"
-> > +    "aspeed,ast2500-kcs-bmc-v2"
-> > +- reg : The address and size of the IDR, ODR and STR registers
-> > +- interrupts : interrupt generated by the controller
-> > +- slave-reg : The host CPU IO map address
-> 
-> aspeed,slave-reg
+On 19:36 Wed 04 Dec 2019, Randy Dunlap wrote:
+>On 12/3/19 1:53 AM, Bhaskar Chowdhury wrote:
+>> SPDX syntax was complining by checkpatch fixed it,added space before it.
+>> And add bash interpreter to find by the env .
+>>=20
+>> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+>> ---
+>>  scripts/kernel_modules_info.sh | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/scripts/kernel_modules_info.sh b/scripts/kernel_modules_inf=
+o.sh
+>> index f005c47a3aa6..3a9b00988ed3 100755
+>> --- a/scripts/kernel_modules_info.sh
+>> +++ b/scripts/kernel_modules_info.sh
+>> @@ -1,5 +1,5 @@
+>> -#!/bin/bash -=20
+>> -#SPDX-License-Identifier: GPL-2.0
+>> +#!/usr/bin/env bash=20
+>> +# SPDX-License-Identifier: GPL-2.0
+>>  #=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>>  #
+>>  #          FILE: kernel_modules_info.sh
+>>=20
+>
+>a.  There is no good reason for patch 2/2.  Just merge the 2 patches.
+>
+>b.  The big header comment in patch 1/2 is not needed and is unwanted.
+>Just put some or all of that in the patch description/comment message.
+>
+Sure, will do.
+>
+>--=20
+>~Randy
+>
 
-I don't agree, as it's not an aspeed-specific behaviour. This property
-controls where the device appears in the host's LPC IO address space,
-which is a common problem for any LPC IO device exposed by the BMC
-to the host.
+--5QAgd0e35j3NYeGe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> >
-> >  Example:
-> >
-> > -    kcs3: kcs3@0 {
-> > -        compatible = "aspeed,ast2500-kcs-bmc";
-> > -        reg = <0x0 0x80>;
-> > +    kcs3: kcs@24 {
-> > +        compatible = "aspeed,ast2500-kcs-bmc-v2";
-> > +        reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
-> 
-> What are the other registers in this address space? I'm not so sure
-> this is an improvement if you end up with a bunch of nodes with single
-> registers.
+-----BEGIN PGP SIGNATURE-----
 
-Put into practice the bindings give the following patch: on the AST2500:
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl3okkgACgkQsjqdtxFL
+KRXbxQgAhat4587gaoyRNOa21+kvB4Q6ui6yRplOY+G3lUt8lFz1WDylqXgkZJXt
+mqHAwXXgZ7UEcYeHN+UQ3Zv9BeJ3z7kdZ9dDjNJlyP+RLJ26w28FshQLRF5k6LyT
+PRiprV5e80wxct4OJD+ImS7MpRck5wnKaOxQLqJ46mUMOCC7JKBehA305WZvb5DV
+6bZMQ1IErFST+66nuPs/gs6Vqs+MeuaesiCP68+s/iRohYSko6IJedqqK3Smh42J
+ecczqKILoZeulJ0MBcA256eKv3U4Jw6vMpsU3rPawy87LJdwLNZ7rHBqTvSXZiB2
+FAo1g4Gn1dXPNilqkOIipzObG0G+Fg==
+=i601
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-index e8feb8b66a2f..5d51f469cbf0 100644
---- a/arch/arm/boot/dts/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -399,22 +399,22 @@
-                                        #size-cells = <1>;
-                                        ranges = <0x0 0x0 0x80>;
- 
--                                       kcs1: kcs1@0 {
--                                               compatible = "aspeed,ast2500-kcs-bmc";
-+                                       kcs1: kcs@24 {
-+                                               compatible = "aspeed,ast2500-kcs-bmc-v2";
-+                                               reg = <0x24 0x1>, <0x30 0x1>, <0x3c 0x1>;
-                                                interrupts = <8>;
--                                               kcs_chan = <1>;
-                                                status = "disabled";
-                                        };
--                                       kcs2: kcs2@0 {
--                                               compatible = "aspeed,ast2500-kcs-bmc";
-+                                       kcs2: kcs@28 {
-+                                               compatible = "aspeed,ast2500-kcs-bmc-v2";
-+                                               reg = <0x28 0x1>, <0x34 0x1>, <0x40 0x1>;
-                                                interrupts = <8>;
--                                               kcs_chan = <2>;
-                                                status = "disabled";
-                                        };
--                                       kcs3: kcs3@0 {
--                                               compatible = "aspeed,ast2500-kcs-bmc";
-+                                       kcs3: kcs@2c {
-+                                               compatible = "aspeed,ast2500-kcs-bmc-v2";
-+                                               reg = <0x2c 0x1>, <0x38 0x1>, <0x44 0x1>;
-                                                interrupts = <8>;
--                                               kcs_chan = <3>;
-                                                status = "disabled";
-                                        };
-                                };
-@@ -428,10 +428,10 @@
-                                        #size-cells = <1>;
-                                        ranges = <0x0 0x80 0x1e0>;
- 
--                                       kcs4: kcs4@0 {
--                                               compatible = "aspeed,ast2500-kcs-bmc";
-+                                       kcs4: kcs@94 {
-+                                               compatible = "aspeed,ast2500-kcs-bmc-v2";
-+                                               reg = <0x94 0x1>, <0x98 0x1>, <0x9c 0x1>;
-                                                interrupts = <8>;
--                                               kcs_chan = <4>;
-                                                status = "disabled";
-                                        };
-
-The aim is to fix these warnings which appear for every aspeed-based devicetree:
-
-        arch/arm/boot/dts/aspeed-g5.dtsi:376.19-381.8: Warning (unit_address_vs_reg): /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs1@0: node has a unit name, but no reg property
-        arch/arm/boot/dts/aspeed-g5.dtsi:382.19-387.8: Warning (unit_address_vs_reg): /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs2@0: node has a unit name, but no reg property
-        arch/arm/boot/dts/aspeed-g5.dtsi:388.19-393.8: Warning (unit_address_vs_reg): /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs3@0: node has a unit name, but no reg property
-        arch/arm/boot/dts/aspeed-g5.dtsi:405.19-410.8: Warning (unit_address_vs_reg): /ahb/apb/lpc@1e789000/lpc-host@80/kcs4@0: node has a unit name, but no reg property
-        arch/arm/boot/dts/aspeed-g5.dtsi:376.19-381.8: Warning (unique_unit_address): /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs1@0: duplicate unit-address (also used in node /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs2@0)
-        arch/arm/boot/dts/aspeed-g5.dtsi:376.19-381.8: Warning (unique_unit_address): /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs1@0: duplicate unit-address (also used in node /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs3@0)
-        arch/arm/boot/dts/aspeed-g5.dtsi:382.19-387.8: Warning (unique_unit_address): /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs2@0: duplicate unit-address (also used in node /ahb/apb/lpc@1e789000/lpc-bmc@0/kcs3@0)
-        arch/arm/boot/dts/aspeed-g5.dtsi:405.19-410.8: Warning (unique_unit_address): /ahb/apb/lpc@1e789000/lpc-host@80/kcs4@0: duplicate unit-address (also used in node /ahb/apb/lpc@1e789000/lpc-host@80/lpc-ctrl@0)
-
-Andrew
+--5QAgd0e35j3NYeGe--
