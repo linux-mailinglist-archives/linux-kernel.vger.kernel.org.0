@@ -2,97 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EBB011446B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 17:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F85311448C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 17:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbfLEQHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 11:07:21 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39173 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfLEQHV (ORCPT
+        id S1729956AbfLEQOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 11:14:14 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1273 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726028AbfLEQON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 11:07:21 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 2so1820181pfx.6;
-        Thu, 05 Dec 2019 08:07:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Nk1cXD8ocqFBtC4Ixaba4spST22wd8UaYJyDzazVJTU=;
-        b=Spso+1VBGEYjX599HKgBZ7LMPvTnErQh8OrWYDokzKb3zBSSaEgZ4u+I7C5EwKrVeR
-         lUG3UW/5r65Fp75N8CBIUjv0os9y+d8jDXNVYICft9E6k/2uxzV9eTJm5v5FvsNpZo9o
-         vf8MzxGjzeWRfcVXaeWb2sQNaDqMSv+/hIJ+IRH3BPxs3B1ykEPlsdshzdpXT6Xuwzcj
-         EgGzERz2cVpnYAaW3kqMFAtCJQswy/cTqOwhu4EHNjgqlzgRKhF2SSB4NFAcFCCyDxfn
-         UbFZIr3T0i9xpQA3xoaqCda2BYeVA5gwQcFMZGSDjcbHaEj8cfWg1pu9yAIv4xdZTwIg
-         k00A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Nk1cXD8ocqFBtC4Ixaba4spST22wd8UaYJyDzazVJTU=;
-        b=l8cWx2IplVPxHPDd91ucWHxdeqOTRmdRRmxSgsk64tGXHRy5fDnSXwy1xUFJAmQghB
-         Mmqeh3LBy4yhXpRf9YqKcouhmvvJBTl0UL/sAVWoN3ydXpf3mqKtxP/3NBugfNNCZRus
-         jYykpdUHURazb3bzw/K98qX7iyYF6yuvClvt/P7158WDeqguChvGrZqdHbjlPGArI9Kw
-         UTl236B7QsawiIGg8GFxLdvLnRXR9MQ2GTf9e98ApIusXmlX0mo/BoNDdn5geJa9+tl8
-         BDDYrMYDnXN1V5JtgN7uJUK9ueJYTdxP9kkudCbyQEs8GR8RjRKVWgyhpVbnlmYT0BD5
-         UANg==
-X-Gm-Message-State: APjAAAUukiG4hJqOZiRM05pU+vkQQrYEIA+Z1aNGNekin0GWI/lEFzqW
-        Wk5gafjSRAZRkGfyLziPvIk=
-X-Google-Smtp-Source: APXvYqy9oKB9Ozl8hrB3SUfpSveBM41X9hsvRCH6URNhs4FJAED+cuPGdd9arO5yZ4Zj26NEgNPDFQ==
-X-Received: by 2002:a63:3104:: with SMTP id x4mr9948531pgx.369.1575562040738;
-        Thu, 05 Dec 2019 08:07:20 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id m15sm11956980pgi.91.2019.12.05.08.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 08:07:20 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] video: fbdev: vesafb: add missed release_region
-Date:   Fri,  6 Dec 2019 00:07:12 +0800
-Message-Id: <20191205160712.32245-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        Thu, 5 Dec 2019 11:14:13 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB5G84uK011353;
+        Thu, 5 Dec 2019 17:14:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=4mAabCdERVwg5AYeHIKSgG4WtVchEnKuRsYMk7wsoDA=;
+ b=J3xRXtc2Sg4YXtL092MpEN/WiVYqjWJnK6KPYCIWegM9HZJe2H101BdjwivCQyup6WeR
+ fnNtydtADpIhfZ8murDO1YyH2nFQWQgqTQCxeX3LdIZenqWiBSsowfnWeBs4C55RHuUO
+ qchlr69MEHHm7rav7t81o4/paRcELIKmuHHuxzKD5n+qUwgAaz8MGE4/+1/BTvqNkpn1
+ 79Q/XSUgNkelAqVIu6bfVlsBCej21Lday9Ys5i3rt2tLzEZ2ryNuT5T7oTl1XcOJx2eM
+ zz0vnnq/f6AcyeRA7r5sWp5n5yibi549U1t39/3syko7ef7xD5n1xQtUmDoXdnlcyUfn RA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wkes33xqk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Dec 2019 17:14:00 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 61D8310002A;
+        Thu,  5 Dec 2019 17:14:00 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2EAE92FF5C4;
+        Thu,  5 Dec 2019 17:14:00 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 5 Dec 2019 17:13:59
+ +0100
+From:   Pascal Paillet <p.paillet@st.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <p.paillet@st.com>
+Subject: [PATCH v3] regulator: Convert stm32-pwr regulator to json-schema
+Date:   Thu, 5 Dec 2019 17:13:59 +0100
+Message-ID: <20191205161359.20755-1-p.paillet@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-05_05:2019-12-04,2019-12-05 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver forgets to free the requested irq in remove and probe
-failure.
-Add the missed calls to fix it.
+Convert the stm32-pwr regulator binding to DT schema format using
+json-schema.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Pascal Paillet <p.paillet@st.com>
 ---
-Changes in v2:
-  - Modify commit message.
+Changes since v2:
+remove /schemas/types.yaml#/definitions/phandle-array for supply
 
- drivers/video/fbdev/vesafb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../regulator/st,stm32mp1-pwr-reg.txt         | 43 -------------
+ .../regulator/st,stm32mp1-pwr-reg.yaml        | 64 +++++++++++++++++++
+ 2 files changed, 64 insertions(+), 43 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
 
-diff --git a/drivers/video/fbdev/vesafb.c b/drivers/video/fbdev/vesafb.c
-index d9c08f6c2155..fbb196a8bbf6 100644
---- a/drivers/video/fbdev/vesafb.c
-+++ b/drivers/video/fbdev/vesafb.c
-@@ -468,6 +468,7 @@ static int vesafb_probe(struct platform_device *dev)
- 	fb_info(info, "%s frame buffer device\n", info->fix.id);
- 	return 0;
- err:
-+	release_region(0x3c0, 32);
- 	arch_phys_wc_del(par->wc_cookie);
- 	if (info->screen_base)
- 		iounmap(info->screen_base);
-@@ -480,6 +481,7 @@ static int vesafb_remove(struct platform_device *pdev)
- {
- 	struct fb_info *info = platform_get_drvdata(pdev);
- 
-+	release_region(0x3c0, 32);
- 	unregister_framebuffer(info);
- 	framebuffer_release(info);
- 
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
+deleted file mode 100644
+index e372dd3f0c8a..000000000000
+--- a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
++++ /dev/null
+@@ -1,43 +0,0 @@
+-STM32MP1 PWR Regulators
+------------------------
+-
+-Available Regulators in STM32MP1 PWR block are:
+-  - reg11 for regulator 1V1
+-  - reg18 for regulator 1V8
+-  - usb33 for the swtich USB3V3
+-
+-Required properties:
+-- compatible: Must be "st,stm32mp1,pwr-reg"
+-- list of child nodes that specify the regulator reg11, reg18 or usb33
+-  initialization data for defined regulators. The definition for each of
+-  these nodes is defined using the standard binding for regulators found at
+-  Documentation/devicetree/bindings/regulator/regulator.txt.
+-- vdd-supply: phandle to the parent supply/regulator node for vdd input
+-- vdd_3v3_usbfs-supply: phandle to the parent supply/regulator node for usb33
+-
+-Example:
+-
+-pwr_regulators: pwr@50001000 {
+-	compatible = "st,stm32mp1,pwr-reg";
+-	reg = <0x50001000 0x10>;
+-	vdd-supply = <&vdd>;
+-	vdd_3v3_usbfs-supply = <&vdd_usb>;
+-
+-	reg11: reg11 {
+-		regulator-name = "reg11";
+-		regulator-min-microvolt = <1100000>;
+-		regulator-max-microvolt = <1100000>;
+-	};
+-
+-	reg18: reg18 {
+-		regulator-name = "reg18";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-	};
+-
+-	usb33: usb33 {
+-		regulator-name = "usb33";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+new file mode 100644
+index 000000000000..8d8f38fe85dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/st,stm32mp1-pwr-reg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: STM32MP1 PWR voltage regulators
++
++maintainers:
++  - Pascal Paillet <p.paillet@st.com>
++
++properties:
++  compatible:
++    const: st,stm32mp1,pwr-reg
++
++  reg:
++    maxItems: 1
++
++  vdd-supply:
++    description: Input supply phandle(s) for vdd input
++
++  vdd_3v3_usbfs-supply:
++    description: Input supply phandle(s) for vdd_3v3_usbfs input
++
++patternProperties:
++  "^(reg11|reg18|usb33)$":
++    type: object
++
++    allOf:
++      - $ref: "regulator.yaml#"
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    pwr@50001000 {
++      compatible = "st,stm32mp1,pwr-reg";
++      reg = <0x50001000 0x10>;
++      vdd-supply = <&vdd>;
++      vdd_3v3_usbfs-supply = <&vdd_usb>;
++
++      reg11 {
++        regulator-name = "reg11";
++        regulator-min-microvolt = <1100000>;
++        regulator-max-microvolt = <1100000>;
++      };
++
++      reg18 {
++        regulator-name = "reg18";
++        regulator-min-microvolt = <1800000>;
++        regulator-max-microvolt = <1800000>;
++      };
++
++      usb33 {
++        regulator-name = "usb33";
++        regulator-min-microvolt = <3300000>;
++        regulator-max-microvolt = <3300000>;
++      };
++    };
++...
 -- 
-2.24.0
+2.17.1
 
