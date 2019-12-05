@@ -2,163 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95BEC113D69
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C12E8113D72
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:59:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbfLEI4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 03:56:42 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42479 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728735AbfLEI4m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 03:56:42 -0500
-Received: by mail-wr1-f66.google.com with SMTP id a15so2441904wrf.9
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 00:56:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TG0HY+KpF4vMGkFbMLfrX7KldppQ0tPQ3SvG+kTPGWY=;
-        b=ZibouDXjcM+vZN0ZC/B/P70jn4Yul92JKVsR7cd4AxKuXZYvG5CIfUJDGjUNlX02PF
-         b+XtemH7+WabXVJtW2PNIk4y48F0lbc2k5BtDFXVIdx1d7eJiYKpnBCBewTO3wz+oXnK
-         wSAAGf0SStUPH9uFJmkwnHvS/rLTtx20sdP/W0Ke2CdsEkG1Fp04alEIsG7wTD4fCDQK
-         TALwa/E7UPPabJxbD4Iv+FEuu4VLfwj7W1iCKKyb5T8X6fn7Hp+csy0VhX+4ce3BC4HD
-         5240WVfkWFzqPqANgSEURVuFUniRYQ2xnrRGFYHSO/gnAOk8DW6FfFkoa67Bkl7Ycy0i
-         pGuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TG0HY+KpF4vMGkFbMLfrX7KldppQ0tPQ3SvG+kTPGWY=;
-        b=MzDlmzgupWTdlmgkD2DQSxlBlBk1vvbNzdb3OCFE45aK5Gd/eG3jTSEZBqZoaLhnT8
-         hrdoSG5cXfePk8sufuxgGKHEGvtS7tQyjInOvsp5j05QAmsUgNP4g2Dif+DZpnOkpzae
-         KbHR2jnd+9gTul9u7eToU7TEa7eP1IHfbSBBQDjyubELJTnajTLpEta9aF7/jw6/Ic9w
-         dvNdlWtGd1o+HIeLiM9pTJ5SlKO/BcWxLrIK3SgTX165sr5F1FbpYvv8MYWNOLhGHwS5
-         r6PpVAAMANKeVZU8b3aakmx4DmzL5cuC7Sd2rJTunJXT5qPu5ZNDuBcpLPPhIjjTq2QM
-         GlDg==
-X-Gm-Message-State: APjAAAWWVG0gu9Q+v8JYkrGocZteMAR9cBqYONKzMJGdAm/ehWNMKqOQ
-        H66JOwZM8YbWLpetoNpqhdYoXhkujSF+yZWVvgKZvA==
-X-Google-Smtp-Source: APXvYqxngD+BCbp84mZSZGrVgY1rSc4U2mgNeiRcPsAthavnl8yoOdiboScqPBig7xAc2fRyFpHTL5MVA8Zt8bFZIfU=
-X-Received: by 2002:adf:ef03:: with SMTP id e3mr9057850wro.216.1575536198468;
- Thu, 05 Dec 2019 00:56:38 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000008c72510598ee6ee7@google.com>
-In-Reply-To: <0000000000008c72510598ee6ee7@google.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Thu, 5 Dec 2019 09:56:27 +0100
-Message-ID: <CAG_fn=V=YbBXSAMYyTt3mtLyeZcMsrewOB6QPUdExQMSgkMjGg@mail.gmail.com>
-Subject: Re: kmsan boot error: KMSAN: uninit-value in proc_task_name
-To:     syzbot <syzbot+c0d17fd100b00692b701@syzkaller.appspotmail.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        bigeasy@linutronix.de, john.ogness@linutronix.de,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729041AbfLEI7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 03:59:42 -0500
+Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:44806
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728991AbfLEI7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 03:59:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CyMEvTWTsbAWn+xylzQGh0F/qZP0FUbgIj+R6pAo92Kx7t1rbxfaXSHxDe9m98xdXQtgySq9/XJzZ6c8eEZ1S2T45+P9X9QH1TeCYeWsoExkGabXEj8lexXqQYdtD1YFM1kBPlgBMrf4eZCqm/gC0+kvVZljrqqI3uKBd57RvYaqafaRO08SYCutshKoji09V+L+dhN5tIzf/ZKlEQcR/71KfDZNsCqsKEJtjgecALShMsi+cNPwZpbQdHw0p+CI8tuu9zlSega7g3UAw4FD6cGzR+RF+q/9J4kaYrISiK/h0/z/AIFrMHHh3UpvYLfDqM4Ipy4sTAEbH2bv1/V57g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7CIzxGpWFAUHgxGUGp3tV6qQNKf1oG4y0wMxwBZ7uFA=;
+ b=QQVLCBq8jEg7cNdzWSgL+kBM7idjI4mQhGgaFWn6HY+X/GjU3wgxXKUx+Sxr6SG03xBuG0o8fgtgFcxTKzN/DhEs3BjMIR+A/CI9cyxGjs4K2hYd5er0n/kBH9aa8sSIfTqCLtKN0AYK7h7iXGKu2GPEMXJhCW50Tifj8O8RJeuwh06SUdQy+pP3hpO2zGxsLuqjh44XEx48ZgCmaO1GO6LWIwpdyqop7mfKGcqzXY/kmgciuzNexgM79rOuajA58DgwsH2REtBn26KIG17VJM6BBWussvVNqMq3zk3ZqrHG9pxpqd5TVf0rY1D5WhctgSZfnvvRyls0r3y5kQ5nkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7CIzxGpWFAUHgxGUGp3tV6qQNKf1oG4y0wMxwBZ7uFA=;
+ b=kAiWMOq35oBUw4VLnSjx1/Q9OZxp3XUO9fqHWSYqiTT/hjcz6otjmksMGnZfVvNewh2InpRKPLwJ0dOMnBtBH02wpmzC1hcrwev6moX3elRyct1Ej/UcHMYwGxi/WaVzq4QCwCMFyyUIV1yW/3h3UWwZP3jUxFVYxNgqZ8Lep/4=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB6847.eurprd04.prod.outlook.com (10.255.196.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.13; Thu, 5 Dec 2019 08:59:38 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::2c49:44c8:2c02:68b1]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::2c49:44c8:2c02:68b1%5]) with mapi id 15.20.2516.014; Thu, 5 Dec 2019
+ 08:59:38 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alice Guo <alice.guo@nxp.com>
+Subject: Re: [PATCH] clk: imx: imx8qxp-lpcg: use
+ devm_platform_ioremap_resource
+Thread-Topic: [PATCH] clk: imx: imx8qxp-lpcg: use
+ devm_platform_ioremap_resource
+Thread-Index: AQHVqoum7IH7ZRFDgESKl5wnHnxd3Q==
+Date:   Thu, 5 Dec 2019 08:59:38 +0000
+Message-ID: <VI1PR04MB70232C511E4F43360D7533C9EE5C0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <1575454349-5762-1-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB7023E9790323200A4B122445EE5D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <AM0PR04MB4481FC4A8FD76A01242424B5885C0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [92.121.36.198]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b31ce410-20ac-4088-1d09-08d77961754b
+x-ms-traffictypediagnostic: VI1PR04MB6847:|VI1PR04MB6847:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB68476CEC0AEB3D04F02E371AEE5C0@VI1PR04MB6847.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02426D11FE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(366004)(136003)(39860400002)(396003)(199004)(189003)(74316002)(44832011)(4326008)(186003)(7736002)(229853002)(33656002)(2501003)(14454004)(6246003)(91956017)(6116002)(6436002)(25786009)(8936002)(86362001)(305945005)(55016002)(966005)(9686003)(52536014)(478600001)(5660300002)(6306002)(53546011)(2906002)(26005)(66446008)(66556008)(54906003)(64756008)(76176011)(3846002)(110136005)(71200400001)(81166006)(81156014)(316002)(6506007)(8676002)(71190400001)(66946007)(66476007)(76116006)(102836004)(7696005)(14444005)(99286004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6847;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Hg8xYH2M5qTU1FxCIR7l+mSWvL4UNDVwoXvXgW169zZ0q8S3EyZ5iE+xiM8kllyCHC0DKRd674M56/BtEGItDMhAoDqXWVSER0eQi2jcrkEpcXB415UBG027TDTW/U2xqdtWuQp0qknaGLpRlDx7prbnbySKevvgkEm9TfWNylndW6w9v0q1rYCSm7pZuJj7CO79558sn0BRyAzaUXDk6GUAbgH1q1vLgJfWM72FNRf6rwlvXCRnpB2KB0wLBF8AUOBbR+MQF++wyWLUnDaWRIcO1992RBVrnkGmBNItcnjICAwY5ToGJQKlqKa9Cua274JiJTVL2tAA/cfEY6sndpjg7yWP1+05TJ/XU4KrVMzlzcF/33w87odujCp1tjuGnbBhH3i73uKBuRQP39LFjnapZAI0XMntJP6XwJxFeu0Q2NCmxZR+3/YwvtgHveQGgDIjUCmQ7KeyTSqnSKfnQOm0f7roI01sd8ePy16xb/vT4+Gm1Mfhpt4J/Z3mjLFQmEzUR8t5AAGhZnk+NYU8OQ==
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b31ce410-20ac-4088-1d09-08d77961754b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2019 08:59:38.2451
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lTBLCAqg9wmr6sPl78P10hAiMAACnE1yABwqdEt0A+ONCg41oDoncHn/TZ9oEQC+IAWVoLdGVwxR0IRJ5evboQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6847
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 6:45 AM syzbot
-<syzbot+c0d17fd100b00692b701@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    818fcf71 Revert "kmsan: disable strscpy() optimization un=
-d..
-> git tree:       https://github.com/google/kmsan.git master
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11b8bb7ae0000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dfde150fb1e865=
-232
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc0d17fd100b0069=
-2b701
-> compiler:       clang version 9.0.0 (/home/glider/llvm/clang
-> 80fee25776c2fb61e74c1ecb1a523375c2500b69)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit=
-:
-> Reported-by: syzbot+c0d17fd100b00692b701@syzkaller.appspotmail.com
-#syz-fix: kmsan: disable strscpy() optimization under KMSAN
-
-This is a false positive that was accidentally sent upstream.
-
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in seq_commit include/linux/seq_file.h:89 [inlin=
-e]
-> BUG: KMSAN: uninit-value in proc_task_name+0x574/0x590 fs/proc/array.c:12=
-1
-> CPU: 1 PID: 5202 Comm: ps Not tainted 5.4.0-rc8-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1c9/0x220 lib/dump_stack.c:118
->   kmsan_report+0x128/0x220 mm/kmsan/kmsan_report.c:108
->   __msan_warning+0x57/0xa0 mm/kmsan/kmsan_instr.c:245
->   seq_commit include/linux/seq_file.h:89 [inline]
->   proc_task_name+0x574/0x590 fs/proc/array.c:121
->   do_task_stat+0x1a7b/0x3090 fs/proc/array.c:540
->   proc_tgid_stat+0xbe/0xf0 fs/proc/array.c:632
->   proc_single_show+0x1a8/0x2b0 fs/proc/base.c:756
->   seq_read+0xac6/0x1d90 fs/seq_file.c:229
->   __vfs_read+0x1a9/0xc90 fs/read_write.c:425
->   vfs_read+0x359/0x6f0 fs/read_write.c:461
->   ksys_read+0x265/0x430 fs/read_write.c:587
->   __do_sys_read fs/read_write.c:597 [inline]
->   __se_sys_read+0x92/0xb0 fs/read_write.c:595
->   __x64_sys_read+0x4a/0x70 fs/read_write.c:595
->   do_syscall_64+0xb6/0x160 arch/x86/entry/common.c:291
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x7fd34fa40310
-> Code: 73 01 c3 48 8b 0d 28 4b 2b 00 31 d2 48 29 c2 64 89 11 48 83 c8 ff e=
-b
-> ea 90 90 83 3d e5 a2 2b 00 00 75 10 b8 00 00 00 00 0f 05 <48> 3d 01 f0 ff
-> ff 73 31 c3 48 83 ec 08 e8 6e 8a 01 00 48 89 04 24
-> RSP: 002b:00007ffc157facf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 00007fd34fa40310
-> RDX: 0000000000000fff RSI: 00007fd34ff0dd00 RDI: 0000000000000006
-> RBP: 0000000000000fff R08: 0000000000000000 R09: 00007fd34fd08a10
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fd34ff0dd00
-> R13: 0000000001a59150 R14: 0000000000000005 R15: 0000000000000000
->
-> Local variable description: ----tcomm@proc_task_name
-> Variable was created at:
->   proc_task_name+0x8d/0x590 fs/proc/array.c:103
->   proc_task_name+0x8d/0x590 fs/proc/array.c:103
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+On 2019-12-05 3:38 AM, Peng Fan wrote:=0A=
+>> Subject: Re: [PATCH] clk: imx: imx8qxp-lpcg: use=0A=
+>> devm_platform_ioremap_resource=0A=
+>>=0A=
+>> On 2019-12-04 12:14 PM, Peng Fan wrote:=0A=
+>>> From: Peng Fan <peng.fan@nxp.com>=0A=
+>>>=0A=
+>>> devm_platform_ioremap_resource() wraps platform_get_resource() and=0A=
+>>> devm_ioremap_resource(), we could use this API to simplify the code.=0A=
+>>>=0A=
+>>> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
+>>=0A=
+>> This patch has been posted before and it breaks uart on imx8qxp-mek and=
+=0A=
+>> possibly other things.=0A=
+>>=0A=
+>> The old and new paths are not equivalent: devm_platform_ioremap_resource=
+=0A=
+>> calls devm_ioremap_resource differs from devm_ioremap by also calling=0A=
+>> devm_request_mem_region.=0A=
+>>=0A=
+>> This prevents other mappings in the area; this is not an issue for most =
+drivers=0A=
+>> but imx8qxp-lpcg maps whole subsystems. For example:=0A=
+>>=0A=
+>>                   adma_lpcg: clock-controller@59000000 {=0A=
+>>                           compatible =3D "fsl,imx8qxp-lpcg-adma";=0A=
+>>                           reg =3D <0x59000000 0x2000000>;=0A=
+>>                           #clock-cells =3D <1>;=0A=
+>>                   };=0A=
+>>=0A=
+>>                   adma_lpuart0: serial@5a060000 {=0A=
+>>                           reg =3D <0x5a060000 0x1000>;=0A=
+>> 			...=0A=
+>> 		};=0A=
+>>=0A=
+>> Previously: https://patchwork.kernel.org/patch/10908807/=0A=
+> =0A=
+> Thanks. I think at least need to provide some comments in code.=0A=
+=0A=
+Yes, comments would help. I think it's actually the 3rd time this =0A=
+incorrect cleanup was posted.=0A=
+=0A=
+But mapping entire subsystems (32mb at a time) for LPCG is deeply =0A=
+flawed: the LPCG areas are each 64k and they're interspersed among the =0A=
+peripherals. The correct solution is to have many small clock providers.=0A=
+=0A=
+This is done by a series of patches from Aisheng, I think this is the =0A=
+latest one:=0A=
+=0A=
+https://patchwork.kernel.org/patch/11248235/=0A=
+=0A=
+If some aspects of that series are dubious perhaps they could be =0A=
+discussed and maybe the series could be split into smaller chunks?=0A=
+=0A=
+That series does brings many essential improvements to imx8 clk support.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
