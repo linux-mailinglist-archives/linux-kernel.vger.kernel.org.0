@@ -2,508 +2,705 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E7A114675
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:01:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A92011467B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:03:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729956AbfLESBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:01:45 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53718 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729154AbfLESBp (ORCPT
+        id S1730279AbfLESDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:03:10 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:44082 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729022AbfLESDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:01:45 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dafna)
-        with ESMTPSA id 0AC2728A9C9
-Subject: Re: [PATCH v3 RESEND] media: vimc: fla: Add virtual flash subdevice
-To:     =?UTF-8?Q?Lucas_Magalh=c3=a3es?= <lucmaga@gmail.com>
-Cc:     linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-kernel@vger.kernel.org,
-        Helen Koike <helen.koike@collabora.com>,
-        Eduardo Barretto <edusbarretto@gmail.com>,
-        lkcamp@lists.libreplanetbr.org
-References: <20191203230148.2442-1-lucmaga@gmail.com>
- <dba2fa57-2101-b24a-a482-97878895fb92@collabora.com>
- <CAK0xOaELnX_axasmBaqanWfaoj+AF3kFZjLdzxjEgnHtzFkX5A@mail.gmail.com>
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Message-ID: <e0d05406-9ceb-ed7c-162d-4d98e34522a6@collabora.com>
-Date:   Thu, 5 Dec 2019 19:01:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 5 Dec 2019 13:03:09 -0500
+Received: by mail-vk1-f193.google.com with SMTP id u189so1405977vkf.11
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 10:03:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1OW8dJXdnXdirixj2xMKRQq4SH2BRoKNtaTT1z/AR1Y=;
+        b=WbbvfplbyZCc2cZt+RdKmPqDpRurpK81huWiIOgfwJR+3nSnwpAzCNUrvcqjVp4s0Y
+         GeWs+MSr0DLNq6ssuh028hGxJ+CpgkBEZ/l0DHgApLgjlwTIhTjEXPzJ6emoHTZkFxtS
+         c2rp/BsA9obI/+BpVtyWuuChXjiEo0QIWIBOs5i+Z1L9vKzmfLka40oASF+C9L8g9L/l
+         evVnDm0YY8WtBCbN8zS89V2T/jyQzbp7BuZO68XEC5fbc3UGxDeAk9o0k9CPd0v2q9Rk
+         umLquXqUt8brkOWki1tMIDEndUlbTNvFSGx9v/tn12Ique9/tSCYX5aB9dUJUXKSzIeU
+         7kcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1OW8dJXdnXdirixj2xMKRQq4SH2BRoKNtaTT1z/AR1Y=;
+        b=pNqfKPhGVaS/JbgExMKF9RkGyHT5Apxh7jJ50rhKSzyp14WZwOWZ19dx6/vBE+2oz+
+         EDg4SOrOYnue/1BJQJXUYuz1VR/565o/P5eFSIF0O9eGJtQminJXpNaU1i1VuGF5OL4w
+         8eyg2/qkSSVFzv/jlZpKMdPyM6LdYU9MSxJJ/Oqgeq1fJIwofpEaYNfrLn8MLdywTkH4
+         TohVyFj0fD6G1nOGG3LqtbMZAUw7uYj2dlKuzZchkcuH5DZKaBPwIEbd5xHbBARE0dTV
+         Z52FMHDZJuq9J6sHywPy+oK2BXS88zke2TOZwG7OtceEGsDd/ZYrTh7gxuP6IjvI3aNA
+         B+WA==
+X-Gm-Message-State: APjAAAUepWwebpcHcDYjvL0Wo2T9P4R2IIG3P5v7n8Lm8Ab1zAGlZnan
+        YhuAORBbSAmTcqCB1WcvXBR1zkmCpASfb+F6OBGAQA==
+X-Google-Smtp-Source: APXvYqwFOx/2PsgAmkmeYYlVCOgWuJnu0zXkS11PhahnSGZlWFOYKnhTqbRGekkeVK4BH9iIa2UXv+ENNUsWaQAYR/s=
+X-Received: by 2002:a05:6122:2dc:: with SMTP id k28mr7857527vki.70.1575568986971;
+ Thu, 05 Dec 2019 10:03:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAK0xOaELnX_axasmBaqanWfaoj+AF3kFZjLdzxjEgnHtzFkX5A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191126163630.17300-1-roman.sudarikov@linux.intel.com>
+ <20191126163630.17300-2-roman.sudarikov@linux.intel.com> <CABPqkBQ0Ukn3RXB2516Qpz3_hGEzOgUA-JcFwBcdDfPPj4bVNQ@mail.gmail.com>
+ <ddd57e52-d7ab-d7d5-bcfa-5e68cf98ef76@linux.intel.com>
+In-Reply-To: <ddd57e52-d7ab-d7d5-bcfa-5e68cf98ef76@linux.intel.com>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Thu, 5 Dec 2019 10:02:55 -0800
+Message-ID: <CABPqkBTpMDfi0D8-N3mcP76hNmOn7CFhVTBmyy0d5r99boigwg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] perf x86: Infrastructure for exposing an Uncore unit
+ to PMON mapping
+To:     "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        alexander.antonov@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Wed, Dec 4, 2019 at 10:48 AM Sudarikov, Roman
+<roman.sudarikov@linux.intel.com> wrote:
+>
+> On 02.12.2019 22:47, Stephane Eranian wrote:
+> > On Tue, Nov 26, 2019 at 8:36 AM <roman.sudarikov@linux.intel.com> wrote=
+:
+> >> From: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+> >>
+> >> Intel=C2=AE Xeon=C2=AE Scalable processor family (code name Skylake-SP=
+) makes significant
+> >> changes in the integrated I/O (IIO) architecture. The new solution int=
+roduces
+> >> IIO stacks which are responsible for managing traffic between the PCIe=
+ domain
+> >> and the Mesh domain. Each IIO stack has its own PMON block and can han=
+dle either
+> >> DMI port, x16 PCIe root port, MCP-Link or various built-in accelerator=
+s.
+> >> IIO PMON blocks allow concurrent monitoring of I/O flows up to 4 x4 bi=
+furcation
+> >> within each IIO stack.
+> >>
+> >> Software is supposed to program required perf counters within each IIO=
+ stack
+> >> and gather performance data. The tricky thing here is that IIO PMON re=
+ports data
+> >> per IIO stack but users have no idea what IIO stacks are - they only k=
+now devices
+> >> which are connected to the platform.
+> >>
+> >> Understanding IIO stack concept to find which IIO stack that particula=
+r IO device
+> >> is connected to, or to identify an IIO PMON block to program for monit=
+oring
+> >> specific IIO stack assumes a lot of implicit knowledge about given Int=
+el server
+> >> platform architecture.
+> >>
+> >> This patch set introduces:
+> >>      An infrastructure for exposing an Uncore unit to Uncore PMON mapp=
+ing through sysfs-backend
+> >>      A new --iiostat mode in perf stat to provide I/O performance metr=
+ics per I/O device
+> >>
+> >> Current version supports a server line starting Intel=C2=AE Xeon=C2=AE=
+ Processor Scalable
+> >> Family and introduces mapping for IIO Uncore units only.
+> >> Other units can be added on demand.
+> >>
+> >> Usage example:
+> >>      /sys/devices/uncore_<type>_<pmu_idx>/platform_mapping
+> >>
+> >> Each Uncore unit type, by its nature, can be mapped to its own context=
+, for example:
+> >>      CHA - each uncore_cha_<pmu_idx> is assigned to manage a distinct =
+slice of LLC capacity
+> >>      UPI - each uncore_upi_<pmu_idx> is assigned to manage one link of=
+ Intel UPI Subsystem
+> >>      IIO - each uncore_iio_<pmu_idx> is assigned to manage one stack o=
+f the IIO module
+> >>      IMC - each uncore_imc_<pmu_idx> is assigned to manage one channel=
+ of Memory Controller
+> >>
+> >> Implementation details:
+> >>      Two callbacks added to struct intel_uncore_type to discover and m=
+ap Uncore units to PMONs:
+> >>          int (*get_topology)(struct intel_uncore_type *type)
+> >>          int (*set_mapping)(struct intel_uncore_type *type)
+> >>
+> >>      IIO stack to PMON mapping is exposed through
+> >>          /sys/devices/uncore_iio_<pmu_idx>/platform_mapping
+> >>          in the following format: domain:bus
+> >>
+> >> Details of IIO Uncore unit mapping to IIO PMON:
+> >> Each IIO stack is either a DMI port, x16 PCIe root port, MCP-Link or v=
+arious
+> >> built-in accelerators. For Uncore IIO Unit type, the platform_mapping =
+file
+> >> holds bus numbers of devices, which can be monitored by that IIO PMON =
+block
+> >> on each die.
+> >>
+> >> For example, on a 4-die Intel Xeon=C2=AE server platform:
+> >>      $ cat /sys/devices/uncore_iio_0/platform_mapping
+> >>      0000:00,0000:40,0000:80,0000:c0
+> >>
+> >> Which means:
+> >> IIO PMON block 0 on die 0 belongs to IIO stack located on bus 0x00, do=
+main 0x0000
+> >> IIO PMON block 0 on die 1 belongs to IIO stack located on bus 0x40, do=
+main 0x0000
+> >> IIO PMON block 0 on die 2 belongs to IIO stack located on bus 0x80, do=
+main 0x0000
+> >> IIO PMON block 0 on die 3 belongs to IIO stack located on bus 0xc0, do=
+main 0x0000
+> >>
+> > You are just looking at one die (package). How does your enumeration
+> > help figure out
+> > is the iio_0 is on socket0 of socket1 and then figure out which
+> > bus/domain in on which
+> > socket.
+> >
+> > And how does that help map actual devices (using the output of lspci)
+> > to the IIO?
+> > You need to show how you would do that, which is really what people
+> > want, with what you
+> > have in your patch right now.
+> No. I'm enumerating all IIO PMUs for all sockets on the platform.
+>
+> Let's take an 4 socket SKX as an example - sysfs exposes 6 instances of
+> IIO PMU and each socket has its own instance of each IIO PMUs,
+> meaning that socket 0 has its own IIO PMU0, socket 1 also has its own
+> IIO PMU0 and so on. Same apply for IIO PMUs 1 through 5.
 
-On 12/5/19 12:12 AM, Lucas Magalhães wrote:
-> Hi Dafna,
-> Thanks for the review.
-> 
-> On Wed, Dec 4, 2019 at 7:03 AM Dafna Hirschfeld
-> <dafna.hirschfeld@collabora.com> wrote:
->>
->> Hi,
->> Thanks for the patch
->>
->> On 12/4/19 12:01 AM, Lucas A. M. Magalhães wrote:
->>> From: Lucas A. M. Magalhaes <lucmaga@gmail.com>
->>>
->>> Add a virtual subdevice to simulate the flash control API.
->>> Those are the supported controls:
->>> v4l2-ctl -d /dev/v4l-subdev6 -L
->>> Flash Controls
->>>
->>>                          led_mode 0x009c0901 (menu)   : min=0 max=2 default=1 value=1
->>>                                   0: Off
->>>                                   1: Flash
->>>                                   2: Torch
->>>                     strobe_source 0x009c0902 (menu)   : min=0 max=1 default=0 value=0
->>>                                   0: Software
->>>                                   1: External
->>>                            strobe 0x009c0903 (button) : flags=write-only, execute-on-write
->>>                       stop_strobe 0x009c0904 (button) : flags=write-only, execute-on-write
->>>                     strobe_status 0x009c0905 (bool)   : default=0 value=0 flags=read-only
->>>                    strobe_timeout 0x009c0906 (int)    : min=50 max=400 step=50 default=50 value=400
->>>              intensity_flash_mode 0x009c0907 (int)    : min=23040 max=1499600 step=11718 default=23040 value=23040
->>>              intensity_torch_mode 0x009c0908 (int)    : min=2530 max=187100 step=1460 default=2530 value=2530
->>>               intensity_indicator 0x009c0909 (int)    : min=0 max=255 step=1 default=0 value=0
->>>                            faults 0x009c090a (bitmask): max=0x00000002 default=0x00000000 value=0x00000000
->>>
->>> Co-authored-by: Eduardo Barretto <edusbarretto@gmail.com>
->>> Signed-off-by: Eduardo Barretto <edusbarretto@gmail.com>
->>> Signed-off-by: Lucas A. M. Magalhães <lucmaga@gmail.com>
->>>
->>> ---
->>> Hi,
->>>
->>> I've copied some values from another driver (lm3646) to make it more
->>> realistic, as suggested by Hans. All values except for
->>> V4L2_CID_FLASH_INDICATOR_INTENSITY, which I couldn't find any
->>> implementation.
->>>
->>> The v4l-compliance is failing. From the documentation
->>> V4L2_CID_FLASH_STROBE should just work if the
->>> V4L2_CID_FLASH_STROBE_SOURCE is "Software" and the
->>> V4L2_CID_FLASH_LED_MODE is "Flash", otherwise it should fail. With the
->>> standard values configured for the V4L2_CID_FLASH_STROBE will not fail.
->>> But during the tests v4l-compliance sets V4L2_CID_FLASH_LED_MODE to
->>> "Torch" and V4L2_CID_FLASH_STROBE_SOURCE to "External" which makes
->>> V4L2_CID_FLASH_STROBE to fail. How do I proceed? Should the
->>> v4l-compliance be changed?
->>>
->>> Changes in v3:
->>>        - Fix style errors
->>>        - Use more realistic numbers for the controllers
->>>        - Change from kthread to workqueue
->>>        - Change commit message for the new controllers values
->>>
->>> Changes in v2:
->>>        - Fix v4l2-complience errors
->>>        - Add V4L2_CID_FLASH_STROBE_STATUS behavior
->>>        - Add V4L2_CID_FLASH_STROBE restrictions
->>>        - Remove vimc_fla_g_volatile_ctrl
->>>        - Remove unnecessarie V4L2_CID_FLASH_CLASS
->>>        - Change varables names
->>>
->>>    drivers/media/platform/vimc/Makefile      |   2 +-
->>>    drivers/media/platform/vimc/vimc-common.c |   2 +
->>>    drivers/media/platform/vimc/vimc-common.h |   4 +
->>>    drivers/media/platform/vimc/vimc-core.c   |   5 +
->>>    drivers/media/platform/vimc/vimc-flash.c  | 248 ++++++++++++++++++++++
->>>    5 files changed, 260 insertions(+), 1 deletion(-)
->>>    create mode 100644 drivers/media/platform/vimc/vimc-flash.c
->>>
->>> diff --git a/drivers/media/platform/vimc/Makefile b/drivers/media/platform/vimc/Makefile
->>> index a53b2b532e9f..e759bbb04b14 100644
->>> --- a/drivers/media/platform/vimc/Makefile
->>> +++ b/drivers/media/platform/vimc/Makefile
->>> @@ -1,6 +1,6 @@
->>>    # SPDX-License-Identifier: GPL-2.0
->>>    vimc-y := vimc-core.o vimc-common.o vimc-streamer.o vimc-capture.o \
->>> -             vimc-debayer.o vimc-scaler.o vimc-sensor.o
->>> +             vimc-debayer.o vimc-scaler.o vimc-sensor.o vimc-flash.o
->>>
->>>    obj-$(CONFIG_VIDEO_VIMC) += vimc.o
->>>
->>> diff --git a/drivers/media/platform/vimc/vimc-common.c b/drivers/media/platform/vimc/vimc-common.c
->>> index a3120f4f7a90..cb786de75573 100644
->>> --- a/drivers/media/platform/vimc/vimc-common.c
->>> +++ b/drivers/media/platform/vimc/vimc-common.c
->>> @@ -203,6 +203,8 @@ struct media_pad *vimc_pads_init(u16 num_pads, const unsigned long *pads_flag)
->>>        struct media_pad *pads;
->>>        unsigned int i;
->>>
->>> +     if (!num_pads)
->>> +             return NULL;
->> Please rebase on top of latest master,
->> this function was removed in patch 'media: vimc: embed the pads of entities in the entities' structs'
->>
-> Ok.
-> 
->>>        /* Allocate memory for the pads */
->>>        pads = kcalloc(num_pads, sizeof(*pads), GFP_KERNEL);
->>>        if (!pads)
->>> diff --git a/drivers/media/platform/vimc/vimc-common.h b/drivers/media/platform/vimc/vimc-common.h
->>> index 698db7c07645..19815f0f4d40 100644
->>> --- a/drivers/media/platform/vimc/vimc-common.h
->>> +++ b/drivers/media/platform/vimc/vimc-common.h
->>> @@ -169,6 +169,10 @@ struct vimc_ent_device *vimc_sen_add(struct vimc_device *vimc,
->>>                                     const char *vcfg_name);
->>>    void vimc_sen_rm(struct vimc_device *vimc, struct vimc_ent_device *ved);
->>>
->>> +struct vimc_ent_device *vimc_fla_add(struct vimc_device *vimc,
->>> +                                  const char *vcfg_name);
->> This should be lined with the opening '('
->>
-> That's strange. I'm sure it's not like this here. Maybe my smtp is alterating
-> my code for some reason. I will look this.
-Hi, apparently it is my email client that does not show the alignment correctly
-sorry for the false comment
+I know that.
 
-> 
->>> +void vimc_fla_rm(struct vimc_device *vimc, struct vimc_ent_device *ved);
->>> +
->>>    /**
->>>     * vimc_pads_init - initialize pads
->>>     *
->>> diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
->>> index 6e3e5c91ae39..5f6c750d3d8d 100644
->>> --- a/drivers/media/platform/vimc/vimc-core.c
->>> +++ b/drivers/media/platform/vimc/vimc-core.c
->>> @@ -91,6 +91,11 @@ static struct vimc_ent_config ent_config[] = {
->>>                .add = vimc_cap_add,
->>>                .rm = vimc_cap_rm,
->>>        },
->>> +     {
->>> +             .name = "Flash Controller",
->>> +             .add = vimc_fla_add,
->>> +             .rm = vimc_fla_rm,
->>> +     }
->>>    };
->>>
->>>    static const struct vimc_ent_link ent_links[] = {
->>> diff --git a/drivers/media/platform/vimc/vimc-flash.c b/drivers/media/platform/vimc/vimc-flash.c
->>> new file mode 100644
->>> index 000000000000..3918beecec57
->>> --- /dev/null
->>> +++ b/drivers/media/platform/vimc/vimc-flash.c
->>> @@ -0,0 +1,248 @@
->>> +// SPDX-License-Identifier: GPL-2.0+
->>> +/*
->>> + * vimc-flash.c Virtual Media Controller Driver
->>> + *
->>> + * Copyright (C) 2019
->>> + * Contributors: Lucas A. M. Magalhães <lamm@lucmaga.dev>
->>> + *               Eduardo Barretto <edusbarretto@gmail.com>
->>> + *
->>> + */
->>> +
->>> +#include <linux/delay.h>
->>> +#include <linux/workqueue.h>
->>> +#include <linux/sched.h>
->>> +#include <linux/vmalloc.h>
->>> +#include <media/v4l2-ctrls.h>
->>> +#include <media/v4l2-event.h>
->>> +#include <media/v4l2-subdev.h>
->>> +
->>> +#include "vimc-common.h"
->>> +
->>> +/*
->>> + * Flash timeout in ms
->>> + */
->>> +#define VIMC_FLASH_TIMEOUT_MS_MIN 50
->>> +#define VIMC_FLASH_TIMEOUT_MS_MAX 400
->>> +#define VIMC_FLASH_TIMEOUT_MS_STEP 50
->>> +
->>> +/*
->>> + * Torch intencity in uA
->>> + */
->>> +#define VIMC_FLASH_TORCH_UA_MIN 2530
->>> +#define VIMC_FLASH_TORCH_UA_MAX 187100
->>> +#define VIMC_FLASH_TORCH_UA_STEP 1460
->>> +
->>> +/*
->>> + * Flash intencity in uA
->>> + */
->>> +#define VIMC_FLASH_FLASH_UA_MIN 23040
->>> +#define VIMC_FLASH_FLASH_UA_MAX 1499600
->>> +#define VIMC_FLASH_FLASH_UA_STEP 11718
->>> +
->>> +struct vimc_fla_device {
->>> +     struct vimc_ent_device ved;
->>> +     struct v4l2_subdev sd;
->>> +     struct v4l2_ctrl_handler hdl;
->>> +     int strobe_source;
->>> +     bool is_strobe;
->>> +     int led_mode;
->>> +     int indicator_intensity;
->>> +     int torch_intensity;
->>> +     int flash_intensity;
->>> +     u64 timeout;
->>> +     u64 last_strobe;
->>> +     struct workqueue_struct *wq;
->>> +     struct work_struct work;
->>> +     struct v4l2_ctrl *strobe_status_ctl;
->>> +};
->>> +
->>> +static void vimc_fla_strobe_work(struct work_struct *work)
->>> +{
->>> +     struct vimc_fla_device *vfla =
->>> +             container_of(work, struct vimc_fla_device, work);
->>> +     v4l2_ctrl_s_ctrl(vfla->strobe_status_ctl, true);
->>> +     vfla->last_strobe = ktime_get_ns();
->>> +     while (vfla->is_strobe &&
->>> +            vfla->last_strobe + vfla->timeout > ktime_get_ns()) {
->>> +             msleep_interruptible(VIMC_FLASH_TIMEOUT_MS_STEP);
->>> +     }
->>> +     v4l2_ctrl_s_ctrl(vfla->strobe_status_ctl, false);
->>> +}
->>> +
->>> +static int vimc_fla_s_ctrl(struct v4l2_ctrl *c)
->>> +{
->>> +     struct vimc_fla_device *vfla =
->>> +             container_of(c->handler, struct vimc_fla_device, hdl);
->>> +
->>> +     switch (c->id) {
->>> +     case V4L2_CID_FLASH_LED_MODE:
->>> +             vfla->led_mode = c->val;
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_STROBE_SOURCE:
->>> +             vfla->strobe_source = c->val;
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_STROBE:
->>> +             if (vfla->led_mode != V4L2_FLASH_LED_MODE_FLASH ||
->>> +                 vfla->strobe_source != V4L2_FLASH_STROBE_SOURCE_SOFTWARE){
->> you can add error/warning debug here,
->> if you choose not to, then the parentheses are redundant.
->> Additionally, the opening '{' should come after a space
->> You can run srctipts/checkpatch.pl before submitting to catch such issues
->>
->>> +                     return -EINVAL;
->>> +             }
->>> +             queue_work(vfla->wq, &vfla->work);
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_STROBE_STATUS:
->>> +             vfla->is_strobe = c->val;
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_STROBE_STOP:
->>> +             vfla->is_strobe = false;
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_TIMEOUT:
->>> +             vfla->timeout = c->val * 1000000; /* MS to NS */
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_INTENSITY:
->>> +             vfla->flash_intensity = c->val;
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_TORCH_INTENSITY:
->>> +             vfla->torch_intensity = c->val;
->>> +             return 0;
->>> +     case V4L2_CID_FLASH_INDICATOR_INTENSITY:
->>> +             vfla->indicator_intensity = c->val;
->>> +             return 0;
->>> +     default:
->>> +             return -EINVAL;
->>> +     }
->>> +     return 0;
->>> +}
->>> +
->>> +static const struct v4l2_ctrl_ops vimc_fla_ctrl_ops = {
->>> +     .s_ctrl = vimc_fla_s_ctrl,
->>> +};
->>> +
->>> +static const struct v4l2_subdev_core_ops vimc_fla_core_ops = {
->>> +     .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
->>> +     .unsubscribe_event = v4l2_event_subdev_unsubscribe,
->>> +};
->>> +
->>> +static const struct v4l2_subdev_ops vimc_fla_ops = {
->>> +     .core = &vimc_fla_core_ops,
->>> +};
->>> +
->>> +static void vimc_fla_release(struct v4l2_subdev *sd)
->>> +{
->>> +     struct vimc_fla_device *vfla =
->>> +                             container_of(sd, struct vimc_fla_device, sd);
->> one tab is enough
->>> +
->>> +     v4l2_ctrl_handler_free(&vfla->hdl);
->>> +     kfree(vfla);
->>> +}
->>> +
->>> +static const struct v4l2_subdev_internal_ops vimc_fla_int_ops = {
->>> +     .release = vimc_fla_release,
->>> +};
->>> +
->>> +/* initialize device */
->>> +struct vimc_ent_device *vimc_fla_add(struct vimc_device *vimc,
->>> +                                  const char *vcfg_name)
->>> +{
->>> +     struct v4l2_device *v4l2_dev = &vimc->v4l2_dev;
->>> +     struct vimc_fla_device *vfla;
->>> +     int ret;
->>> +
->>> +     /* Allocate the vfla struct */
->>> +     vfla = kzalloc(sizeof(*vfla), GFP_KERNEL);
->>> +     if (!vfla)
->>> +             return NULL;
->> I think it is better to change the return values of the .add calbbacks
->> to return ERR_PTR upon error and not just NULL so that different types of
->> errors can be distinguished.
->> (This is not related specifically to this patch),
->> If you want you can send a patch fixing that.
->>
-> 
-> Sure. I will change it.
-cool, thanks
-> 
->>> +
->>> +     v4l2_ctrl_handler_init(&vfla->hdl, 4);
->>> +     v4l2_ctrl_new_std_menu(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                            V4L2_CID_FLASH_LED_MODE,
->>> +                            V4L2_FLASH_LED_MODE_TORCH, ~0x7,
->>> +                            V4L2_FLASH_LED_MODE_FLASH);
->>> +     v4l2_ctrl_new_std_menu(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                            V4L2_CID_FLASH_STROBE_SOURCE, 0x1, ~0x3,
->>> +                            V4L2_FLASH_STROBE_SOURCE_SOFTWARE);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_STROBE, 0, 0, 0, 0);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_STROBE_STOP, 0, 0, 0, 0);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_TIMEOUT, VIMC_FLASH_TIMEOUT_MS_MIN,
->>> +                       VIMC_FLASH_TIMEOUT_MS_MAX,
->>> +                       VIMC_FLASH_TIMEOUT_MS_STEP,
->>> +                       VIMC_FLASH_TIMEOUT_MS_MIN);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_TORCH_INTENSITY,
->>> +                       VIMC_FLASH_TORCH_UA_MIN,
->>> +                       VIMC_FLASH_TORCH_UA_MAX,
->>> +                       VIMC_FLASH_TORCH_UA_STEP,
->>> +                       VIMC_FLASH_TORCH_UA_MIN);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_INTENSITY,
->>> +                       VIMC_FLASH_FLASH_UA_MIN,
->>> +                       VIMC_FLASH_FLASH_UA_MAX,
->>> +                       VIMC_FLASH_FLASH_UA_STEP,
->>> +                       VIMC_FLASH_FLASH_UA_MIN);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_INDICATOR_INTENSITY,
->>> +                       0,
->>> +                       255,
->>> +                       1,
->>> +                       0);
->> why not having one line with "0,255,1,0);" ?
->>
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_STROBE_STATUS, 0, 1, 1, 0);
->>> +     v4l2_ctrl_new_std(&vfla->hdl, &vimc_fla_ctrl_ops,
->>> +                       V4L2_CID_FLASH_FAULT, 0,
->>> +                       V4L2_FLASH_FAULT_TIMEOUT, 0, 0);
->>> +     vfla->sd.ctrl_handler = &vfla->hdl;
->>> +     if (vfla->hdl.error) {
->>> +             ret = vfla->hdl.error;
->>> +             goto err_free_vfla;
->>> +     }
->>> +     vfla->strobe_status_ctl = v4l2_ctrl_find(&vfla->hdl,
->>> +                                              V4L2_CID_FLASH_STROBE_STATUS);
->>> +
->>> +     /* Initialize ved and sd */
->>> +     ret = vimc_ent_sd_register(&vfla->ved, &vfla->sd, v4l2_dev,
->>> +                                vcfg_name,
->>> +                                MEDIA_ENT_F_FLASH, 0, NULL,
->>> +                                &vimc_fla_int_ops, &vimc_fla_ops);
->>> +     if (ret)
->>> +             goto err_free_hdl;
->>> +
->>> +     /* Create processing workqueue */
->>> +     vfla->wq = alloc_workqueue("%s", 0, 0, "vimc-flash thread");
->>> +     if (!vfla->wq)
->>> +             goto err_unregister;
->>> +
->>> +     INIT_WORK(&vfla->work, vimc_fla_strobe_work);
->>> +     /* Initialize standard values */
->>> +     vfla->indicator_intensity = 0;
->>> +     vfla->torch_intensity = 0;
->>> +     vfla->flash_intensity = 0;
->>> +     vfla->is_strobe = false;
->>> +     vfla->timeout = 0;
->>> +     vfla->last_strobe = 0;
->>> +     vfla->strobe_source = V4L2_FLASH_STROBE_SOURCE_SOFTWARE;
->>> +     vfla->led_mode = V4L2_FLASH_LED_MODE_FLASH;
->>> +
->>> +     return &vfla->ved;
->>> +
->>> +err_unregister:
->>> +     vimc_ent_sd_unregister(&vfla->ved, &vfla->sd);
->>> +err_free_hdl:
->>> +     v4l2_ctrl_handler_free(&vfla->hdl);
->>> +err_free_vfla:
->>> +     kfree(vfla);
->>> +
->>> +     return NULL;
->>> +}
->>> +
->>> +void vimc_fla_rm(struct vimc_device *vimc, struct vimc_ent_device *ved)
->>> +{
->>> +     struct vimc_fla_device *vfla;
->>> +
->>> +     if (!ved)
->>> +             return;
->>> +
->>> +     vfla = container_of(ved, struct vimc_fla_device, ved);
->>> +     destroy_workqueue(vfla->wq);
->>> +     vimc_ent_sd_unregister(ved, &vfla->sd);
->>> +}
->>>
->> Not sure but I think there are indentation issues in this patch, a tab should be 8 spaces
-> 
-> This is strange. I already had style issues on the v2 so I runned the
-> checkpatch.pl on the
-> patch before sent and it didn't point this identation issues.
-> 
-> Here is the checkpatch.pl output. It could be the case that my smtp is
-> alterating the
-> it before transmission.
-Sorry, as I wrote, this is my thunderbird client
+> Below is sample output:
+>
+> $:/sys/devices# cat uncore_iio_0/platform_mapping
+> 0000:00,0000:40,0000:80,0000:c0
+> $:/sys/devices# cat uncore_iio_1/platform_mapping
+> 0000:16,0000:44,0000:84,0000:c4
+> $:/sys/devices# cat uncore_iio_2/platform_mapping
+> 0000:24,0000:58,0000:98,0000:d8
+> $:/sys/devices# cat uncore_iio_3/platform_mapping
+> 0000:32,0000:6c,0000:ac,0000:ec
+>
+> Technically, the idea is as follows - kernel part of the feature is for
+> locating IIO stacks and creating  IIO PMON to IIO stack mapping.
+> Userspace part of the feature is for locating IO devices connected to
+> each IIO stack on each socket and configure only required IIO counters to
+> provide 4 IO performance metrics - Inbound Read, Inbound Write, Outbound
+> Read, Outbound Write - attributed to each device.
+>
+>
+> Follow up patches show how users can benefit from the feature; see
+> https://lkml.org/lkml/2019/11/26/451
+>
+I know this is useful. I have done this for internal users a long time ago.
 
-Dafna
+> Below is sample output:
+>
+> 1. show mode
+>
+> ./perf stat --iiostat=3Dshow
+>
+>      S0-RootPort0-uncore_iio_0<00:00.0 Sky Lake-E DMI3 Registers>
+>      S1-RootPort0-uncore_iio_0<81:00.0 Ethernet Controller X710 for 10GbE=
+ SFP+>
+>      S0-RootPort1-uncore_iio_1<18:00.0 Omni-Path HFI Silicon 100 Series [=
+discrete]>
+>      S1-RootPort1-uncore_iio_1<86:00.0 Ethernet Controller XL710 for 40Gb=
+E QSFP+>
+>      S1-RootPort1-uncore_iio_1<88:00.0 Ethernet Controller XL710 for 40Gb=
+E QSFP+>
+>      S0-RootPort2-uncore_iio_2<3d:00.0 Ethernet Connection X722 for 10GBA=
+SE-T>
+>      S1-RootPort2-uncore_iio_2<af:00.0 Omni-Path HFI Silicon 100 Series [=
+discrete]>
+>      S1-RootPort3-uncore_iio_3<da:00.0 NVMe Datacenter SSD [Optane]>
+>
+> For example, NIC at 81:00.0 is local to S1, connected to its RootPort0 an=
+d is covered by IIO PMU0 (on socket 1)
+>
+> 1. collector mode
+>
+>    ./perf stat --iiostat -- dd if=3D/dev/zero of=3D/dev/nvme0n1 bs=3D1M o=
+flag=3Ddirect
+>      357708+0 records in
+>      357707+0 records out
+>      375083606016 bytes (375 GB, 349 GiB) copied, 215.381 s, 1.7 GB/s
+>
+>    Performance counter stats for 'system wide':
+>
+>       device             Inbound Read(MB)    Inbound Write(MB)    Outboun=
+d Read(MB)   Outbound Write(MB)
+>      00:00.0                    0                    0                   =
+ 0                    0
+>      81:00.0                    0                    0                   =
+ 0                    0
+>      18:00.0                    0                    0                   =
+ 0                    0
+>      86:00.0                    0                    0                   =
+ 0                    0
+>      88:00.0                    0                    0                   =
+ 0                    0
+>      3b:00.0                    3                    0                   =
+ 0                    0
+>      3c:03.0                    3                    0                   =
+ 0                    0
+>      3d:00.0                    3                    0                   =
+ 0                    0
+>      af:00.0                    0                    0                   =
+ 0                    0
+>      da:00.0               358559                   44                   =
+ 0                   22
+>
+I think this output would be more useful with the socket information.
+People care about NUMA locality. This output
+does not cover that (in a single cmdline). It would also benefit from
+having the actual Linux device names, e.g., sda, ssda, eth0, ....,
 
-> 
-> $ scripts/checkpatch.pl
-> patchset/0001-media-vimc-fla-Add-virtual-flash-subdevice.patch
-> WARNING: Possible unwrapped commit description (prefer a maximum 75
-> chars per line)
-> #14:
->                         led_mode 0x009c0901 (menu)   : min=0 max=2
-> default=1 value=1
-> 
-> WARNING: Non-standard signature: Co-authored-by:
-> #30:
-> Co-authored-by: Eduardo Barretto <edusbarretto@gmail.com>
-> 
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #131:
-> new file mode 100644
-> 
-> total: 0 errors, 3 warnings, 284 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->        mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> patchset/0001-media-vimc-fla-Add-virtual-flash-subdevice.patch has
-> style problems, please review.
-> 
-> NOTE: If any of the errors are false positives, please report
->        them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> 
-> 
-> Thanks,
-> Lucas
-> 
+
+
+>      215.383783574 seconds time elapsed
+>
+> >
+> >> Signed-off-by: Roman Sudarikov <roman.sudarikov@linux.intel.com>
+> >> Co-developed-by: Alexander Antonov <alexander.antonov@intel.com>
+> >> Signed-off-by: Alexander Antonov <alexander.antonov@intel.com>
+> >> ---
+> >>   arch/x86/events/intel/uncore.c       |  61 +++++++++++-
+> >>   arch/x86/events/intel/uncore.h       |  13 ++-
+> >>   arch/x86/events/intel/uncore_snbep.c | 144 +++++++++++++++++++++++++=
+++
+> >>   3 files changed, 214 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/un=
+core.c
+> >> index 86467f85c383..0f779c8fcc05 100644
+> >> --- a/arch/x86/events/intel/uncore.c
+> >> +++ b/arch/x86/events/intel/uncore.c
+> >> @@ -18,6 +18,11 @@ struct list_head pci2phy_map_head =3D LIST_HEAD_INI=
+T(pci2phy_map_head);
+> >>   struct pci_extra_dev *uncore_extra_pci_dev;
+> >>   static int max_dies;
+> >>
+> >> +int get_max_dies(void)
+> >> +{
+> >> +       return max_dies;
+> >> +}
+> >> +
+> >>   /* mask of cpus that collect uncore events */
+> >>   static cpumask_t uncore_cpu_mask;
+> >>
+> >> @@ -816,6 +821,16 @@ static ssize_t uncore_get_attr_cpumask(struct dev=
+ice *dev,
+> >>
+> >>   static DEVICE_ATTR(cpumask, S_IRUGO, uncore_get_attr_cpumask, NULL);
+> >>
+> >> +static ssize_t platform_mapping_show(struct device *dev,
+> >> +                               struct device_attribute *attr, char *b=
+uf)
+> >> +{
+> >> +       struct intel_uncore_pmu *pmu =3D dev_get_drvdata(dev);
+> >> +
+> >> +       return snprintf(buf, PAGE_SIZE - 1, "%s\n", pmu->platform_mapp=
+ing ?
+> >> +                      (char *)pmu->platform_mapping : "0");
+> >> +}
+> >> +static DEVICE_ATTR_RO(platform_mapping);
+> >> +
+> >>   static struct attribute *uncore_pmu_attrs[] =3D {
+> >>          &dev_attr_cpumask.attr,
+> >>          NULL,
+> >> @@ -825,6 +840,15 @@ static const struct attribute_group uncore_pmu_at=
+tr_group =3D {
+> >>          .attrs =3D uncore_pmu_attrs,
+> >>   };
+> >>
+> >> +static struct attribute *platform_attrs[] =3D {
+> >> +       &dev_attr_platform_mapping.attr,
+> >> +       NULL,
+> >> +};
+> >> +
+> >> +static const struct attribute_group uncore_platform_discovery_group =
+=3D {
+> >> +       .attrs =3D platform_attrs,
+> >> +};
+> >> +
+> >>   static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+> >>   {
+> >>          int ret;
+> >> @@ -905,11 +929,27 @@ static void uncore_types_exit(struct intel_uncor=
+e_type **types)
+> >>                  uncore_type_exit(*types);
+> >>   }
+> >>
+> >> +static void uncore_type_attrs_compaction(struct intel_uncore_type *ty=
+pe)
+> >> +{
+> >> +       int i, j;
+> >> +
+> >> +       for (i =3D 0, j =3D 0; i < UNCORE_MAX_NUM_ATTR_GROUP; i++) {
+> >> +               if (!type->attr_groups[i])
+> >> +                       continue;
+> >> +               if (i > j) {
+> >> +                       type->attr_groups[j] =3D type->attr_groups[i];
+> >> +                       type->attr_groups[i] =3D NULL;
+> >> +               }
+> >> +               j++;
+> >> +       }
+> >> +}
+> >> +
+> >>   static int __init uncore_type_init(struct intel_uncore_type *type, b=
+ool setid)
+> >>   {
+> >>          struct intel_uncore_pmu *pmus;
+> >>          size_t size;
+> >>          int i, j;
+> >> +       int ret;
+> >>
+> >>          pmus =3D kcalloc(type->num_boxes, sizeof(*pmus), GFP_KERNEL);
+> >>          if (!pmus)
+> >> @@ -922,8 +962,10 @@ static int __init uncore_type_init(struct intel_u=
+ncore_type *type, bool setid)
+> >>                  pmus[i].pmu_idx =3D i;
+> >>                  pmus[i].type    =3D type;
+> >>                  pmus[i].boxes   =3D kzalloc(size, GFP_KERNEL);
+> >> -               if (!pmus[i].boxes)
+> >> +               if (!pmus[i].boxes) {
+> >> +                       ret =3D -ENOMEM;
+> >>                          goto err;
+> >> +               }
+> >>          }
+> >>
+> >>          type->pmus =3D pmus;
+> >> @@ -940,8 +982,10 @@ static int __init uncore_type_init(struct intel_u=
+ncore_type *type, bool setid)
+> >>
+> >>                  attr_group =3D kzalloc(struct_size(attr_group, attrs,=
+ i + 1),
+> >>                                                                  GFP_K=
+ERNEL);
+> >> -               if (!attr_group)
+> >> +               if (!attr_group) {
+> >> +                       ret =3D -ENOMEM;
+> >>                          goto err;
+> >> +               }
+> >>
+> >>                  attr_group->group.name =3D "events";
+> >>                  attr_group->group.attrs =3D attr_group->attrs;
+> >> @@ -954,6 +998,17 @@ static int __init uncore_type_init(struct intel_u=
+ncore_type *type, bool setid)
+> >>
+> >>          type->pmu_group =3D &uncore_pmu_attr_group;
+> >>
+> >> +       /*
+> >> +        * Exposing mapping of Uncore units to corresponding Uncore PM=
+Us
+> >> +        * through /sys/devices/uncore_<type>_<idx>/platform_mapping
+> >> +        */
+> >> +       if (type->get_topology && type->set_mapping)
+> >> +               if (!type->get_topology(type) && !type->set_mapping(ty=
+pe))
+> >> +                       type->platform_discovery =3D &uncore_platform_=
+discovery_group;
+> >> +
+> >> +       /* For optional attributes, we can safely remove embedded NULL=
+ attr_groups elements */
+> >> +       uncore_type_attrs_compaction(type);
+> >> +
+> >>          return 0;
+> >>
+> >>   err:
+> >> @@ -961,7 +1016,7 @@ static int __init uncore_type_init(struct intel_u=
+ncore_type *type, bool setid)
+> >>                  kfree(pmus[i].boxes);
+> >>          kfree(pmus);
+> >>
+> >> -       return -ENOMEM;
+> >> +       return ret;
+> >>   }
+> >>
+> >>   static int __init
+> >> diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/un=
+core.h
+> >> index bbfdaa720b45..ce3727b9f7f8 100644
+> >> --- a/arch/x86/events/intel/uncore.h
+> >> +++ b/arch/x86/events/intel/uncore.h
+> >> @@ -43,6 +43,8 @@ struct intel_uncore_box;
+> >>   struct uncore_event_desc;
+> >>   struct freerunning_counters;
+> >>
+> >> +#define UNCORE_MAX_NUM_ATTR_GROUP 5
+> >> +
+> >>   struct intel_uncore_type {
+> >>          const char *name;
+> >>          int num_counters;
+> >> @@ -71,13 +73,19 @@ struct intel_uncore_type {
+> >>          struct intel_uncore_ops *ops;
+> >>          struct uncore_event_desc *event_descs;
+> >>          struct freerunning_counters *freerunning;
+> >> -       const struct attribute_group *attr_groups[4];
+> >> +       const struct attribute_group *attr_groups[UNCORE_MAX_NUM_ATTR_=
+GROUP];
+> >>          struct pmu *pmu; /* for custom pmu ops */
+> >> +       void *platform_topology;
+> >> +       /* finding Uncore units */
+> >> +       int (*get_topology)(struct intel_uncore_type *type);
+> >> +       /* mapping Uncore units to PMON ranges */
+> >> +       int (*set_mapping)(struct intel_uncore_type *type);
+> >>   };
+> >>
+> >>   #define pmu_group attr_groups[0]
+> >>   #define format_group attr_groups[1]
+> >>   #define events_group attr_groups[2]
+> >> +#define platform_discovery attr_groups[3]
+> >>
+> >>   struct intel_uncore_ops {
+> >>          void (*init_box)(struct intel_uncore_box *);
+> >> @@ -99,6 +107,7 @@ struct intel_uncore_pmu {
+> >>          int                             pmu_idx;
+> >>          int                             func_id;
+> >>          bool                            registered;
+> >> +       void                            *platform_mapping;
+> >>          atomic_t                        activeboxes;
+> >>          struct intel_uncore_type        *type;
+> >>          struct intel_uncore_box         **boxes;
+> >> @@ -490,6 +499,8 @@ static inline struct intel_uncore_box *uncore_even=
+t_to_box(struct perf_event *ev
+> >>          return event->pmu_private;
+> >>   }
+> >>
+> >> +int get_max_dies(void);
+> >> +
+> >>   struct intel_uncore_box *uncore_pmu_to_box(struct intel_uncore_pmu *=
+pmu, int cpu);
+> >>   u64 uncore_msr_read_counter(struct intel_uncore_box *box, struct per=
+f_event *event);
+> >>   void uncore_mmio_exit_box(struct intel_uncore_box *box);
+> >> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/in=
+tel/uncore_snbep.c
+> >> index b10a5ec79e48..92ce9fbafde1 100644
+> >> --- a/arch/x86/events/intel/uncore_snbep.c
+> >> +++ b/arch/x86/events/intel/uncore_snbep.c
+> >> @@ -273,6 +273,28 @@
+> >>   #define SKX_CPUNODEID                  0xc0
+> >>   #define SKX_GIDNIDMAP                  0xd4
+> >>
+> >> +/*
+> >> + * The CPU_BUS_NUMBER MSR returns the values of the respective CPUBUS=
+NO CSR
+> >> + * that BIOS programmed. MSR has package scope.
+> >> + * |  Bit  |  Default  |  Description
+> >> + * | [63]  |    00h    | VALID - When set, indicates the CPU bus
+> >> + *                       numbers have been initialized. (RO)
+> >> + * |[62:48]|    ---    | Reserved
+> >> + * |[47:40]|    00h    | BUS_NUM_5 =E2=80=94 Return the bus number BI=
+OS assigned
+> >> + *                       CPUBUSNO(5). (RO)
+> >> + * |[39:32]|    00h    | BUS_NUM_4 =E2=80=94 Return the bus number BI=
+OS assigned
+> >> + *                       CPUBUSNO(4). (RO)
+> >> + * |[31:24]|    00h    | BUS_NUM_3 =E2=80=94 Return the bus number BI=
+OS assigned
+> >> + *                       CPUBUSNO(3). (RO)
+> >> + * |[23:16]|    00h    | BUS_NUM_2 =E2=80=94 Return the bus number BI=
+OS assigned
+> >> + *                       CPUBUSNO(2). (RO)
+> >> + * |[15:8] |    00h    | BUS_NUM_1 =E2=80=94 Return the bus number BI=
+OS assigned
+> >> + *                       CPUBUSNO(1). (RO)
+> >> + * | [7:0] |    00h    | BUS_NUM_0 =E2=80=94 Return the bus number BI=
+OS assigned
+> >> + *                       CPUBUSNO(0). (RO)
+> >> + */
+> >> +#define SKX_MSR_CPU_BUS_NUMBER         0x300
+> >> +
+> >>   /* SKX CHA */
+> >>   #define SKX_CHA_MSR_PMON_BOX_FILTER_TID                (0x1ffULL << =
+0)
+> >>   #define SKX_CHA_MSR_PMON_BOX_FILTER_LINK       (0xfULL << 9)
+> >> @@ -3580,6 +3602,9 @@ static struct intel_uncore_ops skx_uncore_iio_op=
+s =3D {
+> >>          .read_counter           =3D uncore_msr_read_counter,
+> >>   };
+> >>
+> >> +static int skx_iio_get_topology(struct intel_uncore_type *type);
+> >> +static int skx_iio_set_mapping(struct intel_uncore_type *type);
+> >> +
+> >>   static struct intel_uncore_type skx_uncore_iio =3D {
+> >>          .name                   =3D "iio",
+> >>          .num_counters           =3D 4,
+> >> @@ -3594,6 +3619,8 @@ static struct intel_uncore_type skx_uncore_iio =
+=3D {
+> >>          .constraints            =3D skx_uncore_iio_constraints,
+> >>          .ops                    =3D &skx_uncore_iio_ops,
+> >>          .format_group           =3D &skx_uncore_iio_format_group,
+> >> +       .get_topology           =3D skx_iio_get_topology,
+> >> +       .set_mapping            =3D skx_iio_set_mapping,
+> >>   };
+> >>
+> >>   enum perf_uncore_iio_freerunning_type_id {
+> >> @@ -3780,6 +3807,123 @@ static int skx_count_chabox(void)
+> >>          return hweight32(val);
+> >>   }
+> >>
+> >> +static inline u8 skx_iio_topology_byte(void *platform_topology,
+> >> +                                       int die, int idx)
+> >> +{
+> >> +       return *((u8 *)(platform_topology) + die * sizeof(u64) + idx);
+> >> +}
+> >> +
+> >> +static inline bool skx_iio_topology_valid(u64 msr_value)
+> >> +{
+> >> +       return msr_value & ((u64)1 << 63);
+> >> +}
+> >> +
+> >> +static int skx_msr_cpu_bus_read(int cpu, int die)
+> >> +{
+> >> +       int ret =3D rdmsrl_on_cpu(cpu, SKX_MSR_CPU_BUS_NUMBER,
+> >> +                               ((u64 *)skx_uncore_iio.platform_topolo=
+gy) + die);
+> >> +
+> >> +       if (!ret) {
+> >> +               if (!skx_iio_topology_valid(*(((u64 *)skx_uncore_iio.p=
+latform_topology) + die)))
+> >> +                       ret =3D -1;
+> >> +       }
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static int skx_iio_get_topology(struct intel_uncore_type *type)
+> >> +{
+> >> +       int ret, cpu, die, current_die;
+> >> +       struct pci_bus *bus =3D NULL;
+> >> +
+> >> +       while ((bus =3D pci_find_next_bus(bus)) !=3D NULL)
+> >> +               if (pci_domain_nr(bus)) {
+> >> +                       pr_info("Mapping of I/O stack to PMON ranges i=
+s not supported for multi-segment topology\n");
+> >> +                       return -1;
+> >> +               }
+> >> +
+> >> +       /* Size of SKX_MSR_CPU_BUS_NUMBER is 8 bytes, the MSR has pack=
+age scope.*/
+> >> +       type->platform_topology =3D
+> >> +               kzalloc(get_max_dies() * sizeof(u64), GFP_KERNEL);
+> >> +       if (!type->platform_topology)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       /*
+> >> +        * Using cpus_read_lock() to ensure cpu is not going down betw=
+een
+> >> +        * looking at cpu_online_mask.
+> >> +        */
+> >> +       cpus_read_lock();
+> >> +       /* Invalid value to start loop.*/
+> >> +       current_die =3D -1;
+> >> +       for_each_online_cpu(cpu) {
+> >> +               die =3D topology_logical_die_id(cpu);
+> >> +               if (current_die =3D=3D die)
+> >> +                       continue;
+> >> +               ret =3D skx_msr_cpu_bus_read(cpu, die);
+> >> +               if (ret)
+> >> +                       break;
+> >> +               current_die =3D die;
+> >> +       }
+> >> +       cpus_read_unlock();
+> >> +
+> >> +       if (ret)
+> >> +               kfree(type->platform_topology);
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static int skx_iio_set_mapping(struct intel_uncore_type *type)
+> >> +{
+> >> +       /*
+> >> +        * Each IIO stack (PCIe root port) has its own IIO PMON block,=
+ so each
+> >> +        * platform_mapping holds bus number(s) of PCIe root port(s), =
+which can
+> >> +        * be monitored by that IIO PMON block.
+> >> +        *
+> >> +        * For example, on a 4-die Xeon platform with up to 6 IIO stac=
+ks per die
+> >> +        * and, therefore, 6 IIO PMON blocks per die, the platform_map=
+ping of IIO
+> >> +        * PMON block 0 holds "0000:00,0000:40,0000:80,0000:c0":
+> >> +        *
+> >> +        * $ cat /sys/devices/uncore_iio_0/platform_mapping
+> >> +        * 0000:00,0000:40,0000:80,0000:c0
+> >> +        *
+> >> +        * Which means:
+> >> +        * IIO PMON block 0 on the die 0 belongs to PCIe root port loc=
+ated on bus 0x00, domain 0x0000
+> >> +        * IIO PMON block 0 on the die 1 belongs to PCIe root port loc=
+ated on bus 0x40, domain 0x0000
+> >> +        * IIO PMON block 0 on the die 2 belongs to PCIe root port loc=
+ated on bus 0x80, domain 0x0000
+> >> +        * IIO PMON block 0 on the die 3 belongs to PCIe root port loc=
+ated on bus 0xc0, domain 0x0000
+> >> +        */
+> >> +
+> >> +       int ret =3D 0;
+> >> +       int die, i;
+> >> +       char *buf;
+> >> +       struct intel_uncore_pmu *pmu;
+> >> +       const int template_len =3D 8;
+> >> +
+> >> +       for (i =3D 0; i < type->num_boxes; i++) {
+> >> +               pmu =3D type->pmus + i;
+> >> +               /* Root bus 0x00 is valid only for die 0 AND pmu_idx =
+=3D 0. */
+> >> +               if (skx_iio_topology_byte(type->platform_topology, 0, =
+pmu->pmu_idx) || (!pmu->pmu_idx)) {
+> >> +                       pmu->platform_mapping =3D
+> >> +                               kzalloc(get_max_dies() * template_len =
++ 1, GFP_KERNEL);
+> >> +                       if (pmu->platform_mapping) {
+> >> +                               buf =3D (char *)pmu->platform_mapping;
+> >> +                               for (die =3D 0; die < get_max_dies(); =
+die++)
+> >> +                                       buf +=3D snprintf(buf, templat=
+e_len + 1, "%04x:%02x,", 0,
+> >> +                                               skx_iio_topology_byte(=
+type->platform_topology,
+> >> +                                                                     =
+die, pmu->pmu_idx));
+> >> +
+> >> +                               *(--buf) =3D '\0';
+> >> +                       } else {
+> >> +                               for (; i >=3D 0; i--)
+> >> +                                       kfree((type->pmus + i)->platfo=
+rm_mapping);
+> >> +                               ret =3D -ENOMEM;
+> >> +                               break;
+> >> +                       }
+> >> +               }
+> >> +       }
+> >> +
+> >> +       kfree(type->platform_topology);
+> >> +       return ret;
+> >> +}
+> >> +
+> >>   void skx_uncore_cpu_init(void)
+> >>   {
+> >>          skx_uncore_chabox.num_boxes =3D skx_count_chabox();
+> >> --
+> >> 2.19.1
+> >>
+>
