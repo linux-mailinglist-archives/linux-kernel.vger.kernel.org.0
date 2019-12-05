@@ -2,139 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB3F1141AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E23D114196
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfLENkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 08:40:01 -0500
-Received: from mail-eopbgr700079.outbound.protection.outlook.com ([40.107.70.79]:2685
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729587AbfLENj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 08:39:59 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AGHBsjytAyCY0H4CZ3lXzq0E26HgrpAlA05e1AGzUv6N4DCK7PlS+A8nOxn4xTaKz6CTAmo6jP9vDABDWCvUeS3GD3Ff/gXqftwYnu8J2hSU3N6EZwBaNYs4zkMcSrWPWK+o/wAb5exA/XiKSmTKjjVfVb78qFOX96DokrWvQdDB91ONRnNL3ll/9+2Ndpqw/0vsdIn98FLg1KexO+zJ3QMyj9OkDxGHnQTK/uP+rvWvjEd/TR8ipK6K3V+b671MyV5bRTv6WqpQj9e1cRVHXlNmhsa6ZWAIlbP6mc9xebmCXghR53IVfTafOfrDOxdyIf/youQTB4tKovD70C14GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vw05veT0wqXG28Anw+RY+7stHA6/u8CQER6EsH70v+Y=;
- b=DWXE6dZeF0lyemfwkPwe0ETNmNgT+Hk5VMog+P9Ea1G3/JGccQ4pHi+hv3PNv8S37q6WawahGIDxLbhXvuMWRmsiZ4dPIYs5s8rAdWIdzNfsAcP7nFVKxuWY/+6Z5tTQhMh3Oa/yvghN0ldS2Ro8gVkUrYOBWiyNVD4kFA9BgBjRf4z9w0vKSDPFOQOFFE5wMrfIL3EY4PuEOdM2VsQEJCW7cqwut0/uY9A0ZHo+UpL2L8rEfnHn5UffMa/HoFa8LvvTFkIy8b95xmS2OoL2xbhVOvxs8NMOxp3o2XEl9lO6vD0JWkXlbDyjqUXcgErxM+qeKqEFePu7oVTkvaOh6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vw05veT0wqXG28Anw+RY+7stHA6/u8CQER6EsH70v+Y=;
- b=EAE7jslsPAWja70EwFjdwofSAumqqXNHvhM6MstOBcqrY+q93lPACJrZrvMguSpCxj+xBjDxrBVGTxLxFnPGzqiiz7B35HIUESsWVshVNhtFRq+7klSN8HevCXJDN/PWicPAijK4sYz/iVksK3pHOpm4LTf/ji5EHZ30JWbA4oE=
-Received: from DM5PR12CA0005.namprd12.prod.outlook.com (2603:10b6:4:1::15) by
- CY4PR12MB1463.namprd12.prod.outlook.com (2603:10b6:910:e::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.22; Thu, 5 Dec 2019 13:39:56 +0000
-Received: from CO1NAM11FT051.eop-nam11.prod.protection.outlook.com
- (2a01:111:f400:7eab::208) by DM5PR12CA0005.outlook.office365.com
- (2603:10b6:4:1::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.12 via Frontend
- Transport; Thu, 5 Dec 2019 13:39:56 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXMB01.amd.com (165.204.84.17) by
- CO1NAM11FT051.mail.protection.outlook.com (10.13.174.114) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.2451.23 via Frontend Transport; Thu, 5 Dec 2019 13:39:56 +0000
-Received: from SATLEXMB01.amd.com (10.181.40.142) by SATLEXMB01.amd.com
- (10.181.40.142) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 5 Dec 2019
- 07:39:54 -0600
-Received: from vishnu-All-Series.amd.com (10.180.168.240) by
- SATLEXMB01.amd.com (10.181.40.142) with Microsoft SMTP Server id 15.1.1713.5
- via Frontend Transport; Thu, 5 Dec 2019 07:39:50 -0600
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>, <djkurtz@google.com>,
-        <pierre-louis.bossart@linux.intel.com>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 7/7] ASoC: amd MMAP_INTERLEAVED Support
-Date:   Thu, 5 Dec 2019 19:07:32 +0530
-Message-ID: <1575553053-18344-8-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575553053-18344-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-References: <1575553053-18344-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        id S1729456AbfLENiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 08:38:02 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:46369 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729290AbfLENiC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 08:38:02 -0500
+Received: by mail-io1-f71.google.com with SMTP id b186so2371870iof.13
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 05:38:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=BPtd1lCkh28DO7EwzqWFu86aIj+E+y3RBRqfbiycXgU=;
+        b=n4DzrEdLZmF5IXIy7ltt3HtMghmERg6RU8leVVRaAUqr00hFPyC/f3egFryJgKmnYC
+         myDkJ9YbeYg49j2QUN83iPbr6hj2BhgfXM8CdXqGvVvQv9XQjvobOF3at81aVBKIAfJj
+         9oVHYREZovqhC0pHzuIAOpKaqW3LbcD0Gxc9W+QTwNN9ADBQRLiMDLZezBzPhKPBeuic
+         RByGWRizwSieTVrVpPvccJIR0ihP3J0F5IjkxP98dOIKwnF2RqdUunM4IdfjsDnANl81
+         euTKXy7zxc/G6LwUtL0xHwLa7yxwKMcBWfobGSzzjEhYymLe0PoPm4xVOFGd0+WrGo5Y
+         Zoog==
+X-Gm-Message-State: APjAAAXBufpNolFAbWD/TIzsWPSyqV9/Z8ftS8uPhoKmUSADUVv0CNk2
+        9VzT8st2ssjY5MLi+uCZJypFUd8TFZDZ1eEGHi34hd02/y4t
+X-Google-Smtp-Source: APXvYqw0yUIbNh+pGaBmjTGn6QTdUeXaeQPr8IF42eCrt+4KQEhGY66Ikiv3nYhzewKgZfr/soR4DDYF3lXcnPKyIFcc/jNYBhWi
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(346002)(376002)(396003)(428003)(189003)(199004)(7416002)(81166006)(2616005)(336012)(70206006)(53416004)(4326008)(76176011)(48376002)(11346002)(478600001)(109986005)(26005)(426003)(54906003)(8936002)(36756003)(186003)(16586007)(14444005)(81156014)(8676002)(86362001)(50466002)(70586007)(51416003)(316002)(6666004)(5660300002)(2906002)(50226002)(7696005)(356004)(305945005)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1463;H:SATLEXMB01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5bb034cc-00e5-443b-7eaf-08d779889dab
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1463:|CY4PR12MB1463:
-X-Microsoft-Antispam-PRVS: <CY4PR12MB146377695A76B3D23A65BF88E75C0@CY4PR12MB1463.namprd12.prod.outlook.com>
-X-MS-Exchange-Transport-Forked: True
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 02426D11FE
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ypCJE6abawcS41XOMDw1hkkrudAtq/bJYWyviqIGLlWk1j2Lp/OYh/WV5b7bFRZnqjb5bfCOTCYmlB15cE6Qd11kmV8m2PvJRlUpKQG89aDctIZlbcUFtw8zap9oxn+ibQBlcSQEArqW1CxXUVgTra5qPdUxHjpwcO1f+9pNpDiQ5gl7JEQeZj2LSSX5dbSZqgdwVjsuSOixcRVRolyGHnGuDOn4IcA01xgYc/yuzjnnsx5Of1krIbnGTtKP93PMPbfmYbde62peYFtNEXyGbOdJ48wuiu52/hzpqMENdWjqMfUphHuugDak4jYUWd19h7mR2oAyV8qGQY3XCwUqVw27jWVt4YAXldM1InNZDWOTP1/XrK+c9kotaLCa9Y2GLSNrpXcFiz6NX+5o5KMingoBYq02aKpw/cUiQUBFkZgiuCc+L19fgmWheZKgK2Bs0E+Eu+tZkTvbAxg9Dp5FXMjZ/orazAgaUbAwhKH95oE=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2019 13:39:56.2368
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5bb034cc-00e5-443b-7eaf-08d779889dab
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1463
-To:     unlisted-recipients:; (no To-header on input)
+X-Received: by 2002:a92:3984:: with SMTP id h4mr8301330ilf.36.1575553081339;
+ Thu, 05 Dec 2019 05:38:01 -0800 (PST)
+Date:   Thu, 05 Dec 2019 05:38:01 -0800
+In-Reply-To: <0000000000006dff110598d25a9b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bcf3bc0598f5090d@google.com>
+Subject: Re: INFO: task hung in fb_open
+From:   syzbot <syzbot+a4ae1442ccc637162dc1@syzkaller.appspotmail.com>
+To:     airlied@linux.ie, ayan.halder@arm.com, b.zolnierkie@samsung.com,
+        daniel.vetter@ffwll.ch, dri-devel@lists.freedesktop.org,
+        kraxel@redhat.com, linux-arm-kernel@lists.infradead.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
+        peda@axentia.se, sam@ravnborg.org, syzkaller-bugs@googlegroups.com,
+        ville.syrjala@linux.intel.com, wens@csie.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACP-I2S device support MMAP_INTERLEAVED.
-Added support for the same.
+syzbot has bisected this bug to:
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
----
- sound/soc/amd/raven/acp3x-pcm-dma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+commit 979c11ef39cee79d6f556091a357890962be2580
+Author: Ayan Kumar Halder <ayan.halder@arm.com>
+Date:   Tue Jul 17 17:13:46 2018 +0000
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index 916f0d8..28a3081 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -22,6 +22,7 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_playback = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_BATCH |
-+		SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_MMAP_VALID |
- 		SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
- 	.formats = SNDRV_PCM_FMTBIT_S16_LE |  SNDRV_PCM_FMTBIT_S8 |
- 		   SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S24_LE |
-@@ -42,7 +43,8 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_capture = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_BATCH |
--	    SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
-+		SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_MMAP_VALID |
-+		SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
- 	.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
- 		   SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S24_LE |
- 		   SNDRV_PCM_FMTBIT_S32_LE,
--- 
-2.7.4
+     drm/sun4i: Substitute sun4i_backend_format_is_yuv() with format->is_yuv
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15d2f97ee00000
+start commit:   596cf45c Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13d2f97ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8ab2e0e09c2a82
+dashboard link: https://syzkaller.appspot.com/bug?extid=a4ae1442ccc637162dc1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14273edae00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e7677ae00000
+
+Reported-by: syzbot+a4ae1442ccc637162dc1@syzkaller.appspotmail.com
+Fixes: 979c11ef39ce ("drm/sun4i: Substitute sun4i_backend_format_is_yuv()  
+with format->is_yuv")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
