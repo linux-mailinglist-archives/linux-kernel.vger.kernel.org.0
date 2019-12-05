@@ -2,105 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE525113CDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDE6113CBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:06:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbfLEIMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 03:12:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfLEIMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 03:12:32 -0500
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22C3F206DB;
-        Thu,  5 Dec 2019 08:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575533551;
-        bh=ky657dThfKjbVCpIILkr6VubSyzgvjEQ7qr2LeYt6TY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zWTADLrRypv69ffcx5KeP3fiz0Z9hUuW2eeE9r2qjy2Q2u06vOT0cjeLRos5fN18Q
-         sppeEg3dnSGvTz70LpCz/WxVXkTth+7KVp6rQAJ5RJFfexkW8hV+GIYj6xxZYbBu/t
-         BZXTk0kbrZ1SYTl64LBHBAQbPQUI9zGCkth/Fk+8=
-Date:   Wed, 4 Dec 2019 16:17:25 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     andrew.murray@arm.com, maz@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Martin Habets <mhabets@solarflare.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.con>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rdma@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, kexec@lists.infradead.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v4 7/8] linux/log2.h: Fix 64bit calculations in
- roundup/down_pow_two()
-Message-ID: <20191204141725.GA4939@unreal>
-References: <20191203114743.1294-1-nsaenzjulienne@suse.de>
- <20191203114743.1294-8-nsaenzjulienne@suse.de>
+        id S1728011AbfLEIGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 03:06:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41045 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfLEIGO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 03:06:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s18so1222802pfd.8;
+        Thu, 05 Dec 2019 00:06:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sbOWUl/LYyug4BpNjD/sLnbb5ya8VzzTl8Cu9V2yvRY=;
+        b=nmGXMlWXu2JCqHKwG7oK8kS1mCgH+HBN4/eM/NOEeCk2in3RGF5oWu656B48kWYzV4
+         mY3bSWyZ30MR/SPNmvS/GgUUll2YMsfMQo4qX+RVLHY0NPjYtazSfiBM5ugleCHjtKdG
+         /Pbz/f5x5rYSo2Hy4VnzwlqqGlLPdKzWeC6AtTnUUMau3dNCpKjv7aAy3QyOCwm8dRb9
+         s41ylI9rrYu3yOGBb4X3BRQLyBLwUu77hjkAhn3AKb1ti3c9OPbwoPdLzlc1yuCbLZrO
+         P8A/jaKiNBktktPIGGLu3Ewlo84+vLm4GxiQksazqDrPb7d4VxWAHjyWP95q5eFbVCuR
+         KDNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sbOWUl/LYyug4BpNjD/sLnbb5ya8VzzTl8Cu9V2yvRY=;
+        b=UEmitdjxm1vAbrx39eGB5WN7xneSAdVbVQot9uj4nmwAWC4YnFF18L1WHCMqRgJYxS
+         76lmoraRcC0jADevtaGLwvbTQyCs3u6OzoS/gpDfHm9V79coIlJLXbfcsy9C/Js+BDoR
+         qmimz9ylo7U3L+CaxfxY47kxekYcJxCoJj99MRxIjBTfdLRN9hV9cXCPPnNUv7aJU8hS
+         LALIh4O2FjhSXD7Q61Q1R5T8pHGGzYsEsIoad0kMWAVKI1eEGUrpMnnMy5NUkCoz1H0+
+         SNlZG0pPYIZ81doBSKUExdI96QX54qbtk7qEPMQHRx2ynTzerPZ3LBPL2TLEQeW8Co6b
+         5YDQ==
+X-Gm-Message-State: APjAAAWNIB5AUamyA8hEa3HK4dhyTVwmPjS+8ue79G0GGCqSZkc3h2ew
+        7rAe0AJSxDPQ6fAMjnftfl0=
+X-Google-Smtp-Source: APXvYqyk7FdG4hnofsNwSjWrXOupDwiMK/1MsIp6Jp00Uhte+xvNi4jEmcD2YJExVKTWuST0cGuFFg==
+X-Received: by 2002:a63:3cb:: with SMTP id 194mr8219400pgd.123.1575533173934;
+        Thu, 05 Dec 2019 00:06:13 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
+        by smtp.gmail.com with ESMTPSA id w4sm8996292pjt.21.2019.12.05.00.06.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 00:06:12 -0800 (PST)
+Date:   Thu, 5 Dec 2019 17:06:11 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: meson: add missing allocation failure check on
+ new_buf
+Message-ID: <20191205080611.GY93017@google.com>
+References: <20191204141159.1432387-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191203114743.1294-8-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191204141159.1432387-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 12:47:40PM +0100, Nicolas Saenz Julienne wrote:
-> Some users need to make sure their rounding function accepts and returns
-> 64bit long variables regardless of the architecture. Sadly
-> roundup/rounddown_pow_two() takes and returns unsigned longs. It turns
-> out ilog2() already handles 32/64bit calculations properly, and being
-> the building block to the round functions we can rework them as a
-> wrapper around it.
+On (19/12/04 14:11), Colin King wrote:
+[..]
+> diff --git a/drivers/staging/media/meson/vdec/vdec.c b/drivers/staging/media/meson/vdec/vdec.c
+> index 0a1a04fd5d13..8dd1396909d7 100644
+> --- a/drivers/staging/media/meson/vdec/vdec.c
+> +++ b/drivers/staging/media/meson/vdec/vdec.c
+> @@ -133,6 +133,8 @@ vdec_queue_recycle(struct amvdec_session *sess, struct vb2_buffer *vb)
+>  	struct amvdec_buffer *new_buf;
 >
-> Suggested-by: Robin Murphy <robin.murphy@arm.con>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> ---
->  drivers/clk/clk-divider.c                    |  8 ++--
->  drivers/clk/sunxi/clk-sunxi.c                |  2 +-
->  drivers/infiniband/hw/hfi1/chip.c            |  4 +-
->  drivers/infiniband/hw/hfi1/init.c            |  4 +-
->  drivers/infiniband/hw/mlx4/srq.c             |  2 +-
->  drivers/infiniband/hw/mthca/mthca_srq.c      |  2 +-
->  drivers/infiniband/sw/rxe/rxe_qp.c           |  4 +-
+>  	new_buf = kmalloc(sizeof(*new_buf), GFP_KERNEL);
+> +	if (!new_buf)
+> +		return;
+>  	new_buf->vb = vb;
 
+So the buffer is not getting recycled? IOW is leaked?
 
-Thanks, for infiniband.
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+	-ss
