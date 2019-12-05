@@ -2,104 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4681A114109
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 13:55:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EDB4114111
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 13:58:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfLEMzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 07:55:50 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44880 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbfLEMzu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 07:55:50 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v201so2382547lfa.11;
-        Thu, 05 Dec 2019 04:55:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1qiyn/834OJWIRhu0XZvdM5LzzzV2eZ2ASR6H3Xv50k=;
-        b=sdPdpqV7eZ51owcp/denn3Sm5zZ52nNuZOo5AfbnXgCxUXN/N/dRX9HG8ORXYLqahg
-         eeczwMorTzAhvIod8GQef1C1W/HrnTKnghCluMfqBmOVI5zmKof9JgQDcSsoOjwa8prD
-         l6Mayp1+sR1N+CfiKvIfJ/unPu/bXHcr3zlqk1ykZa5vHdBPsZFe/SGsYhhBS8RDsMu5
-         NIkYcgs0e8dgo+0pC06ohP95GCLjLXfLa5LYGGYR1DcECnYlKRRdKnFOO8HnuTojjWnM
-         05ZC3FfDdILf1bcrX4ThjZwbIw2UA5QuhUTmTgkM1VzNAUk9tVUvFSkx7ucBqjsI6HOU
-         zdIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1qiyn/834OJWIRhu0XZvdM5LzzzV2eZ2ASR6H3Xv50k=;
-        b=ItAFdVgWGZjQyPFixNzYMdjSv6oXTrREquYsNe2EYzqkQZZijedU9IVpn+Sz+Q0+QP
-         Tj8QnjhApT+4TDwSJ2878La/YQB2eNKcKl5+j74G3cFqrqg/vNZdeYZB2mdgPtJ8MiGK
-         cCf6nV3OF9x4w+k3LXfJhH4M+B6+1G3dFXLsS3HOzBJ49XwlzN3iwxhD3RJE0c2vOC+T
-         N2sBzvzZskFprjE54ArmKGYv5ZyzG7SVShWkRx4yz6ZgwbtREvWhrv9Xp5PQkp/9Xx41
-         dVOJlBOaarMLk9wqyq32077o9KSRjHEbQFjy0yMoLVmA1JYSlfMJkb8x5DwBrlGU7GkN
-         wcrw==
-X-Gm-Message-State: APjAAAWk9Nc8YKT54/O1v1XpSCs10jRir4d2y+Pp9fz6D3KiXpN5qz/N
-        NxLhNVRj2tjEIf9j+DiibKc=
-X-Google-Smtp-Source: APXvYqxQzn85bdWHUVxwXHtYVTF2R4LVHB0a0B7sZChjdjhVRMnoFP3Z/9lPLRLhcH2/1eQ27Rd3gw==
-X-Received: by 2002:ac2:5a43:: with SMTP id r3mr5399483lfn.150.1575550547868;
-        Thu, 05 Dec 2019 04:55:47 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id e9sm1824997ljp.87.2019.12.05.04.55.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2019 04:55:46 -0800 (PST)
-Subject: Re: [TEGRA194_CPUFREQ Patch 2/3] cpufreq: Add Tegra194 cpufreq driver
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     sumitg <sumitg@nvidia.com>, rjw@rjwysocki.net,
-        catalin.marinas@arm.com, will@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, talho@nvidia.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bbasu@nvidia.com,
-        mperttunen@nvidia.com
-References: <1575394348-17649-1-git-send-email-sumitg@nvidia.com>
- <1575394348-17649-2-git-send-email-sumitg@nvidia.com>
- <20191204054043.o4ff7pnqec3fwdgu@vireshk-i7>
- <7347caa6-43a3-f761-de83-481b45f7b22a@nvidia.com>
- <20191204112749.jkwlyteal4hfvnhb@vireshk-i7>
- <0b634341-ea2b-e9cd-4986-dc9a01c839bb@gmail.com>
- <20191205025125.imxnao2qwyons5zl@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c26ed467-0e30-900b-4e69-762ee83e8377@gmail.com>
-Date:   Thu, 5 Dec 2019 15:55:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729450AbfLEM6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 07:58:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39370 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729048AbfLEM6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 07:58:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 66F10AB87;
+        Thu,  5 Dec 2019 12:58:32 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id B24BCDA733; Thu,  5 Dec 2019 13:58:26 +0100 (CET)
+Date:   Thu, 5 Dec 2019 13:58:26 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] pipe: Notification queue preparation
+Message-ID: <20191205125826.GK2734@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Howells <dhowells@redhat.com>,
+        torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, keyrings@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <31452.1574721589@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20191205025125.imxnao2qwyons5zl@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31452.1574721589@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-05.12.2019 05:51, Viresh Kumar пишет:
-> On 04-12-19, 16:57, Dmitry Osipenko wrote:
->> 04.12.2019 14:27, Viresh Kumar пишет:
->>> On 04-12-19, 16:25, sumitg wrote:
->>>> In T194, CCPLEX doesn't have access to set clocks and the
->>>>
->>>> clk_{get|set}_rate() functions set clocks by hook to BPMP R5.
->>>>
->>>> CPU freq can be directly set by CCPLEX using MSR(NVFREQ_REQ_EL1).
->>>>
->>>> As DVFS run's on BPMP, another MSR (NVFREQ_FEEDBACK_EL1) is
->>>>
->>>> used to read the counters and calculate "actual" cpu freq at CCPLEX.
->>>>
->>>> So, "cpuinfo_cur_freq" node gives the actual cpu frequency and not
->>>>
->>>> given by node "scaling_cur_freq".
->>>
->>> Right, but why can't this be hidden in the CPU's clk driver instead,
->>> so cpufreq driver can just do clk_get_rate() and clk_set_rate() ?
->>
->> What about to make use of dev_pm_opp_register_set_opp_helper()?
-> 
-> It has a different purpose where we have to play with different
-> regulators. And that won't help with clk_get_rate() anyway.
+On Mon, Nov 25, 2019 at 10:39:49PM +0000, David Howells wrote:
+> David Howells (12):
+>       pipe: Reduce #inclusion of pipe_fs_i.h
+>       Remove the nr_exclusive argument from __wake_up_sync_key()
+>       Add wake_up_interruptible_sync_poll_locked()
+>       pipe: Use head and tail pointers for the ring, not cursor and length
 
-Indeed that won't help with the clk.
+This commit (8cefc107ca54c8b06438b7dc9) causes hangs of 'btrfs send'
+commands, that's eg. inside fstests or in btrfs-progs testsuite. The
+'send' uses pipe/splice to get data from kernel to userspace.
+
+The test that reliably worked for me leaves the process hanging with
+this stacktrace (no CPU or IO activity):
+
+[<0>] pipe_write+0x1be/0x4b0
+[<0>] new_sync_write+0x11e/0x1c0
+[<0>] vfs_write+0xc1/0x1d0
+[<0>] kernel_write+0x2c/0x40
+[<0>] send_cmd+0x78/0xf0 [btrfs]
+[<0>] send_extent_data+0x4b1/0x52c [btrfs]
+[<0>] process_extent+0xe46/0xe9d [btrfs]
+[<0>] changed_cb+0xcf5/0xd2f [btrfs]
+[<0>] send_subvol+0x8ad/0xc0b [btrfs]
+[<0>] btrfs_ioctl_send+0xe50/0xf30 [btrfs]
+[<0>] _btrfs_ioctl_send+0x80/0x110 [btrfs]
+[<0>] btrfs_ioctl+0x18e1/0x3450 [btrfs]
+[<0>] do_vfs_ioctl+0xa5/0x710
+[<0>] ksys_ioctl+0x70/0x80
+[<0>] __x64_sys_ioctl+0x16/0x20
+[<0>] do_syscall_64+0x56/0x220
+[<0>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+I've bisected that to the mentioned commit, using test in btrfs-progs
+testsuite with command "make TEST=016\* test-misc". Normally the test
+can run up to 10 seconds, in the buggy case it stays there.
+
+I can help testing fixes or gathering more information, please let me
+know.
+
+Full bisect log:
+
+# bad: [3c0edea9b29f9be6c093f236f762202b30ac9431] pipe: Remove sync on wake_ups
+# good: [da0c9ea146cbe92b832f1b0f694840ea8eb33cce] Linux 5.4-rc2
+git bisect start '3c0edea9b29f9be6c093f236f762202b30ac9431' 'd055b4fb4d165b06d912e7f846610d120c3bb9fb^'
+# bad: [b667b867344301e24f21d4a4c844675ff61d89e1] pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+git bisect bad b667b867344301e24f21d4a4c844675ff61d89e1
+# good: [f94df9890e98f2090c6a8d70c795134863b70201] Add wake_up_interruptible_sync_poll_locked()
+git bisect good f94df9890e98f2090c6a8d70c795134863b70201
+# bad: [6718b6f855a0b4962d54bd625be2718cb820cec6] pipe: Allow pipes to have kernel-reserved slots
+git bisect bad 6718b6f855a0b4962d54bd625be2718cb820cec6
+# bad: [8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98] pipe: Use head and tail pointers for the ring, not cursor and length
+git bisect bad 8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98
+# first bad commit: [8cefc107ca54c8b06438b7dc9cc08bc0a11d5b98] pipe: Use head and tail pointers for the ring, not cursor and length
+
+>       pipe: Allow pipes to have kernel-reserved slots
+>       pipe: Advance tail pointer inside of wait spinlock in pipe_read()
+>       pipe: Conditionalise wakeup in pipe_read()
+>       pipe: Rearrange sequence in pipe_write() to preallocate slot
+>       pipe: Remove redundant wakeup from pipe_write()
+>       pipe: Check for ring full inside of the spinlock in pipe_write()
+>       pipe: Increase the writer-wakeup threshold to reduce context-switch count
+>       pipe: Remove sync on wake_ups
