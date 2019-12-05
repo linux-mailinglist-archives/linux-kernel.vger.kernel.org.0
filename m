@@ -2,172 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0075B113B67
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:45:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD5C113B6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:45:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbfLEFpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 00:45:06 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:57582 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725822AbfLEFpG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 00:45:06 -0500
-X-UUID: 0fb2c8d23659430bb5009b28d2f0e1e4-20191205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=DMukBWFVgZU4DzzXUc2ShgiywIROlscb4YOByu87/p4=;
-        b=A2/T+2gQ9t2mkR4JREyWfUNk7Pba/h+gDoz5DgGGID9QWt7BZ9fMSi+kPhsZr2WyYzU1shFYhFrMrQ9HTbSA8SWfAoyeeaaO54B5HBxmcoZ4syiADXyDM54X0p85gKj05ZZEbUdeSrVn+Mcyth/L15qF9QCQlvBa9oR9g4Zq4/Q=;
-X-UUID: 0fb2c8d23659430bb5009b28d2f0e1e4-20191205
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1063602775; Thu, 05 Dec 2019 13:44:59 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 5 Dec 2019 13:44:41 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 5 Dec 2019 13:44:27 +0800
-Message-ID: <1575524697.24783.20.camel@mtksdaap41>
-Subject: Re: [PATCH v3 6/6] drm/mediatek: apply CMDQ control flow
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Date:   Thu, 5 Dec 2019 13:44:57 +0800
-In-Reply-To: <20191204094441.5116-7-bibby.hsieh@mediatek.com>
-References: <20191204094441.5116-1-bibby.hsieh@mediatek.com>
-         <20191204094441.5116-7-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726201AbfLEFpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 00:45:16 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:57774 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbfLEFpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 00:45:16 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1icjwr-0007sG-8q; Thu, 05 Dec 2019 13:45:09 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1icjwn-0003y8-TT; Thu, 05 Dec 2019 13:45:05 +0800
+Date:   Thu, 5 Dec 2019 13:45:05 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     syzbot <syzbot+c2f1558d49e25cc36e5e@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [PATCH] crypto: af_alg - Use bh_lock_sock in sk_destruct
+Message-ID: <20191205054505.wulhkajz64lwwffc@gondor.apana.org.au>
+References: <0000000000003e5aa90598ed7415@google.com>
+ <f7009e8d-a488-c6df-6875-e872265efec0@gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7009e8d-a488-c6df-6875-e872265efec0@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBXZWQsIDIwMTktMTItMDQgYXQgMTc6NDQgKzA4MDAsIEJpYmJ5IEhz
-aWVoIHdyb3RlOg0KPiBVbmxpa2Ugb3RoZXIgU29DcywgTVQ4MTgzIGRvZXMgbm90IGhhdmUgInNo
-YWRvdyINCj4gcmVnaXN0ZXJzIGZvciBwZXJmb3JtYWluZyBhbiBhdG9taWMgdmlkZW8gbW9kZQ0K
-PiBzZXQgb3IgcGFnZSBmbGlwIGF0IHZibGFuay92c3luYy4NCj4gDQo+IFRoZSBDTURRIChDb21t
-ZW5kIFF1ZXVlKSBpbiBNVDgxODMgaXMgdXNlZCB0byBoZWxwDQo+IHVwZGF0ZSBhbGwgcmVsZXZh
-bnQgZGlzcGxheSBjb250cm9sbGVyIHJlZ2lzdGVycw0KPiB3aXRoIGNyaXRpY2FsIHRpbWUgbGlt
-YXRpb24uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBZVCBTaGVuIDx5dC5zaGVuQG1lZGlhdGVrLmNv
-bT4NCj4gU2lnbmVkLW9mZi1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCj4gU2lnbmVk
-LW9mZi1ieTogUGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4NCj4gU2lnbmVk
-LW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1lZGlhdGVrLmNvbT4NCj4gU2lnbmVk
-LW9mZi1ieTogWW9uZ3FpYW5nIE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQo+IC0t
-LQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jIHwgODAgKysrKysr
-KysrKysrKysrKysrKysrKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDc3IGluc2VydGlvbnMoKyks
-IDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
-Yy5jDQo+IGluZGV4IDlmMWZmMmYzZjEwNC4uOTM0MDM0NmUyNzI3IDEwMDY0NA0KPiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+IEBAIC0xMiw2ICsxMiw4IEBADQo+ICAj
-aW5jbHVkZSA8ZHJtL2RybV9wbGFuZV9oZWxwZXIuaD4NCj4gICNpbmNsdWRlIDxkcm0vZHJtX3By
-b2JlX2hlbHBlci5oPg0KPiAgI2luY2x1ZGUgPGRybS9kcm1fdmJsYW5rLmg+DQo+ICsjaW5jbHVk
-ZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L3NvYy9tZWRpYXRlay9t
-dGstY21kcS5oPg0KPiAgDQo+ICAjaW5jbHVkZSAibXRrX2RybV9kcnYuaCINCj4gICNpbmNsdWRl
-ICJtdGtfZHJtX2NydGMuaCINCj4gQEAgLTQyLDYgKzQ0LDkgQEAgc3RydWN0IG10a19kcm1fY3J0
-YyB7DQo+ICAJdW5zaWduZWQgaW50CQkJbGF5ZXJfbnI7DQo+ICAJYm9vbAkJCQlwZW5kaW5nX3Bs
-YW5lczsNCj4gIA0KPiArCXN0cnVjdCBjbWRxX2NsaWVudAkJKmNtZHFfY2xpZW50Ow0KPiArCXUz
-MgkJCQljbWRxX2V2ZW50Ow0KPiArDQo+ICAJdm9pZCBfX2lvbWVtCQkJKmNvbmZpZ19yZWdzOw0K
-PiAgCWNvbnN0IHN0cnVjdCBtdGtfbW1zeXNfcmVnX2RhdGEgKm1tc3lzX3JlZ19kYXRhOw0KPiAg
-CXN0cnVjdCBtdGtfZGlzcF9tdXRleAkJKm11dGV4Ow0KPiBAQCAtNTksNiArNjQsMTEgQEAgc3Ry
-dWN0IG10a19jcnRjX3N0YXRlIHsNCj4gIAl1bnNpZ25lZCBpbnQJCQlwZW5kaW5nX3dpZHRoOw0K
-PiAgCXVuc2lnbmVkIGludAkJCXBlbmRpbmdfaGVpZ2h0Ow0KPiAgCXVuc2lnbmVkIGludAkJCXBl
-bmRpbmdfdnJlZnJlc2g7DQo+ICsJc3RydWN0IGNtZHFfcGt0CQkJKmNtZHFfaGFuZGxlOw0KDQpU
-aGUgaGFuZGxlIGlzIGp1c3QgdXNlZCBpbiBtdGtfZHJtX2NydGNfaHdfY29uZmlnKCksIHNvIEkg
-dGhpbmsgeW91IG5lZWQNCm5vdCB0byBzdG9yZSBpdCBpbiBtdGtfY3J0Y19zdGF0ZS4gTWFrZSBp
-dCBhIGxvY2FsIHZhcmlhYmxlIGluDQptdGtfZHJtX2NydGNfaHdfY29uZmlnKCkgaXMgZW5vdWdo
-Lg0KDQo+ICt9Ow0KPiArDQo+ICtzdHJ1Y3QgbXRrX2NtZHFfY2JfZGF0YSB7DQo+ICsJc3RydWN0
-IGNtZHFfcGt0CQkJKmNtZHFfaGFuZGxlOw0KPiAgfTsNCj4gIA0KPiAgc3RhdGljIGlubGluZSBz
-dHJ1Y3QgbXRrX2RybV9jcnRjICp0b19tdGtfY3J0YyhzdHJ1Y3QgZHJtX2NydGMgKmMpDQo+IEBA
-IC0yMzMsNiArMjQzLDQ3IEBAIHN0cnVjdCBtdGtfZGRwX2NvbXAgKm10a19kcm1fZGRwX2NvbXBf
-Zm9yX3BsYW5lKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywNCj4gIAlyZXR1cm4gTlVMTDsNCj4gIH0N
-Cj4gIA0KPiArI2lmZGVmIENPTkZJR19NVEtfQ01EUQ0KPiArc3RhdGljIHZvaWQgZGRwX2NtZHFf
-Y2Ioc3RydWN0IGNtZHFfY2JfZGF0YSBkYXRhKQ0KPiArew0KPiArCXN0cnVjdCBtdGtfY21kcV9j
-Yl9kYXRhICpjYl9kYXRhID0gZGF0YS5kYXRhOw0KPiArDQo+ICsJY21kcV9wa3RfZGVzdHJveShj
-Yl9kYXRhLT5jbWRxX2hhbmRsZSk7DQo+ICsJa2ZyZWUoY2JfZGF0YSk7DQo+ICt9DQo+ICsNCj4g
-K3N0YXRpYyB2b2lkIG10a19jbWRxX2FjcXVpcmUoc3RydWN0IGRybV9jcnRjICpjcnRjKQ0KPiAr
-ew0KPiArCXN0cnVjdCBtdGtfY3J0Y19zdGF0ZSAqbXRrX2NydGNfc3RhdGUgPQ0KPiArCQkJdG9f
-bXRrX2NydGNfc3RhdGUoY3J0Yy0+c3RhdGUpOw0KPiArCXN0cnVjdCBtdGtfZHJtX2NydGMgKm10
-a19jcnRjID0gdG9fbXRrX2NydGMoY3J0Yyk7DQo+ICsNCj4gKwltdGtfY3J0Y19zdGF0ZS0+Y21k
-cV9oYW5kbGUgPQ0KPiArCQkJY21kcV9wa3RfY3JlYXRlKG10a19jcnRjLT5jbWRxX2NsaWVudCwN
-Cj4gKwkJCQkJUEFHRV9TSVpFKTsNCj4gKwljbWRxX3BrdF9jbGVhcl9ldmVudChtdGtfY3J0Y19z
-dGF0ZS0+Y21kcV9oYW5kbGUsDQo+ICsJCQkgICAgIG10a19jcnRjLT5jbWRxX2V2ZW50KTsNCj4g
-KwljbWRxX3BrdF93ZmUobXRrX2NydGNfc3RhdGUtPmNtZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21k
-cV9ldmVudCk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIG10a19jbWRxX3JlbGVhc2Uoc3Ry
-dWN0IGRybV9jcnRjICpjcnRjKQ0KPiArew0KPiArCXN0cnVjdCBtdGtfY3J0Y19zdGF0ZSAqbXRr
-X2NydGNfc3RhdGUgPQ0KPiArCQkJdG9fbXRrX2NydGNfc3RhdGUoY3J0Yy0+c3RhdGUpOw0KPiAr
-CXN0cnVjdCBtdGtfY21kcV9jYl9kYXRhICpjYl9kYXRhOw0KPiArDQo+ICsJY2JfZGF0YSA9IGtt
-YWxsb2Moc2l6ZW9mKCpjYl9kYXRhKSwgR0ZQX0tFUk5FTCk7DQo+ICsJaWYgKCFjYl9kYXRhKSB7
-DQo+ICsJCURSTV9ERVZfRVJST1IoY3J0Yy0+ZGV2LT5kZXYsICJGYWlsZWQgdG8gYWxsb2MgY2Jf
-ZGF0YVxuIik7DQo+ICsJCXJldHVybjsNCj4gKwl9DQo+ICsNCj4gKwljYl9kYXRhLT5jbWRxX2hh
-bmRsZSA9IG10a19jcnRjX3N0YXRlLT5jbWRxX2hhbmRsZTsNCj4gKwljbWRxX3BrdF9mbHVzaF9h
-c3luYyhtdGtfY3J0Y19zdGF0ZS0+Y21kcV9oYW5kbGUsDQo+ICsJCQkgICAgIGRkcF9jbWRxX2Ni
-LCBjYl9kYXRhKTsNCg0KV2h5IGRvIHlvdSBjcmVhdGUgbXRrX2NtZHFfY2JfZGF0YXt9PyBZb3Ug
-Y291bGQgZGlyZWN0bHkgcHV0IGhhbmRsZSBpbg0KY2JfZGF0ZSBwYXJhbWV0ZXIuDQoNCj4gK30N
-Cj4gKyNlbmRpZg0KPiArDQo+ICBzdGF0aWMgaW50IG10a19jcnRjX2RkcF9od19pbml0KHN0cnVj
-dCBtdGtfZHJtX2NydGMgKm10a19jcnRjKQ0KPiAgew0KPiAgCXN0cnVjdCBkcm1fY3J0YyAqY3J0
-YyA9ICZtdGtfY3J0Yy0+YmFzZTsNCj4gQEAgLTM5Myw3ICs0NDQsOCBAQCBzdGF0aWMgdm9pZCBt
-dGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykNCj4gIAlpZiAoc3RhdGUt
-PnBlbmRpbmdfY29uZmlnKSB7DQo+ICAJCW10a19kZHBfY29tcF9jb25maWcoY29tcCwgc3RhdGUt
-PnBlbmRpbmdfd2lkdGgsDQo+ICAJCQkJICAgIHN0YXRlLT5wZW5kaW5nX2hlaWdodCwNCj4gLQkJ
-CQkgICAgc3RhdGUtPnBlbmRpbmdfdnJlZnJlc2gsIDAsIE5VTEwpOw0KPiArCQkJCSAgICBzdGF0
-ZS0+cGVuZGluZ192cmVmcmVzaCwgMCwNCj4gKwkJCQkgICAgc3RhdGUtPmNtZHFfaGFuZGxlKTsN
-Cj4gIA0KPiAgCQlzdGF0ZS0+cGVuZGluZ19jb25maWcgPSBmYWxzZTsNCj4gIAl9DQo+IEBAIC00
-MTMsNyArNDY1LDggQEAgc3RhdGljIHZvaWQgbXRrX2NydGNfZGRwX2NvbmZpZyhzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMpDQo+ICANCj4gIAkJCWlmIChjb21wKQ0KPiAgCQkJCW10a19kZHBfY29tcF9s
-YXllcl9jb25maWcoY29tcCwgbG9jYWxfbGF5ZXIsDQo+IC0JCQkJCQkJICBwbGFuZV9zdGF0ZSwg
-TlVMTCk7DQo+ICsJCQkJCQkJICBwbGFuZV9zdGF0ZSwNCj4gKwkJCQkJCQkgIHN0YXRlLT5jbWRx
-X2hhbmRsZSk7DQo+ICAJCQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5jb25maWcgPSBmYWxzZTsNCj4g
-IAkJfQ0KPiAgCQltdGtfY3J0Yy0+cGVuZGluZ19wbGFuZXMgPSBmYWxzZTsNCj4gQEAgLTQ1Miw2
-ICs1MDUsMTMgQEAgc3RhdGljIHZvaWQgbXRrX2RybV9jcnRjX2h3X2NvbmZpZyhzdHJ1Y3QgbXRr
-X2RybV9jcnRjICptdGtfY3J0YykNCj4gIAkJbXRrX2NydGNfZGRwX2NvbmZpZyhjcnRjKTsNCj4g
-IAkJbXRrX2Rpc3BfbXV0ZXhfcmVsZWFzZShtdGtfY3J0Yy0+bXV0ZXgpOw0KPiAgCX0NCj4gKyNp
-ZmRlZiBDT05GSUdfTVRLX0NNRFENCj4gKwlpZiAobXRrX2NydGMtPmNtZHFfY2xpZW50KSB7DQo+
-ICsJCW10a19jbWRxX2FjcXVpcmUoY3J0Yyk7DQo+ICsJCW10a19jcnRjX2RkcF9jb25maWcoY3J0
-Yyk7DQo+ICsJCW10a19jbWRxX3JlbGVhc2UoY3J0Yyk7DQo+ICsJfQ0KPiArI2VuZGlmDQo+ICAJ
-bXV0ZXhfdW5sb2NrKCZtdGtfY3J0Yy0+aHdfbG9jayk7DQo+ICB9DQo+ICANCj4gQEAgLTUyOCw2
-ICs1ODgsNyBAQCBzdGF0aWMgdm9pZCBtdGtfZHJtX2NydGNfYXRvbWljX2Rpc2FibGUoc3RydWN0
-IGRybV9jcnRjICpjcnRjLA0KPiAgCW10a19jcnRjLT5wZW5kaW5nX3BsYW5lcyA9IHRydWU7DQo+
-ICANCj4gIAkvKiBXYWl0IGZvciBwbGFuZXMgdG8gYmUgZGlzYWJsZWQgKi8NCj4gKwltdGtfZHJt
-X2NydGNfaHdfY29uZmlnKG10a19jcnRjKTsNCg0KSSB0aGluayBzaGFkb3cgcmVnaXN0ZXIgaGFz
-IHRoZSBzYW1lIHByb2JsZW0sIHNvIEkgd291bGQgbGlrZSB0byBtb3ZlDQp0aGlzIHBhcnQgdG8g
-YW4gaW5kZXBlbmRlbnQgcGF0Y2ggd2hpY2ggZml4IHNoYWRvdyByZWdpc3RlciBwcm9ibGVtLiBB
-bmQNCkkgdGhpbmsgdGhpcyBzdGF0ZW1lbnQgc2hvdWxkIGJlIG1vdmVkIGJlZm9yZSB0aGUgY29t
-bWVudCBiZWNhdXNlIHRoaXMNCnN0YXRlbWVudCBkb2VzIG5vdCBkb2luZyB3YWl0Lg0KDQo+ICAJ
-ZHJtX2NydGNfd2FpdF9vbmVfdmJsYW5rKGNydGMpOw0KPiAgDQo+ICAJZHJtX2NydGNfdmJsYW5r
-X29mZihjcnRjKTsNCj4gQEAgLTYxOSw3ICs2ODAsNyBAQCB2b2lkIG10a19jcnRjX2RkcF9pcnEo
-c3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgbXRrX2RkcF9jb21wICpjb21wKQ0KPiAgCXN0
-cnVjdCBtdGtfZHJtX2NydGMgKm10a19jcnRjID0gdG9fbXRrX2NydGMoY3J0Yyk7DQo+ICAJc3Ry
-dWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdiA9IGNydGMtPmRldi0+ZGV2X3ByaXZhdGU7DQo+ICAN
-Cj4gLQlpZiAoIXByaXYtPmRhdGEtPnNoYWRvd19yZWdpc3RlcikNCj4gKwlpZiAoIXByaXYtPmRh
-dGEtPnNoYWRvd19yZWdpc3RlciAmJiAhbXRrX2NydGMtPmNtZHFfY2xpZW50KQ0KPiAgCQltdGtf
-Y3J0Y19kZHBfY29uZmlnKGNydGMpOw0KPiAgDQo+ICAJbXRrX2RybV9maW5pc2hfcGFnZV9mbGlw
-KG10a19jcnRjKTsNCj4gQEAgLTc2Myw1ICs4MjQsMTggQEAgaW50IG10a19kcm1fY3J0Y19jcmVh
-dGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsDQo+ICAJcHJpdi0+bnVtX3BpcGVzKys7DQo+
-ICAJbXV0ZXhfaW5pdCgmbXRrX2NydGMtPmh3X2xvY2spOw0KPiAgDQo+ICsjaWZkZWYgQ09ORklH
-X01US19DTURRDQo+ICsJbXRrX2NydGMtPmNtZHFfY2xpZW50ID0NCj4gKwkJCWNtZHFfbWJveF9j
-cmVhdGUoZGV2LCBkcm1fY3J0Y19pbmRleCgmbXRrX2NydGMtPmJhc2UpLA0KPiArCQkJCQkgMjAw
-MCk7DQo+ICsJb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgoZGV2LT5vZl9ub2RlLCAibWVkaWF0
-ZWssZ2NlLWV2ZW50cyIsDQo+ICsJCQkJICAgZHJtX2NydGNfaW5kZXgoJm10a19jcnRjLT5iYXNl
-KSwNCj4gKwkJCQkgICAmbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KDQpDaGVjayB0aGUgcmV0dXJu
-IHZhbHVlLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiArCWlmIChJU19FUlIobXRrX2NydGMtPmNtZHFf
-Y2xpZW50KSkgew0KPiArCQlkZXZfZGJnKGRldiwgIm10a19jcnRjICVkIGZhaWxlZCB0byBjcmVh
-dGUgbWFpbGJveCBjbGllbnQsIHdyaXRpbmcgcmVnaXN0ZXIgYnkgQ1BVIG5vd1xuIiwNCj4gKwkJ
-CWRybV9jcnRjX2luZGV4KCZtdGtfY3J0Yy0+YmFzZSkpOw0KPiArCQltdGtfY3J0Yy0+Y21kcV9j
-bGllbnQgPSBOVUxMOw0KPiArCX0NCj4gKyNlbmRpZg0KPiAgCXJldHVybiAwOw0KPiAgfQ0KDQo=
+On Wed, Dec 04, 2019 at 08:59:11PM -0800, Eric Dumazet wrote:
+>
+> crypto layer (hash_sock_destruct()) is called from rcu callback (this in BH context) but tries to grab a socket lock.
+> 
+> A socket lock can schedule, which is illegal in BH context.
 
+Fair enough.  Although I was rather intrigued as to how the RCU call
+occured in the first place.  After some digging my theory is that
+this is due to a SO_ATTACH_REUSEPORT_CBPF or SO_ATTACH_REUSEPORT_EBPF
+setsockopt on the crypto socket.
+
+What are these filters even suppposed to do on an af_alg socket?
+
+Anyhow, this is a bug that could have been triggered even without
+this, but it would have been almost impossible to do it through
+syzbot as you need to have an outstanding async skcipher/aead request
+that is freed in BH context.
+
+---8<---
+As af_alg_release_parent may be called from BH context (most notably
+due to an async request that only completes after socket closure,
+or as reported here because of an RCU-delayed sk_destruct call), we
+must use bh_lock_sock instead of lock_sock.
+
+Reported-by: syzbot+c2f1558d49e25cc36e5e@syzkaller.appspotmail.com
+Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+Fixes: c840ac6af3f8 ("crypto: af_alg - Disallow bind/setkey/...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index 0dceaabc6321..3d8e53010cda 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -134,11 +134,13 @@ void af_alg_release_parent(struct sock *sk)
+ 	sk = ask->parent;
+ 	ask = alg_sk(sk);
+ 
+-	lock_sock(sk);
++	local_bh_disable();
++	bh_lock_sock(sk);
+ 	ask->nokey_refcnt -= nokey;
+ 	if (!last)
+ 		last = !--ask->refcnt;
+-	release_sock(sk);
++	bh_unlock_sock(sk);
++	local_bh_enable();
+ 
+ 	if (last)
+ 		sock_put(sk);
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
