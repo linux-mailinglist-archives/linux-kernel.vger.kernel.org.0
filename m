@@ -2,212 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 611C5113E29
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:38:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25415113E2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:38:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbfLEJiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 04:38:20 -0500
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:48538 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729215AbfLEJiS (ORCPT
+        id S1729374AbfLEJia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 04:38:30 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:55620 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729329AbfLEJi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 04:38:18 -0500
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB59avmA023516;
-        Thu, 5 Dec 2019 01:38:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=qV5qi/AfPq3EqFN41vakSlCrzeSPxB0+xglTrWS/iQs=;
- b=lXrWYKGvdE9ig6V7LzcukY41pezWrLxUH2a2piyC+DKyx7IE98QyTkA3tmOSpTBTO29r
- Nsbgk8QBSQA/X+3Vxf1OUr+i1qbYFVHY8MAsOp9V9GT+lLLjGEchA4e07A0glRSTHdPP
- InQHOp+3h6VUF1yNxyhFo4fvY3zB5Uu/A0dKq5f0V2f9eXedAYH4/rQS+c9uRYLvie5S
- gvyF6aFLWspfeS4INWlX1mK17GlDfYYyfS9499HCV4DR7Avep7Jd7ydpgCAo3kJz9cFL
- t7zcJCCd1JmtI8jUIwYaj8AwqiLWN0O21AzTnWSZII14mZScsgtCbI2oTEONQ6bt3D3z BQ== 
-Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2wnvgvrd03-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 05 Dec 2019 01:38:06 -0800
-Received: from SC-EXCH04.marvell.com (10.93.176.84) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Thu, 5 Dec
- 2019 01:38:05 -0800
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (104.47.38.54) by
- SC-EXCH04.marvell.com (10.93.176.84) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Thu, 5 Dec 2019 01:38:05 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZbKfMnvDKtspl1kxUjT739vrfUhwG4sw9TRVshDoYC2orffJUly90PvBXMNXpHVk2BW/It5RHldlJkRq1XKVKCRfKKa7s9639AwDBHimmNS5X5s0QgNhIUDpLOIbPr73I0L0B+iv0O0sdnTa2whe7TCbHz/frjlCepqVEUdtI5lk0QWd6mw14mMrQxWYMaHDMg5hwHDBBXrMJy5KgzXpsz3ZQYTCxy5g9L6FwEaGYmWzEjZFcxPGijz44lNlwGQwnPI++f/ZYJvuUDlLgBz1gPSXpEFdq64vIuGn+f1HX8TbcNAPeeJPjyzkSkHE2Rxif/JnlZ/AvfgcFBC22nWO+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qV5qi/AfPq3EqFN41vakSlCrzeSPxB0+xglTrWS/iQs=;
- b=nXFDjEwUaTA7YyfuvzEnCz2Ls+qyGLgDjom9sPUfsBnHWACX9RePPYUEhfAbYarBwwXcsnx8VFpzJhZh+nQjJsRa6Bq0HaWQHTzSJJWU7qdB9XbKNlPOq/F/9o3iAOYawwcAuVrOcqyqNt8GYwNYrXn6/65NiVNLYnPTton5H/8r6B1fJa9SicCllHj05dCRLFt6gBVds88fwQm7oOJUiUb02RShvSo5SUs54WamDVN0yuTzHhONMkBj0fr4cPiwKb5QWBIJiQ2m+o+aMxf1UwXJSesgLbVA0UtozrQrB6Jp9hzuioAxXCefs3k8nHGIP2ilkhazGL47AzNqtexqCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
+        Thu, 5 Dec 2019 04:38:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qV5qi/AfPq3EqFN41vakSlCrzeSPxB0+xglTrWS/iQs=;
- b=roDuDoLYRfnzIrKCH305mI6NX2aPc2X6c4KdpMP1bhyVsF5girve/RnRz0Lx+WEdUHQCKpzNgJglRpzqLTYOhStcXpR3m0FqtLvLERjd5MvKumev2Uu/O7IuYg2Nkih2wU1tyO5tADQBzCX04oGyV9h6anzVhS8n9UVme5kA0ok=
-Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.237.10) by
- MN2PR18MB2367.namprd18.prod.outlook.com (20.179.80.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.21; Thu, 5 Dec 2019 09:38:04 +0000
-Received: from MN2PR18MB3408.namprd18.prod.outlook.com
- ([fe80::657c:6c81:859d:106]) by MN2PR18MB3408.namprd18.prod.outlook.com
- ([fe80::657c:6c81:859d:106%7]) with mapi id 15.20.2516.014; Thu, 5 Dec 2019
- 09:38:04 +0000
-From:   Robert Richter <rrichter@marvell.com>
-To:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>
-CC:     James Morse <james.morse@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
-Subject: [PATCH v2 04/10] EDAC/mc: Determine mci pointer from the error
- descriptor
-Thread-Topic: [PATCH v2 04/10] EDAC/mc: Determine mci pointer from the error
- descriptor
-Thread-Index: AQHVq0+xb1CUUMWr+UmUY/kup7ElpA==
-Date:   Thu, 5 Dec 2019 09:38:04 +0000
-Message-ID: <20191205093739.4040-5-rrichter@marvell.com>
-References: <20191205093739.4040-1-rrichter@marvell.com>
-In-Reply-To: <20191205093739.4040-1-rrichter@marvell.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR05CA0170.eurprd05.prod.outlook.com
- (2603:10a6:3:f8::18) To MN2PR18MB3408.namprd18.prod.outlook.com
- (2603:10b6:208:165::10)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.20.1
-x-originating-ip: [31.208.96.227]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 45551063-58ed-4b20-cec4-08d77966d3c8
-x-ms-traffictypediagnostic: MN2PR18MB2367:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR18MB236705501FC6E0D00C32C2AAD95C0@MN2PR18MB2367.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02426D11FE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(346002)(366004)(396003)(189003)(199004)(81166006)(14444005)(14454004)(36756003)(6512007)(316002)(478600001)(54906003)(5660300002)(110136005)(186003)(8936002)(50226002)(6486002)(26005)(99286004)(66556008)(66476007)(81156014)(71190400001)(86362001)(66946007)(66446008)(64756008)(25786009)(8676002)(2906002)(71200400001)(6506007)(4326008)(2616005)(11346002)(102836004)(305945005)(1076003)(76176011)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2367;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: TyDrnfzeF29z4NnAZK9AhoM3a7bGZMRSbdeSVcZSk0yjtBMNsoLjEdI7Yq4MQxqHy6HKhnmi2NNVqfZmbgw+ZSwKvRlXqiAd5a5kEtigSs5iJUysurPyx2z8d7mxlcdzYQu64CbfsHDdH5wWIrgUyXAIkERQDpY4JhHuaHqhDX+lqVwGI9vh6NmH5zvrvZA5LzaTKAzidlWynRsQ/HTVF8y8XxGYP5R9mYgah4oHwKfJ16CvVvwIw05pIgTyjF+aSLClhVWNaDMpVNS43PCdHOZlZGdP4cYWTGSdDD0wLnQcOaC4hV0xEuSfoxM7/7d14XD3IQHnkcyhphYvioGaPSFpVbbQvCSoK2evRKbdYRNn2VEt1+vVqbZBuVq3DE6TptfufVxsB2p0D+ojmgkwvmugenNtVJRzDl4H68p5NkxVrUp9ySukxpcJ5iS6Sneq
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1575538707; x=1607074707;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=fr4yypOIlHXyvtCM/n2iJREFkZT+H434dWtQtuRZ8lE=;
+  b=iBRom0py9Lxpg4ZtPGriSpwAeLyTC/Npt7y1eC/ll90ISL0jPt1i0SGS
+   DDLupUloKohD26Si8bdYACYzyHjsCIi0XQuAXivAvjKVRf1gznWj7yBvZ
+   exHKx6/V+HwHS+nggtYt28RmMil5ceKFUlFucBi6TFxng8heYI5ePYixl
+   U=;
+IronPort-SDR: vwKxWpcdIIVEqDKGrA9mACVxdY61nw41IgJp6+LUNLcbBhGIGYI+f9MOgu0jtgicNJAkwvIVne
+ 47fkuN3rxT7Q==
+X-IronPort-AV: E=Sophos;i="5.69,280,1571702400"; 
+   d="scan'208";a="7181764"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 05 Dec 2019 09:38:26 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-6e2fc477.us-west-2.amazon.com (Postfix) with ESMTPS id 527B7A065C;
+        Thu,  5 Dec 2019 09:38:24 +0000 (UTC)
+Received: from EX13D31EUA004.ant.amazon.com (10.43.165.161) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 5 Dec 2019 09:38:23 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.249) by
+ EX13D31EUA004.ant.amazon.com (10.43.165.161) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 5 Dec 2019 09:38:19 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <brendanhiggins@google.com>
+CC:     <sj38.park@gmail.com>, <corbet@lwn.net>,
+        <kunit-dev@googlegroups.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <shuah@kernel.org>, <sjpark@amazon.de>
+Subject: [PATCH v5 5/6] kunit: Rename 'kunitconfig' to '.kunitconfig'
+Date:   Thu, 5 Dec 2019 10:38:04 +0100
+Message-ID: <20191205093804.22802-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191205093440.21824-1-sjpark@amazon.com>
+References: <20191205093440.21824-1-sjpark@amazon.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45551063-58ed-4b20-cec4-08d77966d3c8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2019 09:38:04.5231
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tisSjB4d+dETnl2r0Hx4UP7tJYB974sIZ2Zk/rkINXjSTHpc6/mlLHqsC4E90Qha1H9Yr6uac856qJ3Juh6nvQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2367
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-05_01:2019-12-04,2019-12-05 signatures=0
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.249]
+X-ClientProxiedBy: EX13D35UWC002.ant.amazon.com (10.43.162.218) To
+ EX13D31EUA004.ant.amazon.com (10.43.165.161)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each struct mci has its own error descriptor. Create a function
-error_desc_to_mci() to determine the corresponding mci from an error
-descriptor. This eases the parameter list of edac_raw_mc_handle_
-error() as the mci pointer do not need to be passed any longer.
+From: SeongJae Park <sjpark@amazon.de>
 
-Signed-off-by: Robert Richter <rrichter@marvell.com>
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This commit renames 'kunitconfig' to '.kunitconfig' so that it can be
+automatically ignored by git and do not disturb people who want to type
+'kernel/' by pressing only the 'k' and then 'tab' key.
+
+Signed-off-by: SeongJae Park <sjpark@amazon.de>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
 ---
- drivers/edac/edac_mc.c   | 11 ++++++++---
- drivers/edac/edac_mc.h   |  4 +---
- drivers/edac/ghes_edac.c |  2 +-
- 3 files changed, 10 insertions(+), 7 deletions(-)
+ Documentation/dev-tools/kunit/start.rst | 12 +++++-------
+ tools/testing/kunit/kunit.py            |  2 +-
+ tools/testing/kunit/kunit_kernel.py     |  4 ++--
+ 3 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-index ecab08032b4a..aff0630c02fc 100644
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -55,6 +55,11 @@ static LIST_HEAD(mc_devices);
-  */
- static const char *edac_mc_owner;
-=20
-+static struct mem_ctl_info *error_desc_to_mci(struct edac_raw_error_desc *=
-e)
-+{
-+	return container_of(e, struct mem_ctl_info, error_desc);
-+}
-+
- int edac_get_report_status(void)
- {
- 	return edac_report;
-@@ -1084,9 +1089,9 @@ static void edac_ue_error(struct mem_ctl_info *mci,
- 	edac_inc_ue_error(mci, enable_per_layer_report, pos, error_count);
- }
-=20
--void edac_raw_mc_handle_error(struct mem_ctl_info *mci,
--			      struct edac_raw_error_desc *e)
-+void edac_raw_mc_handle_error(struct edac_raw_error_desc *e)
- {
-+	struct mem_ctl_info *mci =3D error_desc_to_mci(e);
- 	char detail[80];
- 	int pos[EDAC_MAX_LAYERS] =3D { e->top_layer, e->mid_layer, e->low_layer }=
-;
- 	u8 grain_bits;
-@@ -1282,6 +1287,6 @@ void edac_mc_handle_error(const enum hw_event_mc_err_=
-type type,
- 	if (p > e->location)
- 		*(p - 1) =3D '\0';
-=20
--	edac_raw_mc_handle_error(mci, e);
-+	edac_raw_mc_handle_error(e);
- }
- EXPORT_SYMBOL_GPL(edac_mc_handle_error);
-diff --git a/drivers/edac/edac_mc.h b/drivers/edac/edac_mc.h
-index 5d78be774f9e..881b00eadf7a 100644
---- a/drivers/edac/edac_mc.h
-+++ b/drivers/edac/edac_mc.h
-@@ -212,15 +212,13 @@ extern int edac_mc_find_csrow_by_page(struct mem_ctl_=
-info *mci,
-  * edac_raw_mc_handle_error() - Reports a memory event to userspace withou=
-t
-  *	doing anything to discover the error location.
-  *
-- * @mci:		a struct mem_ctl_info pointer
-  * @e:			error description
-  *
-  * This raw function is used internally by edac_mc_handle_error(). It shou=
-ld
-  * only be called directly when the hardware error come directly from BIOS=
-,
-  * like in the case of APEI GHES driver.
-  */
--void edac_raw_mc_handle_error(struct mem_ctl_info *mci,
--			      struct edac_raw_error_desc *e);
-+void edac_raw_mc_handle_error(struct edac_raw_error_desc *e);
-=20
- /**
-  * edac_mc_handle_error() - Reports a memory event to userspace.
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index 7c3e5264a41e..bef8a428c429 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -441,7 +441,7 @@ void ghes_edac_report_mem_error(int sev, struct cper_se=
-c_mem_err *mem_err)
- 	if (p > pvt->other_detail)
- 		*(p - 1) =3D '\0';
-=20
--	edac_raw_mc_handle_error(mci, e);
-+	edac_raw_mc_handle_error(e);
-=20
- unlock:
- 	spin_unlock_irqrestore(&ghes_lock, flags);
---=20
-2.20.1
+diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
+index 78a0aed4931d..faa6fa99f903 100644
+--- a/Documentation/dev-tools/kunit/start.rst
++++ b/Documentation/dev-tools/kunit/start.rst
+@@ -21,18 +21,16 @@ The wrapper can be run with:
+ 
+    ./tools/testing/kunit/kunit.py run
+ 
+-Creating a kunitconfig
+-======================
++Creating a .kunitconfig
++=======================
+ The Python script is a thin wrapper around Kbuild as such, it needs to be
+-configured with a ``kunitconfig`` file. This file essentially contains the
++configured with a ``.kunitconfig`` file. This file essentially contains the
+ regular Kernel config, with the specific test targets as well.
+ 
+ .. code-block:: bash
+ 
+ 	cd $PATH_TO_LINUX_REPO
+-	cp arch/um/configs/kunit_defconfig kunitconfig
+-
+-You may want to add kunitconfig to your local gitignore.
++	cp arch/um/configs/kunit_defconfig .kunitconfig
+ 
+ Verifying KUnit Works
+ ---------------------
+@@ -147,7 +145,7 @@ and the following to ``drivers/misc/Makefile``:
+ 
+ 	obj-$(CONFIG_MISC_EXAMPLE_TEST) += example-test.o
+ 
+-Now add it to your ``kunitconfig``:
++Now add it to your ``.kunitconfig``:
+ 
+ .. code-block:: none
+ 
+diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
+index e4250c4b06fb..e59eb9e7f923 100755
+--- a/tools/testing/kunit/kunit.py
++++ b/tools/testing/kunit/kunit.py
+@@ -108,7 +108,7 @@ def main(argv, linux=None):
+ 				type=str, default='', metavar='build_dir')
+ 
+ 	run_parser.add_argument('--defconfig',
+-				help='Uses a default kunitconfig.',
++				help='Uses a default .kunitconfig.',
+ 				action='store_true')
+ 
+ 	cli_args = parser.parse_args(argv)
+diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+index a10c0c787bc1..cc5d844ecca1 100644
+--- a/tools/testing/kunit/kunit_kernel.py
++++ b/tools/testing/kunit/kunit_kernel.py
+@@ -14,7 +14,7 @@ import os
+ import kunit_config
+ 
+ KCONFIG_PATH = '.config'
+-kunitconfig_path = 'kunitconfig'
++kunitconfig_path = '.kunitconfig'
+ 
+ class ConfigError(Exception):
+ 	"""Represents an error trying to configure the Linux kernel."""
+@@ -111,7 +111,7 @@ class LinuxSourceTree(object):
+ 		return True
+ 
+ 	def build_reconfig(self, build_dir):
+-		"""Creates a new .config if it is not a subset of the kunitconfig."""
++		"""Creates a new .config if it is not a subset of the .kunitconfig."""
+ 		kconfig_path = get_kconfig_path(build_dir)
+ 		if os.path.exists(kconfig_path):
+ 			existing_kconfig = kunit_config.Kconfig()
+-- 
+2.17.1
 
