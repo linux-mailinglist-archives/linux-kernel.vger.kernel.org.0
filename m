@@ -2,88 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFDE8114584
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 18:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 992E61145AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 18:18:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfLERPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 12:15:43 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15472 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730111AbfLERPj (ORCPT
+        id S1730124AbfLERSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 12:18:34 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:43226 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729931AbfLERSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:15:39 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB5H7sEb076669;
-        Thu, 5 Dec 2019 12:15:26 -0500
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wq1nndmw9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Dec 2019 12:15:26 -0500
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB5HFHXN005328;
-        Thu, 5 Dec 2019 17:15:25 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma01dal.us.ibm.com with ESMTP id 2wkg27cgk6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Dec 2019 17:15:25 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB5HFOKr51183984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Dec 2019 17:15:24 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99CC36E060;
-        Thu,  5 Dec 2019 17:15:23 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 085846E04E;
-        Thu,  5 Dec 2019 17:15:23 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.103.158])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Dec 2019 17:15:22 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, jason@lakedaemon.net,
-        linux-aspeed@lists.ozlabs.org, maz@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, mark.rutland@arm.com, joel@jms.id.au,
-        andrew@aj.id.au
-Subject: [PATCH v2 12/12] ARM: dts: aspeed: tacoma: Enable XDMA engine
-Date:   Thu,  5 Dec 2019 11:15:12 -0600
-Message-Id: <1575566112-11658-13-git-send-email-eajames@linux.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
-References: <1575566112-11658-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-05_05:2019-12-04,2019-12-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- spamscore=0 priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0
- suspectscore=1 lowpriorityscore=0 mlxlogscore=659 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912050144
+        Thu, 5 Dec 2019 12:18:33 -0500
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id xB5HIQ3R020066;
+        Fri, 6 Dec 2019 02:18:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com xB5HIQ3R020066
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1575566306;
+        bh=QL32G2WdF6azl/M1VG/2Usp3aoWAZyCVws/CUFl9rb4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Y1FGyYwx6csO1vRVtt/Ru8/5yMZHTIZi4xAIqO3ic1JLCmnMHXJkGjuRxAvUgAUXe
+         qD6swSbs2hiw+UALRJR7QfXBcusoaJvl9YR/2ggKJ9vtg9DU+ymDHb+bA4H4KLfixU
+         0t3DJ/6ps5PYBdmXsIUVZCQSfadpAzRlvyqthLPmNOKzlFNWLBgWaySFh3dPHo98W3
+         6OvI06elagDirlqZGCT8y/pvlJHe32A6HrJU+unQA2oMp5DcFwm239cW6U3y+ZGqw/
+         MffiyYk0wZYFgbOOJaKTWYbRn7wCjwg/5tMVRN7B50z1Y66luHsjl7sG+6Zi7OT3+P
+         2I7bAjm26YAFQ==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id t12so2891291vso.13;
+        Thu, 05 Dec 2019 09:18:26 -0800 (PST)
+X-Gm-Message-State: APjAAAXn8FNOdXhBKXSB2QD/D4RZXgWZiDFBY7acITju3hOIJGiHHHyQ
+        h//CnSGQ8kuPYDgTlHC21hImd5ZhNW3Jo8meyP4=
+X-Google-Smtp-Source: APXvYqwz6lzk87ldWLnWUzk21C9QPPg6PLsEbHUvaYKdF+V+4oRwlq5fl1MsZzBqBiG7ttamceW1FOnm7utbplCXIg4=
+X-Received: by 2002:a67:f6c2:: with SMTP id v2mr6318415vso.54.1575566305236;
+ Thu, 05 Dec 2019 09:18:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20191204025148.32101-1-masahiroy@kernel.org>
+In-Reply-To: <20191204025148.32101-1-masahiroy@kernel.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 6 Dec 2019 02:17:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS3wSV6a48zMg=o2RXBz8qaijo6SqBcSyzwf0sW=dF71A@mail.gmail.com>
+Message-ID: <CAK7LNAS3wSV6a48zMg=o2RXBz8qaijo6SqBcSyzwf0sW=dF71A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: fix 'No such file or directory' warning when cleaning
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the XDMA engine node.
+On Wed, Dec 4, 2019 at 11:52 AM Masahiro Yamada <masahiroy@kernel.org> wrot=
+e:
+>
+> Since commit fcbb8461fd23 ("kbuild: remove header compile test"),
+> 'make clean' with O=3D option in the pristine source tree emits
+> 'No such file or directory' warning.
+>
+> $ git clean -d -f -x
+> $ make O=3Dfoo clean
+> make[1]: Entering directory '/home/masahiro/linux/foo'
+> find: =E2=80=98usr/include=E2=80=99: No such file or directory
+> make[1]: Leaving directory '/home/masahiro/linux/foo'
+>
+> Fixes: fcbb8461fd23 ("kbuild: remove header compile test")
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+Applied to linux-kbuild.
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts b/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-index f02de4a..cf54708 100644
---- a/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-@@ -1193,3 +1193,8 @@
- 	pinctrl-0 = <&pinctrl_lpc_default>,
- 		    <&pinctrl_lsirq_default>;
- };
-+
-+&xdma {
-+	status = "okay";
-+	vga-mem = <0xbf800000 0x00800000>;
-+};
--- 
-1.8.3.1
 
+>  usr/include/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/usr/include/Makefile b/usr/include/Makefile
+> index 24543a30b9f0..e5895a79c45f 100644
+> --- a/usr/include/Makefile
+> +++ b/usr/include/Makefile
+> @@ -95,7 +95,7 @@ endif
+>  # asm-generic/*.h is used by asm/*.h, and should not be included directl=
+y
+>  header-test- +=3D asm-generic/%
+>
+> -extra-y :=3D $(patsubst $(obj)/%.h,%.hdrtest, $(shell find $(obj) -name =
+'*.h'))
+> +extra-y :=3D $(patsubst $(obj)/%.h,%.hdrtest, $(shell find $(obj) -name =
+'*.h' 2>/dev/null))
+>
+>  quiet_cmd_hdrtest =3D HDRTEST $<
+>        cmd_hdrtest =3D \
+> --
+> 2.17.1
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
