@@ -2,56 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 668431148EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC2A1148D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387426AbfLEVwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 16:52:19 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46358 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387408AbfLEVwP (ORCPT
+        id S2387437AbfLEVwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 16:52:22 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44426 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387415AbfLEVwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 16:52:15 -0500
-Received: by mail-il1-f195.google.com with SMTP id t17so4346304ilm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 13:52:14 -0800 (PST)
+        Thu, 5 Dec 2019 16:52:17 -0500
+Received: by mail-il1-f194.google.com with SMTP id z12so4362262iln.11;
+        Thu, 05 Dec 2019 13:52:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=czlw2v1n44KvBNP8Ri+2G2naF0l2P1nitiHJyK13A/U=;
-        b=u9EJ3E9o639t3kAnoadfidXpqM8i75hfWT/AjwGATRRAXqt+vgdXk3o6NMYjSSYRIO
-         xdwWxq03v4+d3jx34V3lISTR0LB0c2glrCVbECdHrw9m8GF352a38IelDwX7LGhaHqsj
-         VNRwnDtMXjcdjn5G4f5Rms2R0e5BWp1xeoWgpUH+PKInJfVoIkgfYm7exfaCK+tCuw6b
-         8JM3h7CVakZaAQR/REWv0ug+A8PV/FN73Hh0DYGMXtkLD8RMvu/0ZfkiHIxfzNz1atIV
-         DrByREG8pAGzwYSNsLUQvMOTWdIIf4lDdWjWoxkY+tl7+4vZIwWhw7EqmGsHtoD6F4oI
-         4JgQ==
+        bh=grd1rakogw2BEn4tAE432N08EqUy4BjMhxHYtZmywo4=;
+        b=g9UtKpvdmqkb8LED/sHy5z6LtpDExLhvMqpSfIh3BH/8egEL2QzxM92WHpXPCKU/UX
+         GQ47PT8+lOFHuU0CAsJK0RDtfoID7GvXBTrYwH2X35rNqD2d5LCeLY3EZqNnYUrWDSpz
+         H+mdzlSVK2GwM23/ydBj7qGdjqeKzIA422ZVXoJtmk7cJs6SRhQweobQ8nhP0fPKTz/R
+         7CQWJSmsFd5ZNbU/CJsRJbowVaAUx6G+QnyJIIvnnkuHxVHXST+uTFU84XeLJuDSW8z8
+         MhkKBlslHA7XdUaE9N9BI9tf3DBd7WT4pTh/uzyq5X5cgMpnYAMY3SM0O59uMRX/hObP
+         WJcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=czlw2v1n44KvBNP8Ri+2G2naF0l2P1nitiHJyK13A/U=;
-        b=sQr8a6BhfsJpm0bCsLAdV8hrFAZ37MjLM2iUtuGGo4ZqsrXiBzidTdIw7xWDls20/Q
-         RBv1dwb5+NilzTVUPHcd7exc4U3kfU1mM1HJif++NlAv8GlFmozMRrynykDIeFWKYOtX
-         DQtDeTKY0iTGl6uk3j20RMPXPUWgi31FXCxD9fu+abMCDndT9G4b5g02G0Ndx69qURio
-         OKtxwFRi0oFmwKYxO4SHn0xCAxofMp+NvkiUHt+6EFFRw2g47FX3rnKsl/0a26nKJz8W
-         h1TDBC+pivag8hw6lgvF1c54NLF2fpGWqKhliX4koNjiYH3Nxva0XxklAUUW/uAhq2mx
-         fhxQ==
-X-Gm-Message-State: APjAAAVKx3b1sRWE+rjtGbLNhkGCrsYW05C7LuEOYh3ba5p62ub7uA/W
-        HXWa7WHUKYGVYaYfGKzU05vPUylUlgc=
-X-Google-Smtp-Source: APXvYqya6eFerJqElswc8s9VKDzi90BI3XEF+7SqiXw2fzyMVerqm1YuZsVmIbv5DqAIZk97Y/NsbQ==
-X-Received: by 2002:a92:5c8a:: with SMTP id d10mr11686219ilg.137.1575582734406;
-        Thu, 05 Dec 2019 13:52:14 -0800 (PST)
+        bh=grd1rakogw2BEn4tAE432N08EqUy4BjMhxHYtZmywo4=;
+        b=GjgjrYA/SU2io/wFgaZe+QJQsCaKFublfFcsI5AE/bw5MuTISN3I36T4fFmwXbHCaU
+         HTgj9Ul5zhsHb83ox5wS3wRgBQ0l7af6kFhgF0UYSdgXeuxxATcGk9iXdY5z25+Heh2C
+         4NxLvM3TIVbqM0qQ0aB7FrDWUAlTCmKKQGhJkUGMFZXB3riQSHM8DJ4qSTIu4hljOWvf
+         kCwAvdg2yXaZ5PEG58EcEcOkxkZdwfzvmqegJeCHgHn0Rt4XaWLcpDY1wCYESgWSy9Yu
+         s4gK6FdIUw38hXJKFM4ZdxdleCR5XJe1peU476zj4qMVOefqbyztjjYma8n40GsBpc3E
+         vNyw==
+X-Gm-Message-State: APjAAAWMQT87Ywzt0TEQVNdjqXs2l2xwz0g6apQmeEJ1fkJAMJDayeDM
+        shGsEVco7l0WghA00ihyO/Y=
+X-Google-Smtp-Source: APXvYqxtsOguVD5OjiAl2LXWs61tkwUaHZgqCoQ81BONy+REW3HUxgS8dbNMif1KAdlVb9lXygxS6w==
+X-Received: by 2002:a92:cd4f:: with SMTP id v15mr11425153ilq.230.1575582736991;
+        Thu, 05 Dec 2019 13:52:16 -0800 (PST)
 Received: from localhost.localdomain (c-24-9-77-57.hsd1.co.comcast.net. [24.9.77.57])
-        by smtp.googlemail.com with ESMTPSA id n22sm740184iog.14.2019.12.05.13.52.13
+        by smtp.googlemail.com with ESMTPSA id n22sm740184iog.14.2019.12.05.13.52.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 13:52:13 -0800 (PST)
+        Thu, 05 Dec 2019 13:52:16 -0800 (PST)
 From:   Jim Cromie <jim.cromie@gmail.com>
 To:     jbaron@akamai.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org
-Cc:     linux@rasmusvillemoes.dk, Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH 07/18] dyndbg: refactor parse_linerange out of ddebug_parse_query
-Date:   Thu,  5 Dec 2019 14:51:38 -0700
-Message-Id: <20191205215151.421926-8-jim.cromie@gmail.com>
+Cc:     linux@rasmusvillemoes.dk, Jim Cromie <jim.cromie@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH 08/18] dyndbg: accept 'file foo.c:func1' and 'file foo.c:10-100'
+Date:   Thu,  5 Dec 2019 14:51:39 -0700
+Message-Id: <20191205215151.421926-9-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191205215151.421926-1-jim.cromie@gmail.com>
 References: <20191205215151.421926-1-jim.cromie@gmail.com>
@@ -62,95 +63,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-make the code-block reusable to later handle "file foo.c:101-200" etc.
-This should be a 90%+ code-move, with minimal adaptations; reindent,
-and maybe fixes for compile, behavior.
+Accept these additional query forms:
+
+   echo "file $filestr +_" > control
+
+       path/to/file.c:100	# as from control, column 1
+       path/to/file.c:1-100	# or any legal line-range
+       path/to/file.c:func_A	# as from an editor/browser
+       path/to/file.c:drm_\*	# wildcards still work
+       path/to/file.c:*_foo	# lead wildcard too
+
+1st 2 examples are treated as line-ranges, 3,4 are treated as func's
+
+Doc these changes, and sprinkle in a few extra wild-card examples and
+trailing # explanation texts.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- lib/dynamic_debug.c | 61 +++++++++++++++++++++++++--------------------
- 1 file changed, 34 insertions(+), 27 deletions(-)
+ .../admin-guide/dynamic-debug-howto.rst       |  5 +++++
+ lib/dynamic_debug.c                           | 20 ++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index e011f8907116..689a30316589 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -156,6 +156,7 @@ func
+     of each callsite.  Example::
+ 
+ 	func svc_tcp_accept
++	func *recv*		# in rfcomm, bluetooth, ping, tcp
+ 
+ file
+     The given string is compared against either the src-root relative
+@@ -164,6 +165,9 @@ file
+ 
+ 	file svcsock.c
+ 	file kernel/freezer.c	# ie column 1 of control file
++	file drivers/usb/*	# all callsites under it
++	file inode.c:start_*	# parse :tail as a func (above)
++	file inode.c:1-100	# parse :tail as a line-range (above)
+ 
+ module
+     The given string is compared against the module name
+@@ -173,6 +177,7 @@ module
+ 
+ 	module sunrpc
+ 	module nfsd
++	module drm*	# both drm, drm_kms_helper
+ 
+ format
+     The given string is searched for in the dynamic debug format
 diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index 49cb24948e12..f0cf90e672b8 100644
+index f0cf90e672b8..9fa6d4eeae5c 100644
 --- a/lib/dynamic_debug.c
 +++ b/lib/dynamic_debug.c
-@@ -292,6 +292,39 @@ static inline int parse_lineno(const char *str, unsigned int *val)
+@@ -322,6 +322,8 @@ static int parse_linerange(struct ddebug_query *query, const char *first)
+ 	} else {
+ 		query->last_lineno = query->first_lineno;
+ 	}
++	vpr_info("parsed line %d-%d\n", query->first_lineno,
++		 query->last_lineno);
  	return 0;
  }
  
-+static int parse_linerange(struct ddebug_query *query, const char *first)
-+{
-+	char *last = strchr(first, '-');
-+
-+	if (query->first_lineno || query->last_lineno) {
-+		pr_err("match-spec: line used 2x\n");
-+		return -EINVAL;
-+	}
-+	if (last)
-+		*last++ = '\0';
-+	if (parse_lineno(first, &query->first_lineno) < 0)
-+		return -EINVAL;
-+	if (last) {
-+		/* range <first>-<last> */
-+		if (parse_lineno(last, &query->last_lineno) < 0)
-+			return -EINVAL;
-+
-+		/* special case for last lineno not specified */
-+		if (query->last_lineno == 0)
-+			query->last_lineno = UINT_MAX;
-+
-+		if (query->last_lineno < query->first_lineno) {
-+			pr_err("last-line:%d < 1st-line:%d\n",
-+			       query->last_lineno,
-+			       query->first_lineno);
-+			return -EINVAL;
-+		}
-+	} else {
-+		query->last_lineno = query->first_lineno;
-+	}
-+	return 0;
-+}
-+
- static int check_set(const char **dest, char *src, char *name)
+@@ -358,6 +360,7 @@ static int ddebug_parse_query(char *words[], int nwords,
  {
+ 	unsigned int i;
  	int rc = 0;
-@@ -350,34 +383,8 @@ static int ddebug_parse_query(char *words[], int nwords,
- 							    UNESCAPE_SPECIAL);
- 			rc = check_set(&query->format, words[i+1], "format");
- 		} else if (!strcmp(words[i], "line")) {
--			char *first = words[i+1];
--			char *last = strchr(first, '-');
--			if (query->first_lineno || query->last_lineno) {
--				pr_err("match-spec: line used 2x\n");
--				return -EINVAL;
--			}
--			if (last)
--				*last++ = '\0';
--			if (parse_lineno(first, &query->first_lineno) < 0)
-+			if (parse_linerange(query, words[i+1]))
- 				return -EINVAL;
--			if (last) {
--				/* range <first>-<last> */
--				if (parse_lineno(last, &query->last_lineno) < 0)
--					return -EINVAL;
--
--				/* special case for last lineno not specified */
--				if (query->last_lineno == 0)
--					query->last_lineno = UINT_MAX;
--
--				if (query->last_lineno < query->first_lineno) {
--					pr_err("last-line:%d < 1st-line:%d\n",
--						query->last_lineno,
--						query->first_lineno);
--					return -EINVAL;
--				}
--			} else {
--				query->last_lineno = query->first_lineno;
--			}
- 		} else {
- 			pr_err("unknown keyword \"%s\"\n", words[i]);
- 			return -EINVAL;
++	char *fline;
+ 
+ 	/* check we have an even number of words */
+ 	if (nwords % 2 != 0) {
+@@ -374,7 +377,22 @@ static int ddebug_parse_query(char *words[], int nwords,
+ 		if (!strcmp(words[i], "func")) {
+ 			rc = check_set(&query->function, words[i+1], "func");
+ 		} else if (!strcmp(words[i], "file")) {
+-			rc = check_set(&query->filename, words[i+1], "file");
++			if (check_set(&query->filename, words[i+1], "file"))
++				return -EINVAL;
++
++			/* tail :$info is function or line-range */
++			fline = strchr(query->filename, ':');
++			if (!fline)
++				break;
++			*fline++ = '\0';
++			if (isalpha(*fline) || *fline == '*' || *fline == '?') {
++				/* take as function name */
++				if (check_set(&query->function, fline, "func"))
++					return -EINVAL;
++			} else
++				if (parse_linerange(query, fline))
++					return -EINVAL;
++
+ 		} else if (!strcmp(words[i], "module")) {
+ 			rc = check_set(&query->module, words[i+1], "module");
+ 		} else if (!strcmp(words[i], "format")) {
 -- 
 2.23.0
 
