@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2190113C08
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 07:59:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A546113C07
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 07:59:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfLEG7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 01:59:40 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:55790 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfLEG7j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726352AbfLEG7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 5 Dec 2019 01:59:39 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB56xEEd078510;
-        Thu, 5 Dec 2019 00:59:14 -0600
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54192 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfLEG7i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 01:59:38 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB56xHPA103789;
+        Thu, 5 Dec 2019 00:59:17 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575529154;
-        bh=p7gKLubv7D204H8MsVlcocPH5+pDPFuPXIUfcGx0XSk=;
-        h=From:To:CC:Subject:Date;
-        b=LM3f7r6hylhzrnrI05MmtDcqws04GznHzrHjxnUNxrTO0zu0NJaXlIizJlcR7DH3c
-         sL9jEVl54DxTy+djw8Ik4StgJ3F/eK6sEBjx/sRvKIs3E8Hnwa9xe3OM9eAiE7wMW6
-         csJld+IPEv24sItW3hYfUVGwFj/KBz/jge5w0PlY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB56xEBV006110
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Dec 2019 00:59:14 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1575529157;
+        bh=ueZPp6LO7AwsgcUrcck9zS7JTw5R2EsDBcXIgwU8PY0=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=S7oYTjygMD1D3vPeSlcENfaPR/lz4OcsaUMf+pBGhYuREqMCc0BvC9FoPDOKR04np
+         4FWmR52j9rMqI5Yfqg2C8nTQXltYebVMgKnZySX1J0Uc5uij7bL0MtdDCvomtvJh59
+         KzEbo+ZE4NgM8spNiuCOWy9ETar17mG5bvALo5+c=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB56xHnn075951;
+        Thu, 5 Dec 2019 00:59:17 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Dec
- 2019 00:59:14 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 00:59:16 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Dec 2019 00:59:14 -0600
+ Frontend Transport; Thu, 5 Dec 2019 00:59:16 -0600
 Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB56xBT1097002;
-        Thu, 5 Dec 2019 00:59:12 -0600
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB56xBT2097002;
+        Thu, 5 Dec 2019 00:59:14 -0600
 From:   Vignesh Raghavendra <vigneshr@ti.com>
 To:     Tudor Ambarus <tudor.ambarus@microchip.com>
 CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -45,10 +44,12 @@ CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Ashish Kumar <Ashish.Kumar@nxp.com>,
         <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH 0/3] mtd: spi-nor: Update mt25q/n25q entries
-Date:   Thu, 5 Dec 2019 12:29:32 +0530
-Message-ID: <20191205065935.5727-1-vigneshr@ti.com>
+Subject: [PATCH 1/3] mtd: spi-nor: Split mt25qu512a (n25q512a) entry into two
+Date:   Thu, 5 Dec 2019 12:29:33 +0530
+Message-ID: <20191205065935.5727-2-vigneshr@ti.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191205065935.5727-1-vigneshr@ti.com>
+References: <20191205065935.5727-1-vigneshr@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -58,20 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First patch splits n25q512a and mt25qu512a into two as they are
-different devices. Second patch adds support for more mt25q devices and
-last patch adds USE_FSR flag for n25q entries where missing.
+mt25q family is different from n25q family of devices, even though manf
+ID and device IDs are same. mt25q flash has bit 6 set in 5th byte of
+READ ID response which can be used to distinguish it from n25q variant.
+mt25q flashes support stateless 4 Byte addressing opcodes where as n25q
+flashes don't. Therefore, have two separate entries for mt25qu512a and
+n25q512a.
 
-Tested with mt25qu512a flash
+Fixes: 9607af6f857f ("mtd: spi-nor: Rename "n25q512a" to "mt25qu512a (n25q512a)"")
+Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Vignesh Raghavendra (3):
-  mtd: spi-nor: Split mt25qu512a (n25q512a) entry into two
-  mtd: spi-nor: Add entries for mt25q variants
-  mtd: spi-nor: Add USE_FSR flag for n25q* entries
-
- drivers/mtd/spi-nor/spi-nor.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index f4afe123e9dc..01efea022990 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2459,15 +2459,16 @@ static const struct flash_info spi_nor_ids[] = {
+ 	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
+ 	{ "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
++	{ "mt25qu512a",  INFO6(0x20bb20, 0x104400, 64 * 1024, 1024,
++			       SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
++			       SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
++	{ "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K |
++			      SPI_NOR_QUAD_READ) },
+ 	{ "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+ 	{ "n25q00a",     INFO(0x20bb21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+ 	{ "mt25ql02g",   INFO(0x20ba22, 0, 64 * 1024, 4096,
+ 			      SECT_4K | USE_FSR | SPI_NOR_QUAD_READ |
+ 			      NO_CHIP_ERASE) },
+-	{ "mt25qu512a (n25q512a)", INFO(0x20bb20, 0, 64 * 1024, 1024,
+-					SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
+-					SPI_NOR_QUAD_READ |
+-					SPI_NOR_4B_OPCODES) },
+ 	{ "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+ 
+ 	/* Micron */
 -- 
 2.24.0
 
