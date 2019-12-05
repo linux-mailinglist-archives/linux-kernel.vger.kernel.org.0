@@ -2,200 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257B4114A03
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 00:55:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C65114A0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 00:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfLEXzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 18:55:38 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58108 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726119AbfLEXzi (ORCPT
+        id S1726183AbfLEX6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 18:58:23 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45656 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfLEX6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 18:55:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575590136;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VIfLIfTffCMFdHpcmASazhIPnOM/rt4yCIY2BsD9K90=;
-        b=OT8JXOhck6a67lXXDApibFpPTDmBUjFn3g+YuJ03lbf/sP5v6WIGBshNtqeGSealXUFeHP
-        05dNztGT/hQGuB7JjRxfybsU/NF7r7pgreZtrbqw2JvF67+cf20KdfFSdHXmTDOIwckApT
-        y9iOwdAAaqJBGUVqkPUce4tQ8q4IPwA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-E6xlXRqJNJOn9F_CW9YAVQ-1; Thu, 05 Dec 2019 18:55:35 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C58E9101F4E1;
-        Thu,  5 Dec 2019 23:55:33 +0000 (UTC)
-Received: from x1.home (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E295F5D6A3;
-        Thu,  5 Dec 2019 23:55:30 +0000 (UTC)
-Date:   Thu, 5 Dec 2019 16:55:30 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Yan Zhao <yan.y.zhao@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        libvir-list@redhat.com, qemu-devel@nongnu.org, cohuck@redhat.com,
-        zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
-        kevin.tian@intel.com, shaopeng.he@intel.com
-Subject: Re: [RFC PATCH 4/9] vfio-pci: register default
- dynamic-trap-bar-info region
-Message-ID: <20191205165530.1f29fe85@x1.home>
-In-Reply-To: <20191205032650.29794-1-yan.y.zhao@intel.com>
-References: <20191205032419.29606-1-yan.y.zhao@intel.com>
-        <20191205032650.29794-1-yan.y.zhao@intel.com>
-Organization: Red Hat
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: E6xlXRqJNJOn9F_CW9YAVQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 5 Dec 2019 18:58:23 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p5so5313578qtq.12
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 15:58:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=19Kmz8PlMAAPnYoSfUTwu5grmM6qpP4/2uB2ZZCI+YU=;
+        b=T43/BXB2RbU8iqN7uGFJBhgKhlsGzA/O/QZiwcGDE249VIINHNqyDHDBSXSIaieStm
+         xia2qhJFBZXTOAe0wAIwJCWGhT2nfhGj5tC4wda1pfr+AZ49yVoWuB6S5wJe7i68j69n
+         +nyNzQIzdzUL7ivOWR3HODXcfF9QEtAqM6pCdF/zsq0RRtpEvEls4WbyuMkQGkz4H02h
+         ufO8yQG4DxMDVE6v7o6k80JH8zYEVm+BBM0JGwYbU1V7dEVha2ffyfNxit7kR2xqHP/a
+         Tnkg88W51Eu4TEMMS5VfrMccHz1/Ozr/239Gv6E7tJbR0qmCqwLctNRni3gYSmuP2Xq6
+         +yag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=19Kmz8PlMAAPnYoSfUTwu5grmM6qpP4/2uB2ZZCI+YU=;
+        b=Pd2i0XTrloOcpUqbKu2bBC/6noqaBUAWKsvPSu+0j5xxJfQbyyTwubDsgJmZ1UKjvR
+         bfnvAZrVE1gkxVt/2Zm+CLFC54TaSXydGKToDEjvPphIcJK14aRui7UNdF09BmMUKbcP
+         e7ydZkyB0FR9aDxj4sxStojyUbAoRYPMO8/vDv4KGCy5J2xstAHQueC6URMckM0B3n3R
+         gS1UrqhVlOM4vgxYcsk4Dbam4Ta6WRu7RhKYolWAFCgC5eAJXr4GYhtwSe87P5VNSgIk
+         mvA+r2dkD1tFxNKryDTyT6Id79lS7ZK1DKBcop/OUk7+rIdAcN5qtNIYeLgZeomW2L8I
+         t2xg==
+X-Gm-Message-State: APjAAAV3ipGJB8tdrbo509EnQkW+8m9FfCAXUfeSmEEzuSK4r9rvvjqp
+        eJnT+wJenBAGweqrm7eTVTmBTA==
+X-Google-Smtp-Source: APXvYqyKRq0bhGDnJPvtjgM62dYIgvwyqyyk4HWNEGpHt9JsqMwQ8TkTT/lRXn+Ce3ZXZIYiOYxkyQ==
+X-Received: by 2002:aed:2926:: with SMTP id s35mr10543569qtd.220.1575590302083;
+        Thu, 05 Dec 2019 15:58:22 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id g64sm5273422qke.43.2019.12.05.15.58.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 15:58:21 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [v3 PATCH] mm: move_pages: return valid node id in status if the page is already on the target node
+Date:   Thu, 5 Dec 2019 18:58:20 -0500
+Message-Id: <2139CED9-6C12-48A5-BF61-F36923EB948E@lca.pw>
+References: <a7f354b7-d2f9-71c0-7311-97255933b9a2@nvidia.com>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>, fabecassis@nvidia.com,
+        mhocko@suse.com, cl@linux.com, vbabka@suse.cz,
+        mgorman@techsingularity.net, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+In-Reply-To: <a7f354b7-d2f9-71c0-7311-97255933b9a2@nvidia.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+X-Mailer: iPhone Mail (17B111)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  4 Dec 2019 22:26:50 -0500
-Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-> Dynamic trap bar info region is a channel for QEMU and vendor driver to
-> communicate dynamic trap info. It is of type
-> VFIO_REGION_TYPE_DYNAMIC_TRAP_BAR_INFO and subtype
-> VFIO_REGION_SUBTYPE_DYNAMIC_TRAP_BAR_INFO.
-> 
-> This region has two fields: dt_fd and trap.
-> When QEMU detects a device regions of this type, it will create an
-> eventfd and write its eventfd id to dt_fd field.
-> When vendor drivre signals this eventfd, QEMU reads trap field of this
-> info region.
-> - If trap is true, QEMU would search the device's PCI BAR
-> regions and disable all the sparse mmaped subregions (if the sparse
-> mmaped subregion is disablable).
-> - If trap is false, QEMU would re-enable those subregions.
-> 
-> A typical usage is
-> 1. vendor driver first cuts its bar 0 into several sections, all in a
-> sparse mmap array. So initally, all its bar 0 are passthroughed.
-> 2. vendor driver specifys part of bar 0 sections to be disablable.
-> 3. on migration starts, vendor driver signals dt_fd and set trap to true
-> to notify QEMU disabling the bar 0 sections of disablable flags on.
-> 4. QEMU disables those bar 0 section and hence let vendor driver be able
-> to trap access of bar 0 registers and make dirty page tracking possible.
-> 5. on migration failure, vendor driver signals dt_fd to QEMU again.
-> QEMU reads trap field of this info region which is false and QEMU
-> re-passthrough the whole bar 0 region.
-> 
-> Vendor driver specifies whether it supports dynamic-trap-bar-info region
-> through cap VFIO_PCI_DEVICE_CAP_DYNAMIC_TRAP_BAR in
-> vfio_pci_mediate_ops->open().
-> 
-> If vfio-pci detects this cap, it will create a default
-> dynamic_trap_bar_info region on behalf of vendor driver with region len=0
-> and region->ops=null.
-> Vvendor driver should override this region's len, flags, rw, mmap in its
-> vfio_pci_mediate_ops.
 
-TBH, I don't like this interface at all.  Userspace doesn't pass data
-to the kernel via INFO ioctls.  We have a SET_IRQS ioctl for
-configuring user signaling with eventfds.  I think we only need to
-define an IRQ type that tells the user to re-evaluate the sparse mmap
-information for a region.  The user would enumerate the device IRQs via
-GET_IRQ_INFO, find one of this type where the IRQ info would also
-indicate which region(s) should be re-evaluated on signaling.  The user
-would enable that signaling via SET_IRQS and simply re-evaluate the
-sparse mmap capability for the associated regions when signaled.
-Thanks,
+> On Dec 5, 2019, at 6:24 PM, John Hubbard <jhubbard@nvidia.com> wrote:
+>=20
+> Let's check in the fix that is clearly correct and non-controversial, in o=
+ne
+> patch. Then another patch can be created for the other case. This allows f=
+orward
+> progress and quick resolution of the user's bug report, while still dealin=
+g
+> with all the problems.
+>=20
+> If you try to fix too many problems in one patch (and remember, sometimes "=
+>1"
+> is too many), then things bog down. It's always a judgment call, but what'=
+s=20
+> unfolding here is quite consistent with the usual judgment calls in this a=
+rea.
+>=20
+> I don't think anyone is saying, "don't work on the second problem", it's j=
+ust
+> that it's less urgent, due to no reports from the field. If you are passio=
+nate
+> about fixing the second problem (and are ready and willing to handle the f=
+allout
+> from user space, if it occurs), then I'd encourage you to look into it.
+>=20
+> It could turn out to be one of those "cannot change this because user spac=
+e expectations
+> have baked and hardened, and changes would break user space" situations, j=
+ust to
+> warn you in advance, though.
 
-Alex
-
-> 
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> 
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> ---
->  drivers/vfio/pci/vfio_pci.c | 16 ++++++++++++++++
->  include/linux/vfio.h        |  3 ++-
->  include/uapi/linux/vfio.h   | 11 +++++++++++
->  3 files changed, 29 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index 059660328be2..62b811ca43e4 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -127,6 +127,19 @@ void init_migration_region(struct vfio_pci_device *vdev)
->  		NULL);
->  }
->  
-> +/**
-> + * register a region to hold info for dynamically trap bar regions
-> + */
-> +void init_dynamic_trap_bar_info_region(struct vfio_pci_device *vdev)
-> +{
-> +	vfio_pci_register_dev_region(vdev,
-> +		VFIO_REGION_TYPE_DYNAMIC_TRAP_BAR_INFO,
-> +		VFIO_REGION_SUBTYPE_DYNAMIC_TRAP_BAR_INFO,
-> +		NULL, 0,
-> +		VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE,
-> +		NULL);
-> +}
-> +
->  static void vfio_pci_probe_mmaps(struct vfio_pci_device *vdev)
->  {
->  	struct resource *res;
-> @@ -538,6 +551,9 @@ static int vfio_pci_open(void *device_data)
->  				if (caps & VFIO_PCI_DEVICE_CAP_MIGRATION)
->  					init_migration_region(vdev);
->  
-> +				if (caps & VFIO_PCI_DEVICE_CAP_DYNAMIC_TRAP_BAR)
-> +					init_dynamic_trap_bar_info_region(vdev);
-> +
->  				pr_info("vfio pci found mediate_ops %s, caps=%llx, handle=%x for %x:%x\n",
->  						vdev->mediate_ops->name, caps,
->  						handle, vdev->pdev->vendor,
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index cddea8e9dcb2..cf8ecf687bee 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -197,7 +197,8 @@ extern void vfio_virqfd_disable(struct virqfd **pvirqfd);
->  
->  struct vfio_pci_mediate_ops {
->  	char	*name;
-> -#define VFIO_PCI_DEVICE_CAP_MIGRATION (0x01)
-> +#define VFIO_PCI_DEVICE_CAP_MIGRATION		(0x01)
-> +#define VFIO_PCI_DEVICE_CAP_DYNAMIC_TRAP_BAR	(0x02)
->  	int	(*open)(struct pci_dev *pdev, u64 *caps, u32 *handle);
->  	void	(*release)(int handle);
->  	void	(*get_region_info)(int handle,
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index caf8845a67a6..74a2d0b57741 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -258,6 +258,9 @@ struct vfio_region_info {
->  struct vfio_region_sparse_mmap_area {
->  	__u64	offset;	/* Offset of mmap'able area within region */
->  	__u64	size;	/* Size of mmap'able area */
-> +	__u32	disablable;	/* whether this mmap'able are able to
-> +				 *  be dynamically disabled
-> +				 */
->  };
->  
->  struct vfio_region_info_cap_sparse_mmap {
-> @@ -454,6 +457,14 @@ struct vfio_device_migration_info {
->  #define VFIO_DEVICE_DIRTY_PFNS_ALL	(~0ULL)
->  } __attribute__((packed));
->  
-> +/* Region type and sub-type to hold info to dynamically trap bars */
-> +#define VFIO_REGION_TYPE_DYNAMIC_TRAP_BAR_INFO		(4)
-> +#define VFIO_REGION_SUBTYPE_DYNAMIC_TRAP_BAR_INFO	(1)
-> +
-> +struct vfio_device_dt_bar_info_region {
-> +	__u32 dt_fd; /* fd of eventfd to notify qemu trap/untrap bars*/
-> +	__u32 trap;   /* trap/untrap bar regions */
-> +};
->  
->  /* sub-types for VFIO_REGION_TYPE_PCI_* */
->  
-
+There is no need to paper over the underlying issue. One can think there is o=
+nly one problem. The way move_pages() deal with pages are already in the des=
+ired node. Then, I don=E2=80=99t see there is any controversy that it was br=
+oken for so long and just restore it to according to the manpage. If you wor=
+ried about people has already depended on the broken behavior, it could stay=
+ in linux-next for many releases to gather feedback. In any case, I don=E2=80=
+=99t see it need to hurry to fix this until someone can show the real world u=
+se case for it apart from some random test code.=
