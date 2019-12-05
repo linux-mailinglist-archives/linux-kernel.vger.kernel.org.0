@@ -2,106 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3EB11414A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDAB5114150
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbfLENP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 08:15:58 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:41098 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729396AbfLENP6 (ORCPT
+        id S1729521AbfLENRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 08:17:08 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32776 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729165AbfLENRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 08:15:58 -0500
-Received: from mr1.cc.vt.edu (mail.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id xB5DFv7j031594
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2019 08:15:57 -0500
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id xB5DFqSl001986
-        for <linux-kernel@vger.kernel.org>; Thu, 5 Dec 2019 08:15:57 -0500
-Received: by mail-qt1-f200.google.com with SMTP id r9so2437231qtc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 05:15:57 -0800 (PST)
+        Thu, 5 Dec 2019 08:17:08 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b6so3582416wrq.0;
+        Thu, 05 Dec 2019 05:17:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bNVy28uDYQvmGOvC3k7avc+06MFa2IjqLxanx0z2n2k=;
+        b=N3G7CSIOH4avKnU+pKRcoavsjJB3q1iZL5SvMPfuqkU77Eb3XULeIbvPaOrZmqKjil
+         wVkDRPjLY5EquVQ6wBpyV4sLRsAnMrj8bOq63IZXY1e1lnX4tETHWUKA6AYhwe7er2sb
+         u5B5oV+KnRljkMonOFideS63CZo47qsoJMzMZ7XFlsbqJ4SgEIdsXjKJgycV5Rsv9z8r
+         uDollXuaN7182huRLAcp9jLs+Q37eSOV3DfRQN13c04nVOT9Tirs/2oVIHBKknCEJlSz
+         y6VRAKncPjN9mCHZFtEw/f732bSJxJA2jLSq+gkn8XcyEOGct/cLIP9ry2AjpFgOzl2F
+         duLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=B+V35yq0yLrVPZQXw17FfOlVfkBn2Axc+qxIitr2DJo=;
-        b=HGwV5Mg7QPgDacAecCxvGz05CpyoS/YCtfKrZVyLM+xdC+zxO47viNx8OViKVWrhV8
-         QtRSp+YWjhgU1COK56ogE7PP6ZRLiH7eamGPZX4N/PVtwRZCADAz28fQoO9emIB5Jcht
-         2p+lkQF4y5pvz1FqY9BCP7Je6btHyz1WwsV6r3oDng8cDjZ+QucT3li5jqc9l+XAnCP6
-         y345iFhSamAXln6R1SzBDV530SFD9Yv80JFAi/3hp8hXKxrBtjFrQskCSoWM2tRMrXym
-         pGGi8d2Cj5n7i8N7aJ9Fp9G4gCfEx+fv258t5qDsy01GYKkhf2DykkNtX/pY5buUcA4H
-         ELTA==
-X-Gm-Message-State: APjAAAXcIwsr3l+S3RuJWWwh1iHLve+2Kq+f95THJ0e2mKeEOCUhGXa1
-        b5qOGuCF26mFCRjKD30vt0Ar5bivchtsXtoH93ddivFFRIfBkehRbRBeT31Ol5SewVSnRytQxSC
-        x0nuA2t4d+It2zs8eQStKd43CqIA7XeELDSQ=
-X-Received: by 2002:a05:620a:a1a:: with SMTP id i26mr7844463qka.383.1575551751590;
-        Thu, 05 Dec 2019 05:15:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw9inJYNpDhnSphzZMDWgRJobZqbHDmIjG5eF+JAQjYhmTnPDUKWaICcTM0whp/JwcV0PLskA==
-X-Received: by 2002:a05:620a:a1a:: with SMTP id i26mr7844438qka.383.1575551751239;
-        Thu, 05 Dec 2019 05:15:51 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id t36sm2015117qtt.96.2019.12.05.05.15.49
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bNVy28uDYQvmGOvC3k7avc+06MFa2IjqLxanx0z2n2k=;
+        b=HedTYlgied7rLppF7V88eg0mZPT9EfP/lmR203t+uHj20XxksjUb01QkXyGs+oaEB4
+         EyQWkE32xGd57YONKoesoqNjGFFLxktB/bxavWmBaoZHI94sGtWJbt4Og+RlHJ7jOVwJ
+         XwiEIWp4uCKjAL0xjjICkH4urRThePvNO85nGfISmguQTfJq7j9uuJdwcbg7xzwVml2j
+         q21VXUoaV6to4muwh/HMSXnZLJQVDTv0HzAMXy/uVslA/glySneuecR2Q8aAVClGYMq8
+         mR5wusjniaL+zmIhyNdHrfvUpwcP4AwySfsgxXmF2/OCjzs1P5CntFhNBaSIYpNcO4cW
+         TwKw==
+X-Gm-Message-State: APjAAAW83GCNxRzVODhX37nAm/dPKP5h/ygPWh0XW1QO9npeSor5epxc
+        xW1LXyPcY8vai8306hSZULQ=
+X-Google-Smtp-Source: APXvYqyX/Q9DbbSwBDnsHR4XeRRskSshAkQo8iMxGADyt/KjKHcr5eADrnvv8w8C2vIUSUOWw33TAQ==
+X-Received: by 2002:adf:e6c5:: with SMTP id y5mr9969287wrm.210.1575551824947;
+        Thu, 05 Dec 2019 05:17:04 -0800 (PST)
+Received: from localhost.localdomain ([109.126.146.231])
+        by smtp.gmail.com with ESMTPSA id l7sm12208003wrq.61.2019.12.05.05.17.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 05:15:50 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Steven Price <steven.price@arm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next 20191204: crash in mm/pagewalk.c
-In-Reply-To: <20191205123025.GA46328@arm.com>
-References: <4587.1575548582@turing-police>
- <20191205123025.GA46328@arm.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1575551748_4281P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 05 Dec 2019 08:15:49 -0500
-Message-ID: <7712.1575551749@turing-police>
+        Thu, 05 Dec 2019 05:17:04 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: hook all linked requests via link_list
+Date:   Thu,  5 Dec 2019 16:16:35 +0300
+Message-Id: <49ba20e17803a7caf1cb87792b36dd40b4a99806.1575551693.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1575551748_4281P
-Content-Type: text/plain; charset=us-ascii
+Links are created by chaining requests through req->list with an
+exception that head uses req->link_list. (e.g. link_list->list->list)
+Because of that, io_req_link_next() needs complex splicing to advance.
 
-On Thu, 05 Dec 2019 12:30:26 +0000, Steven Price said:
-> On Thu, Dec 05, 2019 at 12:23:02PM +0000, Valdis Klētnieks wrote:
-> > linux-next 20191204 dies a horrid death on my laptop while booting:
->
-> This is due to an unfortunate conflict between my series reworking of
-> the page walk infrastructure to reuse it for kernel walks and a commit
-> by Thomas Hellstrom to allow safe modification of entries in the
-> callback. See [1] for more detail.
->
-> I believe Andrew has dropped my series for now while I rework it to fix
-> this conflict.
+Link them all through list_list. Also, it seems to be simpler and more
+consistent IMHO.
 
-Thanks for the prompt response - I'll try again with today's -next if the series
-has dropped out...
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 42 ++++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
---==_Exmh_1575551748_4281P
-Content-Type: application/pgp-signature
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 6c2b2afe985e..806d9c72d0c9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -899,7 +899,6 @@ static bool io_link_cancel_timeout(struct io_kiocb *req)
+ static void io_req_link_next(struct io_kiocb *req, struct io_kiocb **nxtptr)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	struct io_kiocb *nxt;
+ 	bool wake_ev = false;
+ 
+ 	/* Already got next link */
+@@ -911,24 +910,21 @@ static void io_req_link_next(struct io_kiocb *req, struct io_kiocb **nxtptr)
+ 	 * potentially happen if the chain is messed up, check to be on the
+ 	 * safe side.
+ 	 */
+-	nxt = list_first_entry_or_null(&req->link_list, struct io_kiocb, list);
+-	while (nxt) {
+-		list_del_init(&nxt->list);
++	while (!list_empty(&req->link_list)) {
++		struct io_kiocb *nxt = list_first_entry(&req->link_list,
++						struct io_kiocb, link_list);
+ 
+-		if ((req->flags & REQ_F_LINK_TIMEOUT) &&
+-		    (nxt->flags & REQ_F_TIMEOUT)) {
++		if (unlikely((req->flags & REQ_F_LINK_TIMEOUT) &&
++			     (nxt->flags & REQ_F_TIMEOUT))) {
++			list_del_init(&nxt->link_list);
+ 			wake_ev |= io_link_cancel_timeout(nxt);
+-			nxt = list_first_entry_or_null(&req->link_list,
+-							struct io_kiocb, list);
+ 			req->flags &= ~REQ_F_LINK_TIMEOUT;
+ 			continue;
+ 		}
+-		if (!list_empty(&req->link_list)) {
+-			INIT_LIST_HEAD(&nxt->link_list);
+-			list_splice(&req->link_list, &nxt->link_list);
+-			nxt->flags |= REQ_F_LINK;
+-		}
+ 
++		list_del_init(&req->link_list);
++		if (!list_empty(&nxt->link_list))
++			nxt->flags |= REQ_F_LINK;
+ 		*nxtptr = nxt;
+ 		break;
+ 	}
+@@ -944,15 +940,15 @@ static void io_req_link_next(struct io_kiocb *req, struct io_kiocb **nxtptr)
+ static void io_fail_links(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+-	struct io_kiocb *link;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&ctx->completion_lock, flags);
+ 
+ 	while (!list_empty(&req->link_list)) {
+-		link = list_first_entry(&req->link_list, struct io_kiocb, list);
+-		list_del_init(&link->list);
++		struct io_kiocb *link = list_first_entry(&req->link_list,
++						struct io_kiocb, link_list);
+ 
++		list_del_init(&link->link_list);
+ 		trace_io_uring_fail_link(req, link);
+ 
+ 		if ((req->flags & REQ_F_LINK_TIMEOUT) &&
+@@ -3173,10 +3169,11 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
+ 	 * We don't expect the list to be empty, that will only happen if we
+ 	 * race with the completion of the linked work.
+ 	 */
+-	if (!list_empty(&req->list)) {
+-		prev = list_entry(req->list.prev, struct io_kiocb, link_list);
++	if (!list_empty(&req->link_list)) {
++		prev = list_entry(req->link_list.prev, struct io_kiocb,
++				  link_list);
+ 		if (refcount_inc_not_zero(&prev->refs)) {
+-			list_del_init(&req->list);
++			list_del_init(&req->link_list);
+ 			prev->flags &= ~REQ_F_LINK_TIMEOUT;
+ 		} else
+ 			prev = NULL;
+@@ -3206,7 +3203,7 @@ static void io_queue_linked_timeout(struct io_kiocb *req)
+ 	 * we got a chance to setup the timer
+ 	 */
+ 	spin_lock_irq(&ctx->completion_lock);
+-	if (!list_empty(&req->list)) {
++	if (!list_empty(&req->link_list)) {
+ 		struct io_timeout_data *data = &req->io->timeout;
+ 
+ 		data->timer.function = io_link_timeout_fn;
+@@ -3226,7 +3223,8 @@ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req)
+ 	if (!(req->flags & REQ_F_LINK))
+ 		return NULL;
+ 
+-	nxt = list_first_entry_or_null(&req->link_list, struct io_kiocb, list);
++	nxt = list_first_entry_or_null(&req->link_list, struct io_kiocb,
++					link_list);
+ 	if (!nxt || nxt->sqe->opcode != IORING_OP_LINK_TIMEOUT)
+ 		return NULL;
+ 
+@@ -3367,7 +3365,7 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+ 			goto err_req;
+ 		}
+ 		trace_io_uring_link(ctx, req, prev);
+-		list_add_tail(&req->list, &prev->link_list);
++		list_add_tail(&req->link_list, &prev->link_list);
+ 	} else if (req->sqe->flags & IOSQE_IO_LINK) {
+ 		req->flags |= REQ_F_LINK;
+ 
+-- 
+2.24.0
 
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXekDBAdmEQWDXROgAQJAdg/7BYsaBUhSz+9hXiSkPtIKyTU29pxSoFrl
-mOxl7X7y6iTQu1LKUIgSERGh3aC+iKmAfPfBjw9xBxfGm4nf5QOhDNVucMpN7dMI
-avgmFzY9xJCeAohJUi6qkNfxn776bvaQGNgK2OtCC+9mIJ69VZZa3oy9hmikKkGx
-88iWdaDg++b4SnkTyjD0Q40382axMvEp9wSMnKPKT0u4JCFbOgpDVzcOJvdgok6k
-zwb6P83NdpMuc+7TY+sFeE/ggdyOs04rHgC9DDmiKojzlxQUiHGxRkjOSB7jAzny
-OejUX9ukYIjiqxXUUaQGuFPSVY03bCUqfrJFZ75y28I+zEkEC3bcvT7yZ/X+iVY1
-qK5DvIJCFr2JYtDAAc74UCTo1nYVkBGpZfbyWGiobZ2P4HAqTJmV1i9Ex1YCnRoU
-AxOgwwtd8JjL70pXU/2iipktrT88WckGzaq1zyZVYvoSstmCTGfxGhQwUxwX+Gwt
-JGlxywGd3bUe/qwPo7C9hqC1jQOTtfY5DkokGzmupPbjrqU4sbjzrLeZQRqlZxtn
-gzYVhovMls2uweeiHXfU+pfYDBP70iPRcLfRbNafGhqEHfQyF0V2pCRcBdKcKHGb
-sPs1VXksYMoCismgy0CBjAoMZQpV02RHbu6gw0K1u4uJYWEPdGMxwt1xMLQ3Aqut
-4wdCJWQpbr0=
-=XB1S
------END PGP SIGNATURE-----
-
---==_Exmh_1575551748_4281P--
