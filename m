@@ -2,284 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DC7113B70
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0075B113B67
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:45:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfLEFrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 00:47:15 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:6079 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbfLEFrO (ORCPT
+        id S1726088AbfLEFpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 00:45:06 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:57582 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725822AbfLEFpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 00:47:14 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5de899e40000>; Wed, 04 Dec 2019 21:47:16 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 04 Dec 2019 21:47:12 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 04 Dec 2019 21:47:12 -0800
-Received: from [10.2.163.157] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 5 Dec
- 2019 05:47:11 +0000
-Subject: Re: [v2 PATCH] mm: move_pages: return valid node id in status if the
- page is already on the target node
-To:     Yang Shi <yang.shi@linux.alibaba.com>, <fabecassis@nvidia.com>,
-        <mhocko@suse.com>, <cl@linux.com>, <vbabka@suse.cz>,
-        <mgorman@techsingularity.net>, <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <1575519678-86510-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <d4935b9f-39ef-fb91-1786-be84784dccd0@nvidia.com>
-Date:   Wed, 4 Dec 2019 21:44:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 5 Dec 2019 00:45:06 -0500
+X-UUID: 0fb2c8d23659430bb5009b28d2f0e1e4-20191205
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=DMukBWFVgZU4DzzXUc2ShgiywIROlscb4YOByu87/p4=;
+        b=A2/T+2gQ9t2mkR4JREyWfUNk7Pba/h+gDoz5DgGGID9QWt7BZ9fMSi+kPhsZr2WyYzU1shFYhFrMrQ9HTbSA8SWfAoyeeaaO54B5HBxmcoZ4syiADXyDM54X0p85gKj05ZZEbUdeSrVn+Mcyth/L15qF9QCQlvBa9oR9g4Zq4/Q=;
+X-UUID: 0fb2c8d23659430bb5009b28d2f0e1e4-20191205
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1063602775; Thu, 05 Dec 2019 13:44:59 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 5 Dec 2019 13:44:41 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 5 Dec 2019 13:44:27 +0800
+Message-ID: <1575524697.24783.20.camel@mtksdaap41>
+Subject: Re: [PATCH v3 6/6] drm/mediatek: apply CMDQ control flow
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
+        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Date:   Thu, 5 Dec 2019 13:44:57 +0800
+In-Reply-To: <20191204094441.5116-7-bibby.hsieh@mediatek.com>
+References: <20191204094441.5116-1-bibby.hsieh@mediatek.com>
+         <20191204094441.5116-7-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <1575519678-86510-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575524836; bh=3BzUfhn2L2EFnKI0pmf+h4twdu2lT7xDJGJSbSIlTSk=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=sPG3P7lQrHMdzhkufix7Ov4qDOGYBHDxCVVz7lyYgqHXbXyHQHY/o9tY1myCgUyK1
-         KUL1R27VMJxzT0f7Qzy60Cnt9d5FMt5xlnJ2zeNT7iuWn8YrlQ4cLLVT/+hot5iHfS
-         mnlbO887v7yrEDobZZkkwISpx6Xt0IXJGzBrquVjMN3dLnef9HJ0HMFqeQKxmGkbrm
-         sevaJ4HMeymYkcEZx3TJTAeZ/uHJHR2aO2LpY8Mr+x2wfzY30JnaVK/mI2QnatNVpV
-         8gRnd2r/uYnshCL6Ro/KeBvD8tgei1cRR2nwVizmSLoex/+ZzRmvFRmoWokjl1WZIb
-         vyYsWwtNRRGwQ==
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/19 8:21 PM, Yang Shi wrote:
-> Felix Abecassis reports move_pages() would return random status if the
-> pages are already on the target node by the below test program:
-> 
-> ---8<---
+SGksIEJpYmJ5Og0KDQpPbiBXZWQsIDIwMTktMTItMDQgYXQgMTc6NDQgKzA4MDAsIEJpYmJ5IEhz
+aWVoIHdyb3RlOg0KPiBVbmxpa2Ugb3RoZXIgU29DcywgTVQ4MTgzIGRvZXMgbm90IGhhdmUgInNo
+YWRvdyINCj4gcmVnaXN0ZXJzIGZvciBwZXJmb3JtYWluZyBhbiBhdG9taWMgdmlkZW8gbW9kZQ0K
+PiBzZXQgb3IgcGFnZSBmbGlwIGF0IHZibGFuay92c3luYy4NCj4gDQo+IFRoZSBDTURRIChDb21t
+ZW5kIFF1ZXVlKSBpbiBNVDgxODMgaXMgdXNlZCB0byBoZWxwDQo+IHVwZGF0ZSBhbGwgcmVsZXZh
+bnQgZGlzcGxheSBjb250cm9sbGVyIHJlZ2lzdGVycw0KPiB3aXRoIGNyaXRpY2FsIHRpbWUgbGlt
+YXRpb24uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBZVCBTaGVuIDx5dC5zaGVuQG1lZGlhdGVrLmNv
+bT4NCj4gU2lnbmVkLW9mZi1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCj4gU2lnbmVk
+LW9mZi1ieTogUGhpbGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4NCj4gU2lnbmVk
+LW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1lZGlhdGVrLmNvbT4NCj4gU2lnbmVk
+LW9mZi1ieTogWW9uZ3FpYW5nIE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQo+IC0t
+LQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jIHwgODAgKysrKysr
+KysrKysrKysrKysrKysrKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDc3IGluc2VydGlvbnMoKyks
+IDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlh
+dGVrL210a19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
+Yy5jDQo+IGluZGV4IDlmMWZmMmYzZjEwNC4uOTM0MDM0NmUyNzI3IDEwMDY0NA0KPiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMNCj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+IEBAIC0xMiw2ICsxMiw4IEBADQo+ICAj
+aW5jbHVkZSA8ZHJtL2RybV9wbGFuZV9oZWxwZXIuaD4NCj4gICNpbmNsdWRlIDxkcm0vZHJtX3By
+b2JlX2hlbHBlci5oPg0KPiAgI2luY2x1ZGUgPGRybS9kcm1fdmJsYW5rLmg+DQo+ICsjaW5jbHVk
+ZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L3NvYy9tZWRpYXRlay9t
+dGstY21kcS5oPg0KPiAgDQo+ICAjaW5jbHVkZSAibXRrX2RybV9kcnYuaCINCj4gICNpbmNsdWRl
+ICJtdGtfZHJtX2NydGMuaCINCj4gQEAgLTQyLDYgKzQ0LDkgQEAgc3RydWN0IG10a19kcm1fY3J0
+YyB7DQo+ICAJdW5zaWduZWQgaW50CQkJbGF5ZXJfbnI7DQo+ICAJYm9vbAkJCQlwZW5kaW5nX3Bs
+YW5lczsNCj4gIA0KPiArCXN0cnVjdCBjbWRxX2NsaWVudAkJKmNtZHFfY2xpZW50Ow0KPiArCXUz
+MgkJCQljbWRxX2V2ZW50Ow0KPiArDQo+ICAJdm9pZCBfX2lvbWVtCQkJKmNvbmZpZ19yZWdzOw0K
+PiAgCWNvbnN0IHN0cnVjdCBtdGtfbW1zeXNfcmVnX2RhdGEgKm1tc3lzX3JlZ19kYXRhOw0KPiAg
+CXN0cnVjdCBtdGtfZGlzcF9tdXRleAkJKm11dGV4Ow0KPiBAQCAtNTksNiArNjQsMTEgQEAgc3Ry
+dWN0IG10a19jcnRjX3N0YXRlIHsNCj4gIAl1bnNpZ25lZCBpbnQJCQlwZW5kaW5nX3dpZHRoOw0K
+PiAgCXVuc2lnbmVkIGludAkJCXBlbmRpbmdfaGVpZ2h0Ow0KPiAgCXVuc2lnbmVkIGludAkJCXBl
+bmRpbmdfdnJlZnJlc2g7DQo+ICsJc3RydWN0IGNtZHFfcGt0CQkJKmNtZHFfaGFuZGxlOw0KDQpU
+aGUgaGFuZGxlIGlzIGp1c3QgdXNlZCBpbiBtdGtfZHJtX2NydGNfaHdfY29uZmlnKCksIHNvIEkg
+dGhpbmsgeW91IG5lZWQNCm5vdCB0byBzdG9yZSBpdCBpbiBtdGtfY3J0Y19zdGF0ZS4gTWFrZSBp
+dCBhIGxvY2FsIHZhcmlhYmxlIGluDQptdGtfZHJtX2NydGNfaHdfY29uZmlnKCkgaXMgZW5vdWdo
+Lg0KDQo+ICt9Ow0KPiArDQo+ICtzdHJ1Y3QgbXRrX2NtZHFfY2JfZGF0YSB7DQo+ICsJc3RydWN0
+IGNtZHFfcGt0CQkJKmNtZHFfaGFuZGxlOw0KPiAgfTsNCj4gIA0KPiAgc3RhdGljIGlubGluZSBz
+dHJ1Y3QgbXRrX2RybV9jcnRjICp0b19tdGtfY3J0YyhzdHJ1Y3QgZHJtX2NydGMgKmMpDQo+IEBA
+IC0yMzMsNiArMjQzLDQ3IEBAIHN0cnVjdCBtdGtfZGRwX2NvbXAgKm10a19kcm1fZGRwX2NvbXBf
+Zm9yX3BsYW5lKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywNCj4gIAlyZXR1cm4gTlVMTDsNCj4gIH0N
+Cj4gIA0KPiArI2lmZGVmIENPTkZJR19NVEtfQ01EUQ0KPiArc3RhdGljIHZvaWQgZGRwX2NtZHFf
+Y2Ioc3RydWN0IGNtZHFfY2JfZGF0YSBkYXRhKQ0KPiArew0KPiArCXN0cnVjdCBtdGtfY21kcV9j
+Yl9kYXRhICpjYl9kYXRhID0gZGF0YS5kYXRhOw0KPiArDQo+ICsJY21kcV9wa3RfZGVzdHJveShj
+Yl9kYXRhLT5jbWRxX2hhbmRsZSk7DQo+ICsJa2ZyZWUoY2JfZGF0YSk7DQo+ICt9DQo+ICsNCj4g
+K3N0YXRpYyB2b2lkIG10a19jbWRxX2FjcXVpcmUoc3RydWN0IGRybV9jcnRjICpjcnRjKQ0KPiAr
+ew0KPiArCXN0cnVjdCBtdGtfY3J0Y19zdGF0ZSAqbXRrX2NydGNfc3RhdGUgPQ0KPiArCQkJdG9f
+bXRrX2NydGNfc3RhdGUoY3J0Yy0+c3RhdGUpOw0KPiArCXN0cnVjdCBtdGtfZHJtX2NydGMgKm10
+a19jcnRjID0gdG9fbXRrX2NydGMoY3J0Yyk7DQo+ICsNCj4gKwltdGtfY3J0Y19zdGF0ZS0+Y21k
+cV9oYW5kbGUgPQ0KPiArCQkJY21kcV9wa3RfY3JlYXRlKG10a19jcnRjLT5jbWRxX2NsaWVudCwN
+Cj4gKwkJCQkJUEFHRV9TSVpFKTsNCj4gKwljbWRxX3BrdF9jbGVhcl9ldmVudChtdGtfY3J0Y19z
+dGF0ZS0+Y21kcV9oYW5kbGUsDQo+ICsJCQkgICAgIG10a19jcnRjLT5jbWRxX2V2ZW50KTsNCj4g
+KwljbWRxX3BrdF93ZmUobXRrX2NydGNfc3RhdGUtPmNtZHFfaGFuZGxlLCBtdGtfY3J0Yy0+Y21k
+cV9ldmVudCk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIG10a19jbWRxX3JlbGVhc2Uoc3Ry
+dWN0IGRybV9jcnRjICpjcnRjKQ0KPiArew0KPiArCXN0cnVjdCBtdGtfY3J0Y19zdGF0ZSAqbXRr
+X2NydGNfc3RhdGUgPQ0KPiArCQkJdG9fbXRrX2NydGNfc3RhdGUoY3J0Yy0+c3RhdGUpOw0KPiAr
+CXN0cnVjdCBtdGtfY21kcV9jYl9kYXRhICpjYl9kYXRhOw0KPiArDQo+ICsJY2JfZGF0YSA9IGtt
+YWxsb2Moc2l6ZW9mKCpjYl9kYXRhKSwgR0ZQX0tFUk5FTCk7DQo+ICsJaWYgKCFjYl9kYXRhKSB7
+DQo+ICsJCURSTV9ERVZfRVJST1IoY3J0Yy0+ZGV2LT5kZXYsICJGYWlsZWQgdG8gYWxsb2MgY2Jf
+ZGF0YVxuIik7DQo+ICsJCXJldHVybjsNCj4gKwl9DQo+ICsNCj4gKwljYl9kYXRhLT5jbWRxX2hh
+bmRsZSA9IG10a19jcnRjX3N0YXRlLT5jbWRxX2hhbmRsZTsNCj4gKwljbWRxX3BrdF9mbHVzaF9h
+c3luYyhtdGtfY3J0Y19zdGF0ZS0+Y21kcV9oYW5kbGUsDQo+ICsJCQkgICAgIGRkcF9jbWRxX2Ni
+LCBjYl9kYXRhKTsNCg0KV2h5IGRvIHlvdSBjcmVhdGUgbXRrX2NtZHFfY2JfZGF0YXt9PyBZb3Ug
+Y291bGQgZGlyZWN0bHkgcHV0IGhhbmRsZSBpbg0KY2JfZGF0ZSBwYXJhbWV0ZXIuDQoNCj4gK30N
+Cj4gKyNlbmRpZg0KPiArDQo+ICBzdGF0aWMgaW50IG10a19jcnRjX2RkcF9od19pbml0KHN0cnVj
+dCBtdGtfZHJtX2NydGMgKm10a19jcnRjKQ0KPiAgew0KPiAgCXN0cnVjdCBkcm1fY3J0YyAqY3J0
+YyA9ICZtdGtfY3J0Yy0+YmFzZTsNCj4gQEAgLTM5Myw3ICs0NDQsOCBAQCBzdGF0aWMgdm9pZCBt
+dGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykNCj4gIAlpZiAoc3RhdGUt
+PnBlbmRpbmdfY29uZmlnKSB7DQo+ICAJCW10a19kZHBfY29tcF9jb25maWcoY29tcCwgc3RhdGUt
+PnBlbmRpbmdfd2lkdGgsDQo+ICAJCQkJICAgIHN0YXRlLT5wZW5kaW5nX2hlaWdodCwNCj4gLQkJ
+CQkgICAgc3RhdGUtPnBlbmRpbmdfdnJlZnJlc2gsIDAsIE5VTEwpOw0KPiArCQkJCSAgICBzdGF0
+ZS0+cGVuZGluZ192cmVmcmVzaCwgMCwNCj4gKwkJCQkgICAgc3RhdGUtPmNtZHFfaGFuZGxlKTsN
+Cj4gIA0KPiAgCQlzdGF0ZS0+cGVuZGluZ19jb25maWcgPSBmYWxzZTsNCj4gIAl9DQo+IEBAIC00
+MTMsNyArNDY1LDggQEAgc3RhdGljIHZvaWQgbXRrX2NydGNfZGRwX2NvbmZpZyhzdHJ1Y3QgZHJt
+X2NydGMgKmNydGMpDQo+ICANCj4gIAkJCWlmIChjb21wKQ0KPiAgCQkJCW10a19kZHBfY29tcF9s
+YXllcl9jb25maWcoY29tcCwgbG9jYWxfbGF5ZXIsDQo+IC0JCQkJCQkJICBwbGFuZV9zdGF0ZSwg
+TlVMTCk7DQo+ICsJCQkJCQkJICBwbGFuZV9zdGF0ZSwNCj4gKwkJCQkJCQkgIHN0YXRlLT5jbWRx
+X2hhbmRsZSk7DQo+ICAJCQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5jb25maWcgPSBmYWxzZTsNCj4g
+IAkJfQ0KPiAgCQltdGtfY3J0Yy0+cGVuZGluZ19wbGFuZXMgPSBmYWxzZTsNCj4gQEAgLTQ1Miw2
+ICs1MDUsMTMgQEAgc3RhdGljIHZvaWQgbXRrX2RybV9jcnRjX2h3X2NvbmZpZyhzdHJ1Y3QgbXRr
+X2RybV9jcnRjICptdGtfY3J0YykNCj4gIAkJbXRrX2NydGNfZGRwX2NvbmZpZyhjcnRjKTsNCj4g
+IAkJbXRrX2Rpc3BfbXV0ZXhfcmVsZWFzZShtdGtfY3J0Yy0+bXV0ZXgpOw0KPiAgCX0NCj4gKyNp
+ZmRlZiBDT05GSUdfTVRLX0NNRFENCj4gKwlpZiAobXRrX2NydGMtPmNtZHFfY2xpZW50KSB7DQo+
+ICsJCW10a19jbWRxX2FjcXVpcmUoY3J0Yyk7DQo+ICsJCW10a19jcnRjX2RkcF9jb25maWcoY3J0
+Yyk7DQo+ICsJCW10a19jbWRxX3JlbGVhc2UoY3J0Yyk7DQo+ICsJfQ0KPiArI2VuZGlmDQo+ICAJ
+bXV0ZXhfdW5sb2NrKCZtdGtfY3J0Yy0+aHdfbG9jayk7DQo+ICB9DQo+ICANCj4gQEAgLTUyOCw2
+ICs1ODgsNyBAQCBzdGF0aWMgdm9pZCBtdGtfZHJtX2NydGNfYXRvbWljX2Rpc2FibGUoc3RydWN0
+IGRybV9jcnRjICpjcnRjLA0KPiAgCW10a19jcnRjLT5wZW5kaW5nX3BsYW5lcyA9IHRydWU7DQo+
+ICANCj4gIAkvKiBXYWl0IGZvciBwbGFuZXMgdG8gYmUgZGlzYWJsZWQgKi8NCj4gKwltdGtfZHJt
+X2NydGNfaHdfY29uZmlnKG10a19jcnRjKTsNCg0KSSB0aGluayBzaGFkb3cgcmVnaXN0ZXIgaGFz
+IHRoZSBzYW1lIHByb2JsZW0sIHNvIEkgd291bGQgbGlrZSB0byBtb3ZlDQp0aGlzIHBhcnQgdG8g
+YW4gaW5kZXBlbmRlbnQgcGF0Y2ggd2hpY2ggZml4IHNoYWRvdyByZWdpc3RlciBwcm9ibGVtLiBB
+bmQNCkkgdGhpbmsgdGhpcyBzdGF0ZW1lbnQgc2hvdWxkIGJlIG1vdmVkIGJlZm9yZSB0aGUgY29t
+bWVudCBiZWNhdXNlIHRoaXMNCnN0YXRlbWVudCBkb2VzIG5vdCBkb2luZyB3YWl0Lg0KDQo+ICAJ
+ZHJtX2NydGNfd2FpdF9vbmVfdmJsYW5rKGNydGMpOw0KPiAgDQo+ICAJZHJtX2NydGNfdmJsYW5r
+X29mZihjcnRjKTsNCj4gQEAgLTYxOSw3ICs2ODAsNyBAQCB2b2lkIG10a19jcnRjX2RkcF9pcnEo
+c3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgbXRrX2RkcF9jb21wICpjb21wKQ0KPiAgCXN0
+cnVjdCBtdGtfZHJtX2NydGMgKm10a19jcnRjID0gdG9fbXRrX2NydGMoY3J0Yyk7DQo+ICAJc3Ry
+dWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdiA9IGNydGMtPmRldi0+ZGV2X3ByaXZhdGU7DQo+ICAN
+Cj4gLQlpZiAoIXByaXYtPmRhdGEtPnNoYWRvd19yZWdpc3RlcikNCj4gKwlpZiAoIXByaXYtPmRh
+dGEtPnNoYWRvd19yZWdpc3RlciAmJiAhbXRrX2NydGMtPmNtZHFfY2xpZW50KQ0KPiAgCQltdGtf
+Y3J0Y19kZHBfY29uZmlnKGNydGMpOw0KPiAgDQo+ICAJbXRrX2RybV9maW5pc2hfcGFnZV9mbGlw
+KG10a19jcnRjKTsNCj4gQEAgLTc2Myw1ICs4MjQsMTggQEAgaW50IG10a19kcm1fY3J0Y19jcmVh
+dGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsDQo+ICAJcHJpdi0+bnVtX3BpcGVzKys7DQo+
+ICAJbXV0ZXhfaW5pdCgmbXRrX2NydGMtPmh3X2xvY2spOw0KPiAgDQo+ICsjaWZkZWYgQ09ORklH
+X01US19DTURRDQo+ICsJbXRrX2NydGMtPmNtZHFfY2xpZW50ID0NCj4gKwkJCWNtZHFfbWJveF9j
+cmVhdGUoZGV2LCBkcm1fY3J0Y19pbmRleCgmbXRrX2NydGMtPmJhc2UpLA0KPiArCQkJCQkgMjAw
+MCk7DQo+ICsJb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgoZGV2LT5vZl9ub2RlLCAibWVkaWF0
+ZWssZ2NlLWV2ZW50cyIsDQo+ICsJCQkJICAgZHJtX2NydGNfaW5kZXgoJm10a19jcnRjLT5iYXNl
+KSwNCj4gKwkJCQkgICAmbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KDQpDaGVjayB0aGUgcmV0dXJu
+IHZhbHVlLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiArCWlmIChJU19FUlIobXRrX2NydGMtPmNtZHFf
+Y2xpZW50KSkgew0KPiArCQlkZXZfZGJnKGRldiwgIm10a19jcnRjICVkIGZhaWxlZCB0byBjcmVh
+dGUgbWFpbGJveCBjbGllbnQsIHdyaXRpbmcgcmVnaXN0ZXIgYnkgQ1BVIG5vd1xuIiwNCj4gKwkJ
+CWRybV9jcnRjX2luZGV4KCZtdGtfY3J0Yy0+YmFzZSkpOw0KPiArCQltdGtfY3J0Yy0+Y21kcV9j
+bGllbnQgPSBOVUxMOw0KPiArCX0NCj4gKyNlbmRpZg0KPiAgCXJldHVybiAwOw0KPiAgfQ0KDQo=
 
-This is correct correct code, so:
-
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-...with a few nitpicky notes about comments, below, that might help:
-
-> 
-> int main(void)
-> {
-> 	const long node_id = 1;
-> 	const long page_size = sysconf(_SC_PAGESIZE);
-> 	const int64_t num_pages = 8;
-> 
-> 	unsigned long nodemask =  1 << node_id;
-> 	long ret = set_mempolicy(MPOL_BIND, &nodemask, sizeof(nodemask));
-> 	if (ret < 0)
-> 		return (EXIT_FAILURE);
-> 
-> 	void **pages = malloc(sizeof(void*) * num_pages);
-> 	for (int i = 0; i < num_pages; ++i) {
-> 		pages[i] = mmap(NULL, page_size, PROT_WRITE | PROT_READ,
-> 				MAP_PRIVATE | MAP_POPULATE | MAP_ANONYMOUS,
-> 				-1, 0);
-> 		if (pages[i] == MAP_FAILED)
-> 			return (EXIT_FAILURE);
-> 	}
-> 
-> 	ret = set_mempolicy(MPOL_DEFAULT, NULL, 0);
-> 	if (ret < 0)
-> 		return (EXIT_FAILURE);
-> 
-> 	int *nodes = malloc(sizeof(int) * num_pages);
-> 	int *status = malloc(sizeof(int) * num_pages);
-> 	for (int i = 0; i < num_pages; ++i) {
-> 		nodes[i] = node_id;
-> 		status[i] = 0xd0; /* simulate garbage values */
-> 	}
-> 
-> 	ret = move_pages(0, num_pages, pages, nodes, status, MPOL_MF_MOVE);
-> 	printf("move_pages: %ld\n", ret);
-> 	for (int i = 0; i < num_pages; ++i)
-> 		printf("status[%d] = %d\n", i, status[i]);
-> }
-> ---8<---
-> 
-> Then running the program would return nonsense status values:
-> $ ./move_pages_bug
-> move_pages: 0
-> status[0] = 208
-> status[1] = 208
-> status[2] = 208
-> status[3] = 208
-> status[4] = 208
-> status[5] = 208
-> status[6] = 208
-> status[7] = 208
-> 
-> This is because the status is not set if the page is already on the
-> target node, but move_pages() should return valid status as long as it
-> succeeds.  The valid status may be errno or node id.
-> 
-> We can't simply initialize status array to zero since the pages may be
-> not on node 0.  Fix it by updating status with node id which the page is
-> already on.  And, it looks we have to update the status inside
-> add_page_for_migration() since the page struct is not available outside
-> it.
-> 
-> Make add_page_for_migration() return 1 if store_status() is failed in
-> order to not mix up the status value since -EFAULT is also a valid
-> status.
-> 
-> Fixes: a49bd4d71637 ("mm, numa: rework do_pages_move")
-> Reported-by: Felix Abecassis <fabecassis@nvidia.com>
-> Tested-by: Felix Abecassis <fabecassis@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: <stable@vger.kernel.org> 4.17+
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
-> v2: *Correted the return value when add_page_for_migration() returns 1.
-> 
-> John noticed another return value inconsistency between the implementation and
-> the manpage.  The manpage says it should return -ENOENT if the page is already
-> on the target node, but it doesn't.  It looks the original code didn't return
-> -ENOENT either, I'm not sure if this is a document issue or not.  Anyway this
-> is another issue, once we confirm it we can fix it later.
-> 
->   mm/migrate.c | 36 ++++++++++++++++++++++++++++++------
->   1 file changed, 30 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index a8f87cb..f1090a0 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1512,17 +1512,21 @@ static int do_move_pages_to_node(struct mm_struct *mm,
->   /*
->    * Resolves the given address to a struct page, isolates it from the LRU and
->    * puts it to the given pagelist.
-> - * Returns -errno if the page cannot be found/isolated or 0 when it has been
-> - * queued or the page doesn't need to be migrated because it is already on
-> - * the target node
-> + * Returns:
-> + *     errno - if the page cannot be found/isolated
-> + *     0 - when it has been queued or the page doesn't need to be migrated
-> + *         because it is already on the target node
-> + *     1 - if store_status() is failed
-
-
-I recommend this wording instead:
-
-  * Returns:
-  *     errno - if the page cannot be found/isolated
-  *     0 - when it has been queued or the page doesn't need to be migrated
-  *         because it is already on the target node
-  *     1 - The page doesn't need to be migrated because it is already on the
-  *         target node. However, attempting to store the node ID in the status
-  *         array failed. Unlike other failures in this function, this case
-  *         needs to turn into a fatal failure in the calling function.
-
-
->    */
->   static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
-> -		int node, struct list_head *pagelist, bool migrate_all)
-> +		int node, struct list_head *pagelist, bool migrate_all,
-> +		int __user *status, int start)
->   {
->   	struct vm_area_struct *vma;
->   	struct page *page;
->   	unsigned int follflags;
->   	int err;
-> +	bool same_node = false;
->   
->   	down_read(&mm->mmap_sem);
->   	err = -EFAULT;
-> @@ -1543,8 +1547,10 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
->   		goto out;
->   
->   	err = 0;
-> -	if (page_to_nid(page) == node)
-> +	if (page_to_nid(page) == node) {
-> +		same_node = true;
->   		goto out_putpage;
-> +	}
->   
->   	err = -EACCES;
->   	if (page_mapcount(page) > 1 && !migrate_all)
-> @@ -1578,6 +1584,16 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
->   	put_page(page);
->   out:
->   	up_read(&mm->mmap_sem);
-> +
-> +	/*
-> +	 * Must call store_status() after releasing mmap_sem since put_user
-> +	 * need acquire mmap_sem too, otherwise potential deadlock may exist.
-> +	 */
-> +	if (same_node) {
-> +		if (store_status(status, start, node, 1))
-> +			err = 1;
-> +	}
-> +
->   	return err;
->   }
->   
-> @@ -1639,10 +1655,18 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
->   		 * report them via status
->   		 */
-
-Let's change the comment above add_page_for_migration(), to read:
-
-		/*
-		 * Most errors in the page lookup or isolation are not fatal
-		 * and we simply report them via the status array. However,
-		 * positive error values are fatal.
-		 */
-
-
->   		err = add_page_for_migration(mm, addr, current_node,
-> -				&pagelist, flags & MPOL_MF_MOVE_ALL);
-> +				&pagelist, flags & MPOL_MF_MOVE_ALL, status,
-> +				i);
-> +
->   		if (!err)
->   			continue;
->   
-> +		/* store_status() failed in add_page_for_migration() */
-
-...and let's replace the above line, with the following:
-
-		/*
-		 * Most errors in the page lookup or isolation are not fatal
-		 * and we simply report them via the status array. However,
-		 * positive error values are fatal.
-		 */
-
-
-> +		if (err > 0) {
-> +			err = -EFAULT;
-> +			goto out_flush;
-> +		}
-> +
->   		err = store_status(status, i, err, 1);
->   		if (err)
->   			goto out_flush;
-> 
-
-And with that, I think the comments help a little bit more, in reading
-through the code.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
