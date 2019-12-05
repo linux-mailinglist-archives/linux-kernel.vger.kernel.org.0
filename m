@@ -2,70 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22C911430C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 15:53:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 907E8114314
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 15:55:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbfLEOxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 09:53:06 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:42255 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729099AbfLEOxG (ORCPT
+        id S1729688AbfLEOzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 09:55:46 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47451 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729187AbfLEOzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 09:53:06 -0500
-X-UUID: 86ed07e071ba49d8bf7c145295ada760-20191205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=6kQKQGw6gLI7hXnDOfChEvohmSGc02ZjJsmKqHdzu6I=;
-        b=uCB06N5np6GGST9drgN1p/HxUt6ZwSW8hGcye0dW3wJIudqWGxtT4pVOKfNvApRrJSu+O4+UQlf/7NOOGycpKI1iUPERlgpxReUIQHHSi3XNWWJPfCI+/NCJ3ErKwUfOmMj4uWtZkTe+rlQbzC23NuygH79pa/hi0fybRaDVfq8=;
-X-UUID: 86ed07e071ba49d8bf7c145295ada760-20191205
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <macpaul.lin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 628453250; Thu, 05 Dec 2019 22:52:59 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 5 Dec 2019 22:52:46 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 5 Dec 2019 22:52:25 +0800
-Message-ID: <1575557578.6727.2.camel@mtkswgap22>
-Subject: Re: [PATCH] usb: musb: replace all unsigned data type to unsigned
- int
-From:   Macpaul Lin <macpaul.lin@mediatek.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-CC:     Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        "Chen-Yu Tsai" <wens@csie.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-omap@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 5 Dec 2019 22:52:58 +0800
-In-Reply-To: <20191205101216.GC1337@shell.armlinux.org.uk>
-References: <1575525677-20760-1-git-send-email-macpaul.lin@mediatek.com>
-         <20191205101216.GC1337@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Thu, 5 Dec 2019 09:55:45 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191205145543euoutp026c8ca1eb12906ea543611f0d90f2ff9c~dgWuA-mKZ0540405404euoutp02S
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2019 14:55:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191205145543euoutp026c8ca1eb12906ea543611f0d90f2ff9c~dgWuA-mKZ0540405404euoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575557743;
+        bh=dGqNJXVYXrQwmKJmbCA1sFU9NdFZmpFhildJ3M91MNU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=D6b7ECEArzKHMzqUl5DhWpVqYyCs9PgzCFoiF9C5x4p6K0PosGXtbhP2d6Jdi4d+o
+         xS66snDd7ABy+V0ydP2JhWhmmJTgcy2HLTU2QDShYq+BFRK6OO2H5m7mogm2RmM8ts
+         MKY9sqxyuqgESr7oRGfv069vDuJ9Ud3ZG0iNC7+Q=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191205145543eucas1p1204779d0eee53f4f674e663068f2bf3e~dgWtyUaFF2197721977eucas1p1b;
+        Thu,  5 Dec 2019 14:55:43 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B2.EB.60679.F6A19ED5; Thu,  5
+        Dec 2019 14:55:43 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191205145542eucas1p2b39536c9c186d5656f39d214baa32670~dgWtfXxfF0125801258eucas1p2M;
+        Thu,  5 Dec 2019 14:55:42 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191205145542eusmtrp1b48b427395ad93003fe9ea752444e933~dgWtetGmi2543125431eusmtrp1h;
+        Thu,  5 Dec 2019 14:55:42 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-05-5de91a6f6a3f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0C.01.07950.E6A19ED5; Thu,  5
+        Dec 2019 14:55:42 +0000 (GMT)
+Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191205145542eusmtip2ae010565245e7cb7602aaf217d3d039d~dgWtAoZ7J2087920879eusmtip2c;
+        Thu,  5 Dec 2019 14:55:42 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@samsung.com>
+To:     k.konieczny@samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v3 0/3] devfreq: improve devfreq statistics counting
+Date:   Thu,  5 Dec 2019 15:55:24 +0100
+Message-Id: <20191205145527.26117-1-k.konieczny@samsung.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djP87r5Ui9jDZ4uZbPYOGM9q8X1L89Z
+        LRZ8msFqcf78BnaLs01v2C0u75rDZvG59wijxdojd9ktbjeuYHPg9Ni0qpPNo2/LKkaPz5vk
+        ApijuGxSUnMyy1KL9O0SuDImzfjKWLCTv2LhZOcGxgU8XYycHBICJhIzNsxi62Lk4hASWMEo
+        cevBXXYI5wujxOmNh1ggnM+MElNv/mKHaTl6uZsRIrGcUeLYyvkILSv//GUDqWIT0Jc4ePYk
+        C4gtIiAt0bloIhNIEbPAMSaJXYf+soIkhAVcJNovfGUCsVkEVCV+XjjKCGLzCthIrNk8F2gq
+        B9A6eYk5bzUgwoISJ2c+AZvJDBRu3jqbGWSmhMBnNolFrX1MEPUuEu+3pUJcKizx6vgWqKtl
+        JE5P7mGBsMslni7sY4fobWGUeND+ESphLXH4+EVWkDnMApoS63fpQ4QdJZbtncMMMZ5P4sZb
+        QYgT+CQmbZsOFeaV6GgTgqhWlXh+qocJwpaW6Pq/jhXC9pA42H4EbJGQQKzEiQ8HmCcwKsxC
+        8tgsJI/NQrhhASPzKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMBEc/rf8S87GHf9STrE
+        KMDBqMTDO+Pzi1gh1sSy4srcQ4wSHMxKIrzpfC9jhXhTEiurUovy44tKc1KLDzFKc7AoifNW
+        MzyIFhJITyxJzU5NLUgtgskycXBKNTAaxeYXP88IVbdh3p3YOXP119qTcusZIm9mpM7/uez0
+        VQWjg195hOwll7D8euLmPPN/za8pB8RPSTxckvJ51/Lpxyd/nvbIPfa2tvatXeK6PziuX/x9
+        wMbM5m1EwMUkwXiuO4zpM8yTTBet+Xrs9h0d8+3Rj482iF/jXr+juzpz5+pD1+ylipuslViK
+        MxINtZiLihMB64qx/zADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsVy+t/xe7p5Ui9jDc7O0rbYOGM9q8X1L89Z
+        LRZ8msFqcf78BnaLs01v2C0u75rDZvG59wijxdojd9ktbjeuYHPg9Ni0qpPNo2/LKkaPz5vk
+        Apij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIm
+        zfjKWLCTv2LhZOcGxgU8XYycHBICJhJHL3czdjFycQgJLGWUmH9kBjNEQlqi8fRqJghbWOLP
+        tS42iKJPjBLbdxwAK2IT0Jc4ePYkC4gtAtTQuWgiWAOzwBkmiV8tFSC2sICLRPuFr2BxFgFV
+        iZ8XjjKC2LwCNhJrNs9l72LkAFogLzHnrQZEWFDi5MwnLBBj5CWat85mnsDINwtJahaS1AJG
+        plWMIqmlxbnpucVGesWJucWleel6yfm5mxiBAb7t2M8tOxi73gUfYhTgYFTi4Z3x+UWsEGti
+        WXFl7iFGCQ5mJRHedL6XsUK8KYmVValF+fFFpTmpxYcYTYFuncgsJZqcD4y+vJJ4Q1NDcwtL
+        Q3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjFuuP7WTdu57VjCrb2Fj57XTJcGr
+        FzE73y7PdjUKzb13fWbtvJ/9aSfWrX0bxiD0rW7ZstaCqa/5N/Me65+Vt8r2ef2TcyGO+o0l
+        1q6f7ZmZTq1do2uTZSlpfrz3d/S8T27az4O4DWfGJndLvpNcf/iZdtOFvZurtvR9S09Q2bVI
+        guf/YWmdd0osxRmJhlrMRcWJAHUE4NSGAgAA
+X-CMS-MailID: 20191205145542eucas1p2b39536c9c186d5656f39d214baa32670
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191205145542eucas1p2b39536c9c186d5656f39d214baa32670
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191205145542eucas1p2b39536c9c186d5656f39d214baa32670
+References: <CGME20191205145542eucas1p2b39536c9c186d5656f39d214baa32670@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTEyLTA1IGF0IDEwOjEyICswMDAwLCBSdXNzZWxsIEtpbmcgLSBBUk0gTGlu
-dXggYWRtaW4gd3JvdGU6DQo+IE9uIFRodSwgRGVjIDA1LCAyMDE5IGF0IDAyOjAxOjE3UE0gKzA4
-MDAsIE1hY3BhdWwgTGluIHdyb3RlOg0KPiA+IFNpbXBseSByZXBsYWNlIGFsbCAndW5zaWduZWQn
-IGRhdGEgdHlwZSBpbiBtdXNiIGRyaXZlciB0bw0KPiA+ICd1bnNpZ25lZCBpbnQnIGJlY2F1c2Ug
-aXQgaGFzIGJlZW4gY29tcGxhaW5lZCBieSBnZXJyaXQNCj4gPiBjaGVja3BhdGNoIHNlcnZpY2Uu
-DQo+IA0KPiAidW5zaWduZWQiIGlzIHBlcmZlY3RseSBsZWdhbCBzdGFuZGFyZCBDLiAgVGhlIHBv
-bGljeSBmb3IgbmV0IHJlbGF0ZWQNCj4gY29kZSBpcyB0byBhYmhvciBpdCwgYnV0IHRoZXJlIGlz
-IG5vdGhpbmcgaW4gdGhlIGtlcm5lbCBzdHlsZQ0KPiBndWlkZWxpbmVzIHRoYXQgcHJldmVudHMg
-aXRzIHVzZSBpbiB0aGUgcmVzdCBvZiB0aGUga2VybmVsLg0KPiANCj4gQUZBSUNTIHRoZXJlIGlz
-IG5vIG5lZWQgZm9yIHRoaXMgY2h1cm4uDQoNClRoYW5rcyBmb3IgeW91ciByZXBseS4NCkknbGwg
-YnJpbmcgdGhpcyBzdWdnZXN0aW9uIGJhY2sgdG8gb3VyIGludGVybmFsIGNoZWNrcGF0Y2gucGwg
-b3duZXJzIHRvDQphbGlnbiB3aXRoIGtlcm5lbCdzIHJ1bGVzLg0KDQpSZWdhcmRzLA0KTWFjcGF1
-bCBMaW4NCg==
+Hi,
+
+this patch series tries to improve devfreq statistics:
+
+- do conversion to use 64-bit jiffies for storing elapsed time and prevent
+  counters overflow,
+
+- add ability to reset statistics using sysfs,
+
+- move statistics data to separate structure for improved code
+  readability and maintenance.
+
+Changes in v3:
+- changed types of cur_time and last_stats_updated to u64 as this is
+  returned by get_jiffies_64() in 1/3
+- add checks for zero in input and clear stats only when zero is written
+  to trans_stats
+- change documentation of trans_stat in sysfs
+- removed freq_table and max_state from struct devfreq_stats as they are
+  already present in struct devfreq_dev_profile
+- renamed last_stat_updated to last_update, as 'stat' is already present
+  in struct devfreq_stats
+- define struct devfreq_stats stats; in devfreq as there is only one
+  stats per devfreq
+- improve descriptions of devfreq_stats and stats
+- use profile instead of devfreq->profile in devfreq_add_device, as this
+  var is already parameter
+- added Reviewed-by: Matthias Kaehlcke <mka@chromium.org> to 3/3
+
+Changes in v2:
+- added Acked-by to first patch
+- dropped spinlock patch, there is mutex used for protecting stats data
+- rewrite clearing statistics, suggested by Chanwoo Choi: reuse
+  trans_stats sysfs file, any write to it will clear devfreq stats
+- dropped change var name last_stat_updated
+- squashed three last patches into one, as it turned out that freq_table
+  from devfreq_profile is used by other drivers
+- rebased on linux-next
+
+Kamil Konieczny (3):
+  devfreq: change time stats to 64-bit
+  devfreq: add clearing transitions stats
+  devfreq: move statistics to separate struct
+
+ Documentation/ABI/testing/sysfs-class-devfreq | 11 ++-
+ drivers/devfreq/devfreq.c                     | 92 ++++++++++++-------
+ include/linux/devfreq.h                       | 26 ++++--
+ 3 files changed, 83 insertions(+), 46 deletions(-)
+
+-- 
+2.24.0
 
