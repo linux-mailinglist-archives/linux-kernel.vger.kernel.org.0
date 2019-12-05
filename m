@@ -2,128 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AFC1113DFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAEF0113DFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbfLEJbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 04:31:33 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40433 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbfLEJbc (ORCPT
+        id S1729074AbfLEJcX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Dec 2019 04:32:23 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:58626 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728629AbfLEJcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 04:31:32 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i15so2000147oto.7
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 01:31:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=aHb1VO0xR+IPYYvVFCIzNRZ9emff31Jj/WMc/RTpBkM=;
-        b=GdP1Dayrp1byZDNq+kDIEblYRD+qV/omiAYqmUcsazuy2zrOpTmK7+HcD2PMqTEB+Q
-         vOjQ1QisF0vLwIIaKBQ0HMJzt1YVjvUNF9a2FedoljZGIrkdxC6srjB2aQ+vivJktyfK
-         c8osz+HLeJs4OXv8IlknXvbGguyE7Risz/VDmUGe5cqgYGRlUMDmMLIIBW8WUunpnZHC
-         eizhEpchE/6f+E9dMdaeSlsJV5F0E181kpJkyXk+nOGjFyOcNdtWvkuUNylHP9FfJqo2
-         4rACwT82dEONNo7Pv9gQ0IL1Vk8OeOa+2nEulr13vDC8vuDBuAwEsF5Z2Gg9ndN5nHK8
-         xH2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=aHb1VO0xR+IPYYvVFCIzNRZ9emff31Jj/WMc/RTpBkM=;
-        b=WjAGzuwcXcsqGySRe6dfy2xeqUJ9Fpyb2QXZxdmoIRrFYcSWx1DkD3ZRyhmloCKtNE
-         feY48LrsXpUcyqWed/vINnl6Sso9dg8Jms4CnBPMfYu2xpWHzbMAn+xJFSF+LATYInFy
-         AYRTc14vczUCZo6q4e+i2DLi0F5xVaOmEfnLCIWhVwZ3Hmxm1lOoHrCmZ0kouGqDFUaT
-         T9cr+ghYltsAxYrOaTw+BusOJgVFdTxzFXaCFSrDvKsYQwU1/Uq2qOjaDaFKaWh0owqG
-         oGL53wvWavLsXErxcJ8Ltu5Fz0+m8XDJJMCU5LTDvkCPDo8EaMkv2d9Xm4o47EIAuUNe
-         bcjw==
-X-Gm-Message-State: APjAAAU3ksKH2VAPs1fMGX6tC2CbrHfbPohebLINBOVZTaDSNUrphPWz
-        oQtGmshHWgnnOBPiFnWBnKMzWAhSNwLMUYXbEsQJpg==
-X-Google-Smtp-Source: APXvYqxCuGWGi2Hd2SmDjfz4WH1x3LVcPWIqAX0xS0+w6ZIHEPKA3anyw8EIKh3cHHTODSHuJcezTbvjiYilTDgRMPU=
-X-Received: by 2002:a9d:27c4:: with SMTP id c62mr6001704otb.292.1575538291595;
- Thu, 05 Dec 2019 01:31:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20191204155912.17590-1-brgl@bgdev.pl> <20191204155912.17590-8-brgl@bgdev.pl>
- <CAHp75Vf7+XY8rnrbMfMgNO25EHSemjZVUgvFFp+zvj4vvJ1B8g@mail.gmail.com>
-In-Reply-To: <CAHp75Vf7+XY8rnrbMfMgNO25EHSemjZVUgvFFp+zvj4vvJ1B8g@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 5 Dec 2019 10:31:20 +0100
-Message-ID: <CAMpxmJU-X3JiVZ2+fVq5Y6jipJUkhVSMUyJjFnmjdkny0LRO9Q@mail.gmail.com>
-Subject: Re: [PATCH v2 07/11] gpiolib: rework the locking mechanism for
- lineevent kfifo
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 5 Dec 2019 04:32:22 -0500
+Received: from marcel-macbook.fritz.box (p4FF9F0D1.dip0.t-ipconnect.de [79.249.240.209])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 5BDCCCECD4;
+        Thu,  5 Dec 2019 10:41:30 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
+Subject: Re: [PATCH] Bluetooth: btusb: Disable runtime suspend on Realtek
+ devices
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20191205090701.12440-1-kai.heng.feng@canonical.com>
+Date:   Thu, 5 Dec 2019 10:32:19 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Alex Lu <alex_lu@realsil.com.cn>, pkshih@realtek.com,
+        linux-bluetooth@vger.kernel.or, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <F8377E2D-EB26-4AF4-83B2-A7903C4A4D2D@holtmann.org>
+References: <20191205090701.12440-1-kai.heng.feng@canonical.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+X-Mailer: Apple Mail (2.3601.0.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 4 gru 2019 o 23:25 Andy Shevchenko <andy.shevchenko@gmail.com> na=
-pisa=C5=82(a):
->
-> On Wed, Dec 4, 2019 at 6:01 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > The read_lock mutex is supposed to prevent collisions between reading
-> > and writing to the line event kfifo but it's actually only taken when
-> > the events are being read from it.
-> >
-> > Drop the mutex entirely and reuse the spinlock made available to us in
-> > the waitqueue struct. Take the lock whenever the fifo is modified or
-> > inspected. Drop the call to kfifo_to_user() and instead first extract
-> > the new element from kfifo when the lock is taken and only then pass
-> > it on to the user after the spinlock is released.
-> >
->
-> My comments below.
->
-> > +       spin_lock(&le->wait.lock);
-> >         if (!kfifo_is_empty(&le->events))
-> >                 events =3D EPOLLIN | EPOLLRDNORM;
-> > +       spin_unlock(&le->wait.lock);
->
-> Sound like a candidate to have kfifo_is_empty_spinlocked().
+Hi Kai-Heng,
 
-Yeah, I noticed but I thought I'd just add it later separately - it's
-always easier to merge self-contained series.
+> After commit 9e45524a0111 ("Bluetooth: btusb: Fix suspend issue for
+> Realtek devices") both WiFi and Bluetooth stop working after reboot:
+> [   34.322617] usb 1-8: reset full-speed USB device number 3 using xhci_hcd
+> [   34.450401] usb 1-8: device descriptor read/64, error -71
+> [   34.694375] usb 1-8: device descriptor read/64, error -71
+> ...
+> [   44.599111] rtw_pci 0000:02:00.0: failed to poll offset=0x5 mask=0x3 value=0x0
+> [   44.599113] rtw_pci 0000:02:00.0: mac power on failed
+> [   44.599114] rtw_pci 0000:02:00.0: failed to power on mac
+> [   44.599114] rtw_pci 0000:02:00.0: leave idle state failed
+> [   44.599492] rtw_pci 0000:02:00.0: failed to leave ips state
+> [   44.599493] rtw_pci 0000:02:00.0: failed to leave idle state
+> 
+> That commit removed USB_QUIRK_RESET_RESUME, which not only resets the USB
+> device after resume, it also prevents the device from being runtime
+> suspended by USB core. My experiment shows if the Realtek btusb device
+> ever runtime suspends once, the entire wireless module becomes useless
+> after reboot.
+> 
+> So let's explicitly disable runtime suspend on Realtek btusb device for
+> now.
+> 
+> Fixes: 9e45524a0111 ("Bluetooth: btusb: Fix suspend issue for Realtek devices")
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+> drivers/bluetooth/btusb.c | 4 ++++
+> 1 file changed, 4 insertions(+)
 
->
->
-> >         struct lineevent_state *le =3D filep->private_data;
-> > -       unsigned int copied;
-> > +       struct gpioevent_data event;
-> >         int ret;
->
-> > +       if (count < sizeof(event))
-> >                 return -EINVAL;
->
-> This still has an issue with compatible syscalls. See patch I have
-> sent recently.
-> I dunno how you see is the better way: a) apply mine and rebase your
-> series, or b) otherwise.
-> I can do b) if you think it shouldn't be backported.
->
+patch has been applied to bluetooth-next tree.
 
-Looking at your patch it seems to me it's best to rebase yours on top
-of this one - where I simply do copy_to_user() we can add a special
-case for 32-bit user-space. I can try to do this myself for v3 if you
-agree.
+Regards
 
-Bart
+Marcel
 
-> Btw, either way we have a benifits for the following one (I see you
-> drop kfifo_to_user() and add event variable on stack).
->
-> > +       return sizeof(event);
->
-> Also see comments in my patch regarding the event handling.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
