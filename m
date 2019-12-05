@@ -2,223 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5F011399F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1131139AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfLECNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:13:49 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:21222 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728419AbfLECNt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:13:49 -0500
-X-UUID: e760a6672fa64b3a98e230b804d7dc02-20191205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=BSLlyAQI/9rakotWHh5TPNBRZCYTmRUC1SW/9OQt5ko=;
-        b=KZVHaol6lQXh5ealAmDim3v8PMGCwsRdo6+P9EoNK5OgUh6lS1RIPLCaoOcqR6slLtUZNBwNkMtq0p4GMSO34o3wMIBRA1qUcRFK8IXecAFqJeB0XaR1kl3QcVj7HZ76XzSj/rzzK8YiOZUhFXIUO+WD7j36JXWEMPwIj8Rsrl4=;
-X-UUID: e760a6672fa64b3a98e230b804d7dc02-20191205
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 79812770; Thu, 05 Dec 2019 10:13:42 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 5 Dec 2019 10:13:29 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 5 Dec 2019 10:12:43 +0800
-Message-ID: <1575512021.24783.6.camel@mtksdaap41>
-Subject: Re: [PATCH v3 3/6] drm/mediatek: update cursors by using async
- atomic update
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Thu, 5 Dec 2019 10:13:41 +0800
-In-Reply-To: <20191204094441.5116-4-bibby.hsieh@mediatek.com>
-References: <20191204094441.5116-1-bibby.hsieh@mediatek.com>
-         <20191204094441.5116-4-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        id S1728680AbfLECPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:15:41 -0500
+Received: from mga17.intel.com ([192.55.52.151]:28117 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728121AbfLECPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 21:15:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 18:15:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,279,1571727600"; 
+   d="scan'208";a="219080343"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Dec 2019 18:15:37 -0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     richard.weiyang@gmail.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, peterz@infradead.or, tglx@linutronix.de,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [Patch v2 0/6] Refactor split_mem_range with proper helper and loop
+Date:   Thu,  5 Dec 2019 10:13:57 +0800
+Message-Id: <20191205021403.25606-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJpYmJ5Og0KDQpPbiBXZWQsIDIwMTktMTItMDQgYXQgMTc6NDQgKzA4MDAsIEJpYmJ5IEhz
-aWVoIHdyb3RlOg0KPiBTdXBwb3J0IHRvIGFzeW5jIHVwZGF0ZXMgb2YgY3Vyc29ycyBieSB1c2lu
-ZyB0aGUgbmV3IGF0b21pYw0KPiBpbnRlcmZhY2UgZm9yIHRoYXQuDQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBCaWJieSBIc2llaCA8YmliYnkuaHNpZWhAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRy
-aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyAgfCA3NSArKysrKysrKysrKysr
-KysrKy0tLS0tLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuaCAg
-fCAgMiArDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jIHwgNTAg
-KysrKysrKysrKysrKysrKw0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxh
-bmUuaCB8ICAyICsNCj4gIDQgZmlsZXMgY2hhbmdlZCwgMTA4IGluc2VydGlvbnMoKyksIDIxIGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0K
-PiBpbmRleCA0YmM1MjM0NjA5M2QuLjkyYjNiMzk3YzZjNCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiBAQCAtNDcsNiArNDcsOSBAQCBzdHJ1Y3QgbXRr
-X2RybV9jcnRjIHsNCj4gIAlzdHJ1Y3QgbXRrX2Rpc3BfbXV0ZXgJCSptdXRleDsNCj4gIAl1bnNp
-Z25lZCBpbnQJCQlkZHBfY29tcF9ucjsNCj4gIAlzdHJ1Y3QgbXRrX2RkcF9jb21wCQkqKmRkcF9j
-b21wOw0KPiArDQo+ICsJLyogbG9jayBmb3IgZGlzcGxheSBoYXJkd2FyZSBhY2Nlc3MgKi8NCj4g
-KwlzdHJ1Y3QgbXV0ZXgJCQlod19sb2NrOw0KPiAgfTsNCj4gIA0KPiAgc3RydWN0IG10a19jcnRj
-X3N0YXRlIHsNCj4gQEAgLTQxNyw2ICs0MjAsNDEgQEAgc3RhdGljIHZvaWQgbXRrX2NydGNfZGRw
-X2NvbmZpZyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpDQo+ICAJfQ0KPiAgfQ0KPiAgDQo+ICtzdGF0
-aWMgdm9pZCBtdGtfZHJtX2NydGNfaHdfY29uZmlnKHN0cnVjdCBtdGtfZHJtX2NydGMgKm10a19j
-cnRjKQ0KPiArew0KPiArCXN0cnVjdCBkcm1fY3J0YyAqY3J0YyA9ICZtdGtfY3J0Yy0+YmFzZTsN
-Cj4gKwlzdHJ1Y3QgbXRrX2RybV9wcml2YXRlICpwcml2ID0gY3J0Yy0+ZGV2LT5kZXZfcHJpdmF0
-ZTsNCj4gKwl1bnNpZ25lZCBpbnQgcGVuZGluZ19wbGFuZXMgPSAwOw0KPiArCWludCBpOw0KPiAr
-DQo+ICsJbXV0ZXhfbG9jaygmbXRrX2NydGMtPmh3X2xvY2spOw0KPiArCWZvciAoaSA9IDA7IGkg
-PCBtdGtfY3J0Yy0+bGF5ZXJfbnI7IGkrKykgew0KPiArCQlzdHJ1Y3QgZHJtX3BsYW5lICpwbGFu
-ZSA9ICZtdGtfY3J0Yy0+cGxhbmVzW2ldOw0KPiArCQlzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlICpw
-bGFuZV9zdGF0ZTsNCj4gKw0KPiArCQlwbGFuZV9zdGF0ZSA9IHRvX210a19wbGFuZV9zdGF0ZShw
-bGFuZS0+c3RhdGUpOw0KPiArCQlpZiAocGxhbmVfc3RhdGUtPnBlbmRpbmcuZGlydHkpIHsNCj4g
-KwkJCXBsYW5lX3N0YXRlLT5wZW5kaW5nLmNvbmZpZyA9IHRydWU7DQo+ICsJCQlwbGFuZV9zdGF0
-ZS0+cGVuZGluZy5kaXJ0eSA9IGZhbHNlOw0KPiArCQkJcGVuZGluZ19wbGFuZXMgfD0gQklUKGkp
-Ow0KPiArCQl9IGVsc2UgaWYgKHBsYW5lX3N0YXRlLT5wZW5kaW5nLmFzeW5jX2RpcnR5KSB7DQo+
-ICsJCQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5jb25maWcgPSB0cnVlOw0KPiArCQkJcGxhbmVfc3Rh
-dGUtPnBlbmRpbmcuYXN5bmNfdXBkYXRlID0gZmFsc2U7DQo+ICsJCQlwbGFuZV9zdGF0ZS0+cGVu
-ZGluZy5hc3luY19kaXJ0eSA9IGZhbHNlOw0KPiArCQkJcGVuZGluZ19wbGFuZXMgfD0gQklUKGkp
-Ow0KPiArCQl9DQoNCkkgdGhpbmsgdGhlIGFzeW5jIHBsYW5lIGJyZWFrIHRoZSBhdG9taWMgcGxh
-bmVzLiBGb3IgZXhhbXBsZSwgcGxhbmUgMCwNCnBsYW5lIDEsIHBsYW5lIDIgYXJlIGF0b21pYyBw
-bGFuZXMgYW5kIHBsYW5lIDMgaXMgYXN5bmMgcGxhbmUuIFdoZW4NCnBsYW5lIDAsIHBsYW5lIDEg
-LCBwbGFuZSAyIHdvdWxkIGJlIGRpcnR5IGluIHNlcXVlbmNlLCBhbmQgcGxhbmUgMCBnZXQNCmRp
-cnR5IGZpcnN0LCBidXQgYXN5bmMgcGxhbmUgdXBkYXRlIGJlZm9yZSBwbGFuZSAxIGdldCBkaXJ0
-eSwgdGhlc2UgY29kZQ0Kd291bGQgYXBwbHkgcGxhbmUgMCBhbmQgcGxhbmUgMywgc28gdGhpcyB3
-b3VsZCBicmVhayB0aGUgYXRvbWljLg0KDQo+ICsJfQ0KPiArCWlmIChwZW5kaW5nX3BsYW5lcykN
-Cj4gKwkJbXRrX2NydGMtPnBlbmRpbmdfcGxhbmVzID0gdHJ1ZTsNCj4gKw0KPiArCWlmIChwcml2
-LT5kYXRhLT5zaGFkb3dfcmVnaXN0ZXIpIHsNCj4gKwkJbXRrX2Rpc3BfbXV0ZXhfYWNxdWlyZSht
-dGtfY3J0Yy0+bXV0ZXgpOw0KPiArCQltdGtfY3J0Y19kZHBfY29uZmlnKGNydGMpOw0KPiArCQlt
-dGtfZGlzcF9tdXRleF9yZWxlYXNlKG10a19jcnRjLT5tdXRleCk7DQo+ICsJfQ0KPiArCW11dGV4
-X3VubG9jaygmbXRrX2NydGMtPmh3X2xvY2spOw0KPiArfQ0KPiArDQo+ICBpbnQgbXRrX2RybV9j
-cnRjX3BsYW5lX2NoZWNrKHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywgc3RydWN0IGRybV9wbGFuZSAq
-cGxhbmUsDQo+ICAJCQkgICAgIHN0cnVjdCBtdGtfcGxhbmVfc3RhdGUgKnN0YXRlKQ0KPiAgew0K
-PiBAQCAtNDI5LDYgKzQ2NywyMCBAQCBpbnQgbXRrX2RybV9jcnRjX3BsYW5lX2NoZWNrKHN0cnVj
-dCBkcm1fY3J0YyAqY3J0Yywgc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ICAJcmV0dXJuIDA7
-DQo+ICB9DQo+ICANCj4gK3ZvaWQgbXRrX2RybV9jcnRjX2FzeW5jX3VwZGF0ZShzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMsIHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0KPiArCQkJICAgICAgIHN0cnVj
-dCBkcm1fcGxhbmVfc3RhdGUgKm5ld19zdGF0ZSkNCj4gK3sNCj4gKwlzdHJ1Y3QgbXRrX2RybV9j
-cnRjICptdGtfY3J0YyA9IHRvX210a19jcnRjKGNydGMpOw0KPiArCWNvbnN0IHN0cnVjdCBkcm1f
-cGxhbmVfaGVscGVyX2Z1bmNzICpwbGFuZV9oZWxwZXJfZnVuY3MgPQ0KPiArCQkJcGxhbmUtPmhl
-bHBlcl9wcml2YXRlOw0KPiArDQo+ICsJaWYgKCFtdGtfY3J0Yy0+ZW5hYmxlZCkNCj4gKwkJcmV0
-dXJuOw0KPiArDQo+ICsJcGxhbmVfaGVscGVyX2Z1bmNzLT5hdG9taWNfdXBkYXRlKHBsYW5lLCBu
-ZXdfc3RhdGUpOw0KPiArCW10a19kcm1fY3J0Y19od19jb25maWcobXRrX2NydGMpOw0KPiArfQ0K
-PiArDQo+ICBzdGF0aWMgdm9pZCBtdGtfZHJtX2NydGNfYXRvbWljX2VuYWJsZShzdHJ1Y3QgZHJt
-X2NydGMgKmNydGMsDQo+ICAJCQkJICAgICAgIHN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqb2xkX3N0
-YXRlKQ0KPiAgew0KPiBAQCAtNTEwLDM0ICs1NjIsMTQgQEAgc3RhdGljIHZvaWQgbXRrX2RybV9j
-cnRjX2F0b21pY19mbHVzaChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsDQo+ICAJCQkJICAgICAgc3Ry
-dWN0IGRybV9jcnRjX3N0YXRlICpvbGRfY3J0Y19zdGF0ZSkNCj4gIHsNCj4gIAlzdHJ1Y3QgbXRr
-X2RybV9jcnRjICptdGtfY3J0YyA9IHRvX210a19jcnRjKGNydGMpOw0KPiAtCXN0cnVjdCBtdGtf
-ZHJtX3ByaXZhdGUgKnByaXYgPSBjcnRjLT5kZXYtPmRldl9wcml2YXRlOw0KPiAtCXVuc2lnbmVk
-IGludCBwZW5kaW5nX3BsYW5lcyA9IDA7DQo+ICAJaW50IGk7DQo+ICANCj4gIAlpZiAobXRrX2Ny
-dGMtPmV2ZW50KQ0KPiAgCQltdGtfY3J0Yy0+cGVuZGluZ19uZWVkc192YmxhbmsgPSB0cnVlOw0K
-PiAtCWZvciAoaSA9IDA7IGkgPCBtdGtfY3J0Yy0+bGF5ZXJfbnI7IGkrKykgew0KPiAtCQlzdHJ1
-Y3QgZHJtX3BsYW5lICpwbGFuZSA9ICZtdGtfY3J0Yy0+cGxhbmVzW2ldOw0KPiAtCQlzdHJ1Y3Qg
-bXRrX3BsYW5lX3N0YXRlICpwbGFuZV9zdGF0ZTsNCj4gLQ0KPiAtCQlwbGFuZV9zdGF0ZSA9IHRv
-X210a19wbGFuZV9zdGF0ZShwbGFuZS0+c3RhdGUpOw0KPiAtCQlpZiAocGxhbmVfc3RhdGUtPnBl
-bmRpbmcuZGlydHkpIHsNCj4gLQkJCXBsYW5lX3N0YXRlLT5wZW5kaW5nLmNvbmZpZyA9IHRydWU7
-DQo+IC0JCQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5kaXJ0eSA9IGZhbHNlOw0KPiAtCQkJcGVuZGlu
-Z19wbGFuZXMgfD0gQklUKGkpOw0KPiAtCQl9DQo+IC0JfQ0KPiAtCWlmIChwZW5kaW5nX3BsYW5l
-cykNCj4gLQkJbXRrX2NydGMtPnBlbmRpbmdfcGxhbmVzID0gdHJ1ZTsNCj4gIAlpZiAoY3J0Yy0+
-c3RhdGUtPmNvbG9yX21nbXRfY2hhbmdlZCkNCj4gIAkJZm9yIChpID0gMDsgaSA8IG10a19jcnRj
-LT5kZHBfY29tcF9ucjsgaSsrKQ0KPiAgCQkJbXRrX2RkcF9nYW1tYV9zZXQobXRrX2NydGMtPmRk
-cF9jb21wW2ldLCBjcnRjLT5zdGF0ZSk7DQo+IC0NCj4gLQlpZiAocHJpdi0+ZGF0YS0+c2hhZG93
-X3JlZ2lzdGVyKSB7DQo+IC0JCW10a19kaXNwX211dGV4X2FjcXVpcmUobXRrX2NydGMtPm11dGV4
-KTsNCj4gLQkJbXRrX2NydGNfZGRwX2NvbmZpZyhjcnRjKTsNCj4gLQkJbXRrX2Rpc3BfbXV0ZXhf
-cmVsZWFzZShtdGtfY3J0Yy0+bXV0ZXgpOw0KPiAtCX0NCj4gKwltdGtfZHJtX2NydGNfaHdfY29u
-ZmlnKG10a19jcnRjKTsNCj4gIH0NCj4gIA0KPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY3J0
-Y19mdW5jcyBtdGtfY3J0Y19mdW5jcyA9IHsNCj4gQEAgLTcyOSw2ICs3NjEsNyBAQCBpbnQgbXRr
-X2RybV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwNCj4gIAlkcm1fbW9k
-ZV9jcnRjX3NldF9nYW1tYV9zaXplKCZtdGtfY3J0Yy0+YmFzZSwgTVRLX0xVVF9TSVpFKTsNCj4g
-IAlkcm1fY3J0Y19lbmFibGVfY29sb3JfbWdtdCgmbXRrX2NydGMtPmJhc2UsIDAsIGZhbHNlLCBN
-VEtfTFVUX1NJWkUpOw0KPiAgCXByaXYtPm51bV9waXBlcysrOw0KPiArCW11dGV4X2luaXQoJm10
-a19jcnRjLT5od19sb2NrKTsNCj4gIA0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5oIGIvZHJpdmVycy9ncHUv
-ZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5oDQo+IGluZGV4IDZhZmUxYzE5NTU3YS4uYTJiNDY3
-N2E0NTFjIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9j
-cnRjLmgNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5oDQo+
-IEBAIC0yMSw1ICsyMSw3IEBAIGludCBtdGtfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2
-aWNlICpkcm1fZGV2LA0KPiAgCQkJdW5zaWduZWQgaW50IHBhdGhfbGVuKTsNCj4gIGludCBtdGtf
-ZHJtX2NydGNfcGxhbmVfY2hlY2soc3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgZHJtX3Bs
-YW5lICpwbGFuZSwNCj4gIAkJCSAgICAgc3RydWN0IG10a19wbGFuZV9zdGF0ZSAqc3RhdGUpOw0K
-PiArdm9pZCBtdGtfZHJtX2NydGNfYXN5bmNfdXBkYXRlKHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywg
-c3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ICsJCQkgICAgICAgc3RydWN0IGRybV9wbGFuZV9z
-dGF0ZSAqcGxhbmVfc3RhdGUpOw0KPiAgDQo+ICAjZW5kaWYgLyogTVRLX0RSTV9DUlRDX0ggKi8N
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX3BsYW5lLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9wbGFuZS5jDQo+IGluZGV4IGNkN2M5
-N2ViN2VlNi4uNmJkYjQyZjA2OGZiIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVk
-aWF0ZWsvbXRrX2RybV9wbGFuZS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHJtX3BsYW5lLmMNCj4gQEAgLTcsNiArNyw3IEBADQo+ICAjaW5jbHVkZSA8ZHJtL2RybV9h
-dG9taWMuaD4NCj4gICNpbmNsdWRlIDxkcm0vZHJtX2F0b21pY19oZWxwZXIuaD4NCj4gICNpbmNs
-dWRlIDxkcm0vZHJtX2ZvdXJjYy5oPg0KPiArI2luY2x1ZGUgPGRybS9kcm1fYXRvbWljX3VhcGku
-aD4NCj4gICNpbmNsdWRlIDxkcm0vZHJtX3BsYW5lX2hlbHBlci5oPg0KPiAgI2luY2x1ZGUgPGRy
-bS9kcm1fZ2VtX2ZyYW1lYnVmZmVyX2hlbHBlci5oPg0KPiAgDQo+IEBAIC03MCw2ICs3MSw1MCBA
-QCBzdGF0aWMgdm9pZCBtdGtfZHJtX3BsYW5lX2Rlc3Ryb3lfc3RhdGUoc3RydWN0IGRybV9wbGFu
-ZSAqcGxhbmUsDQo+ICAJa2ZyZWUodG9fbXRrX3BsYW5lX3N0YXRlKHN0YXRlKSk7DQo+ICB9DQo+
-ICANCj4gK3N0YXRpYyBpbnQgbXRrX3BsYW5lX2F0b21pY19hc3luY19jaGVjayhzdHJ1Y3QgZHJt
-X3BsYW5lICpwbGFuZSwNCj4gKwkJCQkJc3RydWN0IGRybV9wbGFuZV9zdGF0ZSAqc3RhdGUpDQo+
-ICt7DQo+ICsJc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlOw0KPiArDQo+ICsJaWYg
-KHBsYW5lICE9IHN0YXRlLT5jcnRjLT5jdXJzb3IpDQo+ICsJCXJldHVybiAtRUlOVkFMOw0KPiAr
-DQo+ICsJaWYgKCFwbGFuZS0+c3RhdGUpDQo+ICsJCXJldHVybiAtRUlOVkFMOw0KPiArDQo+ICsJ
-aWYgKCFwbGFuZS0+c3RhdGUtPmZiKQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCWlm
-IChzdGF0ZS0+c3RhdGUpDQo+ICsJCWNydGNfc3RhdGUgPSBkcm1fYXRvbWljX2dldF9leGlzdGlu
-Z19jcnRjX3N0YXRlKHN0YXRlLT5zdGF0ZSwNCj4gKwkJCQkJCQkJc3RhdGUtPmNydGMpOw0KPiAr
-CWVsc2UgLyogU3BlY2lhbCBjYXNlIGZvciBhc3luY2hyb25vdXMgY3Vyc29yIHVwZGF0ZXMuICov
-DQo+ICsJCWNydGNfc3RhdGUgPSBzdGF0ZS0+Y3J0Yy0+c3RhdGU7DQo+ICsNCj4gKwlyZXR1cm4g
-ZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfcGxhbmVfc3RhdGUocGxhbmUtPnN0YXRlLCBjcnRjX3N0
-YXRlLA0KPiArCQkJCQkJICAgRFJNX1BMQU5FX0hFTFBFUl9OT19TQ0FMSU5HLA0KPiArCQkJCQkJ
-ICAgRFJNX1BMQU5FX0hFTFBFUl9OT19TQ0FMSU5HLA0KPiArCQkJCQkJICAgdHJ1ZSwgdHJ1ZSk7
-DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIG10a19wbGFuZV9hdG9taWNfYXN5bmNfdXBkYXRl
-KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLA0KPiArCQkJCQkgIHN0cnVjdCBkcm1fcGxhbmVfc3Rh
-dGUgKm5ld19zdGF0ZSkNCj4gK3sNCj4gKwlzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlICpzdGF0ZSA9
-IHRvX210a19wbGFuZV9zdGF0ZShwbGFuZS0+c3RhdGUpOw0KPiArDQo+ICsJcGxhbmUtPnN0YXRl
-LT5jcnRjX3ggPSBuZXdfc3RhdGUtPmNydGNfeDsNCj4gKwlwbGFuZS0+c3RhdGUtPmNydGNfeSA9
-IG5ld19zdGF0ZS0+Y3J0Y195Ow0KPiArCXBsYW5lLT5zdGF0ZS0+Y3J0Y19oID0gbmV3X3N0YXRl
-LT5jcnRjX2g7DQo+ICsJcGxhbmUtPnN0YXRlLT5jcnRjX3cgPSBuZXdfc3RhdGUtPmNydGNfdzsN
-Cj4gKwlwbGFuZS0+c3RhdGUtPnNyY194ID0gbmV3X3N0YXRlLT5zcmNfeDsNCj4gKwlwbGFuZS0+
-c3RhdGUtPnNyY195ID0gbmV3X3N0YXRlLT5zcmNfeTsNCj4gKwlwbGFuZS0+c3RhdGUtPnNyY19o
-ID0gbmV3X3N0YXRlLT5zcmNfaDsNCj4gKwlwbGFuZS0+c3RhdGUtPnNyY193ID0gbmV3X3N0YXRl
-LT5zcmNfdzsNCj4gKwlzdGF0ZS0+cGVuZGluZy5hc3luY191cGRhdGUgPSB0cnVlOw0KPiArDQo+
-ICsJbXRrX2RybV9jcnRjX2FzeW5jX3VwZGF0ZShuZXdfc3RhdGUtPmNydGMsIHBsYW5lLCBuZXdf
-c3RhdGUpOw0KPiArfQ0KPiArDQo+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wbGFuZV9mdW5j
-cyBtdGtfcGxhbmVfZnVuY3MgPSB7DQo+ICAJLnVwZGF0ZV9wbGFuZSA9IGRybV9hdG9taWNfaGVs
-cGVyX3VwZGF0ZV9wbGFuZSwNCj4gIAkuZGlzYWJsZV9wbGFuZSA9IGRybV9hdG9taWNfaGVscGVy
-X2Rpc2FibGVfcGxhbmUsDQo+IEBAIC0xNDEsNiArMTg2LDkgQEAgc3RhdGljIHZvaWQgbXRrX3Bs
-YW5lX2F0b21pY191cGRhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ICAJc3RhdGUtPnBl
-bmRpbmcucm90YXRpb24gPSBwbGFuZS0+c3RhdGUtPnJvdGF0aW9uOw0KPiAgCXdtYigpOyAvKiBN
-YWtlIHN1cmUgdGhlIGFib3ZlIHBhcmFtZXRlcnMgYXJlIHNldCBiZWZvcmUgdXBkYXRlICovDQo+
-ICAJc3RhdGUtPnBlbmRpbmcuZGlydHkgPSB0cnVlOw0KPiArDQo+ICsJaWYgKHN0YXRlLT5wZW5k
-aW5nLmFzeW5jX3VwZGF0ZSkNCj4gKwkJc3RhdGUtPnBlbmRpbmcuYXN5bmNfZGlydHkgPSB0cnVl
-Ow0KDQpXaHkgZG8geW91IHVzZSB0d28gdmFyaWFibGUgdG8gc3RhdGUganVzdCBvbmUgdGhpbmc/
-DQoNClJlZ2FyZHMsDQpDSw0KDQo+ICB9DQo+ICANCj4gIHN0YXRpYyB2b2lkIG10a19wbGFuZV9h
-dG9taWNfZGlzYWJsZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwNCj4gQEAgLTE1OCw2ICsyMDYs
-OCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wbGFuZV9oZWxwZXJfZnVuY3MgbXRrX3BsYW5l
-X2hlbHBlcl9mdW5jcyA9IHsNCj4gIAkuYXRvbWljX2NoZWNrID0gbXRrX3BsYW5lX2F0b21pY19j
-aGVjaywNCj4gIAkuYXRvbWljX3VwZGF0ZSA9IG10a19wbGFuZV9hdG9taWNfdXBkYXRlLA0KPiAg
-CS5hdG9taWNfZGlzYWJsZSA9IG10a19wbGFuZV9hdG9taWNfZGlzYWJsZSwNCj4gKwkuYXRvbWlj
-X2FzeW5jX3VwZGF0ZSA9IG10a19wbGFuZV9hdG9taWNfYXN5bmNfdXBkYXRlLA0KPiArCS5hdG9t
-aWNfYXN5bmNfY2hlY2sgPSBtdGtfcGxhbmVfYXRvbWljX2FzeW5jX2NoZWNrLA0KPiAgfTsNCj4g
-IA0KPiAgaW50IG10a19wbGFuZV9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBk
-cm1fcGxhbmUgKnBsYW5lLA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
-L210a19kcm1fcGxhbmUuaCBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX3BsYW5l
-LmgNCj4gaW5kZXggNzYwODg1ZTM1YjI3Li40MTg4MjQ2NWRkNjcgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX3BsYW5lLmgNCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL21lZGlhdGVrL210a19kcm1fcGxhbmUuaA0KPiBAQCAtMjIsNiArMjIsOCBAQCBzdHJ1
-Y3QgbXRrX3BsYW5lX3BlbmRpbmdfc3RhdGUgew0KPiAgCXVuc2lnbmVkIGludAkJCWhlaWdodDsN
-Cj4gIAl1bnNpZ25lZCBpbnQJCQlyb3RhdGlvbjsNCj4gIAlib29sCQkJCWRpcnR5Ow0KPiArCWJv
-b2wJCQkJYXN5bmNfZGlydHk7DQo+ICsJYm9vbAkJCQlhc3luY191cGRhdGU7DQo+ICB9Ow0KPiAg
-DQo+ICBzdHJ1Y3QgbXRrX3BsYW5lX3N0YXRlIHsNCg0K
+split_mem_range is used to prepare range before mapping kernel page table.
+
+After first version, Thomas suggested some brilliant idea to re-write the
+logic.
+
+Wei split the big patch into pieces and did some tests.  To verify the
+functionality, Wei abstract the code into userland and did following test
+cases:
+    
+        * ranges fits only 4K
+        * ranges fits only 2M
+        * ranges fits only 1G
+        * ranges fits 4K and 2M
+        * ranges fits 2M and 1G
+        * ranges fits 4K, 2M and 1G
+        * ranges fits 4K, 2M and 1G but w/o 1G size
+        * ranges fits 4K, 2M and 1G with only 4K size
+    
+    Below is the test result:
+    
+        ### Split [4K, 16K][0x00001000-0x00004000]:
+        [mem 0x00001000-0x00003fff] page size 4K
+        ### Split [4M, 64M][0x00400000-0x04000000]:
+        [mem 0x00400000-0x03ffffff] page size 2M
+        ### Split [0G, 2G][0000000000-0x80000000]:
+        [mem 0000000000-0x7fffffff] page size 1G
+        ### Split [16K, 4M + 16K][0x00004000-0x00404000]:
+        [mem 0x00004000-0x001fffff] page size 4K
+        [mem 0x00200000-0x003fffff] page size 2M
+        [mem 0x00400000-0x00403fff] page size 4K
+        ### Split [4M, 2G + 2M][0x00400000-0x80200000]:
+        [mem 0x00400000-0x3fffffff] page size 2M
+        [mem 0x40000000-0x7fffffff] page size 1G
+        [mem 0x80000000-0x801fffff] page size 2M
+        ### Split [4M - 16K, 2G + 2M + 16K][0x003fc000-0x80204000]:
+        [mem 0x003fc000-0x003fffff] page size 4K
+        [mem 0x00400000-0x3fffffff] page size 2M
+        [mem 0x40000000-0x7fffffff] page size 1G
+        [mem 0x80000000-0x801fffff] page size 2M
+        [mem 0x80200000-0x80203fff] page size 4K
+        ### Split w/o 1G size [4M - 16K, 2G + 2M + 16K][0x003fc000-0x80204000]:
+        [mem 0x003fc000-0x003fffff] page size 4K
+        [mem 0x00400000-0x801fffff] page size 2M
+        [mem 0x80200000-0x80203fff] page size 4K
+        ### Split w/ only 4K [4M - 16K, 2G + 2M + 16K][0x003fc000-0x80204000]:
+        [mem 0x003fc000-0x80203fff] page size 4K
+
+Thomas Gleixner (1):
+  x86/mm: Refactor split_mem_range with proper helper and loop
+
+Wei Yang (5):
+  x86/mm: Remove second argument of split_mem_range()
+  x86/mm: Add attribute __ro_after_init to after_bootmem
+  x86/mm: Make page_size_mask unsigned int clearly
+  x86/mm: Refine debug print string retrieval function
+  x86/mm: Use address directly in split_mem_range()
+
+ arch/x86/mm/init.c | 259 ++++++++++++++++++---------------------------
+ 1 file changed, 103 insertions(+), 156 deletions(-)
+
+-- 
+2.17.1
 
