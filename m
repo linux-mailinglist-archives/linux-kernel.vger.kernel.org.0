@@ -2,131 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21CA71140AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 13:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D041140B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 13:16:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbfLEMPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 07:15:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:60562 "EHLO foss.arm.com"
+        id S1729408AbfLEMQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 07:16:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729048AbfLEMPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 07:15:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C64031B;
-        Thu,  5 Dec 2019 04:15:31 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9E563F68E;
-        Thu,  5 Dec 2019 04:15:30 -0800 (PST)
-Date:   Thu, 5 Dec 2019 12:15:29 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com,
-        huawei.libin@huawei.com, guohanjun@huawei.com
-Subject: Re: [PATCH] PCI: Add quirk to disable unused BAR for hisilicon NP
- devices 5896
-Message-ID: <20191205121527.GL18399@e119886-lin.cambridge.arm.com>
-References: <1575546041-50907-1-git-send-email-wangxiongfeng2@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575546041-50907-1-git-send-email-wangxiongfeng2@huawei.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+        id S1729074AbfLEMQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 07:16:48 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56DC32245C;
+        Thu,  5 Dec 2019 12:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575548208;
+        bh=JrTSdIrzvfGw0n2g1HFxF6EnXJcyW4HKIkiTE+69Lio=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=0DNjvzgfKR8YvAQoaS5tLzKNeSqYu2EPJoPnNU5bXNfyib9n/qL6tFpj8gt1Up7Ha
+         nrIVYWKKlumS8aa5vOUfcR+vtefkAzQDU4isJtu6IEhDxydmmVzTHycQd3Pn9WeM5W
+         aRIJCImZ5V6btNyNFOzqtpfo31UjzziyJ1YkqqnE=
+Date:   Thu, 5 Dec 2019 21:16:43 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, Micah Morton <mortonm@chromium.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jaswinder.singh@linaro.org
+Subject: Re: [BUGFIX PATCH 0/2] selftests: safesetid: Fix build warnings and
+ errors
+Message-Id: <20191205211643.8253ca3925c336f9a27ee84e@kernel.org>
+In-Reply-To: <157553119188.17524.1379079312058580155.stgit@devnote2>
+References: <157553119188.17524.1379079312058580155.stgit@devnote2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 07:40:41PM +0800, Xiongfeng Wang wrote:
-> Add pci quirk for hisilicon PCI Network Processor devices 5896.
+On Thu,  5 Dec 2019 16:33:12 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Can you capatalise HiSilicon correctly (capital H and S), both here and
-in the subject line?
-
-s/devices 5896/5896 devices/ ?
-
-> The size of the unused BAR3 is set as 265T wrongly. This patch disalbes
-
-s/disalbes/disables/
-
-> this bar.
+> Hi,
 > 
-> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+> Here are the patches to fix build warnings and erorrs on
+> kselftest safesetid.
+
+Oops, I found one another bug in safesetid. I'll send v2 including
+new fix.
+
+Thank you,
+
+> 
+> Thank you,
+> 
 > ---
->  drivers/pci/quirks.c    | 29 +++++++++++++++++++++++++++++
->  include/linux/pci_ids.h |  1 +
->  2 files changed, 30 insertions(+)
 > 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 4937a08..7dfb272 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -5431,3 +5431,32 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
->  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, 0x13b1,
->  			      PCI_CLASS_DISPLAY_VGA, 8,
->  			      quirk_reset_lenovo_thinkpad_p50_nvgpu);
-> +
-> +static void quirk_hisi_fixup_np_class(struct pci_dev *pdev)
-> +{
-> +	u32 class = pdev->class;
-> +
-> +	pdev->class = PCI_BASE_CLASS_NETWORK << 8;
-> +	pci_info(pdev, "PCI class overriden (%#08x -> %#08x)\n",
-> +		 class, pdev->class);
-
-Why is this in here? This is completely unrelated to the commit message.
-
-> +}
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HISI_5896,
-> +			quirk_hisi_fixup_np_class);
-> +
-> +/*
-> + * Hisilicon NP devices 5896 BAR3 size is misreported as 256T. Actually, this
-> + * BAR is unused, so let's disable it.
-
-Does this mean that the existing driver doesn't use this BAR? Is a better fix
-up the BAR to report the correct size?
-
-
-> + */
-> +#define HISI_5896_WRONG_BAR 3
-
-I'd suggest this define is possibly not required.
-
-> +static void quirk_hisi_fixup_np_bar(struct pci_dev *pdev)
-> +{
-> +	struct resource *r = &pdev->resource[HISI_5896_WRONG_BAR];
-> +
-> +	r->start = 0;
-> +	r->end = 0;
-> +	r->flags = 0;
-> +
-> +	pci_info(pdev, "disable BAR %d\n", HISI_5896_WRONG_BAR);
-
-It might be more helpful to describe why, e.g. "Disabling invalid BAR 3"
-or similar.
-
-
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HISI_5896,
-> +			 quirk_hisi_fixup_np_bar);
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 2302d133..56e2b91 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2558,6 +2558,7 @@
->  #define PCI_DEVICE_ID_KORENIX_JETCARDF3	0x17ff
->  
->  #define PCI_VENDOR_ID_HUAWEI		0x19e5
-> +#define PCI_DEVICE_ID_HISI_5896        0x5896 /* Hisilicon NP devices 5896 */
->  
->  #define PCI_VENDOR_ID_NETRONOME		0x19ee
->  #define PCI_DEVICE_ID_NETRONOME_NFP4000	0x4000
-
-Thanks,
-
-Andrew Murray
-
-> -- 
-> 1.7.12.4
+> Masami Hiramatsu (2):
+>       selftests: safesetid: Move link library to LDLIBS
+>       selftests: safesetid: Check the return value of setuid/setgid
 > 
+> 
+>  tools/testing/selftests/safesetid/Makefile         |    3 ++-
+>  tools/testing/selftests/safesetid/safesetid-test.c |   15 ++++++++++-----
+>  2 files changed, 12 insertions(+), 6 deletions(-)
+> 
+> --
+> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
