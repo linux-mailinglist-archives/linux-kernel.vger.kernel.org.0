@@ -2,70 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B37A114888
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C543114895
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:19:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbfLEVPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 16:15:22 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42314 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729450AbfLEVPW (ORCPT
+        id S1729875AbfLEVTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 16:19:04 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39139 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729187AbfLEVTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 16:15:22 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 66so3911410otd.9;
-        Thu, 05 Dec 2019 13:15:21 -0800 (PST)
+        Thu, 5 Dec 2019 16:19:04 -0500
+Received: by mail-vs1-f68.google.com with SMTP id p21so3506678vsq.6
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 13:19:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=WUgUU6EFepvf+3kAqmDr43zIZXXpWpmN9fMRSnPoU50=;
+        b=GhbbMiXNO+52x6ilNuXdv3jbg9SDpfn/SNVQYAL81EU/BAzAVfXVlBGPhnB3h0RKrm
+         URB6nPgLTfCNL0afqXoH7hiIThk8paeWprPaXK0bWHzlm45/bIbr6ffbdCfPtXm57yXQ
+         2nepNfcdthxQWhGpm+S4+a+ar89B9dVEQ6uiQiyE+xbS/0a/ff9oAX8k9GydkBJwGg72
+         OPW4XCi8YgmxtV/kIhNI3IW0TxrZKeQyAgnGxQpQEn5Feop46znp9NccTIIiFiCfm/WR
+         Z+Y3QNwoTUREMADLe+jMPK4PTLVVcFWwlSbxqo4p6NLTfTgfuWsdSbFwFQs2jamY0/xM
+         dIYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YJ9zindtieuDhe+7MeY3HR+ZIrhEnTYORFnF43Fjuuo=;
-        b=H8FjBmCGpKJ12wybDVkmrbxMQtMFXJnBNXpQu+uP8Bz+UET1zkLgd0Q4DSYX+K4lqs
-         R+xgMm3YJptsTUZMSWQsR5M4heft+hOXqhNLpUIQJaP0VXUjTxkju2wgpjUXR5U/lcwP
-         xatmqD6UYO+CDHy7qPT44ntLXzsu9FHi/fT625rP2MWeBUxaTTuJuEzIIcOw/YMHVbeh
-         Nap/78Zfq7KqNjbk/IuBi54arNETu7ZdQVTTLJWPLrx+Ay+Hv9Yka5irqYUiQ3tY78nX
-         gR/+3iGYyIveGWAdpKKnvZYka/N4nqg76aDUMcLua+q4cUK1uErDLG6mWXob2rrUwBgu
-         XH8Q==
-X-Gm-Message-State: APjAAAUm4GCX9FzepGahoB43GDh77p2X0lTPes0nv1xj7bnzVm8fdF7z
-        xA4jPz7euZzcG6PhEmgzsA==
-X-Google-Smtp-Source: APXvYqxZcyLjEEXrywjejvo3Fovq/Vj1ZK2rPKMOypHYm8vTPRNz4P37AyKMhs/HcKqGxOLJBudH/Q==
-X-Received: by 2002:a9d:58c9:: with SMTP id s9mr8001069oth.121.1575580520010;
-        Thu, 05 Dec 2019 13:15:20 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id f62sm3800001otf.23.2019.12.05.13.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 13:15:19 -0800 (PST)
-Date:   Thu, 5 Dec 2019 15:15:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        cang@codeaurora.org, rampraka@codeaurora.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V1 1/2] dt-bindings: mmc: sdhci-msm: Add compatible
- string for sc7180
-Message-ID: <20191205211518.GA30447@bogus>
-References: <0101016eacb255af-3985262d-9b7e-4813-88c2-61838406e12c-000000@us-west-2.amazonses.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=WUgUU6EFepvf+3kAqmDr43zIZXXpWpmN9fMRSnPoU50=;
+        b=AGzW9iuZ1ZJ8Tr34yj9aYqf4xuseW10NLgAli96Kw9WdDjpZli8YX9HDqKjjXQ2J3j
+         ax5uEmKUfB/vwZQea0Ebu+Wlzc1qrHzIJK3ry3g8VJUhZ9lPHQLBttfV//OWP+usbnC2
+         qql5Uz7sw2nMXc5Uo/PDshdyUxug5c1ChifWYJW/ng1LEO5wpSPpn3hSde7UVv7ayXEW
+         SAxX9AkqBU00yuAgb1RuReeehCocKiMa6zoM52HW4qF62PZRXpQnC2AJnuwAPxM2cEsL
+         An+H125H8vFiKy0N+vW8kPe/yYa6FpxN7Qe5NDuPbgAxkwL9THjNYbWZQZJWBEskn5d/
+         P/kA==
+X-Gm-Message-State: APjAAAWe9pgSxtBnXmGKcX/vxlGRPclqwDt3tBbFHvR9/wPilgAWPdTg
+        kFdAe0jrr6qquFro1fShwaCWJmJSLQcPbZ8QLb0Qu1srl16Wnw==
+X-Google-Smtp-Source: APXvYqw+JfxGYjWJsiq/H7mWHop2og5CHsBAEcSLNsIEIlOdqLpDfatp9QmBgqbR0KgsZdBuDBdtJvU6MGbnVApAc2g=
+X-Received: by 2002:a67:dc90:: with SMTP id g16mr7083274vsk.110.1575580742997;
+ Thu, 05 Dec 2019 13:19:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0101016eacb255af-3985262d-9b7e-4813-88c2-61838406e12c-000000@us-west-2.amazonses.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Anatol Pomozov <anatol.pomozov@gmail.com>
+Date:   Thu, 5 Dec 2019 13:18:52 -0800
+Message-ID: <CAOMFOmXU8RoeAOEjP=gkkiZdPS8Ok_wzXcgUZxL11u1zMSEtMQ@mail.gmail.com>
+Subject: dmesg spammed with "caller memremap+0x64/0x160 mapping multiple BARs"
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     avid@redhat.com, hch@lst.de, namit@vmware.com, tglx@linutronix.de,
+        delvare@suse.de, rrichter@marvell.com, rppt@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Nov 2019 11:49:59 +0000, Veerabhadrarao Badiganti wrote:
-> Add sc7180 SoC specific compatible strings for qcom-sdhci controller.
-> 
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Hi folks
 
-Acked-by: Rob Herring <robh@kernel.org>
+We have several servers that run on kernel 4.14.12 and their logs
+spammed with following messages:
+
+ [20633911.311910] caller memremap+0x64/0x160 mapping multiple BARs
+ [20633911.318577] resource sanity check: requesting [mem
+0x000eb570-0x000edc34], which spans more than PCI Bus 0000:00 [mem
+0x000e8000-0x000ebfff window]
+ [20633911.333650] caller memremap+0x64/0x160 mapping multiple BARs
+ [20633911.340412] resource sanity check: requesting [mem
+0x000eb570-0x000edc34], which spans more than PCI Bus 0000:00 [mem
+0x000e8000-0x000ebfff window]
+ [20633911.355481] caller memremap+0x64/0x160 mapping multiple BARs
+
+After some debugging I've found that the warning is printed when I open the file
+/sys/firmware/dmi/entries/*/raw The stacktrace is
+
+[   14.839284] Call Trace:
+[   14.839289]  dump_stack+0x46/0x59
+[   14.839293]  iomem_map_sanity_check+0xb8/0xc0
+[   14.839296]  __ioremap_caller+0x225/0x2f0
+[   14.839302]  memremap+0x113/0x170
+[   14.856703]  ? dmi_name_in_serial+0x30/0x30
+[   14.856705]  dmi_walk+0x30/0x70
+[   14.856706]  find_dmi_entry+0x46/0x80
+[   14.856708]  ? dmi_entry_free+0x10/0x10
+[   14.856710]  dmi_entry_raw_read+0x3a/0x60
+[   14.856712]  kernfs_fop_read+0xa1/0x170
+[   14.856714]  __vfs_read+0x36/0x170
+[   14.856717]  vfs_read+0x89/0x130
+[   14.856719]  SyS_read+0x52/0xc0
+[   14.856721]  do_syscall_64+0x60/0x110
+[   14.856723]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[   14.856725] RIP: 0033:0x7f60aceedf70
+
+As it turned out the root of the problem is BIOS region mapping. Here
+are ACPI mappings:
+
+000e0000-000fffff : Reserved
+  000e0000-000e3fff : PCI Bus 0000:00
+  000e4000-000e7fff : PCI Bus 0000:00
+  000e8000-000ebfff : PCI Bus 0000:00
+  000ec000-000effff : PCI Bus 0000:00
+  000f0000-000fffff : PCI Bus 0000:00
+
+Or the same mapping from IASL tool:
+
+DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed,
+Cacheable, ReadWrite,
+    0x00000000,         // Granularity
+    0x000E8000,         // Range Minimum
+    0x000EBFFF,         // Range Maximum
+    0x00000000,         // Translation Offset
+    0x00004000,         // Length
+    ,, , AddressRangeMemory, TypeStatic)
+DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed,
+Cacheable, ReadWrite,
+    0x00000000,         // Granularity
+    0x000EC000,         // Range Minimum
+    0x000EFFFF,         // Range Maximum
+    0x00000000,         // Translation Offset
+    0x00004000,         // Length
+    ,, , AddressRangeMemory, TypeStatic)
+
+
+SMBIOS table is located at 0x000eb570-0x000edc34 address range. When
+find_dmi_entry() tries to map SMBIOS to kernel address space the
+warning above is printed.
+
+
+
+So I have a few questions here:
+ - What exactly kernel tries to tell us here? Why mapping SMBIOS over
+multiple PCI mappings is bad. Sorry I am not familiar with this
+codepath and I am trying to understand the issue.
+ - Is the warning really bad? The code works just fine despite the
+warnings. Can the warning be turned into info/debug()?
+ - Is the mapping need to be fixed in BIOS? What other possible
+problems can happen due to such BIOS mapping misconfiguration?
+ - Why SMBIOS table mapped for every sysfs file read? Would it make
+sense to map SMBIOS only once at the kernel boot?
+ - Does it make sense to ratelimit the warning? I will be glad to send
+the path for it.
