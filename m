@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA8B1148E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D05EA1148DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:52:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbfLEVw7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 16:52:59 -0500
-Received: from mail-il1-f171.google.com ([209.85.166.171]:33231 "EHLO
-        mail-il1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387477AbfLEVwe (ORCPT
+        id S2387512AbfLEVwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 16:52:40 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44548 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387488AbfLEVwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 16:52:34 -0500
-Received: by mail-il1-f171.google.com with SMTP id r81so4422752ilk.0;
-        Thu, 05 Dec 2019 13:52:33 -0800 (PST)
+        Thu, 5 Dec 2019 16:52:36 -0500
+Received: by mail-io1-f68.google.com with SMTP id z23so5191703iog.11;
+        Thu, 05 Dec 2019 13:52:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xkTFpkb5r8yGg3ZllYhT/TfhMsW8y8XB6bOw4rnyvIg=;
-        b=ffaYczkn/kQm7dm/iFZImyt/WYcBEj9KRyZiBUzvm+skncdGrLVtSFy6t3UN5zTJbk
-         uKou2USrUqz3Tzbs3t9DPa0As25fXXJVvoglPU6KiVITC7+RX6iFSvMpsfgvhaEEWWEC
-         JnxR0iNaw4sqhpNfgNEeJdAJJxZBFdUFfZ9TNtShb5gjDtSe3eYbgGh3E5ltclZUxHSf
-         LOAqE4676d9rR8/JOxIlIXqWie9N73hUSTZFFeN51lZUnVvozRkRW+0EeDrB6er//dq+
-         71z3lXVqrHg6zya6q9ghiNQeuE8XVxak5YBDHJ+L2EabhhieFpj1ms/1mujGhJQ/X9le
-         o5AQ==
+        bh=2hpIeNO/rrHxqmmLp7RAfiIu08DiGGroLpGDwIlCW7M=;
+        b=MOxPNe8WPtSybtjHa0RjD3KJL4IhgjYoRlaEx55/rqpvYo9Ky6IkP8BxUSKa8W//Ul
+         PBG3mLdwri+d+vIivintMAMlESZr7QBNgX+YOA+gIimPYIK7mtAPhdDh9zjI9X6cgTy8
+         hpkh7n7a3Mv6QLc9k+pMlahHM3SBi/a/fE0hKWOAEPaSVUcQhfKiIR4OqWXPvXm+YyhS
+         A6XN6ru7o1ETHZLiBAbpXFeG/QwR/yS+OrF2xV4Q52E2TtUpb9MYk+Gahv/RdbWaCzCw
+         7OubreR8PMWUxQJo9r/xnvAmqklOf85y46yPHqKR5/Zl6ay195i+WhsPx0gbg5S7POwy
+         OZqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xkTFpkb5r8yGg3ZllYhT/TfhMsW8y8XB6bOw4rnyvIg=;
-        b=S9OXaP1KutV+cigNuwNzUIWyS3cHZdDDwSmiYI7b1lJ6M/JJK69LJkrEsp6PMKdv70
-         BS+LVp3EP2LPHl80seaBuwd/5tjAdYtLazw4R7a+4kSBKi2ejQ6n4ZWzOGzkw8tdwye6
-         x2CRq/qaAJloyJb2KEXiUEt3phjALAYlzzaL2kazsid9nU96Mrwk9kf7Xb8W66CsMhXe
-         /RgWtEwb539DfGrmlo2KaE9bkwXEOuA6mOVepOdhhTuoKJ+fHl4CS6Q0ZrcXb+X18+38
-         xOopxH6riwg0JaNTyvAsiy9iBSa2ZqGmBHnF5djgY0niGlXTyEPzycbHf7SAir48Vcyx
-         FgTA==
-X-Gm-Message-State: APjAAAVbv7i+VKD9XQPiVv/zoVJ3J/Mltlm9P+uf6Q3Xcwz4aIAFEcqx
-        s1ZJQAqkmtDAveFF18/CEpc=
-X-Google-Smtp-Source: APXvYqx+XPYzXvmX0MKUwz9EcptmAZLbCBrEH3P+FfTZmPHw95bvHuPfn7BNJvDtfk1zURFmD+dG3A==
-X-Received: by 2002:a92:b604:: with SMTP id s4mr11666899ili.114.1575582752925;
-        Thu, 05 Dec 2019 13:52:32 -0800 (PST)
+        bh=2hpIeNO/rrHxqmmLp7RAfiIu08DiGGroLpGDwIlCW7M=;
+        b=Qe5A5Gt23WUNeQgU6raBeiXMvg3q1Qk6K5mquM7+rx9c1F683kHtOx6XW4ammSqQo9
+         ieb+sjAlgBxl9e70TBKgkfKr/TgptoWOxMeikphcpBwQUCdkcKI8KJL3iAeG1pllqCBG
+         wZadyCU+TRgFx9LY0t+y1+RI3qbGnjKrYzZ3OeyrHoq0Ngw2EdZQSxv8OzHqI3M5yVQy
+         FrH1JyMQLta4LQFhr5tRFMcz1++9cHsJFMUnL3WQyhrYFbDqALD6N1NTy2uwz074gQKS
+         oTLJ2swHhQQnqMtbiJZA5SdPtNla3XXAaM8CX0X0oBe02S8/G/VyJVYxgvmkl8mysZwG
+         JXug==
+X-Gm-Message-State: APjAAAWvvyRrX0576wL7KYiiQTSCqRXC1M6MCmHqtksSHELX8F7EHSMJ
+        e55SVtZphasYdtmdTdD3tlMH3eZauis=
+X-Google-Smtp-Source: APXvYqxPNCcMlZKwCPlWpIF1OSmY5ID6nrckbjANU//r7OZaeuSpKzUBkXCqcUDfwIGUhTXIGlR9Cw==
+X-Received: by 2002:a02:c4da:: with SMTP id h26mr10742177jaj.47.1575582755356;
+        Thu, 05 Dec 2019 13:52:35 -0800 (PST)
 Received: from localhost.localdomain (c-24-9-77-57.hsd1.co.comcast.net. [24.9.77.57])
-        by smtp.googlemail.com with ESMTPSA id n22sm740184iog.14.2019.12.05.13.52.31
+        by smtp.googlemail.com with ESMTPSA id n22sm740184iog.14.2019.12.05.13.52.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 13:52:32 -0800 (PST)
+        Thu, 05 Dec 2019 13:52:34 -0800 (PST)
 From:   Jim Cromie <jim.cromie@gmail.com>
 To:     jbaron@akamai.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org
 Cc:     linux@rasmusvillemoes.dk, Jim Cromie <jim.cromie@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH 15/16] dyndbg: allow inverted-flag-chars in modflags
-Date:   Thu,  5 Dec 2019 14:51:47 -0700
-Message-Id: <20191205215151.421926-17-jim.cromie@gmail.com>
+Subject: [PATCH 15/18] dyndbg: allow negating flag-chars in modflags
+Date:   Thu,  5 Dec 2019 14:51:48 -0700
+Message-Id: <20191205215151.421926-18-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191205215151.421926-1-jim.cromie@gmail.com>
 References: <20191205215151.421926-1-jim.cromie@gmail.com>
@@ -63,52 +63,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend flags modifications to allow [PFMLT_XYZ] inverted flags.
+Extend flags modifications to allow [PFMLTU] inverted flags.
 This allows control-queries like:
 
   #> Q () { echo file inode.c $* > control } # to type less
   #> Q -P	# same as +p
-  #> Q +X	# same as -x
-  #> Q xyz-P	# same as xyz+p
+  #> Q +U	# same as -u
+  #> Q u-P	# same as u+p
 
 This allows flags in a callsite to be simultaneously set and cleared,
 while still starting with the current flagstate (with +- ops).
 Generally, you chose -p or +p 1st, then set or clear flags
 accordingly.
 
-  # enable print on callsites with 'xy'; and re-mark with just 'z'
-  #> Q xy+pXYz
-
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- Documentation/admin-guide/dynamic-debug-howto.rst | 8 +++++---
- lib/dynamic_debug.c                               | 6 ++++--
- 2 files changed, 9 insertions(+), 5 deletions(-)
+ Documentation/admin-guide/dynamic-debug-howto.rst | 10 ++++++----
+ lib/dynamic_debug.c                               |  6 ++++--
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-index 5404e23eeac8..493e74a14bdd 100644
+index 9f68062ba316..5c170e49121d 100644
 --- a/Documentation/admin-guide/dynamic-debug-howto.rst
 +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-@@ -250,9 +250,11 @@ only callsites with x&y cleared.
+@@ -249,9 +249,11 @@ only callsites with ``u`` and ``f`` cleared.
  
- Flagsets cannot contain ``xX`` etc, a flag cannot be true and false.
+ Flagsets cannot contain ``pP`` etc, a flag cannot be true and false.
  
 -modflags containing upper-case flags is reserved/undefined for now.
 -inverted-flags are currently ignored, usage gets trickier if given
 -``-pXy``, it should leave x set.
 +modflags may contain upper-case flags also, using these lets you
-+invert the flag setting implied by the OP; '-pX' means disable
-+printing, and mark that callsite with usr-x flag to create a group,
++invert the flag setting implied by the OP; '-pU' means disable
++printing, and mark that callsite with the user-flag to create a group,
 +for optional further manipulation.  Generally, '+p' and '-p' is your
-+main choice, and use of inverted flags in modflags is rare.
++main choice, and use of negating flags in modflags is rare.
  
  Notes::
  
+@@ -261,7 +263,7 @@ For ``print_hex_dump_debug()`` and ``print_hex_dump_bytes()``, only
+ For display, the flags are preceded by ``=``
+ (mnemonic: what the flags are currently equal to).
+ 
+-Note the regexp ``^[-+=][flmptu_]+$`` matches a flags specification.
++Note the regexp ``/^[-+=][flmptu_]+$/i`` matches a flags specification.
+ To clear all flags at once, use ``=_`` or ``-flmptu``.
+ 
+ 
 diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index b2630df0c3a5..82daf95b8f64 100644
+index 736895efe17d..15bb9939df97 100644
 --- a/lib/dynamic_debug.c
 +++ b/lib/dynamic_debug.c
-@@ -488,15 +488,17 @@ static int ddebug_parse_flags(const char *str,
+@@ -486,15 +486,17 @@ static int ddebug_parse_flags(const char *str,
  
  	/* calculate final mods: flags, mask based upon op */
  	switch (op) {
