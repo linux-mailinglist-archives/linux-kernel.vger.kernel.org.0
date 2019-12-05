@@ -2,147 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E381D113C3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 08:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B3C113C40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 08:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbfLEHUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 02:20:23 -0500
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:39295 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfLEHUV (ORCPT
+        id S1726201AbfLEHXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 02:23:35 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:44525 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfLEHXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 02:20:21 -0500
-Received: by mail-yw1-f73.google.com with SMTP id l12so1740260ywk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 23:20:20 -0800 (PST)
+        Thu, 5 Dec 2019 02:23:35 -0500
+Received: by mail-il1-f196.google.com with SMTP id z12so2062539iln.11
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 23:23:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
-        bh=ts1yBosTiHCFk+FM0gulija97H50ynj8MItVpiYvleQ=;
-        b=ld8GY3TacvMwKqP04HpCI65PJfosSibr/XBnqjhUGqK8lCLovwEHCSicuYg0080tyP
-         dfZbzuPfYYv3pcb1iC+/CjCG+fUQxrimPBy9fyQjgXTDZs1PPcwNfw3HCWbiFE7wRUKk
-         UXIsBTWrF8A4dbgQooSvDgo/pV1rNrkqUuGILp+GFV2cUEVt5BpP6dJJCCd1gu0Gz93w
-         5mBfZHtVfBwJN9vRkQ1DcqJdelveL3SzXxVZcPfFgUTSzGwNBav4M86qMp+cHgOwnQrg
-         7tm3S/98VeIjDpYfSS1hAII/y8JDlNG2vNIvj/6oUTS8FiojrKMPKnf640QM1RQNpCR3
-         +hcQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=TViWHe/fCibeg71RMzs+W48ldBatY/PqH+UEQJGff2s=;
+        b=P7LBaZT7XZf2LzpeAz80EL6WqCPHPSR+jRr37apoahTkqcsMbnzHrvIS0s+sDCU3v4
+         sLr3N2uJrwxSrnSOST6HpiMSfMKMzQN5CsM5xpNTa/D5/0lJy1EEv/mkYzbgz3AYK6wz
+         3EYSiMa1CMarve8gyH01IDjjHdG/sYy57H6tUSATFLfyhP71ZjLwjcB/+VhfpGJjtNDH
+         eXGC3P9AsWjra/XuLavkk7OhwTcfq37rfRYoiDWAh6UdvwV3CS/U3k+Ryj5gCJQwjTke
+         OU2UdDorEhCvZlpJZ6wrYPyRWSeaqqWOAc5JqPb3sUM2H2oUE0+R0dV4Km+0OauHKSCG
+         CZ3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:cc;
-        bh=ts1yBosTiHCFk+FM0gulija97H50ynj8MItVpiYvleQ=;
-        b=uZQFfCrYv568xhySxrKnEXIq9tDUeWGLbEEu09hjlPgGQSAJ9dvgj1ElX7KIGP8OWj
-         oDRwQ1bg2mAlVjBLPTokk+VGEKXfGu9bkBTOmZzRQ6zdscLrKVki3XXVcq3TjcTue/Vo
-         l/hE6b+zi8ff3bwpHxhbwRdEawQ85cLddUj3lxiL3Zh35GPAXLufnXjyjF5KZLbz8sNh
-         d8Ur63lfrV5kShKVtQ59smLK4w57GnLZvYrH3SG/suNM5Hn+XZjOeZLJNRFgkMxa67xL
-         +Qn3XildBsw+jyIVG9AXe2U09aQBMBxDxjJAGWS6/GwNEZv9w6JseYffqvKo+TsRC2eu
-         NqCg==
-X-Gm-Message-State: APjAAAVyNV4+PkL033xSp4nB031VW8VDOPSZKb0uo2s7S9hLusPAG64g
-        bC7v2FLG3JdpSGvuGDcTzJBiM44=
-X-Google-Smtp-Source: APXvYqwPLL22lSTzNWHq5MEuCpLUubSt5RY0lxSgL1kQNEi44mvvHms6QnuzTkyPX1MHD1unKh/9ObE=
-X-Received: by 2002:a0d:d911:: with SMTP id b17mr5123945ywe.269.1575530419968;
- Wed, 04 Dec 2019 23:20:19 -0800 (PST)
-Date:   Wed,  4 Dec 2019 23:19:53 -0800
-In-Reply-To: <20191205071953.121511-1-wvw@google.com>
-Message-Id: <20191205071953.121511-4-wvw@google.com>
-Mime-Version: 1.0
-References: <20191205071953.121511-1-wvw@google.com>
-X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH v3 3/3] thermal: create softlink by name for thermal_zone and cooling_device
-From:   Wei Wang <wvw@google.com>
-Cc:     wei.vince.wang@gmail.com, Wei Wang <wvw@google.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=TViWHe/fCibeg71RMzs+W48ldBatY/PqH+UEQJGff2s=;
+        b=eyR0S4IrOETxsjfiRHx9ehgweHviAk8oPhvYHO2w1VwVSwxYZRfHRp04bviLxS/yBV
+         Vm25KddI5lJDE6fC3+bSGt9zJoKCpni9Q+GxM2xvuHTG+ksKc8NtOI0zqPr5n7FhUyMp
+         +RYZqzWDPgjhmjdi/B2lzC+vQiQgkTtahS6iE5lQ/RrXFmRfcTHY1NtQZPnCUlWynzd0
+         rh6pax7dcacGJta/yWd9AurjIKm5n6O6JTTo/y6b84s9lWXFUa2fx2kzgfh6Re7hw6r7
+         K2hhi9Bw4j3Rmitcwn/tjBu+529MXQETYgze1c9X3xLRsetGPr0sUrilILkEw3UbzMg+
+         Higw==
+X-Gm-Message-State: APjAAAWrKQD7VjOR8u5gaErAN7nE6NcP7hdLBC3ZsQkV4lE0PEXkjr09
+        +i4lGHbQHgd6lsj3hKK018RanZnC7j44+61S6sw=
+X-Google-Smtp-Source: APXvYqzefFVnOGFdgEY4N5XGVPbvcM4mvDLR+0M9wPKXjKyqVzJJlw25vAA5XRjyiOROjxoC4E9UBOIcc92VVmn2x40=
+X-Received: by 2002:a92:d7c6:: with SMTP id g6mr7404493ilq.282.1575530614169;
+ Wed, 04 Dec 2019 23:23:34 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a5e:da06:0:0:0:0:0 with HTTP; Wed, 4 Dec 2019 23:23:33 -0800 (PST)
+Reply-To: daoudaali2200@gmail.com
+From:   Daouda Ali <mrdaoudaali3@gmail.com>
+Date:   Thu, 5 Dec 2019 18:23:33 +1100
+Message-ID: <CA+04AL+2pTmHVzBF0hfSi243PzTNXs53Aa9f8EfMzyzHcARo-w@mail.gmail.com>
+Subject: INVESTMENT PROPOSAL.
+To:     daoudaali2200@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The paths thermal_zone%d and cooling_device%d are not intuitive and the
-numbers are subject to change due to device tree change. This usually
-leads to tree traversal in userspace code.
-The patch creates `tz-by-name' and `cdev-by-name' for thermal zone and
-cooling_device respectively.
+It=E2=80=99s my pleasure to contact you through this media because I need a=
+n
+investment assistance in your country. However I have a profitable
+investment proposal with  good interest to share with you, amounted
+the sum of (Twenty Eight Million Four Hundred Thousand United State
+Dollar ($28.400.000.00). If you  are willing to handle this project
+kindly reply urgent to enable me provide you more information about
+the investment funds and the project.
 
-Signed-off-by: Wei Wang <wvw@google.com>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/thermal/thermal_core.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+I am waiting to hear from you through this my private
+email(daoudaali2200@gmail.com) so we can proceed further.
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 9db7f72e70f8..7872bd527f3f 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -22,6 +22,7 @@
- #include <net/netlink.h>
- #include <net/genetlink.h>
- #include <linux/suspend.h>
-+#include <linux/kobject.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/thermal.h>
-@@ -46,6 +47,8 @@ static DEFINE_MUTEX(poweroff_lock);
- 
- static atomic_t in_suspend;
- static bool power_off_triggered;
-+static struct kobject *cdev_link_kobj;
-+static struct kobject *tz_link_kobj;
- 
- static struct thermal_governor *def_governor;
- 
-@@ -999,9 +1002,15 @@ __thermal_cooling_device_register(struct device_node *np,
- 		return ERR_PTR(result);
- 	}
- 
--	/* Add 'this' new cdev to the global cdev list */
-+	/* Add 'this' new cdev to the global cdev list and create link*/
- 	mutex_lock(&thermal_list_lock);
- 	list_add(&cdev->node, &thermal_cdev_list);
-+	if (!cdev_link_kobj)
-+		cdev_link_kobj = kobject_create_and_add("cdev-by-name",
-+						cdev->device.kobj.parent);
-+	if (!cdev_link_kobj || sysfs_create_link(cdev_link_kobj,
-+						&cdev->device.kobj, cdev->type))
-+		dev_err(&cdev->device, "Failed to create cdev-by-name link\n");
- 	mutex_unlock(&thermal_list_lock);
- 
- 	/* Update binding information for 'this' new cdev */
-@@ -1167,6 +1176,8 @@ void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
- 			}
- 		}
- 	}
-+	if (cdev_link_kobj)
-+		sysfs_remove_link(cdev_link_kobj, cdev->type);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
-@@ -1354,6 +1365,12 @@ thermal_zone_device_register(const char *type, int trips, int mask,
- 
- 	mutex_lock(&thermal_list_lock);
- 	list_add_tail(&tz->node, &thermal_tz_list);
-+	if (!tz_link_kobj)
-+		tz_link_kobj = kobject_create_and_add("tz-by-name",
-+						tz->device.kobj.parent);
-+	if (!tz_link_kobj || sysfs_create_link(tz_link_kobj,
-+						&tz->device.kobj, tz->type))
-+		dev_err(&tz->device, "Failed to create tz-by-name link\n");
- 	mutex_unlock(&thermal_list_lock);
- 
- 	/* Bind cooling devices for this zone */
-@@ -1425,6 +1442,8 @@ void thermal_zone_device_unregister(struct thermal_zone_device *tz)
- 			}
- 		}
- 	}
-+	if (tz_link_kobj)
-+		sysfs_remove_link(tz_link_kobj, tz->type);
- 
- 	mutex_unlock(&thermal_list_lock);
- 
--- 
-2.24.0.393.g34dc348eaf-goog
-
+Best Regards.
+Mr. Daouda Ali.
