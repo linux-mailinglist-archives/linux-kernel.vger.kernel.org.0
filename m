@@ -2,121 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69325113989
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11FB6113990
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:08:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbfLECFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:05:36 -0500
-Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:34968
-        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728374AbfLECFg (ORCPT
+        id S1728604AbfLECI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:08:28 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35972 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbfLECI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:05:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575511535;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        bh=eV5UQc0Nv02TJNdhFWZaDHRnQ93t5irlSEirUDqpNEo=;
-        b=jTNEu15A6/gouO49J5YvppTGbJARs8FLUDiJaGy7+AO8y8LKkfV0JUb3HeMPLBDw
-        QMP4ZSV3E0rAGwsTqg0wvBvnQHLdUAyCQe7vtusVtWAfb+kBK5z0ZWx6XwMGCju88OA
-        ZtBXJH2LfaEQ8ZWPgSxlRv4a/usCjV4mrTyJhxC4=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575511535;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:Feedback-ID;
-        bh=eV5UQc0Nv02TJNdhFWZaDHRnQ93t5irlSEirUDqpNEo=;
-        b=McOewTk7yM5EDBJ0dvAphAFv4JgZDYecZngrgqgB/zU5F8QMLz8sxCBCTWi0dQ+S
-        lSZH6msWSeT8ZelmX6BSoo5QuI8jmN2mIdzALz7a+rGvZTl9ful6sVHjb5cX98tsSbb
-        sbLS4D8wFa4gl0LB9/h2IuK/chlQbsHDKnFtjLdc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7974C64313
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 5/5] scsi: ufs: Do not free irq in suspend
-Date:   Thu, 5 Dec 2019 02:05:35 +0000
-Message-ID: <0101016ed3ce2e27-04f59930-fe71-4290-a028-c71e8310ca49-000000@us-west-2.amazonses.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1575511482-15115-1-git-send-email-cang@codeaurora.org>
-References: <1575511482-15115-1-git-send-email-cang@codeaurora.org>
-X-SES-Outgoing: 2019.12.05-54.240.27.188
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Wed, 4 Dec 2019 21:08:27 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1icgZ1-0006BN-7V; Thu, 05 Dec 2019 02:08:20 +0000
+Date:   Thu, 5 Dec 2019 02:08:19 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fix cast of gfp_t to ulong in __def_gfpflag_names
+Message-ID: <20191205020819.GJ4203@ZenIV.linux.org.uk>
+References: <20191204175425.71855-1-luc.vanoostenryck@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204175425.71855-1-luc.vanoostenryck@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since ufshcd irq resource is allocated with the device resource management
-aware IRQ request implementation, we don't really need to free up irq
-during suspend, disabling it during suspend and reenabling it during resume
-should be good enough.
+On Wed, Dec 04, 2019 at 06:54:25PM +0100, Luc Van Oostenryck wrote:
+> The macro '__def_gfpflag_names' is used to define arrays of
+> struct trace_print_flags. This structure is defined as being
+> a pair of 'unsigned long' - 'const char *'.
+> 
+> However, the macro __def_gfpflag_names is used to for GFP flags
+> and thus take entries of type gfp_t (plus their name) which
+> is a bitwise type, non-convertible to usual integers.
+> These entries are casted to 'unsigned long' but this doesn't
+> prevent Sparse to rughtfully complain:
+> 	warning: cast from restricted gfp_t
+> 
+> The correct way to cast a bitwise type to a normal integer
+> (which is OK here) is to use '__force'.
+> 
+> So, fix the cast by adding the '__force' required for such casts.
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+Ugh...
+> -	{(unsigned long)GFP_TRANSHUGE,		"GFP_TRANSHUGE"},	\
+<plenty of such>
+> +	{(__force ulong)GFP_TRANSHUGE,		"GFP_TRANSHUGE"},	\
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 086d359..c449b68 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -266,26 +266,18 @@ static inline bool ufshcd_valid_tag(struct ufs_hba *hba, int tag)
- 	return tag >= 0 && tag < hba->nutrs;
- }
- 
--static inline int ufshcd_enable_irq(struct ufs_hba *hba)
-+static inline void ufshcd_enable_irq(struct ufs_hba *hba)
- {
--	int ret = 0;
--
- 	if (!hba->is_irq_enabled) {
--		ret = request_irq(hba->irq, ufshcd_intr, IRQF_SHARED, UFSHCD,
--				hba);
--		if (ret)
--			dev_err(hba->dev, "%s: request_irq failed, ret=%d\n",
--				__func__, ret);
-+		enable_irq(hba->irq);
- 		hba->is_irq_enabled = true;
- 	}
--
--	return ret;
- }
- 
- static inline void ufshcd_disable_irq(struct ufs_hba *hba)
- {
- 	if (hba->is_irq_enabled) {
--		free_irq(hba->irq, hba);
-+		disable_irq(hba->irq);
- 		hba->is_irq_enabled = false;
- 	}
- }
-@@ -7930,9 +7922,7 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 		goto out;
- 
- 	/* enable the host irq as host controller would be active soon */
--	ret = ufshcd_enable_irq(hba);
--	if (ret)
--		goto disable_irq_and_vops_clks;
-+	ufshcd_enable_irq(hba);
- 
- 	ret = ufshcd_vreg_set_hpm(hba);
- 	if (ret)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+# operator is there for purpose; as in
+#define FOO(name) {(__force unsigned long)name, #name}
+with those becoming
+#define __def_gfpflag_names \
+	FOO(GFP_TRANSHUGE), \
+	FOO(GFP_TRANSHUGE_LIGHT), \
+etc.
