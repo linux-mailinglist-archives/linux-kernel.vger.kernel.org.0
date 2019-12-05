@@ -2,180 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E221148E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6BB1148F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:56:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387541AbfLEVwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 16:52:53 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44570 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387525AbfLEVwu (ORCPT
+        id S1729954AbfLEV4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 16:56:31 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35390 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbfLEV4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 16:52:50 -0500
-Received: by mail-io1-f68.google.com with SMTP id z23so5192298iog.11;
-        Thu, 05 Dec 2019 13:52:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+DItobioE2v0mcjvG7rtQWbeO2Gh9dZ5P9FoUFdI1r8=;
-        b=dPQL7iwe36qPjYatnqnyMK7+wQcq/+GaIbuumJSYp+Odzdr29W4dj+1GMvZFPEkLfM
-         oNmNdpZg2sTDEI/oKXIUKo/HKR99JM9odseNtG5FtKpfeB3k04kTZE8xpQ+wh5sgowmC
-         rTTgQqq+7LfhVB7gPQrOSEilZFv/rYaMluz46geLr/ut3X6TD0GA59ekD4poXUrDF2xK
-         JxQbqtw1xXN3GtclgVuveNgkX+MVDUwTgno7kM2POx4KSLcyFjR/0mqxaBQWPeNb4h3M
-         2KOlJM2pkKbOGvU7dIk430gVwcAPLnk6jaIEJ52jc5zAzoml8pZDPymIughrtVJHuG1F
-         1ddQ==
+        Thu, 5 Dec 2019 16:56:31 -0500
+Received: by mail-oi1-f193.google.com with SMTP id k196so4270106oib.2;
+        Thu, 05 Dec 2019 13:56:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+DItobioE2v0mcjvG7rtQWbeO2Gh9dZ5P9FoUFdI1r8=;
-        b=oj9G1pWGxjYV82LZliWlCqnvmBwzftC2KOB1aWDLCB1GxQdifuyLP0rWHFDsBOVyrB
-         SQz8fmog3gVS7IHJUpE20Tf5emQ3ATSQZLuv3q5+SzRzmqkgCYelF1xnu8IfMHJEvNPa
-         QoijkMXAwauICHEFCxACR5o+4cNGnQ6BQbK7w4z/mnML2xGjshtJ3TrIpt/QWZ1pjXXX
-         2ZdNkxsH84BuQ1QQWVpY0QPHI50TqPcwfT/kXyWmNRVOsIXFarJOzwVlvZXxQsFfZPWS
-         6shXDnBh2ghrOBiVVwVQKtnfnasdkK4rld3KaU3y8KRKVGzSf9XfpqWGj25+2jS5UGin
-         LQBw==
-X-Gm-Message-State: APjAAAULiwyC1jrA5VTYTd/bH8sbPVcsUnniPIlMsuYDuGy9bRFTTNUp
-        qn09lXmThBLuDhSGFaenaU5O2JzKTDyQRQ==
-X-Google-Smtp-Source: APXvYqy2RPf1EWJTE5thsigSgQnTSK9fZBeGJmChON0tx5U/ZvgnYBw2HIVw83BdYuHDLHTSkkrmbw==
-X-Received: by 2002:a02:ca42:: with SMTP id i2mr10497732jal.87.1575582768972;
-        Thu, 05 Dec 2019 13:52:48 -0800 (PST)
-Received: from localhost.localdomain (c-24-9-77-57.hsd1.co.comcast.net. [24.9.77.57])
-        by smtp.googlemail.com with ESMTPSA id n22sm740184iog.14.2019.12.05.13.52.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+4jN+XaXHwrYJI+muu2FvEZSPfGj9LIVkbxEwDHYMas=;
+        b=BD6GPwcMe0BLBUvudzCr/chkM/YfW+yRM2U+Jxya9K7lPf4ThUT7+8Umyz5e/ucNFA
+         MtC+iCzrzM1tsp/0DuoPaKbrxkmtSyWkRtxvpEqtozMVRDqiIf7uLYKgY9aIJSEeBjA2
+         XsB16DcxxiqhMDCYWJ6GB5cTyqT9KGFNkLNyBZcaxNEejmO8nv1k7DyO28rKxLJYLuzg
+         GQUJlAWkgbbrjy3+aEcJKFdWJiK2rGJTr/tewnTojwUwTrdrLobARKTGLVfOox6Aj2sM
+         vbIdjkj1xAodWF4/m9PpFmrjUHGSKtn3p8YuPJhXCQR4p/ZSHQFbrh2Yz2SMD+Waqenj
+         VK2w==
+X-Gm-Message-State: APjAAAWHxbrPG3yju3F/04X+EfBGmo5F0PNaVUVvgAqfKuDrFET35565
+        AfCottFn+PNyWHMigePqPg==
+X-Google-Smtp-Source: APXvYqwnyU36jjBCPs3lGB+ujZ9geaCsahZP028XU/TWYqFvFZtwklN3E7FkUeJyL4g2H8dTgny28g==
+X-Received: by 2002:aca:889:: with SMTP id 131mr9140897oii.3.1575582990359;
+        Thu, 05 Dec 2019 13:56:30 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o2sm4026571oih.19.2019.12.05.13.56.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 13:52:48 -0800 (PST)
-From:   Jim Cromie <jim.cromie@gmail.com>
-To:     jbaron@akamai.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux@rasmusvillemoes.dk, Jim Cromie <jim.cromie@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [PATCH 18/18] dyndbg-docs: normalize comments in examples
-Date:   Thu,  5 Dec 2019 14:51:51 -0700
-Message-Id: <20191205215151.421926-21-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191205215151.421926-1-jim.cromie@gmail.com>
-References: <20191205215151.421926-1-jim.cromie@gmail.com>
+        Thu, 05 Dec 2019 13:56:29 -0800 (PST)
+Date:   Thu, 5 Dec 2019 15:56:29 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] dt-bindings: net: ti: cpsw-switch: update to fix comments
+Message-ID: <20191205215629.GA32427@bogus>
+References: <20191127155526.22746-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127155526.22746-1-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-given that:
-  ~# cat batch-of-dyndbg-cmd-queries > /sys/kernel/debug/dyndbg/control
+On Wed, 27 Nov 2019 17:55:26 +0200, Grygorii Strashko wrote:
+> After original patch was merged there were additional comments/requests
+> provided by Rob Herring [1]. Mostly they are related to json-schema usage,
+> and this patch fixes them. Also SPDX-License-Identifier has been changed to
+> (GPL-2.0-only OR BSD-2-Clause) as requested.
+> 
+> [1] https://lkml.org/lkml/2019/11/21/875
+> Fixes: ef63fe72f698 ("dt-bindings: net: ti: add new cpsw switch driver bindings")
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+>  .../bindings/net/ti,cpsw-switch.yaml          | 20 +++++++------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+> 
 
-works, and since '#' is a legal comment character accepted
-by >control, the syntax is much more like bash than c++.
+Applied, thanks.
 
-So replace '//' with '#'.
-Someone might copy-paste these examples, lets make them more usable
-
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- .../admin-guide/dynamic-debug-howto.rst       | 51 ++++++++++---------
- 1 file changed, 27 insertions(+), 24 deletions(-)
-
-diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-index d91dbb52721d..33eed4713bb8 100644
---- a/Documentation/admin-guide/dynamic-debug-howto.rst
-+++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-@@ -189,11 +189,11 @@ format
-     characters (``"``) or single quote characters (``'``).
-     Examples::
- 
--	format svcrdma:         // many of the NFS/RDMA server pr_debugs
--	format readahead        // some pr_debugs in the readahead cache
--	format nfsd:\040SETATTR // one way to match a format with whitespace
--	format "nfsd: SETATTR"  // a neater way to match a format with whitespace
--	format 'nfsd: SETATTR'  // yet another way to match a format with whitespace
-+	format svcrdma:         # many of the NFS/RDMA server pr_debugs
-+	format readahead        # some pr_debugs in the readahead cache
-+	format nfsd:\040SETATTR # one way to match a format with whitespace
-+	format "nfsd: SETATTR"  # a neater way to match a format with whitespace
-+	format 'nfsd: SETATTR'  # yet another way to match a format with whitespace
- 
- line
-     The given line number or range of line numbers is compared
-@@ -204,10 +204,10 @@ line
-     the first line in the file, an empty last line number means the
-     last line number in the file.  Examples::
- 
--	line 1603           // exactly line 1603
--	line 1600-1605      // the six lines from line 1600 to line 1605
--	line -1605          // the 1605 lines from line 1 to line 1605
--	line 1600-          // all lines from line 1600 to the end of the file
-+	line 1603           # exactly line 1603
-+	line 1600-1605      # the six lines from line 1600 to line 1605
-+	line -1605          # the 1605 lines from line 1 to line 1605
-+	line 1600-          # all lines from line 1600 to the end of the file
- 
- Flags Specification::
- 
-@@ -345,44 +345,47 @@ Examples
- 
- ::
- 
--  // enable the message at line 1603 of file svcsock.c
-+  # enable the message at line 1603 of file svcsock.c
-   nullarbor:~ # echo -n 'file svcsock.c line 1603 +p' >
- 				<debugfs>/dyndbg/control
- 
--  // enable all the messages in file svcsock.c
-+  # enable all the messages in file svcsock.c
-   nullarbor:~ # echo -n 'file svcsock.c +p' >
- 				<debugfs>/dyndbg/control
- 
--  // enable all the messages in the NFS server module
-+  # enable all the messages in the NFS server module
-   nullarbor:~ # echo -n 'module nfsd +p' >
- 				<debugfs>/dyndbg/control
- 
--  // enable all 12 messages in the function svc_process()
-+  # enable all 12 messages in the function svc_process()
-   nullarbor:~ # echo -n 'func svc_process +p' >
- 				<debugfs>/dyndbg/control
- 
--  // disable all 12 messages in the function svc_process()
-+  # disable all 12 messages in the function svc_process()
-   nullarbor:~ # echo -n 'func svc_process -p' >
- 				<debugfs>/dyndbg/control
- 
--  // enable messages for NFS calls READ, READLINK, READDIR and READDIR+.
-+  # enable messages for NFS calls READ, READLINK, READDIR and READDIR+.
-   nullarbor:~ # echo -n 'format "nfsd: READ" +p' >
- 				<debugfs>/dyndbg/control
- 
--  // enable messages in files of which the paths include string "usb"
-+  # enable messages in files of which the paths include string "usb"
-   nullarbor:~ # echo -n '*usb* +p' > <debugfs>/dyndbg/control
- 
--  // enable all messages
-+  # enable all messages
-   nullarbor:~ # echo -n '+p' > <debugfs>/dyndbg/control
- 
--  // add module, function to all enabled messages
-+  # add module, function to all enabled messages
-   nullarbor:~ # echo -n '+mf' > <debugfs>/dyndbg/control
- 
--  // boot-args example, with newlines and comments for readability
--  Kernel command line: ...
--    // see whats going on in dyndbg=value processing
-+  # boot-args example, with newlines and comments for readability
-+  # Kernel command line: ...
-+
-+    # see whats going on in dyndbg=value processing
-     dyndbg.verbose=1
--    // enable pr_debugs in 2 builtins, #cmt is stripped
-+
-+    # enable pr_debugs in 2 builtins, #cmt is stripped
-     dyndbg="module params +p #cmt ; module sys +p"
--    // enable pr_debugs in 2 functions in a module loaded later
--    pc87360.dyndbg="func pc87360_init_device +p; func pc87360_find +p"
-+
-+    # enable pr_debugs in 2 functions in a module loaded later
-+    pc87360.dyndbg="func *_init_device +p; func *_find +p"
--- 
-2.23.0
-
+Rob
