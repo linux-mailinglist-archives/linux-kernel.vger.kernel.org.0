@@ -2,127 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A236111398E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70253113981
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbfLECGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:06:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728817AbfLECFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:05:49 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CF0622B48;
-        Thu,  5 Dec 2019 02:05:49 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1icgWa-000oCM-I7; Wed, 04 Dec 2019 21:05:48 -0500
-Message-Id: <20191205020548.446051018@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 04 Dec 2019 21:05:02 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Garrett <mjg59@google.com>
-Subject: [PATCH 3/3] tracing: Do not create directories if lockdown is in affect
-References: <20191205020459.023316620@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+        id S1728692AbfLECFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:05:05 -0500
+Received: from a27-21.smtp-out.us-west-2.amazonses.com ([54.240.27.21]:37964
+        "EHLO a27-21.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728419AbfLECFF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 4 Dec 2019 21:05:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575511504;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
+        bh=sN9HQYh6wIVagBIBwBcjFatf2XSTX81OaYD+RTbaeUs=;
+        b=MEnl6REMwAWupUgIrkziAx7V4m1WceQyy03mLLXcJEoMoR50iTDnyLBiL8e59lUl
+        Zsson7+DjZHBSJ55Vu9M0kBQUEwz83DWy7GS5/krT9Q/P+VTThw5BONLfHYMy726Q6a
+        1JeUJkYOp6u4dMbTD1I2an5I1M19nmvuS+Pr92Xw=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575511504;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:Feedback-ID;
+        bh=sN9HQYh6wIVagBIBwBcjFatf2XSTX81OaYD+RTbaeUs=;
+        b=JcbJwX2mEG/7jU6YyaxyUKsPhzpyKNyRe30VD9WnsWS+rIZr/qlba1z/MeqyP4Cn
+        pRyYHA1EFTQkb7Uw0T+q+/PeedT6MDbEldKOGvtf2vuyz3Qjo9wwNbtYc9IqLIE6p5t
+        uL2CUvEJ+zqK8Mkw82ss0QQgH1E0bt51s0nXrSJo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96AE5C447A5
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
+From:   Can Guo <cang@codeaurora.org>
+To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        cang@codeaurora.org
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v5 1/5] scsi: Adjust DBD setting in mode sense for caching mode page per LLD
+Date:   Thu, 5 Dec 2019 02:05:04 +0000
+Message-ID: <0101016ed3cdb63d-06b5ad68-0049-46c5-bb5d-a01866023be5-000000@us-west-2.amazonses.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1575511482-15115-1-git-send-email-cang@codeaurora.org>
+References: <1575511482-15115-1-git-send-email-cang@codeaurora.org>
+X-SES-Outgoing: 2019.12.05-54.240.27.21
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+UFS JEDEC standards require DBD field to be set to 1 in mode sense command.
+This patch allows LLD to define the setting of DBD if required.
 
-If lockdown is disabling tracing on boot up, it prevents the tracing files
-from even bering created. But when that happens, there's several places that
-will give a warning that the files were not created as that is usually a
-sign of a bug.
-
-Add in strategic locations where a check is made to see if tracing is
-disabled by lockdown, and if it is, do not go further, and fail silently
-(but print that tracing is disabled by lockdown, without doing a WARN_ON()).
-
-Cc: Matthew Garrett <mjg59@google.com>
-Fixes: 17911ff38aa5 ("tracing: Add locked_down checks to the open calls of files created for tracefs")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
 ---
- kernel/trace/ring_buffer.c |  6 ++++++
- kernel/trace/trace.c       | 17 +++++++++++++++++
- 2 files changed, 23 insertions(+)
+ drivers/scsi/scsi_lib.c    | 2 ++
+ include/scsi/scsi_device.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 66358d66c933..4bf050fcfe3b 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -11,6 +11,7 @@
- #include <linux/trace_seq.h>
- #include <linux/spinlock.h>
- #include <linux/irq_work.h>
-+#include <linux/security.h>
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
- #include <linux/kthread.h>	/* for self test */
-@@ -5068,6 +5069,11 @@ static __init int test_ringbuffer(void)
- 	int cpu;
- 	int ret = 0;
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 5447738..3812e90 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -2108,6 +2108,8 @@ void scsi_exit_queue(void)
  
-+	if (security_locked_down(LOCKDOWN_TRACEFS)) {
-+		pr_warning("Lockdown is enabled, skipping ring buffer tests\n");
-+		return 0;
-+	}
+ 	memset(data, 0, sizeof(*data));
+ 	memset(&cmd[0], 0, 12);
 +
- 	pr_info("Running ring buffer tests...\n");
++	dbd = sdev->set_dbd_for_ms ? 8 : dbd;
+ 	cmd[1] = dbd & 0x18;	/* allows DBD and LLBA bits */
+ 	cmd[2] = modepage;
  
- 	buffer = ring_buffer_alloc(RB_TEST_BUFFER_SIZE, RB_FL_OVERWRITE);
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 02a23a6e5e00..23459d53d576 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1888,6 +1888,12 @@ int __init register_tracer(struct tracer *type)
- 		return -1;
- 	}
- 
-+	if (security_locked_down(LOCKDOWN_TRACEFS)) {
-+		pr_warning("Can not register tracer %s due to lockdown\n",
-+			   type->name);
-+		return -EPERM;
-+	}
-+
- 	mutex_lock(&trace_types_lock);
- 
- 	tracing_selftest_running = true;
-@@ -8789,6 +8795,11 @@ struct dentry *tracing_init_dentry(void)
- {
- 	struct trace_array *tr = &global_trace;
- 
-+	if (security_locked_down(LOCKDOWN_TRACEFS)) {
-+		pr_warning("Tracing disabled due to lockdown\n");
-+		return ERR_PTR(-EPERM);
-+	}
-+
- 	/* The top level trace array uses  NULL as parent */
- 	if (tr->dir)
- 		return NULL;
-@@ -9231,6 +9242,12 @@ __init static int tracer_alloc_buffers(void)
- 	int ring_buf_size;
- 	int ret = -ENOMEM;
- 
-+
-+	if (security_locked_down(LOCKDOWN_TRACEFS)) {
-+		pr_warning("Tracing disabled due to lockdown\n");
-+		return -EPERM;
-+	}
-+
- 	/*
- 	 * Make sure we don't accidently add more trace options
- 	 * than we have bits for.
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index 3ed836d..f8312a3 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -172,6 +172,7 @@ struct scsi_device {
+ 				     * because we did a bus reset. */
+ 	unsigned use_10_for_rw:1; /* first try 10-byte read / write */
+ 	unsigned use_10_for_ms:1; /* first try 10-byte mode sense/select */
++	unsigned set_dbd_for_ms:1; /* Set "DBD" field in mode sense */
+ 	unsigned no_report_opcodes:1;	/* no REPORT SUPPORTED OPERATION CODES */
+ 	unsigned no_write_same:1;	/* no WRITE SAME command */
+ 	unsigned use_16_for_rw:1; /* Use read/write(16) over read/write(10) */
 -- 
-2.24.0
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
