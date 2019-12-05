@@ -2,154 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E815113DF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:28:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D56A113DF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:28:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfLEJ2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 04:28:02 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64707 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728735AbfLEJ14 (ORCPT
+        id S1729231AbfLEJ2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 04:28:46 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40138 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfLEJ2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 04:27:56 -0500
-X-UUID: 4397a3792bb24f289cc44234b3e2602b-20191205
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=uM1ke7og2J6EZV2kT8QK5FY4tjoIYTgjFwSyXoj2uGo=;
-        b=Qo6VPVEoRw1h3RBGC6Nn1jCHRNzGuklITxKfH4XTP33koBDQnt17gM6FgBPdoMH8+Hk9CCYhkZGtC7wwzF6yiqwzIiyzaQdwndErC4UJCoBXZK0NMsBk6iHXPkDM+DrIkSG4KkWIpZFDTL0+5TxLLZE6GDEhec/fAX+M/Sm85FA=;
-X-UUID: 4397a3792bb24f289cc44234b3e2602b-20191205
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 896328631; Thu, 05 Dec 2019 17:27:52 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 5 Dec 2019 17:27:35 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 5 Dec 2019 17:26:53 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
-        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v4 7/7] drm/mediatek: apply CMDQ control flow
-Date:   Thu, 5 Dec 2019 17:27:49 +0800
-Message-ID: <20191205092749.4021-8-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191205092749.4021-1-bibby.hsieh@mediatek.com>
-References: <20191205092749.4021-1-bibby.hsieh@mediatek.com>
+        Thu, 5 Dec 2019 04:28:45 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i15so1993937oto.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 01:28:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jvkGwJO9wpwmWzb9yFYF8g0IZb78yl4JdpgD9iqbzYo=;
+        b=On51OQFWdvIjn8Q3J7N+Tq3YSiDkfSP1sBhnb0QIuJfAxFuDJab1AxvkR2BocBCgDP
+         dHZqvUqVxKaUnabdCFbiFQBB1Lp1/nntWzS19cPHJj3zIt6epATT9q8EfZVqVvn1eGPT
+         ziWJu3cwExxojl3nIbXHdilO6R5IMkujgFB+h9/y+VHUXpeLjAdT4OPU25bQHA9cXKQp
+         iJ448kofN9nG9IzMawFJcHJCjxTdPyfRv1sqE6NDxL+proHg+TNDcD3K/iZetFEjVPs3
+         gJyKX/M99cccEcKlgPw5zt/VGH8fuHw9SzVXs/lgLePyYUdmY9Ar7DlJigfjzo46/G6H
+         9ZZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jvkGwJO9wpwmWzb9yFYF8g0IZb78yl4JdpgD9iqbzYo=;
+        b=Sd2mVkLtQyyVmv+TY3SjeqWiuAryGKFZeMmL15aLzKG5AftceDUZG+jUG0Rep8Q4Ky
+         iRhnivbXcozyeL504kgIsoD95JpH+sOb+st7vpVfV2eD97Lu/HdxDNWHYMM/Db/G32OB
+         0I/S+TSoL6aFzRNiqHSyP1ioRJg4zftZPzKP9Yh55t9x4GiDxhKWDfi7QrM9kbTtN60a
+         nt55lqGoCMdEXMLu8KHPkMjQpOMNe3RUI9/Ay/Fm62FFR25cPrswVUy1kxitm9chsUbO
+         MPH4oHDXOtl1Zx+TaubgMxRFOV4zZ8fYwc8+SmX+FQ/UE/CjOTtIvcgq49cTq/omZp9B
+         nRsg==
+X-Gm-Message-State: APjAAAVMSYe6TzqjP7SaAD1uIMtduoSPbijkKpe808NetanvYKX8g4ea
+        um+OMlym9fJL2wdoewdKj4yk+7qyFnrVb9RJNev4fYJh
+X-Google-Smtp-Source: APXvYqy+ubC6Uu8h10Qw5Xuv8D18unDenLazP4DmK9vEKViVQ+Vn1OUMHxSxWBMT+ffH7P1Gv0jQeXmObl9sJkKHjWk=
+X-Received: by 2002:a9d:7a46:: with SMTP id z6mr5944040otm.194.1575538124736;
+ Thu, 05 Dec 2019 01:28:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <20191204155912.17590-1-brgl@bgdev.pl> <20191204155912.17590-10-brgl@bgdev.pl>
+ <CAHp75VfbwwDyxoZU2vHo7qo8E0rQdT3czC+Wpe7cqr5uoJVUwQ@mail.gmail.com>
+In-Reply-To: <CAHp75VfbwwDyxoZU2vHo7qo8E0rQdT3czC+Wpe7cqr5uoJVUwQ@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 5 Dec 2019 10:28:33 +0100
+Message-ID: <CAMpxmJXhEK3Whh8vGfW-TewT7uRgipBOd3hhmSGHYkH=PD_Nfw@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] gpiolib: provide a dedicated function for
+ setting lineinfo
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VW5saWtlIG90aGVyIFNvQ3MsIE1UODE4MyBkb2VzIG5vdCBoYXZlICJzaGFkb3ciDQpyZWdpc3Rl
-cnMgZm9yIHBlcmZvcm1haW5nIGFuIGF0b21pYyB2aWRlbyBtb2RlDQpzZXQgb3IgcGFnZSBmbGlw
-IGF0IHZibGFuay92c3luYy4NCg0KVGhlIENNRFEgKENvbW1lbmQgUXVldWUpIGluIE1UODE4MyBp
-cyB1c2VkIHRvIGhlbHANCnVwZGF0ZSBhbGwgcmVsZXZhbnQgZGlzcGxheSBjb250cm9sbGVyIHJl
-Z2lzdGVycw0Kd2l0aCBjcml0aWNhbCB0aW1lIGxpbWF0aW9uLg0KDQpTaWduZWQtb2ZmLWJ5OiBZ
-VCBTaGVuIDx5dC5zaGVuQG1lZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IENLIEh1IDxjay5o
-dUBtZWRpYXRlay5jb20+DQpTaWduZWQtb2ZmLWJ5OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBl
-bmd1dHJvbml4LmRlPg0KU2lnbmVkLW9mZi1ieTogQmliYnkgSHNpZWggPGJpYmJ5LmhzaWVoQG1l
-ZGlhdGVrLmNvbT4NClNpZ25lZC1vZmYtYnk6IFlvbmdxaWFuZyBOaXUgPHlvbmdxaWFuZy5uaXVA
-bWVkaWF0ZWsuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0
-Yy5jIHwgNTYgKysrKysrKysrKysrKysrKysrKysrLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA0OSBp
-bnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kcm1fY3J0Yy5jDQppbmRleCA4YzYyMzFlZDZmNTUuLjQ5NmRmZmU5NjJhZiAxMDA2NDQNCi0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQpAQCAtMTIsNiArMTIsOCBAQA0KICNp
-bmNsdWRlIDxkcm0vZHJtX3BsYW5lX2hlbHBlci5oPg0KICNpbmNsdWRlIDxkcm0vZHJtX3Byb2Jl
-X2hlbHBlci5oPg0KICNpbmNsdWRlIDxkcm0vZHJtX3ZibGFuay5oPg0KKyNpbmNsdWRlIDxsaW51
-eC9vZl9hZGRyZXNzLmg+DQorI2luY2x1ZGUgPGxpbnV4L3NvYy9tZWRpYXRlay9tdGstY21kcS5o
-Pg0KIA0KICNpbmNsdWRlICJtdGtfZHJtX2Rydi5oIg0KICNpbmNsdWRlICJtdGtfZHJtX2NydGMu
-aCINCkBAIC00Myw2ICs0NSw5IEBAIHN0cnVjdCBtdGtfZHJtX2NydGMgew0KIAlib29sCQkJCXBl
-bmRpbmdfcGxhbmVzOw0KIAlib29sCQkJCXBlbmRpbmdfYXN5bmNfcGxhbmVzOw0KIA0KKwlzdHJ1
-Y3QgY21kcV9jbGllbnQJCSpjbWRxX2NsaWVudDsNCisJdTMyCQkJCWNtZHFfZXZlbnQ7DQorDQog
-CXZvaWQgX19pb21lbQkJCSpjb25maWdfcmVnczsNCiAJY29uc3Qgc3RydWN0IG10a19tbXN5c19y
-ZWdfZGF0YSAqbW1zeXNfcmVnX2RhdGE7DQogCXN0cnVjdCBtdGtfZGlzcF9tdXRleAkJKm11dGV4
-Ow0KQEAgLTIzNCw2ICsyMzksMTMgQEAgc3RydWN0IG10a19kZHBfY29tcCAqbXRrX2RybV9kZHBf
-Y29tcF9mb3JfcGxhbmUoc3RydWN0IGRybV9jcnRjICpjcnRjLA0KIAlyZXR1cm4gTlVMTDsNCiB9
-DQogDQorI2lmZGVmIENPTkZJR19NVEtfQ01EUQ0KK3N0YXRpYyB2b2lkIGRkcF9jbWRxX2NiKHN0
-cnVjdCBjbWRxX2NiX2RhdGEgZGF0YSkNCit7DQorCWNtZHFfcGt0X2Rlc3Ryb3koZGF0YS5kYXRh
-KTsNCit9DQorI2VuZGlmDQorDQogc3RhdGljIGludCBtdGtfY3J0Y19kZHBfaHdfaW5pdChzdHJ1
-Y3QgbXRrX2RybV9jcnRjICptdGtfY3J0YykNCiB7DQogCXN0cnVjdCBkcm1fY3J0YyAqY3J0YyA9
-ICZtdGtfY3J0Yy0+YmFzZTsNCkBAIC0zNzgsNyArMzkwLDggQEAgc3RhdGljIHZvaWQgbXRrX2Ny
-dGNfZGRwX2h3X2Zpbmkoc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2NydGMpDQogCX0NCiB9DQog
-DQotc3RhdGljIHZvaWQgbXRrX2NydGNfZGRwX2NvbmZpZyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMp
-DQorc3RhdGljIHZvaWQgbXRrX2NydGNfZGRwX2NvbmZpZyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMs
-DQorCQkJCXN0cnVjdCBjbWRxX3BrdCAqY21kcV9oYW5kbGUpDQogew0KIAlzdHJ1Y3QgbXRrX2Ry
-bV9jcnRjICptdGtfY3J0YyA9IHRvX210a19jcnRjKGNydGMpOw0KIAlzdHJ1Y3QgbXRrX2NydGNf
-c3RhdGUgKnN0YXRlID0gdG9fbXRrX2NydGNfc3RhdGUobXRrX2NydGMtPmJhc2Uuc3RhdGUpOw0K
-QEAgLTM5NCw3ICs0MDcsOCBAQCBzdGF0aWMgdm9pZCBtdGtfY3J0Y19kZHBfY29uZmlnKHN0cnVj
-dCBkcm1fY3J0YyAqY3J0YykNCiAJaWYgKHN0YXRlLT5wZW5kaW5nX2NvbmZpZykgew0KIAkJbXRr
-X2RkcF9jb21wX2NvbmZpZyhjb21wLCBzdGF0ZS0+cGVuZGluZ193aWR0aCwNCiAJCQkJICAgIHN0
-YXRlLT5wZW5kaW5nX2hlaWdodCwNCi0JCQkJICAgIHN0YXRlLT5wZW5kaW5nX3ZyZWZyZXNoLCAw
-LCBOVUxMKTsNCisJCQkJICAgIHN0YXRlLT5wZW5kaW5nX3ZyZWZyZXNoLCAwLA0KKwkJCQkgICAg
-Y21kcV9oYW5kbGUpOw0KIA0KIAkJc3RhdGUtPnBlbmRpbmdfY29uZmlnID0gZmFsc2U7DQogCX0N
-CkBAIC00MTQsNyArNDI4LDggQEAgc3RhdGljIHZvaWQgbXRrX2NydGNfZGRwX2NvbmZpZyhzdHJ1
-Y3QgZHJtX2NydGMgKmNydGMpDQogDQogCQkJaWYgKGNvbXApDQogCQkJCW10a19kZHBfY29tcF9s
-YXllcl9jb25maWcoY29tcCwgbG9jYWxfbGF5ZXIsDQotCQkJCQkJCSAgcGxhbmVfc3RhdGUsIE5V
-TEwpOw0KKwkJCQkJCQkgIHBsYW5lX3N0YXRlLA0KKwkJCQkJCQkgIGNtZHFfaGFuZGxlKTsNCiAJ
-CQlwbGFuZV9zdGF0ZS0+cGVuZGluZy5jb25maWcgPSBmYWxzZTsNCiAJCX0NCiAJCW10a19jcnRj
-LT5wZW5kaW5nX3BsYW5lcyA9IGZhbHNlOw0KQEAgLTQzNSw3ICs0NTAsOCBAQCBzdGF0aWMgdm9p
-ZCBtdGtfY3J0Y19kZHBfY29uZmlnKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykNCiANCiAJCQlpZiAo
-Y29tcCkNCiAJCQkJbXRrX2RkcF9jb21wX2xheWVyX2NvbmZpZyhjb21wLCBsb2NhbF9sYXllciwN
-Ci0JCQkJCQkJICBwbGFuZV9zdGF0ZSwgTlVMTCk7DQorCQkJCQkJCSAgcGxhbmVfc3RhdGUsDQor
-CQkJCQkJCSAgY21kcV9oYW5kbGUpOw0KIAkJCXBsYW5lX3N0YXRlLT5wZW5kaW5nLmFzeW5jX2Nv
-bmZpZyA9IGZhbHNlOw0KIAkJfQ0KIAkJbXRrX2NydGMtPnBlbmRpbmdfYXN5bmNfcGxhbmVzID0g
-ZmFsc2U7DQpAQCAtNDQ0LDYgKzQ2MCw3IEBAIHN0YXRpYyB2b2lkIG10a19jcnRjX2RkcF9jb25m
-aWcoc3RydWN0IGRybV9jcnRjICpjcnRjKQ0KIA0KIHN0YXRpYyB2b2lkIG10a19kcm1fY3J0Y19o
-d19jb25maWcoc3RydWN0IG10a19kcm1fY3J0YyAqbXRrX2NydGMpDQogew0KKwlzdHJ1Y3QgY21k
-cV9wa3QgKmNtZHFfaGFuZGxlOw0KIAlzdHJ1Y3QgZHJtX2NydGMgKmNydGMgPSAmbXRrX2NydGMt
-PmJhc2U7DQogCXN0cnVjdCBtdGtfZHJtX3ByaXZhdGUgKnByaXYgPSBjcnRjLT5kZXYtPmRldl9w
-cml2YXRlOw0KIAl1bnNpZ25lZCBpbnQgcGVuZGluZ19wbGFuZXMgPSAwLCBwZW5kaW5nX2FzeW5j
-X3BsYW5lcyA9IDA7DQpAQCAtNDcyLDkgKzQ4OSwxOCBAQCBzdGF0aWMgdm9pZCBtdGtfZHJtX2Ny
-dGNfaHdfY29uZmlnKHN0cnVjdCBtdGtfZHJtX2NydGMgKm10a19jcnRjKQ0KIA0KIAlpZiAocHJp
-di0+ZGF0YS0+c2hhZG93X3JlZ2lzdGVyKSB7DQogCQltdGtfZGlzcF9tdXRleF9hY3F1aXJlKG10
-a19jcnRjLT5tdXRleCk7DQotCQltdGtfY3J0Y19kZHBfY29uZmlnKGNydGMpOw0KKwkJbXRrX2Ny
-dGNfZGRwX2NvbmZpZyhjcnRjLCBOVUxMKTsNCiAJCW10a19kaXNwX211dGV4X3JlbGVhc2UobXRr
-X2NydGMtPm11dGV4KTsNCiAJfQ0KKyNpZmRlZiBDT05GSUdfTVRLX0NNRFENCisJaWYgKG10a19j
-cnRjLT5jbWRxX2NsaWVudCkgew0KKwkJY21kcV9oYW5kbGUgPSBjbWRxX3BrdF9jcmVhdGUobXRr
-X2NydGMtPmNtZHFfY2xpZW50LCBQQUdFX1NJWkUpOw0KKwkJY21kcV9wa3RfY2xlYXJfZXZlbnQo
-Y21kcV9oYW5kbGUsIG10a19jcnRjLT5jbWRxX2V2ZW50KTsNCisJCWNtZHFfcGt0X3dmZShjbWRx
-X2hhbmRsZSwgbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KKwkJbXRrX2NydGNfZGRwX2NvbmZpZyhj
-cnRjLCBjbWRxX2hhbmRsZSk7DQorCQljbWRxX3BrdF9mbHVzaF9hc3luYyhjbWRxX2hhbmRsZSwg
-ZGRwX2NtZHFfY2IsIGNtZHFfaGFuZGxlKTsNCisJfQ0KKyNlbmRpZg0KIAltdXRleF91bmxvY2so
-Jm10a19jcnRjLT5od19sb2NrKTsNCiB9DQogDQpAQCAtNjQzLDggKzY2OSw4IEBAIHZvaWQgbXRr
-X2NydGNfZGRwX2lycShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVjdCBtdGtfZGRwX2NvbXAg
-KmNvbXApDQogCXN0cnVjdCBtdGtfZHJtX2NydGMgKm10a19jcnRjID0gdG9fbXRrX2NydGMoY3J0
-Yyk7DQogCXN0cnVjdCBtdGtfZHJtX3ByaXZhdGUgKnByaXYgPSBjcnRjLT5kZXYtPmRldl9wcml2
-YXRlOw0KIA0KLQlpZiAoIXByaXYtPmRhdGEtPnNoYWRvd19yZWdpc3RlcikNCi0JCW10a19jcnRj
-X2RkcF9jb25maWcoY3J0Yyk7DQorCWlmICghcHJpdi0+ZGF0YS0+c2hhZG93X3JlZ2lzdGVyICYm
-ICFtdGtfY3J0Yy0+Y21kcV9jbGllbnQpDQorCQltdGtfY3J0Y19kZHBfY29uZmlnKGNydGMsIE5V
-TEwpOw0KIA0KIAltdGtfZHJtX2ZpbmlzaF9wYWdlX2ZsaXAobXRrX2NydGMpOw0KIH0NCkBAIC03
-ODcsNSArODEzLDIxIEBAIGludCBtdGtfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNl
-ICpkcm1fZGV2LA0KIAlwcml2LT5udW1fcGlwZXMrKzsNCiAJbXV0ZXhfaW5pdCgmbXRrX2NydGMt
-Pmh3X2xvY2spOw0KIA0KKyNpZmRlZiBDT05GSUdfTVRLX0NNRFENCisJbXRrX2NydGMtPmNtZHFf
-Y2xpZW50ID0NCisJCQljbWRxX21ib3hfY3JlYXRlKGRldiwgZHJtX2NydGNfaW5kZXgoJm10a19j
-cnRjLT5iYXNlKSwNCisJCQkJCSAyMDAwKTsNCisJaWYgKElTX0VSUihtdGtfY3J0Yy0+Y21kcV9j
-bGllbnQpKSB7DQorCQlkZXZfZGJnKGRldiwgIm10a19jcnRjICVkIGZhaWxlZCB0byBjcmVhdGUg
-bWFpbGJveCBjbGllbnQsIHdyaXRpbmcgcmVnaXN0ZXIgYnkgQ1BVIG5vd1xuIiwNCisJCQlkcm1f
-Y3J0Y19pbmRleCgmbXRrX2NydGMtPmJhc2UpKTsNCisJCW10a19jcnRjLT5jbWRxX2NsaWVudCA9
-IE5VTEw7DQorCX0NCisJcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgoZGV2LT5vZl9u
-b2RlLCAibWVkaWF0ZWssZ2NlLWV2ZW50cyIsDQorCQkJCQkgZHJtX2NydGNfaW5kZXgoJm10a19j
-cnRjLT5iYXNlKSwNCisJCQkJCSAmbXRrX2NydGMtPmNtZHFfZXZlbnQpOw0KKwlpZiAocmV0KQ0K
-KwkJZGV2X2RiZyhkZXYsICJtdGtfY3J0YyAlZCBmYWlsZWQgdG8gZ2V0IG1lZGlhdGVrLGdjZS1l
-dmVudHMgcHJvcGVydHlcbiIsDQorCQkJZHJtX2NydGNfaW5kZXgoJm10a19jcnRjLT5iYXNlKSk7
-DQorI2VuZGlmDQogCXJldHVybiAwOw0KIH0NCi0tIA0KMi4xOC4wDQo=
+=C5=9Br., 4 gru 2019 o 23:30 Andy Shevchenko <andy.shevchenko@gmail.com> na=
+pisa=C5=82(a):
+>
+> On Wed, Dec 4, 2019 at 6:02 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > We'll soon be filling out the gpioline_info structure in multiple
+> > places. Add a separate function that given a gpio_desc sets all relevan=
+t
+> > fields.
+>
+> > +       if (desc->name) {
+> > +               strncpy(info->name, desc->name, sizeof(info->name));
+> > +               info->name[sizeof(info->name) - 1] =3D '\0';
+> > +       } else {
+> > +               info->name[0] =3D '\0';
+> > +       }
+> > +
+> > +       if (desc->label) {
+> > +               strncpy(info->consumer, desc->label, sizeof(info->consu=
+mer));
+> > +               info->consumer[sizeof(info->consumer) - 1] =3D '\0';
+> > +       } else {
+> > +               info->consumer[0] =3D '\0';
+> > +       }
+>
+> I think we have to fix GCC warnings first and then do whatever this patch=
+ does.
+>
 
+What GCC warnings are you referring to exactly?
+
+Bart
+
+> --
+> With Best Regards,
+> Andy Shevchenko
