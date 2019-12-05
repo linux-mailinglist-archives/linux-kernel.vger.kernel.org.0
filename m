@@ -2,154 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0E5113F1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 11:13:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E710113F26
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 11:13:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfLEKNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 05:13:23 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37553 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729017AbfLEKNW (ORCPT
+        id S1729329AbfLEKN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 05:13:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32870 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729288AbfLEKN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 05:13:22 -0500
+        Thu, 5 Dec 2019 05:13:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575540801;
+        s=mimecast20190719; t=1575540805;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=xgc5JyO8RQCVOVYpUAINfycGDlO6jPFQ6bt7STsqhck=;
-        b=ZCVKRtxgmYQ2xM1LOdd2MzeUxgTjsXVnXHYjndBGVuJuhxvRx+HzvNu/8JR+NF4DVM6Tnl
-        DQUFdXlYeSu19dklXGGvtwhkzPYZvPjcRH1ufX6Uy0Udu2roC2q3abQY4VS4J7viFfzzb9
-        A1QAbyDqBIofzoKtDbLTdQOIiMs0YLs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-242-bmJW9P1bOVO_FGczjU_FsA-1; Thu, 05 Dec 2019 05:13:18 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4042C1856A9A;
-        Thu,  5 Dec 2019 10:13:17 +0000 (UTC)
-Received: from [10.36.117.254] (ovpn-117-254.ams2.redhat.com [10.36.117.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A75585C1B5;
-        Thu,  5 Dec 2019 10:13:12 +0000 (UTC)
-Subject: Re: [PATCH] virtio-balloon: fix managed page counts when migrating
- pages between zones
-To:     Igor Mammedov <imammedo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yumei Huang <yuhuang@redhat.com>, stable@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Jiang Liu <liuj97@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org
-References: <20191204204807.8025-1-david@redhat.com>
- <20191205110823.6479c3b2@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <940e5d03-dc20-da0b-17e0-6f11cf480ec6@redhat.com>
-Date:   Thu, 5 Dec 2019 11:13:11 +0100
+         in-reply-to:in-reply-to:references:references;
+        bh=dLjLck9Pm/snpxos2FeKTPLyXDOV4MbjcH5G/gXnZeo=;
+        b=UrjqAl0FdTx1DR8II4SItSOlGSaV0zYAIeT3P/cdj/b/s/gfViXXoV2xNJ0RLZmdjU6cu/
+        4KkfTSYf+GJf2ciZm6bDahr2A/wf9HqN4Mlt25JTIiiatJD4ES0ba0cBW180jJzJnulzny
+        hZ6p2Oxf2aBUKy28i3TAT+CG9DJG3MI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-257-4cu9M_FtMSWF1VZucub3GQ-1; Thu, 05 Dec 2019 05:13:23 -0500
+Received: by mail-wr1-f71.google.com with SMTP id 92so1321302wro.14
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 02:13:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K5MgG/FvOKZSKbQY6hPWHA5W+WMbjReooYZ5I81Xsns=;
+        b=d39jGr3vpU9Yua6SeN4XypsravbNc0M0QXB7hjQzlPWIEg/btWU2Vsw7lt5gTVfojd
+         is+1Xr+PmjrJVVI6qh4HLX5Jpn+YM8JeewkfXsvSr2FdRmHblstmQGGWO9RY0q0JV+3v
+         020UzZM7UInOXOHriYzFplPc1t22dEyhRwpB4uKWtavC4P5tdSfAXh8KE1QrfxSHfi8H
+         BO2vO23Wv/jm2lVJ64lZSKfvRRONvNoT4oPjlAcAwnx7pDpnhRW6G463OGmW4r8t37d3
+         EWTLjZBaAMEraSL6p5oet2ktpLEujgTAuPehsx1z6P12KEgY4a6ykdDalFuDwyJgQjTm
+         P3UA==
+X-Gm-Message-State: APjAAAWAN2PMMMLa2BO5u7P5kpGjsbmuqymGvFAxJiSENwSitz1Cyht5
+        Z33u5XJtlsJbA20ltvgsRhlUUbrjYydFiPQpVkgF/7Pvyx/Q2UXSosTjRzpc6qFmc8zoE+b7W3U
+        duUvS6A81TLWEYJRuUkmqnUza
+X-Received: by 2002:adf:ee88:: with SMTP id b8mr9668755wro.249.1575540802662;
+        Thu, 05 Dec 2019 02:13:22 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy1I4G0ttOXF/rUkkrOfkbFkbQZCtitZoVCfOg6HbWgiUhViQ9mKyA8AXZI2yuHHuDJRNzr4g==
+X-Received: by 2002:adf:ee88:: with SMTP id b8mr9668720wro.249.1575540802410;
+        Thu, 05 Dec 2019 02:13:22 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:541f:a977:4b60:6802? ([2001:b07:6468:f312:541f:a977:4b60:6802])
+        by smtp.gmail.com with ESMTPSA id b10sm11809139wrt.90.2019.12.05.02.13.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 02:13:21 -0800 (PST)
+Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
+To:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
+        aryabinin@virtuozzo.com, b.zolnierkie@samsung.com,
+        daniel.thompson@linaro.org, daniel.vetter@ffwll.ch,
+        dri-devel@lists.freedesktop.org, dvyukov@google.com,
+        ghalat@redhat.com, gleb@kernel.org, gwshan@linux.vnet.ibm.com,
+        hpa@zytor.com, jmorris@namei.org, kasan-dev@googlegroups.com,
+        kvm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        maarten.lankhorst@linux.intel.com, mingo@redhat.com,
+        mpe@ellerman.id.au, penguin-kernel@i-love.sakura.ne.jp,
+        ruscur@russell.cc, sam@ravnborg.org, serge@hallyn.com,
+        stewart@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
+        takedakn@nttdata.co.jp, tglx@linutronix.de, x86@kernel.org
+References: <0000000000003e640e0598e7abc3@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <41c082f5-5d22-d398-3bdd-3f4bf69d7ea3@redhat.com>
+Date:   Thu, 5 Dec 2019 11:13:17 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191205110823.6479c3b2@redhat.com>
+In-Reply-To: <0000000000003e640e0598e7abc3@google.com>
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-MC-Unique: bmJW9P1bOVO_FGczjU_FsA-1
+X-MC-Unique: 4cu9M_FtMSWF1VZucub3GQ-1
 X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.12.19 11:08, Igor Mammedov wrote:
-> On Wed,  4 Dec 2019 21:48:07 +0100
-> David Hildenbrand <david@redhat.com> wrote:
-> 
->> In case we have to migrate a ballon page to a newpage of another zone, the
->> managed page count of both zones is wrong. Paired with memory offlining
->> (which will adjust the managed page count), we can trigger kernel crashes
->> and all kinds of different symptoms.
->>
->> One way to reproduce:
->> 1. Start a QEMU guest with 4GB, no NUMA
->> 2. Hotplug a 1GB DIMM and only the memory to ZONE_NORMAL
->                             ^^^^
-> should it be "online" ?
+On 04/12/19 22:41, syzbot wrote:
+> syzbot has bisected this bug to:
+>=20
+> commit 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+> Author: Russell Currey <ruscur@russell.cc>
+> Date:=C2=A0=C2=A0 Mon Feb 8 04:08:20 2016 +0000
+>=20
+> =C2=A0=C2=A0=C2=A0 powerpc/powernv: Remove support for p5ioc2
+>=20
+> bisection log:=C2=A0 https://syzkaller.appspot.com/x/bisect.txt?x=3D127a0=
+42ae00000
+> start commit:=C2=A0=C2=A0 76bb8b05 Merge tag 'kbuild-v5.5' of
+> git://git.kernel.org/p..
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
+> final crash:=C2=A0=C2=A0=C2=A0 https://syzkaller.appspot.com/x/report.txt=
+?x=3D117a042ae00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D167a042ae0000=
+0
+> kernel config:=C2=A0 https://syzkaller.appspot.com/x/.config?x=3Ddd226651=
+cb0f364b
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D4455ca3b3291de891abc
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://syzkaller.appspot.com/x/=
+repro.syz?x=3D11181edae00000
+> C reproducer:=C2=A0=C2=A0 https://syzkaller.appspot.com/x/repro.c?x=3D105=
+cbb7ae00000
+>=20
+> Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
+> Fixes: 2de50e9674fc ("powerpc/powernv: Remove support for p5ioc2")
+>=20
+> For information about bisection process see:
+> https://goo.gl/tpsmEJ#bisection
+>=20
 
-Very right!
-[...]
+Why is everybody being CC'd, even if the bug has nothing to do with the
+person's subsystem?
 
->>  	mutex_unlock(&vb->balloon_lock);
->>  
->> +	/* fixup the managed page count (esp. of the zone) */
->> +	if (!virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM)) {
-> what happens when balloon has the feature?
-
-With that feature we don't touch the managed page counts at all (see the
-other 2 adjust_managed_page_count() callers in this file).
-
-> 
->> +		adjust_managed_page_count(page, 1);
->> +		adjust_managed_page_count(newpage, -1);
->> +	}
->> +
->>  	put_page(page); /* balloon reference */
->>  
->>  	return MIGRATEPAGE_SUCCESS;
-> 
-
-BTW, I posted a v2 just some minutes ago
-(https://lkml.kernel.org/r/20191205092420.6934-1-david@redhat.com)
-
-Thanks!
-
--- 
 Thanks,
 
-David / dhildenb
+Paolo
 
