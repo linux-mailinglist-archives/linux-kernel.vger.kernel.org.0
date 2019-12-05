@@ -2,100 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71A021139CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1821139BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfLECVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:21:20 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:40265 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728132AbfLECVU (ORCPT
+        id S1728638AbfLECTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:19:43 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33753 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728321AbfLECTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:21:20 -0500
-Received: by mail-pj1-f67.google.com with SMTP id s35so615846pjb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 18:21:20 -0800 (PST)
+        Wed, 4 Dec 2019 21:19:42 -0500
+Received: by mail-yw1-f66.google.com with SMTP id 192so639655ywy.0;
+        Wed, 04 Dec 2019 18:19:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JumaJpJPhmNfSvvvkz61jNW5BTSsDPkTym99dI21cw8=;
-        b=NELtG8K2dfx3apc8E7BMQrUJfvTeRmPJjo/179dWN+u9bqC92MWHpqsHkTkdG9+tHF
-         PkWc/QCeImujLtQRnf/3RUcmQEnVe0z/zZelOft28FusJuB78yRG3LRkTYee+U4vXvo0
-         NOuCfiPqqDj241vOAHnEz9QUHIUElAqGuk4tPIXgcXhGQsbAcwCMKuyXfO4G9iUzkhvy
-         UTtHcjNRw6czLtFkee5AzGgRcgr0EqkDnDvkpAdDOAeVjUChbuY7qAN8a2sBD91Sf5QU
-         ZesxB54dEpcVcp16enpBExvDge265f35e/qjqs09wM/u8CM3orqeE+B/i4ZhyxRsnyhH
-         CvfQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W0wipGAlhtFBkJDMjyVi53Belp9dZbF8qy8E6IHBmAc=;
+        b=kUT4K4VJ3i15DzpOkpq7fK7DgnWrHPwjdAGZyO4qBy5SBblwpIll3K/BimeM7GBf6S
+         h5JNbWRPQXOoa69Dgpc/c28ZfdA2zZcMDn0ptcRrinbBAdxWFeqjSD39G8OEV6MxyfPo
+         PhBieSaCbbvXKPLJ6qAQIXFDisK10uuc/bcHHVArpwGNERDLN3/DEsxnEDPPk6bkLhK5
+         4elI7/lcLdf3xETQ+vSuio0Mj+v6HasE/Gc7/cO6p7ELWxy3WnuQltkRDKEdOnv9sY+q
+         0wznrP/qzbKz5EgEONJ1NCajYAtvI2dS0XRUVEfYWxtywhIHwozZSWqL/NjgHP6dkISy
+         hyPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JumaJpJPhmNfSvvvkz61jNW5BTSsDPkTym99dI21cw8=;
-        b=NORq4EE+KjtJE3N8fFZKbUr6Bx3UQf1+Iw3z1KqQWbXdLAqAWxVvhxeX7K4dGggQKR
-         Xw4JW+tx6RLTj82a4epXKNVgbDNUpvuTrBPsT4dn1HEOTdzcaWE/0xiMhxBnSaQ/ym/Z
-         uqlmuSUXHWrYk4esyCBYyoES4caCap3V6EnhXKKzyXwUsU2jtoTyMUnlmX8GGK5RHdwn
-         IXy0XsmmPlXliRXgpctI+Pt5zMqW5kzOYHW8ktg8RIdDPIcpJkmoQZ0onVAPH6RAtXo8
-         Nm/58GmwGlFrVkRphMrDY8D/VNMEvPq0A8qXvmeGl65lcNJ3QY/HkhiuLwVZ4Os9Dtc2
-         +mTQ==
-X-Gm-Message-State: APjAAAUNV2tVkNLzekYIziiGE5Odc4fTL5suegtVXUFHCQchZN1Ho++2
-        K4tZzIGq9jyVd2cFM2Jqtn+8vuLF
-X-Google-Smtp-Source: APXvYqwb6wYTzOOyWbUQwbCr44Sh1Uouiz0Kb5BZ0Mc3ApMcrfMMebihBJVtLLPa9b3XOn+09sXF8w==
-X-Received: by 2002:a17:90a:6484:: with SMTP id h4mr4335560pjj.84.1575512479426;
-        Wed, 04 Dec 2019 18:21:19 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id y38sm9041215pgk.33.2019.12.04.18.21.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Dec 2019 18:21:19 -0800 (PST)
-Date:   Wed, 4 Dec 2019 18:17:57 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Michael Walle <michael@walle.cc>
-Cc:     alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Timur Tabi <timur@kernel.org>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W0wipGAlhtFBkJDMjyVi53Belp9dZbF8qy8E6IHBmAc=;
+        b=X+eSXH8jWdof+vZ4ygDkRGJyoAy1lvG7DhDjAH7z+6wxU4+7jea+Ou9SuYdbMKp5fD
+         Ebtgi48ElFVdRqLhuBrz9QUgLIdLL2IfmOIo21MyG39Uwg0pbA4zU8GP2AUrI7vYKZwS
+         w5lN0F4ncQtaN/0/79i11oYOIhcyCEHiik562jlxUw5/JVouYJWmA3KPqhxv8CkQUAcX
+         5n0tbc1Cbqoy1km3o81rUssjNRoYSO7MokcldnIT0HB7dp+KHjeuOe+fuoPqetHLXhG0
+         jfFlPlybECBgakp5Gn+nQ5oe+9RsnNn16ZAbudlpfridtQsdDKGE++lD8c6NImv0Tf9Z
+         No8g==
+X-Gm-Message-State: APjAAAUci4Hc+qVuenoJ/jg14R+pNPuBoUL/D7I/BKd3wAwduDHoIJRm
+        8dUqH66n08GoDhAigDd7IjA=
+X-Google-Smtp-Source: APXvYqwmA0tNypyxHFhWWBSeQmaZKBrbjW0ry33aUyY5ro4GqrUJGZqXbgcg/CTdfAPjgNHekXLwLQ==
+X-Received: by 2002:a0d:d5d5:: with SMTP id x204mr3846561ywd.283.1575512380930;
+        Wed, 04 Dec 2019 18:19:40 -0800 (PST)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id l6sm4188449ywa.39.2019.12.04.18.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 18:19:40 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH] ASoC: fsl_sai: add IRQF_SHARED
-Message-ID: <20191205021756.GA1122@Asurada-Nvidia.nvidia.com>
-References: <20191128223802.18228-1-michael@walle.cc>
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] soc: imx: Enable additional functionality of i.MX8M
+Date:   Wed,  4 Dec 2019 20:19:16 -0600
+Message-Id: <20191205021924.25188-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191128223802.18228-1-michael@walle.cc>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 11:38:02PM +0100, Michael Walle wrote:
-> The LS1028A SoC uses the same interrupt line for adjacent SAIs. Use
-> IRQF_SHARED to be able to use these SAIs simultaneously.
-> 
-> Signed-off-by: Michael Walle <michael@walle.cc>
+The GPCv2 controller on the i.MX8M Mini is compatible with the driver
+used for the i.MX8MQ except for the register locations and names.
+The GPCv2 controller is used to enable additional periperals currently
+unavailable on the i.MX8M Mini.  In order to make them function,
+the GPCv2 needs to be adapted so the drivers can associate their
+power domain to the GPCv2 to enable them.
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+This series makes one include file slightly more generic,
+adds the iMX8M Mini entries, updates the bindings, adds them
+to the device tree, then associates the new power domain to
+both the OTG and PCIe controllers.
 
-Thanks
+Adam Ford (7):
+  soc: imx: gpcv2: Rename imx8mq-power.h to imx8m-power.h
+  soc: imx: gpcv2: Update imx8m-power.h to include iMX8M Mini
+  soc: imx: gpcv2: add support for i.MX8M Mini SoC
+  dt-bindings: imx-gpcv2: Update bindings to support i.MX8M Mini
+  arm64: dts: imx8mm: add GPC power domains
+  ARM64: dts: imx8mm: Fix clocks and power domain for USB OTG
+  arm64: dts: imx8mm: Add PCIe support
 
-> ---
->  sound/soc/fsl/fsl_sai.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-> index b517e4bc1b87..8c3ea7300972 100644
-> --- a/sound/soc/fsl/fsl_sai.c
-> +++ b/sound/soc/fsl/fsl_sai.c
-> @@ -958,7 +958,8 @@ static int fsl_sai_probe(struct platform_device *pdev)
->  	if (irq < 0)
->  		return irq;
->  
-> -	ret = devm_request_irq(&pdev->dev, irq, fsl_sai_isr, 0, np->name, sai);
-> +	ret = devm_request_irq(&pdev->dev, irq, fsl_sai_isr, IRQF_SHARED,
-> +			       np->name, sai);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to claim irq %u\n", irq);
->  		return ret;
-> -- 
-> 2.20.1
-> 
+ .../bindings/power/fsl,imx-gpcv2.txt          |   6 +-
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi     | 129 ++++++++-
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi     |   2 +-
+ drivers/soc/imx/gpcv2.c                       | 246 +++++++++++++++++-
+ .../power/{imx8mq-power.h => imx8m-power.h}   |  14 +
+ 5 files changed, 389 insertions(+), 8 deletions(-)
+ rename include/dt-bindings/power/{imx8mq-power.h => imx8m-power.h} (57%)
+
+-- 
+2.20.1
+
