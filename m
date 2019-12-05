@@ -2,94 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB857113B10
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B89A113B1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 06:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbfLEFNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 00:13:45 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:52337 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725822AbfLEFNp (ORCPT
+        id S1726032AbfLEFQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 00:16:12 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:42553 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfLEFQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 00:13:45 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 171566DFB;
-        Thu,  5 Dec 2019 00:13:44 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 05 Dec 2019 00:13:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=HmY629d09ljX49+gWihMYnlLvvddw8y
-        blf8rUOR5/wE=; b=XkSFWnrsqIZKGLVdudWqOUsdB5YtNlYfu/WzJNmOnyi7Za9
-        38ORxDINALsurrmH9koTMeFOuAMZbEdt3jb4NKuSHz1kx+lTQ8xaqEa4ARhDGT4D
-        KGfLIlPrgABX0jjuH+qOBWgYSBYhf6XN2TcuNhLmzc4lnObgmWWgUqILS/RSwONj
-        0dok7lVopN++sUQMDj6CcDhMfaGf0RO0rzOcHeFJbECCjlfWyZ7zpQLUflU2t4m3
-        O7cOUNTC2iCsFkjBQw5iJqeVUyG/bvlRsBcI+ziZDSYuCJO8AJnT2xLVipUkEmKk
-        5GsqpC7va97/ZkAtZQnZUb+3UJAwaK2HhNrJftA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=HmY629
-        d09ljX49+gWihMYnlLvvddw8yblf8rUOR5/wE=; b=mFtuhQSUTGXR6RwrC/ZSqy
-        DHtQ5sfJ72Gp+Fl14rqpI8A7opsv9ESRgx9plv2EalC4IRNebJZFDPAbVXGAep4o
-        JgsZPzXUfI67INU1Q5h0MO2IeaIdp6pYZXaSdxxkzCukfnYYRgBMl9Kp3NEkQDy3
-        +yrfq21UcepbK7ueIDsO974jcDYOwBURh8RF6li/Ko2371GVJkEpfgnv1Y5Bpt6U
-        CyfG3o8gCDE3M6qGOD9nLeUR4TIAqzun6+KU/Vaonbonc6Z35lZTYQnrWIFEeK0p
-        ukSchr2VVYPg9URotj309OcD4EQh8jjd10uwGTVxU9jR+ABqlVslmU+WCOHbl8aw
-        ==
-X-ME-Sender: <xms:BpLoXT9uaXVa-DTA9FwW7wiy_GJt_465bqEkFIhziNC9gaP8vGHyUQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrudektddgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:BpLoXZ_D9ZZbPr1lny9cZzaTeUS9m8tXYUZA2MppI0yZIXZnp_X2Xg>
-    <xmx:BpLoXf_QPUo2GeX0u2WvSXm8b7gNwGJfzBKKQ1G_f6wAJAtDi7mWuw>
-    <xmx:BpLoXXE1ahEGOo08cwQHVS1JRmlO5DhCD36h38YcnnRuHi-6wckWRg>
-    <xmx:CJLoXbQbKnADxn_5wl7Byr_5lJFU-G_lsmG9VHhHT4bPdTbtQ1IPNg>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id AE0DEE00A2; Thu,  5 Dec 2019 00:13:42 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-612-g13027cc-fmstable-20191203v1
-Mime-Version: 1.0
-Message-Id: <cd76d709-683b-44c0-b29f-d31c9dddc75e@www.fastmail.com>
-In-Reply-To: <20191203134026.GI18165@minyard.net>
-References: <cover.5630f63168ad5cddf02e9796106f8e086c196907.1575376664.git-series.andrew@aj.id.au>
- <84315a29b453068373c096c03433e3a326731988.1575376664.git-series.andrew@aj.id.au>
- <20191203134026.GI18165@minyard.net>
-Date:   Thu, 05 Dec 2019 15:45:17 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Corey Minyard" <minyard@acm.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        "Rob Herring" <robh+dt@kernel.org>, mark.rutland@arm.com,
-        "Joel Stanley" <joel@jms.id.au>, "Arnd Bergmann" <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Haiyue Wang" <haiyue.wang@linux.intel.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_2/3]_ipmi:_kcs:_Finish_configuring_ASPEED_KCS_devic?=
- =?UTF-8?Q?e_before_enable?=
-Content-Type: text/plain
+        Thu, 5 Dec 2019 00:16:11 -0500
+Received: by mail-pj1-f67.google.com with SMTP id o11so780201pjp.9;
+        Wed, 04 Dec 2019 21:16:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ww1S/rh1zvVSbDB8LGNfJmI8PQTr/arnIocKw0gWGl8=;
+        b=Y04NfUREjbe3zdo7X89e/wfYGWmcqr39cyvuNQ16XNypEpakmwIkNsHRhcBlF2g8ec
+         +mVDHwjug7tCWWkldbb1wtrYNwIKTiYH8yftPw1wcsTrZFpqV3JRjJjCteCv7DmOsjqM
+         eomg07ry4ngm+jPJ8logCCgmukHoctYXc9I21Koxz1Lg8VN5z0Db16YXMuXIWxrqypoS
+         kSwihR/jeB1aP4sXM24i6mhvdsKfYWTg/BiH11iK7w6RPp8eEBdIEB6doFP/2DVhdYDd
+         juAd1HR8IUaBgcgEOL5XZzgbLUpk0JB3UkZm+LrfOpG3rphUGyGcOaIVikeXOV0YM6ov
+         g0Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ww1S/rh1zvVSbDB8LGNfJmI8PQTr/arnIocKw0gWGl8=;
+        b=eoSp4X+WnZ2kYOl0MGnoyPdA5MCDMzJlFVtMYMFwXvb4hIKZxaLk724CFi30U2Qt68
+         LwVrEGkGIcCfKoDNIpimDw+twpemFbDKWG4qeM9wqye3jASbArLYJACkOC1uM8Wo3bTz
+         tcTOJzCjm++9BlYVjyPED030o76VLpP8+5etS16ZS3v1yrI8/RU+u4hLj3HQODYrh9n7
+         RJVyDffr0uXsQhQ5e8aP2fmVvxonrTmJ7Xbo1T2se2201t4yFxaRczvxzh/1T3zpD8P6
+         0Z5No4Kmp+vnNM/r84nU64qGKcVivyNpt3WCjCcOohI9Sg2qpBhGhfd7IzzZIru+fzqX
+         PZ/Q==
+X-Gm-Message-State: APjAAAVszZHoEDxjltscD0nkKt8SFH+r5oEuEwiNBjYeVkjjOMmJUfOf
+        fSUAH7/fPJ3ob6M0r16molU=
+X-Google-Smtp-Source: APXvYqyYK+vX3i6kTCy8SGVG3+K3wCBVDFA5GE7Lqx89mGyYYlX6hB4yuOs5p+fVjtX3k2uqJe6y6g==
+X-Received: by 2002:a17:90a:b906:: with SMTP id p6mr270229pjr.81.1575522971353;
+        Wed, 04 Dec 2019 21:16:11 -0800 (PST)
+Received: from Slackware.localdomain ([103.231.91.38])
+        by smtp.gmail.com with ESMTPSA id c2sm9860569pfn.55.2019.12.04.21.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 21:16:10 -0800 (PST)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        rdunlap@infradead.org
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH V2] :scripts:kernel_modules_info.sh Removed unnecessary headers information 
+Date:   Thu,  5 Dec 2019 10:45:50 +0530
+Message-Id: <20191205051550.22927-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Strips off the unnecessary details from the header information as Randy
+pointed out.
 
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ scripts/kernel_modules_info.sh | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Wed, 4 Dec 2019, at 00:10, Corey Minyard wrote:
-> On Tue, Dec 03, 2019 at 11:08:24PM +1030, Andrew Jeffery wrote:
-> > The currently interrupts are configured after the channel was enabled.
-> 
-> How about:
-> 
-> The interrupts were configured after the channel was enabled, configure
-> them before so they will work.
+diff --git a/scripts/kernel_modules_info.sh b/scripts/kernel_modules_info.sh
+index b74203322157..c1fe7fae9228 100755
+--- a/scripts/kernel_modules_info.sh
++++ b/scripts/kernel_modules_info.sh
+@@ -2,8 +2,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ #===============================================================================
+ #
+-#          FILE: kernel_modules_info.sh
+-# 
+ #         USAGE: ./kernel_modules_info.sh 
+ # 
+ #   DESCRIPTION:  Running kernel modules information.
+-- 
+2.24.0
 
-Hah, yes, that commit message did get a bit mangled. I'll update it.
-
-Thanks,
-
-Andrew
