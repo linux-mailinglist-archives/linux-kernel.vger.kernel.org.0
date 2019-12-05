@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9671C1139C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59CA21139C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbfLECTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:19:55 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46896 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbfLECTu (ORCPT
+        id S1728928AbfLECT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:19:56 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:37023 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728852AbfLECTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:19:50 -0500
-Received: by mail-yb1-f194.google.com with SMTP id v15so850616ybp.13;
-        Wed, 04 Dec 2019 18:19:49 -0800 (PST)
+        Wed, 4 Dec 2019 21:19:52 -0500
+Received: by mail-yb1-f196.google.com with SMTP id x139so881203ybe.4;
+        Wed, 04 Dec 2019 18:19:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oWN4pUn9h8kmkDUvNkkmAbykuZ7BWRxuHrNipagh7j4=;
-        b=E7lbrt5LKKXPAltqBhYh1f/OR+N2z7JaAe5xBm+yMPOQ0AW79g2OoajbfGorwR8j+w
-         4+culxp+iCxTHyaHTrl0mPe72262t9aHSUdmIWbVQAyflEicAHLSc/KnkJ1uuO27G5sY
-         /doMboiyQ2kccwqntyH12UTgFARKPBfi2XPzQ1NuAsECaYij/cDgGwPdpSI3wCosoWJL
-         vAmOCf60G4fkyjk/b2fzFKHjQ+qQoocKkP23sTLSrVh5nJ4aA/2/qZ8IpVt/pjke3F+5
-         6djv+vG+ymwh+0g0cYBcriE9AK5gpdzNaBEZU6Tp2RUHumtuirmrG6xlMxEeQkVQtNxs
-         NHhA==
+        bh=o8rdL81CA1/QSUatk5QZuPPaOIlwBprO0GQX2EhaRjM=;
+        b=W1C+dYywW8EEg+KrCR9sD3uflofMaz0LkxIaYVdl/6TGvx8BVp2HSq7vgphATgN2BI
+         6XVVI9gBWLX8BXhgqJpIOEOnWlbOzToicgYJaS/tBb+dIxQ1BjfPhhjR5gxnTz7Uat/o
+         olvMTEB5EwL45/extiYTkrbyuMactGPuACcJrxIWL4klqMk8XGZCnS192UxkZBdXT3Y0
+         H7PaFjvvmjAs3+JJEbpefhzNYgO7SI7WRWgJa/jFqa9t7praVOIsTiPhgAQzyQGxX/im
+         3p2rBbJFcte9jSQblW7252rhLust313ljInBl79Yz6S+TBhx6Z6itNRymzOs0EbLzHvI
+         OXcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oWN4pUn9h8kmkDUvNkkmAbykuZ7BWRxuHrNipagh7j4=;
-        b=RrDNb09Hx0Sis2qjRpXlgvpOy5IRr+9SvDSUPf+xOq1svrSumtpg8dtDvjfw6Ai88W
-         JlVmnoQtlPZ84LFsgwVjoqWfHsuw7f8ersIXULXIXRazkoRhKBiBCdHUNiQFjjs+FSq1
-         pcdTHFwPfW9RIrCvP2iDZF+UMxpkpQ/zxZ+taQdj/mR2zNZabQuyWOkt9HboTXLUjcJ8
-         FioXYN2/9UsJXslyJOyckcCEL2T7sqBqoNcRi+szTeutxrXNWEQ8uzQho/O2SGjEq2cg
-         Z18BG7eHwGuGQm2Bu9ym1VvU9i0LIU4VuE5vIoZlGy1h6WtoLkmcV8/knlr+NrDFbBKf
-         q5fA==
-X-Gm-Message-State: APjAAAWR/9qqmD0iLSEk8UUtFX4VFirlfJa/xPzwwtETc3L87yrEHKmX
-        xKURQ8O0o94qaOb8F59cSoA=
-X-Google-Smtp-Source: APXvYqwa9Nm6yYJ/6HOp8YPmf+4cLZwckeWQu0Kb3li5ZZGizpS8hlXIBirWYlS4HI7DdEYEOXg4bw==
-X-Received: by 2002:a25:4144:: with SMTP id o65mr4812334yba.11.1575512388942;
-        Wed, 04 Dec 2019 18:19:48 -0800 (PST)
+        bh=o8rdL81CA1/QSUatk5QZuPPaOIlwBprO0GQX2EhaRjM=;
+        b=JFipOzyFQelxvW3Nks6wpp6Zc0LR+ePibSiDPSwXXUFqsr8QJiMBIU5otRk4I3Z3xN
+         nJcvpjsRbXdORFJpF7xaBDDNnx8jOlGumRPNO7OmVakV9M7lYqxArvNz/JWGg7l76VXH
+         ye1Pte0hssgdMsgCsAbkgFxNuLu+u+q0M76jAhWdZ/GVqUkCp7mKh6QqfCXl0bczvzV1
+         Pw0r6FNQf5IeJHO28iCnJMZ2aotjQaCOfdlCjbK/eFsHb4/SKVqzWw0QD7JqDv3PPkEt
+         GQs6vUwe7dSuPU4qoL1IhZcCiECg3QbQ9n1npcmc2azNaW4KZA7IxOkDx8VdRUZ+qzfk
+         cUBA==
+X-Gm-Message-State: APjAAAXnxOr5EQczaLTXQak9Yapdln8UozytScX8owjnZECL1cOvEOO7
+        N5QAxT/XJ39TFsYpzQhoBYc=
+X-Google-Smtp-Source: APXvYqwAD9YGInc+qgp3awEl6WpVlrReB1uKRLWOTxVKUwY1TL0YVhztXM3OkuWK1013hQExDq0WRQ==
+X-Received: by 2002:a25:d5:: with SMTP id 204mr4502582yba.165.1575512390970;
+        Wed, 04 Dec 2019 18:19:50 -0800 (PST)
 Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id l6sm4188449ywa.39.2019.12.04.18.19.47
+        by smtp.gmail.com with ESMTPSA id l6sm4188449ywa.39.2019.12.04.18.19.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 18:19:48 -0800 (PST)
+        Wed, 04 Dec 2019 18:19:50 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
@@ -55,9 +55,9 @@ Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] dt-bindings: imx-gpcv2: Update bindings to support i.MX8M Mini
-Date:   Wed,  4 Dec 2019 20:19:20 -0600
-Message-Id: <20191205021924.25188-5-aford173@gmail.com>
+Subject: [PATCH 5/7] arm64: dts: imx8mm: add GPC power domains
+Date:   Wed,  4 Dec 2019 20:19:21 -0600
+Message-Id: <20191205021924.25188-6-aford173@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191205021924.25188-1-aford173@gmail.com>
 References: <20191205021924.25188-1-aford173@gmail.com>
@@ -68,41 +68,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The with the recent additions to the driver, the GPCv2 driver can
-support the i.MX8M Mini, but it needs updated 'compatible' entry
-to use the proper table.
+There is a power domain controller on the i.XM8M Mini used for
+handling interrupts and controlling certain peripherals like
+USB OTG and PCIe, which are currently unavailable.
 
-This patch adds the i.MX8MM to the compatible list of devices.
+This patch enables support the controller itself to the help
+facilitate enabling additional peripherals.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 82 ++++++++++++++++++++++-
+ 1 file changed, 81 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt b/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt
-index 7c7e972aaa42..576a79097a4c 100644
---- a/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt
-+++ b/Documentation/devicetree/bindings/power/fsl,imx-gpcv2.txt
-@@ -9,6 +9,7 @@ Required properties:
- - compatible: Should be one of:
- 	- "fsl,imx7d-gpc"
- 	- "fsl,imx8mq-gpc"
-+	- "fsl,imx8mm-gpc"
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index 23c8fad7932b..d05c5b617a4d 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -4,6 +4,7 @@
+  */
  
- - reg: should be register base and length as documented in the
-   datasheet
-@@ -24,8 +25,9 @@ which, in turn, is expected to contain the following:
- Required properties:
+ #include <dt-bindings/clock/imx8mm-clock.h>
++#include <dt-bindings/power/imx8m-power.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -13,7 +14,7 @@
  
- - reg: Power domain index. Valid values are defined in
--  include/dt-bindings/power/imx7-power.h for fsl,imx7d-gpc and
--  include/dt-bindings/power/imx8m-power.h for fsl,imx8mq-gpc
-+  include/dt-bindings/power/imx7-power.h for fsl,imx7d-gpc,
-+  include/dt-bindings/power/imx8m-power.h for fsl,imx8mq-gpc, and
-+  include/dt-bindings/power/imx8m-power.h for fsl,imx8mm-gpc
+ / {
+ 	compatible = "fsl,imx8mm";
+-	interrupt-parent = <&gic>;
++	interrupt-parent = <&gpc>;
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
- - #power-domain-cells: Should be 0
+@@ -495,6 +496,85 @@
+ 				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+ 				#reset-cells = <1>;
+ 			};
++
++			gpc: gpc@303a0000 {
++				compatible = "fsl,imx8mm-gpc";
++				reg = <0x303a0000 0x10000>;
++				interrupt-parent = <&gic>;
++				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-controller;
++				#interrupt-cells = <3>;
++
++				pgc {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					pgc_mipi: power-domain@0 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_MIPI>;
++					};
++
++					pgc_pcie: power-domain@1 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_PCIE>;
++					};
++
++					pgc_otg1: power-domain@2 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_USB_OTG1>;
++					};
++
++					pgc_otg2: power-domain@3 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_USB_OTG2>;
++					};
++
++					pgc_ddr1: power-domain@4 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_DDR1>;
++					};
++
++					pgc_gpu2d: power-domain@5 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_GPU2D>;
++					};
++
++					pgc_gpu: power-domain@6 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_GPU>;
++					};
++
++					pgc_vpu: power-domain@7 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_VPU>;
++					};
++
++					pgc_gpu3d: power-domain@8 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_GPU3D>;
++					};
++
++					pgc_disp: power-domain@9 {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_DOMAIN_DISP>;
++					};
++
++					pgc_vpu_g1: power-domain@a {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_VPU_G1>;
++					};
++
++					pgc_vpu_g2: power-domain@b {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_VPU_G2>;
++					};
++
++					pgc_vpu_h1: power-domain@c {
++						#power-domain-cells = <0>;
++						reg = <IMX8MM_POWER_VPU_H1>;
++					};
++				};
++			};
+ 		};
  
+ 		aips2: bus@30400000 {
 -- 
 2.20.1
 
