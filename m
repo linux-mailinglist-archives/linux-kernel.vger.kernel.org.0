@@ -2,137 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9F91139C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEB61139D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:23:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfLECT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:19:59 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:45542 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbfLECT4 (ORCPT
+        id S1728671AbfLECXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:23:23 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37203 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbfLECXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:19:56 -0500
-Received: by mail-yw1-f66.google.com with SMTP id d12so598803ywl.12;
-        Wed, 04 Dec 2019 18:19:55 -0800 (PST)
+        Wed, 4 Dec 2019 21:23:23 -0500
+Received: by mail-pg1-f195.google.com with SMTP id q127so823818pga.4
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 18:23:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zrsetGriwFN7O5PokupRSAWoGTBVUJcT37C7y0ZMNmw=;
-        b=NGgUmBF79hKaA6rfHlyxqgOEoGaktYvly2OXQKwO26azgRrBz+Kg6wWarzxKrBq0ra
-         t12HAvhbHelpoN/lvn8Kd9NAnRtEIxa0c+Xl7+zyQy/O/De1xKlMO81J/jWbGA0GLcjv
-         82KvKhAIVYtzQIhF64Bicyj7UdpV+YFwVl+lz4QG/tVLjRfth1yjB5YZUEZSjVH4D3Gt
-         KfxHyXbBGdSWfmg/87FrbBb2nmEFWV2G6O9cSfQPXu7p8pNyLq0cBfgphV8iNhqf3hbH
-         o/hv6dlaZtnqx/isgXXPCZu5IGLWlYMsRrE8ZC3tAaN5WUio/rykeziwLK16Fd1ur1NI
-         C6xw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H1VUU4rUNg7kFJO0xACp+i6rdKuZ6Hw04Q1UCWcIN1I=;
+        b=aglRMlJMdAULGfV+4x2klYHp9oyyrIwz3f1q0hoDKQJotHgJodNQPgDvNbiZevppxo
+         BQM6xM/mqyzPvkKf7kt4NMp59Sm9OQCTMpy1gDhVWEH3tfO079d/zDI3qGeovh98hDKE
+         VeVC5xtkNdnKAnjJCHBbaMTazkMa/jsA+8xUcqSrA0mq3oOo2NENR4XY1WexeTw+VyxJ
+         /vTvSm5xCYVi9dBv/k7miIdxyLqSwKBpelvVPgcYzA3n2FFo597Z3mh++tJtZJKzroYC
+         95t1Ad8Ibr0gUrZmOJDiJhST1NjFBqLSKMa48T55xBKnfKKH5fJOKUNcIotF/8F3p1If
+         TwRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zrsetGriwFN7O5PokupRSAWoGTBVUJcT37C7y0ZMNmw=;
-        b=COF8UWfNsoF63V55DvjemMq9iqge8qd6tRi4q4L2x/d9ALkLJ6xMd9rF49mn4g24BH
-         No9RZ2ifBaQJlEuBDVfzRLPzDUElylKQXUwPBjWMVj+kF8shkyVOMaLK9AONy0i7FfLA
-         lBM71wHronKcXvDcmweFwRQ4amJLuUZXMmlksKqFb4d69ApRFG9btHawK8ZJMX+fSsPv
-         KSfe2LCdqmjhu1GI5xq5HhT8oFLPIQP4hgO5+iUxIwxBbIrNepfQypqLTrHPZQDKgMag
-         jdlUhLnfrNaSaxnBvjufP/1cQSLkBYQdhHQ1kdUavO6vXn4oqMBth09Kpd7OBT95OKZl
-         BXew==
-X-Gm-Message-State: APjAAAU2pk7nnc7yPHCyZxl8HYWm8s1vuOgNNsd4gF2zIWvFc+8q+8U1
-        BNu4odLO+vU3bpSR+stIkKs=
-X-Google-Smtp-Source: APXvYqzCCriI9i8RMQSO8C5ehwieJ+buobW2fxeTKupTKau3EoE8HIWwRb+cK78pEhE54ySr7gqOEw==
-X-Received: by 2002:a81:7a0d:: with SMTP id v13mr4506519ywc.175.1575512395086;
-        Wed, 04 Dec 2019 18:19:55 -0800 (PST)
-Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id l6sm4188449ywa.39.2019.12.04.18.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 18:19:54 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H1VUU4rUNg7kFJO0xACp+i6rdKuZ6Hw04Q1UCWcIN1I=;
+        b=tHF+6pLHLUw4mgIZ4zx/vfYikG1MMniWkimhnTZVU3U9GQttYYPU3RttQDV1eswPlw
+         WiOBNRtXF5gGQ3vOT6+WU3i1PYKBEbIWtfLdXTKHNo50b0PU9ZJBBsMegKF8TRJ1i7YH
+         n7AF3sEDGrPTMTqNxMy2G6RhadKxGccKvLk3nhD1kGKppabmSuDGuwPY3Ijf5qlAaNVa
+         221E/EDD8SfbAwFns2xBuGpci7f/YARVDV4Hke4tJIrv1MY2SutryUVBeng14s6+suwQ
+         PjXLwOL1slF/3hqF3J+zVZqGXyCVWkuT4OCYKgQLwjBQtE2AQ+8Uf+knvfq1hf9g+yrI
+         kbKg==
+X-Gm-Message-State: APjAAAVPaIZnwrwmVuTNWrzqUfdVNPieRwSCUtTkppDatKUyyv1mA6Yk
+        3CItdz7ezBACkttCHaOeT7M=
+X-Google-Smtp-Source: APXvYqzkjBxfnQeluO+tqp7YsVDUANm1utWoTgwzql0A8Bkxp/7Um+nIn79aONqUfWZ+c2qIO6OiWQ==
+X-Received: by 2002:a65:4381:: with SMTP id m1mr6893645pgp.43.1575512596508;
+        Wed, 04 Dec 2019 18:23:16 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id d26sm8722858pgv.66.2019.12.04.18.23.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Dec 2019 18:23:16 -0800 (PST)
+Date:   Wed, 4 Dec 2019 18:19:56 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
         Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] arm64: dts: imx8mm: Add PCIe support
-Date:   Wed,  4 Dec 2019 20:19:23 -0600
-Message-Id: <20191205021924.25188-8-aford173@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191205021924.25188-1-aford173@gmail.com>
-References: <20191205021924.25188-1-aford173@gmail.com>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] ASoC: fsl_audmix: add missed pm_runtime_disable
+Message-ID: <20191205021955.GB1122@Asurada-Nvidia.nvidia.com>
+References: <20191203111303.12933-1-hslester96@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203111303.12933-1-hslester96@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIE controller on the i.MX8M Mini appears to be the same
-as the i.MX8MQ but it is absent.
+On Tue, Dec 03, 2019 at 07:13:03PM +0800, Chuhong Yuan wrote:
+> The driver forgets to call pm_runtime_disable in probe failure
+> and remove.
+> Add the missed calls to fix it.
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 
-This patch uses the bindings from the i.MX8MQ and the clock
-information from the NXP Linux release and marks it as disabled
-so it can be configured and enabled on boards where needed.
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 35 +++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Thanks
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 5036d713558f..f384934ddbb4 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/clock/imx8mm-clock.h>
- #include <dt-bindings/power/imx8m-power.h>
-+#include <dt-bindings/reset/imx8mq-reset.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-@@ -936,6 +937,40 @@
- 			status = "disabled";
- 		};
- 
-+		pcie0: pcie@33800000 {
-+			compatible = "fsl,imx8mq-pcie";
-+			reg = <0x33800000 0x400000>,
-+			      <0x1ff00000 0x80000>;
-+			reg-names = "dbi", "config";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			bus-range = <0x00 0xff>;
-+			ranges = <0x81000000 0 0x00000000 0x1ff80000 0 0x00010000 /* downstream I/O 64KB */
-+				  0x82000000 0 0x18000000 0x18000000 0 0x07f00000>; /* non-prefetchable memory */
-+			num-lanes = <1>;
-+			num-viewport = <4>;
-+			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &gic GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &gic GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			fsl,max-link-speed = <2>;
-+			power-domains = <&pgc_pcie>;
-+			resets = <&src IMX8MQ_RESET_PCIEPHY>,
-+				 <&src IMX8MQ_RESET_PCIE_CTRL_APPS_EN>,
-+				 <&src IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF>;
-+			reset-names = "pciephy", "apps", "turnoff";
-+			clocks = <&clk IMX8MM_CLK_PCIE1_ROOT>,
-+				 <&clk IMX8MM_CLK_PCIE1_AUX>,
-+				 <&clk IMX8MM_CLK_PCIE1_PHY>;
-+			clock-names = "pcie", "pcie_bus", "pcie_phy";
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@38800000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x38800000 0x10000>, /* GIC Dist */
--- 
-2.20.1
-
+> ---
+>  sound/soc/fsl/fsl_audmix.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/fsl/fsl_audmix.c b/sound/soc/fsl/fsl_audmix.c
+> index a1db1bce330f..5faecbeb5497 100644
+> --- a/sound/soc/fsl/fsl_audmix.c
+> +++ b/sound/soc/fsl/fsl_audmix.c
+> @@ -505,15 +505,20 @@ static int fsl_audmix_probe(struct platform_device *pdev)
+>  					      ARRAY_SIZE(fsl_audmix_dai));
+>  	if (ret) {
+>  		dev_err(dev, "failed to register ASoC DAI\n");
+> -		return ret;
+> +		goto err_disable_pm;
+>  	}
+>  
+>  	priv->pdev = platform_device_register_data(dev, mdrv, 0, NULL, 0);
+>  	if (IS_ERR(priv->pdev)) {
+>  		ret = PTR_ERR(priv->pdev);
+>  		dev_err(dev, "failed to register platform %s: %d\n", mdrv, ret);
+> +		goto err_disable_pm;
+>  	}
+>  
+> +	return 0;
+> +
+> +err_disable_pm:
+> +	pm_runtime_disable(dev);
+>  	return ret;
+>  }
+>  
+> @@ -521,6 +526,8 @@ static int fsl_audmix_remove(struct platform_device *pdev)
+>  {
+>  	struct fsl_audmix *priv = dev_get_drvdata(&pdev->dev);
+>  
+> +	pm_runtime_disable(&pdev->dev);
+> +
+>  	if (priv->pdev)
+>  		platform_device_unregister(priv->pdev);
+>  
+> -- 
+> 2.24.0
+> 
