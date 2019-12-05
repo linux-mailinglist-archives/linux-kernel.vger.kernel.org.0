@@ -2,303 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48DDA114701
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C733114713
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:44:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfLESko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:40:44 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46513 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729290AbfLESko (ORCPT
+        id S1729154AbfLESoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:44:34 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:56993 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726028AbfLESod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:40:44 -0500
-Received: by mail-qk1-f196.google.com with SMTP id f5so4173409qkm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 10:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version;
-        bh=qNywU4SuN1/j02xrDEkCFwu3QGTs/dxNT1LnQRfHtF8=;
-        b=SWsbU0RX9ejp98wgbcUO3NGwdBv2+KoYM3HfmeqAgo8nCEfWewtIInTnZUSYZIek7X
-         M6XLBVGdTI+ewA74G5hKH4aOqZoxm9bhxZaMBgR7hR/Xpfcs1mc2Yb+vAZjjJJTS7JQB
-         QE32m7U20m4tLxwCDz9x056pCb686+kGalOthXrJgEY8Y4iTot3KxsG63fUJtg1GnOvk
-         6IQvCFh2GXQ8yVzWCma9yNbTgJXhTO3YhAblGG3QI6fSau/BCJucFOBrVzUI6k5FOgF6
-         jzb2hIZwKpm4vSTl2GsTvp8lIJNh9p0LOdFTemNptMOly+ho6idb7VVmIR6bVJw9AYjR
-         KjyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version;
-        bh=qNywU4SuN1/j02xrDEkCFwu3QGTs/dxNT1LnQRfHtF8=;
-        b=FAwqsYC0iInR4CsmiqwOyl6SSaG96NjwVly08Nl1ZQpj2KiDBE5//TUvIT7joc4TNs
-         8ZoGgQZC5cMROpC1GovKasM7o2HA/EZRlEFwj1LvtixDuxui18ZngHs/68+Vr9n2X4G1
-         0qn7naRAV7fqhSk/thLoYzR9/or3qUWOJK0g7qyyJCn/6o5usOWcLispe66DsZ8ZYt0i
-         dni9+Ig6L5zbxPickB4EWkwQLcL/fo8Nw2U9axVoRiqiFXRtGuugj7qMZEWFWSyq6A9M
-         7q9z9dYl6YqZnAZ635uKR58n9SNwpWZpq/Y0Kn1L2Yu8Kux1DpvKdiVuU0CICrrQ/McP
-         O4mA==
-X-Gm-Message-State: APjAAAUyxxoLB8CW9xdBukdLyFhxfyqCV4uF2KffNknd50yEXQvEF3mZ
-        uDF6+jHGTDqTVOrxhCuNmv5RQg==
-X-Google-Smtp-Source: APXvYqysLcRjcDifiharFt6ZbX+CalXc/vNS0LASHBpDag8561+j3VZG6UcBTwQL3KvSwnUZvv7oEA==
-X-Received: by 2002:a05:620a:1366:: with SMTP id d6mr10102265qkl.86.1575571242801;
-        Thu, 05 Dec 2019 10:40:42 -0800 (PST)
-Received: from tpx230-nicolas ([2610:98:8005::650])
-        by smtp.gmail.com with ESMTPSA id 13sm5118928qke.85.2019.12.05.10.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 10:40:41 -0800 (PST)
-Message-ID: <63a630f0760083d735ae02f5797ecd00530c7608.camel@ndufresne.ca>
-Subject: Re: [PATCH 4/5] media: meson: vdec: add VP9 input support
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Neil Armstrong <narmstrong@baylibre.com>, mchehab@kernel.org,
-        hans.verkuil@cisco.com
-Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
-        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 05 Dec 2019 13:40:39 -0500
-In-Reply-To: <20191205092639.26330-1-narmstrong@baylibre.com>
-References: <20191205092454.26075-1-narmstrong@baylibre.com>
-         <20191205092639.26330-1-narmstrong@baylibre.com>
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-CCHdCL4ad1Oj02aHxg2r"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        Thu, 5 Dec 2019 13:44:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575571471;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=xYjhz4SS9rMLveikBk3DdMnUG1sUZAf+yKvNu4LiK8c=;
+        b=h5bcVW1NWYEwHneaBxCPssJc2uQJB5vW5Rbw0f76o5Hw3yN4Kp6qpgKKE3/1NBTNjViOPX
+        ZoiL8bQTqtPbuyaTXKLetHh4u3r9f+gGEJexoHl+Zl8GpHTqYnWD+pDwiBecRxpvuqJl/s
+        NOw+6SbTeK7flo3Ugf2SVIq6jfhoEt8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-215-h7v8Dr15PYKm0CgPz-XRfg-1; Thu, 05 Dec 2019 13:44:30 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3B65218557C3;
+        Thu,  5 Dec 2019 18:44:28 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-55.ams2.redhat.com [10.36.116.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C38ED6013A;
+        Thu,  5 Dec 2019 18:44:23 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: [PATCH v9 00/10]  efi/firmware/platform-x86: Add EFI embedded fw support
+Date:   Thu,  5 Dec 2019 19:44:12 +0100
+Message-Id: <20191205184422.7316-1-hdegoede@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: h7v8Dr15PYKm0CgPz-XRfg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi All,
 
---=-CCHdCL4ad1Oj02aHxg2r
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Here is v9 of my patch-set to add support for EFI embedded fw to the kernel=
+.
 
-Le jeudi 05 d=C3=A9cembre 2019 =C3=A0 10:26 +0100, Neil Armstrong a =C3=A9c=
-rit :
-> From: Maxime Jourdan <mjourdan@baylibre.com>
->=20
-> Amlogic VP9 decoder requires an additional 16-byte payload before every
-> frame header.
+The main new feature in this version is the addition of some selftests for
+the new firmware_request_platform api (patch 5 and 6, both new). My plan
+was to send the patches adding the selftests out as a follow up series.
 
-When I first saw this patch, I assumed data_offset was to be used (like
-for venus), but I think what I'm reading is that the bitstream is
-bounce into another buffer (ring buffer ?) and for this reason such an
-offset is not needed. Maybe worth referring to how the header is being
-added (e.g. while copying the data) ?=20
+But during unrelated testing of my personal tree I found a small but nasty
+bug in the "efi: Add embedded peripheral firmware support" patch, the minor
+refactoring done in v8 exposed a bug which causes a hard crash on boot for
+devices which have a DMI match in the touchscreen_dmi_table but do not use
+EFI-embedded fw, this is fixed in this new version.
 
->=20
-> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/staging/media/meson/vdec/esparser.c | 142 +++++++++++++++++++-
->  1 file changed, 138 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/staging/media/meson/vdec/esparser.c b/drivers/stagin=
-g/media/meson/vdec/esparser.c
-> index adc5c1e81a4c..aeb68f6c732a 100644
-> --- a/drivers/staging/media/meson/vdec/esparser.c
-> +++ b/drivers/staging/media/meson/vdec/esparser.c
-> @@ -52,6 +52,7 @@
->  #define PARSER_VIDEO_HOLE	0x90
-> =20
->  #define SEARCH_PATTERN_LEN	512
-> +#define VP9_HEADER_SIZE		16
-> =20
->  static DECLARE_WAIT_QUEUE_HEAD(wq);
->  static int search_done;
-> @@ -74,14 +75,121 @@ static irqreturn_t esparser_isr(int irq, void *dev)
->  	return IRQ_HANDLED;
->  }
-> =20
-> +/**
-> + * VP9 frame headers need to be appended by a 16-byte long
+Assuming the 2 new patches adding the selftests are ok, I believe that
+this series is ready for merging now.  I believe it would be best to merge
+patches 1-8 through Greg's driver-core tree where firmware-loader changes g=
+o.
+The non firmware patches already have Acked-by-s from the maintainers of
+the EFI/input trees.
 
-nit: Maybe the use of "appending" is not appropriate as the header is
-documented in the commit as being "before every frame header" ?
+Patches 9-10 touch a quirks file under drivers/platform/x86 which sees
+multipe updates each cycle. So my proposal is that once 1-8 has landed
+Greg creates an immutable branch with those changes and then
+Andy and/or Darren can merge in that branch and then apply 9 and 10.
 
-> + * Amlogic custom header
-> + */
-> +static int vp9_update_header(struct amvdec_core *core, struct vb2_buffer=
- *buf)
-> +{
-> +	u8 *dp;
-> +	u8 marker;
-> +	int dsize;
-> +	int num_frames, cur_frame;
-> +	int cur_mag, mag, mag_ptr;
-> +	int frame_size[8], tot_frame_size[8];
-> +	int total_datasize =3D 0;
-> +	int new_frame_size;
-> +	unsigned char *old_header =3D NULL;
-> +
-> +	dp =3D (uint8_t *)vb2_plane_vaddr(buf, 0);
-> +	dsize =3D vb2_get_plane_payload(buf, 0);
-> +
-> +	if (dsize =3D=3D vb2_plane_size(buf, 0)) {
-> +		dev_warn(core->dev, "%s: unable to update header\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	marker =3D dp[dsize - 1];
-> +	if ((marker & 0xe0) =3D=3D 0xc0) {
-> +		num_frames =3D (marker & 0x7) + 1;
-> +		mag =3D ((marker >> 3) & 0x3) + 1;
-> +		mag_ptr =3D dsize - mag * num_frames - 2;
-> +		if (dp[mag_ptr] !=3D marker)
-> +			return 0;
-> +
-> +		mag_ptr++;
-> +		for (cur_frame =3D 0; cur_frame < num_frames; cur_frame++) {
-> +			frame_size[cur_frame] =3D 0;
-> +			for (cur_mag =3D 0; cur_mag < mag; cur_mag++) {
-> +				frame_size[cur_frame] |=3D
-> +					(dp[mag_ptr] << (cur_mag * 8));
-> +				mag_ptr++;
-> +			}
-> +			if (cur_frame =3D=3D 0)
-> +				tot_frame_size[cur_frame] =3D
-> +					frame_size[cur_frame];
-> +			else
-> +				tot_frame_size[cur_frame] =3D
-> +					tot_frame_size[cur_frame - 1] +
-> +					frame_size[cur_frame];
-> +			total_datasize +=3D frame_size[cur_frame];
-> +		}
-> +	} else {
-> +		num_frames =3D 1;
-> +		frame_size[0] =3D dsize;
-> +		tot_frame_size[0] =3D dsize;
-> +		total_datasize =3D dsize;
-> +	}
-> +
-> +	new_frame_size =3D total_datasize + num_frames * VP9_HEADER_SIZE;
-> +
-> +	if (new_frame_size >=3D vb2_plane_size(buf, 0)) {
-> +		dev_warn(core->dev, "%s: unable to update header\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	for (cur_frame =3D num_frames - 1; cur_frame >=3D 0; cur_frame--) {
-> +		int framesize =3D frame_size[cur_frame];
-> +		int framesize_header =3D framesize + 4;
-> +		int oldframeoff =3D tot_frame_size[cur_frame] - framesize;
-> +		int outheaderoff =3D  oldframeoff + cur_frame * VP9_HEADER_SIZE;
-> +		u8 *fdata =3D dp + outheaderoff;
-> +		u8 *old_framedata =3D dp + oldframeoff;
-> +
-> +		memmove(fdata + VP9_HEADER_SIZE, old_framedata, framesize);
-> +
-> +		fdata[0] =3D (framesize_header >> 24) & 0xff;
-> +		fdata[1] =3D (framesize_header >> 16) & 0xff;
-> +		fdata[2] =3D (framesize_header >> 8) & 0xff;
-> +		fdata[3] =3D (framesize_header >> 0) & 0xff;
-> +		fdata[4] =3D ((framesize_header >> 24) & 0xff) ^ 0xff;
-> +		fdata[5] =3D ((framesize_header >> 16) & 0xff) ^ 0xff;
-> +		fdata[6] =3D ((framesize_header >> 8) & 0xff) ^ 0xff;
-> +		fdata[7] =3D ((framesize_header >> 0) & 0xff) ^ 0xff;
-> +		fdata[8] =3D 0;
-> +		fdata[9] =3D 0;
-> +		fdata[10] =3D 0;
-> +		fdata[11] =3D 1;
-> +		fdata[12] =3D 'A';
-> +		fdata[13] =3D 'M';
-> +		fdata[14] =3D 'L';
-> +		fdata[15] =3D 'V';
-> +
-> +		if (!old_header) {
-> +			/* nothing */
-> +		} else if (old_header > fdata + 16 + framesize) {
-> +			dev_dbg(core->dev, "%s: data has gaps, setting to 0\n",
-> +				__func__);
-> +			memset(fdata + 16 + framesize, 0,
-> +			       (old_header - fdata + 16 + framesize));
-> +		} else if (old_header < fdata + 16 + framesize) {
-> +			dev_err(core->dev, "%s: data overwritten\n", __func__);
-> +		}
-> +		old_header =3D fdata;
-> +	}
-> +
-> +	return new_frame_size;
-> +}
-> +
->  /* Pad the packet to at least 4KiB bytes otherwise the VDEC unit won't t=
-rigger
->   * ISRs.
->   * Also append a start code 000001ff at the end to trigger
->   * the ESPARSER interrupt.
->   */
-> -static u32 esparser_pad_start_code(struct amvdec_core *core, struct vb2_=
-buffer *vb)
-> +static u32 esparser_pad_start_code(struct amvdec_core *core,
-> +				   struct vb2_buffer *vb,
-> +				   u32 payload_size)
->  {
-> -	u32 payload_size =3D vb2_get_plane_payload(vb, 0);
->  	u32 pad_size =3D 0;
->  	u8 *vaddr =3D vb2_plane_vaddr(vb, 0);
-> =20
-> @@ -186,13 +294,27 @@ esparser_queue(struct amvdec_session *sess, struct =
-vb2_v4l2_buffer *vbuf)
->  	int ret;
->  	struct vb2_buffer *vb =3D &vbuf->vb2_buf;
->  	struct amvdec_core *core =3D sess->core;
-> +	struct amvdec_codec_ops *codec_ops =3D sess->fmt_out->codec_ops;
->  	u32 payload_size =3D vb2_get_plane_payload(vb, 0);
->  	dma_addr_t phy =3D vb2_dma_contig_plane_dma_addr(vb, 0);
-> +	u32 num_dst_bufs =3D 0;
->  	u32 offset;
->  	u32 pad_size;
-> =20
-> -	if (esparser_vififo_get_free_space(sess) < payload_size)
-> +	if (sess->fmt_out->pixfmt =3D=3D V4L2_PIX_FMT_VP9) {
-> +		if (codec_ops->num_pending_bufs)
-> +			num_dst_bufs =3D codec_ops->num_pending_bufs(sess);
-> +
-> +		num_dst_bufs +=3D v4l2_m2m_num_dst_bufs_ready(sess->m2m_ctx);
-> +		if (sess->fmt_out->pixfmt =3D=3D V4L2_PIX_FMT_VP9)
-> +			num_dst_bufs -=3D 2;
-> +
-> +		if (esparser_vififo_get_free_space(sess) < payload_size ||
-> +		    atomic_read(&sess->esparser_queued_bufs) >=3D num_dst_bufs)
-> +			return -EAGAIN;
-> +	} else if (esparser_vififo_get_free_space(sess) < payload_size) {
->  		return -EAGAIN;
-> +	}
-> =20
->  	v4l2_m2m_src_buf_remove_by_buf(sess->m2m_ctx, vbuf);
-> =20
-> @@ -206,7 +328,19 @@ esparser_queue(struct amvdec_session *sess, struct v=
-b2_v4l2_buffer *vbuf)
->  	vbuf->field =3D V4L2_FIELD_NONE;
->  	vbuf->sequence =3D sess->sequence_out++;
-> =20
-> -	pad_size =3D esparser_pad_start_code(core, vb);
-> +	if (sess->fmt_out->pixfmt =3D=3D V4L2_PIX_FMT_VP9) {
-> +		payload_size =3D vp9_update_header(core, vb);
-> +
-> +		/* If unable to alter buffer to add headers */
-> +		if (payload_size =3D=3D 0) {
-> +			amvdec_remove_ts(sess, vb->timestamp);
-> +			v4l2_m2m_buf_done(vbuf, VB2_BUF_STATE_ERROR);
-> +
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	pad_size =3D esparser_pad_start_code(core, vb, payload_size);
->  	ret =3D esparser_write_data(core, phy, payload_size + pad_size);
-> =20
->  	if (ret <=3D 0) {
+Regards,
 
---=-CCHdCL4ad1Oj02aHxg2r
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Hans
 
------BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXelPKAAKCRBxUwItrAao
-HC3dAJ9ZJcMZtCud2LJf6EsofUzyD1VMDACgtXrUCNYTbD33BQoqjB8YK0nxcmU=
-=7K0z
------END PGP SIGNATURE-----
+Changes in v9:
+- Add 2 new patches adding selftests
+- At least touchscreen_dmi.c uses the same dmi_table for its own private
+  data and the fw_desc structs, putting the fw_desc struct first in the
+  data driver_data points to so that the dmi_table can be shared with
+  efi_check_for_embedded_firmwares(). But not all entries there have
+  embedded-fw so in some cases the fw_desc is empty (zero-ed out).
+  This can lead to a possible crash because fw_desc->length now is
+  less then 8, so if the segment size is close enough to a multiple of the
+  page_size, then the memcmp to check the prefix my segfault. Crashing the
+  machine. v9 checks for and skips these empty fw_desc entries avoiding thi=
+s.
+- Add static inline wrapper for firmware_request_platform() to firmware.h,
+  for when CONFIG_FW_LOADER is not set
 
---=-CCHdCL4ad1Oj02aHxg2r--
+Changes in v8:
+- Add pr_warn if there are mode then EFI_DEBUGFS_MAX_BLOBS boot service seg=
+ments
+- Document how the EFI debugfs boot_service_code? files can be used to chec=
+k for
+  embedded firmware
+- Properly deal with the case of an EFI segment being smaller then the fw w=
+e
+  are looking for
+- Log a warning when efi_get_embedded_fw get called while we did not (yet)
+  check for embedded firmwares
+- Only build fallback_platform.c if CONFIG_EFI_EMBEDDED_FIRMWARE is defined=
+,
+  otherwise make firmware_fallback_platform() a static inline stub
+
+Changes in v7:
+- Split drivers/firmware/efi and drivers/base/firmware_loader changes into
+  2 patches
+- Use new, standalone, lib/crypto/sha256.c code
+- Address kdoc comments from Randy Dunlap
+- Add new FW_OPT_FALLBACK_PLATFORM flag and firmware_request_platform()
+  _request_firmware() wrapper, as requested by Luis R. Rodriguez
+- Stop using "efi-embedded-firmware" device-property, now that drivers need=
+ to
+  use the new firmware_request_platform() to enable fallback to a device fw
+  copy embedded in the platform's main firmware, we no longer need a proper=
+ty
+  on the device to trigger this behavior
+- Use security_kernel_load_data instead of calling
+  security_kernel_read_file with a NULL file pointer argument
+- Move the docs to Documentation/driver-api/firmware/fallback-mechanisms.rs=
+t
+- Document the new firmware_request_platform() function in
+  Documentation/driver-api/firmware/request_firmware.rst
+- Add 2 new patches for the silead and chipone-icn8505 touchscreen drivers
+  to use the new firmware_request_platform() method
+- Rebased on top of 5.4-rc1
+
+Changes in v6:
+-Rework code to remove casts from if (prefix =3D=3D mem) comparison
+-Use SHA256 hashes instead of crc32 sums
+-Add new READING_FIRMWARE_EFI_EMBEDDED read_file_id and use it
+-Call security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED)
+ to check if this is allowed before looking at EFI embedded fw
+-Document why we are not using the PI Firmware Volume protocol
+
+Changes in v5:
+-Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
+
+Changes in v4:
+-Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
+ UEFI proper, so the EFI maintainers don't want us referring people to it
+-Use new EFI_BOOT_SERVICES flag
+-Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
+ file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
+-Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
+ EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
+ in firmware_loader/main.c
+-Properly call security_kernel_post_read_file() on the firmware returned
+ by efi_get_embedded_fw() to make sure that we are allowed to use it
+
+Changes in v2:
+-Rebased on driver-core/driver-core-next
+-Add documentation describing the EFI embedded firmware mechanism to:
+ Documentation/driver-api/firmware/request_firmware.rst
+-Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
+ fw support if this is set. This is an invisible option which should be
+ selected by drivers which need this
+-Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
+ from the efi-embedded-fw code, instead drivers using this are expected to
+ export a dmi_system_id array, with each entries' driver_data pointing to a
+ efi_embedded_fw_desc struct and register this with the efi-embedded-fw cod=
+e
+-Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
+ this avoids us messing with the EFI memmap and avoids the need to make
+ changes to efi_mem_desc_lookup()
+-Make the firmware-loader code only fallback to efi_get_embedded_fw() if th=
+e
+ passed in device has the "efi-embedded-firmware" device-property bool set
+-Skip usermodehelper fallback when "efi-embedded-firmware" device-property
+ is set
 
