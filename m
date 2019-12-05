@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A93114705
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:41:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65BB9114707
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729914AbfLESlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:41:10 -0500
+        id S1729986AbfLESlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:41:13 -0500
 Received: from mga17.intel.com ([192.55.52.151]:4158 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbfLESlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:41:09 -0500
+        id S1729290AbfLESlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 13:41:10 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 10:41:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,282,1571727600"; 
-   d="scan'208";a="214263511"
+   d="scan'208";a="214263519"
 Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2019 10:41:07 -0800
+  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2019 10:41:08 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -35,44 +35,80 @@ To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Fenghua Yu <fenghua.yu@intel.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 0/3] Fix small issues in XSAVES
-Date:   Thu,  5 Dec 2019 10:26:45 -0800
-Message-Id: <20191205182648.32257-1-yu-cheng.yu@intel.com>
+Subject: [PATCH 1/3] x86/fpu/xstate: Fix small issues before adding supervisor xstates
+Date:   Thu,  5 Dec 2019 10:26:46 -0800
+Message-Id: <20191205182648.32257-2-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191205182648.32257-1-yu-cheng.yu@intel.com>
+References: <20191205182648.32257-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first two patches in this series are split from my supervisor xstate
-patches [1].  The third is to fix a vital issue in __fpu_restore_sig(),
-and more RFC than the others.  All three are not directly related to
-supervisor xstates or CET, split them out and submit first.  I will
-re-submit supervisor xstate patches shortly.
+In response to earlier comments, fix small issues before introducing XSAVES
+supervisor states:
+- Add spaces around '*'.
+- Fix comments of xfeature_is_supervisor().
+- Replace ((u64)1 << 63) with XCOMP_BV_COMPACTED_FORMAT.
 
-When__fpu_restore_sig() fails, partially cleared FPU registers still belong
-to the previous owner task.  That causes that task to use corrupted xregs.
-Fix it by doing __cpu_invalidate_fpregs_state() in functions that copy into
-fpregs.  Further details are in the commit log of patch #3.
+No functional changes from this patch.
 
-[1] Support XSAVES supervisor states
-    https://lkml.kernel.org/r/20190925151022.21688-1-yu-cheng.yu@intel.com/
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/kernel/fpu/xstate.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-[2] CET patches:
-    https://lkml.kernel.org/r/20190813205225.12032-1-yu-cheng.yu@intel.com/
-    https://lkml.kernel.org/r/20190813205359.12196-1-yu-cheng.yu@intel.com/
-
-Yu-cheng Yu (3):
-  x86/fpu/xstate: Fix small issues before adding supervisor xstates
-  x86/fpu/xstate: Make xfeature_is_supervisor()/xfeature_is_user()
-    return bool
-  x86/fpu/xstate: Invalidate fpregs when __fpu_restore_sig() fails
-
- arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++++
- arch/x86/kernel/fpu/core.c          | 15 +++++++++++++--
- arch/x86/kernel/fpu/xstate.c        | 22 ++++++++++------------
- 3 files changed, 37 insertions(+), 14 deletions(-)
-
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index e5cb67d67c03..cfcac7b42e5e 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -60,7 +60,7 @@ u64 xfeatures_mask __read_mostly;
+ 
+ static unsigned int xstate_offsets[XFEATURE_MAX] = { [ 0 ... XFEATURE_MAX - 1] = -1};
+ static unsigned int xstate_sizes[XFEATURE_MAX]   = { [ 0 ... XFEATURE_MAX - 1] = -1};
+-static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask)*8];
++static unsigned int xstate_comp_offsets[sizeof(xfeatures_mask) * 8];
+ 
+ /*
+  * The XSAVE area of kernel can be in standard or compacted format;
+@@ -110,12 +110,9 @@ EXPORT_SYMBOL_GPL(cpu_has_xfeatures);
+ static int xfeature_is_supervisor(int xfeature_nr)
+ {
+ 	/*
+-	 * We currently do not support supervisor states, but if
+-	 * we did, we could find out like this.
+-	 *
+-	 * SDM says: If state component 'i' is a user state component,
+-	 * ECX[0] return 0; if state component i is a supervisor
+-	 * state component, ECX[0] returns 1.
++	 * Extended State Enumeration Sub-leaves (EAX = 0DH, ECX = n, n > 1)
++	 * returns ECX[0] set to (1) for a supervisor state, and cleared (0)
++	 * for a user state.
+ 	 */
+ 	u32 eax, ebx, ecx, edx;
+ 
+@@ -342,7 +339,7 @@ static int xfeature_is_aligned(int xfeature_nr)
+  */
+ static void __init setup_xstate_comp(void)
+ {
+-	unsigned int xstate_comp_sizes[sizeof(xfeatures_mask)*8];
++	unsigned int xstate_comp_sizes[sizeof(xfeatures_mask) * 8];
+ 	int i;
+ 
+ 	/*
+@@ -415,7 +412,8 @@ static void __init setup_init_fpu_buf(void)
+ 	print_xstate_features();
+ 
+ 	if (boot_cpu_has(X86_FEATURE_XSAVES))
+-		init_fpstate.xsave.header.xcomp_bv = (u64)1 << 63 | xfeatures_mask;
++		init_fpstate.xsave.header.xcomp_bv = XCOMP_BV_COMPACTED_FORMAT |
++						     xfeatures_mask;
+ 
+ 	/*
+ 	 * Init all the features state with header.xfeatures being 0x0
 -- 
 2.17.1
 
