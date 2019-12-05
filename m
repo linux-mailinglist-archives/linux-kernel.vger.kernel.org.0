@@ -2,114 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 791B9113F5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 11:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9DA113F74
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 11:34:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbfLEK3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 05:29:35 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:41206 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfLEK3f (ORCPT
+        id S1729295AbfLEKeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 05:34:50 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:62946 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728707AbfLEKeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 05:29:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pf3VRmP8HmHiyiOcV+xYnOtrZTggWIGVma7A8JY6Tbc=; b=Aepzbqy6h4NAA4gWqcMM8WUWT
-        dbAK+bwyiwqtDY4+58NteAYnzBPqUPn3Dmtjk4bffOt+0/mQI1/9EFSIZDaoT1Zhy1IjCBEOalDoE
-        ui+oEGIjYETpUbbB/qVU4WpkbCEWys9PoT2WAes9SqLybHOMGNXLWXzk16Z3wwD0P+G0002bHVNb0
-        dLhvbk6JgmZ3XS4G0G44jBNTBn9O5PUyrUnpGciaCwARlxi0YOk2w4SxVUMJFmf2ATJFm9dwloR1y
-        wSnVsKBO2WLOrYx2Y3JedCNjIxFGc5j3tcwS9NQU9bGApBlm7PGlyn8es6BWEXRGaU5XxYMuWK9Jj
-        qK/9PvU6g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1icoO3-0003DQ-EV; Thu, 05 Dec 2019 10:29:32 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id EAFC33011E0;
-        Thu,  5 Dec 2019 11:28:10 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1F0752B26E208; Thu,  5 Dec 2019 11:29:28 +0100 (CET)
-Date:   Thu, 5 Dec 2019 11:29:28 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, jiangshanlai@gmail.com,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Workqueues splat due to ending up on wrong CPU
-Message-ID: <20191205102928.GG2810@hirez.programming.kicks-ass.net>
-References: <20191125230312.GP2889@paulmck-ThinkPad-P72>
- <20191126183334.GE2867037@devbig004.ftw2.facebook.com>
- <20191126220533.GU2889@paulmck-ThinkPad-P72>
- <20191127155027.GA15170@paulmck-ThinkPad-P72>
- <20191128161823.GA24667@paulmck-ThinkPad-P72>
- <20191129155850.GA17002@paulmck-ThinkPad-P72>
- <20191202015548.GA13391@paulmck-ThinkPad-P72>
- <20191202201338.GH16681@devbig004.ftw2.facebook.com>
- <20191203095521.GH2827@hirez.programming.kicks-ass.net>
- <20191204201150.GA14040@paulmck-ThinkPad-P72>
+        Thu, 5 Dec 2019 05:34:50 -0500
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xB5AUvCo044363;
+        Thu, 5 Dec 2019 19:30:57 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
+ Thu, 05 Dec 2019 19:30:57 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xB5AUqmd044301
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 5 Dec 2019 19:30:57 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: KASAN: slab-out-of-bounds Read in fbcon_get_font
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     syzbot <syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI <dri-devel@lists.freedesktop.org>, ghalat@redhat.com,
+        Gleb Natapov <gleb@kernel.org>, gwshan@linux.vnet.ibm.com,
+        "H. Peter Anvin" <hpa@zytor.com>, James Morris <jmorris@namei.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, stewart@linux.vnet.ibm.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <0000000000003e640e0598e7abc3@google.com>
+ <41c082f5-5d22-d398-3bdd-3f4bf69d7ea3@redhat.com>
+ <CACT4Y+bCHOCLYF+TW062n8+tqfK9vizaRvyjUXNPdneciq0Ahg@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <811afcac-ec6e-3ff0-1a4e-c83b98540f0d@i-love.sakura.ne.jp>
+Date:   Thu, 5 Dec 2019 19:30:53 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204201150.GA14040@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACT4Y+bCHOCLYF+TW062n8+tqfK9vizaRvyjUXNPdneciq0Ahg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 12:11:50PM -0800, Paul E. McKenney wrote:
-
-> And the good news is that I didn't see the workqueue splat, though my
-> best guess is that I had about a 13% chance of not seeing it due to
-> random chance (and I am currently trying an idea that I hope will make
-> it more probable).  But I did get a couple of new complaints about RCU
-> being used illegally from an offline CPU.  Splats below.
-
-Shiny!
-
-> Your patch did rearrange the CPU-online sequence, so let's see if I
-> can piece things together...
+On 2019/12/05 19:16, Dmitry Vyukov wrote:
+> On Thu, Dec 5, 2019 at 11:13 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>>
+>> On 04/12/19 22:41, syzbot wrote:
+>>> syzbot has bisected this bug to:
+>>>
+>>> commit 2de50e9674fc4ca3c6174b04477f69eb26b4ee31
+>>> Author: Russell Currey <ruscur@russell.cc>
+>>> Date:   Mon Feb 8 04:08:20 2016 +0000
+>>>
+>>>     powerpc/powernv: Remove support for p5ioc2
+>>>
+>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=127a042ae00000
+>>> start commit:   76bb8b05 Merge tag 'kbuild-v5.5' of
+>>> git://git.kernel.org/p..
+>>> git tree:       upstream
+>>> final crash:    https://syzkaller.appspot.com/x/report.txt?x=117a042ae00000
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=167a042ae00000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd226651cb0f364b
+>>> dashboard link:
+>>> https://syzkaller.appspot.com/bug?extid=4455ca3b3291de891abc
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11181edae00000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105cbb7ae00000
+>>>
+>>> Reported-by: syzbot+4455ca3b3291de891abc@syzkaller.appspotmail.com
+>>> Fixes: 2de50e9674fc ("powerpc/powernv: Remove support for p5ioc2")
+>>>
+>>> For information about bisection process see:
+>>> https://goo.gl/tpsmEJ#bisection
+>>>
+>>
+>> Why is everybody being CC'd, even if the bug has nothing to do with the
+>> person's subsystem?
 > 
-> RCU considers a CPU to be online at rcu_cpu_starting() time.  This is
-> called from notify_cpu_starting(), which is called from the arch-specific
-> CPU-bringup code.  Any RCU readers before rcu_cpu_starting() will trigger
-> the warning I am seeing.
+> The To list should be intersection of 2 groups of emails: result of
+> get_maintainers.pl on the file identified as culprit in the crash
+> message + emails extracted from the bisected to commit.
+> 
 
-Right.
-
-> The original location of the stop_machine_unpark() was in
-> bringup_wait_for_ap(), which is called from bringup_cpu(), which is in
-> the CPUHP_BRINGUP_CPU entry of cpuhp_hp_states[].  Which, if I am not
-> too confused, is invoked by some CPU other than the to-be-incoming CPU.
-
-Correct.
-
-> The new location of the stop_machine_unpark() is in cpuhp_online_idle(),
-> which is called from cpu_startup_entry(), which is invoked from
-> the arch-specific bringup code that runs on the incoming CPU.
-
-The new place is the final piece of bringup, it is right before where
-the freshly woken CPU will drop into the idle loop and start scheduling
-(for the first time).
-
-> Which
-> is the same code that invokes notify_cpu_starting(), so we need
-> notify_cpu_starting() to be invoked before cpu_startup_entry().
-
-Right, that is right before we run what used to be the CPU_STARTING
-notifiers. This is in fact (on x86) before the CPU is marked
-cpu_online(). It has to be before cpu_startup_entry(), before this is
-ran with IRQs disabled, while cpu_startup_entry() demands IRQs are
-enabled.
-
-> The order is not immediately obvious on IA64.  But it looks like
-> everything else does it in the required order, so I am a bit confused
-> about this.
-
-That makes two of us, afaict we have RCU up and running when we get to
-the idle loop.
+There is "#syz uncc" command but it is too hard to utilize?
