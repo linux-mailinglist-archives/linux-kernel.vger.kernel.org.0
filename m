@@ -2,274 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AE9114346
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 16:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AC711434C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 16:12:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbfLEPKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 10:10:20 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:3944 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729187AbfLEPKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 10:10:20 -0500
+        id S1729763AbfLEPMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 10:12:47 -0500
+Received: from mail-eopbgr690069.outbound.protection.outlook.com ([40.107.69.69]:51962
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725909AbfLEPMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 10:12:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wj5ECAfIfmLrPcOlZ+PQ5FPZCrs2GNuAcLRy12Mg7ENJQOHjWznYffGTLumtpxRbqtuTiX1kDB9P7hY5bTByPPawBUbY6znG40JhU7KMtyy2jZ8dABbK5sckj00NU1g3a/mpkhKMBFB84uolKqGv9qUW2+K41I8PT1rpuEOiQ0Ud/MyphVDl4bRbXGOj7XoE35igLKVBujUO3Nul83JzaNtwjwZC7A2PG2KMWmPPhEvi4x9vtp4c95yDfd61JELnvC2q+iE22axiGVR6Su57RzLOUrUnRQCTPCEmi4X2rc1lKs3M/NPcBBVonDi0dJNgXNrP+aph2Ee4QIGc7ERAVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C6rp2ItZ7oxsoBs25AUpknfJwPTft/0U4YSLixy+vEs=;
+ b=W9Vnxc9eFA7NC+dEU36NgyP5+EvQkePAwZ/Z6k92aPBclY4QRjfSB9Uhae934mMolQC/ySdsPeA3QQA406dh1Q/9LOSIEtd41zv6MsludEwobo8lYSXbCSA98yPNyjMHP5d8RYy6dsR3hnfN+9VyzfsKV5Ql8uB0CSXHZL46Tay++dwt4YGB6acYtHVORWw9eeNFqtmOheKBmUymcdQehS1m9Ldo6WXCs73mlY/STXWnRzsFUdL7ijyLFHhWuD+dUz7dgmYvcJrUBs2hdohsBpRZ0FG4NjThFLkzTNF1qxDyZ1GxO3549vwf9uHPJZpqrzHr/s2Qg/wM+S741kcZUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1575558619; x=1607094619;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=SrfasP8IAPqd8vrwXng/eZJeZ7Albzeeh72IDkV4jQI=;
-  b=OW9Yn/ZaWJ//CBZeq8rGeDvcuJIk918UrrPch8wATbipy3qQVv6yuHor
-   oQBLoPu9CAF6fms32pZB2riXH5OPO6W/fEWKnGS7USneM5hAWewSv1hpF
-   wGxcfyel2/oFm7ytwq4hIe+4BD2cadgXIoBj2Jowd0JGtKm83bW0oPLHZ
-   4=;
-IronPort-SDR: 6VkidmQTW/ue9jNioio6TGxd5tu1XHQKcxD/T+VEDx8tDzmBagjTN63qVU/t5lYWXCLkKtZIph
- 1/OCyc1d8QPg==
-X-IronPort-AV: E=Sophos;i="5.69,281,1571702400"; 
-   d="scan'208";a="11821889"
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 05 Dec 2019 15:10:02 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 93E92A201D;
-        Thu,  5 Dec 2019 15:10:00 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 5 Dec 2019 15:09:59 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.171) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 5 Dec 2019 15:09:55 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     <axboe@kernel.dk>, <konrad.wilk@oracle.com>, <roger.pau@citrix.com>
-CC:     <sjpark@amazon.com>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sj38.park@gmail.com>,
-        SeongJae Park <sjpark@amazon.de>
-Subject: [PATCH v2 1/1] xen/blkback: Aggressively shrink page pools if a memory pressure is detected
-Date:   Thu, 5 Dec 2019 16:09:32 +0100
-Message-ID: <20191205150932.3793-2-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191205150932.3793-1-sjpark@amazon.com>
-References: <20191205150932.3793-1-sjpark@amazon.com>
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C6rp2ItZ7oxsoBs25AUpknfJwPTft/0U4YSLixy+vEs=;
+ b=APYtlSsHR3u9DEsZZetVOvpibynI56D6U5UusLB1tRBy/hev7RoeRxLoD25Pyq9nN014vnKZsYzyo71m6gF4tvWYovdyZA6dQ2qiloItMmuS5+TaMrqTISojWgGJgQaed3lT73BY9iMBMX1gCKYrEevEWIg/6bzu50IYOMn/77s=
+Received: from DM6PR12MB3466.namprd12.prod.outlook.com (20.178.198.225) by
+ DM6PR12MB3755.namprd12.prod.outlook.com (10.255.172.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.12; Thu, 5 Dec 2019 15:12:21 +0000
+Received: from DM6PR12MB3466.namprd12.prod.outlook.com
+ ([fe80::8954:6ba3:6dca:4616]) by DM6PR12MB3466.namprd12.prod.outlook.com
+ ([fe80::8954:6ba3:6dca:4616%7]) with mapi id 15.20.2516.014; Thu, 5 Dec 2019
+ 15:12:21 +0000
+From:   "Liu, Zhan" <Zhan.Liu@amd.com>
+To:     "Siqueira, Rodrigo" <Rodrigo.Siqueira@amd.com>,
+        "=dri-devel@lists.freedesktop.org" <=dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+CC:     "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Berthe, Abdoulaye" <Abdoulaye.Berthe@amd.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        "Cornij, Nikola" <Nikola.Cornij@amd.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        =?utf-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: RE: [PATCH] drm: Add FEC registers for LT-tunable repeaters
+Thread-Topic: [PATCH] drm: Add FEC registers for LT-tunable repeaters
+Thread-Index: AQHVq3Q8llMGZNNWYk20ZjZMWEub66erpa/A
+Date:   Thu, 5 Dec 2019 15:12:21 +0000
+Message-ID: <DM6PR12MB3466044EF3A6E85160C3E6EF9E5C0@DM6PR12MB3466.namprd12.prod.outlook.com>
+References: <20191205135856.232784-1-Rodrigo.Siqueira@amd.com>
+In-Reply-To: <20191205135856.232784-1-Rodrigo.Siqueira@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Zhan.Liu@amd.com; 
+x-originating-ip: [165.204.55.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 6c195e77-71c8-4e40-a9ba-08d779958705
+x-ms-traffictypediagnostic: DM6PR12MB3755:|DM6PR12MB3755:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR12MB375545CF6A1E10F8E5122A029E5C0@DM6PR12MB3755.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:130;
+x-forefront-prvs: 02426D11FE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(39860400002)(376002)(346002)(13464003)(189003)(199004)(99286004)(2906002)(25786009)(54906003)(11346002)(110136005)(4326008)(74316002)(6506007)(76116006)(66476007)(102836004)(9686003)(81156014)(66446008)(64756008)(66556008)(229853002)(8676002)(81166006)(55016002)(186003)(316002)(26005)(53546011)(76176011)(66946007)(52536014)(8936002)(7696005)(33656002)(71200400001)(478600001)(305945005)(966005)(45080400002)(71190400001)(86362001)(5660300002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3755;H:DM6PR12MB3466.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ya+9BqxLodHd7ejsoywQ6xDi6IUsfrBbx9hgmnps4S9TCSFxWWlfOFwsuFL7LbgejsObQlH19ZzLWd1cW5Wp/EXMueVUZ21g+izCu3o0po/hWco6OopeUhBWQq0fS5U5h83jKOVWVV4+3gWdfro4xNy4qu6BKDbKpq0AmwXykq1OskZPmx9mhwxoMdTvLuaYI/vBopos4ZHiQGpOk0R42dKqhx1ByFXneFU53jxK/7pVH8+mVWk4fsRic5TSzlP42caiRsJH6V2g09WSuVqMdTXecmQplUx7etasY/KglTTReH0vJH2BnIjVDHDkmD9iEMgtdXW8uxMhhr/WscRdqKIf7gCBqW/CGuWbM12gUSmZPdOV7fdTmyjEjuQfnmp/M57M8ftML2DohpfgSngLWtLW4aQP4glCgmjYpNeDOtC6h7aZ/6qm/3AW5idoSu6CgE53jxKGNaIMCv4IpdKMuyXf/BuEwJC5uGE7WOI3gy6AKu6ZimDWx8YOURydcrq7
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.171]
-X-ClientProxiedBy: EX13D12UWA004.ant.amazon.com (10.43.160.168) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c195e77-71c8-4e40-a9ba-08d779958705
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2019 15:12:21.7788
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jjR8En72RiA/+hxpLqhQP6rpCSHycwUPygw4hsSFEZ1o4yXrs1IH2Z5vuuNdkEub
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3755
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
-
-Each `blkif` has a free pages pool for the grant mapping.  The size of
-the pool starts from zero and be increased on demand while processing
-the I/O requests.  If current I/O requests handling is finished or 100
-milliseconds has passed since last I/O requests handling, it checks and
-shrinks the pool to not exceed the size limit, `max_buffer_pages`.
-
-Therefore, `blkfront` running guests can cause a memory pressure in the
-`blkback` running guest by attaching a large number of block devices and
-inducing I/O.  System administrators can avoid such problematic
-situations by limiting the maximum number of devices each guest can
-attach.  However, finding the optimal limit is not so easy.  Improper
-set of the limit can result in the memory pressure or a resource
-underutilization.  This commit avoids such problematic situations by
-shrinking the pools aggressively (further the limit) for a while (users
-can set this duration via a module parameter) if a memory pressure is
-detected.
-
-Discussions
-===========
-
-The `blkback`'s original shrinking mechanism returns only pages in the
-pool which are not currently be used by `blkback`.  In other words, the
-pages that will be shrunk are not mapped with foreign pages.  Because
-this commit is changing only the shrink limit but uses the shrinking
-mechanism as is, this commit does not introduce improper mappings
-related security issues.
-
-Once a memory pressure is detected, this commit keeps the aggressive
-shrinking limit for a user-specified time duration.  The duration should
-be neither too long nor too short.  If it is too long, free pages pool
-shrinking overhead can reduce the I/O performance.  If it is too short,
-`blkback` will not free enough pages to reduce the memory pressure.
-This commit sets the value as `10 milliseconds` by default because it is
-a short time in terms of I/O while it is a long time in terms of memory
-operations.  Also, as the original shrinking mechanism works for at
-least every 100 milliseconds, this could be a somewhat reasonable
-choice.  I also tested other durations (refer to the below section for
-more details) and confirmed that 10 milliseconds is the one that works
-best.  That said, the proper duration depends on actual configurations
-and workloads.  That's why this commit is allowing users to set it as
-their optimal value via the module parameter.
-
-Memory Pressure Test
-====================
-
-To show how this commit fixes the above mentioned memory pressure
-situation well, I configured a test environment on a xen-running system.
-On the `blkfront` running guest instances, I attach a large number of
-network-backed volume devices and induce I/O to those.  Meanwhile, I
-measure the number of pages that swapped in and out on the `blkback`
-running guest.  The test ran twice, once for the `blkback` before this
-commit and once for that after this commit.  As shown below, this commit
-has dramatically reduced the memory pressure:
-
-                pswpin  pswpout
-    before      76,672  185,799
-    after          212    3,325
-
-Optimal Aggressive Shrinking Duration
--------------------------------------
-
-To find a best aggressive shrinking duration, I repeated the test with
-three different durations (1ms, 10ms, and 100ms).  The results are as
-below:
-
-    duration    pswpin  pswpout
-    1           852     6,424
-    10          212     3,325
-    100         203     3,340
-
-As expected, the numbers have further decreased by increasing the
-duration, but the reduction stopped from the `10ms`.  Based on this
-results, I chose the default duration as 10ms.
-
-Performance Overhead Test
-=========================
-
-This commit could incur I/O performance degradation under severe memory
-pressure because the aggressive shrinking will require more page
-allocations per I/O.  To show the overhead, I artificially made an
-aggressive pages pool shrinking situation and measured the I/O
-performance of a `blkfront` running guest.
-
-For the artificial shrinking, I set the `blkback.max_buffer_pages` using
-the `/sys/module/xen_blkback/parameters/max_buffer_pages` file.  We set
-the value to `1024` and `0`.  The `1024` is the default value.  Setting
-the value as `0` is same to a situation doing the aggressive shrinking
-always (worst-case).
-
-For the I/O performance measurement, I use a simple `dd` command.
-
-Default Performance
--------------------
-
-    [dom0]# echo 1024 >
-/sys/module/xen_blkback/parameters/max_buffer_pages
-    [instance]$ for i in {1..5}; do dd if=/dev/zero of=file bs=4k
-count=$((256*512)); sync; done
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 11.7257 s, 45.8 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8827 s, 38.7 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8781 s, 38.7 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8737 s, 38.7 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8702 s, 38.7 MB/s
-
-Worst-case Performance
-----------------------
-
-    [dom0]# echo 0 >
-/sys/module/xen_blkback/parameters/max_buffer_pages
-    [instance]$ for i in {1..5}; do dd if=/dev/zero of=file bs=4k
-count=$((256*512)); sync; done
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 11.7257 s, 45.8 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.878 s, 38.7 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8746 s, 38.7 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8786 s, 38.7 MB/s
-    131072+0 records in
-    131072+0 records out
-    536870912 bytes (537 MB) copied, 13.8749 s, 38.7 MB/s
-
-In short, even worst case aggressive shrinking makes no visible
-performance degradation.  I think this is due to the slow speed of the
-I/O.  In other words, the additional page allocation overhead is hidden
-under the much slower I/O latency.
-
-Nevertheless, pleaset note that this is just a very simple and minimal
-test.
-
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- drivers/block/xen-blkback/blkback.c | 35 +++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index 3666afa639d1..72d068328ef1 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -135,6 +135,31 @@ module_param(log_stats, int, 0644);
- /* Number of free pages to remove on each call to gnttab_free_pages */
- #define NUM_BATCH_FREE_PAGES 10
- 
-+/*
-+ * Once a memory pressure is detected, keep aggressive shrinking of the free
-+ * page pools for this time (milliseconds)
-+ */
-+static int xen_blkif_aggressive_shrinking_duration = 10;
-+module_param_named(aggressive_shrinking_duration,
-+		xen_blkif_aggressive_shrinking_duration, int, 0644);
-+MODULE_PARM_DESC(aggressive_shrinking_duration,
-+"Duration in ms to do aggressive shrinking when a memory pressure is detected");
-+
-+static unsigned long xen_blk_mem_pressure_end;
-+
-+static unsigned long blkif_shrink_count(struct shrinker *shrinker,
-+				struct shrink_control *sc)
-+{
-+	xen_blk_mem_pressure_end = jiffies +
-+		msecs_to_jiffies(xen_blkif_aggressive_shrinking_duration);
-+	return 0;
-+}
-+
-+static struct shrinker blkif_shrinker = {
-+	.count_objects = blkif_shrink_count,
-+	.seeks = DEFAULT_SEEKS,
-+};
-+
- static inline bool persistent_gnt_timeout(struct persistent_gnt *persistent_gnt)
- {
- 	return xen_blkif_pgrant_timeout &&
-@@ -656,8 +681,11 @@ int xen_blkif_schedule(void *arg)
- 			ring->next_lru = jiffies + msecs_to_jiffies(LRU_INTERVAL);
- 		}
- 
--		/* Shrink if we have more than xen_blkif_max_buffer_pages */
--		shrink_free_pagepool(ring, xen_blkif_max_buffer_pages);
-+		/* Shrink the free pages pool if it is too large. */
-+		if (time_before(jiffies, xen_blk_mem_pressure_end))
-+			shrink_free_pagepool(ring, 0);
-+		else
-+			shrink_free_pagepool(ring, xen_blkif_max_buffer_pages);
- 
- 		if (log_stats && time_after(jiffies, ring->st_print))
- 			print_stats(ring);
-@@ -1500,6 +1528,9 @@ static int __init xen_blkif_init(void)
- 	if (rc)
- 		goto failed_init;
- 
-+	if (register_shrinker(&blkif_shrinker))
-+		pr_warn("shrinker registration failed\n");
-+
-  failed_init:
- 	return rc;
- }
--- 
-2.17.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogYW1kLWdmeCA8YW1kLWdm
+eC1ib3VuY2VzQGxpc3RzLmZyZWVkZXNrdG9wLm9yZz4gT24gQmVoYWxmIE9mDQo+IFJvZHJpZ28g
+U2lxdWVpcmENCj4gU2VudDogMjAxOS9EZWNlbWJlci8wNSwgVGh1cnNkYXkgODo1OSBBTQ0KPiBU
+bzogPWRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
+cm5lbC5vcmc7IGFtZC0NCj4gZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBDYzogTGksIFN1
+biBwZW5nIChMZW8pIDxTdW5wZW5nLkxpQGFtZC5jb20+OyBCZXJ0aGUsIEFiZG91bGF5ZQ0KPiA8
+QWJkb3VsYXllLkJlcnRoZUBhbWQuY29tPjsgSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGxpbnV4
+LmludGVsLmNvbT47DQo+IENvcm5paiwgTmlrb2xhIDxOaWtvbGEuQ29ybmlqQGFtZC5jb20+OyBN
+YW5hc2kgTmF2YXJlDQo+IDxtYW5hc2kuZC5uYXZhcmVAaW50ZWwuY29tPjsgV2VudGxhbmQsIEhh
+cnJ5DQo+IDxIYXJyeS5XZW50bGFuZEBhbWQuY29tPjsgVmlsbGUgU3lyasOkbMOkIDx2aWxsZS5z
+eXJqYWxhQGxpbnV4LmludGVsLmNvbT4NCj4gU3ViamVjdDogW1BBVENIXSBkcm06IEFkZCBGRUMg
+cmVnaXN0ZXJzIGZvciBMVC10dW5hYmxlIHJlcGVhdGVycw0KPiANCj4gRkVDIGlzIHN1cHBvcnRl
+ZCBzaW5jZSBEUCAxLjQsIGFuZCBpdCB3YXMgZXhwYW5kZWQgZm9yIExULXR1bmFibGUgaW4gRFAg
+MS40YS4NCj4gVGhpcyBjb21taXQgYWRkcyB0aGUgYWRkcmVzcyByZWdpc3RlcnMgZm9yDQo+IEZF
+Q19FUlJPUl9DT1VOVF9QSFlfUkVQRUFURVIxIGFuZA0KPiBGRUNfQ0FQQUJJTElUWV9QSFlfUkVQ
+RUFURVIxLg0KPiANCj4gQ2M6IEFiZG91bGF5ZSBCZXJ0aGUgPEFiZG91bGF5ZS5CZXJ0aGVAYW1k
+LmNvbT4NCj4gQ2M6IEhhcnJ5IFdlbnRsYW5kIDxoYXJyeS53ZW50bGFuZEBhbWQuY29tPg0KPiBD
+YzogTGVvIExpIDxzdW5wZW5nLmxpQGFtZC5jb20+DQo+IENjOiBKYW5pIE5pa3VsYSA8amFuaS5u
+aWt1bGFAbGludXguaW50ZWwuY29tPg0KPiBDYzogTWFuYXNpIE5hdmFyZSA8bWFuYXNpLmQubmF2
+YXJlQGludGVsLmNvbT4NCj4gQ2M6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51
+eC5pbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEFiZG91bGF5ZSBCZXJ0aGUgPEFiZG91bGF5
+ZS5CZXJ0aGVAYW1kLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogUm9kcmlnbyBTaXF1ZWlyYSA8Um9k
+cmlnby5TaXF1ZWlyYUBhbWQuY29tPg0KDQpMb29rcyBnb29kIHRvIG1lLg0KUmV2aWV3ZWQtYnk6
+IFpoYW4gTGl1IDx6aGFuLmxpdUBhbWQuY29tPg0KDQo+IC0tLQ0KPiAgaW5jbHVkZS9kcm0vZHJt
+X2RwX2hlbHBlci5oIHwgMiArKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9kcF9oZWxwZXIuaCBiL2luY2x1ZGUv
+ZHJtL2RybV9kcF9oZWxwZXIuaA0KPiBpbmRleCA1MWVjYjUxMTJlZjguLmIyMDU3MDA5YWFiYyAx
+MDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9kcm0vZHJtX2RwX2hlbHBlci5oDQo+ICsrKyBiL2luY2x1
+ZGUvZHJtL2RybV9kcF9oZWxwZXIuaA0KPiBAQCAtMTA0Miw2ICsxMDQyLDggQEANCj4gICNkZWZp
+bmUgRFBfU1lNQk9MX0VSUk9SX0NPVU5UX0xBTkUyX1BIWV9SRVBFQVRFUjENCj4gMHhmMDAzOSAv
+KiAxLjMgKi8NCj4gICNkZWZpbmUgRFBfU1lNQk9MX0VSUk9SX0NPVU5UX0xBTkUzX1BIWV9SRVBF
+QVRFUjENCj4gMHhmMDAzYiAvKiAxLjMgKi8NCj4gICNkZWZpbmUgRFBfRkVDX1NUQVRVU19QSFlf
+UkVQRUFURVIxCQkJICAgIDB4ZjAyOTAgLyoNCj4gMS40ICovDQo+ICsjZGVmaW5lIERQX0ZFQ19F
+UlJPUl9DT1VOVF9QSFlfUkVQRUFURVIxICAgICAgICAgICAgICAgICAgICAweGYwMjkxIC8qDQo+
+IDEuNCAqLw0KPiArI2RlZmluZSBEUF9GRUNfQ0FQQUJJTElUWV9QSFlfUkVQRUFURVIxICAgICAg
+ICAgICAgICAgICAgICAgMHhmMDI5NCAvKiAxLjRhDQo+ICovDQo+IA0KPiAgLyogUmVwZWF0ZXIg
+bW9kZXMgKi8NCj4gICNkZWZpbmUgRFBfUEhZX1JFUEVBVEVSX01PREVfVFJBTlNQQVJFTlQJCSAg
+ICAweDU1ICAgIC8qDQo+IDEuMyAqLw0KPiAtLQ0KPiAyLjI0LjANCj4gDQo+IF9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IGFtZC1nZnggbWFpbGluZyBs
+aXN0DQo+IGFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnDQo+IGh0dHBzOi8vbmFtMTEuc2Fm
+ZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUzQSUyRiUyRmxpc3RzLg0K
+PiBmcmVlZGVza3RvcC5vcmclMkZtYWlsbWFuJTJGbGlzdGluZm8lMkZhbWQtDQo+IGdmeCZhbXA7
+ZGF0YT0wMiU3QzAxJTdDemhhbi5saXUlNDBhbWQuY29tJTdDZmRiZjkyZGNmNzk0NDlkNDM0ZQ0K
+PiAyMDhkNzc5OGI1ODZkJTdDM2RkODk2MWZlNDg4NGU2MDhlMTFhODJkOTk0ZTE4M2QlN0MwJTdD
+MCU3QzYNCj4gMzcxMTE1MTE3OTMxNzI5MTkmYW1wO3NkYXRhPVNYRGtnRXBJUW1Ua21mRkwwYlhT
+QkZ3VnhkOXNTTVdrZQ0KPiBWMzU4ZmtrUVpZJTNEJmFtcDtyZXNlcnZlZD0wDQo=
