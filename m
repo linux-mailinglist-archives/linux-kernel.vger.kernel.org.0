@@ -2,150 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54835114679
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87631114682
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbfLESDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:03:03 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33427 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729022AbfLESDC (ORCPT
+        id S1730335AbfLESFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:05:11 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:43958 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729022AbfLESFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:03:02 -0500
-Received: by mail-wr1-f66.google.com with SMTP id b6so4782405wrq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 10:03:00 -0800 (PST)
+        Thu, 5 Dec 2019 13:05:11 -0500
+Received: by mail-pj1-f68.google.com with SMTP id g4so1587344pjs.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 10:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PbTndd+QidTobY58gwyktgPeVAc9czoOPLjMcmY0Pz0=;
-        b=DkZcgNP5fD5mN33BKMJA8NJUf+fINTsJ4tEtrnt5pO/p7Md6XSfqIUQWYt2vNWLoyb
-         g3/+YZhzt4p0rMmC0k7eYNGAdVHN1R0ZwiQ1ls/lclVEBV63ZtuXMijnhJanConS5cPn
-         my9bm9JzdTDCf20lIMfrfHR5QKcLeMN12zql75UYnfmjY+Tpn6OPK40qaT4lTq8auwqy
-         Ec01/hSioGgZS26Tb1oFKe+YkisG55l+mxljPqkqOrhOHf6zpIDAkXOvy9V1yugDz7e7
-         YrzJ62NmFt9K2CI5DsVyRhukvgszz5xWuYhHXuLN4yy4klZVmPqW6VG6UDpU40g9rU3z
-         9z1A==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v97x35mcpN8JQ3xNEjelWQZ7gcIwbkYh1aMgJhhWZpo=;
+        b=poq9slUM5UFrWvspWWqsQ3Lsf9nfuNepIAWjbcyJJIxIHo1rlExOZnM9HC0dVOIvFQ
+         brQQ9mxhT7n2oNzlIfxnV1cE+gW6rr3eudRp79uoNFJKQxJlhrnnwMMrUmaRrAMuluoW
+         9A6MZNclwv+KZPuui7NwYZsYr/T/QPK/ObM6Isuh6MGvUh5h3VYx4FaYThwQyXMS5wOW
+         hFu+/LPwkDS6XhIHYPYkLX45/kz8U7JPao/00mGgzkQbSUnpBZ8No0F85PLLz572RRh4
+         A5RmeNZEdh6rC/4g2QoTi5pwYSBZTC0g9ZfGW36NrApHJWX3cgWEv2rjnQXm3SYNKyde
+         bauQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PbTndd+QidTobY58gwyktgPeVAc9czoOPLjMcmY0Pz0=;
-        b=OnaSwbf5kAnuPEOmmnARO9a5xqUavr7fYHkZD07Saxj/xuFrQMIhWfa0lInk4PxNQS
-         P/fb3oCAOD0fvqWgOMWXOhvtwcyTO8ZTvLtty0xwV0FfJrPYHF0tUqkalQcAJOMf6Iif
-         R/japiui/3Rw+ZfJJ+/VIOAJgPtbarv0L1yDegJr0eAH68EIFfGUtvsanzas4iW5FnNR
-         YOa/yBOs1i4pk0QPkKzKHNTklq/uuLjmEqwVVaMf2jdhjWege8HgIUOaOz4QPTQXoxBn
-         o4OshpBU8GUZ+MrrqFjGb+uhFwAjWQRwffjKoU3oUDLL+H35/MGARAtZX/q4oWiYRtiy
-         p77A==
-X-Gm-Message-State: APjAAAUHhaU+iS5+dCTt76NMS1XVTdXzcbjaHzV6O5o9mBDJATPuvrTZ
-        H89tc6NfMQ3ZX/QBKlNETFZmSQ==
-X-Google-Smtp-Source: APXvYqwsuY06lolgE9F4L30cleoaE0K4wrnDCTh3JjvjEtuNzg1KnBvNSuj4y1lbblpDurLzSRMYTQ==
-X-Received: by 2002:adf:ef0b:: with SMTP id e11mr11497455wro.128.1575568979260;
-        Thu, 05 Dec 2019 10:02:59 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:24c3:ebb3:9dd5:81c6? ([2a01:e34:ed2f:f020:24c3:ebb3:9dd5:81c6])
-        by smtp.googlemail.com with ESMTPSA id 5sm13532198wrh.5.2019.12.05.10.02.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2019 10:02:58 -0800 (PST)
-Subject: Re: [PATCH V6 2/3] cpuidle: play_idle: Specify play_idle with an idle
- state
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     mathieu.poirier@linaro.org, mingo@redhat.com, peterz@infradead.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org
-References: <20191030075141.1039-2-daniel.lezcano@linaro.org>
- <20191205170438.4318-1-martin.kepplinger@puri.sm>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0682ae10-b7c2-5a79-5101-4daf036fbbfb@linaro.org>
-Date:   Thu, 5 Dec 2019 19:02:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v97x35mcpN8JQ3xNEjelWQZ7gcIwbkYh1aMgJhhWZpo=;
+        b=ek1g6sFfPLHO1aHbdzCKm+/O3kjyRTYlFQQ3+X5XqjpmIXHazYubGeYusTWfNsKQwM
+         NY02pQTCYud5p0PHij5ri1WEExJ7KsrbE4YvmIgGLgXWxkYCziL47yH2Dh1eG5o9BChg
+         SZwjHcntyheVZXZ2ae8EEE34WmRVIDV4QpSd6DQc89G68kEn2D7LfkpuAPP2eTo8sjO/
+         JGA71NlpmUTeii+TBPwDnNkF/Y9Q/joxMyu0yic7hGkSmP70VqtGC67v2xKw952MQnGl
+         CilfB8PY0HBrGXthL6xdGrIrGiSE2v0t5qM+W5rAvFe5o3ZUwpQqNMjfFNuJLRcfb7Od
+         +mDg==
+X-Gm-Message-State: APjAAAXbWmxNgOetHoEu7T+V24TP/ZxTSZdijya4kWGkBF+/rvasM+IF
+        ADEWOaNXe/R4VRPOj4grNdF1PQ==
+X-Google-Smtp-Source: APXvYqwu3nB0FGPlKtOCNzKkFM2Ty+s87nejfHhWpj1pojZVwTSYW/34PSqIRjkuCg3mWA77YqYbcg==
+X-Received: by 2002:a17:902:700c:: with SMTP id y12mr10026365plk.227.1575569109861;
+        Thu, 05 Dec 2019 10:05:09 -0800 (PST)
+Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
+        by smtp.gmail.com with ESMTPSA id s22sm386918pjr.5.2019.12.05.10.05.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Dec 2019 10:05:08 -0800 (PST)
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        soc@kernel.org, arm@kernel.org, Olof Johansson <olof@lixom.net>
+Subject: [GIT PULL 1/4] ARM: SoC platform updates
+Date:   Thu,  5 Dec 2019 10:04:50 -0800
+Message-Id: <20191205180453.14056-1-olof@lixom.net>
+X-Mailer: git-send-email 2.22.GIT
 MIME-Version: 1.0
-In-Reply-To: <20191205170438.4318-1-martin.kepplinger@puri.sm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/12/2019 18:04, Martin Kepplinger wrote:
-> hi Daniel,
-> 
-> Since there's been quite some changes in cpuidle recently, how's your plans
-> to move this patchset forward? I, at least, need it.
+Most of these are for MMP (seeing a bunch of cleanups and refactorings
+for the first time in a while), and for OMAP (a bunch of cleanups and
+added support for voltage controller on OMAP4430).
 
-This series was merged but instead of specifying an idle state, we
-specify an exit latency [1].
+Conflicts:
 
-The cooling device itself is at V4 with some review tags. It should be
-merged soon [2].
+include/Kbuild: File deleted in mainline, just git rm here as well.
 
-  -- Daniel
+----------------------------------------------------------------
 
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c55b51a06b01d67a99457bb82a8c31081c7faa23
+The following changes since commit 2f13437b8917627119d163d62f73e7a78a92303a:
 
-[2] https://lkml.org/lkml/2019/12/4/563
+  Merge tag 'trace-v5.5-2' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+are available in the git repository at:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-soc
 
+for you to fetch changes up to ab818f0999dc73af3f966194d087e9f6650f939f:
+
+  Merge tag 'omap-for-v5.5/maintainers-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into arm/soc
+
+----------------------------------------------------------------
+
+Adam Ford (1):
+      MAINTAINERS: Add logicpd-som-lv and logicpd-torpedo to OMAP TREE
+
+Andreas Färber (2):
+      MAINTAINERS: Add mailing list for Realtek SoCs
+      arm64: realtek: Select reset controller
+
+Andrey Smirnov (1):
+      ARM: imx: Drop imx_anatop_usb_chrg_detect_disable()
+
+Anson Huang (1):
+      ARM: imx: Add serial number support for i.MX6/7 SoCs
+
+Ben Dooks (6):
+      ARM: bcm: include local platsmp.h for bcm2836_smp_ops
+      ARM: bcm: fix missing __iomem in bcm_kona_smc.c
+      ARM: OMAP2+: do not export am43xx_control functions
+      ARM: OMAP2+: make dra7xx_sha0_hwmod static
+      ARM: OMAP2+: prm44xx: make prm_{save,restore}_context static
+      ARM: OMAP2+: make omap44xx_sha0_hwmod and omap44xx_l3_main_2__des static
+
+Ben Dooks (Codethink) (1):
+      OMAP2: fixup doc comments in omap_device
+
+Dmitry Osipenko (2):
+      ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+      ARM: tegra: Use WFE for power-gating on Tegra30
+
+Florian Fainelli (1):
+      Merge tag 'tags/bcm2835-soc-next-2019-10-15' into soc/next
+
+Geert Uytterhoeven (1):
+      ARM: shmobile: rcar-gen2: Drop legacy DT clock support
+
+Jonathan Neuschäfer (1):
+      ARM: OMAP1: ams-delta FIQ: Fix a typo ("Initiaize")
+
+Kefeng Wang (1):
+      ARM: hisi: drop useless depend on ARCH_MULTI_V7
+
+Krzysztof Kozlowski (2):
+      ARM: s3c: Rename s3c64xx_spi_setname() function
+      ARM: s3c: Rename s5p_usb_phy functions
+
+Lubomir Rintel (10):
+      ARM: l2c: add definition for FWA in PL310 aux register
+      ARM: mmp: don't select CACHE_TAUROS2 on all ARCH_MMP
+      ARM: mmp: map the PGU as well
+      ARM: mmp: DT: convert timer driver to use TIMER_OF_DECLARE
+      ARM: mmp: define MMP_CHIPID by the means of CIU_REG()
+      ARM: mmp: add support for MMP3 SoC
+      ARM: mmp: add SMP support
+      ARM: mmp: move cputype.h to include/linux/soc/
+      ARM: mmp: remove MMP3 USB PHY registers from regs-usb.h
+      MAINTAINERS: mmp: add Git repository
+
+Markus Elfring (1):
+      ARM: OMAP2+: Add missing put_device() call in omapdss_init_of()
+
+Mihaela Martinas (1):
+      arm64: Introduce config for S32
+
+Olof Johansson (11):
+      Merge tag 'mmp-soc-for-v5.5-2' of git://git.kernel.org/.../lkundrak/linux-mmp into arm/soc
+      Merge tag 'arm-soc/for-5.5/soc' of https://github.com/Broadcom/stblinux into arm/soc
+      Merge tag 'omap-for-v5.5/soc-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/soc
+      Merge tag 'realtek-arm64-soc-for-5.5' of git://git.kernel.org/.../afaerber/linux-realtek into arm/soc
+      Merge tag 'hisi-armv7-soc-for-5.5' of git://github.com/hisilicon/linux-hisi into arm/soc
+      Merge tag 'renesas-arm-soc-for-v5.5-tag1' of git://git.kernel.org/.../geert/renesas-devel into arm/soc
+      Merge tag 'tegra-for-5.5-arm-core' of git://git.kernel.org/.../tegra/linux into arm/soc
+      Merge tag 'samsung-soc-5.5' of https://git.kernel.org/.../krzk/linux into arm/soc
+      Merge tag 'imx-soc-5.5' of git://git.kernel.org/.../shawnguo/linux into arm/soc
+      Merge tag 'omap-for-v5.5/soc-late-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/soc
+      Merge tag 'omap-for-v5.5/maintainers-signed' of git://git.kernel.org/.../tmlind/linux-omap into arm/soc
+
+Sebastian Reichel (1):
+      ARM: OMAP2+: pdata-quirks: drop TI_ST/KIM support
+
+Stefan Agner (1):
+      ARM: imx: use generic function to exit coherency
+
+Stefan Wahren (1):
+      ARM: bcm: Add support for BCM2711 SoC
+
+Sylwester Nawrocki (1):
+      ARM: exynos: Enable exynos-asv driver for ARCH_EXYNOS
+
+Tao Ren (1):
+      ARM: ASPEED: update default ARCH_NR_GPIO for ARCH_ASPEED
+
+Tony Lindgren (14):
+      ARM: OMAP2+: Remove unused wakeup_cpu
+      ARM: OMAP2+: Drop bogus wkup domain oswr setting
+      ARM: OMAP2+: Remove bogus warnings for machines without twl PMIC
+      ARM: OMAP2+: Update 4430 voltage controller operating points
+      ARM: OMAP2+: Configure voltage controller for cpcap
+      ARM: OMAP2+: Allow per oswr for omap4
+      ARM: OMAP2+: Allow core oswr for omap4
+      ARM: OMAP2+: Initialize voltage controller for omap4
+      ARM: OMAP2+: Drop unused enable_wakeup and disable_wakeup
+      ARM: OMAP2+: Simplify code for clkdm_clock_enable and disable
+      ARM: OMAP2+: Configure voltage controller for retention
+      ARM: OMAP2+: Configure voltage controller for cpcap to low-speed
+      Merge branch 'omap-for-v5.5/pm' into omap-for-v5.5/soc
+      Merge branch 'omap-for-v5.5/omap1' into omap-for-v5.5/soc
+
+Uwe Kleine-König (1):
+      ARM: OMAP1: drop duplicated dependency on ARCH_OMAP1
+
+YueHaibing (2):
+      ARM: OMAP2+: Make some functions static
+      ARM: OMAP2+: Remove duplicated include from pmic-cpcap.c
+
+
+ MAINTAINERS                                     |   5 +
+ arch/arm/Kconfig                                |   2 +-
+ arch/arm/include/asm/hardware/cache-l2x0.h      |   2 +
+ arch/arm/mach-bcm/Kconfig                       |   4 +-
+ arch/arm/mach-bcm/Makefile                      |   3 +-
+ arch/arm/mach-bcm/bcm2711.c                     |  24 ++
+ arch/arm/mach-bcm/bcm_kona_smc.c                |   2 +-
+ arch/arm/mach-bcm/platsmp.c                     |   2 +
+ arch/arm/mach-exynos/Kconfig                    |   1 +
+ arch/arm/mach-hisi/Kconfig                      |  16 +-
+ arch/arm/mach-imx/anatop.c                      |  20 +-
+ arch/arm/mach-imx/cpu.c                         |  38 ++-
+ arch/arm/mach-imx/hotplug.c                     |  24 +-
+ arch/arm/mach-mmp/Kconfig                       |  22 +-
+ arch/arm/mach-mmp/Makefile                      |   4 +
+ arch/arm/mach-mmp/addr-map.h                    |   7 +
+ arch/arm/mach-mmp/common.c                      |  19 +-
+ arch/arm/mach-mmp/common.h                      |   1 +
+ arch/arm/mach-mmp/devices.c                     |   2 +-
+ arch/arm/mach-mmp/mmp-dt.c                      |   5 +-
+ arch/arm/mach-mmp/mmp2-dt.c                     |   7 +-
+ arch/arm/mach-mmp/mmp2.c                        |   2 +-
+ arch/arm/mach-mmp/mmp3.c                        |  29 ++
+ arch/arm/mach-mmp/platsmp.c                     |  32 +++
+ arch/arm/mach-mmp/pm-mmp2.c                     |   2 +-
+ arch/arm/mach-mmp/pm-pxa910.c                   |   2 +-
+ arch/arm/mach-mmp/pxa168.c                      |   2 +-
+ arch/arm/mach-mmp/pxa910.c                      |   2 +-
+ arch/arm/mach-mmp/regs-usb.h                    |  94 -------
+ arch/arm/mach-mmp/time.c                        |  43 +--
+ arch/arm/mach-omap1/Kconfig                     |  33 +--
+ arch/arm/mach-omap1/ams-delta-fiq.c             |   2 +-
+ arch/arm/mach-omap2/Makefile                    |   5 +
+ arch/arm/mach-omap2/clockdomain.c               |  78 ++----
+ arch/arm/mach-omap2/control.c                   |   4 +-
+ arch/arm/mach-omap2/control.h                   |   1 +
+ arch/arm/mach-omap2/display.c                   |   1 +
+ arch/arm/mach-omap2/omap-mpuss-lowpower.c       |   2 -
+ arch/arm/mach-omap2/omap_device.c               |  19 +-
+ arch/arm/mach-omap2/omap_hwmod.c                |  97 -------
+ arch/arm/mach-omap2/omap_hwmod.h                |   3 -
+ arch/arm/mach-omap2/omap_hwmod_44xx_data.c      |   4 +-
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c       |   2 +-
+ arch/arm/mach-omap2/omap_twl.c                  |   8 +-
+ arch/arm/mach-omap2/opp4xxx_data.c              |  16 +-
+ arch/arm/mach-omap2/pdata-quirks.c              |  52 ----
+ arch/arm/mach-omap2/pm.c                        |   1 +
+ arch/arm/mach-omap2/pm.h                        |  14 +
+ arch/arm/mach-omap2/pm44xx.c                    |  13 +-
+ arch/arm/mach-omap2/pmic-cpcap.c                | 271 +++++++++++++++++++
+ arch/arm/mach-omap2/prm44xx.c                   |   4 +-
+ arch/arm/mach-omap2/vc.c                        |  57 +++-
+ arch/arm/mach-omap2/vc.h                        |   2 +-
+ arch/arm/mach-s3c24xx/s3c2416.c                 |   2 +-
+ arch/arm/mach-s3c24xx/s3c2443.c                 |   2 +-
+ arch/arm/mach-s3c24xx/spi-core.h                |   2 +-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c           |   4 +-
+ arch/arm/mach-shmobile/setup-rcar-gen2.c        |   1 -
+ arch/arm/mach-tegra/reset-handler.S             |   6 +-
+ arch/arm/mach-tegra/sleep-tegra30.S             |   4 +-
+ arch/arm/mm/Kconfig                             |   2 +-
+ arch/arm/plat-samsung/devs.c                    |   4 +-
+ arch/arm/plat-samsung/include/plat/usb-phy.h    |   4 +-
+ arch/arm64/Kconfig.platforms                    |  11 +-
+ drivers/clk/Kconfig                             |   5 +
+ drivers/clk/mmp/Makefile                        |   2 +-
+ drivers/soc/tegra/flowctrl.c                    |  19 +-
+ .../linux/soc/mmp}/cputype.h                    |  27 ++
+ 68 files changed, 708 insertions(+), 494 deletions(-)
+ create mode 100644 arch/arm/mach-bcm/bcm2711.c
+ create mode 100644 arch/arm/mach-mmp/mmp3.c
+ create mode 100644 arch/arm/mach-mmp/platsmp.c
+ create mode 100644 arch/arm/mach-omap2/pmic-cpcap.c
+ rename {arch/arm/mach-mmp => include/linux/soc/mmp}/cputype.h (71%)
