@@ -2,177 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 289FF114499
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 17:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB97011449C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 17:16:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbfLEQPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 11:15:44 -0500
-Received: from mga14.intel.com ([192.55.52.115]:65475 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbfLEQPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 11:15:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 08:15:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,281,1571727600"; 
-   d="scan'208";a="205816133"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 05 Dec 2019 08:15:43 -0800
-Received: from [10.125.252.254] (abudanko-mobl.ccr.corp.intel.com [10.125.252.254])
-        by linux.intel.com (Postfix) with ESMTP id 145AD5804A0;
-        Thu,  5 Dec 2019 08:15:39 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v1 0/3] Introduce CAP_SYS_PERFMON capability for secure Perf
- users groups
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        elena.reshetova@intel.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Stephane Eranian <eranian@google.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Organization: Intel Corp.
-Message-ID: <283f09a5-33bd-eac3-bdfd-83d775045bf9@linux.intel.com>
-Date:   Thu, 5 Dec 2019 19:15:38 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1729877AbfLEQQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 11:16:38 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19612 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729430AbfLEQQf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 11:16:35 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB5GCrk0025762;
+        Thu, 5 Dec 2019 11:16:27 -0500
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wpur469s5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Dec 2019 11:16:27 -0500
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB5GFPhT019887;
+        Thu, 5 Dec 2019 16:16:25 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma05wdc.us.ibm.com with ESMTP id 2wkg27r1ky-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Dec 2019 16:16:25 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB5GGPpB17695078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Dec 2019 16:16:25 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 554BD112066;
+        Thu,  5 Dec 2019 16:16:25 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38977112061;
+        Thu,  5 Dec 2019 16:16:25 +0000 (GMT)
+Received: from localhost (unknown [9.41.101.192])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Dec 2019 16:16:25 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: Re: [PATCH 0/3] pseries: Track and expose idle PURR and SPURR ticks
+In-Reply-To: <48823589-b105-0da3-e532-f633ade8f0d9@linux.vnet.ibm.com>
+References: <1574856072-30972-1-git-send-email-ego@linux.vnet.ibm.com> <87r21ju3ud.fsf@linux.ibm.com> <48823589-b105-0da3-e532-f633ade8f0d9@linux.vnet.ibm.com>
+Date:   Thu, 05 Dec 2019 10:16:19 -0600
+Message-ID: <87k17au4rw.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-05_05:2019-12-04,2019-12-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912050135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kamalesh,
 
-Currently access to perf_events functionality [1] beyond the scope permitted
-by perf_event_paranoid [1] kernel setting is allowed to a privileged process
-[2] with CAP_SYS_ADMIN capability enabled in the process effective set [3].
+Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> writes:
+> On 12/5/19 3:54 AM, Nathan Lynch wrote:
+>> "Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
+>>>
+>>> Tools such as lparstat which are used to compute the utilization need
+>>> to know [S]PURR ticks when the cpu was busy or idle. The [S]PURR
+>>> counters are already exposed through sysfs.  We already account for
+>>> PURR ticks when we go to idle so that we can update the VPA area. This
+>>> patchset extends support to account for SPURR ticks when idle, and
+>>> expose both via per-cpu sysfs files.
+>> 
+>> Does anything really want to use PURR instead of SPURR? Seems like we
+>> should expose only SPURR idle values if possible.
+>> 
+>
+> lparstat is one of the consumers of PURR idle metric
+> (https://groups.google.com/forum/#!topic/powerpc-utils-devel/fYRo69xO9r4). 
+> Agree, on the argument that system utilization metrics based on SPURR
+> accounting is accurate in comparison to PURR, which isn't proportional to
+> CPU frequency.  PURR has been traditionally used to understand the system
+> utilization, whereas SPURR is used for understanding how much capacity is
+> left/exceeding in the system based on the current power saving mode.
 
-This patch set introduces CAP_SYS_PERFMON capability devoted to secure performance
-monitoring activity so that CAP_SYS_PERFMON would assist CAP_SYS_ADMIN in its
-governing role for perf_events based performance monitoring of a system.
-
-CAP_SYS_PERFMON aims to harden system security and integrity when monitoring
-performance using perf_events subsystem by processes and Perf privileged users
-[2], thus decreasing attack surface that is available to CAP_SYS_ADMIN
-privileged processes [3].
-
-CAP_SYS_PERFMON aims to take over CAP_SYS_ADMIN credentials related to
-performance monitoring functionality of perf_events and balance amount of
-CAP_SYS_ADMIN credentials in accordance with the recommendations provided in
-the man page for CAP_SYS_ADMIN [3]: "Note: this capability is overloaded;
-see Notes to kernel developers, below."
-
-For backward compatibility reasons performance monitoring functionality of 
-perf_events subsystem remains available under CAP_SYS_ADMIN but its usage for
-secure performance monitoring use cases is discouraged with respect to the
-introduced CAP_SYS_PERFMON capability.
-
-In the suggested implementation CAP_SYS_PERFMON enables Perf privileged users
-[2] to conduct secure performance monitoring using perf_events in the scope
-of available online CPUs when executing code in kernel and user modes.
-
-Possible alternative solution to this capabilities balancing, system security
-hardening task could be to use the existing CAP_SYS_PTRACE capability to govern
-perf_events' performance monitoring functionality, since process debugging is
-similar to performance monitoring with respect to providing insights into
-process memory and execution details. However CAP_SYS_PTRACE still provides
-users with more credentials than are required for secure performance monitoring
-using perf_events subsystem and this excess is avoided by using the dedicated
-CAP_SYS_PERFMON capability.
-
-libcap library utilities [4], [5] and Perf tool can be used to apply
-CAP_SYS_PERFMON capability for secure performance monitoring beyond the scope
-permitted by system wide perf_event_paranoid kernel setting and below are the
-steps to evaluate the advancement suggested by the patch set:
-
-  - patch, build and boot the kernel
-  - patch, build Perf tool e.g. to /home/user/perf
-  ...
-  # git clone git://git.kernel.org/pub/scm/libs/libcap/libcap.git libcap
-  # pushd libcap
-  # patch libcap/include/uapi/linux/capabilities.h with [PATCH 1/3]
-  # make
-  # pushd progs
-  # ./setcap "cap_sys_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
-  # ./setcap -v "cap_sys_perfmon,cap_sys_ptrace,cap_syslog=ep" /home/user/perf
-  /home/user/perf: OK
-  # ./getcap /home/user/perf
-  /home/user/perf = cap_sys_ptrace,cap_syslog,cap_sys_perfmon+ep
-  # echo 2 > /proc/sys/kernel/perf_event_paranoid
-  # cat /proc/sys/kernel/perf_event_paranoid 
-  2
-  ...
-  $ /home/user/perf top
-    ... works as expected ...
-  $ cat /proc/`pidof perf`/status
-  Name:	perf
-  Umask:	0002
-  State:	S (sleeping)
-  Tgid:	2958
-  Ngid:	0
-  Pid:	2958
-  PPid:	9847
-  TracerPid:	0
-  Uid:	500	500	500	500
-  Gid:	500	500	500	500
-  FDSize:	256
-  ...
-  CapInh:	0000000000000000
-  CapPrm:	0000004400080000
-  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
-                                     cap_sys_perfmon,cap_sys_ptrace,cap_syslog
-  CapBnd:	0000007fffffffff
-  CapAmb:	0000000000000000
-  NoNewPrivs:	0
-  Seccomp:	0
-  Speculation_Store_Bypass:	thread vulnerable
-  Cpus_allowed:	ff
-  Cpus_allowed_list:	0-7
-  ...
-
-Usage of cap_sys_perfmon effectively avoids unused credentials excess:
-- with cap_sys_admin:
-  CapEff:	0000007fffffffff => 01111111 11111111 11111111 11111111 11111111
-- with cap_sys_perfmon:
-  CapEff:	0000004400080000 => 01000100 00000000 00001000 00000000 00000000
-                                    38   34               19
-                           sys_perfmon   syslog           sys_ptrace
-
-The patch set is for tip perf/core repository:
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip perf/core
-  tip sha1: ceb9e77324fa661b1001a0ae66f061b5fcb4e4e6
-
-[1] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
-[2] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html
-[3] http://man7.org/linux/man-pages/man7/capabilities.7.html
-[4] http://man7.org/linux/man-pages/man8/setcap.8.html
-[5] https://git.kernel.org/pub/scm/libs/libcap/libcap.git
-[6] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
-
----
-Alexey Budankov (3):
-  capabilities: introduce CAP_SYS_PERFMON to kernel and user space
-  perf/core: apply CAP_SYS_PERFMON to CPUs and kernel monitoring
-  perf tool: extend Perf tool with CAP_SYS_PERFMON support
-
- include/linux/perf_event.h          |  6 ++++--
- include/uapi/linux/capability.h     | 10 +++++++++-
- security/selinux/include/classmap.h |  4 ++--
- tools/perf/design.txt               |  3 ++-
- tools/perf/util/cap.h               |  4 ++++
- tools/perf/util/evsel.c             | 10 +++++-----
- tools/perf/util/util.c              | 15 +++++++++++++--
- 7 files changed, 39 insertions(+), 13 deletions(-)
-
--- 
-2.20.1
+I'll phrase my question differently: does SPURR complement or supercede
+PURR? You seem to be saying they serve different purposes. If PURR is
+actually useful rather then vestigial then I have no objection to
+exposing idle_purr.
