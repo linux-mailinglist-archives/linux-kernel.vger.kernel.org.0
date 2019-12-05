@@ -2,86 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 340A7114626
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 18:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42845114621
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 18:42:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730222AbfLERo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 12:44:27 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46460 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730195AbfLERo0 (ORCPT
+        id S1730173AbfLERm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 12:42:26 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43583 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729396AbfLERm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:44:26 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB5Hi8aW031074;
-        Thu, 5 Dec 2019 11:44:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575567848;
-        bh=B2u+1EXUJef+VRu1rBJvXbM0zJ7qX1rNIdIdh6bNero=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Q3JXPcJbFBQEDUSNRLbb6GuGRHBlATmYP9m+KM8YCnDxfRk89cDyTwH0kUsm/oaMM
-         3cyZmE3+XPzybQPniK+QbyGbh0TIzxDjHVemRgYrkA4SMp0BZ2L4jK9IVNkFlJcdMt
-         uIMLjick/RUJkiewxarhUa6zK/uy2so4h3Rs+E6o=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB5Hi870019722
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 5 Dec 2019 11:44:08 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Dec
- 2019 11:44:08 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Dec 2019 11:44:08 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB5Hi74E048911;
-        Thu, 5 Dec 2019 11:44:08 -0600
-Subject: Re: [PATCH] MAINTAINERS: add myself as maintainer of MCAN MMIO device
- driver
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sriram Dash <sriram.dash@samsung.com>,
-        <linux-kernel@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <wg@grandegger.com>
-CC:     <mchehab+samsung@kernel.org>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>,
-        <rcsekar@samsung.com>, <pankaj.dubey@samsung.com>,
-        <pankj.sharma@samsung.com>
-References: <CGME20191203043533epcas5p19bfc21e2b03db7f27c6d84cda6824d27@epcas5p1.samsung.com>
- <1575347349-32689-1-git-send-email-sriram.dash@samsung.com>
- <9c9b1f4d-e092-957a-150c-41f2348810e5@pengutronix.de>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <946fbd81-a024-04e4-74d8-90e9f5e9979a@ti.com>
-Date:   Thu, 5 Dec 2019 11:42:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Thu, 5 Dec 2019 12:42:26 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 9so3119395lfq.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 09:42:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pbUJTjP9F3GwOz1HFUh2s3Qmcb6CiYFw+YJqleMOHnU=;
+        b=At+uWZuKrLZ9S7SyRUatFCEd1Mv2OAsl5w3v+FMN3slvSqWktBXK4CWewfKJV7jSv0
+         jpx4YsZEPIQAb72cz8O870cYWisRieSJNwsV8ZKkMw0312Czo8jJrbF9lgpKcnqShANR
+         4t99ocyvjH84jbC8Y0/H3HnaS1ee2Sr9m+fHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pbUJTjP9F3GwOz1HFUh2s3Qmcb6CiYFw+YJqleMOHnU=;
+        b=BgKcRPYKK8ByDZT3Ph4Fgfy8azt6Wh8HpOXvhW+TdNxSg8hK1W09g9OPZFhgCFR0tp
+         n+J+wqb6RZJXcum88ZEw/D/SVj2QW4BCE56bQPFE5EqOBDEuC6eFvL4vb1RewqFq0p4e
+         i4qa9cZfau+Wa0iVjombfru2m9Mq3CE2MxdkhQY7N3Lw9t+TOmBt5rgmGVlZG1Y0DUQa
+         4ZkZ9/n0CMMv1/AOVvXLhckegs3iPbj+If4cpQYMw6ZV42epzPaGJpDsWizDNLqvOv12
+         LUruKBJqna60nd6bOf/2DtjqDStsgLaR/DdRA9MFx9oZxzINCnPtdMNpMEncETnFHcVZ
+         oeJg==
+X-Gm-Message-State: APjAAAV46npNMYXapAoG6auuD89DaGuKB/m/mQILyeQU2mY4KUHY9p45
+        rIRCssh0aqli9GuBqW3i0anz+1gC+tM=
+X-Google-Smtp-Source: APXvYqzUQgx0qBBoU4xA5MYH9S0BIGAlwHokc3ignzP+YKjNS02Qi+se6qeQ8eOWDlDMnqdHjmGxtw==
+X-Received: by 2002:a19:c84:: with SMTP id 126mr5917386lfm.5.1575567743590;
+        Thu, 05 Dec 2019 09:42:23 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id 144sm5421932lfi.67.2019.12.05.09.42.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 09:42:22 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id y5so3136976lfy.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 09:42:22 -0800 (PST)
+X-Received: by 2002:ac2:4946:: with SMTP id o6mr5923371lfi.170.1575567742310;
+ Thu, 05 Dec 2019 09:42:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9c9b1f4d-e092-957a-150c-41f2348810e5@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <157556649610.20869.8537079649495343567.stgit@warthog.procyon.org.uk>
+ <157556650320.20869.10314267987837887098.stgit@warthog.procyon.org.uk>
+In-Reply-To: <157556650320.20869.10314267987837887098.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Dec 2019 09:42:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgBLUeMUwfWGfqeihz4K=QhXxEgskOo6aUfTmLa=XMvzQ@mail.gmail.com>
+Message-ID: <CAHk-=wgBLUeMUwfWGfqeihz4K=QhXxEgskOo6aUfTmLa=XMvzQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pipe: Remove assertion from pipe_poll()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc
+On Thu, Dec 5, 2019 at 9:21 AM David Howells <dhowells@redhat.com> wrote:
+>
+> An assertion check was added to pipe_poll() to make sure that the ring
+> occupancy isn't seen to overflow the ring size.  However, since no locks
+> are held when the three values are read, it is possible for F_SETPIPE_SZ to
+> intervene and muck up the calculation, thereby causing the oops.
+>
+> Fix this by simply removing the assertion and accepting that the
+> calculation might be approximate.
 
-On 12/3/19 3:55 AM, Marc Kleine-Budde wrote:
-> On 12/3/19 5:29 AM, Sriram Dash wrote:
->> Since we are actively working on MMIO MCAN device driver,
->> as discussed with Marc, I am adding myself as a maintainer.
->>
->> Signed-off-by: Sriram Dash <sriram.dash@samsung.com>
->> ---
-> Added to linux-can.
+This is not what the patch actually does.
 
-When I add my maintainership for TCAN I am also going to add the 
-m_can.c, m_can.h as well as the dt doc.
+The patch you sent only adds the wakeup when the pipe size changes.
 
-Or if you want me to add my email to the MMIO as well that is fine as we 
-have devices that have the embedded Bosch IP as well
+Please re-generate both patches and re-send.
 
-Dan
-
+              Linus
