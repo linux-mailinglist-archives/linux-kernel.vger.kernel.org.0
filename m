@@ -2,141 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB4B6114746
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB30111470D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbfLESpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:45:36 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28836 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730278AbfLESp3 (ORCPT
+        id S1729755AbfLESoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:44:00 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36787 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfLESn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:45:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575571529;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=o+ceyNOAgwOHGOedPh8jjnXDmvLZ/5D9KblQB5Ic6zg=;
-        b=id6bY7NrHUwmTCF7ouSvsf6LSNWL9PTYJ6iSB02ysTu6P+lkbzAHRwRbhqw+/HdWUBI6Ja
-        y3sptHYl77NzInYxhrxJ49Ar/qFB54xAIz30kOywgrQMEq/7qkEeTZesjlfuupbXaDmlIX
-        4yVqspl9P6HXUP5st1lYJRPi1U3xW5A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-26-wjmLsy-_NiCvkUvbpkiP0g-1; Thu, 05 Dec 2019 13:45:27 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61250100550E;
-        Thu,  5 Dec 2019 18:45:25 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-55.ams2.redhat.com [10.36.116.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1955600D1;
-        Thu,  5 Dec 2019 18:45:21 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-input@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v9 10/10] platform/x86: touchscreen_dmi: Add info for the Chuwi Vi8 Plus tablet
-Date:   Thu,  5 Dec 2019 19:44:22 +0100
-Message-Id: <20191205184422.7316-11-hdegoede@redhat.com>
-In-Reply-To: <20191205184422.7316-1-hdegoede@redhat.com>
-References: <20191205184422.7316-1-hdegoede@redhat.com>
+        Thu, 5 Dec 2019 13:43:59 -0500
+Received: by mail-pl1-f194.google.com with SMTP id k20so1605071pls.3;
+        Thu, 05 Dec 2019 10:43:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FCp49Ui27dydwY8694hG4UdI57V9y5xaYI+0ibAx9Mc=;
+        b=EwfdDzeJebLnKRGKcgosgHey0wK42t0sQk9CWjBY+NVVlAlon+T2fEoqLBaEy1HPlm
+         1Ri4tZacXbJy/6Se+pXlXRSyqyWISZlgfR0tYvZ9YFMrX29wvt4WUYNhjD0W5PL+puhg
+         upOMLVdycTmy3Et4J8+t2i/FldEusxTr3XIc1oWKFvAe03nrUey9uUzzCGc3K8UHL74A
+         8tQyIuYY7AOM3R/4/xX7pkDg7SZc5Eq75AX8LQnnJcJRg/gXQt+L4EAV83L8BDsFr9IK
+         hZTSQBqtUo3mDpHYt1Gxzkmq+CYURP3lukQHxSyYOZ94cUsHr1cNNEAak2GN1yUWt+QL
+         iHNw==
+X-Gm-Message-State: APjAAAVYeWv45aEyP5zMaEMhQqYoSorxaTokpTjGi+9kI59PAJRo7FxO
+        fxmMQtYFF4BgAAIqT8QHxms=
+X-Google-Smtp-Source: APXvYqxEGWkHqf3SoqS5JfOUeYQylUakgL3ONZFsTaapa4Y7GVYOM+MlCU3V6fpr61txQqIa5+ArzQ==
+X-Received: by 2002:a17:90a:23a9:: with SMTP id g38mr11278130pje.128.1575571438433;
+        Thu, 05 Dec 2019 10:43:58 -0800 (PST)
+Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
+        by smtp.gmail.com with ESMTPSA id p68sm13748345pfp.149.2019.12.05.10.43.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 10:43:57 -0800 (PST)
+Date:   Thu, 5 Dec 2019 10:44:50 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     Alexander Lobakin <alobakin@dlink.ru>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        Hassan Naveed <hnaveed@wavecomp.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: MIPS eBPF JIT support on pre-32R2
+Message-ID: <20191205184450.lbrkenmursz4zpdm@lantea.localdomain>
+References: <09d713a59665d745e21d021deeaebe0a@dlink.ru>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: wjmLsy-_NiCvkUvbpkiP0g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <09d713a59665d745e21d021deeaebe0a@dlink.ru>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen info for the Chuwi Vi8 Plus tablet. This tablet uses a
-Chipone ICN8505 touchscreen controller, with the firmware used by the
-touchscreen embedded in the EFI firmware.
+Hi Alexander,
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v7:
-- Remove PROPERTY_ENTRY_BOOL("efi-embedded-firmware") properties entry,
-  as this is no longer necessary
+On Thu, Dec 05, 2019 at 03:45:27PM +0300, Alexander Lobakin wrote:
+> Hey all,
+> 
+> I'm writing about lines arch/mips/net/ebpf_jit.c:1806-1807:
+> 
+> 	if (!prog->jit_requested || MIPS_ISA_REV < 2)
+> 		return prog;
+> 
+> Do pre-32R2 architectures (32R1, maybe even R3000-like) actually support
+> this eBPF JIT code?
 
-Changes in v6:
-- Switch from crc sums to SHA256 hashes for the firmware hash
----
- drivers/platform/x86/touchscreen_dmi.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+No, they don't; the eBPF JIT makes unconditional use of at least the
+(d)ins & (d)ext instructions which were added in MIPSr2, so it would
+result in reserved instruction exceptions & panics if enabled on
+pre-MIPSr2 CPUs.
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/=
-touchscreen_dmi.c
-index 4449e4c0b26b..4a09b479cda5 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -132,6 +132,18 @@ static const struct ts_dmi_data chuwi_vi8_data =3D {
- =09.properties     =3D chuwi_vi8_props,
- };
-=20
-+static const struct ts_dmi_data chuwi_vi8_plus_data =3D {
-+=09.embedded_fw =3D {
-+=09=09.name=09=3D "chipone/icn8505-HAMP0002.fw",
-+=09=09.prefix =3D { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
-+=09=09.length=09=3D 35012,
-+=09=09.sha256=09=3D { 0x93, 0xe5, 0x49, 0xe0, 0xb6, 0xa2, 0xb4, 0xb3,
-+=09=09=09    0x88, 0x96, 0x34, 0x97, 0x5e, 0xa8, 0x13, 0x78,
-+=09=09=09    0x72, 0x98, 0xb8, 0x29, 0xeb, 0x5c, 0xa7, 0xf1,
-+=09=09=09    0x25, 0x13, 0x43, 0xf4, 0x30, 0x7c, 0xfc, 0x7c },
-+=09},
-+};
-+
- static const struct property_entry chuwi_vi10_props[] =3D {
- =09PROPERTY_ENTRY_U32("touchscreen-min-x", 0),
- =09PROPERTY_ENTRY_U32("touchscreen-min-y", 4),
-@@ -743,6 +755,15 @@ const struct dmi_system_id touchscreen_dmi_table[] =3D=
- {
- =09=09=09DMI_MATCH(DMI_BIOS_VERSION, "CHUWI.D86JLBNR"),
- =09=09},
- =09},
-+=09{
-+=09=09/* Chuwi Vi8 Plus (CWI519) */
-+=09=09.driver_data =3D (void *)&chuwi_vi8_plus_data,
-+=09=09.matches =3D {
-+=09=09=09DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-+=09=09=09DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
-+=09=09=09DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+=09=09},
-+=09},
- =09{
- =09=09/* Chuwi Vi10 (CWI505) */
- =09=09.driver_data =3D (void *)&chuwi_vi10_data,
-@@ -1137,6 +1158,9 @@ static int __init ts_dmi_init(void)
- =09=09return 0; /* Not an error */
-=20
- =09ts_data =3D dmi_id->driver_data;
-+=09/* Some dmi table entries only provide an efi_embedded_fw_desc */
-+=09if (!ts_data->properties)
-+=09=09return 0;
-=20
- =09error =3D bus_register_notifier(&i2c_bus_type, &ts_dmi_notifier);
- =09if (error)
---=20
-2.23.0
+> If they do, then the condition 'MIPS_ISA_REV < 2'
+> should be removed as it is always true for them and tells CC to remove
+> JIT completely.
+> 
+> If they don't support instructions from this JIT, then the line
+> arch/mips/Kconfig:50:
+> 
+> 	select HAVE_EBPF_JIT if (!CPU_MICROMIPS)
+> 
+> should be changed to something like:
+> 
+> 	select HAVE_EBPF_JIT if !CPU_MICROMIPS && TARGET_ISA_REV >= 2
+> 
+> (and then the mentioned 'if' condition would become redundant)
 
+Good spot; I agree entirely, this dependency should be reflected in
+Kconfig.
+
+> At the moment it is possible to build a kernel without both JIT and
+> interpreter, but with CONFIG_BPF_SYSCALL=y (what should not be allowed
+> I suppose?) within the following configuration:
+> 
+> - select any pre-32R2 CPU (e.g. CONFIG_CPU_MIPS32_R1);
+> - enable CONFIG_BPF_JIT (CONFIG_MIPS_EBPF_JIT will be autoselected);
+> - enable CONFIG_BPF_JIT_ALWAYS_ON (this removes BPF interpreter from
+>   the system).
+> 
+> I may prepare a proper patch by myself if needed (after clarification).
+
+That would be great, thanks!
+
+One thing to note is that I hope we'll restore the cBPF JIT with this
+patch:
+
+https://lore.kernel.org/linux-mips/20191205182318.2761605-1-paulburton@kernel.org/T/#u
+
+The cBPF JIT looks like it should work on older pre-MIPSr2 CPUs, so the
+only way this is relevant is that your patch might have a minor
+conflict. But I thought I'd mention it anyway :)
+
+Thanks,
+    Paul
