@@ -2,316 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B267C113892
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 01:16:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB95111389E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 01:24:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbfLEAQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 19:16:07 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35501 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbfLEAQH (ORCPT
+        id S1728494AbfLEAYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 19:24:15 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46013 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbfLEAYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 19:16:07 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s10so441701plp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 16:16:06 -0800 (PST)
+        Wed, 4 Dec 2019 19:24:14 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 203so992791lfa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 16:24:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=dIxP6eV19dV4deKuY2u2OMouyxNg4VVPoJ/7ILKlt5A=;
-        b=HGikBZLck8OARIrtAyQH3OeYiqo0Ij6YGebXJIIIRxVX71igUK9HbQXhX2OBH08lyO
-         5RJh4XoDgLBqrkxiyI4Y+OyMLKOfCoV5d1PI5bEtFSs7VqcHInIi9ca45iKf6bksoedk
-         Eqhr3y1Rfg0g3CJXfoDVokCHjjaEZ4hiZ//ALVY0fSWObzeMQy0vu/w+too2wH+Rxte9
-         iP3H+QXdZfDafNmsk09TEWFdtt/VZyEpgjuOZBwgpM1mpZqXN1LkNAXWcaZ0gHJ9dq2A
-         RkncLEsEeLnt4v/bOqtrpRZZpGDTtfJ/eiDlH/OFv/HqL29HjHlzJ8aRZjJhqyKNW8Du
-         7Whg==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=WlXLW2RI1tJQOcMNYgc98Qgcf4rYrGp8OIDLgoJCH0c=;
+        b=fNwiQqfGnNsyEJYMPlge43hvB2JRQtOIQ7khRISVYNFdvNINB6iKEx0QoEJON7A4qg
+         omWu6pKQJ8w6HgqGWf/MIO65vwjCsdYIYZYEtD4ySqIzqRvyd8CP/lBjPg1J2ol2FgZj
+         Rs1eI4tDR3rz0hMU1ncrKBRIHY2AAMoHQEfbmMNudMkELJbUTpVZklq88nj/dZVis8EY
+         vYBkyTnAjEkqNk34aamGnLh3muzsO95SpMOL7Or6FmPVzQ8pC2c2KY4yI/reU3XsRvOn
+         lb3ahcDI3+7vyUAVoS7mXj4eE6EF+IQqduJA1uUjhXuEQ5sxhx8d3EDrxT5l2KHwEN2P
+         ZkLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=dIxP6eV19dV4deKuY2u2OMouyxNg4VVPoJ/7ILKlt5A=;
-        b=QIb69zY6aRGFER+cqGyGSNuVgFOQaeOD6NLnsdTI62gMe5yO9syeC85WSWJhyRjXXE
-         83FWDE9w6QlvjVXvGpnwrtqCjHSDbNfqf96s845V4CiRli/eNQF6SlYXOyYUlK1L+/RS
-         xIBGOafnyEBWxP4t4AZ+Ols6nm69puW/Q3bCsQDdneSSVeMco3VSF0tUH1tRaqfruD8S
-         vBeDvB0HOXY5sOIx01om8MKeSKPxAeySCxDKBeXwub6RUkoxczHlEjrBfGjFTsA6VlAy
-         exwsWAZg+Zir+4nkDxBztl/Hk3Zbtw0dmRy5u9/yhb8iDsBX/fJDIncDi+AnNImatsCX
-         HOkQ==
-X-Gm-Message-State: APjAAAV3ShfhDG39rOmGdXmHZawMXCdypr8JOjZKBy7tT6rI+xSLe0Du
-        RHBvnQPNVMM50coRx2loeWYvQw==
-X-Google-Smtp-Source: APXvYqxeT9uihoBBzyRhAwmkW/g9V+/o1AQCwmW1ck6mL/ZoJBtejNoD5YqWH0Ghvs6ckqXpawCpHg==
-X-Received: by 2002:a17:902:b410:: with SMTP id x16mr6196641plr.258.1575504965547;
-        Wed, 04 Dec 2019 16:16:05 -0800 (PST)
-Received: from [100.112.92.218] ([104.133.9.106])
-        by smtp.gmail.com with ESMTPSA id g26sm9053526pfo.128.2019.12.04.16.16.04
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 04 Dec 2019 16:16:04 -0800 (PST)
-Date:   Wed, 4 Dec 2019 16:15:42 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-cc:     hughd@google.com, kirill.shutemov@linux.intel.com,
-        aarcange@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP
- partially
-In-Reply-To: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
-Message-ID: <alpine.LSU.2.11.1912041601270.12930@eggly.anvils>
-References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=WlXLW2RI1tJQOcMNYgc98Qgcf4rYrGp8OIDLgoJCH0c=;
+        b=Ln3DzeL4MJzFJEFI24jDaF5tesA/pa6tJXZ6IPHiIwkm2iud4P29GEc4cwwULuks8X
+         BCbG7+Lz9QC9pA8rs0XwTEDVs105ODbElEcqTdSO02zkTVYDwIopIPI+8qiwvri/uEWt
+         Nf9NKy4C5J1ruzX+YTC49B0SDt6MkF90qDDD8DokQI9JgY/prl+1cI+bqb8WvePjfQ1q
+         a3FrHwnYcQ2ZkWAQTcY42RMzs4BAml4iLe7NgkN1OKMierKMonvwVNLtel0Rlk19ew9b
+         XtOU6t6ik4rTEHBM1IYNo5JJH2B87uIAYIluHk7x7nfROvTvWZWTdEv3O3KLWjv9yoTf
+         kFcQ==
+X-Gm-Message-State: APjAAAX3pM0ALHQIigA/AFpLHyoV+30ED09cILDJ8KrnSaJ3+MuVNgfO
+        DRg5I2aaVTxWLxpjSZXizNPe5w==
+X-Google-Smtp-Source: APXvYqy7QeMNXACuTpx2U0w7soJGbGDcz1sK5VXmG2ytucMOOYNINLaDrgync325PZJQuq3Nc0rb3g==
+X-Received: by 2002:a19:c7c5:: with SMTP id x188mr3580128lff.22.1575505452514;
+        Wed, 04 Dec 2019 16:24:12 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id l7sm4054402lfc.80.2019.12.04.16.24.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 16:24:12 -0800 (PST)
+Date:   Wed, 4 Dec 2019 16:23:48 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Toke =?UTF-8?B?SMO4aWxh?= =?UTF-8?B?bmQtSsO4cmdlbnNlbg==?= 
+        <toke@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCHv4 0/6] perf/bpftool: Allow to link libbpf dynamically
+Message-ID: <20191204162348.49be5f1b@cakuba.netronome.com>
+In-Reply-To: <20191204233948.opvlopjkxe5o66lr@ast-mbp.dhcp.thefacebook.com>
+References: <20191202131847.30837-1-jolsa@kernel.org>
+        <CAEf4BzY_D9JHjuU6K=ciS70NSy2UvSm_uf1NfN_tmFz1445Jiw@mail.gmail.com>
+        <87wobepgy0.fsf@toke.dk>
+        <CAADnVQK-arrrNrgtu48_f--WCwR5ki2KGaX=mN2qmW_AcRyb=w@mail.gmail.com>
+        <CAEf4BzZ+0XpH_zJ0P78vjzmFAH3kGZ21w3-LcSEG=B=+ZQWJ=w@mail.gmail.com>
+        <20191204135405.3ffb9ad6@cakuba.netronome.com>
+        <20191204233948.opvlopjkxe5o66lr@ast-mbp.dhcp.thefacebook.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Dec 2019, Yang Shi wrote:
+On Wed, 4 Dec 2019 15:39:49 -0800, Alexei Starovoitov wrote:
+> > Agreed. Having libbpf on GH is definitely useful today, but one can hope
+> > a day will come when distroes will get up to speed on packaging libbpf,
+> > and perhaps we can retire it? Maybe 2, 3 years from now? Putting
+> > bpftool in the same boat is just more baggage. =20
+>=20
+> Distros should be packaging libbpf and bpftool from single repo on github.
+> Kernel tree is for packaging kernel.
 
-> Currently when truncating shmem file, if the range is partial of THP
-> (start or end is in the middle of THP), the pages actually will just get
-> cleared rather than being freed unless the range cover the whole THP.
-> Even though all the subpages are truncated (randomly or sequentially),
-> the THP may still be kept in page cache.  This might be fine for some
-> usecases which prefer preserving THP.
-> 
-> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
-> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
-> So, when using shmem THP as memory backend QEMU inflation actually doesn't
-> work as expected since it doesn't free memory.  But, the inflation
-> usecase really needs get the memory freed.  Anonymous THP will not get
-> freed right away too but it will be freed eventually when all subpages are
-> unmapped, but shmem THP would still stay in page cache.
-> 
-> Split THP right away when doing partial hole punch, and if split fails
-> just clear the page so that read to the hole punched area would return
-> zero.
-> 
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
-> v2: * Adopted the comment from Kirill.
->     * Dropped fallocate mode flag, THP split is the default behavior.
->     * Blended Huge's implementation with my v1 patch. TBH I'm not very keen to
->       Hugh's find_get_entries() hack (basically neutral), but without that hack
+Okay, single repo on GitHub:
 
-Thanks for giving it a try.  I'm not neutral about my find_get_entries()
-hack: it surely had to go (without it, I'd have just pushed my own patch).
-I've not noticed anything wrong with your patch, and it's in the right
-direction, but I'm still not thrilled with it.  I also remember that I
-got the looping wrong in my first internal attempt (fixed in what I sent),
-and need to be very sure of the try-again-versus-move-on-to-next conditions
-before agreeing to anything.  No rush, I'll come back to this in days or
-month ahead: I'll try to find a less gotoey blend of yours and mine.
+https://github.com/torvalds/linux
 
-Hugh
+we are in agreement =F0=9F=98=9D
 
->       we have to rely on pagevec_release() to release extra pins and play with
->       goto. This version does in this way. The patch is bigger than Hugh's due
->       to extra comments to make the flow clear.
-> 
->  mm/shmem.c | 120 ++++++++++++++++++++++++++++++++++++++++++-------------------
->  1 file changed, 83 insertions(+), 37 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 220be9f..1ae0c7f 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -806,12 +806,15 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  	long nr_swaps_freed = 0;
->  	pgoff_t index;
->  	int i;
-> +	bool split = false;
-> +	struct page *page = NULL;
->  
->  	if (lend == -1)
->  		end = -1;	/* unsigned, so actually very big */
->  
->  	pagevec_init(&pvec);
->  	index = start;
-> +retry:
->  	while (index < end) {
->  		pvec.nr = find_get_entries(mapping, index,
->  			min(end - index, (pgoff_t)PAGEVEC_SIZE),
-> @@ -819,7 +822,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  		if (!pvec.nr)
->  			break;
->  		for (i = 0; i < pagevec_count(&pvec); i++) {
-> -			struct page *page = pvec.pages[i];
-> +			split = false;
-> +			page = pvec.pages[i];
->  
->  			index = indices[i];
->  			if (index >= end)
-> @@ -838,23 +842,24 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  			if (!trylock_page(page))
->  				continue;
->  
-> -			if (PageTransTail(page)) {
-> -				/* Middle of THP: zero out the page */
-> -				clear_highpage(page);
-> -				unlock_page(page);
-> -				continue;
-> -			} else if (PageTransHuge(page)) {
-> -				if (index == round_down(end, HPAGE_PMD_NR)) {
-> +			if (PageTransCompound(page) && !unfalloc) {
-> +				if (PageHead(page) &&
-> +				    index != round_down(end, HPAGE_PMD_NR)) {
->  					/*
-> -					 * Range ends in the middle of THP:
-> -					 * zero out the page
-> +					 * Fall through when punching whole
-> +					 * THP.
->  					 */
-> -					clear_highpage(page);
-> -					unlock_page(page);
-> -					continue;
-> +					index += HPAGE_PMD_NR - 1;
-> +					i += HPAGE_PMD_NR - 1;
-> +				} else {
-> +					/*
-> +					 * Split THP for any partial hole
-> +					 * punch.
-> +					 */
-> +					get_page(page);
-> +					split = true;
-> +					goto split;
->  				}
-> -				index += HPAGE_PMD_NR - 1;
-> -				i += HPAGE_PMD_NR - 1;
->  			}
->  
->  			if (!unfalloc || !PageUptodate(page)) {
-> @@ -866,9 +871,29 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  			}
->  			unlock_page(page);
->  		}
-> +split:
->  		pagevec_remove_exceptionals(&pvec);
->  		pagevec_release(&pvec);
->  		cond_resched();
-> +
-> +		if (split) {
-> +			/*
-> +			 * The pagevec_release() released all extra pins
-> +			 * from pagevec lookup.  And we hold an extra pin
-> +			 * and still have the page locked under us.
-> +			 */
-> +			if (!split_huge_page(page)) {
-> +				unlock_page(page);
-> +				put_page(page);
-> +				/* Re-lookup page cache from current index */
-> +				goto retry;
-> +			}
-> +
-> +			/* Fail to split THP, move to next index */
-> +			unlock_page(page);
-> +			put_page(page);
-> +		}
-> +
->  		index++;
->  	}
->  
-> @@ -901,6 +926,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  		return;
->  
->  	index = start;
-> +again:
->  	while (index < end) {
->  		cond_resched();
->  
-> @@ -916,7 +942,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  			continue;
->  		}
->  		for (i = 0; i < pagevec_count(&pvec); i++) {
-> -			struct page *page = pvec.pages[i];
-> +			split = false;
-> +			page = pvec.pages[i];
->  
->  			index = indices[i];
->  			if (index >= end)
-> @@ -936,30 +963,24 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  
->  			lock_page(page);
->  
-> -			if (PageTransTail(page)) {
-> -				/* Middle of THP: zero out the page */
-> -				clear_highpage(page);
-> -				unlock_page(page);
-> -				/*
-> -				 * Partial thp truncate due 'start' in middle
-> -				 * of THP: don't need to look on these pages
-> -				 * again on !pvec.nr restart.
-> -				 */
-> -				if (index != round_down(end, HPAGE_PMD_NR))
-> -					start++;
-> -				continue;
-> -			} else if (PageTransHuge(page)) {
-> -				if (index == round_down(end, HPAGE_PMD_NR)) {
-> +			if (PageTransCompound(page) && !unfalloc) {
-> +				if (PageHead(page) &&
-> +				    index != round_down(end, HPAGE_PMD_NR)) {
->  					/*
-> -					 * Range ends in the middle of THP:
-> -					 * zero out the page
-> +					 * Fall through when punching whole
-> +					 * THP.
->  					 */
-> -					clear_highpage(page);
-> -					unlock_page(page);
-> -					continue;
-> +					index += HPAGE_PMD_NR - 1;
-> +					i += HPAGE_PMD_NR - 1;
-> +				} else {
-> +					/*
-> +					 * Split THP for any partial hole
-> +					 * punch.
-> +					 */
-> +					get_page(page);
-> +					split = true;
-> +					goto rescan_split;
->  				}
-> -				index += HPAGE_PMD_NR - 1;
-> -				i += HPAGE_PMD_NR - 1;
->  			}
->  
->  			if (!unfalloc || !PageUptodate(page)) {
-> @@ -976,8 +997,33 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->  			}
->  			unlock_page(page);
->  		}
-> +rescan_split:
->  		pagevec_remove_exceptionals(&pvec);
->  		pagevec_release(&pvec);
-> +
-> +		if (split) {
-> +			/*
-> +			 * The pagevec_release() released all extra pins
-> +			 * from pagevec lookup.  And we hold an extra pin
-> +			 * and still have the page locked under us.
-> +			 */
-> +			if (!split_huge_page(page)) {
-> +				unlock_page(page);
-> +				put_page(page);
-> +				/* Re-lookup page cache from current index */
-> +				goto again;
-> +			}
-> +
-> +			/*
-> +			 * Split fail, clear the page then move to next
-> +			 * index.
-> +			 */
-> +			clear_highpage(page);
-> +
-> +			unlock_page(page);
-> +			put_page(page);
-> +		}
-> +
->  		index++;
->  	}
->  
-> -- 
-> 1.8.3.1
-> 
-> 
+Jokes aside, you may need to provide some reasoning on this one..
+The recommendation for packaging libbpf from GitHub never had any=20
+clear justification either AFAICR.
+
+I honestly don't see why location matters. bpftool started out on GitHub
+but we moved it into the tree for... ease of packaging/distribution(?!)
+Now it's handy to have it in the tree to reuse the uapi headers.
+
+As much as I don't care if we move it (back) out of the tree - having
+two copies makes no sense to me. As does having it in the libbpf repo.
+The sync effort is not warranted. User confusion is not warranted.
+
+The distroes already package bpftool from the kernel sources, people had
+put in time to get to this stage and there aren't any complaints.
+
+In fact all the BPF projects and test suites we are involved in at
+Netronome are entirely happy the packaged versions of LLVM and libbpf
+in Fedora _today_, IOW the GH libbpf is irrelevant to us already.
+
+As for the problem which sparked this discussion - I disagree that
+bpftool should have "special relationship" with the library. In fact
+bpftool uses the widest range of libbpf's interfaces of all known
+projects so it's invaluable for making sure that those interfaces are
+usable, consistent and complete.
+
+You also said a few times you don't want to merge fixes into bpf/net.
+That divergence from kernel development process is worrying.
+
+None of this makes very much sense to me. We're diverging from well
+established development practices without as much as a justification.
+
+Perhaps I'm not clever enough to follow. But if I'm allowed to make an
+uneducated guess it would be that it's some Facebook internal reason,
+like it's hard to do backports? :/
