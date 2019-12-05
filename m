@@ -2,77 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89DA1146E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:29:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A93114705
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:41:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729789AbfLES3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:29:33 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:57490 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfLES3d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:29:33 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 8F92380697;
-        Thu,  5 Dec 2019 19:29:29 +0100 (CET)
-Date:   Thu, 5 Dec 2019 19:29:27 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        nd <nd@arm.com>
-Subject: Re: [PATCH] drm: Rename drm_bridge->dev to drm
-Message-ID: <20191205182927.GA27091@ravnborg.org>
-References: <20191205163028.19941-1-mihail.atanassov@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191205163028.19941-1-mihail.atanassov@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
-        a=oBCgqzsU5Q40nlY60G0A:9 a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
+        id S1729914AbfLESlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:41:10 -0500
+Received: from mga17.intel.com ([192.55.52.151]:4158 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729290AbfLESlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 13:41:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 10:41:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,282,1571727600"; 
+   d="scan'208";a="214263511"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2019 10:41:07 -0800
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 0/3] Fix small issues in XSAVES
+Date:   Thu,  5 Dec 2019 10:26:45 -0800
+Message-Id: <20191205182648.32257-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mihail.
+The first two patches in this series are split from my supervisor xstate
+patches [1].  The third is to fix a vital issue in __fpu_restore_sig(),
+and more RFC than the others.  All three are not directly related to
+supervisor xstates or CET, split them out and submit first.  I will
+re-submit supervisor xstate patches shortly.
 
-On Thu, Dec 05, 2019 at 04:30:45PM +0000, Mihail Atanassov wrote:
-> The 'dev' name causes some confusion with 'struct device' [1][2], so use
-> 'drm' instead since this seems to be the prevalent name for 'struct
-> drm_device' members.
-Thanks for doing this - it helps readability.
+When__fpu_restore_sig() fails, partially cleared FPU registers still belong
+to the previous owner task.  That causes that task to use corrupted xregs.
+Fix it by doing __cpu_invalidate_fpregs_state() in functions that copy into
+fpregs.  Further details are in the commit log of patch #3.
 
-checkpatch complained:
+[1] Support XSAVES supervisor states
+    https://lkml.kernel.org/r/20190925151022.21688-1-yu-cheng.yu@intel.com/
 
--:107: CHECK:PARENTHESIS_ALIGNMENT: Alignment should match open parenthesis
-#107: FILE: drivers/gpu/drm/bridge/nxp-ptn3460.c:251:
-+	ret = drm_connector_init(bridge->drm, &ptn_bridge->connector,
- 			&ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
+[2] CET patches:
+    https://lkml.kernel.org/r/20190813205225.12032-1-yu-cheng.yu@intel.com/
+    https://lkml.kernel.org/r/20190813205359.12196-1-yu-cheng.yu@intel.com/
 
--:133: CHECK:PARENTHESIS_ALIGNMENT: Alignment should match open parenthesis
-#133: FILE: drivers/gpu/drm/bridge/parade-ps8622.c:491:
-+	ret = drm_connector_init(bridge->drm, &ps8622->connector,
- 			&ps8622_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
+Yu-cheng Yu (3):
+  x86/fpu/xstate: Fix small issues before adding supervisor xstates
+  x86/fpu/xstate: Make xfeature_is_supervisor()/xfeature_is_user()
+    return bool
+  x86/fpu/xstate: Invalidate fpregs when __fpu_restore_sig() fails
 
-But this seems unrelated to your changes - so should be ignored.
+ arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++++
+ arch/x86/kernel/fpu/core.c          | 15 +++++++++++++--
+ arch/x86/kernel/fpu/xstate.c        | 22 ++++++++++------------
+ 3 files changed, 37 insertions(+), 14 deletions(-)
 
+-- 
+2.17.1
 
-Browsed the patch and throw it after my build check script.
-All looked good.
-
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-
-	Sam
