@@ -2,91 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 110491147B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E2D1147CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730040AbfLETdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 14:33:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfLETdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 14:33:24 -0500
-Received: from quaco.ghostprotocols.net (179-240-141-74.3g.claro.net.br [179.240.141.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4F24206D9;
-        Thu,  5 Dec 2019 19:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575574403;
-        bh=XAUOtI0wjcDlVyNl4pbSZ/3xp52OqFcZAQjcfokMtkM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yoW99ybVU5qaohIMXJb8OLiO1CySK3KUxhe7nyo50X7f0cqbU4sXxJqoOL8kZZhFO
-         Ehb6IuFQlQaKHKv85yEGXaROTJTMoTX1Ydl/GII135qkSwtM4hMHQ7XrZLs9+mTS52
-         Zfx5yc9jy3Tz7g6WT6ZNyZrfupdzkS3ziUprxwBA=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Chunming Zhou <david1.zhou@amd.com>
-Subject: [PATCH 6/6] tools headers UAPI: Update tools's copy of drm.h headers
-Date:   Thu,  5 Dec 2019 16:32:24 -0300
-Message-Id: <20191205193224.24629-7-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191205193224.24629-1-acme@kernel.org>
-References: <20191205193224.24629-1-acme@kernel.org>
+        id S1729708AbfLETne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 14:43:34 -0500
+Received: from icp-osb-irony-out9.external.iinet.net.au ([203.59.1.226]:52977
+        "EHLO icp-osb-irony-out9.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726028AbfLETne (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 14:43:34 -0500
+X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Dec 2019 14:43:32 EST
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2D5AABIW+ld/zXSMGcNWBwBAQEBAQc?=
+ =?us-ascii?q?BAREBBAQBAYF+gwyBMYQrj2YGiyCRRAkBAQEBAQEBAQEjFAEBhECCOTgTAhA?=
+ =?us-ascii?q?BAQEEAQEBAQEFAwGFWEyFYScVQSgNAiYCbAgBAYMeAYJSrmB1gTIaiGmBSIE?=
+ =?us-ascii?q?OKIFlikx5gQeBOIc8gQSCQ4JeBI0wiUGXWQiCMIcfjjUhgkGHboQsA4tIqn6?=
+ =?us-ascii?q?BejMaCCgIgycJR5YShVFijyeCQQEB?=
+X-IPAS-Result: =?us-ascii?q?A2D5AABIW+ld/zXSMGcNWBwBAQEBAQcBAREBBAQBAYF+g?=
+ =?us-ascii?q?wyBMYQrj2YGiyCRRAkBAQEBAQEBAQEjFAEBhECCOTgTAhABAQEEAQEBAQEFA?=
+ =?us-ascii?q?wGFWEyFYScVQSgNAiYCbAgBAYMeAYJSrmB1gTIaiGmBSIEOKIFlikx5gQeBO?=
+ =?us-ascii?q?Ic8gQSCQ4JeBI0wiUGXWQiCMIcfjjUhgkGHboQsA4tIqn6BejMaCCgIgycJR?=
+ =?us-ascii?q?5YShVFijyeCQQEB?=
+X-IronPort-AV: E=Sophos;i="5.69,282,1571673600"; 
+   d="scan'208";a="216494522"
+Received: from unknown (HELO [10.44.0.192]) ([103.48.210.53])
+  by icp-osb-irony-out9.iinet.net.au with ESMTP; 06 Dec 2019 03:34:11 +0800
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Subject: [git pull] m68knommu changes for v5.5
+To:     torvalds@linux-foundation.org
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux/m68k <linux-m68k@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Message-ID: <b0a3cf1a-940e-f4e0-7102-acee10248048@linux-m68k.org>
+Date:   Fri, 6 Dec 2019 05:34:06 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Picking the changes from:
+Hi Linus,
 
-  2093dea3def9 ("drm/syncobj: extend syncobj query ability v3")
+Can you please pull the m68knommu git tree, for-next branch.
 
-Which doesn't affect tooling, just silences this perf build warning:
+Only a single change, to enable coldfire preemption entry code for all
+preemption types.
 
-  Warning: Kernel ABI header at 'tools/include/uapi/drm/drm.h' differs from latest version at 'include/uapi/drm/drm.h'
-  diff -u tools/include/uapi/drm/drm.h include/uapi/drm/drm.h
+Regards
+Greg
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: Chunming Zhou <david1.zhou@amd.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-t1xqmjffo4rxdw395dsnu34j@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/uapi/drm/drm.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/drm/drm.h b/tools/include/uapi/drm/drm.h
-index 8a5b2f8f8eb9..868bf7996c0f 100644
---- a/tools/include/uapi/drm/drm.h
-+++ b/tools/include/uapi/drm/drm.h
-@@ -778,11 +778,12 @@ struct drm_syncobj_array {
- 	__u32 pad;
- };
- 
-+#define DRM_SYNCOBJ_QUERY_FLAGS_LAST_SUBMITTED (1 << 0) /* last available point on timeline syncobj */
- struct drm_syncobj_timeline_array {
- 	__u64 handles;
- 	__u64 points;
- 	__u32 count_handles;
--	__u32 pad;
-+	__u32 flags;
- };
- 
- 
--- 
-2.21.0
+The following changes since commit 31f4f5b495a62c9a8b15b1c3581acd5efeb9af8c:
 
+   Linux 5.4-rc7 (2019-11-10 16:17:15 -0800)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git for-next
+
+for you to fetch changes up to 3ad3cbe305b5a23d829d3723b60be59c36713992:
+
+   m68k/coldfire: Use CONFIG_PREEMPTION (2019-11-11 10:54:40 +1000)
+
+----------------------------------------------------------------
+Thomas Gleixner (1):
+       m68k/coldfire: Use CONFIG_PREEMPTION
+
+  arch/m68k/coldfire/entry.S | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
