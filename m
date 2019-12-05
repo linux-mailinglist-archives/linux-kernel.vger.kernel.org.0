@@ -2,93 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65A00113FFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 12:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F22A8114004
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 12:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbfLELTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 06:19:32 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47966 "EHLO huawei.com"
+        id S1729297AbfLELVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 06:21:24 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2158 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729017AbfLELTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 06:19:32 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9B570BC9944553746866;
-        Thu,  5 Dec 2019 19:19:28 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 5 Dec 2019 19:19:19 +0800
-From:   Hongbo Yao <yaohongbo@huawei.com>
-To:     <haver@linux.ibm.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>
-CC:     <yaohongbo@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] misc: genwqe: fix compile warnings
-Date:   Thu, 5 Dec 2019 19:16:55 +0800
-Message-ID: <20191205111655.170382-1-yaohongbo@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1729017AbfLELVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 06:21:24 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 7FD9DD56C9737AD06B31;
+        Thu,  5 Dec 2019 11:21:22 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml707-cah.china.huawei.com (10.201.108.48) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 5 Dec 2019 11:21:22 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Thu, 5 Dec 2019
+ 11:21:21 +0000
+Subject: Re: [PATCH 3/3] mtd: spi-nor: Add USE_FSR flag for n25q* entries
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Ashish Kumar <Ashish.Kumar@nxp.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        chenxiang <chenxiang66@hisilicon.com>
+References: <20191205065935.5727-1-vigneshr@ti.com>
+ <20191205065935.5727-4-vigneshr@ti.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <36213198-a09c-a969-1f57-092e0fb7cd68@huawei.com>
+Date:   Thu, 5 Dec 2019 11:21:20 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
+In-Reply-To: <20191205065935.5727-4-vigneshr@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml702-chm.china.huawei.com (10.201.108.51) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the following command will get compile warnings:
-make W=1 drivers/misc/genwqe/card_ddcb.o ARCH=x86_64
+On 05/12/2019 06:59, Vignesh Raghavendra wrote:
+> Add USE_FSR flag to all variants of n25q entries that support Flag Status
+> Register.
+> 
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
 
-drivers/misc/genwqe/card_ddcb.c: In function setup_ddcb_queue:
-drivers/misc/genwqe/card_ddcb.c:1024:6: warning: variable rc set but not
-used [-Wunused-but-set-variable]
-drivers/misc/genwqe/card_ddcb.c: In function genwqe_card_thread:
-drivers/misc/genwqe/card_ddcb.c:1190:23: warning: variable rc set but
-not used [-Wunused-but-set-variable]
+Tested-by: John Garry <john.garry@huawei.com> #for n25q128a13
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
----
- drivers/misc/genwqe/card_ddcb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/misc/genwqe/card_ddcb.c b/drivers/misc/genwqe/card_ddcb.c
-index 026c6ca24540..905106579935 100644
---- a/drivers/misc/genwqe/card_ddcb.c
-+++ b/drivers/misc/genwqe/card_ddcb.c
-@@ -1084,7 +1084,7 @@ static int setup_ddcb_queue(struct genwqe_dev *cd, struct ddcb_queue *queue)
- 				queue->ddcb_daddr);
- 	queue->ddcb_vaddr = NULL;
- 	queue->ddcb_daddr = 0ull;
--	return -ENODEV;
-+	return rc;
- 
- }
- 
-@@ -1179,7 +1179,7 @@ static irqreturn_t genwqe_vf_isr(int irq, void *dev_id)
-  */
- static int genwqe_card_thread(void *data)
- {
--	int should_stop = 0, rc = 0;
-+	int should_stop = 0;
- 	struct genwqe_dev *cd = (struct genwqe_dev *)data;
- 
- 	while (!kthread_should_stop()) {
-@@ -1187,12 +1187,12 @@ static int genwqe_card_thread(void *data)
- 		genwqe_check_ddcb_queue(cd, &cd->queue);
- 
- 		if (GENWQE_POLLING_ENABLED) {
--			rc = wait_event_interruptible_timeout(
-+			wait_event_interruptible_timeout(
- 				cd->queue_waitq,
- 				genwqe_ddcbs_in_flight(cd) ||
- 				(should_stop = kthread_should_stop()), 1);
- 		} else {
--			rc = wait_event_interruptible_timeout(
-+			wait_event_interruptible_timeout(
- 				cd->queue_waitq,
- 				genwqe_next_ddcb_ready(cd) ||
- 				(should_stop = kthread_should_stop()), HZ);
--- 
-2.20.1
+> ---
+>   drivers/mtd/spi-nor/spi-nor.c | 15 ++++++++++-----
+>   1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index a5cb647378f0..1082b6bb1393 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -2454,16 +2454,21 @@ static const struct flash_info spi_nor_ids[] = {
+>   	{ "n25q032a",	 INFO(0x20bb16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
+>   	{ "n25q064",     INFO(0x20ba17, 0, 64 * 1024,  128, SECT_4K | SPI_NOR_QUAD_READ) },
+>   	{ "n25q064a",    INFO(0x20bb17, 0, 64 * 1024,  128, SECT_4K | SPI_NOR_QUAD_READ) },
+> -	{ "n25q128a11",  INFO(0x20bb18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
+> -	{ "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
+> +	{ "n25q128a11",  INFO(0x20bb18, 0, 64 * 1024,  256, SECT_4K |
+> +			      USE_FSR | SPI_NOR_QUAD_READ) },
+> +	{ "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K |
+> +			      USE_FSR | SPI_NOR_QUAD_READ) },
+>   	{ "mt25ql256a",  INFO6(0x20ba19, 0x104400, 64 * 1024,  512,
+>   			       SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
+>   			       SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
+> -	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+> +	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K |
+> +			      USE_FSR | SPI_NOR_DUAL_READ |
+> +			      SPI_NOR_QUAD_READ) },
+>   	{ "mt25qu256a",  INFO6(0x20bb19, 0x104400, 64 * 1024,  512,
+>   			       SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
+>   			       SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
+> -	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
+> +	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K |
+> +			      USE_FSR | SPI_NOR_QUAD_READ) },
+>   	{ "mt25ql512a",  INFO6(0x20ba20, 0x104400, 64 * 1024, 1024,
+>   			       SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
+>   			       SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
+> @@ -2472,7 +2477,7 @@ static const struct flash_info spi_nor_ids[] = {
+>   			       SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
+>   			       SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
+>   	{ "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K |
+> -			      SPI_NOR_QUAD_READ) },
+> +			      USE_FSR | SPI_NOR_QUAD_READ) },
+>   	{ "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+>   	{ "n25q00a",     INFO(0x20bb21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+>   	{ "mt25ql02g",   INFO(0x20ba22, 0, 64 * 1024, 4096,
+> 
 
