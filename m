@@ -2,279 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C53B5113CFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B446F113D06
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:28:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbfLEI02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 03:26:28 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:56099 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfLEI0Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 03:26:25 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xB58Q3Nx024527, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xB58Q3Nx024527
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 5 Dec 2019 16:26:03 +0800
-Received: from james-BS01.localdomain (172.21.190.33) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server id
- 14.3.468.0; Thu, 5 Dec 2019 16:26:03 +0800
-From:   James Tai <james.tai@realtek.com>
-To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <linux-realtek-soc@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 2/2] arm64: dts: realtek: Add RTD1319 SoC and Realtek PymParticle EVB
-Date:   Thu, 5 Dec 2019 16:25:55 +0800
-Message-ID: <20191205082555.22633-3-james.tai@realtek.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191205082555.22633-1-james.tai@realtek.com>
-References: <20191205082555.22633-1-james.tai@realtek.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+        id S1726589AbfLEI2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 03:28:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725974AbfLEI2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 03:28:33 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC8D220707;
+        Thu,  5 Dec 2019 08:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575534513;
+        bh=/l81rifg3rXzLUo11Q36GAttbB8DKI+R9E4DG7pEnKM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=chCMKjcpCxO62O5MnivFHjPUdtxg6+WgtEauVsar/Y9E+qBshhHXHHYEm3xzSYQtp
+         j9qCk2vZsSvQl57fNz6goAF5IZ8wLM65QreL0gu5o/TRVZicDsdEnAmAF3lJnUQ5bR
+         I9Vp2X0muh1wOLdYMKXQmpjMSIQ8QfVinlMh1ZWI=
+Date:   Thu, 5 Dec 2019 17:28:29 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org
+Subject: Re: [BUGFIX PATCH] selftests/x86: Check the availablity of
+ sys/syscall.h
+Message-Id: <20191205172829.66ec55907ac31303bbede593@kernel.org>
+In-Reply-To: <157467982420.24866.4375165389279465782.stgit@devnote2>
+References: <157467982420.24866.4375165389279465782.stgit@devnote2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Device Trees for Realtek RTD1319 SoC family, RTD1319 SoC and
-Realtek PymParticle EVB.
+Hi Shuah,
 
-Signed-off-by: James Tai <james.tai@realtek.com>
----
- arch/arm64/boot/dts/realtek/Makefile          |   2 +
- .../boot/dts/realtek/rtd1319-pymparticle.dts  |  43 ++++++
- arch/arm64/boot/dts/realtek/rtd1319.dtsi      |  12 ++
- arch/arm64/boot/dts/realtek/rtd13xx.dtsi      | 137 ++++++++++++++++++
- 4 files changed, 194 insertions(+)
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1319-pymparticle.dts
- create mode 100644 arch/arm64/boot/dts/realtek/rtd1319.dtsi
- create mode 100644 arch/arm64/boot/dts/realtek/rtd13xx.dtsi
+Could you pick this if there si no issue?
 
-diff --git a/arch/arm64/boot/dts/realtek/Makefile b/arch/arm64/boot/dts/realtek/Makefile
-index fb5f05978ecc..ab00c272ea9e 100644
---- a/arch/arm64/boot/dts/realtek/Makefile
-+++ b/arch/arm64/boot/dts/realtek/Makefile
-@@ -9,3 +9,5 @@ dtb-$(CONFIG_ARCH_REALTEK) += rtd1295-zidoo-x9s.dtb
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1296-ds418.dtb
- 
- dtb-$(CONFIG_ARCH_REALTEK) += rtd1619-mjolnir.dtb
-+
-+dtb-$(CONFIG_ARCH_REALTEK) += rtd1319-pymparticle.dtb
-diff --git a/arch/arm64/boot/dts/realtek/rtd1319-pymparticle.dts b/arch/arm64/boot/dts/realtek/rtd1319-pymparticle.dts
-new file mode 100644
-index 000000000000..d8bfe2304b71
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd1319-pymparticle.dts
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Copyright (c) 2019 Realtek Semiconductor Corp.
-+ */
-+
-+/dts-v1/;
-+
-+#include "rtd1319.dtsi"
-+
-+/ {
-+	compatible = "realtek,pymparticle", "realtek,rtd1319";
-+	model = "Realtek PymParticle EVB";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000>;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:460800n8";
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+	};
-+};
-+
-+/* debug console (J1) */
-+&uart0 {
-+	status = "okay";
-+};
-+
-+/* M.2 slot (CON8) */
-+&uart1 {
-+	status = "disabled";
-+};
-+
-+/* GPIO connector (T1) */
-+&uart2 {
-+	status = "disabled";
-+};
-diff --git a/arch/arm64/boot/dts/realtek/rtd1319.dtsi b/arch/arm64/boot/dts/realtek/rtd1319.dtsi
-new file mode 100644
-index 000000000000..1dcee00009cd
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd1319.dtsi
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Realtek RTD1319 SoC
-+ *
-+ * Copyright (c) 2019 Realtek Semiconductor Corp.
-+ */
-+
-+#include "rtd13xx.dtsi"
-+
-+/ {
-+	compatible = "realtek,rtd1319";
-+};
-diff --git a/arch/arm64/boot/dts/realtek/rtd13xx.dtsi b/arch/arm64/boot/dts/realtek/rtd13xx.dtsi
-new file mode 100644
-index 000000000000..92bf962377f6
---- /dev/null
-+++ b/arch/arm64/boot/dts/realtek/rtd13xx.dtsi
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+/*
-+ * Realtek RTD13xx SoC family
-+ *
-+ * Copyright (c) 2019 Realtek Semiconductor Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu2: cpu@200 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x200>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu3: cpu@300 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			reg = <0x300>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		l2: l2-cache {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	arm_pmu: pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>,
-+			<&cpu3>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	osc27M: osc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <27000000>;
-+		clock-output-names = "osc27M";
-+		#clock-cells = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x98000000 0x98000000 0x68000000>;
-+
-+		rbus: bus@98000000 {
-+			compatible = "simple-bus";
-+			reg = <0x98000000 0x200000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0x98000000 0x200000>;
-+
-+			uart0: serial0@7800 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x7800 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <432000000>;
-+				status = "disabled";
-+			};
-+
-+			uart1: serial1@1b200 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b200 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <432000000>;
-+				status = "disabled";
-+			};
-+
-+			uart2: serial2@1b400 {
-+				compatible = "snps,dw-apb-uart";
-+				reg = <0x1b400 0x400>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <432000000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		gic: interrupt-controller@ff100000 {
-+			compatible = "arm,gic-v3";
-+			reg = <0xff100000 0x10000>,
-+			      <0xff140000 0xc0000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+	};
-+};
+Thank you,
+
+On Mon, 25 Nov 2019 20:03:44 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Since single_step_syscall.c depends on sys/syscall.h and
+> its include, asm/unistd.h, we should check the availability
+> of those headers.
+> Without this fix, if gcc-multilib is not installed but
+> libc6-dev-i386 is installed, kselftest tries to build 32bit
+> binary and failed with following error message.
+> 
+> In file included from single_step_syscall.c:18:
+> /usr/include/sys/syscall.h:24:10: fatal error: asm/unistd.h: No such file or directory
+>  #include <asm/unistd.h>
+>           ^~~~~~~~~~~~~~
+> compilation terminated.
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>  .../testing/selftests/x86/trivial_32bit_program.c  |    1 +
+>  .../testing/selftests/x86/trivial_64bit_program.c  |    1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/x86/trivial_32bit_program.c b/tools/testing/selftests/x86/trivial_32bit_program.c
+> index aa1f58c2f71c..6b455eda24f7 100644
+> --- a/tools/testing/selftests/x86/trivial_32bit_program.c
+> +++ b/tools/testing/selftests/x86/trivial_32bit_program.c
+> @@ -8,6 +8,7 @@
+>  # error wrong architecture
+>  #endif
+>  
+> +#include <sys/syscall.h>
+>  #include <stdio.h>
+>  
+>  int main()
+> diff --git a/tools/testing/selftests/x86/trivial_64bit_program.c b/tools/testing/selftests/x86/trivial_64bit_program.c
+> index 39f4b84fbf15..07ae86df18ff 100644
+> --- a/tools/testing/selftests/x86/trivial_64bit_program.c
+> +++ b/tools/testing/selftests/x86/trivial_64bit_program.c
+> @@ -8,6 +8,7 @@
+>  # error wrong architecture
+>  #endif
+>  
+> +#include <sys/syscall.h>
+>  #include <stdio.h>
+>  
+>  int main()
+> 
+
+
 -- 
-2.24.0
-
+Masami Hiramatsu <mhiramat@kernel.org>
