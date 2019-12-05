@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8E411391F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 02:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AF02113920
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 02:09:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbfLEBIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 20:08:48 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38524 "EHLO
+        id S1728674AbfLEBJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 20:09:30 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:38530 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbfLEBIr (ORCPT
+        with ESMTP id S1728100AbfLEBJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 20:08:47 -0500
+        Wed, 4 Dec 2019 20:09:29 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C54B914F35C6E;
-        Wed,  4 Dec 2019 17:08:46 -0800 (PST)
-Date:   Wed, 04 Dec 2019 17:08:46 -0800 (PST)
-Message-Id: <20191204.170846.1266614281989376759.davem@davemloft.net>
-To:     jaskaransingh7654321@gmail.com
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2927814F35C6E;
+        Wed,  4 Dec 2019 17:09:29 -0800 (PST)
+Date:   Wed, 04 Dec 2019 17:09:28 -0800 (PST)
+Message-Id: <20191204.170928.536021818533653039.davem@davemloft.net>
+To:     colin.king@canonical.com
 Cc:     aelior@marvell.com, GR-everest-linux-l2@marvell.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] drivers: net: qlogic: apply alloc_cast.cocci to
- qlogic/qed/qed_roce.c
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] qed: remove redundant assignments to rc
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191204114013.31726-1-jaskaransingh7654321@gmail.com>
-References: <20191204114013.31726-1-jaskaransingh7654321@gmail.com>
+In-Reply-To: <20191204114442.1413895-1-colin.king@canonical.com>
+References: <20191204114442.1413895-1-colin.king@canonical.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 04 Dec 2019 17:08:47 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 04 Dec 2019 17:09:29 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaskaran Singh <jaskaransingh7654321@gmail.com>
-Date: Wed,  4 Dec 2019 17:10:13 +0530
+From: Colin King <colin.king@canonical.com>
+Date: Wed,  4 Dec 2019 11:44:42 +0000
 
-> coccicheck reports that qlogic/qed/qed_roce.c can be patched with the
-> semantic patch alloc_cast.cocci. The casts on the function
-> dma_alloc_coherent can be removed. Apply the semantic patch and perform
-> formatting changes as required.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Jaskaran Singh <jaskaransingh7654321@gmail.com>
+> The variable rc is assigned with a value that is never read and
+> it is re-assigned a new value later on.  The assignment is redundant
+> and can be removed.  Clean up multiple occurrances of this pattern.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This is a cleanup and therefore net-next material.
+This really is a cleanup, and doesn't fix any bugs.
 
-net-next is closed, please resubmit this when the net-next tree is
-open again.
+Therefore, please resubmit this when net-next opens back up.
 
 Thank you.
