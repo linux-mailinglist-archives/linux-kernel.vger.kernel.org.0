@@ -2,221 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9C5114708
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:41:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 724641146EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 19:31:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbfLESlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 13:41:20 -0500
-Received: from mga17.intel.com ([192.55.52.151]:4158 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729935AbfLESlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 13:41:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 10:41:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,282,1571727600"; 
-   d="scan'208";a="214263547"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2019 10:41:10 -0800
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 3/3] x86/fpu/xstate: Invalidate fpregs when __fpu_restore_sig() fails
-Date:   Thu,  5 Dec 2019 10:26:48 -0800
-Message-Id: <20191205182648.32257-4-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191205182648.32257-1-yu-cheng.yu@intel.com>
-References: <20191205182648.32257-1-yu-cheng.yu@intel.com>
+        id S1729877AbfLESbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 13:31:13 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43019 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729290AbfLESbN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 13:31:13 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b1so1971878pgq.10
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 10:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HI4uYxR0J9DMTnkRmLhO8esoltr/E7e+IU0bpfvbumQ=;
+        b=nyVc4+A6dtfKp5EmT95300EFmgP7gQevt7DIkRtreep8yQoK/jQBq0+L1A8HZcKZ78
+         QRG4IEHOi5aWaS9lsMHV3GbAXZvJY9MLXnMEU2+6QavOQp2OWJtwa0Pptfl/0G0nbPkw
+         A5dUqhKJX//j7CfYxhguSqmpkWUuFJAlgYvl2k1OPeRVuccYRDkHm0XCLbug23jNOZYQ
+         kpWBQ8JOOQJhPXc1gquKDxEtatESK9i0Vp0slDyquhiYpOXg3sgBWReeMYPFhzJliLh4
+         H8zfIHq/o+wPO7DaGs5h/6XozND/CQUe62mautLmZCoa0sUQddpX0fFXfl5n+jLXrjsl
+         UIeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HI4uYxR0J9DMTnkRmLhO8esoltr/E7e+IU0bpfvbumQ=;
+        b=cqvzSTgbHtdYmMwdPBCqRDGdXuW4Ci0wyj87d7MTz3DaySt3D+9Wm2dsRM2GenM1Bc
+         wNQEBnVmMj7K21fbvgk4Hug2RaKGL7tmJ7r0vvcHgMMDbv979kcLY5DV6T2sAfQQhlng
+         vKmwJyWXBXRDVTK9DFNlZjHaoqk2JpJ6P7e/fWrvs+l9z1vw6rLg+jDFFL+hnRmm1drg
+         F7iM+vqYQ3yHOjkGidDeCBxS+4yuWt7NmJ3mVIsPdEQbvw0yF3wl5TRA19TIJTu2gZyi
+         jvUdZafbEFlQLSYwHaDS+kt0WT8ljAyO/9Qp36w3KyCL1lV2uSepBbaXEBc/S1of43IY
+         KvtA==
+X-Gm-Message-State: APjAAAW/ecDKnJGaWAbaWaSPDL0JXisHLIpGEdiFgbkrXe4dmIxed/Mj
+        1dSuGYC/6LAoonrKruYvITZjWtYT7oOgrOqOFsiXHQ==
+X-Google-Smtp-Source: APXvYqwT7ShzxGreCEuYPGEZxiVNpcROPBYQcRibsPumhz7L933fr9ODqh2A0iIKt0qHZJKolpaaSUV3b12srJ+FST0=
+X-Received: by 2002:aa7:961b:: with SMTP id q27mr10426991pfg.23.1575570671690;
+ Thu, 05 Dec 2019 10:31:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20191204234522.42855-1-brendanhiggins@google.com> <CABVgOSn7tTYuMZ8ArA3fRWp4aeKAcKJ3qNL+SgtFt5fkBLnc-A@mail.gmail.com>
+In-Reply-To: <CABVgOSn7tTYuMZ8ArA3fRWp4aeKAcKJ3qNL+SgtFt5fkBLnc-A@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 5 Dec 2019 10:31:00 -0800
+Message-ID: <CAFd5g446ippuyNN5ej0hEiz1Rv9hqpke55pE0en15U=gG3zX0A@mail.gmail.com>
+Subject: Re: [PATCH v1] staging: exfat: fix multiple definition error of `rename_file'
+To:     David Gow <davidgow@google.com>
+Cc:     valdis.kletnieks@vt.edu,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In __fpu_restore_sig(),'init_fpstate.xsave' and part of 'fpu->state.xsave'
-are restored separately to xregs.  However, as stated in __cpu_invalidate_
-fpregs_state(),
+On Thu, Dec 5, 2019 at 9:51 AM David Gow <davidgow@google.com> wrote:
+>
+> On Wed, Dec 4, 2019 at 3:46 PM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> >
+> > `rename_file' was exported but not properly namespaced causing a
+> > multiple definition error because `rename_file' is already defined in
+> > fs/hostfs/hostfs_user.c:
+> >
+> > ld: drivers/staging/exfat/exfat_core.o: in function `rename_file':
+> > drivers/staging/exfat/exfat_core.c:2327: multiple definition of
+> > `rename_file'; fs/hostfs/hostfs_user.o:fs/hostfs/hostfs_user.c:350:
+> > first defined here
+> > make: *** [Makefile:1077: vmlinux] Error 1
+> >
+> > This error can be reproduced on ARCH=um by selecting:
+> >
+> > CONFIG_EXFAT_FS=y
+> > CONFIG_HOSTFS=y
+> >
+> > Add a namespace prefix exfat_* to fix this error.
+> >
+> > Reported-by: Brendan Higgins <brendanhiggins@google.com>
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> Tested-by: David Gow <davidgow@google.com>
+> Reviewed-by: David Gow <davidgow@google.com>
+>
+> This works for me: I was able to reproduce the compile error without
+> this patch, and successfully compile a UML kernel and mount an exfat
+> fs after applying it.
+>
+> > ---
+> >  drivers/staging/exfat/exfat.h       | 4 ++--
+> >  drivers/staging/exfat/exfat_core.c  | 4 ++--
+> >  drivers/staging/exfat/exfat_super.c | 4 ++--
+> >  3 files changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+> > index 2aac1e000977e..51c665a924b76 100644
+> > --- a/drivers/staging/exfat/exfat.h
+> > +++ b/drivers/staging/exfat/exfat.h
+> > @@ -805,8 +805,8 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
+> >  s32 create_file(struct inode *inode, struct chain_t *p_dir,
+> >                 struct uni_name_t *p_uniname, u8 mode, struct file_id_t *fid);
+> >  void remove_file(struct inode *inode, struct chain_t *p_dir, s32 entry);
+> > -s32 rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
+> > -               struct uni_name_t *p_uniname, struct file_id_t *fid);
+> > +s32 exfat_rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
+> > +                     struct uni_name_t *p_uniname, struct file_id_t *fid);
+> >  s32 move_file(struct inode *inode, struct chain_t *p_olddir, s32 oldentry,
+> >               struct chain_t *p_newdir, struct uni_name_t *p_uniname,
+> >               struct file_id_t *fid);
+>
+> It seems a bit ugly to add the exfat_ prefix to just rename_file,
+> rather than all of the above functions (e.g., create_dir, remove_file,
+> etc). It doesn't look like any of the others are causing any issues
+> though (while, for example, there is another remove_file in
+> drivers/infiniband/hw/qib/qib_fs.c, it's static, so shouldn't be a
+> problem).
 
-  Any code that clobbers the FPU registers or updates the in-memory
-  FPU state for a task MUST let the rest of the kernel know that the
-  FPU registers are no longer valid for this task.
+Agreed; however, given that this is a fix, I didn't want to overreach
+in the scope of this change since I want to make sure it gets accepted
+in 5.5 and it probably won't make it in the merge window. I also
+figured that, since this is in staging, this might be one of the
+things that needs to happen before being promoted out of staging.
 
-and this code violates that rule.  Should the restoration fail, the other
-task's context is corrupted.
+Nevertheless, I don't mind going through and adding the namespace
+prefix to the other non-static functions if that's what Valdis and
+Greg want.
 
-This problem does not occur very often because copy_*_to_xregs() succeeds
-most of the time.  It occurs, for instance, in copy_user_to_fpregs_
-zeroing() when the first half of the restoration succeeds and the other
-half fails.  This can be triggered by running glibc tests, where a non-
-present user stack page causes the XRSTOR to fail.
-
-The introduction of supervisor xstates and CET, while not contributing to
-the problem, makes it more detectable.  After init_fpstate and the Shadow
-Stack pointer have been restored to xregs, the XRSTOR from user stack
-fails and fpu_fpregs_owner_ctx is not updated.  The task currently owning
-fpregs then uses the corrupted Shadow Stack pointer and triggers a control-
-protection fault.
-
-Fix it by adding __cpu_invalidate_fpregs_state() to functions that copy
-fpstate to fpregs:
-  copy_*_to_xregs_*(), copy_*_to_fxregs_*(), and copy_*_to_fregs_*().
-The alternative is to hit all of the call sites themselves.
-
-The function __cpu_invalidate_fpregs_state() is chosen over fpregs_
-deactivate() as it is called under fpregs_lock() protection.
-
-In addition to sigreturn, also checked all call sites of these functions:
-
-- copy_init_fpstate_to_fpregs();
-- copy_kernel_to_fpregs();
-- ex_handler_fprestore();
-- fpu__save(); and
-- fpu__copy().
-
-In fpu__save() and fpu__copy(), fpregs are re-activated because they are
-considered valid in both cases.
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++++
- arch/x86/kernel/fpu/core.c          | 15 +++++++++++++--
- 2 files changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 4c95c365058a..cd380d14e4e2 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -142,6 +142,8 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
- 		     _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_fprestore)	\
- 		     : output : input)
- 
-+static inline void __cpu_invalidate_fpregs_state(void);
-+
- static inline int copy_fregs_to_user(struct fregs_state __user *fx)
- {
- 	return user_insn(fnsave %[fx]; fwait,  [fx] "=m" (*fx), "m" (*fx));
-@@ -158,6 +160,8 @@ static inline int copy_fxregs_to_user(struct fxregs_state __user *fx)
- 
- static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
-+
- 	if (IS_ENABLED(CONFIG_X86_32))
- 		kernel_insn(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- 	else
-@@ -166,6 +170,8 @@ static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
- 
- static inline int copy_kernel_to_fxregs_err(struct fxregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
-+
- 	if (IS_ENABLED(CONFIG_X86_32))
- 		return kernel_insn_err(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- 	else
-@@ -174,6 +180,8 @@ static inline int copy_kernel_to_fxregs_err(struct fxregs_state *fx)
- 
- static inline int copy_user_to_fxregs(struct fxregs_state __user *fx)
- {
-+	__cpu_invalidate_fpregs_state();
-+
- 	if (IS_ENABLED(CONFIG_X86_32))
- 		return user_insn(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- 	else
-@@ -182,16 +190,19 @@ static inline int copy_user_to_fxregs(struct fxregs_state __user *fx)
- 
- static inline void copy_kernel_to_fregs(struct fregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
- 	kernel_insn(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- }
- 
- static inline int copy_kernel_to_fregs_err(struct fregs_state *fx)
- {
-+	__cpu_invalidate_fpregs_state();
- 	return kernel_insn_err(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- }
- 
- static inline int copy_user_to_fregs(struct fregs_state __user *fx)
- {
-+	__cpu_invalidate_fpregs_state();
- 	return user_insn(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
- }
- 
-@@ -340,6 +351,7 @@ static inline void copy_kernel_to_xregs(struct xregs_state *xstate, u64 mask)
- 	u32 lmask = mask;
- 	u32 hmask = mask >> 32;
- 
-+	__cpu_invalidate_fpregs_state();
- 	XSTATE_XRESTORE(xstate, lmask, hmask);
- }
- 
-@@ -382,6 +394,7 @@ static inline int copy_user_to_xregs(struct xregs_state __user *buf, u64 mask)
- 	u32 hmask = mask >> 32;
- 	int err;
- 
-+	__cpu_invalidate_fpregs_state();
- 	stac();
- 	XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
- 	clac();
-@@ -399,6 +412,7 @@ static inline int copy_kernel_to_xregs_err(struct xregs_state *xstate, u64 mask)
- 	u32 hmask = mask >> 32;
- 	int err;
- 
-+	__cpu_invalidate_fpregs_state();
- 	XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
- 
- 	return err;
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 12c70840980e..743ff5ea4076 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -127,7 +127,12 @@ void fpu__save(struct fpu *fpu)
- 
- 	if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
- 		if (!copy_fpregs_to_fpstate(fpu)) {
-+			/*
-+			 * copy_kernel_to_fpregs deactivates fpregs;
-+			 * re-activate fpregs after that.
-+			 */
- 			copy_kernel_to_fpregs(&fpu->state);
-+			fpregs_activate(fpu);
- 		}
- 	}
- 
-@@ -191,11 +196,17 @@ int fpu__copy(struct task_struct *dst, struct task_struct *src)
- 	 *   register contents so we have to load them back. )
- 	 */
- 	fpregs_lock();
--	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-+	if (test_thread_flag(TIF_NEED_FPU_LOAD)) {
- 		memcpy(&dst_fpu->state, &src_fpu->state, fpu_kernel_xstate_size);
- 
--	else if (!copy_fpregs_to_fpstate(dst_fpu))
-+	} else if (!copy_fpregs_to_fpstate(dst_fpu)) {
-+		/*
-+		 * copy_kernel_to_fpregs deactivates fpregs;
-+		 * re-activate fpregs after that.
-+		 */
- 		copy_kernel_to_fpregs(&dst_fpu->state);
-+		fpregs_activate(src_fpu);
-+	}
- 
- 	fpregs_unlock();
- 
--- 
-2.17.1
-
+Thanks!
