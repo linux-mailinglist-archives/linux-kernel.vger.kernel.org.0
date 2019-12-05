@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8561411478C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FB3114794
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbfLETTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 14:19:14 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39578 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfLETTN (ORCPT
+        id S1729632AbfLETZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 14:25:42 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:51470 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfLETZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 14:19:13 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d124so4324847qke.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 11:19:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=X8Tp/XdEXs+TR5v+c9/suhk5h4IbR9LUYJcwVVfa/Uw=;
-        b=ZX6PGbbxLe5/+H4/x+2ZwhNRSL/jP669CQcGGWDNfkkAp8vql6U0uYnfE+QF3sTNPv
-         ExWqhN1gwNF37jPk7G6+k1S5kUO3VRteOuRzWzoejOtvD4hlOjgSANzsdOEnwtpoPWP2
-         loOo30hlBIleoDQCDU4y3hF0EO+ggo42JD7IEY1LQ3sXyG2NGfunBUTncU2dCY3lVDSI
-         gtynwEONEhLRiHaSOHJOTEorCytRJRJ5RoRTkfc0MAqPEOyDtimybJOX+nJszIUXokJX
-         hkMRmmbU/uLOAZCR+LXJJjZ1B43W3JGvA69m//0OFwTn4AdK/9bKfGlfduMjV9HgiJVC
-         yr7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=X8Tp/XdEXs+TR5v+c9/suhk5h4IbR9LUYJcwVVfa/Uw=;
-        b=ENafYUs/q2yKtM3QXHasSbRGA6XjnsD7Nuzq54/Nz3pzSK/XS/GkNkt/27sjpz6xHa
-         /9YnoXCfXSvPfpDfPdVkNwYyrvxdRtHIii27jZfrHRbBx3e5696UCYdcT/qZO1yGNaSK
-         x91sNgmw5cMYf4K/Qf2X9iO69yOxoXLcvAoNEwOOMwfLazhCZ++Mqt+p9CAh+I7OSYbV
-         IDhvPSfO5u6md2A2fVz0YBOSAECX4zG1xQIqcyV86Ed4fNl1WnZZXSkr7OibPL5aBlQg
-         9ayLv7DkDeNRLYuf0OJFsqT1r/k7l78O0dsLLoLObvN3/DARN8vvEVBNpWUNQVEtPErZ
-         TSkw==
-X-Gm-Message-State: APjAAAXIWYfeEKkgaEJ+ZRC9+0KrkgyinMBcTH57x/+exOwmVz8IKc75
-        9oXOusP5PYxUwErO1uEemmydxQ==
-X-Google-Smtp-Source: APXvYqxARhrKeQEoDRAu0FLed91qByNWJosnqUpmhhkBLUwPDj/7VnH8zVcJgktfsRT/sMody/3aBA==
-X-Received: by 2002:a37:a348:: with SMTP id m69mr10474834qke.474.1575573550513;
-        Thu, 05 Dec 2019 11:19:10 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id a63sm5180161qkd.37.2019.12.05.11.19.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2019 11:19:09 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [v3 PATCH] mm: move_pages: return valid node id in status if the page is already on the target node
-Date:   Thu, 5 Dec 2019 14:19:08 -0500
-Message-Id: <0E1D1C04-5892-438F-9191-F23CBE1A6DC5@lca.pw>
-References: <1575572053-128363-1-git-send-email-yang.shi@linux.alibaba.com>
-Cc:     fabecassis@nvidia.com, jhubbard@nvidia.com, mhocko@suse.com,
-        cl@linux.com, vbabka@suse.cz, mgorman@techsingularity.net,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <1575572053-128363-1-git-send-email-yang.shi@linux.alibaba.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-X-Mailer: iPhone Mail (17B111)
+        Thu, 5 Dec 2019 14:25:41 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1icwiY-0004sv-00; Thu, 05 Dec 2019 19:23:14 +0000
+Date:   Thu, 5 Dec 2019 14:23:14 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Rob Landley <rob@landley.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v6 10/18] sh/tlb: Convert SH to generic mmu_gather
+Message-ID: <20191205192314.GC16318@brightrain.aerifal.cx>
+References: <20190219103148.192029670@infradead.org>
+ <20190219103233.443069009@infradead.org>
+ <CAMuHMdW3nwckjA9Bt-_Dmf50B__sZH+9E5s0_ziK1U_y9onN=g@mail.gmail.com>
+ <20191204104733.GR2844@hirez.programming.kicks-ass.net>
+ <e2cf6780-ba7e-d6f6-9d15-92e182f98e84@landley.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2cf6780-ba7e-d6f6-9d15-92e182f98e84@landley.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 05, 2019 at 01:24:02PM -0600, Rob Landley wrote:
+> On 12/4/19 4:47 AM, Peter Zijlstra wrote:
+> > On Tue, Dec 03, 2019 at 12:19:00PM +0100, Geert Uytterhoeven wrote:
+> >> Hoi Peter,
+> >>
+> >> On Tue, Feb 19, 2019 at 11:35 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >>> Generic mmu_gather provides everything SH needs (range tracking and
+> >>> cache coherency).
+> >>>
+> >>> Cc: Will Deacon <will.deacon@arm.com>
+> >>> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+> >>> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >>> Cc: Nick Piggin <npiggin@gmail.com>
+> >>> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> >>> Cc: Rich Felker <dalias@libc.org>
+> >>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >>
+> >> I got remote access to an SH7722-based Migo-R again, which spews a long
+> >> sequence of BUGs during userspace startup.  I've bisected this to commit
+> >> c5b27a889da92f4a ("sh/tlb: Convert SH to generic mmu_gather").
+> > 
+> > Whoopsy.. also, is this really the first time anybody booted an SH
+> > kernel in over a year ?!?
+> 
+> No, but most people running this kind of hardware tend not to upgrade to current
+> kernels on a regular basis.
+> 
+> The j-core guys tested the 5.3 release. I can't find an email about 5.4 so I
+> dunno if that's been tested yet?
 
+Being that this code is about mmu, does it affect nommu machines?
+That's what we've got at present on the J-core side.
 
-> On Dec 5, 2019, at 1:54 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
->=20
-> This is because the status is not set if the page is already on the
-> target node, but move_pages() should return valid status as long as it
-> succeeds.  The valid status may be errno or node id.
->=20
-> We can't simply initialize status array to zero since the pages may be
-> not on node 0.  Fix it by updating status with node id which the page is
-> already on.
-
-This does not look correct either.
-
-=E2=80=9CENOENT
-No pages were found that require moving. All pages are either already on the=
- target node, not present, had an invalid address or could not be moved beca=
-use they were mapped by multiple processes.=E2=80=9D
-
-move_pages() should return -ENOENT instead.=
+Rich
