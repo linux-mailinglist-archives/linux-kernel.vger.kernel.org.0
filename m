@@ -2,53 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F001148AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:30:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77EFC1148B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 22:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbfLEVaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 16:30:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbfLEVaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 16:30:03 -0500
-Subject: Re: [GIT PULL] fuse update for 5.5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575581403;
-        bh=oZwr/JAPXTXrcsPq69YsGQO2h51xC7nCTpePfVOHBx8=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=b7M5HOIafjNroCh/e1g/9+1WiQd8egsUqQZLNNg4SBZO63pRSOr/2X7xREm9mVgkI
-         PA5K+dKVGT/lRCtbMs9D4nPi279H7B1nCVJLsb91mHvhiSBm97twyDvgmBbvGUuS7d
-         C7G3/AZf0DoABRFTfEfwrmlHyNqt3kcI3vZGGtns=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191204091059.GB16668@miu.piliscsaba.redhat.com>
-References: <20191204091059.GB16668@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191204091059.GB16668@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
- tags/fuse-update-5.5
-X-PR-Tracked-Commit-Id: 8d66fcb7488486bf144eab852e87e03a45e0fd3a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7ce4fab8191396a1b8e4bc42d3b90029876b2bcd
-Message-Id: <157558140312.8243.12648934323249833371.pr-tracker-bot@kernel.org>
-Date:   Thu, 05 Dec 2019 21:30:03 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+        id S1730416AbfLEVay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 16:30:54 -0500
+Received: from heinz.dinsnail.net ([81.169.187.250]:42578 "EHLO
+        heinz.dinsnail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbfLEVay (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 16:30:54 -0500
+Received: from heinz.dinsnail.net ([IPv6:0:0:0:0:0:0:0:1])
+        by heinz.dinsnail.net (8.15.2/8.15.2) with ESMTP id xB5LUEC0010903;
+        Thu, 5 Dec 2019 22:30:14 +0100
+Received: from eldalonde.UUCP (uucp@localhost)
+        by heinz.dinsnail.net (8.15.2/8.15.2/Submit) with bsmtp id xB5LUDNb010898;
+        Thu, 5 Dec 2019 22:30:13 +0100
+Received: from eldalonde.weiser.dinsnail.net (localhost [IPv6:0:0:0:0:0:0:0:1])
+        by eldalonde.weiser.dinsnail.net (8.15.2/8.15.2) with ESMTP id xB5LFWAK010648;
+        Thu, 5 Dec 2019 22:15:32 +0100
+Received: (from michael@localhost)
+        by eldalonde.weiser.dinsnail.net (8.15.2/8.15.2/Submit) id xB5LFWDY010647;
+        Thu, 5 Dec 2019 22:15:32 +0100
+Date:   Thu, 5 Dec 2019 22:15:32 +0100
+From:   Michael Weiser <michael@weiser.dinsnail.net>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, linux-efi@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kexec@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/efi: update e820 about reserved EFI boot services
+ data to fix kexec breakage
+Message-ID: <20191205211532.GA10177@weiser.dinsnail.net>
+References: <20191204075233.GA10520@dhcp-128-65.nay.redhat.com>
+ <20191204075917.GA10587@dhcp-128-65.nay.redhat.com>
+ <20191204101412.GD114697@gmail.com>
+ <20191205105545.GA6710@dhcp-128-65.nay.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205105545.GA6710@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-dinsnail-net-MailScanner-Information: Please contact the ISP for more information
+X-dinsnail-net-MailScanner-ID: xB5LUEC0010903
+X-dinsnail-net-MailScanner: Found to be clean
+X-dinsnail-net-MailScanner-From: michael@weiser.dinsnail.net
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 4 Dec 2019 10:10:59 +0100:
+On Thu, Dec 05, 2019 at 06:55:45PM +0800, Dave Young wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-5.5
+> >    esrt: Unsupported ESRT version 2904149718861218184.
+> > 
+> >  The ESRT memory stays in EFI boot services data, and it was reserved
+> >  in kernel via efi_mem_reserve().  The initial purpose of the reservation
+> >  is to reuse the EFI boot services data across kexec reboot. For example
+> >  the BGRT image data and some ESRT memory like Michael reported.
+> > 
+> >  But although the memory is reserved it is not updated in the X86 E820 table,
+> >  and kexec_file_load() iterates system RAM in the IO resource list to find places
+> >  for kernel, initramfs and other stuff. In Michael's case the kexec loaded
+> >  initramfs overwrote the ESRT memory and then the failure happened.
+> > 
+> >  Since kexec_file_load() depends on the E820 table being updated, just fix this
+> >  by updating the reserved EFI boot services memory as reserved type in E820.
+> Thanks for the amending, also thank all for the review and test.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7ce4fab8191396a1b8e4bc42d3b90029876b2bcd
-
-Thank you!
-
+Same from me, particularly everyone's patience with my haphazard
+guesswork around an area I clearly know nothing about. :)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks,
+Michael
