@@ -2,105 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3730114146
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E5111414D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:16:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbfLENPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 08:15:05 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39744 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729109AbfLENPF (ORCPT
+        id S1729514AbfLENQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 08:16:20 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42052 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729290AbfLENQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 08:15:05 -0500
-Received: by mail-qt1-f193.google.com with SMTP id g1so3468957qtj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 05:15:04 -0800 (PST)
+        Thu, 5 Dec 2019 08:16:19 -0500
+Received: by mail-wr1-f67.google.com with SMTP id a15so3507856wrf.9;
+        Thu, 05 Dec 2019 05:16:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=ci+Il7R0z85hcBaZjDpG/Dx0n3gFLviKjHNEHX1Pepk=;
-        b=TP6Rm1zOouE3WSPWD8apJn5tfIaeOGIdFpSt5bs/4GbVl6fN5nFf05kN/RyiB0tQgs
-         7+pi9+O0IfLFLMN8JyhbC64Lt69jKs1Hnn5YJhGDkGdML0trHHHwrv1UbYP1IHKxqfnT
-         1c+7haZO77OhJJlUBsroTbFcDMTVlmNYLaNrcTjZ8yFNbarKmA0vkrvweWmLQ3e2/3Rc
-         j2a2sHFIkWwNYdvePdcsP03aplXXl5o0huznYeYuC8O0+k5xPRPE99hbTibY/s8WLnTW
-         L//lt3nW/AocEgytxvAzk+kn1RBaE4xSlMrVH5iCVPlsoQElHKzU+CiVZKNYXHLQuTTw
-         VOlg==
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fZH84HPNreWtotycUDHC/DTlMQk+vV5ojMrCEDiTK38=;
+        b=C0Yvgk7pvQ+PYPsCtkWKERII8rsduUXaiaVraS2N4NK+802/fojqgHV6dRHx9saEzr
+         UCvLustwKcy1/VBEdSrV8+7+B4LaiUexIf5maiGxCJ58BFAM9YBM3MxDv+yesi+xuD/U
+         NTZEGGIEOJZlIZPegwGBCj3PQWVTnF7Z9ti8sAjVfzsV75uP9uW1/MHWt76WIaC+zixY
+         cM9xdkGp9KcBYBWd9vxujtdeIS6vJUWpWlbOrQxfN6paT7ooPaiY+0NaPGhNW/m5Ge0m
+         d1yHaqcC6W5xZ83bTVEespfg3Ce1iHdBtirSWnB4meAo0ZTeUHXnq455jFX0I44RkLsv
+         lstA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=ci+Il7R0z85hcBaZjDpG/Dx0n3gFLviKjHNEHX1Pepk=;
-        b=TBwB4Ei7NqdkDnjNjhtg5lgqiSNQJBjzoMy+LldUo39v4BEbJhxqhVMteujN7WPJej
-         ssogq/hIqMj6vb1p2uihkZj44jY9Kt0qXvWAt/DF2EUWSs1aYVldJAZFNuHEZzbGzjRe
-         H3oVXGRoxM0H8XhnkwTr4ShcUE3NM/ayMHNi49M6d456+HLCDtSY4wR8jN1NeawEjP5+
-         aI0DqrnDLxdQkGQ4ok11zc36WTh8hzTDX9mj9hzYK6Gog61rqBXgkv3q0Sc6kYuv2jtB
-         0LuX5BBQoFAWwVsvb4frRXF3tLWJcqD31ZQKOm5fb7/BymMu0XG7TqTTgXPLBpyZyY6T
-         w0pw==
-X-Gm-Message-State: APjAAAVVFwsuvWi0DfCejlQ3Qtx8QxjhbIW7ISBPB9d5n+0ABnmYIelr
-        ocmmEUd7zJuV0t8zRo6EsjnBsg==
-X-Google-Smtp-Source: APXvYqxHW8DGT/kKJL7N6FSy/ayvCsum2cTR7vYA5fykS6fEhOCjJRkFygAl+kF2HccA8SqNMAi0nQ==
-X-Received: by 2002:ac8:60cc:: with SMTP id i12mr7329084qtm.103.1575551703794;
-        Thu, 05 Dec 2019 05:15:03 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id d134sm4917395qkc.42.2019.12.05.05.15.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2019 05:15:02 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v15 00/23] Generic page walk and ptdump
-Date:   Thu, 5 Dec 2019 08:15:02 -0500
-Message-Id: <A22DE6B7-23A1-41FA-AF82-9613778277C7@lca.pw>
-References: <20191204163235.GA1597@arm.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?utf-8?Q?J=C3=A9r=C3=B4me_Glisse?= <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <James.Morse@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-In-Reply-To: <20191204163235.GA1597@arm.com>
-To:     Steven Price <Steven.Price@arm.com>
-X-Mailer: iPhone Mail (17B111)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fZH84HPNreWtotycUDHC/DTlMQk+vV5ojMrCEDiTK38=;
+        b=Homh0E4RjJJ/Kl13EgX9KXsUbQfZ75SvypLnVcXufPXdhtlLqR40aF6Mq0N8yYXene
+         Yndu8OgMWgax/T4L9VD+tkbE6+2/gnkRhhArbLo+SM+49YOkUV0CkaF43vsbrI09qzeg
+         iIJhhkC750M13SwIMHJ+2gyzjilUs6aQAQhrMX0tzkGYUSMNOR3Jhgo166PHx7RPPhMa
+         n6mEebTmKNbmIdpiU8zMdhhoFyHMkeu4PnBT3bxsXfAiN86sG4njgUZ23ghVMgLvsxyh
+         lbQXTXsJmPBHSR3vW0IFsb4yhQeV9PdpEHzTnnHal39qnAR/FuxfAQV0OjkuXS9R4u7I
+         mmsg==
+X-Gm-Message-State: APjAAAXNv71koHu0Z/xa++9WDVR4J3o3MZ8Ec/+St6lCaLF6xEWbjKey
+        zDLZm+QSKX/FfCYTnI4eK4DHHhHq
+X-Google-Smtp-Source: APXvYqy/DNCxkrLf/HXthIOSRd0pC7iRqh7lnHkd81DjgnVeN9e9/gn8HPcZT9lrS25w+EceWnX4jg==
+X-Received: by 2002:adf:e5cb:: with SMTP id a11mr9723709wrn.28.1575551777038;
+        Thu, 05 Dec 2019 05:16:17 -0800 (PST)
+Received: from localhost.localdomain ([109.126.146.231])
+        by smtp.gmail.com with ESMTPSA id b10sm12385490wrt.90.2019.12.05.05.16.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 05:16:16 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring: fix error handling in io_queue_link_head
+Date:   Thu,  5 Dec 2019 16:15:45 +0300
+Message-Id: <d3151624354a37ec5510af32b00475574aa60aca.1575551692.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In case of an error io_submit_sqe() drops a request and continues
+without it, even if the request was a part of a link. Not only it
+doesn't cancel links, but also may execute wrong sequence of actions.
 
+Stop consuming sqes, and let the user handle errors.
 
-> On Dec 4, 2019, at 11:32 AM, Steven Price <Steven.Price@arm.com> wrote:
->=20
-> I've bisected this problem and it's a merge conflict with:
->=20
-> ace88f1018b8 ("mm: pagewalk: Take the pagetable lock in walk_pte_range()")=
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/io_uring.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2efe1ac7352a..6c2b2afe985e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3318,7 +3318,7 @@ static inline void io_queue_link_head(struct io_kiocb *req)
+ 
+ #define SQE_VALID_FLAGS	(IOSQE_FIXED_FILE|IOSQE_IO_DRAIN|IOSQE_IO_LINK)
+ 
+-static void io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
++static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+ 			  struct io_kiocb **link)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+@@ -3337,7 +3337,7 @@ static void io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+ err_req:
+ 		io_cqring_add_event(req, ret);
+ 		io_double_put_req(req);
+-		return;
++		return false;
+ 	}
+ 
+ 	/*
+@@ -3376,6 +3376,8 @@ static void io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+ 	} else {
+ 		io_queue_sqe(req);
+ 	}
++
++	return true;
+ }
+ 
+ /*
+@@ -3505,6 +3507,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 			}
+ 		}
+ 
++		submitted++;
+ 		sqe_flags = req->sqe->flags;
+ 
+ 		req->ring_file = ring_file;
+@@ -3514,9 +3517,8 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+ 		req->needs_fixed_file = async;
+ 		trace_io_uring_submit_sqe(ctx, req->sqe->user_data,
+ 					  true, async);
+-		io_submit_sqe(req, statep, &link);
+-		submitted++;
+-
++		if (!io_submit_sqe(req, statep, &link))
++			break;
+ 		/*
+ 		 * If previous wasn't linked and we have a linked command,
+ 		 * that's the end of the chain. Submit the previous link.
+-- 
+2.24.0
 
-Sigh, how does that commit end up merging in the mainline without going thro=
-ugh Andrew=E2=80=99s tree and missed all the linux-next testing? It was merg=
-ed into the mainline Oct 4th?
-
-> Reverting that commit "fixes" the problem. That commit adds a call to
-> pte_offset_map_lock(), however that isn't necessarily safe when
-> considering an "unusual" mapping in the kernel. Combined with my patch
-> set this leads to the BUG when walking the kernel's page tables.
->=20
-> At this stage I think it's best if Andrew drops my series and I'll try
-> to rework it on top -rc1 fixing up this conflict and the other x86
-> 32-bit issue that has cropped up.
