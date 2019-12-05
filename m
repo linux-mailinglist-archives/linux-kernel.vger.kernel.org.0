@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 323FD1139C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A9F91139C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfLECUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:20:06 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:36148 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728862AbfLECTy (ORCPT
+        id S1728963AbfLECT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:19:59 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:45542 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbfLECT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:19:54 -0500
-Received: by mail-yb1-f196.google.com with SMTP id v2so882435ybo.3;
-        Wed, 04 Dec 2019 18:19:53 -0800 (PST)
+        Wed, 4 Dec 2019 21:19:56 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d12so598803ywl.12;
+        Wed, 04 Dec 2019 18:19:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NBUCQ3HXWtjqS7u+DV8bVMI4GRsmhHpuG+2/DBZke2U=;
-        b=gZqvPktcf6I8/hfOocl3lqK6ZkGdntiy5ippuyOtLR1PsAvNFTzHaCL0peOfCUrZFN
-         hZBA2YM5Zqiqf+TjBICsmwrRVJTbjb6UCIRkl3PM2kOboSJ+NqrO4svjirQ8QORXJdeg
-         qv5mNTpM+DPfWLq7RjcJ8+JWYXqPvqqGzwh1uGn9P+tiLP8f96Dm4PNROjUBA83XIxcm
-         VzmmovvA+bxcThlIUHj5FBlFqpB5HkSrnVphnsgF32EtIVTh+GecSxdiVbLBF+LP+fDs
-         D1NwShFZ5ueZxyFaeac2pntK9BO4aLlmJDZ4d4CkUanv6sO2BcaDF5DwmuaVZY7SjIyG
-         LTjg==
+        bh=zrsetGriwFN7O5PokupRSAWoGTBVUJcT37C7y0ZMNmw=;
+        b=NGgUmBF79hKaA6rfHlyxqgOEoGaktYvly2OXQKwO26azgRrBz+Kg6wWarzxKrBq0ra
+         t12HAvhbHelpoN/lvn8Kd9NAnRtEIxa0c+Xl7+zyQy/O/De1xKlMO81J/jWbGA0GLcjv
+         82KvKhAIVYtzQIhF64Bicyj7UdpV+YFwVl+lz4QG/tVLjRfth1yjB5YZUEZSjVH4D3Gt
+         KfxHyXbBGdSWfmg/87FrbBb2nmEFWV2G6O9cSfQPXu7p8pNyLq0cBfgphV8iNhqf3hbH
+         o/hv6dlaZtnqx/isgXXPCZu5IGLWlYMsRrE8ZC3tAaN5WUio/rykeziwLK16Fd1ur1NI
+         C6xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NBUCQ3HXWtjqS7u+DV8bVMI4GRsmhHpuG+2/DBZke2U=;
-        b=pWCh53rmv9NCM+4i99YaKZpjYXoTdWkUWrgybmKnTFlTEwpYLHryDBQ08KHdWXh7s1
-         6ia7aecBpuQUpANmT1BTre4QAEGLATE+kOn1RXQ77i1ddAaobhpWOq3Dtek4whLqow4j
-         6DIr32z+xmI4duwj7kC2xg8ZuIoz/b15gGKQt0xx6VNsfFTs7eUXs7uBajxH9YttajLS
-         TIPCGhEJCNVMlMTM1O6nh/jitXWg1zu0GKWm6V+xgC6V8LTjYcWUg+CEHEmKTHfpoOuY
-         MavexBkDrN7TxKFJ7AYBr0ULayDA3w4uVUvcqgrPVeVxKd8vVTHuVG+8EQsdjV0Kd8kA
-         h3oA==
-X-Gm-Message-State: APjAAAUXWxpeFxp7Hq4/yOkhwEzRgsZrxbrJP3h32v1LnYeEYKXdAwRe
-        JqaNkoObFBDjBe5lwGUpEO0=
-X-Google-Smtp-Source: APXvYqwpnSW0TEm1sDRCzLBvTQE4cuFAOFTuoVVDJT3nfkg/Z0yJYgcHWfa00gQ6AC1z7piMSl0Ffg==
-X-Received: by 2002:a25:860b:: with SMTP id y11mr4655565ybk.485.1575512392989;
-        Wed, 04 Dec 2019 18:19:52 -0800 (PST)
+        bh=zrsetGriwFN7O5PokupRSAWoGTBVUJcT37C7y0ZMNmw=;
+        b=COF8UWfNsoF63V55DvjemMq9iqge8qd6tRi4q4L2x/d9ALkLJ6xMd9rF49mn4g24BH
+         No9RZ2ifBaQJlEuBDVfzRLPzDUElylKQXUwPBjWMVj+kF8shkyVOMaLK9AONy0i7FfLA
+         lBM71wHronKcXvDcmweFwRQ4amJLuUZXMmlksKqFb4d69ApRFG9btHawK8ZJMX+fSsPv
+         KSfe2LCdqmjhu1GI5xq5HhT8oFLPIQP4hgO5+iUxIwxBbIrNepfQypqLTrHPZQDKgMag
+         jdlUhLnfrNaSaxnBvjufP/1cQSLkBYQdhHQ1kdUavO6vXn4oqMBth09Kpd7OBT95OKZl
+         BXew==
+X-Gm-Message-State: APjAAAU2pk7nnc7yPHCyZxl8HYWm8s1vuOgNNsd4gF2zIWvFc+8q+8U1
+        BNu4odLO+vU3bpSR+stIkKs=
+X-Google-Smtp-Source: APXvYqzCCriI9i8RMQSO8C5ehwieJ+buobW2fxeTKupTKau3EoE8HIWwRb+cK78pEhE54ySr7gqOEw==
+X-Received: by 2002:a81:7a0d:: with SMTP id v13mr4506519ywc.175.1575512395086;
+        Wed, 04 Dec 2019 18:19:55 -0800 (PST)
 Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id l6sm4188449ywa.39.2019.12.04.18.19.51
+        by smtp.gmail.com with ESMTPSA id l6sm4188449ywa.39.2019.12.04.18.19.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2019 18:19:52 -0800 (PST)
+        Wed, 04 Dec 2019 18:19:54 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
@@ -55,9 +55,9 @@ Cc:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] ARM64: dts: imx8mm: Fix clocks and power domain for USB OTG
-Date:   Wed,  4 Dec 2019 20:19:22 -0600
-Message-Id: <20191205021924.25188-7-aford173@gmail.com>
+Subject: [PATCH 7/7] arm64: dts: imx8mm: Add PCIe support
+Date:   Wed,  4 Dec 2019 20:19:23 -0600
+Message-Id: <20191205021924.25188-8-aford173@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191205021924.25188-1-aford173@gmail.com>
 References: <20191205021924.25188-1-aford173@gmail.com>
@@ -68,63 +68,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two USB OTG controllers on the i.MX8M Mini, but currently
-neither are functional.
+The PCIE controller on the i.MX8M Mini appears to be the same
+as the i.MX8MQ but it is absent.
 
-According to the device tree entries published on the NXP kernel
-for the imx8m mini, these both need to be assigned to the proper
-clocks and power domain in order to function.
-
-This patch configures both USB OTG controllers to enable a missing
-clock and define the power domain so boards wishing to enable
-the USB OTG can do so.
+This patch uses the bindings from the i.MX8MQ and the clock
+information from the NXP Linux release and marks it as disabled
+so it can be configured and enabled on boards where needed.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 35 +++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index d05c5b617a4d..5036d713558f 100644
+index 5036d713558f..f384934ddbb4 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -14,7 +14,7 @@
+@@ -5,6 +5,7 @@
  
- / {
- 	compatible = "fsl,imx8mm";
--	interrupt-parent = <&gpc>;
-+	interrupt-parent = <&gic>;
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+ #include <dt-bindings/clock/imx8mm-clock.h>
+ #include <dt-bindings/power/imx8m-power.h>
++#include <dt-bindings/reset/imx8mq-reset.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -936,6 +937,40 @@
+ 			status = "disabled";
+ 		};
  
-@@ -867,8 +867,11 @@
- 				interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MM_CLK_USB1_CTRL_ROOT>;
- 				clock-names = "usb1_ctrl_root_clk";
--				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>;
--				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>;
-+				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>,
-+						  <&clk IMX8MM_CLK_USB_CORE_REF>;
-+				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>,
-+							 <&clk IMX8MM_SYS_PLL1_100M>;
-+				power-domains = <&pgc_otg1>;
- 				fsl,usbphy = <&usbphynop1>;
- 				fsl,usbmisc = <&usbmisc1 0>;
- 				status = "disabled";
-@@ -886,8 +889,11 @@
- 				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clk IMX8MM_CLK_USB1_CTRL_ROOT>;
- 				clock-names = "usb1_ctrl_root_clk";
--				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>;
--				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>;
-+				assigned-clocks = <&clk IMX8MM_CLK_USB_BUS>,
-+						  <&clk IMX8MM_CLK_USB_CORE_REF>;
-+				assigned-clock-parents = <&clk IMX8MM_SYS_PLL2_500M>,
-+							 <&clk IMX8MM_SYS_PLL1_100M>;
-+				power-domains = <&pgc_otg2>;
- 				fsl,usbphy = <&usbphynop2>;
- 				fsl,usbmisc = <&usbmisc2 0>;
- 				status = "disabled";
++		pcie0: pcie@33800000 {
++			compatible = "fsl,imx8mq-pcie";
++			reg = <0x33800000 0x400000>,
++			      <0x1ff00000 0x80000>;
++			reg-names = "dbi", "config";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			bus-range = <0x00 0xff>;
++			ranges = <0x81000000 0 0x00000000 0x1ff80000 0 0x00010000 /* downstream I/O 64KB */
++				  0x82000000 0 0x18000000 0x18000000 0 0x07f00000>; /* non-prefetchable memory */
++			num-lanes = <1>;
++			num-viewport = <4>;
++			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &gic GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &gic GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			fsl,max-link-speed = <2>;
++			power-domains = <&pgc_pcie>;
++			resets = <&src IMX8MQ_RESET_PCIEPHY>,
++				 <&src IMX8MQ_RESET_PCIE_CTRL_APPS_EN>,
++				 <&src IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF>;
++			reset-names = "pciephy", "apps", "turnoff";
++			clocks = <&clk IMX8MM_CLK_PCIE1_ROOT>,
++				 <&clk IMX8MM_CLK_PCIE1_AUX>,
++				 <&clk IMX8MM_CLK_PCIE1_PHY>;
++			clock-names = "pcie", "pcie_bus", "pcie_phy";
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@38800000 {
+ 			compatible = "arm,gic-v3";
+ 			reg = <0x38800000 0x10000>, /* GIC Dist */
 -- 
 2.20.1
 
