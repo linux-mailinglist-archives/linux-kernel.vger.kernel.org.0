@@ -2,151 +2,338 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24413113EEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 11:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90DBD113EF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 11:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbfLEKAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 05:00:10 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39847 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbfLEKAJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 05:00:09 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e10so2821541ljj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 02:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=unikie-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=CmLQYer57shUUBOpu/Cd8aIR5RIL9543fihD/YvLsXE=;
-        b=iM86cNmC7keSOExpd9IrsKNuFPzBGDGkRHg9At0x8Lrs927cuxIwkxOcjGd0CnoM/D
-         z5r5s5SWGsk7yF3bsf5V9hfoh5RDpSKkWYcPg3e3zzXKP7HhymAcXeVYAItQ7IV4YoME
-         IPY22akkBZJFht2KUw2TExBOa0YroucwX7WSLSz4UktYJoH12fR9duIguY55evDR1Udx
-         W16vXoviQB27t+cbxA9drid0BBTkC4gGoo5xHG84DUPZ/xdIYh+ir3R3OxxV57BnwHD1
-         VuGhrL3Qrm559vqA0VoXMTsJxltJOxcVKaS3MoLTf4B2epukdJRAjl+BIJGcVsJpAApV
-         88EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version:content-transfer-encoding;
-        bh=CmLQYer57shUUBOpu/Cd8aIR5RIL9543fihD/YvLsXE=;
-        b=GMrmcF68wg7E9Y1ccxPgZJJh7CO1WwzAmBLoN2N+a33Yt6fWmZkQ2rO51MoM58V/Wt
-         mhmc6kIBN/tun5MQhy58ZB2ry+9zKaaqGHUjRip+zXX5L8dKx3C/HEaoAaFgKoRV1B2C
-         TyeoF0c77TZHmpD5Ppw8lHOpJqIDv2tVoXV07ed7TjT2F1U262XRijZbPAMIF8cZ2nSy
-         5oqIuZJ0tOxSzrsrfQ1QxawOX0C9AT2BvAJ3aTuuz8HqSpdW8csLMat5WNCcxfF6OTqd
-         pvW2eViihNV6xvAcQ5OBYRnxlPPxrwymQ88CLhg0CcjCBjYzQ2SvSOOBqLBLd/kWa9vV
-         x1sg==
-X-Gm-Message-State: APjAAAVj0RzLVWYHp6TGP6iveB69vnK/vPqLOD7HZ4m29Op3OzskmB/H
-        TouT33uDSZCUxmx1DZEeMv1Sig==
-X-Google-Smtp-Source: APXvYqyUd6Hu34vl80xhCcuVStEXBKoEqU2PZVoi1m8XyMQLuipmj09Hb9bDLlW4CULsjFp7UzhYhQ==
-X-Received: by 2002:a2e:b52a:: with SMTP id z10mr4837726ljm.178.1575540006971;
-        Thu, 05 Dec 2019 02:00:06 -0800 (PST)
-Received: from GL-434 ([109.204.235.119])
-        by smtp.gmail.com with ESMTPSA id k5sm389873lfd.86.2019.12.05.02.00.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 05 Dec 2019 02:00:06 -0800 (PST)
-From:   jouni.hogander@unikie.com (Jouni =?utf-8?Q?H=C3=B6gander?=)
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>,
-        YueHaibing <yuehaibing@huawei.com>, Julian Anastasov <ja@ssi.bg>,
-        ddstreet@ieee.org, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, Hulk Robot <hulkci@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: unregister_netdevice: waiting for DEV to become free (2)
-References: <0000000000007d22100573d66078@google.com>
-        <alpine.LFD.2.20.1808201527230.2758@ja.home.ssi.bg>
-        <ace19af4-7cae-babd-bac5-cd3505dcd874@I-love.SAKURA.ne.jp>
-Date:   Thu, 05 Dec 2019 12:00:04 +0200
-In-Reply-To: <ace19af4-7cae-babd-bac5-cd3505dcd874@I-love.SAKURA.ne.jp>
-        (Tetsuo Handa's message of "Thu, 28 Nov 2019 18:56:21 +0900")
-Message-ID: <87y2vrgkij.fsf@unikie.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1729332AbfLEKAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 05:00:18 -0500
+Received: from relay.sw.ru ([185.231.240.75]:46762 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726239AbfLEKAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 05:00:17 -0500
+Received: from dhcp-172-16-25-5.sw.ru ([172.16.25.5] helo=i7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1icnvW-0005di-NU; Thu, 05 Dec 2019 13:00:02 +0300
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        Daniel Axtens <dja@axtens.net>, Qian Cai <cai@lca.pw>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: [PATCH v2] kasan: fix crashes on access to memory mapped by vm_map_ram()
+Date:   Thu,  5 Dec 2019 12:59:42 +0300
+Message-Id: <20191205095942.1761-1-aryabinin@virtuozzo.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191204224037.GA12896@pc636>
+References: <20191204224037.GA12896@pc636>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+With CONFIG_KASAN_VMALLOC=y any use of memory obtained via vm_map_ram()
+will crash because there is no shadow backing that memory.
 
-> [   61.584734] Code: bd b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 4=
-8 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <=
-48> 3d 01 f0 ff ff 0f 83 8b b1 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> [   61.590407] RSP: 002b:00007f25d540ec88 EFLAGS: 00000246 ORIG_RAX: 0000=
-000000000010
-> [   61.592488] RAX: ffffffffffffffda RBX: 000000000071bf00 RCX: 000000000=
-045a729
-> [   61.594552] RDX: 0000000020000040 RSI: 00000000400454d9 RDI: 000000000=
-0000003
-> [   61.596829] RBP: 00007f25d540eca0 R08: 0000000000000000 R09: 000000000=
-0000000
-> [   61.598540] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f25d=
-540f6d4
-> [   61.600278] R13: 00000000004ac5a5 R14: 00000000006ee8a0 R15: 000000000=
-0000005
-> [   61.655323] kobject_add_internal failed for tx-1 (error: -12 parent: q=
-ueues)
-> [   71.760970] unregister_netdevice: waiting for vet to become free. Usag=
-e count =3D -1
-> [   82.028434] unregister_netdevice: waiting for vet to become free. Usag=
-e count =3D -1
-> [   92.140031] unregister_netdevice: waiting for vet to become free. Usag=
-e count =3D -1
-> ----------
->
-> Worrisome part is that tun_attach() calls tun_set_real_num_queues() at th=
-e end of tun_attach()
-> but tun_set_real_num_queues() is not handling netif_set_real_num_tx_queue=
-s() failure.
-> That is, tun_attach() is returning success even if netdev_queue_update_ko=
-bjects() from
-> netif_set_real_num_tx_queues() failed.
->
->   static void tun_set_real_num_queues(struct tun_struct *tun)
->   {
->           netif_set_real_num_tx_queues(tun->dev, tun->numqueues);
->           netif_set_real_num_rx_queues(tun->dev, tun->numqueues);
->   }
->
-> And I guess that ignoring that failure causes clean-up function to drop a=
- refcount
-> which was not held by initialization function. Applying below diff seems =
-to avoid
-> this problem. Please check.
->
-> ----------
-> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-> index ae3bcb1540ec..562d06c274aa 100644
-> --- a/net/core/net-sysfs.c
-> +++ b/net/core/net-sysfs.c
-> @@ -1459,14 +1459,14 @@ static int netdev_queue_add_kobject(struct net_de=
-vice *dev, int index)
->  	struct kobject *kobj =3D &queue->kobj;
->  	int error =3D 0;
->=20=20
-> +	dev_hold(queue->dev);
-> +
->  	kobj->kset =3D dev->queues_kset;
->  	error =3D kobject_init_and_add(kobj, &netdev_queue_ktype, NULL,
->  				     "tx-%u", index);
->  	if (error)
->  		goto err;
->=20=20
-> -	dev_hold(queue->dev);
-> -
->  #ifdef CONFIG_BQL
->  	error =3D sysfs_create_group(kobj, &dql_group);
->  	if (error)
+Instead of sprinkling additional kasan_populate_vmalloc() calls all over
+the vmalloc code, move it into alloc_vmap_area(). This will fix
+vm_map_ram() and simplify the code a bit.
 
-Now after reproducing the issue I think this is actually proper fix for
-the issue.  It's not related to missing error handling in in
-tun_set_real_num_queues as I commented earlier. Can you prepare patch
-for this?
+Fixes: 3c5c3cfb9ef4 ("kasan: support backing vmalloc space with real shadow memory")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+---
 
-BR,
+ Changes since v1:
+  - Fix error path in alloc_vmap_area.
+  - Remove wrong Reported-by: syzbot (The issue reported by bot is a different one)
 
-Jouni H=C3=B6gander
+ include/linux/kasan.h | 15 +++++---
+ mm/kasan/common.c     | 27 +++++++++-----
+ mm/vmalloc.c          | 85 ++++++++++++++++++++-----------------------
+ 3 files changed, 67 insertions(+), 60 deletions(-)
+
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 4f404c565db1..e18fe54969e9 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -205,20 +205,23 @@ static inline void *kasan_reset_tag(const void *addr)
+ #endif /* CONFIG_KASAN_SW_TAGS */
+ 
+ #ifdef CONFIG_KASAN_VMALLOC
+-int kasan_populate_vmalloc(unsigned long requested_size,
+-			   struct vm_struct *area);
+-void kasan_poison_vmalloc(void *start, unsigned long size);
++int kasan_populate_vmalloc(unsigned long addr, unsigned long size);
++void kasan_poison_vmalloc(const void *start, unsigned long size);
++void kasan_unpoison_vmalloc(const void *start, unsigned long size);
+ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+ 			   unsigned long free_region_start,
+ 			   unsigned long free_region_end);
+ #else
+-static inline int kasan_populate_vmalloc(unsigned long requested_size,
+-					 struct vm_struct *area)
++static inline int kasan_populate_vmalloc(unsigned long start,
++					unsigned long size)
+ {
+ 	return 0;
+ }
+ 
+-static inline void kasan_poison_vmalloc(void *start, unsigned long size) {}
++static inline void kasan_poison_vmalloc(const void *start, unsigned long size)
++{ }
++static inline void kasan_unpoison_vmalloc(const void *start, unsigned long size)
++{ }
+ static inline void kasan_release_vmalloc(unsigned long start,
+ 					 unsigned long end,
+ 					 unsigned long free_region_start,
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index df3371d5c572..a1e6273be8c3 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -777,15 +777,17 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+ 	return 0;
+ }
+ 
+-int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
++int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
+ {
+ 	unsigned long shadow_start, shadow_end;
+ 	int ret;
+ 
+-	shadow_start = (unsigned long)kasan_mem_to_shadow(area->addr);
++	if (!is_vmalloc_or_module_addr((void *)addr))
++		return 0;
++
++	shadow_start = (unsigned long)kasan_mem_to_shadow((void *)addr);
+ 	shadow_start = ALIGN_DOWN(shadow_start, PAGE_SIZE);
+-	shadow_end = (unsigned long)kasan_mem_to_shadow(area->addr +
+-							area->size);
++	shadow_end = (unsigned long)kasan_mem_to_shadow((void *)addr + size);
+ 	shadow_end = ALIGN(shadow_end, PAGE_SIZE);
+ 
+ 	ret = apply_to_page_range(&init_mm, shadow_start,
+@@ -796,10 +798,6 @@ int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
+ 
+ 	flush_cache_vmap(shadow_start, shadow_end);
+ 
+-	kasan_unpoison_shadow(area->addr, requested_size);
+-
+-	area->flags |= VM_KASAN;
+-
+ 	/*
+ 	 * We need to be careful about inter-cpu effects here. Consider:
+ 	 *
+@@ -842,12 +840,23 @@ int kasan_populate_vmalloc(unsigned long requested_size, struct vm_struct *area)
+  * Poison the shadow for a vmalloc region. Called as part of the
+  * freeing process at the time the region is freed.
+  */
+-void kasan_poison_vmalloc(void *start, unsigned long size)
++void kasan_poison_vmalloc(const void *start, unsigned long size)
+ {
++	if (!is_vmalloc_or_module_addr(start))
++		return;
++
+ 	size = round_up(size, KASAN_SHADOW_SCALE_SIZE);
+ 	kasan_poison_shadow(start, size, KASAN_VMALLOC_INVALID);
+ }
+ 
++void kasan_unpoison_vmalloc(const void *start, unsigned long size)
++{
++	if (!is_vmalloc_or_module_addr(start))
++		return;
++
++	kasan_unpoison_shadow(start, size);
++}
++
+ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+ 					void *unused)
+ {
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 4d3b3d60d893..6e865cea846c 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1061,6 +1061,26 @@ __alloc_vmap_area(unsigned long size, unsigned long align,
+ 	return nva_start_addr;
+ }
+ 
++/*
++ * Free a region of KVA allocated by alloc_vmap_area
++ */
++static void free_vmap_area(struct vmap_area *va)
++{
++	/*
++	 * Remove from the busy tree/list.
++	 */
++	spin_lock(&vmap_area_lock);
++	unlink_va(va, &vmap_area_root);
++	spin_unlock(&vmap_area_lock);
++
++	/*
++	 * Insert/Merge it back to the free tree/list.
++	 */
++	spin_lock(&free_vmap_area_lock);
++	merge_or_add_vmap_area(va, &free_vmap_area_root, &free_vmap_area_list);
++	spin_unlock(&free_vmap_area_lock);
++}
++
+ /*
+  * Allocate a region of KVA of the specified size and alignment, within the
+  * vstart and vend.
+@@ -1073,6 +1093,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	struct vmap_area *va, *pva;
+ 	unsigned long addr;
+ 	int purged = 0;
++	int ret;
+ 
+ 	BUG_ON(!size);
+ 	BUG_ON(offset_in_page(size));
+@@ -1139,6 +1160,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	va->va_end = addr + size;
+ 	va->vm = NULL;
+ 
++
+ 	spin_lock(&vmap_area_lock);
+ 	insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
+ 	spin_unlock(&vmap_area_lock);
+@@ -1147,6 +1169,12 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	BUG_ON(va->va_start < vstart);
+ 	BUG_ON(va->va_end > vend);
+ 
++	ret = kasan_populate_vmalloc(addr, size);
++	if (ret) {
++		free_vmap_area(va);
++		return ERR_PTR(ret);
++	}
++
+ 	return va;
+ 
+ overflow:
+@@ -1185,26 +1213,6 @@ int unregister_vmap_purge_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(unregister_vmap_purge_notifier);
+ 
+-/*
+- * Free a region of KVA allocated by alloc_vmap_area
+- */
+-static void free_vmap_area(struct vmap_area *va)
+-{
+-	/*
+-	 * Remove from the busy tree/list.
+-	 */
+-	spin_lock(&vmap_area_lock);
+-	unlink_va(va, &vmap_area_root);
+-	spin_unlock(&vmap_area_lock);
+-
+-	/*
+-	 * Insert/Merge it back to the free tree/list.
+-	 */
+-	spin_lock(&free_vmap_area_lock);
+-	merge_or_add_vmap_area(va, &free_vmap_area_root, &free_vmap_area_list);
+-	spin_unlock(&free_vmap_area_lock);
+-}
+-
+ /*
+  * Clear the pagetable entries of a given vmap_area
+  */
+@@ -1771,6 +1779,8 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+ 	BUG_ON(addr > VMALLOC_END);
+ 	BUG_ON(!PAGE_ALIGNED(addr));
+ 
++	kasan_poison_vmalloc(mem, size);
++
+ 	if (likely(count <= VMAP_MAX_ALLOC)) {
+ 		debug_check_no_locks_freed(mem, size);
+ 		vb_free(mem, size);
+@@ -1821,6 +1831,9 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
+ 		addr = va->va_start;
+ 		mem = (void *)addr;
+ 	}
++
++	kasan_unpoison_vmalloc(mem, size);
++
+ 	if (vmap_page_range(addr, addr + size, prot, pages) < 0) {
+ 		vm_unmap_ram(mem, count);
+ 		return NULL;
+@@ -2075,6 +2088,7 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
+ {
+ 	struct vmap_area *va;
+ 	struct vm_struct *area;
++	unsigned long requested_size = size;
+ 
+ 	BUG_ON(in_interrupt());
+ 	size = PAGE_ALIGN(size);
+@@ -2098,23 +2112,9 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
+ 		return NULL;
+ 	}
+ 
+-	setup_vmalloc_vm(area, va, flags, caller);
++	kasan_unpoison_vmalloc((void *)va->va_start, requested_size);
+ 
+-	/*
+-	 * For KASAN, if we are in vmalloc space, we need to cover the shadow
+-	 * area with real memory. If we come here through VM_ALLOC, this is
+-	 * done by a higher level function that has access to the true size,
+-	 * which might not be a full page.
+-	 *
+-	 * We assume module space comes via VM_ALLOC path.
+-	 */
+-	if (is_vmalloc_addr(area->addr) && !(area->flags & VM_ALLOC)) {
+-		if (kasan_populate_vmalloc(area->size, area)) {
+-			unmap_vmap_area(va);
+-			kfree(area);
+-			return NULL;
+-		}
+-	}
++	setup_vmalloc_vm(area, va, flags, caller);
+ 
+ 	return area;
+ }
+@@ -2293,8 +2293,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 	debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
+ 	debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
+ 
+-	if (area->flags & VM_KASAN)
+-		kasan_poison_vmalloc(area->addr, area->size);
++	kasan_poison_vmalloc(area->addr, area->size);
+ 
+ 	vm_remove_mappings(area, deallocate_pages);
+ 
+@@ -2539,7 +2538,7 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 	if (!size || (size >> PAGE_SHIFT) > totalram_pages())
+ 		goto fail;
+ 
+-	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNINITIALIZED |
++	area = __get_vm_area_node(real_size, align, VM_ALLOC | VM_UNINITIALIZED |
+ 				vm_flags, start, end, node, gfp_mask, caller);
+ 	if (!area)
+ 		goto fail;
+@@ -2548,11 +2547,6 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 	if (!addr)
+ 		return NULL;
+ 
+-	if (is_vmalloc_or_module_addr(area->addr)) {
+-		if (kasan_populate_vmalloc(real_size, area))
+-			return NULL;
+-	}
+-
+ 	/*
+ 	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
+ 	 * flag. It means that vm_struct is not fully initialized.
+@@ -3437,7 +3431,8 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 	/* populate the shadow space outside of the lock */
+ 	for (area = 0; area < nr_vms; area++) {
+ 		/* assume success here */
+-		kasan_populate_vmalloc(sizes[area], vms[area]);
++		kasan_populate_vmalloc(vas[area]->va_start, sizes[area]);
++		kasan_unpoison_vmalloc((void *)vms[area]->addr, sizes[area]);
+ 	}
+ 
+ 	kfree(vas);
+-- 
+2.23.0
+
