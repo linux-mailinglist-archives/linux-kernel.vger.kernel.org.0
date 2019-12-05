@@ -2,262 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4037E114003
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 12:21:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FD111400A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 12:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfLELVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 06:21:07 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:59166 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729017AbfLELVH (ORCPT
+        id S1729344AbfLELX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 06:23:27 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53753 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729117AbfLELX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 06:21:07 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB5BKuPh053390;
-        Thu, 5 Dec 2019 05:20:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575544856;
-        bh=Aw7GprFDO9w2I0bI/UyUztLL0uF3dC6VNrttSY25G0I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JXRGtTEAZypzaSt+YXgOJI8a2WTOBCJqsykWMh6s8TRMhUk400NPe7xm8HH2wr6vs
-         rqqYhHkKIPcCIK93t6UUU5Db1L2VbpOLhgV8o7BL44R0/Bp/aa+wB48QRqQcfL9fe/
-         Uy4HvVkmbbz6q54lLEaCaaIilMiOmx4p1NHGU0ck=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB5BKuK8086560;
-        Thu, 5 Dec 2019 05:20:56 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 5 Dec
- 2019 05:20:56 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 5 Dec 2019 05:20:56 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB5BKpxL102091;
-        Thu, 5 Dec 2019 05:20:52 -0600
-Subject: Re: [PATCH 4/4] PCI: pci-epf-test: Add support to defer core
- initialization
-To:     Vidya Sagar <vidyas@nvidia.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>, <lorenzo.pieralisi@arm.com>,
-        <andrew.murray@arm.com>, <bhelgaas@google.com>,
-        <thierry.reding@gmail.com>
-CC:     <Jisheng.Zhang@synaptics.com>, <jonathanh@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20191113090851.26345-1-vidyas@nvidia.com>
- <20191113090851.26345-5-vidyas@nvidia.com>
- <e8e3b8b6-d115-b4d4-19c5-1eae1d8abd0f@ti.com>
- <958fcc14-6794-0328-5c31-0dcc845ee646@nvidia.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <c7877f72-97e0-ac48-06c3-8e3ecec87cd5@ti.com>
-Date:   Thu, 5 Dec 2019 16:52:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Thu, 5 Dec 2019 06:23:26 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191205112325euoutp01ec785317b00281894c6d2a377cced009~dddWhkk310561505615euoutp01T
+        for <linux-kernel@vger.kernel.org>; Thu,  5 Dec 2019 11:23:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191205112325euoutp01ec785317b00281894c6d2a377cced009~dddWhkk310561505615euoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575545005;
+        bh=4cZz6jB9XqYzT/+qcSSKXwM6MSppAW1MvQ8WfWj920M=;
+        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
+        b=IGK0NmSQwxVg2PkeYxtFFkcLqnL3hUi01p7d4jxcAOWVkz+4D1x3IVTCysVj8BYcg
+         XWNaf15HUonk654wu3R75iqbKVRwCVolOzE3J5xvyVHaS4dj+a9dOxKfKPeiO+ofTf
+         4aq/pT+B8o1MifLsTwUK80xZ3UtuSttyh5+QbUls=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191205112324eucas1p1655be95b30dc529a1be583b878b6cc56~dddV5P-AS1131911319eucas1p1E;
+        Thu,  5 Dec 2019 11:23:24 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 62.63.61286.CA8E8ED5; Thu,  5
+        Dec 2019 11:23:24 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191205112324eucas1p2f8a449e76cd80ecbe8eeee6fdb5ee85f~dddVlTDf42069020690eucas1p2r;
+        Thu,  5 Dec 2019 11:23:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191205112324eusmtrp186f6072b724ed9277abbc3a249002fa8~dddVkjH-f1370513705eusmtrp1E;
+        Thu,  5 Dec 2019 11:23:24 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-60-5de8e8ac70bd
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EE.F1.07950.BA8E8ED5; Thu,  5
+        Dec 2019 11:23:23 +0000 (GMT)
+Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191205112323eusmtip1f0505dc253968033d941192647daf571~dddU7LGZh1180011800eusmtip1H;
+        Thu,  5 Dec 2019 11:23:23 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
+ errors on Exynos5422/5800 SoCs
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        k.konieczny@samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <de72b641-c150-0368-b0bd-f46c87a8c2d0@samsung.com>
+Date:   Thu, 5 Dec 2019 12:23:23 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <958fcc14-6794-0328-5c31-0dcc845ee646@nvidia.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <635904ed-93e1-944b-9317-8c9a19844223@samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djP87prXryINZh4XMhi44z1rBbXvzxn
+        tVjwaQarRf/j18wW589vYLc42/SG3WLT42usFpd3zWGz+Nx7hNFixvl9TBa3G1ewOXB7bFrV
+        yeaxeUm9R9+WVYwenzfJBbBEcdmkpOZklqUW6dslcGWc2LGKteCURcW0EyeZGhgX6HYxcnJI
+        CJhIbN/4khHEFhJYwSjRulO0i5ELyP7CKDH9VgsbROIzo8SfTheYhhOrJ7NCxJczSjS9KoBo
+        eMsoseHdB3aQBJuAoUTX2y6wZmGBbIlvp5cxg9giAnkSHXevsoM0MAvcZpLo/fSLpYuRg4NX
+        wE7ixklVkBoWARWJLad3gYVFBWIlOpZngIR5BQQlTs58AhbmFLCX6D9UBRJmFhCXuPVkPhOE
+        LS/RvHU2M8h0CYFz7BLty++zQ9zsInFxbSszhC0s8er4Fqi4jMTpyT0sEA3NjBIPz61lh3B6
+        GCUuN81ghKiyljh8/CIryGZmAU2J9bv0IcKOEm/vX2YECUsI8EnceCsIcQSfxKRt05khwrwS
+        HW1CENVqErOOr4Nbe/DCJeYJjEqzkHw2C8k7s5C8Mwth7wJGllWM4qmlxbnpqcWGeanlesWJ
+        ucWleel6yfm5mxiBien0v+OfdjB+vZR0iFGAg1GJh7dh0/NYIdbEsuLK3EOMEhzMSiK82ySe
+        xgrxpiRWVqUW5ccXleakFh9ilOZgURLnrWZ4EC0kkJ5YkpqdmlqQWgSTZeLglGpg3PbOoFSZ
+        i4VFZ+9TuY/vNid48b65tlrvkoqU7bE5B3/w9El6SllmP+acsyc4xY3pwXMx7c0Ld/GYhl27
+        HK6z5fyDBVPb1p2KqbZwYrjerMM9f+Gk1c7fWKZMvfVyluGrXoUpBXdsjv/UibrS7vqk7ZFh
+        vMipt0WtNzXSZt/8lBB4TOV3rHv+QSWW4oxEQy3mouJEADClLldIAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xu7qrX7yINTi429Ji44z1rBbXvzxn
+        tVjwaQarRf/j18wW589vYLc42/SG3WLT42usFpd3zWGz+Nx7hNFixvl9TBa3G1ewOXB7bFrV
+        yeaxeUm9R9+WVYwenzfJBbBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp
+        29mkpOZklqUW6dsl6GWc2LGKteCURcW0EyeZGhgX6HYxcnJICJhInFg9mbWLkYtDSGApo8TK
+        eR/YIRIyEienNbBC2MISf651sUEUvWaUmPptF1iCTcBQoustSIKTQ1ggW+Lb6WXMILaIQJ7E
+        vp7JLCANzAJ3mSTWffvABNF9jVli/pxFQCs4OHgF7CRunFQFaWARUJHYcnoXC4gtKhAr8X3l
+        J0YQm1dAUOLkzCcsIOWcAvYS/YeqQMLMAmYS8zY/ZIawxSVuPZnPBGHLSzRvnc08gVFoFpLu
+        WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAiNx27OeWHYxd74IPMQpw
+        MCrx8DZseh4rxJpYVlyZe4hRgoNZSYR3m8TTWCHelMTKqtSi/Pii0pzU4kOMpkC/TWSWEk3O
+        ByaLvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjBqyZ6tF2fZN
+        DPyaJuHKGVz5vWLuSm6OM1yqfq/iy9b8OOPdGH60dJGcj5DFlCxfwX1GM97evXl1otRZS4mM
+        vKRK2xPOyWoXzlgq6O2U/HRUJmrLjdVPtKwnTp2uMuFlgCWvZPiqWdcCxZ7YiUVtEeSwmXys
+        NE/pcxFD/5mNIfyT5WN5dkxepsRSnJFoqMVcVJwIAPxb/mHeAgAA
+X-CMS-MailID: 20191205112324eucas1p2f8a449e76cd80ecbe8eeee6fdb5ee85f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b
+References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
+        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
+        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
+        <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
+        <d742e7be-ca79-ae9e-6cc2-dc1fae08d252@samsung.com>
+        <dd5bc937-e776-f717-1cf3-ee0e17621304@samsung.com>
+        <9e0a4aa6-46a6-3ca6-42db-11ed55b468dd@samsung.com>
+        <635904ed-93e1-944b-9317-8c9a19844223@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi
 
-On 01/12/19 7:59 pm, Vidya Sagar wrote:
-> On 11/27/2019 2:50 PM, Kishon Vijay Abraham I wrote:
->> Hi,
->>
->> On 13/11/19 2:38 PM, Vidya Sagar wrote:
->>> Add support to defer core initialization and to receive a notifier
->>> when core is ready to accommodate platforms where core is not for
->>> initialization untile reference clock from host is available.
+On 14.11.2019 08:38, Chanwoo Choi wrote:
+> On 11/14/19 3:07 PM, Chanwoo Choi wrote:
+>> On 11/14/19 12:12 AM, Kamil Konieczny wrote:
+>>> On 14.10.2019 08:46, Chanwoo Choi wrote:
+>>>> On 19. 10. 11. 오후 8:33, Marek Szyprowski wrote:
+>>>>> On 10.10.2019 04:50, Chanwoo Choi wrote:
+>>>>>> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
+>>>>>>> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
+>>>>>>> dev_pm_opp_set_rate()") introduced errors:
+>>>>>>> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
+>>>>>>> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
+>>>>>>> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
+>>>>>>> ...
+>>>>>>> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
+>>>>>>> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
+>>>>>>> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
+>>>>>>>
+>>>>>>> They are caused by incorrect PLL assigned to clock source, which results
+>>>>>>> in clock rate outside of OPP range. Add workaround for this in
+>>>>>>> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
+>>>>>> If the clock caused this issue, you can set the initial clock on DeviceTree
+>>>>>> with assigned-clock-* properties. Because the probe time of clock driver
+>>>>>> is early than the any device drivers.
+>>>>>>
+>>>>>> It is not proper to fix the clock issue on other device driver.
+>>>>>> I think you can fix it by using the supported clock properties.
+>>>>> This issue is about something completely different. The OPPs defined in
+>>>>> DT cannot be applied, because it is not possible to derive the needed
+>>>>> clock rate from the bootloader-configured clock topology (mainly due to
+>>>>> lack of common divisor values for some of the parent clocks). Some time
+>>>>> ago Lukasz tried initially to redefine this clock topology using
+>>>>> assigned-clock-rates/parents properties (see
+>>>>> https://protect2.fireeye.com/url?k=4b80c0304459bc8e.4b814b7f-f87f1e1aee1a85c0&u=https://lkml.org/lkml/2019/7/15/276), but it has limitations and some
+>>>>> such changes has to be done in bootloader. Until this is resolved,
+>>>>> devfreq simply cannot set some of the defined OPPs.
+>>>> As you mentioned, the wrong setting in bootloader cause the this issue.
+>>>> So, this patch change the rate on exynos-bus.c in order to fix
+>>>> the issue with workaround style.
+>>>>
+>>>> But, also, it can be fixed by initializing the clock rate on DT
+>>>> although it is not fundamental solution as you mentioned.
+>>>>
+>>>> If above two method are workaround way, I think that set the clock
+>>>> rate in DT is proper. The role of 'assigned-clock-*' properties
+>>>> is for this case in order to set the initial frequency on probe time.
+>>> I can add 'assigned-clock-*' to DT, but the issue is caused in opp points,
+>>> so the warning from exynos-bus will still be there.
 >>>
->>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->>> ---
->>>   drivers/pci/endpoint/functions/pci-epf-test.c | 114 ++++++++++++------
->>>   1 file changed, 77 insertions(+), 37 deletions(-)
->>>
->>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c 
->>> b/drivers/pci/endpoint/functions/pci-epf-test.c
->>> index bddff15052cc..068024fab544 100644
->>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->>> @@ -360,18 +360,6 @@ static void pci_epf_test_cmd_handler(struct 
->>> work_struct *work)
->>>                  msecs_to_jiffies(1));
->>>   }
->>> -static int pci_epf_test_notifier(struct notifier_block *nb, unsigned 
->>> long val,
->>> -                 void *data)
->>> -{
->>> -    struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
->>> -    struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>> -
->>> -    queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
->>> -               msecs_to_jiffies(1));
->>> -
->>> -    return NOTIFY_OK;
->>> -}
->>> -
->>>   static void pci_epf_test_unbind(struct pci_epf *epf)
->>>   {
->>>       struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>> @@ -428,6 +416,78 @@ static int pci_epf_test_set_bar(struct pci_epf 
->>> *epf)
->>>       return 0;
->>>   }
->>> +static int pci_epf_test_core_init(struct pci_epf *epf)
->>> +{
->>> +    struct pci_epf_header *header = epf->header;
->>> +    const struct pci_epc_features *epc_features;
->>> +    struct pci_epc *epc = epf->epc;
->>> +    struct device *dev = &epf->dev;
->>> +    bool msix_capable = false;
->>> +    bool msi_capable = true;
->>> +    int ret;
->>> +
->>> +    epc_features = pci_epc_get_features(epc, epf->func_no);
->>> +    if (epc_features) {
->>> +        msix_capable = epc_features->msix_capable;
->>> +        msi_capable = epc_features->msi_capable;
->>> +    }
->>> +
->>> +    ret = pci_epc_write_header(epc, epf->func_no, header);
->>> +    if (ret) {
->>> +        dev_err(dev, "Configuration header write failed\n");
->>> +        return ret;
->>> +    }
->>> +
->>> +    ret = pci_epf_test_set_bar(epf);
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    if (msi_capable) {
->>> +        ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
->>> +        if (ret) {
->>> +            dev_err(dev, "MSI configuration failed\n");
->>> +            return ret;
->>> +        }
->>> +    }
->>> +
->>> +    if (msix_capable) {
->>> +        ret = pci_epc_set_msix(epc, epf->func_no, 
->>> epf->msix_interrupts);
->>> +        if (ret) {
->>> +            dev_err(dev, "MSI-X configuration failed\n");
->>> +            return ret;
->>> +        }
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int pci_epf_test_notifier(struct notifier_block *nb, unsigned 
->>> long val,
->>> +                 void *data)
->>> +{
->>> +    struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
->>> +    struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>> +    int ret;
->>> +
->>> +    switch (val) {
->>> +    case CORE_INIT:
->>> +        ret = pci_epf_test_core_init(epf);
->>> +        if (ret)
->>> +            return NOTIFY_BAD;
->>> +        break;
->>> +
->>> +    case LINK_UP:
->>> +        queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
->>> +                   msecs_to_jiffies(1));
->>> +        break;
->>> +
->>> +    default:
->>> +        dev_err(&epf->dev, "Invalid EPF test notifier event\n");
->>> +        return NOTIFY_BAD;
->>> +    }
->>> +
->>> +    return NOTIFY_OK;
->>> +}
->>> +
->>>   static int pci_epf_test_alloc_space(struct pci_epf *epf)
->>>   {
->>>       struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>> @@ -496,12 +556,11 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>>   {
->>>       int ret;
->>>       struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>> -    struct pci_epf_header *header = epf->header;
->>>       const struct pci_epc_features *epc_features;
->>>       enum pci_barno test_reg_bar = BAR_0;
->>>       struct pci_epc *epc = epf->epc;
->>> -    struct device *dev = &epf->dev;
->>>       bool linkup_notifier = false;
->>> +    bool skip_core_init = false;
->>>       bool msix_capable = false;
->>>       bool msi_capable = true;
->>> @@ -511,6 +570,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>>       epc_features = pci_epc_get_features(epc, epf->func_no);
->>>       if (epc_features) {
->>>           linkup_notifier = epc_features->linkup_notifier;
->>> +        skip_core_init = epc_features->skip_core_init;
->>>           msix_capable = epc_features->msix_capable;
->>>           msi_capable = epc_features->msi_capable;
+>>> Before this fix, devfreq will issue warning and then change clock to max
+>>> frequency within opp range. This fix mask warning, and as Marek and
+>>> Lukasz Luba wrotes, the proper fix will be to make changes in u-boot
+>>> (and connect proper PLLs to IPs).
+>> PLL could be changed by clock device driver in the linux kernel.
+>> If you don't add the supported frequency into PLL frequency table
+>> of clock device driver, will fail to change the wanted frequency
+>> on the linux kernel. It means that it is not fixed by only touching
+>> the bootloader.
 >>
->> Are these used anywhere in this function?
-> Nope. I'll remove them.
-> 
->>>           test_reg_bar = pci_epc_get_first_free_bar(epc_features);
->>> @@ -520,34 +580,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>>       epf_test->test_reg_bar = test_reg_bar;
->>>       epf_test->epc_features = epc_features;
->>> -    ret = pci_epc_write_header(epc, epf->func_no, header);
->>> -    if (ret) {
->>> -        dev_err(dev, "Configuration header write failed\n");
->>> -        return ret;
->>> -    }
->>> -
->>>       ret = pci_epf_test_alloc_space(epf);
->>>       if (ret)
->>>           return ret;
->>> -    ret = pci_epf_test_set_bar(epf);
->>> -    if (ret)
->>> -        return ret;
->>> -
->>> -    if (msi_capable) {
->>> -        ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
->>> -        if (ret) {
->>> -            dev_err(dev, "MSI configuration failed\n");
->>> -            return ret;
->>> -        }
->>> -    }
->>> -
->>> -    if (msix_capable) {
->>> -        ret = pci_epc_set_msix(epc, epf->func_no, 
->>> epf->msix_interrupts);
->>> -        if (ret) {
->>> -            dev_err(dev, "MSI-X configuration failed\n");
->>> +    if (!skip_core_init) {
->>> +        ret = pci_epf_test_core_init(epf);
->>> +        if (ret)
->>>               return ret;
->>> -        }
->>>       }
->>>       if (linkup_notifier) {
+>> As you commented, the wrong opp points which are specified on dt
+>> cause this issue. Usually, have to initialize the clock rate on dt
+>> by using 'assigned-clocks-*' property and then use the clock
+>> with the preferable clock rate. I think that we have to fix
+>> the fundamental problem.
 >>
->> This could as well be moved to pci_epf_test_core_init().
-> Yes, but I would like to keep only the code that touches hardware in 
-> pci_epf_test_core_init()
-> to minimize the time it takes to execute it. Is there any strong reason 
-> to move it? if not,
-> I would prefer to leave it here in this function itself.
+>> Without bootloader problem, you can fix it by initializing
+>> the clock on dt with 'assigned-clocks-*' property.
+>>
+>> As I knew that it is correct way and I always tried to do this method
+>> for resolving the similar clock issue.
+>>
+>> Lastly, I think that my opinion is more simple and correct.
+>> It could give the more correct information to linux kernel user
+>> which refer to the device tree file.
+>>
+>> 1. Your suggestion
+>> 	a. Add opp-table with unsupported frequency on dt
+>> 	b. Try to change the clock rate on exynos-bus.c by using unsupported frequency from opp-table
+>> 	c. If failed, retry to change the clock rate on exynos-bus.c
+>>
+>> 2. My opinion
+>> 	a. Initialize the PLL or any clock by using assigned-clock-* property on dt
+>> 	   and add opp-table with supported frequency on dt
+>> 	b. Try to change the clock rate on exynos-bus.c by using supported frequency from opp-table
+>>
+> Just I tried to add 'assigned-clock-rates' property to initialize
+> the clock rate of some bus node as following on odroid-xu3 board:
+>
+> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> index 829147e320e0..9a237af5436a 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> @@ -42,6 +42,8 @@
+>   };
+>   
+>   &bus_wcore {
+> +       assigned-clocks = <&clock CLK_DOUT_ACLK400_WCORE>;
+> +       assigned-clock-rates = <400000000>;
+>          devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
+>                          <&nocp_mem1_0>, <&nocp_mem1_1>;
+>          vdd-supply = <&buck3_reg>;
+> @@ -50,11 +52,15 @@
+>   };
+>   
+>   &bus_noc {
+> +       assigned-clocks = <&clock CLK_DOUT_ACLK100_NOC>;
+> +       assigned-clock-rates = <100000000>;
+>          devfreq = <&bus_wcore>;
+>          status = "okay";
+>   };
+>   
+>   &bus_fsys_apb {
+> +       assigned-clocks = <&clock CLK_DOUT_PCLK200_FSYS>;
+> +       assigned-clock-rates = <200000000>;
+>          devfreq = <&bus_wcore>;
+>          status = "okay";
+>   };
+> @@ -120,6 +126,8 @@
+>   };
+>   
+>   &bus_mscl {
+> +       assigned-clocks = <&clock CLK_DOUT_ACLK400_MSCL>;
+> +       assigned-clock-rates = <400000000>;
+>          devfreq = <&bus_wcore>;
+>          status = "okay";
+>   };
 
-There is no point in scheduling a work to check for commands from host 
-when the EP itself is not initialized.
 
-Thanks
-Kishon
+Well, this is a poor workaround. There is indeed no warning, but the 
+clock rates are far from the specified in the device tree. For WCORE 
+assigned-clock-rates = <400000000> on Odroid XU3/XU4 kernel will set 
+dout_aclk400_wcore clock to 266MHz, because it is not possible to derive 
+400MHz from 532MHz MPLL...
+
+I plan to measure the impact of different rates on the performance of 
+the various components and overall power consumption. Only then IMHO it 
+makes sense to decide if we really should adjust OPPs to the current 
+PLLs configuration (-> basically define following OPPs for WCORE: 
+532MHz, 266MHz, 133MHZ and 77MHz) or change PLL configuration and 
+re-parent WCORE to 1200MHz to properly drive: 400MHz, 300MHz, 200MHz and 
+100MHz.
+
+Other devfreq buses should IMHO use the values similar to the selected 
+for WCORE.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
