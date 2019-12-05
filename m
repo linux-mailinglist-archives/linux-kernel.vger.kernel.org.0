@@ -2,270 +2,393 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D1B5113D6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31576113D61
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 09:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbfLEI70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 03:59:26 -0500
-Received: from mga07.intel.com ([134.134.136.100]:44458 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfLEI7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 03:59:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 00:59:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,280,1571727600"; 
-   d="scan'208";a="236602245"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Dec 2019 00:59:22 -0800
-Date:   Thu, 5 Dec 2019 03:51:11 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     alex.williamson@redhat.com, kevin.tian@intel.com,
-        kvm@vger.kernel.org, libvir-list@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, zhenyuw@linux.intel.com,
-        qemu-devel@nongnu.org, shaopeng.he@intel.com, zhi.a.wang@intel.com
-Subject: Re: [RFC PATCH 0/9] Introduce mediate ops in vfio-pci
-Message-ID: <20191205085111.GD31791@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20191205032419.29606-1-yan.y.zhao@intel.com>
- <8bcf603c-f142-f96d-bb11-834d686f5519@redhat.com>
+        id S1728991AbfLEIxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 03:53:21 -0500
+Received: from mail-eopbgr20089.outbound.protection.outlook.com ([40.107.2.89]:1134
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726096AbfLEIxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 03:53:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VXDfAQ8ZqwuYaMoIouNhcfirddFXMrV/He5r86420kY=;
+ b=8qxyH1miwiUqYphPSFAtZSg1NjlfIHbmmscBvvAP71bCUuuBgV/cR9a3vxFAim6b2RWgc4j+s1v+gEXYJ0j0oaC1IT3q6zfIb5YNo55abPI7F0GF3RtBDsmTfAzxjstev+shmNUbUbu1x3yTR5mwtj/76DP08h5nmpSHYqRLC0c=
+Received: from VI1PR08CA0190.eurprd08.prod.outlook.com (2603:10a6:800:d2::20)
+ by AM6PR08MB3910.eurprd08.prod.outlook.com (2603:10a6:20b:6f::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.12; Thu, 5 Dec
+ 2019 08:53:10 +0000
+Received: from VE1EUR03FT057.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::209) by VI1PR08CA0190.outlook.office365.com
+ (2603:10a6:800:d2::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.13 via Frontend
+ Transport; Thu, 5 Dec 2019 08:53:10 +0000
+Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=bestguesspass
+ action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT057.mail.protection.outlook.com (10.152.19.123) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.18 via Frontend Transport; Thu, 5 Dec 2019 08:53:10 +0000
+Received: ("Tessian outbound 1e3e4a1147b7:v37"); Thu, 05 Dec 2019 08:53:10 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 4be44e811d08ee72
+X-CR-MTA-TID: 64aa7808
+Received: from 4ef3277b09ea.2
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 1061346F-8102-4005-9A60-57FDDC9DE735.1;
+        Thu, 05 Dec 2019 08:53:04 +0000
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 4ef3277b09ea.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Thu, 05 Dec 2019 08:53:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cNV4BadoukXlOFRHuZ0NbPkhZZvwgXPv88zomHygjgLtyKTsaJ7cTz7YLz4IgKdCpy4c86tLmZsxgOJMiyo4OwAVtoOcl4l3XDRV8MNRFiutCmSwbkO4Vmdnw3hcaq4lGQ/7CBjhoFjyBNF1bhIn8T8fWFV3Ia4JLf9jV/yrO8PJk1tWMT1GjXvx6Z0gTDqFD0Pdqt7Rtyq0JIS6Rw3we9i5sg/iGSHqjMNtQc0i0v61trDE5I7KkKBs7gwn0sPp8AyXFYgMp8CdCJHKr7JC14ibGbTI1VXroP5AtYDDEEowmWDZ+KW/NS/UCqa9bmoPREAEP9Hp3DJt/L5s7nz+WA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VXDfAQ8ZqwuYaMoIouNhcfirddFXMrV/He5r86420kY=;
+ b=nR4gdnQulaiV8E+vQx7z2d+pI6wP6pT9C+yjvSDTu7QNJvKFyqDFW2Uic70jWJCCdFhh9a2No5QjSV8sV5kG/O6UeqZ1BlQqGw1y885Y27i8u8e7/fwPoCwnOXOaL/odMYX9M8Uks1scJgh8ayAX+syw1tJwsTnLzTXWQQKropkrdo8Ue0nMAhnNJs5Qb89N3zqL0ZBrACzdlYduqCT731boJBe+v3QM+W6j7Pv7cQ/GPpjW0LShIz2gWsdxdzsZRarD9Hy9e4x6o+SEc9QJXBSRMvNYAZfGETWF5QDsC0aAuRBRIZAkDb5uMz0sRRcED8RRyu/PRWmg7wLZdVlQ9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VXDfAQ8ZqwuYaMoIouNhcfirddFXMrV/He5r86420kY=;
+ b=8qxyH1miwiUqYphPSFAtZSg1NjlfIHbmmscBvvAP71bCUuuBgV/cR9a3vxFAim6b2RWgc4j+s1v+gEXYJ0j0oaC1IT3q6zfIb5YNo55abPI7F0GF3RtBDsmTfAzxjstev+shmNUbUbu1x3yTR5mwtj/76DP08h5nmpSHYqRLC0c=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB5151.eurprd08.prod.outlook.com (20.179.31.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.14; Thu, 5 Dec 2019 08:53:03 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::f984:b0c7:bce9:144e]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::f984:b0c7:bce9:144e%2]) with mapi id 15.20.2495.014; Thu, 5 Dec 2019
+ 08:53:03 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
+CC:     Liviu Dudau <Liviu.Dudau@arm.com>, nd <nd@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>
+Subject: Re: [PATCH v2 2/2] drm/komeda: Enable new product D32 support
+Thread-Topic: [PATCH v2 2/2] drm/komeda: Enable new product D32 support
+Thread-Index: AQHVoEQnHODp0nh43k+zk6WDkpPTxKemwPIAgAFJKYCAADYygIADEfAA
+Date:   Thu, 5 Dec 2019 08:53:02 +0000
+Message-ID: <20191205085256.GA11212@jamwan02-TSP300>
+References: <20191121081717.29518-1-james.qian.wang@arm.com>
+ <15788924.1fOzIsmBsr@e123338-lin> <20191203064559.GA17018@jamwan02-TSP300>
+ <2125422.nYgIr5rE5T@e123338-lin>
+In-Reply-To: <2125422.nYgIr5rE5T@e123338-lin>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK2PR0302CA0001.apcprd03.prod.outlook.com
+ (2603:1096:202::11) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 1695b376-52d3-4e2b-a9ac-08d779608e1a
+X-MS-TrafficTypeDiagnostic: VE1PR08MB5151:|VE1PR08MB5151:|AM6PR08MB3910:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR08MB39107C949F377DB03CCCA54CB35C0@AM6PR08MB3910.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:9508;OLM:9508;
+x-forefront-prvs: 02426D11FE
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(396003)(136003)(366004)(39860400002)(346002)(376002)(189003)(199004)(66556008)(66476007)(66946007)(64756008)(66446008)(8936002)(33656002)(81156014)(6636002)(26005)(81166006)(8676002)(2906002)(86362001)(305945005)(229853002)(6436002)(7736002)(6486002)(5660300002)(6512007)(9686003)(3846002)(6116002)(1076003)(4326008)(6862004)(76176011)(11346002)(25786009)(33716001)(99286004)(52116002)(316002)(58126008)(6246003)(186003)(54906003)(14454004)(6506007)(71190400001)(55236004)(102836004)(14444005)(478600001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5151;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: DsGM2b4UKqJv0HCqi/z0SBr5HMDe3qyrxTJ+Gb53Sr0Mj6vYuTDIeuvi7lnZDIEscxmwdxcY/91X7wQqmOfgyCijg0ohgut1Vaz1HmbT8B67vqOIP1jCBkaYjGS7FDH6ql9gpIQUqJHfyBcFrPYxkDmUfPAVva47ftaqJ3+xd2fjKxkYi803xaLmY0nMc2aHQlaRwXK8ix1ihR3SXcgmiyLu8/RY0Aq0BqNwK2EtbcxWCKUbBdWUBBzQn4CW8oEJq2Q3rBA8kM+3FilnA3IiJowSs1tcKa+359TtFEo8JC+s7I9+Woq+wNBQoZZGwWMn/LvMZOwpgDmFmx9QbRciYyvyi7BK/VjNWKDHbrzzKDorUshobAXZVZINJ2tFIh7oI4NAwek+ceg4P3VrU7BEusKHgtk0LjGlwXT4KDKo7P8HBvNO1/XQ3qfjJNoeWN4R
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D3205F69480ACE44B1635AD6C259A461@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8bcf603c-f142-f96d-bb11-834d686f5519@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5151
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT057.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(7916004)(346002)(396003)(376002)(136003)(39860400002)(199004)(189003)(102836004)(11346002)(336012)(478600001)(26826003)(26005)(14454004)(186003)(50466002)(76176011)(6636002)(4326008)(6862004)(6246003)(25786009)(97756001)(99286004)(76130400001)(6486002)(6512007)(14444005)(229853002)(54906003)(9686003)(3846002)(36906005)(70586007)(58126008)(6506007)(70206006)(6116002)(305945005)(7736002)(23726003)(86362001)(316002)(2906002)(22756006)(5660300002)(46406003)(8676002)(356004)(81166006)(81156014)(1076003)(33716001)(8936002)(8746002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3910;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:Pass;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 6a4ce101-22ae-4b97-f32a-08d779608976
+NoDisclaimer: True
+X-Forefront-PRVS: 02426D11FE
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: O1b6p7vIlZp5ph2jN3cJRmMKsL7px+u242Y+cUUwM7eaGo87njsGzPXglUJe/DXWIxgvHG2pwSul+yzLzz3i3Lu22OXQJR5TjnEGMg3xHsN0t4FBtzgpvsl46RIDt/z2tbswznrT7t+40zcCVzyeK9MminLFj4B1YrTE1IlNHh+PO6PLqUcBkh5iLCYGaYJ0+qUNJT9mspuCc7kveT00ptpjRsm6X6usDVvW5r2WnO0lxYaUKbb2JPy4S9XPCPDN7EB0msKB913fitvCzzNh8vtH3OkKbh4pZF/if6fPS3W9fyGZoN2bZ8YCqEN3I1noUBOds142GiXiGZBgC4SnOIyxSrKWUogGSonuXnicDRvIZMiKFM1GClrcAd+lx2uLFWQEZtK3/iTSpEJzFHPj0k7QGTrf7AY6q5+sgPNtS6EdRBrEtCYzt+Objw3dnE5+
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2019 08:53:10.2676
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1695b376-52d3-4e2b-a9ac-08d779608e1a
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3910
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 02:33:19PM +0800, Jason Wang wrote:
-> Hi:
-> 
-> On 2019/12/5 上午11:24, Yan Zhao wrote:
-> > For SRIOV devices, VFs are passthroughed into guest directly without host
-> > driver mediation. However, when VMs migrating with passthroughed VFs,
-> > dynamic host mediation is required to  (1) get device states, (2) get
-> > dirty pages. Since device states as well as other critical information
-> > required for dirty page tracking for VFs are usually retrieved from PFs,
-> > it is handy to provide an extension in PF driver to centralizingly control
-> > VFs' migration.
-> > 
-> > Therefore, in order to realize (1) passthrough VFs at normal time, (2)
-> > dynamically trap VFs' bars for dirty page tracking and
-> 
-> 
-> A silly question, what's the reason for doing this, is this a must for dirty
-> page tracking?
->
-For performance consideration. VFs' bars should be passthoughed at
-normal time and only enter into trap state on need.
+On Tue, Dec 03, 2019 at 09:59:57AM +0000, Mihail Atanassov wrote:
+> On Tuesday, 3 December 2019 06:46:06 GMT james qian wang (Arm Technology =
+China) wrote:
+> > On Mon, Dec 02, 2019 at 11:07:52AM +0000, Mihail Atanassov wrote:
+> > > On Thursday, 21 November 2019 08:17:45 GMT james qian wang (Arm Techn=
+ology China) wrote:
+> > > > D32 is simple version of D71, the difference is:
+> > > > - Only has one pipeline
+> > > > - Drop the periph block and merge it to GCU
+> > > >=20
+> > > > v2: Rebase.
+> > > >=20
+> > > > Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.w=
+ang@arm.com>
+> > > > ---
+> > > >  .../drm/arm/display/include/malidp_product.h  |  3 +-
+> > > >  .../arm/display/komeda/d71/d71_component.c    |  2 +-
+> > > >  .../gpu/drm/arm/display/komeda/d71/d71_dev.c  | 43 ++++++++++++---=
+----
+> > > >  .../gpu/drm/arm/display/komeda/d71/d71_regs.h | 13 ++++++
+> > > >  .../gpu/drm/arm/display/komeda/komeda_drv.c   |  1 +
+> > > >  5 files changed, 44 insertions(+), 18 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/arm/display/include/malidp_product.h b=
+/drivers/gpu/drm/arm/display/include/malidp_product.h
+> > > > index 96e2e4016250..dbd3d4765065 100644
+> > > > --- a/drivers/gpu/drm/arm/display/include/malidp_product.h
+> > > > +++ b/drivers/gpu/drm/arm/display/include/malidp_product.h
+> > > > @@ -18,7 +18,8 @@
+> > > >  #define MALIDP_CORE_ID_STATUS(__core_id)     (((__u32)(__core_id))=
+ & 0xFF)
+> > > > =20
+> > > >  /* Mali-display product IDs */
+> > > > -#define MALIDP_D71_PRODUCT_ID   0x0071
+> > > > +#define MALIDP_D71_PRODUCT_ID	0x0071
+> > > > +#define MALIDP_D32_PRODUCT_ID	0x0032
+> > > > =20
+> > > >  union komeda_config_id {
+> > > >  	struct {
+> > > > diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c=
+ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> > > > index 6dadf4413ef3..c7f7e9c545c7 100644
+> > > > --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> > > > +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> > > > @@ -1274,7 +1274,7 @@ static int d71_timing_ctrlr_init(struct d71_d=
+ev *d71,
+> > > > =20
+> > > >  	ctrlr =3D to_ctrlr(c);
+> > > > =20
+> > > > -	ctrlr->supports_dual_link =3D true;
+> > > > +	ctrlr->supports_dual_link =3D d71->supports_dual_link;
+> > > > =20
+> > > >  	return 0;
+> > > >  }
+> > > > diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/dri=
+vers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+> > > > index 9b3bf353b6cc..2d429e310e5b 100644
+> > > > --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+> > > > +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+> > > > @@ -371,23 +371,33 @@ static int d71_enum_resources(struct komeda_d=
+ev *mdev)
+> > > >  		goto err_cleanup;
+> > > >  	}
+> > > > =20
+> > > > -	/* probe PERIPH */
+> > > > +	/* Only the legacy HW has the periph block, the newer merges the =
+periph
+> > > > +	 * into GCU
+> > > > +	 */
+> > > >  	value =3D malidp_read32(d71->periph_addr, BLK_BLOCK_INFO);
+> > > > -	if (BLOCK_INFO_BLK_TYPE(value) !=3D D71_BLK_TYPE_PERIPH) {
+> > > > -		DRM_ERROR("access blk periph but got blk: %d.\n",
+> > > > -			  BLOCK_INFO_BLK_TYPE(value));
+> > > > -		err =3D -EINVAL;
+> > > > -		goto err_cleanup;
+> > > > +	if (BLOCK_INFO_BLK_TYPE(value) !=3D D71_BLK_TYPE_PERIPH)
+> > > > +		d71->periph_addr =3D NULL;
+> > > > +
+> > > > +	if (d71->periph_addr) {
+> > > > +		/* probe PERIPHERAL in legacy HW */
+> > > > +		value =3D malidp_read32(d71->periph_addr, PERIPH_CONFIGURATION_I=
+D);
+> > > > +
+> > > > +		d71->max_line_size	=3D value & PERIPH_MAX_LINE_SIZE ? 4096 : 204=
+8;
+> > > > +		d71->max_vsize		=3D 4096;
+> > > > +		d71->num_rich_layers	=3D value & PERIPH_NUM_RICH_LAYERS ? 2 : 1;
+> > > > +		d71->supports_dual_link	=3D !!(value & PERIPH_SPLIT_EN);
+> > > > +		d71->integrates_tbu	=3D !!(value & PERIPH_TBU_EN);
+> > > > +	} else {
+> > > > +		value =3D malidp_read32(d71->gcu_addr, GCU_CONFIGURATION_ID0);
+> > > > +		d71->max_line_size	=3D GCU_MAX_LINE_SIZE(value);
+> > > > +		d71->max_vsize		=3D GCU_MAX_NUM_LINES(value);
+> > > > +
+> > > > +		value =3D malidp_read32(d71->gcu_addr, GCU_CONFIGURATION_ID1);
+> > > > +		d71->num_rich_layers	=3D GCU_NUM_RICH_LAYERS(value);
+> > > > +		d71->supports_dual_link	=3D GCU_DISPLAY_SPLIT_EN(value);
+> > > > +		d71->integrates_tbu	=3D GCU_DISPLAY_TBU_EN(value);
+> > > >  	}
+> > > > =20
+> > > > -	value =3D malidp_read32(d71->periph_addr, PERIPH_CONFIGURATION_ID=
+);
+> > > > -
+> > > > -	d71->max_line_size	=3D value & PERIPH_MAX_LINE_SIZE ? 4096 : 2048=
+;
+> > > > -	d71->max_vsize		=3D 4096;
+> > > > -	d71->num_rich_layers	=3D value & PERIPH_NUM_RICH_LAYERS ? 2 : 1;
+> > > > -	d71->supports_dual_link	=3D value & PERIPH_SPLIT_EN ? true : fals=
+e;
+> > > > -	d71->integrates_tbu	=3D value & PERIPH_TBU_EN ? true : false;
+> > > > -
+> > > >  	for (i =3D 0; i < d71->num_pipelines; i++) {
+> > > >  		pipe =3D komeda_pipeline_add(mdev, sizeof(struct d71_pipeline),
+> > > >  					   &d71_pipeline_funcs);
+> > > > @@ -415,7 +425,7 @@ static int d71_enum_resources(struct komeda_dev=
+ *mdev)
+> > > >  	}
+> > > > =20
+> > > >  	/* loop the register blks and probe */
+> > > > -	i =3D 2; /* exclude GCU and PERIPH */
+> > > > +	i =3D 1; /* exclude GCU */
+> > > >  	offset =3D D71_BLOCK_SIZE; /* skip GCU */
+> > > >  	while (i < d71->num_blocks) {
+> > > >  		blk_base =3D mdev->reg_base + (offset >> 2);
+> > > > @@ -425,9 +435,9 @@ static int d71_enum_resources(struct komeda_dev=
+ *mdev)
+> > > >  			err =3D d71_probe_block(d71, &blk, blk_base);
+> > > >  			if (err)
+> > > >  				goto err_cleanup;
+> > > > -			i++;
+> > > >  		}
+> > > > =20
+> > > > +		i++;
+> > >=20
+> > > This change doesn't make much sense if you want to count how many
+> > > blocks are available, since you're now counting the reserved ones, to=
+o.
+> >=20
+> > That's because for D32 num_blocks includes the reserved blocks.
+> >=20
+> > > On the counting note, the prior code rides on the assumption the peri=
+ph
+> > > block is last in the map, and I don't see how you still handle not
+> > > counting it in the D71 case.
+> >=20
+> > Since D71 has one reserved block, and now we count reserved block.
+> >=20
+> > So now no matter D32 or D71:
+> >   num_blocks =3D n_valid_block + n_reserved_block + GCU.
+>=20
+> So at least we need that comment dropped in with the code. Future HW
+> might break your assumption here once more and it will then be useful
+> to know why this works for both products.
 
-> 
-> >   (3) centralizing
-> > VF critical states retrieving and VF controls into one driver, we propose
-> > to introduce mediate ops on top of current vfio-pci device driver.
-> > 
-> > 
-> >                                     _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-> >   __________   register mediate ops|  ___________     ___________    |
-> > |          |<-----------------------|     VF    |   |           |
-> > | vfio-pci |                      | |  mediate  |   | PF driver |   |
-> > |__________|----------------------->|   driver  |   |___________|
-> >       |            open(pdev)      |  -----------          |         |
-> >       |                                                    |
-> >       |                            |_ _ _ _ _ _ _ _ _ _ _ _|_ _ _ _ _|
-> >      \|/                                                  \|/
-> > -----------                                         ------------
-> > |    VF   |                                         |    PF    |
-> > -----------                                         ------------
-> > 
-> > 
-> > VF mediate driver could be a standalone driver that does not bind to
-> > any devices (as in demo code in patches 5-6) or it could be a built-in
-> > extension of PF driver (as in patches 7-9) .
-> > 
-> > Rather than directly bind to VF, VF mediate driver register a mediate
-> > ops into vfio-pci in driver init. vfio-pci maintains a list of such
-> > mediate ops.
-> > (Note that: VF mediate driver can register mediate ops into vfio-pci
-> > before vfio-pci binding to any devices. And VF mediate driver can
-> > support mediating multiple devices.)
-> > 
-> > When opening a device (e.g. a VF), vfio-pci goes through the mediate ops
-> > list and calls each vfio_pci_mediate_ops->open() with pdev of the opening
-> > device as a parameter.
-> > VF mediate driver should return success or failure depending on it
-> > supports the pdev or not.
-> > E.g. VF mediate driver would compare its supported VF devfn with the
-> > devfn of the passed-in pdev.
-> > Once vfio-pci finds a successful vfio_pci_mediate_ops->open(), it will
-> > stop querying other mediate ops and bind the opening device with this
-> > mediate ops using the returned mediate handle.
-> > 
-> > Further vfio-pci ops (VFIO_DEVICE_GET_REGION_INFO ioctl, rw, mmap) on the
-> > VF will be intercepted into VF mediate driver as
-> > vfio_pci_mediate_ops->get_region_info(),
-> > vfio_pci_mediate_ops->rw,
-> > vfio_pci_mediate_ops->mmap, and get customized.
-> > For vfio_pci_mediate_ops->rw and vfio_pci_mediate_ops->mmap, they will
-> > further return 'pt' to indicate whether vfio-pci should further
-> > passthrough data to hw.
-> > 
-> > when vfio-pci closes the VF, it calls its vfio_pci_mediate_ops->release()
-> > with a mediate handle as parameter.
-> > 
-> > The mediate handle returned from vfio_pci_mediate_ops->open() lets VF
-> > mediate driver be able to differentiate two opening VFs of the same device
-> > id and vendor id.
-> > 
-> > When VF mediate driver exits, it unregisters its mediate ops from
-> > vfio-pci.
-> > 
-> > 
-> > In this patchset, we enable vfio-pci to provide 3 things:
-> > (1) calling mediate ops to allow vendor driver customizing default
-> > region info/rw/mmap of a region.
-> > (2) provide a migration region to support migration
-> 
-> 
-> What's the benefit of introducing a region? It looks to me we don't expect
-> the region to be accessed directly from guest. Could we simply extend device
-> fd ioctl for doing such things?
->
-You may take a look on mdev live migration discussions in
-https://lists.gnu.org/archive/html/qemu-devel/2019-11/msg01763.html
+OK, will add a comments like.
 
-or previous discussion at
-https://lists.gnu.org/archive/html/qemu-devel/2019-02/msg04908.html,
-which has kernel side implemetation https://patchwork.freedesktop.org/series/56876/
+/* Per HW design: num_blocks =3D n_valid_block + n_reserved_block + GCU */
 
-generaly speaking, qemu part of live migration is consistent for
-vfio-pci + mediate ops way or mdev way. The region is only a channel for
-QEMU and kernel to communicate information without introducing IOCTLs.
+And Per HW, all arch-v1.x include (d71/d32/d77) follows this rule,
+the old logic which skip the reserved-block actually not right.
 
+> I'd personally abstract that a bit behind a small helper func and
+> handle different products separately. It's a bit of duplication but
+> much easier to comprehend. Saved cycles reading code =3D=3D Good Thing(tm=
+).
 
-> 
-> > (3) provide a dynamic trap bar info region to allow vendor driver
-> > control trap/untrap of device pci bars
-> > 
-> > This vfio-pci + mediate ops way differs from mdev way in that
-> > (1) medv way needs to create a 1:1 mdev device on top of one VF, device
-> > specific mdev parent driver is bound to VF directly.
-> > (2) vfio-pci + mediate ops way does not create mdev devices and VF
-> > mediate driver does not bind to VFs. Instead, vfio-pci binds to VFs.
-> > 
-> > The reason why we don't choose the way of writing mdev parent driver is
-> > that
-> > (1) VFs are almost all the time directly passthroughed. Directly binding
-> > to vfio-pci can make most of the code shared/reused.
-> 
-> 
-> Can we split out the common parts from vfio-pci?
-> 
-That's very attractive. but one cannot implement a vfio-pci except
-export everything in it as common part :)
-> 
-> >   If we write a
-> > vendor specific mdev parent driver, most of the code (like passthrough
-> > style of rw/mmap) still needs to be copied from vfio-pci driver, which is
-> > actually a duplicated and tedious work.
-> 
-> 
-> The mediate ops looks quite similar to what vfio-mdev did. And it looks to
-> me we need to consider live migration for mdev as well. In that case, do we
-> still expect mediate ops through VFIO directly?
-> 
-> 
-> > (2) For features like dynamically trap/untrap pci bars, if they are in
-> > vfio-pci, they can be available to most people without repeated code
-> > copying and re-testing.
-> > (3) with a 1:1 mdev driver which passthrough VFs most of the time, people
-> > have to decide whether to bind VFs to vfio-pci or mdev parent driver before
-> > it runs into a real migration need. However, if vfio-pci is bound
-> > initially, they have no chance to do live migration when there's a need
-> > later.
-> 
-> 
-> We can teach management layer to do this.
-> 
-No. not possible as vfio-pci by default has no migration region and
-dirty page tracking needs vendor's mediation at least for most
-passthrough devices now.
+Our komeda driver has two layers, common layer and chip. current we
+only have one chip folder d71 for support arch-v1.x prodcut.
+And our future products (arch-v2.x) will have its own chip folder, and
+its own chip specific code.
 
 Thanks
-Yn
-
-> Thanks
-> 
-> 
-> > 
-> > In this patchset,
-> > - patches 1-4 enable vfio-pci to call mediate ops registered by vendor
-> >    driver to mediate/customize region info/rw/mmap.
-> > 
-> > - patches 5-6 provide a standalone sample driver to register a mediate ops
-> >    for Intel Graphics Devices. It does not bind to IGDs directly but decides
-> >    what devices it supports via its pciidlist. It also demonstrates how to
-> >    dynamic trap a device's PCI bars. (by adding more pciids in its
-> >    pciidlist, this sample driver actually is not necessarily limited to
-> >    support IGDs)
-> > 
-> > - patch 7-9 provide a sample on i40e driver that supports Intel(R)
-> >    Ethernet Controller XL710 Family of devices. It supports VF precopy live
-> >    migration on Intel's 710 SRIOV. (but we commented out the real
-> >    implementation of dirty page tracking and device state retrieving part
-> >    to focus on demonstrating framework part. Will send out them in future
-> >    versions)
-> >    patch 7 registers/unregisters VF mediate ops when PF driver
-> >    probes/removes. It specifies its supporting VFs via
-> >    vfio_pci_mediate_ops->open(pdev)
-> > 
-> >    patch 8 reports device cap of VFIO_PCI_DEVICE_CAP_MIGRATION and
-> >    provides a sample implementation of migration region.
-> >    The QEMU part of vfio migration is based on v8
-> >    https://lists.gnu.org/archive/html/qemu-devel/2019-08/msg05542.html.
-> >    We do not based on recent v9 because we think there are still opens in
-> >    dirty page track part in that series.
-> > 
-> >    patch 9 reports device cap of VFIO_PCI_DEVICE_CAP_DYNAMIC_TRAP_BAR and
-> >    provides an example on how to trap part of bar0 when migration starts
-> >    and passthrough this part of bar0 again when migration fails.
-> > 
-> > Yan Zhao (9):
-> >    vfio/pci: introduce mediate ops to intercept vfio-pci ops
-> >    vfio/pci: test existence before calling region->ops
-> >    vfio/pci: register a default migration region
-> >    vfio-pci: register default dynamic-trap-bar-info region
-> >    samples/vfio-pci/igd_dt: sample driver to mediate a passthrough IGD
-> >    sample/vfio-pci/igd_dt: dynamically trap/untrap subregion of IGD bar0
-> >    i40e/vf_migration: register mediate_ops to vfio-pci
-> >    i40e/vf_migration: mediate migration region
-> >    i40e/vf_migration: support dynamic trap of bar0
-> > 
-> >   drivers/net/ethernet/intel/Kconfig            |   2 +-
-> >   drivers/net/ethernet/intel/i40e/Makefile      |   3 +-
-> >   drivers/net/ethernet/intel/i40e/i40e.h        |   2 +
-> >   drivers/net/ethernet/intel/i40e/i40e_main.c   |   3 +
-> >   .../ethernet/intel/i40e/i40e_vf_migration.c   | 626 ++++++++++++++++++
-> >   .../ethernet/intel/i40e/i40e_vf_migration.h   |  78 +++
-> >   drivers/vfio/pci/vfio_pci.c                   | 189 +++++-
-> >   drivers/vfio/pci/vfio_pci_private.h           |   2 +
-> >   include/linux/vfio.h                          |  18 +
-> >   include/uapi/linux/vfio.h                     | 160 +++++
-> >   samples/Kconfig                               |   6 +
-> >   samples/Makefile                              |   1 +
-> >   samples/vfio-pci/Makefile                     |   2 +
-> >   samples/vfio-pci/igd_dt.c                     | 367 ++++++++++
-> >   14 files changed, 1455 insertions(+), 4 deletions(-)
-> >   create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.c
-> >   create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migration.h
-> >   create mode 100644 samples/vfio-pci/Makefile
-> >   create mode 100644 samples/vfio-pci/igd_dt.c
-> > 
-> 
+James
+>=20
+> >=20
+> > Thanks
+> > James
+> > >=20
+> > > >  		offset +=3D D71_BLOCK_SIZE;
+> > > >  	}
+> > > > =20
+> > > > @@ -603,6 +613,7 @@ d71_identify(u32 __iomem *reg_base, struct kome=
+da_chip_info *chip)
+> > > > =20
+> > > >  	switch (product_id) {
+> > > >  	case MALIDP_D71_PRODUCT_ID:
+> > > > +	case MALIDP_D32_PRODUCT_ID:
+> > > >  		funcs =3D &d71_chip_funcs;
+> > > >  		break;
+> > > >  	default:
+> > > > diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h b/dr=
+ivers/gpu/drm/arm/display/komeda/d71/d71_regs.h
+> > > > index 1727dc993909..81de6a23e7f3 100644
+> > > > --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h
+> > > > +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h
+> > > > @@ -72,6 +72,19 @@
+> > > >  #define GCU_CONTROL_MODE(x)	((x) & 0x7)
+> > > >  #define GCU_CONTROL_SRST	BIT(16)
+> > > > =20
+> > > > +/* GCU_CONFIGURATION registers */
+> > > > +#define GCU_CONFIGURATION_ID0	0x100
+> > > > +#define GCU_CONFIGURATION_ID1	0x104
+> > > > +
+> > > > +/* GCU configuration */
+> > > > +#define GCU_MAX_LINE_SIZE(x)	((x) & 0xFFFF)
+> > > > +#define GCU_MAX_NUM_LINES(x)	((x) >> 16)
+> > > > +#define GCU_NUM_RICH_LAYERS(x)	((x) & 0x7)
+> > > > +#define GCU_NUM_PIPELINES(x)	(((x) >> 3) & 0x7)
+> > > > +#define GCU_NUM_SCALERS(x)	(((x) >> 6) & 0x7)
+> > > > +#define GCU_DISPLAY_SPLIT_EN(x)	(((x) >> 16) & 0x1)
+> > > > +#define GCU_DISPLAY_TBU_EN(x)	(((x) >> 17) & 0x1)
+> > > > +
+> > > >  /* GCU opmode */
+> > > >  #define INACTIVE_MODE		0
+> > > >  #define TBU_CONNECT_MODE	1
+> > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/driv=
+ers/gpu/drm/arm/display/komeda/komeda_drv.c
+> > > > index b7a1097c45c4..ad38bbc7431e 100644
+> > > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+> > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+> > > > @@ -125,6 +125,7 @@ static int komeda_platform_remove(struct platfo=
+rm_device *pdev)
+> > > > =20
+> > > >  static const struct of_device_id komeda_of_match[] =3D {
+> > > >  	{ .compatible =3D "arm,mali-d71", .data =3D d71_identify, },
+> > > > +	{ .compatible =3D "arm,mali-d32", .data =3D d71_identify, },
+> > > >  	{},
+> > > >  };
+> > > > =20
+> > > >=20
+> > >=20
+> > >=20
+> >=20
+>=20
+>=20
+> --=20
+> Mihail
+>=20
+>=20
