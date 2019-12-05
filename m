@@ -2,138 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F221145F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 18:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F05114619
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 18:40:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbfLERbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 12:31:51 -0500
-Received: from mga09.intel.com ([134.134.136.24]:50971 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729396AbfLERbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 12:31:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 09:31:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,282,1571727600"; 
-   d="scan'208";a="209217337"
-Received: from pdemke-mobl.amr.corp.intel.com ([10.251.20.175])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Dec 2019 09:31:49 -0800
-Message-ID: <56a33219fc336c26b8ef9d8de1a3d50893a7b7d1.camel@linux.intel.com>
-Subject: Re: [PATCH] ACPI: PM: Avoid attaching ACPI PM domain to certain
- devices
-From:   Todd Brandt <todd.e.brandt@linux.intel.com>
-Reply-To: todd.e.brandt@linux.intel.com
-To:     Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Brandt, Todd E" <todd.e.brandt@intel.com>
-Date:   Thu, 05 Dec 2019 09:32:09 -0800
-In-Reply-To: <2991d01601fdbcf25d745a387eda74926f1192b2.camel@intel.com>
-References: <1773028.iBGNyVBcMc@kreacher>
-         <2991d01601fdbcf25d745a387eda74926f1192b2.camel@intel.com>
+        id S1730155AbfLERkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 12:40:49 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37408 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729598AbfLERkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 12:40:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u17so4571470lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 09:40:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=/eKd/FDqrplPYUuvbR0AiU2l8M+m4LPxDGweCaRKq6w=;
+        b=M56np70zVr1VfiJPsuEXyT4OG9+Mgq+nZRonIdlMO0qNjSITB1EVwHnE+jM9THnBNz
+         3vX00ZNLigUAoH1Qop/bcwkoEis8chlXpTrSREoavAISt/m/5l5mLyPd23rMwP17l/QA
+         7M9TY3swoS1z9u0iCZT3it6ySOEzIm2iiZPAY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=/eKd/FDqrplPYUuvbR0AiU2l8M+m4LPxDGweCaRKq6w=;
+        b=IWy+KcmaKnnE+NSZ2xusHW05GydntW1VB6eJy4UFZ91q1iX+awK2+R4A/jnvqzZ8l0
+         cApnFWqmF6sZwaisAMYSu1VP0p73EqpuwHCFX16ZYJHzP3lxql+yPyMeK7b1DIxgFLty
+         CPpj6UbBB7WV3SvfyqTmI5cJ6bK2Xf6kL05Huxrw6/wOTekr4dbFupSBkoz6Waqh5Wzy
+         06m+JBjzfVtB7qNXZse5/s5o76j3SBw39GO438EV93FcJd06fl36fKFqNZO3nlDbJDzL
+         vFKts+5GhixNeCGvCmFSRWFPsBBvIBjbdsKlsaZVAz/otJRRhrD/yR79pasOFWWbb8/e
+         R0+w==
+X-Gm-Message-State: APjAAAWFMV+eNylHR9dZvfpaISEIUnKfwzXigmx/Rb+MtBpxfkevdtzF
+        gWUCIkRx1J+9zb1hlTxdzfRfjUQI0d0=
+X-Google-Smtp-Source: APXvYqzl8g/rX5BwukYiYmiZqnhk3mJuhPCOpVcIBhnwp4o3sFyvfPgSl6JfjWZJ5+tjebJkTpjlIQ==
+X-Received: by 2002:a2e:2e0e:: with SMTP id u14mr6281462lju.106.1575567646735;
+        Thu, 05 Dec 2019 09:40:46 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id y7sm5312989ljn.31.2019.12.05.09.40.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2019 09:40:46 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id l18so3163415lfc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 09:40:46 -0800 (PST)
+X-Received: by 2002:ac2:430e:: with SMTP id l14mr2520386lfh.79.1575567200366;
+ Thu, 05 Dec 2019 09:33:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20191205125826.GK2734@twin.jikos.cz> <31452.1574721589@warthog.procyon.org.uk>
+ <1593.1575554217@warthog.procyon.org.uk> <20191205172127.GW2734@suse.cz>
+In-Reply-To: <20191205172127.GW2734@suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 5 Dec 2019 09:33:04 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whw+R5GVQdpV6J_5afQ=76vtBPzBPRj6-zG1tnhT32Pag@mail.gmail.com>
+Message-ID: <CAHk-=whw+R5GVQdpV6J_5afQ=76vtBPzBPRj6-zG1tnhT32Pag@mail.gmail.com>
+Subject: Re: [GIT PULL] pipe: Notification queue preparation
+To:     David Sterba <dsterba@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-04 at 22:04 +0800, Zhang Rui wrote:
-> On Wed, 2019-12-04 at 02:54 +0100, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > 
-> > Certain ACPI-enumerated devices represented as platform devices in
-> > Linux, like fans, require special low-level power management
-> > handling
-> > implemented by their drivers that is not in agreement with the ACPI
-> > PM domain behavior.  That leads to problems with managing ACPI fans
-> > during system-wide suspend and resume.
-> > 
-> > For this reason, make acpi_dev_pm_attach() skip the affected
-> > devices
-> > by adding a list of device IDs to avoid to it and putting the IDs
-> > of
-> > the affected devices into that list.
-> > 
-> > Fixes: e5cc8ef31267 (ACPI / PM: Provide ACPI PM callback routines
-> > for
-> > subsystems)
-> > Reported-by: Zhang Rui <rui.zhang@intel.com>
-> > Cc: 3.10+ <stable@vger.kernel.org> # 3.10+
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> > 
-> > Rui,
-> > 
-> > Please test this on the machine(s) affected by the fan
-> > suspend/resume
-> > issues.
-> 
-> Sure, Todd and I will re-run stress test with this patch applied when
-> 5.5-rc1 released.
+On Thu, Dec 5, 2019 at 9:22 AM David Sterba <dsterba@suse.cz> wrote:
+>
+> I rerun the test again (with a different address where it's stuck), there's
+> nothing better I can get from the debug info, it always points to pipe_wait,
+> disassembly points to.
 
-I've applied it 5.4.0 and will do a full stress test run this weekend
-in the lab (where 7 out of 20 machines have this issue). The kernel
-will be called "5.4.0-acpifanfix", and the data should be ready Sunday
-Dec 8.
+Hah. I see another bug.
 
-This is the issue I'll test for:
-https://bugzilla.kernel.org/show_bug.cgi?id=204321
+"pipe_wait()" depends on the fact that all events that wake it up
+happen with the pipe lock held.
 
-> 
-> thanks,
-> rui
-> 
-> > 
-> > I don't really see any cleaner way to address this problem, because
-> > the
-> > ACPI PM domain should not be used with the devices in question even
-> > if
-> > the driver that binds to them is not loaded.
-> > 
-> > Cheers,
-> > Rafael
-> > 
-> > ---
-> >  drivers/acpi/device_pm.c |   12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > Index: linux-pm/drivers/acpi/device_pm.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/acpi/device_pm.c
-> > +++ linux-pm/drivers/acpi/device_pm.c
-> > @@ -1314,9 +1314,19 @@ static void acpi_dev_pm_detach(struct de
-> >   */
-> >  int acpi_dev_pm_attach(struct device *dev, bool power_on)
-> >  {
-> > +	/*
-> > +	 * Skip devices whose ACPI companions match the device IDs
-> > below,
-> > +	 * because they require special power management handling
-> > incompatible
-> > +	 * with the generic ACPI PM domain.
-> > +	 */
-> > +	static const struct acpi_device_id special_pm_ids[] = {
-> > +		{"PNP0C0B", }, /* Generic ACPI fan */
-> > +		{"INT3404", }, /* Fan */
-> > +		{}
-> > +	};
-> >  	struct acpi_device *adev = ACPI_COMPANION(dev);
-> >  
-> > -	if (!adev)
-> > +	if (!adev || !acpi_match_device_ids(adev, special_pm_ids))
-> >  		return 0;
-> >  
-> >  	/*
-> > 
-> > 
-> > 
-> 
-> 
+But we do some of the "do_wakeup()" handling outside the pipe lock now
+on the reader side
 
+        __pipe_unlock(pipe);
+
+        /* Signal writers asynchronously that there is more room. */
+        if (do_wakeup) {
+                wake_up_interruptible_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
+                kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+        }
+
+However, that isn't new to this series _either_, so I don't think
+that's it. It does wake up things inside the lock _too_ if it ended up
+emptying a whole buffer.
+
+So it could be triggered by timing and behavior changes, but I doubt
+this pipe_wait() thing is it either. The fact that it bisects to the
+thing that changes things to use head/tail pointers makes me think
+there's some other incorrect update or comparison somewhere.
+
+That said, "pipe_wait()" is an abomination. It should use a proper
+wait condition and use wait_event(), but the code predates all of
+that. I suspect pipe_wait() goes back to the dark ages with the BKL
+and no actual races between kernel code.
+
+               Linus
