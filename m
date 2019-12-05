@@ -2,99 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A183114154
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D86F4114156
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 14:19:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbfLENSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 08:18:47 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:54941 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729099AbfLENSq (ORCPT
+        id S1729512AbfLENTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 08:19:05 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40223 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbfLENTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 08:18:46 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1icr1n-0006Zm-3t; Thu, 05 Dec 2019 14:18:43 +0100
-To:     Gaurav Kohli <gkohli@codeaurora.org>
-Subject: Re: [PATCH v0] irqchip/gic-v3: Avoid check of lpi configuration for  non existent cpu
-X-PHP-Originating-Script: 0:main.inc
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 05 Dec 2019 13:18:43 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-In-Reply-To: <209f30c6-c03a-daeb-1f01-e03c489f41d8@codeaurora.org>
-References: <1575543357-31892-1-git-send-email-gkohli@codeaurora.org>
- <60f61282c1b1e512ca6ce638b6dfca09@www.loen.fr>
- <209f30c6-c03a-daeb-1f01-e03c489f41d8@codeaurora.org>
-Message-ID: <18011d088d5202339048ac5e3c224bb5@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: gkohli@codeaurora.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+        Thu, 5 Dec 2019 08:19:04 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t14so3627353wmi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 05:19:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=KAcKcn55ZC43+JsoEE9iyrk0uGRkJUBkt2eSWXtjjKo=;
+        b=z/AWAzgTX0lOM8lIimEzXZL7Es4PlvY117PPDM5y91/gJWLVNvax+sEu/s82VqZ440
+         vob2+6JF+W81MIZk3BFY/ujYte0tJHFGvhtjsJ5aQEWgBRhGSLcBSpMPJyxTH/Z1X1wm
+         02JNXm9nfzqxdBG2ZUDfHA4bYU4Z9seReUmQGXD6yvef5qFTp3K/NHLw03EmWKng+OYB
+         ontBzr7W7OIfSh22VzC3Q1DBGidUhES8jJ10tkL2Jk9xhtWlPeVTP5tuHfQCgFUr2Y/M
+         5LY1e+Ee7pi1Gkz2fx2dcPuClzq1yfjFK+JzEslYStsNBxf3B5kNQXPyK5M2/8/7eBr6
+         LUFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KAcKcn55ZC43+JsoEE9iyrk0uGRkJUBkt2eSWXtjjKo=;
+        b=TyimPDUCzWiwak9SNy7fMvZOLXciCbH2/tHtkQ3WJa2SmIeXPSPOcTxcnxs8tJLlcP
+         vFCTlrVFZyZJlMBybyIZMJv4WaiQ2BylXe05I0oXSqeuHZ/F7fXgsFoO+q6ow0R688lV
+         1EZV5012IrCNyS2OOTgkNEHcw3LJud/mJmQViqLJNp8N3LmRUE/maS6yMADQ5U24IR9+
+         96YlvTQoKIk6b1OPM58nUbK7Z2LSmls6460oQP58YeQRJj43aH1TQTRLGkgO8/ULa7vd
+         hw9FQCFJzVx5TB4q578tJx+C00OOORiIhe3tJ/DKmVsHc3w+SrhCd21U88YoKWqC7avq
+         RrRg==
+X-Gm-Message-State: APjAAAWl7GLgECT+1t9RFfGPTBtusrwEIcZ/zrNT+hqQRb5EiZ+Hckxn
+        aAUVCilkvxusXfhlUVFsikAmIg==
+X-Google-Smtp-Source: APXvYqyZesiIZmY7RGMT4MF4IpUnHfAqJR6vCTBVsLVzWRfkp34Mu3brQAC1PF+x3trPEIdHrmPcdA==
+X-Received: by 2002:a7b:cc0c:: with SMTP id f12mr5122129wmh.5.1575551942365;
+        Thu, 05 Dec 2019 05:19:02 -0800 (PST)
+Received: from glaroque-ThinkPad-T480.home ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
+        by smtp.gmail.com with ESMTPSA id c4sm8333656wml.7.2019.12.05.05.19.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 05:19:01 -0800 (PST)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     khilman@baylibre.com, devicetree@vger.kernel.org
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: meson-sm1-sei610: add gpio bluetooth interrupt
+Date:   Thu,  5 Dec 2019 14:19:00 +0100
+Message-Id: <20191205131900.2059-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-05 13:01, Gaurav Kohli wrote:
-> On 12/5/2019 6:17 PM, Marc Zyngier wrote:
->> Hi Gaurav,
->> On 2019-12-05 10:55, Gaurav Kohli wrote:
->>> As per GIC specification, we can configure gic for more no of cpus
->>> then the available cpus in the soc, But this can cause mem abort
->>> while iterating lpi region for non existent cpu as we don't map
->> Which LPI region? We're talking about RDs, right... Or does LPI mean
->> something other than GIC LPIs for you?
->>
->
-> Yes RDs only.
->>> redistrubutor region for non-existent cpu.
->>>
->>> To avoid this issue, put one more check of valid mpidr.
->> Sorry, but I'm not sure I grasp your problem. Let me try and 
->> rephrase it:
->> - Your GIC is configured for (let's say) 8 CPUs, and your SoC has 
->> only 4.
-> Yes, suppose gic is configured for 8 cpus but soc has only 4 cpus.
-> Then in this case gic_iterate will iterate till it get TYPER_LAST.
+add gpio irq to support interrupt trigger mode.
 
-And that's what is expected from the architecture.
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+---
+hi,
 
->
-> But as gic is configured for 8, So last bit sets in eight
-> redistributor regions only.
->> - As part of the probing, the driver iterates on the RD regions and 
->> explodes
->>    because something isn't mapped?
->> That'd be a grave bug, but I believe the issue is somewhere else.
->
-> There are 4 cpus present, that's why we have mapped 4 redistributor
-> only, but during probe below function keeps iterating and give mem
-> abort for 5th cpu.
->
-> static void gic_update_vlpi_properties(void)
-> {
->         gic_iterate_rdists(__gic_update_vlpi_properties);
->
-> }
->
-> We can solve this problem by mapping all eight redistributor in dt,
-> but ideally code should also able to handle this and we can avoid
-> mappin?
+this patch depends of 
+https://lkml.org/lkml/2019/12/4/644
 
-The whole point of DT is to describe the HW, all the HW, nothing but
-the HW. This is what is expected by both the architecture and Linux.
+Guillaume
 
-So you have the solution already. Don't lie to the kernel, and 
-everything
-will be fine.
+ arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-         M.
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+index 2c90f4713d0e..a8bb3fa9fec9 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+@@ -591,6 +591,8 @@
+ 
+ 	bluetooth {
+ 		compatible = "brcm,bcm43438-bt";
++		interrupt-parent = <&gpio_intc>;
++		interrupts = <95 IRQ_TYPE_LEVEL_HIGH>;
+ 		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
+ 		max-speed = <2000000>;
+ 		clocks = <&wifi32k>;
 -- 
-Jazz is not dead. It just smells funny...
+2.17.1
+
