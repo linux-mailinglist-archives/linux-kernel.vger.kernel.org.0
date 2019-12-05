@@ -2,83 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3755114785
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15B4B11477D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:09:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbfLETMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 14:12:06 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44791 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbfLETMF (ORCPT
+        id S1729744AbfLETJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 14:09:55 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40351 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729598AbfLETJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 14:12:05 -0500
-Received: by mail-oi1-f193.google.com with SMTP id d62so3761772oia.11
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 11:12:05 -0800 (PST)
+        Thu, 5 Dec 2019 14:09:54 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i15so3583807oto.7
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 11:09:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lbTgn4jNgsokf2M6goUMgel36hy0BJM0Dor775D7GSE=;
-        b=KqaiLT61/XGnqIJhyHQusP4pG9VwXR+bKLFriLrHG7+eWANmbvM2tv0SS0gLxwZVAU
-         nsmUBgaji2JlUcHgiQDOK6v3RPwyLG7HmyQ+b7bBZfvD03vCB90Ym/p77Py1195ubD4M
-         Lzkwqu6taOKa4HIz7qyRUfhUcEEHsEUfVmZfOoE73SX7H04DnFOSEw1+af0sto1/idf7
-         z1UqhwrzFEfVZKYMRDIEFScrL5o6Fzw5U8b842jXc6f6vNOSDmB0HYWzOBuJawEHmebm
-         NViX2VGHk77eRYN+46e8IBzsNFnxcFC2VEtgC0sYd5mbWZqrXldmWhSitZUJej3nXAdd
-         kHMw==
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=20d5qRXT4h3Aj7j6m3duNxsgBzhRlyKJh3IbvE+5Fho=;
+        b=J/6Yuz7JdXcqnJPvChPIerIDa9QROqY9XuceIxTRIJYYxh0OtF8Bs4JZnx0/QW2Y2S
+         BbFuV06qeMU3tgcS62zJvmuFrVIhzkb+fuDi9EjVNwSImzsQEdytIrM+8Q6jT2r4tya7
+         qWiq61aneCmrFauYqz/1bKBg+3etIBaBaNsvvlAWGojYSV69Nfwph6Ccxu2ufaTavIl6
+         yadjiSHnPL7JHQEuK8fIkXV6+kFV/DoZOQUWISJArjne/MIGYEX/+gDHUiKS9vKfkcYV
+         4fssLTr58W6Y55iv2a1Lj5UzVrvDtTEb+tX5Eqt1nu7YCCjadB1dj1e1krgSYocY4mKh
+         bKuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lbTgn4jNgsokf2M6goUMgel36hy0BJM0Dor775D7GSE=;
-        b=kioAKOJhiiCjvrF63HVLxj5oooN/wJidDUY2RTPj8tNqeG1DbPSrOmtO0V6/pMZKqu
-         Xh2hR3nIuY8RJ4GAcUEDpupzRc0LikaEsSl+jENxqCIb1yufR6UJR3dmcDp18W8LveY/
-         18yMj/HSkBZW+WP3E34DaSaZsLnDc4gw4soihyPlkjKknlUHGnmv/61jIuNs9B/vymw4
-         b1r6TyDTXLamIxXMv1BUhmvE7y3QVdSE+x/SIftEKplWI2Jnqhg7FjkSA5WFk8P37mVb
-         Mwm6VL4Y2gQ5Elkf0lSENPx6JQHz6k/7mbkd+gXycjn1UcP5iMu5C+URQ5IZIDSJbAPS
-         7oug==
-X-Gm-Message-State: APjAAAX63uYr0PCdk7afdboca/PJYEGhNz5ftNuGhIzAU3L2APfGtSxj
-        F57bzLUt563wonBhyRyeKhkR7QycxbTVNBzQvkC2Jw==
-X-Google-Smtp-Source: APXvYqwO24mcZkmRu8n96LRippWIZh/qu1VArRKN8KHPM7/mkUlrnXW//GsNTA2ZsMEsxE5rDQ505XtmyKjgLo6mZSc=
-X-Received: by 2002:aca:503:: with SMTP id 3mr2990513oif.24.1575573124553;
- Thu, 05 Dec 2019 11:12:04 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=20d5qRXT4h3Aj7j6m3duNxsgBzhRlyKJh3IbvE+5Fho=;
+        b=X3pccgcS/whz5ayaEwSVzRcuBGz0zSj+4NK36K+Mnz4/6rx6YEJGH1xVfaGdZ5/cH1
+         II0JdVr8ynC2DNUD7F/mM8GmjtJ4pUn9eWOkr6QVeCJ1t90ibcR9kHPkNs5QBH9LAlhm
+         Q4EgOXTH66YU7xLoe5AIGj8uIBbWFXE0vxarWNJawrzMp58fdkJ5FGISTFwhE1yZZkWj
+         2LoKW2wR1a6GTzT46sJ3pr1ZEgUKg4AL6xZfgK9uvBlJux3gKLuFG/SSkJCHu+i6Z9le
+         zMFuK+19iiNbmJrJikh+xY2QLPGJdqN2hIVYdB7aFPxm4moMwcZE2dKgReo9ApDcQFrL
+         puWg==
+X-Gm-Message-State: APjAAAV8Wqz6NCmZ5+dA7tnBbTgmKKN5ZGVo6Jshf+1tH8dQ2uEwvCHp
+        n4GbxvDzg94aJ2IDPsGhyDW3bQ==
+X-Google-Smtp-Source: APXvYqzy1b6I1gohEeph6A4mtcIpvgBmIa8dfuXZRwioA7rXlcOMM5/Kec8/oh+PMQB4dB5OSG2BEA==
+X-Received: by 2002:a9d:3af:: with SMTP id f44mr7708161otf.332.1575572993685;
+        Thu, 05 Dec 2019 11:09:53 -0800 (PST)
+Received: from ?IPv6:2607:fb90:d77:c7b2:6680:99ff:fe6f:cb54? ([2607:fb90:d77:c7b2:6680:99ff:fe6f:cb54])
+        by smtp.googlemail.com with ESMTPSA id o2sm3853709oih.19.2019.12.05.11.09.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Dec 2019 11:09:53 -0800 (PST)
+Subject: Re: [PATCH v2] drivers: Fix boot problem on SuperH
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20191203205852.15659-1-linux@roeck-us.net>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <4e06aa64-59e1-888d-184a-0cb49ac175d5@landley.net>
+Date:   Thu, 5 Dec 2019 13:13:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20190717222340.137578-1-saravanak@google.com> <20190717222340.137578-4-saravanak@google.com>
- <20191125112812.26jk5hsdwqfnofc2@vireshk-i7> <20191125112952.uwrmeukppkqu4hvm@vireshk-i7>
-In-Reply-To: <20191125112952.uwrmeukppkqu4hvm@vireshk-i7>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 5 Dec 2019 11:11:28 -0800
-Message-ID: <CAGETcx_uohJknvW8pDb6XXBkZveFqMvt5wRyecV5sye5a8vLpQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] OPP: Improve require-opps linking
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191203205852.15659-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 3:29 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 25-11-19, 16:58, Viresh Kumar wrote:
-> > Message-Id: <8df083ca64d82ff57f778689271cc1be75aa99c4.1574681211.git.viresh.kumar@linaro.org>
-> > From: Viresh Kumar <viresh.kumar@linaro.org>
-> > Date: Mon, 25 Nov 2019 13:57:58 +0530
-> > Subject: [PATCH] opp: Allow lazy-linking of required-opps
->
-> Forgot to mention that this is based of pm/linux-next + following series
->
-> https://lore.kernel.org/lkml/befccaf76d647f30e03c115ed7a096ebd5384ecd.1574074666.git.viresh.kumar@linaro.org/
+On 12/3/19 2:58 PM, Guenter Roeck wrote:
+> SuperH images crash too eearly to display any console output. Bisect
+> points to commit 507fd01d5333 ("drivers: move the early platform device
+> support to arch/sh"). An analysis of that patch suggests that
+> early_platform_cleanup() is now called at the wrong time. Restoring its
+> call point fixes the problem.
+> 
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Fixes: 507fd01d5333 ("drivers: move the early platform device support to arch/sh")
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Thanks Viresh. Is there a git I can pull a branch that has your lazy
-linking patch series and whatever dependencies it has?
+Yup, I need this too.
 
--Saravana
+Acked-by: Rob Landley <rob@landley.net>
+
+Rob
