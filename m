@@ -2,185 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06EB0113BBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 07:35:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC4F113BCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 07:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfLEGfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 01:35:08 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:43072 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfLEGfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 01:35:07 -0500
-Received: by mail-il1-f198.google.com with SMTP id j17so1731915ilc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 22:35:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=sWlaImi5B4uVh73w3PHyR9//P49nAec4x6mydwyswqI=;
-        b=bslcDjwClzwE1Z0KfVJ/bW1ns7psfhbp6Oocyg6KgrZuJ9ftjt0uvaLn1a7JLTRJG3
-         hGxyCzwuzETLe5k1PAyhHzzDsAmNSu4wIwFPkMc71N3WBGiABRRWArcL6c+FfRgPestY
-         lg1RJ016FW3ZGWkBq+MtQa+OqaXATOWI+kewGwsveQc5uANvSLpir4XlB+2vgCNL7PaW
-         jMaAl0dDgHIvHHy/TjR7RhemtVJAl27AXRBSSOF8GDSZy/DOkbBe4uyBOam0iKGKB2L0
-         9EF6V0G2eNTo+aN0SEgXIwUaNwrzCCn9pLDsgOunUClmlHa2G0BZupq2LwQrJ0j/uC6C
-         tydw==
-X-Gm-Message-State: APjAAAWHZF9eBljPtTWgJqZkBO7Kr0e1ijNSY7WnEpYBJI1rVaSdhnJl
-        g7Ow1gXzKJoVkzMSOuIqNw+3Jt9BPAvvs4ToZRKJiXOK7Hgq
-X-Google-Smtp-Source: APXvYqyTtejw80rTQ+CvFHMjZ29IKsVykf637q7u88PD0v7dSr0tMfseJhNiwYx/dKnjCd9NiH1jHxoe84au5O7n2k3Y1oufRx2G
+        id S1728912AbfLEGh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 01:37:56 -0500
+Received: from mail-eopbgr680074.outbound.protection.outlook.com ([40.107.68.74]:2267
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbfLEGhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 01:37:40 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RVk1kCycfYPkLbfNWkT4UdIhWBW3pdBKyaMnWgcFqtvxJBBRXmZPB6esP8fBjEVB+k3fYTAf0zGK0VRu+zCuuILM0pqodpvBasrnKdQDbeKshv/fhLoIdtYPBeWGfCnoThD4AE4hH7WYr0emguVYDSRPyuKj75iQg22fkAg6tGoL6E0BKW+/O1Fgf3GrPVMxDi78QagWs1dPYU7zU/E6TYMQxc0TtJ5wD/cQACV60sstGCYtTlRNOWPkA9vRLHVyhcoUlE/gmEvStUyFUDB4x8xK1PLIr6oQl6lX3egW4XejjhN8M3lXMTEB0vQkNJKy3zERGm0JyRjj9UCtIKnksQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=33LS+ZyloUssHMLNiVKIi6pfKqJm0s1OswnsyX5QmCY=;
+ b=kwxhVZfxMESCN1b2sRR0PKUNNkomisw9kJgmbvdBuX3xsP8uEpoKK5+S/ss8TAV3NnczgCqdOJgZU9ky1ib2xKddprdkghqQscaYcLZMqR72ZsT9plOGRQErqX22Omcm8oZd+zqe6cGbPoefthn8XUKZGkfxx9DtFi5HBrnyRl2zSV8wDVPmekdA0S9RTTErM51rjqesnm8CWe1newjAQnvIwvG4PpcsIMrCO/P+PTgwU/OVanMZZG87QkOAMxG1tCW0UzYPN7jemCKMrSa7EgVCkzUT2mtRGt5vjhcdbXhXJevGlq2cEW/gqqtydbAP3rynv1GpMb5qDRb60g8h3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=lists.infradead.org
+ smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=33LS+ZyloUssHMLNiVKIi6pfKqJm0s1OswnsyX5QmCY=;
+ b=XtbWNw7PeC8HngHNHgxnqby5z51/+Pw3X/tfyDDhA6R0RCaVdtbvWzHybwtsAK7tD/O7KudJHqTxV0ewYJx64Lh14wTGXc3cG2eIPc0EX4DoD9YgLARPQ/KiuIEPAg/2K2APtMpgtRPVgdQHlBczfe3s/PmIpVESLosjdpna7jc=
+Received: from BL0PR02CA0130.namprd02.prod.outlook.com (2603:10b6:208:35::35)
+ by BN7PR02MB4978.namprd02.prod.outlook.com (2603:10b6:408:2a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.18; Thu, 5 Dec
+ 2019 06:37:36 +0000
+Received: from BL2NAM02FT013.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::204) by BL0PR02CA0130.outlook.office365.com
+ (2603:10b6:208:35::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.18 via Frontend
+ Transport; Thu, 5 Dec 2019 06:37:36 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT013.mail.protection.outlook.com (10.152.77.19) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
+ via Frontend Transport; Thu, 5 Dec 2019 06:37:36 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1icklb-0000xN-1u; Wed, 04 Dec 2019 22:37:35 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1icklV-0000XV-Un; Wed, 04 Dec 2019 22:37:29 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xB56bJdw010325;
+        Wed, 4 Dec 2019 22:37:19 -0800
+Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1icklL-0000WL-Mg; Wed, 04 Dec 2019 22:37:19 -0800
+From:   Rajan Vaja <rajan.vaja@xilinx.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, michal.simek@xilinx.com,
+        jolly.shah@xilinx.com, m.tretter@pengutronix.de,
+        gustavo@embeddedor.com, tejas.patel@xilinx.com,
+        nava.manne@xilinx.com, mdf@kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rajan Vaja <rajan.vaja@xilinx.com>
+Subject: [PATCH v3 0/6] clk: zynqmp: Extend and fix zynqmp clock driver
+Date:   Wed,  4 Dec 2019 22:35:53 -0800
+Message-Id: <1575527759-26452-1-git-send-email-rajan.vaja@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com>
+References: <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(346002)(136003)(39860400002)(199004)(189003)(4326008)(5660300002)(16586007)(50466002)(7696005)(81166006)(316002)(336012)(8676002)(48376002)(9786002)(107886003)(76176011)(356004)(51416003)(6666004)(81156014)(11346002)(305945005)(478600001)(14444005)(50226002)(8936002)(26005)(36756003)(7416002)(426003)(186003)(2616005)(2906002)(70206006)(44832011)(70586007)(36386004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR02MB4978;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
-X-Received: by 2002:a6b:5a13:: with SMTP id o19mr5063163iob.120.1575527706944;
- Wed, 04 Dec 2019 22:35:06 -0800 (PST)
-Date:   Wed, 04 Dec 2019 22:35:06 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004e6eed0598ef2184@google.com>
-Subject: KASAN: slab-out-of-bounds Write in decode_data
-From:   syzbot <syzbot+fc8cd9a673d4577fb2e4@syzkaller.appspotmail.com>
-To:     ajk@comnets.uni-bremen.de, davem@davemloft.net,
-        linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 008fa6ff-3627-4751-bf7b-08d7794d9e10
+X-MS-TrafficTypeDiagnostic: BN7PR02MB4978:
+X-Microsoft-Antispam-PRVS: <BN7PR02MB4978A89B46C8FDFAF7DF1354B75C0@BN7PR02MB4978.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 02426D11FE
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GixZawCC27bTcGF15s5shn5D7og2KQf6FBLpMwvLopd7E2MG1Bkm6XHqwa323sQe1kdWialSpvRtL5OeMXjtBEp3UKHSmqahn+ToANwUG9KR0zPyzxBta+IQEeWA82FQ99ZY3Pd4thmlSZyMN8iQGlOhe0D/1CVg3alGrDRN5rGcK6axvw1efNK2CThYkGWBOZW7eVlilo2PZDYyZgtJ+uf8nt8fXq0P3nV7vFJpzQTwtrWXsPqIAGyDcq+SqWKl69Ucezk5VZOXtnOvMHzEldRW/WhNYUhw4VghvJ4/xwxUE7p0LEOwqGZEAV5FcPDXp78dHPHvQIK9bVR/pifG68w3FFE6wb5edzR5pdg3KUnJ2Y2e9a8jdGBDZ5qTWh7PJr51K+3afDsKSNkiFwrWZM9Wd5yd836VG+CYSWBMcD+saytjXHTq3E9jBCBLz6W2y+H2jqv6oauq74Wb4OBFAwdjqU4MmoXlI5DBNOKTjM+XtsVTMpQzIOWDAG7Mc2s2
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2019 06:37:36.5823
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 008fa6ff-3627-4751-bf7b-08d7794d9e10
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR02MB4978
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+ZynqMP clock driver can be used for Versal platform also. Add support
+for Versal platform in ZynqMP clock driver.
 
-syzbot found the following crash on:
+Also this patch series fixes divider calculation and adds support for get
+maximum divider, clock with CLK_DIVIDER_POWER_OF_TWO flag and warn user if
+clock users are more than allowed.
 
-HEAD commit:    63de3747 Merge tag 'tag-chrome-platform-for-v5.5' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=165a7c82e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d189d07c6717979
-dashboard link: https://syzkaller.appspot.com/bug?extid=fc8cd9a673d4577fb2e4
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15379c2ee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133cf97ee00000
+Rajan Vaja (5):
+  dt-bindings: clock: Add bindings for versal clock driver
+  clk: zynqmp: Extend driver for versal
+  clk: zynqmp: Warn user if clock user are more than allowed
+  clk: zynqmp: Add support for get max divider
+  clk: zynqmp: Fix divider calculation
 
-Bisection is inconclusive: the bug happens on the oldest tested release.
+Tejas Patel (1):
+  clk: zynqmp: Add support for clock with CLK_DIVIDER_POWER_OF_TWO flag
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=150e2861e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=170e2861e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=130e2861e00000
+ .../devicetree/bindings/clock/xlnx,versal-clk.yaml |  64 +++++++++++
+ drivers/clk/zynqmp/clkc.c                          |   3 +-
+ drivers/clk/zynqmp/divider.c                       | 118 +++++++++++++++++++-
+ drivers/clk/zynqmp/pll.c                           |   6 +-
+ drivers/firmware/xilinx/zynqmp.c                   |   2 +
+ include/dt-bindings/clock/xlnx-versal-clk.h        | 123 +++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h               |   2 +
+ 7 files changed, 310 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+ create mode 100644 include/dt-bindings/clock/xlnx-versal-clk.h
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fc8cd9a673d4577fb2e4@syzkaller.appspotmail.com
+-- 
+Changes in v3:
+ - [PATCH 1/7]: Update SPDX-License-Identifier.
+Changes in v2:
+ - [PATCH 7/7]: Removed patch #7 to fix clock frac to handle backward
+		compatibility. Will send this patch separately with
+		proper backward compatibility handling.
+ - Rest of the changes are mentioned in individual patches.
+-- 
+2.7.4
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in decode_data.part.0+0x23b/0x270  
-drivers/net/hamradio/6pack.c:843
-Write of size 1 at addr ffff8880993bd04e by task kworker/u4:2/25
-
-CPU: 1 PID: 25 Comm: kworker/u4:2 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events_unbound flush_to_ldisc
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-  kasan_report+0x12/0x20 mm/kasan/common.c:638
-  __asan_report_store1_noabort+0x17/0x20 mm/kasan/generic_report.c:137
-  decode_data.part.0+0x23b/0x270 drivers/net/hamradio/6pack.c:843
-  decode_data drivers/net/hamradio/6pack.c:965 [inline]
-  sixpack_decode drivers/net/hamradio/6pack.c:968 [inline]
-  sixpack_receive_buf drivers/net/hamradio/6pack.c:458 [inline]
-  sixpack_receive_buf+0xde4/0x1420 drivers/net/hamradio/6pack.c:435
-  tty_ldisc_receive_buf+0x15f/0x1c0 drivers/tty/tty_buffer.c:465
-  tty_port_default_receive_buf+0x7d/0xb0 drivers/tty/tty_port.c:38
-  receive_buf drivers/tty/tty_buffer.c:481 [inline]
-  flush_to_ldisc+0x222/0x390 drivers/tty/tty_buffer.c:533
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 8864:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_kmalloc mm/kasan/common.c:512 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:485
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:526
-  __do_kmalloc_node mm/slab.c:3616 [inline]
-  __kmalloc_node+0x4e/0x70 mm/slab.c:3623
-  kmalloc_node include/linux/slab.h:579 [inline]
-  kvmalloc_node+0x68/0x100 mm/util.c:574
-  kvmalloc include/linux/mm.h:655 [inline]
-  kvzalloc include/linux/mm.h:663 [inline]
-  alloc_netdev_mqs+0x98/0xde0 net/core/dev.c:9730
-  sixpack_open+0x104/0xaaf drivers/net/hamradio/6pack.c:563
-  tty_ldisc_open.isra.0+0xa3/0x110 drivers/tty/tty_ldisc.c:464
-  tty_set_ldisc+0x30e/0x6b0 drivers/tty/tty_ldisc.c:591
-  tiocsetd drivers/tty/tty_io.c:2337 [inline]
-  tty_ioctl+0xe8d/0x14f0 drivers/tty/tty_io.c:2597
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 8605:
-  save_stack+0x23/0x90 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  kasan_set_free_info mm/kasan/common.c:334 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:473
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:482
-  __cache_free mm/slab.c:3426 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3757
-  skb_free_head+0x93/0xb0 net/core/skbuff.c:591
-  skb_release_data+0x551/0x8d0 net/core/skbuff.c:611
-  skb_release_all+0x4d/0x60 net/core/skbuff.c:665
-  __kfree_skb net/core/skbuff.c:679 [inline]
-  consume_skb net/core/skbuff.c:838 [inline]
-  consume_skb+0xfb/0x410 net/core/skbuff.c:832
-  skb_free_datagram+0x1b/0x100 net/core/datagram.c:328
-  netlink_recvmsg+0x6c6/0xf50 net/netlink/af_netlink.c:1996
-  sock_recvmsg_nosec net/socket.c:873 [inline]
-  sock_recvmsg net/socket.c:891 [inline]
-  sock_recvmsg+0xce/0x110 net/socket.c:887
-  ____sys_recvmsg+0x236/0x550 net/socket.c:2562
-  ___sys_recvmsg+0xff/0x190 net/socket.c:2603
-  __sys_recvmsg+0x102/0x1d0 net/socket.c:2650
-  __do_sys_recvmsg net/socket.c:2660 [inline]
-  __se_sys_recvmsg net/socket.c:2657 [inline]
-  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2657
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8880993bc000
-  which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 78 bytes to the right of
-  4096-byte region [ffff8880993bc000, ffff8880993bd000)
-The buggy address belongs to the page:
-page:ffffea000264ef00 refcount:1 mapcount:0 mapping:ffff8880aa402000  
-index:0x0 compound_mapcount: 0
-raw: 00fffe0000010200 ffffea000262c288 ffffea00029bc908 ffff8880aa402000
-raw: 0000000000000000 ffff8880993bc000 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8880993bcf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8880993bcf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8880993bd000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                               ^
-  ffff8880993bd080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8880993bd100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
