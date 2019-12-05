@@ -2,102 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB97114390
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 16:29:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 164FB114396
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 16:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbfLEP3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 10:29:50 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55780 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729099AbfLEP3u (ORCPT
+        id S1729502AbfLEPbK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 5 Dec 2019 10:31:10 -0500
+Received: from mail.07d02.mspz7.gob.ec ([181.196.137.211]:41956 "EHLO
+        mail.07d02.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfLEPbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 10:29:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q9so4310003wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 07:29:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cP+oM3NA7KncqmbMbjVli5611B4S2UpI7p/XGvy4+VM=;
-        b=ABix7BZQE6/oBKIKzeq9oQL81G5DErroX9yrN0/xNE9ctYSu1ppRCD8sQMK77lOdts
-         Mfr15V5jwVQ2rcMIcysM2MiH6VZLtLggMq0L0SRa1qBRPmMnHNXiOVbnOHvMqyCmHKRo
-         6FOfi054BSOc5EOTe54VmuigHJSnbORH6oTtwGSAZ62YJOXkuowcArCg5VWS+hry7iqA
-         BYAUeO6RGrCTf9WYI7VME/NZ8tbhZ9ObrWccYrSxw8c/16qUUnKIE2p4AArXHFhDovwA
-         2FRNRjaSfG+YETDxzNHli16KZ1Pf0ZSSGdK2F/Pi7gjD94kcwr4bWPw9FAao/PFHNcVh
-         925A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cP+oM3NA7KncqmbMbjVli5611B4S2UpI7p/XGvy4+VM=;
-        b=J6zJDC4XK/xgZcQ+H5RF4wRudNMYRrf8D1U6pRKT8iSEcxnAXvyqcYdNrwAlgOUFMR
-         4Ei49DcoFCaGqdtyliifik8kVZJgQxoEWaqvwl1ckF+aUQDl9+P2NTMANKEgxFDXBoyc
-         Sf3q1vQrU3g6y9/lJdYTTnwcDPAgkAce9QgBO9WO+QlhIYlqmoSING7l6MNGrM6vjAfJ
-         w45msSQXPgtL04SAzZ+1o/sH/IhcDF6MT+uD0sKvhduW81F36DIdBl+j1WLtgK97bh8N
-         KfAmMfCXIKxzhB710hKJ0qofaFIVkbJM0B2ZSerG7nX+sG7XWvnqBTN/BloqQuPPswy5
-         XwEA==
-X-Gm-Message-State: APjAAAWN54pZMGCtvFePu7CcGbpxvZ6PKCGftv26lhrLmfUXp5Gvg7bl
-        2eRfCU0sjKNOSrkM0X3x423s2Q==
-X-Google-Smtp-Source: APXvYqwg7r5WIGyCZhCUyuc9pK/Q411mfTgj34TL5oqoEJcHF0kVbf5N6U5FZZj3N86LNm+WlNwMbQ==
-X-Received: by 2002:a1c:61d7:: with SMTP id v206mr5704907wmb.13.1575559788631;
-        Thu, 05 Dec 2019 07:29:48 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id z64sm176283wmg.30.2019.12.05.07.29.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 07:29:47 -0800 (PST)
-Date:   Thu, 5 Dec 2019 16:29:45 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     David Airlie <airlied@redhat.com>
-Cc:     airlied <airlied@linux.ie>, arnd@arndb.de, fenghua.yu@intel.com,
-        "KH, Greg" <gregkh@linuxfoundation.org>,
-        "Luck, Tony" <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] agp: minor fixes, does the maintainer still there
- ?
-Message-ID: <20191205152945.GB10549@Red>
-References: <1574324085-4338-1-git-send-email-clabbe@baylibre.com>
- <20191202133254.GA21550@Red>
- <CAMwc25obOebugXGSNVWd1bjPN+tR82wwFJ6PgqnvZXK4O6xAFw@mail.gmail.com>
+        Thu, 5 Dec 2019 10:31:10 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.07d02.mspz7.gob.ec (Postfix) with ESMTP id 10272A3DCB8;
+        Thu,  5 Dec 2019 02:17:35 -0500 (-05)
+Received: from mail.07d02.mspz7.gob.ec ([127.0.0.1])
+        by localhost (mail.07d02.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id pBrgC-E5D1_m; Thu,  5 Dec 2019 02:17:34 -0500 (-05)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.07d02.mspz7.gob.ec (Postfix) with ESMTP id 03556A3DCC6;
+        Wed,  4 Dec 2019 23:33:16 -0500 (-05)
+X-Virus-Scanned: amavisd-new at 07d02.mspz7.gob.ec
+Received: from mail.07d02.mspz7.gob.ec ([127.0.0.1])
+        by localhost (mail.07d02.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id W1GHC9bazaxa; Wed,  4 Dec 2019 23:33:15 -0500 (-05)
+Received: from [10.102.37.150] (unknown [185.253.121.8])
+        by mail.07d02.mspz7.gob.ec (Postfix) with ESMTPSA id 037FCA1C7EA;
+        Wed,  4 Dec 2019 22:44:20 -0500 (-05)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMwc25obOebugXGSNVWd1bjPN+tR82wwFJ6PgqnvZXK4O6xAFw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Cash Gift/contant geschenk
+To:     Recipients <luz.bravo@07d02.mspz7.gob.ec>
+From:   "Lisa Robinson <luz.bravo"@07d02.mspz7.gob.ec
+Message-Id: <20191205034422.037FCA1C7EA@mail.07d02.mspz7.gob.ec>
+Date:   Wed,  4 Dec 2019 22:44:20 -0500 (-05)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 06:01:15AM +1000, David Airlie wrote:
-> On Mon, Dec 2, 2019 at 11:33 PM LABBE Corentin <clabbe@baylibre.com> wrote:
-> >
-> > On Thu, Nov 21, 2019 at 08:14:40AM +0000, Corentin Labbe wrote:
-> > > Hello
-> > >
-> > > This patch serie fixes some minor problem found in the agp subsystem
-> > > There are no change since v1 (posted two years ago)
-> > > This is simply a repost for trying to get an answer (gentle ping 6 month
-> > > ago got no answer also).
-> > >
-> > > Regards
-> > >
-> >
-> > Hello
-> >
-> > Does the AGP maintainer still maintain it ?
-> 
-> It's maintained but really loathe to touch it, I've no hw to validate
-> any changes on so making any changes to it really has to get past my
-> internal, I care enough about this change to risk applying anything to
-> AGP.
-> 
-> I'll try and look and apply those patches today.
-> 
+>
+Date: Thu, 05 Dec 2019 06:43:25 +0300
+Reply-To: lisarobinsonfundation@gmail.com
 
-Thanks for applying.
-Perhaps you need to fix your address in MAINTAINERS.
-
-When you has hardware, What was your tests procedure ?
-I can on my freetime add some AGP hw on my kernelCI lab.
-
-Regards
+Gefeliciteerd, je bent gekozen voor mijn liefdadigheidsproject en krijgt nu een cash donatie van $1,2 miljoen dollar.
