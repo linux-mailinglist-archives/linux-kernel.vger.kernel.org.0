@@ -2,149 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC9E8114777
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3755114785
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 20:12:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfLETJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 14:09:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44229 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726028AbfLETJa (ORCPT
+        id S1729502AbfLETMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 14:12:06 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44791 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726257AbfLETMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 14:09:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575572969;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=KMSt1fsmGsnUyD3THB0TYricfW4Ly8DVOePbhwwALGg=;
-        b=T6YA+GrMYUkH3t4RhMPpzFtfPb0KMX8wsZzMlCY6yTFySQhEbnshfuvuTvB8EnTlgLxWQJ
-        0SarfoYzCXYH+UWlLpAbpEGXtJX2mR3H3hlfL99dW4D+h1CokDWNtifeA4knjEiXDja/Gr
-        T8s08MFtUJ7GRzNcCQIRGk/3HFLBDJI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-278-jGkiYA4RNLefmEkpwXdxyg-1; Thu, 05 Dec 2019 14:09:23 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 162B8DB60;
-        Thu,  5 Dec 2019 19:09:22 +0000 (UTC)
-Received: from max.com (ovpn-205-78.brq.redhat.com [10.40.205.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 48CF8600D1;
-        Thu,  5 Dec 2019 19:09:18 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [GIT PULL] GFS2 changes for the 5.5 merge window
-Date:   Thu,  5 Dec 2019 20:09:15 +0100
-Message-Id: <20191205190915.5468-1-agruenba@redhat.com>
+        Thu, 5 Dec 2019 14:12:05 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so3761772oia.11
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 11:12:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lbTgn4jNgsokf2M6goUMgel36hy0BJM0Dor775D7GSE=;
+        b=KqaiLT61/XGnqIJhyHQusP4pG9VwXR+bKLFriLrHG7+eWANmbvM2tv0SS0gLxwZVAU
+         nsmUBgaji2JlUcHgiQDOK6v3RPwyLG7HmyQ+b7bBZfvD03vCB90Ym/p77Py1195ubD4M
+         Lzkwqu6taOKa4HIz7qyRUfhUcEEHsEUfVmZfOoE73SX7H04DnFOSEw1+af0sto1/idf7
+         z1UqhwrzFEfVZKYMRDIEFScrL5o6Fzw5U8b842jXc6f6vNOSDmB0HYWzOBuJawEHmebm
+         NViX2VGHk77eRYN+46e8IBzsNFnxcFC2VEtgC0sYd5mbWZqrXldmWhSitZUJej3nXAdd
+         kHMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lbTgn4jNgsokf2M6goUMgel36hy0BJM0Dor775D7GSE=;
+        b=kioAKOJhiiCjvrF63HVLxj5oooN/wJidDUY2RTPj8tNqeG1DbPSrOmtO0V6/pMZKqu
+         Xh2hR3nIuY8RJ4GAcUEDpupzRc0LikaEsSl+jENxqCIb1yufR6UJR3dmcDp18W8LveY/
+         18yMj/HSkBZW+WP3E34DaSaZsLnDc4gw4soihyPlkjKknlUHGnmv/61jIuNs9B/vymw4
+         b1r6TyDTXLamIxXMv1BUhmvE7y3QVdSE+x/SIftEKplWI2Jnqhg7FjkSA5WFk8P37mVb
+         Mwm6VL4Y2gQ5Elkf0lSENPx6JQHz6k/7mbkd+gXycjn1UcP5iMu5C+URQ5IZIDSJbAPS
+         7oug==
+X-Gm-Message-State: APjAAAX63uYr0PCdk7afdboca/PJYEGhNz5ftNuGhIzAU3L2APfGtSxj
+        F57bzLUt563wonBhyRyeKhkR7QycxbTVNBzQvkC2Jw==
+X-Google-Smtp-Source: APXvYqwO24mcZkmRu8n96LRippWIZh/qu1VArRKN8KHPM7/mkUlrnXW//GsNTA2ZsMEsxE5rDQ505XtmyKjgLo6mZSc=
+X-Received: by 2002:aca:503:: with SMTP id 3mr2990513oif.24.1575573124553;
+ Thu, 05 Dec 2019 11:12:04 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: jGkiYA4RNLefmEkpwXdxyg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+References: <20190717222340.137578-1-saravanak@google.com> <20190717222340.137578-4-saravanak@google.com>
+ <20191125112812.26jk5hsdwqfnofc2@vireshk-i7> <20191125112952.uwrmeukppkqu4hvm@vireshk-i7>
+In-Reply-To: <20191125112952.uwrmeukppkqu4hvm@vireshk-i7>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 5 Dec 2019 11:11:28 -0800
+Message-ID: <CAGETcx_uohJknvW8pDb6XXBkZveFqMvt5wRyecV5sye5a8vLpQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] OPP: Improve require-opps linking
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Nov 25, 2019 at 3:29 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 25-11-19, 16:58, Viresh Kumar wrote:
+> > Message-Id: <8df083ca64d82ff57f778689271cc1be75aa99c4.1574681211.git.viresh.kumar@linaro.org>
+> > From: Viresh Kumar <viresh.kumar@linaro.org>
+> > Date: Mon, 25 Nov 2019 13:57:58 +0530
+> > Subject: [PATCH] opp: Allow lazy-linking of required-opps
+>
+> Forgot to mention that this is based of pm/linux-next + following series
+>
+> https://lore.kernel.org/lkml/befccaf76d647f30e03c115ed7a096ebd5384ecd.1574074666.git.viresh.kumar@linaro.org/
 
-could you please consider pulling the following gfs2 changes?
+Thanks Viresh. Is there a git I can pull a branch that has your lazy
+linking patch series and whatever dependencies it has?
 
-Thanks a lot,
-Andreas
-
-The following changes since commit d5798141fd54cea074c3429d5803f6c41ade0ca8=
-:
-
-  gfs2: Fix initialisation of args for remount (2019-10-30 12:16:53 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gf=
-s2-for-5.5
-
-for you to fetch changes up to ade48088937f53fe0467162177726176813b9564:
-
-  gfs2: Don't write log headers after file system withdraw (2019-11-21 11:3=
-7:41 +0100)
-
-----------------------------------------------------------------
-GFS2 changes for this merge window:
-
-Bob's extensive filesystem withdrawal and recovery testing:
-- Don't write log headers after file system withdraw
-- clean up iopen glock mess in gfs2_create_inode
-- Close timing window with GLF_INVALIDATE_IN_PROGRESS
-- Abort gfs2_freeze if io error is seen
-- Don't loop forever in gfs2_freeze if withdrawn
-- fix infinite loop in gfs2_ail1_flush on io error
-- Introduce function gfs2_withdrawn
-- fix glock reference problem in gfs2_trans_remove_revoke
-
-Filesystems with a block size smaller than the page size:
-- Fix end-of-file handling in gfs2_page_mkwrite
-- Improve mmap write vs. punch_hole consistency
-
-Other:
-- Remove active journal side effect from gfs2_write_log_header
-- Multi-block allocations in gfs2_page_mkwrite
-
-Minor cleanups and coding style fixes:
-- Remove duplicate call from gfs2_create_inode
-- make gfs2_log_shutdown static
-- make gfs2_fs_parameters static
-- Some whitespace cleanups
-- removed unnecessary semicolon
-
-----------------------------------------------------------------
-Aliasgar Surti (1):
-      gfs2: removed unnecessary semicolon
-
-Andreas Gruenbacher (6):
-      gfs2: Some whitespace cleanups
-      gfs2: Improve mmap write vs. punch_hole consistency
-      gfs2: Multi-block allocations in gfs2_page_mkwrite
-      gfs2: Fix end-of-file handling in gfs2_page_mkwrite
-      gfs2: Remove active journal side effect from gfs2_write_log_header
-      gfs2: Remove duplicate call from gfs2_create_inode
-
-Ben Dooks (Codethink) (1):
-      gfs2: make gfs2_fs_parameters static
-
-Bob Peterson (9):
-      gfs2: make gfs2_log_shutdown static
-      gfs2: fix glock reference problem in gfs2_trans_remove_revoke
-      gfs2: Introduce function gfs2_withdrawn
-      gfs2: fix infinite loop in gfs2_ail1_flush on io error
-      gfs2: Don't loop forever in gfs2_freeze if withdrawn
-      gfs2: Abort gfs2_freeze if io error is seen
-      gfs2: Close timing window with GLF_INVALIDATE_IN_PROGRESS
-      gfs2: clean up iopen glock mess in gfs2_create_inode
-      gfs2: Don't write log headers after file system withdraw
-
- fs/gfs2/aops.c       |  6 +++---
- fs/gfs2/bmap.c       | 11 +++++++++--
- fs/gfs2/file.c       | 56 ++++++++++++++++++++++++++++++++----------------=
-----
- fs/gfs2/glock.c      | 16 ++++++++++-----
- fs/gfs2/glops.c      |  4 ++--
- fs/gfs2/inode.c      | 16 +++++++--------
- fs/gfs2/log.c        | 25 +++++++++++++++++++----
- fs/gfs2/log.h        |  2 +-
- fs/gfs2/lops.c       | 34 +++++++++++++++----------------
- fs/gfs2/lops.h       |  3 ++-
- fs/gfs2/meta_io.c    |  6 +++---
- fs/gfs2/ops_fstype.c |  5 ++---
- fs/gfs2/quota.c      |  4 ++--
- fs/gfs2/recovery.c   |  8 +++++---
- fs/gfs2/super.c      | 33 ++++++++++++++++++-------------
- fs/gfs2/sys.c        |  2 +-
- fs/gfs2/trans.c      |  2 ++
- fs/gfs2/util.c       |  2 +-
- fs/gfs2/util.h       |  9 +++++++++
- 19 files changed, 152 insertions(+), 92 deletions(-)
-
+-Saravana
