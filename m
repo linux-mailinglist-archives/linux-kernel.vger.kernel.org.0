@@ -2,122 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF17113A98
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 04:46:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22761113AA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 04:52:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbfLEDqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 22:46:22 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44073 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728132AbfLEDqW (ORCPT
+        id S1728849AbfLEDwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 22:52:47 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:44924 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728132AbfLEDwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 22:46:22 -0500
-Received: by mail-qt1-f195.google.com with SMTP id b5so2133875qtt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 19:46:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=ORECt6z+ycDjfptUtQ2najrif2bAPibjEeq++PAuMhg=;
-        b=Ny1hHF6G+OWWdUUeOmHg6E8RMSsl645UfKNGSn/v31VjPXZJ9nNaR6qEfddBubtJDT
-         z88BHtZ+QKUYENeT4cWi+9cUSV5alAgAZ0PdiZ8tWKgOIZyA0jCACAz+gQqqVXkLIVhZ
-         EZIbVMoqhO8pHjdw0I3D9VuRW47bSgbOLPKH8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=ORECt6z+ycDjfptUtQ2najrif2bAPibjEeq++PAuMhg=;
-        b=saykqQ/ZQ/sLyx0Yo9I8dCH1BZFMqLpHD8MtPjkxUDkDqvbnpGSuqCw9PNI0lfasg9
-         Gdcbzk4YYeAgcHPoCFQlUVe0+oSdoFFfGFVWpiW2rgZXEbA5eus/wJV5e2YTjn7ZYbzJ
-         p+o6sp9l3ULZIk5vMeM/z+XGlQh6aExOudPH3TZIsXf7hsZQRcxNJS/NMiY22S0sI+AU
-         vOgbjaimomIz3c0QheQANAhblJ4jyfY39IKCi/JUWw0niVpnj+kMGnjFxaH0vCMWjPN8
-         /GSQyetgnk2j41i5P77e2Fvaq6I9qwrW8xxQKqSmT5M/PLsvxwOKJQ63vAdS3loD1oxF
-         IKWA==
-X-Gm-Message-State: APjAAAWzNHpC6NfpCAz94QL72NBTqNGwwgb4ydGVckf3QlAL4EzuQMez
-        P4osG2aofUsaeFUPkIwiwvsjNxqnEfWXeHc5tLDSMpqJKZo67g==
-X-Google-Smtp-Source: APXvYqw2Do/tFhwEzuYj4/1wo+tcwhsNKZbNVXOM8wVGAsZyZ3bels4i3qVIRmXVcjaz4C+VGAG74r0LO+VOIgxVCvU=
-X-Received: by 2002:ac8:7609:: with SMTP id t9mr5893105qtq.341.1575517581012;
- Wed, 04 Dec 2019 19:46:21 -0800 (PST)
-MIME-Version: 1.0
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Wed, 4 Dec 2019 19:46:10 -0800
-Message-ID: <CABWYdi1ZKR=jmKnjoJTik08Q9uJBvyZ4W0C29iPiUJ5ef1obvw@mail.gmail.com>
-Subject: perf not picking up symbols for namespaced processes
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     kernel-team <kernel-team@cloudflare.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Wed, 4 Dec 2019 22:52:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0Tk0Ttie_1575517957;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Tk0Ttie_1575517957)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 05 Dec 2019 11:52:38 +0800
+Subject: Re: [PATCH v4 1/2] sched/numa: introduce per-cgroup NUMA locality
+ info
+To:     Randy Dunlap <rdunlap@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, sashal@kernel.org,
-        Kenton Varda <kenton@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
+ <89416266-0a06-ce1c-1d78-11171f0c80b8@linux.alibaba.com>
+ <fde5d43b-447d-1b54-1bad-3a5d67e6c1f2@infradead.org>
+ <c757f282-e89c-78f6-71cd-1273d2624429@infradead.org>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <2b1fde95-9d50-b03b-1cd7-de7001f4fe56@linux.alibaba.com>
+Date:   Thu, 5 Dec 2019 11:52:37 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <c757f282-e89c-78f6-71cd-1273d2624429@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have a service that forks a child process in a namespace-based
-sandbox where the mount namespace is intentionally designed to reflect
-a totally empty filesystem. Our use case is very similar to Chrome's
-sandbox, for example, but on a server. Within the sandbox, not even
-the service's own binary is present in the mount namespace.
 
-Process tree looks like this:
 
-$ sudo pstree -psc 63989
-edgeworker(63989)=E2=94=80=E2=94=AC=E2=94=80edgeworker/sbox(255716)=E2=94=
-=80=E2=94=AC=E2=94=80edgeworker/zygt(255718)
-                   =E2=94=82                         =E2=94=9C=E2=94=80{edg=
-eworker/sbox}(255719)
-                   =E2=94=82                         =E2=94=9C=E2=94=80{edg=
-eworker/sbox}(255720)
-                   =E2=94=82                         =E2=94=9C=E2=94=80{edg=
-eworker/sbox}(255721)
-                   =E2=94=9C=E2=94=80edgeworker/stry(5803)
-                   =E2=94=9C=E2=94=80edgeworker/stry(63990)
-                   =E2=94=9C=E2=94=80edgeworker/stry(106218)
-                   =E2=94=9C=E2=94=80edgeworker/stry(191905)
-                   =E2=94=9C=E2=94=80edgeworker/stry(255695)
-                   =E2=94=9C=E2=94=80edgeworker/supr(255717)
+On 2019/12/5 上午11:29, Randy Dunlap wrote:
+> On 12/4/19 7:28 PM, Randy Dunlap wrote:
+>> Hi,
+>>
+>> It seems that you missed my previous comments...
+>>
+>>
+>> On 12/3/19 11:59 PM, 王贇 wrote:
+>>> diff --git a/init/Kconfig b/init/Kconfig
+>>> index 4d8d145c41d2..fb7182a0d017 100644
+>>> --- a/init/Kconfig
+>>> +++ b/init/Kconfig
+>>> @@ -817,6 +817,15 @@ config NUMA_BALANCING_DEFAULT_ENABLED
+>>>  	  If set, automatic NUMA balancing will be enabled if running on a NUMA
+>>>  	  machine.
+>>>
+>>> +config CGROUP_NUMA_LOCALITY
+>>> +	bool "The per-cgroup NUMA Locality"
+>>
+>> Drop "The"
+>>
+>>> +	default n
+>>> +	depends on CGROUP_SCHED && NUMA_BALANCING
+>>> +	help
+>>> +	  This option enable the collection of per-cgroup NUMA locality info,
+>>
+>> 	              enables
+>>
+>>> +	  to tell whether NUMA Balancing is working well for a particular
+>>> +	  workload, also imply the NUMA efficiency.
+>>> +
+>>>  menuconfig CGROUPS
+>>>  	bool "Control Group support"
+>>>  	select KERNFS
+>>
+>>
+>> thanks.
+>>
+> 
+> Ah, the changes are in patch 2/2/ for some reason.  OK, thanks.
 
-Here sbox processes do actual work living in an empty mount namespaces
-and stry is a helper process for error reporting. All tasks come from
-the same binary that lives in the root mount namespace, launched by
-systemd.
+My bad, let's move them to 1/2 then, also will apply the comments you sent
+for 2/2 in next version ;-)
 
-During "perf script" run on a trace obtained from the system there are
-these possible outcomes:
+Regards,
+Michael Wang
 
-1. The first pid to be processed is a non-namespaced helper and
-symbols are present.
-2. The first pid is not found and symbols are present.
-3. The first pid is a sandboxed task and symbols are missing.
-
-Symbols are missing, because "perf script" tries to jump into an empty
-sandbox and find a binary there, when in fact it lives outside:
-
-getcwd("/state/home/ivan", 4096)        =3D 17
-open("/proc/self/ns/mnt", O_RDONLY)     =3D 5
-open("/proc/255719/ns/mnt", O_RDONLY)   =3D 6
-setns(6, CLONE_NEWNS)                   =3D 0
-stat("/usr/local/bin/edgeworker", 0x7ffedb9b3ca0) =3D -1 ENOENT (No such
-file or directory)
-
-In the second outcome we don't have a PID to figure out the namespace
-to jump into, so this doesn't happen. It's a good fallback, but it was
-a bit confusing during debugging.
-
-It's not entirely clear to me why sometimes a helper PID is picked,
-even though it's not the first sample in the recorded trace (at least
-not in the output). This happens deterministically, or at least
-appears so. In my process tree it's 255695.
-
-I think perf should try to fallback to the default namespace to look
-up symbols if they are not found inside to cover our case. Relevant
-piece of logic is here:
-
-* https://elixir.free-electrons.com/linux/v5.4.1/source/tools/perf/util/dso=
-.c#L520
+> 
