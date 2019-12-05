@@ -2,80 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B83FD113EC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF31113ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 10:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbfLEJy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 04:54:29 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:37836 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729460AbfLEJyO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 04:54:14 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1icnpr-0003j1-Co; Thu, 05 Dec 2019 10:54:11 +0100
-To:     Eric Auger <eric.auger@redhat.com>
-Subject: Re: [RFC 1/3] KVM: arm64: pmu: Don't increment  =?UTF-8?Q?SW=5FINCR=20if=20PMCR=2EE=20is=20unset?=
-X-PHP-Originating-Script: 0:main.inc
+        id S1729577AbfLEJzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 04:55:15 -0500
+Received: from mga09.intel.com ([134.134.136.24]:7258 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729180AbfLEJzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 04:55:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 01:55:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,281,1571727600"; 
+   d="scan'208";a="361873652"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
+  by orsmga004.jf.intel.com with ESMTP; 05 Dec 2019 01:55:10 -0800
+Subject: Re: [kbuild-all] Re: [PATCH v15 06/19] leds: lp50xx: Add the LP50XX
+ family of the RGB LED driver
+To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191028183629.11779-7-dmurphy@ti.com>
+ <201910302027.2hNdR993%lkp@intel.com>
+ <29321f74-8200-90cd-40f9-8f5bdb86e34e@ti.com> <20191125150730.GA3816@amd>
+ <e05148a1-2588-0b08-2bcf-1ef819c33683@ti.com>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <7df57f17-0804-469b-0e0b-084cafa3a442@intel.com>
+Date:   Thu, 5 Dec 2019 17:54:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 05 Dec 2019 09:54:11 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <eric.auger.pro@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <kvmarm@lists.cs.columbia.edu>, <james.morse@arm.com>,
-        <andrew.murray@arm.com>, <suzuki.poulose@arm.com>,
-        <drjones@redhat.com>
-In-Reply-To: <20191204204426.9628-2-eric.auger@redhat.com>
-References: <20191204204426.9628-1-eric.auger@redhat.com>
- <20191204204426.9628-2-eric.auger@redhat.com>
-Message-ID: <b84fb5e660e313eb790a8c53853ea36e@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: eric.auger@redhat.com, eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu, james.morse@arm.com, andrew.murray@arm.com, suzuki.poulose@arm.com, drjones@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <e05148a1-2588-0b08-2bcf-1ef819c33683@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-04 20:44, Eric Auger wrote:
-> The specification says PMSWINC increments PMEVCNTR<n>_EL1 by 1
-> if PMEVCNTR<n>_EL0 is enabled and configured to count SW_INCR.
->
-> For PMEVCNTR<n>_EL0 to be enabled, we need both PMCNTENSET to
-> be set for the corresponding event counter but we also need
-> the PMCR.E bit to be set.
->
-> Fixes: 7a0adc7064b8 ("arm64: KVM: Add access handler for PMSWINC 
-> register")
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  virt/kvm/arm/pmu.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
-> index 8731dfeced8b..c3f8b059881e 100644
-> --- a/virt/kvm/arm/pmu.c
-> +++ b/virt/kvm/arm/pmu.c
-> @@ -486,6 +486,9 @@ void kvm_pmu_software_increment(struct kvm_vcpu
-> *vcpu, u64 val)
->  	if (val == 0)
->  		return;
->
-> +	if (!(__vcpu_sys_reg(vcpu, PMCR_EL0) & ARMV8_PMU_PMCR_E))
-> +		return;
-> +
->  	enable = __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
->  	for (i = 0; i < ARMV8_PMU_CYCLE_IDX; i++) {
->  		if (!(val & BIT(i)))
 
-Acked-by: Marc Zyngier <maz@kernel.org>
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+On 12/4/19 8:44 PM, Dan Murphy wrote:
+> Pavel
+>
+> On 11/25/19 9:07 AM, Pavel Machek wrote:
+>> On Wed 2019-10-30 11:43:10, Dan Murphy wrote:
+>>> Pavel
+>>>
+>>> On 10/30/19 7:07 AM, kbuild test robot wrote:
+>>>> Hi Dan,
+>>>>
+>>>> I love your patch! Yet something to improve:
+>>>>
+>>>> [auto build test ERROR on j.anaszewski-leds/for-next]
+>>> You might want to get your tree to be the base now.
+>> Do you have an idea who I need to contact?
+>
+> Not sure maybe the mail list for the kbuild lkp@intel.com?
+>
+>
+
+Thanks for the advice,  we have added the tree to our monitor list:
+
+https://github.com/intel/lkp-tests/blob/master/repo/linux/pavel-linux-leds
+
+Best Regards,
+Rong Chen
+
