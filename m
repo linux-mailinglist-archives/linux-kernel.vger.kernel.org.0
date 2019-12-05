@@ -2,99 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F351113A05
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C63113A0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Dec 2019 03:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfLEClF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 4 Dec 2019 21:41:05 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38944 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfLEClF (ORCPT
+        id S1728807AbfLECnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 4 Dec 2019 21:43:00 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41663 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728548AbfLECm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 4 Dec 2019 21:41:05 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o9so575665plk.6
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Dec 2019 18:41:05 -0800 (PST)
+        Wed, 4 Dec 2019 21:42:59 -0500
+Received: by mail-io1-f68.google.com with SMTP id z26so1966955iot.8;
+        Wed, 04 Dec 2019 18:42:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=X+lqgHIiRLBY7DQHCQbM7VobhB8S+PBBkbBvINIo7h4=;
-        b=uCiGWSZSL2YSHomU4B+jTR89AljcueykPHFPG9k/9p0HQdJGXdOrTdJ9b0hzyLqz5W
-         o8lRCYsSFVDNREt4sAEH/McuWNVCE73GLLwCbCoa41jnHZH7efgqOr1RKrLVerDeCH1T
-         VNx2BX2nGCgJRX8wBCcah6N4x68SQKvKt91rkF+V8QI+E/n4bv3EGB9MDdGZGoh6qf4N
-         hOkcbtg4UaFOlgn9RVLsCnK/VhIxFRcmeE5Kqf88DbW0UwUZMOhdle5NyE5+TOq35RYS
-         5nfXdIh8qOnxiuWzJ2JdXmMPbazRnZWyyYQ/BKkW+REnqlLYXz9wASKTMwsTcRMdkqGJ
-         tg+g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vSYXq7k3D7T0dUleEUNaJBpJRJeTNo0CbEMieQSFYHs=;
+        b=OAlH3TSVK/Ihtm0+HajQjItGYfwrIRCBBjFV/Jq4zFcQ4UILqZZ9O01MdQdPHTO94K
+         RXkSag1msFqS9qcpaCFw3tFi8LKwaRNbNzcCcP+txvSJTZUIZghbvmRKh0QCArK+6vjo
+         aQfdJj+3mDALDsspWeWTX26ZUmvxuU06vQbRezXjJ6wTuQPy7Qvurfu+7xtgTI7lGVhV
+         U5Ub0HJE67O8y9USyAtE2JrAxkf32WGOozmWkSLWsxOo+WiGUShQGn6xUrJFLTYafiZB
+         4Tt6Oiex20c6VWI9iZ5naBG3HddAx4DcJhCfwi37RXUs8pevPteod4qqWp9uuSipjM1D
+         jsqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=X+lqgHIiRLBY7DQHCQbM7VobhB8S+PBBkbBvINIo7h4=;
-        b=MiZA0imC7vvL3d5AoWViYQXYfBDiWYR/ox7ETC/mxXiLGqYNfqNeoZUPHNvPGavsii
-         Ox2HC9oOzXP7yRE8r0nNfIb1xgQ8/N8UTghSqOapW0r6E4qBJVm1SErH+GIcXj7jZ7xt
-         l6mGwDt0mSAo1JES7+/7/3J92tCeLjtVOL8+tQcvO4DYqLW21t+aN/DQXzSh8ehBrKus
-         /K6QqFZ2gtzMaDnB2r4p33Ib9e4hh9BioMpdFhWg9/RC2h5XX3wbWumW1YEeQRzpiNDY
-         /pnwKe+NRmveml+gtAnR0YJ/yhI5muv/miFCEvK4igv4HgjIfSBdg6Ny5kAhDavH/dm7
-         H6tA==
-X-Gm-Message-State: APjAAAVY8La5LOQCX7XVRYT2bxkchhrpKGaQ8JTiZQa1h6hCgE8GkIBp
-        iTFKdMHVlOL5mFeVqTrd6BQ=
-X-Google-Smtp-Source: APXvYqzu6O2DqKF873cvUST7UP6Ab9oVXV7IFyak+mrZq5h56vxW/Ax/Z6g669Xbbkh1MiIQAFWVYw==
-X-Received: by 2002:a17:90a:e291:: with SMTP id d17mr6993893pjz.116.1575513664637;
-        Wed, 04 Dec 2019 18:41:04 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id t65sm9635566pfd.178.2019.12.04.18.41.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Dec 2019 18:41:03 -0800 (PST)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ley Foon Tan <lftan@altera.com>
-Cc:     nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] nios2: Fix ioremap
-Date:   Wed,  4 Dec 2019 18:41:00 -0800
-Message-Id: <20191205024100.1066-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vSYXq7k3D7T0dUleEUNaJBpJRJeTNo0CbEMieQSFYHs=;
+        b=dLylXVxn4mN+luOoEI69tsr9RqnmoshavUU772P17YU0i+2P7Ep8xcAk7EPhE04a9L
+         Ziw4J9/YbNHG3V2+/KtCuxRMT/5Ge0KZlsoYSpVgv6Q6xpCAXm86VpQ5vMmXv0fy8bnc
+         TRYLFTVebyX4+Qbqe+Ti5l5PHF6RhjLEpx4JIAgb4rDgxgrs8z43s7lVKFSBU1uG1oDz
+         ImlZgp7j80KkIh+gXDDE4zIawlt7sux/OxqEAQddejr8+o2y39SWB05aUC8eWD3XH5nJ
+         VVBb8b8ttiMMbus6ShE8KKaDj8oJmfFXg6jcMEt7AeKoZbkqvFRVoa5GDCaiXH1U6ggO
+         IOvQ==
+X-Gm-Message-State: APjAAAVkmi8IrVf/R+T+hu0zx3ztgr0/htm/Vf6yCH/pIRf6MFjrjL6D
+        b3zM4zi2VZHr7El1TTov77DOwXfn7Luuzy/vRbw=
+X-Google-Smtp-Source: APXvYqxjxJswzFYlrl9uW8u0CkKp94IvIZ2n+WI2Ew/dZQblDPXe5IPsqoDnmP6u7zEKBzaYLc2rUWnp2z1NuLM6VvA=
+X-Received: by 2002:a6b:ab07:: with SMTP id u7mr4543829ioe.27.1575513778857;
+ Wed, 04 Dec 2019 18:42:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20191204031005.2638-1-gmayyyha@gmail.com> <20191204103629.GA22244@hermes.olymp>
+In-Reply-To: <20191204103629.GA22244@hermes.olymp>
+From:   Yanhu Cao <gmayyyha@gmail.com>
+Date:   Thu, 5 Dec 2019 10:42:46 +0800
+Message-ID: <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com>
+Subject: Re: [PATCH] ceph: check set quota operation support before syncing setxattr.
+To:     Luis Henriques <lhenriques@suse.com>
+Cc:     jlayton@kernel.org, sage@redhat.com, idryomov@gmail.com,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 5ace77e0b41a ("nios2: remove __ioremap") removed the following code,
-with the argument that cacheflag is always 0 and the expression would
-therefore always be false.
+On Wed, Dec 4, 2019 at 6:36 PM Luis Henriques <lhenriques@suse.com> wrote:
+>
+> On Wed, Dec 04, 2019 at 11:10:05AM +0800, Yanhu Cao wrote:
+> > Environment
+> > -----------
+> > ceph version: 12.2.*
+> > kernel version: 4.19+
+> >
+> > setfattr quota operation actually sends op to MDS, and settings
+> > effective. but kclient outputs 'Operation not supported'. This may conf=
+use
+> > users' understandings.
+>
+> What exactly do you mean by "settings effective"?  There have been
+> changes in the way CephFS quotas work in mimic and, if you're using a
+> Luminous cluster (12.2.*) the kernel client effectively does *not*
+> support quotas -- you'll be able to exceed the quotas you've tried to
+> set because the client won't be checking the limits.  Thus, -EOPNOTSUPP
+> seems appropriate for this scenario.
+>
+> I guess that the confusing part is that the xattr is actually set in
+> that case, but the kernel client won't be able to use it to validate
+> quotas in the filesystem tree because realms won't be created.
+>
+Yes. we use kcephfs+nfs for CentOS6.*, it does not support ceph-fuse(12.2.*=
+).
+The operating system of other applications is CentOS7.*, which uses
+ceph-fuse and can get quota settings set by kclient.
 
-	if (IS_MAPPABLE_UNCACHEABLE(phys_addr) &&
-	    IS_MAPPABLE_UNCACHEABLE(last_addr) &&
-	    !(cacheflag & _PAGE_CACHED))
-		return (void __iomem *)(CONFIG_NIOS2_IO_REGION_BASE + phys_addr);
+Thanks.
+BRs
 
-This did not take the "!" in the expression into account. Result is that
-nios2 images no longer boot. Restoring the removed code fixes the problem.
-
-Fixes: 5ace77e0b41a ("nios2: remove __ioremap")
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- arch/nios2/mm/ioremap.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/nios2/mm/ioremap.c b/arch/nios2/mm/ioremap.c
-index b56af759dcdf..819bdfcc2e71 100644
---- a/arch/nios2/mm/ioremap.c
-+++ b/arch/nios2/mm/ioremap.c
-@@ -138,6 +138,14 @@ void __iomem *ioremap(unsigned long phys_addr, unsigned long size)
- 				return NULL;
- 	}
- 
-+	/*
-+	 * Map uncached objects in the low part of address space to
-+	 * CONFIG_NIOS2_IO_REGION_BASE
-+	 */
-+	if (IS_MAPPABLE_UNCACHEABLE(phys_addr) &&
-+	    IS_MAPPABLE_UNCACHEABLE(last_addr))
-+		return (void __iomem *)(CONFIG_NIOS2_IO_REGION_BASE + phys_addr);
-+
- 	/* Mappings have to be page-aligned */
- 	offset = phys_addr & ~PAGE_MASK;
- 	phys_addr &= PAGE_MASK;
--- 
-2.17.1
-
+> Cheers,
+> --
+> Lu=C3=ADs
+> >
+> > If the kernel version and ceph version are not compatible, should check
+> > quota operations are supported first, then do sync_setxattr.
+> >
+> > reference: https://docs.ceph.com/docs/master/cephfs/quota/
+> >
+> > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > ---
+> >  fs/ceph/xattr.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > index cb18ee637cb7..189aace75186 100644
+> > --- a/fs/ceph/xattr.c
+> > +++ b/fs/ceph/xattr.c
+> > @@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, const ch=
+ar *name,
+> >                                   "during filling trace\n", inode);
+> >               err =3D -EBUSY;
+> >       } else {
+> > -             err =3D ceph_sync_setxattr(inode, name, value, size, flag=
+s);
+> > -             if (err >=3D 0 && check_realm) {
+> > +             err =3D 0;
+> > +             if (check_realm) {
+> >                       /* check if snaprealm was created for quota inode=
+ */
+> >                       spin_lock(&ci->i_ceph_lock);
+> >                       if ((ci->i_max_files || ci->i_max_bytes) &&
+> > @@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, const ch=
+ar *name,
+> >                               err =3D -EOPNOTSUPP;
+> >                       spin_unlock(&ci->i_ceph_lock);
+> >               }
+> > +             if (err =3D=3D 0)
+> > +                     err =3D ceph_sync_setxattr(inode, name, value, si=
+ze, flags);
+> >       }
+> >  out:
+> >       ceph_free_cap_flush(prealloc_cf);
+> > --
+> > 2.21.0 (Apple Git-122.2)
+> >
