@@ -2,79 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F60114C68
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D366114C6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:46:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfLFGkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 01:40:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfLFGkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 01:40:24 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1043D24679;
-        Fri,  6 Dec 2019 06:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575614423;
-        bh=p+tIxBSz0bQmkPz89oUoLma0YvcFZrDr6uINE15sZsg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hml23TGZcwh3DGHy6YiUYyWCx3/yK8SjA6ahPmbeXXwggLNiZ9/h1aHnwkgL8Bhk6
-         IpTghxQznhBFiRqEG/yMkMpL2q7dSEryGMZc/DrJ0nkGg4ZNeLnvbGH8pWwOulXfgT
-         jcZzZNsyOhCoceEbDr4eMhNqplQVEMcntqyhRsAQ=
-Date:   Fri, 6 Dec 2019 07:40:20 +0100
-From:   'Greg KH' <gregkh@linuxfoundation.org>
-To:     =?utf-8?B?77+977+977+977+977+977+9L0hZVU4tS0k=?= KOO 
-        <hyunki00.koo@samsung.com>
-Cc:     'Krzysztof Kozlowski' <krzk@kernel.org>,
-        'Hyunki Koo' <kkoos00@naver.com>, jslaby@suse.com,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kkoos00@gmail.com, 'Shinbeom Choi' <sbeom.choi@samsung.com>
-Subject: Re: [PATCH] tty: serial: samsung: support driver modulization
-Message-ID: <20191206064020.GA1318959@kroah.com>
-References: <20191201075914.23512-1-kkoos00@naver.com>
- <20191201080314.GA3716559@kroah.com>
- <CAJKOXPet=RyJ3nrcOooHdN0GSO33Ce82-9L_X0oYC2MjN7nOig@mail.gmail.com>
- <CGME20191205160249epcas2p3c1dcb24aba71f6b4264e76ebea36348c@epcas2p3.samsung.com>
- <20191205160243.GA757198@kroah.com>
- <000001d5abd6$ae5a6b50$0b0f41f0$@samsung.com>
+        id S1726298AbfLFGqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 01:46:49 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45347 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfLFGqs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 01:46:48 -0500
+Received: by mail-yw1-f68.google.com with SMTP id d12so2291707ywl.12;
+        Thu, 05 Dec 2019 22:46:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7gaosEyCtS7figPaTevfhISyTIAcwkXEtc8ItLxSuls=;
+        b=NwOh2LW6GvrtCLPiYl0gp4bYM5mcmkPs5GMwnsSHyeOnf11ZgJRAkVQtdsioEwpgbB
+         xIaHJyK/DkrNiYHZ/qhBOzG4VtQCIovYFAB2fEtMXc7QG2Cua1pJBkgW0rsf0Mt0Lxn7
+         XaBpBbSPR+KJPzqsZvRZdTxy/w60i/sMIUp8LA7CUVC/yt8ap63wgimUM075+kZT6Woi
+         hC2SBX1lq/g3rmmNzJ/ggAwDhmMaBEpi9Au3FhiXhPo5F3/PVpAQM3qX7ZzznfsE+tsd
+         s76ey9TfKuBCyr2LgmbnE4MFFA3tD14/2Dr3XMdfAKzdPkMCIe/upu512JjlfwDFQ24E
+         SC5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7gaosEyCtS7figPaTevfhISyTIAcwkXEtc8ItLxSuls=;
+        b=VIMyeHZYpRJIzxiqukOSvy3IRwbWg4MMTcH84VU0nbJu9rSbxsmQvi36KXoywGO81i
+         vOXRtWcLJGpV3ZMiJl/lr/wMnQYQGqzTlVXGGyP8prAYBiwUEWjgDvvS2B2ooJma/v1x
+         B3Q9tL/rAikJkVSK/7yahXEtI1qLurvrD+w1kBOiC9F7SgcMoua+3WkymmPii28MHMBM
+         +wuC6s1ThokYy89Bd/3Hui6TkSF7KMOhPgnaDPu6y4N/PD4tFvMKlRhIoI4eGLQyAK5r
+         GlvshhuUdw84Sld1ZuiKd+NniEJPsCej7A4hnx1fi2V0SbJNf8urGwVGNtxjb8ZvzK9W
+         2ImQ==
+X-Gm-Message-State: APjAAAVB/gTD3/MtF2GGe8Xe+ANQVPMQ/pqpQdEfi00mCsYFHolsQHTz
+        1T2Azg6rt/yg8VhI6IztaSPdWmo/GsokACXtoo8=
+X-Google-Smtp-Source: APXvYqxZPoGPZ2g12UuMmnRst0eaRP4msgk/8mr3Sw9+PT/0v4fpiG2Jd/uCEF/o8zxSRZZJsFHnZ+hqe3yjhK8ZwpE=
+X-Received: by 2002:a81:14d:: with SMTP id 74mr8923710ywb.183.1575614807610;
+ Thu, 05 Dec 2019 22:46:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <000001d5abd6$ae5a6b50$0b0f41f0$@samsung.com>
+References: <0000000000002492cc0587d58ed8@google.com> <000000000000db84550598ff519f@google.com>
+In-Reply-To: <000000000000db84550598ff519f@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 6 Dec 2019 08:46:36 +0200
+Message-ID: <CAOQ4uxgzGRJs3o=7_rM3HtdMjEP-Emy=0a98LMVvYa-3==ZpjQ@mail.gmail.com>
+Subject: Re: WARNING in ovl_rename
+To:     syzbot <syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 6, 2019 at 3:54 AM syzbot
+<syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this bug was fixed by commit:
+>
+> commit 146d62e5a5867fbf84490d82455718bfb10fe824
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Thu Apr 18 14:42:08 2019 +0000
+>
+>      ovl: detect overlapping layers
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138841dae00000
+> start commit:   037904a2 Merge branch 'x86-urgent-for-linus' of git://git...
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a42d110b47dd6b36
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bb1836a212e69f8e201a
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ba097ca00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10be1ceca00000
+>
+> If the result looks correct, please mark the bug fixed by replying with:
+>
+> #syz fix: ovl: detect overlapping layers
+>
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+Not exactly. Depends how you define "the bug".
 
-A: No.
-Q: Should I include quotations after my reply?
+The actual bug wasn't introduced by:
+     ovl: fix EIO from lookup of non-indexed upper
 
-http://daringfireball.net/2007/07/on_top
+Nor was it fixed by:
+     ovl: detect overlapping layers
 
-On Fri, Dec 06, 2019 at 10:44:20AM +0900, ������/HYUN-KI KOO wrote:
-> To support module for Samsung serial driver,
-> I would like to split the file into 2 files.
+It would be more accurate to say that the former commit exposed the bug
+to this specific repro and the latter commit has masked it from this repro.
 
-But you did not do that here in this patch, right?
+The actual bug was introduced by:
+    804032fabb3b ("ovl: don't check rename to self")
 
-> Because it cannot be supported in one file both early console and
-> module driver
-> Thus some function need to change to EXPORT_SYMBOL to use in module
-> driver file.
-> I'm not pushed yet for module driver.
+Which did not take into account hardlinking underneath overlayfs.
 
-I do not understand, this patch feels wrong and incomplete as-is, right?
-Please fix it up to work properly.
+I posted a fix to relax this WARN_ON(), which is marked for stable 4.9+,
+because I see that the repro is also reported on kernel 4.14.y and
+"ovl: detect overlapping layers" is not expected to land in 4.14.y.
 
-thanks,
-
-greg k-h
+Thanks,
+Amir.
