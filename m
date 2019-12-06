@@ -2,216 +2,435 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 476AB114E3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:39:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25084114E40
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:40:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbfLFJjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:39:08 -0500
-Received: from mail-il1-f197.google.com ([209.85.166.197]:36874 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfLFJjI (ORCPT
+        id S1726242AbfLFJkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:40:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40925 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726065AbfLFJkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:39:08 -0500
-Received: by mail-il1-f197.google.com with SMTP id t19so4843221ila.4
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 01:39:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OrytzaAn3+lacXDAUIE2oscw4h2bfuo+pRQAwDlMSEA=;
-        b=hkvx+48Gqcp9ekQMv86044AaDTp9OSx94JnwUaa6Vqi/UpmfnFo7oxMCqSJqyPF56A
-         5sIeWQ5dHNAwcIlJPYFn8/E+9GbHAWRSo4ZRkWZa9NtNPGmQI6pyCu70Hy4z5oFfn2sW
-         JAdupQsrAJGTIgSXAeO8WMp7R1knXK0J6M58dq/mPOPSzumVefot7L2vr5ehH8FM2Bue
-         s65A8ONg+bHnsxrZLFfckkShuOmCFqNFrbRrvbLUkYN0Fg9s6f0iCo1nUY75DYtNW5Zo
-         2WI1VVh6Cg9YOCDPXEKAoqhsNPItjBL2YrH0Oqo/jvrunwTbzRrQDhmY0kaE4n59pnHk
-         KcaA==
-X-Gm-Message-State: APjAAAXducBWJFdPVkfoKW4eMPREa4+8o2f+eyypdfLb12miPvz4IWNn
-        p6oY3zkp7DSG8UlcgoIRv1wua/P2td3U5TJRaRWmbR6fXZ7k
-X-Google-Smtp-Source: APXvYqzLxrvw8lC6Mq5F0OoVONEhG/8KDRrAFOBTMBuGiyqgl+mcDOiQjqHl/3Ah/g3ES68X6aMMzfshP5FTn/VYXlUcrqvzufAj
+        Fri, 6 Dec 2019 04:40:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575625220;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ee6kZgpqHsGl3Yib6gXFQ8A7ZeHKLFO7UJRRdey8Gi0=;
+        b=V+UiM+B1rnhjUYjDsDdy+3KeqQc1JZ42hImfSTaqiyzWvFonfnu3DOhMtj8aVIqOo1/SYj
+        D03MAF3IS7ws8K1b58ZWnw/XPNJi9JX4nPrjDh8KdtgNgdjCj7jF0fzg0o9lU97E8xjrwV
+        n4eZvidaUz8F8vtUFMTEvxyVaO4ku3E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-26-pZCEgwzaOTyGo-ymJQn4Eg-1; Fri, 06 Dec 2019 04:40:17 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96041DB66;
+        Fri,  6 Dec 2019 09:40:15 +0000 (UTC)
+Received: from [10.72.13.14] (ovpn-13-14.pek2.redhat.com [10.72.13.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E1A96B8ED;
+        Fri,  6 Dec 2019 09:40:04 +0000 (UTC)
+Subject: Re: [RFC PATCH 0/9] Introduce mediate ops in vfio-pci
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "He, Shaopeng" <shaopeng.he@intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>
+References: <20191205032419.29606-1-yan.y.zhao@intel.com>
+ <8bcf603c-f142-f96d-bb11-834d686f5519@redhat.com>
+ <20191205085111.GD31791@joy-OptiPlex-7040>
+ <fe84dba6-5af7-daad-3102-9fa86a90aa4d@redhat.com>
+ <20191206082232.GH31791@joy-OptiPlex-7040>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <8b97a35c-184c-cc87-4b4f-de5a1fa380a3@redhat.com>
+Date:   Fri, 6 Dec 2019 17:40:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:4818:: with SMTP id v24mr12443185ila.96.1575625147687;
- Fri, 06 Dec 2019 01:39:07 -0800 (PST)
-Date:   Fri, 06 Dec 2019 01:39:07 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003a2af3059905d1dc@google.com>
-Subject: INFO: task hung in paste_selection
-From:   syzbot <syzbot+a172213a651850d94cf2@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191206082232.GH31791@joy-OptiPlex-7040>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: pZCEgwzaOTyGo-ymJQn4Eg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
-
-HEAD commit:    aedc0650 Merge tag 'for-linus' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1475090ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d189d07c6717979
-dashboard link: https://syzkaller.appspot.com/bug?extid=a172213a651850d94cf2
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a172213a651850d94cf2@syzkaller.appspotmail.com
-
-INFO: task syz-executor.5:13549 blocked for more than 143 seconds.
-       Not tainted 5.4.0-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.5  D28536 13549   8906 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3385 [inline]
-  __schedule+0x934/0x1f90 kernel/sched/core.c:4081
-  schedule+0xdc/0x2b0 kernel/sched/core.c:4155
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4214
-  __mutex_lock_common kernel/locking/mutex.c:1036 [inline]
-  __mutex_lock+0x7ab/0x13c0 kernel/locking/mutex.c:1106
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1121
-  tty_buffer_lock_exclusive+0x30/0x40 drivers/tty/tty_buffer.c:61
-  paste_selection+0x11d/0x460 drivers/tty/vt/selection.c:361
-  tioclinux+0x133/0x480 drivers/tty/vt/vt.c:3044
-  vt_ioctl+0x1a41/0x26d0 drivers/tty/vt/vt_ioctl.c:364
-  tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a679
-Code: Bad RIP value.
-RSP: 002b:00007f044b9acc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a679
-RDX: 0000000020000180 RSI: 000000000000541c RDI: 0000000000000007
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f044b9ad6d4
-R13: 00000000004c5962 R14: 00000000004dbb78 R15: 00000000ffffffff
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1088:
-  #0: ffffffff897a4080 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0x5f/0x279 kernel/locking/lockdep.c:5334
-1 lock held by rsyslogd/8764:
-  #0: ffff8880a94c53e0 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
-fs/file.c:801
-2 locks held by getty/8855:
-  #0: ffff8880a691c090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffff8880a691c118 (&tty->atomic_write_lock){+.+.}, at:  
-tty_write_lock+0x23/0x90 drivers/tty/tty_io.c:888
-2 locks held by getty/8856:
-  #0: ffff88809d355090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000182b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/8857:
-  #0: ffff88809799b090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000180b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/8858:
-  #0: ffff88809535f090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc900017fb2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/8859:
-  #0: ffff888096e67090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc900017eb2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/8860:
-  #0: ffff8880a9088090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000181b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-2 locks held by getty/8861:
-  #0: ffff88809a733090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffffc9000176b2e0 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1c10 drivers/tty/n_tty.c:2156
-3 locks held by syz-executor.3/13496:
-2 locks held by syz-executor.5/13549:
-  #0: ffff8880a691c090 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:340
-  #1: ffff8880aa5bc0a8 (&buf->lock){+.+.}, at:  
-tty_buffer_lock_exclusive+0x30/0x40 drivers/tty/tty_buffer.c:61
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1088 Comm: khungtaskd Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0xb11/0x10c0 kernel/hung_task.c:289
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 13496 Comm: syz-executor.3 Not tainted 5.4.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:in_lock_functions+0x17/0x20 kernel/locking/spinlock.c:398
-Code: 0f 1f 00 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 31 c0 48 81  
-ff 58 8a c6 87 72 0c 31 c0 48 81 ff fd 98 c6 87 0f 92 c0 <c3> cc cc cc cc  
-cc cc cc cc 55 48 89 e5 41 57 41 56 41 55 49 c7 c5
-RSP: 0018:ffffc900018d7868 EFLAGS: 00000297
-RAX: 0000000000000000 RBX: ffffffff87c56be5 RCX: 1ffffffff1685c9c
-RDX: 0000000000000000 RSI: ffffffff83dd7b30 RDI: ffffffff87c56be5
-RBP: ffffc900018d7880 R08: ffff888069fee1c0 R09: ffffed1014d2388d
-R10: ffffed1014d2388c R11: ffff8880a691c467 R12: ffff888069fee1c0
-R13: ffff888069fee1e4 R14: ffffed100d3fdc38 R15: 0000000000000001
-FS:  00007f4190eb5700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 000000009b00e000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  schedule+0xd5/0x2b0 kernel/sched/core.c:4154
-  paste_selection+0x2f5/0x460 drivers/tty/vt/selection.c:367
-  tioclinux+0x133/0x480 drivers/tty/vt/vt.c:3044
-  vt_ioctl+0x1a41/0x26d0 drivers/tty/vt/vt_ioctl.c:364
-  tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a679
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4190eb4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045a679
-RDX: 0000000020000180 RSI: 000000000000541c RDI: 0000000000000007
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f4190eb56d4
-R13: 00000000004c5962 R14: 00000000004dbb78 R15: 00000000ffffffff
+On 2019/12/6 =E4=B8=8B=E5=8D=884:22, Yan Zhao wrote:
+> On Thu, Dec 05, 2019 at 09:05:54PM +0800, Jason Wang wrote:
+>> On 2019/12/5 =E4=B8=8B=E5=8D=884:51, Yan Zhao wrote:
+>>> On Thu, Dec 05, 2019 at 02:33:19PM +0800, Jason Wang wrote:
+>>>> Hi:
+>>>>
+>>>> On 2019/12/5 =E4=B8=8A=E5=8D=8811:24, Yan Zhao wrote:
+>>>>> For SRIOV devices, VFs are passthroughed into guest directly without =
+host
+>>>>> driver mediation. However, when VMs migrating with passthroughed VFs,
+>>>>> dynamic host mediation is required to  (1) get device states, (2) get
+>>>>> dirty pages. Since device states as well as other critical informatio=
+n
+>>>>> required for dirty page tracking for VFs are usually retrieved from P=
+Fs,
+>>>>> it is handy to provide an extension in PF driver to centralizingly co=
+ntrol
+>>>>> VFs' migration.
+>>>>>
+>>>>> Therefore, in order to realize (1) passthrough VFs at normal time, (2=
+)
+>>>>> dynamically trap VFs' bars for dirty page tracking and
+>>>> A silly question, what's the reason for doing this, is this a must for=
+ dirty
+>>>> page tracking?
+>>>>
+>>> For performance consideration. VFs' bars should be passthoughed at
+>>> normal time and only enter into trap state on need.
+>>
+>> Right, but how does this matter for the case of dirty page tracking?
+>>
+> Take NIC as an example, to trap its VF dirty pages, software way is
+> required to trap every write of ring tail that resides in BAR0.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Interesting, but it looks like we need:
+- decode the instruction
+- mediate all access to BAR0
+All of which seems a great burden for the VF driver. I wonder whether or=20
+not doing interrupt relay and tracking head is better in this case.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+>   There's
+> still no IOMMU Dirty bit available.
+>>>>>     (3) centralizing
+>>>>> VF critical states retrieving and VF controls into one driver, we pro=
+pose
+>>>>> to introduce mediate ops on top of current vfio-pci device driver.
+>>>>>
+>>>>>
+>>>>>                                       _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _=
+ _
+>>>>>     __________   register mediate ops|  ___________     ___________  =
+  |
+>>>>> |          |<-----------------------|     VF    |   |           |
+>>>>> | vfio-pci |                      | |  mediate  |   | PF driver |   |
+>>>>> |__________|----------------------->|   driver  |   |___________|
+>>>>>         |            open(pdev)      |  -----------          |       =
+  |
+>>>>>         |                                                    |
+>>>>>         |                            |_ _ _ _ _ _ _ _ _ _ _ _|_ _ _ _=
+ _|
+>>>>>        \|/                                                  \|/
+>>>>> -----------                                         ------------
+>>>>> |    VF   |                                         |    PF    |
+>>>>> -----------                                         ------------
+>>>>>
+>>>>>
+>>>>> VF mediate driver could be a standalone driver that does not bind to
+>>>>> any devices (as in demo code in patches 5-6) or it could be a built-i=
+n
+>>>>> extension of PF driver (as in patches 7-9) .
+>>>>>
+>>>>> Rather than directly bind to VF, VF mediate driver register a mediate
+>>>>> ops into vfio-pci in driver init. vfio-pci maintains a list of such
+>>>>> mediate ops.
+>>>>> (Note that: VF mediate driver can register mediate ops into vfio-pci
+>>>>> before vfio-pci binding to any devices. And VF mediate driver can
+>>>>> support mediating multiple devices.)
+>>>>>
+>>>>> When opening a device (e.g. a VF), vfio-pci goes through the mediate =
+ops
+>>>>> list and calls each vfio_pci_mediate_ops->open() with pdev of the ope=
+ning
+>>>>> device as a parameter.
+>>>>> VF mediate driver should return success or failure depending on it
+>>>>> supports the pdev or not.
+>>>>> E.g. VF mediate driver would compare its supported VF devfn with the
+>>>>> devfn of the passed-in pdev.
+>>>>> Once vfio-pci finds a successful vfio_pci_mediate_ops->open(), it wil=
+l
+>>>>> stop querying other mediate ops and bind the opening device with this
+>>>>> mediate ops using the returned mediate handle.
+>>>>>
+>>>>> Further vfio-pci ops (VFIO_DEVICE_GET_REGION_INFO ioctl, rw, mmap) on=
+ the
+>>>>> VF will be intercepted into VF mediate driver as
+>>>>> vfio_pci_mediate_ops->get_region_info(),
+>>>>> vfio_pci_mediate_ops->rw,
+>>>>> vfio_pci_mediate_ops->mmap, and get customized.
+>>>>> For vfio_pci_mediate_ops->rw and vfio_pci_mediate_ops->mmap, they wil=
+l
+>>>>> further return 'pt' to indicate whether vfio-pci should further
+>>>>> passthrough data to hw.
+>>>>>
+>>>>> when vfio-pci closes the VF, it calls its vfio_pci_mediate_ops->relea=
+se()
+>>>>> with a mediate handle as parameter.
+>>>>>
+>>>>> The mediate handle returned from vfio_pci_mediate_ops->open() lets VF
+>>>>> mediate driver be able to differentiate two opening VFs of the same d=
+evice
+>>>>> id and vendor id.
+>>>>>
+>>>>> When VF mediate driver exits, it unregisters its mediate ops from
+>>>>> vfio-pci.
+>>>>>
+>>>>>
+>>>>> In this patchset, we enable vfio-pci to provide 3 things:
+>>>>> (1) calling mediate ops to allow vendor driver customizing default
+>>>>> region info/rw/mmap of a region.
+>>>>> (2) provide a migration region to support migration
+>>>> What's the benefit of introducing a region? It looks to me we don't ex=
+pect
+>>>> the region to be accessed directly from guest. Could we simply extend =
+device
+>>>> fd ioctl for doing such things?
+>>>>
+>>> You may take a look on mdev live migration discussions in
+>>> https://lists.gnu.org/archive/html/qemu-devel/2019-11/msg01763.html
+>>>
+>>> or previous discussion at
+>>> https://lists.gnu.org/archive/html/qemu-devel/2019-02/msg04908.html,
+>>> which has kernel side implemetation https://patchwork.freedesktop.org/s=
+eries/56876/
+>>>
+>>> generaly speaking, qemu part of live migration is consistent for
+>>> vfio-pci + mediate ops way or mdev way.
+>>
+>> So in mdev, do you still have a mediate driver? Or you expect the parent
+>> to implement the region?
+>>
+> No, currently it's only for vfio-pci.
+
+And specific to PCI.
+
+> mdev parent driver is free to customize its regions and hence does not
+> requires this mediate ops hooks.
+>
+>>> The region is only a channel for
+>>> QEMU and kernel to communicate information without introducing IOCTLs.
+>>
+>> Well, at least you introduce new type of region in uapi. So this does
+>> not answer why region is better than ioctl. If the region will only be
+>> used by qemu, using ioctl is much more easier and straightforward.
+>>
+> It's not introduced by me :)
+> mdev live migration is actually using this way, I'm just keeping
+> compatible to the uapi.
+
+
+I meant e.g VFIO_REGION_TYPE_MIGRATION.
+
+
+>
+>  From my own perspective, my answer is that a region is more flexible
+> compared to ioctl. vendor driver can freely define the size,
+>
+
+Probably not since it's an ABI I think.
+
+>   mmap cap of
+> its data subregion.
+>
+
+It doesn't help much unless it can be mapped into guest (which I don't=20
+think it was the case here).
+
+>   Also, there're already too many ioctls in vfio.
+
+Probably not :) We had a brunch of=C2=A0 subsystems that have much more=20
+ioctls than VFIO. (e.g DRM)
+
+>>>
+>>>>> (3) provide a dynamic trap bar info region to allow vendor driver
+>>>>> control trap/untrap of device pci bars
+>>>>>
+>>>>> This vfio-pci + mediate ops way differs from mdev way in that
+>>>>> (1) medv way needs to create a 1:1 mdev device on top of one VF, devi=
+ce
+>>>>> specific mdev parent driver is bound to VF directly.
+>>>>> (2) vfio-pci + mediate ops way does not create mdev devices and VF
+>>>>> mediate driver does not bind to VFs. Instead, vfio-pci binds to VFs.
+>>>>>
+>>>>> The reason why we don't choose the way of writing mdev parent driver =
+is
+>>>>> that
+>>>>> (1) VFs are almost all the time directly passthroughed. Directly bind=
+ing
+>>>>> to vfio-pci can make most of the code shared/reused.
+>>>> Can we split out the common parts from vfio-pci?
+>>>>
+>>> That's very attractive. but one cannot implement a vfio-pci except
+>>> export everything in it as common part :)
+>>
+>> Well, I think there should be not hard to do that. E..g you can route it
+>> back to like:
+>>
+>> vfio -> vfio_mdev -> parent -> vfio_pci
+>>
+> it's desired for us to have mediate driver binding to PF device.
+> so once a VF device is created, only PF driver and vfio-pci are
+> required. Just the same as what needs to be done for a normal VF passthro=
+ugh.
+> otherwise, a separate parent driver binding to VF is required.
+> Also, this parent driver has many drawbacks as I mentions in this
+> cover-letter.
+
+Well, as discussed, no need to duplicate the code, bar trick should=20
+still work. The main issues I saw with this proposal is:
+
+1) PCI specific, other bus may need something similar
+2) Function duplicated with mdev and mdev can do even more
+
+
+>>>>>     If we write a
+>>>>> vendor specific mdev parent driver, most of the code (like passthroug=
+h
+>>>>> style of rw/mmap) still needs to be copied from vfio-pci driver, whic=
+h is
+>>>>> actually a duplicated and tedious work.
+>>>> The mediate ops looks quite similar to what vfio-mdev did. And it look=
+s to
+>>>> me we need to consider live migration for mdev as well. In that case, =
+do we
+>>>> still expect mediate ops through VFIO directly?
+>>>>
+>>>>
+>>>>> (2) For features like dynamically trap/untrap pci bars, if they are i=
+n
+>>>>> vfio-pci, they can be available to most people without repeated code
+>>>>> copying and re-testing.
+>>>>> (3) with a 1:1 mdev driver which passthrough VFs most of the time, pe=
+ople
+>>>>> have to decide whether to bind VFs to vfio-pci or mdev parent driver =
+before
+>>>>> it runs into a real migration need. However, if vfio-pci is bound
+>>>>> initially, they have no chance to do live migration when there's a ne=
+ed
+>>>>> later.
+>>>> We can teach management layer to do this.
+>>>>
+>>> No. not possible as vfio-pci by default has no migration region and
+>>> dirty page tracking needs vendor's mediation at least for most
+>>> passthrough devices now.
+>>
+>> I'm not quite sure I get here but in this case, just tech them to use
+>> the driver that has migration support?
+>>
+> That's a way, but as more and more passthrough devices have demands and
+> caps to do migration, will vfio-pci be used in future any more ?
+
+
+This should not be a problem:
+- If we introduce a common mdev for vfio-pci, we can just bind that=20
+driver always
+- The most straightforward way to support dirty page tracking is done by=20
+IOMMU instead of device specific operations.
+
+Thanks
+
+>
+> Thanks
+> Yan
+>
+>> Thanks
+>>
+>>
+>>> Thanks
+>>> Yn
+>>>
+>>>> Thanks
+>>>>
+>>>>
+>>>>> In this patchset,
+>>>>> - patches 1-4 enable vfio-pci to call mediate ops registered by vendo=
+r
+>>>>>      driver to mediate/customize region info/rw/mmap.
+>>>>>
+>>>>> - patches 5-6 provide a standalone sample driver to register a mediat=
+e ops
+>>>>>      for Intel Graphics Devices. It does not bind to IGDs directly bu=
+t decides
+>>>>>      what devices it supports via its pciidlist. It also demonstrates=
+ how to
+>>>>>      dynamic trap a device's PCI bars. (by adding more pciids in its
+>>>>>      pciidlist, this sample driver actually is not necessarily limite=
+d to
+>>>>>      support IGDs)
+>>>>>
+>>>>> - patch 7-9 provide a sample on i40e driver that supports Intel(R)
+>>>>>      Ethernet Controller XL710 Family of devices. It supports VF prec=
+opy live
+>>>>>      migration on Intel's 710 SRIOV. (but we commented out the real
+>>>>>      implementation of dirty page tracking and device state retrievin=
+g part
+>>>>>      to focus on demonstrating framework part. Will send out them in =
+future
+>>>>>      versions)
+>>>>>      patch 7 registers/unregisters VF mediate ops when PF driver
+>>>>>      probes/removes. It specifies its supporting VFs via
+>>>>>      vfio_pci_mediate_ops->open(pdev)
+>>>>>
+>>>>>      patch 8 reports device cap of VFIO_PCI_DEVICE_CAP_MIGRATION and
+>>>>>      provides a sample implementation of migration region.
+>>>>>      The QEMU part of vfio migration is based on v8
+>>>>>      https://lists.gnu.org/archive/html/qemu-devel/2019-08/msg05542.h=
+tml.
+>>>>>      We do not based on recent v9 because we think there are still op=
+ens in
+>>>>>      dirty page track part in that series.
+>>>>>
+>>>>>      patch 9 reports device cap of VFIO_PCI_DEVICE_CAP_DYNAMIC_TRAP_B=
+AR and
+>>>>>      provides an example on how to trap part of bar0 when migration s=
+tarts
+>>>>>      and passthrough this part of bar0 again when migration fails.
+>>>>>
+>>>>> Yan Zhao (9):
+>>>>>      vfio/pci: introduce mediate ops to intercept vfio-pci ops
+>>>>>      vfio/pci: test existence before calling region->ops
+>>>>>      vfio/pci: register a default migration region
+>>>>>      vfio-pci: register default dynamic-trap-bar-info region
+>>>>>      samples/vfio-pci/igd_dt: sample driver to mediate a passthrough =
+IGD
+>>>>>      sample/vfio-pci/igd_dt: dynamically trap/untrap subregion of IGD=
+ bar0
+>>>>>      i40e/vf_migration: register mediate_ops to vfio-pci
+>>>>>      i40e/vf_migration: mediate migration region
+>>>>>      i40e/vf_migration: support dynamic trap of bar0
+>>>>>
+>>>>>     drivers/net/ethernet/intel/Kconfig            |   2 +-
+>>>>>     drivers/net/ethernet/intel/i40e/Makefile      |   3 +-
+>>>>>     drivers/net/ethernet/intel/i40e/i40e.h        |   2 +
+>>>>>     drivers/net/ethernet/intel/i40e/i40e_main.c   |   3 +
+>>>>>     .../ethernet/intel/i40e/i40e_vf_migration.c   | 626 +++++++++++++=
++++++
+>>>>>     .../ethernet/intel/i40e/i40e_vf_migration.h   |  78 +++
+>>>>>     drivers/vfio/pci/vfio_pci.c                   | 189 +++++-
+>>>>>     drivers/vfio/pci/vfio_pci_private.h           |   2 +
+>>>>>     include/linux/vfio.h                          |  18 +
+>>>>>     include/uapi/linux/vfio.h                     | 160 +++++
+>>>>>     samples/Kconfig                               |   6 +
+>>>>>     samples/Makefile                              |   1 +
+>>>>>     samples/vfio-pci/Makefile                     |   2 +
+>>>>>     samples/vfio-pci/igd_dt.c                     | 367 ++++++++++
+>>>>>     14 files changed, 1455 insertions(+), 4 deletions(-)
+>>>>>     create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migrat=
+ion.c
+>>>>>     create mode 100644 drivers/net/ethernet/intel/i40e/i40e_vf_migrat=
+ion.h
+>>>>>     create mode 100644 samples/vfio-pci/Makefile
+>>>>>     create mode 100644 samples/vfio-pci/igd_dt.c
+>>>>>
+
