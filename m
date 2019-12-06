@@ -2,215 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3626B114C3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 06:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11488114C4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:12:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbfLFF7W convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Dec 2019 00:59:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35321 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfLFF7W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 00:59:22 -0500
-Received: from mail-pf1-f200.google.com ([209.85.210.200])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1id6e7-0005VR-M8
-        for linux-kernel@vger.kernel.org; Fri, 06 Dec 2019 05:59:19 +0000
-Received: by mail-pf1-f200.google.com with SMTP id r2so3345245pfl.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 21:59:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+2mKgHzfaWeOqhosxhoRTKR9TD87JVY8kGwmLWgEhAc=;
-        b=pV8hc+XoDolbNmxFrokDsXXOqS/1kaKZ1pJmdzduPnWtAszJOCQaL/ocHUIbvd0yw6
-         q2nJQowuu947juN+XfrTGjj5xyD2yWWpoXYo/kNEKiFJuYMlck3Q8o2ij3DPGBqmM01j
-         dIFwwQKShaakoPqkI4ibT6hO/q+bUB5uMunbyUoBraYK5PyQSsl57txSZX5cOVVVs/4u
-         Rtsbsb8aUWmUl8VxHzgHxc3rNAcykzqssaFRQNkAaJHTswbX8QAC18yrEp+/Ktwx9+Mp
-         c+7STC2GgAE5XIlQKS5k+tFQEkqe33rYEXtybYqlO1QHzESCqzCproqqRAs8YoReUTJq
-         RlNA==
-X-Gm-Message-State: APjAAAUi/GSvMJ4d/dESmUfNklgZDwYRTkMvsqg44O0935i0eE1n14PQ
-        4UK3N2ILDepv5UpbA96Wd4YeMitdVYLs/vjcJBlZIqgQel68sncSJQamN7jpIiqIwqZBOwibWqz
-        WYRy/DVWfpGF9qD/05e0K9bcdrauwr6F5bRxDB6mfqw==
-X-Received: by 2002:a17:902:fe12:: with SMTP id g18mr12934600plj.20.1575611958301;
-        Thu, 05 Dec 2019 21:59:18 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxFp7Q8nML4iKGezxNzXym94RYC3uR23DeMZAj4myq3biuBjjbGqoM2K7pXjPUXX+WdR7GiKg==
-X-Received: by 2002:a17:902:fe12:: with SMTP id g18mr12934587plj.20.1575611957951;
-        Thu, 05 Dec 2019 21:59:17 -0800 (PST)
-Received: from 2001-b011-380f-3c42-d14c-a8f0-9761-234f.dynamic-ip6.hinet.net (2001-b011-380f-3c42-d14c-a8f0-9761-234f.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:d14c:a8f0:9761:234f])
-        by smtp.gmail.com with ESMTPSA id d13sm1586857pjx.21.2019.12.05.21.59.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Dec 2019 21:59:17 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
-Subject: Re: [PATCH v2] iommu/amd: Disable IOMMU on Stoney Ridge systems
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <MWHPR12MB135851B49EEDEE17DE873506F75D0@MWHPR12MB1358.namprd12.prod.outlook.com>
-Date:   Fri, 6 Dec 2019 13:59:15 +0800
-Cc:     Lucas Stach <dev@lynxeye.de>, "joro@8bytes.org" <joro@8bytes.org>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <F7EB73FE-F902-4548-B1FD-29D78AA4A694@canonical.com>
-References: <20191129142154.29658-1-kai.heng.feng@canonical.com>
- <5b2097e8c4172a8516fcfc8c56dc98e3d105ffe2.camel@lynxeye.de>
- <MWHPR12MB1358891F2AC2AAA41E9BA835F7430@MWHPR12MB1358.namprd12.prod.outlook.com>
- <MWHPR12MB135851B49EEDEE17DE873506F75D0@MWHPR12MB1358.namprd12.prod.outlook.com>
-To:     "Deucher, Alexander" <alexander.deucher@amd.com>
-X-Mailer: Apple Mail (2.3601.0.10)
+        id S1726461AbfLFGMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 01:12:23 -0500
+Received: from mail-dm6nam10on2079.outbound.protection.outlook.com ([40.107.93.79]:34240
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726151AbfLFGMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 01:12:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WoFqAEkjPeACIL672N8D1lMhxogIt29mFeExGlItaYLqn98jJrh+JD+fQYkwBospYLs1Ae2fOV+R4hQHq0M7rHP4V2Wt3XNi9r+k+buTWCPq+C/oKZ8tkf9T0XtKe7pCh1w7crZ8+saF9mhLb++B0SZBIMD8/lw571PREYqgJqg4rUtRD7693l2cBlLr3gzH3Xr+bWJZ2UKKS4Q1Bwmi4aXM5QGYTX6faLJ4c1Lssn1exzo6guMTeqdm9rbp19iburXwZ3/gpiMtokD1pkyxKQ+NA3Bcgg9iDWxgA3juZTgTo/szE6dopI+L1bmYlhaYAMC7OWZU6uWnMftcIcYcRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L5pWZ6NtaSyf8auFQMmberX+EXwjUKZTacVzQgRwDo8=;
+ b=PG+APk0g1FFsx6EsnHWphsBPyz3xhjiD8MQJEE9s3nKhH/2upZOyVAY363u0MzYfcpZIKF5RcTeLQsSig42do39bMzn+hlPIJAeDe0qlEpwdthOMfIa5V2m44PenEpuLR5PUDL+C04Q4/5vp0yEoSE6a1wazRM+jrAEeSpmUcRVfxMzd+WlBuJBic4YIgo81ucf1sCL7a6PpxV7M7eEDoBe1qAcYU7/n9Xbss4n/A/5rgiSE9eOZ9QBTdqb907DqVRL+CCCFXKq4xFKxV1XERa2x4DPd9ePKfLuXNHtgLpX87dVS+nHEzu2v4Xp54JP06zftzZWI6viJR/2fCmBZfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L5pWZ6NtaSyf8auFQMmberX+EXwjUKZTacVzQgRwDo8=;
+ b=RSGJmBZkGoeQmf2rgcti7VRXK9amoEDQKoIVCsj6tefs22yOZQdi+gP6jQ8gH5uCTQD0uASbNqibOrGpvWgY6UGV0EqXvrXvqnc+W1vyWvm1/+a6DLAgdtkDq1ySGBUJmOCtcHF5np5Wc1jJP3FtSV3iKK4HF0y0Wy2zmE9p0qw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Rijo-john.Thomas@amd.com; 
+Received: from CY4PR12MB1925.namprd12.prod.outlook.com (10.175.62.7) by
+ CY4PR12MB1944.namprd12.prod.outlook.com (10.175.81.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2495.22; Fri, 6 Dec 2019 06:11:39 +0000
+Received: from CY4PR12MB1925.namprd12.prod.outlook.com
+ ([fe80::cd8b:1d7e:31c2:e8b4]) by CY4PR12MB1925.namprd12.prod.outlook.com
+ ([fe80::cd8b:1d7e:31c2:e8b4%7]) with mapi id 15.20.2495.014; Fri, 6 Dec 2019
+ 06:11:38 +0000
+From:   Rijo Thomas <Rijo-john.Thomas@amd.com>
+To:     Jens Wiklander <jens.wiklander@linaro.org>,
+        tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc:     Rijo Thomas <Rijo-john.Thomas@amd.com>,
+        Nimesh Easow <Nimesh.Easow@amd.com>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>
+Subject: [RFC PATCH v3 0/4] TEE driver for AMD APUs
+Date:   Fri,  6 Dec 2019 10:48:40 +0530
+Message-Id: <cover.1575608819.git.Rijo-john.Thomas@amd.com>
+X-Mailer: git-send-email 1.9.1
+Content-Type: text/plain
+X-ClientProxiedBy: MA1PR0101CA0042.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:22::28) To CY4PR12MB1925.namprd12.prod.outlook.com
+ (2603:10b6:903:120::7)
+MIME-Version: 1.0
+X-Mailer: git-send-email 1.9.1
+X-Originating-IP: [165.204.156.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2dd23edc-fa32-423d-c448-08d77a13275a
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1944:|CY4PR12MB1944:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CY4PR12MB194448E9C015FEE3C2B873C7CF5F0@CY4PR12MB1944.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0243E5FD68
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(39860400002)(366004)(136003)(346002)(189003)(199004)(2906002)(14444005)(50226002)(6666004)(54906003)(52116002)(6506007)(51416003)(8936002)(81166006)(48376002)(50466002)(316002)(99286004)(16586007)(6512007)(36756003)(81156014)(305945005)(6486002)(14454004)(2616005)(478600001)(5660300002)(8676002)(66556008)(66476007)(186003)(4326008)(966005)(66946007)(26005)(86362001)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1944;H:CY4PR12MB1925.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Vo8ZrE/WzltKJwwM+ov9Gi/txIAO6o8Po2LFChb2RiMW4NXQ5u+r04Bn55vGldalL2G/nhQG/ryRIdnSCXqEoQbaMXmray7n2bbErUsQSOU0l92N9VooeDJh+KcDxMUy+UtnoJ/OvNxy6y1cgSDOcnbJjTVLqA4HUOkR2AAYnX9M4lDs0t+3XhLMWTKYN6l6BGeHeMCPMIdSaGo9CazF1apWlI1UkdJZXIYcwYE5Z5aaxhs7vP+203offJ/bs9BS5syt2mjEIip1joN81+t46Zol35Yj/UQUbTBCwYSigkQUjFPXRxbpinXnU8ryN/Jtcm/pOaDTWewpJKn4L+0rvRljelv3QeR2RDtQ5s18boJ55+Izzgq07lVZEkpd3fdT/AQDHjFT3izZg1v4citduYl+mu0/myox92fow0o3uleiSFxpm+HdF/dRapVetgSu2YN1QGAzqJGaKHlYDxZcjHt/u9uauEYTPxhzeeDk9gE=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dd23edc-fa32-423d-c448-08d77a13275a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2019 06:11:38.6198
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Vry3uY3uuFG7Arpyi8FkotbuycPdQsrl9fNrQLndWOWeG0x/+59NUCSA2FKHLSlzlm49aQYUWhGn8QpMzQlDtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1944
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series introduces Trusted Execution Environment (TEE) driver
+for AMD APU enabled systems. The TEE is a secure area of a processor which
+ensures that sensitive data is stored, processed and protected in an
+isolated and trusted environment. The AMD Secure Processor is a dedicated
+processor which provides TEE to enable HW platform security. It offers
+protection against software attacks generated in Rich Operating
+System (Rich OS) such as Linux running on x86. The AMD-TEE Trusted OS
+running on AMD Secure Processor allows loading and execution of security
+sensitive applications called Trusted Applications (TAs). An example of
+a TA would be a DRM (Digital Rights Management) TA written to enforce
+content protection.
 
+Linux already provides a tee subsystem, which is described in [1]. The tee
+subsystem provides a generic TEE ioctl interface which can be used by user
+space to talk to a TEE driver. AMD-TEE driver registers with tee subsystem
+and implements tee function callbacks in an AMD platform specific manner.
 
-> On Dec 5, 2019, at 00:08, Deucher, Alexander <alexander.deucher@amd.com> wrote:
-> 
->> -----Original Message-----
->> From: Deucher, Alexander
->> Sent: Monday, December 2, 2019 11:37 AM
->> To: Lucas Stach <dev@lynxeye.de>; Kai-Heng Feng
->> <kai.heng.feng@canonical.com>; joro@8bytes.org; Koenig, Christian
->> (Christian.Koenig@amd.com) <Christian.Koenig@amd.com>
->> Cc: iommu@lists.linux-foundation.org; linux-kernel@vger.kernel.org
->> Subject: RE: [PATCH v2] iommu/amd: Disable IOMMU on Stoney Ridge
->> systems
->> 
->>> -----Original Message-----
->>> From: Lucas Stach <dev@lynxeye.de>
->>> Sent: Sunday, December 1, 2019 7:43 AM
->>> To: Kai-Heng Feng <kai.heng.feng@canonical.com>; joro@8bytes.org
->>> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>;
->>> iommu@lists.linux-foundation.org; linux-kernel@vger.kernel.org
->>> Subject: Re: [PATCH v2] iommu/amd: Disable IOMMU on Stoney Ridge
->>> systems
->>> 
->>> Am Freitag, den 29.11.2019, 22:21 +0800 schrieb Kai-Heng Feng:
->>>> Serious screen flickering when Stoney Ridge outputs to a 4K monitor.
->>>> 
->>>> According to Alex Deucher, IOMMU isn't enabled on Windows, so let's
->>>> do the same here to avoid screen flickering on 4K monitor.
->>> 
->>> This doesn't seem like a good solution, especially if there isn't a
->>> method for the user to opt-out.  Some users might prefer having the
->>> IOMMU support to 4K display output.
->>> 
->>> But before using the big hammer of disabling or breaking one of those
->>> features, we should take a look at what's the issue here. Screen
->>> flickering caused by the IOMMU being active hints to the IOMMU not
->>> being able to sustain the translation bandwidth required by the high-
->>> bandwidth isochronous transfers caused by 4K scanout, most likely due
->>> to insufficient TLB space.
->>> 
->>> As far as I know the framebuffer memory for the display buffers is
->>> located in stolen RAM, and thus contigous in memory. I don't know the
->>> details of the GPU integration on those APUs, but maybe there even is
->>> a way to bypass the IOMMU for the stolen VRAM regions?
->>> 
->>> If there isn't and all GPU traffic passes through the IOMMU when
->>> active, we should check if the stolen RAM is mapped with hugepages on
->>> the IOMMU side. All the stolen RAM can most likely be mapped with a
->>> few hugepage mappings, which should reduce IOMMU TLB demand by a
->> large margin.
->> 
->> The is no issue when we scan out of the carve out region.  The issue occurs
->> when we scan out of regular system memory (scatter/gather).  Many newer
->> laptops have very small carve out regions (e.g., 32 MB), so we have to use
->> regular system pages to support multiple high resolution displays.  The
->> problem is, the latency gets too high at some point when the IOMMU is
->> involved.  Huge pages would probably help in this case, but I'm not sure if
->> there is any way to guarantee that we get huge pages for system memory.  I
->> guess we could use CMA or something like that.
-> 
-> Thomas recently sent out a patch set to add huge page support to ttm:
-> https://patchwork.freedesktop.org/series/70090/
-> We'd still need a way to guarantee huge pages for the display buffer.
+The following TEE commands are recognized by AMD-TEE Trusted OS:
+1. TEE_CMD_ID_LOAD_TA : Load Trusted Application (TA) binary into TEE
+   environment
+2. TEE_CMD_ID_UNLOAD_TA : Unload TA binary from TEE environment
+3. TEE_CMD_ID_OPEN_SESSION : Open session with loaded TA
+4. TEE_CMD_ID_CLOSE_SESSION : Close session with loaded TA
+5. TEE_CMD_ID_INVOKE_CMD : Invoke a command with loaded TA
+6. TEE_CMD_ID_MAP_SHARED_MEM : Map shared memory
+7. TEE_CMD_ID_UNMAP_SHARED_MEM : Unmap shared memory
 
-Is there an amdgpu counterpart to let me test out?
+Each command has its own payload format. The AMD-TEE driver creates a
+command buffer payload for submission to AMD-TEE Trusted OS.
 
-Kai-Heng
+This patch series has a dependency on another patch set titled - Add TEE
+interface support to AMD Secure Processor driver.
+Link: https://lkml.org/lkml/2019/12/4/42
 
-> 
-> Alex
-> 
->> 
->> Alex
->> 
->>> 
->>> Regards,
->>> Lucas
->>> 
->>>> Cc: Alex Deucher <alexander.deucher@amd.com>
->>>> Bug:
->>>> 
->> https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgi
->>>> tl
->>>> 
->>> 
->> ab.freedesktop.org%2Fdrm%2Famd%2Fissues%2F961&amp;data=02%7C01%
->>> 7Calexa
->>>> 
->>> 
->> nder.deucher%40amd.com%7C30540b2bf2be417c4d9508d7765bf07f%7C3dd
->>> 8961fe4
->>>> 
->>> 
->> 884e608e11a82d994e183d%7C0%7C0%7C637108010075463266&amp;sdata=1
->>> ZIZUWos
->>>> cPiB4auOY10jlGzoFeWszYMDBQG0CtrrOO8%3D&amp;reserved=0
->>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>> ---
->>>> v2:
->>>> - Find Stoney graphics instead of host bridge.
->>>> 
->>>> drivers/iommu/amd_iommu_init.c | 13 ++++++++++++-
->>>> 1 file changed, 12 insertions(+), 1 deletion(-)
->>>> 
->>>> diff --git a/drivers/iommu/amd_iommu_init.c
->>>> b/drivers/iommu/amd_iommu_init.c index 568c52317757..139aa6fdadda
->>>> 100644
->>>> --- a/drivers/iommu/amd_iommu_init.c
->>>> +++ b/drivers/iommu/amd_iommu_init.c
->>>> @@ -2516,6 +2516,7 @@ static int __init early_amd_iommu_init(void)
->>>> 	struct acpi_table_header *ivrs_base;
->>>> 	acpi_status status;
->>>> 	int i, remap_cache_sz, ret = 0;
->>>> +	u32 pci_id;
->>>> 
->>>> 	if (!amd_iommu_detected)
->>>> 		return -ENODEV;
->>>> @@ -2603,6 +2604,16 @@ static int __init early_amd_iommu_init(void)
->>>> 	if (ret)
->>>> 		goto out;
->>>> 
->>>> +	/* Disable IOMMU if there's Stoney Ridge graphics */
->>>> +	for (i = 0; i < 32; i++) {
->>>> +		pci_id = read_pci_config(0, i, 0, 0);
->>>> +		if ((pci_id & 0xffff) == 0x1002 && (pci_id >> 16) == 0x98e4) {
->>>> +			pr_info("Disable IOMMU on Stoney Ridge\n");
->>>> +			amd_iommu_disabled = true;
->>>> +			break;
->>>> +		}
->>>> +	}
->>>> +
->>>> 	/* Disable any previously enabled IOMMUs */
->>>> 	if (!is_kdump_kernel() || amd_iommu_disabled)
->>>> 		disable_iommus();
->>>> @@ -2711,7 +2722,7 @@ static int __init state_next(void)
->>>> 		ret = early_amd_iommu_init();
->>>> 		init_state = ret ? IOMMU_INIT_ERROR :
->>> IOMMU_ACPI_FINISHED;
->>>> 		if (init_state == IOMMU_ACPI_FINISHED &&
->>> amd_iommu_disabled) {
->>>> -			pr_info("AMD IOMMU disabled on kernel command-
->>> line\n");
->>>> +			pr_info("AMD IOMMU disabled\n");
->>>> 			init_state = IOMMU_CMDLINE_DISABLED;
->>>> 			ret = -EINVAL;
->>>> 		}
+v3:
+* Updated [1] with driver details
+
+v2:
+* Added a helper API in AMD Secure Processor driver, which can be
+  called by AMD-TEE driver during module init to check if TEE is
+  present on the device
+* Added proper checks for parameter attribute variable
+* Used tee_shm_pool_alloc() to allocate struct tee_shm_pool data structure
+* Removed all references to tee_private.h header file in driver code,
+  except for the file drivers/tee/amdtee/core.c. The driver loads TA binary
+  by calling request_firmware(), which takes struct device* as one of its
+  arguments. The device 'dev' field is part of struct tee_device, defined
+  in tee_private.h
+
+[1] https://www.kernel.org/doc/Documentation/tee.txt
+
+Rijo Thomas (4):
+  tee: allow compilation of tee subsystem for AMD CPUs
+  tee: add AMD-TEE driver
+  tee: amdtee: check TEE status during driver initialization
+  Documentation: tee: add AMD-TEE driver details
+
+ Documentation/tee.txt               |  81 ++++++
+ drivers/crypto/ccp/tee-dev.c        |  11 +
+ drivers/tee/Kconfig                 |   4 +-
+ drivers/tee/Makefile                |   1 +
+ drivers/tee/amdtee/Kconfig          |   8 +
+ drivers/tee/amdtee/Makefile         |   5 +
+ drivers/tee/amdtee/amdtee_if.h      | 183 +++++++++++++
+ drivers/tee/amdtee/amdtee_private.h | 159 +++++++++++
+ drivers/tee/amdtee/call.c           | 373 ++++++++++++++++++++++++++
+ drivers/tee/amdtee/core.c           | 516 ++++++++++++++++++++++++++++++++++++
+ drivers/tee/amdtee/shm_pool.c       |  93 +++++++
+ include/linux/psp-tee.h             |  18 ++
+ include/uapi/linux/tee.h            |   1 +
+ 13 files changed, 1451 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/tee/amdtee/Kconfig
+ create mode 100644 drivers/tee/amdtee/Makefile
+ create mode 100644 drivers/tee/amdtee/amdtee_if.h
+ create mode 100644 drivers/tee/amdtee/amdtee_private.h
+ create mode 100644 drivers/tee/amdtee/call.c
+ create mode 100644 drivers/tee/amdtee/core.c
+ create mode 100644 drivers/tee/amdtee/shm_pool.c
+
+--
+1.9.1
 
