@@ -2,67 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D9FE1154F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A17115508
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfLFQTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:19:10 -0500
-Received: from mail-pj1-f47.google.com ([209.85.216.47]:34220 "EHLO
-        mail-pj1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfLFQTJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:19:09 -0500
-Received: by mail-pj1-f47.google.com with SMTP id j11so1817064pjs.1;
-        Fri, 06 Dec 2019 08:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=41QvHatHr0g3uZPwHbiixW/aEz8FiwJ4DRuDN3ZTAZU=;
-        b=kDgU7N/FqrEaiBPUK3AQSShoOnDpdLUi6+T3Dv9758TdJM2N+yVEtJUwPnP1GSb0n6
-         rMHgB0VGs98mnoNW9NaSuWAYvL8bRPDc9JI9cx5HrvxojjckmbBiflAlsB8wP0XVPh1Q
-         GcqLi6HqEyxzTyMilAkmWUNAXUYVdsmJjrVkJn2zS18WlZFuAikif/gEGsUCsNCHcHBh
-         Dc0c51GCkZu66l673y4us9LPrn3GkE+Kd/FN/7QiZWNIfRxepmIedBdah+hE4WW3KDb2
-         Iqjkjxxj6WYH2NFHKV/ngt9/G1hI2ONc3vz90tEpX9twhfPbM2X7UaK0pmCSKYjZ/vzF
-         rEKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=41QvHatHr0g3uZPwHbiixW/aEz8FiwJ4DRuDN3ZTAZU=;
-        b=cnZ4QgpPlU71Xt4PaTw9akOtBrLf6QX9xZsc0RJv9YBPBiKhY+aJEv7xCUUELICxnp
-         Yxiw4Ea/m7BqlXwVfCp/zgQtqaJVt0IBMYGaS1/VmXofC1EknZWfszGHK2WYduoQJ496
-         0q91JmZMZxyZf3tpHWy/YLuwG51zsCgyyPtWYbFXlaf1u0mLiwkepLOZi27DFO8SQWPM
-         za3pCMD2MQLHhXFjmoQxXyUGXjbv5vZFQdrThrrn2Ta1LSR3tkDc82fdxPn2AfhEsEoz
-         wzSt+LUXn1AOu8YY2weTEAEKBRmGHLa1uSOzuNKnLHH0PKztv+CeH065itsNblC0ULFO
-         EXBA==
-X-Gm-Message-State: APjAAAXSlZCo8zfZYAYKl3McihEUqOx6lbUywwF9TV5dwQH6kgXOBN8d
-        daGS63KQBCdqXvqF6+4IvoUN4ZO8
-X-Google-Smtp-Source: APXvYqwP7ciMTfz113hONKdgvFWnVcg5bk56SmmrYXxIlvQPh6h6eSbqeAGJ8qI3xCJCnyWSnBnXBQ==
-X-Received: by 2002:a17:90a:c790:: with SMTP id gn16mr16647645pjb.76.1575649149075;
-        Fri, 06 Dec 2019 08:19:09 -0800 (PST)
-Received: from [192.168.84.65] (8.100.247.35.bc.googleusercontent.com. [35.247.100.8])
-        by smtp.gmail.com with ESMTPSA id s2sm17531268pfb.109.2019.12.06.08.19.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 08:19:08 -0800 (PST)
-Subject: Re: recvfrom/recvmsg performance and CONFIG_HARDENED_USERCOPY
-To:     Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        network dev <netdev@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <23db23416d3148fa86e54dccc6152266@AcuMS.aculab.com>
- <dc10298d-4280-b9b4-9203-be4000e85c42@gmail.com>
- <8b8a3cc1c3341912e0db5c55cd0e504dd4371588.camel@redhat.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <fbac8306-247f-10f3-4067-14c0610b17d6@gmail.com>
-Date:   Fri, 6 Dec 2019 08:19:03 -0800
+        id S1726332AbfLFQVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:21:09 -0500
+Received: from relay.sw.ru ([185.231.240.75]:51204 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726258AbfLFQVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:21:09 -0500
+Received: from dhcp-172-16-25-5.sw.ru ([172.16.25.5])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1idGLe-00008F-Rf; Fri, 06 Dec 2019 19:20:55 +0300
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: [PATCH 2/2] kasan: Don't allocate page tables in
+ kasan_release_vmalloc()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        Daniel Axtens <dja@axtens.net>, Qian Cai <cai@lca.pw>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20191204204534.32202-1-aryabinin@virtuozzo.com>
+ <20191204204534.32202-2-aryabinin@virtuozzo.com>
+ <20191204142256.567b143cfde572acd804544a@linux-foundation.org>
+Message-ID: <1d53f0a3-a37e-72ca-fc69-c34e4f5023b7@virtuozzo.com>
+Date:   Fri, 6 Dec 2019 19:20:39 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <8b8a3cc1c3341912e0db5c55cd0e504dd4371588.camel@redhat.com>
+In-Reply-To: <20191204142256.567b143cfde572acd804544a@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,24 +42,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 12/6/19 8:09 AM, Paolo Abeni wrote:
-
-> Oh, nice! I though the compiler was smart enough to avoid the indirect
-> call with the current code, but it looks like that least gcc 9.2.1 is
-> not.
+On 12/5/19 1:22 AM, Andrew Morton wrote:
+> On Wed,  4 Dec 2019 23:45:34 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
 > 
-> Thanks for pointing that out!
+>> The purpose of kasan_release_vmalloc() is to unmap and deallocate shadow
+>> memory. The usage of apply_to_page_range() isn't suitable in that scenario
+>> because it allocates pages to fill missing page tables entries.
+>> This also cause sleep in atomic bug:
+>>
+>> 	BUG: sleeping function called from invalid context at mm/page_alloc.c:4681
+>> 	in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 15087, name:
+>>
+>> 	Call Trace:
+>> 	 __dump_stack lib/dump_stack.c:77 [inline]
+>> 	 dump_stack+0x199/0x216 lib/dump_stack.c:118
+>> 	 ___might_sleep.cold.97+0x1f5/0x238 kernel/sched/core.c:6800
+>> 	 __might_sleep+0x95/0x190 kernel/sched/core.c:6753
+>> 	 prepare_alloc_pages mm/page_alloc.c:4681 [inline]
+>> 	 __alloc_pages_nodemask+0x3cd/0x890 mm/page_alloc.c:4730
+>> 	 alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2211
+>> 	 alloc_pages include/linux/gfp.h:532 [inline]
+>> 	 __get_free_pages+0xc/0x40 mm/page_alloc.c:4786
+>> 	 __pte_alloc_one_kernel include/asm-generic/pgalloc.h:21 [inline]
+>> 	 pte_alloc_one_kernel include/asm-generic/pgalloc.h:33 [inline]
+>> 	 __pte_alloc_kernel+0x1d/0x200 mm/memory.c:459
+>> 	 apply_to_pte_range mm/memory.c:2031 [inline]
+>> 	 apply_to_pmd_range mm/memory.c:2068 [inline]
+>> 	 apply_to_pud_range mm/memory.c:2088 [inline]
+>> 	 apply_to_p4d_range mm/memory.c:2108 [inline]
+>> 	 apply_to_page_range+0x77d/0xa00 mm/memory.c:2133
+>> 	 kasan_release_vmalloc+0xa7/0xc0 mm/kasan/common.c:970
+>> 	 __purge_vmap_area_lazy+0xcbb/0x1f30 mm/vmalloc.c:1313
+>> 	 try_purge_vmap_area_lazy mm/vmalloc.c:1332 [inline]
+>> 	 free_vmap_area_noflush+0x2ca/0x390 mm/vmalloc.c:1368
+>> 	 free_unmap_vmap_area mm/vmalloc.c:1381 [inline]
+>> 	 remove_vm_area+0x1cc/0x230 mm/vmalloc.c:2209
+>> 	 vm_remove_mappings mm/vmalloc.c:2236 [inline]
+>> 	 __vunmap+0x223/0xa20 mm/vmalloc.c:2299
+>> 	 __vfree+0x3f/0xd0 mm/vmalloc.c:2356
+>> 	 __vmalloc_area_node mm/vmalloc.c:2507 [inline]
+>> 	 __vmalloc_node_range+0x5d5/0x810 mm/vmalloc.c:2547
+>> 	 __vmalloc_node mm/vmalloc.c:2607 [inline]
+>> 	 __vmalloc_node_flags mm/vmalloc.c:2621 [inline]
+>> 	 vzalloc+0x6f/0x80 mm/vmalloc.c:2666
+>> 	 alloc_one_pg_vec_page net/packet/af_packet.c:4233 [inline]
+>> 	 alloc_pg_vec net/packet/af_packet.c:4258 [inline]
+>> 	 packet_set_ring+0xbc0/0x1b50 net/packet/af_packet.c:4342
+>> 	 packet_setsockopt+0xed7/0x2d90 net/packet/af_packet.c:3695
+>> 	 __sys_setsockopt+0x29b/0x4d0 net/socket.c:2117
+>> 	 __do_sys_setsockopt net/socket.c:2133 [inline]
+>> 	 __se_sys_setsockopt net/socket.c:2130 [inline]
+>> 	 __x64_sys_setsockopt+0xbe/0x150 net/socket.c:2130
+>> 	 do_syscall_64+0xfa/0x780 arch/x86/entry/common.c:294
+>> 	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
 > 
-> In this specific scenario I think the code you propose above is better
-> than INDIRECT_CALL.
+> Why is this warning happening?  Some lock held?  If so, which one?
+
+spin_lock(&free_vmap_area_lock);
+
 > 
-> Would you submit the patch formally?
-
-Certainly, although I am not sure this will be enough to close
-the gap between recvmsg() and recvfrom() :)
-
-Also I was wondering if a likely() or unlikely() clause would
-make sense.
-
-This could prevent an over zealous compiler optimizer
-to put back the indirect call that we tried to avoid.
+>> Add kasan_unmap_page_range() which skips empty page table entries instead
+>> of allocating them.
+> 
+> Adding an open-coded range walker is unfortunate.  Did you consider
+> generalizing apply_to_page_range() for this purpose?  I did - it looks
+> messy.
+> 
+> Somewhat.  I guess adding another arg to
+> apply_to_p4d_range...apply_to_pte_range wouldn't kill us.  I wonder if
+> there would be other sites which could utilize the additional control.
+> 
+> 
