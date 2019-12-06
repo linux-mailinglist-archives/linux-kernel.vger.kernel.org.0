@@ -2,157 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F038114C1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 06:44:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5432D114C3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 06:59:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfLFFoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 00:44:37 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41339 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfLFFoh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 00:44:37 -0500
-Received: by mail-ed1-f66.google.com with SMTP id c26so4794710eds.8;
-        Thu, 05 Dec 2019 21:44:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jG4VeHKyYrwbwzbvzBFt4Gx2edRiCsdmF+I1yIWaGOQ=;
-        b=hwk8aQjrxoq7/cMpTn3R/vI7AwL8vcmF8odckxSgFkQ7S5l8xjksnJ8GXpTauf6VxW
-         FbIV50+Finemz9inqv8p8j41pxeEKHNNiTaBbub+pgk7JxY5lpgS3hYLG8ATCX7ZFVUJ
-         uwcoARmbktnQSOrOAabeGjejFiovi03QBCyaK5qjJgTgfHABaIwl6sLey6iCxrHLGHc2
-         s6D4pmKTdaB48kvXcyRq90VKOHsjA4vR4zDhHYOKpEn9UfjSjHsv60cvhXqF5r0DK0p1
-         0hkd08vUqnTd6gqZMDG6fgBSNT1VzMrWRhfLztWMZtiOdx5zqQ+SaGXPRwBQMCWdQdDB
-         Gpwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jG4VeHKyYrwbwzbvzBFt4Gx2edRiCsdmF+I1yIWaGOQ=;
-        b=sR7N41nbiQGsPPkUeaImK66VFXttJq4w3Be24/ZQlBh574GnDSa7NTECidJ4O8ZM5q
-         m8G7TVC1WB+gUhmlT/KGS4D0HIoOztc++V8pMoNzyH0cUZbdGxLQG1OlSeVJ4hZcX9+L
-         Phing4XrS0HvfJNfEOs/1mFIeMpsx6jOj7bEzDOcB+v25JU3cz4RSSlS4A5ts+OUKXWU
-         Lnw6LI9hqrgYu8027eA3FQ4aJmraVKAQjak8MujzRJ6iO/AlGNHGIM5sFMzo/hsL04yc
-         EVY7rhshxPcRFQXoWaTcufTTYFv35/qSzxQVpHjZ4v+mZmVARteJagmJosxHBFGQqshL
-         tMsw==
-X-Gm-Message-State: APjAAAUUhaxIBVXqpa2xCS8/k+Tq2X6U1cSYD06djeL80nuwciIzi9Dw
-        QODySDSlTN2IQRsecaZO+bqgbQu1+BlPVrNeCBU=
-X-Google-Smtp-Source: APXvYqyDDeni3gnBiyE0+HxIAg+g/Cy0WoARGXH+7cPG3f7z554qdeBuocYEs/PL7lODC/WIgmE8dBBlC+DWW7zBBjU=
-X-Received: by 2002:a05:6402:12d1:: with SMTP id k17mr14585333edx.291.1575611074979;
- Thu, 05 Dec 2019 21:44:34 -0800 (PST)
+        id S1726225AbfLFF7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 00:59:09 -0500
+Received: from mga01.intel.com ([192.55.52.88]:56909 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbfLFF7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 00:59:09 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 21:59:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,283,1571727600"; 
+   d="scan'208";a="413229029"
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Dec 2019 21:59:06 -0800
+Date:   Fri, 6 Dec 2019 00:50:57 -0500
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [RFC PATCH 3/9] vfio/pci: register a default migration region
+Message-ID: <20191206055057.GE31791@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20191205032419.29606-1-yan.y.zhao@intel.com>
+ <20191205032638.29747-1-yan.y.zhao@intel.com>
+ <20191205165515.3a9ac7b6@x1.home>
 MIME-Version: 1.0
-References: <1574679352-2989-1-git-send-email-shubhrajyoti.datta@gmail.com> <20191205181740.GA26684@bogus>
-In-Reply-To: <20191205181740.GA26684@bogus>
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Fri, 6 Dec 2019 11:14:23 +0530
-Message-ID: <CAKfKVtHnnFbgmtpRJYS7V97SvZdipnhf7Pe1kOxPpJh+30bEFA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: Add dt bindings for flex noc Performance Monitor
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org,
-        corbet@lwn.net, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205165515.3a9ac7b6@x1.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 11:47 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Nov 25, 2019 at 04:25:50PM +0530, shubhrajyoti.datta@gmail.com wrote:
-> > From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> >
-> > Add dt bindings for flexnoc Performance Monitor.
-> > The flexnoc counters for read and write response and requests are
-> > supported.
-> >
-> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+On Fri, Dec 06, 2019 at 07:55:15AM +0800, Alex Williamson wrote:
+> On Wed,  4 Dec 2019 22:26:38 -0500
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > Vendor driver specifies when to support a migration region through cap
+> > VFIO_PCI_DEVICE_CAP_MIGRATION in vfio_pci_mediate_ops->open().
+> > 
+> > If vfio-pci detects this cap, it creates a default migration region on
+> > behalf of vendor driver with region len=0 and region->ops=null.
+> > Vendor driver should override this region's len, flags, rw, mmap in
+> > its vfio_pci_mediate_ops.
+> > 
+> > This migration region definition is aligned to QEMU vfio migration code v8:
+> > (https://lists.gnu.org/archive/html/qemu-devel/2019-08/msg05542.html)
+> > 
+> > Cc: Kevin Tian <kevin.tian@intel.com>
+> > 
+> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
 > > ---
-> > changes from RFC:
-> > moved to schema / yaml
-> >
-> >  .../devicetree/bindings/perf/xlnx-flexnoc-pm.yaml  | 45 ++++++++++++++++++++++
-> >  1 file changed, 45 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml b/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
-> > new file mode 100644
-> > index 0000000..bd0f345
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
-> > @@ -0,0 +1,45 @@
-> > +# SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
+> >  drivers/vfio/pci/vfio_pci.c |  15 ++++
+> >  include/linux/vfio.h        |   1 +
+> >  include/uapi/linux/vfio.h   | 149 ++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 165 insertions(+)
+> > 
+> > diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> > index f3730252ee82..059660328be2 100644
+> > --- a/drivers/vfio/pci/vfio_pci.c
+> > +++ b/drivers/vfio/pci/vfio_pci.c
+> > @@ -115,6 +115,18 @@ static inline bool vfio_pci_is_vga(struct pci_dev *pdev)
+> >  	return (pdev->class >> 8) == PCI_CLASS_DISPLAY_VGA;
+> >  }
+> >  
+> > +/**
+> > + * init a region to hold migration ctl & data
+> > + */
+> > +void init_migration_region(struct vfio_pci_device *vdev)
+> > +{
+> > +	vfio_pci_register_dev_region(vdev, VFIO_REGION_TYPE_MIGRATION,
+> > +		VFIO_REGION_SUBTYPE_MIGRATION,
+> > +		NULL, 0,
+> > +		VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE,
+> > +		NULL);
+> > +}
+> > +
+> >  static void vfio_pci_probe_mmaps(struct vfio_pci_device *vdev)
+> >  {
+> >  	struct resource *res;
+> > @@ -523,6 +535,9 @@ static int vfio_pci_open(void *device_data)
+> >  				vdev->mediate_ops = mentry->ops;
+> >  				vdev->mediate_handle = handle;
+> >  
+> > +				if (caps & VFIO_PCI_DEVICE_CAP_MIGRATION)
+> > +					init_migration_region(vdev);
+> 
+> No.  We're not going to add a cap flag for every region the mediation
+> driver wants to add.  The mediation driver should have the ability to
+> add regions and irqs to the device itself.  Thanks,
+> 
+> Alex
 >
-> () around the licenses.
->
-> Are you good with GPL v10? Make it 'GPL-2.0-only' instead.
-fixed in v2
+ok. got it. will do it.
 
->
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/perf/xlnx-flexnoc-pm.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Xilinx flexnoc Performance Monitor device tree bindings
-> > +
-> > +maintainers:
-> > +  - Arnd Bergmann <arnd@arndb.de>
-> > +  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> This should be someone familar with this h/w (you).
->
-fixed in v2
-> > +
-> > +properties:
-> > +  compatible:
-> > +    # Versal SoC based boards
-> > +    items:
-> > +      - enum:
-> > +          - xlnx,flexnoc-pm-2.7
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description: funnel registers
-> > +      - description: baselpd registers
-> > +      - description: basefpd registers
-> > +
-> > +  reg-names:
-> > +    # The core schema enforces this is a string array
-> > +    items:
-> > +      - const: funnel
-> > +      - const: baselpd
-> > +      - const: basefpd
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
->
-> No point having 'reg-names' if not required.
-this I am using to get the addresses.
+Thanks
+Yan
 
->
->
-> Add:
->
-> additionalProperties: false
-
-updated in v2.
->
 > > +
-> > +examples:
-> > +  - |
-> > +    performance-monitor@f0920000 {
-> > +        compatible = "xlnx,flexnoc-pm-2.7";
-> > +        reg-names = "funnel", "baselpd", "basefpd";
-> > +        reg = <0x0 0xf0920000 0x0 0x1000>,
-> > +              <0x0 0xf0980000 0x0 0x9000>,
-> > +              <0x0 0xf0b80000 0x0 0x9000>;
-> > +    };
-> > --
-> > 2.1.1
-> >
+> >  				pr_info("vfio pci found mediate_ops %s, caps=%llx, handle=%x for %x:%x\n",
+> >  						vdev->mediate_ops->name, caps,
+> >  						handle, vdev->pdev->vendor,
+> 
