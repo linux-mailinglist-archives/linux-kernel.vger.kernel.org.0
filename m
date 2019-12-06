@@ -2,53 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE811158AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 22:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AABDD1158D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 22:53:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726403AbfLFViM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 16:38:12 -0500
-Received: from mga17.intel.com ([192.55.52.151]:42161 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfLFViM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 16:38:12 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 13:38:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,286,1571727600"; 
-   d="scan'208";a="294976823"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2019 13:38:11 -0800
-Date:   Fri, 6 Dec 2019 13:38:11 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     linmiaohe <linmiaohe@huawei.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, kvm@vger.kernel.org,
+        id S1726420AbfLFVx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 16:53:29 -0500
+Received: from freki.datenkhaos.de ([81.7.17.101]:59500 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfLFVx3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 16:53:29 -0500
+X-Greylist: delayed 350 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 16:53:27 EST
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 0EEA01E3A722;
+        Fri,  6 Dec 2019 22:47:36 +0100 (CET)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3vv8b2g8ZfmA; Fri,  6 Dec 2019 22:47:30 +0100 (CET)
+Received: from latitude (x4db74696.dyn.telefonica.de [77.183.70.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Fri,  6 Dec 2019 22:47:30 +0100 (CET)
+Date:   Fri, 6 Dec 2019 22:47:25 +0100
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: get rid of var page in kvm_set_pfn_dirty()
-Message-ID: <20191206213811.GF5433@linux.intel.com>
-References: <1575515105-19426-1-git-send-email-linmiaohe@huawei.com>
+Subject: Re: [RFC PATCH 04/10] pipe: Use head and tail pointers for the ring,
+ not cursor and length [ver #2]
+Message-ID: <20191206214725.GA2108@latitude>
+References: <157186182463.3995.13922458878706311997.stgit@warthog.procyon.org.uk>
+ <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1575515105-19426-1-git-send-email-linmiaohe@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <157186186167.3995.7568100174393739543.stgit@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 11:05:05AM +0800, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
-> 
-> We can get rid of unnecessary var page in
-> kvm_set_pfn_dirty() , thus make code style
-> similar with kvm_set_pfn_accessed().
+On 2019 Okt 23, David Howells wrote:
+> Convert pipes to use head and tail pointers for the buffer ring rather than
+> pointer and length as the latter requires two atomic ops to update (or a
+> combined op) whereas the former only requires one.
 
-For future reference, there's no need to wrap so aggressively, preferred
-kernel style is to wrap at 75 columns (though for some reason I am in the
-habit of wrapping changelogs at 73 columns), e.g.:
+This change breaks firefox on my system. I've noticed that some pages
+doesn't load correctly anymore (e.g. facebook, spiegel.de). The pages
+start loading and than stop. Looks like firefox is waiting for some
+dynamic loading content. I've bisected to this commit, but can't revert
+because of conflicts.
 
-We can get rid of unnecessary var page in kvm_set_pfn_dirty(), thus make
-code style similar with kvm_set_pfn_accessed().
+-- 
+Regards,
+  Johannes Hirte
+
