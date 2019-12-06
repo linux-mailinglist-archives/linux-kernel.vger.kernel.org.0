@@ -2,91 +2,369 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFFEA114E00
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C52E6114DE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:01:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfLFJFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:05:30 -0500
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:55550 "EHLO
-        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbfLFJFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:05:30 -0500
-X-Greylist: delayed 606 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 04:05:29 EST
-Received: from faui04l.informatik.uni-erlangen.de (faui04l.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:142])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 9B6AE241797;
-        Fri,  6 Dec 2019 09:54:57 +0100 (CET)
-Received: by faui04l.informatik.uni-erlangen.de (Postfix, from userid 66757)
-        id 7997E620AD0; Fri,  6 Dec 2019 09:54:57 +0100 (CET)
-From:   Michael Kupfer <michael.kupfer@fau.de>
-To:     eric@anholt.net, wahrenst@gmx.net,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, mchehab+samsung@kernel.org,
-        hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        dave.stevenson@raspberrypi.org, daniela.mormocea@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de, Michael Kupfer <michael.kupfer@fau.de>,
-        Kay Friedrich <kay.friedrich@fau.de>
-Subject: [PATCH] staging/vc04_services/bcm2835-camera: distinct numeration and names for devices
-Date:   Fri,  6 Dec 2019 09:54:32 +0100
-Message-Id: <20191206085432.19962-1-michael.kupfer@fau.de>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726374AbfLFJBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:01:20 -0500
+Received: from mga14.intel.com ([192.55.52.115]:41583 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfLFJBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 04:01:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 01:01:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,283,1571727600"; 
+   d="scan'208";a="202048619"
+Received: from test-hp-compaq-8100-elite-cmt-pc.igk.intel.com ([10.237.149.93])
+  by orsmga007.jf.intel.com with ESMTP; 06 Dec 2019 01:01:17 -0800
+From:   Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rostedt@goodmis.org, acme@redhat.com, tstoyanov@vmware.com,
+        andriy.shevchenko@intel.com, cezary.rojewski@intel.com,
+        gustaw.lewandowski@intel.com
+Subject: [PATCH] libtraceevent: add __print_hex_dump support
+Date:   Fri,  6 Dec 2019 10:00:51 +0100
+Message-Id: <1575622851-26514-1-git-send-email-piotrx.maziarz@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a static atomic counter for numerating cameras.
-Use the Media Subsystem Kernel Internal API to create distinct
-device-names, so that the camera-number (given by the counter)
-matches the camera-name.
+This allows using parsing __print_hex_dump in user space tools. Print
+format is aligned with debugfs tracing interface.
 
-Co-developed-by: Kay Friedrich <kay.friedrich@fau.de>
-Signed-off-by: Kay Friedrich <kay.friedrich@fau.de>
-Signed-off-by: Michael Kupfer <michael.kupfer@fau.de>
+Signed-off-by: Piotr Maziarz <piotrx.maziarz@linux.intel.com>
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
 ---
- .../vc04_services/bcm2835-camera/bcm2835-camera.c        | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/lib/traceevent/event-parse.c | 123 +++++++++++++++++++++++++++++++++++++
+ tools/lib/traceevent/event-parse.h |  12 ++++
+ tools/lib/traceevent/trace-seq.c   |  92 +++++++++++++++++++++++++++
+ tools/lib/traceevent/trace-seq.h   |   3 +
+ 4 files changed, 230 insertions(+)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index beb6a0063bb8..be5f90a8b49d 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -60,6 +60,9 @@ MODULE_PARM_DESC(max_video_width, "Threshold for video mode");
- module_param(max_video_height, int, 0644);
- MODULE_PARM_DESC(max_video_height, "Threshold for video mode");
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index d948475..b8f6686 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -898,6 +898,15 @@ static void free_arg(struct tep_print_arg *arg)
+ 		free_arg(arg->int_array.count);
+ 		free_arg(arg->int_array.el_size);
+ 		break;
++	case TEP_PRINT_HEX_DUMP:
++		free_arg(arg->hex_dump.prefix_str);
++		free_arg(arg->hex_dump.prefix_type);
++		free_arg(arg->hex_dump.rowsize);
++		free_arg(arg->hex_dump.groupsize);
++		free_arg(arg->hex_dump.buf);
++		free_arg(arg->hex_dump.len);
++		free_arg(arg->hex_dump.ascii);
++		break;
+ 	case TEP_PRINT_TYPE:
+ 		free(arg->typecast.type);
+ 		free_arg(arg->typecast.item);
+@@ -2752,6 +2761,58 @@ process_int_array(struct tep_event *event, struct tep_print_arg *arg, char **tok
+ }
  
-+/* camera instance counter */
-+static atomic_t camera_instance = ATOMIC_INIT(0);
+ static enum tep_event_type
++process_hex_dump(struct tep_event *event, struct tep_print_arg *arg, char **tok)
++{
++	memset(arg, 0, sizeof(*arg));
++	arg->type = TEP_PRINT_HEX_DUMP;
 +
- /* global device data array */
- static struct bm2835_mmal_dev *gdev[MAX_BCM2835_CAMERAS];
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.prefix_str))
++		goto out;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.prefix_type))
++		goto free_prefix_str;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.rowsize))
++		goto free_prefix_type;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.groupsize))
++		goto free_rowsize;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.buf))
++		goto free_groupsize;
++
++	if (alloc_and_process_delim(event, ",", &arg->hex_dump.len))
++		goto free_buf;
++
++	if (alloc_and_process_delim(event, ")", &arg->hex_dump.ascii))
++		goto free_len;
++
++	return read_token_item(tok);
++
++free_len:
++	free_arg(arg->hex_dump.len);
++	arg->hex_dump.len = NULL;
++free_buf:
++	free_arg(arg->hex_dump.buf);
++	arg->hex_dump.buf = NULL;
++free_groupsize:
++	free_arg(arg->hex_dump.groupsize);
++	arg->hex_dump.groupsize = NULL;
++free_rowsize:
++	free_arg(arg->hex_dump.rowsize);
++	arg->hex_dump.rowsize = NULL;
++free_prefix_type:
++	free_arg(arg->hex_dump.prefix_type);
++	arg->hex_dump.prefix_type = NULL;
++free_prefix_str:
++	free_arg(arg->hex_dump.prefix_str);
++	arg->hex_dump.prefix_str = NULL;
++out:
++	*tok = NULL;
++	return TEP_EVENT_ERROR;
++}
++
++static enum tep_event_type
+ process_dynamic_array(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_format_field *field;
+@@ -3090,6 +3151,10 @@ process_function(struct tep_event *event, struct tep_print_arg *arg,
+ 		free_token(token);
+ 		return process_int_array(event, arg, tok);
+ 	}
++	if (strcmp(token, "__print_hex_dump") == 0) {
++		free_token(token);
++		return process_hex_dump(event, arg, tok);
++	}
+ 	if (strcmp(token, "__get_str") == 0) {
+ 		free_token(token);
+ 		return process_str(event, arg, tok);
+@@ -3626,6 +3691,7 @@ eval_num_arg(void *data, int size, struct tep_event *event, struct tep_print_arg
+ 	case TEP_PRINT_FLAGS:
+ 	case TEP_PRINT_SYMBOL:
+ 	case TEP_PRINT_INT_ARRAY:
++	case TEP_PRINT_HEX_DUMP:
+ 	case TEP_PRINT_HEX:
+ 	case TEP_PRINT_HEX_STR:
+ 		break;
+@@ -4124,6 +4190,46 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
+ 		}
+ 		break;
+ 	}
++	case TEP_PRINT_HEX_DUMP: {
++		void *buf;
++		char *prefix_str;
++		int prefix_type, rowsize, groupsize, ascii;
++
++		if (arg->hex_dump.buf->type == TEP_PRINT_DYNAMIC_ARRAY) {
++			unsigned long offset;
++
++			field = arg->hex_dump.buf->dynarray.field;
++			offset = tep_read_number(tep,
++						 data + field->offset,
++						 field->size);
++			buf = data + (offset & 0xffff);
++		} else {
++			field = arg->hex_dump.buf->field.field;
++			if (!field) {
++				str = arg->hex_dump.buf->field.name;
++				field = tep_find_any_field(event, str);
++				if (!field)
++					goto out_warning_field;
++				arg->hex_dump.buf->field.field = field;
++			}
++			buf = data + field->offset;
++		}
++		prefix_type = eval_num_arg(data, size, event,
++					   arg->hex_dump.prefix_type);
++		rowsize = eval_num_arg(data, size, event,
++				       arg->hex_dump.rowsize);
++		groupsize = eval_num_arg(data, size, event,
++					 arg->hex_dump.groupsize);
++		len = eval_num_arg(data, size, event, arg->hex_dump.len);
++		ascii = eval_num_arg(data, size, event,
++					   arg->hex_dump.ascii);
++		prefix_str = arg->hex_dump.prefix_str->atom.atom;
++
++		trace_seq_putc(s, '\n');
++		trace_seq_hex_dump(s, prefix_str, prefix_type,
++				   rowsize, groupsize, buf, len, ascii);
++		break;
++	}
+ 	case TEP_PRINT_TYPE:
+ 		break;
+ 	case TEP_PRINT_STRING: {
+@@ -5984,6 +6090,23 @@ static void print_args(struct tep_print_arg *args)
+ 		print_args(args->int_array.el_size);
+ 		printf(")");
+ 		break;
++	case TEP_PRINT_HEX_DUMP:
++		printf("__print_hex_dump(");
++		print_args(args->hex_dump.prefix_str);
++		printf(", ");
++		print_args(args->hex_dump.prefix_type);
++		printf(", ");
++		print_args(args->hex_dump.rowsize);
++		printf(", ");
++		print_args(args->hex_dump.groupsize);
++		printf(", ");
++		print_args(args->hex_dump.buf);
++		printf(", ");
++		print_args(args->hex_dump.len);
++		printf(", ");
++		print_args(args->hex_dump.ascii);
++		printf(")");
++		break;
+ 	case TEP_PRINT_STRING:
+ 	case TEP_PRINT_BSTRING:
+ 		printf("__get_str(%s)", args->string.string);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index b77837f..9d4482f 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -213,6 +213,16 @@ struct tep_print_arg_int_array {
+ 	struct tep_print_arg	*el_size;
+ };
  
-@@ -1870,7 +1873,6 @@ static int bcm2835_mmal_probe(struct platform_device *pdev)
++struct tep_print_arg_hex_dump {
++	struct tep_print_arg	*prefix_str;
++	struct tep_print_arg	*prefix_type;
++	struct tep_print_arg	*rowsize;
++	struct tep_print_arg	*groupsize;
++	struct tep_print_arg	*buf;
++	struct tep_print_arg	*len;
++	struct tep_print_arg	*ascii;
++};
++
+ struct tep_print_arg_dynarray {
+ 	struct tep_format_field	*field;
+ 	struct tep_print_arg	*index;
+@@ -242,6 +252,7 @@ enum tep_print_arg_type {
+ 	TEP_PRINT_SYMBOL,
+ 	TEP_PRINT_HEX,
+ 	TEP_PRINT_INT_ARRAY,
++	TEP_PRINT_HEX_DUMP,
+ 	TEP_PRINT_TYPE,
+ 	TEP_PRINT_STRING,
+ 	TEP_PRINT_BSTRING,
+@@ -264,6 +275,7 @@ struct tep_print_arg {
+ 		struct tep_print_arg_symbol	symbol;
+ 		struct tep_print_arg_hex	hex;
+ 		struct tep_print_arg_int_array	int_array;
++		struct tep_print_arg_hex_dump	hex_dump;
+ 		struct tep_print_arg_func	func;
+ 		struct tep_print_arg_string	string;
+ 		struct tep_print_arg_bitmask	bitmask;
+diff --git a/tools/lib/traceevent/trace-seq.c b/tools/lib/traceevent/trace-seq.c
+index 8d5ecd2..05e5700 100644
+--- a/tools/lib/traceevent/trace-seq.c
++++ b/tools/lib/traceevent/trace-seq.c
+@@ -247,3 +247,95 @@ int trace_seq_do_printf(struct trace_seq *s)
+ {
+ 	return trace_seq_do_fprintf(s, stdout);
+ }
++
++enum {
++	DUMP_PREFIX_NONE,
++	DUMP_PREFIX_ADDRESS,
++	DUMP_PREFIX_OFFSET
++};
++
++int hex_dump_line(const unsigned char *buf, size_t len, int rowsize,
++		  int groupsize, struct trace_seq *s, bool ascii)
++{
++	unsigned long long val;
++	int i, ret, pos = 0;
++	const char *format;
++	int ascii_pos = rowsize * 2 + rowsize / groupsize + 1;
++
++	len = min(len, (size_t)rowsize);
++	if ((groupsize != 2 && groupsize != 4 && groupsize != 8)
++	    || (len % groupsize) != 0) {
++		groupsize = 1;
++	}
++
++	for (i = 0; i < len / groupsize; i++) {
++		if (groupsize == 8) {
++			const unsigned long long *ptr8 = (void *)buf;
++
++			val = *(ptr8 + i);
++			format = "%s%16.16llx";
++		} else if (groupsize == 4) {
++			const unsigned int *ptr4 = (void *)buf;
++
++			val = *(ptr4 + i);
++			format = "%s%8.8x";
++		} else if (groupsize == 2) {
++			const unsigned short *ptr2 = (void *)buf;
++
++			val = *(ptr2 + i);
++			format = "%s%4.4x";
++		} else {
++			const unsigned char *ptr1 = (void *)buf;
++
++			val = *(ptr1 + i);
++			format = "%s%2.2x";
++		}
++		ret = trace_seq_printf(s,
++			       format, i ? " " : "",
++			       val);
++		if (ret <= 0)
++			return ret;
++		pos += ret;
++	}
++	if (!ascii)
++		return 0;
++	ret = trace_seq_printf(s, "%*s", ascii_pos - pos, "");
++	if (ret <= 0)
++		return ret;
++	for (i = 0; i < len; i++)
++		trace_seq_putc(s, (isprint(buf[i])) ? buf[i] : '.');
++	return 0;
++}
++
++int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
++		       int prefix_type, int rowsize, int groupsize,
++		       const void *buf, size_t len, int ascii)
++{
++	const unsigned char *ptr = buf;
++	int i, linelen, remaining = len;
++	int ret;
++
++	if (rowsize != 16 && rowsize != 32)
++		rowsize = 16;
++
++	for (i = 0; i < len; i += rowsize) {
++		linelen = min(remaining, rowsize);
++		remaining -= linelen;
++
++		if (prefix_type == DUMP_PREFIX_ADDRESS)
++			ret = trace_seq_printf(s, "%s%p: ",
++					       prefix_str, ptr + i);
++		else if (prefix_type == DUMP_PREFIX_OFFSET)
++			ret = trace_seq_printf(s, "%s%.8x: ",
++					       prefix_str, i);
++		else
++			ret = trace_seq_printf(s, "%s",
++					       prefix_str);
++		if (ret <= 0)
++			return ret;
++		hex_dump_line(ptr + i, linelen, rowsize, groupsize,
++			      s, ascii);
++		trace_seq_putc(s, '\n');
++	}
++	return 0;
++}
+diff --git a/tools/lib/traceevent/trace-seq.h b/tools/lib/traceevent/trace-seq.h
+index d68ec69..7b7d72e 100644
+--- a/tools/lib/traceevent/trace-seq.h
++++ b/tools/lib/traceevent/trace-seq.h
+@@ -51,5 +51,8 @@ extern void trace_seq_terminate(struct trace_seq *s);
  
- 		/* v4l2 core mutex used to protect all fops and v4l2 ioctls. */
- 		mutex_init(&dev->mutex);
--		dev->camera_num = camera;
- 		dev->max_width = resolutions[camera][0];
- 		dev->max_height = resolutions[camera][1];
+ extern int trace_seq_do_fprintf(struct trace_seq *s, FILE *fp);
+ extern int trace_seq_do_printf(struct trace_seq *s);
++extern int trace_seq_hex_dump(struct trace_seq *s, const char *prefix_str,
++			      int prefix_type, int rowsize, int groupsize,
++			      const void *buf, size_t len, int ascii);
  
-@@ -1886,8 +1888,9 @@ static int bcm2835_mmal_probe(struct platform_device *pdev)
- 		dev->capture.fmt = &formats[3]; /* JPEG */
- 
- 		/* v4l device registration */
--		snprintf(dev->v4l2_dev.name, sizeof(dev->v4l2_dev.name),
--			 "%s", BM2835_MMAL_MODULE_NAME);
-+		dev->camera_num = v4l2_device_set_name(&dev->v4l2_dev,
-+						       BM2835_MMAL_MODULE_NAME,
-+						       &camera_instance);
- 		ret = v4l2_device_register(NULL, &dev->v4l2_dev);
- 		if (ret) {
- 			dev_err(&pdev->dev, "%s: could not register V4L2 device: %d\n",
+ #endif /* _TRACE_SEQ_H */
 -- 
-2.20.1
+2.7.4
 
