@@ -2,1630 +2,345 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E97FF11586A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 22:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A7A115873
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 22:12:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLFVGb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Dec 2019 16:06:31 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54130 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726418AbfLFVGa (ORCPT
+        id S1726453AbfLFVMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 16:12:22 -0500
+Received: from mail-ot1-f54.google.com ([209.85.210.54]:40247 "EHLO
+        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfLFVMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 16:06:30 -0500
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-175-8ZCW47hFNxe6sEMqtkAgXA-1; Fri, 06 Dec 2019 16:06:24 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 78D61800EBF;
-        Fri,  6 Dec 2019 21:06:22 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-89.brq.redhat.com [10.40.204.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 296AB60135;
-        Fri,  6 Dec 2019 21:06:19 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 2/2] libperf: Add man pages
-Date:   Fri,  6 Dec 2019 22:06:12 +0100
-Message-Id: <20191206210612.8676-3-jolsa@kernel.org>
-In-Reply-To: <20191206210612.8676-1-jolsa@kernel.org>
-References: <20191206210612.8676-1-jolsa@kernel.org>
+        Fri, 6 Dec 2019 16:12:21 -0500
+Received: by mail-ot1-f54.google.com with SMTP id i15so7023998oto.7
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 13:12:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=carlosedp-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YdHciF5HT4NgfVYmLECpZu4mij9jceu5at9ZUMTKa8I=;
+        b=FTHx5Isvz6SuxSV1Rd1sZ40+c2jk+n33PkfKHk95d+A+bKwo22yAGaCCYkdXj7a5JQ
+         HE2x3Hs9THsDgn6T9rAWmjvtnyeOZs3u6XJxDmLSFL2Fy8tuJrYj/uqwM8YIN9u+rNwn
+         Ks9L7x6JzcbgtzxbgZCY/bBCL/yNb5GnRumltg3nUX6qvvyb5qNyi7zQ2HrYSub41PwX
+         P2VbyOtUe3kp/XU15AsrBQBB6CM34g+PTPX7MqHmszjw+/5H1/Hh6NlxsYE1t2ZpbtWU
+         PcLAi4I/dLQsszkDjSESEOIZ02d/Oy9L1IrjvOsxBAcFwLig/B6FdLcCORr3uMbtlhe0
+         hWjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YdHciF5HT4NgfVYmLECpZu4mij9jceu5at9ZUMTKa8I=;
+        b=O8Cn90bBXffKhCROmNRcPIZDSS3jgCqm53pWRerf30L9q10IIgYeCuFuWQ1mClNaNw
+         paiaJGxxM0yyLNhxKzEvMsD0vxE7Y9FuSrSAw0LZC0etrLtQ4YQiFHeJAecFsnfSo+gc
+         zXSHNKQATseYL7cMa6ImEaqlegZ+UliMxwzktK9iLv9Nqd5zAe5IKZhEQmRBi/2UPxdK
+         LQs5pRb868dUmueqIq5+mEvx76ex4bemrpJbosn9L5TNWJ7JC4S5banq9pe91QRMfjdJ
+         UoJx8S+4a8kUqc+ettP0nMXKATK4dQw8k5jVaWzwFSfWEz9eOju53aMzfbxyUo+bnoMT
+         7plg==
+X-Gm-Message-State: APjAAAV7LZ4BcYDVboNdji9eqi6rFe11RkaT2IBYU0dv39gaBXyIWeZW
+        ezqWP0UzZHSnnfL0g6gLSzixrH8TbC0DSQ==
+X-Google-Smtp-Source: APXvYqzJJ2a/ClqGc88oQsiD5FYs4zp+uoWkohVOMkMREgeV4AnUzcsRKZMG/gn2najV0jgRHWvatg==
+X-Received: by 2002:a9d:644:: with SMTP id 62mr13237876otn.287.1575666739838;
+        Fri, 06 Dec 2019 13:12:19 -0800 (PST)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com. [209.85.210.46])
+        by smtp.gmail.com with ESMTPSA id x15sm5047018otq.30.2019.12.06.13.12.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 13:12:19 -0800 (PST)
+Received: by mail-ot1-f46.google.com with SMTP id d17so7075009otc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 13:12:18 -0800 (PST)
+X-Received: by 2002:a9d:2073:: with SMTP id n106mr12773659ota.145.1575666738241;
+ Fri, 06 Dec 2019 13:12:18 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: 8ZCW47hFNxe6sEMqtkAgXA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+References: <alpine.DEB.2.21.9999.1912040050430.56420@viisi.sifive.com>
+ <CAAhSdy2id0FoLBxWwN7WHEk5Am770BizkK=sZO0-G54MtYa6DQ@mail.gmail.com>
+ <9044bad02aa6553cdb2523294500b50fccf3fd2a.camel@wdc.com> <alpine.DEB.2.21.9999.1912041128400.186402@viisi.sifive.com>
+ <81530734312456aab8b9625d7e9bb071c43db1c5.camel@wdc.com> <alpine.DEB.2.21.9999.1912041644170.206929@viisi.sifive.com>
+ <84c4ee600c0dd235a0fcc257115807af7207b5f6.camel@wdc.com> <alpine.DEB.2.21.9999.1912051435130.239155@viisi.sifive.com>
+ <99bbf5710da82c8b52e59ad5fc4e44471573ecd3.camel@wdc.com> <3286a00cb9c8033872f533ec3e7f3db3e652c30c.camel@wdc.com>
+In-Reply-To: <3286a00cb9c8033872f533ec3e7f3db3e652c30c.camel@wdc.com>
+From:   Carlos Eduardo de Paula <me@carlosedp.com>
+Date:   Fri, 6 Dec 2019 18:12:07 -0300
+X-Gmail-Original-Message-ID: <CADnnUqe-=yTAFbwin_Lti6mQKqO2ABVYMa1XgTv_J=usT5w2gg@mail.gmail.com>
+Message-ID: <CADnnUqe-=yTAFbwin_Lti6mQKqO2ABVYMa1XgTv_J=usT5w2gg@mail.gmail.com>
+Subject: Re: [GIT PULL] Second set of RISC-V updates for v5.5-rc1
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+Cc:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "hch@lst.de" <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changing the man page generation to, because it's easier
-to use and been more common in related projects. Removing
-the current rst pages.
+On Thu, Dec 5, 2019 at 8:46 PM Alistair Francis
+<Alistair.Francis@wdc.com> wrote:
+>
+> On Thu, 2019-12-05 at 15:29 -0800, Alistair Francis wrote:
+> > On Thu, 2019-12-05 at 15:12 -0800, Paul Walmsley wrote:
+> > > On Thu, 5 Dec 2019, Alistair Francis wrote:
+> > >
+> > > > On Wed, 2019-12-04 at 18:54 -0800, Paul Walmsley wrote:
+> > > > > On Wed, 4 Dec 2019, Alistair Francis wrote:
+> > > > >
+> > > > > > It is too much to expect every distro to maintain a defconfig
+> > > > > > for
+> > > > > > RISC-V.
+> > > > >
+> > > > > The major Linux distributions maintain their own kernel
+> > > > > configuration
+> > > > > files, completely ignoring kernel defconfigs.  This has been so
+> > > > > for a
+> > > > > long time.
+> > > >
+> > > > That might be true for the traditional "desktop" distros, but
+> > > > embedded
+> > > > distros (the main target for RISC-V at the moment) don't
+> > > > generally
+> > > > do
+> > > > this.
+> > >
+> > > Maybe in this discussion we can agree to use the common
+> > > distinction
+> > > between distributions and distribution build frameworks, where
+> > > users
+> > > of
+> > > the latter need to be more technically sophisticated - as opposed
+> > > to
+> > > downloading a disk image.
+> >
+> > Why is there a distinction?
+> >
+> > There are lots of disk images that you can just download which are
+> > based on OE or buildroot. Lots of people use OE images and never
+> > realise it.
+> >
+> > In the same way that there are build enviroments based on the
+> > standard
+> > "desktop" distros. In both cases these are distros.
+> >
+> > > > > > Which is why we currently use the defconfig as a base and
+> > > > > > apply
+> > > > > > extra features that distro want on top.
+> > > > >
+> > > > > As you know, since you've worked on some of the distribution
+> > > > > builder
+> > > > > frameworks (not distributions) like OE and Buildroot, those
+> > > > > build
+> > > > > systems have sophisticated kernel configuration patching and
+> > > > > override
+> > > > > systems that can disable the debug options if the maintainers
+> > > > > think
+> > > > > it's a good idea to do that.
+> > > >
+> > > > Yes they do. As I said, we start with the defconfig and then
+> > > > apply
+> > > > config changes on top. Every diversion is a maintainence burden
+> > > > so
+> > > > where possible we don't make any changed. All of the QEMU
+> > > > machines
+> > > > currently don't have config changes (and hopefully never will) as
+> > > > it's
+> > > > a pain to maintain.
+> > >
+> > > I'm open to your concerns here.  Can you help me understand why
+> > > adding a
+> > > few lines to the kernel configuration fragments to disable the
+> > > debug
+> > > options creates maintenance pain?  Isn't it just a matter of adding
+> > > a
+> >
+> > For one, we have the same burden as you do.
+> >
+> > You feel that it's too much of a burden to have a config fragment in
+> > tree to enable debug. You clearly feel that having a
+> > `extra_debug.config` fragment for you is too much of a burden, why is
+> > it not a burden for distros?
+> >
+> > > few
+> > > lines to disable the debug options, and -- since you clearly don't
+> > > want
+> > > them enabled for any platform -- just leaving them in there?
+> >
+> > Leave them in where?
+> >
+> > No other architecture does this. Now we have to have a special config
+> > fragment added just for RISC-V. Why is RISC-V so special that it
+> > needs
+> > it's own fragment that other arches don't have?
+> >
+> > > > > > > distros and benchmarkers will create their own Kconfigs for
+> > > > > > > their
+> > > > > > > needs.
+> > > > > >
+> > > > > > Like I said, that isn't true. After this patch is applied
+> > > > > > (and
+> > > > > > it
+> > > > > > makes it to a release) all OE users will now have a slower
+> > > > > > RISC-V
+> > > > > > kernel.
+> > > > >
+> > > > > OE doesn't have any RISC-V support upstream, so pure OE users
+> > > > > won't
+> > > > > notice
+> > > >
+> > > > That is just not true.
+> > >
+> > > After getting your response, I reviewed the OE-core tree that I
+> > > have
+> > > here,
+> > > which is based on following the OE-core "getting started"
+> > > instructions.
+> > > The result is a tree with no RISC-V machine support.  Looking again
+> > > at
+> > > those instructions, I see that they check out the last release,
+> > > rather
+> > > than the current top of the tree; and the current top of tree does
+> > > have a
+> > > QEMU RISC-V machine.  So this statement of yours is correct, and I
+> > > was in
+> > > error about the current top-of-tree OE-core support.
+> >
+> > The last release (Zeus) also has RISC-V support....
+>
+> Whoops, I left the dots to remind me to come back and double check
+> this, but then I forgot to remove them.
+>
+> >
+> > > > You talk later about misinformation but this is a blatent lie.
+> > >
+> > > This isn't acceptable.  We've met each other in person, and I've
+> > > considered you an enjoyable and trustworthy person to discuss
+> > > technical
+> > > issues with.  This is the first time that you've ever publicly
+> > > accused me
+> > > of misrepresenting an issue with intent to deceive.  There's a big
+> > > difference between stating that someone is quoting misinformation
+> > > and
+> > > accusing someone of bad intentions.  I expect an apology from you.
+> >
+> > I didn't say you had bad intentions. I was just pointing out that you
+> > spent the time researching points that match your argument, but
+> > didn't
+> > check to see what current RISC-V support is.
+> >
+> > I don't see a difference between saying someone is spreading
+> > misinformation and lying, but I am sorry if it upset you.
+>
+> Just to clarify, I am sorry that I upset you. I did not mean to do
+> that.
+>
+> I do not appriate you saying that I am spreading misinformation,
+> espicially when there are numbers to back up the claim of slowing down
+> defconfig users.
+>
+> Alistair
+>
+> >
+> > > > > > Slowing down all users to help kernel developers debug seems
+> > > > > > like
+> > > > > > the wrong direction. Kernel developers should know enough to
+> > > > > > be
+> > > > > > able
+> > > > > > to turn on the required configs, why does this need to be
+> > > > > > the
+> > > > > > default?
+> > > > >
+> > > > > It's clear you strongly disagree with the decision to do
+> > > > > this.  It's
+> > > > > certainly your right to do so.  But it's not good to spread
+> > > > > misinformation about how changing the defconfigs "slow[s] down
+> > > > > all
+> > > > > users," or
+> > > >
+> > > > What misinformation?
+> >
+> > Somehow it looks like you dropped this paragraph from my response,
+> > I'll
+> > just add it back in:
+> >
+> > ******
+> > Anup shared benchmarking results indicating that this change has a
+> > 12%
+> > performance decrease for everyone who uses the defconfig without
+> > removing this change.
+> > ******
+> >
+> > > You've already acknowledged in your response that the major Linux
+> > > distributions don't use defconfigs.  So it's clear that your
+> >
+> > What do you mean major?
+> >
+> > AFAIK OE and buildroot are the only distros that have first class
+> > RISC-
+> > V support. That seems pretty major to me.
+> >
+> > > statement is
+> > > false, and rather than admitting that you're wrong, you're doubling
+> > > down.
+> >
+> > Doubling down on what? I never claimed all distros use defconfigs.
+> >
+> > > > > exaggerating the difficulty for downstream software
+> > > > > environments
+> > > > > to
+> > > > > back this change out if they wish.
+> > > >
+> > > > If you think it is that easy can you please submit the patches?
+> > >
+> > > For my part, I'd be happy if the current RISC-V OE and Buildroot
+> > > users who
+> > > don't change the kernel configs run with the defconfig debug
+> > > options
+> > > enabled right now.   So, I don't plan to send patches for them.
+> >
+> > That is what will continue to happen. All users will be expected to
+> > live with a 12% performance impact.
+> >
+> > > > I understand it's easy to make decisions that simplfy your flow,
+> > > > but
+> > > > this has real negative consequences in terms of performance for
+> > > > users
+> > > > or complexity for maintainers. It would be nice if you take other
+> > > > users
+> > > > /developers into account before merging changes.
+> > >
+> > > As stated earlier, I'm open to reconsidering if it indeed is
+> > > onerous,
+> > > and
+> > > not just a matter of patching a few lines of kernel configuration
+> > > fragments in OE and Buildroot once.
+> >
+> > I don't understand, if patching a config is so easy why not just have
+> > a
+> > fragment in the kernel tree and you can use that when you build a
+> > kernel? This is what Daniel Thompson pointed out. That would avoid
+> > this
+> > issue and have it easy for you to build a kernel with debug support.
+> > How is that not the best solution?
+> >
+> > AFIAK no other architecture has all these debug options enabled in
+> > the
+> > defconfi, why is RISC-V so special?
+> >
+> > Alistair
+> >
+> > >
+> > > - Paul
 
-Adding 3 man pages to have the man page base for more
-additions:
+Folks, isn't viable having a defconfig and a defconfig_debug. This
+would address both cases and avoid putting a penalty on people that
+are already using Risc-V boards or VMs for building software.
 
-  libperf.3          - overall description
-  libperf-counting.7 - counting basics explained on simple example
-  libperf-sampling.7 - sampling basics explained on simple example
-
-The plan is to add more man pages to cover the basic API.
-
-The build generates html and man pages:
-
-  $ cd tools/lib/perf/Documentation
-  $ make
-    ASCIIDOC libperf.xml
-    XMLTO    libperf.3
-    ASCIIDOC libperf-counting.xml
-    XMLTO    libperf-counting.7
-    ASCIIDOC libperf-sampling.xml
-    XMLTO    libperf-sampling.7
-    ASCIIDOC libperf.html
-    ASCIIDOC libperf-counting.html
-    ASCIIDOC libperf-sampling.html
-
-Adding following install targets:
-   install-man      - man pages
-   install-html     - html version of man pages
-   install-examples - examples mentioned in the man pages
-
-Link: https://lkml.kernel.org/n/tip-nr27ee1oxca14n491pkud7tu@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/lib/perf/Documentation/Makefile         | 159 ++++++++++-
- tools/lib/perf/Documentation/asciidoc.conf    | 120 +++++++++
- .../perf/Documentation/examples/sampling.c    | 119 +++++++++
- .../perf/Documentation/libperf-counting.txt   | 211 +++++++++++++++
- .../perf/Documentation/libperf-sampling.txt   | 243 +++++++++++++++++
- tools/lib/perf/Documentation/libperf.txt      | 246 ++++++++++++++++++
- tools/lib/perf/Documentation/man/libperf.rst  | 100 -------
- tools/lib/perf/Documentation/manpage-1.72.xsl |  14 +
- tools/lib/perf/Documentation/manpage-base.xsl |  35 +++
- .../Documentation/manpage-bold-literal.xsl    |  17 ++
- .../lib/perf/Documentation/manpage-normal.xsl |  13 +
- .../Documentation/manpage-suppress-sp.xsl     |  21 ++
- .../perf/Documentation/tutorial/tutorial.rst  | 123 ---------
- tools/lib/perf/Makefile                       |   5 +-
- 14 files changed, 1197 insertions(+), 229 deletions(-)
- create mode 100644 tools/lib/perf/Documentation/asciidoc.conf
- create mode 100644 tools/lib/perf/Documentation/examples/sampling.c
- create mode 100644 tools/lib/perf/Documentation/libperf-counting.txt
- create mode 100644 tools/lib/perf/Documentation/libperf-sampling.txt
- create mode 100644 tools/lib/perf/Documentation/libperf.txt
- delete mode 100644 tools/lib/perf/Documentation/man/libperf.rst
- create mode 100644 tools/lib/perf/Documentation/manpage-1.72.xsl
- create mode 100644 tools/lib/perf/Documentation/manpage-base.xsl
- create mode 100644 tools/lib/perf/Documentation/manpage-bold-literal.xsl
- create mode 100644 tools/lib/perf/Documentation/manpage-normal.xsl
- create mode 100644 tools/lib/perf/Documentation/manpage-suppress-sp.xsl
- delete mode 100644 tools/lib/perf/Documentation/tutorial/tutorial.rst
-
-diff --git a/tools/lib/perf/Documentation/Makefile b/tools/lib/perf/Documentation/Makefile
-index 586425a88795..972754082a85 100644
---- a/tools/lib/perf/Documentation/Makefile
-+++ b/tools/lib/perf/Documentation/Makefile
-@@ -1,7 +1,156 @@
--all:
--	rst2man man/libperf.rst > man/libperf.7
--	rst2pdf tutorial/tutorial.rst
-+# SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-+# Most of this file is copied from tools/perf/Documentation/Makefile
-+
-+include ../../../scripts/Makefile.include
-+include ../../../scripts/utilities.mak
-+
-+MAN3_TXT  = libperf.txt
-+MAN7_TXT  = libperf-counting.txt libperf-sampling.txt
-+MAN_EX    = examples/*.c
-+
-+MAN_TXT   = $(MAN3_TXT) $(MAN7_TXT)
-+
-+_MAN_XML  = $(patsubst %.txt,%.xml,$(MAN_TXT))
-+_MAN_HTML = $(patsubst %.txt,%.html,$(MAN_TXT))
-+_MAN_3    = $(patsubst %.txt,%.3,$(MAN3_TXT))
-+_MAN_7    = $(patsubst %.txt,%.7,$(MAN7_TXT))
-+
-+MAN_XML   = $(addprefix $(OUTPUT),$(_MAN_XML))
-+MAN_HTML  = $(addprefix $(OUTPUT),$(_MAN_HTML))
-+MAN_3     = $(addprefix $(OUTPUT),$(_MAN_3))
-+MAN_7     = $(addprefix $(OUTPUT),$(_MAN_7))
-+MAN_X     = $(MAN_3) $(MAN_7)
-+
-+# Make the path relative to DESTDIR, not prefix
-+ifndef DESTDIR
-+  prefix ?=$(HOME)
-+endif
-+
-+mandir  ?= $(prefix)/share/man
-+man3dir  = $(mandir)/man3
-+man7dir  = $(mandir)/man7
-+
-+docdir  ?= $(prefix)/share/doc/libperf
-+htmldir  = $(docdir)/html
-+exdir    = $(docdir)/examples
-+
-+ASCIIDOC        = asciidoc
-+ASCIIDOC_EXTRA  = --unsafe -f asciidoc.conf
-+ASCIIDOC_HTML   = xhtml11
-+MANPAGE_XSL     = manpage-normal.xsl
-+XMLTO_EXTRA     =
-+XMLTO           =xmlto
-+
-+INSTALL ?= install
-+RM      ?= rm -f
-+
-+# For asciidoc ...
-+#	-7.1.2,	no extra settings are needed.
-+#	8.0-,	set ASCIIDOC8.
-+#
-+
-+# For docbook-xsl ...
-+#	-1.68.1,	set ASCIIDOC_NO_ROFF? (based on changelog from 1.73.0)
-+#	1.69.0,		no extra settings are needed?
-+#	1.69.1-1.71.0,	set DOCBOOK_SUPPRESS_SP?
-+#	1.71.1,		no extra settings are needed?
-+#	1.72.0,		set DOCBOOK_XSL_172.
-+#	1.73.0-,	set ASCIIDOC_NO_ROFF
-+
-+# If you had been using DOCBOOK_XSL_172 in an attempt to get rid
-+# of 'the ".ft C" problem' in your generated manpages, and you
-+# instead ended up with weird characters around callouts, try
-+# using ASCIIDOC_NO_ROFF instead (it works fine with ASCIIDOC8).
-+
-+ifdef ASCIIDOC8
-+  ASCIIDOC_EXTRA += -a asciidoc7compatible
-+endif
-+ifdef DOCBOOK_XSL_172
-+  ASCIIDOC_EXTRA += -a libperf-asciidoc-no-roff
-+  MANPAGE_XSL = manpage-1.72.xsl
-+else
-+  ifdef ASCIIDOC_NO_ROFF
-+    # docbook-xsl after 1.72 needs the regular XSL, but will not
-+    # pass-thru raw roff codes from asciidoc.conf, so turn them off.
-+    ASCIIDOC_EXTRA += -a libperf-asciidoc-no-roff
-+  endif
-+endif
-+ifdef MAN_BOLD_LITERAL
-+  XMLTO_EXTRA += -m manpage-bold-literal.xsl
-+endif
-+ifdef DOCBOOK_SUPPRESS_SP
-+  XMLTO_EXTRA += -m manpage-suppress-sp.xsl
-+endif
-+
-+DESTDIR ?=
-+DESTDIR_SQ = '$(subst ','\'',$(DESTDIR))'
-+
-+export DESTDIR DESTDIR_SQ
-+
-+# Please note that there is a minor bug in asciidoc.
-+# The version after 6.0.3 _will_ include the patch found here:
-+#   http://marc.theaimsgroup.com/?l=libtraceevent&m=111558757202243&w=2
-+#
-+# Until that version is released you may have to apply the patch
-+# yourself - yes, all 6 characters of it!
-+
-+QUIET_SUBDIR0  = +$(MAKE) -C # space to separate -C and subdir
-+QUIET_SUBDIR1  =
-+
-+ifneq ($(findstring $(MAKEFLAGS),w),w)
-+  PRINT_DIR = --no-print-directory
-+else # "make -w"
-+  NO_SUBDIR = :
-+endif
-+
-+ifneq ($(findstring $(MAKEFLAGS),s),s)
-+  ifneq ($(V),1)
-+    QUIET_ASCIIDOC = @echo '  ASCIIDOC '$@;
-+    QUIET_XMLTO    = @echo '  XMLTO    '$@;
-+  endif
-+endif
-+
-+all: $(MAN_X) $(MAN_HTML)
-+
-+$(MAN_HTML) $(MAN_X): asciidoc.conf
-+
-+install-man: all
-+	$(call QUIET_INSTALL, man) \
-+		$(INSTALL) -d -m 755 $(DESTDIR)$(man3dir); \
-+		$(INSTALL) -m 644 $(MAN_3) $(DESTDIR)$(man3dir); \
-+		$(INSTALL) -d -m 755 $(DESTDIR)$(man7dir); \
-+		$(INSTALL) -m 644 $(MAN_7) $(DESTDIR)$(man7dir);
-+
-+install-html:
-+	$(call QUIET_INSTALL, html) \
-+		$(INSTALL) -d -m 755 $(DESTDIR)$(htmldir); \
-+		$(INSTALL) -m 644 $(MAN_HTML) $(DESTDIR)$(htmldir); \
-+
-+install-examples:
-+	$(call QUIET_INSTALL, examples) \
-+		$(INSTALL) -d -m 755 $(DESTDIR)$(exdir); \
-+		$(INSTALL) -m 644 $(MAN_EX) $(DESTDIR)$(exdir); \
-+
-+CLEAN_FILES =					\
-+	$(MAN_XML) $(addsuffix +,$(MAN_XML))	\
-+	$(MAN_HTML) $(addsuffix +,$(MAN_HTML))	\
-+	$(MAN_X)
- 
- clean:
--	rm -f man/libperf.7
--	rm -f tutorial/tutorial.pdf
-+	$(call QUIET_CLEAN, Documentation) $(RM) $(CLEAN_FILES)
-+
-+$(MAN_3): $(OUTPUT)%.3: %.xml
-+	$(QUIET_XMLTO)$(XMLTO) -o $(OUTPUT). -m $(MANPAGE_XSL) $(XMLTO_EXTRA) man $<
-+
-+$(MAN_7): $(OUTPUT)%.7: %.xml
-+	$(QUIET_XMLTO)$(XMLTO) -o $(OUTPUT). -m $(MANPAGE_XSL) $(XMLTO_EXTRA) man $<
-+
-+$(MAN_XML): $(OUTPUT)%.xml: %.txt
-+	$(QUIET_ASCIIDOC)$(ASCIIDOC) -b docbook -d manpage \
-+		$(ASCIIDOC_EXTRA) -alibperf_version=$(EVENT_PARSE_VERSION) -o $@+ $< && \
-+	mv $@+ $@
-+
-+$(MAN_HTML): $(OUTPUT)%.html: %.txt
-+	$(QUIET_ASCIIDOC)$(ASCIIDOC) -b $(ASCIIDOC_HTML) -d manpage \
-+	$(ASCIIDOC_EXTRA) -aperf_version=$(EVENT_PARSE_VERSION) -o $@+ $< && \
-+	mv $@+ $@
-diff --git a/tools/lib/perf/Documentation/asciidoc.conf b/tools/lib/perf/Documentation/asciidoc.conf
-new file mode 100644
-index 000000000000..9d5a5a5ee091
---- /dev/null
-+++ b/tools/lib/perf/Documentation/asciidoc.conf
-@@ -0,0 +1,120 @@
-+## linktep: macro
-+#
-+# Usage: linktep:command[manpage-section]
-+#
-+# Note, {0} is the manpage section, while {target} is the command.
-+#
-+# Show TEP link as: <command>(<section>); if section is defined, else just show
-+# the command.
-+
-+[macros]
-+(?su)[\\]?(?P<name>linktep):(?P<target>\S*?)\[(?P<attrlist>.*?)\]=
-+
-+[attributes]
-+asterisk=&#42;
-+plus=&#43;
-+caret=&#94;
-+startsb=&#91;
-+endsb=&#93;
-+tilde=&#126;
-+
-+ifdef::backend-docbook[]
-+[linktep-inlinemacro]
-+{0%{target}}
-+{0#<citerefentry>}
-+{0#<refentrytitle>{target}</refentrytitle><manvolnum>{0}</manvolnum>}
-+{0#</citerefentry>}
-+endif::backend-docbook[]
-+
-+ifdef::backend-docbook[]
-+ifndef::tep-asciidoc-no-roff[]
-+# "unbreak" docbook-xsl v1.68 for manpages. v1.69 works with or without this.
-+# v1.72 breaks with this because it replaces dots not in roff requests.
-+[listingblock]
-+<example><title>{title}</title>
-+<literallayout>
-+ifdef::doctype-manpage[]
-+&#10;.ft C&#10;
-+endif::doctype-manpage[]
-+|
-+ifdef::doctype-manpage[]
-+&#10;.ft&#10;
-+endif::doctype-manpage[]
-+</literallayout>
-+{title#}</example>
-+endif::tep-asciidoc-no-roff[]
-+
-+ifdef::tep-asciidoc-no-roff[]
-+ifdef::doctype-manpage[]
-+# The following two small workarounds insert a simple paragraph after screen
-+[listingblock]
-+<example><title>{title}</title>
-+<literallayout>
-+|
-+</literallayout><simpara></simpara>
-+{title#}</example>
-+
-+[verseblock]
-+<formalpara{id? id="{id}"}><title>{title}</title><para>
-+{title%}<literallayout{id? id="{id}"}>
-+{title#}<literallayout>
-+|
-+</literallayout>
-+{title#}</para></formalpara>
-+{title%}<simpara></simpara>
-+endif::doctype-manpage[]
-+endif::tep-asciidoc-no-roff[]
-+endif::backend-docbook[]
-+
-+ifdef::doctype-manpage[]
-+ifdef::backend-docbook[]
-+[header]
-+template::[header-declarations]
-+<refentry>
-+<refmeta>
-+<refentrytitle>{mantitle}</refentrytitle>
-+<manvolnum>{manvolnum}</manvolnum>
-+<refmiscinfo class="source">libperf</refmiscinfo>
-+<refmiscinfo class="version">{libperf_version}</refmiscinfo>
-+<refmiscinfo class="manual">libperf Manual</refmiscinfo>
-+</refmeta>
-+<refnamediv>
-+  <refname>{manname1}</refname>
-+  <refname>{manname2}</refname>
-+  <refname>{manname3}</refname>
-+  <refname>{manname4}</refname>
-+  <refname>{manname5}</refname>
-+  <refname>{manname6}</refname>
-+  <refname>{manname7}</refname>
-+  <refname>{manname8}</refname>
-+  <refname>{manname9}</refname>
-+  <refname>{manname10}</refname>
-+  <refname>{manname11}</refname>
-+  <refname>{manname12}</refname>
-+  <refname>{manname13}</refname>
-+  <refname>{manname14}</refname>
-+  <refname>{manname15}</refname>
-+  <refname>{manname16}</refname>
-+  <refname>{manname17}</refname>
-+  <refname>{manname18}</refname>
-+  <refname>{manname19}</refname>
-+  <refname>{manname20}</refname>
-+  <refname>{manname21}</refname>
-+  <refname>{manname22}</refname>
-+  <refname>{manname23}</refname>
-+  <refname>{manname24}</refname>
-+  <refname>{manname25}</refname>
-+  <refname>{manname26}</refname>
-+  <refname>{manname27}</refname>
-+  <refname>{manname28}</refname>
-+  <refname>{manname29}</refname>
-+  <refname>{manname30}</refname>
-+  <refpurpose>{manpurpose}</refpurpose>
-+</refnamediv>
-+endif::backend-docbook[]
-+endif::doctype-manpage[]
-+
-+ifdef::backend-xhtml11[]
-+[linktep-inlinemacro]
-+<a href="{target}.html">{target}{0?({0})}</a>
-+endif::backend-xhtml11[]
-diff --git a/tools/lib/perf/Documentation/examples/sampling.c b/tools/lib/perf/Documentation/examples/sampling.c
-new file mode 100644
-index 000000000000..8e1a926a9cfe
---- /dev/null
-+++ b/tools/lib/perf/Documentation/examples/sampling.c
-@@ -0,0 +1,119 @@
-+#include <linux/perf_event.h>
-+#include <perf/evlist.h>
-+#include <perf/evsel.h>
-+#include <perf/cpumap.h>
-+#include <perf/threadmap.h>
-+#include <perf/mmap.h>
-+#include <perf/core.h>
-+#include <perf/event.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+
-+static int libperf_print(enum libperf_print_level level,
-+                         const char *fmt, va_list ap)
-+{
-+	return vfprintf(stderr, fmt, ap);
-+}
-+
-+union u64_swap {
-+	__u64 val64;
-+	__u32 val32[2];
-+};
-+
-+int main(int argc, char **argv)
-+{
-+	struct perf_evlist *evlist;
-+	struct perf_evsel *evsel;
-+	struct perf_mmap *map;
-+	struct perf_cpu_map *cpus;
-+	struct perf_event_attr attr = {
-+		.type        = PERF_TYPE_HARDWARE,
-+		.config      = PERF_COUNT_HW_CPU_CYCLES,
-+		.disabled    = 1,
-+		.freq        = 1,
-+		.sample_freq = 10,
-+		.sample_type = PERF_SAMPLE_IP|PERF_SAMPLE_TID|PERF_SAMPLE_CPU|PERF_SAMPLE_PERIOD,
-+	};
-+	int err = -1;
-+	union perf_event *event;
-+
-+	libperf_init(libperf_print);
-+
-+	cpus = perf_cpu_map__new(NULL);
-+	if (!cpus) {
-+		fprintf(stderr, "failed to create cpus\n");
-+		return -1;
-+	}
-+
-+	evlist = perf_evlist__new();
-+	if (!evlist) {
-+		fprintf(stderr, "failed to create evlist\n");
-+		goto out_cpus;
-+	}
-+
-+	evsel = perf_evsel__new(&attr);
-+	if (!evsel) {
-+		fprintf(stderr, "failed to create cycles\n");
-+		goto out_cpus;
-+	}
-+
-+	perf_evlist__add(evlist, evsel);
-+
-+	perf_evlist__set_maps(evlist, cpus, NULL);
-+
-+	err = perf_evlist__open(evlist);
-+	if (err) {
-+		fprintf(stderr, "failed to open evlist\n");
-+		goto out_evlist;
-+	}
-+
-+	err = perf_evlist__mmap(evlist, 4);
-+	if (err) {
-+		fprintf(stderr, "failed to mmap evlist\n");
-+		goto out_evlist;
-+	}
-+
-+	perf_evlist__enable(evlist);
-+	sleep(3);
-+	perf_evlist__disable(evlist);
-+
-+	perf_evlist__for_each_mmap(evlist, map, false) {
-+		if (perf_mmap__read_init(map) < 0)
-+			continue;
-+
-+		while ((event = perf_mmap__read_event(map)) != NULL) {
-+			int cpu, pid, tid;
-+			__u64 ip, period, *array;
-+			union u64_swap u;
-+
-+			array = event->sample.array;
-+
-+			ip = *array;
-+			array++;
-+
-+			u.val64 = *array;
-+			pid = u.val32[0];
-+			tid = u.val32[1];
-+			array++;
-+
-+			u.val64 = *array;
-+			cpu = u.val32[0];
-+			array++;
-+
-+			period = *array;
-+
-+			fprintf(stdout, "cpu %3d, pid %6d, tid %6d, ip %20llx, period %20llu\n",
-+				cpu, pid, tid, ip, period);
-+
-+			perf_mmap__consume(map);
-+		}
-+
-+		perf_mmap__read_done(map);
-+	}
-+
-+out_evlist:
-+	perf_evlist__delete(evlist);
-+out_cpus:
-+	perf_cpu_map__put(cpus);
-+	return err;
-+}
-diff --git a/tools/lib/perf/Documentation/libperf-counting.txt b/tools/lib/perf/Documentation/libperf-counting.txt
-new file mode 100644
-index 000000000000..cae9757f49c1
---- /dev/null
-+++ b/tools/lib/perf/Documentation/libperf-counting.txt
-@@ -0,0 +1,211 @@
-+libperf-counting(7)
-+===================
-+
-+NAME
-+----
-+libperf-counting - counting interface
-+
-+DESCRIPTION
-+-----------
-+The counting interface provides API to meassure and get count for specific perf events.
-+
-+The following test tries to explain count on `counting.c` example.
-+
-+It is by no means complete guide to counting, but shows libperf basic API for counting.
-+
-+The `counting.c` comes with libbperf package and can be compiled and run like:
-+
-+[source,bash]
-+--
-+$ gcc -o counting counting.c -lperf
-+$ sudo ./counting
-+count 176792, enabled 176944, run 176944
-+count 176242, enabled 176242, run 176242
-+--
-+
-+It requires root access, because of the `PERF_COUNT_SW_CPU_CLOCK` event,
-+which is available only for root.
-+
-+The `counting.c` example monitors two events on the current process and displays their count, in a nutshel it:
-+
-+* creates events
-+* adds them to the event list
-+* opens and enables events through the event list
-+* does some workload
-+* disables events
-+* reads and displays event counts
-+* destroys the event list
-+
-+The first thing you need to do before using libperf is to call init function:
-+
-+[source,c]
-+--
-+  8 static int libperf_print(enum libperf_print_level level,
-+  9                          const char *fmt, va_list ap)
-+ 10 {
-+ 11         return vfprintf(stderr, fmt, ap);
-+ 12 }
-+
-+ 14 int main(int argc, char **argv)
-+ 15 {
-+ ...
-+ 35         libperf_init(libperf_print);
-+--
-+
-+It will setup the library and sets function for debug output from library.
-+
-+The `libperf_print` callback will receive any message with its debug level,
-+defined as:
-+
-+[source,c]
-+--
-+enum libperf_print_level {
-+        LIBPERF_ERR,
-+        LIBPERF_WARN,
-+        LIBPERF_INFO,
-+        LIBPERF_DEBUG,
-+        LIBPERF_DEBUG2,
-+        LIBPERF_DEBUG3,
-+};
-+--
-+
-+Once the setup is complete we start by defining specific events using the `struct perf_event_attr`.
-+
-+We create software events for cpu and task:
-+
-+[source,c]
-+--
-+ 20         struct perf_event_attr attr1 = {
-+ 21                 .type        = PERF_TYPE_SOFTWARE,
-+ 22                 .config      = PERF_COUNT_SW_CPU_CLOCK,
-+ 23                 .read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING,
-+ 24                 .disabled    = 1,
-+ 25         };
-+ 26         struct perf_event_attr attr2 = {
-+ 27                 .type        = PERF_TYPE_SOFTWARE,
-+ 28                 .config      = PERF_COUNT_SW_TASK_CLOCK,
-+ 29                 .read_format = PERF_FORMAT_TOTAL_TIME_ENABLED|PERF_FORMAT_TOTAL_TIME_RUNNING,
-+ 30                 .disabled    = 1,
-+ 31         };
-+--
-+
-+The `read_format` setup tells perf to include timing details together with each count.
-+
-+Next step is to prepare threads map.
-+
-+In this case we will monitor current process, so we create threads map with single pid (0):
-+
-+[source,c]
-+--
-+ 37         threads = perf_thread_map__new_dummy();
-+ 38         if (!threads) {
-+ 39                 fprintf(stderr, "failed to create threads\n");
-+ 40                 return -1;
-+ 41         }
-+ 42
-+ 43         perf_thread_map__set_pid(threads, 0, 0);
-+--
-+
-+Now we create libperf's event list, which will serve as holder for the events we want:
-+
-+[source,c]
-+--
-+ 45         evlist = perf_evlist__new();
-+ 46         if (!evlist) {
-+ 47                 fprintf(stderr, "failed to create evlist\n");
-+ 48                 goto out_threads;
-+ 49         }
-+--
-+
-+We create libperf's events for the attributes we defined earlier and add them to the list:
-+
-+[source,c]
-+--
-+ 51         evsel = perf_evsel__new(&attr1);
-+ 52         if (!evsel) {
-+ 53                 fprintf(stderr, "failed to create evsel1\n");
-+ 54                 goto out_evlist;
-+ 55         }
-+ 56
-+ 57         perf_evlist__add(evlist, evsel);
-+ 58
-+ 59         evsel = perf_evsel__new(&attr2);
-+ 60         if (!evsel) {
-+ 61                 fprintf(stderr, "failed to create evsel2\n");
-+ 62                 goto out_evlist;
-+ 63         }
-+ 64
-+ 65         perf_evlist__add(evlist, evsel);
-+--
-+
-+Configure event list with the thread map and open events:
-+
-+[source,c]
-+--
-+ 67         perf_evlist__set_maps(evlist, NULL, threads);
-+ 68
-+ 69         err = perf_evlist__open(evlist);
-+ 70         if (err) {
-+ 71                 fprintf(stderr, "failed to open evsel\n");
-+ 72                 goto out_evlist;
-+ 73         }
-+--
-+
-+Both events are created as disabled (note the `disabled = 1` assignment above),
-+so we need to enable the whole list explicitely (both events).
-+
-+From this moment events are counting and we can do our workload.
-+
-+When we are done we disable the events list.
-+
-+[source,c]
-+--
-+ 75         perf_evlist__enable(evlist);
-+ 76
-+ 77         while (count--);
-+ 78
-+ 79         perf_evlist__disable(evlist);
-+--
-+
-+Now we need to get the counts from events, following code iterates throught the events list and read counts:
-+
-+[source,c]
-+--
-+ 81         perf_evlist__for_each_evsel(evlist, evsel) {
-+ 82                 perf_evsel__read(evsel, 0, 0, &counts);
-+ 83                 fprintf(stdout, "count %llu, enabled %llu, run %llu\n",
-+ 84                         counts.val, counts.ena, counts.run);
-+ 85         }
-+--
-+
-+And finaly cleanup.
-+
-+We close the whole events list (both events) and remove it together with the threads map:
-+
-+[source,c]
-+--
-+ 87         perf_evlist__close(evlist);
-+ 88
-+ 89 out_evlist:
-+ 90         perf_evlist__delete(evlist);
-+ 91 out_threads:
-+ 92         perf_thread_map__put(threads);
-+ 93         return err;
-+ 94 }
-+--
-+
-+REPORTING BUGS
-+--------------
-+Report bugs to <linux-perf-users@vger.kernel.org>.
-+
-+LICENSE
-+-------
-+libperf is Free Software licensed under the GNU LGPL 2.1
-+
-+RESOURCES
-+---------
-+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-+
-+SEE ALSO
-+--------
-+libperf(3), libperf-sampling(7)
-diff --git a/tools/lib/perf/Documentation/libperf-sampling.txt b/tools/lib/perf/Documentation/libperf-sampling.txt
-new file mode 100644
-index 000000000000..d71a7b4fcf5f
---- /dev/null
-+++ b/tools/lib/perf/Documentation/libperf-sampling.txt
-@@ -0,0 +1,243 @@
-+libperf-sampling(7)
-+===================
-+
-+NAME
-+----
-+libperf-sampling - sampling interface
-+
-+
-+DESCRIPTION
-+-----------
-+The sampling interface provides API to meassure and get count for specific perf events.
-+
-+The following test tries to explain count on `sampling.c` example.
-+
-+It is by no means complete guide to sampling, but shows libperf basic API for sampling.
-+
-+The `sampling.c` comes with libbperf package and can be compiled and run like:
-+
-+[source,bash]
-+--
-+$ gcc -o sampling sampling.c -lperf
-+$ sudo ./sampling
-+cpu   0, pid      0, tid      0, ip     ffffffffad06c4e6, period                    1
-+cpu   0, pid   4465, tid   4469, ip     ffffffffad118748, period             18322959
-+cpu   0, pid      0, tid      0, ip     ffffffffad115722, period             33544846
-+cpu   0, pid   4465, tid   4470, ip         7f84fe0cdad6, period             23687474
-+cpu   0, pid      0, tid      0, ip     ffffffffad9e0349, period             34255790
-+cpu   0, pid   4465, tid   4469, ip     ffffffffad136581, period             38664069
-+cpu   0, pid      0, tid      0, ip     ffffffffad9e55e2, period             21922384
-+cpu   0, pid   4465, tid   4470, ip         7f84fe0ebebf, period             17655175
-+...
-+--
-+
-+It requires root access, because it uses hardware cycles event.
-+
-+The `sampling.c` example profiles/samples all CPUs with hardware cycles, in a nutshel it:
-+
-+- creates events
-+- adds them to the event list
-+- opens and enables events through the event list
-+- sleeps for 3 seconds
-+- disables events
-+- reads and displays recorded samples
-+- destroys the event list
-+
-+The first thing you need to do before using libperf is to call init function:
-+
-+[source,c]
-+--
-+ 12 static int libperf_print(enum libperf_print_level level,
-+ 13                          const char *fmt, va_list ap)
-+ 14 {
-+ 15         return vfprintf(stderr, fmt, ap);
-+ 16 }
-+
-+ 23 int main(int argc, char **argv)
-+ 24 {
-+ ...
-+ 40         libperf_init(libperf_print);
-+--
-+
-+It will setup the library and sets function for debug output from library.
-+
-+The `libperf_print` callback will receive any message with its debug level,
-+defined as:
-+
-+[source,c]
-+--
-+enum libperf_print_level {
-+        LIBPERF_ERR,
-+        LIBPERF_WARN,
-+        LIBPERF_INFO,
-+        LIBPERF_DEBUG,
-+        LIBPERF_DEBUG2,
-+        LIBPERF_DEBUG3,
-+};
-+--
-+
-+Once the setup is complete we start by defining cycles event using the `struct perf_event_attr`:
-+
-+[source,c]
-+--
-+ 29         struct perf_event_attr attr = {
-+ 30                 .type        = PERF_TYPE_HARDWARE,
-+ 31                 .config      = PERF_COUNT_HW_CPU_CYCLES,
-+ 32                 .disabled    = 1,
-+ 33                 .freq        = 1,
-+ 34                 .sample_freq = 10,
-+ 35                 .sample_type = PERF_SAMPLE_IP|PERF_SAMPLE_TID|PERF_SAMPLE_CPU|PERF_SAMPLE_PERIOD,
-+ 36         };
-+--
-+
-+Next step is to prepare cpus map.
-+
-+In this case we will monitor all the available CPUs:
-+
-+[source,c]
-+--
-+ 42         cpus = perf_cpu_map__new(NULL);
-+ 43         if (!cpus) {
-+ 44                 fprintf(stderr, "failed to create cpus\n");
-+ 45                 return -1;
-+ 46         }
-+--
-+
-+Now we create libperf's event list, which will serve as holder for the cycles event:
-+
-+[source,c]
-+--
-+ 48         evlist = perf_evlist__new();
-+ 49         if (!evlist) {
-+ 50                 fprintf(stderr, "failed to create evlist\n");
-+ 51                 goto out_cpus;
-+ 52         }
-+--
-+
-+We create libperf's event for the cycles attribute we defined earlier and add it to the list:
-+
-+[source,c]
-+--
-+ 54         evsel = perf_evsel__new(&attr);
-+ 55         if (!evsel) {
-+ 56                 fprintf(stderr, "failed to create cycles\n");
-+ 57                 goto out_cpus;
-+ 58         }
-+ 59
-+ 60         perf_evlist__add(evlist, evsel);
-+--
-+
-+Configure event list with the cpus map and open event:
-+
-+[source,c]
-+--
-+ 62         perf_evlist__set_maps(evlist, cpus, NULL);
-+ 63
-+ 64         err = perf_evlist__open(evlist);
-+ 65         if (err) {
-+ 66                 fprintf(stderr, "failed to open evlist\n");
-+ 67                 goto out_evlist;
-+ 68         }
-+--
-+
-+Once the events list is open, we can create memory maps AKA perf ring buffers:
-+
-+[source,c]
-+--
-+ 70         err = perf_evlist__mmap(evlist, 4);
-+ 71         if (err) {
-+ 72                 fprintf(stderr, "failed to mmap evlist\n");
-+ 73                 goto out_evlist;
-+ 74         }
-+--
-+
-+The event is created as disabled (note the `disabled = 1` assignment above),
-+so we need to enable the events list explicitely.
-+
-+From this moment the cycles event is sampling.
-+
-+We will sleep for 3 seconds while the ring buffers get data from all CPUs, then we disable the events list.
-+
-+[source,c]
-+--
-+ 76         perf_evlist__enable(evlist);
-+ 77         sleep(3);
-+ 78         perf_evlist__disable(evlist);
-+--
-+
-+Following code walks through the ring buffers and reads stored events/samples:
-+
-+[source,c]
-+--
-+ 80         perf_evlist__for_each_mmap(evlist, map, false) {
-+ 81                 if (perf_mmap__read_init(map) < 0)
-+ 82                         continue;
-+ 83
-+ 84                 while ((event = perf_mmap__read_event(map)) != NULL) {
-+
-+                            /* process event */
-+
-+108                         perf_mmap__consume(map);
-+109                 }
-+110                 perf_mmap__read_done(map);
-+111         }
-+
-+--
-+
-+Each sample needs to get parsed:
-+
-+[source,c]
-+--
-+ 85                         int cpu, pid, tid;
-+ 86                         __u64 ip, period, *array;
-+ 87                         union u64_swap u;
-+ 88
-+ 89                         array = event->sample.array;
-+ 90
-+ 91                         ip = *array;
-+ 92                         array++;
-+ 93
-+ 94                         u.val64 = *array;
-+ 95                         pid = u.val32[0];
-+ 96                         tid = u.val32[1];
-+ 97                         array++;
-+ 98
-+ 99                         u.val64 = *array;
-+100                         cpu = u.val32[0];
-+101                         array++;
-+102
-+103                         period = *array;
-+104
-+105                         fprintf(stdout, "cpu %3d, pid %6d, tid %6d, ip %20llx, period %20llu\n",
-+106                                 cpu, pid, tid, ip, period);
-+--
-+
-+And finaly cleanup.
-+
-+We close the whole events list (both events) and remove it together with the threads map:
-+
-+[source,c]
-+--
-+113 out_evlist:
-+114         perf_evlist__delete(evlist);
-+115 out_cpus:
-+116         perf_cpu_map__put(cpus);
-+117         return err;
-+118 }
-+--
-+
-+REPORTING BUGS
-+--------------
-+Report bugs to <linux-perf-users@vger.kernel.org>.
-+
-+LICENSE
-+-------
-+libperf is Free Software licensed under the GNU LGPL 2.1
-+
-+RESOURCES
-+---------
-+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-+
-+SEE ALSO
-+--------
-+libperf(3), libperf-counting(7)
-diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
-new file mode 100644
-index 000000000000..5a6bb512789d
---- /dev/null
-+++ b/tools/lib/perf/Documentation/libperf.txt
-@@ -0,0 +1,246 @@
-+libperf(3)
-+==========
-+
-+NAME
-+----
-+libperf - Linux kernel perf event library
-+
-+
-+SYNOPSIS
-+--------
-+*Generic API:*
-+
-+[source,c]
-+--
-+  #include <perf/core.h>
-+
-+  enum libperf_print_level {
-+          LIBPERF_ERR,
-+          LIBPERF_WARN,
-+          LIBPERF_INFO,
-+          LIBPERF_DEBUG,
-+          LIBPERF_DEBUG2,
-+          LIBPERF_DEBUG3,
-+  };
-+
-+  typedef int (*libperf_print_fn_t)(enum libperf_print_level level,
-+                                    const char *, va_list ap);
-+
-+  void libperf_init(libperf_print_fn_t fn);
-+--
-+
-+*API to handle cpu maps:*
-+
-+[source,c]
-+--
-+  #include <perf/cpumap.h>
-+
-+  struct perf_cpu_map;
-+
-+  struct perf_cpu_map *perf_cpu_map__dummy_new(void);
-+  struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list);
-+  struct perf_cpu_map *perf_cpu_map__read(FILE *file);
-+  struct perf_cpu_map *perf_cpu_map__get(struct perf_cpu_map *map);
-+  struct perf_cpu_map *perf_cpu_map__merge(struct perf_cpu_map *orig,
-+                                           struct perf_cpu_map *other);
-+  void perf_cpu_map__put(struct perf_cpu_map *map);
-+  int perf_cpu_map__cpu(const struct perf_cpu_map *cpus, int idx);
-+  int perf_cpu_map__nr(const struct perf_cpu_map *cpus);
-+  bool perf_cpu_map__empty(const struct perf_cpu_map *map);
-+  int perf_cpu_map__max(struct perf_cpu_map *map);
-+
-+  #define perf_cpu_map__for_each_cpu(cpu, idx, cpus)
-+--
-+
-+*API to handle thread maps:*
-+
-+[source,c]
-+--
-+  #include <perf/threadmap.h>
-+
-+  struct perf_thread_map;
-+
-+  struct perf_thread_map *perf_thread_map__new_dummy(void);
-+
-+  void perf_thread_map__set_pid(struct perf_thread_map *map, int thread, pid_t pid);
-+  char *perf_thread_map__comm(struct perf_thread_map *map, int thread);
-+  int perf_thread_map__nr(struct perf_thread_map *threads);
-+  pid_t perf_thread_map__pid(struct perf_thread_map *map, int thread);
-+
-+  struct perf_thread_map *perf_thread_map__get(struct perf_thread_map *map);
-+  void perf_thread_map__put(struct perf_thread_map *map);
-+--
-+
-+*API to handle event lists:*
-+
-+[source,c]
-+--
-+  #include <perf/evlist.h>
-+
-+  struct perf_evlist;
-+
-+  void perf_evlist__add(struct perf_evlist *evlist,
-+                        struct perf_evsel *evsel);
-+  void perf_evlist__remove(struct perf_evlist *evlist,
-+                           struct perf_evsel *evsel);
-+  struct perf_evlist *perf_evlist__new(void);
-+  void perf_evlist__delete(struct perf_evlist *evlist);
-+  struct perf_evsel* perf_evlist__next(struct perf_evlist *evlist,
-+                                       struct perf_evsel *evsel);
-+  int perf_evlist__open(struct perf_evlist *evlist);
-+  void perf_evlist__close(struct perf_evlist *evlist);
-+  void perf_evlist__enable(struct perf_evlist *evlist);
-+  void perf_evlist__disable(struct perf_evlist *evlist);
-+
-+  #define perf_evlist__for_each_evsel(evlist, pos)
-+
-+  void perf_evlist__set_maps(struct perf_evlist *evlist,
-+                             struct perf_cpu_map *cpus,
-+                             struct perf_thread_map *threads);
-+  int perf_evlist__poll(struct perf_evlist *evlist, int timeout);
-+  int perf_evlist__filter_pollfd(struct perf_evlist *evlist,
-+                                 short revents_and_mask);
-+
-+  int perf_evlist__mmap(struct perf_evlist *evlist, int pages);
-+  void perf_evlist__munmap(struct perf_evlist *evlist);
-+
-+  struct perf_mmap *perf_evlist__next_mmap(struct perf_evlist *evlist,
-+                                           struct perf_mmap *map,
-+                                           bool overwrite);
-+
-+  #define perf_evlist__for_each_mmap(evlist, pos, overwrite)
-+--
-+
-+*API to handle events:*
-+
-+[source,c]
-+--
-+  #include <perf/evsel.h>*
-+
-+  struct perf_evsel;
-+
-+  struct perf_counts_values {
-+          union {
-+                  struct {
-+                          uint64_t val;
-+                          uint64_t ena;
-+                          uint64_t run;
-+                  };
-+                  uint64_t values[3];
-+          };
-+  };
-+
-+  struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr);
-+  void perf_evsel__delete(struct perf_evsel *evsel);
-+  int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
-+                       struct perf_thread_map *threads);
-+  void perf_evsel__close(struct perf_evsel *evsel);
-+  void perf_evsel__close_cpu(struct perf_evsel *evsel, int cpu);
-+  int perf_evsel__read(struct perf_evsel *evsel, int cpu, int thread,
-+                       struct perf_counts_values *count);
-+  int perf_evsel__enable(struct perf_evsel *evsel);
-+  int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu);
-+  int perf_evsel__disable(struct perf_evsel *evsel);
-+  int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu);
-+  struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
-+  struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
-+  struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
-+--
-+
-+*API to handle maps (perf ring buffers):*
-+
-+[source,c]
-+--
-+  #include <perf/mmap.h>
-+
-+  struct perf_mmap;
-+
-+  void perf_mmap__consume(struct perf_mmap *map);
-+  int perf_mmap__read_init(struct perf_mmap *map);
-+  void perf_mmap__read_done(struct perf_mmap *map);
-+  union perf_event *perf_mmap__read_event(struct perf_mmap *map);
-+--
-+
-+*Structures to access perf API events:*
-+
-+[source,c]
-+--
-+  #include <perf/event.h>
-+
-+  struct perf_record_mmap;
-+  struct perf_record_mmap2;
-+  struct perf_record_comm;
-+  struct perf_record_namespaces;
-+  struct perf_record_fork;
-+  struct perf_record_lost;
-+  struct perf_record_lost_samples;
-+  struct perf_record_read;
-+  struct perf_record_throttle;
-+  struct perf_record_ksymbol;
-+  struct perf_record_bpf_event;
-+  struct perf_record_sample;
-+  struct perf_record_switch;
-+  struct perf_record_header_attr;
-+  struct perf_record_record_cpu_map;
-+  struct perf_record_cpu_map_data;
-+  struct perf_record_cpu_map;
-+  struct perf_record_event_update_cpus;
-+  struct perf_record_event_update_scale;
-+  struct perf_record_event_update;
-+  struct perf_trace_event_type;
-+  struct perf_record_header_event_type;
-+  struct perf_record_header_tracing_data;
-+  struct perf_record_header_build_id;
-+  struct perf_record_id_index;
-+  struct perf_record_auxtrace_info;
-+  struct perf_record_auxtrace;
-+  struct perf_record_auxtrace_error;
-+  struct perf_record_aux;
-+  struct perf_record_itrace_start;
-+  struct perf_record_thread_map_entry;
-+  struct perf_record_thread_map;
-+  struct perf_record_stat_config_entry;
-+  struct perf_record_stat_config;
-+  struct perf_record_stat;
-+  struct perf_record_stat_round;
-+  struct perf_record_time_conv;
-+  struct perf_record_header_feature;
-+  struct perf_record_compressed;
-+--
-+
-+DESCRIPTION
-+-----------
-+The libperf library provides an API to access the linux kernel perf
-+events subsystem.
-+
-+Following objects are key to the libperf interface:
-+
-+[horizontal]
-+
-+struct perf_cpu_map:: Provides a cpu list abstraction.
-+
-+struct perf_thread_map:: Provides a thread list abstraction.
-+
-+struct perf_evsel:: Provides an abstraction for single a perf event.
-+
-+struct perf_evlist:: Gathers several struct perf_evsel object and performs functions on all of them.
-+
-+struct perf_mmap:: Provides an abstraction for accessing perf ring buffer.
-+
-+The exported API functions bind these objects together.
-+
-+REPORTING BUGS
-+--------------
-+Report bugs to <linux-perf-users@vger.kernel.org>.
-+
-+LICENSE
-+-------
-+libperf is Free Software licensed under the GNU LGPL 2.1
-+
-+RESOURCES
-+---------
-+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-+
-+SEE ALSO
-+--------
-+libperf-sampling(7), libperf-counting(7)
-diff --git a/tools/lib/perf/Documentation/man/libperf.rst b/tools/lib/perf/Documentation/man/libperf.rst
-deleted file mode 100644
-index 09a270fccb9c..000000000000
---- a/tools/lib/perf/Documentation/man/libperf.rst
-+++ /dev/null
-@@ -1,100 +0,0 @@
--.. SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--
--libperf
--
--The libperf library provides an API to access the linux kernel perf
--events subsystem. It provides the following high level objects:
--
--  - struct perf_cpu_map
--  - struct perf_thread_map
--  - struct perf_evlist
--  - struct perf_evsel
--
--reference
--=========
--Function reference by header files:
--
--perf/core.h
-------------
--.. code-block:: c
--
--  typedef int (\*libperf_print_fn_t)(enum libperf_print_level level,
--                                     const char \*, va_list ap);
--
--  void libperf_set_print(libperf_print_fn_t fn);
--
--perf/cpumap.h
---------------
--.. code-block:: c
--
--  struct perf_cpu_map \*perf_cpu_map__dummy_new(void);
--  struct perf_cpu_map \*perf_cpu_map__new(const char \*cpu_list);
--  struct perf_cpu_map \*perf_cpu_map__read(FILE \*file);
--  struct perf_cpu_map \*perf_cpu_map__get(struct perf_cpu_map \*map);
--  void perf_cpu_map__put(struct perf_cpu_map \*map);
--  int perf_cpu_map__cpu(const struct perf_cpu_map \*cpus, int idx);
--  int perf_cpu_map__nr(const struct perf_cpu_map \*cpus);
--  perf_cpu_map__for_each_cpu(cpu, idx, cpus)
--
--perf/threadmap.h
------------------
--.. code-block:: c
--
--  struct perf_thread_map \*perf_thread_map__new_dummy(void);
--  void perf_thread_map__set_pid(struct perf_thread_map \*map, int thread, pid_t pid);
--  char \*perf_thread_map__comm(struct perf_thread_map \*map, int thread);
--  struct perf_thread_map \*perf_thread_map__get(struct perf_thread_map \*map);
--  void perf_thread_map__put(struct perf_thread_map \*map);
--
--perf/evlist.h
---------------
--.. code-block::
--
--  void perf_evlist__init(struct perf_evlist \*evlist);
--  void perf_evlist__add(struct perf_evlist \*evlist,
--                      struct perf_evsel \*evsel);
--  void perf_evlist__remove(struct perf_evlist \*evlist,
--                         struct perf_evsel \*evsel);
--  struct perf_evlist \*perf_evlist__new(void);
--  void perf_evlist__delete(struct perf_evlist \*evlist);
--  struct perf_evsel\* perf_evlist__next(struct perf_evlist \*evlist,
--                                     struct perf_evsel \*evsel);
--  int perf_evlist__open(struct perf_evlist \*evlist);
--  void perf_evlist__close(struct perf_evlist \*evlist);
--  void perf_evlist__enable(struct perf_evlist \*evlist);
--  void perf_evlist__disable(struct perf_evlist \*evlist);
--  perf_evlist__for_each_evsel(evlist, pos)
--  void perf_evlist__set_maps(struct perf_evlist \*evlist,
--                           struct perf_cpu_map \*cpus,
--                           struct perf_thread_map \*threads);
--
--perf/evsel.h
--------------
--.. code-block:: c
--
--  struct perf_counts_values {
--        union {
--                struct {
--                        uint64_t val;
--                        uint64_t ena;
--                        uint64_t run;
--                };
--                uint64_t values[3];
--        };
--  };
--
--  void perf_evsel__init(struct perf_evsel \*evsel,
--                      struct perf_event_attr \*attr);
--  struct perf_evsel \*perf_evsel__new(struct perf_event_attr \*attr);
--  void perf_evsel__delete(struct perf_evsel \*evsel);
--  int perf_evsel__open(struct perf_evsel \*evsel, struct perf_cpu_map \*cpus,
--                     struct perf_thread_map \*threads);
--  void perf_evsel__close(struct perf_evsel \*evsel);
--  int perf_evsel__read(struct perf_evsel \*evsel, int cpu, int thread,
--                     struct perf_counts_values \*count);
--  int perf_evsel__enable(struct perf_evsel \*evsel);
--  int perf_evsel__disable(struct perf_evsel \*evsel);
--  int perf_evsel__apply_filter(struct perf_evsel \*evsel, const char \*filter);
--  struct perf_cpu_map \*perf_evsel__cpus(struct perf_evsel \*evsel);
--  struct perf_thread_map \*perf_evsel__threads(struct perf_evsel \*evsel);
--  struct perf_event_attr \*perf_evsel__attr(struct perf_evsel \*evsel);
-diff --git a/tools/lib/perf/Documentation/manpage-1.72.xsl b/tools/lib/perf/Documentation/manpage-1.72.xsl
-new file mode 100644
-index 000000000000..b4d315cb8c47
---- /dev/null
-+++ b/tools/lib/perf/Documentation/manpage-1.72.xsl
-@@ -0,0 +1,14 @@
-+<!-- manpage-1.72.xsl:
-+     special settings for manpages rendered from asciidoc+docbook
-+     handles peculiarities in docbook-xsl 1.72.0 -->
-+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-+		version="1.0">
-+
-+<xsl:import href="manpage-base.xsl"/>
-+
-+<!-- these are the special values for the roff control characters
-+     needed for docbook-xsl 1.72.0 -->
-+<xsl:param name="git.docbook.backslash">&#x2593;</xsl:param>
-+<xsl:param name="git.docbook.dot"      >&#x2302;</xsl:param>
-+
-+</xsl:stylesheet>
-diff --git a/tools/lib/perf/Documentation/manpage-base.xsl b/tools/lib/perf/Documentation/manpage-base.xsl
-new file mode 100644
-index 000000000000..a264fa616093
---- /dev/null
-+++ b/tools/lib/perf/Documentation/manpage-base.xsl
-@@ -0,0 +1,35 @@
-+<!-- manpage-base.xsl:
-+     special formatting for manpages rendered from asciidoc+docbook -->
-+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-+		version="1.0">
-+
-+<!-- these params silence some output from xmlto -->
-+<xsl:param name="man.output.quietly" select="1"/>
-+<xsl:param name="refentry.meta.get.quietly" select="1"/>
-+
-+<!-- convert asciidoc callouts to man page format;
-+     git.docbook.backslash and git.docbook.dot params
-+     must be supplied by another XSL file or other means -->
-+<xsl:template match="co">
-+	<xsl:value-of select="concat(
-+			      $git.docbook.backslash,'fB(',
-+			      substring-after(@id,'-'),')',
-+			      $git.docbook.backslash,'fR')"/>
-+</xsl:template>
-+<xsl:template match="calloutlist">
-+	<xsl:value-of select="$git.docbook.dot"/>
-+	<xsl:text>sp&#10;</xsl:text>
-+	<xsl:apply-templates/>
-+	<xsl:text>&#10;</xsl:text>
-+</xsl:template>
-+<xsl:template match="callout">
-+	<xsl:value-of select="concat(
-+			      $git.docbook.backslash,'fB',
-+			      substring-after(@arearefs,'-'),
-+			      '. ',$git.docbook.backslash,'fR')"/>
-+	<xsl:apply-templates/>
-+	<xsl:value-of select="$git.docbook.dot"/>
-+	<xsl:text>br&#10;</xsl:text>
-+</xsl:template>
-+
-+</xsl:stylesheet>
-diff --git a/tools/lib/perf/Documentation/manpage-bold-literal.xsl b/tools/lib/perf/Documentation/manpage-bold-literal.xsl
-new file mode 100644
-index 000000000000..608eb5df6281
---- /dev/null
-+++ b/tools/lib/perf/Documentation/manpage-bold-literal.xsl
-@@ -0,0 +1,17 @@
-+<!-- manpage-bold-literal.xsl:
-+     special formatting for manpages rendered from asciidoc+docbook -->
-+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-+		version="1.0">
-+
-+<!-- render literal text as bold (instead of plain or monospace);
-+     this makes literal text easier to distinguish in manpages
-+     viewed on a tty -->
-+<xsl:template match="literal">
-+	<xsl:value-of select="$git.docbook.backslash"/>
-+	<xsl:text>fB</xsl:text>
-+	<xsl:apply-templates/>
-+	<xsl:value-of select="$git.docbook.backslash"/>
-+	<xsl:text>fR</xsl:text>
-+</xsl:template>
-+
-+</xsl:stylesheet>
-diff --git a/tools/lib/perf/Documentation/manpage-normal.xsl b/tools/lib/perf/Documentation/manpage-normal.xsl
-new file mode 100644
-index 000000000000..a48f5b11f3dc
---- /dev/null
-+++ b/tools/lib/perf/Documentation/manpage-normal.xsl
-@@ -0,0 +1,13 @@
-+<!-- manpage-normal.xsl:
-+     special settings for manpages rendered from asciidoc+docbook
-+     handles anything we want to keep away from docbook-xsl 1.72.0 -->
-+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-+		version="1.0">
-+
-+<xsl:import href="manpage-base.xsl"/>
-+
-+<!-- these are the normal values for the roff control characters -->
-+<xsl:param name="git.docbook.backslash">\</xsl:param>
-+<xsl:param name="git.docbook.dot"	>.</xsl:param>
-+
-+</xsl:stylesheet>
-diff --git a/tools/lib/perf/Documentation/manpage-suppress-sp.xsl b/tools/lib/perf/Documentation/manpage-suppress-sp.xsl
-new file mode 100644
-index 000000000000..a63c7632a87d
---- /dev/null
-+++ b/tools/lib/perf/Documentation/manpage-suppress-sp.xsl
-@@ -0,0 +1,21 @@
-+<!-- manpage-suppress-sp.xsl:
-+     special settings for manpages rendered from asciidoc+docbook
-+     handles erroneous, inline .sp in manpage output of some
-+     versions of docbook-xsl -->
-+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-+		version="1.0">
-+
-+<!-- attempt to work around spurious .sp at the tail of the line
-+     that some versions of docbook stylesheets seem to add -->
-+<xsl:template match="simpara">
-+  <xsl:variable name="content">
-+    <xsl:apply-templates/>
-+  </xsl:variable>
-+  <xsl:value-of select="normalize-space($content)"/>
-+  <xsl:if test="not(ancestor::authorblurb) and
-+                not(ancestor::personblurb)">
-+    <xsl:text>&#10;&#10;</xsl:text>
-+  </xsl:if>
-+</xsl:template>
-+
-+</xsl:stylesheet>
-diff --git a/tools/lib/perf/Documentation/tutorial/tutorial.rst b/tools/lib/perf/Documentation/tutorial/tutorial.rst
-deleted file mode 100644
-index 7be7bc27b385..000000000000
---- a/tools/lib/perf/Documentation/tutorial/tutorial.rst
-+++ /dev/null
-@@ -1,123 +0,0 @@
--.. SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--
--libperf tutorial
--================
--
--Compile and install libperf from kernel sources
--===============================================
--.. code-block:: bash
--
--  git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
--  cd linux/tools/perf/lib
--  make
--  sudo make install prefix=/usr
--
--Libperf object
--==============
--The libperf library provides several high level objects:
--
--struct perf_cpu_map
--  Provides a cpu list abstraction.
--
--struct perf_thread_map
--  Provides a thread list abstraction.
--
--struct perf_evsel
--  Provides an abstraction for single a perf event.
--
--struct perf_evlist
--  Gathers several struct perf_evsel object and performs functions on all of them.
--
--The exported API binds these objects together,
--for full reference see the libperf.7 man page.
--
--Examples
--========
--Examples aim to explain libperf functionality on simple use cases.
--They are based in on a checked out linux kernel git tree:
--
--.. code-block:: bash
--
--  $ cd tools/perf/lib/Documentation/tutorial/
--  $ ls -d  ex-*
--  ex-1-compile  ex-2-evsel-stat  ex-3-evlist-stat
--
--ex-1-compile example
--====================
--This example shows the basic usage of *struct perf_cpu_map*,
--how to create it and display its cpus:
--
--.. code-block:: bash
--
--  $ cd ex-1-compile/
--  $ make
--  gcc -o test test.c -lperf
--  $ ./test
--  0 1 2 3 4 5 6 7
--
--
--The full code listing is here:
--
--.. code-block:: c
--
--   1 #include <perf/cpumap.h>
--   2
--   3 int main(int argc, char **Argv)
--   4 {
--   5         struct perf_cpu_map *cpus;
--   6         int cpu, tmp;
--   7
--   8         cpus = perf_cpu_map__new(NULL);
--   9
--  10         perf_cpu_map__for_each_cpu(cpu, tmp, cpus)
--  11                 fprintf(stdout, "%d ", cpu);
--  12
--  13         fprintf(stdout, "\n");
--  14
--  15         perf_cpu_map__put(cpus);
--  16         return 0;
--  17 }
--
--
--First you need to include the proper header to have *struct perf_cpumap*
--declaration and functions:
--
--.. code-block:: c
--
--   1 #include <perf/cpumap.h>
--
--
--The *struct perf_cpumap* object is created by *perf_cpu_map__new* call.
--The *NULL* argument asks it to populate the object with the current online CPUs list:
--
--.. code-block:: c
--
--   8         cpus = perf_cpu_map__new(NULL);
--
--This is paired with a *perf_cpu_map__put*, that drops its reference at the end, possibly deleting it.
--
--.. code-block:: c
--
--  15         perf_cpu_map__put(cpus);
--
--The iteration through the *struct perf_cpumap* CPUs is done using the *perf_cpu_map__for_each_cpu*
--macro which requires 3 arguments:
--
--- cpu  - the cpu numer
--- tmp  - iteration helper variable
--- cpus - the *struct perf_cpumap* object
--
--.. code-block:: c
--
--  10         perf_cpu_map__for_each_cpu(cpu, tmp, cpus)
--  11                 fprintf(stdout, "%d ", cpu);
--
--ex-2-evsel-stat example
--=======================
--
--TBD
--
--ex-3-evlist-stat example
--========================
--
--TBD
-diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-index 768dd423730b..3718d65cffac 100644
---- a/tools/lib/perf/Makefile
-+++ b/tools/lib/perf/Makefile
-@@ -181,7 +181,10 @@ install_pkgconfig: $(LIBPERF_PC)
- 	$(call QUIET_INSTALL, $(LIBPERF_PC)) \
- 		$(call do_install,$(LIBPERF_PC),$(libdir_SQ)/pkgconfig,644)
- 
--install: install_lib install_headers install_pkgconfig
-+install_doc:
-+	$(Q)$(MAKE) -C Documentation install-man install-html install-examples
-+
-+install: install_lib install_headers install_pkgconfig install_doc
- 
- FORCE:
- 
 -- 
-2.21.0
-
+________________________________________
+Carlos Eduardo de Paula
+me@carlosedp.com
+http://carlosedp.com
+http://twitter.com/carlosedp
+Linkedin
+________________________________________
