@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867A41159A2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 00:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B2311159A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 00:17:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbfLFXPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 18:15:54 -0500
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:41255 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfLFXPx (ORCPT
+        id S1726791AbfLFXQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 18:16:01 -0500
+Received: from mail-pj1-f73.google.com ([209.85.216.73]:38598 "EHLO
+        mail-pj1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfLFXPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 18:15:53 -0500
-Received: by mail-pf1-f202.google.com with SMTP id x6so4887023pfx.8
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 15:15:52 -0800 (PST)
+        Fri, 6 Dec 2019 18:15:55 -0500
+Received: by mail-pj1-f73.google.com with SMTP id k93so4418891pjh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 15:15:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=/tMF1N1dpWqmFPBdnMHtm+6D236UvdPkpsxrjo59FNA=;
-        b=jH5/7SPkJEJNDCcZ8Jb2mgl0FnTgYUNWYzNB3dib1Owp4UrC6vSDPs0W+DC8uLsZKE
-         gyfG3KAVfaDxtpRHNYK21zs1XqtaBWGJUb6k16WRTcu5dZLinT59Pi5ezlfnJwj0B97f
-         rtftXK19lnEd9hmIuzDG6J/buhnS0GxJWcpY2f2oOdtFMlmiKVugID+PHYa/IV1swXkp
-         XGp+BUje0lCKnxz08fxyP0usnHOmtkjQ4tWa4WhQLhG2rCc46bX7PbvW8bm3Jl+SNxx9
-         9vBsSVGWqkdHxf3bFRusXOOIBMN3TuIP5pxdB1CClXVm/U+kMw6rJOI84SeXIHqSgGyY
-         cjIg==
+        bh=dQcTotfpal6OIFNFfZsJBWPz/JeXUsjONjaFgIBxFvQ=;
+        b=SgiVBzQjnMVCLe5dzS0N4Xr20kf5G67BRXOolP1/rodR7ETjX1ylLJKHhGIKos10hB
+         Lk0hzXBgcq+eMXqyUz61Kgj6zb2Z+LQUWM3y1MauMkRht+DgTUOQzU4xM5Afhe+S0Vgx
+         hWKS9p/oGNHM4f0ImtEV0/Y7YNAqkvvQHFGEgS1NY08jEGck1A0sb+Wa5Yk+o8wvldAl
+         cYx1diE0BszLDEpRtKZhaIUJFbe29nYWtezC4VN8CkhyeFrEiSTUmr/Q5Xn1QCBH4CiW
+         mcC/0+pyVBxGf8uJudJ0WHmDlLMOHyPsYElLEha60T190WYE92IF7V8vGxG+4j7+5YUX
+         X8QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=/tMF1N1dpWqmFPBdnMHtm+6D236UvdPkpsxrjo59FNA=;
-        b=KK5UCkXLFaiQctVA94HC1oSIkUfvVS8dEQZiMjBcR4w2/Q6KAhPiV9AZdg8IKaiS4h
-         KGWW5hrO7cxoL4mtKvMN9SoVUoLUH4VZXrE9jSKJSem0cYBq6eE+mBv0KLf4F9EttXFh
-         w6VhaTYmKjn5PZuljH9vTerWGBQfXX4s88dn8XljDswTWZWaSUitZQ/irJDpA+CyfcsJ
-         mi+d4nOlBXEmmB0e7WdBmVVOloJioKdCnMc5HU/5IfhBHbArwfCFF0dg8PJKubhwgfhz
-         1wQi2AzeZjckCpwK9w2vS3tHVCOu6oOMPaezTB1LVuwQ/FOKn9nmGbLjpWUSnG6yKMQ0
-         5RdQ==
-X-Gm-Message-State: APjAAAXW2dH3zb0yXPexoTnitOEQl8VvZXmiQ2Vlcc/8wiadML91VwcG
-        OFExwjU4G/5olvwsRllkWHsgxpBjDFZT
-X-Google-Smtp-Source: APXvYqz/2M6XlUBqqFmYQ1sxlZm7bros7cbLxuTPYlgBE4O3tPQ1tTSoCPPO8dyRlNc6JCKGjhqSy8bu6A9O
-X-Received: by 2002:a63:dc0d:: with SMTP id s13mr6065726pgg.129.1575674152318;
- Fri, 06 Dec 2019 15:15:52 -0800 (PST)
-Date:   Fri,  6 Dec 2019 15:15:31 -0800
+        bh=dQcTotfpal6OIFNFfZsJBWPz/JeXUsjONjaFgIBxFvQ=;
+        b=A6zQH40Ahf27WMQcIYeSzU0FrPqoZ9oJ8QNVGyg9gnTIHXcBOWPOSt3gSnR15+Irmd
+         ZNd3bfH8Yjvd0IOLOkH1+NqN251yN5wuP8lFVkn16084shZFmwL6NHCGIldWcF/5JzAr
+         bwMBWx+L0H7ngZKRDxfbSKv8jUIuSW9Oca5jNT1ql5HvrRnRHKXFVpmoy7R6ZNeldrk4
+         zeuwukfrWSW0FR4/qqUt9CPYWamYyE0NDY8n3wUQ17C7Cvy1dgHxHoa1HYcxw1/GcKTK
+         gGzN+O7ihlrBwBbKoSPcDA1f/T/7/nw2vsAnkQVnRIEhv2M8i83PfDmrw96CORTMVWe0
+         0FgQ==
+X-Gm-Message-State: APjAAAWVMUPvkbtvAS4CToJW8owd+4ROr74aUBZu8Sm9wpdemdwwHH3i
+        jQ8RY7YFdJLXIgiqYvitmlTgFFK7UlBp
+X-Google-Smtp-Source: APXvYqwgukUC1YiLF3qHMaEl8YVY8YDY56SBIHR7cDcK77OjjI6C/3CmgRX49oDT+nffiSiZryVyAh0Ertpu
+X-Received: by 2002:a65:56c6:: with SMTP id w6mr6430940pgs.167.1575674154668;
+ Fri, 06 Dec 2019 15:15:54 -0800 (PST)
+Date:   Fri,  6 Dec 2019 15:15:32 -0800
 In-Reply-To: <20191206231539.227585-1-irogers@google.com>
-Message-Id: <20191206231539.227585-3-irogers@google.com>
+Message-Id: <20191206231539.227585-4-irogers@google.com>
 Mime-Version: 1.0
 References: <20191116011845.177150-1-irogers@google.com> <20191206231539.227585-1-irogers@google.com>
 X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
-Subject: [PATCH v5 02/10] lib: introduce generic min-heap
+Subject: [PATCH v5 03/10] perf: Use min_max_heap in visit_groups_merge
 From:   Ian Rogers <irogers@google.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -81,394 +81,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Supports push, pop and converting an array into a heap. If the sense of
-the compare function is inverted then it can provide a max-heap.
+visit_groups_merge will pick the next event based on when it was
+inserted in to the context (perf_event group_index). Events may be per CPU
+or for any CPU, but in the future we'd also like to have per cgroup events
+to avoid searching all events for the events to schedule for a cgroup.
+Introduce a min heap for the events that maintains a property that the
+earliest inserted event is always at the 0th element. Initialize the heap
+with per-CPU and any-CPU events for the context.
 Based-on-work-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- include/linux/min_heap.h | 135 +++++++++++++++++++++++++++
- lib/Kconfig.debug        |  10 ++
- lib/Makefile             |   1 +
- lib/test_min_heap.c      | 194 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 340 insertions(+)
- create mode 100644 include/linux/min_heap.h
- create mode 100644 lib/test_min_heap.c
+ kernel/events/core.c | 72 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 54 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-new file mode 100644
-index 000000000000..0f04f49c0779
---- /dev/null
-+++ b/include/linux/min_heap.h
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_MIN_HEAP_H
-+#define _LINUX_MIN_HEAP_H
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 9f055ca0651d..e0cc1c833408 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -49,6 +49,7 @@
+ #include <linux/sched/mm.h>
+ #include <linux/proc_ns.h>
+ #include <linux/mount.h>
++#include <linux/min_max_heap.h>
+ 
+ #include "internal.h"
+ 
+@@ -3387,32 +3388,67 @@ static void cpu_ctx_sched_out(struct perf_cpu_context *cpuctx,
+ 	ctx_sched_out(&cpuctx->ctx, cpuctx, event_type);
+ }
+ 
+-static int visit_groups_merge(struct perf_event_groups *groups, int cpu,
+-			      int (*func)(struct perf_event *, void *), void *data)
++static bool perf_cmp_group_idx(const void *l, const void *r)
+ {
+-	struct perf_event **evt, *evt1, *evt2;
++	const struct perf_event *le = l, *re = r;
 +
-+#include <linux/bug.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
++	return le->group_index < re->group_index;
++}
 +
-+/**
-+ * struct min_heap - Data structure to hold a min-heap.
-+ * @data: Start of array holding the heap elements.
-+ * @size: Number of elements currently in the heap.
-+ * @cap: Maximum number of elements that can be held in current storage.
-+ */
-+struct min_heap {
-+	void *data;
-+	int size;
-+	int cap;
++static void swap_ptr(void *l, void *r)
++{
++	void **lp = l, **rp = r;
++
++	swap(*lp, *rp);
++}
++
++static const struct min_max_heap_callbacks perf_min_heap = {
++	.elem_size = sizeof(struct perf_event *),
++	.cmp = perf_cmp_group_idx,
++	.swp = swap_ptr,
 +};
 +
-+/**
-+ * struct min_heap_callbacks - Data/functions to customise the min_heap.
-+ * @elem_size: The size of each element in bytes.
-+ * @cmp: Partial order function for this heap 'less'/'<' for min-heap,
-+ *       'greater'/'>' for max-heap.
-+ * @swp: Swap elements function.
-+ */
-+struct min_heap_callbacks {
-+	int elem_size;
-+	bool (*cmp)(const void *lhs, const void *rhs);
-+	void (*swp)(void *lhs, void *rhs);
-+};
-+
-+/* Sift the element at pos down the heap. */
-+static __always_inline
-+void min_heapify(struct min_heap *heap, int pos,
-+		const struct min_heap_callbacks *func)
++static void __heap_add(struct min_max_heap *heap, struct perf_event *event)
 +{
-+	void *left_child, *right_child, *parent, *large_or_smallest;
-+	u8 *data = (u8 *)heap->data;
++	struct perf_event **itrs = heap->data;
 +
-+	for (;;) {
-+		if (pos * 2 + 1 >= heap->size)
-+			break;
-+
-+		left_child = data + ((pos * 2 + 1) * func->elem_size);
-+		parent = data + (pos * func->elem_size);
-+		large_or_smallest = parent;
-+		if (func->cmp(left_child, large_or_smallest))
-+			large_or_smallest = left_child;
-+
-+		if (pos * 2 + 2 < heap->size) {
-+			right_child = data + ((pos * 2 + 2) * func->elem_size);
-+			if (func->cmp(right_child, large_or_smallest))
-+				large_or_smallest = right_child;
-+		}
-+		if (large_or_smallest == parent)
-+			break;
-+		func->swp(large_or_smallest, parent);
-+		if (large_or_smallest == left_child)
-+			pos = (pos * 2) + 1;
-+		else
-+			pos = (pos * 2) + 2;
++	if (event) {
++		itrs[heap->size] = event;
++		heap->size++;
 +	}
 +}
 +
-+/* Floyd's approach to heapification that is O(size). */
-+static __always_inline
-+void min_heapify_all(struct min_heap *heap,
-+		const struct min_heap_callbacks *func)
++static noinline int visit_groups_merge(struct perf_event_groups *groups,
++				int cpu,
++				int (*func)(struct perf_event *, void *),
++				void *data)
 +{
-+	int i;
-+
-+	for (i = heap->size / 2; i >= 0; i--)
-+		min_heapify(heap, i, func);
-+}
-+
-+/* Remove minimum element from the heap, O(log2(size)). */
-+static __always_inline
-+void min_heap_pop(struct min_heap *heap,
-+		const struct min_heap_callbacks *func)
-+{
-+	u8 *data = (u8 *)heap->data;
-+
-+	if (WARN_ONCE(heap->size <= 0, "Popping an empty heap"))
-+		return;
-+
-+	/* Place last element at the root (position 0) and then sift down. */
-+	heap->size--;
-+	memcpy(data, data + (heap->size * func->elem_size), func->elem_size);
-+	min_heapify(heap, 0, func);
-+}
-+
-+/*
-+ * Remove the minimum element and then push the given element. The
-+ * implementation performs 1 sift (O(log2(size))) and is therefore more
-+ * efficient than a pop followed by a push that does 2.
-+ */
-+static __always_inline
-+void min_heap_pop_push(struct min_heap *heap,
-+		const void *element,
-+		const struct min_heap_callbacks *func)
-+{
-+	memcpy(heap->data, element, func->elem_size);
-+	min_heapify(heap, 0, func);
-+}
-+
-+/* Push an element on to the heap, O(log2(size)). */
-+static __always_inline
-+void min_heap_push(struct min_heap *heap, const void *element,
-+		const struct min_heap_callbacks *func)
-+{
-+	void *child, *parent;
-+	int pos;
-+	u8 *data = (u8 *)heap->data;
-+
-+	if (WARN_ONCE(heap->size >= heap->cap, "Pushing on a full heap"))
-+		return;
-+
-+	/* Place at the end of data. */
-+	pos = heap->size;
-+	memcpy(data + (pos * func->elem_size), element, func->elem_size);
-+	heap->size++;
-+
-+	/* Sift child at pos up. */
-+	for (; pos > 0; pos = (pos - 1) / 2) {
-+		child = data + (pos * func->elem_size);
-+		parent = data + ((pos - 1) / 2) * func->elem_size;
-+		if (func->cmp(parent, child))
-+			break;
-+		func->swp(parent, child);
-+	}
-+}
-+
-+#endif /* _LINUX_MIN_HEAP_H */
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 35accd1d93de..aedad6a89745 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1693,6 +1693,16 @@ config TEST_LIST_SORT
- 
- 	  If unsure, say N.
- 
-+config TEST_MIN_HEAP
-+	tristate "Min heap test"
-+	depends on DEBUG_KERNEL || m
-+	help
-+	  Enable this to turn on min heap function tests. This test is
-+	  executed only once during system boot (so affects only boot time),
-+	  or at module load time.
-+
-+	  If unsure, say N.
-+
- config TEST_SORT
- 	tristate "Array-based sort test"
- 	depends on DEBUG_KERNEL || m
-diff --git a/lib/Makefile b/lib/Makefile
-index 778ab704e3ad..c30ee12f8a9c 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -70,6 +70,7 @@ CFLAGS_test_ubsan.o += $(call cc-disable-warning, vla)
- UBSAN_SANITIZE_test_ubsan.o := y
- obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
- obj-$(CONFIG_TEST_LIST_SORT) += test_list_sort.o
-+obj-$(CONFIG_TEST_MIN_HEAP) += test_min_heap.o
- obj-$(CONFIG_TEST_LKM) += test_module.o
- obj-$(CONFIG_TEST_VMALLOC) += test_vmalloc.o
- obj-$(CONFIG_TEST_OVERFLOW) += test_overflow.o
-diff --git a/lib/test_min_heap.c b/lib/test_min_heap.c
-new file mode 100644
-index 000000000000..0f06d1f757b5
---- /dev/null
-+++ b/lib/test_min_heap.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#define pr_fmt(fmt) "min_heap_test: " fmt
-+
-+/*
-+ * Test cases for the min max heap.
-+ */
-+
-+#include <linux/log2.h>
-+#include <linux/min_heap.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/random.h>
-+
-+static __init bool less_than(const void *lhs, const void *rhs)
-+{
-+	return *(int *)lhs < *(int *)rhs;
-+}
-+
-+static __init bool greater_than(const void *lhs, const void *rhs)
-+{
-+	return *(int *)lhs > *(int *)rhs;
-+}
-+
-+static __init void swap_ints(void *lhs, void *rhs)
-+{
-+	int temp = *(int *)lhs;
-+
-+	*(int *)lhs = *(int *)rhs;
-+	*(int *)rhs = temp;
-+}
-+
-+static __init int pop_verify_heap(bool min_heap,
-+				struct min_heap *heap,
-+				const struct min_heap_callbacks *funcs)
-+{
-+	int last;
-+	int *values = (int *)heap->data;
-+	int err = 0;
-+
-+	last = values[0];
-+	min_heap_pop(heap, funcs);
-+	while (heap->size > 0) {
-+		if (min_heap) {
-+			if (last > values[0]) {
-+				pr_err("error: expected %d <= %d\n", last,
-+					values[0]);
-+				err++;
-+			}
-+		} else {
-+			if (last < values[0]) {
-+				pr_err("error: expected %d >= %d\n", last,
-+					values[0]);
-+				err++;
-+			}
-+		}
-+		last = values[0];
-+		min_heap_pop(heap, funcs);
-+	}
-+	return err;
-+}
-+
-+static __init int test_heapify_all(bool min_heap)
-+{
-+	int values[] = { 3, 1, 2, 4, 0x8000000, 0x7FFFFFF, 0,
-+			 -3, -1, -2, -4, 0x8000000, 0x7FFFFFF };
-+	struct min_heap heap = {
-+		.data = values,
-+		.size = ARRAY_SIZE(values),
-+		.cap =  ARRAY_SIZE(values),
-+	};
-+	struct min_heap_callbacks funcs = {
-+		.elem_size = sizeof(int),
-+		.cmp = min_heap ? less_than : greater_than,
-+		.swp = swap_ints,
-+	};
-+	int i, err;
-+
-+	/* Test with known set of values. */
-+	min_heapify_all(&heap, &funcs);
-+	err = pop_verify_heap(min_heap, &heap, &funcs);
-+
-+
-+	/* Test with randomly generated values. */
-+	heap.size = ARRAY_SIZE(values);
-+	for (i = 0; i < heap.size; i++)
-+		values[i] = get_random_int();
-+
-+	min_heapify_all(&heap, &funcs);
-+	err += pop_verify_heap(min_heap, &heap, &funcs);
-+
-+	return err;
-+}
-+
-+static __init int test_heap_push(bool min_heap)
-+{
-+	const int data[] = { 3, 1, 2, 4, 0x80000000, 0x7FFFFFFF, 0,
-+			     -3, -1, -2, -4, 0x80000000, 0x7FFFFFFF };
-+	int values[ARRAY_SIZE(data)];
-+	struct min_heap heap = {
-+		.data = values,
++	/* Space for per CPU and/or any CPU event iterators. */
++	struct perf_event *itrs[2];
++	struct min_max_heap event_heap = {
++		.data = itrs,
 +		.size = 0,
-+		.cap =  ARRAY_SIZE(values),
++		.cap = ARRAY_SIZE(itrs),
 +	};
-+	struct min_heap_callbacks funcs = {
-+		.elem_size = sizeof(int),
-+		.cmp = min_heap ? less_than : greater_than,
-+		.swp = swap_ints,
-+	};
-+	int i, temp, err;
-+
-+	/* Test with known set of values copied from data. */
-+	for (i = 0; i < ARRAY_SIZE(data); i++)
-+		min_heap_push(&heap, &data[i], &funcs);
-+
-+	err = pop_verify_heap(min_heap, &heap, &funcs);
-+
-+	/* Test with randomly generated values. */
-+	while (heap.size < heap.cap) {
-+		temp = get_random_int();
-+		min_heap_push(&heap, &temp, &funcs);
-+	}
-+	err += pop_verify_heap(min_heap, &heap, &funcs);
-+
-+	return err;
-+}
-+
-+static __init int test_heap_pop_push(bool min_heap)
-+{
-+	const int data[] = { 3, 1, 2, 4, 0x80000000, 0x7FFFFFFF, 0,
-+			     -3, -1, -2, -4, 0x80000000, 0x7FFFFFFF };
-+	int values[ARRAY_SIZE(data)];
-+	struct min_heap heap = {
-+		.data = values,
-+		.size = 0,
-+		.cap =  ARRAY_SIZE(values),
-+	};
-+	struct min_heap_callbacks funcs = {
-+		.elem_size = sizeof(int),
-+		.cmp = min_heap ? less_than : greater_than,
-+		.swp = swap_ints,
-+	};
-+	int i, temp, err;
-+
-+	/* Fill values with data to pop and replace. */
-+	temp = min_heap ? 0x80000000 : 0x7FFFFFFF;
-+	for (i = 0; i < ARRAY_SIZE(data); i++)
-+		min_heap_push(&heap, &temp, &funcs);
-+
-+	/* Test with known set of values copied from data. */
-+	for (i = 0; i < ARRAY_SIZE(data); i++)
-+		min_heap_pop_push(&heap, &data[i], &funcs);
-+
-+	err = pop_verify_heap(min_heap, &heap, &funcs);
-+
-+	heap.size = 0;
-+	for (i = 0; i < ARRAY_SIZE(data); i++)
-+		min_heap_push(&heap, &temp, &funcs);
-+
-+	/* Test with randomly generated values. */
-+	for (i = 0; i < ARRAY_SIZE(data); i++) {
-+		temp = get_random_int();
-+		min_heap_pop_push(&heap, &temp, &funcs);
-+	}
-+	err += pop_verify_heap(min_heap, &heap, &funcs);
-+
-+	return err;
-+}
-+
-+static int __init test_min_heap_init(void)
-+{
-+	int err = 0;
-+
-+	err += test_heapify_all(true);
-+	err += test_heapify_all(false);
-+	err += test_heap_push(true);
-+	err += test_heap_push(false);
-+	err += test_heap_pop_push(true);
-+	err += test_heap_pop_push(false);
-+	if (err) {
-+		pr_err("test failed with %d errors\n", err);
-+		return -EINVAL;
-+	}
-+	pr_info("test passed\n");
-+	return 0;
-+}
-+module_init(test_min_heap_init);
-+
-+static void __exit test_min_heap_exit(void)
-+{
-+	/* do nothing */
-+}
-+module_exit(test_min_heap_exit);
-+
-+MODULE_LICENSE("GPL");
++	struct perf_event *next;
+ 	int ret;
+ 
+-	evt1 = perf_event_groups_first(groups, -1);
+-	evt2 = perf_event_groups_first(groups, cpu);
++	__heap_add(&event_heap, perf_event_groups_first(groups, -1));
++	__heap_add(&event_heap, perf_event_groups_first(groups, cpu));
+ 
+-	while (evt1 || evt2) {
+-		if (evt1 && evt2) {
+-			if (evt1->group_index < evt2->group_index)
+-				evt = &evt1;
+-			else
+-				evt = &evt2;
+-		} else if (evt1) {
+-			evt = &evt1;
+-		} else {
+-			evt = &evt2;
+-		}
++	min_max_heapify_all(&event_heap, &perf_min_heap);
+ 
+-		ret = func(*evt, data);
++	while (event_heap.size) {
++		ret = func(itrs[0], data);
+ 		if (ret)
+ 			return ret;
+ 
+-		*evt = perf_event_groups_next(*evt);
++		next = perf_event_groups_next(itrs[0]);
++		if (next) {
++			min_max_heap_pop_push(&event_heap, &next,
++					&perf_min_heap);
++		} else
++			min_max_heap_pop(&event_heap, &perf_min_heap);
+ 	}
+ 
+ 	return 0;
 -- 
 2.24.0.393.g34dc348eaf-goog
 
