@@ -2,144 +2,320 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14A4F114DE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 904C6114DF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbfLFJAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:00:24 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:34036 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfLFJAY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:00:24 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB6909uV013502;
-        Fri, 6 Dec 2019 03:00:09 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575622809;
-        bh=uaXzZSsyNHO08tIpDkwGwrPMYqYLJBO4Gfc7A2K13E8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FMFmLosuuKCZW7AkF/X81qsrzdSuoDgsdXMsFUJvHqsyR+1VnlWmM7j5QT4OOjdp2
-         dzcJxHcO3S8QSl3MrPUvOEmpt8AtPnO4FnvWZWCI3BrJLrsCWPE6J8GJOVpxjLv9Ck
-         Bji9mz06imCSMz2qHvoTQDvRPBfp6JiZt4dZyJJ0=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB6909YR100000;
-        Fri, 6 Dec 2019 03:00:09 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Dec
- 2019 03:00:09 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 6 Dec 2019 03:00:09 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB6906vX023816;
-        Fri, 6 Dec 2019 03:00:07 -0600
-Subject: Re: [PATCH 2/2] PCI: uniphier: Add checking whether PERST# is
- deasserted
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <20191204190547.333C.4A936039@socionext.com>
- <c40da2f3-ea5d-b1fc-0190-f90f031eef4c@ti.com>
- <20191206175813.E6B2.4A936039@socionext.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <6b288f46-452d-6f92-728c-56c4100028cf@ti.com>
-Date:   Fri, 6 Dec 2019 14:31:17 +0530
+        id S1726345AbfLFJCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:02:45 -0500
+Received: from mga04.intel.com ([192.55.52.120]:57964 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726168AbfLFJCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 04:02:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 01:02:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,283,1571727600"; 
+   d="scan'208";a="294805778"
+Received: from anishraw-mobl.ger.corp.intel.com (HELO [10.252.35.105]) ([10.252.35.105])
+  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2019 01:02:41 -0800
+Subject: Re: [tip: perf/urgent] tools headers UAPI: Sync drm/i915_drm.h with
+ the kernel sources
+To:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        x86 <x86@kernel.org>
+References: <tip-qwzjrgwj55y3g6rjdf9spkpr@git.kernel.org>
+ <157561941460.21853.2764754016587862850.tip-bot2@tip-bot2>
+From:   Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Organization: Intel Corporation (UK) Ltd. - Co. Reg. #1134945 - Pipers Way,
+ Swindon SN3 1RJ
+Message-ID: <67313606-63d4-ae56-bca8-6dbc2717aa24@intel.com>
+Date:   Fri, 6 Dec 2019 11:02:40 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191206175813.E6B2.4A936039@socionext.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <157561941460.21853.2764754016587862850.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 06/12/2019 10:03, tip-bot2 for Arnaldo Carvalho de Melo wrote:
+> The following commit has been merged into the perf/urgent branch of tip:
+>
+> Commit-ID:     0b3fca6ad3283866e9d2376554b3e4fbf23bfd5d
+> Gitweb:        https://git.kernel.org/tip/0b3fca6ad3283866e9d2376554b3e4fbf23bfd5d
+> Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+> AuthorDate:    Wed, 04 Dec 2019 12:49:43 -03:00
+> Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+> CommitterDate: Wed, 04 Dec 2019 16:22:28 -03:00
+>
+> tools headers UAPI: Sync drm/i915_drm.h with the kernel sources
+>
+> To pick the change in:
+>
+>    a0e047156cde ("drm/i915/gem: Make context persistence optional")
+>    9cd20ef7803c ("drm/i915/perf: allow holding preemption on filtered ctx")
+>    7831e9a965ea ("drm/i915/perf: Allow dynamic reconfiguration of the OA stream")
+>    4f6ccc74a85c ("drm/i915: add support for perf configuration queries")
+>    b8d49f28aa03 ("drm/i915/perf: introduce a versioning of the i915-perf uapi")
+>    601734f7aabd ("drm/i915/tgl: s/ss/eu fuse reading support")
+>
+> That don't result in any changes in tooling, just silences this perf
+> build warning:
+>
+>    Warning: Kernel ABI header at 'tools/include/uapi/drm/i915_drm.h' differs from latest version at 'include/uapi/drm/i915_drm.h'
+>    diff -u tools/include/uapi/drm/i915_drm.h include/uapi/drm/i915_drm.h
+>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Link: https://lkml.kernel.org/n/tip-qwzjrgwj55y3g6rjdf9spkpr@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+> ---
+>   tools/include/uapi/drm/i915_drm.h | 128 ++++++++++++++++++++++++++++-
+>   1 file changed, 125 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/include/uapi/drm/i915_drm.h b/tools/include/uapi/drm/i915_drm.h
+> index 469dc51..5400d7e 100644
+> --- a/tools/include/uapi/drm/i915_drm.h
+> +++ b/tools/include/uapi/drm/i915_drm.h
+> @@ -611,6 +611,13 @@ typedef struct drm_i915_irq_wait {
+>    * See I915_EXEC_FENCE_OUT and I915_EXEC_FENCE_SUBMIT.
+>    */
+>   #define I915_PARAM_HAS_EXEC_SUBMIT_FENCE 53
+> +
+> +/*
+> + * Revision of the i915-perf uAPI. The value returned helps determine what
+> + * i915-perf features are available. See drm_i915_perf_property_id.
+> + */
+> +#define I915_PARAM_PERF_REVISION	54
+> +
+>   /* Must be kept compact -- no holes and well documented */
+>   
+>   typedef struct drm_i915_getparam {
+> @@ -1565,6 +1572,21 @@ struct drm_i915_gem_context_param {
+>    *   i915_context_engines_bond (I915_CONTEXT_ENGINES_EXT_BOND)
+>    */
+>   #define I915_CONTEXT_PARAM_ENGINES	0xa
+> +
+> +/*
+> + * I915_CONTEXT_PARAM_PERSISTENCE:
+> + *
+> + * Allow the context and active rendering to survive the process until
+> + * completion. Persistence allows fire-and-forget clients to queue up a
+> + * bunch of work, hand the output over to a display server and then quit.
+> + * If the context is marked as not persistent, upon closing (either via
+> + * an explicit DRM_I915_GEM_CONTEXT_DESTROY or implicitly from file closure
+> + * or process termination), the context and any outstanding requests will be
+> + * cancelled (and exported fences for cancelled requests marked as -EIO).
+> + *
+> + * By default, new contexts allow persistence.
+> + */
+> +#define I915_CONTEXT_PARAM_PERSISTENCE	0xb
+>   /* Must be kept compact -- no holes and well documented */
+>   
+>   	__u64 value;
+> @@ -1844,23 +1866,31 @@ enum drm_i915_perf_property_id {
+>   	 * Open the stream for a specific context handle (as used with
+>   	 * execbuffer2). A stream opened for a specific context this way
+>   	 * won't typically require root privileges.
+> +	 *
+> +	 * This property is available in perf revision 1.
+>   	 */
+>   	DRM_I915_PERF_PROP_CTX_HANDLE = 1,
+>   
+>   	/**
+>   	 * A value of 1 requests the inclusion of raw OA unit reports as
+>   	 * part of stream samples.
+> +	 *
+> +	 * This property is available in perf revision 1.
+>   	 */
+>   	DRM_I915_PERF_PROP_SAMPLE_OA,
+>   
+>   	/**
+>   	 * The value specifies which set of OA unit metrics should be
+>   	 * be configured, defining the contents of any OA unit reports.
+> +	 *
+> +	 * This property is available in perf revision 1.
+>   	 */
+>   	DRM_I915_PERF_PROP_OA_METRICS_SET,
+>   
+>   	/**
+>   	 * The value specifies the size and layout of OA unit reports.
+> +	 *
+> +	 * This property is available in perf revision 1.
+>   	 */
+>   	DRM_I915_PERF_PROP_OA_FORMAT,
+>   
+> @@ -1870,9 +1900,22 @@ enum drm_i915_perf_property_id {
+>   	 * from this exponent as follows:
+>   	 *
+>   	 *   80ns * 2^(period_exponent + 1)
+> +	 *
+> +	 * This property is available in perf revision 1.
+>   	 */
+>   	DRM_I915_PERF_PROP_OA_EXPONENT,
+>   
+> +	/**
+> +	 * Specifying this property is only valid when specify a context to
+> +	 * filter with DRM_I915_PERF_PROP_CTX_HANDLE. Specifying this property
+> +	 * will hold preemption of the particular context we want to gather
+> +	 * performance data about. The execbuf2 submissions must include a
+> +	 * drm_i915_gem_execbuffer_ext_perf parameter for this to apply.
+> +	 *
+> +	 * This property is available in perf revision 3.
+> +	 */
+> +	DRM_I915_PERF_PROP_HOLD_PREEMPTION,
+> +
+>   	DRM_I915_PERF_PROP_MAX /* non-ABI */
+>   };
+>   
+> @@ -1901,6 +1944,8 @@ struct drm_i915_perf_open_param {
+>    * to close and re-open a stream with the same configuration.
+>    *
+>    * It's undefined whether any pending data for the stream will be lost.
+> + *
+> + * This ioctl is available in perf revision 1.
+>    */
+>   #define I915_PERF_IOCTL_ENABLE	_IO('i', 0x0)
+>   
+> @@ -1908,10 +1953,25 @@ struct drm_i915_perf_open_param {
+>    * Disable data capture for a stream.
+>    *
+>    * It is an error to try and read a stream that is disabled.
+> + *
+> + * This ioctl is available in perf revision 1.
+>    */
+>   #define I915_PERF_IOCTL_DISABLE	_IO('i', 0x1)
+>   
+>   /**
+> + * Change metrics_set captured by a stream.
+> + *
+> + * If the stream is bound to a specific context, the configuration change
+> + * will performed inline with that context such that it takes effect before
+> + * the next execbuf submission.
+> + *
+> + * Returns the previously bound metrics set id, or a negative error code.
+> + *
+> + * This ioctl is available in perf revision 2.
+> + */
+> +#define I915_PERF_IOCTL_CONFIG	_IO('i', 0x2)
+> +
+> +/**
+>    * Common to all i915 perf records
+>    */
+>   struct drm_i915_perf_record_header {
+> @@ -1984,6 +2044,7 @@ struct drm_i915_query_item {
+>   	__u64 query_id;
+>   #define DRM_I915_QUERY_TOPOLOGY_INFO    1
+>   #define DRM_I915_QUERY_ENGINE_INFO	2
+> +#define DRM_I915_QUERY_PERF_CONFIG      3
+>   /* Must be kept compact -- no holes and well documented */
+>   
+>   	/*
+> @@ -1995,9 +2056,18 @@ struct drm_i915_query_item {
+>   	__s32 length;
+>   
+>   	/*
+> -	 * Unused for now. Must be cleared to zero.
+> +	 * When query_id == DRM_I915_QUERY_TOPOLOGY_INFO, must be 0.
+> +	 *
+> +	 * When query_id == DRM_I915_QUERY_PERF_CONFIG, must be one of the
+> +	 * following :
+> +	 *         - DRM_I915_QUERY_PERF_CONFIG_LIST
+> +	 *         - DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_UUID
+> +	 *         - DRM_I915_QUERY_PERF_CONFIG_FOR_UUID
+>   	 */
+>   	__u32 flags;
+> +#define DRM_I915_QUERY_PERF_CONFIG_LIST          1
+> +#define DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_UUID 2
+> +#define DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_ID   3
+>   
+>   	/*
+>   	 * Data will be written at the location pointed by data_ptr when the
+> @@ -2033,8 +2103,10 @@ struct drm_i915_query {
+>    *           (data[X / 8] >> (X % 8)) & 1
+>    *
+>    * - the subslice mask for each slice with one bit per subslice telling
+> - *   whether a subslice is available. The availability of subslice Y in slice
+> - *   X can be queried with the following formula :
+> + *   whether a subslice is available. Gen12 has dual-subslices, which are
+> + *   similar to two gen11 subslices. For gen12, this array represents dual-
+> + *   subslices. The availability of subslice Y in slice X can be queried
+> + *   with the following formula :
+>    *
+>    *           (data[subslice_offset +
+>    *                 X * subslice_stride +
+> @@ -2123,6 +2195,56 @@ struct drm_i915_query_engine_info {
+>   	struct drm_i915_engine_info engines[];
+>   };
+>   
+> +/*
+> + * Data written by the kernel with query DRM_I915_QUERY_PERF_CONFIG.
+> + */
+> +struct drm_i915_query_perf_config {
+> +	union {
+> +		/*
+> +		 * When query_item.flags == DRM_I915_QUERY_PERF_CONFIG_LIST, i915 sets
+> +		 * this fields to the number of configurations available.
+> +		 */
+> +		__u64 n_configs;
+> +
+> +		/*
+> +		 * When query_id == DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_ID,
+> +		 * i915 will use the value in this field as configuration
+> +		 * identifier to decide what data to write into config_ptr.
+> +		 */
+> +		__u64 config;
+> +
+> +		/*
+> +		 * When query_id == DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_UUID,
+> +		 * i915 will use the value in this field as configuration
+> +		 * identifier to decide what data to write into config_ptr.
+> +		 *
+> +		 * String formatted like "%08x-%04x-%04x-%04x-%012x"
+> +		 */
+> +		char uuid[36];
+> +	};
+> +
+> +	/*
+> +	 * Unused for now. Must be cleared to zero.
+> +	 */
+> +	__u32 flags;
+> +
+> +	/*
+> +	 * When query_item.flags == DRM_I915_QUERY_PERF_CONFIG_LIST, i915 will
+> +	 * write an array of __u64 of configuration identifiers.
+> +	 *
+> +	 * When query_item.flags == DRM_I915_QUERY_PERF_CONFIG_DATA, i915 will
+> +	 * write a struct drm_i915_perf_oa_config. If the following fields of
+> +	 * drm_i915_perf_oa_config are set not set to 0, i915 will write into
+> +	 * the associated pointers the values of submitted when the
+> +	 * configuration was created :
+> +	 *
+> +	 *         - n_mux_regs
+> +	 *         - n_boolean_regs
+> +	 *         - n_flex_regs
+> +	 */
+> +	__u8 data[];
+> +};
+> +
+>   #if defined(__cplusplus)
+>   }
+>   #endif
 
-On 06/12/19 2:28 pm, Kunihiko Hayashi wrote:
-> Hi Kishon,
-> 
-> On Fri, 6 Dec 2019 12:28:29 +0530 <kishon@ti.com> wrote:
-> 
->> Hi,
->>
->> On 04/12/19 3:35 pm, Kunihiko Hayashi wrote:
->>> On Fri, 22 Nov 2019 20:53:16 +0900 <hayashi.kunihiko@socionext.com> wrote:
->>>>> Hello Lorenzo,
->>>>
->>>> On Thu, 21 Nov 2019 16:47:05 +0000 <lorenzo.pieralisi@arm.com> wrote:
->>>>
->>>>> On Fri, Nov 08, 2019 at 04:30:27PM +0900, Kunihiko Hayashi wrote:
->>>>>>> However, If I understand correctly, doesn't your solution only work some
->>>>>>> of the time? What happens if you boot both machines at the same time,
->>>>>>> and PERST# isn't asserted prior to the kernel booting?
->>>>>>
->>>>>> I think it contains an annoying problem.
->>>>>>
->>>>>> If PERST# isn't toggled prior to the kernel booting, PERST# remains asserted
->>>>>> and the RC driver can't access PCI bus.
->>>>>>
->>>>>> As a result, this patch works and deasserts PERST# (and EP configuration will
->>>>>> be lost). So boot sequence needs to include deasserting PERST#.
->>>>>
->>>>> I am sorry but I have lost you. Can you explain to us why checking
->>>>> that PERST# is deasserted guarantees you that:
->>>>>
->>>>> - The EP has bootstrapped
->>>>> - It is safe not to toggle it again (and also skip
->>>>>     uniphier_pcie_ltssm_enable())
->>>>>
->>>>> Please provide details of the HW configuration so that we understand
->>>>> what's actually supposed to happen and why this patch fixes the
->>>>> issue you are facing.
->>>>
->>>> I tried to connect between the following boards, and do pci-epf-test:
->>>>    - "RC board": UniPhier ld20 board that has DWC RC controller
->>>>    - "EP board": UniPhier legacy board that has DWC EP controller
->>>>
->>>> This EP has power-on-state configuration, but it's necessary to set
->>>> class ID, BAR sizes, etc. after starting up.
->>>>
->>>> In case of that starting up RC board before EP board, the RC driver
->>>> can't establish link. So we need to boot EP board first.
->>>> At that point, I've considered why RC can't establish link,
->>> and found that the waitng time was too short.
->>>> - EP/RC: power on both boards
->>>> - RC: start up the kernel on RC board
->>>> - RC: wait for link up (long time enough)
->>>> - EP: start up the kernel on EP board
->>>> - EP: configurate pci-epf-test
->>>> When the endpoint  configuration is done and the EP driver enables LTSSM,
->>> the RC driver will quit from waiting for link up.
->>>> Currently DWC RC driver calls dwc_pcie_wait_for_link(), however,
->>> the function tries to link up 10 times only, that is defined
->>> as LINK_WAIT_MAX_RETRIES in pcie-designware.h, it's too short
->>> to configurate the endpoint.
->>>> Now the patch to bypass PERST# is not necessary.
->>>> Instead for DWC RC drivers, I think that the number of retries
->>> should be changed according to the usage.
->>> And the same issue remains with other RC drivers.
->>
->> If EP is configured using Linux, then PERST# cannot be used as it's difficult to boot linux and initialize EP within the specified time interval. Can't you prevent PERST from being propagated at all?
-> 
-> Surely it might be difficult for RC to decide the time to wait for EP.
-> Since RC almost toggles PERST# in boot time, I'd like to think about
-> how to prevent from first PERST# at least.
 
-It can be prevented in the HW (If that's possible). I modify the cable 
-connecting RC and EP to not propagate PERST#.
-
-Thanks
-Kishon
