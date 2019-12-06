@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D366114C6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:46:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D0E5114C72
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:53:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfLFGqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 01:46:49 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45347 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfLFGqs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 01:46:48 -0500
-Received: by mail-yw1-f68.google.com with SMTP id d12so2291707ywl.12;
-        Thu, 05 Dec 2019 22:46:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7gaosEyCtS7figPaTevfhISyTIAcwkXEtc8ItLxSuls=;
-        b=NwOh2LW6GvrtCLPiYl0gp4bYM5mcmkPs5GMwnsSHyeOnf11ZgJRAkVQtdsioEwpgbB
-         xIaHJyK/DkrNiYHZ/qhBOzG4VtQCIovYFAB2fEtMXc7QG2Cua1pJBkgW0rsf0Mt0Lxn7
-         XaBpBbSPR+KJPzqsZvRZdTxy/w60i/sMIUp8LA7CUVC/yt8ap63wgimUM075+kZT6Woi
-         hC2SBX1lq/g3rmmNzJ/ggAwDhmMaBEpi9Au3FhiXhPo5F3/PVpAQM3qX7ZzznfsE+tsd
-         s76ey9TfKuBCyr2LgmbnE4MFFA3tD14/2Dr3XMdfAKzdPkMCIe/upu512JjlfwDFQ24E
-         SC5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7gaosEyCtS7figPaTevfhISyTIAcwkXEtc8ItLxSuls=;
-        b=VIMyeHZYpRJIzxiqukOSvy3IRwbWg4MMTcH84VU0nbJu9rSbxsmQvi36KXoywGO81i
-         vOXRtWcLJGpV3ZMiJl/lr/wMnQYQGqzTlVXGGyP8prAYBiwUEWjgDvvS2B2ooJma/v1x
-         B3Q9tL/rAikJkVSK/7yahXEtI1qLurvrD+w1kBOiC9F7SgcMoua+3WkymmPii28MHMBM
-         +wuC6s1ThokYy89Bd/3Hui6TkSF7KMOhPgnaDPu6y4N/PD4tFvMKlRhIoI4eGLQyAK5r
-         GlvshhuUdw84Sld1ZuiKd+NniEJPsCej7A4hnx1fi2V0SbJNf8urGwVGNtxjb8ZvzK9W
-         2ImQ==
-X-Gm-Message-State: APjAAAVB/gTD3/MtF2GGe8Xe+ANQVPMQ/pqpQdEfi00mCsYFHolsQHTz
-        1T2Azg6rt/yg8VhI6IztaSPdWmo/GsokACXtoo8=
-X-Google-Smtp-Source: APXvYqxZPoGPZ2g12UuMmnRst0eaRP4msgk/8mr3Sw9+PT/0v4fpiG2Jd/uCEF/o8zxSRZZJsFHnZ+hqe3yjhK8ZwpE=
-X-Received: by 2002:a81:14d:: with SMTP id 74mr8923710ywb.183.1575614807610;
- Thu, 05 Dec 2019 22:46:47 -0800 (PST)
+        id S1726395AbfLFGxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 01:53:10 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37418 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725858AbfLFGxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 01:53:10 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5006FFFC772847A8BCAD;
+        Fri,  6 Dec 2019 14:53:08 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 6 Dec 2019
+ 14:52:59 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <jonathanh@nvidia.com>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] drm/tegra: sor: Fix unused function warnings
+Date:   Fri, 6 Dec 2019 14:47:41 +0800
+Message-ID: <20191206064741.23432-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <0000000000002492cc0587d58ed8@google.com> <000000000000db84550598ff519f@google.com>
-In-Reply-To: <000000000000db84550598ff519f@google.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 6 Dec 2019 08:46:36 +0200
-Message-ID: <CAOQ4uxgzGRJs3o=7_rM3HtdMjEP-Emy=0a98LMVvYa-3==ZpjQ@mail.gmail.com>
-Subject: Re: WARNING in ovl_rename
-To:     syzbot <syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 3:54 AM syzbot
-<syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this bug was fixed by commit:
->
-> commit 146d62e5a5867fbf84490d82455718bfb10fe824
-> Author: Amir Goldstein <amir73il@gmail.com>
-> Date:   Thu Apr 18 14:42:08 2019 +0000
->
->      ovl: detect overlapping layers
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138841dae00000
-> start commit:   037904a2 Merge branch 'x86-urgent-for-linus' of git://git...
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a42d110b47dd6b36
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bb1836a212e69f8e201a
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ba097ca00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10be1ceca00000
->
-> If the result looks correct, please mark the bug fixed by replying with:
->
-> #syz fix: ovl: detect overlapping layers
->
+drivers/gpu/drm/tegra/sor.c:3984:12: warning: 'tegra_sor_resume' defined but not used [-Wunused-function]
+drivers/gpu/drm/tegra/sor.c:3970:12: warning: 'tegra_sor_suspend' defined but not used [-Wunused-function]
+drivers/gpu/drm/tegra/sor.c:3937:12: warning: 'tegra_sor_runtime_resume' defined but not used [-Wunused-function]
+drivers/gpu/drm/tegra/sor.c:3915:12: warning: 'tegra_sor_runtime_suspend' defined but not used [-Wunused-function]
 
-Not exactly. Depends how you define "the bug".
+Mark these functions as __maybe_unused so gcc can drop them
+silently.
 
-The actual bug wasn't introduced by:
-     ovl: fix EIO from lookup of non-indexed upper
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/tegra/sor.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Nor was it fixed by:
-     ovl: detect overlapping layers
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index a68d3b3..69b9ebe 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -3912,7 +3912,7 @@ static int tegra_sor_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_runtime_suspend(struct device *dev)
++static int __maybe_unused tegra_sor_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+@@ -3934,7 +3934,7 @@ static int tegra_sor_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_runtime_resume(struct device *dev)
++static int __maybe_unused tegra_sor_runtime_resume(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+@@ -3967,7 +3967,7 @@ static int tegra_sor_runtime_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_suspend(struct device *dev)
++static int __maybe_unused tegra_sor_suspend(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+@@ -3981,7 +3981,7 @@ static int tegra_sor_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int tegra_sor_resume(struct device *dev)
++static int __maybe_unused tegra_sor_resume(struct device *dev)
+ {
+ 	struct tegra_sor *sor = dev_get_drvdata(dev);
+ 	int err;
+-- 
+2.7.4
 
-It would be more accurate to say that the former commit exposed the bug
-to this specific repro and the latter commit has masked it from this repro.
 
-The actual bug was introduced by:
-    804032fabb3b ("ovl: don't check rename to self")
-
-Which did not take into account hardlinking underneath overlayfs.
-
-I posted a fix to relax this WARN_ON(), which is marked for stable 4.9+,
-because I see that the repro is also reported on kernel 4.14.y and
-"ovl: detect overlapping layers" is not expected to land in 4.14.y.
-
-Thanks,
-Amir.
