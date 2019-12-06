@@ -2,73 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BF2111502A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F1B115021
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfLFMKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:10:44 -0500
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:42553 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726124AbfLFMKn (ORCPT
+        id S1726284AbfLFMBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 07:01:40 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54232 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfLFMBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:10:43 -0500
-X-Greylist: delayed 1798 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 07:10:43 EST
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.52 with ESMTP; 6 Dec 2019 20:40:41 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: neidhard.kim@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.178.32.48)
-        by 156.147.1.121 with ESMTP; 6 Dec 2019 20:40:41 +0900
-X-Original-SENDERIP: 10.178.32.48
-X-Original-MAILFROM: neidhard.kim@lge.com
-From:   Jongsung Kim <neidhard.kim@lge.com>
-To:     netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        mcoquelin.stm32@gmail.com, davem@davemloft.net,
-        joabreu@synopsys.com, alexandre.torgue@st.com,
-        peppe.cavallaro@st.com, Jongsung Kim <neidhard.kim@lge.com>
-Subject: [PATCH] net: stmmac: reset Tx desc base address before restarting Tx
-Date:   Fri,  6 Dec 2019 20:40:00 +0900
-Message-Id: <20191206114000.27283-1-neidhard.kim@lge.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 6 Dec 2019 07:01:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WDGe9NNIN+jrDK16NuyUHcFjeEvddlNCAaErz6+/soE=; b=CvCXNPNew8FBsA+FN+LYn7os6
+        S4tHptRoUEtk+BYeueBh2byPdWt0dwGvEZgXxeACiVl43DV1InEPPGoUg2SccqVlpEVUomRoak//C
+        SpxXlxFGoh8RoxbCSBIFmsgSFoI3fhb1jqLryQVl1Ifb96k1EjLmBnDaFoGtlFhpYiQDwNuSJtcBl
+        pBgQewubLX+wnBCf2G4z7svyAio8GgHoBETydrnolkYSz6xbAhLp2VYdi3sN+Oojie00IOjFeJNG3
+        gTLl8eCSQIsPrItbgjQ1H6sr+/TQPdMl4loFkKfLgV5/Aio2DHV/a46VvqDpHTTTS7ec5gLYic8IM
+        FLTmLo6ww==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1idCIg-00039F-NH; Fri, 06 Dec 2019 12:01:34 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7124E303F45;
+        Fri,  6 Dec 2019 13:00:14 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E270920B83957; Fri,  6 Dec 2019 13:01:31 +0100 (CET)
+Date:   Fri, 6 Dec 2019 13:01:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     liu.song11@zte.com.cn
+Cc:     fishland@aliyun.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, jiang.xuexin@zte.com.cn
+Subject: Re: [PATCH] psi: Only collect online cpu time in collect_percpu_times
+Message-ID: <20191206120131.GG2844@hirez.programming.kicks-ass.net>
+References: <20191205103329.GH2810@hirez.programming.kicks-ass.net>
+ <201912061229281310714@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201912061229281310714@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refer to the databook of DesignWare Cores Ethernet MAC Universal:
+On Fri, Dec 06, 2019 at 12:29:28PM +0800, liu.song11@zte.com.cn wrote:
 
-6.2.1.5 Register 4 (Transmit Descriptor List Address Register
+> >No, the value will not change, but it need not be 0.
+> 
+> Hi,
+> 
+> Suppose there are 4 cpu online, then we take cpu 3 offline. In "collect_percpu_times",
+> because "for_each_possible_cpu", will still collect the time of cpu 3 which is offline.
 
-If this register is not changed when the ST bit is set to 0, then
-the DMA takes the descriptor address where it was stopped earlier.
+Correct, someone needs to collect the last deltas.
 
-The stmmac_tx_err() does zero indices to Tx descriptors, but does
-not reset HW current Tx descriptor address. To fix inconsistency,
-the base address of the Tx descriptors should be rewritten before
-restarting Tx.
+> However, it is clear that "nonidle" will remain at 0 until cpu 3 comes online again.
 
-Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+How does it become 0?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 644cb5d1fd4f..bbc65bd332a8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2009,6 +2009,8 @@ static void stmmac_tx_err(struct stmmac_priv *priv, u32 chan)
- 	tx_q->cur_tx = 0;
- 	tx_q->mss = 0;
- 	netdev_tx_reset_queue(netdev_get_tx_queue(priv->dev, chan));
-+	stmmac_init_tx_chan(priv, priv->ioaddr, priv->plat->dma_cfg,
-+			    tx_q->dma_tx_phy, chan);
- 	stmmac_start_tx_dma(priv, chan);
- 
- 	priv->dev->stats.tx_errors++;
--- 
-2.20.1
+Consider
 
+	CPU2		CPU3
+
+			// runs crap, nonidle increases
+
+	// offline CPU3
+
+			// goes offline, nonidle is still >0
+
+
+At this point someone needs to collect the delta from CPU3 to make it 0.
+But if you only iterate online CPUs, that will not happen.
+
+> And the value of "deltas[s]" will not change after collecting CPU 2. In "get_recent_times",
+> the value of "groupc->times_prev[aggregator][s]" corresponding to cpu 3 will not change.
+
+They will not change after the first collection after hot-un-plug. You
+need at least one collection after it stops running crap.
+
+> This is only a case where one CPU goes offline. If there are multiple CPUs offline,
+> it will correspond to more meaningless operations. So here should be changed to
+> "for_each_online_cpu", the effect is exactly the same as "for_each_possible_cpu",
+> and the possible meaningless processes are excluded.
+
+It is not. Or if it is, you failed to explain who collects on hotplug.
