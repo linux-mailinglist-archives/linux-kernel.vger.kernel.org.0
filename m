@@ -2,96 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C6C114A46
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 01:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D3B114A4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 01:54:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfLFAsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 19:48:47 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36688 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfLFAsr (ORCPT
+        id S1726150AbfLFAyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 19:54:55 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:26998 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725988AbfLFAyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 19:48:47 -0500
-Received: by mail-lj1-f195.google.com with SMTP id r19so5744136ljg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 16:48:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=Nyr+154eR2wuSEPEECtenrGZMzDE5gSwPZgde47puyU=;
-        b=iT5TEDsGWfpp4MpSLoWjWapvjzlNc5xGpFt97jnIG1v0mS+N/rxIjkI7S6cIrglMkr
-         LbFAx+ayRe3IocpixxuObB17T8JRnQSS9cLMKDGIB2Lsmcrp5i7SOdzLT7GPuFbVO32F
-         qFFE50KbUhzXta9OlBUONQq3DH6Fm2ZvzAEZxYg+kS4VqGugwEVVdxYppbHAJY5xNFQ4
-         uog1uDwwjEnOa2ceZ4iA9TZzy5XxhqXziz/0dPw69VFRaUayhHT+B4d6EkcZaPyxm5mY
-         NZL1NZaeQoD7k2ZYE4RqvExaSgBJvyY4ZIKjjn5FluZKKzAJIyK1ySnryhj4r2qoju4M
-         i1WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=Nyr+154eR2wuSEPEECtenrGZMzDE5gSwPZgde47puyU=;
-        b=ald5mT5zoc5UgREtfAmmvtI1d8uKaBIOykhGH4fbB6cJSRWVGmPgr17FdmWP9IMbPu
-         G3PnL2JIz1wJi2xae76FOzHpRbuK84kN7sJnNjZ87tcHSJYneEE9jQOaliA204AXMFIR
-         +7ohSnZCImnSG8EELEVeT6cIsh2RwhSHztEksxmN/RsMkP58gjFjfvfkl+JyXP+feXys
-         xAlcSjF6a0E0FX85aQLT4gTDZNEMNczlnEjhxjenVkllqphgw8MEbsi9iqK3LsCkOCVq
-         pbSR2n6ZDByq9aivvoS2ZMmppOwFGGwU3ZWbkNC3d2lI0PLO3Avjn2r4e/Yu3+36LFgC
-         gkAw==
-X-Gm-Message-State: APjAAAXswQbR9cts5Wi04rCYlYCvHaVAzZsoh+Pp3S7thsM2VtQPn+W/
-        z1dXaEv4OH9wwSGdhzgi+N3TnJXAzBU3fb48rxk=
-X-Google-Smtp-Source: APXvYqxXBVYqeoWLZdSlZV8IUTxHO0VZx0LsRZGhrfTqvcPeXHk22NQ+IrMSCNn0IChvRsDR9m/MzJd/XfiI2Edk6OM=
-X-Received: by 2002:a2e:b60d:: with SMTP id r13mr7056423ljn.40.1575593325112;
- Thu, 05 Dec 2019 16:48:45 -0800 (PST)
+        Thu, 5 Dec 2019 19:54:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575593693;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wvC+UrzFhvb89O+Byz15qsgENexEOo6OJybWKjv9TuE=;
+        b=OsDmQ9DbRZGg7PBlW2AEPwNWN2ylk+Ig0Ocp1vtANAnoGUuk5VFwnh4SUYrBWM4a3sJ6Dl
+        w4/+6j6qpLM56hNHQECJ3OFOv+vC2qG5onphBf5MgrMHugkjiFN1pxWO5zBB1FruEOAJDc
+        km9szbZPfUmyaksnn49Gnj7+mZ8iM3k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-333-GrJDkLvqNOmXp6AqZihGow-1; Thu, 05 Dec 2019 19:54:50 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9C586800D5E;
+        Fri,  6 Dec 2019 00:54:48 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-25.pek2.redhat.com [10.72.8.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A633D19488;
+        Fri,  6 Dec 2019 00:54:41 +0000 (UTC)
+Date:   Fri, 6 Dec 2019 08:54:35 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Christoph Hellwig <hch@lst.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        linux-block@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 240/321] mmc: core: align max segment size with
+ logical block size
+Message-ID: <20191206005435.GA13152@ming.t460p>
+References: <20191203223427.103571230@linuxfoundation.org>
+ <20191203223439.627632861@linuxfoundation.org>
+ <20191205222247.GC25107@duo.ucw.cz>
 MIME-Version: 1.0
-Reply-To: nicolemartha247@gmail.com
-Received: by 2002:a19:5d55:0:0:0:0:0 with HTTP; Thu, 5 Dec 2019 16:48:44 -0800 (PST)
-From:   "Mrs.Nicole Martha" <nicolemartha245@gmail.com>
-Date:   Fri, 6 Dec 2019 00:48:44 +0000
-X-Google-Sender-Auth: kOyiolp8gEBF9cFpqBsRJohmPkM
-Message-ID: <CACv8WupegHMFKaBnxk_Cb6ija3G4fu1r1kKxC3M6HatVqL6T1g@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191205222247.GC25107@duo.ucw.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: GrJDkLvqNOmXp6AqZihGow-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Hello Dear,
+On Thu, Dec 05, 2019 at 11:22:47PM +0100, Pavel Machek wrote:
+> Hi!
+>=20
+> > From: Ming Lei <ming.lei@redhat.com>
+> >=20
+> > [ Upstream commit c53336c8f5f29043fded57912cc06c24e12613d7 ]
+> >=20
+> > Logical block size is the lowest possible block size that the storage
+> > device can address. Max segment size is often related with controller's
+> > DMA capability. And it is reasonable to align max segment size with
+> > logical block size.
+>=20
+> > SDHCI sets un-aligned max segment size, and causes ADMA error, so
+> > fix it by aligning max segment size with logical block size.
+>=20
+> If un-aligned max segment sizes are problem, should we add checks to
+> prevent setting them?
+>=20
+> At least these set unaligned problems; is that a problem?
+>=20
+> drivers/block/nbd.c:=09blk_queue_max_segment_size(disk->queue, UINT_MAX);
+> drivers/block/virtio_blk.c:=09=09blk_queue_max_segment_size(q, -1U);
+> drivers/block/rbd.c:=09blk_queue_max_segment_size(q, UINT_MAX);
 
-Please forgive me for stressing you with my predicaments as I know
-that this letter may come to you as big surprise. Actually, I came
-across your E-mail from my personal search afterward I decided to
-email you directly believing that you will be honest to fulfill my
-final wish before i die.
+In theory, all segment size should be aligned, however the above MAX
+value just means the queue hasn't max segment size limit, so it won't
+be applied actually.
 
-Meanwhile, I am Mrs.  Nicole Martha 62 years old, from France, and I
-am suffering from a long time cancer and from all indication my
-condition is really deteriorating as my doctors have confirmed and
-courageously advised me that I may not live beyond two months from now
-for the reason that my tumor has reached a critical stage which has
-defiled all forms of medical treatment. As a matter of fact,
-registered nurse by profession while my husband was dealing on Gold
-Dust and Gold Dory Bars in Burkina Faso till his sudden death the year
-2008 then I took over his business till date.
 
-In fact, at this moment I have a deposit sum of four million five
-hundred thousand US dollars [$4,500,000.00] with one of the leading
-bank in Burkina Faso but unfortunately I cannot visit the bank since I
-m critically sick and powerless to do anything myself but my bank
-account officer advised me to assign any of my trustworthy relative,
-friends or partner with authorization letter to stand as the recipient
-of my money but sorrowfully I don t have any reliable relative and no
-child.
+Thanks,
+Ming
 
-Therefore, I want you to receive the money and take 50% to take care
-of yourself and family while 50% should be use basically on
-humanitarian purposes mostly to orphanages home, Motherless babies
-home, less privileged and disable citizens and widows around the
-world. and as soon as I receive your I shall send you my pictures,
-banking records and with full contacts of my banking institution to
-communicate them on the matter. Please contact me with these email
-address.( nicolemartha247@gmail.com)
-
-Hope to hear from you soon.
-Yours Faithfully,
-Mrs.  Nicole Martha
