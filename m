@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A04C4115053
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F4C115055
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbfLFMYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:24:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50148 "EHLO
+        id S1726284AbfLFMYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 07:24:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13886 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726140AbfLFMYr (ORCPT
+        by vger.kernel.org with ESMTP id S1726251AbfLFMYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:24:47 -0500
+        Fri, 6 Dec 2019 07:24:49 -0500
 Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB6CGtWT109362
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2019 07:24:46 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wq9hm9st1-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB6CGso7109271
+        for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2019 07:24:48 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wq9hm9su5-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 07:24:45 -0500
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 07:24:48 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <sourabhjain@linux.ibm.com>;
-        Fri, 6 Dec 2019 12:24:42 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 6 Dec 2019 12:24:46 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 6 Dec 2019 12:24:40 -0000
+        Fri, 6 Dec 2019 12:24:43 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB6COclV38207704
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB6CO0T646268718
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Dec 2019 12:24:38 GMT
+        Fri, 6 Dec 2019 12:24:00 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0FDA4C040;
-        Fri,  6 Dec 2019 12:24:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 595354C050;
+        Fri,  6 Dec 2019 12:24:41 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16A064C044;
-        Fri,  6 Dec 2019 12:24:37 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id C232D4C040;
+        Fri,  6 Dec 2019 12:24:39 +0000 (GMT)
 Received: from localhost.in.ibm.com (unknown [9.124.35.191])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Dec 2019 12:24:36 +0000 (GMT)
+        Fri,  6 Dec 2019 12:24:39 +0000 (GMT)
 From:   Sourabh Jain <sourabhjain@linux.ibm.com>
 To:     mpe@ellerman.id.au
 Cc:     mahesh@linux.vnet.ibm.com, hbathini@linux.ibm.com,
@@ -47,19 +47,21 @@ Cc:     mahesh@linux.vnet.ibm.com, hbathini@linux.ibm.com,
         corbet@lwn.net, linux-doc@vger.kernel.org,
         gregkh@linuxfoundation.org,
         Sourabh Jain <sourabhjain@linux.ibm.com>
-Subject: [PATCH v4 0/6] reorganize and add FADump sysfs files
-Date:   Fri,  6 Dec 2019 17:54:28 +0530
+Subject: [PATCH v4 1/6] Documentation/ABI: add ABI documentation for /sys/kernel/fadump_*
+Date:   Fri,  6 Dec 2019 17:54:29 +0530
 X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20191206122434.29587-1-sourabhjain@linux.ibm.com>
+References: <20191206122434.29587-1-sourabhjain@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19120612-0020-0000-0000-00000394F60D
+x-cbid: 19120612-4275-0000-0000-0000038C6155
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120612-0021-0000-0000-000021EC28EA
-Message-Id: <20191206122434.29587-1-sourabhjain@linux.ibm.com>
+x-cbparentid: 19120612-4276-0000-0000-000038A00A05
+Message-Id: <20191206122434.29587-2-sourabhjain@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
  definitions=2019-12-06_03:2019-12-05,2019-12-06 signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  bulkscore=0 lowpriorityscore=0 adultscore=0 suspectscore=1 impostorscore=0
- clxscore=1015 spamscore=0 mlxlogscore=769 phishscore=0 mlxscore=0
+ clxscore=1015 spamscore=0 mlxlogscore=866 phishscore=0 mlxscore=0
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-1910280000 definitions=main-1912060105
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,61 +69,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, FADump sysfs files are present inside /sys/kernel directory.
-But as the number of FADump sysfs file increases it is not a good idea to
-push all of them in /sys/kernel directory. It is better to have separate
-directory to keep all the FADump sysfs files.
+Add missing ABI documentation for existing FADump sysfs files.
 
-Patch series reorganizes the FADump sysfs files and avail all the existing
-FADump sysfs files present inside /sys/kernel into a new directory
-/sys/kernel/fadump. The backward compatibility is maintained by adding a
-symlink for every sysfs file that has moved to new location. Also a new
-FADump sys interface is added to get the amount of memory reserved by FADump
-for saving the crash dump.
+Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+---
+ Documentation/ABI/testing/sysfs-kernel-fadump_enabled     | 7 +++++++
+ Documentation/ABI/testing/sysfs-kernel-fadump_registered  | 8 ++++++++
+ Documentation/ABI/testing/sysfs-kernel-fadump_release_mem | 8 ++++++++
+ .../ABI/testing/sysfs-kernel-fadump_release_opalcore      | 7 +++++++
+ 4 files changed, 30 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_enabled
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_registered
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_release_mem
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
 
-Changelog:
-v1 -> v2:
- - Move fadump_release_opalcore sysfs to FADump Kobject instead of
-   replicating.
- - Changed the patch order 1,2,3,4 -> 2,1,3,4 (First add the ABI doc for
-   exisiting sysfs file then replicate them under FADump kobject).
-
-v2 -> v3:
- - Remove the fadump_ prefix from replicated FADump sysfs file names.
-
- v3 -> v4:
- - New patch that adds a wrapper function to create symlink with
-   custom symlink file name.
- - Add symlink instead of replicating the FADump sysfs files.
- - Move the OPAL core rel
-
-Sourabh Jain (6):
-  Documentation/ABI: add ABI documentation for /sys/kernel/fadump_*
-  sysfs: wrap __compat_only_sysfs_link_entry_to_kobj function to change
-    the symlink name
-  powerpc/fadump: reorganize /sys/kernel/fadump_* sysfs files
-  powerpc/powernv: move core and fadump_release_opalcore under new
-    kobject
-  Documentation/ABI: mark /sys/kernel/fadump_* sysfs files deprecated
-  powerpc/fadump: sysfs for fadump memory reservation
-
- .../ABI/obsolete/sysfs-kernel-fadump_enabled  |  9 +++
- .../obsolete/sysfs-kernel-fadump_registered   | 10 +++
- .../obsolete/sysfs-kernel-fadump_release_mem  | 10 +++
- .../sysfs-kernel-fadump_release_opalcore      |  9 +++
- Documentation/ABI/testing/sysfs-kernel-fadump | 40 +++++++++
- .../powerpc/firmware-assisted-dump.rst        | 28 +++++--
- arch/powerpc/kernel/fadump.c                  | 81 +++++++++++++++----
- arch/powerpc/platforms/powernv/opal-core.c    | 31 +++++--
- fs/sysfs/group.c                              | 28 ++++++-
- include/linux/sysfs.h                         | 12 +++
- 10 files changed, 225 insertions(+), 33 deletions(-)
- create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-fadump_enabled
- create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-fadump_registered
- create mode 100644 Documentation/ABI/obsolete/sysfs-kernel-fadump_release_mem
- create mode 100644 Documentation/ABI/removed/sysfs-kernel-fadump_release_opalcore
- create mode 100644 Documentation/ABI/testing/sysfs-kernel-fadump
-
+diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_enabled b/Documentation/ABI/testing/sysfs-kernel-fadump_enabled
+new file mode 100644
+index 000000000000..f73632b1c006
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-kernel-fadump_enabled
+@@ -0,0 +1,7 @@
++What:		/sys/kernel/fadump_enabled
++Date:		Feb 2012
++Contact:	linuxppc-dev@lists.ozlabs.org
++Description:	read only
++		Primarily used to identify whether the FADump is enabled in
++		the kernel or not.
++User:		Kdump service
+diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_registered b/Documentation/ABI/testing/sysfs-kernel-fadump_registered
+new file mode 100644
+index 000000000000..dcf925e53f0f
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-kernel-fadump_registered
+@@ -0,0 +1,8 @@
++What:		/sys/kernel/fadump_registered
++Date:		Feb 2012
++Contact:	linuxppc-dev@lists.ozlabs.org
++Description:	read/write
++		Helps to control the dump collect feature from userspace.
++		Setting 1 to this file enables the system to collect the
++		dump and 0 to disable it.
++User:		Kdump service
+diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_release_mem b/Documentation/ABI/testing/sysfs-kernel-fadump_release_mem
+new file mode 100644
+index 000000000000..9c20d64ab48d
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-kernel-fadump_release_mem
+@@ -0,0 +1,8 @@
++What:		/sys/kernel/fadump_release_mem
++Date:		Feb 2012
++Contact:	linuxppc-dev@lists.ozlabs.org
++Description:	write only
++		This is a special sysfs file and only available when
++		the system is booted to capture the vmcore using FADump.
++		It is used to release the memory reserved by FADump to
++		save the crash dump.
+diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore b/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
+new file mode 100644
+index 000000000000..53313c1d4e7a
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
+@@ -0,0 +1,7 @@
++What:		/sys/kernel/fadump_release_opalcore
++Date:		Sep 2019
++Contact:	linuxppc-dev@lists.ozlabs.org
++Description:	write only
++		The sysfs file is available when the system is booted to
++		collect the dump on OPAL based machine. It used to release
++		the memory used to collect the opalcore.
 -- 
 2.17.2
 
