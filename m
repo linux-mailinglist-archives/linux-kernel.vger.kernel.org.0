@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18CA2114FE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD9A114FE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:42:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbfLFLnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 06:43:13 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:55209 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726124AbfLFLnN (ORCPT
+        id S1726201AbfLFLmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 06:42:18 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:36644 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfLFLmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:43:13 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1idC0j-0001qF-ES; Fri, 06 Dec 2019 12:43:01 +0100
-To:     linmiaohe <linmiaohe@huawei.com>
-Subject: Re: [PATCH] KVM: arm: get rid of unused arg in  =?UTF-8?Q?cpu=5Finit=5Fhyp=5Fmode=28=29?=
-X-PHP-Originating-Script: 0:main.inc
+        Fri, 6 Dec 2019 06:42:17 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB6BgFIq054225;
+        Fri, 6 Dec 2019 05:42:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575632535;
+        bh=oQQWI05cs5ZZbMyfIpjlE+7PWlwHVVzIAHXpj5+znlE=;
+        h=From:To:CC:Subject:Date;
+        b=Ri3f9kyDt18kPeUNNtPOqcToR1BxZwGAgaXjEeIdVPsH6eHCGUonqcAo7ZNOoxTMP
+         +aC8DcK9nwzC4gakVZbuVNiXq6C3/zXQaz2k95fI3Oj6LAEvkmpObgs3kP6bb/0tHr
+         ncDPnR4mSE42HVZIjIGgMjsaMS88XXlpeGy4Qklg=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB6BgF6c008805
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Dec 2019 05:42:15 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Dec
+ 2019 05:42:14 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Dec 2019 05:42:14 -0600
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB6Bg6JA079926;
+        Fri, 6 Dec 2019 05:42:11 -0600
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH] mmc: sdhci: Update the tuning failed messages to pr_debug level
+Date:   Fri, 6 Dec 2019 17:13:26 +0530
+Message-ID: <20191206114326.15856-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 06 Dec 2019 11:43:01 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <james.morse@arm.com>,
-        <julien.thierry.kdev@gmail.com>, <suzuki.poulose@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-In-Reply-To: <1574320559-5662-1-git-send-email-linmiaohe@huawei.com>
-References: <1574320559-5662-1-git-send-email-linmiaohe@huawei.com>
-Message-ID: <2ca295ccc30b53b4d57098d9718f8aa3@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: linmiaohe@huawei.com, pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-21 07:15, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
->
-> As arg dummy is not really needed, there's no need to pass
-> NULL when calling cpu_init_hyp_mode(). So clean it up.
->
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  virt/kvm/arm/arm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 86c6aa1cb58e..a5470f1b1a19 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -1315,7 +1315,7 @@ long kvm_arch_vm_ioctl(struct file *filp,
->  	}
->  }
->
-> -static void cpu_init_hyp_mode(void *dummy)
-> +static void cpu_init_hyp_mode(void)
->  {
->  	phys_addr_t pgd_ptr;
->  	unsigned long hyp_stack_ptr;
-> @@ -1349,7 +1349,7 @@ static void cpu_hyp_reinit(void)
->  	if (is_kernel_in_hyp_mode())
->  		kvm_timer_init_vhe();
->  	else
-> -		cpu_init_hyp_mode(NULL);
-> +		cpu_init_hyp_mode();
->
->  	kvm_arm_init_debug();
+Tuning support in DDR50 speed mode was added in SD Specifications Part1
+Physical Layer Specification v3.01. Its not possible to distinguish
+between v3.00 and v3.01 from the SCR and that is why since
+commit 4324f6de6d2e ("mmc: core: enable CMD19 tuning for DDR50 mode")
+tuning failures are ignored in DDR50 speed mode.
 
-Applied, thanks.
+Cards compatible with v3.00 don't respond to CMD19 in DDR50 and this
+error gets printed during enumeration and also if retune is triggered at
+any time during operation. Update the printk level to pr_debug so that
+these errors don't lead to false error reports.
 
-         M.
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ drivers/mmc/host/sdhci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 296d955ede59..42a9c8179da7 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2417,8 +2417,8 @@ static int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 		sdhci_send_tuning(host, opcode);
+ 
+ 		if (!host->tuning_done) {
+-			pr_info("%s: Tuning timeout, falling back to fixed sampling clock\n",
+-				mmc_hostname(host->mmc));
++			pr_debug("%s: Tuning timeout, falling back to fixed sampling clock\n",
++				 mmc_hostname(host->mmc));
+ 			sdhci_abort_tuning(host, opcode);
+ 			return -ETIMEDOUT;
+ 		}
 -- 
-Jazz is not dead. It just smells funny...
+2.19.2
+
