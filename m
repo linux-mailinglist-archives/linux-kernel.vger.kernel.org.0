@@ -2,153 +2,273 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA574114AE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:31:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71488114AEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfLFCbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 21:31:46 -0500
-Received: from emcscan.emc.com.tw ([192.72.220.5]:64185 "EHLO
-        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfLFCbp (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 21:31:45 -0500
-X-IronPort-AV: E=Sophos;i="5.56,253,1539619200"; 
-   d="scan'208";a="33171812"
-Received: from unknown (HELO webmail.emc.com.tw) ([192.168.10.1])
-  by emcscan.emc.com.tw with ESMTP; 06 Dec 2019 10:31:33 +0800
-Received: from 192.168.10.23
-        by webmail.emc.com.tw with MailAudit ESMTP Server V5.0(71513:0:AUTH_RELAY)
-        (envelope-from <dave.wang@emc.com.tw>); Fri, 06 Dec 2019 10:31:33 +0800 (CST)
-Received: from 192.168.33.57
-        by webmail.emc.com.tw with Mail2000 ESMTP Server V7.00(101176:2:AUTH_RELAY)
-        (envelope-from <dave.wang@emc.com.tw>); Fri, 06 Dec 2019 10:31:33 +0800 (CST)
-From:   "Dave.Wang" <dave.wang@emc.com.tw>
-To:     <Linux-kernel@vger.kernel.org>, <Linux-input@vger.kernel.org>,
-        "'Benjamin Tissoires'" <benjamin.tissoires@redhat.com>,
-        <Dmitry.torokhov@gmail.com>
-Cc:     "'Josh.Chen'" <josh.chen@emc.com.tw>, <jingle.wu@emc.com.tw>,
-        "'phoenix'" <phoenix@emc.com.tw>
-Subject: [PATCH 3/6] Input: elantech - Increace and correct device information for pattern 0,1,2
-Date:   Fri, 6 Dec 2019 10:31:32 +0800
-Message-ID: <000b01d5abdd$45ffece0$d1ffc6a0$@emc.com.tw>
+        id S1726258AbfLFCdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 21:33:43 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:55473 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfLFCdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 21:33:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1575599622; x=1607135622;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=u4ns4F+dn++weka+UCIKzTDCJRd3kH78GNtaEz0nonc=;
+  b=FrGs+dW1IUoAsg8fvkOqEqlhjJf5X2LfztUVhLTKJw/zRbiwbliycxwH
+   D4Fm72ViJLUR5rku9aR2x7VdOEda9bCUkodAK/NAjtEx9cMG6MtyY53if
+   l/DXdzNNXsyn3E6ZTSnVvCoyLsOcS8zmO9rAVvbpgrX7fw3Hhq6W035Zz
+   em4hk4df532wt0R+56TNsg9brRKzlc6aUN7QddfeBw7MZ6tI4pfmC6NBP
+   2tJ33T6JIUljBsFxIGOTNRK1V8Z+gXXZf2bICPlz/rbcBR907qdnOo6v+
+   XJsPtNbHIACI1/b8+32pG4eMSRcweEsm329YfMVH2iC46C14GK7QtHqY8
+   w==;
+IronPort-SDR: qUMeXxNYY2kvVuOVBzO9yLwUe5WWjkR9N15B6YLYKB0jwLhxjKgIqPpVC11fahAZCcPpOkeFU6
+ 2BtiBKNMBtLWwKCHBs5NLFVVKImE5OMt8D2i3QIW4P+tjS9jAVpztxDIHyMXtFSjM1fh3FMuEF
+ 9aV12xFnl91cw+Q/ngsibGG3nwheEhex2QicKkaN3+MjuMNQ3i9QF/3v1HC8O3VPQNJ5nxUgmG
+ IPp/IjKwBcdqdRka39Y12k3k14tQuDN9Wt5fR7rswwRW5XUEaecMPaBdZJCnuThqu09dvBBL4x
+ F8M=
+X-IronPort-AV: E=Sophos;i="5.69,282,1571673600"; 
+   d="scan'208";a="232250438"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Dec 2019 10:33:42 +0800
+IronPort-SDR: PTCRpE45Omx0z4M8QhERvD0clPXcN+ZqIATvlQ7VDETZ86iEKGlxeI1Wq+43q8uRJGunN0lePd
+ K89zAmmeEdM2jvZuN9bjWFXdXpDeYmKTyFRHTC89WudrmzEs13WNGeGCAg3AWzJhcgsinlV0P+
+ n1Y1FOZWEIL9eoTeNt5JkNr4UHC/Rie+jNODaL6wd5elcuvzy6PIMKT/h15By/q5heumIy/KDC
+ soPptRPGlyjFwFNFKtPTa1ekkzdnCn006LaVDiDRsVreTABDGZ/KmGdKv2IVaNLyFdzU1q5NbY
+ f/zAjNPYhKCQHqxQuDk5OF2x
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2019 18:28:05 -0800
+IronPort-SDR: 1uVywYMCYS8oZsoD9gY5Fk7u9lTc0Bm8vFKGK4oFld57RoPB6F5srL4xkmacLIDCXgewFOCKFI
+ 8ahUQZCBoPzGuFm7oUSZihFKeyX6OQznPE6KG7aLOnE4d+xIhInyfLhALT3cm8VJXn+jWdtsGF
+ l9ZrIvcKVXDlJtxq41PFE+TnJbkK2skho/2GZ+zV0o7YODXQIJP8qM0TknN6ZuG9oGas6/GhLX
+ chph+Qp4OHDh4hs5mfqTU5e7wnJAOTjFHn6bPidZ8fO+uWRpYrY0/2FIGnEMGlboMcblrSh+CX
+ BWE=
+WDCIronportException: Internal
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 05 Dec 2019 18:33:42 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>, Anup Patel <anup.patel@wdc.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-riscv@lists.infradead.org, Marc Zyngier <maz@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] irqchip/sifive-plic: Add support for multiple PLICs
+Date:   Thu,  5 Dec 2019 18:31:56 -0800
+Message-Id: <20191206023156.24732-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AdWr3MrL7q4sCqxkTvGjETZLUp5TEw==
-Content-Language: zh-tw
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMDYxMjlcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy04Mzc4YTZhMC0xN2QwLTExZWEtYWExOS04OGQ3ZjY1NjczMzBcYW1lLXRlc3RcODM3OGE2YTItMTdkMC0xMWVhLWFhMTktODhkN2Y2NTY3MzMwYm9keS50eHQiIHN6PSIzNjAxIiB0PSIxMzIyMDA3MzA5MjQ1ODAxMjgiIGg9IlNWZWxGTTNyZ3pXYk8wZU42ZFhyRlByWkI3Yz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get and correct the device informations including fw_checksum, iap_checksum,
-ic_body, iap_version from differnet pattern.
+Current, PLIC driver can support only 1 PLIC on the board. However,
+there can be multiple PLICs present on a two socket systems in RISC-V.
 
-Signed-off-by: Dave Wang <dave.wang@emc.com.tw>
+Modify the driver so that each PLIC handler can have a information
+about individual PLIC registers and an irqdomain associated with it.
+
+Tested on two socket RISC-V system based on VCU118 FPGA connected via
+OmniXtend protocol.
+
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Signed-off-by: Anup Patel <anup.patel@wdc.com>
 ---
- drivers/input/mouse/elantech.c | 47 +++++++++++++++++++++++++++++++++-
- drivers/input/mouse/elantech.h |  8 ++++++
- 2 files changed, 54 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-sifive-plic.c | 81 +++++++++++++++++++------------
+ 1 file changed, 51 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-index afb87122b766..322b181d00e9 100644
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -857,7 +857,8 @@ static int elantech_packet_check_v4(struct psmouse
-*psmouse)
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index c72c036aea76..aea1f2f0f0d5 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -55,7 +55,11 @@
+ #define     CONTEXT_THRESHOLD		0x00
+ #define     CONTEXT_CLAIM		0x04
+ 
+-static void __iomem *plic_regs;
++struct plic_hw {
++	struct cpumask lmask;
++	struct irq_domain *irqdomain;
++	void __iomem *regs;
++};
+ 
+ struct plic_handler {
+ 	bool			present;
+@@ -66,6 +70,7 @@ struct plic_handler {
  	 */
- 	if (etd->info.crc_enabled)
- 		sanity_check = ((packet[3] & 0x08) == 0x00);
--	else if (ic_version == 7 && etd->info.samples[1] == 0x2A)
-+	else if (ic_version == 7 && etd->info.samples[1] == 0x2A &&
-+			etd->info.pattern == 0x00)
- 		sanity_check = ((packet[3] & 0x1c) == 0x10);
+ 	raw_spinlock_t		enable_lock;
+ 	void __iomem		*enable_base;
++	struct plic_hw		*hw;
+ };
+ static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+ 
+@@ -84,31 +89,40 @@ static inline void plic_toggle(struct plic_handler *handler,
+ }
+ 
+ static inline void plic_irq_toggle(const struct cpumask *mask,
+-				   int hwirq, int enable)
++				   struct irq_data *d, int enable)
+ {
+ 	int cpu;
++	struct plic_hw *hw = d->domain->host_data;
+ 
+-	writel(enable, plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
++	writel(enable, hw->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+ 	for_each_cpu(cpu, mask) {
+ 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+ 
+-		if (handler->present)
+-			plic_toggle(handler, hwirq, enable);
++		if (handler->present &&
++		    cpumask_test_cpu(cpu, &handler->hw->lmask))
++			plic_toggle(handler, d->hwirq, enable);
+ 	}
+ }
+ 
+ static void plic_irq_enable(struct irq_data *d)
+ {
+-	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
+-					   cpu_online_mask);
++	struct cpumask amask;
++	unsigned int cpu;
++	struct plic_hw *hw = d->domain->host_data;
++
++	cpumask_and(&amask, &hw->lmask, cpu_online_mask);
++	cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
++					   &amask);
+ 	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
+ 		return;
+-	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
++	plic_irq_toggle(cpumask_of(cpu), d, 1);
+ }
+ 
+ static void plic_irq_disable(struct irq_data *d)
+ {
+-	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
++	struct plic_hw *hw = d->domain->host_data;
++
++	plic_irq_toggle(&hw->lmask, d, 0);
+ }
+ 
+ #ifdef CONFIG_SMP
+@@ -116,18 +130,22 @@ static int plic_set_affinity(struct irq_data *d,
+ 			     const struct cpumask *mask_val, bool force)
+ {
+ 	unsigned int cpu;
++	struct cpumask amask;
++	struct plic_hw *hw = d->domain->host_data;
++
++	cpumask_and(&amask, &hw->lmask, mask_val);
+ 
+ 	if (force)
+-		cpu = cpumask_first(mask_val);
++		cpu = cpumask_first(&amask);
  	else
- 		sanity_check = ((packet[0] & 0x08) == 0x00 &&
-@@ -1669,6 +1670,50 @@ static int elantech_query_info(struct psmouse
-*psmouse,
- 			     info->samples[2]);
+-		cpu = cpumask_any_and(mask_val, cpu_online_mask);
++		cpu = cpumask_any_and(&amask, cpu_online_mask);
+ 
+ 	if (cpu >= nr_cpu_ids)
+ 		return -EINVAL;
+ 
+ 	if (!irqd_irq_disabled(d)) {
+-		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+-		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
++		plic_irq_toggle(&hw->lmask, d, 0);
++		plic_irq_toggle(cpumask_of(cpu), d, 1);
  	}
  
-+	if (elantech_read_reg_params(psmouse, ETP_FW_CHECKSUM_QUERY,
-+				info->fw_checksum)) {
-+		psmouse_err(psmouse, "failed to get fw checksum\n");
-+		return -EINVAL;
-+	}
-+	psmouse_info(psmouse,
-+			 "Elan fw checksum result %02x, %02x, %02x\n",
-+			 info->fw_checksum[0],
-+			 info->fw_checksum[1],
-+			 info->fw_checksum[2]);
-+
-+	if (elantech_read_reg_params(psmouse, ETP_IAP_CHECKSUM_QUERY,
-+				info->iap_checksum)) {
-+		psmouse_err(psmouse, "failed to get iap checksum\n");
-+		return -EINVAL;
-+	}
-+	psmouse_info(psmouse,
-+			 "Elan iap checksum result %02x, %02x, %02x\n",
-+			 info->iap_checksum[0],
-+			 info->iap_checksum[1],
-+			 info->iap_checksum[2]);
-+
-+	if (info->pattern > 0x00) {
-+		if (info->send_cmd(psmouse, ETP_ICBODY_QUERY,
-info->ic_body)) {
-+			psmouse_err(psmouse, "failed to query ic body\n");
-+			return -EINVAL;
-+		}
-+		psmouse_info(psmouse,
-+			     "Elan ic body : %02x%02x, fw version : %02x\n",
-+			     info->ic_body[0],
-+			     info->ic_body[1],
-+			     info->ic_body[2]);
-+
-+		if (info->send_cmd(psmouse, ETP_IAP_VERSION_QUERY,
-+					info->iap_version)) {
-+			psmouse_err(psmouse, "failed to query iap
-version\n");
-+			return -EINVAL;
-+		}
-+		psmouse_info(psmouse,
-+			     "Elan iap interface type : %02x, iap version :
-%02x\n",
-+			     info->iap_version[1],
-+			     info->iap_version[2]);
-+	}
-+
- 	if (info->samples[1] == 0x74 && info->hw_version == 0x03) {
- 		/*
- 		 * This module has a bug which makes absolute mode
-diff --git a/drivers/input/mouse/elantech.h b/drivers/input/mouse/elantech.h
-index 0aae6a9de8f0..a633ffa0eb07 100644
---- a/drivers/input/mouse/elantech.h
-+++ b/drivers/input/mouse/elantech.h
-@@ -18,6 +18,10 @@
- #define ETP_CAPABILITIES_QUERY		0x02
- #define ETP_SAMPLE_QUERY		0x03
- #define ETP_RESOLUTION_QUERY		0x04
-+#define ETP_ICBODY_QUERY		0x05
-+#define ETP_IAP_VERSION_QUERY		0x06
-+#define ETP_IAP_CHECKSUM_QUERY		0x0A
-+#define ETP_FW_CHECKSUM_QUERY		0xFE
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+@@ -163,8 +181,6 @@ static const struct irq_domain_ops plic_irqdomain_ops = {
+ 	.xlate		= irq_domain_xlate_onecell,
+ };
  
+-static struct irq_domain *plic_irqdomain;
+-
  /*
-  * Command values for register reading or writing
-@@ -138,6 +142,10 @@ struct finger_pos {
- struct elantech_device_info {
- 	unsigned char capabilities[3];
- 	unsigned char samples[3];
-+	unsigned char fw_checksum[3];
-+	unsigned char iap_checksum[3];
-+	unsigned char ic_body[3];
-+	unsigned char iap_version[3];
- 	unsigned char debug;
- 	unsigned char hw_version;
- 	unsigned char pattern;
+  * Handling an interrupt is a two-step process: first you claim the interrupt
+  * by reading the claim register, then you complete the interrupt by writing
+@@ -181,7 +197,7 @@ static void plic_handle_irq(struct pt_regs *regs)
+ 
+ 	csr_clear(sie, SIE_SEIE);
+ 	while ((hwirq = readl(claim))) {
+-		int irq = irq_find_mapping(plic_irqdomain, hwirq);
++		int irq = irq_find_mapping(handler->hw->irqdomain, hwirq);
+ 
+ 		if (unlikely(irq <= 0))
+ 			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
+@@ -212,15 +228,17 @@ static int __init plic_init(struct device_node *node,
+ {
+ 	int error = 0, nr_contexts, nr_handlers = 0, i;
+ 	u32 nr_irqs;
++	struct plic_hw *hw;
+ 
+-	if (plic_regs) {
+-		pr_warn("PLIC already present.\n");
+-		return -ENXIO;
+-	}
++	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++	if (!hw)
++		return -ENOMEM;
+ 
+-	plic_regs = of_iomap(node, 0);
+-	if (WARN_ON(!plic_regs))
+-		return -EIO;
++	hw->regs = of_iomap(node, 0);
++	if (WARN_ON(!hw->regs)) {
++		error = -EIO;
++		goto out_freehw;
++	}
+ 
+ 	error = -EINVAL;
+ 	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
+@@ -234,9 +252,9 @@ static int __init plic_init(struct device_node *node,
+ 		goto out_iounmap;
+ 
+ 	error = -ENOMEM;
+-	plic_irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
+-			&plic_irqdomain_ops, NULL);
+-	if (WARN_ON(!plic_irqdomain))
++	hw->irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
++			&plic_irqdomain_ops, hw);
++	if (WARN_ON(!hw->irqdomain))
+ 		goto out_iounmap;
+ 
+ 	for (i = 0; i < nr_contexts; i++) {
+@@ -279,13 +297,14 @@ static int __init plic_init(struct device_node *node,
+ 			goto done;
+ 		}
+ 
++		cpumask_set_cpu(cpu, &hw->lmask);
+ 		handler->present = true;
+ 		handler->hart_base =
+-			plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
++			hw->regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
+ 		raw_spin_lock_init(&handler->enable_lock);
+ 		handler->enable_base =
+-			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
+-
++			hw->regs + ENABLE_BASE + i * ENABLE_PER_HART;
++		handler->hw = hw;
+ done:
+ 		/* priority must be > threshold to trigger an interrupt */
+ 		writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
+@@ -300,7 +319,9 @@ static int __init plic_init(struct device_node *node,
+ 	return 0;
+ 
+ out_iounmap:
+-	iounmap(plic_regs);
++	iounmap(hw->regs);
++out_freehw:
++	kfree(hw);
+ 	return error;
+ }
+ 
 -- 
-2.17.1
+2.24.0
 
