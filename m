@@ -2,55 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C97901155F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 860A61155F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:58:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfLFQ5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:57:42 -0500
-Received: from foss.arm.com ([217.140.110.172]:50606 "EHLO foss.arm.com"
+        id S1726824AbfLFQ6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:58:07 -0500
+Received: from foss.arm.com ([217.140.110.172]:50636 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbfLFQ5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:57:40 -0500
+        id S1726271AbfLFQ6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:58:07 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9B4531B;
-        Fri,  6 Dec 2019 08:57:39 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A87E83F52E;
-        Fri,  6 Dec 2019 08:57:38 -0800 (PST)
-Subject: Re: [PATCH] sched/fair: Optimize select_idle_core
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-References: <20191205172316.8198-1-srikar@linux.vnet.ibm.com>
- <6242deaa-e570-3384-0737-e49abb0599dd@arm.com>
- <20191206125317.GC22330@linux.vnet.ibm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <8521e154-b485-c9fc-708d-7d87a12a9e9e@arm.com>
-Date:   Fri, 6 Dec 2019 16:57:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBD1F31B;
+        Fri,  6 Dec 2019 08:58:06 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9710F3F52E;
+        Fri,  6 Dec 2019 08:58:05 -0800 (PST)
+Date:   Fri, 6 Dec 2019 16:58:03 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Thomas Renninger <trenn@suse.de>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux@armlinux.org.uk, will.deacon@arm.com, x86@kernel.org,
+        fschnitzlein@suse.de
+Subject: Re: [PATCH v5 0/3] sysfs: add sysfs based cpuinfo
+Message-ID: <20191206165803.GD21671@lakrids.cambridge.arm.com>
+References: <20191206162421.15050-1-trenn@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20191206125317.GC22330@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191206162421.15050-1-trenn@suse.de>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2019 12:53, Srikar Dronamraju wrote:
-> Its probably something to think over. I probably don't have an answer on why
-> we are not choosing the starting cpu to be primary CPU.  Would we have to
-> think of the case where the Primary CPUs are online / offline etc? I mean
-> with target cpu, we know the CPU is online for sure.
-> 
+Hi Thomas,
 
-Myes, CPU affinity also makes the thing much more painful (what if the task
-is affined to some of the core's threads, but not the primary one?). The
-current method has the merit of handling these cases.
+On Fri, Dec 06, 2019 at 05:24:18PM +0100, Thomas Renninger wrote:
+> I picked up Felix Schnizlein's work from 2017.
+> 
+> It was already reviewed by Greg-KH at this time and even
+> pushed into linux-next tree, when it came out that the mails
+> never reached lkml, even the list was added to CC.
+> 
+> ARM people then correctly complained that this needs more review
+> by ARCH people. It got reverted, Felix had no time anymore and this
+> nice patcheset was hanging around nowhere...
+
+Can you please provide a rationale for this?
+
+It's not entirely clear to me what information people need or want, and
+there's some data in /proc/cpuinfo that I think makes no sense to try to
+export export in a structured way (e.g. bogomips).
+
+> 
+> Tested on aarch64:
+> 
+> /sys/devices/system/cpu/cpu1/info/:[0]# ls
+> architecture  bogomips  flags  implementer  part  revision  variant
+> 
+> ------------------------------------------------------------
+> 
+> for file in *;do echo $file; cat $file;echo;done
+> architecture
+> 8
+> 
+> bogomips
+> 40.00
+> 
+> flags
+> fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid asimdrdm
+> 
+> implementer
+> 0x51
+> 
+> part
+> 0xc00
+> 
+> revision
+> 1
+> 
+> variant
+> 0x0
+ 
+For arm64 we already expose the MIDR and REVIDR register values under
+/sys/devices/system/cpu/cpu*/regs/identification, and that's the bulk of
+the useful information above (aside from the flags/hwcaps).
+
+Thanks,
+Mark.
