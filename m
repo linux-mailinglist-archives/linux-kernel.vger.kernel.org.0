@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98D1D11516D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B552E11516E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:53:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfLFNxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 08:53:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:44434 "EHLO foss.arm.com"
+        id S1726484AbfLFNx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:53:57 -0500
+Received: from foss.arm.com ([217.140.110.172]:44470 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726395AbfLFNxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 08:53:51 -0500
+        id S1726395AbfLFNxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 08:53:55 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0ABC113E;
-        Fri,  6 Dec 2019 05:53:51 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61DE91FB;
+        Fri,  6 Dec 2019 05:53:54 -0800 (PST)
 Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06AF83F718;
-        Fri,  6 Dec 2019 05:53:48 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D65933F718;
+        Fri,  6 Dec 2019 05:53:51 -0800 (PST)
 From:   Steven Price <steven.price@arm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -34,11 +34,10 @@ Cc:     Steven Price <steven.price@arm.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v16 03/25] arm: mm: Add p?d_leaf() definitions
-Date:   Fri,  6 Dec 2019 13:52:54 +0000
-Message-Id: <20191206135316.47703-4-steven.price@arm.com>
+        "Liang, Kan" <kan.liang@linux.intel.com>
+Subject: [PATCH v16 04/25] arm64: mm: Add p?d_leaf() definitions
+Date:   Fri,  6 Dec 2019 13:52:55 +0000
+Message-Id: <20191206135316.47703-5-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191206135316.47703-1-steven.price@arm.com>
 References: <20191206135316.47703-1-steven.price@arm.com>
@@ -51,44 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 walk_page_range() is going to be allowed to walk page tables other than
 those of user space. For this it needs to know when it has reached a
-'leaf' entry in the page tables. This information is provided by the
+'leaf' entry in the page tables. This information will be provided by the
 p?d_leaf() functions/macros.
 
-For arm pmd_large() already exists and does what we want. So simply
-provide the generic pmd_leaf() name.
+For arm64, we already have p?d_sect() macros which we can reuse for
+p?d_leaf().
 
-CC: Russell King <linux@armlinux.org.uk>
-CC: linux-arm-kernel@lists.infradead.org
+pud_sect() is defined as a dummy function when CONFIG_PGTABLE_LEVELS < 3
+or CONFIG_ARM64_64K_PAGES is defined. However when the kernel is
+configured this way then architecturally it isn't allowed to have a
+large page at this level, and any code using these page walking macros
+is implicitly relying on the page size/number of levels being the same as
+the kernel. So it is safe to reuse this for p?d_leaf() as it is an
+architectural restriction.
+
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will@kernel.org>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/arm/include/asm/pgtable-2level.h | 1 +
- arch/arm/include/asm/pgtable-3level.h | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm64/include/asm/pgtable.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
-index 51beec41d48c..0d3ea35c97fe 100644
---- a/arch/arm/include/asm/pgtable-2level.h
-+++ b/arch/arm/include/asm/pgtable-2level.h
-@@ -189,6 +189,7 @@ static inline pmd_t *pmd_offset(pud_t *pud, unsigned long addr)
- }
- 
- #define pmd_large(pmd)		(pmd_val(pmd) & 2)
-+#define pmd_leaf(pmd)		(pmd_val(pmd) & 2)
- #define pmd_bad(pmd)		(pmd_val(pmd) & 2)
- #define pmd_present(pmd)	(pmd_val(pmd))
- 
-diff --git a/arch/arm/include/asm/pgtable-3level.h b/arch/arm/include/asm/pgtable-3level.h
-index 5b18295021a0..ad55ab068dbf 100644
---- a/arch/arm/include/asm/pgtable-3level.h
-+++ b/arch/arm/include/asm/pgtable-3level.h
-@@ -134,6 +134,7 @@
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 5d15b4735a0e..40df7e16d397 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -445,6 +445,7 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ 				 PMD_TYPE_TABLE)
  #define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
- 						 PMD_TYPE_SECT)
- #define pmd_large(pmd)		pmd_sect(pmd)
+ 				 PMD_TYPE_SECT)
 +#define pmd_leaf(pmd)		pmd_sect(pmd)
  
- #define pud_clear(pudp)			\
- 	do {				\
+ #if defined(CONFIG_ARM64_64K_PAGES) || CONFIG_PGTABLE_LEVELS < 3
+ static inline bool pud_sect(pud_t pud) { return false; }
+@@ -529,6 +530,7 @@ static inline void pte_unmap(pte_t *pte) { }
+ #define pud_none(pud)		(!pud_val(pud))
+ #define pud_bad(pud)		(!(pud_val(pud) & PUD_TABLE_BIT))
+ #define pud_present(pud)	pte_present(pud_pte(pud))
++#define pud_leaf(pud)		pud_sect(pud)
+ #define pud_valid(pud)		pte_valid(pud_pte(pud))
+ 
+ static inline void set_pud(pud_t *pudp, pud_t pud)
 -- 
 2.20.1
 
