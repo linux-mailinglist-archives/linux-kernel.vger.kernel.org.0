@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66841114DF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFEA114E00
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:05:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfLFJBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:01:49 -0500
-Received: from mga09.intel.com ([134.134.136.24]:50490 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfLFJBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:01:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 01:01:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,283,1571727600"; 
-   d="scan'208";a="219395101"
-Received: from lxy-clx-4s.sh.intel.com ([10.239.43.57])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Dec 2019 01:01:40 -0800
-From:   Xiaoyao Li <xiaoyao.li@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH 3/3] KVM: VMX: Fix the spelling of CPU_BASED_USE_TSC_OFFSETTING
-Date:   Fri,  6 Dec 2019 16:45:26 +0800
-Message-Id: <20191206084526.131861-4-xiaoyao.li@intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191206084526.131861-1-xiaoyao.li@intel.com>
-References: <20191206084526.131861-1-xiaoyao.li@intel.com>
+        id S1726278AbfLFJFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:05:30 -0500
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:55550 "EHLO
+        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726109AbfLFJFa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 04:05:30 -0500
+X-Greylist: delayed 606 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 04:05:29 EST
+Received: from faui04l.informatik.uni-erlangen.de (faui04l.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:142])
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 9B6AE241797;
+        Fri,  6 Dec 2019 09:54:57 +0100 (CET)
+Received: by faui04l.informatik.uni-erlangen.de (Postfix, from userid 66757)
+        id 7997E620AD0; Fri,  6 Dec 2019 09:54:57 +0100 (CET)
+From:   Michael Kupfer <michael.kupfer@fau.de>
+To:     eric@anholt.net, wahrenst@gmx.net,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, mchehab+samsung@kernel.org,
+        hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, f.fainelli@gmail.com,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        dave.stevenson@raspberrypi.org, daniela.mormocea@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-kernel@i4.cs.fau.de, Michael Kupfer <michael.kupfer@fau.de>,
+        Kay Friedrich <kay.friedrich@fau.de>
+Subject: [PATCH] staging/vc04_services/bcm2835-camera: distinct numeration and names for devices
+Date:   Fri,  6 Dec 2019 09:54:32 +0100
+Message-Id: <20191206085432.19962-1-michael.kupfer@fau.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,127 +41,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mis-spelling is found by checkpatch.pl, so fix them.
+Create a static atomic counter for numerating cameras.
+Use the Media Subsystem Kernel Internal API to create distinct
+device-names, so that the camera-number (given by the counter)
+matches the camera-name.
 
-Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Co-developed-by: Kay Friedrich <kay.friedrich@fau.de>
+Signed-off-by: Kay Friedrich <kay.friedrich@fau.de>
+Signed-off-by: Michael Kupfer <michael.kupfer@fau.de>
 ---
- arch/x86/include/asm/vmx.h                               | 2 +-
- arch/x86/kvm/vmx/nested.c                                | 8 ++++----
- arch/x86/kvm/vmx/vmx.c                                   | 6 +++---
- tools/testing/selftests/kvm/include/x86_64/vmx.h         | 2 +-
- tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c | 2 +-
- 5 files changed, 10 insertions(+), 10 deletions(-)
+ .../vc04_services/bcm2835-camera/bcm2835-camera.c        | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index 06d4420508c5..d716fe938fc0 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -20,7 +20,7 @@
-  * Definitions of Primary Processor-Based VM-Execution Controls.
-  */
- #define CPU_BASED_INTR_WINDOW_EXITING           0x00000004
--#define CPU_BASED_USE_TSC_OFFSETING             0x00000008
-+#define CPU_BASED_USE_TSC_OFFSETTING            0x00000008
- #define CPU_BASED_HLT_EXITING                   0x00000080
- #define CPU_BASED_INVLPG_EXITING                0x00000200
- #define CPU_BASED_MWAIT_EXITING                 0x00000400
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index f8b9da53191e..8c215da368b7 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3230,7 +3230,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
- 	}
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+index beb6a0063bb8..be5f90a8b49d 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+@@ -60,6 +60,9 @@ MODULE_PARM_DESC(max_video_width, "Threshold for video mode");
+ module_param(max_video_height, int, 0644);
+ MODULE_PARM_DESC(max_video_height, "Threshold for video mode");
  
- 	enter_guest_mode(vcpu);
--	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
-+	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETTING)
- 		vcpu->arch.tsc_offset += vmcs12->tsc_offset;
++/* camera instance counter */
++static atomic_t camera_instance = ATOMIC_INIT(0);
++
+ /* global device data array */
+ static struct bm2835_mmal_dev *gdev[MAX_BCM2835_CAMERAS];
  
- 	if (prepare_vmcs02(vcpu, vmcs12, &exit_qual))
-@@ -3294,7 +3294,7 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
- 	 * 26.7 "VM-entry failures during or after loading guest state".
- 	 */
- vmentry_fail_vmexit_guest_mode:
--	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
-+	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETTING)
- 		vcpu->arch.tsc_offset -= vmcs12->tsc_offset;
- 	leave_guest_mode(vcpu);
+@@ -1870,7 +1873,6 @@ static int bcm2835_mmal_probe(struct platform_device *pdev)
  
-@@ -4209,7 +4209,7 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 	if (nested_cpu_has_preemption_timer(vmcs12))
- 		hrtimer_cancel(&to_vmx(vcpu)->nested.preemption_timer);
+ 		/* v4l2 core mutex used to protect all fops and v4l2 ioctls. */
+ 		mutex_init(&dev->mutex);
+-		dev->camera_num = camera;
+ 		dev->max_width = resolutions[camera][0];
+ 		dev->max_height = resolutions[camera][1];
  
--	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
-+	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETTING)
- 		vcpu->arch.tsc_offset -= vmcs12->tsc_offset;
+@@ -1886,8 +1888,9 @@ static int bcm2835_mmal_probe(struct platform_device *pdev)
+ 		dev->capture.fmt = &formats[3]; /* JPEG */
  
- 	if (likely(!vmx->fail)) {
-@@ -6016,7 +6016,7 @@ void nested_vmx_setup_ctls_msrs(struct nested_vmx_msrs *msrs, u32 ept_caps,
- 		CPU_BASED_ALWAYSON_WITHOUT_TRUE_MSR;
- 	msrs->procbased_ctls_high &=
- 		CPU_BASED_INTR_WINDOW_EXITING |
--		CPU_BASED_NMI_WINDOW_EXITING | CPU_BASED_USE_TSC_OFFSETING |
-+		CPU_BASED_NMI_WINDOW_EXITING | CPU_BASED_USE_TSC_OFFSETTING |
- 		CPU_BASED_HLT_EXITING | CPU_BASED_INVLPG_EXITING |
- 		CPU_BASED_MWAIT_EXITING | CPU_BASED_CR3_LOAD_EXITING |
- 		CPU_BASED_CR3_STORE_EXITING |
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 84ceee734e98..ec0bada57792 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1724,7 +1724,7 @@ static u64 vmx_read_l1_tsc_offset(struct kvm_vcpu *vcpu)
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 
- 	if (is_guest_mode(vcpu) &&
--	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING))
-+	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETTING))
- 		return vcpu->arch.tsc_offset - vmcs12->tsc_offset;
- 
- 	return vcpu->arch.tsc_offset;
-@@ -1742,7 +1742,7 @@ static u64 vmx_write_l1_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
- 	 * to the newly set TSC to get L2's TSC.
- 	 */
- 	if (is_guest_mode(vcpu) &&
--	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING))
-+	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETTING))
- 		g_tsc_offset = vmcs12->tsc_offset;
- 
- 	trace_kvm_write_tsc_offset(vcpu->vcpu_id,
-@@ -2363,7 +2363,7 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 	      CPU_BASED_CR3_STORE_EXITING |
- 	      CPU_BASED_UNCOND_IO_EXITING |
- 	      CPU_BASED_MOV_DR_EXITING |
--	      CPU_BASED_USE_TSC_OFFSETING |
-+	      CPU_BASED_USE_TSC_OFFSETTING |
- 	      CPU_BASED_MWAIT_EXITING |
- 	      CPU_BASED_MONITOR_EXITING |
- 	      CPU_BASED_INVLPG_EXITING |
-diff --git a/tools/testing/selftests/kvm/include/x86_64/vmx.h b/tools/testing/selftests/kvm/include/x86_64/vmx.h
-index 7eb38451c359..3d27069b9ed9 100644
---- a/tools/testing/selftests/kvm/include/x86_64/vmx.h
-+++ b/tools/testing/selftests/kvm/include/x86_64/vmx.h
-@@ -19,7 +19,7 @@
-  * Definitions of Primary Processor-Based VM-Execution Controls.
-  */
- #define CPU_BASED_INTR_WINDOW_EXITING		0x00000004
--#define CPU_BASED_USE_TSC_OFFSETING		0x00000008
-+#define CPU_BASED_USE_TSC_OFFSETTING		0x00000008
- #define CPU_BASED_HLT_EXITING			0x00000080
- #define CPU_BASED_INVLPG_EXITING		0x00000200
- #define CPU_BASED_MWAIT_EXITING			0x00000400
-diff --git a/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c b/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
-index 5590fd2bcf87..69e482a95c47 100644
---- a/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/vmx_tsc_adjust_test.c
-@@ -98,7 +98,7 @@ static void l1_guest_code(struct vmx_pages *vmx_pages)
- 	prepare_vmcs(vmx_pages, l2_guest_code,
- 		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
- 	control = vmreadz(CPU_BASED_VM_EXEC_CONTROL);
--	control |= CPU_BASED_USE_MSR_BITMAPS | CPU_BASED_USE_TSC_OFFSETING;
-+	control |= CPU_BASED_USE_MSR_BITMAPS | CPU_BASED_USE_TSC_OFFSETTING;
- 	vmwrite(CPU_BASED_VM_EXEC_CONTROL, control);
- 	vmwrite(TSC_OFFSET, TSC_OFFSET_VALUE);
- 
+ 		/* v4l device registration */
+-		snprintf(dev->v4l2_dev.name, sizeof(dev->v4l2_dev.name),
+-			 "%s", BM2835_MMAL_MODULE_NAME);
++		dev->camera_num = v4l2_device_set_name(&dev->v4l2_dev,
++						       BM2835_MMAL_MODULE_NAME,
++						       &camera_instance);
+ 		ret = v4l2_device_register(NULL, &dev->v4l2_dev);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "%s: could not register V4L2 device: %d\n",
 -- 
-2.19.1
+2.20.1
 
