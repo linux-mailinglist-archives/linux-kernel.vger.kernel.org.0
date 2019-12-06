@@ -2,89 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD9A114FE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C815114FE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:43:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfLFLmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 06:42:18 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:36644 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfLFLmR (ORCPT
+        id S1726271AbfLFLnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 06:43:52 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:35708 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726128AbfLFLnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:42:17 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB6BgFIq054225;
-        Fri, 6 Dec 2019 05:42:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575632535;
-        bh=oQQWI05cs5ZZbMyfIpjlE+7PWlwHVVzIAHXpj5+znlE=;
-        h=From:To:CC:Subject:Date;
-        b=Ri3f9kyDt18kPeUNNtPOqcToR1BxZwGAgaXjEeIdVPsH6eHCGUonqcAo7ZNOoxTMP
-         +aC8DcK9nwzC4gakVZbuVNiXq6C3/zXQaz2k95fI3Oj6LAEvkmpObgs3kP6bb/0tHr
-         ncDPnR4mSE42HVZIjIGgMjsaMS88XXlpeGy4Qklg=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB6BgF6c008805
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Dec 2019 05:42:15 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Dec
- 2019 05:42:14 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 6 Dec 2019 05:42:14 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB6Bg6JA079926;
-        Fri, 6 Dec 2019 05:42:11 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH] mmc: sdhci: Update the tuning failed messages to pr_debug level
-Date:   Fri, 6 Dec 2019 17:13:26 +0530
-Message-ID: <20191206114326.15856-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Fri, 6 Dec 2019 06:43:51 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1idC1U-0001s8-GU; Fri, 06 Dec 2019 12:43:48 +0100
+To:     Jia He <justin.he@arm.com>
+Subject: Re: [PATCH] KVM: arm: remove excessive permission check in  =?UTF-8?Q?kvm=5Farch=5Fprepare=5Fmemory=5Fregion?=
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Dec 2019 11:43:48 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     James Morse <james.morse@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+In-Reply-To: <20191206020802.196108-1-justin.he@arm.com>
+References: <20191206020802.196108-1-justin.he@arm.com>
+Message-ID: <128917a0fe502137f7575932bbf48fd0@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: justin.he@arm.com, james.morse@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tuning support in DDR50 speed mode was added in SD Specifications Part1
-Physical Layer Specification v3.01. Its not possible to distinguish
-between v3.00 and v3.01 from the SCR and that is why since
-commit 4324f6de6d2e ("mmc: core: enable CMD19 tuning for DDR50 mode")
-tuning failures are ignored in DDR50 speed mode.
+On 2019-12-06 02:08, Jia He wrote:
+> In kvm_arch_prepare_memory_region, arm kvm regards the memory region 
+> as
+> writable if the flag has no KVM_MEM_READONLY, and the vm is readonly 
+> if
+> !VM_WRITE.
+>
+> But there is common usage for setting kvm memory region as follows:
+> e.g. qemu side (see the PROT_NONE flag)
+> 1. mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+>    memory_region_init_ram_ptr()
+> 2. re mmap the above area with read/write authority.
+>
+> Such example is used in virtio-fs qemu codes which hasn't been 
+> upstreamed
+> [1]. But seems we can't forbid this example.
+>
+> Without this patch, it will cause an EPERM during 
+> kvm_set_memory_region()
+> and cause qemu boot crash.
+>
+> As told by Ard, "the underlying assumption is incorrect, i.e., that 
+> the
+> value of vm_flags at this point in time defines how the VMA is used
+> during its lifetime. There may be other cases where a VMA is created
+> with VM_READ vm_flags that are changed to VM_READ|VM_WRITE later, and
+> we are currently rejecting this use case as well."
+>
+> [1]
+> 
+> https://gitlab.com/virtio-fs/qemu/blob/5a356e/hw/virtio/vhost-user-fs.c#L488
+>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Jia He <justin.he@arm.com>
+> ---
+>  virt/kvm/arm/mmu.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+>
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 38b4c910b6c3..a48994af70b8 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -2301,15 +2301,6 @@ int kvm_arch_prepare_memory_region(struct kvm 
+> *kvm,
+>  		if (!vma || vma->vm_start >= reg_end)
+>  			break;
+>
+> -		/*
+> -		 * Mapping a read-only VMA is only allowed if the
+> -		 * memory region is configured as read-only.
+> -		 */
+> -		if (writable && !(vma->vm_flags & VM_WRITE)) {
+> -			ret = -EPERM;
+> -			break;
+> -		}
+> -
+>  		/*
+>  		 * Take the intersection of this VMA with the memory region
+>  		 */
 
-Cards compatible with v3.00 don't respond to CMD19 in DDR50 and this
-error gets printed during enumeration and also if retune is triggered at
-any time during operation. Update the printk level to pr_debug so that
-these errors don't lead to false error reports.
+Applied, thanks.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/mmc/host/sdhci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 296d955ede59..42a9c8179da7 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2417,8 +2417,8 @@ static int __sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
- 		sdhci_send_tuning(host, opcode);
- 
- 		if (!host->tuning_done) {
--			pr_info("%s: Tuning timeout, falling back to fixed sampling clock\n",
--				mmc_hostname(host->mmc));
-+			pr_debug("%s: Tuning timeout, falling back to fixed sampling clock\n",
-+				 mmc_hostname(host->mmc));
- 			sdhci_abort_tuning(host, opcode);
- 			return -ETIMEDOUT;
- 		}
+         M.
 -- 
-2.19.2
-
+Jazz is not dead. It just smells funny...
