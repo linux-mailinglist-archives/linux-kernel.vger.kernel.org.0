@@ -2,111 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45F0B115111
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0072F115138
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:41:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfLFNio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 08:38:44 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:60710 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726325AbfLFNin (ORCPT
+        id S1726418AbfLFNlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:41:13 -0500
+Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:35097
+        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726250AbfLFNlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 08:38:43 -0500
-X-UUID: 03a3e438f7394e7bbdaf1637691b62be-20191206
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=20DdYNmRn+XgG0rR7STf/vH2MSHtbMKg/TCTvePLOKg=;
-        b=JBJ4YSm19x4Bz43nMUM8kjlUetFYz6ekpo57rk+MhIWimTtT9zflwPoJjkuq2dMqvDvwBwZOB2CXxfMWOm4CW/LUBecW6A1T9yp3XiS3T4db/psAwHV+OA9+x7FTicohWQC8SZRpQdGCewy7pF0akNNPIlanHwBreBDNl7CrZLM=;
-X-UUID: 03a3e438f7394e7bbdaf1637691b62be-20191206
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <hsin-hsiung.wang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1431212983; Fri, 06 Dec 2019 21:38:39 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 6 Dec 2019 21:38:25 +0800
-Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 6 Dec 2019 21:38:00 +0800
-From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Ran Bi <ran.bi@mediatek.com>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-Subject: [PATCH v6 6/6] rtc: Add support for the MediaTek MT6358 RTC
-Date:   Fri, 6 Dec 2019 21:33:03 +0800
-Message-ID: <1575639183-17606-7-git-send-email-hsin-hsiung.wang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1575639183-17606-1-git-send-email-hsin-hsiung.wang@mediatek.com>
-References: <1575639183-17606-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+        Fri, 6 Dec 2019 08:41:12 -0500
+X-Greylist: delayed 403 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 08:41:12 EST
+Received: from mschiller01.dev.tdt.de (unknown [10.2.3.20])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 8BBC42011E;
+        Fri,  6 Dec 2019 13:34:26 +0000 (UTC)
+From:   Martin Schiller <ms@dev.tdt.de>
+To:     andrew.hendry@gmail.com, davem@davemloft.net
+Cc:     edumazet@google.com, linux-x25@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Schiller <ms@dev.tdt.de>
+Subject: [PATCH] net/x25: add new state X25_STATE_5
+Date:   Fri,  6 Dec 2019 14:34:18 +0100
+Message-Id: <20191206133418.14075-1-ms@dev.tdt.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogUmFuIEJpIDxyYW4uYmlAbWVkaWF0ZWsuY29tPg0KDQpUaGlzIGFkZCBzdXBwb3J0IGZv
-ciB0aGUgTWVkaWFUZWsgTVQ2MzU4IFJUQy4gRHJpdmVyIHVzaW5nDQpjb21wYXRpYmxlIGRhdGEg
-dG8gc3RvcmUgZGlmZmVyZW50IFJUQ19XUlRHUiBhZGRyZXNzIG9mZnNldC4NCg0KU2lnbmVkLW9m
-Zi1ieTogUmFuIEJpIDxyYW4uYmlAbWVkaWF0ZWsuY29tPg0KU2lnbmVkLW9mZi1ieTogSHNpbi1I
-c2l1bmcgV2FuZyA8aHNpbi1oc2l1bmcud2FuZ0BtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJz
-L3J0Yy9ydGMtbXQ2Mzk3LmMgfCAzOCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0t
-LS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQ0K
-DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ydGMvcnRjLW10NjM5Ny5jIGIvZHJpdmVycy9ydGMvcnRj
-LW10NjM5Ny5jDQppbmRleCBiMjE2YmRjLi42MzFlMjc1IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9y
-dGMvcnRjLW10NjM5Ny5jDQorKysgYi9kcml2ZXJzL3J0Yy9ydGMtbXQ2Mzk3LmMNCkBAIC0xMiw2
-ICsxMiw3IEBADQogI2luY2x1ZGUgPGxpbnV4L2lycWRvbWFpbi5oPg0KICNpbmNsdWRlIDxsaW51
-eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCiAjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KKyNp
-bmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4NCiAjaW5jbHVkZSA8bGludXgvb2ZfaXJxLmg+DQog
-I2luY2x1ZGUgPGxpbnV4L2lvLmg+DQogI2luY2x1ZGUgPGxpbnV4L21mZC9tdDYzOTcvY29yZS5o
-Pg0KQEAgLTE5LDcgKzIwLDggQEANCiAjZGVmaW5lIFJUQ19CQlBVCQkweDAwMDANCiAjZGVmaW5l
-IFJUQ19CQlBVX0NCVVNZCQlCSVQoNikNCiANCi0jZGVmaW5lIFJUQ19XUlRHUgkJMHgwMDNjDQor
-I2RlZmluZSBSVENfV1JUR1JfTVQ2MzU4CTB4M2ENCisjZGVmaW5lIFJUQ19XUlRHUl9NVDYzOTcJ
-MHgzYw0KIA0KICNkZWZpbmUgUlRDX0lSUV9TVEEJCTB4MDAwMg0KICNkZWZpbmUgUlRDX0lSUV9T
-VEFfQUwJCUJJVCgwKQ0KQEAgLTYzLDYgKzY1LDEwIEBADQogI2RlZmluZSBSVENfTlVNX1lFQVJT
-CQkxMjgNCiAjZGVmaW5lIFJUQ19NSU5fWUVBUl9PRkZTRVQJKFJUQ19NSU5fWUVBUiAtIFJUQ19C
-QVNFX1lFQVIpDQogDQorc3RydWN0IG10a19ydGNfZGF0YSB7DQorCXUzMgkJCXdydGdyOw0KK307
-DQorDQogc3RydWN0IG10NjM5N19ydGMgew0KIAlzdHJ1Y3QgZGV2aWNlCQkqZGV2Ow0KIAlzdHJ1
-Y3QgcnRjX2RldmljZQkqcnRjX2RldjsNCkBAIC03MCwxNSArNzYsMzQgQEAgc3RydWN0IG10NjM5
-N19ydGMgew0KIAlzdHJ1Y3QgcmVnbWFwCQkqcmVnbWFwOw0KIAlpbnQJCQlpcnE7DQogCXUzMgkJ
-CWFkZHJfYmFzZTsNCisJY29uc3Qgc3RydWN0IG10a19ydGNfZGF0YSAqZGF0YTsNCit9Ow0KKw0K
-K3N0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX3J0Y19kYXRhIG10NjM1OF9ydGNfZGF0YSA9IHsNCisJ
-LndydGdyID0gUlRDX1dSVEdSX01UNjM1OCwNCiB9Ow0KIA0KK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
-bXRrX3J0Y19kYXRhIG10NjM5N19ydGNfZGF0YSA9IHsNCisJLndydGdyID0gUlRDX1dSVEdSX01U
-NjM5NywNCit9Ow0KKw0KK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIG10NjM5N19y
-dGNfb2ZfbWF0Y2hbXSA9IHsNCisJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDYzNTgtcnRj
-IiwNCisJCS5kYXRhID0gKHZvaWQgKikmbXQ2MzU4X3J0Y19kYXRhLCB9LA0KKwl7IC5jb21wYXRp
-YmxlID0gIm1lZGlhdGVrLG10NjM5Ny1ydGMiLA0KKwkJLmRhdGEgPSAodm9pZCAqKSZtdDYzOTdf
-cnRjX2RhdGEsIH0sDQorCXt9DQorfTsNCitNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBtdDYzOTdf
-cnRjX29mX21hdGNoKTsNCisNCiBzdGF0aWMgaW50IG10a19ydGNfd3JpdGVfdHJpZ2dlcihzdHJ1
-Y3QgbXQ2Mzk3X3J0YyAqcnRjKQ0KIHsNCiAJdW5zaWduZWQgbG9uZyB0aW1lb3V0ID0gamlmZmll
-cyArIEhaOw0KIAlpbnQgcmV0Ow0KIAl1MzIgZGF0YTsNCiANCi0JcmV0ID0gcmVnbWFwX3dyaXRl
-KHJ0Yy0+cmVnbWFwLCBydGMtPmFkZHJfYmFzZSArIFJUQ19XUlRHUiwgMSk7DQorCXJldCA9IHJl
-Z21hcF93cml0ZShydGMtPnJlZ21hcCwNCisJCQkgICBydGMtPmFkZHJfYmFzZSArIHJ0Yy0+ZGF0
-YS0+d3J0Z3IsIDEpOw0KIAlpZiAocmV0IDwgMCkNCiAJCXJldHVybiByZXQ7DQogDQpAQCAtMzMz
-LDYgKzM1OCw5IEBAIHN0YXRpYyBpbnQgbXRrX3J0Y19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQ0KIAlyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJD
-RV9NRU0sIDApOw0KIAlydGMtPmFkZHJfYmFzZSA9IHJlcy0+c3RhcnQ7DQogDQorCXJ0Yy0+ZGF0
-YSA9IChzdHJ1Y3QgbXRrX3J0Y19kYXRhICopDQorCQkJb2ZfZGV2aWNlX2dldF9tYXRjaF9kYXRh
-KCZwZGV2LT5kZXYpOw0KKw0KIAlydGMtPmlycSA9IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7
-DQogCWlmIChydGMtPmlycSA8IDApDQogCQlyZXR1cm4gcnRjLT5pcnE7DQpAQCAtNDA2LDEyICs0
-MzQsNiBAQCBzdGF0aWMgaW50IG10NjM5N19ydGNfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikN
-CiBzdGF0aWMgU0lNUExFX0RFVl9QTV9PUFMobXQ2Mzk3X3BtX29wcywgbXQ2Mzk3X3J0Y19zdXNw
-ZW5kLA0KIAkJCW10NjM5N19ydGNfcmVzdW1lKTsNCiANCi1zdGF0aWMgY29uc3Qgc3RydWN0IG9m
-X2RldmljZV9pZCBtdDYzOTdfcnRjX29mX21hdGNoW10gPSB7DQotCXsgLmNvbXBhdGlibGUgPSAi
-bWVkaWF0ZWssbXQ2Mzk3LXJ0YyIsIH0sDQotCXsgfQ0KLX07DQotTU9EVUxFX0RFVklDRV9UQUJM
-RShvZiwgbXQ2Mzk3X3J0Y19vZl9tYXRjaCk7DQotDQogc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9k
-cml2ZXIgbXRrX3J0Y19kcml2ZXIgPSB7DQogCS5kcml2ZXIgPSB7DQogCQkubmFtZSA9ICJtdDYz
-OTctcnRjIiwNCi0tIA0KMi42LjQNCg==
+This is needed, because if the flag X25_ACCPT_APPRV_FLAG is not set on a
+socket (manual call confirmation) and the channel is cleared by remote
+before the manual call confirmation was sent, this situation needs to
+be handled.
+
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+---
+ include/net/x25.h |  3 ++-
+ net/x25/af_x25.c  |  8 ++++++++
+ net/x25/x25_in.c  | 35 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 45 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/x25.h b/include/net/x25.h
+index ed1acc3044ac..d7d6c2b4ffa7 100644
+--- a/include/net/x25.h
++++ b/include/net/x25.h
+@@ -62,7 +62,8 @@ enum {
+ 	X25_STATE_1,		/* Awaiting Call Accepted */
+ 	X25_STATE_2,		/* Awaiting Clear Confirmation */
+ 	X25_STATE_3,		/* Data Transfer */
+-	X25_STATE_4		/* Awaiting Reset Confirmation */
++	X25_STATE_4,		/* Awaiting Reset Confirmation */
++	X25_STATE_5		/* Call Accepted / Call Connected pending */
+ };
+ 
+ enum {
+diff --git a/net/x25/af_x25.c b/net/x25/af_x25.c
+index c34f7d077604..2efe44a34644 100644
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -659,6 +659,12 @@ static int x25_release(struct socket *sock)
+ 			sock_set_flag(sk, SOCK_DEAD);
+ 			sock_set_flag(sk, SOCK_DESTROY);
+ 			break;
++
++		case X25_STATE_5:
++			x25_write_internal(sk, X25_CLEAR_REQUEST);
++			x25_disconnect(sk, 0, 0, 0);
++			__x25_destroy_socket(sk);
++			goto out;
+ 	}
+ 
+ 	sock_orphan(sk);
+@@ -1054,6 +1060,8 @@ int x25_rx_call_request(struct sk_buff *skb, struct x25_neigh *nb,
+ 	if (test_bit(X25_ACCPT_APPRV_FLAG, &makex25->flags)) {
+ 		x25_write_internal(make, X25_CALL_ACCEPTED);
+ 		makex25->state = X25_STATE_3;
++	} else {
++		makex25->state = X25_STATE_5;
+ 	}
+ 
+ 	/*
+diff --git a/net/x25/x25_in.c b/net/x25/x25_in.c
+index f97c43344e95..3f0f42bdd086 100644
+--- a/net/x25/x25_in.c
++++ b/net/x25/x25_in.c
+@@ -382,6 +382,38 @@ static int x25_state4_machine(struct sock *sk, struct sk_buff *skb, int frametyp
+ 	return 0;
+ }
+ 
++/*
++ * State machine for state 5, Call Accepted / Call Connected pending (X25_ACCPT_APPRV_FLAG).
++ * The handling of the timer(s) is in file x25_timer.c
++ * Handling of state 0 and connection release is in af_x25.c.
++ */
++static int x25_state5_machine(struct sock *sk, struct sk_buff *skb, int frametype)
++{
++	struct x25_sock *x25 = x25_sk(sk);
++
++	switch (frametype) {
++
++		case X25_CLEAR_REQUEST:
++			if (!pskb_may_pull(skb, X25_STD_MIN_LEN + 2))
++				goto out_clear;
++
++			x25_write_internal(sk, X25_CLEAR_CONFIRMATION);
++			x25_disconnect(sk, 0, skb->data[3], skb->data[4]);
++			break;
++
++		default:
++			break;
++	}
++
++	return 0;
++
++out_clear:
++	x25_write_internal(sk, X25_CLEAR_REQUEST);
++	x25->state = X25_STATE_2;
++	x25_start_t23timer(sk);
++	return 0;
++}
++
+ /* Higher level upcall for a LAPB frame */
+ int x25_process_rx_frame(struct sock *sk, struct sk_buff *skb)
+ {
+@@ -406,6 +438,9 @@ int x25_process_rx_frame(struct sock *sk, struct sk_buff *skb)
+ 	case X25_STATE_4:
+ 		queued = x25_state4_machine(sk, skb, frametype);
+ 		break;
++	case X25_STATE_5:
++		queued = x25_state5_machine(sk, skb, frametype);
++		break;
+ 	}
+ 
+ 	x25_kick(sk);
+-- 
+2.20.1
 
