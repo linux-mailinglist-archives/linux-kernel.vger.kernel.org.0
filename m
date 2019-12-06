@@ -2,253 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8BC11518C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E54115189
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:54:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfLFNy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 08:54:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:45150 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbfLFNyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 08:54:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E38511FB;
-        Fri,  6 Dec 2019 05:54:55 -0800 (PST)
-Received: from e112269-lin.cambridge.arm.com (e112269-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 930B63F718;
-        Fri,  6 Dec 2019 05:54:52 -0800 (PST)
-From:   Steven Price <steven.price@arm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: [PATCH v16 25/25] mm: ptdump: Reduce level numbers by 1 in note_page()
-Date:   Fri,  6 Dec 2019 13:53:16 +0000
-Message-Id: <20191206135316.47703-26-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191206135316.47703-1-steven.price@arm.com>
-References: <20191206135316.47703-1-steven.price@arm.com>
+        id S1727022AbfLFNyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:54:50 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59360 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbfLFNyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 08:54:47 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB6DsLMA189904;
+        Fri, 6 Dec 2019 13:54:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : in-reply-to : message-id : references : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=mnbDjzi+t8U359ofhgGJEJTb4vIsS6/RiU9IOJRnczw=;
+ b=fQpEoIR3DU8LApVJVbMF+hPqXvUW+V9cbqH516L2mmSa6bW3kp8BByYh0G3ogenxXe8S
+ x7XuDELaCdpb6emkhLYihYZM/rG+eDe3vSaXt/X3lLo3CFXul4jxwEeHqdWEUoVDQPpz
+ LX4zdgcQdBUqJ1A+QU74pHtlU/Eo7U+inIsjcULS1xpmKy4t4UujGFGXXPlMIqEAz8f6
+ 4ZX4stfp6rC7Tfprfm1WOuO8IDyKYoXZ+T/thEZG0xaCvBpy7LiZ57nlljkbB0Gm0cOT
+ drZ3npH4TE5udLGxxLcDIVBqQUTFQ8CVSATdLnPJHLvUqFexGRA20r4344Jp/dwDep9q JQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2wkh2rv513-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Dec 2019 13:54:21 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xB6Ds686156099;
+        Fri, 6 Dec 2019 13:54:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2wqerahcpq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 06 Dec 2019 13:54:20 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xB6DrqtH013467;
+        Fri, 6 Dec 2019 13:53:52 GMT
+Received: from dhcp-10-175-208-120.vpn.oracle.com (/10.175.208.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 06 Dec 2019 05:53:51 -0800
+Date:   Fri, 6 Dec 2019 13:53:38 +0000 (GMT)
+From:   Alan Maguire <alan.maguire@oracle.com>
+X-X-Sender: alan@dhcp-10-175-208-120.vpn.oracle.com
+To:     Iurii Zaikin <yzaikin@google.com>
+cc:     Alan Maguire <alan.maguire@oracle.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        David Gow <davidgow@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com,
+        Jonathan Corbet <corbet@lwn.net>, adilger.kernel@dilger.ca,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Knut Omang <knut.omang@oracle.com>
+Subject: Re: [PATCH v5 linux-kselftest-test 3/6] kunit: allow kunit tests to
+ be loaded as a module
+In-Reply-To: <CAAXuY3qekjWBUTxzAjCs+87nVXpigvzqm7TpG7MtJagTSG-xtg@mail.gmail.com>
+Message-ID: <alpine.LRH.2.20.1912061349001.28856@dhcp-10-175-208-120.vpn.oracle.com>
+References: <1575374868-32601-1-git-send-email-alan.maguire@oracle.com> <1575374868-32601-4-git-send-email-alan.maguire@oracle.com> <CAFd5g47dRP9HvsZD3sqzzfbAthNq8gxEdh57owo3CqVHLNOf6w@mail.gmail.com> <20191204003851.GF86484@mit.edu>
+ <alpine.LRH.2.20.1912041531160.5511@dhcp-10-175-179-22.vpn.oracle.com> <CAAXuY3qekjWBUTxzAjCs+87nVXpigvzqm7TpG7MtJagTSG-xtg@mail.gmail.com>
+User-Agent: Alpine 2.20 (LRH 67 2015-01-07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9462 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912060120
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9462 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912060120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than having to increment the 'depth' number by 1 in
-ptdump_hole(), let's change the meaning of 'level' in note_page() since
-that makes the code simplier.
 
-Note that for x86, the level numbers were previously increased by 1 in
-commit 45dcd2091363 ("x86/mm/dump_pagetables: Fix printout of p4d level")
-and the comment "Bit 7 has a different meaning" was not updated, so this
-change also makes the code match the comment again.
+On Wed, 4 Dec 2019, Iurii Zaikin wrote:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/mm/dump.c          |  6 +++---
- arch/x86/mm/dump_pagetables.c | 19 ++++++++++---------
- include/linux/ptdump.h        |  1 +
- mm/ptdump.c                   | 16 ++++++++--------
- 4 files changed, 22 insertions(+), 20 deletions(-)
+> > I've also got a patch that I was hoping to send out soon
+> > that might help.  The idea is that each test suite would create
+> > a debugfs representation under /sys/kernel/debug/kunit;
+> > specifically:
+> >
+> > /sys/kernel/debug/kunit/results/<suite>
+> > /sys/kernel/debug/kunit/results/<suite>-tests
+> >
+> > ...where cat'ing the former shows the full set of results,
+> > and the latter is a directory within which we can display
+> > individual test results in test-case-specific files.
+> >
+> > This is all done by ensuring that when tests log information,
+> > they log to a per-test-case log buffer as well as to dmesg.
+> >
+> > If the above sounds useful, I'll try and polish up the patch
+> > for submission. Thanks!
+> What would be the best way for kunit_tool to:
+> 1. Know that the tests have completed as QEMU will be just sitting
+> there with kernel complaining about the absence of init (or running
+> whatever we give it as init)?
+> 2. Read the test results from debugfs under QEMU virtual machine while
+> the kernel is still there?
+> I think supplying an init script/binary that copies the
+> /sys/kernel/debug/kunit/results/* to a 9p shared dir set up by
+> kunit_tool would work but it would add a step of cross-compiling and
+> packaging a userspace binary.
+> 
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 3203dd8e6d0a..4997ce244172 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -175,8 +175,7 @@ struct pg_level {
- };
- 
- static struct pg_level pg_level[] = {
--	{
--	}, { /* pgd */
-+	{ /* pgd */
- 		.name	= "PGD",
- 		.bits	= pte_bits,
- 		.num	= ARRAY_SIZE(pte_bits),
-@@ -256,7 +255,7 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 	if (level >= 0)
- 		prot = val & pg_level[level].mask;
- 
--	if (!st->level) {
-+	if (st->level == -1) {
- 		st->level = level;
- 		st->current_prot = prot;
- 		st->start_address = addr;
-@@ -350,6 +349,7 @@ void ptdump_check_wx(void)
- 			{ 0, NULL},
- 			{ -1, NULL},
- 		},
-+		.level = -1,
- 		.check_wx = true,
- 		.ptdump = {
- 			.note_page = note_page,
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 77a1332c6cd4..d3c28b3765fc 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -176,7 +176,7 @@ static struct addr_marker address_markers[] = {
- static void printk_prot(struct seq_file *m, pgprotval_t pr, int level, bool dmsg)
- {
- 	static const char * const level_name[] =
--		{ "cr3", "pgd", "p4d", "pud", "pmd", "pte" };
-+		{ "pgd", "p4d", "pud", "pmd", "pte" };
- 
- 	if (!(pr & _PAGE_PRESENT)) {
- 		/* Not present */
-@@ -200,12 +200,12 @@ static void printk_prot(struct seq_file *m, pgprotval_t pr, int level, bool dmsg
- 			pt_dump_cont_printf(m, dmsg, "    ");
- 
- 		/* Bit 7 has a different meaning on level 3 vs 4 */
--		if (level <= 4 && pr & _PAGE_PSE)
-+		if (level <= 3 && pr & _PAGE_PSE)
- 			pt_dump_cont_printf(m, dmsg, "PSE ");
- 		else
- 			pt_dump_cont_printf(m, dmsg, "    ");
--		if ((level == 5 && pr & _PAGE_PAT) ||
--		    ((level == 4 || level == 3) && pr & _PAGE_PAT_LARGE))
-+		if ((level == 4 && pr & _PAGE_PAT) ||
-+		    ((level == 3 || level == 2) && pr & _PAGE_PAT_LARGE))
- 			pt_dump_cont_printf(m, dmsg, "PAT ");
- 		else
- 			pt_dump_cont_printf(m, dmsg, "    ");
-@@ -267,15 +267,15 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 
- 	new_prot = val & PTE_FLAGS_MASK;
- 
--	if (level > 1) {
--		new_eff = effective_prot(st->prot_levels[level - 2],
-+	if (level > 0) {
-+		new_eff = effective_prot(st->prot_levels[level - 1],
- 					 new_prot);
- 	} else {
- 		new_eff = new_prot;
- 	}
- 
--	if (level > 0)
--		st->prot_levels[level - 1] = new_eff;
-+	if (level >= 0)
-+		st->prot_levels[level] = new_eff;
- 
- 	/*
- 	 * If we have a "break" in the series, we need to flush the state that
-@@ -285,7 +285,7 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 	cur = st->current_prot;
- 	eff = st->effective_prot;
- 
--	if (!st->level) {
-+	if (st->level == -1) {
- 		/* First entry */
- 		st->current_prot = new_prot;
- 		st->effective_prot = new_eff;
-@@ -376,6 +376,7 @@ static void ptdump_walk_pgd_level_core(struct seq_file *m, struct mm_struct *mm,
- 			.note_page	= note_page,
- 			.range		= ptdump_ranges
- 		},
-+		.level = -1,
- 		.to_dmesg	= dmesg,
- 		.check_wx	= checkwx,
- 		.seq		= m
-diff --git a/include/linux/ptdump.h b/include/linux/ptdump.h
-index a0fb8dd2be97..b28f3f2acf90 100644
---- a/include/linux/ptdump.h
-+++ b/include/linux/ptdump.h
-@@ -11,6 +11,7 @@ struct ptdump_range {
- };
- 
- struct ptdump_state {
-+	/* level is 0:PGD to 4:PTE, or -1 if unknown */
- 	void (*note_page)(struct ptdump_state *st, unsigned long addr,
- 			  int level, unsigned long val);
- 	const struct ptdump_range *range;
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-index 9357ab3ecc88..39b0773b6172 100644
---- a/mm/ptdump.c
-+++ b/mm/ptdump.c
-@@ -11,7 +11,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
- 	pgd_t val = READ_ONCE(*pgd);
- 
- 	if (pgd_leaf(val))
--		st->note_page(st, addr, 1, pgd_val(val));
-+		st->note_page(st, addr, 0, pgd_val(val));
- 
- 	return 0;
- }
-@@ -23,7 +23,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
- 	p4d_t val = READ_ONCE(*p4d);
- 
- 	if (p4d_leaf(val))
--		st->note_page(st, addr, 2, p4d_val(val));
-+		st->note_page(st, addr, 1, p4d_val(val));
- 
- 	return 0;
- }
-@@ -35,7 +35,7 @@ static int ptdump_pud_entry(pud_t *pud, unsigned long addr,
- 	pud_t val = READ_ONCE(*pud);
- 
- 	if (pud_leaf(val))
--		st->note_page(st, addr, 3, pud_val(val));
-+		st->note_page(st, addr, 2, pud_val(val));
- 
- 	return 0;
- }
-@@ -47,7 +47,7 @@ static int ptdump_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	pmd_t val = READ_ONCE(*pmd);
- 
- 	if (pmd_leaf(val))
--		st->note_page(st, addr, 4, pmd_val(val));
-+		st->note_page(st, addr, 3, pmd_val(val));
- 
- 	return 0;
- }
-@@ -57,7 +57,7 @@ static int ptdump_pte_entry(pte_t *pte, unsigned long addr,
- {
- 	struct ptdump_state *st = walk->private;
- 
--	st->note_page(st, addr, 5, pte_val(READ_ONCE(*pte)));
-+	st->note_page(st, addr, 4, pte_val(READ_ONCE(*pte)));
- 
- 	return 0;
- }
-@@ -75,7 +75,7 @@ static inline int note_kasan_page_table(struct mm_walk *walk,
- {
- 	struct ptdump_state *st = walk->private;
- 
--	st->note_page(st, addr, 5, pte_val(kasan_early_shadow_pte[0]));
-+	st->note_page(st, addr, 4, pte_val(kasan_early_shadow_pte[0]));
- 	return 1;
- }
- 
-@@ -115,7 +115,7 @@ static int ptdump_hole(unsigned long addr, unsigned long next,
- {
- 	struct ptdump_state *st = walk->private;
- 
--	st->note_page(st, addr, depth + 1, 0);
-+	st->note_page(st, addr, depth, 0);
- 
- 	return 0;
- }
-@@ -147,5 +147,5 @@ void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm)
- 	up_read(&mm->mmap_sem);
- 
- 	/* Flush out the last page */
--	st->note_page(st, 0, 0, 0);
-+	st->note_page(st, 0, -1, 0);
- }
--- 
-2.20.1
+I confess I'd only been thinking about supporting the case of a user 
+modprobe-ing a kunit test suite module directly and wanting a clean set 
+of results separated from other dmesg output. However the scheme you 
+describe does seem workable for the UML case also.  With the 
+late_initcalls the builtin kunit suites will likely run early in boot but perhaps we could tweak the 
+semantics such that the full results debugfs file is not populated until 
+the tests have run to simplify script-based probing. I'll try some 
+experiments with the debugfs patch once it's ready. Thanks!
+
+Alan 
 
