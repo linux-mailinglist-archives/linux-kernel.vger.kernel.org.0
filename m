@@ -2,62 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64AAE115081
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9349115087
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfLFMlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:41:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:42342 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfLFMlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:41:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B9B831B;
-        Fri,  6 Dec 2019 04:41:35 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A62543F52E;
-        Fri,  6 Dec 2019 04:41:34 -0800 (PST)
-Date:   Fri, 6 Dec 2019 12:41:29 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Torsten Duwe <duwe@lst.de>, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: arch/arm64/kernel/entry-ftrace.S:238: undefined reference to
- `ftrace_graph_caller'
-Message-ID: <20191206124129.GA21671@lakrids.cambridge.arm.com>
-References: <201912061533.I9JjEoWz%lkp@intel.com>
+        id S1726377AbfLFMnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 07:43:18 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7196 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726124AbfLFMnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 07:43:18 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 34E8698A8BE4491AEB20;
+        Fri,  6 Dec 2019 20:43:15 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 6 Dec 2019
+ 20:43:06 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <wim@linux-watchdog.org>, <linux@roeck-us.net>, <andrew@lunn.ch>
+CC:     <linux-watchdog@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] watchdog: tqmx86_wdt: Fix build error
+Date:   Fri, 6 Dec 2019 20:42:59 +0800
+Message-ID: <20191206124259.25880-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201912061533.I9JjEoWz%lkp@intel.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 03:08:40PM +0800, kbuild test robot wrote:
-> Hi Torsten,
-> 
-> FYI, the error/warning still remains.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   b0d4beaa5a4b7d31070c41c2e50740304a3f1138
-> commit: 3b23e4991fb66f6d152f9055ede271a726ef9f21 arm64: implement ftrace with regs
+If TQMX86_WDT is y and WATCHDOG_CORE is m, building fails:
 
-> All errors (new ones prefixed by >>):
-> 
->    arch/arm64/kernel/entry-ftrace.o: In function `skip_ftrace_call':
-> >> arch/arm64/kernel/entry-ftrace.S:238: undefined reference to `ftrace_graph_caller'
->    arch/arm64/kernel/entry-ftrace.S:238:(.text+0x3c): relocation truncated to fit: R_AARCH64_CONDBR19 against undefined symbol `ftrace_graph_caller'
->    arch/arm64/kernel/entry-ftrace.S:243: undefined reference to `ftrace_graph_caller'
->    arch/arm64/kernel/entry-ftrace.S:243:(.text+0x54): relocation truncated to fit: R_AARCH64_CONDBR19 against undefined symbol `ftrace_graph_caller'
+drivers/watchdog/tqmx86_wdt.o: In function `tqmx86_wdt_probe':
+tqmx86_wdt.c:(.text+0x46e): undefined reference to `watchdog_init_timeout'
+tqmx86_wdt.c:(.text+0x4e0): undefined reference to `devm_watchdog_register_device'
 
-This is my bad; I messed up the ifdeffery so that ftrace_graph_caller
-isn't defined for CONFIG_DYNAMIC_FTRACE && CONFIG_FUNCTION_GRAPH_TRACER.
+Select WATCHDOG_CORE to fix this.
 
-I will send a patch shortly. Sorry about this.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: e3c21e088f89 ("watchdog: tqmx86: Add watchdog driver for the IO controller")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/watchdog/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Mark.
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 1679e0d..20bd967 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1444,6 +1444,7 @@ config SMSC37B787_WDT
+ config TQMX86_WDT
+ 	tristate "TQ-Systems TQMX86 Watchdog Timer"
+ 	depends on X86
++	select WATCHDOG_CORE
+ 	help
+ 	This is the driver for the hardware watchdog timer in the TQMX86 IO
+ 	controller found on some of their ComExpress Modules.
+-- 
+2.7.4
+
+
