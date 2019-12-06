@@ -2,128 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FB41150A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:51:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78FA71150AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfLFMv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:51:26 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59249 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfLFMvZ (ORCPT
+        id S1726272AbfLFMxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 07:53:31 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:47013 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfLFMxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:51:25 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191206125124euoutp014e35b46a47203565241e02b878937f16~dyTdl7kra2068520685euoutp01q
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2019 12:51:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191206125124euoutp014e35b46a47203565241e02b878937f16~dyTdl7kra2068520685euoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575636684;
-        bh=wF1Iy7VsoT2dA4yuiPpiriyC0w9NhNDxY4A8+kILiJk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=X9D+TJ1jpuWYWlNh0VcSUHOxpmchQi+awZxcGlzfUNxITsJrm+8goXrkw+qkfwNoK
-         N5IN9G8dfyyz+7r4bJAu6PzBaIjdGiraQ4BNGSU5kmBYiMb1lWjrnx+vzJ1KW2q4oY
-         vOMUrEKjImTLJkH/78ZmTuwVi8PLG/AbOFmRDwcQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191206125124eucas1p1d7f4a644ba4feea13d90848c6bad9607~dyTdO4M7b3207632076eucas1p1i;
-        Fri,  6 Dec 2019 12:51:24 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 31.D7.60679.BCE4AED5; Fri,  6
-        Dec 2019 12:51:23 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25~dyTc0k1df1825518255eucas1p1d;
-        Fri,  6 Dec 2019 12:51:23 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191206125123eusmtrp2ffb17d3f3f0243921fd4239724b33edf~dyTcz7C4Y0189301893eusmtrp2I;
-        Fri,  6 Dec 2019 12:51:23 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-1f-5dea4ecbcf79
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D4.D6.08375.BCE4AED5; Fri,  6
-        Dec 2019 12:51:23 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191206125123eusmtip2070f004f9a6e9b6c4ef2024ffd34fe94~dyTcVHUsz0588405884eusmtip2K;
-        Fri,  6 Dec 2019 12:51:23 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Kusanagi Kouichi <slash@ac.auone-net.jp>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] arm: multi_v7_config: Restore debugfs support
-Date:   Fri,  6 Dec 2019 13:51:12 +0100
-Message-Id: <20191206125112.11006-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduznOd3Tfq9iDeZ9Mbf4O+kYu8XGGetZ
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLtkbvsFqeuf2az2NfxgMni+auzzA5cHisW7WX3+P1r
-        EqNHy75b7B6bVnWyeWxeUu9x5UQTq0ffllWMHp83yQVwRHHZpKTmZJalFunbJXBlHPj1h7Hg
-        PEdF356rbA2Me9m7GDk5JARMJGbf2sTSxcjFISSwglHiztJrjBDOF0aJ6ZPvsIFUCQl8ZpQ4
-        d8kWpmNrz1QmiKLljBK/+r+xw3Us7rrPDFLFJmAo0fW2C6xbRCBbovPxA7CxzAKLmCT+LNwH
-        tlxYwE6i8cJaoAYODhYBVYklbypBwrwCthITT81hgtgmL7F6wwFmkF4JgWZ2ieM7/kIlXCSO
-        dE5jhrCFJV4d3wL1kIzE/53zmaAaGCUenlvLDuH0MEpcbprBCFFlLXH4+EVWkM3MApoS63fp
-        Q4QdJd6+aWUDCUsI8EnceCsIEmYGMidtm84MEeaV6GgTgqhWk5h1fB3c2oMXLkGd4yHR2b6M
-        BRJysRJf1m9hn8AoNwth1wJGxlWM4qmlxbnpqcVGeanlesWJucWleel6yfm5mxiBaeT0v+Nf
-        djDu+pN0iFGAg1GJh3fG5xexQqyJZcWVuYcYJTiYlUR40/lexgrxpiRWVqUW5ccXleakFh9i
-        lOZgURLnNV4ElBJITyxJzU5NLUgtgskycXBKNTBO0VhYfyP1mEPbLNncLct7giTZEkqeiscc
-        8D8ZPqN4T+HrXp8vF/5vfKZ6l1e76LPTNN3D7xZPr6swtW9+9SnO4O09/xonwYk2V7WMDK0i
-        GX7pPfG8vGzlhl+LptVtmCazIod79QeuuL/zbutO2v9lq+PmB+1ia379Zchb1mnvf5hhJ2M6
-        1zc5JZbijERDLeai4kQAXjPhyx8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t/xe7qn/V7FGkw8pGjxd9IxdouNM9az
-        Wpw/v4HdYtPja6wWl3fNYbOYcX4fk8XaI3fZLU5d/8xmsa/jAZPF81dnmR24PFYs2svu8fvX
-        JEaPln232D02repk89i8pN7jyokmVo++LasYPT5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIz
-        tLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLOPDrD2PBeY6Kvj1X2RoY97J3MXJySAiY
-        SGztmcrUxcjFISSwlFGi5egpqISMxMlpDawQtrDEn2tdbBBFnxglVs/9xAaSYBMwlOh6C5Lg
-        4BARyJV4s0wcpIZZYAWTxK1n+8FqhAXsJBovrGUGqWERUJVY8qYSJMwrYCsx8dQcJoj58hKr
-        NxxgnsDIs4CRYRWjSGppcW56brGhXnFibnFpXrpecn7uJkZg8G479nPzDsZLG4MPMQpwMCrx
-        8M74/CJWiDWxrLgy9xCjBAezkghvOt/LWCHelMTKqtSi/Pii0pzU4kOMpkC7JzJLiSbnAyMr
-        ryTe0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDo0HLzVflKYarshuW
-        uV/Mn+WonvHV3WjJ1PNMpjFhctWBB65ceZBQ+X3R5m0WB6V+e726MbGdn2dWetyCpuObE7W4
-        2J7eOsZz/hxf7KQL1zjZ72efSTweve4rdzu/Jl/84yif4knt4fcun772vePvtvlrb0zbL/Vk
-        0sXZ23PX+yn4TJio4PvYoUmJpTgj0VCLuag4EQD4BPjIdAIAAA==
-X-CMS-MailID: 20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25
-References: <CGME20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25@eucas1p1.samsung.com>
+        Fri, 6 Dec 2019 07:53:30 -0500
+Received: from [192.168.1.155] ([95.117.69.190]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MBV6n-1iT3RS2059-00CzZl; Fri, 06 Dec 2019 13:53:25 +0100
+Subject: Re: [PATCH 0/8] gpiolib: add an ioctl() for monitoring line status
+ changes
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Kent Gibson <warthog618@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20191127133510.10614-1-brgl@bgdev.pl>
+ <CACRpkdZ6e0GaE9KBJ1-E+cS_KnPY-EKLNxJFqjArr28hYMQqOg@mail.gmail.com>
+ <CAMRc=McH6m3Lsvz8g1JSD_c-QNdb-Kh0+8BH5EKcEW2vM2VYJA@mail.gmail.com>
+ <0058e57c-5765-3944-3137-10b780985a36@metux.net>
+ <CAMRc=McHdtrvkLvT67ew1+88iPtRpd+MO1+5Tr3YsuLceQor1A@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <569d7017-fe19-2f4f-a402-a1f28b3c9e84@metux.net>
+Date:   Fri, 6 Dec 2019 13:52:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=McHdtrvkLvT67ew1+88iPtRpd+MO1+5Tr3YsuLceQor1A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:XOjHc5F72uLN+OdFfxUbHj/j+76RvCQEynOfS+MfsmRnvCVBA3i
+ +1VvKp1HZRKNt679pZDDsDCWS7rvGf2f5HyJWMNaSRcdfatz/5v6C0dZ1M1sX3PVjsiTvPj
+ 8x6izIHdD0iTZzR/nwt+i6TKbZd3VjyxewVDKx47AH5gT422+VUQfgpKqmMIS/YhR9RPU/s
+ v0bJq5Frl/dRU/jCgplqQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:R4VpifeGNB4=:dHPCnyZCOjRuqA9ozNoCeZ
+ BdcwuL3uakQaQ7an/QLvrKiQE4tIVSiSPuHKFugqVFv7/d911kNKPk0gKVS/3sLyySACvImed
+ 4fGnP7psvLSwUMmsQwoFar2KKtHSSGexuehbosawR2UzPeZ0wRJf7tiToWCnpogL1k/YB37F+
+ /MnFvxzmbH5IfSV2FbcrtKtnjrJd5VjS/tC8oW3jGjb3Id5+ktcBNyoTSkeLErBljJdZY1cSH
+ mOYbgTW5UkWpUAGMLDaqnp3m91avGxSCkunfzrKUrlzFiVpUziGZ391RRXS3zhHtTpR4IRR4k
+ RNY4GaCRwn/R3u0GadwClfOQaUakXpgXASUM73dMChpOvrcx0Tg3Bd18Un0dTnCDfUFCOZa9n
+ TqzpCDR+fajdegMOCLFSOj7abodKXHHMRZzeUou0L/stTHTAJJgWMIV8FoFVQV+xF8c7ikW1E
+ wwV5chcachxNxG9OkJ3z6FZwKNgDOyLK+vT2bgm2L2lUcBHi14+Not/6qAS2xvWAxYa3Gjnkf
+ 8UqMFIeIiif/SXRvQtAvQSQrh3fhJ7hATkWVTPUc9XqhMu7qTUn53uuLkmJjwlFyXHl36gRqE
+ Nynphv5ggZjpTx6ICaBApKe68+sNwi8yCCNVqURXWaUrTZQK1S9/QRqeJfAPy0sqBuXIa4u2N
+ UKjbuCUT9Gv5sgryNdvo/A6DksWvkfrtx7uxaLtLWQN1cNOrPOsGm52tU5VVm6UDA6NXV8jmb
+ Avfha7mKdlXo923HAPd7jNcaULANAqjRsWjJgqqYOMB09Cg7bBmpi1CwS/+U41cGN0ACM99Rn
+ Yy+gIbb+pW+VZ0ioMCh8FjTeHG98SXRovtvVUODUcwBjny34kGz5sWcwZum3Or27aI3AyEq82
+ sL1xqhChnVQIFHhy2gfg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit fd7d58f0dbc3 ("ARM: multi_v7_defconfig: renormalize based on recent
-additions") removed explicit enable line for CONFIG_DEBUG_FS, because
-that feature has been selected by other enabled options: CONFIG_TRACING,
-which were enabled by CONFIG_PERF_EVENTS.
+Hi,
 
-In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
-dependency") removed the dependency between CONFIG_DEBUG_FS and
-CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
+>> Oh, no, I've been afraid that this would be coming ... desktop bus in
+>> embedded system is a real nightmare. (yes, some people are even insane
+>> enough to put that thing on an public IP interface and so make critical
+>> machinery like cards easily remote controllable by average school kids)
+> 
+> Nah, you're overreacting, nobody is putting anything on the network.
 
-Enable it again explicitly, as debugfs support is essential for various
-automated testing tools.
+Maybe you've just missed that (maybe better for mental health ;-)), but
+people actually do put desktop bus on open networks. Chrysler/Harmann
+are an famous example (rendering the cars easily remote-controllable)
+I've had lots of similar cases w/ my clients. Whats going on in critical
+industries like automotive or medical often is a real nightmare. One of
+the reasons why I only buy old cars and do a careful inspection of
+physicians before allowing them to treat me or my family.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+IMHO, we should be careful about not encouraging folks out there to do
+silly things, just because they look so easy. (embedded development
+isn't entirely easy)
+
+> Most of my work isn't in upstream kernel development - it's actually
+> launching CE products. And it's been a long time since I've worked
+> with a client that could be convinced not to use systemd and dbus on
+> an embedded system. 
+
+Yeah, same problem here. But actually, it's easier than one might think:
+let them run into a scenario where that malware really does horrible
+things and let the client drive against the wall. Some will learn,
+others won't - just let evolution optimize that :p
+
+> This just makes things so easy for people writing
+> high-level application code that it's become de-facto standard -
+> whether we like it or not.
+
+Yeah, "hilevel" code, that completely ignores vital aspects of the
+machine it then runs on, eg. RT or memory constraints. Seen that so
+many times. Emperical experience tells: sooner or later it will go
+nuts and things go horribly wrong. The unplesant question just is: how
+many people have get hurt or killed in the process.
+
+Lennartware isn't the only problem here, but also ancient and completely
+unmaintained vendor kernels, patched-to-deah by rookies (eg. ublox).
+OTOH, the positive side, eg. if I really need to get a *new* car, I'd
+pick one where I can disable surveillance stuff like "ecall" easily :p
+
+In general, what those industries completely ignore is maintainability
+and stability. There, this only exists on the paper (cubic meters of
+papers that formally look nice, but don't really tell anything about
+the *actual* important facts) - formally proven bullshit.
+
+I've made the personal decision that I don't wanna become yet another
+Edward Teller, neither do I wanna allow some BSG-type scenario. That's
+the reason I'm spending so much time in this discussion.
+
+> This is just your personal anecdote. I could bring up several examples
+> of good implementations of event-based, dbus-oriented systems all
+> right. Bad programmers don't make tools they're using bad.
+
+Problem is: good programmers who can really deal with those concepts
+are hard to find. And those systems usually are hard to test. Desktop
+bus is magnitudes more complex than isolated FSMs.
+
+Within the last decades, I never had a single case where desktop bus had
+been the superior choice (actually, only few cases where purely event-
+driven architecture was a good idea).
+
+> I want to add this
+> new feature to allow for creating a central entity controlling GPIO
+> lines in the user-space. In case of sysfs - IT IS such a central
+> entity except that it lives in the kernel. It doesn't need to be
+> notified about changes in line properties.
+
+I'm still wondering why exactly one would want such an central entity
+in userspace and then letting it talk to others via desktop bus. At
+least in critical embedded systems, not talking about self-knittet
+hobby projects. Seems those ideas originate from people who don't know
+what the OS/Kernel is for :p
+
+Actually, I had a case where somebody attemted to do so (folks who tried
+linux embedded development from a windows machine :o). Fortunately,
+before they could write their planned "GPIO HAL" (several 10kLoc for
+just doing some trivial sysfs ops), I've configured the lines to the
+proper drivers in DT (basically, just some LEDs, inputs, rs485 signal
+lines, etc). Later on they started to write some "HAL" for LEDs,
+inputs, rs485 ... the manager of neighboring department on the other
+end of the room then ask me: "don't they know that they've got an
+operating system" ;-)
+
+Seriously, we shouldn't do everything that some strange folks are asking
+for, just to make them happy. We don't wanna desktop bus in the kernel,
+do we ? :p
+
+By the way: we *do* need some improvements for PLC-like applications:
+Highlevel provisioning of platform devices, eg. configure which devices
+are attached to certain interfaces in an specific installation, so the
+applications don't ever need any knowledge about that, but just talk
+to specific devices.
+
+Most of what's needed (on kernel side) is already there: DT overlays.
+Just yet have to get this working on non-DT (eg. ACPI platform).
+
+In fact that's already in my pipeline, also for other purposes, eg.
+replace simple board or mfd drivers by just a DT snippet. Yet lacked the
+time to work out a suitable way for mixing DT and ACPI and allowing DT
+to override ACPI. But that's a topic for a completely different thread.
+
+
+--mtx--
+
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 24962d0e71c7..0ffa957f2c94 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -1121,3 +1121,4 @@ CONFIG_CRYPTO_DEV_ROCKCHIP=m
- CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_PRINTK_TIME=y
- CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_FS=y
--- 
-2.17.1
-
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
