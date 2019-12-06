@@ -2,129 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F80114F88
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 11:56:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80AF5114F97
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfLFK4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 05:56:37 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:37079 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726154AbfLFK4g (ORCPT
+        id S1726365AbfLFLFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 06:05:17 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54604 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfLFLFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 05:56:36 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1idBHd-0001CF-6Z; Fri, 06 Dec 2019 11:56:25 +0100
-To:     linmiaohe <linmiaohe@huawei.com>
-Subject: Re: [PATCH] KVM: arm: fix missing =?UTF-8?Q?free=5Fpercpu=5Firq?=  =?UTF-8?Q?=20in=20kvm=5Ftimer=5Fhyp=5Finit=28=29?=
-X-PHP-Originating-Script: 0:main.inc
+        Fri, 6 Dec 2019 06:05:16 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB6B53Gf086517;
+        Fri, 6 Dec 2019 05:05:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575630303;
+        bh=NQj04N73Ko2XwRvN2MeTWE69+YfdYaANdf4+pxQ7yuI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=DTExk/liU/hLK3PCPl+jiR4CEifmVjk9YGsGxnG1ubPwWPqJO/UYTvuBPMmryeK4k
+         XT5ZTgOxx7kP3pgaKocroEETq9kFwJRfHf64azx/y9VzgH1XqU8uAp8rCYIgun4RnM
+         72aw1OYvyFRuYqNgWzUYXww+PjzdHmLwa1YQH18Y=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB6B53Fm016763
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Dec 2019 05:05:03 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Dec
+ 2019 05:05:03 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Dec 2019 05:05:03 -0600
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB6B50TX117761;
+        Fri, 6 Dec 2019 05:05:01 -0600
+Subject: Re: [PATCH 0/2] net: ethernet: ti: cpsw_switchdev: fix unmet direct
+ dependencies detected for NET_SWITCHDEV
+To:     David Miller <davem@davemloft.net>
+CC:     <rdunlap@infradead.org>, <netdev@vger.kernel.org>,
+        <tony@atomide.com>, <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <20191204174533.32207-1-grygorii.strashko@ti.com>
+ <20191205.143944.1644239054512253859.davem@davemloft.net>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <393acd95-7556-3d68-4e44-b940a7e9bfc8@ti.com>
+Date:   Fri, 6 Dec 2019 13:04:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <20191205.143944.1644239054512253859.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 06 Dec 2019 10:56:24 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <james.morse@arm.com>,
-        <julien.thierry.kdev@gmail.com>, <suzuki.poulose@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>
-In-Reply-To: <1574476229-15448-1-git-send-email-linmiaohe@huawei.com>
-References: <1574476229-15448-1-git-send-email-linmiaohe@huawei.com>
-Message-ID: <96f07f61e3356c942ce934f81efc4a94@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: linmiaohe@huawei.com, pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-23 02:30, linmiaohe wrote:
-> From: Miaohe Lin <linmiaohe@huawei.com>
->
-> When host_ptimer_irq request irq resource failed, we forget
-> to release the host_vtimer_irq resource already requested.
-> Fix this missing irq release and other similar scenario.
 
-That's really not a big deal, as nothing but KVM can use the
-timers anyway, but I guess it doesn't hurt to be correct.
 
->
-> Fixes: 9e01dc76be6a ("KVM: arm/arm64: arch_timer: Assign the phys
-> timer on VHE systems")
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  virt/kvm/arm/arch_timer.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
->
-> diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
-> index f182b2380345..73867f97040c 100644
-> --- a/virt/kvm/arm/arch_timer.c
-> +++ b/virt/kvm/arm/arch_timer.c
-> @@ -935,7 +935,7 @@ int kvm_timer_hyp_init(bool has_gic)
->  					    kvm_get_running_vcpus());
->  		if (err) {
->  			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
-> -			goto out_free_irq;
-> +			goto out_free_vtimer_irq;
->  		}
->
->  		static_branch_enable(&has_gic_active_state);
-> @@ -960,7 +960,7 @@ int kvm_timer_hyp_init(bool has_gic)
->  		if (err) {
->  			kvm_err("kvm_arch_timer: can't request ptimer interrupt %d 
-> (%d)\n",
->  				host_ptimer_irq, err);
-> -			return err;
-> +			goto out_disable_gic_state;
->  		}
->
->  		if (has_gic) {
-> @@ -968,7 +968,7 @@ int kvm_timer_hyp_init(bool has_gic)
->  						    kvm_get_running_vcpus());
->  			if (err) {
->  				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
-> -				goto out_free_irq;
-> +				goto out_free_ptimer_irq;
->  			}
->  		}
->
-> @@ -977,15 +977,22 @@ int kvm_timer_hyp_init(bool has_gic)
->  		kvm_err("kvm_arch_timer: invalid physical timer IRQ: %d\n",
->  			info->physical_irq);
->  		err = -ENODEV;
-> -		goto out_free_irq;
-> +		goto out_disable_gic_state;
->  	}
->
->  	cpuhp_setup_state(CPUHP_AP_KVM_ARM_TIMER_STARTING,
->  			  "kvm/arm/timer:starting", kvm_timer_starting_cpu,
->  			  kvm_timer_dying_cpu);
->  	return 0;
-> -out_free_irq:
-> +
-> +out_free_ptimer_irq:
-> +	free_percpu_irq(host_ptimer_irq, kvm_get_running_vcpus());
-> +out_disable_gic_state:
-> +	if (has_gic)
-> +		static_branch_disable(&has_gic_active_state);
+On 06/12/2019 00:39, David Miller wrote:
+> From: Grygorii Strashko <grygorii.strashko@ti.com>
+> Date: Wed, 4 Dec 2019 19:45:31 +0200
+> 
+>> This series fixes Kconfig warning with CONFIG_COMPILE_TEST=y reported by
+>> Randy Dunlap <rdunlap@infradead.org> [1]
+>>
+>> [1] https://lkml.org/lkml/2019/12/3/1373
+> 
+> I applied patch #1 to the networking tree, the defconfig update has to be routed via
+> the appropriate architecture tree.
+  
+Thank you.
+  
 
-Given that we're failing the init of KVM, this is totally
-superfluous. Also, this state is still valid, no matter
-what happens (the GIC is not going away from under our feet).
-
-> +out_free_vtimer_irq:
->  	free_percpu_irq(host_vtimer_irq, kvm_get_running_vcpus());
-> +
->  	return err;
->  }
-
-Thanks,
-
-         M.
 -- 
-Jazz is not dead. It just smells funny...
+Best regards,
+grygorii
