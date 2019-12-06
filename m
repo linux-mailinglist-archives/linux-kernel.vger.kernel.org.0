@@ -2,159 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B980114E69
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B795114E32
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:32:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLFJtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:49:50 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63135 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbfLFJtf (ORCPT
+        id S1726269AbfLFJcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:32:55 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:50177 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726065AbfLFJcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:49:35 -0500
-Received: from 79.184.254.100.ipv4.supernova.orange.pl (79.184.254.100) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 4caf4ace7258cfa2; Fri, 6 Dec 2019 10:49:32 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [RFC][PATCH 2/6] ACPI: processor: Introduce acpi_processor_evaluate_cst()
-Date:   Fri, 06 Dec 2019 10:32:47 +0100
-Message-ID: <2604399.tYvJkFLScm@kreacher>
-In-Reply-To: <2037014.bnAicLLH9b@kreacher>
-References: <2037014.bnAicLLH9b@kreacher>
+        Fri, 6 Dec 2019 04:32:54 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1id9yl-0008Mk-IS; Fri, 06 Dec 2019 10:32:51 +0100
+To:     Atish Patra <atish.patra@wdc.com>
+Subject: Re: [PATCH] irqchip/sifive-plic: Add support for multiple PLICs
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Dec 2019 09:32:51 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <linux-kernel@vger.kernel.org>, Anup Patel <anup.patel@wdc.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <linux-riscv@lists.infradead.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+In-Reply-To: <20191206023156.24732-1-atish.patra@wdc.com>
+References: <20191206023156.24732-1-atish.patra@wdc.com>
+Message-ID: <1839bf9ef91de2358a7e8ecade361f7a@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: atish.patra@wdc.com, linux-kernel@vger.kernel.org, anup.patel@wdc.com, jason@lakedaemon.net, linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[Fixing Palmer's email address]
 
-In order to separate the ACPI _CST evaluation from checks
-specific to the ACPI processor driver, move the majority of
-the acpi_processor_get_power_info_cst() function body to a new
-function, acpi_processor_evaluate_cst(), that will extract
-the C-states information from _CST output, and redefine
-acpi_processor_get_power_info_cst() as a wrapper around it.
+On 2019-12-06 02:31, Atish Patra wrote:
+> Current, PLIC driver can support only 1 PLIC on the board. However,
+> there can be multiple PLICs present on a two socket systems in 
+> RISC-V.
+>
+> Modify the driver so that each PLIC handler can have a information
+> about individual PLIC registers and an irqdomain associated with it.
+>
+> Tested on two socket RISC-V system based on VCU118 FPGA connected via
+> OmniXtend protocol.
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> Signed-off-by: Anup Patel <anup.patel@wdc.com>
 
-No intentional functional impact.
+There seem to be some confusion here about who the author of the patch 
+is.
+If this is a co-development, please use the appropriate tag.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/processor_idle.c |   52 +++++++++++++++++++++++++-----------------
- 1 file changed, 32 insertions(+), 20 deletions(-)
+> ---
+>  drivers/irqchip/irq-sifive-plic.c | 81 
+> +++++++++++++++++++------------
+>  1 file changed, 51 insertions(+), 30 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-sifive-plic.c
+> b/drivers/irqchip/irq-sifive-plic.c
+> index c72c036aea76..aea1f2f0f0d5 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -55,7 +55,11 @@
+>  #define     CONTEXT_THRESHOLD		0x00
+>  #define     CONTEXT_CLAIM		0x04
+>
+> -static void __iomem *plic_regs;
+> +struct plic_hw {
+> +	struct cpumask lmask;
+> +	struct irq_domain *irqdomain;
+> +	void __iomem *regs;
+> +};
 
-Index: linux-pm/drivers/acpi/processor_idle.c
-===================================================================
---- linux-pm.orig/drivers/acpi/processor_idle.c
-+++ linux-pm/drivers/acpi/processor_idle.c
-@@ -297,21 +297,17 @@ static int acpi_processor_get_power_info
- 	return 0;
- }
- 
--static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
-+static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
-+				       struct acpi_processor_power *info)
- {
-+	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-+	union acpi_object *cst;
- 	acpi_status status;
- 	u64 count;
--	int current_count;
-+	int current_count = 0;
- 	int i, ret = 0;
--	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	union acpi_object *cst;
--
--	if (nocst)
--		return -ENODEV;
--
--	current_count = 0;
- 
--	status = acpi_evaluate_object(pr->handle, "_CST", NULL, &buffer);
-+	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
- 	if (ACPI_FAILURE(status)) {
- 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "No _CST, giving up\n"));
- 		return -ENODEV;
-@@ -335,9 +331,6 @@ static int acpi_processor_get_power_info
- 		goto end;
- 	}
- 
--	/* Tell driver that at least _CST is supported. */
--	pr->flags.has_cst = 1;
--
- 	for (i = 1; i <= count; i++) {
- 		union acpi_object *element;
- 		union acpi_object *obj;
-@@ -383,7 +376,7 @@ static int acpi_processor_get_power_info
- 		cx.entry_method = ACPI_CSTATE_SYSTEMIO;
- 		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
- 			if (acpi_processor_ffh_cstate_probe
--					(pr->id, &cx, reg) == 0) {
-+					(cpu, &cx, reg) == 0) {
- 				cx.entry_method = ACPI_CSTATE_FFH;
- 			} else if (cx.type == ACPI_STATE_C1) {
- 				/*
-@@ -432,7 +425,7 @@ static int acpi_processor_get_power_info
- 			continue;
- 
- 		current_count++;
--		memcpy(&(pr->power.states[current_count]), &cx, sizeof(cx));
-+		memcpy(&info->states[current_count], &cx, sizeof(cx));
- 
- 		/*
- 		 * We support total ACPI_PROCESSOR_MAX_POWER - 1
-@@ -446,12 +439,9 @@ static int acpi_processor_get_power_info
- 		}
- 	}
- 
--	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found %d power states\n",
--			  current_count));
-+	acpi_handle_info(handle, "Found %d idle states\n", current_count);
- 
--	/* Validate number of power states discovered */
--	if (current_count < 2)
--		ret = -EFAULT;
-+	info->count = current_count;
- 
-       end:
- 	kfree(buffer.pointer);
-@@ -459,6 +449,28 @@ static int acpi_processor_get_power_info
- 	return ret;
- }
- 
-+static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
-+{
-+	int ret;
-+
-+	if (nocst)
-+		return -ENODEV;
-+
-+	ret = acpi_processor_evaluate_cst(pr->handle, pr->id, &pr->power);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * It is expected that there will be at least 2 states, C1 and
-+	 * something else (C2 or C3), so fail if that is not the case.
-+	 */
-+	if (pr->power.count < 2)
-+		return -EFAULT;
-+
-+	pr->flags.has_cst = 1;
-+	return 0;
-+}
-+
- static void acpi_processor_power_verify_c3(struct acpi_processor *pr,
- 					   struct acpi_processor_cx *cx)
- {
+The '_hw' suffix is a bit unfortunate, as there is mostly SW constructs
+in this structure. Maybe something more general like 'context' would
+be more appropriate.
 
+>
+>  struct plic_handler {
+>  	bool			present;
+> @@ -66,6 +70,7 @@ struct plic_handler {
+>  	 */
+>  	raw_spinlock_t		enable_lock;
+>  	void __iomem		*enable_base;
+> +	struct plic_hw		*hw;
+>  };
+>  static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+>
+> @@ -84,31 +89,40 @@ static inline void plic_toggle(struct
+> plic_handler *handler,
+>  }
+>
+>  static inline void plic_irq_toggle(const struct cpumask *mask,
+> -				   int hwirq, int enable)
+> +				   struct irq_data *d, int enable)
+>  {
+>  	int cpu;
+> +	struct plic_hw *hw = d->domain->host_data;
 
+The usual construct is to transfer the domain->host_data pointer to
+the irq_data->chip_data pointer at map() time, using 
+irq_set_chip_data().
 
+You can then retrieve the pointer with irq_get_chip_data(), and save
+yourselves some pointer chasing.
+
+>
+> -	writel(enable, plic_regs + PRIORITY_BASE + hwirq * 
+> PRIORITY_PER_ID);
+> +	writel(enable, hw->regs + PRIORITY_BASE + d->hwirq * 
+> PRIORITY_PER_ID);
+>  	for_each_cpu(cpu, mask) {
+>  		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+>
+> -		if (handler->present)
+> -			plic_toggle(handler, hwirq, enable);
+> +		if (handler->present &&
+> +		    cpumask_test_cpu(cpu, &handler->hw->lmask))
+> +			plic_toggle(handler, d->hwirq, enable);
+>  	}
+>  }
+>
+>  static void plic_irq_enable(struct irq_data *d)
+>  {
+> -	unsigned int cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
+> -					   cpu_online_mask);
+> +	struct cpumask amask;
+> +	unsigned int cpu;
+> +	struct plic_hw *hw = d->domain->host_data;
+> +
+> +	cpumask_and(&amask, &hw->lmask, cpu_online_mask);
+> +	cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
+> +					   &amask);
+>  	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
+>  		return;
+> -	plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+> +	plic_irq_toggle(cpumask_of(cpu), d, 1);
+>  }
+>
+>  static void plic_irq_disable(struct irq_data *d)
+>  {
+> -	plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+> +	struct plic_hw *hw = d->domain->host_data;
+> +
+> +	plic_irq_toggle(&hw->lmask, d, 0);
+>  }
+>
+>  #ifdef CONFIG_SMP
+> @@ -116,18 +130,22 @@ static int plic_set_affinity(struct irq_data 
+> *d,
+>  			     const struct cpumask *mask_val, bool force)
+>  {
+>  	unsigned int cpu;
+> +	struct cpumask amask;
+> +	struct plic_hw *hw = d->domain->host_data;
+> +
+> +	cpumask_and(&amask, &hw->lmask, mask_val);
+
+So this means that an interrupt cannot move between sockets?
+How is that going to work with CPU hotplug? This seems like
+a pretty bad restriction for anything but the most basic
+experimental platform.
+
+>
+>  	if (force)
+> -		cpu = cpumask_first(mask_val);
+> +		cpu = cpumask_first(&amask);
+>  	else
+> -		cpu = cpumask_any_and(mask_val, cpu_online_mask);
+> +		cpu = cpumask_any_and(&amask, cpu_online_mask);
+>
+>  	if (cpu >= nr_cpu_ids)
+>  		return -EINVAL;
+>
+>  	if (!irqd_irq_disabled(d)) {
+> -		plic_irq_toggle(cpu_possible_mask, d->hwirq, 0);
+> -		plic_irq_toggle(cpumask_of(cpu), d->hwirq, 1);
+> +		plic_irq_toggle(&hw->lmask, d, 0);
+> +		plic_irq_toggle(cpumask_of(cpu), d, 1);
+>  	}
+>
+>  	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+> @@ -163,8 +181,6 @@ static const struct irq_domain_ops 
+> plic_irqdomain_ops = {
+>  	.xlate		= irq_domain_xlate_onecell,
+>  };
+>
+> -static struct irq_domain *plic_irqdomain;
+> -
+>  /*
+>   * Handling an interrupt is a two-step process: first you claim the
+> interrupt
+>   * by reading the claim register, then you complete the interrupt by 
+> writing
+> @@ -181,7 +197,7 @@ static void plic_handle_irq(struct pt_regs *regs)
+>
+>  	csr_clear(sie, SIE_SEIE);
+>  	while ((hwirq = readl(claim))) {
+> -		int irq = irq_find_mapping(plic_irqdomain, hwirq);
+> +		int irq = irq_find_mapping(handler->hw->irqdomain, hwirq);
+>
+>  		if (unlikely(irq <= 0))
+>  			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
+> @@ -212,15 +228,17 @@ static int __init plic_init(struct device_node 
+> *node,
+>  {
+>  	int error = 0, nr_contexts, nr_handlers = 0, i;
+>  	u32 nr_irqs;
+> +	struct plic_hw *hw;
+>
+> -	if (plic_regs) {
+> -		pr_warn("PLIC already present.\n");
+> -		return -ENXIO;
+> -	}
+> +	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
+> +	if (!hw)
+> +		return -ENOMEM;
+>
+> -	plic_regs = of_iomap(node, 0);
+> -	if (WARN_ON(!plic_regs))
+> -		return -EIO;
+> +	hw->regs = of_iomap(node, 0);
+> +	if (WARN_ON(!hw->regs)) {
+> +		error = -EIO;
+> +		goto out_freehw;
+> +	}
+>
+>  	error = -EINVAL;
+>  	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
+> @@ -234,9 +252,9 @@ static int __init plic_init(struct device_node 
+> *node,
+>  		goto out_iounmap;
+>
+>  	error = -ENOMEM;
+> -	plic_irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
+> -			&plic_irqdomain_ops, NULL);
+> -	if (WARN_ON(!plic_irqdomain))
+> +	hw->irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
+> +			&plic_irqdomain_ops, hw);
+> +	if (WARN_ON(!hw->irqdomain))
+>  		goto out_iounmap;
+>
+>  	for (i = 0; i < nr_contexts; i++) {
+> @@ -279,13 +297,14 @@ static int __init plic_init(struct device_node 
+> *node,
+>  			goto done;
+>  		}
+>
+> +		cpumask_set_cpu(cpu, &hw->lmask);
+>  		handler->present = true;
+>  		handler->hart_base =
+> -			plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
+> +			hw->regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
+>  		raw_spin_lock_init(&handler->enable_lock);
+>  		handler->enable_base =
+> -			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
+> -
+> +			hw->regs + ENABLE_BASE + i * ENABLE_PER_HART;
+> +		handler->hw = hw;
+>  done:
+>  		/* priority must be > threshold to trigger an interrupt */
+>  		writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
+> @@ -300,7 +319,9 @@ static int __init plic_init(struct device_node 
+> *node,
+>  	return 0;
+>
+>  out_iounmap:
+> -	iounmap(plic_regs);
+> +	iounmap(hw->regs);
+> +out_freehw:
+> +	kfree(hw);
+>  	return error;
+>  }
+
+This otherwise seems like a very straightforward change.
+
+Thanks,
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
