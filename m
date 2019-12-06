@@ -2,131 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531BC114D21
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 09:05:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4A1114D3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 09:10:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfLFIFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 03:05:00 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:31900 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfLFIE7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 03:04:59 -0500
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id xB684ujw021333;
-        Fri, 6 Dec 2019 17:04:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com xB684ujw021333
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1575619496;
-        bh=5HkglI0EKjnLXCnlt94Q9XbXoUC156pTW0gJif8WsLM=;
-        h=From:Date:Subject:To:Cc:From;
-        b=fCADfeHV0pHWJfJJZReqYgrFWALqlNHJo4mhghcMnzY+qcFsW7i/T3WSK24ScT7Iy
-         dLN32NZkjERwIWiqpD6nV2aZduYg5CKr6dFWewRNvdMoKtHqrCqTwfUED1D4AQZa8r
-         +7zCdPbukVAygKyeaw31rJ+shCyWECyp1dsqKEqrtxgbb1WNCElPVs779xujmQ9G1Y
-         Q1fmoVO+I2KiZB3CGAtSgqGHUy0+T7zSCSqT20VzTKJ46qnaIn7575Cmltlu9kfuSX
-         Ltq8puz7u/G4nFsErrsyaLCPMonLBx9naBmnwBYdaOS3E0NjNUN7Bxfv+J6LxXZD9y
-         9uRI4N4PwMCdg==
-X-Nifty-SrcIP: [209.85.222.54]
-Received: by mail-ua1-f54.google.com with SMTP id f7so2464123uaa.8;
-        Fri, 06 Dec 2019 00:04:56 -0800 (PST)
-X-Gm-Message-State: APjAAAWo2ND7LJG/OUHYzSHyEO5OPsPx5RUSI6ibhFjGOVhmRJpjKg1z
-        1kqQqT83wNvxagVB96pJPKic0L6I7gFGW592pmM=
-X-Google-Smtp-Source: APXvYqy3+OU+tXwm9mApi3095nPuMim4hayi3qQUxbwWEblDDMPQ+2LojXhJOLXlE5A6bcurl/xkESk2ulBMZ17+6e4=
-X-Received: by 2002:ab0:3487:: with SMTP id c7mr9347188uar.25.1575619495354;
- Fri, 06 Dec 2019 00:04:55 -0800 (PST)
+        id S1726697AbfLFIJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 03:09:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7645 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726203AbfLFIJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 03:09:58 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4CD1E7533FAA2136108F;
+        Fri,  6 Dec 2019 16:09:56 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 6 Dec 2019 16:09:50 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <linux@armlinux.org.uk>, <gregkh@linuxfoundation.org>,
+        <jslaby@suse.com>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <wangxiongfeng2@huawei.com>
+Subject: [PATCH] tty: serial: amba-pl011: remove set but unused variable
+Date:   Fri, 6 Dec 2019 16:05:26 +0800
+Message-ID: <1575619526-34482-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 6 Dec 2019 17:04:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ29tXAFZaYODFyd4iAx9UhyjhyEtXxk+ZC+yUtXsqMMQ@mail.gmail.com>
-Message-ID: <CAK7LNAQ29tXAFZaYODFyd4iAx9UhyjhyEtXxk+ZC+yUtXsqMMQ@mail.gmail.com>
-Subject: About DT binding of reset control
-To:     Rob Herring <robh+dt@kernel.org>, DTML <devicetree@vger.kernel.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Rob, DT folks,
+Fix the following warning:
+drivers/tty/serial/amba-pl011.c: In function check_apply_cts_event_workaround:
+drivers/tty/serial/amba-pl011.c:1461:15: warning: variable dummy_read set but not used [-Wunused-but-set-variable]
 
-I am trying to add the reset control into
-the Denali NAND controller driver:
-Documentation/devicetree/bindings/mtd/denali-nand.txt
-drivers/mtd/nand/raw/denali_dt.c
+The data read is useless and can be dropped.
 
-I'd like to get some advice about the DT binding
-before the detailed implementation.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/tty/serial/amba-pl011.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 4b28134..c5e9475 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1452,8 +1452,6 @@ static void pl011_modem_status(struct uart_amba_port *uap)
+ 
+ static void check_apply_cts_event_workaround(struct uart_amba_port *uap)
+ {
+-	unsigned int dummy_read;
+-
+ 	if (!uap->vendor->cts_event_workaround)
+ 		return;
+ 
+@@ -1465,8 +1463,8 @@ static void check_apply_cts_event_workaround(struct uart_amba_port *uap)
+ 	 * single apb access will incur 2 pclk(133.12Mhz) delay,
+ 	 * so add 2 dummy reads
+ 	 */
+-	dummy_read = pl011_read(uap, REG_ICR);
+-	dummy_read = pl011_read(uap, REG_ICR);
++	pl011_read(uap, REG_ICR);
++	pl011_read(uap, REG_ICR);
+ }
+ 
+ static irqreturn_t pl011_int(int irq, void *dev_id)
+-- 
+1.7.12.4
 
-
-The IP datasheet clearly says
-two separate reset lines, like this:
-
-rst_n :           controller core reset
-reg_rst_n:     register flip-flop reset
-
-
-But, in actual SoC integration,
-the two reset signals are often tied up together, and
-the reset controller only provides 1-bit control.
-
-(The upstream platforms, SoCFPGA, UniPhier,
- both are this case.)
-
-
-In this case, which is more preferred for the
-DT binding?
-
-
-[1] Define two resets explicitly according to the IP spec
-
-Optional properties:
-  reset-names :  contain "nand", "reg"
-  resets: phandles to the controller core reset, the register reset
-
-Example:
-
-   nand {
-         ....
-         reset-names = "nand", "reg";
-         resets = <&nand_rst>, <&nand_rst>;
-         ...
-   };
-
-
-
-[2] Allow arbitrary number of reset lines
-
-
-Optional properties:
-     resets: phandle(s) to reset(s)
-
-   The number of reset lines is SoC-dependent.
-
-
-Examples:
-
-      nand {
-
-               resets = <&nand>;
-                ...
-       };
-
-
-
-
-
-I guess [1] is more precise as the hardware specification.
-But, DT files will end up with giving the same phandle
-to both of the two resets.
-I think it is OK, but anyway better to ask
-before proceeding.
-
-Thanks.
-
---
-Best Regards
-Masahiro Yamada
