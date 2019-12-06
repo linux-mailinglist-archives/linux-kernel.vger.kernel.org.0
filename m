@@ -2,114 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 952C9114F15
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 11:33:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A384114F1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 11:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfLFKc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 05:32:59 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:40205 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfLFKc6 (ORCPT
+        id S1726284AbfLFKfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 05:35:51 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:55916 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726102AbfLFKfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 05:32:58 -0500
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id xB6AWePs002653
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2019 19:32:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com xB6AWePs002653
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1575628361;
-        bh=TDjawUlmNNXUEMf1DhyFf5MKCPPn8CovJxPUOaAc2oc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KZyQL6sGwHXlLzRXNDrEfVVY/yjlfYCq7MzavV7PX1RuVzFueZSpOf2mPLxMRVv85
-         aGkC/fD/tc/OpmZEy6sb79o+2vMjdS/Q5j10G0mo2Y4h94AoLHe7r5ln30/U6AgAxq
-         eW2YmGIc6OWse24f3kiMVjsjGrpVmBq+emlp0lA+RPmMYxdTPitjF9oZDy90XlOZ0x
-         X8fEGtT5DA/J/u7li8NExtHJoHN972riTh051J6JpRZSu8CXiKRwIuIfOqiudlzXhW
-         rf9NEx6crIpcRHcX7FiXmFEfhU763PQVAsnVPxSzKfUMjwodF4N1JROiqL4hucpAPY
-         MNSPYHZ+mySWg==
-X-Nifty-SrcIP: [209.85.221.180]
-Received: by mail-vk1-f180.google.com with SMTP id i18so2087017vkk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 02:32:40 -0800 (PST)
-X-Gm-Message-State: APjAAAXHsN4i4JkG3x4ROAPcwQpKhKQdMzX97ask2Q3p3ag7wY0VAxmN
-        B1bgv1TQUOu+yHLv+FkMCCsEp7tvohLi8ENo8b4=
-X-Google-Smtp-Source: APXvYqy7cm748UdnM90CLgAG1ZA9MFTcYgJ8zjVaMoKjzv6tyXiBABFAld7eOFcOIfoKfcf84Pbg2MdfjRn/7lkZDw0=
-X-Received: by 2002:a1f:5447:: with SMTP id i68mr10722286vkb.66.1575628359661;
- Fri, 06 Dec 2019 02:32:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20191206075432.18412-1-hslester96@gmail.com>
-In-Reply-To: <20191206075432.18412-1-hslester96@gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 6 Dec 2019 19:32:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQsK5JD-qeBugp9mn8DgW+SYttp5AwZ_ht5KY2MhPe-Ew@mail.gmail.com>
-Message-ID: <CAK7LNAQsK5JD-qeBugp9mn8DgW+SYttp5AwZ_ht5KY2MhPe-Ew@mail.gmail.com>
-Subject: Re: [PATCH] mtd: rawnand: denali: add missed pci_release_regions
+        Fri, 6 Dec 2019 05:35:51 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB6AXb4K012056;
+        Fri, 6 Dec 2019 04:34:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=gODTI0lW1pdRgw8ARzPT2hG/hZAyqOBktg59aJ0itXo=;
+ b=JGYVJCRKfWlj4U1CRVRaNLheVAXMN0UpKhO5wWhF1OVVjzTtLapt6rXwRwuiQLvvWYOq
+ ZqzmENVuZie+QlP8jdkmkcrlsA5R9SKs49XH+Ko7CyKJQ0JfsWo9Lf6QfsVFpyHjcb+2
+ 6dZ7LTkDPM7fgSDWDvPQnpMd7Wg9c710J3WXJXOceQJ/k9+wC+s++QSfLq0h7Hn/IrwK
+ Y4Su51rR09YwwUzh7HxBBZDkJOSz8vCukobzSho6xbRMQq5jOvWbaK3GncRrWTZHS/Ez
+ Sjll2JKiW8K73nM/LPN0bGnhFRucaro9iU4jq//KRCfM034+IKggAlYHpq8vvia8JsBW hQ== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([5.172.152.52])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2wqmq101fa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 06 Dec 2019 04:34:57 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 6 Dec
+ 2019 10:34:53 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Fri, 6 Dec 2019 10:34:53 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id D991F2D1;
+        Fri,  6 Dec 2019 10:34:53 +0000 (UTC)
+Date:   Fri, 6 Dec 2019 10:34:53 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <patches@opensource.cirrus.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm5100: add missed regulator_bulk_disable
+Message-ID: <20191206103453.GC10451@ediswmail.ad.cirrus.com>
+References: <20191206075300.18182-1-hslester96@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191206075300.18182-1-hslester96@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=2 spamscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ mlxscore=0 malwarescore=0 mlxlogscore=977 adultscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912060091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
-
-On Fri, Dec 6, 2019 at 4:54 PM Chuhong Yuan <hslester96@gmail.com> wrote:
->
-> The driver forgets to call pci_release_regions() in probe failure
-> and remove.
-> Add the missed calls to fix it.
->
+On Fri, Dec 06, 2019 at 03:53:00PM +0800, Chuhong Yuan wrote:
+> The driver forgets to call regulator_bulk_disable() in remove like that
+> in probe failure.
+> Add the missed call to fix it.
+> 
 > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 > ---
+>  sound/soc/codecs/wm5100.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/sound/soc/codecs/wm5100.c b/sound/soc/codecs/wm5100.c
+> index 91cc63c5a51f..d985b2061169 100644
+> --- a/sound/soc/codecs/wm5100.c
+> +++ b/sound/soc/codecs/wm5100.c
+> @@ -2653,6 +2653,8 @@ static int wm5100_i2c_remove(struct i2c_client *i2c)
+>  		gpio_set_value_cansleep(wm5100->pdata.ldo_ena, 0);
+>  		gpio_free(wm5100->pdata.ldo_ena);
+>  	}
+> +	regulator_bulk_disable(ARRAY_SIZE(wm5100->core_supplies),
+> +			       wm5100->core_supplies);
+>  
 
-This patch looks equivalent to what I submitted,
-then was rejected a couple of years ago.
-https://lists.gt.net/linux/kernel/2557740
+This is a bit trickier than this since these regulators are being
+controlled by PM runtime, and it doesn't necessarily leave things
+in an enabled state when it is disabled.
 
-
-
->  drivers/mtd/nand/raw/denali_pci.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mtd/nand/raw/denali_pci.c b/drivers/mtd/nand/raw/denali_pci.c
-> index d62aa5271753..ca170775b141 100644
-> --- a/drivers/mtd/nand/raw/denali_pci.c
-> +++ b/drivers/mtd/nand/raw/denali_pci.c
-> @@ -77,7 +77,8 @@ static int denali_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
->         denali->reg = ioremap_nocache(csr_base, csr_len);
->         if (!denali->reg) {
->                 dev_err(&dev->dev, "Spectra: Unable to remap memory region\n");
-> -               return -ENOMEM;
-> +               ret = -ENOMEM;
-> +               goto out_release_regions;
->         }
->
->         denali->host = ioremap_nocache(mem_base, mem_len);
-> @@ -121,6 +122,8 @@ static int denali_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
->         iounmap(denali->host);
->  out_unmap_reg:
->         iounmap(denali->reg);
-> +out_release_regions:
-> +       pci_release_regions(dev);
->         return ret;
->  }
->
-> @@ -131,6 +134,7 @@ static void denali_pci_remove(struct pci_dev *dev)
->         denali_remove(denali);
->         iounmap(denali->reg);
->         iounmap(denali->host);
-> +       pci_release_regions(dev);
->  }
->
->  static struct pci_driver denali_pci_driver = {
-> --
-> 2.24.0
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Charles
