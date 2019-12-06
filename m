@@ -2,86 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC181115027
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:07:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 264CD115030
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 13:14:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbfLFMHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 07:07:46 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45410 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbfLFMHq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 07:07:46 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w7so2649208plz.12;
-        Fri, 06 Dec 2019 04:07:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RUi+772OFh0+aMi235GUKCqF36iP78kIVRkHfrv5Nvw=;
-        b=kseXJg08ZQh8rMo47swpsu0wTLe2Ee3FuQ5CtSlQjo2doT2Adj3aUu/cFodGwyFoDb
-         O58GpssUT0KQZVQIK3Wap5SO1EO4v/ogxHLsf8BdJ51vAazKrkX1VBBLNcqZuohwLIyS
-         C/edxu4lGJ6SyzIj+w/AAEj5TQ/kUeVq8fL48H0o81bSA8GiIui76DScsZNbZ4tntiJv
-         Fue6dXTTBKb+cuy0vXMePBWX2JRVxnHttgS8U9IPrlMw5ot3HsM9o90RQT0U+dJfIqTV
-         koCCiSu1qZ42yaWKxMjWbpSc+RFBNipRNH5s/vw+yJOEaxmagy7USVi8yL2wDTKVjqjb
-         NBQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RUi+772OFh0+aMi235GUKCqF36iP78kIVRkHfrv5Nvw=;
-        b=tJOvfFG8O0UH/57W9x1LHRaYC0Z1DM/D6TIGgTivGl8dyfZe7O2EZ6MvCFemypjJin
-         EN4fwFpme6ooOTkU1kFUMLbWzML+7lk+3x0H8aDn9PCMgkKCHhoJj7TKYnO3lXWtTPds
-         6uFoBgk3iXgpaJiXERs2ovznnmN2p6R35pHbLlWrqpqJKMf5taEiPb5wWV0lsRoZ2YZl
-         /iM39McPuaCGI6EvGBI5fhFEdEkhr0MFmZD5ZEkj/JALfY3V5YazetQNBBjHVJjjDFp7
-         2QiRYP1UeaENfLBms8fpXuhHzE0yVl9HCpEnUhXXjSPp1CS9+bW8/bPTRci7yPzmM4PR
-         KAqw==
-X-Gm-Message-State: APjAAAVCPBH2gXdGpKvrYfrmtvVxPE/8t6Qdf0ooxAuNulzNHA2HVxqt
-        ah0S6AiLbQ+ZzvxrXNwMtE8=
-X-Google-Smtp-Source: APXvYqzNGd9adTgKkpZqoWzOHPwlLCxP3jynWBkNyuvvFRQFwm7VSFLmIN1m6XlJ+vpkxiNyD2IpYg==
-X-Received: by 2002:a17:90a:6484:: with SMTP id h4mr12443621pjj.84.1575634065578;
-        Fri, 06 Dec 2019 04:07:45 -0800 (PST)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id c8sm16855843pfj.106.2019.12.06.04.07.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2019 04:07:44 -0800 (PST)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] media: go7007: fix a miss of snd_card_free
-Date:   Fri,  6 Dec 2019 20:07:35 +0800
-Message-Id: <20191206120735.21873-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726256AbfLFMOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 07:14:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbfLFMOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 07:14:18 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1060C24659;
+        Fri,  6 Dec 2019 12:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575634457;
+        bh=o9F0FuHOka2xZ0DmTCxH9WxB/cnnsDObFTkSmj9uGn4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n4V/NNwpig9+WVhOViCP9jYRxmz4yhy2Qed2W6VvichITokR4w5POCyM+QIBRPOjJ
+         AEFIEm7KySg7SrSUydZi0VDehdLQDHN31QYpE3zreqyWVSzq/H2LEC1CCUDZiyIzX3
+         uLaaOjwdvHoBIPeY3erxearcvRIu7REdPNQ58kcA=
+Date:   Fri, 6 Dec 2019 07:14:16 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lyude Paul <lyude@redhat.com>, linux-input@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 24/25] Input: synaptics - enable RMI mode
+ for X1 Extreme 2nd Generation
+Message-ID: <20191206121415.GV5861@sasha-vm>
+References: <20191122194859.24508-1-sashal@kernel.org>
+ <20191122194859.24508-24-sashal@kernel.org>
+ <20191122195532.GB248138@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191122195532.GB248138@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-go7007_snd_init() misses a snd_card_free() in an error path.
-Add the missed call to fix it.
+On Fri, Nov 22, 2019 at 11:55:32AM -0800, Dmitry Torokhov wrote:
+>Hi Sasha,
+>
+>On Fri, Nov 22, 2019 at 02:48:57PM -0500, Sasha Levin wrote:
+>> From: Lyude Paul <lyude@redhat.com>
+>>
+>> [ Upstream commit 768ea88bcb235ac3a92754bf82afcd3f12200bcc ]
+>>
+>> Just got one of these for debugging some unrelated issues, and noticed
+>> that Lenovo seems to have gone back to using RMI4 over smbus with
+>> Synaptics touchpads on some of their new systems, particularly this one.
+>> So, let's enable RMI mode for the X1 Extreme 2nd Generation.
+>>
+>> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>> Link: https://lore.kernel.org/r/20191115221814.31903-1-lyude@redhat.com
+>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>
+>This will be reverted, do not pick up for stable.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/media/usb/go7007/snd-go7007.c | 1 +
- 1 file changed, 1 insertion(+)
+I've dropped it, thanks!
 
-diff --git a/drivers/media/usb/go7007/snd-go7007.c b/drivers/media/usb/go7007/snd-go7007.c
-index b05fa227ffb2..dced8c019514 100644
---- a/drivers/media/usb/go7007/snd-go7007.c
-+++ b/drivers/media/usb/go7007/snd-go7007.c
-@@ -243,6 +243,7 @@ int go7007_snd_init(struct go7007 *go)
- 	ret = snd_device_new(gosnd->card, SNDRV_DEV_LOWLEVEL, go,
- 			&go7007_snd_device_ops);
- 	if (ret < 0) {
-+		snd_card_free(gosnd->card);
- 		kfree(gosnd);
- 		return ret;
- 	}
 -- 
-2.24.0
-
+Thanks,
+Sasha
