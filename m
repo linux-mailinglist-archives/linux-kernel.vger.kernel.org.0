@@ -2,201 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFFAD11579E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 20:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C29B1157A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 20:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLFTQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 14:16:32 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726321AbfLFTQc (ORCPT
+        id S1726425AbfLFTSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 14:18:47 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41941 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfLFTSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 14:16:32 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB6JC7lt101865
-        for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2019 14:16:30 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2wq2t4br3w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 14:16:30 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sourabhjain@linux.ibm.com>;
-        Fri, 6 Dec 2019 19:16:28 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 6 Dec 2019 19:16:26 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB6JGPWr60489848
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Dec 2019 19:16:25 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5111D42049;
-        Fri,  6 Dec 2019 19:16:25 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 902D14204B;
-        Fri,  6 Dec 2019 19:16:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.71.21])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Dec 2019 19:16:23 +0000 (GMT)
-Subject: Re: [PATCH v4 4/6] powerpc/powernv: move core and
- fadump_release_opalcore under new kobject
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mpe@ellerman.id.au, mahesh@linux.vnet.ibm.com,
-        hbathini@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, corbet@lwn.net, linux-doc@vger.kernel.org
-References: <20191206122434.29587-1-sourabhjain@linux.ibm.com>
- <20191206122434.29587-5-sourabhjain@linux.ibm.com>
- <20191206124801.GD1360047@kroah.com>
-From:   Sourabh Jain <sourabhjain@linux.ibm.com>
-Date:   Sat, 7 Dec 2019 00:46:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20191206124801.GD1360047@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19120619-0008-0000-0000-0000033E5B01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19120619-0009-0000-0000-00004A5D8325
-Message-Id: <d22893e3-41e0-c8db-9262-670f90536816@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-06_06:2019-12-05,2019-12-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 mlxscore=0 impostorscore=0 clxscore=1015 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912060154
+        Fri, 6 Dec 2019 14:18:46 -0500
+Received: by mail-pf1-f196.google.com with SMTP id s18so3804889pfd.8;
+        Fri, 06 Dec 2019 11:18:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
+         :references:in-reply-to;
+        bh=EfuiC5g9uwuyk/XA/r2lQbj8CwOw/7zBQtIMHV2LGGg=;
+        b=dMFiAtmTLczQtk+CUYCSLNJ9VFaQv3JnOST7BH1Y7RfuihLmS44xq6qkXxurFp2qaE
+         DpJzatqPrfRFo2CnbHMzfGP8eDTQXza8/dDotgLlaRdIWh44jdN97HtxyCb/6VSi7wVx
+         dJPrTALmiFoYaQHsEfp5EUzUO0K9czMeANSlTXrnZswuIdXqat9Byca9vy+GrzbIBAfs
+         3vgHenHIAE2IAefIX7BmbRKpd4+RdY4hFN7b4u0RFwRQ4GIS9LYfe8B9/poA7ywu/G+3
+         WTe6mMx5tyH+RVVwSTr9TjvgNTobMa2CAnaFG8rMcGwxI4FgpdAL57cM88lP72fs5POe
+         ZvzA==
+X-Gm-Message-State: APjAAAVbjQK/9uA/iakeq6pfc/tpHiJBOkCqHsHWvDqUd+l/+jc6H+Sm
+        4fl1PUVU2ACPZRm1P9S+vA8=
+X-Google-Smtp-Source: APXvYqxC3rbCY2YzRS2G6XX19XoD+mFGP85/kEnW2NtNt2Ur2w+SKrkYWBZhVNsmhZeQfFgt7mHK9A==
+X-Received: by 2002:a63:e14a:: with SMTP id h10mr5174663pgk.74.1575659925557;
+        Fri, 06 Dec 2019 11:18:45 -0800 (PST)
+Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
+        by smtp.gmail.com with ESMTPSA id n188sm7984307pga.84.2019.12.06.11.18.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2019 11:18:44 -0800 (PST)
+Message-ID: <5deaa994.1c69fb81.97561.647e@mx.google.com>
+Date:   Fri, 06 Dec 2019 11:18:44 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     Paul Burton <paulburton@kernel.org>
+CC:     linux-mips@vger.kernel.org
+CC:     linux-kernel@vger.kernel.org, Paul Burton <paulburton@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Hassan Naveed <hnaveed@wavecomp.com>,
+        Tony Ambardar <itugrok@yahoo.com>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, stable@vger.kernel.org
+CC:     linux-mips@vger.kernel.org
+Subject: Re: [PATCH] MIPS: BPF: Restore MIPS32 cBPF JIT; disable MIPS32 eBPF JIT
+References:  <20191205182318.2761605-1-paulburton@kernel.org>
+In-Reply-To:  <20191205182318.2761605-1-paulburton@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-
-On 12/6/19 6:18 PM, Greg KH wrote:
-> On Fri, Dec 06, 2019 at 05:54:32PM +0530, Sourabh Jain wrote:
->> The /sys/firmware/opal/core and /sys/kernel/fadump_release_opalcore sysfs
->> files are used to export and release the OPAL memory on PowerNV platform.
->> let's organize them into a new kobject under /sys/firmware/opal/mpipl/
->> directory.
->>
->> A symlink is added to maintain the backward compatibility for
->> /sys/firmware/opal/core sysfs file.
->>
->> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
->> ---
->>  .../sysfs-kernel-fadump_release_opalcore      |  2 ++
->>  .../powerpc/firmware-assisted-dump.rst        | 15 +++++----
->>  arch/powerpc/platforms/powernv/opal-core.c    | 31 ++++++++++++++-----
->>  3 files changed, 34 insertions(+), 14 deletions(-)
->>  rename Documentation/ABI/{testing => removed}/sysfs-kernel-fadump_release_opalcore (82%)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore b/Documentation/ABI/removed/sysfs-kernel-fadump_release_opalcore
->> similarity index 82%
->> rename from Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
->> rename to Documentation/ABI/removed/sysfs-kernel-fadump_release_opalcore
->> index 53313c1d4e7a..a8d46cd0f4e6 100644
->> --- a/Documentation/ABI/testing/sysfs-kernel-fadump_release_opalcore
->> +++ b/Documentation/ABI/removed/sysfs-kernel-fadump_release_opalcore
->> @@ -1,3 +1,5 @@
->> +This ABI is moved to /sys/firmware/opal/mpipl/release_core.
->> +
->>  What:		/sys/kernel/fadump_release_opalcore
->>  Date:		Sep 2019
->>  Contact:	linuxppc-dev@lists.ozlabs.org
->> diff --git a/Documentation/powerpc/firmware-assisted-dump.rst b/Documentation/powerpc/firmware-assisted-dump.rst
->> index 0455a78486d5..345a3405206e 100644
->> --- a/Documentation/powerpc/firmware-assisted-dump.rst
->> +++ b/Documentation/powerpc/firmware-assisted-dump.rst
->> @@ -112,13 +112,13 @@ to ensure that crash data is preserved to process later.
->>  
->>  -- On OPAL based machines (PowerNV), if the kernel is build with
->>     CONFIG_OPAL_CORE=y, OPAL memory at the time of crash is also
->> -   exported as /sys/firmware/opal/core file. This procfs file is
->> +   exported as /sys/firmware/opal/mpipl/core file. This procfs file is
->>     helpful in debugging OPAL crashes with GDB. The kernel memory
->>     used for exporting this procfs file can be released by echo'ing
->> -   '1' to /sys/kernel/fadump_release_opalcore node.
->> +   '1' to /sys/firmware/opal/mpipl/release_core node.
->>  
->>     e.g.
->> -     # echo 1 > /sys/kernel/fadump_release_opalcore
->> +     # echo 1 > /sys/firmware/opal/mpipl/release_core
->>  
->>  Implementation details:
->>  -----------------------
->> @@ -283,14 +283,17 @@ Here is the list of files under kernel sysfs:
->>      enhanced to use this interface to release the memory reserved for
->>      dump and continue without 2nd reboot.
->>  
->> - /sys/kernel/fadump_release_opalcore
->> +Note: /sys/kernel/fadump_release_opalcore sysfs has moved to
->> +      /sys/firmware/opal/mpipl/release_core
->> +
->> + /sys/firmware/opal/mpipl/release_core
->>  
->>      This file is available only on OPAL based machines when FADump is
->>      active during capture kernel. This is used to release the memory
->> -    used by the kernel to export /sys/firmware/opal/core file. To
->> +    used by the kernel to export /sys/firmware/opal/mpipl/core file. To
->>      release this memory, echo '1' to it:
->>  
->> -    echo 1  > /sys/kernel/fadump_release_opalcore
->> +    echo 1  > /sys/firmware/opal/mpipl/release_core
->>  
->>  Here is the list of files under powerpc debugfs:
->>  (Assuming debugfs is mounted on /sys/kernel/debug directory.)
->> diff --git a/arch/powerpc/platforms/powernv/opal-core.c b/arch/powerpc/platforms/powernv/opal-core.c
->> index ed895d82c048..7fcc092d065e 100644
->> --- a/arch/powerpc/platforms/powernv/opal-core.c
->> +++ b/arch/powerpc/platforms/powernv/opal-core.c
->> @@ -589,7 +589,8 @@ static ssize_t fadump_release_opalcore_store(struct kobject *kobj,
->>  	return count;
->>  }
->>  
->> -static struct kobj_attribute opalcore_rel_attr = __ATTR(fadump_release_opalcore,
->> +struct kobject *mpipl_kobj;
->> +static struct kobj_attribute opalcore_rel_attr = __ATTR(release_core,
->>  						0200, NULL,
->>  						fadump_release_opalcore_store);
+Paul Burton wrote:
+> Commit 716850ab104d ("MIPS: eBPF: Initial eBPF support for MIPS32
+> architecture.") enabled our eBPF JIT for MIPS32 kernels, whereas it has
+> previously only been availailable for MIPS64. It was my understanding at
+> the time that the BPF test suite was passing & JITing a comparable
+> number of tests to our cBPF JIT [1], but it turns out that was not the
+> case.
 > 
-> __ATTR_WO()?
-
-Thanks :)
+> The eBPF JIT has a number of problems on MIPS32:
 > 
->>  
->> @@ -609,7 +610,7 @@ static int __init opalcore_init(void)
->>  	 * then capture the dump.
->>  	 */
->>  	if (!(is_opalcore_usable())) {
->> -		pr_err("Failed to export /sys/firmware/opal/core\n");
->> +		pr_err("Failed to export /sys/firmware/opal/mpipl/core\n");
->>  		opalcore_cleanup();
->>  		return rc;
->>  	}
->> @@ -617,18 +618,32 @@ static int __init opalcore_init(void)
->>  	/* Set OPAL core file size */
->>  	opal_core_attr.size = oc_conf->opalcore_size;
->>  
->> +	mpipl_kobj = kobject_create_and_add("mpipl", opal_kobj);
->> +	if (!mpipl_kobj) {
->> +		pr_err("unable to create mpipl kobject\n");
->> +		return -ENOMEM;
->> +	}
->> +
->>  	/* Export OPAL core sysfs file */
->> -	rc = sysfs_create_bin_file(opal_kobj, &opal_core_attr);
->> +	rc = sysfs_create_bin_file(mpipl_kobj, &opal_core_attr);
+> - Most notably various code paths still result in emission of MIPS64
+>   instructions which will cause reserved instruction exceptions & kernel
+>   panics when run on MIPS32 CPUs.
 > 
-> Again, create an attribute group and add everything all at once, makes
-> it much simpler and your error cleanup logic will actually work :)
+> - The eBPF JIT doesn't account for differences between the O32 ABI used
+>   by MIPS32 kernels versus the N64 ABI used by MIPS64 kernels. Notably
+>   arguments beyond the first 4 are passed on the stack in O32, and this
+>   is entirely unhandled when JITing a BPF_CALL instruction. Stack space
+>   must be reserved for arguments even if they all fit in registers, and
+>   the callee is free to assume that stack space has been reserved for
+>   its use - with the eBPF JIT this is not the case, so calling any
+>   function can result in clobbering values on the stack & unpredictable
+>   behaviour. Function arguments in eBPF are always 64-bit values which
+>   is also entirely unhandled - the JIT still uses a single (32-bit)
+>   register per argument. As a result all function arguments are always
+>   passed incorrectly when JITing a BPF_CALL instruction, leading to
+>   kernel crashes or strange behavior.
+> 
+> - The JIT attempts to bail our on use of ALU64 instructions or 64-bit
+>   memory access instructions. The code doing this at the start of
+>   build_one_insn() incorrectly checks whether BPF_OP() equals BPF_DW,
+>   when it should really be checking BPF_SIZE() & only doing so when
+>   BPF_CLASS() is one of BPF_{LD,LDX,ST,STX}. This results in false
+>   positives that cause more bailouts than intended, and that in turns
+>   hides some of the problems described above.
+> 
+> - The kernel's cBPF->eBPF translation makes heavy use of 64-bit eBPF
+>   instructions that the MIPS32 eBPF JIT bails out on, leading to most
+>   cBPF programs not being JITed at all.
+> 
+> Until these problems are resolved, revert the removal of the cBPF JIT &
+> the enabling of the eBPF JIT on MIPS32 done by commit 716850ab104d
+> ("MIPS: eBPF: Initial eBPF support for MIPS32 architecture.").
+> 
+> Note that this does not undo the changes made to the eBPF JIT by that
+> commit, since they are a useful starting point to providing MIPS32
+> support - they're just not nearly complete.
+> 
+> [1] https://lore.kernel.org/linux-mips/MWHPR2201MB13583388481F01A422CE7D66D4410@MWHPR2201MB1358.namprd22.prod.outlook.com/
 
-Agree.
+Applied to mips-fixes.
+
+> commit c409cd05ab7f
+> https://git.kernel.org/mips/c/c409cd05ab7f
+> 
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
+> Fixes: 716850ab104d ("MIPS: eBPF: Initial eBPF support for MIPS32 architecture.")
 
 Thanks,
-Sourabh Jain
+    Paul
 
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paulburton@kernel.org to report it. ]
