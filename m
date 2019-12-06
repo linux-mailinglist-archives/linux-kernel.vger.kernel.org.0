@@ -2,78 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A6911534C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 15:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B72A8115341
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 15:37:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfLFOiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 09:38:50 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49562 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726195AbfLFOiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 09:38:50 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 13E2F424AEAD2B2EE89B;
-        Fri,  6 Dec 2019 22:38:42 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 6 Dec 2019 22:38:34 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <tglx@linutronix.de>
-CC:     <chenxiang66@hisilicon.com>, <bigeasy@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, <maz@kernel.org>, <hare@suse.com>,
-        <ming.lei@redhat.com>, <hch@lst.de>, <axboe@kernel.dk>,
-        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity for managed interrupt
-Date:   Fri, 6 Dec 2019 22:35:04 +0800
-Message-ID: <1575642904-58295-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
-References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
+        id S1726284AbfLFOhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 09:37:07 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36885 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbfLFOhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 09:37:06 -0500
+Received: by mail-pl1-f195.google.com with SMTP id bb5so2805261plb.4;
+        Fri, 06 Dec 2019 06:37:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MmAJYe9y7hqJDFUyCzbIg+/OBoZV4/dfN8ALgALbljo=;
+        b=PFDgxgxfa1SQfvN602ZGkhQGP+RUlpRbKFPdeHwt1yx2/1QK8DF9XuSXfmlbmGFH3O
+         qdnjDNdPuTVtV3jDzel/MzOUc0ADPf/EZrQDJVSCc+FlKKP/WO1hJawk+sYjb+tp5mq3
+         fkpyaBZY6P5YQ4/RXNM0BN9xMn63GrqAgPsU5CBo1mUlwVt+pUF1uyQyMQDPe+/seJPo
+         QqE3SwtEf+cZtfGvCVduV/gvw6mE20+J5bTBs1M2BoDfN/RO4vv+OupEtubpY3j7LoYx
+         xziCwRNHPRfT1QxlUOcEOftAzCunpp47VZilf2huVZBnJNvoJBPpRLq808H7MXSuQq1M
+         3iQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MmAJYe9y7hqJDFUyCzbIg+/OBoZV4/dfN8ALgALbljo=;
+        b=fVAeNcPmYHjQGV4JpR4jJW8RVWXZzY/SAkW6CgGU/hRnHbR/rtYM89L/TG5bv/jKjS
+         7qgR8DUPo5ZdWdxSt3KUDyq7/HRrfeFZBspAYVQgtoeE3UlHdNy//Wj8cBNFqXMmyUn7
+         lgBHw30++IU6QaPE3K6m/kWabAFz6rfdjRXljKcBenchw1i2QlTrGHreQGOFzCajCzH2
+         pbEvlL0MsE9SAJTC34i2fzPwXnWzyR6+h96qoz6ebWTtYf+jscDBpCK5Q3EvCDysc1p0
+         HPwWYUwA+jrTxkHNxjaSXR/XQLhVNsbPnRK/LxIvviCD27Lz+h5UdNCxQQrSKa/xH2Lu
+         PB9w==
+X-Gm-Message-State: APjAAAUobGja8EqZTflDleX4zUBW6IKOoi7pfOx+57gYp2PUxv8McRR4
+        GCKzbCwZD54r8XrkvZMCg80=
+X-Google-Smtp-Source: APXvYqxJGdkN7RNKsZLyt14TxInds+wbC8VNpPQfJGJOSwV7v/peQJDCs7D08nXCIJ/B4vPMqxaFrA==
+X-Received: by 2002:a17:90a:a44:: with SMTP id o62mr15799733pjo.80.1575643025840;
+        Fri, 06 Dec 2019 06:37:05 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 186sm16865700pfe.141.2019.12.06.06.37.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 06 Dec 2019 06:37:05 -0800 (PST)
+Date:   Fri, 6 Dec 2019 06:37:03 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Luuk Paulussen <luuk.paulussen@alliedtelesis.co.nz>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: (adt7475) Make volt2reg return same reg as
+ reg2volt input
+Message-ID: <20191206143703.GA2291@roeck-us.net>
+References: <20191205225755.GC2532@roeck-us.net>
+ <20191205231659.1301-1-luuk.paulussen@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205231659.1301-1-luuk.paulussen@alliedtelesis.co.nz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the cpu allowed mask for the threaded part of a threaded irq
-handler will be set to the effective affinity of the hard irq.
+On Fri, Dec 06, 2019 at 12:16:59PM +1300, Luuk Paulussen wrote:
+> reg2volt returns the voltage that matches a given register value.
+> Converting this back the other way with volt2reg didn't return the same
+> register value because it used truncation instead of rounding.
+> 
+> This meant that values read from sysfs could not be written back to sysfs
+> to set back the same register value.
+> 
+> With this change, volt2reg will return the same value for every voltage
+> previously returned by reg2volt (for the set of possible input values)
+> 
+> Signed-off-by: Luuk Paulussen <luuk.paulussen@alliedtelesis.co.nz>
 
-Typically the effective affinity of the hard irq will be for a single cpu. As such,
-the threaded handler would always run on the same cpu as the hard irq.
+Applied.
 
-We have seen scenarios in high data-rate throughput testing that the cpu
-handling the interrupt can be totally saturated handling both the hard
-interrupt and threaded handler parts, limiting throughput.
+Thanks,
+Guenter
 
-For when the interrupt is managed, allow the threaded part to run on all
-cpus in the irq affinity mask.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- kernel/irq/manage.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 1753486b440c..8e7f8e758a88 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -968,7 +968,11 @@ irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *action)
- 	if (cpumask_available(desc->irq_common_data.affinity)) {
- 		const struct cpumask *m;
- 
--		m = irq_data_get_effective_affinity_mask(&desc->irq_data);
-+		if (irqd_affinity_is_managed(&desc->irq_data))
-+			m = desc->irq_common_data.affinity;
-+		else
-+			m = irq_data_get_effective_affinity_mask(
-+					&desc->irq_data);
- 		cpumask_copy(mask, m);
- 	} else {
- 		valid = false;
--- 
-2.17.1
-
+> ---
+>  changes in v2:
+>  - remove unnecessary braces.
+>  drivers/hwmon/adt7475.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+> index 6c64d50c9aae..01c2eeb02aa9 100644
+> --- a/drivers/hwmon/adt7475.c
+> +++ b/drivers/hwmon/adt7475.c
+> @@ -294,9 +294,10 @@ static inline u16 volt2reg(int channel, long volt, u8 bypass_attn)
+>  	long reg;
+>  
+>  	if (bypass_attn & (1 << channel))
+> -		reg = (volt * 1024) / 2250;
+> +		reg = DIV_ROUND_CLOSEST(volt * 1024, 2250);
+>  	else
+> -		reg = (volt * r[1] * 1024) / ((r[0] + r[1]) * 2250);
+> +		reg = DIV_ROUND_CLOSEST(volt * r[1] * 1024,
+> +					(r[0] + r[1]) * 2250);
+>  	return clamp_val(reg, 0, 1023) & (0xff << 2);
+>  }
+>  
