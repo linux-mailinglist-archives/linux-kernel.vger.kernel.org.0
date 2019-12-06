@@ -2,92 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43915115307
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 15:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6F411530E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 15:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLFOV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 09:21:59 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:36648 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfLFOV7 (ORCPT
+        id S1726345AbfLFOYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 09:24:22 -0500
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:39996 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbfLFOYW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 09:21:59 -0500
-Received: by mail-vs1-f67.google.com with SMTP id m5so5133568vsj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 06:21:58 -0800 (PST)
+        Fri, 6 Dec 2019 09:24:22 -0500
+Received: by mail-ua1-f51.google.com with SMTP id p18so2874812uar.7;
+        Fri, 06 Dec 2019 06:24:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LsMPI+jZ4YNhiN6FwdaZWSk9yKIx7sFVc+DM655R9Cw=;
-        b=gf48QX/QAIT+u20WLakoLpcaRiGjYExkN4PMv432iCTmSanP9Dm2958OCgMSnXHqQK
-         L5UuMduZLs7OQpJChpevkxTy06x6HvvlQXbjLg6K3Gvq5o4ykgT9XsUltRwl4sdWyJI+
-         /QDgLSx/wcZGoP1ZnCxS43MDURq1Hva8HULw8bedVV7Tm2MC3HYhmpKWsAWqJtoMYaPQ
-         sW8Ayuxz1Jhn4dPFN6E42/p1TteyCLwZylfKNefEMF+cJ0OUmz8GsuP2kXQwQvyTf6Ta
-         ijypuZuN6lADlZxVr8LaVQFMLpD3kPA8XnV0nfOx+IMaHBIO2phm+Nbs1CfcZnIFF+5X
-         pDnw==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Qhm3+t7GK6/m83rY6QgqOB/4TSxKB24Zwb1q3yg7yOo=;
+        b=FPGyFyS9D1rSA0MGHxen4cLv8K1aEy+AE893sjd4G+mQetsKMLL5opqkK86xRmF0+x
+         dap/1W7PwWScMu3NIrAFFkmJ+jPF50n+73G0hD7vQvKXxw1B27iyMyC+/NHpJbMscN0k
+         WiIznwnveFGN6Q0ZeiOQKMiWJl+V2x0QJd6nM2/e3ln474dKzScWiylg/bDcpg6TnNHS
+         Vbg5MbvkSiHGQV61REYiY2PbjeAgczcXLaYX1RmmJzv49TVkiygp7TX2d2Gxqxv0RbV1
+         22EtUpIPNOINyfkKrM7/8tdTFcG81nkKdVB9BizhanCi7SLPPShHdY99Gg9QadynemJp
+         zwxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LsMPI+jZ4YNhiN6FwdaZWSk9yKIx7sFVc+DM655R9Cw=;
-        b=kcgDXrFKGV58nCR4D4xPUEAiGqojbvxcItmWLNiwxlJf4rwGSsswazeo30TMHlDcUB
-         idyIqy5Ja+6c9w0C/92ejHTa9J00oyX/yOHfdsZjwCas+Xe3V9ZzxTpfwGpE5uFbMVWi
-         FsuEjIoXkIj6LWet3QgXVk9M0p4lzGqcxax3kl3zO0GBa/7rNr/Z8+eLX8Q3OlfhGKHr
-         hKc8ziFtornE6BVQUTOVfQfINaqFlSrxcfmj7CMRWWHpP1Q1fqrkn/3RCXHaYxyhloCR
-         IdoGJ44JVgYT6vTYd964io1cVtRKrXgvmB+DE+h+S8GvIpgESGq4GNSr6CzYof/q+JUt
-         vEKw==
-X-Gm-Message-State: APjAAAWZ4uD12PtTqcsNl9mm2hatXCR66CjTgsMROz8NAfnNsswmn13J
-        a7G+JaM/JsUxRsQ/+AkxVHiWGsO5
-X-Google-Smtp-Source: APXvYqwd89uBZUqBQJ53al03cU7aKrtCI/bYrmqL+8jtlBqZxtc59zUoeRTf3fKD7Fk4uPgE8kOkdg==
-X-Received: by 2002:a67:f496:: with SMTP id o22mr9687201vsn.9.1575642118159;
-        Fri, 06 Dec 2019 06:21:58 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Qhm3+t7GK6/m83rY6QgqOB/4TSxKB24Zwb1q3yg7yOo=;
+        b=EV+BI5NV6Kq2yTmMRJAHnq/fx2R9Qz+11srYaRCWyZh8yucINOnNW5XIDu8rjqmApg
+         yYsDOMQcEjQrIRNHIN5KthQnmEbUJTrbEzV7Vt7ihm5ePvy/acD+3rfTzeMh0TRZdIEz
+         ozFKBficImFaOeglOnXQr+6dZrxlhPFT3tE81ObEonMP0KaTYpSCi50WEjBbcX8iYjzw
+         SqqO75BLEnTjPnYCS+sIce6NqsQJZeQunD0c5YJHI3PRMEJdMxCKeG6tqsaxUu1u6Ey5
+         4GZXX2yHq6TeySkGyDY0KI0VbLWBkPAfmF+5vSnIzwiXcemyQ0rnTXLfR/1wOBBKQKHx
+         2bEg==
+X-Gm-Message-State: APjAAAWz1VJYQUMKnYdUZM0pDql9lGGl03id2wNfzGAjATjf2uF6qhdS
+        ljIbTCtmohE8lfDN9+FD7lc=
+X-Google-Smtp-Source: APXvYqwlyfqXgSIlHKyZ4N54x16QtF4n7CIGpLbVbluGqvGMDyVPxiEYX4fBerm0pdPGKL9Bqy61lg==
+X-Received: by 2002:ab0:7007:: with SMTP id k7mr12605664ual.14.1575642260748;
+        Fri, 06 Dec 2019 06:24:20 -0800 (PST)
 Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id q18sm1469192vsp.19.2019.12.06.06.21.56
+        by smtp.gmail.com with ESMTPSA id r199sm1140427vke.41.2019.12.06.06.24.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2019 06:21:57 -0800 (PST)
+        Fri, 06 Dec 2019 06:24:20 -0800 (PST)
 From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D19C240352; Fri,  6 Dec 2019 11:21:54 -0300 (-03)
-Date:   Fri, 6 Dec 2019 11:21:54 -0300
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        id D230940352; Fri,  6 Dec 2019 11:24:17 -0300 (-03)
+Date:   Fri, 6 Dec 2019 11:24:17 -0300
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 0/3] perf/libperf move
-Message-ID: <20191206142154.GA30698@kernel.org>
-References: <20191206135513.31586-1-jolsa@kernel.org>
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 0/6] perf/urgent fixes
+Message-ID: <20191206142417.GB30698@kernel.org>
+References: <20191205193224.24629-1-acme@kernel.org>
+ <20191206075701.GA25384@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191206135513.31586-1-jolsa@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191206075701.GA25384@gmail.com>
 X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Dec 06, 2019 at 02:55:10PM +0100, Jiri Olsa escreveu:
-> NOTE 'make perf-targz-src-pkg' works nicely with this change,
-> but is currently failing because of recent bpf changes, I have
-> a fix for that and will send it shortly
+Em Fri, Dec 06, 2019 at 08:57:01AM +0100, Ingo Molnar escreveu:
+> Pulled, thanks a lot Arnaldo!
+ 
+> JFYI, on my system the default perf/urgent build still has this noise 
+> generated by util/parse-events.y and util/expr.y:
+ 
+>   util/parse-events.y:1.1-12: warning: deprecated directive, use ‘%define api.pure’ [-Wdeprecated]
+>       1 | %pure-parser
+>       | ^~~~~~~~~~~~
+>   util/parse-events.y: warning: fix-its can be applied.  Rerun with option '--update'. [-Wother]
+>   util/expr.y:15.1-12: warning: deprecated directive, use ‘%define api.pure’ [-Wdeprecated]
+>      15 | %pure-parser
+>       | ^~~~~~~~~~~~
+>   util/expr.y: warning: fix-its can be applied.  Rerun with option '--update'. [-Wother]
 
-By any means it is one of:
-
-"libbpf: Fix up generation of bpf_helper_defs.h"
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=1fd450f99272
-
-And:
-
-"libbpf: Fix sym->st_value print on 32-bit arches"
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=7c3977d1e804
-
-?
-
-I've been cherry-picking this to have my build-test and container builds
-for some time waiting for those to get upstream.
+I'll get to this, I've been postponing dealing with this nuisance as,
+IIRC, this will make perf not build in systems with older bisons.
 
 - Arnaldo
+
