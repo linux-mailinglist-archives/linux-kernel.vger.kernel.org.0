@@ -2,89 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A77114F92
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72874114F9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 12:09:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbfLFLES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 06:04:18 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:34974 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfLFLES (ORCPT
+        id S1726330AbfLFLJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 06:09:24 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33142 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfLFLJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:04:18 -0500
-Received: by mail-il1-f194.google.com with SMTP id g12so5922274ild.2;
-        Fri, 06 Dec 2019 03:04:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+K2i2NBMzFxBPENxFOj55e/4N2mWKkV/KyZn4aZDJ/E=;
-        b=J+lO5rdeGz/uq0GRKk7Vlr5+fkJbi9Q/1L1Gwh+GLdHU53JmXXqwGZSMXm4oTnW/pJ
-         xFdXk3URIBtlYttPmbi80Mq2JLb2ijEE/qFoMXLoZlwOeNlLDSfkVCFL3UUPA3BikOgv
-         oWM8lcunhgf4MF6NvE7wr1iJBsgDKzvIj3chFPjOlSB143YYRduKSiACDtZ4Svc5+T72
-         A4svWQQNE8vdhl7W6uOVrUWI6gKNE050XWF7CwV66vQCdRScdvKt7A9qfH9P9LrTbj0B
-         DDgMm14YybtG8sEkxlQnl1SIK0Fm7uSmviAK9gKti8JayhDQsXq9pmj2CKEKEYoPmZIU
-         VD1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+K2i2NBMzFxBPENxFOj55e/4N2mWKkV/KyZn4aZDJ/E=;
-        b=LylePvITvvCyTax2LjGOM7QrjgnW1Yi3uNsWVesRsl6huPyT+Tj6+XcdsQERqrJ5LZ
-         7UX5sGvGFH/p+hWd3zdT/4OGkwk11b2j0PiSfqCs0JCYIiM1HVXamtYcM5q41eKLYEoF
-         NkDqLPa7CThSZsfSpT2l3TzIbzjgARzOzcIg0quZbgrFHfGmu3azHTakiRmE6VzT8s7X
-         mAmVvXbnyub3eVGQ4JOoQs7w/3zXQBE7b/OldxOig7W8Zsr3LesbJF3C8jhJk+mjuOku
-         XZH+D+qifX597LkeOYL87Rs7x2fCDVbI8ddPLZsgLB3SL0YYXNSBfSpvDkSnQyRwcm6t
-         9gaw==
-X-Gm-Message-State: APjAAAVe+UxrnEyzIk3vrHPp1sQisyRsLenhitb4Frx0iLJC1HWzZoNF
-        SLm0Iy/HdGd7Oc9nAyuwgnMus42dIfqTMBl8S0w=
-X-Google-Smtp-Source: APXvYqya8X01NYggP7t3CVoWZjUKlt/yGkpN4d2gA6d/51cmQjMCHZUZmiorAjcnVj4Xoyt4OswyArH2DattCHmByvo=
-X-Received: by 2002:a92:b749:: with SMTP id c9mr13076534ilm.143.1575630257440;
- Fri, 06 Dec 2019 03:04:17 -0800 (PST)
+        Fri, 6 Dec 2019 06:09:24 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB6B7KYf043909;
+        Fri, 6 Dec 2019 05:07:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1575630440;
+        bh=43MIP2YvtyQu/1M9KI8G6euH8OqvsdbRq2rXQEnRmok=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=knuVRvKuQDjE3s9nYvvgOMREZYWNbUjRSPfExtHOZpisBBmwmOOjcszBBjQha9AYG
+         FTTUIdRMF62rKvJrz3+v75vQq4Guic5BUFeAr8NKaZ7xAI0svA86A0RZIFwfiDaVKz
+         7oLuXgy1uPsbhweAGJfuz6VO2arceAbez1W0T5gc=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB6B7KKp094692
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Dec 2019 05:07:20 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Dec
+ 2019 05:07:20 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Dec 2019 05:07:20 -0600
+Received: from [10.250.100.73] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB6B7HjZ112203;
+        Fri, 6 Dec 2019 05:07:18 -0600
+Subject: Re: [PATCH 2/2] arm: omap2plus_defconfig: enable NET_SWITCHDEV
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Randy Dunlap <rdunlap@infradead.org>, <netdev@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20191204174533.32207-1-grygorii.strashko@ti.com>
+ <20191204174533.32207-3-grygorii.strashko@ti.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <c8058866-2be9-831c-19f6-31d17decb6f1@ti.com>
+Date:   Fri, 6 Dec 2019 13:07:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191204200307.21047-1-idryomov@gmail.com> <CAHk-=wjm+9rJvh=aRahfoN7z6waV87Eqr=-i_Cb7zOwHrugf5A@mail.gmail.com>
-In-Reply-To: <CAHk-=wjm+9rJvh=aRahfoN7z6waV87Eqr=-i_Cb7zOwHrugf5A@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 6 Dec 2019 12:05:01 +0100
-Message-ID: <CAOi1vP_biwOVuG9U4nemfH803O_ADHGgjmd0_6eL-ZJhyrkOYA@mail.gmail.com>
-Subject: Re: [GIT PULL] Ceph updates for 5.5-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191204174533.32207-3-grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 10:19 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, Dec 4, 2019 at 12:02 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> >
-> > Colin Ian King (1):
-> >       rbd: fix spelling mistake "requeueing" -> "requeuing"
->
-> Hmm. Why? That's not a spelling mistake, it's the same word.
->
-> Arguably "requeue" isn't much of a real word to begin with, and is
-> more of a made-up tech language. And then on wiktionary apparently the
-> only "ing" form you find is the one without the final "e", but
-> honestly, that's reaching. The word doesn't exist in _real_
-> dictionaries at all.
->
-> I suspect "re-queueing" with the explicit hyphen would be the more
-> legible spelling (with or without the "e" - both forms are as
-> correct), but whatever.
->
-> I've pulled it, but I really don't think it was misspelled to begin
-> with, and somebody who actually cares about language probably wouldn't
-> like either form.
+Hi Tony,
 
-FWIW that was my spelling.  I suspected the same thing, saw it being
-used in various spellings, but since Colin is a native speaker I took
-the patch.
+On 04/12/2019 19:45, Grygorii Strashko wrote:
+> The TI_CPSW_SWITCHDEV definition in Kconfig was changed from "select
+> NET_SWITCHDEV" to "depends on NET_SWITCHDEV", and therefore it is required
+> to explicitelly enable NET_SWITCHDEV config option in omap2plus_defconfig.
+> 
+> Fixes: 3727d259ddaf ("arm: omap2plus_defconfig: enable new cpsw switchdev driver")
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+>   arch/arm/configs/omap2plus_defconfig | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+> index 89cce8d4bc6b..7bbef86a4e76 100644
+> --- a/arch/arm/configs/omap2plus_defconfig
+> +++ b/arch/arm/configs/omap2plus_defconfig
+> @@ -92,6 +92,7 @@ CONFIG_IP_PNP_BOOTP=y
+>   CONFIG_IP_PNP_RARP=y
+>   CONFIG_NETFILTER=y
+>   CONFIG_PHONET=m
+> +CONFIG_NET_SWITCHDEV=y
+>   CONFIG_CAN=m
+>   CONFIG_CAN_C_CAN=m
+>   CONFIG_CAN_C_CAN_PLATFORM=m
+> @@ -182,6 +183,7 @@ CONFIG_SMSC911X=y
+>   # CONFIG_NET_VENDOR_STMICRO is not set
+>   CONFIG_TI_DAVINCI_EMAC=y
+>   CONFIG_TI_CPSW=y
+> +CONFIG_TI_CPSW_SWITCHDEV=y
+>   CONFIG_TI_CPTS=y
+>   # CONFIG_NET_VENDOR_VIA is not set
+>   # CONFIG_NET_VENDOR_WIZNET is not set
+> @@ -554,4 +556,3 @@ CONFIG_DEBUG_INFO_DWARF4=y
+>   CONFIG_MAGIC_SYSRQ=y
+>   CONFIG_SCHEDSTATS=y
+>   # CONFIG_DEBUG_BUGVERBOSE is not set
+> -CONFIG_TI_CPSW_SWITCHDEV=y
+> 
 
-Thanks,
+Could it be applied as fix, as without it cpsw switch driver will not be built,
+so no networking on am571x-idk
 
-                Ilya
+-- 
+Best regards,
+grygorii
