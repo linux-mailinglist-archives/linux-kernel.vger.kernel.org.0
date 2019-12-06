@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D570114D1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 09:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5632114D15
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 09:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfLFIED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 03:04:03 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60500 "EHLO
+        id S1726799AbfLFIDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 03:03:52 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60505 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfLFIDr (ORCPT
+        with ESMTP id S1726509AbfLFIDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 03:03:47 -0500
+        Fri, 6 Dec 2019 03:03:48 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1id8aN-00053F-E9; Fri, 06 Dec 2019 09:03:35 +0100
+        id 1id8aN-00053M-Q9; Fri, 06 Dec 2019 09:03:35 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 14AE11C2785;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 3EE0C1C2786;
         Fri,  6 Dec 2019 09:03:35 +0100 (CET)
-Date:   Fri, 06 Dec 2019 08:03:34 -0000
+Date:   Fri, 06 Dec 2019 08:03:35 -0000
 From:   "tip-bot2 for Ravi Bangoria" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf report: Bail out --mem-mode if mem info is
- not available
+Subject: [tip: perf/urgent] perf report: Make -F more strict like -s
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Jin Yao <yao.jin@linux.intel.com>,
         Kan Liang <kan.liang@linux.intel.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191114132213.5419-4-ravi.bangoria@linux.ibm.com>
-References: <20191114132213.5419-4-ravi.bangoria@linux.ibm.com>
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191114132213.5419-3-ravi.bangoria@linux.ibm.com>
+References: <20191114132213.5419-3-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <157561941498.21853.1471285577751914913.tip-bot2@tip-bot2>
+Message-ID: <157561941516.21853.8956813920047526893.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,65 +55,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     bb30acae4c4dacfa2622387c5ad5563246810583
-Gitweb:        https://git.kernel.org/tip/bb30acae4c4dacfa2622387c5ad5563246810583
+Commit-ID:     aa6b3c99236b49a3e842d7272efa2529f15f7d8a
+Gitweb:        https://git.kernel.org/tip/aa6b3c99236b49a3e842d7272efa2529f15f7d8a
 Author:        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-AuthorDate:    Thu, 14 Nov 2019 18:52:13 +05:30
+AuthorDate:    Thu, 14 Nov 2019 18:52:12 +05:30
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Wed, 04 Dec 2019 12:34:02 -03:00
+CommitterDate: Wed, 04 Dec 2019 12:32:40 -03:00
 
-perf report: Bail out --mem-mode if mem info is not available
+perf report: Make -F more strict like -s
 
-If perf.data is recorded without -d, don't allow user to use --mem-mode
-with 'perf report'. symbol_daddr and phys_daddr can be recorded
-separately and may be present in the perf.data but at the report time
-they are associated with mem-mode fields and thus this restriction
-applies to them as well.
-
-Before:
-  $ perf record ls
-  $ perf report --mem-mode --stdio
-  # Overhead  Local Weight  Memory access  Symbol
-  # ........  ............  .............  .......................
-      55.56%  0             N/A            [k] 0xffffffff81a00ae7
-
-After:
-  $ perf report --mem-mode --stdio
-  Error:
-  Selected --mem-mode but no mem data. Did you call perf record without -d?
+Currently -F allows branch-mode / mem-mode fields with -F even
+when perf report is not running in that mode. Don't allow that.
 
 Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/20191114132213.5419-4-ravi.bangoria@linux.ibm.com
+Link: http://lore.kernel.org/lkml/20191114132213.5419-3-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-report.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/perf/util/sort.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 830d563..387311c 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -388,6 +388,14 @@ static int report__setup_sample_type(struct report *rep)
- 		}
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 106d795..9fcba28 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -2959,6 +2959,9 @@ int output_field_add(struct perf_hpp_list *list, char *tok)
+ 		if (strncasecmp(tok, sd->name, strlen(tok)))
+ 			continue;
+ 
++		if (sort__mode != SORT_MODE__MEMORY)
++			return -EINVAL;
++
+ 		return __sort_dimension__add_output(list, sd);
  	}
  
-+	if (sort__mode == SORT_MODE__MEMORY) {
-+		if (!is_pipe && !(sample_type & PERF_SAMPLE_DATA_SRC)) {
-+			ui__error("Selected --mem-mode but no mem data. "
-+				  "Did you call perf record without -d?\n");
-+			return -1;
-+		}
-+	}
+@@ -2968,6 +2971,9 @@ int output_field_add(struct perf_hpp_list *list, char *tok)
+ 		if (strncasecmp(tok, sd->name, strlen(tok)))
+ 			continue;
+ 
++		if (sort__mode != SORT_MODE__BRANCH)
++			return -EINVAL;
 +
- 	if (symbol_conf.use_callchain || symbol_conf.cumulate_callchain) {
- 		if ((sample_type & PERF_SAMPLE_REGS_USER) &&
- 		    (sample_type & PERF_SAMPLE_STACK_USER)) {
+ 		return __sort_dimension__add_output(list, sd);
+ 	}
+ 
