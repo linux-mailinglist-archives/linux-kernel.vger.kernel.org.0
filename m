@@ -2,96 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D48115551
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2416B1154E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:15:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfLFQ3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:29:34 -0500
-Received: from mail-40138.protonmail.ch ([185.70.40.138]:11488 "EHLO
-        mail-40138.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfLFQ3e (ORCPT
+        id S1726336AbfLFQPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:15:37 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58981 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726271AbfLFQPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:29:34 -0500
-X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Dec 2019 11:29:33 EST
-Date:   Fri, 06 Dec 2019 16:13:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1575648792;
-        bh=z5ckHnM1JT0bjLvn3hu4ZpaORLMeQ8ST4azSjqKt/OI=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=LBJvUu/rQZkFQkYxEnV1DHmyjivJCcrljuT6+EmK6y1juedk/dCQonL5Z22l5fmRh
-         5GgA7lg5FL7hpb+KuTpYPzxna6usQ0kC1uruq2SLXjQuLRezWJ7WkpBWU5W+CyCF5E
-         MN6S0Ndur6pvnTwJ3yKsFbWEPr1hGRWDOAvGOQFI=
-To:     Peter Zijlstra <peterz@infradead.org>
-From:   Krzysztof Piecuch <piecuch@protonmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        "malat@debian.org" <malat@debian.org>,
-        "juri.lelli@redhat.com" <juri.lelli@redhat.com>
-Reply-To: Krzysztof Piecuch <piecuch@protonmail.com>
-Subject: Re: [PATCH] x86/tsc: Don't use cpuid 0x16 leaf to determine cpu speed.
-Message-ID: <s2tCh5akte6KmZimjnjJ0dn_zhWfLr_DEXJ6je2DFCUwZwrF9wqS4kPcJ-j1LOtP8rmkjR6oMg58anmztMJMd0e1Dfe8CvtTZudBXRT4gik=@protonmail.com>
-In-Reply-To: <20191206103942.GE2844@hirez.programming.kicks-ass.net>
-References: <SoluZg51N39Rx0tDCSJFbEvvgMrDnJ_g0RdRdN5mtCfag4GahIOPfok7UbkyeO5Qpl3wUHp8H8y73JtClcZvr1ARSIOBIFQAne0Z712el8M=@protonmail.com>
- <20191206103942.GE2844@hirez.programming.kicks-ass.net>
-Feedback-ID: krphKiiPlx_XKIryTSpdJ_XtBwogkHXWA-Us-PsTeaBSrzOTAKWxwbFkseT4Z85b_7PMRvSnq3Ah7f9INXrOMw==:Ext:ProtonMail
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+        Fri, 6 Dec 2019 11:15:37 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=rocking@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Tk8WAei_1575648901;
+Received: from localhost(mailfrom:rocking@linux.alibaba.com fp:SMTPD_---0Tk8WAei_1575648901)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 07 Dec 2019 00:15:35 +0800
+From:   Peng Wang <rocking@linux.alibaba.com>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de
+Cc:     linux-kernel@vger.kernel.org, Peng Wang <rocking@linux.alibaba.com>
+Subject: [PATCH] schied/fair: Skip updating "contrib" without load
+Date:   Sat,  7 Dec 2019 00:14:22 +0800
+Message-Id: <1575648862-12095-1-git-send-email-rocking@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for your reply.
+We only update load_sum/runnable_load_sum/util_sum with
+decayed old sum when load is clear.
 
-I experience 2% tsc clock-drift (671s ahead of my local NTP server after 9.=
-5h)
-on my machine with Supermicro's Hyperspeed turned on. There's no clock
-drift when I turn Hyperspeed off.
+Signed-off-by: Peng Wang <rocking@linux.alibaba.com>
+---
+ kernel/sched/pelt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-As far as I know Hyperspeed increases base clock frequency[1].
-
-That's what CPUID says about my overclocked Intel Xeon Gold 6146:
-
-   Time Stamp Counter/Core Crystal Clock Information (0x15):
-      TSC/clock ratio =3D 256/2
-      nominal core crystal clock =3D 0 Hz
-   Processor Frequency Information (0x16):
-      Core Base Frequency (MHz) =3D 0xc80 (3200)
-      Core Maximum Frequency (MHz) =3D 0x1068 (4200)
-      Bus (Reference) Frequency (MHz) =3D 0x64 (100)
-
-tsc_refine_calibration_work never corrects the early calibration
-because it calculates a tsc frequency beyond 1% tolerance.
-
-I've bumped the tsc_refine_calibration_work's tolerance to 3% and made it w=
-ork:
-
-Hyperspeed:
-[    8.571471] tsc: Refined TSC clocksource calibration: 3264.012 MHz
-No hyperspeed:
-[    8.506009] tsc: Refined TSC clocksource calibration: 3200.013 MHz
-
-Increasing the tolerance to 3% would work in my case but apparently some
-servers can increase the base-clock frequency to 6%. [2]
-At this point in order to completely eliminate this bug we would need to
-significantly increase the tolerance which might introduce other bugs.
-
-[1]: https://www.supermicro.com/support/faqs/faq.cfm?faq=3D21337
-[2]: https://www.servethehome.com/supermicro-hyper-speed-server-overclockin=
-g-bios/
-
-Kind regards,
-Krzysztof Piecuch
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index a96db50..4392953 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -129,8 +129,9 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
+ 		 * Step 2
+ 		 */
+ 		delta %= 1024;
+-		contrib = __accumulate_pelt_segments(periods,
+-				1024 - sa->period_contrib, delta);
++		if (load)
++			contrib = __accumulate_pelt_segments(periods,
++					1024 - sa->period_contrib, delta);
+ 	}
+ 	sa->period_contrib = delta;
+ 
+-- 
+1.8.3.1
 
