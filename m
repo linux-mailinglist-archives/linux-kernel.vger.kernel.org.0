@@ -2,71 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15037114CCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 08:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D8C114CAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 08:38:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfLFHmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 02:42:13 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39456 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725858AbfLFHmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 02:42:13 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6B7BB24DAD939D5DA602;
-        Fri,  6 Dec 2019 15:42:11 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 6 Dec 2019 15:42:02 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>
-CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huawei.libin@huawei.com>, <wangxiongfeng2@huawei.com>
-Subject: [PATCH v2] tty: omap-serial: remove set but unused variable
-Date:   Fri, 6 Dec 2019 15:37:43 +0800
-Message-ID: <1575617863-32484-1-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1726490AbfLFHiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 02:38:23 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46781 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfLFHiX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 02:38:23 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1id8Bx-0001yw-23; Fri, 06 Dec 2019 08:38:21 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1id8Bw-0007V9-1B; Fri, 06 Dec 2019 08:38:20 +0100
+Date:   Fri, 6 Dec 2019 08:38:20 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Biwen Li <biwen.li@nxp.com>, shawnguo@kernel.org,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        wsa@the-dreams.de, leoyang.li@nxp.com, aisheng.dong@nxp.com,
+        xiaoning.wang@nxp.com, xiaobo.xie@nxp.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        jiafei.pan@nxp.com, linux-arm-kernel@lists.infradead.org,
+        laurentiu.tudor@nxp.com
+Subject: Re: [v6] i2c: imx: support slave mode for imx I2C driver
+Message-ID: <20191206073819.lntjjxpcjm5yrb7y@pengutronix.de>
+References: <20191203114809.21226-1-biwen.li@nxp.com>
+ <20191204100005.r56huywxa7h3c6zr@pengutronix.de>
+ <9a1a00c1-e9fa-36a1-0e79-3492d9b98d9f@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a1a00c1-e9fa-36a1-0e79-3492d9b98d9f@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:32:55 up 151 days, 13:43, 140 users,  load average: 0.05, 0.13,
+ 0.13
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following warning:
-drivers/tty/serial/omap-serial.c: In function serial_omap_rlsi:
-drivers/tty/serial/omap-serial.c:496:16: warning: variable ch set but not used [-Wunused-but-set-variable]
+On Thu, Dec 05, 2019 at 12:43:46PM +0100, Oleksij Rempel wrote:
+> Hi,
+> 
+> On 04.12.19 11:00, Sascha Hauer wrote:
+> > Hi,
+> > 
+> > The patch looks ok to me now, but I still do not like the #ifdeffery
+> > around CONFIG_I2C_SLAVE. With the patch I just sent (You are on Cc:)
+> > we could apply the following on your patch which makes it more readable
+> > and increases compile coverage.
+> > 
+> > Wolfram, Biwen, what do you think?
+> 
+> 
+> RCAR depends on slave:
+> config I2C_RCAR
+> 
+>         tristate "Renesas R-Car I2C Controller"
+> 
+>         depends on ARCH_RENESAS || COMPILE_TEST
+> 
+>         select I2C_SLAVE
+> see:
+> drivers/i2c/busses/i2c-rcar.c
+> 
+> So, I would suggest to do the same in imx.
 
-The character read is useless according to the table 23-246 of the omap4
-TRM. So we can drop it.
+I suggested that to v1 of this patch. If we agree though that I2C slave
+support deserves an extra Kconfig option we should also make the drivers
+cope with that situation. Otherwise we would better make I2C slave
+support non optional.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
----
- drivers/tty/serial/omap-serial.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Sascha
 
-diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
-index 6420ae5..5f808d8 100644
---- a/drivers/tty/serial/omap-serial.c
-+++ b/drivers/tty/serial/omap-serial.c
-@@ -493,10 +493,13 @@ static unsigned int check_modem_status(struct uart_omap_port *up)
- static void serial_omap_rlsi(struct uart_omap_port *up, unsigned int lsr)
- {
- 	unsigned int flag;
--	unsigned char ch = 0;
- 
-+	/*
-+	 * Read one data character out to avoid stalling the receiver according
-+	 * to the table 23-246 of the omap4 TRM.
-+	 */
- 	if (likely(lsr & UART_LSR_DR))
--		ch = serial_in(up, UART_RX);
-+		serial_in(up, UART_RX);
- 
- 	up->port.icount.rx++;
- 	flag = TTY_NORMAL;
 -- 
-1.7.12.4
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
