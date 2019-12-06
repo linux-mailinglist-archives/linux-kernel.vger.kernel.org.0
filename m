@@ -2,155 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2144311579B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 20:15:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8229C11579F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 20:16:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfLFTPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 14:15:48 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43727 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbfLFTPs (ORCPT
+        id S1726491AbfLFTQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 14:16:51 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37394 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfLFTQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 14:15:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id h14so3799176pfe.10
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 11:15:47 -0800 (PST)
+        Fri, 6 Dec 2019 14:16:51 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b15so6076419lfc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 11:16:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dWXpOimTwenaVBdKiG9dZ3FcmpYa3OZhkX/d4LqtYMY=;
-        b=R4THKPT9e2z0+N0yWZKPw/8yGeOLtcWd8zEIwU/WVcengfgiuqzJ7MVVnq2qw+Brji
-         +oo22CBINwDdoHamQKCVERZo0y5sc6U8L4nWLEzWFokuaSiy4I0u2RcbAg/twolkUK6m
-         +m4dB9uDgCh4IqOxVSOH+FHWpQQu6YwlwB+cg=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dp6TtsDVMwDLXVNf7z26o9XIaBeojD6ZI0FYrgN+jxw=;
+        b=iP/LrjVMleDaUJuXaUiNHfkocDJ+QBeAdqfEUhPU+zL8YR3HhO5xKQTteOaptagCby
+         4JT64mVbmW9G6XScfGCKDnVfbX1uYpgrUiMjou2dA9VpJ+z/yCj7jafk2C3g2wUjptE5
+         9tG9mdoGs2Tt9k7WwtEd68QJq7G3aLTs5ahc8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dWXpOimTwenaVBdKiG9dZ3FcmpYa3OZhkX/d4LqtYMY=;
-        b=HwJnOCc+SvidvmD3G5N+BPTlgUBlTRMXiAwyM6XXfqKzWsyMAhSsDaXThmY2D2bXh5
-         YdlaV5B+IfFjBLSKE9atKn4JbeixUS7vU/Xun9vzC4YPqkYcsRXq+fa32sFeUxqWKHJF
-         N0p5keT66F3mwtAP133ZYTchBtXXKI5TuBxKPNeJz2MtECHm15bg136+ZnsGgmJfORCH
-         /dsWFGdfoztriq2nNixWmDu75x1w1qK3BeCDYnwlVAzbLloYPETf8Ws9hBBC/WV4nDPe
-         jfACxkN2tTGpAcinpyy3D6GbfvzgDBTilVsC388CW+S9zGDio7TmFQTHjRI7o68n+SLJ
-         jd0Q==
-X-Gm-Message-State: APjAAAV3f2HbRg7GY8lFhD21Sw91VQHKHBV5UEJ6hh+vle2LQmYaW9O2
-        aYIbKJLHpBZuNQxiJPxr3KLMk4lWR2E2uA==
-X-Google-Smtp-Source: APXvYqzIZtCOzPKJBrdfjSYj8H80B6OJE2Mxs7uyZAYFiCkW3Mzbwoiv6KnRBgy2hbm7XIvX1a7Z6g==
-X-Received: by 2002:a63:cf41:: with SMTP id b1mr5207454pgj.53.1575659747397;
-        Fri, 06 Dec 2019 11:15:47 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id u1sm16718126pfn.133.2019.12.06.11.15.46
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dp6TtsDVMwDLXVNf7z26o9XIaBeojD6ZI0FYrgN+jxw=;
+        b=DXEvauyRaFAXzSzWQcMAKXkQMSRNzz/EzjRh4Whoa1abX/knMfziV2nW9Q1/WwS9Yp
+         vPYM9DKlEeEuj0n3/OqTw4dktl9W67qwFWMvb7h9/AlxlM2hdOQsOH7mo+E57H8m8LWC
+         UTSQ9wP4lXwOz7rJLkQsYLuCpMEFR+J/uXXfmVB7XqIDOIWjIVc5svW1VJ1J6Y4v3Teh
+         u5LUJc9UOPOnP6ViGkIoebVbSVji89oOr4bAWPmxO9OPLWOwakrdod2XhrbXHmcjGULU
+         iut6n5qS8jMnzxTysyJHSww1RCRIG7JzFI8O1UFiY7wdFq8NDai4eKVxYDHnBUIXu3Ot
+         pGng==
+X-Gm-Message-State: APjAAAXQ+6LW2KNIKGgQWmlgdR1lbtWwjUtsiEj5fwMM116aUZjpQx+J
+        NnIwv/NuFQqtj0CIgaRLbyJh+iiprKw=
+X-Google-Smtp-Source: APXvYqwIrQP95wfnRpUaBSQ1js3MSss6YGiQIeuFWXrh1c7x4fBsJIgSzjSHzG0u9zd8GWWUnB0u+w==
+X-Received: by 2002:ac2:4476:: with SMTP id y22mr9146713lfl.169.1575659808846;
+        Fri, 06 Dec 2019 11:16:48 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id v21sm3061155lfi.7.2019.12.06.11.16.47
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 11:15:46 -0800 (PST)
-Date:   Fri, 6 Dec 2019 11:15:45 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Wei Wang <wvw@google.com>
-Cc:     wei.vince.wang@gmail.com, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH v3 3/3] thermal: create softlink by name for thermal_zone
- and cooling_device
-Message-ID: <20191206191545.GO228856@google.com>
-References: <20191205071953.121511-1-wvw@google.com>
- <20191205071953.121511-4-wvw@google.com>
+        Fri, 06 Dec 2019 11:16:47 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id l18so6099492lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 11:16:47 -0800 (PST)
+X-Received: by 2002:ac2:4945:: with SMTP id o5mr8789546lfi.93.1575659806793;
+ Fri, 06 Dec 2019 11:16:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191205071953.121511-4-wvw@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191118154435.20357-1-sibis@codeaurora.org> <0101016e7f30ad15-18908ef0-a2b9-4a2a-bf32-6cb3aa447b01-000000@us-west-2.amazonses.com>
+ <CAE=gft5jGagsFS2yBeJCLt9R26RQjx9bfMxhQu8Jj4uc4ca40w@mail.gmail.com>
+ <0101016e83897442-ecc4c00f-c0d1-4c2c-92ed-ce78e65c0935-000000@us-west-2.amazonses.com>
+ <0101016eac068d05-761f0d60-b1ef-400f-bf84-3164c2a26d2e-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016eac068d05-761f0d60-b1ef-400f-bf84-3164c2a26d2e-000000@us-west-2.amazonses.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 6 Dec 2019 11:16:10 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5cS54qn0JjxO58xL6sFyQk4t=8ofLFWPUSVQ9sdU4XpQ@mail.gmail.com>
+Message-ID: <CAE=gft5cS54qn0JjxO58xL6sFyQk4t=8ofLFWPUSVQ9sdU4XpQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add OSM L3 interconnect
+ provider support
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 11:19:53PM -0800, Wei Wang wrote:
-> The paths thermal_zone%d and cooling_device%d are not intuitive and the
-> numbers are subject to change due to device tree change. This usually
-> leads to tree traversal in userspace code.
-> The patch creates `tz-by-name' and `cdev-by-name' for thermal zone and
-> cooling_device respectively.
+On Wed, Nov 27, 2019 at 12:42 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> Hey Evan/Georgi,
+>
+> https://git.linaro.org/people/georgi.djakov/linux.git/commit/?h=icc-dev&id=9197da7d06e88666d1588e3c21a743e60381264d
+>
+> With the "Redefine interconnect provider
+> DT nodes for SDM845" series, wouldn't it
+> make more sense to define the OSM_L3 icc
+> nodes in the sdm845.c icc driver and have
+> the common helpers in osm_l3 driver? Though
+> we don't plan on linking the OSM L3 nodes
+> to the other nodes on SDM845/SC7180, we
+> might have GPU needing to be linked to the
+> OSM L3 nodes on future SoCs. Let me know
+> how you want this done.
+>
+> Anyway I'll re-spin the series once the
+> SDM845 icc re-work gets re-posted.
 
-This is useful, especially for systems with plenty of thermal zones :)
-
-> Signed-off-by: Wei Wang <wvw@google.com>
-> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/thermal/thermal_core.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 9db7f72e70f8..7872bd527f3f 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -22,6 +22,7 @@
->  #include <net/netlink.h>
->  #include <net/genetlink.h>
->  #include <linux/suspend.h>
-> +#include <linux/kobject.h>
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/thermal.h>
-> @@ -46,6 +47,8 @@ static DEFINE_MUTEX(poweroff_lock);
->  
->  static atomic_t in_suspend;
->  static bool power_off_triggered;
-> +static struct kobject *cdev_link_kobj;
-> +static struct kobject *tz_link_kobj;
->  
->  static struct thermal_governor *def_governor;
->  
-> @@ -999,9 +1002,15 @@ __thermal_cooling_device_register(struct device_node *np,
->  		return ERR_PTR(result);
->  	}
->  
-> -	/* Add 'this' new cdev to the global cdev list */
-> +	/* Add 'this' new cdev to the global cdev list and create link*/
->  	mutex_lock(&thermal_list_lock);
->  	list_add(&cdev->node, &thermal_cdev_list);
-> +	if (!cdev_link_kobj)
-> +		cdev_link_kobj = kobject_create_and_add("cdev-by-name",
-> +						cdev->device.kobj.parent);
-> +	if (!cdev_link_kobj || sysfs_create_link(cdev_link_kobj,
-> +						&cdev->device.kobj, cdev->type))
-> +		dev_err(&cdev->device, "Failed to create cdev-by-name link\n");
->  	mutex_unlock(&thermal_list_lock);
->  
->  	/* Update binding information for 'this' new cdev */
-> @@ -1167,6 +1176,8 @@ void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
->  			}
->  		}
->  	}
-> +	if (cdev_link_kobj)
-> +		sysfs_remove_link(cdev_link_kobj, cdev->type);
->  
->  	mutex_unlock(&thermal_list_lock);
->  
-> @@ -1354,6 +1365,12 @@ thermal_zone_device_register(const char *type, int trips, int mask,
->  
->  	mutex_lock(&thermal_list_lock);
->  	list_add_tail(&tz->node, &thermal_tz_list);
-> +	if (!tz_link_kobj)
-> +		tz_link_kobj = kobject_create_and_add("tz-by-name",
-> +						tz->device.kobj.parent);
-> +	if (!tz_link_kobj || sysfs_create_link(tz_link_kobj,
-> +						&tz->device.kobj, tz->type))
-> +		dev_err(&tz->device, "Failed to create tz-by-name link\n");
->  	mutex_unlock(&thermal_list_lock);
->  
->  	/* Bind cooling devices for this zone */
-> @@ -1425,6 +1442,8 @@ void thermal_zone_device_unregister(struct thermal_zone_device *tz)
->  			}
->  		}
->  	}
-> +	if (tz_link_kobj)
-> +		sysfs_remove_link(tz_link_kobj, tz->type);
->  
->  	mutex_unlock(&thermal_list_lock);
->  
-
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-
+I don't have a clear picture of the proposal. You'd put the couple of
+extra defines in sdm845.c for the new nodes. But then you'd need to do
+something in icc_set() of sdm845. Is that when you'd call out to the
+osm_l3 driver?
