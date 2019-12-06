@@ -2,74 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D2F1159B3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 00:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B57861159BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2019 00:43:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfLFX2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 18:28:51 -0500
-Received: from mga11.intel.com ([192.55.52.93]:15752 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbfLFX2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 18:28:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 15:28:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,286,1571727600"; 
-   d="scan'208";a="263717725"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by FMSMGA003.fm.intel.com with ESMTP; 06 Dec 2019 15:28:50 -0800
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH] x86/fpu/xstate: Export fpu_fpregs_owner_ctx
-Date:   Fri,  6 Dec 2019 15:17:09 -0800
-Message-Id: <20191206231709.15398-1-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726416AbfLFXn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 18:43:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47064 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfLFXn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 18:43:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Bk39U4AprAV9W/n6oRzrf7ni+G23npbBzAJcX9fnbmk=; b=r2oULPifsD0T4HYqiXshebMWy
+        XHDNVckZd4f9LTcL4dqzWyXIGH2uYwkx2JGllgnfFASKiJjQBB1L1nQkdUPgHK79pelMAoFgeZo+0
+        NeeA1CPSaSkK2TLrtOq2QjEZRgkdMtYZk3Fr7X/NiOXVK5GNYnsQl6W3UTPu/tfzcVD7mst2Llt3y
+        0H+OIFx+Sx60x5kSrIO8V0BlDp6eUxy//RI/TjeQcq3K7qa81HsVqpWyoN+V8ggd8n3aIND0zyX9R
+        MFyfH1gvap2RBSs2IIIhTv6lzofIDjyrJlhICFxzfZbz/3a4yx2kjPgctDsQMUaCIIIbwIMok4nRt
+        w4k8j+EDQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1idNFm-0007Ul-CV; Fri, 06 Dec 2019 23:43:18 +0000
+Date:   Fri, 6 Dec 2019 15:43:18 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org, dhowells@redhat.com,
+        matthewgarrett@google.com, jmorris@namei.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: Return -EPERM when locked down
+Message-ID: <20191206234318.GA16467@bombadil.infradead.org>
+References: <20191206225909.46721-1-eric.snowberg@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191206225909.46721-1-eric.snowberg@oracle.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After applying my "Invalidate fpregs when __fpu_restore_sig() fails"
-patch [1], the following happens:
+On Fri, Dec 06, 2019 at 05:59:09PM -0500, Eric Snowberg wrote:
+> -static bool debugfs_is_locked_down(struct inode *inode,
+> +static int debugfs_is_locked_down(struct inode *inode,
 
-    ERROR: "fpu_fpregs_owner_ctx" [arch/x86/kvm/kvm.ko] undefined!
+I might rename this function to debugfs_locked_down() to make it sound
+less like it returns a boolean.
 
-Fix it by exporting the symbol.  I apologize for missing this!
+Other than that,
 
-[1] https://lkml.kernel.org/r/20191205182648.32257-4-yu-cheng.yu@intel.com/
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/kernel/fpu/core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 743ff5ea4076..4e5151e43a2c 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -42,6 +42,7 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
-  * Track which context is using the FPU on the CPU:
-  */
- DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
-+EXPORT_SYMBOL_GPL(fpu_fpregs_owner_ctx);
- 
- static bool kernel_fpu_disabled(void)
- {
--- 
-2.17.1
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
