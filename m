@@ -2,198 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD6B2114ABE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCCE4114AB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:02:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfLFCDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 21:03:05 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:23742 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfLFCDE (ORCPT
+        id S1726151AbfLFCB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 21:01:59 -0500
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:50292 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfLFCB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 21:03:04 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191206020302epoutp0227b75a22df49cdaefad33e26ad137245~dpdXJT_Io2785427854epoutp02D
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2019 02:03:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191206020302epoutp0227b75a22df49cdaefad33e26ad137245~dpdXJT_Io2785427854epoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575597782;
-        bh=/J4bbOh/im3Q0/SZMy2JQoaCbxm5WJSp6NHH/ELX6jw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Kwzmn/SmkTEVl+RR4Rtn1JYdzO57aXQ34+tuDSU4GcPatYeOY9S96b7zBzK/qC5Tf
-         NmnX7hWq+rwnHQoYv0CYKo0JxJcRULERfUynnOUBt6ge7u9i8Dl+CKuGBnQZfTeVc4
-         foWz9opp2GQFo2lVes5w/yVJlHGQ2oQipgya1BZM=
-Received: from epcpadp2 (unknown [182.195.40.12]) by epcas1p2.samsung.com
-        (KnoxPortal) with ESMTP id
-        20191206020301epcas1p2e08c5c9322489308bcecf46490b4afb6~dpdWaCtPZ3093830938epcas1p2C;
-        Fri,  6 Dec 2019 02:03:01 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191206015532epcas1p3c0555be59b53f966e45034fe4a171090~dpW0uE26l2233422334epcas1p3_;
-        Fri,  6 Dec 2019 01:55:32 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191206015532epsmtrp28f94a776a52cacf09935ee77571482a7~dpW0s5yfQ0278202782epsmtrp2J;
-        Fri,  6 Dec 2019 01:55:32 +0000 (GMT)
-X-AuditID: b6c32a2a-077ff700000019a9-d7-5de9b514c5d0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E7.6C.06569.415B9ED5; Fri,  6 Dec 2019 10:55:32 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191206015532epsmtip2cfe59875bb2b9a36a68bcc782cc5ee5b~dpW0Z-dMX0080600806epsmtip2R;
-        Fri,  6 Dec 2019 01:55:32 +0000 (GMT)
-Subject: Re: [PATCH v3 2/3] devfreq: add clearing transitions stats
-To:     Kamil Konieczny <k.konieczny@samsung.com>
-Cc:     Andrew Donnellan <ajd@linux.ibm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <1019298652.01575597781442.JavaMail.epsvc@epcpadp2>
-Date:   Fri, 6 Dec 2019 11:01:46 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20191205145527.26117-3-k.konieczny@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsWy7bCSvK7I1pexBg0zzCzeLDnGbLFxxnpW
-        i5eHNC2aF69ns1jwaQarxfnzG9gtzja9Ybe4vGsOm8Xn3iOMFmuP3GW3WLbpD5PF7cYVbBaP
-        V7xld+D1WLznJZPHplWdbB4TFh1g9Ng/dw27R9+WVYwenzfJBbBFcdmkpOZklqUW6dslcGW0
-        9sxmKuiVrWj79Jy1gbFbvIuRk0NCwETixo1tLCC2kMBuRonzuxQg4pIS0y4eZe5i5ACyhSUO
-        Hy7uYuQCKnnLKLHw7ndGkBphAWeJvXsgekUEdCXe7FjKDFLELNDLInF6+S5WiI7DjBK9r46y
-        gVSxCWhJ7H9xA8zmF1CUuPrjMSPIBl4BO4kT6zlAwiwCKhIPJ3SwgtiiAmESO5c8ZgKxeQUE
-        JU7OfAK2jFPAVuJlxxNmEJtZQF3iz7xLULa4xK0n85kgbHmJ7W/nME9gFJ6FpH0WkpZZSFpm
-        IWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOCK1tHYwnjgRf4hRgINRiYd3
-        xucXsUKsiWXFlbmHGCU4mJVEeNP5XsYK8aYkVlalFuXHF5XmpBYfYpTmYFES55XPPxYpJJCe
-        WJKanZpakFoEk2Xi4JRqYNTZamR3w9nx5ZMlPdJOsXte7MnvT1dpsOKdcEpp/sv4nfOyWFps
-        ZjxW0qm86vgj0nrbwcqiBjtjnyMfNtc36Da8Mq3+J5+ykGNj3XOd16aq03aVX9MSWbxsL0/q
-        ysc26VsCxR9ZLG77Hb52xrZUpgX/0o4+1Hi+dv28/Qe2bJgxa+nmP3JfOFYpsRRnJBpqMRcV
-        JwIAzSYLUMQCAAA=
-X-CMS-MailID: 20191206015532epcas1p3c0555be59b53f966e45034fe4a171090
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20191205145543eucas1p1a317647203c47be07bbcee7867fb3e1e
-References: <20191205145527.26117-1-k.konieczny@samsung.com>
-        <CGME20191205145543eucas1p1a317647203c47be07bbcee7867fb3e1e@eucas1p1.samsung.com>
-        <20191205145527.26117-3-k.konieczny@samsung.com>
+        Thu, 5 Dec 2019 21:01:58 -0500
+Received: by mail-qk1-f202.google.com with SMTP id j1so3494043qkk.17
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2019 18:01:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=7yhy1qVy7r+OhvXrem9lQMeX0WI2ZBv4daZte/Qe81A=;
+        b=EX46zlqkNdgUkQf4DjlzdWcdW0CotPab3ag5TehwyqpseikYVbO8LOlacwlZv8u/6h
+         TNnsxzYEASdKkuiCFl9UkI14s0SP5xwOBQIcoW4xxVCw45EPIA1W+42WHM8ForICvwwY
+         ZSG2uZjkWJ7CQvaZBX8JAeezo2S3bjAJGB9AWN+sTgewVxGK7q4oi6Ti1aFH06ww1xji
+         HnHUzrvD4XvhL3yKrdGMDaUvZUNA5GWUwVE6NA7VyXdOAmyn8TtYeTMJB/mfzDRWZVN2
+         fGprjqR7yw7qDNJnErIqcttmh6hajXBVmR+2H5wpWpz/gYLFLcxLV2qiNZiM8Bk5K2rJ
+         WT2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=7yhy1qVy7r+OhvXrem9lQMeX0WI2ZBv4daZte/Qe81A=;
+        b=IadunemzEC0olgaF5SXeN6r5q0nj7MO+H+hUrVas55qKFf3qWcN3P5uh/j8cjSlnwJ
+         PQXv0O1DpBbtevl4XaqYccjgM9FBrbWMGTLMie60u91GjOU2Rsl16xiHSBgdKnaI14B8
+         QFOxqwNnK6ngtq/zFIt7/f3DKAnJ42IeyB3LZ05kjtTcImoo+KWqKFQ+Vm55MgvO59eT
+         aUdvCBeonW7ZYFJm2R9l/+BVT0qdmqRtY1iumXOSMsugSqhMCVgO4+e+mf07f4Fi+WOk
+         /A/HtdyOKTLYzcBpIyHQWWdT6NFx+21L765zcn/Lm+pGHWfdyoE+BnF+OjftbA1EZxGs
+         oYYQ==
+X-Gm-Message-State: APjAAAUYQv6DiHatcXN01IkzvMS/6AP4Rjlwed8WB+xGOVyUECwTlYI3
+        cQRMKurvNQ/VAqUkEU+HtbyKiep1nyLBcn5zyebQsQ==
+X-Google-Smtp-Source: APXvYqx8I5bEIazMNgm70QCTtM1l3Nmciyo0UDNEDBk/gGH1/pKfd5iPWcvoIq0JcpNcc2IVrJoYfiifLm5Gs//JviyGSQ==
+X-Received: by 2002:ac8:425a:: with SMTP id r26mr10607042qtm.138.1575597717420;
+ Thu, 05 Dec 2019 18:01:57 -0800 (PST)
+Date:   Thu,  5 Dec 2019 18:01:51 -0800
+Message-Id: <20191206020153.228283-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
+Subject: [RFC v1 0/2] um: drop broken features to fix allyesconfig
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com
+Cc:     johannes.berg@intel.com, linux-um@lists.infradead.org,
+        linux-kernel@vger.kernel.org, davidgow@google.com,
+        Brendan Higgins <brendanhiggins@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/19 11:55 PM, Kamil Konieczny wrote:
-> Add clearing transition table and time in states devfreq statistics
-> by writing 0 (zero) to trans_stat file in devfreq sysfs. An example use
-> is like following:
-> 
-> echo 0 > /sys/class/devfreq/devfreqX/trans_stat
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
-> ---
-> Changes in v3:
-> - add checks for zero in input and clear stats only when zero is written
->   to trans_stats
-> - change documentation of trans_stat in sysfs
-> 
-> Changes in v2:
-> - instead of creating new sysfs file, add new functionality to trans_stat
->   and clear stats when anything is writen to it
-> ---
->  Documentation/ABI/testing/sysfs-class-devfreq | 11 +++++---
->  drivers/devfreq/devfreq.c                     | 27 ++++++++++++++++++-
->  2 files changed, 33 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-devfreq b/Documentation/ABI/testing/sysfs-class-devfreq
-> index 75897e2fde43..9758eb85ade3 100644
-> --- a/Documentation/ABI/testing/sysfs-class-devfreq
-> +++ b/Documentation/ABI/testing/sysfs-class-devfreq
-> @@ -55,12 +55,15 @@ What:		/sys/class/devfreq/.../trans_stat
->  Date:		October 2012
->  Contact:	MyungJoo Ham <myungjoo.ham@samsung.com>
->  Description:
-> -		This ABI shows the statistics of devfreq behavior on a
-> -		specific device. It shows the time spent in each state and
-> -		the number of transitions between states.
-> +		This ABI shows or clears the statistics of devfreq behavior
-> +		on a specific device. It shows the time spent in each state
-> +		and the number of transitions between states.
->  		In order to activate this ABI, the devfreq target device
->  		driver should provide the list of available frequencies
-> -		with its profile.
-> +		with its profile. If need to reset the statistics of devfreq
-> +		behavior on a specific device, enter 0(zero) to 'trans_stat'
-> +		as following:
-> +			echo 0 > /sys/class/devfreq/.../trans_stat
->  
->  What:		/sys/class/devfreq/.../userspace/set_freq
->  Date:		September 2011
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index abecadeb3dc2..218eb64d7f28 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -1478,7 +1478,32 @@ static ssize_t trans_stat_show(struct device *dev,
->  					devfreq->total_trans);
->  	return len;
->  }
-> -static DEVICE_ATTR_RO(trans_stat);
-> +
-> +static ssize_t trans_stat_store(struct device *dev,
-> +				struct device_attribute *attr,
-> +				const char *buf, size_t count)
-> +{
-> +	struct devfreq *df = to_devfreq(dev);
-> +	unsigned int cnt = df->profile->max_state;
-> +	int err, value;
-> +
-> +	if (cnt == 0)
-> +		return count;
-> +
-> +	err = kstrtoint(buf, 10, &value);
-> +	if (err || value != 0)
-> +		return count;
+# TL;DR
 
-Better returning -EINVAL to inform the error of user.
-I changed it by myself.
+This patchset drops two broken features in an attempt to get
+allyesconfig closer to working for ARCH=um.
 
-> +
-> +	mutex_lock(&df->lock);
-> +	memset(df->time_in_state, 0, cnt * sizeof(u64));
+# What am I trying to do?
 
-Changed the size calculation way as following by myself:
+This patchset is part of my attempt to get `make ARCH=um allyesconfig`
+to produce a config that will build *and* boot to init, so that I can
+use it as a mechanism to run tests[1].
 
-    memset(df->time_in_state, 0, (df->profile->max_state *                  
-					sizeof(*devfreq->time_in_state)));  
+# How far away are we from an allyesconfig UML kernel?
 
-> +	memset(df->trans_table, 0, cnt * cnt * sizeof(int));
+I have identified 33 Kconfigs that are selected by allyesconfig, but
+will either not build on UML, or prevent it from booting. They are:
 
-Changed the size calculation way with array3_size() as following by myself:
-	memset(df->trans_table, 0, array3_size(sizeof(unsigned int),            
-					df->profile->max_state,                 
-					df->profile->max_state));     
+CONFIG_STATIC_LINK=y
+CONFIG_UML_NET_PCAP=y
+CONFIG_NET_PTP_CLASSIFY=y
+CONFIG_IP_VS=y
+CONFIG_BRIDGE_EBT_BROUTE=y
+CONFIG_BRIDGE_EBT_T_FILTER=y
+CONFIG_BRIDGE_EBT_T_NAT=y
+CONFIG_MTD_NAND_CADENCE=y
+CONFIG_MTD_NAND_NANDSIM=y
+CONFIG_BLK_DEV_NULL_BLK=y
+CONFIG_BLK_DEV_RAM=y
+CONFIG_SCSI_DEBUG=y
+CONFIG_NET_VENDOR_XILINX=y
+CONFIG_NULL_TTY=y
+CONFIG_PTP_1588_CLOCK=y
+CONFIG_PINCTRL_EQUILIBRIUM=y
+CONFIG_DMABUF_SELFTESTS=y
+CONFIG_COMEDI=y
+CONFIG_XIL_AXIS_FIFO=y
+CONFIG_EXFAT_FS=y
+CONFIG_STM_DUMMY=y
+CONFIG_FSI_MASTER_ASPEED=y
+CONFIG_JFS_FS=y
+CONFIG_UBIFS_FS=y
+CONFIG_CRAMFS=y
+CONFIG_CRYPTO_DEV_SAFEXCEL=y
+CONFIG_CRYPTO_DEV_AMLOGIC_GXL=y
+CONFIG_KCOV=y
+CONFIG_LKDTM=y
+CONFIG_REED_SOLOMON_TEST=y
+CONFIG_TEST_RHASHTABLE=y
+CONFIG_TEST_MEMINIT=y
+CONFIG_NETWORK_PHY_TIMESTAMPING=y
 
+This patchset attempts to deal with CONFIG_STATIC_LINK=y and
+CONFIG_UML_NET_PCAP=y by just removing them since they are broken and
+appear to have been broken for some time. (I am aware of the taboo of
+dropping configs, but given the amount of time they have been broken, I
+figured that I might be able to get away with it in this case, which is
+easier than trying to actually fix them.)
 
-> +	df->last_stat_updated = get_jiffies_64();
-> +	df->total_trans = 0;
+I also have a patch out to fix CONFIG_EXFAT_FS=y[2].
 
-Changed the init sequence as following by myself.
-	df->total_trans = 0;
-	df->last_stat_updated = get_jiffies_64();
+After this I plan on going after
+
+CONFIG_PINCTRL_EQUILIBRIUM=y
+CONFIG_MTD_NAND_CADENCE=y
+CONFIG_FSI_MASTER_ASPEED=y
+CONFIG_CRYPTO_DEV_SAFEXCEL=y
+CONFIG_XIL_AXIS_FIFO=y
+CONFIG_CRYPTO_DEV_AMLOGIC_GXL=y
+CONFIG_XILINX_AXI_EMAC=y
+
+the problem with these is that they depend on
+devm_platform_ioremap_resource without explicitly depending on
+CONFIG_HAS_IOMEM=y.
+
+Also note that I don't think that CONFIG_NULL_TTY=y is actually broken
+on UML; however, console seems to get assigned to the null TTY by
+default when it is enabled, so I added it to the list for the sake of
+completeness.
+
+The other broken configs require more investigation (I would welcome
+help, if anyone is interested ;-) ).
+
+# Why won't allyesconfig break again after this series of fixes?
+
+As I mentioned above, I am using UML for testing the kernel, and I am
+currently working on getting my tests to run on KernelCI. As part of our
+testing procedure for KernelCI, we are planning on building a UML kernel
+using allyesconfig and running our tests on it. Thus, we will find out
+very quickly once someone breaks allyesconfig again once we get this all
+working.
+
+Brendan Higgins (2):
+  um: drivers: remove support for UML_NET_PCAP
+  uml: remove support for CONFIG_STATIC_LINK
+
+ arch/um/Kconfig              |  23 +----
+ arch/um/Makefile             |   3 +-
+ arch/um/drivers/Kconfig      |  16 ----
+ arch/um/drivers/Makefile     |  17 +---
+ arch/um/drivers/pcap_kern.c  | 113 ----------------------
+ arch/um/drivers/pcap_user.c  | 137 ---------------------------
+ arch/um/drivers/pcap_user.h  |  21 -----
+ arch/um/kernel/dyn.lds.S     | 170 ----------------------------------
+ arch/um/kernel/uml.lds.S     | 115 -----------------------
+ arch/um/kernel/vmlinux.lds.S | 175 ++++++++++++++++++++++++++++++++++-
+ 10 files changed, 174 insertions(+), 616 deletions(-)
+ delete mode 100644 arch/um/drivers/pcap_kern.c
+ delete mode 100644 arch/um/drivers/pcap_user.c
+ delete mode 100644 arch/um/drivers/pcap_user.h
+ delete mode 100644 arch/um/kernel/dyn.lds.S
+ delete mode 100644 arch/um/kernel/uml.lds.S
+
+Looking forward to hearing people's thoughts!
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=205223
+[2] https://patchwork.kernel.org/patch/11273771/
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.24.0.393.g34dc348eaf-goog
 
