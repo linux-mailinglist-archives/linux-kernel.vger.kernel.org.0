@@ -2,125 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7BC114E31
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:32:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B980114E69
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbfLFJco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:32:44 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38190 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfLFJco (ORCPT
+        id S1726469AbfLFJtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:49:50 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63135 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfLFJtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:32:44 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xB69WIgh024250;
-        Fri, 6 Dec 2019 03:32:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1575624738;
-        bh=NYFG+Lvsr2YM0gqYd5cEG6Mr/SyvVQ86a1Rho1sT43Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kjaIvJwFBkPjkYkjai2bYYOUWeUZNL+W9jVd167YeEZklvNKhcGY2HFO7hltZPy/v
-         LNCXBYfJCu8uXM+qijXInVazPyhAhLXBABr3FzfgKyI/f+gOBvwKSpuUhGXze8kG02
-         ZfBiK4/IU90DEYbKez07jYxy3xTxDqqrkI+BqQAA=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xB69WIS4074328
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Dec 2019 03:32:18 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Dec
- 2019 03:32:14 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 6 Dec 2019 03:32:14 -0600
-Received: from [10.250.133.44] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xB69WBdu086266;
-        Fri, 6 Dec 2019 03:32:12 -0600
-Subject: Re: [EXT] [PATCH 1/3] mtd: spi-nor: Split mt25qu512a (n25q512a) entry
- into two
-To:     Ashish Kumar <ashish.kumar@nxp.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>
-References: <20191205065935.5727-1-vigneshr@ti.com>
- <20191205065935.5727-2-vigneshr@ti.com>
- <VI1PR04MB40154C771556031768A4D48D955C0@VI1PR04MB4015.eurprd04.prod.outlook.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <8a7709b6-215c-939a-906d-0ed7c3c2dbd8@ti.com>
-Date:   Fri, 6 Dec 2019 15:02:10 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 6 Dec 2019 04:49:35 -0500
+Received: from 79.184.254.100.ipv4.supernova.orange.pl (79.184.254.100) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 4caf4ace7258cfa2; Fri, 6 Dec 2019 10:49:32 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [RFC][PATCH 2/6] ACPI: processor: Introduce acpi_processor_evaluate_cst()
+Date:   Fri, 06 Dec 2019 10:32:47 +0100
+Message-ID: <2604399.tYvJkFLScm@kreacher>
+In-Reply-To: <2037014.bnAicLLH9b@kreacher>
+References: <2037014.bnAicLLH9b@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <VI1PR04MB40154C771556031768A4D48D955C0@VI1PR04MB4015.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+In order to separate the ACPI _CST evaluation from checks
+specific to the ACPI processor driver, move the majority of
+the acpi_processor_get_power_info_cst() function body to a new
+function, acpi_processor_evaluate_cst(), that will extract
+the C-states information from _CST output, and redefine
+acpi_processor_get_power_info_cst() as a wrapper around it.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/processor_idle.c |   52 +++++++++++++++++++++++++-----------------
+ 1 file changed, 32 insertions(+), 20 deletions(-)
+
+Index: linux-pm/drivers/acpi/processor_idle.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/processor_idle.c
++++ linux-pm/drivers/acpi/processor_idle.c
+@@ -297,21 +297,17 @@ static int acpi_processor_get_power_info
+ 	return 0;
+ }
+ 
+-static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
++static int acpi_processor_evaluate_cst(acpi_handle handle, u32 cpu,
++				       struct acpi_processor_power *info)
+ {
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	union acpi_object *cst;
+ 	acpi_status status;
+ 	u64 count;
+-	int current_count;
++	int current_count = 0;
+ 	int i, ret = 0;
+-	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	union acpi_object *cst;
+-
+-	if (nocst)
+-		return -ENODEV;
+-
+-	current_count = 0;
+ 
+-	status = acpi_evaluate_object(pr->handle, "_CST", NULL, &buffer);
++	status = acpi_evaluate_object(handle, "_CST", NULL, &buffer);
+ 	if (ACPI_FAILURE(status)) {
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "No _CST, giving up\n"));
+ 		return -ENODEV;
+@@ -335,9 +331,6 @@ static int acpi_processor_get_power_info
+ 		goto end;
+ 	}
+ 
+-	/* Tell driver that at least _CST is supported. */
+-	pr->flags.has_cst = 1;
+-
+ 	for (i = 1; i <= count; i++) {
+ 		union acpi_object *element;
+ 		union acpi_object *obj;
+@@ -383,7 +376,7 @@ static int acpi_processor_get_power_info
+ 		cx.entry_method = ACPI_CSTATE_SYSTEMIO;
+ 		if (reg->space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
+ 			if (acpi_processor_ffh_cstate_probe
+-					(pr->id, &cx, reg) == 0) {
++					(cpu, &cx, reg) == 0) {
+ 				cx.entry_method = ACPI_CSTATE_FFH;
+ 			} else if (cx.type == ACPI_STATE_C1) {
+ 				/*
+@@ -432,7 +425,7 @@ static int acpi_processor_get_power_info
+ 			continue;
+ 
+ 		current_count++;
+-		memcpy(&(pr->power.states[current_count]), &cx, sizeof(cx));
++		memcpy(&info->states[current_count], &cx, sizeof(cx));
+ 
+ 		/*
+ 		 * We support total ACPI_PROCESSOR_MAX_POWER - 1
+@@ -446,12 +439,9 @@ static int acpi_processor_get_power_info
+ 		}
+ 	}
+ 
+-	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found %d power states\n",
+-			  current_count));
++	acpi_handle_info(handle, "Found %d idle states\n", current_count);
+ 
+-	/* Validate number of power states discovered */
+-	if (current_count < 2)
+-		ret = -EFAULT;
++	info->count = current_count;
+ 
+       end:
+ 	kfree(buffer.pointer);
+@@ -459,6 +449,28 @@ static int acpi_processor_get_power_info
+ 	return ret;
+ }
+ 
++static int acpi_processor_get_power_info_cst(struct acpi_processor *pr)
++{
++	int ret;
++
++	if (nocst)
++		return -ENODEV;
++
++	ret = acpi_processor_evaluate_cst(pr->handle, pr->id, &pr->power);
++	if (ret)
++		return ret;
++
++	/*
++	 * It is expected that there will be at least 2 states, C1 and
++	 * something else (C2 or C3), so fail if that is not the case.
++	 */
++	if (pr->power.count < 2)
++		return -EFAULT;
++
++	pr->flags.has_cst = 1;
++	return 0;
++}
++
+ static void acpi_processor_power_verify_c3(struct acpi_processor *pr,
+ 					   struct acpi_processor_cx *cx)
+ {
 
 
-On 12/5/2019 12:54 PM, Ashish Kumar wrote:
-> Hi Vignesh,
-[...]
->>  drivers/mtd/spi-nor/spi-nor.c | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
->> index f4afe123e9dc..01efea022990 100644
->> --- a/drivers/mtd/spi-nor/spi-nor.c
->> +++ b/drivers/mtd/spi-nor/spi-nor.c
->> @@ -2459,15 +2459,16 @@ static const struct flash_info spi_nor_ids[] = {
->>         { "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K |
->> SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
->>         { "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K |
->> SPI_NOR_QUAD_READ) },
->>         { "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR |
->> SPI_NOR_QUAD_READ) },
->> +       { "mt25qu512a",  INFO6(0x20bb20, 0x104400, 64 * 1024, 1024,
->> +                              SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
->> +                              SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
-> It seems you have moved back to my original patch [1], wrt mt25qu512a.
-> 
 
-
-Yes, it seems like n25q and mt25q are not really same... mt25q supports
-stateless 4 byte addressing opcodes where as n25q does not. Hence we
-cannot add SPI_NOR_4B_OPCODES to n25q's idcodes.
-This patch is outcome of from U-Boot discussion here (I believe you were
-cc'd as well):
-https://patchwork.ozlabs.org/patch/1160501/
-
-Regards
-Vignesh
-
-> Regards
-> Ashish  
->> +       { "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K |
->> +                             SPI_NOR_QUAD_READ) },
->>         { "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR |
->> SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
->>         { "n25q00a",     INFO(0x20bb21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR |
->> SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
->>         { "mt25ql02g",   INFO(0x20ba22, 0, 64 * 1024, 4096,
->>                               SECT_4K | USE_FSR | SPI_NOR_QUAD_READ |
->>                               NO_CHIP_ERASE) },
->> -       { "mt25qu512a (n25q512a)", INFO(0x20bb20, 0, 64 * 1024, 1024,
->> -                                       SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
->> -                                       SPI_NOR_QUAD_READ |
->> -                                       SPI_NOR_4B_OPCODES) },
->>         { "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K | USE_FSR |
->> SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
->>
->>         /* Micron */
->> --
->> 2.24.0
-> [1]: http://patchwork.ozlabs.org/patch/1146197/
-> 
