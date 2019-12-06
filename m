@@ -2,320 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 904C6114DF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6568D114E03
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbfLFJCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:02:45 -0500
-Received: from mga04.intel.com ([192.55.52.120]:57964 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbfLFJCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:02:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2019 01:02:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,283,1571727600"; 
-   d="scan'208";a="294805778"
-Received: from anishraw-mobl.ger.corp.intel.com (HELO [10.252.35.105]) ([10.252.35.105])
-  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2019 01:02:41 -0800
-Subject: Re: [tip: perf/urgent] tools headers UAPI: Sync drm/i915_drm.h with
- the kernel sources
-To:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>
-References: <tip-qwzjrgwj55y3g6rjdf9spkpr@git.kernel.org>
- <157561941460.21853.2764754016587862850.tip-bot2@tip-bot2>
-From:   Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-Organization: Intel Corporation (UK) Ltd. - Co. Reg. #1134945 - Pipers Way,
- Swindon SN3 1RJ
-Message-ID: <67313606-63d4-ae56-bca8-6dbc2717aa24@intel.com>
-Date:   Fri, 6 Dec 2019 11:02:40 +0200
+        id S1726262AbfLFJIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:08:13 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38598 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbfLFJIM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 04:08:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y17so6910830wrh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 01:08:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=IC0nFJQovPdziVzgU2aFSV4eEeO6kPT3TlMkyeyMjTY=;
+        b=BE6ht680FK89WSCevAr+hDyb8eiiRaSME+dcBCpdAfBPuoSvfGpOOy8GTvuMkQot8K
+         qbPX0nc8xReBu8fQo1uAJ01WyJ7Sn+MJ9qlNLfdJe8VJhQmETJmZdvFuzekZk9T7jguD
+         1wtEIImojrv6poPBjtrkJo6rqpqlfzJvFsaSLoa1I1SE7pFzYslfnB3cMJOziys4d7el
+         P4GqzCVIPomt19lNJy0tt9k1AqiKL1RuJDu1Ls0BqcStkQMOoTl1bGN9sPT+wIEfn0iH
+         0Wu7B5mhZZLC913K2lXnVFrcQROMYMdKVoQE0mte0Z2XkYXYPIM+nt/wF8YE/9BR7QC0
+         rSKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=IC0nFJQovPdziVzgU2aFSV4eEeO6kPT3TlMkyeyMjTY=;
+        b=tDqfU3/JJze5JlP3lBgy6YEOM/TmhkGGEeAfTQyD4OdB9Hxtivd4XDflwaoSyrBWaN
+         jEM659NHVSPMsgcaTghUa5smovkRTVYWOVRvUlKL/0lqUKlpSpDjNObEjn9M7NmJadDC
+         km7JAB51HR03lVInb62unuiUJmJnzKKyT5iSn51cKJ4bSe1s7OAsdMaAJIBX6gna5BDk
+         PtgwkGEj1it/D5ncv71wdBM2y4qSvIoKGLpsH7b67V53iMp0vhiKi0xMAt/N7EC3QkS+
+         EwpaKken4zUtnUMzfCN1LCkCaEXifk3/nnOAOuBn3PqHdZ6w1OPw/Zw4jwg5Dwdar8h9
+         vFXg==
+X-Gm-Message-State: APjAAAXUiDuWzpvm2PrGt1VFZCKdCFQ6TUzsTg9TBxcmYVUA1vc/ptyP
+        IprLd4F8SPyEFDKfiYIbZSQx9/pmP5dyJQ==
+X-Google-Smtp-Source: APXvYqxAwUOIdiopWUwCUwN0Qp3EG6FDEluwivT/IAoznBn8WYyf9gk/0j9zA4KkkFZDgCe44j+tSw==
+X-Received: by 2002:adf:dd46:: with SMTP id u6mr14998118wrm.13.1575623290069;
+        Fri, 06 Dec 2019 01:08:10 -0800 (PST)
+Received: from [10.1.4.98] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g25sm4662913wmh.3.2019.12.06.01.08.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 01:08:09 -0800 (PST)
+Subject: Re: [PATCH v2] bluetooth: hci_bcm: enable IRQ capability from node
+To:     Kevin Hilman <khilman@baylibre.com>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20191204161239.16653-1-glaroque@baylibre.com>
+ <7hv9qu2rt1.fsf@baylibre.com>
+From:   guillaume La Roque <glaroque@baylibre.com>
+Message-ID: <6f6cbb0d-3265-8e6d-60fb-6df2539d36af@baylibre.com>
+Date:   Fri, 6 Dec 2019 10:08:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <157561941460.21853.2764754016587862850.tip-bot2@tip-bot2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <7hv9qu2rt1.fsf@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2019 10:03, tip-bot2 for Arnaldo Carvalho de Melo wrote:
-> The following commit has been merged into the perf/urgent branch of tip:
->
-> Commit-ID:     0b3fca6ad3283866e9d2376554b3e4fbf23bfd5d
-> Gitweb:        https://git.kernel.org/tip/0b3fca6ad3283866e9d2376554b3e4fbf23bfd5d
-> Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-> AuthorDate:    Wed, 04 Dec 2019 12:49:43 -03:00
-> Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-> CommitterDate: Wed, 04 Dec 2019 16:22:28 -03:00
->
-> tools headers UAPI: Sync drm/i915_drm.h with the kernel sources
->
-> To pick the change in:
->
->    a0e047156cde ("drm/i915/gem: Make context persistence optional")
->    9cd20ef7803c ("drm/i915/perf: allow holding preemption on filtered ctx")
->    7831e9a965ea ("drm/i915/perf: Allow dynamic reconfiguration of the OA stream")
->    4f6ccc74a85c ("drm/i915: add support for perf configuration queries")
->    b8d49f28aa03 ("drm/i915/perf: introduce a versioning of the i915-perf uapi")
->    601734f7aabd ("drm/i915/tgl: s/ss/eu fuse reading support")
->
-> That don't result in any changes in tooling, just silences this perf
-> build warning:
->
->    Warning: Kernel ABI header at 'tools/include/uapi/drm/i915_drm.h' differs from latest version at 'include/uapi/drm/i915_drm.h'
->    diff -u tools/include/uapi/drm/i915_drm.h include/uapi/drm/i915_drm.h
->
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Link: https://lkml.kernel.org/n/tip-qwzjrgwj55y3g6rjdf9spkpr@git.kernel.org
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-> ---
->   tools/include/uapi/drm/i915_drm.h | 128 ++++++++++++++++++++++++++++-
->   1 file changed, 125 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/include/uapi/drm/i915_drm.h b/tools/include/uapi/drm/i915_drm.h
-> index 469dc51..5400d7e 100644
-> --- a/tools/include/uapi/drm/i915_drm.h
-> +++ b/tools/include/uapi/drm/i915_drm.h
-> @@ -611,6 +611,13 @@ typedef struct drm_i915_irq_wait {
->    * See I915_EXEC_FENCE_OUT and I915_EXEC_FENCE_SUBMIT.
->    */
->   #define I915_PARAM_HAS_EXEC_SUBMIT_FENCE 53
-> +
-> +/*
-> + * Revision of the i915-perf uAPI. The value returned helps determine what
-> + * i915-perf features are available. See drm_i915_perf_property_id.
-> + */
-> +#define I915_PARAM_PERF_REVISION	54
-> +
->   /* Must be kept compact -- no holes and well documented */
->   
->   typedef struct drm_i915_getparam {
-> @@ -1565,6 +1572,21 @@ struct drm_i915_gem_context_param {
->    *   i915_context_engines_bond (I915_CONTEXT_ENGINES_EXT_BOND)
->    */
->   #define I915_CONTEXT_PARAM_ENGINES	0xa
-> +
-> +/*
-> + * I915_CONTEXT_PARAM_PERSISTENCE:
-> + *
-> + * Allow the context and active rendering to survive the process until
-> + * completion. Persistence allows fire-and-forget clients to queue up a
-> + * bunch of work, hand the output over to a display server and then quit.
-> + * If the context is marked as not persistent, upon closing (either via
-> + * an explicit DRM_I915_GEM_CONTEXT_DESTROY or implicitly from file closure
-> + * or process termination), the context and any outstanding requests will be
-> + * cancelled (and exported fences for cancelled requests marked as -EIO).
-> + *
-> + * By default, new contexts allow persistence.
-> + */
-> +#define I915_CONTEXT_PARAM_PERSISTENCE	0xb
->   /* Must be kept compact -- no holes and well documented */
->   
->   	__u64 value;
-> @@ -1844,23 +1866,31 @@ enum drm_i915_perf_property_id {
->   	 * Open the stream for a specific context handle (as used with
->   	 * execbuffer2). A stream opened for a specific context this way
->   	 * won't typically require root privileges.
-> +	 *
-> +	 * This property is available in perf revision 1.
->   	 */
->   	DRM_I915_PERF_PROP_CTX_HANDLE = 1,
->   
->   	/**
->   	 * A value of 1 requests the inclusion of raw OA unit reports as
->   	 * part of stream samples.
-> +	 *
-> +	 * This property is available in perf revision 1.
->   	 */
->   	DRM_I915_PERF_PROP_SAMPLE_OA,
->   
->   	/**
->   	 * The value specifies which set of OA unit metrics should be
->   	 * be configured, defining the contents of any OA unit reports.
-> +	 *
-> +	 * This property is available in perf revision 1.
->   	 */
->   	DRM_I915_PERF_PROP_OA_METRICS_SET,
->   
->   	/**
->   	 * The value specifies the size and layout of OA unit reports.
-> +	 *
-> +	 * This property is available in perf revision 1.
->   	 */
->   	DRM_I915_PERF_PROP_OA_FORMAT,
->   
-> @@ -1870,9 +1900,22 @@ enum drm_i915_perf_property_id {
->   	 * from this exponent as follows:
->   	 *
->   	 *   80ns * 2^(period_exponent + 1)
-> +	 *
-> +	 * This property is available in perf revision 1.
->   	 */
->   	DRM_I915_PERF_PROP_OA_EXPONENT,
->   
-> +	/**
-> +	 * Specifying this property is only valid when specify a context to
-> +	 * filter with DRM_I915_PERF_PROP_CTX_HANDLE. Specifying this property
-> +	 * will hold preemption of the particular context we want to gather
-> +	 * performance data about. The execbuf2 submissions must include a
-> +	 * drm_i915_gem_execbuffer_ext_perf parameter for this to apply.
-> +	 *
-> +	 * This property is available in perf revision 3.
-> +	 */
-> +	DRM_I915_PERF_PROP_HOLD_PREEMPTION,
-> +
->   	DRM_I915_PERF_PROP_MAX /* non-ABI */
->   };
->   
-> @@ -1901,6 +1944,8 @@ struct drm_i915_perf_open_param {
->    * to close and re-open a stream with the same configuration.
->    *
->    * It's undefined whether any pending data for the stream will be lost.
-> + *
-> + * This ioctl is available in perf revision 1.
->    */
->   #define I915_PERF_IOCTL_ENABLE	_IO('i', 0x0)
->   
-> @@ -1908,10 +1953,25 @@ struct drm_i915_perf_open_param {
->    * Disable data capture for a stream.
->    *
->    * It is an error to try and read a stream that is disabled.
-> + *
-> + * This ioctl is available in perf revision 1.
->    */
->   #define I915_PERF_IOCTL_DISABLE	_IO('i', 0x1)
->   
->   /**
-> + * Change metrics_set captured by a stream.
-> + *
-> + * If the stream is bound to a specific context, the configuration change
-> + * will performed inline with that context such that it takes effect before
-> + * the next execbuf submission.
-> + *
-> + * Returns the previously bound metrics set id, or a negative error code.
-> + *
-> + * This ioctl is available in perf revision 2.
-> + */
-> +#define I915_PERF_IOCTL_CONFIG	_IO('i', 0x2)
-> +
-> +/**
->    * Common to all i915 perf records
->    */
->   struct drm_i915_perf_record_header {
-> @@ -1984,6 +2044,7 @@ struct drm_i915_query_item {
->   	__u64 query_id;
->   #define DRM_I915_QUERY_TOPOLOGY_INFO    1
->   #define DRM_I915_QUERY_ENGINE_INFO	2
-> +#define DRM_I915_QUERY_PERF_CONFIG      3
->   /* Must be kept compact -- no holes and well documented */
->   
->   	/*
-> @@ -1995,9 +2056,18 @@ struct drm_i915_query_item {
->   	__s32 length;
->   
->   	/*
-> -	 * Unused for now. Must be cleared to zero.
-> +	 * When query_id == DRM_I915_QUERY_TOPOLOGY_INFO, must be 0.
-> +	 *
-> +	 * When query_id == DRM_I915_QUERY_PERF_CONFIG, must be one of the
-> +	 * following :
-> +	 *         - DRM_I915_QUERY_PERF_CONFIG_LIST
-> +	 *         - DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_UUID
-> +	 *         - DRM_I915_QUERY_PERF_CONFIG_FOR_UUID
->   	 */
->   	__u32 flags;
-> +#define DRM_I915_QUERY_PERF_CONFIG_LIST          1
-> +#define DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_UUID 2
-> +#define DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_ID   3
->   
->   	/*
->   	 * Data will be written at the location pointed by data_ptr when the
-> @@ -2033,8 +2103,10 @@ struct drm_i915_query {
->    *           (data[X / 8] >> (X % 8)) & 1
->    *
->    * - the subslice mask for each slice with one bit per subslice telling
-> - *   whether a subslice is available. The availability of subslice Y in slice
-> - *   X can be queried with the following formula :
-> + *   whether a subslice is available. Gen12 has dual-subslices, which are
-> + *   similar to two gen11 subslices. For gen12, this array represents dual-
-> + *   subslices. The availability of subslice Y in slice X can be queried
-> + *   with the following formula :
->    *
->    *           (data[subslice_offset +
->    *                 X * subslice_stride +
-> @@ -2123,6 +2195,56 @@ struct drm_i915_query_engine_info {
->   	struct drm_i915_engine_info engines[];
->   };
->   
-> +/*
-> + * Data written by the kernel with query DRM_I915_QUERY_PERF_CONFIG.
-> + */
-> +struct drm_i915_query_perf_config {
-> +	union {
-> +		/*
-> +		 * When query_item.flags == DRM_I915_QUERY_PERF_CONFIG_LIST, i915 sets
-> +		 * this fields to the number of configurations available.
-> +		 */
-> +		__u64 n_configs;
-> +
-> +		/*
-> +		 * When query_id == DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_ID,
-> +		 * i915 will use the value in this field as configuration
-> +		 * identifier to decide what data to write into config_ptr.
-> +		 */
-> +		__u64 config;
-> +
-> +		/*
-> +		 * When query_id == DRM_I915_QUERY_PERF_CONFIG_DATA_FOR_UUID,
-> +		 * i915 will use the value in this field as configuration
-> +		 * identifier to decide what data to write into config_ptr.
-> +		 *
-> +		 * String formatted like "%08x-%04x-%04x-%04x-%012x"
-> +		 */
-> +		char uuid[36];
-> +	};
-> +
-> +	/*
-> +	 * Unused for now. Must be cleared to zero.
-> +	 */
-> +	__u32 flags;
-> +
-> +	/*
-> +	 * When query_item.flags == DRM_I915_QUERY_PERF_CONFIG_LIST, i915 will
-> +	 * write an array of __u64 of configuration identifiers.
-> +	 *
-> +	 * When query_item.flags == DRM_I915_QUERY_PERF_CONFIG_DATA, i915 will
-> +	 * write a struct drm_i915_perf_oa_config. If the following fields of
-> +	 * drm_i915_perf_oa_config are set not set to 0, i915 will write into
-> +	 * the associated pointers the values of submitted when the
-> +	 * configuration was created :
-> +	 *
-> +	 *         - n_mux_regs
-> +	 *         - n_boolean_regs
-> +	 *         - n_flex_regs
-> +	 */
-> +	__u8 data[];
-> +};
-> +
->   #if defined(__cplusplus)
->   }
->   #endif
+hi Kevin,
 
+
+On 12/6/19 1:58 AM, Kevin Hilman wrote:
+> Guillaume La Roque <glaroque@baylibre.com> writes:
+>
+>> Actually IRQ can be found from GPIO but all platorms don't support
+> nit: s/platorms/platforms/
+will fix in v3
+>> gpiod_to_irq, it's the case on amlogic chip.
+>> so to have possibility to use interrupt mode we need to add interrupts
+>> field in node and support it in driver.
+>>
+>> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+>> ---
+>> sorry for noise,
+>>
+>> v2 is for rebasing on master branch
+>>
+>> guillaume
+>>
+>>  drivers/bluetooth/hci_bcm.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+>> index f8f5c593a05c..9f52d57c56de 100644
+>> --- a/drivers/bluetooth/hci_bcm.c
+>> +++ b/drivers/bluetooth/hci_bcm.c
+>> @@ -1409,6 +1409,7 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+>>  {
+>>  	struct bcm_device *bcmdev;
+>>  	const struct bcm_device_data *data;
+>> +	struct platform_device *pdev;
+>>  	int err;
+>>  
+>>  	bcmdev = devm_kzalloc(&serdev->dev, sizeof(*bcmdev), GFP_KERNEL);
+>> @@ -1421,6 +1422,8 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+>>  #endif
+>>  	bcmdev->serdev_hu.serdev = serdev;
+>>  	serdev_device_set_drvdata(serdev, bcmdev);
+>> +	pdev = to_platform_device(bcmdev->dev);
+>> +	bcmdev->irq = platform_get_irq(pdev, 0);
+> I don't know this driver well enough to be sure, but don't you need some
+> error checking here?
+>
+> If this fails (on platforms with no IRQ defined), is an error code in
+> bcmdev->irq going to affect later code that tries to setup IRQs?
+
+not needed to do something here because  bcm_get_resources function check irq <=0 if yes it check if host-wakeup gpio was defined in node and try a gpiod_to_irq.
+
+at the end in bcm_request_irq function i check if irq <=0 if yes return EOPNOTSUPP
+
+
+> Kevin
+>
+
+Guillaume
 
