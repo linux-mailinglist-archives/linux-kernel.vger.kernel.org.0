@@ -2,31 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A666114B36
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10311114B2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfLFCth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 21:49:37 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15987 "EHLO
+        id S1727021AbfLFCt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 21:49:26 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15998 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfLFCtK (ORCPT
+        with ESMTP id S1726806AbfLFCtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 21:49:10 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5de9c1940000>; Thu, 05 Dec 2019 18:48:52 -0800
+        Thu, 5 Dec 2019 21:49:15 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5de9c1950000>; Thu, 05 Dec 2019 18:48:53 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 05 Dec 2019 18:49:08 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 05 Dec 2019 18:49:10 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 05 Dec 2019 18:49:08 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
- 2019 02:49:07 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 6 Dec 2019 02:49:07 +0000
+        by hqpgpgate101.nvidia.com on Thu, 05 Dec 2019 18:49:10 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
+ 2019 02:49:09 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
+ 2019 02:49:09 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 6 Dec 2019 02:49:08 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.163.171]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5de9c1a20000>; Thu, 05 Dec 2019 18:49:07 -0800
+        id <B5de9c1a30001>; Thu, 05 Dec 2019 18:49:08 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <digetx@gmail.com>,
@@ -44,9 +47,9 @@ CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
         <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
         <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
-Subject: [PATCH v3 07/15] dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
-Date:   Thu, 5 Dec 2019 18:48:47 -0800
-Message-ID: <1575600535-26877-8-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v3 08/15] ASoC: tegra: Add audio mclk control through clk_out_1 and extern1
+Date:   Thu, 5 Dec 2019 18:48:48 -0800
+Message-ID: <1575600535-26877-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
 References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
@@ -54,178 +57,178 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575600532; bh=AoUfZIY+YXf8dsokt7kEH2A0DDWvPIIhSwfR2b7pRwI=;
+        t=1575600533; bh=C8ogo7PFlkowNwgYuCMhfHS/nrwB/RSqHS/qmHQ/Fpc=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=PMt+4B9mIZxzMa0VBHeuGsctDk7SkyMRGwHESkzdQMvb02IsUpMfGCfRqY5YUoOR0
-         LJKK0/Lv1hx/zWXZNH8OQYQdMTL2kihWiO7K92N/gjaiSs47Hce9yU9MUgTwwFMDXc
-         cbDScFHQi1wEC6a6Fehv3ZHUItHW6h9bfay0Zg+GsgASVy5atrhKYXZW+Vb0+Qos2p
-         YFWmOjlWcLdpIZ6/11RailUL/qZ946A1PyebshPDigZ4CJ9GWtcQwWP3A2DY6JsUn3
-         6FHi/29NObfKm/z3Y1zSeyaUccc41ICo90kPwLxdXpj1JTLnsqx9pMX9KafF/93FY9
-         ZG6BYRu1YcyFw==
+        b=Kbwn0bhFtW2q/rZt2u6MK8d0GQA1uRvGJ8F6mOd7tF2TI6Ab5yURb3EZ+I3QmMryp
+         J4UoIBKCwSoVlLAD3gbIrfduYvP//0bhzTJnNK2ihzLqeuDv4tTdPezMa44paPK0bv
+         GFvKko2N73YDVTK43OSxaN42E8wrZwZCKFZdVny8CEz15J7yYuDenTB4JRI47YZqzB
+         7CveJHu3nvqZ10/8b75nfQ1Pb+E3j+l1uxvfxbI8oVe///DIwLMrzxS6xrUiGHFkxv
+         5fFgBL6FaLlbOS8BhoE8agDv7MeNXj1AUvIbSt+0501wwAkFGJnNrWBfz3jQO9BUzO
+         JYjyy33X1u33w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clk_out_1, clk_out_2, clk_out_3, blink are part of Tegra PMC block and
-these clocks are moved to Tegra PMC driver with pmc as clock provider
-and uses clock ids from dt-bindings/soc/tegra-pmc.h
+Current ASoC driver uses extern1 as cdev1 clock from Tegra30 onwards
+through device tree.
 
-So, this patch removes ids for these clocks from Tegra clock dt-bindings.
+Actual audio mclk is clk_out_1 and to use PLLA for mclk rate control,
+need to clk_out_1_mux parent to extern1 and extern1 parent to PLLA_OUT0.
+
+Currently Tegra clock driver init sets the parents and enables both
+clk_out_1 and extern1 clocks. But these clocks parent and enables should
+be controlled by ASoC driver.
+
+Clock parents can be specified in device tree using assigned-clocks
+and assigned-clock-parents.
+
+To enable audio mclk, both clk_out_1 and extern1 clocks need to be
+enabled.
+
+This patch configures parents for clk_out_1 and extern1 clocks if device
+tree does not specify clock parents inorder to support old device tree
+and controls mclk using both clk_out_1 and extern1 clocks.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/clock/tegra114-car.h        | 14 +++++++-------
- include/dt-bindings/clock/tegra124-car-common.h | 14 +++++++-------
- include/dt-bindings/clock/tegra20-car.h         |  2 +-
- include/dt-bindings/clock/tegra210-car.h        | 14 +++++++-------
- include/dt-bindings/clock/tegra30-car.h         | 14 +++++++-------
- 5 files changed, 29 insertions(+), 29 deletions(-)
+ sound/soc/tegra/tegra_asoc_utils.c | 66 ++++++++++++++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_asoc_utils.h |  1 +
+ 2 files changed, 67 insertions(+)
 
-diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
-index bb5c2c999c05..9175cd0571b5 100644
---- a/include/dt-bindings/clock/tegra114-car.h
-+++ b/include/dt-bindings/clock/tegra114-car.h
-@@ -270,10 +270,10 @@
- #define TEGRA114_CLK_AUDIO3 242
- #define TEGRA114_CLK_AUDIO4 243
- #define TEGRA114_CLK_SPDIF 244
--#define TEGRA114_CLK_CLK_OUT_1 245
--#define TEGRA114_CLK_CLK_OUT_2 246
--#define TEGRA114_CLK_CLK_OUT_3 247
--#define TEGRA114_CLK_BLINK 248
-+/* 245 */
-+/* 246 */
-+/* 247 */
-+/* 248 */
- /* 249 */
- /* 250 */
- /* 251 */
-@@ -333,9 +333,9 @@
- #define TEGRA114_CLK_AUDIO3_MUX 303
- #define TEGRA114_CLK_AUDIO4_MUX 304
- #define TEGRA114_CLK_SPDIF_MUX 305
--#define TEGRA114_CLK_CLK_OUT_1_MUX 306
--#define TEGRA114_CLK_CLK_OUT_2_MUX 307
--#define TEGRA114_CLK_CLK_OUT_3_MUX 308
-+/* 306 */
-+/* 307 */
-+/* 308 */
- #define TEGRA114_CLK_DSIA_MUX 309
- #define TEGRA114_CLK_DSIB_MUX 310
- #define TEGRA114_CLK_XUSB_SS_DIV2 311
-diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
-index 0c4f5be0a742..90a0c5e7eb5f 100644
---- a/include/dt-bindings/clock/tegra124-car-common.h
-+++ b/include/dt-bindings/clock/tegra124-car-common.h
-@@ -269,10 +269,10 @@
- #define TEGRA124_CLK_AUDIO3 242
- #define TEGRA124_CLK_AUDIO4 243
- #define TEGRA124_CLK_SPDIF 244
--#define TEGRA124_CLK_CLK_OUT_1 245
--#define TEGRA124_CLK_CLK_OUT_2 246
--#define TEGRA124_CLK_CLK_OUT_3 247
--#define TEGRA124_CLK_BLINK 248
-+/* 245 */
-+/* 246 */
-+/* 247 */
-+/* 248 */
- /* 249 */
- /* 250 */
- /* 251 */
-@@ -332,9 +332,9 @@
- #define TEGRA124_CLK_AUDIO3_MUX 303
- #define TEGRA124_CLK_AUDIO4_MUX 304
- #define TEGRA124_CLK_SPDIF_MUX 305
--#define TEGRA124_CLK_CLK_OUT_1_MUX 306
--#define TEGRA124_CLK_CLK_OUT_2_MUX 307
--#define TEGRA124_CLK_CLK_OUT_3_MUX 308
-+/* 306 */
-+/* 307 */
-+/* 308 */
- /* 309 */
- /* 310 */
- #define TEGRA124_CLK_SOR0_LVDS 311 /* deprecated */
-diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
-index b21a0eb32921..fe541f627965 100644
---- a/include/dt-bindings/clock/tegra20-car.h
-+++ b/include/dt-bindings/clock/tegra20-car.h
-@@ -131,7 +131,7 @@
- #define TEGRA20_CLK_CCLK 108
- #define TEGRA20_CLK_HCLK 109
- #define TEGRA20_CLK_PCLK 110
--#define TEGRA20_CLK_BLINK 111
-+/* 111 */
- #define TEGRA20_CLK_PLL_A 112
- #define TEGRA20_CLK_PLL_A_OUT0 113
- #define TEGRA20_CLK_PLL_C 114
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 44f60623f99b..a3d8d3e75728 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -304,10 +304,10 @@
- #define TEGRA210_CLK_AUDIO3 274
- #define TEGRA210_CLK_AUDIO4 275
- #define TEGRA210_CLK_SPDIF 276
--#define TEGRA210_CLK_CLK_OUT_1 277
--#define TEGRA210_CLK_CLK_OUT_2 278
--#define TEGRA210_CLK_CLK_OUT_3 279
--#define TEGRA210_CLK_BLINK 280
-+/* 277 */
-+/* 278 */
-+/* 279 */
-+/* 280 */
- #define TEGRA210_CLK_SOR0_LVDS 281 /* deprecated */
- #define TEGRA210_CLK_SOR0_OUT 281
- #define TEGRA210_CLK_SOR1_OUT 282
-@@ -386,9 +386,9 @@
- #define TEGRA210_CLK_AUDIO3_MUX 353
- #define TEGRA210_CLK_AUDIO4_MUX 354
- #define TEGRA210_CLK_SPDIF_MUX 355
--#define TEGRA210_CLK_CLK_OUT_1_MUX 356
--#define TEGRA210_CLK_CLK_OUT_2_MUX 357
--#define TEGRA210_CLK_CLK_OUT_3_MUX 358
-+/* 356 */
-+/* 357 */
-+/* 358 */
- #define TEGRA210_CLK_DSIA_MUX 359
- #define TEGRA210_CLK_DSIB_MUX 360
- /* 361 */
-diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
-index 3c90f1535551..20ef2462d9e1 100644
---- a/include/dt-bindings/clock/tegra30-car.h
-+++ b/include/dt-bindings/clock/tegra30-car.h
-@@ -230,11 +230,11 @@
- #define TEGRA30_CLK_AUDIO3 204
- #define TEGRA30_CLK_AUDIO4 205
- #define TEGRA30_CLK_SPDIF 206
--#define TEGRA30_CLK_CLK_OUT_1 207 /* (extern1) */
--#define TEGRA30_CLK_CLK_OUT_2 208 /* (extern2) */
--#define TEGRA30_CLK_CLK_OUT_3 209 /* (extern3) */
-+/* 207 */
-+/* 208 */
-+/* 209 */
- #define TEGRA30_CLK_SCLK 210
--#define TEGRA30_CLK_BLINK 211
-+/* 211 */
- #define TEGRA30_CLK_CCLK_G 212
- #define TEGRA30_CLK_CCLK_LP 213
- #define TEGRA30_CLK_TWD 214
-@@ -260,9 +260,9 @@
- /* 297 */
- /* 298 */
- /* 299 */
--#define TEGRA30_CLK_CLK_OUT_1_MUX 300
--#define TEGRA30_CLK_CLK_OUT_2_MUX 301
--#define TEGRA30_CLK_CLK_OUT_3_MUX 302
-+/* 300 */
-+/* 301 */
-+/* 302 */
- #define TEGRA30_CLK_AUDIO0_MUX 303
- #define TEGRA30_CLK_AUDIO1_MUX 304
- #define TEGRA30_CLK_AUDIO2_MUX 305
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 536a578e9512..8e3a3740df7c 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -60,6 +60,7 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 	data->set_mclk = 0;
+ 
+ 	clk_disable_unprepare(data->clk_cdev1);
++	clk_disable_unprepare(data->clk_extern1);
+ 	clk_disable_unprepare(data->clk_pll_a_out0);
+ 	clk_disable_unprepare(data->clk_pll_a);
+ 
+@@ -89,6 +90,14 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 		return err;
+ 	}
+ 
++	if (!IS_ERR_OR_NULL(data->clk_extern1)) {
++		err = clk_prepare_enable(data->clk_extern1);
++		if (err) {
++			dev_err(data->dev, "Can't enable extern1: %d\n", err);
++			return err;
++		}
++	}
++
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -109,6 +118,7 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 	int err;
+ 
+ 	clk_disable_unprepare(data->clk_cdev1);
++	clk_disable_unprepare(data->clk_extern1);
+ 	clk_disable_unprepare(data->clk_pll_a_out0);
+ 	clk_disable_unprepare(data->clk_pll_a);
+ 
+@@ -142,6 +152,14 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 		return err;
+ 	}
+ 
++	if (!IS_ERR_OR_NULL(data->clk_extern1)) {
++		err = clk_prepare_enable(data->clk_extern1);
++		if (err) {
++			dev_err(data->dev, "Can't enable extern1: %d\n", err);
++			return err;
++		}
++	}
++
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -158,6 +176,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 			  struct device *dev)
+ {
++	struct clk *clk_out_1_mux;
+ 	int ret;
+ 
+ 	data->dev = dev;
+@@ -196,6 +215,51 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 		goto err_put_pll_a_out0;
+ 	}
+ 
++	/*
++	 * If clock parents are not set in DT, configure here to use clk_out_1
++	 * as mclk and extern1 as parent for Tegra30 and higher.
++	 */
++	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
++	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
++		data->clk_extern1 = clk_get_sys("clk_out_1", "extern1");
++		if (IS_ERR(data->clk_extern1)) {
++			dev_err(data->dev, "Can't retrieve clk extern1\n");
++			ret = PTR_ERR(data->clk_extern1);
++			goto err_put_cdev1;
++		}
++
++		ret = clk_set_parent(data->clk_extern1, data->clk_pll_a_out0);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk extern1: %d\n",
++				ret);
++			goto err_put_cdev1;
++		}
++
++		clk_out_1_mux = clk_get_sys(NULL, "clk_out_1_mux");
++		if (IS_ERR(clk_out_1_mux)) {
++			dev_err(data->dev, "Can't retrieve clk clk_out_1_mux\n");
++			ret = PTR_ERR(clk_out_1_mux);
++			goto err_put_cdev1;
++		}
++
++		ret = clk_set_parent(clk_out_1_mux, data->clk_extern1);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk_out_1_mux: %d\n",
++				ret);
++			clk_put(clk_out_1_mux);
++			goto err_put_cdev1;
++		}
++
++		data->clk_cdev1 = clk_get_sys(NULL, "clk_out_1");
++		if (IS_ERR(data->clk_cdev1)) {
++			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
++			ret = PTR_ERR(data->clk_cdev1);
++			goto err_put_cdev1;
++		}
++	}
++
+ 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+ 	if (ret)
+ 		goto err_put_cdev1;
+@@ -215,6 +279,8 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_init);
+ 
+ void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data)
+ {
++	if (!IS_ERR_OR_NULL(data->clk_extern1))
++		clk_put(data->clk_extern1);
+ 	clk_put(data->clk_cdev1);
+ 	clk_put(data->clk_pll_a_out0);
+ 	clk_put(data->clk_pll_a);
+diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
+index 0c13818dee75..5f2b96478caf 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.h
++++ b/sound/soc/tegra/tegra_asoc_utils.h
+@@ -25,6 +25,7 @@ struct tegra_asoc_utils_data {
+ 	struct clk *clk_pll_a;
+ 	struct clk *clk_pll_a_out0;
+ 	struct clk *clk_cdev1;
++	struct clk *clk_extern1;
+ 	int set_baseclock;
+ 	int set_mclk;
+ };
 -- 
 2.7.4
 
