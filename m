@@ -2,85 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5F91155E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED1501155E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfLFQ41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:56:27 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45040 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfLFQ4K (ORCPT
+        id S1726786AbfLFQ4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:56:20 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35861 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfLFQ4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:56:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l4A/o2+wyjx84ZFaPlMMEV4MACdBKMwfmSyM67ZwjiM=; b=ighuK9muOzPxJYFwUwOg0PO8+
-        +JGaeuWGo7vCnedvc0p9ldjmojIcrlB1/qkhQ7mfkR8vsXOmmCsJ6UEwMhCEG6ctJ3vspq6b48DTi
-        YQvzm4SDgmQNa9PZy4Hz8JDvGZ80dFBSKbwKpXl+k/PDptFyzmGaPMFpBuioTZ7M61kCwbdilhDKd
-        9zimj0UIoPHPBwuK1LRzffeoIsu1uuG2Cm9lbJwCCELh6XynoAML+OMJUAq+mOVqA/1G4EY+cZcnL
-        Mg/v5XY7TbPTnRMiguDWsDua+z2b3z+pD4T0fhB8h2LGKBI1iidIVPI6goTDAcnrWw8UO4gv6xK/X
-        lEIZVtoJw==;
-Received: from [2601:1c0:6280:3f0::3deb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1idGtf-0001K3-PA; Fri, 06 Dec 2019 16:56:03 +0000
-Subject: Re: [PATCH 1/3] cpuinfo: add sysfs based arch independent cpuinfo
- framework
-To:     Thomas Renninger <trenn@suse.de>, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, Felix Schnizlein <fschnizlein@suse.de>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux@armlinux.org.uk, will.deacon@arm.com, x86@kernel.org,
-        fschnitzlein@suse.de, Felix Schnizlein <fschnizlein@suse.com>
-References: <20191206162421.15050-1-trenn@suse.de>
- <20191206162421.15050-2-trenn@suse.de>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <65a20b22-8cc9-4492-25d5-4f03727086e8@infradead.org>
-Date:   Fri, 6 Dec 2019 08:56:02 -0800
+        Fri, 6 Dec 2019 11:56:18 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x184so2182846pfb.3;
+        Fri, 06 Dec 2019 08:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ux+f+Nau75JwdbE4emjx8UpFsrP8QXJmcDtvXXDzHeM=;
+        b=dzy+6eljRSsfdHi2oS9Z4J/cuWgMm9HnNnD5VYem8eJkTo43i0mgotulazqOlzuFtg
+         bIjKYAMt3yhMxLJWX7NIC4HYbTPkyxAbI62DlWy+hNQq79hP0I+64uybAM0CnAFcQW5P
+         B8vMtYwLEhrwM3gYt+p5D7kX13InDXFfiH9ZkQvCbCR5AzHb0+1HX7JvImGtjryDYdlf
+         MMGxF/XwKmAJuEbPkhFfmWyeSgrwNI5nM7TJvMk1GGXjRGg4QaYx7ky+bsJNxga8eP/B
+         2cVVJZXUGJLvIZF70TbR3+fTslteOC8Nnqo6CRYcDKtPkzdvHzh/DikIa+ADY/jcLu8U
+         BzWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ux+f+Nau75JwdbE4emjx8UpFsrP8QXJmcDtvXXDzHeM=;
+        b=BJlbFmEckyQsWV7MumKSc+8J4DXRRBPdfx6shu8qTjpUsUVsSqjxefT6NwM2Xyuu89
+         00rmCuczfyoK/Pp+CrJ2PQTfuK3N8PnwdNrFBsfGxZSeDGQmjCFDIphP4Z0YAD7pmmje
+         6I98Dw4vcCwgScQ2nDyDG+aMB4vWXyHbQjyBDzTlF8lagwqWJtidBM3WzQQ4z5AlrtCz
+         57ht8uj4vxkRKRT/GPWMYavPufXayGCFjqcCpAmPCgq9eLlvgjBlrYBVzc1KCP7n6JND
+         mR1I4uqWaFndyElGg7zUzqHGpcueXds7IMQVEPSGtQNDbbUVQqKgILkDhyaGed1NZi8c
+         7uqg==
+X-Gm-Message-State: APjAAAWVQc2mGSCT0SfJRX3ljMBVmF7QLBtwuQYGP0E0HLjfofbkLLd7
+        aTzcnMnAXugEpqXeU9kZLVYjCQ8t
+X-Google-Smtp-Source: APXvYqzoCRTTuo/ofjO2p1Pn+UY6q8rXJioZYu3Wed+FNmjVnKPt5EtVofUrhXYf8nE+8DTZG3TfUQ==
+X-Received: by 2002:a62:383:: with SMTP id 125mr9746402pfd.248.1575651377596;
+        Fri, 06 Dec 2019 08:56:17 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j28sm16075278pgb.36.2019.12.06.08.56.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2019 08:56:16 -0800 (PST)
+Subject: Re: [PATCH 4.14 000/209] 4.14.158-stable review
+To:     shuah <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20191204175321.609072813@linuxfoundation.org>
+ <1dac10cd-7183-9dfd-204c-05fae75bcd74@kernel.org>
+ <20191206152823.GA75339@kroah.com>
+ <785c9534-1eb2-ea9b-8c9b-6713fdefdd01@kernel.org>
+ <e04a233b-0854-2dd4-060e-47e1013879ee@roeck-us.net>
+ <f7e72654-42a6-864a-4b4c-41adcce74404@kernel.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <5e923897-6bc6-5756-1283-39e5ff1481b7@roeck-us.net>
+Date:   Fri, 6 Dec 2019 08:56:14 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191206162421.15050-2-trenn@suse.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f7e72654-42a6-864a-4b4c-41adcce74404@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/19 8:24 AM, Thomas Renninger wrote:
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 48b5e103bdb0..39015570b1ca 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -882,6 +882,17 @@ config STRICT_MODULE_RWX
->  	  and non-text memory will be made non-executable. This provides
->  	  protection against certain security exploits (e.g. writing to text)
->  
-> +config CPUINFO_SYSFS
-> +	bool "Provides processor information in sysfs. Successor of /proc/cpuinfo"
+On 12/6/19 8:23 AM, shuah wrote:
+> On 12/6/19 9:10 AM, Guenter Roeck wrote:
+>> On 12/6/19 7:35 AM, shuah wrote:
+>>> On 12/6/19 8:28 AM, Greg Kroah-Hartman wrote:
+>>>> On Fri, Dec 06, 2019 at 08:24:36AM -0700, shuah wrote:
+>>>>> On 12/4/19 10:53 AM, Greg Kroah-Hartman wrote:
+>>>>>> This is the start of the stable review cycle for the 4.14.158 release.
+>>>>>> There are 209 patches in this series, all will be posted as a response
+>>>>>> to this one.  If anyone has any issues with these being applied, please
+>>>>>> let me know.
+>>>>>>
+>>>>>> Responses should be made by Fri, 06 Dec 2019 17:50:10 +0000.
+>>>>>> Anything received after that time might be too late.
+>>>>>>
+>>>>>> The whole patch series can be found in one patch at:
+>>>>>>     https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.158-rc1.gz
+>>>>>> or in the git tree and branch at:
+>>>>>>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+>>>>>> and the diffstat can be found below.
+>>>>>>
+>>>>>> thanks,
+>>>>>>
+>>>>>> greg k-h
+>>>>>>
+>>>>>
+>>>>> Starting with Linux 4.14.157, 4.9.204, and 4.4.204 stables stopped
+>>>>> booting on my system. It can't find the root disk. No config changes
+>>>>> in between.
+>>>>>
+>>>>> I have been bisecting 4.14 and 4.9 with no luck so far. I updated
+>>>>> to Ubuntu 19.10 in between.
+>>>>>
+>>>>> The only other thing I see is CONFIG_GCC_VERSION which is supported
+>>>>> starting 4.18. I don't this boot failing issue on 4.19 + up. I am
+>>>>> also chasing any links between this config and scripts and tools
+>>>>> that generate the initramfs.
+>>>>
+>>>> Did you also upgrade your version of gcc?  I know I build those older
+>>>> kernels with the latest version of gcc for build tests, but I do not
+>>>> boot them.  I think everyone who still uses them uses older versions of
+>>>> gcc.
+>>>
+>>> Yes. gcc version changed. That has been my strong suspect since I started poking around the CONFIG_GCC_VERSION.
+>>>
+>>
+>> What version of gcc are you using ? I currently use gcc 8.3.0 for all
+>> qemu boot tests (except for 3.16 which doesn't support it, or at least
+>> it didn't when I last checked), and have not observed any problems.
+>>
+> 
+> With the upgrade gcc version went from 8.3.0 to 9.2.1
+> 
+> Interestingly enough all the older 4.14, 4.9, and 4.4 kernel I have
+> on the system boot just fine. It fails when build newer rcs with new
+> gcc, boot fails.
+> 
+> I would really like to understand it just in case something in our
+> kbuild scrips is the issue.
+> 
 
-	      Provide
+v4.4.206 boots for me into qemu when compiled with gcc 9.2.0 (9.2.1 does not
+appear to be an official release). So at least it isn't that simple. Let me
+know if I can test anything else.
 
-> +	def_bool y
-> +	depends on HAVE_CPUINFO_SYSFS
-> +	help
-> +	  Provides architecture specific processor information in /sys/devices/system/cpu/info> +	  Use this instead of /proc/cpuinfo
-
-End those 2 sentences with periods (full stop), please.
-
-> +
-> +config HAVE_CPUINFO_SYSFS
-> +	bool
-> +
->  # select if the architecture provides an asm/dma-direct.h header
->  config ARCH_HAS_PHYS_TO_DMA
->  	bool
-
-
--- 
-~Randy
-
+Thanks,
+Guenter
