@@ -2,127 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09AD115136
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A91711513B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfLFNlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 08:41:04 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33763 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbfLFNlE (ORCPT
+        id S1726256AbfLFNna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:43:30 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45291 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbfLFNna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 08:41:04 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 6so3352177pgk.0;
-        Fri, 06 Dec 2019 05:41:04 -0800 (PST)
+        Fri, 6 Dec 2019 08:43:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 2so3357679pfg.12;
+        Fri, 06 Dec 2019 05:43:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3EFCJeRV2jMf+iQ+j1NhNnzIhn47IDN/JAAO+nGlAGU=;
-        b=rn0r9y4MNjQb5vsu88mzLjNm0oUlpl/NY+ttecEbHb2mr82tElxKnFHiEE49UMuLFu
-         2GDmEqj7H+Z/pNuhLTQzgpzB1xoQ3LseCus1xviES7APeu2ZPo/piNpI70zRsqe8jYI4
-         n9lxAtkegvvyEBBZk4Tyk2RA6FpoC1ExcvjEhFnAmHWJdz558NEYdaackd3r6HQmbfDF
-         KZRF4RTuB0zhQ8uP3bmAFrKd2GSdxq5cxrmqinmkjOSmGNzRoW6S1RD1b2xpPXBDBmJL
-         X7NHGhNHXMELfqLJSSxwEikYAF97tpZD8svdq3TCzvPna+21CSwqgWUALGjWX6DcITNq
-         NZ1w==
+        h=from:to:cc:subject:date:message-id;
+        bh=r1n5pvqLG2z6eBpv3libroUGed6tLBBxHVt4i5CbkMg=;
+        b=BvtZ6v/KAbAE1G23ShR8R/onH0EbwGsbCdIZyTcqVoVpP2x0wYJy1c1ScTeqpLY542
+         hYruSoVX0lAsq+Zf0jFUAms0t6XpJ1DDKaUE8gpXrgXQIsLm5SILHzrt0eg3UtRxUQ+M
+         LDEsaUA4DpyA/uJERYx6H5KsegMS6aRtweNy7Z8gFu9tHp3lMLNDYeLO3Az6kODH/k2K
+         /XX+DTAYze38hr6b4Pv2Q7S4vm9Ssm0cp9CdPBH7gNzGLI9XwxpFHoyVZTDRcTm3ep47
+         paLnXGxEzoC3PYqrTryTe2705gRc0dN0FrgpBpCXUfIMoIj1M2js9tiJIzWvXLuYzdIx
+         87PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3EFCJeRV2jMf+iQ+j1NhNnzIhn47IDN/JAAO+nGlAGU=;
-        b=FCbCzRpFvFZ2UyV8fe1kRc316Eemcs3wZuQUrOH5sb2oCrHfxe1ADOh3eHv/PYgcJc
-         7ROBvMqbolwX6Mg75pAToF+M6arEltKDfip4dIjVUBvxQoE5y4F+aAJtMXlgwHYQ/Mlx
-         e6rmOpSeLxbBOnMzlHRpBPqroRRV29O8aiVuqrLwKm9l1Z3b5R+q4hzguj0Ym8A+iJ+k
-         YW/Cp02yFXuTEtRQFuWywo0cE1KqGWlaZzvW5phtXKV36eTDdgzP6qhkMlBZQUIb62aD
-         mu0mAlGs4K2cCqcHw1dsiH9v2v3c17Mzj/ePn0u2VfaR9nvls3vCOT6EdlWg8jPMswNk
-         W18Q==
-X-Gm-Message-State: APjAAAUzSla3A49oNY0dENjHdW03fNbrIQnScPx67jNnkbJFZp4t4K+U
-        gF7Ou8E+Y1FJcI/ydStRs8k=
-X-Google-Smtp-Source: APXvYqy+STqdn3H3r8DJnP94GB2uQbw7gMpPHzPAmc32MRNlyiXZJqgSHJ+AG0RxOsAQuQNQp/BUIQ==
-X-Received: by 2002:a62:ea19:: with SMTP id t25mr14534879pfh.74.1575639663699;
-        Fri, 06 Dec 2019 05:41:03 -0800 (PST)
-Received: from [192.168.86.235] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
-        by smtp.gmail.com with ESMTPSA id f24sm3398977pjp.12.2019.12.06.05.41.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2019 05:41:02 -0800 (PST)
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: [PATCH] selftests: net: ip_defrag: increase netdev_max_backlog
-To:     Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     netdev@vger.kernel.org, davem@davemloft.net, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        posk@google.com
-References: <20191204195321.406365-1-cascardo@canonical.com>
- <483097a3-92ec-aedd-60d9-ab7f58b9708d@gmail.com>
- <20191206121707.GC5083@calabresa>
-Message-ID: <d2dddb34-f126-81f8-cbf7-04635f04795a@gmail.com>
-Date:   Fri, 6 Dec 2019 05:41:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191206121707.GC5083@calabresa>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=r1n5pvqLG2z6eBpv3libroUGed6tLBBxHVt4i5CbkMg=;
+        b=gk7edtRVuYX0GemOAX4UYY3oAkaQ7ogkpNSx/eLDG4F4On0GlcJ25iRTH6DLV7n0zl
+         JYzB8v2TN/YQQZprBSV5ixK8kyczxUa3yX4oNTcHTFPh4yXFCGSH+6HtziD9x74W21yq
+         pyp3fLIaiUdlak7XBvh94ndkGDrrdX4urjAqxBjCXCVUMhoFqSKroe2PA0/702sD7iji
+         g3bHYAwadSoJe+WsnrBMue9fnjbt+/FblOHvw/ckx7iycX+Jo6p064GWGc/O3RzJ+yjG
+         Ei5CPFnu0BHDW3yN+E1fsTjfpVvRdyeaAzUMoDaJvrxnrVXYUH6jOyIzdIp76Mh4Uoa0
+         qhaw==
+X-Gm-Message-State: APjAAAWAo6rZ4G/T4x1l9cWwW/RLxOvmdURJYe3F1eJlrJTSS8MNDOjB
+        rlxD+M1meqvFTs18JQpP8AvrpiuJRxQ=
+X-Google-Smtp-Source: APXvYqw4SVt4XXbvzo+F0UIJa3Z8CxgI+x9x9WcadfupHaqHRA+LVzyRfltVNvxP0K/Ff6LIUiDUqw==
+X-Received: by 2002:a63:d544:: with SMTP id v4mr3462664pgi.288.1575639809712;
+        Fri, 06 Dec 2019 05:43:29 -0800 (PST)
+Received: from workstation.localdomain ([170.178.178.163])
+        by smtp.gmail.com with ESMTPSA id x7sm16297631pfa.107.2019.12.06.05.43.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Dec 2019 05:43:29 -0800 (PST)
+From:   Liang Chen <liangchen.linux@gmail.com>
+To:     colyli@suse.de
+Cc:     kent.overstreet@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        Liang Chen <liangchen.linux@gmail.com>
+Subject: [PATCH v2 2/2] [PATCH] bcache: __write_super to handle page sizes other than 4k
+Date:   Fri,  6 Dec 2019 21:43:14 +0800
+Message-Id: <1575639794-30056-1-git-send-email-liangchen.linux@gmail.com>
+X-Mailer: git-send-email 2.7.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+__write_super assumes super block data starts at offset 0 of the page
+read in with __bread from read_super, which is not true when page size
+is not 4k. We encountered the issue on system with 64K page size - commonly
+ seen on aarch64 architecture.
 
+Instead of making any assumption on the offset of the data within the page,
+this patch calls __bread again to locate the data. That should not introduce
+an extra io since the page has been held when it's read in from read_super,
+and __write_super is not on performance critical code path.
 
-On 12/6/19 4:17 AM, Thadeu Lima de Souza Cascardo wrote:
-> On Wed, Dec 04, 2019 at 12:03:57PM -0800, Eric Dumazet wrote:
->>
->>
->> On 12/4/19 11:53 AM, Thadeu Lima de Souza Cascardo wrote:
->>> When using fragments with size 8 and payload larger than 8000, the backlog
->>> might fill up and packets will be dropped, causing the test to fail. This
->>> happens often enough when conntrack is on during the IPv6 test.
->>>
->>> As the larger payload in the test is 10000, using a backlog of 1250 allow
->>> the test to run repeatedly without failure. At least a 1000 runs were
->>> possible with no failures, when usually less than 50 runs were good enough
->>> for showing a failure.
->>>
->>> As netdev_max_backlog is not a pernet setting, this sets the backlog to
->>> 1000 during exit to prevent disturbing following tests.
->>>
->>
->> Hmmm... I would prefer not changing a global setting like that.
->> This is going to be flaky since we often run tests in parallel (using different netns)
->>
->> What about adding a small delay after each sent packet ?
->>
->> diff --git a/tools/testing/selftests/net/ip_defrag.c b/tools/testing/selftests/net/ip_defrag.c
->> index c0c9ecb891e1d78585e0db95fd8783be31bc563a..24d0723d2e7e9b94c3e365ee2ee30e9445deafa8 100644
->> --- a/tools/testing/selftests/net/ip_defrag.c
->> +++ b/tools/testing/selftests/net/ip_defrag.c
->> @@ -198,6 +198,7 @@ static void send_fragment(int fd_raw, struct sockaddr *addr, socklen_t alen,
->>                 error(1, 0, "send_fragment: %d vs %d", res, frag_len);
->>  
->>         frag_counter++;
->> +       usleep(1000);
->>  }
->>  
->>  static void send_udp_frags(int fd_raw, struct sockaddr *addr,
->>
-> 
-> That won't work because the issue only shows when we using conntrack, as the
-> packet will be reassembled on output, then fragmented again. When this happens,
-> the fragmentation code is transmitting the fragments in a tight loop, which
-> floods the backlog.
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+---
+ drivers/md/bcache/super.c | 56 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 6 deletions(-)
 
-Interesting !
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index a573ce1d85aa..a40eb6335cb8 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -207,15 +207,43 @@ static void write_bdev_super_endio(struct bio *bio)
+ 	closure_put(&dc->sb_write);
+ }
+ 
+-static void __write_super(struct cache_sb *sb, struct bio *bio)
++/*
++ * With 4k page size, the 4k super block will be read in at offset 0 of
++ * the cache page. But it's not the case with larger page sizes. For
++ * example, with 64k page size reading in a 4k size block will cause the
++ * cache page being divided into 16 equal sized buffers, and block 1
++ * to be put at offset 4K in the page.
++ * Thus locating the super block again is nessessary in order to be
++ * compatilbe with different page sizes. And the page is held since
++ * read_super, this __bread should not cause an extra io.
++ */
++static inline struct cache_sb *locate_bch_sb(struct block_device *bdev)
++{
++ 	struct cache_sb *s;
++	struct buffer_head *bh = __bread(bdev, 1, SB_SIZE);
++	if (!bh)
++		return NULL;
++	s = (struct cache_sb *)bh->b_data;
++
++	/* The page will still be held without this bh.*/
++	put_bh(bh);
++	return s;
++}
++
++static int __write_super(struct cache_sb *sb, struct bio *bio,
++			 struct block_device *bdev)
+ {
+-	struct cache_sb *out = page_address(bio_first_page_all(bio));
++	struct cache_sb *out;
+ 	unsigned int i;
+ 
++	out = locate_bch_sb(bdev);
++	if (!out)
++		goto out_locate;
++
+ 	bio->bi_iter.bi_sector	= SB_SECTOR;
+ 	bio->bi_iter.bi_size	= SB_SIZE;
+ 	bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC|REQ_META);
+-	bch_bio_map(bio, NULL);
++	bch_bio_map(bio, out);
+ 
+ 	out->offset		= cpu_to_le64(sb->offset);
+ 	out->version		= cpu_to_le64(sb->version);
+@@ -240,6 +268,11 @@ static void __write_super(struct cache_sb *sb, struct bio *bio)
+ 		 sb->version, sb->flags, sb->seq);
+ 
+ 	submit_bio(bio);
++	return 0;
++
++out_locate:
++	pr_err("Couldn't locate super block, __write_super failed");
++	return -1;
+ }
+ 
+ static void bch_write_bdev_super_unlock(struct closure *cl)
+@@ -263,8 +296,13 @@ void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent)
+ 	bio->bi_private = dc;
+ 
+ 	closure_get(cl);
+-	/* I/O request sent to backing device */
+-	__write_super(&dc->sb, bio);
++	/* I/O request sent to backing device
++	 * Needs to put the clouser explicitly if __write_super failed,
++	 * because the bio is not submitted and write_bdev_super_endio
++	 * will not have a chance to put the closure.
++	 */
++	if(__write_super(&dc->sb, bio, dc->bdev))
++		closure_put(cl);
+ 
+ 	closure_return_with_destructor(cl, bch_write_bdev_super_unlock);
+ }
+@@ -312,7 +350,13 @@ void bcache_write_super(struct cache_set *c)
+ 		bio->bi_private = ca;
+ 
+ 		closure_get(cl);
+-		__write_super(&ca->sb, bio);
++		/* Needs to put the clouser explicitly if __write_super failed,
++		 * because the bio is not submitted and write_super_endio
++		 * will not have a chance to put the closure.
++		 */
++		if(__write_super(&ca->sb, bio, ca->bdev))
++			closure_put(cl);
++
+ 	}
+ 
+ 	closure_return_with_destructor(cl, bcache_write_super_unlock);
+-- 
+2.17.0
 
-So it looks like the test is correct, and exposed a long standing problem in this code.
-
-We should not adjust the test to some kernel-of-the-day-constraints, and instead fix the kernel bug ;)
-
-Where is this tight loop exactly ?
-
-If this is feeding/bursting ~1000 skbs via netif_rx() in a BH context, maybe we need to call a variant
-that allows immediate processing instead of (ab)using the softnet backlog.
-
-Thanks !
