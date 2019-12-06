@@ -2,302 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 420F0114C12
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 06:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23E8B114C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 06:46:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbfLFFaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 00:30:07 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:61605 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfLFFaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 00:30:07 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191206053003epoutp042606e1c3cc0bfb4b1d59c8c8ba64ce9c~dsSHQ7TwU3249132491epoutp04i
-        for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2019 05:30:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191206053003epoutp042606e1c3cc0bfb4b1d59c8c8ba64ce9c~dsSHQ7TwU3249132491epoutp04i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575610203;
-        bh=GG5MUxpWQ7809fVXXhPZYMif8ZzXORDkwT23qiPKBAY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=IlXlGiIkY/2e9XQYil1r0fAE2eaY01jyA2LD83ZFyC2A47GOX48DKlQHlR6FhXcK9
-         poTL66RnZvl4UvXaDB/UBEgCzJH+SV8D/rr52QDSg2O43W53sGOINYqzDMewX91f5T
-         4lnGLmb6MADXW7mCDeOlIS/NgBsH7kQ+wO8fK7Nw=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191206053002epcas1p257f22c58142e6ca684b50614fb218b28~dsSGmpQEW0609506095epcas1p24;
-        Fri,  6 Dec 2019 05:30:02 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47Th482VlfzMqYkZ; Fri,  6 Dec
-        2019 05:30:00 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        79.E7.48019.457E9ED5; Fri,  6 Dec 2019 14:29:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191206052955epcas1p34c376e4336b832c469751d13f115b855~dsR-7tv620382203822epcas1p30;
-        Fri,  6 Dec 2019 05:29:55 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191206052955epsmtrp10de98b84a0a097692259cd7045d0890f~dsR-6xTXm1384813848epsmtrp1v;
-        Fri,  6 Dec 2019 05:29:55 +0000 (GMT)
-X-AuditID: b6c32a38-23fff7000001bb93-06-5de9e75400d9
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.2B.06569.357E9ED5; Fri,  6 Dec 2019 14:29:55 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191206052955epsmtip262edf22dc744042b5861d84afc289f74~dsR-vN6u-2620426204epsmtip2e;
-        Fri,  6 Dec 2019 05:29:55 +0000 (GMT)
-Subject: Re: [PATCH v4] PM / devfreq: Move statistics to separate struct
- devfreq_stats
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     rafael.j.wysocki@intel.com, myungjoo.ham@samsung.com,
-        b.zolnierkie@samsung.com, gregkh@linuxfoundation.org,
-        krzk@kernel.org, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, mchehab@kernel.org, cpgs@samsung.com,
-        Kamil Konieczny <k.konieczny@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <af1a2fd9-f717-ed23-1130-a0dad169c7e6@samsung.com>
-Date:   Fri, 6 Dec 2019 14:36:08 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        id S1726284AbfLFFqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 00:46:46 -0500
+Received: from mail-bn8nam11on2078.outbound.protection.outlook.com ([40.107.236.78]:19873
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726043AbfLFFqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 00:46:46 -0500
+Received: from BL0PR02CA0055.namprd02.prod.outlook.com (2603:10b6:207:3d::32)
+ by DM6PR02MB6233.namprd02.prod.outlook.com (2603:10b6:5:1d6::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.14; Fri, 6 Dec
+ 2019 05:46:43 +0000
+Received: from SN1NAM02FT053.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::201) by BL0PR02CA0055.outlook.office365.com
+ (2603:10b6:207:3d::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2516.14 via Frontend
+ Transport; Fri, 6 Dec 2019 05:46:43 +0000
+Authentication-Results: spf=softfail (sender IP is 149.199.60.83)
+ smtp.mailfrom=gmail.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=fail action=none header.from=gmail.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ gmail.com discourages use of 149.199.60.83 as permitted sender)
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT053.mail.protection.outlook.com (10.152.72.102) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2474.17
+ via Frontend Transport; Fri, 6 Dec 2019 05:46:43 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1id6Ld-0000Ll-RX; Thu, 05 Dec 2019 21:40:13 -0800
+Received: from [127.0.0.1] (helo=xsj-smtp-dlp2.xlnx.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1id6LY-00044a-9q; Thu, 05 Dec 2019 21:40:08 -0800
+Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xB65e49k006773;
+        Thu, 5 Dec 2019 21:40:05 -0800
+Received: from [10.140.6.59] (helo=xhdshubhraj40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1id6LU-0003rO-4g; Thu, 05 Dec 2019 21:40:04 -0800
+From:   shubhrajyoti.datta@gmail.com
+To:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH v2 1/3] dt-bindings: Add dt bindings for flex noc Performance Monitor
+Date:   Fri,  6 Dec 2019 11:09:56 +0530
+Message-Id: <19bb1ad0783e66aef45b140ccf409917ef94e63b.1575609926.git.shubhrajyoti.datta@xilinx.com>
+X-Mailer: git-send-email 2.1.1
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-Result: No--5.130-7.0-31-1
+X-imss-scan-details: No--5.130-7.0-31-1;No--5.130-5.0-31-1
+X-TM-AS-User-Approved-Sender: No;No
+X-TM-AS-Result-Xfilter: Match text exemption rules:No
+X-EOPAttributedMessage: 0
+X-Matching-Connectors: 132200848033218437;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(396003)(199004)(189003)(70206006)(70586007)(9686003)(73392003)(8936002)(5660300002)(336012)(426003)(86362001)(107886003)(50466002)(48376002)(36756003)(26005)(450100002)(356004)(305945005)(4326008)(14444005)(16586007)(51416003)(316002)(7696005)(8676002)(50226002)(498600001)(76482006)(966005)(81156014)(81166006)(9786002)(118296001)(82202003)(6666004)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB6233;H:xsj-pvapsmtpgw01;FPR:;SPF:SoftFail;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
 MIME-Version: 1.0
-In-Reply-To: <20191206053340.18706-1-cw00.choi@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0hTcRTH+W27D8Vrt2l5kB7zGoSWj5uubpYRZLFISDAijGk3d9lkz3Zn
-        78BS0jR7EJVJkpGVaWUNKRN1ZUKssAcRhWFUrnI9LBzVYhZtu4v873PO73zP+X1/D1Ku7MET
-        yTKLQ7BbeBODRytu3E3JSFv3wavN9LSQ3PWGDozz9qdwlec6cK55vAHjHj26RnCD+z4T3NPu
-        0zjnqx9A3JWBYYK74JyQcS/3tuLcSOsXYnmM5lyPV6Zxth3ANa6my4TmUGcb0vicswqwIuNS
-        g8DrBLtKsJRadWUWfS6zprBkRYl6YSabxi7mFjEqC28Wcpm8/IK0VWWm4PYY1VbeVB5MFfCi
-        yGQsW2q3ljsElcEqOnIZwaYz2Rbb0kXeLJZb9OmlVnMOm5m5QB0s3GQ0jNU9wWy+7O1H7rtR
-        BQqk1qIoEuhs8NX3yWpRNKmkuxAcqprApWAcgeezRy4FPxC0359Q/JMM/TyOSQu9CO601iMp
-        +Irg6JuqYDOSjKM3QNun6SFBPJ0Do9UfiRDL6ToZtHzDQ4zTqeAafRHmKXQSPPOPoBBT9DIY
-        fFsrD7GCngNf3x8ID55Grwf3japIzVRwn/IoQqOi6CVw4XaR1D4BhjxnZBLPhptfTocNAH2S
-        gN7Bh5hkIA/GnndHOA4+3uskJE4E7+H9Ed4Fl9wDuCSuQdDpehwRZIHr/LGwRzmdAh3dGVI6
-        CW4FmpDEFFRcD0T8xsLY94NYqDyUr9mvlEqS4enrYdkRlNw4yU3jJAuNkyw0/h/WjBRtaLpg
-        E816QWRt2ZMv24nCLzeV60I9D/P7EU0iJoZq8I1qlRi/Vdxh7kdAypl4Sh/r1SopHb9jp2C3
-        ltjLTYLYj9TBwz4qT5xWag3+A4ujhFUvyMrK4rLZhWqWZRIo0v9Eq6T1vEMwCoJNsP/Tycio
-        xAqUt3akcF9LT8u2DUbH7s2/52P1f/y/+mY/cC9ZndsRGx33asJobmdmanLaVRcLqT+D4omp
-        QxsTAtqLM1YeJIb9m4qu2nXUOzJ/5h2ibmAco/qSHrhq/fMMMbprla2VV19Xf9qd16Tbs6Vq
-        za3lxXPHo2vWLUpvcqYXVycHoPnt2Z2MQjTwbKrcLvJ/AfpRaqzPAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvG7w85exBjNb5S02zljPavHykKZF
-        8+L1bBYLPs1gtTh/fgO7xdmmN+wWl3fNYbP43HuE0WLtkbvsFss2/WGyuN24gs3i8Yq37A48
-        Hov3vGTy2LSqk81j/9w17B59W1YxenzeJBfAGsVlk5Kak1mWWqRvl8CV8a77ImvBZ5OKCadO
-        MjYw/tbqYuTkkBAwkbj1fSprFyMXh5DAbkaJR2c/skMkJCWmXTzK3MXIAWQLSxw+XAxR85ZR
-        YvbdHUwgcWGBCIlVr8VAykUErCRetL9iB6lhFuhmkrg5A6QGpOEgo8TUu8vBhrIJaEnsf3GD
-        DcTmF1CUuPrjMSOIzStgJ3H2URcziM0ioCLx/lknC4gtKhAmsXPJYyaIGkGJkzOfsIAs5hSw
-        llh2IAokzCygLvFn3iVmCFtc4taT+UwQtrzE9rdzmCcwCs9C0j0LScssJC2zkLQsYGRZxSiZ
-        WlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHH1aWjsYT5yIP8QowMGoxMM74/OLWCHWxLLi
-        ytxDjBIczEoivOl8L2OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ88rnH4sUEkhPLEnNTk0tSC2C
-        yTJxcEo1MFbqlui+KL1Ymxaw5v4xMQXh/lhz2w+35mnGbth98G2TsP3PqVzlM+23a+d06Lyo
-        FPYWnKZ0fk/1qVzO/KU3eDZNffbY/+ah/H8dHR93z7OMV7X7n2zBbGH32vHN06N6TfJprXIn
-        8y/OyMqYdbdHY21i07Zml9y13P1/VyhyTdNcE+Cb81ZkihJLcUaioRZzUXEiAO2Akka6AgAA
-X-CMS-MailID: 20191206052955epcas1p34c376e4336b832c469751d13f115b855
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-CPGSPASS: Y
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191206052729epcas1p110d11c728db1ebd7487c8c5fe936df21
-References: <20191205145527.26117-4-k.konieczny@samsung.com>
-        <CGME20191206052729epcas1p110d11c728db1ebd7487c8c5fe936df21@epcas1p1.samsung.com>
-        <20191206053340.18706-1-cw00.choi@samsung.com>
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5fe86c2e-6e0f-4553-2af5-08d77a0fac76
+X-MS-TrafficTypeDiagnostic: DM6PR02MB6233:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB623370CB6683946D1D49E925875F0@DM6PR02MB6233.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-Forefront-PRVS: 0243E5FD68
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: RT1JFYb3WCoa9xQ/JdwLnL6QdE8sIvasaH+5zHQxNuD0r3NPveZgMj8fShBwETByvazpRzbyCsUoSw6cCbdhqXyATtruyKNteQAOfvrtEGCP/11W1fhJt1+uJqBfNFaIaPIciQJVloKW1ZHEDWLeorhAmTgqRe0X4cVlLIHIZLSc3AM1vSQHXfWk2+5wugban+4mp4NPgzmc6eohFmccxnPUSwMmfjZJ455quvBC9sEVy8v31X14BUOu6BTMkye0B7jx80B2LSq8WlbuaCRvvHO203HfHfrPX6WZkoTqFb5QmmD/EwcTknfWI6LOkP6g24q0dpScydG+SXmR1FxMw8nzZOtFAMLQdeqnXlkYqf97p8iRFhH/cKQFR/EykPv2oxsG2DC4S6HIkzXddj1GYQo1cu0fSWZsRnEVUwBsPJYYdpDrRfo54MNMS36q7z33KcPPaKQM07WJobh/MCtQczUDf628jsMA+JabrQX8A9Y=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2019 05:46:43.1617
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fe86c2e-6e0f-4553-2af5-08d77a0fac76
+X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6233
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/19 2:33 PM, Chanwoo Choi wrote:
-> From: Kamil Konieczny <k.konieczny@samsung.com>
-> 
-> Count time and transitions between devfreq frequencies in separate
-> struct devfreq_stats for improved code readability and maintenance.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> [cw00.choi: Fix the merge conflict in trasn_stat_store]
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/devfreq/devfreq.c | 44 ++++++++++++++++++++-------------------
->  include/linux/devfreq.h   | 26 +++++++++++++++--------
->  2 files changed, 40 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index df31f430051d..1786a86b1779 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -214,8 +214,8 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
->  		goto out;
->  	}
->  
-> -	devfreq->time_in_state[prev_lev] +=
-> -			 cur_time - devfreq->last_stat_updated;
-> +	devfreq->stats.time_in_state[prev_lev] +=
-> +			cur_time - devfreq->stats.last_update;
->  
->  	lev = devfreq_get_freq_level(devfreq, freq);
->  	if (lev < 0) {
-> @@ -224,13 +224,13 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
->  	}
->  
->  	if (lev != prev_lev) {
-> -		devfreq->trans_table[(prev_lev *
-> -				devfreq->profile->max_state) + lev]++;
-> -		devfreq->total_trans++;
-> +		devfreq->stats.trans_table[
-> +			(prev_lev * devfreq->profile->max_state) + lev]++;
-> +		devfreq->stats.total_trans++;
->  	}
->  
->  out:
-> -	devfreq->last_stat_updated = cur_time;
-> +	devfreq->stats.last_update = cur_time;
->  	return ret;
->  }
->  EXPORT_SYMBOL(devfreq_update_status);
-> @@ -525,7 +525,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
->  			msecs_to_jiffies(devfreq->profile->polling_ms));
->  
->  out_update:
-> -	devfreq->last_stat_updated = get_jiffies_64();
-> +	devfreq->stats.last_update = get_jiffies_64();
->  	devfreq->stop_polling = false;
->  
->  	if (devfreq->profile->get_cur_freq &&
-> @@ -735,28 +735,29 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  		goto err_out;
->  	}
->  
-> -	devfreq->trans_table = devm_kzalloc(&devfreq->dev,
-> +	devfreq->stats.trans_table = devm_kzalloc(&devfreq->dev,
->  			array3_size(sizeof(unsigned int),
->  				    devfreq->profile->max_state,
->  				    devfreq->profile->max_state),
->  			GFP_KERNEL);
-> -	if (!devfreq->trans_table) {
-> +	if (!devfreq->stats.trans_table) {
->  		mutex_unlock(&devfreq->lock);
->  		err = -ENOMEM;
->  		goto err_devfreq;
->  	}
->  
-> -	devfreq->time_in_state = devm_kcalloc(&devfreq->dev,
-> +	devfreq->stats.time_in_state = devm_kcalloc(&devfreq->dev,
->  			devfreq->profile->max_state,
-> -			sizeof(*devfreq->time_in_state),
-> +			sizeof(*devfreq->stats.time_in_state),
->  			GFP_KERNEL);
-> -	if (!devfreq->time_in_state) {
-> +	if (!devfreq->stats.time_in_state) {
->  		mutex_unlock(&devfreq->lock);
->  		err = -ENOMEM;
->  		goto err_devfreq;
->  	}
->  
-> -	devfreq->last_stat_updated = get_jiffies_64();
-> +	devfreq->stats.total_trans = 0;
-> +	devfreq->stats.last_update = get_jiffies_64();
->  
->  	srcu_init_notifier_head(&devfreq->transition_notifier_list);
->  
-> @@ -1469,13 +1470,14 @@ static ssize_t trans_stat_show(struct device *dev,
->  				devfreq->profile->freq_table[i]);
->  		for (j = 0; j < max_state; j++)
->  			len += sprintf(buf + len, "%10u",
-> -				devfreq->trans_table[(i * max_state) + j]);
-> +				devfreq->stats.trans_table[(i * max_state) + j]);
-> +
->  		len += sprintf(buf + len, "%10llu\n", (u64)
-> -			jiffies64_to_msecs(devfreq->time_in_state[i]));
-> +			jiffies64_to_msecs(devfreq->stats.time_in_state[i]));
->  	}
->  
->  	len += sprintf(buf + len, "Total transition : %u\n",
-> -					devfreq->total_trans);
-> +					devfreq->stats.total_trans);
->  	return len;
->  }
->  
-> @@ -1494,13 +1496,13 @@ static ssize_t trans_stat_store(struct device *dev,
->  		return -EINVAL;
->  
->  	mutex_lock(&df->lock);
-> -	memset(df->time_in_state, 0, (df->profile->max_state *
-> -					sizeof(*df->time_in_state)));
-> -	memset(df->trans_table, 0, array3_size(sizeof(unsigned int),
-> +	memset(df->stats.time_in_state, 0, (df->profile->max_state *
-> +					sizeof(*df->stats.time_in_state)));
-> +	memset(df->stats.trans_table, 0, array3_size(sizeof(unsigned int),
->  					df->profile->max_state,
->  					df->profile->max_state));
-> -	df->total_trans = 0;
-> -	df->last_stat_updated = get_jiffies_64();
-> +	df->stats.total_trans = 0;
-> +	df->stats.last_update = get_jiffies_64();
->  	mutex_unlock(&df->lock);
->  
->  	return count;
-> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-> index 41f15e7a22b8..de2fdc56aa5b 100644
-> --- a/include/linux/devfreq.h
-> +++ b/include/linux/devfreq.h
-> @@ -106,6 +106,20 @@ struct devfreq_dev_profile {
->  	unsigned int max_state;
->  };
->  
-> +/**
-> + * struct devfreq_stats - Statistics of devfreq device behavior
-> + * @total_trans:	Number of devfreq transitions.
-> + * @trans_table:	Statistics of devfreq transitions.
-> + * @time_in_state:	Statistics of devfreq states.
-> + * @last_update:	The last time stats were updated.
-> + */
-> +struct devfreq_stats {
-> +	unsigned int total_trans;
-> +	unsigned int *trans_table;
-> +	u64 *time_in_state;
-> +	u64 last_update;
-> +};
-> +
->  /**
->   * struct devfreq - Device devfreq structure
->   * @node:	list node - contains the devices with devfreq that have been
-> @@ -131,10 +145,7 @@ struct devfreq_dev_profile {
->   * @suspend_freq:	 frequency of a device set during suspend phase.
->   * @resume_freq:	 frequency of a device set in resume phase.
->   * @suspend_count:	 suspend requests counter for a device.
-> - * @total_trans:	Number of devfreq transitions
-> - * @trans_table:	Statistics of devfreq transitions
-> - * @time_in_state:	Statistics of devfreq states
-> - * @last_stat_updated:	The last time stat updated
-> + * @stats:	Statistics of devfreq device behavior
->   * @transition_notifier_list: list head of DEVFREQ_TRANSITION_NOTIFIER notifier
->   *
->   * This structure stores the devfreq information for a give device.
-> @@ -171,11 +182,8 @@ struct devfreq {
->  	unsigned long resume_freq;
->  	atomic_t suspend_count;
->  
-> -	/* information for device frequency transition */
-> -	unsigned int total_trans;
-> -	unsigned int *trans_table;
-> -	u64 *time_in_state;
-> -	u64 last_stat_updated;
-> +	/* information for device frequency transitions */
-> +	struct devfreq_stats stats;
->  
->  	struct srcu_notifier_head transition_notifier_list;
->  };
-> 
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-Applied it. Thanks.
+Add dt bindings for flexnoc Performance Monitor.
+The flexnoc counters for read and write response and requests are
+supported.
 
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+---
+changes from RFC:
+moved to schema / yaml
+v2:
+Add additionalProperties
+Update the License
+
+ .../devicetree/bindings/perf/xlnx-flexnoc-pm.yaml  | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
+
+diff --git a/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml b/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
+new file mode 100644
+index 0000000..39c54c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/perf/xlnx-flexnoc-pm.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/perf/xlnx-flexnoc-pm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xilinx flexnoc Performance Monitor device tree bindings
++
++maintainers:
++  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
++
++properties:
++  compatible:
++    # Versal SoC based boards
++    items:
++      - enum:
++          - xlnx,flexnoc-pm-2.7
++
++  reg:
++    items:
++      - description: funnel registers
++      - description: baselpd registers
++      - description: basefpd registers
++
++  reg-names:
++    # The core schema enforces this is a string array
++    items:
++      - const: funnel
++      - const: baselpd
++      - const: basefpd
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    performance-monitor@f0920000 {
++        compatible = "xlnx,flexnoc-pm-2.7";
++        reg-names = "funnel", "baselpd", "basefpd";
++        reg = <0x0 0xf0920000 0x0 0x1000>,
++              <0x0 0xf0980000 0x0 0x9000>,
++              <0x0 0xf0b80000 0x0 0x9000>;
++    };
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.1.1
+
