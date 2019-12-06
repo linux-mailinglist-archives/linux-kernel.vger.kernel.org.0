@@ -2,85 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA58A115342
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 15:37:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E249811534F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 15:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfLFOhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 09:37:20 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44064 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfLFOhU (ORCPT
+        id S1726475AbfLFOjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 09:39:25 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40332 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726259AbfLFOjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 09:37:20 -0500
-Received: by mail-ed1-f67.google.com with SMTP id cm12so5918132edb.11;
-        Fri, 06 Dec 2019 06:37:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6pqXKRvUFOG37AuALEYM3R9VG4PngpMcyaJBzg7nV3g=;
-        b=UOQ2KQpe9ck++pTanAdEzfd/yFGVbZiP2ZMhqgoOZMwM/Q230FJT2OgR+6mM30LfM7
-         AFkAS5oyZhHDejOo6pNmISpWQxCoOVKrVsgkVPMXPK85PKADrXAMWFOyJiEFIZSc0E1D
-         c9yQPRjXyCgAg35mP39ZOV0enbfMyUquyhWJjczlmbV5Q4XdUaYI+Gc5VKW78kcP6RSj
-         4WszCqX9CURNDEGBcOFMV1jg2K2PReDvkf8IjPosqK3mDCsK3GvXhILtMJpu+yNCoyOD
-         dL5rvp9jP8kJdG7n2XgUzHs2EttJWdt4IYpm7QU/fItm24xSph0oo4zJd/OPKndjRgij
-         zhSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6pqXKRvUFOG37AuALEYM3R9VG4PngpMcyaJBzg7nV3g=;
-        b=njwawOiPUDNea/oA6EztSGWGm0QkKCMdwRZDtt8GLbei+sqBhdDwJiIpD3yPyckJk0
-         Xp9qRp9Mj9BRLEyCe9dn8l2K2NXsrmkBFwbcoO6bFVJnFcyps/XqF2zN8MtVHI/WITcM
-         iYhT16HFpWTZNdV2w0hb35heY5U5QZ4pVjF2mXJfh5DgnPYXoV4TQktOLnugjxLI21+q
-         fhKnPOFryapXXf1gxwxt/OTMV97C0XG1w/Vzir6Pu63SzMm9LQbGTcN0XSJay+M1cejG
-         SVHSwan5GkWBro01zfF60NDqEvytof/7x6bW5PYQgIAMdd/M/zgDJm0C0ZCKB//1ePMm
-         mf3A==
-X-Gm-Message-State: APjAAAV1J47uI35gZGNcLPbsnUBpxuEN388p/89jZo65DrjxV2h2TpZx
-        X7l08Oc2ZgMQyeMRRIR1TydLayobX+2JD4KTX2Q=
-X-Google-Smtp-Source: APXvYqzE0Uq4loP3mpC5eV1rW0FqCbw+BjPeim2rbVHRpDm2funRWXToQ4PY1gFfVy4jXKoCn9u+fiip9glnhROliVc=
-X-Received: by 2002:a17:906:12c6:: with SMTP id l6mr15393240ejb.53.1575643038507;
- Fri, 06 Dec 2019 06:37:18 -0800 (PST)
+        Fri, 6 Dec 2019 09:39:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575643163;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=t9EmvdK1AgBEeVtyIdQhFEC+nCx5dAL/M6REGeRF2KI=;
+        b=A8u6dFx7I3AQ9vPjpD4oHMpe5QOUPE3N36xPugfLKDuaA98+bb1h7mDn/rQXjtk0m8xxt7
+        I3Ug+bSW+15uBh2M0pUS4zhx+U12Klw/EVJOJn/Dnyy4AdnzqDZ8/L2ePuR/T35v4b3UFz
+        kceOEZ5bil4v/g+AhHRp6U7jQlu49nA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-111-vn1BWFynNbyWxKfbUzJhhg-1; Fri, 06 Dec 2019 09:39:20 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F30F64A9B;
+        Fri,  6 Dec 2019 14:39:19 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-106.ams2.redhat.com [10.36.117.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ECF4D5C1C3;
+        Fri,  6 Dec 2019 14:39:12 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     virtualization@lists.linux-foundation.org
+Cc:     Stefano Garzarella <sgarzare@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH] vhost/vsock: accept only packets with the right dst_cid
+Date:   Fri,  6 Dec 2019 15:39:12 +0100
+Message-Id: <20191206143912.153583-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-References: <20191206120735.21873-1-hslester96@gmail.com> <f6fcd441-e92d-0fff-e488-9507999b1682@web.de>
-In-Reply-To: <f6fcd441-e92d-0fff-e488-9507999b1682@web.de>
-From:   Chuhong Yuan <hslester96@gmail.com>
-Date:   Fri, 6 Dec 2019 22:37:08 +0800
-Message-ID: <CANhBUQ2p4hkSUgW8ZpA6+M_RsuN72E+v-XN=1a=m-Xf_++ZkdQ@mail.gmail.com>
-Subject: Re: [PATCH] media: go7007: fix a miss of snd_card_free
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: vn1BWFynNbyWxKfbUzJhhg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 10:11 PM Markus Elfring <Markus.Elfring@web.de> wrot=
-e:
->
-> > go7007_snd_init() misses a snd_card_free() in an error path.
-> > Add the missed call to fix it.
->
-> How do you think about to take another look also at the previous update s=
-uggestion
-> =E2=80=9C[PATCH 5/6] [media] go7007: Use common error handling code in go=
-7007_snd_init()=E2=80=9D?
-> https://lore.kernel.org/linux-media/05efac78-3a14-803c-5b4a-68670728628b@=
-users.sourceforge.net/
-> https://lore.kernel.org/patchwork/patch/831887/
-> https://lkml.org/lkml/2017/9/19/115
->
+When we receive a new packet from the guest, we check if the
+src_cid is correct, but we forgot to check the dst_cid.
 
-I think using goto is really much better than freeing after every error.
-I will send a new version if others also agree with this pattern.
+The host should accept only packets where dst_cid is
+equal to the host CID.
 
-Regards,
-Chuhong
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ drivers/vhost/vsock.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Regards,
-> Markus
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index 50de0642dea6..c2d7d57e98cf 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -480,7 +480,9 @@ static void vhost_vsock_handle_tx_kick(struct vhost_wor=
+k *work)
+ =09=09virtio_transport_deliver_tap_pkt(pkt);
+=20
+ =09=09/* Only accept correctly addressed packets */
+-=09=09if (le64_to_cpu(pkt->hdr.src_cid) =3D=3D vsock->guest_cid)
++=09=09if (le64_to_cpu(pkt->hdr.src_cid) =3D=3D vsock->guest_cid &&
++=09=09    le64_to_cpu(pkt->hdr.dst_cid) =3D=3D
++=09=09    vhost_transport_get_local_cid())
+ =09=09=09virtio_transport_recv_pkt(&vhost_transport, pkt);
+ =09=09else
+ =09=09=09virtio_transport_free_pkt(pkt);
+--=20
+2.23.0
+
