@@ -2,73 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19FD114E23
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74783114E65
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 10:49:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbfLFJ1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 04:27:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33790 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfLFJ1O (ORCPT
+        id S1726423AbfLFJtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 04:49:41 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64169 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfLFJtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 04:27:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Zo0jtbIsOCFbGh+b8IHpEzhIrR3GU31EEJ5gwFtfOLI=; b=tCLQjpLBG1mkfvFy2UlwcyiY5
-        /QkA+UQH6qepxcH8+285c71e9nPMDHT3s8+mW8JsSEUrAVP0FW6UxGNOlEzv3ukQ9NCok2rHB2PV2
-        NZ5PEku1ONlrdtesCjGjxnwoo5Mxn7ALqYZ0lH+KTQXwkQPTVQtNJOIN0FASRJaQ8WnB2q/JQmmuv
-        WhWrW8N+7GUlHhM3dcaJ/Z6scTt7KALoxEzcjgFubDtgXqcohjm1GG+7n85gW4ptPhRxI5Gd+zP7H
-        jtNilC6Yx20Q0Vc2KiNf1U8orUWzdPylX33i5q+6SSDUxUTaRu9JeHEIipuXrs6FBYceYFIqOHMeT
-        PI+19/JPw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1id9tK-0006Qg-0X; Fri, 06 Dec 2019 09:27:14 +0000
-Date:   Fri, 6 Dec 2019 01:27:13 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Liang Chen <liangchen.linux@gmail.com>
-Cc:     colyli@suse.de, kent.overstreet@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org
-Subject: Re: [PATCH 1/2] [PATCH] bcache: cached_dev_free needs to put the sb
- page
-Message-ID: <20191206092713.GB7650@infradead.org>
-References: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
+        Fri, 6 Dec 2019 04:49:36 -0500
+Received: from 79.184.254.100.ipv4.supernova.orange.pl (79.184.254.100) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id a94a341a3eddd6ac; Fri, 6 Dec 2019 10:49:34 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Subject: [RFC][PATCH 0/6] cpuidle: intel_idle: Use ACPI _CTS to get idle states information
+Date:   Fri, 06 Dec 2019 10:28:51 +0100
+Message-ID: <2037014.bnAicLLH9b@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575622543-22470-1-git-send-email-liangchen.linux@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 04:55:42PM +0800, Liang Chen wrote:
-> Same as cache device, the buffer page needs to be put while
-> freeing cached_dev.  Otherwise a page would be leaked every
-> time a cached_dev is stopped.
-> 
-> Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
-> ---
->  drivers/md/bcache/super.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 77e9869345e7..a573ce1d85aa 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1275,6 +1275,9 @@ static void cached_dev_free(struct closure *cl)
->  
->  	mutex_unlock(&bch_register_lock);
->  
-> +	if (dc->sb_bio.bi_inline_vecs[0].bv_page)
-> +		put_page(bio_first_page_all(&dc->sb_bio));
+Hi All,
 
-Using bio_first_page_all in the put_page call, but open coding it
-for the check looks rather strange.
+The purpose of this set of patches is to allow the intel_idle driver to use
+C-states information from ACPI _CST on systems where the processor is not
+recognized by it.
 
-The cleanest thing here would be to just add a page pointer to the
-cached device structure and use that instead of all the indirections.
+The first five patches are preparatory (please look into the changelogs for
+details) and are not expected to make any functional difference.
+
+The last patch adds ACPI _CST support to intel_idle so that _CST is used when
+the driver does not have a dedicated list of C-states for the given processor.
+
+The plan (for the future) is to also use _CST in some cases when there is a
+list of C-states for the given processor in intel_idle in order to produce a
+combined list in which some states may be disabled by default.
+
+This has been lightly tested on a Dell XPS13 9360 (with an additional patch to
+drop the Kaby Lake entries from intel_idle_ids[] which normally would prevent
+intel_idle from registering itself as the cpuidle driver).  The difference
+between using the idle states list from _CST and the built-in one generally is
+that in the latter case the processor spends more time in package C-state when
+the system is idle.
+
+If there are any concerns about this series, please let me know.
+
+Thanks,
+Rafael
+
+
+
