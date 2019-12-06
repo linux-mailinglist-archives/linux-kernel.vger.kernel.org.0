@@ -2,99 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C3DF1154B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6389B1154EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfLFQAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:00:04 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38456 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfLFQAE (ORCPT
+        id S1726395AbfLFQRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:17:06 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51614 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726312AbfLFQRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:00:04 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so3544307pfc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 08:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yp4NDcto5u3LEI/hPsxbY59xGgx6y4i/6vjXYjtnjow=;
-        b=lnAxMEOEHX+2ySVymkjh100nDEHcIL4fsUSOKlWMR5nDBzDCp4AATKxrpWzWyI8Dk4
-         zg58wU4yvgBvfrNP1HGcAvWjaydR5zG2JJOEldi2nbebNK0efx4k8YZTKryX3VIvQOyb
-         lo74CFW4MxylA/c6L7/iqA0GePoca2b3t8d3g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yp4NDcto5u3LEI/hPsxbY59xGgx6y4i/6vjXYjtnjow=;
-        b=XsqjUATAJAY6rBcBtszyHSKGGGEjji3bpB35V1M0EUZgo1G+tfElLrcTM3zX0GlB+8
-         8ojfTelz+PV+0z/AZFpLD/iR/Ei5TS97zHbjpFiXOMxctyoi6ON05KQ6qVgOGxK86ES6
-         eFkNOK8KUR9mNGXQSxQCMpUwa9iPV7esf45z3YAmKf9IoJiIBE8Uvv1gUlS0BasYODVp
-         JHVzojsdrGpY3XaR32AhkwvjygYA2YlrcY7TLZ4j04rBvuOwBT+vhAFQOxfRdvEpbtx/
-         PX2gVreV/NFGM9aZOtpuBsucQqzOPko2LdBLQzJiYJDcLI8vQlrOBfexRS9cE/MDzeOF
-         bWNA==
-X-Gm-Message-State: APjAAAWR56TXfkUuBbmdCcnNH8UK87w6E++eQ0Nfc4Ko71BYIKFde0gH
-        Yuc5Kix7nfF0ACC7Yz8w+QJXxQ==
-X-Google-Smtp-Source: APXvYqypv1DWB8/LOdDKSMQkxkwrrdr8pO+nq2V/VfOTVcMO5ym9WNe6AXU+sPVo6aMYwGOSopGp9Q==
-X-Received: by 2002:aa7:9315:: with SMTP id 21mr15127246pfj.187.1575648003565;
-        Fri, 06 Dec 2019 08:00:03 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id d14sm3740684pjz.12.2019.12.06.08.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2019 08:00:03 -0800 (PST)
-Date:   Fri, 6 Dec 2019 11:00:02 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     madhuparnabhowmik04@gmail.com
-Cc:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
-        linux-nfs@vger.kernel.org, rcu@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org, paulmck@kernel.org
-Subject: Re: [PATCH 2/2] fs: nfs: dir.c: Fix sparse error
-Message-ID: <20191206160002.GB15547@google.com>
-References: <20191206151640.10966-1-madhuparnabhowmik04@gmail.com>
+        Fri, 6 Dec 2019 11:17:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575649024;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9FcmzKbZjToAadhOdw0aqboYZH5PpSClOXPEco7jAnA=;
+        b=Ay+tdUYqts4l+k2LF05M818KXfFehbDiAq4j9Y+iXZHIlDYFOay0DIQlapbVazcIa6ZSEz
+        Jt92SLwVgkxb1gfkRq1tejmOp0AraHa+nqr7wCdAE9CVZmWWV+RE6fSPxckywFln5Km5er
+        sbhwoSXEkjkxfLZmJ5rFQBhWvXA272I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-295-AMpQHCkJMmOxhJumF-3VZw-1; Fri, 06 Dec 2019 11:16:59 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5DFB11B18BDC;
+        Fri,  6 Dec 2019 16:16:58 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-5.gru2.redhat.com [10.97.112.5])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 206B886B80;
+        Fri,  6 Dec 2019 16:16:58 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 56F5E1004E6;
+        Fri,  6 Dec 2019 13:07:45 -0200 (BRST)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id xB6F7fo9028164;
+        Fri, 6 Dec 2019 13:07:41 -0200
+Date:   Fri, 6 Dec 2019 13:07:41 -0200
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH] cpuidle: use first valid target residency as poll time
+Message-ID: <20191206150739.GA20167@amt.cnet>
 MIME-Version: 1.0
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-MC-Unique: AMpQHCkJMmOxhJumF-3VZw-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20191206151640.10966-1-madhuparnabhowmik04@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Paul, here is the dependent patch for the list_prev_rcu() patch Madhuparna
-posted.
 
-On Fri, Dec 06, 2019 at 08:46:40PM +0530, madhuparnabhowmik04@gmail.com wrote:
-> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> 
-> This patch fixes the following errors:
-> fs/nfs/dir.c:2353:14: error: incompatible types in comparison expression (different address spaces):
-> fs/nfs/dir.c:2353:14:    struct list_head [noderef] <asn:4> *
-> fs/nfs/dir.c:2353:14:    struct list_head *
-> 
-> caused due to directly accessing the prev pointer of
-> a RCU protected list.
-> Accessing the pointer using the macro list_prev_rcu() fixes this error.
-> 
-> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> ---
->  fs/nfs/dir.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-> index e180033e35cf..2035254cc283 100644
-> --- a/fs/nfs/dir.c
-> +++ b/fs/nfs/dir.c
-> @@ -2350,7 +2350,7 @@ static int nfs_access_get_cached_rcu(struct inode *inode, const struct cred *cre
->  	rcu_read_lock();
->  	if (nfsi->cache_validity & NFS_INO_INVALID_ACCESS)
->  		goto out;
-> -	lh = rcu_dereference(nfsi->access_cache_entry_lru.prev);
-> +	lh = rcu_dereference(list_prev_rcu(&nfsi->access_cache_entry_lru));
->  	cache = list_entry(lh, struct nfs_access_entry, lru);
->  	if (lh == &nfsi->access_cache_entry_lru ||
->  	    cred != cache->cred)
-> -- 
-> 2.17.1
-> 
+commit 259231a045616c4101d023a8f4dcc8379af265a6 changed, by mistake,
+the target residency from the first available sleep state to the last
+available sleep state (which should be longer).
+
+This might cause excessive polling.
+
+Fixes: 259231a045616c4101d023a8f4dcc8379af265a6
+
+Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 0005be5ea2b4..15877b431143 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -382,6 +382,7 @@ u64 cpuidle_poll_time(struct cpuidle_driver *drv,
+ =09=09=09continue;
+=20
+ =09=09limit_ns =3D (u64)drv->states[i].target_residency_ns;
++=09=09break;
+ =09}
+=20
+ =09dev->poll_limit_ns =3D limit_ns;
+
