@@ -2,137 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BC4114D12
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 09:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 531BC114D21
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 09:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfLFIDp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 6 Dec 2019 03:03:45 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60492 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfLFIDp (ORCPT
+        id S1726903AbfLFIFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 03:05:00 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:31900 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfLFIE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 03:03:45 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1id8aN-00053O-R8; Fri, 06 Dec 2019 09:03:36 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6414A1C2787;
-        Fri,  6 Dec 2019 09:03:35 +0100 (CET)
-Date:   Fri, 06 Dec 2019 08:03:35 -0000
-From:   "tip-bot2 for Ravi Bangoria" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf report/top TUI: Replace pr_err() with ui__error()
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191114132213.5419-2-ravi.bangoria@linux.ibm.com>
-References: <20191114132213.5419-2-ravi.bangoria@linux.ibm.com>
+        Fri, 6 Dec 2019 03:04:59 -0500
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id xB684ujw021333;
+        Fri, 6 Dec 2019 17:04:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com xB684ujw021333
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1575619496;
+        bh=5HkglI0EKjnLXCnlt94Q9XbXoUC156pTW0gJif8WsLM=;
+        h=From:Date:Subject:To:Cc:From;
+        b=fCADfeHV0pHWJfJJZReqYgrFWALqlNHJo4mhghcMnzY+qcFsW7i/T3WSK24ScT7Iy
+         dLN32NZkjERwIWiqpD6nV2aZduYg5CKr6dFWewRNvdMoKtHqrCqTwfUED1D4AQZa8r
+         +7zCdPbukVAygKyeaw31rJ+shCyWECyp1dsqKEqrtxgbb1WNCElPVs779xujmQ9G1Y
+         Q1fmoVO+I2KiZB3CGAtSgqGHUy0+T7zSCSqT20VzTKJ46qnaIn7575Cmltlu9kfuSX
+         Ltq8puz7u/G4nFsErrsyaLCPMonLBx9naBmnwBYdaOS3E0NjNUN7Bxfv+J6LxXZD9y
+         9uRI4N4PwMCdg==
+X-Nifty-SrcIP: [209.85.222.54]
+Received: by mail-ua1-f54.google.com with SMTP id f7so2464123uaa.8;
+        Fri, 06 Dec 2019 00:04:56 -0800 (PST)
+X-Gm-Message-State: APjAAAWo2ND7LJG/OUHYzSHyEO5OPsPx5RUSI6ibhFjGOVhmRJpjKg1z
+        1kqQqT83wNvxagVB96pJPKic0L6I7gFGW592pmM=
+X-Google-Smtp-Source: APXvYqy3+OU+tXwm9mApi3095nPuMim4hayi3qQUxbwWEblDDMPQ+2LojXhJOLXlE5A6bcurl/xkESk2ulBMZ17+6e4=
+X-Received: by 2002:ab0:3487:: with SMTP id c7mr9347188uar.25.1575619495354;
+ Fri, 06 Dec 2019 00:04:55 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157561941531.21853.3292049704449436636.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 6 Dec 2019 17:04:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ29tXAFZaYODFyd4iAx9UhyjhyEtXxk+ZC+yUtXsqMMQ@mail.gmail.com>
+Message-ID: <CAK7LNAQ29tXAFZaYODFyd4iAx9UhyjhyEtXxk+ZC+yUtXsqMMQ@mail.gmail.com>
+Subject: About DT binding of reset control
+To:     Rob Herring <robh+dt@kernel.org>, DTML <devicetree@vger.kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+Hello, Rob, DT folks,
 
-Commit-ID:     ae87405fb511d6220ce86b9a60807fef92e1a934
-Gitweb:        https://git.kernel.org/tip/ae87405fb511d6220ce86b9a60807fef92e1a934
-Author:        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-AuthorDate:    Thu, 14 Nov 2019 18:52:11 +05:30
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Wed, 04 Dec 2019 12:27:14 -03:00
+I am trying to add the reset control into
+the Denali NAND controller driver:
+Documentation/devicetree/bindings/mtd/denali-nand.txt
+drivers/mtd/nand/raw/denali_dt.c
 
-perf report/top TUI: Replace pr_err() with ui__error()
+I'd like to get some advice about the DT binding
+before the detailed implementation.
 
-pr_err() in TUI mode does not print anyting on the screen and just
-quits.
 
-Replace such pr_err() with ui__error().
 
-Before:
+The IP datasheet clearly says
+two separate reset lines, like this:
 
-  $ perf report -s +
-  $
+rst_n :           controller core reset
+reg_rst_n:     register flip-flop reset
 
-After:
 
-  $ perf report -s +
+But, in actual SoC integration,
+the two reset signals are often tied up together, and
+the reset controller only provides 1-bit control.
 
-    ┌─Error:────────────────┐
-    │Invalid --sort key: `+'│
-    │                       │
-    │Press any key...       │
-    └───────────────────────┘
+(The upstream platforms, SoCFPGA, UniPhier,
+ both are this case.)
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/20191114132213.5419-2-ravi.bangoria@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/sort.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 345b5cc..106d795 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -2681,12 +2681,12 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
- 			ret = sort_dimension__add(list, tok, evlist, level);
- 			if (ret == -EINVAL) {
- 				if (!cacheline_size() && !strncasecmp(tok, "dcacheline", strlen(tok)))
--					pr_err("The \"dcacheline\" --sort key needs to know the cacheline size and it couldn't be determined on this system");
-+					ui__error("The \"dcacheline\" --sort key needs to know the cacheline size and it couldn't be determined on this system");
- 				else
--					pr_err("Invalid --sort key: `%s'", tok);
-+					ui__error("Invalid --sort key: `%s'", tok);
- 				break;
- 			} else if (ret == -ESRCH) {
--				pr_err("Unknown --sort key: `%s'", tok);
-+				ui__error("Unknown --sort key: `%s'", tok);
- 				break;
- 			}
- 		}
-@@ -2743,7 +2743,7 @@ static int setup_sort_order(struct evlist *evlist)
- 		return 0;
- 
- 	if (sort_order[1] == '\0') {
--		pr_err("Invalid --sort key: `+'");
-+		ui__error("Invalid --sort key: `+'");
- 		return -EINVAL;
- 	}
- 
-@@ -3034,7 +3034,7 @@ static int __setup_output_field(void)
- 		strp++;
- 
- 	if (!strlen(strp)) {
--		pr_err("Invalid --fields key: `+'");
-+		ui__error("Invalid --fields key: `+'");
- 		goto out;
- 	}
- 
+In this case, which is more preferred for the
+DT binding?
+
+
+[1] Define two resets explicitly according to the IP spec
+
+Optional properties:
+  reset-names :  contain "nand", "reg"
+  resets: phandles to the controller core reset, the register reset
+
+Example:
+
+   nand {
+         ....
+         reset-names = "nand", "reg";
+         resets = <&nand_rst>, <&nand_rst>;
+         ...
+   };
+
+
+
+[2] Allow arbitrary number of reset lines
+
+
+Optional properties:
+     resets: phandle(s) to reset(s)
+
+   The number of reset lines is SoC-dependent.
+
+
+Examples:
+
+      nand {
+
+               resets = <&nand>;
+                ...
+       };
+
+
+
+
+
+I guess [1] is more precise as the hardware specification.
+But, DT files will end up with giving the same phandle
+to both of the two resets.
+I think it is OK, but anyway better to ask
+before proceeding.
+
+Thanks.
+
+--
+Best Regards
+Masahiro Yamada
