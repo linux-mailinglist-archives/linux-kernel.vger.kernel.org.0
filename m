@@ -2,221 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCCDA115576
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F50711557B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 17:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfLFQdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 11:33:45 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:21444 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726258AbfLFQdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 11:33:45 -0500
-X-IronPort-AV: E=Sophos;i="5.69,285,1571670000"; 
-   d="scan'208";a="33693129"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2019 01:33:43 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 42A6F400D4D7;
-        Sat,  7 Dec 2019 01:33:38 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ebiharaml@si-linux.co.jp
-Subject: [PATCH v4 7/7] arm64: dts: renesas: Add EK874 board with idk-2121wr display support
-Date:   Fri,  6 Dec 2019 16:32:54 +0000
-Message-Id: <1575649974-31472-8-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1575649974-31472-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1575649974-31472-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        id S1726795AbfLFQeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 11:34:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43360 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbfLFQeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 6 Dec 2019 11:34:01 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92B3B20659;
+        Fri,  6 Dec 2019 16:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575650041;
+        bh=FwQ6VscWsqMam9RlefGeqZZTmrK5VLbts/8e96NHtDs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CToJK3TfBlAqQ5tLy/hzDY80uIkNeEM9nJPTjtUgEOjLxPbJ85Qajp/UVxSF54EXc
+         RE2MOUm0obEjPwfo2DqqyxhJsQvv2pdtxhYXJXwg0IsS9VXOWN5d+NMcc7Mz7itNyM
+         EIWlfHOPdtOpzMsfhZitLXWQa15aD1euwwqoeqZc=
+Date:   Fri, 6 Dec 2019 17:33:58 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Thomas Renninger <trenn@suse.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Felix Schnizlein <fschnizlein@suse.de>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux@armlinux.org.uk, will.deacon@arm.com, x86@kernel.org,
+        fschnitzlein@suse.de, Felix Schnizlein <fschnizlein@suse.com>
+Subject: Re: [PATCH 1/3] cpuinfo: add sysfs based arch independent cpuinfo
+ framework
+Message-ID: <20191206163358.GB86904@kroah.com>
+References: <20191206162421.15050-1-trenn@suse.de>
+ <20191206162421.15050-2-trenn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191206162421.15050-2-trenn@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EK874 is advertised as compatible with panel IDK-2121WR from
-Advantech, however the panel isn't sold alongside the board.
-A new dts, adding everything that's required to get the panel to
-to work with the EK874, is the most convenient way to support the
-EK874 when it's connected to the IDK-2121WR.
+On Fri, Dec 06, 2019 at 05:24:19PM +0100, Thomas Renninger wrote:
+> --- /dev/null
+> +++ b/drivers/base/cpuinfo.c
+> @@ -0,0 +1,48 @@
+> +/*
+> + * Copyright (C) 2017 SUSE Linux GmbH
+> + * Written by: Felix Schnizlein <fschnizlein@suse.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License version
+> + * 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> + * General Public License for more details.
+> + *
+> + */
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+No SPDX line?  And you can drop the license boilerplate text as well
+too.
 
----
-v3->v4:
-* no change
+> +
+> +#include <linux/cpu.h>
+> +#include <linux/module.h>
+> +#include <linux/cpuinfo.h>
+> +
+> +static struct attribute_group cpuinfo_attr_group = {
+> +	.attrs = cpuinfo_attrs,
+> +	.name = "info"
+> +};
+> +
+> +static int cpuinfo_add_dev(unsigned int cpu)
+> +{
+> +	struct device *dev = get_cpu_device(cpu);
+> +
+> +	return sysfs_create_group(&dev->kobj, &cpuinfo_attr_group);
 
-v2->v3:
-* removed renesas,swap-data property
-* added dual-lvds-odd-pixels and dual-lvds-even-pixels properties
+Why are a set of attributes being added _after_ the device is created?
+We have fixed up a lot of the "default attribute" logic since 2017,
+perhaps you should be using that instead?
 
-v1->v2:
-* Added comment for lvds-connector-en-gpio
-* Renamed &lvds0_panel_in to panel_in0
-* Renamed &lvds1_panel_in to panel_in1
----
- arch/arm64/boot/dts/renesas/Makefile               |   3 +-
- .../boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts | 116 +++++++++++++++++++++
- 2 files changed, 118 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8fdbd22..2635799 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -3,7 +3,8 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
--dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
-+dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
-+			       r8a774c0-ek874-idk-2121wr.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
-new file mode 100644
-index 0000000..a7b27d0
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Silicon Linux RZ/G2E evaluation kit (EK874),
-+ * connected to an Advantech IDK-2121WR 21.5" LVDS panel
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+
-+#include "r8a774c0-ek874.dts"
-+
-+/ {
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm5 0 50000>;
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+
-+		power-supply = <&reg_12p0v>;
-+		enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	panel-lvds {
-+		compatible = "advantech,idk-2121wr", "panel-lvds";
-+
-+		width-mm = <476>;
-+		height-mm = <268>;
-+
-+		data-mapping = "vesa-24";
-+
-+		panel-timing {
-+			clock-frequency = <148500000>;
-+			hactive = <1920>;
-+			vactive = <1080>;
-+			hsync-len = <44>;
-+			hfront-porch = <88>;
-+			hback-porch = <148>;
-+			vfront-porch = <4>;
-+			vback-porch = <36>;
-+			vsync-len = <5>;
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+				panel_in0: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+				panel_in1: endpoint {
-+					remote-endpoint = <&lvds1_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&gpio0 {
-+	/*
-+	 * When GP0_17 is low LVDS[01] are connected to the LVDS connector
-+	 * When GP0_17 is high LVDS[01] are connected to the LT8918L
-+	 */
-+	lvds-connector-en-gpio{
-+		gpio-hog;
-+		gpios = <17 GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "lvds-connector-en-gpio";
-+	};
-+};
-+
-+&lvds0 {
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&panel_in0>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>, <&x13_clk>, <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds1_out: endpoint {
-+				remote-endpoint = <&panel_in1>;
-+			};
-+		};
-+	};
-+};
-+
-+&pfc {
-+	pwm5_pins: pwm5 {
-+		groups = "pwm5_a";
-+		function = "pwm5";
-+	};
-+};
-+
-+&pwm5 {
-+	pinctrl-0 = <&pwm5_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
--- 
-2.7.4
+> +}
+> +
+> +static int cpuinfo_remove_dev(unsigned int cpu)
+> +{
+> +	struct device *dev = get_cpu_device(cpu);
+> +
+> +	sysfs_remove_group(&dev->kobj, &cpuinfo_attr_group);
 
+Same here, I don't think this is needed.
+
+> +	return 0;
+> +}
+> +
+> +static int cpuinfo_sysfs_init(void)
+> +{
+> +	return cpuhp_setup_state(CPUHP_CPUINFO_PREPARE,
+> +				 "base/cpuinfo:prepare",
+> +				 cpuinfo_add_dev,
+> +				 cpuinfo_remove_dev);
+> +}
+> +
+> +device_initcall(cpuinfo_sysfs_init);
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index e51ee772b9f5..2c4c59304bdb 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -78,6 +78,7 @@ enum cpuhp_state {
+>  	CPUHP_SH_SH3X_PREPARE,
+>  	CPUHP_NET_FLOW_PREPARE,
+>  	CPUHP_TOPOLOGY_PREPARE,
+> +	CPUHP_CPUINFO_PREPARE,
+>  	CPUHP_NET_IUCV_PREPARE,
+>  	CPUHP_ARM_BL_PREPARE,
+>  	CPUHP_TRACE_RB_PREPARE,
+> diff --git a/include/linux/cpuinfo.h b/include/linux/cpuinfo.h
+> new file mode 100644
+> index 000000000000..112ff76d64d5
+> --- /dev/null
+> +++ b/include/linux/cpuinfo.h
+> @@ -0,0 +1,43 @@
+> +/*
+> + * Copyright (C) 2017 SUSE Linux GmbH
+> + * Written by: Felix Schnizlein <fschnizlein@suse.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License version
+> + * 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> + * General Public License for more details.
+
+SPDX and boilerplate.
+
+
+> + */
+> +#ifndef _LINUX_CPUINFO_H
+> +#define _LINUX_CPUINFO_H
+> +
+> +#ifdef CONFIG_HAVE_CPUINFO_SYSFS
+> +extern struct attribute *cpuinfo_attrs[];
+
+No need for thie #ifdef really, right?
+
+thanks,
+
+greg k-h
