@@ -2,122 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E28114A14
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 01:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 494DA114A19
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 01:04:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbfLFAEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 19:04:11 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15992 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbfLFAEK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 19:04:10 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5de99afe0000>; Thu, 05 Dec 2019 16:04:14 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 05 Dec 2019 16:04:10 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 05 Dec 2019 16:04:10 -0800
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
- 2019 00:04:09 +0000
-Received: from [10.110.48.28] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec 2019
- 00:04:09 +0000
-Subject: Re: [v3 PATCH] mm: move_pages: return valid node id in status if the
- page is already on the target node
-To:     Qian Cai <cai@lca.pw>
-CC:     Yang Shi <yang.shi@linux.alibaba.com>, <fabecassis@nvidia.com>,
-        <mhocko@suse.com>, <cl@linux.com>, <vbabka@suse.cz>,
-        <mgorman@techsingularity.net>, <akpm@linux-foundation.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <a7f354b7-d2f9-71c0-7311-97255933b9a2@nvidia.com>
- <2139CED9-6C12-48A5-BF61-F36923EB948E@lca.pw>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <22b5bfde-45be-95bd-5c98-2ab13302c107@nvidia.com>
-Date:   Thu, 5 Dec 2019 16:04:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726262AbfLFAEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 19:04:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbfLFAEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 5 Dec 2019 19:04:47 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 864BD2173E;
+        Fri,  6 Dec 2019 00:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575590686;
+        bh=AHTJZcpN/qDv+wbWaTsS7NjJKUfm6INqxec1a3pa6FY=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=MF82HqQXjxBVUdoCFnI8bNTstmeIMs1kGG0nx6Gei8RsgBLcHa6KrsYm55riGFZou
+         IAcf5bo6L0J9oDd8x8lYIPGK7UpZEsHGeh8nYBzxW1IhvVDEf1iXj5VErZk3EsdcB0
+         2yO1G34RiaaCIotKCsq3SkUnQoSxAGmmvmdoTVzc=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 564BD3522782; Thu,  5 Dec 2019 16:04:46 -0800 (PST)
+Date:   Thu, 5 Dec 2019 16:04:46 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     madhuparnabhowmik04@gmail.com
+Cc:     josh@joshtriplett.org, joel@joelfernandes.org, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] include: linux: rculist_nulls: Change docbook comment
+ headers
+Message-ID: <20191206000446.GW2889@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191205185352.1957-1-madhuparnabhowmik04@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2139CED9-6C12-48A5-BF61-F36923EB948E@lca.pw>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575590654; bh=HDeKv827CiSQ8RzNL5TATYMtNjIBTbYkbw7NU4jWVmc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=e4500oBYXGcC8/koWSWB6iUl1ZFKQ4hL8OjrgxarlmjN3W3BViEVFRWaojft72r6L
-         hQ6AOW5/XOYcPNF5NN+IXSM8oiN5AW8G2lcmXuIVwVuYThty7VJnJH9Urj1pbrwJh+
-         KPUFCPxXk6/ydWrdWtKS/WxIPbTHPVdj8IAGRAt1m5sHpqe4/aeYquIJK4YctH2Kvf
-         WQ3wBtGo3e4IF6k09tVlTbaLO+9vY0vONgSfhnHIYykDP0w3kcfY+TnluubN9eov7b
-         2xpZkdqgepyjgEU2AilCc/axH7i+s6jq8CZvE2olsutb7UUchierqqoz6SkVlRiV6m
-         RJ6UWykhSVDMg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205185352.1957-1-madhuparnabhowmik04@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/19 3:58 PM, Qian Cai wrote:
->=20
->=20
->> On Dec 5, 2019, at 6:24 PM, John Hubbard <jhubbard@nvidia.com> wrote:
->>
->> Let's check in the fix that is clearly correct and non-controversial, in=
- one
->> patch. Then another patch can be created for the other case. This allows=
- forward
->> progress and quick resolution of the user's bug report, while still deal=
-ing
->> with all the problems.
->>
->> If you try to fix too many problems in one patch (and remember, sometime=
-s ">1"
->> is too many), then things bog down. It's always a judgment call, but wha=
-t's=20
->> unfolding here is quite consistent with the usual judgment calls in this=
- area.
->>
->> I don't think anyone is saying, "don't work on the second problem", it's=
- just
->> that it's less urgent, due to no reports from the field. If you are pass=
-ionate
->> about fixing the second problem (and are ready and willing to handle the=
- fallout
->> from user space, if it occurs), then I'd encourage you to look into it.
->>
->> It could turn out to be one of those "cannot change this because user sp=
-ace expectations
->> have baked and hardened, and changes would break user space" situations,=
- just to
->> warn you in advance, though.
->=20
-> There is no need to paper over the underlying issue. One can think there =
-is only one problem. The way move_pages() deal with pages are already in th=
-e desired node. Then, I don=E2=80=99t see there is any controversy that it =
-was broken for so long and just restore it to according to the manpage. If =
-you worried about people has already depended on the broken behavior, it co=
-uld stay in linux-next for many releases to gather feedback. In any case, I=
- don=E2=80=99t see it need to hurry to fix this until someone can show the =
-real world use case for it apart from some random test code.
->=20
+On Fri, Dec 06, 2019 at 12:23:52AM +0530, madhuparnabhowmik04@gmail.com wrote:
+> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+> 
+> This patch changes the docbook comment "head for your list"
+> to "head of the list".
+> 
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-Felix's code is not random test code. It's code he wrote and he expected it=
- to work.
+I applied both with some updates to the subject line and commit log.
+Could you please double-check for errors on my part?
 
-Anyway, I've explained what I want here, and done my best to explain it. So=
- I'm=20
-dropping off now. :)
+							Thanx, Paul
 
-thanks,
---=20
-John Hubbard
-NVIDIA
+> ---
+>  include/linux/rculist_nulls.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.h
+> index 517a06f36c7a..bea311c884b3 100644
+> --- a/include/linux/rculist_nulls.h
+> +++ b/include/linux/rculist_nulls.h
+> @@ -104,7 +104,7 @@ static inline void hlist_nulls_add_head_rcu(struct hlist_nulls_node *n,
+>   * hlist_nulls_for_each_entry_rcu - iterate over rcu list of given type
+>   * @tpos:	the type * to use as a loop cursor.
+>   * @pos:	the &struct hlist_nulls_node to use as a loop cursor.
+> - * @head:	the head for your list.
+> + * @head:	the head of the list.
+>   * @member:	the name of the hlist_nulls_node within the struct.
+>   *
+>   * The barrier() is needed to make sure compiler doesn't cache first element [1],
+> @@ -124,7 +124,7 @@ static inline void hlist_nulls_add_head_rcu(struct hlist_nulls_node *n,
+>   *   iterate over list of given type safe against removal of list entry
+>   * @tpos:	the type * to use as a loop cursor.
+>   * @pos:	the &struct hlist_nulls_node to use as a loop cursor.
+> - * @head:	the head for your list.
+> + * @head:	the head of the list.
+>   * @member:	the name of the hlist_nulls_node within the struct.
+>   */
+>  #define hlist_nulls_for_each_entry_safe(tpos, pos, head, member)		\
+> -- 
+> 2.17.1
+> 
