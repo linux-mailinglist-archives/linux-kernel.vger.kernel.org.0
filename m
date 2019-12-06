@@ -2,136 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D63F114C70
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:52:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2820114C75
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 07:53:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfLFGwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 01:52:45 -0500
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:44948 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfLFGwp (ORCPT
+        id S1726425AbfLFGxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 01:53:22 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:15889 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfLFGxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 01:52:45 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47Tjvb3xPkzQlBQ;
-        Fri,  6 Dec 2019 07:52:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id 8NucHSJ0hqGc; Fri,  6 Dec 2019 07:52:39 +0100 (CET)
-Date:   Fri, 6 Dec 2019 17:52:30 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Jann Horn <jannh@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: Re: [RFC PATCH] ptrace: add PTRACE_GETFD request
-Message-ID: <20191206065230.uddea7uhslmfemrw@yavin.dot.cyphar.com>
-References: <20191205234450.GA26369@ircssh-2.c.rugged-nimbus-611.internal>
- <CAG48ez0_CCxO=stFvK=4G4Og=xe9Rtws8PEVy-cSmLqcxfE2Zw@mail.gmail.com>
- <CAMp4zn85sz_y8EvXUULVY0a0fAmg91pFkYX5zZSXDz6Q-EiUoA@mail.gmail.com>
+        Fri, 6 Dec 2019 01:53:20 -0500
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191206065316epoutp0349c42c9ee70ca92af03bb8b89c4e7630~dtaxRsjl41047310473epoutp03K
+        for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2019 06:53:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191206065316epoutp0349c42c9ee70ca92af03bb8b89c4e7630~dtaxRsjl41047310473epoutp03K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575615196;
+        bh=6q2km7P8W0ptCfUIkh6mVjoU06ki9p4x8jz4+H3ttQo=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=SRwIwQRP14k5Dg6/N0cUEM279O6m/r/AW2nN11q0rtFP5jlwmlZONjjdAyBCcu0PI
+         YDY0+55eDGbhTvoU+toHHVBCN1Y2dQ71MrTp7eWrtTFkfd5PsR6mnUVoB6xH0GTKDZ
+         hdWSUjghf5MBDO7/vMhEqHTBWJOrQf8MGH3d2l/c=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20191206065315epcas5p2180d84f4c9ea4632e3757033938b176e~dtaw3J-zS0235302353epcas5p2p;
+        Fri,  6 Dec 2019 06:53:15 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        55.0C.19726.BDAF9ED5; Fri,  6 Dec 2019 15:53:15 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191206065315epcas5p31cea423889a39b4fc4b350fc0681fe7c~dtawYrgE12908629086epcas5p3H;
+        Fri,  6 Dec 2019 06:53:15 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191206065315epsmtrp2b5dbafa8b0166cec4130e1416ceb3532~dtawX8Pkf3273732737epsmtrp2Z;
+        Fri,  6 Dec 2019 06:53:15 +0000 (GMT)
+X-AuditID: b6c32a49-7c1ff70000014d0e-30-5de9fadbd8d7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A9.C1.06569.BDAF9ED5; Fri,  6 Dec 2019 15:53:15 +0900 (KST)
+Received: from pankjsharma02 (unknown [107.111.85.32]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191206065313epsmtip143ccef58c0711e68d79f29240247ee72~dtavAIJ0r1340813408epsmtip1Q;
+        Fri,  6 Dec 2019 06:53:13 +0000 (GMT)
+From:   "pankj.sharma" <pankj.sharma@samsung.com>
+To:     "'Dan Murphy'" <dmurphy@ti.com>
+Cc:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>,
+        <rcsekar@samsung.com>, <pankaj.dubey@samsung.com>,
+        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <f0550b0b-6681-75a3-c58a-28f5b7ca0821@ti.com>
+Subject: RE: [PATCH 0/2] can: m_can_platform: Bug fix of kernel panic for
+Date:   Fri, 6 Dec 2019 12:23:11 +0530
+Message-ID: <021d01d5ac01$d55f1220$801d3660$@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cumsf4lv6dzy3snz"
-Content-Disposition: inline
-In-Reply-To: <CAMp4zn85sz_y8EvXUULVY0a0fAmg91pFkYX5zZSXDz6Q-EiUoA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQE7rWdEBMvebVKOOOKqXHxmn9mClwHtd6OFAaMRhhWoxCE6wA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7bCmlu7tXy9jDaYtN7GYc76FxaL79BZW
+        i1XfpzJbXN41h81i/aIpLBbHFohZLNr6hd1i1oUdrBZL7+1kdeD02LLyJpPHx0u3GT36/xp4
+        9G1Zxehx/MZ2Jo/Pm+QC2KK4bFJSczLLUov07RK4Mp7tOc9S8JS74vem96wNjB1cXYycHBIC
+        JhIvd2xn7GLk4hAS2M0o8eP7SxYI5xOjRM+NZ0wQzjdGiXmn1zPCtKx41sEGkdjLKLHn2252
+        COc1o8SHW0fZQKrYBPQlpjT9ZQGxRQSUJVY1nALrYBa4wihxeuoLsFGcAlYSfasWgRUJC3hK
+        rG9ey9rFyMHBIqAi0XBODsTkFbCUOPJDFaSCV0BQ4uTMJ2DVzALaEssWvmaGOEhB4ufTZawQ
+        cXGJl0ePsEOsdZI4f+oVK8haCYH/bBI3Zu5jAZkpIeAiMeFSAkSvsMSr41vYIWwpic/v9rJB
+        2NkSC3f3Q5VXSLTNEIYI20scuDIHLMwsoCmxfpc+xFY+id7fT5ggqnklOtqEIKrVJKY+fQcN
+        NRmJO482Qw33kJi84ADLBEbFWUj+moXkr1lIfpmFsGwBI8sqRsnUguLc9NRi0wLDvNRyveLE
+        3OLSvHS95PzcTYzg5KTluYNx1jmfQ4wCHIxKPLwzPr+IFWJNLCuuzD3EKMHBrCTCm873MlaI
+        NyWxsiq1KD++qDQntfgQozQHi5I47yTWqzFCAumJJanZqakFqUUwWSYOTqkGxszj7+e9Vtmp
+        zFXzqYDJ+dSzc1djeT210l7JMs09kH/w0F1z/0InRfa7wh/CZrjds2W1+3H2/KNHSvxfcsUj
+        Tb0P2By5sie5y/ZswknDLSVSvTll7/WCeiYedKt5UnpW9sLm2l23dr6Zv8Yh/WOzp83kC3oz
+        qqS4jR/G71B8q8WWsNHfZJWcthJLcUaioRZzUXEiANj0qoBKAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSnO7tXy9jDU7OFraYc76FxaL79BZW
+        i1XfpzJbXN41h81i/aIpLBbHFohZLNr6hd1i1oUdrBZL7+1kdeD02LLyJpPHx0u3GT36/xp4
+        9G1Zxehx/MZ2Jo/Pm+QC2KK4bFJSczLLUov07RK4Mh73eBS846q4P+8bYwPjDY4uRk4OCQET
+        iRXPOti6GLk4hAR2M0p8fbmDpYuRAyghI7H4czVEjbDEyn/P2SFqXjJKrL/6mxEkwSagLzGl
+        6S8LiC0ioCyxquEU2CBmgTuMEstPfoaaepxR4s6Df8wgVZwCVhJ9qxaBdQgLeEqsb17LCrKN
+        RUBFouGcHIjJK2ApceSHKkgFr4CgxMmZT8CqmQW0JZ7efApnL1v4mhniOAWJn0+XsULExSVe
+        Hj3CDnGPk8T5U69YJzAKz0IyahaSUbOQjJqFpH0BI8sqRsnUguLc9NxiwwKjvNRyveLE3OLS
+        vHS95PzcTYzgKNPS2sF44kT8IUYBDkYlHt4Zn1/ECrEmlhVX5h5ilOBgVhLhTed7GSvEm5JY
+        WZValB9fVJqTWnyIUZqDRUmcVz7/WKSQQHpiSWp2ampBahFMlomDU6qB0WOGT6B/UYJBnLa+
+        27I3Egt6m+4oaeiVbKp8+2dLgmLvztsv39u0qmjtYehbcfRkqSsve31rBJPpZIaZh+TeVXbf
+        fR9r1syjnr/C6foSzarLcy52i2378Yy/uOinz83LLJWHFyiYMIYHaPlt/LJEsiO9/kn9z8yo
+        5xu8HtU96n2qe1OyYfVhJZbijERDLeai4kQAEzTZGq4CAAA=
+X-CMS-MailID: 20191206065315epcas5p31cea423889a39b4fc4b350fc0681fe7c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20191119102134epcas5p4d3c1b18203e2001c189b9fa7a0e3aab5
+References: <CGME20191119102134epcas5p4d3c1b18203e2001c189b9fa7a0e3aab5@epcas5p4.samsung.com>
+        <1574158838-4616-1-git-send-email-pankj.sharma@samsung.com>
+        <f0550b0b-6681-75a3-c58a-28f5b7ca0821@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---cumsf4lv6dzy3snz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2019-12-05, Sargun Dhillon <sargun@sargun.me> wrote:
-> On Thu, Dec 5, 2019 at 6:38 PM Jann Horn <jannh@google.com> wrote:
+> From: Dan Murphy <dmurphy=40ti.com>
+> Subject: Re: =5BPATCH 0/2=5D can: m_can_platform: Bug fix of kernel panic=
+ for
+>=20
+> Pankaj
+>=20
+> On 11/19/19 4:20 AM, Pankaj Sharma wrote:
+> > The current code is failing while clock prepare enable because of not
+> > getting proper clock from platform device.
+> > A device driver for CAN controller hardware registers itself with the
+> > Linux network layer as a network device. So, the driver data for m_can
+> > should ideally be of type net_device.
 > >
-> > On Fri, Dec 6, 2019 at 12:44 AM Sargun Dhillon <sargun@sargun.me> wrote:
-> > > PTRACE_GETFD is a generic ptrace API that allows the tracer to
-> > > get file descriptors from the traceee.
+> > Further even when passing the proper net device in probe function the
+> > code was hanging because of the function m_can_runtime_resume()
+> > getting recursively called from m_can_class_resume().
 > >
-> > typo: tracee
-> >
-> > > The primary reason to use this syscall is to allow sandboxers to
-> > > take action on an FD on behalf of the tracee. For example, this
-> > > can be combined with seccomp's user notification feature to extract
-> > > a file descriptor and call privileged syscalls, like binding
-> > > a socket to a privileged port.
-> > [...]
-> > > +/* This gets a file descriptor from a running process. It doesn't re=
-quire the
-> > > + * process to be stopped.
-> > > + */
-> > > +#define PTRACE_GETFD   0x420f
-> > [...]
-> > > +static int ptrace_getfd(struct task_struct *child, unsigned long fd)
-> >
-> > I'd make the "fd" parameter of this function an "unsigned int", given
-> > that that's also the argument type of fcheck_files().
-> >
-> > > +{
-> > > +       struct files_struct *files;
-> > > +       struct file *file;
-> > > +       int ret =3D 0;
-> > > +
-> > > +       files =3D get_files_struct(child);
-> > > +       if (!files)
-> > > +               return -ENOENT;
-> > > +
-> > > +       spin_lock(&files->file_lock);
-> > > +       file =3D fcheck_files(files, fd);
-> > > +       if (!file)
-> > > +               ret =3D -EBADF;
-> > > +       else
-> > > +               get_file(file);
-> > > +       spin_unlock(&files->file_lock);
-> > > +       put_files_struct(files);
-> > > +
-> > > +       if (ret)
-> > > +               goto out;
-> > > +
-> > > +       ret =3D get_unused_fd_flags(0);
-> >
-> > You're hardcoding the flags for the fd as 0, which means that there is
-> > no way for the caller to enable O_CLOEXEC on the fd in a way that is
-> > race-free against a concurrent execve(). If you can't easily plumb
-> > through an O_CLOEXEC flag from userspace to here, you should probably
-> > hardcode O_CLOEXEC here.
-> >
-> I thought about making addr used for flags. It seems a little weird,
-> given the name, but it'll do the job. Alternatively, it could be a
-> point to an options struct. If we introduce options, one of the nice
-> things we could add is add the ability to cleanse the FD of certain
-> information, like cgroups.
-
-If you do end up opting for an options struct, please make sure you use
-copy_struct_from_user() or something similar so that we can painlessly
-extend it in the future (if necessary). Since there isn't an additional
-argument, you might want to do what perf_event_open() does and embed the
-size as the first field of the options struct.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---cumsf4lv6dzy3snz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXen6qgAKCRCdlLljIbnQ
-EhQlAP4roSXSw1CdkPHQv45bE+qCNKoo5kwo6mVCLOWj3jQp6AEA49yr/WUUwAPL
-Jg2a71AZ1Dd0MwKVAyG6T9ViqGPxlgE=
-=oc5i
------END PGP SIGNATURE-----
-
---cumsf4lv6dzy3snz--
+> > Pankaj Sharma (2):
+> >    can: m_can_platform: set net_device structure as driver data
+> >    can: m_can_platform: remove unnecessary m_can_class_resume() call
+>=20
+> Did you CC: linux-stable for these?  We are probably going to have custom=
+ers
+> picking up 5.4 LTS and would need these bug fixes.
+Hello Dan,=20
+I haven=E2=80=99t=20copied=20to=20linux-stable,=20but=20the=20patches=20are=
+=20already=20in=20linux-stable=20branch.=20=0D=0AYou=20can=20check=20in=20f=
+ollowing=20link.=0D=0Ahttps://git.kernel.org/pub/scm/linux/kernel/git/stabl=
+e/linux.git/log/?h=3Dlinux-5.4.y=0D=0A=0D=0APankaj=0D=0A=0D=0A>=20=0D=0A>=
+=20Or=20at=20the=20very=20least=20see=20if=20the=20stable=20automation=20wi=
+ll=20pick=20these=20up.=0D=0A>=20=0D=0A>=20Dan=0D=0A>=20=0D=0A=0D=0A=0D=0A
