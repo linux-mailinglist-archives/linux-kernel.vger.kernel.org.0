@@ -2,138 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E19115103
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41119115110
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 14:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfLFNcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 6 Dec 2019 08:32:06 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36676 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbfLFNcG (ORCPT
+        id S1726321AbfLFNim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 6 Dec 2019 08:38:42 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:13867 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726171AbfLFNil (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 6 Dec 2019 08:32:06 -0500
-Received: by mail-pg1-f196.google.com with SMTP id k3so2685687pgc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2019 05:32:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2S08e87qyOClIb15ji+5kVBV12PJ10Rg7yCvmuY9seI=;
-        b=L67Udo4kJZKk80cfaTAth0CgKYP/DsxHicSKHyNruf6i0ke+J/XqppX60g+cun9oq+
-         rU/KAZ8Vz2gnPIK0EecvN4/PgsuGXj2aZy8D9+I0AlhNnAKRRQfim9LG1cW1/j6X6wgu
-         DaOoDtVEjztCMMS3YDEMmhA5F7rTQRPMvvYVTM0f84Z0NAzd+AyuofKkyrBojGf2v+Ui
-         yd+UmL61srEGYH3zMaExIUzkvqRsJMuEYN/nmFRbo91eZxwz5AGpCitV+1ZGm7hGWCLH
-         NGyP9Au3P/xw+DkJAFZEiQVTLt+3Vgr90XMwdtcmH/wS+POClIxXnd2Xf9X3QvBM7SbU
-         iJIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2S08e87qyOClIb15ji+5kVBV12PJ10Rg7yCvmuY9seI=;
-        b=UZkn60G2w1j1ejss2cCGjujhwns1XqL6YSmC2ir+t76zz4Bee4MrVTNSJ5GUKX4czN
-         79ZDAVPGECwF0esFgw9nexTFY7eGV/gf8EZTjsFTMuYY+13weee6JmicxIZTuNyVTd0Z
-         xIRZggKI27OpkqCLcZeb5fK4xRBkhfpq2srSZtxbpKA8fcweFUq9uS57Uao9qmdtj5ex
-         CsYO5poJpmVUVA9yaTkAl8/mH8/vw4opBrLPgfjkBfCgSFIUv1CrckwuxvxLo2rbd5uJ
-         nzBNG9eyC7XxYwMsPLZ5QrGBWd2mNFdxKpCUTz+lou73rQs9oSKAEV8gXMu6jLC/uMHz
-         Jqaw==
-X-Gm-Message-State: APjAAAWFO61vI0xQMY5a4xBJcdMDEz3761Xbc0WCNuNvxcMrtUFGZRXy
-        ReK3xWlzeVt9AkrCcoBOld/5kZ4fU4c5zp+TVIiKzw==
-X-Google-Smtp-Source: APXvYqzGLszCKnNXCjDC648w2B2pW9Ym7h1x0WCYSF56kB12Pba7M4Ri36jHDVLBNr2t8h97l/8SAfP70geO0kxFXho=
-X-Received: by 2002:a65:678f:: with SMTP id e15mr3508678pgr.130.1575639125248;
- Fri, 06 Dec 2019 05:32:05 -0800 (PST)
+        Fri, 6 Dec 2019 08:38:41 -0500
+X-UUID: 6c4c820fee6649d695c97504d2b3bbeb-20191206
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=l3AyP0772iGyqIMwjjQJ92YVDpBT4cXNYlHsqaJrWq8=;
+        b=Ent4iCvIjwjY9RaJ8Ny+plgdS/o80t8O7WpuiU4VvqN0+qVHSWe89TJma/NI0q2dcXWCr0lozkYwjoRK9Q4QJwzxKwyBFdKqzY25salxpc05KRnDKR59trdbRWGK9fpU3cnjwAsg2Aprm6AvmbhizemfE8denxHromzZv3AV0oc=;
+X-UUID: 6c4c820fee6649d695c97504d2b3bbeb-20191206
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 405452737; Fri, 06 Dec 2019 21:38:37 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 6 Dec 2019 21:38:19 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 6 Dec 2019 21:37:59 +0800
+From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Subject: [PATCH v6 0/6] Add Support for MediaTek PMIC MT6358
+Date:   Fri, 6 Dec 2019 21:32:57 +0800
+Message-ID: <1575639183-17606-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-References: <46cee2a09d53921057cd4b87d1ed3796a2ab15bb.1575637022.git.andreyknvl@google.com>
- <CANpmjNPb988whEFQW+msYpdco=_=CXwG1mj+apy7U7ARJ3s0CQ@mail.gmail.com>
-In-Reply-To: <CANpmjNPb988whEFQW+msYpdco=_=CXwG1mj+apy7U7ARJ3s0CQ@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Fri, 6 Dec 2019 14:31:53 +0100
-Message-ID: <CAAeHK+w749YgJDXi-YnYn_K=OPLPGKNgEU47p6iEjb-BsXtCUQ@mail.gmail.com>
-Subject: Re: [PATCH] kcov: fix struct layout for kcov_remote_arg
-To:     Marco Elver <elver@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 6, 2019 at 2:14 PM Marco Elver <elver@google.com> wrote:
->
-> On Fri, 6 Dec 2019 at 14:05, Andrey Konovalov <andreyknvl@google.com> wrote:
-> >
-> > Make the layout of kcov_remote_arg the same for 32-bit and 64-bit code.
-> > This makes it more convenient to write userspace apps that can be compiled
-> > into 32-bit or 64-bit binaries and still work with the same 64-bit kernel.
-> > Also use proper __u32 types in uapi headers instead of unsigned ints.
-> >
-> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> > ---
-> >
-> > Hi Andrew,
-> >
-> > We've noticed failures on 32 bit syzbot instances when the kcov patches
-> > got merged into mainline. The reason is that the layout of kcov_remote_arg
-> > depends on the alignment rules, which are different for 32/64 bit code.
-> > We can deal with this issue in syzkaller [1], but I think it would be
-> > cleander to get this fixed in the kernel.
-> >
-> > I hope this patch is acceptable, since the change has just been merged and
-> > is not included into a release kernel version. The patch breaks the newly
-> > introduced kcov API for 32 bit apps.
-> >
-> > Sorry for not testing it with 32 bit code earlier.
-> >
-> > Thanks!
-> >
-> > [1] https://github.com/google/syzkaller/commit/ba97c611a36b7729d489ebca5f97183c2ba7a90a
-> >
-> >  Documentation/dev-tools/kcov.rst |  7 ++++---
-> >  include/uapi/linux/kcov.h        | 11 ++++++-----
-> >  2 files changed, 10 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
-> > index 36890b026e77..744df2bae1ed 100644
-> > --- a/Documentation/dev-tools/kcov.rst
-> > +++ b/Documentation/dev-tools/kcov.rst
-> > @@ -251,9 +251,10 @@ selectively from different subsystems.
-> >  .. code-block:: c
-> >
-> >      struct kcov_remote_arg {
-> > -       unsigned        trace_mode;
-> > -       unsigned        area_size;
-> > -       unsigned        num_handles;
-> > +       uint32_t        trace_mode;
-> > +       uint32_t        area_size;
-> > +       uint32_t        num_handles;
-> > +       uint32_t        reserved;
-> >         uint64_t        common_handle;
-> >         uint64_t        handles[0];
-> >      };
-> > diff --git a/include/uapi/linux/kcov.h b/include/uapi/linux/kcov.h
-> > index 409d3ad1e6e2..53267f9f1665 100644
-> > --- a/include/uapi/linux/kcov.h
-> > +++ b/include/uapi/linux/kcov.h
-> > @@ -9,11 +9,12 @@
-> >   * and the comment before kcov_remote_start() for usage details.
-> >   */
-> >  struct kcov_remote_arg {
-> > -       unsigned int    trace_mode;     /* KCOV_TRACE_PC or KCOV_TRACE_CMP */
-> > -       unsigned int    area_size;      /* Length of coverage buffer in words */
-> > -       unsigned int    num_handles;    /* Size of handles array */
-> > -       __u64           common_handle;
-> > -       __u64           handles[0];
-> > +       __u32   trace_mode;     /* KCOV_TRACE_PC or KCOV_TRACE_CMP */
-> > +       __u32   area_size;      /* Length of coverage buffer in words */
-> > +       __u32   num_handles;    /* Size of handles array */
-> > +       __u32   reserved;
->
-> The kernel provides __aligned_u64 for this purpose (32/64 bit uapi
-> compatibility).
+VGhpcyBwYXRjaHNldCBpbmNsdWRpbmcgbW9kaWZ5aW5nIHN1c3BlbmQvcmVzdW1lIGJlaGF2aW9y
+IGFkZCBzdXBwb3J0IHRvIE1UNjM1OCBQTUlDLg0KTVQ2MzU4IGlzIHRoZSBwcmltYXJ5IFBNSUMg
+Zm9yIE1UODE4MyBwbGF0Zm9ybS4NCg0KY2hhbmdlcyBzaW5jZSB2NToNCi0gcmV3cml0ZSBzdXNw
+ZW5kL3Jlc3VtZSBiZWhhdmlvciBmb3IgbWZkIGRyaXZlci4NCi0gcmVtb3ZlIHVudXNlZCBlcnJv
+ciBoYW5kbGUgZm9yIG1mZCBkcml2ZXIuDQotIHJlZmluZSBmb3IgYmV0dGVyIGNvZGUgcXVhbGl0
+eSBpbiBtZmQgZHJpdmVyLg0KLSBhZGQgTVQ2MzU4IFBNSUMgc3VwcG9ydCB0byBNVDgxODMgZXZi
+Lg0KLSBhZGQgc2lnbmVkLW9mZi1ieSBmb3IgcnRjIHBhdGNoZXMuDQoNCkhzaW4tSHNpdW5nIFdh
+bmcgKDQpOg0KICBtZmQ6IG10NjM5NzogbW9kaWZ5IHN1c3BlbmQvcmVzdW1lIGJlaGF2aW9yDQog
+IGR0LWJpbmRpbmdzOiBtZmQ6IEFkZCBjb21wYXRpYmxlIGZvciB0aGUgTWVkaWFUZWsgTVQ2MzU4
+IFBNSUMNCiAgbWZkOiBBZGQgc3VwcG9ydCBmb3IgdGhlIE1lZGlhVGVrIE1UNjM1OCBQTUlDDQog
+IGFybTY0OiBkdHM6IG10NjM1ODogYWRkIFBNSUMgTVQ2MzU4IHJlbGF0ZWQgbm9kZXMNCg0KUmFu
+IEJpICgyKToNCiAgcnRjOiBtdDYzOTc6IGZpeCBhbGFybSByZWdpc3RlciBvdmVyd3JpdGUNCiAg
+cnRjOiBBZGQgc3VwcG9ydCBmb3IgdGhlIE1lZGlhVGVrIE1UNjM1OCBSVEMNCg0KIERvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvbXQ2Mzk3LnR4dCB8ICAxNCArLQ0KIGFyY2gv
+YXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ2MzU4LmR0c2kgICAgICAgICB8IDM2MSArKysrKysr
+KysrKysrKysrKysrKysrKw0KIGFyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLWV2
+Yi5kdHMgICAgICB8ICAgMSArDQogZHJpdmVycy9tZmQvTWFrZWZpbGUgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHwgICAyICstDQogZHJpdmVycy9tZmQvbXQ2MzU4LWlycS5jICAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgMjI0ICsrKysrKysrKysrKysrDQogZHJpdmVycy9tZmQvbXQ2Mzk3
+LWNvcmUuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDc1ICsrKy0tDQogZHJpdmVycy9tZmQv
+bXQ2Mzk3LWlycS5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMzICsrKw0KIGRyaXZlcnMv
+cnRjL3J0Yy1tdDYzOTcuYyAgICAgICAgICAgICAgICAgICAgICAgICB8ICA4NSArKysrLS0NCiBp
+bmNsdWRlL2xpbnV4L21mZC9tdDYzNTgvY29yZS5oICAgICAgICAgICAgICAgICAgfCAxNTggKysr
+KysrKysrKw0KIGluY2x1ZGUvbGludXgvbWZkL210NjM1OC9yZWdpc3RlcnMuaCAgICAgICAgICAg
+ICB8IDI4MiArKysrKysrKysrKysrKysrKysNCiBpbmNsdWRlL2xpbnV4L21mZC9tdDYzOTcvY29y
+ZS5oICAgICAgICAgICAgICAgICAgfCAgIDUgKw0KIDExIGZpbGVzIGNoYW5nZWQsIDExODIgaW5z
+ZXJ0aW9ucygrKSwgNTggZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJt
+NjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ2MzU4LmR0c2kNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9tZmQvbXQ2MzU4LWlycS5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvbGludXgv
+bWZkL210NjM1OC9jb3JlLmgNCiBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9tZmQv
+bXQ2MzU4L3JlZ2lzdGVycy5oDQoNCi0tIA0KMi42LjQNCg==
 
-Oh yes, this is much better, sent v2, thank you!
-
-> Is adding an explicit 'reserved' better here? If so,
-> it'd be good to document.
