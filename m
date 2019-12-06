@@ -2,152 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5492F114AEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DAFE114B3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2019 03:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbfLFCcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 5 Dec 2019 21:32:06 -0500
-Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:55848
-        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726160AbfLFCcF (ORCPT
+        id S1726628AbfLFCuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 5 Dec 2019 21:50:24 -0500
+Received: from mail-m973.mail.163.com ([123.126.97.3]:46260 "EHLO
+        mail-m973.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfLFCuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 5 Dec 2019 21:32:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575599524;
-        h=From:To:Cc:Subject:Date:Message-Id;
-        bh=dbpQ33z0+MU9P4fX+5DhPUfJ1DnpVxYrmcfpMV8MJaI=;
-        b=J4+5j2tXiA8fSOxzRwBXkhxhFSPJ7hFwa2L2jF63lKosOWWgoCCJMwHZj8dYHbd4
-        zSBRbhcxOQpMcXQ4iK2wF2m+Ht2uGSW3FxtvzHWFDNbqyPMrdaDsSV5uDRL9m0TjFPH
-        WHv/DhkjTY/gdEtdsa+HjEK3g6UKfniV1HZY1lok=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575599524;
-        h=From:To:Cc:Subject:Date:Message-Id:Feedback-ID;
-        bh=dbpQ33z0+MU9P4fX+5DhPUfJ1DnpVxYrmcfpMV8MJaI=;
-        b=av8IuSlcY46Zd9obFJpbpiy/vBakrI94qBLC/sy6rVV/9wDGeLqYl78Ax630M4bP
-        hJh7shrH7j32Quc3XwvSIzbdd+HFhmS0GkSYXRosO3bCmcblcLwssTkaekz/8h4gb7b
-        6XvNruGFtB6BJlZVdXxXdBDRxaPHSGMT8+Nocap0=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 921A8C4479F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From:   Can Guo <cang@codeaurora.org>
-To:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        cang@codeaurora.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: ufs: Export query request interfaces
-Date:   Fri, 6 Dec 2019 02:32:04 +0000
-Message-ID: <0101016ed90ccaa9-28e4056b-b182-4739-80e0-c9f1dff0f257-000000@us-west-2.amazonses.com>
-X-Mailer: git-send-email 1.9.1
-X-SES-Outgoing: 2019.12.06-54.240.27.11
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+        Thu, 5 Dec 2019 21:50:24 -0500
+X-Greylist: delayed 909 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Dec 2019 21:50:22 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=a4CzE9P9Sv83fyUfeq
+        1jc6MxRpP1ZXVGxEaARk3HmoY=; b=lyEBwfSl6RmafVlypvBzyXV3eoVhbBZ8e6
+        4IbwOxU3MrioIBM5WeNVzVGl9Ce91qR936Pj/SA8UEQkr40JPQIorjPiKR84Apsl
+        AFHsfHDf8qx9gbQrJf2To1aqBmKvGqzpAanPU5TtvzvP8MedyZ0S/v1rAYn3I1Em
+        2kJkjpFuQ=
+Received: from localhost.localdomain (unknown [218.106.182.184])
+        by smtp3 (Coremail) with SMTP id G9xpCgD3+99EvuldgtBkAQ--.76S3;
+        Fri, 06 Dec 2019 10:35:04 +0800 (CST)
+From:   Xidong Wang <wangxidong_97@163.com>
+To:     Xidong Wang <wangxidong_97@163.com>,
+        Steffen Maier <maier@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] scsi: zfcp: check qdio before use
+Date:   Fri,  6 Dec 2019 10:34:04 +0800
+Message-Id: <1575599644-15837-1-git-send-email-wangxidong_97@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: G9xpCgD3+99EvuldgtBkAQ--.76S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xry8Gry5CFWfXFW3Cw15Arb_yoW3WFgE9r
+        97urn2qrWfCrs2krWUKw1UZryFkr4xurn3Crn3tayfZFnxJFZ7XF1vvFWDJw15Jw1jgwnr
+        uw1qyFy09F17KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbS4i5UUUUU==
+X-Originating-IP: [218.106.182.184]
+X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbi8BiD81uoV8DXCAAAsj
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vendor drivers may need to send query requests in proprietary
-implementations. Hence, export the query request interfaces
-so that vendor drivers can use them.
+In zfcp_fsf_fcp_cmnd(), zfcp_qdio_sbal_get(qdio) should
+be checked before zfcp_fsf_req_create() is called.
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+---
+ drivers/s390/scsi/zfcp_fsf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c449b68..0d1667d 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -2737,7 +2737,7 @@ static inline void ufshcd_init_query(struct ufs_hba *hba,
- 	(*request)->upiu_req.selector = selector;
- }
+diff --git a/drivers/s390/scsi/zfcp_fsf.c b/drivers/s390/scsi/zfcp_fsf.c
+index cf63916..8e460e3 100644
+--- a/drivers/s390/scsi/zfcp_fsf.c
++++ b/drivers/s390/scsi/zfcp_fsf.c
+@@ -2292,6 +2292,9 @@ int zfcp_fsf_fcp_cmnd(struct scsi_cmnd *scsi_cmnd)
+ 	if (scsi_cmnd->sc_data_direction == DMA_TO_DEVICE)
+ 		sbtype = SBAL_SFLAGS0_TYPE_WRITE;
  
--static int ufshcd_query_flag_retry(struct ufs_hba *hba,
-+int ufshcd_query_flag_retry(struct ufs_hba *hba,
- 	enum query_opcode opcode, enum flag_idn idn, bool *flag_res)
- {
- 	int ret;
-@@ -2759,6 +2759,7 @@ static int ufshcd_query_flag_retry(struct ufs_hba *hba,
- 			__func__, opcode, idn, ret, retries);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(ufshcd_query_flag_retry);
++	if (zfcp_qdio_sbal_get(qdio))
++		goto out;
++
+ 	req = zfcp_fsf_req_create(qdio, FSF_QTCB_FCP_CMND,
+ 				  sbtype, adapter->pool.scsi_req);
  
- /**
-  * ufshcd_query_flag() - API function for sending flag query requests
-@@ -2826,6 +2827,7 @@ int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
- 	ufshcd_release(hba);
- 	return err;
- }
-+EXPORT_SYMBOL_GPL(ufshcd_query_flag);
- 
- /**
-  * ufshcd_query_attr - API function for sending attribute requests
-@@ -2890,6 +2892,7 @@ int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
- 	ufshcd_release(hba);
- 	return err;
- }
-+EXPORT_SYMBOL_GPL(ufshcd_query_attr);
- 
- /**
-  * ufshcd_query_attr_retry() - API function for sending query
-@@ -2904,7 +2907,7 @@ int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
-  *
-  * Returns 0 for success, non-zero in case of failure
- */
--static int ufshcd_query_attr_retry(struct ufs_hba *hba,
-+int ufshcd_query_attr_retry(struct ufs_hba *hba,
- 	enum query_opcode opcode, enum attr_idn idn, u8 index, u8 selector,
- 	u32 *attr_val)
- {
-@@ -2927,6 +2930,7 @@ static int ufshcd_query_attr_retry(struct ufs_hba *hba,
- 			__func__, idn, ret, QUERY_REQ_RETRIES);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(ufshcd_query_attr_retry);
- 
- static int __ufshcd_query_descriptor(struct ufs_hba *hba,
- 			enum query_opcode opcode, enum desc_idn idn, u8 index,
-@@ -3024,6 +3028,7 @@ int ufshcd_query_descriptor_retry(struct ufs_hba *hba,
- 
- 	return err;
- }
-+EXPORT_SYMBOL_GPL(ufshcd_query_descriptor_retry);
- 
- /**
-  * ufshcd_read_desc_length - read the specified descriptor length from header
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index e0fe247..a1d27e6 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -923,8 +923,13 @@ int ufshcd_read_desc_param(struct ufs_hba *hba,
- 			   u8 param_size);
- int ufshcd_query_attr(struct ufs_hba *hba, enum query_opcode opcode,
- 		      enum attr_idn idn, u8 index, u8 selector, u32 *attr_val);
-+int ufshcd_query_attr_retry(struct ufs_hba *hba, enum query_opcode opcode,
-+			    enum attr_idn idn, u8 index, u8 selector,
-+			    u32 *attr_val);
- int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
- 	enum flag_idn idn, bool *flag_res);
-+int ufshcd_query_flag_retry(struct ufs_hba *hba, enum query_opcode opcode,
-+			    enum flag_idn idn, bool *flag_res);
- 
- #define SD_ASCII_STD true
- #define SD_RAW false
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
 
